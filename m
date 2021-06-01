@@ -2,138 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2905C47080
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 May 2021 21:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8CFC47080
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 15:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A402E61159
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 May 2021 21:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B21AC613B1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 15:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232102AbhEaVnU (ORCPT
+        id S230288AbhFAPaq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 May 2021 17:43:20 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:57588 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231377AbhEaVnU (ORCPT
+        Tue, 1 Jun 2021 11:30:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230523AbhFAPap (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 May 2021 17:43:20 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210531214138epoutp03429c89b507d2a822d985e0d0764f4d10~ERLI40bM22230622306epoutp03X
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 May 2021 21:41:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210531214138epoutp03429c89b507d2a822d985e0d0764f4d10~ERLI40bM22230622306epoutp03X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1622497298;
-        bh=xbmc5wIqKEfUFYKOhh0IRxmokDrQ20wOpZo1J0r3Shc=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=TPDvyfE5OSGDa3Vbj0/pMuOMpqk0Ncyq9B8F4o9eStRLJwPQ9kzTx7q2OKQSk8Ten
-         zE+KwSPKFKSFwN8McZNJzCE7ND4RlBeRkY+JVuJVmbiVxCIjBWsaJGxwNjIPBl3u6E
-         M+eAyG4xBBltkYBR6CtZnQEU5wPl11q8Kq9z/MXg=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20210531214137epcas5p34f3f64da946ce9aada5fe993a68a2cb4~ERLIXk6c11491014910epcas5p32;
-        Mon, 31 May 2021 21:41:37 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        58.1B.09835.11855B06; Tue,  1 Jun 2021 06:41:37 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210531165414epcas5p1aae4ea3815fcbadad8b48a9210742489~ENQN5bgEs1332813328epcas5p1D;
-        Mon, 31 May 2021 16:54:14 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210531165414epsmtrp147a9ce6b9a0b4ce0a8bc106fc64e28d9~ENQN4sY-d0730807308epsmtrp1H;
-        Mon, 31 May 2021 16:54:14 +0000 (GMT)
-X-AuditID: b6c32a4b-7dfff7000000266b-05-60b55811a091
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        09.FD.08637.6B415B06; Tue,  1 Jun 2021 01:54:14 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210531165413epsmtip1b7a5b9f88e942d605f0623e41ad1fa9e~ENQM58FSQ2067920679epsmtip1U;
-        Mon, 31 May 2021 16:54:13 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com
-Cc:     krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] arm64: defconfig: Enable Exynos UFS driver
-Date:   Mon, 31 May 2021 22:30:57 +0530
-Message-Id: <20210531170057.7730-1-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsWy7bCmuq5gxNYEg32PxSwezNvGZvF+WQ+j
-        xfnzG9gtNj2+xmpxedccNosZ5/cxObB5rJm3htFj06pONo/NS+o9+rasYvT4vEkugDWKyyYl
-        NSezLLVI3y6BK+Pw+XVsBX/ZKw7fmcXawPiLrYuRk0NCwERi25kbrF2MXBxCArsZJeZ9b2KE
-        cD4xSlyaeJoZwvnGKPH8621mmJbFp1qZQGwhgb2MEm+bQyGKWpgkDt59AzaXTUBb4u70LWBF
-        IgKJEn8X3mQFsZkF4iVa+1eBxYUFrCV+3FsBNJSDg0VAVWLZJiuQMC9QeOfkF0wQu+QlVm84
-        ALV3GbvEkVniELaLxNl5H6BeEJZ4dXwLO4QtJfGyv40dZKSEQLZEzy5jiHCNxNJ5x1ggbHuJ
-        A1fmsICUMAtoSqzfpQ8RlpWYemodE8SRfBK9v59AXcArsWMejK0q0fzuKtQYaYmJ3d2sELaH
-        xJTtW1ghIRIrcWlxL/MERtlZCBsWMDKuYpRMLSjOTU8tNi0wzkst1ytOzC0uzUvXS87P3cQI
-        jnMt7x2Mjx580DvEyMTBeIhRgoNZSYT3TMXGBCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Kx5O
-        ThASSE8sSc1OTS1ILYLJMnFwSjUwJfXH/284dXiORNKnjJv1D1PTUu8ujyiTebrSdd+8uknP
-        ys/I1PLrzIlJqutxLNtbcKIitpLL8GvWhr3dp5Z8MeiPSV1y7xAPw44zfY1TJhtvuukr737u
-        tfa1GUuZ9r4+FerzxZNLwGll0LyWe7Fnjz8/dvWB4b0LNoGCzDdUVtzpKbz1xfHglJxLHb/n
-        rc7WVuO8kR+668/j3KNJQg8X+Pz6uOZUCpdP9xd+s/pQhrLWd9+EXLR+Lt6SfPE7m2/3nAR/
-        p12/5md4fha4umPb8Zlv+v5VLVP6d2raWjv3GyHHrcP+WVe8NHySI3Dr4nSvfXNmvGqb8MyI
-        Mf3Agia9uilcz74tNK+awVWh1fdhEacSS3FGoqEWc1FxIgAl1nN2YgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOJMWRmVeSWpSXmKPExsWy7bCSnO42ka0JBqsWals8mLeNzeL9sh5G
-        i/PnN7BbbHp8jdXi8q45bBYzzu9jcmDzWDNvDaPHplWdbB6bl9R79G1ZxejxeZNcAGsUl01K
-        ak5mWWqRvl0CV8bh8+vYCv6yVxy+M4u1gfEXWxcjJ4eEgInE4lOtTF2MXBxCArsZJY41XmSG
-        SEhLXN84gR3CFpZY+e85mC0k0MQkceShBYjNJqAtcXf6FiYQW0QgWaJr3Ucwm1kgUeLu05ks
-        ILawgLXEj3srgGZycLAIqEos22QFEuYFCu+c/IIJYry8xOoNB5gnMPIsYGRYxSiZWlCcm55b
-        bFhgmJdarlecmFtcmpeul5yfu4kRHDZamjsYt6/6oHeIkYmD8RCjBAezkgjvmYqNCUK8KYmV
-        ValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwHc25c3D7pBObcw+8
-        8L23iSH178+KgAncikuSZXiv3YvRFOewD553dr5ozTU7/ZayC0vCQvMv7p1Vd3zxdYVSj8It
-        elouogwx3den8wbbuKns5Nxxr4jn3sHfps53NNqDwpiOnIh8cHpN5bG/kpK5X/QuH/weZbV7
-        5tXlVw/9D/ui3rsgKkA07HKRD5erf7k+c+Pewi0Grw5JHc37OcG4zsQ9UWvyrtS9astvzvc5
-        mJ/jMSPnVr25xS91RSOztYotdeGOh05tUL56kU87UWbl/suPQgWqhGtCJX8Uv+560flb4qH7
-        jZrmq1Hp9y3eM8U9zJ77u6xs2o1XTDaSNkI/uMWnXCg24L+U7uqndF9YiaU4I9FQi7moOBEA
-        pDeUAIoCAAA=
-X-CMS-MailID: 20210531165414epcas5p1aae4ea3815fcbadad8b48a9210742489
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20210531165414epcas5p1aae4ea3815fcbadad8b48a9210742489
-References: <CGME20210531165414epcas5p1aae4ea3815fcbadad8b48a9210742489@epcas5p1.samsung.com>
+        Tue, 1 Jun 2021 11:30:45 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 885D8C061756
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jun 2021 08:29:03 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id c5so3616187wrq.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jun 2021 08:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=4Fw9dpKXbERV/dKFcemxtYQKsc73Y6U63vbXSE3Oibo=;
+        b=MTbzdsjNuV883Tx57hU16YOhd3i7RXIpP8zs8pv0uD50ckDIlzXxIKzXYGr/NNkvot
+         rAkly4+qadmOVQKTiYMwLUAc7wS1kBGx6V9seHLHMOocxZIizZE+tUKRoU9/Zy3V4Lxv
+         DZ0mRqVgRW60G9feA7VVScu+cle+Jb8WE0PpghvVmneKLpX1tILOaIswrLDS7Hyq/Pb2
+         U1PDcaULLVjtvL8e0ih8mmOQwcV0ohxaa1KgjQ4PplyoT67uF3SiXxtyFy/gPo4QAik8
+         k2vS6lXxDALL3CnYj2IkklTPL8KVdSvyiDrGXTCji8rWOsMnIUaWByBXXDgxxY+nBvwz
+         kHRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=4Fw9dpKXbERV/dKFcemxtYQKsc73Y6U63vbXSE3Oibo=;
+        b=FitgFlpXdsDG45woHKUIJ51Y/GjcAdVL41joAAr1sKq3wEGLXeDTP9ySPyrXFfl1+y
+         2ZaWamq4e5avQ31GmV75jHv8KoHHpQAiHD0syLG7Lai1bTaR7qs3SLQ/esAXzXIpnPaY
+         Uvk2MsI4+1trGUy6mXw/YqkrEONC7DEJ/gc67UhBgxKiK/I8SEvQAaUE3xlvvHmAIjuG
+         5QvWBsKe4quxZp1H4CfUn1TmNfsyp4dQghiyRFmZPhD9ugRqF1u8UsjuWXtazHod1/zR
+         MkO31wiOncAzgFg6kmuLp2DtH073kCvfJAyfo6hfSHnlfULNJmH1EtCylk2tzKWhJWpj
+         MHjw==
+X-Gm-Message-State: AOAM532HDGubgURgCslXmdMAJ+jJRYIxjnictwTPhFL3Whl6CSh+VyTU
+        kKjvzx/1i/Po96wI9rdvLxF1qA==
+X-Google-Smtp-Source: ABdhPJwlEHUfYNe8eojetGb5Wl0PUicjjf8/xWeiO5HFCYB0h6dHGOk4lwEoOx8pmGanLLNRuWgvwQ==
+X-Received: by 2002:adf:f7d1:: with SMTP id a17mr10628419wrq.84.1622561342123;
+        Tue, 01 Jun 2021 08:29:02 -0700 (PDT)
+Received: from dell ([91.110.221.249])
+        by smtp.gmail.com with ESMTPSA id m132sm2195135wmf.10.2021.06.01.08.29.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jun 2021 08:29:01 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 16:28:59 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Support Opensource <support.opensource@diasemi.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [RESEND PATCH v2 00/13] Simplify + drop board file support for
+ Samsung PMIC
+Message-ID: <20210601152859.GB2159518@dell>
+References: <20210526124711.33223-1-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210526124711.33223-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Enable the Exynos UFS controller and PHY configs. They need to be
-buildin to ensure UFS devices gets detected on exynos7 and its
-variant boards.
+On Wed, 26 May 2021, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> Hi Lee,
+> 
+> This is the resend of two previous series, combined together as the
+> latter depends on the first:
+> https://lore.kernel.org/lkml/20210420113929.278082-1-krzysztof.kozlowski@canonical.com/
+> https://lore.kernel.org/lkml/20210420170118.12788-1-krzysztof.kozlowski@canonical.com/
+> 
+> Everything rebased on latest next.
+> 
+> This also includes two MFD "Correct kerneldoc" patches which seems to be
+> still valid, even though you mentioned they were fixed.
+> 
+> 
+> The Samsung PMIC drivers since long time are used only on devicetree
+> platforms (Samsung Exynos) and there are no users with board files.
+> 
+> Drop the support for board files entirely and depend on OF for matching.
+> This makes the code smaller and simpler.
+> 
+> Best regards,
+> Krzysztof
+> 
+> Krzysztof Kozlowski (13):
+>   mfd: max8997: Simplify getting of_device_id match data
+>   mfd: max8998: Simplify getting of_device_id match data
+>   mfd: da9052: Simplify getting of_device_id match data
+>   mfd: da9062: Simplify getting of_device_id match data
+>   mfd: sec: Simplify getting of_device_id match data
+>   mfd: wm831x: Correct kerneldoc
+>   mfd: twl: Correct kerneldoc
+>   mfd: sec: Drop support for board files and require devicetree
+>   mfd: sec: Remove unused cfg_pmic_irq in platform data
+>   mfd: sec: Remove unused device_type in platform data
+>   mfd: sec: Remove unused irq_base in platform data
+>   mfd: sec: Enable wakeup from suspend via devicetree property
+>   mfd: sec: Remove unused platform data members
+> 
+>  drivers/mfd/Kconfig              |  1 +
+>  drivers/mfd/da9052-i2c.c         |  9 +---
+>  drivers/mfd/da9062-core.c        | 13 ++----
+>  drivers/mfd/max8997.c            |  9 ++--
+>  drivers/mfd/max8998.c            |  8 ++--
+>  drivers/mfd/sec-core.c           | 70 +++++---------------------------
+>  drivers/mfd/sec-irq.c            |  4 +-
+>  drivers/mfd/twl-core.c           |  4 +-
+>  drivers/mfd/wm831x-core.c        |  2 +-
+>  include/linux/mfd/samsung/core.h | 33 ---------------
+>  10 files changed, 29 insertions(+), 124 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 08c6f769df9a..f9938e0eb720 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -289,6 +289,7 @@ CONFIG_SCSI_UFSHCD=y
- CONFIG_SCSI_UFSHCD_PLATFORM=y
- CONFIG_SCSI_UFS_QCOM=m
- CONFIG_SCSI_UFS_HISI=y
-+CONFIG_SCSI_UFS_EXYNOS=y
- CONFIG_ATA=y
- CONFIG_SATA_AHCI=y
- CONFIG_SATA_AHCI_PLATFORM=y
-@@ -1110,6 +1111,7 @@ CONFIG_PHY_ROCKCHIP_INNO_USB2=y
- CONFIG_PHY_ROCKCHIP_INNO_DSIDPHY=m
- CONFIG_PHY_ROCKCHIP_PCIE=m
- CONFIG_PHY_ROCKCHIP_TYPEC=y
-+CONFIG_PHY_SAMSUNG_UFS=y
- CONFIG_PHY_UNIPHIER_USB2=y
- CONFIG_PHY_UNIPHIER_USB3=y
- CONFIG_PHY_TEGRA_XUSB=y
+Applied all except patches 6 and 7, thanks.
 
-base-commit: c4681547bcce777daf576925a966ffa824edd09d
 -- 
-2.17.1
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
