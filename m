@@ -2,135 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8CFC47080
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 15:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E85C47096
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 15:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B21AC613B1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 15:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44C216139A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 15:41:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230288AbhFAPaq (ORCPT
+        id S234074AbhFAPnL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Jun 2021 11:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
+        Tue, 1 Jun 2021 11:43:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbhFAPap (ORCPT
+        with ESMTP id S234052AbhFAPnK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Jun 2021 11:30:45 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 885D8C061756
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jun 2021 08:29:03 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id c5so3616187wrq.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jun 2021 08:29:03 -0700 (PDT)
+        Tue, 1 Jun 2021 11:43:10 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8AA5C061761
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Jun 2021 08:41:27 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id q5so14839291wrs.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jun 2021 08:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=4Fw9dpKXbERV/dKFcemxtYQKsc73Y6U63vbXSE3Oibo=;
-        b=MTbzdsjNuV883Tx57hU16YOhd3i7RXIpP8zs8pv0uD50ckDIlzXxIKzXYGr/NNkvot
-         rAkly4+qadmOVQKTiYMwLUAc7wS1kBGx6V9seHLHMOocxZIizZE+tUKRoU9/Zy3V4Lxv
-         DZ0mRqVgRW60G9feA7VVScu+cle+Jb8WE0PpghvVmneKLpX1tILOaIswrLDS7Hyq/Pb2
-         U1PDcaULLVjtvL8e0ih8mmOQwcV0ohxaa1KgjQ4PplyoT67uF3SiXxtyFy/gPo4QAik8
-         k2vS6lXxDALL3CnYj2IkklTPL8KVdSvyiDrGXTCji8rWOsMnIUaWByBXXDgxxY+nBvwz
-         kHRg==
+        bh=9ITtNZNwlQldiOHh3k8Zcr3KS2X5VoqbKBn+PkTuH9w=;
+        b=HWWIXMjpZY5Nv0Do85zKy0XnIH09Cv+I8O90aJOO3BSMIE4c5sIPyG45bCQfYVgiio
+         eYhGJVSbT+KqeN62w97gEPyDfsykx6JnyGdcBK+mpLrSUajv6ANshRbBGSqALbl3YNIQ
+         a/nWwSoYi1etW2NYalB9dhW5u/tJEf8kHUKOqjsh+HUwXk1fGB+GqNnL5y+XmIUi6BEb
+         SiEIMa6Xd3KhWGNURw6qE8q2vkZwJfXT7lXdpeCk3SvF96Ko0x45vLAJXwmU0DDSQ7se
+         aJg9JD7GZt0DuLh2vQqGCMLk2A0EVKfouceoqryeDu3pqPumOYK2PpxVDwzfiPZhtW0q
+         lvfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=4Fw9dpKXbERV/dKFcemxtYQKsc73Y6U63vbXSE3Oibo=;
-        b=FitgFlpXdsDG45woHKUIJ51Y/GjcAdVL41joAAr1sKq3wEGLXeDTP9ySPyrXFfl1+y
-         2ZaWamq4e5avQ31GmV75jHv8KoHHpQAiHD0syLG7Lai1bTaR7qs3SLQ/esAXzXIpnPaY
-         Uvk2MsI4+1trGUy6mXw/YqkrEONC7DEJ/gc67UhBgxKiK/I8SEvQAaUE3xlvvHmAIjuG
-         5QvWBsKe4quxZp1H4CfUn1TmNfsyp4dQghiyRFmZPhD9ugRqF1u8UsjuWXtazHod1/zR
-         MkO31wiOncAzgFg6kmuLp2DtH073kCvfJAyfo6hfSHnlfULNJmH1EtCylk2tzKWhJWpj
-         MHjw==
-X-Gm-Message-State: AOAM532HDGubgURgCslXmdMAJ+jJRYIxjnictwTPhFL3Whl6CSh+VyTU
-        kKjvzx/1i/Po96wI9rdvLxF1qA==
-X-Google-Smtp-Source: ABdhPJwlEHUfYNe8eojetGb5Wl0PUicjjf8/xWeiO5HFCYB0h6dHGOk4lwEoOx8pmGanLLNRuWgvwQ==
-X-Received: by 2002:adf:f7d1:: with SMTP id a17mr10628419wrq.84.1622561342123;
-        Tue, 01 Jun 2021 08:29:02 -0700 (PDT)
+        bh=9ITtNZNwlQldiOHh3k8Zcr3KS2X5VoqbKBn+PkTuH9w=;
+        b=PQXj4baevc9GmEQ61ayWhyQBmgiD8k0CWzy1MDZGr37nWMJV4DDtf49e/RPXQVOh3y
+         ycrIwXj3ok+X9XsHHFexTsgkuq9pfZ1A97VmiR/jwsa+I57RRxHorZIHLwOEqLGvOksP
+         zxV6FXk4f1A25N9A4J8388O5rAWxpZE9OJcQPojZX1N4QLqcCmhoQOlwsAusDnq0oknt
+         zx/Mohfd6HSVME+fDqqx5AywzZAasz3Ziuvj5lNY6uTxS5w+lAoe/rq2bsnpsHw237Ha
+         5DWygCCUjqT3DmgCkVN0AhcZD+G6K0+t/0GZDBrNrMR+SsQb7N6rUWKBd4lRNRQ2kSGp
+         nCkQ==
+X-Gm-Message-State: AOAM531X7OAiGBRhR2cMf9UJ0DDtj4nQBpCDPGI3xWJ76u8PSjmGyzRo
+        eQDmCNqtPCcHLCZ/zb41sdhXDQ==
+X-Google-Smtp-Source: ABdhPJzHmIVw1vEegAeEcDl0WTBgV8jvsI8TadSWkcRQk7OSZx2qAUeHL1kPJexYHqY8+BXavqgFSA==
+X-Received: by 2002:a05:6000:180f:: with SMTP id m15mr1762181wrh.60.1622562086113;
+        Tue, 01 Jun 2021 08:41:26 -0700 (PDT)
 Received: from dell ([91.110.221.249])
-        by smtp.gmail.com with ESMTPSA id m132sm2195135wmf.10.2021.06.01.08.29.01
+        by smtp.gmail.com with ESMTPSA id a123sm3414501wmd.2.2021.06.01.08.41.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jun 2021 08:29:01 -0700 (PDT)
-Date:   Tue, 1 Jun 2021 16:28:59 +0100
+        Tue, 01 Jun 2021 08:41:25 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 16:41:23 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Support Opensource <support.opensource@diasemi.com>,
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: Re: [RESEND PATCH v2 00/13] Simplify + drop board file support for
- Samsung PMIC
-Message-ID: <20210601152859.GB2159518@dell>
-References: <20210526124711.33223-1-krzysztof.kozlowski@canonical.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] mfd/power/rtc: Do not enforce (incorrect)
+ interrupt trigger type
+Message-ID: <20210601154123.GD2159518@dell>
+References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210526124711.33223-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On Wed, 26 May 2021, Krzysztof Kozlowski wrote:
 
-> Hi Lee,
+> Hi,
 > 
-> This is the resend of two previous series, combined together as the
-> latter depends on the first:
-> https://lore.kernel.org/lkml/20210420113929.278082-1-krzysztof.kozlowski@canonical.com/
-> https://lore.kernel.org/lkml/20210420170118.12788-1-krzysztof.kozlowski@canonical.com/
+> This is a v2 with only minor changes:
+> 1. Drop patches which landed in mainline.
+> 2. Add acks.
+> 3. Rebase max17040 power supply (dtschema conversion).
 > 
-> Everything rebased on latest next.
-> 
-> This also includes two MFD "Correct kerneldoc" patches which seems to be
-> still valid, even though you mentioned they were fixed.
-> 
-> 
-> The Samsung PMIC drivers since long time are used only on devicetree
-> platforms (Samsung Exynos) and there are no users with board files.
-> 
-> Drop the support for board files entirely and depend on OF for matching.
-> This makes the code smaller and simpler.
+> Patches are independent and there are no external dependencies, so
+> please pick up freely.
 > 
 > Best regards,
 > Krzysztof
 > 
-> Krzysztof Kozlowski (13):
->   mfd: max8997: Simplify getting of_device_id match data
->   mfd: max8998: Simplify getting of_device_id match data
->   mfd: da9052: Simplify getting of_device_id match data
->   mfd: da9062: Simplify getting of_device_id match data
->   mfd: sec: Simplify getting of_device_id match data
->   mfd: wm831x: Correct kerneldoc
->   mfd: twl: Correct kerneldoc
->   mfd: sec: Drop support for board files and require devicetree
->   mfd: sec: Remove unused cfg_pmic_irq in platform data
->   mfd: sec: Remove unused device_type in platform data
->   mfd: sec: Remove unused irq_base in platform data
->   mfd: sec: Enable wakeup from suspend via devicetree property
->   mfd: sec: Remove unused platform data members
 > 
->  drivers/mfd/Kconfig              |  1 +
->  drivers/mfd/da9052-i2c.c         |  9 +---
->  drivers/mfd/da9062-core.c        | 13 ++----
->  drivers/mfd/max8997.c            |  9 ++--
->  drivers/mfd/max8998.c            |  8 ++--
->  drivers/mfd/sec-core.c           | 70 +++++---------------------------
->  drivers/mfd/sec-irq.c            |  4 +-
->  drivers/mfd/twl-core.c           |  4 +-
->  drivers/mfd/wm831x-core.c        |  2 +-
->  include/linux/mfd/samsung/core.h | 33 ---------------
->  10 files changed, 29 insertions(+), 124 deletions(-)
+> Krzysztof Kozlowski (7):
+>   mfd: sec-irq: Do not enforce (incorrect) interrupt trigger type
+>   mfd: max77686: Do not enforce (incorrect) interrupt trigger type
+>   mfd: max77693: Do not enforce (incorrect) interrupt trigger type
+>   mfd: max14577: Do not enforce (incorrect) interrupt trigger type
+>   rtc: max77686: Do not enforce (incorrect) interrupt trigger type
+>   power: supply: max17042: Do not enforce (incorrect) interrupt trigger
+>     type
+>   power: supply: max17040: Do not enforce (incorrect) interrupt trigger
+>     type
 
-Applied all except patches 6 and 7, thanks.
+MFD patches (at least) do not apply.
+
+Please rebase and resubmit with my:
+
+For my own reference (apply this as-is to your sign-off block):
+
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
 Lee Jones [李琼斯]
