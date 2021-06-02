@@ -2,128 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52F7C4708F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 16:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403E8C4708F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 11:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1A2660FD8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Jun 2021 16:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BA99613D0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 11:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234017AbhFAQPK (ORCPT
+        id S231899AbhFBLG4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Jun 2021 12:15:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49537 "EHLO
+        Wed, 2 Jun 2021 07:06:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52350 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231918AbhFAQPJ (ORCPT
+        with ESMTP id S232556AbhFBLGi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Jun 2021 12:15:09 -0400
-Received: from mail-ed1-f69.google.com ([209.85.208.69])
+        Wed, 2 Jun 2021 07:06:38 -0400
+Received: from mail-wm1-f69.google.com ([209.85.128.69])
         by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lo71D-0007hP-9Q
-        for linux-samsung-soc@vger.kernel.org; Tue, 01 Jun 2021 16:13:27 +0000
-Received: by mail-ed1-f69.google.com with SMTP id y7-20020aa7ce870000b029038fd7cdcf3bso4594720edv.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jun 2021 09:13:27 -0700 (PDT)
+        id 1loOgA-0003vG-MU
+        for linux-samsung-soc@vger.kernel.org; Wed, 02 Jun 2021 11:04:54 +0000
+Received: by mail-wm1-f69.google.com with SMTP id h18-20020a05600c3512b029018434eb1bd8so2042515wmq.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jun 2021 04:04:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2ynkpujCou9NfTAZ9mjRuBBH8CKUsEIW60PHdi5amDs=;
-        b=nJrXLDX9cU7he92F/CHJABzk/aR9QtCDQK0zSBRfWVnALVCibmeCI4WQ3153k5fEQW
-         h+BRIinzpFpr2g6qhCFvCvPehmmQ6ry4ryXFUOylcHikLxmGGaympYjxG2ab7hUGF2n8
-         LxvUNoEjaCBlBm3+ktW70+xDRE9Cf1t9afAj9Vf+e+ubmskvX+/Qbqnr4j5o3hzVJBuO
-         s/7XYbB4B9nLrPmpuaK4tq4SuZKJGIBQhwuOumgx2v58VnyOgm7NlfIWEPKO9Ej05Z19
-         xAuTwBG7MSSg81qU9Lg1mY15OS1fPoSeKaa26aH02IbdYyGqgPC0Prx5dFOd8wkclth/
-         zYlg==
-X-Gm-Message-State: AOAM5301XKi4k19ei7p8+f/U6ASEFzXr4KEAVeP9I8w/6EveGakYTUl2
-        phfOio9ONnLWFY0QONOtrgY5Vim8YD+DdzJFq+7pUpaf0r9cMaqkHolYntNLYpH+9x6YkGx8GsX
-        pYw9oN3SDPddipH0+8Ww3pdN4Ui4zmCLBCFa4oD1iTA/XkAwD
-X-Received: by 2002:a05:6402:2044:: with SMTP id bc4mr34517826edb.282.1622564007076;
-        Tue, 01 Jun 2021 09:13:27 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJztLTZkdLCHrH695KliUdfuJxr4t8ctJTHJ8+zUqsCGjcG0A6oz4POiCu53tJSkRGVSxiyXnA==
-X-Received: by 2002:a05:6402:2044:: with SMTP id bc4mr34517815edb.282.1622564006974;
-        Tue, 01 Jun 2021 09:13:26 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
-        by smtp.gmail.com with ESMTPSA id bh3sm7446959ejb.19.2021.06.01.09.13.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jun 2021 09:13:26 -0700 (PDT)
-Subject: Re: [PATCH v2 0/7] mfd/power/rtc: Do not enforce (incorrect)
- interrupt trigger type
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org
-References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
- <20210601154123.GD2159518@dell>
+        bh=Ji+tC5V5g/Ce+vgR+BJKn16Nmk3kGVreTbAerQ8gR/A=;
+        b=ZJuCqvvnRZ8FUKGjrisxjR5ht7GCTJ1S8RO5E3zkcEEG+dYIOEgOgPfSTtziQj0Ms4
+         83NgqqdsLykqh2Tqg3a/jbdiBDqxLN0Sw1pAbJLwBoO/Ih2r0VDL3ZSwU4iRA43L3qKe
+         pBJXvrdHgbUD+c33CqMjEuNOFI1D/uGfaVCT1pyceoAfntVcw8PpfYICD+1eJXZxOVqa
+         OU5UwVzpAsefmZp3vR95xUymMrjveh8+cDZ1yEyivgnvF+MQ79XV3I6CDeOt1owmukY1
+         8sBKvA3y00OwR3p5a7TpJ9iGpOb+IBS+i2yHsUUYP/HZ3gKLAgxoZbi+OeMRRIC2m1R0
+         lQoA==
+X-Gm-Message-State: AOAM531hQpwdIO2ukgXqYr1i1jmeji+ya8V+THrVC9yPv4WYYMHFigHS
+        cF90uhm+059Tb0+3Ycf36FVuRgW/rTyGzgrmyDTFfH3o9WCKTKBlhkA0E3r92Lw3JX8DVo3/jiQ
+        jK8EQu7ZqXK1HEnpYuVEO3PGaJb/CyQ2UThSVbAtzjXyRdIho
+X-Received: by 2002:a1c:f316:: with SMTP id q22mr31373946wmq.152.1622631894327;
+        Wed, 02 Jun 2021 04:04:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzUi60Islv2sP9zukPKfLBZO8KAnwQYQoa56n07SmYetGNc/q6ebYs8y1pFF8rJvd04u2vnXw==
+X-Received: by 2002:a1c:f316:: with SMTP id q22mr31373922wmq.152.1622631894111;
+        Wed, 02 Jun 2021 04:04:54 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-185-9.adslplus.ch. [188.155.185.9])
+        by smtp.gmail.com with ESMTPSA id f5sm6948175wrf.22.2021.06.02.04.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jun 2021 04:04:53 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <63ef9657-3b01-f06e-0d61-555806e4b191@canonical.com>
-Date:   Tue, 1 Jun 2021 18:13:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [RESEND PATCH v2 1/4] mfd: sec-irq: Do not enforce (incorrect) interrupt trigger type
+Date:   Wed,  2 Jun 2021 13:04:42 +0200
+Message-Id: <20210602110445.33536-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20210601154123.GD2159518@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/06/2021 17:41, Lee Jones wrote:
-> On Wed, 26 May 2021, Krzysztof Kozlowski wrote:
-> 
->> Hi,
->>
->> This is a v2 with only minor changes:
->> 1. Drop patches which landed in mainline.
->> 2. Add acks.
->> 3. Rebase max17040 power supply (dtschema conversion).
->>
->> Patches are independent and there are no external dependencies, so
->> please pick up freely.
->>
->> Best regards,
->> Krzysztof
->>
->>
->> Krzysztof Kozlowski (7):
->>   mfd: sec-irq: Do not enforce (incorrect) interrupt trigger type
->>   mfd: max77686: Do not enforce (incorrect) interrupt trigger type
->>   mfd: max77693: Do not enforce (incorrect) interrupt trigger type
->>   mfd: max14577: Do not enforce (incorrect) interrupt trigger type
->>   rtc: max77686: Do not enforce (incorrect) interrupt trigger type
->>   power: supply: max17042: Do not enforce (incorrect) interrupt trigger
->>     type
->>   power: supply: max17040: Do not enforce (incorrect) interrupt trigger
->>     type
-> 
-> MFD patches (at least) do not apply.
-> 
-> Please rebase and resubmit with my:
-> 
-> For my own reference (apply this as-is to your sign-off block):
-> 
->   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-I'll resend the MFD part.
+Interrupt line can be configured on different hardware in different way,
+even inverted.  Therefore driver should not enforce specific trigger
+type - edge falling - but instead rely on Devicetree to configure it.
 
-For the RTC and power, I hope these apply still cleanly.
+The Samsung PMIC drivers are used only on Devicetree boards.
 
+Additionally, the PMIC datasheets describe the interrupt line as active
+low with a requirement of acknowledge from the CPU therefore the edge
+falling is not correct.
 
-Best regards,
-Krzysztof
+Marek Szyprowski reports that together with DTS change (proper level in
+DTS) it fixes RTC alarm failure that he observed from time to time on
+TM2e board.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+---
+
+Rebased on https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/log/?h=for-mfd-next
+
+Changes since v1:
+1. Mention in commit msg that this fixes TM2e RTC alarm.
+2. Add Marek's tested-by.
+---
+ drivers/mfd/sec-irq.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index e473c2fb42d5..f5f59fdc72fe 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -479,8 +479,7 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+ 	}
+ 
+ 	ret = devm_regmap_add_irq_chip(sec_pmic->dev, sec_pmic->regmap_pmic,
+-				       sec_pmic->irq,
+-				       IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++				       sec_pmic->irq, IRQF_ONESHOT,
+ 				       0, sec_irq_chip, &sec_pmic->irq_data);
+ 	if (ret != 0) {
+ 		dev_err(sec_pmic->dev, "Failed to register IRQ chip: %d\n", ret);
+-- 
+2.27.0
+
