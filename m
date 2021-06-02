@@ -2,118 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C909FC4708F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 14:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C57C47093
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3BEA613E6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 14:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1D41613BF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231796AbhFBOg0 (ORCPT
+        id S229746AbhFBUIK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Jun 2021 10:36:26 -0400
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:35525 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231691AbhFBOgR (ORCPT
+        Wed, 2 Jun 2021 16:08:10 -0400
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:41937 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229491AbhFBUII (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Jun 2021 10:36:17 -0400
-Received: by mail-wm1-f52.google.com with SMTP id h5-20020a05600c3505b029019f0654f6f1so3390655wmq.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jun 2021 07:34:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ggE8ksbwsKIQV0Iz58/vSuT7hydgMXkIFUzJg2iRL3g=;
-        b=j1G7oiOUGHpTTpz7N1iwCK31eRewhRnoAF2xf8UwzdvPqQglJHQm5wgoBIQ6wjwMjg
-         q+7qtBtnoyK12VxJOtlQOffmMwgKbTIuSsCd68GxxfeKwYjeWzIsYGzSEVDq2HndGIUb
-         s0CfACPN1haeU3M0PD3alT3nwpJs9FIPgQjWXh23qOIpQObjaH8OUA3kWOxCOAWVj+E7
-         2W9MnyRFUEmy6xxuzqsPyyQ3tox+X6w7nOqTZ7BSJUVFprJlOmAmTG+6GciYpvGRtIcS
-         P59EGzETOn/uvHje/qBYMvMjNLgD9tTLbcKTSAizUGThSDsa/RcOaV+T8FOJGiJ8ozDS
-         dulw==
+        Wed, 2 Jun 2021 16:08:08 -0400
+Received: by mail-ot1-f44.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so3574392oth.8;
+        Wed, 02 Jun 2021 13:06:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ggE8ksbwsKIQV0Iz58/vSuT7hydgMXkIFUzJg2iRL3g=;
-        b=ufNWTYcVDSZM96Iru82xJGIhYp3V/faTXunWQzok8WXqILKJtZYbMt/HXFCzbgy1HF
-         8Ba03PCFhTRMzmZmEkLAbP+Ikon/uww5HnzVP14KTkYudaqEoYInE0Xh0fZXKPSSGz9l
-         9OUZJPeJuEMrUEsuwTqKjCc9DqxJLZ1mZ0HL3/JChse+3vzTQ3vRzTHXFKBbV+tR33RD
-         anXQl74IORjEtLnjWlMHz1ryxxdvGMCC3e6iv6DJKx/+CSimQ5DBst9StX8uO+MHyX6K
-         GzUZizm89b3x+cgfBZ/zjGPQH1yVF5P5+OpDDolk8nCvqXsnAUAa/xrzcc/CiW8aLX1x
-         pf8Q==
-X-Gm-Message-State: AOAM533IxRaPQ1FpKsB7Y8gLI9BO+yFDQrjSHhC7gljGE6fEsxpx7qlR
-        ctYfIGJrZcOyWLYCILUZ6AGWMQ==
-X-Google-Smtp-Source: ABdhPJxuui5QGQFjB6ghdF42kN+HT/+I/xxE44H9hpyRue/mdRNGI3/PcvlzK7bQqwgrsMF4W/P4qQ==
-X-Received: by 2002:a1c:a7d4:: with SMTP id q203mr5573033wme.39.1622644413721;
-        Wed, 02 Jun 2021 07:33:33 -0700 (PDT)
-Received: from dell.default ([91.110.221.214])
-        by smtp.gmail.com with ESMTPSA id o11sm132315wrq.93.2021.06.02.07.33.32
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Eqg/NhAI7hbUorU0sneYRdLeG0QUON8FK2Nid9hN1UY=;
+        b=VJSmbYP3HrQKqbOzjw3tpJjFjGkz61G7E0Wuyulqx7ljopCAyYQ1TkDsHiApCi2M5n
+         MYI57o9brvzNrMFGgsXjy58Ff4eB57diI5/D3B9m2lexq9ixRxZzqkiXo15OyK3lZLka
+         Dqy8445nnJqOBZoAmoovQ9qtRq3McP/J7J0j/y3ct9FNrlPocnVIwvC8EqHkqYA7DB8l
+         2aWxwia4N+wMkCPbJXgYF9gtpomNc5dHcXUtiNUb9z2uVKOHhtCjwOixJMo5yRpR7iKQ
+         Z3aQt/pd/rbTZWfXuPXXINdCu80dmK6ar7LWcSs7l3GF98DweiYpLmyz68qgW6VsBYHV
+         tnwA==
+X-Gm-Message-State: AOAM5314IrOlteVIYirBQpnNAbfiG78TzugS+N+DEyRcJGuPuV66nsIw
+        slaRP9+w/fULxl5Hbpwzuw==
+X-Google-Smtp-Source: ABdhPJwOOhWiTlBUVMkgdreVunVQq9Th2V0p/jeTk68tZ2BCDbzX7OWLgT1+YDeOhvnir4cNa8WV0A==
+X-Received: by 2002:a9d:6194:: with SMTP id g20mr4537073otk.8.1622664371257;
+        Wed, 02 Jun 2021 13:06:11 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i9sm189166oog.17.2021.06.02.13.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 07:33:33 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Akshu Agarwal <akshua@gmail.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [RESEND 23/26] drm/exynos/exynos7_drm_decon: Fix incorrect naming of 'decon_shadow_protect_win()'
-Date:   Wed,  2 Jun 2021 15:32:57 +0100
-Message-Id: <20210602143300.2330146-24-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210602143300.2330146-1-lee.jones@linaro.org>
-References: <20210602143300.2330146-1-lee.jones@linaro.org>
+        Wed, 02 Jun 2021 13:06:10 -0700 (PDT)
+Received: (nullmailer pid 3900234 invoked by uid 1000);
+        Wed, 02 Jun 2021 20:06:09 -0000
+Date:   Wed, 2 Jun 2021 15:06:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Mark Brown <broonie@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        devicetree@vger.kernel.org,
+        Iskren Chernev <iskren.chernev@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] power: supply: max17040: Do not enforce
+ (incorrect) interrupt trigger type
+Message-ID: <20210602200609.GA3900200@robh.at.kernel.org>
+References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
+ <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fixes the following W=1 kernel build warning(s):
+On Wed, 26 May 2021 13:20:36 -0400, Krzysztof Kozlowski wrote:
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Interrupt line can be configured on different hardware in different way,
+> even inverted.  Therefore driver should not enforce specific trigger
+> type - edge falling - but instead rely on Devicetree to configure it.
+> 
+> The Maxim 14577/77836 datasheets describe the interrupt line as active
+> low with a requirement of acknowledge from the CPU therefore the edge
+> falling is not correct.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Iskren Chernev <iskren.chernev@gmail.com>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Remove the 'flags' variable.
+> 2. Added ack.
+> 3. Rebase - the bindings were converted to dtschema.
+> ---
+>  .../devicetree/bindings/power/supply/maxim,max17040.yaml      | 2 +-
+>  drivers/power/supply/max17040_battery.c                       | 4 +---
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
 
- drivers/gpu/drm/exynos/exynos7_drm_decon.c:355: warning: expecting prototype for shadow_protect_win(). Prototype was for decon_shadow_protect_win() instead
-
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Akshu Agarwal <akshua@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 431c5d32f9a47..9b5e6f94e5585 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -344,7 +344,7 @@ static void decon_win_set_colkey(struct decon_context *ctx, unsigned int win)
- }
- 
- /**
-- * shadow_protect_win() - disable updating values from shadow registers at vsync
-+ * decon_shadow_protect_win() - disable updating values from shadow registers at vsync
-  *
-  * @ctx: display and enhancement controller context
-  * @win: window to protect registers for
--- 
-2.31.1
-
+Acked-by: Rob Herring <robh@kernel.org>
