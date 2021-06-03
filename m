@@ -2,104 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C57C47093
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4D9C47082
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Jun 2021 07:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1D41613BF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Jun 2021 20:06:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12675613E7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Jun 2021 07:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbhFBUIK (ORCPT
+        id S229629AbhFCHIG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Jun 2021 16:08:10 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:41937 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbhFBUII (ORCPT
+        Thu, 3 Jun 2021 03:08:06 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3398 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229567AbhFCHIG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Jun 2021 16:08:08 -0400
-Received: by mail-ot1-f44.google.com with SMTP id 36-20020a9d0ba70000b02902e0a0a8fe36so3574392oth.8;
-        Wed, 02 Jun 2021 13:06:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Eqg/NhAI7hbUorU0sneYRdLeG0QUON8FK2Nid9hN1UY=;
-        b=VJSmbYP3HrQKqbOzjw3tpJjFjGkz61G7E0Wuyulqx7ljopCAyYQ1TkDsHiApCi2M5n
-         MYI57o9brvzNrMFGgsXjy58Ff4eB57diI5/D3B9m2lexq9ixRxZzqkiXo15OyK3lZLka
-         Dqy8445nnJqOBZoAmoovQ9qtRq3McP/J7J0j/y3ct9FNrlPocnVIwvC8EqHkqYA7DB8l
-         2aWxwia4N+wMkCPbJXgYF9gtpomNc5dHcXUtiNUb9z2uVKOHhtCjwOixJMo5yRpR7iKQ
-         Z3aQt/pd/rbTZWfXuPXXINdCu80dmK6ar7LWcSs7l3GF98DweiYpLmyz68qgW6VsBYHV
-         tnwA==
-X-Gm-Message-State: AOAM5314IrOlteVIYirBQpnNAbfiG78TzugS+N+DEyRcJGuPuV66nsIw
-        slaRP9+w/fULxl5Hbpwzuw==
-X-Google-Smtp-Source: ABdhPJwOOhWiTlBUVMkgdreVunVQq9Th2V0p/jeTk68tZ2BCDbzX7OWLgT1+YDeOhvnir4cNa8WV0A==
-X-Received: by 2002:a9d:6194:: with SMTP id g20mr4537073otk.8.1622664371257;
-        Wed, 02 Jun 2021 13:06:11 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i9sm189166oog.17.2021.06.02.13.06.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jun 2021 13:06:10 -0700 (PDT)
-Received: (nullmailer pid 3900234 invoked by uid 1000);
-        Wed, 02 Jun 2021 20:06:09 -0000
-Date:   Wed, 2 Jun 2021 15:06:09 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Brown <broonie@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        devicetree@vger.kernel.org,
-        Iskren Chernev <iskren.chernev@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] power: supply: max17040: Do not enforce
- (incorrect) interrupt trigger type
-Message-ID: <20210602200609.GA3900200@robh.at.kernel.org>
-References: <20210526172036.183223-1-krzysztof.kozlowski@canonical.com>
- <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
+        Thu, 3 Jun 2021 03:08:06 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4FwcKQ5S8Kz67n9;
+        Thu,  3 Jun 2021 15:02:34 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 3 Jun 2021 15:06:20 +0800
+Received: from thunder-town.china.huawei.com (10.174.177.72) by
+ dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 3 Jun 2021 15:06:19 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] media: exynos4-is: use DEVICE_ATTR_RW() helper macro
+Date:   Thu, 3 Jun 2021 15:06:13 +0800
+Message-ID: <20210603070613.11385-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210526172036.183223-8-krzysztof.kozlowski@canonical.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.174.177.72]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 26 May 2021 13:20:36 -0400, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Interrupt line can be configured on different hardware in different way,
-> even inverted.  Therefore driver should not enforce specific trigger
-> type - edge falling - but instead rely on Devicetree to configure it.
-> 
-> The Maxim 14577/77836 datasheets describe the interrupt line as active
-> low with a requirement of acknowledge from the CPU therefore the edge
-> falling is not correct.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Iskren Chernev <iskren.chernev@gmail.com>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Remove the 'flags' variable.
-> 2. Added ack.
-> 3. Rebase - the bindings were converted to dtschema.
-> ---
->  .../devicetree/bindings/power/supply/maxim,max17040.yaml      | 2 +-
->  drivers/power/supply/max17040_battery.c                       | 4 +---
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
+Use DEVICE_ATTR_RW() helper macro instead of DEVICE_ATTR(), which is
+simpler and more readable.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Due to the names of the read and write functions of the sysfs attribute is
+normalized, there is a natural association.
+
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/media/platform/exynos4-is/media-dev.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 3b8a24bb724c8e9..fa648721eaab9a5 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1238,8 +1238,8 @@ static const struct media_device_ops fimc_md_ops = {
+ 	.link_notify = fimc_md_link_notify,
+ };
+ 
+-static ssize_t fimc_md_sysfs_show(struct device *dev,
+-				  struct device_attribute *attr, char *buf)
++static ssize_t subdev_conf_mode_show(struct device *dev,
++				     struct device_attribute *attr, char *buf)
+ {
+ 	struct fimc_md *fmd = dev_get_drvdata(dev);
+ 
+@@ -1249,9 +1249,9 @@ static ssize_t fimc_md_sysfs_show(struct device *dev,
+ 	return strscpy(buf, "V4L2 video node only API (vid-dev)\n", PAGE_SIZE);
+ }
+ 
+-static ssize_t fimc_md_sysfs_store(struct device *dev,
+-				   struct device_attribute *attr,
+-				   const char *buf, size_t count)
++static ssize_t subdev_conf_mode_store(struct device *dev,
++				      struct device_attribute *attr,
++				      const char *buf, size_t count)
+ {
+ 	struct fimc_md *fmd = dev_get_drvdata(dev);
+ 	bool subdev_api;
+@@ -1278,8 +1278,7 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
+  *  sub-dev - for media controller API, subdevs must be configured in user
+  *  space before starting streaming.
+  */
+-static DEVICE_ATTR(subdev_conf_mode, S_IWUSR | S_IRUGO,
+-		   fimc_md_sysfs_show, fimc_md_sysfs_store);
++static DEVICE_ATTR_RW(subdev_conf_mode);
+ 
+ static int cam_clk_prepare(struct clk_hw *hw)
+ {
+-- 
+2.26.0.106.g9fadedd
+
+
