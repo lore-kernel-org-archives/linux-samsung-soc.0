@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6683BC48BDF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Jun 2021 11:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0634CC49ECB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Jun 2021 11:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB6461364
+	by mail.kernel.org (Postfix) with ESMTP id EFA19613B8
 	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Jun 2021 11:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238971AbhFILWZ (ORCPT
+        id S238986AbhFILW1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Jun 2021 07:22:25 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:44562 "EHLO
+        Wed, 9 Jun 2021 07:22:27 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:44610 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238904AbhFILWO (ORCPT
+        with ESMTP id S238912AbhFILWP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Jun 2021 07:22:14 -0400
+        Wed, 9 Jun 2021 07:22:15 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C9F0C219E7;
-        Wed,  9 Jun 2021 11:20:18 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 19DE7219E6;
+        Wed,  9 Jun 2021 11:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1623237618; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1623237620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0LgmkNBFCrk1hW0/5PXKqc/A6qw4hyWmJvURgp3U/IY=;
-        b=feETavSAwPIN91p0cp256C9fiEsKaNYIKuVNT50Mf3so2lwsaBjQikkEdEpjs8+dLr+wQZ
-        aRXgCTaShXVXVpbrYad0kOe3F7/pN97IxqZCBf5JanIEjq1G4uCGdjvA1wfggeqAJJdyA7
-        cuUfQ5zlL3AEG3KxZiJ6na/5xlBS7gc=
+        bh=Hk665B6tEfCs3+xiggyrmaaBVgfZTuKVzd+3pkK7Ryg=;
+        b=0riftsnENuEtlKaO45VfMLILTW7CVsIiXdx49o3MHlH7Q+EKEz+QeJkuwWMGzAEhU6UHHH
+        3ts3WOmOU4iussIVGweeahprcgL7L9c+tNdjKY5Dk6n3NaNwC28S1xW4RjYy+UmH7VLOjH
+        k2GIcXr/JV10H9i/R8LvGdlonJJ8RMk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1623237618;
+        s=susede2_ed25519; t=1623237620;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0LgmkNBFCrk1hW0/5PXKqc/A6qw4hyWmJvURgp3U/IY=;
-        b=FiHMe32Ni2REvI8BzxgNMv2YcNCb3Od9taV4cLY/CDSaTllreQL1Zf7x3eX+qMtrvXbqLK
-        svw5Gcb+w5vufCDQ==
+        bh=Hk665B6tEfCs3+xiggyrmaaBVgfZTuKVzd+3pkK7Ryg=;
+        b=Wcvg3bkzQ+lyHvS1B+AJdv/5DCMi0f2Em4b89mhyz0mHV8DFPdA7XrbwOT44PzMYlcG3sD
+        mYqnz4K5nYFXyzDg==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 249C311A98;
-        Wed,  9 Jun 2021 11:20:18 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 74EFE11A98;
+        Wed,  9 Jun 2021 11:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1623237618; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1623237620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0LgmkNBFCrk1hW0/5PXKqc/A6qw4hyWmJvURgp3U/IY=;
-        b=feETavSAwPIN91p0cp256C9fiEsKaNYIKuVNT50Mf3so2lwsaBjQikkEdEpjs8+dLr+wQZ
-        aRXgCTaShXVXVpbrYad0kOe3F7/pN97IxqZCBf5JanIEjq1G4uCGdjvA1wfggeqAJJdyA7
-        cuUfQ5zlL3AEG3KxZiJ6na/5xlBS7gc=
+        bh=Hk665B6tEfCs3+xiggyrmaaBVgfZTuKVzd+3pkK7Ryg=;
+        b=0riftsnENuEtlKaO45VfMLILTW7CVsIiXdx49o3MHlH7Q+EKEz+QeJkuwWMGzAEhU6UHHH
+        3ts3WOmOU4iussIVGweeahprcgL7L9c+tNdjKY5Dk6n3NaNwC28S1xW4RjYy+UmH7VLOjH
+        k2GIcXr/JV10H9i/R8LvGdlonJJ8RMk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1623237618;
+        s=susede2_ed25519; t=1623237620;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0LgmkNBFCrk1hW0/5PXKqc/A6qw4hyWmJvURgp3U/IY=;
-        b=FiHMe32Ni2REvI8BzxgNMv2YcNCb3Od9taV4cLY/CDSaTllreQL1Zf7x3eX+qMtrvXbqLK
-        svw5Gcb+w5vufCDQ==
+        bh=Hk665B6tEfCs3+xiggyrmaaBVgfZTuKVzd+3pkK7Ryg=;
+        b=Wcvg3bkzQ+lyHvS1B+AJdv/5DCMi0f2Em4b89mhyz0mHV8DFPdA7XrbwOT44PzMYlcG3sD
+        mYqnz4K5nYFXyzDg==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id gK7nB/KjwGBTUgAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Wed, 09 Jun 2021 11:20:18 +0000
+        id SIS9G/OjwGBTUgAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Wed, 09 Jun 2021 11:20:19 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, mripard@kernel.org,
         maarten.lankhorst@linux.intel.com, l.stach@pengutronix.de,
@@ -91,9 +91,9 @@ Cc:     dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
         linux-rockchip@lists.infradead.org, xen-devel@lists.xenproject.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 7/9] drm/xen: Implement mmap as GEM object function
-Date:   Wed,  9 Jun 2021 13:20:10 +0200
-Message-Id: <20210609112012.10019-8-tzimmermann@suse.de>
+Subject: [PATCH 9/9] drm: Update documentation and TODO of gem_prime_mmap hook
+Date:   Wed,  9 Jun 2021 13:20:12 +0200
+Message-Id: <20210609112012.10019-10-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210609112012.10019-1-tzimmermann@suse.de>
 References: <20210609112012.10019-1-tzimmermann@suse.de>
@@ -103,221 +103,60 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Moving the driver-specific mmap code into a GEM object function allows
-for using DRM helpers for various mmap callbacks.
-
-The respective xen functions are being removed. The file_operations
-structure fops is now being created by the helper macro
-DEFINE_DRM_GEM_FOPS().
+The hook gem_prime_mmap in struct drm_driver is deprecated. Document
+the new requirements.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/xen/xen_drm_front.c     |  16 +---
- drivers/gpu/drm/xen/xen_drm_front_gem.c | 108 +++++++++---------------
- drivers/gpu/drm/xen/xen_drm_front_gem.h |   7 --
- 3 files changed, 44 insertions(+), 87 deletions(-)
+ Documentation/gpu/todo.rst | 11 -----------
+ include/drm/drm_drv.h      | 11 +++++++----
+ 2 files changed, 7 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-index 9f14d99c763c..434064c820e8 100644
---- a/drivers/gpu/drm/xen/xen_drm_front.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front.c
-@@ -469,19 +469,7 @@ static void xen_drm_drv_release(struct drm_device *dev)
- 	kfree(drm_info);
- }
+diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
+index 12e61869939e..50ad731d579b 100644
+--- a/Documentation/gpu/todo.rst
++++ b/Documentation/gpu/todo.rst
+@@ -268,17 +268,6 @@ Contact: Daniel Vetter
  
--static const struct file_operations xen_drm_dev_fops = {
--	.owner          = THIS_MODULE,
--	.open           = drm_open,
--	.release        = drm_release,
--	.unlocked_ioctl = drm_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl   = drm_compat_ioctl,
--#endif
--	.poll           = drm_poll,
--	.read           = drm_read,
--	.llseek         = no_llseek,
--	.mmap           = xen_drm_front_gem_mmap,
--};
-+DEFINE_DRM_GEM_FOPS(xen_drm_dev_fops);
+ Level: Intermediate
  
- static const struct drm_driver xen_drm_driver = {
- 	.driver_features           = DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-@@ -489,7 +477,7 @@ static const struct drm_driver xen_drm_driver = {
- 	.prime_handle_to_fd        = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle        = drm_gem_prime_fd_to_handle,
- 	.gem_prime_import_sg_table = xen_drm_front_gem_import_sg_table,
--	.gem_prime_mmap            = xen_drm_front_gem_prime_mmap,
-+	.gem_prime_mmap            = drm_gem_prime_mmap,
- 	.dumb_create               = xen_drm_drv_dumb_create,
- 	.fops                      = &xen_drm_dev_fops,
- 	.name                      = "xendrm-du",
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-index b293c67230ef..dd358ba2bf8e 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-@@ -57,6 +57,47 @@ static void gem_free_pages_array(struct xen_gem_object *xen_obj)
- 	xen_obj->pages = NULL;
- }
+-Clean up mmap forwarding
+-------------------------
+-
+-A lot of drivers forward gem mmap calls to dma-buf mmap for imported buffers.
+-And also a lot of them forward dma-buf mmap to the gem mmap implementations.
+-There's drm_gem_prime_mmap() for this now, but still needs to be rolled out.
+-
+-Contact: Daniel Vetter
+-
+-Level: Intermediate
+-
+ Generic fbdev defio support
+ ---------------------------
  
-+static int xen_drm_front_gem_object_mmap(struct drm_gem_object *gem_obj,
-+					 struct vm_area_struct *vma)
-+{
-+	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
-+	int ret;
-+
-+	vma->vm_ops = gem_obj->funcs->vm_ops;
-+
-+	/*
-+	 * Clear the VM_PFNMAP flag that was set by drm_gem_mmap(), and set the
-+	 * vm_pgoff (used as a fake buffer offset by DRM) to 0 as we want to map
-+	 * the whole buffer.
-+	 */
-+	vma->vm_flags &= ~VM_PFNMAP;
-+	vma->vm_flags |= VM_MIXEDMAP;
-+	vma->vm_pgoff = 0;
-+
-+	/*
-+	 * According to Xen on ARM ABI (xen/include/public/arch-arm.h):
-+	 * all memory which is shared with other entities in the system
-+	 * (including the hypervisor and other guests) must reside in memory
-+	 * which is mapped as Normal Inner Write-Back Outer Write-Back
-+	 * Inner-Shareable.
-+	 */
-+	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
-+
-+	/*
-+	 * vm_operations_struct.fault handler will be called if CPU access
-+	 * to VM is here. For GPUs this isn't the case, because CPU  doesn't
-+	 * touch the memory. Insert pages now, so both CPU and GPU are happy.
+diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+index b439ae1921b8..40d93a52cf7a 100644
+--- a/include/drm/drm_drv.h
++++ b/include/drm/drm_drv.h
+@@ -385,11 +385,14 @@ struct drm_driver {
+ 	 * mmap hook for GEM drivers, used to implement dma-buf mmap in the
+ 	 * PRIME helpers.
+ 	 *
+-	 * FIXME: There's way too much duplication going on here, and also moved
+-	 * to &drm_gem_object_funcs.
++	 * This hook only exists for historical reasons. Drivers must use
++	 * drm_gem_prime_mmap() to implement it.
 +	 *
-+	 * FIXME: as we insert all the pages now then no .fault handler must
-+	 * be called, so don't provide one
-+	 */
-+	ret = vm_map_pages(vma, xen_obj->pages, xen_obj->num_pages);
-+	if (ret < 0)
-+		DRM_ERROR("Failed to map pages into vma: %d\n", ret);
-+
-+	return ret;
-+}
-+
- static const struct vm_operations_struct xen_drm_drv_vm_ops = {
- 	.open           = drm_gem_vm_open,
- 	.close          = drm_gem_vm_close,
-@@ -67,6 +108,7 @@ static const struct drm_gem_object_funcs xen_drm_front_gem_object_funcs = {
- 	.get_sg_table = xen_drm_front_gem_get_sg_table,
- 	.vmap = xen_drm_front_gem_prime_vmap,
- 	.vunmap = xen_drm_front_gem_prime_vunmap,
-+	.mmap = xen_drm_front_gem_object_mmap,
- 	.vm_ops = &xen_drm_drv_vm_ops,
- };
++	 * FIXME: Convert all drivers to implement mmap in struct
++	 * &drm_gem_object_funcs and inline drm_gem_prime_mmap() into
++	 * its callers. This hook should be removed afterwards.
+ 	 */
+-	int (*gem_prime_mmap)(struct drm_gem_object *obj,
+-				struct vm_area_struct *vma);
++	int (*gem_prime_mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
  
-@@ -238,58 +280,6 @@ xen_drm_front_gem_import_sg_table(struct drm_device *dev,
- 	return &xen_obj->base;
- }
- 
--static int gem_mmap_obj(struct xen_gem_object *xen_obj,
--			struct vm_area_struct *vma)
--{
--	int ret;
--
--	/*
--	 * clear the VM_PFNMAP flag that was set by drm_gem_mmap(), and set the
--	 * vm_pgoff (used as a fake buffer offset by DRM) to 0 as we want to map
--	 * the whole buffer.
--	 */
--	vma->vm_flags &= ~VM_PFNMAP;
--	vma->vm_flags |= VM_MIXEDMAP;
--	vma->vm_pgoff = 0;
--	/*
--	 * According to Xen on ARM ABI (xen/include/public/arch-arm.h):
--	 * all memory which is shared with other entities in the system
--	 * (including the hypervisor and other guests) must reside in memory
--	 * which is mapped as Normal Inner Write-Back Outer Write-Back
--	 * Inner-Shareable.
--	 */
--	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
--
--	/*
--	 * vm_operations_struct.fault handler will be called if CPU access
--	 * to VM is here. For GPUs this isn't the case, because CPU
--	 * doesn't touch the memory. Insert pages now, so both CPU and GPU are
--	 * happy.
--	 * FIXME: as we insert all the pages now then no .fault handler must
--	 * be called, so don't provide one
--	 */
--	ret = vm_map_pages(vma, xen_obj->pages, xen_obj->num_pages);
--	if (ret < 0)
--		DRM_ERROR("Failed to map pages into vma: %d\n", ret);
--
--	return ret;
--}
--
--int xen_drm_front_gem_mmap(struct file *filp, struct vm_area_struct *vma)
--{
--	struct xen_gem_object *xen_obj;
--	struct drm_gem_object *gem_obj;
--	int ret;
--
--	ret = drm_gem_mmap(filp, vma);
--	if (ret < 0)
--		return ret;
--
--	gem_obj = vma->vm_private_data;
--	xen_obj = to_xen_gem_obj(gem_obj);
--	return gem_mmap_obj(xen_obj, vma);
--}
--
- int xen_drm_front_gem_prime_vmap(struct drm_gem_object *gem_obj, struct dma_buf_map *map)
- {
- 	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
-@@ -313,17 +303,3 @@ void xen_drm_front_gem_prime_vunmap(struct drm_gem_object *gem_obj,
- {
- 	vunmap(map->vaddr);
- }
--
--int xen_drm_front_gem_prime_mmap(struct drm_gem_object *gem_obj,
--				 struct vm_area_struct *vma)
--{
--	struct xen_gem_object *xen_obj;
--	int ret;
--
--	ret = drm_gem_mmap_obj(gem_obj, gem_obj->size, vma);
--	if (ret < 0)
--		return ret;
--
--	xen_obj = to_xen_gem_obj(gem_obj);
--	return gem_mmap_obj(xen_obj, vma);
--}
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.h b/drivers/gpu/drm/xen/xen_drm_front_gem.h
-index a4e67d0a149c..eaea470f7001 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_gem.h
-+++ b/drivers/gpu/drm/xen/xen_drm_front_gem.h
-@@ -15,9 +15,7 @@ struct dma_buf_attachment;
- struct dma_buf_map;
- struct drm_device;
- struct drm_gem_object;
--struct file;
- struct sg_table;
--struct vm_area_struct;
- 
- struct drm_gem_object *xen_drm_front_gem_create(struct drm_device *dev,
- 						size_t size);
-@@ -33,15 +31,10 @@ struct page **xen_drm_front_gem_get_pages(struct drm_gem_object *obj);
- 
- void xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj);
- 
--int xen_drm_front_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--
- int xen_drm_front_gem_prime_vmap(struct drm_gem_object *gem_obj,
- 				 struct dma_buf_map *map);
- 
- void xen_drm_front_gem_prime_vunmap(struct drm_gem_object *gem_obj,
- 				    struct dma_buf_map *map);
- 
--int xen_drm_front_gem_prime_mmap(struct drm_gem_object *gem_obj,
--				 struct vm_area_struct *vma);
--
- #endif /* __XEN_DRM_FRONT_GEM_H */
+ 	/**
+ 	 * @dumb_create:
 -- 
 2.31.1
 
