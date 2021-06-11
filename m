@@ -2,163 +2,176 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E263CC48BD1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 02:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4236C48BD1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 06:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5F866139A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 02:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC93A61374
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 06:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbhFKCwM (ORCPT
+        id S230526AbhFKGQW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 22:52:12 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:27859 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbhFKCwL (ORCPT
+        Fri, 11 Jun 2021 02:16:22 -0400
+Received: from mga12.intel.com ([192.55.52.136]:51220 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230406AbhFKGQV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Jun 2021 22:52:11 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210611025013epoutp02e97e637ab8828006ae5c77434418d521~HZ1bDyWd-0986009860epoutp02L
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jun 2021 02:50:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210611025013epoutp02e97e637ab8828006ae5c77434418d521~HZ1bDyWd-0986009860epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1623379813;
-        bh=76g/yp5nTxd62hNm4R1Rvvp7hkkQXghX9lgOEJeNmng=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=r30MhHmcniDV94ecXmggPZpc5E5xuvULQwAYVpKkweHfpjrJGhWtz06UrierObNvb
-         QgifGB0qXDLnHUKHlS2SH7X81pFYohVnObShNNDox62yiL/IMza1tINzoLYyfOfKqb
-         wDj26tESS4/bUlFpDLsZzzrEadVo+lcpDeWNZmsw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20210611025012epcas1p3ee7617f510ae6c5060faccddfe5d6b45~HZ1a3Ak7y2092120921epcas1p3Q;
-        Fri, 11 Jun 2021 02:50:12 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4G1QLT0nM1z4x9Q4; Fri, 11 Jun
-        2021 02:50:09 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5D.AB.09701.55FC2C06; Fri, 11 Jun 2021 11:49:57 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210611024956epcas1p1c15767f446a585a62be9aec1482082c1~HZ1L8hyks2574525745epcas1p1c;
-        Fri, 11 Jun 2021 02:49:56 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210611024956epsmtrp121a31882d7fd4524889a26617e1e0839~HZ1L72Jlx3125131251epsmtrp1S;
-        Fri, 11 Jun 2021 02:49:56 +0000 (GMT)
-X-AuditID: b6c32a36-647ff700000025e5-d2-60c2cf5549ca
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        41.8B.08163.45FC2C06; Fri, 11 Jun 2021 11:49:56 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210611024956epsmtip1bba7829aba57f707622d822070c8824f~HZ1LwLMSn2571825718epsmtip1I;
-        Fri, 11 Jun 2021 02:49:56 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Fri, 11 Jun 2021 11:59:39 +0900
-Message-Id: <20210611025939.393282-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 11 Jun 2021 02:16:21 -0400
+IronPort-SDR: aPtgTGGxGJYWZQ+V34HDEZpYkdKJaqbzUTKwjvrMP0D7eTxvWrhMVK28o+ugLDU6AP0Eq4mJ0Q
+ chKPwbsp6OhA==
+X-IronPort-AV: E=McAfee;i="6200,9189,10011"; a="185160442"
+X-IronPort-AV: E=Sophos;i="5.83,265,1616482800"; 
+   d="scan'208";a="185160442"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 23:14:23 -0700
+IronPort-SDR: J0RkFeg3TbRmOA1vksM6Zzb9jbMU3xaY46QEB0aEjePdyjO8H3Gbg71A6Goc4JQEHGmO8+2+M0
+ GIKdcp7/cMxw==
+X-IronPort-AV: E=Sophos;i="5.83,265,1616482800"; 
+   d="scan'208";a="450657291"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 23:14:15 -0700
+Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
+        by paasikivi.fi.intel.com (Postfix) with SMTP id 23EA42036A;
+        Fri, 11 Jun 2021 09:14:13 +0300 (EEST)
+Date:   Fri, 11 Jun 2021 09:14:13 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Pavel Machek <pavel@ucw.cz>, Shawn Tu <shawnx.tu@intel.com>,
+        Ricardo Ribalda <ribalda@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        "Paul J. Murphy" <paul.j.murphy@intel.com>,
+        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Dongchun Zhu <dongchun.zhu@mediatek.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
+        Hyungwoo Yang <hyungwoo.yang@intel.com>,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Petr Cvek <petrcvekcz@gmail.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mickael Guene <mickael.guene@st.com>,
+        Mats Randgaard <matrandg@cisco.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Andy Walls <awalls@md.metrocast.net>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Dan Scally <djrscally@gmail.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>, Jacopo Mondi <jacopo@jmondi.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH v5 0/9] media: v4l2-subdev: add subdev-wide state struct
+Message-ID: <20210611061413.GM3@paasikivi.fi.intel.com>
+References: <20210610145606.3468235-1-tomi.valkeinen@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMKsWRmVeSWpSXmKPExsWy7bCmgW7o+UMJBksWC1r0njvJZHHl63s2
-        ixnn9zE5MHts//aA1eN+93Emj8+b5AKYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1
-        DS0tzJUU8hJzU22VXHwCdN0yc4AWKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIK
-        LAv0ihNzi0vz0vWS83OtDA0MjEyBChOyMz6cm8NSME+wYlXTAvYGxtV8XYycHBICJhKbDs1l
-        6WLk4hAS2MEocebBQVYI5xOjxM4jB6Aynxklvu75wgzT0tDdzA6R2MUocXX/YyYI5wujxJTZ
-        S1lBqtgEVCUmrrjPBmKLCIhIHF/2F8xmFnCT+LP0LAuILSygLLH7+j6wehag+iVtTxlBbF4B
-        K4mzLfvZIbbJS8y89J0dIi4ocXLmExaIOfISzVtnM4MslhCYxy4xa9oDqPNcJD7PeA9lC0u8
-        Or4FapCUxMv+NnaIhmZGiYkzTjNBOB2MEncfX2eBqDKW2L90MlCCA2iFpsT6XfoQYUWJnb/n
-        MkJs5pN497WHFaREQoBXoqNNCKJESeLYxRuMELaExIUlE9kgSjwk2j+BA1tIIFaiefUGxgmM
-        8rOQvDMLyTuzEPYuYGRexSiWWlCcm55abFhghBytmxjBqU3LbAfjpLcf9A4xMnEwHmKU4GBW
-        EuHdufJQghBvSmJlVWpRfnxRaU5q8SFGU2AAT2SWEk3OBybXvJJ4Q1MjY2NjCxNDM1NDQyVx
-        3p1sQE0C6YklqdmpqQWpRTB9TBycUg1MMbyPpna08k49I34vc3OT5q9yh9TnksKf2Kb9fdEn
-        33D475llh9rWfBHfwZKo+eN2skrZL6d9D1l106JWhsR9FGUznfK06B6TcfckExUpoRPuDOu5
-        bzLl2WVEc0o9Vjn008fsE6/R8Zj3Ol4pM0KSFt7/++uj2WzdN1WVUc4nt51b911gcYySTRPj
-        ivR7kScutdoLXdv2M6YzfF7Ck6cyNcwuKXJ3BEVrzhZ93WD5fNuRy4v79q7j1diz3cfjysuQ
-        pYsL5h92ULyw7BCbVtpc1lP72rlOXV7OLWlbyvT6sOsS1p+LDF3konWXbth6/iD/rjsXZHwk
-        Lq030d/x69CsX76Hu/0/ut4+JbHmmdJjMSWW4oxEQy3mouJEAPWX6pD2AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LZdlhJTjfk/KEEgwmPtCx6z51ksrjy9T2b
-        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUVw2Kak5mWWpRfp2CVwZH87NYSmYJ1ixqmkBewPj
-        ar4uRk4OCQETiYbuZnYQW0hgB6PEluV5XYwcQHEJiS1bOSBMYYnDh4shKj4xShydaQViswmo
-        SkxccZ8NxBYREJE4vuwvmM0s4CHxfs9qsInCAsoSu6/vYwWxWYDql7Q9ZQSxeQWsJM627GeH
-        uEBeYual7+wQcUGJkzOfsEDMkZdo3jqbeQIj3ywkqVlIUgsYmVYxSqYWFOem5xYbFhjlpZbr
-        FSfmFpfmpesl5+duYgSHmJbWDsY9qz7oHWJk4mA8xCjBwawkwrtz5aEEId6UxMqq1KL8+KLS
-        nNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphiuq9+Z9u5vXzyFMHKFZek389d
-        svOB79XC5e/dzq1d+yovmKt87ub3wZt+3qsK4NyzeZLWx4MqCQ97dDYy5XH/+HnkNf+UnD3Z
-        28x+bN53t+Rhe2LOMcvomstbIubvcOvznx0sFvQ04Fzbr8V3J+7z5ey9rqgwZ1OuNJeerKJr
-        cf4WrZmZ987b1Dgs7Mvaa7fs5LyD0959PWJ3+Pbe826bthpf7HY9f7elPT1K6Ql39sziSLU8
-        ++21DVGfDnHz7c450nDIYueSX66/rrC92lz8MS7ja7dtQu2TzSI7uCfZXnS+vDqZ8VaCs9Fp
-        82eTDjr4cogy/b7rfvdV9gSDpjWVTBJtOlKdzjvOJ1Q/0lN7oMRSnJFoqMVcVJwIAHxlz6ig
-        AgAA
-X-CMS-MailID: 20210611024956epcas1p1c15767f446a585a62be9aec1482082c1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210611024956epcas1p1c15767f446a585a62be9aec1482082c1
-References: <CGME20210611024956epcas1p1c15767f446a585a62be9aec1482082c1@epcas1p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210610145606.3468235-1-tomi.valkeinen@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
+Moi,
 
-   Just two cleanups to replace pm_runtime_get_sync() with
-   pm_runtime_resume_and_get().
+On Thu, Jun 10, 2021 at 05:55:57PM +0300, Tomi Valkeinen wrote:
+> Hi,
+> 
+> v5 of the series. No content changes compared to v4, but the series is
+> split into smaller parts to enable reviews.
+> 
+> The split is artificial, and all the patches need to be squashed into
+> one before merging.
+> 
+> The point of the series is explained in "media: v4l2-subdev: add
+> subdev-wide state struct", but for easier reviews I add it partially
+> here:
+> 
+> We have 'struct v4l2_subdev_pad_config' which contains configuration for
+> a single pad used for the TRY functionality, and an array of those
+> structs is passed to various v4l2_subdev_pad_ops.
+> 
+> I was working on subdev internal routing between pads, and realized that
+> there's no way to add TRY functionality for routes, which is not pad
+> specific configuration. Adding a separate struct for try-route config
+> wouldn't work either, as e.g. set-fmt needs to know the try-route
+> configuration to propagate the settings.
+> 
+> This patch adds a new struct, 'struct v4l2_subdev_state' (which at the
+> moment only contains the v4l2_subdev_pad_config array) and the new
+> struct is used in most of the places where v4l2_subdev_pad_config was
+> used. All v4l2_subdev_pad_ops functions taking v4l2_subdev_pad_config
+> are changed to instead take v4l2_subdev_state.
 
-   Please kinkdly let me know if there is any problem.
+Thanks for the update.
 
-Thanks,
-Inki Dae
+For the set:
 
-The following changes since commit c707b73f0cfb1acc94a20389aecde65e6385349b:
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-  Merge tag 'amd-drm-next-5.14-2021-06-09' of https://gitlab.freedesktop.org/agd5f/linux into drm-next (2021-06-10 13:47:13 +1000)
+-- 
+Terveisin,
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.14
-
-for you to fetch changes up to 445d3bed75de4082c7c7794030ac9a5b8bfde886:
-
-  drm/exynos: use pm_runtime_resume_and_get() (2021-06-11 10:56:38 +0900)
-
-----------------------------------------------------------------
-Two cleanups
-- These patches make Exynos DRM driver to use pm_runtime_resume_and_get()
-  function instead of m_runtime_get_sync() to deal with usage counter.
-  pm_runtime_get_sync() increases the usage counter even when it failed,
-  which could make callers to forget to decrease the usage counter.
-  pm_runtime_resume_and_get() decreases the usage counter regardless of
-  whether it failed or not.
-
-----------------------------------------------------------------
-Inki Dae (1):
-      drm/exynos: use pm_runtime_resume_and_get()
-
-Tian Tao (1):
-      drm/exynos: Use pm_runtime_resume_and_get() to replace open coding
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  7 ++++++-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  7 ++++++-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c       |  7 ++++++-
- drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  8 +++++++-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 25 ++++++++++++++++++++-----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  9 ++++++++-
- drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  7 ++++++-
- drivers/gpu/drm/exynos/exynos_drm_mic.c       |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  7 ++++++-
- drivers/gpu/drm/exynos/exynos_drm_scaler.c    | 10 ++++++----
- drivers/gpu/drm/exynos/exynos_hdmi.c          |  8 +++++++-
- drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++++-
- 12 files changed, 86 insertions(+), 22 deletions(-)
+Sakari Ailus
