@@ -2,342 +2,163 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EABC48BE5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Jun 2021 14:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E263CC48BD1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 02:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADB10613F8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Jun 2021 14:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5F866139A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 02:50:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbhFJO6b (ORCPT
+        id S230034AbhFKCwM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 10:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51868 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbhFJO6a (ORCPT
+        Thu, 10 Jun 2021 22:52:12 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:27859 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230001AbhFKCwL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Jun 2021 10:58:30 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 377F0C061574;
-        Thu, 10 Jun 2021 07:56:34 -0700 (PDT)
-Received: from deskari.lan (91-158-153-130.elisa-laajakaista.fi [91.158.153.130])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1173E8D4;
-        Thu, 10 Jun 2021 16:56:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1623336990;
-        bh=SxEgL8cnLpb/jRlWgIpmg8TG8eHiIpa6PqahE1+yfYo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=i/ZTfIZCBdUt08Ou/la3+E1RRfVNCCGWKugSMFIm6n1Pf4FfRR+QYvuIDoVHu/4HR
-         nojyo9LdzeqRj/ubUvTKI6/klykqWoGnBgYFZfW6ElzMxulG5zr/4tSmoGZwIAFhMt
-         cSU0kP4EectyzL7nrMPmBjVW+MwR/RLeJfsyGu0I=
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To:     linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Pavel Machek <pavel@ucw.cz>, Shawn Tu <shawnx.tu@intel.com>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        "Paul J. Murphy" <paul.j.murphy@intel.com>,
-        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Heungjun Kim <riverful.kim@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Dongchun Zhu <dongchun.zhu@mediatek.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
-        Hyungwoo Yang <hyungwoo.yang@intel.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Petr Cvek <petrcvekcz@gmail.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mickael Guene <mickael.guene@st.com>,
-        Mats Randgaard <matrandg@cisco.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Dan Scally <djrscally@gmail.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH v5 0/9] media: v4l2-subdev: add subdev-wide state struct
-Date:   Thu, 10 Jun 2021 17:55:57 +0300
-Message-Id: <20210610145606.3468235-1-tomi.valkeinen@ideasonboard.com>
+        Thu, 10 Jun 2021 22:52:11 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210611025013epoutp02e97e637ab8828006ae5c77434418d521~HZ1bDyWd-0986009860epoutp02L
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jun 2021 02:50:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210611025013epoutp02e97e637ab8828006ae5c77434418d521~HZ1bDyWd-0986009860epoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1623379813;
+        bh=76g/yp5nTxd62hNm4R1Rvvp7hkkQXghX9lgOEJeNmng=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=r30MhHmcniDV94ecXmggPZpc5E5xuvULQwAYVpKkweHfpjrJGhWtz06UrierObNvb
+         QgifGB0qXDLnHUKHlS2SH7X81pFYohVnObShNNDox62yiL/IMza1tINzoLYyfOfKqb
+         wDj26tESS4/bUlFpDLsZzzrEadVo+lcpDeWNZmsw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20210611025012epcas1p3ee7617f510ae6c5060faccddfe5d6b45~HZ1a3Ak7y2092120921epcas1p3Q;
+        Fri, 11 Jun 2021 02:50:12 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4G1QLT0nM1z4x9Q4; Fri, 11 Jun
+        2021 02:50:09 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5D.AB.09701.55FC2C06; Fri, 11 Jun 2021 11:49:57 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210611024956epcas1p1c15767f446a585a62be9aec1482082c1~HZ1L8hyks2574525745epcas1p1c;
+        Fri, 11 Jun 2021 02:49:56 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210611024956epsmtrp121a31882d7fd4524889a26617e1e0839~HZ1L72Jlx3125131251epsmtrp1S;
+        Fri, 11 Jun 2021 02:49:56 +0000 (GMT)
+X-AuditID: b6c32a36-647ff700000025e5-d2-60c2cf5549ca
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        41.8B.08163.45FC2C06; Fri, 11 Jun 2021 11:49:56 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210611024956epsmtip1bba7829aba57f707622d822070c8824f~HZ1LwLMSn2571825718epsmtip1I;
+        Fri, 11 Jun 2021 02:49:56 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date:   Fri, 11 Jun 2021 11:59:39 +0900
+Message-Id: <20210611025939.393282-1-inki.dae@samsung.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMKsWRmVeSWpSXmKPExsWy7bCmgW7o+UMJBksWC1r0njvJZHHl63s2
+        ixnn9zE5MHts//aA1eN+93Emj8+b5AKYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1
+        DS0tzJUU8hJzU22VXHwCdN0yc4AWKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIK
+        LAv0ihNzi0vz0vWS83OtDA0MjEyBChOyMz6cm8NSME+wYlXTAvYGxtV8XYycHBICJhKbDs1l
+        6WLk4hAS2MEocebBQVYI5xOjxM4jB6Aynxklvu75wgzT0tDdzA6R2MUocXX/YyYI5wujxJTZ
+        S1lBqtgEVCUmrrjPBmKLCIhIHF/2F8xmFnCT+LP0LAuILSygLLH7+j6wehag+iVtTxlBbF4B
+        K4mzLfvZIbbJS8y89J0dIi4ocXLmExaIOfISzVtnM4MslhCYxy4xa9oDqPNcJD7PeA9lC0u8
+        Or4FapCUxMv+NnaIhmZGiYkzTjNBOB2MEncfX2eBqDKW2L90MlCCA2iFpsT6XfoQYUWJnb/n
+        MkJs5pN497WHFaREQoBXoqNNCKJESeLYxRuMELaExIUlE9kgSjwk2j+BA1tIIFaiefUGxgmM
+        8rOQvDMLyTuzEPYuYGRexSiWWlCcm55abFhghBytmxjBqU3LbAfjpLcf9A4xMnEwHmKU4GBW
+        EuHdufJQghBvSmJlVWpRfnxRaU5q8SFGU2AAT2SWEk3OBybXvJJ4Q1MjY2NjCxNDM1NDQyVx
+        3p1sQE0C6YklqdmpqQWpRTB9TBycUg1MMbyPpna08k49I34vc3OT5q9yh9TnksKf2Kb9fdEn
+        33D475llh9rWfBHfwZKo+eN2skrZL6d9D1l106JWhsR9FGUznfK06B6TcfckExUpoRPuDOu5
+        bzLl2WVEc0o9Vjn008fsE6/R8Zj3Ol4pM0KSFt7/++uj2WzdN1WVUc4nt51b911gcYySTRPj
+        ivR7kScutdoLXdv2M6YzfF7Ck6cyNcwuKXJ3BEVrzhZ93WD5fNuRy4v79q7j1diz3cfjysuQ
+        pYsL5h92ULyw7BCbVtpc1lP72rlOXV7OLWlbyvT6sOsS1p+LDF3konWXbth6/iD/rjsXZHwk
+        Lq030d/x69CsX76Hu/0/ut4+JbHmmdJjMSWW4oxEQy3mouJEAPWX6pD2AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LZdlhJTjfk/KEEgwmPtCx6z51ksrjy9T2b
+        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUVw2Kak5mWWpRfp2CVwZH87NYSmYJ1ixqmkBewPj
+        ar4uRk4OCQETiYbuZnYQW0hgB6PEluV5XYwcQHEJiS1bOSBMYYnDh4shKj4xShydaQViswmo
+        SkxccZ8NxBYREJE4vuwvmM0s4CHxfs9qsInCAsoSu6/vYwWxWYDql7Q9ZQSxeQWsJM627GeH
+        uEBeYual7+wQcUGJkzOfsEDMkZdo3jqbeQIj3ywkqVlIUgsYmVYxSqYWFOem5xYbFhjlpZbr
+        FSfmFpfmpesl5+duYgSHmJbWDsY9qz7oHWJk4mA8xCjBwawkwrtz5aEEId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphiuq9+Z9u5vXzyFMHKFZek389d
+        svOB79XC5e/dzq1d+yovmKt87ub3wZt+3qsK4NyzeZLWx4MqCQ97dDYy5XH/+HnkNf+UnD3Z
+        28x+bN53t+Rhe2LOMcvomstbIubvcOvznx0sFvQ04Fzbr8V3J+7z5ey9rqgwZ1OuNJeerKJr
+        cf4WrZmZ987b1Dgs7Mvaa7fs5LyD0959PWJ3+Pbe826bthpf7HY9f7elPT1K6Ql39sziSLU8
+        ++21DVGfDnHz7c450nDIYueSX66/rrC92lz8MS7ja7dtQu2TzSI7uCfZXnS+vDqZ8VaCs9Fp
+        82eTDjr4cogy/b7rfvdV9gSDpjWVTBJtOlKdzjvOJ1Q/0lN7oMRSnJFoqMVcVJwIAHxlz6ig
+        AgAA
+X-CMS-MailID: 20210611024956epcas1p1c15767f446a585a62be9aec1482082c1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210611024956epcas1p1c15767f446a585a62be9aec1482082c1
+References: <CGME20210611024956epcas1p1c15767f446a585a62be9aec1482082c1@epcas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Dave,
 
-v5 of the series. No content changes compared to v4, but the series is
-split into smaller parts to enable reviews.
+   Just two cleanups to replace pm_runtime_get_sync() with
+   pm_runtime_resume_and_get().
 
-The split is artificial, and all the patches need to be squashed into
-one before merging.
+   Please kinkdly let me know if there is any problem.
 
-The point of the series is explained in "media: v4l2-subdev: add
-subdev-wide state struct", but for easier reviews I add it partially
-here:
+Thanks,
+Inki Dae
 
-We have 'struct v4l2_subdev_pad_config' which contains configuration for
-a single pad used for the TRY functionality, and an array of those
-structs is passed to various v4l2_subdev_pad_ops.
+The following changes since commit c707b73f0cfb1acc94a20389aecde65e6385349b:
 
-I was working on subdev internal routing between pads, and realized that
-there's no way to add TRY functionality for routes, which is not pad
-specific configuration. Adding a separate struct for try-route config
-wouldn't work either, as e.g. set-fmt needs to know the try-route
-configuration to propagate the settings.
+  Merge tag 'amd-drm-next-5.14-2021-06-09' of https://gitlab.freedesktop.org/agd5f/linux into drm-next (2021-06-10 13:47:13 +1000)
 
-This patch adds a new struct, 'struct v4l2_subdev_state' (which at the
-moment only contains the v4l2_subdev_pad_config array) and the new
-struct is used in most of the places where v4l2_subdev_pad_config was
-used. All v4l2_subdev_pad_ops functions taking v4l2_subdev_pad_config
-are changed to instead take v4l2_subdev_state.
+are available in the Git repository at:
 
- Tomi
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.14
 
-Tomi Valkeinen (9):
-  media: v4l2-subdev: add subdev-wide state struct
-  media: s5k5baf: changes for subdev-wide state struct
-  media: s3c-camif: changes for subdev-wide state struct
-  media: i2c: changes for subdev-wide state struct
-  media: pci: changes for subdev-wide state struct
-  media: platform: changes for subdev-wide state struct
-  media: test-drivers: changes for subdev-wide state struct
-  media: usb: changes for subdev-wide state struct
-  media: staging: changes for subdev-wide state struct
+for you to fetch changes up to 445d3bed75de4082c7c7794030ac9a5b8bfde886:
 
- drivers/media/i2c/adv7170.c                   |   6 +-
- drivers/media/i2c/adv7175.c                   |   6 +-
- drivers/media/i2c/adv7180.c                   |  18 +--
- drivers/media/i2c/adv7183.c                   |   8 +-
- drivers/media/i2c/adv748x/adv748x-afe.c       |  13 +-
- drivers/media/i2c/adv748x/adv748x-csi2.c      |  14 +-
- drivers/media/i2c/adv748x/adv748x-hdmi.c      |  13 +-
- drivers/media/i2c/adv7511-v4l2.c              |  10 +-
- drivers/media/i2c/adv7604.c                   |  12 +-
- drivers/media/i2c/adv7842.c                   |  12 +-
- drivers/media/i2c/ak881x.c                    |   6 +-
- drivers/media/i2c/ccs/ccs-core.c              |  84 ++++++-----
- drivers/media/i2c/cx25840/cx25840-core.c      |   2 +-
- drivers/media/i2c/et8ek8/et8ek8_driver.c      |  23 +--
- drivers/media/i2c/hi556.c                     |  15 +-
- drivers/media/i2c/imx208.c                    |  19 +--
- drivers/media/i2c/imx214.c                    |  37 ++---
- drivers/media/i2c/imx219.c                    |  30 ++--
- drivers/media/i2c/imx258.c                    |  19 +--
- drivers/media/i2c/imx274.c                    |  38 ++---
- drivers/media/i2c/imx290.c                    |  20 +--
- drivers/media/i2c/imx319.c                    |  18 +--
- drivers/media/i2c/imx334.c                    |  28 ++--
- drivers/media/i2c/imx355.c                    |  18 +--
- drivers/media/i2c/m5mols/m5mols_core.c        |  21 ++-
- drivers/media/i2c/max9286.c                   |  17 ++-
- drivers/media/i2c/ml86v7667.c                 |   4 +-
- drivers/media/i2c/mt9m001.c                   |  18 +--
- drivers/media/i2c/mt9m032.c                   |  38 ++---
- drivers/media/i2c/mt9m111.c                   |  18 +--
- drivers/media/i2c/mt9p031.c                   |  45 +++---
- drivers/media/i2c/mt9t001.c                   |  44 +++---
- drivers/media/i2c/mt9t112.c                   |  14 +-
- drivers/media/i2c/mt9v011.c                   |   6 +-
- drivers/media/i2c/mt9v032.c                   |  44 +++---
- drivers/media/i2c/mt9v111.c                   |  23 +--
- drivers/media/i2c/noon010pc30.c               |  19 ++-
- drivers/media/i2c/ov02a10.c                   |  17 ++-
- drivers/media/i2c/ov13858.c                   |  18 +--
- drivers/media/i2c/ov2640.c                    |  16 +-
- drivers/media/i2c/ov2659.c                    |  14 +-
- drivers/media/i2c/ov2680.c                    |  23 +--
- drivers/media/i2c/ov2685.c                    |  10 +-
- drivers/media/i2c/ov2740.c                    |  15 +-
- drivers/media/i2c/ov5640.c                    |  14 +-
- drivers/media/i2c/ov5645.c                    |  38 ++---
- drivers/media/i2c/ov5647.c                    |  26 ++--
- drivers/media/i2c/ov5648.c                    |  14 +-
- drivers/media/i2c/ov5670.c                    |  19 +--
- drivers/media/i2c/ov5675.c                    |  15 +-
- drivers/media/i2c/ov5695.c                    |  15 +-
- drivers/media/i2c/ov6650.c                    |  28 ++--
- drivers/media/i2c/ov7251.c                    |  39 ++---
- drivers/media/i2c/ov7670.c                    |  17 ++-
- drivers/media/i2c/ov772x.c                    |  12 +-
- drivers/media/i2c/ov7740.c                    |  17 ++-
- drivers/media/i2c/ov8856.c                    |  15 +-
- drivers/media/i2c/ov8865.c                    |  14 +-
- drivers/media/i2c/ov9640.c                    |   8 +-
- drivers/media/i2c/ov9650.c                    |  17 ++-
- drivers/media/i2c/ov9734.c                    |  15 +-
- drivers/media/i2c/rdacm20.c                   |   4 +-
- drivers/media/i2c/rdacm21.c                   |   4 +-
- drivers/media/i2c/rj54n1cb0c.c                |  12 +-
- drivers/media/i2c/s5c73m3/s5c73m3-core.c      |  55 +++----
- drivers/media/i2c/s5k4ecgx.c                  |  22 +--
- drivers/media/i2c/s5k5baf.c                   |  49 +++---
- drivers/media/i2c/s5k6a3.c                    |  19 ++-
- drivers/media/i2c/s5k6aa.c                    |  39 ++---
- drivers/media/i2c/saa6752hs.c                 |   6 +-
- drivers/media/i2c/saa7115.c                   |   2 +-
- drivers/media/i2c/saa717x.c                   |   2 +-
- drivers/media/i2c/sr030pc30.c                 |   8 +-
- drivers/media/i2c/st-mipid02.c                |  21 +--
- drivers/media/i2c/tc358743.c                  |   8 +-
- drivers/media/i2c/tda1997x.c                  |  14 +-
- drivers/media/i2c/tvp514x.c                   |  12 +-
- drivers/media/i2c/tvp5150.c                   |  20 +--
- drivers/media/i2c/tvp7002.c                   |  11 +-
- drivers/media/i2c/tw9910.c                    |  10 +-
- drivers/media/i2c/vs6624.c                    |   8 +-
- drivers/media/pci/cx18/cx18-av-core.c         |   2 +-
- drivers/media/pci/intel/ipu3/ipu3-cio2-main.c |  17 ++-
- drivers/media/pci/saa7134/saa7134-empress.c   |   5 +-
- drivers/media/platform/atmel/atmel-isc-base.c |  19 ++-
- drivers/media/platform/atmel/atmel-isi.c      |  19 ++-
- drivers/media/platform/cadence/cdns-csi2tx.c  |  14 +-
- .../media/platform/exynos4-is/fimc-capture.c  |  22 +--
- drivers/media/platform/exynos4-is/fimc-isp.c  |  37 +++--
- drivers/media/platform/exynos4-is/fimc-lite.c |  39 ++---
- drivers/media/platform/exynos4-is/mipi-csis.c |  17 ++-
- .../media/platform/marvell-ccic/mcam-core.c   |   5 +-
- drivers/media/platform/omap3isp/ispccdc.c     |  85 ++++++-----
- drivers/media/platform/omap3isp/ispccp2.c     |  49 +++---
- drivers/media/platform/omap3isp/ispcsi2.c     |  41 ++---
- drivers/media/platform/omap3isp/isppreview.c  |  69 +++++----
- drivers/media/platform/omap3isp/ispresizer.c  |  70 +++++----
- drivers/media/platform/pxa_camera.c           |   5 +-
- .../media/platform/qcom/camss/camss-csid.c    |  35 ++---
- .../media/platform/qcom/camss/camss-csiphy.c  |  40 ++---
- .../media/platform/qcom/camss/camss-ispif.c   |  36 ++---
- drivers/media/platform/qcom/camss/camss-vfe.c |  84 ++++++-----
- drivers/media/platform/rcar-vin/rcar-csi2.c   |   8 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c   |  10 +-
- drivers/media/platform/renesas-ceu.c          |   7 +-
- .../platform/rockchip/rkisp1/rkisp1-isp.c     | 112 ++++++++------
- .../platform/rockchip/rkisp1/rkisp1-resizer.c |  95 +++++++-----
- .../media/platform/s3c-camif/camif-capture.c  |  18 +--
- drivers/media/platform/stm32/stm32-dcmi.c     |  14 +-
- .../platform/sunxi/sun4i-csi/sun4i_v4l2.c     |  16 +-
- drivers/media/platform/ti-vpe/cal-camerarx.c  |  35 +++--
- drivers/media/platform/via-camera.c           |   5 +-
- drivers/media/platform/video-mux.c            |  22 +--
- drivers/media/platform/vsp1/vsp1_brx.c        |  34 +++--
- drivers/media/platform/vsp1/vsp1_clu.c        |  13 +-
- drivers/media/platform/vsp1/vsp1_entity.c     |  59 ++++----
- drivers/media/platform/vsp1/vsp1_entity.h     |  20 +--
- drivers/media/platform/vsp1/vsp1_histo.c      |  51 ++++---
- drivers/media/platform/vsp1/vsp1_hsit.c       |  14 +-
- drivers/media/platform/vsp1/vsp1_lif.c        |  13 +-
- drivers/media/platform/vsp1/vsp1_lut.c        |  13 +-
- drivers/media/platform/vsp1/vsp1_rwpf.c       |  32 ++--
- drivers/media/platform/vsp1/vsp1_rwpf.h       |   2 +-
- drivers/media/platform/vsp1/vsp1_sru.c        |  22 +--
- drivers/media/platform/vsp1/vsp1_uds.c        |  22 +--
- drivers/media/platform/vsp1/vsp1_uif.c        |  27 ++--
- .../media/platform/xilinx/xilinx-csi2rxss.c   |  26 ++--
- drivers/media/platform/xilinx/xilinx-tpg.c    |  25 +--
- drivers/media/platform/xilinx/xilinx-vip.c    |  12 +-
- drivers/media/platform/xilinx/xilinx-vip.h    |   4 +-
- .../media/test-drivers/vimc/vimc-debayer.c    |  20 +--
- drivers/media/test-drivers/vimc/vimc-scaler.c |  36 ++---
- drivers/media/test-drivers/vimc/vimc-sensor.c |  16 +-
- drivers/media/usb/go7007/s2250-board.c        |   2 +-
- drivers/media/v4l2-core/v4l2-subdev.c         | 142 ++++++++++--------
- .../media/atomisp/i2c/atomisp-gc0310.c        |  10 +-
- .../media/atomisp/i2c/atomisp-gc2235.c        |  10 +-
- .../media/atomisp/i2c/atomisp-mt9m114.c       |  12 +-
- .../media/atomisp/i2c/atomisp-ov2680.c        |  10 +-
- .../media/atomisp/i2c/atomisp-ov2722.c        |  10 +-
- .../media/atomisp/i2c/ov5693/atomisp-ov5693.c |  10 +-
- .../staging/media/atomisp/pci/atomisp_cmd.c   |  33 ++--
- .../staging/media/atomisp/pci/atomisp_csi2.c  |  28 ++--
- .../staging/media/atomisp/pci/atomisp_csi2.h  |   2 +-
- .../staging/media/atomisp/pci/atomisp_file.c  |  14 +-
- .../staging/media/atomisp/pci/atomisp_fops.c  |   6 +-
- .../media/atomisp/pci/atomisp_subdev.c        |  64 ++++----
- .../media/atomisp/pci/atomisp_subdev.h        |   9 +-
- .../staging/media/atomisp/pci/atomisp_tpg.c   |  12 +-
- drivers/staging/media/imx/imx-ic-prp.c        |  19 +--
- drivers/staging/media/imx/imx-ic-prpencvf.c   |  31 ++--
- drivers/staging/media/imx/imx-media-csi.c     |  82 +++++-----
- drivers/staging/media/imx/imx-media-utils.c   |   4 +-
- drivers/staging/media/imx/imx-media-vdic.c    |  24 +--
- drivers/staging/media/imx/imx-media.h         |   2 +-
- drivers/staging/media/imx/imx6-mipi-csi2.c    |  12 +-
- drivers/staging/media/imx/imx7-media-csi.c    |  33 ++--
- drivers/staging/media/imx/imx7-mipi-csis.c    |  34 +++--
- drivers/staging/media/ipu3/ipu3-v4l2.c        |  26 ++--
- drivers/staging/media/omap4iss/iss_csi2.c     |  37 ++---
- drivers/staging/media/omap4iss/iss_ipipe.c    |  37 ++---
- drivers/staging/media/omap4iss/iss_ipipeif.c  |  47 +++---
- drivers/staging/media/omap4iss/iss_resizer.c  |  39 ++---
- drivers/staging/media/tegra-video/csi.c       |  10 +-
- drivers/staging/media/tegra-video/vi.c        |  24 +--
- include/media/v4l2-subdev.h                   |  74 +++++----
- 166 files changed, 2162 insertions(+), 1802 deletions(-)
+  drm/exynos: use pm_runtime_resume_and_get() (2021-06-11 10:56:38 +0900)
 
--- 
-2.25.1
+----------------------------------------------------------------
+Two cleanups
+- These patches make Exynos DRM driver to use pm_runtime_resume_and_get()
+  function instead of m_runtime_get_sync() to deal with usage counter.
+  pm_runtime_get_sync() increases the usage counter even when it failed,
+  which could make callers to forget to decrease the usage counter.
+  pm_runtime_resume_and_get() decreases the usage counter regardless of
+  whether it failed or not.
 
+----------------------------------------------------------------
+Inki Dae (1):
+      drm/exynos: use pm_runtime_resume_and_get()
+
+Tian Tao (1):
+      drm/exynos: Use pm_runtime_resume_and_get() to replace open coding
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  7 ++++++-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  7 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c       |  7 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  8 +++++++-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 25 ++++++++++++++++++++-----
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  9 ++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  7 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_mic.c       |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  7 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c    | 10 ++++++----
+ drivers/gpu/drm/exynos/exynos_hdmi.c          |  8 +++++++-
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++++-
+ 12 files changed, 86 insertions(+), 22 deletions(-)
