@@ -2,176 +2,131 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4236C48BD1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 06:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F067C48BE0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC93A61374
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 06:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65A3F613D9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230526AbhFKGQW (ORCPT
+        id S230392AbhFKKET (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 11 Jun 2021 02:16:22 -0400
-Received: from mga12.intel.com ([192.55.52.136]:51220 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230406AbhFKGQV (ORCPT
+        Fri, 11 Jun 2021 06:04:19 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36295 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229777AbhFKKEL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Jun 2021 02:16:21 -0400
-IronPort-SDR: aPtgTGGxGJYWZQ+V34HDEZpYkdKJaqbzUTKwjvrMP0D7eTxvWrhMVK28o+ugLDU6AP0Eq4mJ0Q
- chKPwbsp6OhA==
-X-IronPort-AV: E=McAfee;i="6200,9189,10011"; a="185160442"
-X-IronPort-AV: E=Sophos;i="5.83,265,1616482800"; 
-   d="scan'208";a="185160442"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 23:14:23 -0700
-IronPort-SDR: J0RkFeg3TbRmOA1vksM6Zzb9jbMU3xaY46QEB0aEjePdyjO8H3Gbg71A6Goc4JQEHGmO8+2+M0
- GIKdcp7/cMxw==
-X-IronPort-AV: E=Sophos;i="5.83,265,1616482800"; 
-   d="scan'208";a="450657291"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 23:14:15 -0700
-Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
-        by paasikivi.fi.intel.com (Postfix) with SMTP id 23EA42036A;
-        Fri, 11 Jun 2021 09:14:13 +0300 (EEST)
-Date:   Fri, 11 Jun 2021 09:14:13 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Pavel Machek <pavel@ucw.cz>, Shawn Tu <shawnx.tu@intel.com>,
-        Ricardo Ribalda <ribalda@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        "Paul J. Murphy" <paul.j.murphy@intel.com>,
-        Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Heungjun Kim <riverful.kim@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Dongchun Zhu <dongchun.zhu@mediatek.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>,
-        Hyungwoo Yang <hyungwoo.yang@intel.com>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Petr Cvek <petrcvekcz@gmail.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mickael Guene <mickael.guene@st.com>,
-        Mats Randgaard <matrandg@cisco.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Andy Walls <awalls@md.metrocast.net>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Dan Scally <djrscally@gmail.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>, Jacopo Mondi <jacopo@jmondi.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH v5 0/9] media: v4l2-subdev: add subdev-wide state struct
-Message-ID: <20210611061413.GM3@paasikivi.fi.intel.com>
-References: <20210610145606.3468235-1-tomi.valkeinen@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210610145606.3468235-1-tomi.valkeinen@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 11 Jun 2021 06:04:11 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210611100211euoutp02c42540c36d76ac4dd266372ebb9abbac~HfulykYbf0661306613euoutp023
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jun 2021 10:02:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210611100211euoutp02c42540c36d76ac4dd266372ebb9abbac~HfulykYbf0661306613euoutp023
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1623405731;
+        bh=DjmZWdnFfFqC9Q2lLHxyn+VU0DlPp2vCtfc1zrda64U=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=NQut6wG3o2lKn/wOtmRAGBm7wnDbMjKGvahuIvKD6T/8pR5IpJTzMGZzGxKXvY+NN
+         AImjRSDiy11yVZlbMnQ/4t3WVHxr0M2cY80UFevZxM18MDpvCNwocmR1xXXprOTPO3
+         MXR+luuQyw27LnnTCi26BhT5ccwYsr0p4r1S822U=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210611100211eucas1p2dab3f6ceb89e9e70b674b78c8b46fbc0~Hfulbur693189931899eucas1p2b;
+        Fri, 11 Jun 2021 10:02:11 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 06.DB.09444.3A433C06; Fri, 11
+        Jun 2021 11:02:11 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210611100210eucas1p148dd8d15360269eeb8fb9eace94ba3b4~Hfuk5C7dC2326223262eucas1p18;
+        Fri, 11 Jun 2021 10:02:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210611100210eusmtrp10e07a1610d79674906388d2be0081c71~Hfuk4RRtb2112621126eusmtrp1S;
+        Fri, 11 Jun 2021 10:02:10 +0000 (GMT)
+X-AuditID: cbfec7f4-dd5ff700000024e4-d5-60c334a327be
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id AF.3D.08705.2A433C06; Fri, 11
+        Jun 2021 11:02:10 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210611100210eusmtip1c4c45684116c67ed0e731ec79598acb4~Hfukig7E52317423174eusmtip1O;
+        Fri, 11 Jun 2021 10:02:10 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: restore framebuffer support
+Date:   Fri, 11 Jun 2021 12:02:04 +0200
+Message-Id: <20210611100204.6240-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsWy7djP87qLTQ4nGKxfK2yxccZ6Vovz5zew
+        W8w4v4/JYu2Ru+wOLB6bVnWyefRtWcXo8XmTXABzFJdNSmpOZllqkb5dAlfGrfXTmQoa2StW
+        LVrB3sDYydbFyMkhIWAicav/OWsXIxeHkMAKRon2pk3MEM4XRonmb82MEM5nRomvF98wdTFy
+        gLV8eRgDEV/OKLFoxWSEjkvtM5lB5rIJGEp0ve0C2yEioCrxuW0BO0gRs0Afo8T1vXPBioQF
+        nCV+/53JCmKzABW1vO9iAdnAK2AjcftSFMR98hKrNxwAWyAhcI9dYu66s8wQV7hInHtaCVEj
+        LPHq+BZ2CFtG4vTkHhaI+mZGiYfn1rJDOD2MEpebZjBCVFlL3Dn3iw1kELOApsT6XfoQMx0l
+        nm1WhDD5JG68FQQpZgYyJ22bDrWVV6KjTQhihprErOPr4LYevHCJGcL2kOjZtw8sLiQQK/Fs
+        8SKWCYxysxBWLWBkXMUonlpanJueWmyUl1quV5yYW1yal66XnJ+7iREY16f/Hf+yg3H5q496
+        hxiZOBgPMUpwMCuJ8O5ceShBiDclsbIqtSg/vqg0J7X4EKM0B4uSOG/SljXxQgLpiSWp2amp
+        BalFMFkmDk6pBiaT+yuVGw9FVsp4rJWO/ZElFrlhkmVextNT38++f/PX/JKDYMek5X1K7Dd2
+        mnJ2H/5xaAHfzAafHn8zeT+PmbtOqxzcZNj01bNOw/G1kH1U+SKZhgP/84qD9s7LeJZfb916
+        bFG/b8gDB33lK+cYwoI2H6neZfzymLLn7/rb2pN3S6yy3sclPMvxxO1n6+Y83VcgKMzaMm9T
+        7BtHsc8F8+tVtzOo/l81Uypwe8KJlABmNvfelJW71ir5nJKKr31/U/JdfSjr93lTp775MCHx
+        ntDCa6FS3Cmbc9QLj3PxvrPO+utS2OzDu7aZS/HjvcjNX+fE+HIpn7U8FP5u8oqVhgIie6/+
+        eHR5jvytMl2roL9KLMUZiYZazEXFiQD45C9OWgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsVy+t/xu7qLTA4nGGz9oWOxccZ6Vovz5zew
+        W8w4v4/JYu2Ru+wOLB6bVnWyefRtWcXo8XmTXABzlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWe
+        kYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GrfXTmQoa2StWLVrB3sDYydbFyMEhIWAi8eVh
+        TBcjF4eQwFJGif7njxm7GDmB4jISJ6c1sELYwhJ/rnWxQRR9YpToXvSMCSTBJmAo0fUWJMHJ
+        ISKgKvG5bQE7SBGzwARGifOdM8ASwgLOEr//zgSbxAJU1PK+iwVkM6+AjcTtS1EQC+QlVm84
+        wDyBkWcBI8MqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwIDaduzn5h2M81591DvEyMTBeIhR
+        goNZSYR358pDCUK8KYmVValF+fFFpTmpxYcYTYHWTWSWEk3OB4Z0Xkm8oZmBqaGJmaWBqaWZ
+        sZI479a5a+KFBNITS1KzU1MLUotg+pg4OKUamBg/rlermXr6n8IlxkOtCmkNLjJq078WGL5/
+        o8OllTblwbfCdR/k3X/tOmsy6arRJbaDX7PnXjm7yebUyQSjn6unMGy82XJq+YMZmxap7RLv
+        9proxfY5l+GxUFJXUeWdV4djv3F2+y7urpQz3sSr/vJIYdueE2/8Tk9sKSvml97bEPtFQ+PF
+        4ukxPwKuqiuECCXnsAk+nr/xcOOCorZkjraSadvZ2q6E73ze1KH4SnXumlrdieFH81L2ljwK
+        l2x1unPkh798o8btCxtOy6+9umFOv2PWPwaVpHe7GCdNOyPDtOX3R48tzur3525SC3eSc5Ix
+        7qvninwma7zQ69I2Uy5N/krLRka2wuPLJ4RsalZiKc5INNRiLipOBADUSy2tsQIAAA==
+X-CMS-MailID: 20210611100210eucas1p148dd8d15360269eeb8fb9eace94ba3b4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210611100210eucas1p148dd8d15360269eeb8fb9eace94ba3b4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210611100210eucas1p148dd8d15360269eeb8fb9eace94ba3b4
+References: <CGME20210611100210eucas1p148dd8d15360269eeb8fb9eace94ba3b4@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Moi,
+Commit f611b1e7624c ("drm: Avoid circular dependencies for CONFIG_FB")
+changed the Kconfig dependencies, so COFNIG_FB is no longer selected in
+defconfigs. Restore support for it in exynos_defconfig, because most
+Exynos platforms had graphical console running on framebuffer device
+emulated on the Exynos DRM drivers.
 
-On Thu, Jun 10, 2021 at 05:55:57PM +0300, Tomi Valkeinen wrote:
-> Hi,
-> 
-> v5 of the series. No content changes compared to v4, but the series is
-> split into smaller parts to enable reviews.
-> 
-> The split is artificial, and all the patches need to be squashed into
-> one before merging.
-> 
-> The point of the series is explained in "media: v4l2-subdev: add
-> subdev-wide state struct", but for easier reviews I add it partially
-> here:
-> 
-> We have 'struct v4l2_subdev_pad_config' which contains configuration for
-> a single pad used for the TRY functionality, and an array of those
-> structs is passed to various v4l2_subdev_pad_ops.
-> 
-> I was working on subdev internal routing between pads, and realized that
-> there's no way to add TRY functionality for routes, which is not pad
-> specific configuration. Adding a separate struct for try-route config
-> wouldn't work either, as e.g. set-fmt needs to know the try-route
-> configuration to propagate the settings.
-> 
-> This patch adds a new struct, 'struct v4l2_subdev_state' (which at the
-> moment only contains the v4l2_subdev_pad_config array) and the new
-> struct is used in most of the places where v4l2_subdev_pad_config was
-> used. All v4l2_subdev_pad_ops functions taking v4l2_subdev_pad_config
-> are changed to instead take v4l2_subdev_state.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for the update.
-
-For the set:
-
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 513f56b3c059..f4e1873912a3 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -236,6 +236,7 @@ CONFIG_DRM_SII9234=y
+ CONFIG_DRM_TOSHIBA_TC358764=y
+ CONFIG_DRM_LIMA=y
+ CONFIG_DRM_PANFROST=y
++CONFIG_FB=y
+ CONFIG_LCD_CLASS_DEVICE=y
+ CONFIG_LCD_PLATFORM=y
+ CONFIG_BACKLIGHT_PWM=y
 -- 
-Terveisin,
+2.17.1
 
-Sakari Ailus
