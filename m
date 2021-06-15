@@ -2,102 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 173E2C2B9F4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Jun 2021 19:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C0BC48BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Jun 2021 17:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00F6761246
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Jun 2021 19:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6896610A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Jun 2021 17:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234362AbhFNTfW (ORCPT
+        id S229649AbhFORNk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Jun 2021 15:35:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35372 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234976AbhFNTfU (ORCPT
+        Tue, 15 Jun 2021 13:13:40 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6383 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229528AbhFORNk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Jun 2021 15:35:20 -0400
-Received: from mail-ed1-f71.google.com ([209.85.208.71])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lssKi-0000AH-7D
-        for linux-samsung-soc@vger.kernel.org; Mon, 14 Jun 2021 19:33:16 +0000
-Received: by mail-ed1-f71.google.com with SMTP id y16-20020a0564024410b0290394293f6816so3467840eda.20
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jun 2021 12:33:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qoNs0rkeMMUPf/jH63Pbn4GEa6xEussm8RBcM0JZAj0=;
-        b=ii4oMHICY3Ox0Qjfc41Ts1OS3uInyEC3hnZXxvyb+d1qXMiJaJM3HCbOusN6Qk01Op
-         oGA4QFQbQHUiKby4i7SIb4idbudrQnJ2dprISA6VM/8d0oii/j9V/OsrMAcE0DlpIG7v
-         kixJkYK3Lhh+Guvi9h4vWnzjdpzsvkJWTe1O+2e2rc8um5wX6j0igqAg/9/1CayKgryR
-         UiNxToSWEbS4EMQu8unLCHM07idVlOaLyzxTGBpSpsEsGfO9Ui2MSfUo1dj8ahtIAHXh
-         96F0FwgDT9stRv5uYg1Rba8jNBISbNbRwUQXg+Fwb1W9sOaYilOOUcHuRK1wQefnXvZ6
-         Uo/Q==
-X-Gm-Message-State: AOAM533g5ne+gqK5WnSA2hb1c1JJPNuX4GXKVoclhfeTNW58k4O5qOfF
-        5fvUjY5MI/h4Hjt29BRQutEn658gJp5M5sasus94tReHBicT2ev7sLEFJzTV1GUKpY5epSGX3r2
-        jU4GC69lhjrbkdZ9Y7Ch2qOJGj8A+xSkNq0e6lZV3bVSNJ8IA
-X-Received: by 2002:aa7:c818:: with SMTP id a24mr19448641edt.53.1623699196022;
-        Mon, 14 Jun 2021 12:33:16 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzq1B8upiBsEetFmAjSMtxkDRFzyHcPey+4IkR631CQiOXVzgOKDik6rb85uCWnTOZsFAP0FQ==
-X-Received: by 2002:aa7:c818:: with SMTP id a24mr19448632edt.53.1623699195929;
-        Mon, 14 Jun 2021 12:33:15 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id gw7sm8029291ejb.5.2021.06.14.12.33.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 12:33:15 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-List-Id: <soc.lore.kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] ARM/arm64: defconfig: samsung: pull for v5.14
-Date:   Mon, 14 Jun 2021 21:33:09 +0200
-Message-Id: <20210614193309.20248-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210614193309.20248-1-krzysztof.kozlowski@canonical.com>
-References: <20210614193309.20248-1-krzysztof.kozlowski@canonical.com>
+        Tue, 15 Jun 2021 13:13:40 -0400
+Received: from dggeml759-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G4F9y1krwz61Wh;
+        Wed, 16 Jun 2021 01:07:34 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 16 Jun 2021 01:11:32 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] drm/exynos: g2d: fix missing unlock on error in g2d_runqueue_worker()
+Date:   Tue, 15 Jun 2021 17:21:53 +0000
+Message-ID: <20210615172153.2839275-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
+Add the missing unlock before return from function g2d_runqueue_worker()
+in the error handling case.
 
-  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
+Fixes: 445d3bed75de ("drm/exynos: use pm_runtime_resume_and_get()")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index cab4d2c370a7..0ed665501ac4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -897,13 +897,14 @@ static void g2d_runqueue_worker(struct work_struct *work)
+ 			ret = pm_runtime_resume_and_get(g2d->dev);
+ 			if (ret < 0) {
+ 				dev_err(g2d->dev, "failed to enable G2D device.\n");
+-				return;
++				goto out;
+ 			}
+ 
+ 			g2d_dma_start(g2d, g2d->runqueue_node);
+ 		}
+ 	}
+ 
++out:
+ 	mutex_unlock(&g2d->runqueue_mutex);
+ }
+ 
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.14
-
-for you to fetch changes up to 38f61ef1a0cefb4e3b37c3e7b16c0f68df34a3dc:
-
-  ARM: exynos_defconfig: restore framebuffer support (2021-06-11 12:54:33 +0200)
-
-----------------------------------------------------------------
-Samsung defconfig changes for v5.14
-
-1. Enable Exynos Universal Flash Storage (UFS) driver for Exynos7 arm64
-   boards.
-2. Restore framebuffer support in exynos_defconfig.
-
-----------------------------------------------------------------
-Alim Akhtar (1):
-      arm64: defconfig: Enable Exynos UFS driver
-
-Marek Szyprowski (1):
-      ARM: exynos_defconfig: restore framebuffer support
-
- arch/arm/configs/exynos_defconfig | 1 +
- arch/arm64/configs/defconfig      | 2 ++
- 2 files changed, 3 insertions(+)
