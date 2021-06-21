@@ -2,174 +2,231 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,PDS_BAD_THREAD_QP_64,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23712C49361
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Jun 2021 05:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6B4C48BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Jun 2021 08:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA47B60FF1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Jun 2021 05:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E258661164
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Jun 2021 08:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229695AbhFUFit (ORCPT
+        id S230235AbhFUIyK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Jun 2021 01:38:49 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:51257 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbhFUFit (ORCPT
+        Mon, 21 Jun 2021 04:54:10 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39668 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229789AbhFUIyK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Jun 2021 01:38:49 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210621053633epoutp03bdf1c4bd6229015fa12dcc6230ae5f17~KgjhHwhZL3153731537epoutp03v
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jun 2021 05:36:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210621053633epoutp03bdf1c4bd6229015fa12dcc6230ae5f17~KgjhHwhZL3153731537epoutp03v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1624253793;
-        bh=0PLR6M50yiRdMI4Vr9g6B/Mq+cV1i9BidWEN60U5MmM=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=kZ3b73Q2XoNjFX+Ayo+09HowV71kGYiYkrQekD6O/4MCp7uw+zXfJKvY7MvVo1HeN
-         vYwMbgE0k3FrJmhHEh6FIvHg8H55byD/GCii5g6JEMRotxDhROOPri5jWzI8wglb4I
-         t47x4jHigZcPGtXSYAxIfL/L6wO86V//0UDnTthI=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20210621053633epcas5p29aebe7aa9f5ae95af2009098a6434163~KgjgkpQ0e2583525835epcas5p2b;
-        Mon, 21 Jun 2021 05:36:33 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E4.1E.09452.16520D06; Mon, 21 Jun 2021 14:36:33 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210621052648epcas5p3cbacaee0cccd663805a27056c6137356~Kga-_e8oP2593125931epcas5p3x;
-        Mon, 21 Jun 2021 05:26:48 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210621052648epsmtrp127ff6ada70782f09379c23a531f03b40~Kga-9ox020352403524epsmtrp1J;
-        Mon, 21 Jun 2021 05:26:48 +0000 (GMT)
-X-AuditID: b6c32a4b-429ff700000024ec-ed-60d02561441f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3E.08.08394.81320D06; Mon, 21 Jun 2021 14:26:48 +0900 (KST)
-Received: from mshams01 (unknown [107.122.12.94]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210621052646epsmtip168d181e4f721be5f7428ca887d4ae298~Kga_beFNs3221732217epsmtip1W;
-        Mon, 21 Jun 2021 05:26:46 +0000 (GMT)
-From:   "M Tamseel Shams" <m.shams@samsung.com>
-To:     <kgene@kernel.org>, <krzk@kernel.org>,
-        <gregkh@linuxfoundation.org>, <jslaby@suse.com>
-Cc:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <alim.akhtar@samsung.com>, <ajaykumar.rs@samsung.com>
-In-Reply-To: <20210621044757.40046-1-m.shams@samsung.com>
-Subject: RE: [PATCH v4] serial: samsung: change to platform_get_irq_optional
-Date:   Mon, 21 Jun 2021 10:56:45 +0530
-Message-ID: <000801d7665e$08424a00$18c6de00$@samsung.com>
+        Mon, 21 Jun 2021 04:54:10 -0400
+Received: from mail-ej1-f70.google.com ([209.85.218.70])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lvFet-0005rz-II
+        for linux-samsung-soc@vger.kernel.org; Mon, 21 Jun 2021 08:51:55 +0000
+Received: by mail-ej1-f70.google.com with SMTP id f1-20020a1709064941b02903f6b5ef17bfso6047669ejt.20
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jun 2021 01:51:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ggXee6A796CsVt4xk+5DiytAJr6HRec0kihk7+kdguU=;
+        b=IVjfEkvX1GrhMKOmK9/e2RfZugF8IIcDes6/knzowzPvye/cFZhB9E5NXob1k59huS
+         HUGiip4zFQkyBligrxx56nbFK0B4B3FuhUkj8TFKjt8geTYZYYSZN54iEu2Cz/pHAumC
+         AdIAx3IbxlvoVjHL+AaR7ad6DWxqs4cL269/v17r7XuWHv6rzlpDZBN8fUGIrFYqA6bR
+         sCXTbjVWL5TeqGjiDbkX/k7eT4bMeq2Vfa4hpQJ3Q6l4kyYEFTyz3nR2MraaXY8pzx+Y
+         8B+tqDQO5L9jUAe+8FUJ0odLO527W3Bu0w8+3qqpSc/rPw26NcvtSuXxr28ANsnleiQH
+         Jvgg==
+X-Gm-Message-State: AOAM531a5bP1T7bNc61lLPlRzmBPh8i7vPUYcWNJcs09GADU49UK/Omv
+        KZEKmcCMjdOVSJTSyCOEv6xgpDjlyApANkUny0qZgXIm3lzzdvYefR8RfoH53RY/TNPGt3CJCWL
+        Hc9OTgPNnk0LtmN74xI4zwjoXZcupRIA8QKsisIWmz9hJdLYe
+X-Received: by 2002:a17:906:b190:: with SMTP id w16mr23951026ejy.332.1624265514880;
+        Mon, 21 Jun 2021 01:51:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxw/9DH/lZzejm4BaxNnmKxMr/3WyMC6hKB5u1jhTfs5PGPy2HClTCywxxBQkefzrdj/XXQDw==
+X-Received: by 2002:a17:906:b190:: with SMTP id w16mr23951016ejy.332.1624265514735;
+        Mon, 21 Jun 2021 01:51:54 -0700 (PDT)
+Received: from [192.168.1.115] (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
+        by smtp.gmail.com with ESMTPSA id og37sm2584474ejc.100.2021.06.21.01.51.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jun 2021 01:51:54 -0700 (PDT)
+Subject: Re: [PATCH 2/2] arm64: dts: exynos5433: Add cpu cache information
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        robh+dt@kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org
+References: <20210617113739.66911-1-alim.akhtar@samsung.com>
+ <CGME20210617113314epcas5p4652e98d24d7f56a7c8461175bbb25456@epcas5p4.samsung.com>
+ <20210617113739.66911-2-alim.akhtar@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <0120db2f-e25e-a4ae-669b-a404dbfae05b@canonical.com>
+Date:   Mon, 21 Jun 2021 10:51:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLrt4vOvQgF3TDEnmyTfCXOmtgdwgF+I3k8qOlbpbA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7bCmhm6i6oUEg5ltPBYH3h9ksXgwbxub
-        RfPi9WwWUzZ8YLLof/ya2eL8+Q3sFpseX2O1uLxrDpvFjPP7mCzOLO5ld+Dy2LSqk81j/9w1
-        7B6bl9R79G1ZxeixfstVFo/Pm+QC2KK4bFJSczLLUov07RK4Mk6cnMBWsIK/YtWdV2wNjO94
-        uhg5OSQETCT+P7rH0sXIxSEksJtR4uG0qawQzidGibYzV5ggnG+MEm++bmGEaXmy4S4LiC0k
-        sJdRovG0B0TRM0aJjvYtzCAJNgFdiUkH28BsEYEYiZVrPoNNYhY4wyjxePFkJpAEp4ClxL4r
-        R9lAbGEBH4kXz6aC2SwCqhI/JjeD2bxANVOa5jNB2IISJ2c+AdvMLKAtsWzha2aIixQkfj5d
-        xgqxzEpi/8rzjBA14hIvjx5hB1ksIbCWQ2LOhidQL7hIHF94gAnCFpZ4dXwLO4QtJfGyvw3K
-        zpeYP28V1IIKiZUX3kDZ9hIHrswBOoIDaIGmxPpd+hBhWYmpp9YxQezlk+j9/QRqPK/Ejnkw
-        tqLE/939UOPFJd6tmMI6gVFpFpLXZiF5bRaSF2YhbFvAyLKKUTK1oDg3PbXYtMA4L7Vcrzgx
-        t7g0L10vOT93EyM4YWl572B89OCD3iFGJg7GQ4wSHMxKIrycmWcShHhTEiurUovy44tKc1KL
-        DzFKc7AoifMuZT+UICSQnliSmp2aWpBaBJNl4uCUamCqzdznYK7T9tlO9evrbt3LMrVpu3Iu
-        Wv+N7TJLOnvrqqGCRzH/RBEOeeZHZ2cdEJkozfD5W3rg0U8BenWRVTNzEuQOrBY+4K91YpZE
-        671/gRlxS3fHdz1vTj+Yd0juFP/b8uNXb0/Lj9da5OFgK7en0VXr/0Q7abvn2WIFF/QDtCZX
-        t1xmep1ffMxK7Ry7SZSazYJZ8X76fQuTypnC229whUx/+ZY56Jq/72mOygjfQyW+YULL/Csm
-        SwiIaPH2CO3K2x6dKZWw1zN12u2VciZuTw/HeNiK71u+aPVXnXchrg4Ru0sZJ5eKVKqXPZ2z
-        mEPd7YNM/YK8mU+c+edMYtdqWnN/uZKb7pte1i+blViKMxINtZiLihMBdaz9j8cDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnK6E8oUEgwOTJSwOvD/IYvFg3jY2
-        i+bF69kspmz4wGTR//g1s8X58xvYLTY9vsZqcXnXHDaLGef3MVmcWdzL7sDlsWlVJ5vH/rlr
-        2D02L6n36NuyitFj/ZarLB6fN8kFsEVx2aSk5mSWpRbp2yVwZUz68oep4A9fRc/uC2wNjPt4
-        uhg5OSQETCSebLjL0sXIxSEksJtRomHzbXaIhLjEtF/7GSFsYYmV/56zQxQ9YZQ4teM8WBGb
-        gK7EpINtzCC2iECCxJeTMxlBipgFLjBKdB+9AdXRxSjxfudlsFGcApYS+64cZQOxhQV8JF48
-        mwpmswioSvyY3Axm8wLVTGmazwRhC0qcnPmEBcRmFtCW6H3YyghjL1v4mhniPAWJn0+XsUJc
-        YSWxf+V5qBpxiZdHj7BPYBSehWTULCSjZiEZNQtJywJGllWMkqkFxbnpucWGBYZ5qeV6xYm5
-        xaV56XrJ+bmbGMGRp6W5g3H7qg96hxiZOBgPMUpwMCuJ8HJmnkkQ4k1JrKxKLcqPLyrNSS0+
-        xCjNwaIkznuh62S8kEB6YklqdmpqQWoRTJaJg1OqgUmJ/bmv6bYas7gw1uOPD32LPPa7xDBj
-        0Yts7533q1ZtirolbZc+//csoXCBjZWCS19/2XLpRIDOhVk1UUJ6Cod9Fz3VNum0fbBw5az3
-        XRfrrE+uVo5g3jut7E3uZvmXd0/517yZyKbaPN3o1a3eEK37u+N1ttm/SthUbL/r3bRYnfqZ
-        385/W38v/31jS8VK6W+TOMUON3w+PzvDVU5nfqepdbjIBlWzFNGdb8KXXZTher6+dt93TvXv
-        su90OCIsprvM5asQTxUOc+XicWf7Um+f8I/t+PF5V3NOfpj9ZMK0K1Lr+2u5D15eqdF9UfyQ
-        /TPruR5LZwocer7Sas6XK/NWv4l9yd+izSJ26LjilsSPSizFGYmGWsxFxYkAVgQfPisDAAA=
-X-CMS-MailID: 20210621052648epcas5p3cbacaee0cccd663805a27056c6137356
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20210621044400epcas5p40368077e77d2da219db8f890dfd69f7c
-References: <CGME20210621044400epcas5p40368077e77d2da219db8f890dfd69f7c@epcas5p4.samsung.com>
-        <20210621044757.40046-1-m.shams@samsung.com>
+In-Reply-To: <20210617113739.66911-2-alim.akhtar@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Tamseel Shams <m.shams=40samsung.com>
-> Sent: Monday, June 21, 2021 10:18 AM
-> To: kgene=40kernel.org; krzk=40kernel.org; gregkh=40linuxfoundation.org;
-> jslaby=40suse.com
-> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kern=
-el.org;
-> linux-serial=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> alim.akhtar=40samsung.com; ajaykumar.rs=40samsung.com; Tamseel Shams
-> <m.shams=40samsung.com>
-> Subject: =5BPATCH v4=5D serial: samsung: change to platform_get_irq_optio=
-nal
->=20
-> In few older Samsung SoCs like s3c2410, s3c2412 and s3c2440, UART IP is h=
-aving
-> 2 interrupt lines.
-> However, in other SoCs like s3c6400, s5pv210, exynos5433, and exynos4210
-> UART is having only 1 interrupt line. Due to this, =22platform_get_irq(pl=
-atdev, 1)=22
-> call in the driver gives the following false-positive error:
-> =22IRQ index 1 not found=22 on recent platforms.
->=20
-> This patch replaces the platform_get_irq() call with
-> platform_get_irq_optional() and hence avoiding the false-positive error.
->=20
-> Signed-off-by: Tamseel Shams <m.shams=40samsung.com>
+On 17/06/2021 13:37, Alim Akhtar wrote:
+> This patch adds cpu caches information to its dt
+> nodes so that the same is available to userspace
+> via sysfs.
+> This SoC has 48/32 KB I/D cache for each A57 cores
+> with 2MB L2 cache.
+> And 32/32 KB I/D cache for each A53 cores with
+> 256KB L2 cache.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
-> Commit message is changed.
-> Addressed Krzysztof's previous comment.
->=20
->  drivers/tty/serial/samsung_tty.c =7C 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsun=
-g_tty.c
-> index 6ef614d8648c..c44582011b9b 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> =40=40 -1911,7 +1911,7 =40=40 static int s3c24xx_serial_init_port(struct
-> s3c24xx_uart_port *ourport,
->  		ourport->tx_irq =3D ret + 1;
->  	=7D
->=20
-> -	ret =3D platform_get_irq(platdev, 1);
-> +	ret =3D platform_get_irq_optional(platdev, 1);
->  	if (ret > 0)
->  		ourport->tx_irq =3D ret;
->  	/*
-> --
->=20
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 70 ++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 18a912eee360..8183a59e9046 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -62,6 +62,13 @@
+>  			clock-names = "apolloclk";
+>  			operating-points-v2 = <&cluster_a53_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&apollo_l2>;
+>  		};
+>  
+>  		cpu1: cpu@101 {
+> @@ -72,6 +79,13 @@
+>  			clock-frequency = <1300000000>;
+>  			operating-points-v2 = <&cluster_a53_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&apollo_l2>;
+>  		};
+>  
+>  		cpu2: cpu@102 {
+> @@ -82,6 +96,13 @@
+>  			clock-frequency = <1300000000>;
+>  			operating-points-v2 = <&cluster_a53_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&apollo_l2>;
+>  		};
+>  
+>  		cpu3: cpu@103 {
+> @@ -92,6 +113,13 @@
+>  			clock-frequency = <1300000000>;
+>  			operating-points-v2 = <&cluster_a53_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0x8000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <128>;
+> +			next-level-cache = <&apollo_l2>;
+>  		};
+>  
+>  		cpu4: cpu@0 {
+> @@ -104,6 +132,13 @@
+>  			clock-names = "atlasclk";
+>  			operating-points-v2 = <&cluster_a57_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0xc000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&atlas_l2>;
+>  		};
+>  
+>  		cpu5: cpu@1 {
+> @@ -114,6 +149,13 @@
+>  			clock-frequency = <1900000000>;
+>  			operating-points-v2 = <&cluster_a57_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0xc000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&atlas_l2>;
+>  		};
+>  
+>  		cpu6: cpu@2 {
+> @@ -124,6 +166,13 @@
+>  			clock-frequency = <1900000000>;
+>  			operating-points-v2 = <&cluster_a57_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0xc000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&atlas_l2>;
+>  		};
+>  
+>  		cpu7: cpu@3 {
+> @@ -134,6 +183,27 @@
+>  			clock-frequency = <1900000000>;
+>  			operating-points-v2 = <&cluster_a57_opp_table>;
+>  			#cooling-cells = <2>;
+> +			i-cache-size = <0xc000>;
+> +			i-cache-line-size = <64>;
+> +			i-cache-sets = <256>;
+> +			d-cache-size = <0x8000>;
+> +			d-cache-line-size = <64>;
+> +			d-cache-sets = <256>;
+> +			next-level-cache = <&atlas_l2>;
+> +		};
+> +
+> +		atlas_l2: l2-cache0 {
 
-Please ignore this patch.
-Sorry for the spam.
+Few other nodes (PMU, OPP tables) use a57/a53 names instead of
+codenames, so I would prefer to stay with them (so cluster_a57_l2).
 
-Thanks & Regards,
-Tamseel Shams
+For Exynos7 it's fine as it uses Atlas already in labels.
+
+> +			compatible = "cache";
+> +			cache-size = <0x200000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <2048>;
+> +		};
+> +
+> +		apollo_l2: l2-cache1 {
+> +			compatible = "cache";
+> +			cache-size = <0x40000>;
+> +			cache-line-size = <64>;
+> +			cache-sets = <256>;
+>  		};
+>  	};
+>  
+> 
 
 
+Best regards,
+Krzysztof
