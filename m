@@ -2,257 +2,193 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13A7C2B9F4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 13:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE79C49EA4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 919996113E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 13:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710A560238
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbhFVNHx (ORCPT
+        id S231397AbhFVOMW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Jun 2021 09:07:53 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:50306 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231240AbhFVNHx (ORCPT
+        Tue, 22 Jun 2021 10:12:22 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:36426 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230160AbhFVOMV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Jun 2021 09:07:53 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210622130535epoutp01aeddba4c2789135a1a2e07db9fb313bd~K6U3E9f7F1523915239epoutp01D
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jun 2021 13:05:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210622130535epoutp01aeddba4c2789135a1a2e07db9fb313bd~K6U3E9f7F1523915239epoutp01D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1624367135;
-        bh=zX/Xx9xQltdLLFto+ROMce7uXxnLYlXqc6+w5MHvh+U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eapcSz8+fSPRT3A2xaYL86fwzVMV3rjJ6Die4IMgewmXcVjHv7puYAHplCl/5omkb
-         lbSZex5arAyxQ9KA0btAMcwqP8BJ7L64KflQiRS+daS5tFmM7iqHS6k9jRqk2fx724
-         sNdNm9S8zViGbrSVva5LoYKDUQGDVgS6iEh8YAw0=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20210622130535epcas5p146ba50c9a15bd734625aeb6534b6c6bc~K6U20ANst0526305263epcas5p1J;
-        Tue, 22 Jun 2021 13:05:35 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AE.8A.09476.F10E1D06; Tue, 22 Jun 2021 22:05:35 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210622130204epcas5p1192cd38abc4a0b49798355cecea9f763~K6RyegZ8T2755727557epcas5p1_;
-        Tue, 22 Jun 2021 13:02:04 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210622130204epsmtrp23b2e89bed8b1642e1cd3b50ac14a5e57~K6RydbfNO0900809008epsmtrp2m;
-        Tue, 22 Jun 2021 13:02:04 +0000 (GMT)
-X-AuditID: b6c32a49-6b7ff70000002504-98-60d1e01fc9db
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        23.D7.08394.C4FD1D06; Tue, 22 Jun 2021 22:02:04 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210622130203epsmtip127b62670911b16144070d4e71b809cdc~K6RxV8LV43046230462epsmtip1a;
-        Tue, 22 Jun 2021 13:02:03 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        robh+dt@kernel.org
-Cc:     krzysztof.kozlowski@canonical.com,
+        Tue, 22 Jun 2021 10:12:21 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7BA0B21983;
+        Tue, 22 Jun 2021 14:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624371004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Zlq4KKsU8/JYDA/ykAeVvIai2ocIqYe99RU3QFbsdmU=;
+        b=0v86hE2VTLzEM17qBfcdZmBklmxzS3uxRZV1SGwrgbxnZmAHokY+cxJIQhfHXQDFhWrRxm
+        mNSsxsvZmAOjtFc26K0Agh4sKMfhwApmhr0BdQOGEahrzoc9u05XpIb8lp8Vdh3amkGVfl
+        uJFaYWGwO7i62UCyoBWD1fE9HlA/Wqc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624371004;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Zlq4KKsU8/JYDA/ykAeVvIai2ocIqYe99RU3QFbsdmU=;
+        b=sBfw1F8RoZ7krrkKcsNIctjBZau4LKd5m6itT3fA/6O/2sq3gTvZ0OVWEe7BIVFr4IiY6O
+        h8HM/7+JiMPvRoBQ==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 74827118DD;
+        Tue, 22 Jun 2021 14:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624371004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Zlq4KKsU8/JYDA/ykAeVvIai2ocIqYe99RU3QFbsdmU=;
+        b=0v86hE2VTLzEM17qBfcdZmBklmxzS3uxRZV1SGwrgbxnZmAHokY+cxJIQhfHXQDFhWrRxm
+        mNSsxsvZmAOjtFc26K0Agh4sKMfhwApmhr0BdQOGEahrzoc9u05XpIb8lp8Vdh3amkGVfl
+        uJFaYWGwO7i62UCyoBWD1fE9HlA/Wqc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624371004;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Zlq4KKsU8/JYDA/ykAeVvIai2ocIqYe99RU3QFbsdmU=;
+        b=sBfw1F8RoZ7krrkKcsNIctjBZau4LKd5m6itT3fA/6O/2sq3gTvZ0OVWEe7BIVFr4IiY6O
+        h8HM/7+JiMPvRoBQ==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id CKiPGzvv0WD3UAAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:03 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com,
+        james.qian.wang@arm.com, liviu.dudau@arm.com,
+        mihail.atanassov@arm.com, brian.starkey@arm.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
+        tiantao6@hisilicon.com, john.stultz@linaro.org,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        laurentiu.palcu@oss.nxp.com, l.stach@pengutronix.de,
+        p.zabel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, chunkuang.hu@kernel.org, matthias.bgg@gmail.com,
+        bskeggs@redhat.com, tomba@kernel.org, hjc@rock-chips.com,
+        heiko@sntech.de, benjamin.gaignard@linaro.org,
+        yannick.fertre@foss.st.com, philippe.cornu@foss.st.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jyri.sarha@iki.fi, emma@anholt.net,
+        linux-graphics-maintainer@vmware.com, zackr@vmware.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 2/2] arm64: dts: exynos5433: Add cpu cache information
-Date:   Tue, 22 Jun 2021 18:35:51 +0530
-Message-Id: <20210622130551.67446-2-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210622130551.67446-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsWy7bCmhq78g4sJBk2NkhYP5m1js9j49geT
-        xabH11gtLu+aw2Yx4/w+JovWvUfYHdg8ZjX0snlsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk
-        5mSWpRbp2yVwZdxq2MJa0K9QcXF6P1MD40uJLkZODgkBE4mrd36xdDFycQgJ7GaUWPbnCDuE
-        84lRYuqcuVCZb4wSK+c+ZYVp2bOilxkisZdR4vWm1YwQTguTxNru7+wgVWwC2hJ3p29hArFF
-        BGIkHu6ZB9bNLFAo8aLlJliNsICnRFPvO0YQm0VAVeL1rbMsIDavgI3E1HN7WCC2yUus3nCA
-        GcTmFLCVmDTlEth9EgL72CVOfzjIDlHkIvFu/xEoW1ji1fEtULaUxOd3e9m6GDmA7GyJnl3G
-        EOEaiaXzjkHNt5c4cGUOC0gJs4CmxPpd+hBhWYmpp9YxQZzMJ9H7+wkTRJxXYsc8GFtVovnd
-        Vagx0hITu7tZITZ5SLT0pECCZAKjxPRPM5gnMMrNQtiwgJFxFaNkakFxbnpqsWmBYV5quV5x
-        Ym5xaV66XnJ+7iZGcBLQ8tzBePfBB71DjEwcjIcYJTiYlUR4X2RfTBDiTUmsrEotyo8vKs1J
-        LT7EKM3BoiTOu5T9UIKQQHpiSWp2ampBahFMlomDU6qBaf4uny1eiWmMLltN1+i/jeC9eclY
-        4O6xmaL/ZF7YHGlsZnR3lftpP9H7oVA964/pu0/mPrk18Z74rRePru89aZLkp3CxiOfUKf8V
-        6ufnWresydruvX3hyuXF+5ft3rjAYavpeuG47tClztoa5tVPP7w5H7zP98OLGexr2CUfzZgq
-        33VaSfhOUdnreQdWLsy5vXv3bb7ynVIv3j802/PtyOquVykNJyfvW8X2QVYy+1BlId+Zlyad
-        Ah+Tk9p+XFCIyZ7+0Cx3QvZVpUnaK9MKHNNKztkrn5wqx3nk0hv2Q7FnZ+nutjjA+6H77tl5
-        hzQbKvhljLfH77t8e/8f96tdZwx3neiv1dl6c0Eob77kvLarSizFGYmGWsxFxYkAxQGma3ED
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjluLIzCtJLcpLzFFi42LZdlhJTtfn/sUEg3nXVCwezNvGZrHx7Q8m
-        i02Pr7FaXN41h81ixvl9TBate4+wO7B5zGroZfPYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJ
-        zcksSy3St0vgyrjVsIW1oF+h4uL0fqYGxpcSXYycHBICJhJ7VvQydzFycQgJ7GaU2HXiFwtE
-        Qlri+sYJ7BC2sMTKf8/BbCGBJiaJv501IDabgLbE3elbmLoYOThEBOIkWtdXg5jMAsUSp38x
-        gVQIC3hKNPW+YwSxWQRUJV7fOgs2nVfARmLquT1Qm+QlVm84wAxicwrYSkyacglqk43E4rWr
-        mCcw8i1gZFjFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcZFqaOxi3r/qgd4iRiYPx
-        EKMEB7OSCO+L7IsJQrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgsky
-        cXBKNTCt49coLdsYZfvzmYZAZCIfzz7ByqPms2541n4KYLu/0+dWyW+28ocVP66zvrq+3uKi
-        hc+MZXPu/b32dsF3IRNfoW5Om2tb+N5bZS+46zavqHGDlkbOlcdHfu4zK/fttf4h+PbOPxfV
-        7prNL62XSN8R6FrSV6P59870uI9zdh/x7eDavfR4xEz1VSUvo7Uq93NNszyrlOV8TedHusXL
-        rYI72L1M1Nbde6Cp5DJ/RbjFg9QyicRY1ZgqM/5NKZKcke0bxC5/+S7z9XD195mTA7fsDPju
-        0C15L/o2243ju3o/XGUT3MWv5CKdkXk64/daqe2ptlXzeCbmPH5ZfeBLhrGStuLxmgNL0zW/
-        TQmvq0lSYinOSDTUYi4qTgQAUlcJN6ECAAA=
-X-CMS-MailID: 20210622130204epcas5p1192cd38abc4a0b49798355cecea9f763
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20210622130204epcas5p1192cd38abc4a0b49798355cecea9f763
-References: <20210622130551.67446-1-alim.akhtar@samsung.com>
-        <CGME20210622130204epcas5p1192cd38abc4a0b49798355cecea9f763@epcas5p1.samsung.com>
+        linux-mediatek@lists.infradead.org, nouveau@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v2 00/22] Deprecate struct drm_device.irq_enabled
+Date:   Tue, 22 Jun 2021 16:09:40 +0200
+Message-Id: <20210622141002.11590-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch adds cpu caches information to its dt
-nodes so that the same is available to userspace
-via sysfs.
-This SoC has 48/32 KB I/D cache for each A57 cores
-with 2MB L2 cache.
-And 32/32 KB I/D cache for each A53 cores with
-256KB L2 cache.
+Remove references to struct drm_device.irq_enabled from modern
+DRM drivers and core.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
--Changes since v1:
-* addressed Krzysztof's review comments
+KMS drivers enable IRQs for their devices internally. They don't
+have to keep track of the IRQ state via irq_enabled. For vblanking,
+it's cleaner to test for vblanking support directly than to test
+for enabled IRQs.
 
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+This used to be a single patch, [1] but it's now a full series.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 18a912eee360..73aa0fa9b778 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -62,6 +62,13 @@
- 			clock-names = "apolloclk";
- 			operating-points-v2 = <&cluster_a53_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&cluster_a53_l2>;
- 		};
- 
- 		cpu1: cpu@101 {
-@@ -72,6 +79,13 @@
- 			clock-frequency = <1300000000>;
- 			operating-points-v2 = <&cluster_a53_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&cluster_a53_l2>;
- 		};
- 
- 		cpu2: cpu@102 {
-@@ -82,6 +96,13 @@
- 			clock-frequency = <1300000000>;
- 			operating-points-v2 = <&cluster_a53_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&cluster_a53_l2>;
- 		};
- 
- 		cpu3: cpu@103 {
-@@ -92,6 +113,13 @@
- 			clock-frequency = <1300000000>;
- 			operating-points-v2 = <&cluster_a53_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			next-level-cache = <&cluster_a53_l2>;
- 		};
- 
- 		cpu4: cpu@0 {
-@@ -104,6 +132,13 @@
- 			clock-names = "atlasclk";
- 			operating-points-v2 = <&cluster_a57_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cluster_a57_l2>;
- 		};
- 
- 		cpu5: cpu@1 {
-@@ -114,6 +149,13 @@
- 			clock-frequency = <1900000000>;
- 			operating-points-v2 = <&cluster_a57_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cluster_a57_l2>;
- 		};
- 
- 		cpu6: cpu@2 {
-@@ -124,6 +166,13 @@
- 			clock-frequency = <1900000000>;
- 			operating-points-v2 = <&cluster_a57_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cluster_a57_l2>;
- 		};
- 
- 		cpu7: cpu@3 {
-@@ -134,6 +183,27 @@
- 			clock-frequency = <1900000000>;
- 			operating-points-v2 = <&cluster_a57_opp_table>;
- 			#cooling-cells = <2>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cluster_a57_l2>;
-+		};
-+
-+		cluster_a57_l2: l2-cache0 {
-+			compatible = "cache";
-+			cache-size = <0x200000>;
-+			cache-line-size = <64>;
-+			cache-sets = <2048>;
-+		};
-+
-+		cluster_a53_l2: l2-cache1 {
-+			compatible = "cache";
-+			cache-size = <0x40000>;
-+			cache-line-size = <64>;
-+			cache-sets = <256>;
- 		};
- 	};
- 
--- 
-2.17.1
+The first 3 patches replace instances of irq_enabled that are not
+required.
+
+Patch 4 fixes vblank ioctls to actually test for vblank support
+instead of IRQs.
+
+THe rest of the patchset removes irq_enabled from all non-legacy
+drivers. The only exception is omapdrm, which has an internal
+dpendency on the field's value. For this drivers, the state gets
+duplicated internally.
+
+With the patchset applied, drivers can later switch over to plain
+Linux IRQ interfaces and DRM's IRQ midlayer can be declared legacy.
+
+v2:
+	* keep the original test for legacy drivers in
+	  drm_wait_vblank_ioctl() (Daniel)
+
+[1] https://lore.kernel.org/dri-devel/20210608090301.4752-1-tzimmermann@suse.de/
+
+Thomas Zimmermann (22):
+  drm/amdgpu: Track IRQ state in local device state
+  drm/hibmc: Call drm_irq_uninstall() unconditionally
+  drm/radeon: Track IRQ state in local device state
+  drm: Don't test for IRQ support in VBLANK ioctls
+  drm/komeda: Don't set struct drm_device.irq_enabled
+  drm/malidp: Don't set struct drm_device.irq_enabled
+  drm/exynos: Don't set struct drm_device.irq_enabled
+  drm/kirin: Don't set struct drm_device.irq_enabled
+  drm/imx: Don't set struct drm_device.irq_enabled
+  drm/mediatek: Don't set struct drm_device.irq_enabled
+  drm/nouveau: Don't set struct drm_device.irq_enabled
+  drm/omapdrm: Track IRQ state in local device state
+  drm/rockchip: Don't set struct drm_device.irq_enabled
+  drm/sti: Don't set struct drm_device.irq_enabled
+  drm/stm: Don't set struct drm_device.irq_enabled
+  drm/sun4i: Don't set struct drm_device.irq_enabled
+  drm/tegra: Don't set struct drm_device.irq_enabled
+  drm/tidss: Don't use struct drm_device.irq_enabled
+  drm/vc4: Don't set struct drm_device.irq_enabled
+  drm/vmwgfx: Don't set struct drm_device.irq_enabled
+  drm/xlnx: Don't set struct drm_device.irq_enabled
+  drm/zte: Don't set struct drm_device.irq_enabled
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c         |  6 +++---
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.c |  4 ----
+ drivers/gpu/drm/arm/malidp_drv.c                |  4 ----
+ drivers/gpu/drm/drm_irq.c                       | 10 +++-------
+ drivers/gpu/drm/drm_vblank.c                    | 13 +++++++++----
+ drivers/gpu/drm/exynos/exynos_drm_drv.c         | 10 ----------
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c |  3 +--
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c |  2 --
+ drivers/gpu/drm/imx/dcss/dcss-kms.c             |  3 ---
+ drivers/gpu/drm/imx/imx-drm-core.c              | 11 -----------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c          |  6 ------
+ drivers/gpu/drm/nouveau/nouveau_drm.c           |  3 ---
+ drivers/gpu/drm/omapdrm/omap_drv.h              |  2 ++
+ drivers/gpu/drm/omapdrm/omap_irq.c              |  6 +++---
+ drivers/gpu/drm/radeon/radeon_fence.c           |  2 +-
+ drivers/gpu/drm/radeon/radeon_irq_kms.c         | 16 ++++++++--------
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c     |  6 ------
+ drivers/gpu/drm/sti/sti_compositor.c            |  2 --
+ drivers/gpu/drm/stm/ltdc.c                      |  3 ---
+ drivers/gpu/drm/sun4i/sun4i_drv.c               |  2 --
+ drivers/gpu/drm/tegra/drm.c                     |  7 -------
+ drivers/gpu/drm/tidss/tidss_irq.c               |  3 ---
+ drivers/gpu/drm/vc4/vc4_kms.c                   |  1 -
+ drivers/gpu/drm/vmwgfx/vmwgfx_irq.c             |  8 --------
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c             |  2 --
+ drivers/gpu/drm/zte/zx_drm_drv.c                |  6 ------
+ 26 files changed, 30 insertions(+), 111 deletions(-)
+
+
+base-commit: 8c1323b422f8473421682ba783b5949ddd89a3f4
+prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
+prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
+--
+2.32.0
 
