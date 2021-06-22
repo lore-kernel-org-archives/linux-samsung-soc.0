@@ -2,274 +2,267 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B16FC48BDF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 05:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54543C2B9F4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 07:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F02361358
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 05:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D9C161107
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 07:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbhFVFtS (ORCPT
+        id S229789AbhFVHIf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Jun 2021 01:49:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229677AbhFVFtR (ORCPT
+        Tue, 22 Jun 2021 03:08:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41383 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229574AbhFVHIf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Jun 2021 01:49:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D07F36115B;
-        Tue, 22 Jun 2021 05:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1624340821;
-        bh=KRZRfZcqXFVpJXGqMt3gTkRjPb17Tz3tlN13szaVGV4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YcNb/YyzfzYAqFaCZfOqXyY9/LopvrphHj2ag4Rx8sl6HW5+u5K3RtIwtIZQWjKG+
-         20Lvo3vdPxogc8kBAA4zCan5LSZ9jKA91LnEJixR36fYirfhUkFu3dC8j6VijOwWUl
-         QjpMo9Yju5Ive/ZDwCi1lrg1q02ouJqEpo1tbWqQ=
-Date:   Tue, 22 Jun 2021 07:46:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tamseel Shams <m.shams@samsung.com>
-Cc:     krzysztof.kozlowski@canonical.com, jirislaby@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Tue, 22 Jun 2021 03:08:35 -0400
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <krzysztof.kozlowski@canonical.com>)
+        id 1lvaUE-0002qX-C5
+        for linux-samsung-soc@vger.kernel.org; Tue, 22 Jun 2021 07:06:18 +0000
+Received: by mail-wr1-f69.google.com with SMTP id b3-20020a05600018a3b029011a84f85e1cso5189003wri.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jun 2021 00:06:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lTXjEM62TZsdnqbafkcE1LO7W2CdxUF8uNFzRXMFweE=;
+        b=ZdA/O0Ip4mDWVRkuVsdLukRPyz8kbVS8F1O7g1NMFQBDJkkV3FyHf3xIdo3wXidC3m
+         sCA3x8VzJOwH32Cl8AYokq+1KOiVh6DAMciE/4rUHRUlt3SmOR2ga0AMeY2+oQbiENxj
+         5VpvPXkQeeqS8QGz9db/Io6HNfmJGzEo/xszFrGJoWllt2lvwXOR+qMWOPonhXiHxp6g
+         4sPKe+V/khwkcAyrjWM1N3NJJrjFVACf0NwPBAiU/oCrXqH98jXflLzHlwS/38dX6UUw
+         KYzYPzZYwFVGaDVBYGNuNSZm6yR3IY2K33Rq94yzw8pTTH1eSfdyj4qFbFXLLKzxVd+j
+         ovaA==
+X-Gm-Message-State: AOAM532739X/mbc7WtGGCRtH05ps3SaIlDTTfm6I4jyQj/t42z0Vxal/
+        Av1U+edprOUMnrLJ2aI60b7AnzIvWRDgsSxL+X7CjE2xj7X7iyl4+YvtfEmaC3FXzClcScG2wJH
+        gTylqX3ELhIvbeJz8V812Ti+Vmqx1KShiXc59N8dwukY8chwz
+X-Received: by 2002:a05:6000:2:: with SMTP id h2mr2790448wrx.347.1624345578006;
+        Tue, 22 Jun 2021 00:06:18 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwiXsFCAg1kqgd0xWRFS3Ug29pVJQn/MmYUKAXDKg2JDMTx0ckzB/LQVNNxLH0oeFk/78hvdw==
+X-Received: by 2002:a05:6000:2:: with SMTP id h2mr2790422wrx.347.1624345577744;
+        Tue, 22 Jun 2021 00:06:17 -0700 (PDT)
+Received: from [192.168.1.115] (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
+        by smtp.gmail.com with ESMTPSA id 11sm1321777wmf.20.2021.06.22.00.06.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jun 2021 00:06:17 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH] serial: samsung: use dma_ops of DMA if attached
+To:     M Tamseel Shams <m.shams@samsung.com>, kgene@kernel.org,
+        gregkh@linuxfoundation.org, jslaby@suse.com
+Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
         ajaykumar.rs@samsung.com
-Subject: Re: [PATCH v2] serial: samsung: use dma_ops of DMA if attached
-Message-ID: <YNF5T3dLjGZ7z0Gw@kroah.com>
-References: <CGME20210622034818epcas5p3837ce2315f5c57980576f10b8fc7efeb@epcas5p3.samsung.com>
- <20210622035202.5260-1-m.shams@samsung.com>
+References: <CGME20210621044517epcas5p187affa518a18a3d019deb0c189cd8396@epcas5p1.samsung.com>
+ <20210621044916.41564-1-m.shams@samsung.com>
+ <8935a448-04b7-91ce-203a-9f0d7e377052@canonical.com>
+ <004f01d766a0$567b9860$0372c920$@samsung.com>
+Message-ID: <4b2576c1-c986-a4d8-d6cf-661ca056ecee@canonical.com>
+Date:   Tue, 22 Jun 2021 09:06:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210622035202.5260-1-m.shams@samsung.com>
+In-Reply-To: <004f01d766a0$567b9860$0372c920$@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 22, 2021 at 09:22:02AM +0530, Tamseel Shams wrote:
-> When DMA is used for TX and RX by serial driver, it should
-> pass the DMA device pointer to DMA API instead of UART device
-> pointer.
+On 21/06/2021 15:21, M Tamseel Shams wrote:
+> Hi,
 > 
-> This patch is necessary to fix the SMMU page faults
-> which is observed when a DMA(with SMMU enabled) is attached
-> to UART for transfer.
+>>
+>> Hi,
+>>
+>> Thanks for the patch.
+>>
+>> On 21/06/2021 06:49, Tamseel Shams wrote:
+>>> When DMA is used for TX and RX by serial driver, it should pass the
+>>> DMA device pointer to DMA API instead of UART device pointer.
+>>
+>> Hmmm, but why DMA device pointer should be used?
+>>
+>>>
+>>> This patch is necessary to fix the SMMU page faults which is observed
+>>> when a DMA(with SMMU enabled) is attached to UART for transfer.
+>>>
+>>> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>> ---
+>>>  drivers/tty/serial/samsung_tty.c | 60
+>>> +++++++++++++++++++++++++-------
+>>>  1 file changed, 48 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/tty/serial/samsung_tty.c
+>>> b/drivers/tty/serial/samsung_tty.c
+>>> index b923683e6a25..5bdc7dd2a5e2 100644
+>>> --- a/drivers/tty/serial/samsung_tty.c
+>>> +++ b/drivers/tty/serial/samsung_tty.c
+>>> @@ -284,8 +284,13 @@ static void s3c24xx_serial_stop_tx(struct uart_port
+>> *port)
+>>>  	struct s3c24xx_uart_dma *dma = ourport->dma;
+>>>  	struct circ_buf *xmit = &port->state->xmit;
+>>>  	struct dma_tx_state state;
+>>> +	struct device *dma_map_ops_dev = ourport->port.dev;
+>>>  	int count;
+>>>
+>>> +	/* Pick dma_ops of DMA device if DMA device is attached */
+>>
+>> You mention here and further comments "dma_ops". I don't see you changing
+>> the DMA ops, but the device. It's quite confusing. I think you meant a DMA
+>> device shall be passed to DMA API?
+>>
+> Yes, DMA device should be used for DMA API because only the DMA device is aware of
+> how the device connects to the memory. There might be an extra level of address translation
+> due to a SMMU attached to the DMA device. When serial device pointer device is used
+> for DMA API, the DMA API will have no clue of the SMMU attached to the DMA device.
+
+Thanks, this should be in commit msg.
+
 > 
-> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  drivers/tty/serial/samsung_tty.c | 62 +++++++++++++++++++++++++-------
->  1 file changed, 50 insertions(+), 12 deletions(-)
+>> Second question: you write that DMA devices should be used if DMA is attached
+>> and in the code you follow such pattern a lot:
+>>
+>>> +	if (dma && dma->tx_chan)
+>>> +		dma_map_ops_dev = dma->tx_chan->device->dev;
+>>> +
+>>
+>> Are you trying to say that if DMA is not attached, UART device should be used? If
+>> DMA is not attached, how are the DMA operations used then?
+>>
+> If DMA is not attached, this part of code related to dma_engine or DMA API do not
+> get called. There will not be any DMA operations at all.
+
+Now I get it. The "When" in your description followed by multiple
+comments "if DMA device is attached" confused me that you expect to use
+UART device for DMA operations if DMA is not attached...
+
 > 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 9fbc61151c2e..0c924bb6108e 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -284,8 +284,13 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
->  	struct s3c24xx_uart_dma *dma = ourport->dma;
->  	struct circ_buf *xmit = &port->state->xmit;
->  	struct dma_tx_state state;
-> +	struct device *dma_map_ops_dev = ourport->port.dev;
->  	int count;
->  
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->tx_chan)
-> +		dma_map_ops_dev = dma->tx_chan->device->dev;
-> +
->  	if (!ourport->tx_enabled)
->  		return;
->  
-> @@ -305,7 +310,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
->  		dmaengine_pause(dma->tx_chan);
->  		dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
->  		dmaengine_terminate_all(dma->tx_chan);
-> -		dma_sync_single_for_cpu(ourport->port.dev,
-> +		dma_sync_single_for_cpu(dma_map_ops_dev,
->  			dma->tx_transfer_addr, dma->tx_size, DMA_TO_DEVICE);
->  		async_tx_ack(dma->tx_desc);
->  		count = dma->tx_bytes_requested - state.residue;
-> @@ -331,14 +336,19 @@ static void s3c24xx_serial_tx_dma_complete(void *args)
->  	struct circ_buf *xmit = &port->state->xmit;
->  	struct s3c24xx_uart_dma *dma = ourport->dma;
->  	struct dma_tx_state state;
-> +	struct device *dma_map_ops_dev = ourport->port.dev;
->  	unsigned long flags;
->  	int count;
->  
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->tx_chan)
-> +		dma_map_ops_dev = dma->tx_chan->device->dev;
-> +
->  	dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
->  	count = dma->tx_bytes_requested - state.residue;
->  	async_tx_ack(dma->tx_desc);
->  
-> -	dma_sync_single_for_cpu(ourport->port.dev, dma->tx_transfer_addr,
-> +	dma_sync_single_for_cpu(dma_map_ops_dev, dma->tx_transfer_addr,
->  				dma->tx_size, DMA_TO_DEVICE);
->  
->  	spin_lock_irqsave(&port->lock, flags);
-> @@ -436,6 +446,11 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
->  	struct uart_port *port = &ourport->port;
->  	struct circ_buf *xmit = &port->state->xmit;
->  	struct s3c24xx_uart_dma *dma = ourport->dma;
-> +	struct device *dma_map_ops_dev = ourport->port.dev;
-> +
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->tx_chan)
-> +		dma_map_ops_dev = dma->tx_chan->device->dev;
->  
->  	if (ourport->tx_mode != S3C24XX_TX_DMA)
->  		enable_tx_dma(ourport);
-> @@ -443,7 +458,7 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
->  	dma->tx_size = count & ~(dma_get_cache_alignment() - 1);
->  	dma->tx_transfer_addr = dma->tx_addr + xmit->tail;
->  
-> -	dma_sync_single_for_device(ourport->port.dev, dma->tx_transfer_addr,
-> +	dma_sync_single_for_device(dma_map_ops_dev, dma->tx_transfer_addr,
->  				dma->tx_size, DMA_TO_DEVICE);
->  
->  	dma->tx_desc = dmaengine_prep_slave_single(dma->tx_chan,
-> @@ -510,12 +525,17 @@ static void s3c24xx_uart_copy_rx_to_tty(struct s3c24xx_uart_port *ourport,
->  		struct tty_port *tty, int count)
->  {
->  	struct s3c24xx_uart_dma *dma = ourport->dma;
-> +	struct device *dma_map_ops_dev = ourport->port.dev;
->  	int copied;
->  
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->rx_chan)
-> +		dma_map_ops_dev = dma->rx_chan->device->dev;
-> +
->  	if (!count)
->  		return;
->  
-> -	dma_sync_single_for_cpu(ourport->port.dev, dma->rx_addr,
-> +	dma_sync_single_for_cpu(dma_map_ops_dev, dma->rx_addr,
->  				dma->rx_size, DMA_FROM_DEVICE);
->  
->  	ourport->port.icount.rx += count;
-> @@ -635,8 +655,13 @@ static void s3c24xx_serial_rx_dma_complete(void *args)
->  static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port *ourport)
->  {
->  	struct s3c24xx_uart_dma *dma = ourport->dma;
-> +	struct device *dma_map_ops_dev = ourport->port.dev;
-> +
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->rx_chan)
-> +		dma_map_ops_dev = dma->rx_chan->device->dev;
->  
-> -	dma_sync_single_for_device(ourport->port.dev, dma->rx_addr,
-> +	dma_sync_single_for_device(dma_map_ops_dev, dma->rx_addr,
->  				dma->rx_size, DMA_FROM_DEVICE);
->  
->  	dma->rx_desc = dmaengine_prep_slave_single(dma->rx_chan,
-> @@ -1045,6 +1070,7 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  	struct s3c24xx_uart_dma	*dma = p->dma;
->  	struct dma_slave_caps dma_caps;
->  	const char *reason = NULL;
-> +	struct device *dma_map_ops_dev = p->port.dev;
->  	int ret;
->  
->  	/* Default slave configuration parameters */
-> @@ -1102,18 +1128,25 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  		goto err_release_tx;
->  	}
->  
-> -	dma->rx_addr = dma_map_single(p->port.dev, dma->rx_buf,
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->rx_chan)
-> +		dma_map_ops_dev = dma->rx_chan->device->dev;
-> +
-> +	dma->rx_addr = dma_map_single(dma_map_ops_dev, dma->rx_buf,
->  				dma->rx_size, DMA_FROM_DEVICE);
-> -	if (dma_mapping_error(p->port.dev, dma->rx_addr)) {
-> +	if (dma_mapping_error(dma_map_ops_dev, dma->rx_addr)) {
->  		reason = "DMA mapping error for RX buffer";
->  		ret = -EIO;
->  		goto err_free_rx;
->  	}
->  
-> +	/* Pick dma_ops of DMA device if DMA device is attached */
-> +	if (dma && dma->tx_chan)
-> +		dma_map_ops_dev = dma->tx_chan->device->dev;
->  	/* TX buffer */
-> -	dma->tx_addr = dma_map_single(p->port.dev, p->port.state->xmit.buf,
-> +	dma->tx_addr = dma_map_single(dma_map_ops_dev, p->port.state->xmit.buf,
->  				UART_XMIT_SIZE, DMA_TO_DEVICE);
-> -	if (dma_mapping_error(p->port.dev, dma->tx_addr)) {
-> +	if (dma_mapping_error(dma_map_ops_dev, dma->tx_addr)) {
->  		reason = "DMA mapping error for TX buffer";
->  		ret = -EIO;
->  		goto err_unmap_rx;
-> @@ -1122,7 +1155,9 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  	return 0;
->  
->  err_unmap_rx:
-> -	dma_unmap_single(p->port.dev, dma->rx_addr, dma->rx_size,
-> +	if (dma->rx_chan)
-> +		dma_map_ops_dev = dma->rx_chan->device->dev;
-> +	dma_unmap_single(dma_map_ops_dev, dma->rx_addr, dma->rx_size,
->  			 DMA_FROM_DEVICE);
->  err_free_rx:
->  	kfree(dma->rx_buf);
-> @@ -1139,10 +1174,12 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
->  static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
->  {
->  	struct s3c24xx_uart_dma	*dma = p->dma;
-> +	struct device *dma_map_ops_dev = p->port.dev;
->  
->  	if (dma->rx_chan) {
-> +		dma_map_ops_dev = dma->rx_chan->device->dev;
->  		dmaengine_terminate_all(dma->rx_chan);
-> -		dma_unmap_single(p->port.dev, dma->rx_addr,
-> +		dma_unmap_single(dma_map_ops_dev, dma->rx_addr,
->  				dma->rx_size, DMA_FROM_DEVICE);
->  		kfree(dma->rx_buf);
->  		dma_release_channel(dma->rx_chan);
-> @@ -1150,8 +1187,9 @@ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
->  	}
->  
->  	if (dma->tx_chan) {
-> +		dma_map_ops_dev = dma->tx_chan->device->dev;
->  		dmaengine_terminate_all(dma->tx_chan);
-> -		dma_unmap_single(p->port.dev, dma->tx_addr,
-> +		dma_unmap_single(dma_map_ops_dev, dma->tx_addr,
->  				UART_XMIT_SIZE, DMA_TO_DEVICE);
->  		dma_release_channel(dma->tx_chan);
->  		dma->tx_chan = NULL;
-> -- 
-> 2.17.1
+>>>  	if (!ourport->tx_enabled)
+>>>  		return;
+>>>
+>>> @@ -298,7 +303,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port
+>> *port)
+>>>  		dmaengine_pause(dma->tx_chan);
+>>>  		dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
+>>>  		dmaengine_terminate_all(dma->tx_chan);
+>>> -		dma_sync_single_for_cpu(ourport->port.dev,
+>>> +		dma_sync_single_for_cpu(dma_map_ops_dev,
+>>>  			dma->tx_transfer_addr, dma->tx_size,
+>> DMA_TO_DEVICE);
+>>>  		async_tx_ack(dma->tx_desc);
+>>>  		count = dma->tx_bytes_requested - state.residue; @@ -324,15
+>> +329,19
+>>> @@ static void s3c24xx_serial_tx_dma_complete(void *args)
+>>>  	struct circ_buf *xmit = &port->state->xmit;
+>>>  	struct s3c24xx_uart_dma *dma = ourport->dma;
+>>>  	struct dma_tx_state state;
+>>> +	struct device *dma_map_ops_dev = ourport->port.dev;
+>>>  	unsigned long flags;
+>>>  	int count;
+>>>
+>>> +	/* Pick dma_ops of DMA device if DMA device is attached */
+>>> +	if (dma && dma->tx_chan)
+>>> +		dma_map_ops_dev = dma->tx_chan->device->dev;
+
+Example is this one - you use here "if" suggesting there is "else". So
+what is the else condition? There is none...
+
+>>>
+>>>  	dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
+>>>  	count = dma->tx_bytes_requested - state.residue;
+>>>  	async_tx_ack(dma->tx_desc);
+>>>
+>>> -	dma_sync_single_for_cpu(ourport->port.dev, dma->tx_transfer_addr,
+>>> +	dma_sync_single_for_cpu(dma_map_ops_dev, dma->tx_transfer_addr,
+>>>  				dma->tx_size, DMA_TO_DEVICE);
+>>>
+>>>  	spin_lock_irqsave(&port->lock, flags); @@ -408,7 +417,11 @@ static
+>>> int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
+>>>  	struct uart_port *port = &ourport->port;
+>>>  	struct circ_buf *xmit = &port->state->xmit;
+>>>  	struct s3c24xx_uart_dma *dma = ourport->dma;
+>>> +	struct device *dma_map_ops_dev = ourport->port.dev;
+>>>
+>>> +	/* Pick dma_ops of DMA device if DMA device is attached */
+>>> +	if (dma && dma->tx_chan)
+>>> +		dma_map_ops_dev = dma->tx_chan->device->dev;
+>>>
+>>>  	if (ourport->tx_mode != S3C24XX_TX_DMA)
+>>>  		enable_tx_dma(ourport);
+>>> @@ -416,7 +429,7 @@ static int s3c24xx_serial_start_tx_dma(struct
+>> s3c24xx_uart_port *ourport,
+>>>  	dma->tx_size = count & ~(dma_get_cache_alignment() - 1);
+>>>  	dma->tx_transfer_addr = dma->tx_addr + xmit->tail;
+>>>
+>>> -	dma_sync_single_for_device(ourport->port.dev, dma-
+>>> tx_transfer_addr,
+>>> +	dma_sync_single_for_device(dma_map_ops_dev, dma-
+>>> tx_transfer_addr,
+>>>  				dma->tx_size, DMA_TO_DEVICE);
+>>>
+>>>  	dma->tx_desc = dmaengine_prep_slave_single(dma->tx_chan,
+>>> @@ -483,12 +496,17 @@ static void s3c24xx_uart_copy_rx_to_tty(struct
+>> s3c24xx_uart_port *ourport,
+>>>  		struct tty_port *tty, int count)
+>>>  {
+>>>  	struct s3c24xx_uart_dma *dma = ourport->dma;
+>>> +	struct device *dma_map_ops_dev = ourport->port.dev;
+>>>  	int copied;
+>>>
+>>> +	/* Pick dma_ops of DMA device if DMA device is attached */
+>>> +	if (dma && dma->rx_chan)
+>>> +		dma_map_ops_dev = dma->rx_chan->device->dev;
+>>> +
+>>>  	if (!count)
+>>>  		return;
+>>>
+>>> -	dma_sync_single_for_cpu(ourport->port.dev, dma->rx_addr,
+>>> +	dma_sync_single_for_cpu(dma_map_ops_dev, dma->rx_addr,
+>>>  				dma->rx_size, DMA_FROM_DEVICE);
+>>>
+>>>  	ourport->port.icount.rx += count;
+>>> @@ -600,8 +618,13 @@ static void s3c24xx_serial_rx_dma_complete(void
+>>> *args)  static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port
+>>> *ourport)  {
+>>>  	struct s3c24xx_uart_dma *dma = ourport->dma;
+>>> +	struct device *dma_map_ops_dev = ourport->port.dev;
+>>>
+>>> -	dma_sync_single_for_device(ourport->port.dev, dma->rx_addr,
+>>> +	/* Pick dma_ops of DMA device if DMA device is attached */
+>>> +	if (dma && dma->rx_chan)
+>>> +		dma_map_ops_dev = dma->rx_chan->device->dev;
+>>> +
+>>> +	dma_sync_single_for_device(dma_map_ops_dev, dma->rx_addr,
+>>>  				dma->rx_size, DMA_FROM_DEVICE);
+>>>
+>>>  	dma->rx_desc = dmaengine_prep_slave_single(dma->rx_chan,
+>>> @@ -983,6 +1006,7 @@ static int s3c24xx_serial_request_dma(struct
+>>> s3c24xx_uart_port *p)
+>>
+>> Offset of hunks looks here significantly different than mainline. The patch should
+>> be based and tested mainline tree. Which one did you choose as base?
+>>
+>> Using my email address not from get_maintainers.pl also suggests that you
+>> don't use anything recent as a base.
+>>
+> I used "master" branch of main linux-next tree as the base.
+> I will rebase on "tty-next" branch of TTY tree and post again.
+> 
+> Thanks & Regards,
+> Tamseel Shams
 > 
 
-Hi,
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/SubmittingPatches for what needs to be done
-  here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Best regards,
+Krzysztof
