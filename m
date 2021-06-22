@@ -5,70 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E128C49EBC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C5CC49EBF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 816626138C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D59D61380
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 14:10:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231613AbhFVOMa (ORCPT
+        id S231653AbhFVOMc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Jun 2021 10:12:30 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:34330 "EHLO
+        Tue, 22 Jun 2021 10:12:32 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34412 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231599AbhFVOM3 (ORCPT
+        with ESMTP id S231514AbhFVOMb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Jun 2021 10:12:29 -0400
+        Tue, 22 Jun 2021 10:12:31 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 113241FD5D;
-        Tue, 22 Jun 2021 14:10:13 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 304471FD6A;
+        Tue, 22 Jun 2021 14:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624371013; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624371015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nsb6EOV5i9yxNJWt/hSSm5Rr2kdRZDSU/aOUfcCebr0=;
-        b=ZNcm0/6CnNd7BvJvhLBC8ASvBLgQu7QZ9yO+BmqybX0/NSkVIso82Eq7YTLwlVJzSkvdbx
-        7XQR1WWI1nOcXn9TK+Fuq0iRbtu7Yfy/UAyFpgoBUbC8MaarsWLBDafYG4AEcVuGZr1azT
-        WrocGG3/0Ff8jXYG1KX3Pb0wIxuyBJM=
+        bh=GX5rVYPsIJFDJMqjcVWK0gcX9dqcNJgaBLAco3+q4FA=;
+        b=ihpPmzliXJJBrIj2f9CvJoRAb4V9Clgrb1s23+XgWZAjuF5O0GPkbKQdxdMmjCQLiPsmqD
+        8XF9sfJaOTcEn3KPu+yS/MwnF5ybXZMctF6FKDgi3JkXgnYLlo1PubYU73UJVIchy8D42y
+        hUjeKIhks6FlTkircbELTV4quXqlhFA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624371013;
+        s=susede2_ed25519; t=1624371015;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nsb6EOV5i9yxNJWt/hSSm5Rr2kdRZDSU/aOUfcCebr0=;
-        b=9sQelEixBwewxDbr3EUl+EMKS6mABBc3WpMZY8Ylu91oJWWCJVL6o6jSVQweOegMO7aUi5
-        7YvfHxPmfAL3JwDA==
+        bh=GX5rVYPsIJFDJMqjcVWK0gcX9dqcNJgaBLAco3+q4FA=;
+        b=LTbugzhSR3/R9rbwAWQHlrt3j893aGmWGKVUgLif8aiXm6Apm7G1yqfSsyCGsdMLIfSpdT
+        cIKpuwZwkjMqOeAA==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 0AD35118DD;
-        Tue, 22 Jun 2021 14:10:12 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 2A20C118DD;
+        Tue, 22 Jun 2021 14:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624371013; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624371015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nsb6EOV5i9yxNJWt/hSSm5Rr2kdRZDSU/aOUfcCebr0=;
-        b=ZNcm0/6CnNd7BvJvhLBC8ASvBLgQu7QZ9yO+BmqybX0/NSkVIso82Eq7YTLwlVJzSkvdbx
-        7XQR1WWI1nOcXn9TK+Fuq0iRbtu7Yfy/UAyFpgoBUbC8MaarsWLBDafYG4AEcVuGZr1azT
-        WrocGG3/0Ff8jXYG1KX3Pb0wIxuyBJM=
+        bh=GX5rVYPsIJFDJMqjcVWK0gcX9dqcNJgaBLAco3+q4FA=;
+        b=ihpPmzliXJJBrIj2f9CvJoRAb4V9Clgrb1s23+XgWZAjuF5O0GPkbKQdxdMmjCQLiPsmqD
+        8XF9sfJaOTcEn3KPu+yS/MwnF5ybXZMctF6FKDgi3JkXgnYLlo1PubYU73UJVIchy8D42y
+        hUjeKIhks6FlTkircbELTV4quXqlhFA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624371013;
+        s=susede2_ed25519; t=1624371015;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nsb6EOV5i9yxNJWt/hSSm5Rr2kdRZDSU/aOUfcCebr0=;
-        b=9sQelEixBwewxDbr3EUl+EMKS6mABBc3WpMZY8Ylu91oJWWCJVL6o6jSVQweOegMO7aUi5
-        7YvfHxPmfAL3JwDA==
+        bh=GX5rVYPsIJFDJMqjcVWK0gcX9dqcNJgaBLAco3+q4FA=;
+        b=LTbugzhSR3/R9rbwAWQHlrt3j893aGmWGKVUgLif8aiXm6Apm7G1yqfSsyCGsdMLIfSpdT
+        cIKpuwZwkjMqOeAA==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id KA3OAUTv0WD3UAAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:12 +0000
+        id QB1xCUbv0WD3UAAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Tue, 22 Jun 2021 14:10:14 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -101,9 +101,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 08/22] drm/kirin: Don't set struct drm_device.irq_enabled
-Date:   Tue, 22 Jun 2021 16:09:48 +0200
-Message-Id: <20210622141002.11590-9-tzimmermann@suse.de>
+Subject: [PATCH v2 10/22] drm/mediatek: Don't set struct drm_device.irq_enabled
+Date:   Tue, 22 Jun 2021 16:09:50 +0200
+Message-Id: <20210622141002.11590-11-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210622141002.11590-1-tzimmermann@suse.de>
 References: <20210622141002.11590-1-tzimmermann@suse.de>
@@ -114,26 +114,30 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't set it in kirin.
+with userspace modesetting. Don't set it in mediatek.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-index e590e19db657..98ae9a48f3fe 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-@@ -185,8 +185,6 @@ static int kirin_drm_kms_init(struct drm_device *dev,
- 		DRM_ERROR("failed to initialize vblank.\n");
- 		goto err_unbind_all;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index b46bdb8985da..9b60bec33d3b 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -270,12 +270,6 @@ static int mtk_drm_kms_init(struct drm_device *drm)
+ 		goto err_component_unbind;
  	}
--	/* with irq_enabled = true, we can use the vblank feature. */
--	dev->irq_enabled = true;
  
- 	/* reset all the states of crtc/plane/encoder/connector */
- 	drm_mode_config_reset(dev);
+-	/*
+-	 * We don't use the drm_irq_install() helpers provided by the DRM
+-	 * core, so we need to set this manually in order to allow the
+-	 * DRM_IOCTL_WAIT_VBLANK to operate correctly.
+-	 */
+-	drm->irq_enabled = true;
+ 	ret = drm_vblank_init(drm, MAX_CRTC);
+ 	if (ret < 0)
+ 		goto err_component_unbind;
 -- 
 2.32.0
 
