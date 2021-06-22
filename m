@@ -2,281 +2,301 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ED4C4743C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Jun 2021 14:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC873C2B9F4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 04:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7D0A6124B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Jun 2021 14:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5C860FE9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Jun 2021 04:29:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbhFUOSj (ORCPT
+        id S229751AbhFVEbj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Jun 2021 10:18:39 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:56978 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbhFUOSj (ORCPT
+        Tue, 22 Jun 2021 00:31:39 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:56251 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229668AbhFVEbj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Jun 2021 10:18:39 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210621141623epoutp022634b030abb3d882ac0de6a765ec6b1a~KnpY-mcCy2247122471epoutp02O
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jun 2021 14:16:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210621141623epoutp022634b030abb3d882ac0de6a765ec6b1a~KnpY-mcCy2247122471epoutp02O
+        Tue, 22 Jun 2021 00:31:39 -0400
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210622042921epoutp03757beb1acd21ac1904f2723b8a27c0a0~KzSIHZ1B-2590525905epoutp03S
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jun 2021 04:29:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210622042921epoutp03757beb1acd21ac1904f2723b8a27c0a0~KzSIHZ1B-2590525905epoutp03S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1624284983;
-        bh=+YOZQIA0VYLmb++HUK8eQxJhK0ZldtwTJ1UJlu/gxuQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=aJEvoUS7rsAA9EX+k+05F8oECZKEjpvkDDGrtLJd3C09KOTnOCrcc1inaMrZH3Pq8
-         gWMK4PILO6KhfPyDI2d38fH0mLP8yD0sQrSRHeWjPwtSv8pngOSZESxctGGYYwCBNC
-         WQT3cTP/0blOUyq+GMPQiU6KXikLdS378tQcLxfA=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20210621141623epcas5p2ce06f8c1a37f4e6b4c88af58c41409d3~KnpYfGD3t1669816698epcas5p2T;
-        Mon, 21 Jun 2021 14:16:23 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DA.D0.09595.73F90D06; Mon, 21 Jun 2021 23:16:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20210621134650epcas5p4a7771105cae63643c2594247f238441e~KnPlu42U71120611206epcas5p4P;
-        Mon, 21 Jun 2021 13:46:50 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210621134650epsmtrp1364841447030c424da91aaa50c87139a~KnPluQ8M11006210062epsmtrp1O;
-        Mon, 21 Jun 2021 13:46:50 +0000 (GMT)
-X-AuditID: b6c32a4a-eebff7000000257b-45-60d09f37a97c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4F.A1.08289.A4890D06; Mon, 21 Jun 2021 22:46:50 +0900 (KST)
-Received: from alimakhtar02 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210621134649epsmtip1d4a2c2eb4e0ab3043bd4668e2a4cefd6~KnPkz49Od0293502935epsmtip1f;
-        Mon, 21 Jun 2021 13:46:49 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <robh+dt@kernel.org>
-Cc:     <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <0120db2f-e25e-a4ae-669b-a404dbfae05b@canonical.com>
-Subject: RE: [PATCH 2/2] arm64: dts: exynos5433: Add cpu cache information
-Date:   Mon, 21 Jun 2021 19:16:38 +0530
-Message-ID: <000001d766a3$e2ff6610$a8fe3230$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHEo7zAfNlKfaR4gq1MTeAlf4A8nwIz090JAp9BlrYBinVXX6sRE1QQ
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7bCmuq75/AsJBkeuclhsfPuDyWLT42us
-        Fpd3zWGzmHF+H5NF694j7A6sHrMaetk8Nq3qZPPYvKTe4/MmuQCWKC6blNSczLLUIn27BK6M
-        Y18PsxXM16w4PXETawPjD7kuRk4OCQETiWffrrJ3MXJxCAnsZpT4srmTFcL5xCgx/89lqMxn
-        RollLWtZYVrOHlrDCJHYxSix6M9lKOclUNWSTYwgVWwCuhI7FrexgSREBBYySszZuZANJMEs
-        oC7x9MhDsFGcAo4Su+9tZOpi5OAQFvCSuNpsBhJmEVCVOLv4MguIzStgKTH3435WCFtQ4uTM
-        JywQY+Qltr+dwwxxkYLEz6fLwGpEBNwkbm/Zyg5RIy5x9GcPM8gNEgKtHBKLjj5gg2hwkXhx
-        5y8ThC0s8er4FnYIW0riZX8bO8g9EgLZEj27jCHCNRJL5x1jgbDtJQ5cmcMCUsIsoCmxfpc+
-        RFhWYuqpdUwQa/kken8/gZrOK7FjHoytKtH87irUGGmJid3drBMYlWYh+WwWks9mIflgFsK2
-        BYwsqxglUwuKc9NTi00LjPJSy/WKE3OLS/PS9ZLzczcxghONltcOxocPPugdYmTiYDzEKMHB
-        rCTCezPlQoIQb0piZVVqUX58UWlOavEhRmkOFiVx3qXshxKEBNITS1KzU1MLUotgskwcnFIN
-        TCv+Pk7c/mWRVZdgsdrnHvvCh3e3dN2T2v3fiMvpf6/NjQa5yCkvJ74+01S8N32Kx85FRrO/
-        OvOdqz43T/b0pH+TfRefY7Raes3t9obbb2Nzc3Y7HWV6vds9214x+VzpSrmtAYLz1hy5nXnF
-        IHeKx7fsRYeCLPq5duzsLH4Z/jHVLktm1nn7nIfiG5JY92nEuB09FrE26QDvl1UOx/aeX53y
-        /oLWhjMSX+6lvNjf+eqNAcfMY2s647s16vQZ094J6P3OklzQyj1l92t3k9iDX5ce/LNS9XNY
-        ilvY23uFSYdd530x2eoi3H1k5xZ3hbeTLP/u4+KsLze6cojVn4tTIPpaotjFkmc78vbbvbov
-        ly+sxFKckWioxVxUnAgAD4brhaMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSnK7XjAsJBjc2qFhsfPuDyWLT42us
-        Fpd3zWGzmHF+H5NF694j7A6sHrMaetk8Nq3qZPPYvKTe4/MmuQCWKC6blNSczLLUIn27BK6M
-        Y18PsxXM16w4PXETawPjD7kuRk4OCQETibOH1jB2MXJxCAnsYJRo+fSZHSIhLXF94wQoW1hi
-        5b/n7BBFzxkl1n+dzwKSYBPQldixuI0NJCEisJhR4s2EOWwgCWYBdYmnRx6ygthCAl8YJaZ9
-        dACxOQUcJXbf28jUxcjBISzgJXG12QwkzCKgKnF28WWwmbwClhJzP+5nhbAFJU7OfMICMVJb
-        4unNp1C2vMT2t3OYIY5TkPj5dBlYvYiAm8TtLVvZIWrEJY7+7GGewCg8C8moWUhGzUIyahaS
-        lgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYLjRUtrB+OeVR/0DjEycTAeYpTg
-        YFYS4b2ZciFBiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6p
-        BqauxYUJ+8+tdDi42p3bN6eX+eoNkbuXnZPto9JK5vt5v/kd+1tystS8p3uS911avPB8s1ZF
-        vaPy6WlXXx15dVLp4h1X2wl+v+Y0bz595K+yd1iuClt9D3fG0kediusT80o+3XoSU3mq+bG5
-        c4JNfELjL7uFxyQErjxX3jnvmerH+KtqZ0/kGrpMnT29eOX0dqNJxtndMfpTij4Kv209Nk1/
-        4rXgyecz8yt4rGf+M4nfuJJNYYrLtpcCWVceCUrNNrYNK2e6+luOZ41tvd+UHJE1zaqs1tFf
-        HW/eY78gIHRze7fRzj1rLqhnf+p3WHVeIuhqv8pSU4mWBQlHU34lnu78foR5bnZK+KvDJx97
-        T9+pxFKckWioxVxUnAgA00jeRAYDAAA=
-X-CMS-MailID: 20210621134650epcas5p4a7771105cae63643c2594247f238441e
+        s=mail20170921; t=1624336161;
+        bh=lWP1/+eZrzHstaQ/AT2T62KyWbs10mew8C3n6w1XkKQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=pOImwlXK01mcmol+Jp7P4At19edoAp9b+iQl0TPjcJEWYuPozaPxjv+DeI7Hv4O/q
+         rvy6uoJLU/zYtFi8EOskoMQag1woE8WmIoGbcoW+hxLHlVvSPmWlJQLfGZ6O6WKqpF
+         YEsI5NmJXot9XmnCn5eCdMIDRHshSbPBpGoiJx0U=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20210622042920epcas5p3549a22d1113cb11c056d932bccfd6c81~KzSG-W-u52459124591epcas5p3V;
+        Tue, 22 Jun 2021 04:29:20 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D8.27.09476.02761D06; Tue, 22 Jun 2021 13:29:20 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210622034818epcas5p3837ce2315f5c57980576f10b8fc7efeb~KyuSRssVG0855908559epcas5p3V;
+        Tue, 22 Jun 2021 03:48:18 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210622034818epsmtrp2784f980b414b4af3c46eaa8a010aa249~KyuSQtrLo0947109471epsmtrp2c;
+        Tue, 22 Jun 2021 03:48:18 +0000 (GMT)
+X-AuditID: b6c32a49-6a1ff70000002504-9c-60d16720e8a1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B0.00.08394.28D51D06; Tue, 22 Jun 2021 12:48:18 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210622034817epsmtip29945746b26433cfe79d09a63aa96e61f~KyuQwr_V30534405344epsmtip2Z;
+        Tue, 22 Jun 2021 03:48:16 +0000 (GMT)
+From:   Tamseel Shams <m.shams@samsung.com>
+To:     krzysztof.kozlowski@canonical.com, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+        ajaykumar.rs@samsung.com, Tamseel Shams <m.shams@samsung.com>
+Subject: [PATCH v2] serial: samsung: use dma_ops of DMA if attached
+Date:   Tue, 22 Jun 2021 09:22:02 +0530
+Message-Id: <20210622035202.5260-1-m.shams@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsWy7bCmlq5C+sUEg8N3xCwOvD/IYvFg3jY2
+        i+bF69ks3s2Vsdj49geTxabH11gtLu+aw2Yx4/w+Joszi3vZLe62LmZ34PKY1dDL5rFpVSeb
+        x/65a9g9Ni+p9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6MdXM+MRY8s6r4N+U0cwPjUcMu
+        Rk4OCQETifkTG1m7GLk4hAR2M0pc/3uRBcL5xCjx+PNtRgjnG6PE52k3mWFabh05BNWyl1Fi
+        +uYjUE4Lk8S79gNALRwcbAKaEsfPc4M0iAhESnzYs4kZpIZZ4CmjxPJj11lAEsICzhLzP61n
+        BqlnEVCVWPDLHyTMK2AuMWFVPxvEMnmJ1RsOgPVKCJxil2i68BzqCheJOxuvQhUJS7w6voUd
+        wpaS+PxuL1Q8X2L+vFVQ9RUSKy+8gbLtJQ5cmcMCspcZ6M71u/QhwrISU0+tYwKxmQX4JHp/
+        P2GCiPNK7JgHYytK/N/dD7VKXOLdiimsELaHxIYX19lBRgoJxEocORc5gVF2FsKCBYyMqxgl
+        UwuKc9NTi00LDPNSy/WKE3OLS/PS9ZLzczcxglODlucOxrsPPugdYmTiYDzEKMHBrCTCezPl
+        QoIQb0piZVVqUX58UWlOavEhRmkOFiVx3qXshxKEBNITS1KzU1MLUotgskwcnFINTOFWCk6T
+        FavLw6Wdr2rtypzJ4SjN5V/lfjT0hOSx/5POb+KbHu/v6tMSkZg5e+lKq4OC9+4ILzefe5eJ
+        x+XyjjUyBy53RmpturaxerfmngSPtZML7r/n6SuuXzthtzKzKsOcZ9fvFO8Wu240c8FX0wYf
+        pmTvCYtXJmv1KflbnmEOfjxh4UsrzudnF/Bsu5QWs5R9k2K62pPv2VxnLyxQL7BYeSc7TDK8
+        /4Ach1GOxL7G1e4TH0U/5Vm444GvXrqbrrDUBumgH6JziuT5RdcsF7UKT2ky0SiwaeW7tOfY
+        9sSzRsosHOc7xQ8bpSaaz27zffFGQefivflbYt1Uzgg0vTxWYv9ZuKRKOe/jRd6TSizFGYmG
+        WsxFxYkAE0U0HnwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsWy7bCSvG5T7MUEg6m75S0OvD/IYvFg3jY2
+        i+bF69ks3s2Vsdj49geTxabH11gtLu+aw2Yx4/w+Joszi3vZLe62LmZ34PKY1dDL5rFpVSeb
+        x/65a9g9Ni+p9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6MdXM+MRY8s6r4N+U0cwPjUcMu
+        Rk4OCQETiVtHDrF2MXJxCAnsZpR4M38LE0RCXGLar/2MELawxMp/z9khipqYJC71HAIq4uBg
+        E9CUOH6eG6RGRCBaYvHmQ4wgNcwCrxkltjyYANYsLOAsMf/TemaQehYBVYkFv/xBwrwC5hIT
+        VvWzQcyXl1i94QDzBEaeBYwMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxggNNS3MH
+        4/ZVH/QOMTJxMB5ilOBgVhLhvZlyIUGINyWxsiq1KD++qDQntfgQozQHi5I474Wuk/FCAumJ
+        JanZqakFqUUwWSYOTqkGpriyxh9vra/K3W5ZzXlWvf2IoxDrnhmPD1mo7LeZ+eLzyXB5X3/b
+        TyEVDnuEvpk8Wnwi4vPWOftO3dwf9HW2Pqvq3u3OG/L4p3M835M9y8txfvy1f9mJJ/Lqwler
+        JKUfrTO2r3r9TDuqdc4Mz+u7Fyw0f6Ln4W/O/dhnrh9bNmeczWsrFraFwYf0TW5n/vvr8W7d
+        xYyJTnsEGbrsv96oa00v9l3XfZ7f/ZRXW1hNwVbfN+I/o5LafjczpebnR+VrZd1uvLH654o8
+        0cQu+bOCwhJLzKx0fA8zXbXfNu3hY5WM/QphrsYLpG9Fra/P3KYVV8Sw7JHaS6/P2jk5ZqXV
+        Aa+Ejs/9fS5JQzxhQZqvEktxRqKhFnNRcSIAkh6F7KMCAAA=
+X-CMS-MailID: 20210622034818epcas5p3837ce2315f5c57980576f10b8fc7efeb
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20210617113314epcas5p4652e98d24d7f56a7c8461175bbb25456
-References: <20210617113739.66911-1-alim.akhtar@samsung.com>
-        <CGME20210617113314epcas5p4652e98d24d7f56a7c8461175bbb25456@epcas5p4.samsung.com>
-        <20210617113739.66911-2-alim.akhtar@samsung.com>
-        <0120db2f-e25e-a4ae-669b-a404dbfae05b@canonical.com>
+X-CMS-RootMailID: 20210622034818epcas5p3837ce2315f5c57980576f10b8fc7efeb
+References: <CGME20210622034818epcas5p3837ce2315f5c57980576f10b8fc7efeb@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof
+When DMA is used for TX and RX by serial driver, it should
+pass the DMA device pointer to DMA API instead of UART device
+pointer.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Sent: 21 June 2021 14:22
-> To: Alim Akhtar <alim.akhtar@samsung.com>; linux-kernel@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; robh+dt@kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Subject: Re: [PATCH 2/2] arm64: dts: exynos5433: Add cpu cache information
-> 
-> On 17/06/2021 13:37, Alim Akhtar wrote:
-> > This patch adds cpu caches information to its dt nodes so that the
-> > same is available to userspace via sysfs.
-> > This SoC has 48/32 KB I/D cache for each A57 cores with 2MB L2 cache.
-> > And 32/32 KB I/D cache for each A53 cores with 256KB L2 cache.
-> >
-> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> > ---
-> >  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 70
-> > ++++++++++++++++++++++
-> >  1 file changed, 70 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > index 18a912eee360..8183a59e9046 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> > @@ -62,6 +62,13 @@
-> >  			clock-names = "apolloclk";
-> >  			operating-points-v2 = <&cluster_a53_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0x8000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <128>;
-> > +			next-level-cache = <&apollo_l2>;
-> >  		};
-> >
-> >  		cpu1: cpu@101 {
-> > @@ -72,6 +79,13 @@
-> >  			clock-frequency = <1300000000>;
-> >  			operating-points-v2 = <&cluster_a53_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0x8000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <128>;
-> > +			next-level-cache = <&apollo_l2>;
-> >  		};
-> >
-> >  		cpu2: cpu@102 {
-> > @@ -82,6 +96,13 @@
-> >  			clock-frequency = <1300000000>;
-> >  			operating-points-v2 = <&cluster_a53_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0x8000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <128>;
-> > +			next-level-cache = <&apollo_l2>;
-> >  		};
-> >
-> >  		cpu3: cpu@103 {
-> > @@ -92,6 +113,13 @@
-> >  			clock-frequency = <1300000000>;
-> >  			operating-points-v2 = <&cluster_a53_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0x8000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <128>;
-> > +			next-level-cache = <&apollo_l2>;
-> >  		};
-> >
-> >  		cpu4: cpu@0 {
-> > @@ -104,6 +132,13 @@
-> >  			clock-names = "atlasclk";
-> >  			operating-points-v2 = <&cluster_a57_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0xc000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <256>;
-> > +			next-level-cache = <&atlas_l2>;
-> >  		};
-> >
-> >  		cpu5: cpu@1 {
-> > @@ -114,6 +149,13 @@
-> >  			clock-frequency = <1900000000>;
-> >  			operating-points-v2 = <&cluster_a57_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0xc000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <256>;
-> > +			next-level-cache = <&atlas_l2>;
-> >  		};
-> >
-> >  		cpu6: cpu@2 {
-> > @@ -124,6 +166,13 @@
-> >  			clock-frequency = <1900000000>;
-> >  			operating-points-v2 = <&cluster_a57_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0xc000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <256>;
-> > +			next-level-cache = <&atlas_l2>;
-> >  		};
-> >
-> >  		cpu7: cpu@3 {
-> > @@ -134,6 +183,27 @@
-> >  			clock-frequency = <1900000000>;
-> >  			operating-points-v2 = <&cluster_a57_opp_table>;
-> >  			#cooling-cells = <2>;
-> > +			i-cache-size = <0xc000>;
-> > +			i-cache-line-size = <64>;
-> > +			i-cache-sets = <256>;
-> > +			d-cache-size = <0x8000>;
-> > +			d-cache-line-size = <64>;
-> > +			d-cache-sets = <256>;
-> > +			next-level-cache = <&atlas_l2>;
-> > +		};
-> > +
-> > +		atlas_l2: l2-cache0 {
-> 
-> Few other nodes (PMU, OPP tables) use a57/a53 names instead of
-> codenames, so I would prefer to stay with them (so cluster_a57_l2).
-> 
-Thanks for review, will update in next patch set.
+This patch is necessary to fix the SMMU page faults
+which is observed when a DMA(with SMMU enabled) is attached
+to UART for transfer.
 
-> For Exynos7 it's fine as it uses Atlas already in labels.
-> 
-> > +			compatible = "cache";
-> > +			cache-size = <0x200000>;
-> > +			cache-line-size = <64>;
-> > +			cache-sets = <2048>;
-> > +		};
-> > +
-> > +		apollo_l2: l2-cache1 {
-> > +			compatible = "cache";
-> > +			cache-size = <0x40000>;
-> > +			cache-line-size = <64>;
-> > +			cache-sets = <256>;
-> >  		};
-> >  	};
-> >
-> >
-> 
-> 
-> Best regards,
-> Krzysztof
+Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/tty/serial/samsung_tty.c | 62 +++++++++++++++++++++++++-------
+ 1 file changed, 50 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 9fbc61151c2e..0c924bb6108e 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -284,8 +284,13 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
+ 	struct circ_buf *xmit = &port->state->xmit;
+ 	struct dma_tx_state state;
++	struct device *dma_map_ops_dev = ourport->port.dev;
+ 	int count;
+ 
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->tx_chan)
++		dma_map_ops_dev = dma->tx_chan->device->dev;
++
+ 	if (!ourport->tx_enabled)
+ 		return;
+ 
+@@ -305,7 +310,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
+ 		dmaengine_pause(dma->tx_chan);
+ 		dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
+ 		dmaengine_terminate_all(dma->tx_chan);
+-		dma_sync_single_for_cpu(ourport->port.dev,
++		dma_sync_single_for_cpu(dma_map_ops_dev,
+ 			dma->tx_transfer_addr, dma->tx_size, DMA_TO_DEVICE);
+ 		async_tx_ack(dma->tx_desc);
+ 		count = dma->tx_bytes_requested - state.residue;
+@@ -331,14 +336,19 @@ static void s3c24xx_serial_tx_dma_complete(void *args)
+ 	struct circ_buf *xmit = &port->state->xmit;
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
+ 	struct dma_tx_state state;
++	struct device *dma_map_ops_dev = ourport->port.dev;
+ 	unsigned long flags;
+ 	int count;
+ 
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->tx_chan)
++		dma_map_ops_dev = dma->tx_chan->device->dev;
++
+ 	dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
+ 	count = dma->tx_bytes_requested - state.residue;
+ 	async_tx_ack(dma->tx_desc);
+ 
+-	dma_sync_single_for_cpu(ourport->port.dev, dma->tx_transfer_addr,
++	dma_sync_single_for_cpu(dma_map_ops_dev, dma->tx_transfer_addr,
+ 				dma->tx_size, DMA_TO_DEVICE);
+ 
+ 	spin_lock_irqsave(&port->lock, flags);
+@@ -436,6 +446,11 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
+ 	struct uart_port *port = &ourport->port;
+ 	struct circ_buf *xmit = &port->state->xmit;
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
++	struct device *dma_map_ops_dev = ourport->port.dev;
++
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->tx_chan)
++		dma_map_ops_dev = dma->tx_chan->device->dev;
+ 
+ 	if (ourport->tx_mode != S3C24XX_TX_DMA)
+ 		enable_tx_dma(ourport);
+@@ -443,7 +458,7 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
+ 	dma->tx_size = count & ~(dma_get_cache_alignment() - 1);
+ 	dma->tx_transfer_addr = dma->tx_addr + xmit->tail;
+ 
+-	dma_sync_single_for_device(ourport->port.dev, dma->tx_transfer_addr,
++	dma_sync_single_for_device(dma_map_ops_dev, dma->tx_transfer_addr,
+ 				dma->tx_size, DMA_TO_DEVICE);
+ 
+ 	dma->tx_desc = dmaengine_prep_slave_single(dma->tx_chan,
+@@ -510,12 +525,17 @@ static void s3c24xx_uart_copy_rx_to_tty(struct s3c24xx_uart_port *ourport,
+ 		struct tty_port *tty, int count)
+ {
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
++	struct device *dma_map_ops_dev = ourport->port.dev;
+ 	int copied;
+ 
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->rx_chan)
++		dma_map_ops_dev = dma->rx_chan->device->dev;
++
+ 	if (!count)
+ 		return;
+ 
+-	dma_sync_single_for_cpu(ourport->port.dev, dma->rx_addr,
++	dma_sync_single_for_cpu(dma_map_ops_dev, dma->rx_addr,
+ 				dma->rx_size, DMA_FROM_DEVICE);
+ 
+ 	ourport->port.icount.rx += count;
+@@ -635,8 +655,13 @@ static void s3c24xx_serial_rx_dma_complete(void *args)
+ static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port *ourport)
+ {
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
++	struct device *dma_map_ops_dev = ourport->port.dev;
++
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->rx_chan)
++		dma_map_ops_dev = dma->rx_chan->device->dev;
+ 
+-	dma_sync_single_for_device(ourport->port.dev, dma->rx_addr,
++	dma_sync_single_for_device(dma_map_ops_dev, dma->rx_addr,
+ 				dma->rx_size, DMA_FROM_DEVICE);
+ 
+ 	dma->rx_desc = dmaengine_prep_slave_single(dma->rx_chan,
+@@ -1045,6 +1070,7 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+ 	struct s3c24xx_uart_dma	*dma = p->dma;
+ 	struct dma_slave_caps dma_caps;
+ 	const char *reason = NULL;
++	struct device *dma_map_ops_dev = p->port.dev;
+ 	int ret;
+ 
+ 	/* Default slave configuration parameters */
+@@ -1102,18 +1128,25 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+ 		goto err_release_tx;
+ 	}
+ 
+-	dma->rx_addr = dma_map_single(p->port.dev, dma->rx_buf,
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->rx_chan)
++		dma_map_ops_dev = dma->rx_chan->device->dev;
++
++	dma->rx_addr = dma_map_single(dma_map_ops_dev, dma->rx_buf,
+ 				dma->rx_size, DMA_FROM_DEVICE);
+-	if (dma_mapping_error(p->port.dev, dma->rx_addr)) {
++	if (dma_mapping_error(dma_map_ops_dev, dma->rx_addr)) {
+ 		reason = "DMA mapping error for RX buffer";
+ 		ret = -EIO;
+ 		goto err_free_rx;
+ 	}
+ 
++	/* Pick dma_ops of DMA device if DMA device is attached */
++	if (dma && dma->tx_chan)
++		dma_map_ops_dev = dma->tx_chan->device->dev;
+ 	/* TX buffer */
+-	dma->tx_addr = dma_map_single(p->port.dev, p->port.state->xmit.buf,
++	dma->tx_addr = dma_map_single(dma_map_ops_dev, p->port.state->xmit.buf,
+ 				UART_XMIT_SIZE, DMA_TO_DEVICE);
+-	if (dma_mapping_error(p->port.dev, dma->tx_addr)) {
++	if (dma_mapping_error(dma_map_ops_dev, dma->tx_addr)) {
+ 		reason = "DMA mapping error for TX buffer";
+ 		ret = -EIO;
+ 		goto err_unmap_rx;
+@@ -1122,7 +1155,9 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+ 	return 0;
+ 
+ err_unmap_rx:
+-	dma_unmap_single(p->port.dev, dma->rx_addr, dma->rx_size,
++	if (dma->rx_chan)
++		dma_map_ops_dev = dma->rx_chan->device->dev;
++	dma_unmap_single(dma_map_ops_dev, dma->rx_addr, dma->rx_size,
+ 			 DMA_FROM_DEVICE);
+ err_free_rx:
+ 	kfree(dma->rx_buf);
+@@ -1139,10 +1174,12 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
+ {
+ 	struct s3c24xx_uart_dma	*dma = p->dma;
++	struct device *dma_map_ops_dev = p->port.dev;
+ 
+ 	if (dma->rx_chan) {
++		dma_map_ops_dev = dma->rx_chan->device->dev;
+ 		dmaengine_terminate_all(dma->rx_chan);
+-		dma_unmap_single(p->port.dev, dma->rx_addr,
++		dma_unmap_single(dma_map_ops_dev, dma->rx_addr,
+ 				dma->rx_size, DMA_FROM_DEVICE);
+ 		kfree(dma->rx_buf);
+ 		dma_release_channel(dma->rx_chan);
+@@ -1150,8 +1187,9 @@ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
+ 	}
+ 
+ 	if (dma->tx_chan) {
++		dma_map_ops_dev = dma->tx_chan->device->dev;
+ 		dmaengine_terminate_all(dma->tx_chan);
+-		dma_unmap_single(p->port.dev, dma->tx_addr,
++		dma_unmap_single(dma_map_ops_dev, dma->tx_addr,
+ 				UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 		dma_release_channel(dma->tx_chan);
+ 		dma->tx_chan = NULL;
+-- 
+2.17.1
 
