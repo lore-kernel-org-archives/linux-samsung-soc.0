@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31169C49EAF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF20C49EB9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC31613ED
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7941613E8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231653AbhFXHbo (ORCPT
+        id S231671AbhFXHbt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Jun 2021 03:31:44 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:55772 "EHLO
+        Thu, 24 Jun 2021 03:31:49 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:55934 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231532AbhFXHbn (ORCPT
+        with ESMTP id S231667AbhFXHbt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Jun 2021 03:31:43 -0400
+        Thu, 24 Jun 2021 03:31:49 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0714021986;
-        Thu, 24 Jun 2021 07:29:24 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 9F31E21966;
+        Thu, 24 Jun 2021 07:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624519764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624519769; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
-        b=nmIPqslFnX0Q80pdl86tf/ccQHTD1qXZsv4FKeiVGQ9IRRJxlLhagX7pxTlWyuquo0luD8
-        Y+yxCDiJS4aeG4Zy6HC0+Z8XbTzeV/i+7UpD8QoWiBZUnFCgN0PCysS1rlMIzQ1CvHfwPd
-        uBLM+l0Ri8muTKu8yIbga7XmmG+jxSY=
+        bh=zwf7mP0LsMNCN4pPPKF35auE5vJ/S0UeIANplAsdQLk=;
+        b=STo72iuJ1K+GaaokzevsxV96gotIhcfTkGxoYXkPfkfGnXn+eV9hSYQ7M56J/X/5pr2Piq
+        dN7V9D+0JTpMf6IAJ4s1Xh9V2VtMP2l+vKCc07lxDCe3T4nekc9Pc0LqlKnN7FBV63vJ4s
+        g/jQyb108MtwIRVfZKVIkt0t+hEI7a8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624519764;
+        s=susede2_ed25519; t=1624519769;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
-        b=4K5huN0VkhXvJqoObl1xqjkuOwsgHQq6A6n84t0A84IVQS58zLUjUZrDpXSMqUjQ/Qj+U9
-        My1vXx7mqxhEBrBw==
+        bh=zwf7mP0LsMNCN4pPPKF35auE5vJ/S0UeIANplAsdQLk=;
+        b=OaSfuOJr9a5VEb8ElaPdQsJmoyZJeP392R6BmApDZYZDeVZCL4FsZFxdQNtpc5lSIGGEkY
+        dG+xjtv7jnWykxAg==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id D5B5D11C9B;
-        Thu, 24 Jun 2021 07:29:22 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 84ABD11A97;
+        Thu, 24 Jun 2021 07:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624519763; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624519769; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
-        b=GXB3NT/hiSOvWGqH7SX1jWLCRIQsgSuCL9ZUMVM43hZtusQyoXnRYqMFYrFUwS06LB+rZw
-        /9bo2QzCoJsoALwtQzu3T3mbsshlB9DDYVZ2gneICHT2rX7jVJlMpTJ+lrJxWiNMz0I0jt
-        XvmFgm1jIDwBF8dHUaZb0mFaHSaagPs=
+        bh=zwf7mP0LsMNCN4pPPKF35auE5vJ/S0UeIANplAsdQLk=;
+        b=STo72iuJ1K+GaaokzevsxV96gotIhcfTkGxoYXkPfkfGnXn+eV9hSYQ7M56J/X/5pr2Piq
+        dN7V9D+0JTpMf6IAJ4s1Xh9V2VtMP2l+vKCc07lxDCe3T4nekc9Pc0LqlKnN7FBV63vJ4s
+        g/jQyb108MtwIRVfZKVIkt0t+hEI7a8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624519763;
+        s=susede2_ed25519; t=1624519769;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
-        b=s5ZiQAcpHVYNWTd+aExwSUDXm69sEq82qW7VdS9TIIEAlhuWm4ovd82h6Of8oFUTT/TDcK
-        fPsEbmXK94XTchBw==
+        bh=zwf7mP0LsMNCN4pPPKF35auE5vJ/S0UeIANplAsdQLk=;
+        b=OaSfuOJr9a5VEb8ElaPdQsJmoyZJeP392R6BmApDZYZDeVZCL4FsZFxdQNtpc5lSIGGEkY
+        dG+xjtv7jnWykxAg==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id YJc+M1I01GAJfwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 07:29:22 +0000
+        id 2IuLH1g01GAJfwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 07:29:28 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -107,9 +107,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v3 03/27] drm/radeon: Track IRQ state in local device state
-Date:   Thu, 24 Jun 2021 09:28:52 +0200
-Message-Id: <20210624072916.27703-4-tzimmermann@suse.de>
+Subject: [PATCH v3 08/27] drm/malidp: Don't set struct drm_device.irq_enabled
+Date:   Thu, 24 Jun 2021 09:28:57 +0200
+Message-Id: <20210624072916.27703-9-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210624072916.27703-1-tzimmermann@suse.de>
 References: <20210624072916.27703-1-tzimmermann@suse.de>
@@ -119,108 +119,46 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Replace usage of struct drm_device.irq_enabled with the driver's
-own state field struct radeon_device.irq.installed. The field in
-the DRM device structure is considered legacy and should not be
-used by KMS drivers.
+The field drm_device.irq_enabled is only used by legacy drivers
+with userspace modesetting. Don't set it in malidp.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/radeon/radeon_fence.c   |  2 +-
- drivers/gpu/drm/radeon/radeon_irq_kms.c | 16 ++++++++--------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/arm/malidp_drv.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_fence.c b/drivers/gpu/drm/radeon/radeon_fence.c
-index 0d8ef2368adf..7ec581363e23 100644
---- a/drivers/gpu/drm/radeon/radeon_fence.c
-+++ b/drivers/gpu/drm/radeon/radeon_fence.c
-@@ -288,7 +288,7 @@ static void radeon_fence_check_lockup(struct work_struct *work)
- 		return;
- 	}
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index de59f3302516..78d15b04b105 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -847,8 +847,6 @@ static int malidp_bind(struct device *dev)
+ 	if (ret < 0)
+ 		goto irq_init_fail;
  
--	if (fence_drv->delayed_irq && rdev->ddev->irq_enabled) {
-+	if (fence_drv->delayed_irq && rdev->irq.installed) {
- 		unsigned long irqflags;
- 
- 		fence_drv->delayed_irq = false;
-diff --git a/drivers/gpu/drm/radeon/radeon_irq_kms.c b/drivers/gpu/drm/radeon/radeon_irq_kms.c
-index 84d0b1a3355f..a36ce826d0c0 100644
---- a/drivers/gpu/drm/radeon/radeon_irq_kms.c
-+++ b/drivers/gpu/drm/radeon/radeon_irq_kms.c
-@@ -357,7 +357,7 @@ void radeon_irq_kms_sw_irq_get(struct radeon_device *rdev, int ring)
- {
- 	unsigned long irqflags;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	if (atomic_inc_return(&rdev->irq.ring_int[ring]) == 1) {
-@@ -396,7 +396,7 @@ void radeon_irq_kms_sw_irq_put(struct radeon_device *rdev, int ring)
- {
- 	unsigned long irqflags;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	if (atomic_dec_and_test(&rdev->irq.ring_int[ring])) {
-@@ -422,7 +422,7 @@ void radeon_irq_kms_pflip_irq_get(struct radeon_device *rdev, int crtc)
- 	if (crtc < 0 || crtc >= rdev->num_crtc)
- 		return;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	if (atomic_inc_return(&rdev->irq.pflip[crtc]) == 1) {
-@@ -448,7 +448,7 @@ void radeon_irq_kms_pflip_irq_put(struct radeon_device *rdev, int crtc)
- 	if (crtc < 0 || crtc >= rdev->num_crtc)
- 		return;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	if (atomic_dec_and_test(&rdev->irq.pflip[crtc])) {
-@@ -470,7 +470,7 @@ void radeon_irq_kms_enable_afmt(struct radeon_device *rdev, int block)
- {
- 	unsigned long irqflags;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
-@@ -492,7 +492,7 @@ void radeon_irq_kms_disable_afmt(struct radeon_device *rdev, int block)
- {
- 	unsigned long irqflags;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
-@@ -514,7 +514,7 @@ void radeon_irq_kms_enable_hpd(struct radeon_device *rdev, unsigned hpd_mask)
- 	unsigned long irqflags;
- 	int i;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
-@@ -537,7 +537,7 @@ void radeon_irq_kms_disable_hpd(struct radeon_device *rdev, unsigned hpd_mask)
- 	unsigned long irqflags;
- 	int i;
- 
--	if (!rdev->ddev->irq_enabled)
-+	if (!rdev->irq.installed)
- 		return;
- 
- 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
+-	drm->irq_enabled = true;
+-
+ 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to initialise vblank\n");
+@@ -874,7 +872,6 @@ static int malidp_bind(struct device *dev)
+ vblank_fail:
+ 	malidp_se_irq_fini(hwdev);
+ 	malidp_de_irq_fini(hwdev);
+-	drm->irq_enabled = false;
+ irq_init_fail:
+ 	drm_atomic_helper_shutdown(drm);
+ 	component_unbind_all(dev, drm);
+@@ -909,7 +906,6 @@ static void malidp_unbind(struct device *dev)
+ 	drm_atomic_helper_shutdown(drm);
+ 	malidp_se_irq_fini(hwdev);
+ 	malidp_de_irq_fini(hwdev);
+-	drm->irq_enabled = false;
+ 	component_unbind_all(dev, drm);
+ 	of_node_put(malidp->crtc.port);
+ 	malidp->crtc.port = NULL;
 -- 
 2.32.0
 
