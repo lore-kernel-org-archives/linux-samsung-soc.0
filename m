@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C186C49EAB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31169C49EAF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54D6B613EE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC31613ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbhFXHbr (ORCPT
+        id S231653AbhFXHbo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Jun 2021 03:31:47 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:55902 "EHLO
+        Thu, 24 Jun 2021 03:31:44 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:55772 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231655AbhFXHbq (ORCPT
+        with ESMTP id S231532AbhFXHbn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Jun 2021 03:31:46 -0400
+        Thu, 24 Jun 2021 03:31:43 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 592C82198F;
-        Thu, 24 Jun 2021 07:29:27 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0714021986;
+        Thu, 24 Jun 2021 07:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624519767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624519764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8ogLEOlbRqAQd2RJqrB9gv196PzgeGQ2osFk6goTStA=;
-        b=CY1YzbPa8ReAs8p4kHDM+yaxEBVk5CXqCsu0IySC1RfbwEkY4dKSlInc3L5atuuzWjWG9y
-        2rhcnUVZIRIdl7e1RKAsaXKBS8o6DEFnwHaBXtMDKV8EsggH0D5I2PSYe+h7DvXTIIqiqp
-        e6GKt42IMCGtpyKD6OugfqxZnkj93iY=
+        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
+        b=nmIPqslFnX0Q80pdl86tf/ccQHTD1qXZsv4FKeiVGQ9IRRJxlLhagX7pxTlWyuquo0luD8
+        Y+yxCDiJS4aeG4Zy6HC0+Z8XbTzeV/i+7UpD8QoWiBZUnFCgN0PCysS1rlMIzQ1CvHfwPd
+        uBLM+l0Ri8muTKu8yIbga7XmmG+jxSY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624519767;
+        s=susede2_ed25519; t=1624519764;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8ogLEOlbRqAQd2RJqrB9gv196PzgeGQ2osFk6goTStA=;
-        b=ErFol0Ee/4pC9+kbn4Eui4amW/RaGhBNhVK19emWptQ/sOx9Cnz/28FsK6156STDeGl9Bm
-        YSUlrHtk2rMVlRAA==
+        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
+        b=4K5huN0VkhXvJqoObl1xqjkuOwsgHQq6A6n84t0A84IVQS58zLUjUZrDpXSMqUjQ/Qj+U9
+        My1vXx7mqxhEBrBw==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 421E411A97;
-        Thu, 24 Jun 2021 07:29:26 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id D5B5D11C9B;
+        Thu, 24 Jun 2021 07:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624519767; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624519763; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8ogLEOlbRqAQd2RJqrB9gv196PzgeGQ2osFk6goTStA=;
-        b=CY1YzbPa8ReAs8p4kHDM+yaxEBVk5CXqCsu0IySC1RfbwEkY4dKSlInc3L5atuuzWjWG9y
-        2rhcnUVZIRIdl7e1RKAsaXKBS8o6DEFnwHaBXtMDKV8EsggH0D5I2PSYe+h7DvXTIIqiqp
-        e6GKt42IMCGtpyKD6OugfqxZnkj93iY=
+        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
+        b=GXB3NT/hiSOvWGqH7SX1jWLCRIQsgSuCL9ZUMVM43hZtusQyoXnRYqMFYrFUwS06LB+rZw
+        /9bo2QzCoJsoALwtQzu3T3mbsshlB9DDYVZ2gneICHT2rX7jVJlMpTJ+lrJxWiNMz0I0jt
+        XvmFgm1jIDwBF8dHUaZb0mFaHSaagPs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624519767;
+        s=susede2_ed25519; t=1624519763;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8ogLEOlbRqAQd2RJqrB9gv196PzgeGQ2osFk6goTStA=;
-        b=ErFol0Ee/4pC9+kbn4Eui4amW/RaGhBNhVK19emWptQ/sOx9Cnz/28FsK6156STDeGl9Bm
-        YSUlrHtk2rMVlRAA==
+        bh=vCvMaakhW43FBHwwwgIT0NH9WFXQUbPBWotzOXDN7eU=;
+        b=s5ZiQAcpHVYNWTd+aExwSUDXm69sEq82qW7VdS9TIIEAlhuWm4ovd82h6Of8oFUTT/TDcK
+        fPsEbmXK94XTchBw==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id aNVJD1Y01GAJfwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 07:29:26 +0000
+        id YJc+M1I01GAJfwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 07:29:22 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -105,10 +105,11 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         intel-gfx@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 06/27] drm/i915: Track IRQ state in local device state
-Date:   Thu, 24 Jun 2021 09:28:55 +0200
-Message-Id: <20210624072916.27703-7-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH v3 03/27] drm/radeon: Track IRQ state in local device state
+Date:   Thu, 24 Jun 2021 09:28:52 +0200
+Message-Id: <20210624072916.27703-4-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210624072916.27703-1-tzimmermann@suse.de>
 References: <20210624072916.27703-1-tzimmermann@suse.de>
@@ -119,63 +120,107 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Replace usage of struct drm_device.irq_enabled with the driver's
-own state field struct drm_i915_private.irq_enabled. The field in
+own state field struct radeon_device.irq.installed. The field in
 the DRM device structure is considered legacy and should not be
 used by KMS drivers.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/i915/i915_drv.h | 2 ++
- drivers/gpu/drm/i915/i915_irq.c | 8 ++++----
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/radeon/radeon_fence.c   |  2 +-
+ drivers/gpu/drm/radeon/radeon_irq_kms.c | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
-index 01e11fe38642..48c1835bd54b 100644
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -1134,6 +1134,8 @@ struct drm_i915_private {
- 	/* For i915gm/i945gm vblank irq workaround */
- 	u8 vblank_enabled;
- 
-+	bool irq_enabled;
-+
- 	/* perform PHY state sanity checks? */
- 	bool chv_phy_assert[2];
- 
-diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
-index a11bdb667241..987211f21761 100644
---- a/drivers/gpu/drm/i915/i915_irq.c
-+++ b/drivers/gpu/drm/i915/i915_irq.c
-@@ -4488,14 +4488,14 @@ int intel_irq_install(struct drm_i915_private *dev_priv)
- 	 */
- 	dev_priv->runtime_pm.irqs_enabled = true;
- 
--	dev_priv->drm.irq_enabled = true;
-+	dev_priv->irq_enabled = true;
- 
- 	intel_irq_reset(dev_priv);
- 
- 	ret = request_irq(irq, intel_irq_handler(dev_priv),
- 			  IRQF_SHARED, DRIVER_NAME, dev_priv);
- 	if (ret < 0) {
--		dev_priv->drm.irq_enabled = false;
-+		dev_priv->irq_enabled = false;
- 		return ret;
+diff --git a/drivers/gpu/drm/radeon/radeon_fence.c b/drivers/gpu/drm/radeon/radeon_fence.c
+index 0d8ef2368adf..7ec581363e23 100644
+--- a/drivers/gpu/drm/radeon/radeon_fence.c
++++ b/drivers/gpu/drm/radeon/radeon_fence.c
+@@ -288,7 +288,7 @@ static void radeon_fence_check_lockup(struct work_struct *work)
+ 		return;
  	}
  
-@@ -4521,10 +4521,10 @@ void intel_irq_uninstall(struct drm_i915_private *dev_priv)
- 	 * intel_modeset_driver_remove() calling us out of sequence.
- 	 * Would be nice if it didn't do that...
- 	 */
--	if (!dev_priv->drm.irq_enabled)
-+	if (!dev_priv->irq_enabled)
+-	if (fence_drv->delayed_irq && rdev->ddev->irq_enabled) {
++	if (fence_drv->delayed_irq && rdev->irq.installed) {
+ 		unsigned long irqflags;
+ 
+ 		fence_drv->delayed_irq = false;
+diff --git a/drivers/gpu/drm/radeon/radeon_irq_kms.c b/drivers/gpu/drm/radeon/radeon_irq_kms.c
+index 84d0b1a3355f..a36ce826d0c0 100644
+--- a/drivers/gpu/drm/radeon/radeon_irq_kms.c
++++ b/drivers/gpu/drm/radeon/radeon_irq_kms.c
+@@ -357,7 +357,7 @@ void radeon_irq_kms_sw_irq_get(struct radeon_device *rdev, int ring)
+ {
+ 	unsigned long irqflags;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
  		return;
  
--	dev_priv->drm.irq_enabled = false;
-+	dev_priv->irq_enabled = false;
+ 	if (atomic_inc_return(&rdev->irq.ring_int[ring]) == 1) {
+@@ -396,7 +396,7 @@ void radeon_irq_kms_sw_irq_put(struct radeon_device *rdev, int ring)
+ {
+ 	unsigned long irqflags;
  
- 	intel_irq_reset(dev_priv);
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
  
+ 	if (atomic_dec_and_test(&rdev->irq.ring_int[ring])) {
+@@ -422,7 +422,7 @@ void radeon_irq_kms_pflip_irq_get(struct radeon_device *rdev, int crtc)
+ 	if (crtc < 0 || crtc >= rdev->num_crtc)
+ 		return;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
+ 
+ 	if (atomic_inc_return(&rdev->irq.pflip[crtc]) == 1) {
+@@ -448,7 +448,7 @@ void radeon_irq_kms_pflip_irq_put(struct radeon_device *rdev, int crtc)
+ 	if (crtc < 0 || crtc >= rdev->num_crtc)
+ 		return;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
+ 
+ 	if (atomic_dec_and_test(&rdev->irq.pflip[crtc])) {
+@@ -470,7 +470,7 @@ void radeon_irq_kms_enable_afmt(struct radeon_device *rdev, int block)
+ {
+ 	unsigned long irqflags;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
+ 
+ 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
+@@ -492,7 +492,7 @@ void radeon_irq_kms_disable_afmt(struct radeon_device *rdev, int block)
+ {
+ 	unsigned long irqflags;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
+ 
+ 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
+@@ -514,7 +514,7 @@ void radeon_irq_kms_enable_hpd(struct radeon_device *rdev, unsigned hpd_mask)
+ 	unsigned long irqflags;
+ 	int i;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
+ 
+ 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
+@@ -537,7 +537,7 @@ void radeon_irq_kms_disable_hpd(struct radeon_device *rdev, unsigned hpd_mask)
+ 	unsigned long irqflags;
+ 	int i;
+ 
+-	if (!rdev->ddev->irq_enabled)
++	if (!rdev->irq.installed)
+ 		return;
+ 
+ 	spin_lock_irqsave(&rdev->irq.lock, irqflags);
 -- 
 2.32.0
 
