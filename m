@@ -2,276 +2,343 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3BEC48BDF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 09:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33DBC49EA6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 09:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74934613BE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 09:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3671613F0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 09:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbhFXJCc (ORCPT
+        id S229928AbhFXJKT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Jun 2021 05:02:32 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:56660 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbhFXJCb (ORCPT
+        Thu, 24 Jun 2021 05:10:19 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:36178 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229918AbhFXJKS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Jun 2021 05:02:31 -0400
+        Thu, 24 Jun 2021 05:10:18 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id AE2BE1FD6B;
-        Thu, 24 Jun 2021 09:00:11 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 085B921966;
+        Thu, 24 Jun 2021 09:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624525211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=gb59PTGwPnqVr+gEmQvDXGouiV1yjYn7rlq1+gb5adI=;
-        b=l+ChCqAxzLXRh0JQgNjDYbc3nWPBhopZhHKPVP8QkV5dt6M/e9yD4OB9dT/mElYaHcfCG3
-        9rsJVMCGEJx28Tr7tc3OLIwGQqNGy5bng3H4TxvtXFqCKrkXT2m1ZadHoqQt6MRQ885oYZ
-        6nkwXPDJOFrx4Q4Z/BFbk4hBhmMKhJc=
+        t=1624525679; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rKL9mP48io+APDMklw5yU/nTFyyLtllrHvhRByxGfgM=;
+        b=Fa003aqPNfKvMmB5gj67Z2b+vADOqXwJZbsZa1wLiyJFEYxd8Ib341pE3+k1q3LB/3NTPM
+        sec4L/zG58xoB1lJqeaGcoJORFmdA4MYlT10zNcfBOK9OQqTDe4HPy2ViRmxXEaOVhWpeB
+        stgCohp2fTLc+re6z5B7wGsQj3RuBdw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624525211;
+        s=susede2_ed25519; t=1624525679;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=gb59PTGwPnqVr+gEmQvDXGouiV1yjYn7rlq1+gb5adI=;
-        b=377p+/n4cDRsywuG+PEaejRHej2Ikn3GSrM/YLvLdKAVsX8DF4flFy2CcjqLkUzt90eJni
-        Zx3may8AqOx76hDA==
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rKL9mP48io+APDMklw5yU/nTFyyLtllrHvhRByxGfgM=;
+        b=5fbRrwXqzrlBotN6vVs6nYUPpayauPPnI+y3I6tTE09d75iLijxUx+ydMD0QEa5X+6VQch
+        gQMq4UauX+vXn3AA==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 6628411A97;
-        Thu, 24 Jun 2021 09:00:11 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id D3DC011A97;
+        Thu, 24 Jun 2021 09:07:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624525211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=gb59PTGwPnqVr+gEmQvDXGouiV1yjYn7rlq1+gb5adI=;
-        b=l+ChCqAxzLXRh0JQgNjDYbc3nWPBhopZhHKPVP8QkV5dt6M/e9yD4OB9dT/mElYaHcfCG3
-        9rsJVMCGEJx28Tr7tc3OLIwGQqNGy5bng3H4TxvtXFqCKrkXT2m1ZadHoqQt6MRQ885oYZ
-        6nkwXPDJOFrx4Q4Z/BFbk4hBhmMKhJc=
+        t=1624525678; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rKL9mP48io+APDMklw5yU/nTFyyLtllrHvhRByxGfgM=;
+        b=qka1M/+/Q0elb+Z4f6NaP+BgHuSA/yV87SJKUK7fBN5PWNEmX+fCZcno/5kvg/PzTE44iv
+        joOoo0J1V3O+yOBF1zFmhwUrUs2dy9UjZf9K1YAFsRlSIR/viSN1/anfeuQcykgILCWH0K
+        16EhnP2e/GNrZU++exd36UAeNj2qNMU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624525211;
+        s=susede2_ed25519; t=1624525678;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=gb59PTGwPnqVr+gEmQvDXGouiV1yjYn7rlq1+gb5adI=;
-        b=377p+/n4cDRsywuG+PEaejRHej2Ikn3GSrM/YLvLdKAVsX8DF4flFy2CcjqLkUzt90eJni
-        Zx3may8AqOx76hDA==
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rKL9mP48io+APDMklw5yU/nTFyyLtllrHvhRByxGfgM=;
+        b=XNZZ2ccXjd52Zfc2lfinuyEZHBLa2WF7fIMYqmaGxOEk8UiNOL4HuWXLk8lyaE0Mmw9X8C
+        niNIquqh21hULJCQ==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id n6//F5tJ1GDRMgAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 09:00:11 +0000
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        id GA8HMm1L1GANNwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 09:07:57 +0000
+Subject: Re: [PATCH v3 04/27] drm: Don't test for IRQ support in VBLANK ioctls
+To:     Jani Nikula <jani.nikula@linux.intel.com>, daniel@ffwll.ch,
+        airlied@linux.ie, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com,
+        james.qian.wang@arm.com, liviu.dudau@arm.com,
+        mihail.atanassov@arm.com, brian.starkey@arm.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
         sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        airlied@linux.ie, daniel@ffwll.ch,
-        krzysztof.kozlowski@canonical.com, sumit.semwal@linaro.org,
-        christian.koenig@amd.com
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH] drm/exynox: Implement mmap as GEM object function
-Date:   Thu, 24 Jun 2021 11:00:10 +0200
-Message-Id: <20210624090010.8086-1-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.32.0
+        krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
+        tiantao6@hisilicon.com, john.stultz@linaro.org,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        laurentiu.palcu@oss.nxp.com, l.stach@pengutronix.de,
+        p.zabel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, chunkuang.hu@kernel.org, matthias.bgg@gmail.com,
+        bskeggs@redhat.com, tomba@kernel.org, hjc@rock-chips.com,
+        heiko@sntech.de, benjamin.gaignard@linaro.org,
+        yannick.fertre@foss.st.com, philippe.cornu@foss.st.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        wens@csie.org, jernej.skrabec@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, jyri.sarha@iki.fi, emma@anholt.net,
+        linux-graphics-maintainer@vmware.com, zackr@vmware.com,
+        hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        michal.simek@xilinx.com, rodrigo.vivi@intel.com,
+        linux@armlinux.org.uk, kieran.bingham+renesas@ideasonboard.com,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Cc:     linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-tegra@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org
+References: <20210624072916.27703-1-tzimmermann@suse.de>
+ <20210624072916.27703-5-tzimmermann@suse.de> <87im23u1ok.fsf@intel.com>
+ <b5e7729f-ed11-e9ca-386e-562feb2bd2b7@suse.de> <877dijtzl2.fsf@intel.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <af21db75-584f-aec0-9659-d5386f27b4ea@suse.de>
+Date:   Thu, 24 Jun 2021 11:07:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <877dijtzl2.fsf@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="Yy3WbyUimc1Hxu4dvJZCfzpxTV3jVapRO"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Moving the driver-specific mmap code into a GEM object function allows
-for using DRM helpers for various mmap callbacks.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Yy3WbyUimc1Hxu4dvJZCfzpxTV3jVapRO
+Content-Type: multipart/mixed; boundary="4JbZC3NkmBgthQugAZppQ3TwC7sIXD4e6";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Jani Nikula <jani.nikula@linux.intel.com>, daniel@ffwll.ch,
+ airlied@linux.ie, alexander.deucher@amd.com, christian.koenig@amd.com,
+ Xinhui.Pan@amd.com, james.qian.wang@arm.com, liviu.dudau@arm.com,
+ mihail.atanassov@arm.com, brian.starkey@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, inki.dae@samsung.com,
+ jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+ krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
+ tiantao6@hisilicon.com, john.stultz@linaro.org,
+ kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+ laurentiu.palcu@oss.nxp.com, l.stach@pengutronix.de, p.zabel@pengutronix.de,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, linux-imx@nxp.com, chunkuang.hu@kernel.org,
+ matthias.bgg@gmail.com, bskeggs@redhat.com, tomba@kernel.org,
+ hjc@rock-chips.com, heiko@sntech.de, benjamin.gaignard@linaro.org,
+ yannick.fertre@foss.st.com, philippe.cornu@foss.st.com,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, wens@csie.org,
+ jernej.skrabec@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+ jyri.sarha@iki.fi, emma@anholt.net, linux-graphics-maintainer@vmware.com,
+ zackr@vmware.com, hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+ michal.simek@xilinx.com, rodrigo.vivi@intel.com, linux@armlinux.org.uk,
+ kieran.bingham+renesas@ideasonboard.com, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, hamohammed.sa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-rockchip@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ amd-gfx@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+ linux-tegra@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <af21db75-584f-aec0-9659-d5386f27b4ea@suse.de>
+Subject: Re: [PATCH v3 04/27] drm: Don't test for IRQ support in VBLANK ioctls
+References: <20210624072916.27703-1-tzimmermann@suse.de>
+ <20210624072916.27703-5-tzimmermann@suse.de> <87im23u1ok.fsf@intel.com>
+ <b5e7729f-ed11-e9ca-386e-562feb2bd2b7@suse.de> <877dijtzl2.fsf@intel.com>
+In-Reply-To: <877dijtzl2.fsf@intel.com>
 
-The respective exynos functions are being removed. The file_operations
-structure exynos_drm_driver_fops is now being created by the helper macro
-DEFINE_DRM_GEM_FOPS().
+--4JbZC3NkmBgthQugAZppQ3TwC7sIXD4e6
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c   | 13 ++-----
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 20 ++---------
- drivers/gpu/drm/exynos/exynos_drm_gem.c   | 43 +++++------------------
- drivers/gpu/drm/exynos/exynos_drm_gem.h   |  5 ---
- 4 files changed, 13 insertions(+), 68 deletions(-)
+Hi
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index e60257f1f24b..1d46751cad02 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -102,16 +102,7 @@ static const struct drm_ioctl_desc exynos_ioctls[] = {
- 			DRM_RENDER_ALLOW),
- };
- 
--static const struct file_operations exynos_drm_driver_fops = {
--	.owner		= THIS_MODULE,
--	.open		= drm_open,
--	.mmap		= exynos_drm_gem_mmap,
--	.poll		= drm_poll,
--	.read		= drm_read,
--	.unlocked_ioctl	= drm_ioctl,
--	.compat_ioctl = drm_compat_ioctl,
--	.release	= drm_release,
--};
-+DEFINE_DRM_GEM_FOPS(exynos_drm_driver_fops);
- 
- static const struct drm_driver exynos_drm_driver = {
- 	.driver_features	= DRIVER_MODESET | DRIVER_GEM
-@@ -124,7 +115,7 @@ static const struct drm_driver exynos_drm_driver = {
- 	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
- 	.gem_prime_import	= exynos_drm_gem_prime_import,
- 	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
--	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
-+	.gem_prime_mmap		= drm_gem_prime_mmap,
- 	.ioctls			= exynos_ioctls,
- 	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
- 	.fops			= &exynos_drm_driver_fops,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 5147f5929be7..02c97b9ca926 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -15,6 +15,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
-+#include <drm/drm_prime.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/exynos_drm.h>
- 
-@@ -39,25 +40,8 @@ static int exynos_drm_fb_mmap(struct fb_info *info,
- 	struct drm_fb_helper *helper = info->par;
- 	struct exynos_drm_fbdev *exynos_fbd = to_exynos_fbdev(helper);
- 	struct exynos_drm_gem *exynos_gem = exynos_fbd->exynos_gem;
--	unsigned long vm_size;
--	int ret;
--
--	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
--
--	vm_size = vma->vm_end - vma->vm_start;
--
--	if (vm_size > exynos_gem->size)
--		return -EINVAL;
- 
--	ret = dma_mmap_attrs(to_dma_dev(helper->dev), vma, exynos_gem->cookie,
--			     exynos_gem->dma_addr, exynos_gem->size,
--			     exynos_gem->dma_attrs);
--	if (ret < 0) {
--		DRM_DEV_ERROR(to_dma_dev(helper->dev), "failed to mmap.\n");
--		return ret;
--	}
--
--	return 0;
-+	return drm_gem_prime_mmap(&exynos_gem->base, vma);
- }
- 
- static const struct fb_ops exynos_drm_fb_ops = {
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 4396224227d1..c4b63902ee7a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -17,6 +17,8 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_gem.h"
- 
-+static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
-+
- static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem, bool kvmap)
- {
- 	struct drm_device *dev = exynos_gem->base.dev;
-@@ -135,6 +137,7 @@ static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
- static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
- 	.free = exynos_drm_gem_free_object,
- 	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
-+	.mmap = exynos_drm_gem_mmap,
- 	.vm_ops = &exynos_drm_gem_vm_ops,
- };
- 
-@@ -354,12 +357,16 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
- 	return 0;
- }
- 
--static int exynos_drm_gem_mmap_obj(struct drm_gem_object *obj,
--				   struct vm_area_struct *vma)
-+static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
- {
- 	struct exynos_drm_gem *exynos_gem = to_exynos_gem(obj);
- 	int ret;
- 
-+	if (obj->import_attach)
-+		return dma_buf_mmap(obj->dma_buf, vma, 0);
-+
-+	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
-+
- 	DRM_DEV_DEBUG_KMS(to_dma_dev(obj->dev), "flags = 0x%x\n",
- 			  exynos_gem->flags);
- 
-@@ -385,26 +392,6 @@ static int exynos_drm_gem_mmap_obj(struct drm_gem_object *obj,
- 	return ret;
- }
- 
--int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
--{
--	struct drm_gem_object *obj;
--	int ret;
--
--	/* set vm_area_struct. */
--	ret = drm_gem_mmap(filp, vma);
--	if (ret < 0) {
--		DRM_ERROR("failed to mmap.\n");
--		return ret;
--	}
--
--	obj = vma->vm_private_data;
--
--	if (obj->import_attach)
--		return dma_buf_mmap(obj->dma_buf, vma, 0);
--
--	return exynos_drm_gem_mmap_obj(obj, vma);
--}
--
- /* low-level interface prime helpers */
- struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device *dev,
- 					    struct dma_buf *dma_buf)
-@@ -466,15 +453,3 @@ exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
- 	exynos_gem->sgt = sgt;
- 	return &exynos_gem->base;
- }
--
--int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
--			      struct vm_area_struct *vma)
--{
--	int ret;
--
--	ret = drm_gem_mmap_obj(obj, obj->size, vma);
--	if (ret < 0)
--		return ret;
--
--	return exynos_drm_gem_mmap_obj(obj, vma);
--}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
-index a23272fb96fb..79d7e1a87419 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
-@@ -96,9 +96,6 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
- 			       struct drm_device *dev,
- 			       struct drm_mode_create_dumb *args);
- 
--/* set vm_flags and we can change the vm attribute to other one at here. */
--int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
--
- /* low-level interface prime helpers */
- struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device *dev,
- 					    struct dma_buf *dma_buf);
-@@ -107,7 +104,5 @@ struct drm_gem_object *
- exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
- 				     struct dma_buf_attachment *attach,
- 				     struct sg_table *sgt);
--int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
--			      struct vm_area_struct *vma);
- 
- #endif
--- 
-2.32.0
+Am 24.06.21 um 10:51 schrieb Jani Nikula:
+> On Thu, 24 Jun 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>> Hi
+>>
+>> Am 24.06.21 um 10:06 schrieb Jani Nikula:
+>>> On Thu, 24 Jun 2021, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>>> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vbla=
+nk.c
+>>>> index 3417e1ac7918..10fe16bafcb6 100644
+>>>> --- a/drivers/gpu/drm/drm_vblank.c
+>>>> +++ b/drivers/gpu/drm/drm_vblank.c
+>>>> @@ -1748,8 +1748,16 @@ int drm_wait_vblank_ioctl(struct drm_device *=
+dev, void *data,
+>>>>    	unsigned int pipe_index;
+>>>>    	unsigned int flags, pipe, high_pipe;
+>>>>   =20
+>>>> -	if (!dev->irq_enabled)
+>>>> -		return -EOPNOTSUPP;
+>>>> +#if defined(CONFIG_DRM_LEGACY)
+>>>> +	if  (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY))) {
+>>>> +		if (!dev->irq_enabled)
+>>>> +			return -EOPNOTSUPP;
+>>>> +	} else /* if DRIVER_MODESET */
+>>>> +#endif
+>>>> +	{
+>>>> +		if (!drm_dev_has_vblank(dev))
+>>>> +			return -EOPNOTSUPP;
+>>>> +	}
+>>>
+>>> Sheesh I hate this kind of inline #ifdefs.
+>>>
+>>> Two alternate suggestions that I believe should be as just efficient:=
 
+>>
+>> Or how about:
+>>
+>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>>
+>> {
+>>
+>> if defined(CONFIG_DRM_LEGACY)
+>> 	if  (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY)))
+>>
+>> 		return dev->irq_enabled;
+>>
+>> #endif
+>> 	return drm_dev_has_vblank(dev);
+>>
+>> }
+>>
+>>
+>> ?
+>>
+>> It's inline, but still readable.
+>=20
+> It's definitely better than the original, but it's unclear to me why
+> you'd prefer this over option 2) below. I guess the only reason I can
+> think of is emphasizing the conditional compilation. However,
+> IS_ENABLED() is widely used in this manner specifically to avoid inline=
+
+> #if, and the compiler optimizes it away.
+
+It's simply more readable to me as the condition is simpler. But option=20
+2 is also ok.
+
+Best regards
+Thomas
+
+>=20
+> BR,
+> Jani.
+>=20
+>=20
+>>
+>> Best regards
+>> Thomas
+>>
+>>>
+>>> 1) The more verbose:
+>>>
+>>> #if defined(CONFIG_DRM_LEGACY)
+>>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>>> {
+>>> 	if  (unlikely(drm_core_check_feature(dev, DRIVER_LEGACY)))
+>>> 		return dev->irq_enabled;
+>>> 	else
+>>> 		return drm_dev_has_vblank(dev);
+>>> }
+>>> #else
+>>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>>> {
+>>> 	return drm_dev_has_vblank(dev);
+>>> }
+>>> #endif
+>>>
+>>> 2) The more compact:
+>>>
+>>> static bool drm_wait_vblank_supported(struct drm_device *dev)
+>>> {
+>>> 	if  (IS_ENABLED(CONFIG_DRM_LEGACY) && unlikely(drm_core_check_featur=
+e(dev, DRIVER_LEGACY)))
+>>> 		return dev->irq_enabled;
+>>> 	else
+>>> 		return drm_dev_has_vblank(dev);
+>>> }
+>>>
+>>> Then, in drm_wait_vblank_ioctl().
+>>>
+>>> 	if (!drm_wait_vblank_supported(dev))
+>>> 		return -EOPNOTSUPP;
+>>>
+>>> The compiler should do the right thing without any explicit inline
+>>> keywords etc.
+>>>
+>>> BR,
+>>> Jani.
+>>>
+>>>>   =20
+>>>>    	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+>>>>    		return -EINVAL;
+>>>> @@ -2023,7 +2031,7 @@ int drm_crtc_get_sequence_ioctl(struct drm_dev=
+ice *dev, void *data,
+>>>>    	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>>>>    		return -EOPNOTSUPP;
+>>>>   =20
+>>>> -	if (!dev->irq_enabled)
+>>>> +	if (!drm_dev_has_vblank(dev))
+>>>>    		return -EOPNOTSUPP;
+>>>>   =20
+>>>>    	crtc =3D drm_crtc_find(dev, file_priv, get_seq->crtc_id);
+>>>> @@ -2082,7 +2090,7 @@ int drm_crtc_queue_sequence_ioctl(struct drm_d=
+evice *dev, void *data,
+>>>>    	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+>>>>    		return -EOPNOTSUPP;
+>>>>   =20
+>>>> -	if (!dev->irq_enabled)
+>>>> +	if (!drm_dev_has_vblank(dev))
+>>>>    		return -EOPNOTSUPP;
+>>>>   =20
+>>>>    	crtc =3D drm_crtc_find(dev, file_priv, queue_seq->crtc_id);
+>>>
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--4JbZC3NkmBgthQugAZppQ3TwC7sIXD4e6--
+
+--Yy3WbyUimc1Hxu4dvJZCfzpxTV3jVapRO
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmDUS20FAwAAAAAACgkQlh/E3EQov+Cd
+sQ//WrJ+cTjeCic8XWKP/6B1g/HO+aPRrvY0ktdf5gWjTVO6YN/FUVYp01LvOH8E1lh+mUmOWXlH
+6sTbGXnxD39Kch9JuZqlVwVDjG+SFSNcwJtHHF4D93/sMMgf0C00N0dUwPEFARmqTu091Ya/R3fI
+6iTBwu1GDLEcHDVaw5asnzmmDY9mMr7GIiJ4Kcy9I9fsdNybxG+P6Em3pMTBUlOFN6N4/GHrqs7I
+MjCvfDylb5jXxjPNMxQIeaevOwIi+xPTIZwGIeVdEhIpY6GHe8HKWFSqV2saCb9AoHW7vkNs0Tig
+ol8QFs1B/Yau/K39PCoRg1F8Y4nJaZfKL7JCHh0/bhhetCas1X4j8m1Y+jGPHIXFCh6orFNIqT+v
+J05PwfQ0vIz6bmxPxPt+KsHyf2RaYP6u5MPjfDICbAx1DPygVNuJLa+cUstqxoDqnPDNsK8a/s7b
+1MitJWn6UOhnwzkXomyZcKTxvRzZqFy0nAcbGYQyGmZHg7hW1ylSuuWddE5a3wFgXY2yN4GwUARa
+t3F4HqZ+cFDwQJrxZ7Lev/rHSEL+IduPHzjfun+HVUzuqk2X/n/7qrll6ne0HOmaTLX19qRbMsZp
+NsZn3eCBnJbhcNS6NJ8CA6iMkBSb3oYkXDafmo8zZ1rbKVLsMJxHeaa/x9f79Ooa24VXjdRx3g0o
+EqM=
+=Jf7v
+-----END PGP SIGNATURE-----
+
+--Yy3WbyUimc1Hxu4dvJZCfzpxTV3jVapRO--
