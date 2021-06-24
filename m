@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B1EC49EA6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267AFC49EBC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0E6F613EB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F460613EC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Jun 2021 07:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbhFXHb4 (ORCPT
+        id S231701AbhFXHb7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Jun 2021 03:31:56 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:48076 "EHLO
+        Thu, 24 Jun 2021 03:31:59 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:48106 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231691AbhFXHb4 (ORCPT
+        with ESMTP id S231601AbhFXHb6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Jun 2021 03:31:56 -0400
+        Thu, 24 Jun 2021 03:31:58 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id BCA191FD71;
-        Thu, 24 Jun 2021 07:29:36 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 18FCD1FD72;
+        Thu, 24 Jun 2021 07:29:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624519776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624519779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VaRXxCAvZK3dW/xVjjwke5Yisd83W0hZnEs7kK8mD6I=;
-        b=Rqw28IZdo8jW52Q8ZEjSP92nIX2fkbn+olFtN0ddvkRYT4AsMHMutgY/AaaMx0S8z7eO82
-        s1YN1Q+e6z1fytT4QNzpJAkGE6tq9hP8CgkFxZzznG4fp6jKC7Fa55mGQ0Xq/KT29Mbj1y
-        uMW3078G7r3ynEfX7jZDDSnhvYxFdwQ=
+        bh=ungDhNFtQV2QSuJ2i67VQ3TCcIcmnRI6EF4jC5OssoA=;
+        b=hVKFDj3/cIaqtT5NLvfk93UyLfpHWiRKNEWd3jlt74s33nu593jZCBV67Lv8RZY2KizjJQ
+        Zrkux6n4WUmqEOL+MloBwpZjKn4vLUYbxGJq7NfIR3X++heXTQNFTPqFUjzehQvpz1wowY
+        ehqYrMtr2llTTegcXv1yP2cFFSQHqZI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624519776;
+        s=susede2_ed25519; t=1624519779;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VaRXxCAvZK3dW/xVjjwke5Yisd83W0hZnEs7kK8mD6I=;
-        b=wvruJyx1zg3xGRIN5exzUV1qBRCwuUm6GDy8QDRDB2ABUHGP2Sa1CNweD6H6VtwdpYdgOW
-        mNfEpHwLaAWvrgDQ==
+        bh=ungDhNFtQV2QSuJ2i67VQ3TCcIcmnRI6EF4jC5OssoA=;
+        b=MEJTQMzk99Z7mFnSaOb2vmELUSL7+TxEM+QFIFmAFLtPdbVIe1ulNmE+zdOR96s/BjmUQ7
+        Qyq9XIW/oVON7pDA==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 881BD11A97;
-        Thu, 24 Jun 2021 07:29:35 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id EC1ED11A97;
+        Thu, 24 Jun 2021 07:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624519776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624519779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VaRXxCAvZK3dW/xVjjwke5Yisd83W0hZnEs7kK8mD6I=;
-        b=Rqw28IZdo8jW52Q8ZEjSP92nIX2fkbn+olFtN0ddvkRYT4AsMHMutgY/AaaMx0S8z7eO82
-        s1YN1Q+e6z1fytT4QNzpJAkGE6tq9hP8CgkFxZzznG4fp6jKC7Fa55mGQ0Xq/KT29Mbj1y
-        uMW3078G7r3ynEfX7jZDDSnhvYxFdwQ=
+        bh=ungDhNFtQV2QSuJ2i67VQ3TCcIcmnRI6EF4jC5OssoA=;
+        b=hVKFDj3/cIaqtT5NLvfk93UyLfpHWiRKNEWd3jlt74s33nu593jZCBV67Lv8RZY2KizjJQ
+        Zrkux6n4WUmqEOL+MloBwpZjKn4vLUYbxGJq7NfIR3X++heXTQNFTPqFUjzehQvpz1wowY
+        ehqYrMtr2llTTegcXv1yP2cFFSQHqZI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624519776;
+        s=susede2_ed25519; t=1624519779;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VaRXxCAvZK3dW/xVjjwke5Yisd83W0hZnEs7kK8mD6I=;
-        b=wvruJyx1zg3xGRIN5exzUV1qBRCwuUm6GDy8QDRDB2ABUHGP2Sa1CNweD6H6VtwdpYdgOW
-        mNfEpHwLaAWvrgDQ==
+        bh=ungDhNFtQV2QSuJ2i67VQ3TCcIcmnRI6EF4jC5OssoA=;
+        b=MEJTQMzk99Z7mFnSaOb2vmELUSL7+TxEM+QFIFmAFLtPdbVIe1ulNmE+zdOR96s/BjmUQ7
+        Qyq9XIW/oVON7pDA==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id SExVIF801GAJfwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 07:29:35 +0000
+        id EMDJOGE01GAJfwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Thu, 24 Jun 2021 07:29:37 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -105,11 +105,10 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         intel-gfx@lists.freedesktop.org,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v3 14/27] drm/nouveau: Don't set struct drm_device.irq_enabled
-Date:   Thu, 24 Jun 2021 09:29:03 +0200
-Message-Id: <20210624072916.27703-15-tzimmermann@suse.de>
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 16/27] drm/rcar-du: Don't set struct drm_device.irq_enabled
+Date:   Thu, 24 Jun 2021 09:29:05 +0200
+Message-Id: <20210624072916.27703-17-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210624072916.27703-1-tzimmermann@suse.de>
 References: <20210624072916.27703-1-tzimmermann@suse.de>
@@ -120,36 +119,26 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't set it in nouveau.
+with userspace modesetting. Don't set it in rcar-du.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index a616cf4573b8..1cb14e99a60c 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -553,8 +553,6 @@ nouveau_drm_device_init(struct drm_device *dev)
- 	if (ret)
- 		goto fail_master;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index bfbff90588cb..e289a66594a7 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -593,8 +593,6 @@ static int rcar_du_probe(struct platform_device *pdev)
+ 		goto error;
+ 	}
  
--	dev->irq_enabled = true;
+-	rcdu->ddev.irq_enabled = 1;
 -
- 	nvxx_client(&drm->client.base)->debug =
- 		nvkm_dbgopt(nouveau_debug, "DRM");
- 
-@@ -795,7 +793,6 @@ nouveau_drm_device_remove(struct drm_device *dev)
- 
- 	drm_dev_unregister(dev);
- 
--	dev->irq_enabled = false;
- 	client = nvxx_client(&drm->client.base);
- 	device = nvkm_device_find(client->device);
- 
+ 	/*
+ 	 * Register the DRM device with the core and the connectors with
+ 	 * sysfs.
 -- 
 2.32.0
 
