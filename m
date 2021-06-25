@@ -5,70 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9610C49EC8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A82C49ED6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A66D61433
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9FEC6142C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbhFYIZA (ORCPT
+        id S230225AbhFYIY7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 25 Jun 2021 04:25:00 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:42272 "EHLO
+        Fri, 25 Jun 2021 04:24:59 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:42190 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbhFYIY6 (ORCPT
+        with ESMTP id S230137AbhFYIY5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Jun 2021 04:24:58 -0400
+        Fri, 25 Jun 2021 04:24:57 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A002821A8A;
-        Fri, 25 Jun 2021 08:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QfYM+yu/dDUqVQVVAamhAGGl+dxgi6uc/Haqt+q/kbA=;
-        b=aTbtmRW1ii1J6RggbCXMpZ7C2iy1P/s5bLFTnDxBrs2Lbd2EBt1IH6EQnUMOo46k5DOQXV
-        1xVsnB0xojDD/9tvYPlYU1BuYyqWbCdDvMCwJi4cBeKnMr95AW+fUrC+jTTnoM9gCbfcb6
-        nDQOSMfuFLccRsvZ+TkO38N4+EbXoMw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609357;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QfYM+yu/dDUqVQVVAamhAGGl+dxgi6uc/Haqt+q/kbA=;
-        b=Wz51w3465+rMAEwDuwT2YVAPYOPGPNcdtgKgOLYu15tCMSCTdF8gqIc0LSGko9lTa8ia2H
-        3Sl6f1Yj13gTDaBg==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 7B76F11C9B;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7674F21992;
         Fri, 25 Jun 2021 08:22:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609356; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QfYM+yu/dDUqVQVVAamhAGGl+dxgi6uc/Haqt+q/kbA=;
-        b=aTbtmRW1ii1J6RggbCXMpZ7C2iy1P/s5bLFTnDxBrs2Lbd2EBt1IH6EQnUMOo46k5DOQXV
-        1xVsnB0xojDD/9tvYPlYU1BuYyqWbCdDvMCwJi4cBeKnMr95AW+fUrC+jTTnoM9gCbfcb6
-        nDQOSMfuFLccRsvZ+TkO38N4+EbXoMw=
+        bh=SLzKsIZA1d52/kbw8dyxn4baJfnhn8GvqO/eIvChuCE=;
+        b=BU/WTC9TlUju9Kf9h0clbBtB59Pq9D/s9+lpF+ZC/oy9WAnpeKCXvHQyzHkccq747Cx5EN
+        nZHptEUrK5T6EPwaFWVzsrMDTGbq1ZuY5yYqj0SvNEt4Fuw9I3Mb0ZafOS3jyYhUDP7YIQ
+        oRuUjueA7+u2lOpF3f1+b4w5iXGFDZw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609357;
+        s=susede2_ed25519; t=1624609356;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QfYM+yu/dDUqVQVVAamhAGGl+dxgi6uc/Haqt+q/kbA=;
-        b=Wz51w3465+rMAEwDuwT2YVAPYOPGPNcdtgKgOLYu15tCMSCTdF8gqIc0LSGko9lTa8ia2H
-        3Sl6f1Yj13gTDaBg==
+        bh=SLzKsIZA1d52/kbw8dyxn4baJfnhn8GvqO/eIvChuCE=;
+        b=gerIRDd0IRur65Iy+jJnbGWyDhRAhNqin1wJfwXbU6w8jOILAlm4Tc9VjehuAy3Fw0EeoH
+        ++x/2OfxerilK+BA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 4C34311A97;
+        Fri, 25 Jun 2021 08:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624609356; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SLzKsIZA1d52/kbw8dyxn4baJfnhn8GvqO/eIvChuCE=;
+        b=BU/WTC9TlUju9Kf9h0clbBtB59Pq9D/s9+lpF+ZC/oy9WAnpeKCXvHQyzHkccq747Cx5EN
+        nZHptEUrK5T6EPwaFWVzsrMDTGbq1ZuY5yYqj0SvNEt4Fuw9I3Mb0ZafOS3jyYhUDP7YIQ
+        oRuUjueA7+u2lOpF3f1+b4w5iXGFDZw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624609356;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SLzKsIZA1d52/kbw8dyxn4baJfnhn8GvqO/eIvChuCE=;
+        b=gerIRDd0IRur65Iy+jJnbGWyDhRAhNqin1wJfwXbU6w8jOILAlm4Tc9VjehuAy3Fw0EeoH
+        ++x/2OfxerilK+BA==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id uJs0HUyS1WAISwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:36 +0000
+        id UJKxEUuS1WAISwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:35 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -107,9 +107,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v4 11/27] drm/imx: Don't set struct drm_device.irq_enabled
-Date:   Fri, 25 Jun 2021 10:22:06 +0200
-Message-Id: <20210625082222.3845-12-tzimmermann@suse.de>
+Subject: [PATCH v4 10/27] drm/kirin: Don't set struct drm_device.irq_enabled
+Date:   Fri, 25 Jun 2021 10:22:05 +0200
+Message-Id: <20210625082222.3845-11-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210625082222.3845-1-tzimmermann@suse.de>
 References: <20210625082222.3845-1-tzimmermann@suse.de>
@@ -120,41 +120,28 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't set it in imx.
-
-v3:
-	* move dcss changes into separate patch (Laurentiu)
+with userspace modesetting. Don't set it in kirin.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/imx/imx-drm-core.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
-index 76819a8ac37f..9558e9e1b431 100644
---- a/drivers/gpu/drm/imx/imx-drm-core.c
-+++ b/drivers/gpu/drm/imx/imx-drm-core.c
-@@ -207,17 +207,6 @@ static int imx_drm_bind(struct device *dev)
- 	if (IS_ERR(drm))
- 		return PTR_ERR(drm);
+diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+index e590e19db657..98ae9a48f3fe 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+@@ -185,8 +185,6 @@ static int kirin_drm_kms_init(struct drm_device *dev,
+ 		DRM_ERROR("failed to initialize vblank.\n");
+ 		goto err_unbind_all;
+ 	}
+-	/* with irq_enabled = true, we can use the vblank feature. */
+-	dev->irq_enabled = true;
  
--	/*
--	 * enable drm irq mode.
--	 * - with irq_enabled = true, we can use the vblank feature.
--	 *
--	 * P.S. note that we wouldn't use drm irq handler but
--	 *      just specific driver own one instead because
--	 *      drm framework supports only one irq handler and
--	 *      drivers can well take care of their interrupts
--	 */
--	drm->irq_enabled = true;
--
- 	/*
- 	 * set max width and height as default value(4096x4096).
- 	 * this value would be used to check framebuffer size limitation
+ 	/* reset all the states of crtc/plane/encoder/connector */
+ 	drm_mode_config_reset(dev);
 -- 
 2.32.0
 
