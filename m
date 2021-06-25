@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7D6C49EBD
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:51 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7F3B6142E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A62CAC4CC64
 	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:49 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id D25626141C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Jun 2021 08:22:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbhFYIZJ (ORCPT
+        id S230268AbhFYIZG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 25 Jun 2021 04:25:09 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:42496 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbhFYIZI (ORCPT
+        Fri, 25 Jun 2021 04:25:06 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:35310 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229890AbhFYIZG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Jun 2021 04:25:08 -0400
+        Fri, 25 Jun 2021 04:25:06 -0400
 Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
         (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 38F6A21BD2;
-        Fri, 25 Jun 2021 08:22:47 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C12DF1FE51;
+        Fri, 25 Jun 2021 08:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zFsd5fw7cpfrhhhZuifyWRgc2fo+ZUq3fWG/7rKoJro=;
-        b=Q/WP6nsPKaLIEFONDt85dgtiIwreS052Y3iKzJKFswJPdRmDrEU9bL3T7ISSlnm87uL7Nz
-        lr5Y4O7LPnhxCU0C8OntgJe1rumzUPw2l1KMJiDk9SfomKq85ASsVTcE2MuFf30dW74A/V
-        boxaD4mBalkdYwZgpRjtcAL1DKkquZ4=
+        bh=Nqa6630ruRYYlI8ZNLoNGF3Kw3KIKsV19KV/b5stot8=;
+        b=VKnswZyTdPYIlYTVYNXP3mPIf181nFPqs1dQKHYYalIYVtyYZ0JM8YI9h5dy3/u9P301UB
+        g7rJ6wMMTutOM7NojRMujg+sxGDmbGEpTz5Iy+wvcNpoQSJ7dGibFrFBJMeT6oek4NUVXj
+        ZBbLMreOLXZcUdHz5MwcnavglwgRNpw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609367;
+        s=susede2_ed25519; t=1624609364;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zFsd5fw7cpfrhhhZuifyWRgc2fo+ZUq3fWG/7rKoJro=;
-        b=S4/w961C3obBdWSaEYMQlWZ1d8KNcklSP3yJMp5qpbmVG5d7GK4wxU5OkmXpFMmMIQ2jgV
-        l/cXTfZqVc5KpSAA==
+        bh=Nqa6630ruRYYlI8ZNLoNGF3Kw3KIKsV19KV/b5stot8=;
+        b=COgs7QL/cz74wBLBNVYeewHOzc8Try+PBOsT0vMl2EZ918odGLJqq8Aj/4j7umfsT9gPjf
+        5owmJWsIG9wVoQBQ==
 Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 04D9E11C9B;
-        Fri, 25 Jun 2021 08:22:46 +0000 (UTC)
+        by imap.suse.de (Postfix) with ESMTP id 8E68C11C9B;
+        Fri, 25 Jun 2021 08:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624609367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1624609364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zFsd5fw7cpfrhhhZuifyWRgc2fo+ZUq3fWG/7rKoJro=;
-        b=Q/WP6nsPKaLIEFONDt85dgtiIwreS052Y3iKzJKFswJPdRmDrEU9bL3T7ISSlnm87uL7Nz
-        lr5Y4O7LPnhxCU0C8OntgJe1rumzUPw2l1KMJiDk9SfomKq85ASsVTcE2MuFf30dW74A/V
-        boxaD4mBalkdYwZgpRjtcAL1DKkquZ4=
+        bh=Nqa6630ruRYYlI8ZNLoNGF3Kw3KIKsV19KV/b5stot8=;
+        b=VKnswZyTdPYIlYTVYNXP3mPIf181nFPqs1dQKHYYalIYVtyYZ0JM8YI9h5dy3/u9P301UB
+        g7rJ6wMMTutOM7NojRMujg+sxGDmbGEpTz5Iy+wvcNpoQSJ7dGibFrFBJMeT6oek4NUVXj
+        ZBbLMreOLXZcUdHz5MwcnavglwgRNpw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624609367;
+        s=susede2_ed25519; t=1624609364;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zFsd5fw7cpfrhhhZuifyWRgc2fo+ZUq3fWG/7rKoJro=;
-        b=S4/w961C3obBdWSaEYMQlWZ1d8KNcklSP3yJMp5qpbmVG5d7GK4wxU5OkmXpFMmMIQ2jgV
-        l/cXTfZqVc5KpSAA==
+        bh=Nqa6630ruRYYlI8ZNLoNGF3Kw3KIKsV19KV/b5stot8=;
+        b=COgs7QL/cz74wBLBNVYeewHOzc8Try+PBOsT0vMl2EZ918odGLJqq8Aj/4j7umfsT9gPjf
+        5owmJWsIG9wVoQBQ==
 Received: from director2.suse.de ([192.168.254.72])
         by imap3-int with ESMTPSA
-        id SPxRAFaS1WAISwAALh3uQQ
-        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:46 +0000
+        id cMHoIVOS1WAISwAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Fri, 25 Jun 2021 08:22:43 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
@@ -107,9 +107,9 @@ Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v4 19/27] drm/stm: Don't set struct drm_device.irq_enabled
-Date:   Fri, 25 Jun 2021 10:22:14 +0200
-Message-Id: <20210625082222.3845-20-tzimmermann@suse.de>
+Subject: [PATCH v4 17/27] drm/rockchip: Don't set struct drm_device.irq_enabled
+Date:   Fri, 25 Jun 2021 10:22:12 +0200
+Message-Id: <20210625082222.3845-18-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210625082222.3845-1-tzimmermann@suse.de>
 References: <20210625082222.3845-1-tzimmermann@suse.de>
@@ -120,29 +120,32 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 The field drm_device.irq_enabled is only used by legacy drivers
-with userspace modesetting. Don't set it in stm.
+with userspace modesetting. Don't set it in rockchip.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/stm/ltdc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 08b71248044d..e9c5a52f041a 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -1339,9 +1339,6 @@ int ltdc_load(struct drm_device *ddev)
- 		goto err;
- 	}
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index b730b8d5d949..c8e60fd9ff24 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -162,12 +162,6 @@ static int rockchip_drm_bind(struct device *dev)
  
--	/* Allow usage of vblank without having to call drm_irq_install */
--	ddev->irq_enabled = 1;
+ 	drm_mode_config_reset(drm_dev);
+ 
+-	/*
+-	 * enable drm irq mode.
+-	 * - with irq_enabled = true, we can use the vblank feature.
+-	 */
+-	drm_dev->irq_enabled = true;
 -
- 	clk_disable_unprepare(ldev->pixel_clk);
- 
- 	pinctrl_pm_select_sleep_state(ddev->dev);
+ 	ret = rockchip_drm_fbdev_init(drm_dev);
+ 	if (ret)
+ 		goto err_unbind_all;
 -- 
 2.32.0
 
