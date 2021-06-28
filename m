@@ -2,67 +2,73 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7492DC49EA7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 26 Jun 2021 08:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CEDC49EAB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Jun 2021 06:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC6861925
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 26 Jun 2021 08:55:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23220619F1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Jun 2021 06:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbhFZI5s (ORCPT
+        id S230256AbhF1G0C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 26 Jun 2021 04:57:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbhFZI5r (ORCPT
+        Mon, 28 Jun 2021 02:26:02 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:56764 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229778AbhF1G0B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 26 Jun 2021 04:57:47 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC31DC061574;
-        Sat, 26 Jun 2021 01:55:24 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id k30-20020a05600c1c9eb02901d4d33c5ca0so1923936wms.3;
-        Sat, 26 Jun 2021 01:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ptTxiGNRR9tLNMxRNvuOfTEawaDh7PBZAwJYDWExn6A=;
-        b=WXZPto5hzmyq5c5odNy0McigPUrb1U8D3ElSea0YA6x/fugujmRnICRwcXvzB0modn
-         RFnxjMlR5rE8gEr/sN5IsPfVueKZ85sDhJDqHVQdokVO1mBkU5H75gAJjv02f5wgE+hn
-         9LbJ/Lux2MkBxb4hmXxfyM2A54N/Inefn2dzazJZSSLXMuZel802aLRLHm61C95k4Knf
-         Qzq1O1q8UbX4z+Di3lo98MSoo9TmKjBJp0IDDBkY80mplsdN197X8ah2DRZiZXdVKiON
-         Ys/9hFDExx35ZaHsv4nZKEgcmZoYISMbZ7YT3aQ1MdLsDQFfdmlLJG04Z4poXicy4dGf
-         XV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ptTxiGNRR9tLNMxRNvuOfTEawaDh7PBZAwJYDWExn6A=;
-        b=c9dZVZtC2p2+B6eoFzh6AdwkuN21dZJ+exRFoaR5VpO33DBz82PiP1UUThMJEHcmGy
-         BMMhMTgNWw4gFgJai9KJtJoYzQRDIDVJOiU3RQVTVqZowPIQ9rqlkwRIE5bhp9FKkdO3
-         RK89J9u4kLuF79AHFLXyQZct+m02WhbWGxpUfVBCRWj5k3uLtP9SmxUznC25J7ALOpnl
-         JI6WIHyWE88d3qWgGu0wkVxwuNxDC11WbFZdMpetVh/kuSyEVxFlvwuswJdHzE1Ygg+0
-         xXqPmG0IHJV9NEbOd9E2KTz5jlyqzm5Wk2vXFiOmQLCH1qF8aO4vphgYjZXJdtX7CZ7I
-         3Znw==
-X-Gm-Message-State: AOAM533zrOmc0i8zU14mWWoEts5Cn9+Fwb92FmbI+scMwC4amlrkaV1w
-        3M09lOmywaIXHR2V/sSD3Zo=
-X-Google-Smtp-Source: ABdhPJw6/VYXiHMo3tYPsIdCX2Czl9c8v5+Wa4nye0fP9/XfYl++WvluOveXRSNeUl+JlD1lODFXkg==
-X-Received: by 2002:a05:600c:2243:: with SMTP id a3mr15630087wmm.86.1624697723317;
-        Sat, 26 Jun 2021 01:55:23 -0700 (PDT)
-Received: from smtp.gmail.com (a95-92-181-29.cpe.netcabo.pt. [95.92.181.29])
-        by smtp.gmail.com with ESMTPSA id n8sm7967502wrt.95.2021.06.26.01.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Jun 2021 01:55:22 -0700 (PDT)
-Date:   Sat, 26 Jun 2021 09:55:13 +0100
-From:   Melissa Wen <melissa.srw@gmail.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
+        Mon, 28 Jun 2021 02:26:01 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B303C20200;
+        Mon, 28 Jun 2021 06:23:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624861415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3f/RQ+o/NN1qA7MbgkBwKBo1UY1pJWjqF+CekEE7tvs=;
+        b=jJM/B+QJ0HaTwqIYl1RXnmf+3kS01V89ycXtkk6p6XRsDI0f0fsSYWSMxuQjKP4pqQ0E+1
+        s8MITUczcRX2a8uMHRISVlbqGN7L1AmLkau+jzoUaW2yOqZOzt5T1SrWObCQMTd+s9ffpr
+        ATR41EBppViL088sYF/EuuEt0QBmJHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624861415;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3f/RQ+o/NN1qA7MbgkBwKBo1UY1pJWjqF+CekEE7tvs=;
+        b=NBW1kkaGRxLiRwOxNiLCHy+jTq7PDtH+lJSbjdqofRosiUym/h3BpEXG8WHWk0LKYIFlQF
+        Iy0+1fzHScVjq3CA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 73EFC118DD;
+        Mon, 28 Jun 2021 06:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624861415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3f/RQ+o/NN1qA7MbgkBwKBo1UY1pJWjqF+CekEE7tvs=;
+        b=jJM/B+QJ0HaTwqIYl1RXnmf+3kS01V89ycXtkk6p6XRsDI0f0fsSYWSMxuQjKP4pqQ0E+1
+        s8MITUczcRX2a8uMHRISVlbqGN7L1AmLkau+jzoUaW2yOqZOzt5T1SrWObCQMTd+s9ffpr
+        ATR41EBppViL088sYF/EuuEt0QBmJHs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624861415;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3f/RQ+o/NN1qA7MbgkBwKBo1UY1pJWjqF+CekEE7tvs=;
+        b=NBW1kkaGRxLiRwOxNiLCHy+jTq7PDtH+lJSbjdqofRosiUym/h3BpEXG8WHWk0LKYIFlQF
+        Iy0+1fzHScVjq3CA==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id T4qyGuZq2WDleAAALh3uQQ
+        (envelope-from <tzimmermann@suse.de>); Mon, 28 Jun 2021 06:23:34 +0000
+Subject: Re: [PATCH v4 05/27] drm/armada: Don't set struct
+ drm_device.irq_enabled
+To:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         christian.koenig@amd.com, Xinhui.Pan@amd.com,
         james.qian.wang@arm.com, liviu.dudau@arm.com,
         mihail.atanassov@arm.com, brian.starkey@arm.com,
@@ -87,57 +93,136 @@ Cc:     daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
         michal.simek@xilinx.com, jani.nikula@linux.intel.com,
         rodrigo.vivi@intel.com, linux@armlinux.org.uk,
         kieran.bingham+renesas@ideasonboard.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, nouveau@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Cc:     linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH v4 24/27] drm/vkms: Don't set struct
- drm_device.irq_enabled
-Message-ID: <20210626085513.akf4cwyqpbchmycf@smtp.gmail.com>
+        linux-arm-kernel@lists.infradead.org
 References: <20210625082222.3845-1-tzimmermann@suse.de>
- <20210625082222.3845-25-tzimmermann@suse.de>
+ <20210625082222.3845-6-tzimmermann@suse.de>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Message-ID: <57eb0ca1-e1a3-495e-926e-0d02634f096f@suse.de>
+Date:   Mon, 28 Jun 2021 08:23:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210625082222.3845-25-tzimmermann@suse.de>
+In-Reply-To: <20210625082222.3845-6-tzimmermann@suse.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="i2lHLYH7S6KjXfCFaxpWcKmmhZvcPmhxI"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/25, Thomas Zimmermann wrote:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--i2lHLYH7S6KjXfCFaxpWcKmmhZvcPmhxI
+Content-Type: multipart/mixed; boundary="ZsJWMZ3fKnfvZTQNCUxxACBUzMa2385FX";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: daniel@ffwll.ch, airlied@linux.ie, alexander.deucher@amd.com,
+ christian.koenig@amd.com, Xinhui.Pan@amd.com, james.qian.wang@arm.com,
+ liviu.dudau@arm.com, mihail.atanassov@arm.com, brian.starkey@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, inki.dae@samsung.com,
+ jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+ krzysztof.kozlowski@canonical.com, xinliang.liu@linaro.org,
+ tiantao6@hisilicon.com, john.stultz@linaro.org,
+ kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+ laurentiu.palcu@oss.nxp.com, l.stach@pengutronix.de, p.zabel@pengutronix.de,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, linux-imx@nxp.com, chunkuang.hu@kernel.org,
+ matthias.bgg@gmail.com, bskeggs@redhat.com, tomba@kernel.org,
+ hjc@rock-chips.com, heiko@sntech.de, yannick.fertre@foss.st.com,
+ philippe.cornu@foss.st.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, wens@csie.org, jernej.skrabec@gmail.com,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, jyri.sarha@iki.fi,
+ emma@anholt.net, linux-graphics-maintainer@vmware.com, zackr@vmware.com,
+ hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+ michal.simek@xilinx.com, jani.nikula@linux.intel.com,
+ rodrigo.vivi@intel.com, linux@armlinux.org.uk,
+ kieran.bingham+renesas@ideasonboard.com, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, hamohammed.sa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@lists.linux.dev, linux-rockchip@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <57eb0ca1-e1a3-495e-926e-0d02634f096f@suse.de>
+Subject: Re: [PATCH v4 05/27] drm/armada: Don't set struct
+ drm_device.irq_enabled
+References: <20210625082222.3845-1-tzimmermann@suse.de>
+ <20210625082222.3845-6-tzimmermann@suse.de>
+In-Reply-To: <20210625082222.3845-6-tzimmermann@suse.de>
+
+--ZsJWMZ3fKnfvZTQNCUxxACBUzMa2385FX
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+
+
+Am 25.06.21 um 10:22 schrieb Thomas Zimmermann:
 > The field drm_device.irq_enabled is only used by legacy drivers
-> with userspace modesetting. Don't set it in vkms.
+> with userspace modesetting. Don't set it in armada.
 >=20
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-I've also checked here, lgtm.
+R-b'ed by Laurent via IRC
 
-Reviewed-by: Melissa Wen <melissa.srw@gmail.com>
 > ---
->  drivers/gpu/drm/vkms/vkms_drv.c | 2 --
->  1 file changed, 2 deletions(-)
+>   drivers/gpu/drm/armada/armada_drv.c | 2 --
+>   1 file changed, 2 deletions(-)
 >=20
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_=
-drv.c
-> index 027ffe759440..496de38ad983 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> @@ -163,8 +163,6 @@ static int vkms_create(struct vkms_config *config)
->  		goto out_devres;
->  	}
-> =20
-> -	vkms_device->drm.irq_enabled =3D true;
+> diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/arma=
+da/armada_drv.c
+> index dab0a1f0983b..4a64f1b9ec4d 100644
+> --- a/drivers/gpu/drm/armada/armada_drv.c
+> +++ b/drivers/gpu/drm/armada/armada_drv.c
+> @@ -130,8 +130,6 @@ static int armada_drm_bind(struct device *dev)
+>   	if (ret)
+>   		goto err_comp;
+>  =20
+> -	priv->drm.irq_enabled =3D true;
 > -
->  	ret =3D drm_vblank_init(&vkms_device->drm, 1);
->  	if (ret) {
->  		DRM_ERROR("Failed to vblank\n");
-> --=20
-> 2.32.0
+>   	drm_mode_config_reset(&priv->drm);
+>  =20
+>   	ret =3D armada_fbdev_init(&priv->drm);
 >=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--ZsJWMZ3fKnfvZTQNCUxxACBUzMa2385FX--
+
+--i2lHLYH7S6KjXfCFaxpWcKmmhZvcPmhxI
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmDZauUFAwAAAAAACgkQlh/E3EQov+BI
+/hAAwo/d/PjJfngTOTApUkdBmvqLyDR9l5V4s4HUVyGrzgf1k3ANJUoqAEBC0li07IImisiMhKK8
+8wmGPIQHSU3aRLQy+IbasD12kuSAJXTiFc8KZ41WpXafVHPiumFm5LRhKTGDC9jw1NtbjnRpaJLR
+qng3SVUTGFmAcFjzS4rm+eVvFy6d0S667p+A04vRcWLgMkmZJt8l6mM235cyRVKidi1aoejJLVCd
+MgfPBD6QopEOl+KU3aggPK0b+iNk5I8vBTiSGosBFFNF1HAr6YjzyYodpHn1xX7Y9aUIPkoEYmIa
+nhym33NotP/6vZJIedE3tHo92o1oRWlB6k36FdX4fRJBkcPoGVDOnm3Q7xZXDTV+bAEKGO4xy//z
+FUK8NXmy1vNd5aAt7F2cQPNO0vq6pa0Se8GaIGteQqFbd2LfTdHaZHlEmNb6x+NA1r4uMoTKsbHd
+XiGVGBFETOR3ElshkxJGL/aACPeELm/CxMYCCHVYOjakNn7MGDJmQyMlJyzPcEEelXCOOuO7HnOY
+Meb9ovN73XEjZcxq4KzOS/sc5FpDU/Te6DQpjFKxKwudZaZrLMLuUypbmmlMP1o1G0hepbNe3rey
+eFdvCeu1rBsor2Ae6ooTqoc4SdsyqzHnYfAvQuAkeWUBOW3fekUl8r0Viqxkv1BaYBgK4FW4pNLD
+bu8=
+=AJ6t
+-----END PGP SIGNATURE-----
+
+--i2lHLYH7S6KjXfCFaxpWcKmmhZvcPmhxI--
