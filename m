@@ -2,139 +2,130 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BF4C2B9F4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Jun 2021 08:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20794C2B9F4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Jun 2021 11:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55A3961C2E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Jun 2021 08:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC88F60232
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Jun 2021 11:10:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232412AbhF1IrW (ORCPT
+        id S232791AbhF1LNC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Jun 2021 04:47:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56713 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232214AbhF1IrV (ORCPT
+        Mon, 28 Jun 2021 07:13:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232745AbhF1LNC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Jun 2021 04:47:21 -0400
-Received: from mail-ej1-f69.google.com ([209.85.218.69])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <krzysztof.kozlowski@canonical.com>)
-        id 1lxmsv-0001hR-KP
-        for linux-samsung-soc@vger.kernel.org; Mon, 28 Jun 2021 08:44:53 +0000
-Received: by mail-ej1-f69.google.com with SMTP id de48-20020a1709069bf0b029048ae3ebecabso4043473ejc.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jun 2021 01:44:53 -0700 (PDT)
+        Mon, 28 Jun 2021 07:13:02 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC3BEC061574
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jun 2021 04:10:36 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id x20so18346113ljc.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jun 2021 04:10:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bWqtZ2im8bhpe7wgbjV8zsEbbfLVDc0iR3ke9Y3lfWw=;
+        b=GWKNCASd9MPmyxEUsoGR9JzIVqWCjK0OSZF1l1oCdifzvEDMqh0KUYe3MV8Dgbr+PA
+         la9gyUtlwDg0n3+3jlE9gokVLM6wdEqMHpYm1GUNKILSnuRdU+RgBU7sRxOUjljpyx1u
+         zKT2T7iMjOJzomPtHeovnBESXt8hdlSg1o9l9GDzfxR/6G/S3tgN1K7+yyCGozJ1EgyI
+         9PvkiqVsL1bXqLvS7gQ+U/3JwHmPIo1Hy4i7AHzDiPuPyOEXwm7HJstY+KYKcy+at9Yg
+         H1VQ4aM1iq7p8brNaOJS61SqZPEocFRr1bHCErosV2zAZJTQ2DzKJf/Yr1Gt16mOzVxo
+         1abQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KmtJfV8NItnsIFSWg4xXgNASx94tom0VLkFkXbFAOfI=;
-        b=dm9dwEappP8TMfhkxS1B15OgFoRpzdAv8Px+I1d6iHho5DtaEv/58ujn0hzwm22I90
-         lzZbXT623txtYM3qhGMAt2gUb+W04ZtjYmcaduJ8OTj5puiaAof7jfBNZ/ieoS+l7WWx
-         jhUy81PZOB/zkyVSawAsEFMoyiivJaeCuXFSxXeyEwMiMovvsR4kxkEJpXSMfeZWpUgt
-         GyjRFQf07bFGzyVOeQL+SZwRWOpMcx9TcxSyOuBP9IPaccudUctchv21wi5OEZA+21E2
-         bf0tYhkJSnSg4mlWWtTSrCXoXkg7pghEFKwJuiUMKS9HsPwMkTH2qO+V0wfgRxv1vmav
-         QygA==
-X-Gm-Message-State: AOAM5326sjUGEMzoj5pUVxuqy69NgAHBTC6Ehri6YVziTTVDWo18Y1hz
-        0fNhH+GuOAKUYR+kgZPl+HGxenC7UqQW1TauivgQhFPRw5vp9/PbfMP8FgxdUhOB8/CvIevSLyg
-        zVb+bh3uDJQjUOUzoBaXKJGuemM7ZzG0t61un7FVmEFFnZGE6
-X-Received: by 2002:a05:6402:214:: with SMTP id t20mr32006498edv.20.1624869893174;
-        Mon, 28 Jun 2021 01:44:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzgeLioIsaaCeLGrQTkc0wZAz537qLD1J7tTEDktZUt/kPkCQJJfbSv7dTimZbtgaouriCEhA==
-X-Received: by 2002:a05:6402:214:: with SMTP id t20mr32006482edv.20.1624869893042;
-        Mon, 28 Jun 2021 01:44:53 -0700 (PDT)
-Received: from [192.168.1.115] (xdsl-188-155-177-222.adslplus.ch. [188.155.177.222])
-        by smtp.gmail.com with ESMTPSA id h14sm3068530ejl.118.2021.06.28.01.44.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jun 2021 01:44:52 -0700 (PDT)
-Subject: Re: [PATCH v4] serial: samsung: use dma_ops of DMA if attached
-To:     Tamseel Shams <m.shams@samsung.com>, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-        ajaykumar.rs@samsung.com, robin.murphy@arm.com
-References: <CGME20210625074751epcas5p125067e47c4ff1ad24a1e595d85f82540@epcas5p1.samsung.com>
- <20210625075114.71155-1-m.shams@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <3aa88ee4-c662-8069-fb04-90df82038dbe@canonical.com>
-Date:   Mon, 28 Jun 2021 10:44:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bWqtZ2im8bhpe7wgbjV8zsEbbfLVDc0iR3ke9Y3lfWw=;
+        b=il/lwgJsdsRpQ7F9pOQqFe+MfyPsMiAyk8+Y2LZbcSr2NzOH/qNRyQRLfhMPjLuEVU
+         mcMiACmcEhSw8oKjXsEnsiUwc3RGOsvrYQxwip9+jwqqES6Bn4vNMXgZqW2Fj5egdhpt
+         hZpfODsGlRiCF3SIxdd2AYeBoM5YEtOc7q1szUmHiGBoJQT0NPi/ewVmP9dePMxwRCWY
+         oDy3mXsq0Bil4qopn9wnBb5Qbk0mpJGFdC+fD1CjRxUfoElM5X0sERRxU5lESspWEc2H
+         PiUlpDSLKZOrFB5PcNmLOdx5+hXZWY6gOJx6UHTPuvP0eKZXH0hIQr2g9nFzJYA/ZARV
+         Spdg==
+X-Gm-Message-State: AOAM533Rf0dr+oQDc46jATDkrjekL1pIsZZ2H7o/QajtLifFwPQkYSDk
+        Rp20M1J67SX9+VCedhE/L6XRU9hNXt3J3VFhbc4AfA==
+X-Google-Smtp-Source: ABdhPJzyEQpk+qVTQTN61ga94Up2dG17/tdSZ8ryGBxDStAhbzvUPZemkx4xWP9DPdoHPznWcXaHK8zDx3IUoLZtJDU=
+X-Received: by 2002:a2e:9483:: with SMTP id c3mr19694556ljh.273.1624878635125;
+ Mon, 28 Jun 2021 04:10:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210625075114.71155-1-m.shams@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210211113309.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
+ <CACRpkdbQa3BZwgtp3=061cu+y+4qkMqtXQhXH_VuHB3KcLyDCA@mail.gmail.com> <CANMq1KAsvXZAjmYCMQsAUwpkzuA9-PRnNWkpsLuNbOkP6DixGA@mail.gmail.com>
+In-Reply-To: <CANMq1KAsvXZAjmYCMQsAUwpkzuA9-PRnNWkpsLuNbOkP6DixGA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 28 Jun 2021 13:10:23 +0200
+Message-ID: <CACRpkdYK3nw890YFNxgtrwDvxcoeNVu7MxqUw94NN_6PiYxkJQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling features
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Sean Paul <sean@poorly.run>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Xin Ji <xji@analogixsemi.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25/06/2021 09:51, Tamseel Shams wrote:
-> When DMA is used for TX and RX by serial driver, it should
-> pass the DMA device pointer to DMA API instead of UART device
-> pointer. DMA device should be used for DMA API because only
-> the DMA device is aware of how the device connects to the memory.
-> There might be an extra level of address translation due to a
-> SMMU attached to the DMA device. When serial device is used for
-> DMA API, the DMA API will have no clue of the SMMU attached to
-> the DMA device.
-> 
-> This patch is necessary to fix the SMMU page faults
-> which is observed when a DMA(with SMMU enabled) is attached
-> to UART for transfer.
-> 
-> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
-> Changes since v1:
-> 1. Rebased the patch on "tty-next" branch of TTY driver tree
-> 
-> Changes since v2:
-> 1. Updated the commit message.
-> 2. Changed the comment description
-> 
-> Changes since v3:
-> 1. Removed the null pointer check for "dma", "dma->tx_chan" and
-> "dma->rx_chan" and instead sending DMA device pointer while calling
-> DMA API.
-> 
->  drivers/tty/serial/samsung_tty.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 9fbc61151c2e..fa30aa20a13f 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -305,7 +305,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
->  		dmaengine_pause(dma->tx_chan);
->  		dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
->  		dmaengine_terminate_all(dma->tx_chan);
-> -		dma_sync_single_for_cpu(ourport->port.dev,
-> +		dma_sync_single_for_cpu(dma->tx_chan->device->dev,
->  			dma->tx_transfer_addr, dma->tx_size, DMA_TO_DEVICE);
->  		async_tx_ack(dma->tx_desc);
->  		count = dma->tx_bytes_requested - state.residue;
-> @@ -338,8 +338,8 @@ static void s3c24xx_serial_tx_dma_complete(void *args)
->  	count = dma->tx_bytes_requested - state.residue;
->  	async_tx_ack(dma->tx_desc);
->  
-> -	dma_sync_single_for_cpu(ourport->port.dev, dma->tx_transfer_addr,
-> -				dma->tx_size, DMA_TO_DEVICE);
-> +	dma_sync_single_for_cpu(dma->tx_chan->device->dev,
-> +			dma->tx_transfer_addr, dma->tx_size, DMA_TO_DEVICE);
+On Wed, Mar 3, 2021 at 11:31 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+> On Mon, Mar 1, 2021 at 4:59 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Looks like alignment is broken here. However even if the line was not
-aligned before, please fix it up now - align the arguments like
-checkpatch suggests.
+> > >                 dsi->mode_flags =
+> > >                         MIPI_DSI_CLOCK_NON_CONTINUOUS |
+> > > -                       MIPI_DSI_MODE_EOT_PACKET;
+> > > +                       MIPI_DSI_MODE_NO_EOT_PACKET;
+> >
+> > Same, just delete the flag.
+> >
+> > These are all just semantic bugs due to the ambiguity of the flags, it is
+> > possible to provide a Fixes: flag for each file using this flag the wrong way
+> > but I dunno if it's worth it.
+>
+> Wow nice catch.
+>
+> I think we should fix all of those _before_ my patch is applied, with
+> proper Fixes tags so that this can be backported to stable branches,
+> even if it's a no-op. I can look into it but that may take a bit of
+> time.
 
-This applies to other places as well. Thanks.
+This is fixed now, please will you proceed with this patch, because I
+really like it!
 
-Best regards,
-Krzysztof
+Yours,
+Linus Walleij
