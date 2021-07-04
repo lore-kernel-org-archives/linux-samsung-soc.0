@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9726DC07E95
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 09:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BC7C07E95
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 09:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB8F608FC
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 09:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2A59608FC
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 09:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbhGDJHK (ORCPT
+        id S229573AbhGDJHQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Jul 2021 05:07:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59926 "EHLO
+        Sun, 4 Jul 2021 05:07:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbhGDJHJ (ORCPT
+        with ESMTP id S229492AbhGDJHP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Jul 2021 05:07:09 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD80C061764
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Jul 2021 02:04:35 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id y17so15026617pgf.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Jul 2021 02:04:35 -0700 (PDT)
+        Sun, 4 Jul 2021 05:07:15 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE9DCC061764
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Jul 2021 02:04:40 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id x21-20020a17090aa395b029016e25313bfcso9479654pjp.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Jul 2021 02:04:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=y9Aly6nJLJSN3b2bUvikDgpkvqF9hImc8XWMkPBqpXI=;
-        b=TdmLonvKL3YQ4lTciPW2d5BOkfnDv1G7HGporYX1pWNlZ1aGEL+Eq8M7tmO8uBv+mf
-         S7ULb87R3+34zvp3osimpLFs7hdpiemCCUQQLsKO4xiLBT2mPUks1MQ/LMUKarkFnES2
-         I24uenpZy8PqVrpzNQlkvafBaBR5l0ByYLzRE=
+        bh=4/t/yuyJpK03/e85JwmT4sPri76hH2e7sinXKHn6Jm4=;
+        b=PBfEFr1BFMVjj3B+E0cmJ2WWmRzElaTVeIW2FUDP67VEsqTV2t4doQ/laPx33w01ZZ
+         QLkKZPLV88HMSQWHmWGqufXpWw6dHjL2B6Zf4xwMHSm8DB1Rh0y3enlxGz/w/DcGkIip
+         tjR3OU0WtVrMK2ooLVJLQc1P87TGWNHy+uWHU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y9Aly6nJLJSN3b2bUvikDgpkvqF9hImc8XWMkPBqpXI=;
-        b=jZS0ooEPCcgZsTSgC1QLuf2KVmv/br+SN9BuCVxdBbD92R9nbkREFYUHyE/2IJTlq7
-         kImA/bI1dOv7++efCHdvPoa99fIAEU6mfyWdm2cIECY4e5LH88i4l8EkxwxJ0pC9zo2K
-         LksreynPzRRiHERm773w+v33nt0UNX5WLpQLqob52uRpO3mxL0e4syBZfptDtcO8axgV
-         ALXIR1e1krcvUyIEzR/2WBtX/xE+vcq6TxPubqIfgdMdNn18jSbSTFvzu6a3unh/64ZY
-         bhfx7ic0/r0ipS+ChPujwdjPt/napZvEmZDnNmnTc0Rfs1VVHrLIsoVXIWR3hgOafysl
-         lgMA==
-X-Gm-Message-State: AOAM530Oscvaqnf5LkZ7tHMkEEM/cPQEg9Ei0kfG2jPH9kl511/884O4
-        HFhFgIr1wk88vDjpxkxR3JgTcA==
-X-Google-Smtp-Source: ABdhPJweFhSs5QChPSwb0B5wADBPo78G77JyeMZ39XaIlV7lSuuZY45FOdIQsUxegraD1I9JmgaImQ==
-X-Received: by 2002:aa7:8003:0:b029:2eb:2f8f:a320 with SMTP id j3-20020aa780030000b02902eb2f8fa320mr9221995pfi.70.1625389474612;
-        Sun, 04 Jul 2021 02:04:34 -0700 (PDT)
+        bh=4/t/yuyJpK03/e85JwmT4sPri76hH2e7sinXKHn6Jm4=;
+        b=SZoGaiHUiLaREPNv0FeRqLTKwsfR5GBJB58olgh3Rg+2dzV23T2VYA45QUsh2PDvF/
+         ZZitM7q+1kcci25+HKQSDt+NM4035R7orLOlgsZ5Uv4WU2P9uI47cIrHhcWONaGntKWD
+         WmUJBXqvLun/eSDMBl+b5EIg291MADEkrmdmqoONKKE8vTJe91/8tJya8khjILmjsDoI
+         VbwwTxltvP7OvIQaHGYfQRDptdxW/T5lsK+kqVkAp85P30q40yCqCmtdBrsEOnLoVwIC
+         zvk6rK6mW67mHp/+AJX86ls/itOem9vEN4PRvj53ODfFGKwcLokYLkroy72pS5Zfrpqe
+         L4Dg==
+X-Gm-Message-State: AOAM532NamGwgIU99omHlHO4yjwUkpXYHqBLtgteVjsBcX0wy6E58I8f
+        BPnIPidkF4/UwRHocE+tCbgPbw==
+X-Google-Smtp-Source: ABdhPJy77aPWv0aLk8PVV9lGvo6WZzNRAOw/jXfAWvLysS/qv7rPpqLNr9aOcMxLgr7szCl4Cxz56A==
+X-Received: by 2002:a17:90a:d598:: with SMTP id v24mr8316714pju.185.1625389480337;
+        Sun, 04 Jul 2021 02:04:40 -0700 (PDT)
 Received: from localhost.localdomain ([2405:201:c00a:a884:1ae9:772f:6f0f:3e24])
-        by smtp.gmail.com with ESMTPSA id m24sm3360793pgd.60.2021.07.04.02.04.28
+        by smtp.gmail.com with ESMTPSA id m24sm3360793pgd.60.2021.07.04.02.04.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Jul 2021 02:04:34 -0700 (PDT)
+        Sun, 04 Jul 2021 02:04:39 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -74,9 +74,9 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [RFC PATCH 04/17] drm/exynos: dsi: Create bridge connector for encoder
-Date:   Sun,  4 Jul 2021 14:32:17 +0530
-Message-Id: <20210704090230.26489-5-jagan@amarulasolutions.com>
+Subject: [RFC PATCH 05/17] drm/exynos: dsi: Get the mode from bridge
+Date:   Sun,  4 Jul 2021 14:32:18 +0530
+Message-Id: <20210704090230.26489-6-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210704090230.26489-1-jagan@amarulasolutions.com>
 References: <20210704090230.26489-1-jagan@amarulasolutions.com>
@@ -86,64 +86,65 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use drm_bridge_connector_init to create a connector
-for display pipelines that use drm_bridge for encoder
-implementation.
+Now the exynos dsi driver is fully aware of bridge
+handling, so get the display mode from bridge, mode_set
+API instead of legacy encoder crtc.
 
-This allows splitting connector operations across
-multiple bridges when necessary, instead of having
-the last bridge in the chain creating the connector
-and handling all connector operations internally.
+This makes bridge usage more efficient instead of relying
+on encoder stack.
+
+Add mode_set in drm_bridge_funcs.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 24f0b082ac6d..d828be07c325 100644
+index d828be07c325..99a1b8c22313 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -24,6 +24,7 @@
- #include <video/videomode.h>
+@@ -275,6 +275,7 @@ struct exynos_dsi {
+ 	u32 format;
  
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_mipi_dsi.h>
-@@ -1591,6 +1592,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 	struct drm_device *drm_dev = data;
- 	struct device_node *in_bridge_node;
- 	struct drm_bridge *in_bridge;
-+	struct drm_connector *connector;
- 	int ret;
+ 	int state;
++	struct drm_display_mode mode;
+ 	struct drm_property *brightness;
+ 	struct completion completed;
  
- 	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
-@@ -1599,12 +1601,22 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 	if (ret < 0)
- 		return ret;
+@@ -881,7 +882,7 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
  
--	ret = drm_bridge_attach(&dsi->encoder, &dsi->bridge, NULL, 0);
-+	ret = drm_bridge_attach(&dsi->encoder, &dsi->bridge, NULL,
-+				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret) {
- 		drm_encoder_cleanup(&dsi->encoder);
- 		return ret;
- 	}
+ static void exynos_dsi_set_display_mode(struct exynos_dsi *dsi)
+ {
+-	struct drm_display_mode *m = &dsi->encoder.crtc->state->adjusted_mode;
++	struct drm_display_mode *m = &dsi->mode;
+ 	unsigned int num_bits_resol = dsi->driver_data->num_bits_resol;
+ 	u32 reg;
  
-+	connector = drm_bridge_connector_init(drm_dev, &dsi->encoder);
-+	if (IS_ERR(connector)) {
-+		DRM_DEV_ERROR(dsi->dev, "Unable to create bridge connector\n");
-+		drm_encoder_cleanup(&dsi->encoder);
-+		return PTR_ERR(connector);
-+	}
+@@ -1411,6 +1412,15 @@ static void exynos_dsi_bridge_disable(struct drm_bridge *bridge)
+ 	pm_runtime_put_sync(dsi->dev);
+ }
+ 
++static void exynos_dsi_bridge_mode_set(struct drm_bridge *bridge,
++				       const struct drm_display_mode *mode,
++				       const struct drm_display_mode *adjusted_mode)
++{
++	struct exynos_dsi *dsi = bridge_to_dsi(bridge);
 +
-+	drm_connector_attach_encoder(connector, &dsi->encoder);
++	drm_mode_copy(&dsi->mode, adjusted_mode);
++}
 +
- 	in_bridge_node = of_graph_get_remote_node(dev->of_node, DSI_PORT_IN, 0);
- 	if (in_bridge_node) {
- 		in_bridge = of_drm_find_bridge(in_bridge_node);
+ static int exynos_dsi_panel_or_bridge(struct exynos_dsi *dsi,
+ 				      struct device_node *node)
+ {
+@@ -1451,6 +1461,7 @@ static int exynos_dsi_bridge_attach(struct drm_bridge *bridge,
+ static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
+ 	.enable = exynos_dsi_bridge_enable,
+ 	.disable = exynos_dsi_bridge_disable,
++	.mode_set = exynos_dsi_bridge_mode_set,
+ 	.attach = exynos_dsi_bridge_attach,
+ };
+ 
 -- 
 2.25.1
 
