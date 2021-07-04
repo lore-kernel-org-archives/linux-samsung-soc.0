@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381D5C07E96
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05931C11F66
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 257FE619B3
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF6CF619B5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbhGDXNk (ORCPT
+        id S229989AbhGDXNy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Jul 2021 19:13:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47610 "EHLO mail.kernel.org"
+        Sun, 4 Jul 2021 19:13:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232149AbhGDXML (ORCPT
+        id S231533AbhGDXJW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Jul 2021 19:12:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8495E61956;
-        Sun,  4 Jul 2021 23:08:31 +0000 (UTC)
+        Sun, 4 Jul 2021 19:09:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 536706145D;
+        Sun,  4 Jul 2021 23:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625440112;
+        s=k20201202; t=1625440006;
         bh=g7YZHIXlmpzIxBwyRILjn1eXvxCLTK1iVgAuIElkdJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ljgqX0BKgPx3qhovMTmGQu5/9ayff8e+ZfUut4oA4u6P3ZxzaXkjejd5/YPXAxkKc
-         4giQrtk+c7plBr/QPiEOR00mYPMxgU4b2xDPtee29eyfJJbI/7IGYqEP0LNErInbPF
-         BkJPtSofa5DMQ5mzFey9XzE1qCkxUJrr7dRUQjiGtBo80RyPlZADFzJDuhUy6gMurc
-         Sqjnl2EQMTxMLCDI5RKKWBnmj43xlnV7zn7GEiVdlPEUIhrBVB/pGrhqJ944hM7Kyg
-         vIRZpJc9uOiiNQyjDCXFWHB9Lf1+UdA3W092hjpxMDp7ISc8Vf9JohwMDu3wMQeseY
-         p1/V30TjcDTLg==
+        b=Vo4TP+zxRKGFSQQrYfezHaW537ypc7Bm5BqAY5ETuE81SunGIq/zNHAFtaFHbrQIU
+         GvSL0v/ykuCwKei87loUoHCSOE5JsetgZ78yW0nlWvuNGK/IOYlHY/VXveh2nUrcfa
+         q3nNoHotPtTd5sOPtjDE94n+2dEJm5x1YVzUTheaPa9MasnlyGSNBFVfwM/Ti+RpMr
+         R0u7MyoFltxPWxxrSI07C/hsOJ8TxV3Q2pXLlB+qMhmyqiOytHYIKOsc2imVXI3jf6
+         YH6OXCDB+HIbT/I+/IArisFb+xO6ogSIknHZ1uVhhaNvB8W0iMADOI/fpCXNn0URSq
+         gO1JZW/fcEclA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
@@ -41,12 +41,12 @@ Cc:     =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 20/70] hwrng: exynos - Fix runtime PM imbalance on error
-Date:   Sun,  4 Jul 2021 19:07:13 -0400
-Message-Id: <20210704230804.1490078-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.12 21/80] hwrng: exynos - Fix runtime PM imbalance on error
+Date:   Sun,  4 Jul 2021 19:05:17 -0400
+Message-Id: <20210704230616.1489200-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210704230804.1490078-1-sashal@kernel.org>
-References: <20210704230804.1490078-1-sashal@kernel.org>
+In-Reply-To: <20210704230616.1489200-1-sashal@kernel.org>
+References: <20210704230616.1489200-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
