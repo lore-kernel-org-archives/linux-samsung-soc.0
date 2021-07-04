@@ -5,50 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1581C11F69
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69945C07E9D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2A66162A
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A12661483
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhGDXHa (ORCPT
+        id S231360AbhGDXJ3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Jul 2021 19:07:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45692 "EHLO mail.kernel.org"
+        Sun, 4 Jul 2021 19:09:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230134AbhGDXH1 (ORCPT
+        id S231646AbhGDXJC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Jul 2021 19:07:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E82F613F7;
-        Sun,  4 Jul 2021 23:04:50 +0000 (UTC)
+        Sun, 4 Jul 2021 19:09:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 79CED61283;
+        Sun,  4 Jul 2021 23:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625439891;
-        bh=g7YZHIXlmpzIxBwyRILjn1eXvxCLTK1iVgAuIElkdJQ=;
+        s=k20201202; t=1625439986;
+        bh=Lz+/JlLUf0y6vdpM5zzN5Pg+5vyv1ERRqgWrhzFUI5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pj9xx7nSYUWmuAatkVjyZOVgO/ZQvoJ6AHHtHeqwu2sAQK20dMY8JozpegDR5ishy
-         /qkjJ/CROPy0NPlJzYV4qWOF5KajA9SzMz0O6Ue1Q/5CA07D2+5bvZKeWPkad8ntCi
-         95y/fOa66quRpOUsjsb+aDE+O93vNkIpdFTr5kzQY9Ac/fCcwkUylGAdFNq6ADwltz
-         h9ftgRbRQr0enRTRFhSE38nUM9UV8stIa03Q8wc1Fq9pXvvqpAlEvjFtwrVuy5mBlp
-         E4VzRIoNWnlsDtah5nE3v5kZijWtVe7c+JsYeaUFgkAMlvJr9rWa3fH8rm9ajo3/Em
-         qlNCPL3N/9zTQ==
+        b=lls0rlpXPa9rgkC/6n/DQ0rbomZ/+doSazSrvSUpI49RARjy8hyWVICo0PkYciTXj
+         3FZyYsM9gdZR60dxOsqi386QsEsxX78zxHsgAy1mFHDEO/5GQkPwPmJGK10DFErNUS
+         WgbydxMaNqzcjUBIeFCtfzDeOTu6YO+h71I2jUa/U/y3b84F2vKidSow7wGPXjuD6I
+         t5Z1NTLWXpQqeSj5eu34kF9xF8ztj6T58dGDlP0g/DtJ12LxAarumYT3JCg7KhGwDy
+         W9cRelz0wInqqCWfDyGn4Q/lV41LwEECVY5BpdfGigO9Fsl3Gh16apARsWd1zIb9rS
+         azWM0+AYx/VHQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.13 21/85] hwrng: exynos - Fix runtime PM imbalance on error
-Date:   Sun,  4 Jul 2021 19:03:16 -0400
-Message-Id: <20210704230420.1488358-21-sashal@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 07/80] media: s5p: fix pm_runtime_get_sync() usage count
+Date:   Sun,  4 Jul 2021 19:05:03 -0400
+Message-Id: <20210704230616.1489200-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210704230420.1488358-1-sashal@kernel.org>
-References: <20210704230420.1488358-1-sashal@kernel.org>
+In-Reply-To: <20210704230616.1489200-1-sashal@kernel.org>
+References: <20210704230616.1489200-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -56,44 +55,48 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Łukasz Stelmach <l.stelmach@samsung.com>
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-[ Upstream commit 0cdbabf8bb7a6147f5adf37dbc251e92a1bbc2c7 ]
+[ Upstream commit fdc34e82c0f968ac4c157bd3d8c299ebc24c9c63 ]
 
-pm_runtime_resume_and_get() wraps around pm_runtime_get_sync() and
-decrements the runtime PM usage counter in case the latter function
-fails and keeps the counter balanced.
+The pm_runtime_get_sync() internally increments the
+dev->power.usage_count without decrementing it, even on errors.
+Replace it by the new pm_runtime_resume_and_get(), introduced by:
+commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+in order to properly decrement the usage counter, avoiding
+a potential PM usage counter leak.
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+While here, check if the PM runtime error was caught at
+s5p_cec_adap_enable().
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/hw_random/exynos-trng.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-index 8e1fe3f8dd2d..c8db62bc5ff7 100644
---- a/drivers/char/hw_random/exynos-trng.c
-+++ b/drivers/char/hw_random/exynos-trng.c
-@@ -132,7 +132,7 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 		return PTR_ERR(trng->mem);
+diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
+index 2a3e7ffefe0a..2250c1cbc64e 100644
+--- a/drivers/media/cec/platform/s5p/s5p_cec.c
++++ b/drivers/media/cec/platform/s5p/s5p_cec.c
+@@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
  
- 	pm_runtime_enable(&pdev->dev);
--	ret = pm_runtime_get_sync(&pdev->dev);
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Could not get runtime PM.\n");
- 		goto err_pm_get;
-@@ -165,7 +165,7 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(trng->clk);
+ static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
+ {
++	int ret;
+ 	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
  
- err_clock:
--	pm_runtime_put_sync(&pdev->dev);
-+	pm_runtime_put_noidle(&pdev->dev);
+ 	if (enable) {
+-		pm_runtime_get_sync(cec->dev);
++		ret = pm_runtime_resume_and_get(cec->dev);
++		if (ret < 0)
++			return ret;
  
- err_pm_get:
- 	pm_runtime_disable(&pdev->dev);
+ 		s5p_cec_reset(cec);
+ 
 -- 
 2.30.2
 
