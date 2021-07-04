@@ -2,77 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5432EC07E95
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 14:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DCAC07E9E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD42613E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 14:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3C256135D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  4 Jul 2021 23:04:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbhGDOsD (ORCPT
+        id S229824AbhGDXHH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 4 Jul 2021 10:48:03 -0400
-Received: from mxout03.lancloud.ru ([45.84.86.113]:47968 "EHLO
-        mxout03.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbhGDOsD (ORCPT
+        Sun, 4 Jul 2021 19:07:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229907AbhGDXHH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 4 Jul 2021 10:48:03 -0400
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru EF26A20F200B
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-Subject: [PATCH v2 4/5] i2c: s3c2410: fix IRQ check
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-To:     <linux-i2c@vger.kernel.org>
-CC:     <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <3712e871-bf2f-32c5-f9c2-2968c42087f8@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <771d94cf-5e82-0cb7-fb1f-5af2f0b10dd4@omp.ru>
-Date:   Sun, 4 Jul 2021 17:45:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Sun, 4 Jul 2021 19:07:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1223761283;
+        Sun,  4 Jul 2021 23:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625439871;
+        bh=Lz+/JlLUf0y6vdpM5zzN5Pg+5vyv1ERRqgWrhzFUI5w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pDBzVMZCpYWL7kFR/jW5nOiW0ECZnFgq888zCES31Ks92bNjvyYS6e3+2H+HiMOjf
+         EcdRUV48/ghYPSF7Ptr0oSiqYtbNZg117p38fmXHna73UhnuBAu3a148hZE/RUBmRX
+         ozOMS+03E75fofvBMHYJcy5XfgZSlFOHhPl6GJb5w01WzPQrpt4yLyi3bRrZc8Dt6M
+         43bl7uK5dH76dLGazB4O0OLwCrd9fiLa0Ovb8BX0dsWkMKaxBxeuwawTKiaTZ17jmS
+         0YuJTrQ3E/yGH7xXMsgsDO2+tHt1bq51EwciWKDyLKvMB62GqG3XqGhDmbh5EeDTon
+         kZ4rWr3KhJGrg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.13 07/85] media: s5p: fix pm_runtime_get_sync() usage count
+Date:   Sun,  4 Jul 2021 19:03:02 -0400
+Message-Id: <20210704230420.1488358-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210704230420.1488358-1-sashal@kernel.org>
+References: <20210704230420.1488358-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3712e871-bf2f-32c5-f9c2-2968c42087f8@omp.ru>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Iff platform_get_irq() returns 0, the driver's probe() method will return 0
-early (as if the method's call was successful).  Let's consider IRQ0 valid
-for simplicity -- devm_request_irq() can always override that decision...
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Fixes: 2bbd681ba2b ("i2c-s3c2410: Change IRQ to be plain integer.")
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+[ Upstream commit fdc34e82c0f968ac4c157bd3d8c299ebc24c9c63 ]
 
+The pm_runtime_get_sync() internally increments the
+dev->power.usage_count without decrementing it, even on errors.
+Replace it by the new pm_runtime_resume_and_get(), introduced by:
+commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+in order to properly decrement the usage counter, avoiding
+a potential PM usage counter leak.
+
+While here, check if the PM runtime error was caught at
+s5p_cec_adap_enable().
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/cec/platform/s5p/s5p_cec.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Index: linux/drivers/i2c/busses/i2c-s3c2410.c
-===================================================================
---- linux.orig/drivers/i2c/busses/i2c-s3c2410.c
-+++ linux/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1137,7 +1137,7 @@ static int s3c24xx_i2c_probe(struct plat
- 	 */
- 	if (!(i2c->quirks & QUIRK_POLL)) {
- 		i2c->irq = ret = platform_get_irq(pdev, 0);
--		if (ret <= 0) {
-+		if (ret < 0) {
- 			dev_err(&pdev->dev, "cannot find IRQ\n");
- 			clk_unprepare(i2c->clk);
- 			return ret;
-
+diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
+index 2a3e7ffefe0a..2250c1cbc64e 100644
+--- a/drivers/media/cec/platform/s5p/s5p_cec.c
++++ b/drivers/media/cec/platform/s5p/s5p_cec.c
+@@ -35,10 +35,13 @@ MODULE_PARM_DESC(debug, "debug level (0-2)");
+ 
+ static int s5p_cec_adap_enable(struct cec_adapter *adap, bool enable)
+ {
++	int ret;
+ 	struct s5p_cec_dev *cec = cec_get_drvdata(adap);
+ 
+ 	if (enable) {
+-		pm_runtime_get_sync(cec->dev);
++		ret = pm_runtime_resume_and_get(cec->dev);
++		if (ret < 0)
++			return ret;
+ 
+ 		s5p_cec_reset(cec);
+ 
+-- 
+2.30.2
 
