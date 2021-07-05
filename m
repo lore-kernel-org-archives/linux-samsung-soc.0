@@ -2,64 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A57C07E9B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Jul 2021 12:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAE1C07E99
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Jul 2021 12:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6C9C6145D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Jul 2021 12:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 958C361370
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Jul 2021 12:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231382AbhGEMDs (ORCPT
+        id S231263AbhGEMPu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Jul 2021 08:03:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230435AbhGEMDr (ORCPT
+        Mon, 5 Jul 2021 08:15:50 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34814 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231193AbhGEMPu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Jul 2021 08:03:47 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF9DC061574
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jul 2021 05:01:10 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id b2so28743456ejg.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jul 2021 05:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MGuPeMN8zkdPQjcnEwbeIwIBVsqBhILaUCgkLVxvDIw=;
-        b=q3OLm05fCG+cXVayBfPolQ96fFMDwVcgLxLGIcY4So4KhtjqNPNTLrERdFct/xcQnG
-         uIlG0SDO2xgAUTdopMDtBVQahhjaoVA/69qpm1ZspLq6Huy/YIIWqVdMGwAZbkeiuJcQ
-         5pgJuce66IkiMI4ik/NnrFz3vxrQCVXjtz5g4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MGuPeMN8zkdPQjcnEwbeIwIBVsqBhILaUCgkLVxvDIw=;
-        b=FMwQInX52khv92RKOd7M+/CV1hvNmfm8iD3EVTjNmUmuHFDdY5x06fBcHO12w6yDLn
-         xLt2a8P3tdF+YbxCrIJW7e0+7CjAw1uwQlsW/n6jLLC7Oh2yF4tCa67X29JT2ex+Cf3Q
-         zegwV0AKTBJqxwLI3U1vX2mEBbUd6OeG8Dktdf3Ql6WlFZ9fZU8IVJc6Wb8hr6J+jbzv
-         El+fxEg0McfxHQ0YmafvoqFXny+o2Q2MlDHDUT/B5tpwQPmxyZj+RV/gHfSenklaE/EO
-         uHIvVw43/t7JlXrpF/EORVXIS9wNjUck8UsMgVXFavcT96GJpuTPjM1VQ3xcesladKcS
-         D1Yg==
-X-Gm-Message-State: AOAM531hhXyxQQx61U8cxB54lJtV20jxEljl01of0TP2nEzyiayahXjm
-        m3zFMxYTn0HCUmLhfwMpJ7si/OGSIcUcYX6Paw94XA==
-X-Google-Smtp-Source: ABdhPJwVDTheCeyDFdym6u4brcx0LurzRRARJzXqy0PRVQGeyD8MwvD5M4rgTnKegCf3lV+bZY+DgUAx4Vn9RaDMVJo=
-X-Received: by 2002:a17:906:498b:: with SMTP id p11mr13163327eju.295.1625486468878;
- Mon, 05 Jul 2021 05:01:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210704090230.26489-1-jagan@amarulasolutions.com>
- <CGME20210704090432eucas1p2fa4225336e35f3f5fd2fbf5da99001ff@eucas1p2.samsung.com>
- <20210704090230.26489-4-jagan@amarulasolutions.com> <7af964c7-0e92-f190-2a86-d7a061a05129@samsung.com>
-In-Reply-To: <7af964c7-0e92-f190-2a86-d7a061a05129@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 5 Jul 2021 17:30:57 +0530
-Message-ID: <CAMty3ZB6Y91iOBPujNWZh9h5kO4p04NioiL2zJY_j_c_LqOxBw@mail.gmail.com>
+        Mon, 5 Jul 2021 08:15:50 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210705121312euoutp023412776847d79028168cbd2403a5344d~O4-1JT5UA1634016340euoutp02j
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jul 2021 12:13:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210705121312euoutp023412776847d79028168cbd2403a5344d~O4-1JT5UA1634016340euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1625487192;
+        bh=jhQoyOq4j5ztuXa06+ODE3urKcHV8fvtEws4Dx3cOvU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=cc+EbcsK6pcA+n6cyC2+018VOKpcSWS3IKY2+DLu3sKtXezbds9i6yxo18lhshiZC
+         o5wKTySWyj0/4xN9nrPF0z9fP7impRrGisdVRUDthw7/GOS7MnPtyZ2Acly/E9peT2
+         F/ecSyHngC7KugSJ8M935pf0d/A8h91mCVGiIB6A=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210705121311eucas1p1a49464e10c0e259a57f629e4ac238975~O4-0h50Lf0122001220eucas1p1q;
+        Mon,  5 Jul 2021 12:13:11 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 72.D4.42068.757F2E06; Mon,  5
+        Jul 2021 13:13:11 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210705121311eucas1p19f4bdb0ebe891cb864e6d1b331b809f2~O4-zztNlo0081600816eucas1p1g;
+        Mon,  5 Jul 2021 12:13:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210705121311eusmtrp1c3b93afc65ae283b9f513cb6f9fc3c7c~O4-zycZXM1026010260eusmtrp1R;
+        Mon,  5 Jul 2021 12:13:11 +0000 (GMT)
+X-AuditID: cbfec7f4-c89ff7000002a454-d4-60e2f757267d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 80.11.31287.657F2E06; Mon,  5
+        Jul 2021 13:13:10 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210705121309eusmtip123260c7c7ff4e317d54adbecc9632e15~O4-yqbzyC2630626306eusmtip1Z;
+        Mon,  5 Jul 2021 12:13:09 +0000 (GMT)
 Subject: Re: [RFC PATCH 03/17] drm/exynos: dsi: Use the drm_panel_bridge API
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
@@ -79,41 +76,103 @@ Cc:     Inki Dae <inki.dae@samsung.com>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <03653aa2-ed43-88b3-213a-9ccc99587844@samsung.com>
+Date:   Mon, 5 Jul 2021 14:13:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <CAMty3ZB6Y91iOBPujNWZh9h5kO4p04NioiL2zJY_j_c_LqOxBw@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0wTZxjHfe+u16OxzdHieCcEks4RmRFlm+aGm2FsI4e4KfEPo5hAgRuy
+        QS1XC+qyiLg5LYV1UJTeEFRgHURZBBQUg7ES60IpSKkiKTCY66zQMRC2ThJZz8ON/z7P9/n5
+        ffMSqPwUvprIUR9kWLUqV4lLsKt3/ulbv/vvifSNptsbqeFmh4iy2JtRqrY7QIPz0zg17tpB
+        lTYEovIxI0bNtRhx6vHoPYy67PMjVG/xlJg69V29mLIYu3Cq5df7Ikr/rBGlqvq6EGrqxDFA
+        WctSqVluPCBVePH4EPrSzJiInh76WkxzRaU4XcPdxehr3IiY/v6kWUTX3fAidLerTkS779/A
+        6bESG0K31h+lL//RgdBlbU2AftoSsVO2V/JuFpObU8CwG7amS/YbLpoQjWvlocXmx2gRMEn0
+        IIiA5Nvwt45qoAcSQk7+COBiayvgE3JyDsAe/Voh8RTAOWcteNlRV9a41GEB8JfKTpEQzADI
+        2RxivkpBbodWh0fEcwi5Dv5lnsR5RskuHJb5V/KMk7FQ79O/0KXkVthptKE8Y+QaaJs6+0Jf
+        RWbC6ZoqkVATDH82P8J4DiJTYLWdA8LMSNjuq0YFDoXDj2oR/iBIzgbB5/1juHD2h9CwaBYL
+        rIBPbG1LHA57KgyY0HAcwHHHJbEQGAB0Flctmd4C3Y5ngUlEYEU0/On6BkF+H9pHRzFehqQM
+        DvmChSNksPzqGVSQpfDkCblQHRV4n+b/1t7qH0CNQMkts8Yts8Mts8P9v/ccwJpAKKPT5mUz
+        2jfVTGGMVpWn1amzYzIP5LWAwG/teW6b6wCWJzMxVoAQwAoggSpDpCGmiXS5NEt1+AjDHkhj
+        dbmM1grCCEwZKs1ou5gmJ7NVB5nPGUbDsC+zCBG0ughZU5K4a9bpyXGJ1r4a3dufFbVvffyI
+        YbL3022vV+45+oErVBN3lo1Ilib6h7y7Gz7bPKj/RJdfoZs0amoH7F9armRMVZs2J7EFJYUj
+        0fMfZe1EI2+e9xS+Rs331XzrZx/ambDkh+ODss4L5KB1j6lbVnw3KqzjzA9vOWMxvS5bWnDH
+        M7HLcUjx1Rd/poRvah+oLA23xLmLyb1wwd3dlrHdm09sc+fbEphW47BTt+nYtYyPM5PtKfK4
+        VE/S76+k5icmLNQfeWddgiEC6VUMb1Er1Cvi76WflqQd7rz1QOxd1fjNe6NNvsjyhqTj5vYE
+        Z3BUheb8g4LKhQXdinPMTYW/X4lp96ti30BZrepfccpinBwEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDKsWRmVeSWpSXmKPExsVy+t/xu7ph3x8lGFw7ZW5xa905VovlZ9Yx
+        W8w/AmRd+fqezeLhVX+L3qVA3qT7E1gsvmyawGbx4t5FFouNb38wWZxtesNu0TlxCbvF8gn7
+        2Cw2Pb7GatH1ayWzxYzz+5gs3rQ1Mloc6ou2+DTrIVBo8ks2BxGPtR/vs3q8v9HK7jGroZfN
+        Y96sEyweO2fdZfeY3TGT1WPxnpdMHkeuLmb1uHNtD5vH/e7jTB6bl9R7bHy3g8mjb8sqRo/P
+        m+QC+KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0
+        MnrWTGEquMpT8X/dC+YGxilcXYycHBICJhKL+1YydjFycQgJLGWU2HOglRkiISNxcloDK4Qt
+        LPHnWhcbRNF7RonF2yexgSSEBXwkDp17BlYkIqAt8W3ma7A4s8ARNomVk0MhGo4ySUy48ASs
+        iE3AUKLrbRdYEa+AncTuCcfBtrEIqEgcfzMXLC4qkCzxc307VI2gxMmZT1hAbE6BQIk5Z2Yx
+        Qiwwk5i3+SEzhC0vsf3tHChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy02
+        1CtOzC0uzUvXS87P3cQITCbbjv3cvINx3quPeocYmTgYDzFKcDArifCKTHmUIMSbklhZlVqU
+        H19UmpNafIjRFOificxSosn5wHSWVxJvaGZgamhiZmlgamlmrCTOu3XumnghgfTEktTs1NSC
+        1CKYPiYOTqkGptCVd2zO+8/WnxV0odNT+WGWzTajOf9WGDAp2Z55vO6y0Vz9y0ZBaurzqnot
+        Jj+0+Jgae3KuoFfs2sVrnd/syKg5GZJ09d1O0Z4Q/r9tj9NXB/BkechWvgpKfehQv+Xpc/ac
+        v9U2bfp5zB9U32kdufJZbm1Kni7fwXavovQtjJ8+N+efyNm+97unudptti+XJu6a+urZse57
+        c3RvHWx1v2IRdkhn26FlTaHOCVvLY0tVrs16qfpMwb10VtAL2QrTnDsLdT9q7pYSMd9as8D/
+        sWbdI/EPbwpZP3zjuP155qOe9zGcbyaKJjxeL77nbvK5K07TU59s7L86Z4vOzFTX1ylr49V/
+        zwntsrkaInH3JocSS3FGoqEWc1FxIgDZB5bbrwMAAA==
+X-CMS-MailID: 20210705121311eucas1p19f4bdb0ebe891cb864e6d1b331b809f2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210704090432eucas1p2fa4225336e35f3f5fd2fbf5da99001ff
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210704090432eucas1p2fa4225336e35f3f5fd2fbf5da99001ff
+References: <20210704090230.26489-1-jagan@amarulasolutions.com>
+        <CGME20210704090432eucas1p2fa4225336e35f3f5fd2fbf5da99001ff@eucas1p2.samsung.com>
+        <20210704090230.26489-4-jagan@amarulasolutions.com>
+        <7af964c7-0e92-f190-2a86-d7a061a05129@samsung.com>
+        <CAMty3ZB6Y91iOBPujNWZh9h5kO4p04NioiL2zJY_j_c_LqOxBw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 5, 2021 at 5:18 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On 05.07.2021 14:00, Jagan Teki wrote:
+> On Mon, Jul 5, 2021 at 5:18 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 04.07.2021 11:02, Jagan Teki wrote:
+>>> Use drm_panel_bridge to replace manual panel and
+>>> bridge_chain handling code.
+>>>
+>>> This makes the driver simpler to allow all components
+>>> in the display pipeline to be treated as bridges by
+>>> cleaning the way to generic connector handling.
+>>>
+>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> This breaks Exysos DSI driver operation (Trats board worked fine with
+>> only patches 1-2):
+>>
+>> [    2.540066] exynos4-fb 11c00000.fimd: Adding to iommu group 0
+>> [    2.554733] OF: graph: no port node found in /soc/fimd@11c00000
+>> [    2.602819] [drm] Exynos DRM: using 11c00000.fimd device for DMA
+>> mapping operations
+>> [    2.609649] exynos-drm exynos-drm: bound 11c00000.fimd (ops
+>> fimd_component_ops)
+>> [    2.632558] exynos-drm exynos-drm: failed to bind 11c80000.dsi (ops
+>> exynos_dsi_component_ops): -22
+>> [    2.642263] exynos-drm exynos-drm: master bind failed: -22
+>> [    2.651017] exynos-drm: probe of exynos-drm failed with error -22
+> Thanks for testing it.
 >
-> On 04.07.2021 11:02, Jagan Teki wrote:
-> > Use drm_panel_bridge to replace manual panel and
-> > bridge_chain handling code.
-> >
-> > This makes the driver simpler to allow all components
-> > in the display pipeline to be treated as bridges by
-> > cleaning the way to generic connector handling.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->
-> This breaks Exysos DSI driver operation (Trats board worked fine with
-> only patches 1-2):
->
-> [    2.540066] exynos4-fb 11c00000.fimd: Adding to iommu group 0
-> [    2.554733] OF: graph: no port node found in /soc/fimd@11c00000
-> [    2.602819] [drm] Exynos DRM: using 11c00000.fimd device for DMA
-> mapping operations
-> [    2.609649] exynos-drm exynos-drm: bound 11c00000.fimd (ops
-> fimd_component_ops)
-> [    2.632558] exynos-drm exynos-drm: failed to bind 11c80000.dsi (ops
-> exynos_dsi_component_ops): -22
-> [    2.642263] exynos-drm exynos-drm: master bind failed: -22
-> [    2.651017] exynos-drm: probe of exynos-drm failed with error -22
+> Can you check Squash of 3,4 or 3,4,5 will work or not?
 
-Thanks for testing it.
+I've check both sets: 1-4 and 1-5 and none of them works. The result is 
+same as above. If I remember correctly, last time when I played with 
+that code, there was a problem with DRM core calling bridge ops in 
+different order than when they are used by the Exynos DSI driver.
 
-Can you check Squash of 3,4 or 3,4,5 will work or not?
+Best regards
 
-Thanks,
-Jagan.
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
