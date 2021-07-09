@@ -2,353 +2,220 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B51CC07E96
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Jul 2021 12:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4925C07E99
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jul 2021 06:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11D69614A5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  8 Jul 2021 12:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCC9B6128D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jul 2021 06:57:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbhGHMHz (ORCPT
+        id S230418AbhGIHAT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 8 Jul 2021 08:07:55 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:34094 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231397AbhGHMHy (ORCPT
+        Fri, 9 Jul 2021 03:00:19 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:18905 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230316AbhGIHAS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 8 Jul 2021 08:07:54 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3F434220D5;
-        Thu,  8 Jul 2021 12:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1625745912; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=x86zdx99+DRFmmWseHawCr5E5oFbq535MTLP5SjRHBw=;
-        b=aOgQKh/DqId+UqVMC3f2ZkBbFqcgdS/I9NBENHYbR19aQPxOYpDJyFzmW9nRhfaRacZs8N
-        /jgxpR7UYBkKD4nXwJgjUSJp+2WDV8Ew08/6/9qSLZvlRCPhTtI6ZNB8hTBX6z8RZ8j/hH
-        ivp4upuJgobjSWv4WUvCgooq3ZDK2D4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1625745912;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=x86zdx99+DRFmmWseHawCr5E5oFbq535MTLP5SjRHBw=;
-        b=vFCImedlM7kL85cnm18aqkMpdI/9G0jjdOrFgJr7h9SnkvS+QwSy2RXlP11gZC2AsmIt+1
-        tIl/RgmFKDzDjLDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EED7F13BDF;
-        Thu,  8 Jul 2021 12:05:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id y4hUOffp5mApUQAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Thu, 08 Jul 2021 12:05:11 +0000
-Subject: Re: [PATCH] drm/exynox: Implement mmap as GEM object function
-To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        airlied@linux.ie, daniel@ffwll.ch,
-        krzysztof.kozlowski@canonical.com, sumit.semwal@linaro.org,
-        christian.koenig@amd.com
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-References: <20210624090010.8086-1-tzimmermann@suse.de>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Message-ID: <6ebaed9e-6f86-1e5f-aa33-1a0cb6e825dc@suse.de>
-Date:   Thu, 8 Jul 2021 14:05:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Fri, 9 Jul 2021 03:00:18 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210709065733epoutp0125c4ffb1e0acb40f41a5a4fd3209a8fc~QDRX08BZu2702827028epoutp01N
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jul 2021 06:57:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210709065733epoutp0125c4ffb1e0acb40f41a5a4fd3209a8fc~QDRX08BZu2702827028epoutp01N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1625813853;
+        bh=9lBLIjfefxpIddL33TYWRmwm+w4y1PAUmGsE0uakKdA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=BZuspo5zt19BdFRQnbC5SXigLaZzWYIPxM/aVVsHXQtHRs3vn4LY2Buik3OCTvJyW
+         Ro84TdbjWiUC/rbvpDard32hYR44Loo/+jZXR4w04ykjIOuWMu2pc7MESJMFxwEOtj
+         R0eAJNwudEyrcbNaAwXtbTdcPIbomRK0UGL+P8OU=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20210709065732epcas2p143399e43b70c088ae1747288a09e2ba5~QDRWlSeH82881228812epcas2p1h;
+        Fri,  9 Jul 2021 06:57:32 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.40.188]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4GLkVx1SQcz4x9Q5; Fri,  9 Jul
+        2021 06:57:29 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4D.4D.09571.353F7E06; Fri,  9 Jul 2021 15:57:23 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20210709065721epcas2p46f7aae35571c10f233b71a6381214419~QDRNLJBf52941029410epcas2p4G;
+        Fri,  9 Jul 2021 06:57:21 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210709065721epsmtrp15a6d9b66242433bb4d328c6568f17c52~QDRNI-Lnf3179431794epsmtrp17;
+        Fri,  9 Jul 2021 06:57:21 +0000 (GMT)
+X-AuditID: b6c32a48-1f5ff70000002563-a7-60e7f353d2d0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        76.B7.08289.153F7E06; Fri,  9 Jul 2021 15:57:21 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210709065721epsmtip234807cad7753df7e56bca57ef629e9cc~QDRM8P5ZB3177431774epsmtip2Y;
+        Fri,  9 Jul 2021 06:57:21 +0000 (GMT)
+From:   Chanho Park <chanho61.park@samsung.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Can Guo <cang@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        jongmin jeong <jjmin.jeong@samsung.com>,
+        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH 00/15] introduce exynosauto v9 ufs driver
+Date:   Fri,  9 Jul 2021 15:56:56 +0900
+Message-Id: <20210709065711.25195-1-chanho61.park@samsung.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210624090010.8086-1-tzimmermann@suse.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="TmncTDefJnHiveBjRrAcgdm9jsyBHY7Pk"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHJsWRmVeSWpSXmKPExsWy7bCmhW7w5+cJBk/+iVqcfLKGzeLBvG1s
+        Fi9/XmWzmPbhJ7PFp/XLWC0u79e26NnpbHF6wiImiyfrZzFbLLqxjcli5TULi5tbjrJYzDi/
+        j8mi+/oONovlx/8xOfB7XL7i7XG5r5fJY/MKLY/Fe14yeWxa1cnmMWHRAUaPj09vsXj0bVnF
+        6PF5k5xH+4FupgCuqBybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFsl
+        F58AXbfMHKAXlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFhoYFesWJucWleel6
+        yfm5VoYGBkamQJUJORmLPy5nL+hQqJj05RJbA2ObZBcjJ4eEgInE7utbWboYuTiEBHYwSnz4
+        MYUVwvnEKPGicQU7hPOZUaLjwiMmmJYXKzaB2UICuxglVh03hSj6yCix6O4DsASbgK7Eluev
+        GEESIgL9jBLL988FW8IscJJZ4vSCg+wgVcIClhIPlu8Bs1kEVCXm3dgNZvMK2ElsP9XMArFO
+        XuLUsoNMEHFBiZMzn4DFmYHizVtnM4MMlRBYyiFxecE0ZogGF4ktOz6zQtjCEq+Ob2GHsKUk
+        Xva3sUM0dDNKtD76D5VYzSjR2egDYdtL/Jq+BaiZA2iDpsT6XfogpoSAssSRW1B7+SQ6Dv9l
+        hwjzSnS0CUE0qksc2D4d6mRZie45MBd4SPRNnwYNrViJhd8/s09glJ+F5JtZSL6ZhbB3ASPz
+        Kkax1ILi3PTUYqMCE+Ro3cQITshaHjsYZ7/9oHeIkYmD8RCjBAezkgiv0YxnCUK8KYmVValF
+        +fFFpTmpxYcYTYHhO5FZSjQ5H5gT8kriDU2NzMwMLE0tTM2MLJTEeTnYDyUICaQnlqRmp6YW
+        pBbB9DFxcEo1MIlEPZG88kn/2tl/Z+8ee2H84OuxtC49phs7X0+wKBCPE1y9zn6Vx6+TLEqC
+        /VseC/s8Z9rV/Lrh/xrtD8YaCw79Y1bJa/T178qS3ha95N9d360iNR3nvFutprHoc+nfipHJ
+        jT6rpFl8Usq7cMmHU3oV01b/Ecpu+bfi15v9jFd8zjVt/RpxT03xjozw79sFcXzCHwU8iv4c
+        npSTdUp2a/XbLXyPs8LWOz8W+PN/8zHpKWcYLQJX3na00DTLqVFZMHFrsWTN5dU2P97ahqw5
+        oKZV4vmsxzN5SdDymafVJq/bcojpm1GG+eO4vITiZc/8DEUulkQv2ulfK30tgeGLsf+PbbNm
+        Ppl0ikP9ew5Tp7kSS3FGoqEWc1FxIgBS+aWOUQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsWy7bCSvG7g5+cJBv8umVqcfLKGzeLBvG1s
+        Fi9/XmWzmPbhJ7PFp/XLWC0u79e26NnpbHF6wiImiyfrZzFbLLqxjcli5TULi5tbjrJYzDi/
+        j8mi+/oONovlx/8xOfB7XL7i7XG5r5fJY/MKLY/Fe14yeWxa1cnmMWHRAUaPj09vsXj0bVnF
+        6PF5k5xH+4FupgCuKC6blNSczLLUIn27BK6MxR+Xsxd0KFRM+nKJrYGxTbKLkZNDQsBE4sWK
+        TUxdjFwcQgI7GCWmbTzACJGQlXj2bgc7hC0scb/lCCtE0XtGiSMbGlhAEmwCuhJbnr8CaxAR
+        mMgoseSeGEgRs8BlZolv064wgySEBSwlHizfAzaJRUBVYt6N3WA2r4CdxPZTzSwQG+QlTi07
+        yAQRF5Q4OfMJWJwZKN68dTbzBEa+WUhSs5CkFjAyrWKUTC0ozk3PLTYsMMpLLdcrTswtLs1L
+        10vOz93ECI4QLa0djHtWfdA7xMjEwXiIUYKDWUmE12jGswQh3pTEyqrUovz4otKc1OJDjNIc
+        LErivBe6TsYLCaQnlqRmp6YWpBbBZJk4OKUamCx8UrfobD4nM7Nhol9fWuChHS189qv0BBIM
+        vspIuPau2nFJ0mkpz/6J0Rflf98S3fc0/c3zqwYPo+4evzt3ilXdx3N3nVKz2yIP7ZddphIX
+        32V9Um4XY+ICZWnnl3tz3k6e1xgsN2Pt9mrVTgndVfzPPkxpndfBdLlKy0vSauXkmquMyye7
+        S92ZdSH2wBwrvefstRYrtBco9sxl1RZa9MKdaVax15nYa/vXLeYRXP/DglVv3oYD351a0v8o
+        LGh+zPe+zZdL4R//npD5fQVWNw47XBTavlPWdXGEcjOnlgt78A2FmF2tupyC1ZY1C/9077St
+        Zpqlk7N4V+ziifffiVf9v2+lHxHP5MS8VE+QW4mlOCPRUIu5qDgRAGeUU8//AgAA
+X-CMS-MailID: 20210709065721epcas2p46f7aae35571c10f233b71a6381214419
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210709065721epcas2p46f7aae35571c10f233b71a6381214419
+References: <CGME20210709065721epcas2p46f7aae35571c10f233b71a6381214419@epcas2p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---TmncTDefJnHiveBjRrAcgdm9jsyBHY7Pk
-Content-Type: multipart/mixed; boundary="idlRb0oF7LIyIGwCLdx8rO7h1hDB3UjDj";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
- krzysztof.kozlowski@canonical.com, sumit.semwal@linaro.org,
- christian.koenig@amd.com
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-Message-ID: <6ebaed9e-6f86-1e5f-aa33-1a0cb6e825dc@suse.de>
-Subject: Re: [PATCH] drm/exynox: Implement mmap as GEM object function
-References: <20210624090010.8086-1-tzimmermann@suse.de>
-In-Reply-To: <20210624090010.8086-1-tzimmermann@suse.de>
+In ExynosAuto(variant of the Exynos for automotive), the UFS Storage needs
+to be accessed from multi-OS. To increase IO performance and reduce SW
+complexity, we implemented UFS-IOV to support storage IO virtualization
+feature on UFS.
 
---idlRb0oF7LIyIGwCLdx8rO7h1hDB3UjDj
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+IO virtualization increases IO performance and reduce SW complexity
+with small area cost. And IO virtualization supports virtual machine
+isolation for Security and Safety which are requested by Multi-OS system
+such as automotive application.
 
-ping for review
+Below figure is the conception of UFS-IOV architeture.
 
-Am 24.06.21 um 11:00 schrieb Thomas Zimmermann:
-> Moving the driver-specific mmap code into a GEM object function allows
-> for using DRM helpers for various mmap callbacks.
->=20
-> The respective exynos functions are being removed. The file_operations
-> structure exynos_drm_driver_fops is now being created by the helper mac=
-ro
-> DEFINE_DRM_GEM_FOPS().
->=20
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
->   drivers/gpu/drm/exynos/exynos_drm_drv.c   | 13 ++-----
->   drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 20 ++---------
->   drivers/gpu/drm/exynos/exynos_drm_gem.c   | 43 +++++-----------------=
--
->   drivers/gpu/drm/exynos/exynos_drm_gem.h   |  5 ---
->   4 files changed, 13 insertions(+), 68 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/=
-exynos/exynos_drm_drv.c
-> index e60257f1f24b..1d46751cad02 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -102,16 +102,7 @@ static const struct drm_ioctl_desc exynos_ioctls[]=
- =3D {
->   			DRM_RENDER_ALLOW),
->   };
->  =20
-> -static const struct file_operations exynos_drm_driver_fops =3D {
-> -	.owner		=3D THIS_MODULE,
-> -	.open		=3D drm_open,
-> -	.mmap		=3D exynos_drm_gem_mmap,
-> -	.poll		=3D drm_poll,
-> -	.read		=3D drm_read,
-> -	.unlocked_ioctl	=3D drm_ioctl,
-> -	.compat_ioctl =3D drm_compat_ioctl,
-> -	.release	=3D drm_release,
-> -};
-> +DEFINE_DRM_GEM_FOPS(exynos_drm_driver_fops);
->  =20
->   static const struct drm_driver exynos_drm_driver =3D {
->   	.driver_features	=3D DRIVER_MODESET | DRIVER_GEM
-> @@ -124,7 +115,7 @@ static const struct drm_driver exynos_drm_driver =3D=
- {
->   	.prime_fd_to_handle	=3D drm_gem_prime_fd_to_handle,
->   	.gem_prime_import	=3D exynos_drm_gem_prime_import,
->   	.gem_prime_import_sg_table	=3D exynos_drm_gem_prime_import_sg_table,=
+    +------+          +------+
+    | OS#1 |          | OS#2 |
+    +------+          +------+
+       |                 |
+ +------------+     +------------+
+ |  Physical  |     |   Virtual  |
+ |    Host    |     |    Host    |
+ +------------+     +------------+
+   |      |              | <-- UTP_CMD_SAP, UTP_TM_SAP
+   |   +-------------------------+
+   |   |    Function Arbitor     |
+   |   +-------------------------+
+ +-------------------------------+
+ |           UTP Layer           |
+ +-------------------------------+
+ +-------------------------------+
+ |           UIC Layer           |
+ +-------------------------------+
 
-> -	.gem_prime_mmap		=3D exynos_drm_gem_prime_mmap,
-> +	.gem_prime_mmap		=3D drm_gem_prime_mmap,
->   	.ioctls			=3D exynos_ioctls,
->   	.num_ioctls		=3D ARRAY_SIZE(exynos_ioctls),
->   	.fops			=3D &exynos_drm_driver_fops,
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_fbdev.c
-> index 5147f5929be7..02c97b9ca926 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -15,6 +15,7 @@
->   #include <drm/drm_crtc.h>
->   #include <drm/drm_fb_helper.h>
->   #include <drm/drm_fourcc.h>
-> +#include <drm/drm_prime.h>
->   #include <drm/drm_probe_helper.h>
->   #include <drm/exynos_drm.h>
->  =20
-> @@ -39,25 +40,8 @@ static int exynos_drm_fb_mmap(struct fb_info *info,
->   	struct drm_fb_helper *helper =3D info->par;
->   	struct exynos_drm_fbdev *exynos_fbd =3D to_exynos_fbdev(helper);
->   	struct exynos_drm_gem *exynos_gem =3D exynos_fbd->exynos_gem;
-> -	unsigned long vm_size;
-> -	int ret;
-> -
-> -	vma->vm_flags |=3D VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
-> -
-> -	vm_size =3D vma->vm_end - vma->vm_start;
-> -
-> -	if (vm_size > exynos_gem->size)
-> -		return -EINVAL;
->  =20
-> -	ret =3D dma_mmap_attrs(to_dma_dev(helper->dev), vma, exynos_gem->cook=
-ie,
-> -			     exynos_gem->dma_addr, exynos_gem->size,
-> -			     exynos_gem->dma_attrs);
-> -	if (ret < 0) {
-> -		DRM_DEV_ERROR(to_dma_dev(helper->dev), "failed to mmap.\n");
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return drm_gem_prime_mmap(&exynos_gem->base, vma);
->   }
->  =20
->   static const struct fb_ops exynos_drm_fb_ops =3D {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/=
-exynos/exynos_drm_gem.c
-> index 4396224227d1..c4b63902ee7a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> @@ -17,6 +17,8 @@
->   #include "exynos_drm_drv.h"
->   #include "exynos_drm_gem.h"
->  =20
-> +static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_a=
-rea_struct *vma);
-> +
->   static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem, bo=
-ol kvmap)
->   {
->   	struct drm_device *dev =3D exynos_gem->base.dev;
-> @@ -135,6 +137,7 @@ static const struct vm_operations_struct exynos_drm=
-_gem_vm_ops =3D {
->   static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs =
-=3D {
->   	.free =3D exynos_drm_gem_free_object,
->   	.get_sg_table =3D exynos_drm_gem_prime_get_sg_table,
-> +	.mmap =3D exynos_drm_gem_mmap,
->   	.vm_ops =3D &exynos_drm_gem_vm_ops,
->   };
->  =20
-> @@ -354,12 +357,16 @@ int exynos_drm_gem_dumb_create(struct drm_file *f=
-ile_priv,
->   	return 0;
->   }
->  =20
-> -static int exynos_drm_gem_mmap_obj(struct drm_gem_object *obj,
-> -				   struct vm_area_struct *vma)
-> +static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_a=
-rea_struct *vma)
->   {
->   	struct exynos_drm_gem *exynos_gem =3D to_exynos_gem(obj);
->   	int ret;
->  =20
-> +	if (obj->import_attach)
-> +		return dma_buf_mmap(obj->dma_buf, vma, 0);
-> +
-> +	vma->vm_flags |=3D VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
-> +
->   	DRM_DEV_DEBUG_KMS(to_dma_dev(obj->dev), "flags =3D 0x%x\n",
->   			  exynos_gem->flags);
->  =20
-> @@ -385,26 +392,6 @@ static int exynos_drm_gem_mmap_obj(struct drm_gem_=
-object *obj,
->   	return ret;
->   }
->  =20
-> -int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)=
+There are two types of host controllers on the UFS host controller
+that we designed.
+The UFS device has a Function Arbitor that arranges commands of each host.
+When each host transmits a command to the Arbitor, the Arbitor transmits it
+to the UTP layer.
+Physical Host(PH) support all UFSHCI functions(all SAPs) same as
+conventional UFSHCI.
+Virtual Host(VH) support only data transfer function(UTP_CMD_SAP and
+UTP_TM_SAP).
 
-> -{
-> -	struct drm_gem_object *obj;
-> -	int ret;
-> -
-> -	/* set vm_area_struct. */
-> -	ret =3D drm_gem_mmap(filp, vma);
-> -	if (ret < 0) {
-> -		DRM_ERROR("failed to mmap.\n");
-> -		return ret;
-> -	}
-> -
-> -	obj =3D vma->vm_private_data;
-> -
-> -	if (obj->import_attach)
-> -		return dma_buf_mmap(obj->dma_buf, vma, 0);
-> -
-> -	return exynos_drm_gem_mmap_obj(obj, vma);
-> -}
-> -
->   /* low-level interface prime helpers */
->   struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device =
-*dev,
->   					    struct dma_buf *dma_buf)
-> @@ -466,15 +453,3 @@ exynos_drm_gem_prime_import_sg_table(struct drm_de=
-vice *dev,
->   	exynos_gem->sgt =3D sgt;
->   	return &exynos_gem->base;
->   }
-> -
-> -int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
-> -			      struct vm_area_struct *vma)
-> -{
-> -	int ret;
-> -
-> -	ret =3D drm_gem_mmap_obj(obj, obj->size, vma);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return exynos_drm_gem_mmap_obj(obj, vma);
-> -}
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/=
-exynos/exynos_drm_gem.h
-> index a23272fb96fb..79d7e1a87419 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
-> @@ -96,9 +96,6 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_=
-priv,
->   			       struct drm_device *dev,
->   			       struct drm_mode_create_dumb *args);
->  =20
-> -/* set vm_flags and we can change the vm attribute to other one at her=
-e. */
-> -int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)=
-;
-> -
->   /* low-level interface prime helpers */
->   struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device =
-*dev,
->   					    struct dma_buf *dma_buf);
-> @@ -107,7 +104,5 @@ struct drm_gem_object *
->   exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
->   				     struct dma_buf_attachment *attach,
->   				     struct sg_table *sgt);
-> -int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
-> -			      struct vm_area_struct *vma);
->  =20
->   #endif
->=20
+In an environment where multiple OSs are used, the OS that has the
+leadership of the system is called System OS(Dom0). This system OS uses
+PH and controls error handling.
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+Since VH can only use less functions than PH, it is necessary to send a
+request to PH for Detected Error Handling in VH. To interface among PH
+and VHs, UFSHCI HW supports mailbox. PH can broadcast mail to other VH at
+the same time with arguments and VH can mail to PH with arguments.
+PH and VH generate interrupts when mails from PH or VH.
 
+In this structure, the virtual host can't support some feature and need
+to skip the some part of ufshcd code by using quirk.
+This patchs add quirks so that the UIC command is ignored and the ufshcd
+init process can be skipped for VH. Also, according to our UFS-IOV policy,
 
---idlRb0oF7LIyIGwCLdx8rO7h1hDB3UjDj--
+First two patches, I picked them up from Jonmin's patchset[1] and the third
+patch has been dropped because we need to check it again.
 
---TmncTDefJnHiveBjRrAcgdm9jsyBHY7Pk
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+[1]: https://lore.kernel.org/linux-scsi/20210527030901.88403-1-jjmin.jeong@samsung.com/
 
------BEGIN PGP SIGNATURE-----
+Patch 0003 ~ 0012, they are changes of exynos7 ufs driver to apply
+exynosauto v9 variant and PH/VH capabilities.
+Patch 0013 ~ 0015, they introduce exynosauto v9 ufs MHCI which includes
+PH and VH.
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmDm6fcFAwAAAAAACgkQlh/E3EQov+B8
-lw//cRmuoxBlOXmm0LKuC4HcrkTquQpHNmcYzoVsuE7/w4KPs2K/0HFoA8Tiac2GWdxoA+FX3Qut
-0UQ+J/bVDuiMLHkgDt38pno8mAaGnKYPZ0cNIPXrSSMFroW7usmM6OBVuGSh94XO+KyIocXPEsvt
-YsQiJ4+izOb9Ci+bIQsyoE5/IUobm6YrlQUaE5KQFXf9hZmaEm/VHO/MuPJjf66jQO/YWrGrHa51
-B1KeXgTtvIYAvQTLUAQj4mpwsfwHeuqNr+e24J3Cz5WnMiAPcnGxY/grfs1nX3NL944iehWr36l2
-/i1RZAkdJcE/3uv9lPCPV1LHYUW82lWZNLNS6BLSuX0wiYtJijuqi8iC8TxdUoGpA3t/YC9RNzfM
-YERf7IFKJ/RilXLPthpIV3oJ5ixtVIHxbvNGiz5e7o9U5/ZxRPNNctvayqc3plxnjzWEnGxFZ26z
-DQLCCYJ3KxqoEfexnHF3i4rVlnITqWqXiBOJo/LsyKfXqNMOIx4xPThzlSlj3CUy2SqMOwoVVkAW
-y+7pHt032T0HuTIZB/GoQc3H+FErW92hgVyYRPDlTWSb4DG+fuL4uUlHJmo9IBA54qs1YgC0c608
-l7NlpgOPrkL8qlNVRbX557hvpyPfaJya+4Vv/y6GDFEL4n6EVP9vPLN9FADEN0D/JtpAOeDhQ7f2
-LSU=
-=yOQP
------END PGP SIGNATURE-----
+Chanho Park (13):
+  scsi: ufs: ufs-exynos: change pclk available max value
+  scsi: ufs: ufs-exynos: simplify drv_data retrieval
+  scsi: ufs: ufs-exynos: get sysreg regmap for io-coherency
+  scsi: ufs: ufs-exynos: add refclkout_stop control
+  scsi: ufs: ufs-exynos: add setup_clocks callback
+  scsi: ufs: ufs-exynos: correct timeout value setting registers
+  scsi: ufs: ufs-exynos: support custom version of ufs_hba_variant_ops
+  scsi: ufs: ufs-exynos: add EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR option
+  scsi: ufs: ufs-exynos: factor out priv data init
+  scsi: ufs: ufs-exynos: add pre/post_hce_enable drv callbacks
+  scsi: ufs: ufs-exynos: support exynosauto v9 ufs driver
+  scsi: ufs: ufs-exynos: multi-host configuration for exynosauto
+  scsi: ufs: ufs-exynos: introduce exynosauto v9 virtual host
 
---TmncTDefJnHiveBjRrAcgdm9jsyBHY7Pk--
+jongmin jeong (2):
+  scsi: ufs: add quirk to handle broken UIC command
+  scsi: ufs: add quirk to enable host controller without interface
+    configuration
+
+ drivers/scsi/ufs/ufs-exynos.c | 318 +++++++++++++++++++++++++++++++---
+ drivers/scsi/ufs/ufs-exynos.h |  10 +-
+ drivers/scsi/ufs/ufshcd.c     |   6 +
+ drivers/scsi/ufs/ufshcd.h     |  12 ++
+ 4 files changed, 320 insertions(+), 26 deletions(-)
+
+-- 
+2.32.0
+
