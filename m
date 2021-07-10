@@ -2,103 +2,58 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E48C11F6E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jul 2021 13:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03687C07E9E
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Jul 2021 00:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47806613F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Jul 2021 13:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3476613C2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 10 Jul 2021 00:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232088AbhGIOAb (ORCPT
+        id S231156AbhGJApW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Jul 2021 10:00:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231918AbhGIOAa (ORCPT
+        Fri, 9 Jul 2021 20:45:22 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:38405 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229614AbhGJApW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Jul 2021 10:00:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5D05D613B2;
-        Fri,  9 Jul 2021 13:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625839067;
-        bh=HyNehvqgAJQzHq1MhZD/QmNgbhv9hin721hnafe3LcI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=toOdvWw5iKKMV7gg70ONZoGKe3kIMcaKbL9tBcnZ6fQCipRadtQuP6o5myjdowG6K
-         yBxVgSqRaP1ZSBfkmvIFC5FC1N6TEY6CddTYG62SR6Fg/6iEgwLmLwX5VxogkIGDUs
-         afRoG2e5sMmA9EYSqOG4P1jb90w3Alz4L7pbqmOlpbVkirRXJ2kVpmFRD7sJsBKXUO
-         vY8zqFToJJxgS1uYKx9x0/78G+QMfqcv9e5W/U3ad5Rmfs6B3pL7NCxdi0PWJe4lgD
-         p+PFFgmr1TBdGROLHQbTeNMFNTKjCiZordM2C8hglZ25/+Rf4fkN5G355TVrYZpL54
-         h5lCS444TGgUg==
-Received: by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1m1r0i-0004lB-Ik; Fri, 09 Jul 2021 15:57:44 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v3 0/2] convert designware-pcie.txt and kirin-pcie.txt to yaml
-Date:   Fri,  9 Jul 2021 15:57:41 +0200
-Message-Id: <cover.1625838920.git.mchehab+huawei@kernel.org>
+        Fri, 9 Jul 2021 20:45:22 -0400
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id D1EDE200002;
+        Sat, 10 Jul 2021 00:42:35 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Alessandro Zummo <a.zummo@towertech.it>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] rtc: s5m: Check return value of s5m_check_peding_alarm_interrupt()
+Date:   Sat, 10 Jul 2021 02:42:34 +0200
+Message-Id: <162587774658.1208259.11635583040730413749.b4-ty@bootlin.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210708051304.341278-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+References: <20210708051304.341278-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Rob,
+On Thu, 8 Jul 2021 14:13:04 +0900, Nobuhiro Iwamatsu wrote:
+> s5m_check_peding_alarm_interrupt() in s5m_rtc_read_alarm() gets the return
+> value, but doesn't use it.
+> This modifies using the s5m_check_peding_alarm_interrupt()"s return value
+> as the s5m_rtc_read_alarm()'s return value.
 
-This series applies after this one:
-   https://lore.kernel.org/lkml/cover.1625826353.git.mchehab+huawei@kernel.org/
+Applied, thanks!
 
-It basically converts two PCI DT-bindings to DT schema. On this version, I'm
-addressing some of your comments from v2, and rebased it on the top of
-my Hikey 960/970 tree (based on linus/master).
+[1/1] rtc: s5m: Check return value of s5m_check_peding_alarm_interrupt()
+      commit: f2581b1dfa9858e342afa8034b0f64f923bbf233
 
-The example for the designware file is producing some warnings here, as it
-can't find the right propertiesPattern. No idea why.
-
-Mauro Carvalho Chehab (2):
-  dt-bindings: PCI: designware-pcie.txt: convert it to yaml
-  dt-bindings: PCI: kirin-pcie.txt: convert it to yaml
-
- .../bindings/pci/amlogic,meson-pcie.txt       |   4 +-
- .../bindings/pci/axis,artpec6-pcie.txt        |   2 +-
- .../bindings/pci/designware-pcie.txt          |  77 ----------
- .../bindings/pci/fsl,imx6q-pcie.txt           |   2 +-
- .../bindings/pci/hisilicon,kirin-pcie.yaml    |  79 ++++++++++
- .../bindings/pci/hisilicon-histb-pcie.txt     |   2 +-
- .../devicetree/bindings/pci/kirin-pcie.txt    |  41 ------
- .../bindings/pci/layerscape-pci.txt           |   2 +-
- .../bindings/pci/nvidia,tegra194-pcie.txt     |   4 +-
- .../devicetree/bindings/pci/pci-armada8k.txt  |   2 +-
- .../devicetree/bindings/pci/pcie-al.txt       |   2 +-
- .../devicetree/bindings/pci/qcom,pcie.txt     |  14 +-
- .../bindings/pci/samsung,exynos-pcie.yaml     |   2 +-
- .../bindings/pci/sifive,fu740-pcie.yaml       |   2 +-
- .../devicetree/bindings/pci/snps,dw-pcie.yaml | 135 ++++++++++++++++++
- .../pci/socionext,uniphier-pcie-ep.yaml       |   2 +-
- .../devicetree/bindings/pci/ti-pci.txt        |   4 +-
- .../devicetree/bindings/pci/uniphier-pcie.txt |   2 +-
- MAINTAINERS                                   |   4 +-
- 19 files changed, 239 insertions(+), 143 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/kirin-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
-
+Best regards,
 -- 
-2.31.1
-
-
+Alexandre Belloni <alexandre.belloni@bootlin.com>
