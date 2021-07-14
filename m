@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A71B8C12002
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFD7C47E4E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94FAA613FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:42:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E2A613D3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237014AbhGNTpC (ORCPT
+        id S238171AbhGNTvs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:45:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36840 "EHLO mail.kernel.org"
+        Wed, 14 Jul 2021 15:51:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235533AbhGNToY (ORCPT
+        id S238637AbhGNTsI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:44:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D1C1613EE;
-        Wed, 14 Jul 2021 19:41:11 +0000 (UTC)
+        Wed, 14 Jul 2021 15:48:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5A4A7613EB;
+        Wed, 14 Jul 2021 19:43:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291672;
-        bh=gpnF7OUMNHCYMkaXyNSVlQlN1/Aws7hl9vXk2PLcjrA=;
+        s=k20201202; t=1626291819;
+        bh=zk2+0tbakUZ/9PwNRSvSTCtLeNsiqr4jud6adup3Yng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TjQ4RJO9PiNXFchSaNm1MJuDcOEnRi7KlmFkCHcN2TEFonQCAXbQitUn8dOl4Oi92
-         zb1Bos1BTFwtdgqo0UlBiZHLm4Ykmt8FNBCuHIRnnJznQERpZqtgkW/k3CYyouzcW9
-         y06LH+Mlabr1iPFj7V85qbu9CEvexY1xIaox2QV2Z/MASjxm5aEv3bQ2jthQCFamBA
-         OCiuAfdpF+ZsCHjzUPZRVoDA++P4pgDSL8v/8LsxHVH22GhiDlvlQTeAhC0JzW7Kno
-         PZBZ9shKmr2W1qnN4hJHblpNXlhSmdKF7xJ1m/W5ZvtdwJXoMZstB6BbdICEcrh31Y
-         lNy5T6JGqeRcg==
+        b=sq/iYU7R62YG+puH1pr+Ooay4vIpF1pmVflY2iKYS3JsMrHjl43aflL9eBLCUCMO6
+         yAB0UwkZgkOOQTIWcPgsLiGFJMpcON9Hfhtf0lqfIkNu09UcV1ac4BkbYhpIVoXNHv
+         lmYaIBD9RdoHSVY/zLge7h2BEjvl2Of1QabkbkNw3v9lG384FJkEEv9abhH3H3kOsh
+         oqSp1BlZcHmVPB3kk7jNE59mzZ7gas3ugpFMfFr4GWgoq0OKqVysMppHMBl06RaLxX
+         w4uyHwsieEbq9wTpjSHYABtqatlilp8VOM+JVthc5e7xHBZ6TxN4NodmhqmQpo+iXn
+         b5lWFVJZXYxoQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.12 025/102] ARM: dts: exynos: align Broadcom WiFi with dtschema
-Date:   Wed, 14 Jul 2021 15:39:18 -0400
-Message-Id: <20210714194036.53141-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 21/88] ARM: dts: exynos: align Broadcom WiFi with dtschema
+Date:   Wed, 14 Jul 2021 15:41:56 -0400
+Message-Id: <20210714194303.54028-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210714194036.53141-1-sashal@kernel.org>
-References: <20210714194036.53141-1-sashal@kernel.org>
+In-Reply-To: <20210714194303.54028-1-sashal@kernel.org>
+References: <20210714194303.54028-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,7 +75,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index d64ccf4b7d32..2a93f71abf9a 100644
+index f9e3b13d3aac..8ef20a66e24e 100644
 --- a/arch/arm/boot/dts/exynos3250-rinato.dts
 +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
 @@ -653,7 +653,7 @@ &mshc_1 {
@@ -88,10 +88,10 @@ index d64ccf4b7d32..2a93f71abf9a 100644
  
  		interrupt-parent = <&gpx1>;
 diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index d98c78207aaf..26820b46cc76 100644
+index 7777bf51a6e6..083408f3f695 100644
 --- a/arch/arm/boot/dts/exynos4210-i9100.dts
 +++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -752,7 +752,7 @@ &sdhci_3 {
+@@ -746,7 +746,7 @@ &sdhci_3 {
  	pinctrl-0 = <&sd3_clk>, <&sd3_cmd>, <&sd3_bus4>;
  
  	brcmf: wifi@1 {
@@ -101,10 +101,10 @@ index d98c78207aaf..26820b46cc76 100644
  
  		interrupt-parent = <&gpx2>;
 diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index d2406c9146b8..3eb8df319246 100644
+index a226bec56a45..68635dad541f 100644
 --- a/arch/arm/boot/dts/exynos4210-trats.dts
 +++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -521,7 +521,7 @@ &sdhci_3 {
+@@ -501,7 +501,7 @@ &sdhci_3 {
  	pinctrl-0 = <&sd3_clk>, <&sd3_cmd>, <&sd3_bus4>;
  
  	brcmf: wifi@1 {
@@ -114,10 +114,10 @@ index d2406c9146b8..3eb8df319246 100644
  
  		interrupt-parent = <&gpx2>;
 diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index dd44ad2c6ad6..f052853244a4 100644
+index 08284e8f3624..28361994ff80 100644
 --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
 +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -614,7 +614,7 @@ &sdhci_3 {
+@@ -596,7 +596,7 @@ &sdhci_3 {
  	pinctrl-0 = <&sd3_clk>, <&sd3_cmd>, <&sd3_bus4>;
  
  	brcmf: wifi@1 {
