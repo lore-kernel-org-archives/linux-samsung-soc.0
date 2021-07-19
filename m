@@ -2,397 +2,181 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D6BC6377B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Jul 2021 11:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CF7C636CB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 02:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7E756108B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Jul 2021 11:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 734D061168
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 02:07:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233335AbhGRLoB (ORCPT
+        id S233807AbhGSCKY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Jul 2021 07:44:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232973AbhGRLn5 (ORCPT
+        Sun, 18 Jul 2021 22:10:24 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:7124 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233713AbhGSCKX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Jul 2021 07:43:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BA8B061186;
-        Sun, 18 Jul 2021 11:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626608459;
-        bh=isbbNOQYmMDdvoK8/v5zZiC6f8zoovqrif/IUzFrOtg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fZ+TnhVk5WQ7OgZ/XAp9/kyEgPAHm6CEvCQE6m/kqfRM4TxMcUi2oB9ONJ/0Ky8Wj
-         IBRPCKSr6YfSpRPntymO9wuDgb2bUGi98OFk/2+qn+uEGUP9WvBmcfbDZwEQ6q+45x
-         Uj/oDZw6zyykBMSIbQzRcIqGYGQKreSlRp936Dli4042JkKLf0n3bqxU0d+llObG7l
-         Wc3LWNneu4HoboVSgLeTN/cOl4SToFKH3rxFiv7u0jiqb2z74famOmexw8xiEF9Dek
-         x+6ZfCudCHP2oDDBvM0kEg5/6ySn76HPsHgCPdZtUiOXjNF95kLnmvz1WvFA3tPQrn
-         K5D+0x/KQo/ag==
-Received: by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1m55AE-001Dw5-Ay; Sun, 18 Jul 2021 13:40:54 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v5 3/5] dt-bindings: PCI: update references to Designware schema
-Date:   Sun, 18 Jul 2021 13:40:50 +0200
-Message-Id: <dfff4d94631546c53450d1baeddc694dd26b5c36.1626608375.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1626608375.git.mchehab+huawei@kernel.org>
-References: <cover.1626608375.git.mchehab+huawei@kernel.org>
+        Sun, 18 Jul 2021 22:10:23 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16J26kET003758;
+        Mon, 19 Jul 2021 02:07:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
+ b=W4eon/OAfHh8IailIsFKU+zECz+IDTGEY93zNyL2qjSMzVtpo7UscACKErR4VUCdGkxS
+ LlGFW1HUEjC1XXbuUcgJ6fn4LIPpjbIoV1gedkHpLKzmV5xWkjOw3fLkb5ZxQMq8hUuh
+ sH5z6UblxYnjbLv0AiZ9N1HpgNmIo5QiwRkbWvD3vC+78PN848KAPciCoY2N5W2w4IkX
+ kCii19q8DZTGX0h2/pv6THqgJLJmLoBZ+AOBQXTXlXCR4Rx+s7OGedejLswJqdcq7TVU
+ evi4yL5H9IF+W7yLFQrHyhdwKs/fYc1o/htGgldqgOwQ4Bx13qIzsOcIWyOJ7Yw0lgeB QA== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
+ b=slt8F/UEh/ZjQZNg8VCPAdQy9XAT4A6HnCMFsIVe0bAXApU3U07UjzFqIhekCfRDMoBf
+ Op0VfwJKBTjI1MHiD8FHA2SaimV9YazdBG0PHAsCjxhzK6yAGhODEriwrMEML4RCxRHV
+ swIpeu+0bqd04q/kKM81w6aD84ttAGj2uvllJH7N3FUTc0fNzIOF6Uy+uJ0lm9+jaQvk
+ LDBYvuJ0QQhL4Thp33wfhg6lXL9ZlCswDxhEWfLQcYv/10Ce/snpNTfDXde/sh53AGwf
+ wkrQ/fGEPv5nfT8SQeO6ee474J+7bk2Fe3PzA5ixXm5TQNr3J+kxX1L9HboUYA8Jf/ZO vQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39uptrsvd4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Jul 2021 02:07:12 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 16J25ApI015410;
+        Mon, 19 Jul 2021 02:07:11 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2109.outbound.protection.outlook.com [104.47.70.109])
+        by aserp3030.oracle.com with ESMTP id 39upe7cf95-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Jul 2021 02:07:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oYxyV9d9/Du/VAPWLEl5l55tEriuppFfuCJED7bck1O9XteEJ+M6zYU1w9lbxmfZ+fZZJfWBzRUPCG2PnozO1im3BWgn/JzLyDy9to3SrjhpQ9Rzipbu28LdPu9cMYD+lnlhyNWgRuRwPaY9ZOztQxhhIZGVJS39kf/1xzQRCRLBoNTNltKqR5iFVT9KZ5FfJ0o1aP8m+clzaCNaL3HEPht625nOFKdUKTLp5gkJG1ltlcDzm196JKnok6PeMGZto9HwlOMSXhnPnlkBX6JIpNaKldLkUR+mpcCLGdfm9USSPZGAKVnri89Yec+jjabNESByktZT/CZwfhkOIla5RQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
+ b=TTu20KdkDdTEhems9qst9kYTRjBr1y8UxLhecgAtXPiD3E0mZRZABnrnyX16TaL+o+F8lNGaQQeJTj77Xsyrd5lFWmwYghlsRobD8GCWYr2xn28l5vkj/8fpqThX9vPahO38Asm+8POGrqofQ/kQpX9//mUyx9GK9qZeEyUJXt8UlXJOYCc7icsnuZNdVKD3d+1emgdaYoFSqO1M4tuq4opfzK5AmxOgtsUrdrCA26O134tz7RYt3sBXqDVJf6PZLlA0N1PBg/Q8XN/f5y6YgXjHwtW4NNFJPPmJcKJV69D9FkkXwUH3sfWXUYw9/oP5ZxUm5xnZRBmMTl0LHN2Auw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
+ b=sYf7zYjxevtA3aBce/7kqry6h1IYC2jRFmG6MtwhtPtfXe3urh8qkTat/WuMWzzemcvmMXZ03vEbRIRtxTrclz5WmbpFAch9fRk0KYLOicKxtrU0Xz4yikFCROj9fb7abRR+S00Fk8QPi9FbVU+MuMlReHgM4Fh/4noq1AI25wo=
+Authentication-Results: samsung.com; dkim=none (message not signed)
+ header.d=none;samsung.com; dmarc=none action=none header.from=oracle.com;
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by PH0PR10MB4519.namprd10.prod.outlook.com (2603:10b6:510:37::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.23; Mon, 19 Jul
+ 2021 02:07:09 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::153e:22d1:d177:d4f1]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::153e:22d1:d177:d4f1%8]) with mapi id 15.20.4331.032; Mon, 19 Jul 2021
+ 02:07:09 +0000
+To:     "Chanho Park" <chanho61.park@samsung.com>
+Cc:     "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+        "'Alim Akhtar'" <alim.akhtar@gmail.com>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>, <robh@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <avri.altman@wdc.com>, <martin.petersen@oracle.com>,
+        <kwmad.kim@samsung.com>, <cang@codeaurora.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kishon@ti.com>
+Subject: Re: [RESEND PATCH v10 08/10] dt-bindings: ufs: Add bindings for
+ Samsung ufs host
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1y2a3ysix.fsf@ca-mkp.ca.oracle.com>
+References: <CGME20200613030454epcas5p400f76485ddb34ce6293f0c8fa94332b8@epcas5p4.samsung.com>
+        <20200613024706.27975-1-alim.akhtar@samsung.com>
+        <20200613024706.27975-9-alim.akhtar@samsung.com>
+        <CAGOxZ500JD5xNWb0xFyEgaUH0qwQKm+kn1Ng71_1SM1wmJFxKg@mail.gmail.com>
+        <CAJKOXPd6VMBaW7zBDXb7tXDHr3xwV2yZXxZtLJqNe3T69oUqsw@mail.gmail.com>
+        <000001d7783f$ae446670$0acd3350$@samsung.com>
+Date:   Sun, 18 Jul 2021 22:07:06 -0400
+In-Reply-To: <000001d7783f$ae446670$0acd3350$@samsung.com> (Chanho Park's
+        message of "Wed, 14 Jul 2021 08:34:53 +0900")
+Content-Type: text/plain
+X-ClientProxiedBy: SN6PR05CA0017.namprd05.prod.outlook.com
+ (2603:10b6:805:de::30) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from ca-mkp.ca.oracle.com (138.3.200.58) by SN6PR05CA0017.namprd05.prod.outlook.com (2603:10b6:805:de::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.10 via Frontend Transport; Mon, 19 Jul 2021 02:07:09 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 577c7cde-bc40-4edd-307d-08d94a59ea87
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4519:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <PH0PR10MB45196C59D1391B4218C1DCD78EE19@PH0PR10MB4519.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: tokNI5N7MT22AHf9U27zw2xYGB/4BZX2oU9VnP/4+DsI9akhr+Jai6C+3ZIgQeMPZWh48KLuCxHVXQ0Pc/0CdMOljT2p8l+7ZvFXgpnchLxwi2+R+wmtI60a+KXrRyacP4P871tdx6U2HroTysm1FdY8bSmR6zq8wAxsWRg7UqZfty9J4WSH3z8okFIbMsBUR4EseWG0m2gvks8RTV/r6QlwNVi2Vx+bwAMTNFWsbX8fs33jKHP7bwumX0WUnQW++NE2u6hJy3xfNkenL0SFoG7FYD5UR/kKZr+i7XZczb5iln2OXWsbxQe0GTjMRtCp+/5vYey1163JkqEGyB31T5k6T137IJP7FTfWBtjIjzE1Q68cjhbBcPeTfV5VkQbkGqT7j6qCWDTMSbc4+qX/vTImceq21QgUkb0FL66iWbnbsvsWnw0ooGEgrho7Lk1fifJBbt/J9apqkhvUzVqCDVrJ3b4GhUMHn0H5OamMg+HJ1wXJzPY8cCvkA0i2oaYVdEQFjCPhq4gDEsjWkQ+OtxGSkuVitiyneg27/F4u5gQvzELkAsgcBTZsQpKjI7mJz4CXPuAcH3b5o9JpKTav9X51tP2x/sh+1Ps09qW4DUdnDS2MM0tjZtqhfh48J2K3wFyT7I5bdUFMW2WOE0bIESs7KUIGPlFSgQol+sBIP404+Ch5pgrIUmqFDuyAVK3yc3EmyAYY2HK4t5f0kVUM+w==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(4326008)(54906003)(316002)(26005)(6916009)(52116002)(86362001)(186003)(36916002)(7696005)(7416002)(6666004)(508600001)(55016002)(2906002)(4744005)(8936002)(956004)(38100700002)(8676002)(38350700002)(66946007)(5660300002)(66556008)(66476007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ET+HoILi7+E5C+XPSfeWUH4An3YeUErYStr2E+pOH6KTzXQglcZhiAmaPaEu?=
+ =?us-ascii?Q?5LjDdP0yDcT4i0R3XFnxKv8yrBS89yulIinFv79siTla8hGHl82cgoUce0Ts?=
+ =?us-ascii?Q?c/YMry8P/zfCYXyWjsCFBwcK0NjHD5ZpAVivKMYVzCfK/ee0q61khXClW/+c?=
+ =?us-ascii?Q?7KEblcLNTYjBJgvXjuMK7HYQKDEWImt4bE105Lx+CzBcSeAGzJzZfXoVaeFq?=
+ =?us-ascii?Q?XdIs7mBXb53z/IZJ6HbEH3hwVeGZVmA4FOn8osNXgtpwO0BA+J0IhtqewgNd?=
+ =?us-ascii?Q?1M/WzBNPMW4VFVRzbALN7YRt2jHeyyVpYRiDRQhp3jsaYWfuPtg0ndmmL9qm?=
+ =?us-ascii?Q?aLF7+NpzzmsYaHE5+s3w4Vo4PL6C6/B3pGSTJZcOp38+JiL7jud4kOrBzg7l?=
+ =?us-ascii?Q?jbrMSpHz1FnbtRZrYzIsr9GnM/CICQsX9xtd+fOwdhK18klwgnIhUCjdaDEc?=
+ =?us-ascii?Q?3A8badxQRXBLWXVqQnVeYmgHS6pwzseGKuFm07cvIueHslMPYtKsZS+IfkMN?=
+ =?us-ascii?Q?YoGg4gWI2Yopn58lUDQoLATd/4Pyk6VeUQCFybHmqgncrVWWn7ZYpg24XPjK?=
+ =?us-ascii?Q?h1e7KRvvfvl/f6MREtHe8BSBUTjp6ESwuI3fY4KPVu2r14vU9vaR07yvjQd7?=
+ =?us-ascii?Q?l6pwrgr3ao9MfjWMxbDomL6Oe2AsZeKqFnBl91paoc1HnVu+MtMyMZz2fe+r?=
+ =?us-ascii?Q?4QKtp3N6kML2FQHAZpJi46SzUvmjq1tzUNm5lMpyY7CiZ2XxwuqJM3uLCQg4?=
+ =?us-ascii?Q?WJVINtEjw1ObJ0yzY1V2hHB9CMyozNlA/Nzwb3+b5WM4dE8JJxKxV+Bax3iK?=
+ =?us-ascii?Q?6Rg0LRI5eAtWOEHb894XytE89ERTe3c/MsHAIuiGM4sPqi6pPmdnkaj6pKLT?=
+ =?us-ascii?Q?gauCVHs0qPTHOP0y5zeVPtEIMaIMSnM6z1xtEcpXpeBF/FQceQrZ/e9FYdG1?=
+ =?us-ascii?Q?Q4OYq4gacUF4Fz37C+RjuLjY2eVA77crMVMSd8MfW9k05Qz5B5FzxuBwfbM1?=
+ =?us-ascii?Q?//VR6qlo0cVaVi00QGfMj9kH6GzEFq4ZSkGiuVnz/KQIqhQulnTbHcFZQqrQ?=
+ =?us-ascii?Q?RtsAXATtwSuTznoZCy9BsVeZ32XJbBLgntheCcAXUMhozn//YkTvEtY97Dnj?=
+ =?us-ascii?Q?dzbhA++eQubPOLyxYtSQi7luvABdSJ8is/nm4nlrVJfqvHD5V9h5FKmz0Frq?=
+ =?us-ascii?Q?vw/L2nUKk+P5AeI7W09XRJnUA+GMrUBPzLMyVkYt71Fy4KPYkv+KAXNhBgoa?=
+ =?us-ascii?Q?A1715gJlNw+HnHn2Pe5px5IGgfYptKc/rAXAgyHlJkiWnGhgTVEtB/OtCM/K?=
+ =?us-ascii?Q?mB1e/d69HtNd9o8W+9eNuc4X?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 577c7cde-bc40-4edd-307d-08d94a59ea87
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 02:07:09.7904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: smYtRY/CxyoyjZgE+M8fq1Wg91mz1PyWOYDKC/EuXMqEVrK/bcfEmyzAdwVcxlvU9tMYHasXcksZX3iae7fG094Kvl1Fac5uNQrYVFPwIv4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4519
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10049 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 bulkscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=994 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2107190011
+X-Proofpoint-ORIG-GUID: NNBrGUqgrglLOIGdv40PLOgPiJu7Gl-l
+X-Proofpoint-GUID: NNBrGUqgrglLOIGdv40PLOgPiJu7Gl-l
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Now that its contents were converted to a DT schema, replace
-the references for the old file on existing properties.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- .../devicetree/bindings/pci/amlogic,meson-pcie.txt |  4 ++--
- .../devicetree/bindings/pci/axis,artpec6-pcie.txt  |  2 +-
- .../devicetree/bindings/pci/fsl,imx6q-pcie.txt     |  2 +-
- .../bindings/pci/hisilicon-histb-pcie.txt          |  2 +-
- .../devicetree/bindings/pci/kirin-pcie.txt         |  2 +-
- .../devicetree/bindings/pci/layerscape-pci.txt     |  2 +-
- .../bindings/pci/nvidia,tegra194-pcie.txt          |  5 +++--
- .../devicetree/bindings/pci/pci-armada8k.txt       |  2 +-
- Documentation/devicetree/bindings/pci/pcie-al.txt  |  2 +-
- .../devicetree/bindings/pci/qcom,pcie.txt          | 14 +++++++-------
- .../bindings/pci/samsung,exynos-pcie.yaml          |  4 ++--
- .../devicetree/bindings/pci/sifive,fu740-pcie.yaml |  4 ++--
- .../bindings/pci/socionext,uniphier-pcie-ep.yaml   |  4 ++--
- Documentation/devicetree/bindings/pci/ti-pci.txt   |  4 ++--
- .../devicetree/bindings/pci/uniphier-pcie.txt      |  2 +-
- 15 files changed, 28 insertions(+), 27 deletions(-)
+Chanho,
 
-diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-index b6acbe694ffb..c3a75ac6e59d 100644
---- a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
-@@ -3,7 +3,7 @@ Amlogic Meson AXG DWC PCIE SoC controller
- Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
- It shares common functions with the PCIe DesignWare core driver and
- inherits common properties defined in
--Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
- 
- Additional properties are described here:
- 
-@@ -33,7 +33,7 @@ Required properties:
- - phy-names: must contain "pcie"
- 
- - device_type:
--	should be "pci". As specified in designware-pcie.txt
-+	should be "pci". As specified in snps,dw-pcie.yaml
- 
- 
- Example configuration:
-diff --git a/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt b/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
-index 979dc7b6cfe8..cc6dcdb676b9 100644
---- a/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
-@@ -1,7 +1,7 @@
- * Axis ARTPEC-6 PCIe interface
- 
- This PCIe host controller is based on the Synopsys DesignWare PCIe IP
--and thus inherits all the common properties defined in designware-pcie.txt.
-+and thus inherits all the common properties defined in snps,dw-pcie.yaml.
- 
- Required properties:
- - compatible: "axis,artpec6-pcie", "snps,dw-pcie" for ARTPEC-6 in RC mode;
-diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-index d8971ab99274..5e6eb44c81b5 100644
---- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-@@ -1,7 +1,7 @@
- * Freescale i.MX6 PCIe interface
- 
- This PCIe host controller is based on the Synopsys DesignWare PCIe IP
--and thus inherits all the common properties defined in designware-pcie.txt.
-+and thus inherits all the common properties defined in snps,dw-pcie.yaml.
- 
- Required properties:
- - compatible:
-diff --git a/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt b/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt
-index 760b4d740616..5f0cf6c2fef3 100644
---- a/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/hisilicon-histb-pcie.txt
-@@ -3,7 +3,7 @@ HiSilicon STB PCIe host bridge DT description
- The HiSilicon STB PCIe host controller is based on the DesignWare PCIe core.
- It shares common functions with the DesignWare PCIe core driver and inherits
- common properties defined in
--Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
- 
- Additional properties are described here:
- 
-diff --git a/Documentation/devicetree/bindings/pci/kirin-pcie.txt b/Documentation/devicetree/bindings/pci/kirin-pcie.txt
-index 6bbe43818ad5..7db30534498f 100644
---- a/Documentation/devicetree/bindings/pci/kirin-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/kirin-pcie.txt
-@@ -3,7 +3,7 @@ HiSilicon Kirin SoCs PCIe host DT description
- Kirin PCIe host controller is based on the Synopsys DesignWare PCI core.
- It shares common functions with the PCIe DesignWare core driver and
- inherits common properties defined in
--Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
- 
- Additional properties are described here:
- 
-diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-index 6d898dd4a8e2..f36efa73a470 100644
---- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-@@ -1,7 +1,7 @@
- Freescale Layerscape PCIe controller
- 
- This PCIe host controller is based on the Synopsys DesignWare PCIe IP
--and thus inherits all the common properties defined in designware-pcie.txt.
-+and thus inherits all the common properties defined in snps,dw-pcie.yaml.
- 
- This controller derives its clocks from the Reset Configuration Word (RCW)
- which is used to describe the PLL settings at the time of chip-reset.
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-index bd43f3c3ece4..6a99d2aa8075 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
-@@ -1,7 +1,8 @@
- NVIDIA Tegra PCIe controller (Synopsys DesignWare Core based)
- 
- This PCIe controller is based on the Synopsis Designware PCIe IP
--and thus inherits all the common properties defined in designware-pcie.txt.
-+and thus inherits all the common properties defined in snps,dw-pcie.yaml and
-+snps,dw-pcie-ep.yaml.
- Some of the controller instances are dual mode where in they can work either
- in root port mode or endpoint mode but one at a time.
- 
-@@ -22,7 +23,7 @@ Required properties:
-   property.
- - reg-names: Must include the following entries:
-   "appl": Controller's application logic registers
--  "config": As per the definition in designware-pcie.txt
-+  "config": As per the definition in snps,dw-pcie.yaml
-   "atu_dma": iATU and DMA registers. This is where the iATU (internal Address
-              Translation Unit) registers of the PCIe core are made available
-              for SW access.
-diff --git a/Documentation/devicetree/bindings/pci/pci-armada8k.txt b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
-index 7a813d0e6d63..ff25a134befa 100644
---- a/Documentation/devicetree/bindings/pci/pci-armada8k.txt
-+++ b/Documentation/devicetree/bindings/pci/pci-armada8k.txt
-@@ -1,7 +1,7 @@
- * Marvell Armada 7K/8K PCIe interface
- 
- This PCIe host controller is based on the Synopsys DesignWare PCIe IP
--and thus inherits all the common properties defined in designware-pcie.txt.
-+and thus inherits all the common properties defined in snps,dw-pcie.yaml.
- 
- Required properties:
- - compatible: "marvell,armada8k-pcie"
-diff --git a/Documentation/devicetree/bindings/pci/pcie-al.txt b/Documentation/devicetree/bindings/pci/pcie-al.txt
-index 557a5089229d..2ad1fe466eab 100644
---- a/Documentation/devicetree/bindings/pci/pcie-al.txt
-+++ b/Documentation/devicetree/bindings/pci/pcie-al.txt
-@@ -2,7 +2,7 @@
- 
- Amazon's Annapurna Labs PCIe Host Controller is based on the Synopsys DesignWare
- PCI core. It inherits common properties defined in
--Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
- 
- Properties of the host controller node that differ from it are:
- 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-index 25f4def468bf..3f646875f8c2 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-@@ -34,22 +34,22 @@
- - device_type:
- 	Usage: required
- 	Value type: <string>
--	Definition: Should be "pci". As specified in designware-pcie.txt
-+	Definition: Should be "pci". As specified in snps,dw-pcie.yaml
- 
- - #address-cells:
- 	Usage: required
- 	Value type: <u32>
--	Definition: Should be 3. As specified in designware-pcie.txt
-+	Definition: Should be 3. As specified in snps,dw-pcie.yaml
- 
- - #size-cells:
- 	Usage: required
- 	Value type: <u32>
--	Definition: Should be 2. As specified in designware-pcie.txt
-+	Definition: Should be 2. As specified in snps,dw-pcie.yaml
- 
- - ranges:
- 	Usage: required
- 	Value type: <prop-encoded-array>
--	Definition: As specified in designware-pcie.txt
-+	Definition: As specified in snps,dw-pcie.yaml
- 
- - interrupts:
- 	Usage: required
-@@ -64,17 +64,17 @@
- - #interrupt-cells:
- 	Usage: required
- 	Value type: <u32>
--	Definition: Should be 1. As specified in designware-pcie.txt
-+	Definition: Should be 1. As specified in snps,dw-pcie.yaml
- 
- - interrupt-map-mask:
- 	Usage: required
- 	Value type: <prop-encoded-array>
--	Definition: As specified in designware-pcie.txt
-+	Definition: As specified in snps,dw-pcie.yaml
- 
- - interrupt-map:
- 	Usage: required
- 	Value type: <prop-encoded-array>
--	Definition: As specified in designware-pcie.txt
-+	Definition: As specified in snps,dw-pcie.yaml
- 
- - clocks:
- 	Usage: required
-diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-index 1810bf722350..445eed94b53f 100644
---- a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
-@@ -13,10 +13,10 @@ maintainers:
- description: |+
-   Exynos5433 SoC PCIe host controller is based on the Synopsys DesignWare
-   PCIe IP and thus inherits all the common properties defined in
--  designware-pcie.txt.
-+  snps,dw-pcie.yaml.
- 
- allOf:
--  - $ref: /schemas/pci/pci-bus.yaml#
-+  - $ref: /schemas/pci/snps,dw-pcie.yaml#
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-index b03cbb9b6602..2b9d1d6fc661 100644
---- a/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-@@ -10,14 +10,14 @@ description: |+
-   SiFive FU740 PCIe host controller is based on the Synopsys DesignWare
-   PCI core. It shares common features with the PCIe DesignWare core and
-   inherits common properties defined in
--  Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+  Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
- 
- maintainers:
-   - Paul Walmsley <paul.walmsley@sifive.com>
-   - Greentime Hu <greentime.hu@sifive.com>
- 
- allOf:
--  - $ref: /schemas/pci/pci-bus.yaml#
-+  - $ref: /schemas/pci/snps,dw-pcie.yaml#
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
-index d6cf8a560ef0..144cbcd60a1c 100644
---- a/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
-+++ b/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
-@@ -10,13 +10,13 @@ description: |
-   UniPhier PCIe endpoint controller is based on the Synopsys DesignWare
-   PCI core. It shares common features with the PCIe DesignWare core and
-   inherits common properties defined in
--  Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+  Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml.
- 
- maintainers:
-   - Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
- 
- allOf:
--  - $ref: "pci-ep.yaml#"
-+  - $ref: /schemas/pci/snps,dw-pcie-ep.yaml#
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pci/ti-pci.txt b/Documentation/devicetree/bindings/pci/ti-pci.txt
-index d5cbfe6b0d89..8147e3e3e29b 100644
---- a/Documentation/devicetree/bindings/pci/ti-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/ti-pci.txt
-@@ -12,7 +12,7 @@ PCIe DesignWare Controller
- 	       number of PHYs as specified in *phys* property.
-  - ti,hwmods : Name of the hwmod associated to the pcie, "pcie<X>",
- 	       where <X> is the instance number of the pcie from the HW spec.
-- - num-lanes as specified in ../designware-pcie.txt
-+ - num-lanes as specified in ../snps,dw-pcie.yaml
-  - ti,syscon-lane-sel : phandle/offset pair. Phandle to the system control
- 			module and the register offset to specify lane
- 			selection.
-@@ -32,7 +32,7 @@ HOST MODE
-    device_type,
-    ranges,
-    interrupt-map-mask,
--   interrupt-map : as specified in ../designware-pcie.txt
-+   interrupt-map : as specified in ../snps,dw-pcie.yaml
-  - ti,syscon-unaligned-access: phandle to the syscon DT node. The 1st argument
- 			       should contain the register offset within syscon
- 			       and the 2nd argument should contain the bit field
-diff --git a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-index c4b7381733a0..359585db049f 100644
---- a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-@@ -6,7 +6,7 @@ on Socionext UniPhier SoCs.
- UniPhier PCIe host controller is based on the Synopsys DesignWare PCI core.
- It shares common functions with the PCIe DesignWare core driver and inherits
- common properties defined in
--Documentation/devicetree/bindings/pci/designware-pcie.txt.
-+Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
- 
- Required properties:
- - compatible: Should be "socionext,uniphier-pcie".
+>> It has Rob's ack, so it can be taken directly via SCSI tree.
+
+> Anyway, who will take this patch?
+
+I can't remember the rationale behind only taking a subset of the exynos
+series through SCSI. However, it's been over a year. A resend is a
+prerequisite.
+
 -- 
-2.31.1
-
+Martin K. Petersen	Oracle Linux Engineering
