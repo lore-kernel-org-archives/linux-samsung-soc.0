@@ -2,221 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1F5C07E9D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 22:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD21BC07E95
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Jul 2021 03:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38C7B6113A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 22:57:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE1646108B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Jul 2021 03:08:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236678AbhGSWQR (ORCPT
+        id S237727AbhGTC1E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Jul 2021 18:16:17 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51318 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385218AbhGSSwF (ORCPT
+        Mon, 19 Jul 2021 22:27:04 -0400
+Received: from mail-il1-f169.google.com ([209.85.166.169]:35609 "EHLO
+        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1359656AbhGSVWA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Jul 2021 14:52:05 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210719192915euoutp0155fac45ee8c70bcd4780aef9cbaf40c9~TR_jcRTiM1235212352euoutp01J
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jul 2021 19:29:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210719192915euoutp0155fac45ee8c70bcd4780aef9cbaf40c9~TR_jcRTiM1235212352euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1626722955;
-        bh=27homzhxtOgQquKIw/0+3LoypE6+9O9g4fIKMDgjxBE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iD1REVptyDUZ/Zjs6dOS56FtvF2BUb2OZ6wxaSPG0oH7UILBu3rIz79G1IQsqBHG0
-         NXIKKtQ6guApCvm/7Uy8MJm3zdxqyMpemeRQTxa+529n+IMtU+xtGG8NLLP1ZnbcXN
-         2BOPNXtm33dUaEVmjPtvw/BWHxh6nvG8ZhCYevQA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210719192914eucas1p10bc584d300209c1063fe205a5b30061a~TR_iPnZb02583725837eucas1p1K;
-        Mon, 19 Jul 2021 19:29:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id BF.0C.56448.A82D5F06; Mon, 19
-        Jul 2021 20:29:14 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210719192913eucas1p22ebe775ac3f40af0184a6569e6e869f3~TR_hP3Rz12864628646eucas1p2J;
-        Mon, 19 Jul 2021 19:29:13 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210719192913eusmtrp21cdfa6e7305cdfc6be1d469ac4f90199~TR_hPF1n52699226992eusmtrp2b;
-        Mon, 19 Jul 2021 19:29:13 +0000 (GMT)
-X-AuditID: cbfec7f5-d3bff7000002dc80-82-60f5d28a6288
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FC.DC.20981.982D5F06; Mon, 19
-        Jul 2021 20:29:13 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210719192913eusmtip2a81ef80b5e8c795df594d2f46bed8c02~TR_hBT65D1148611486eusmtip2-;
-        Mon, 19 Jul 2021 19:29:13 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mon, 19 Jul 2021 17:22:00 -0400
+Received: by mail-il1-f169.google.com with SMTP id a11so17437935ilf.2;
+        Mon, 19 Jul 2021 15:02:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=f1jPjrRlaCoGW6NcDg+XE1Qycqf9T6zQzCIsLWnTwZQ=;
+        b=GE7hs4aKssR+tkCZ2JdLeIsRsAPN6hDYNRJ3NaB0O/YuXKBJMzW4flKrJJoNVbAu+c
+         gKiH/95MU5l93sLt9JX2CiGKSTHfL0YjmoTAdUgofZY5rPcj4onCmufaErvN4hd8ghNh
+         rWVfvTiPBW93WBwbgEK1fC+Q+opfj94Ms0Rorzq/g/f0chqSgbBcV5f/XknYfq9CsLex
+         8xy4wh+J9JLR/unBHeH6l8Y7l24kA1z6v635284N0hVsx1fwF2IXrHnsdgs/Rmv010/p
+         f+ENTIQY7CD5WD7wWnJ/R8MztAawlhYWHz6+1yvUxCalT6cFAultsPQ+SbvaV2UmAYGC
+         Mq+Q==
+X-Gm-Message-State: AOAM533Nod60KTqSkrIhjmv1RiNmeLfBxfjZ5pBZdATuBnyUt5ZBr63d
+        UST1dpMhhuF7kEPOvKAEfw==
+X-Google-Smtp-Source: ABdhPJw7EeICoNwI7faYsy/ynAxnzY/CYjaXAly9aLu6w9Sr0yXeF9bmNozCXqaxmtS1LZg+Uz4WKw==
+X-Received: by 2002:a92:d706:: with SMTP id m6mr17728297iln.78.1626732154753;
+        Mon, 19 Jul 2021 15:02:34 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id o13sm10372829ilq.58.2021.07.19.15.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jul 2021 15:02:34 -0700 (PDT)
+Received: (nullmailer pid 2677074 invoked by uid 1000);
+        Mon, 19 Jul 2021 22:02:27 -0000
+Date:   Mon, 19 Jul 2021 16:02:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        mauro.chehab@huawei.com, Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH net-next v14 2/3] dt-bindings: net: Add bindings for
- AX88796C SPI Ethernet Adapter
-Date:   Mon, 19 Jul 2021 21:28:51 +0200
-Message-Id: <20210719192852.27404-3-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210719192852.27404-1-l.stelmach@samsung.com>
+        linux-omap@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-kernel@axis.com, Rob Herring <robh+dt@kernel.org>,
+        linux-tegra@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        linux-arm-msm@vger.kernel.org,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        devicetree@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        linux-pci@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linuxarm@huawei.com, Thierry Reding <thierry.reding@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v5 3/5] dt-bindings: PCI: update references to Designware
+ schema
+Message-ID: <20210719220227.GA2676918@robh.at.kernel.org>
+References: <cover.1626608375.git.mchehab+huawei@kernel.org>
+ <dfff4d94631546c53450d1baeddc694dd26b5c36.1626608375.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsWy7djPc7pdl74mGLx5LW1x/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
-        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsFv837OD3UHI4/K1i8weW1beZPLYOesuu8emVZ1s
-        HpuX1Hvs3PGZyaNvyypGj8+b5AI4orhsUlJzMstSi/TtErgyrh4zKzgvXLGg9ydTA+MU/i5G
-        Tg4JAROJp2tmsnQxcnEICaxglPj25h87hPOFUWLtk/tMEM5nRom901cywrSsvPiGGSKxnFFi
-        avcqVgjnOaPEiuanzCBVbAKOEv1LT4AlRATuMUusb3/ACOIwC9xnlLj3fDVQFQeHsECKxJF7
-        jiANLAKqEle+rGIBsXkFrCV+Tm9hhlgnL9G+fDsbiM0pYCMx98MTNogaQYmTM5+A1fMLaEms
-        aboOZjMD1TdvnQ12noTAKU6JFx/mM0EMcpE4/ukeC4QtLPHq+BZ2CFtG4v9OkBoOILteYvIk
-        M4jeHkaJbXN+QNVbS9w594sNpIZZQFNi/S59iLCjxMKjk6Ba+SRuvBWEOIFPYtK26cwQYV6J
-        jjYhiGoViXX9e6AGSkn0vlrBOIFRaRaSZ2YheWAWwq4FjMyrGMVTS4tz01OLjfNSy/WKE3OL
-        S/PS9ZLzczcxAlPe6X/Hv+5gXPHqo94hRiYOxkOMEhzMSiK8KkVfE4R4UxIrq1KL8uOLSnNS
-        iw8xSnOwKInz7tq6Jl5IID2xJDU7NbUgtQgmy8TBKdXANFH96sloHn3uy3EtG071+lj+540X
-        ZfoQ7lm9K+Ebp2RqyBqBHyuUGY3D9+/V/R7c1fVjum+8zp+9P2+9jPwq8/QC041VU65c6o88
-        lpIdtN8vl5fB6NzXiOQX75gFbR5vizx/46ZOwt+NVZc62ectK1O/U50YflxDupU///ENkd6l
-        qZHOAVc2lk44miaWImgv6PD90p1JJyr3+Z6638N3R+1hvuX7f9+WBpuzTrtSp6XDFx33yDKo
-        LjonlrNSJL9gbeKcrr/BntyxP2cLR+5p3zP/53H5tym+fk9vbPX4L7pFKdPy/qlU+/8yTidr
-        F/7Kt2KdLchc/DNaOHdC6b750nWSIXud9/Kv+7x/RrCXEktxRqKhFnNRcSIAqljNY+gDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xe7qdl74mGHzYL2lx/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2px89AKRotNj6+xWlzeNYfN
-        Ysb5fUwWh6buZbRYe+Quu8WxBWIWrXuPsFv837OD3UHI4/K1i8weW1beZPLYOesuu8emVZ1s
-        HpuX1Hvs3PGZyaNvyypGj8+b5AI4ovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOt
-        jEyV9O1sUlJzMstSi/TtEvQyrh4zKzgvXLGg9ydTA+MU/i5GTg4JAROJlRffMHcxcnEICSxl
-        lNhxrp+xi5EDKCElsXJuOkSNsMSfa11sEDVPGSU+bVrJCpJgE3CU6F96ghUkISLwhlmi6d5b
-        dhCHWeA+o8SvTy8YQaqEBZIkNr5+zwRiswioSlz5sooFxOYVsJb4Ob2FGWKFvET78u1sIDan
-        gI3E3A9P2ECuEAKqWb07AKJcUOLkzCcsIGFmAXWJ9fOEQML8AloSa5qug01kBprSvHU28wRG
-        oVlIOmYhdMxCUrWAkXkVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYHxvO/Zzyw7Gla8+6h1i
-        ZOJgPMQowcGsJMKrUvQ1QYg3JbGyKrUoP76oNCe1+BCjKdBjE5mlRJPzgQkmryTe0MzA1NDE
-        zNLA1NLMWEmc1+TImnghgfTEktTs1NSC1CKYPiYOTqkGpn41TrM1e22DFuwqlXxyfIuX9c8b
-        H6t8/dZ518iF7y7cfexVueqnr6b6IuorPA7bi2w2Fg97djVox6q3anFL+Pl/5fWask9hMK3M
-        2Lll54XJ7kuZvm0+r/R+8teCyP8vzs/z6aoMO/dltuKMnffKNBVD2nq3SkROMo2d9M126vGu
-        d1cMJm8ouW58Z/ep90f63z9lrf123MXedy9fdMX/uE8inddn1T15s3V/1OEs392Oop++LuJn
-        eSax5M2xZwo5D5QrPqQXvJVKXtspOuNbjNvzBVH5W2rConmvnkzlm/zL0feE6sFzX39PuNn3
-        UPJRu8okx6p/Ly28rkSw1LzbfkLwx9wcO7lcca7mEMvZK34psRRnJBpqMRcVJwIAwEC+fHgD
-        AAA=
-X-CMS-MailID: 20210719192913eucas1p22ebe775ac3f40af0184a6569e6e869f3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210719192913eucas1p22ebe775ac3f40af0184a6569e6e869f3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210719192913eucas1p22ebe775ac3f40af0184a6569e6e869f3
-References: <20210719192852.27404-1-l.stelmach@samsung.com>
-        <CGME20210719192913eucas1p22ebe775ac3f40af0184a6569e6e869f3@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfff4d94631546c53450d1baeddc694dd26b5c36.1626608375.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for AX88796C SPI Ethernet Adapter.
+On Sun, 18 Jul 2021 13:40:50 +0200, Mauro Carvalho Chehab wrote:
+> Now that its contents were converted to a DT schema, replace
+> the references for the old file on existing properties.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  .../devicetree/bindings/pci/amlogic,meson-pcie.txt |  4 ++--
+>  .../devicetree/bindings/pci/axis,artpec6-pcie.txt  |  2 +-
+>  .../devicetree/bindings/pci/fsl,imx6q-pcie.txt     |  2 +-
+>  .../bindings/pci/hisilicon-histb-pcie.txt          |  2 +-
+>  .../devicetree/bindings/pci/kirin-pcie.txt         |  2 +-
+>  .../devicetree/bindings/pci/layerscape-pci.txt     |  2 +-
+>  .../bindings/pci/nvidia,tegra194-pcie.txt          |  5 +++--
+>  .../devicetree/bindings/pci/pci-armada8k.txt       |  2 +-
+>  Documentation/devicetree/bindings/pci/pcie-al.txt  |  2 +-
+>  .../devicetree/bindings/pci/qcom,pcie.txt          | 14 +++++++-------
+>  .../bindings/pci/samsung,exynos-pcie.yaml          |  4 ++--
+>  .../devicetree/bindings/pci/sifive,fu740-pcie.yaml |  4 ++--
+>  .../bindings/pci/socionext,uniphier-pcie-ep.yaml   |  4 ++--
+>  Documentation/devicetree/bindings/pci/ti-pci.txt   |  4 ++--
+>  .../devicetree/bindings/pci/uniphier-pcie.txt      |  2 +-
+>  15 files changed, 28 insertions(+), 27 deletions(-)
+> 
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../bindings/net/asix,ax88796c.yaml           | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-new file mode 100644
-index 000000000000..699ebf452479
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88796c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASIX AX88796C SPI Ethernet Adapter
-+
-+maintainers:
-+  - Łukasz Stelmach <l.stelmach@samsung.com>
-+
-+description: |
-+  ASIX AX88796C is an Ethernet controller with a built in PHY. This
-+  describes SPI mode of the chip.
-+
-+  The node for this driver must be a child node of an SPI controller,
-+  hence all mandatory properties described in
-+  ../spi/spi-controller.yaml must be specified.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: asix,ax88796c
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 40000000
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      A GPIO line handling reset of the chip. As the line is active low,
-+      it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  local-mac-address: true
-+
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - interrupts
-+  - reset-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  # Artik5 eval board
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ethernet@0 {
-+            compatible = "asix,ax88796c";
-+            reg = <0x0>;
-+            local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+            interrupt-parent = <&gpx2>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+            spi-max-frequency = <40000000>;
-+            reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
-+        };
-+    };
--- 
-2.26.2
-
+Applied, thanks!
