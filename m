@@ -2,181 +2,150 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CF7C636CB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 02:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB02DC636C8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 03:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 734D061168
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 02:07:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90DCF61029
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Jul 2021 03:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233807AbhGSCKY (ORCPT
+        id S233964AbhGSDF1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Jul 2021 22:10:24 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:7124 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233713AbhGSCKX (ORCPT
+        Sun, 18 Jul 2021 23:05:27 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:27811 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233894AbhGSDF0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Jul 2021 22:10:23 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16J26kET003758;
-        Mon, 19 Jul 2021 02:07:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : content-type :
- mime-version; s=corp-2021-07-09;
- bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
- b=W4eon/OAfHh8IailIsFKU+zECz+IDTGEY93zNyL2qjSMzVtpo7UscACKErR4VUCdGkxS
- LlGFW1HUEjC1XXbuUcgJ6fn4LIPpjbIoV1gedkHpLKzmV5xWkjOw3fLkb5ZxQMq8hUuh
- sH5z6UblxYnjbLv0AiZ9N1HpgNmIo5QiwRkbWvD3vC+78PN848KAPciCoY2N5W2w4IkX
- kCii19q8DZTGX0h2/pv6THqgJLJmLoBZ+AOBQXTXlXCR4Rx+s7OGedejLswJqdcq7TVU
- evi4yL5H9IF+W7yLFQrHyhdwKs/fYc1o/htGgldqgOwQ4Bx13qIzsOcIWyOJ7Yw0lgeB QA== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : content-type :
- mime-version; s=corp-2020-01-29;
- bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
- b=slt8F/UEh/ZjQZNg8VCPAdQy9XAT4A6HnCMFsIVe0bAXApU3U07UjzFqIhekCfRDMoBf
- Op0VfwJKBTjI1MHiD8FHA2SaimV9YazdBG0PHAsCjxhzK6yAGhODEriwrMEML4RCxRHV
- swIpeu+0bqd04q/kKM81w6aD84ttAGj2uvllJH7N3FUTc0fNzIOF6Uy+uJ0lm9+jaQvk
- LDBYvuJ0QQhL4Thp33wfhg6lXL9ZlCswDxhEWfLQcYv/10Ce/snpNTfDXde/sh53AGwf
- wkrQ/fGEPv5nfT8SQeO6ee474J+7bk2Fe3PzA5ixXm5TQNr3J+kxX1L9HboUYA8Jf/ZO vQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 39uptrsvd4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Jul 2021 02:07:12 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 16J25ApI015410;
-        Mon, 19 Jul 2021 02:07:11 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2109.outbound.protection.outlook.com [104.47.70.109])
-        by aserp3030.oracle.com with ESMTP id 39upe7cf95-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Jul 2021 02:07:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oYxyV9d9/Du/VAPWLEl5l55tEriuppFfuCJED7bck1O9XteEJ+M6zYU1w9lbxmfZ+fZZJfWBzRUPCG2PnozO1im3BWgn/JzLyDy9to3SrjhpQ9Rzipbu28LdPu9cMYD+lnlhyNWgRuRwPaY9ZOztQxhhIZGVJS39kf/1xzQRCRLBoNTNltKqR5iFVT9KZ5FfJ0o1aP8m+clzaCNaL3HEPht625nOFKdUKTLp5gkJG1ltlcDzm196JKnok6PeMGZto9HwlOMSXhnPnlkBX6JIpNaKldLkUR+mpcCLGdfm9USSPZGAKVnri89Yec+jjabNESByktZT/CZwfhkOIla5RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
- b=TTu20KdkDdTEhems9qst9kYTRjBr1y8UxLhecgAtXPiD3E0mZRZABnrnyX16TaL+o+F8lNGaQQeJTj77Xsyrd5lFWmwYghlsRobD8GCWYr2xn28l5vkj/8fpqThX9vPahO38Asm+8POGrqofQ/kQpX9//mUyx9GK9qZeEyUJXt8UlXJOYCc7icsnuZNdVKD3d+1emgdaYoFSqO1M4tuq4opfzK5AmxOgtsUrdrCA26O134tz7RYt3sBXqDVJf6PZLlA0N1PBg/Q8XN/f5y6YgXjHwtW4NNFJPPmJcKJV69D9FkkXwUH3sfWXUYw9/oP5ZxUm5xnZRBmMTl0LHN2Auw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=49KQkwiVTcZMf2C479YSQSfIJ0/DfWy6eG0yrYnsVmU=;
- b=sYf7zYjxevtA3aBce/7kqry6h1IYC2jRFmG6MtwhtPtfXe3urh8qkTat/WuMWzzemcvmMXZ03vEbRIRtxTrclz5WmbpFAch9fRk0KYLOicKxtrU0Xz4yikFCROj9fb7abRR+S00Fk8QPi9FbVU+MuMlReHgM4Fh/4noq1AI25wo=
-Authentication-Results: samsung.com; dkim=none (message not signed)
- header.d=none;samsung.com; dmarc=none action=none header.from=oracle.com;
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by PH0PR10MB4519.namprd10.prod.outlook.com (2603:10b6:510:37::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.23; Mon, 19 Jul
- 2021 02:07:09 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::153e:22d1:d177:d4f1]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::153e:22d1:d177:d4f1%8]) with mapi id 15.20.4331.032; Mon, 19 Jul 2021
- 02:07:09 +0000
-To:     "Chanho Park" <chanho61.park@samsung.com>
+        Sun, 18 Jul 2021 23:05:26 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210719030226epoutp018542c5fdb30cacbe106879c937a2b71c~TEg8KpfaT3236732367epoutp01Y
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jul 2021 03:02:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210719030226epoutp018542c5fdb30cacbe106879c937a2b71c~TEg8KpfaT3236732367epoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1626663746;
+        bh=s/m1HwqS3slEK2Mv0h5w19UqOm7RZFcMMyC+F3XPOf8=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=A+DhJJcrYBLWvlLcgpg1Uqxmf/4ulLSG35N5a0GLgTUyy3E0aBuJ5dpAQV8vz5uI1
+         4FDCNJHMtxS7ZGAJT155WhBXRR1c2Q+HaETE3BJqORNz88tDH3HYgWxpmS0/qeQEVR
+         mldYHm90kmNN5NpQpJj3qpVhPHDVLVqWSFtnj2pU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20210719030225epcas2p3a9f4e3acfb2fea005c47f4c02eff9c79~TEg7rcorv3072930729epcas2p32;
+        Mon, 19 Jul 2021 03:02:25 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.191]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4GSmq414Ryz4x9QD; Mon, 19 Jul
+        2021 03:02:24 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DD.E2.09921.04BE4F06; Mon, 19 Jul 2021 12:02:24 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210719030223epcas2p3694f96730773d9a8864bf3d0de8b36e0~TEg5lE1G73072530725epcas2p3x;
+        Mon, 19 Jul 2021 03:02:23 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210719030223epsmtrp1b0e159058bd0019d9ffca2b8887d0e87~TEg5kOh6e0951509515epsmtrp1_;
+        Mon, 19 Jul 2021 03:02:23 +0000 (GMT)
+X-AuditID: b6c32a45-f9dff700000026c1-ca-60f4eb40e9f6
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AB.2D.08394.F3BE4F06; Mon, 19 Jul 2021 12:02:23 +0900 (KST)
+Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20210719030223epsmtip281564cf9bea1d78704a1b0e0faf97915~TEg5YgzNJ0045600456epsmtip2B;
+        Mon, 19 Jul 2021 03:02:23 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Martin K. Petersen'" <martin.petersen@oracle.com>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>
 Cc:     "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        "'Alim Akhtar'" <alim.akhtar@gmail.com>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>, <robh@kernel.org>,
+        "'Alim Akhtar'" <alim.akhtar@gmail.com>, <robh@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <avri.altman@wdc.com>, <martin.petersen@oracle.com>,
-        <kwmad.kim@samsung.com>, <cang@codeaurora.org>,
-        <linux-samsung-soc@vger.kernel.org>,
+        <avri.altman@wdc.com>, <kwmad.kim@samsung.com>,
+        <cang@codeaurora.org>, <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <kishon@ti.com>
-Subject: Re: [RESEND PATCH v10 08/10] dt-bindings: ufs: Add bindings for
+In-Reply-To: <yq1y2a3ysix.fsf@ca-mkp.ca.oracle.com>
+Subject: RE: [RESEND PATCH v10 08/10] dt-bindings: ufs: Add bindings for
  Samsung ufs host
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1y2a3ysix.fsf@ca-mkp.ca.oracle.com>
+Date:   Mon, 19 Jul 2021 12:02:23 +0900
+Message-ID: <003601d77c4a$7f219390$7d64bab0$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLSJHm6eNEbPiUjxcYKuzqoT35S6wG4t7PjAWYpiDECouhoZQFFh/mAAgSS0dcCXaHtfKj4/wbA
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmua7D6y8JBjOusVgsvVVt8WDeNjaL
+        lz+vsll8Wr+M1WL+kXOsFhee9rBZnD+/gd3i5pajLBabHl9jtbi8aw6bxYzz+5gsuq/vYLNY
+        fvwfk8X/PTvYHfg8Lvf1MnnsnHWX3WPTqk42j81L6j0+Pr3F4tG3ZRWjx/Eb25k8Pm+S82g/
+        0M0UwBmVY5ORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkD
+        dLuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8DQsECvODG3uDQvXS85P9fK0MDA
+        yBSoMiEn4+qcLcwF35grPm//zt7A2MjcxcjJISFgIjFx7iy2LkYuDiGBHYwS7+YfgnI+MUq8
+        7mkFqxIS+MYo8euuJkzHj6NH2SGK9jJKHF53hwnCecEocfbuPVaQKjYBfYmXHdvAbBGBFInj
+        D76AdTALfGGS+N2+ngUkwSlgLLHiyFuwImGBaIlV798ygdgsAqoS7WtawFbzClhKbJyzgQ3C
+        FpQ4OfMJWC+zgLzE9rdzoJ5QkPj5dBnUsiiJf78PQtWISMzubGMGWSwh8IRD4sTLn4wQDS4S
+        HSu3sUDYwhKvjm9hh7ClJF72t7FDNHQzSrQ++g+VWM0o0dnoA2HbS/yavgVoGwfQBk2J9bv0
+        QUwJAWWJI7eg9vJJdBz+yw4R5pXoaBOCaFSXOLB9OtRWWYnuOZ9ZJzAqzULy2Swkn81C8sEs
+        hF0LGFlWMYqlFhTnpqcWGxUYIsf2JkZwwtZy3cE4+e0HvUOMTByMhxglOJiVRHi/1XxMEOJN
+        SaysSi3Kjy8qzUktPsRoCgzricxSosn5wJyRVxJvaGpkZmZgaWphamZkoSTOy8F+KEFIID2x
+        JDU7NbUgtQimj4mDU6qBSU2pd63pzeq0hG41yTWrXPjezA85zOa/S33T0tc3xQJXCzIvrPhn
+        KWWVcevJzxs+z2M+XT+xxOdZ1P/A6RNiNE22vJr4g9VxB/OCu89tnT/+vX5/YsikjTb64jWK
+        tze0sHlEHu647V+4S/Tywf4oB31HxvKWXZ2zj0b87bv0cEpnSM2Fo34n3ry88NP715pHSwxE
+        65fcT/H8erJwpf3PW5K320V0rh7cUj/h/6WT6k6Gf4Xr5S27eQ468/hrZfCH1TJ9+/ju8Ot5
+        kckHwk3TDvzcZ3fCIfK+5xu2X5cWa0Uxiv71MdivHsV+7i/77/DImKWGEZnrty9gvpdRcDSJ
+        R+Pur94TTpp8UzW+2vw0zlBiKc5INNRiLipOBAADBoW1YQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSvK796y8JBqsW8FgsvVVt8WDeNjaL
+        lz+vsll8Wr+M1WL+kXOsFhee9rBZnD+/gd3i5pajLBabHl9jtbi8aw6bxYzz+5gsuq/vYLNY
+        fvwfk8X/PTvYHfg8Lvf1MnnsnHWX3WPTqk42j81L6j0+Pr3F4tG3ZRWjx/Eb25k8Pm+S82g/
+        0M0UwBnFZZOSmpNZllqkb5fAlXF1zhbmgm/MFZ+3f2dvYGxk7mLk5JAQMJH4cfQoexcjF4eQ
+        wG5GibnTPjNBJGQlnr3bwQ5hC0vcbznCCmILCTxjlFi6SQfEZhPQl3jZsQ0sLiKQIrFj/R+w
+        emaBBmaJr990IYbOY5bY8O4YG0iCU8BYYsWRt2ANwgKREt8+7QaLswioSrSvaQG7iFfAUmLj
+        nA1sELagxMmZT1i6GDmAhupJtG1khJgvL7H97RyoBxQkfj5dBnVDlMS/3wdZIGpEJGZ3tjFP
+        YBSehWTSLIRJs5BMmoWkYwEjyypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOCo1dLc
+        wbh91Qe9Q4xMHIyHGCU4mJVEeL/VfEwQ4k1JrKxKLcqPLyrNSS0+xCjNwaIkznuh62S8kEB6
+        YklqdmpqQWoRTJaJg1OqgYnBPmDahzfMp/tyDt1Q6pNbbGG1QmPZr72BSxoeqP47uUR2wWv9
+        GaksbY9PSj+/9ThS1PGr7VfeGS+u3nQLNPyqbeh7p+Xvc8kNnRPflt73nbhniei0nY5WYSY6
+        R3XMVcq+/hCuXfW3RtA2q/rEpBk3jIQz9fu7NevL5k+c86pi+4Enc4/smGfySzfM197653Qd
+        GWf2aUxxdm+vNHFWM85/1bFeoWh9lavBjQUpjtxPegQNqrY73ZFcfbDe//61NQbpvrGt9fec
+        by2xV3u98n56bvCtaZP3Ttw77d5kCZulC7qcs36E/Baami79Kvql4vUvzz/uXdAbUNvjUjkn
+        +ODuV3su8tW4PrqqO2XV1A9JSizFGYmGWsxFxYkAN78KlUkDAAA=
+X-CMS-MailID: 20210719030223epcas2p3694f96730773d9a8864bf3d0de8b36e0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200613030454epcas5p400f76485ddb34ce6293f0c8fa94332b8
 References: <CGME20200613030454epcas5p400f76485ddb34ce6293f0c8fa94332b8@epcas5p4.samsung.com>
         <20200613024706.27975-1-alim.akhtar@samsung.com>
         <20200613024706.27975-9-alim.akhtar@samsung.com>
         <CAGOxZ500JD5xNWb0xFyEgaUH0qwQKm+kn1Ng71_1SM1wmJFxKg@mail.gmail.com>
         <CAJKOXPd6VMBaW7zBDXb7tXDHr3xwV2yZXxZtLJqNe3T69oUqsw@mail.gmail.com>
         <000001d7783f$ae446670$0acd3350$@samsung.com>
-Date:   Sun, 18 Jul 2021 22:07:06 -0400
-In-Reply-To: <000001d7783f$ae446670$0acd3350$@samsung.com> (Chanho Park's
-        message of "Wed, 14 Jul 2021 08:34:53 +0900")
-Content-Type: text/plain
-X-ClientProxiedBy: SN6PR05CA0017.namprd05.prod.outlook.com
- (2603:10b6:805:de::30) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from ca-mkp.ca.oracle.com (138.3.200.58) by SN6PR05CA0017.namprd05.prod.outlook.com (2603:10b6:805:de::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.10 via Frontend Transport; Mon, 19 Jul 2021 02:07:09 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 577c7cde-bc40-4edd-307d-08d94a59ea87
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4519:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <PH0PR10MB45196C59D1391B4218C1DCD78EE19@PH0PR10MB4519.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tokNI5N7MT22AHf9U27zw2xYGB/4BZX2oU9VnP/4+DsI9akhr+Jai6C+3ZIgQeMPZWh48KLuCxHVXQ0Pc/0CdMOljT2p8l+7ZvFXgpnchLxwi2+R+wmtI60a+KXrRyacP4P871tdx6U2HroTysm1FdY8bSmR6zq8wAxsWRg7UqZfty9J4WSH3z8okFIbMsBUR4EseWG0m2gvks8RTV/r6QlwNVi2Vx+bwAMTNFWsbX8fs33jKHP7bwumX0WUnQW++NE2u6hJy3xfNkenL0SFoG7FYD5UR/kKZr+i7XZczb5iln2OXWsbxQe0GTjMRtCp+/5vYey1163JkqEGyB31T5k6T137IJP7FTfWBtjIjzE1Q68cjhbBcPeTfV5VkQbkGqT7j6qCWDTMSbc4+qX/vTImceq21QgUkb0FL66iWbnbsvsWnw0ooGEgrho7Lk1fifJBbt/J9apqkhvUzVqCDVrJ3b4GhUMHn0H5OamMg+HJ1wXJzPY8cCvkA0i2oaYVdEQFjCPhq4gDEsjWkQ+OtxGSkuVitiyneg27/F4u5gQvzELkAsgcBTZsQpKjI7mJz4CXPuAcH3b5o9JpKTav9X51tP2x/sh+1Ps09qW4DUdnDS2MM0tjZtqhfh48J2K3wFyT7I5bdUFMW2WOE0bIESs7KUIGPlFSgQol+sBIP404+Ch5pgrIUmqFDuyAVK3yc3EmyAYY2HK4t5f0kVUM+w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(4326008)(54906003)(316002)(26005)(6916009)(52116002)(86362001)(186003)(36916002)(7696005)(7416002)(6666004)(508600001)(55016002)(2906002)(4744005)(8936002)(956004)(38100700002)(8676002)(38350700002)(66946007)(5660300002)(66556008)(66476007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ET+HoILi7+E5C+XPSfeWUH4An3YeUErYStr2E+pOH6KTzXQglcZhiAmaPaEu?=
- =?us-ascii?Q?5LjDdP0yDcT4i0R3XFnxKv8yrBS89yulIinFv79siTla8hGHl82cgoUce0Ts?=
- =?us-ascii?Q?c/YMry8P/zfCYXyWjsCFBwcK0NjHD5ZpAVivKMYVzCfK/ee0q61khXClW/+c?=
- =?us-ascii?Q?7KEblcLNTYjBJgvXjuMK7HYQKDEWImt4bE105Lx+CzBcSeAGzJzZfXoVaeFq?=
- =?us-ascii?Q?XdIs7mBXb53z/IZJ6HbEH3hwVeGZVmA4FOn8osNXgtpwO0BA+J0IhtqewgNd?=
- =?us-ascii?Q?1M/WzBNPMW4VFVRzbALN7YRt2jHeyyVpYRiDRQhp3jsaYWfuPtg0ndmmL9qm?=
- =?us-ascii?Q?aLF7+NpzzmsYaHE5+s3w4Vo4PL6C6/B3pGSTJZcOp38+JiL7jud4kOrBzg7l?=
- =?us-ascii?Q?jbrMSpHz1FnbtRZrYzIsr9GnM/CICQsX9xtd+fOwdhK18klwgnIhUCjdaDEc?=
- =?us-ascii?Q?3A8badxQRXBLWXVqQnVeYmgHS6pwzseGKuFm07cvIueHslMPYtKsZS+IfkMN?=
- =?us-ascii?Q?YoGg4gWI2Yopn58lUDQoLATd/4Pyk6VeUQCFybHmqgncrVWWn7ZYpg24XPjK?=
- =?us-ascii?Q?h1e7KRvvfvl/f6MREtHe8BSBUTjp6ESwuI3fY4KPVu2r14vU9vaR07yvjQd7?=
- =?us-ascii?Q?l6pwrgr3ao9MfjWMxbDomL6Oe2AsZeKqFnBl91paoc1HnVu+MtMyMZz2fe+r?=
- =?us-ascii?Q?4QKtp3N6kML2FQHAZpJi46SzUvmjq1tzUNm5lMpyY7CiZ2XxwuqJM3uLCQg4?=
- =?us-ascii?Q?WJVINtEjw1ObJ0yzY1V2hHB9CMyozNlA/Nzwb3+b5WM4dE8JJxKxV+Bax3iK?=
- =?us-ascii?Q?6Rg0LRI5eAtWOEHb894XytE89ERTe3c/MsHAIuiGM4sPqi6pPmdnkaj6pKLT?=
- =?us-ascii?Q?gauCVHs0qPTHOP0y5zeVPtEIMaIMSnM6z1xtEcpXpeBF/FQceQrZ/e9FYdG1?=
- =?us-ascii?Q?Q4OYq4gacUF4Fz37C+RjuLjY2eVA77crMVMSd8MfW9k05Qz5B5FzxuBwfbM1?=
- =?us-ascii?Q?//VR6qlo0cVaVi00QGfMj9kH6GzEFq4ZSkGiuVnz/KQIqhQulnTbHcFZQqrQ?=
- =?us-ascii?Q?RtsAXATtwSuTznoZCy9BsVeZ32XJbBLgntheCcAXUMhozn//YkTvEtY97Dnj?=
- =?us-ascii?Q?dzbhA++eQubPOLyxYtSQi7luvABdSJ8is/nm4nlrVJfqvHD5V9h5FKmz0Frq?=
- =?us-ascii?Q?vw/L2nUKk+P5AeI7W09XRJnUA+GMrUBPzLMyVkYt71Fy4KPYkv+KAXNhBgoa?=
- =?us-ascii?Q?A1715gJlNw+HnHn2Pe5px5IGgfYptKc/rAXAgyHlJkiWnGhgTVEtB/OtCM/K?=
- =?us-ascii?Q?mB1e/d69HtNd9o8W+9eNuc4X?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 577c7cde-bc40-4edd-307d-08d94a59ea87
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2021 02:07:09.7904
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: smYtRY/CxyoyjZgE+M8fq1Wg91mz1PyWOYDKC/EuXMqEVrK/bcfEmyzAdwVcxlvU9tMYHasXcksZX3iae7fG094Kvl1Fac5uNQrYVFPwIv4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4519
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10049 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 bulkscore=0
- malwarescore=0 phishscore=0 mlxlogscore=994 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2107190011
-X-Proofpoint-ORIG-GUID: NNBrGUqgrglLOIGdv40PLOgPiJu7Gl-l
-X-Proofpoint-GUID: NNBrGUqgrglLOIGdv40PLOgPiJu7Gl-l
+        <yq1y2a3ysix.fsf@ca-mkp.ca.oracle.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+> >> It has Rob's ack, so it can be taken directly via SCSI tree.
+> 
+> > Anyway, who will take this patch?
+> 
+> I can't remember the rationale behind only taking a subset of the exynos
+> series through SCSI. However, it's been over a year. A resend is a
+> prerequisite.
 
-Chanho,
+Okay.
 
->> It has Rob's ack, so it can be taken directly via SCSI tree.
+Alim, please resend the patch without Rob's review tag.
 
-> Anyway, who will take this patch?
+> The binding should have been applied with the driver. If you want me
+> to apply, resend it without my Reviewed-by tag.
 
-I can't remember the rationale behind only taking a subset of the exynos
-series through SCSI. However, it's been over a year. A resend is a
-prerequisite.
+Best Regards,
+Chanho Park
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
