@@ -2,174 +2,143 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B833C636CA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Jul 2021 13:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8280C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 25 Jul 2021 17:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D640610F7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 20 Jul 2021 13:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E94060F11
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 25 Jul 2021 17:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238832AbhGTNOD (ORCPT
+        id S230217AbhGYQdi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 20 Jul 2021 09:14:03 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55146 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239226AbhGTNKp (ORCPT
+        Sun, 25 Jul 2021 12:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55208 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229545AbhGYQdi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 20 Jul 2021 09:10:45 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210720135032euoutp01a385d7d1801433af631e7eb3b63641ad~ThAGPpodm1137411374euoutp01Z;
-        Tue, 20 Jul 2021 13:50:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210720135032euoutp01a385d7d1801433af631e7eb3b63641ad~ThAGPpodm1137411374euoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1626789032;
-        bh=xNFvXq4JCnO3U/+kGcl3QyUQHNjjPfejoXyNvpzJrDI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qUkhNM2NYIULG647hoklSvGPWCvZ1ZOQUGTZkU47E4dKl9XDtJD5lCXa+X/g+ky8U
-         3pYJ3C2ybyvTNRa0+wcLT0wNgymlRFI8PfEmP+pYGQ7rCsMRDrmCiiX6qxc2Zew75B
-         Ze4dFm+iS2jnw6w3UwzlLE3gt2gBcmEd/8CzjHAw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210720135032eucas1p198b52f59e50b6ac61ae73a09b0cb0adb~ThAF3oere1915719157eucas1p1J;
-        Tue, 20 Jul 2021 13:50:32 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 40.3E.42068.8A4D6F06; Tue, 20
-        Jul 2021 14:50:32 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210720135031eucas1p1f83f554ff6e98ff719505e0d0cce7aaa~ThAFXjFvl1915719157eucas1p1I;
-        Tue, 20 Jul 2021 13:50:31 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210720135031eusmtrp146cf46d62b4b92731c12daef14072780~ThAFWp_UA0964109641eusmtrp1H;
-        Tue, 20 Jul 2021 13:50:31 +0000 (GMT)
-X-AuditID: cbfec7f4-c89ff7000002a454-60-60f6d4a88953
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1D.A0.31287.7A4D6F06; Tue, 20
-        Jul 2021 14:50:31 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210720135031eusmtip1a41c46d4a5d4c531329a6702edead0fd~ThAFI3d921409814098eusmtip1F;
-        Tue, 20 Jul 2021 13:50:31 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>, jim.cromie@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?utf-8?Q?Bart=C5=82omiej_=C5=BBolni?= =?utf-8?Q?erkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH net-next v14 3/3] net: ax88796c: ASIX AX88796C SPI
- Ethernet Adapter Driver
-Date:   Tue, 20 Jul 2021 15:50:21 +0200
-In-Reply-To: <20210720123646.2991df22@cakuba> (Jakub Kicinski's message of
-        "Tue, 20 Jul 2021 12:36:46 +0200")
-Message-ID: <dleftjlf61nlgi.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sun, 25 Jul 2021 12:33:38 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DD5C061757
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Jul 2021 10:14:08 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id oz16so4104966ejc.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Jul 2021 10:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H3RPOWBRf2k2synG3wrZwitti/PedojQEmKKrIh2UUo=;
+        b=TH2gxgFULV3Btg8IqnkRewzfEIxAXYMpVn2yzlu582rw3Tkd6LO0hyYodBGl+z3oOG
+         FCCEjmdxW1A8AOt5F8w+i6QkbHU5HZJ6cl68r8LuL4Tj7K2bwik3XqCiX4ybx0XqDenN
+         voy9QGTXoRAhRVXYCmsSBDR824M8vqCCNStoI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H3RPOWBRf2k2synG3wrZwitti/PedojQEmKKrIh2UUo=;
+        b=UzXj2VptOrL1872i16XXmf3G0Z53suUUVWuw8lhYlcCv199yCZH86SUuummBreF13n
+         QiQUZunWs3Xk9Fhm7XYG/4dl8/cpvJVQdVAUzFGP8eZABpNh17BBYCqQPZL6LBTlRYs/
+         GSRLSBZ3viieHVSyQ/GHE3gL8yNP2mWyfQZCC8le513AsBhHpuTLde1a8V2eNuWjQ1MA
+         WkUl09pGN1LB5Zu6iC7lj4XzE7jYxV0lOWJ7auO6+kyRAn/gx4PUGW/wh3vlwJuvpi77
+         rbDfk8/dfLDjOo17h6KNdti2117NK5N1Ihn5VFV1Gw4IYisaZjfws9Nej2aroj8Q6vbk
+         Uz2Q==
+X-Gm-Message-State: AOAM530xO7eJQT7tCRmI5eScY1whKq8vjt3HfAv34dCWbYH7E0Rn4o+a
+        wJRoxof+UZNgs6BJkM+D+Rj9egM9FBfQqUkRYTm7yA==
+X-Google-Smtp-Source: ABdhPJxHwHQXUhyRK5a5X9ubPP7qAlXX/q2WPa8HKt6EPPQlN1ZOYkiGslGAR5j+VSADs9ttExe8DXD7AN113IbTGAQ=
+X-Received: by 2002:a17:906:368e:: with SMTP id a14mr14034879ejc.60.1627233247000;
+ Sun, 25 Jul 2021 10:14:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsWy7djP87orrnxLMHi2i93i/N1DzBYbZ6xn
-        tZhzvoXFYv6Rc6wWi97PYLW49vYOq0X/49fMFufPb2C3uLCtj9Vi0+NrrBaXd81hs5hxfh+T
-        xaGpexkt1h65y25xbIGYReveI+wOAh6Xr11k9tiy8iaTx85Zd9k9Nq3qZPPYvKTeY+eOz0we
-        fVtWMXp83iQXwBHFZZOSmpNZllqkb5fAlTHx7xLGgi08FVsW7WRsYPzO1cXIySEhYCLxr/0O
-        YxcjF4eQwApGiZNf2tghnC+MEvPuT2WCcD4zShy88pcRpuXWuVssEInljBI9D1ugqp4zSrxc
-        3wHkcHCwCehJrF0bAdIgIqAi0bJ5JlgDs8BFFon13Z9ZQGqEBRIkFq7yAqlhEVCVeNPdzA5i
-        cwrkS7ScecgCYvMKmEt0bNvPBGKLClhKbHlxnx0iLihxcuYTsBpmgVyJmeffgP0gIXCOU+L5
-        oV/sEJe6SGzfc5gVwhaWeHV8C1RcRuL05B6wGyQE6iUmTzKD6O1hlNg25wcLRI21xJ1zv9gg
-        bEeJpl1dUPV8EjfeCkLs5ZOYtG06M0SYV6KjTQiiWkViXf8eqClSEr2vVjBClHhILO4ThYRU
-        A6NEx/QOlgmMCrOQfDMLyTezgFqYBTQl1u/ShwhrSyxb+JoZwraVWLfuPcsCRtZVjOKppcW5
-        6anFRnmp5XrFibnFpXnpesn5uZsYgenw9L/jX3YwLn/1Ue8QIxMH4yFGFaDmRxtWX2CUYsnL
-        z0tVEuFVKfqaIMSbklhZlVqUH19UmpNafIhRmoNFSZw3acuaeCGB9MSS1OzU1ILUIpgsEwen
-        VANTAq/XYY5zvLvV34k8fejROa01ReFky3vH+heKf++s35FxLGxFxs9bu0zyZR4eXvHbed/T
-        qRO77G83Tj/i+2S9a1F/2a9wrguv503ZsYWjId4+cdLkt7Z7DU5Fr3q+odFzt0DXi9md/4LC
-        fj8/ZvmNweTGCcui7+/M4h0uTNMXL+Tjk9Vp/j89OEU4XJtZVm2H0mS5XZqzDJc9Ov3z3mHe
-        xXmyAj+i3uy/3L4gsUsk+tmT0zudRA6zbXX0l7EqF5y57RSPSm36ZfOzlf2MLuEsri2POWZ8
-        VMzvsJA2OaAutNXLxUadI4SN595XpxMb3M+/uPR6U/m1D7/CK9YLcxTKxb/7897cyWGy5SX7
-        vvnblFiKMxINtZiLihMBda0KywIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsVy+t/xu7rLr3xLMFjSqGxx/u4hZouNM9az
-        Wsw538JiMf/IOVaLRe9nsFpce3uH1aL/8Wtmi/PnN7BbXNjWx2qx6fE1VovLu+awWcw4v4/J
-        4tDUvYwWa4/cZbc4tkDMonXvEXYHAY/L1y4ye2xZeZPJY+esu+wem1Z1snlsXlLvsXPHZyaP
-        vi2rGD0+b5IL4IjSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
-        Sy3St0vQy5j4dwljwRaeii2LdjI2MH7n6mLk5JAQMJG4de4WSxcjF4eQwFJGiRWLHrJ1MXIA
-        JaQkVs5Nh6gRlvhzrYsNouYpo8SlazOZQGrYBPQk1q6NAKkREVCRaNk8E2wOs8AVFolVH1tY
-        QWqEBeIkbp7nAKkREtCRWNb1gB3EZhFQlXjT3QxmcwrkS7ScecgCYvMKmEt0bNvPBGKLClhK
-        bHlxnx0iLihxcuYTsBpmgWyJr6ufM09gFJiFJDULSWoW0GZmAU2J9bv0IcLaEssWvmaGsG0l
-        1q17z7KAkXUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYCxvO/Zz8w7Gea8+6h1iZOJgPMSo
-        AtT5aMPqC4xSLHn5ealKIrwqRV8ThHhTEiurUovy44tKc1KLDzGaAr02kVlKNDkfmGTySuIN
-        zQxMDU3MLA1MLc2MlcR5t85dEy8kkJ5YkpqdmlqQWgTTx8TBKdXAJPpxrtsds5TPeiJhfefn
-        iQZHWhncLlvYerdJ2PSJAFtP6yQeS+ZA/XKnU7f2LXGt6/5w3OXjvTUl238LTmTfyObEe+GT
-        v8DaPfly/GtlhI2vnvuycVll+awjiwtPusZf2aTc0Pz3l6SK+ttF1m4ejwI8PvJvURL3cA9S
-        22nVfif3zFyLfDZ2o9Xfjj3KuRvReYNz3cSmhXLiVmW768JY0g9Ou7U9W+uV779ziik+P18u
-        dWjf9ZAx7b9e20kn7ssaj/1mm4ZW71u/e/fCa1tXrCiZFJOyNCr7Bc/P8s6Ge5ErGLbs/K+u
-        NfOj+CX3jdONF6zYzWRz/7r2Z93u4LDHG189bYy/pW/H+sfbcDZTkRJLcUaioRZzUXEiAGRi
-        YDF6AwAA
-X-CMS-MailID: 20210720135031eucas1p1f83f554ff6e98ff719505e0d0cce7aaa
-X-Msg-Generator: CA
-X-RootMTR: 20210720135031eucas1p1f83f554ff6e98ff719505e0d0cce7aaa
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210720135031eucas1p1f83f554ff6e98ff719505e0d0cce7aaa
-References: <20210720123646.2991df22@cakuba>
-        <CGME20210720135031eucas1p1f83f554ff6e98ff719505e0d0cce7aaa@eucas1p1.samsung.com>
+References: <20210704090230.26489-1-jagan@amarulasolutions.com> <YP2ZvoVQyvwTXP++@ravnborg.org>
+In-Reply-To: <YP2ZvoVQyvwTXP++@ravnborg.org>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sun, 25 Jul 2021 22:43:55 +0530
+Message-ID: <CAMty3ZANJz=HSKFzZ8gn896uw98iVwMEpGhmanXNbj77Ren4hw@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/17] drm: bridge: Samsung MIPI DSIM bridge
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Marek Vasut <marex@denx.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Sam,
 
-It was <2021-07-20 wto 12:36>, when Jakub Kicinski wrote:
-> On Mon, 19 Jul 2021 21:28:52 +0200, =C5=81ukasz Stelmach wrote:
->> +	ax_local->stats =3D
->> +		devm_netdev_alloc_pcpu_stats(&spi->dev,
->> +					     struct ax88796c_pcpu_stats);
->> +	if (!ax_local->stats)
->> +		return -ENOMEM;
->> +	u64_stats_init(&ax_local->stats->syncp);
+On Sun, Jul 25, 2021 at 10:35 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 >
-> ../drivers/net/ethernet/asix/ax88796c_main.c:971:33: warning: incorrect t=
-ype in argument 1 (different address spaces)
-> ../drivers/net/ethernet/asix/ax88796c_main.c:971:33:    expected struct u=
-64_stats_sync *syncp
-> ../drivers/net/ethernet/asix/ax88796c_main.c:971:33:    got struct u64_st=
-ats_sync [noderef] __percpu *
+> Hi Jagan,
 >
+> On Sun, Jul 04, 2021 at 02:32:13PM +0530, Jagan Teki wrote:
+> > This series supports common bridge support for Samsung MIPI DSIM
+> > which is used in Exynos and i.MX8MM SoC's.
+> >
+> > The final bridge supports both the Exynos and i.MX8MM DSI devices.
+> >
+> > Right now bridge offers two sets of implementations.
+> >
+> > A. With component_ops and exynos specific code exclusively for
+> >    exynos dsi drivers and it's legacy bindings.
+> >
+> > B. Without componenet_ops for newly implemented bridges and its
+> >    users like i.MX8MM.
+> >
+> > The future plan is to fix the implementation A) by dropping
+> > component_ops and fixing exynos specific code in order to make
+> > the bridge more mature to use and the same is mentioned in
+> > drivers TODO.
+> >
+> > Patch 0001 - 0006: Bridge conversion
+> > Patch 0007 - 0017: Samsung MIPI DSIM bridge fixes, additions
+> >
+> > Tested in Engicam i.Core MX8M Mini SoM.
+> >
+> > Anyone interest, please have a look on this repo
+> > https://github.com/openedev/linux/tree/070421-imx8mm-dsim
+> >
+> > Would appreciate anyone from the exynos team to test it on
+> > the exynos platform?
+> >
+> > Any inputs?
+>
+> I really like where you are headign with this!
+> No testing - sorry. But I will try to provide a bit of feedback on the
+> individual patches.
+>
+> I hope you find a way to move forward with this.
 
-Fixed, thanks.
+Thanks for the response.
 
-Apparently separate u64_stats_init() is not necessary as
-netdev_alloc_pcpu_stats() invokes it for_each_possible_cpu.
+We have found some issues with Bridge conversion on existing exynos
+drivers. The component based DSI drivers(like exynos) are difficult to
+attach if it involves kms hotplug. kms hotplug would require drm
+pointer and that pointer would only available after the bind call
+finishes. But the bridge attach in bind call will defer till it find
+the attached bridge.
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+Right now I'm trying to find the proper way to attach the bridges for
+component based DSI drivers which involves kms hot-plug.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+If you have any ideas on this, please let me know.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmD21J0ACgkQsK4enJil
-gBC7cQf/fcyMOIEa244/esDfTKJn946iQj+W6YkPBBEMabKff4AkOkwJfBMnxAiE
-U/LbwQ+rRXWibT2RmdPEyNQg1YcsYg2r/u26VYicVOaoq36WfxF1T6jtCunLKH4B
-YSo5OV67xHKd0i209cPq6hhnDu97BGEoyMRMF+6jnq8ESKjekme72/qamLzWcjeT
-QK+ETuodqMzRIMLNYuNtR7V1ha+y4jrcT66W9ltk+Yi5v6FkFijQUAAps9PlF7w+
-RDo/m9zeCAwAFRmjz2LpPi+/z5Jx8I0/F63emYVsQfsSlKyYSaa85sF5M1YGP6fI
-ucwyG3eRwziVeqyizAMBeFsJuA+1iQ==
-=vCVS
------END PGP SIGNATURE-----
---=-=-=--
+Thanks,
+Jagan.
