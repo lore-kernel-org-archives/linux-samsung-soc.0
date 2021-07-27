@@ -2,94 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7236FC4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2FBC4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 23:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4957F60F6C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B5ED60F51
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 23:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231771AbhG0UwJ (ORCPT
+        id S233412AbhG0XhF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Jul 2021 16:52:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231516AbhG0UwI (ORCPT
+        Tue, 27 Jul 2021 19:37:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232766AbhG0XhE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Jul 2021 16:52:08 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79170C061757;
-        Tue, 27 Jul 2021 13:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=Fq6S4w4nEQQZrAxDSBIsga9g3jtsYB15MhkfRjqeXRY=; b=UZFZN2G47QoudeUbhHEl8mirU9
-        qW3v9bN+CCf472/fuvE7Hm0iX3s5m/Ox6/Gfg9hj+fCB6RgCfEr8Fcpg5ei0q70ivWhzuGvcgvCc2
-        pcSetvoGgTqCCaa/lZDK3sxtnh9oyRTNqqn0dlB/7ThgjhW5L3rorQMFR0n6+viacjrea3j2P707H
-        Ixsijlgq9yESbhGm0jMkO1CATA5eWKSv0AT550CoUFLnITWTcPxYiMGlhoW13T0A6vwMalzGHqnMf
-        NgwmDkORHSM+iVcsOl9MgbK5flhHHTgO5z12RBQ5INGaRtZqNQRxe9y7zTjdF/kgnfas5JDLxsgNp
-        RghRdw8w==;
-Received: from [2601:1c0:6280:3f0::aefb]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m8U3b-00GHCy-Lm; Tue, 27 Jul 2021 20:52:07 +0000
-Subject: Re: [PATCH] media: s3c-camif: Remove unused including
- <linux/version.h>
-To:     Cai Huoqing <caihuoqing@baidu.com>, sylvester.nawrocki@gmail.com,
-        mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210727054032.760-1-caihuoqing@baidu.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e09e8157-ff37-ba76-49a8-c6c2f84725b4@infradead.org>
-Date:   Tue, 27 Jul 2021 13:52:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 27 Jul 2021 19:37:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BE69C60F6B;
+        Tue, 27 Jul 2021 23:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627429024;
+        bh=7/A1ynyuGJxC2V55onFtTcT0S30N0yPSiFAcLSZd8cM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FibbjNdxtH5GDjWtsw/d7V7QPB0BQDBhsE1DjoVAsqbv+omdSiPX4vf5tbeuM7Bpl
+         mHGMOYOM172j+aQbEYSQDwtZW2FnakYXO+YKWDKipaq5xN5QiPgPQ+fL0g5v/jDRKC
+         xHmQpRY1ktas0Jz3/a4q28t9fzbYR+Z7hkVne7xtWwexehtohv8rqyn8+Pp0CJFZLa
+         i8lB0TlbNUhpKVSDsODne7RWccG4jH64JUhEGuFr6c14jvQddsrW+bOmK5H7OPOTJQ
+         i1B6hnarD9gYqcbLJoMTwS0MBEO8VQxcDtRDieC+k+0I8vuD06+Znp/+7PwwGdT5iT
+         BPM9irdiQBVlw==
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <nathan@kernel.org>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] drm/exynos: Always initialize mapping in exynos_drm_register_dma()
+Date:   Tue, 27 Jul 2021 16:36:56 -0700
+Message-Id: <20210727233656.753002-1-nathan@kernel.org>
+X-Mailer: git-send-email 2.32.0.264.g75ae10bc75
 MIME-Version: 1.0
-In-Reply-To: <20210727054032.760-1-caihuoqing@baidu.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 7/26/21 10:40 PM, Cai Huoqing wrote:
-> Remove including <linux/version.h> that don't need it.
-> 
-> Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
+In certain randconfigs, clang warns:
 
-as reported by 'make versioncheck':
+drivers/gpu/drm/exynos/exynos_drm_dma.c:121:19: warning: variable
+'mapping' is uninitialized when used here [-Wuninitialized]
+                priv->mapping = mapping;
+                                ^~~~~~~
+drivers/gpu/drm/exynos/exynos_drm_dma.c:111:16: note: initialize the
+variable 'mapping' to silence this warning
+                void *mapping;
+                             ^
+                              = NULL
+1 warning generated.
 
-../drivers/media/platform/s3c-camif/camif-core.c: 26 linux/version.h not needed.
+This occurs when CONFIG_EXYNOS_IOMMU is enabled and both
+CONFIG_ARM_DMA_USE_IOMMU and CONFIG_IOMMU_DMA are disabled, which makes
+the code look like
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+  void *mapping;
 
-thanks.
+  if (0)
+    mapping = arm_iommu_create_mapping()
+  else if (0)
+    mapping = iommu_get_domain_for_dev()
 
-> ---
->  drivers/media/platform/s3c-camif/camif-core.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-> index e1d51fd3e700..64078cbfd7f9 100644
-> --- a/drivers/media/platform/s3c-camif/camif-core.c
-> +++ b/drivers/media/platform/s3c-camif/camif-core.c
-> @@ -23,7 +23,6 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
-> -#include <linux/version.h>
->  
->  #include <media/media-device.h>
->  #include <media/v4l2-ctrls.h>
-> 
+  ...
+  priv->mapping = mapping;
 
+Add an else branch that initializes mapping to the -ENODEV error pointer
+so that there is no more warning and the driver does not change during
+runtime.
 
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index 0644936afee2..bf33c3084cb4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -115,6 +115,8 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+ 				EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
+ 		else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+ 			mapping = iommu_get_domain_for_dev(priv->dma_dev);
++		else
++			mapping = ERR_PTR(-ENODEV);
+ 
+ 		if (IS_ERR(mapping))
+ 			return PTR_ERR(mapping);
+
+base-commit: 7d549995d4e0d99b68e8a7793a0d23da6fc40fe8
 -- 
-~Randy
+2.32.0.264.g75ae10bc75
 
