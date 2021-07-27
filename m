@@ -2,146 +2,140 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 780E3C432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 10:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0C5C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 19:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 585BB617E5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 10:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADCB60F59
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 27 Jul 2021 19:36:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236269AbhG0K3X (ORCPT
+        id S232043AbhG0TgL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Jul 2021 06:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49312 "EHLO
+        Tue, 27 Jul 2021 15:36:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236186AbhG0K3U (ORCPT
+        with ESMTP id S231932AbhG0TgK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Jul 2021 06:29:20 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47312C061760
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jul 2021 03:29:20 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id d6so4731276uav.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jul 2021 03:29:20 -0700 (PDT)
+        Tue, 27 Jul 2021 15:36:10 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF7EC061757;
+        Tue, 27 Jul 2021 12:36:08 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id h24-20020a1ccc180000b029022e0571d1a0so107884wmb.5;
+        Tue, 27 Jul 2021 12:36:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BNXOQOHHvkyOlpYQvBOMgkkH26gWwGd0okW8oi8QdqI=;
-        b=VA9XBSq4CQhlCAZrPbTm3nskntRBag7xfqyt0l5ZRi4tj4r7Nwmj7cH8Q//ULvZ68Y
-         5rx6ds4fUh1cKyKjtK9DlDLoCmoMTBGuBTVGak7TJbutzKps51Gx+PW0a4zDeLzgCVRA
-         7v+taAWoRMIo4GLW7W31F6kuP0wNC9VL3N8Xk=
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=/T1UW9KKkDdZZxMp9zDH9Bd1AZKq8r2LawQzTZBFZfs=;
+        b=i/3vFo5EM8cGwVykY8/0meuREc0TTeTSh1ZgS6lPAPGjTe3lrM9Pw7NVTHwGq6ga3o
+         P4FjdbPAkNqazWV4IqMnSDK/rEjjyyZmzjh2Z+0sWoI/uIYl/vnL4Ii2VB1i0MaD+z0g
+         LaqJTQXTVDD3z8rtOBF3ru7RUUhuLXXE8XhdzHQV06NyH0+zyJIo4dilvS0OF6Y89iT4
+         FQorvY5Y4PVAqsNUGl0rOJxn5VZ3oXuj7TDox7DneMyis/LNvzqhSbYfAU8bEjaESPkd
+         dyLcUklTsdVL6ZPdHpXeVAEoQMlFh09jMilAe+OyDvHmYswe3uyyi/ZwH73A/Aj3dL8k
+         lEWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BNXOQOHHvkyOlpYQvBOMgkkH26gWwGd0okW8oi8QdqI=;
-        b=mr1rxGXJESwN8I8pBNggqkQt4BQniqFb3MjHGLzg9RYKZaBNVW1XKd7HwN0Ug7IOnQ
-         07SXpxMRCPMu3PBf+WFooLblZcAGqVB+33baumPxLdVTaPYPTlqCZQ0tRmoo8d0lkYQQ
-         8WNPL5KJEWwphKayOGooVSEHpNIgMYgtApEYWmMG/TKn9TKJ4UW94DpGtHFF5xcc9jrY
-         Pb2D0v3Jskc8Z/vmFO2nuNDTkFrQGMHpttFueaD0JnAxp7JRnhwVRgL24oRyJ/FzQ6Tm
-         XOJBdwVg/KZz3Q3mPEdU+6Rrc5FcHZbTTPa+ET3CqX/bwAH/vLN+vsDk0jvsD1ZY+yQY
-         uIsA==
-X-Gm-Message-State: AOAM530yzepljrAxw+wyIPFIUyTILvZy4xwhKQ3tFcvdS2UQnjji5CFQ
-        nQwnTW7BLhq+3k5XSVLNjzr3VHICr1hJBD4WUCH/mA==
-X-Google-Smtp-Source: ABdhPJyx7sQwhJ8UE8NDg2Kx4YHR88sGvEf5AH10FBKUxfscAE8LJuhcwnvw8wjRTLPiqyBoy6zqtE4uvHrV7c6EPNE=
-X-Received: by 2002:ab0:2641:: with SMTP id q1mr16151134uao.82.1627381759398;
- Tue, 27 Jul 2021 03:29:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210727094435.v3.1.I629b2366a6591410359c7fcf6d385b474b705ca2@changeid>
- <YP/FMblLCPpR7Tgf@ravnborg.org>
-In-Reply-To: <YP/FMblLCPpR7Tgf@ravnborg.org>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Tue, 27 Jul 2021 18:29:08 +0800
-Message-ID: <CANMq1KAVA3LRXzcKrVoj30KtvwuA0hQ12JdMLu32-RD8h=UjFw@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/dsi: Add _NO_ to MIPI_DSI_* flags disabling features
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Tzung-Bi Shih <tzungbi@google.com>,
-        Adrien Grassein <adrien.grassein@gmail.com>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Paul <sean@poorly.run>, Xin Ji <xji@analogixsemi.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Yu Jiahua <yujiahua1@huawei.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        freedreno <freedreno@lists.freedesktop.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/T1UW9KKkDdZZxMp9zDH9Bd1AZKq8r2LawQzTZBFZfs=;
+        b=Sh/Czemz9aAFPeglrsvHe2t0MtJNnVVy/AU7ShdCP7YF219b2cetgLoqB0f4nRbUHc
+         TsjcDXiwKmeMofh7mcH32rBh5Bl6qSBEKnmKGypj3dI+FjKmNrmoWPm/SMl9TI0fEg71
+         8m5Fw+jEZ5yxe/kwaKTU+T2tFSzA1iu7ZQ7J6yNCSHtV1FPaKjsPJkjIQgh+WmMw6VXS
+         fM4BDURWlMbQ3+TbqaKmvmySDxJeBjHd2V0HzHdv5c1C2+cNkbuBMQxWqauf03ivPN3J
+         z/bUZATbiwiSJs5ilIaiApeDZnoCRN6BhaGah7hQ6vTzd+vjUKialT4+pO7npZ+Aeu4K
+         qBSQ==
+X-Gm-Message-State: AOAM5327cTFI0XRA1Cqgl2vnvB0UrV4WggD8O7nU58zjEBFoT2Dw9Rlg
+        UHlN2OWUEIjlnSkNh96ursI=
+X-Google-Smtp-Source: ABdhPJxf+CP6SZ2z5OI6IO/WcnAiffmHbp8wzi69RVmRzfTmVGunwIlDWuxkVA60qYWK6FnOiVujCw==
+X-Received: by 2002:a05:600c:198f:: with SMTP id t15mr5660071wmq.60.1627414567175;
+        Tue, 27 Jul 2021 12:36:07 -0700 (PDT)
+Received: from ubuntu-laptop (ip5f5bec25.dynamic.kabel-deutschland.de. [95.91.236.37])
+        by smtp.googlemail.com with ESMTPSA id l41sm4423908wmp.23.2021.07.27.12.36.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jul 2021 12:36:06 -0700 (PDT)
+Message-ID: <8af01dbdfbecf2aa2f35e8c3a5240b2bcf76d9b0.camel@gmail.com>
+Subject: Re: [PATCH v2 14/15] scsi: ufs: ufs-exynos: multi-host
+ configuration for exynosauto
+From:   Bean Huo <huobean@gmail.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Krzysztof Kozlowski' <krzk@kernel.org>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
+        "'Martin K . Petersen'" <martin.petersen@oracle.com>
+Cc:     'Can Guo' <cang@codeaurora.org>,
+        'Jaegeuk Kim' <jaegeuk@kernel.org>,
+        'Kiwoong Kim' <kwmad.kim@samsung.com>,
+        'Avri Altman' <avri.altman@wdc.com>,
+        'Adrian Hunter' <adrian.hunter@intel.com>,
+        'Christoph Hellwig' <hch@infradead.org>,
+        'Bart Van Assche' <bvanassche@acm.org>,
+        'jongmin jeong' <jjmin.jeong@samsung.com>,
+        'Gyunghoon Kwon' <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org
+Date:   Tue, 27 Jul 2021 21:36:05 +0200
+In-Reply-To: <004601d782d0$2f43cd20$8dcb6760$@samsung.com>
+References: <20210714071131.101204-1-chanho61.park@samsung.com>
+         <CGME20210714071200epcas2p3f76e68f6bbb4755574dba2055a8130ab@epcas2p3.samsung.com>
+         <20210714071131.101204-15-chanho61.park@samsung.com>
+         <2b4f4e6d76cdc517843fe8880312541c754d5352.camel@gmail.com>
+         <000601d7820a$9aa11210$cfe33630$@samsung.com>
+         <602ee8bc56891f0f0429afe274d7174ec325172e.camel@gmail.com>
+         <004601d782d0$2f43cd20$8dcb6760$@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 27, 2021 at 4:35 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Nicolas,
-> On Tue, Jul 27, 2021 at 09:45:21AM +0800, Nicolas Boichat wrote:
-> > Many of the DSI flags have names opposite to their actual effects,
-> > e.g. MIPI_DSI_MODE_EOT_PACKET means that EoT packets will actually
-> > be disabled. Fix this by including _NO_ in the flag names, e.g.
-> > MIPI_DSI_MODE_NO_EOT_PACKET.
-> >
-> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Reviewed-by: Robert Foss <robert.foss@linaro.org>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Reviewed-by: Andrzej Hajda <andrzej.hajda@samsung.com>
-> > Reviewed-by: Xin Ji <xji@analogixsemi.com> # anx7625.c
-> > Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org> # msm/dsi
-> > ---
-> > I considered adding _DISABLE_ instead, but that'd make the
-> > flag names a big too long.
-> >
-> > Generated with:
-> > flag=MIPI_DSI_MODE_VIDEO_HFP; git grep $flag | cut -f1 -d':' | \
-> >   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HFP/" {}
-> > flag=MIPI_DSI_MODE_VIDEO_HBP; git grep $flag | cut -f1 -d':' | \
-> >   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HBP/" {}
-> > flag=MIPI_DSI_MODE_VIDEO_HSA; git grep $flag | cut -f1 -d':' | \
-> >   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_VIDEO_NO_HSA/" {}
-> > flag=MIPI_DSI_MODE_EOT_PACKET; git grep $flag | cut -f1 -d':' | \
-> >   xargs -I{} sed -i -e "s/$flag/MIPI_DSI_MODE_NO_EOT_PACKET/" {}
-> > (then minor format changes)
-> >
-> > Changes in v3:
-> >  - Added all R-b tags from v1 and v2 (hopefully didn't miss any).
-> >
-> > Changes in v2:
-> >  - Rebased on latest linux-next, after some of the flags got fixed
-> >    (Linus Walleij).
->
-> Thanks for the update, applied to drm-misc-next.
+On Tue, 2021-07-27 at 19:14 +0900, Chanho Park wrote:
+> > > A PH has its own doorbell register and each VHs also has it as
+> > > well.
+> > > The TASK_TAG[7:5] can be used to distinguish the origin of the
+> > > request among VHs and remaining TASK_TAG[4:0] will be used for
+> > > supporting 32 tags.
+> > > Best Regards,
+> > > Chanho Park
+> > Thanks for your reply.
+> > so you split the "Task Tag" filed byte3 in the UPIU header to two
+> > parts, bit7~bit5 is for the VHs ID, and bit4~bit0 is for the task
+> > ID.
+> > but this is not defined in the Spec 2.1. correct?
+> 
+> 
+> You're right.
+> 
+> For PH, TASK_TAG[7:5] will be set to "0" but a VHID will be used in
+> case of VH.
+> 
+> 
+> 
+> Best Regards,
+> 
+> Chanho Park
 
-Thanks Sam!
+Hi Chanho Park,
+Thansk for yoru reply.
 
->
->         Sam
+I didn't see your changes about task_tag and IID. Having a look at
+ufshcd_prepare_utp_scsi_cmd_upiu(), the task tag in the UPIU header
+is still only task tag. and IID is always 0x00.
+
+If you didn't add these changes, your patch is un-readable, and also
+the driver doesn't have a real usage case.
+
+
+Also, you mentioned there is no support/change needed from the UFS
+device side. But, IMO, if you changed the UPIU header, there are
+changes needed on the UFS device side in order to use your driver.
+
+
+Kind regards,
+Bean 
+
+
