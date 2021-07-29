@@ -2,159 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30636C432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 13:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF65C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 21:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15A0460230
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 13:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3521560EFF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 21:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237344AbhG2NUe (ORCPT
+        id S233281AbhG2VLF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 29 Jul 2021 09:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
+        Thu, 29 Jul 2021 17:11:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237381AbhG2NUe (ORCPT
+        with ESMTP id S229738AbhG2VLE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Jul 2021 09:20:34 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271A9C0613C1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jul 2021 06:20:30 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so9265209pjh.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jul 2021 06:20:30 -0700 (PDT)
+        Thu, 29 Jul 2021 17:11:04 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246A2C061765;
+        Thu, 29 Jul 2021 14:11:01 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id f18-20020a05600c4e92b0290253c32620e7so7470925wmq.5;
+        Thu, 29 Jul 2021 14:11:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dn16VRGzINjpK5hTkcROYonwyO77GNzKhrw6QPtb+WU=;
-        b=UGHYkoDL7+nEZ+Ici1GVaiIpoD7un33lWWCEf4TVNKpJZjvFUFTBaCsYxSYJMq7F7t
-         kjEuDYUfGdm2Y6esFw8K58f+EtxqDY5JhVZLQ7fzcMwehxZ/F3219Hp4LfVIgxqlvVUl
-         BPRICJBCxma317as9WmiDNoqXmVh6wgIbhnpN4smFb3XFiVF3Def2iBGIsnHGWpMY6xf
-         NzTuG6Px+qvjkyin3DpjfFz7pinhGGfhL88FXiVFxz3uo6Bv2AleoBCaTbdqm8SWUL4T
-         hDwnFgPcmBMW6URS35QlFCYGwuYjDtVuMcuWY2k65CTNCOt16N46Hcd0YWKwDp23uB7b
-         q4pQ==
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=8SkuOyTmyIB5hT8ozqKKAwUAdXcXcTyxuVRFatULG8M=;
+        b=DWk49QFZkR5as4hP27AYXu0irseC6zGLUvqN+ph9UXUz597r5LK57bqXI9FFi27QNX
+         mxjeXWh8tAyMlQ2FQnC6zbYsCICgouVVF+fVligDpu9779zSF7kC9oRHlphjwB8XVy9j
+         brVWw/3tmijMfJHuvLGF0Il89bJaysvdVgmAind3FUbodtMXRWHyu4tzJzeGcLBBp71V
+         Wy90hp4aqyckgOH4h2ogcSj4FxM1gEuxIFIkz01sjX16UU3lUx3RFDqehXxjCleJHlM1
+         AAj4tpKB40m+v8a5iQW12FKkN/CDrVW9+uaYcl73Rp2j5aFYqLRUbo8nsUx0+InIx2s5
+         vwRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dn16VRGzINjpK5hTkcROYonwyO77GNzKhrw6QPtb+WU=;
-        b=qc53wCRr1g53jfgIX8rMuj5qGGqKFGXtGVWy1istDU5tCPvU5sGD4NYRaq9L2SwKwq
-         uTdMF1DvxrOJoTPfnSvkQfIPA2GNCO3GKQXpd0bhIDvBt1q/mf8VVzKd/uXqN9bcfiXQ
-         yGbYkk08hHcXx5rPXFr1KLXCFrU8g0pHas4opRW/WZLZsTh9JEpSk49i5o80k1QjHhf3
-         y7D7QYQChylr/6s6IAomPh3elszkT7KUsZ7XEOsu2lK+Q7C9zI6UXlC2Qj/h03J+iDRU
-         xMrFMXB+X8TeS+L6+tRpA7LioN5EUablkWeX6H6KztC8trIkikscJZ/b8B5l9ePJDPBH
-         iLjA==
-X-Gm-Message-State: AOAM531X74DEL6Rn3Ahx4KHNVVnMIvqiQsdE+1BPmflhNqQXf2D0iUmi
-        3rrxdhw9QvMgM9iloalrWrNLUZsGZ9Ud0bQC49jRnw==
-X-Google-Smtp-Source: ABdhPJwZGMBeDDIs8OW6egcQktP4OuNjLmCnf0s9q2ER3N5wFGSw0h4xjwRmt/xhkYeiRPsvGus7PV8t11L557Z5dnY=
-X-Received: by 2002:a63:494f:: with SMTP id y15mr3798897pgk.185.1627564829264;
- Thu, 29 Jul 2021 06:20:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210704090230.26489-1-jagan@amarulasolutions.com> <20210704090230.26489-6-jagan@amarulasolutions.com>
-In-Reply-To: <20210704090230.26489-6-jagan@amarulasolutions.com>
-From:   Robert Foss <robert.foss@linaro.org>
-Date:   Thu, 29 Jul 2021 15:20:17 +0200
-Message-ID: <CAG3jFytHb=iOc6CHy47iGwvxuSg1UMqnpE7oFZL9tfcPUB22eA@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/17] drm/exynos: dsi: Get the mode from bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Marek Vasut <marex@denx.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=8SkuOyTmyIB5hT8ozqKKAwUAdXcXcTyxuVRFatULG8M=;
+        b=kNoiByQ6pE2UY2hcpnt6KOBh+7WgpSeCc/8O6Z6RgxxlIr7MAjN4nTdy5gx/1es3/g
+         1Pm201MAaWFSkgGChNPf8P2iS69sCofwy+EzO6Ra/S2yjsfmgO2sTGNqV1YiWzhoTNmz
+         ygWjSP9NHWOwlhpT0vA+2EGQhtcZ28LS9anf3PrHRMSnBPZViOE3/KTyWZtywOrNr0yk
+         rLS7XH9lO9sk+H0zLQGTWueyV/iIMibJdkaipp0ekD3P8Zx2dpyQhbgfoUpSkIGCCx06
+         mn40Or6oc+9xot5NJrDBFKvV5D9tl/sX3cUKaVyntzhhJIHKLkm2HldfVvgXpMUcQLy7
+         0CkQ==
+X-Gm-Message-State: AOAM530B5fu41cQVZ5rjTbiuFxdMyrBezbulga9lIvF1rbwWgMTLAWLO
+        JYe2qCWtEL/7PQgqFoUUoWA=
+X-Google-Smtp-Source: ABdhPJzHd1t4wdMOxnOe8QZjk8B7YHwst01lbmIJjN/GWcY6+uq08T/fz7kg77oiLzhVIlnx/BCXrw==
+X-Received: by 2002:a7b:c30f:: with SMTP id k15mr385705wmj.128.1627593059736;
+        Thu, 29 Jul 2021 14:10:59 -0700 (PDT)
+Received: from ubuntu-laptop (ip5f5bfdd7.dynamic.kabel-deutschland.de. [95.91.253.215])
+        by smtp.googlemail.com with ESMTPSA id q7sm4281641wmq.33.2021.07.29.14.10.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jul 2021 14:10:59 -0700 (PDT)
+Message-ID: <27287a3c10d6096bd050f1f743c218b825dde2b9.camel@gmail.com>
+Subject: Re: [PATCH v2 14/15] scsi: ufs: ufs-exynos: multi-host
+ configuration for exynosauto
+From:   Bean Huo <huobean@gmail.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Krzysztof Kozlowski' <krzk@kernel.org>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
+        "'Martin K . Petersen'" <martin.petersen@oracle.com>
+Cc:     'Can Guo' <cang@codeaurora.org>,
+        'Jaegeuk Kim' <jaegeuk@kernel.org>,
+        'Kiwoong Kim' <kwmad.kim@samsung.com>,
+        'Avri Altman' <avri.altman@wdc.com>,
+        'Adrian Hunter' <adrian.hunter@intel.com>,
+        'Christoph Hellwig' <hch@infradead.org>,
+        'Bart Van Assche' <bvanassche@acm.org>,
+        'jongmin jeong' <jjmin.jeong@samsung.com>,
+        'Gyunghoon Kwon' <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org
+Date:   Thu, 29 Jul 2021 23:10:58 +0200
+In-Reply-To: <002e01d78351$6996d040$3cc470c0$@samsung.com>
+References: <20210714071131.101204-1-chanho61.park@samsung.com>
+         <CGME20210714071200epcas2p3f76e68f6bbb4755574dba2055a8130ab@epcas2p3.samsung.com>
+         <20210714071131.101204-15-chanho61.park@samsung.com>
+         <2b4f4e6d76cdc517843fe8880312541c754d5352.camel@gmail.com>
+         <000601d7820a$9aa11210$cfe33630$@samsung.com>
+         <602ee8bc56891f0f0429afe274d7174ec325172e.camel@gmail.com>
+         <004601d782d0$2f43cd20$8dcb6760$@samsung.com>
+         <8af01dbdfbecf2aa2f35e8c3a5240b2bcf76d9b0.camel@gmail.com>
+         <002e01d78351$6996d040$3cc470c0$@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hey Jagan,
+On Wed, 2021-07-28 at 10:39 +0900, Chanho Park wrote:
+> > Hi Chanho Park,
+> > Thansk for yoru reply.
+> > I didn't see your changes about task_tag and IID. Having a look at
+> > ufshcd_prepare_utp_scsi_cmd_upiu(), the task tag in the UPIU header
+> > is
+> > still only task tag. and IID is always 0x00.
+> > If you didn't add these changes, your patch is un-readable, and
+> > also the
+> > driver doesn't have a real usage case.
+> 
+> 
+> I already replied regarding this in another mail thread and please
+> refer below comments. The controller will handle the tag translation.
+> 
+> https://lore.kernel.org/linux-scsi/002901d782c6$937ac0f0$ba7042d0$@samsung.com/
+> 
+> 
+> 
+> > Also, you mentioned there is no support/change needed from the UFS
+> > device
+> > side. But, IMO, if you changed the UPIU header, there are changes
+> > needed
+> > on the UFS device side in order to use your driver.
+> 
+> 
+> Please see the figure[1]. Once IID_IN_TASKTAG bit is set, the
+> function arbiter will translate the value of UPIU header before
+> delivering it to the device.
+> 
+> 
+> 
+> [1]: 
+> https://lore.kernel.org/linux-scsi/20210714071131.101204-1-chanho61.park@samsung.com/
+> 
+> 
+> 
+> Best Regards,
+> 
+> Chanho Park
 
-On Sun, 4 Jul 2021 at 11:04, Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Now the exynos dsi driver is fully aware of bridge
-> handling, so get the display mode from bridge, mode_set
-> API instead of legacy encoder crtc.
->
-> This makes bridge usage more efficient instead of relying
-> on encoder stack.
->
-> Add mode_set in drm_bridge_funcs.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index d828be07c325..99a1b8c22313 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -275,6 +275,7 @@ struct exynos_dsi {
->         u32 format;
->
->         int state;
-> +       struct drm_display_mode mode;
->         struct drm_property *brightness;
->         struct completion completed;
->
-> @@ -881,7 +882,7 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
->
->  static void exynos_dsi_set_display_mode(struct exynos_dsi *dsi)
->  {
-> -       struct drm_display_mode *m = &dsi->encoder.crtc->state->adjusted_mode;
-> +       struct drm_display_mode *m = &dsi->mode;
->         unsigned int num_bits_resol = dsi->driver_data->num_bits_resol;
->         u32 reg;
->
-> @@ -1411,6 +1412,15 @@ static void exynos_dsi_bridge_disable(struct drm_bridge *bridge)
->         pm_runtime_put_sync(dsi->dev);
->  }
->
-> +static void exynos_dsi_bridge_mode_set(struct drm_bridge *bridge,
-> +                                      const struct drm_display_mode *mode,
-> +                                      const struct drm_display_mode *adjusted_mode)
-> +{
-> +       struct exynos_dsi *dsi = bridge_to_dsi(bridge);
-> +
-> +       drm_mode_copy(&dsi->mode, adjusted_mode);
-> +}
-> +
->  static int exynos_dsi_panel_or_bridge(struct exynos_dsi *dsi,
->                                       struct device_node *node)
->  {
-> @@ -1451,6 +1461,7 @@ static int exynos_dsi_bridge_attach(struct drm_bridge *bridge,
->  static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
->         .enable = exynos_dsi_bridge_enable,
->         .disable = exynos_dsi_bridge_disable,
-> +       .mode_set = exynos_dsi_bridge_mode_set,
+Hi Chanho Park,
 
-As far as I understand it, .enable(), .disable() &.mode_set() are
-deprecated[1] and should be replaced by atomic_enable(),
-atomic_disable() & atomic_enable() respectively.
+thansk for your further reply. I didn't find out your cover-letter in
+your patchset before.
 
-[1] https://lore.kernel.org/dri-devel/20210722062246.2512666-8-sam@ravnborg.org/
+IID will be automatically set by HW controller according to the VH_ID
+in the tasg_tag byte[7:5]. Before sending this RPMB to UFS device,
+doese your controller reset task_tag byte[7:5] to 0x0 or your
+controller will keep VH_ID?
 
->         .attach = exynos_dsi_bridge_attach,
->  };
->
-> --
-> 2.25.1
->
+one more question, you mentioned para-virtualization, did you use Xen
+or KVM?
+
+Kind regards,
+Bean
+
