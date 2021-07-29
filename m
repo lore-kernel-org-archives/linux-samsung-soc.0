@@ -2,188 +2,159 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DFFC4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Jul 2021 01:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30636C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 13:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C000A60F91
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 28 Jul 2021 01:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A0460230
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 13:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234635AbhG1Bjj (ORCPT
+        id S237344AbhG2NUe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 27 Jul 2021 21:39:39 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:18526 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234624AbhG1Bjj (ORCPT
+        Thu, 29 Jul 2021 09:20:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237381AbhG2NUe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 27 Jul 2021 21:39:39 -0400
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210728013936epoutp0410ec5b199c257f50b8cb1e4edc5889ef~V0MMOKtOh3273632736epoutp04a
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jul 2021 01:39:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210728013936epoutp0410ec5b199c257f50b8cb1e4edc5889ef~V0MMOKtOh3273632736epoutp04a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1627436376;
-        bh=sAwkRwmL3WZzg47uaC9Kv1orORi3aiDnpRqA4R1kCkk=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Zdik7sveSAwhuvroaHD5oHq5sWjelq7rJIqHW5f1mdr+BNVz1fm7D4MF69kYAb594
-         O63K/ndLUev9jhwMWabuWu9csgY9KbQ6PzEjtNIGOzONC+68qwPNPoyMQLiPK5xctW
-         i03ELKfuQNaZfna/5VgEWeNkIgp+RZoXFktWDGdM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20210728013935epcas2p1d11dc975dcf2e38575e7147b3320b6be~V0MLptpiX1005410054epcas2p1g;
-        Wed, 28 Jul 2021 01:39:35 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.184]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4GZGYJ6hmCz4x9Pv; Wed, 28 Jul
-        2021 01:39:32 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AC.78.09541.455B0016; Wed, 28 Jul 2021 10:39:32 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210728013931epcas2p3a09c382f461dd54036241dfd5d6fbb1e~V0MHzsDbc0070600706epcas2p3d;
-        Wed, 28 Jul 2021 01:39:31 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210728013931epsmtrp211230ba6ddaa17183dc6cb3962252278~V0MHysZxS2394623946epsmtrp2d;
-        Wed, 28 Jul 2021 01:39:31 +0000 (GMT)
-X-AuditID: b6c32a46-0abff70000002545-25-6100b554972e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C8.47.08289.355B0016; Wed, 28 Jul 2021 10:39:31 +0900 (KST)
-Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210728013931epsmtip2022d672bf0a952ade8d272992f4b2618~V0MHmqNwR2415724157epsmtip22;
-        Wed, 28 Jul 2021 01:39:31 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Bean Huo'" <huobean@gmail.com>,
-        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
-        "'Martin K . Petersen'" <martin.petersen@oracle.com>
-Cc:     "'Can Guo'" <cang@codeaurora.org>,
-        "'Jaegeuk Kim'" <jaegeuk@kernel.org>,
-        "'Kiwoong Kim'" <kwmad.kim@samsung.com>,
-        "'Avri Altman'" <avri.altman@wdc.com>,
-        "'Adrian Hunter'" <adrian.hunter@intel.com>,
-        "'Christoph Hellwig'" <hch@infradead.org>,
-        "'Bart Van Assche'" <bvanassche@acm.org>,
-        "'jongmin jeong'" <jjmin.jeong@samsung.com>,
-        "'Gyunghoon Kwon'" <goodjob.kwon@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-In-Reply-To: <8af01dbdfbecf2aa2f35e8c3a5240b2bcf76d9b0.camel@gmail.com>
-Subject: RE: [PATCH v2 14/15] scsi: ufs: ufs-exynos: multi-host
- configuration for exynosauto
-Date:   Wed, 28 Jul 2021 10:39:31 +0900
-Message-ID: <002e01d78351$6996d040$3cc470c0$@samsung.com>
+        Thu, 29 Jul 2021 09:20:34 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271A9C0613C1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jul 2021 06:20:30 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so9265209pjh.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jul 2021 06:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dn16VRGzINjpK5hTkcROYonwyO77GNzKhrw6QPtb+WU=;
+        b=UGHYkoDL7+nEZ+Ici1GVaiIpoD7un33lWWCEf4TVNKpJZjvFUFTBaCsYxSYJMq7F7t
+         kjEuDYUfGdm2Y6esFw8K58f+EtxqDY5JhVZLQ7fzcMwehxZ/F3219Hp4LfVIgxqlvVUl
+         BPRICJBCxma317as9WmiDNoqXmVh6wgIbhnpN4smFb3XFiVF3Def2iBGIsnHGWpMY6xf
+         NzTuG6Px+qvjkyin3DpjfFz7pinhGGfhL88FXiVFxz3uo6Bv2AleoBCaTbdqm8SWUL4T
+         hDwnFgPcmBMW6URS35QlFCYGwuYjDtVuMcuWY2k65CTNCOt16N46Hcd0YWKwDp23uB7b
+         q4pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dn16VRGzINjpK5hTkcROYonwyO77GNzKhrw6QPtb+WU=;
+        b=qc53wCRr1g53jfgIX8rMuj5qGGqKFGXtGVWy1istDU5tCPvU5sGD4NYRaq9L2SwKwq
+         uTdMF1DvxrOJoTPfnSvkQfIPA2GNCO3GKQXpd0bhIDvBt1q/mf8VVzKd/uXqN9bcfiXQ
+         yGbYkk08hHcXx5rPXFr1KLXCFrU8g0pHas4opRW/WZLZsTh9JEpSk49i5o80k1QjHhf3
+         y7D7QYQChylr/6s6IAomPh3elszkT7KUsZ7XEOsu2lK+Q7C9zI6UXlC2Qj/h03J+iDRU
+         xMrFMXB+X8TeS+L6+tRpA7LioN5EUablkWeX6H6KztC8trIkikscJZ/b8B5l9ePJDPBH
+         iLjA==
+X-Gm-Message-State: AOAM531X74DEL6Rn3Ahx4KHNVVnMIvqiQsdE+1BPmflhNqQXf2D0iUmi
+        3rrxdhw9QvMgM9iloalrWrNLUZsGZ9Ud0bQC49jRnw==
+X-Google-Smtp-Source: ABdhPJwZGMBeDDIs8OW6egcQktP4OuNjLmCnf0s9q2ER3N5wFGSw0h4xjwRmt/xhkYeiRPsvGus7PV8t11L557Z5dnY=
+X-Received: by 2002:a63:494f:: with SMTP id y15mr3798897pgk.185.1627564829264;
+ Thu, 29 Jul 2021 06:20:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQJIF3zu3g+/Awptn47LJA2vs45sGwKSU/P/Ail7aZYBcufzmAMJoF0fATgHUhcCQpyeqAKzJthXqftAlxA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAJsWRmVeSWpSXmKPExsWy7bCmmW7IVoZEg/65lhYnn6xhs3gwbxub
-        xcufV9kspn34yWzxaf0yVouenc4WpycsYrKYc7aByeLJ+lnMFotubGOyWHnNwuL8+Q3sFje3
-        HGWxmHF+H5NF9/UdbBbLj/9jchDwuHzF2+NyXy+Tx85Zd9k9Nq/Q8li85yWTx6ZVnWweExYd
-        YPT4+PQWi0ffllWMHp83yXm0H+hmCuCOyrHJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1
-        tLQwV1LIS8xNtVVy8QnQdcvMAfpGSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNg
-        aFigV5yYW1yal66XnJ9rZWhgYGQKVJmQk/F7+h32gn/cFY+7LrI1MB7k7GLk5JAQMJG48fMV
-        excjF4eQwA5GiReTt7OBJIQEPjFKnN9XBpH4zCjx/NpBFpiO138OMkIkdjFK7H25ngXCecEo
-        8e3/GrAqNgF9iZcd21hBbBGQRP9iUZAiZoETzBILf01hBklwCrhL3FrzggnEFhaIk7i8fBsj
-        iM0ioCoxbcJMsDivgKXE2xcrGSFsQYmTM5+ALWAW0JZYtvA1M8RJChI/ny5jhYiLSMzubGOG
-        WJwk0TF5CxvIYgmB/xwSO/7uZ4RocJE439PFBGELS7w6voUdwpaS+PxuL1RDN6NE66P/UInV
-        jBKdjT4Qtr3Er+lbgLZxAG3TlFi/Sx/ElBBQljhyC+o2PomOw3/ZIcK8Eh1tQhCN6hIHtk+H
-        hqKsRPecz6wTGJVmIflsFpLPZiH5ZhbCrgWMLKsYxVILinPTU4uNCoyQY3sTIzipa7ntYJzy
-        9oPeIUYmDsZDjBIczEoivK9//E8Q4k1JrKxKLcqPLyrNSS0+xGgKDOuJzFKiyfnAvJJXEm9o
-        amRmZmBpamFqZmShJM6rEfc1QUggPbEkNTs1tSC1CKaPiYNTqoHp5K6/b41ru/bYCnUcWmFq
-        Wvz6uLWZ5A6PaXIuZ7asur/g3arYFSLWzRm8pYI7/TomXpjJWciqMGH90x/xS+6E/ot8lC5e
-        KKKT6+A7t0vivdC1fd9fPvxzhJFR1ldBVJulIY//PJ+ffJmNGuNeV9mFotvK+CNecTs9+2jH
-        9Mpqg1Z9Na/O8VlGv5ZIuyfr/ZJk+7U0Zq3zTwNJi/la9utTPhQZ3bCKtWM9tuBKSKbmJF0Z
-        944D02v6tFfPmTLl75dJ36bO2PR8Dz9Dg+DEBPeAJ2dOCczlUk9nrD4t5ODdentKfVXLtSCJ
-        c9NLdrgJhh+L+ZRqdj1Nfp+6cf7vo3KPBfkTIg99Whs30Vw/rFGJpTgj0VCLuag4EQBHJxgv
-        cwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsWy7bCSvG7wVoZEgwc3jS1OPlnDZvFg3jY2
-        i5c/r7JZTPvwk9ni0/plrBY9O50tTk9YxGQx52wDk8WT9bOYLRbd2MZksfKahcX58xvYLW5u
-        OcpiMeP8PiaL7us72CyWH//H5CDgcfmKt8flvl4mj52z7rJ7bF6h5bF4z0smj02rOtk8Jiw6
-        wOjx8ektFo++LasYPT5vkvNoP9DNFMAdxWWTkpqTWZZapG+XwJXxYck51oKn3BVnb/1lamBc
-        xNnFyMkhIWAi8frPQcYuRi4OIYEdjBKL715khEjISjx7t4MdwhaWuN9yhBWi6BmjxKtHV1hB
-        EmwC+hIvO7aBJUQEXjFKnLjazgbiMAtcYJa4/v8nG0TLZWaJ1kW7wFo4Bdwlbq15wQRiCwvE
-        SBzbsAFsH4uAqsS0CTPB4rwClhJvX6xkhLAFJU7OfMICYjMLaEv0PmxlhLGXLXzNDHGfgsTP
-        p8tYIeIiErM728DiIgJJEh2Tt7BNYBSehWTULCSjZiEZNQtJ+wJGllWMkqkFxbnpucWGBUZ5
-        qeV6xYm5xaV56XrJ+bmbGMExrqW1g3HPqg96hxiZOBgPMUpwMCuJ8L7+8T9BiDclsbIqtSg/
-        vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqbzk2bfiXc99Vlr6ZrF/3Zs
-        sIhvPCh3gPPL5PnvWdxZLbS8i6RWLn3Fsr/VW4PDXI3Hu/GJ2WahfUdqig0/ze+uyZT9urCG
-        jztX9OakW7MXpfkrzchv6/awW+jYE2Xowf9mfbjfihvdG913VSys/9+cwFDWyvnJxr1/V/xD
-        8y0xXz6l2ofoS1a7vvoRtS4lb6G98+Yu1j3Rkkp7vLXShCt2cJ+R5i+VqTuh1R9VYMT9zSuF
-        U6Oo9qxg1tJ1bz1yGRVkVOz9drzq13VNFNx1TnrT70l9NwsZwn71Zj/2qv1hrPbHnz1/6vcI
-        RlffHLllHy3bmLc5RnvU3/uwxv1zQ6XX2SqGQ/8uLP/in35eiaU4I9FQi7moOBEATOoCiWAD
-        AAA=
-X-CMS-MailID: 20210728013931epcas2p3a09c382f461dd54036241dfd5d6fbb1e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210714071200epcas2p3f76e68f6bbb4755574dba2055a8130ab
-References: <20210714071131.101204-1-chanho61.park@samsung.com>
-        <CGME20210714071200epcas2p3f76e68f6bbb4755574dba2055a8130ab@epcas2p3.samsung.com>
-        <20210714071131.101204-15-chanho61.park@samsung.com>
-        <2b4f4e6d76cdc517843fe8880312541c754d5352.camel@gmail.com>
-        <000601d7820a$9aa11210$cfe33630$@samsung.com>
-        <602ee8bc56891f0f0429afe274d7174ec325172e.camel@gmail.com>
-        <004601d782d0$2f43cd20$8dcb6760$@samsung.com>
-        <8af01dbdfbecf2aa2f35e8c3a5240b2bcf76d9b0.camel@gmail.com>
+References: <20210704090230.26489-1-jagan@amarulasolutions.com> <20210704090230.26489-6-jagan@amarulasolutions.com>
+In-Reply-To: <20210704090230.26489-6-jagan@amarulasolutions.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Thu, 29 Jul 2021 15:20:17 +0200
+Message-ID: <CAG3jFytHb=iOc6CHy47iGwvxuSg1UMqnpE7oFZL9tfcPUB22eA@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/17] drm/exynos: dsi: Get the mode from bridge
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Marek Vasut <marex@denx.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> > > so you split the =22Task Tag=22 filed byte3 in the UPIU header to two
-> > > parts, bit7=7Ebit5 is for the VHs ID, and bit4=7Ebit0 is for the task
-> > > ID.
-> > > but this is not defined in the Spec 2.1. correct?
-> >
-> >
-> > You're right.
-> >
-> > For PH, TASK_TAG=5B7:5=5D will be set to =220=22 but a VHID will be use=
-d in
-> > case of VH.
-> >
-> >
-> >
-> > Best Regards,
-> >
-> > Chanho Park
->=20
-> Hi Chanho Park,
-> Thansk for yoru reply.
->=20
-> I didn't see your changes about task_tag and IID. Having a look at
-> ufshcd_prepare_utp_scsi_cmd_upiu(), the task tag in the UPIU header is
-> still only task tag. and IID is always 0x00.
->=20
-> If you didn't add these changes, your patch is un-readable, and also the
-> driver doesn't have a real usage case.
+Hey Jagan,
 
-I already replied regarding this in another mail thread and please refer be=
-low comments. The controller will handle the tag translation.
-https://lore.kernel.org/linux-scsi/002901d782c6=24937ac0f0=24ba7042d0=24=40=
-samsung.com/
+On Sun, 4 Jul 2021 at 11:04, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> Now the exynos dsi driver is fully aware of bridge
+> handling, so get the display mode from bridge, mode_set
+> API instead of legacy encoder crtc.
+>
+> This makes bridge usage more efficient instead of relying
+> on encoder stack.
+>
+> Add mode_set in drm_bridge_funcs.
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index d828be07c325..99a1b8c22313 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -275,6 +275,7 @@ struct exynos_dsi {
+>         u32 format;
+>
+>         int state;
+> +       struct drm_display_mode mode;
+>         struct drm_property *brightness;
+>         struct completion completed;
+>
+> @@ -881,7 +882,7 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+>
+>  static void exynos_dsi_set_display_mode(struct exynos_dsi *dsi)
+>  {
+> -       struct drm_display_mode *m = &dsi->encoder.crtc->state->adjusted_mode;
+> +       struct drm_display_mode *m = &dsi->mode;
+>         unsigned int num_bits_resol = dsi->driver_data->num_bits_resol;
+>         u32 reg;
+>
+> @@ -1411,6 +1412,15 @@ static void exynos_dsi_bridge_disable(struct drm_bridge *bridge)
+>         pm_runtime_put_sync(dsi->dev);
+>  }
+>
+> +static void exynos_dsi_bridge_mode_set(struct drm_bridge *bridge,
+> +                                      const struct drm_display_mode *mode,
+> +                                      const struct drm_display_mode *adjusted_mode)
+> +{
+> +       struct exynos_dsi *dsi = bridge_to_dsi(bridge);
+> +
+> +       drm_mode_copy(&dsi->mode, adjusted_mode);
+> +}
+> +
+>  static int exynos_dsi_panel_or_bridge(struct exynos_dsi *dsi,
+>                                       struct device_node *node)
+>  {
+> @@ -1451,6 +1461,7 @@ static int exynos_dsi_bridge_attach(struct drm_bridge *bridge,
+>  static const struct drm_bridge_funcs exynos_dsi_bridge_funcs = {
+>         .enable = exynos_dsi_bridge_enable,
+>         .disable = exynos_dsi_bridge_disable,
+> +       .mode_set = exynos_dsi_bridge_mode_set,
 
-> Also, you mentioned there is no support/change needed from the UFS device
-> side. But, IMO, if you changed the UPIU header, there are changes needed
-> on the UFS device side in order to use your driver.
+As far as I understand it, .enable(), .disable() &.mode_set() are
+deprecated[1] and should be replaced by atomic_enable(),
+atomic_disable() & atomic_enable() respectively.
 
-Please see the figure=5B1=5D. Once IID_IN_TASKTAG bit is set, the function =
-arbiter will translate the value of UPIU header before delivering it to the=
- device.
+[1] https://lore.kernel.org/dri-devel/20210722062246.2512666-8-sam@ravnborg.org/
 
-=5B1=5D: https://lore.kernel.org/linux-scsi/20210714071131.101204-1-chanho6=
-1.park=40samsung.com/
-
-Best Regards,
-Chanho Park
-
+>         .attach = exynos_dsi_bridge_attach,
+>  };
+>
+> --
+> 2.25.1
+>
