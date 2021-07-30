@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3928BC432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 15:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DEFC4320E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 15:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2550860F46
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 15:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66D916101C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 15:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239711AbhG3PW5 (ORCPT
+        id S239761AbhG3PZJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Jul 2021 11:22:57 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47262
+        Fri, 30 Jul 2021 11:25:09 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47384
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239664AbhG3PWz (ORCPT
+        by vger.kernel.org with ESMTP id S239743AbhG3PZI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Jul 2021 11:22:55 -0400
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Fri, 30 Jul 2021 11:25:08 -0400
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 8AD593F23D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 15:22:49 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id A5A093F237
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 15:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627658569;
-        bh=ZB8kRJjvGWoqH+/4j72g+qbwLJfHVt3xG+HcUqPQc2Y=;
+        s=20210705; t=1627658702;
+        bh=x+6pX9ZPyUiM1Rt9roeiBBTX1oDHG2m/9+XL3uN84UM=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=hsSJUIQWF+A54wirnqBUwl9XJEi3X2Y4Lu8vHQOR73gbMhpTzIIBXNkR+RBcW2OPW
-         YAxzffQyaRvwfvb0PlaJNx/+rCRQum4GDJaljsxNSQsFM7UYRcbzeJk0vtyzTmEMLY
-         ojxlWPlARYQA/HS964ZAstMrKXoLjVVx+eYdAGeA7TqTKQ+Jw3D45wiC12WuUtOVf0
-         MGpg/z00VCJ1SXsH999lmI6+yG8vsHIVKcGQzhfavPws8wnVRgBp510N8nfwwcE7SO
-         Xtl0yM9B0q6xUe2wlcHoe4lf14zDEQC1Kwct6r17bjDTEX/x5ZtEmosw/U1ESfsOVm
-         2hZ+8LTWnO1YA==
-Received: by mail-ed1-f70.google.com with SMTP id p2-20020a50c9420000b02903a12bbba1ebso4754093edh.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 08:22:49 -0700 (PDT)
+        b=D6JryoivxvbJZijNhsbU9QBiuFI7KQQ/VMLdi1YKtEnqwJoHhmGOKSOrszWcLLHfp
+         bIQdmhJeH2N4LFBjwuVNYlCTfY8ZHb5MwHH3slOWqUSBBNfq7whDOPHxNRAWqLuOOF
+         0iTGNI2kecRJ73W2iO/UgNttsK+6AfEfXoxLCYJGEmLvXZh3+sNgIo/Lid8rIKMnJO
+         YeHqhv43wy0k+TiF8U8GVYxBYBJuHoE14Mo/TYtC25i+UNby1Vr2HfGhr6bEMzaEIg
+         biFpnXldSI+pvpS2qFaMXyOT8cuEBAsPrZ7dnz6uuRrmrq2f1acV+jyxQl8xzFc+w6
+         FzbHNwbqD6rwg==
+Received: by mail-ej1-f69.google.com with SMTP id gg35-20020a17090689a3b0290580ff45a075so3202195ejc.20
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 08:25:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ZB8kRJjvGWoqH+/4j72g+qbwLJfHVt3xG+HcUqPQc2Y=;
-        b=amIGp6rBYTOaamVPXGNJkFVKGO9NPHY+z9vKMToi1mD4A+34g3p0q62GdLVYz06i/K
-         92FtHCK+tiSFX5K0XS4mVzBxlNeFFiAOl2mtynuKG0t4GHOema4RTLB/NTxZzklXGXNI
-         QOkTXIxx4gv8R39NLuGPEieA02z9nCcM4AnOQzIWAUIZkumqE1MVVY733beGlIJgmeb1
-         ClUY+dxbM8fyqpE2vGoplU/JYZoPYXiX/OA4nQxWR66vEGeMc29YH2ft88zGvHSN2hWo
-         gA4nXMhLuZgUjzAL34KxAILpr5ZY6nynxkLGnY288swwBOdo7XZF5qn1SZz2oFusqt/1
-         v2qg==
-X-Gm-Message-State: AOAM5336c/NmXCMahE+edcGzDNTrxhIKKXEJavaqvgk0H0CzSpn5SAKM
-        ciaNXtTF6MSnWvjEa0c8Rc/4zbUYbZf+X6O65+TS1HAtAMwgVvB8OnLTDDAk3EI8+szsM8r1w3m
-        f5YB7+wpU6SqFGfW5qNX/za4R2AFw0iaRtTxLMh388ErJ5+FR
-X-Received: by 2002:a17:907:216d:: with SMTP id rl13mr3086321ejb.190.1627658568596;
-        Fri, 30 Jul 2021 08:22:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwJmE2LbHYPFXopTp4l0M6WlVDaj/oAMIqaQivR3KofKuI0KNALJNNHvO7iO6MY00bQnFdV9w==
-X-Received: by 2002:a17:907:216d:: with SMTP id rl13mr3086285ejb.190.1627658568399;
-        Fri, 30 Jul 2021 08:22:48 -0700 (PDT)
+        bh=x+6pX9ZPyUiM1Rt9roeiBBTX1oDHG2m/9+XL3uN84UM=;
+        b=SbnNnbqyVA+SYob4Pc2biuqKOzU3cXAZtph8B1wibCUvPhRJVD+miYfOyZu82LVcV4
+         1pQu4UaJKFcr88Z6wylAkaq4YIFirDiLoNR5QhzAIr84ORfLRqcWv4WIJzSDqabkr70H
+         yCfOOBgOtQLdOfRJMz5vT+CPv8VeRLN9GvGcVhTwb8NMwXn5E6laGYPWjsCDk9W64vx0
+         HcZJEkvZKhPuTYCuwxBveIE5CIcgJqsLgmbYsc310q7WHx+YOKv6iIYiXy05hu14Bsx4
+         WWqVwh6MaazYtuJ55lfIdiwoNe5DCYh6XLrfpL4I1iR3p7D5BmdXpgT9Y+NKpbPnHFUu
+         gmZg==
+X-Gm-Message-State: AOAM5309Kj5CgH7omOOc3qNnvU9FZCy5oBLh3cdQx/b/pQMELfbbmuD5
+        fZ8/q7a9haAzDMOHODT/vJUap+5hQllvbc1thEK5ZbggOY5OGz9uZcIMSCcVVZyuRWY7QQumrpX
+        545LOAG+9cDGVI2kWCIOsKJGIjbDD/utgAy7WJPHgUKi0pPyN
+X-Received: by 2002:a17:907:75cd:: with SMTP id jl13mr2947114ejc.327.1627658702302;
+        Fri, 30 Jul 2021 08:25:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyqqUP+KIIGoq9q1WH1X67AGbVHunzdzYqA1b+ewcbCdTxqa8OY5fibzCtJefglr1Ece6TTig==
+X-Received: by 2002:a17:907:75cd:: with SMTP id jl13mr2947093ejc.327.1627658702183;
+        Fri, 30 Jul 2021 08:25:02 -0700 (PDT)
 Received: from [192.168.8.102] ([86.32.47.9])
-        by smtp.gmail.com with ESMTPSA id k21sm816287edo.41.2021.07.30.08.22.46
+        by smtp.gmail.com with ESMTPSA id p3sm699984ejy.20.2021.07.30.08.24.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Jul 2021 08:22:47 -0700 (PDT)
-Subject: Re: [PATCH 02/12] pinctrl: samsung: Add Exynos850 SoC specific data
+        Fri, 30 Jul 2021 08:25:01 -0700 (PDT)
+Subject: Re: [PATCH 03/12] dt-bindings: pinctrl: samsung: Add Exynos850 doc
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -86,14 +86,14 @@ Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-serial@vger.kernel.org
 References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-3-semen.protsenko@linaro.org>
+ <20210730144922.29111-4-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <a2b6b868-e984-440c-75b1-599680537cc9@canonical.com>
-Date:   Fri, 30 Jul 2021 17:22:45 +0200
+Message-ID: <61a6c636-6f72-d086-79b8-e87dbab6b456@canonical.com>
+Date:   Fri, 30 Jul 2021 17:24:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210730144922.29111-3-semen.protsenko@linaro.org>
+In-Reply-To: <20210730144922.29111-4-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -102,124 +102,21 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 30/07/2021 16:49, Sam Protsenko wrote:
-> Add Samsung Exynos850 SoC specific data to enable pinctrl support for
-> all platforms based on Exynos850.
+> Document compatible string for Exynos850 SoC. Nothing else is changed,
+> as Exynos850 SoC uses already existing samsung pinctrl driver.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 129 ++++++++++++++++++
->  drivers/pinctrl/samsung/pinctrl-exynos.h      |  29 ++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
->  4 files changed, 161 insertions(+)
+>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> index b6e56422a700..9c71ff84ba7e 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> @@ -40,6 +40,24 @@ static const struct samsung_pin_bank_type exynos5433_bank_type_alive = {
->  	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
->  };
->  
-> +/*
-> + * Bank type for non-alive type. Bit fields:
-> + * CON: 4, DAT: 1, PUD: 4, DRV: 4, CONPDN: 2, PUDPDN: 4
-> + */
-> +static struct samsung_pin_bank_type exynos850_bank_type_off  = {
-> +	.fld_width = { 4, 1, 4, 4, 2, 4, },
-> +	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, },
-> +};
-> +
-> +/*
-> + * Bank type for alive type. Bit fields:
-> + * CON: 4, DAT: 1, PUD: 4, DRV: 4
-> + */
-> +static struct samsung_pin_bank_type exynos850_bank_type_alive = {
-> +	.fld_width = { 4, 1, 4, 4, },
-> +	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
-> +};
-> +
->  /* Pad retention control code for accessing PMU regmap */
->  static atomic_t exynos_shared_retention_refcnt;
->  
-> @@ -422,3 +440,114 @@ const struct samsung_pinctrl_of_match_data exynos7_of_data __initconst = {
->  	.ctrl		= exynos7_pin_ctrl,
->  	.num_ctrl	= ARRAY_SIZE(exynos7_pin_ctrl),
->  };
-> +
-> +/* pin banks of exynos850 pin-controller 0 (ALIVE) */
-> +static struct samsung_pin_bank_data exynos850_pin_banks0[] = {
-> +	/* Must start with EINTG banks, ordered by EINT group number. */
-> +	EXYNOS9_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
 
-Why EXYNOS9 not EXYNOS850? Is it really shared with 96xx, 98xx and 9x0
-series?
+The patch should be first in the series - dt-bindings go at beginning.
+Although no need to resend just for this.
+If the resend happens, the fix ("pinctrl: samsung: Fix pinctrl bank pin
+count") should be sent separately (no mixing fixes and new features)
+because they are independent and usually easier for review.
 
-> +	EXYNOS9_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-> +	EXYNOS9_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-> +	EXYNOS9_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-> +	EXYNOS9_PIN_BANK_EINTW(4, 0x080, "gpa4", 0x10),
-> +	EXYNOS9_PIN_BANK_EINTN(3, 0x0A0, "gpq0"),
-> +};
-> +
-> +/* pin banks of exynos850 pin-controller 1 (CMGP) */
-> +static struct samsung_pin_bank_data exynos850_pin_banks1[] = {
-> +	/* Must start with EINTG banks, ordered by EINT group number. */
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x000, "gpm0", 0x00),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x020, "gpm1", 0x04),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x040, "gpm2", 0x08),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x060, "gpm3", 0x0C),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x080, "gpm4", 0x10),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x0A0, "gpm5", 0x14),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x0C0, "gpm6", 0x18),
-> +	EXYNOS9_PIN_BANK_EINTW(1, 0x0E0, "gpm7", 0x1C),
-> +};
-> +
-> +/* pin banks of exynos850 pin-controller 2 (AUD) */
-> +static struct samsung_pin_bank_data exynos850_pin_banks2[] = {
-> +	/* Must start with EINTG banks, ordered by EINT group number. */
-> +	EXYNOS9_PIN_BANK_EINTG(5, 0x000, "gpb0", 0x00),
-> +	EXYNOS9_PIN_BANK_EINTG(5, 0x020, "gpb1", 0x04),
-> +};
-> +
-> +/* pin banks of exynos850 pin-controller 3 (HSI) */
-> +static struct samsung_pin_bank_data exynos850_pin_banks3[] = {
-> +	/* Must start with EINTG banks, ordered by EINT group number. */
-> +	EXYNOS9_PIN_BANK_EINTG(6, 0x000, "gpf2", 0x00),
-> +};
-> +
-> +/* pin banks of exynos850 pin-controller 4 (CORE) */
-> +static struct samsung_pin_bank_data exynos850_pin_banks4[] = {
-> +	/* Must start with EINTG banks, ordered by EINT group number. */
-> +	EXYNOS9_PIN_BANK_EINTG(4, 0x000, "gpf0", 0x00),
-> +	EXYNOS9_PIN_BANK_EINTG(8, 0x020, "gpf1", 0x04),
-> +};
-> +
-> +/* pin banks of exynos850 pin-controller 5 (PERI) */
-> +static struct samsung_pin_bank_data exynos850_pin_banks5[] = {
-> +	/* Must start with EINTG banks, ordered by EINT group number. */
-> +	EXYNOS9_PIN_BANK_EINTG(2, 0x000, "gpg0", 0x00),
-> +	EXYNOS9_PIN_BANK_EINTG(6, 0x020, "gpp0", 0x04),
-> +	EXYNOS9_PIN_BANK_EINTG(4, 0x040, "gpp1", 0x08),
-> +	EXYNOS9_PIN_BANK_EINTG(4, 0x060, "gpp2", 0x0C),
-> +	EXYNOS9_PIN_BANK_EINTG(8, 0x080, "gpg1", 0x10),
-> +	EXYNOS9_PIN_BANK_EINTG(8, 0x0A0, "gpg2", 0x14),
-> +	EXYNOS9_PIN_BANK_EINTG(1, 0x0C0, "gpg3", 0x18),
-> +	EXYNOS9_PIN_BANK_EINTG(3, 0x0E0, "gpc0", 0x1C),
-> +	EXYNOS9_PIN_BANK_EINTG(6, 0x100, "gpc1", 0x20),
-> +};
-> +
-> +static const struct samsung_pin_ctrl exynos850_pin_ctrl[] __initconst = {
-> +	{
-> +		/* pin-controller instance 0 ALIVE data */
-> +		.pin_banks	= exynos850_pin_banks0,
-> +		.nr_banks	= ARRAY_SIZE(exynos850_pin_banks0),
-> +		.eint_gpio_init = exynos_eint_gpio_init,
-> +		.eint_wkup_init = exynos_eint_wkup_init,
-> +		.suspend	= exynos_pinctrl_suspend,
-> +		.resume		= exynos_pinctrl_resume,
-
-I guess retention registers will follow sometime later.
 
 Best regards,
 Krzysztof
