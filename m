@@ -2,153 +2,122 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF65C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 21:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDCEC43216
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 14:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3521560EFF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 29 Jul 2021 21:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D711261050
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 14:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233281AbhG2VLF (ORCPT
+        id S239352AbhG3Otd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 29 Jul 2021 17:11:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46534 "EHLO
+        Fri, 30 Jul 2021 10:49:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbhG2VLE (ORCPT
+        with ESMTP id S239340AbhG3Otc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 29 Jul 2021 17:11:04 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246A2C061765;
-        Thu, 29 Jul 2021 14:11:01 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id f18-20020a05600c4e92b0290253c32620e7so7470925wmq.5;
-        Thu, 29 Jul 2021 14:11:01 -0700 (PDT)
+        Fri, 30 Jul 2021 10:49:32 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B961C0613C1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 07:49:27 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id d6so5910046edt.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 07:49:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=8SkuOyTmyIB5hT8ozqKKAwUAdXcXcTyxuVRFatULG8M=;
-        b=DWk49QFZkR5as4hP27AYXu0irseC6zGLUvqN+ph9UXUz597r5LK57bqXI9FFi27QNX
-         mxjeXWh8tAyMlQ2FQnC6zbYsCICgouVVF+fVligDpu9779zSF7kC9oRHlphjwB8XVy9j
-         brVWw/3tmijMfJHuvLGF0Il89bJaysvdVgmAind3FUbodtMXRWHyu4tzJzeGcLBBp71V
-         Wy90hp4aqyckgOH4h2ogcSj4FxM1gEuxIFIkz01sjX16UU3lUx3RFDqehXxjCleJHlM1
-         AAj4tpKB40m+v8a5iQW12FKkN/CDrVW9+uaYcl73Rp2j5aFYqLRUbo8nsUx0+InIx2s5
-         vwRQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VTDgPgWodE/cSRF6bHIc6D1D5Dn1jvPwRYXuY/lAMLo=;
+        b=TkueiDTdOMqYTmTxIiWclFQDmAoJQIi9pKg/pDn4T1rA2VjfILkGJNRgYCunu870MP
+         qypWhzFqenbxNDZV4QPpZvTBiL0T6ZzwAkBRHMaovinMWM8mTUwcZ1jc6pskjFipGKIM
+         IXhUOo6SBJYFp2Yht0rWwR6rKjHOixSLarchv5uf56EVbCILFXRb+G0Y547em6aa4I8/
+         BqZr3+joyNVs85IjpkswpDcIjciP+mlO9g6EoGxO1/d3NIEJTlZbuskA5bb08gAkGtd4
+         2oFBaMMAzmc1lYRJdhu9xkPqeQH6gQLUdBaAq+YpDbbvFgnFduiJnZeySi1IBccyGB81
+         Sgjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=8SkuOyTmyIB5hT8ozqKKAwUAdXcXcTyxuVRFatULG8M=;
-        b=kNoiByQ6pE2UY2hcpnt6KOBh+7WgpSeCc/8O6Z6RgxxlIr7MAjN4nTdy5gx/1es3/g
-         1Pm201MAaWFSkgGChNPf8P2iS69sCofwy+EzO6Ra/S2yjsfmgO2sTGNqV1YiWzhoTNmz
-         ygWjSP9NHWOwlhpT0vA+2EGQhtcZ28LS9anf3PrHRMSnBPZViOE3/KTyWZtywOrNr0yk
-         rLS7XH9lO9sk+H0zLQGTWueyV/iIMibJdkaipp0ekD3P8Zx2dpyQhbgfoUpSkIGCCx06
-         mn40Or6oc+9xot5NJrDBFKvV5D9tl/sX3cUKaVyntzhhJIHKLkm2HldfVvgXpMUcQLy7
-         0CkQ==
-X-Gm-Message-State: AOAM530B5fu41cQVZ5rjTbiuFxdMyrBezbulga9lIvF1rbwWgMTLAWLO
-        JYe2qCWtEL/7PQgqFoUUoWA=
-X-Google-Smtp-Source: ABdhPJzHd1t4wdMOxnOe8QZjk8B7YHwst01lbmIJjN/GWcY6+uq08T/fz7kg77oiLzhVIlnx/BCXrw==
-X-Received: by 2002:a7b:c30f:: with SMTP id k15mr385705wmj.128.1627593059736;
-        Thu, 29 Jul 2021 14:10:59 -0700 (PDT)
-Received: from ubuntu-laptop (ip5f5bfdd7.dynamic.kabel-deutschland.de. [95.91.253.215])
-        by smtp.googlemail.com with ESMTPSA id q7sm4281641wmq.33.2021.07.29.14.10.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VTDgPgWodE/cSRF6bHIc6D1D5Dn1jvPwRYXuY/lAMLo=;
+        b=OjM0a/RvTUfVSmkIrJk5GDZeDW09VjYOjbf74/CMbjhZFtNxWzJW4RlUgWQ26Cxmlu
+         5EmV3LLSAZxBk32MlmnQdY4DSWDkpC+UXUqpasPra2na8Js2QI9s7A4HKLQPe2oLJE8G
+         s7bUGjEBeDuy4Hy1Fb+Owbh7dy8yyDkYpUgNkp6YNtDuC7qfdy/w9aMQi5XvEYaH2/oe
+         Q/XhWqxN/UYPKMNpr8HfcegTAIEoXdUwywyuxOkXXzyd4T/Gh5TEhl/8QLxsfT3kBeje
+         Mw1s7iD0u5Tr1zAlNHt1rhCD5sMkvw/bq5Io3K0tXw8ZwOMvWsKggwokvmsZZ9ap/sPj
+         x13A==
+X-Gm-Message-State: AOAM533pCovxoGeGR1AbcLbGhs00W0LU8kcMr0Bj8pUfMi3qx0HVQ2Fa
+        t/hLMpRYvodLz8nhXcNHrZCqIA==
+X-Google-Smtp-Source: ABdhPJwQ3Vu/iMAI2TwOY1RDcotd+8kXvX1qj2ZROjO1I6ex2OtKHUvLBmtYk8c0mf//n0KTncs5Fw==
+X-Received: by 2002:a05:6402:31ba:: with SMTP id dj26mr3436625edb.252.1627656565567;
+        Fri, 30 Jul 2021 07:49:25 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id o17sm629581ejb.84.2021.07.30.07.49.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 14:10:59 -0700 (PDT)
-Message-ID: <27287a3c10d6096bd050f1f743c218b825dde2b9.camel@gmail.com>
-Subject: Re: [PATCH v2 14/15] scsi: ufs: ufs-exynos: multi-host
- configuration for exynosauto
-From:   Bean Huo <huobean@gmail.com>
-To:     Chanho Park <chanho61.park@samsung.com>,
-        'Krzysztof Kozlowski' <krzk@kernel.org>,
-        'Alim Akhtar' <alim.akhtar@samsung.com>,
-        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
-        "'Martin K . Petersen'" <martin.petersen@oracle.com>
-Cc:     'Can Guo' <cang@codeaurora.org>,
-        'Jaegeuk Kim' <jaegeuk@kernel.org>,
-        'Kiwoong Kim' <kwmad.kim@samsung.com>,
-        'Avri Altman' <avri.altman@wdc.com>,
-        'Adrian Hunter' <adrian.hunter@intel.com>,
-        'Christoph Hellwig' <hch@infradead.org>,
-        'Bart Van Assche' <bvanassche@acm.org>,
-        'jongmin jeong' <jjmin.jeong@samsung.com>,
-        'Gyunghoon Kwon' <goodjob.kwon@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org
-Date:   Thu, 29 Jul 2021 23:10:58 +0200
-In-Reply-To: <002e01d78351$6996d040$3cc470c0$@samsung.com>
-References: <20210714071131.101204-1-chanho61.park@samsung.com>
-         <CGME20210714071200epcas2p3f76e68f6bbb4755574dba2055a8130ab@epcas2p3.samsung.com>
-         <20210714071131.101204-15-chanho61.park@samsung.com>
-         <2b4f4e6d76cdc517843fe8880312541c754d5352.camel@gmail.com>
-         <000601d7820a$9aa11210$cfe33630$@samsung.com>
-         <602ee8bc56891f0f0429afe274d7174ec325172e.camel@gmail.com>
-         <004601d782d0$2f43cd20$8dcb6760$@samsung.com>
-         <8af01dbdfbecf2aa2f35e8c3a5240b2bcf76d9b0.camel@gmail.com>
-         <002e01d78351$6996d040$3cc470c0$@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Fri, 30 Jul 2021 07:49:25 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH 01/12] pinctrl: samsung: Fix pinctrl bank pin count
+Date:   Fri, 30 Jul 2021 17:49:11 +0300
+Message-Id: <20210730144922.29111-2-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210730144922.29111-1-semen.protsenko@linaro.org>
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2021-07-28 at 10:39 +0900, Chanho Park wrote:
-> > Hi Chanho Park,
-> > Thansk for yoru reply.
-> > I didn't see your changes about task_tag and IID. Having a look at
-> > ufshcd_prepare_utp_scsi_cmd_upiu(), the task tag in the UPIU header
-> > is
-> > still only task tag. and IID is always 0x00.
-> > If you didn't add these changes, your patch is un-readable, and
-> > also the
-> > driver doesn't have a real usage case.
-> 
-> 
-> I already replied regarding this in another mail thread and please
-> refer below comments. The controller will handle the tag translation.
-> 
-> https://lore.kernel.org/linux-scsi/002901d782c6$937ac0f0$ba7042d0$@samsung.com/
-> 
-> 
-> 
-> > Also, you mentioned there is no support/change needed from the UFS
-> > device
-> > side. But, IMO, if you changed the UPIU header, there are changes
-> > needed
-> > on the UFS device side in order to use your driver.
-> 
-> 
-> Please see the figure[1]. Once IID_IN_TASKTAG bit is set, the
-> function arbiter will translate the value of UPIU header before
-> delivering it to the device.
-> 
-> 
-> 
-> [1]: 
-> https://lore.kernel.org/linux-scsi/20210714071131.101204-1-chanho61.park@samsung.com/
-> 
-> 
-> 
-> Best Regards,
-> 
-> Chanho Park
+From: Jaehyoung Choi <jkkkkk.choi@samsung.com>
 
-Hi Chanho Park,
+Commit 1abd18d1a51a ("pinctrl: samsung: Register pinctrl before GPIO")
+changes the order of GPIO and pinctrl registration: now pinctrl is
+registered before GPIO. That means gpio_chip->ngpio is not set when
+samsung_pinctrl_register() called, and one cannot rely on that value
+anymore. Use `pin_bank->nr_pins' instead of `pin_bank->gpio_chip.ngpio'
+to fix mentioned inconsistency.
 
-thansk for your further reply. I didn't find out your cover-letter in
-your patchset before.
+Fixes: 1abd18d1a51a ("pinctrl: samsung: Register pinctrl before GPIO")
+Signed-off-by: Jaehyoung Choi <jkkkkk.choi@samsung.com>
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-IID will be automatically set by HW controller according to the VH_ID
-in the tasg_tag byte[7:5]. Before sending this RPMB to UFS device,
-doese your controller reset task_tag byte[7:5] to 0x0 or your
-controller will keep VH_ID?
-
-one more question, you mentioned para-virtualization, did you use Xen
-or KVM?
-
-Kind regards,
-Bean
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 376876bd6605..2975b4369f32 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -918,7 +918,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+ 		pin_bank->grange.pin_base = drvdata->pin_base
+ 						+ pin_bank->pin_base;
+ 		pin_bank->grange.base = pin_bank->grange.pin_base;
+-		pin_bank->grange.npins = pin_bank->gpio_chip.ngpio;
++		pin_bank->grange.npins = pin_bank->nr_pins;
+ 		pin_bank->grange.gc = &pin_bank->gpio_chip;
+ 		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
+ 	}
+-- 
+2.30.2
 
