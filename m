@@ -5,65 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E66C4320A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096ADC432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B252161057
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFBFD6103B
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232752AbhGaJYq (ORCPT
+        id S232846AbhGaJYq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Sat, 31 Jul 2021 05:24:46 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:59912
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229703AbhGaJYp (ORCPT
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47664
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232568AbhGaJYp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sat, 31 Jul 2021 05:24:45 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id 4E1903F235
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 09:24:36 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 4C6B63F239
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 09:24:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
         s=20210705; t=1627723477;
-        bh=kGo37r3WhFCeIFTyZEtB2b0clBfBYswptDUZjNvqtBo=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=Pn5AM4+RTr3v2gvWU1GhJ6S64vSgytYHeNA6eItQhTIv6qNo/LWYeYVa5A/DBGcsP
-         eIfLt8k1wW7JwwWG1ltx1ob2wJWvBau/4iqAfFJDKIzlW8vqIoLsvCpX9uQTr/pH59
-         d3UuqaLmYqumd+msboGpIUQyo0fRwCgGqFQrUoDkOqiPuAbY3VLLA3BqPXc+zdlhuJ
-         tDSwlKFreAwZUPLAXTfvwqv/alcbTp/ccKii84eaUPffFlxtsRdlhtkaARXkAmqkxL
-         Dl+FfugIrK4btbosHu9Cva7YtijZUDZgGYqUTB4p9WkegXUlPKv4BXM8E4YeOwDcTY
-         8AOVpOrnjb56g==
-Received: by mail-ed1-f71.google.com with SMTP id p2-20020a50c9420000b02903a12bbba1ebso5853463edh.6
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 02:24:36 -0700 (PDT)
+        bh=2SsoeL69SAbyVLuagHDmvrXJo7lE3+dC0c+iRSlRnVc=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=qFsTkO4eepm/DqCMQXppe8VxSEAFM3YwAlxSrj2U6Eq84QGni2PVt4TurlipA1zpi
+         3T+zZjyKCuW6zs+t68drgEnyrmxHbgnk9NH22iluQ2ukdq0DAZ119RXehvWPRvMC0i
+         yoMK5TDyeJxIITephJ3EqPUSs6O/F8Z1BZVYYZI/egfu+4SjbnXrBOgG0Ahi+FyDWb
+         1H7eXVDPMMSnSAmqlZ76yGqap3y5+avNcSU4WX9nqQX2ZwBdLjdgQnkZlczwZLH8XQ
+         j2O5ef3z3dMcMSEwLvWNJi9pBgRa/rsEnUeDlIx2tTSL8ueR2l6mTch8Ks+E4v8YFl
+         9XbeRaN0KSLpg==
+Received: by mail-ed1-f70.google.com with SMTP id b13-20020a056402278db029039c013d5b80so5901678ede.7
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 02:24:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kGo37r3WhFCeIFTyZEtB2b0clBfBYswptDUZjNvqtBo=;
-        b=HD+bHdPPvbfY0NHBwkLg+5kFEed428RQjJBOB5IQFjllZz7CFy8qiOJ62aojf6/4DI
-         Yap/R/3JvRyzzcKxPnE9l5UcH2LjLQlVZVDKCUQ9XdJKt6LMxaZSDtqfW22JFbmggHBb
-         8IQb9TPZcT0hwiUKcWVNjwnZ7Wiv3+UnnMUBIVfpP8Zv3QDY9x4TWW/QOH8+8/1jHP2l
-         MzxBEntFo4xP2Gctt+4kr9vUe9OEYVxSAQCQ3dZq7Mmp65e79GkCXYvWWo9lmVyHrkag
-         3eiYwDlI6Co8ng3A+z/2M5s7nNVYgGSdEUZFQG05RLvS5vi88tvt6d2v92qCF8WNcyC8
-         LJWw==
-X-Gm-Message-State: AOAM531UwccChCd0euOt94yNFdbnymyTGpQ+rUZTkVBHqhAy9Q1UlZuN
-        NRVqw6+Wcy0xzaaG5ToRzACq2MNhywQ/0wxAraznJ/WJqEBDPSipOst18qe+lwh5iZcnfwngsIe
-        Lu+IT+EoiH2K2YIh76vL246ZjKAKHT3Jf/tnfICG/vFkfrM6T
-X-Received: by 2002:a05:6402:28f:: with SMTP id l15mr8056973edv.131.1627723475766;
-        Sat, 31 Jul 2021 02:24:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyaUYFBiBXOj/YrSnv2G1IxSRpz8mT9DY7R7LnPnM3pnBBdSPX26G/dea1pdGER5HCdqQwzig==
-X-Received: by 2002:a05:6402:28f:: with SMTP id l15mr8056962edv.131.1627723475618;
-        Sat, 31 Jul 2021 02:24:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2SsoeL69SAbyVLuagHDmvrXJo7lE3+dC0c+iRSlRnVc=;
+        b=K89oEQFuEUmxv8be4ZruOyoPodKEChvz38C+N3bk+I7vEmONory8CQSGwCzQBciEK5
+         WgnpBsNZaM33O3CbtdEnPQ6EWvgmax5bcDNYb2sIEuL3Vx7m8ucCnv9sv2TQkprK6BPc
+         0r6ZYocgn7q9chbK585FwmWPWHQOaMlw17Mz4jhX8ZnKQX+7OOCchY/DfkG5BJYbxUGR
+         HW774j9ppQXBb5jxpRRmXTnA+AO1AEAnVlOyAVkpBAR6sZw4bzLZhrZGLtfe/V1MlIo1
+         VeJ6HJUUJcivTy0wH3Nnj7+9q9u2zUyXpShiDhBl0RAMlKr2cRVqECJ1qIdTaPJG7g2m
+         JwIQ==
+X-Gm-Message-State: AOAM531tjjC/aYyngCtggsB9lDbzXrfNxChSlRCI7WBMk93i5pKXQF+3
+        1zIZCZ2K2Mmm2/wMIM1M60+Qe8k3A3O3yYjw2OPz8SxJ5D7lS0E2+IJz0zR5UNuKhg0S+qznWHi
+        dcah14Ohbb+bF4a2CIzRSL+DDqUNNrDFAZOdwJ9iAOUQn/H0l
+X-Received: by 2002:aa7:c3d1:: with SMTP id l17mr4578539edr.299.1627723474536;
+        Sat, 31 Jul 2021 02:24:34 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxeAnPajwclK+eQXY1ZtPp0NIkRYZP3KRr0MLG5lY5FR1vkdqt76BV8Rkpf4D3K9sS4iN6vpg==
+X-Received: by 2002:aa7:c3d1:: with SMTP id l17mr4578532edr.299.1627723474425;
+        Sat, 31 Jul 2021 02:24:34 -0700 (PDT)
 Received: from localhost.localdomain ([86.32.47.9])
-        by smtp.gmail.com with ESMTPSA id r16sm1947693edt.15.2021.07.31.02.24.34
+        by smtp.gmail.com with ESMTPSA id r16sm1947693edt.15.2021.07.31.02.24.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 02:24:35 -0700 (PDT)
+        Sat, 31 Jul 2021 02:24:34 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -74,30 +73,28 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 2/8] ARM: dts: exynos: add CPU topology to Exynos4210
-Date:   Sat, 31 Jul 2021 11:24:03 +0200
-Message-Id: <20210731092409.31496-2-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 1/8] ARM: dts: exynos: add CPU topology to Exynos3250
+Date:   Sat, 31 Jul 2021 11:24:02 +0200
+Message-Id: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
-References: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Describe Exynos4210 CPU topology.
+Describe Exynos3250 CPU topology.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/exynos4210.dtsi | 11 +++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 70baad9b11f0..7e7d65ce6585 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -32,6 +32,17 @@ cpus {
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 77ab7193b903..a10b789d8acf 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -50,6 +50,17 @@ cpus {
  		#address-cells = <1>;
  		#size-cells = <0>;
  
@@ -112,9 +109,9 @@ index 70baad9b11f0..7e7d65ce6585 100644
 +			};
 +		};
 +
- 		cpu0: cpu@900 {
+ 		cpu0: cpu@0 {
  			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
+ 			compatible = "arm,cortex-a7";
 -- 
 2.27.0
 
