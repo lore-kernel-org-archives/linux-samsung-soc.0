@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF83C04FE3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4092FC4320A
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C0A060FE7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24F5360FE7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 09:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232758AbhGaJYs (ORCPT
+        id S233033AbhGaJYu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 31 Jul 2021 05:24:48 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:59950
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232801AbhGaJYq (ORCPT
+        Sat, 31 Jul 2021 05:24:50 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47704
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232931AbhGaJYs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 31 Jul 2021 05:24:46 -0400
+        Sat, 31 Jul 2021 05:24:48 -0400
 Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id E535E3F340
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 09:24:39 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 423CE3F23B
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 09:24:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627723479;
-        bh=LR7PylKlSM9jbeT9DvZDED63xszwtTNm8McFnmsrZzE=;
+        s=20210705; t=1627723482;
+        bh=ERP8Nj6BhzRSI6a/TCOdFNPpRXHoJA+/4PhYRhY4Cn4=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=vbhNutqO5C+wrwQrf11kMUiWHkqzEf3pRq5EVfbBlbhNKbKBh39ISmZ0ZMEwd7I1W
-         9JR2sUPtBMIB5TW7PHl9/3n9qNOR+9sfVbHuM3zMnESxe+PwhQybajB4C8IE/Qsx8v
-         Vvj3YysUgc9pN+tsVvl7rp6TEFy2AJHIKtkuBJ6OzPTFXUq7LpEn+EstOb0y6/tdLZ
-         LK4VllHS8lhNmUEgiwMqBp1P7evX4QWYBGZeIxMB/SgJJLfPEdYFW6DoMdjRqnPECe
-         fHttX9uSjTYlwccwbZyi10DCDtcxDABFhOWHZWqZe6OV+kg8+8hM5Rf+I1rtNx7vOp
-         l2UeXy7J1svRw==
-Received: by mail-ed1-f71.google.com with SMTP id de5-20020a0564023085b02903bb92fd182eso5932508edb.8
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 02:24:39 -0700 (PDT)
+        b=ltZcAAlNLOY43R5wfUoIv463WaIZosnP5B0zkDYpunVh2xACR1sFOW5AZD8GBimRZ
+         xpjawjZYOB2AMsCs4abW/yzJDj/UWFONqW4Z2Di0+v07/haMi+nGLRzYyL3+ZVcTRv
+         G92Xffrnie/6DP0T9n0AivJbqi6fHKm3kvEnEOlm3YwP3MaisjiyAEK+V+iqLWTzvy
+         Fa2uOG47+8SeNIvuguOtcMDoitht1rB4B/nFA1Td/hq9oFLBgN3GH6hYsPNdUA0rRI
+         qcWAXsk/kIkf8bRDi/dnbVlqFZysXMrwqiNkSEmi+NTZ1tRtlOseUkP71kRR6NlZZd
+         k0Y7FCSP/7VCw==
+Received: by mail-ed1-f71.google.com with SMTP id a23-20020a50ff170000b02903b85a16b672so5886984edu.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 02:24:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LR7PylKlSM9jbeT9DvZDED63xszwtTNm8McFnmsrZzE=;
-        b=aj0hiU0vwY/BdRjks2aAoqHMSZKEUC1neZvUxAG9gdOzBuo7/Gj1m2NS8JSQftn+NI
-         gMU4EiDY1qogIlHn0iv7Ya+sB1q9jqRYL8ja1Z08KIXveqnFd5Lo+vfT4C727nsC3hMB
-         YOT0IBQ2riiccX2GarIiyAxx0xOBuu2T0WpPmd93Q6VE0C4y1s0uSUHEKBwNLYG3y9mS
-         XJCzEYcgmVCBGzfk8vtOPwnpkuNCeBJf1dW3oDsWVNQUzYuxall+G/9XLwAUBg8nZRZP
-         y0eVkENOzLA2qnqBUaFGYoxMaNZYGzz5RzGVnxww8Nb/6pQ6cf0L9aRn2ycKi8O8QJFD
-         2sLA==
-X-Gm-Message-State: AOAM533mOUqu+l55PGv8QxGHVpvAUUuKQqwUsFObFqjWSFuz9fqPh7Yc
-        J7nOuq+dYaEgPGF5A2TScc0ituOCe7gRmiRw2U3AwThySFPuKhn3Pf4We5My6ETx1NuW0EcK1rv
-        rtj/sJfSoCzWSFAj7CIwI5Gyxk56nmn8HHblogM5U8yaS5c5L
-X-Received: by 2002:a50:d64a:: with SMTP id c10mr8402832edj.199.1627723479598;
-        Sat, 31 Jul 2021 02:24:39 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwnlJgsAJ+NC3dcAMAIjP6kd6XsZ6o25gKIxAdDwyN5QE4D1Nu5jA5QJOklXRxaOPI7XGCfBw==
-X-Received: by 2002:a50:d64a:: with SMTP id c10mr8402817edj.199.1627723479493;
-        Sat, 31 Jul 2021 02:24:39 -0700 (PDT)
+        bh=ERP8Nj6BhzRSI6a/TCOdFNPpRXHoJA+/4PhYRhY4Cn4=;
+        b=YB4REAqtU0yEO9JMh1TSECy5OibACjJ8BUUR53iZL9HNY+cshfFLM7ZXFdQD7HH2ZN
+         5G2YQNEXLwq3boY4/6ke5ZJuAtaCh/hYXubR69wef5NSsA8RMq3JLxsjWF/fpGZhOUzd
+         +FMwEWPNoiOAYJX/TJF8UxKPMBoIbV+qr6JJ6gNLv2VvF6JRFoHOdrPxSzHhnM8Zo+lM
+         rky9ijblEmzkBODxFfPgGuQ+cZ4MQp317Dv/w56ttessi/ND6qzy5vfwo+VUQY/Y1M98
+         hsi9qHIKsoHJePlCGoaLEDcIIQVM+gV8yJ4+6N9E4b9AX+tgdOJSrHZZWjE/KSk6WFqF
+         +jrA==
+X-Gm-Message-State: AOAM531XFMeY+Se5/99w+PtFnb01oqo85Z4ew2xc6WfP9VJhgRNuub67
+        78pfRrzIR0jku5kJg26Uz8h9EXcYsfBxU05N19ZqIPcZPqFq8YlMV8EMRmuri92h8iEzHg60hMq
+        jq56tPtMScgY7AtzBm9xqIjiUzE+4qM5IzS89jY1n17r+6wLb
+X-Received: by 2002:aa7:c2d7:: with SMTP id m23mr8435691edp.30.1627723482013;
+        Sat, 31 Jul 2021 02:24:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzWDPnTDXwoerV0fH7BKZWtc51zibHNXd/dd+1kecWozTV2HkLy5eSAhhDXTpFxZ0+A24W0fA==
+X-Received: by 2002:aa7:c2d7:: with SMTP id m23mr8435672edp.30.1627723481915;
+        Sat, 31 Jul 2021 02:24:41 -0700 (PDT)
 Received: from localhost.localdomain ([86.32.47.9])
-        by smtp.gmail.com with ESMTPSA id r16sm1947693edt.15.2021.07.31.02.24.38
+        by smtp.gmail.com with ESMTPSA id r16sm1947693edt.15.2021.07.31.02.24.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 02:24:39 -0700 (PDT)
+        Sat, 31 Jul 2021 02:24:41 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -73,9 +73,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 5/8] ARM: dts: exynos: add CPU topology to Exynos5260
-Date:   Sat, 31 Jul 2021 11:24:06 +0200
-Message-Id: <20210731092409.31496-5-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 7/8] ARM: dts: exynos: add CPU topology to Exynos5422
+Date:   Sat, 31 Jul 2021 11:24:08 +0200
+Message-Id: <20210731092409.31496-7-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
 References: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
@@ -85,22 +85,21 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Describe Exynos5260 CPU topology.
+Describe Exynos5422 CPU topology.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/exynos5260.dtsi | 38 ++++++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/exynos5422-cpus.dtsi | 32 ++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-index 973448c4ad93..52fa211525ce 100644
---- a/arch/arm/boot/dts/exynos5260.dtsi
-+++ b/arch/arm/boot/dts/exynos5260.dtsi
-@@ -34,42 +34,68 @@ cpus {
+diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+index 4b641b9b8179..412a0bb4b988 100644
+--- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
++++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+@@ -21,6 +21,38 @@ cpus {
  		#address-cells = <1>;
  		#size-cells = <0>;
  
--		cpu@0 {
 +		cpu-map {
 +			cluster0 {
 +				core0 {
@@ -109,68 +108,33 @@ index 973448c4ad93..52fa211525ce 100644
 +				core1 {
 +					cpu = <&cpu1>;
 +				};
++				core2 {
++					cpu = <&cpu2>;
++				};
++				core3 {
++					cpu = <&cpu3>;
++				};
 +			};
 +
 +			cluster1 {
 +				core0 {
-+					cpu = <&cpu2>;
-+				};
-+				core1 {
-+					cpu = <&cpu3>;
-+				};
-+				core2 {
 +					cpu = <&cpu4>;
 +				};
-+				core3 {
++				core1 {
 +					cpu = <&cpu5>;
++				};
++				core2 {
++					cpu = <&cpu6>;
++				};
++				core3 {
++					cpu = <&cpu7>;
 +				};
 +			};
 +		};
 +
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
- 			cci-control-port = <&cci_control1>;
- 		};
- 
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x1>;
- 			cci-control-port = <&cci_control1>;
- 		};
- 
--		cpu@100 {
-+		cpu2: cpu@100 {
+ 		cpu0: cpu@100 {
  			device_type = "cpu";
  			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
- 			cci-control-port = <&cci_control0>;
- 		};
- 
--		cpu@101 {
-+		cpu3: cpu@101 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x101>;
- 			cci-control-port = <&cci_control0>;
- 		};
- 
--		cpu@102 {
-+		cpu4: cpu@102 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x102>;
- 			cci-control-port = <&cci_control0>;
- 		};
- 
--		cpu@103 {
-+		cpu5: cpu@103 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x103>;
 -- 
 2.27.0
 
