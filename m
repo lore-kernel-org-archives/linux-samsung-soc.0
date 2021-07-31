@@ -2,66 +2,71 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4325C4320A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 23:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2328C43214
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 07:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC70060F46
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 30 Jul 2021 23:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE5666101C
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 31 Jul 2021 07:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234893AbhG3XKy (ORCPT
+        id S230331AbhGaHM3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 30 Jul 2021 19:10:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234625AbhG3XKw (ORCPT
+        Sat, 31 Jul 2021 03:12:29 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:53466
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230148AbhGaHM1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 30 Jul 2021 19:10:52 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1FBC0613C1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 16:10:47 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id u11so3851442vst.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Jul 2021 16:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1TbM8t6BNkSg4D2ia1l4JTeH7i8cCps/pEqFiTm27VI=;
-        b=pQrODr43Tq85sO7xev8VokbneJbm5zeP5yoYuIENZPWPGzqaou9BgZY6fwo8YMfy6q
-         DEFyoI0Tx3ZLIau3mYWwHsSB/8Kg2TJawcyxM1fcczHY+wiJFggCXrMuRL7kQwc69fn5
-         ON1gNh74Lzl4gbRJPb3Bs2yS/iisOBmc54wJYt9sU4bVuNDZobMpypQ3IvmA8SVuQlh9
-         F9BHRVHFYm7u3dtmaNYHIQlhS3yVdC7cuuarR8UBtAAKEwIPbpdVSIGbVrrLnPyVtYAp
-         fBNaIGi2wmKmLVl5CqYRJUbFkTmA8e+stGXBEqNEaykxSePM9u8UKNBbEabeb6oqGo2J
-         rCgg==
+        Sat, 31 Jul 2021 03:12:27 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id E67993F0FE
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 07:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627715539;
+        bh=hN6QfGvmrSwTg4tA4I3radaavpm+Sqfgu2IG+IjJCBU=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=B0PAP61XUWJZhkjQiJoFJ6o2+qyJG6f+RbTMjUZ+8LptRgw/A340uWzzIkCh2ZIA6
+         clw14io+hbIdgN7k7OEGBZ3ntQq+43eecoMqzqMTkhEVJbJ0WzdP06UimgNTVINHQn
+         Aui4gWYVpuRPy2v9LfjcG6G/05xOfpjDaP69dFKpdAtcIEEAHpxuODK2BlJfg09a1u
+         pVoa70KGHRP3MmzBPPOApkiSE0XT8dYcVtNaLifH5YnbvgGjPF3aQro4XKTfOQpTmB
+         yFFcDA1kHzCg4CKw8msRIYJ+ICR0I8MFXQ8q40MEbI+O5m3u9wrrLlZqA2LcTCpgTa
+         BuUQQwE2YQPLw==
+Received: by mail-ed1-f70.google.com with SMTP id h16-20020aa7de100000b02903a6620f87feso5786994edv.18
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Jul 2021 00:12:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1TbM8t6BNkSg4D2ia1l4JTeH7i8cCps/pEqFiTm27VI=;
-        b=ogOhAnkJNHiAGAJJojIVo6in8hM2ivtWxg9NM0SyYNNAZttXelzYGL3H+h1cbRTDfd
-         aYe+CgkgEAXd92YsBXJZeQoQF0rCEfmbN94eUuvYDWQhAPs159R8gxr5+5yaDOSVHjEC
-         a/j3DNL5ceW4/puaYE35r0G+2D3oppylhDIoy14vIvSCbt6tVxkPi3SFQwRaHto1nhKh
-         otqoZbCy5jUXi8d5ZaH3j05RujS/pHJ+LeVjAFGavYInogI9OEAwMhhCi5cOL9svgGp0
-         SBfwXzM5poEIMDtmup376YhAu9k4Z9bn1RrPeF3mT69x+W3RGCdXgs52fuE1+zZEQlsz
-         9Rgw==
-X-Gm-Message-State: AOAM5322eloKRtf40BobUGZ+iaHqYA5n15V6XwxqHaY4D8+Bk83y0fE5
-        5q6/JqXM+YYSDJVp+5t9+JrH/lpXOEpXXnuUsDt7LA==
-X-Google-Smtp-Source: ABdhPJzjN4/BBXYdmqDYw3Auz5/+2Hw4s/UhDtBUqd4bFeznRfXGoaUAkywM5B9TqucDz/hqA+hxev/WRZVElP9J8As=
-X-Received: by 2002:a05:6102:21b:: with SMTP id z27mr4528245vsp.27.1627686646549;
- Fri, 30 Jul 2021 16:10:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-7-semen.protsenko@linaro.org> <5826bc3e-e9e8-a9bb-4541-21c1b944a60e@canonical.com>
-In-Reply-To: <5826bc3e-e9e8-a9bb-4541-21c1b944a60e@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 31 Jul 2021 02:10:35 +0300
-Message-ID: <CAPLW+4=yOETYdVWvG_YUzewRDg9wB1h+z4i3DRDxJQHeVgu1EQ@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hN6QfGvmrSwTg4tA4I3radaavpm+Sqfgu2IG+IjJCBU=;
+        b=OKyjgcporNXiFBLNVGYlIIMHcoDbxA9uqqoFKjv6UkP//NIQrPX84W8fgzZdlxi+cf
+         deyX94oADEhBkI3Rm4ZB+fc9i9U1euuvjhCkIjoquYQdPvxwt1IflB5qcW9OAfRhVSmH
+         SfNpDkusUQLnWppm3YBUbQoFwMRZC09Ajd2VibEcmlfg/qgGamydb5c+9+kdaPcOxjEd
+         7vyI1bDQ1U91vUQk4OP2PY+kwFcEHR1tS6KDTWZqqPHqZMnBWOfa94Co3wSD+wNm7SDd
+         Nk7C3jxRAvf2kH7HeucNH4ZflscAYlNFZ4qUxaLrQshHbkhZfnTQMWdws36vKeKfAtdX
+         KoDQ==
+X-Gm-Message-State: AOAM5308WPb6fjKUX1shdSGnrBklDONq1MF9Y993c13ojBfj+ajFDpK3
+        mmhMKYZLr2/HpRL0WQLQwAdpK9uQaFvNIncvfYm0v0763RD6BYZSXRXSQmQc8D3Y5Z7tWUhjae/
+        YgzbBFi5h5Lcy1dlZYUdUuU0y+ndzgGcuTAAbRSDTlSJJl6nW
+X-Received: by 2002:a50:da0e:: with SMTP id z14mr7925671edj.73.1627715537251;
+        Sat, 31 Jul 2021 00:12:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzM+J4ApxUWFlgbSwRrJJR8tujps6FaXF0fw5qP1Ypyvp7qxb82ntIhvndqLnHetlhetnI/Qw==
+X-Received: by 2002:a50:da0e:: with SMTP id z14mr7925659edj.73.1627715537087;
+        Sat, 31 Jul 2021 00:12:17 -0700 (PDT)
+Received: from [192.168.8.102] ([86.32.47.9])
+        by smtp.gmail.com with ESMTPSA id l2sm1339054ejg.37.2021.07.31.00.12.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Jul 2021 00:12:16 -0700 (PDT)
 Subject: Re: [PATCH 06/12] tty: serial: samsung: Add Exynos850 SoC data
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
 Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -84,67 +89,82 @@ Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
         "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+ <20210730144922.29111-7-semen.protsenko@linaro.org>
+ <5826bc3e-e9e8-a9bb-4541-21c1b944a60e@canonical.com>
+ <CAPLW+4=yOETYdVWvG_YUzewRDg9wB1h+z4i3DRDxJQHeVgu1EQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <3b607569-e97a-9f1b-92a2-a28de5d0e6b6@canonical.com>
+Date:   Sat, 31 Jul 2021 09:12:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <CAPLW+4=yOETYdVWvG_YUzewRDg9wB1h+z4i3DRDxJQHeVgu1EQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 30 Jul 2021 at 19:05, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 30/07/2021 16:49, Sam Protsenko wrote:
-> > Add serial driver data for Exynos850 SoC. This driver data is basically
-> > reusing EXYNOS_COMMON_SERIAL_DRV_DATA, which is common for all Exynos
-> > chips, but also enables USI init, which was added in previous commit:
-> > "tty: serial: samsung: Init USI to keep clocks running".
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  drivers/tty/serial/samsung_tty.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> > index 75ccbb08df4a..d059b516a0f4 100644
-> > --- a/drivers/tty/serial/samsung_tty.c
-> > +++ b/drivers/tty/serial/samsung_tty.c
-> > @@ -2814,11 +2814,19 @@ static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
-> >       .fifosize = { 64, 256, 16, 256 },
-> >  };
-> >
-> > +static struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
-> > +     EXYNOS_COMMON_SERIAL_DRV_DATA_USI(1),
-> > +     .fifosize = { 0, },
->
-> This does not look correct. You rely on samsung,uart-fifosize property
-> but it is optional.
->
+On 31/07/2021 01:10, Sam Protsenko wrote:
+> On Fri, 30 Jul 2021 at 19:05, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 30/07/2021 16:49, Sam Protsenko wrote:
+>>> Add serial driver data for Exynos850 SoC. This driver data is basically
+>>> reusing EXYNOS_COMMON_SERIAL_DRV_DATA, which is common for all Exynos
+>>> chips, but also enables USI init, which was added in previous commit:
+>>> "tty: serial: samsung: Init USI to keep clocks running".
+>>>
+>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>>> ---
+>>>  drivers/tty/serial/samsung_tty.c | 13 +++++++++++++
+>>>  1 file changed, 13 insertions(+)
+>>>
+>>> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+>>> index 75ccbb08df4a..d059b516a0f4 100644
+>>> --- a/drivers/tty/serial/samsung_tty.c
+>>> +++ b/drivers/tty/serial/samsung_tty.c
+>>> @@ -2814,11 +2814,19 @@ static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
+>>>       .fifosize = { 64, 256, 16, 256 },
+>>>  };
+>>>
+>>> +static struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
+>>> +     EXYNOS_COMMON_SERIAL_DRV_DATA_USI(1),
+>>> +     .fifosize = { 0, },
+>>
+>> This does not look correct. You rely on samsung,uart-fifosize property
+>> but it is optional.
+>>
+> 
+> Good point. I will replace fifosize elements (in patch series v2) with
+> this code (the reasoning is below):
+> 
+>     .fifosize = { 256, 64, 64, 64 }
+> 
+> TRM mentions that USI block has configurable FIFO of 16/32/64/128/256
+> byte. In vendor kernel they are setting default values in dtsi instead
+> of driver, that's where fifosize = { 0 } appeared from. And in vendor
+> dtsi they set 256 for serial_0 (USI UART instance), 64 for serial_1
+> (CMGP0 UART instance) and 64 for serial_2 (CMGP1 UART instance). I
+> tested 256 and 64 for serial_0 (which is used for serial console)
+> 
+> As for fifosize array elements count: though it's possible to
+> configure up to 7 UARTs in Exynos850 (it has 5 USI blocks and 2 CMGP
+> blocks, which can be configured as USIs), in a regular case it's only
+> 3 UARTs (1 in USI and 2 in CMGP). This is how it's done in vendor's
+> device tree, and I doubt someone is going to need more than 3 serials
+> anyway, looks like very specific case for a mobile SoC. But
+> CONFIG_SERIAL_SAMSUNG_UARTS_4=y is set by default when using arm64
+> defconfig, and I'd like to keep minimal delta for this defconfig for
+> now.
+> 
+> Hope you are ok with this?
+> 
 
-Good point. I will replace fifosize elements (in patch series v2) with
-this code (the reasoning is below):
+Yes, sounds good.
 
-    .fifosize = { 256, 64, 64, 64 }
 
-TRM mentions that USI block has configurable FIFO of 16/32/64/128/256
-byte. In vendor kernel they are setting default values in dtsi instead
-of driver, that's where fifosize = { 0 } appeared from. And in vendor
-dtsi they set 256 for serial_0 (USI UART instance), 64 for serial_1
-(CMGP0 UART instance) and 64 for serial_2 (CMGP1 UART instance). I
-tested 256 and 64 for serial_0 (which is used for serial console)
-
-As for fifosize array elements count: though it's possible to
-configure up to 7 UARTs in Exynos850 (it has 5 USI blocks and 2 CMGP
-blocks, which can be configured as USIs), in a regular case it's only
-3 UARTs (1 in USI and 2 in CMGP). This is how it's done in vendor's
-device tree, and I doubt someone is going to need more than 3 serials
-anyway, looks like very specific case for a mobile SoC. But
-CONFIG_SERIAL_SAMSUNG_UARTS_4=y is set by default when using arm64
-defconfig, and I'd like to keep minimal delta for this defconfig for
-now.
-
-Hope you are ok with this?
-
-Thanks!
-
->
-> Best regards,
-> Krzysztof
+Best regards,
+Krzysztof
