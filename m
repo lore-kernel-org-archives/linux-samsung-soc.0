@@ -2,118 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254F3C4320A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 12:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6C9C4320A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 17:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEF8760F38
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 12:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8551F61029
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 17:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236123AbhHCM7D (ORCPT
+        id S236727AbhHCRBl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Aug 2021 08:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
+        Tue, 3 Aug 2021 13:01:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236102AbhHCM7C (ORCPT
+        with ESMTP id S237582AbhHCQ6s (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Aug 2021 08:59:02 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C412C061757
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Aug 2021 05:58:50 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id j15so8131088uaa.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Aug 2021 05:58:50 -0700 (PDT)
+        Tue, 3 Aug 2021 12:58:48 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B00AC061388;
+        Tue,  3 Aug 2021 09:57:32 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id k4so12874365wms.3;
+        Tue, 03 Aug 2021 09:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZNSRpZlFlkmyaZcGeRCdqzNpmwaM/CsxmQZTU5Q+xqI=;
-        b=JTvNoxAfXZ9vd1+wTKKiK81cryvFYXUGiGJWt11dtugSKCRZzRqEhcPYJix7xbxCp3
-         YKo8vQZvgq9xZzfTHfarl0LQRITIaB4flkRr46M/PM11DUdJZCYJj4JHzB1m4bqx5bK8
-         EtJobyfZ5hYhOHAmCcTk1L77+1UWYJBdyJGjdJ30Ntetl239/qIi+Fiv0aETt/cPMddI
-         ms9C8NsZJic+woCQWggmqJrKuEW+FhJ3tl1PWC1C8h6wEZIajpUf5wuiwiZo6WQaNEmA
-         JlftDOWGep6h0KpoD8jIiUEJIHA707wXiVqyP72XfW2jJC1M40uKyybpRAtzIlzWGXYI
-         vljQ==
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=GjLc7onVdzdr8zDnow2vfGguyGyW9hjky8/FH15iwqc=;
+        b=o+02R0oINmfghGgFaSZDs1kl7pKeMfhT6v5PMbdfZYAItdge960vVkgB/FXgv0YoT9
+         bicCvJLBEbt5RdOwxAhLvh8t6inMcWu8ljzTud+xwlRCtpvoo1sszUAsMtGgrzd6PK5u
+         aE3wfYWwZhgLHQuSv0GW9Ra4vD4PZtHDJ779xjYzWsaAWAtDSky3Z753paV/OlsF5xro
+         tgpuc8n7I5zWCC4FfHYgOTSnWuabDeoDCabjt5lNYWGcUdMQH1T7MOoHGssP8szgDzyy
+         8/ZoSjonu51+FTIDUjL9EE5dl0rKUpThT8rGSm4XU6Uz8Kf9QFvqj+S1pZnpbD3AmFpS
+         MVLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZNSRpZlFlkmyaZcGeRCdqzNpmwaM/CsxmQZTU5Q+xqI=;
-        b=Lh/48bB+sXh7vkEWtl0JSVhdZJ9F1C2h/7KN8ZRoNNZ4lWaUz0USUDV3L8E28wIQqv
-         WFgevv36yYeu3R/MOSGGhYfp9wM5obZOn5y+JXzoXkvBbPY7jlpI2+LET7OzdHFaGnL5
-         /s9vS8n1woFedxtt943WmdzuyVQTbWKyzeWIYiG+ACl3HGdCxxV1g0s8AiA7w6x7/VFB
-         sIUGmrl8BNATuyW2UdNHaP1e+p53jKn3baIZnP3pdVYpyJsjC7F76X10P/RbYnkPI9ox
-         aB9cwUTNkZ/e9QKRRWmLB263+nCECTNxEiptl36/V4iZkflPsYh8Lt/xbD0r1PHTd3bv
-         1cRg==
-X-Gm-Message-State: AOAM531N3e7t1fZJ/UNjYx44RRWHuIS7SlWmufDBJ01STkG9xuJKCnyi
-        HT8lxTpkJkqTyOOogp8kz6aRHdC/pMM82l4pln7D1A==
-X-Google-Smtp-Source: ABdhPJwmT+9f8+SVTRLGGJ8jMXd1p1owMfyXKEFiXfIxd5UXzXpXp2cbHPwsCzFyYJ/B7mnJE2eGb95SBJDpnGdNpVs=
-X-Received: by 2002:ab0:6f4b:: with SMTP id r11mr4698819uat.104.1627995529623;
- Tue, 03 Aug 2021 05:58:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <20210730144922.29111-12-semen.protsenko@linaro.org> <d603be80-4fb6-1bad-1963-c9fa7d1e63fb@canonical.com>
-In-Reply-To: <d603be80-4fb6-1bad-1963-c9fa7d1e63fb@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 3 Aug 2021 15:58:38 +0300
-Message-ID: <CAPLW+4mPeSOuiQ1iYTVXqTzmPP7o1uPX8Gapzr7Es0wRBpYt6g@mail.gmail.com>
-Subject: Re: [PATCH 11/12] dt-bindings: interrupt-controller: Add IRQ
- constants for Exynos850
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=GjLc7onVdzdr8zDnow2vfGguyGyW9hjky8/FH15iwqc=;
+        b=VbGaTmBr3kSBmW8g98ZZbUyCL5Y59JDkPMz1BX3mBX/235UVlBOX9Fi9ME3w+YQRdj
+         tvOATys7KoAR4DHeLEEyohg9kTum9jF3vBpZ8wZZfDNvmcpdsRz5GPg7rW/z96nA0G/2
+         1sTekFH3CPZ5ydTf4vaHIQ/OpAodKG9+OxHtGIMPqdpScDkSiplVm9kguT5cQVgknn0p
+         DBAa05WRDE8ZrvIeZayvRVmmZ7g1S0EVvwpQnaMvR8BSmc/SqHyJpotYOhljlKtN9XH3
+         PEWSL8+ALxzw0TngGULgfo+3+7SCeq1E12AW9zZWSjIY89NBHGQTqb1ScXhfDwtEKmhE
+         QuKA==
+X-Gm-Message-State: AOAM532LyhzwvgQyboTp0n0jcuZ/5wUDrB671aEcgKSr1YJsVzTfESk9
+        /8F0dLr68o75oevMVcHXqF4=
+X-Google-Smtp-Source: ABdhPJwHbIUNR0p/86NH4ueKS6v7ZicJ3tHWqv+a3IF4Mc469T9Eu5jXhS8GFZyEFJSnUNd9wGjvsw==
+X-Received: by 2002:a1c:7c10:: with SMTP id x16mr23041319wmc.41.1628009851136;
+        Tue, 03 Aug 2021 09:57:31 -0700 (PDT)
+Received: from ubuntu-laptop (ip5f5bfdd7.dynamic.kabel-deutschland.de. [95.91.253.215])
+        by smtp.googlemail.com with ESMTPSA id s1sm3103057wmj.8.2021.08.03.09.57.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Aug 2021 09:57:30 -0700 (PDT)
+Message-ID: <73a79fbbec661cd898feda9064a10c6c182d7fad.camel@gmail.com>
+Subject: Re: [PATCH 14/15] scsi: ufs: ufs-exynos: multi-host configuration
+ for exynosauto
+From:   Bean Huo <huobean@gmail.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Can Guo <cang@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Kiwoong Kim <kwmad.kim@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        jongmin jeong <jjmin.jeong@samsung.com>,
+        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org
+Date:   Tue, 03 Aug 2021 18:57:28 +0200
+In-Reply-To: <20210709065711.25195-15-chanho61.park@samsung.com>
+References: <20210709065711.25195-1-chanho61.park@samsung.com>
+         <CGME20210709065747epcas2p10c59e097d9770fc02134cb0545c9de4f@epcas2p1.samsung.com>
+         <20210709065711.25195-15-chanho61.park@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 31 Jul 2021 at 11:45, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 30/07/2021 16:49, Sam Protsenko wrote:
-> > Add external GIC interrupt constants for SPI[479:0] for Exynos850 SoC.
-> > Interrupt names were taken from TRM without change, hence double
-> > underscore in const namings.
->
-> I am not sure what is the benefit of defining these in header. Unlike
-> other DT consts (e.g. clock IDs) drivers do not us them at all. Using
-> them in DT does not reduce chance of mistakes in numbers - instead of in
-> DTS you can make a mistake here in header file. In the same time, they
-> grow the interrupt property in DTS making it more difficult to read.
->
-> I also did not see anyone else using this approach, so it's not only me
-> (Marc also find it confusing).
->
-> If vendor kernel did similar, it's not an argument. Samsung LSI /.
-> vendor kernel has terrible code quality so usually it is not a good example.
->
+On Fri, 2021-07-09 at 15:57 +0900, Chanho Park wrote:
+> We divide this M-HCI as PH(Physical Host) and VHs(Virtual Host). The
+> PH
+> 
+> supports all UFSHCI functions(all SAPs) same as conventional UFSHCI
+> but
+> 
+> the VH only supports data transfer function. Thus, except UTP_CMD_SAP
+> and
+> 
+> UTP_TMPSAP, the PH should handle all the physical features.
 
-Agreed. I'll use IRQ numbers in dts directly, in v2. I probably
-thought that IRQ header might replace missing public TRM, but that's a
-poor substitute anyway.
+Hi Chanho park,
 
->
-> Best regards,
-> Krzysztof
+You mentioned this in your coverletter:
+
+"There are two types of host controllers on the UFS host controller
+that we designed. The UFS device has a Function Arbitor that arranges
+commands of each host. When each host transmits a command to the
+Arbitor, the Arbitor transmits it to the UTP layer".
+
+where does this "Function Arbitor" exit? From your comments, seems it
+exists on the UFS device side? right? If this is true, where is related
+code in your patch?? Maybe you only submited partial of your real
+driver parch for this controller??
+
+Bean
+
