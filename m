@@ -2,196 +2,273 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA88EC432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 07:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F63C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 09:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 924196023F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 07:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FC516052B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Aug 2021 09:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234082AbhHCHlj (ORCPT
+        id S235000AbhHCJlZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Aug 2021 03:41:39 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:54402
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234215AbhHCHli (ORCPT
+        Tue, 3 Aug 2021 05:41:25 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42989 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235125AbhHCJlU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Aug 2021 03:41:38 -0400
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id 8CD9E3F34C
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Aug 2021 07:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1627976487;
-        bh=+1a5dSrcHG3YYcJ1yRZezWpe6zYrLOk/VkEAKrHxRTg=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=hZM1oKuYoXXjCtlDqC1zI+fOcspa2MUJJFJHn48pl8TXic9mSHST/Se9VTG5jOSNP
-         EntARqL3SRvX30qdeLetiKMErKKY5beKjsJGnbaCjI1ZflQpYhcxCqweCI2SQxfZLf
-         2UJgjVMqarGZ67mhi+NjoNE+1Le+QUaJyECk9xCjjiSY3SIRzJ8fLU7wZRxi9K+Iwn
-         g7GiH58RM+s8UnvMCxbYSSQ4+5wXxf0eC2AKV1Yua91vLCLW8CrUmnFhwJq1wiIt1I
-         t1dlU0+BjM83nLB2oyiYF2lrnBnjjoFLvSZ+JEbeM1dS3li7BIZi8Nsmm0rar4+1oi
-         T+/mOe4V93SXg==
-Received: by mail-ed1-f72.google.com with SMTP id c1-20020aa7df010000b02903bb5c6f746eso9976110edy.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Aug 2021 00:41:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+1a5dSrcHG3YYcJ1yRZezWpe6zYrLOk/VkEAKrHxRTg=;
-        b=dcQSVnyYSD/L4DNXGWx4Y7yXE6oRPU305K1nhd1ZmqCvFjc/iUuVHoAQGGFSORHBM1
-         JPzqnxaRjqL2mFtyX3Z7tueLJnat4HLyVCBExiIwL43YcsfTfldJRSg+/WnZoQ7zfvnQ
-         6UmE7vrv1PJxoTByIO5P1TVEICSW07ESDHSq3hVjiPsJEhGYuIBDN+Rc9RzFFn/pmv9Y
-         hbzuRjXN4DDviyw0msx+ecPSRJmAPHqyDrR9VxU6ib6D3dU7UU77Kti/UljQMFWsuS+t
-         bZE64IfXidVeIXXQL8sH9qsVg1l0dF0Uqqh+m6FIykYhPfw6WTBXnTuecpHLmRyqosGY
-         4kHg==
-X-Gm-Message-State: AOAM5330ymJHNUEfUEdArcQ2VLkLcrpsY7V69KWi8ykRS7P4V4gnWU8S
-        yAly7YfLMLd6lcXRoey6SnzfD+odw7U0ECJs6wobZ1BhzAr5tNm3dCpgdpJGzwdIcrU0ez2uT3Q
-        DrI462HoLto2mRPQElDoQev5t0+ogbXSrpZd6EgviH1GKfnBF
-X-Received: by 2002:aa7:c541:: with SMTP id s1mr24485061edr.327.1627976487092;
-        Tue, 03 Aug 2021 00:41:27 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwClir8KajrBwLYFa9sxs319qmqBxSIwIvjypQANqh0uaYnlV/i3vAIM/mKfxSOd8kXLutsqw==
-X-Received: by 2002:aa7:c541:: with SMTP id s1mr24485042edr.327.1627976486967;
-        Tue, 03 Aug 2021 00:41:26 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.43.172])
-        by smtp.gmail.com with ESMTPSA id gu2sm5787222ejb.96.2021.08.03.00.41.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Aug 2021 00:41:26 -0700 (PDT)
-Subject: Re: [PATCH 00/12] Add minimal support for Exynos850 SoC
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-References: <20210730144922.29111-1-semen.protsenko@linaro.org>
- <5e35b0a7-13aa-3c62-ca49-14af2fcb2a08@canonical.com>
- <c3486111-0ec9-9679-d2a2-68b2f33a2450@canonical.com>
- <CAPLW+4kbnJEBkc0D=RWt59JxBan8X1uDy6sSXBiYAq8N9FDV6A@mail.gmail.com>
- <13f166bb-7103-25d5-35a6-8ec53a1f1817@canonical.com>
- <2dacc205-04ce-c206-a393-50ba0d5aa1a7@canonical.com>
- <CAPLW+4=1Anr6rCWEBL04D81aEAEVKD5cGE+ObXH3q-HNHce07w@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <0277c701-cc25-cdc5-d3b9-cf2cc2ba4de5@canonical.com>
-Date:   Tue, 3 Aug 2021 09:41:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 3 Aug 2021 05:41:20 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210803094002euoutp0238818e0f22d607a4bf00297d3c89f100~XwnX32bTj1269312693euoutp026
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Aug 2021 09:40:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210803094002euoutp0238818e0f22d607a4bf00297d3c89f100~XwnX32bTj1269312693euoutp026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1627983602;
+        bh=SZTXHGoRmkwSqVOXx87SZrS5ZSG033Yq8X6Zml/TvN8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ZRDH7aDDz4AMm1Mk3rD972uiCBIPM6NHv2RxW+klz5cJo1ZmBcuteimGXLy6Qkd6d
+         1/Cpaddk5m1HRYwlz9T7G/WBQ4bg8Lft6N7TZhzL6wWQ9BYSlR16tLzeWTzES2j8hO
+         kWSErc6juAIgahMAexbkcgZKHHlzW/jsMNwsI35w=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210803094001eucas1p2a978bc07316ec8b3c7372ae8f4e1e74a~XwnXWOUM82740227402eucas1p2Q;
+        Tue,  3 Aug 2021 09:40:01 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 98.5B.45756.1FE09016; Tue,  3
+        Aug 2021 10:40:01 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210803094001eucas1p2ec7f1c27d5cc7dab023be10dbfee5d6e~XwnWzLk8D2704327043eucas1p2T;
+        Tue,  3 Aug 2021 09:40:01 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210803094001eusmtrp11adaacd93f12956032e42cf7d13bc78a~XwnWyLPJ21640416404eusmtrp1Y;
+        Tue,  3 Aug 2021 09:40:01 +0000 (GMT)
+X-AuditID: cbfec7f2-7bdff7000002b2bc-6f-61090ef15607
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B5.44.31287.0FE09016; Tue,  3
+        Aug 2021 10:40:00 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210803094000eusmtip1ac448e864c03c0a7f75d31e057a24325~XwnWNQ3Iw1281212812eusmtip16;
+        Tue,  3 Aug 2021 09:40:00 +0000 (GMT)
+Subject: Re: [PATCH] usb: dwc2: Skip clock gating on Samsung SoCs
+To:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Artur Petrosyan <Arthur.Petrosyan@synopsys.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <0d8de3e0-341b-f751-909d-22aa16e91717@samsung.com>
+Date:   Tue, 3 Aug 2021 11:40:00 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=1Anr6rCWEBL04D81aEAEVKD5cGE+ObXH3q-HNHce07w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <a7efdf13-48bb-db21-5755-ebbbe2614f78@synopsys.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xSYRju43A5ktAJdbwzyqKLluVlWrF0ll0Ws8t0zR9dNiM7Mw3UQC37
+        4bSy6ckuo1oIpcVcFywtQyqmplSSutBks1JWWeTUpkZ0tTseK/89z/M+7/e+z7sPxwR6lj+e
+        mp5FKtNlcjGbyzQ1f7UtcvG9ZGG2U7MlRx2Rkhuaapak/NkOSXv7dY7Ebj7LlmjaGxgS/cVC
+        TDJ8qgdbgUtrDMVsaVlLgvSY0YCkxrtuJHXXzIhnbeFG7yTlqTmkMjRmO3fXy1tdrMyByH0X
+        qls5+aghmEJeOBCRUHX6M5tCXFxAXEbQMVyAaPIBQbuzf5y4EVQO6zkUwsdaWnW5tH4JQZ1T
+        y6CJ6w8p62V43vUhYsHU+pzlKfgSPxBYrxRhHoIRTQgq6r+zPC42EQ7UEMX2YB4RA/c7j2Ie
+        zCTmwJfG5jGPH5EMjraRcc9UaCl1Mj3Yi1gBzaVPxvwYEQAHa3XjWAjdzvKxlYBw4jA8UMSi
+        o66Guj7aBIQPDFqNHBqLoO1kCZNuOIig13aNQ5MSBPYDGkS7osBhG2V7LoAR86HaHErLsfC2
+        rJhFH4YPT4em0kvwQW06g9EyD4oOC2j3PNBaq/6NberoxE4gsXZCNO2EONoJcbT/555HTAMS
+        ktkqRQqpCk8n94aoZApVdnpKSHKGogb9+UZtP63vb6Nzg64QC2LgyIIAx8S+vMSnuEzA2ynL
+        3U8qM5KU2XJSZUHTcKZYyDPoriYJiBRZFrmbJDNJ5d8qA/fyz2coXIcGLC3vFI/ULdRKy021
+        y3t9yd1PfV1BZYwl9oDXsxZvnpsmj2e70VC/KFk0uMGc5SjaRpne6Zrk77V18ZVpOvP+Xy+5
+        1wMagp05W6PVh0qffBQI+4VVy0NSA+zrHJXBM/Nigpr3HAmdF4R/s7/qW5U0KVpYYO16sSGM
+        OjDSPalC/MuoOdfZFNGzp/aN08g3bBzl+y3qHqn/bJ4RZ4oy3siLlHr35HsbUXj5wkQzkTHw
+        c0ruBZf7dcfVpQ9irQ/vIV8OI27Z3CNhuoQ7vfg6UWAxWhu41N9bU7jJ1pi4dU1phOimXv0w
+        bzAu87G+8A21Y3JjxPGo89MrjiXcacsRM1W7ZOELMKVK9hsWUyKLtQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xu7of+DgTDX5NsrHovWNisXHGelaL
+        +TeTLM6f38BucXnXHDaLGef3MVksWtbKbPFuym1mBw6PTas62TzmnQz06NuyitFjy/7PjB6f
+        N8kFsEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
+        ZTzYfo214KVJxcL1p9gbGPdpdzFycEgImEicml3ZxcjFISSwlFHiwe07zF2MnEBxGYmT0xpY
+        IWxhiT/Xutggit4zSjz7cYgNJCEs4Cix7dQ9VpCEiMBfRolbe26zgzjMAocZJf4tPcsO0XKM
+        UeL16kOMIC1sAoYSXW+7wNp5BewkjlzqBdvHIqAi8ePAMbB9ogLJEn1fJjBC1AhKnJz5hAXE
+        5hRwkDg28zpYPbOAmcS8zQ+hbHmJ5q2zoWxxiVtP5jNNYBSahaR9FpKWWUhaZiFpWcDIsopR
+        JLW0ODc9t9hQrzgxt7g0L10vOT93EyMw+rYd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4Q29wZEo
+        xJuSWFmVWpQfX1Sak1p8iNEU6J+JzFKiyfnA+M8riTc0MzA1NDGzNDC1NDNWEufdOndNvJBA
+        emJJanZqakFqEUwfEwenVANT3fQUmdb8+6v2C/bOKDZlvf780ewP5hfzjJk/5bzbl+LktOie
+        x7FtDdNNHFZEFLQLOWxZvchzhkH4r2sPdN7oREy2abJnePvCWyy48kx8xIv4BJEzPfl30ue7
+        Kl/0Fng9u+/uaZXHQnNT/wcUnLpfVfV0iYFEbNmrRbw/euTZt4ROnHyQ5XCe29oNpR2aVW6C
+        2q0iAZGiOb3zXkZ94tx1PfHelBnid25p/Pn5YM2PdTJuyRNe7HCuv9nFMVX1VMeCc9OXlv78
+        HXU8tuvldmm3jarbJl1xcVR+csm7t3m20VKTJ5NamXv23lB6Me/7pKtCPRHKzyW2vz8U/8u3
+        ft9sc9mp6tfEP3u9mHOlybLqjBJLcUaioRZzUXEiAJ0zJFVHAwAA
+X-CMS-MailID: 20210803094001eucas1p2ec7f1c27d5cc7dab023be10dbfee5d6e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210716050132eucas1p285949f9a73764b173c29ad0fa8502f23
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210716050132eucas1p285949f9a73764b173c29ad0fa8502f23
+References: <CGME20210716050132eucas1p285949f9a73764b173c29ad0fa8502f23@eucas1p2.samsung.com>
+        <20210716050127.4406-1-m.szyprowski@samsung.com>
+        <a7efdf13-48bb-db21-5755-ebbbe2614f78@synopsys.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 03/08/2021 01:27, Sam Protsenko wrote:
-> On Sat, 31 Jul 2021 at 11:12, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> On 31/07/2021 09:29, Krzysztof Kozlowski wrote:
->>> On 30/07/2021 21:02, Sam Protsenko wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On Fri, 30 Jul 2021 at 20:21, Krzysztof Kozlowski
->>>> <krzysztof.kozlowski@canonical.com> wrote:
->>>>>
->>>>> On 30/07/2021 17:18, Krzysztof Kozlowski wrote:
->>>>>> On 30/07/2021 16:49, Sam Protsenko wrote:
->>>>>>> This patch series adds initial platform support for Samsung Exynos850
->>>>>>> SoC [1]. With this patchset it's possible to run the kernel with BusyBox
->>>>>>> rootfs as a RAM disk. More advanced platform support (like MMC driver
->>>>>>> additions) will be added later. The idea is to keep the first submission
->>>>>>> minimal to ease the review, and then build up on top of that.
->>>>>>>
->>>>>>> [1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
->>>>>>>
->>>>>>
->>>>>> Great work!
->>>>>>
->>>>
->>>> Thanks, Krzysztof! And thank you for reviewing the whole series.
->>>>
->>>>>> What's the SoC revision number (should be accessible via
->>>>>> /sys/bus/soc/devices/soc0/)? Recent wrap in numbering of Exynos chips
->>>>>> might bring confusion...
->>>>
->>>> # cat /sys/devices/soc0/revision
->>>> 0
->>>
->>> soc_id but you're right it won't be set for unknown SoCs. You need to
->>> extend drivers/soc/samsung/exynos-chipid.c to parse new values (E3830000
->>> for product ID) and maybe new register offsets (previous offset is 0x0,
->>> for 3830 is 0x10 I think). Also revision mask might change.
->>>
->>>>> Judging by vendor's sources it is quite confusing. It looks mostly like
->>>>> Exynos3830 but in few other cases it uses Exynos9 compatibles (Exynos9,
->>>>> Exynos9820). Only in few places there is Exynos850. Marketing department
->>>>> made it so confusing...  The revision embedded in SoC would be very
->>>>> interesting.
->>>>>
->>>>
->>>> As I understand, this SoC is called Exynos850 everywhere now.
->>>> Exynos3830 is its old name, not used anymore. As you noticed from
->>>> patch #2, it shares some definitions with Exynos9 SoC, so I guess some
->>>> software is similar for both architectures. Not sure about hardware
->>>> though, never worked with Exynos9 CPUs. Anyway, I asked Samsung
->>>> representatives about naming, and it seems like we should stick to
->>>> "Exynos850" name, even in code.
->>>
->>>
->>> Since the chip identifies itself as E3830000, I would prefer naming
->>> matching real product ID instead of what is pushed by marketing or sales
->>> representatives. The marketing names don't have to follow any
->>> engineering rules, they can be changed and renamed. Sales follows rather
->>> money and corporate rules, not consistency for upstream project.
->>
->> On the other hand we have already two exceptions for naming
->> inconsistency - Exynos3250 identifies itself as 3472 (which is confusing
->> because 3250 is two core and there is a separate quad-core
->> Exyons3472...) and Exynos5800 is actually marketing name for a revision
->> of Exynos5422. Maybe indeed will be easier to go with the branded name
->> 850...
->>
-> 
-> Well, chip engraving says "3830", but I was specifically told to stick
-> to "850" in upstream kernel. I can presume there was some mix ups with
-> this naming, and it might be the case it's better to stick to "850"
-> exactly to avoid further confusion. Yes, I can see that
-> EXYNOS3830_SOC_ID = 0xE3830000 in chipid driver, but we can return
-> "EXYNOS850" string for that const, right? If you google "Exynos850"
-> and "Exynos3830", it's obvious everybody uses the former, so I'd
-> appreciate if we can stick to "850" in the end.
+Hi Minas,
 
-Yeah, let it be. If you have some pushback from some company
-representatives about naming, encourage them to speak up here. Otherwise
-you will be the guy in the middle bringing arguments between different
-parties. :)
+On 16.07.2021 16:54, Minas Harutyunyan wrote:
+> On 7/16/2021 9:01 AM, Marek Szyprowski wrote:
+>> Commit 0112b7ce68ea ("usb: dwc2: Update dwc2_handle_usb_suspend_intr
+>> function.") changed the way the driver handles power down modes in a such
+>> way that it uses clock gating when no other power down mode is available.
+>>
+>> This however doesn't work well on the DWC2 implementation used on the
+>> Samsung SoCs. When a clock gating is enabled, system hangs. It looks that
+>> the proper clock gating requires some additional glue code in the shared
+>> USB2 PHY and/or Samsung glue code for the DWC2. To restore driver
+>> operation on the Samsung SoCs simply skip enabling clock gating mode
+>> until one finds what is really needed to make it working reliably.
+>>
+>> Fixes: 0112b7ce68ea ("usb: dwc2: Update dwc2_handle_usb_suspend_intr function.")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>    drivers/usb/dwc2/core.h      | 4 ++++
+>>    drivers/usb/dwc2/core_intr.c | 3 ++-
+>>    drivers/usb/dwc2/hcd.c       | 6 ++++--
+>>    drivers/usb/dwc2/params.c    | 1 +
+>>    4 files changed, 11 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+>> index ab6b815e0089..483de2bbfaab 100644
+>> --- a/drivers/usb/dwc2/core.h
+>> +++ b/drivers/usb/dwc2/core.h
+>> @@ -383,6 +383,9 @@ enum dwc2_ep0_state {
+>>     *			0 - No (default)
+>>     *			1 - Partial power down
+>>     *			2 - Hibernation
+>> + * @no_clock_gating:	Specifies whether to avoid clock gating feature.
+>> + *			0 - No (use clock gating)
+>> + *			1 - Yes (avoid it)
+>>     * @lpm:		Enable LPM support.
+>>     *			0 - No
+>>     *			1 - Yes
+>> @@ -480,6 +483,7 @@ struct dwc2_core_params {
+>>    #define DWC2_POWER_DOWN_PARAM_NONE		0
+>>    #define DWC2_POWER_DOWN_PARAM_PARTIAL		1
+>>    #define DWC2_POWER_DOWN_PARAM_HIBERNATION	2
+>> +	bool no_clock_gating;
+>>    
+>>    	bool lpm;
+>>    	bool lpm_clock_gating;
+>> diff --git a/drivers/usb/dwc2/core_intr.c b/drivers/usb/dwc2/core_intr.c
+>> index a5ab03808da6..a5c52b237e72 100644
+>> --- a/drivers/usb/dwc2/core_intr.c
+>> +++ b/drivers/usb/dwc2/core_intr.c
+>> @@ -556,7 +556,8 @@ static void dwc2_handle_usb_suspend_intr(struct dwc2_hsotg *hsotg)
+>>    				 * If neither hibernation nor partial power down are supported,
+>>    				 * clock gating is used to save power.
+>>    				 */
+>> -				dwc2_gadget_enter_clock_gating(hsotg);
+>> +				if (!hsotg->params.no_clock_gating)
+>> +					dwc2_gadget_enter_clock_gating(hsotg);
+>>    			}
+>>    
+>>    			/*
+>> diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+>> index 035d4911a3c3..2a7828971d05 100644
+>> --- a/drivers/usb/dwc2/hcd.c
+>> +++ b/drivers/usb/dwc2/hcd.c
+>> @@ -3338,7 +3338,8 @@ int dwc2_port_suspend(struct dwc2_hsotg *hsotg, u16 windex)
+>>    		 * If not hibernation nor partial power down are supported,
+>>    		 * clock gating is used to save power.
+>>    		 */
+>> -		dwc2_host_enter_clock_gating(hsotg);
+>> +		if (!hsotg->params.no_clock_gating)
+>> +			dwc2_host_enter_clock_gating(hsotg);
+>>    		break;
+>>    	}
+>>    
+>> @@ -4402,7 +4403,8 @@ static int _dwc2_hcd_suspend(struct usb_hcd *hcd)
+>>    		 * If not hibernation nor partial power down are supported,
+>>    		 * clock gating is used to save power.
+>>    		 */
+>> -		dwc2_host_enter_clock_gating(hsotg);
+>> +		if (!hsotg->params.no_clock_gating)
+>> +			dwc2_host_enter_clock_gating(hsotg);
+>>    
+>>    		/* After entering suspend, hardware is not accessible */
+>>    		clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+>> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+>> index 67c5eb140232..59e119345994 100644
+>> --- a/drivers/usb/dwc2/params.c
+>> +++ b/drivers/usb/dwc2/params.c
+>> @@ -76,6 +76,7 @@ static void dwc2_set_s3c6400_params(struct dwc2_hsotg *hsotg)
+>>    	struct dwc2_core_params *p = &hsotg->params;
+>>    
+>>    	p->power_down = DWC2_POWER_DOWN_PARAM_NONE;
+>> +	p->no_clock_gating = true;
+>>    	p->phy_utmi_width = 8;
+>>    }
+>>    
+>>
+> In which mode host/device you see the issue?
+I do my test in my device mode.
+> What is your core version? Please provide GHWCFG1-4 registers values.
 
+This is a result of dwc2_dump_global_registers() added just after 
+dwc2_lowlevel_hw_enable() in dwc2_driver_probe():
 
-Best regards,
-Krzysztof
+dwc2 12480000.hsotg: Core Global Registers
+
+dwc2 12480000.hsotg: GOTGCTL      @0xE0260000 : 0x000D0000
+dwc2 12480000.hsotg: GOTGINT      @0xE0260004 : 0x00000000
+dwc2 12480000.hsotg: GAHBCFG      @0xE0260008 : 0x00000027
+dwc2 12480000.hsotg: GUSBCFG      @0xE026000C : 0x0000540F
+dwc2 12480000.hsotg: GRSTCTL      @0xE0260010 : 0x80000040
+dwc2 12480000.hsotg: GINTSTS      @0xE0260014 : 0x54008428
+dwc2 12480000.hsotg: GINTMSK      @0xE0260018 : 0x800C3800
+dwc2 12480000.hsotg: GRXSTSR      @0xE026001C : 0x616EC77D
+dwc2 12480000.hsotg: GRXFSIZ      @0xE0260024 : 0x00000400
+dwc2 12480000.hsotg: GNPTXFSIZ    @0xE0260028 : 0x04000400
+dwc2 12480000.hsotg: GNPTXSTS     @0xE026002C : 0x00080400
+dwc2 12480000.hsotg: GI2CCTL      @0xE0260030 : 0x00000000
+dwc2 12480000.hsotg: GPVNDCTL     @0xE0260034 : 0x00000000
+dwc2 12480000.hsotg: GGPIO        @0xE0260038 : 0x00000000
+dwc2 12480000.hsotg: GUID         @0xE026003C : 0x00000000
+dwc2 12480000.hsotg: GSNPSID      @0xE0260040 : 0x4F54281A
+dwc2 12480000.hsotg: GHWCFG1      @0xE0260044 : 0x00000000
+dwc2 12480000.hsotg: GHWCFG2      @0xE0260048 : 0x228FFC50
+dwc2 12480000.hsotg: GHWCFG3      @0xE026004C : 0x1E8084E8
+dwc2 12480000.hsotg: GHWCFG4      @0xE0260050 : 0xFFF08030
+dwc2 12480000.hsotg: GLPMCFG      @0xE0260054 : 0x00000000
+dwc2 12480000.hsotg: GPWRDN       @0xE0260058 : 0x00000000
+dwc2 12480000.hsotg: GDFIFOCFG    @0xE026005C : 0x00000000
+dwc2 12480000.hsotg: HPTXFSIZ     @0xE0260100 : 0x00000000
+dwc2 12480000.hsotg: PCGCTL       @0xE0260E00 : 0x00000000
+dwc2 12480000.hsotg: dwc2_check_params: Invalid parameter besl=1
+dwc2 12480000.hsotg: dwc2_check_params: Invalid parameter 
+g_np_tx_fifo_size=1024
+dwc2 12480000.hsotg: EPs: 16, dedicated fifos, 7808 entries in SPRAM
+> Is the issue seen because of programming PCGCTL.PCGCTL_GATEHCLK bit
+> only? To check it, could you please comment this bit setting/resetting
+> in clock gating functions:
+> dwc2_host_exit_clock_gating()
+> dwc2_host_enter_clock_gating()
+> dwc2_gadget_exit_clock_gating()
+> dwc2_gadget_enter_clock_gating()
+
+After removing programming PCGCTL.PCGCTL_GATEHCLK bit in the above 
+functions, everything works fine.
+
+Best regards
+
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
