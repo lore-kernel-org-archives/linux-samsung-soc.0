@@ -2,107 +2,231 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6542C4320A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Aug 2021 12:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 647FBC4320A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Aug 2021 14:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A68860F22
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Aug 2021 12:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CCBC60F01
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Aug 2021 14:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237184AbhHDMBh (ORCPT
+        id S237990AbhHDOkG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Aug 2021 08:01:37 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:48904
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235740AbhHDMBg (ORCPT
+        Wed, 4 Aug 2021 10:40:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236290AbhHDOkE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Aug 2021 08:01:36 -0400
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPS id C946D3F0A3
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Aug 2021 12:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628078482;
-        bh=UrGdV0D3iWVxaJtJA8ED/FFHeXLfzVORwPvVExdU3p8=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=HdZ0MyL4jiB93jGyPdnFr+rlzde2NZa0C8i6LVyOxj0tC0TcTKfP5oewO5Yo/yIpR
-         lG585pZzpyFGmUc43TO+7A2ys0KM/d3o1srlC5W+QIsMVYtXIphtB6LSJm0Vu1D2+E
-         3udBqjIBM75TFayovEKWbSxq7DrR857pBGVQyOtiC+jZljWcfxBLjaWmXkaOMS4Umz
-         ikmQPknPVKtMN+5pcDShri2lAhZ3oxX23PVSwDkPIKX9cu0g3wtzjQvc9psnsmtgC9
-         Mwsx1+y5k3RE3Ispk+eL4aPB9S0sGtjNFqKHfBIRX7DNvWcfLaExfzDbUGZxdtuDra
-         ct/ESoLr1c0MQ==
-Received: by mail-ej1-f72.google.com with SMTP id g19-20020a1709065953b02905a4506b6d92so750223ejr.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Aug 2021 05:01:22 -0700 (PDT)
+        Wed, 4 Aug 2021 10:40:04 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882CEC061799
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Aug 2021 07:39:51 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id q75so492789vkb.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Aug 2021 07:39:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rDKZtg82NP3ddCZ+CbKtTQlVqMfRo/3JfYFc/Sav3bE=;
+        b=Rb4w2JW9NDUtFI5B1DdY4p2VknlohGp3Ak2rkEyHilaSfQWGfO0PvM1LI8VTGSK58E
+         E5E1B7V9pL3lsFa9AlJN5av9Qj+fCiZP+6tceSKxdI88Ba47f90C3X8Z4yv2iUc+dHm0
+         I4ldJ6XAhqprsW6XOH5F45fxk02OUBmUTwEKyL9gV6aedQ/k3CI1uHi8cB5PtGBQKZG6
+         Odz6nToeGDrD5vdlizhxdCzailrpXe2J3KfMjoivaI8rPBD1almFcOU+6j2dUPFr0uer
+         zfNkuOoXistHWz3jiy1hDLDplsrrln/1yOHA4dOaP9Z9uNs+SeRuriIj+AuA6y67mGyN
+         xNTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UrGdV0D3iWVxaJtJA8ED/FFHeXLfzVORwPvVExdU3p8=;
-        b=hvKTuQtFfh8Q/0YZw/+545hYMo+/D5cXYU/d8EisQlIrrWU6qEcmkEps/xkPwv8QHg
-         SxZLLK7jm3yYAvv0z6R7sb1404mK9M7knyGeMKKeTp8+/3lQe2zI5UpFO/sLGsf7N54v
-         EmVIiEiq0nUUQAqgk/c5y0fRLv4htRF7lWUWuJpP9EIgpvEXGTOa9Q+dit0oHbg+QutM
-         MgUQlLesUhP1Np4nr71QLFvQTChRNG8B6unkfjPInIw/meCBSpFs4vo1YDUseVQwKd/2
-         Bi7YzuqOS7l5WtTYE3c1i2HCmZHRXlEimWx0N1RFyBX7QHQewy/2ootB4h4mdTS4qVsK
-         4iZQ==
-X-Gm-Message-State: AOAM532Eck8foZMJ4N+gZFzbeWvj7FObR9NI5RzIOYt/6GW0qDANe5US
-        KmROZ77gxLpznyAjGBBsewVodgwCxDMgJVunw9LUwrdXVIKNKRyDe0aHW90UWESfP65H7DOUSL2
-        9bl7uADlr8wBz+GuMCV887aRTb3ShFbOO3Xfncw3Q/T3byPIo
-X-Received: by 2002:a50:9b06:: with SMTP id o6mr32405094edi.284.1628078482113;
-        Wed, 04 Aug 2021 05:01:22 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzu9mcDgpRKO7iN+OSXq3CE2q+TuTk8y4Xr56jJ++XDrgspBXyzOuCzES6ol2tmnRVRRmEudQ==
-X-Received: by 2002:a50:9b06:: with SMTP id o6mr32405064edi.284.1628078481900;
-        Wed, 04 Aug 2021 05:01:21 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.43.172])
-        by smtp.gmail.com with ESMTPSA id i11sm607007ejx.82.2021.08.04.05.01.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Aug 2021 05:01:21 -0700 (PDT)
-Subject: Re: [PATCH 4/4] rtc: s5m: set range
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20210804104133.5158-1-alexandre.belloni@bootlin.com>
- <20210804104133.5158-4-alexandre.belloni@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <4fe80580-50a8-2b51-548c-480e60164490@canonical.com>
-Date:   Wed, 4 Aug 2021 14:01:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rDKZtg82NP3ddCZ+CbKtTQlVqMfRo/3JfYFc/Sav3bE=;
+        b=NFyt+IxIZvke5Lb2grD9pxePziVsQoC7N/VWRwrnTVmPn0TavJ4oi0kZQYah+GqKoB
+         KLwL5o1dH2scrfgJ+tsuJn+xn0tRiJAb2y35nbfpehbd9waBrrDk5X+7dDZOly/lQ9rh
+         2HR13VJ8cPTUqcM3uXJJDnqeGwl9Ie9XywTSjYhimXWjDV5R59N8hogdUEf+mEQSORBd
+         twHzPLGJAwaIzoNTV5PRYmc238H/4aX7xOXZwonaBMyLcFJQP2UK6dpAqH4Feu0n4OcJ
+         il1dOY0ioKbvvU9Xs+p3Tu/eAVsvt1t2tqYk3Ow9LtRjcR2pCY6jhfPqBObX8A/K+JfS
+         eTAw==
+X-Gm-Message-State: AOAM530v93Mbnshz3xyuAIW2zTjmZZKf5Rl05PI/g0tU4mPmcPt/WINH
+        0lYPSpxb2PwVU3kzgb2E907ONfbd4eMUfvltZw+vLg==
+X-Google-Smtp-Source: ABdhPJxlsfrubol74U2vzDZDlR75ZOAD7I215GfcgIYKIkBbyLzJAazUw8L/PPcVieLCSBWNf4qgTYF7TKl9M+mp1Eo=
+X-Received: by 2002:a05:6122:549:: with SMTP id y9mr5395608vko.7.1628087990034;
+ Wed, 04 Aug 2021 07:39:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210804104133.5158-4-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+ <20210730144922.29111-13-semen.protsenko@linaro.org> <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+In-Reply-To: <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 4 Aug 2021 17:39:38 +0300
+Message-ID: <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04/08/2021 12:41, Alexandre Belloni wrote:
-> The S5M8763X type seems to handles dates from year 0000 to 9999, there is
-> no info on leap year handling after 2099. The other models handles dates
-> from 2000 to 2099.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-s5m.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
+Hi Marc,
 
-Seems correct:
+On Fri, 30 Jul 2021 at 19:50, Marc Zyngier <maz@kernel.org> wrote:
+>
+> On 2021-07-30 15:49, Sam Protsenko wrote:
+> > Samsung Exynos850 is ARMv8-based mobile-oriented SoC.
+> >
+> > Features:
+> >  * CPU: Cortex-A55 Octa (8 cores), up to 2 GHz
+> >  * Memory interface: LPDDR4/4x 2 channels (12.8 GB/s)
+> >  * SD/MMC: SD 3.0, eMMC5.1 DDR 8-bit
+> >  * Modem: 4G LTE, 3G, GSM/GPRS/EDGE
+> >  * RF: Quad GNSS, WiFi 5 (802.11ac), Bluetooth 5.0
+> >  * GPU: Mali-G52 MP1
+> >  * Codec: 1080p 60fps H64, HEVC, JPEG HW Codec
+> >  * Display: Full HD+ (2520x1080)@60fps LCD
+> >  * Camera: 16+5MP/13+8MP ISP, MIPI CSI 4/4/2, FD, DRC
+> >  * Connectivity: USB 2.0 DRD, USI (SPI/UART/I2C), HSI2C, I3C, ADC,
+> > Audio
+> >
+> > This patch adds minimal SoC support. Particular board device tree files
+> > can include exynos850.dtsi file to get SoC related nodes, and then
+> > reference those nodes further as needed.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 ++++++++++++++++++
+> >  arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
+> >  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
+> >  3 files changed, 1057 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-usi.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> > b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> > new file mode 100644
+> > index 000000000000..4cf0a22cc6db
+>
+> [...]
+>
+> > +     gic: interrupt-controller@12a00000 {
+> > +             compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
+>
+> One thing for sure, it cannot be both. And given that it is
+> an A55-based SoC, it isn't either. It is more likely a GIC400.
+>
 
+Yes, it's GIC-400, thanks for pointing that out. Will fix that in v2.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> > +             #interrupt-cells = <3>;
+> > +             #address-cells = <0>;
+> > +             interrupt-controller;
+> > +             reg = <0x0 0x12a01000 0x1000>,
+> > +                   <0x0 0x12a02000 0x1000>,
+>
+> This is wrong. It is architecturally set to 8kB.
+>
 
+Nice catch! Actually there is an error (typo?) in SoC's TRM, saying
+that Virtual Interface Control Register starts at 0x3000 offset (from
+0x12a00000), where it obviously should be 0x4000, that's probably
+where this dts error originates from. Btw, I'm also seeing the same
+error in exynos7.dtsi. Though I don't have a TRM for Exynos7 SoCs, so
+not sure if I should go ahead and fix that too. Anyway, for Exynos850,
+I'll fix that in v2 series.
 
-Best regards,
-Krzysztof
+> > +                   <0x0 0x12a04000 0x2000>,
+> > +                   <0x0 0x12a06000 0x2000>;
+> > +             interrupts = <GIC_PPI 9
+> > +                             (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>
+> 4? With 8 CPUs?
+>
+
+Will be fixed in v2, thanks.
+
+> I also find it curious that you went through the unusual
+> (and IMO confusing) effort to allocate a name to each and
+> every SPI in the system, but didn't do it for any on the PPIs...
+>
+
+Yeah, after some consideration I removed the whole interrupts header
+and used hard-coded values instead. I probably felt it would be right
+thing to have, just because there is no public TRM for Exynos850, thus
+documenting interrupts somewhere would be nice. But that reasoning is
+wrong, as trying to mix that kind of documentation with code just
+clutters it. The right thing to do is probably just provide a public
+TRM, but that's not for me to decide, alas :) Anyway, will be fixed in
+v2.
+
+>
+> > +     };
+> > +
+> > +     timer {
+> > +             compatible = "arm,armv8-timer";
+> > +             interrupts = <GIC_PPI 13
+> > +                             (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                          <GIC_PPI 14
+> > +                             (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                          <GIC_PPI 11
+> > +                             (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                          <GIC_PPI 10
+> > +                             (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> > +             clock-frequency = <26000000>;
+>
+> No, please. Fix the firmware to program CNTFRQ_EL0 on each
+> and every CPU. This isn't 2012 anymore.
+>
+
+Ok, will remove that property in v2. Though it looks like CNTFRQ_EL0
+register can be only changed in EL3 execution level, so I'll have to
+ask the vendor to fix their BL31 or whatever. But that might take some
+time, so I'll have to keep "clock-frequency" workaround in my local
+tree for now, to make scheduler work.
+
+> You are also missing the hypervisor virtual timer interrupt.
+>
+
+Checked SoC TRM, there is no PPI for hypervisor virtual timer
+interrupt, and no mentioning of it at all. Likewise, I checked ARMv8
+ARM and TRM, almost no description of it. Also, I checked other
+platforms, and seems like everyone does the same (having only 4
+interrupts). And I wasn't able to find any documentation on that, so I
+guess I'll leave it as is, if you don't mind.
+
+> > +             use-clocksource-only;
+> > +             use-physical-timer;
+>
+> Thankfully, these two properties do not exist.
+>
+
+Yeah, that's just some leftover from vendor's kernel, overlook by
+me... Will remove in v2, thanks.
+
+> Thanks,
+>
+>          M.
+> --
+> Jazz is not dead. It just smells funny...
