@@ -2,112 +2,119 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B8EC4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Aug 2021 07:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3E4C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Aug 2021 07:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DBA060F41
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Aug 2021 07:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6D7E6105A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Aug 2021 07:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238611AbhHEH0U (ORCPT
+        id S232409AbhHEHav (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Aug 2021 03:26:20 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:40644
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230446AbhHEH0U (ORCPT
+        Thu, 5 Aug 2021 03:30:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231499AbhHEHau (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Aug 2021 03:26:20 -0400
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Thu, 5 Aug 2021 03:30:50 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id B3B8F40641
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Aug 2021 07:26:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1628148365;
-        bh=g9qBqxkhsVrwTaR51E6CfuBSIwrS5M1PgyyXHDx+vl4=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=WtLuQsSagMl4L//2PQzlWEilTrFqRMSNgApMiKbamShSBojiQSoi6bqWAwM9ih87j
-         YXTod5qy41q9XMqQV03xM9mjpqqX2IxHMqggxbU5hZK5wrLkzDO40KFgpFE1vyVqsC
-         YzZmm+vEzZg4ZyuJa2R895e4GiYxmPjyIaXR4HJYgKP2yLaZaG47NzU0sm0Ax++4Ra
-         K40ry1WIVE0s1OhoHPs9id+rq6+xIUm+fanPda+gxhG0SY3cnvTUF9rnjPE/CVA8aK
-         Ocium0R4E6HGgGcGrCoGhyw6x/M7Kxe9MencBX0X0oEQ+x6USy+lcqluhJ8CvzUIIG
-         lq+5A1tyQcniw==
-Received: by mail-ed1-f69.google.com with SMTP id d6-20020a50f6860000b02903bc068b7717so2709144edn.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Aug 2021 00:26:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=g9qBqxkhsVrwTaR51E6CfuBSIwrS5M1PgyyXHDx+vl4=;
-        b=Ce3KM0rMerm27Cu5xHniLKkjJ+AEc91C5TG28soUzlmjT45ej7A20zNoT70Qz8gXZ6
-         XK17e/SxQ5HfIoivDn1DU80cf3bP/kV+bnIOLXs7E4zykDAuxPhqmyZdAD37y3yIj4D+
-         E1T4YpQRezQjtipLWol1i41lxnmYrzlrS7fCWf9DyiXppiXnBGuwxmaRWlQ5kCMFtY0e
-         8EOwG30A//zUpSsc+a5EqJx8C+fvfqb9ezQ8rWQ2vXwr8yUP2ilU4WIzKiW/BvgesZ/L
-         ERXOhh+U0b7z6LOQ/VEoOPbs2P7I8NwyWwpH/5HWWR55Sx+6/st2aIqakaagGMQNoEGn
-         3KEg==
-X-Gm-Message-State: AOAM530cL2pL9pqBENYjGbUViRYndhBiiYrub91yU3O8gDGQ9SQscWrK
-        FboJg2Gu+2IEwOICYfSDfBd/wp5Q1iRMdA5W3oCHhk5kHnm2VasTPqFtO5/SXLV+bcO9BSF5KbP
-        vn6WP8VjdjaB3D0IILibVg8LpEfhbMI9pqeZiPm9fhiUI9GE3
-X-Received: by 2002:a50:be81:: with SMTP id b1mr4735901edk.295.1628148365326;
-        Thu, 05 Aug 2021 00:26:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw+pEeF0AYkyWCT4YC0tcD+JhvhWIIsPWvWkaXRRVc3F27jZY8cg94BFy4gyubfS81YcRMbvg==
-X-Received: by 2002:a50:be81:: with SMTP id b1mr4735896edk.295.1628148365185;
-        Thu, 05 Aug 2021 00:26:05 -0700 (PDT)
-Received: from localhost.localdomain ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id la23sm1399073ejc.63.2021.08.05.00.26.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Aug 2021 00:26:04 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 0812960F58;
+        Thu,  5 Aug 2021 07:30:37 +0000 (UTC)
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1mBXpr-0034o3-4w; Thu, 05 Aug 2021 08:30:35 +0100
+Date:   Thu, 05 Aug 2021 08:30:30 +0100
+Message-ID: <87zgtwbb6x.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/8] ARM: dts: exynos: add CPU topology to Exynos3250
-Date:   Thu,  5 Aug 2021 09:25:25 +0200
-Message-Id: <162814831970.6166.12328372184939604484.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
-References: <20210731092409.31496-1-krzysztof.kozlowski@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+In-Reply-To: <e264f96e-a230-456b-08a5-dbe3a31bdb43@canonical.com>
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+        <20210730144922.29111-13-semen.protsenko@linaro.org>
+        <15871f8ced3c757fad1ab3b6e62c4e64@misterjones.org>
+        <CAPLW+4=v4bDcuxGVqs06mobGj34At4cD+vg48b4dPujarS07Tg@mail.gmail.com>
+        <bf21badb-804f-45f0-c02b-80ff57ab9931@canonical.com>
+        <CAPLW+4nY=hozOR+B_0sPZODrk9PXaXg+NB-9pVhDbAjEy7yjhg@mail.gmail.com>
+        <e264f96e-a230-456b-08a5-dbe3a31bdb43@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: krzysztof.kozlowski@canonical.com, semen.protsenko@linaro.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com, jirislaby@kernel.org, gregkh@linuxfoundation.org, ckeepax@opensource.wolfsonmicro.com, ryu.real@samsung.com, tom.gall@linaro.org, sumit.semwal@linaro.org, john.stultz@linaro.org, amit.pundir@linaro.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 31 Jul 2021 11:24:02 +0200, Krzysztof Kozlowski wrote:
-> Describe Exynos3250 CPU topology.
+On Thu, 05 Aug 2021 08:17:14 +0100,
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+> 
+> On 04/08/2021 23:30, Sam Protsenko wrote:
+> >>>
+> >>> Nice catch! Actually there is an error (typo?) in SoC's TRM, saying
+> >>> that Virtual Interface Control Register starts at 0x3000 offset (from
+> >>> 0x12a00000), where it obviously should be 0x4000, that's probably
+> >>> where this dts error originates from. Btw, I'm also seeing the same
+> >>> error in exynos7.dtsi.
+> >>
+> >> What's the error exactly? The "Virtual interface control register"
+> >> offset (3rd region) is set properly to 0x4000 on Exynos7. Also one for
+> >> the Exynos5433 looks correct.
+> >>
+> > 
+> > The issue is that 2nd region's size is 0x1000, but it must be 0x2000.
+> > It's defined by GIC-400 architecture, as I understand. Please look at
+> > [1], table 3-1 has very specific offsets and sizes for each functional
+> > block, and each particular SoC must adhere to that spec. So having
+> > 0x1000 for 2nd region can't be correct. And because exynos7.dtsi has
+> > GIC-400 as well, and 0x1000 is specified there for 2nd region size
+> > too, so I presume there is the same mistake there.
+> 
+> I understand, the range length has indeed same mistake. However it does
+> not matter that much There are no registers pass 0x10C (so pass 0x1000).
+> This address space is not used.
 
-Applied, thanks!
+I have no idea which spec you are looking at, but the GICv2
+architecture (of which GIC400 is an implementation) definitely has a
+register in the second 4kB page of the CPU interface. It contains the
+GICC_DIR register, which is used to deactivate an interrupt when
+EOIMode==1.
 
-[1/8] ARM: dts: exynos: add CPU topology to Exynos3250
-      commit: a2798e309f3c67ab69073582dc4b8102a9013e25
-[2/8] ARM: dts: exynos: add CPU topology to Exynos4210
-      commit: 900dd07d13e46b2937522ac7cc46a9ceb49284b6
-[3/8] ARM: dts: exynos: add CPU topology to Exynos4412
-      commit: 1fb5b5b0dc491613eaa42bc39457589bfcb2b2b9
-[4/8] ARM: dts: exynos: add CPU topology to Exynos5250
-      commit: fc6d5c9953757c61042676db9bb32ecd7af958f3
-[5/8] ARM: dts: exynos: add CPU topology to Exynos5260
-      commit: fa0c56dbc3a1b116d280c3a3a97052ea38e4ea2b
-[6/8] ARM: dts: exynos: add CPU topology to Exynos5420
-      commit: a73d3069f6f7717bbd31a2fcfe8ddb3d98076b1d
-[7/8] ARM: dts: exynos: add CPU topology to Exynos5422
-      commit: 6cad6db75231a18f25dc7d610d5a0683160ac545
-[8/8] arm64: dts: exynos: add CPU topology to Exynos5433
-      commit: 0cdcca7ec37cfe54cd2f0668eddcf5aef87a05e3
+Linux actively uses it when started at EL2.
 
-Best regards,
+	M.
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Without deviation from the norm, progress is not possible.
