@@ -2,189 +2,184 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2D9C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Aug 2021 07:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA8EC4320E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Aug 2021 08:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBCD6054F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Aug 2021 07:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B02C961076
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Aug 2021 08:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237697AbhHJH4N (ORCPT
+        id S233318AbhHJIpD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Aug 2021 03:56:13 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:46908 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237707AbhHJH4E (ORCPT
+        Tue, 10 Aug 2021 04:45:03 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:57182 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231129AbhHJIpC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Aug 2021 03:56:04 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210810075540euoutp02fa292eceb21ffcec1fe554522c6a2f6b~Z4tP_BQwv2210222102euoutp02a
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Aug 2021 07:55:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210810075540euoutp02fa292eceb21ffcec1fe554522c6a2f6b~Z4tP_BQwv2210222102euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1628582140;
-        bh=VeRFKSxzvKpp1y//P/JPPiQIsMJu74pFw5ZDgXW9bX0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=btjfF1BgUsFiyyXHBLyOionZUAUTvabtlxSdaV+8EINtdjk9HTrLg0ON0JXeglFWk
-         fLbL6KCAt5fkQutpMNU5AzCOs0s1bnI8ZmdBzfTEong/TNKyNgYXMdpxKZoqkNv9YA
-         XH/lp/BrY6NNv/XjdN74q5Wl+sE+R1HgzowXR6WQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210810075539eucas1p266514336f5ec6979029c4a641c527ff1~Z4tPU3EfV2486224862eucas1p2E;
-        Tue, 10 Aug 2021 07:55:39 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1D.10.56448.BF032116; Tue, 10
-        Aug 2021 08:55:39 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210810075539eucas1p2e444e70ef5d7acbd4af9ad0479e11a09~Z4tOsoygI2987429874eucas1p24;
-        Tue, 10 Aug 2021 07:55:39 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210810075539eusmtrp2fbf7493e9a3b0b0207fd97bc52baabfe~Z4tOradcE2391623916eusmtrp2N;
-        Tue, 10 Aug 2021 07:55:39 +0000 (GMT)
-X-AuditID: cbfec7f5-d53ff7000002dc80-de-611230fb30eb
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 88.64.31287.AF032116; Tue, 10
-        Aug 2021 08:55:38 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210810075537eusmtip12fdb1e043caa6df4382b8e946896443d~Z4tNQWFjt3253232532eusmtip1g;
-        Tue, 10 Aug 2021 07:55:37 +0000 (GMT)
-Subject: Re: [PATCH v2 7/8] clk: samsung: Add Exynos850 clock driver stub
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <bb69e79d-55a8-2090-e51c-fdfea755cf99@samsung.com>
-Date:   Tue, 10 Aug 2021 09:55:37 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.12.0
+        Tue, 10 Aug 2021 04:45:02 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17A8gCmL016137;
+        Tue, 10 Aug 2021 08:44:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=sXX1cTvJmqTTHSOO3RnGlSKyYCzBS1tgnP8mWl2esVA=;
+ b=GRR0wA3gPDH95A+y9L3VgqL7jiy7bSB7AidVM/GqVlZhtHjEzUXlWVZn3ICHtYggLCBO
+ +UqJeBGUdI1JVgaYcNV+nVhDnbv7zI660vWgD8bN0YvSLEpgrimVZ2K1WWb2YBMYK/5U
+ nkRtePTCzNX4kwAZPto2kbVIf9dDcwIA6MKNDf6De9pV/Em0bwDHM4XbQdCrg5EQ8hLg
+ W6ON0G2wZOK8dFOg3WiuEVk+UPUcTJbyPsOa+01E2NzUix0PVgw8Hd/Xh4YhJe0rO1YX
+ zdLdheg/zVD2Pui/NfQM9dy+0HAbqLNJHWuV8E3mgcoFbKfIKcRgENopbRpo+hPpWpac Ww== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2020-01-29;
+ bh=sXX1cTvJmqTTHSOO3RnGlSKyYCzBS1tgnP8mWl2esVA=;
+ b=zUIsy0aXr1Ko8SbNiJn8Q/R2T0/zzVU0fgok38CxPPaaW8qZBcYkkiNDELLIQhAPRszN
+ i9GwclKrsSe384i4LmVom/gF1oxirJBKKorKlyAwbNYB1eLeIwLBKGSlMNKPBpfjce5H
+ qpxix8c05C51OpoVqmyKrTlAurDnf7sy4arwWGKfB3FY7irexSGnB7PgGEgx6L8EO71x
+ ixbKgu5hPhXXB95/22pVzA8Ym4X1rML62lZO6PMIJToN+9+HVJRmoE8jV46akT2FLDI1
+ q7QjDBfLM5nZ2ej34eO5RLhsfaCGHyYe/qjwrWpTUOYSKEb6RyYkU35m8jEzu8TtDUuG 9w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3aay0fu40n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Aug 2021 08:44:32 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17A8e5eh149448;
+        Tue, 10 Aug 2021 08:44:31 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2106.outbound.protection.outlook.com [104.47.58.106])
+        by userp3030.oracle.com with ESMTP id 3abjw414hq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Aug 2021 08:44:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=faKMTgkxR/eajB7MgdsRzRexVr8PlG3uWEiY0feh2ufC/ygqp6ToSgRCb4bepQwfxIwppfyoHJcOaThgA63795tQwE9eodoC0Co4PJHQ5QYYeVW2HdRLMW8r4j6mV/xutSGENtjYuU6Cx1o/geE6Ce2Ml+ajyq9zekAm+frozp9mAHpXU0Arskn5/xYU2dm72khNyvlNUKV01pUxyBQq5IeH/1lddplJy/8xRCDM7QwaNiFNGX9pRRfsvU22DDWWjefhKBesbEiEUSeoSxKuEivCNWvJN1HqwIMJTJZpfhPsK789fDj4O3aVA06w93iYEGv8nMHhTSw+KWQZffiMKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sXX1cTvJmqTTHSOO3RnGlSKyYCzBS1tgnP8mWl2esVA=;
+ b=jSwE109hzKiJFq1StQ6IfsQIaVOKS1H6pvrg+1cHFgMlZ8Z0BFVtCzYsfQUPHA9yEs+Z6vRjYIfUnhCmFZdfCJfuKhlCfWJl2CeA4VFcQa1RN8lTdfo7WK42kRKN08AEkz71tw15vOQsSjgHXhvOLCJcvTolsm4ZnSQBPB8llXIYCdysOiKNXeX2vyvc2zHe/21fJSn4cHTjVB12z5xOBp0odbspR0cxMYLNBu8OuU+vX59PjrAT7zXaY17UOu1kFURmyHB7l5KlmuNhXp0vErLgHay0sseEgLfKvKoEkgkXGJlZxv6KtkgS8LtMdt51o1BOJWO4niGd2nvHKENuZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sXX1cTvJmqTTHSOO3RnGlSKyYCzBS1tgnP8mWl2esVA=;
+ b=PDzofpH1pfXNN864Faqr+JsucmE0XYnpP2Gg7NIiIl6xdRQvBfMzpL/1OBrrlWBdUEh/LEWWEf9YZudW1GddH9BkXxJYprWi9TRli7IfUvtzZfiit9znw17dHw+H8xNJIFh6TvFZTOCPbio2n6lH5P7y1SNGaYQAsHUcc/p0a7U=
+Authentication-Results: samsung.com; dkim=none (message not signed)
+ header.d=none;samsung.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by MWHPR10MB1566.namprd10.prod.outlook.com
+ (2603:10b6:300:27::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16; Tue, 10 Aug
+ 2021 08:44:28 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5820:e42b:73d7:4268]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5820:e42b:73d7:4268%7]) with mapi id 15.20.4394.023; Tue, 10 Aug 2021
+ 08:44:28 +0000
+Date:   Tue, 10 Aug 2021 11:44:13 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Abhilash Kesavan <a.kesavan@samsung.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Lukasz Majewski <l.majewski@samsung.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] thermal: exynos: Fix an error code in exynos_tmu_probe()
+Message-ID: <20210810084413.GA23810@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: ZR0P278CA0059.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:21::10) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjHeU/bc06LhUPpxmtVnJ0mc4sgkbCXyAhksh0TP2zTObtkuE7O
-        Chm3teJlY7GkKwHHzcsCFkiJInYNowNaWIt0QtAGYVayithxmQPDYKlA2kVcuYz2YMa3//M8
-        v/9zSR6SI6rAJWRW7klGmSvPluICbsed5849/r0i+d5vn+xE84arAK1cHiHQQ980D+n77vGQ
-        5poJR0/rt6JB/x7U6lnE0OWlGxhqmxzmoYWycR5q1y8B9JutDkc1TjuGBq+VE8ha189DQ3fT
-        0KKjgoO03X0E+n7RjaOV4VYumq5Yw+6OeQnkGizBkNG2BFI203MjWoLWqctx2qobI+g2YylO
-        jw7fxOlf6psJur3xHD1zwY/TFWYjoL1t0e8JPhYkZTDZWacYZWzyp4LMGZeTl28KP6PtiVCD
-        +k3nAZ+EVDxsMXbj54GAFFEGAOvvD2Fs4AOw/3EXhw28AF5ZXuW+sDS3ewi2cANAnWV83bIA
-        YMuzWSxARVIH4ZhNywtoMZUFn/bMcwMQh9KR8Ja5JdgKp+Jg+e0KENBCKhlW3SoNGrjULtg6
-        /zDY6CXqBBwdmMNZJgL2X5kKevnU+7D6L12Q4VBR0D2lX9fbYaenLrg3pFb4sLKkAWf3PgDv
-        P+gkWB0JZx3mdb0Vrlr1GGvQAFjW9TvBBlUATjgaAEvth6P3/l3rRK6N2A1Ntlg2nQp13kFu
-        IA2pMDjiiWCXCIMXO6o5bFoIS4pFLL0T+o3VGKsl8LupVW4VkOo2nKbbcI5uwzm6/+c2AK4R
-        RDEFqhwFo9qXy5yOUclzVAW5ipgTeTltYO1lB1Yc//wMDLMLMb0AI0EvgCRHKhZao0VykTBD
-        fvYrRpl3XFmQzah6wRaSK40S2izNx0WUQn6S+YJh8hnliypG8iVqjDS9Fh8a63ncaAkrC0uS
-        GW6T2tLtz7dNtlea7OciMtJlMiLUH77vj/TEQ0eKpJtkd7rfkmHEG8uRAxrx3xkG669pVw8X
-        N+2YqA5xvSk58CH+6CAq/vqnhHKZzSPuTpc0/hmameT+pMlyNmoy/xXzg2PhffOhS2LFzRr4
-        6sWYtGdvH7o+kVh7+kt1zWbncJH9xxC0I1rT61E1PkrY8nmSmHzZjX22XHiMEM/5Urb9UGSb
-        MqvFH9hT9c5Z95mWWu9R2pFjF0iPSvuS/YUmn8UbUli5v2t3gqZJIfFdmOF/lJoYP9TpNPa8
-        e2lX85N3xqexlG+kcZkdtdfzTmldlnHXpJSrypTHvc5RquT/AQsHbmohBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsVy+t/xu7q/DIQSDRr/m1l8WLGI0eLflBvs
-        Fte/PGe1mH/kHKtF8+L1bBbv5spYnPmta7Hx7Q8miyl/ljNZbHp8jdXiY889VovN8/8wWlze
-        NYfNYsb5fUwWZxb3slvsnHOS1eLiKVeLH8f7mC1a9x5ht5j64xabxb9rG1ksnvcBlZ26+5nd
-        4sqZDiaLVbv+MDpIery/0cruMauhl81j56y77B6bVnWyedy5tofNY//cNewem5fUe7yc+JvN
-        o2/LKkaPz5vkArii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMy
-        y1KL9O0S9DJeXjnPWrCev6L1oGAD41yeLkZODgkBE4k1m9+ydzFycQgJLGWU2Nl4nbGLkQMo
-        ISUxv0UJokZY4s+1LjYQW0jgPaNE0zc5EFtYwFPi7q5WVhBbRCBTYvL9FrA5zAILOCSWnN7N
-        CDH0OJPEsb5GRpAqNgFDid6jfWA2r4CdxIQDnWDdLAKqEhs/XGcCsUUFkiX6vkyAqhGUODnz
-        CQuIzSkQKDH9xSywGmYBdYk/8y4xQ9jiEreezIeKy0tsfzuHeQKj0Cwk7bOQtMxC0jILScsC
-        RpZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgQll27Gfm3cwznv1Ue8QIxMH4yFGCQ5mJRHe
-        nXJCiUK8KYmVValF+fFFpTmpxYcYTYH+mcgsJZqcD0xpeSXxhmYGpoYmZpYGppZmxkrivFvn
-        rokXEkhPLEnNTk0tSC2C6WPi4JRqYFr7zsH3y932v6077OK7Arb73Z1xa1//l7b40He6TLaL
-        wlfkzlD8tsLkOCsDj4ZWydrT6wqjpGu33I1la234uUDxyXH/fwffKjxOzk95wnRrf6n0mWDL
-        649sXf/f/7nnzA71W34XkpWD3DsTn24UZdeZXMdrqrhvqvrrbxV+Bl/7w+oad8ipLeKqt33+
-        40jM094VUay2KmpG8U1LE/MS524+qrvunuPUjN7YbZe7V4U2FjDYz+y8oPs/Zmp6iOgFP5Pv
-        E/0vvFR3+Pnu/8c3Dyc2cB/Mep0uV/WyY+etnFiBmgeWLPOFbX8tXi45SadHR9pmA/tmKznx
-        W/VzlVzvV301KZ1Ursp5+97WZX9dVJRYijMSDbWYi4oTAQ1zxqexAwAA
-X-CMS-MailID: 20210810075539eucas1p2e444e70ef5d7acbd4af9ad0479e11a09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f
-References: <20210806152146.16107-1-semen.protsenko@linaro.org>
-        <20210806152146.16107-8-semen.protsenko@linaro.org>
-        <3add6f87-7293-e1ae-8f9e-c69e9de18cf5@canonical.com>
-        <CGME20210809194915eucas1p19999295aef3127f95ffe4c75a8acc63f@eucas1p1.samsung.com>
-        <CAPLW+4=-uUcoLCjjBAC2K5NLswnXGXW1qrsTJrb_uZDgOQ5Ehw@mail.gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from kili (102.222.70.252) by ZR0P278CA0059.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:21::10) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16 via Frontend Transport; Tue, 10 Aug 2021 08:44:22 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 209f02a3-2a69-4ff8-f189-08d95bdb10be
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1566:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MWHPR10MB156649CAC423408217D14A3E8EF79@MWHPR10MB1566.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: T66FognNnW4PksC6xmcYmtMKJUod9+6uk03LyvxUOY0f+tWOUX9+DsHRJUCIHm0HrnpC4knqv8noG85ebrn0wxPaYiVoWIU/bMYjdia5xyCk9byWwa3nDMnq/vKmpV93BBgckb4G5Q/bhSOeCpTvTckWka2wcIca4DPQ3mfIRTyPdsc52v03bYKNRkpdUhagAG0eaBWS3gQ4aN7/hovrQX8JR7qIeKJ6WyFTE1DrJB93e5Pv+66597fyvEvvx0GQrtGUppw2BVJrtzzEbZ5118JGtM7N7Jf6nKcWUZFHsWr0b3Jo3cRdSASVg1z0urCZWakVb1ZHfeNT0UxKLbJxoa5FDER+FLUy5raw3uXajLc8K6LeWZTI7e067WPXa9XYNVoAvCPLZIiXs+fVzl+ifpw8hQgRPl2upF+PO4yQ9puRmNTc7E8QanLDIpVaj12eBmyKVQB95MP1R/DXmCrxChgMRqPd8yKRxxHqLj5puY4ZWzIZdvd80kgV4VdisezMTfskzdo2TozOStdfoJhUSvEI58ZKsiYGwjg446Y1xUJ/1GONIpMD99mn9RtJONbVPxeX25YmAp1p2PK3sarCRIYi25G+6WFbTH69/mlJyDD7+dA+OmJKq0IN/5j90oL0iHjR9YMtQ/kpgWGPesmXa5ART4NnKlGXCyGQlxnjz0CBzfjyi80irMjxWSQkeev0sbi0+BiYSeqjPSAu7ZikvQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(366004)(39860400002)(376002)(346002)(396003)(38350700002)(52116002)(1076003)(55016002)(86362001)(9686003)(478600001)(6496006)(956004)(33716001)(44832011)(54906003)(26005)(38100700002)(110136005)(6666004)(316002)(4326008)(8936002)(9576002)(66946007)(66476007)(66556008)(2906002)(8676002)(186003)(33656002)(5660300002)(7416002)(4744005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hmPrdx5MDMrS7+wKQ0HAwr+hgTy1Y3iuXyRKIOSAC3Ld/9iB3DmjmPpsP/yp?=
+ =?us-ascii?Q?L1J7I1PKxNEz5S81IjRjpM4xnIkDy42l2cwurrBoIt4J2wcKZETOQS9iR9PY?=
+ =?us-ascii?Q?DWHq3DrKVtMlcHP1cZ7PC5BgN3eKiLqLSjHYd6iQXJOtC+VVTxdVgrUnFHJb?=
+ =?us-ascii?Q?bEL1HL3+ZtboaLWDWtP6O4pstckbxiFQNtF72uYQi35Ex6QCPtJaXnvoNMOg?=
+ =?us-ascii?Q?I5mswo6ci4KdzKNJxMh3OM3KJgQzIxhepyycftvJ6GW3GMd2tBdiKoTROtBf?=
+ =?us-ascii?Q?xyt12+uQ7cXRva3N3yfiennqCfYstTAyhXN1GXyzd3DwCo8daPWS01P3Pzok?=
+ =?us-ascii?Q?mysVV01wfrCwWhLdED5tKrNqYdzzp6jOOU/0D3ii/uG6Lq6Yf074dVT2HIwb?=
+ =?us-ascii?Q?5UUUSWGi+bgjdJRVu92g/0AQXSF2f2cYATMr88Vp6nnChGaOvpNBQ2zwePOg?=
+ =?us-ascii?Q?R7cdK0sw8RSJb0fL766MNePAHn+aYf/wjqERDcuv5Hwn8TnsLmw2zpEjgByE?=
+ =?us-ascii?Q?UAkILDyNIYx5h/OSC3QrM92402HN0arPjJU1TMmb5AdVy5+ACZG7K2IH1+Fi?=
+ =?us-ascii?Q?u3ehsr21/02MWJClJSaeqSGw+grEBNIQN25UkwpDoNc6BQQaWc/944O74QvQ?=
+ =?us-ascii?Q?lvx1sZsHfD1MUo4PxLRba3M+Mg5pEd/xQFUSd0MToQojWHgn6vs9u6Cg+rr4?=
+ =?us-ascii?Q?QBcj+G9CwuHwvUPbrRWX4y12OGfDGry2tNJuDzzJ9mt2Uz1uTsM/e4KS6XmS?=
+ =?us-ascii?Q?GWiLTnjIMT4IiC4RhBKfni8Z3YKafRH+N2oG68flgHkS+pSkYUcmTuElPRFM?=
+ =?us-ascii?Q?PxiXY9UAJQ4GQP9OerUWwtdfKEuMqnyfwDe++U1t7qZKIreBiXu9HtZtNXYR?=
+ =?us-ascii?Q?13kherrv4718pxCLvBRel2psdkTM5wsy5DhvRKyHjLE+ZtcjG3WOcR9+UOvf?=
+ =?us-ascii?Q?wVIGDTQzbZgZc8p70Rkt4YaVbuRYSd5OPZQkklQBAR+6GrGGmnjwNZQDquy5?=
+ =?us-ascii?Q?mZmJgDYr3w9M2Fy1hOsi63TSsIF9BuDn0PNngBbYoMBxjkykCfjS1t0zJtN8?=
+ =?us-ascii?Q?XxgH1mHtshcH5wOWJBtaCsYFPjgbOW45INPq9hznjHoOI9s3dIq0Be8jnAvk?=
+ =?us-ascii?Q?SYdLADmCNnvHejo6+Y23zU1BmjR8G7scx94JAtsTkrqtBofEkemR8feYk7EQ?=
+ =?us-ascii?Q?8Ikmy/1EDTzndcYSfODZUu97OOYZGMfhbu5i6WyGpjBK86QzXIktVuKWho5c?=
+ =?us-ascii?Q?7aSOfzvYw6Us7HJHy5gYsOUuyGXRn4ktCCXKfNwyEhR5bgnV+eUGQ9IYhF7d?=
+ =?us-ascii?Q?DMVjAC0IfXpjKIEu6VdDXibN?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 209f02a3-2a69-4ff8-f189-08d95bdb10be
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2021 08:44:28.7579
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FmdUQvY+k3NU6WPFBkzfmyP52oAWnarFWQOP1UTFVTdyRAM1lq26rPadsBycpVIEt3XgaU9kWLQdnfzbkJ3nMF0wZbZq7HY4ixPbwkL4Jlo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1566
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10071 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108100054
+X-Proofpoint-ORIG-GUID: RX7mUvLfs8AxSyIDm7pxGuUmnCPH6YD3
+X-Proofpoint-GUID: RX7mUvLfs8AxSyIDm7pxGuUmnCPH6YD3
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09.08.2021 21:48, Sam Protsenko wrote:
->>> +/* Will be extracted to bindings header once proper clk driver is implemented */
->>> +#define OSCCLK               1
->>> +#define DOUT_UART    2
->>> +#define CLK_NR_CLKS  3
->>> +
->>> +/* Fixed rate clocks generated outside the SoC */
->>> +static struct samsung_fixed_rate_clock exynos850_fixed_rate_ext_clks[] __initdata = {
->>> +     FRATE(OSCCLK, "fin_pll", NULL, 0, 26000000),
->>> +};
->>> +
->>> +/*
->>> + * Model the UART clock as a fixed-rate clock for now, to make serial driver
->>> + * work. This clock is already configured in the bootloader.
->>> + */
->>> +static const struct samsung_fixed_rate_clock exynos850_peri_clks[] __initconst = {
->>> +     FRATE(DOUT_UART, "DOUT_UART", NULL, 0, 200000000),
->>> +};
->>> +
->>> +static const struct of_device_id ext_clk_match[] __initconst = {
->>> +     { .compatible = "samsung,exynos850-oscclk" },
->>
->> One more thing - I am not sure anymore if this is correct. AFAIR, we
->> wanted to drop compatibles for external clocks.
->>
-> I'll remove oscclk from the clock driver and device tree. It's not
-> needed right now anyway, as that driver is just a stub.
-> 
-> But I'd still like to know the proper way to define external clocks. I
-> can see that in exynos7.dtsi and exynos5433.dtsi there is just regular
-> fixed clock defined for "oscclk" (or "fin_pll"), and then that clock
-> is referenced in corresponding clock driver by its
-> 'clock-output-names' property. I guess that approach is the
-> recommended one?
+This error path return success but it should propagate the negative
+error code from devm_clk_get().
 
-Yes, we should use generic "fixed-clock" in DT to model the external
-root clock. Registering the external clock from within the CMU driver
-is a legacy method that predates generic "fixed-clock" and should be
-avoided.  
+Fixes: 6c247393cfdd ("thermal: exynos: Add TMU support for Exynos7 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/thermal/samsung/exynos_tmu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-That said I think this temporary stub driver is not needed at all, 
-you could well define a fixed clock in DT and reference it in the UART 
-node, as Krzysztof suggested.
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index e9a90bc23b11..f4ab4c5b4b62 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -1073,6 +1073,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 		data->sclk = devm_clk_get(&pdev->dev, "tmu_sclk");
+ 		if (IS_ERR(data->sclk)) {
+ 			dev_err(&pdev->dev, "Failed to get sclk\n");
++			ret = PTR_ERR(data->sclk);
+ 			goto err_clk;
+ 		} else {
+ 			ret = clk_prepare_enable(data->sclk);
+-- 
+2.20.1
 
---
-Regards, 
-Sylwester
