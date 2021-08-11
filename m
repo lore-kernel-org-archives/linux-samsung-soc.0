@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EE3C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Aug 2021 11:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28514C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Aug 2021 11:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09FE160F56
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Aug 2021 11:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 035FC60C3E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Aug 2021 11:49:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237438AbhHKLtI (ORCPT
+        id S237506AbhHKLtU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Aug 2021 07:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
+        Wed, 11 Aug 2021 07:49:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237493AbhHKLtD (ORCPT
+        with ESMTP id S237508AbhHKLtE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Aug 2021 07:49:03 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE03C061386
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Aug 2021 04:48:38 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id t1so3282527edd.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Aug 2021 04:48:38 -0700 (PDT)
+        Wed, 11 Aug 2021 07:49:04 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF27FC06179B
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Aug 2021 04:48:39 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id y7so3301973eda.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Aug 2021 04:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HPjQiKeY/Pm3cwK5bLlcgaOU8O6PA1oY+1ashl1tZII=;
-        b=IBsFx07oFf+vCulkJ+TaU4TZ8+TJY7oRmjHzjramGo3IIB07cb0AjF6zdiGjwHYAW1
-         Tqpupcr9JZsUIoJFv1IAonhPLja4SYBbpCNk3GPYB/qAtLnsD0IiIE6ENOhM2pqkGIaI
-         DlOftRgyt6Bms1W57ULog+ewElYtugxn1FuQZRM33zfR4PP0cjXG1gn/cJpD6Sa2FwZc
-         irT8vkNxP1o74fHgkJXCSPt8ggwKVdCqyPX+/i+Ezu0Tdba8YHfaDLvUnZzFWtmzCevp
-         SS4oLTSxNCSMx15LdVhMiCi6HdkCWUNefTItnCF1Y8977X4crqedED2lFf/7d3JVpwmu
-         8Kgw==
+        bh=EmrLgkupVqTxc8/L9lxZYrujbcXsZpYLC0Uzd5BaWr4=;
+        b=mEfotTU+4tEz1nqSr+lmns404cQ18u7hfJyZbjftAT2+YzIAkrV92eW1pwFYc+wWfb
+         6imwjRL4TRfc0RKuSV6SWqnCi41hQpOWLy8gn/RzXr33PwhXmkcpMBbBjOlz3k85TEMC
+         r4U31IkAXDxL/i+h/XQKsy7tVZoqfbR5hBwk9zx0uZeSh9S5rHnA91KuUlbXHxDCi1+Z
+         2bCgkItJGUMVuZerKlmfupT4aKwaVHcZT8CKcrxraPpMOsCKwSVswF9xeoCrlJkj21Xx
+         cLrmLzMfBo+Z8Amoro0etyM/RVS8OeYQkop58ySADJ9qPd1uXS8Jb3ZSQ8hEGMPdCrwd
+         A0/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HPjQiKeY/Pm3cwK5bLlcgaOU8O6PA1oY+1ashl1tZII=;
-        b=WnLcEWG+TTu3yySva4zg32BJffCVvcfgFkrNA430MMvS/3/o5oOns41r3Nq8eT1mXc
-         lpw9NU78VS5GZdGnQyJAAWuxOxlP5I3BKmg6H4+oOQzqHRERdfB5Igq6lbP8tR8tW28a
-         DmNWb0cd8OwRh3wGEBT7z7tDWkaK7Weqj3hjeSFgTEP3DZHN1ZyPIOzvd7QgiFz2EZI9
-         5Ncn0RIq2/baOQX6Z08j8f5RVMpcF7ZJxIMMI+nhv2p5M9UhSNEegLTQehwwftZsClmu
-         ZjWybS8hwtuJDIQGGG8P9Xke7JGMPpO4jxGSPvLQ5UrR0xCP9qSzK8s8fLRCFF59lD5g
-         Hw9g==
-X-Gm-Message-State: AOAM531UO7lhOO+oAMN1JYaxG+refrd94uSJYrtK0ttIIEZ9dBc5w2MX
-        nZZoR0yY6r8WDMI2JjAo9jcNkg==
-X-Google-Smtp-Source: ABdhPJwwQlTLXrsIYXHANtNL1PihNzfAw6ogeS76lZDqO+9edFnOzfqvWzpuGkVw7nv8oKZ34mb/SA==
-X-Received: by 2002:a50:ed05:: with SMTP id j5mr11111037eds.256.1628682516768;
-        Wed, 11 Aug 2021 04:48:36 -0700 (PDT)
+        bh=EmrLgkupVqTxc8/L9lxZYrujbcXsZpYLC0Uzd5BaWr4=;
+        b=ZEhkH4SFj1eCkHVoQBL6g81etpk7isY9ImaukLaj+r4y1KMxBQBwMpTRVTxLUUGp4I
+         yw9EpZrZxtMrOnFY7dbn9ZsdGREjNmiWIO1MD3neCtaReojHii57ui8wKHeHUJQLNsBL
+         lRiMXBw0EkVhwxzX1yWhieXufChTmBJ4rGuz84fIctSsRu3vhtlBVWM0NSGVPD/RmXWd
+         aBh0rEoamQh35p9rYieEo+AULWWIqFu4SVASptUZ/kiF+ceOzDcuEcviWBg59MfLMqlO
+         jvCqEn9OvaXMH6NWYQnRfqs7fCWqxO9sEKaK+1WGCBRFJyKdSxB+lEl2gnWbuB08/NoC
+         WSRA==
+X-Gm-Message-State: AOAM533J+lHD8fWVOKmQAp9r7jctEgb+87XWJ1RAOv0H6z01owOIPuQM
+        UHxlnkVqVR+RwMcLLhaZv4ftOw==
+X-Google-Smtp-Source: ABdhPJzqXam1/Gn0LDYoJXt+4Sip2QlyRr/ZQ9sne5m8mRxq5wCggub4M+7avgPRrfTnLLNB5JUq7w==
+X-Received: by 2002:aa7:dcd1:: with SMTP id w17mr10745160edu.322.1628682518340;
+        Wed, 11 Aug 2021 04:48:38 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id lw15sm8073337ejb.50.2021.08.11.04.48.36
+        by smtp.gmail.com with ESMTPSA id x13sm8113077ejv.64.2021.08.11.04.48.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 04:48:36 -0700 (PDT)
+        Wed, 11 Aug 2021 04:48:37 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -79,9 +79,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v3 5/7] tty: serial: samsung: Fix driver data macros style
-Date:   Wed, 11 Aug 2021 14:48:25 +0300
-Message-Id: <20210811114827.27322-6-semen.protsenko@linaro.org>
+Subject: [PATCH v3 6/7] tty: serial: samsung: Add Exynos850 SoC data
+Date:   Wed, 11 Aug 2021 14:48:26 +0300
+Message-Id: <20210811114827.27322-7-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210811114827.27322-1-semen.protsenko@linaro.org>
 References: <20210811114827.27322-1-semen.protsenko@linaro.org>
@@ -91,41 +91,66 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Make checkpatch happy by fixing this error:
-
-    ERROR: Macros with complex values should be enclosed in parentheses
-
-Although this change is made to keep macros consistent with consequent
-patches (adding driver data for new SoC), it's intentionally added as a
-separate patch to ease possible porting efforts in future.
+Add serial driver data for Exynos850 SoC. This driver data is basically
+reusing EXYNOS_COMMON_SERIAL_DRV_DATA, which is common for all Exynos
+chips, but also enables USI init, which was added in previous commit:
+"tty: serial: samsung: Init USI to keep clocks running".
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v3:
-  - None
+  - Added Reviewed-by tag by Krzysztof
 
 Changes in v2:
-  - Added Reviewed-by tag by Krzysztof Kozlowski
+  - Fixed default fifo sizes
 
- drivers/tty/serial/samsung_tty.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/samsung_tty.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index b8034c1168e0..130bdc978e93 100644
+index 130bdc978e93..a069e7bb858f 100644
 --- a/drivers/tty/serial/samsung_tty.c
 +++ b/drivers/tty/serial/samsung_tty.c
-@@ -2816,8 +2816,8 @@ static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
+@@ -2813,11 +2813,19 @@ static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
+ 	.fifosize = { 64, 256, 16, 256 },
+ };
+ 
++static struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
++	EXYNOS_COMMON_SERIAL_DRV_DATA_USI(1),
++	.fifosize = { 256, 64, 64, 64 },
++};
++
  #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos4210_serial_drv_data)
  #define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos5433_serial_drv_data)
++#define EXYNOS850_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos850_serial_drv_data)
++
  #else
--#define EXYNOS4210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
--#define EXYNOS5433_SERIAL_DRV_DATA (kernel_ulong_t)NULL
-+#define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
-+#define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
+ #define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
++#define EXYNOS850_SERIAL_DRV_DATA ((kernel_ulong_t)NULL)
  #endif
  
  #ifdef CONFIG_ARCH_APPLE
+@@ -2873,6 +2881,9 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
+ 	}, {
+ 		.name		= "s5l-uart",
+ 		.driver_data	= S5L_SERIAL_DRV_DATA,
++	}, {
++		.name		= "exynos850-uart",
++		.driver_data	= EXYNOS850_SERIAL_DRV_DATA,
+ 	},
+ 	{ },
+ };
+@@ -2896,6 +2907,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
+ 		.data = (void *)EXYNOS5433_SERIAL_DRV_DATA },
+ 	{ .compatible = "apple,s5l-uart",
+ 		.data = (void *)S5L_SERIAL_DRV_DATA },
++	{ .compatible = "samsung,exynos850-uart",
++		.data = (void *)EXYNOS850_SERIAL_DRV_DATA },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
 -- 
 2.30.2
 
