@@ -2,308 +2,341 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B419C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 12:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4839C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 12:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E85F560EFE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 12:16:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9730610CC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 12:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbhHMMRG (ORCPT
+        id S240502AbhHMMz0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Aug 2021 08:17:06 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53180 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229474AbhHMMRG (ORCPT
+        Fri, 13 Aug 2021 08:55:26 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33378
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240497AbhHMMz0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Aug 2021 08:17:06 -0400
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 287B54A1;
-        Fri, 13 Aug 2021 14:16:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1628856998;
-        bh=wfulRNt8yvhsGrhM4LjmQoomH8J3dxet9JJ7iWsN0LU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ogGzu+2sDe9V8+1LOOop+qHu3LgoZvcEnrY8tEOLQtc1/qgkkfaL8Q1sgIO73jyP+
-         BDFge6tJyCgSPGTuDHc23u6X4rvC1PMmjDYYAwaWyTXppXymYIyHw360FegVumaHU/
-         2lseGF7hXKDM6ZCMjBGD2AmUJYjMa/+NHkg7ug+0=
-Date:   Fri, 13 Aug 2021 15:16:33 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Inki Dae <inki.dae@samsung.com>
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Marek Vasut <marex@denx.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 06/17] drm/exynos: dsi: Handle exynos specifics via
- driver_data
-Message-ID: <YRZioZvYrU99fQxJ@pendragon.ideasonboard.com>
-References: <20210704090230.26489-1-jagan@amarulasolutions.com>
- <20210704090230.26489-7-jagan@amarulasolutions.com>
- <CGME20210725172551epcas1p31dff839439ac37757cf061405b5ac65c@epcas1p3.samsung.com>
- <YP2el40V3K4R7ner@ravnborg.org>
- <79ef7f71-b167-2368-e0fd-d4ccaee596c2@samsung.com>
+        Fri, 13 Aug 2021 08:55:26 -0400
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPS id CF13341281
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Aug 2021 12:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1628859298;
+        bh=BIiDZIvIKhWZo8ChmOHD9cnqndoFwXV2somORXCN6EY=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=QI6yPWtg4HYDyP3tZuT/Vx4yk4Tvrwnd+A+uX+j5YAGVkW0yWhahXlOMsMqRq7N8O
+         yGWMJOD86/KqWZopk6x42tA3Y5xrvkT1/s5s1lD2nFydiMcdjHydV5R9Qipj5Q4xdQ
+         lCmHD1N3MvxKw4W5neLP7wgM2gIaPiL8GiMh5hm8/qc15Kf4xKDso3ROgJMtSOAQgd
+         yfNwaFzhXfC+ROYSTWUgNdfW2ZIFVgdgpJxXRP96Aia03L751IdXbx1J0fVDt2pBqB
+         5mUYhh7+F6sYyughfxPQKcWN/blw+1PnSslLQTzSlZ9D0qNOIb5Pz4IzKOZZqrfaHQ
+         cLXKqXOfsH4lw==
+Received: by mail-ed1-f71.google.com with SMTP id b16-20020a0564022790b02903be6352006cso4817129ede.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Aug 2021 05:54:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BIiDZIvIKhWZo8ChmOHD9cnqndoFwXV2somORXCN6EY=;
+        b=UAIZEbSYVY6pnLzevCVwiWNtHw9B3bDt/TkqTlCBg+E0COy7bF5TKhcC+DWrb3p1oa
+         J0zv+txwp55Z78O5crKkoVcacMfBiuwgwJ5ma6Qp6JqAYaACOhmdVdA7hrhfxeRTuYdM
+         MhSUWnaegDyJ1Ie0iKyGmwzKrTKkzxiGsmICOUeOs0untsTHbJxqTupaNjRnUAuZNOkt
+         omKZog3T37vNUTGRDsFlaRxio9K13xZY6MlkrihOEPNOzqj18cWM0GvBZgIDGWIGR6RA
+         dLgX5RrSPwMst/2RPcJrZqGZHX70H3B74PVu9iLkC0ylotmEjTWfd7PhvGooJ4QGuwG7
+         u47Q==
+X-Gm-Message-State: AOAM532HY86c9yUhvcuqE+i9voDhXLcWE/Z0Pce3a3AAcLl8yEHKL7dF
+        JKzhq4v+IUo+Mydj15Y5acgLH90Qrr550x18v51R8xymvJMK7JQwK2k9dcIkozEiX2PVQSRr9Su
+        a6MWNuY1aZYmLh7gHikjoeC2kp0eEgwRYVir6Hiw3276QYSKM
+X-Received: by 2002:aa7:c4d4:: with SMTP id p20mr2949919edr.382.1628859298080;
+        Fri, 13 Aug 2021 05:54:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzVlWeVKe50mKNtAwRRnujr59LFk6b9kiWigqOfEHvhKA9oq2QAmUrCktKZiswrFYf56kinjQ==
+X-Received: by 2002:aa7:c4d4:: with SMTP id p20mr2949894edr.382.1628859297856;
+        Fri, 13 Aug 2021 05:54:57 -0700 (PDT)
+Received: from localhost.localdomain ([86.32.42.198])
+        by smtp.gmail.com with ESMTPSA id h8sm593264ejj.22.2021.08.13.05.54.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Aug 2021 05:54:57 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH] dt-bindings: memory: convert Samsung Exynos DMC to dtschema
+Date:   Fri, 13 Aug 2021 14:54:14 +0200
+Message-Id: <20210813125414.104467-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <79ef7f71-b167-2368-e0fd-d4ccaee596c2@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
+Convert Samsung Exynos5422 SoC frequency and voltage scaling for
+Dynamic Memory Controller to DT schema format using json-schema.
 
-On Fri, Aug 13, 2021 at 03:50:56PM +0900, Inki Dae wrote:
-> 21. 7. 26. 오전 2:25에 Sam Ravnborg 이(가) 쓴 글:
-> > On Sun, Jul 04, 2021 at 02:32:19PM +0530, Jagan Teki wrote:
-> >> Exynos DSI driver is actually a Samsung MIPI DSIM bridge
-> >> IP which is also used in i.MX8MM platforms.
-> >>
-> >> Right now the existing driver has some exynos drm specific
-> >> code bases like te_irq, crtc and component_ops.
-> >>
-> >> In order to switch this driver into a common bridge driver
-> >> We can see 2 options to handle the exynos specific code.
-> >>
-> >> A. Drop the component_ops, and rework other specifics.
-> >>    This may lead to more foundation work as it requires
-> >>    more changes in exynos drm drivers stack.
-> >>
-> >> B. Handle the exynos specifics via driver data, and make
-> >>    the common bridge work in different platforms and plan
-> >>    for option A in future.
-> >>
-> >> So, this patch is trying to add option B) changes to handle
-> >> exynos specifics via driver_data.
-> > 
-> > We really should find someone that has the time, energy, knowledge and
-> > hardware that can include device_link support once anf for all for
-> > bridges.
-> > Then we would avoid hacks like this.
-> > 
-> > I see no other options at the moment, but look forward for a better
-> > solution.
-> 
-> I'm not sure that it's correct to share this mipi dsi driver with
-> I.MX8MM SoC even though it's a same IP because this MIPI DSI device
-> isn't peripheral device but in SoC.
->
-> It would mean that Exynos MIPI DSI device depends on SoC architecture,
-> and Exynos and I.MX series are totally different SoC. So if we share
-> the same driver for the MIPI DSI device then many things we didn't
-> predict may happen in the future.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ .../memory-controllers/exynos5422-dmc.txt     |  84 -----------
+ .../samsung,exynos5422-dmc.yaml               | 137 ++++++++++++++++++
+ MAINTAINERS                                   |   2 +-
+ 3 files changed, 138 insertions(+), 85 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
 
-Isn't that true for external components true thought ? Any driver shared
-by multiple systems will face this issue, where it will be developed
-with some use cases in mind, and regressions may happen when the driver
-is then extended to support other use cases not required for the
-original platform.
-
-In general we don't want multiple drivers for the same IP core unless
-there are valid technical reasons for that. It's the whole point of the
-device tree, being able to describe how IP cores are integrated, so that
-code can be reused across platforms. Of course, integration differences
-between SoCs can sometimes vary wildly and require some amount of glue
-code.
-
-> I don't want to make Jagan's efforts
-> in vain for the community but clarify whether this is correct way or
-> not. If this is only the way we have to go then we could more focus on
-> actual solution not such hack. Impossible work with Jagan alone I
-> think.
-
-I do agree that we need more correct solutions and less hacks in general
-:-) The issues faced on Exynos also exist on other platforms, so it
-would be much better to solve them well once that duplicating
-implementations with less test coverage and reviews. There have been
-efforts in the past to address some of these issues, which have resulted
-in solutions such as the component framework. However, I'd argued that
-we've never taken it to the last step, and have always stopped with half
-solutions. The component framework, for instance, is painful to use, and
-the handling of .remove() in most drivers is completely broken because
-of that (not just because of that though, we have issues in the DRM core
-that make hot-unplug just impossible to handle safetly).
-
-> So let's get started with a question,
-> - Is MIPI-DSI bridge device or Encoder device? I think that MIPI-DSI
-> is a Encoder device managed by atomic KMS. If MIPI-DSI should be
-> handled as bridge device then does now drm bridge framework provide
-> everything to share one driver with one more SoC? I mean something
-> that drm bridge has to consider for such driver support, which is
-> shared with one more SoC.
-
-The DRM "encoder" concept was a bit of a historical mistake that we are
-stuck with as drm_encoder is exposed to userspace. It comes from a time
-where nobody was envisioning chaining multiple encoders. DRM is moving
-to modelling every component after the CRTC as a bridge. This brings
-much more flexibility, and in that model, the drm_encoder becomes more
-or less a stub.
-
-The DRM bridge API has been extended in the past to support more
-features, and if anything is still missing that makes it difficult to
-move away from drm_encoder, we can of course address the issues in
-drm_bridge.
-
-> And Display mode - VIDEO and COMMAND mode - is generic type of MIPI
-> DSI, and also componentised subsystem is a generic solution to resolve
-> probing order issue not Exynos specific feature. These are driver
-> specific ones not Exynos SoC I think. As SoC specific things should be
-> considered, I think MIPI DSI Driver - interrupt handler and probing
-> order things are really specific to device driver - should be
-> separated but we could share the control part of the device.
-> 
-> I was busy with other projects so didn't care of Linux DRM world so
-> there may be my missing something.
-> 
-> >> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >> ---
-> >>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 37 +++++++++++++++++++------
-> >>  1 file changed, 29 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> >> index 99a1b8c22313..53d878d4d2d7 100644
-> >> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> >> @@ -250,6 +250,7 @@ struct exynos_dsi_driver_data {
-> >>  	unsigned int wait_for_reset;
-> >>  	unsigned int num_bits_resol;
-> >>  	const unsigned int *reg_values;
-> >> +	bool exynos_specific;
-> >>  };
-> >>  
-> >>  struct exynos_dsi {
-> >> @@ -459,6 +460,7 @@ static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
-> >>  	.wait_for_reset = 1,
-> >>  	.num_bits_resol = 11,
-> >>  	.reg_values = reg_values,
-> >> +	.exynos_specific = true,
-> >>  };
-> >>  
-> >>  static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
-> >> @@ -471,6 +473,7 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
-> >>  	.wait_for_reset = 1,
-> >>  	.num_bits_resol = 11,
-> >>  	.reg_values = reg_values,
-> >> +	.exynos_specific = true,
-> >>  };
-> >>  
-> >>  static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
-> >> @@ -481,6 +484,7 @@ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
-> >>  	.wait_for_reset = 1,
-> >>  	.num_bits_resol = 11,
-> >>  	.reg_values = reg_values,
-> >> +	.exynos_specific = true,
-> >>  };
-> >>  
-> >>  static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
-> >> @@ -492,6 +496,7 @@ static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
-> >>  	.wait_for_reset = 0,
-> >>  	.num_bits_resol = 12,
-> >>  	.reg_values = exynos5433_reg_values,
-> >> +	.exynos_specific = true,
-> >>  };
-> >>  
-> >>  static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
-> >> @@ -503,6 +508,7 @@ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
-> >>  	.wait_for_reset = 1,
-> >>  	.num_bits_resol = 12,
-> >>  	.reg_values = exynos5422_reg_values,
-> >> +	.exynos_specific = true,
-> >>  };
-> >>  
-> >>  static const struct of_device_id exynos_dsi_of_match[] = {
-> >> @@ -1484,7 +1490,8 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
-> >>  	 * If attached panel device is for command mode one, dsi should register
-> >>  	 * TE interrupt handler.
-> >>  	 */
-> >> -	if (!(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
-> >> +	if (dsi->driver_data->exynos_specific &&
-> >> +	    !(device->mode_flags & MIPI_DSI_MODE_VIDEO)) {
-> >>  		int ret = exynos_dsi_register_te_irq(dsi, &device->dev);
-> >>  		if (ret)
-> >>  			return ret;
-> >> @@ -1495,8 +1502,9 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
-> >>  	dsi->lanes = device->lanes;
-> >>  	dsi->format = device->format;
-> >>  	dsi->mode_flags = device->mode_flags;
-> >> -	exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
-> >> -			!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
-> >> +	if (dsi->driver_data->exynos_specific)
-> >> +		exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
-> >> +					    !(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
-> >>  
-> >>  	mutex_unlock(&drm->mode_config.mutex);
-> >>  
-> >> @@ -1515,7 +1523,8 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
-> >>  	if (drm->mode_config.poll_enabled)
-> >>  		drm_kms_helper_hotplug_event(drm);
-> >>  
-> >> -	exynos_dsi_unregister_te_irq(dsi);
-> >> +	if (dsi->driver_data->exynos_specific)
-> >> +		exynos_dsi_unregister_te_irq(dsi);
-> >>  
-> >>  	return 0;
-> >>  }
-> >> @@ -1737,6 +1746,15 @@ static int exynos_dsi_probe(struct platform_device *pdev)
-> >>  	if (ret)
-> >>  		return ret;
-> >>  
-> >> +	if (!dsi->driver_data->exynos_specific) {
-> >> +		ret = mipi_dsi_host_register(&dsi->dsi_host);
-> >> +		if (ret) {
-> >> +			dev_err(dev, "failed to register mipi dsi host: %d\n",
-> >> +				ret);
-> >> +			return ret;
-> >> +		}
-> >> +	}
-> >> +
-> >>  	platform_set_drvdata(pdev, dsi);
-> >>  
-> >>  	pm_runtime_enable(dev);
-> >> @@ -1747,9 +1765,11 @@ static int exynos_dsi_probe(struct platform_device *pdev)
-> >>  
-> >>  	drm_bridge_add(&dsi->bridge);
-> >>  
-> >> -	ret = component_add(dev, &exynos_dsi_component_ops);
-> >> -	if (ret)
-> >> -		goto err_disable_runtime;
-> >> +	if (dsi->driver_data->exynos_specific) {
-> >> +		ret = component_add(dev, &exynos_dsi_component_ops);
-> >> +		if (ret)
-> >> +			goto err_disable_runtime;
-> >> +	}
-> >>  
-> >>  	return 0;
-> >>  
-> >> @@ -1767,7 +1787,8 @@ static int exynos_dsi_remove(struct platform_device *pdev)
-> >>  
-> >>  	pm_runtime_disable(&pdev->dev);
-> >>  
-> >> -	component_del(&pdev->dev, &exynos_dsi_component_ops);
-> >> +	if (dsi->driver_data->exynos_specific)
-> >> +		component_del(&pdev->dev, &exynos_dsi_component_ops);
-> >>  
-> >>  	return 0;
-> >>  }
-
+diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+deleted file mode 100644
+index 02e4a1f862f1..000000000000
+--- a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
++++ /dev/null
+@@ -1,84 +0,0 @@
+-* Exynos5422 frequency and voltage scaling for Dynamic Memory Controller device
+-
+-The Samsung Exynos5422 SoC has DMC (Dynamic Memory Controller) to which the DRAM
+-memory chips are connected. The driver is to monitor the controller in runtime
+-and switch frequency and voltage. To monitor the usage of the controller in
+-runtime, the driver uses the PPMU (Platform Performance Monitoring Unit), which
+-is able to measure the current load of the memory.
+-When 'userspace' governor is used for the driver, an application is able to
+-switch the DMC and memory frequency.
+-
+-Required properties for DMC device for Exynos5422:
+-- compatible: Should be "samsung,exynos5422-dmc".
+-- clocks : list of clock specifiers, must contain an entry for each
+-  required entry in clock-names for CLK_FOUT_SPLL, CLK_MOUT_SCLK_SPLL,
+-  CLK_FF_DOUT_SPLL2, CLK_FOUT_BPLL, CLK_MOUT_BPLL, CLK_SCLK_BPLL,
+-  CLK_MOUT_MX_MSPLL_CCORE, CLK_MOUT_MX_MSPLL_CCORE_PHY, CLK_MOUT_MCLK_CDREX,
+-- clock-names : should include "fout_spll", "mout_sclk_spll", "ff_dout_spll2",
+-  "fout_bpll", "mout_bpll", "sclk_bpll", "mout_mx_mspll_ccore",
+-  "mout_mclk_cdrex"  entries
+-- devfreq-events : phandles for PPMU devices connected to this DMC.
+-- vdd-supply : phandle for voltage regulator which is connected.
+-- reg : registers of two CDREX controllers.
+-- operating-points-v2 : phandle for OPPs described in v2 definition.
+-- device-handle : phandle of the connected DRAM memory device. For more
+-	information please refer to documentation file:
+-	Documentation/devicetree/bindings/ddr/lpddr3.txt
+-- devfreq-events : phandles of the PPMU events used by the controller.
+-- samsung,syscon-clk : phandle of the clock register set used by the controller,
+-	these registers are used for enabling a 'pause' feature and are not
+-	exposed by clock framework but they must be used in a safe way.
+-	The register offsets are in the driver code and specyfic for this SoC
+-	type.
+-
+-Optional properties for DMC device for Exynos5422:
+-- interrupt-parent : The parent interrupt controller.
+-- interrupts : Contains the IRQ line numbers for the DMC internal performance
+-  event counters in DREX0 and DREX1 channels. Align with specification of the
+-  interrupt line(s) in the interrupt-parent controller.
+-- interrupt-names : IRQ names "drex_0" and "drex_1", the order should be the
+-  same as in the 'interrupts' list above.
+-
+-Example:
+-
+-	ppmu_dmc0_0: ppmu@10d00000 {
+-		compatible = "samsung,exynos-ppmu";
+-		reg = <0x10d00000 0x2000>;
+-		clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
+-		clock-names = "ppmu";
+-		events {
+-			ppmu_event_dmc0_0: ppmu-event3-dmc0_0 {
+-				event-name = "ppmu-event3-dmc0_0";
+-			};
+-		};
+-	};
+-
+-	dmc: memory-controller@10c20000 {
+-		compatible = "samsung,exynos5422-dmc";
+-		reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>;
+-		clocks = <&clock CLK_FOUT_SPLL>,
+-			 <&clock CLK_MOUT_SCLK_SPLL>,
+-			 <&clock CLK_FF_DOUT_SPLL2>,
+-			 <&clock CLK_FOUT_BPLL>,
+-			 <&clock CLK_MOUT_BPLL>,
+-			 <&clock CLK_SCLK_BPLL>,
+-			 <&clock CLK_MOUT_MX_MSPLL_CCORE>,
+-			 <&clock CLK_MOUT_MCLK_CDREX>;
+-		clock-names = "fout_spll",
+-			      "mout_sclk_spll",
+-			      "ff_dout_spll2",
+-			      "fout_bpll",
+-			      "mout_bpll",
+-			      "sclk_bpll",
+-			      "mout_mx_mspll_ccore",
+-			      "mout_mclk_cdrex";
+-		operating-points-v2 = <&dmc_opp_table>;
+-		devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
+-				 <&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
+-		device-handle = <&samsung_K3QF2F20DB>;
+-		vdd-supply = <&buck1_reg>;
+-		samsung,syscon-clk = <&clock>;
+-		interrupt-parent = <&combiner>;
+-		interrupts = <16 0>, <16 1>;
+-		interrupt-names = "drex_0", "drex_1";
+-	};
+diff --git a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+new file mode 100644
+index 000000000000..b168a9c8bfde
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+@@ -0,0 +1,137 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/memory-controllers/samsung,exynos5422-dmc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: |
++  Samsung Exynos5422 SoC frequency and voltage scaling for Dynamic Memory
++  Controller device
++
++maintainers:
++  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
++  - Lukasz Luba <lukasz.luba@arm.com>
++
++description: |
++  The Samsung Exynos5422 SoC has DMC (Dynamic Memory Controller) to which the
++  DRAM memory chips are connected. The driver is to monitor the controller in
++  runtime and switch frequency and voltage. To monitor the usage of the
++  controller in runtime, the driver uses the PPMU (Platform Performance
++  Monitoring Unit), which is able to measure the current load of the memory.
++  When 'userspace' governor is used for the driver, an application is able to
++  switch the DMC and memory frequency.
++
++properties:
++  compatible:
++    items:
++      - const: samsung,exynos5422-dmc
++
++  clock-names:
++    items:
++      - const: fout_spll
++      - const: mout_sclk_spll
++      - const: ff_dout_spll2
++      - const: fout_bpll
++      - const: mout_bpll
++      - const: sclk_bpll
++      - const: mout_mx_mspll_ccore
++      - const: mout_mclk_cdrex
++
++  clocks:
++    minItems: 8
++    maxItems: 8
++
++  devfreq-events:
++    $ref: '/schemas/types.yaml#/definitions/phandle-array'
++    minItems: 1
++    maxItems: 16
++    description: phandles of the PPMU events used by the controller.
++
++  device-handle:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description: |
++      phandle of the connected DRAM memory device. For more information please
++      refer to documentation file: Documentation/devicetree/bindings/ddr/lpddr3.txt
++
++  operating-points-v2: true
++
++  interrupts:
++    items:
++      - description: DMC internal performance event counters in DREX0
++      - description: DMC internal performance event counters in DREX1
++
++  interrupt-names:
++    items:
++      - const: drex_0
++      - const: drex_1
++
++  reg:
++    items:
++      - description: registers of DREX0
++      - description: registers of DREX1
++
++  samsung,syscon-clk:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    description: |
++      Phandle of the clock register set used by the controller, these registers
++      are used for enabling a 'pause' feature and are not exposed by clock
++      framework but they must be used in a safe way.  The register offsets are
++      in the driver code and specyfic for this SoC type.
++
++  vdd-supply: true
++
++required:
++  - compatible
++  - clock-names
++  - clocks
++  - devfreq-events
++  - device-handle
++  - reg
++  - samsung,syscon-clk
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos5420.h>
++    ppmu_dmc0_0: ppmu@10d00000 {
++        compatible = "samsung,exynos-ppmu";
++        reg = <0x10d00000 0x2000>;
++        clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
++        clock-names = "ppmu";
++        events {
++            ppmu_event_dmc0_0: ppmu-event3-dmc0_0 {
++                event-name = "ppmu-event3-dmc0_0";
++            };
++        };
++    };
++
++    memory-controller@10c20000 {
++        compatible = "samsung,exynos5422-dmc";
++        reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>;
++        clocks = <&clock CLK_FOUT_SPLL>,
++                 <&clock CLK_MOUT_SCLK_SPLL>,
++                 <&clock CLK_FF_DOUT_SPLL2>,
++                 <&clock CLK_FOUT_BPLL>,
++                 <&clock CLK_MOUT_BPLL>,
++                 <&clock CLK_SCLK_BPLL>,
++                 <&clock CLK_MOUT_MX_MSPLL_CCORE>,
++                 <&clock CLK_MOUT_MCLK_CDREX>;
++        clock-names = "fout_spll",
++                      "mout_sclk_spll",
++                      "ff_dout_spll2",
++                      "fout_bpll",
++                      "mout_bpll",
++                      "sclk_bpll",
++                      "mout_mx_mspll_ccore",
++                      "mout_mclk_cdrex";
++        operating-points-v2 = <&dmc_opp_table>;
++        devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
++                         <&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
++        device-handle = <&samsung_K3QF2F20DB>;
++        vdd-supply = <&buck1_reg>;
++        samsung,syscon-clk = <&clock>;
++        interrupt-parent = <&combiner>;
++        interrupts = <16 0>, <16 1>;
++        interrupt-names = "drex_0", "drex_1";
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ebdb07a49b02..eb4ada858826 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5570,7 +5570,7 @@ M:	Lukasz Luba <lukasz.luba@arm.com>
+ L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
++F:	Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+ F:	drivers/memory/samsung/exynos5422-dmc.c
+ 
+ DME1737 HARDWARE MONITOR DRIVER
 -- 
-Regards,
+2.30.2
 
-Laurent Pinchart
