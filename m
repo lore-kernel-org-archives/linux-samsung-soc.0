@@ -2,98 +2,247 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-14.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D77BC4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 16:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A12C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 19:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1583C6103A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 16:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DC3E610EA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 19:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233838AbhHMQuR (ORCPT
+        id S233887AbhHMTxD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Aug 2021 12:50:17 -0400
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:43719 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhHMQuQ (ORCPT
+        Fri, 13 Aug 2021 15:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233862AbhHMTxD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Aug 2021 12:50:16 -0400
-Received: by mail-ot1-f46.google.com with SMTP id r16-20020a0568304190b02904f26cead745so12731503otu.10;
-        Fri, 13 Aug 2021 09:49:49 -0700 (PDT)
+        Fri, 13 Aug 2021 15:53:03 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06136C0617AF
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Aug 2021 12:52:35 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id u13-20020a17090abb0db0290177e1d9b3f7so22231707pjr.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Aug 2021 12:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SM/lQTi+zDygoE+XS6N/UT9RB15cmwU0M45x22/Joec=;
+        b=ClpwbdOkN+fUw06l6m/r9I/6eV2Zc4wl3HcjVdbx2cjVfih6L4MNKKohX+Urqu5GYv
+         6KW2zdF8jXCFUcMtBWPNFNRwYkLBbJEOlRrp2pSol8//TBWAtUubSYQvDN2wqzQfSlk5
+         +kAGpg/E7C2SGAcp1XXqTEAAWQhM6T80PWwlE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=tEn4MVEzF0W4BZNXTcFcLsDZ9oqFF1sqQqH38Cw3xN0=;
-        b=tD7ZVXCnWWkV0PKItk2VYkuebsq0BQiaw91blGm+H2K9A9ZZwf6zo2vDO/tWQYwM/F
-         NdBZ2HmqmdABne+IOZ6AwkbW89PEkqZ5CzKr9rD+cGIldN6v4vJEp1pr7x5Ky6ho22rV
-         lKHTL4RACtUDRAeJN4j+q35sDxmfQ/J3HFtQKB9vDt0Q5p124C4iGGDv0vzMPwo6/KrA
-         xjl8zwn02wVnyng96UTHz2NU/YRvEMipej3tjfUyEofllrzd7YLcoT01/hbCW2yKszs+
-         tX7PP4EPvD8lBajBvF9ZSa+itQDZcMb7zF0QcuGydA1iCb/aBDiSzaLdhWo1rog6Fqu2
-         g+4w==
-X-Gm-Message-State: AOAM532UY7jggkO8/f1TJSxRu+MMc1rsOfpFC6cDpAsd3pPjasS1Nyh4
-        KM1oXx3AkY0+jn527EWOhg==
-X-Google-Smtp-Source: ABdhPJw60rnLvC2U06XFlPJd8fNDGFWvujytEhbYfBqUwRO06HTfZZ5hFfWSedttOheOvqon9OcLrQ==
-X-Received: by 2002:a05:6830:18fc:: with SMTP id d28mr2874300otf.359.1628873388801;
-        Fri, 13 Aug 2021 09:49:48 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s21sm346415ooh.44.2021.08.13.09.49.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Aug 2021 09:49:47 -0700 (PDT)
-Received: (nullmailer pid 3650551 invoked by uid 1000);
-        Fri, 13 Aug 2021 16:49:46 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SM/lQTi+zDygoE+XS6N/UT9RB15cmwU0M45x22/Joec=;
+        b=UTInvyeZnAjeqAO3wBA6vsYZA3vU6NR5cUBAaQkLomcGhPPC7Z+uEwwpQwbvQ/dyTS
+         s4l8mih5c0HqPfn2YQ5ZsDjBC/WBFCz3A93CCHV5ccgNQ1bbyHyAmhHOE67tcMko9v7U
+         3HozLaEZsrB38oXRuIPJSyob024zoAzLp+ecUBfupvt3B5BpIxAAlXOWZIcdID+rqeRj
+         anVVcpgTLfkdOSWiYuilmNMPrMd/QgU+5/PpMBzKglQTzqRyk4nwIxj1h/1jkAIva8nW
+         D5gF/4hubUTo8emWIl/QYd6eXuJk25XwldMNrHKebpyEni1b9detv21fsNDYrjL9SyI1
+         f1TA==
+X-Gm-Message-State: AOAM5326xOq1VTsKmw5gY3ZVGNj1lnHU0BwjSl15AoX7RlRAx91Mw7vg
+        sZbScz+/KMC+F46cmOtzTHTbDg==
+X-Google-Smtp-Source: ABdhPJy2w8yD9cldBqoy3do8Oh7daxWgiPmYLMaMspNZIK+anKngS+Tlq0TxUqjOvZvr+qsyzykfpQ==
+X-Received: by 2002:a62:dd83:0:b029:2e8:e511:c32f with SMTP id w125-20020a62dd830000b02902e8e511c32fmr4069276pff.49.1628884355393;
+        Fri, 13 Aug 2021 12:52:35 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:450d:9788:a70e:42d6])
+        by smtp.gmail.com with UTF8SMTPSA id x1sm3174894pfn.64.2021.08.13.12.52.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Aug 2021 12:52:34 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     devicetree@vger.kernel.org, Peter Chen <peter.chen@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Bastien Nocera <hadess@hadess.net>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Roger Quadros <rogerq@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Al Cooper <alcooperx@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jens Axboe <axboe@kernel.dk>, Johan Hovold <johan@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Pawel Laszczak <pawell@cadence.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20210813125414.104467-1-krzysztof.kozlowski@canonical.com>
-References: <20210813125414.104467-1-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH] dt-bindings: memory: convert Samsung Exynos DMC to dtschema
-Date:   Fri, 13 Aug 2021 11:49:46 -0500
-Message-Id: <1628873386.475685.3650550.nullmailer@robh.at.kernel.org>
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v16 0/7] usb: misc: Add onboard_usb_hub driver
+Date:   Fri, 13 Aug 2021 12:52:21 -0700
+Message-Id: <20210813195228.2003500-1-mka@chromium.org>
+X-Mailer: git-send-email 2.33.0.rc1.237.g0d66db33f3-goog
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 13 Aug 2021 14:54:14 +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos5422 SoC frequency and voltage scaling for
-> Dynamic Memory Controller to DT schema format using json-schema.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../memory-controllers/exynos5422-dmc.txt     |  84 -----------
->  .../samsung,exynos5422-dmc.yaml               | 137 ++++++++++++++++++
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 138 insertions(+), 85 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-> 
+This series adds:
+- the onboard_usb_hub_driver
+- glue in the xhci-plat driver to create and destroy the
+  onboard_usb_hub platform devices if needed
+- a device tree binding for the Realtek RTS5411 USB hub controller
+- device tree changes that add RTS5411 entries for the QCA SC7180
+  based boards trogdor and lazor
+- a couple of stubs for platform device functions to avoid
+  unresolved symbols with certain kernel configs
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The main issue the driver addresses is that a USB hub needs to be
+powered before it can be discovered. For discrete onboard hubs (an
+example for such a hub is the Realtek RTS5411) this is often solved
+by supplying the hub with an 'always-on' regulator, which is kind
+of a hack. Some onboard hubs may require further initialization
+steps, like changing the state of a GPIO or enabling a clock, which
+requires even more hacks. This driver creates a platform device
+representing the hub which performs the necessary initialization.
+Currently it only supports switching on a single regulator, support
+for multiple regulators or other actions can be added as needed.
+Different initialization sequences can be supported based on the
+compatible string.
 
-yamllint warnings/errors:
+Besides performing the initialization the driver can be configured
+to power the hub off during system suspend. This can help to extend
+battery life on battery powered devices which have no requirements
+to keep the hub powered during suspend. The driver can also be
+configured to leave the hub powered when a wakeup capable USB device
+is connected when suspending, and power it off otherwise.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.example.dt.yaml:0:0: /example-0/ppmu@10d00000: failed to match any schema with compatible: ['samsung,exynos-ppmu']
+Changes in v16:
+- added patch 'ARM: configs: Explicitly enable USB_XHCI_PLATFORM
+  where needed' to keep arm32 defconfigs effectively unchanged
 
-doc reference errors (make refcheckdocs):
+Changes in v15:
+- adjusted dependencies of USB_DWC3_CORE to make sure it can only
+  be enabled when at least one of USB_DWC3_HOST, USB_DWC3_GADGET
+  or USB_DWC3_DUAL_ROLE is selectable
 
-See https://patchwork.ozlabs.org/patch/1516650
+Changes in v14:
+- rebased on top of v5.14-rc1
+- dropped DT binding patch which landed in v5.13
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Changes in v13:
+- added patch "usb: Specify dependency on USB_XHCI_PLATFORM with
+  'depends on'" to the series to avoid Kconfig conflicts
+- added patch "arm64: defconfig: Explicitly enable USB_XHCI_PLATFORM"
+  to the series to keep effective defconfig unchanged
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Changes in v12:
+- onboard_hub driver: use IS_ENABLED(CONFIG_USB_ONBOARD_HUB_MODULE)
+  in onboard_hub.h to also check for the driver built as module
+- onboard_hub_driver: include onboard_hub.h again to make sure there
+  are prototype declarations for the public functions
 
-pip3 install dtschema --upgrade
+Changes in v11:
+- support multiple onboard hubs connected to the same parent
+- don't include ‘onboard_hub.h’ from the onboard hub driver
 
-Please check and re-submit.
+Changes in v10:
+- always use of_is_onboard_usb_hub() stub unless ONBOARD_USB_HUB=y/m
+- keep 'regulator-boot-on' property for pp3300_hub
+
+Changes in v9:
+- added dependency on ONBOARD_USB_HUB (or !!ONBOARD_USB_HUB) to
+  USB_PLATFORM_XHCI
+
+Changes in v7:
+- updated DT binding
+- series rebased on qcom/arm64-for-5.13
+
+Changes in v6:
+- updated summary
+
+Changes in v5:
+- cover letter added
+
+Matthias Kaehlcke (7):
+  usb: misc: Add onboard_usb_hub driver
+  of/platform: Add stubs for of_platform_device_create/destroy()
+  ARM: configs: Explicitly enable USB_XHCI_PLATFORM where needed
+  arm64: defconfig: Explicitly enable USB_XHCI_PLATFORM
+  usb: Specify dependencies on USB_XHCI_PLATFORM with 'depends on'
+  usb: host: xhci-plat: Create platform device for onboard hubs in
+    probe()
+  arm64: dts: qcom: sc7180-trogdor: Add nodes for onboard USB hub
+
+ .../sysfs-bus-platform-onboard-usb-hub        |   8 +
+ MAINTAINERS                                   |   7 +
+ arch/arm/configs/exynos_defconfig             |   1 +
+ arch/arm/configs/keystone_defconfig           |   1 +
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ arch/arm/configs/mvebu_v7_defconfig           |   1 +
+ arch/arm/configs/omap2plus_defconfig          |   1 +
+ arch/arm/configs/pxa_defconfig                |   1 +
+ .../boot/dts/qcom/sc7180-trogdor-lazor-r0.dts |  19 +-
+ .../boot/dts/qcom/sc7180-trogdor-lazor-r1.dts |  12 +-
+ .../arm64/boot/dts/qcom/sc7180-trogdor-r1.dts |  19 +-
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  19 +-
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/usb/cdns3/Kconfig                     |   2 +-
+ drivers/usb/dwc3/Kconfig                      |   5 +-
+ drivers/usb/host/Kconfig                      |   5 +-
+ drivers/usb/host/xhci-plat.c                  |   6 +
+ drivers/usb/host/xhci.h                       |   2 +
+ drivers/usb/misc/Kconfig                      |  17 +
+ drivers/usb/misc/Makefile                     |   1 +
+ drivers/usb/misc/onboard_usb_hub.c            | 497 ++++++++++++++++++
+ include/linux/of_platform.h                   |  22 +-
+ include/linux/usb/onboard_hub.h               |  18 +
+ 23 files changed, 627 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-platform-onboard-usb-hub
+ create mode 100644 drivers/usb/misc/onboard_usb_hub.c
+ create mode 100644 include/linux/usb/onboard_hub.h
+
+-- 
+2.33.0.rc1.237.g0d66db33f3-goog
 
