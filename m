@@ -2,200 +2,199 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C058C432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 19:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAD0C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Aug 2021 16:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7280610FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Aug 2021 19:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC2F860FF2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Aug 2021 16:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234133AbhHMTxW (ORCPT
+        id S238617AbhHNQ4W (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Aug 2021 15:53:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55394 "EHLO
+        Sat, 14 Aug 2021 12:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234131AbhHMTxS (ORCPT
+        with ESMTP id S233116AbhHNQ4W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Aug 2021 15:53:18 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE16C0612AF
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Aug 2021 12:52:49 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id w14so16830648pjh.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Aug 2021 12:52:49 -0700 (PDT)
+        Sat, 14 Aug 2021 12:56:22 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B795C061764;
+        Sat, 14 Aug 2021 09:55:53 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id q16so15148852ioj.0;
+        Sat, 14 Aug 2021 09:55:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rmecue9QUeQLjEjIx40ol9W8NZeTwwWyqVOpKPEfJgQ=;
-        b=h4+g/p4zliff4K3/cjL/A4A5SmFQmvVCsuFj25M74PywK8belHVLPd84mufDGOc99Y
-         fGqjxwCyRuccst5WNCdAUE7ch+nbURpFjSg5atf2Zf3WWduE4FhEogoZV2doYILpzEL7
-         xHYipN658PX7IqYoLi7fOn+uDM2MVYnWBKC7E=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TkKxZT4mLxk5mIde0v6z+9Gul4yrYdjCFOtjnU1rDPg=;
+        b=sTYMOrGZvwIXsLStVXxA9LYq3pNG88CR7XUkoBJ7bRT09rILeQ7+5PzZOUHkc8ojCf
+         pj14BWZ+A/FmZJaKVj08tR3sITuA+U6pMh2BcUdM3XPk0lB5LT/CmEJUCvrmI5Cos/Ot
+         vVW/HqC63LuXlaYQUgAcW+u0uReAdw7yA6VF/SpXNzVGrobeNE1DvR0q1KUKiu1xlRJo
+         Y+PYS8Swz/UtuapW9ngwl7am9vUrVuUsw5n0MIvm1JLmUY7HWdfSb9hidlumw3fqH4lb
+         fFk2OKeooV3gqd4kN+rDGCPlKF53K4jt7msfdlnUx5v/VOoW7Yqa0QvWj8kTLcT64jk9
+         BZSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rmecue9QUeQLjEjIx40ol9W8NZeTwwWyqVOpKPEfJgQ=;
-        b=rp0MWBnT7R76QG+wJbwy2suJUCq5bL9VBPSs+iNryyKBCZkuv+Lhtvu3/085niWPit
-         T99wG5/PgNuiaiLMfmHMUeiF1qK8PYa7uPs9a82Dhqod+xAJPlRFZ/iUvxV5wr9ONE2/
-         2EtfBYKyQFxbSD80SxlnyEEgKWb87omM7btcLdYtg1l9/uGLwVoZ/Fb03I6cyG6DXzGz
-         MtobVogm2XEMGKTY6LQnmvdLG7mzKUn7GsAe7x9r0lb5WidnQqQWWNXqIrZlo/fAbSly
-         2bb2cxpgSp1B6SKhAu5u2/W7G2KZGzCtex2tQW3xmu6dGaFh2OmIP/zwkwL9LV2NA+Ii
-         +w8Q==
-X-Gm-Message-State: AOAM533IjACZauWXaRAC8Ex2ts665T2cDGqKB4pls7ullLIG84JsX6xh
-        c+Fraq8tUTBXqtHwtim3D0xXZg==
-X-Google-Smtp-Source: ABdhPJzOWOlsavcCtPw0JA3mrby5b3cV4By0+SKQ6t9340axfGaaw4art/RyEN/KJya669RhN3muMg==
-X-Received: by 2002:a65:4581:: with SMTP id o1mr3695529pgq.349.1628884369112;
-        Fri, 13 Aug 2021 12:52:49 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:450d:9788:a70e:42d6])
-        by smtp.gmail.com with UTF8SMTPSA id ca7sm2554886pjb.11.2021.08.13.12.52.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Aug 2021 12:52:48 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     devicetree@vger.kernel.org, Peter Chen <peter.chen@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Bastien Nocera <hadess@hadess.net>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Roger Quadros <rogerq@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v16 5/7] usb: Specify dependencies on USB_XHCI_PLATFORM with 'depends on'
-Date:   Fri, 13 Aug 2021 12:52:26 -0700
-Message-Id: <20210813125146.v16.5.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
-X-Mailer: git-send-email 2.33.0.rc1.237.g0d66db33f3-goog
-In-Reply-To: <20210813195228.2003500-1-mka@chromium.org>
-References: <20210813195228.2003500-1-mka@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TkKxZT4mLxk5mIde0v6z+9Gul4yrYdjCFOtjnU1rDPg=;
+        b=J65QqjiXYEOrLKM1BFFsntCp2/SbM3iGCclbMMuD4Ra3Ht+HS5Ic2X9387NqX8YvOg
+         Bz1QvIO5CqNa7POYeUmoFkao/1qgd+xssENhYmx/Rtg8r4G2eUu/58mSTdfhBuAsF8Ef
+         XoNfBsdPhCaBRaJQwkoUN7pMrGCstV8ul6py2tcoUoWcsq7QzC0UodH31lb4pv9HCrUK
+         i5kcWHt/TPCqrv1MR+2p1xdC1RwcrsuzlcoEJxQWopFccf9yBadmenbmySWABACOVTf7
+         UJKHGwcHiSWeLWaGkvR+SGTvzODp1UXAgE2OOMa/dNq3KR/zdz22Ttp2n+rRXuAKp/Ih
+         EPrQ==
+X-Gm-Message-State: AOAM530aqGfOM0F8WDBoyMmiEWmRPLLnHvfEU/fO0xxqzBWTvyuJEhoR
+        WFrNJG+rXuAwCyZkGbfnuMNlGHIMKVnuQr9W4pw=
+X-Google-Smtp-Source: ABdhPJx0e6ayA20p27N/AVvpeQ/S9ofFLEn5vP5MNt5K39nC/5o0Xumu9QTwWrg9yInJbQywan5g/4UFQ7tnJJowl9Q=
+X-Received: by 2002:a5e:8e04:: with SMTP id a4mr4449132ion.56.1628960152421;
+ Sat, 14 Aug 2021 09:55:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20210803032734epcas5p2143008ddb212fe53fcd28b813c85c9d8@epcas5p2.samsung.com>
+ <20210803032539.15676-1-alim.akhtar@samsung.com>
+In-Reply-To: <20210803032539.15676-1-alim.akhtar@samsung.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Sat, 14 Aug 2021 22:25:17 +0530
+Message-ID: <CAGOxZ53emv4H4UqT2L7tDtTXRgDrtrqti=FtfkNWo2M3rTnZMw@mail.gmail.com>
+Subject: Re: [PATCH v11] dt-bindings: ufs: Add bindings for Samsung ufs host
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "robh+dt" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some USB controller drivers that depend on the xhci-plat driver
-specify this dependency using 'select' in Kconfig. This is not
-recommended for symbols that have other dependencies as it may
-lead to invalid configurations. Use 'depends on' to specify the
-dependency instead of 'select'.
+Ping!!
 
-For dwc3 specify the dependency on USB_XHCI_PLATFORM in
-USB_DWC3_HOST and USB_DWC3_DUAL_ROLE. Also adjust the
-dependencies of USB_DWC3_CORE to make sure that at least one
-of USB_DWC3_HOST, USB_DWC3_GADGET or USB_DWC3_DUAL_ROLE can be
-selected.
+On Wed, Aug 4, 2021 at 9:01 AM Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>
+> This patch adds DT bindings for Samsung ufs hci
+>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+> Changes since v10
+> * Rebased on v5.14-rc2
+> * removed Rob Herring earlier Reviewed-by tag
+>
+> This patch was part of exynos ufs driver series, somehow
+> this got missed to applied on the tree, sending again as a new
+> patch v11, removing Rob's earlier Reviewed-by tag.
+>
+>  .../bindings/ufs/samsung,exynos-ufs.yaml      | 89 +++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> new file mode 100644
+> index 000000000000..38193975c9f1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ufs/samsung,exynos-ufs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC series UFS host controller Device Tree Bindings
+> +
+> +maintainers:
+> +  - Alim Akhtar <alim.akhtar@samsung.com>
+> +
+> +description: |
+> +  Each Samsung UFS host controller instance should have its own node.
+> +  This binding define Samsung specific binding other then what is used
+> +  in the common ufshcd bindings
+> +  [1] Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> +
+> +properties:
+> +
+> +  compatible:
+> +    enum:
+> +      - samsung,exynos7-ufs
+> +
+> +  reg:
+> +    items:
+> +     - description: HCI register
+> +     - description: vendor specific register
+> +     - description: unipro register
+> +     - description: UFS protector register
+> +
+> +  reg-names:
+> +    items:
+> +      - const: hci
+> +      - const: vs_hci
+> +      - const: unipro
+> +      - const: ufsp
+> +
+> +  clocks:
+> +    items:
+> +      - description: ufs link core clock
+> +      - description: unipro main clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: core_clk
+> +      - const: sclk_unipro_main
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    const: ufs-phy
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - phys
+> +  - phy-names
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/exynos7-clk.h>
+> +
+> +    ufs: ufs@15570000 {
+> +       compatible = "samsung,exynos7-ufs";
+> +       reg = <0x15570000 0x100>,
+> +             <0x15570100 0x100>,
+> +             <0x15571000 0x200>,
+> +             <0x15572000 0x300>;
+> +       reg-names = "hci", "vs_hci", "unipro", "ufsp";
+> +       interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
+> +       clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
+> +                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
+> +       clock-names = "core_clk", "sclk_unipro_main";
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
+> +       phys = <&ufs_phy>;
+> +       phy-names = "ufs-phy";
+> +    };
+> +...
+>
+> base-commit: 2734d6c1b1a089fb593ef6a23d4b70903526fe0c
+> --
+> 2.17.1
+>
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
 
-Changes in v16:
-- none
-
-Changes in v15:
-- adjusted dependencies of USB_DWC3_CORE to make sure it can only
-  be enabled when at least one of USB_DWC3_HOST, USB_DWC3_GADGET
-  or USB_DWC3_DUAL_ROLE is selectable
-- updated commit message
-
-Changes in v14:
-- none
-
-Changes in v13:
-- patch added to the series
-
- drivers/usb/cdns3/Kconfig | 2 +-
- drivers/usb/dwc3/Kconfig  | 5 +++--
- drivers/usb/host/Kconfig  | 4 ++--
- 3 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/cdns3/Kconfig b/drivers/usb/cdns3/Kconfig
-index b98ca0a1352a..07e12f786d48 100644
---- a/drivers/usb/cdns3/Kconfig
-+++ b/drivers/usb/cdns3/Kconfig
-@@ -1,7 +1,7 @@
- config USB_CDNS_SUPPORT
- 	tristate "Cadence USB Support"
- 	depends on USB_SUPPORT && (USB || USB_GADGET) && HAS_DMA
--	select USB_XHCI_PLATFORM if USB_XHCI_HCD
-+	depends on !USB_XHCI_HCD || USB_XHCI_PLATFORM
- 	select USB_ROLE_SWITCH
- 	help
- 	  Say Y here if your system has a Cadence USBSS or USBSSP
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 66b1454c4db2..870f2251350a 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -2,8 +2,7 @@
- 
- config USB_DWC3
- 	tristate "DesignWare USB3 DRD Core Support"
--	depends on (USB || USB_GADGET) && HAS_DMA
--	select USB_XHCI_PLATFORM if USB_XHCI_HCD
-+	depends on ((USB && USB_XHCI_PLATFORM) || USB_GADGET) && HAS_DMA
- 	select USB_ROLE_SWITCH if USB_DWC3_DUAL_ROLE
- 	help
- 	  Say Y or M here if your system has a Dual Role SuperSpeed
-@@ -30,6 +29,7 @@ choice
- config USB_DWC3_HOST
- 	bool "Host only mode"
- 	depends on USB=y || USB=USB_DWC3
-+	depends on USB_XHCI_PLATFORM
- 	help
- 	  Select this when you want to use DWC3 in host mode only,
- 	  thereby the gadget feature will be regressed.
-@@ -44,6 +44,7 @@ config USB_DWC3_GADGET
- config USB_DWC3_DUAL_ROLE
- 	bool "Dual Role mode"
- 	depends on ((USB=y || USB=USB_DWC3) && (USB_GADGET=y || USB_GADGET=USB_DWC3))
-+	depends on USB_XHCI_PLATFORM
- 	depends on (EXTCON=y || EXTCON=USB_DWC3)
- 	help
- 	  This is the default mode of working of DWC3 controller where
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index df9428f1dc5e..518c2312ef0c 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -80,7 +80,7 @@ config USB_XHCI_MTK
- 
- config USB_XHCI_MVEBU
- 	tristate "xHCI support for Marvell Armada 375/38x/37xx"
--	select USB_XHCI_PLATFORM
-+	depends on USB_XHCI_PLATFORM
- 	depends on HAS_IOMEM
- 	depends on ARCH_MVEBU || COMPILE_TEST
- 	help
-@@ -112,9 +112,9 @@ config USB_EHCI_BRCMSTB
- config USB_BRCMSTB
- 	tristate "Broadcom STB USB support"
- 	depends on (ARCH_BRCMSTB && PHY_BRCM_USB) || COMPILE_TEST
-+	depends on !USB_XHCI_HCD || USB_XHCI_PLATFORM
- 	select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
- 	select USB_EHCI_BRCMSTB if USB_EHCI_HCD
--	select USB_XHCI_PLATFORM if USB_XHCI_HCD
- 	help
- 	  Enables support for XHCI, EHCI and OHCI host controllers
- 	  found in Broadcom STB SoC's.
 -- 
-2.33.0.rc1.237.g0d66db33f3-goog
-
+Regards,
+Alim
