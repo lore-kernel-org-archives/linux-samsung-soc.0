@@ -2,84 +2,97 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB55C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Aug 2021 21:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53923C4320A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Aug 2021 21:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 112FD60FC3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Aug 2021 21:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C02560F58
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Aug 2021 21:22:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234116AbhHQVPo (ORCPT
+        id S234211AbhHQVWg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 17 Aug 2021 17:15:44 -0400
-Received: from mail-oi1-f180.google.com ([209.85.167.180]:44595 "EHLO
-        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233802AbhHQVPm (ORCPT
+        Tue, 17 Aug 2021 17:22:36 -0400
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:36450 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230515AbhHQVWf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Aug 2021 17:15:42 -0400
-Received: by mail-oi1-f180.google.com with SMTP id w6so1144917oiv.11;
-        Tue, 17 Aug 2021 14:15:08 -0700 (PDT)
+        Tue, 17 Aug 2021 17:22:35 -0400
+Received: by mail-oi1-f182.google.com with SMTP id bd1so1246496oib.3;
+        Tue, 17 Aug 2021 14:22:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=PM2enoDBVpEuZpWbvRhxMVpJH3XAHQlsUlPw3171kZA=;
-        b=HEEout4/Efp6X1vj9qiCLD7Mb9/WeObrPr08l4ZOp8krLytVn1O8+r1JoRCtqQjSPy
-         i3XNVski804Uv4gDpeKUfpCGYYl38IICjBnH9Vivq3NfvmgMRGWFFQ2aH9YWKbnWsEb3
-         9iOct/zQFQ/8dhVEXfZijkQDkh06k0yG3YouV0vms1VXB6WLcuKE+FrF3526fkZnf9FG
-         k5Vcw6Ar24TCqKkP+Gjy1Pc6ID88bL4AfJ5ydaeF7HghzPzrFBsLvRLh6SO8xGDHAO87
-         AJfhDY/WyOYcgv10sTF1+KDY4KGHhj5qEbMfouPV6QegUYiEnAJEgBaFh0t2zHBx/Hj7
-         4Mjg==
-X-Gm-Message-State: AOAM5338b4JZcie/NhN9FQbgAcUJIqKbfW2iFDU+lTEffQBskGTL+Tuo
-        Q7IuRyz4GfI8dQ8vNmlLIw==
-X-Google-Smtp-Source: ABdhPJxeKQH2Qe+oyN/Eb6NLA66EQFyOE9Rd/a//VVTyHHLmmtmQGWiK/UY92yF/ki7QTfEYTxWrEw==
-X-Received: by 2002:a05:6808:f13:: with SMTP id m19mr4147887oiw.127.1629234908413;
-        Tue, 17 Aug 2021 14:15:08 -0700 (PDT)
+        bh=6L+5wlMt2yzIbfshHduMjrMVAdkTpwetAGTBAeNQdRg=;
+        b=jTG3eQr8kJfzQYWwrL73J28Ns/gDtyg91UPXTlnWfcIQyUvZOv4NBaepfXOIweiwvK
+         rs0N3cmXURa9qK2ZS5Baw2G6lVl3gx24GdAa+97acu9eUdKPMq52k3LkhLUM3STh1zSX
+         jB8gy7bzKgMAPSO0X4/J11JNBaKjktfyzpjSWK2aQmMMEeQwm7LY84jvmLdI7I1zMYP6
+         WR0Og32gCgNcPgjzD4O56jzPJH5weLtwoXeBXZOhpoWAfHSkJZh11NqonWUKFIhik/DH
+         IITQLTFAoEKvajudDxys71ZNlicllhjt33vBM9vuAGr818s8R4W/xX+AEYod4YV8qjMH
+         N5ZQ==
+X-Gm-Message-State: AOAM532yAND7IkZYpafEZPeljH+qerb8K3z7qijiNmMOEK7t2juV/n8d
+        j9PeClS6SkGOlbVm+9q9Hw==
+X-Google-Smtp-Source: ABdhPJwOmIKfALlUUV7/8OtxuGv3plXSNmLw/cppX34gG2KRU+NuHHV0PYqmGWcFcGmvBOy24j+mgA==
+X-Received: by 2002:aca:1911:: with SMTP id l17mr4172891oii.160.1629235321616;
+        Tue, 17 Aug 2021 14:22:01 -0700 (PDT)
 Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n9sm613545otn.54.2021.08.17.14.15.07
+        by smtp.gmail.com with ESMTPSA id s63sm753605oia.52.2021.08.17.14.21.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 14:15:07 -0700 (PDT)
-Received: (nullmailer pid 852498 invoked by uid 1000);
-        Tue, 17 Aug 2021 21:15:07 -0000
-Date:   Tue, 17 Aug 2021 16:15:07 -0500
+        Tue, 17 Aug 2021 14:22:00 -0700 (PDT)
+Received: (nullmailer pid 862324 invoked by uid 1000);
+        Tue, 17 Aug 2021 21:21:58 -0000
+Date:   Tue, 17 Aug 2021 16:21:58 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-        devicetree@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     linux-serial@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tom Gall <tom.gall@linaro.org>, Marc Zyngier <maz@kernel.org>,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 2/2] dt-bindings: rng: convert Samsung Exynos TRNG to
- dtschema
-Message-ID: <YRwm27L+PQx0TydS@robh.at.kernel.org>
-References: <20210811084306.28740-1-krzysztof.kozlowski@canonical.com>
- <20210811084306.28740-2-krzysztof.kozlowski@canonical.com>
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 3/7] dt-bindings: serial: samsung: Add Exynos850 doc
+Message-ID: <YRwodjUxlZmvrvSC@robh.at.kernel.org>
+References: <20210811114827.27322-1-semen.protsenko@linaro.org>
+ <20210811114827.27322-4-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210811084306.28740-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210811114827.27322-4-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 11 Aug 2021 10:43:06 +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos SoC True Random Number Generator bindings to DT
-> schema format using json-schema.
+On Wed, 11 Aug 2021 14:48:23 +0300, Sam Protsenko wrote:
+> Add compatible string for Exynos850 SoC.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  .../bindings/rng/samsung,exynos5250-trng.txt  | 17 -------
->  .../bindings/rng/samsung,exynos5250-trng.yaml | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 45 insertions(+), 18 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
->  create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
+> Changes in v3:
+>   - None
+> 
+> Changes in v2:
+>   - None
+> 
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Applied, thanks!
+Acked-by: Rob Herring <robh@kernel.org>
