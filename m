@@ -2,172 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7766EC4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 01:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2A0C4320A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 08:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5A160F9F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 01:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B32610D2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 08:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236038AbhHTBtq (ORCPT
+        id S230490AbhHTIVT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Aug 2021 21:49:46 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:32461 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235974AbhHTBto (ORCPT
+        Fri, 20 Aug 2021 04:21:19 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:52420
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232243AbhHTIVT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Aug 2021 21:49:44 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210820014903epoutp041a8c261b1af65cb01a8e428775d5cf04~c4KA506941141511415epoutp046
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 01:49:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210820014903epoutp041a8c261b1af65cb01a8e428775d5cf04~c4KA506941141511415epoutp046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1629424144;
-        bh=66qEicnIYMhO8Vbu+61zgiZtEIAgnKSoCVqjxIgW6sw=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=a7Am/Q09+H+FiTtg7Kr4QW8zS8pEIBnTlckQOLQgRck6gzTJJGicb8Mt0c1PoqcVm
-         TpAXBiRvb2vasdkroAGa3udfFG9aMsB0yvoMDeOKQ+M3QvPUFcbw+fHLOle2BrwQBi
-         67tkJs1OHjIjHvkNub3xTe0Nll+Nb7DYHPIhcgRY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20210820014903epcas5p2e5c058ade7c7e77a10160ad9996e676a~c4KAeumJW1347513475epcas5p2K;
-        Fri, 20 Aug 2021 01:49:03 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4GrPgX6yrbz4x9QN; Fri, 20 Aug
-        2021 01:48:56 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AE.58.41701.BF90F116; Fri, 20 Aug 2021 10:48:43 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210819170304epcas5p211ae01fc6ba6f5beaf7afaa90dcd5dda~cw_wfHsUp1503415034epcas5p2p;
-        Thu, 19 Aug 2021 17:03:04 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210819170304epsmtrp2faf230cb549f23c73802a7ebc68b6be0~cw_weIvaM0828208282epsmtrp2x;
-        Thu, 19 Aug 2021 17:03:04 +0000 (GMT)
-X-AuditID: b6c32a4b-0abff7000001a2e5-6b-611f09fb5a20
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0E.26.32548.7CE8E116; Fri, 20 Aug 2021 02:03:03 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210819170301epsmtip28419697366e72c3c11e7ad95793f5ddf~cw_uRMeka0714007140epsmtip2j;
-        Thu, 19 Aug 2021 17:03:00 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com
-Cc:     krzysztof.kozlowski@canonical.com,
-        linux-samsung-soc@vger.kernel.org, avri.altman@wdc.com,
-        kwmad.kim@samsung.com, dan.carpenter@oracle.com,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] scsi: ufs: ufs-exynos: Fix static checker warning
-Date:   Thu, 19 Aug 2021 22:41:31 +0530
-Message-Id: <20210819171131.55912-1-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7bCmhu5vTvlEg0XvBC0ezNvGZvHy51U2
-        i9f/prNYbHz7g8ni5pajLBYzzu9jsui+voPNYvnxf0wOHB6zGnrZPD4+vcXi0bdlFaPH501y
-        Hu0HupkCWKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTd
-        MnOAblFSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBka
-        GBiZAhUmZGccWr6JueALf8WNz+3MDYyTebsYOTkkBEwkvnXsYupi5OIQEtjNKHH0/Q12kISQ
-        wCdGiauvmSDsz4wST9vLuhg5wBomXUmBCO9ilDi5NACit4VJovHbNkaQBJuAtsTd6VvAekUE
-        rCR+rfzMDGIzC+xklFj+Qh1kjrCAk8Sk5dEgYRYBVYndc/+wgti8AjYSqy/8Zoe4TV5i9YYD
-        zBD2NnaJW+3JELaLxKmrD1ggbGGJV8e3QNVLSXx+t5cN4sxsiZ5dxhDhGoml845BldtLHLgy
-        hwWkhFlAU2L9Ln2IsKzE1FPrmCCO5JPo/f2ECSLOK7FjHoytKtH87irUGGmJid3drBC2h8Sr
-        +X+ZISESK/Hz51rWCYyysxA2LGBkXMUomVpQnJueWmxaYJyXWg6PouT83E2M4MSl5b2D8dGD
-        D3qHGJk4GA8xSnAwK4nwHvsjmyjEm5JYWZValB9fVJqTWnyI0RQYYhOZpUST84GpM68k3tDE
-        0sDEzMzMxNLYzFBJnFf3lUyikEB6YklqdmpqQWoRTB8TB6dUA1Pdf9fD3QyPb33PqfBr0Xv4
-        rDVNS1thU9HmY3f+fK3UmmG0MS71yXqPsDkcvOJh+/QkH14+tMhg7f3tTOk602Mn87auqYxl
-        2LrJ9J9clfGJeUxXLyhwGOvfPaInn87gpLqLue7fL6+a5L4rphHvp91gVH5tyXukJ7bg3buS
-        8L/cC7qn69iaBjE+LEhsfL8x7UKvwkVl65ATubsWMGysr+hfsvfej623JO+EdunqL/PUlI/3
-        cHisujHX8WL8g1XLnd9JSwqoH+F6UzpRxO68elpwN/+O5Y80n6yasP2QaOFS6Xjrje/2u8xM
-        bhLc8lD3g3O4nvuz9o9Rm89OTUhTY7D4c13eqM9pmXNk02vLx0osxRmJhlrMRcWJAHEySbDl
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmluLIzCtJLcpLzFFi42LZdlhJXvd4n1yiwc5NFhYP5m1js3j58yqb
-        xet/01ksNr79wWRxc8tRFosZ5/cxWXRf38Fmsfz4PyYHDo9ZDb1sHh+f3mLx6NuyitHj8yY5
-        j/YD3UwBrFFcNimpOZllqUX6dglcGYeWb2Iu+MJfceNzO3MD42TeLkYODgkBE4lJV1K6GLk4
-        hAR2MEr8X7+VuYuREyguLXF94wR2CFtYYuW/5+wQRU1MEo+nLGIFSbAJaEvcnb6FCcQWEbCR
-        OPp1IitIEbPAfkaJjr9TmUA2CAs4SUxaHg1SwyKgKrF77h+wXl6g+tUXfkMtkJdYveEA8wRG
-        ngWMDKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYLDSUtrB+OeVR/0DjEycTAeYpTg
-        YFYS4T32RzZRiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6p
-        Biadp8yub4XYr85zLzRjPzc1O5zBhEWPoag7MH2uSmzDIieGCuGcDI+oU5s+sG78GhHzWoGD
-        UdnZ3b/3pMSHhTsyJCJyOmXXsLFL1KYBfTT15UQmXS9pe8eNTWcCXvyRm8LNvd3p978/Uo2N
-        +T9zXVnntcm1bvK3ufFtTvqu1port7P3s55qTTRh/znBSPH2wl8NQg9/depOk9n/3st5e6Sy
-        lKb3K4uUo8yeCyS2Ttlh0L+8UvPsxuQ2tSyDP8b77jhLHDtTJq316+2DCPs3Z7W/S4hFcd0N
-        aTqpHZmof2au/9aIUNOCD3It64NidJ4r6i/ZUBn43fn2xJMbGV8rvFEJnLWmasHBU6rLF2oo
-        sRRnJBpqMRcVJwIANeCg+pYCAAA=
-X-CMS-MailID: 20210819170304epcas5p211ae01fc6ba6f5beaf7afaa90dcd5dda
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210819170304epcas5p211ae01fc6ba6f5beaf7afaa90dcd5dda
-References: <CGME20210819170304epcas5p211ae01fc6ba6f5beaf7afaa90dcd5dda@epcas5p2.samsung.com>
+        Fri, 20 Aug 2021 04:21:19 -0400
+X-Greylist: delayed 337 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Aug 2021 04:21:19 EDT
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AC888406E1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 08:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1629447303;
+        bh=+kHKFGwTKXn41PWg7UfAuln8Q8OXBJ2CxByz+s3vd2w=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=f0bJGBTkK41EdRUtkva9SvKq4HfNqCbcKh9qM36/vLR2oXlk8kLnM65QUfGQIwS+h
+         UK58rf7LNyQ6zn2WH4dislBeJKFlD6RR/RbNL+A3JfRzg5ypnmzzze+B5trRvkmJ9S
+         kTFdlZY5DbS2cmKQBFojBLv7c9NMLOD8w8yybN+MW760kzFOytdUmHw0nShSIeAcsE
+         FbzwKu0d6PgS49hABSro3Q6tPGEUYp8EQypgqP2AY9A+vJ7ckA8geRn0rJTKHluHvq
+         sFaSpbLS8c6mZvExT/FfYoKV1DAUDfCV/h90IMAuSm/EX2t40ll5NfirFNilupV0in
+         /Yqm/ond7dJLg==
+Received: by mail-ed1-f71.google.com with SMTP id l18-20020a0564021252b02903be7bdd65ccso4192123edw.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 01:15:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+kHKFGwTKXn41PWg7UfAuln8Q8OXBJ2CxByz+s3vd2w=;
+        b=YVXsYevvYgWDKM0vCGZuD2z+5Wze0BeNjTfSLIv66/tx/Z9Ii16oW4X7tyWFLc5S0k
+         0zNyfrG2i3Vz3vQhe9cMCZyLouSPeXSutc9AxL73HiFri4O02yUKKSnZ5I/2Gxapnqt3
+         69YLL5l+E21x4zadJ51xGYOaWTQo7jRSiqmBjTvVNCgpv+Q/B5GF/CGLBEosv41wna7B
+         nyEbZm89LkTe0JTDuaoNS98Q5xQCgzgnXknKPvhEx3WV2nuE/q6aHtqJY2K/raeBPZLx
+         IYFpVijDVj+23x8V6CMmaEsK7V9Iuv5Jciaff5n8YjqYR9STCgnV5gyV5UntYY3Kz1vt
+         2xHg==
+X-Gm-Message-State: AOAM531PMzRmN9adJITZh+aMeOpCrzA1BH2XeJYdnFdCpKQhhJ0ehTMH
+        6PRxiz3qEGIf9ROG4fRyUWM42m5FOXOBQipuTGN///QFj80w8FXVFmyUA6/oHXVL/MIMnTcCybF
+        n1vI49YJgfP1OaGJ0ZRXhGCCQswH//GLk1DP5Xk9DLWYo5tUp
+X-Received: by 2002:a05:6402:50c9:: with SMTP id h9mr21654141edb.357.1629447302553;
+        Fri, 20 Aug 2021 01:15:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzMEqHxaJILqth3tDzX13eqFAO3EJLWJDrrCnn+vkSZOV4tjYEACJCJ7+O/QLcOpMQv2o3JsQ==
+X-Received: by 2002:a05:6402:50c9:: with SMTP id h9mr21654120edb.357.1629447302372;
+        Fri, 20 Aug 2021 01:15:02 -0700 (PDT)
+Received: from localhost.localdomain ([86.32.42.198])
+        by smtp.gmail.com with ESMTPSA id a2sm3284071edm.72.2021.08.20.01.15.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Aug 2021 01:15:01 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] arm64: dts: exynos: align operating-points table name with dtschema in Exynos5433
+Date:   Fri, 20 Aug 2021 10:14:57 +0200
+Message-Id: <20210820081458.83406-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-clk_get_rate() returns unsigned long and currently this driver
-stores the return value in u32 type, resulting the below warning:
+Align the name of operating-points node to dtschema to fix warnings like:
 
-Fixed smatch warnings:
-
-        drivers/scsi/ufs/ufs-exynos.c:286 exynos_ufs_get_clk_info()
-        warn: wrong type for 'ufs->mclk_rate' (should be 'ulong')
-
-        drivers/scsi/ufs/ufs-exynos.c:287 exynos_ufs_get_clk_info()
-        warn: wrong type for 'pclk_rate' (should be 'ulong')
-
-Fixes: 55f4b1f73631: "scsi: ufs: ufs-exynos: Add UFS host support for Exynos SoCs"
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/scsi/ufs/ufs-exynos.c | 4 ++--
- drivers/scsi/ufs/ufs-exynos.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi | 10 +++++-----
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi     |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufs-exynos.c b/drivers/scsi/ufs/ufs-exynos.c
-index cf46d6f86e0e..427a2ff7e9da 100644
---- a/drivers/scsi/ufs/ufs-exynos.c
-+++ b/drivers/scsi/ufs/ufs-exynos.c
-@@ -260,7 +260,7 @@ static int exynos_ufs_get_clk_info(struct exynos_ufs *ufs)
- 	struct ufs_hba *hba = ufs->hba;
- 	struct list_head *head = &hba->clk_list_head;
- 	struct ufs_clk_info *clki;
--	u32 pclk_rate;
-+	unsigned long pclk_rate;
- 	u32 f_min, f_max;
- 	u8 div = 0;
- 	int ret = 0;
-@@ -299,7 +299,7 @@ static int exynos_ufs_get_clk_info(struct exynos_ufs *ufs)
- 	}
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+index 8997f8f2b96c..72ccf18eb9d1 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
+@@ -87,7 +87,7 @@ bus_noc2: bus9 {
+ 		status = "disabled";
+ 	};
  
- 	if (unlikely(pclk_rate < f_min || pclk_rate > f_max)) {
--		dev_err(hba->dev, "not available pclk range %d\n", pclk_rate);
-+		dev_err(hba->dev, "not available pclk range %lu\n", pclk_rate);
- 		ret = -EINVAL;
- 		goto out;
- 	}
-diff --git a/drivers/scsi/ufs/ufs-exynos.h b/drivers/scsi/ufs/ufs-exynos.h
-index 67505fe32ebf..dadf4fd10dd8 100644
---- a/drivers/scsi/ufs/ufs-exynos.h
-+++ b/drivers/scsi/ufs/ufs-exynos.h
-@@ -184,7 +184,7 @@ struct exynos_ufs {
- 	u32 pclk_div;
- 	u32 pclk_avail_min;
- 	u32 pclk_avail_max;
--	u32 mclk_rate;
-+	unsigned long mclk_rate;
- 	int avail_ln_rx;
- 	int avail_ln_tx;
- 	int rx_sel_idx;
-
-base-commit: 36a21d51725af2ce0700c6ebcb6b9594aac658a6
+-	bus_g2d_400_opp_table: opp-table2 {
++	bus_g2d_400_opp_table: opp-table-2 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -117,7 +117,7 @@ opp-100000000 {
+ 		};
+ 	};
+ 
+-	bus_g2d_266_opp_table: opp-table3 {
++	bus_g2d_266_opp_table: opp-table-3 {
+ 		compatible = "operating-points-v2";
+ 
+ 		opp-267000000 {
+@@ -137,7 +137,7 @@ opp-100000000 {
+ 		};
+ 	};
+ 
+-	bus_gscl_opp_table: opp-table4 {
++	bus_gscl_opp_table: opp-table-4 {
+ 		compatible = "operating-points-v2";
+ 
+ 		opp-333000000 {
+@@ -151,7 +151,7 @@ opp-166500000 {
+ 		};
+ 	};
+ 
+-	bus_hevc_opp_table: opp-table5 {
++	bus_hevc_opp_table: opp-table-5 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -175,7 +175,7 @@ opp-100000000 {
+ 		};
+ 	};
+ 
+-	bus_noc2_opp_table: opp-table6 {
++	bus_noc2_opp_table: opp-table-6 {
+ 		compatible = "operating-points-v2";
+ 
+ 		opp-400000000 {
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 6a6f7dd1d65c..ebd5091d68b4 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -239,7 +239,7 @@ cluster_a53_l2: l2-cache1 {
+ 		};
+ 	};
+ 
+-	cluster_a53_opp_table: opp-table0 {
++	cluster_a53_opp_table: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -285,7 +285,7 @@ opp-1300000000 {
+ 		};
+ 	};
+ 
+-	cluster_a57_opp_table: opp-table1 {
++	cluster_a57_opp_table: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
 -- 
-2.17.1
+2.30.2
 
