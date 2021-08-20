@@ -2,109 +2,190 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45924C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 15:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7FDC432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 15:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 212B26112E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 15:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B549961053
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Aug 2021 15:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240607AbhHTPFP (ORCPT
+        id S240951AbhHTPFY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Aug 2021 11:05:15 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38382
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229772AbhHTPFP (ORCPT
+        Fri, 20 Aug 2021 11:05:24 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:60600
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240953AbhHTPFY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Aug 2021 11:05:15 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        Fri, 20 Aug 2021 11:05:24 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0E0BE40791
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 15:04:36 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3BBA240202
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 15:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629471876;
-        bh=+9RVHIO7GV1Om2KHgusO6/MXkZN0OfEQMTrFuagDZKI=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=NiAqpx/BHsRMliyv/ACW72HdBctzKXhU8wc6GSz5C71fXX0iRVWFqa+koZKE3awAl
-         FTVtHkJ5jEdcNFtyFXhT8u7C8Vv2oOudbi1p9CcFIWqivU6yYYvTHIJm81hOhLr6S9
-         ql0tP5vs8g2vlz2XqYJQAUDRYi5Y6RcMix498XQTaXttCDPCvfrVJvmpN2N0eqtayD
-         ySfMzsWlsQU+fw+sOtVs1BNxhgGcQY1JayeYhqvJFoDK2jvvoF3dFwXi6aa+/AEhi0
-         F1O+JeE9APlUk7rUuRr2arbcGl9wFKEX7Tz1qY71G8TSPen4J3pEPRzDhyZ5RIaeQ3
-         xB9ImzyJEdxzA==
-Received: by mail-ed1-f71.google.com with SMTP id x24-20020aa7dad8000000b003bed477317eso4709340eds.18
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 08:04:36 -0700 (PDT)
+        s=20210705; t=1629471885;
+        bh=Q4bywyC7UewzTV+MQFN+uCdHpvQHcyElXiuKGQcww6Q=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=pRSSgpsE+YAHgJ2wzKudMlU0ELeMaaIWdyua0cwIdMqIywmHj5QhMS8bIoojiJiQj
+         f2FP4+dOAjc3XM9SvrKAETg8KNd1ollPu5+c3UmuH2u80vbJpOjeU0CtFog4EmNMGj
+         v0X8wOLcq28HtHyQwrnamZJ7glxr5t3L3bA7wTBlWIFy1S6UcP2xzTfm0DTd8OUdtN
+         dnZi0IEgqmOE4l7DGasHIAdsiLUT9d0FN7a9CYpTifYOxqb4v5gKh7cpe+6Xmx/VDX
+         u9hFE2v8wfWtLa7vrgli5O3jsKNJLhEVsSwAP4/a9B20kaMzXsN4cWPX+5f1cJZUAJ
+         xROzaMiONA9zQ==
+Received: by mail-ed1-f70.google.com with SMTP id k13-20020aa7c04d000000b003bf04c03fc4so4697992edo.22
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2021 08:04:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+9RVHIO7GV1Om2KHgusO6/MXkZN0OfEQMTrFuagDZKI=;
-        b=lAHgTn7KKpQr1O0G1vmYv9mMWzE1sx0zMFTy1zCzqFIw+i9Z+ipU+lX1kdSjrGgEbj
-         /X8fd2LloTOrZn8vSUgynL4LZn7nE1TZLjdu3/nYQ5N1cIffUI7VjWdwdYAsF449TnAa
-         qtI4FHY/PO0rut/ZHaLsG1DfpEWdx5EHIvONgfET/7E0uxWY1kE6FychjkdQGQIoio3Q
-         QzHhfIsdK63qKiJ0ojfQ3aLTfE7OT0hvGCAa9NWJc8FGyl2cLz3fx3Lud1K9xlKOsfOl
-         kakoW6Z9XdZO1scbt9BwrqyjGVXUFqfG83sK9idAC2ItAah/LtKiwpDov23DXvvVJQ0g
-         KyrA==
-X-Gm-Message-State: AOAM533Rs8I9Wa5C2C3fOUotfWNM2dQpEuRx/rHLy9BptvLF1OTtA+ue
-        GO1qel/67Zw59npWNz/RNoW4QvdmbnoUDWri9U058ebyNMxfbWYy1TeRqXn7eI9AT2uvGSMOj/U
-        VTXFwD3PjtxkdtLcM4LxXdF3rHfamE/2zjocgLRKBIjh9mzes
-X-Received: by 2002:a05:6402:1157:: with SMTP id g23mr23183743edw.90.1629471875798;
-        Fri, 20 Aug 2021 08:04:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwgDiyfkZv84mpJkewwib7hgZF+c9z+OtbNAQMGJ7h7jHN43rWGybqDCjw2we1dlKuY6kNo0A==
-X-Received: by 2002:a05:6402:1157:: with SMTP id g23mr23183722edw.90.1629471875595;
-        Fri, 20 Aug 2021 08:04:35 -0700 (PDT)
-Received: from [192.168.8.102] ([86.32.42.198])
-        by smtp.gmail.com with ESMTPSA id q6sm2960038ejm.106.2021.08.20.08.04.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Aug 2021 08:04:35 -0700 (PDT)
-Subject: Re: [PATCH 1/2] arm64: dts: exynos: align operating-points table name
- with dtschema in Exynos5433
-To:     Alim Akhtar <alim.akhtar@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-References: <20210820081458.83406-1-krzysztof.kozlowski@canonical.com>
- <CAGOxZ53oTWuSLupGKWd+XWPXJZQfZ28-Vo=wWT1exty0LpCfOA@mail.gmail.com>
+        bh=Q4bywyC7UewzTV+MQFN+uCdHpvQHcyElXiuKGQcww6Q=;
+        b=nsRUgFLxmJXTlXQb32faSZrp0iTyuXiH4NQaoObUG1AbhVTy6eDDfUcCxhoAC08tms
+         6uXPec+Aujn/2u7d42mbtcCjhQBMZt5O+4SLx4IXAMV7N4CfNDP4c3gZlolW18qGisqB
+         ei35JX3NkzU1B1NBeoA0hQzhegBNK9De81mU8bkWy5TTPr7bIjSkInOSzpLd2CQlrhcZ
+         LN4vC8peBESRtiHE1Y2yeVqMDUEqLt0vjeFSFtLi7ryNL4BlwHq4iwwoB52FYPNGSdno
+         kBIN7trEEh0NtiSsmQ1bTF3SpMzLEQO77Z1ByRPpLWvmtCBrd19HhvgbrMH57Ti3kPjy
+         YX8A==
+X-Gm-Message-State: AOAM530JykFWSRCSSspIxlto5SuswRx3AM/zAWCJken+uBCbdwxzFc+H
+        RIztMH1pC+49AMs+pbjtZb6mHudnx1ufpPdu59SxRWqD2myvVtb++N8tZY7oNbkkYtRR9WlJ1jD
+        jxzIduPaWYn6TYpSHLzbfh50ayGMD0GTH0CrerR4qLsE+9IZK
+X-Received: by 2002:a05:6402:4cb:: with SMTP id n11mr22599469edw.292.1629471884979;
+        Fri, 20 Aug 2021 08:04:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw8+g4RTCfx6bbgnVK47oGQHaFdzl3eiT1whUbYdVBDa+CRr+lDNwbM7mge/61Vwch8hFXB5Q==
+X-Received: by 2002:a05:6402:4cb:: with SMTP id n11mr22599453edw.292.1629471884755;
+        Fri, 20 Aug 2021 08:04:44 -0700 (PDT)
+Received: from localhost.localdomain ([86.32.42.198])
+        by smtp.gmail.com with ESMTPSA id ck17sm3690735edb.88.2021.08.20.08.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Aug 2021 08:04:44 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <ed2e81ce-97ac-be28-8db5-3f1242c64a91@canonical.com>
-Date:   Fri, 20 Aug 2021 17:04:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] dt-bindings: devfreq: event: convert Samsung Exynos NoCP to dtschema
+Date:   Fri, 20 Aug 2021 17:03:50 +0200
+Message-Id: <20210820150353.161161-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <CAGOxZ53oTWuSLupGKWd+XWPXJZQfZ28-Vo=wWT1exty0LpCfOA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/08/2021 16:44, Alim Akhtar wrote:
-> On Fri, Aug 20, 2021 at 1:51 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> Align the name of operating-points node to dtschema to fix warnings like:
->>
-> Did you miss adding warnings here?
+Convert Samsung Exynos NoC Probe bindings to DT schema format using
+json-schema.
 
-Yeah, I missed. I will add it when applying.
+New bindings contain copied description from previous bindings document,
+therefore the license is set as GPL-2.0-only.
 
-> 
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
-> Rest looks good.
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Thanks!
+---
 
+Changes since v1:
+1. New patch
+---
+ .../bindings/devfreq/event/exynos-nocp.txt    | 26 ----------
+ .../devfreq/event/samsung,exynos-nocp.yaml    | 48 +++++++++++++++++++
+ 2 files changed, 48 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt
+ create mode 100644 Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt
+deleted file mode 100644
+index aeaebd425d1f..000000000000
+--- a/Documentation/devicetree/bindings/devfreq/event/exynos-nocp.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-
+-* Samsung Exynos NoC (Network on Chip) Probe device
+-
+-The Samsung Exynos542x SoC has NoC (Network on Chip) Probe for NoC bus.
+-NoC provides the primitive values to get the performance data. The packets
+-that the Network on Chip (NoC) probes detects are transported over
+-the network infrastructure to observer units. You can configure probes to
+-capture packets with header or data on the data request response network,
+-or as traffic debug or statistic collectors. Exynos542x bus has multiple
+-NoC probes to provide bandwidth information about behavior of the SoC
+-that you can use while analyzing system performance.
+-
+-Required properties:
+-- compatible: Should be "samsung,exynos5420-nocp"
+-- reg: physical base address of each NoC Probe and length of memory mapped region.
+-
+-Optional properties:
+-- clock-names : the name of clock used by the NoC Probe, "nocp"
+-- clocks : phandles for clock specified in "clock-names" property
+-
+-Example : NoC Probe nodes in Device Tree are listed below.
+-
+-	nocp_mem0_0: nocp@10ca1000 {
+-		compatible = "samsung,exynos5420-nocp";
+-		reg = <0x10CA1000 0x200>;
+-	};
+diff --git a/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml b/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml
+new file mode 100644
+index 000000000000..d318fccf78f1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/devfreq/event/samsung,exynos-nocp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos NoC (Network on Chip) Probe
++
++maintainers:
++  - Chanwoo Choi <cw00.choi@samsung.com>
++  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
++
++description: |
++  The Samsung Exynos542x SoC has a NoC (Network on Chip) Probe for NoC bus.
++  NoC provides the primitive values to get the performance data. The packets
++  that the Network on Chip (NoC) probes detects are transported over the
++  network infrastructure to observer units. You can configure probes to capture
++  packets with header or data on the data request response network, or as
++  traffic debug or statistic collectors. Exynos542x bus has multiple NoC probes
++  to provide bandwidth information about behavior of the SoC that you can use
++  while analyzing system performance.
++
++properties:
++  compatible:
++    const: samsung,exynos5420-nocp
++
++  clock-names:
++    items:
++      - const: nocp
++
++  clocks:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    nocp_mem0_0: nocp@10ca1000 {
++        compatible = "samsung,exynos5420-nocp";
++        reg = <0x10ca1000 0x200>;
++    };
+-- 
+2.30.2
+
