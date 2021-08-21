@@ -2,111 +2,304 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55922C4338F
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Aug 2021 17:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A0C4338F
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Aug 2021 20:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37D4861242
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Aug 2021 17:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A1D61242
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Aug 2021 20:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbhHUR3K (ORCPT
+        id S230207AbhHUUFH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 Aug 2021 13:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
+        Sat, 21 Aug 2021 16:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbhHUR3J (ORCPT
+        with ESMTP id S230180AbhHUUFH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 Aug 2021 13:29:09 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56197C061575
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Aug 2021 10:28:30 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id t42so8956780pfg.12
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Aug 2021 10:28:30 -0700 (PDT)
+        Sat, 21 Aug 2021 16:05:07 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843B3C061756
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Aug 2021 13:04:27 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id d16so8425623vsf.12
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Aug 2021 13:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=C5bdnNLXW/3a03Da92T1tNYI9jbJ+iBX8hk1AZBK69k=;
-        b=lPCT56fvdHhbMeaNM/ljtItbgIsd+ynybDNkESbxyq1PY0QqgViI70CKj1boq8zjY5
-         uIqHxKPuCDg0V+tfidN7qCTm0PwSTU//6eP1ObGfJyn02TkffSs7P/LGGUZoin+41A+8
-         6gatgzAL8py1LAIWZOF3aMpAXiYVxXy8aIHom4DXozXcNc1uTIYGmxBrIZXq6CuaBOiQ
-         nV4SD/JCOaktp/kMvjsGuJeigTa81aPYBdeSB87mdP+sTyZebhfDFwlqEjvosG4rNdA8
-         aH4RV8FvcG/Pk6IpGOgUIYWvBrGnAzTABwliQ3mgckt4/W8cpf/gtNYqBCpVGaDcClY2
-         EMXQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G38jY1tilTGN6yDwHsom5S6bcpGnsNsFIqj6vHXaM+4=;
+        b=jbszNntP7qTNXuYqeSDrSwyTEJRUxrFw9Tszq2ShHFrKt+c5lI5tR1iD4bTU5W0CY6
+         +CIRYtl6wu5OzPTlhRq4xVu2fyRkkCshIJnzMGm8Uz+VgmoICIPSkqID4iLESFOzwJzO
+         FfI3xg/pnuBnsa9QCjryMzEjzqIcvpU6cCqRUJkED4JBHaNQ8h3pmRDbtXD3XiLZP+sY
+         D2kiu9zD3NZ04mNunkmIyGotJoS9joa0JNQy4rYj2iUaQiyJvG6w4rW+k55A6NaoBE1e
+         qVnAgI0ULUX2/mmEHX0WIhzB6wxlAeydUSx6CNxYtUtb+CSqUsxo2EEA8huQ9kk+eTvO
+         usRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=C5bdnNLXW/3a03Da92T1tNYI9jbJ+iBX8hk1AZBK69k=;
-        b=VhTPLX8kMpSOzCLqtmvjqURBR8ECodONR1x9v5QVDZ8JBq8afcV13ZsROtPDiQmb5e
-         EwZEaCF3lr3uEvp/kXeBm3nZHJWoI+bqj/93WKnbqhfnAIaK/s2HdsTvjpj+YwUVPnnG
-         e2xw7yJae4Q5v4y7/HTC0GBURnZPJkRyQb677AmrT4vnvRrBDWxBSUB8RgMA2CRdV2tq
-         6N0uEMkgDaDOUD39dwjM6aZdv0Elod0ZQnpv5ldyI8OQiRPWCl1tjRubFVI4ssPY39j+
-         KLuNpONUvRADVlMKnn05w+qKY0dVp+QI+FuANMKuY4nNXmEvdNto9ceivohkquvit0VA
-         9gQw==
-X-Gm-Message-State: AOAM5334rIXC5wy9Lkx7f8/5caHsFnAqZHJBHryMkFAo552uOfHhb8in
-        Rdv/nw2BqmC+1bZhsZAo0X+CQ8R16Jg=
-X-Google-Smtp-Source: ABdhPJyM3QDjqE31vQvc4MhN+5picZL2CRZaxyUGcHqIF7f1Qcc1p5NVmD9nuZ3AOLmw0mzgfhIjhQ==
-X-Received: by 2002:a05:6a00:1989:b0:3e2:a387:e1d9 with SMTP id d9-20020a056a00198900b003e2a387e1d9mr23648446pfl.64.1629566909900;
-        Sat, 21 Aug 2021 10:28:29 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id n22sm10938169pff.57.2021.08.21.10.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Aug 2021 10:28:28 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Sun, 22 Aug 2021 02:28:25 +0900
-Message-Id: <20210821172825.54720-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G38jY1tilTGN6yDwHsom5S6bcpGnsNsFIqj6vHXaM+4=;
+        b=Z8OZf6/WhPsgMnEDV9pDedULzvXQjONZApFbF5KIVZLoe5Es6tmyi94eSHcPGgen8C
+         d3s0bJg+Xl8YNm2VtyrDl8z2FmnleFx/SEScEiI7bu3BLIkd+DR/88pAaIjksvCztS96
+         acxec0PgpzagckZZdNsicfTQn767AJBhonc+NOhhdS2HSVAS0cmO/JN9QZ18n073uR8K
+         A6WOCWeFG7cQljZ0xoAWKjdQa3AcvVwmDo0+6iyodqDJUsode5OWkdpFulhTHtsce6EF
+         bNdOeIhptP25YYWFtRc5HQHjhB/MC5sAx0C7F4jNnzthc/ZO37WspnQjinlhDo8xGBZK
+         3f8w==
+X-Gm-Message-State: AOAM5315lbJYZGfm8KDFXU11qiwX4X7YHmoZnLMco65dn2UA0l52YA6U
+        FX7QPq/y6meHKxZRHT28bdVAawmrWc05kLnHPvEu4Q==
+X-Google-Smtp-Source: ABdhPJzU7hnomubaSHIzPBGsiWg0WU5H7lkMGJVnVU/4N1qnPmwHy/BZu/KqOcfxg7pCte4q8mzlxNLvP7gLbwusFfw=
+X-Received: by 2002:a67:16c1:: with SMTP id 184mr20698442vsw.14.1629576266521;
+ Sat, 21 Aug 2021 13:04:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210811114827.27322-1-semen.protsenko@linaro.org>
+ <20210811114827.27322-8-semen.protsenko@linaro.org> <YRwDETpe019RFU/q@robh.at.kernel.org>
+In-Reply-To: <YRwDETpe019RFU/q@robh.at.kernel.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sat, 21 Aug 2021 23:04:14 +0300
+Message-ID: <CAPLW+4mt8x3XacrOHBSgOPZckUbhs=7ee4MCZwEP3ziPYRD7bw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] arm64: dts: exynos: Add Exynos850 SoC support
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Marc Zyngier <maz@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
+On Tue, 17 Aug 2021 at 21:42, Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Aug 11, 2021 at 02:48:27PM +0300, Sam Protsenko wrote:
+> > Samsung Exynos850 is ARMv8-based mobile-oriented SoC.
+> >
+> > This patch adds minimal SoC support by including next Device Tree nodes:
+> >
+> > 1. Octa cores (Cortex-A55), supporting PSCI v1.0
+> > 2. ARM architecture timer (armv8-timer)
+> > 3. Interrupt controller (GIC-400)
+> > 4. Pinctrl nodes for GPIO
+> > 5. Serial node
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Changes in v3:
+> >  - Used generic fixed clock for serial
+> >
+> > Changes in v2:
+> >  * Commit message:
+> >    - Documented added dts features instead of CPU features
+> >
+> >  * exynos850-usi.dtsi:
+> >    - Removed, moved everything to exynos850.dtsi
+> >
+> >  * exynos850.dtsi:
+> >    - Root node:
+> >      - Added comment about engineering name (Exynos3830)
+> >      - Renamed pinctrl nodes, adding domain names
+> >      - Used hard coded IRQ numbers instead of named constants everywhere
+> >      - Added soc node, moved next nodes there: gic, clock, pinctrls and
+> >        serial
+> >      - Used address-cells=1 for soc node and removed unneeded 0x0 from
+> >        reg properties
+> >      - Moved exynos850-pinctrl.dtsi include line to the end of
+> >        exynos850.dtsi
+> >      - Coding style fixes
+> >    - cpus:
+> >      - Used address-cells=1 for cpus node
+> >      - Renamed cpu@0001 to cpu@1, and so on
+> >      - Left only "arm,cortex-a55" for cpus compatible
+> >      - Renamed reg = <0x0001> to <0x1> for cpus
+> >    - armv8 timer:
+> >      - Add comment about missing HV timer IRQ to armv8 timer node
+> >      - Removed not existing properties from armv8 timer node
+> >      - Fixed cpu number in CPU_MASK()
+> >      - Removed obsolete clock-frequency property
+> >    - GIC:
+> >      - Fixed GIC type to be GIC-400
+> >      - Fixed size of GIC's 2nd region to be 0x2000
+> >    - serial node:
+> >      - Hard coded clock number for serial_0 for now; will replace with
+> >        named const once proper clock driver is implemented
+> >      - Removed gate_uart_clk0 clock from serial_0, as that clock is not
+> >        supported in serial driver anyway (yet)
+> >    - clock node:
+> >      - Fixed clock controller node name (@0x12.. -> @12..)
+> >
+> >  * exynos850-pinctrl.dtsi:
+> >    - Referenced pinctrl nodes instead of defining those again in root node
+> >    - Fixed interrupt-cells (3 -> 2)
+> >    - Fixed USI related comments for pin config nodes
+> >    - Removed decon_f_te_* and fm_lna_en nodes (won't be used)
+> >    - Reordered pin config nodes by pin numbers
+> >    - Improved all comments
+> >    - Used existing named constants for pin-function and pin-pud
+> >    - Fixed node names (used hyphens instead of underscore)
+> >    - Fixed warnings found in W=1 build
+> >
+> >  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 748 ++++++++++++++++++
+> >  arch/arm64/boot/dts/exynos/exynos850.dtsi     | 261 ++++++
+> >  2 files changed, 1009 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> > new file mode 100644
+> > index 000000000000..ba5d5f33e2f6
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> > @@ -0,0 +1,748 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Samsung's Exynos850 SoC pin-mux and pin-config device tree source
+> > + *
+> > + * Copyright (C) 2017 Samsung Electronics Co., Ltd.
+> > + * Copyright (C) 2021 Linaro Ltd.
+> > + *
+> > + * Samsung's Exynos850 SoC pin-mux and pin-config options are listed as device
+> > + * tree nodes in this file.
+> > + */
+> > +
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/pinctrl/samsung.h>
+> > +
+> > +&pinctrl_alive {
+> > +     gpa0: gpa0 {
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +             interrupt-parent = <&gic>;
+> > +             interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+> > +     };
+> > +
+> > +     gpa1: gpa1 {
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +             interrupt-parent = <&gic>;
+> > +             interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+> > +     };
+> > +
+> > +     gpa2: gpa2 {
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +             interrupt-parent = <&gic>;
+> > +             interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> > +     };
+> > +
+> > +     gpa3: gpa3 {
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +             interrupt-parent = <&gic>;
+> > +             interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> > +     };
+> > +
+> > +     gpa4: gpa4 {
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +             interrupt-parent = <&gic>;
+> > +             interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
+> > +                          <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> > +     };
+> > +
+> > +     gpq0: gpq0 {
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +     };
+> > +
+> > +     /* I2C5 (also called CAM_PMIC_I2C in TRM) */
+> > +     i2c5_bus: i2c5-bus {
+>
+> Please name all the pinctrl nodes with some pattern you can match on
+> once there is a schema. '-pins$' is my suggestion.
+>
 
-   Just two fixups - fixing one build warning and missing unlock,
-   and one cleanup - replaceing atomic_t with refcount_t.
+Done. This looks much better, the change will be present in new patch
+series including board dts.
 
-   Please kindly let me know if there is any problem.
+Can I ask for more info about schema you mentioned: is there some doc
+or examples I can check? And is it something generic, or I have to
+implement it for Exynos850 dts?
 
-Thanks,
-Inki Dae
+Thanks!
 
-The following changes since commit 397ab98e2d69cede84444a28eab77a171983d14e:
-
-  Merge tag 'drm-msm-next-2021-08-12' of https://gitlab.freedesktop.org/drm/msm into drm-next (2021-08-17 10:53:52 +1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.15
-
-for you to fetch changes up to c626f3864bbbb28bbe06476b0b497c1330aa4463:
-
-  drm/exynos: Always initialize mapping in exynos_drm_register_dma() (2021-08-22 01:56:39 +0900)
-
-----------------------------------------------------------------
-Two fixups
-- Fix missing unlock issue in exynos_drm_g2d.c
-- Fix a build warning in exynos_drm_dma.c
-
-One cleanup
-- Replace atomic_t with refcount_t in exynos_drm_g2d.c
-
-----------------------------------------------------------------
-Nathan Chancellor (1):
-      drm/exynos: Always initialize mapping in exynos_drm_register_dma()
-
-Wei Yongjun (1):
-      drm/exynos: g2d: fix missing unlock on error in g2d_runqueue_worker()
-
-Xiyu Yang (1):
-      drm/exynos: Convert from atomic_t to refcount_t on g2d_cmdlist_userptr->refcount
-
- drivers/gpu/drm/exynos/exynos_drm_dma.c |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 14 ++++++++------
- 2 files changed, 10 insertions(+), 6 deletions(-)
+> > +             samsung,pins = "gpa3-5", "gpa3-6";
+> > +             samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+> > +             samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> > +             samsung,pin-drv = <0>;
+> > +     };
+> > +
+> > +     /* I2C6 (also called MOTOR_I2C in TRM) */
+> > +     i2c6_bus: i2c6-bus {
+> > +             samsung,pins = "gpa3-7", "gpa4-0";
+> > +             samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
+> > +             samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> > +             samsung,pin-drv = <0>;
+> > +     };
