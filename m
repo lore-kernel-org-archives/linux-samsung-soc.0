@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9349C4320E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5281C25AEC
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1CE760FD8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB052611EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239550AbhHYNo3 (ORCPT
+        id S240322AbhHYNob (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Aug 2021 09:44:29 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58768
+        Wed, 25 Aug 2021 09:44:31 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58802
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238882AbhHYNoU (ORCPT
+        by vger.kernel.org with ESMTP id S239538AbhHYNo2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Aug 2021 09:44:20 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        Wed, 25 Aug 2021 09:44:28 -0400
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A30EC4076B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Aug 2021 13:43:33 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9A0D840782
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Aug 2021 13:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629899013;
-        bh=W6Oha4DZG34PoHCL6IOPjoBy8fsf6s2H9cR2PIHqu3o=;
+        s=20210705; t=1629899015;
+        bh=skl+DRiXkNysfO8pcQNyeLlyFZw5ntPUibqnPCDAM3U=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=DEb6d+tviN1+WZKjW4AcEIrmdITN0q7PjbfrRSLm+TJ4qgyqBLQqk0rF34/kWchcs
-         MPTiQ2ivypIFpFl6GYwggF97k/4UGkM9DiXhzQwu9zweZS13l9b4mJ9J/AvwCFCA8c
-         2aMaC2jIESrhckvZADcerY14j6Xmi1HSZ5i3I/vltGmdQ1g5m/JRiNRmUvfQpVNOZ2
-         s6yW3GioQBEr7vWEyLz0LKWpXy04oMKaAA69lHTsYDrj8LeopcnBG3n/UjnqTnnLTe
-         /LZWb2ninMMbRV8AortiYx1aWJ/ot6IORNEUjHMT+IIrWeoj6ovhbxf2z8PMiFRcex
-         XCA4HFp8tWbgw==
-Received: by mail-wr1-f69.google.com with SMTP id t15-20020a5d42cf000000b001565f9c9ee8so6663436wrr.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
+        b=iNOt7udhk/TcPcnXRCrcag/nIHDyPhszuqjBxBS3RNX8wpv3oITNBzzdD/MWu3OWQ
+         3kcVha4beXy8+ofCQ/llg66SFoyy2Zzk3NiLLpT315JXb1RVvPS98TgGG8AxMRy1jx
+         5JXijaN7p6JeBDyNbY9F+QcjutEO0F3QyGqaGFjU7nWPDEzqRntckCvOBxCqGAlNR5
+         skvFwgvlOUxzUiLdvWT60UCCiUCdHbB86+/pVzv0WHkMif4k2gFMw2DZ/FcYhubu3c
+         SE+7Y7mhdK3qRBLr+vFapYs1dauLrgbEWLqFD3WpzfsVgIzevRKuBlFgiVQMEX6OPE
+         JzQGcUezwD8Tw==
+Received: by mail-wm1-f71.google.com with SMTP id f19-20020a1c1f13000000b002e6bd83c344so1882811wmf.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W6Oha4DZG34PoHCL6IOPjoBy8fsf6s2H9cR2PIHqu3o=;
-        b=RMoYjxMbL/JtM3D0yTgiR5nbtzZqbAjhml4QiH+xxIZ+b+p4Rmp8cp8XMLZz5YIUjN
-         QJeAQ+paZ41hHHNyWYXpYa5H0PpGsk6nZV6SJtcWzt5b+qXr8cMakgU8uDnUav2WBWtN
-         r6TVKwOY9M2MU73Ekh2eg+5aXLVYNv4Hv0xZVP5bYmeXrmpVyrCnE6NzrkR9b4dtSDd9
-         DIJxE3fEH2RFXGcxWX4fULGWMKRhDA9pfUN6yIxqhVz12L/Tc1n72qS9fwhLNkLpUnjJ
-         m9aqDkFdehxcEDOC7NtkElUzxH9Dcv+m4dMb2W5kZst4ea5JXKWmc0g6j+4uugxriNQW
-         Qxyg==
-X-Gm-Message-State: AOAM533+0x/aE+wYiavWyD9mFGofz/iqoUeVa/GjhSw4LX0+6eXRdCEC
-        UvPhATTix70EF73xtOfMH0yotpJDLDZbyTOKY1KTHUKsSjClj5tFUAcYwV7a4FI8kEK/giJ+Umb
-        8POwvEoatV5a3CEQynuN0sQlXhUpywLrIjn1ogvJn21J1XstF
-X-Received: by 2002:a5d:4ccc:: with SMTP id c12mr18442144wrt.59.1629899013212;
-        Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw3fagRQBIAglfR3n4QgXwSq1YOk/VrR/cjLAJnCPTJzswjxeHhZDVi/fKirZNqak5phsOaFQ==
-X-Received: by 2002:a5d:4ccc:: with SMTP id c12mr18442112wrt.59.1629899013020;
-        Wed, 25 Aug 2021 06:43:33 -0700 (PDT)
+        bh=skl+DRiXkNysfO8pcQNyeLlyFZw5ntPUibqnPCDAM3U=;
+        b=eZoKZIxwMBr2CTmLZX7Fpp2Q6Sdq3pfdQZjtxl9wuW6EKPoksP/lDLsYxM6j4bfWAb
+         qTG9sa1lrY1xGf2A+ljnJi+MiYD4pt9gHb5P9+zr8bj698lMOttqQ/k24KicFWAYf8F9
+         xIa2pmOaPqfLapHCyTv5iIDA3Eh98D2NZstwJxDtglat2y/OwywvJXbmIoCp3SaAPfQm
+         6U1X79GrqNmQrJjtB8S0usOv0Ju/yG5KA17FPZw7B+mTZMSsgBXqNko8s9XtkNNXKpzH
+         7jyEf5B+z97JByMquMUURsWmMav5OyPcaYvj7G/YMRp9lsHL6elLlwmQbAzFjs78OHr/
+         vr8g==
+X-Gm-Message-State: AOAM530dOjA2PUmzVFvN+iLlXLZWynewo2Daml5O9ZyT85fG9BiScTIc
+        1NLkLswt8Sg5Ufk3Yj83xE+T/sKAs/CS3woAPNkq0Hmdr5USu61gTyE/An/TlUsfj8+GK1jQWGa
+        ZGS/J0enKdcCqD9OdTi6r1AcSJgOBDakiU9hwD/WLdcwRa7c+
+X-Received: by 2002:adf:e887:: with SMTP id d7mr24689371wrm.79.1629899015399;
+        Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyuhNGgwvNYoo0GmQ6L5/SlgHG39BAbAF1TxdBcudJBAkgJcJdjgsnDBKXIrzEA7Y3mZjl6Iw==
+X-Received: by 2002:adf:e887:: with SMTP id d7mr24689355wrm.79.1629899015263;
+        Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
 Received: from localhost.localdomain ([79.98.113.172])
-        by smtp.gmail.com with ESMTPSA id w9sm5238954wmc.19.2021.08.25.06.43.32
+        by smtp.gmail.com with ESMTPSA id w9sm5238954wmc.19.2021.08.25.06.43.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 06:43:32 -0700 (PDT)
+        Wed, 25 Aug 2021 06:43:34 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -75,9 +75,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Sam Protsenko <semen.protsenko@linaro.org>
-Subject: [PATCH v3 6/8] dt-bindings: clock: samsung: convert Exynos AudSS to dtschema
-Date:   Wed, 25 Aug 2021 15:42:49 +0200
-Message-Id: <20210825134251.220098-1-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v3 8/8] MAINTAINERS: clock: include S3C and S5P in Samsung SoC clock entry
+Date:   Wed, 25 Aug 2021 15:42:51 +0200
+Message-Id: <20210825134251.220098-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
 References: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
@@ -87,213 +87,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos Audio SubSystem clock controller bindings to DT
-schema format using json-schema.
+Cover the S3C and S5Pv210 clock controller binding headers by Samsung
+SoC clock controller drivers maintainer entry.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- .../bindings/clock/clk-exynos-audss.txt       | 103 ------------------
- .../clock/samsung,exynos-audss-clock.yaml     |  80 ++++++++++++++
- 2 files changed, 80 insertions(+), 103 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-deleted file mode 100644
-index 6030afb10b5c..000000000000
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-+++ /dev/null
-@@ -1,103 +0,0 @@
--* Samsung Audio Subsystem Clock Controller
--
--The Samsung Audio Subsystem clock controller generates and supplies clocks
--to Audio Subsystem block available in the S5PV210 and Exynos SoCs. The clock
--binding described here is applicable to all SoCs in Exynos family.
--
--Required Properties:
--
--- compatible: should be one of the following:
--  - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
--  - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
--    SoCs.
--  - "samsung,exynos5410-audss-clock" - controller compatible with Exynos5410
--    SoCs.
--  - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
--    SoCs.
--- reg: physical base address and length of the controller's register set.
--
--- #clock-cells: should be 1.
--
--- clocks:
--  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss. "fin_pll"
--    is used if not specified.
--  - pll_in: Input PLL to the AudioSS block, parent of mout_audss. "fout_epll"
--    is used if not specified.
--  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if not
--    specified.
--  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if
--    not specified.
--  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not
--    specified.
--
--- clock-names: Aliases for the above clocks. They should be "pll_ref",
--  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
--
--Optional Properties:
--
--  - power-domains: a phandle to respective power domain node as described by
--    generic PM domain bindings (see power/power_domain.txt for more
--    information).
--
--The following is the list of clocks generated by the controller. Each clock is
--assigned an identifier and client nodes use this identifier to specify the
--clock which they consume. Some of the clocks are available only on a particular
--Exynos4 SoC and this is specified where applicable.
--
--Provided clocks:
--
--Clock           ID      SoC (if specific)
-------------------------------------------------
--
--mout_audss      0
--mout_i2s        1
--dout_srp        2
--dout_aud_bus    3
--dout_i2s        4
--srp_clk         5
--i2s_bus         6
--sclk_i2s        7
--pcm_bus         8
--sclk_pcm        9
--adma            10      Exynos5420
--
--Example 1: An example of a clock controller node using the default input
--	   clock names is listed below.
--
--clock_audss: audss-clock-controller@3810000 {
--	compatible = "samsung,exynos5250-audss-clock";
--	reg = <0x03810000 0x0C>;
--	#clock-cells = <1>;
--};
--
--Example 2: An example of a clock controller node with the input clocks
--           specified.
--
--clock_audss: audss-clock-controller@3810000 {
--	compatible = "samsung,exynos5250-audss-clock";
--	reg = <0x03810000 0x0C>;
--	#clock-cells = <1>;
--	clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>,
--		<&ext_i2s_clk>;
--	clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
--};
--
--Example 3: I2S controller node that consumes the clock generated by the clock
--           controller. Refer to the standard clock bindings for information
--           about 'clocks' and 'clock-names' property.
--
--i2s0: i2s@3830000 {
--	compatible = "samsung,i2s-v5";
--	reg = <0x03830000 0x100>;
--	dmas = <&pdma0 10
--		&pdma0 9
--		&pdma0 8>;
--	dma-names = "tx", "rx", "tx-sec";
--	clocks = <&clock_audss EXYNOS_I2S_BUS>,
--		<&clock_audss EXYNOS_I2S_BUS>,
--		<&clock_audss EXYNOS_SCLK_I2S>,
--		<&clock_audss EXYNOS_MOUT_AUDSS>,
--		<&clock_audss EXYNOS_MOUT_I2S>;
--	clock-names = "iis", "i2s_opclk0", "i2s_opclk1",
--		      "mout_audss", "mout_i2s";
--};
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-new file mode 100644
-index 000000000000..f14f1d39da36
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/samsung,exynos-audss-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Audio SubSystem clock controller
-+
-+maintainers:
-+  - Chanwoo Choi <cw00.choi@samsung.com>
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-+  - Tomasz Figa <tomasz.figa@gmail.com>
-+
-+description: |
-+  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/exynos-audss-clk.h header.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos4210-audss-clock
-+      - samsung,exynos5250-audss-clock
-+      - samsung,exynos5410-audss-clock
-+      - samsung,exynos5420-audss-clock
-+
-+  clocks:
-+    minItems: 2
-+    items:
-+      - description:
-+          Fixed rate PLL reference clock, parent of mout_audss. "fin_pll" is
-+          used if not specified.
-+      - description:
-+          Input PLL to the AudioSS block, parent of mout_audss. "fout_epll" is
-+          used if not specified.
-+      - description:
-+          Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if not
-+          specified.
-+      - description:
-+          PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not specified.
-+      - description:
-+          External i2s clock, parent of mout_i2s. "cdclk0" is used if not
-+          specified.
-+
-+  clock-names:
-+    minItems: 2
-+    items:
-+      - const: pll_ref
-+      - const: pll_in
-+      - const: sclk_audio
-+      - const: sclk_pcm_in
-+      - const: cdclk
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@3810000 {
-+        compatible = "samsung,exynos5250-audss-clock";
-+        reg = <0x03810000 0x0c>;
-+        #clock-cells = <1>;
-+        clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>, <&ext_i2s_clk>;
-+        clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
-+    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a8e1e5d10d1f..eb4ada858826 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16496,6 +16496,9 @@ F:	Documentation/devicetree/bindings/clock/samsung,s3c*
+ F:	Documentation/devicetree/bindings/clock/samsung,s5p*
+ F:	drivers/clk/samsung/
+ F:	include/dt-bindings/clock/exynos*.h
++F:	include/dt-bindings/clock/s3c*.h
++F:	include/dt-bindings/clock/s5p*.h
++F:	include/dt-bindings/clock/samsung,*.h
+ F:	include/linux/clk/samsung.h
+ F:	include/linux/platform_data/clk-s3c2410.h
+ 
 -- 
 2.30.2
 
