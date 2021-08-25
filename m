@@ -2,114 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5281C25AEC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F43C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 17:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB052611EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 13:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4935C60F35
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Aug 2021 17:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240322AbhHYNob (ORCPT
+        id S235559AbhHYSA0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Aug 2021 09:44:31 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58802
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239538AbhHYNo2 (ORCPT
+        Wed, 25 Aug 2021 14:00:26 -0400
+Received: from mail-oo1-f44.google.com ([209.85.161.44]:41815 "EHLO
+        mail-oo1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230112AbhHYSAZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Aug 2021 09:44:28 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9A0D840782
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Aug 2021 13:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1629899015;
-        bh=skl+DRiXkNysfO8pcQNyeLlyFZw5ntPUibqnPCDAM3U=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=iNOt7udhk/TcPcnXRCrcag/nIHDyPhszuqjBxBS3RNX8wpv3oITNBzzdD/MWu3OWQ
-         3kcVha4beXy8+ofCQ/llg66SFoyy2Zzk3NiLLpT315JXb1RVvPS98TgGG8AxMRy1jx
-         5JXijaN7p6JeBDyNbY9F+QcjutEO0F3QyGqaGFjU7nWPDEzqRntckCvOBxCqGAlNR5
-         skvFwgvlOUxzUiLdvWT60UCCiUCdHbB86+/pVzv0WHkMif4k2gFMw2DZ/FcYhubu3c
-         SE+7Y7mhdK3qRBLr+vFapYs1dauLrgbEWLqFD3WpzfsVgIzevRKuBlFgiVQMEX6OPE
-         JzQGcUezwD8Tw==
-Received: by mail-wm1-f71.google.com with SMTP id f19-20020a1c1f13000000b002e6bd83c344so1882811wmf.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
+        Wed, 25 Aug 2021 14:00:25 -0400
+Received: by mail-oo1-f44.google.com with SMTP id b5-20020a4ac285000000b0029038344c3dso61901ooq.8;
+        Wed, 25 Aug 2021 10:59:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=skl+DRiXkNysfO8pcQNyeLlyFZw5ntPUibqnPCDAM3U=;
-        b=eZoKZIxwMBr2CTmLZX7Fpp2Q6Sdq3pfdQZjtxl9wuW6EKPoksP/lDLsYxM6j4bfWAb
-         qTG9sa1lrY1xGf2A+ljnJi+MiYD4pt9gHb5P9+zr8bj698lMOttqQ/k24KicFWAYf8F9
-         xIa2pmOaPqfLapHCyTv5iIDA3Eh98D2NZstwJxDtglat2y/OwywvJXbmIoCp3SaAPfQm
-         6U1X79GrqNmQrJjtB8S0usOv0Ju/yG5KA17FPZw7B+mTZMSsgBXqNko8s9XtkNNXKpzH
-         7jyEf5B+z97JByMquMUURsWmMav5OyPcaYvj7G/YMRp9lsHL6elLlwmQbAzFjs78OHr/
-         vr8g==
-X-Gm-Message-State: AOAM530dOjA2PUmzVFvN+iLlXLZWynewo2Daml5O9ZyT85fG9BiScTIc
-        1NLkLswt8Sg5Ufk3Yj83xE+T/sKAs/CS3woAPNkq0Hmdr5USu61gTyE/An/TlUsfj8+GK1jQWGa
-        ZGS/J0enKdcCqD9OdTi6r1AcSJgOBDakiU9hwD/WLdcwRa7c+
-X-Received: by 2002:adf:e887:: with SMTP id d7mr24689371wrm.79.1629899015399;
-        Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyuhNGgwvNYoo0GmQ6L5/SlgHG39BAbAF1TxdBcudJBAkgJcJdjgsnDBKXIrzEA7Y3mZjl6Iw==
-X-Received: by 2002:adf:e887:: with SMTP id d7mr24689355wrm.79.1629899015263;
-        Wed, 25 Aug 2021 06:43:35 -0700 (PDT)
-Received: from localhost.localdomain ([79.98.113.172])
-        by smtp.gmail.com with ESMTPSA id w9sm5238954wmc.19.2021.08.25.06.43.34
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZrM5Epoo74sm/kt4wx9mo69TrpmEQ3qMo82ZHzdzhGo=;
+        b=fEnwNCwTN8dKXPFegHgqFQs9h5Mnu7rtMTszr/ONDdwYJfLioSSaItCTNC0JRM5Ihm
+         /szpLCj8gsb/ZFpPKnTvn6WV9wHVaRNLBU6JS5CBQGqNhyNSx+ZoElgOg5VXpsSAjviY
+         jFKhrh/Fap2WjmlnIXYdMlo9OoR/xrUSDVM0x0R8aSP7ivZbHRXdDYV0uksa7TV80d5X
+         WbG0X8kwgFcDqbBp002/jCojzZ81cMJWLzwOItBsFFIy4kWNffzO2hY+lriVNOgTK8AL
+         L9avh/IW1G/994lvdAzh5p98qkbzySBfnx59Q7DV4LBSXETrJM/ja22FuIqSRN9nd+WT
+         ZLsw==
+X-Gm-Message-State: AOAM530aQiGZp0E1MtM3JOJIaztmk3xUA2fik+IDoDQq8cvuCOJTf6YN
+        +I18LT+xwncd1tDRz9Q85w==
+X-Google-Smtp-Source: ABdhPJw7ri7y/07bKnMFJT3Wt2+BTJxAWa45zytD0FdTHGGzylw1Wx617wSCb5O/A+c+duS7VJ3hxw==
+X-Received: by 2002:a4a:e923:: with SMTP id a3mr35184661ooe.45.1629914379560;
+        Wed, 25 Aug 2021 10:59:39 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id u18sm101188ooi.40.2021.08.25.10.59.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 06:43:34 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Wed, 25 Aug 2021 10:59:38 -0700 (PDT)
+Received: (nullmailer pid 3021286 invoked by uid 1000);
+        Wed, 25 Aug 2021 17:59:37 -0000
+Date:   Wed, 25 Aug 2021 12:59:37 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>
-Subject: [PATCH v3 8/8] MAINTAINERS: clock: include S3C and S5P in Samsung SoC clock entry
-Date:   Wed, 25 Aug 2021 15:42:51 +0200
-Message-Id: <20210825134251.220098-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
-References: <20210825134056.219884-6-krzysztof.kozlowski@canonical.com>
+        linux-samsung-soc@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: samsung: convert Exynos5250
+ to dtschema
+Message-ID: <YSaFCcsNGp9Ut5fS@robh.at.kernel.org>
+References: <20210825134056.219884-1-krzysztof.kozlowski@canonical.com>
+ <20210825134056.219884-2-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210825134056.219884-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Cover the S3C and S5Pv210 clock controller binding headers by Samsung
-SoC clock controller drivers maintainer entry.
+On Wed, 25 Aug 2021 15:40:49 +0200, Krzysztof Kozlowski wrote:
+> Convert Samsung Exynos5250 clock controller bindings to DT schema format
+> using json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../bindings/clock/exynos5250-clock.txt       | 41 -----------------
+>  .../bindings/clock/samsung,exynos-clock.yaml  | 46 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 47 insertions(+), 41 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a8e1e5d10d1f..eb4ada858826 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16496,6 +16496,9 @@ F:	Documentation/devicetree/bindings/clock/samsung,s3c*
- F:	Documentation/devicetree/bindings/clock/samsung,s5p*
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
-+F:	include/dt-bindings/clock/s3c*.h
-+F:	include/dt-bindings/clock/s5p*.h
-+F:	include/dt-bindings/clock/samsung,*.h
- F:	include/linux/clk/samsung.h
- F:	include/linux/platform_data/clk-s3c2410.h
- 
--- 
-2.30.2
-
+Reviewed-by: Rob Herring <robh@kernel.org>
