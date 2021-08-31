@@ -2,119 +2,285 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0D2C432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Aug 2021 06:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A429C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Aug 2021 07:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 462A460FC0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Aug 2021 06:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0E5360F56
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Aug 2021 07:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbhH3HAN (ORCPT
+        id S239908AbhHaHvQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Aug 2021 03:00:13 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46312
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232622AbhH3HAK (ORCPT
+        Tue, 31 Aug 2021 03:51:16 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:46534 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S239790AbhHaHvQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Aug 2021 03:00:10 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5CB0840779
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Aug 2021 06:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630306756;
-        bh=TfCd6FiaT8DSxbI3Ba5RISkJ5knMWyV+1tKQL4oN4Pk=;
-        h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=g9TwuTwcsWlworIL0foJevvgTkc3ttp9FhHFWRpF7p3AwO5JXlb3QS0zwsQ4RcyhK
-         3/5vIoL9dvLBy33Uln5bcwUF/H4kGjCwKQlrwMaC+K/Rd/XbYks9B65y5OVVLUdbYb
-         3CRWzRNbXWYRS7V2DzeMzQ8YL0ZrUI50f3vTnI7emzAGBhLLDB7Dwi4zKrh34PL/7z
-         bDLdA93voZ84cjHGLacZtRSwyFNNQGZR/M0w2gi8zPbffeIbb+UotW3ncgu6qIY6tq
-         MsWIyAj6uSQxKrSpihTLYgt867XfRL+7r3p+MZaLgzKADNpm6r82H1hgB+tt7dhGA3
-         nI1JaVxdgmx2g==
-Received: by mail-wm1-f71.google.com with SMTP id x125-20020a1c3183000000b002e73f079eefso8341308wmx.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Aug 2021 23:59:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TfCd6FiaT8DSxbI3Ba5RISkJ5knMWyV+1tKQL4oN4Pk=;
-        b=gZAJ7w2GRxTDOa5l001kt7Q7LrUtlzIM0OjKadrhNU40YbcNuPEkGiXJgD6IqG4Bj2
-         nHVI0NHJQek5I5R34FyibhPVko4EaOV7FCKx97K3x6oDfpEXmoEripzYQDoBitZO5fd5
-         8Q45n2Q+o0t1kRWJZTYN/1ixPcgNG998amKrz9QW6UopayPG7TABpxxM8+84Voa9kQFA
-         qGfpxSVZP8BEvLSGhDw1oKvvg8iWUjnupj/J2nXf9Mu3Lag5k05oDgs4LbFX71+hKxbQ
-         pGrRQbdN9iXnK/3Q3JRRiDctGdJTIIDVUdlVGYDmKszPjSHzlQIljmFCbHXS6ViuWWK4
-         Zu+w==
-X-Gm-Message-State: AOAM530mNglhLO2I4JvwYGLtuaQ7KRyc9swK/xA4M4wtHElPXmABKykS
-        lN5T7I40L2/YXGPpSsnvDZ4ZtibH3PVGnWOQcKoSPCE7v44hHODi3xbiIKuFXqho4FvmFMsLfzG
-        ac6uFtG/BfkpDtJC6bsWQmGx8t0FJFDX6r23GsuIQ9fnjr0N6
-X-Received: by 2002:adf:e509:: with SMTP id j9mr24038750wrm.320.1630306756076;
-        Sun, 29 Aug 2021 23:59:16 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx0ZqYN0bkagHGWkHbzTZbv9x4AkRZKERJlpklYIFSr1ahy2vKEcx4g1ux82suPSSvCeeexxg==
-X-Received: by 2002:adf:e509:: with SMTP id j9mr24038730wrm.320.1630306755877;
-        Sun, 29 Aug 2021 23:59:15 -0700 (PDT)
-Received: from [192.168.3.211] ([79.98.112.21])
-        by smtp.gmail.com with ESMTPSA id z17sm10180474wrh.66.2021.08.29.23.59.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Aug 2021 23:59:15 -0700 (PDT)
-Subject: Re: [PATCH] MAINTAINERS: clock: samsung: include S3C/S5P header
- bindings
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20210830065647.5386-1-krzysztof.kozlowski@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <69d4b87b-74f8-8107-d4b2-19b4c28910b4@canonical.com>
-Date:   Mon, 30 Aug 2021 08:59:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 31 Aug 2021 03:51:16 -0400
+Received: from BJHW-Mail-Ex07.internal.baidu.com (unknown [10.127.64.17])
+        by Forcepoint Email with ESMTPS id 0296D3971EF51398CBFD;
+        Tue, 31 Aug 2021 15:50:13 +0800 (CST)
+Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
+ BJHW-Mail-Ex07.internal.baidu.com (10.127.64.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.14; Tue, 31 Aug 2021 15:50:12 +0800
+Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
+ BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.14; Tue, 31 Aug 2021 15:50:12 +0800
+From:   Cai Huoqing <caihuoqing@baidu.com>
+To:     <inki.dae@samsung.com>, <jy0922.shim@samsung.com>,
+        <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <krzysztof.kozlowski@canonical.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        "Cai Huoqing" <caihuoqing@baidu.com>
+Subject: [PATCH] drm/exynos: Make use of the helper function devm_platform_ioremap_resource()
+Date:   Tue, 31 Aug 2021 15:49:58 +0800
+Message-ID: <20210831074958.608-1-caihuoqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20210830065647.5386-1-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [172.31.63.8]
+X-ClientProxiedBy: BC-Mail-Ex16.internal.baidu.com (172.31.51.56) To
+ BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42)
+X-Baidu-BdMsfe-DateCheck: 1_BJHW-Mail-Ex07_2021-08-31 15:50:12:864
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/08/2021 08:56, Krzysztof Kozlowski wrote:
-> Include S3C24xx, S3C64xx and S5Pv210 SoC clock headers with bindings in
-> the Samsung SoC Clock drivers entry.  The clock drivers for these SoCs
-> are already covered.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  MAINTAINERS | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index eee4c926003b..c17299c30ea7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16582,6 +16582,9 @@ F:	Documentation/devicetree/bindings/clock/samsung,s3c*
->  F:	Documentation/devicetree/bindings/clock/samsung,s5p*
->  F:	drivers/clk/samsung/
->  F:	include/dt-bindings/clock/exynos*.h
-> +F:	include/dt-bindings/clock/s3c24*.h
-> +F:	include/dt-bindings/clock/s5pv210*.h
-> +F:	include/dt-bindings/clock/samsung,s3c64xx-clock.h
->  F:	include/linux/clk/samsung.h
->  F:	include/linux/platform_data/clk-s3c2410.h
+Use the devm_platform_ioremap_resource() helper instead of
+calling platform_get_resource() and devm_ioremap_resource()
+separately
 
-Ignore it, please. I just sent the same patch second time... I need more
-coffee.
+Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 5 +----
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 5 +----
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 6 +-----
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c    | 4 +---
+ drivers/gpu/drm/exynos/exynos_hdmi.c          | 4 +---
+ 9 files changed, 9 insertions(+), 31 deletions(-)
 
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 9870c4e6af36..b5001db7a95c 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -793,7 +793,6 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct decon_context *ctx;
+-	struct resource *res;
+ 	int ret;
+ 	int i;
+ 
+@@ -818,8 +817,7 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 		ctx->clks[i] = clk;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ctx->addr = devm_ioremap_resource(dev, res);
++	ctx->addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ctx->addr))
+ 		return PTR_ERR(ctx->addr);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index e39fac889edc..8d137857818c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1738,7 +1738,6 @@ static const struct component_ops exynos_dsi_component_ops = {
+ static int exynos_dsi_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	struct exynos_dsi *dsi;
+ 	int ret, i;
+ 
+@@ -1789,8 +1788,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	dsi->reg_base = devm_ioremap_resource(dev, res);
++	dsi->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dsi->reg_base))
+ 		return PTR_ERR(dsi->reg_base);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index a3c718148c45..ecfd82d0afb7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -85,7 +85,6 @@ struct fimc_scaler {
+ /*
+  * A structure of fimc context.
+  *
+- * @regs_res: register resources.
+  * @regs: memory mapped io registers.
+  * @lock: locking of operations.
+  * @clocks: fimc clocks.
+@@ -103,7 +102,6 @@ struct fimc_context {
+ 	struct exynos_drm_ipp_formats	*formats;
+ 	unsigned int			num_formats;
+ 
+-	struct resource	*regs_res;
+ 	void __iomem	*regs;
+ 	spinlock_t	lock;
+ 	struct clk	*clocks[FIMC_CLKS_MAX];
+@@ -1327,8 +1325,7 @@ static int fimc_probe(struct platform_device *pdev)
+ 	ctx->num_formats = num_formats;
+ 
+ 	/* resource memory */
+-	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
++	ctx->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ctx->regs))
+ 		return PTR_ERR(ctx->regs);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 700ca4fa6665..c735e53939d8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -1202,9 +1202,7 @@ static int fimd_probe(struct platform_device *pdev)
+ 		return PTR_ERR(ctx->lcd_clk);
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+-	ctx->regs = devm_ioremap_resource(dev, res);
++	ctx->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ctx->regs))
+ 		return PTR_ERR(ctx->regs);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index b00230626c6a..471fd6c8135f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -1449,7 +1449,6 @@ static const struct component_ops g2d_component_ops = {
+ static int g2d_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	struct g2d_data *g2d;
+ 	int ret;
+ 
+@@ -1491,9 +1490,7 @@ static int g2d_probe(struct platform_device *pdev)
+ 	clear_bit(G2D_BIT_SUSPEND_RUNQUEUE, &g2d->flags);
+ 	clear_bit(G2D_BIT_ENGINE_BUSY, &g2d->flags);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+-	g2d->regs = devm_ioremap_resource(dev, res);
++	g2d->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(g2d->regs)) {
+ 		ret = PTR_ERR(g2d->regs);
+ 		goto err_put_clk;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index 90d7bf906885..166a80262896 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -86,7 +86,6 @@ struct gsc_scaler {
+ /*
+  * A structure of gsc context.
+  *
+- * @regs_res: register resources.
+  * @regs: memory mapped io registers.
+  * @gsc_clk: gsc gate clock.
+  * @sc: scaler infomations.
+@@ -103,7 +102,6 @@ struct gsc_context {
+ 	struct exynos_drm_ipp_formats	*formats;
+ 	unsigned int			num_formats;
+ 
+-	struct resource	*regs_res;
+ 	void __iomem	*regs;
+ 	const char	**clk_names;
+ 	struct clk	*clocks[GSC_MAX_CLOCKS];
+@@ -1272,9 +1270,7 @@ static int gsc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	/* resource memory */
+-	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
++	ctx->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ctx->regs))
+ 		return PTR_ERR(ctx->regs);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index ee61be4cf152..dec7df35baa9 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -278,7 +278,6 @@ static const struct component_ops rotator_component_ops = {
+ static int rotator_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource	*regs_res;
+ 	struct rot_context *rot;
+ 	const struct rot_variant *variant;
+ 	int irq;
+@@ -292,8 +291,7 @@ static int rotator_probe(struct platform_device *pdev)
+ 	rot->formats = variant->formats;
+ 	rot->num_formats = variant->num_formats;
+ 	rot->dev = dev;
+-	regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	rot->regs = devm_ioremap_resource(dev, regs_res);
++	rot->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(rot->regs))
+ 		return PTR_ERR(rot->regs);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index f9ae5b038d59..3a7851b7dc66 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -485,7 +485,6 @@ static const struct component_ops scaler_component_ops = {
+ static int scaler_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource	*regs_res;
+ 	struct scaler_context *scaler;
+ 	int irq;
+ 	int ret, i;
+@@ -498,8 +497,7 @@ static int scaler_probe(struct platform_device *pdev)
+ 		(struct scaler_data *)of_device_get_match_data(dev);
+ 
+ 	scaler->dev = dev;
+-	regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	scaler->regs = devm_ioremap_resource(dev, regs_res);
++	scaler->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(scaler->regs))
+ 		return PTR_ERR(scaler->regs);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index c769dec576de..7655142a4651 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1957,7 +1957,6 @@ static int hdmi_probe(struct platform_device *pdev)
+ 	struct hdmi_audio_infoframe *audio_infoframe;
+ 	struct device *dev = &pdev->dev;
+ 	struct hdmi_context *hdata;
+-	struct resource *res;
+ 	int ret;
+ 
+ 	hdata = devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNEL);
+@@ -1979,8 +1978,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hdata->regs = devm_ioremap_resource(dev, res);
++	hdata->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hdata->regs)) {
+ 		ret = PTR_ERR(hdata->regs);
+ 		return ret;
+-- 
+2.25.1
 
-Best regards,
-Krzysztof
