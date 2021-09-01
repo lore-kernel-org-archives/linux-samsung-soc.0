@@ -2,97 +2,260 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19939C432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 12:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF79C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 20:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 052026115A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 12:39:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18F9660FC0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 20:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343547AbhIAMke (ORCPT
+        id S245139AbhIAUVf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Sep 2021 08:40:34 -0400
-Received: from out0.migadu.com ([94.23.1.103]:54263 "EHLO out0.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344017AbhIAMhT (ORCPT
+        Wed, 1 Sep 2021 16:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55266 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243721AbhIAUV2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Sep 2021 08:37:19 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1630499775;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=pJotZ7v11sHuJLFfrcQ3UlD/rmnLoWbUqGvZgu+uUlQ=;
-        b=Ksl3r1rTmRB0M2mXpX3f9HLE+Wk74YmJcLEYbwzZBdQD54hAGhvFYGD5zM4s/h0i+sx1DR
-        Mhlo57w/c7ulijCj1yzWvphWGMDp/KYAc6o1fGzGjOfy/V9xwlAzs3kBDOt9hnu530Wt/M
-        SWngk6J7G3whPnJcyz5oKYn+7NbVKVk=
-From:   Jackie Liu <liu.yun@linux.dev>
-To:     krzysztof.kozlowski@canonical.com
-Cc:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, liu.yun@linux.dev,
-        liuyun01@kylinos.cn
-Subject: [PATCH v2] ARM: s3c: irq-s3c24xx: Fix return value check for s3c24xx_init_intc()
-Date:   Wed,  1 Sep 2021 20:35:57 +0800
-Message-Id: <20210901123557.1043953-1-liu.yun@linux.dev>
+        Wed, 1 Sep 2021 16:21:28 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CCDC061796
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Sep 2021 13:20:26 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id 17so660005pgp.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Sep 2021 13:20:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+u2QuOkRRMX/DqMZWfX/UVRQi9noRYZC06sr4Cz0Hp8=;
+        b=ZMMPana7L7vTDCgu/jp5FKD2Lrbrz0jK26GBO0aS5kFqX8ZWAwDd8LGVRgMmKIW4cy
+         pM4/1N42XKs3Esi1gnR1zGqKA++SzJlDvfQrVg5j28Z5B5k6XohhNOknkTV7aRkmINrK
+         CmPERtsKo0Rsb/rb2L17uz6Xg8W52l6oAnoOY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+u2QuOkRRMX/DqMZWfX/UVRQi9noRYZC06sr4Cz0Hp8=;
+        b=JIhjTj7hjU/hw0U0j/BWJ5dHjUy56JUT0TDh2jR3eI249nDbjPxYCudqHlWJXa1iK0
+         HVKivkpcsQoLubj7bZGnyFr9BpC/yXwHSXUTskTht651x8EtYgTo0UtLP7GHKmvLVDk6
+         6wRjQEXtWPlyqudGg/3iFY5C5UhNAR2Tf/9Ad6IMq175tYyz+I0UrR963XidrAJVYm6/
+         bWwvW1Y22Pqm7GPKxZsfgy2/iABmH4VDwyIJxuXqKOfpBxvOPWAKLnw9Vlzh29L4zVOm
+         PBnhK/a7CA0w87YpvqgvyUgGxsmhu02FZx9OTuFfQjPyKvm6dRpVs0IXfvU7n1eCAl0+
+         sHBA==
+X-Gm-Message-State: AOAM533rID+Pniiq++ZvMpPeX/0VVlZPhn+rkBEYzqMFtnptMVvTPUOB
+        YSsqKQbbbM/rol1U2b6whVMA3g==
+X-Google-Smtp-Source: ABdhPJzep5JI+YTg6jYwfIvOqV7EJbMgqrs4tymTqpHRzn2sts2yu7nyKA3inirB5PAxwEJh4dOyVA==
+X-Received: by 2002:a65:6642:: with SMTP id z2mr790331pgv.240.1630527626154;
+        Wed, 01 Sep 2021 13:20:26 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:201:958b:b561:a735:e774])
+        by smtp.gmail.com with ESMTPSA id x15sm321178pfq.31.2021.09.01.13.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Sep 2021 13:20:25 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus W <linus.walleij@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
+        Steev Klimaszewski <steev@kali.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Olof Johansson <olof@lixom.net>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v3 00/16] eDP: Support probing eDP panels dynamically instead of hardcoding
+Date:   Wed,  1 Sep 2021 13:19:18 -0700
+Message-Id: <20210901201934.1084250-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.33.0.259.gc128427fd7-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: liu.yun@linux.dev
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Jackie Liu <liuyun01@kylinos.cn>
+The goal of this patch series is to move away from hardcoding exact
+eDP panels in device tree files. As discussed in the various patches
+in this series (I'm not repeating everything here), most eDP panels
+are 99% probable and we can get that last 1% by allowing two "power
+up" delays to be specified in the device tree file and then using the
+panel ID (found in the EDID) to look up additional power sequencing
+delays for the panel.
 
-The s3c24xx_init_intc() returns an error pointer upon failure, not NULL.
-let's add an error pointer check in s3c24xx_handle_irq.
+This patch series is the logical contiunation of a previous patch
+series where I proposed solving this problem by adding a
+board-specific compatible string [1]. In the discussion that followed
+it sounded like people were open to something like the solution
+proposed in this new series.
 
-s3c_intc[0] is not NULL or ERR, we can simplify the code.
+In version 2 I got rid of the idea that we could have a "fallback"
+compatible string that we'd use if we didn't recognize the ID in the
+EDID. This simplifies the bindings a lot and the implementation
+somewhat. As a result of not having a "fallback", though, I'm not
+confident in transitioning any existing boards over to this since
+we'll have to fallback to very conservative timings if we don't
+recognize the ID from the EDID and I can't guarantee that I've seen
+every panel that might have shipped on an existing product. The plan
+is to use "edp-panel" only on new boards or new revisions of old
+boards where we can guarantee that every EDID that ships out of the
+factory has an ID in the table.
 
-Fixes: 1f629b7a3ced ("ARM: S3C24XX: transform irq handling into a declarative form")
-Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
----
- arch/arm/mach-s3c/irq-s3c24xx.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+Version 3 of this series now splits out all eDP panels to their own
+driver and adds the generic eDP panel support to this new driver. I
+believe this is what Sam was looking for [2].
 
-diff --git a/arch/arm/mach-s3c/irq-s3c24xx.c b/arch/arm/mach-s3c/irq-s3c24xx.c
-index 0c631c14a817..df471d322493 100644
---- a/arch/arm/mach-s3c/irq-s3c24xx.c
-+++ b/arch/arm/mach-s3c/irq-s3c24xx.c
-@@ -362,11 +362,24 @@ static inline int s3c24xx_handle_intc(struct s3c_irq_intc *intc,
- static asmlinkage void __exception_irq_entry s3c24xx_handle_irq(struct pt_regs *regs)
- {
- 	do {
--		if (likely(s3c_intc[0]))
--			if (s3c24xx_handle_intc(s3c_intc[0], regs, 0))
--				continue;
-+		/* For platform based machines, neither ERR nor NULL can happen here.
-+		 * The s3c24xx_handle_irq() will be set as IRQ handler iff this succeeds:
-+		 *
-+		 *    s3c_intc[0] = s3c24xx_init_intc()
-+		 *
-+		 * If this fails, the next calls to s3c24xx_init_intc() won't be executed.
-+		 *
-+		 * For DT machine, s3c_init_intc_of() could set the IRQ handler without
-+		 * setting s3c_intc[0] only if it was called with num_ctrl=0. There is no
-+		 * such code path, so again the s3c_intc[0] will have a valid pointer if
-+		 * set_handle_irq() is called.
-+		 *
-+		 * Therefore in s3c24xx_handle_irq(), the s3c_intc[0] is always something.
-+		 */
-+		if (s3c24xx_handle_intc(s3c_intc[0], regs, 0))
-+			continue;
- 
--		if (s3c_intc[2])
-+		if (!IS_ERR_OR_NULL(s3c_intc[2]))
- 			if (s3c24xx_handle_intc(s3c_intc[2], regs, 64))
- 				continue;
- 
+[1] https://lore.kernel.org/r/YFKQaXOmOwYyeqvM@google.com/
+[2] https://lore.kernel.org/r/YRTsFNTn%2FT8fLxyB@ravnborg.org/
+
+Changes in v3:
+- Decode hex product ID w/ same endianness as everyone else.
+- ("Reorder logicpd_type_28...") patch new for v3.
+- Split eDP panels patch new for v3.
+- Move wayward panels patch new for v3.
+- ("Non-eDP panels don't need "HPD" handling") new for v3.
+- Split the delay structure out patch just on eDP now.
+- ("Better describe eDP panel delays") new for v3.
+- Fix "prepare_to_enable" patch new for v3.
+- ("Don't re-read the EDID every time") moved to eDP only patch.
+- Generic "edp-panel" handled by the eDP panel driver now.
+- Change init order to we power at the end.
+- Adjust endianness of product ID.
+- Fallback to conservative delays if panel not recognized.
+- Add Sharp LQ116M1JW10 to table.
+- Add AUO B116XAN06.1 to table.
+- Rename delays more generically so they can be reused.
+
+Changes in v2:
+- No longer allow fallback to panel-simple.
+- Add "-ms" suffix to delays.
+- Don't support a "fallback" panel. Probed panels must be probed.
+- Not based on patch to copy "desc"--just allocate for probed panels.
+- Add "-ms" suffix to delays.
+
+Douglas Anderson (16):
+  dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+  drm/edid: Break out reading block 0 of the EDID
+  drm/edid: Allow the querying/working with the panel ID from the EDID
+  drm/panel-simple: Reorder logicpd_type_28 / mitsubishi_aa070mc01
+  drm/panel-simple-edp: Split eDP panels out of panel-simple
+  ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_SIMPLE_EDP
+  arm64: defconfig: Everyone who had PANEL_SIMPLE now gets
+    PANEL_SIMPLE_EDP
+  MIPS: configs: Everyone who had PANEL_SIMPLE now gets PANEL_SIMPLE_EDP
+  drm/panel-simple-edp: Move some wayward panels to the eDP driver
+  drm/panel-simple: Non-eDP panels don't need "HPD" handling
+  drm/panel-simple-edp: Split the delay structure out
+  drm/panel-simple-edp: Better describe eDP panel delays
+  drm/panel-simple-edp: hpd_reliable shouldn't be subtraced from
+    hpd_absent
+  drm/panel-simple-edp: Fix "prepare_to_enable" if panel doesn't handle
+    HPD
+  drm/panel-simple-edp: Don't re-read the EDID every time we power off
+    the panel
+  drm/panel-simple-edp: Implement generic "edp-panel"s probed by EDID
+
+ .../bindings/display/panel/panel-edp.yaml     |  188 ++
+ arch/arm/configs/at91_dt_defconfig            |    1 +
+ arch/arm/configs/exynos_defconfig             |    1 +
+ arch/arm/configs/imx_v6_v7_defconfig          |    1 +
+ arch/arm/configs/lpc32xx_defconfig            |    1 +
+ arch/arm/configs/multi_v5_defconfig           |    1 +
+ arch/arm/configs/multi_v7_defconfig           |    1 +
+ arch/arm/configs/omap2plus_defconfig          |    1 +
+ arch/arm/configs/qcom_defconfig               |    1 +
+ arch/arm/configs/realview_defconfig           |    1 +
+ arch/arm/configs/sama5_defconfig              |    1 +
+ arch/arm/configs/shmobile_defconfig           |    1 +
+ arch/arm/configs/sunxi_defconfig              |    1 +
+ arch/arm/configs/tegra_defconfig              |    1 +
+ arch/arm/configs/versatile_defconfig          |    1 +
+ arch/arm/configs/vexpress_defconfig           |    1 +
+ arch/arm64/configs/defconfig                  |    1 +
+ arch/mips/configs/qi_lb60_defconfig           |    1 +
+ arch/mips/configs/rs90_defconfig              |    1 +
+ drivers/gpu/drm/drm_edid.c                    |  121 +-
+ drivers/gpu/drm/panel/Kconfig                 |   16 +-
+ drivers/gpu/drm/panel/Makefile                |    1 +
+ drivers/gpu/drm/panel/panel-simple-edp.c      | 1895 +++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c          | 1100 +---------
+ include/drm/drm_edid.h                        |   47 +
+ 25 files changed, 2293 insertions(+), 1093 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-edp.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-simple-edp.c
+
 -- 
-2.25.1
+2.33.0.259.gc128427fd7-goog
 
