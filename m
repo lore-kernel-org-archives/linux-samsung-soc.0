@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1931DC432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA551C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F399961074
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE5DC610A4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242198AbhIAFuH (ORCPT
+        id S242202AbhIAFuO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:50:07 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:45850 "EHLO baidu.com"
+        Wed, 1 Sep 2021 01:50:14 -0400
+Received: from mx21.baidu.com ([220.181.3.85]:45984 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242183AbhIAFuD (ORCPT
+        id S242200AbhIAFuL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Sep 2021 01:50:03 -0400
-Received: from Bc-Mail-Ex13.internal.baidu.com (unknown [172.31.51.53])
-        by Forcepoint Email with ESMTPS id ED881745EF707FEA25DE;
-        Wed,  1 Sep 2021 13:49:04 +0800 (CST)
+        Wed, 1 Sep 2021 01:50:11 -0400
+Received: from BC-Mail-Ex10.internal.baidu.com (unknown [172.31.51.50])
+        by Forcepoint Email with ESMTPS id 694954006B9E883A2CB4;
+        Wed,  1 Sep 2021 13:49:12 +0800 (CST)
 Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- Bc-Mail-Ex13.internal.baidu.com (172.31.51.53) with Microsoft SMTP Server
+ BC-Mail-Ex10.internal.baidu.com (172.31.51.50) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Wed, 1 Sep 2021 13:49:04 +0800
+ 15.1.2242.12; Wed, 1 Sep 2021 13:49:12 +0800
 Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Wed, 1 Sep 2021 13:49:04 +0800
+ 15.1.2308.14; Wed, 1 Sep 2021 13:49:11 +0800
 From:   Cai Huoqing <caihuoqing@baidu.com>
 To:     <caihuoqing@baidu.com>
 CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -40,8 +40,8 @@ CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
         <linux-samsung-soc@vger.kernel.org>, <linux-media@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 Subject: [PATCH] media: cec: s5p_cec: Make use of the helper function devm_platform_ioremap_resource()
-Date:   Wed, 1 Sep 2021 13:48:57 +0800
-Message-ID: <20210901054858.6365-1-caihuoqing@baidu.com>
+Date:   Wed, 1 Sep 2021 13:49:05 +0800
+Message-ID: <20210901054906.6414-1-caihuoqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
