@@ -2,66 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538A8C43214
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 21:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12048C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 23:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB74610A8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 21:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCFC960F4B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 23:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244954AbhIAVNK (ORCPT
+        id S1344635AbhIAXTd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Sep 2021 17:13:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39210 "EHLO
+        Wed, 1 Sep 2021 19:19:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232644AbhIAVNJ (ORCPT
+        with ESMTP id S1345240AbhIAXTU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Sep 2021 17:13:09 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8DBC061760
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Sep 2021 14:12:12 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id x19so833011pfu.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Sep 2021 14:12:12 -0700 (PDT)
+        Wed, 1 Sep 2021 19:19:20 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CDDDC061575
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Sep 2021 16:18:22 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id d11so26850qtw.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Sep 2021 16:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NmD6NfZ4ntJSAzZVeHzGwx+9LMKE03Sdt9CwYbMKD7Y=;
-        b=rrRU0L93Wl3dd/9llX/ZnoKYuGFSdDWKG1uN8Gv1fFTegETF12B23Ag/5WGRKWIWau
-         O8EFhntrOcOx6d3AuhaU2V/BjDQCb3DDLPHbovVi9M84wf1HCPIfdTV3Ba9ZKbS4IcCZ
-         6YwnCs8Zp7jc6H4EJrtjsZ2KLjXqnLzng7NRbloC/ZV8ZeG9KOkOWoMxlnk4mkCW/ld7
-         KBqQbYocAZvotTNrQotqhaBCSrQ83H2JX/t6VU/1//LmZ3sJZKp0o6j2aD3IYvNDDn9D
-         MVfd+v7Ryf93lGSGYO8a9PhqJoN1GODF+EVDV18LG2HXaHV9nfFd6fumgo4HVnFq9yqu
-         0N1g==
+        bh=1Y+GVokmV9xV7i0Kbyl+zT81HcVIXennIBiGTGbWIfQ=;
+        b=Ss78CZppoDiVB5zdMTBxQWBVResulcnOWqd8Qi3UkjhRlNgSbjSTQDveLQ4owdMFOd
+         mgwlrVIyuyDeGaBwBWxBoZvXlIJfVMzhnF2/tIAtLNZqNqrIQMexqtyQHl+M/z23jDJt
+         /l6kSthz2Kvx8zBGuz1IIWMUwzkcbS3DLX0UM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NmD6NfZ4ntJSAzZVeHzGwx+9LMKE03Sdt9CwYbMKD7Y=;
-        b=K3TGtUaICQywa4mWg1Eqcta0p7YvR9ZZC5Ey/KW21OtJrRdojpfIB1oslAGdmQvMxt
-         ABipJNygFtcHNSBNd7HwGw4j3YTslppz1kas/XStOxOOJ8K38JLNbu5Mn6SX54Yx+mD/
-         IL+Yu58OX64WpA3NSTqzsI1mJwacUbj0EoCpBCfTibqDmIAqem/+IW+zz6zAcifshyU3
-         pjqqMFcgDm8MzHTm+vgssO2EfgOh0F13OTyJXE1ZnJQ6IK+TQJultRAhX03XY1dOxEWc
-         ez5CX0AqtvC2oHkGI8L/jvY0HCsrupz/tRpqX18p7pFkDZlkc4sOEneXs5QnEYWi8EHe
-         cBGg==
-X-Gm-Message-State: AOAM532QjDI/eFPmutJs1yVfH/NOMm7jLrO9Il/4/A5KBjEttInb7bA7
-        R7QjH1Ya410FlQ6VPFR1AZjaMa4P6/LMcEY+tWK+ew==
-X-Google-Smtp-Source: ABdhPJylbGieillP4v3Sou9GfiOafHmfSdD7JjHyJBYaAf+EOtB7ue7nViFrVdrgxVrSReapdfqxB6ae0ZGRSPj/Qs0=
-X-Received: by 2002:a65:44c4:: with SMTP id g4mr981021pgs.254.1630530731360;
- Wed, 01 Sep 2021 14:12:11 -0700 (PDT)
+        bh=1Y+GVokmV9xV7i0Kbyl+zT81HcVIXennIBiGTGbWIfQ=;
+        b=huMVgiO6DeEwalHvyect1xUD6xHb9wgIKQXbasdYxpn3Du0H0Bk4uVALFkdpMjQCzw
+         IxO9LFrSXxPRkgTQw5Ba/jt1kecQc4wqT4MLxO57ZGlE3MCVfk4Mu/toShiAiTKUeGA6
+         4h0pm/D88TeSnynwlkeVMsUj4b1G5ITdXU3TVTjYrQK4ehpEVzAEYDZ7KtJHe/Xmau/B
+         szn6TE3XmQLYq3JPcEwGvh0Qb9UoNQySbsP1+TpUPllj/GNWuX9L9mp4rEmrIUOfUQDe
+         7/yP7pAxolNro0iPtozD0dK/MzEAS11H8LXwevQGr9d+13vXbmoryBwFKXgb6ALsBX0Q
+         Cusg==
+X-Gm-Message-State: AOAM533X23GWTw11i0IBaFo/aDjAOcI9DMU9GUZpLPcOPoDTlh4YAhQ9
+        da2jMtmCuKGXJU83nBmKAc2LDkG7tM6ZMg==
+X-Google-Smtp-Source: ABdhPJyKt5IT4cQN+tkunP5Irv8AvNwNjRTlZMD2GS8GYsPBYu+o4vvpr18O6dqUb9zjoLjUpq7trQ==
+X-Received: by 2002:ac8:7491:: with SMTP id v17mr217428qtq.291.1630538301470;
+        Wed, 01 Sep 2021 16:18:21 -0700 (PDT)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
+        by smtp.gmail.com with ESMTPSA id i27sm92461qkl.111.2021.09.01.16.18.21
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Sep 2021 16:18:21 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id x5so1227548qtq.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Sep 2021 16:18:21 -0700 (PDT)
+X-Received: by 2002:a02:ca0b:: with SMTP id i11mr277172jak.84.1630537827704;
+ Wed, 01 Sep 2021 16:10:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210901201934.1084250-1-dianders@chromium.org> <20210901131531.v3.6.I02250cd7d4799661b068bcc65849a456ed411734@changeid>
-In-Reply-To: <20210901131531.v3.6.I02250cd7d4799661b068bcc65849a456ed411734@changeid>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 1 Sep 2021 14:12:00 -0700
-Message-ID: <CAOesGMjp4pscuxciHZo7br-acgbkZSdRA_mUWNpcz0OfF7zOSA@mail.gmail.com>
+References: <20210901201934.1084250-1-dianders@chromium.org>
+ <20210901131531.v3.6.I02250cd7d4799661b068bcc65849a456ed411734@changeid> <CAOesGMjp4pscuxciHZo7br-acgbkZSdRA_mUWNpcz0OfF7zOSA@mail.gmail.com>
+In-Reply-To: <CAOesGMjp4pscuxciHZo7br-acgbkZSdRA_mUWNpcz0OfF7zOSA@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 1 Sep 2021 16:10:15 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WPXAUyuAHb1jKx9F_aw+JGX4MWB3or=Eq5rXoKY=OQMw@mail.gmail.com>
+Message-ID: <CAD=FV=WPXAUyuAHb1jKx9F_aw+JGX4MWB3or=Eq5rXoKY=OQMw@mail.gmail.com>
 Subject: Re: [PATCH v3 06/16] ARM: configs: Everyone who had PANEL_SIMPLE now
  gets PANEL_SIMPLE_EDP
-To:     Douglas Anderson <dianders@chromium.org>
+To:     Olof Johansson <olof@lixom.net>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -137,18 +145,34 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 1, 2021 at 1:20 PM Douglas Anderson <dianders@chromium.org> wrote:
+Hi,
+
+On Wed, Sep 1, 2021 at 2:12 PM Olof Johansson <olof@lixom.net> wrote:
 >
-> In the patch ("drm/panel-simple-edp: Split eDP panels out of
-> panel-simple") we split the PANEL_SIMPLE driver in 2. By default let's
-> give everyone who had the old driver enabled the new driver too. If
-> folks want to opt-out of one or the other they always can later.
+> On Wed, Sep 1, 2021 at 1:20 PM Douglas Anderson <dianders@chromium.org> wrote:
+> >
+> > In the patch ("drm/panel-simple-edp: Split eDP panels out of
+> > panel-simple") we split the PANEL_SIMPLE driver in 2. By default let's
+> > give everyone who had the old driver enabled the new driver too. If
+> > folks want to opt-out of one or the other they always can later.
+> >
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 >
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Isn't this a case where the new option should just have had the old
+> option as the default value to avoid this kind of churn and possibly
+> broken platforms?
 
-Isn't this a case where the new option should just have had the old
-option as the default value to avoid this kind of churn and possibly
-broken platforms?
+I'm happy to go either way. I guess I didn't do that originally
+because logically there's not any reason to link the two drivers going
+forward. Said another way, someone enabling the "simple panel" driver
+for non-eDP panels wouldn't expect that the "simple panel" driver for
+DP panels would also get enabled by default. They really have nothing
+to do with one another. Enabling by default for something like this
+also seems like it would lead to bloat. I could have sworn that
+periodically people get yelled at for marking drivers on by default
+when it doesn't make sense.
 
+...that being said, I'm happy to change the default as you suggest.
+Just let me know.
 
--Olof
+-Doug
