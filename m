@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA551C432BE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 793A3C432BE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE5DC610A4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57C5C60F92
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Sep 2021 05:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242202AbhIAFuO (ORCPT
+        id S242047AbhIAFw3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Sep 2021 01:50:14 -0400
-Received: from mx21.baidu.com ([220.181.3.85]:45984 "EHLO baidu.com"
+        Wed, 1 Sep 2021 01:52:29 -0400
+Received: from mx20.baidu.com ([111.202.115.85]:48216 "EHLO baidu.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242200AbhIAFuL (ORCPT
+        id S242191AbhIAFw2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Sep 2021 01:50:11 -0400
-Received: from BC-Mail-Ex10.internal.baidu.com (unknown [172.31.51.50])
-        by Forcepoint Email with ESMTPS id 694954006B9E883A2CB4;
-        Wed,  1 Sep 2021 13:49:12 +0800 (CST)
+        Wed, 1 Sep 2021 01:52:28 -0400
+Received: from BC-Mail-Ex07.internal.baidu.com (unknown [172.31.51.47])
+        by Forcepoint Email with ESMTPS id D68C0C2445CC3B193B92;
+        Wed,  1 Sep 2021 13:51:30 +0800 (CST)
 Received: from BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) by
- BC-Mail-Ex10.internal.baidu.com (172.31.51.50) with Microsoft SMTP Server
+ BC-Mail-EX07.internal.baidu.com (172.31.51.47) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2242.12; Wed, 1 Sep 2021 13:49:12 +0800
+ 15.1.2242.12; Wed, 1 Sep 2021 13:51:30 +0800
 Received: from LAPTOP-UKSR4ENP.internal.baidu.com (172.31.63.8) by
  BJHW-MAIL-EX27.internal.baidu.com (10.127.64.42) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.14; Wed, 1 Sep 2021 13:49:11 +0800
+ 15.1.2308.14; Wed, 1 Sep 2021 13:51:30 +0800
 From:   Cai Huoqing <caihuoqing@baidu.com>
 To:     <caihuoqing@baidu.com>
-CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: cec: s5p_cec: Make use of the helper function devm_platform_ioremap_resource()
-Date:   Wed, 1 Sep 2021 13:49:05 +0800
-Message-ID: <20210901054906.6414-1-caihuoqing@baidu.com>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] media: exynos-gsc: Make use of the helper function devm_platform_ioremap_resource()
+Date:   Wed, 1 Sep 2021 13:51:23 +0800
+Message-ID: <20210901055124.6629-1-caihuoqing@baidu.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -58,30 +58,22 @@ separately
 
 Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
 ---
- drivers/media/cec/platform/s5p/s5p_cec.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index 028a09a7531e..ce9a9d922f11 100644
---- a/drivers/media/cec/platform/s5p/s5p_cec.c
-+++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-@@ -178,7 +178,6 @@ static int s5p_cec_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device *hdmi_dev;
--	struct resource *res;
- 	struct s5p_cec_dev *cec;
- 	bool needs_hpd = of_property_read_bool(pdev->dev.of_node, "needs-hpd");
- 	int ret;
-@@ -212,8 +211,7 @@ static int s5p_cec_probe(struct platform_device *pdev)
- 	if (IS_ERR(cec->pmu))
- 		return -EPROBE_DEFER;
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index f49f3322f835..cfd6ae70b8d8 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1137,8 +1137,7 @@ static int gsc_probe(struct platform_device *pdev)
+ 	spin_lock_init(&gsc->slock);
+ 	mutex_init(&gsc->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	cec->reg = devm_ioremap_resource(dev, res);
-+	cec->reg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(cec->reg))
- 		return PTR_ERR(cec->reg);
+-	gsc->regs = devm_ioremap_resource(dev, res);
++	gsc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(gsc->regs))
+ 		return PTR_ERR(gsc->regs);
  
 -- 
 2.25.1
