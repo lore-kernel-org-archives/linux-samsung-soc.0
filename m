@@ -2,111 +2,293 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DD7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 13:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F975C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 15:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74A8360F13
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 13:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0552560FED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 15:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242959AbhIFN6w (ORCPT
+        id S242065AbhIFPSN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Sep 2021 09:58:52 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:36410
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242826AbhIFN6v (ORCPT
+        Mon, 6 Sep 2021 11:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43586 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242362AbhIFPSM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Sep 2021 09:58:51 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1C3324019A
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Sep 2021 13:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630936666;
-        bh=J8YbYX9rObxi/+dAj0p29flv/Pb6qwtzNhWxLnF5+5k=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=EYmuHhoCurZtRGtUsVd/PPRZQp4QsT421ABpIXah25aBKrX+D9K9OgnM/dpVl011h
-         n/XdL/okJWwscZ3Qvg5YVilRRkmtDBcC7jba/NcNNEbgNZFUr/wpZeNJqhgFTqltwt
-         kUH0UgTpsxfz1jIcvXLBbzF2iNYyobsnloTzFZSNgdiGC6qOsuilXcWAMCv438bvMB
-         b0LWyhLSlyp3PGUTet/0epcHuMB3HF25RYtX9Wk4CFm8EOIjVOPFAh1qLeaBGNM8bA
-         9vIo6UJyCXAznBlTPFHL5xYFrW92VH0tsBE406/mog/QbEfg1Ix+mxf8nhx+l22Bj/
-         Ob2qtOjdek42A==
-Received: by mail-wr1-f71.google.com with SMTP id n1-20020a5d4c41000000b00159305d19baso1224327wrt.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Sep 2021 06:57:46 -0700 (PDT)
+        Mon, 6 Sep 2021 11:18:12 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D5BC0613C1
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Sep 2021 08:17:04 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id l24so3974183uai.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Sep 2021 08:17:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bQrcOPSf7pBZJCYQQnVkSrgNEesYDMSFecU9BQuGKZU=;
+        b=zYe9FR9ZNaFmXa/bzWa/4JbqZVIulgJ6lbYskzgikyVc6Og/9TOjcJKnIjDb1eEucZ
+         kG1X8tg1HoGjsJ95+BxJb243vLWeu00fyyYGcVmkyEO44lBEJ6TEVhBrkiDs3dyaCZui
+         It/w80qNYdvf6f1NrDkZnuYNfWGMD331qsX1YEMeiAaO+LCSbB5oRh9OevAwdfydjhMI
+         4gk9S+zG+gEquPWYXFTPSehBZME3pX38EZruq85WmqlX2awokHjcXOkR1NPpzRRMjsNO
+         VffyLSHsnQwJy4HqiGq4WZLxNQUPVBkJW5ejLYE2bhDuxgbHNojK1rp1+I0cVZFU3N1s
+         cPUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J8YbYX9rObxi/+dAj0p29flv/Pb6qwtzNhWxLnF5+5k=;
-        b=rObdJ/gMkDriIM9jEKfjxjcQBYCKsYJ9mQFLvHOH1dUix82juXhiUKJgyvPqTE3HO7
-         pM5IPryQht10MSZL57wrhzW8dMbCszWuNTm2nlnN2d12eOEVnJh3UZc4GN8hpKcKonAC
-         H/c0fGb5cVnPRsG9B10x9225UnvXfGnVUOXxPOaiW7PNplnmaeGuh62ML7ZyS+FvPLQt
-         hPHE/mDWKD7cNF7h4Mf9LUleMeaPHmXuMyOy+50OfyHgJkStIRtnAGJUApYrMUVM15Bt
-         B9rC3jd57dUVXohhD0rP8gVBR/daJdlXpsojvlx4sFqACvl3kS8rn1Tv3fy/2NfC8t0r
-         h9Bw==
-X-Gm-Message-State: AOAM533m7TMewf3OZGDbYjawbY9/Zl+Z6aUSQ6mRdtH3t17ck3eVbI6m
-        GfsimzXrsTj9l6msPSAZVHc8JhyXPgb4dl8QK0XkNABroCMa+MtbetndMVtMELkiAgj645iQnzg
-        fjtW02+e2zPEPPcOAuua4VK/QWZvyUVkVPVwPiGi/oTtzgjPn
-X-Received: by 2002:a05:600c:2295:: with SMTP id 21mr11497243wmf.84.1630936665323;
-        Mon, 06 Sep 2021 06:57:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxfKIgSTWWuKIqTodWd4lKtj/JI/NVBFOzbRNEQLz76HjYJektmsLbR+IXiCrH1QFEpjoH4Jw==
-X-Received: by 2002:a05:600c:2295:: with SMTP id 21mr11497232wmf.84.1630936665170;
-        Mon, 06 Sep 2021 06:57:45 -0700 (PDT)
-Received: from [192.168.3.211] ([79.98.113.217])
-        by smtp.gmail.com with ESMTPSA id o10sm8422907wrc.16.2021.09.06.06.57.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Sep 2021 06:57:44 -0700 (PDT)
-Subject: Re: [PATCH] ARM: s3c: Use strscpy to replace strlcpy
-To:     Jason Wang <wangborong@cdjrlc.com>
-Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210906134656.101088-1-wangborong@cdjrlc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <6ca0d3e1-b895-e6c8-e075-786f24c19696@canonical.com>
-Date:   Mon, 6 Sep 2021 15:57:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bQrcOPSf7pBZJCYQQnVkSrgNEesYDMSFecU9BQuGKZU=;
+        b=MvOcIqQcfoMmuhEh0PR7QOjA2jKo3AGBfYtsSICO14fW+jhz2IcMEstXvyAWL7oLSX
+         LGDaBBy0dja3lCpW6vTulkteXHIRn9fr0/bf9Ny1l9jAFiDBQb2pHQhWPZxBNHmG3yjT
+         nMnv3yUN0uQz5smUu1G4D/uGRA6migDQAitrNVVmREdJNsvjgFnRQBlJbpZe+c7EOVA/
+         MTgE1Ui0cX4zE4xWBiAx+YGBWNw76FmQcBiDHq+4T5BeiyRADXnHYPVXmRbVYZHqXUvR
+         cDF1LORegdwHkOqEHGB2t0+yo11TXMhPaWEGJogo4OOVbSMDohh+Y6ps5DV0v7aLg7Ai
+         RLLQ==
+X-Gm-Message-State: AOAM530kGXspOCU8sRCPcmRHJpcjecgqPtSyCeFxSanEN2DMtqBqVHOd
+        6aOyRxFlqJJ3zK0IU8berrk3XV+O1Dbttphz+E44fw==
+X-Google-Smtp-Source: ABdhPJwRm+FKxm0YSP8+0/3Dgu/q6YVV1RAAkL/Hx1QxF9PMM6RdemkterGZszBPDz4vhjLfYOArLtkqbVaXsEbQvhE=
+X-Received: by 2002:ab0:3303:: with SMTP id r3mr6027322uao.17.1630941423339;
+ Mon, 06 Sep 2021 08:17:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210906134656.101088-1-wangborong@cdjrlc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210730144922.29111-1-semen.protsenko@linaro.org>
+ <20210730144922.29111-13-semen.protsenko@linaro.org> <455cfb5e-dff7-a5c0-3875-49abe3e900f3@canonical.com>
+ <CAPLW+4nDS0atrbUFagDA0W_Ky5MvOiY+N+NQoQ+me4pndp_iWg@mail.gmail.com>
+ <68734f6c-fc76-595c-8d34-8924dbbbb845@canonical.com> <CAPLW+4n_JKj5xeBHXONcv__vyAFvx3fhXoxJa17NTHK1RSJFJw@mail.gmail.com>
+ <b753796c-2ce6-4166-7c20-289e950237ad@canonical.com> <50f84842-c397-8012-af95-e9d9fce53162@gmail.com>
+In-Reply-To: <50f84842-c397-8012-af95-e9d9fce53162@gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 6 Sep 2021 18:16:51 +0300
+Message-ID: <CAPLW+4=qDpwU0Qkc9Q8bewnQb283RonAUHwwM-H86qkbPrU9gw@mail.gmail.com>
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add Exynos850 SoC support
+To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/09/2021 15:46, Jason Wang wrote:
-> The strlcpy should not be used because it doesn't limit the source
-> length. As linus says, it's a completely useless function if you
-> can't implicitly trust the source string - but that is almost always
-> why people think they should use it! All in all the BSD function
-> will lead some potential bugs.
-> 
-> But the strscpy doesn't require reading memory from the src string
-> beyond the specified "count" bytes, and since the return value is
-> easier to error-check than strlcpy()'s. In addition, the implementation
-> is robust to the string changing out from underneath it, unlike the
-> current strlcpy() implementation.
-> 
-> Thus, We prefer using strscpy instead of strlcpy.
+On Fri, 6 Aug 2021 at 23:32, Pawe=C5=82 Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+>
+> W dniu 06.08.2021 o 14:32, Krzysztof Kozlowski pisze:
+> > On 06/08/2021 14:07, Sam Protsenko wrote:
+> >> On Fri, 6 Aug 2021 at 10:49, Krzysztof Kozlowski
+> >> <krzysztof.kozlowski@canonical.com> wrote:
+> >>>
+> >>> On 06/08/2021 01:06, Sam Protsenko wrote:
+> >>>> On Sat, 31 Jul 2021 at 12:03, Krzysztof Kozlowski
+> >>>> <krzysztof.kozlowski@canonical.com> wrote:
+> >>>>
+> >>>>>>
+> >>>>>> This patch adds minimal SoC support. Particular board device tree =
+files
+> >>>>>> can include exynos850.dtsi file to get SoC related nodes, and then
+> >>>>>> reference those nodes further as needed.
+> >>>>>>
+> >>>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >>>>>> ---
+> >>>>>>   .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 782 ++++++++++++=
+++++++
+> >>>>>>   arch/arm64/boot/dts/exynos/exynos850-usi.dtsi |  30 +
+> >>>>>>   arch/arm64/boot/dts/exynos/exynos850.dtsi     | 245 ++++++
+> >>>>>
+> >>>>> Not buildable. Missing Makefile, missing DTS. Please submit with in=
+itial
+> >>>>> DTS, otherwise no one is able to verify it even compiles.
+> >>>>>
+> >>>>
+> >>>> This device is not available for purchase yet. I'll send the patch f=
+or
+> >>>> board dts once it's announced. I can do all the testing for now, if
+> >>>> you have any specific requests. Would it be possible for us to revie=
+w
+> >>>> and apply only SoC support for now? Will send v2 soon...
+> >>>
+> >>> What you propose is equal to adding a driver (C source code) without
+> >>> ability to compile it. What's the point of having it in the kernel? I=
+t's
+> >>> unverifiable, unbuildable and unusable.
+> >>>
+> >>
+> >> Yes, I understand. That's adding code with no users, and it's not a
+> >> good practice.
+> >>
+> >>> We can review the DTSI however merging has to be with a DTS. Usually =
+the
+> >>> SoC vendor adds first an evalkit (e.g. SMDK board). Maybe you have on=
+e
+> >>> for Exynos850? Otherwise if you cannot disclose the actual board, the
+> >>> DTSI will have to wait. You can submit drivers, though.
+> >>>
+> >>
+> >> Sure, let's go this way. I'll send v2 soon. Improving patches and
+> >> having Reviewed-by tag for those would good enough for me at this
+> >> point. I'll continue to prepare another Exynos850 related patches
+> >> until the actual board is announced, like proper clock driver, reset,
+> >> MMC, etc. Is it ok if I send those for a review too (so I can fix all
+> >> issues ahead)?
+> >
+> > Sure, prepare all necessary drivers earlier. I suspect clocks will be a
+> > real pain because of significant changes modeled in vendor kernel. I
+> > remember Pawe=C5=82 Chmiel (+Cc) was doing something for these:
+> > https://github.com/PabloPL/linux/tree/exynos7420
+> >
+> > I mentioned before - you should also modify the chipid driver. Check
+> > also other drivers in drivers/soc/samsung, although some are needed onl=
+y
+> > for suspend&resume.
+> >
+> > BTW, Pawe=C5=82,
+> > How is your Exynos7420 progress? :)
+> Hi
+>
+> Sadly i had to postpone it for a while. Maybe will have more time now to
+> get back to it.
+>
+> About clock driver. In vendor sources there is clk driver with something
+> called virtual clocks (different than real ones). That driver calls
+> another driver called pwrcal, responsible for real manipulation of
+> clocks in hardware. This one has info about real clocks and also
+> additional info about for example rate for some of them, which is read
+> from binary from memory, by another driver called ect_parser in case of
+> devices at which i did looked.
+>
+> In my case i was able to find some more info about real clocks there -
+> for example register names and offsets
+> https://github.com/krzk/linux-vendor-backup/blob/mokee/android-3.18-samsu=
+ng-galaxy-s7-sm-g930f-exynos8890/drivers/soc/samsung/pwrcal/S5E8890/S5E8890=
+-cmusfr.h
+> and some clocks hierarchy info inside
+> https://github.com/krzk/linux-vendor-backup/blob/mokee/android-3.18-samsu=
+ng-galaxy-s7-sm-g930f-exynos8890/drivers/soc/samsung/pwrcal/S5E8890/S5E8890=
+-cmu.c
+> but there was still many info missing.
+>
+> Finding a way (which could be applied to other Exynos SOC) to "convert"
+> or use that vendor code and turn it into mainline driver, especially
+> without TRM which is not available for all/most of them, would be great.
+>
+> I'm wondering if Exynos850 device has the same issue as on 7420 (and
+> probably 8890/7578 and maybe also other 64 bit Exynos devices) - broken
+> firmware. For example i had to specify in dts timer clock frequency, on
+> few devices there is also a problem with timer registers not properly
+> configured by FW, which probably won't be fixed by vendor and patches
+> with workaround for it in kernel were rejected :/.
 
-Don't copy-paste kernel documentation into commits. It's enough to say
-that strlcpy is preferred, according to the kernel coding style (see
-strlcpy()).
+Hi Pawe=C5=82,
 
-If you want to add more sentences, make them relevant, e.g. describe
-possible effect of bugs depending on the source.
+Sorry for the late reply. Thanks for your input! I just started
+implementing the clock driver, and maybe I can share some useful stuff
+in exchange.
 
+ECT parser: in downstream kernel there is an option to dump ECT tables
+via some DebugFS file. I did that, and it seems to me it would be
+easier to just hard code necessary table in corresponding drivers
+code. E.g., PLL tables can be hard-coded in the clock driver (which is
+how it seems to be implemented for other Exynos SoC upstream anyway).
+So I don't think there is a huge need to upstream ECT parser itself.
+But dumping the tables can be useful to implement corresponding
+drivers (clocks, DVFS, APM, etc).
 
+Investigating downstream clock driver for Exynos850 and its
+dependencies (like VCLK, RA, CMUCAL), I figured it's much easier to
+implement the clock driver completely from scratch. Looking into
+clk-exynos7.c and clk-exynos5433.c implementation, this is probably
+how upstream design should look like. And it has nothing to do with
+downstream implementation. E.g., downstream driver has one single CMU
+node in dts (for the whole clock subsystem), but for upstream drivers
+we want to have separate nodes for each particular CMU. Also
+downstream implementation is over-complicated; that might have some
+sense for the vendor, if they have a bunch of similar SoCs or sharing
+driver code between different OS kernels, but for upstream kernel it's
+just unneeded complexity (several layers of abstraction that should be
+just removed, and useful stuff should be integrated in already
+existing upstream infrastructure). So I ended up using TRM and trying
+to make something similar to mentioned upstream drivers. Of course,
+there are some questions on whether we should use manual clocks
+control, or rely on automatic clock gating and Q-channel
+communication. But I'm having some progress already, and hopefully
+will submit the minimal driver in a week or so.
 
+As for downstream design and how to make a sense of it, for converting
+that to something more upstreamable, here is what I figured.
 
-Best regards,
-Krzysztof
+1. Clock driver (clk-exynosXXXX.c) registers some vclk clocks
+("Virtual Clocks"). Those are clocks which will be actually used. But
+those are lacking any hardware specific data yet (like register
+offsets, etc).
+
+2. ".calid" field from those vclk's is used to find more
+hardware-related info (later in run-time) for those registered clocks,
+from cmucal-node.c file. That file contains actual parent information
+and some info on HW stuff, but not real addresses/offset, but only
+indexes.
+
+3. Those indexes are resolved further (in run-time), obtaining actual
+offsets from cmucal-sfr.c file, in ra_init() function.
+
+4. Instead of using existing CCF clocks, custom vclk clock ops are
+used. Those are defined in composite.c (has nothing to do with CCF
+composite clocks). So the whole VCLK type looks like vendor
+re-implementation of composite clocks. For example, one VCLK clock can
+have the whole list of clocks which will be controlled via that single
+VCLK clock, and all operations will be called for each clock from the
+list.
+
+5. Further those operations are actually calling the code from ra.c,
+different functions are used for different clock types (PLL_TYPE,
+MUX_TYPE, etc). So if you're curious about actual ops implementation
+(like PLL, muxes, etc), just look there.
+
+That should be enough to convert downstream driver to upstream one.
+Basically one can use downstream source code to figure out info about
+registers and offsets (from cmucal-sfr.c) and info about internal
+clocks structure from cmucal-node.c and cmucal-vclk.c, and implement
+everything from scratch using clk-exynos7.c/clk-exynos5433.c as a
+template. I'd say it's easier to just use TRM for that, though :)
+
+As for the broken firmware and clock freq registers: yes, CNTFRQ_EL0
+registers wasn't set in EL3 firmware too, so I'm setting the
+"clock-frequency" property for arch timer in dts as a workaround right
+now, in my local tree. But I already let vendor guys know about that
+problem, and they are trying to fix that right now (at least for
+Exynos850 SoC).
+
+Thanks!
+
+> >
+> >> And should I maybe add RFC tag for those?
+> >
+> > No need. Drivers can be merged before DTS users.
+> >
+> > Best regards,
+> > Krzysztof
+> >
+>
