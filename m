@@ -2,86 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E230BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 13:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DD7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 13:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B75E160E8B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 13:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74A8360F13
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Sep 2021 13:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242478AbhIFNss (ORCPT
+        id S242959AbhIFN6w (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Sep 2021 09:48:48 -0400
-Received: from smtpbg126.qq.com ([106.55.201.22]:17264 "EHLO smtpbg587.qq.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S242330AbhIFNss (ORCPT
+        Mon, 6 Sep 2021 09:58:52 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:36410
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242826AbhIFN6v (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Sep 2021 09:48:48 -0400
-X-QQ-mid: bizesmtp32t1630936019t1xc7n3c
-Received: from localhost.localdomain (unknown [171.223.98.107])
-        by esmtp6.qq.com (ESMTP) with 
-        id ; Mon, 06 Sep 2021 21:46:58 +0800 (CST)
-X-QQ-SSF: 01000000004000C0D000B00A0000000
-X-QQ-FEAT: 0VmwRkEgV1FWcRSAALeydNZuGmmRQOvfXre6MvYzyVi1tkDn5Cdgidi1shKhC
-        Sknu6ZAyCKbDkD7bhCk4DUrSVQWEWwZ/1tMhR00TDwWO46mldUDlTSUNAgX9zJJwfBGTBkU
-        sPy52KRAoeMhK+psazlvQl7L7gSG05rhgy40VmG0ySByUhWVgZaKxnUqI2/HITYeuggXlcY
-        ehYW7X98Am2kPVE9HWoBXyB0ZURRZuZLJts5a1zb7r6FSEpu+qFAtTCBR90rAKgj8zgQdHN
-        sRxfqxY7Y1PFGscAvyn5mQJi8zDlJNQlmV5glWW5j9lgTwiYgwuOmHdu90jmDCiMijwXmrX
-        ANE6jGtwghATq3QHn2N/266Qki2DA==
-X-QQ-GoodBg: 0
-From:   Jason Wang <wangborong@cdjrlc.com>
-To:     krzysztof.kozlowski@canonical.com
+        Mon, 6 Sep 2021 09:58:51 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1C3324019A
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Sep 2021 13:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1630936666;
+        bh=J8YbYX9rObxi/+dAj0p29flv/Pb6qwtzNhWxLnF5+5k=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=EYmuHhoCurZtRGtUsVd/PPRZQp4QsT421ABpIXah25aBKrX+D9K9OgnM/dpVl011h
+         n/XdL/okJWwscZ3Qvg5YVilRRkmtDBcC7jba/NcNNEbgNZFUr/wpZeNJqhgFTqltwt
+         kUH0UgTpsxfz1jIcvXLBbzF2iNYyobsnloTzFZSNgdiGC6qOsuilXcWAMCv438bvMB
+         b0LWyhLSlyp3PGUTet/0epcHuMB3HF25RYtX9Wk4CFm8EOIjVOPFAh1qLeaBGNM8bA
+         9vIo6UJyCXAznBlTPFHL5xYFrW92VH0tsBE406/mog/QbEfg1Ix+mxf8nhx+l22Bj/
+         Ob2qtOjdek42A==
+Received: by mail-wr1-f71.google.com with SMTP id n1-20020a5d4c41000000b00159305d19baso1224327wrt.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Sep 2021 06:57:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J8YbYX9rObxi/+dAj0p29flv/Pb6qwtzNhWxLnF5+5k=;
+        b=rObdJ/gMkDriIM9jEKfjxjcQBYCKsYJ9mQFLvHOH1dUix82juXhiUKJgyvPqTE3HO7
+         pM5IPryQht10MSZL57wrhzW8dMbCszWuNTm2nlnN2d12eOEVnJh3UZc4GN8hpKcKonAC
+         H/c0fGb5cVnPRsG9B10x9225UnvXfGnVUOXxPOaiW7PNplnmaeGuh62ML7ZyS+FvPLQt
+         hPHE/mDWKD7cNF7h4Mf9LUleMeaPHmXuMyOy+50OfyHgJkStIRtnAGJUApYrMUVM15Bt
+         B9rC3jd57dUVXohhD0rP8gVBR/daJdlXpsojvlx4sFqACvl3kS8rn1Tv3fy/2NfC8t0r
+         h9Bw==
+X-Gm-Message-State: AOAM533m7TMewf3OZGDbYjawbY9/Zl+Z6aUSQ6mRdtH3t17ck3eVbI6m
+        GfsimzXrsTj9l6msPSAZVHc8JhyXPgb4dl8QK0XkNABroCMa+MtbetndMVtMELkiAgj645iQnzg
+        fjtW02+e2zPEPPcOAuua4VK/QWZvyUVkVPVwPiGi/oTtzgjPn
+X-Received: by 2002:a05:600c:2295:: with SMTP id 21mr11497243wmf.84.1630936665323;
+        Mon, 06 Sep 2021 06:57:45 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxfKIgSTWWuKIqTodWd4lKtj/JI/NVBFOzbRNEQLz76HjYJektmsLbR+IXiCrH1QFEpjoH4Jw==
+X-Received: by 2002:a05:600c:2295:: with SMTP id 21mr11497232wmf.84.1630936665170;
+        Mon, 06 Sep 2021 06:57:45 -0700 (PDT)
+Received: from [192.168.3.211] ([79.98.113.217])
+        by smtp.gmail.com with ESMTPSA id o10sm8422907wrc.16.2021.09.06.06.57.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Sep 2021 06:57:44 -0700 (PDT)
+Subject: Re: [PATCH] ARM: s3c: Use strscpy to replace strlcpy
+To:     Jason Wang <wangborong@cdjrlc.com>
 Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jason Wang <wangborong@cdjrlc.com>
-Subject: [PATCH] ARM: s3c: Use strscpy to replace strlcpy
-Date:   Mon,  6 Sep 2021 21:46:56 +0800
-Message-Id: <20210906134656.101088-1-wangborong@cdjrlc.com>
-X-Mailer: git-send-email 2.33.0
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210906134656.101088-1-wangborong@cdjrlc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <6ca0d3e1-b895-e6c8-e075-786f24c19696@canonical.com>
+Date:   Mon, 6 Sep 2021 15:57:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:cdjrlc.com:qybgspam:qybgspam2
+In-Reply-To: <20210906134656.101088-1-wangborong@cdjrlc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The strlcpy should not be used because it doesn't limit the source
-length. As linus says, it's a completely useless function if you
-can't implicitly trust the source string - but that is almost always
-why people think they should use it! All in all the BSD function
-will lead some potential bugs.
+On 06/09/2021 15:46, Jason Wang wrote:
+> The strlcpy should not be used because it doesn't limit the source
+> length. As linus says, it's a completely useless function if you
+> can't implicitly trust the source string - but that is almost always
+> why people think they should use it! All in all the BSD function
+> will lead some potential bugs.
+> 
+> But the strscpy doesn't require reading memory from the src string
+> beyond the specified "count" bytes, and since the return value is
+> easier to error-check than strlcpy()'s. In addition, the implementation
+> is robust to the string changing out from underneath it, unlike the
+> current strlcpy() implementation.
+> 
+> Thus, We prefer using strscpy instead of strlcpy.
 
-But the strscpy doesn't require reading memory from the src string
-beyond the specified "count" bytes, and since the return value is
-easier to error-check than strlcpy()'s. In addition, the implementation
-is robust to the string changing out from underneath it, unlike the
-current strlcpy() implementation.
+Don't copy-paste kernel documentation into commits. It's enough to say
+that strlcpy is preferred, according to the kernel coding style (see
+strlcpy()).
 
-Thus, We prefer using strscpy instead of strlcpy.
+If you want to add more sentences, make them relevant, e.g. describe
+possible effect of bugs depending on the source.
 
-Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
----
- arch/arm/mach-s3c/mach-mini6410.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-s3c/mach-mini6410.c b/arch/arm/mach-s3c/mach-mini6410.c
-index 741fa1f09694..c14c2e27127b 100644
---- a/arch/arm/mach-s3c/mach-mini6410.c
-+++ b/arch/arm/mach-s3c/mach-mini6410.c
-@@ -262,7 +262,7 @@ static char mini6410_features_str[12] __initdata = "0";
- static int __init mini6410_features_setup(char *str)
- {
- 	if (str)
--		strlcpy(mini6410_features_str, str,
-+		strscpy(mini6410_features_str, str,
- 			sizeof(mini6410_features_str));
- 	return 1;
- }
--- 
-2.33.0
 
+
+Best regards,
+Krzysztof
