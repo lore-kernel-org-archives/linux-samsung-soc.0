@@ -2,77 +2,71 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91732C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Sep 2021 22:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB12C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Sep 2021 23:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB8160F5E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Sep 2021 22:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 182326113E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Sep 2021 23:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236877AbhIHWhh (ORCPT
+        id S229997AbhIHXJp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Sep 2021 18:37:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
+        Wed, 8 Sep 2021 19:09:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235691AbhIHWhg (ORCPT
+        with ESMTP id S234048AbhIHXJo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Sep 2021 18:37:36 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6BDC061575
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Sep 2021 15:36:28 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id i13so4015803ilm.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Sep 2021 15:36:28 -0700 (PDT)
+        Wed, 8 Sep 2021 19:09:44 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A3BC0613C1
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Sep 2021 16:08:35 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d18so2223447pll.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Sep 2021 16:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=M/dueucM0XzOy1jPT/PQdcqnijwVro2s2Bw0YSR2geg=;
-        b=LkipFzU3cjINN/t5kFqm8if/dRpeVPe5N3h3SK1jKCbuJYBNkdOKO1Q1BlRDgpJwkF
-         uecfJZnqLEqB4ptN4xZ93fVt8PEUJA6HkO2/CTlBx2dJELQY0APPZr34AZSYfiKYYUzh
-         uH+J7IHDcQ+Gf9T4yeyACeE7nz4Tz7it+F8Ok=
+        bh=zZtlzVhWBbwXoavimL5Cu2zNuLqJKyQrs9PtnLoTbBw=;
+        b=kSjq7V7UVdcmFJyduvILA7A+e4J9ObyfE9f9UlOv1wvamgAl4MgHpJqYP1XrUEZhuD
+         qsMZW0Fk31XflGWEup34tqLssSis/K7KZ1VFRY9uiUuUWwWoHQYync4TQhBzfDNxh2Tv
+         UOgVsuOzWCLKEPDsv1L+nBsBQk5yO9jklbAtJDFD1Th25XdzQZGa3b+fMzs2kswPgwWN
+         8sKr8mQWjMCY75HA6h2gk7J0vCnx9c19EL7g70oFrnAsU54eBRbWhdip29c8oSPgqgpf
+         L5YVWqhWliH0iHZRhi1JBIHkJQ5qPATPl+ulZnecXkpVLPg+9gvZI4nTQS742Q+by/1E
+         VlHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=M/dueucM0XzOy1jPT/PQdcqnijwVro2s2Bw0YSR2geg=;
-        b=vFTvdyvO9UHM+vFk5teAXwvcuKyH8YjnJwmSchsF5UA8kAocjhiVnHht0GWieXDOQq
-         a3t68Wzk4Ul3TAah62UPJBLYJR0bjRXVe5E+Ae6nZ/8VAb+ZNVxbiYCJ6dGKCL5/D59B
-         dP/GVvSXL25QiM+kKJeGJY+hSLI4kbPYc6QJAsHut6CPEXoCcxcmjeTOvg2ioxFbKmYP
-         NjI8qluzSNRUxXB8/AoHK2gdEZ5mGOdeu08rzQlc4u1Z6vUHE9n/9sJYXyfAbUzFoasU
-         7goIXnX4AbS6FQoRAODWvuxONia1cQmOMelrs57eJSJvE1XLeDfC+i2y+0GT3r/m0H7I
-         bbbQ==
-X-Gm-Message-State: AOAM533nbBvjVQjr5TtOVAd/dacBXb5ZVZjyVoCxqPTM8PXWG4KpBjdC
-        s/dqCWcT/icBcRSQN65I+E5dLdvH/VkboQ==
-X-Google-Smtp-Source: ABdhPJy4tFtUxtyOd6oC3O+6+bf0jxm9pqQuXG9J/j9bIjDKvlywHwbki1sSs9lno2F7+syaM2XZNw==
-X-Received: by 2002:a05:6e02:1c27:: with SMTP id m7mr398853ilh.190.1631140587437;
-        Wed, 08 Sep 2021 15:36:27 -0700 (PDT)
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com. [209.85.166.45])
-        by smtp.gmail.com with ESMTPSA id a14sm231194iol.24.2021.09.08.15.36.25
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Sep 2021 15:36:26 -0700 (PDT)
-Received: by mail-io1-f45.google.com with SMTP id b10so5367498ioq.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Sep 2021 15:36:25 -0700 (PDT)
-X-Received: by 2002:a5d:8458:: with SMTP id w24mr489939ior.168.1631140574432;
- Wed, 08 Sep 2021 15:36:14 -0700 (PDT)
+        bh=zZtlzVhWBbwXoavimL5Cu2zNuLqJKyQrs9PtnLoTbBw=;
+        b=BqeFChnawmNhX1liCfcTnZZWyipjdUz8l26Ri8bUx4KspkimDi4oUBYfEv/6VBWoJq
+         qBiUKhzwmweNLn6yyWm9savMsdMQLXz76gq3Fw0h8o3wPlLGhTd9DBb3y40jlPfFs0Fm
+         T2tiPMrJ+66ZP/KVrBTqffWQFhnqC64C67g4fbMyG0w65DEnwlwDJupUuhsbT7WXHsAe
+         5M2dx8fnGo8PsLXK3UOtIiqnrRdUr5mJMKDTiYz65JgFGKQE7t1GZiflk5m82XzG1pgg
+         ufbf2bsiXk3fQJSRJserKCk3XlIzs66hPf3040ZX21S0X/cxHnAC7ly2xq846Fxi12Op
+         U2KA==
+X-Gm-Message-State: AOAM533odgE3C4ZAiuj/XtFIvYpc0SQ6sUi7hNikFizJlbS6hmOi3cD4
+        4lZKmVFVZaavH3/iG3CpXpnSKHipURVZWC98tNG5Dg==
+X-Google-Smtp-Source: ABdhPJyFn28fS/y5ulgH/27LqxDmH6NBfIEoA9Td+810/fo43QUOaiDpFlx7utmV8lw1jHrEN/4yqFOCMF/8I1/Q04A=
+X-Received: by 2002:a17:90a:7301:: with SMTP id m1mr45943pjk.34.1631142514970;
+ Wed, 08 Sep 2021 16:08:34 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210901201934.1084250-1-dianders@chromium.org>
  <20210901131531.v3.6.I02250cd7d4799661b068bcc65849a456ed411734@changeid>
  <CAOesGMjp4pscuxciHZo7br-acgbkZSdRA_mUWNpcz0OfF7zOSA@mail.gmail.com>
- <CAD=FV=WPXAUyuAHb1jKx9F_aw+JGX4MWB3or=Eq5rXoKY=OQMw@mail.gmail.com> <163070152582.405991.9480635890491684680@swboyd.mtv.corp.google.com>
-In-Reply-To: <163070152582.405991.9480635890491684680@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 8 Sep 2021 15:36:02 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XzPVda==+hkJ8ZJNXz3sT=V+8y4gbsbUik4k3Om_cGvQ@mail.gmail.com>
-Message-ID: <CAD=FV=XzPVda==+hkJ8ZJNXz3sT=V+8y4gbsbUik4k3Om_cGvQ@mail.gmail.com>
+ <CAD=FV=WPXAUyuAHb1jKx9F_aw+JGX4MWB3or=Eq5rXoKY=OQMw@mail.gmail.com>
+ <163070152582.405991.9480635890491684680@swboyd.mtv.corp.google.com> <CAD=FV=XzPVda==+hkJ8ZJNXz3sT=V+8y4gbsbUik4k3Om_cGvQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=XzPVda==+hkJ8ZJNXz3sT=V+8y4gbsbUik4k3Om_cGvQ@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Wed, 8 Sep 2021 16:08:23 -0700
+Message-ID: <CAOesGMhd+m=hU6Fj3QXxqZb6TFf414UwvQLsLWgxe9Zb=3-tPQ@mail.gmail.com>
 Subject: Re: [PATCH v3 06/16] ARM: configs: Everyone who had PANEL_SIMPLE now
  gets PANEL_SIMPLE_EDP
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Olof Johansson <olof@lixom.net>,
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -148,166 +142,194 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Fri, Sep 3, 2021 at 1:38 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Sep 8, 2021 at 3:36 PM Doug Anderson <dianders@chromium.org> wrote:
 >
-> Quoting Doug Anderson (2021-09-01 16:10:15)
-> > Hi,
+> Hi,
+>
+> On Fri, Sep 3, 2021 at 1:38 PM Stephen Boyd <sboyd@kernel.org> wrote:
 > >
-> > On Wed, Sep 1, 2021 at 2:12 PM Olof Johansson <olof@lixom.net> wrote:
+> > Quoting Doug Anderson (2021-09-01 16:10:15)
+> > > Hi,
 > > >
-> > > On Wed, Sep 1, 2021 at 1:20 PM Douglas Anderson <dianders@chromium.org> wrote:
+> > > On Wed, Sep 1, 2021 at 2:12 PM Olof Johansson <olof@lixom.net> wrote:
 > > > >
-> > > > In the patch ("drm/panel-simple-edp: Split eDP panels out of
-> > > > panel-simple") we split the PANEL_SIMPLE driver in 2. By default let's
-> > > > give everyone who had the old driver enabled the new driver too. If
-> > > > folks want to opt-out of one or the other they always can later.
+> > > > On Wed, Sep 1, 2021 at 1:20 PM Douglas Anderson <dianders@chromium.org> wrote:
+> > > > >
+> > > > > In the patch ("drm/panel-simple-edp: Split eDP panels out of
+> > > > > panel-simple") we split the PANEL_SIMPLE driver in 2. By default let's
+> > > > > give everyone who had the old driver enabled the new driver too. If
+> > > > > folks want to opt-out of one or the other they always can later.
+> > > > >
+> > > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > > > >
-> > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > > > Isn't this a case where the new option should just have had the old
+> > > > option as the default value to avoid this kind of churn and possibly
+> > > > broken platforms?
 > > >
-> > > Isn't this a case where the new option should just have had the old
-> > > option as the default value to avoid this kind of churn and possibly
-> > > broken platforms?
+> > > I'm happy to go either way. I guess I didn't do that originally
+> > > because logically there's not any reason to link the two drivers going
+> > > forward. Said another way, someone enabling the "simple panel" driver
+> > > for non-eDP panels wouldn't expect that the "simple panel" driver for
+> > > DP panels would also get enabled by default. They really have nothing
+> > > to do with one another. Enabling by default for something like this
+> > > also seems like it would lead to bloat. I could have sworn that
+> > > periodically people get yelled at for marking drivers on by default
+> > > when it doesn't make sense.
+> > >
+> > > ...that being said, I'm happy to change the default as you suggest.
+> > > Just let me know.
 > >
-> > I'm happy to go either way. I guess I didn't do that originally
-> > because logically there's not any reason to link the two drivers going
-> > forward. Said another way, someone enabling the "simple panel" driver
-> > for non-eDP panels wouldn't expect that the "simple panel" driver for
-> > DP panels would also get enabled by default. They really have nothing
-> > to do with one another. Enabling by default for something like this
-> > also seems like it would lead to bloat. I could have sworn that
-> > periodically people get yelled at for marking drivers on by default
-> > when it doesn't make sense.
+> > Having the default will help olddefconfig users seamlessly migrate to
+> > the new Kconfig. Sadly they don't notice that they should probably
+> > disable the previous Kconfig symbol, but oh well. At least with the
+> > default they don't go on a hunt/bisect to figure out that some Kconfig
+> > needed to be enabled now that they're using a new kernel version.
 > >
-> > ...that being said, I'm happy to change the default as you suggest.
-> > Just let me know.
+> > Maybe the default should have a TODO comment next to it indicating we
+> > should remove the default in a year or two.
 >
-> Having the default will help olddefconfig users seamlessly migrate to
-> the new Kconfig. Sadly they don't notice that they should probably
-> disable the previous Kconfig symbol, but oh well. At least with the
-> default they don't go on a hunt/bisect to figure out that some Kconfig
-> needed to be enabled now that they're using a new kernel version.
+> OK, so I'm trying to figure out how to do this without just "kicking
+> the can" down the road. I guess your idea is that for the next year
+> this will be the default and that anyone who really wants
+> "CONFIG_DRM_PANEL_EDP" will "opt-in" to keep it by adding
+> "CONFIG_DRM_PANEL_EDP=y" to their config? ...and then after a year
+> passes we remove the default? ...but that won't work, will it? Since
+> "CONFIG_DRM_PANEL_EDP" will be the default for the next year then you
+> really can't add it to the "defconfig", at least if you ever
+> "normalize" it. The "defconfig" by definition has everything stripped
+> from it that's already the "default", so for the next year anyone who
+> tries to opt-in will get their preference stripped.
 >
-> Maybe the default should have a TODO comment next to it indicating we
-> should remove the default in a year or two.
+> Hrm, so let me explain options as I see them. Maybe someone can point
+> out something that I missed. I'll assume that we'll change the config
+> option from CONFIG_DRM_PANEL_SIMPLE_EDP to CONFIG_DRM_PANEL_EDP
+> (remove the "SIMPLE" part).
+>
+> ==
+>
+> Where we were before my series:
+>
+> * One config "CONFIG_DRM_PANEL_SIMPLE" and it enables simple non-eDP
+> and eDP drivers.
+>
+> ==
+>
+> Option 1: update everyone's configs (this patch)
+>
+> * Keep old config "CONFIG_DRM_PANEL_SIMPLE" but it now only means
+> enable the panel-simple (non-eDP) driver.
+> * Anyone who wants eDP panels must opt-in to "CONFIG_DRM_PANEL_EDP"
+> * Update all configs in mainline; any out-of mainline configs must
+> figure this out themselves.
+>
+> Pros:
+> * no long term baggage
+>
+> Cons:
+> * patch upstream is a bit of "churn"
+> * anyone with downstream config will have to figure out what happened.
+>
+> ==
+>
+> Option 2: kick the can down the road + accept cruft
+>
+> * Keep old config "CONFIG_DRM_PANEL_SIMPLE" and it means enable the
+> panel-simple (non-eDP) driver.
+> * Anyone with "CONFIG_DRM_PANEL_SIMPLE" is opted in by default to
+> "CONFIG_DRM_PANEL_EDP"
+>
+> AKA:
+> config DRM_PANEL_EDP
+>   default DRM_PANEL_SIMPLE
+>
+> Pros:
+> * no config patches needed upstream at all and everything just works!
+>
+> Cons:
+> * people are opted in to extra cruft by default and need to know to turn it off.
+> * unclear if we can change the default without the same problems.
+>
+> ==
+>
+> Option 3: try to be clever
+>
+> * Add _two_ new configs. CONFIG_DRM_PANEL_SIMPLE_V2 and CONFIG_DRM_PANEL_EDP.
+> * Old config "CONFIG_DRM_PANEL_SIMPLE" gets marked as "deprecated".
+> * Both new configs have "default CONFIG_DRM_PANEL_SIMPLE"
+>
+> Now anyone old will magically get both the new config options by
+> default. Anyone looking at this in the future _won't_ set the
+> deprecated CONFIG_DRM_PANEL_SIMPLE but will instead choose if they
+> want either the eDP or "simple" driver.
+>
+> Pros:
+> * No long term baggage.
+> * Everyone is transitioned automatically by default with no cruft patches.
+>
+> Cons:
+> * I can't think of a better name than "CONFIG_DRM_PANEL_SIMPLE_V2" and
+> that name is ugly.
+>
+> ==
+>
+> Option 4: shave a yak
+>
+> When thinking about this I came up with a clever idea of stashing the
+> kernel version in a defconfig when it's generated. Then you could do
+> something like:
+>
+> config DRM_PANEL_EDP
+>   default DRM_PANEL_SIMPLE if DEFCONFIG_GENERATED_AT <= 0x00050f00
+>
+> That feels like a good idea to me but who knows what others would
+> think. In general I think this series already shaves enough yaks. This
+> isn't a new problem we're trying to solve so it seems like we should
+> pick one of the options above.
+>
+> ==
+>
+> Unless I get an explicit NAK from someone like Olof or Arnd or I hear
+> that everyone loves Option #3 I'll probably just stick with the
+> existing approach since:
+>
+> * Olof's wording didn't make it sound like a strong objection.
 
-OK, so I'm trying to figure out how to do this without just "kicking
-the can" down the road. I guess your idea is that for the next year
-this will be the default and that anyone who really wants
-"CONFIG_DRM_PANEL_EDP" will "opt-in" to keep it by adding
-"CONFIG_DRM_PANEL_EDP=y" to their config? ...and then after a year
-passes we remove the default? ...but that won't work, will it? Since
-"CONFIG_DRM_PANEL_EDP" will be the default for the next year then you
-really can't add it to the "defconfig", at least if you ever
-"normalize" it. The "defconfig" by definition has everything stripped
-from it that's already the "default", so for the next year anyone who
-tries to opt-in will get their preference stripped.
+Yeah, not a strong objection but an enquiry if there's a better way to
+handle it. TL;DR: I don't think there really is.
 
-Hrm, so let me explain options as I see them. Maybe someone can point
-out something that I missed. I'll assume that we'll change the config
-option from CONFIG_DRM_PANEL_SIMPLE_EDP to CONFIG_DRM_PANEL_EDP
-(remove the "SIMPLE" part).
+My comment mostly came from the fact that when olddefconfig gets
+broken like this, we tend to have a bunch of patches trickle in over
+time as downstream users discover the need to turn on the new option.
+You covered (most) of that  by doing the appropriate defconfigs to
+this patch series, so it won't be as bad (besides any newly added
+defconfigs during the same release, and we're quite careful about
+doing that these days).
 
-==
+I think most of the other options, besides 2, are just more overhead
+than needed here. So I'd be fine with just picking up option 1.
 
-Where we were before my series:
+What's clear is that this is not a very convenient activity that
+scales, but we don't do it all that often. This is where something
+like a "HAVE_EDP" type config that the platform can provide helps, but
+adding it just for this rework seems to be more work than it's worth.
 
-* One config "CONFIG_DRM_PANEL_SIMPLE" and it enables simple non-eDP
-and eDP drivers.
+> * From git history it looks as if config patches don't necessarily
+> land through the SoC tree and thus I'd by default follow the
+> suggestions of the DRM folks. Andrzej suggested going with the
+> existing approach as long as I changed the symbol names and re-ordered
+> the patches.
 
-==
+Right, Kconfig changes usually go with the driver. dts and defconfig
+changes go to the SoC tree though since otherwise we end up with a
+bunch of churn and conflicts.
 
-Option 1: update everyone's configs (this patch)
+> Please yell if anything above sounds wrong! I'll probably try to send
+> out a new version tomorrow or the next day, but I won't land it right
+> away to give people time to yell.
 
-* Keep old config "CONFIG_DRM_PANEL_SIMPLE" but it now only means
-enable the panel-simple (non-eDP) driver.
-* Anyone who wants eDP panels must opt-in to "CONFIG_DRM_PANEL_EDP"
-* Update all configs in mainline; any out-of mainline configs must
-figure this out themselves.
-
-Pros:
-* no long term baggage
-
-Cons:
-* patch upstream is a bit of "churn"
-* anyone with downstream config will have to figure out what happened.
-
-==
-
-Option 2: kick the can down the road + accept cruft
-
-* Keep old config "CONFIG_DRM_PANEL_SIMPLE" and it means enable the
-panel-simple (non-eDP) driver.
-* Anyone with "CONFIG_DRM_PANEL_SIMPLE" is opted in by default to
-"CONFIG_DRM_PANEL_EDP"
-
-AKA:
-config DRM_PANEL_EDP
-  default DRM_PANEL_SIMPLE
-
-Pros:
-* no config patches needed upstream at all and everything just works!
-
-Cons:
-* people are opted in to extra cruft by default and need to know to turn it off.
-* unclear if we can change the default without the same problems.
-
-==
-
-Option 3: try to be clever
-
-* Add _two_ new configs. CONFIG_DRM_PANEL_SIMPLE_V2 and CONFIG_DRM_PANEL_EDP.
-* Old config "CONFIG_DRM_PANEL_SIMPLE" gets marked as "deprecated".
-* Both new configs have "default CONFIG_DRM_PANEL_SIMPLE"
-
-Now anyone old will magically get both the new config options by
-default. Anyone looking at this in the future _won't_ set the
-deprecated CONFIG_DRM_PANEL_SIMPLE but will instead choose if they
-want either the eDP or "simple" driver.
-
-Pros:
-* No long term baggage.
-* Everyone is transitioned automatically by default with no cruft patches.
-
-Cons:
-* I can't think of a better name than "CONFIG_DRM_PANEL_SIMPLE_V2" and
-that name is ugly.
-
-==
-
-Option 4: shave a yak
-
-When thinking about this I came up with a clever idea of stashing the
-kernel version in a defconfig when it's generated. Then you could do
-something like:
-
-config DRM_PANEL_EDP
-  default DRM_PANEL_SIMPLE if DEFCONFIG_GENERATED_AT <= 0x00050f00
-
-That feels like a good idea to me but who knows what others would
-think. In general I think this series already shaves enough yaks. This
-isn't a new problem we're trying to solve so it seems like we should
-pick one of the options above.
-
-==
-
-Unless I get an explicit NAK from someone like Olof or Arnd or I hear
-that everyone loves Option #3 I'll probably just stick with the
-existing approach since:
-
-* Olof's wording didn't make it sound like a strong objection.
-
-* From git history it looks as if config patches don't necessarily
-land through the SoC tree and thus I'd by default follow the
-suggestions of the DRM folks. Andrzej suggested going with the
-existing approach as long as I changed the symbol names and re-ordered
-the patches.
+I'd leave it up to you if you want to do option 1 or 2, since there's
+no really convenient way to do it better. 3 seems to be a bigger
+hammer than what this situation calls for IMHO.
 
 
-Please yell if anything above sounds wrong! I'll probably try to send
-out a new version tomorrow or the next day, but I won't land it right
-away to give people time to yell.
-
-
--Doug
+-Olof
