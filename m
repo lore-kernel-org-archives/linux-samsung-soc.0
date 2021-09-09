@@ -2,347 +2,106 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31F2C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 21:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FE6C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 22:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCE4D6113E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 21:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D494661132
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 22:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346632AbhIIVCm (ORCPT
+        id S233986AbhIIWbZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 17:02:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50074 "EHLO
+        Thu, 9 Sep 2021 18:31:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346523AbhIIVCm (ORCPT
+        with ESMTP id S229531AbhIIWbY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 17:02:42 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19648C061757
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Sep 2021 14:01:32 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id u11-20020a17090adb4b00b00181668a56d6so2395096pjx.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Sep 2021 14:01:32 -0700 (PDT)
+        Thu, 9 Sep 2021 18:31:24 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A4BC061574;
+        Thu,  9 Sep 2021 15:30:14 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id e21so86019ejz.12;
+        Thu, 09 Sep 2021 15:30:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=n006i3IBW2iUEGDiSQzDbT/ZRDF6GTq7cgbwR3bFSGQ=;
-        b=DmLMttWEuMDptT4pkUI7EML70x7xxDpq3k4Bd4QKmj6PYOaerM1g4jawU+xW+E3l4h
-         XqQjq9OjDcHwFNHbf7zAlzTeduNdvCx+dRFawLlvMv1ZcZmDe2d+oYZ8+SdyVwjSvsHz
-         363GXhzw/rR0tjwlk6umJ8aUsmep/ehQge0ds=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sB1PMWA/ZgtSnuaLYnidQDY1PRQoxYpPc51bJqK9AUA=;
+        b=WiYCeUYtMcYFG6FgNoxwGnoohj1120C8ISU6S6jG1suPLJMJfsQAEVBY7C5Q0nONJN
+         AkcQC5CjkaUCQHaq4fRS8JpF7hWkmKJna8hsFfu+/Aiuzwns3kwFMXWnqZzd+ErVtj15
+         LnDmGr2NMsK9m0sqqcHEoAWR7eKNQr7Cpqa4HzBlsROsiz5SkEl/ll+MOl6BlE/kUUtI
+         61WUDzovGO5H6ThPNF1n8BfPqVV6m7qv6S3Zscnc7eqs93/ayrkh+mxLEWSDVC68ayxj
+         0+NeeKW52o+b3d8XtURwl3ul8/kPF3WjyBkYG0fqf3gwXADJOVnHHj5rZcfLsyrztPxh
+         cMiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n006i3IBW2iUEGDiSQzDbT/ZRDF6GTq7cgbwR3bFSGQ=;
-        b=gS00S+T1qptJsMSRcvv17odR919WkbeYIVEqcm8zIztfjCLsLn5aCjQfPzU5b0xf36
-         ZsbKsHSCizC6S4igZ6T0ypxStCURvDHplCAWfrxxAUI5NCi6rR6WuMSQz14C4WPp5EER
-         /vTey9t5aRXlzXUKbVXycDEoVdtvLdfNKH+klcu1QQMq3GlZcHDKPB7YNTwy/Vx2zYjD
-         sLJZ2kMs75IcYwHqSX9xjkwTg/uv1DU7Y4gZKCx8fhM2na0daSoxAzEVWFGH4wfFtybf
-         Td9YRLXh+PhdMO0zDaUTWVY8mWSB0JIV4acVxDMR56Sduv3LSqpAbhclsdDZE88H9tS8
-         rbqQ==
-X-Gm-Message-State: AOAM530KfaPNhlxZGKHEBoE+Pfg2zz4NOPI5BSNemFIZE5OwPwt4XByY
-        KC5y1U50BhUr7i1qSfqVkz6e5Q==
-X-Google-Smtp-Source: ABdhPJzjG7YLOczzbE3Y9qWt5C8gEnPH762+qg5P1jHWQwBpJiTKvjdTN7Ijd0U5T+C2rUT6AUCZpg==
-X-Received: by 2002:a17:902:c40e:b0:138:e2f9:6c97 with SMTP id k14-20020a170902c40e00b00138e2f96c97mr4522970plk.26.1631221291607;
-        Thu, 09 Sep 2021 14:01:31 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:201:8da3:b0fb:4261:2c10])
-        by smtp.gmail.com with ESMTPSA id l143sm177069pfd.60.2021.09.09.14.01.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sB1PMWA/ZgtSnuaLYnidQDY1PRQoxYpPc51bJqK9AUA=;
+        b=KKvjk5bs165Y+dFR7FAaSFGnRb9R6xR8R/ru81Vbf2PVK4uhyXyZ4AnbO2m+05iL9S
+         2vtW/EXNV7tRD2mCkjcnLVWzYyUQEXsLE5PxHxjgKCYZ0uFZvzSsS7XOvoyK5HtEsbQr
+         e42p+kzKA+UaUWzcnl7/WC2wBHTHeWr9Fn0tH2aIG1iGfzxhWmj+raTYU1dbsdMB6l6E
+         opPLJeAiX8gwDwZWYHyzGeOOKnz3hDcFkcqFJUitrwQBbRojL9ZJWx1WE21+mLHla4n0
+         XFNG4sNmJO1Zl5gO8QGGD4epKYToEAs53k9MdzwhFBOWKu7IyfSxG5UXLMCVojIS/LrR
+         Yahg==
+X-Gm-Message-State: AOAM533p8P9cMyCRokT2xPG7tw2Oji7/Mh2QmliJ1I8KKSPy3pA5qoOu
+        CL3rb5ri8Z1fhWss60rPI9w=
+X-Google-Smtp-Source: ABdhPJw/iEC4zfda/17vuVcH5S+7dLC1aQchLJ2YA0gDqQf7+Z87zv2aAGQwjrrgMvG7KcFdqntimg==
+X-Received: by 2002:a17:907:7f29:: with SMTP id qf41mr5992812ejc.211.1631226613331;
+        Thu, 09 Sep 2021 15:30:13 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:ab88:3694:e80:aff:4a9a:bef5:ef56])
+        by smtp.googlemail.com with ESMTPSA id m6sm1670883edi.10.2021.09.09.15.30.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Sep 2021 14:01:31 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Linus W <linus.walleij@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        Steev Klimaszewski <steev@kali.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Arnd Bergmann <arnd@arndb.de>, Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
+        Thu, 09 Sep 2021 15:30:12 -0700 (PDT)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     virag.david003@gmail.com,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lionel Debieve <lionel.debieve@st.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Olof Johansson <olof@lixom.net>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
-        Robert Richter <rric@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH v4 05/15] ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
-Date:   Thu,  9 Sep 2021 14:00:21 -0700
-Message-Id: <20210909135838.v4.5.I02250cd7d4799661b068bcc65849a456ed411734@changeid>
-X-Mailer: git-send-email 2.33.0.309.g3052b89438-goog
-In-Reply-To: <20210909210032.465570-1-dianders@chromium.org>
-References: <20210909210032.465570-1-dianders@chromium.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: samsung: exynos-pmu: Fix compilation when nothing selects CONFIG_MFD_CORE
+Date:   Fri, 10 Sep 2021 00:28:12 +0200
+Message-Id: <20210909222812.108614-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In the patch ("drm/panel-simple-edp: Split eDP panels out of
-panel-simple") we will split the PANEL_SIMPLE driver in two. By
-default let's give everyone who had the old driver enabled the new
-driver too. If folks want to opt-out of one or the other they always
-can later.
+Commit 93618e344a5e ("soc: samsung: exynos-pmu: instantiate clkout driver as MFD")
+adds a "devm_mfd_add_devices" call in the exynos-pmu driver which depends
+on CONFIG_MFD_CORE. If no driver selects that config, the build will fail
+if CONFIG_EXYNOS_PMU is enabled with the following error:
+drivers/soc/samsung/exynos-pmu.c:137: undefined reference to `devm_mfd_add_devices'
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Fix this by making CONFIG_EXYNOS_PMU select CONFIG_MFD_CORE.
+Fixes: 93618e344a5e ("soc: samsung: exynos-pmu: instantiate clkout driver as MFD")
+
+Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
+ drivers/soc/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v4:
-- PANEL_SIMPLE_EDP => PANEL_EDP
-- Reordered config patches to be before code patch
-
- arch/arm/configs/at91_dt_defconfig   | 1 +
- arch/arm/configs/exynos_defconfig    | 1 +
- arch/arm/configs/imx_v6_v7_defconfig | 1 +
- arch/arm/configs/lpc32xx_defconfig   | 1 +
- arch/arm/configs/multi_v5_defconfig  | 1 +
- arch/arm/configs/multi_v7_defconfig  | 1 +
- arch/arm/configs/omap2plus_defconfig | 1 +
- arch/arm/configs/qcom_defconfig      | 1 +
- arch/arm/configs/realview_defconfig  | 1 +
- arch/arm/configs/sama5_defconfig     | 1 +
- arch/arm/configs/shmobile_defconfig  | 1 +
- arch/arm/configs/sunxi_defconfig     | 1 +
- arch/arm/configs/tegra_defconfig     | 1 +
- arch/arm/configs/versatile_defconfig | 1 +
- arch/arm/configs/vexpress_defconfig  | 1 +
- 15 files changed, 15 insertions(+)
-
-diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
-index b1564e0aa000..a6310c8abcc3 100644
---- a/arch/arm/configs/at91_dt_defconfig
-+++ b/arch/arm/configs/at91_dt_defconfig
-@@ -144,6 +144,7 @@ CONFIG_VIDEO_MT9V032=m
- CONFIG_DRM=y
- CONFIG_DRM_ATMEL_HLCDC=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_FB_ATMEL=y
- CONFIG_BACKLIGHT_ATMEL_LCDC=y
- CONFIG_BACKLIGHT_PWM=y
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index f4e1873912a3..cae09010a799 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -227,6 +227,7 @@ CONFIG_DRM_EXYNOS_DPI=y
- CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SAMSUNG_LD9040=y
- CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=y
- CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=y
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 079fcd8d1d11..f46cdc4a0ca8 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -280,6 +280,7 @@ CONFIG_DRM=y
- CONFIG_DRM_MSM=y
- CONFIG_DRM_PANEL_LVDS=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SEIKO_43WVF1G=y
- CONFIG_DRM_TI_TFP410=y
- CONFIG_DRM_DW_HDMI_AHB_AUDIO=m
-diff --git a/arch/arm/configs/lpc32xx_defconfig b/arch/arm/configs/lpc32xx_defconfig
-index 989bcc84e7fb..6c3e4a141963 100644
---- a/arch/arm/configs/lpc32xx_defconfig
-+++ b/arch/arm/configs/lpc32xx_defconfig
-@@ -108,6 +108,7 @@ CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_DRM=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PL111=y
- CONFIG_FB_MODE_HELPERS=y
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
-diff --git a/arch/arm/configs/multi_v5_defconfig b/arch/arm/configs/multi_v5_defconfig
-index 80a3ae02d759..fe8d760256a4 100644
---- a/arch/arm/configs/multi_v5_defconfig
-+++ b/arch/arm/configs/multi_v5_defconfig
-@@ -194,6 +194,7 @@ CONFIG_VIDEO_ATMEL_ISI=m
- CONFIG_DRM=y
- CONFIG_DRM_ATMEL_HLCDC=m
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_ASPEED_GFX=m
- CONFIG_FB_IMX=y
- CONFIG_FB_ATMEL=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index d9abaae118dd..610e3453d720 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -699,6 +699,7 @@ CONFIG_DRM_TEGRA=y
- CONFIG_DRM_STM=m
- CONFIG_DRM_STM_DSI=m
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
- CONFIG_DRM_PANEL_ORISETECH_OTM8009A=m
- CONFIG_DRM_PANEL_RAYDIUM_RM68200=m
-diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 2ac2418084ab..d933b787d934 100644
---- a/arch/arm/configs/omap2plus_defconfig
-+++ b/arch/arm/configs/omap2plus_defconfig
-@@ -511,6 +511,7 @@ CONFIG_OMAP2_DSS_DSI=y
- CONFIG_DRM_TILCDC=m
- CONFIG_DRM_PANEL_DSI_CM=m
- CONFIG_DRM_PANEL_SIMPLE=m
-+CONFIG_DRM_PANEL_EDP=m
- CONFIG_DRM_PANEL_LG_LB035Q02=m
- CONFIG_DRM_PANEL_NEC_NL8048HL11=m
- CONFIG_DRM_PANEL_SHARP_LS037V7DW01=m
-diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-index 26353cbfa968..0daa9c0d298e 100644
---- a/arch/arm/configs/qcom_defconfig
-+++ b/arch/arm/configs/qcom_defconfig
-@@ -158,6 +158,7 @@ CONFIG_MEDIA_SUPPORT=y
- CONFIG_DRM=y
- CONFIG_DRM_MSM=m
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_ANALOGIX_ANX78XX=m
- CONFIG_FB=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
-diff --git a/arch/arm/configs/realview_defconfig b/arch/arm/configs/realview_defconfig
-index 4c01e313099f..3ef3521c19db 100644
---- a/arch/arm/configs/realview_defconfig
-+++ b/arch/arm/configs/realview_defconfig
-@@ -61,6 +61,7 @@ CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_DRM=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_DISPLAY_CONNECTOR=y
- CONFIG_DRM_SIMPLE_BRIDGE=y
- CONFIG_DRM_PL111=y
-diff --git a/arch/arm/configs/sama5_defconfig b/arch/arm/configs/sama5_defconfig
-index 17db3b3e2dd3..fe0d7ccc8fb2 100644
---- a/arch/arm/configs/sama5_defconfig
-+++ b/arch/arm/configs/sama5_defconfig
-@@ -160,6 +160,7 @@ CONFIG_VIDEO_MT9V032=m
- CONFIG_DRM=y
- CONFIG_DRM_ATMEL_HLCDC=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_LCD_CLASS_DEVICE=y
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
- CONFIG_BACKLIGHT_PWM=y
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index d9a27e4e0914..b772105039f6 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -129,6 +129,7 @@ CONFIG_VIDEO_ML86V7667=y
- CONFIG_DRM=y
- CONFIG_DRM_RCAR_DU=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_DISPLAY_CONNECTOR=y
- CONFIG_DRM_LVDS_CODEC=y
- CONFIG_DRM_SII902X=y
-diff --git a/arch/arm/configs/sunxi_defconfig b/arch/arm/configs/sunxi_defconfig
-index a60c134c5e04..8ba7935bd039 100644
---- a/arch/arm/configs/sunxi_defconfig
-+++ b/arch/arm/configs/sunxi_defconfig
-@@ -108,6 +108,7 @@ CONFIG_DRM_SUN4I_HDMI_CEC=y
- CONFIG_DRM_SUN8I_DW_HDMI=y
- CONFIG_DRM_PANEL_LVDS=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_SIMPLE_BRIDGE=y
- CONFIG_DRM_LIMA=y
- CONFIG_FB_SIMPLE=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 3d8d8af9524d..055e35b48706 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -204,6 +204,7 @@ CONFIG_DRM_TEGRA=y
- CONFIG_DRM_TEGRA_STAGING=y
- CONFIG_DRM_PANEL_LVDS=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_LVDS_CODEC=y
- # CONFIG_LCD_CLASS_DEVICE is not set
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
-diff --git a/arch/arm/configs/versatile_defconfig b/arch/arm/configs/versatile_defconfig
-index b703f4757021..d06aa64e05a1 100644
---- a/arch/arm/configs/versatile_defconfig
-+++ b/arch/arm/configs/versatile_defconfig
-@@ -57,6 +57,7 @@ CONFIG_GPIO_PL061=y
- CONFIG_DRM=y
- CONFIG_DRM_PANEL_ARM_VERSATILE=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_DISPLAY_CONNECTOR=y
- CONFIG_DRM_SIMPLE_BRIDGE=y
- CONFIG_DRM_PL111=y
-diff --git a/arch/arm/configs/vexpress_defconfig b/arch/arm/configs/vexpress_defconfig
-index b5e246dd23f4..947987730eb7 100644
---- a/arch/arm/configs/vexpress_defconfig
-+++ b/arch/arm/configs/vexpress_defconfig
-@@ -77,6 +77,7 @@ CONFIG_SENSORS_VEXPRESS=y
- CONFIG_REGULATOR_VEXPRESS=y
- CONFIG_DRM=y
- CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_PANEL_EDP=y
- CONFIG_DRM_SII902X=y
- CONFIG_DRM_PL111=y
- CONFIG_FB=y
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index 5745d7e5908e..1f643c0f5c93 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -25,6 +25,7 @@ config EXYNOS_PMU
+ 	bool "Exynos PMU controller driver" if COMPILE_TEST
+ 	depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+ 	select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
++	select MFD_CORE
+ 
+ # There is no need to enable these drivers for ARMv8
+ config EXYNOS_PMU_ARM_DRIVERS
 -- 
-2.33.0.309.g3052b89438-goog
+2.33.0
 
