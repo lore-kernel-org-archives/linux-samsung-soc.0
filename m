@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3523C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79EFC43219
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 902176115B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAB5860555
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:56:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353504AbhIIMr2 (ORCPT
+        id S1343509AbhIIM5o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 08:47:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45824 "EHLO mail.kernel.org"
+        Thu, 9 Sep 2021 08:57:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354148AbhIIMg5 (ORCPT
+        id S1353445AbhIIMtJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:36:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BBF9D61B61;
-        Thu,  9 Sep 2021 11:54:05 +0000 (UTC)
+        Thu, 9 Sep 2021 08:49:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3C336613A3;
+        Thu,  9 Sep 2021 11:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188446;
-        bh=76pG/1mTrO5PLLh788TwM7n8iSFCwidakWpyicrLVjc=;
+        s=k20201202; t=1631188608;
+        bh=QOZ5zytWglQA3/+3KXYARHhWSKqxTsAXNpce4qfrPMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VDq3UAcUgqiUJbv4WiGfKOMVNUTb+VUBEU8sCkQ+Qoo8Fqz5NsJu+xUAcPNNxQwtK
-         Qgricvk1qgMohn/AOZO6BFjCdecPgGqK5hYtiAyIBpS8Lztc+zA/pJldasdO2QCfhe
-         ju3iNpgLQCBfplgyrkmNmwUhcVQp6LY64E15j93jrnts/R7x8T4PxM4pAFehi+55z0
-         U6aC6WqIMQ7ukGJE1/rAGIKKcQSlGRBC+7n4+XTi+EAokBmgYe3xz+HXkLfioC8nLv
-         93BnwSMFS2sMe8JeWIyQGm27Dt67G4BC4hZAjbL1jXURmbulpaPT0r3uEcL4vjioPR
-         +z/PvIr9zsU1g==
+        b=oSdzFhimbbD+Ta8wuaAYihw/lVKidoGnMxQXIU2GVHWUQV3nJn37lTq8EQ2MsPy7M
+         rnMAywK6YF7g6wFiicmRk6+0KblZrJpiA3KOeqtnnTKDeRE3kFb0q9sMZN2Szvd6hC
+         eKfSEtI4Lm5LD4+869wo31Tcgx2fhFYIhHIsaz2CoibYNOkm9mCMm1w9pZKpYInUnu
+         usMVEGFEN/Wvvs8tCkjJdYwpn2bhzoVIfvK/bKrdVrwXUyUlVE/lQE8VLMBg5s/hoT
+         guLwMYilPf0jByLYs+yP/atuBL6fbv3jZCDOt30C9jAalfk3FmWnw0J+fJHnEV3TYq
+         Tqjy47hZ+RDHg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nathan Chancellor <nathan@kernel.org>,
@@ -43,12 +43,12 @@ Cc:     Nathan Chancellor <nathan@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.10 130/176] drm/exynos: Always initialize mapping in exynos_drm_register_dma()
-Date:   Thu,  9 Sep 2021 07:50:32 -0400
-Message-Id: <20210909115118.146181-130-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 079/109] drm/exynos: Always initialize mapping in exynos_drm_register_dma()
+Date:   Thu,  9 Sep 2021 07:54:36 -0400
+Message-Id: <20210909115507.147917-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909115118.146181-1-sashal@kernel.org>
-References: <20210909115118.146181-1-sashal@kernel.org>
+In-Reply-To: <20210909115507.147917-1-sashal@kernel.org>
+References: <20210909115507.147917-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -101,10 +101,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-index 0644936afee2..bf33c3084cb4 100644
+index 58b89ec11b0e..a3c9d8b9e1a1 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-@@ -115,6 +115,8 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+@@ -140,6 +140,8 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
  				EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
  		else if (IS_ENABLED(CONFIG_IOMMU_DMA))
  			mapping = iommu_get_domain_for_dev(priv->dma_dev);
