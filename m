@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EB7C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 11:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A80C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1A263217
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 11:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4116560FE3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343775AbhIIL5M (ORCPT
+        id S1352607AbhIIMXb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 07:57:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33232 "EHLO mail.kernel.org"
+        Thu, 9 Sep 2021 08:23:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245510AbhIILzD (ORCPT
+        id S1350866AbhIIMSL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 07:55:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 686F36138B;
-        Thu,  9 Sep 2021 11:45:04 +0000 (UTC)
+        Thu, 9 Sep 2021 08:18:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3843861A8B;
+        Thu,  9 Sep 2021 11:50:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631187905;
+        s=k20201202; t=1631188205;
         bh=76pG/1mTrO5PLLh788TwM7n8iSFCwidakWpyicrLVjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qYXnSJ+E7aRyp9oCxzY9WQQm0Ou3+oiW3UZbqUTcZpKok/1eI1hQff5E+N9I9LVxM
-         QhbdPc4QO9EFiuPQMXkSV5x6k/lImPSnmR+Dawp9fx7JiHJY946QdPuroNyaMSkoD3
-         6heAm1tGH107hazDWg9GgoiFsnXkzFYcexy18cgzraqirD5GNgcDstb0RukaHUF3jm
-         0KHQNgb/3gX8wor5bvnrlyHBIWCZR9hsw114LIXDMvQMYmWuAw2pQCx9qj5eLckIvi
-         j2W+QOUNN1yoXNezenanwBsxnK8e8mEEH9kJ7CR4Sd7WIFU56VXNeqdM9+34j8R9Pm
-         BxPS42V91wzrw==
+        b=e68NEJeqYdHNF1165XrHZ0svPJEIdRYWoTwzeDfdQL0nWdMTA/hIokJK4AqtoAdFK
+         UioojRMCVVJUjY8RDFXB79w0fWtvJaR4SLFTi2AjtQoOHVJgvVGzDueLHLDyey0ZqC
+         sE/cab/2QLC74Sw/JOmv02QXQkpedZzjzv+Ts+erDfhL1/0jzFqoZY8UqV4J4HmcTq
+         UyO1R8xJNSX8bIz2S0Dhb+Ae8DAsIOFXCV7vWDFEATHD16b+6MzHRNnCv9NjCd0w6L
+         PXkVz1+cf2200ARfoqkEDxS3LA5dJaDhYzusvkOWc72HWFbZy8AKah+MaS0H9nOHu0
+         9TTf8UT2GwgvQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nathan Chancellor <nathan@kernel.org>,
@@ -43,12 +43,12 @@ Cc:     Nathan Chancellor <nathan@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.14 183/252] drm/exynos: Always initialize mapping in exynos_drm_register_dma()
-Date:   Thu,  9 Sep 2021 07:39:57 -0400
-Message-Id: <20210909114106.141462-183-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 162/219] drm/exynos: Always initialize mapping in exynos_drm_register_dma()
+Date:   Thu,  9 Sep 2021 07:45:38 -0400
+Message-Id: <20210909114635.143983-162-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909114106.141462-1-sashal@kernel.org>
-References: <20210909114106.141462-1-sashal@kernel.org>
+In-Reply-To: <20210909114635.143983-1-sashal@kernel.org>
+References: <20210909114635.143983-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
