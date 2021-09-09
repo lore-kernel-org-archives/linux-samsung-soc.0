@@ -2,117 +2,270 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79EFC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A6DC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 21:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAB5860555
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F7F661026
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 21:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343509AbhIIM5o (ORCPT
+        id S1346214AbhIIVCf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 08:57:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1353445AbhIIMtJ (ORCPT
+        Thu, 9 Sep 2021 17:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49996 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345906AbhIIVC3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:49:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3C336613A3;
-        Thu,  9 Sep 2021 11:56:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188608;
-        bh=QOZ5zytWglQA3/+3KXYARHhWSKqxTsAXNpce4qfrPMQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oSdzFhimbbD+Ta8wuaAYihw/lVKidoGnMxQXIU2GVHWUQV3nJn37lTq8EQ2MsPy7M
-         rnMAywK6YF7g6wFiicmRk6+0KblZrJpiA3KOeqtnnTKDeRE3kFb0q9sMZN2Szvd6hC
-         eKfSEtI4Lm5LD4+869wo31Tcgx2fhFYIhHIsaz2CoibYNOkm9mCMm1w9pZKpYInUnu
-         usMVEGFEN/Wvvs8tCkjJdYwpn2bhzoVIfvK/bKrdVrwXUyUlVE/lQE8VLMBg5s/hoT
-         guLwMYilPf0jByLYs+yP/atuBL6fbv3jZCDOt30C9jAalfk3FmWnw0J+fJHnEV3TYq
-         Tqjy47hZ+RDHg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        kernel test robot <lkp@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
+        Thu, 9 Sep 2021 17:02:29 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E1DC061756
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Sep 2021 14:01:19 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id t1so3121242pgv.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Sep 2021 14:01:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TgYZsymCmqy6vs2OAQuoPF75DcvJ7dTHyXuxA0yEqwQ=;
+        b=l3z9MTSjdnlmhP5mE7FA5iEXUZFoTQXDdRHC+RW4FVdcmwc4PenpU06QOYEENGQV7u
+         G2ulyEeNyekNayLflnSI2V4wHKdy9EH9yUa50gYrRaW6weQ6+jrhJXV2earkNzZQ2rFB
+         KtCzrZPvcxxigSjMFri/KLpVSnvl/0QKhpJOA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TgYZsymCmqy6vs2OAQuoPF75DcvJ7dTHyXuxA0yEqwQ=;
+        b=2GWh4RajF+hEHbaTl34f+tyX9MUcDtnx4kpFeZl9Lr52J/lTPtqybBbMssDvFeN+21
+         EwQU83OPlYe7RbbLJeEPraG2ee68b8XqXuIWso6Bb5WAoKnCC6fE5qN4oub2Ap9MFBGA
+         Bzq8171Fg0EJiPltt3ztS3jHPjlozgoVrKn1MLdVrA0nI7lizVwLqNfAJeId3K0Y456H
+         3JMqcMVKkZcMTRCUw5h5dOt8t/RtxHKocfWbD7yP39owJwszGcchegP952NB+jpen6sn
+         HkjQf0tZLHzZ/hvtUTqZuzcJGEZSxxGblrF/jNbRjgGH0K7T15SWcC/Wk59KbVT1lhnL
+         8Yvw==
+X-Gm-Message-State: AOAM53324A8LKanLSX7D2covq0Dh3VPqyzE2K89KOsOH94UJntvsTifv
+        11853MOJ599W8OoW4g+nsdYFyA==
+X-Google-Smtp-Source: ABdhPJzNYdLP54ZPrpCmZ3ORzDC7zdYKwrZ7BBoTmjOUbsHF+UzEN4SItH8EnPA93NK8fIF0hPxZ7g==
+X-Received: by 2002:a63:9a19:: with SMTP id o25mr4440039pge.61.1631221279054;
+        Thu, 09 Sep 2021 14:01:19 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:201:8da3:b0fb:4261:2c10])
+        by smtp.gmail.com with ESMTPSA id l143sm177069pfd.60.2021.09.09.14.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Sep 2021 14:01:18 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     devicetree@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Linus W <linus.walleij@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        Steev Klimaszewski <steev@kali.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.4 079/109] drm/exynos: Always initialize mapping in exynos_drm_register_dma()
-Date:   Thu,  9 Sep 2021 07:54:36 -0400
-Message-Id: <20210909115507.147917-79-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909115507.147917-1-sashal@kernel.org>
-References: <20210909115507.147917-1-sashal@kernel.org>
+        Douglas Anderson <dianders@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Olof Johansson <olof@lixom.net>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v4 00/15] eDP: Support probing eDP panels dynamically instead of hardcoding
+Date:   Thu,  9 Sep 2021 14:00:16 -0700
+Message-Id: <20210909210032.465570-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.33.0.309.g3052b89438-goog
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Nathan Chancellor <nathan@kernel.org>
+The goal of this patch series is to move away from hardcoding exact
+eDP panels in device tree files. As discussed in the various patches
+in this series (I'm not repeating everything here), most eDP panels
+are 99% probable and we can get that last 1% by allowing two "power
+up" delays to be specified in the device tree file and then using the
+panel ID (found in the EDID) to look up additional power sequencing
+delays for the panel.
 
-[ Upstream commit c626f3864bbbb28bbe06476b0b497c1330aa4463 ]
+This patch series is the logical contiunation of a previous patch
+series where I proposed solving this problem by adding a
+board-specific compatible string [1]. In the discussion that followed
+it sounded like people were open to something like the solution
+proposed in this new series.
 
-In certain randconfigs, clang warns:
+In version 2 I got rid of the idea that we could have a "fallback"
+compatible string that we'd use if we didn't recognize the ID in the
+EDID. This simplifies the bindings a lot and the implementation
+somewhat. As a result of not having a "fallback", though, I'm not
+confident in transitioning any existing boards over to this since
+we'll have to fallback to very conservative timings if we don't
+recognize the ID from the EDID and I can't guarantee that I've seen
+every panel that might have shipped on an existing product. The plan
+is to use "edp-panel" only on new boards or new revisions of old
+boards where we can guarantee that every EDID that ships out of the
+factory has an ID in the table.
 
-drivers/gpu/drm/exynos/exynos_drm_dma.c:121:19: warning: variable
-'mapping' is uninitialized when used here [-Wuninitialized]
-                priv->mapping = mapping;
-                                ^~~~~~~
-drivers/gpu/drm/exynos/exynos_drm_dma.c:111:16: note: initialize the
-variable 'mapping' to silence this warning
-                void *mapping;
-                             ^
-                              = NULL
-1 warning generated.
+Version 3 of this series now splits out all eDP panels to their own
+driver and adds the generic eDP panel support to this new driver. I
+believe this is what Sam was looking for [2].
 
-This occurs when CONFIG_EXYNOS_IOMMU is enabled and both
-CONFIG_ARM_DMA_USE_IOMMU and CONFIG_IOMMU_DMA are disabled, which makes
-the code look like
+Version 4 of this series is mostly small fixes / renames from review
+feedback. It's largely the same as v3. Other than naming /
+description / comment changes, the differences are:
+- Dropped the MIPS config patch as per request.
+- Reorder config patches first.
+- Added a new patch to use the panel ID scheme for quirks.
+- Landed the reorder of logicpd_type_28 / mitsubishi_aa070mc01
+It could possibly be ready to land?
 
-  void *mapping;
+[1] https://lore.kernel.org/r/YFKQaXOmOwYyeqvM@google.com/
+[2] https://lore.kernel.org/r/YRTsFNTn%2FT8fLxyB@ravnborg.org/
 
-  if (0)
-    mapping = arm_iommu_create_mapping()
-  else if (0)
-    mapping = iommu_get_domain_for_dev()
+Changes in v4:
+- "u8 *edid" => "void *edid" to avoid cast.
+- ("Use new encoded panel id style for quirks matching") new for v4.
+- Don't put kmalloc() in the "if" test even if the old code did.
+- Don't refer to "panel-simple" in commit message.
+- PANEL_SIMPLE_EDP => PANEL_EDP
+- Remove "non-eDP" in panel-simple description.
+- Reordered config patches to be before code patch
+- decode_edid_id() => drm_edid_decode_panel_id()
+- drm_do_get_edid_blk0() => drm_do_get_edid_base_block()
+- drm_get_panel_id() => drm_edid_get_panel_id()
+- encode_edid_id() => drm_edid_encode_panel_id()
+- panel-simple-edp => panel-edp
+- split panel id extraction out to its own function.
 
-  ...
-  priv->mapping = mapping;
+Changes in v3:
+- ("Better describe eDP panel delays") new for v3.
+- ("Don't re-read the EDID every time") moved to eDP only patch.
+- ("Non-eDP panels don't need "HPD" handling") new for v3.
+- Add AUO B116XAN06.1 to table.
+- Add Sharp LQ116M1JW10 to table.
+- Adjust endianness of product ID.
+- Change init order to we power at the end.
+- Decode hex product ID w/ same endianness as everyone else.
+- Fallback to conservative delays if panel not recognized.
+- Fix "prepare_to_enable" patch new for v3.
+- Generic "edp-panel" handled by the eDP panel driver now.
+- Move wayward panels patch new for v3.
+- Rename delays more generically so they can be reused.
+- Split eDP panels patch new for v3.
+- Split the delay structure out patch just on eDP now.
 
-Add an else branch that initializes mapping to the -ENODEV error pointer
-so that there is no more warning and the driver does not change during
-runtime.
+Changes in v2:
+- Add "-ms" suffix to delays.
+- Don't support a "fallback" panel. Probed panels must be probed.
+- No longer allow fallback to panel-simple.
+- Not based on patch to copy "desc"--just allocate for probed panels.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/exynos/exynos_drm_dma.c | 2 ++
- 1 file changed, 2 insertions(+)
+Douglas Anderson (15):
+  dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+  drm/edid: Break out reading block 0 of the EDID
+  drm/edid: Allow querying/working with the panel ID from the EDID
+  drm/edid: Use new encoded panel id style for quirks matching
+  ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+  arm64: defconfig: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+  drm/panel-edp: Split eDP panels out of panel-simple
+  drm/panel-edp: Move some wayward panels to the eDP driver
+  drm/panel-simple: Non-eDP panels don't need "HPD" handling
+  drm/panel-edp: Split the delay structure out
+  drm/panel-edp: Better describe eDP panel delays
+  drm/panel-edp: hpd_reliable shouldn't be subtraced from hpd_absent
+  drm/panel-edp: Fix "prepare_to_enable" if panel doesn't handle HPD
+  drm/panel-edp: Don't re-read the EDID every time we power off the
+    panel
+  drm/panel-edp: Implement generic "edp-panel"s probed by EDID
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-index 58b89ec11b0e..a3c9d8b9e1a1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-@@ -140,6 +140,8 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
- 				EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
- 		else if (IS_ENABLED(CONFIG_IOMMU_DMA))
- 			mapping = iommu_get_domain_for_dev(priv->dma_dev);
-+		else
-+			mapping = ERR_PTR(-ENODEV);
- 
- 		if (IS_ERR(mapping))
- 			return PTR_ERR(mapping);
+ .../bindings/display/panel/panel-edp.yaml     |  188 ++
+ arch/arm/configs/at91_dt_defconfig            |    1 +
+ arch/arm/configs/exynos_defconfig             |    1 +
+ arch/arm/configs/imx_v6_v7_defconfig          |    1 +
+ arch/arm/configs/lpc32xx_defconfig            |    1 +
+ arch/arm/configs/multi_v5_defconfig           |    1 +
+ arch/arm/configs/multi_v7_defconfig           |    1 +
+ arch/arm/configs/omap2plus_defconfig          |    1 +
+ arch/arm/configs/qcom_defconfig               |    1 +
+ arch/arm/configs/realview_defconfig           |    1 +
+ arch/arm/configs/sama5_defconfig              |    1 +
+ arch/arm/configs/shmobile_defconfig           |    1 +
+ arch/arm/configs/sunxi_defconfig              |    1 +
+ arch/arm/configs/tegra_defconfig              |    1 +
+ arch/arm/configs/versatile_defconfig          |    1 +
+ arch/arm/configs/vexpress_defconfig           |    1 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/gpu/drm/drm_edid.c                    |  281 ++-
+ drivers/gpu/drm/panel/Kconfig                 |   16 +-
+ drivers/gpu/drm/panel/Makefile                |    1 +
+ drivers/gpu/drm/panel/panel-edp.c             | 1896 +++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c          | 1072 +---------
+ include/drm/drm_edid.h                        |   47 +
+ 23 files changed, 2355 insertions(+), 1162 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-edp.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-edp.c
+
 -- 
-2.30.2
+2.33.0.309.g3052b89438-goog
 
