@@ -2,106 +2,223 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FE6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 22:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 037D1C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Sep 2021 10:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D494661132
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Sep 2021 22:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB56061153
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Sep 2021 10:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233986AbhIIWbZ (ORCPT
+        id S232209AbhIJKNo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 18:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41936 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbhIIWbY (ORCPT
+        Fri, 10 Sep 2021 06:13:44 -0400
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:42015 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232094AbhIJKNn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 18:31:24 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0A4BC061574;
-        Thu,  9 Sep 2021 15:30:14 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id e21so86019ejz.12;
-        Thu, 09 Sep 2021 15:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sB1PMWA/ZgtSnuaLYnidQDY1PRQoxYpPc51bJqK9AUA=;
-        b=WiYCeUYtMcYFG6FgNoxwGnoohj1120C8ISU6S6jG1suPLJMJfsQAEVBY7C5Q0nONJN
-         AkcQC5CjkaUCQHaq4fRS8JpF7hWkmKJna8hsFfu+/Aiuzwns3kwFMXWnqZzd+ErVtj15
-         LnDmGr2NMsK9m0sqqcHEoAWR7eKNQr7Cpqa4HzBlsROsiz5SkEl/ll+MOl6BlE/kUUtI
-         61WUDzovGO5H6ThPNF1n8BfPqVV6m7qv6S3Zscnc7eqs93/ayrkh+mxLEWSDVC68ayxj
-         0+NeeKW52o+b3d8XtURwl3ul8/kPF3WjyBkYG0fqf3gwXADJOVnHHj5rZcfLsyrztPxh
-         cMiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sB1PMWA/ZgtSnuaLYnidQDY1PRQoxYpPc51bJqK9AUA=;
-        b=KKvjk5bs165Y+dFR7FAaSFGnRb9R6xR8R/ru81Vbf2PVK4uhyXyZ4AnbO2m+05iL9S
-         2vtW/EXNV7tRD2mCkjcnLVWzYyUQEXsLE5PxHxjgKCYZ0uFZvzSsS7XOvoyK5HtEsbQr
-         e42p+kzKA+UaUWzcnl7/WC2wBHTHeWr9Fn0tH2aIG1iGfzxhWmj+raTYU1dbsdMB6l6E
-         opPLJeAiX8gwDwZWYHyzGeOOKnz3hDcFkcqFJUitrwQBbRojL9ZJWx1WE21+mLHla4n0
-         XFNG4sNmJO1Zl5gO8QGGD4epKYToEAs53k9MdzwhFBOWKu7IyfSxG5UXLMCVojIS/LrR
-         Yahg==
-X-Gm-Message-State: AOAM533p8P9cMyCRokT2xPG7tw2Oji7/Mh2QmliJ1I8KKSPy3pA5qoOu
-        CL3rb5ri8Z1fhWss60rPI9w=
-X-Google-Smtp-Source: ABdhPJw/iEC4zfda/17vuVcH5S+7dLC1aQchLJ2YA0gDqQf7+Z87zv2aAGQwjrrgMvG7KcFdqntimg==
-X-Received: by 2002:a17:907:7f29:: with SMTP id qf41mr5992812ejc.211.1631226613331;
-        Thu, 09 Sep 2021 15:30:13 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:3694:e80:aff:4a9a:bef5:ef56])
-        by smtp.googlemail.com with ESMTPSA id m6sm1670883edi.10.2021.09.09.15.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Sep 2021 15:30:12 -0700 (PDT)
-From:   David Virag <virag.david003@gmail.com>
-Cc:     virag.david003@gmail.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: samsung: exynos-pmu: Fix compilation when nothing selects CONFIG_MFD_CORE
-Date:   Fri, 10 Sep 2021 00:28:12 +0200
-Message-Id: <20210909222812.108614-1-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.33.0
+        Fri, 10 Sep 2021 06:13:43 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 478942B00939;
+        Fri, 10 Sep 2021 06:12:23 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 10 Sep 2021 06:12:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:content-type:mime-version
+        :content-transfer-encoding; s=fm3; bh=/wYkDAweBEVV6XEJJiBjkmdd+f
+        sR/vIPk4SFnyRJIEw=; b=Z61vRn/pjHuIVK0U8iQQc6o02wWjGgSy5Mq7VhkrtG
+        9KszoGSplOrJbMAi690ob1Z1Rbd6CXaR0bSdSKloPkNc+4MadfECmZcsS+Iyqg9p
+        wNh+rC18qzcHP5JJUUrGVSUzBgTA/SgkNH5ZsIkacsKcfGDwkjzYgyoV/8tFkqYc
+        M9igqVSgwO5qcewjWPkP11YhCGrq81Qao6UmtRA988I+FV2FJkQPbDonbvBulIfF
+        b9LRs4TR/1m8RlY9zO6rhexNIqQanbrnqQ1a2/QOo8SHhVlfM/Ob9Gu/FWnkjmX/
+        MDod8kaA/25VHLY3v4qc94NOZO5nSZ8fXOfFa3rMpSmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=/wYkDA
+        weBEVV6XEJJiBjkmdd+fsR/vIPk4SFnyRJIEw=; b=Tp3/xf5wSTYdhQexa5+jVb
+        /Xr2459iQLqKuECB5obggKx1lCx+O/eqxynoA7E5Jjt9EQf4op6D3dPnOTs31XVY
+        Yo/g7EK8pytjoO5L5bzIEu+dNFNUCIFwBmbKYGDFibf5n3mNDeL44Cg90xk3d1VN
+        +k08B81vz2EBeUAOZ9SWmb1NXeEZgvmfahmSCQiYzThjnNDtCXCCnJxJYXdqc8qw
+        nqKfTYEi0KIA5VHD1ODoNYop3lWLl6ASkwLXZbIXmiyUGgBBzkTvTCDsE5tBsOp+
+        kPYm2rVnR3nYOudb6qmTPmLegTjDSZEAlbOEr4p1qrTE0ZM7NxmT6f/FVWvUPgYg
+        ==
+X-ME-Sender: <xms:hC87YeY799W2Yyv2QDfsd-tYZ2W7aAkkRgJ5QgiICmhoaGFLPe7g3A>
+    <xme:hC87YRZBEy4-3J19eGLjtu5DbtZkWtCTHA9FPt1k-F-ArpCbHasHT-mt4MxNxKw_s
+    xP-JNhJmFVULw4klEg>
+X-ME-Received: <xmr:hC87YY_SVPYz8G2Oq5uYvcK9Grsw4MzqvssnWrr7G9VVLiypbrN30TPSWoj_tMPqMFbY8HOh5GNqxl3e34MlZzkY4gmdHKAtbIrz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeguddgvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffotggggfesthhqredtredtjeenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeetieekgfffkeegkeeltdehudetteejgfekueevhffhteegudfgkedtueegfffg
+    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:hC87YQqNAXq2zy6WSo4ZWBQPuS1MJxeUD0ccg-23d0LOWDB7CWFgMQ>
+    <xmx:hC87YZrN20R_GiKpG2lpYUyI2SSLzPTNOUbV08kGX3K4luyaodfl5g>
+    <xmx:hC87YeSCLWOMLfr75sxnvaLE4mJgFnJ9va92ZH1JnLBg_EMStvoyUQ>
+    <xmx:hi87Yarx_m8WB5_rbYe9o-RAM7XgThkPPtirosv1HQfRudXcuLYL4BCbmKo>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 10 Sep 2021 06:12:19 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-kernel@vger.kernel.org,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        John Stultz <john.stultz@linaro.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH v4 00/24] drm/bridge: Make panel and bridge probe order consistent
+Date:   Fri, 10 Sep 2021 12:11:54 +0200
+Message-Id: <20210910101218.1632297-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.31.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 93618e344a5e ("soc: samsung: exynos-pmu: instantiate clkout driver as MFD")
-adds a "devm_mfd_add_devices" call in the exynos-pmu driver which depends
-on CONFIG_MFD_CORE. If no driver selects that config, the build will fail
-if CONFIG_EXYNOS_PMU is enabled with the following error:
-drivers/soc/samsung/exynos-pmu.c:137: undefined reference to `devm_mfd_add_devices'
-
-Fix this by making CONFIG_EXYNOS_PMU select CONFIG_MFD_CORE.
-Fixes: 93618e344a5e ("soc: samsung: exynos-pmu: instantiate clkout driver as MFD")
-
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
- drivers/soc/samsung/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 5745d7e5908e..1f643c0f5c93 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -25,6 +25,7 @@ config EXYNOS_PMU
- 	bool "Exynos PMU controller driver" if COMPILE_TEST
- 	depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
- 	select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
-+	select MFD_CORE
- 
- # There is no need to enable these drivers for ARMv8
- config EXYNOS_PMU_ARM_DRIVERS
--- 
-2.33.0
-
+Hi,=0D
+=0D
+We've encountered an issue with the RaspberryPi DSI panel that prevented th=
+e=0D
+whole display driver from probing.=0D
+=0D
+The issue is described in detail in the commit 7213246a803f ("drm/vc4: dsi:=
+=0D
+Only register our component once a DSI device is attached"), but the basic =
+idea=0D
+is that since the panel is probed through i2c, there's no synchronization=0D
+between its probe and the registration of the MIPI-DSI host it's attached t=
+o.=0D
+=0D
+We initially moved the component framework registration to the MIPI-DSI Hos=
+t=0D
+attach hook to make sure we register our component only when we have a DSI=
+=0D
+device attached to our MIPI-DSI host, and then use lookup our DSI device in=
+ our=0D
+bind hook.=0D
+=0D
+However, all the DSI bridges controlled through i2c are only registering th=
+eir=0D
+associated DSI device in their bridge attach hook, meaning with our change=
+=0D
+above, we never got that far, and therefore ended up in the same situation =
+than=0D
+the one we were trying to fix for panels.=0D
+=0D
+The best practice to avoid those issues is to register its functions only a=
+fter=0D
+all its dependencies are live. We also shouldn't wait any longer than we sh=
+ould=0D
+to play nice with the other components that are waiting for us, so in our c=
+ase=0D
+that would mean moving the DSI device registration to the bridge probe.=0D
+=0D
+I also had a look at all the DSI hosts, and it seems that exynos, kirin and=
+ msm=0D
+would be affected by this and wouldn't probe anymore after those changes.=0D
+Exynos and kirin seems to be simple enough for a mechanical change (that st=
+ill=0D
+requires to be tested), but the changes in msm seemed to be far more import=
+ant=0D
+and I wasn't confortable doing them.=0D
+=0D
+Let me know what you think,=0D
+Maxime=0D
+=0D
+---=0D
+=0D
+Changes from v3:=0D
+  - Converted exynos and kirin=0D
+  - Converted all the affected bridge drivers=0D
+  - Reworded the documentation a bit=0D
+=0D
+Changes from v2:=0D
+  - Changed the approach as suggested by Andrzej, and aligned the bridge on=
+ the=0D
+    panel this time.=0D
+  - Fixed some typos=0D
+=0D
+Changes from v1:=0D
+  - Change the name of drm_of_get_next function to drm_of_get_bridge=0D
+  - Mention the revert of 87154ff86bf6 and squash the two patches that were=
+=0D
+    reverting that commit=0D
+  - Add some documentation=0D
+  - Make drm_panel_attach and _detach succeed when no callback is there=0D
+=0D
+Maxime Ripard (24):=0D
+  drm/bridge: Add documentation sections=0D
+  drm/bridge: Document the probe issue with MIPI-DSI bridges=0D
+  drm/mipi-dsi: Create devm device registration=0D
+  drm/mipi-dsi: Create devm device attachment=0D
+  drm/bridge: adv7533: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: adv7511: Register and attach our DSI device at probe=0D
+  drm/bridge: anx7625: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: anx7625: Register and attach our DSI device at probe=0D
+  drm/bridge: lt8912b: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt8912b: Register and attach our DSI device at probe=0D
+  drm/bridge: lt9611: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt9611: Register and attach our DSI device at probe=0D
+  drm/bridge: lt9611uxc: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt9611uxc: Register and attach our DSI device at probe=0D
+  drm/bridge: ps8640: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: ps8640: Register and attach our DSI device at probe=0D
+  drm/bridge: sn65dsi83: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: sn65dsi83: Register and attach our DSI device at probe=0D
+  drm/bridge: sn65dsi86: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: sn65dsi86: Register and attach our DSI device at probe=0D
+  drm/bridge: tc358775: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: tc358775: Register and attach our DSI device at probe=0D
+  drm/kirin: dsi: Adjust probe order=0D
+  drm/exynos: dsi: Adjust probe order=0D
+=0D
+ Documentation/gpu/drm-kms-helpers.rst        |  12 +++=0D
+ drivers/gpu/drm/bridge/adv7511/adv7511.h     |   1 -=0D
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |  15 ++-=0D
+ drivers/gpu/drm/bridge/adv7511/adv7533.c     |  20 +---=0D
+ drivers/gpu/drm/bridge/analogix/anx7625.c    |  40 ++++----=0D
+ drivers/gpu/drm/bridge/lontium-lt8912b.c     |  31 ++----=0D
+ drivers/gpu/drm/bridge/lontium-lt9611.c      |  62 +++++-------=0D
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c   |  65 +++++-------=0D
+ drivers/gpu/drm/bridge/parade-ps8640.c       | 101 ++++++++++---------=0D
+ drivers/gpu/drm/bridge/tc358775.c            |  50 +++++----=0D
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c        |  86 ++++++++--------=0D
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c        |  94 ++++++++---------=0D
+ drivers/gpu/drm/drm_bridge.c                 |  69 ++++++++++++-=0D
+ drivers/gpu/drm/drm_mipi_dsi.c               |  81 +++++++++++++++=0D
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c      |  19 ++--=0D
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c |  27 +++--=0D
+ include/drm/drm_mipi_dsi.h                   |   4 +=0D
+ 17 files changed, 460 insertions(+), 317 deletions(-)=0D
+=0D
+-- =0D
+2.31.1=0D
+=0D
