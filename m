@@ -5,64 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C26C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Sep 2021 06:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DE4C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Sep 2021 10:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D09F460FC0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Sep 2021 06:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ECDD61051
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Sep 2021 10:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237368AbhIMGbA (ORCPT
+        id S238851AbhIMKbr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Sep 2021 02:31:00 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60034 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230003AbhIMGa7 (ORCPT
+        Mon, 13 Sep 2021 06:31:47 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:32803 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238162AbhIMKbr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Sep 2021 02:30:59 -0400
+        Mon, 13 Sep 2021 06:31:47 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210913062942euoutp024f4d4661c7350567035cc08d0f98a2db~kTd5up7F02636626366euoutp02C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Sep 2021 06:29:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210913062942euoutp024f4d4661c7350567035cc08d0f98a2db~kTd5up7F02636626366euoutp02C
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210913103030euoutp010d168a811e00d29ab0bfcc4d0ddcd8cc~kWwI_jum82004620046euoutp01g
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Sep 2021 10:30:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210913103030euoutp010d168a811e00d29ab0bfcc4d0ddcd8cc~kWwI_jum82004620046euoutp01g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1631514582;
-        bh=yfqRkQDKxR6+pW3E/XXVEL3wgEDDUumbRF/U8EODWTs=;
+        s=mail20170921; t=1631529030;
+        bh=mBdkMQ0a8HEntf0WzyTJuWVTEn0vGpkJ1scguzqe5wU=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=jRD38euYljheO/7pj5Rc330gciJe5MzWqdeRRFHVFFZTaFQ2W0KQwTRP3IYU4O5Mj
-         IPDDMHsP/S42MgbwZtQl05R/1kmJjqTiQfM8nq4z7DA/a3VLC0Cfdz2dGR/F9QFCgr
-         /gDaqqtRq0QByztEzBLv5OVOaDFrTc1dZX2FZNfU=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210913062942eucas1p10063f9b5e36ebe923689ebfe2045518f~kTd5NWl0g2716427164eucas1p1F;
-        Mon, 13 Sep 2021 06:29:42 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id E9.8E.56448.5DFEE316; Mon, 13
-        Sep 2021 07:29:42 +0100 (BST)
+        b=iXIOXsC5Mzi7xmMItc5NH+Cfsoa/0qoam8btpJMjtkQCjYNXbijx/gOFFkw44Z5bj
+         OyUGjxul97AbqdWDguhrIVQnPvv7UH/Wy5YV5J6uYvN+sLCNR6XbAVzUoiUHcMvPMk
+         gaZZeFKzimuUGYJWa/tbJmoV0hjg9yrPCcDL/260=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20210913103029eucas1p2ab099b567293b34bd52ae698c4e08ae1~kWwIaypEq2979329793eucas1p2O;
+        Mon, 13 Sep 2021 10:30:29 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 64.53.42068.5482F316; Mon, 13
+        Sep 2021 11:30:29 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210913062941eucas1p24e96143ba4ab25cb1c9c5e7cef29812e~kTd4bc3MY3092830928eucas1p2s;
-        Mon, 13 Sep 2021 06:29:41 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210913103028eucas1p1428844a2a68d9611ef5fe5cc41827079~kWwHup5db0359103591eucas1p17;
+        Mon, 13 Sep 2021 10:30:28 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210913062941eusmtrp1adb246ecd37f99f51f61a2ecbe2601ad~kTd4aX5Ic1726917269eusmtrp1e;
-        Mon, 13 Sep 2021 06:29:41 +0000 (GMT)
-X-AuditID: cbfec7f5-d53ff7000002dc80-7b-613eefd58a9b
+        20210913103028eusmtrp1eacd5f624076fb100ad3e10715c82169~kWwHs96iX1386413864eusmtrp1I;
+        Mon, 13 Sep 2021 10:30:28 +0000 (GMT)
+X-AuditID: cbfec7f4-c71ff7000002a454-24-613f28456861
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2D.3C.31287.5DFEE316; Mon, 13
-        Sep 2021 07:29:41 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B5.48.31287.4482F316; Mon, 13
+        Sep 2021 11:30:28 +0100 (BST)
 Received: from [106.210.131.79] (unknown [106.210.131.79]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210913062940eusmtip1a1cdacd97e897a0713826f91501e2edb~kTd3LcC591305313053eusmtip1K;
-        Mon, 13 Sep 2021 06:29:39 +0000 (GMT)
-Message-ID: <7ad18d53-3ad6-a614-a8e1-cce6505f90a8@samsung.com>
-Date:   Mon, 13 Sep 2021 08:29:37 +0200
+        20210913103027eusmtip115ab51036f568e5ad8646b732b3baac3~kWwGezCNM0455004550eusmtip1L;
+        Mon, 13 Sep 2021 10:30:27 +0000 (GMT)
+Message-ID: <29a2111d-024b-4d9e-27ef-e3399509ff32@samsung.com>
+Date:   Mon, 13 Sep 2021 12:30:27 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0)
         Gecko/20100101 Thunderbird/92.0
-Subject: Re: [PATCH v4 02/24] drm/bridge: Document the probe issue with
- MIPI-DSI bridges
+Subject: Re: [PATCH v4 24/24] drm/exynos: dsi: Adjust probe order
 Content-Language: en-GB
 To:     Maxime Ripard <maxime@cerno.tech>, Sam Ravnborg <sam@ravnborg.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
@@ -90,178 +89,168 @@ Cc:     Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
         Xinwei Kong <kong.kongxinwei@hisilicon.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>
 From:   Andrzej Hajda <a.hajda@samsung.com>
-In-Reply-To: <20210910101218.1632297-3-maxime@cerno.tech>
+In-Reply-To: <20210910101218.1632297-25-maxime@cerno.tech>
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTdxTO797be287Sy6Vrb+gU9fFbTpE3MP9yAZjCVluostkS1jGlmGd
-        d8B41LQwhyadQyCAUp5hUBhQRa2ovGyLdKxkVYSmtugQBgYtExiI3Tp5jUfA0V6W8d93vnPO
-        d75zcmhcco0MpBNSUjllijxJRooI080F565+T7g8ZKwJQ/lOG4Yu3GrA0d1ZD4mqxh0AFbsK
-        CTRe0wDQraVdyObuI9DEgzsEml+2CJAjw02h3KI6ChV1OCjUa64iUXmPBUO6J0YClc+vAGTV
-        fIZcZdpVDd08jqa0v+NIv2AE6H7JDYDKSx6RaMFcTaBLjy0UMriLBKizo14QsZn1DGRR7JCz
-        h2TbtPcpduTHZoqtzKkQsGfbH2Fsd+GvGDvU306yrXPDArbaFsW6TnVhbJf5HsXWlfWRrMZQ
-        D9ir9uPsdMuWA0yM6J3DXFLCN5xyd/hBUfxDjfhI3Y5vT57uByeAa1seoGnIvAFndKo8IKIl
-        jB7A/Mkugg9mAKzNvY3zwTSA5t/yyDwg9HW0/t2OebGEuQBg4/XjfJEHwOLMRsqbEDPh8HHp
-        BO7FBLMdnipYIXjeH9oqRn34WeYgHD83i3ltbGRi4KIDeGmckcKMmYsCr2YAs4TDpoVBnyWc
-        uUNA48M8nyjJ7IDLVwd9joRMKMxa7hPw3VvhSWOlzzZkOkXQZmwkeNuRUGMaFfB4I5zsMlA8
-        3gztJafXar6DLn3mWnMOgMamNpxPvA2HnIuk1yq+OrnRvJun34PXK+wEf0g/OPCnP+/BDxab
-        fsB5WgxzsiV89QvQ5TCuCUrhuduzZCGQadedRbtuf+26bbT/z60FRD2Qcmmq5DhO9XoKdzRY
-        JU9WpaXEBX+pSG4Bq89tX+mavQb0k0+CrQCjgRVAGpcFiE3uMLlEfFiefoxTKmKVaUmcygo2
-        0YRMKjYbL8dKmDh5KpfIcUc45X9ZjBYGnsA+D+7t/cK/WvbKV+nPmY5Go8Swj1WKM7KWgkXz
-        mTn1M0F/1AZ299ivRBk3vFiaUZOaOPh+yd2d7r0HrNb+1IE56HcogKjRTcWz52toT0hM5EuS
-        iPy4hn2/PGjeX9WKpH3CraP2iNfG4JgneiQkzROBWUMU2cKRn4FNERrqzAhR36gM89e8Kj8/
-        IUE2+96v0zOf/rOFzvV796Oq5YLsD+LbL+fc27S9E7QtWLsNGnWQfXFYGv69eqX+046o3qms
-        S0hrc3BBT4Oe19btv7Ln5jbDElG0YYb5ybJPrjMUvNnz11vl01W0LetsUllkvvrDjmZLQqy+
-        9JNjiRdfjtY1DLcdkhGqePmenbhSJf8XdYjUSksEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLKsWRmVeSWpSXmKPExsVy+t/xu7pX39slGqzdym3Re+4kk8XyM+uY
-        La58fc9mMef5WUaLSfcnsFg8n7+O0eLMb12Lk2+usli8uHeRxeLH332sFmeb3rBbdE5cwm4x
-        cf9ZdovLu+awWcw4v4/JYuHHrSwWM378Y7Q41BdtcX/aLKAZC38wW3ya9ZDZYsXPrYwWdycf
-        YbSYMfklm8XPXfNYLFa/3sduseXNRFaLo/tXsTrIeLy/0crucefceTaPnbPusns8nruR3WN2
-        x0xWj8V7XjJ5nJhwicnjzrU9bB7bvz1g9Zh3MtDjfvdxJo/ju26xeyyZdpXNo2/LKkaPzaer
-        PT5vkgsQiNKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3
-        S9DLeNTHW7BEs6K55xpjA+N9hS5GTg4JAROJ7R/2MHUxcnEICSxllLjb84ENIiEusXv+W2YI
-        W1jiz7UuNoiit4wSV/fPBEvwCthJvJ7yAsxmEVCV6O7/xwIRF5Q4OfMJmC0qkCCx+3AXexcj
-        B4ewQJTEr7OMIGFmoPlNX1aygswUEfjPLNE1fRUziMMscJVFouHoLKhtuxkl7l9aCraBTUBT
-        4u/mm2DncQpYSrT+vcoKMcpMomtrF9RYeYnmrbOZJzAKzUJyyCwkG2chaZmFpGUBI8sqRpHU
-        0uLc9NxiQ73ixNzi0rx0veT83E2MwHS17djPzTsY5736qHeIkYmD8RCjBAezkgjvtje2iUK8
-        KYmVValF+fFFpTmpxYcYTYGhMZFZSjQ5H5gw80riDc0MTA1NzCwNTC3NjJXEebfOXRMvJJCe
-        WJKanZpakFoE08fEwSnVwLSOV+LvRbl98pEXD6/bcGeWw77F7jGfH11u32XKzFPyRePchS0l
-        i9jZlvpqm6amyJjvP3ooW85rB0OdxZvMwq6i+40/Y/Zp8Fy+P139t+j9qqvvbE1ecIco/r8V
-        J8mVrliTmue9cwnPozUxeY83cmh0tvNH3ly5tFh7euuMixZ50oWyB17fyEmxDRJkP3VmKfsf
-        iZkX53o9SErnOha69pJ8nRf7tQovkZpPs2zmdl+fOIHr6eLn1zbdsIw4tDztNU8+18nD/9eZ
-        9x+wXN3KuMQ8vHyS27EM1xOFer8sdz4Q6Wp61K//4sLs9neGam+9Z4u7uLWq2lSEq4fMeqT+
-        tKTafXLu2sf6IidX3s+4cViJpTgj0VCLuag4EQCy6bx04AMAAA==
-X-CMS-MailID: 20210913062941eucas1p24e96143ba4ab25cb1c9c5e7cef29812e
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxjOd87p6aFZ8VDc+uEYdQ3LNhLwErd9gwmSjewkbslcNra4ealw
+        1jYCaiuMXZwEL3QdYksnQsE6osjFpVNsYRSEDVDacGdjIAIVnQO5rHKVCsIoBzP+Pe/zvs/7
+        Ps+Xj8JFleQ6SplwmFUlyOKkpIAou+luDY56JUK2sfy0BJ1qcWCosMmMoz+nXSTKG2wGKNOp
+        I9DgeTNATXPByDHaSaCh/nYCzT6p5qHm1FE++l5/kY/0Nc189Ictj0TZrdUYyh+3Eih7dgGg
+        2ozPkDPLuLQjfxZHE8YBHBW5rQD1GeoByjY8IJHbZiLQ5ZFqPrKM6nnoRk0Jb5s/4+o+wWd6
+        W1pJpsLYx2funbvKZ3I1OTzmQtUDjLHrOjCm968qkimfucNjTI4djPOHBoxpsPXwmYtZnSST
+        YSkBzLXGb5jJ0oAP6J2Ct2LZOGUSq9oQvlegSOuyYAfzJMn1OT+SKcDspwVeFKS3wPGeOlIL
+        BJSILgKwot8EuGIKwFLDbwRXTALo6pzCn0pGDCdwrlEI4EDpwsqUC8Cu/ONLHYoS0uGwyC72
+        CAj6Jdh1coLwYCHtAx05fy/jZ+m9cLBgGvNgXzoS6ib6l3mcFsPUqWKeZ+daeg6HV9y3lg/g
+        dDsBrXe1yzZI+lX45Not0oO96FBYN+PEOLUEHrPmLtuDtEMAi7UzfM73O1BvLMA47AuHGywr
+        vD9sNKQTHD4KnUXHV8QaAK1XKlZCh8HelsekJxq+dPkX2waOjoSaUk8cagl7w+4xH86DN8ws
+        O4tztBBqToq46Rehs9m6slAMC9qmSR2QGle9i3FVfuOqNMb/7/4EiBIgZhPV8XJWvTmB/TJE
+        LYtXJybIQ2IOxJeCpf/duNAw9SsoHB4PqQUYBWoBpHDpWmHZ6FaZSBgr++prVnVgjyoxjlXX
+        gucpQioW7rP8vEdEy2WH2f0se5BVPe1ilNe6FKx4V33Yy7yN86fPV80ETm32nk08E3rpmcG3
+        D93dGn4p5fXcbv0jHyYjxC87ObvHIv12sbr/04G22N/tc02ff6j+J9j3MpF4fzx93vCG1vRR
+        YWsUNj/23ptJktR9Z9vfP2cKOCavXOz4OCkzv9gvpjdrzcDDcr+dIxeG5h5vf8EceXNTx0SY
+        /qhI8K4Tv794JFkv++5q3Z3dqQ532sPI2tvrzWkS+70von1DA/uUClngc+ttEbdPic+AijWP
+        cuxR0f9G8+Rt1BFbTroS7C7S6YbdHa9dj+yc3jLRmaeIiNl2yK6K14eRSsxfXqgIulEWHNTg
+        0lR8MhQVoB6rrNmxf/J6d8kupZRQK2SbgnCVWvYfxEW/0U4EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsVy+t/xu7ouGvaJBm9faFr0njvJZLH8zDpm
+        iytf37NZzHl+ltFi0v0JLBbP569jtDjzW9fi5JurLBYv7l1ksfjxdx+rxdmmN+wWnROXsFtM
+        3H+W3eLyrjlsFjPO72OyWPhxK4vFjB//GC0O9UVb3J82C2jGwh/MFp9mPWS2WPFzK6PF3clH
+        GC1mTH7JZvFz1zwWi9Wv97FbbHkzkdXi6P5VrA4yHu9vtLJ73Dl3ns1j56y77B6P525k95jd
+        MZPVY/Gel0weJyZcYvK4c20Pm8f2bw9YPeadDPS4332cyeP4rlvsHkumXWXz6NuyitFj8+lq
+        j8+b5AIEovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/Tt
+        EvQy2q9vYSqYI19xZOYUtgbGdZJdjJwcEgImEq8ntzKD2EICSxkl1s4sgIiLS+ye/5YZwhaW
+        +HOtiw2i5i2jxPZzgV2MHBy8AnYSK06Ig4RZBFQlrrd9YgGxeQUEJU7OfAJmiwokSOw+3MUO
+        YgsLOEpM+HQPLM4MNL7py0rWLkYuDhGB/8wSXdNXMYM4zAJXWSQajs5iA3GEBPYwSjz/d4cJ
+        pIVNQFPi7+abYFdwClhJHP52nwlilJlE19YuRghbXqJ562zmCYxCs5BcMgvJxllIWmYhaVnA
+        yLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMFltO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMK7
+        7Y1tohBvSmJlVWpRfnxRaU5q8SFGU2BwTGSWEk3OB6bLvJJ4QzMDU0MTM0sDU0szYyVx3q1z
+        18QLCaQnlqRmp6YWpBbB9DFxcEo1MNVJT3i1atrzssfR1/+raJyr1fh6ck2BXsucbP787HsW
+        geGZjRrnjjy4ZBJ2Ycram5VelUu0mupFg2Ie883irS12WcP6xiup0D8290nLB/uDh6d53P22
+        vP6m2XO7vWcspLhetTi/feJ+7Mc3lU/px32dzLXiL9+5Mf2F+dzvmpf79z4+zrHOyGzvjgu2
+        twqMvVT3P+CPElQwmfNxcv/f9xPFVp55K7ePVXS1S8Izb7eF9/y1mJ4+09WcyFI/RTZvt1ro
+        7+IL+sAwcPLYtrJ9e5ZV7tmW1kN/lZ5H/jCJd38w6c/urTPsJ0oue8JbvOvc5gd1bNtVenVf
+        X1dv9/1v4Rn01zA6pyDbb6vldmG2/UosxRmJhlrMRcWJAEdcfsjfAwAA
+X-CMS-MailID: 20210913103028eucas1p1428844a2a68d9611ef5fe5cc41827079
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210910101246eucas1p17191a80c37b0e1784d6d9b8bf6fbcd60
+X-RootMTR: 20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20210910101246eucas1p17191a80c37b0e1784d6d9b8bf6fbcd60
+X-CMS-RootMailID: 20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e
 References: <20210910101218.1632297-1-maxime@cerno.tech>
-        <CGME20210910101246eucas1p17191a80c37b0e1784d6d9b8bf6fbcd60@eucas1p1.samsung.com>
-        <20210910101218.1632297-3-maxime@cerno.tech>
+        <CGME20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e@eucas1p1.samsung.com>
+        <20210910101218.1632297-25-maxime@cerno.tech>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-W dniu 10.09.2021 o 12:11, Maxime Ripard pisze:
-> Interactions between bridges, panels, MIPI-DSI host and the component
-> framework are not trivial and can lead to probing issues when
-> implementing a display driver. Let's document the various cases we need
-> too consider, and the solution to support all the cases.
+W dniu 10.09.2021 o 12:12, Maxime Ripard pisze:
+> Without proper care and an agreement between how DSI hosts and devices
+> drivers register their MIPI-DSI entities and potential components, we can
+> end up in a situation where the drivers can never probe.
+>
+> Most drivers were taking evasive maneuvers to try to workaround this,
+> but not all of them were following the same conventions, resulting in
+> various incompatibilities between DSI hosts and devices.
+>
+> Now that we have a sequence agreed upon and documented, let's convert
+> exynos to it.
 >
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->   Documentation/gpu/drm-kms-helpers.rst |  6 +++
->   drivers/gpu/drm/drm_bridge.c          | 57 +++++++++++++++++++++++++++
->   2 files changed, 63 insertions(+)
->
-> diff --git a/Documentation/gpu/drm-kms-helpers.rst b/Documentation/gpu/drm-kms-helpers.rst
-> index 10f8df7aecc0..ec2f65b31930 100644
-> --- a/Documentation/gpu/drm-kms-helpers.rst
-> +++ b/Documentation/gpu/drm-kms-helpers.rst
-> @@ -157,6 +157,12 @@ Display Driver Integration
->   .. kernel-doc:: drivers/gpu/drm/drm_bridge.c
->      :doc: display driver integration
->   
-> +Special Care with MIPI-DSI bridges
-> +----------------------------------
-> +
-> +.. kernel-doc:: drivers/gpu/drm/drm_bridge.c
-> +   :doc: special care dsi
-> +
->   Bridge Operations
->   -----------------
->   
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index baff74ea4a33..7cc2d2f94ae3 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -96,6 +96,63 @@
->    * documentation of bridge operations for more details).
->    */
->   
-> +/**
-> + * DOC: special care dsi
-> + *
-> + * The interaction between the bridges and other frameworks involved in
-> + * the probing of the upstream driver and the bridge driver can be
-> + * challenging. Indeed, there's multiple cases that needs to be
-> + * considered:
-> + *
-> + * - The upstream driver doesn't use the component framework and isn't a
-> + *   MIPI-DSI host. In this case, the bridge driver will probe at some
-> + *   point and the upstream driver should try to probe again by returning
-> + *   EPROBE_DEFER as long as the bridge driver hasn't probed.
-> + *
-> + * - The upstream driver doesn't use the component framework, but is a
-> + *   MIPI-DSI host. The bridge device uses the MIPI-DCS commands to be
-> + *   controlled. In this case, the bridge device is a child of the
-> + *   display device and when it will probe it's assured that the display
-> + *   device (and MIPI-DSI host) is present. The upstream driver will be
-> + *   assured that the bridge driver is connected between the
-> + *   &mipi_dsi_host_ops.attach and &mipi_dsi_host_ops.detach operations.
-> + *   Therefore, it must run mipi_dsi_host_register() in its probe
-> + *   function, and then run drm_bridge_attach() in its
-> + *   &mipi_dsi_host_ops.attach hook.
-> + *
-> + * - The upstream driver uses the component framework and is a MIPI-DSI
-> + *   host. The bridge device uses the MIPI-DCS commands to be
-> + *   controlled. This is the same situation than above, and can run
-> + *   mipi_dsi_host_register() in either its probe or bind hooks.
-> + *
-> + * - The upstream driver uses the component framework and is a MIPI-DSI
-> + *   host. The bridge device uses a separate bus (such as I2C) to be
-> + *   controlled. In this case, there's no correlation between the probe
-> + *   of the bridge and upstream drivers, so care must be taken to avoid
-> + *   an endless EPROBE_DEFER loop, with each driver waiting for the
-> + *   other to probe.
-> + *
-> + * The ideal pattern to cover the last item (and all the others in the
-> + * MIPI-DSI host driver case) is to split the operations like this:
-> + *
-> + * - The MIPI-DSI host driver must run mipi_dsi_host_register() in its
-> + *   probe hook. It will make sure that the MIPI-DSI host sticks around,
-> + *   and that the driver's bind can be called.
-> + *
-> + * - In its probe hook, the bridge driver must try to find its MIPI-DSI
-> + *   host, register as a MIPI-DSI device and attach the MIPI-DSI device
-> + *   to its host. The bridge driver is now functional.
-> + *
-> + * - In its &struct mipi_dsi_host_ops.attach hook, the MIPI-DSI host can
-> + *   now add its component. Its bind hook will now be called and since
-> + *   the bridge driver is attached and registered, we can now look for
-> + *   and attach it.
-> + *
-> + * At this point, we're now certain that both the upstream driver and
-> + * the bridge driver are functional and we can't have a deadlock-like
-> + * situation when probing.
-> + */
-> +
->   static DEFINE_MUTEX(bridge_lock);
->   static LIST_HEAD(bridge_list);
->   
 
+This patch should be dropped, as it will probably break the driver.
 
-Nice work with documenting this initialization dance. It clearly shows 
-that bridge API lacks better mechanism - usage of mipi dsi callbacks to 
-get notifications about bridge appearance is ugly. It remains me my 
-resource tracking patches which I have posted long time ago [1] - they 
-would solve the issue in much more elegant way, described here [2]. 
-Apparently I was not stubborn enough in promoting this solution.
-
-Anyway:
-
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
-
-[1]: https://lkml.org/lkml/2014/12/10/342
-
-[2]: 
-https://events19.linuxfoundation.org/wp-content/uploads/2017/12/Deferred-Problem-Issues-With-Complex-Dependencies-Between-Devices-in-Linux-Kernel-Andrzej-Hajda-Samsung.pdf
+Exynos is already compatible with the pattern 
+register-bus-then-get-sink, but it adds/removes panel/bridge 
+dynamically, so it creates drm_device without waiting for downstream sink.
 
 
 Regards
+
 Andrzej
 
 
+> ---
+>   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 19 ++++++++++++-------
+>   1 file changed, 12 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index e39fac889edc..dfda2b259c44 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -1529,6 +1529,7 @@ static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+>   
+>   MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
+>   
+> +static const struct component_ops exynos_dsi_component_ops;
+>   static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+>   				  struct mipi_dsi_device *device)
+>   {
+> @@ -1536,6 +1537,7 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+>   	struct drm_encoder *encoder = &dsi->encoder;
+>   	struct drm_device *drm = encoder->dev;
+>   	struct drm_bridge *out_bridge;
+> +	struct device *dev = host->dev;
+>   
+>   	out_bridge  = of_drm_find_bridge(device->dev.of_node);
+>   	if (out_bridge) {
+> @@ -1585,7 +1587,7 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+>   	if (drm->mode_config.poll_enabled)
+>   		drm_kms_helper_hotplug_event(drm);
+>   
+> -	return 0;
+> +	return component_add(dev, &exynos_dsi_component_ops);
+>   }
+>   
+>   static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+> @@ -1593,6 +1595,9 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+>   {
+>   	struct exynos_dsi *dsi = host_to_dsi(host);
+>   	struct drm_device *drm = dsi->encoder.dev;
+> +	struct device *dev = host->dev;
+> +
+> +	component_del(dev, &exynos_dsi_component_ops);
+>   
+>   	if (dsi->panel) {
+>   		mutex_lock(&drm->mode_config.mutex);
+> @@ -1716,7 +1721,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
+>   		of_node_put(in_bridge_node);
+>   	}
+>   
+> -	return mipi_dsi_host_register(&dsi->dsi_host);
+> +	return 0;
+>   }
+>   
+>   static void exynos_dsi_unbind(struct device *dev, struct device *master,
+> @@ -1726,8 +1731,6 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
+>   	struct drm_encoder *encoder = &dsi->encoder;
+>   
+>   	exynos_dsi_disable(encoder);
+> -
+> -	mipi_dsi_host_unregister(&dsi->dsi_host);
+>   }
+>   
+>   static const struct component_ops exynos_dsi_component_ops = {
+> @@ -1821,7 +1824,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+>   
+>   	pm_runtime_enable(dev);
+>   
+> -	ret = component_add(dev, &exynos_dsi_component_ops);
+> +	ret = mipi_dsi_host_register(&dsi->dsi_host);
+>   	if (ret)
+>   		goto err_disable_runtime;
+>   
+> @@ -1835,10 +1838,12 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+>   
+>   static int exynos_dsi_remove(struct platform_device *pdev)
+>   {
+> +	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
+> +
+> +	mipi_dsi_host_unregister(&dsi->dsi_host);
+> +
+>   	pm_runtime_disable(&pdev->dev);
+>   
+> -	component_del(&pdev->dev, &exynos_dsi_component_ops);
+> -
+>   	return 0;
+>   }
+>   
