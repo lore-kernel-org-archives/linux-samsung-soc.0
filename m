@@ -2,205 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94959C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Sep 2021 10:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF0EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Sep 2021 04:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 838026103D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Sep 2021 10:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F12B160F6F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Sep 2021 04:27:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232711AbhIJKQE (ORCPT
+        id S231458AbhIME3G (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Sep 2021 06:16:04 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:44983 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233014AbhIJKPt (ORCPT
+        Mon, 13 Sep 2021 00:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49076 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230397AbhIME3F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Sep 2021 06:15:49 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 789FF2B013F5;
-        Fri, 10 Sep 2021 06:14:36 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 10 Sep 2021 06:14:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=THjyt/udMqvIS
-        g7/C7BNDCUAlJStjMNR1MB6XhOeOzg=; b=os1ue1yYQlHuSypaKJXgRcobxzFOn
-        KLQPB1ItAoZPXtNimByXgLZFOft9KD0rswZ/ljtTjM803FvgmpVpgUh3CLnBbTY0
-        +nMXLnN1xuzdWGCM5HhgkBxW/u+yA3y2Q3UHB6rT3n1YWbdFpca1GY4UtHRchBKm
-        COpjCIHHZcTBmkQdwgiv4Uan1QPqDKasI+L08A/RNNnbEf9+NDKdffpAvetiF9kq
-        7MmNdm3LKfo1L5+uLBVrSc3eLYb5YJJZzBHJsttc2qEIEKPHKof41uhufmhduPtV
-        7qewwX66bSERofVMxgg79lZNXb/5mnxIVCcwOWVnPBnpSDqFVSumenz9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=THjyt/udMqvISg7/C7BNDCUAlJStjMNR1MB6XhOeOzg=; b=Q0KUlGP3
-        5KdAE/kmRk0YcujRCdB7e0GLja4wNw1lQuGdErGpwpOt5o1Uai7qISUJbKfU9E5u
-        DhS0pRuYcChRHkPQFazXVXDlAHccyRoOK9NVgT9c5oAZImoMzxNR9f9+9kdp/dRG
-        iUE7yPvIUE8MUKygMsPUkFNVJDPl9opXwhwiq2thmkvbGF5/+cI95sGw0Fah+//x
-        GWG5N0HHME0qpbhavr8SY11w1e8nFmNd8P10rfb5bKliuavo/PGAsGEVJlKCq/Ca
-        fkiu2l0oI4N8JMKVs5NT7f7qAh1n/gWS9+W7WzRBuSOlz5j1jyXyA0sY6+qNGlzl
-        c3MnO7MJ+pBysQ==
-X-ME-Sender: <xms:CzA7YdMhu3iTLixe02I63ClFyYUVOUN8nfj0rK3R9JKRSYSfj_L0vQ>
-    <xme:CzA7Yf8Ui_id_eU3GTRWD7wVpCll385nG2thLcVrjNR4gasOJITCAxo01nymlRzUV
-    SUScKHLJNxHH5LiLbo>
-X-ME-Received: <xmr:CzA7YcRiiTw5xkGl5JhaHflTJyl8q92nAL3PnKZHqdmx4bUNbxe4VQLTBrOxPR2-3Jq9lux5Ft5all6m16a03fE9u31wvkPu5soW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeguddgvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:CzA7YZuRzn4u0_5t8-e10A6krjJKBbwScWzVS7UBTUZ0TXXbtoTSqw>
-    <xmx:CzA7YVcF7XWqV-91dmSyu7PK3C9oKOHKnvlxCFgM5JRGK5RBKhQdDA>
-    <xmx:CzA7YV0M0gcE2OpSMZJvVcnwSBB5Q5kzC-YyvnuY33zK9_xBuUt8ww>
-    <xmx:DDA7YaOrqgA3bperzcYGWWGF1DaEU7uJHdSFWXcLg1h3edluSjMMDJ-sZ5c>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Sep 2021 06:14:35 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        John Stultz <john.stultz@linaro.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH v4 24/24] drm/exynos: dsi: Adjust probe order
-Date:   Fri, 10 Sep 2021 12:12:18 +0200
-Message-Id: <20210910101218.1632297-25-maxime@cerno.tech>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210910101218.1632297-1-maxime@cerno.tech>
-References: <20210910101218.1632297-1-maxime@cerno.tech>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 13 Sep 2021 00:29:05 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0AB4C061574
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Sep 2021 21:27:49 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id jg16so18046791ejc.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Sep 2021 21:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:content-transfer-encoding:mime-version:subject:message-id:date
+         :cc:to;
+        bh=KEdnfdVtALg1+RmjiE9eLbEo8mfRabZqYOY5/3C2Occ=;
+        b=Ds46SE9W2W/X8g+enHbiZHBC0mdzASAvjR+I6uz5vh3NTLksmpPUQ9tV8FzpCHYP70
+         wkHOMlvxWsaKSe3iVFJIQrUhm4diMRgUe+wOKgOm+vqX/LhFotiNzmQ5IRLy5WSobsAZ
+         cEd6U0DsNOD3w3JW89v6kbiubafv/pDJY8eBBeLe+o6zjQ8nUKhSPDq0c8jmy+3VjGgb
+         pINQc4J+zB/HtdJ16Uz4JPKoEq8wqEqcIruEvT5p93bZREpvU7tFTn1+zXzW4oGcqtds
+         R+7QT93u9Dwkf4sm32HSJRnswbZDtbJooKgS2oJho9/V1bjZgQieOxyVGpCYoI294L30
+         qbEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:cc:to;
+        bh=KEdnfdVtALg1+RmjiE9eLbEo8mfRabZqYOY5/3C2Occ=;
+        b=n2DRUlKPoh+TGcUhL5nfi51F9rgD01zXn0v8fYNZUlAhTJD31kusXCCrBfqjWUGv0T
+         lccjH47aG6/bOvf4x4VFQvCYgytLYjPIe/9EcUJ5UMhVrK8aiYI6soOBGEQdTICefrXb
+         Vg4mZpZWKKmr5BwuTyu6p81tXZw3qVB/hhcKrNIvumZp3iqCAckNFCtQx43uk/LCU7GK
+         sXa1Hq2eFQaLzHrJjp7F+hUCqD/8di0hID0r+YaCCsmdarJNdEbvmLoPt11ZOhOlwHeh
+         /a8cqJ9xKVXdynIuxoNRFCYr6xH72PhdNBOHTWpcjbA/YLYgv6pDTxBq2l4zCCbIS0+4
+         QB9A==
+X-Gm-Message-State: AOAM530w276VpmKn/tKvePB8rt9s2vOQrgD/nSAr6MhrL0+wFjiHgTR4
+        +Vz+sXdkQQm4nOIInG8+uwt3ALbLxEs=
+X-Google-Smtp-Source: ABdhPJzVNN88XA5T5Vfjym0UWqRx7dRCTPc3QY+G+pC8sPQKn9DDDJtr/svUtxRUwc+I84H0MuhmcA==
+X-Received: by 2002:a17:906:138a:: with SMTP id f10mr10419553ejc.89.1631507268080;
+        Sun, 12 Sep 2021 21:27:48 -0700 (PDT)
+Received: from [172.16.20.20] ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id qx18sm2780406ejb.75.2021.09.12.21.27.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 12 Sep 2021 21:27:47 -0700 (PDT)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.7\))
+Subject: BUG: Cannot boot Odroid XU4 from eMMC without this patch
+Message-Id: <89888711-56BF-4E6C-92EE-2053E773B077@gmail.com>
+Date:   Mon, 13 Sep 2021 08:27:46 +0400
+Cc:     Marian Mihailescu <mihailescu2m@gmail.com>
+To:     linux-samsung-soc@vger.kernel.org
+X-Mailer: Apple Mail (2.3608.120.23.2.7)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Without proper care and an agreement between how DSI hosts and devices
-drivers register their MIPI-DSI entities and potential components, we can
-end up in a situation where the drivers can never probe.
+h=
+ttps://github.com/chewitt/linux/commit/8a4ebfb43a394e5dc5e9fafc92a50d5e81a=
+4f258
 
-Most drivers were taking evasive maneuvers to try to workaround this,
-but not all of them were following the same conventions, resulting in
-various incompatibilities between DSI hosts and devices.
+If I boot any recent kernel without the above patch, the emmc module on =
+the XU4 is not detected, see:
 
-Now that we have a sequence agreed upon and documented, let's convert
-exynos to it.
+Without:
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+[    3.227837] mmc0: tuning execution failed: -5
+[    3.231229] mmc0: error -5 whilst initialising MMC card
+[    3.536450] mmc0: tuning execution failed: -5
+[    3.539680] mmc0: error -5 whilst initialising MMC card
+[    3.794056] mmc0: tuning execution failed: -5
+[    3.794212] mmc0: error -5 whilst initialising MMC card
+[    4.111097] mmc0: tuning execution failed: -5
+[    4.115356] mmc0: error -5 whilst initialising MMC card
+[    4.426164] mmc0: tuning execution failed: -5
+[    4.429678] mmc0: error -5 whilst initialising MMC card
+[    4.756226] mmc0: tuning execution failed: -5
+[    4.760641] mmc0: error -5 whilst initialising MMC card
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e39fac889edc..dfda2b259c44 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1529,6 +1529,7 @@ static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
- 
- MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
- 
-+static const struct component_ops exynos_dsi_component_ops;
- static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 				  struct mipi_dsi_device *device)
- {
-@@ -1536,6 +1537,7 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	struct drm_encoder *encoder = &dsi->encoder;
- 	struct drm_device *drm = encoder->dev;
- 	struct drm_bridge *out_bridge;
-+	struct device *dev = host->dev;
- 
- 	out_bridge  = of_drm_find_bridge(device->dev.of_node);
- 	if (out_bridge) {
-@@ -1585,7 +1587,7 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	if (drm->mode_config.poll_enabled)
- 		drm_kms_helper_hotplug_event(drm);
- 
--	return 0;
-+	return component_add(dev, &exynos_dsi_component_ops);
- }
- 
- static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
-@@ -1593,6 +1595,9 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
- {
- 	struct exynos_dsi *dsi = host_to_dsi(host);
- 	struct drm_device *drm = dsi->encoder.dev;
-+	struct device *dev = host->dev;
-+
-+	component_del(dev, &exynos_dsi_component_ops);
- 
- 	if (dsi->panel) {
- 		mutex_lock(&drm->mode_config.mutex);
-@@ -1716,7 +1721,7 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 		of_node_put(in_bridge_node);
- 	}
- 
--	return mipi_dsi_host_register(&dsi->dsi_host);
-+	return 0;
- }
- 
- static void exynos_dsi_unbind(struct device *dev, struct device *master,
-@@ -1726,8 +1731,6 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
- 	struct drm_encoder *encoder = &dsi->encoder;
- 
- 	exynos_dsi_disable(encoder);
--
--	mipi_dsi_host_unregister(&dsi->dsi_host);
- }
- 
- static const struct component_ops exynos_dsi_component_ops = {
-@@ -1821,7 +1824,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(dev);
- 
--	ret = component_add(dev, &exynos_dsi_component_ops);
-+	ret = mipi_dsi_host_register(&dsi->dsi_host);
- 	if (ret)
- 		goto err_disable_runtime;
- 
-@@ -1835,10 +1838,12 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 
- static int exynos_dsi_remove(struct platform_device *pdev)
- {
-+	struct exynos_dsi *dsi = platform_get_drvdata(pdev);
-+
-+	mipi_dsi_host_unregister(&dsi->dsi_host);
-+
- 	pm_runtime_disable(&pdev->dev);
- 
--	component_del(&pdev->dev, &exynos_dsi_component_ops);
--
- 	return 0;
- }
- 
--- 
-2.31.1
+With:
 
+[    3.305461] mmc0: new HS400 MMC card at address 0001
+[    3.307444] mmcblk0: mmc0:0001 8GME4R 7.28 GiB
+[    3.308132] mmcblk0boot0: mmc0:0001 8GME4R 4.00 MiB
+[    3.309172] mmcblk0boot1: mmc0:0001 8GME4R 4.00 MiB
+[    3.310255] mmcblk0rpmb: mmc0:0001 8GME4R 512 KiB, chardev (246:0)
+[    3.315963]  mmcblk0: p1 p2
+
+The patch is sourced from a Linux 5.4 patchset used by several retro =
+gaming distros for XU4 images shared in the HardKernel forums. I would =
+be happy to submit it, but the original patch has no description in the =
+commit message. Not being a coding developer myself I cannot explain =
+whether it is correct or what it=E2=80=99s doing to add one. All I can =
+do is confirm that it works, and is needed. SD card boot is not an =
+issue.
+
+I=E2=80=99ve CC=E2=80=99d the original author (Marian) in case he =
+remembers the patch and can comment. It would be good to get this =
+upstream.=20
+
+Christian=
