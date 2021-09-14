@@ -2,104 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB6BC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 21:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0104C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 22:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BECD361183
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 21:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8333610A6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 22:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234245AbhINVgx (ORCPT
+        id S235363AbhINWNy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Sep 2021 17:36:53 -0400
-Received: from mail-ot1-f42.google.com ([209.85.210.42]:37755 "EHLO
-        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232047AbhINVgx (ORCPT
+        Tue, 14 Sep 2021 18:13:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235303AbhINWNx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Sep 2021 17:36:53 -0400
-Received: by mail-ot1-f42.google.com with SMTP id i3-20020a056830210300b0051af5666070so597138otc.4;
-        Tue, 14 Sep 2021 14:35:35 -0700 (PDT)
+        Tue, 14 Sep 2021 18:13:53 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82659C061764
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Sep 2021 15:12:35 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id i4so1659087lfv.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Sep 2021 15:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LAvaIUH5OlRWAZQfOb+bWm3uVreewxT3eR+cClts1uI=;
+        b=VLrCs/+hNIGuWHNfFM8FPpo9MdASxRdZfjTQbnUJQyNoarhnB48pzOHj92Uv+amr9p
+         ixzRcYtYvH4tHeMTkq392YF521gX9qRP6RXpjY/MbnIpiM/U1DAP4rT3mhItZ+smgYPC
+         HAnvOKCP691XE//yBgTqBGfOzo3Xk8LHh+rXW30yKTdtiIQEgJZOMlPkWV+fJ3uxpW4R
+         nToOeYf0EHRW6z3YX/fLoUtleulbtYB1Liz6pppbcIZmFmkKstGWGpmXGDPpdxxXQDOO
+         To6zI2pt1uDGWX1qSHzdUDUBiwjbHPMgxHrVOk9ocyyjcFoQBRhXrj0omC1wbF+Moi96
+         n6BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=nV9xXSrBUTmCzf5AiBkL6FDLbv6dEG3GHOqZwFkkyGw=;
-        b=0FSH7vO/CiYKfFUKQCtw65wJmeEnSFxiem01S3pXZXxCktDkcLClrfuGPL9ptzDKK4
-         4g9zLsDL/YhroSlItOVstKS3H2h+BGo5FvR/SHLwypSNhnq0rm5ItazFAnd3o5NmVj2X
-         VwE7FdUm1WlJVP29gfW2r6mnG0Q7KcC+4fXdBVfq6ZMECfG0qbf2RTou2p0zvcXkQi0O
-         6Compn7RoOBUR236eOR6COoOmNDk9v3cxj5ZcYsLvVa3zcAhwKRa1c/TwMQ5onB7ZBmS
-         1poaGwqGhK554CxyhTFOvOOphQW2D/uGQdF04sQD1rAKiYpJaaGYU/EOZLp/k/eMAEVr
-         ddfQ==
-X-Gm-Message-State: AOAM532vtz8wJJrc3geVKqvzXoww3ZirJHzHeQrQYLvJ+XHyOAG2bcMI
-        UyDmUGgpFTj1FT8LjbYOBA==
-X-Google-Smtp-Source: ABdhPJyaI54mbxvyEqPJ8hb3jhXyeZejVuYhsxqlt4be67wj2aws/2/5Mlq8Sb+XvAJVlxqMGN3YIg==
-X-Received: by 2002:a9d:7289:: with SMTP id t9mr16704656otj.273.1631655335239;
-        Tue, 14 Sep 2021 14:35:35 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id v11sm2916500oto.22.2021.09.14.14.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 14:35:34 -0700 (PDT)
-Received: (nullmailer pid 4008885 invoked by uid 1000);
-        Tue, 14 Sep 2021 21:35:33 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Tom Gall <tom.gall@linaro.org>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LAvaIUH5OlRWAZQfOb+bWm3uVreewxT3eR+cClts1uI=;
+        b=S84vyRuz0N12H1jQ9EevUn4snwdAhdmYCMyx5f5yZvAQgAWzSy/unpdmhCt8W4OGMn
+         j7/RNfhMSda0p7gqEeYoR71iLsJyuGUdLjqHav6N739nquNsO/JTj2klFagIle+k9NYK
+         GjILqp7yKaIwoHAH/rZbqnrYuRy1uQNBct/x6/OddS6ObWdV1BoDcW6re7MsP+fIptby
+         NvNIw01kc644Gn/f5LRgDJV+HIKWiErdsI8mtsEwj8VI6OJg4Fd89FgJ0KPBPrtAyBbO
+         jUEMFrgfCxlaUPULcZc2YoN0j24trcu87vfUXkRrkQCI6C9OQ96mzE31pM+6MjF0UmFt
+         h3jg==
+X-Gm-Message-State: AOAM530oz7WuiL5x+sZEmq7eoR8sfF/klqsRaKz/4iUjoAWLKo9hLP98
+        zaI57Q7cH2S9jPCOe0pJ0Qsk13Cwa52FLE0F683/Hw==
+X-Google-Smtp-Source: ABdhPJwu3ztXRgAHEffeDYZFOfptVugQFO781IvsJ0Ym9L4qfm8T9QJBx3b1mwEoJsYA+Z6NYJX/ewEtSqtF71Fz60g=
+X-Received: by 2002:a05:6512:132a:: with SMTP id x42mr14797863lfu.291.1631657553855;
+ Tue, 14 Sep 2021 15:12:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210914202202.1702601-1-dianders@chromium.org>
+In-Reply-To: <20210914202202.1702601-1-dianders@chromium.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 15 Sep 2021 00:12:22 +0200
+Message-ID: <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
+ instead of hardcoding
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        =?utf-8?q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20210914155607.14122-6-semen.protsenko@linaro.org>
-References: <20210914155607.14122-1-semen.protsenko@linaro.org> <20210914155607.14122-6-semen.protsenko@linaro.org>
-Subject: Re: [PATCH 5/6] dt-bindings: clock: Document Exynos850 CMU bindings
-Date:   Tue, 14 Sep 2021 16:35:33 -0500
-Message-Id: <1631655333.292425.4008884.nullmailer@robh.at.kernel.org>
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-sunxi@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 14 Sep 2021 18:56:06 +0300, Sam Protsenko wrote:
-> Provide dt-schema documentation for Exynos850 SoC clock controller.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  .../clock/samsung,exynos850-clock.yaml        | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> 
+On Tue, Sep 14, 2021 at 10:22 PM Douglas Anderson <dianders@chromium.org> wrote:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> Version 5 of this series just fixes the panel ID encode macro to be
+> cleaner and adds Jani's review tags.
+>
+> It could possibly be ready to land?
 
-yamllint warnings/errors:
+Definitely IMO, the kernel look so much better after this change,
+so for the series:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/samsung,exynos850-clock.example.dt.yaml:0:0: /example-2/serial@13820000: failed to match any schema with compatible: ['samsung,exynos850-uart']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1528063
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Yours,
+Linus Walleij
