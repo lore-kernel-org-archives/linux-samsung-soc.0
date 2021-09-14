@@ -2,285 +2,279 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBE9C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 19:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97872C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 20:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0222D61164
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 19:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F76A61212
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Sep 2021 20:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232113AbhINTBw (ORCPT
+        id S233850AbhINUXh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Sep 2021 15:01:52 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40965 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232269AbhINTBu (ORCPT
+        Tue, 14 Sep 2021 16:23:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233780AbhINUXf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Sep 2021 15:01:50 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210914190031euoutp0252a3f0c65b54a254acad7d078254053b~kxWurLt5o2848928489euoutp02B
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Sep 2021 19:00:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210914190031euoutp0252a3f0c65b54a254acad7d078254053b~kxWurLt5o2848928489euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1631646031;
-        bh=xm1zaqXeyvV2esoGirppTvrBf0GA4uTS8Yww/fX/oqc=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=M7QKMNs/1PdJgacqnxuCPAjPZkqsMt6XVUrOQw00rGQakWaUY3cQ6Gx3ewjGE21FY
-         0FsF0CPLhD5ffAn3GSvNbDCvm2/tS20dZsnAJpiJr+Dr2ivnTt98EVZ1OsPimCjXaa
-         s4iM+KuiGWh4SjD/GXJnKzuEsAX+dn5MWb+STUXc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210914190030eucas1p175b756fbaec2a0c514695fcec70152f1~kxWuLC4EH2248322483eucas1p1c;
-        Tue, 14 Sep 2021 19:00:30 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id BD.1E.45756.E41F0416; Tue, 14
-        Sep 2021 20:00:30 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210914190030eucas1p25f2fca6b8abc3f09e9c3eec15ef95675~kxWtnXQVj3156731567eucas1p2f;
-        Tue, 14 Sep 2021 19:00:30 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210914190030eusmtrp2a4b24888128433c0437039bb0067ea99~kxWtmOi7o2400724007eusmtrp22;
-        Tue, 14 Sep 2021 19:00:30 +0000 (GMT)
-X-AuditID: cbfec7f2-7d5ff7000002b2bc-55-6140f14e43a7
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 68.FE.20981.D41F0416; Tue, 14
-        Sep 2021 20:00:29 +0100 (BST)
-Received: from [106.210.131.79] (unknown [106.210.131.79]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210914190028eusmtip236a1fe4ead5a72d804ca1ce148a75845~kxWsHqeHR2441624416eusmtip2j;
-        Tue, 14 Sep 2021 19:00:28 +0000 (GMT)
-Message-ID: <e5ec9763-37fe-6cd8-6eca-52792afbdb94@samsung.com>
-Date:   Tue, 14 Sep 2021 21:00:28 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0)
-        Gecko/20100101 Thunderbird/93.0
-Subject: Re: [PATCH v4 02/24] drm/bridge: Document the probe issue with
- MIPI-DSI bridges
-Content-Language: pl
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+        Tue, 14 Sep 2021 16:23:35 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C223FC061768
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Sep 2021 13:22:17 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id f11-20020a17090aa78b00b0018e98a7cddaso509447pjq.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Sep 2021 13:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=29glUktI+TgFcu0s/snTaCZqtPLPWr2Rvd/8CIHFfUI=;
+        b=cfcIKIVYpE12XwL7GHkvoewGDjTUKq7LX1i1W01aOLR2X0kcbmmtIty6rTJxAE+UtB
+         EXZxeVBBlW0eOxly76fpGdXjzLRCH4txhTigfbfrX8f/zh/8A7hgaqNAM5UUtMVWefkw
+         ptV8EFOYK9tU6rzbt9T1ncBVfQuDJ/F5eB0Hw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=29glUktI+TgFcu0s/snTaCZqtPLPWr2Rvd/8CIHFfUI=;
+        b=g0Yalrivk7Ck5KiUGYcT9Ar/biF9Q8WjPtJX5an5VO1tV2qONd+zu7W6902+fkDa9f
+         bOJXC1Fd0Er32LmqFQqAh7jDTHG7J0runL+1O/nPgITK+U+QEwmZoQypedNLrjcmulDR
+         +qf6GOjq+F8pqmpKMv7RPV+DTLs2B5xXtFIQ1ZrKN+wfPXEHOpSE1i8mn5xt68SPKKlc
+         hWMUO48QIibDqZ2HsB6Xo/JLkVvKV3k1BUgsPRd0faoBSE6Rb2wVrL0LsxaxZTximExz
+         eEN14xzJHQ6btbGWXRLQjcf9LPcnE8c7og8hhRhM7Bp4X1lHq99/0vF2oT7kmChUIYdE
+         +r9g==
+X-Gm-Message-State: AOAM5338UGSTUotJmn73d/Blv9vkPeGiLi6/mgtxTeCMZ/y1fu+gJLGG
+        E/WgWYtEE5fHKjSgWZ6bgWp+1Q==
+X-Google-Smtp-Source: ABdhPJy2EEe19ESWg5bxUnradbRUCA2EQ+Ty9mf2FrxoWf30CMjk9tPMo/WXlF/y4jzWF/N4QIc6ZA==
+X-Received: by 2002:a17:902:9682:b0:138:e2f9:720d with SMTP id n2-20020a170902968200b00138e2f9720dmr16562742plp.57.1631650937237;
+        Tue, 14 Sep 2021 13:22:17 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:201:f38f:9d0f:3eba:f8c4])
+        by smtp.gmail.com with ESMTPSA id 141sm12185393pgg.16.2021.09.14.13.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 13:22:16 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     devicetree@vger.kernel.org, Steev Klimaszewski <steev@kali.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
+        Linus W <linus.walleij@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Adam Ford <aford173@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        John Stultz <john.stultz@linaro.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-In-Reply-To: <20210914143541.433ucx2kvz36tw42@gilmour>
+        Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Walle <michael@walle.cc>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nishanth Menon <nm@ti.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Otavio Salvador <otavio@ossystems.com.br>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
+        Robert Richter <rric@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Will Deacon <will@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically instead of hardcoding
+Date:   Tue, 14 Sep 2021 13:21:47 -0700
+Message-Id: <20210914202202.1702601-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.33.0.309.g3052b89438-goog
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf0wTZxj2u7veHTVlR6n2i4PhMJrpBDQj5osKgUWXW7IZN2MCnRMPuCFZ
-        +bFWnJNECTjtMLgCpkKrIFOEgGMCLY5GIIFhbaCADkz5ZZkQfpPyeyCDDXqY8d/zPu/7PM/7
-        fvloXFpNbqNj48/xqnhO6UuKiaqni61+x6ZCuH35y9tRRosVQ0XNZThqn3OS6PaQDaAsh5ZA
-        Q/llADUv+SHreAeBhl89J9DCcq0I2VLHKfRT5n0KZdbZKPSn+TaJclprMVQwZSJQzsIKQPU3
-        vkIOnX7Vo2ABR9P6v3BUvGgCqDf7D4ByskdItGjOI1DpWC2FjOOZItRYVyIK8WKd9h8ptqel
-        lWSr9b0U23+nnGINmlwRe+/JCMY+077A2J6XT0j28XyfiM2zfsE6rlsw1mLuotj7ug6SvWEs
-        AWxlUzI7U/HecUYhPhzNK2PP86qA4DPisy9Su6nEXwMuPGxGKaBmZzpwoyETCDsrJ7B0IKal
-        TDGAhddLSaGYBTBvbEokFDMAatPSibeS1HYzITSKAJyx9+JC4QTQONcG1qYkTDDUlTuxNUww
-        O6E9/SYh8B7QmjvgwluYM3DsVcVqHk17Mgr4xuaS4owM2l9fcWHZqrQ9o8bljzNFNMzOm3Z5
-        ksxuuFzZSa5hN+YA7DKWkoLYB6aZDC4BZBrFUFNZtr72Edg/mSISsCcctRgpAXvBf6vzMQFf
-        ho7iK+tiDYCmR9W40DgEe1reuDbFV5N/MwcIdChsyG0i1mjIuEP7hIewgzvMqrqFC7QEaq5K
-        hen3ocNmWjeUw8K2OVILfPUbXkW/4Xz9hmv0/+feBUQJkPNJ6rgYXr0/nv/eX83FqZPiY/yj
-        EuIqwOrvblqxTP8O7oxO+dcDjAb1ANK4r0xSNR7ESSXR3A8XeVVChCpJyavrwbs04SuXlBge
-        RkiZGO4c/y3PJ/Kqt12MdtuWgsUOns4YzAgNDDu1wkqtz1+bUayf48ulZi5186HEx5EB2x0d
-        WZ4L8WPMPUstmH9WHa1yXB36rl/uF9btoxyejAybmF/pKwgqPPpR8lwnTobenU39PKe87YPD
-        u3n5P3U+8r2z0pentv49otPuuCSW7Y32jtApL3/oeS306UTHiSbLJu/uopqu/uPGroPTSQcU
-        n34SGh7uD7Uej7zHlxsunR9U7pjzTDPEKA2N33zc+5ly4KjXBNfg3DRJDybLQn7p2+qj6D0S
-        HHVMMgyvRUX53XxHodm1L6179GB2xUyfLfBB+Anr6fagJXBBk0DrNhu3XGz2znwQ8bP71wmR
-        3s49mQMnx3wJ9Vlu/x5cpeb+A6vxcsBMBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGd+69vbdgGq+lhBM0bGtkmy4U+kE9GECmZrkZIUP/FDda4QrG
-        fmBbmCAZroBxnRg6lED5ECIMRTGjtKCIJelgXcOHkWEF5WMyEwaDECY4OhTX0i3hv1+e932e
-        5+Tk5eL8AU4495TGwOo0SpWQDCYGNlxTUSnLScqYyflYVDbsxlDL4B0cja4ukah2dgig76fL
-        CTR77Q5Ag+tRyL3wmEB/TD0i0NobBwcNGRco9K25iULm3iEK/dpdS6Kqhw4MNS7bCVS1tgGQ
-        83Iamq60+DIa13D0l+U5jm547QBNVvQBVFUxRyJvdz2Bbv3poJBtwcxB/b2tnKRdzNJYKcVM
-        DD8kmXuWSYr5va6dYmouVnOY6z1zGPNL+QjGTHh6SKbr1W8cpt59hJn+zoUxru6nFNNU+Zhk
-        LttaAdMxcI55aY1IpY+J4nXaXAP7XrZWb0gQpomRRCSOQyKJLE4klu77Yr8kVhidGJ/Jqk7l
-        sbroRIUoe8T4jMppiz57exCdBw8iTSCIC2kZNI52E37m080A3pgLD+hh8P61RTzAIfC1x0Sa
-        QLBvZxHAqepLlH/AoxNhZfsS5meCjoRjpitEQN8B3dUvNjmUVsCK8XqOCXC5IfQx+M8Q8Ms4
-        LYBjMyWbLPBZR8se4P58nG7jwl5PLwiU1WKwzmzeLCDpPfBNxzjp5yBaDp/abpGBJDk02U3/
-        pb4Li+01eDngW7a8w7Kl0LLFYtliaQBEKxCwuXp1llovEemVan2uJkuUoVVbge+qOn/22u6C
-        m/PLIifAuMAJIBcXCnidCwlKPi9TmV/A6rTpulwVq3eCWN9nmPHw0Ayt7yw1hnSxPCZWLJPH
-        xcTGyaXCMJ6s73Y6n85SGtjTLJvD6v73Ydyg8PNYobFo3VrwFjaXKjXt1/NKZ+XB+ac/0Ryu
-        PZjdnbxRbvpcmpP9d8qzvhMtRUEXVhZ3j7R8tmSd3TZ+dKD/wtVdJ1/vLLR5X0zHY/cdj2yu
-        M5fwvYXr1uGCt8BbkuRSHHpy9wR2pOtefWOm7PnRjh8i2xMORITWnXRHlLz8MZXzTrB4Irkq
-        5JuP912dLzZ6pY6PPsX7B53Vbmlbc1lL8UzU6iHXwdSUud05rtxh47kGj92iqqkrylPyftqf
-        cXznmeUDHxaOyVpXbJKzatv7G01pCV+tenM6V7Z9ULL9yUWIKHJHn6Pi8Kse9UyDQqXK31P+
-        pS7fE6aI+7qyizReSRZs7ywSEvpspXgvrtMr/wW07rSo3gMAAA==
-X-CMS-MailID: 20210914190030eucas1p25f2fca6b8abc3f09e9c3eec15ef95675
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210910101246eucas1p17191a80c37b0e1784d6d9b8bf6fbcd60
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210910101246eucas1p17191a80c37b0e1784d6d9b8bf6fbcd60
-References: <20210910101218.1632297-1-maxime@cerno.tech>
-        <CGME20210910101246eucas1p17191a80c37b0e1784d6d9b8bf6fbcd60@eucas1p1.samsung.com>
-        <20210910101218.1632297-3-maxime@cerno.tech>
-        <7ad18d53-3ad6-a614-a8e1-cce6505f90a8@samsung.com>
-        <20210914143541.433ucx2kvz36tw42@gilmour>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The goal of this patch series is to move away from hardcoding exact
+eDP panels in device tree files. As discussed in the various patches
+in this series (I'm not repeating everything here), most eDP panels
+are 99% probable and we can get that last 1% by allowing two "power
+up" delays to be specified in the device tree file and then using the
+panel ID (found in the EDID) to look up additional power sequencing
+delays for the panel.
 
-W dniu 14.09.2021 o 16:35, Maxime Ripard pisze:
-> Hi,
->
-> On Mon, Sep 13, 2021 at 08:29:37AM +0200, Andrzej Hajda wrote:
->> W dniu 10.09.2021 o 12:11, Maxime Ripard pisze:
->>> Interactions between bridges, panels, MIPI-DSI host and the component
->>> framework are not trivial and can lead to probing issues when
->>> implementing a display driver. Let's document the various cases we need
->>> too consider, and the solution to support all the cases.
->>>
->>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
->>> ---
->>>    Documentation/gpu/drm-kms-helpers.rst |  6 +++
->>>    drivers/gpu/drm/drm_bridge.c          | 57 +++++++++++++++++++++++++++
->>>    2 files changed, 63 insertions(+)
->>>
->>> diff --git a/Documentation/gpu/drm-kms-helpers.rst b/Documentation/gpu/drm-kms-helpers.rst
->>> index 10f8df7aecc0..ec2f65b31930 100644
->>> --- a/Documentation/gpu/drm-kms-helpers.rst
->>> +++ b/Documentation/gpu/drm-kms-helpers.rst
->>> @@ -157,6 +157,12 @@ Display Driver Integration
->>>    .. kernel-doc:: drivers/gpu/drm/drm_bridge.c
->>>       :doc: display driver integration
->>>    
->>> +Special Care with MIPI-DSI bridges
->>> +----------------------------------
->>> +
->>> +.. kernel-doc:: drivers/gpu/drm/drm_bridge.c
->>> +   :doc: special care dsi
->>> +
->>>    Bridge Operations
->>>    -----------------
->>>    
->>> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
->>> index baff74ea4a33..7cc2d2f94ae3 100644
->>> --- a/drivers/gpu/drm/drm_bridge.c
->>> +++ b/drivers/gpu/drm/drm_bridge.c
->>> @@ -96,6 +96,63 @@
->>>     * documentation of bridge operations for more details).
->>>     */
->>>    
->>> +/**
->>> + * DOC: special care dsi
->>> + *
->>> + * The interaction between the bridges and other frameworks involved in
->>> + * the probing of the upstream driver and the bridge driver can be
->>> + * challenging. Indeed, there's multiple cases that needs to be
->>> + * considered:
->>> + *
->>> + * - The upstream driver doesn't use the component framework and isn't a
->>> + *   MIPI-DSI host. In this case, the bridge driver will probe at some
->>> + *   point and the upstream driver should try to probe again by returning
->>> + *   EPROBE_DEFER as long as the bridge driver hasn't probed.
->>> + *
->>> + * - The upstream driver doesn't use the component framework, but is a
->>> + *   MIPI-DSI host. The bridge device uses the MIPI-DCS commands to be
->>> + *   controlled. In this case, the bridge device is a child of the
->>> + *   display device and when it will probe it's assured that the display
->>> + *   device (and MIPI-DSI host) is present. The upstream driver will be
->>> + *   assured that the bridge driver is connected between the
->>> + *   &mipi_dsi_host_ops.attach and &mipi_dsi_host_ops.detach operations.
->>> + *   Therefore, it must run mipi_dsi_host_register() in its probe
->>> + *   function, and then run drm_bridge_attach() in its
->>> + *   &mipi_dsi_host_ops.attach hook.
->>> + *
->>> + * - The upstream driver uses the component framework and is a MIPI-DSI
->>> + *   host. The bridge device uses the MIPI-DCS commands to be
->>> + *   controlled. This is the same situation than above, and can run
->>> + *   mipi_dsi_host_register() in either its probe or bind hooks.
->>> + *
->>> + * - The upstream driver uses the component framework and is a MIPI-DSI
->>> + *   host. The bridge device uses a separate bus (such as I2C) to be
->>> + *   controlled. In this case, there's no correlation between the probe
->>> + *   of the bridge and upstream drivers, so care must be taken to avoid
->>> + *   an endless EPROBE_DEFER loop, with each driver waiting for the
->>> + *   other to probe.
->>> + *
->>> + * The ideal pattern to cover the last item (and all the others in the
->>> + * MIPI-DSI host driver case) is to split the operations like this:
->>> + *
->>> + * - The MIPI-DSI host driver must run mipi_dsi_host_register() in its
->>> + *   probe hook. It will make sure that the MIPI-DSI host sticks around,
->>> + *   and that the driver's bind can be called.
->>> + *
->>> + * - In its probe hook, the bridge driver must try to find its MIPI-DSI
->>> + *   host, register as a MIPI-DSI device and attach the MIPI-DSI device
->>> + *   to its host. The bridge driver is now functional.
->>> + *
->>> + * - In its &struct mipi_dsi_host_ops.attach hook, the MIPI-DSI host can
->>> + *   now add its component. Its bind hook will now be called and since
->>> + *   the bridge driver is attached and registered, we can now look for
->>> + *   and attach it.
->>> + *
->>> + * At this point, we're now certain that both the upstream driver and
->>> + * the bridge driver are functional and we can't have a deadlock-like
->>> + * situation when probing.
->>> + */
->>> +
->>>    static DEFINE_MUTEX(bridge_lock);
->>>    static LIST_HEAD(bridge_list);
->>
->> Nice work with documenting this initialization dance. It clearly shows
->> that bridge API lacks better mechanism - usage of mipi dsi callbacks to
->> get notifications about bridge appearance is ugly.
-> Yeah, there's so many moving parts it's definitely not great.
->
->> It remains me my resource tracking patches which I have posted long
->> time ago [1] - they would solve the issue in much more elegant way,
->> described here [2]. Apparently I was not stubborn enough in promoting
->> this solution.
-> Wow, that sounds like a massive change indeed :/
->
->> Anyway:
->>
->> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> I assume you'll want me to hold off that patch before someone reviews
-> the rest?
+This patch series is the logical contiunation of a previous patch
+series where I proposed solving this problem by adding a
+board-specific compatible string [1]. In the discussion that followed
+it sounded like people were open to something like the solution
+proposed in this new series.
 
-The last exynos patch should be dropped, kirin patch should be 
-tested/reviewed/acked by kirin maintaner. I am not sure about bridge 
-patches, which ones have been tested by you, and which one have other users.
+In version 2 I got rid of the idea that we could have a "fallback"
+compatible string that we'd use if we didn't recognize the ID in the
+EDID. This simplifies the bindings a lot and the implementation
+somewhat. As a result of not having a "fallback", though, I'm not
+confident in transitioning any existing boards over to this since
+we'll have to fallback to very conservative timings if we don't
+recognize the ID from the EDID and I can't guarantee that I've seen
+every panel that might have shipped on an existing product. The plan
+is to use "edp-panel" only on new boards or new revisions of old
+boards where we can guarantee that every EDID that ships out of the
+factory has an ID in the table.
 
-If yes it would be good to test them as well - changes in initialization 
-flow can beat sometimes :)
+Version 3 of this series now splits out all eDP panels to their own
+driver and adds the generic eDP panel support to this new driver. I
+believe this is what Sam was looking for [2].
 
-I think patches 1-4 can be merged earlier, if you like, as they are on 
-the list for long time.
+Version 4 of this series is mostly small fixes / renames from review
+feedback. It's largely the same as v3. Other than naming /
+description / comment changes, the differences are:
+- Dropped the MIPS config patch as per request.
+- Reorder config patches first.
+- Added a new patch to use the panel ID scheme for quirks.
+- Landed the reorder of logicpd_type_28 / mitsubishi_aa070mc01
 
+Version 5 of this series just fixes the panel ID encode macro to be
+cleaner and adds Jani's review tags.
 
-Regards
+It could possibly be ready to land?
 
-Andrzej
+[1] https://lore.kernel.org/r/YFKQaXOmOwYyeqvM@google.com/
+[2] https://lore.kernel.org/r/YRTsFNTn%2FT8fLxyB@ravnborg.org/
 
+Changes in v5:
+- Prettier encode panel ID function (thanks Andrzej!)
+- Probable => Probeable
 
->
-> Thanks!
-> Maxime
+Changes in v4:
+- "u8 *edid" => "void *edid" to avoid cast.
+- ("Use new encoded panel id style for quirks matching") new for v4.
+- Don't put kmalloc() in the "if" test even if the old code did.
+- Don't refer to "panel-simple" in commit message.
+- PANEL_SIMPLE_EDP => PANEL_EDP
+- Remove "non-eDP" in panel-simple description.
+- Reordered config patches to be before code patch
+- decode_edid_id() => drm_edid_decode_panel_id()
+- drm_do_get_edid_blk0() => drm_do_get_edid_base_block()
+- drm_get_panel_id() => drm_edid_get_panel_id()
+- encode_edid_id() => drm_edid_encode_panel_id()
+- panel-simple-edp => panel-edp
+- split panel id extraction out to its own function.
+
+Changes in v3:
+- ("Better describe eDP panel delays") new for v3.
+- ("Don't re-read the EDID every time") moved to eDP only patch.
+- ("Non-eDP panels don't need "HPD" handling") new for v3.
+- Add AUO B116XAN06.1 to table.
+- Add Sharp LQ116M1JW10 to table.
+- Adjust endianness of product ID.
+- Change init order to we power at the end.
+- Decode hex product ID w/ same endianness as everyone else.
+- Fallback to conservative delays if panel not recognized.
+- Fix "prepare_to_enable" patch new for v3.
+- Generic "edp-panel" handled by the eDP panel driver now.
+- Move wayward panels patch new for v3.
+- Rename delays more generically so they can be reused.
+- Split eDP panels patch new for v3.
+- Split the delay structure out patch just on eDP now.
+
+Changes in v2:
+- Add "-ms" suffix to delays.
+- Don't support a "fallback" panel. Probed panels must be probed.
+- No longer allow fallback to panel-simple.
+- Not based on patch to copy "desc"--just allocate for probed panels.
+
+Douglas Anderson (15):
+  dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+  drm/edid: Break out reading block 0 of the EDID
+  drm/edid: Allow querying/working with the panel ID from the EDID
+  drm/edid: Use new encoded panel id style for quirks matching
+  ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+  arm64: defconfig: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
+  drm/panel-edp: Split eDP panels out of panel-simple
+  drm/panel-edp: Move some wayward panels to the eDP driver
+  drm/panel-simple: Non-eDP panels don't need "HPD" handling
+  drm/panel-edp: Split the delay structure out
+  drm/panel-edp: Better describe eDP panel delays
+  drm/panel-edp: hpd_reliable shouldn't be subtraced from hpd_absent
+  drm/panel-edp: Fix "prepare_to_enable" if panel doesn't handle HPD
+  drm/panel-edp: Don't re-read the EDID every time we power off the
+    panel
+  drm/panel-edp: Implement generic "edp-panel"s probed by EDID
+
+ .../bindings/display/panel/panel-edp.yaml     |  188 ++
+ arch/arm/configs/at91_dt_defconfig            |    1 +
+ arch/arm/configs/exynos_defconfig             |    1 +
+ arch/arm/configs/imx_v6_v7_defconfig          |    1 +
+ arch/arm/configs/lpc32xx_defconfig            |    1 +
+ arch/arm/configs/multi_v5_defconfig           |    1 +
+ arch/arm/configs/multi_v7_defconfig           |    1 +
+ arch/arm/configs/omap2plus_defconfig          |    1 +
+ arch/arm/configs/qcom_defconfig               |    1 +
+ arch/arm/configs/realview_defconfig           |    1 +
+ arch/arm/configs/sama5_defconfig              |    1 +
+ arch/arm/configs/shmobile_defconfig           |    1 +
+ arch/arm/configs/sunxi_defconfig              |    1 +
+ arch/arm/configs/tegra_defconfig              |    1 +
+ arch/arm/configs/versatile_defconfig          |    1 +
+ arch/arm/configs/vexpress_defconfig           |    1 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/gpu/drm/drm_edid.c                    |  280 ++-
+ drivers/gpu/drm/panel/Kconfig                 |   16 +-
+ drivers/gpu/drm/panel/Makefile                |    1 +
+ drivers/gpu/drm/panel/panel-edp.c             | 1895 +++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c          | 1072 +---------
+ include/drm/drm_edid.h                        |   45 +
+ 23 files changed, 2351 insertions(+), 1162 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-edp.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-edp.c
+
+-- 
+2.33.0.309.g3052b89438-goog
+
