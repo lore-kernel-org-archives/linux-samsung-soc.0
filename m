@@ -2,144 +2,263 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155CCC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 13:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1240C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 15:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E643C611C4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 13:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD03D61247
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 15:59:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233325AbhIONIq (ORCPT
+        id S238261AbhIOQBF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Sep 2021 09:08:46 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:16957 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233273AbhIONIp (ORCPT
+        Wed, 15 Sep 2021 12:01:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52526 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238257AbhIOQBC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Sep 2021 09:08:45 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210915130725euoutp01fee62e53eec5d300589c8b85c8c7ecca~lALuJH-qs0417704177euoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 13:07:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210915130725euoutp01fee62e53eec5d300589c8b85c8c7ecca~lALuJH-qs0417704177euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1631711245;
-        bh=7JUEMvLJ7EzT05xMWppWHbthLnYcH45wwJbxKBR7B+o=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=s5I3sAZDeTFzJ5dlIhAlTuAwcu4Z49MkuJ344RIHyZFkouVn0r8f1ukn438C2X79Z
-         TPDRuSNWY9csnr+MapL6xsW7xRjsVHkjljVcSW9513DCdqVTiHgA5/rR0Ln1k3CKNR
-         kslMWJ+Rko9xOAWblcu/Y9/4yv+2Eo0LSsrFHsQA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210915130724eucas1p1bf3f9ccf15bd73a983c55e65991dc053~lALs9qHK51221912219eucas1p1n;
-        Wed, 15 Sep 2021 13:07:24 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A1.82.56448.C00F1416; Wed, 15
-        Sep 2021 14:07:24 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210915130723eucas1p1c78e991e4c5c360a7f84ab524018564e~lALsT_OAB2425024250eucas1p1g;
-        Wed, 15 Sep 2021 13:07:23 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210915130723eusmtrp15a4829c41ece59982c9307ca065206c9~lALsS8iBh2247422474eusmtrp1Z;
-        Wed, 15 Sep 2021 13:07:23 +0000 (GMT)
-X-AuditID: cbfec7f5-d3bff7000002dc80-bf-6141f00c513c
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BE.FB.20981.B00F1416; Wed, 15
-        Sep 2021 14:07:23 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210915130722eusmtip208339a5ed16f7badb7155c943480274f~lALrQyaE13211632116eusmtip2C;
-        Wed, 15 Sep 2021 13:07:22 +0000 (GMT)
-Subject: Re: [PATCH 6/6] clk: samsung: Introduce Exynos850 clock driver
-To:     Sam Protsenko <semen.protsenko@linaro.org>
+        Wed, 15 Sep 2021 12:01:02 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6E6C061574;
+        Wed, 15 Sep 2021 08:59:43 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id g14so3119819pfm.1;
+        Wed, 15 Sep 2021 08:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OkiiGHbQZwoirzVbd8s1wT3AXOTUQoT8rTgbKgTYjH4=;
+        b=i6EO+HrgwbvJsQQ2YpEuIGI4TcPgkJrKnEjI6rVzmv43sG7iAOiMxSi8VMiO7XfNxa
+         xpZLDsFfVQU/Lzfp9ltItNYsiGW6PA2gvJNHY1/7YqNnfNiauIxwd551577USgAzG5vu
+         h2KMGwriNN3SUmjFDXLuTdMYh+iYfbi8Py8eRbAut0j9y8gZwtU4EflVGllx8zeLeMTv
+         B6DiJ9HjgSFfdv4UdIyMy0fLisYWx5BR9r2GKjokxyzeOjeG/YrL0qtET75pbxoB+XfD
+         vDxCwfDEnPDlzKQUrYloEwtQCcTPT1mec32x40Gmc1scCqBPD6iIJSfymnvo3ilAL0d6
+         ZWIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OkiiGHbQZwoirzVbd8s1wT3AXOTUQoT8rTgbKgTYjH4=;
+        b=M9OH8exjNYo20Z9YEUZyj9WAmNfWuJf1mtPg9A6PWaOHCnVoKwLraMAIOFQhwcj08C
+         6+wI9rDTZMSq1mJToF09uVd2TeSXhJerbtCgmpPl47b2YToaMD3E4X9Asd/NKSbT7Vq2
+         D1NGB7ggQcclagtg5ZZbAs/p1yGDIbNMAlyaYMcUN56ePUK0998fAEm8ER0Qif//xAcj
+         0EQrBELJvovHbaTWM6L/muyzT845xGUV7zYG4uFpTz+VABV8ghJrz9PaQFnrIz8rQW6s
+         fMs7I3YEpCnHNGVKfYv2FijUt7Ao0NgKDdjHc2SMg6KAZ1p7zeBUanBcDqhHki7ub9Zy
+         Ta3g==
+X-Gm-Message-State: AOAM531Igiqhl99QYfupE9w9pLQMyG0pUaHvYQtSBtqY5JzmX+fEpzMx
+        Cu6CIfoXOMCkw/9yaA/U8j4BzI1P92M=
+X-Google-Smtp-Source: ABdhPJzTCnp9h5O3IHeMY3Inj2+Eq4maNRLbgxyOToF3HlhlL29u6LufFYNlHAqNrKXM2EsrSj63KA==
+X-Received: by 2002:a63:841:: with SMTP id 62mr445090pgi.354.1631721582877;
+        Wed, 15 Sep 2021 08:59:42 -0700 (PDT)
+Received: from [172.30.1.2] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id j6sm385502pgq.0.2021.09.15.08.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 08:59:41 -0700 (PDT)
+Subject: Re: [PATCH 2/6] clk: samsung: clk-pll: Implement pll0822x PLL type
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
 Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
         Amit Pundir <amit.pundir@linaro.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <1d884e38-ac8c-6f0c-ad27-243c5c4b9b9b@samsung.com>
-Date:   Wed, 15 Sep 2021 15:07:22 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <20210914155607.14122-7-semen.protsenko@linaro.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEKsWRmVeSWpSXmKPExsWy7djPc7o8HxwTDb6sZbP4sGIRo8X1L89Z
-        LeYfOcdqcea3rsXGtz+YLDY9vsZq8bHnHqvF5V1z2CxmnN/HZHHxlKvFj+N9zBate4+wW0z9
-        cYvN4t+1jSwWz/uAkqfufma3uHKmg8li1a4/jA5CHu9vtLJ7zGroZfPYOesuu8emVZ1sHneu
-        7WHz2Lyk3qNvyypGj8+b5AI4orhsUlJzMstSi/TtErgy2vf8Yy44z1xxveUrYwNjK3MXIyeH
-        hICJxJstk1m6GLk4hARWMEq8b1jBCOF8YZQ48fgpO0iVkMBnRol7O9lhOiYunc4OUbScUeLr
-        9e+sEM5HRolXEw4yglQJC7hLfHjynAXEFhHQk1g38xVYB7PAAlaJJ6uWgo1iEzCU6D3aB9bA
-        K2AnMXHBDSYQm0VAVaK9dzobiC0qkCwx7W8TM0SNoMTJmU/AhnIKOEjM+rIHrIZZQFzi1pP5
-        TBC2vMT2t3OYQZZJCBzmlJh4fyobxN0uEn2zFkF9LSzx6vgWqH9kJE5P7mGBaGhmlOjZfZsd
-        wpnAKHH/+AJGiCpriTvnfgFN4gBaoSmxfpc+RNhR4vDpY4wgYQkBPokbbwUhjuCTmLRtOjNE
-        mFeio00IolpF4veq6UwQtpRE95P/LBMYlWYheW0WkndmIXlnFsLeBYwsqxjFU0uLc9NTi43z
-        Usv1ihNzi0vz0vWS83M3MQKT4el/x7/uYFzx6qPeIUYmDsZDjBIczEoivBdqHBOFeFMSK6tS
-        i/Lji0pzUosPMUpzsCiJ8+7auiZeSCA9sSQ1OzW1ILUIJsvEwSnVwCTy/kvHzBzFkBXHH33Y
-        YT1ZdrZFmPmc736ytjxZP6YmfXghOM/uu8zbt6nTH5v92txyIbcmR0n4g5LNjXf/Aq0t8yOO
-        +qhutRNrP5GumKmUMMPiS1HMg60d8QyHL8z6tfzL+f9FEy/KaIrkdXJqNmjzzxFbaz57c+nN
-        WVdNZvG6WxnJ8ycn6ev0aKXY7vS+6KKWK2KR+I6vXOJAcWdsmL/s0xmfwivDopbfD/2nOiV7
-        5+9XO5R57NkWrGmNNWSp0HY9k3u4ILtGUdlr3/V3VyYZ6O713XXkhpP3UW5L99vx5Ss+MJ6z
-        fH+YycUytDUx8jtTrcse1urrFRkPThTOCKjKmeXtYRnYrsn2sqRQiaU4I9FQi7moOBEAB/hL
-        7/UDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEIsWRmVeSWpSXmKPExsVy+t/xe7rcHxwTDc58ErP4sGIRo8X1L89Z
-        LeYfOcdqcea3rsXGtz+YLDY9vsZq8bHnHqvF5V1z2CxmnN/HZHHxlKvFj+N9zBate4+wW0z9
-        cYvN4t+1jSwWz/uAkqfufma3uHKmg8li1a4/jA5CHu9vtLJ7zGroZfPYOesuu8emVZ1sHneu
-        7WHz2Lyk3qNvyypGj8+b5AI4ovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
-        9O1sUlJzMstSi/TtEvQy2vf8Yy44z1xxveUrYwNjK3MXIyeHhICJxMSl09lBbCGBpYwSy85x
-        dDFyAMWlJOa3KEGUCEv8udbF1sXIBVTynlHi5YdtLCAJYQF3iQ9PnoPZIgJ6EutmvmIHKWIW
-        WMAqMW3+JDaIoScZJTa3+YDYbAKGEr1H+xhBbF4BO4mJC24wgdgsAqoS7b3TwepFBZIl3r7+
-        zgRRIyhxcuYTsAWcAg4Ss77sAathFlCX+DPvEjOELS5x68l8JghbXmL72znMExiFZiFpn4Wk
-        ZRaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjPxtx35u2cG48tVHvUOMTByM
-        hxglOJiVRHgv1DgmCvGmJFZWpRblxxeV5qQWH2I0BfpnIrOUaHI+MPXklcQbmhmYGpqYWRqY
-        WpoZK4nzmhxZEy8kkJ5YkpqdmlqQWgTTx8TBKdXAZFGpp3Hpl8Zu9bboCdVNqxgTi1dqGvaX
-        9hm+27x2qtoT/p3PPipN2sC55XbHQ9YfuTyPJ7xfqx8Raxhh7biFzZtRaod3aQz33b6tqpsY
-        X03x9Hv6OK9J0cDs3uqv8c/aZz+5/cD809UAzdPrRIpdD3o8/Hj0ruq8r1ar0jYfMxK5HjNL
-        QkTvCeM0N7nLTEHfTumuOb97/ZFwc5/eq1vXcbbpTq48+uRL4DHNEmvjyB82iS1Hj595t36O
-        +vv03/kqWguq/654M32/ScvHq8vfHwthjhXx23nyWdmypvTiQ2kZ50Wu6JwU5mlr5laRfryX
-        QePUnIW7z099o6JUHeb/d52V2r37no8fqGpu4BApNlJiKc5INNRiLipOBACGefYJhQMAAA==
-X-CMS-MailID: 20210915130723eucas1p1c78e991e4c5c360a7f84ab524018564e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210914155639eucas1p2b65f35fcbd2b3fde7d4e7541ac6d76d3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210914155639eucas1p2b65f35fcbd2b3fde7d4e7541ac6d76d3
+        linux-samsung-soc@vger.kernel.org
 References: <20210914155607.14122-1-semen.protsenko@linaro.org>
-        <CGME20210914155639eucas1p2b65f35fcbd2b3fde7d4e7541ac6d76d3@eucas1p2.samsung.com>
-        <20210914155607.14122-7-semen.protsenko@linaro.org>
+ <20210914155607.14122-3-semen.protsenko@linaro.org>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <faa9a9b7-919a-5b99-f99a-9550cc3d1260@gmail.com>
+Date:   Thu, 16 Sep 2021 00:59:35 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20210914155607.14122-3-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14.09.2021 17:56, Sam Protsenko wrote:
-> +static void __init exynos850_cmu_top_init(struct device_node *np)
+On 21. 9. 15. 오전 12:56, Sam Protsenko wrote:
+> pll0822x PLL is used in Exynos850 SoC for top-level integer PLLs. The
+> code was derived from very similar pll35xx type, with next differences:
+> 
+> 1. Lock time for pll0822x is 150*P_DIV, when for pll35xx it's 270*P_DIV
+> 2. It's not suggested in Exynos850 TRM that S_DIV change doesn't require
+>     performing PLL lock procedure (which is done in pll35xx
+>     implementation)
+> 
+> When defining pll0822x type, CON3 register offset should be provided as
+> a "con" parameter of PLL() macro, like this:
+> 
+>      PLL(pll_0822x, 0, "fout_shared0_pll", "oscclk",
+>          PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
+>          exynos850_shared0_pll_rates),
+> 
+> To define PLL rates table, one can use PLL_35XX_RATE() macro, e.g.:
+> 
+>      PLL_35XX_RATE(26 * MHZ, 1600 * MHZ, 800, 13, 0)
+> 
+> as it's completely appropriate for pl0822x type and there is no sense in
+> duplicating that.
+> 
+> If bit #1 (MANUAL_PLL_CTRL) is not set in CON1 register, it won't be
+> possible to set new rate, with next error showing in kernel log:
+> 
+>      Could not lock PLL fout_shared1_pll
+> 
+> That can happen for example if bootloader clears that bit beforehand.
+> PLL driver doesn't account for that, so if MANUAL_PLL_CTRL bit was
+> cleared, it's assumed it was done for a reason and it shouldn't be
+> possible to change that PLL's rate at all.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>   drivers/clk/samsung/clk-pll.c | 91 +++++++++++++++++++++++++++++++++++
+>   drivers/clk/samsung/clk-pll.h |  1 +
+>   2 files changed, 92 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 5873a9354b50..03131b149c0b 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -415,6 +415,89 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+>   	.recalc_rate = samsung_pll36xx_recalc_rate,
+>   };
+>   
+> +/*
+> + * PLL0822x Clock Type
+> + */
+> +/* Maximum lock time can be 150 * PDIV cycles */
+> +#define PLL0822X_LOCK_FACTOR		(150)
+> +
+> +#define PLL0822X_MDIV_MASK		(0x3FF)
+> +#define PLL0822X_PDIV_MASK		(0x3F)
+> +#define PLL0822X_SDIV_MASK		(0x7)
+> +#define PLL0822X_MDIV_SHIFT		(16)
+> +#define PLL0822X_PDIV_SHIFT		(8)
+> +#define PLL0822X_SDIV_SHIFT		(0)
+> +#define PLL0822X_LOCK_STAT_SHIFT	(29)
+> +#define PLL0822X_ENABLE_SHIFT		(31)
+> +
+> +static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
+> +						  unsigned long parent_rate)
 > +{
-> +	exynos850_init_clocks(np, top_clk_regs, ARRAY_SIZE(top_clk_regs));
-> +	samsung_cmu_register_one(np, &top_cmu_info);
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 mdiv, pdiv, sdiv, pll_con3;
+> +	u64 fvco = parent_rate;
+> +
+> +	pll_con3 = readl_relaxed(pll->con_reg);
+> +	mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL0822X_MDIV_MASK;
+> +	pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
+> +	sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
+> +
+> +	fvco *= mdiv;
+> +	do_div(fvco, (pdiv << sdiv));
+> +
+> +	return (unsigned long)fvco;
 > +}
 > +
-> +CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
-> +	       exynos850_cmu_top_init);
+> +static int samsung_pll0822x_set_rate(struct clk_hw *hw, unsigned long drate,
+> +				     unsigned long prate)
+> +{
+> +	const struct samsung_pll_rate_table *rate;
+> +	struct samsung_clk_pll *pll = to_clk_pll(hw);
+> +	u32 pll_con3;
+> +
+> +	/* Get required rate settings from table */
+> +	rate = samsung_get_pll_settings(pll, drate);
+> +	if (!rate) {
+> +		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
+> +			drate, clk_hw_get_name(hw));
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Change PLL PMS values */
+> +	pll_con3 = readl_relaxed(pll->con_reg);
+> +	pll_con3 &= ~((PLL0822X_MDIV_MASK << PLL0822X_MDIV_SHIFT) |
+> +			(PLL0822X_PDIV_MASK << PLL0822X_PDIV_SHIFT) |
+> +			(PLL0822X_SDIV_MASK << PLL0822X_SDIV_SHIFT));
+> +	pll_con3 |= (rate->mdiv << PLL0822X_MDIV_SHIFT) |
+> +			(rate->pdiv << PLL0822X_PDIV_SHIFT) |
+> +			(rate->sdiv << PLL0822X_SDIV_SHIFT);
+> +
+> +	/* Set PLL lock time */
+> +	writel_relaxed(rate->pdiv * PLL0822X_LOCK_FACTOR,
+> +			pll->lock_reg);
+> +
+> +	/* Write PMS values */
+> +	writel_relaxed(pll_con3, pll->con_reg);
+> +
+> +	/* Wait for PLL lock if the PLL is enabled */
+> +	if (pll_con3 & BIT(pll->enable_offs))
+> +		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops samsung_pll0822x_clk_ops = {
+> +	.recalc_rate = samsung_pll0822x_recalc_rate,
+> +	.round_rate = samsung_pll_round_rate,
+> +	.set_rate = samsung_pll0822x_set_rate,
+> +	.enable = samsung_pll3xxx_enable,
+> +	.disable = samsung_pll3xxx_disable,
+> +};
+> +
+> +static const struct clk_ops samsung_pll0822x_clk_min_ops = {
+> +	.recalc_rate = samsung_pll0822x_recalc_rate,
+> +};
+> +
+>   /*
+>    * PLL45xx Clock Type
+>    */
+> @@ -1296,6 +1379,14 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+>   		else
+>   			init.ops = &samsung_pll35xx_clk_ops;
+>   		break;
+> +	case pll_0822x:
+> +		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+> +		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
+> +		if (!pll->rate_table)
+> +			init.ops = &samsung_pll0822x_clk_min_ops;
+> +		else
+> +			init.ops = &samsung_pll0822x_clk_ops;
+> +		break;
+>   	case pll_4500:
+>   		init.ops = &samsung_pll45xx_clk_min_ops;
+>   		break;
+> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+> index 79e41c226b90..213e94a97f23 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -36,6 +36,7 @@ enum samsung_pll_type {
+>   	pll_1451x,
+>   	pll_1452x,
+>   	pll_1460x,
+> +	pll_0822x,
+>   };
+>   
+>   #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
+> 
 
-Was there anything preventing you from making it a platform driver instead?
+Even if I have not Exynos850 TRM, it looks good to me. Thanks.
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-Regards,
-Sylwester
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
