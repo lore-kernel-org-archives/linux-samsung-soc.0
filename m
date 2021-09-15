@@ -8,64 +8,63 @@ X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA7EC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE463C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B397161209
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D618E60527
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232257AbhIOIaK (ORCPT
+        id S237138AbhIOJBA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Sep 2021 04:30:10 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53036
+        Wed, 15 Sep 2021 05:01:00 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54300
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232307AbhIOIaJ (ORCPT
+        by vger.kernel.org with ESMTP id S237169AbhIOJAy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Sep 2021 04:30:09 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        Wed, 15 Sep 2021 05:00:54 -0400
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 918BB40285
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 08:28:50 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 595E54026C
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 08:59:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631694530;
-        bh=/IRBxu7nqqQwWukLDNF8mXTbZavrvfbLU6FhnLGRjL4=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+        s=20210705; t=1631696369;
+        bh=39NyD7eSdjWRLG7akJoaBQq2vkbMMaThM/SwbRfMg/Y=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=CtXMyFBbOe859X8h3Tg6LP1kpMcaKJWIyMOM66EoHBvWE3uESfbtalASMuZqzLEub
-         lWWy8EJhIt3mGVOaxmGRwZiBLP6uGs25iUs2rcMhRsd9cXffckL0Kt25SU5sEqbSXO
-         QwiU8YQyWTTL/dxlOlSTFD+8vPLgglwI4xhez5IDxpsh5Vb25ee8dbaNa4oiqI4rKM
-         l4mkJAhLbuF5HE/otkF6R4tDran/9Noe7o/2IbWgEAXWjB0REjBlSTuieJS+XHOpGo
-         REPrvkhSaH/OLkQKiEkGdzX/A3KjcJJ11mHrkSlAiOKGGnp3ibpdr41of0ZX+yZ8Pr
-         OEccKx4hSUXbg==
-Received: by mail-ed1-f71.google.com with SMTP id s12-20020a05640217cc00b003cde58450f1so1173391edy.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 01:28:50 -0700 (PDT)
+        b=kSUCDXOUbBSjJTliF3DNPHcJbV96qsvr+7LSkmX5/kweDMsOoSZQt9uJWMtsIe0EJ
+         3EKmUur0EwMaRbDxTe4o2jdAzdxgQR2ppRiSnRbo1FKJnjr7KDXIzOmtGmqe2JSO2R
+         z1nFdOfKL0webr3V0vUXafqXvlhlLzLlgqPnOPqT84dPeMu7XCpndWrUBoktN8xJ3j
+         tXPjRAjdtbPADfxRvsCJd7DnM7Q5nuIhcfOBI8WKUDhS7pWUhjAUYtAvcVbVs6ltuy
+         NureCTGO2INlMbdiXxIPqIUk5hHM7PVLDZCLaSpqYkeIhB0+V39mwqR8ufHIo1mTK6
+         0W6+f2N0n0Iow==
+Received: by mail-ej1-f72.google.com with SMTP id ne21-20020a1709077b95b029057eb61c6fdfso1121156ejc.22
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 01:59:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/IRBxu7nqqQwWukLDNF8mXTbZavrvfbLU6FhnLGRjL4=;
-        b=HpFmOZT2ZKW4JUJmYL++pk0DsZi34chitIFuTFyP8SS+HGo+tUudI56ge7Pm97T5Gb
-         IJHBqyIZkq/XhSxH3utMiwuC2HqL7kE06Is8iDVEitgaEzHH4ziIui+/pr8JG4LPqZoG
-         GGo5F3+xaw0q8PDiCy4uNwVYa5dcCXEHHT7XrY03fKnTuZUlih6M7o9TgWkedhPPcSHq
-         jQd1R9kfEQQutl8u6UGh4C2mDr9VaJnN1LpfLehUyN+X6QIqrHn9c5TyQMPsmjiBQSFf
-         6b76Peh+FV6o73vqFaRYr8qDeaa/DmtfKIujx0byxRlqEe96A/Y3wyTAkE+kp9ogUkar
-         CZRA==
-X-Gm-Message-State: AOAM532bd4Xa4JxvIxET5KYwnJFSmgvu+SJFc+8ttGcsrWI0IChmsN1K
-        oW6wUZbvm4+u9ieOA8rYXE0cUvvwW8ciSrSqRZUgfPKUhfcR4el8K4pS5pPY2hWs91jgTLjY0Eo
-        vo1TZGBZkxMJTXSyxjl2XFpeLoN+rSsduimmQQzDNArc9GazQ
-X-Received: by 2002:a05:6402:2048:: with SMTP id bc8mr24440073edb.114.1631694529618;
-        Wed, 15 Sep 2021 01:28:49 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxFE7KpqwtgPjFHqZtwqDPFpM2l1Rj+AfEANN6cyfGTPrR0kyY4r2TwAFv44S4jcixEb1XdIg==
-X-Received: by 2002:a05:6402:2048:: with SMTP id bc8mr24440045edb.114.1631694529404;
-        Wed, 15 Sep 2021 01:28:49 -0700 (PDT)
+        bh=39NyD7eSdjWRLG7akJoaBQq2vkbMMaThM/SwbRfMg/Y=;
+        b=kKTASiAqUyM0Ie+EqrjSrzgEz6LmMkw1yDicGB57oXJLwXm9ZbYo6D/Vy+Hfa6AF9Y
+         LsmeR64i6PaJHb61UO9vgUAAT3mQlUhaZA5a1yxysstqiT4ayPB7sVrUTtezWCzDlu20
+         d37Z4LbLj4qDGKMy2ZIIuWeRO87pkPfHiSt86TMAjMZmQoBOpIaBboJxjdwH8kLbuSie
+         qiXYxE22Gnhm90toaTghyfnndIPu60lMvwsbz4JDwCTY58VQ6tq3mDC8rhxYH3O2a2fU
+         IP+l+woRd3qokpJnUE6TsnIIQ7YyMpjJ1pXsT6zVH9lJBwJx9rkcUap34LoKMm9Pb9zV
+         HVnQ==
+X-Gm-Message-State: AOAM533NifCWjyK+fkZ+9ta+SMlZ7ZK6tf6EwSZNGeIhCf6LDBKotKPZ
+        EgqN+zcyRV6OuIzJcalHlh4sC6tBF0kzlaeewvpGMZHmVh3tkM1B5oFWel+5MqwZzzj2H8UZ84b
+        kYGV7Sdoyk/58pBiuwKUPZtV0+IIDqz/1z3Le9gO1qFb1A3QT
+X-Received: by 2002:a17:906:f15:: with SMTP id z21mr23428830eji.177.1631696368016;
+        Wed, 15 Sep 2021 01:59:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJymRnBWWR852OpGubXgrdOU89q9lNXSyAJz+ZILaji+sCwYZwgAvCN0PKGDsBRUEBEUCnD23A==
+X-Received: by 2002:a17:906:f15:: with SMTP id z21mr23428808eji.177.1631696367855;
+        Wed, 15 Sep 2021 01:59:27 -0700 (PDT)
 Received: from [192.168.3.211] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id q11sm6717919edv.73.2021.09.15.01.28.47
+        by smtp.gmail.com with ESMTPSA id f24sm6703253edc.40.2021.09.15.01.59.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 01:28:48 -0700 (PDT)
-Subject: Re: [PATCH 5/6] dt-bindings: clock: Document Exynos850 CMU bindings
+        Wed, 15 Sep 2021 01:59:27 -0700 (PDT)
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
@@ -82,230 +81,126 @@ Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 References: <20210914155607.14122-1-semen.protsenko@linaro.org>
- <20210914155607.14122-6-semen.protsenko@linaro.org>
+ <20210914155607.14122-7-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <b7fd881e-b027-fb87-3740-69cf00f795c0@canonical.com>
-Date:   Wed, 15 Sep 2021 10:28:46 +0200
+Subject: Re: [PATCH 6/6] clk: samsung: Introduce Exynos850 clock driver
+Message-ID: <3da75dbe-2f98-39db-c455-46adead7097b@canonical.com>
+Date:   Wed, 15 Sep 2021 10:59:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210914155607.14122-6-semen.protsenko@linaro.org>
+In-Reply-To: <20210914155607.14122-7-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 14/09/2021 17:56, Sam Protsenko wrote:
-> Provide dt-schema documentation for Exynos850 SoC clock controller.
+> This is the initial implementation adding only basic clocks like UART,
+> MMC, I2C and corresponding parent clocks. Design is influenced by
+> Exynos7 and Exynos5433 clock drivers.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  .../clock/samsung,exynos850-clock.yaml        | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+>  drivers/clk/samsung/Makefile        |   1 +
+>  drivers/clk/samsung/clk-exynos850.c | 700 ++++++++++++++++++++++++++++
+>  2 files changed, 701 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-exynos850.c
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 028b2e27a37e..c46cf11e4d0b 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -17,6 +17,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
+>  obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
+>  obj-$(CONFIG_EXYNOS_CLKOUT)	+= clk-exynos-clkout.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+> +obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+>  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+> diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
 > new file mode 100644
-> index 000000000000..b69ba4125421
+> index 000000000000..1028caa2102e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> @@ -0,0 +1,190 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/samsung,exynos850-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/drivers/clk/samsung/clk-exynos850.c
+> @@ -0,0 +1,700 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2021 Linaro Ltd.
+> + * Author: Sam Protsenko <semen.protsenko@linaro.org>
+> + *
+> + * Common Clock Framework support for Exynos850 SoC.
+> + */
 > +
-> +title: Samsung Exynos850 SoC clock controller
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
 > +
-> +maintainers:
-> +  - Sam Protsenko <semen.protsenko@linaro.org>
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +  - Tomasz Figa <tomasz.figa@gmail.com>
+> +#include <dt-bindings/clock/exynos850.h>
 > +
-> +description: |
-> +  Exynos850 clock controller is comprised of several CMU units, generating
-> +  clocks for different domains. Those CMU units are modeled as separate device
-> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
-> +  two external clocks:: OSCCLK (26 MHz) and RTCCLK (32768 Hz). Those external
-> +  clocks must be defined as fixed-rate clocks in dts.
+> +#include "clk.h"
 > +
-> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
-> +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
+> +/* Gate register bits */
+> +#define GATE_MANUAL		BIT(20)
+> +#define GATE_ENABLE_HWACG	BIT(28)
 > +
-> +  Each clock is assigned an identifier and client nodes can use this identifier
-> +  to specify the clock which they consume. All clocks that available for usage
-> +  in clock consumer nodes are defined as preprocessor macros in
-> +  'dt-bindings/clock/exynos850.h' header.
+> +/* Gate register offsets range */
+> +#define GATE_OFF_START		0x2000
+> +#define GATE_OFF_END		0x2fff
 > +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynos850-cmu-top
-> +      - samsung,exynos850-cmu-core
-> +      - samsung,exynos850-cmu-hsi
-> +      - samsung,exynos850-cmu-peri
+> +/**
+> + * exynos850_init_clocks - Set clocks initial configuration
+> + * @np:			CMU device tree node with "reg" property (CMU addr)
+> + * @reg_offs:		Register offsets array for clocks to init
+> + * @reg_offs_len:	Number of register offsets in reg_offs array
+> + *
+> + * Set manual control mode for all gate clocks.
+> + */
+> +static void __init exynos850_init_clocks(struct device_node *np,
+> +		const unsigned long *reg_offs, size_t reg_offs_len)
+> +{
+> +	const __be32 *regaddr_p;
+> +	u64 regaddr;
+> +	u32 base;
+> +	size_t i;
 > +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 5
+> +	/* Get the base address ("reg" property in dts) */
+> +	regaddr_p = of_get_address(np, 0, NULL, NULL);
+> +	if (!regaddr_p)
+> +		panic("%s: failed to get reg regaddr\n", __func__);
 > +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 5
+> +	regaddr = of_translate_address(np, regaddr_p);
+> +	if (regaddr == OF_BAD_ADDR || !regaddr)
+> +		panic("%s: bad reg regaddr\n", __func__);
 > +
-> +  "#clock-cells":
-> +    const: 1
+> +	base = (u32)regaddr;
 > +
-> +  reg:
-> +    maxItems: 1
+> +	for (i = 0; i < reg_offs_len; ++i) {
+> +		void __iomem *reg;
+> +		u32 val;
 > +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos850-cmu-top
+> +		/* Modify only gate clock registers */
+> +		if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OFF_END)
+> +			continue;
 > +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos850-cmu-core
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +            - description: CMU_CORE bus clock (from CMU_TOP)
-> +            - description: CCI clock (from CMU_TOP)
-> +            - description: eMMC clock (from CMU_TOP)
-> +            - description: SSS clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: dout_core_bus
-> +            - const: dout_core_cci
-> +            - const: dout_core_mmc_embd
-> +            - const: dout_core_sss
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos850-cmu-hsi
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +            - description: External RTC clock (32768 Hz)
-> +            - description: CMU_HSI bus clock (from CMU_TOP)
-> +            - description: SD card clock (from CMU_TOP)
-> +            - description: "USB 2.0 DRD clock (from CMU_TOP)"
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: rtcclk
-> +            - const: dout_hsi_bus
-> +            - const: dout_hsi_mmc_card
-> +            - const: dout_hsi_usb20drd
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos850-cmu-peri
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +            - description: CMU_PERI bus clock (from CMU_TOP)
-> +            - description: UART clock (from CMU_TOP)
-> +            - description: Parent clock for HSI2C and SPI (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: dout_peri_bus
-> +            - const: dout_peri_uart
-> +            - const: dout_peri_ip
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Clock controller node for CMU_PERI
-> +  - |
-> +    #include <dt-bindings/clock/exynos850.h>
-> +
-> +    cmu_peri: clock-controller@10030000 {
-> +        compatible = "samsung,exynos850-cmu-peri";
-> +        reg = <0x10030000 0x8000>;
-> +        #clock-cells = <1>;
-> +
-> +        clocks = <&oscclk>, <&cmu_top DOUT_PERI_BUS>,
-> +                 <&cmu_top DOUT_PERI_UART>,
-> +                 <&cmu_top DOUT_PERI_IP>;
-> +        clock-names = "oscclk", "dout_peri_bus",
-> +                      "dout_peri_uart", "dout_peri_ip";
-> +    };
-> +
-> +  # External reference clock (should be provided in particular board DTS)
-> +  - |
-> +    oscclk: clock-oscclk {
-> +        compatible = "fixed-clock";
-> +        #clock-cells = <0>;
-> +        clock-output-names = "oscclk";
-> +        clock-frequency = <26000000>;
-> +    };
+> +		reg = ioremap(base + reg_offs[i], 4);
 
-Skip ossclk - it's trivial and not related to these bindings.
+You first translate the address to CPU physical address and then apply
+offset. This should be equivalent to one of_iomap() of entire range and
+iterate starting from the base pointer.  IOW, I don't get why you have
+to map each register instead of mapping entire SFR/IO range?
 
-> +
-> +  # UART controller node that consumes the clock generated by CMU_PERI
-> +  - |
-> +    #include <dt-bindings/clock/exynos850.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    serial_0: serial@13820000 {
-> +        compatible = "samsung,exynos850-uart";
-> +        reg = <0x13820000 0x100>;
-> +        interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&uart0_pins>;
-> +        clocks = <&cmu_peri GOUT_UART_PCLK>, <&cmu_peri GOUT_UART_IPCLK>;
-> +        clock-names = "uart", "clk_uart_baud0";
+> +		val = ioread32(reg);
+> +		val |= GATE_MANUAL;
+> +		val &= ~GATE_ENABLE_HWACG;
+> +		iowrite32(val, reg);
 
-The same, skip it because it is trivial and common with all clock providers.
+All other drivers use readl/writel, so how about keeping it consistent?
 
-Also Rob's robot checker complains about it.
+Rest looks good but I did not verify the numbers :)
 
 Best regards,
 Krzysztof
