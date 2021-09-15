@@ -2,241 +2,199 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8FEC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 11:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C2AC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 12:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 843B760FC0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 11:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B15B611C2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 12:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbhIOLUj (ORCPT
+        id S233791AbhIOMxS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Sep 2021 07:20:39 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:31647 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232733AbhIOLUi (ORCPT
+        Wed, 15 Sep 2021 08:53:18 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:23582 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233897AbhIOMxQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Sep 2021 07:20:38 -0400
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20210915111914epoutp04e26a19e3723a0dbfdb06f2d3ed7ec653~k_tQuTUP12233922339epoutp04k
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 11:19:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20210915111914epoutp04e26a19e3723a0dbfdb06f2d3ed7ec653~k_tQuTUP12233922339epoutp04k
+        Wed, 15 Sep 2021 08:53:16 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210915125156euoutp0255a6c5c713e4126951a0cacbfbc056af~k-_NMt-SK2119221192euoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 12:51:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210915125156euoutp0255a6c5c713e4126951a0cacbfbc056af~k-_NMt-SK2119221192euoutp02X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1631704754;
-        bh=WRI58h8fgGgCoO94+KVd1E7f0/lNdZ273QzsFa9FrwM=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=l7WZT8w/rEUag0bGaQVA7aPwNuy3nDd3QweMDreRQvmL2XVBDnRaYGr50mdUWfCf8
-         f/dAffLxhjQWukL/JdlhT6iYJiQFMnrxqSauhZo1BoFk8JkoObOPQ0f8f4CGqqqCzx
-         7sUQ5XClkD4KkrwRU3IfNfi3KRs5bzJVZHwdG0I8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20210915111913epcas2p2c9a16c636594023be111f73359031cc6~k_tPs0Lc22487124871epcas2p22;
-        Wed, 15 Sep 2021 11:19:13 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.186]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4H8d5W03scz4x9Pp; Wed, 15 Sep
-        2021 11:19:11 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C7.EF.09816.EA6D1416; Wed, 15 Sep 2021 20:19:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20210915111909epcas2p345ed0a47b12d82d67ab28da1d9fd2eb8~k_tMu2pkk1723317233epcas2p3r;
-        Wed, 15 Sep 2021 11:19:09 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210915111909epsmtrp1ff75d8e5b33b901f680b2572f9309336~k_tMrb2Iy0733807338epsmtrp1W;
-        Wed, 15 Sep 2021 11:19:09 +0000 (GMT)
-X-AuditID: b6c32a46-63bff70000002658-4b-6141d6ae12ec
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FF.59.08750.DA6D1416; Wed, 15 Sep 2021 20:19:09 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210915111909epsmtip26d3b9eea4154e9c1f6dcb7d283391cf3~k_tMfDMUR2974329743epsmtip2U;
-        Wed, 15 Sep 2021 11:19:09 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>,
+        s=mail20170921; t=1631710316;
+        bh=03ujAQ/c7ECVsa5KofPPIAP+m4Mo6XF14OM04r2XKJw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=mTmqiXMlKCFzFaFmdj7kpvbKxAJqJwQv/djdI5QoSFCt+fb3r5s1J7mY6s0Sa5mAz
+         nD9H6d8R/ovBiPwuPAJYQLsHstL4JK8m1vH2qOMjIXsDAb4J36nbafq8R1weowtvpI
+         YebgNbwNN+29Rn1TtWXa1gH5a/UE7aVP5Qn9L36Y=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210915125156eucas1p12243ad632605b39bf97dfd841fb56e7c~k-_Mw66VD2997129971eucas1p1S;
+        Wed, 15 Sep 2021 12:51:56 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id EF.BF.56448.C6CE1416; Wed, 15
+        Sep 2021 13:51:56 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210915125155eucas1p204553084818cc0e14ea20acc295519cb~k-_MLv-By0821808218eucas1p2U;
+        Wed, 15 Sep 2021 12:51:55 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210915125155eusmtrp1213fd6a52fe4c505cb90093d4c500a95~k-_MKuv6W1149811498eusmtrp1K;
+        Wed, 15 Sep 2021 12:51:55 +0000 (GMT)
+X-AuditID: cbfec7f5-d53ff7000002dc80-7c-6141ec6cf2b2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id AF.69.20981.B6CE1416; Wed, 15
+        Sep 2021 13:51:55 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210915125154eusmtip2f8cac74da6df926a2f4be386cad6fd07~k-_LLOEb62365823658eusmtip2O;
+        Wed, 15 Sep 2021 12:51:54 +0000 (GMT)
+Subject: Re: [PATCH 1/6] clk: samsung: Enable bus clock on init
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v12] dt-bindings: ufs: Add bindings for Samsung ufs host
-Date:   Wed, 15 Sep 2021 20:18:44 +0900
-Message-Id: <20210915111844.42752-1-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.33.0
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <b44e1c4a-5abc-7a27-e9ae-d4645d04527a@samsung.com>
+Date:   Wed, 15 Sep 2021 14:51:54 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdljTVHfdNcdEgx3vzSwezNvGZjH14RM2
-        i8v7tS3mHznHarHoxjYmi41vfzBZzDi/j8li+fF/TBate4+wO3B6zGroZfPYtKqTzWPCogOM
-        Hh+f3mLx6NuyitHj8ya5ALaoHJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
-        xNxUWyUXnwBdt8wcoKOUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWGhgV6xYm5
-        xaV56XrJ+blWhgYGRqZAlQk5GffWXGYqeCBV8fD3S7YGxgciXYycHBICJhKPtj1m7GLk4hAS
-        2MEo8bD9NJTziVFi47eZzBDOZ0aJptfr2LoYOcBanp7LgIjvYpSYOvMoVNFHRokjXTvZQOay
-        CehKbHn+ihHEFhFQkdjw/BZYEbPATSaJWwfmgSWEBTwk9n55zgpiswioSnTO6GIBsXkF7CTm
-        rVnMDnGgvMSRX53MEHFBiZMzn4DVMAPFm7fOBhsqIfCSXeLLzp3sEOe5SFw9ZQLRKyzx6vgW
-        qDlSEi/729gh6rsZJVof/YdKrGaU6Gz0gbDtJX5N38IKModZQFNi/S59iJHKEkduQa3lk+g4
-        /BdqE69ER5sQRKO6xIHt01kgbFmJ7jmfWSFsoA9b28EWCQnESrx68495AqP8LCTPzELyzCyE
-        vQsYmVcxiqUWFOempxYbFRghR+omRnDC1HLbwTjl7Qe9Q4xMHIyHGCU4mJVEeC/UOCYK8aYk
-        VlalFuXHF5XmpBYfYjQFBu9EZinR5Hxgys4riTc0NTIzM7A0tTA1M7JQEuc9/9oyUUggPbEk
-        NTs1tSC1CKaPiYNTqoGpf8N3pzx+4b4+c+v+G32VHUcnfF/vUZqoqXX0SvF+tw3vU25/s7A7
-        7Mw5c09fgRsr20lfpX4fjefb62a5/fn6fPM/JqXV7mzb1t/aFdoqk1mdEzmP4c/m52b/1XZq
-        fU68F1zqaFLCcOvT2jdlPzNfT6/QDTOonNe6e0XTrF8WjyakPS+72Loz3dLpIHuNp+3HSXP1
-        xV6bsjrMfi78isvcv3qy34PuqT6WB2UWGP0ReR1sv5v359v7N9Y1WWiLPX8W+viD7bs1DwyC
-        RWs+9x5vOvv7c2KLYNOEqDOia2OXvmE+waEs+zHnf4HV7PDDtdFfH717ysv3OGLtj4lcr9JW
-        q3Hs+pEwx+ffEdfMTuNuJZbijERDLeai4kQAj1N7TiEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSvO7aa46JBkdf6ls8mLeNzWLqwyds
-        Fpf3a1vMP3KO1WLRjW1MFhvf/mCymHF+H5PF8uP/mCxa9x5hd+D0mNXQy+axaVUnm8eERQcY
-        PT4+vcXi0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBn31lxmKnggVfHw90u2BsYHIl2MHBwS
-        AiYST89ldDFycggJ7GCUmN/GDWJLCMhKPHu3gx3CFpa433KEtYuRC6jmPaNEy/QtzCAJNgFd
-        iS3PXzGC2CICKhIbnt9iBiliFrjLJHF+/x2wbmEBD4m9X56zgtgsAqoSnTO6WEBsXgE7iXlr
-        FkNtkJc48quTGSIuKHFy5hOwGmagePPW2cwTGPlmIUnNQpJawMi0ilEytaA4Nz232LDAKC+1
-        XK84Mbe4NC9dLzk/dxMjOIC1tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeCzWOiUK8KYmVValF+fFF
-        pTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwTTO90Ms9oUo9cLK/tR2fyikd
-        fcd/1514Nh9MdXNIij5vX+C4qF3+gcyGI4VxGivV3Vi1et3rewsqHh3wDN8hwiu/crX2z5YI
-        3ltr7jIUVHzyvirzd1un2IkJt1e8mfzU+mLj4Zl2G53f744025ukrXbgXYqZUc550Xfexkv+
-        NIfy5HqZch53nxO4SZ5xDdPJEO9TjhvFtBJKs8N03CxXrT/xxuHfzzaJjfqrmtr0jpy8K1R/
-        9UPGJQWO/CiVN3/E39jX8a7oWnzqwd3LGa91exMWPrvEI8UlZXkh8sqUS1uadGo1eKsWGlvc
-        +9XVXOnd/ejpf/l5h6/r/W15ZVJ6bwXXz9wLLQFr9OwWLpivxFKckWioxVxUnAgAt29S0s8C
-        AAA=
-X-CMS-MailID: 20210915111909epcas2p345ed0a47b12d82d67ab28da1d9fd2eb8
+In-Reply-To: <20210914155607.14122-2-semen.protsenko@linaro.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUwbZRjfe3e9XiutR5npE5iOtDOyJYPhTHZGh5CM5Ga2ZRsuMSSOXdiF
+        FVogLR9OpzJwCBUQcWOug0DJHF0lQ75HxUWgWNdWKg7pwvjaSsAwiTTMpPtode3FyH+/r+d5
+        3l/yUrjiviiW0uQX8fp8TqsipUT/T488O7V/pnG7bNMSZs3Shhjvw2UR02IfFzHuJzuZrtUA
+        xnT7pkSMv2ZOxNy2NZHM156bGDPhTGcCjjqcOfeDXcxcCEyTTGiqi2CW656Zztl1MTPprsIY
+        q+0pSlWwf905J2ZNZbUkO2iaFbPd1mqSnZkaItmeK5+wdb1WxK53v3SYypS+eZLXakp4fVLK
+        CempW5U2VNikfN85OycuQzMKI6IooF+DgUCmEUkpBW1BMDR4UyyQhwh+Di1hAllHYPNex41I
+        EpkwL9xFgtGOoNf8CyEQP4JrZi8RTsXQb0HLmC8yvpkOILDf9kdGcHoKh/m+7yIpkk6G2rE6
+        FMYyOgU+8w5EdIJ+GSw1RjKMX6CzoTFYjguZaLh1aTGSkdCp0NrhiOg4rYTpxRZMwFthYLUJ
+        Dx8DelQCoW/PYkLVfeCeUAodYmDF0SsW8BZwfVVDCPkKBDXf3xULpB7BvKMVCak3YGb8MRle
+        hNPbodOWJMhpsPDHMiHsl8Od1WjhDXJo6L+IC7IMqioVQnobPLFexAQcC58v/kPUI5VpQzPT
+        hjamDW1M/99tRYQVKfligy6HN+zO50sTDZzOUJyfk5hdoOtGz76hK+T4+wayrPgTRxBGoREE
+        FK7aLPv1TBqnkJ3kTn/A6wuy9MVa3jCC4ihCpZTZ+jqyFHQOV8Tn8Xwhr//PxShJbBnW6Hmv
+        PjR8PP6eaVAfpTbXLtqz11yUfqV2f/uLHQfOH1w7+2Hsx0dvbG1p7pzUxD9Q7DJ1ve3KW3oK
+        wWS59PqwXd1GVkxov8E/7dI9Kj4x+rgSOX/zWDjzmcaCOKCiK3wJQxpJaFMe7yz1+uOWOl3n
+        h3ri1PtOF84H28rcr2Tk7lgY2HNhr+aepzX1nZ7RPZn91V/MVJQHm5u9lxo0H+2+LPkSXk0f
+        G8/a1vhgqdqp28L6SuPp9Sp/bgmm356rVEcNcz8e26S9GnU54dqVopIjk+XpB+TO5L37+44e
+        Vng8vyfo3LlHnk+akL/e/pxvznfoUNCYkuDIyFDzDcffjbmvIgynuOQduN7A/QsgRzDs9QMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsVy+t/xe7rZbxwTDdrXKFh8WLGI0eL6l+es
+        FvOPnGO1OPNb12Lj2x9MFpseX2O1+Nhzj9Xi8q45bBYzzu9jsrh4ytXix/E+ZovWvUfYLab+
+        uMVm8e/aRhaL531AyVN3P7NbXDnTwWSxatcfRgchj/c3Wtk9ZjX0snnsnHWX3WPTqk42jzvX
+        9rB5bF5S79G3ZRWjx+dNcgEcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK
+        +nY2Kak5mWWpRfp2CXoZJ9t2MRbMEa84dfceewPjHaEuRk4OCQETiYUPbjN2MXJxCAksZZTY
+        f6GHrYuRAyghJTG/RQmiRljiz7UuNoia94wS7/etYAFJCAvYS8w/+pgJJCEi8INR4uCV38wg
+        DrPANWaJLft+sEK0nGSUOPG3jxGkhU3AUKL3KITNK2An0X59O9goFgFViRU9IDs4OUQFkiXe
+        vv7OBFEjKHFy5hOwGk4BB4kFa44zg9jMAuoSf+ZdgrLFJW49mc8EYctLbH87h3kCo9AsJO2z
+        kLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIHxv+3Yzy07GFe++qh3iJGJ
+        g/EQowQHs5II74Uax0Qh3pTEyqrUovz4otKc1OJDjKZA/0xklhJNzgcmoLySeEMzA1NDEzNL
+        A1NLM2MlcV6TI2vihQTSE0tSs1NTC1KLYPqYODilGpgC3+g8nPaf61PWlrUzX8TMYtv7VnvV
+        5zjvLyum2J97kL2DgzvS/tDFXJ9zJeX7F7Mu+ZlpsWLecumNj1+/fXbzac350ocFpSLObxcy
+        3PPk8HJedGG6PvOsuvX+ifpmJ0xPin8umOvcd/CDSUe8dPHG1rbJeSpaasH18441eun/cf2/
+        MZBFu73yTMLG65kp/oc3r/L8czBVzuLwtWS+W2fU63b2KClff2r1ULlVMDTgobv19h9mlwU2
+        epk6uDjqSIlZJ21N/Fm+7f5cbu4CBUF1jievMxpcNKcFXUh53+ST9YrvieGBlUnLQu7cEXqa
+        WM1fY/ttNYfGx8gz68K+WrlozrfZpl4768rKLm1RTS8lluKMREMt5qLiRACKwJ3piAMAAA==
+X-CMS-MailID: 20210915125155eucas1p204553084818cc0e14ea20acc295519cb
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210915111909epcas2p345ed0a47b12d82d67ab28da1d9fd2eb8
-References: <CGME20210915111909epcas2p345ed0a47b12d82d67ab28da1d9fd2eb8@epcas2p3.samsung.com>
+X-RootMTR: 20210914155621eucas1p18e0f1f50fe42af4f8048ed88507219ed
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210914155621eucas1p18e0f1f50fe42af4f8048ed88507219ed
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+        <CGME20210914155621eucas1p18e0f1f50fe42af4f8048ed88507219ed@eucas1p1.samsung.com>
+        <20210914155607.14122-2-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Alim Akhtar <alim.akhtar@samsung.com>
+Hi,
 
-This patch adds DT bindings for Samsung ufs hci
+On 14.09.2021 17:56, Sam Protsenko wrote:
+> By default if bus clock has no users its "enable count" value is 0. It
+> might be actually running if it's already enabled in bootloader, but
+> then in some cases it can be disabled by mistake. For example, such case
+> was observed when dw_mci_probe() enabled bus clock, then failed to do
+> something and disabled that bus clock on error path. After that even
+> attempt to read the 'clk_summary' file in DebugFS freezed forever, as
+> CMU bus clock ended up being disabled and it wasn't possible to access
+> CMU registers anymore.
+> 
+> To avoid such cases, CMU driver must increment the ref count for that
+> bus clock by running clk_prepare_enable(). There is already existing
+> '.clk_name' field in struct samsung_cmu_info, exactly for that reason.
+> It was added in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
+> support for runtime PM"). But the clock is actually enabled only in
+> Exynos5433 clock driver. Let's mimic what is done there in generic
+> samsung_cmu_register_one() function, so other drivers can benefit from
+> that `.clk_name' field. As was described above, it might be helpful not
+> only for PM reasons, but also to prevent possible erroneous clock gating
+> on error paths.
+> 
+> Another way to workaround that issue would be to use CLOCK_IS_CRITICAL
+> flag for corresponding gate clocks. But that might be not very good
+> design decision, as we might still want to disable that bus clock, e.g.
+> on PM suspend.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  drivers/clk/samsung/clk.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> index 1949ae7851b2..da65149fa502 100644
+> --- a/drivers/clk/samsung/clk.c
+> +++ b/drivers/clk/samsung/clk.c
+> @@ -357,6 +357,19 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+>  
+>  	ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
+>  
+> +	/* Keep bus clock running, so it's possible to access CMU registers */
+> +	if (cmu->clk_name) {
+> +		struct clk *bus_clk;
+> +
+> +		bus_clk = __clk_lookup(cmu->clk_name);
+> +		if (bus_clk) {
+> +			clk_prepare_enable(bus_clk);
+> +		} else {
+> +			pr_err("%s: could not find bus clock %s\n", __func__,
+> +			       cmu->clk_name);
+> +		}
+> +	}
+> +
+>  	if (cmu->pll_clks)
+>  		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks,
+>  			reg_base);
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
-Changes since v11
-* remove below warning by dt_binding_check
-./Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml:26:6:
-[warning] wrong indentation: expected 6 but found 5 (indentation)
+I would suggest to implement runtime PM ops in your driver instead, even though
+those would initially only contain single clk enable/disable. Things like 
+the clk_summary will work then thanks to runtime PM support in the clk core 
+(see clk_pm_runtime_* calls).
+We could also make common runtime PM suspend/resume helpers but I wouldn't focus
+on that too much now, it could well be done later.
+And please avoid introducing new __clk_lookup() calls.
 
-Changes since v10
-* Rebased on v5.14-rc2
-* removed Rob Herring earlier Reviewed-by tag
-
-This patch was part of exynos ufs driver series, somehow
-this got missed to applied on the tree, sending again as a new
-patch v11, removing Rob's earlier Reviewed-by tag.
-
- .../bindings/ufs/samsung,exynos-ufs.yaml      | 89 +++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-
-diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-new file mode 100644
-index 000000000000..b9ca8ef4f2be
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ufs/samsung,exynos-ufs.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung SoC series UFS host controller Device Tree Bindings
-+
-+maintainers:
-+  - Alim Akhtar <alim.akhtar@samsung.com>
-+
-+description: |
-+  Each Samsung UFS host controller instance should have its own node.
-+  This binding define Samsung specific binding other then what is used
-+  in the common ufshcd bindings
-+  [1] Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-+
-+properties:
-+
-+  compatible:
-+    enum:
-+      - samsung,exynos7-ufs
-+
-+  reg:
-+    items:
-+      - description: HCI register
-+      - description: vendor specific register
-+      - description: unipro register
-+      - description: UFS protector register
-+
-+  reg-names:
-+    items:
-+      - const: hci
-+      - const: vs_hci
-+      - const: unipro
-+      - const: ufsp
-+
-+  clocks:
-+    items:
-+      - description: ufs link core clock
-+      - description: unipro main clock
-+
-+  clock-names:
-+    items:
-+      - const: core_clk
-+      - const: sclk_unipro_main
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  phys:
-+    maxItems: 1
-+
-+  phy-names:
-+    const: ufs-phy
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - phys
-+  - phy-names
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/exynos7-clk.h>
-+
-+    ufs: ufs@15570000 {
-+       compatible = "samsung,exynos7-ufs";
-+       reg = <0x15570000 0x100>,
-+             <0x15570100 0x100>,
-+             <0x15571000 0x200>,
-+             <0x15572000 0x300>;
-+       reg-names = "hci", "vs_hci", "unipro", "ufsp";
-+       interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
-+       clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
-+                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
-+       clock-names = "core_clk", "sclk_unipro_main";
-+       pinctrl-names = "default";
-+       pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
-+       phys = <&ufs_phy>;
-+       phy-names = "ufs-phy";
-+    };
-+...
 -- 
-2.33.0
-
+Regards,
+Sylwester
