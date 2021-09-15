@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA40C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC78AC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8175C61212
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB38261212
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Sep 2021 08:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236807AbhIOIWs (ORCPT
+        id S236757AbhIOIZ5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Sep 2021 04:22:48 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46422
+        Wed, 15 Sep 2021 04:25:57 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46636
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229847AbhIOIWr (ORCPT
+        by vger.kernel.org with ESMTP id S232172AbhIOIZ4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Sep 2021 04:22:47 -0400
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        Wed, 15 Sep 2021 04:25:56 -0400
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 111674028B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 08:21:28 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 63B983F4BE
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 08:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631694088;
-        bh=T9oBygJtDcSxynkt0eDMI4wk/aOKBmsP5WZcP0OudvE=;
+        s=20210705; t=1631694277;
+        bh=jH5yqZdy0poBMayuZGGYMX7sqt3HTnu/3+K0ZeEsCPk=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=Ywx/9rGUCRPEAySS0CABXhyg0v20hpLlc0leB3QXJoarh4wbWebdFAFaWeYq5uUOG
-         SltSdba6Q/GouVyf7xOE2F9C6cDK2TcyWEUJbgpqq/X6i5Y/ouOjt55sbMLwriS2xf
-         1YKtYM/78O2B/QJGhv5jsP36Z25r704SzpX5aLnbUrg9GI7UdyYpfObz5g1jsg0v8S
-         mGsc2pBT6x69F0I6GFW3bpMFgQWiGiXy682iis2ah5P+iFApQnr5VSBWTEMh0uQDpb
-         S60qvS+S8jKymEnm+shAvavOaqrBLg6ZBhCW9k++5QWKOUcPy6xITdEwJ6GeIQa/uS
-         AJKqgo9wgpPxQ==
-Received: by mail-ed1-f69.google.com with SMTP id z6-20020a50cd06000000b003d2c2e38f1fso1170763edi.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 01:21:28 -0700 (PDT)
+        b=rvsBoM5hXP/ROal7lSPOY5nmCailY+6GI4ig7XhKJC6XQucDLAv56usAPq6R+mQpG
+         TT1RT1ywPpzpSBjlV5Je0l4/w25Sr784656cZSWppbeyTWfeUhHpVfyqx66f3U0lhe
+         pVExi94/RWsryNPljlGTAVrwmP/eNwzqF+uYQWt9d8qh8e56JVM8opWGAcHNukfoTO
+         5/O5Yn66uowJCzx+0liE8ZpZEURsRfIbrbl/vFiBUPmS7Aa3Z74w1xagm3/SebGlfL
+         nKgrt2v2cIIM5d8Km2G/obRqKybUGB8Ld25JIRa2cRiJMdoFYe+etC8D5IcC8rXLz8
+         cq/Rc7Dw8++pQ==
+Received: by mail-ed1-f70.google.com with SMTP id y17-20020a50e611000000b003d051004603so1164263edm.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Sep 2021 01:24:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=T9oBygJtDcSxynkt0eDMI4wk/aOKBmsP5WZcP0OudvE=;
-        b=UJ2ASDihGqJvzLQlxOIh0MqZhNcjoLxVjKhmkyWkclOgQ7auLjW0vLOFEjjKcnkxIL
-         boRMv7gqu8bagg/yxUH18mxkNIt7rWHx2yGqyGwl9ynNFt6wVcNQhaWlHxYm47mmH1g6
-         P0xzU2XqYdFagmsC0qs6dZC8PUnGgOl1PDhq3OruG2X30RWI+QTzZK8ajIt7UQDV2Nyn
-         nSKkiDXJKAki0uEYPIKO5XZg9iU2p6OOmg3QNkpIDP28Qoo0eDorsAZuLmeymTONEBBv
-         79WfMngMIBW4XK6VB8O5bglIqzdyks/dhkGoXQKcFfhx3eXbte7iUKhRinBLDhejjIyY
-         ChpA==
-X-Gm-Message-State: AOAM530NbHWcdf7i8adgYliHkD31TnfXgACl6RCIAbrIZyg+HYj1dyHG
-        hqRzeuUH+NbXni0FKGdTvMG4ApfozlnTGWPS8GbvHRVfK9N0izSTLvr2wVgV5pC/c34RV/qEGc8
-        9sHuWEhC5PA4HpdUm+c3Vb3FFk2UKFuw+BCeV/AhgyWjwHy9u
-X-Received: by 2002:a17:907:2659:: with SMTP id ar25mr6434158ejc.541.1631694087332;
-        Wed, 15 Sep 2021 01:21:27 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwJHhAt+UC2TTt6eZKM2wmD48YPJlH69BUzCNHbTGNiVGA/qWWuPtGChl6QJ4B1hK5grd9Teg==
-X-Received: by 2002:a17:907:2659:: with SMTP id ar25mr6434129ejc.541.1631694087157;
-        Wed, 15 Sep 2021 01:21:27 -0700 (PDT)
+        bh=jH5yqZdy0poBMayuZGGYMX7sqt3HTnu/3+K0ZeEsCPk=;
+        b=e3CMuOqaalKFI0HcK7k35W1/Rnd3sFdHHt8XzoIAk0naZl4sxgtvCRcvqMyfKIdPLg
+         0nuDjkQ1/QedcHc4vEPXMTtgpYyxLHRMtzAteygw5dfdLUtYXHK0Xy3kzKXJlwmED+Ru
+         5iuXOMkx1+u4RVKVyoOj9pr3JxGyaL3FDmoYlAkd4iOXCxyFG9e6h7EAxfj60IEDJdZN
+         pSbKzpKpqlPfexSPtdiwoS7Pfgt5/lFBQRI5uXuR7ZP6UzVjk2T7BHOyYDcrCrPG9P5T
+         LexCGqukGldcJpZYyd7vdFYYCMcP30j4+FuLmiWUHpsePyTDn4VLU9/n2Qke/2np0HZZ
+         v63A==
+X-Gm-Message-State: AOAM533kffRHuTw0zTUdNlUTSZqrIU+Qv/6thTWjPg3PHchd9OGS9ZyX
+        8oC5BAU5mD33EFwa4bCluw71y0QeYhOPjP5aDiLdxtTLK61Un8oAkVDWA4EuB7a7ov0eCfQF0P6
+        3NV/qxCeyZmXnTiccKockC71lDWjiffrZraeWF7CmyrhBS5Pl
+X-Received: by 2002:a17:907:d23:: with SMTP id gn35mr24610925ejc.556.1631694276567;
+        Wed, 15 Sep 2021 01:24:36 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzsVkw4c2rpKq/jC9r7maHh5NKfix2SH8toBQTvS0RrkMXOk3q+BW0FeTzs/ZNQvvCu8pb6OQ==
+X-Received: by 2002:a17:907:d23:: with SMTP id gn35mr24610904ejc.556.1631694276399;
+        Wed, 15 Sep 2021 01:24:36 -0700 (PDT)
 Received: from [192.168.3.211] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id n10sm5922155ejk.86.2021.09.15.01.21.25
+        by smtp.gmail.com with ESMTPSA id d3sm6658015edv.87.2021.09.15.01.24.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 01:21:26 -0700 (PDT)
-Subject: Re: [PATCH 1/6] clk: samsung: Enable bus clock on init
+        Wed, 15 Sep 2021 01:24:35 -0700 (PDT)
+Subject: Re: [PATCH 2/6] clk: samsung: clk-pll: Implement pll0822x PLL type
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
@@ -82,14 +82,14 @@ Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 References: <20210914155607.14122-1-semen.protsenko@linaro.org>
- <20210914155607.14122-2-semen.protsenko@linaro.org>
+ <20210914155607.14122-3-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <6ef3e9a3-77e7-48b7-cbcd-c13db50d0cd9@canonical.com>
-Date:   Wed, 15 Sep 2021 10:21:24 +0200
+Message-ID: <47e5b93a-27b4-2188-7b1e-fd2c1b2379d3@canonical.com>
+Date:   Wed, 15 Sep 2021 10:24:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210914155607.14122-2-semen.protsenko@linaro.org>
+In-Reply-To: <20210914155607.14122-3-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -98,61 +98,48 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 14/09/2021 17:56, Sam Protsenko wrote:
-> By default if bus clock has no users its "enable count" value is 0. It
-> might be actually running if it's already enabled in bootloader, but
-> then in some cases it can be disabled by mistake. For example, such case
-> was observed when dw_mci_probe() enabled bus clock, then failed to do
-> something and disabled that bus clock on error path. After that even
-> attempt to read the 'clk_summary' file in DebugFS freezed forever, as
-> CMU bus clock ended up being disabled and it wasn't possible to access
-> CMU registers anymore.
+> pll0822x PLL is used in Exynos850 SoC for top-level integer PLLs. The
+> code was derived from very similar pll35xx type, with next differences:
 > 
-> To avoid such cases, CMU driver must increment the ref count for that
-> bus clock by running clk_prepare_enable(). There is already existing
-> '.clk_name' field in struct samsung_cmu_info, exactly for that reason.
-> It was added in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
-> support for runtime PM"). But the clock is actually enabled only in
-> Exynos5433 clock driver. Let's mimic what is done there in generic
-> samsung_cmu_register_one() function, so other drivers can benefit from
-> that `.clk_name' field. As was described above, it might be helpful not
-> only for PM reasons, but also to prevent possible erroneous clock gating
-> on error paths.
+> 1. Lock time for pll0822x is 150*P_DIV, when for pll35xx it's 270*P_DIV
+> 2. It's not suggested in Exynos850 TRM that S_DIV change doesn't require
+>    performing PLL lock procedure (which is done in pll35xx
+>    implementation)
 > 
-> Another way to workaround that issue would be to use CLOCK_IS_CRITICAL
-> flag for corresponding gate clocks. But that might be not very good
-> design decision, as we might still want to disable that bus clock, e.g.
-> on PM suspend.
+> When defining pll0822x type, CON3 register offset should be provided as
+> a "con" parameter of PLL() macro, like this:
+> 
+>     PLL(pll_0822x, 0, "fout_shared0_pll", "oscclk",
+>         PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
+>         exynos850_shared0_pll_rates),
+> 
+> To define PLL rates table, one can use PLL_35XX_RATE() macro, e.g.:
+> 
+>     PLL_35XX_RATE(26 * MHZ, 1600 * MHZ, 800, 13, 0)
+> 
+> as it's completely appropriate for pl0822x type and there is no sense in
+> duplicating that.
+> 
+> If bit #1 (MANUAL_PLL_CTRL) is not set in CON1 register, it won't be
+> possible to set new rate, with next error showing in kernel log:
+> 
+>     Could not lock PLL fout_shared1_pll
+> 
+> That can happen for example if bootloader clears that bit beforehand.
+> PLL driver doesn't account for that, so if MANUAL_PLL_CTRL bit was
+> cleared, it's assumed it was done for a reason and it shouldn't be
+> possible to change that PLL's rate at all.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/clk/samsung/clk.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  drivers/clk/samsung/clk-pll.c | 91 +++++++++++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk-pll.h |  1 +
+>  2 files changed, 92 insertions(+)
 > 
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 1949ae7851b2..da65149fa502 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -357,6 +357,19 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
->  
->  	ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
->  
-> +	/* Keep bus clock running, so it's possible to access CMU registers */
-> +	if (cmu->clk_name) {
-> +		struct clk *bus_clk;
-> +
-> +		bus_clk = __clk_lookup(cmu->clk_name);
-> +		if (bus_clk) {
-> +			clk_prepare_enable(bus_clk);
-> +		} else {
-> +			pr_err("%s: could not find bus clock %s\n", __func__,
-> +			       cmu->clk_name);
-> +		}
-> +	}
-> +
 
-Solving this problem in generic way makes sense but your solution is
-insufficient. You skipped suspend/resume paths and in such case you
-should remove the Exynos5433-specific code.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
 
 Best regards,
 Krzysztof
