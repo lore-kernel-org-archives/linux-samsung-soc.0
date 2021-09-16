@@ -2,119 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1126C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 11:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB981C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 15:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9534860F6D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 11:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DAC26124B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 15:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237279AbhIPLSH (ORCPT
+        id S238513AbhIPPIp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Sep 2021 07:18:07 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37096
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237251AbhIPLSG (ORCPT
+        Thu, 16 Sep 2021 11:08:45 -0400
+Received: from mail-io1-f42.google.com ([209.85.166.42]:43985 "EHLO
+        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231702AbhIPPIo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Sep 2021 07:18:06 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 357B140286
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2021 11:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631791005;
-        bh=UXq/IEFZVtb+dXj3jPcLu567vbwU2ZCcPRqhUQdx3Wk=;
-        h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=WTD5jdTjfDXsDAnhuypNh/WzAQBqMsdm0xJWGlpDyyQbF9x2ORj45uW1Z+FLAgEDU
-         nOhXJrrFtcwRgNhMx9Ms6wD+EfE+aRG//eB5OFvQe8gM9Po0EYBln8mIu3ilfaG1/0
-         PwLVlcYZvUYOZANMIibE+va695fIIVe5vbr8ZZmu8IEDwcFqX0iUs/2ZoJw1qU1KxP
-         D2g5b3CcUafigMqgLOFJPXrtO5uBIa1S2l8Jkz2owOnmA3ZTjlPuWCzjeGvDbrllyN
-         GLBmFQw9CnXcXE4vyw6BEYnUDO92TYOy5pdde0oevtAOftLKpr0f1YUxSg9W6PVhXa
-         CGR8UwrtRDByA==
-Received: by mail-wm1-f71.google.com with SMTP id k5-20020a7bc3050000b02901e081f69d80so2978680wmj.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2021 04:16:45 -0700 (PDT)
+        Thu, 16 Sep 2021 11:08:44 -0400
+Received: by mail-io1-f42.google.com with SMTP id p80so1683427iod.10;
+        Thu, 16 Sep 2021 08:07:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UXq/IEFZVtb+dXj3jPcLu567vbwU2ZCcPRqhUQdx3Wk=;
-        b=bR9fqeKZDleguCVT/ahYpS5E0ghrhVPn2eHXb3Zh4/5g7zSAKNIXkmzICrxcuXGAff
-         nHcXV0FBothWHFkU+iYIJCdvUQgoNAR7CeRvMugnHnxqUbJRSGusm97tKMTCljDOoO1Y
-         i60f2Sdazq5D4o7oWedoC0YKZxZnFIModmkrNYiwsv9AgBwYi3NLeSqJ0LcHjK5rLkGZ
-         NhHYcivTf/MSjZc7IJYGYIelK21WX/PpLSX82Ee0iccqedmsLmRsecAobQaZcZq7X2P9
-         l1AgKAs7xorNC+upYBuGE1Jkd7zsi62Ib1/CdBjSstYRhTmqwkStgiqoNmVNXif6ueKN
-         jChA==
-X-Gm-Message-State: AOAM533rE2quHmk16bbkTOBKcqKpr4NO0bg+pCb7vepBbg7jYt1rwp+r
-        nurvIxkUeOfxO4UouxoWQDZznrrwhApDczItll/b2QMvvBMdKo3EA/4qxXd2axqKFeRsHgNIikj
-        qLI5ZACF1RVu/WuTvyL+0lHA9NQN3khlkZmVobIOF2cGoDqwO
-X-Received: by 2002:adf:b319:: with SMTP id j25mr5491427wrd.256.1631791004637;
-        Thu, 16 Sep 2021 04:16:44 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyPUYPtugKgY5biMl0OjTAOdNuK5egkmHMFoaDuBJ2DWRk5mx3hS8X+eQzKUYhNjcOhIbqIbg==
-X-Received: by 2002:adf:b319:: with SMTP id j25mr5491411wrd.256.1631791004497;
-        Thu, 16 Sep 2021 04:16:44 -0700 (PDT)
-Received: from [192.168.3.211] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id c30sm3021368wrb.74.2021.09.16.04.16.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Sep 2021 04:16:44 -0700 (PDT)
-Subject: Re: (subset) [PATCH v2 4/4] ARM: dts: exynos: align PPMU event node
- names with dtschema
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-pm@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>
-References: <20210820150353.161161-1-krzysztof.kozlowski@canonical.com>
- <20210820150353.161161-4-krzysztof.kozlowski@canonical.com>
- <CGME20210915075117eucas1p11e3c07d77f1f0dc43c9e4685665eb494@eucas1p1.samsung.com>
- <163169222223.16372.15525688455985156121.b4-ty@canonical.com>
- <9ed20f4b-ca45-54d3-2577-976a9e55eb9d@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <0212a402-1490-0f8f-005e-32bb6f636a13@canonical.com>
-Date:   Thu, 16 Sep 2021 13:16:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ukDh0m6xUg+LA/SFSsYJdFnswVIKLG98sv4W680v9Ro=;
+        b=qcIjZg52YHj3y/cCVK+rTmZox3xerPL1D2Y7DSrjdGexxn0G66Nd7lDZbvSTJYckU8
+         aKWXynZiTlyJ8l/KCpd9U5ChI8sQ9lggp46we15yxeG5b6C79G+kIiVFUjbwIgjTGdL1
+         inePSUskRFTUK/1kDTo2CikvqL69ot2tGBMweonUgZ7dEN/edeckBLrzaIZviDJLnB+k
+         NhjkyPaSqLVmkEVCq6Lw4QE8KoDsBF3fUp7lB47XljLfJB6wC5roEUD/tpel53DoJPe3
+         QLy5FVWXOCjvNb2TpzNUQOv4xoF4SgQMH/NHmqCCAAThvR+SSpYz+J5wGzSm7I3MrUEL
+         /xbA==
+X-Gm-Message-State: AOAM532O9oMCkeOR7Te2UfPCE2C7gs0ziuus/wxaEhPTwTIoBnA5aLnd
+        DgGZabWS++h+tqfLcfqw6g==
+X-Google-Smtp-Source: ABdhPJyEmCh5JpDCnDKUruqK4ec1sLmjX/bKc5u/nUWiwRjhkrHJgwuVrMZah6JQkBV1pOLN1X1cbQ==
+X-Received: by 2002:a05:6638:2589:: with SMTP id s9mr4778919jat.87.1631804843796;
+        Thu, 16 Sep 2021 08:07:23 -0700 (PDT)
+Received: from robh.at.kernel.org (96-84-70-89-static.hfc.comcastbusiness.net. [96.84.70.89])
+        by smtp.gmail.com with ESMTPSA id i6sm1949907ilj.45.2021.09.16.08.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Sep 2021 08:07:23 -0700 (PDT)
+Received: (nullmailer pid 1362925 invoked by uid 1000);
+        Thu, 16 Sep 2021 15:07:22 -0000
+Date:   Thu, 16 Sep 2021 10:07:22 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chanho Park <chanho61.park@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v12] dt-bindings: ufs: Add bindings for Samsung ufs host
+Message-ID: <YUNdqnZ2kYefxFUC@robh.at.kernel.org>
+References: <CGME20210915111909epcas2p345ed0a47b12d82d67ab28da1d9fd2eb8@epcas2p3.samsung.com>
+ <20210915111844.42752-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <9ed20f4b-ca45-54d3-2577-976a9e55eb9d@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210915111844.42752-1-chanho61.park@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/09/2021 13:15, Marek Szyprowski wrote:
-> Hi Krzysztof,
+On Wed, 15 Sep 2021 20:18:44 +0900, Chanho Park wrote:
+> From: Alim Akhtar <alim.akhtar@samsung.com>
 > 
-> On 15.09.2021 09:50, Krzysztof Kozlowski wrote:
->> On Fri, 20 Aug 2021 17:03:53 +0200, Krzysztof Kozlowski wrote:
->>> Use hyphen instead of underscore and align the PPMU event node name with
->>> dtschema.
->>>
->>>
->> Applied, thanks!
->>
->> [4/4] ARM: dts: exynos: align PPMU event node names with dtschema
->>        commit: fb9b199e562d66af90f61d70eb737fa5e4deac2c
->>
-> This breaks probing of Exynos event counters, which are needed by the 
-> Exynos DMC driver on Odroid XU3/XU4/HC1 boards. Just check the today's 
-> linux-next. I had no time to analyze which part of the code depends on 
-> the node names though...
+> This patch adds DT bindings for Samsung ufs hci
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+> Changes since v11
+> * remove below warning by dt_binding_check
+> ./Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml:26:6:
+> [warning] wrong indentation: expected 6 but found 5 (indentation)
+> 
+> Changes since v10
+> * Rebased on v5.14-rc2
+> * removed Rob Herring earlier Reviewed-by tag
+> 
+> This patch was part of exynos ufs driver series, somehow
+> this got missed to applied on the tree, sending again as a new
+> patch v11, removing Rob's earlier Reviewed-by tag.
+> 
+>  .../bindings/ufs/samsung,exynos-ufs.yaml      | 89 +++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> 
 
-Thanks for the report. I'll drop the patch from my queue and check later
-the driver.
+Applied, thanks!
 
 
-Best regards,
-Krzysztof
+Sorry it fell thru the cracks, but it taking a year to notice is not 
+great. If no one cares enough to notice, why are we applying any of it.
+
+Rob
