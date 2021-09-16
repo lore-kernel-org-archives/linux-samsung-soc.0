@@ -2,117 +2,145 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5FEC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 10:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFDAC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 11:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27579611C4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 10:52:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9B9860E05
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Sep 2021 11:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237300AbhIPKyD (ORCPT
+        id S236985AbhIPLRB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Sep 2021 06:54:03 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:36262
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235627AbhIPKyA (ORCPT
+        Thu, 16 Sep 2021 07:17:01 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:21905 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236506AbhIPLRA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Sep 2021 06:54:00 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1A3884028E
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2021 10:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1631789559;
-        bh=4Lgdn0Ixo4EbM/31cJClCQJWWjH8/3D1avitifyopTc=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=Cr9qm5aJxJbkCpFqUGzq3IKsxa0wQEbQBEjvUOMeq3NNfEyLNh7+/Zn2kA4fSMpYH
-         O+bEN6MEY9xAAcQs3VMGDBuum9/6NNVIs0NhupJAnpfLlOSTjPxwfpMsi+q6xNE1Cy
-         ZoVBNZgYOKOvTpUPF7Qvid5SfbVCAHiPTShQIbpiyPEMmjd6PC4P5YVnJg6SRAd70Q
-         juQ8wPSGaKo2ugq9xocDLRco+1nhk5o8WB2U7a6blYbuaqVdZMbkVhGa9bsTTgPfuU
-         AfszoRuGvPPWtsezLO4QDDsTK27B5g40GajzQESWwO1Q5qZ0ugZHtmQo01l8p2FCHg
-         TB8l2LlJ60Nxg==
-Received: by mail-ed1-f71.google.com with SMTP id r7-20020aa7c147000000b003d1f18329dcso4994249edp.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2021 03:52:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4Lgdn0Ixo4EbM/31cJClCQJWWjH8/3D1avitifyopTc=;
-        b=gtlV+c13FOq6d3d/5JrIzmiFV0rIdUd/UhTUJ4eBpZdE5uLr6prsCsTYySKOc3DYB3
-         pvB2gGyBZN3DpbCPFSSiPe01U1DpEOmibyWtVfdX0daxHDKUqB1vfrKWDcfhpfsYfaM3
-         5FZPwpUB6UICEwZ6+qWwhHyFMiPPdXiXBdbQzWWNajHUuD5Uvuf0vRThCIiKowIsRBeI
-         SX3+ep2oA++MBAprSMq5NmoSfmcA53nzUhLj9s8x/uN6Lsj5HjzAbIcpgphuSCSvAJmz
-         hOtS0jdEpXNrtU8pXDUuppiQ54ZWzKs8P11SQ1w932VKN1yq+eYnnbInRSnf+08QXgho
-         NtaQ==
-X-Gm-Message-State: AOAM532M5DUHjKUr1giPNLltOC/TR8BcrAeii2Q8u0MtnMVvlaNltu7z
-        l+ivDCbQ4PgiogjDryJzVzR89CMfdcdBi6yqUeeDhHOC7Bpc9LTkcYFU63u/62QLivwjMMPe0tl
-        ndMQ50stiFMDyGfJUwgquwb7Bu4evvSdQge5LuUL+j+Cvv47J
-X-Received: by 2002:a17:906:4413:: with SMTP id x19mr5475681ejo.234.1631789558221;
-        Thu, 16 Sep 2021 03:52:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyGfx6w0ppmn0HpLTJ+dsV03ZGRjBHau0aYhh2Ng8iIcPUHpQyfZSlfhi3RuYMMxWbYjlibTg==
-X-Received: by 2002:a17:906:4413:: with SMTP id x19mr5475670ejo.234.1631789558079;
-        Thu, 16 Sep 2021 03:52:38 -0700 (PDT)
-Received: from [192.168.3.211] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id d16sm1244793edu.8.2021.09.16.03.52.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Sep 2021 03:52:37 -0700 (PDT)
-Subject: Re: [PATCH] i2c: s3c2410: Delete unneeded variable: "ret"
-To:     Xiang wangx <wangxiang@cdjrlc.com>
-Cc:     linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210916103718.29956-1-wangxiang@cdjrlc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <0d1a0027-e74d-9f07-3b96-372b5ca14ae3@canonical.com>
-Date:   Thu, 16 Sep 2021 12:52:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thu, 16 Sep 2021 07:17:00 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210916111535euoutp024baddc10feefd6259f6f4ddfdc5a8a9a~lSTXJCVMt0528805288euoutp02k
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2021 11:15:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210916111535euoutp024baddc10feefd6259f6f4ddfdc5a8a9a~lSTXJCVMt0528805288euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1631790935;
+        bh=yZ91VPl7cTh5Ls9cFXddR4PJtoTgFav69EjZZYSJALM=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=R+yEHs9JS/DtCHxhnTIxOAFQtk3j9RwwNom7mUwgLsfu0+nNf++XKawiSSu+G+To4
+         j0QwfmgAAGoSrJdKhVln+R+/5j3IBP97NWJrb+XLs5+xniOoH4YqXKFUJpnrkZc7T6
+         pli8m7a3yIuuXlkz740+vN447/n5suPIzQ/NTeJ0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210916111534eucas1p167eb21fe292147bc6c99939372e65309~lSTWmkj613218432184eucas1p1D;
+        Thu, 16 Sep 2021 11:15:34 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E9.A3.45756.65723416; Thu, 16
+        Sep 2021 12:15:34 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210916111534eucas1p21dc35b47d2540e26f4d1ad262840fdd1~lSTV7EJ8i2816728167eucas1p2m;
+        Thu, 16 Sep 2021 11:15:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210916111534eusmtrp1d6fdffb8f58172bad6de80cce0e57d3a~lSTV6HM1o1455514555eusmtrp1K;
+        Thu, 16 Sep 2021 11:15:34 +0000 (GMT)
+X-AuditID: cbfec7f2-7bdff7000002b2bc-bf-614327560678
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1D.84.31287.55723416; Thu, 16
+        Sep 2021 12:15:33 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210916111533eusmtip1342e6688169fe7baed3ef9e7b5cc7cfb~lSTVJDeLS2104121041eusmtip1O;
+        Thu, 16 Sep 2021 11:15:33 +0000 (GMT)
+Subject: Re: (subset) [PATCH v2 4/4] ARM: dts: exynos: align PPMU event node
+ names with dtschema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-pm@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <9ed20f4b-ca45-54d3-2577-976a9e55eb9d@samsung.com>
+Date:   Thu, 16 Sep 2021 13:15:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20210916103718.29956-1-wangxiang@cdjrlc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <163169222223.16372.15525688455985156121.b4-ty@canonical.com>
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7ph6s6JBq0NWhbXvzxntZh/5Byr
+        xca3P5gszja9YbfY9Pgaq8XlXXPYLD73HmG0mHF+H5PFwqYWdovbjSvYLFr3HmF34PZYM28N
+        o8eshl42j02rOtk8Ni+p9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6Mznlr2QoOslY0HJ7E
+        1MC4gaWLkZNDQsBE4m5PD1MXIxeHkMAKRokzV1cwQjhfGCWmnl/JCuF8ZpTY3vGGHable9Ny
+        ZojEcqDElBdsEM5HRokDG9Yyg1QJCyRJ7J5zHaxKRGAhs8SvuV/A2tkEDCW63naxgdi8AnYS
+        He8OM4LYLAKqEr83fWUCsUUFkiWm/W1ihqgRlDg58wnYtZwCXhJHP+wGizMLyEtsfzsHyhaX
+        uPVkPtgXEgIfOCT6fs1mgrjVReLxritsELawxKvjW6B+kJE4PbmHBaKhmVHi4bm17BBOD6PE
+        5aYZjBBV1hJ3zv0C6uYAWqEpsX6XPkTYUWLPt53sIGEJAT6JG28FIY7gk5i0bTozRJhXoqNN
+        CKJaTWLW8XVwaw9euMQMYXtIbG0/xzSBUXEWkjdnIXltFpLXZiHcsICRZRWjeGppcW56arFh
+        Xmq5XnFibnFpXrpecn7uJkZg4jr97/inHYxzX33UO8TIxMF4iFGCg1lJhPdCjWOiEG9KYmVV
+        alF+fFFpTmrxIUZpDhYlcd5Vs9fECwmkJ5akZqemFqQWwWSZODilGpgkOE0YHhoFfHbzW/9u
+        upup0AqX7Xox1nGTTT61VE6R3+qVd9fBtUR+7iK5J5J2JwU9OI8Y+3//kcZ7be07NWvNg4tr
+        G0PTNr9QKw/hvXBZ97U319tjXNMjVyadEc6famvwLj40Qs5JlVF3x8525qX3/q11cxDtkPJo
+        WF17MPdbbmxL89fzAh75OWtmqKy4XPJM+l6qdhXPOeGAU6kL3DVV3X7ZJLs/zD228seuIzk8
+        V3u01weHZMw/tkfum16Te6jCG6VpK3Sj9xu3re6zWT193h2/U6lHzRryRB11uVzE1zLPSLU4
+        t6QnLc+MsV/6b36hkK/8qXtWDUsZmrwcuQ9fC2bR3lUq5zstKWyFEktxRqKhFnNRcSIAX0E+
+        rMsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xu7qh6s6JBlvWWlpc//Kc1WL+kXOs
+        Fhvf/mCyONv0ht1i0+NrrBaXd81hs/jce4TRYsb5fUwWC5ta2C1uN65gs2jde4Tdgdtjzbw1
+        jB6zGnrZPDat6mTz2Lyk3qNvyypGj8+b5ALYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws
+        9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyOuetZSs4yFrRcHgSUwPjBpYuRk4OCQETie9Ny5m7
+        GLk4hASWMkqc2L2aFSIhI3FyWgOULSzx51oXG0TRe0aJH4/eM4EkhAWSJHbPuQ7WLSKwmFli
+        zd9zTBBVM5kkOn8/AdvBJmAo0fUWpJ2Tg1fATqLj3WFGEJtFQFXi96avYJNEBZIl3r7+zgRR
+        IyhxciZEL6eAl8TRD7uZQWxmATOJeZsfQtnyEtvfzoGyxSVuPZnPNIFRcBaS9llIWmYhaZmF
+        pGUBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwIjcduzn5h2M81591DvEyMTBeIhRgoNZ
+        SYT3Qo1johBvSmJlVWpRfnxRaU5q8SFGU6B/JjJLiSbnA1NCXkm8oZmBqaGJmaWBqaWZsZI4
+        79a5a+KFBNITS1KzU1MLUotg+pg4OKUamAwiHN9sLxD7v9b053a9C1tn+797dKJjkf0xhnN6
+        MZklG5LONEsq1uxtapm4v+em55Rru6cvWP5BatOi7zNmGQRuYzcT6DZ5f+X9cRvL9qjEB4sz
+        mzP2Pf8tuSDiLtdKT8uZp6P/MP/ivnPz8PugbKbPqsq9pcHuqxgOMerM4az8o/h23obm1Osh
+        2gtcVGNCtNryM/49NOZLX+Z261C69qVVi+2tWponaTX2nzfvOL4sqkh7eqqQXfTOvW879x54
+        NmV9cP3Wn4lXHJ53P1n353fJc1E271qD+95KBh/vlIZa12y5mZ6z2ya+IkHvzEWbEw8tG26v
+        TvR7N8U+6erhOl2j2oIzrnM7PSPjjq+sW6LEUpyRaKjFXFScCABJec0HUQMAAA==
+X-CMS-MailID: 20210916111534eucas1p21dc35b47d2540e26f4d1ad262840fdd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210915075117eucas1p11e3c07d77f1f0dc43c9e4685665eb494
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210915075117eucas1p11e3c07d77f1f0dc43c9e4685665eb494
+References: <20210820150353.161161-1-krzysztof.kozlowski@canonical.com>
+        <20210820150353.161161-4-krzysztof.kozlowski@canonical.com>
+        <CGME20210915075117eucas1p11e3c07d77f1f0dc43c9e4685665eb494@eucas1p1.samsung.com>
+        <163169222223.16372.15525688455985156121.b4-ty@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/09/2021 12:37, Xiang wangx wrote:
-> variable: "ret" defined but not used in function "i2c_s3c_irq_nextbyte"
-> 
-> Signed-off-by: Xiang wangx <wangxiang@cdjrlc.com>
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index b49a1b170bb2..6df85b23156c 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -385,7 +385,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
->  {
->  	unsigned long tmp;
->  	unsigned char byte;
-> -	int ret = 0;
->  
->  	switch (i2c->state) {
->  
-> @@ -548,7 +547,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
->  	tmp &= ~S3C2410_IICCON_IRQPEND;
->  	writel(tmp, i2c->regs + S3C2410_IICCON);
->   out:
-> -	return ret;
-> +	return 0;
+Hi Krzysztof,
 
-Change is okay but I would go step further - made the function return
-void(). None of the callers check for return so no functionality is lost.
+On 15.09.2021 09:50, Krzysztof Kozlowski wrote:
+> On Fri, 20 Aug 2021 17:03:53 +0200, Krzysztof Kozlowski wrote:
+>> Use hyphen instead of underscore and align the PPMU event node name with
+>> dtschema.
+>>
+>>
+> Applied, thanks!
+>
+> [4/4] ARM: dts: exynos: align PPMU event node names with dtschema
+>        commit: fb9b199e562d66af90f61d70eb737fa5e4deac2c
+>
+This breaks probing of Exynos event counters, which are needed by the 
+Exynos DMC driver on Odroid XU3/XU4/HC1 boards. Just check the today's 
+linux-next. I had no time to analyze which part of the code depends on 
+the node names though...
 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Best regards,
-Krzysztof
