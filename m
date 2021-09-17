@@ -2,176 +2,118 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33270C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Sep 2021 12:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DF5C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Sep 2021 17:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1757B61246
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Sep 2021 12:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9D3610E9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Sep 2021 17:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244125AbhIQMgf (ORCPT
+        id S233099AbhIQRxL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Sep 2021 08:36:35 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59936 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244118AbhIQMge (ORCPT
+        Fri, 17 Sep 2021 13:53:11 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39664
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232203AbhIQRxL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Sep 2021 08:36:34 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210917123509euoutp01e357ac326f24229303ae85b15b911c45~lnCHjLJ9R1682316823euoutp01R
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Sep 2021 12:35:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210917123509euoutp01e357ac326f24229303ae85b15b911c45~lnCHjLJ9R1682316823euoutp01R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1631882109;
-        bh=m1Y6LWA4PXoajOSun3pzOfX28Emf6U0QDQDDXYjTyUo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=N525ixmYaI2hd+M1rwOKqQVzKJ4Ph/PvZVgw5t2si/8X/FBgRxoFO7pfAgozcgP4m
-         7ceKEKFFI5QyBzGnx/Ptl1NE5F2AGuMVW33EPSSxHSJszv0+3fI8/0ofAYSfaZUJfS
-         oaaeMWeY1pTPoUuad1YLZqA3nCFg9yzbLN3K1Qyg=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210917123508eucas1p1ca60528d596ee60f53e6b3499307e58d~lnCG4xCFU2999629996eucas1p13;
-        Fri, 17 Sep 2021 12:35:08 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.73.45756.C7B84416; Fri, 17
-        Sep 2021 13:35:08 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210917123508eucas1p2a73b5bf1cab9fac80de826cacfd817b8~lnCGVm2Fj2071520715eucas1p2a;
-        Fri, 17 Sep 2021 12:35:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210917123508eusmtrp268e219a81f573fd96d703a8a52ea4af2~lnCGUPcK31459814598eusmtrp2E;
-        Fri, 17 Sep 2021 12:35:08 +0000 (GMT)
-X-AuditID: cbfec7f2-7d5ff7000002b2bc-0d-61448b7c201e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 37.FD.20981.B7B84416; Fri, 17
-        Sep 2021 13:35:07 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210917123505eusmtip1840ad4dd0237808a52a6821790b51fda~lnCEVoqUS1263012630eusmtip1b;
-        Fri, 17 Sep 2021 12:35:05 +0000 (GMT)
-Subject: Re: [PATCH v4 24/24] drm/exynos: dsi: Adjust probe order
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        John Stultz <john.stultz@linaro.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <fc1fbd42-6ed4-9d67-2903-8f9cc2aaad43@samsung.com>
-Date:   Fri, 17 Sep 2021 14:35:05 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.14.0
+        Fri, 17 Sep 2021 13:53:11 -0400
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BB7CA3F4BE
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Sep 2021 17:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1631901107;
+        bh=MMF2iWv4kcxI3pzDDiyV/HVjAyM5xI6kvs1LvzNHODk=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=AO502w7SMhi7l4wKKmK/tbdzUdkJ6zv40nNbVLyvpOt8Ak9wh6GIJby8hiUZ6FwlE
+         /nmIAqcH5lsBoj155XhQlpe1G/GwjfsZn5e6NPOuZDficszXge4Sj4CtJQqLNEpdMI
+         nQVlJzcWdDQLOvWZfhl4emLvS6uwyzvRvRXGIYDimN2EcY0ObgZlGhfxj9XPaiZdUw
+         kYThOXL4WBwkymZ7/zFnl0sIgvSOo2UzhK9JTLT5fE1XDEjHLJPblBsAfgJcfE7tN1
+         vHfoqJNh3d4b5zIhM7n7LPu7H40FDNBNgyMteLdQmwjsPmsFXSYIhHUJC2p10DCOlc
+         PpMjs/yLAQsZg==
+Received: by mail-ed1-f72.google.com with SMTP id o18-20020a056402439200b003d2b11eb0a9so9756078edc.23
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Sep 2021 10:51:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MMF2iWv4kcxI3pzDDiyV/HVjAyM5xI6kvs1LvzNHODk=;
+        b=NBoTvAbuIh4FVFGIv3ATVL7vE8Tjtaz+0s7wWPi+0bTdrs3THeVj4Wbo2ic5vAGgCl
+         9hS1wxQ/n3E/gpS13mzaP0ralgPmI2p0IgVsYVXitvAOwDa0PNmKqgbeA9WL/yc7Z2NL
+         B6j+kjViYN5Ao8fsf9Ah6pSdFPuj37zSJaOFid6SnXn7dx9k1YjfIsH/a2nD2fzidOqn
+         hrVoLPdzZ6DBoeIUX207f7Jehbl+pvw1IBkbVQ4zPe+7MeygqO46UbHTxQ1cYv6dpjjK
+         0/ZyMHC9r1/5cMT8PmMZgkkCYHKt8w8ae7J4MVpyEMA/CMeyuGOAFtWI0+oegJkBMowp
+         gotA==
+X-Gm-Message-State: AOAM530miw1nuCOV/Fb62V//vFEVDVQ3dkEElI+cwIEKm5UbwO7CA6Ym
+        J01Im7fCkx2L2YrgkhOfJGzUXKDHUYj5HZFf6my+hTucEv4z7i7GYUQ0dNu4dzQZtOX601D8zav
+        doXuzw5sD6oLTPqRT/zcScy+BaJOgR7g6hhWsGJjoQjU+1ziZ
+X-Received: by 2002:a17:906:a18f:: with SMTP id s15mr14093629ejy.269.1631901107484;
+        Fri, 17 Sep 2021 10:51:47 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwSIzcpv+tMyR6TNvX1deHw1+0dUu13dndrvmjG4VR4paQlLXKULMAl5QGjqAySEq52fFnZcA==
+X-Received: by 2002:a17:906:a18f:: with SMTP id s15mr14093598ejy.269.1631901107301;
+        Fri, 17 Sep 2021 10:51:47 -0700 (PDT)
+Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.gmail.com with ESMTPSA id l11sm2951345edv.67.2021.09.17.10.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Sep 2021 10:51:46 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 0/2] soc: samsung: be a module!
+Date:   Fri, 17 Sep 2021 19:51:32 +0200
+Message-Id: <20210917175134.252882-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <29a2111d-024b-4d9e-27ef-e3399509ff32@samsung.com>
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGc+69vf0wbS5Vw4kfGEvmGBsUlmWcRYMDcd6RmTln4qJx2OkN
-        KFC0FV0dbEgFoThSJIHSgrQrG4xhmQhakUBW3WopbfkYhBEUURJoRU1hOJDBRrm68d/vfc/z
-        fjxvDg8Xd5DreMfkpxiFXJYmIQXE9d/mPBFZRQmyKG33ZjRkcXPQt24Hhmq7LDj6feYZiSrH
-        XQBdGtESaLzaAlDXfARyTPYTaOJ+D4FmF9o5yJU7yUWFJTVcVNLh4qK+1koS6TztGDL5Wwik
-        m10EyFZ8EI2U6Zd6mGZxNKUfxVHdXAtA90rvAKQr9ZJorvUygX563M5FzZMlHPRrRz3n/Y30
-        s8E8Lj3s9pD0Tf09Lv2o6iqXNhRUcGhzmxej72p7MXp4oI2kbzx/wKEvOz6hR4rsGG1vHeLS
-        NWX9JF3cXA/oa86v6OmmkD3UAcG2o0zasdOMQhp7WJCSWxl1Qs3/suZ2HicHNHA1gM+D1DvQ
-        3VSyxAKemKoDsLZqEGeDPwGcmvVibDANoGbGSGgAb7nE35DJ5msBdD18gQVaiSk/gN9XxAd4
-        NRUHtVP3iYBoDWUkoPNcwXJbnOohYMtDDR5QkVQ01DzRkAEWUrHQa3VyAkxQr8E6TzcR4LXU
-        EVi2kIuzmiDoqBhbzvOp7fAHTw4IME5tguoWA85yMBwaq15eG1IOARwuHCJZpwmwfuApzvJq
-        6LM3v7zABvjPzVcFagBH3Ve4bHARwL5cHWBVW+Gw+wUZOABOvQEbW6VsOg4WNI29vIsIDj4J
-        YpcQwUvXy3E2LYQF+WJWvQXq7Zb/xv7S3YtrgUS/wpp+hR39Cjv6/+caAVEPgplMZXoyo4yW
-        M2cilbJ0ZaY8OfJIRnoTWPrjzkX7lBVU+fyRNoDxgA1AHi5ZI+zOipOJhUdlqrOMIiNJkZnG
-        KG1gPY+QBAvrDQ1JYipZdopJZZgTjOLVK8bjr8vBslYpBvC9Bf7v3rq9vXr3mzv3t99S7TV/
-        bI1PC9tc26n+MSb1bKjq9ZSr+8L4137+sPOQL0F6oHGfZqavKFQv9sPH3sNRD1yfDqqsu6cf
-        LYS91xV6Pnwx8bNNGye/SY0n5nuOq2LIERDXGVEVkmhW3KgrX/X1RLYxxegM55dKHV+MihpF
-        Mfl5A1vzrYIMM189YfLtCXvb6go136E+Lx9XnfyoJSR7x8VCX7W2aZvwD2gQ37qr3bnwgfp5
-        rGsX/XRLZOnY/JW/gpst+42JjuNr10sPJpX1v9twWndoPt/9t0nSaZNvMJptsTsMJ3vCu9D5
-        3rYz2aLGICd5jnOhON40dWGXhFCmyKLDcYVS9i/CyZHTUgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTZxTA+e69fZGR3VWMH8ShaUKcCoWW0n11QpEo3MUssWQucW5Ah1dg
-        Qqu97RzDQSMhjhJZWRdSSuWRIUNWMLw2rAihoqXjUafSLB0PjW4MxJGCUwg+1oJL+O93Hr9z
-        cpLDxfm3WeHcXJWW1qiUeQJ2MDH80jkZXVi+Xxl72RKHvG1jLHR+zIWhH0facHT33wU2ss6M
-        AvTdtJFAM3VtAI2sRiPX/DiB/p76jUDLL/pYaPTsPAeVVTZyUGX/KAfdsVvZyOzuw1CDr5tA
-        5uWXADkqjqLpKot/RsMyjhYt93HUvNIN0KRpECCzaZaNVuy1BPrpUR8Hdc1XstCN/hZW0tvU
-        wu+lHGpizM2mrlgmOdSDC+0cquabahb1Q+8sRg0Zb2PUhKeXTf3y9B6LqnUpqOlyJ0Y57V4O
-        1Vg1zqYquloA1TlcSC11RBwiPxbu1ah1Wnp7jprRJgiOipBYKJIhoVgiE4ri3v10jzheEJO4
-        9xidl/sFrYlJzBTmnLXGnizhfdl4vZSlBzaOAXC5kJRAn01nAMFcPnkRQM/QAGYAPH9+K3RV
-        6VnrvAk+9xjY600LAM6ZX7ADhU3kPmhcnCIChVCykYDXKz0gEODkOAH1NyyvFR+Ar5x2PKCw
-        SRE0PDas6SFkIpztGV7bQZCRsNl9iwjwZjILPn70DFvveQu6qh+u5XmkHDa59SDAOCmFtZ33
-        8XXeBku6a17zFuh9WIcZAd+yQbdsUCwbFMsGpR4QLSCU1jH52fmMWMgo8xmdKluYpc7vAP7n
-        +vnmSlcPuDTnEzoAxgUOALm4IDTk1pl9Sn7IMWXBV7RGnaHR5dGMA8T776nEwzdnqf3fqdJm
-        iKSx8SKJVBYbL5PGCbaESAZtGXwyW6mlT9D0SVrzv4dxeeF67GB/Hx120aA15/2Tzjl1qT5d
-        Qcl9xtgPmtMOh32bcqWhY7L+QtTVw0+O/yVXFFuDIkxvtva2f//1gMS9MzX7+JGEJ5kfJVcf
-        XLrWMVKzar/a2U75fi3fzdOBofKJoraZge1l3qAKU7qymSna0bR0zjEoP7F44LStPpp72WtL
-        +TOhRz2VZHzGnGlNTcWKyZ3x3HvC0t3FN1tlb7SW3FldcWhMakXyq0Ll+a3byqK0BdLuqORP
-        Hnz4nEqKoMGhXU0azFxbepc5cDo18jP5U/G5z4n9R3gxxQXWNKHqHXlmzbW0IDedop6IC0ss
-        eN+5Izfjj/66U8GR73kgUYHPKfbMFgkIJkcp2oVrGOV/GhjNROUDAAA=
-X-CMS-MailID: 20210917123508eucas1p2a73b5bf1cab9fac80de826cacfd817b8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e
-References: <20210910101218.1632297-1-maxime@cerno.tech>
-        <CGME20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e@eucas1p1.samsung.com>
-        <20210910101218.1632297-25-maxime@cerno.tech>
-        <29a2111d-024b-4d9e-27ef-e3399509ff32@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On 13.09.2021 12:30, Andrzej Hajda wrote:
-> W dniu 10.09.2021 o 12:12, Maxime Ripard pisze:
->> Without proper care and an agreement between how DSI hosts and devices
->> drivers register their MIPI-DSI entities and potential components, we can
->> end up in a situation where the drivers can never probe.
->>
->> Most drivers were taking evasive maneuvers to try to workaround this,
->> but not all of them were following the same conventions, resulting in
->> various incompatibilities between DSI hosts and devices.
->>
->> Now that we have a sequence agreed upon and documented, let's convert
->> exynos to it.
->>
->> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> This patch should be dropped, as it will probably break the driver.
->
-> Exynos is already compatible with the pattern
-> register-bus-then-get-sink, but it adds/removes panel/bridge
-> dynamically, so it creates drm_device without waiting for downstream sink.
+A question - what is the convention for naming modules: underscores '_' or
+hyphens '-'?
 
-Right, this patch breaks Exynos DSI driver operation. Without it, the 
-whole series works fine on all Exynos based test boards.
+The C-unit file already uses a hyphen "exynos-chipid.c", so I could
+create a module named:
+1. exynos_chipid
+2. soc-exynos-chipid
+3. exynos-chip-id
 
-Best regards
+The Linux device name is "exynos-chipid".
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (2):
+  soc: export soc_device_to_device symbol
+  soc: samsung: exynos-chipid: convert to a module
+
+ drivers/base/soc.c                   |  1 +
+ drivers/soc/samsung/Kconfig          |  3 ++-
+ drivers/soc/samsung/Makefile         |  3 ++-
+ drivers/soc/samsung/exynos-chipid.c  | 11 ++++++++++-
+ drivers/soc/samsung/exynos5422-asv.c |  1 +
+ 5 files changed, 16 insertions(+), 3 deletions(-)
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.30.2
 
