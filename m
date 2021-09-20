@@ -2,190 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HK_RANDOM_FROM,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB97C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 17:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA5AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Sep 2021 01:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D62C06327F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 17:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6579561177
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Sep 2021 01:59:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344686AbhITRVt (ORCPT
+        id S233411AbhIUCAt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 13:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
+        Mon, 20 Sep 2021 22:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348646AbhITRTw (ORCPT
+        with ESMTP id S233536AbhIUBlc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 13:19:52 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E5C1C0604DD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 09:50:39 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id lb1-20020a17090b4a4100b001993f863df2so402015pjb.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 09:50:39 -0700 (PDT)
+        Mon, 20 Sep 2021 21:41:32 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F40C04CD1C
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 13:58:13 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id v5so65085390edc.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 13:58:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qwTJ7Ad7zVwW8MXijFTCxqxIz/INuyLU038X6Cl8cX8=;
-        b=gEpnnaWNfeGWV1YEfOrXuq+LS+LgPIPsf1DgmGFv9Am5IX4FzgUCAAz9kv6Wok3gcj
-         hyqxFa0fPyvhfifyDUGVN6FUhXjQr5JBt69GUObZUMETluh34krbCh9RfSG3gJ2vz7WU
-         m2sKlwAIdi+n4v1ByPZGwiF865i2wURG5Xvpg=
+        bh=PC43tSgvhG7E0sEr+EdWjU4dUcDPCSX0FiAfZowtiZg=;
+        b=nIMzEFRDbWw1z1g6+GhQbUl4DUvtylQpDP+jTHJoTenS8HI5r6M2ar3tFGhFvpuB9F
+         QKXYIBNORPCzuiHLY0Ld/nyW4dWGSehFCuhVm4/g8RmFM5FHXd2YbKZ0ZWsZ6cjTQAAd
+         rAeadVgIdfLtKpLv6nlbwU3BXfVWapw1JmfSgEVRKGbtNH3n+9mOlsTSffV7gW6rR8vl
+         xqgtFQ70JnuH6tJCFZeN5B4s4aEyaXppka2q2ezEQUu6yee/X+ppufw0EYuEuEeXLtql
+         9Fu+/Ttw3V4LZ+4ainPQa1WcvPUqJwVQdxIVp8zEDKfgATa9jJTmhHMY7ds0Fs4pA4f5
+         h7XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qwTJ7Ad7zVwW8MXijFTCxqxIz/INuyLU038X6Cl8cX8=;
-        b=NPmFzRaL5mmHgTJN4AQ7JrMdwPbfzOR3uDiJXtBRrN2n7wiW+a1HRRq/YF50I6sWbL
-         7on7zzWKL+25iM5QTbmnGSUJl3Hv2sqyIOkD8+kfKKAafDmP4lkJpKkeIr59+e4MX93D
-         tBV/x1oEmgmVz5KvWxzbiY2N0r7cORSHDwn94CJ+bEUVWZRUlSs4Jb3BiSz2GBGz0k1c
-         IMAVBKJ6+HJpr+hMa+AAIee9ev5xYLMWNbJC/rB9H4Dm8262GSbz1MWy+4oSgLq1cj7y
-         PdFS+jHdNdskqVovOgKJz/TbyPuKjCo0kBXH3bz/A0zsw1C19BN+d9LeLHlusB1S5r65
-         vqrg==
-X-Gm-Message-State: AOAM533GGyBIsNj9xTRgr2ogBTfSVGhkFy/6EFp8TJPgyUNn8FhI76fk
-        AN81/5oaEncp8ZRpxSMXj+eV3dHw21lo9Q==
-X-Google-Smtp-Source: ABdhPJwqWbDVaV+CcvGL8CSuWa16nxDIfbBePTuOUKA/eFm+eVO37actySnhGRUDPphvU8VTsdBqzw==
-X-Received: by 2002:a17:90a:c982:: with SMTP id w2mr13947pjt.30.1632156638796;
-        Mon, 20 Sep 2021 09:50:38 -0700 (PDT)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com. [209.85.210.169])
-        by smtp.gmail.com with ESMTPSA id c4sm16589175pga.4.2021.09.20.09.50.38
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Sep 2021 09:50:38 -0700 (PDT)
-Received: by mail-pf1-f169.google.com with SMTP id g14so16859119pfm.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 09:50:38 -0700 (PDT)
-X-Received: by 2002:a05:6e02:1847:: with SMTP id b7mr18604550ilv.180.1632156161095;
- Mon, 20 Sep 2021 09:42:41 -0700 (PDT)
+        bh=PC43tSgvhG7E0sEr+EdWjU4dUcDPCSX0FiAfZowtiZg=;
+        b=JPgO6RB8Ao6KlBZRpkbFlDJ58ZUEZUWbl//YqD2f+TU4s/WSyfoVvQE3lvBkor58HQ
+         08PmrVXcswUlpFBtDqFEB5GThpQ+kwRU5wsVHEXMmQXgnMEb3i2Ume85H6WVQsvafnQT
+         6weeltZ2Fy8lRE2cQmO9NfLFo3xYdGIfkC+a6V53KKVLFX8DUW0a46NJnw3zzFxsCIUD
+         AOp0IblcrrZCs0gZA75AO5eRB9xTu6du15I8mJplOIHDzoIB8y3+ZDAYcv4ZqGoUehEj
+         BE5AeKk2JvssRlS+ntZgcKNmcI9pwQdxgUlCb8PZwR+pJ/q2Pd97pZNrtZexWoj+zXpE
+         +RnA==
+X-Gm-Message-State: AOAM531KVeA7Jf93qm2C4QGqYCS4e8MGP8md6jR9NculbqLEEAyuJ3lj
+        98aXYQV7bk+J5vlzU47rs2yJh+b8C260WHptR937aw==
+X-Google-Smtp-Source: ABdhPJx5e1g4BROAxqXoTN8Q7cw00CNUSRPKmEtwEG/MNdxn3PAjt/9c1I+re1VC08Eb6LibgwFMTXauNkekkW2yQRk=
+X-Received: by 2002:a17:906:3a58:: with SMTP id a24mr17992046ejf.67.1632171491324;
+ Mon, 20 Sep 2021 13:58:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210914202202.1702601-1-dianders@chromium.org> <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-In-Reply-To: <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 20 Sep 2021 09:42:28 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
-Message-ID: <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Steev Klimaszewski <steev@kali.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lionel Debieve <lionel.debieve@st.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Walle <michael@walle.cc>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nishanth Menon <nm@ti.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>,
-        Robert Richter <rric@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
+References: <20210920190350.3860821-1-willmcvicker@google.com> <20210920190350.3860821-3-willmcvicker@google.com>
+In-Reply-To: <20210920190350.3860821-3-willmcvicker@google.com>
+From:   Will McVicker <willmcvicker@google.com>
+Date:   Mon, 20 Sep 2021 13:57:55 -0700
+Message-ID: <CABYd82YhCzLL8Bs0bMtC9cTFETtbKn8S1NXnP_254vHwzi4E3g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] soc: samsung: change SOC_SAMSUNG default config logic
+To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Tue, Sep 14, 2021 at 3:12 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+On Mon, Sep 20, 2021 at 12:04 PM Will McVicker <willmcvicker@google.com> wrote:
 >
-> On Tue, Sep 14, 2021 at 10:22 PM Douglas Anderson <dianders@chromium.org> wrote:
+> Switch the default logic to enable SOC_SAMSUNG and it's sub-configs to
+> be enabled by default via "default y if ARCH_EXYNOS" versus being
+> selected by the ARCH_EXYNOS config directly. This allows vendors to
+> disable these configs if they wish and provides additional flexibility
+> to modularize them in the presence of a generic kernel.
 >
-> > Version 5 of this series just fixes the panel ID encode macro to be
-> > cleaner and adds Jani's review tags.
-> >
-> > It could possibly be ready to land?
+> There are no .config differences with this change. The configs
+> SOC_SAMSUNG, EXYNOS_CHIPID, EXYNOS_PM_DOMAINS, and EXYNOS_PMU still
+> remain enabled by default.
 >
-> Definitely IMO, the kernel look so much better after this change,
-> so for the series:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
+> ---
+>  arch/arm64/Kconfig.platforms | 4 ----
+>  drivers/soc/samsung/Kconfig  | 4 ++++
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 3a66ed43088d..6a006490c9b9 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -91,14 +91,10 @@ config ARCH_BRCMSTB
+>
+>  config ARCH_EXYNOS
+>         bool "ARMv8 based Samsung Exynos SoC family"
+> -       select EXYNOS_CHIPID
+> -       select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+> -       select EXYNOS_PMU
+>         select HAVE_S3C_RTC if RTC_CLASS
+>         select PINCTRL
+>         select PINCTRL_EXYNOS
+>         select PM_GENERIC_DOMAINS if PM
+> -       select SOC_SAMSUNG
+>         help
+>           This enables support for ARMv8 based Samsung Exynos SoC family.
+>
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 5745d7e5908e..9402c02bc9de 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -4,6 +4,7 @@
+>  #
+>  menuconfig SOC_SAMSUNG
+>         bool "Samsung SoC driver support" if COMPILE_TEST
+> +       default y if ARCH_EXYNOS
+>
+>  if SOC_SAMSUNG
+>
+> @@ -15,6 +16,7 @@ config EXYNOS_ASV_ARM
+>  config EXYNOS_CHIPID
+>         bool "Exynos ChipID controller and ASV driver" if COMPILE_TEST
+>         depends on ARCH_EXYNOS || COMPILE_TEST
+> +       default y if ARCH_EXYNOS
+>         select EXYNOS_ASV_ARM if ARM && ARCH_EXYNOS
+>         select MFD_SYSCON
+>         select SOC_BUS
+> @@ -24,6 +26,7 @@ config EXYNOS_CHIPID
+>  config EXYNOS_PMU
+>         bool "Exynos PMU controller driver" if COMPILE_TEST
+>         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> +       default y if ARCH_EXYNOS
+>         select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
+>
+>  # There is no need to enable these drivers for ARMv8
+> @@ -34,6 +37,7 @@ config EXYNOS_PMU_ARM_DRIVERS
+>  config EXYNOS_PM_DOMAINS
+>         bool "Exynos PM domains" if COMPILE_TEST
+>         depends on (ARCH_EXYNOS && PM_GENERIC_DOMAINS) || COMPILE_TEST
+> +       default y if (ARCH_EXYNOS && PM_GENERIC_DOMAINS)
+>
+>  config SAMSUNG_PM_DEBUG
+>         bool "Samsung PM Suspend debug"
+> --
+> 2.33.0.464.g1972c5931b-goog
+>
 
-Pushed all 15 to drm-misc-next.
+Sorry I didn't see this patch sent yesterday:
+https://lore.kernel.org/lkml/CAGOxZ50i6URzUQ7o7V4m7MR=2TqSeD6qx5fQaQDs+5nEq4fa2A@mail.gmail.com/
 
-5540cf8f3e8d drm/panel-edp: Implement generic "edp-panel"s probed by EDID
-24e27de11560 drm/panel-edp: Don't re-read the EDID every time we power
-off the panel
-a64ad9c3e4a5 drm/panel-edp: Fix "prepare_to_enable" if panel doesn't handle HPD
-c46a4cc1403e drm/panel-edp: hpd_reliable shouldn't be subtraced from hpd_absent
-52824ca4502d drm/panel-edp: Better describe eDP panel delays
-9ea10a500045 drm/panel-edp: Split the delay structure out
-b6d5ffce11dd drm/panel-simple: Non-eDP panels don't need "HPD" handling
-3fd68b7b13c2 drm/panel-edp: Move some wayward panels to the eDP driver
-5f04e7ce392d drm/panel-edp: Split eDP panels out of panel-simple
-c0c11c70a6d0 arm64: defconfig: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
-310720875efa ARM: configs: Everyone who had PANEL_SIMPLE now gets PANEL_EDP
-e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
-d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from the EDID
-bac9c2948224 drm/edid: Break out reading block 0 of the EDID
-29145a566873 dt-bindings: drm/panel-simple-edp: Introduce generic eDP panels
+Looks like Krzysztof's patch covers my portion of the patch related to
+EXYNOS_CHIPID. I'll keep an eye on his patch as it goes through and
+will modify mine as needed since it's likely to come in after.
 
--Doug
+Thanks,
+Will
