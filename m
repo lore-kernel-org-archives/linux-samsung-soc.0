@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9669DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD25C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD9D610A8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1861160F25
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234825AbhITHTe (ORCPT
+        id S234824AbhITHTh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 03:19:34 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53842
+        Mon, 20 Sep 2021 03:19:37 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53862
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234778AbhITHTe (ORCPT
+        by vger.kernel.org with ESMTP id S234779AbhITHTf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 03:19:34 -0400
+        Mon, 20 Sep 2021 03:19:35 -0400
 Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DF11B3F32A
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 07:18:06 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 80DBE40261
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 07:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632122286;
-        bh=g/5RG3r3yZseQXLqjOW/OPcxsvmzNDs0bMtIh+wjazo=;
+        s=20210705; t=1632122288;
+        bh=swGJ1gN3O+A01G8QTLTNdHDVpdphD2BLeeNkqQuo/Sc=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=Rk5yJtnYQOjh8Bt7XBs/pZczD7mKoK+3dihEQTAMaDAQMbAuwV61WtNZICKdZWyo0
-         OfaCNYd9TSf7pDy4jfQVA8uofZ4oEtGK8vBr/ZjmHJbg5lUYMpyToDvDap/w/bC0Wl
-         aDwDqqVRURupVmDPslOU0VYsEa17B/K1ogoUYV+slWO4LuMeJFo/NoVkfhgfQ7iF1p
-         Cu9MWF8E+zngFUETaDa+PIHKYn6wY019TAO1HN8BdYqVZ1rayuK+WjDdJqZCoxYYvM
-         2ieOtccGOnQ4i0Vvq9DNDaw43hOiGgWEARhZM4tVRlpduktsnuSaPCKIJRIJLcZQrW
-         N8oOCqNLTe1JA==
-Received: by mail-wm1-f69.google.com with SMTP id c2-20020a7bc8420000b0290238db573ab7so5416871wml.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 00:18:06 -0700 (PDT)
+        b=iBQdk/xKpOAu30pawOebJFnbMkdXFn7R8Z9bLYM+X/F0N23/WWgRjnIm8Z4vG5Rov
+         gOaVRcapRrwoJP9dREeGO+rLBM1As0J13EpDKumUOqOM0pB/cx/nAsfoHcZPHBaaLL
+         dsJKi9F9/4BVCl0IdApiE4/LwaMzbj8JreSZLEUA2a6DdWMgsPD9NOQXwT9Qarl//W
+         4ojLQVBebD/vKAUwuk+LevW3nNN1vhhhkm+OFtrqUUS1AzpEaTn7qP+qrApJhvke6I
+         JD7/PK/mFmmCEpaXiYuB0BVdYFoWixijwjaWLiG0o+cR9+2T8oys+9NzWQKIlXNMPv
+         D6L2aTy+bJ9Gg==
+Received: by mail-wm1-f69.google.com with SMTP id 201-20020a1c04d2000000b0030b3e4fdcfbso5021003wme.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 00:18:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=g/5RG3r3yZseQXLqjOW/OPcxsvmzNDs0bMtIh+wjazo=;
-        b=Dpqj/JKQFQoBoBwADO7w2qgjRtWPoiRtLMhcStiVll7xe9LeNDGNaG/j9J+Yrw8ni6
-         XGrFlZJalnsQE1MRWxHkb6DMWHqKvx+eUzqfCzUTu4i/ZtZV5P8iBbPDzUwsyNQbeS0A
-         cn/zFlZr4TL63+HZN8lIB4+hcg26xjZU/Q6dxsi+GZmmd+CP2qtNU+73b0r6Luy1fYgN
-         pLmKUlzdzND3L7hE9+dPl58V4sWX0EmNxnv4+5jZyuyWy/vCovFlnZCUqjDAsQoDdMTT
-         ROcOlu6TtjOxTEoq4ZEURu2d5Ur9iBnZkTXetGy+jx5IwWIzCX3nM9SAOQxkCdsmvyP3
-         P6+w==
-X-Gm-Message-State: AOAM533o1Lts1k7HS4tMAjtmmZo6jVyaOcWB3A1wBpXxhcHVgg5teaHF
-        Hz0eYONOf5tSALRux9QGy7STuDw9evK4Nij3q03UOL/jahIVClc+8FMY+Lg4rHcESLIz6ZpmDZB
-        WgXO9FYgjUW6TFc2YFBq4vOrHRq8r5PzH7aDuj2u4CPq1hAxK
-X-Received: by 2002:adf:b7c5:: with SMTP id t5mr26612605wre.322.1632122286574;
-        Mon, 20 Sep 2021 00:18:06 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz09HTrwbItt4V4htloX64whzplHYzcpSmGaXTvrQepaoBp1J3Tpven9yjUCHjyNrL5/xX1aw==
-X-Received: by 2002:adf:b7c5:: with SMTP id t5mr26612589wre.322.1632122286380;
-        Mon, 20 Sep 2021 00:18:06 -0700 (PDT)
+        bh=swGJ1gN3O+A01G8QTLTNdHDVpdphD2BLeeNkqQuo/Sc=;
+        b=G4fGJIjgjADkyVC5i6xYo4D/Pm/A/UeWX7/amOkNOQbe8xxt7L1LoI0QgOQeoWapbF
+         YyQWJldd/4HNhyUGvIkPl0fkeoqnL9xjL25u2OjMhbDF61TfrYldHlVw2hSKi3XCK06W
+         Ky3hVuCUdZf/tMvrpEIYJEVAJPNTTEKhxIGMGmxH2GLq8gt6Az23emxysF3nOfsYyFCi
+         Ac00agkUgaSDQaNOLVSr/mB6LuoR+qrf0g+zdYQfm7unuaCU0vnj7RU4iGYkvalJLjVr
+         rkESmMIfsJorLGMdb6CMUEQKuivH8guYyMa3IUsNX7VJf1VNajn+X/fqbrqpO9z4mg6+
+         j3TA==
+X-Gm-Message-State: AOAM530s1HYdEqF7+yI5F50k88OgroYSs48kSmfQ8sYk4Gw7M5pkOBvH
+        wwG+jRGEE+z/CPPirv9OW6pHeaE9cNRKY+XAQZqLyhDKdAJbq7J1FMTQ5KSJNdklpuDutsoFAig
+        BNrdEXqQLnxrhpJ1kZOWdtfOsBGJioKI7QAinxu+oaoGBm2Bk
+X-Received: by 2002:a1c:4d01:: with SMTP id o1mr22731739wmh.61.1632122288058;
+        Mon, 20 Sep 2021 00:18:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzwD/PArfs9F4Roo/d4YvUWVOAOminsTVQuygI6zh+bxukqW4C/NtN2gDIjven3qWcbaSdyNw==
+X-Received: by 2002:a1c:4d01:: with SMTP id o1mr22731719wmh.61.1632122287863;
+        Mon, 20 Sep 2021 00:18:07 -0700 (PDT)
 Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id a202sm6990798wmd.15.2021.09.20.00.18.04
+        by smtp.gmail.com with ESMTPSA id a202sm6990798wmd.15.2021.09.20.00.18.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Sep 2021 00:18:05 -0700 (PDT)
+        Mon, 20 Sep 2021 00:18:07 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -75,9 +75,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 2/3] devfreq: exynos-ppmu: simplify parsing event-type from DT
-Date:   Mon, 20 Sep 2021 09:17:52 +0200
-Message-Id: <20210920071753.38560-2-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 3/3] ARM: dts: exynos: align PPMU event node names with dtschema
+Date:   Mon, 20 Sep 2021 09:17:53 +0200
+Message-Id: <20210920071753.38560-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
 References: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
@@ -87,46 +87,63 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When parsing devicetree, the function of_get_devfreq_events(), for each
-device child node, iterates over array of possible events "ppmu_events"
-till it finds one matching by node name.  When match is found the
-ppmu_events[i] points to element having both the name of the event and
-the counters ID.
-
-Each PPMU device child node might have an "event-name" property with the
-name of the event, however due to the design of devfreq it must be the
-same as the device node name.  If it is not the same, the devfreq client
-won't be able to use it via devfreq_event_get_edev_by_phandle().
-
-Since PPMU device child node name must be equal to the "event-name"
-property (event-name == ppmu_events[i].name), there is no need to find
-the counters ID by the "event-name".  Instead use ppmu_events[i].id
-which must be equal to it.
+Use hyphen instead of underscore and align the PPMU event node name with
+dtschema.  The event-name property must match the node name, by the
+design of devfreq events and PPMU driver.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/devfreq/event/exynos-ppmu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 541bd13ab61d..9b849d781116 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -566,13 +566,10 @@ static int of_get_devfreq_events(struct device_node *np,
- 			 * use default if not.
- 			 */
- 			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
--				int id;
- 				/* Not all registers take the same value for
- 				 * read+write data count.
- 				 */
--				id = __exynos_ppmu_find_ppmu_id(desc[j].name);
--
--				switch (id) {
-+				switch (ppmu_events[i].id) {
- 				case PPMU_PMNCNT0:
- 				case PPMU_PMNCNT1:
- 				case PPMU_PMNCNT2:
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index e23e8ffb093f..b2f30bea96ce 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -302,8 +302,8 @@ ppmu_dmc0_0: ppmu@10d00000 {
+ 			clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
+ 			clock-names = "ppmu";
+ 			events {
+-				ppmu_event3_dmc0_0: ppmu-event3-dmc0_0 {
+-					event-name = "ppmu-event3-dmc0_0";
++				ppmu_event3_dmc0_0: ppmu-event3-dmc0-0 {
++					event-name = "ppmu-event3-dmc0-0";
+ 				};
+ 			};
+ 		};
+@@ -314,8 +314,8 @@ ppmu_dmc0_1: ppmu@10d10000 {
+ 			clocks = <&clock CLK_PCLK_PPMU_DREX0_1>;
+ 			clock-names = "ppmu";
+ 			events {
+-				ppmu_event3_dmc0_1: ppmu-event3-dmc0_1 {
+-					event-name = "ppmu-event3-dmc0_1";
++				ppmu_event3_dmc0_1: ppmu-event3-dmc0-1 {
++					event-name = "ppmu-event3-dmc0-1";
+ 				};
+ 			};
+ 		};
+@@ -326,8 +326,8 @@ ppmu_dmc1_0: ppmu@10d60000 {
+ 			clocks = <&clock CLK_PCLK_PPMU_DREX1_0>;
+ 			clock-names = "ppmu";
+ 			events {
+-				ppmu_event3_dmc1_0: ppmu-event3-dmc1_0 {
+-					event-name = "ppmu-event3-dmc1_0";
++				ppmu_event3_dmc1_0: ppmu-event3-dmc1-0 {
++					event-name = "ppmu-event3-dmc1-0";
+ 				};
+ 			};
+ 		};
+@@ -338,8 +338,8 @@ ppmu_dmc1_1: ppmu@10d70000 {
+ 			clocks = <&clock CLK_PCLK_PPMU_DREX1_1>;
+ 			clock-names = "ppmu";
+ 			events {
+-				ppmu_event3_dmc1_1: ppmu-event3-dmc1_1 {
+-					event-name = "ppmu-event3-dmc1_1";
++				ppmu_event3_dmc1_1: ppmu-event3-dmc1-1 {
++					event-name = "ppmu-event3-dmc1-1";
+ 				};
+ 			};
+ 		};
 -- 
 2.30.2
 
