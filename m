@@ -2,157 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C9EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8B1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 10:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC1E760F58
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA2046108C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 10:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234899AbhITJkJ (ORCPT
+        id S235876AbhITKaW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:40:09 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63223 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234628AbhITJkI (ORCPT
+        Mon, 20 Sep 2021 06:30:22 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60350
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235873AbhITKaV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:40:08 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210920093835euoutp02a08495d984b2fcd7eb57904b87363d7b~mfj0gOPjS2710827108euoutp02T
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 09:38:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210920093835euoutp02a08495d984b2fcd7eb57904b87363d7b~mfj0gOPjS2710827108euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1632130716;
-        bh=e6isLm0fq/xkM6oDTJGwHszCngzBJExBJzDBgTBtJs0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=l/ElDmCoYjJa66ScBu2HKInHkEAD4KiX1K8uZXGwnOCzdZIkI2isYApN4VrMzvpr6
-         m9Pem7H6dlKDJb/BgdnWvtF8gjWNMlx6FNGCqatR6E12I18pz6vPoi4zQmwWfVSHPL
-         y5EVUGFBo+5s1aq8lhwNQb+DQ/pPqJrvVsyLk+2s=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210920093835eucas1p1c9dda5ed24ec95143ab290b506c8f2b8~mfjz7AyFA0165601656eucas1p1n;
-        Mon, 20 Sep 2021 09:38:35 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 50.0F.42068.B9658416; Mon, 20
-        Sep 2021 10:38:35 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210920093834eucas1p2a0187690220f466590d390b9775ced84~mfjzKw59e2473024730eucas1p2R;
-        Mon, 20 Sep 2021 09:38:34 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210920093834eusmtrp2bcae9c6411b3f96dcbeba51ad7144439~mfjzJwm1L2829128291eusmtrp22;
-        Mon, 20 Sep 2021 09:38:34 +0000 (GMT)
-X-AuditID: cbfec7f4-c71ff7000002a454-e7-6148569bd40a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.20.31287.A9658416; Mon, 20
-        Sep 2021 10:38:34 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20210920093833eusmtip24b53e66487ae49756c55d09b113c5c6e~mfjyXLVVq1258312583eusmtip2n;
-        Mon, 20 Sep 2021 09:38:33 +0000 (GMT)
-Subject: Re: [PATCH v2 0/3] devfreq: exynos-ppmu: conform to dt naming
- convention
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <04270892-0952-49ca-d9b7-eb8406e283ff@samsung.com>
-Date:   Mon, 20 Sep 2021 11:38:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.14.0
+        Mon, 20 Sep 2021 06:30:21 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7BFDE3F32A
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 10:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632133733;
+        bh=h1YWBhjma4M2GwmIPdG3QPXZrXZU7YAH22dk5VSYmW0=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=ilTwwVhcb7Nf6Kp7s4B+meoifEtgKXOZPE1sVizqUBM0WxzseF14SGKkqqIz4twTr
+         EgLj1sqa9gTr2Z7rtCtBC7ILXZAXSxD2gOIxT0xXJ0IXG/JL+ATjwsLst9DrePMJob
+         IYHBo5vJuEYJBO9MfTo2+xyt3K+abjUHamSk59xYF9umpv3cGm0gq0+A41Qy90X4rV
+         Td3Mw4Oh6HP03NFx9RkvvKH+pRlLHurr2T66Emsxo7Dr6QCkwS0eRtL3yPqozBuOQa
+         LOhfEaTsWVgucdJGdN0o0/PvIGMt7Yl3CUhHeiRG8gPE9czJ8jAD3k6ERnWijJEPQy
+         S63b5XyprKFZg==
+Received: by mail-wr1-f69.google.com with SMTP id z2-20020a5d4c82000000b0015b140e0562so5714535wrs.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 03:28:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h1YWBhjma4M2GwmIPdG3QPXZrXZU7YAH22dk5VSYmW0=;
+        b=2o05+Ab30a30dKKlVvyKcrDHItfTBsiawZcL/LfsM8sejVIbc7z7ltIwrQ72bBtbwx
+         z45Aa/MR725Y5hQSoRZiZUy3f1dyyy0S9DtiwYwtEpDnXNpDxopzd+NNv8YOdZFesT2d
+         2XIhEKYWWtdVjVsAQ1LtgQdrCbwm1WrGD0O4nHd4W9khegTBCJyGd8QWCjQtNFoupuXE
+         SA/0Gr5o+KVwRoAh705NDxuCzLviKHpiPuG7G+lhe4+z4Jr89gAvZtehChWOWdosDCvO
+         Fq5RqR27NnPlMQ/x4o+chJc9jC2577ne4LSPZX8WNs5/mSbkq0UxNnEHqpNe1R7fj53/
+         b1RA==
+X-Gm-Message-State: AOAM532WYusazS78yl37SDf+wmBulzflwVIET+G3jOeqMLi8q/NyMDa5
+        TMha/OmyTixGxuIeYDRtBQA4dAd2duSsCvHAZcZ8EmYf7H6BKgX3Ch8lswUfulTNOneUcqrK9J4
+        x5sFLTIB9KGlBanyM1KUOivPyX5gA67XFiyk3oX5BQmmTlvp7
+X-Received: by 2002:a7b:c947:: with SMTP id i7mr23403115wml.179.1632133733198;
+        Mon, 20 Sep 2021 03:28:53 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw8roJ7mxUuaEl5Dmc1d3O4yyBSyyeQBPXjTbcVZynN4bU2hmO4ka5BX3dZbMKlKHujyenKwQ==
+X-Received: by 2002:a7b:c947:: with SMTP id i7mr23403105wml.179.1632133733070;
+        Mon, 20 Sep 2021 03:28:53 -0700 (PDT)
+Received: from [192.168.2.20] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.gmail.com with ESMTPSA id c185sm14249104wma.8.2021.09.20.03.28.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Sep 2021 03:28:52 -0700 (PDT)
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: select CONFIG_MFD_CORE
+To:     Arnd Bergmann <arnd@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210920100613.1613919-1-arnd@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <ec078007-4d70-aa24-3a18-5b1cfb9cba25@canonical.com>
+Date:   Mon, 20 Sep 2021 12:28:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210920100613.1613919-1-arnd@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7qzwzwSDZ71ClhsnLGe1eL6l+es
-        FvOPnGO12Pj2B5PF2aY37BabHl9jtbi8aw6bxefeI4wWM87vY7K43biCzaJ17xF2i/anL5kd
-        eDxmNfSyeWxa1cnmsXlJvUffllWMHp83yQWwRnHZpKTmZJalFunbJXBlXJh8hbXgLkfFlT3N
-        7A2Mk9m7GDk5JARMJK7NmsHSxcjFISSwglHi34FeJgjnC6NEx95PzCBVQgKfGSUeTbCD6fi4
-        +gkbRNFyoPiLD4wQzkdGiYk3b7OAVAkLBEucXLsaLCEi8I9JYs/+BYwgCWaBVIn/D3vAxrIJ
-        GEp0ve1iA7F5Bewkmr73gjWzCKhKXP3ZCnagqECyxLS/TcwQNYISJ2c+AavhFHCXaDx+AWqm
-        vMT2t3OYIWxxiVtP5oP9ICHwg0PiTMMhJoi7XSSunN/ADGELS7w6vgUaAjIS/3fCNDQzSjw8
-        t5YdwulhlLjcNIMRospa4s65X0CncgCt0JRYv0sfIuwosWDhEkaQsIQAn8SNt4IQR/BJTNo2
-        nRkizCvR0SYEUa0mMev4Ori1By9cYp7AqDQLyWuzkLwzC8k7sxD2LmBkWcUonlpanJueWmyU
-        l1quV5yYW1yal66XnJ+7iRGYtk7/O/5lB+PyVx/1DjEycTAeYpTgYFYS4U194pYoxJuSWFmV
-        WpQfX1Sak1p8iFGag0VJnDdpy5p4IYH0xJLU7NTUgtQimCwTB6dUA5OxMV/3rL6NM+ZFrM8L
-        7QjgCwuWTK6IL7ylurr39+4nz7/O5PXKZVqpsHRJTFHan8jOs4EH03Q+TIhPZZPIl0+ZdVhW
-        QPv9JvHdN9vVPM66fGNIn6TL7WXLoPu4tsAseecMW4436z5/97apf3STKXyKVfePrWe3rrXp
-        udywwqLAXNT1ivx0dv2TMdsrjG7sFfmhmMUj/sNVjd+Y06Lza/L7O7/X/76ufPa8zJI/JssX
-        f1/oWVz43pV1YpnrOZPmvFWzpwn/DblWF1yel7F40baHNRcn7b0QrJWWsGRG1Zqd9V15tfcV
-        8iP5rM1/Xv13XeVG9eF8xTmHHdaZnAx8pDZ1/f3gv8kJLetyNqXVvFdiKc5INNRiLipOBACp
-        dacpygMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsVy+t/xe7qzwjwSDXrmSVlsnLGe1eL6l+es
-        FvOPnGO12Pj2B5PF2aY37BabHl9jtbi8aw6bxefeI4wWM87vY7K43biCzaJ17xF2i/anL5kd
-        eDxmNfSyeWxa1cnmsXlJvUffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY
-        6hkam8daGZkq6dvZpKTmZJalFunbJehlXJh8hbXgLkfFlT3N7A2Mk9m7GDk5JARMJD6ufsLW
-        xcjFISSwlFHiYsckZoiEjMTJaQ2sELawxJ9rXVBF7xklus78A+sWFgiWOLl2NSOILSLwj0ni
-        0VdDEJtZIFVi+sQP7BANsxgl7rz9CTaJTcBQoustyCRODl4BO4mm770sIDaLgKrE1Z+tYENF
-        BZIl3r7+zgRRIyhxcuYTsBpOAXeJxuMXGCEWmEnM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQ
-        tM9C0jILScssJC0LGFlWMYqklhbnpucWG+oVJ+YWl+al6yXn525iBMbptmM/N+9gnPfqo94h
-        RiYOxkOMEhzMSiK8qU/cEoV4UxIrq1KL8uOLSnNSiw8xmgL9M5FZSjQ5H5go8kriDc0MTA1N
-        zCwNTC3NjJXEebfOXRMvJJCeWJKanZpakFoE08fEwSnVwHRI5pkaR6q8kamo8/UDF0KWXtwS
-        pVW7u3Tm+6o9dg0bpnmWbinYOD9HeetysU/6exx4NqlOVN89Syv/b9nSk3leb+fOOSEYGRZs
-        enJqTkBiUnHsJPEsnYAeRlFTCYFVBSFL/u3kDxVerquSvYyhgyUx1eWD4uROxf5H2w8KPhQq
-        yOzWfV3cltq4aE179+bfGz2NDXVsWTgvmU/j87fOYFTzWFzZwdW6mPP9J/b7vybKa75w/Kix
-        J0tswbHdv3gVc8MW7zQLqmLbo363kokvZGuETMb69/9XqBW0i/22OGLBOPWUq1nwbTHNmcd6
-        HXVcV0ywULVcekeiNL04xUf62J8srXD1b2y9dtzLgsSVWIozEg21mIuKEwHHLAXgXAMAAA==
-X-CMS-MailID: 20210920093834eucas1p2a0187690220f466590d390b9775ced84
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210920071554eucas1p195184c73f79e7bc12ea83cb43e14adc5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210920071554eucas1p195184c73f79e7bc12ea83cb43e14adc5
-References: <CGME20210920071554eucas1p195184c73f79e7bc12ea83cb43e14adc5@eucas1p1.samsung.com>
-        <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20.09.2021 09:15, Krzysztof Kozlowski wrote:
-> My previous patch 3/3 (ARM: dts: exynos: align PPMU event node names
-> with dtschema) caused issues reported by Marek [1].
->
-> Tested on Exynos5422. Testing on Exynso5433 board would be very useful.
+On 20/09/2021 12:06, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Using devm_mfd_add_devices() fails if no driver selects the
+> MFD core code:
+> 
+> aarch64-linux-ld: drivers/soc/samsung/exynos-pmu.o: in function `exynos_pmu_probe':
+> exynos-pmu.c:(.text+0xa0): undefined reference to `devm_mfd_add_devices'
+> 
+> Add the missing select statement.
+> 
+> Fixes: 93618e344a5e ("soc: samsung: exynos-pmu: instantiate clkout driver as MFD")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/soc/samsung/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Works fine on both 5422 and 5433.
+Hi Arnd,
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Thanks for the patch but this was already committed few days ago from
+different author:
+https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=next/drivers&id=e37ef6dcdb1f4738b01cec7fb7be46af07816af9
 
-> Changes since v1:
-> 1. New patches 1/3 and 2/3.
-> 2. Patch 3/3: rename event-name to match node name.
->
-> [1] https://lore.kernel.org/linux-samsung-soc/0212a402-1490-0f8f-005e-32bb6f636a13@canonical.com/T/#m570c0257204af553fe11f9122551311beb56c15e
->
-> Best regards,
-> Krzysztof
->
->
-> Krzysztof Kozlowski (3):
->    devfreq: exynos-ppmu: use node names with hyphens
->    devfreq: exynos-ppmu: simplify parsing event-type from DT
->    ARM: dts: exynos: align PPMU event node names with dtschema
->
->   arch/arm/boot/dts/exynos5420.dtsi   | 16 ++++++++--------
->   drivers/devfreq/event/exynos-ppmu.c | 12 +++++++-----
->   2 files changed, 15 insertions(+), 13 deletions(-)
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
 
+Best regards,
+Krzysztof
