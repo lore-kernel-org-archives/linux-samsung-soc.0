@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214DBC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9669DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC49A60F25
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DD9D610A8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 07:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234682AbhITHT0 (ORCPT
+        id S234825AbhITHTe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 03:19:26 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:49424
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234683AbhITHT0 (ORCPT
+        Mon, 20 Sep 2021 03:19:34 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:53842
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234778AbhITHTe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 03:19:26 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        Mon, 20 Sep 2021 03:19:34 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id F1EDF4018F
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 07:17:58 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DF11B3F32A
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 07:18:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632122278;
-        bh=K975uWTYLGkLbkETM9T3s7Y45GbdozAN4S3IGUhBhMo=;
+        s=20210705; t=1632122286;
+        bh=g/5RG3r3yZseQXLqjOW/OPcxsvmzNDs0bMtIh+wjazo=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=BbbSf2IYQkzLy8pUdFju1wufZSgPWXMAomvadMGdNKyBBalbNIze4cHXOBvWrhknl
-         obcC3j4W6gpe8cvCaZ/5iqdoi7YWyjA5CpjLzs8TCr5DYVwVp6iPC5om1Z1XmJ+Fxj
-         tRZA2WBxJIQKDxdEpc8gX87DwGobbQTG6Zl14qJ/KYenVQ5o+o9PYzxklQCRkvVu9s
-         2hT27PIpwMdf4jiGqbsu/8HM26pVgvotkiXHvcU8n5ty/JfvrbhG5Yf7NTim+y+Buf
-         zTH+kHxefhvnCg4YlmLMh5xn/a3aTPbWbgyLxPVtdEy17dSExE96oej2ugdrLnpXsl
-         hruUlW7AYCL3w==
-Received: by mail-wr1-f69.google.com with SMTP id x2-20020a5d54c2000000b0015dfd2b4e34so5467815wrv.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 00:17:58 -0700 (PDT)
+        b=Rk5yJtnYQOjh8Bt7XBs/pZczD7mKoK+3dihEQTAMaDAQMbAuwV61WtNZICKdZWyo0
+         OfaCNYd9TSf7pDy4jfQVA8uofZ4oEtGK8vBr/ZjmHJbg5lUYMpyToDvDap/w/bC0Wl
+         aDwDqqVRURupVmDPslOU0VYsEa17B/K1ogoUYV+slWO4LuMeJFo/NoVkfhgfQ7iF1p
+         Cu9MWF8E+zngFUETaDa+PIHKYn6wY019TAO1HN8BdYqVZ1rayuK+WjDdJqZCoxYYvM
+         2ieOtccGOnQ4i0Vvq9DNDaw43hOiGgWEARhZM4tVRlpduktsnuSaPCKIJRIJLcZQrW
+         N8oOCqNLTe1JA==
+Received: by mail-wm1-f69.google.com with SMTP id c2-20020a7bc8420000b0290238db573ab7so5416871wml.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 00:18:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K975uWTYLGkLbkETM9T3s7Y45GbdozAN4S3IGUhBhMo=;
-        b=0WRHtIDy+JLqyDuOQrVHUFSqOIveDl+CdA3JdkXve6ftGaZBhFZ9or6LBPpcWBDFTf
-         luk6he7ZmTpzwxOEJO+dWDaeHl5skTyiCqP2yAp5c6+5JN53nCEELXX/Na7+Jtf3QFkn
-         +/3pS+HjdPujZXMwH978BjLVB9HtJkBT6dndVXGmhYEMZWm850g8a5slvDurzZA8aSNB
-         i4eajJOLf3IGkHPjn5f2W88cS0HyBYxaV3j3bdH7MiUwO414knJRFgVpuqK4tZNRV7QE
-         RUYBdb7iAP1iyHCm6eScfIoAcDFr6IKqvpFAMy5uPjNqOu+pigi3jcOnlZaOXvhU26gv
-         FKmA==
-X-Gm-Message-State: AOAM5315OGNjkUZ6O4L5s5FDpR4Z1y4TZ/b84pfmZ/eOjLqArKgt2yXC
-        MD0ATG7tXnf5Fs2v69S1JbymzynjRElVrmChtJPSVVN2P/tgp4jSn+9qlvyFvyJnzamPdFmJ0Ij
-        VU6JN/+prlTEH9EoScMV85vxc/o1OBXG/gA7BEnaMj/ClM7iz
-X-Received: by 2002:a5d:668c:: with SMTP id l12mr25958818wru.436.1632122278681;
-        Mon, 20 Sep 2021 00:17:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzW4RCYsQAwDVi//vMFGQ0H5hMTUOpmow8nulLe+L4fg0CAxTaF+uxW5s557hhH8OPbHt+Sdw==
-X-Received: by 2002:a5d:668c:: with SMTP id l12mr25958797wru.436.1632122278512;
-        Mon, 20 Sep 2021 00:17:58 -0700 (PDT)
+        bh=g/5RG3r3yZseQXLqjOW/OPcxsvmzNDs0bMtIh+wjazo=;
+        b=Dpqj/JKQFQoBoBwADO7w2qgjRtWPoiRtLMhcStiVll7xe9LeNDGNaG/j9J+Yrw8ni6
+         XGrFlZJalnsQE1MRWxHkb6DMWHqKvx+eUzqfCzUTu4i/ZtZV5P8iBbPDzUwsyNQbeS0A
+         cn/zFlZr4TL63+HZN8lIB4+hcg26xjZU/Q6dxsi+GZmmd+CP2qtNU+73b0r6Luy1fYgN
+         pLmKUlzdzND3L7hE9+dPl58V4sWX0EmNxnv4+5jZyuyWy/vCovFlnZCUqjDAsQoDdMTT
+         ROcOlu6TtjOxTEoq4ZEURu2d5Ur9iBnZkTXetGy+jx5IwWIzCX3nM9SAOQxkCdsmvyP3
+         P6+w==
+X-Gm-Message-State: AOAM533o1Lts1k7HS4tMAjtmmZo6jVyaOcWB3A1wBpXxhcHVgg5teaHF
+        Hz0eYONOf5tSALRux9QGy7STuDw9evK4Nij3q03UOL/jahIVClc+8FMY+Lg4rHcESLIz6ZpmDZB
+        WgXO9FYgjUW6TFc2YFBq4vOrHRq8r5PzH7aDuj2u4CPq1hAxK
+X-Received: by 2002:adf:b7c5:: with SMTP id t5mr26612605wre.322.1632122286574;
+        Mon, 20 Sep 2021 00:18:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz09HTrwbItt4V4htloX64whzplHYzcpSmGaXTvrQepaoBp1J3Tpven9yjUCHjyNrL5/xX1aw==
+X-Received: by 2002:adf:b7c5:: with SMTP id t5mr26612589wre.322.1632122286380;
+        Mon, 20 Sep 2021 00:18:06 -0700 (PDT)
 Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id a202sm6990798wmd.15.2021.09.20.00.17.56
+        by smtp.gmail.com with ESMTPSA id a202sm6990798wmd.15.2021.09.20.00.18.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Sep 2021 00:17:57 -0700 (PDT)
+        Mon, 20 Sep 2021 00:18:05 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -75,9 +75,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 1/3] devfreq: exynos-ppmu: use node names with hyphens
-Date:   Mon, 20 Sep 2021 09:17:51 +0200
-Message-Id: <20210920071753.38560-1-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 2/3] devfreq: exynos-ppmu: simplify parsing event-type from DT
+Date:   Mon, 20 Sep 2021 09:17:52 +0200
+Message-Id: <20210920071753.38560-2-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
 References: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
@@ -87,42 +87,46 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Devicetree naming convention requires device node names to use hyphens
-instead of underscore, so Exynos5422 devfreq event name
-"ppmu-event3-dmc0_0" should be "ppmu-event3-dmc0-0".  Newly introduced
-dtschema enforces this, however the driver still expects old name with
-an underscore.
+When parsing devicetree, the function of_get_devfreq_events(), for each
+device child node, iterates over array of possible events "ppmu_events"
+till it finds one matching by node name.  When match is found the
+ppmu_events[i] points to element having both the name of the event and
+the counters ID.
 
-Add new events for Exynos5422 while still accepting old name for
-backwards compatibility.
+Each PPMU device child node might have an "event-name" property with the
+name of the event, however due to the design of devfreq it must be the
+same as the device node name.  If it is not the same, the devfreq client
+won't be able to use it via devfreq_event_get_edev_by_phandle().
+
+Since PPMU device child node name must be equal to the "event-name"
+property (event-name == ppmu_events[i].name), there is no need to find
+the counters ID by the "event-name".  Instead use ppmu_events[i].id
+which must be equal to it.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/devfreq/event/exynos-ppmu.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/devfreq/event/exynos-ppmu.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 17ed980d9099..541bd13ab61d 100644
+index 541bd13ab61d..9b849d781116 100644
 --- a/drivers/devfreq/event/exynos-ppmu.c
 +++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -94,11 +94,16 @@ static struct __exynos_ppmu_events {
- 	PPMU_EVENT(d1-general),
- 	PPMU_EVENT(d1-rt),
- 
--	/* For Exynos5422 SoC */
-+	/* For Exynos5422 SoC, deprecated (backwards compatible) */
- 	PPMU_EVENT(dmc0_0),
- 	PPMU_EVENT(dmc0_1),
- 	PPMU_EVENT(dmc1_0),
- 	PPMU_EVENT(dmc1_1),
-+	/* For Exynos5422 SoC */
-+	PPMU_EVENT(dmc0-0),
-+	PPMU_EVENT(dmc0-1),
-+	PPMU_EVENT(dmc1-0),
-+	PPMU_EVENT(dmc1-1),
- };
- 
- static int __exynos_ppmu_find_ppmu_id(const char *edev_name)
+@@ -566,13 +566,10 @@ static int of_get_devfreq_events(struct device_node *np,
+ 			 * use default if not.
+ 			 */
+ 			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
+-				int id;
+ 				/* Not all registers take the same value for
+ 				 * read+write data count.
+ 				 */
+-				id = __exynos_ppmu_find_ppmu_id(desc[j].name);
+-
+-				switch (id) {
++				switch (ppmu_events[i].id) {
+ 				case PPMU_PMNCNT0:
+ 				case PPMU_PMNCNT1:
+ 				case PPMU_PMNCNT2:
 -- 
 2.30.2
 
