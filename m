@@ -2,106 +2,157 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C1AC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 08:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C9EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE38610CE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 08:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1E760F58
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233959AbhITIQf (ORCPT
+        id S234899AbhITJkJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 04:16:35 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51132
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233908AbhITIQf (ORCPT
+        Mon, 20 Sep 2021 05:40:09 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63223 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234628AbhITJkI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 04:16:35 -0400
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3A10C3F048
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 08:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632125708;
-        bh=RbnF5hAV4mmqgOMwbx5PeFWTjk5AbWZGdxLNmlZ/+u0=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=JksSR1ZgccMORnY/fktNqkJzaCTW6uIg1wb4B4tPeAOwrdnWn1Hqwa71bu0W7MgPG
-         M9rgxz3ycVEaVOfkVfRTCgJh/H0aWKeEjJybfuTlIURhiM7Jxdjk9iqLb1ONVDGgch
-         NhvaUQowRwh+Fct+nXOjg9tx6lCxmcG/IkI3Y0ndJf+Aa+T3B7u6uygAG5+klETTbw
-         5qDNeykZVmN4UeeMTSxi8uR1yY6iidOIKlSefZTMwqW9jXIOlXzyQniJKspe0xWomc
-         Ylc4BJ2uqRZWvJwmjcc559hqAbWB3yqscdQmlyQp7LqnSh2qVmjNCSZkYdJ67thf2r
-         pJGUqPox7Zarw==
-Received: by mail-wr1-f72.google.com with SMTP id f7-20020a5d50c7000000b0015e288741a4so5520912wrt.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 01:15:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RbnF5hAV4mmqgOMwbx5PeFWTjk5AbWZGdxLNmlZ/+u0=;
-        b=rwLoUplKizW7xxDaKpVKNcmRrGR2pelQgazKqL9/v3F0oK71QmXHC2Lat56q1fagmt
-         ZSjMhQ11q2TAXjBBi8Sty3qnlANi705mIzUQx3hNntdxK4+yz8T1dxQfC3Mfk59taP0U
-         Lppr0FqPPugtGF8YoFZoXfmIEDLSzjGf5fNCU9PRzcJqKr1d78AwrmJIBkm/gbVCTM95
-         P4qsWa0DBtnys6l3zPdpluinsGe0YhaEafhzWnqCtounfP5cAqQ74fQwCVraJZa5tcx+
-         h/hX5pukiY/knciqDgC34PQraO0BJVBFhbZIgdGuzigWH4p/EN0jxkgew7TxCOYOYA8c
-         I4fw==
-X-Gm-Message-State: AOAM531icpGEJgToecai2f3pe7t3LYkxiX9QrxFwaEiQ8FD/UkU6d0TG
-        I8+r5+vUYSojqO8CGHnESylkrPILk+D/98EkNrDIQxlQ0wtmvSPaDW9yww9PkbMQjptlOdoQxQt
-        AUsCDUol9i6DmFXaCKxy7BaAyQBjjPA4Yq90FOPgTLIoYcawX
-X-Received: by 2002:a5d:4e47:: with SMTP id r7mr27168651wrt.417.1632125707970;
-        Mon, 20 Sep 2021 01:15:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyI1Laop0HHhwm29eWDYQDKvcafzMKgfc+Q8LVzR67h+bw1jUc88e3rl9xSTyZK3r5x8IVxrg==
-X-Received: by 2002:a5d:4e47:: with SMTP id r7mr27168627wrt.417.1632125707785;
-        Mon, 20 Sep 2021 01:15:07 -0700 (PDT)
-Received: from kozik-lap.lan (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id b207sm1947652wmb.29.2021.09.20.01.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Sep 2021 01:15:07 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Jason Wang <wangborong@cdjrlc.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 20 Sep 2021 05:40:08 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210920093835euoutp02a08495d984b2fcd7eb57904b87363d7b~mfj0gOPjS2710827108euoutp02T
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Sep 2021 09:38:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210920093835euoutp02a08495d984b2fcd7eb57904b87363d7b~mfj0gOPjS2710827108euoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1632130716;
+        bh=e6isLm0fq/xkM6oDTJGwHszCngzBJExBJzDBgTBtJs0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=l/ElDmCoYjJa66ScBu2HKInHkEAD4KiX1K8uZXGwnOCzdZIkI2isYApN4VrMzvpr6
+         m9Pem7H6dlKDJb/BgdnWvtF8gjWNMlx6FNGCqatR6E12I18pz6vPoi4zQmwWfVSHPL
+         y5EVUGFBo+5s1aq8lhwNQb+DQ/pPqJrvVsyLk+2s=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210920093835eucas1p1c9dda5ed24ec95143ab290b506c8f2b8~mfjz7AyFA0165601656eucas1p1n;
+        Mon, 20 Sep 2021 09:38:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 50.0F.42068.B9658416; Mon, 20
+        Sep 2021 10:38:35 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20210920093834eucas1p2a0187690220f466590d390b9775ced84~mfjzKw59e2473024730eucas1p2R;
+        Mon, 20 Sep 2021 09:38:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210920093834eusmtrp2bcae9c6411b3f96dcbeba51ad7144439~mfjzJwm1L2829128291eusmtrp22;
+        Mon, 20 Sep 2021 09:38:34 +0000 (GMT)
+X-AuditID: cbfec7f4-c71ff7000002a454-e7-6148569bd40a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 18.20.31287.A9658416; Mon, 20
+        Sep 2021 10:38:34 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210920093833eusmtip24b53e66487ae49756c55d09b113c5c6e~mfjyXLVVq1258312583eusmtip2n;
+        Mon, 20 Sep 2021 09:38:33 +0000 (GMT)
+Subject: Re: [PATCH v2 0/3] devfreq: exynos-ppmu: conform to dt naming
+ convention
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk
-Subject: Re: [PATCH] ARM: s3c: Use strscpy to replace strlcpy
-Date:   Mon, 20 Sep 2021 10:15:04 +0200
-Message-Id: <163212570006.110243.10080683787518372101.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210906134656.101088-1-wangborong@cdjrlc.com>
-References: <20210906134656.101088-1-wangborong@cdjrlc.com>
+        linux-pm@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <04270892-0952-49ca-d9b7-eb8406e283ff@samsung.com>
+Date:   Mon, 20 Sep 2021 11:38:32 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
+        Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7qzwzwSDZ71ClhsnLGe1eL6l+es
+        FvOPnGO12Pj2B5PF2aY37BabHl9jtbi8aw6bxefeI4wWM87vY7K43biCzaJ17xF2i/anL5kd
+        eDxmNfSyeWxa1cnmsXlJvUffllWMHp83yQWwRnHZpKTmZJalFunbJXBlXJh8hbXgLkfFlT3N
+        7A2Mk9m7GDk5JARMJK7NmsHSxcjFISSwglHi34FeJgjnC6NEx95PzCBVQgKfGSUeTbCD6fi4
+        +gkbRNFyoPiLD4wQzkdGiYk3b7OAVAkLBEucXLsaLCEi8I9JYs/+BYwgCWaBVIn/D3vAxrIJ
+        GEp0ve1iA7F5Bewkmr73gjWzCKhKXP3ZCnagqECyxLS/TcwQNYISJ2c+AavhFHCXaDx+AWqm
+        vMT2t3OYIWxxiVtP5oP9ICHwg0PiTMMhJoi7XSSunN/ADGELS7w6vgUaAjIS/3fCNDQzSjw8
+        t5YdwulhlLjcNIMRospa4s65X0CncgCt0JRYv0sfIuwosWDhEkaQsIQAn8SNt4IQR/BJTNo2
+        nRkizCvR0SYEUa0mMev4Ori1By9cYp7AqDQLyWuzkLwzC8k7sxD2LmBkWcUonlpanJueWmyU
+        l1quV5yYW1yal66XnJ+7iRGYtk7/O/5lB+PyVx/1DjEycTAeYpTgYFYS4U194pYoxJuSWFmV
+        WpQfX1Sak1p8iFGag0VJnDdpy5p4IYH0xJLU7NTUgtQimCwTB6dUA5OxMV/3rL6NM+ZFrM8L
+        7QjgCwuWTK6IL7ylurr39+4nz7/O5PXKZVqpsHRJTFHan8jOs4EH03Q+TIhPZZPIl0+ZdVhW
+        QPv9JvHdN9vVPM66fGNIn6TL7WXLoPu4tsAseecMW4436z5/97apf3STKXyKVfePrWe3rrXp
+        udywwqLAXNT1ivx0dv2TMdsrjG7sFfmhmMUj/sNVjd+Y06Lza/L7O7/X/76ufPa8zJI/JssX
+        f1/oWVz43pV1YpnrOZPmvFWzpwn/DblWF1yel7F40baHNRcn7b0QrJWWsGRG1Zqd9V15tfcV
+        8iP5rM1/Xv13XeVG9eF8xTmHHdaZnAx8pDZ1/f3gv8kJLetyNqXVvFdiKc5INNRiLipOBACp
+        dacpygMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsVy+t/xe7qzwjwSDXrmSVlsnLGe1eL6l+es
+        FvOPnGO12Pj2B5PF2aY37BabHl9jtbi8aw6bxefeI4wWM87vY7K43biCzaJ17xF2i/anL5kd
+        eDxmNfSyeWxa1cnmsXlJvUffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY
+        6hkam8daGZkq6dvZpKTmZJalFunbJehlXJh8hbXgLkfFlT3N7A2Mk9m7GDk5JARMJD6ufsLW
+        xcjFISSwlFHiYsckZoiEjMTJaQ2sELawxJ9rXVBF7xklus78A+sWFgiWOLl2NSOILSLwj0ni
+        0VdDEJtZIFVi+sQP7BANsxgl7rz9CTaJTcBQoustyCRODl4BO4mm770sIDaLgKrE1Z+tYENF
+        BZIl3r7+zgRRIyhxcuYTsBpOAXeJxuMXGCEWmEnM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQ
+        tM9C0jILScssJC0LGFlWMYqklhbnpucWG+oVJ+YWl+al6yXn525iBMbptmM/N+9gnPfqo94h
+        RiYOxkOMEhzMSiK8qU/cEoV4UxIrq1KL8uOLSnNSiw8xmgL9M5FZSjQ5H5go8kriDc0MTA1N
+        zCwNTC3NjJXEebfOXRMvJJCeWJKanZpakFoE08fEwSnVwHRI5pkaR6q8kamo8/UDF0KWXtwS
+        pVW7u3Tm+6o9dg0bpnmWbinYOD9HeetysU/6exx4NqlOVN89Syv/b9nSk3leb+fOOSEYGRZs
+        enJqTkBiUnHsJPEsnYAeRlFTCYFVBSFL/u3kDxVerquSvYyhgyUx1eWD4uROxf5H2w8KPhQq
+        yOzWfV3cltq4aE179+bfGz2NDXVsWTgvmU/j87fOYFTzWFzZwdW6mPP9J/b7vybKa75w/Kix
+        J0tswbHdv3gVc8MW7zQLqmLbo363kokvZGuETMb69/9XqBW0i/22OGLBOPWUq1nwbTHNmcd6
+        HXVcV0ywULVcekeiNL04xUf62J8srXD1b2y9dtzLgsSVWIozEg21mIuKEwHHLAXgXAMAAA==
+X-CMS-MailID: 20210920093834eucas1p2a0187690220f466590d390b9775ced84
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-RootMTR: 20210920071554eucas1p195184c73f79e7bc12ea83cb43e14adc5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210920071554eucas1p195184c73f79e7bc12ea83cb43e14adc5
+References: <CGME20210920071554eucas1p195184c73f79e7bc12ea83cb43e14adc5@eucas1p1.samsung.com>
+        <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 6 Sep 2021 21:46:56 +0800, Jason Wang wrote:
-> The strlcpy should not be used because it doesn't limit the source
-> length. As linus says, it's a completely useless function if you
-> can't implicitly trust the source string - but that is almost always
-> why people think they should use it! All in all the BSD function
-> will lead some potential bugs.
-> 
-> But the strscpy doesn't require reading memory from the src string
-> beyond the specified "count" bytes, and since the return value is
-> easier to error-check than strlcpy()'s. In addition, the implementation
-> is robust to the string changing out from underneath it, unlike the
-> current strlcpy() implementation.
-> 
-> [...]
+On 20.09.2021 09:15, Krzysztof Kozlowski wrote:
+> My previous patch 3/3 (ARM: dts: exynos: align PPMU event node names
+> with dtschema) caused issues reported by Marek [1].
+>
+> Tested on Exynos5422. Testing on Exynso5433 board would be very useful.
 
-Applied, thanks!
+Works fine on both 5422 and 5433.
 
-[1/1] ARM: s3c: Use strscpy to replace strlcpy
-      commit: aa519471715ce73034ffaa52fc85681de31c1acf
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Best regards,
+> Changes since v1:
+> 1. New patches 1/3 and 2/3.
+> 2. Patch 3/3: rename event-name to match node name.
+>
+> [1] https://lore.kernel.org/linux-samsung-soc/0212a402-1490-0f8f-005e-32bb6f636a13@canonical.com/T/#m570c0257204af553fe11f9122551311beb56c15e
+>
+> Best regards,
+> Krzysztof
+>
+>
+> Krzysztof Kozlowski (3):
+>    devfreq: exynos-ppmu: use node names with hyphens
+>    devfreq: exynos-ppmu: simplify parsing event-type from DT
+>    ARM: dts: exynos: align PPMU event node names with dtschema
+>
+>   arch/arm/boot/dts/exynos5420.dtsi   | 16 ++++++++--------
+>   drivers/devfreq/event/exynos-ppmu.c | 12 +++++++-----
+>   2 files changed, 15 insertions(+), 13 deletions(-)
+>
+Best regards
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
