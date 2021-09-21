@@ -2,52 +2,65 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD69C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Sep 2021 07:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E28C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Sep 2021 08:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7A86120A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Sep 2021 07:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84BA061181
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Sep 2021 08:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbhIUHwh (ORCPT
+        id S231184AbhIUINR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Sep 2021 03:52:37 -0400
-Received: from mail-vs1-f52.google.com ([209.85.217.52]:38417 "EHLO
-        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230136AbhIUHwh (ORCPT
+        Tue, 21 Sep 2021 04:13:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231168AbhIUINR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Sep 2021 03:52:37 -0400
-Received: by mail-vs1-f52.google.com with SMTP id y141so7858387vsy.5;
-        Tue, 21 Sep 2021 00:51:09 -0700 (PDT)
+        Tue, 21 Sep 2021 04:13:17 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4D9C061575
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Sep 2021 01:11:48 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id q11so36617167wrr.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Sep 2021 01:11:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ydWqOkie+tr01fbOoWOEuomByeEyt2VRZxMCMJGoWKQ=;
+        b=m90vVQ0/g+glJejnMxIyN9vpccBAGiYy5DSylPUvFlECP6wxT9gbfdgf/ycu0oLZzn
+         rvf7DeSGFkOCsKdA7GF/xT3QIO9x69g7b8g6DO2wLzrFDDUdkTmkRo1Jslj9UBik09iy
+         Fxf6Xtj4tyaeCnlf5VypiGZnDNBqEAK9cflPq1vlmlZHNmzYLmtowCWGtbfDyCSqVmXZ
+         PVr7fSmLRNfmLKsPvvqqubuAFw1i/5smUFViSPgTYEnVqikvaUi3JZNJ1kBF5xg1JNYI
+         MgJePs34Jdh5p0Sjk7u4jfVS/fTtHkdJyc11AEKcD/0tuf9lnJ5ZKQncr0uHn1hlHGKp
+         k7SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8/N4irXZXXoqT9WU1NeZNtea91/GmlWjvw07gZnEdTY=;
-        b=VZsnPjqOc1S6CsBhivezYB6nPC7RbRUfNYPuOeMhub8Lov3xz7ft/TQkbhPQvOGlUQ
-         b+tB6H8H64GIEDPV7PKsskMZHfBU2NbVIb001bUwf0gM3aKlImQFLoB/sIDQ8Uc6js8X
-         1R6T6U3P7VwjDE6qUryDvf6sh5FiJ74674WM5aWycnFa+KVmtokZuQKlOqMc8DH6A1bI
-         JtJQiL/4p0Z6sG4CHF/8akqbFR8PUShqgBs1gd2IEDsRmQCJh9s8P5NEraI/sXqf4HRC
-         0Pe4bziE4NJKOsNiMONL5KJdBqneMjHjg9YP2L4xwTSIf0s5svH3ZZEG5WbClGMm/W8j
-         5SXg==
-X-Gm-Message-State: AOAM533cOxsO17fXr8JulND28XLFNHCTfZoXTvrfZ6g+/E8odW7zWozx
-        6jkqlNTRW1BLfyuZvqmqGbcriZiw6A5RUFsdU2s=
-X-Google-Smtp-Source: ABdhPJzYZGsZ4dZcqwbCdynpvilMS743u09VJ9Cuu54KRX/0QCI+aNebqqkhz49kmbioxdtwj7MTDXk6FsjhvAqZnFE=
-X-Received: by 2002:a67:2c58:: with SMTP id s85mr2438234vss.35.1632210668743;
- Tue, 21 Sep 2021 00:51:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210920190350.3860821-1-willmcvicker@google.com>
- <20210920190350.3860821-2-willmcvicker@google.com> <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
-In-Reply-To: <a8d40b96-bcb2-5eb6-b0e5-c20c14471c8a@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 Sep 2021 09:50:57 +0200
-Message-ID: <CAMuHMdWdHF49qj+qV-DnbDDv14J3y98TPHd_6y_i7o7_azhErg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] clk: samsung: change COMMON_CLK_SAMSUNG default
- config logic
-To:     Krzysztof Kozlowski <krzk@kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ydWqOkie+tr01fbOoWOEuomByeEyt2VRZxMCMJGoWKQ=;
+        b=LtKNx/z5jalMhIRM3ij0kDD1zdG7AlhtNszCYqsv7jMAHO3sZ0bQHPCHH6VoUHoA3t
+         UyUVk+ExO08cYclCUQdk0laGiN893BuO7YlxqGCH4AIyXML6LobxQhGCll54i5VasiZH
+         BVq+jYiIjsd2rsqXi7WJJ7s31s/bziN8aEzgzSp0hIDFeFXnMxsNsPQU8s0hfK9l9+S9
+         3mLrTQLkxnW1DM2nYSo4a4pcWZDgylDv4bouEh9VXvsqm0rs8VJFqdG8B2UAxoOObLYv
+         YeDJW6eIw7ovMFkK7Fq624n5SW/wPDkimFMleJynQpLguAUl+XESkYfrU67nZznj2/H8
+         5mwQ==
+X-Gm-Message-State: AOAM533ELUWVsOg0BdV/ybbwJcL1dyXCfEZ8nxrV/tmWzEUNipO05ele
+        xZ1P4t6Dt8XQ9yI2DadVFC5KPA==
+X-Google-Smtp-Source: ABdhPJzv2vNo66rTcRBrAlohDVsFc3SMmKKr76F/SZVNAIZ9JZ7eBaIvwAaVxjt21dQdltK+QYYkLA==
+X-Received: by 2002:a5d:43cc:: with SMTP id v12mr33874060wrr.329.1632211907545;
+        Tue, 21 Sep 2021 01:11:47 -0700 (PDT)
+Received: from google.com ([95.148.6.233])
+        by smtp.gmail.com with ESMTPSA id j21sm18300805wrd.48.2021.09.21.01.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Sep 2021 01:11:47 -0700 (PDT)
+Date:   Tue, 21 Sep 2021 09:11:45 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Will McVicker <willmcvicker@google.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -56,53 +69,90 @@ Cc:     Will McVicker <willmcvicker@google.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] arm64: Kconfig: Update ARCH_EXYNOS select configs
+Message-ID: <YUmTwZPqrCfRMekd@google.com>
+References: <20210920190350.3860821-1-willmcvicker@google.com>
+ <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 9:31 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
+
 > On 20/09/2021 21:03, Will McVicker wrote:
-> > COMMON_CLK_SAMSUNG is selected by ARCH_EXYNOS which forces this config
-> > to be built-in when ARCH_EXYNOS is enabled. Switch the logic to use a
-> > "default y if ARCH_EXYNOS" to provide flexibilty for vendors to disable
-> > or modularize this driver.
->
-> The clock drivers are essential, you cannot disable them for a generic
-> kernel supporting ARCH_EXYNOS. Such kernel won't work properly on platforms.
+> > This patch series tries to address the issue of ARCH_EXYNOS force selecting
+> > a handful of drivers without allowing the vendor to override any of the
+> > default configs. This takes away from the flexibilty of compiling a generic
+> > kernel with exynos kernel modules. For example, it doesn't allow vendors to
+> > modularize these drivers out of the core kernel in order to share a generic
+> > kernel image across multiple devices that require device-specific kernel
+> > modules.
+> 
+> You do not address the issue in these patches. The problem you describe
+> is that drivers are not modules and you are not changing them into modules.
 
-Obviously it's not gonna work if the clock driver is not enabled
-at all.  But does it work if you make the clock driver modular, and
-put it with all other essential driver modules in initramfs?  Debugging
-would be hard, as the serial console driver also relies on clocks
-and PM Domains etc.
+The wording is unfortunate.  The reason for this change doesn't have
+much to do with kernel modules.
 
-If not, this patch should be NAKed, until it works with a modular
-clock driver.
+Let's go back in time 18 months or so when Greg KH submitted this [0]
+patch, which you Acked.  Greg was trying to solve the problem of not
+having to enable ARCH_EXYNOS on kernels which are designed to be
+platform agnostic (sometimes called Generic Kernels).  For some reason
+SERIAL_SAMSUNG is the only symbol with these dependencies, so the
+solution seemed simple and straight forward at the time.
 
-If yes, perhaps another line should be added (_before_ the other line)?
+However, For sound reasons Geert NACKed the patch.
 
-  + default m if ARCH_EXYNOS && MODULES
-    default y if ARCH_EXYNOS
+Quoting from [1] he says:
 
-However, many developers may want MODULES=y, but not want to bother
-with an initramfs.  So perhaps we need a new symbol
-MINIMUM_GENERIC_KERNEL or so, protected by EXPERT, and make the
-driver default to m if that is enabled?
+  "A generic kernel will include Samsung SoC support, hence
+  PLAT_SAMSUNG or ARCH_EXYNOS will be enabled."
 
-Gr{oetje,eeting}s,
+However, since the entry for ARCH_EXYNOS *insists* on building-in a
+bunch of other symbols (via 'select') which will be unused in most
+cases, this is not a currently acceptable approach for many Generic
+Kernels due to size constraints.
 
-                        Geert
+What this patch does is migrates those symbols from being 'select'ed
+(always built-in with no recourse) to 'default y'.  Where the former
+cannot be over-ridden, but the latter can be via a vendor's
+defconfig/fragment.
+
+I doubt many (any?) of these symbols can be converted to kernel
+modules anyway, as they are required very early on in the boot
+sequence.
+
+> > To address this without impacting the existing behavior, this series
+> > switches the default config logic for the offending configs to use "default
+> > y if ARCH_EXYNOS" versus having ARCH_EXYNOS directly select them. I have
+> > verified that these patches do not impact the default aarch64 .config.
+> 
+> Yep, this is what you did but it does not match the described problem.
+> You are not solving it but doing something else.
+> 
+> > Will McVicker (4):
+> >   clk: samsung: change COMMON_CLK_SAMSUNG default config logic
+> >   soc: samsung: change SOC_SAMSUNG default config logic
+> >   pinctrl: samsung: change PINCTRL_EXYNOS default config logic
+> >   rtc: change HAVE_S3C_RTC default config logic
+
+[0] https://lore.kernel.org/lkml/20200220102628.3371996-1-gregkh@linuxfoundation.org/
+[1] https://lore.kernel.org/lkml/CAMuHMdVrVe37JyUNFSf9KRZTcndrvDaZvrVoBxzm_7J2nhg1kg@mail.gmail.com/
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
