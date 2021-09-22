@@ -2,141 +2,128 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78F3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AF1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9614D6124A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:05:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F5056124A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233342AbhIVIHV (ORCPT
+        id S233559AbhIVIMg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 04:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233336AbhIVIHU (ORCPT
+        Wed, 22 Sep 2021 04:12:36 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:50444
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233532AbhIVIMb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:07:20 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDA0C061574;
-        Wed, 22 Sep 2021 01:05:51 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id f129so1875358pgc.1;
-        Wed, 22 Sep 2021 01:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3vgj0hW3KSHhJ1FNGvvnjMW3NitG36aDXcJz/7heGcA=;
-        b=FAkBVWugynwfJI5lWaQvYEy5zoZ/PcwxIzBamJjPUP+b2SJ39zuwELnOxZD4mWY7qI
-         VL+NRFb28mlUzCzMNFU8j2NXe+OzTklHCFA1mSE3MXf4GK+Sx65lA1keQKFwGlsrg9tU
-         tRonpRLFulMJRQa9KRODt+Cp+UQlzyTtiUHLtMgCsrKSVqTJbk4CqpICjwqwgiMymCpa
-         zVNq1/Yg3KD7mrkYF4M7le9Q4d3Gn8986+7TMsBcQHgo7Q+GySY6qjBPrwQu5mqiJ3iI
-         EdQMGVC+gVV9oJFAEklO3sPTpktjuuiE5r4+kATExB81e4C/gPw5qi069u7USlKJNEiM
-         KluQ==
+        Wed, 22 Sep 2021 04:12:31 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4085B402D8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Sep 2021 08:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632298259;
+        bh=P8Qe07F/xjMQdNLxVav+Rfl78SB2e9oBWelI8/7HSJc=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=CsM4WOF81WV4yB0lm/EC63pq6fB0GK4NL8c4/F5T2//WbLnIeKe42j/bP2oUKxitz
+         mp++AyRgVe+N2l+uOArLWutgo28uA/ASj36UsuqtSCR04x2f1T7isAgNOMJWQqTnWA
+         hHd/GuvSPETJY1/RCKnDOWpkxc1QpD0rdvcaRPEb1GwulU+FTifRo1HEKbP7oUCsXb
+         p3RUIxB6z7fpCPQTs/3Sf6PS75AbjV/t3Y3F6hWjCbUXfab2Ksjbe6izEZS50oAPUd
+         /bbWz9RmziME4Vpy2yoOTK6wEg8J0hXIjYP+LeuyGlC910r6cm0paI/xa/bQqT6GTe
+         71ZFoYf/zeKJQ==
+Received: by mail-wr1-f69.google.com with SMTP id c2-20020adfa302000000b0015e4260febdso1346240wrb.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Sep 2021 01:10:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=3vgj0hW3KSHhJ1FNGvvnjMW3NitG36aDXcJz/7heGcA=;
-        b=e8HNrhaTTjfcmwLQai4PLyHPYmWL+nJCRjvEgVrZJ69awBa+Cd/HIaZ16ej5bdrxmy
-         ly3TF8SlPPOii48+fffczdK8Gnak98BlFm2hiRRaO2XUaDvcXpsiVaakaf7iFgplaQc4
-         q8B1fYFPVFHMx+5YCxQ7/FzKJf609WeSJN9suyrrECibDsdZhXrl83SMiaLM3A5Q5usn
-         OK472jpHgMhFyd8Bu2SUIuG+zt63Zc7oV9xi94/2ocMZXMxDSYstR0LsSE16UyQfMXi5
-         NYfA33KqGkE1IjFxLDA8s0d6tnjC2pZTyZzSJ9VrJf3oiE8Iu6QmR8Ju+ygWXoEFsPmf
-         a1YQ==
-X-Gm-Message-State: AOAM532AsEo0jmffvcWWnQhAEiB2z/65MQJLkOSilnrdxzGAx1q9aSdV
-        mtEkO3Df2JcCGVUlBaU5WoQ=
-X-Google-Smtp-Source: ABdhPJwdylx2gAkFtmU9FHajYgZBLBBYYbPpvbp7sGfAL2p7//GTWekKTYSd4s/OpU5ahmIuNorN4g==
-X-Received: by 2002:a62:7b14:0:b0:447:c4c9:ce3f with SMTP id w20-20020a627b14000000b00447c4c9ce3fmr12556780pfc.15.1632297950610;
-        Wed, 22 Sep 2021 01:05:50 -0700 (PDT)
-Received: from [172.30.1.2] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id c23sm1599245pgb.74.2021.09.22.01.05.45
+        bh=P8Qe07F/xjMQdNLxVav+Rfl78SB2e9oBWelI8/7HSJc=;
+        b=OdN16OXVxoH+kgQ4wIw56QfxLl2N3lXxDYY8fdrelRR8TEfVVU4pidW4g3mEgQZDnO
+         j2uWQHuU2AwcbIUtW4VPTnHV4CfWPojBT64zkYggvhl8vsttvxhWZFfWijeUfGRVE3YQ
+         6kIupCgu+KfCfIjShRGdaq6ARcTY9PpEU5eLKpS8HkGTdzcuAwdDt/aUTyr7TOG0xuAG
+         Daaxo27rQk6ZfaSvp19Ju1+C5SG5Z1Z22c6/CHLj8fHp6uAmjTfvJhOxba9VgQV9AG4v
+         RuunrFOlpRWGttsM8b3rytehKKF3IcdrAbGvtLdeX+K2/7g+8Ifrd+KzJuL1oXUctJmd
+         y3HA==
+X-Gm-Message-State: AOAM5315kvyxy9Jq+tjrdoQW0NR3ON2gi1W3Uh6tRt/4wf8rK3sdPTnW
+        X+zRw6NXKFjEboP0CXpqBO0O1Pd4tPkLL9u3rnnDtokv6Ta34KjCnwDHaM1Ok9ra0JrPVxXdu0t
+        Of39df/Ie6ZRXB6zQDe+DvAExBvs6e1GM1rhRaYBL6YRstvFr
+X-Received: by 2002:a05:600c:3b89:: with SMTP id n9mr9113903wms.186.1632298258646;
+        Wed, 22 Sep 2021 01:10:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzb3Ljj7oUI5lHEYQz4nwFDjBGGdyp2FKjKpmWPv5gSTXpVI7LSRlWIyJA3WG9xT/pBfVR0VA==
+X-Received: by 2002:a05:600c:3b89:: with SMTP id n9mr9113885wms.186.1632298258458;
+        Wed, 22 Sep 2021 01:10:58 -0700 (PDT)
+Received: from [192.168.0.134] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.gmail.com with ESMTPSA id d24sm1174219wmb.35.2021.09.22.01.10.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 01:05:50 -0700 (PDT)
-Subject: Re: [PATCH v2 2/3] devfreq: exynos-ppmu: simplify parsing event-type
- from DT
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 22 Sep 2021 01:10:58 -0700 (PDT)
+Subject: Re: [RESEND PATCH v2 1/4] mfd: sec-irq: Do not enforce (incorrect)
+ interrupt trigger type
+To:     Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com>
- <20210920071753.38560-2-krzysztof.kozlowski@canonical.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Message-ID: <35ad437f-7527-e9b1-4819-8f4faa765e26@gmail.com>
-Date:   Wed, 22 Sep 2021 17:05:45 +0900
+References: <20210602110445.33536-1-krzysztof.kozlowski@canonical.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <7ac677f1-2928-21de-a226-449e72b1bd10@canonical.com>
+Date:   Wed, 22 Sep 2021 10:10:57 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210920071753.38560-2-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20210602110445.33536-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 21. 9. 20. 오후 4:17, Krzysztof Kozlowski wrote:
-> When parsing devicetree, the function of_get_devfreq_events(), for each
-> device child node, iterates over array of possible events "ppmu_events"
-> till it finds one matching by node name.  When match is found the
-> ppmu_events[i] points to element having both the name of the event and
-> the counters ID.
+On 02/06/2021 13:04, Krzysztof Kozlowski wrote:
+> From: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> Each PPMU device child node might have an "event-name" property with the
-> name of the event, however due to the design of devfreq it must be the
-> same as the device node name.  If it is not the same, the devfreq client
-> won't be able to use it via devfreq_event_get_edev_by_phandle().
+> Interrupt line can be configured on different hardware in different way,
+> even inverted.  Therefore driver should not enforce specific trigger
+> type - edge falling - but instead rely on Devicetree to configure it.
 > 
-> Since PPMU device child node name must be equal to the "event-name"
-> property (event-name == ppmu_events[i].name), there is no need to find
-> the counters ID by the "event-name".  Instead use ppmu_events[i].id
-> which must be equal to it.
+> The Samsung PMIC drivers are used only on Devicetree boards.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Additionally, the PMIC datasheets describe the interrupt line as active
+> low with a requirement of acknowledge from the CPU therefore the edge
+> falling is not correct.
+> 
+> Marek Szyprowski reports that together with DTS change (proper level in
+> DTS) it fixes RTC alarm failure that he observed from time to time on
+> TM2e board.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
 > ---
->   drivers/devfreq/event/exynos-ppmu.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index 541bd13ab61d..9b849d781116 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -566,13 +566,10 @@ static int of_get_devfreq_events(struct device_node *np,
->   			 * use default if not.
->   			 */
->   			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
-> -				int id;
->   				/* Not all registers take the same value for
->   				 * read+write data count.
->   				 */
-> -				id = __exynos_ppmu_find_ppmu_id(desc[j].name);
-> -
-> -				switch (id) {
-> +				switch (ppmu_events[i].id) {
->   				case PPMU_PMNCNT0:
->   				case PPMU_PMNCNT1:
->   				case PPMU_PMNCNT2:
+> Rebased on https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/log/?h=for-mfd-next
 > 
+> Changes since v1:
+> 1. Mention in commit msg that this fixes TM2e RTC alarm.
+> 2. Add Marek's tested-by.
+> ---
+>  drivers/mfd/sec-irq.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied it. Thanks.
+Dear Lee,
 
+This was already a resend. Any comments from your side?
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Best regards,
+Krzysztof
