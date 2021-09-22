@@ -2,128 +2,164 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AF1C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D60C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5056124A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78EB46135A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Sep 2021 08:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233559AbhIVIMg (ORCPT
+        id S233856AbhIVIyo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 04:12:36 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:50444
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233532AbhIVIMb (ORCPT
+        Wed, 22 Sep 2021 04:54:44 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:54035 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233741AbhIVIyn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:12:31 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4085B402D8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Sep 2021 08:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632298259;
-        bh=P8Qe07F/xjMQdNLxVav+Rfl78SB2e9oBWelI8/7HSJc=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=CsM4WOF81WV4yB0lm/EC63pq6fB0GK4NL8c4/F5T2//WbLnIeKe42j/bP2oUKxitz
-         mp++AyRgVe+N2l+uOArLWutgo28uA/ASj36UsuqtSCR04x2f1T7isAgNOMJWQqTnWA
-         hHd/GuvSPETJY1/RCKnDOWpkxc1QpD0rdvcaRPEb1GwulU+FTifRo1HEKbP7oUCsXb
-         p3RUIxB6z7fpCPQTs/3Sf6PS75AbjV/t3Y3F6hWjCbUXfab2Ksjbe6izEZS50oAPUd
-         /bbWz9RmziME4Vpy2yoOTK6wEg8J0hXIjYP+LeuyGlC910r6cm0paI/xa/bQqT6GTe
-         71ZFoYf/zeKJQ==
-Received: by mail-wr1-f69.google.com with SMTP id c2-20020adfa302000000b0015e4260febdso1346240wrb.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Sep 2021 01:10:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P8Qe07F/xjMQdNLxVav+Rfl78SB2e9oBWelI8/7HSJc=;
-        b=OdN16OXVxoH+kgQ4wIw56QfxLl2N3lXxDYY8fdrelRR8TEfVVU4pidW4g3mEgQZDnO
-         j2uWQHuU2AwcbIUtW4VPTnHV4CfWPojBT64zkYggvhl8vsttvxhWZFfWijeUfGRVE3YQ
-         6kIupCgu+KfCfIjShRGdaq6ARcTY9PpEU5eLKpS8HkGTdzcuAwdDt/aUTyr7TOG0xuAG
-         Daaxo27rQk6ZfaSvp19Ju1+C5SG5Z1Z22c6/CHLj8fHp6uAmjTfvJhOxba9VgQV9AG4v
-         RuunrFOlpRWGttsM8b3rytehKKF3IcdrAbGvtLdeX+K2/7g+8Ifrd+KzJuL1oXUctJmd
-         y3HA==
-X-Gm-Message-State: AOAM5315kvyxy9Jq+tjrdoQW0NR3ON2gi1W3Uh6tRt/4wf8rK3sdPTnW
-        X+zRw6NXKFjEboP0CXpqBO0O1Pd4tPkLL9u3rnnDtokv6Ta34KjCnwDHaM1Ok9ra0JrPVxXdu0t
-        Of39df/Ie6ZRXB6zQDe+DvAExBvs6e1GM1rhRaYBL6YRstvFr
-X-Received: by 2002:a05:600c:3b89:: with SMTP id n9mr9113903wms.186.1632298258646;
-        Wed, 22 Sep 2021 01:10:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzb3Ljj7oUI5lHEYQz4nwFDjBGGdyp2FKjKpmWPv5gSTXpVI7LSRlWIyJA3WG9xT/pBfVR0VA==
-X-Received: by 2002:a05:600c:3b89:: with SMTP id n9mr9113885wms.186.1632298258458;
-        Wed, 22 Sep 2021 01:10:58 -0700 (PDT)
-Received: from [192.168.0.134] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id d24sm1174219wmb.35.2021.09.22.01.10.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 01:10:58 -0700 (PDT)
-Subject: Re: [RESEND PATCH v2 1/4] mfd: sec-irq: Do not enforce (incorrect)
- interrupt trigger type
-To:     Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <20210602110445.33536-1-krzysztof.kozlowski@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <7ac677f1-2928-21de-a226-449e72b1bd10@canonical.com>
-Date:   Wed, 22 Sep 2021 10:10:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 22 Sep 2021 04:54:43 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7BE84580255;
+        Wed, 22 Sep 2021 04:53:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Wed, 22 Sep 2021 04:53:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=vB4ezIS3B/kZC3s/eTN0cuFplTA
+        XmSMYfGeoI88X2qo=; b=YsylE5OY/aekw+oI2+1FimeeZRY/2Yo3w7Q4AnyFH/C
+        0ih8xf12GaTRWGSGTSa1lN6UtpMTcTfPWnzJzLZyulnDzMLCiqsIOMHgWvvvtM+t
+        aRxYTV4nS+BDY+Jp+0Tgjp32cDAX2K9LovlT8axaAZrkNb3g8FlQE0hlxdSHcc6v
+        uUazUJciXlMA2np4kTf2XA4jP58ygmsHJhALjr8iW8ds3YWvvsyMuFrxW3dW+xvg
+        oVhVSI66rua+eX1nSrT2AGrFsrVYDfuNjuem8BNuK2YVmXG/FVK+ZyojoexASuNw
+        Hc2CPhaDFbymXUYb9wF9OYPe8VdgS5NsCJBUHWMZeKw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=vB4ezI
+        S3B/kZC3s/eTN0cuFplTAXmSMYfGeoI88X2qo=; b=fC2KOYeledOkkC0aXAt3K+
+        dKvD36fgpb6vnAv1HouSdfS8PJmsHJ8jhtXbGGb9iC/Xj+ZSlG2oWEx6AkoYkon5
+        suffel7OAkN/YnqLea9oClqBi5NJqimc8Y6NiZoghzmE4R3RHtJJabaRXFdnj8fN
+        zf2mEiVJ9qw5XbV+038Vsl1IA2WGOIvUoIjisaLgYdqMpKblOttTJH/a8FG1R64F
+        DR1noMRcccN9iK2qlxgLD0a6PweKrFhR8wrD7ht8NtAMG6s1YMSPoj4hxC5HMI3H
+        eRshjJ/OpQNYI1qL+EZVbeZx3oTUTLwA9fVnhcPIUekEPJg5h59MmMslpiM8ud6Q
+        ==
+X-ME-Sender: <xms:9u5KYekdnmXJHNpxfNoWaC4yZDbFKMDIMpBBkzOiDOyqU4KbopKu2Q>
+    <xme:9u5KYV0u9Dvd18g4ZX-oDyXf5gzHYsf__TZf6J-xqn1HKqh3JlnhL-FgeImrf-LIJ
+    c8nsmIzVXCsWz2VH3s>
+X-ME-Received: <xmr:9u5KYcqju0OvuwONUjkYz6Bu9GX5MgRgU_JTyWtOsiO_PLMOvDJyCEtjRuemy-o7d7uRRzYwZA7xTyCyqdi1PmYYmJITakP5W5-W>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeijedgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddunecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepuddvudfhkeekhefgffetffelgffftdehffduffegveetffehueeivddvjedv
+    gfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:9u5KYSmlJ9urbGNWvh4mVJzB7EAtmY5_AdSC33thxwd9Is6TzxDMCQ>
+    <xmx:9u5KYc3sU_rz5oyUREwe9hVvDy4C4ZX2INr1dn8wF-y2blmj0sNX4g>
+    <xmx:9u5KYZudXpDV8jw8CDYTCg1WodNfJFH5dobYYFeTpQDpH9nUBu7jkQ>
+    <xmx:-e5KYeGzPi3o7aXd1E6BUwNERCc7GvHXrLBDt2qHkLcX8pLIPyjrAw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Sep 2021 04:53:09 -0400 (EDT)
+Date:   Wed, 22 Sep 2021 10:53:08 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-kernel@vger.kernel.org,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        John Stultz <john.stultz@linaro.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v4 24/24] drm/exynos: dsi: Adjust probe order
+Message-ID: <20210922085308.udvhfbzpn3vpbksr@gilmour>
+References: <20210910101218.1632297-1-maxime@cerno.tech>
+ <CGME20210910101445eucas1p172f99ff7fe853052fc457861c3174f9e@eucas1p1.samsung.com>
+ <20210910101218.1632297-25-maxime@cerno.tech>
+ <29a2111d-024b-4d9e-27ef-e3399509ff32@samsung.com>
+ <fc1fbd42-6ed4-9d67-2903-8f9cc2aaad43@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20210602110445.33536-1-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="26b3pc6nmf5dnhp2"
+Content-Disposition: inline
+In-Reply-To: <fc1fbd42-6ed4-9d67-2903-8f9cc2aaad43@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 02/06/2021 13:04, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Interrupt line can be configured on different hardware in different way,
-> even inverted.  Therefore driver should not enforce specific trigger
-> type - edge falling - but instead rely on Devicetree to configure it.
-> 
-> The Samsung PMIC drivers are used only on Devicetree boards.
-> 
-> Additionally, the PMIC datasheets describe the interrupt line as active
-> low with a requirement of acknowledge from the CPU therefore the edge
-> falling is not correct.
-> 
-> Marek Szyprowski reports that together with DTS change (proper level in
-> DTS) it fixes RTC alarm failure that he observed from time to time on
-> TM2e board.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> ---
-> 
-> Rebased on https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/log/?h=for-mfd-next
-> 
-> Changes since v1:
-> 1. Mention in commit msg that this fixes TM2e RTC alarm.
-> 2. Add Marek's tested-by.
-> ---
->  drivers/mfd/sec-irq.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Dear Lee,
+--26b3pc6nmf5dnhp2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This was already a resend. Any comments from your side?
+Hi Marek,
 
-Best regards,
-Krzysztof
+On Fri, Sep 17, 2021 at 02:35:05PM +0200, Marek Szyprowski wrote:
+> Hi,
+>=20
+> On 13.09.2021 12:30, Andrzej Hajda wrote:
+> > W dniu 10.09.2021 o=A012:12, Maxime Ripard pisze:
+> >> Without proper care and an agreement between how DSI hosts and devices
+> >> drivers register their MIPI-DSI entities and potential components, we =
+can
+> >> end up in a situation where the drivers can never probe.
+> >>
+> >> Most drivers were taking evasive maneuvers to try to workaround this,
+> >> but not all of them were following the same conventions, resulting in
+> >> various incompatibilities between DSI hosts and devices.
+> >>
+> >> Now that we have a sequence agreed upon and documented, let's convert
+> >> exynos to it.
+> >>
+> >> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > This patch should be dropped, as it will probably break the driver.
+> >
+> > Exynos is already compatible with the pattern
+> > register-bus-then-get-sink, but it adds/removes panel/bridge
+> > dynamically, so it creates drm_device without waiting for downstream si=
+nk.
+>=20
+> Right, this patch breaks Exynos DSI driver operation. Without it, the=20
+> whole series works fine on all Exynos based test boards.
+
+Thanks for testing. Did you have any board using one of those bridges in
+your test sample?
+
+Thanks!
+Maxime
+
+--26b3pc6nmf5dnhp2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYUru9AAKCRDj7w1vZxhR
+xTqqAP9CqUjRoyxAvQGCjWFdaNoEsrQKtq/nCmfrA8Q8IiEyfQEAvvCeSnRl1MRL
+dPx0RgcMkyY55JZZXZJ3c688AzfVKg0=
+=c7ne
+-----END PGP SIGNATURE-----
+
+--26b3pc6nmf5dnhp2--
