@@ -5,73 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06882C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22648C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4ECD61038
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C0C960F4C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346118AbhIXNbo (ORCPT
+        id S1346006AbhIXNcQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 09:31:44 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59602
+        Fri, 24 Sep 2021 09:32:16 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59636
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345349AbhIXNbk (ORCPT
+        by vger.kernel.org with ESMTP id S1345989AbhIXNcO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 09:31:40 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        Fri, 24 Sep 2021 09:32:14 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DF3F240784
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 13:30:06 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5657940783
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 13:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632490206;
-        bh=F70yOyVZZjxlDll0pjQntOrMr5BdXyTooQkEjSqxu5A=;
+        s=20210705; t=1632490240;
+        bh=3xD6qAEhtRsJqFfznLwkKRQHrDkBb3UaWxl2/slC6j4=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=p3OPG05jmZFoz+Vj6jlyX83cYRfVRStNntZv/z69jPq8/hSvoJhC1gZxV1pAQ8gez
-         0wHLj0O4WQPzgVln+BW6CFr2/2y63kEO/jL4tjE4OefUZ/4fZ9NVceZA+GEUUFb6Dd
-         PyLe4YmUY3X4nMIczFH8yrpQ6G265NUDwckUiE9V2RpDcx3oyyyrwNQPo/xmsA3RyC
-         K4vrgjIM0ufAobx7u/hupJ1Te8md1C6E+dGIMl5RkrnYrmZjAuMnS5Onb418TPIw1Z
-         x3h6zQy6agJOVkJhHmYucFtReHaa2SAF5gPiHEYWE2UN23KwQ6/CfXM1NcSrU5szzN
-         6hpkLrob/1G3A==
-Received: by mail-wr1-f71.google.com with SMTP id h5-20020a5d6885000000b0015e21e37523so8068981wru.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 06:30:06 -0700 (PDT)
+        b=nSjm3xZyhfahJPG/dd2BJOA02+LCoFxYoguBs6CybtMYbjB18D0DM1KPv5jTLqY6X
+         nlIYIqRHgJy0L2EuIYJBhbSmCdrSEPWC8yJ/9FBt4CSurIYr66iqE2ky6vcDn1hlWU
+         dN/Ng9JdxDbazvJTXTJcyi+IbVK0gMqN2vOx5C7QIrxadz8Zv6v+ym8xtkmTph3fQ7
+         yrGW20s5ZFT/wLoikFsCKO21fuU0JaiqEaVADR1b5D/7kijNpavDfURf4af/uc2EJN
+         vFX3G4DsRxx92eYfnzBOSu+LAndjijk0OZbK/ulBe/rJagxD97Cc/FzyXB863N443R
+         LzrdsmSDinvSw==
+Received: by mail-wr1-f69.google.com with SMTP id j16-20020adfa550000000b0016012acc443so8079703wrb.14
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 06:30:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=F70yOyVZZjxlDll0pjQntOrMr5BdXyTooQkEjSqxu5A=;
-        b=SjYwUFpRBKp9vgV8FULCExSB3bvMmUUIRAEjso5jSaLRx7IPF0utzdNYhOJn1zxvMC
-         fYj2j1ri9T1eBlRcmNoTRYvA8Wz1JElYzq0mgAAcDDqS4VMNeDsClbdY+W3HZ95YPV5y
-         kwUHIgzpB4xLGqAegzocu+ka/BKUkJ8eY7OlkXDHJ7a1fVx3YFCK56e+lnYf+CgYcx9W
-         cWZScR4Vxn0GU0RI0Tk8Wjouo2ejp781gXStR9sEQAtWZIZ7GOo22Uc3lc9MCUeT4kaX
-         ZHeCVcE/Sc9ERJU0xmBLB6YPaYY8B5dRBE52MC4qzBXsfw0d9rlp6p/mEQVVZcv+CzE2
-         cs+A==
-X-Gm-Message-State: AOAM533TASBg/e1Rt41UlvHYrSgg85lT3SBlKlnKobB6NU/HOdJ3ltk7
-        Z+v886lfq0ibhnf1s+r39vXepwy+ih8zDJwKOz0abSOxKkCAZhfTooBG+eGuFjwird3lVrOy+b/
-        B98W3AD5x7qNqqCvhMyYYavmj07OgRRy4vbLtQu5HAuEUcK1/
-X-Received: by 2002:a5d:4d01:: with SMTP id z1mr11248674wrt.209.1632490204794;
-        Fri, 24 Sep 2021 06:30:04 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzkbc8Da6V2TsZslzItTVmktEElS+30iL6GeasX73+gONH6uwFQeCmkiLeu5/Bg32tsZMpPnw==
-X-Received: by 2002:a5d:4d01:: with SMTP id z1mr11248655wrt.209.1632490204659;
-        Fri, 24 Sep 2021 06:30:04 -0700 (PDT)
+        bh=3xD6qAEhtRsJqFfznLwkKRQHrDkBb3UaWxl2/slC6j4=;
+        b=XB6wW1a3auAQmFoK+PYx3THuXZMd/mL9RjowmxwhogdvaeI4V7aRUCYlD9Z/hpkBlU
+         R4iTM0xvS8UEMxJR08Fas3ZRBCoP+vMO+PCXAx5IvOoXkSvMIx91f2HlRL60hlPpNa7l
+         LEGKpNotdqoi+hJIZR7K2KySb953pP4pZcZC+RVBAtGiGsBrK9SVDYfpVO+lCl5ntGkq
+         77YWSdmGEDcircUFyATb3Lon2GTG2+c9LZhPYK4oxntFCino3RRgoelCpSC4mQp7Vsd4
+         +mJQG6fQ49w88ChERhvfAMR/rCpzNufd1Sm61WpY1vamK7Yxbsr9LOTkM+G81WZrr29y
+         ZNmQ==
+X-Gm-Message-State: AOAM532VImBg6+C646GG5o1NIjtB18N0dLAB+puZJJmjLMfwHVUnBfg1
+        gYevap/LbUqK79kCGeqDFJji1hElfgN7b62aDgK6WXT6ngvcT41MPryoWGPlEhCP0rLFMiQQhFI
+        VN45XzcPr6iMqpe8R9irfKURscLgUxUUhGXqSoTJtg445CtYJ
+X-Received: by 2002:a7b:c052:: with SMTP id u18mr2131024wmc.105.1632490239951;
+        Fri, 24 Sep 2021 06:30:39 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxatSONAGwx8bkyPabvpoXT2g6eOdCu2CFURKgVt6gBRUeQdbu9BS0S8yUmhBIZdqIfSdu7VA==
+X-Received: by 2002:a7b:c052:: with SMTP id u18mr2130997wmc.105.1632490239750;
+        Fri, 24 Sep 2021 06:30:39 -0700 (PDT)
 Received: from localhost.localdomain (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id i2sm8034262wrq.78.2021.09.24.06.30.03
+        by smtp.gmail.com with ESMTPSA id l19sm8646742wrc.16.2021.09.24.06.30.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 06:30:04 -0700 (PDT)
+        Fri, 24 Sep 2021 06:30:38 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH] watchdog: s3c2410: describe driver in KConfig
-Date:   Fri, 24 Sep 2021 15:29:30 +0200
-Message-Id: <20210924132930.111443-1-krzysztof.kozlowski@canonical.com>
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] usb: exynos: describe driver in KConfig
+Date:   Fri, 24 Sep 2021 15:30:05 +0200
+Message-Id: <20210924133005.111564-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -84,35 +84,55 @@ kernel for Samsung SoC easier.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/watchdog/Kconfig | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/usb/dwc3/Kconfig | 7 ++++---
+ drivers/usb/host/Kconfig | 6 ++++--
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index b81fe4f7d434..75591ba261e2 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -496,16 +496,18 @@ config S3C2410_WATCHDOG
- 	select WATCHDOG_CORE
- 	select MFD_SYSCON if ARCH_EXYNOS
+diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+index 66b1454c4db2..c483f28b695d 100644
+--- a/drivers/usb/dwc3/Kconfig
++++ b/drivers/usb/dwc3/Kconfig
+@@ -66,12 +66,13 @@ config USB_DWC3_OMAP
+ 	  Say 'Y' or 'M' here if you have one such device
+ 
+ config USB_DWC3_EXYNOS
+-	tristate "Samsung Exynos Platform"
++	tristate "Samsung Exynos SoC Platform"
+ 	depends on (ARCH_EXYNOS || COMPILE_TEST) && OF
+ 	default USB_DWC3
  	help
--	  Watchdog timer block in the Samsung SoCs. This will reboot
--	  the system when the timer expires with the watchdog enabled.
-+	  Watchdog timer block in the Samsung S3C24xx, S3C64xx, S5Pv210 and
-+	  Exynos SoCs. This will reboot the system when the timer expires with
-+	  the watchdog enabled.
+-	  Recent Exynos5 SoCs ship with one DesignWare Core USB3 IP inside,
+-	  say 'Y' or 'M' if you have one such device.
++	  Recent Samsung Exynos SoCs (Exynos5250, Exynos5410, Exynos542x,
++	  Exynos5800, Exynos5433, Exynos7) ship with one DesignWare Core USB3
++	  IP inside, say 'Y' or 'M' if you have one such device.
  
- 	  The driver is limited by the speed of the system's PCLK
- 	  signal, so with reasonably fast systems (PCLK around 50-66MHz)
- 	  then watchdog intervals of over approximately 20seconds are
- 	  unavailable.
+ config USB_DWC3_PCI
+ 	tristate "PCIe-based Platforms"
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index c4736d1d020c..d1d926f8f9c2 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -290,7 +290,8 @@ config USB_EHCI_EXYNOS
+ 	tristate "EHCI support for Samsung S5P/Exynos SoC Series"
+ 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+ 	help
+-	  Enable support for the Samsung Exynos SOC's on-chip EHCI controller.
++	  Enable support for the Samsung S5Pv210 and Exynos SOC's on-chip EHCI
++	  controller.
  
-+	  Choose Y/M here only if you build for such Samsung SoC.
- 	  The driver can be built as a module by choosing M, and will
--	  be called s3c2410_wdt
-+	  be called s3c2410_wdt.
+ config USB_EHCI_MV
+ 	tristate "EHCI support for Marvell PXA/MMP USB controller"
+@@ -563,7 +564,8 @@ config USB_OHCI_EXYNOS
+ 	tristate "OHCI support for Samsung S5P/Exynos SoC Series"
+ 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+ 	help
+-	  Enable support for the Samsung Exynos SOC's on-chip OHCI controller.
++	  Enable support for the Samsung S5Pv210 and Exynos SOC's on-chip OHCI
++	  controller.
  
- config SA1100_WATCHDOG
- 	tristate "SA1100/PXA2xx watchdog"
+ config USB_CNS3XXX_OHCI
+ 	bool "Cavium CNS3XXX OHCI Module (DEPRECATED)"
 -- 
 2.30.2
 
