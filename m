@@ -2,159 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A9AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 14:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F84AC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 17:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D20660F21
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 14:56:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D4B61265
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 17:52:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346924AbhIXO5v (ORCPT
+        id S1344440AbhIXRyO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 10:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346920AbhIXO5v (ORCPT
+        Fri, 24 Sep 2021 13:54:14 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:55275 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344340AbhIXRyO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 10:57:51 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338CCC061571
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 07:56:18 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id y197so12914951iof.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 07:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BTzhRmtCWqSMLNXYgMz/A9yGJztHmzn9VR2FvTuT1X0=;
-        b=SKj11i9J4weHpWL5gca5C27GtKyeqnzkCdtcpOIE6SIBamXV+/M7CCgWI59YoHaNnN
-         iSF1u8VJNmzdE20M16uM0tZzJoOCJvjCiAKadITYS8Nm4YpI6rE0IFZKalF9NOxRcEoO
-         HNl464XYupmzvQxjt3QsQLi35uS7yBRNytTbM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BTzhRmtCWqSMLNXYgMz/A9yGJztHmzn9VR2FvTuT1X0=;
-        b=Sba74Mlv1cfePXkOSYcZllM9x4eUCQJVZeBew47mBg5ILKk3flyLJ3yFmSdJkdZqW3
-         dq6CSAD4adWXt5C2EiXPPZGYbhMMhLeeWI/2B+1A8Wlo3dFdw5gPGd/+NcARuyUifbdP
-         tlui+yJ9jTg2i0kpSz3Sg7LpqygifaBg4jPpnp0o0E6dc3lcLVxu2V+Ybijy/PoTqAjv
-         E/71rt7haLWSQ5j2l4JTrIjy6Ohdr9gE2wgCwkm5IGZnmtt1PicX1itghwGCBASA9o3E
-         Vyn0XGyNyG0GaRE4ya4aFu41pS4533alGFGzROmYxh+K3+Bx4PYajZFO0NY33BCt5iw1
-         OtUA==
-X-Gm-Message-State: AOAM532YbD232J9bCbFhURT4ONhSOQtR62pK8CDEt8lqnOYtL20GHPoO
-        WFbCihahprToGkVlYUhr2vBo/CdR+ZVzVw==
-X-Google-Smtp-Source: ABdhPJxgnhlQab1BwOs+iFqbDdnh+4URuYb/ZR0AKkIkUyWzlkxYVmBzgH3aiISMyExbFkgAgeFfCA==
-X-Received: by 2002:a02:77c4:: with SMTP id g187mr9621723jac.56.1632495377521;
-        Fri, 24 Sep 2021 07:56:17 -0700 (PDT)
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com. [209.85.166.176])
-        by smtp.gmail.com with ESMTPSA id j4sm4434090ilo.8.2021.09.24.07.56.17
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Sep 2021 07:56:17 -0700 (PDT)
-Received: by mail-il1-f176.google.com with SMTP id b15so10633395ils.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 07:56:17 -0700 (PDT)
-X-Received: by 2002:a6b:3f02:: with SMTP id m2mr9047097ioa.136.1632495366689;
- Fri, 24 Sep 2021 07:56:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210914202202.1702601-1-dianders@chromium.org>
- <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
- <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
- <CGME20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b@eucas1p2.samsung.com>
- <874kaabdt5.fsf@intel.com> <68c3f798-a18d-fe8d-2925-2686716a985b@samsung.com> <CAD=FV=XEb-jx81inK8hGvdJeRqTLmmBKz7U-m+9=CHbNRSa16g@mail.gmail.com>
-In-Reply-To: <CAD=FV=XEb-jx81inK8hGvdJeRqTLmmBKz7U-m+9=CHbNRSa16g@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 24 Sep 2021 07:55:54 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V7V0MLy9XeA=vb_dpMS6ZBKkrGS_dC8uMeAxOeok5C3g@mail.gmail.com>
-Message-ID: <CAD=FV=V7V0MLy9XeA=vb_dpMS6ZBKkrGS_dC8uMeAxOeok5C3g@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
+        Fri, 24 Sep 2021 13:54:14 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 4BB37580AA6;
+        Fri, 24 Sep 2021 13:52:37 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Fri, 24 Sep 2021 13:52:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=fm3; bh=
+        sp6EE7DxKHroQEvu81eWzZGB1zBIRkggUg0gv0hvam8=; b=VM6q5bS2qLSgMt+D
+        goet5bmHTy6oMn4zQAzhRAs6mn7w1sUlmPwFYnvQT3A7kHXaaHnXibpwUjBmGFC5
+        MW2f9LjBQ9uAmq7QGJB4Ai99bhhQZIOH39htM4p+n9xq64H3la0tXQ386DznJtvA
+        rpYT0VJJNNlE2A62P3cto7y/cAeNKJMLqPU8S/q96Wd1o3l3xCP86vbmvnmOC2fN
+        N+72i1Bz1SIALKklIAZU4hyRFIXO3iLcViCHthHxofFqdV0opcBtdO940YNjQxzt
+        UvjotCc6CV0XlXoLLq9TW61PIg6mqCxK/NMVo8dWyEszULZVc4I7N6SLhQQsczPa
+        +krAyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=sp6EE7DxKHroQEvu81eWzZGB1zBIRkggUg0gv0hva
+        m8=; b=YOClWC7dNyVRH+WEdQwpFn3W3SRPaP3PhD64DwBD8hBOMwA3WU7F5tRLG
+        ghzY6u7B01hfVKY2rOgvduoicGGPJ+8SjnhgiskkTxc2kN/1siKeoubCuy8Ek1mv
+        PbjEQIcS3tbe177JyVoJeBbgmVM0pYEC69RsDBz/g8wLnRjHHuKKlE7NxgJBWbTE
+        kWUdEdg5CAVqbaFJN5LV2C/KVKx1/T1kCSL88R+zuvkxRJ/rKTVAU6BgkE8gwK89
+        ERGpto7Lb/Xw3fw8Pwfzg+4SrxjbC6+aFEujbLf22s94GiUwXlINKXN+5qXJDlbp
+        FTTC7LXPz31pvbe7ZSTYmGqDrpabA==
+X-ME-Sender: <xms:YxBOYQc_BFvFw7iVbv2i_Vaw-QjltiBlupjMV1sdiQQV1h6uMGFq3A>
+    <xme:YxBOYSM82QV2YCdcIxxMFZDx0mA1jTesxid5Pm-zPXTCUjNHNOQIoFLOHHJvl-55n
+    oPX8VOkhGoh1ddxWXU>
+X-ME-Received: <xmr:YxBOYRhlKmtfeX2cdoRfcSEbuQo8TWqif3jU4-l0bzQmcL-bhA0jux7QZVSbMrjJOrQtct6YgfxRphCJXKOvWXbifCEhbRuFbT_z>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudejuddguddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepjeeugfegkeffgfeuvedtvddufffhjeffjeejvddvudduteehhfefhfef
+    geeikeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:YxBOYV8H5P5HWDUqNCArUELWeKByLFG62t5JBnzSpI1_vpKTku2UxQ>
+    <xmx:YxBOYctBjs8DcOCIp3L8xv7L8EMY-vOf-HNAAIYnAEogBlUEnXevmQ>
+    <xmx:YxBOYcEBuWBdzG_rugbu0CLhT4vErI4JUZKKWUtlZRF0vWMaXbfONQ>
+    <xmx:ZRBOYQcjzO1ZQXxUbAswUZATyvdlNjMAQgkMUfd4aO2LpzlVjL_qVw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 24 Sep 2021 13:52:35 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jagan Teki <jagan@amarulasolutions.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        David Airlie <airlied@linux.ie>,
+        Robert Foss <robert.foss@linaro.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
-        Srikanth Myakam <smyakam@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+        Maxime Ripard <maxime@cerno.tech>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Chen Feng <puck.chen@hisilicon.com>,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        dri-devel@lists.freedesktop.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        John Stultz <john.stultz@linaro.org>,
+        freedreno@lists.freedesktop.org, Tian Tao <tiantao6@hisilicon.com>
+Subject: Re: (subset) [PATCH v4 01/24] drm/bridge: Add documentation sections
+Date:   Fri, 24 Sep 2021 19:52:25 +0200
+Message-Id: <163250593261.1360097.5766561564698142265.b4-ty@cerno.tech>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210910101218.1632297-2-maxime@cerno.tech>
+References: <20210910101218.1632297-1-maxime@cerno.tech> <20210910101218.1632297-2-maxime@cerno.tech>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Fri, 10 Sep 2021 12:11:55 +0200, Maxime Ripard wrote:
+> The bridge documentation overview is quite packed already, and we'll add
+> some more documentation that isn't part of an overview at all.
+> 
+> Let's add some sections to the documentation to separate each bits.
+> 
+> 
 
-On Fri, Sep 24, 2021 at 6:59 AM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Fri, Sep 24, 2021 at 2:10 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >
-> > Hi
-> >
-> > removed most cc, due to server limitation
-> >
-> >
-> > W dniu 24.09.2021 o 10:03, Jani Nikula pisze:
-> > > On Mon, 20 Sep 2021, Doug Anderson <dianders@chromium.org> wrote:
-> > >> Pushed all 15 to drm-misc-next.
-> > > ...
-> > >> e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
-> > >> d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from
-> > >> the EDID
-> > > Hi Doug, Stan's reporting "initializer element is not constant" issues
-> > > here that were discussed before [1]. I wonder what gives, you said you'd
-> > > hit them on a draft version, but not with what was merged, and I can't
-> > > reproduce this either. Curious.
-> >
-> >
-> > Apparently this is grey area of unclear specification.
-> >
-> > gcc version below 8 reports error, above 8.1+ should work [1]. I am not
-> > sure if there is nice workaround for older gcc.
-> >
-> >
-> > [1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69960#c18
->
-> So I think the only solution is to go back to the character-at-a-time
-> version. It's slightly uglier but functionality trumps form.
->
-> I'll post something today though it might need to wait a few hours
-> before I can manage it.
+Applied to drm/drm-misc (drm-misc-next).
 
-I managed to squeeze it in before my other obligations:
-
-https://lore.kernel.org/all/20210924075317.1.I1e58d74d501613f1fe7585958f451160d11b8a98@changeid
-
-I didn't CC everyone here but dri-devel and LKML are copied so
-hopefully if I missed someone it should still be accessible.
-
--Doug
+Thanks!
+Maxime
