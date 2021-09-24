@@ -5,71 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF507C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECBDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A723161039
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73966103D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346562AbhIXNfU (ORCPT
+        id S1344487AbhIXNf5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 09:35:20 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:37888
+        Fri, 24 Sep 2021 09:35:57 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:37912
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344307AbhIXNfG (ORCPT
+        by vger.kernel.org with ESMTP id S1346371AbhIXNfk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 09:35:06 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        Fri, 24 Sep 2021 09:35:40 -0400
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 25D014027C
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 13:33:32 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8AFCC4019A
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 13:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632490412;
-        bh=XKzcwZuGjS/78EnzwfC5NLVDtJ4nskm07UNCWnFZuVI=;
+        s=20210705; t=1632490446;
+        bh=c2rr929hp7ctSTiZFzB7IuYuTf+oD1xck7mUQWU9nKU=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=vGBJYhCRiA7zVmNnSG0ktqTG3xgW4SN9ZyiulTA5inQ/1YPM+AmmdD+YnEa2QAvxN
-         0AExaOdRY4rnhp6GnG8oymNhAMRj94w4liJQiPsIaBoLmSiiMaXi4MkvgRuaMyPMqD
-         IO1WjdTqfFMmSItio2BQI2/XuaU6e0Qy2TC56Jic7dO4nd9bblW/fPF+P5Sh8SUrJq
-         +v89xKglXwYjw8bNT2jVdPv7E1Pfhuixvm4/pZIKsmjmyH/puSEWKFWf34lPJpYwtk
-         y8T/2Er8uyNkCYz9y2D7cD6Sj7gQupvfwmtG6/C0+fx39NSzQxpnBE4nYMhSRyT901
-         kfQI2tcrp9H2g==
-Received: by mail-wr1-f69.google.com with SMTP id e1-20020adfa741000000b0015e424fdd01so8105377wrd.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 06:33:32 -0700 (PDT)
+        b=EYaakHyGVLyVB5CRwdu2s5kUtL1Cc185Ba0Ig3jCvvhBSo0u/gqqFYvcEu7OmJH44
+         +R6HGKj1qj5qnsOu6vTIjasMeyaXe8/GecKbJPHWQLQ8wW2LEtMDiVsUOeDqWtKeJG
+         pZC7fa2AU+p62DPjOGD3r9wKfEkDHIrBYYyFkOmBDWhX3UdOLsmiCXw11FNHRd8Vqr
+         WelM6jTuJnsAHOQRh073vqPfjH4e5kJaq5RQJ0IzeRFrpF1+2st/k0Bbbmw1VTp7Lg
+         T1zgSxmD9dAOxLdeJz07Yn/2rJv/5xVUlcMjGc3qN65k3PdtYwvyD1G1cq9mMPJjzm
+         svoO/ftl4beFQ==
+Received: by mail-wr1-f71.google.com with SMTP id c15-20020a5d4ccf000000b0015dff622f39so8043095wrt.21
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 06:34:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=XKzcwZuGjS/78EnzwfC5NLVDtJ4nskm07UNCWnFZuVI=;
-        b=aE0AV5oUHwMkVudpi5+TBndgQyO89UWhZ2GqECLTJypky4fADn8vlhaoPlDwQxDwIy
-         g2TKPMF23H758vmn2IdiSN5zOSjQm1gCwHeahrfjgNCtaVh9GvdMf+aFDvu33ehNEqvj
-         kV/ifGcHk++ButfoCWNarvRAL9YglhsjrCF9onLQCst9iXvIuxSCxi7iQTMoyvcM7X7W
-         csdlGNHD7ALENdcJ1z8ESUg+Du361V3huDR0syWt3NdBP6IF3E5NYRcDnrb2ZL1uo4/s
-         +j7xHqdc/fu4ZZUusla8qCqlX8ataaoJCICtnCWAknnjEPaSOwwyCsPppIjboFAAU5bc
-         kP+g==
-X-Gm-Message-State: AOAM531zA2nAWhgr1Eesiovj4Svhni1Z5cQGhEJDrcK4K/jYl4eyU7tL
-        PWS7gE90Gx5rjKBabILVSor4S4bayAzm3g4iKeBk2UppVNQN47T/ap+nqceg8b1pZZO+LD8UK2F
-        f/8Us2ryCnRB+ax27pflwYq0qkW2KVLw0WhnsQIytlzp9bpuH
-X-Received: by 2002:a05:6000:1567:: with SMTP id 7mr11418486wrz.84.1632490411880;
-        Fri, 24 Sep 2021 06:33:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwejRfNkpbo05/gq3EhCAin4mt4r31Piv7+agmXlRHuJktohhgGDajWxZvlAJGT9ZJUgdgE0g==
-X-Received: by 2002:a05:6000:1567:: with SMTP id 7mr11418468wrz.84.1632490411764;
-        Fri, 24 Sep 2021 06:33:31 -0700 (PDT)
+        bh=c2rr929hp7ctSTiZFzB7IuYuTf+oD1xck7mUQWU9nKU=;
+        b=Irb0OE2RDcKS9itYWonLlpxaLbb/I8xVxzB7y/z6Z66/bIDHkSVMjsXi98TnSZbcWm
+         Xfc53keVh/1phvdfh7ux80l/7C1GMaTpkoFbLS4k55uYGMvbt6qiZxSf3IUfqUg+6VIx
+         ukn/HvksE58Qg7N0UKkx+AyM3SiPPRkmcI989D8DiZ4k5WQW5HxP7oRrQSmAHe12sLhz
+         2urcTYDf1CLfybAefMBWO55iiZD4yynvVWlWVFGGC8BxRED1EnRTWYCWtcE5eQ352TKe
+         0J+6zWde2ZASol3zVcjTZaDZIyCAErsG+g9E+u7613B9giGnlxG/8osr5Lg6yVcixlnc
+         wqBg==
+X-Gm-Message-State: AOAM5318wRKJCgvaTZcQytkhsh0Qp108TKBdQwv7jVlONDxUsTSJXw8x
+        jH4FRZGq7O6GqtxeNM0ackaAjfFP6r8bOrrvhaPYInqM/7f1JMNksPZzj7HdJgdS+yT8lSmE9sL
+        pXy0HkusJcSnfwJa4Fpd/m3kZpcfeoDJ+0hWQTdp07bK5WzmM
+X-Received: by 2002:a5d:47c4:: with SMTP id o4mr11692852wrc.102.1632490446221;
+        Fri, 24 Sep 2021 06:34:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJySuTDFUNbQADkW2VZazPIKq+SvCnkBXNyrcbBg66KNezbVsPSVOuYyd/Q+oowjMRif6TMaRQ==
+X-Received: by 2002:a5d:47c4:: with SMTP id o4mr11692842wrc.102.1632490446106;
+        Fri, 24 Sep 2021 06:34:06 -0700 (PDT)
 Received: from localhost.localdomain (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id n7sm8259677wra.37.2021.09.24.06.33.30
+        by smtp.gmail.com with ESMTPSA id j14sm8068533wrp.21.2021.09.24.06.34.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 06:33:31 -0700 (PDT)
+        Fri, 24 Sep 2021 06:34:05 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH] mmc: sdhci-s3c: Describe driver in KConfig
-Date:   Fri, 24 Sep 2021 15:32:57 +0200
-Message-Id: <20210924133257.112017-1-krzysztof.kozlowski@canonical.com>
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] mfd: exynos-lpass: Describe driver in KConfig
+Date:   Fri, 24 Sep 2021 15:33:32 +0200
+Message-Id: <20210924133332.112092-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -82,34 +82,24 @@ kernel for Samsung SoC easier.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/mmc/host/Kconfig | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/mfd/Kconfig | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 71313961cc54..e4c1648e364e 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -315,15 +315,17 @@ config MMC_SDHCI_TEGRA
- 	  If unsure, say N.
- 
- config MMC_SDHCI_S3C
--	tristate "SDHCI support on Samsung S3C SoC"
-+	tristate "SDHCI support on Samsung S3C/S5P/Exynos SoC"
- 	depends on MMC_SDHCI
- 	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index ca0edab91aeb..722a7aef4266 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -417,7 +417,9 @@ config MFD_EXYNOS_LPASS
+ 	select REGMAP_MMIO
  	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  often referrered to as the HSMMC block in some of the Samsung S3C
--	  range of SoC.
-+	  (S3C2416, S3C2443, S3C6410), S5Pv210 and Exynos (Exynso4210,
-+	  Exynos4412) SoCs.
+ 	  Select this option to enable support for Samsung Exynos Low Power
+-	  Audio Subsystem.
++	  Audio Subsystem present on some of Samsung Exynos
++	  SoCs (e.g. Exynos5433).
++	  Choose Y here only if you build for such Samsung SoC.
  
--	  If you have a controller with this interface, say Y or M here.
-+	  If you have a controller with this interface (thereforeyou build for
-+	  such Samsung SoC), say Y or M here.
- 
- 	  If unsure, say N.
- 
+ config MFD_GATEWORKS_GSC
+ 	tristate "Gateworks System Controller"
 -- 
 2.30.2
 
