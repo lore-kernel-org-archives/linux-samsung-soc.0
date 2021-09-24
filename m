@@ -7,69 +7,73 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1596C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D808CC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9529561090
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA52B60F4C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 13:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344437AbhIXNiV (ORCPT
+        id S1346649AbhIXNik (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 09:38:21 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38016
+        Fri, 24 Sep 2021 09:38:40 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38072
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346703AbhIXNh7 (ORCPT
+        by vger.kernel.org with ESMTP id S1346762AbhIXNid (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 09:37:59 -0400
+        Fri, 24 Sep 2021 09:38:33 -0400
 Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4EB85402CF
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 13:36:25 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 19F23402D9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 13:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632490585;
-        bh=S6Kt/t1TSGyeiJtJgoFpkmvIPh9xU6Dr0xsilHYx1x4=;
+        s=20210705; t=1632490619;
+        bh=90LQqsSK32tSFh91aPRZL+TZq8U0f1YD/IqlXackaD4=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=YVu1wkd3juuiuIsSYlHezkrgIfTumH6d03suWRQzi/Ldjf8fNK6Ys9pQO8QW8cmMi
-         P8tI4YKBIP6m9zZ3UaCg1OFzzV0vJqzN5v7LTIeVs6j6HpwcF5ZRKLs3DlnhrBuvUy
-         BRm0z3vjHV3mS/8lIdklSgzfArHwSri1eYW5z2nr2kFkRQ+cDFOZtYhS3oS7A7GR9L
-         kPJjk60gP1P7cp+wr44lwhqxW2PUUQwq21M4if6Pt4UlfifuW9GpbluP1o9TzEqjMT
-         0kxM/ehz4TYcC7p08L2pJqJnpjoFArPC11DZuvcpOBtspd1f1JVjVAZcuKJyzZ6PzX
-         lFNZB/D2bCeTA==
-Received: by mail-wr1-f71.google.com with SMTP id c15-20020a5d4ccf000000b0015dff622f39so8049063wrt.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 06:36:25 -0700 (PDT)
+        b=DBzeGI4+DiY/y7wrEPo4VqyOc6XVnodZlGnpyFWVC/LOVLPEA9dClr6DOFtBN4Evq
+         IbvJ22NMJu7zvMYqn8h2o6i+m+mifRhYLIRy4GBIroueEp1hmUwFxyhJi2QWXml4lN
+         +XMK8QgTxjHSDXaw+SHbb/bEbcJsdXZa/VcFutX/EmOktl+rfUQNaxQR+NA46GBndP
+         k8FeTQBsHjB4VcHC1bo6vhGTAXTRJtCwcA191SXU8CyblfNEgaFAeMWdOX+Wz3c3cm
+         2Ni6SuBmu/lv9upvzDqnFTl0Z44p+8HB8sHnNjG/AamVPQ/wFnXP2Y067d3K9RMM4k
+         b+iPyf/czzIpA==
+Received: by mail-wr1-f71.google.com with SMTP id s13-20020a5d69cd000000b00159d49442cbso8091388wrw.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 06:36:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=S6Kt/t1TSGyeiJtJgoFpkmvIPh9xU6Dr0xsilHYx1x4=;
-        b=ysGWcKdRN9YpNp317gYmOKZuxNfH5jG0z1LltzBxPi0Snvz34BxJ0BSFwPqm4G5dY8
-         ynxj0chuvUEm0AxwxO1dt0hM5VgcxyKnl8PaNQsMKa5u3nsvcik8e/BavWJFEWC5E/o0
-         c6IyMlhEZZEgRBdDWVsvoGfx8ghq6zXiHzScRTGdTyrbMIq+ZZ/9gOgIIWUpafBOwh1g
-         qlHOzVa85tvV886QATEaZkg5D2IiDbTVOMCPhMUK7vlP6mtvZRnKhVNbdnpehLYmqpfD
-         j2yfJgsLnl4Rbgk73F80T6ELI/7nUtZK+wv033AW0GIxMl44xjq1uSrKDiV0qGZYKW3s
-         p6ow==
-X-Gm-Message-State: AOAM531jo7Fr4iyzBatLT3f2O/EBAF7zQUXDQQ+xx40hKxYm08/yQ0/S
-        Uid7BIPh/JVAcnpJZovksvb1Iyv5SEFFeNBjnoOyUC/LV4EP7zBF2shQgepF81ae1guVp5qqn9u
-        g+DEjE7IJTgNzfdJnGgYYR5841bhEqkBhJpxq9EFowGG8v6za
-X-Received: by 2002:a05:600c:214a:: with SMTP id v10mr2117099wml.167.1632490584120;
-        Fri, 24 Sep 2021 06:36:24 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwI1yh/i/veV4CX3x/B+5KadPo5GhYE/87Z36LyePhdH5qhrHtk2EOcRVEL6+fCnuWBNcRmpA==
-X-Received: by 2002:a05:600c:214a:: with SMTP id v10mr2117071wml.167.1632490583780;
-        Fri, 24 Sep 2021 06:36:23 -0700 (PDT)
+        bh=90LQqsSK32tSFh91aPRZL+TZq8U0f1YD/IqlXackaD4=;
+        b=SI1cdvwmP2QXT5vko45hBHEaABHXSa7JkHxnwPIvcMF4e0rbM2ZmlKhtf/odBi0fNZ
+         zYthDAlidV9oXMCZmvRkZ4Z0tXbTpZbTuzIsgGXpiuIJJkzionDSk0gG8El8SQMjdc6t
+         09oXhimSF0pFEfEWvl8jMkJWlHOSD2uOW46FwrPGPZqI4W48++cN15MW1y28W6GGYVn0
+         Uqva2h2eWs0+SO1DoWJ4jzC1LEIabE8oquiia6FS4L4kir6yXGDyeXTRUBskF/JZYYl8
+         OhZnObYpHrGGVUrodQRHXDIcD/g3Z9E9qsX0xwl7pHtDwjsC+Njbw2QZC7IB3EihACMt
+         l4QQ==
+X-Gm-Message-State: AOAM531aOt25fYFMpQI6m3mHqX9/8VhuxgdKEH0JanS2X9k7/9FzTnT2
+        hUlBzcj7rrg1HWtQPrKfWrSn/40Ctp3uUleIr75AObhAB2Iin361hzOgddKFzd6H2zfmHnDU2H9
+        oaBvXSpGhAkNGMCRf8V4ZnM9BnpS6+j62e+uUKXQJRaKlfGFO
+X-Received: by 2002:a05:600c:4106:: with SMTP id j6mr2248100wmi.99.1632490618455;
+        Fri, 24 Sep 2021 06:36:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzOzWcfCKTUfPBl8cAWjFiXGRe8fe974eq3o4JN39+VEZHWSXwMJ+8CTcRTSWPLHrokroGXgw==
+X-Received: by 2002:a05:600c:4106:: with SMTP id j6mr2248085wmi.99.1632490618319;
+        Fri, 24 Sep 2021 06:36:58 -0700 (PDT)
 Received: from localhost.localdomain (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
-        by smtp.gmail.com with ESMTPSA id d70sm8377400wmd.3.2021.09.24.06.36.23
+        by smtp.gmail.com with ESMTPSA id j19sm8122245wra.92.2021.09.24.06.36.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 06:36:23 -0700 (PDT)
+        Fri, 24 Sep 2021 06:36:57 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH] i2c: exynos: describe drivers in KConfig
-Date:   Fri, 24 Sep 2021 15:35:49 +0200
-Message-Id: <20210924133550.112488-1-krzysztof.kozlowski@canonical.com>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: samsung: describe drivers in KConfig
+Date:   Fri, 24 Sep 2021 15:36:24 +0200
+Message-Id: <20210924133624.112593-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -82,25 +86,80 @@ kernel for Samsung SoC easier.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/i2c/busses/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/Kconfig | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index e17790fe35a7..1df19ccc310b 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -615,7 +615,10 @@ config I2C_EXYNOS5
- 	depends on ARCH_EXYNOS || COMPILE_TEST
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index 0441c4f73ac9..0e18d6ff2916 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -67,7 +67,8 @@ config EXYNOS_5420_COMMON_CLK
+ 	depends on COMMON_CLK_SAMSUNG
+ 	help
+ 	  Support for the clock controller present on the Samsung
+-	  Exynos5420 SoCs. Choose Y here only if you build for this SoC.
++	  Exynos5420/Exynos5422/Exynos5800 SoCs. Choose Y here only if you
++	  build for this SoC.
+ 
+ config EXYNOS_ARM64_COMMON_CLK
+ 	bool "Samsung Exynos ARMv8-family clock controller support" if COMPILE_TEST
+@@ -79,38 +80,47 @@ config EXYNOS_AUDSS_CLK_CON
  	default y if ARCH_EXYNOS
  	help
--	  High-speed I2C controller on Exynos5 and newer Samsung SoCs.
-+	  High-speed I2C controller on Samsung Exynos5 and newer Samsung SoCs:
-+	  Exynos5250, Exynos5260, Exynos5410, Exynos542x, Exynos5800,
-+	  Exynos5433 and Exynos7.
-+	  Choose Y here only if you build for such Samsung SoC.
+ 	  Support for the Audio Subsystem CLKCON clock controller present
+-	  on some Exynos SoC variants. Choose M or Y here if you want to
+-	  use audio devices such as I2S, PCM, etc.
++	  on some Samsung Exynos SoC variants. Choose M or Y here if you want
++	  to use audio devices such as I2S, PCM, etc.
  
- config I2C_GPIO
- 	tristate "GPIO-based bitbanging I2C"
+ config EXYNOS_CLKOUT
+ 	tristate "Samsung Exynos clock output driver"
+ 	depends on COMMON_CLK_SAMSUNG
+ 	default y if ARCH_EXYNOS
+ 	help
+-	  Support for the clock output (XCLKOUT) present on some of Exynos SoC
+-	  variants. Usually the XCLKOUT is used to monitor the status of the
+-	  certains clocks from SoC, but it could also be tied to other devices
+-	  as an input clock.
++	  Support for the clock output (XCLKOUT) present on some of Samsung
++	  Exynos SoC variants. Usually the XCLKOUT is used to monitor the
++	  status of the certains clocks from SoC, but it could also be tied to
++	  other devices as an input clock.
+ 
+ # For S3C24XX platforms, select following symbols:
+ config S3C2410_COMMON_CLK
+ 	bool "Samsung S3C2410 clock controller support" if COMPILE_TEST
+ 	select COMMON_CLK_SAMSUNG
+ 	help
+-	  Build the s3c2410 clock driver based on the common clock framework.
++	  Support for the clock controller present on the Samsung
++	  S3C2410/S3C2440/S3C2442 SoCs. Choose Y here only if you build for
++	  this SoC.
+ 
+ config S3C2410_COMMON_DCLK
+ 	bool
+ 	select COMMON_CLK_SAMSUNG
+ 	select REGMAP_MMIO
+ 	help
+-	  Temporary symbol to build the dclk driver based on the common clock
+-	  framework.
++	  Support for the dclk clock controller present on the Samsung
++	  S3C2410/S3C2412/S3C2440/S3C2443 SoCs. Choose Y here only if you build
++	  for this SoC.
+ 
+ config S3C2412_COMMON_CLK
+ 	bool "Samsung S3C2412 clock controller support" if COMPILE_TEST
+ 	select COMMON_CLK_SAMSUNG
++	help
++	  Support for the clock controller present on the Samsung S3C2412 SoCs.
++	  Choose Y here only if you build for this SoC.
+ 
+ config S3C2443_COMMON_CLK
+ 	bool "Samsung S3C2443 clock controller support" if COMPILE_TEST
+ 	select COMMON_CLK_SAMSUNG
++	help
++	  Support for the clock controller present on the Samsung
++	  S3C2416/S3C2443 SoCs. Choose Y here only if you build for this SoC.
 -- 
 2.30.2
 
