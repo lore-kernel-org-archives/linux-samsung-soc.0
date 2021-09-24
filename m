@@ -2,223 +2,148 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC277C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 09:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 926F4C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 11:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C70686105A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 09:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B71060F43
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Sep 2021 11:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244681AbhIXJLt (ORCPT
+        id S1343581AbhIXLrF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 05:11:49 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49089 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244510AbhIXJLr (ORCPT
+        Fri, 24 Sep 2021 07:47:05 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:34128
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1343582AbhIXLrF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 05:11:47 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20210924091011euoutp017d64020bbd298fcd3207857f5a7e067a~ntwKmwOUW2400624006euoutp01c;
-        Fri, 24 Sep 2021 09:10:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20210924091011euoutp017d64020bbd298fcd3207857f5a7e067a~ntwKmwOUW2400624006euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1632474612;
-        bh=GDIYSu/OY2EFkD7/7XvXSG2UL3GneP5U91ko+jcNozQ=;
-        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-        b=BhmXmEphHN2PW7grFTMUq3yHrG4IR8JYqqER6Q5rzMRtj1voVonQM6cZF3RIqYKgL
-         TDXg+Vc4g1sbgGrq/WnIok6KbJUWT1Yb/yqLwNxaC487iJk0lnO2MeybrKl1zvRMkS
-         x8zN3vue9oM6LlCukdYsVzHMom+JVMdeBiX1SD8c=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210924091011eucas1p1b2d6107118f1e24a80b7c9be02e7fce7~ntwJ_5oNC0534605346eucas1p1M;
-        Fri, 24 Sep 2021 09:10:11 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 3F.53.45756.3F59D416; Fri, 24
-        Sep 2021 10:10:11 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20210924091010eucas1p21a6b28ce9866385d25ade5b854d9c110~ntwJOuvk21198011980eucas1p20;
-        Fri, 24 Sep 2021 09:10:10 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210924091010eusmtrp158c1fd12553683e07b5cb268591a7897~ntwJK-xUr3000630006eusmtrp1Y;
-        Fri, 24 Sep 2021 09:10:10 +0000 (GMT)
-X-AuditID: cbfec7f2-7bdff7000002b2bc-0f-614d95f32ade
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9A.E8.20981.2F59D416; Fri, 24
-        Sep 2021 10:10:10 +0100 (BST)
-Received: from [106.210.131.79] (unknown [106.210.131.79]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20210924091008eusmtip1d03be791cbb29065d8b3415cff78ff10~ntwHanPJO3170131701eusmtip1V;
-        Fri, 24 Sep 2021 09:10:08 +0000 (GMT)
-Message-ID: <68c3f798-a18d-fe8d-2925-2686716a985b@samsung.com>
-Date:   Fri, 24 Sep 2021 11:10:08 +0200
+        Fri, 24 Sep 2021 07:47:05 -0400
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9C7283F325
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 11:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632483931;
+        bh=Rktmb+c/jmGGJpbEWYmUQWQyyChLN+sZ5YGx4agFeyU=;
+        h=To:References:From:Cc:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=NRTEA4ywWWGsXNWP4NMGiOwi6Wc92KV3+3Vd1RKb55JSV42MHbhiqvLRHyjjSFTqY
+         gYEKocCR3QPN5qfsMyAnQFY3bDOOnsCWdz3s8/mWhJtzMpbfjmWlSQj/z2AnAW6s49
+         Vm194o/UxmFPyOHovoQT9KU1ers7uBynlWeur4aKxBUkizcrm4wusSIPC/HBaol7px
+         Vc81uMBu6OmOuYY8C63DghgYGBmuU7fb7K39Y/Y3WDjAiQ+tZTL6u1zi43IgWddxGL
+         isIEEpxkLykt8KpzdWQ7TYdaFNMlrh/yfdUZJHpBp4ma/2+6IicQ+BE+afhiPOBKCG
+         WVdzcmbRco0CA==
+Received: by mail-wr1-f72.google.com with SMTP id x7-20020a5d6507000000b0015dada209b1so7788649wru.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 04:45:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:references:from:cc:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Rktmb+c/jmGGJpbEWYmUQWQyyChLN+sZ5YGx4agFeyU=;
+        b=7B6BWcXuygWZYMFgzK++4gvSx07HZ3kr4PNGCVCPasj1bbjRy7KHJ6XqNtveWS86EU
+         0nlkpqTF6Oo1lgPFxZGMeIRtNfpLtZzBNhhbJeahzKY9q9H4TpmMLcTrRRf4gzZmFLDz
+         kUArGXyU2eDqXK125jp3sBtw9s7noXKPIAjL5TLrZwWiYzPF2Xg7IVmCq1di4m9bl5xy
+         YTxlvUSZTTyxRy/FkkD/gkW0n8XvNU+XEp7GYvpmpAEW+Srip4yeMk7mUA9F61Jy/4gR
+         /D/Yhwo6mKcROaD32X05RPQkV+ibNgfhqGqkhPI9gDTor7k+hWX1AJ67tjgxK9ligYDr
+         U5Bw==
+X-Gm-Message-State: AOAM533111NutjX7lRe24EoIIC+MJY6k5FFqRlfnuBuoD9NO9wPAU/0R
+        wyb4Rk2bABgkXMXWrus8tMAZGPYKJMKMsxRoOW0EA9Cn6ofKIIAIm3OGpKt97mdmSKHzex18ynb
+        k/Hr5F4znfrqKYecrzRG3V2+6AJ00DGR2quq8YD5PhBN+pBCN
+X-Received: by 2002:a7b:cd0d:: with SMTP id f13mr1573620wmj.183.1632483931095;
+        Fri, 24 Sep 2021 04:45:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwkYUFV3B7g5xCWZDPrK8dWvrpcRvuqDvM2ibYLLbikrHkDphlAXQgkW94Kg0w3tSgaQ5hzLQ==
+X-Received: by 2002:a7b:cd0d:: with SMTP id f13mr1573604wmj.183.1632483930884;
+        Fri, 24 Sep 2021 04:45:30 -0700 (PDT)
+Received: from [192.168.0.134] (lk.84.20.244.219.dc.cable.static.lj-kabel.net. [84.20.244.219])
+        by smtp.gmail.com with ESMTPSA id h15sm7741993wrc.19.2021.09.24.04.45.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Sep 2021 04:45:30 -0700 (PDT)
+To:     Henrik Grimler <henrik@grimler.se>, sre@kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, wolfgit@wiedmeyer.de
+References: <20210919200735.142862-1-henrik@grimler.se>
+ <20210919200735.142862-2-henrik@grimler.se>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH 1/1] power: supply: max17042_battery: use VFSOC for
+ capacity when no rsns
+Message-ID: <17ba5aaa-c456-2bb9-1680-ff0a302b412f@canonical.com>
+Date:   Fri, 24 Sep 2021 13:45:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0)
-        Gecko/20100101 Thunderbird/93.0
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v5 00/15] eDP: Support probing eDP panels dynamically
- instead of hardcoding
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
-Content-Language: pl
-In-Reply-To: <874kaabdt5.fsf@intel.com>
+In-Reply-To: <20210919200735.142862-2-henrik@grimler.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzO6b29ve2sXh6TMyB7MA2TKeiEeOYq6rKR65JNiWMPyYJFbhBH
-        gbTiNrZFCIz3xBZQaQXRsZZHRdNZoAhsa7p2iMBKJ48IY9MtjPIaUNhgtI5ya8Z/3/ed7/u9
-        kkNi3qOEP5mUcpqRpoiTgwgB3mRe6t0xX/6meOeUgUBf9nRyUN60moecCjMPzaiLAXrUJMfQ
-        FVMPF3WrvyfQzwszBPqjcIpA2vtGgCpVCoAcuvME0thuADR2pRGgu0US1Nt7k4fKVjQcpHvY
-        z0Xyb7t5yNZ6mUCqmhIc6cenOehSbwcHlXW0EqjAoSSQsbwdoOumER66OqvHUW6Bmou+aDfx
-        UO2SHqC8QhFaaq3C0a1JORf1Oi1clDMccWALfX12lEtrq7SAtvVbMfrfZQWgq7Sf0qpMK063
-        jNQAun2xGqfl3Ttog3KER3/VNs6hdfUFBD3c30bQzYu/cumqzmh6tMjCOeJ3TCBKYJKTzjDS
-        sMjjgpPZBjytjvo467cL3ExgFRYCkoRUOMzJEhcCAelN1QLocFZyWeIA8O873wGWzAPY32DG
-        HieG76ezugbAc3NZHtMMgE366dU4nxRSkfBSvZVwY5zaCvNdeRire8HOit9xN36SOg4nftGt
-        eQhqG3R+M0S4G/hQYtieS7hr+lKZAJZ0lWBuglF9T0CnyrAWwChfOPggB7gxnwqGFYt2wOrP
-        wGy9ai0AKYcA3u0cX+sMqddgX/ayB/tAu+UWj8WBsKu0GGfxWTham+MJ5wOov2nwBF6Bwz3L
-        a+Nhq6PeaA1j5YNwYNCEs2fZCAenvNgZNkJF00XPtYQwP9ebdT8HR7v1noJ+8OufFojzIEi5
-        7izKdZsp122j/L9vNcDrgR+TLpMkMrJdKcxHoTKxRJaekhh6IlWiA6t/oMtlmWsBlfbZUCPg
-        kMAIIIkF+QrnB98QewsTxJ9kMNLUOGl6MiMzggASD/IT1qu0cd5Uovg08yHDpDHSx68cku+f
-        yXm2bkIX/eehTntSze59FS1Pk0VR5oM/FGlcDxUbTn22cFvKtZ8Z78NctpdXdAOwp6u9o9h+
-        4LAxWhIVv+ns9nKfmlArCL/3zu2rph/zE0TVAWRkbfFmL1fAwJgg1Gn7q2/Iq+B5dMyyP2Iv
-        uCh769S190pjXLIM0+EPds/RpG1zwyag3PBCmlJU5vuq4fMQs9Oxde+hqH1b1KK3G+UZZdEN
-        s6UXdu45ERccFfFUYOCkzT8Gb9sefadf/3rf/lgm/sjEnlTJ5aOTlpJETVhwo+rdugePcvj3
-        VsKaV/5RhMWGv8iPFyXGvj9lGR48WlesHsNGQvTN14YCfGLwAZ6imr/tpSBcdlK8KwSTysT/
-        AZvrFYdyBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0yTZxjN2+/SwmzyUWB9BzPbCmaZCYUihReC7JLGfdG5bH+2OEaggw+K
-        vbm2dF4SB8pgVNgoImI7Ck4EwTK0UNByMasNyAbWjq2iQBgqM7CBoyoLCDKgW8K/k3Oec86T
-        Jw8H4/mIME6uSsdoVFKFgAzEf37ePx7lO7VXGrO8ilDZzQEWKp5rYKOVij42etRQCtBqhxFD
-        ta6bBBpq+JFEvz59RKIpwyyJrKNOgGrMFQA9sZWTqHG4FaCHtT8ANHhCidzuS2xUudzIQrb7
-        XgIZrw2x0bDjOxKZ67/FkX16joWq3b0sVNnrIFHJExOJnKd6AGpxjbPR2Xk7jopKGgj0VY+L
-        jS4s2gEqNiSjRYcFR+1/GQnkXuknUOGY+K1IumV+gqCtFiugh70ejH62VAFoi/UIbc734PSV
-        8XpA9yzU4bRxKIq+ahpn0+e6p1m0rbmEpMe83STdufA7QVsGPqQnTvSzPuB/IkzWqPN0zKsy
-        tVa3U5AqQrFCUSISxsYlCkU7EtKSYsWC6JTkLEaRq2c00SkZQtnxq/iBJupgwWQVkQ88XAPg
-        cCAVB8dG8wwgkMOjzgNoablNGEDAGs+HXbWzmB8Hw2WvgfQPzQI4U2kH6wKXSoHVzR5yHePU
-        Nvj182LMzwfBgTMP8HUcSmXAk3csG6Ek9QZcabtDrhcHU1LYU7SRGUIdA/CftqqNGYwaeQF2
-        zYT7y7pY8MbYfcwvhMCRe4UbxQHU6/DMwgzw8/HQYDf8h1+Bx+1mrBzwTJv2MG2ymzZZTJss
-        dQBvBiFMnlaZo9TGCrVSpTZPlSPMVCttYO35OvoW26+Appl5oROwOMAJIAcThHAfj+yW8rhZ
-        0kOHGY06XZOnYLROIF47hhELC81Ur32vSpcuio8Ri+LiE2PEifE7BHxunMuazqNypDpGzjAH
-        GM3/PhYnICyfldV0sWxLaue2BJ3+8UsJ2d9Eqo9mfTn39o0m7qFgH86vz12VLdEF1wW70qvD
-        dzpqCH3l3mtpW3kdu80PJv/MTmp9/+xS4e3kW6vnHMqncHtUfFzrw46Rzjf3l1+Qy1Xez0ym
-        j/Y825OUkDU5uSz5rUrPj/BIsk2OX4olitLejhej77UbJ0QHy/QRW3UnJUHqjLRZj0L16Wsv
-        V/P5g/KAoLsjdWyVIrLEvSX0ls3dN5g2+u47so9lRdlTR8rEvZenHZ/v0vwh79p3ubS0MIKc
-        dl3K/KLm7t/HrO99n6ossOWev94d7TrsW6TDwvcXmn+anG8M3Hd67KKmwX20TRI5NVzhcwpw
-        rUwq2o5ptNJ/AZQIyjoFBAAA
-X-CMS-MailID: 20210924091010eucas1p21a6b28ce9866385d25ade5b854d9c110
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b
-References: <20210914202202.1702601-1-dianders@chromium.org>
-        <CACRpkdaTb4_UfFzCqw=fiAnQhHD+1sDDua529KdGQbgMVfjYBw@mail.gmail.com>
-        <CAD=FV=VPgFRBLgOGvt4a4afDr80aQL64L7=H3kqeRf2ffiusPg@mail.gmail.com>
-        <CGME20210924080417eucas1p209819b105dc64faf1f2a7140c5c1389b@eucas1p2.samsung.com>
-        <874kaabdt5.fsf@intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
+On 19/09/2021 22:07, Henrik Grimler wrote:
+> On Galaxy S3 (i9300/i9305), which has the max17047 fuel gauge and no
+> current sense resistor (rsns), the RepSOC register does not provide an
+> accurate state of charge value. The reported value is wrong, and does
+> not change over time. VFSOC however, which uses the voltage fuel gauge
+> to determine the state of charge, always shows an accurate value.
+> 
+> At least one max170xx driver, found in Asus' Z00D kernel [1], chooses
+> how to get the capacity based on if current sense is available or not.
+> Lets change the mainline driver to match the Asus Z00D driver's
+> behaviour and thereby fix so that correct state of charge values are
+> obtained on Galaxy S3.
+> 
+> [1] https://github.com/LineageOS/android_kernel_asus_Z00D/blob/c7ab0e3ec5b5/drivers/power/max17042_battery.c#L1103-L1105
+> 
+> Suggested-by: Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+>  drivers/power/supply/max17042_battery.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+> index 622bdae6182c..7233670978d0 100644
+> --- a/drivers/power/supply/max17042_battery.c
+> +++ b/drivers/power/supply/max17042_battery.c
+> @@ -317,7 +317,10 @@ static int max17042_get_property(struct power_supply *psy,
+>  		val->intval = data * 625 / 8;
+>  		break;
+>  	case POWER_SUPPLY_PROP_CAPACITY:
+> -		ret = regmap_read(map, MAX17042_RepSOC, &data);
+> +		if (chip->pdata->enable_current_sense)
+> +			ret = regmap_read(map, MAX17042_RepSOC, &data);
+> +		else
+> +			ret = regmap_read(map, MAX17042_VFSOC, &data);
 
-removed most cc, due to server limitation
+Thanks for the patch. I found also my comments to Wolfgang's patch in
+2016, which you resolve here but I have more. :)
 
+I think my previous message about current sense are not correct. What is
+important is whether ModelGauge is being used/configured. For example
+none of DT platforms support it but ACPI might.
 
-W dniu 24.09.2021 o 10:03, Jani Nikula pisze:
-> On Mon, 20 Sep 2021, Doug Anderson <dianders@chromium.org> wrote:
->> Pushed all 15 to drm-misc-next.
-> ...
->> e8de4d55c259 drm/edid: Use new encoded panel id style for quirks matching
->> d9f91a10c3e8 drm/edid: Allow querying/working with the panel ID from 
->> the EDID
-> Hi Doug, Stan's reporting "initializer element is not constant" issues
-> here that were discussed before [1]. I wonder what gives, you said you'd
-> hit them on a draft version, but not with what was merged, and I can't
-> reproduce this either. Curious.
+There is incoming patch around it:
+https://lore.kernel.org/lkml/5702731.UytLkSCjyO@pliszka/
 
+If you switch to VSSoc, I think you need to modify the SOC Alert Config
+in MiscCFG register (bits 0:1 to 0x1). Otherwise the alerts will be
+generated on different value.
 
-Apparently this is grey area of unclear specification.
+Different topic:
+When touching Exynos-based boards (like Galaxy S3), please Cc me as
+well, even if I don't pop up in the maintainers.
 
-gcc version below 8 reports error, above 8.1+ should work [1]. I am not 
-sure if there is nice workaround for older gcc.
+For max17042 we need to Cc broader group of users, for example using it
+in ACPI platforms. The best is to pick the contributors.
 
-
-[1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69960#c18
-
-
-Regards
-
-Andrzej
-
-
-> BR,
-> Jani.
->
->
-> In file included from drivers/gpu/drm/drm_edid.c:42:0:
-> ./include/drm/drm_edid.h:525:2: error: initializer element is not constant
-> ((((u32)((vend)[0]) - '@') & 0x1f) << 26 | \
-> ^
-> drivers/gpu/drm/drm_edid.c:111:14: note: in expansion of macro 
-> ‘drm_edid_encode_panel_id’
-> .panel_id = drm_edid_encode_panel_id(vend, product_id), \
-> ^~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/drm_edid.c:120:2: note: in expansion of macro ‘EDID_QUIRK’
-> EDID_QUIRK("ACR", 44358, EDID_QUIRK_PREFER_LARGE_60),
-> ^~~~~~~~~~
-> ./include/drm/drm_edid.h:525:2: note: (near initialization for 
-> ‘edid_quirk_list[0].panel_id’)
-> ((((u32)((vend)[0]) - '@') & 0x1f) << 26 | \
-> ^
-> drivers/gpu/drm/drm_edid.c:111:14: note: in expansion of macro 
-> ‘drm_edid_encode_panel_id’
-> .panel_id = drm_edid_encode_panel_id(vend, product_id), \
-> ^~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/drm_edid.c:120:2: note: in expansion of macro ‘EDID_QUIRK’
-> EDID_QUIRK("ACR", 44358, EDID_QUIRK_PREFER_LARGE_60),
-> ^~~~~~~~~~
->
->
-> [1] 
-> https://lore.kernel.org/all/CAD=FV=XHvFq5+Rtax7WNq2-BieQr-BM4UnmOcma_eTzkX2ZtNA@mail.gmail.com/
->
->
+Best regards,
+Krzysztof
