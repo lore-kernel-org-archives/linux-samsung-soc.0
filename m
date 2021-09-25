@@ -2,214 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393F3C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Sep 2021 02:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2D4C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Sep 2021 14:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6746124B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Sep 2021 02:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB15E60EE5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Sep 2021 14:26:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347506AbhIYCTn (ORCPT
+        id S1343746AbhIYO2L (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 22:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58298 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347429AbhIYCTm (ORCPT
+        Sat, 25 Sep 2021 10:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233738AbhIYO2L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 22:19:42 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4945FC061613
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 19:18:08 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id i84so9784668ybc.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Sep 2021 19:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Di1Rj4i8NNjxp2cBpfWHuge/r4aFHPc9tdM1Aqn2uaQ=;
-        b=RULTTSYMpzcMqu/lH9m6RVVkMZSgo7xVxk3vvJHNciAYlpw3OcPwxtQgIXTjpe38RX
-         7l8F3CYKnC/ZqznIXnYleT84WVwUYxQWbpL/QRwl1zVAnxB1+6i6CfmJ+l6HWo5ZzwVI
-         egpZWT1Cxk4+oj2abOTPYGu5ux4vFsUGgBrbXySios1hXai0Z5G88cVwzn8M92umkF6W
-         q7jlU9+lrFzukDQxNIqE5/k2NjtLs0l6gj6Lvvc6BVOn3FH2Mg1nCkXQuYbnmG+mI4N6
-         AZoG5Ip7TZZ+8R8kTqhCmei83qs1dDLiIBtw80jdRQAsDoL3gz22daS5g7ihzFvsVaNK
-         ASdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Di1Rj4i8NNjxp2cBpfWHuge/r4aFHPc9tdM1Aqn2uaQ=;
-        b=SWp3/b9f6fDGUtygxbnWeOXMIzKBFlxRcel8czuRS0dgdl4vcgh6KYjciXMj5+CGvs
-         Kty6PINdcIGw/bYqSUbwMIAblP51yFPyS11Tgzred9BcA4CbBfX/oPoHe54BgCPzWwJq
-         uUrfPTOK7Syw2cmFUK1YMZvjM4Z7/gHgVZcsefh/LsEcwVC05yEuzG5mMiFy/DWrZYR6
-         YjjJ9x5WQWTxOl2hCxop1ZxBLIqR/sLwHTbppaxVKwWFhzM9gKu2LyQAKMyTJSply9NN
-         BRdXjGdDtgkM5QGx9wTDDbGvMXKFVC9jbyFuqRnEMgqqOHU5ylBJRuZAb4NfA9tOo+of
-         exKQ==
-X-Gm-Message-State: AOAM531gsnn1Xz65vDEjp8JEltgFmWaEUnHBrN1mmYetPm38KIymjmQB
-        6H5ogOnQ2AUJgCOGFpU70P7mBgsnmtIM+Aey8eqB3Q==
-X-Google-Smtp-Source: ABdhPJwpkpI/4ynNoGZO3Tt2LHq14lHoq8y03inXj18wPF7a5sbJjd+FrJ61pEThOJCudT8JzVygtlCV8utFiPdOG1E=
-X-Received: by 2002:a25:5606:: with SMTP id k6mr15946697ybb.476.1632536287181;
- Fri, 24 Sep 2021 19:18:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210920190350.3860821-1-willmcvicker@google.com>
- <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com> <YUmTwZPqrCfRMekd@google.com>
- <d6212801-f2a0-a6a7-6154-0f99b57f1c4d@canonical.com>
-In-Reply-To: <d6212801-f2a0-a6a7-6154-0f99b57f1c4d@canonical.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Fri, 24 Sep 2021 19:17:30 -0700
-Message-ID: <CAGETcx9wp3cbsehODj=oAd658hF6KNL5Qiy2nVc=7Bxqxxwimw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] arm64: Kconfig: Update ARCH_EXYNOS select configs
+        Sat, 25 Sep 2021 10:28:11 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC2760E94;
+        Sat, 25 Sep 2021 14:26:34 +0000 (UTC)
+Date:   Sat, 25 Sep 2021 15:30:23 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: exynos: describe drivers in KConfig
+Message-ID: <20210925153023.06ef72ec@jic23-huawei>
+In-Reply-To: <20210924133515.112357-1-krzysztof.kozlowski@canonical.com>
+References: <20210924133515.112357-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 1:25 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 21/09/2021 10:11, Lee Jones wrote:
-> > On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
-> >
-> >> On 20/09/2021 21:03, Will McVicker wrote:
-> >>> This patch series tries to address the issue of ARCH_EXYNOS force selecting
-> >>> a handful of drivers without allowing the vendor to override any of the
-> >>> default configs. This takes away from the flexibilty of compiling a generic
-> >>> kernel with exynos kernel modules. For example, it doesn't allow vendors to
-> >>> modularize these drivers out of the core kernel in order to share a generic
-> >>> kernel image across multiple devices that require device-specific kernel
-> >>> modules.
-> >>
-> >> You do not address the issue in these patches. The problem you describe
-> >> is that drivers are not modules and you are not changing them into modules.
-> >
-> > The wording is unfortunate.  The reason for this change doesn't have
-> > much to do with kernel modules.
-> >
-> > Let's go back in time 18 months or so when Greg KH submitted this [0]
-> > patch, which you Acked.  Greg was trying to solve the problem of not
-> > having to enable ARCH_EXYNOS on kernels which are designed to be
-> > platform agnostic (sometimes called Generic Kernels).  For some reason
-> > SERIAL_SAMSUNG is the only symbol with these dependencies, so the
-> > solution seemed simple and straight forward at the time.
-> >
-> > However, For sound reasons Geert NACKed the patch.
-> >
-> > Quoting from [1] he says:
-> >
-> >   "A generic kernel will include Samsung SoC support, hence
-> >   PLAT_SAMSUNG or ARCH_EXYNOS will be enabled."
->
-> Yes, it's correct reasoning. There is also one more use-case -
-> non-upstreamed (out of tree) platform which wants to use Exynos-specific
-> drivers. Something like was happening with Apple M1 except that it got
-> upstreamed and we do not care much about out-of-tree.
->
-> >
-> > However, since the entry for ARCH_EXYNOS *insists* on building-in a
-> > bunch of other symbols (via 'select') which will be unused in most
-> > cases, this is not a currently acceptable approach for many Generic
-> > Kernels due to size constraints.
->
-> In the mainline kernel there is no such use case. If you want to have
-> Exynos-whatever-driver (e.g. SERIAL_SAMSUNG or S3C RTC), you should
-> select ARCH_EXYNOS because otherwise it does not make any sense. Zero
-> sense. Such kernel won't work.
->
-> It makes sense only if there is some other work, hidden here, where
-> someone might want to have SERIAL_SAMSUNG or S3C RTC without
-> ARCH_EXYNOS. Although GKI is not that work because GKI kernel will
-> select ARCH_EXYNOS. It must select ARCH_EXYNOS if it wants to support
-> Exynos platforms.
->
-> Therefore I expect first to bring this "some other work, hidden here" to
-> broader audience, so we can review its use case.
->
-> >
-> > What this patch does is migrates those symbols from being 'select'ed
-> > (always built-in with no recourse) to 'default y'.  Where the former
-> > cannot be over-ridden, but the latter can be via a vendor's
-> > defconfig/fragment.
->
-> It cannot be overridden by vendor fragment because options are not
-> visible. You cannot change them.
->
-> The patch does nothing in this regard (making them selectable/possible
-> to disable), which is why I complained.
->
-> >
-> > I doubt many (any?) of these symbols can be converted to kernel
-> > modules anyway, as they are required very early on in the boot
-> > sequence.
->
-> True, some could, some not. Also some platforms are set up via
-> bootloader, so actually could "survive" till module is loaded from some
-> initrd.
+On Fri, 24 Sep 2021 15:35:15 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
 
-Hi Krzysztof,
+> Describe better which driver applies to which SoC, to make configuring
+> kernel for Samsung SoC easier.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-I was trying to chime in, but the discussion got spread out across all
-the patches. Since the cover letter seems to have everyone, I thought
-I'd reply here. Hope you don't mind. I'll try to respond/chime in on
-the various topics that were raised across the patches.
+Seems reasonable.  Applied thanks,
 
-Yes, the next patch series would To/Cc folks correctly. William simply
-forgot to use the --to-cover and --cc-cover options when using git
-send-email.
+Jonathan
 
-I agree with you that it doesn't make sense to have ARCH_EXYNOS
-enabled but to have all the clock drivers exynos compiled out. Then
-one obviously can't boot an exynos platform using that kernel. I think
-William is going to send out a new patch series with a few drivers
-modularized. That'll ensure all the common exynos clock code is
-modularized and we have a few examples of exynos clock modules.
+> ---
+>  drivers/iio/adc/Kconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index af168e1c9fdb..6cc1268da184 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -430,9 +430,9 @@ config EXYNOS_ADC
+>  	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || (OF && COMPILE_TEST)
+>  	depends on HAS_IOMEM
+>  	help
+> -	  Core support for the ADC block found in the Samsung EXYNOS series
+> -	  of SoCs for drivers such as the touchscreen and hwmon to use to share
+> -	  this resource.
+> +	  Driver for the ADC block found in the Samsung S3C (S3C2410, S3C2416,
+> +	  S3C2440, S3C2443, S3C6410), S5Pv210 and Exynos SoCs.
+> +	  Choose Y here only if you build for such Samsung SoC.
+>  
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called exynos_adc.
 
-Speaking of modules, a fully modularized generic ARM64 kernel where
-everything is modularized out and we only load the necessary modules
-is a great goal. And this is where I can chime in the most since I
-wrote fw_devlink and tested this out. Such a kernel is not
-hypothetical. IIRC hikey960 can already do this. There's an upstream
-amlogic(?) board that can do this (Kevin Hilman has done that). A more
-complex/recent/powerful, but downstream example is the Pixel 5 -- it
-has a fully modular kernel. 320+ modules! Including interrupt
-controllers, timers, pinctrl and clocks.
-
-I can assure you any of the framework code related to pulling off
-booting a fully modular ARM64 kernel is already upstreamed
-(fw_devlink, irq framework changes, etc) or sent upstream (timer -- by
-a SoC vendor, etc) and being worked on. As for fw_devlink, I've
-extended it way past what GKI or Android would need. It would have
-been super trivial if all I wanted to do was support Android devices.
-I've also upstreamed changes that improve module loading time for all
-ARM64 modules. All of this and more upstream work came out of GKI and
-our push to be upstream first -- so I think it's reasonable to say the
-GKI effort helps and cares to get more work upstreamed.
-
-Speaking of GKI, let's not speak of it. It really doesn't matter.
-Android is just yet another distribution (albeit a very popular one).
-The part that's relevant to upstream/all the other distributions is
-the fully modular generic ARM64 kernel and that's what we should focus
-on.
-
-In that context, I think William's attempts are reasonable and I think
-he'll be glad to fix up any technical issues that people point out. So
-hopefully we can focus on that?
-
-Cheers,
-Saravana
