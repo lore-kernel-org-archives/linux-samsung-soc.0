@@ -2,56 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6206AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Sep 2021 21:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE99C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Sep 2021 12:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CBA461076
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Sep 2021 21:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6FFD60EE2
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Sep 2021 12:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229997AbhIYVbe (ORCPT
+        id S231160AbhIZMP3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 25 Sep 2021 17:31:34 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:48023 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229966AbhIYVbe (ORCPT
+        Sun, 26 Sep 2021 08:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230160AbhIZMP2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 25 Sep 2021 17:31:34 -0400
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 7936924000A;
-        Sat, 25 Sep 2021 21:29:57 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 1/2] rtc: omap: drop unneeded MODULE_ALIAS
-Date:   Sat, 25 Sep 2021 23:29:53 +0200
-Message-Id: <163260532289.37353.5313230409498030745.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210916164513.134725-1-krzysztof.kozlowski@canonical.com>
-References: <20210916164513.134725-1-krzysztof.kozlowski@canonical.com>
+        Sun, 26 Sep 2021 08:15:28 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A66C061570;
+        Sun, 26 Sep 2021 05:13:52 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id z11so21633358oih.1;
+        Sun, 26 Sep 2021 05:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3Pf5rU/TB/BW2ajTVjYWCJhuzdNpYKVst0ZSbg4WjX0=;
+        b=Kev7foseiXhcccruFzCzWbqnt/nsv0uHCpvE0dQDu7iJzyBuIV1iYpanAaJT22iWNB
+         4Q+z4EDr11ihcgv4MSTnxm2Vis4dIG8ub79lA7s4z6rZQUbaQMl8dp3Sbr5+6EaL28+E
+         LNkPgWOID13CjiFB34mcXjIZ8efFKUbqTJoOHW1tW5Enk+qGh0MKp85ErS6sqAzi1XfB
+         vvV9xOv64F5hx0LMdXYrZkkLaYsb1QDIsDZw7VvxvWizX+23NlChmAW92+jJPbXr1ZSc
+         gKoy3NldeJKwGloeIJ7OV4MRRnWqyI4V6cU3kAcGRvK50i6qvTZiV+FE429uTLgUpFpp
+         hcHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=3Pf5rU/TB/BW2ajTVjYWCJhuzdNpYKVst0ZSbg4WjX0=;
+        b=ncKWSZ5L4uax6F7ylpzLfhxpmeUeqryHh5lYT1NB5qDVFnv3MhXIAO9KsbQI8rLnY5
+         5KXBT4+AoUldONDyPp8KR7TC3EoUTJNF/VW5GxjAqqQcwJHXFgWP2BWCNthgDnBrpMgB
+         pfj+ftMOPqhR2VfMvqMaYrZol4pmBUBclRAW4WBzHqYLXL3tnPxjZtNpiATzPdlCHOj4
+         jZk1wXZglE/2wjWGQbGXDDtD7ImNspSBvcSlK4siImojwfgfx09tOGFryt6LEFb8Xs43
+         NXwoFc08YE0l8DNNP8s0x+DbAajjZnH+yrv9iuj0v7zSp0EXYSqi3LE7JdKLzAESw7AG
+         nYEA==
+X-Gm-Message-State: AOAM533/PjgU4ot96O3swyCiqGyOcLGYNR4k0wuiXu/WsKuFE9JshCI6
+        7jRbdWyFhk8B6Vzy0ObTJoovbR+Lr+k=
+X-Google-Smtp-Source: ABdhPJwAa//K6Y7U71YSn4FZ+9A9LY11mS6IHLh9n+yS2sdRbI3E6yBmIp4Z4k4xHnPoGv3cZZGVRA==
+X-Received: by 2002:a05:6808:2016:: with SMTP id q22mr8231106oiw.19.1632658432046;
+        Sun, 26 Sep 2021 05:13:52 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i23sm3229040oof.4.2021.09.26.05.13.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Sep 2021 05:13:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Sun, 26 Sep 2021 05:13:50 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH] watchdog: s3c2410: describe driver in KConfig
+Message-ID: <20210926121350.GA3174183@roeck-us.net>
+References: <20210924132930.111443-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210924132930.111443-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 16 Sep 2021 18:45:12 +0200, Krzysztof Kozlowski wrote:
-> The MODULE_DEVICE_TABLE already creates proper alias for platform
-> driver.  Having another MODULE_ALIAS causes the alias to be duplicated.
+On Fri, Sep 24, 2021 at 03:29:30PM +0200, Krzysztof Kozlowski wrote:
+> Describe better which driver applies to which SoC, to make configuring
+> kernel for Samsung SoC easier.
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  drivers/watchdog/Kconfig | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-
-Applied, thanks!
-
-[1/2] rtc: omap: drop unneeded MODULE_ALIAS
-      commit: 5e295f9402039aaa38d0949f598745b98850fd13
-[2/2] rtc: s5m: drop unneeded MODULE_ALIAS
-      commit: 6eee1c48be7cb0b9b14408521a9151c1021901d3
-
-Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index b81fe4f7d434..75591ba261e2 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -496,16 +496,18 @@ config S3C2410_WATCHDOG
+>  	select WATCHDOG_CORE
+>  	select MFD_SYSCON if ARCH_EXYNOS
+>  	help
+> -	  Watchdog timer block in the Samsung SoCs. This will reboot
+> -	  the system when the timer expires with the watchdog enabled.
+> +	  Watchdog timer block in the Samsung S3C24xx, S3C64xx, S5Pv210 and
+> +	  Exynos SoCs. This will reboot the system when the timer expires with
+> +	  the watchdog enabled.
+>  
+>  	  The driver is limited by the speed of the system's PCLK
+>  	  signal, so with reasonably fast systems (PCLK around 50-66MHz)
+>  	  then watchdog intervals of over approximately 20seconds are
+>  	  unavailable.
+>  
+> +	  Choose Y/M here only if you build for such Samsung SoC.
+>  	  The driver can be built as a module by choosing M, and will
+> -	  be called s3c2410_wdt
+> +	  be called s3c2410_wdt.
+>  
+>  config SA1100_WATCHDOG
+>  	tristate "SA1100/PXA2xx watchdog"
+> -- 
+> 2.30.2
+> 
