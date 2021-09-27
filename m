@@ -2,108 +2,202 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 136CAC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 19:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8775C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 19:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDD3C6101A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 19:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AA0160184
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 19:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235880AbhI0THb (ORCPT
+        id S236703AbhI0T4j (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Sep 2021 15:07:31 -0400
-Received: from h04mx15.reliablemail.org ([185.76.67.208]:11336 "EHLO
-        h04mx15.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236092AbhI0THb (ORCPT
+        Mon, 27 Sep 2021 15:56:39 -0400
+Received: from mail-vs1-f50.google.com ([209.85.217.50]:35487 "EHLO
+        mail-vs1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235711AbhI0T4j (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Sep 2021 15:07:31 -0400
-X-Halon-Out: eda8a205-1fc5-11ec-a232-556aad082471
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
-        s=default; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=pN1JWfUtQK5RnfrNT62FZbXkwiasWCkQhH5ojUXTPSc=; b=Y8kjVHTQo/i3uIj4FOMETduDxQ
-        n9H4dC6dDw32hqmR54757Dbk6oo5zjz2nzOkMKKNGVRb0+9clo6o/EKItlZ83rLf6pmwwFFUJ6sOq
-        y+iZ3mzlJXFSUB+Vabb7c4958ZIUyFu4d4FtC8mIM7RKW1BoLfFTQRiH5lP/SjQV72hEVAT+jNYc+
-        66wpdRa8agp24w/85HyqR+hoLTppDsJbOjIEWACxO2dGeepjx9CSuBFLvTUMc4eOGP9bhSNTIY/5R
-        C5SFuzIlezH25YNLiyy5Yrsrl86Wz3IQ2pw8VSsKdZQG/LWivkDV4TJHOXJoPQKUJZhDcI2DyRJUY
-        2UUk5OpQ==;
-Date:   Mon, 27 Sep 2021 21:05:47 +0200
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     sre@kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, wolfgit@wiedmeyer.de,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Nikita Travkin <nikita@trvn.ru>
-Subject: Re: [PATCH 1/1] power: supply: max17042_battery: use VFSOC for
- capacity when no rsns
-Message-ID: <YVIWC5gehfh3TXX/@grimlerstat.localdomain>
-References: <20210919200735.142862-1-henrik@grimler.se>
- <20210919200735.142862-2-henrik@grimler.se>
- <17ba5aaa-c456-2bb9-1680-ff0a302b412f@canonical.com>
+        Mon, 27 Sep 2021 15:56:39 -0400
+Received: by mail-vs1-f50.google.com with SMTP id f18so19525067vsp.2;
+        Mon, 27 Sep 2021 12:55:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/qYkJdocNMf64y4DQpFrkh7ip501uJ0j8evhtC6TmAM=;
+        b=0fIY7wtBFrQO+SJMseuDECznpzHwKHekKh0hLdqAmfbIwq0B6mYPQzgMDu2YxuPqtf
+         amtLQq4QS89LY5IjgacQpn7QsqiNBPPSeqcrEz1/F0i09mGdaA37xnPPoJ1AsLpbmLoA
+         NiJNivANXR9p/MGRcc4tdm77YIkdyhfG9MSo32tSYU6o+KF4yM366uT6qPOQnwfCI0CO
+         4dpj/lq7ugfLv/SmhXgs1WJGZarmOZ4YRmzCa+zzYdriHtgkZ5vY96nbVny+VnqFl7qa
+         pxXCvGQnEio1lyLqX9NfneZVH0XFjOj6xS5pdReCzKAXTj56Og/cQfoCrzBuaQICP/tf
+         OaXQ==
+X-Gm-Message-State: AOAM531kFbQND+BtLqfVYl43pKZXCMPWNYEx6Bxi0KBY5dVNsYimYBPH
+        4jUp+sQNEt02YeqhtElmm+rgzXgxYg6dcXeXx2g=
+X-Google-Smtp-Source: ABdhPJwPJmXU/Uf1MApSAaImmnQ49AfoZTTvSJ9EYE8DADK73laAy0lsWW8ZIuxb0TKgP4nWS1QiGkDkmY8p1587B1s=
+X-Received: by 2002:a67:cc1c:: with SMTP id q28mr1689183vsl.37.1632772500240;
+ Mon, 27 Sep 2021 12:55:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17ba5aaa-c456-2bb9-1680-ff0a302b412f@canonical.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - grimler.se
-X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
-X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20210920190350.3860821-1-willmcvicker@google.com>
+ <7735b09c-cf1c-5e37-a737-9a330fbacf1e@canonical.com> <YUmTwZPqrCfRMekd@google.com>
+ <d6212801-f2a0-a6a7-6154-0f99b57f1c4d@canonical.com> <CAGETcx9wp3cbsehODj=oAd658hF6KNL5Qiy2nVc=7Bxqxxwimw@mail.gmail.com>
+ <5ec72235-add4-d6dd-f89f-ca3941c9878e@canonical.com> <CAGETcx-b9nPjq2PqUYoXohU-WE1PAPzy4Mz5M99CzNfqvGTOsA@mail.gmail.com>
+In-Reply-To: <CAGETcx-b9nPjq2PqUYoXohU-WE1PAPzy4Mz5M99CzNfqvGTOsA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 27 Sep 2021 21:54:48 +0200
+Message-ID: <CAMuHMdXKcbBEpXbbc8eret8oOndwnqRq0d17e5qWpRmLH1SBgg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] arm64: Kconfig: Update ARCH_EXYNOS select configs
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Will McVicker <willmcvicker@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 01:45:29PM +0200, Krzysztof Kozlowski wrote:
-> Thanks for the patch. I found also my comments to Wolfgang's patch in
-> 2016, which you resolve here but I have more. :)
-> 
-> I think my previous message about current sense are not correct. What is
-> important is whether ModelGauge is being used/configured. For example
-> none of DT platforms support it but ACPI might.
-> There is incoming patch around it:
-> https://lore.kernel.org/lkml/5702731.UytLkSCjyO@pliszka/
-> 
-> If you switch to VSSoc, I think you need to modify the SOC Alert Config
-> in MiscCFG register (bits 0:1 to 0x1). Otherwise the alerts will be
-> generated on different value.
+Hi Saravana,
 
-So, 0x1 should correspond to AvSOC (i.e. non-filtered RepSOC), while
-right now we write 0x3 (VFSOC) to MiscCFG for devices without current
-sense [1]. Could you elaborate on why AvSOC should be used for alert
-if we use VFSOC to get PROP_CAPACITY?
+On Mon, Sep 27, 2021 at 8:07 PM Saravana Kannan <saravanak@google.com> wrote:
+> On Mon, Sep 27, 2021 at 1:08 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+> > On 25/09/2021 04:17, Saravana Kannan wrote:
+> > > On Tue, Sep 21, 2021 at 1:25 AM Krzysztof Kozlowski
+> > > <krzysztof.kozlowski@canonical.com> wrote:
+> > >> On 21/09/2021 10:11, Lee Jones wrote:
+> > >>> On Tue, 21 Sep 2021, Krzysztof Kozlowski wrote:
+> > >>>> On 20/09/2021 21:03, Will McVicker wrote:
+> > >>>>> This patch series tries to address the issue of ARCH_EXYNOS force selecting
+> > >>>>> a handful of drivers without allowing the vendor to override any of the
+> > >>>>> default configs. This takes away from the flexibilty of compiling a generic
+> > >>>>> kernel with exynos kernel modules. For example, it doesn't allow vendors to
+> > >>>>> modularize these drivers out of the core kernel in order to share a generic
+> > >>>>> kernel image across multiple devices that require device-specific kernel
+> > >>>>> modules.
+> > >>>>
+> > >>>> You do not address the issue in these patches. The problem you describe
+> > >>>> is that drivers are not modules and you are not changing them into modules.
+> > >>>
+> > >>> The wording is unfortunate.  The reason for this change doesn't have
+> > >>> much to do with kernel modules.
+> > >>>
+> > >>> Let's go back in time 18 months or so when Greg KH submitted this [0]
+> > >>> patch, which you Acked.  Greg was trying to solve the problem of not
+> > >>> having to enable ARCH_EXYNOS on kernels which are designed to be
+> > >>> platform agnostic (sometimes called Generic Kernels).  For some reason
+> > >>> SERIAL_SAMSUNG is the only symbol with these dependencies, so the
+> > >>> solution seemed simple and straight forward at the time.
+> > >>>
+> > >>> However, For sound reasons Geert NACKed the patch.
+> > >>>
+> > >>> Quoting from [1] he says:
+> > >>>
+> > >>>   "A generic kernel will include Samsung SoC support, hence
+> > >>>   PLAT_SAMSUNG or ARCH_EXYNOS will be enabled."
+> > >>
+> > >> Yes, it's correct reasoning. There is also one more use-case -
+> > >> non-upstreamed (out of tree) platform which wants to use Exynos-specific
+> > >> drivers. Something like was happening with Apple M1 except that it got
+> > >> upstreamed and we do not care much about out-of-tree.
+> > >>
+> > >>>
+> > >>> However, since the entry for ARCH_EXYNOS *insists* on building-in a
+> > >>> bunch of other symbols (via 'select') which will be unused in most
+> > >>> cases, this is not a currently acceptable approach for many Generic
+> > >>> Kernels due to size constraints.
+> > >>
+> > >> In the mainline kernel there is no such use case. If you want to have
+> > >> Exynos-whatever-driver (e.g. SERIAL_SAMSUNG or S3C RTC), you should
+> > >> select ARCH_EXYNOS because otherwise it does not make any sense. Zero
+> > >> sense. Such kernel won't work.
+> > >>
+> > >> It makes sense only if there is some other work, hidden here, where
+> > >> someone might want to have SERIAL_SAMSUNG or S3C RTC without
+> > >> ARCH_EXYNOS. Although GKI is not that work because GKI kernel will
+> > >> select ARCH_EXYNOS. It must select ARCH_EXYNOS if it wants to support
+> > >> Exynos platforms.
+> > >>
+> > >> Therefore I expect first to bring this "some other work, hidden here" to
+> > >> broader audience, so we can review its use case.
+> > >>
+> > >>>
+> > >>> What this patch does is migrates those symbols from being 'select'ed
+> > >>> (always built-in with no recourse) to 'default y'.  Where the former
+> > >>> cannot be over-ridden, but the latter can be via a vendor's
+> > >>> defconfig/fragment.
+> > >>
+> > >> It cannot be overridden by vendor fragment because options are not
+> > >> visible. You cannot change them.
+> > >>
+> > >> The patch does nothing in this regard (making them selectable/possible
+> > >> to disable), which is why I complained.
+> > >>
+> > >>>
+> > >>> I doubt many (any?) of these symbols can be converted to kernel
+> > >>> modules anyway, as they are required very early on in the boot
+> > >>> sequence.
+> > >>
+> > >> True, some could, some not. Also some platforms are set up via
+> > >> bootloader, so actually could "survive" till module is loaded from some
+> > >> initrd.
+> > >
+> > > I was trying to chime in, but the discussion got spread out across all
+> > > the patches. Since the cover letter seems to have everyone, I thought
+> > > I'd reply here. Hope you don't mind. I'll try to respond/chime in on
+> > > the various topics that were raised across the patches.
+> > >
+> > > Yes, the next patch series would To/Cc folks correctly. William simply
+> > > forgot to use the --to-cover and --cc-cover options when using git
+> > > send-email.
+> > >
+> > > I agree with you that it doesn't make sense to have ARCH_EXYNOS
+> > > enabled but to have all the clock drivers exynos compiled out. Then
+> > > one obviously can't boot an exynos platform using that kernel.
+> >
+> > If downstream kernel does not use any upstream platforms (e.g.
+> > Exynos5433 or Exynos7) and has its own drivers for everything, then
+> > downstream does not even need ARCH_EXYNOS. Just disable it.
+>
+> As Geert pointed out in another reply, that prevents the use of
+> earlyconsole on an exynos SoC + fully modular generic kernel. Are we
+> okay with removing the ARCH_EXYNOS dependency on the early console
+> driver now?
 
-On this particular device it does not seem to make a difference what I
-use for the SOC alert, the alert triggers all the time in any case
-since RepSOC does not give an accurate value. Supposedly this happens
-because ModelGauge configuration is incomplete, as you said. Looking
-at the registers used by the ModelGauge it seems that only the
-"characterization table" at 0x80 - 0xAF is missing. The rest (FullCap,
-DesignCap, ICHGTerm, ..) are set to the same values as with vendor
-kernel.
+IMHO not in upstream, as there is no upstream use yet for not having
+the dependencies.
 
-> Different topic:
-> When touching Exynos-based boards (like Galaxy S3), please Cc me as
-> well, even if I don't pop up in the maintainers.
-> 
-> For max17042 we need to Cc broader group of users, for example using it
-> in ACPI platforms. The best is to pick the contributors.
+Even if there was, I think it is good to have dependencies like
+ARCH_EXYNOS, as they let us partition the (19000, as Arnd said recently)
+Kconfig symbols into better manageable groups.  Without these, we cannot
+do better than "depends on ARM || ARM64 || COMPILE_TEST".
 
-Thanks for taking the time to explain this.
+Greg says that's what defconfig files are for, but the arm64 policy is
+to have a single defconfig file only.  But thanks to the ARCH_* symbol,
+you can take arm64 defconfig, disable the ARCH_* symbols not applicable
+to your platform, and have a good start for a config file tailored to
+your platform. Note that works for the arm multi_v*_defconfigs, too.
 
-> Best regards,
-> Krzysztof
+Gr{oetje,eeting}s,
 
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/power/supply/max17042_battery.c#n1092
+                        Geert
 
-Best regards,
-Henrik Grimler
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
