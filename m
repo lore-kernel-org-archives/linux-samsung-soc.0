@@ -2,120 +2,134 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936EFC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 09:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB22C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 10:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A54E61166
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 09:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEF0761002
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 10:28:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233766AbhI0J5l (ORCPT
+        id S233772AbhI0K3o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Sep 2021 05:57:41 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:39788
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233773AbhI0J5k (ORCPT
+        Mon, 27 Sep 2021 06:29:44 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:54844 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233827AbhI0K3n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Sep 2021 05:57:40 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 72579402DE
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Sep 2021 09:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632736559;
-        bh=nIU5tLYb8kiPoNkLCvMx2HqJO/MUaTxKgEujQiXGrPI=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=JSy+4eYnCTplSl+dSVzoeHu5juCEE7J6rLBOPRIxYenATLauGNMlxxpuQfEE/+aVP
-         EB4BFKceHi793dN/Z7d/XUjgW6bXcXUCxHZ8ICSt7NF9s8ZcvMY1T8oQUI212Rr12f
-         3LxBHNuBSsp3t6jVWu8+t65nuZOUWHWRmuWFptamtvXEDZ/6d1KiwcOR9DyVf64jsV
-         uw2kSybRBUQPLLbtTDIhgxXeXjggk5fGcao2ZTmXLQ7UJYlA1EzPVeXIk1hso3z72o
-         NnauAfr94+CSqNK4Psk/UZm35uuwwUmNFddEd4YcOXXonRNPSjY0AyGDVKzo5KbZ9E
-         UawS+6gtvgxLA==
-Received: by mail-lf1-f70.google.com with SMTP id z9-20020a0565120c0900b003fce36c1f74so3279335lfu.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Sep 2021 02:55:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nIU5tLYb8kiPoNkLCvMx2HqJO/MUaTxKgEujQiXGrPI=;
-        b=3D87xE3VC5l/SVi2tPK8LJ9HIRJGTarNSpCDcwgyQ3q1VCWJKrAZk6ZHjYYu1HhgeA
-         BgQDDXw5pRCdEtxAPlZIrfb02oaN81vSq6ib73eNBBV1TzaxlDjWWuJrLBA+sF4GAgLI
-         csRwpJJPFJFGoR9Vj+cLMlEz7IBc4Fvmshu9H+oG07ItssZPQVvoNkGg9d+ZiN3CSW/0
-         ScoyrHOMX0mUpSMorQetF8Xeg+EBfKZXCG5VfpPSrSISJAtJoW7IWcmnm5WFIxxddEZJ
-         UuIx2vgwPT2+5dBJgekboz3GSury16VZO/qMv3eHVW5DzKyvLiotDAlebxGqIXw/5sQl
-         vYlg==
-X-Gm-Message-State: AOAM530UZ08P10DlZKaOrZitvu4WuwB9Q6eF+Tt2S+5rsNMp8OtFqnGD
-        KuFugDhNJWwvovGW1TWyg+6ouy30tyznnoiX8dE0C7031qaht54p0wCPErGAOEk5g9zweuK/GNc
-        7VZctMhExDmfjGCDs8zvGqrSFLY5Ojxx+nb7KrtcBqDwD+owA
-X-Received: by 2002:a05:6512:234b:: with SMTP id p11mr22993038lfu.81.1632736558905;
-        Mon, 27 Sep 2021 02:55:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzsQ6KVBbhaTPACnyZPmIXhjr9se2x7ZwWQTaBMxZMqHiZxJFGWKh3hO/D3QI+51qPHcHs7eQ==
-X-Received: by 2002:a05:6512:234b:: with SMTP id p11mr22993025lfu.81.1632736558751;
-        Mon, 27 Sep 2021 02:55:58 -0700 (PDT)
-Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id br38sm1537149lfb.305.2021.09.27.02.55.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Sep 2021 02:55:58 -0700 (PDT)
-Subject: Re: [PATCH] cpufreq: s3c244x: add fallthrough comments for switch
-To:     Arnd Bergmann <arnd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210927095150.944127-1-arnd@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <6695844c-e79d-d62e-87da-f96f8d5ca3bf@canonical.com>
-Date:   Mon, 27 Sep 2021 11:55:57 +0200
+        Mon, 27 Sep 2021 06:29:43 -0400
+Received: from epcas3p3.samsung.com (unknown [182.195.41.21])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210927102803epoutp023e476d6050aa54b918a0c3a8756ac07d~opv-ug0hV1774817748epoutp02W
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Sep 2021 10:28:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210927102803epoutp023e476d6050aa54b918a0c3a8756ac07d~opv-ug0hV1774817748epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1632738483;
+        bh=g6jph51DvljsJEGDzc0mYrm9RldFly+bcqC78F61+HU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=hphXSJfmL2RDmvds+L0zO100mpiYHfHdsE7QVN5HXONzEmX/8u1zdVGlQCV/NilS2
+         +0RDyetyffXoAkBV7HQy4K9U+XFMUhHM0Of5iIusEJnAzT1+LQ6VDKoPjICAkjnATV
+         pOT0iThQvydLUVdyWIpkxZVPJqvC5tvBKVcgOb1c=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas3p4.samsung.com (KnoxPortal) with ESMTP id
+        20210927102802epcas3p495877e5af59b6c3902c6e953d25428a7~opv-MPcwc2905429054epcas3p4Q;
+        Mon, 27 Sep 2021 10:28:02 +0000 (GMT)
+Received: from epcpadp4 (unknown [182.195.40.18]) by epsnrtp3.localdomain
+        (Postfix) with ESMTP id 4HHzNy3DvZz4x9Q9; Mon, 27 Sep 2021 10:28:02 +0000
+        (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210927070056epcas1p1d6509ff1d206e655732d2a161b201b58~om7Kg8_8q1438014380epcas1p1_;
+        Mon, 27 Sep 2021 07:00:56 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20210927070056epsmtrp28d8b8cea5a28abfb50c9cb8bfac12f30~om7Kfx6uJ1565415654epsmtrp2G;
+        Mon, 27 Sep 2021 07:00:56 +0000 (GMT)
+X-AuditID: b6c32a2a-dcdff7000000222e-42-61516c28f88a
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9D.B8.08750.82C61516; Mon, 27 Sep 2021 16:00:56 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20210927070056epsmtip1a46986d1f5001007b2c513d566f31184~om7KIehWj2648426484epsmtip1d;
+        Mon, 27 Sep 2021 07:00:56 +0000 (GMT)
+Subject: Re: [PATCH v3 03/17] scsi: ufs: ufs-exynos: change pclk available
+ max value
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        'Avri Altman' <avri.altman@wdc.com>,
+        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
+        "'Martin K . Petersen'" <martin.petersen@oracle.com>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski@canonical.com>
+Cc:     'Bean Huo' <beanhuo@micron.com>,
+        'Bart Van Assche' <bvanassche@acm.org>,
+        'Adrian Hunter' <adrian.hunter@intel.com>,
+        'Christoph Hellwig' <hch@infradead.org>,
+        'Can Guo' <cang@codeaurora.org>,
+        'Jaegeuk Kim' <jaegeuk@kernel.org>,
+        'Gyunghoon Kwon' <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        cpgs@samsung.com
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <1891546521.01632738482290.JavaMail.epsvc@epcpadp4>
+Date:   Mon, 27 Sep 2021 16:11:22 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210927095150.944127-1-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <000001d7b36b$5a8817e0$0f9847a0$@samsung.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSnK5GTmCiQUs3n8XJJ2vYLB7M28Zm
+        8fLnVTaLgw87WSymffjJbPFp/TJWi8v7tS1eHtK06NnpbHF6wiImiyfrZzFbLLqxjcli49sf
+        TBYzzu9jsui+voPNYvnxf0wOAh6Xr3h7zGroZfO43NfL5LF5hZbH4j0vmTw2repk85iw6ACj
+        x/f1HWweH5/eYvHo27KK0ePzJjmP9gPdTAE8UVw2Kak5mWWpRfp2CVwZ2xZeYSzYw15x8PIF
+        5gbGf6xdjJwcEgImEr9f3mHqYuTiEBLYwSix8HATkMMBlJCQ2LKVA8IUljh8uBii5C2jxNX3
+        M1hAeoUFwiQW/n8M1isisIRJovHjbFYQh1ngHZPEjbUT2CBa1jFJ/F//mwmkhU1AVWLiivts
+        IDavgJ3Eh22zGUFWsADFu2eYgoRFBSIlmk5shSoRlDg58wnYNk4BK4lXq9eD2cwC6hJ/5l1i
+        hrDFJW49mc8EYctLNG+dzTyBUWgWkvZZSFpmIWmZhaRlASPLKkbJ1ILi3PTcYsMCo7zUcr3i
+        xNzi0rx0veT83E2M4GjW0trBuGfVB71DjEwcjIcYJTiYlUR4g1n8E4V4UxIrq1KL8uOLSnNS
+        iw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLglGpgWiDtybhA1m++3/QViy5oR+YtXLwk
+        U7pVt8LeIv9spErzxkf28XuLP9Ym65sqTbt5TJazfpHO7cRI+1z/48leE7Ntznd/aFoxfzHT
+        4/819jzhM72+CHSt2vpT/q3MOkF5rz0iFtyf+TYE/tnL/V34bGPYtFUzPht/+r2GZ9FVQQPJ
+        MCf+rQVVm3vaFMqVCms5xVmfcrsLXTu/S12y5e+c0mw3zsLzK7WkTQ6vLl6z8HyH8z5HlnVH
+        9x7P03wxr29HRs4Xfwv/sy0eEYu6jLcnrNp68DfDL85D242/b5C782c9s129xprlnJsTUhYt
+        aRPIy1Hv/pr96q41l+Vs5dKT/HLN33qPbN2s03Vi+bcZSizFGYmGWsxFxYkAeZioW1UDAAA=
+X-CMS-MailID: 20210927070056epcas1p1d6509ff1d206e655732d2a161b201b58
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20210917065522epcas2p26f56b37c3f7505b9d0e34bc2162fdbbd
+References: <20210917065436.145629-1-chanho61.park@samsung.com>
+        <CGME20210917065522epcas2p26f56b37c3f7505b9d0e34bc2162fdbbd@epcas2p2.samsung.com>
+        <20210917065436.145629-4-chanho61.park@samsung.com>
+        <878274034.81632720182984.JavaMail.epsvc@epcpadp4>
+        <000001d7b36b$5a8817e0$0f9847a0$@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27/09/2021 11:51, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+
+
+21. 9. 27. 오후 3:46에 Chanho Park 이(가) 쓴 글:
+>>>  #define PCLK_AVAIL_MIN	70000000
+>>> -#define PCLK_AVAIL_MAX	133000000
+>>> +#define PCLK_AVAIL_MAX	167000000
+>>>
+>>
+>> I'm not sure but doesn't the maximum clock frequency depend on a given
+>> machine? Is it true for all machines using different SoC?
 > 
-> Apparently nobody has so far caught this warning, I hit it in randconfig
-> build testing:
+> Regarding pclk(sclk_unipro)of the ufs, it can be defined by mux(MUX_CLK_FSYS2_UFS_EMBD).
+> It can be either 167MHz or 160MHz. And it can be defined by OSCCLK(26MHz) as well. The value was up to 133Mhz in case of exynos7 but can be extended up to 167MHz for later SoCs, AFAIK.
+
+Oscillator clock frequency could be different according to machine. And what if UFS driver is enabled for other machine using Exynos7? Is it true to use a fixed 167MHz frequency for these machines?
+I think you could get a proper pclk frequency from device tree specific to machine.
+
+Thanks,
+Inki Dae
+
 > 
-> drivers/cpufreq/s3c2440-cpufreq.c: In function 's3c2440_cpufreq_setdivs':
-> drivers/cpufreq/s3c2440-cpufreq.c:175:10: error: this statement may fall through [-Werror=implicit-fallthrough=]
->    camdiv |= S3C2440_CAMDIVN_HCLK3_HALF;
->           ^
-> drivers/cpufreq/s3c2440-cpufreq.c:176:2: note: here
->   case 3:
->   ^~~~
-> drivers/cpufreq/s3c2440-cpufreq.c:181:10: error: this statement may fall through [-Werror=implicit-fallthrough=]
->    camdiv |= S3C2440_CAMDIVN_HCLK4_HALF;
->           ^
-> drivers/cpufreq/s3c2440-cpufreq.c:182:2: note: here
->   case 4:
->   ^~~~
+> Best Regards,
+> Chanho Park
 > 
-> Both look like the fallthrough is intentional, so add the new
-> "fallthrough;" keyword.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/cpufreq/s3c2440-cpufreq.c | 2 ++
->  1 file changed, 2 insertions(+)
 
-I think I saw it but back then implicit-fallthrough was not an error :)
-
-LGTM:
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-
-Best regards,
-Krzysztof
