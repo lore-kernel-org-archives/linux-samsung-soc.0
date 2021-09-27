@@ -2,113 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE99C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Sep 2021 12:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F97CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 05:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6FFD60EE2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Sep 2021 12:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0CF60FED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 05:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231160AbhIZMP3 (ORCPT
+        id S232919AbhI0FYn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Sep 2021 08:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbhIZMP2 (ORCPT
+        Mon, 27 Sep 2021 01:24:43 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:29707 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232051AbhI0FYn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Sep 2021 08:15:28 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A66C061570;
-        Sun, 26 Sep 2021 05:13:52 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id z11so21633358oih.1;
-        Sun, 26 Sep 2021 05:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3Pf5rU/TB/BW2ajTVjYWCJhuzdNpYKVst0ZSbg4WjX0=;
-        b=Kev7foseiXhcccruFzCzWbqnt/nsv0uHCpvE0dQDu7iJzyBuIV1iYpanAaJT22iWNB
-         4Q+z4EDr11ihcgv4MSTnxm2Vis4dIG8ub79lA7s4z6rZQUbaQMl8dp3Sbr5+6EaL28+E
-         LNkPgWOID13CjiFB34mcXjIZ8efFKUbqTJoOHW1tW5Enk+qGh0MKp85ErS6sqAzi1XfB
-         vvV9xOv64F5hx0LMdXYrZkkLaYsb1QDIsDZw7VvxvWizX+23NlChmAW92+jJPbXr1ZSc
-         gKoy3NldeJKwGloeIJ7OV4MRRnWqyI4V6cU3kAcGRvK50i6qvTZiV+FE429uTLgUpFpp
-         hcHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=3Pf5rU/TB/BW2ajTVjYWCJhuzdNpYKVst0ZSbg4WjX0=;
-        b=ncKWSZ5L4uax6F7ylpzLfhxpmeUeqryHh5lYT1NB5qDVFnv3MhXIAO9KsbQI8rLnY5
-         5KXBT4+AoUldONDyPp8KR7TC3EoUTJNF/VW5GxjAqqQcwJHXFgWP2BWCNthgDnBrpMgB
-         pfj+ftMOPqhR2VfMvqMaYrZol4pmBUBclRAW4WBzHqYLXL3tnPxjZtNpiATzPdlCHOj4
-         jZk1wXZglE/2wjWGQbGXDDtD7ImNspSBvcSlK4siImojwfgfx09tOGFryt6LEFb8Xs43
-         NXwoFc08YE0l8DNNP8s0x+DbAajjZnH+yrv9iuj0v7zSp0EXYSqi3LE7JdKLzAESw7AG
-         nYEA==
-X-Gm-Message-State: AOAM533/PjgU4ot96O3swyCiqGyOcLGYNR4k0wuiXu/WsKuFE9JshCI6
-        7jRbdWyFhk8B6Vzy0ObTJoovbR+Lr+k=
-X-Google-Smtp-Source: ABdhPJwAa//K6Y7U71YSn4FZ+9A9LY11mS6IHLh9n+yS2sdRbI3E6yBmIp4Z4k4xHnPoGv3cZZGVRA==
-X-Received: by 2002:a05:6808:2016:: with SMTP id q22mr8231106oiw.19.1632658432046;
-        Sun, 26 Sep 2021 05:13:52 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id i23sm3229040oof.4.2021.09.26.05.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Sep 2021 05:13:51 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 26 Sep 2021 05:13:50 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] watchdog: s3c2410: describe driver in KConfig
-Message-ID: <20210926121350.GA3174183@roeck-us.net>
-References: <20210924132930.111443-1-krzysztof.kozlowski@canonical.com>
+        Mon, 27 Sep 2021 01:24:43 -0400
+Received: from epcas3p3.samsung.com (unknown [182.195.41.21])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20210927052303epoutp0179e8e46728d2d87d826c3d459caa6c2d~olltHnCNv1590015900epoutp01Q
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Sep 2021 05:23:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20210927052303epoutp0179e8e46728d2d87d826c3d459caa6c2d~olltHnCNv1590015900epoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1632720183;
+        bh=/RDKfJgvo+6//ygW4W4RIWBqKDZbDkV0kobmwpDGfrc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=RwrrYotsEW3d3VYEumwby3MgZBQxD225Eu/DKz2/vNh4TW2RYbA14qa1GJVjl6+Al
+         rD9HI2DEUX5MrPtt2VWL8ZYL81HhqxUGP/xJpb/LtTvZjGBf0C5vLONgVorPizYCNx
+         rqpyEQUGN0fK0/TVJkd5ELfMFCgIph/Hl8nenwrk=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas3p4.samsung.com (KnoxPortal) with ESMTP id
+        20210927052303epcas3p4993f1f266e63c7bb4485fca7ed84192c~ollsfhaxk0142001420epcas3p4m;
+        Mon, 27 Sep 2021 05:23:03 +0000 (GMT)
+Received: from epcpadp4 (unknown [182.195.40.18]) by epsnrtp1.localdomain
+        (Postfix) with ESMTP id 4HHrd301XPz4x9Q3; Mon, 27 Sep 2021 05:23:03 +0000
+        (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20210927051540epcas1p1c2a893b9a1b476ee64dda652c16fd549~olfQnrYCi1112811128epcas1p1C;
+        Mon, 27 Sep 2021 05:15:40 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210927051540epsmtrp1f4b0d7fd83563e85eeb3c46de4912518~olfQmarD_2735827358epsmtrp16;
+        Mon, 27 Sep 2021 05:15:40 +0000 (GMT)
+X-AuditID: b6c32a29-d87ff70000002383-6d-6151537ce3ca
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        55.39.09091.C7351516; Mon, 27 Sep 2021 14:15:40 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210927051540epsmtip232a42143de2ef234f3a0500d6311ee6e~olfQTKmxp0178101781epsmtip2e;
+        Mon, 27 Sep 2021 05:15:40 +0000 (GMT)
+Subject: Re: [PATCH v3 03/17] scsi: ufs: ufs-exynos: change pclk available
+ max value
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Can Guo <cang@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        cpgs@samsung.com
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <878274034.81632720182984.JavaMail.epsvc@epcpadp4>
+Date:   Mon, 27 Sep 2021 14:25:58 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+        Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210924132930.111443-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210917065436.145629-4-chanho61.park@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCSvG5NcGCiwe8TGhYnn6xhs3gwbxub
+        xcufV9ksDj7sZLGY9uEns8Wn9ctYLS7v17Z4eUjTomens8XpCYuYLJ6sn8VssejGNiaLjW9/
+        MFnMOL+PyaL7+g42i+XH/zE5CHhcvuLtMauhl83jcl8vk8fmFVoei/e8ZPLYtKqTzWPCogOM
+        Ht/Xd7B5fHx6i8Wjb8sqRo/Pm+Q82g90MwXwRHHZpKTmZJalFunbJXBl9LacYS44yl7xbMEn
+        tgbGqWxdjBwcEgImElPm5ncxcnIICexmlPi01AQiLCGxZSsHhCkscfhwcRcjF1DFW0aJCRuW
+        s4OUCwuESSz8/5gJJCEiMItJ4srDJ8wgCWaBe0wSDUe1IDpOMkq0b33FCJJgE1CVmLjiPhuI
+        zStgJ/H8/CWwBhageEf3JbC4qECkRNOJrVA1ghInZz5hAbE5BRwkHsxazAqxQF3iz7xLUMvE
+        JW49mc8EYctLNG+dzTyBUWgWkvZZSFpmIWmZhaRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi
+        0rx0veT83E2M4EjW0tzBuH3VB71DjEwcjIcYJTiYlUR4g1n8E4V4UxIrq1KL8uOLSnNSiw8x
+        SnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLglGpgOu40+1rae9swkTXbpuy4XPNsYzj3wob9
+        NYvLkzICDC9HZnw6cVKv9bvV3KXv2j7ufa4tsnru56tz55eXxaz5o/yg//PSxEk2/gcWaYvU
+        hn4773JkaZ9i/6wDv39M2Cr6YZ2Y0Nzas9L+5/X5rAscKpZvMAm+e26G8i4vx44P1XNK/ber
+        75gdzHNi86Rdc/sN/z3LuLxlwd7uFueNelsNPj7p7rf3YThg+fKOR06NwbLJr57P+bvUQfVt
+        ip79Cau1L4S0YnfM+nYjj6WzOvy6bf7K9wfX/Gmc1fhCZAK32syJ3/enzf6tNfmWXrFxknry
+        pwT/UFMTHzatt7W6W6VM168WE1+/Q2H7pYDK5XNWvp2nxFKckWioxVxUnAgAWNu9WVMDAAA=
+X-CMS-MailID: 20210927051540epcas1p1c2a893b9a1b476ee64dda652c16fd549
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20210917065522epcas2p26f56b37c3f7505b9d0e34bc2162fdbbd
+References: <20210917065436.145629-1-chanho61.park@samsung.com>
+        <CGME20210917065522epcas2p26f56b37c3f7505b9d0e34bc2162fdbbd@epcas2p2.samsung.com>
+        <20210917065436.145629-4-chanho61.park@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 03:29:30PM +0200, Krzysztof Kozlowski wrote:
-> Describe better which driver applies to which SoC, to make configuring
-> kernel for Samsung SoC easier.
+Hi Chanho,
+
+21. 9. 17. 오후 3:54에 Chanho Park 이(가) 쓴 글:
+> To support 167MHz PCLK, we need to adjust the maximum value.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > ---
->  drivers/watchdog/Kconfig | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  drivers/scsi/ufs/ufs-exynos.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index b81fe4f7d434..75591ba261e2 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -496,16 +496,18 @@ config S3C2410_WATCHDOG
->  	select WATCHDOG_CORE
->  	select MFD_SYSCON if ARCH_EXYNOS
->  	help
-> -	  Watchdog timer block in the Samsung SoCs. This will reboot
-> -	  the system when the timer expires with the watchdog enabled.
-> +	  Watchdog timer block in the Samsung S3C24xx, S3C64xx, S5Pv210 and
-> +	  Exynos SoCs. This will reboot the system when the timer expires with
-> +	  the watchdog enabled.
+> diff --git a/drivers/scsi/ufs/ufs-exynos.h b/drivers/scsi/ufs/ufs-exynos.h
+> index dadf4fd10dd8..0a31f77a5f48 100644
+> --- a/drivers/scsi/ufs/ufs-exynos.h
+> +++ b/drivers/scsi/ufs/ufs-exynos.h
+> @@ -99,7 +99,7 @@ struct exynos_ufs;
+>  #define PA_HIBERN8TIME_VAL	0x20
 >  
->  	  The driver is limited by the speed of the system's PCLK
->  	  signal, so with reasonably fast systems (PCLK around 50-66MHz)
->  	  then watchdog intervals of over approximately 20seconds are
->  	  unavailable.
+>  #define PCLK_AVAIL_MIN	70000000
+> -#define PCLK_AVAIL_MAX	133000000
+> +#define PCLK_AVAIL_MAX	167000000
 >  
-> +	  Choose Y/M here only if you build for such Samsung SoC.
->  	  The driver can be built as a module by choosing M, and will
-> -	  be called s3c2410_wdt
-> +	  be called s3c2410_wdt.
->  
->  config SA1100_WATCHDOG
->  	tristate "SA1100/PXA2xx watchdog"
-> -- 
-> 2.30.2
+
+I'm not sure but doesn't the maximum clock frequency depend on a given machine? Is it true for all machines using different SoC?
+
+Thanks,
+Inki Dae
+
+>  struct exynos_ufs_uic_attr {
+>  	/* TX Attributes */
 > 
+
