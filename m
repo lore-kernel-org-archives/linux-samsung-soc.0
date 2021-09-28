@@ -2,266 +2,132 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66A3C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B87C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 09:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C140261058
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 08:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC52861130
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 09:18:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239938AbhI1Iwg (ORCPT
+        id S239043AbhI1JUK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Sep 2021 04:52:36 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:48496
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239900AbhI1IwN (ORCPT
+        Tue, 28 Sep 2021 05:20:10 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54810
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239845AbhI1JUJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Sep 2021 04:52:13 -0400
+        Tue, 28 Sep 2021 05:20:09 -0400
 Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A73504082A
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 08:50:16 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8D7C6402FB
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 09:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632819016;
-        bh=7tIJ+clHqy+CZwai/Om4gGD+ttDWFFGGGFnCE/+PWi8=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=rvuAxQLbNhId7yW/E3zmIp8gS3uhwWq88vVidv7/rPvSZVOY003vi+MypE5ljDeCH
-         ARWJCAySJGTV5AGeS67gwoyTHYj8AOgHBo2/0NTK04Kzzwac5EHDKh503n6RTY06lx
-         SU5cnnmF6YCgeLa2d4RjZHWLKIBXHrYV2kvoKHwciYSWBDlZHYhGSl9m919jewxxf7
-         HmiXkGMcEjR+M5Z84mJl++XcRfwSXx0EN95ksIQKn8IjdBcM9hYulKGZP76rqI6dlx
-         imhQeK2TfDbUTnn18wfmn7/Gs38wCp3HxkqfSQ52Gxb+jplVhgmA61ELdKv5vv8duG
-         tDwMhLsd8NjxA==
-Received: by mail-lf1-f69.google.com with SMTP id 12-20020ac2484c000000b003fcb3298d00so15525082lfy.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 01:50:16 -0700 (PDT)
+        s=20210705; t=1632820709;
+        bh=UEwPYoEAcHY9GRKjlSgsfRi7nzOLAdhMhKDnso+q7nw=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=EtEXOsiNUVViOqqnYXk+SjO9E9PjH/r5G9vzftAw+QVXlNrOMEydrYH2beEEC+jJQ
+         rWfgJc3hXmAZbL6NpREzYKFKBBnZwBqu/3ogRh133R8CsGD5POf7tBh+vada4xN6dJ
+         MRRQJAt65oD4KrMKfjPpj3fZQKmI/AjLdgbeoYRgKGJbffpA7UQeEIavzh8IY228Vp
+         3EgwVx1zID5rVs7iVh1J1EaRY+uLuPZ3SpWMivpPXEOAZHA/e7rTL4wvy7leXbV+9a
+         g6AT9y7deXYxb4rlQDccpvwHtjbX8c9QyABgC9Hyo9+mpw7gCA3hNGEiTvWhRuRL6M
+         I9UEaWWJaYohw==
+Received: by mail-lf1-f69.google.com with SMTP id t187-20020a19c3c4000000b003fc1361fb20so18738682lff.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 02:18:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7tIJ+clHqy+CZwai/Om4gGD+ttDWFFGGGFnCE/+PWi8=;
-        b=axgNOXfET3BWp3vxBLYFt8e06F5S5MO3+I/41DGwc68dYjbr2rsH6dEX8n4PWOq/sL
-         R+dZ4XdEODjvfywl1Y2v3+hxVh2OcDmHzhX0tcX/4dXtbsfI36CASltZOH8OJ30UmUKP
-         dsL4Z4c7Q2copyrFUIOa6X3ZX8EL3DgfT6lKVaS2zX4KjrcoH9azIaaKBvv0fSASk7D8
-         ThSiViZNO3zp8q8bwgbW3y+23LfnNcLCPQoweoy7hXBc5qcbmLxcMd1IFO0H5bUZQpME
-         3Fl2Wu0gi00m1jqF/FmzaGsTKqhbWte8iNNCWXA9s04xjoDjpCP1cHshutZWQT1cfiN8
-         wMqw==
-X-Gm-Message-State: AOAM530LHay+H6ihAyy7lmFflt4LbLKap91p5o5zcgD+Jm8feFICMWk7
-        UT1uhOukjcUB/vwbE51T4zRTb1SVqUBoBIdYEMe0rq+Y57vNMXBpjOWk4IEPhz4yCjqhyQVu3sB
-        HE0Chhp1y6nWtYx6jdlLbpEl0VFF5clTWriBQwlVCiNzyHYyF
-X-Received: by 2002:a2e:bba0:: with SMTP id y32mr4729605lje.135.1632819013557;
-        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwXNIsIC74EHEhcaaIOoTj5Amse61yM2/pmnchBnUI0iS1c3lanOpAQelzFzUvbyrrH5gtK6Q==
-X-Received: by 2002:a2e:bba0:: with SMTP id y32mr4729585lje.135.1632819013368;
-        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
-Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id h13sm1848419lfl.205.2021.09.28.01.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Sep 2021 01:50:13 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UEwPYoEAcHY9GRKjlSgsfRi7nzOLAdhMhKDnso+q7nw=;
+        b=iKrT2txiozLZAYscd8LJr3oIKZSMmaeoHaTU7S/UrIkJCgggp53j8MBxiiAf5HRLqT
+         V6i2fpJK7WdZlCeuk6OXGjOnrhion2XgzDN47qOfUOFn7M9y5XIpGqb2B/kF6vzNfTHX
+         hDuaXmLkXUQ0P71fy21h5j9aVJ95tChC1X7aU4XqfJG1nUUWrAUlzYR4sTfS4AdM3oV/
+         qqlB2HhQIefFECcmW2K/IAu3kqtoO22s9rA0zZ61WYivDPSY5XvYk0fUF3nzdznbhPnh
+         tQI7lbuFt6aUupb9AQKZ/5ym9F94m8o/XQBhWADed9gfknKFdg30dtPox5PT/gStJdkJ
+         rApg==
+X-Gm-Message-State: AOAM53234F1b5puxir2ND/FPfE2jOsU/4yFbUPjPOPquwJgPWDF9TZm0
+        saOzfjA3d25u7OyTdHpx3uf4lhJEuFdQszThuBMa69mFzOBIS+YqWZqJMfb6j6InCqtIyxzY8Hc
+        Gc0ht/l/PEZH3h3+YQOOUtTj5FjsK/z3ekvxOJcFCu7HiR6lV
+X-Received: by 2002:a19:690e:: with SMTP id e14mr1909513lfc.553.1632820708682;
+        Tue, 28 Sep 2021 02:18:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxKDYuABfvueO2sPn1V9pQTgAf7Uce/FLkCD7Ov7RDKIV6bQ5b9lHhYZmBF9fvl/Y220gV2/Q==
+X-Received: by 2002:a19:690e:: with SMTP id e14mr1909501lfc.553.1632820708509;
+        Tue, 28 Sep 2021 02:18:28 -0700 (PDT)
+Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id v18sm2299366ljg.95.2021.09.28.02.18.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Sep 2021 02:18:28 -0700 (PDT)
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     sre@kernel.org, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 12/12] ARM: dts: exynos: use spaces instead of tabs around '='
-Date:   Tue, 28 Sep 2021 10:49:49 +0200
-Message-Id: <20210928084949.27939-13-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
+        ~postmarketos/upstreaming@lists.sr.ht, wolfgit@wiedmeyer.de,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Nikita Travkin <nikita@trvn.ru>
+References: <20210919200735.142862-1-henrik@grimler.se>
+ <20210919200735.142862-2-henrik@grimler.se>
+ <17ba5aaa-c456-2bb9-1680-ff0a302b412f@canonical.com>
+ <YVIWC5gehfh3TXX/@grimlerstat.localdomain>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH 1/1] power: supply: max17042_battery: use VFSOC for
+ capacity when no rsns
+Message-ID: <6b77953f-cbad-5688-7364-667975309f8f@canonical.com>
+Date:   Tue, 28 Sep 2021 11:18:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <YVIWC5gehfh3TXX/@grimlerstat.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use spaces in Origen boards instead of tabs around '=' for simple
-property assignments, to match coding style.
+On 27/09/2021 21:05, Henrik Grimler wrote:
+> On Fri, Sep 24, 2021 at 01:45:29PM +0200, Krzysztof Kozlowski wrote:
+>> Thanks for the patch. I found also my comments to Wolfgang's patch in
+>> 2016, which you resolve here but I have more. :)
+>>
+>> I think my previous message about current sense are not correct. What is
+>> important is whether ModelGauge is being used/configured. For example
+>> none of DT platforms support it but ACPI might.
+>> There is incoming patch around it:
+>> https://lore.kernel.org/lkml/5702731.UytLkSCjyO@pliszka/
+>>
+>> If you switch to VSSoc, I think you need to modify the SOC Alert Config
+>> in MiscCFG register (bits 0:1 to 0x1). Otherwise the alerts will be
+>> generated on different value.
+> 
+> So, 0x1 should correspond to AvSOC (i.e. non-filtered RepSOC), while
+> right now we write 0x3 (VFSOC) to MiscCFG for devices without current
+> sense [1]. Could you elaborate on why AvSOC should be used for alert
+> if we use VFSOC to get PROP_CAPACITY?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- arch/arm/boot/dts/exynos4210-origen.dts | 24 ++++++++++++------------
- arch/arm/boot/dts/exynos4412-origen.dts | 14 +++++++-------
- 2 files changed, 19 insertions(+), 19 deletions(-)
+I meant that same measurement should be used for both: for PROP_CAPACITY
+and for alerts.
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 1c5394152561..435fda60e86d 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -206,74 +206,74 @@ ldo3_reg: LDO3 {
- 			ldo4_reg: LDO4 {
- 				regulator-name = "VDD_RTC_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo6_reg: LDO6 {
- 				regulator-name = "VMIPI_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo7_reg: LDO7 {
- 				regulator-name = "VDD_AUD_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 			};
- 
- 			ldo8_reg: LDO8 {
- 				regulator-name = "VADC_3.3V";
- 				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt	= <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 			};
- 
- 			ldo9_reg: LDO9 {
- 				regulator-name = "DVDD_SWB_2.8V";
- 				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt	= <2800000>;
-+				regulator-max-microvolt = <2800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo10_reg: LDO10 {
- 				regulator-name = "VDD_PLL_1.1V";
- 				regulator-min-microvolt = <1100000>;
--				regulator-max-microvolt	= <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo11_reg: LDO11 {
- 				regulator-name = "VDD_AUD_3V";
- 				regulator-min-microvolt = <3000000>;
--				regulator-max-microvolt	= <3000000>;
-+				regulator-max-microvolt = <3000000>;
- 			};
- 
- 			ldo14_reg: LDO14 {
- 				regulator-name = "AVDD18_SWB_1.8V";
- 				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt	= <1800000>;
-+				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo17_reg: LDO17 {
- 				regulator-name = "VDD_SWB_3.3V";
- 				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt	= <3300000>;
-+				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 			};
- 
- 			ldo21_reg: LDO21 {
- 				regulator-name = "VDD_MIF_1.2V";
- 				regulator-min-microvolt = <1200000>;
--				regulator-max-microvolt	= <1200000>;
-+				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 			};
- 
- 			buck1_reg: BUCK1 {
- 				regulator-name = "VDD_ARM_1.2V";
- 				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt	= <1350000>;
-+				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 			};
-@@ -281,7 +281,7 @@ buck1_reg: BUCK1 {
- 			buck2_reg: BUCK2 {
- 				regulator-name = "VDD_INT_1.1V";
- 				regulator-min-microvolt = <900000>;
--				regulator-max-microvolt	= <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 			};
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 5479ef09f9f3..e6aec5facabf 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -382,7 +382,7 @@ ldo28_reg: LDO28 {
- 			buck1_reg: BUCK1 {
- 				regulator-name = "VDD_MIF";
- 				regulator-min-microvolt = <950000>;
--				regulator-max-microvolt	= <1100000>;
-+				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -391,7 +391,7 @@ buck1_reg: BUCK1 {
- 			buck2_reg: BUCK2 {
- 				regulator-name = "VDD_ARM";
- 				regulator-min-microvolt = <900000>;
--				regulator-max-microvolt	= <1350000>;
-+				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -400,7 +400,7 @@ buck2_reg: BUCK2 {
- 			buck3_reg: BUCK3 {
- 				regulator-name = "VDD_INT";
- 				regulator-min-microvolt = <900000>;
--				regulator-max-microvolt	= <1200000>;
-+				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -409,7 +409,7 @@ buck3_reg: BUCK3 {
- 			buck4_reg: BUCK4 {
- 				regulator-name = "VDD_G3D";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <1500000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -418,7 +418,7 @@ buck4_reg: BUCK4 {
- 			buck5_reg: BUCK5 {
- 				regulator-name = "VDD_M12";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <1500000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -427,7 +427,7 @@ buck5_reg: BUCK5 {
- 			buck6_reg: BUCK6 {
- 				regulator-name = "VDD12_5M";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <1500000>;
-+				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
-@@ -436,7 +436,7 @@ buck6_reg: BUCK6 {
- 			buck9_reg: BUCK9 {
- 				regulator-name = "VDDF28_EMMC";
- 				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt	= <3000000>;
-+				regulator-max-microvolt = <3000000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>; /* Normal Mode */
--- 
-2.30.2
+I double checked the driver and your change is actually aligned with it.
+If !enable_current_sense, the driver will set MiscCFG to 0x3 to use
+VFSOC for alerts. I think you can ignore that part of my comment before.
 
+However still remaining issue is that switching to VFSoc should happen
+not only if !enable_current_sense but also if ModelGauge m3 is not
+configured.
+
+> On this particular device it does not seem to make a difference what I
+> use for the SOC alert, the alert triggers all the time in any case
+> since RepSOC does not give an accurate value. Supposedly this happens
+> because ModelGauge configuration is incomplete, as you said. Looking
+> at the registers used by the ModelGauge it seems that only the
+> "characterization table" at 0x80 - 0xAF is missing. The rest (FullCap,
+> DesignCap, ICHGTerm, ..) are set to the same values as with vendor
+> kernel.
+
+Are you sure? I could not find setting of these (e.g.
+MAX17042_FullCAP/config->fullcap) for a DT platform.
+
+Best regards,
+Krzysztof
