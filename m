@@ -2,112 +2,149 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CEAC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 22:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454DEC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 02:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84B80610A2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Sep 2021 22:32:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21A5861266
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 02:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237855AbhI0WeP (ORCPT
+        id S238620AbhI1CVp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Sep 2021 18:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237899AbhI0WeO (ORCPT
+        Mon, 27 Sep 2021 22:21:45 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:14327 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238567AbhI1CVo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Sep 2021 18:34:14 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5475EC061765
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Sep 2021 15:32:35 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id g41so83797404lfv.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Sep 2021 15:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SWtpZ8PO1D/9eZFX8nceZYsmLHQWGmkDYyw8clyIoeQ=;
-        b=nsv+9QbYaiqvtpvL0wrJuH7G7mw8h6nMh5mofTyXGGAeKDE8SUGersA+a/Yo3NkFAr
-         aniIIzDZ6Jbf0clUsu2XlJdS32IPCPd9V3FHvw5WnG5PidLr41vu5a16BeAd0ww2ZLyh
-         RgWN54kjzvAjvFPaejwwXJaYwsdpZqxPr3YBK3CaBn/dylvTLV2OOnsH/w+oaaKIdd7E
-         +F2HXqZgxbqkizIt2ZzKQOpzx94qj5/yKPko8l3qUfJ8V4Q6hC8w8RzN8k2uxmCZpxHq
-         WhgAGDzMaiMWranShw8/gsrbRLnRvabX3luVEEkOmMZy0v32tnx/xDK3duThElp/r9Zq
-         WArw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SWtpZ8PO1D/9eZFX8nceZYsmLHQWGmkDYyw8clyIoeQ=;
-        b=F5MuyFCjvLxHU1TArMLKn90IhNI/Ep/0UxAEWhcYLQFA8ovSbbj0m43Ob+m9DG7aMr
-         9YKBgGrcD4co6iyW01ImkkuwiH4FzewGDKwgz7v85bJlQYSf9uSZrzA3caghG7IA/IaS
-         yPgdMbSsOloHdGRul+D9aJMJS+gEGCiex0XvLB+kMwDMhbV14ft8Doglp2jF5Oa3yf1m
-         2+jbKmB7tlCm8jNxW28Nhi12VGz3SCdOdRrcMe/nZCKxKb+v4vSUaqcqVTRpRfwe3CWm
-         12rMr5aiUiuIcwu0ff+l+L+MrAuHLWTnI//W9JYJ4k/8rN7zFaql+R+EQKU5F1luhTIA
-         pBKg==
-X-Gm-Message-State: AOAM530fI+t46Q6Ivd/ZqdWd2DyVRfbjYlCGYH6cb0043i/TDxrfCfjJ
-        Day3rNo8sNc6JRFwvDM1GJJitYCYnNzsDU1s7Y4fKQ==
-X-Google-Smtp-Source: ABdhPJyEXb/yQ9/a6K8aBzhJdUYb10ZUYNoy2vlteyYKNJZtPx8j46XiOXQmIJRCjJRs1TQZhUKudUPzSmNoSz+Gk+Y=
-X-Received: by 2002:a05:6512:3fa5:: with SMTP id x37mr2271959lfa.233.1632781953710;
- Mon, 27 Sep 2021 15:32:33 -0700 (PDT)
+        Mon, 27 Sep 2021 22:21:44 -0400
+Received: from epcas3p3.samsung.com (unknown [182.195.41.21])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210928022003epoutp033e4bb6488ea4847ff3815ff359e42af8~o2vNh8w2q2338823388epoutp03F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 02:20:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210928022003epoutp033e4bb6488ea4847ff3815ff359e42af8~o2vNh8w2q2338823388epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1632795603;
+        bh=4cV1cNC1u5nCvaXo1VkU/P8gEHxGNPcrXraD59LyqqA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=mEuxxwyIIdrDKSiERv2erdfeHY1cy2zKv11MljinF8Xgv3n6MzEYtTC5C8b2GqTR2
+         zfeMboud6CSlPRnpqRp2WluEqSUV6tIBa18JwKkQzKViPlIVlvB3weI1ZvASccuq4e
+         lLcrc3UKi5r1+7xc4lg9d911FR7yhhUbEWXgR+Y0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas3p4.samsung.com (KnoxPortal) with ESMTP id
+        20210928022003epcas3p49131eb755461a77ec29e20cfbd975120~o2vNAnu0X1824718247epcas3p4q;
+        Tue, 28 Sep 2021 02:20:03 +0000 (GMT)
+Received: from epcpadp3 (unknown [182.195.40.17]) by epsnrtp2.localdomain
+        (Postfix) with ESMTP id 4HJNWR0WDfz4x9QY; Tue, 28 Sep 2021 02:20:03 +0000
+        (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210928020736epcas1p38c49d5984bdf5869f1e0f9c57a382f7b~o2kV2EVQe2987929879epcas1p3Y;
+        Tue, 28 Sep 2021 02:07:36 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210928020736epsmtrp13cdbb8bc75da2d3e76e64d445c19f341~o2kV1tzIy2914829148epsmtrp1r;
+        Tue, 28 Sep 2021 02:07:36 +0000 (GMT)
+X-AuditID: b6c32a2a-dcdff7000000222e-4c-615278e86b2e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        21.7A.08750.8E872516; Tue, 28 Sep 2021 11:07:36 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210928020736epsmtip297f06ab426492f0ff54f3f05ed269fb9~o2kViaug21321113211epsmtip2A;
+        Tue, 28 Sep 2021 02:07:36 +0000 (GMT)
+Subject: Re: [PATCH v3 03/17] scsi: ufs: ufs-exynos: change pclk available
+ max value
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        'Avri Altman' <avri.altman@wdc.com>,
+        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
+        "'Martin K . Petersen'" <martin.petersen@oracle.com>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski@canonical.com>
+Cc:     'Bean Huo' <beanhuo@micron.com>,
+        'Bart Van Assche' <bvanassche@acm.org>,
+        'Adrian Hunter' <adrian.hunter@intel.com>,
+        'Christoph Hellwig' <hch@infradead.org>,
+        'Can Guo' <cang@codeaurora.org>,
+        'Jaegeuk Kim' <jaegeuk@kernel.org>,
+        'Gyunghoon Kwon' <goodjob.kwon@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        cpgs@samsung.com
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <2038148563.21632795603027.JavaMail.epsvc@epcpadp3>
+Date:   Tue, 28 Sep 2021 11:18:03 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+        Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210924133257.112017-1-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20210924133257.112017-1-krzysztof.kozlowski@canonical.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 28 Sep 2021 00:31:56 +0200
-Message-ID: <CAPDyKFr6tEEm0j7qBrA3dqqEZxF-5+DXrau3TKTK8RRuYeL5yA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-s3c: Describe driver in KConfig
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <00f401d7b390$017ed1f0$047c75d0$@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02RfyyUcRzH+z7P4/G4OT3umG+azLVqsRRp+9ZkpNmz1ZRarW6Ki8ePOHRH
+        Tm1SzZJiZ5lyJI7q3OLy49D5ffoljUZitopzrTPJj2qoRt2pzX+vz/v9fv31oXBeB+FMxSYk
+        s5IEUbyA5BANXQLXbSbZEdEOzbQb6jY+ItFoSQOJJhYHSdQ5dp1ABTOLOJrTPLBCA+0eaEK/
+        Fd18Eoh65EoMGTUKHCmHGzBUM7WAoTt9bRi6MdREoocvljB/mhl4e4BRZOSQzEBuDsbUqdyZ
+        8pYJjKlVXycZubIDMPOaLJKZ/TRCMLn1asB8q93AXOu4gR22FXJ8I9n42POsZLtfOCfmTn9M
+        0qKtrGBiFM8APZxsYENB2gcuvy/DsgGH4tFNAL54oLPOBtTfAsJ6LbWCfNjVJTXPefQUgLlt
+        Hmbm08dh2fK4RXWgKzB4ebbIynzg9FcMDlfJyRUjH4cNry6amaQ3wTzVR0vOpf1gzc9iazMT
+        f/NnJqOFHemT8MpL7b+NPewuNBJmtqH3wMnnGZYcp7fA3yX9+Ao7wRHjPWyFXeFVbREuBzzF
+        Kl2xSlGsUhSrlFJAqME6NkkqjhZLvZK8E9hUT6lILE1JiPaMSBTXAsuT3d2bQIt6xlMPMAro
+        AaRwgQP3KHFIxONGitIusJLEMElKPCvVg/UUIXDivsnuDuPR0aJkNo5lk1jJ/xajbJwzsFOX
+        vPmqnJGwWtY+bGdv9dDc8e+lr8EuTfG59OLmSHUAc8WxdPBDCE9WLLSb/diWFmS15vv+KZXb
+        dOWvbgPeGGsX/I2c5ycXFphUsooxZcWkjtNz+6Keb2MMXPrq8gy3Ryeyhg9vdI7N+2ToxHTz
+        ptTyFFN5TdVoZpSjVWr6+NWRStYnfCHUX6PVRe3J338+9O6MY0y4trVuIVdoaBRkuaRHLWd6
+        2A/LC/126+I0wohm+vTjW9Ww1XYzqbz/Q+HfMhnc3G54d7cXBeDWfmXClC9npnVTBoXvWe7a
+        z3vf33wK7F6F1Bu9mH3+yragZLwnUFzVt0Pm7HDM+mCik4CQxoi83HGJVPQHIWIzd1MDAAA=
+X-CMS-MailID: 20210928020736epcas1p38c49d5984bdf5869f1e0f9c57a382f7b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20210917065522epcas2p26f56b37c3f7505b9d0e34bc2162fdbbd
+References: <20210917065436.145629-1-chanho61.park@samsung.com>
+        <CGME20210917065522epcas2p26f56b37c3f7505b9d0e34bc2162fdbbd@epcas2p2.samsung.com>
+        <20210917065436.145629-4-chanho61.park@samsung.com>
+        <878274034.81632720182984.JavaMail.epsvc@epcpadp4>
+        <000001d7b36b$5a8817e0$0f9847a0$@samsung.com>
+        <1891546521.01632738482290.JavaMail.epsvc@epcpadp4>
+        <00f401d7b390$017ed1f0$047c75d0$@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 24 Sept 2021 at 15:33, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> Describe better which driver applies to which SoC, to make configuring
-> kernel for Samsung SoC easier.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
 
 
-> ---
->  drivers/mmc/host/Kconfig | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+21. 9. 27. 오후 8:08에 Chanho Park 이(가) 쓴 글:
+>>>>>  #define PCLK_AVAIL_MIN	70000000
+>>>>> -#define PCLK_AVAIL_MAX	133000000
+>>>>> +#define PCLK_AVAIL_MAX	167000000
+>>>>>
+>>>>
+>>>> I'm not sure but doesn't the maximum clock frequency depend on a
+>>>> given machine? Is it true for all machines using different SoC?
+>>>
+>>> Regarding pclk(sclk_unipro)of the ufs, it can be defined by
+>> mux(MUX_CLK_FSYS2_UFS_EMBD).
+>>> It can be either 167MHz or 160MHz. And it can be defined by OSCCLK(26MHz)
+>> as well. The value was up to 133Mhz in case of exynos7 but can be extended
+>> up to 167MHz for later SoCs, AFAIK.
+>>
+>> Oscillator clock frequency could be different according to machine. And
+>> what if UFS driver is enabled for other machine using Exynos7? Is it true
+>> to use a fixed 167MHz frequency for these machines?
+>> I think you could get a proper pclk frequency from device tree specific to
+>> machine.
+> 
+> The actual pclk value will be get by CCF's clk_get_rate. PCLK_AVAIL_MAX represents the available maximum value of UFS's pclk to find an optimal value of unipro clock. I just extend the maximum pclk rate from 133MHz to 167MHz. The divider will be calculated according to the actual pclk value :)
 >
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 71313961cc54..e4c1648e364e 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -315,15 +315,17 @@ config MMC_SDHCI_TEGRA
->           If unsure, say N.
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/ufs/ufs-exynos.c?h=v5.15-rc3#n287
 >
->  config MMC_SDHCI_S3C
-> -       tristate "SDHCI support on Samsung S3C SoC"
-> +       tristate "SDHCI support on Samsung S3C/S5P/Exynos SoC"
->         depends on MMC_SDHCI
->         depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
->           often referrered to as the HSMMC block in some of the Samsung S3C
-> -         range of SoC.
-> +         (S3C2416, S3C2443, S3C6410), S5Pv210 and Exynos (Exynso4210,
-> +         Exynos4412) SoCs.
->
-> -         If you have a controller with this interface, say Y or M here.
-> +         If you have a controller with this interface (thereforeyou build for
-> +         such Samsung SoC), say Y or M here.
->
->           If unsure, say N.
->
-> --
-> 2.30.2
->
+Thanks for the link. I thought only PCLK_AVAIL_MAX is valid but it means available maximum clock so clock frequency between the min and max would be allowed as well. :)
+
+Reviewed-by : Inki Dae <inki.dae@samsung.com>
+
+Thanks,
+Inki Dae
+
+> Best Regards,
+> Chanho Park
+> 
+> 
+
