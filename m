@@ -2,104 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70172C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 19:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABBBC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 22:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5210E6135F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 19:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10F206115A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 22:36:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242253AbhI1T0b (ORCPT
+        id S243119AbhI1WiH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Sep 2021 15:26:31 -0400
-Received: from h03mx16.reliablemail.org ([173.236.90.20]:43356 "EHLO
-        h03mx16.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234442AbhI1T0a (ORCPT
+        Tue, 28 Sep 2021 18:38:07 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38999 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238632AbhI1WiG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Sep 2021 15:26:30 -0400
-X-Greylist: delayed 361 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Sep 2021 15:26:30 EDT
-X-Halon-Out: e72c9685-2090-11ec-a67c-00163c72d6d3
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
-        s=default; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=6gdqqI/giyhAYUrbUwjWsKNav3qRv+eFiZ0eQNMhlhI=; b=Rro2Q17P19gqh2Cii+Ba2zrHdP
-        SorXS9mEu2REKZ5+XsX1MDg2il+YUBf0k3K7WonrbeVHfxhgNKgTHbDXrvLeirg5v8Q0FD5HhmYXk
-        rF7N53XX5s5/erFDmSCmE2ujtmOHzGTFfonCfPubfddnQRLDXvqSmbk2YaXw6wjIRa/UgAKeY9peb
-        nv2i21fyL5aCagO2vXD4iz2/itmjF2WCnbUI7LZe7BukTZ4hTkoTpzKmA5uq2OWxfcsB9OV2QTnve
-        Nm2ZD6ot6CYLU3A/cEEQ+r/8cuY848GDESnvQ+cvrk2/256XFpX3Q4ZncACt9sAiWaMIl/42qz0Q9
-        wiEY8zKg==;
-Date:   Tue, 28 Sep 2021 21:18:44 +0200
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     sre@kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, wolfgit@wiedmeyer.de
-Subject: Re: [PATCH 1/1] power: supply: max17042_battery: use VFSOC for
- capacity when no rsns
-Message-ID: <YVNqlIIAJNil5MFL@grimlerstat.localdomain>
-References: <20210919200735.142862-1-henrik@grimler.se>
- <20210919200735.142862-2-henrik@grimler.se>
- <febc15c6-8a40-cc0c-d98c-bbefc9cc953d@canonical.com>
+        Tue, 28 Sep 2021 18:38:06 -0400
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 900391C0007;
+        Tue, 28 Sep 2021 22:36:19 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] mtd: onenand: samsung: drop Exynos4 and describe driver in KConfig
+Date:   Wed, 29 Sep 2021 00:36:16 +0200
+Message-Id: <20210928223616.200628-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210924133223.111930-1-krzysztof.kozlowski@canonical.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <febc15c6-8a40-cc0c-d98c-bbefc9cc953d@canonical.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - grimler.se
-X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
-X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'c2606ddcf5ad1969ceffe3c98d427b272243e150'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 28, 2021 at 11:22:15AM +0200, Krzysztof Kozlowski wrote:
-> On 19/09/2021 22:07, Henrik Grimler wrote:
-> > On Galaxy S3 (i9300/i9305), which has the max17047 fuel gauge and no
-> > current sense resistor (rsns), the RepSOC register does not provide an
-> > accurate state of charge value. The reported value is wrong, and does
-> > not change over time. VFSOC however, which uses the voltage fuel gauge
-> > to determine the state of charge, always shows an accurate value.
-> > 
-> > At least one max170xx driver, found in Asus' Z00D kernel [1], chooses
-> > how to get the capacity based on if current sense is available or not.
-> > Lets change the mainline driver to match the Asus Z00D driver's
-> > behaviour and thereby fix so that correct state of charge values are
-> > obtained on Galaxy S3.
-> > 
-> > [1] https://github.com/LineageOS/android_kernel_asus_Z00D/blob/c7ab0e3ec5b5/drivers/power/max17042_battery.c#L1103-L1105
-> > 
-> > Suggested-by: Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>
-> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> > ---
-> >  drivers/power/supply/max17042_battery.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
+On Fri, 2021-09-24 at 13:32:23 UTC, Krzysztof Kozlowski wrote:
+> None of supported Samsung Exynos4 SoCs (Exynos4210, Exynos4412) seem to
+> use OneNAND driver so drop it.  Describe better which driver applies to
+> which SoC, to make configuring kernel for Samsung SoC easier.
 > 
-> After explanation and double-checking of driver this makes sense. The
-> driver already uses VFSoc for alerts (MiscCFG register) if
-> !enable_current_sense.
-> 
-> Fixes: 359ab9f5b154 ("power_supply: Add MAX17042 Fuel Gauge Driver")
-> Cc: <stable@vger.kernel.org>
-> 
-> These could be added when applying but maybe Sebastian wants a v2 with it?
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-I can send a v2 with updated commit message to mention that we already
-use VFSOC for the alert on this device, and sneak in a patch to fix a
-typo in Iavg_empty parameter.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
-> Best regards,
-> Krzysztof
-
-Best regards,
-Henrik Grimler
+Miquel
