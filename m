@@ -2,140 +2,155 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7614AC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 12:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280B0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 18:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58D6260FE8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 12:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E400610E6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Sep 2021 18:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240622AbhI1MX0 (ORCPT
+        id S242524AbhI1SeR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Sep 2021 08:23:26 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:33304
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240526AbhI1MX0 (ORCPT
+        Tue, 28 Sep 2021 14:34:17 -0400
+Received: from h04mx15.reliablemail.org ([185.76.67.208]:38486 "EHLO
+        h04mx15.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242479AbhI1Sdv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Sep 2021 08:23:26 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C7B34402FC
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 12:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632831705;
-        bh=OfxwTguAAwbeZQgJ80ueoQgTshBZ+S7XY57UrX7LQSQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=Rd0aVshdaryBtD77hiwU9t33H9sijF1oaX1t90jyDSp8LBnWoEPnsdIspUPEEqrbK
-         WpV41NfVZupTGJp95ctnL0P2iJttlZlQbxhTiaxZN8YcitIq5ItrxCU5Iw5z7C/wE8
-         GcWTyw6fqJI1NZVG/QI2KuF+GsLvhYYCGBbCph6qWnnhURjKqO71UODTJfr3qos6hC
-         iFlfSrgJO7gsCJZ60Xklk0QVaKT2jinswL+P1aZpefHxdXXdC3rdkPqzCd9bkeeWKR
-         HIUdLvaZXIgKH3loeAWn8XSMsQD7dotDgpRqvvtoc/CZDU1loKahY/irfQjMHSuOPl
-         bxSFR4jLv/rYA==
-Received: by mail-lf1-f70.google.com with SMTP id e9-20020ac25469000000b003fcfe6c574fso1537234lfn.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 05:21:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OfxwTguAAwbeZQgJ80ueoQgTshBZ+S7XY57UrX7LQSQ=;
-        b=R5mxAhRTSLYztFvS/zUb8NPT29Fn5d0Q0478FgwYjLf00bz+xLQVKe1dUjdBgalctk
-         MWvdSIZnNiHcoAlhCKg/lcG/+3kLdUCuRKshtj3dKh53H5n4yipnigPGOrAUKw8Ir55/
-         v2pqu8AVwB1S7b7DwA0vHbLUG1yXRz3LEq1j0tRz48qDx4GdHujoDa/CPY7jz/Yf1db4
-         KGQ43glBseQa4yopkFuQ30VefokevJ8eGJZ/UuZ4UjRKDDOgrMvSu1eMtCKYZTZWfloY
-         dkf6XUuDdyPjfDWBEQ0hZylFXLBqFu2L0bnwslt/GvaAjcHolyxC7cZmS9NXmltP+K3Z
-         bdSg==
-X-Gm-Message-State: AOAM533lxpcmUrlbEuYCwBEWrr8VqPlqE+fyy1wVVp+lbqCxJmQfPc/c
-        H3hclAimSyQHY/YsLqbSAMkQeWJxb/P5FV/iVCF2Gp+tvllyiCsHi1aXD+BZse8Ve8EKd8+yLon
-        lJxHn6yU9fNw2I2Mzkf+8N5ZG5iPc6RFOqdklbWTuZEtPyLJd
-X-Received: by 2002:a05:6512:114d:: with SMTP id m13mr5424617lfg.303.1632831705063;
-        Tue, 28 Sep 2021 05:21:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw0vy5vZrqnYYaMKL16pGzHUs9IX7TEGREv9QsV/r46W3ZYpEP3iSl0+DfWN2eepyhKMjjDmg==
-X-Received: by 2002:a05:6512:114d:: with SMTP id m13mr5424585lfg.303.1632831704789;
-        Tue, 28 Sep 2021 05:21:44 -0700 (PDT)
-Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id v138sm2097090lfa.120.2021.09.28.05.21.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Sep 2021 05:21:44 -0700 (PDT)
-Subject: Re: [PATCH 06/12] regulator: dt-bindings: samsung,s5m8767: convert to
- dtschema
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tue, 28 Sep 2021 14:33:51 -0400
+X-Halon-Out: 61755fa5-208a-11ec-a232-556aad082471
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
+        s=default; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ZICk2IYCnmzzwW2vK4JY7Si4OBFyGwQO3d/G7vlr/BQ=; b=LCPCFk2+4M5wg+6dmSb/IBwTmw
+        yaNMjvqq6tr764TBMpp57qZnAn9x9jxOiGJro5ZhhTLzSEPys2riXJzTXRBcertQhkZ4XWWOnDa5x
+        jdAaKgKQPrcZSCP7OVREu36W7joDv2B5iJGBgWz4kBSi4nP/AA8u/GbrMHyxTfNX0KSndIw+U82tV
+        MZHdc+5uMDxQJ9+HAYx9q0btFgnzkeuUhAnzDhRgFKoFLAG4w0mU1aAbbZIS0VRnlbsR1C8lTd9EN
+        Ve/fS8g2sg/9AIzCao7oBraznPVy29PxRomP/2yahNHVy5x5dP/pNuHxJ8JCPGWYi8yTdbUWQ5XOJ
+        Ob1d+D/A==;
+Date:   Tue, 28 Sep 2021 20:32:03 +0200
+From:   Henrik Grimler <henrik@grimler.se>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     sre@kernel.org, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
- <20210928084949.27939-7-krzysztof.kozlowski@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <48ec9ee9-0fc6-4c25-3e3a-1395286ee89d@canonical.com>
-Date:   Tue, 28 Sep 2021 14:21:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        ~postmarketos/upstreaming@lists.sr.ht, wolfgit@wiedmeyer.de,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH 1/1] power: supply: max17042_battery: use VFSOC for
+ capacity when no rsns
+Message-ID: <YVNfo75ALWWGLZeA@grimlerstat.localdomain>
+References: <20210919200735.142862-1-henrik@grimler.se>
+ <20210919200735.142862-2-henrik@grimler.se>
+ <17ba5aaa-c456-2bb9-1680-ff0a302b412f@canonical.com>
+ <YVIWC5gehfh3TXX/@grimlerstat.localdomain>
+ <6b77953f-cbad-5688-7364-667975309f8f@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20210928084949.27939-7-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b77953f-cbad-5688-7364-667975309f8f@canonical.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - grimler.se
+X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
+X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/09/2021 10:49, Krzysztof Kozlowski wrote:
-> Convert the regulators of Samsung S5M8767 PMIC to DT schema format.
+On Tue, Sep 28, 2021 at 11:18:27AM +0200, Krzysztof Kozlowski wrote:
+> On 27/09/2021 21:05, Henrik Grimler wrote:
+> > On Fri, Sep 24, 2021 at 01:45:29PM +0200, Krzysztof Kozlowski wrote:
+> >> If you switch to VSSoc, I think you need to modify the SOC Alert Config
+> >> in MiscCFG register (bits 0:1 to 0x1). Otherwise the alerts will be
+> >> generated on different value.
+> > 
+> > So, 0x1 should correspond to AvSOC (i.e. non-filtered RepSOC), while
+> > right now we write 0x3 (VFSOC) to MiscCFG for devices without current
+> > sense [1]. Could you elaborate on why AvSOC should be used for alert
+> > if we use VFSOC to get PROP_CAPACITY?
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../bindings/regulator/samsung,s5m8767.txt    | 23 +----
->  .../bindings/regulator/samsung,s5m8767.yaml   | 83 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 85 insertions(+), 23 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
+> I meant that same measurement should be used for both: for PROP_CAPACITY
+> and for alerts.
 > 
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> index 6cd83d920155..a1c6eb6f07c8 100644
-> --- a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-> @@ -48,28 +48,7 @@ Additional properties required if either of the optional properties are used:
->     for dvs. The format of the gpio specifier depends in the gpio controller.
->  
->  
-> -Names of regulators supported by S5M8767 device:
-> -	- LDOn
-> -		  - valid values for n are 1 to 28
-> -		  - Example: LDO1, LDO2, LDO28
-> -	- BUCKn
-> -		  - valid values for n are 1 to 9.
-> -		  - Example: BUCK1, BUCK2, BUCK9
-> -Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
-> -as per the datasheet of device.
-> -
-> -
-> -Optional properties of the nodes under "regulators" sub-node:
-> - - op_mode: describes the different operating modes of the LDO's with
-> -            power mode change in SOC. The different possible values are,
-> -             0 - always off mode
-> -             1 - on in normal mode
-> -             2 - low power mode
-> -             3 - suspend mode
-> - - s5m8767,pmic-ext-control-gpios: (optional) GPIO specifier for one
-> -                                   GPIO controlling this regulator
-> -                                   (enable/disable); This is valid only
-> -                                   for buck9.
-> +
+> I double checked the driver and your change is actually aligned with it.
+> If !enable_current_sense, the driver will set MiscCFG to 0x3 to use
+> VFSOC for alerts. I think you can ignore that part of my comment before.
 
-That's obviously not sufficient - I will remove full file in v2.
+Makes sense, thanks!
+
+> However still remaining issue is that switching to VFSoc should happen
+> not only if !enable_current_sense but also if ModelGauge m3 is not
+> configured.
+
+If I manage to get ModelGauge working on this device in the future I
+can address this.
+
+> > On this particular device it does not seem to make a difference what I
+> > use for the SOC alert, the alert triggers all the time in any case
+> > since RepSOC does not give an accurate value. Supposedly this happens
+> > because ModelGauge configuration is incomplete, as you said. Looking
+> > at the registers used by the ModelGauge it seems that only the
+> > "characterization table" at 0x80 - 0xAF is missing. The rest (FullCap,
+> > DesignCap, ICHGTerm, ..) are set to the same values as with vendor
+> > kernel.
+> 
+> Are you sure? I could not find setting of these (e.g.
+> MAX17042_FullCAP/config->fullcap) for a DT platform.
+
+Actually, it seems that the registers are set to the default Power-On
+Reset (POR) values in both mainline and vendor kernel.  Printing all
+the Cell Characterization Information Registers (given in Table 1 in
+the MAX17047 datasheet) with something like:
+
+    u32 tmp;
+    regmap_read(chip->regmap, MAX17042_FullCAP, &tmp);
+    dev_err(&chip->client->dev, "Fullcap %04x\n", tmp);
+
+in both vendor kernel and mainline gives the same values:
+
+    Fullcap    07d0
+    DesignCap  07d0
+    ICHGTerm   03c0
+    FullCapNom 0667
+    RCOMP0     0065
+    Iavg_empty 0780
+    TempCo     0930
+    QRes 00    1e2f
+    QRes 10    1e00
+    QRes 20    1306
+    QRes 30    0c00
+
+and these are the POR values (seen in Table 5 of the datasheet).  Only
+difference between vendor and mainline is that MAX17042_MODELChrTbl is
+all zeros on mainline, while with vendor kernel I get something like:
+
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    00 50 05 c0 a0 85 a9 f1 e0 5d 84 f1 01 00 00 00
+
+and the values here change over time as well, as the algorithm learns
+about the battery(?).
+
+Maybe this means that the ModelGauge algorithm is not configured with
+vendor kernel either, and that a full battery characterization
+(described in [1]) is needed if we are to use ModelGauge.  ModelGauge
+is also not mentioned in the vendor kernel driver for max17047 [2],
+but it is mentioned in the very similar max17042 [3] and max17050
+drivers in the same kernel.
+
+> Best regards,
+> Krzysztof
+
+[1] https://pdfserv.maximintegrated.com/en/an/AN4799.pdf
+[2] https://github.com/LineageOS/android_kernel_samsung_smdk4412/blob/2489007e7d74/drivers/battery/max17047_fuelgauge.c
+[3] https://github.com/LineageOS/android_kernel_samsung_smdk4412/blob/2489007e7d74/drivers/battery/max17042_fuelgauge.c
 
 Best regards,
-Krzysztof
+Henrik Grimler
