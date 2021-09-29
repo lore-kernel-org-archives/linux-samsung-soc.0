@@ -2,59 +2,25 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8613C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 03:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15ED4C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 11:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89A0F613D0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 03:42:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08459613D1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 11:52:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244029AbhI2DoX (ORCPT
+        id S244859AbhI2LyR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Sep 2021 23:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37272 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242428AbhI2DoV (ORCPT
+        Wed, 29 Sep 2021 07:54:17 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:41739 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244263AbhI2LyQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Sep 2021 23:44:21 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEB3C061746
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 20:42:41 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id e15so4864529lfr.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2021 20:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IuNTL9gPvpWYsW3AwxYryKONOf4+S+yGJL4QxUsihbA=;
-        b=h7mvpzImaXE2WV7qwWKc2k5Jqj0LIXIZYtDyLIOOa7f0MYkXYYneJn5QWbqPgwBQxQ
-         bSiclPOqlt57iy3gVD8Q6aXV0R3mZs0DU421XL+PEBe9/UyURCMtA4Ux2VfU9AjuLnuL
-         dvu5KRMi2MZPbyVWgjqy7XGMiLfXKLHVOQCphKRcU7Ipe18W7J9z3+vFpTPPBhKWFTmA
-         aDB1WUxmKCqha1Paw/WytXLKfSPjuU772NfZv7P3hzhteJ6iJdoVt8abA9dBiQbFEnLL
-         LgFksSFjwAXKFOE0aYOBuX79a/qG7kTJsQvDZpmvm0CqetzfQXBXBg0vZ8lVKqL+xK+V
-         9V+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IuNTL9gPvpWYsW3AwxYryKONOf4+S+yGJL4QxUsihbA=;
-        b=r2gCh3GbfY8TgXcXhq5RroOg6P5Qh5u/fD9WUwpXBWPsH8C/bp6j7VJFWCdwCYFdG3
-         QHYFWgOE9XjXo48gNoI1ZLPWUXi5knJQM4EUDoZ+F6dcFcuGTTdjB8CYKvmo1vlfYjwi
-         V7WOu6EmYrivebcJeej5t0fX4c/OjWSWD7/hrWgLVVKScVEiRw/tHA7zrtVf021UzIZU
-         frwj8rvxxK0DZk9iUTad9/mBjZA6TQ54Te7tV+ykJjgEAT9xexnjpFYNRZFehbWqTSIW
-         /k4MnE7fmHqC51M7a4MyL8lIvHcczbgWLcdjcmGukPCbK7dWAXozab4S21dgJ12/rsYN
-         RHvg==
-X-Gm-Message-State: AOAM530sSkV4ymp1wC+N1zwVOTKLlvZA7SsR4NEoXV1/VX74o4PfEjS+
-        okPwR/oPYd259Ti45lX7QZmCM390NKkFutar/6lzig==
-X-Google-Smtp-Source: ABdhPJwflCbRIz99ZM3n81OZD0bcobRt+9ytyfnyFvFexD+UThys3zwr5ilEDOM1PEC9Bhei1U3vyqJMMda+w4ALBr4=
-X-Received: by 2002:a2e:83c5:: with SMTP id s5mr3615270ljh.515.1632886958477;
- Tue, 28 Sep 2021 20:42:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com> <20210928235635.1348330-3-willmcvicker@google.com>
-In-Reply-To: <20210928235635.1348330-3-willmcvicker@google.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 28 Sep 2021 20:42:27 -0700
-Message-ID: <CALAqxLUju1Bw0dDpi_oK6-eOiP6B2Xm1MV19G53WaRFm3Z_AWw@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] timekeeping: add API for getting timekeeping_suspended
+        Wed, 29 Sep 2021 07:54:16 -0400
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id E0EBE20000D;
+        Wed, 29 Sep 2021 11:52:30 +0000 (UTC)
+Date:   Wed, 29 Sep 2021 13:52:30 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Will McVicker <willmcvicker@google.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -67,32 +33,124 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Lee Jones <lee.jones@linaro.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Saravana Kannan <saravanak@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 12/12] ARM: rtc: remove HAVE_S3C_RTC in favor of
+ direct dependencies
+Message-ID: <YVRTfuoC8TxtFTEO@piout.net>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <20210928235635.1348330-13-willmcvicker@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210928235635.1348330-13-willmcvicker@google.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 28, 2021 at 4:56 PM Will McVicker <willmcvicker@google.com> wrote:
->
-> This allows modules to access the value of timekeeping_suspended without
-> giving them write access to the variable.
->
+Hi,
 
-It's important to cover "the why" not "the what" in these commit
-messages, so you might add a note as to what code will be the user of
-this (the samsung/clk-pll.c code changed later in this series).
+I'd argue that the subject should be rtc: s3c: ...
 
-thanks
--john
+On 28/09/2021 23:56:29+0000, Will McVicker wrote:
+> The config HAVE_S3C_RTC is not really needed since we can simply just
+> add the dependencies directly to RTC_DRV_S3C. Also, one less config to
+> keep track of!
+> 
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+> ---
+>  arch/arm/Kconfig              |  1 -
+>  arch/arm/mach-exynos/Kconfig  |  1 -
+>  arch/arm/mach-s5pv210/Kconfig |  1 -
+>  arch/arm64/Kconfig.platforms  |  1 -
+>  drivers/rtc/Kconfig           | 10 ++--------
+>  5 files changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index fc196421b2ce..5ed6b5de981e 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -475,7 +475,6 @@ config ARCH_S3C24XX
+>  	select GPIOLIB
+>  	select GENERIC_IRQ_MULTI_HANDLER
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C_RTC if RTC_CLASS
+>  	select NEED_MACH_IO_H
+>  	select S3C2410_WATCHDOG
+>  	select SAMSUNG_ATAGS
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 2ad19a08bf06..8b72a70b6c43 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -19,7 +19,6 @@ menuconfig ARCH_EXYNOS
+>  	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
+>  	select HAVE_ARM_SCU if SMP
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PM_GENERIC_DOMAINS if PM
+>  	select S5P_DEV_MFC
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index 62b90dda571f..681823687018 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -12,7 +12,6 @@ config ARCH_S5PV210
+>  	select CLKSRC_SAMSUNG_PWM
+>  	select GPIOLIB
+>  	select HAVE_S3C2410_I2C if I2C
+> -	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select SOC_SAMSUNG
+>  	help
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index e44d5e9f5058..02c8637d3f09 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -91,7 +91,6 @@ config ARCH_BRCMSTB
+>  
+>  config ARCH_EXYNOS
+>  	bool "ARMv8 based Samsung Exynos SoC family"
+> -	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PM_GENERIC_DOMAINS if PM
+>  	select SOC_SAMSUNG
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index e1bc5214494e..7208eeb8459a 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -1404,16 +1404,10 @@ config RTC_DRV_OMAP
+>  	  This driver can also be built as a module, if so, module
+>  	  will be called rtc-omap.
+>  
+> -config HAVE_S3C_RTC
+> -	bool
+> -	help
+> -	  This will include RTC support for Samsung SoCs. If
+> -	  you want to include RTC support for any machine, kindly
+> -	  select this in the respective mach-XXXX/Kconfig file.
+> -
+>  config RTC_DRV_S3C
+>  	tristate "Samsung S3C series SoC RTC"
+> -	depends on ARCH_S3C64XX || HAVE_S3C_RTC || COMPILE_TEST
+> +	depends on ARCH_EXYNOS || ARCH_S3C64XX || ARCH_S3C24XX || ARCH_S5PV210 || \
+> +		   COMPILE_TEST
+>  	help
+>  	  RTC (Realtime Clock) driver for the clock inbuilt into the
+>  	  Samsung S3C24XX series of SoCs. This can provide periodic
+> -- 
+> 2.33.0.685.g46640cef36-goog
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
