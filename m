@@ -2,128 +2,150 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5D6C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 20:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90475C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 21:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 731526124C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 20:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A952613A6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 21:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346750AbhI2UsC (ORCPT
+        id S1347040AbhI2V3T (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Sep 2021 16:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46242 "EHLO
+        Wed, 29 Sep 2021 17:29:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346191AbhI2UsB (ORCPT
+        with ESMTP id S1346978AbhI2V3O (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Sep 2021 16:48:01 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2BEC061767
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 13:46:19 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id m3so15777586lfu.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 13:46:19 -0700 (PDT)
+        Wed, 29 Sep 2021 17:29:14 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260C3C061770
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 14:27:33 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id j5so11559345lfg.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 14:27:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ei5m2coJFPE9ArBvAOBUe88q9SzwkYzMD0NediKju6U=;
-        b=qEv872EZJ1VZxT3IbJ1lydKZMOtHlz2Tq+poMTU1EKCSqXT6FO1OsC7Rr+v4XFJLfu
-         sh3FDwWV8D8kla4buDfzP9s/pIFjI20Ke+2kzu5bFSRunrsNbTbLE22/VNWZbyl31Ho4
-         zC6ZL3/oa0CIuBN4hbE+4PVZPLmzFeni2OSZIC+HlfoxlZ6aVFhfUwfAtkyGN6GsyOap
-         VOpWLMT6atWAINgWI7nt6MoexZQ6FhZ0nt5uIVa2L2mIbSs2XtHhnILZCdtulY3U5+CM
-         n60SmQgw3yX64OcifIiQ9uN5K10wtgiaDdQ6m4PPUVmHMue7zLg41F2rxhTG6NjmFsS2
-         URSw==
+        bh=vjQP0/+z55MvzkQLmpO17f1ojfgarxRQxkpypeDCRYQ=;
+        b=P6d7v/ARFy2oAzNGlzkCFMmhuF0dw1E4Ty8/aKGGomT30aic5OSINMht/5eTnTjw+E
+         HVwG/Vb0f044xHEAedWSzxWElToMUBbgbJq2HpAC0E3cTqgTRqpyyvO/TxZlRGm7Knzd
+         g197vNwd2IHxhZjeaz4yRtAoxCOvziEh/yVbtU+3O8VuswsBr07x1VFM5xAtgWihuCkO
+         uaX1aUCJfdL12bZY+cJm7vPnn7R7kAZO2pzg6uXgoaCGHwkzYiXL2tUrJgQgg6Kyykb/
+         RcZANF9j+IZ5JhNrzRCHZVii00VULrEZwGuwD9dkVZiGUnoOdzpJdvJXgmdVANl52dPG
+         GeTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ei5m2coJFPE9ArBvAOBUe88q9SzwkYzMD0NediKju6U=;
-        b=cwoO+IYKqqbBoqAJDy10bM+wWx18QHvdO8Aw6Y8BFe2eCSM5O9WRNmQj3LuQoFhE+s
-         TWtzZGZNTyIim/KxaCCFbVOpWa+H3KbbIR/Tr7FJW9OWbPNNah9sEysQP7aTXWzjz/ey
-         VTSOdHKlRO3pkUFxMv8hH3pdAReigQLxtIvJftC4B+PIfZWR3287XKXFELZWSgB/QGuL
-         Zl8sYJWtZ0kOtwiPnD6jSMJjqg1H42V0MBrDGEA4+pDBXOW/jkT+uKeyhgSTy3/U0GfR
-         KIGIOzUyy5Y1ePLqFTgEe+QCpPKIjAhbb1UyZzl4jrpH3PHnbP4v0v/nPyOIglBIFKDd
-         G1Og==
-X-Gm-Message-State: AOAM5307hmKhEbS9STq7iHpG70nfOakyNJrhNXMnSTNH6fTs+JTLhmon
-        4g1lM2UTf7BqucXUNT51gFSCcSbegk+aV1JFfL7xYg==
-X-Google-Smtp-Source: ABdhPJxrEvaOY+BJcEwgYKyltmJ1P95B1u5A4ohEGs0wRyoS4JlFDwH3bL8wLds17FeMKw6Pk2VeWmVGDsuYCaCd4P0=
-X-Received: by 2002:a2e:9802:: with SMTP id a2mr2036742ljj.427.1632948377858;
- Wed, 29 Sep 2021 13:46:17 -0700 (PDT)
+        bh=vjQP0/+z55MvzkQLmpO17f1ojfgarxRQxkpypeDCRYQ=;
+        b=K/7/p6RVgT6q6SNePe8rK3URGHv6ldYCHsskk3r+J6IVFpMyxrEaYHrXT1rCnKYsFM
+         6EPaSD8J3zE0y8a0LcOzUSwaVpdIQUz0Q5AyZAOEXO+tXM/Y+XDeNqcwTiHPtI59sF+r
+         q8uvhmFk2tT6UmDB7ynifgHiqWe4t8HwPjRXBDL7JDwsbEvFL/CTY1poALmw66JANFzD
+         ksKtNhXX26tlKxHxz1Ugf7/TVDN4c94OYNQT6pIV8bpltUM5Ifi3vIK4KBsODMeDKVns
+         9KhZj+3DuNpoEtzOn7UlwfhoqB0INZRq2rAvPR7jmQjcw+cr319aa6UZkT4fIgGNphGG
+         e+1A==
+X-Gm-Message-State: AOAM532jPTAFVxZXhj6tkpTar8T0qRimYNJonyhDXR8djCDoEDD9DqW9
+        0jUc2hmtj9/UuRAMY1p8QX4Arp5nkHu4llLRK0pd2Q==
+X-Google-Smtp-Source: ABdhPJxlRl2WWh8eZDcWokrINznDZYEeyO4HbV5UfIxRhCovDEAxjUhr3yg0Uy13hYjMGKtihX9SR8gKl3bzVxFYltc=
+X-Received: by 2002:a05:6512:ea5:: with SMTP id bi37mr1986548lfb.36.1632950851440;
+ Wed, 29 Sep 2021 14:27:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <20210928235635.1348330-3-willmcvicker@google.com> <CALAqxLUju1Bw0dDpi_oK6-eOiP6B2Xm1MV19G53WaRFm3Z_AWw@mail.gmail.com>
- <CABYd82Z4pgJpYVhJEGjgbWgSQp7if_=Rf03VmTu+U9D3b=dVzA@mail.gmail.com>
-In-Reply-To: <CABYd82Z4pgJpYVhJEGjgbWgSQp7if_=Rf03VmTu+U9D3b=dVzA@mail.gmail.com>
+References: <20210910101218.1632297-1-maxime@cerno.tech>
+In-Reply-To: <20210910101218.1632297-1-maxime@cerno.tech>
 From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 29 Sep 2021 13:46:05 -0700
-Message-ID: <CALAqxLXUOY+tdJat0YaxAEiS_AWrwxBaLq3M90btSVdWfvFBag@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] timekeeping: add API for getting timekeeping_suspended
-To:     Will McVicker <willmcvicker@google.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+Date:   Wed, 29 Sep 2021 14:27:19 -0700
+Message-ID: <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/24] drm/bridge: Make panel and bridge probe order consistent
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         lkml <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 1:01 PM Will McVicker <willmcvicker@google.com> wrote:
-> On Tue, Sep 28, 2021 at 8:42 PM John Stultz <john.stultz@linaro.org> wrote:
-> > On Tue, Sep 28, 2021 at 4:56 PM Will McVicker <willmcvicker@google.com> wrote:
-> > >
-> > > This allows modules to access the value of timekeeping_suspended without
-> > > giving them write access to the variable.
-> > >
-> >
-> > It's important to cover "the why" not "the what" in these commit
-> > messages, so you might add a note as to what code will be the user of
-> > this (the samsung/clk-pll.c code changed later in this series).
-> >
-> > thanks
-> > -john
+On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno.tech> wrote:
 >
-> Thanks John for the tip. I will try to be better at that in the followup.
+> We've encountered an issue with the RaspberryPi DSI panel that prevented the
+> whole display driver from probing.
+>
+> The issue is described in detail in the commit 7213246a803f ("drm/vc4: dsi:
+> Only register our component once a DSI device is attached"), but the basic idea
+> is that since the panel is probed through i2c, there's no synchronization
+> between its probe and the registration of the MIPI-DSI host it's attached to.
+>
+> We initially moved the component framework registration to the MIPI-DSI Host
+> attach hook to make sure we register our component only when we have a DSI
+> device attached to our MIPI-DSI host, and then use lookup our DSI device in our
+> bind hook.
+>
+> However, all the DSI bridges controlled through i2c are only registering their
+> associated DSI device in their bridge attach hook, meaning with our change
+> above, we never got that far, and therefore ended up in the same situation than
+> the one we were trying to fix for panels.
+>
+> The best practice to avoid those issues is to register its functions only after
+> all its dependencies are live. We also shouldn't wait any longer than we should
+> to play nice with the other components that are waiting for us, so in our case
+> that would mean moving the DSI device registration to the bridge probe.
+>
+> I also had a look at all the DSI hosts, and it seems that exynos, kirin and msm
+> would be affected by this and wouldn't probe anymore after those changes.
+> Exynos and kirin seems to be simple enough for a mechanical change (that still
+> requires to be tested), but the changes in msm seemed to be far more important
+> and I wasn't confortable doing them.
 
-I have to remind myself regularly as well. :)  Apologies if my quick
-reply above seemed curt (as it does to me re-reading it now). Wasn't
-my intent.
 
-> For this specific patch, I am adding this new API because the Samsung
-> PLL driver (drivers/clk/samsung/clk-pll.c) currently is using the
-> variable 'timekeeping_suspended' to detect timeouts before the
-> clocksource is initialized or timekeeping itself is suspended. My
-> patch series aims to modularize the Samsung PLL driver. So to keep the
-> driver's functionality intact, I need to add this additional API.
+Hey Maxime,
+  Sorry for taking so long to get to this, but now that plumbers is
+over I've had a chance to check it out on kirin
 
-Sounds good!
+Rob Clark pointed me to his branch with some fixups here:
+   https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridge-rework
 
-Another small/medium suggestion:  Since you're adding a new interface
-for non-core users of timekeeping_suspended, it might be good to
-switch the other users as well (seems like just
-drivers/clk/ti/clkctrl.c and kernel/sched/clock.c), then also remove
-the extern in include/linux/timekeeping.h (so there's one consistent
-method to access it)?  I know it's a sort of scope creep, so apologies
-for asking, but it would make the series more attractive if it's not
-leaving something for others to clean up later.
+But trying to boot hikey with that, I see the following loop indefinitely:
+[    4.632132] adv7511 2-0039: supply avdd not found, using dummy regulator
+[    4.638961] adv7511 2-0039: supply dvdd not found, using dummy regulator
+[    4.645741] adv7511 2-0039: supply pvdd not found, using dummy regulator
+[    4.652483] adv7511 2-0039: supply a2vdd not found, using dummy regulator
+[    4.659342] adv7511 2-0039: supply v3p3 not found, using dummy regulator
+[    4.666086] adv7511 2-0039: supply v1p2 not found, using dummy regulator
+[    4.681898] adv7511 2-0039: failed to find dsi host
+[    4.688836] adv7511 2-0039: supply avdd not found, using dummy regulator
+[    4.695724] adv7511 2-0039: supply dvdd not found, using dummy regulator
+[    4.702583] adv7511 2-0039: supply pvdd not found, using dummy regulator
+[    4.709369] adv7511 2-0039: supply a2vdd not found, using dummy regulator
+[    4.716232] adv7511 2-0039: supply v3p3 not found, using dummy regulator
+[    4.722972] adv7511 2-0039: supply v1p2 not found, using dummy regulator
+[    4.738720] adv7511 2-0039: failed to find dsi host
+
+I'll have to dig a bit to figure out what's going wrong, but wanted to
+give you the heads up that there seems to be a problem
 
 thanks
 -john
