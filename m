@@ -2,214 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CDEC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 14:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB63C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 18:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 284BF6140F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 14:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE4C6120D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Sep 2021 18:15:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344419AbhI2OLI (ORCPT
+        id S1345824AbhI2SRQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Sep 2021 10:11:08 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53905 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344396AbhI2OK5 (ORCPT
+        Wed, 29 Sep 2021 14:17:16 -0400
+Received: from h04mx15.reliablemail.org ([185.76.67.208]:28608 "EHLO
+        h04mx15.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232318AbhI2SRQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Sep 2021 10:10:57 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20210929140914euoutp02d997a03a46e8e0f26cb4f9087372ea2c~pUDr2tAMV2990729907euoutp02n
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 14:09:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20210929140914euoutp02d997a03a46e8e0f26cb4f9087372ea2c~pUDr2tAMV2990729907euoutp02n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1632924554;
-        bh=Z4IBSKno7o4u2IPtq/oGi8k3geESxSGYf1l5VWz39q4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EJFF5JDh2gR4dwAi0l3p+Grg5YPMl/aRHfWgIu6pR+C/IKIPmP5jFXiLyBwwCQg2R
-         lq46q5y7GU6d9yQjLz4Gpz75dRbkvAGOk3YXcKpqM5Tcni5RfGZ0PdjOgdhxWZDy97
-         80VUqV4SuEsbSLL7/i1vW4fZuTYD/9GqzIndv7wc=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20210929140913eucas1p2cbed7e470a84688dcfb7576d88cece93~pUDrcUys-1555515555eucas1p2h;
-        Wed, 29 Sep 2021 14:09:13 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4A.CB.42068.98374516; Wed, 29
-        Sep 2021 15:09:13 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210929140913eucas1p19ae6de17520916149879be71a33291c7~pUDq6AAux0545405454eucas1p1i;
-        Wed, 29 Sep 2021 14:09:13 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20210929140913eusmtrp1d29ca32d2519ee0d7b0a0c2f2352437b~pUDq5KMgY3235032350eusmtrp1s;
-        Wed, 29 Sep 2021 14:09:13 +0000 (GMT)
-X-AuditID: cbfec7f4-c71ff7000002a454-ef-615473895320
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2A.D0.20981.88374516; Wed, 29
-        Sep 2021 15:09:12 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210929140912eusmtip277040d10ff0b8d90d7b154f3268ef9a9~pUDqseiwu0168801688eusmtip2F;
-        Wed, 29 Sep 2021 14:09:12 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        jim.cromie@gmail.com, Heiner Kallweit <hkallweit1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
-        <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH net-next v16 2/3] dt-bindings: net: Add bindings for
- AX88796C SPI Ethernet Adapter
-Date:   Wed, 29 Sep 2021 16:08:53 +0200
-Message-Id: <20210929140854.28535-3-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210929140854.28535-1-l.stelmach@samsung.com>
+        Wed, 29 Sep 2021 14:17:16 -0400
+X-Halon-Out: 3c7786dd-2151-11ec-a232-556aad082471
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
+        s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=KIjLywngr8bdrLt5titQeuOYT+bdxPvm9Rv5zh+DvWM=; b=jgEVo5ipGp1OGZM2sHglnTJSFe
+        M/Gu77biam8hVIvCykin9gq3cokCAJYrGfxQQE62YmoJLcHVtfDFT0RBFJhzvgZd0MIuRID/TYrbC
+        OHIa+/16ogy5FwZeZ4h+00vmu12mfzqzC3SgTCFSJ2+nqiFzzHFoBEAB7CjePC68B+nOW51XmN46w
+        lzQd3ANbnSqcDt4ecG341KbggNF6CYoR/ork4/D4D58EmUeGJ83iN1KJAlJjKVmOyCeQsImaq0AE4
+        ffNeSLC4nIcOsDhFSE4SeIL4U3Rj5EqiMxGJ61bZ5WJPu20wDm6iNqT0JAtb2CH0lsiMQwQeyI+t1
+        PmKu73AQ==;
+From:   Henrik Grimler <henrik@grimler.se>
+To:     sre@kernel.org, m.szyprowski@samsung.com,
+        krzysztof.kozlowski@canonical.com, sebastian.krzyszkowiak@puri.sm,
+        hdegoede@redhat.com, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH v2 2/2] power: supply: max17042_battery: fix typo in MAX17042_IAvg_empty
+Date:   Wed, 29 Sep 2021 20:14:18 +0200
+Message-Id: <20210929181418.4221-2-henrik@grimler.se>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210929181418.4221-1-henrik@grimler.se>
+References: <20210929181418.4221-1-henrik@grimler.se>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCKsWRmVeSWpSXmKPExsWy7djP87qdxSGJBj+3KVqcv3uI2WLjjPWs
-        FnPOt7BYzD9yjtVi0fsZrBbX3t5hteh//JrZ4vz5DewWF7b1sVrcPLSC0WLT42usFpd3zWGz
-        mHF+H5PFoal7GS3WHrnLbnFsgZhF694j7Bb/9+xgdxDyuHztIrPHlpU3mTx2zrrL7rFpVSeb
-        x+Yl9R47d3xm8ujbsorR4/MmuQCOKC6blNSczLLUIn27BK6M5vNP2AvOC1cc3nWXuYFxCn8X
-        IyeHhICJxL89s5m6GLk4hARWMEp8XP6IFcL5wijR1fiXGcL5zCjxc8t1RpiWQ7397CC2kMBy
-        Rom/uxUhip4zSvzZu4gZJMEm4CjRv/QE2CgRgXvMEp+OHWcDcZgF7jNK3Hu+GqxKWCBFYv2D
-        Z0AJDg4WAVWJO1eLQExeAWuJzzdiIJbJS7Rdnw62mFPARuL93wNgNq+AoMTJmU9YQGx+AS2J
-        NU3XwWxmoPrmrbPBrpYQOMwpcWL3LqirXSS6Jm+BsoUlXh3fwg5hy0icntzDArJXQqBeYvIk
-        M4jeHkaJbXN+sEDUWEvcOfcL7ExmAU2J9bv0IcKOEi+W/4Vq5ZO48VYQ4gQ+iUnbpjNDhHkl
-        OtqEIKpVJNb174EaKCXR+2oF4wRGpVlInpmF5IFZCLsWMDKvYhRPLS3OTU8tNspLLdcrTswt
-        Ls1L10vOz93ECEx4p/8d/7KDcfmrj3qHGJk4GA8xSnAwK4nw/hAPThTiTUmsrEotyo8vKs1J
-        LT7EKM3BoiTOm7RlTbyQQHpiSWp2ampBahFMlomDU6qByTu+7G1sQklAodNkkV2JE9f08Z3b
-        qfdEKPdkl+AZbUf1Sg5NZos5Z74GPc59+Ebr7IveAyUbhP6teMO2MGuHVKuzhUxR0lKxukOq
-        2zQ2N5h5H5uuYJpcdbS6c9b755bKzV0Panw6Pgo+P89jJJB8ye21ctuHT+zyX2ruXa0Vmz+j
-        88VxiwiFRQt/i5ecE4gu2yiWKB0XzNdUt7hp+2m1iXcLIryWXHql0PhDuvdh7s99f3y/XfrV
-        6hV+LlxGe3vcP6mtanGpu2oPMV1SSrphu/if5+QPcdOdPi+z89gR1Rjy0ejFc1vHlbYJC74W
-        MRbfyG6/ejR96kY3g2DHlnT5pYFPp/ZIGCofNLA5f2y+EktxRqKhFnNRcSIAGfqkkecDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsVy+t/xe7odxSGJBl3/bCzO3z3EbLFxxnpW
-        iznnW1gs5h85x2qx6P0MVotrb++wWvQ/fs1scf78BnaLC9v6WC1uHlrBaLHp8TVWi8u75rBZ
-        zDi/j8ni0NS9jBZrj9xltzi2QMyide8Rdov/e3awOwh5XL52kdljy8qbTB47Z91l99i0qpPN
-        Y/OSeo+dOz4zefRtWcXo8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayV
-        kamSvp1NSmpOZllqkb5dgl5G8/kn7AXnhSsO77rL3MA4hb+LkZNDQsBE4lBvP3sXIxeHkMBS
-        RoknPUuZuhg5gBJSEivnpkPUCEv8udbFBlHzlFGiY/NddpAEm4CjRP/SE6wgtojAG2aJn71S
-        IEXMAvcZJX59esEIkhAWSJJ4vaaHEWQoi4CqxJ2rRSAmr4C1xOcbMRDz5SXark8Hq+YUsJF4
-        //cAmC0EUvK8AczmFRCUODnzCQtIK7OAusT6eUIgYX4BLYk1TddZQGxmoDHNW2czT2AUmoWk
-        YxZCxywkVQsYmVcxiqSWFuem5xYb6RUn5haX5qXrJefnbmIERve2Yz+37GBc+eqj3iFGJg7G
-        Q4wSHMxKIrw/xIMThXhTEiurUovy44tKc1KLDzGaAv01kVlKNDkfmF7ySuINzQxMDU3MLA1M
-        Lc2MlcR5TY6siRcSSE8sSc1OTS1ILYLpY+LglGpgmrI4qCatXLx/KqPBAs1v+lzX9E80MJke
-        suc67Fa787XoTJeH63TKWz4ZSG3WEVWw1jnG4xJvp7hs/TFDp9t2Ib+/vdW5zD3X/8/0jyts
-        L3KaTpKpNNp+Jzs6JuZx4qajorfyGqe+YJ3y+GXz95itChOdvXrDT74t3jdj7YdYI03lmVd8
-        btff456uz3tl3b6/edaisR6fdddZaL+4tHrrr0e7F/YyLz1jdyPPvOcYy3ynXa3nNLY9k9sX
-        /nzStpjOuuyLc57N0L6sXut//blD4ofnq2+7LX9+03fvvcu7PD8cXNVc5x98rMFH1jDAS3TZ
-        U/UbfadO7bZyKFHPF3756N6Es9oeaQvbA49JSjxT6VViKc5INNRiLipOBAD9gsPQdwMAAA==
-X-CMS-MailID: 20210929140913eucas1p19ae6de17520916149879be71a33291c7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210929140913eucas1p19ae6de17520916149879be71a33291c7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210929140913eucas1p19ae6de17520916149879be71a33291c7
-References: <20210929140854.28535-1-l.stelmach@samsung.com>
-        <CGME20210929140913eucas1p19ae6de17520916149879be71a33291c7@eucas1p1.samsung.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - grimler.se
+X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
+X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for AX88796C SPI Ethernet Adapter.
+Datasheet gives the name IAvg_empty, not LAvg_empty.
 
-Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
 ---
- .../bindings/net/asix,ax88796c.yaml           | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/asix,ax88796c.yaml
+ drivers/power/supply/max17042_battery.c | 2 +-
+ include/linux/power/max17042_battery.h  | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/asix,ax88796c.yaml b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-new file mode 100644
-index 000000000000..699ebf452479
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/asix,ax88796c.yaml
-@@ -0,0 +1,73 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/asix,ax88796c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASIX AX88796C SPI Ethernet Adapter
-+
-+maintainers:
-+  - Łukasz Stelmach <l.stelmach@samsung.com>
-+
-+description: |
-+  ASIX AX88796C is an Ethernet controller with a built in PHY. This
-+  describes SPI mode of the chip.
-+
-+  The node for this driver must be a child node of an SPI controller,
-+  hence all mandatory properties described in
-+  ../spi/spi-controller.yaml must be specified.
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: asix,ax88796c
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 40000000
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description:
-+      A GPIO line handling reset of the chip. As the line is active low,
-+      it should be marked GPIO_ACTIVE_LOW.
-+    maxItems: 1
-+
-+  local-mac-address: true
-+
-+  mac-address: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - spi-max-frequency
-+  - interrupts
-+  - reset-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  # Artik5 eval board
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ethernet@0 {
-+            compatible = "asix,ax88796c";
-+            reg = <0x0>;
-+            local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-+            interrupt-parent = <&gpx2>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+            spi-max-frequency = <40000000>;
-+            reset-gpios = <&gpe0 2 GPIO_ACTIVE_LOW>;
-+        };
-+    };
+diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+index 5809ba997093..32f331480487 100644
+--- a/drivers/power/supply/max17042_battery.c
++++ b/drivers/power/supply/max17042_battery.c
+@@ -786,7 +786,7 @@ static inline void max17042_override_por_values(struct max17042_chip *chip)
+ 	if ((chip->chip_type == MAXIM_DEVICE_TYPE_MAX17042) ||
+ 	    (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17047) ||
+ 	    (chip->chip_type == MAXIM_DEVICE_TYPE_MAX17050)) {
+-		max17042_override_por(map, MAX17042_LAvg_empty, config->lavg_empty);
++		max17042_override_por(map, MAX17042_IAvg_empty, config->iavg_empty);
+ 		max17042_override_por(map, MAX17042_TempNom, config->temp_nom);
+ 		max17042_override_por(map, MAX17042_TempLim, config->temp_lim);
+ 		max17042_override_por(map, MAX17042_FCTC, config->fctc);
+diff --git a/include/linux/power/max17042_battery.h b/include/linux/power/max17042_battery.h
+index dd24756a8af7..c417abd2ab70 100644
+--- a/include/linux/power/max17042_battery.h
++++ b/include/linux/power/max17042_battery.h
+@@ -78,7 +78,7 @@ enum max17042_register {
+ 	MAX17042_T_empty	= 0x34,
+ 
+ 	MAX17042_FullCAP0       = 0x35,
+-	MAX17042_LAvg_empty	= 0x36,
++	MAX17042_IAvg_empty	= 0x36,
+ 	MAX17042_FCTC		= 0x37,
+ 	MAX17042_RCOMP0		= 0x38,
+ 	MAX17042_TempCo		= 0x39,
+@@ -221,7 +221,7 @@ struct max17042_config_data {
+ 	u16	fullcap;	/* 0x10 */
+ 	u16	fullcapnom;	/* 0x23 */
+ 	u16	socempty;	/* 0x33 */
+-	u16	lavg_empty;	/* 0x36 */
++	u16	iavg_empty;	/* 0x36 */
+ 	u16	dqacc;		/* 0x45 */
+ 	u16	dpacc;		/* 0x46 */
+ 	u16	qrtbl00;	/* 0x12 */
 -- 
-2.30.2
+2.33.0
 
