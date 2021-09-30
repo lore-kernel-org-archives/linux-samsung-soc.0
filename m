@@ -2,143 +2,298 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 650D9C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 02:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D939FC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 06:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C84C61881
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 02:31:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB6FF6138F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 06:15:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347827AbhI3Ccl (ORCPT
+        id S1347847AbhI3GQr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Sep 2021 22:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347821AbhI3Cck (ORCPT
+        Thu, 30 Sep 2021 02:16:47 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:49968
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1348185AbhI3GQq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Sep 2021 22:32:40 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6FBC06176C
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 19:30:58 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id u18so18858944lfd.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 19:30:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iQnUr5SY7f8OGO57S3EM4uCQ4piA9YupnmmYWxxVKyY=;
-        b=LjS98cvidJEmDORic59MjQfO2hbiTgxfTPD9/2/BLF9ce//XnLIiWgiIkzSXr/gD2G
-         y5tyf0KeEAoS49e4mYQdczDnBT/f/TJt3SBEcGDu/v6oInWf4J0R3Pzkdp4Zb5mTDBox
-         FhQ1S4a8GrGLYeQg3WevOUEvv1xjquhZ8Oxl9NkWXS2zCJGbooU3psEId6fvcuChc6QX
-         snU5E32PuJ8ewpYQoF4iRr3f0AIodLMCW/1RVwEEXXAjTVMeZ7bsg+LxDsWzfqHkVXyG
-         KRffm+ELFqgSNXDqcF6/R2J0XIvvrxXGr1MkGPHdj1+fZQZesnPo12Y9vbyuZKN7xTYd
-         kmcw==
+        Thu, 30 Sep 2021 02:16:46 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B99AF3F048
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 06:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632982503;
+        bh=l4P1yQgHmK4IoeNIUGcmxpjGHV2AL8XAWEflVAlKCuA=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=ih/GKOgES5bbB9lqXk55cx3IkymGd0z9ss5VnOtRVO2TxtljoXBm0Yk/HxIeVgTBd
+         DfqeQOQxr9Hl4UQE+T47SeI1FSCZZ+/Dqxe7ICDnl5SgebbtuYKCOQov2SSeAeikjA
+         yqUpE0huQ6/cVrBmR7B+d+1UNeX+rhxpLoUNbxhFWunqy8ftCUPTykUfAsN/cqmrm6
+         PqFjeMKOFKbE70pkMfuT18Tfww2WAs3pr6W+WZwO8GIG6OV0TBHotpE2Rw8HFMSXcr
+         cbh9V/ZYXm/lK2nOlD8nHYkFkYNydCFgVvl97KaJUILsJcHpoJ6ZiwZvBuT/i9eBZv
+         KiuIWkkaIpz8A==
+Received: by mail-wm1-f72.google.com with SMTP id j82-20020a1c2355000000b0030cec9c9a66so2452471wmj.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Sep 2021 23:15:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iQnUr5SY7f8OGO57S3EM4uCQ4piA9YupnmmYWxxVKyY=;
-        b=MQVr4CdihDXYqQC13eLSuWL4qrKw+SmX6r0Xjrn9xbyyA6Txzel4l3T6p24M7ffJGg
-         3fbu0bUIIxsnfnBGaIS7F0OpmHtxB6kXOIAjIfOsQCN5G+gBs/oPqmzx9RPR+iU3dygL
-         6xbHAgpL4aCrljB70aZmIyfpwq+oAXwEff2mtkpR0/sogm0c1A4OlnSoOOtYXprECNBZ
-         kFt2TgTKQnQAADZdAZO8210REDYSelEVWxlNZTHGFZzFbscMsQiV05uU43oVrRs5itnB
-         QbUtuKpeTpYvxWJVw+aoRg337OYdggSAI0Tj8lsNPk3okDWgU5L/dgWLZaswq0rqwtHF
-         l3yw==
-X-Gm-Message-State: AOAM531Jg0Kxn+FsR+K/a0OrduUg9HUA+eNXvJJ64gTJQkr81K1EV+HW
-        tAwWiqpeJBlDrSOP5rnZlmAbx31qINkBCpleB+guwA==
-X-Google-Smtp-Source: ABdhPJyTibsWlvwWrbIC7Ms+JKl21H1RF1ZZfVQil46L2bTnFKehzHlQGf3CLV72YRs7O3rCPip69Gu8jOrXs4PLVSM=
-X-Received: by 2002:a2e:87c4:: with SMTP id v4mr3339415ljj.61.1632969056722;
- Wed, 29 Sep 2021 19:30:56 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l4P1yQgHmK4IoeNIUGcmxpjGHV2AL8XAWEflVAlKCuA=;
+        b=HzFoOW+uVS7fqV+D4j/rH2vzL2ma7zwm+oTH8tVkZikUbJ/4LZvlnyGWUP6kXC9K/8
+         /JlkH9IMybcVWwDaaTKtxQG3P1vcNFvmHLJxGRtGYJ5m+TinjPiBSzLpQ4Z38ed58i5A
+         azfIDZmVs1OqS7G+kylpENcciJ0VnFZgGcT5jhiEXjVEwXmhqlqDxJ7hArVk6XbaKIha
+         n+0ylkZtukrW5hNWI4U1SrmLB2t9LZtTF9LwByNkXSzqnmV7I7aWuKOsEUnOw9TO6/e5
+         pBbLCkhV7jrb8438DBHWrVO5P6TDfamN4GSUUBPClYgsaAKK1uaKpr6TIb9vTJLkFFHD
+         LUgg==
+X-Gm-Message-State: AOAM5330i47P53cbiPtJVdM2oWBf44y3Tj3kKA9P7EHFOjZlSeilyCUV
+        eygFGkSAPsKolEKFMAyOsSm5XrykUGOw0mZoZsEco5u3uXRgeAnWwI0lpNSs0mMeB8VWgJfXz9r
+        825l4xQPGH+6CgEroS5AVX2v2YHpOwTeKHjmKp92hnTmud434
+X-Received: by 2002:a05:6512:3193:: with SMTP id i19mr1482843lfe.485.1632982492977;
+        Wed, 29 Sep 2021 23:14:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw2ed5i0IuL5p++CT70JdS9PYYz1vbD+xm+23BVhAAobKjG9WLM+ErIJYhEnSrjoPv18RAJXQ==
+X-Received: by 2002:a05:6512:3193:: with SMTP id i19mr1482787lfe.485.1632982492506;
+        Wed, 29 Sep 2021 23:14:52 -0700 (PDT)
+Received: from [192.168.0.197] ([193.178.187.25])
+        by smtp.gmail.com with ESMTPSA id l6sm252964lfp.143.2021.09.29.23.14.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Sep 2021 23:14:51 -0700 (PDT)
+To:     Will McVicker <willmcvicker@google.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+ <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
+Date:   Thu, 30 Sep 2021 08:14:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210910101218.1632297-1-maxime@cerno.tech> <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
- <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
- <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com> <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
-In-Reply-To: <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 29 Sep 2021 19:30:44 -0700
-Message-ID: <CALAqxLXSbYpHhn0-cVoD0-Rcsz8H43+WnP4ftO0z6PwHDCiyAw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/24] drm/bridge: Make panel and bridge probe order consistent
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 4:20 PM Rob Clark <robdclark@gmail.com> wrote:
-> On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.org> wrote:
-> > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro.org> wrote:
-> > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@linaro.org> wrote:
-> > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> > > > > The best practice to avoid those issues is to register its functions only after
-> > > > > all its dependencies are live. We also shouldn't wait any longer than we should
-> > > > > to play nice with the other components that are waiting for us, so in our case
-> > > > > that would mean moving the DSI device registration to the bridge probe.
-> > > > >
-> > > > > I also had a look at all the DSI hosts, and it seems that exynos, kirin and msm
-> > > > > would be affected by this and wouldn't probe anymore after those changes.
-> > > > > Exynos and kirin seems to be simple enough for a mechanical change (that still
-> > > > > requires to be tested), but the changes in msm seemed to be far more important
-> > > > > and I wasn't confortable doing them.
-> > > >
-> > > >
-> > > > Hey Maxime,
-> > > >   Sorry for taking so long to get to this, but now that plumbers is
-> > > > over I've had a chance to check it out on kirin
-> > > >
-> > > > Rob Clark pointed me to his branch with some fixups here:
-> > > >    https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridge-rework
-> > > >
-> > > > But trying to boot hikey with that, I see the following loop indefinitely:
-> > > > [    4.632132] adv7511 2-0039: supply avdd not found, using dummy regulator
-> > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using dummy regulator
-> > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using dummy regulator
-> > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, using dummy regulator
-> > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using dummy regulator
-> > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using dummy regulator
-> > > > [    4.681898] adv7511 2-0039: failed to find dsi host
-> > >
-> > > I just realized Rob's tree is missing the kirin patch. My apologies!
-> > > I'll retest and let you know.
-> >
-> > Ok, just retested including the kirin patch and unfortunately I'm
-> > still seeing the same thing.  :(
-> >
-> > Will dig a bit and let you know when I find more.
->
-> Did you have a chance to test it on anything using drm/msm with DSI
-> panels?  That would at least confirm that I didn't miss anything in
-> the drm/msm patch to swap the dsi-host vs bridge ordering..
+On 29/09/2021 21:48, Will McVicker wrote:
+> On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 29/09/2021 01:56, Will McVicker wrote:
+>>> This is v2 of the series of patches that modularizes a number of core
+>>> ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
+>>> modularized all of the drivers that are removed from the ARCH_EXYNOS
+>>> series of "select XXX". This includes setting the following configs as
+>>> tristate:
+>>>
+>>>  * COMMON_CLK_SAMSUNG
+>>>  * EXYNOS_ARM64_COMMON_CLK
+>>>  * PINCTRL_SAMSUNG
+>>>  * PINCTRL_EXYNOS
+>>>  * EXYNOS_PMU_ARM64
+>>>  * EXYNOS_PM_DOMAINS
+>>>
+>>> Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
+>>> which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
+>>> The reason for these new configs is because we are not able to easily
+>>> modularize the ARMv7 PMU driver due to built-in arch dependencies on
+>>> pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
+>>> the ARM and ARM64 portions into two separate configs.
+>>>
+>>> Overall, these drivers didn't require much refactoring and converted to
+>>> modules relatively easily. However, due to my lack of exynos hardware, I
+>>> was not able to boot test these changes. I'm mostly concerned about the
+>>> CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
+>>> requesting help for testing these changes on the respective hardware.
+>>>
+>>
+>> These are all not tested at all? In such case, since these are not
+>> trivial changes, please mark the series as RFT.
+>>
+>> I will not be able to test these for some days, so it must wait.
+>>
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> +Cc Arnd and Olof,
+> 
+> Hi Krzysztof,
+> 
+> To avoid the scrambled conversation from the first patchset, I'm going
+> to address all your general questions here in the cover letter thread
+> so that it's easier for everyone to follow and reference in the
+> future.
+> 
+>> What is more, it seems you entirely ignored Geert's comments. I pointed
+>> attention to it last time and you just said you will send v2 instead of
+>> joining discussion.
+>>
+>> It's a NAK for this reason - ignoring what Geert brought: you just broke
+>> distro configs for Exynos.
+> 
+> First off I did want to chime into the discussion from the previous
+> patchset, but I felt that Lee and Saravana addressed all your concerns
+> regarding the intent and feasibility. You also made it clear what the
+> next steps were that I needed to take.
 
-Not a dsi panel, but for what it's worth, I did just test the series
-with the db845c w/ HDMI using the lt9611 bridge.
-So at least that is looking ok.
+One of the steps was problem with distros using everything as modules.
+They should not receive these drivers as modules.
+Reminder: these are essential drivers and all Exynos platforms must have
+them as built-in (at least till someone really tests this on multiple
+setups).
 
-thanks
--john
+> 
+>> Please also explain why Exynos is so special that we deviate from the
+>> policy for all SoC that critical SoC-related drivers have to be enabled
+>> (built-in or as module).
+> 
+> I am not actually changing ANY default build configurations here and
+> I'm not removing any existing configuration.
+
+You are changing not default, but selectability which is part of the
+enforced configuration to make platforms working. The distros do not
+always choose defaults but rather all as modules. Kernel configuration
+is huge and complex, so by mistake they could now even disable
+potentially essential driver. There is no need to disable for example
+essential clock driver on a supported Exynos platform.
+
+> I tried to make it pretty
+> clear in my original patch series commit messages that none of my
+> changes modify the default behavior. The .config is the same with and
+> without my patches. All of these drivers remain enabled as built-in.
+> So if there is a distro that requires all of these drivers to be
+> built-in, then they can continue as is without noticing any
+> difference. IOW, all of these changes are/should be backwards
+> compatible.
+
+I was not referring to default neither to backwards compatibility.
+Please explain why Exynos is special that it does not require essential
+drivers to be selected as built-in. For example why aren't same changes
+done for Renesas?
+
+Is that now a new global approach that all SoC drivers should be allowed
+to be disabled for ARCH_XXX?
+
+> 
+> I really appreciate yours and John Stultz's comments regarding
+> including the "why" in my commit message wording. I will spend more
+> time on the next series on trying to write a more meaningful commit
+> message, but before that we can surely discuss the "why" here.
+> 
+> As mentioned by Lee and Saravana, our common goal is to make it easier
+> for everyone to contribute upstream. In particular, this series of
+> patches is laying the ground work for distros to have more flexibility
+> in supporting a wider range of platforms without forcing everyone to
+> include unnecessary drivers. 
+
+The drivers are usually necessary. Actually, you admitted you didn't
+test patchset, so how do you even know that they are unnecessary? How do
+ you judge?
+
+> You said that upstream supports a generic
+> kernel, but I argue that the upstream "generic" arm64 kernel can't be
+> considered generic if it builds in SoC specific drivers that can be
+> modules.
+
+Good point, but since having them as modules was not tested, I consider
+it as theoretical topic.
+
+> This patch series is addressing exactly that -- allow distros
+> to move SoC specific drivers out of the core kernel and into modules.
+> Ultimately, our goal is to be able to directly develop with the
+> upstream kernel on new and old SoCs by not including SoC specific
+> drivers in our generic kernel distro. This helps the upstream
+> community in a number of ways:
+> 
+> (1) It makes the ARM64 generic kernel smaller by converting more
+> drivers into modules
+> (2) It makes it a lot easier for everyone to develop upstream if they
+> can directly use the upstream kernel without carrying downstream
+> changes.
+
+I don't understand the point (2) here. Anyone can use upstream kernel
+for supported and unsupported platforms. How upstream benefits from a
+change affecting supported platforms made for unsupported, downstream
+platforms.
+
+> 
+>> Even if there was, I think it is good to have dependencies like
+>> ARCH_EXYNOS, as they let us partition the (19000, as Arnd said recently)
+>> Kconfig symbols into better manageable groups.  Without these, we cannot
+>> do better than "depends on ARM || ARM64 || COMPILE_TEST".
+> 
+> My patch series still keeps the dependencies on ARCH_EXYNOS. I am
+> totally fine with "depends on ARCH_EXYNOS" and totally fine with
+> "default ARCH_EXYNOS". The problem we have is that ARCH_EXYNOS
+> forcefully selects SoC specific drivers to be built-in because it just
+> adds more and more SoC-specific drivers to a generic kernel.
+
+The selected drivers are essential for supported platforms. We don't
+even know what are these unsupported, downstream platforms you want
+customize kernel for. They cannot be audited, cannot be compared.
+
+Therefore I don't agree with calling it a "problem" that we select
+*necessary* drivers for supported platforms. It's by design - supported
+platforms should receive them without ability to remove.
+
+If you want to change it, let me paste from previous discussion:
+
+Affecting upstream platforms just because vendor/downstream does not
+want to mainline some code is unacceptable. Please upstream your drivers
+and DTS.
+
+Everyone else are working like this. NXP, Renesas, Xilinx, TI, Rockchip,
+AllWinner. Samsung or Google is not special to receive an exception for
+this.
+
+
+> 
+> I know you are asking for me to only push changes that have proven to
+> work. 
+
+Yep, tested.
+
+> The theory behind these changes has been proven downstream on
+> other devices and I'm more than willing to help debug any issues that
+> arise out of this patch series, but since I don't have the hardware
+> myself I do need help with device testing these changes.
+
+Downstream uses very specific Linux "distro" or fork - Android - with
+changes not present in others. Although tests on other
+(unsupported/unupstreamed) devices is good, but it's not sufficient. For
+example I guess that half or most of Odroid devices are running standard
+Linux distro (Arch, Ubuntu).
+
+You also mentioned downstream devices but without actually ever defining
+them. Please be more specific. What SoC, what hardware?
+
+Best regards,
+Krzysztof
