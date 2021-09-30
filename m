@@ -2,158 +2,142 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09336C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 12:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BDDC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 13:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE4C8613CE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 12:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D32461425
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 13:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351047AbhI3Mtm (ORCPT
+        id S1349191AbhI3NKS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Sep 2021 08:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351064AbhI3Mtl (ORCPT
+        Thu, 30 Sep 2021 09:10:18 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:38786
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350302AbhI3NKL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Sep 2021 08:49:41 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28519C06176D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 05:47:59 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id w29so9852070wra.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 05:47:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jQcb/IRMulWTMVpLN7/tTW0JOEcywHbsCrqDEOi1tes=;
-        b=YciORU29ZLiM3+rVUPyXHQ/8jB28s1o/9oUDvkyfz5GDf+e9xhFV7JeHUgmjYxXHSL
-         fZL7VzoVijF/ZysR1BzWIU9+EsUSVjhDNhBbs8K75x2G+e/Ua+OzUhje3IJkab4RJF/b
-         2Wj6+P/HBT7whH6TTLSEDgC+28U2SxY8yrUdAohzBjOol2v4ap4D5QRNhb4cXINdH6jb
-         ZbGbPo/eatNtfPE1nbbZ9Hfw2GJuSEPeuC/Vis5sLjRvVocs5D2KBxG6Ek6rFDD9iAyk
-         eF8BBC+g66Vt5hSQs0mGUGSfSbqoFTtqBXQ4bDutWP9w9td99kj+qE594JunsF0UuI3P
-         njRQ==
+        Thu, 30 Sep 2021 09:10:11 -0400
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A528F402C9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 13:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633007306;
+        bh=hUl4AzMPgOLZrORvQmrSxH7LjjpDiFvnLVFli7UcmE4=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=g4blcrIOznhYm3kComtzSMOi5fPys2jYnfW2R4L0wO9PXcI39EC0bxATKQDG37A5x
+         qN4gSwZ7l9qfqXLc66LsW9+UobDBo/JCVe/bNbk+1erwG53MJ6cd8EtHpG43bfzIhj
+         zXPPeYziqkFZXcHzfar418q/ibqxB8cU7jSdph0Wjcnnke/qcz0kmZl/Z9fVRpZyps
+         VEkRnjPv6fwQuR+SB9K5oHuUClr3t/w28/KkOgnaQr6xzCrfdbFMOggxiysgePjJNu
+         B2X4L+1gaO5kh04iWXhzJE89ScecsNzW3qiuev/71dyvd/Qf0HL7s1BxtneEQLh28n
+         u122ga0O8ho0w==
+Received: by mail-lf1-f70.google.com with SMTP id d16-20020a056512369000b003fca9e038ddso5574048lfs.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 06:08:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jQcb/IRMulWTMVpLN7/tTW0JOEcywHbsCrqDEOi1tes=;
-        b=FM6f8iBRhHzsX272zqWSo4coZJA6HuHYBb2ilgaUmy/dftm7IVgewZnmt9KfK2V4+r
-         WzoblL8lGhVEXg+n4vzXNefCI7TxX4YxkE4kBZBsO1vQ+N+XJ21QisbdxvM+8HvYvO/k
-         pqnwdZj4kzll/d650rPr3UCdcO5pTcfuWX5fdmTJmviY14hBreKNhlasMt0ccFMc6nOU
-         aqwmaEHGTLx/MSyDsauxxix/OCXEhDLdQh4lIJETLgtbvfV1mZqFu4yfbfScUehpV8Uq
-         ngokzYpgaXu4OlwG/TXWQhDZRPAkqkAZ/Lzvnr7B+R+2biPOg+OLGqvpAFzGXTdVL3CD
-         eWDA==
-X-Gm-Message-State: AOAM5327sxS9fyZdhXUMTQ9GuKtKIvOUx2lE0quJJN1zACAR607l2TPl
-        jL730vrl6yBlGlDwPZOMHunYxA==
-X-Google-Smtp-Source: ABdhPJwnejh6dcPEIzPH5qBtw9qE77SEtnm6HLAZlJZXDYk4sIFKXEk4qno2ugj5odIXtRGh9o+kAA==
-X-Received: by 2002:a5d:6b46:: with SMTP id x6mr5972981wrw.192.1633006077728;
-        Thu, 30 Sep 2021 05:47:57 -0700 (PDT)
-Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id t16sm5222171wmi.33.2021.09.30.05.47.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 05:47:57 -0700 (PDT)
-Date:   Thu, 30 Sep 2021 13:47:55 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hUl4AzMPgOLZrORvQmrSxH7LjjpDiFvnLVFli7UcmE4=;
+        b=T5kLZcL7TADEPYdwMvqLm20/JtNKer9IqhaapbYPPM26afONN/qxLLk9je2YIbl9oN
+         ZD9IBnlYvu5GYTpWiWll46I6TDT2IPfVXgEHQn89kuaa+FanomzVbhCWxHcXFJiyaSVx
+         aTNyRIWW/N8XJyDOPeC57KJlYRNmr7MIIGO3m4N+XxtNRGgBW8+DNy0hX4TmePanMd6t
+         DcSa8cg6PCAHF33se+WfG5lvaDatO7gIc6SPFvNKOYLPu+5m8yDucIZk1hrpOrE8v4cg
+         5saRYwfBLy1GjuLaUW/iW0E0tD1obtM0wWHQhAQv0e3XLU1tl9o87mj32PA3swyS/yM6
+         kNnQ==
+X-Gm-Message-State: AOAM531K1ooUgkSYs5Qp+BX2DS1H/LCAArHrEKvCODcdOrr4w1IGfJoT
+        hKsx8gdSvlj8yMivz8YPQmGM1dmWTVYkOORSXFWUb729keZT8rrkUz+5RBnhaLjArz9VeXiDwY6
+        /hU/g1cdTIKReP3CRHHSIhIE4Bfxdj91Cgi149cjuAe5TiDbA
+X-Received: by 2002:a05:6512:3093:: with SMTP id z19mr5967987lfd.242.1633007305688;
+        Thu, 30 Sep 2021 06:08:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyjm3vd0EFvqL7ckfqAQvq9Lo79q9lkx+VOJUC5cK4B1tRx3+/dBYuyWUn8tO852nNIwX6f3w==
+X-Received: by 2002:a05:6512:3093:: with SMTP id z19mr5967946lfd.242.1633007305455;
+        Thu, 30 Sep 2021 06:08:25 -0700 (PDT)
+Received: from [192.168.0.197] ([193.178.187.25])
+        by smtp.gmail.com with ESMTPSA id r3sm367245lfc.131.2021.09.30.06.08.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Sep 2021 06:08:24 -0700 (PDT)
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Will McVicker <willmcvicker@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 10/12] mfd: dt-bindings: samsung,s5m8767: document buck
- and LDO supplies
-Message-ID: <YVWx+08egbGPiYYt@google.com>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
- <20210928084949.27939-11-krzysztof.kozlowski@canonical.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+ <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
+ <YVWCK5QO331rfhJJ@google.com>
+ <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
+ <YVWwBz8jrznqXah4@google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
+Date:   Thu, 30 Sep 2021 15:08:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <YVWwBz8jrznqXah4@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210928084949.27939-11-krzysztof.kozlowski@canonical.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 28 Sep 2021, Krzysztof Kozlowski wrote:
-
-> Document the properties with regulator supplies for bucks and LDOs.  At
-> least one board uses it (Exynos5250 Arndale).
+On 30/09/2021 14:39, Lee Jones wrote:
+> On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
->  1 file changed, 38 insertions(+)
+>> On 30/09/2021 11:23, Lee Jones wrote:
+>>> [0] Full disclosure: part of my role at Linaro is to keep the Android
+>>> kernel running as close to Mainline as possible and encourage/push the
+>>> upstream-first mantra, hence my involvement with this and other sets.
+>>> I assure you all intentions are good and honourable.  If you haven't
+>>> already seen it, please see Todd's most recent update on the goals and
+>>> status of GKI:
+>>>
+>>>   Article: https://tinyurl.com/saaen3sp
+>>>   Video:   https://youtu.be/O_lCFGinFPM
+>>>
+>>
+>> Side topic, why this patchset is in your scope or Will's/Google's scope?
+>> Just drop it from Android main kernel, it will not be your problem. I
+>> mean, really, you don't need this patchset in your tree at all. The only
+>> platform which needs it, the only platform which will loose something
+>> will be one specific vendor. Therefore this will be an incentive for
+>> them to join both discussions and upstream development. :)
+> 
+> How would they fix this besides upstreaming support for unreleased
+> work-in-progress H/W?
+> 
+> Haven't I explained this several times already? :)
 
-These all need Rob's Ack.
+Either that way or the same as Will's doing but that's not my question.
+I understand you flush the queue of your GKI patches to be closer to
+upstream. Reduce the backlog/burden. you can achieve your goal by simply
+dropping such patch and making it not your problem. :)
 
-But can you start with reworking the subject line please.
 
-It should be:
-
-  "dt-bindings: mfd: <component>: <Subject starting with an uppercase char>"
-
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-> index 35018346f68b..e97a94cab4e8 100644
-> --- a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-> @@ -96,6 +96,44 @@ properties:
->      description: |
->        GPIO specifiers for three host gpio's used for dvs.
->  
-> +  vinb1-supply:
-> +    description: Power supply for buck1
-> +  vinb2-supply:
-> +    description: Power supply for buck1
-> +  vinb3-supply:
-> +    description: Power supply for buck1
-> +  vinb4-supply:
-> +    description: Power supply for buck1
-> +  vinb5-supply:
-> +    description: Power supply for buck1
-> +  vinb6-supply:
-> +    description: Power supply for buck1
-> +  vinb7-supply:
-> +    description: Power supply for buck1
-> +  vinb8-supply:
-> +    description: Power supply for buck1
-> +  vinb9-supply:
-> +    description: Power supply for buck1
-> +
-> +  vinl1-supply:
-> +    description: Power supply for LDO3, LDO10, LDO26, LDO27
-> +  vinl2-supply:
-> +    description: Power supply for LDO13, LDO16, LDO25, LDO28
-> +  vinl3-supply:
-> +    description: Power supply for LDO11, LDO14
-> +  vinl4-supply:
-> +    description: Power supply for LDO4, LDO9
-> +  vinl5-supply:
-> +    description: Power supply for LDO12, LDO17, LDO19, LDO23
-> +  vinl6-supply:
-> +    description: Power supply for LDO18, LDO20, LDO21, LDO24
-> +  vinl7-supply:
-> +    description: Power supply for LDO5, LDO22
-> +  vinl8-supply:
-> +    description: Power supply for LDO1, LDO6, LDO7, LDO8, LDO15
-> +  vinl9-supply:
-> +    description: Power supply for LDO2
-> +
->    wakeup-source: true
->  
->  required:
-
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Best regards,
+Krzysztof
