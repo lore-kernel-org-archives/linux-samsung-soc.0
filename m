@@ -2,119 +2,144 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8E1C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 13:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3E5C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 13:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0351161247
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 13:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 901AE6187A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 13:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351106AbhI3NXU (ORCPT
+        id S1351456AbhI3Nba (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Sep 2021 09:23:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
+        Thu, 30 Sep 2021 09:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351100AbhI3NXQ (ORCPT
+        with ESMTP id S1351412AbhI3Nb3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Sep 2021 09:23:16 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF39C06176A
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 06:21:33 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id q127-20020a1ca785000000b0030cb71ea4d1so4344577wme.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 06:21:33 -0700 (PDT)
+        Thu, 30 Sep 2021 09:31:29 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EF7C06176C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 06:29:46 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id t8so10131419wri.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 06:29:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=0EnoGcQxVcjVLjhlbUWYyjl1NXgdf4STxEMEBfnyuEE=;
-        b=RfTVTSp1Jll5QOCFPLIM78aADWMp5XJ+7MXbtAhSEJgHyf5spRRcODCjtBNQ1Zr29M
-         3zZ0ofUeQgp4EmzaiUh9syLWblSChCksVV8XwwiVndwfk9CSH9jlVDatSVNRtfSkLV0K
-         UUnMG/NHEM8gFVZWGcFMqUgEVGDEhc2uWRGCLnWvDTRkfyXc2jv+7H5qafKQ8fZl3Aum
-         1Nnr8yVXQDR+vs8nayhUqdLXMCaj7KCNtU5EJNuhDJL0tkmteDGs407BQjMP6qfWasle
-         4POTMeon+KJwy6tnw3miMqaA96nRffXtdAm+Ky0rqO/NNPSR0QKAem7NDkk6Kx3WDKv9
-         1VCw==
+        bh=q+R3lw9hSs/DZNzD1ywHyamm1IrGhxmkV4ENbV1GCU4=;
+        b=DgISTWDu6rOHfzRjV6Qlml3/7p6txDssydTajODz+GlRBwZnnZJ+mHqxja6SLqqzZS
+         eyqevG/RTJ1e19LvzUSviCvcRdY/ZQlLzVjdheF0j9oYG2VCjjxYzy70fFH6h8wQFIl1
+         heZTwo8Ij6lQSgsdYl1dZiwV3X78qZHJLVBF7Te55QST9l020nZl0zdexD6cQxRMEf6W
+         SRIUEGew9SLXCrM/mV3q/VEp2npSKkXBbZ5+s2TfsplI/1q6wc/x7KyW1mrI5x5IDs/H
+         NBJzxCeq6cVp7HZB2iCl43ejKQHiNBQy43JZ3VV5ezx4T/8upAw3Pc/u2fcrSEWOZw/o
+         CpiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=0EnoGcQxVcjVLjhlbUWYyjl1NXgdf4STxEMEBfnyuEE=;
-        b=yEI0YTAlKE2Qw1h3DPqX+kDDbOjIbZeysVSHHAmOWHX7iHtlH6xoSdAZcmCSEXbPnI
-         P58S3MvoHtypB9TYzh5v5GB3xgNlARuewkdf75EgD6Qh8VBvIAu2qktsgtEkWFr2Qol5
-         Dzs9uOfBoms4CvqLs1sE32d4NOItjkwbc/JaMYawDthO5aEwQbN71jRNWuQqVcDd2Ip4
-         zVe7IBOkBegJVbOoFvX7moiQpqSJsscQOpeAVwiXjmIBBCanU1hMpht0C3nJ/f74azCJ
-         6Gpd/ifQJ4LCA1EUOjV4c/AfkVAw+nPfjlpTqgFwlddFnmzfaK8T2saLfeIZbOhzV2D1
-         3Ofg==
-X-Gm-Message-State: AOAM531MsGFnupLHMJ0vPpRy6bPU141z0wPMTiNbrpIVQ69Yo38Cb1Gw
-        NUB4MfRKYI87z/c8T6mjNtKH3g==
-X-Google-Smtp-Source: ABdhPJyyEtgq7rfkTi/7o2F3OJOwqDVQ7uW6EcRjxsPnSK+R3odzh0Zz0IG2MLTOeNWuUz6OYd2YEg==
-X-Received: by 2002:a1c:f713:: with SMTP id v19mr5199573wmh.188.1633008092422;
-        Thu, 30 Sep 2021 06:21:32 -0700 (PDT)
+        bh=q+R3lw9hSs/DZNzD1ywHyamm1IrGhxmkV4ENbV1GCU4=;
+        b=Ko4Sxeb4kBqUaziI+XKaGhGybhca0rLbFpmyIUWWyG1Aebsj6iuH65WPv+Tb+yVWYT
+         UrovwU53QAkGjgd1M4/AsTOkAYlKhLTqqWes/tL1OCilTazxQ0Qr9g+HoDNKmJyV9DhD
+         uJGHEOfVoAAeGIXxU/sEPK5lPeqq5HpFxDPVH1dx+KHBNoQWZ/Rybp3UReTaGlAEla00
+         ftxDrdjGm3HEQc5je6Og4YChESREhHKFyui/0wIBpUT5DenrcDgZywa4E9+RuEtoSEeK
+         uP/v49+FofES+EBAyBzg7Fa8fNnrfqk8OAPCrR6FWyRcQu4LD0K7Hf/uV8WMnyl3l4gZ
+         0f2Q==
+X-Gm-Message-State: AOAM530nNawvZWr9kLFZ1JoGHnt7nMW/fxikAK9RWYMU4fEYMg4TLAYR
+        +qlS8dsLRtc5XDOu81ligpC7tg==
+X-Google-Smtp-Source: ABdhPJy/y/6uR/KPQ8dQ/+hV2n00qqTbyI2pfOM4zKq4a5jrPB98oGnv1D/dr/8czG2Kuq8YEDugGw==
+X-Received: by 2002:adf:eac8:: with SMTP id o8mr5785614wrn.273.1633008585451;
+        Thu, 30 Sep 2021 06:29:45 -0700 (PDT)
 Received: from google.com ([95.148.6.233])
-        by smtp.gmail.com with ESMTPSA id s13sm4847931wmc.47.2021.09.30.06.21.31
+        by smtp.gmail.com with ESMTPSA id x21sm4825619wmc.14.2021.09.30.06.29.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 06:21:32 -0700 (PDT)
-Date:   Thu, 30 Sep 2021 14:21:30 +0100
+        Thu, 30 Sep 2021 06:29:44 -0700 (PDT)
+Date:   Thu, 30 Sep 2021 14:29:42 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+Cc:     Will McVicker <willmcvicker@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 10/12] mfd: dt-bindings: samsung,s5m8767: document buck
- and LDO supplies
-Message-ID: <YVW52vAdxbA8LqhM@google.com>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com>
- <20210928084949.27939-11-krzysztof.kozlowski@canonical.com>
- <YVWx+08egbGPiYYt@google.com>
- <e5ab2ba9-e4ae-30db-8e54-8af42d7f3bf1@canonical.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <YVW7xoHaLdGHBoEQ@google.com>
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
+ <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
+ <YVWCK5QO331rfhJJ@google.com>
+ <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
+ <YVWwBz8jrznqXah4@google.com>
+ <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e5ab2ba9-e4ae-30db-8e54-8af42d7f3bf1@canonical.com>
+In-Reply-To: <8d260548-176e-d76b-6f05-d4d02ddd4f67@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
 
-> On 30/09/2021 14:47, Lee Jones wrote:
-> > On Tue, 28 Sep 2021, Krzysztof Kozlowski wrote:
+> On 30/09/2021 14:39, Lee Jones wrote:
+> > On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
 > > 
-> >> Document the properties with regulator supplies for bucks and LDOs.  At
-> >> least one board uses it (Exynos5250 Arndale).
+> >> On 30/09/2021 11:23, Lee Jones wrote:
+> >>> [0] Full disclosure: part of my role at Linaro is to keep the Android
+> >>> kernel running as close to Mainline as possible and encourage/push the
+> >>> upstream-first mantra, hence my involvement with this and other sets.
+> >>> I assure you all intentions are good and honourable.  If you haven't
+> >>> already seen it, please see Todd's most recent update on the goals and
+> >>> status of GKI:
+> >>>
+> >>>   Article: https://tinyurl.com/saaen3sp
+> >>>   Video:   https://youtu.be/O_lCFGinFPM
+> >>>
 > >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> >> ---
-> >>  .../bindings/mfd/samsung,s5m8767.yaml         | 38 +++++++++++++++++++
-> >>  1 file changed, 38 insertions(+)
+> >> Side topic, why this patchset is in your scope or Will's/Google's scope?
+> >> Just drop it from Android main kernel, it will not be your problem. I
+> >> mean, really, you don't need this patchset in your tree at all. The only
+> >> platform which needs it, the only platform which will loose something
+> >> will be one specific vendor. Therefore this will be an incentive for
+> >> them to join both discussions and upstream development. :)
 > > 
-> > These all need Rob's Ack.
+> > How would they fix this besides upstreaming support for unreleased
+> > work-in-progress H/W?
+> > 
+> > Haven't I explained this several times already? :)
 > 
-> Correct.
-> 
-> > 
-> > But can you start with reworking the subject line please.
-> > 
-> > It should be:
-> > 
-> >   "dt-bindings: mfd: <component>: <Subject starting with an uppercase char>"
-> 
-> Sure, just have in mind that Mark wants them the other way around for
-> regulator. :)
+> Either that way or the same as Will's doing but that's not my question.
+> I understand you flush the queue of your GKI patches to be closer to
+> upstream. Reduce the backlog/burden. you can achieve your goal by simply
+> dropping such patch and making it not your problem. :)
 
-a) I'm suggesting you use the standard formatting
-b) This is not a regulator patch :)
+git reset --hard mainline/master   # job done - tea break  :)
+
+Seriously though, we wish to encourage the use of GKI so all vendors
+can enjoy the benefits of more easily updateable/secure code-bases.
+
+I can't see how pushing back on seamlessly benign changes would
+benefit them or anyone else.
 
 -- 
 Lee Jones [李琼斯]
