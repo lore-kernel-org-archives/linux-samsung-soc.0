@@ -2,65 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06680C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 10:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4123C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 10:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D62866187A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 10:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0CD6101B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 10:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350182AbhI3KyC (ORCPT
+        id S1350198AbhI3K6O (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Sep 2021 06:54:02 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:39306
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350183AbhI3KyB (ORCPT
+        Thu, 30 Sep 2021 06:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350203AbhI3K6I (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Sep 2021 06:54:01 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id ED651402D9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 10:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632999137;
-        bh=IXdF+Px2IPPBasNnxm33nxmrPP5ltJ+hhzJPPAqE+rA=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=ryrqg6+JMl8tJi4VQwHIauzm8nBdjvDV5VETn+6HBNhb5FJ3heZe8UTcdM1ysAtxt
-         RthU8LPDXJpzjpj9WVHT2J1HZf4lXYmvFFHihvemFZYC9At4ih/daeKSeGi6wPlV69
-         SeyuTuSW4ZqaQricgdG4zC5WOw0LC7veFa1BtOTuMb4PQADJ8tIqyk6EmhENUkFpkR
-         KOHZDMTce3yuVX77rkZZkmLrNtB61puXKDMJfbmZi7RrypwVj029VQefCWN9JOullc
-         Sz6spFbtCogxt0VZv4eTsK4QkeP/jE93U7tHAHIFrszYCEFdH9ztNoYCrhpJ763myI
-         SZBpK/HdrOTAg==
-Received: by mail-lf1-f70.google.com with SMTP id f21-20020ac25095000000b003fd0f3d19f4so4033914lfm.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 03:52:17 -0700 (PDT)
+        Thu, 30 Sep 2021 06:58:08 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5CC1C06176F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 03:56:25 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id h15so7718852wrc.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 03:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=/VMupglYU4EOxZ9GIvUTD4Oa9Wz9bmjm6P6VPn5LJEQ=;
+        b=m1SFtJApbC2xkdEpuLj5DyxW/ZNBB3L7xGICBs7nWMebGOeAqWLF6G98j1uRrydwdz
+         kW9Wv8B1NalzEcHPk886QneW10d5dpY+3Cfp5doLRn5nJGPqcxYpgVOrCDaiAkMk35Y+
+         cQ1gpG0C3q0MtwU07e4bd2uwrs3jzj+7az1QyIuHHbCmmqs17OG/Caf9trFEvntoVxFc
+         enDWOVWJFBMJxHgnMAIenc/2yvQwwVMFRm+mDFqFI0YoriBV8IfPY9Q7E8oAXVvItZ7a
+         vbQnrhdeb7cVt2u22M7t3zvtzg4wL1e1HkQNCeqxcHkySWPWv3Ler0H4IflvMKjzDiI7
+         jC8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IXdF+Px2IPPBasNnxm33nxmrPP5ltJ+hhzJPPAqE+rA=;
-        b=T9CC6De2Iurv9zWDoXiguwaxuJXI1OWLgKp7twum0afDZvAFHWDFsRWqKe2lKcKiaq
-         SWdIyN93W3DdgdvuE1J/EysMi1dKAlnJVPqKqKBkJ2tRuGaPd06sp4mA838jO91pPUfJ
-         oGnnUOc/lGQSUxDqwHl00kYboHvsxDTBLZYvXiFM1lcxo3qRckmh+jzQknBjzSPddBqB
-         6RgVhXCJxcNEsYqrPMXWpHQqsJvMelI9YjUSk3XhJ4gKbT7qK8L0BlyNN31t+8w27OOc
-         oXiSJ6Ugm5F2FRGSZShE/gzYlr1V/53Lbb5L+AZUfF8+g9wCiCcA/FpPX2iuvBOMFmuT
-         uY/w==
-X-Gm-Message-State: AOAM530tm582oq0H4NMVB/i7M7h5VYpFlHKwn1i040ywHoSicpNU3HHk
-        hmeo0IuAQIzsz8ZIfUyWroVrl9E3hRRzUKY8qIloHy0jOVEMSA+fJh0nTkxXa+HYGISIaf+REld
-        aO9+cjHENqwSbZ2MXwu7lPfAQ+eiPUb27kCR13veFdqjkAIo5
-X-Received: by 2002:a19:4895:: with SMTP id v143mr5214331lfa.622.1632999134978;
-        Thu, 30 Sep 2021 03:52:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyP1XCL6lSBqwYJx+1KtdIMtCBYDdtJrS4cpFezKFo6ZYlspxly5txMX2ta+SKXWbBz1VKdtg==
-X-Received: by 2002:a19:4895:: with SMTP id v143mr5214307lfa.622.1632999134719;
-        Thu, 30 Sep 2021 03:52:14 -0700 (PDT)
-Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id b25sm329579lfi.151.2021.09.30.03.52.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Sep 2021 03:52:14 -0700 (PDT)
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Will McVicker <willmcvicker@google.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/VMupglYU4EOxZ9GIvUTD4Oa9Wz9bmjm6P6VPn5LJEQ=;
+        b=o+ItEHOhisJS5O+n9szauFLXudUGX8K2Q2rXVFHvY7Pnja/VvxTxb5duZyyHU4F1ha
+         k0naPvA3h8v+rX3ycmxshJAhAzcPcsPq6+KzbWIXzqK1qx7OcgHHhACwW/6zy8Kb0FCR
+         HY77FDiB6CezHJXKmUKXZZCywz0pVRfxhwVPbmFuLaO687LmIVvABbX2GoX0KT/jKo4X
+         A9AtA2gtUrJoyiNEEr/eA08mNuX+inAQsnwnwggtAtCM66c4NyVyvEPnzo3GakCkagga
+         PyTyG2rb+iiC1J3WxOYAxCRD4s2SNYZyVo4LAO3sDBn0LZP5t/Yocj9dt3yrTh1+leP4
+         NSYg==
+X-Gm-Message-State: AOAM533BmLAiECGERHTWKmouPOxew37LPe67Db3ZmDTwUH1u5YO3d5DJ
+        MVo5Obt3DgzizMP0DUEMI5uKEA==
+X-Google-Smtp-Source: ABdhPJypOUvaFKcTlUycVS7eKZhECtrth44ZiCPYHEO6MZ0vTZaWDKWjEfaWkJeRfx6pupOWXq6ZEw==
+X-Received: by 2002:a5d:47cf:: with SMTP id o15mr989697wrc.394.1632999384182;
+        Thu, 30 Sep 2021 03:56:24 -0700 (PDT)
+Received: from google.com ([95.148.6.233])
+        by smtp.gmail.com with ESMTPSA id c7sm3413926wmq.13.2021.09.30.03.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Sep 2021 03:56:23 -0700 (PDT)
+Date:   Thu, 30 Sep 2021 11:56:21 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Will McVicker <willmcvicker@google.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -74,182 +71,153 @@ Cc:     Will McVicker <willmcvicker@google.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Saravana Kannan <saravanak@google.com>,
         "Cc: Android Kernel" <kernel-team@android.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <YVWX1fFB1L1K3Mnn@google.com>
 References: <20210928235635.1348330-1-willmcvicker@google.com>
  <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
  <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
  <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
  <YVWCK5QO331rfhJJ@google.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
- configs
-Message-ID: <d79df9ff-fc22-8d29-011d-c3cb7dbbfa4e@canonical.com>
-Date:   Thu, 30 Sep 2021 12:52:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ <CAMuHMdVkF--Oq_EBRq-8Wn=E5DyOVzgSNYwo8ujf18zRCJSL9Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YVWCK5QO331rfhJJ@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVkF--Oq_EBRq-8Wn=E5DyOVzgSNYwo8ujf18zRCJSL9Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/09/2021 11:23, Lee Jones wrote:
-> I've taken the liberty of cherry-picking some of the points you have
-> reiteratted a few times.  Hopefully I can help to address them
-> adequently.
+On Thu, 30 Sep 2021, Geert Uytterhoeven wrote:
+
+> Hi Lee,
 > 
-> On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
->> Reminder: these are essential drivers and all Exynos platforms must have
->> them as built-in (at least till someone really tests this on multiple
->> setups).
+> On Thu, Sep 30, 2021 at 11:23 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > I've taken the liberty of cherry-picking some of the points you have
+> > reiteratted a few times.  Hopefully I can help to address them
+> > adequently.
+> >
+> > On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
+> > > Reminder: these are essential drivers and all Exynos platforms must have
+> > > them as built-in (at least till someone really tests this on multiple
+> > > setups).
+> >
+> > > Therefore I don't agree with calling it a "problem" that we select
+> > > *necessary* drivers for supported platforms. It's by design - supported
+> > > platforms should receive them without ability to remove.
+> >
+> > > The selected drivers are essential for supported platforms.
+> >
+> > SoC specific drivers are only essential/necessary/required in
+> > images designed to execute solely on a platform that requires them.
 > 
->> Therefore I don't agree with calling it a "problem" that we select
->> *necessary* drivers for supported platforms. It's by design - supported
->> platforms should receive them without ability to remove.
+> Why?
+
+Because without them the image wouldn't functional on any level.
+
+But you're right, there is still no requirement for it to be built-in.
+
+> > For a kernel image which is designed to be generic i.e. one that has
+> > the ability to boot on vast array of platforms, the drivers simply
+> > have to be *available*.
 > 
->> The selected drivers are essential for supported platforms.
+> If the drivers are really essential/necessary/required, this precludes
+> running the generic kernel image on the platform that requires them,
+> making the kernel not sufficiently generic.
+
+If they are not at all present, then yes.  However that is not what is
+being suggested.  The essential functionality will be provided.  Just
+not built-in.
+
+> > Forcing all H/W drivers that are only *potentially* utilised on *some*
+> > platforms as core binary built-ins doesn't make any technical sense.
+> > The two most important issues this causes are image size and a lack of
+> > configurability/flexibility relating to real-world application i.e.
+> > the one issue we already agreed upon; H/W or features that are too
+> > new (pre-release).
 > 
-> SoC specific drivers are only essential/necessary/required in
-> images designed to execute solely on a platform that requires them.
-> For a kernel image which is designed to be generic i.e. one that has
-> the ability to boot on vast array of platforms, the drivers simply
-> have to be *available*.
+> True, if "potentially".  If not potentially, they must be included.
 
-By "essential", I meant drivers which are needed for supported platform
-to boot properly. Also without significant performance penalty due to
-probe deferrals.
+I'm not sure what you're trying to say here.  Would you mind elaborating?
 
-Therefore if someone selects ARCH_EXYNOS in mainline kernel, it means
-he/she wants such devices to be working fine with generic kernel.
-
-This is the difference with term "drivers have to be available".
-
+> > Bloating a generic kernel with potentially hundreds of unnecessary
+> > drivers that will never be executed in the vast majority of instances
+> > doesn't achieve anything.  If we have a kernel image that has the
+> > ability to boot on 10's of architectures which have 10's of platforms
+> > each, that's a whole host of unused/wasted executable space.
 > 
-> Forcing all H/W drivers that are only *potentially* utilised on *some*
-> platforms as core binary built-ins doesn't make any technical sense.
-> The two most important issues this causes are image size and a lack of
-> configurability/flexibility relating to real-world application i.e.
-> the one issue we already agreed upon; H/W or features that are too
-> new (pre-release).
+> The key here is if the driver is required or not to use the platform,
+> and why it is required.  If the requirement comes from some deficiency
+> in the kernel code or config system, it should be fixed, if possible.
+> And the fix should be tested.
+> If it cannot be fixed, the driver should be included, else it would
+> preclude running the generic kernel on the affected platform.
 
-Geert responded here. If drivers are essential for supported platforms
-to boot, having them built-in has technical sense.
-For other drivers not and we do not discuss such cases.
+Sorry, I'm not following.
 
+> > In order for vendors to work more closely with upstream, they need the
+> > ability to over-ride a *few* drivers to supplement them with some
+> > functionality which they believe provides them with a competitive edge
+> > (I think you called this "value-add" before) prior to the release of a
+> > device.  This is a requirement that cannot be worked around.
+> >
+> > By insisting on drivers (most of which will not be executed in the
+> > vast majority of cases) to be built-in, you are insisting on a
+> > downstream kernel fork, which all of us would like to avoid [0].
+> >
+> > [0] Full disclosure: part of my role at Linaro is to keep the Android
+> > kernel running as close to Mainline as possible and encourage/push the
+> > upstream-first mantra, hence my involvement with this and other sets.
+> > I assure you all intentions are good and honourable.  If you haven't
+> > already seen it, please see Todd's most recent update on the goals and
+> > status of GKI:
+> >
+> >   Article: https://tinyurl.com/saaen3sp
+> >   Video:   https://youtu.be/O_lCFGinFPM
+> >
+> > > We don't even know what are these unsupported, downstream platforms
+> > > you want customize kernel for. They cannot be audited, cannot be
+> > > compared.  Affecting upstream platforms just because
+> > > vendor/downstream does not want to mainline some code is
+> > > unacceptable. Please upstream your drivers and DTS.
+> >
+> > > You also mentioned downstream devices but without actually ever defining
+> > > them. Please be more specific. What SoC, what hardware?
+> >
+> > Accepting changes based on the proviso that vendors upstream all of
+> > their work-in-progress solutions is an unfair position.  We already
+> > discussed why upstreaming support for bleeding edge H/W and
+> > functionality is unrealistic in terms of competitive advantage.
+> >
+> > Besides, we might not be talking about new silicon at all (I don't
+> > believe anyone alluded to that).  The flexibility in configuration
+> > simply allows for generic upstream drivers to be swapped out for ones
+> > which may have more or slightly different functionality (that can't be
+> > publicly shared until release).
 > 
-> Bloating a generic kernel with potentially hundreds of unnecessary
-> drivers that will never be executed in the vast majority of instances
-> doesn't achieve anything.  If we have a kernel image that has the
-> ability to boot on 10's of architectures which have 10's of platforms
-> each, that's a whole host of unused/wasted executable space.
+> The replacement drivers are already a downstream kernel fork, which you
+> would like to avoid?
 
-Geert responded here.
+Avoid, yes, absolutely.
 
-> 
-> In order for vendors to work more closely with upstream, they need the
-> ability to over-ride a *few* drivers to supplement them with some
-> functionality which they believe provides them with a competitive edge
-> (I think you called this "value-add" before) prior to the release of a
-> device.  This is a requirement that cannot be worked around.
-> 
-> By insisting on drivers (most of which will not be executed in the
-> vast majority of cases) to be built-in, you are insisting on a
-> downstream kernel fork, which all of us would like to avoid [0].
+However, in the real world of competitive tech, other than in extreme
+cases such as; fully open source, community driven, cute embedded
+hobby platforms, there will always be changes required on-top of
+upstream projects.  Even as upstream kernel developers we need to
+understand and respect that.
 
-The same with all the DTS and hundreds of drivers you keep out of tree.
-
-> 
-> [0] Full disclosure: part of my role at Linaro is to keep the Android
-> kernel running as close to Mainline as possible and encourage/push the
-> upstream-first mantra, hence my involvement with this and other sets.
-> I assure you all intentions are good and honourable.  If you haven't
-> already seen it, please see Todd's most recent update on the goals and
-> status of GKI:
-> 
->   Article: https://tinyurl.com/saaen3sp
->   Video:   https://youtu.be/O_lCFGinFPM
-> 
->> We don't even know what are these unsupported, downstream platforms
->> you want customize kernel for. They cannot be audited, cannot be
->> compared.  Affecting upstream platforms just because
->> vendor/downstream does not want to mainline some code is
->> unacceptable. Please upstream your drivers and DTS.
-> 
->> You also mentioned downstream devices but without actually ever defining
->> them. Please be more specific. What SoC, what hardware?
-> 
-> Accepting changes based on the proviso that vendors upstream all of
-> their work-in-progress solutions is an unfair position.  
-
-You twisted (or ignored) my words here. I said before - sacrificing any
-mainline platform (e.g. reliable boot for distro) for an out-of-tree
-vendor which does no want to upstream drivers is the unfair position.
-One of the incentives of upstreaming is to be able to shape kernel and
-be considered in kernel upstream decisions. That's the privileged for
-upstreamed platforms - they have an impact.
-
-Vendor decides to stay out - fine, vendor's choice. You loose impact.
-Any sad words like "oh upstream does not want to change for me" should
-receive a message: "please join the upstream :), so we will change
-together".
-
-> We already
-> discussed why upstreaming support for bleeding edge H/W and
-> functionality is unrealistic in terms of competitive advantage.
-
-Nope, my last point was not responded to. You said that there is no
-point for vendor to upstream bleeding edge HW. Then you said that there
-is also little point to upstream older HW.
-
-Basically following this approach you agree that vendor does not have to
-do anything because it is inconvenient for him.
-
-However upstream has to adapt to downstream vendor, right?
-
-No, this is *unfair to all the platforms we upstreamed*.
-
-> 
-> Besides, we might not be talking about new silicon at all (I don't
-> believe anyone alluded to that).  The flexibility in configuration
-> simply allows for generic upstream drivers to be swapped out for ones
-> which may have more or slightly different functionality (that can't be
-> publicly shared until release).
-> 
->> Please explain why Exynos is special that it does not require essential
->> drivers to be selected as built-in. For example why aren't same changes
->> done for Renesas?
-> 
->> Everyone else are working like this. NXP, Renesas, Xilinx, TI, Rockchip,
->> AllWinner. Samsung or Google is not special to receive an exception for
->> this.
-> 
-> Exynos isn't special in this regard.  This applies to any vendor who
-> releases Android images and wishes to be solve all of the issues the
-> GKI project addresses (please read the article above for more about
-> this).
-
-We have then slightly different goals, because you are driven by Android
-release images and this is why you are less interested in NXP and
-Renesas. Only some vendors should receive such changes? No, in upstream
-we are not focusing on any specific distro and there are other uses of
-Exynos (and NXP and Renesas) platforms. Therefore the choice/policy and
-overall design tries to match all vendors, not only some subset
-convenient to Android.
-
-If Android (or some vendor) wants to have exception for a specific
-driver/platform, it must do it in upstream way, by contributing, not by
-changing to match downstream needs while ignoring other users.
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
