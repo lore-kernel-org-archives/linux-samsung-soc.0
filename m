@@ -2,68 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BE3C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 12:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0C6C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 12:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFCE760EE3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 12:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4909E60EE3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 12:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350947AbhI3Mk0 (ORCPT
+        id S1350963AbhI3MlW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Sep 2021 08:40:26 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37374
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350679AbhI3MkZ (ORCPT
+        Thu, 30 Sep 2021 08:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37632 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350955AbhI3MlW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Sep 2021 08:40:25 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5AB804025C
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 12:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633005522;
-        bh=9UEPWfr7ebPMheyY1ItfdUf+trBF8Xkd/Vl6hTzqSXw=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=v/Hhpuo4muIpVpv52hZR7Pjg4/TlIYvyM5MyzbieesJ4pOKTpP/UJUGBL4YO5NF2i
-         Ly7owuwG/5FyWPNwnDJry2WxhfSVun5wNHx9tILglX0/rGGLwS4lc7Bc8iRogqAkoW
-         0o3kd2MXUG5+I5FgE9+0OvmvUvKvyaxHjXTCCQJE0MDFDUT87qfRkOhiRH7sVj1dA0
-         mqJJ4QbAnhonsv6GbhrchXvRExKmviWMNybpf5auH8SpzqGKAYRjfD1ZHiuedhhOQp
-         /V6B9KkXIbHPDuq8LR/rHI+9hE17IqYEK6uRFJZBq5mTmdRPpz0Xvtag5BiTy5pF21
-         JQD6KE+BuwdvQ==
-Received: by mail-lf1-f71.google.com with SMTP id d16-20020a056512369000b003fca9e038ddso5491673lfs.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 05:38:42 -0700 (PDT)
+        Thu, 30 Sep 2021 08:41:22 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6A3C06176E
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 05:39:39 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id h15so8210579wrc.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 05:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=y6Zw5vGV4wBB593iryFIJ1oUvhj3gXCvlT2YuBiI5Vk=;
+        b=wspNYwBb0pdNBBaJ+OxQc9CRnog1NSxtwePpOG8BW8OQ4mONAKykv6Go6SVQJYjuYu
+         0bB0jtEf1f5o3HR3ko2Z2aZGTLu/CnJaR/zul4uAgYdN8Pb7zFvgQUEnKD60jD0AMurR
+         0wgjcEccprlll+ORjdw3oZasPFy2QGIRxZIYmCRYju1ly5LU8ES2o0zkTg2MYKj+J1pq
+         Azc8e5ytOWlPaQTIuRiIQ+2QCMtGUWBiQkSxBu864Am8dhoCkRlWpNXlPuJbCtN+rojd
+         0PAF3R8brCiIV6pFfh65IwyLeIpJxc2R5+EDiXVnItANVn8hVLK2jP/5dmoTrxew1cUw
+         bQ1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9UEPWfr7ebPMheyY1ItfdUf+trBF8Xkd/Vl6hTzqSXw=;
-        b=FHikaJtC9K7bkzrcafHkf7gs7Cr4IJTbORSYk5+sFcHvyzaWq7FUk/y8St6kCAfp6t
-         RwDHFfY8Ydi1nniX/FVC7iRH0gvJo1hb0VgIYrMGVDQLXzxdZdVWdVy/pRNb3ISkeMGp
-         RPdjsiOkMzvi0SLUcLCdyFICrWdFmsQLDyYi363gnyRzreYFW8krbgD80WZbeZ37UbaV
-         Oe2paQtaCGu6l+UcoRoOslIpRz7fbNzReRWZXVnuGpit4KtdEAx4cShY56Y5MCXG+9CS
-         q63PQBN7wnq9KPTT2091YW+1Kkvcbaisfdp4fBcsebWEUbxoqC10DNpKFqpfsTDFiQZW
-         EyNw==
-X-Gm-Message-State: AOAM5322vVwuPHa2KJSyxswWCI6XAQbVkgqsOUg47zirzgyyy4759dxw
-        Y2ALKrni0dA5hM20OTdrCg6q/sqJm2MxqHOWqdtjj8SZuGQh5bdE2qnhXn5dTFW44eKascDt0aZ
-        cLzd4cYI5YxoY7L99gYIdRmn64EILyDii6ZdVsqZuovk9CPEV
-X-Received: by 2002:a2e:98c4:: with SMTP id s4mr5529034ljj.316.1633005521794;
-        Thu, 30 Sep 2021 05:38:41 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz4VmVl8yLsL1J3X6zPeVy08Dz03yCtDXig4BMfZlB5TReP45Vy4ZGUWpipnx+5aVpp7cIQEg==
-X-Received: by 2002:a2e:98c4:: with SMTP id s4mr5529018ljj.316.1633005521617;
-        Thu, 30 Sep 2021 05:38:41 -0700 (PDT)
-Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id x9sm152040lfr.246.2021.09.30.05.38.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Sep 2021 05:38:41 -0700 (PDT)
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
- configs
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Will McVicker <willmcvicker@google.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=y6Zw5vGV4wBB593iryFIJ1oUvhj3gXCvlT2YuBiI5Vk=;
+        b=gn7ZanQea2z9u9usAkh3eUuGcDzIBpaaQrxrrL2JYNz4wBKdfqPw+5k25DtS+/8xo3
+         SwOHEgBDhZBv3qmHhkDYJmg1T7UIW6/oYMn18BQxSDjmHGTB1KGWabaN9XPSLJXiZvq5
+         XoITfMaxGUyIfC82xGflXjfO6jHLqTzu18KdxvATwlFWtZQXGTL/SMkjeLH0ixEV/Psm
+         gPb2xkZGJz2/GhNnyAkSgt84Ef0f5e+/efxDafF4ieSpKT2nudVjzef6DoIUAuJerpWM
+         2Gyc+6SO2UXXybJ5XCJLG8UT2UK9k43KOnmEVO8mP7LhCK6gtU9OGadOcqDrKtI8uL2M
+         pTvQ==
+X-Gm-Message-State: AOAM5307GoWtQbfP9vAjmTQBWCNkkpnl7KGiaTkPcST0YVMa5Z04BVhL
+        MGRpNfCynOElPiJCgyzuOdqLFg==
+X-Google-Smtp-Source: ABdhPJwaqKGVecsjvlptya3O6PJWSH4P8v5nliYYQ8SIrpDwOrZNbA56RNmczgz9+gqO9+kCmN3NpQ==
+X-Received: by 2002:adf:a402:: with SMTP id d2mr5744060wra.266.1633005577899;
+        Thu, 30 Sep 2021 05:39:37 -0700 (PDT)
+Received: from google.com ([95.148.6.233])
+        by smtp.gmail.com with ESMTPSA id n14sm2974159wms.0.2021.09.30.05.39.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Sep 2021 05:39:37 -0700 (PDT)
+Date:   Thu, 30 Sep 2021 13:39:35 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Will McVicker <willmcvicker@google.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -84,63 +77,54 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select
+ configs
+Message-ID: <YVWwBz8jrznqXah4@google.com>
 References: <20210928235635.1348330-1-willmcvicker@google.com>
  <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com>
  <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
  <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com>
- <CAK8P3a0zezKvexqvL29Oc44uQq-8QG7LwZy31VYJuYAYbh-Utw@mail.gmail.com>
- <YVWDsFE7qyH6AwxR@google.com>
- <8928290c-73d9-0843-25ed-2a4817ad32f7@canonical.com>
- <YVWu2RoSqEzcG79I@google.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <5eb551d9-a26e-f4eb-6641-3264c2398adc@canonical.com>
-Date:   Thu, 30 Sep 2021 14:38:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ <YVWCK5QO331rfhJJ@google.com>
+ <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <YVWu2RoSqEzcG79I@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <72d27a82-9d4d-1f91-bd1f-ebead3b75ffa@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/09/2021 14:34, Lee Jones wrote:
-> On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
->>>   It sounds like a lack of testing is your main concern.
->>>
->>>   How can I help here?  What H/W do I need to be able to fully test this?
->>
->> The changes here need to be tested on affected platforms (ARMv7 and
->> ARMv8), when built as a modules on some types of regular distros (e.g.
->> Arch, Ubuntu). From each of such boot I would be happy to see number of
->> new dmesg warnings/errors plus number of probe deferrals.
->>
->> Since the drivers could be switched to modules (and some distros might
->> do it), they might be hit by surprise regressions in boot performance
->> due to probe deferrals. This should be also checked on these platforms.
->> Geert pointed out before that clocks in many cases are not optional -
->> driver needs them and will wait defer.
->>
->> Assuming of course that boot succeeds. Minor differences in boot speed
->> should not be a problem, I think, because distro anyway chosen
->> all-module approach so it accepts the penalty.
+On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
+
+> On 30/09/2021 11:23, Lee Jones wrote:
+> > [0] Full disclosure: part of my role at Linaro is to keep the Android
+> > kernel running as close to Mainline as possible and encourage/push the
+> > upstream-first mantra, hence my involvement with this and other sets.
+> > I assure you all intentions are good and honourable.  If you haven't
+> > already seen it, please see Todd's most recent update on the goals and
+> > status of GKI:
+> > 
+> >   Article: https://tinyurl.com/saaen3sp
+> >   Video:   https://youtu.be/O_lCFGinFPM
+> > 
 > 
-> Do you have any suggestions in terms of devboards?
+> Side topic, why this patchset is in your scope or Will's/Google's scope?
+> Just drop it from Android main kernel, it will not be your problem. I
+> mean, really, you don't need this patchset in your tree at all. The only
+> platform which needs it, the only platform which will loose something
+> will be one specific vendor. Therefore this will be an incentive for
+> them to join both discussions and upstream development. :)
 
-Minimal set:
-1. Something with Exynos4 (e.g. Odroid U3 with Exynos4412).
-2. Something with Exynos 5422/5800 (e.g. Odroid XU3/XU4/HC1/MC1 or
-Chromebook Peach Pi).
-3. Exynos5433 - TM2 or TM2E. Boards are not widely available, so we need
-to rely on provided testing by Samsung.
+How would they fix this besides upstreaming support for unreleased
+work-in-progress H/W?
 
-What would be good is to also test Exynos3 boards, but this is also not
-widely available.
+Haven't I explained this several times already? :)
 
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
