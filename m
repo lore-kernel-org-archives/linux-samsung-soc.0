@@ -2,84 +2,85 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF88C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30816C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31566619E7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:47:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15C4C615A2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:47:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350548AbhI3Lth (ORCPT
+        id S1350565AbhI3Ltj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Sep 2021 07:49:37 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:41614
+        Thu, 30 Sep 2021 07:49:39 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:41648
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350512AbhI3Lth (ORCPT
+        by vger.kernel.org with ESMTP id S1350553AbhI3Lti (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Sep 2021 07:49:37 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        Thu, 30 Sep 2021 07:49:38 -0400
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B556740283
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 11:47:53 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 317E63F325
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 11:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633002473;
-        bh=30GqHbSX7U2pH06RCxY6mnA48AnbCVjiQKTx0BVxwMQ=;
+        s=20210705; t=1633002475;
+        bh=2I691nvxU/lO8++QbjVQLPuSPw++eMWKgLS4yAxN8zc=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=GF1oVo95HPyh6ET4npF5hWXNwBnHNiM7AbRwEZN4YJ8n5ePccKjlFp/Zv6z0QB1wq
-         v7eWuQZITb7DrNn0140mv0ZQ9E7MDefd/nYP0xqIWJ0nc2mnFvVDrcLfeIqroQItud
-         qJqInNRtzT/PWzXv5sK0uZwU69ijwCGJ7ckh++Shz2xtRriq9x4eZJYE55dCJ6v1ru
-         v+5fu+rmjl5PU8z9cqbsNBfiLhBLpuAQTe0YmFM5H5Mqlzrh4sFHje2NMGSt74Fcae
-         cFHQ3NxOzkbSGxOaRv9vteARB/3v1gVNdLL/uw/If20Hpc1HiLhaxhhjksxSEvAq8P
-         UeItdgbDwWrIA==
-Received: by mail-lf1-f72.google.com with SMTP id a28-20020a056512021c00b003f5883dcd4bso5366470lfo.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 04:47:53 -0700 (PDT)
+        b=MQMJtlxuUSexb6eLopj9TGoKs0f/cEuYxvS3XOuM4JXgTh4rRK5SVmjEbJJ6beaiy
+         mMFtvixKxRJKXo1IccAr8Rl+lV5kKrvgpRk2VFsF26BgiI9XSdHx8PCXGMpOLDM6bp
+         U38AzUPtWx6nurq5MmE0Pq9VZvfxCkOLgW/stgaCnU+r3b3Je1W5EmMUK6zaZLINw8
+         +lMGhr1gBBZufDNhDvM6QZmyDPKpFmJphC06bdYC7r7iFTmF90ZT/0zbCpzcDXUvQ+
+         91kzHOglVOQxfMqGRGbO74tteO6mbCBVpjeekpESkdbbXCJ28gcJgDonk+H7r1YTRj
+         pbMFbfQ5fJtbQ==
+Received: by mail-lf1-f70.google.com with SMTP id n22-20020a0565120ad600b003fcc09af59fso5342094lfu.21
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 04:47:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=30GqHbSX7U2pH06RCxY6mnA48AnbCVjiQKTx0BVxwMQ=;
-        b=JSddoG7/Sdiil2baf1tgo4CwjGbV2CmDArKGejuwLooBn2vVR/vaRiNwHPZDxdSuYm
-         FoS7B5chy3a6zQbX7qGzmDfyqtyGAzaPKYUMk8CDMVJakhewiUTnN8t/YROHmGeVLcH0
-         Z4hlyIDRN5T9N8CZMVSgX+B/8h5bTQ0Z+9fDqzjDMmlpMEr2svUn7chQJKq52ftdmZG/
-         ng/Fq0Xx3079ShXauxYhuPxPUhL8r/ulITylxQBG3rPo63Bcj+nKfwvp+OnbVrJjeSti
-         IPO5elYGXA8lPl59jtjgsasN2Xwhs3Ox6LXCle6+4t37ICbymrq7r+PvI30iFjZCtqxn
-         9uZA==
-X-Gm-Message-State: AOAM53057G/dezUH0kncOjRxIyHCdwdm7dxppnKuWUvKl4Xu/TKkLYJj
-        PVkbi21VKY9QBdUuAY0FyiwReq8TAdPoifpWuXxderAKIwn77V3LsP0KjIMfniA4aGdcsB1+uPS
-        MV4eTfXuit5URN+eEjgyDr9eeIBNbpzppoUFZ4EcWa4/Wt+Vw
-X-Received: by 2002:a19:7b16:: with SMTP id w22mr5325746lfc.197.1633002473156;
-        Thu, 30 Sep 2021 04:47:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyzlYjPDEr1fFxHxvIWWfISigHa9YDy7HSM5ztq/2c2pZmcQ6QQFrEh17DWNlIWhli5i28q7A==
-X-Received: by 2002:a19:7b16:: with SMTP id w22mr5325730lfc.197.1633002472978;
-        Thu, 30 Sep 2021 04:47:52 -0700 (PDT)
+        bh=2I691nvxU/lO8++QbjVQLPuSPw++eMWKgLS4yAxN8zc=;
+        b=A/XLCaho+BuVKoHD6N7RitPsKXwGVItYTfZ7EB8JRT1ZT2ld9zP0hoN2auAfltcb9G
+         VoVp2xE++12pPnGPJ+eZKjhdMCKb1YQP69hXQ77130JR0iSOIu0zK0QmIy42TZwR52D4
+         EZ6hKy10cAZBwelE5+rU/IlEjYTzKj4AaWwbXcA44sx5xUdvO891tGviAVddIkYWv9B1
+         5f5bs1SbtFZ8ICwZXQ0ZOrkt1TnVL86Yt6G7R8QkN6WiaVacQS9HGk8uCSC7YJhlM+1M
+         IWeGgHvJnicxEG3sdjaSbe2QxW7bs0XbdAXYvRXJHwPQ3x/mFAtnVkBfE4efLOe7Gg8f
+         PW9w==
+X-Gm-Message-State: AOAM532T7593pqpy97R14eo+g0mnlc7dylk468epfO3/OA7IoQ/Uz6dw
+        qDF7Ni7yAubxl5rf9DDxjH1HWPpZyaxQe1PLdjBKaBWg5Wvmo7O6BxBID6kn7uxW02D+cRg8PHD
+        RbnTuYemK0rDE54JlUpbWsg/8YqWQcEEaSoCee6wNsxrwRoC5
+X-Received: by 2002:a05:6512:3a96:: with SMTP id q22mr5172732lfu.228.1633002474481;
+        Thu, 30 Sep 2021 04:47:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxxxYXwhD32IdBAqEB2fAWGTXTprOHL2G3T691kTIriVXTz9p4loVv7RSJMT2Gvh5L2Ki1NSA==
+X-Received: by 2002:a05:6512:3a96:: with SMTP id q22mr5172709lfu.228.1633002474326;
+        Thu, 30 Sep 2021 04:47:54 -0700 (PDT)
 Received: from localhost.localdomain ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id w19sm311349ljd.110.2021.09.30.04.47.51
+        by smtp.gmail.com with ESMTPSA id w19sm311349ljd.110.2021.09.30.04.47.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 04:47:52 -0700 (PDT)
+        Thu, 30 Sep 2021 04:47:53 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mark Brown <broonie@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: (subset) [PATCH 11/12] ARM: dts: exynos: remove unneeded DVS voltages from PMIC on Arndale
-Date:   Thu, 30 Sep 2021 13:47:15 +0200
-Message-Id: <163300242600.178519.8912702221291105624.b4-ty@canonical.com>
+Subject: Re: (subset) [PATCH 12/12] ARM: dts: exynos: use spaces instead of tabs around '='
+Date:   Thu, 30 Sep 2021 13:47:16 +0200
+Message-Id: <163300242600.178519.4513175036717923621.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210928084949.27939-12-krzysztof.kozlowski@canonical.com>
-References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com> <20210928084949.27939-12-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210928084949.27939-13-krzysztof.kozlowski@canonical.com>
+References: <20210928084949.27939-1-krzysztof.kozlowski@canonical.com> <20210928084949.27939-13-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -87,20 +88,16 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 28 Sep 2021 10:49:48 +0200, Krzysztof Kozlowski wrote:
-> The S5M8767 PMIC does not require anymore a safe DVS voltage, if the DVS
-> GPIO is not enabled.  Although previously bindings required providing
-> this safe DVS voltage, but since commit 04f9f068a619 ("regulator:
-> s5m8767: Modify parsing method of the voltage table of buck2/3/4") this
-> was ignored.
+On Tue, 28 Sep 2021 10:49:49 +0200, Krzysztof Kozlowski wrote:
+> Use spaces in Origen boards instead of tabs around '=' for simple
+> property assignments, to match coding style.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[11/12] ARM: dts: exynos: remove unneeded DVS voltages from PMIC on Arndale
-        commit: 1d775cc371620caa12cb404771edbab944b1caba
+[12/12] ARM: dts: exynos: use spaces instead of tabs around '='
+        commit: 7ec804d6025c952e3122ad7fe768178efca3300e
 
 Best regards,
 -- 
