@@ -2,144 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2658C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21F0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D24B61452
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB47615E2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Sep 2021 11:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350423AbhI3L3U convert rfc822-to-8bit (ORCPT
+        id S1350530AbhI3Ln7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Sep 2021 07:29:20 -0400
-Received: from mail-vs1-f54.google.com ([209.85.217.54]:38590 "EHLO
-        mail-vs1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350416AbhI3L3U (ORCPT
+        Thu, 30 Sep 2021 07:43:59 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34780
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350490AbhI3Ln6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Sep 2021 07:29:20 -0400
-Received: by mail-vs1-f54.google.com with SMTP id y141so6829599vsy.5;
-        Thu, 30 Sep 2021 04:27:37 -0700 (PDT)
+        Thu, 30 Sep 2021 07:43:58 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 105B94025C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 11:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633002134;
+        bh=LiA1TOvesLNd2L6kNyPnkczuXXBnqvVYAhAbqt4uCJY=;
+        h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=HoEd+3EpfTM9rFOJhb3CL8e0RESGHAZG1T3tlBjoGyNy784DO2D80Ekk7vcencQiO
+         MDCdfi0PQHnM5uc13+9OVcMHZYbxiASgRdMpMfzEOAqOgz69ifVgYh9wj2s8HMXi3B
+         mhmTR5SpEEalcBstsUT4Q1tUhNfdLVscQ7ix1T92hHLvJhNG8h5w/SEvr5qdlNp0/O
+         UypldF5L7y91uZdpVZw5u/8+OHZeGUhOGwb47dLDRuI7vFxQ+Fb5dJ+25889iIug2M
+         8fbzqc2UpgvNHb3QW4gCoZzMMp4RBCSUJTGXrukuEZuQpSpHTDBWvhwPlxzrtXbZVE
+         +8hihoD2aZRYQ==
+Received: by mail-lf1-f72.google.com with SMTP id e9-20020ac25469000000b003fcfe6c574fso5303486lfn.23
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 04:42:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=R0n80uXJhjvsdb8nwwGcbOkkET0omNYYJeYTRDyy/SI=;
-        b=yS26ctsKeX57aAlqf7NDam9jPkw5ohC09ymZYj4vIJp2uhNaZOg3h6VJrGm914h1WT
-         qznn/oG+2k35rk1uGid1H6Jm335JsLlOtim9EP8mZ3QqqQwV6qaoTS2ZDS3Ghb/XirpL
-         BYocf6z00jZ0DVR6eGtM6cryTi3RcTTSmUDPlhsKoM3bQ14TgLr+eD+2U7OKGEXGcgS/
-         mCCLw/4HoR9nz5FcXbkcHya/WxNQAHTqbCuNDNldQlrjarVHhfxSgcsP5FXCIpQQmQbS
-         47FKRYHwVyHDsJC6Opf6nj3Us/olWRyLeAwFlfBw+sAK5wmIUTIIQ1XDHbloX5ZEBHbU
-         5NBQ==
-X-Gm-Message-State: AOAM5329iBddJ6wd5bqD36SqOu5JGk9+teRNkepMASFFUyesx2gKyRtW
-        NOaba5DTotbe8ph+N5U9yvqExj3EI0GQaOrlxqM=
-X-Google-Smtp-Source: ABdhPJyXAN0F5dsiwjAjlfy6er6qYnriP1vB7GdQ+i/Kg/UMjTKXQJReCJpTewOKooCa0vrxgqXzqX6uevEBzNVhCpw=
-X-Received: by 2002:a67:cb0a:: with SMTP id b10mr3191112vsl.9.1633001257163;
- Thu, 30 Sep 2021 04:27:37 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LiA1TOvesLNd2L6kNyPnkczuXXBnqvVYAhAbqt4uCJY=;
+        b=tc/Oq8811y5sRJpxxuwMQxemLj7+ETr/oOy+m/bXDN1PS/41W0lJOP23Hrj6vr1U3M
+         G7NYzMAjK/WfZnHJK7O5TkZflDYqDN1kyQN6IdxHtDefDUfOy+s0Sl7AvCxS53HAUCKr
+         OhJtdjccMeeesbNUiz8Zp3LbdzeCBwQ4JhHFRjSNpP3vGyg/7GmNTRzk123zFK6GyWNY
+         OcoO+hu9uXzAwwiNONsPYAMwGJ5eXp84VALTT5cJtmQptMc+KCOswcUNj23APS3yE78G
+         C+193ta4Mj6Igq+urs+k8NGReyYQQ5ImfYOS+L85wuMZE1VWep+BEyU+BnKibCZpT3S+
+         aiXA==
+X-Gm-Message-State: AOAM532p8VaaGWN3TmGnCzEAnTjbaO5heV969ofhMbOSiiiEbhVZjYlc
+        E3iM+rGWFPqoQHTn2TM1fUnXJ8NOAv0qhwh6UzmOmtFSdy2NZY4Cg3Yn4vdmNG/v7ymQY26j9kd
+        mlHLprmqoKq+Tp+HPEmYuvIJo624wsdtenb0jZPp6om4jgXPF
+X-Received: by 2002:a05:651c:12c6:: with SMTP id 6mr5292185lje.256.1633002133391;
+        Thu, 30 Sep 2021 04:42:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxJ9VPROzXrnhFDEqZM3+5XH+VvEwc4uc1+UgeDBBsaFfWTg0qHNO338pvCpvOv2QinrtD8cA==
+X-Received: by 2002:a05:651c:12c6:: with SMTP id 6mr5292168lje.256.1633002133221;
+        Thu, 30 Sep 2021 04:42:13 -0700 (PDT)
+Received: from [192.168.0.197] ([193.178.187.25])
+        by smtp.gmail.com with ESMTPSA id z3sm379628lfe.50.2021.09.30.04.42.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Sep 2021 04:42:12 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] power: supply: max17042_battery: fix typo in
+ MAX17042_IAvg_empty
+To:     Henrik Grimler <henrik@grimler.se>, sre@kernel.org,
+        m.szyprowski@samsung.com, sebastian.krzyszkowiak@puri.sm,
+        hdegoede@redhat.com, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20210929181418.4221-1-henrik@grimler.se>
+ <20210929181418.4221-2-henrik@grimler.se>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <7c8c781a-a80f-a9d2-2959-254da4844b21@canonical.com>
+Date:   Thu, 30 Sep 2021 13:42:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <c65bf0db-6fd1-eb05-f407-37c41f9125f4@canonical.com> <YVWCK5QO331rfhJJ@google.com>
- <CA+Ln22EbXKsRFZ=3L4A_jqciRxG2hnAh9iKTfQ_Ypr2NJgDzQQ@mail.gmail.com>
-In-Reply-To: <CA+Ln22EbXKsRFZ=3L4A_jqciRxG2hnAh9iKTfQ_Ypr2NJgDzQQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 30 Sep 2021 13:27:25 +0200
-Message-ID: <CAMuHMdWRhNPUyWJ5f8V-w8TCw+AjF8EXC5RZ_9h7JLvJ4RvkEA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Tomasz Figa <tomasz.figa@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Saravana Kannan <saravanak@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20210929181418.4221-2-henrik@grimler.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
+On 29/09/2021 20:14, Henrik Grimler wrote:
+> Datasheet gives the name IAvg_empty, not LAvg_empty.
+> 
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+>  drivers/power/supply/max17042_battery.c | 2 +-
+>  include/linux/power/max17042_battery.h  | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
 
-On Thu, Sep 30, 2021 at 1:01 PM Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> 2021年9月30日(木) 18:23 Lee Jones <lee.jones@linaro.org>:
-> > I've taken the liberty of cherry-picking some of the points you have
-> > reiteratted a few times.  Hopefully I can help to address them
-> > adequently.
-> >
-> > On Thu, 30 Sep 2021, Krzysztof Kozlowski wrote:
-> > > Reminder: these are essential drivers and all Exynos platforms must have
-> > > them as built-in (at least till someone really tests this on multiple
-> > > setups).
-> >
-> > > Therefore I don't agree with calling it a "problem" that we select
-> > > *necessary* drivers for supported platforms. It's by design - supported
-> > > platforms should receive them without ability to remove.
-> >
-> > > The selected drivers are essential for supported platforms.
-> >
-> > SoC specific drivers are only essential/necessary/required in
-> > images designed to execute solely on a platform that requires them.
-> > For a kernel image which is designed to be generic i.e. one that has
-> > the ability to boot on vast array of platforms, the drivers simply
-> > have to be *available*.
-> >
-> > Forcing all H/W drivers that are only *potentially* utilised on *some*
-> > platforms as core binary built-ins doesn't make any technical sense.
-> > The two most important issues this causes are image size and a lack of
-> > configurability/flexibility relating to real-world application i.e.
-> > the one issue we already agreed upon; H/W or features that are too
-> > new (pre-release).
-> >
-> > Bloating a generic kernel with potentially hundreds of unnecessary
-> > drivers that will never be executed in the vast majority of instances
-> > doesn't achieve anything.  If we have a kernel image that has the
-> > ability to boot on 10's of architectures which have 10's of platforms
-> > each, that's a whole host of unused/wasted executable space.
-> >
-> > In order for vendors to work more closely with upstream, they need the
-> > ability to over-ride a *few* drivers to supplement them with some
-> > functionality which they believe provides them with a competitive edge
-> > (I think you called this "value-add" before) prior to the release of a
-> > device.  This is a requirement that cannot be worked around.
->
-> [Chiming in as a clock driver sub-maintainer and someone who spent a
-> non-insignificant part of his life on SoC driver bring-up - not as a
-> Google employee.]
->
-> I'd argue that the proper way for them to achieve it would be to
-> extend the upstream frameworks and/or existing drivers with
-> appropriate APIs to allow their downstream modules to plug into what's
-> already available upstream.
 
-Yes, that's one possible solution.
-We do have to be careful this would not just become some fishy API
-to touch deeply buried internals, and for which there are no valid use
-cases in upstream.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
