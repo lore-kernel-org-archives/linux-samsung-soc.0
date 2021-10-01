@@ -2,180 +2,163 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767F3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 13:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D88FC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 15:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE11619F6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 13:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ADD861A6E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 15:27:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353771AbhJANnW (ORCPT
+        id S232327AbhJAP27 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 09:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42734 "EHLO
+        Fri, 1 Oct 2021 11:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353905AbhJANnH (ORCPT
+        with ESMTP id S231946AbhJAP26 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 09:43:07 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81FBC0613E6
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Oct 2021 06:41:22 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id ba1so34999701edb.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Oct 2021 06:41:22 -0700 (PDT)
+        Fri, 1 Oct 2021 11:28:58 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C2B5C061775
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Oct 2021 08:27:14 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id rj12-20020a17090b3e8c00b0019f88e44d85so500663pjb.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Oct 2021 08:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dpqrj9UQ61JeP64CiYYmvZqBFTg8BYcLuzBfSctij60=;
-        b=dNl7rDd9AS2NSu5/IljpMfdAuke1+r3Xajm1bMW0w26SyizOfMBnmgAs+Ol2g0gEtt
-         U0WNmMmCrstFUS/qVqa90Vvb25YFBXSlgZhHu74snTm3H4kt6Nku5/lP5QTSsoNFMlSM
-         Guz2IWVZy0rzjF8Vhdh+mPspq4v/MvaDXPBBWr5KMHTCL+d/XTzWbRtwZ1FEe+bycd2o
-         cQ2oDfGzU+X8iuYz5b/L6NKhN20yJyyzaXUBLpU9Tr3jzSkXA/YewsYikQDsyi8Chrlf
-         fJxc16maMaJi/jgDVdBamzbF+bp3maIHfBbv6oYpfQwBhUwW2mJ5c8G+qjeLIAx3X+HC
-         IL9g==
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NDBF0d4bKXIj7mL5yYNHBXYAg7HQa1G1QOL0lrIIjuQ=;
+        b=vyCE1SjTyUO59YshqoxCZREYCGmX1MLlD2wPH86txBGh9li4OkL1kVFk49gHlm1VaD
+         ftZLw4tkzhpF5hlX2FiAddEp3MvH4L4Fg1Mu1TLOsaieKla+AmpvH5c4iQ3aOZdX7oJz
+         J/pGhZFBosmhuydsPFT3/19gQUVWyqr0eY8Ghyjckm8+STHJ+H6Q3LINLYMkm4Tb/VWo
+         NQFkzjZU7JhIkTJrzj0vuwTjz49j6dfiPPG5QsH1KGBsWpu6suruD2Zoqy6ujUV0mXRr
+         zpx/0+szWfgVfjxzN57nEoskVnF5Aq/8+LXxY5e8sLc4+/IuGcxQc+oC0D/0qQqUcHIX
+         l9ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=dpqrj9UQ61JeP64CiYYmvZqBFTg8BYcLuzBfSctij60=;
-        b=YfjI5yKSnWcKcgEPy59D7l/SN3YP9FsljdGq7v4QsPwvTJz76Jyod8aZg1xsa4abxO
-         o288xr5n9qDJy9DW9WszE4tA69liKTmFmJ205oYDKgPrPNd0ByT3kCQU5pwUJLsQvebm
-         mtV3BKxnQQ7Rpat/RpkYC0CEbz3p6TRB3B3dQ9tZd4eDH2IpvSQ7LA6+4eTN1y4JSWic
-         mS4+ZOgbsj8UeqdFaf0MGm7FkcSxnxDGYHVUGPUpn3Gqp1017lU/GSw+Twh4Q6X+2bdD
-         H40554V7G1JxcBCvA0SnQvXNp0ZXKyHLg4Chov0YfAbkxdFYPD0/WV7fpXhpy9IyyTgJ
-         sTWw==
-X-Gm-Message-State: AOAM530g3wh7sTEUsByEvrhzikr6qEYo8XTkusNsm3aPTfVJRHCxJwKu
-        21aP9GP6LD3uaFx3mnLJK1Q=
-X-Google-Smtp-Source: ABdhPJzYG0Yfmu0eJ3zsH/2XAMil1P4hyTFKRiUT7t2TvxdHa1/JNrwsNJPkS/hCSssWMEh0eoQ3Wg==
-X-Received: by 2002:a50:9d49:: with SMTP id j9mr14044852edk.39.1633095681278;
-        Fri, 01 Oct 2021 06:41:21 -0700 (PDT)
-Received: from [172.16.20.20] ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id cq11sm2911977edb.4.2021.10.01.06.41.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Oct 2021 06:41:20 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.7\))
-Subject: Re: BUG: Cannot boot Odroid XU4 from eMMC without this patch
-From:   Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <fec1cc85-0c81-035b-fe89-1b6dedbb3bc5@samsung.com>
-Date:   Fri, 1 Oct 2021 17:41:17 +0400
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <974A393B-EE0A-487F-8315-D4E0498DAA25@gmail.com>
-References: <89888711-56BF-4E6C-92EE-2053E773B077@gmail.com>
- <CGME20210927111008epcas1p24778eabe0ab08ced2a200b48111c822b@epcas1p2.samsung.com>
- <CAJKOXPfUnLbhc6e_ccZxhVReV9jHsQ8aykkP=ghK-qURQLCdLA@mail.gmail.com>
- <fec1cc85-0c81-035b-fe89-1b6dedbb3bc5@samsung.com>
-To:     Jaehoon Chung <jh80.chung@samsung.com>
-X-Mailer: Apple Mail (2.3608.120.23.2.7)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NDBF0d4bKXIj7mL5yYNHBXYAg7HQa1G1QOL0lrIIjuQ=;
+        b=Y+sJEcWA0T16M+m/7YlN8AVj83ipShubvjcSqh5PUv/scZj5f6kRyzvQDn66fPqokd
+         sXghA8ZJROg5uhZLQcLNuQ4ITMCHULviaXBCrVYbczbe39teo5MQIoX27p63q0HApyLv
+         XhtRMEgzzE2BMMzyBUxIijKsnURhuIxVVyyHy3wCfie0JxqgdeleFKFqzhzBC03NDeF/
+         tQcCYAKqHYdkSwvtQLbCpX2uac06wF0yzj8fpmUxqBbljZc6csotcKzgweDVMHgt2b7m
+         uXoFhjGcXhZDVuG8M3J8eWtjoM97tCxT3YAyTcOFiyiKEsEhwUHkJS9eM0lhDmMi+SCe
+         L2fw==
+X-Gm-Message-State: AOAM530MWNROWZcC6KDN9xw2mTsyoap9VoQMPbwSjqsLf4fzID07x5w2
+        XRqYYr26P4FTXV+d1UrvU+V1/anhm2xdunb1nETEDQ==
+X-Google-Smtp-Source: ABdhPJw+H/uBI4TBsasR8eBHLbgky559HD5gbdguuPNsq60YvUyVD3gt7UgsIT81kS73NIa4qmiR13/eOF+1CUlO760=
+X-Received: by 2002:a17:902:c193:b0:13e:8e77:6c82 with SMTP id
+ d19-20020a170902c19300b0013e8e776c82mr1802110pld.29.1633102033855; Fri, 01
+ Oct 2021 08:27:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
+ <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
+ <CAMuHMdWhCB_zg6TwjYfz+=vc+_Wd5yzuAAzk=2ToZOQSAyaiJA@mail.gmail.com> <CAK8P3a10R-Q8hB-piH_QT0hzkaAZTczLbM=6WmgoMHYL8EhZ4g@mail.gmail.com>
+In-Reply-To: <CAK8P3a10R-Q8hB-piH_QT0hzkaAZTczLbM=6WmgoMHYL8EhZ4g@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Fri, 1 Oct 2021 08:27:02 -0700
+Message-ID: <CAOesGMhHK7Z8Ki+UFRi24dXTdk4=YC6ExneOnfkVmG2HFiVMKw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Fri, Oct 1, 2021 at 2:01 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Fri, Oct 1, 2021 at 10:19 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Fri, Oct 1, 2021 at 7:24 AM Saravana Kannan <saravanak@google.com> wrote:
+> > > GIC and arch timer. Basically the minimal kernel would need a timer
+> > > for the scheduler tick and IRQ controller to get the timer IRQ and the
+> > > fixed clock driver if the archtimer uses one to get its frequency and
+> > > the early UART console is pointless as a module (so build it in to
+> > > allow debugging/development).
+> > >
+> > > And then all new drivers, we should make sure are implemented as
+> > > tristate drivers. And we can go back and slowly work on converting
+> > > existing drivers to modules (community effort -- not one person or
+> > > entity) -- at least the ones where the author has hardware or ones
+> > > where the change is very likely to be correct and someone else is
+> > > willing to test it. We'll never be able to support some/all ARM32 (do
+> > > they even have a GIC/arch timer standard?), but at least for ARM64,
+> > > this seems like a viable goal.
+> >
+> > Cortex-A7/A15 and later have GIC and architectured timer, so it should
+> > work for contemporary systems.
+> > Cortex-A9 systems may have GIC, and TWD and/or Global Timer (but I've
+> > seen SoCs where the interrupt for the latter was not wired :-(.
+>
+> There are a number of well-known examples even with 64-bit chips or
+> Cortex-A7/A15 based SoCs that can't use the architected timer,
+> irqchip or iommu.
+>
+> Apple M1, Broadcom BCM283x, Samsung Exynos5 and
+> some Hisilicon server parts come to mind, I'm sure there
+> are more.
 
-> On 1 Oct 2021, at 4:40 am, Jaehoon Chung <jh80.chung@samsung.com> =
-wrote:
->=20
-> On 9/27/21 8:09 PM, Krzysztof Kozlowski wrote:
->> On Mon, 13 Sept 2021 at 06:32, Christian Hewitt
->> <christianshewitt@gmail.com> wrote:
->>>=20
->>> =
-https://protect2.fireeye.com/v1/url?k=3D6f7d4070-30e6793d-6f7ccb3f-0cc47aa=
-8f5ba-2c8976d4b015314f&q=3D1&e=3D776d64d2-22f3-400a-a241-42af8b5f60d0&u=3D=
-https%3A%2F%2Fgithub.com%2Fchewitt%2Flinux%2Fcommit%2F8a4ebfb43a394e5dc5e9=
-fafc92a50d5e81a4f258
->>>=20
->>> If I boot any recent kernel without the above patch, the emmc module =
-on the XU4 is not detected, see:
->>>=20
->>> Without:
->>>=20
->>> [    3.227837] mmc0: tuning execution failed: -5
->>> [    3.231229] mmc0: error -5 whilst initialising MMC card
->>> [    3.536450] mmc0: tuning execution failed: -5
->>> [    3.539680] mmc0: error -5 whilst initialising MMC card
->>> [    3.794056] mmc0: tuning execution failed: -5
->>> [    3.794212] mmc0: error -5 whilst initialising MMC card
->>> [    4.111097] mmc0: tuning execution failed: -5
->>> [    4.115356] mmc0: error -5 whilst initialising MMC card
->>> [    4.426164] mmc0: tuning execution failed: -5
->>> [    4.429678] mmc0: error -5 whilst initialising MMC card
->>> [    4.756226] mmc0: tuning execution failed: -5
->>> [    4.760641] mmc0: error -5 whilst initialising MMC card
->>>=20
->>> With:
->>>=20
->>> [    3.305461] mmc0: new HS400 MMC card at address 0001
->>> [    3.307444] mmcblk0: mmc0:0001 8GME4R 7.28 GiB
->>> [    3.308132] mmcblk0boot0: mmc0:0001 8GME4R 4.00 MiB
->>> [    3.309172] mmcblk0boot1: mmc0:0001 8GME4R 4.00 MiB
->>> [    3.310255] mmcblk0rpmb: mmc0:0001 8GME4R 512 KiB, chardev =
-(246:0)
->>> [    3.315963]  mmcblk0: p1 p2
->>>=20
->>> The patch is sourced from a Linux 5.4 patchset used by several retro =
-gaming distros for XU4 images shared in the HardKernel forums. I would =
-be happy to submit it, but the original patch has no description in the =
-commit message. Not being a coding developer myself I cannot explain =
-whether it is correct or what it=E2=80=99s doing to add one. All I can =
-do is confirm that it works, and is needed. SD card boot is not an =
-issue.
->>>=20
->>> I=E2=80=99ve CC=E2=80=99d the original author (Marian) in case he =
-remembers the patch and can comment. It would be good to get this =
-upstream.
->>=20
->> The patch might have sense but would require describing conditions -
->> what MMC input and output clock settings work and which do not work.
->> Also someone would need to test other Exynos5422 boards and other
->> Exynos with HS200 and HS400 support (Exynos5433, Exynos7). I think
->> this should not affect SD cards.
->=20
->=20
-> Thanks for adding me.
-> I didn't see XU4 booting fail with linux-5.15-rc1 kernel.
->=20
-> [    4.561934] mmc1: new HS400 MMC card at address 0001
-> [    4.572401] mmcblk1: mmc1:0001 SDW16G 14.7 GiB
-> [    4.602555]  mmcblk1: p1 p2 p3 p4 < p5 p6 p7 >
-> [    4.623201] mmcblk1boot0: mmc1:0001 SDW16G 4.00 MiB
-> [    4.640465] mmcblk1boot1: mmc1:0001 SDW16G 4.00 MiB
->=20
-> Which kernel version did you use?
+There's also more and more movement towards having coprocessors with
+standardized interfaces dealing with this functionality. We're
+currently at the point where they have coprocessors with
+non-standardized interfaces, and it's useful to keep encouraging
+convergence in this area to everybody's benefit. I don't find it
+particularly useful to make life easier for the custom solutions at
+the expense of others like this patchset does, when that's (just
+beyond? on?) the horizon.
 
-The original report is against 5.14.0, but I see the same with 5.15-rc3
+> > What are the plans for other architectures?
+> > I've seen similar patches being applied for e.g. MIPS.
+>
+> There is some work in the more actively maintained MIPS
+> platforms to make those behave more like Arm/powerpc/riscv/m68k
+> platforms, using a single image and moving drivers into modules.
+> Most MIPS platforms seem unlikely to get updated to this,
+> and will continue to require a SoC specific kernel binary forever,
+> similar to the renesas superh platforms. Most of the less
+> common architectures (arc, csky, hexagon, nios2, xtensa,
+> microblaze, nds32, openrisc, sparc/leon) are way behind that
+> though, and generally don't work at all without out-of-tree
+> code.
 
-dmesg: http://ix.io/3AuL
-dmesg | grep mmc: http://ix.io/3AuO
+One of the arguments for needing some of these core drivers in-kernel
+is that some platforms boot at very conservative DVFS operating
+points, to a degree that you really want to turn up the CPU clocks
+fairly early during boot.
 
-And if I pick that patch to my kernel branch all is good:
+If you don't have the drivers built-in, you can't do that and/or you
+create possible fragile or awkward inter-module dependencies with
+deferred probing, etc. We do care about boot time enough to prefer to
+just build them in for this reason.
 
-dmesg: http://ix.io/3Avf
-dmesg | grep mmc: http://ix.io/3Ave
+If vmlinux binary size is a concern, maybe it's time to consider
+splitting the drivers into a bare-minimum piece that's not a module
+for early setup, and the rest that can be loaded post-boot.
 
-Here=E2=80=99s an SD (or eMMC) bootable image for an XU4 that exhibits =
-the problem. You need to run =E2=80=9Csystemctl stop kodi=E2=80=9D once =
-the UART console is available else it attempts to run Kodi and Panfrost =
-(the image is created for some Panfrost poking) currently wedges the =
-board. Once the Kodi service is stopped =E2=80=9Csystemctl mask kodi=E2=80=
-=9D will prevent it from running again.
 
-=
-https://chewitt.libreelec.tv/testing/LibreELEC-Exynos.arm-10.0.0-odroid-xu=
-4.img.gz
-
-Kernel defconfig for the image: http://sprunge.us/G6uxty - basically the =
-exynos config but with a wide variety of not-needed drivers (other SoCs, =
-network cards, etc.) disabled.
-
-The board is booting from u-boot 2020.04 in case that matters.
-
-Christian
-
+-Olof
