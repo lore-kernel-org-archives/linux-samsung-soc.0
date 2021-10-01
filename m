@@ -2,63 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A24C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 05:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06394C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 05:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0E5161052
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 05:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE87761A55
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 05:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351778AbhJAFhx (ORCPT
+        id S1351954AbhJAGBM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 01:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43760 "EHLO
+        Fri, 1 Oct 2021 02:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230512AbhJAFhx (ORCPT
+        with ESMTP id S241631AbhJAGBF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 01:37:53 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE50AC06176D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 22:36:09 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id t4so5610526plo.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 22:36:09 -0700 (PDT)
+        Fri, 1 Oct 2021 02:01:05 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A92AEC061771
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 22:59:21 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id g8so30741470edt.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2021 22:59:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lwPyxDqaGBhT92QACUI/bh+VkUYF5Oo/5CIkAxgdtZ0=;
-        b=x4+eS/mPHFSaWAR3xsBgO23T1i0mXQSg5zBlZyUWrRmossN4sDE/RgApQuGNJSyKlx
-         LRsdEA+fHhNG7b37ubODdSxT8Bf61fc21oJV4cGXpJkBnDvVg9UMLor5aANUxLMedr2U
-         +4HtKL/belqPrhzcWZUz40RVVQaz/86inqcF15fBdN0ujQStvUBFnBY3/Z9OOntVQa+5
-         BbeZX0aEr6/mohhEefytrMODC7pyF+qHZR1t4VPvZGC75jGvIy9pllZ1e1zV6aIbzo8P
-         ED8gZPdtk/O1HyOl+alpfG38L+LhsnZN6H74QHGaNOZIdj3Bu+r/bbX89ffqFthfzbgn
-         6A6w==
+        bh=Wrerzu0eOzULblqI6hcqBoW5s1gAeWyg1d4PDm0YiP0=;
+        b=A7NluRHIT9P6ll142j0SyO7hXaBZ3Wm3gFiEtcJj/ODZ7DbVvi6FQp8DHFl4uUWrKE
+         A2nXBJk6lYPW1woby8AUcNHisprHtXQlLNTLOA/WOTcfcZK80hQdpbmCqDBame/6jXEJ
+         FF0oHRuUpBlvguQGYS73PQGq/v+OreH/y9w1Sx3xPmE0p3yFLP+pKhHODbIEYJoFu/L8
+         K+2Cbayc3YOH1cR4X9ZtfjUfLYAhsAZ1XcyvoQrs3xBX1XSQdqPejrN1dslA6egxkQZQ
+         Odib8NKeADHaGhHlQME8ssMuM0DjYqVmF6n3BxbLDog3ZeG9JgblBdp8bidhHQKxuVq0
+         HadA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lwPyxDqaGBhT92QACUI/bh+VkUYF5Oo/5CIkAxgdtZ0=;
-        b=0G4AtOoS3Ul4chxwOoik6P3pC5PtSCK4j3P8DrBrI8pqAsJkiywmEnnYmoHUZeD1VA
-         M6EJ8PCp4zN83MeX3wvB+FBqWqJVyXAa+TiPRDNvTRzagiX8+OqLLaZhFsQuJUFEbI9h
-         Er978g/i/y1fRcoSYMV0E358SZ+EclTu+Vnt99j1scmkluY00o/Ed6Oq5XNCffsG/48I
-         TYjJ3gMxtg3zhgDqrVy5YQGxylMEdrS5kMaYkbvAyFgeK+lgFGSRYbeHZz/sGngbwd++
-         xnH9jSc1GM7E8/FQrfO7ogT/wp71EHgDS4zNh+xHp8A8Mv+xKfHl0wsVQsk1jKcpYm/W
-         vBmg==
-X-Gm-Message-State: AOAM530ReteIj3PSFfxft98WE+i3N7Faor6TjuV6sJyX1dYfB34ItTY1
-        CTojO1ChgTNq+Bxr5K7F2475gmLgsHjLnfk0YuLrLQ==
-X-Google-Smtp-Source: ABdhPJyXrHEjSRsbvGuDy1U26vszb5TEBTH/srDHAuSr9YR7iT8IG7gbwvXgl1d4rlALNdae0jk7Dkp7FchFO9bSadM=
-X-Received: by 2002:a17:90a:9317:: with SMTP id p23mr11101909pjo.151.1633066567459;
- Thu, 30 Sep 2021 22:36:07 -0700 (PDT)
+        bh=Wrerzu0eOzULblqI6hcqBoW5s1gAeWyg1d4PDm0YiP0=;
+        b=EXTwIDCol/0+L5copa7DipbryPu/hfLChE2+FN/wC92y8cNmUfXs33d8W6KR6VQu5w
+         GUhSwkNGkbN3l+52oVwmvKDqqem+PLG0EFnODiCJS9AOgRdkcj8KkTpmcRdQ9jopJBpH
+         /Z0YLuCmY4hKtawRpJsTN/9euLh083scIuR3cYLRU20ZUe5KBGysQHUe+j/G1MEJVLbq
+         6YVL5StOoOb/QK4EhDK3ATZKyVNabHVUEp7kjTrjUcEciJlJx+R1hZRKL3+lDHVewcE3
+         fYoogjzcr3a4kgKpM8S0bPY3LHnyExgZVYL3ImuQO/44FX3gGPhB6w4F36um4DDvY9IA
+         3Byg==
+X-Gm-Message-State: AOAM532SCJ5/U8iEsvgDxp/amv/XludLoF0kZw7BYeYwXHylTTujZ27f
+        c9q1LN2hK3GB9LYkEOb9BL9I58t6ZBbnhtm43f2Rng==
+X-Google-Smtp-Source: ABdhPJzuvodcs8tct+DTVA009d4X4KLuUNmSIlwB3FnuvDUY8NEj4Xa/4ykTuUiOVGOVFV3KFGQS3R125A2/yrLz1SA=
+X-Received: by 2002:a50:8405:: with SMTP id 5mr12215046edp.228.1633067959935;
+ Thu, 30 Sep 2021 22:59:19 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210928235635.1348330-1-willmcvicker@google.com>
  <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com> <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
-In-Reply-To: <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Thu, 30 Sep 2021 22:35:55 -0700
-Message-ID: <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
+ <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com> <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+In-Reply-To: <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+From:   Will McVicker <willmcvicker@google.com>
+Date:   Thu, 30 Sep 2021 22:59:04 -0700
+Message-ID: <CABYd82b7umA2h=b2NTMU7X0u8ABOjMcmh5cHOH_gyWr=QeFFTA@mail.gmail.com>
 Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Will McVicker <willmcvicker@google.com>,
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Saravana Kannan <saravanak@google.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -87,87 +88,106 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 10:24 PM Saravana Kannan <saravanak@google.com> wrote:
+On Thu, Sep 30, 2021 at 10:36 PM Olof Johansson <olof@lixom.net> wrote:
 >
-> On Thu, Sep 30, 2021 at 9:52 PM Olof Johansson <olof@lixom.net> wrote:
+> On Thu, Sep 30, 2021 at 10:24 PM Saravana Kannan <saravanak@google.com> wrote:
 > >
-> > On Wed, Sep 29, 2021 at 12:48 PM Will McVicker <willmcvicker@google.com> wrote:
+> > On Thu, Sep 30, 2021 at 9:52 PM Olof Johansson <olof@lixom.net> wrote:
 > > >
-> > > On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
-> > > <krzysztof.kozlowski@canonical.com> wrote:
+> > > On Wed, Sep 29, 2021 at 12:48 PM Will McVicker <willmcvicker@google.com> wrote:
 > > > >
-> > > > On 29/09/2021 01:56, Will McVicker wrote:
-> > > > > This is v2 of the series of patches that modularizes a number of core
-> > > > > ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
-> > > > > modularized all of the drivers that are removed from the ARCH_EXYNOS
-> > > > > series of "select XXX". This includes setting the following configs as
-> > > > > tristate:
+> > > > On Wed, Sep 29, 2021 at 6:02 AM Krzysztof Kozlowski
+> > > > <krzysztof.kozlowski@canonical.com> wrote:
 > > > > >
-> > > > >  * COMMON_CLK_SAMSUNG
-> > > > >  * EXYNOS_ARM64_COMMON_CLK
-> > > > >  * PINCTRL_SAMSUNG
-> > > > >  * PINCTRL_EXYNOS
-> > > > >  * EXYNOS_PMU_ARM64
-> > > > >  * EXYNOS_PM_DOMAINS
+> > > > > On 29/09/2021 01:56, Will McVicker wrote:
+> > > > > > This is v2 of the series of patches that modularizes a number of core
+> > > > > > ARCH_EXYNOS drivers. Based off of the feedback from the v1 series, I have
+> > > > > > modularized all of the drivers that are removed from the ARCH_EXYNOS
+> > > > > > series of "select XXX". This includes setting the following configs as
+> > > > > > tristate:
+> > > > > >
+> > > > > >  * COMMON_CLK_SAMSUNG
+> > > > > >  * EXYNOS_ARM64_COMMON_CLK
+> > > > > >  * PINCTRL_SAMSUNG
+> > > > > >  * PINCTRL_EXYNOS
+> > > > > >  * EXYNOS_PMU_ARM64
+> > > > > >  * EXYNOS_PM_DOMAINS
+> > > > > >
+> > > > > > Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
+> > > > > > which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
+> > > > > > The reason for these new configs is because we are not able to easily
+> > > > > > modularize the ARMv7 PMU driver due to built-in arch dependencies on
+> > > > > > pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
+> > > > > > the ARM and ARM64 portions into two separate configs.
+> > > > > >
+> > > > > > Overall, these drivers didn't require much refactoring and converted to
+> > > > > > modules relatively easily. However, due to my lack of exynos hardware, I
+> > > > > > was not able to boot test these changes. I'm mostly concerned about the
+> > > > > > CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
+> > > > > > requesting help for testing these changes on the respective hardware.
+> > > > > >
 > > > > >
-> > > > > Additionally, it introduces the config EXYNOS_PMU_ARM64 and EXYNOS_PMU_ARM
-> > > > > which was previously EXYNOS_PMU and EXYNOS_PMU_ARM_DRIVERS respectively.
-> > > > > The reason for these new configs is because we are not able to easily
-> > > > > modularize the ARMv7 PMU driver due to built-in arch dependencies on
-> > > > > pmu_base_addr under arch/arm/mach-exynos/*. So the new configs split up
-> > > > > the ARM and ARM64 portions into two separate configs.
+> > > > > These are all not tested at all? In such case, since these are not
+> > > > > trivial changes, please mark the series as RFT.
 > > > > >
-> > > > > Overall, these drivers didn't require much refactoring and converted to
-> > > > > modules relatively easily. However, due to my lack of exynos hardware, I
-> > > > > was not able to boot test these changes. I'm mostly concerned about the
-> > > > > CLK_OF_DECLARE() changes having dependencies on early timers. So I'm
-> > > > > requesting help for testing these changes on the respective hardware.
+> > > > > I will not be able to test these for some days, so it must wait.
 > > > > >
+> > > > >
+> > > > > Best regards,
+> > > > > Krzysztof
 > > > >
-> > > > These are all not tested at all? In such case, since these are not
-> > > > trivial changes, please mark the series as RFT.
+> > > > +Cc Arnd and Olof,
 > > > >
-> > > > I will not be able to test these for some days, so it must wait.
+> > > > Hi Krzysztof,
 > > > >
-> > > >
-> > > > Best regards,
-> > > > Krzysztof
+> > > > To avoid the scrambled conversation from the first patchset, I'm going
+> > > > to address all your general questions here in the cover letter thread
+> > > > so that it's easier for everyone to follow and reference in the
+> > > > future.
 > > >
-> > > +Cc Arnd and Olof,
+> > > This patchset shouldn't go in.
 > > >
-> > > Hi Krzysztof,
+> > > GKI is a fantastic effort, since it finally seems like Google has the
+> > > backbone to put pressure on the vendors to upstream all their stuff.
 > > >
-> > > To avoid the scrambled conversation from the first patchset, I'm going
-> > > to address all your general questions here in the cover letter thread
-> > > so that it's easier for everyone to follow and reference in the
-> > > future.
-> >
-> > This patchset shouldn't go in.
-> >
-> > GKI is a fantastic effort, since it finally seems like Google has the
-> > backbone to put pressure on the vendors to upstream all their stuff.
-> >
-> > This patcheset dilutes and undermines all of that by opening up a
-> > truck-size loophole, reducing the impact of GKI, and overall removes
-> > leverage to get vendors to do the right thing.
-> >
-> > It's against our interest as a community to have this happen, since
-> > there's no other reasonably justifiable reason to do this.
+> > > This patcheset dilutes and undermines all of that by opening up a
+> > > truck-size loophole, reducing the impact of GKI, and overall removes
+> > > leverage to get vendors to do the right thing.
+> > >
+> > > It's against our interest as a community to have this happen, since
+> > > there's no other reasonably justifiable reason to do this.
+
+Are you saying that modularizing drivers is opening up a loophole? How
+is this different from Krysztof pushing changes to modularize the
+Exynos ChipId driver just last week [1].  I understand the push back
+on "these aren't tested yet" and I agree that we should not merge them
+until they are (I've re-iterated that multiple times and have
+requested for testing help multiple times since I can't get my hands
+on any Exynos arm64 hardware), but are you saying that if I gather the
+test data to prove that these drivers can actually be made into
+modules that you will still deny them out of the interest of the
+community?
+
+[1] https://lore.kernel.org/linux-samsung-soc/4aee1b0d-91a1-75ac-d2b7-6dab3d7a301f@kernel.org/T/#t
+
+--Will
+
 >
-> Oolf, Geert, Krzysztof, Arnd,
-
-So close.
-
-> I skimmed through the emails and you all make a lot of good points.
-
-I skimmed through this email and I think it adds a lot of new
-complexity and fragility to solve a problem that doesn't really exist
-for upstream, adding yet more config parameter combinations to build
-and test for.
-
-A much more valuable approach would be to work towards being able to
-free up memory by un-probed drivers at the end of boot. That would
-possibly benefit all platforms on all architectures.
-
-
--Olof
+> >
+> > Oolf, Geert, Krzysztof, Arnd,
+>
+> So close.
+>
+> > I skimmed through the emails and you all make a lot of good points.
+>
+> I skimmed through this email and I think it adds a lot of new
+> complexity and fragility to solve a problem that doesn't really exist
+> for upstream, adding yet more config parameter combinations to build
+> and test for.
+>
+> A much more valuable approach would be to work towards being able to
+> free up memory by un-probed drivers at the end of boot. That would
+> possibly benefit all platforms on all architectures.
+>
+>
+> -Olof
