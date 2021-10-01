@@ -2,213 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36856C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 11:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AD8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 11:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A16861A8C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 11:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD9DD61A63
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 11:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353212AbhJALUU (ORCPT
+        id S1354083AbhJALkK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 07:20:20 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:36904
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352581AbhJALUP (ORCPT
+        Fri, 1 Oct 2021 07:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353988AbhJALkJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 07:20:15 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C77904076E
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Oct 2021 11:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633087110;
-        bh=c6v/4qeCiawCEQ51bX3tsw9TJ7/8T8+FzX0Gq/a0zdo=;
-        h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=GXw0A/246X7qoa4WwfI7DmznycylOn11AnhCTrQNr/Wsy0Huv1ACpNbjc35XSpPY2
-         2G0elpw7VGF7KUCeu4BuXqQ/Wjozpz2OaG+HGkHW/0sG5wHeeTsySp6uH9OXG5ym9D
-         rFxu3EVtIL1+kWwMizv2J42FjHGE9oDQZqkbrZO7ezuy3yeweXe05BU8azrAVNyO6H
-         Wh3SbfBXQItigGu85CG/4cJ3TRdoDEEpP90hQXeytJrNfkufOqPlisIufDxXg0wFea
-         g5jtX05PFhddD0CxDkVQft9HosCGf8NrdlnL/40TV5oFGYnhROj3A5H3c2aHv3zKJl
-         ITGOPyf8y25Gg==
-Received: by mail-lf1-f70.google.com with SMTP id n22-20020a0565120ad600b003fcc09af59fso8656515lfu.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Oct 2021 04:18:30 -0700 (PDT)
+        Fri, 1 Oct 2021 07:40:09 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42522C06177D
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Oct 2021 04:38:25 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id y23so3005521lfj.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Oct 2021 04:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PgQJwBmVLBdUeAFbcJpLOUvKI5KGsOalaorIVrJziYU=;
+        b=ulGdV921YPSj31Yv4v5aF/syTvWDzr0emxFqFfTXLGaac8eOgGmUwTS2oQqs9+4MaT
+         ycJJ4EGMFd1wiR/zE0HlRhLZMtUDrYcG8Cr0hZxQmBlm3f6VfnGmWUYOyEGuccqje6Kd
+         f4GITEqFG47ZwzLDHw9uq53A5+pAdnhsw17ahJv5ZuVf4U9IJ2d3AwJBGWDMAfF5AhZm
+         MrXvj+pMDYf7U5gRFhMMsvAqNMb/OCUK9FxDr6neZzgERJ4g+QgUNRGh/nG+POoPyV28
+         vf9j6BK1UWjNCQXLmoyAqCerQFmcdJzzsxVO48fBV8Tiiwq75Yk8tA868/lhicBoEji6
+         WTSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=c6v/4qeCiawCEQ51bX3tsw9TJ7/8T8+FzX0Gq/a0zdo=;
-        b=JxbMCcwZE5Uc3Fpg2EPv47MoFk54Kw1WWN1l3lpYnA3vg5MFImgLgm3iNDihmMRv21
-         ePCg6RYtMkVulPUd6pj8vBTY/OvohaSY9EfylPXbl42GiC1NrRoJfGm3nbgi8rB57Ii+
-         MsiKvHxazCPaIoH7RRa/jgB0aTG/uZzg8oZYzZ75WLde101z9RSDFChpi82vzHoGMCbs
-         MyVyyOoE85kalolm7wFSSCsuvhmteIJcSjSQ9HZYNAUa7W+AlofSTZeDmWKRqaLFBUuq
-         EOEmbovZB3uNXI3VqInA7mxvvTCBQS/Zypt90lUrIpJqNm/ZpsfC2SK+wULj9t3qCmLL
-         62Ew==
-X-Gm-Message-State: AOAM532ZFkHNadX39AjRhe9bm7WcpSzyoZLXe7jG1u5XcEZ+jJey/kqt
-        iMl1QI9dKKQT4fgpyXYXtr8EVyMd7UWRAnHdpu8pxN7/7Ke5agNxN9E9OpYsr8mQewE8Vbq5tk0
-        HRzBVlqPPZH53SdQaaieSAdEt/1iYQ79A8fm98Sq58/119M99
-X-Received: by 2002:a2e:bf1c:: with SMTP id c28mr11444059ljr.345.1633087109842;
-        Fri, 01 Oct 2021 04:18:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzuYT/ZjdN+eSAIczNq1zrKmj2TkagpSajT6fyogi+QsoqXKhasYq3k534Q6T34GSICI/U27w==
-X-Received: by 2002:a2e:bf1c:: with SMTP id c28mr11444032ljr.345.1633087109622;
-        Fri, 01 Oct 2021 04:18:29 -0700 (PDT)
-Received: from [192.168.0.197] ([193.178.187.25])
-        by smtp.gmail.com with ESMTPSA id b9sm629490ljq.87.2021.10.01.04.18.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Oct 2021 04:18:28 -0700 (PDT)
-Subject: Re: [PATCH v2 09/10] dt-bindings: mfd: samsung,s5m8767: convert to
- dtschema
-To:     Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PgQJwBmVLBdUeAFbcJpLOUvKI5KGsOalaorIVrJziYU=;
+        b=2tvNSQ01ODXRGcJkXY4tZelduT35n32dg55fno7fq63H7Nm9UAZPZ7CLsIkDa4d3tv
+         czoCIpDechEkr3E1EIAhtYvYtHGJBqLrzacjrQpT4AUgaxepVcwHaaNVskokUXKniutH
+         45NMDmN/VNedQ/+IkyHahHk5PskklAznduuQySoNiFrEkZjNy4ire8PKmLNywJWfz96H
+         JgVhcBgF9IwWF8Ygt8IQG6b7O8YKmtbA1ahSieRdBHUOfiokKQ+EVd2DW/SNof3EtabL
+         ROaW9vquchJMfYv4NEN7TWJ1qRBHtT79wdJTwyR4pxneQDTeiMGACRqQWZEAQxEG6Vj9
+         zQ2A==
+X-Gm-Message-State: AOAM531xJmr2sKc9ixKAQwR2M4li45RDcO8HhqPXqPW2n5wbKv9OfNtj
+        n0gni1a3hr8j5DMbE2Tn2XTajvv/0enjP64xF5engw==
+X-Google-Smtp-Source: ABdhPJxco3cL637mdMjAYhbk4AYPbPN/02smOY4EnT08ERaI7xmLVT0QYUwcEKNdpq2dlrNPhyl+AzDtpyyabfLalGs=
+X-Received: by 2002:a2e:8011:: with SMTP id j17mr10931191ljg.145.1633088303563;
+ Fri, 01 Oct 2021 04:38:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210928235635.1348330-1-willmcvicker@google.com>
+ <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
+ <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
+ <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com> <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+In-Reply-To: <CAOesGMhQ3YsLJeQ7aUfb=0oNa3uPCx42wO1U7-ArqJTAUq1G3Q@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 1 Oct 2021 13:38:11 +0200
+Message-ID: <CACRpkdajAwysiTOGuFcEySJjePp774J+4Z_YHXaoquTXk6cA+g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
- <20211001094106.52412-10-krzysztof.kozlowski@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <bf26dd28-cf5e-bc09-0b99-6666f9d73d69@canonical.com>
-Date:   Fri, 1 Oct 2021 13:18:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <20211001094106.52412-10-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc <linux-rtc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/10/2021 11:41, Krzysztof Kozlowski wrote:
-> Convert the MFD part of Samsung S5M8767 PMIC to DT schema format.
-> Previously the bindings were mostly in mfd/samsung,sec-core.txt.
-> 
-> Since all of bindings for Samsung S2M and S5M family of PMICs were
-> converted from mfd/samsung,sec-core.txt to respective dtschema file,
-> remove the former one.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../bindings/mfd/samsung,s5m8767.yaml         | 269 ++++++++++++++++++
->  .../bindings/mfd/samsung,sec-core.txt         |  86 ------
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 270 insertions(+), 87 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-> new file mode 100644
-> index 000000000000..b2529a48c890
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-> @@ -0,0 +1,269 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/samsung,s5m8767.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S5M8767 Power Management IC
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +
-> +description: |
-> +  This is a part of device tree bindings for S2M and S5M family of Power
-> +  Management IC (PMIC).
-> +
-> +  The Samsung S5M8767 is a Power Management IC which includes voltage
-> +  and current regulators, RTC, clock outputs and other sub-blocks.
-> +
-> +properties:
-> +  compatible:
-> +    const: samsung,s5m8767-pmic
-> +
-> +  clocks:
-> +    $ref: ../clock/samsung,s2mps11.yaml
-> +    description:
-> +      Child node describing clock provider.
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  regulators:
-> +    $ref: ../regulator/samsung,s5m8767.yaml
-> +    description:
-> +      List of child nodes that specify the regulators.
-> +
-> +  s5m8767,pmic-buck2-dvs-voltage:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 8
-> +    maxItems: 8
-> +    description: |
-> +      A set of 8 voltage values in micro-volt (uV) units for buck2 when
-> +      changing voltage using gpio dvs.
-> +
-> +  s5m8767,pmic-buck3-dvs-voltage:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 8
-> +    maxItems: 8
-> +    description: |
-> +      A set of 8 voltage values in micro-volt (uV) units for buck3 when
-> +      changing voltage using gpio dvs.
-> +
-> +  s5m8767,pmic-buck4-dvs-voltage:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 8
-> +    maxItems: 8
-> +    description: |
-> +      A set of 8 voltage values in micro-volt (uV) units for buck4 when
-> +      changing voltage using gpio dvs.
-> +
-> +  s5m8767,pmic-buck-ds-gpios:
-> +    minItems: 3
-> +    maxItems: 3
-> +    description: |
-> +      GPIO specifiers for three host gpio's used for selecting GPIO DVS lines.
-> +      It is one-to-one mapped to dvs gpio lines.
-> +
-> +  s5m8767,pmic-buck2-uses-gpio-dvs:
-> +    type: boolean
-> +    description: buck2 can be controlled by gpio dvs.
-> +
-> +  s5m8767,pmic-buck3-uses-gpio-dvs:
-> +    type: boolean
-> +    description: buck3 can be controlled by gpio dvs.
-> +
-> +  s5m8767,pmic-buck4-uses-gpio-dvs:
-> +    type: boolean
-> +    description: buck4 can be controlled by gpio dvs.
-> +
-> +  s5m8767,pmic-buck-default-dvs-idx:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+On Fri, Oct 1, 2021 at 7:36 AM Olof Johansson <olof@lixom.net> wrote:
 
-There is a bug here - it's just uint32.
+> A much more valuable approach would be to work towards being able to
+> free up memory by un-probed drivers at the end of boot. That would
+> possibly benefit all platforms on all architectures.
 
-I will send a v3 later (feel free to review earlier, so I can accumulate
-tags/comments).
+This would be really neat.
 
-> +    minimum: 0
-> +    maximum: 7
-> +    default: 0
-> +    description: |
-> +      Default voltage setting selected from the possible 8 options selectable
-> +      by the dvs gpios. The value of this property should be between 0 and 7.
-> +      If not specified or if out of range, the default value of this property
-> +      is set to 0.
-> +
-Best regards,
-Krzysztof
+Also the ages-old problem of discarding unreferenced strings which
+apparently still isn't possible would be great to have solved. E.g.
+to couple strings to the file/module it belongs with and discard them
+if the code is not probed.
+
+Yours,
+Linus Walleij
