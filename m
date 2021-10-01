@@ -2,130 +2,189 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DE6C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE058C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9C8961A89
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCFC1619EC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352310AbhJAJCx (ORCPT
+        id S1353013AbhJAJn3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 05:02:53 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:45923 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbhJAJCw (ORCPT
+        Fri, 1 Oct 2021 05:43:29 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46512
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352979AbhJAJn3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 05:02:52 -0400
-Received: from mail-ot1-f48.google.com ([209.85.210.48]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MLzSD-1mEq7W0X7B-00HyMA; Fri, 01 Oct 2021 11:01:07 +0200
-Received: by mail-ot1-f48.google.com with SMTP id d12-20020a05683025cc00b0054d8486c6b8so10758832otu.0;
-        Fri, 01 Oct 2021 02:01:05 -0700 (PDT)
-X-Gm-Message-State: AOAM530tA9E/DBh8gxWxVqEaJoCEyKpxu2zRsjoBEX4XuoqtVKc7TQeX
-        Jn1naToK570DFt4sZhNvWzBVRIKcp0A9IGQrI2g=
-X-Google-Smtp-Source: ABdhPJwrrQqEv7F64oGZsF1JyOHej2llconZfQnraWBbfjZa9qDw+1LcpZbSuxEjvbdlBxeUtpphqB+NhSpYIemm5VI=
-X-Received: by 2002:a05:6830:1098:: with SMTP id y24mr8865313oto.368.1633078864794;
- Fri, 01 Oct 2021 02:01:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
- <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com> <CAMuHMdWhCB_zg6TwjYfz+=vc+_Wd5yzuAAzk=2ToZOQSAyaiJA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWhCB_zg6TwjYfz+=vc+_Wd5yzuAAzk=2ToZOQSAyaiJA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 1 Oct 2021 11:00:47 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a10R-Q8hB-piH_QT0hzkaAZTczLbM=6WmgoMHYL8EhZ4g@mail.gmail.com>
-Message-ID: <CAK8P3a10R-Q8hB-piH_QT0hzkaAZTczLbM=6WmgoMHYL8EhZ4g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Olof Johansson <olof@lixom.net>,
-        Will McVicker <willmcvicker@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Fri, 1 Oct 2021 05:43:29 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9F1BF402D3
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Oct 2021 09:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633081304;
+        bh=hCpMRXvOk2qr7XekeSwTAlezX0sg/HHCf3cdaEa6PNI=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=V+uoDUE4Tys3jJRO5q2Qa+/TQHrreER05Q4dtzhm2vF7Hvi+5VvRdwtjuVUOpxu0U
+         I96AR3ETnJ+MUD5E5m5No0jUUSteg8/Ii4KTiBBR3an0a41xLWXC4bZFf503W2Id/a
+         rkBjXGCJXU2pfeOUQR/Stoqr0QblX0pYkSIFUYStrL9nGkhq9Xd/IDG9Eo7N+VsD67
+         y23CvTZFwLoXxu2jcnsBP/TZu3i7lKHVg6qkasUScy6YXWX19+q+Ge23QHEsqqa8ut
+         mAF9tocEvSkyoAB5VZv5hVTmgKYZqVPnOUYH8kb+SrhXF5zTLw4RAA9MEcJYElXFIK
+         r21515v5lKzvA==
+Received: by mail-lf1-f71.google.com with SMTP id c24-20020ac25318000000b003f257832dfdso8355296lfh.20
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Oct 2021 02:41:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hCpMRXvOk2qr7XekeSwTAlezX0sg/HHCf3cdaEa6PNI=;
+        b=x1yC3F7jEkLcRUhPNXydWJZCUG7a0s3f/LVRu5Wv+s+neftqfY9aTCIEgUBqN7eTah
+         guLmzR7rn1h7hfT87W7JABR5f2S2tVdygE5F10asGUMiZa2bOkEn+WSeO629lXxQLtwx
+         1XU74gwPPwtkTBbCUaLH6thQHf91XZJyo8Tywt+lKKSP7Y+H4LbWAcIA16PwEiP6hGKD
+         WRsLLTEIvXBwX8owNWUJ8Kg3KQco9CqN7jjr7nDxq0TRuACRIRC6EPxJ1HyYscRHh220
+         GGjL3JEMbXJKy6w4GAXywkWtVmbWd7/vIKFkCB59Tj/mhU527PaT4B5mqVXtIxuyTec6
+         PJJA==
+X-Gm-Message-State: AOAM533EEZqRSXAN/cySZ56EChzsYd+oWgGfLgJOti49vXPchsI2H1mv
+        r5Z0DGag9NkE2avkf4Z5Vm/BYbnT+eYTDslECy0Vkc8Cz7zljFfBgpOgDRNhmakfg1H+hnrVjcV
+        Fax6masdYjhcDSvzfZrmUf75GNeH7vXSXUUEWTv/aw8lgF6A8
+X-Received: by 2002:ac2:5b10:: with SMTP id v16mr4303303lfn.331.1633081303912;
+        Fri, 01 Oct 2021 02:41:43 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxx27QWtjCHIBqlzXq+yG8hpF1waFM4KgjEZAEVScGpVqd57scj/Mcll414XykeZPaNgSPJLQ==
+X-Received: by 2002:ac2:5b10:: with SMTP id v16mr4303273lfn.331.1633081303584;
+        Fri, 01 Oct 2021 02:41:43 -0700 (PDT)
+Received: from localhost.localdomain ([193.178.187.25])
+        by smtp.gmail.com with ESMTPSA id g29sm673784lfj.212.2021.10.01.02.41.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Oct 2021 02:41:43 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
         Lee Jones <lee.jones@linaro.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:2o479mjNuqx9rSf+ILcfJiGayRTmk3TpFQEUm6/l6HEDCHqUdKC
- 8jsKFJo65wFllF9QPd9sLL3zQsguOGOD2E8GRyRyAigAiJEyW1KsfbdHmIc6p6M5LpUhcqP
- D+PT0dBPXZGUQrIIWpg10RPZzZ82rLqgEVuRE7oHI0l0rq8OMRRS49BECCF5dSuCFRXpcXJ
- SUfmCaP36khl/5Sy/qOmw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+PYnIXbz9l0=:QrrVsjwcxCMWz4tkKQSG1f
- yctEFJwYuE+qfwxpNd/uBGeiLUXSXDhwJtHDKSCAvgyiMdjV7mHyctGP/3by+ISy3q54FWqMh
- WVX+VIRrmwAbZ/oaWl7pys5/S0De7+ES54WydVvCbmQWqJeSZVMl5FFkngsb1L+BN9oRkVjzb
- l6mc2gUStAQ/iDUxMEtE6ziERCbE6to6fGdav8ggMsSEjmcBh1dhxseOnf2gg5vsJGYNc1cfz
- VZp6NknsRuRYmc0YbiqKjnwHq6tBMtRsSre9og4NxYd7DFVFqBJF8FkrZUSeW6urlrTIrAkCl
- GD0W4yu1SC3nw8SIu9CHC50MRE4qvszzCQNCEE2ycpXIrz0m2iUnIqdD3KYMX193r8aOnphAr
- Md+HK30Yb0Yt0AKXlQ8Ku6MFZEnnqbyjVFn91grh5//OBeVpDHTljZ/0qbCwGUfcVii716VAw
- UHt5DUUbCYxQ0T1pq7p3qwZSvJoy1fNE8up7snksLxr15hY+yIESjxNOpZoys0ORe7tGXAl9w
- 2yP4JF4gsfagAp/4UaVot1epAKhbZlhIB/KjxUlIcEZg9LlKaXE7qQnNHmFOZdBvcddACMZ6g
- MpE3PsPaPwPo6ORCdvcJx1YDB8vWWlK3QRsbmrG4iKgjE/c3fdeHN9OoH/9RdDkusJ2+TigHd
- QIwjQBINwnIXm7+i9q0itajTdm3TnJr4wY/nATq/H3g6yeKF2WLZVlAEjpHrjLfaQ3HL/wYz/
- m2tOiNXKaXaJuJGyCTfrINOgzU1YUhMg+KEDcQ==
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M and S5M to dtschema
+Date:   Fri,  1 Oct 2021 11:40:56 +0200
+Message-Id: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 1, 2021 at 10:19 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Fri, Oct 1, 2021 at 7:24 AM Saravana Kannan <saravanak@google.com> wrote:
-> > GIC and arch timer. Basically the minimal kernel would need a timer
-> > for the scheduler tick and IRQ controller to get the timer IRQ and the
-> > fixed clock driver if the archtimer uses one to get its frequency and
-> > the early UART console is pointless as a module (so build it in to
-> > allow debugging/development).
-> >
-> > And then all new drivers, we should make sure are implemented as
-> > tristate drivers. And we can go back and slowly work on converting
-> > existing drivers to modules (community effort -- not one person or
-> > entity) -- at least the ones where the author has hardware or ones
-> > where the change is very likely to be correct and someone else is
-> > willing to test it. We'll never be able to support some/all ARM32 (do
-> > they even have a GIC/arch timer standard?), but at least for ARM64,
-> > this seems like a viable goal.
->
-> Cortex-A7/A15 and later have GIC and architectured timer, so it should
-> work for contemporary systems.
-> Cortex-A9 systems may have GIC, and TWD and/or Global Timer (but I've
-> seen SoCs where the interrupt for the latter was not wired :-(.
+Hi All,
 
-There are a number of well-known examples even with 64-bit chips or
-Cortex-A7/A15 based SoCs that can't use the architected timer,
-irqchip or iommu.
+Changes since v1
+================
+1. Drop DTS patches - applied.
+2. Fully remove bindings/regulator/samsung,s5m8767.txt .
+3. Minor subject reformatting and few typos in text.
 
-Apple M1, Broadcom BCM283x, Samsung Exynos5 and
-some Hisilicon server parts come to mind, I'm sure there
-are more.
 
-> What are the plans for other architectures?
-> I've seen similar patches being applied for e.g. MIPS.
+Intro
+=====
+This patchset converts all devicetree bindings of Samsung S2M and S5M
+PMIC devices from txt to dtschema.
 
-There is some work in the more actively maintained MIPS
-platforms to make those behave more like Arm/powerpc/riscv/m68k
-platforms, using a single image and moving drivers into modules.
-Most MIPS platforms seem unlikely to get updated to this,
-and will continue to require a SoC specific kernel binary forever,
-similar to the renesas superh platforms. Most of the less
-common architectures (arc, csky, hexagon, nios2, xtensa,
-microblaze, nds32, openrisc, sparc/leon) are way behind that
-though, and generally don't work at all without out-of-tree
-code.
+It includes also two fixes because later conversion depends on it
+(contextually).
 
-      Arnd
+
+Merging/dependencies
+====================
+1. Regulator related binding changes depend on first two commits (the
+   fixes), because of context.
+2. The mfd bindings depend on clock and regulator bindings.
+
+The fixes and bindings changes (patches 1-10) should go via the same
+tree.  For example regulator or mfd tree.  I propose the regulator tree,
+since it will have also one driver change (the fix, first commit).
+
+
+Overview of devices
+===================
+Essentially all Samsung S2M and S5M PMICs are very similar devices. They
+provide the same functionality: regulators, RTC, 2 or 3 clocks and main
+power management (e.g. power cut to SoC).
+
+The differences are mostly in registers layout and number of regulators.
+
+The drivers are built around one common part, mfd/sec-core.c, and share
+some drivers between devices:
+1. MFD sec-core for all devices,
+1. one clock driver for most of devices,
+2. one RTC driver for all devices,
+3. three regulator drivers.
+
+The regulator drivers were implementing slightly different features,
+therefore one regulator binding for all devices does not make much
+sense.  However the clock device binding can be shared.
+
+The final dtschema bindings try to implement this - share only the clock
+bindings.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (10):
+  regulator: s5m8767: do not use reset value as DVS voltage if GPIO DVS
+    is disabled
+  regulator: dt-bindings: samsung,s5m8767: correct
+    s5m8767,pmic-buck-default-dvs-idx property
+  dt-bindings: clock: samsung,s2mps11: convert to dtschema
+  regulator: dt-bindings: samsung,s2m: convert to dtschema
+  regulator: dt-bindings: samsung,s2mpa01: convert to dtschema
+  regulator: dt-bindings: samsung,s5m8767: convert to dtschema
+  dt-bindings: mfd: samsung,s2mps11: convert to dtschema
+  dt-bindings: mfd: samsung,s2mpa01: convert to dtschema
+  dt-bindings: mfd: samsung,s5m8767: convert to dtschema
+  dt-bindings: mfd: samsung,s5m8767: document buck and LDO supplies
+
+ .../bindings/clock/samsung,s2mps11.txt        |  49 ---
+ .../bindings/clock/samsung,s2mps11.yaml       |  45 +++
+ .../bindings/mfd/samsung,s2mpa01.yaml         |  91 ++++++
+ .../bindings/mfd/samsung,s2mps11.yaml         | 267 +++++++++++++++
+ .../bindings/mfd/samsung,s5m8767.yaml         | 307 ++++++++++++++++++
+ .../bindings/mfd/samsung,sec-core.txt         |  86 -----
+ .../bindings/regulator/samsung,s2mpa01.txt    |  79 -----
+ .../bindings/regulator/samsung,s2mpa01.yaml   |  69 ++++
+ .../bindings/regulator/samsung,s2mps11.txt    | 102 ------
+ .../bindings/regulator/samsung,s2mps11.yaml   |  52 +++
+ .../bindings/regulator/samsung,s2mps13.yaml   |  52 +++
+ .../bindings/regulator/samsung,s2mps14.yaml   |  52 +++
+ .../bindings/regulator/samsung,s2mps15.yaml   |  52 +++
+ .../bindings/regulator/samsung,s2mpu02.yaml   |  52 +++
+ .../bindings/regulator/samsung,s5m8767.txt    | 145 ---------
+ .../bindings/regulator/samsung,s5m8767.yaml   |  83 +++++
+ MAINTAINERS                                   |   9 +-
+ drivers/regulator/s5m8767.c                   |  21 +-
+ 18 files changed, 1136 insertions(+), 477 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+ delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+ delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps11.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps13.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mps15.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpu02.yaml
+ delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
+
+-- 
+2.30.2
+
