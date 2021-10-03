@@ -2,195 +2,199 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65BEAC43217
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Oct 2021 21:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21E6C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Oct 2021 13:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 470B861B25
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Oct 2021 21:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1E9561B30
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Oct 2021 13:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234040AbhJBVFA (ORCPT
+        id S230207AbhJCN1H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 2 Oct 2021 17:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38066 "EHLO
+        Sun, 3 Oct 2021 09:27:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234034AbhJBVE7 (ORCPT
+        with ESMTP id S230050AbhJCN1G (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 2 Oct 2021 17:04:59 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04DAAC061780
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Oct 2021 14:03:12 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id y8so11072784pfa.7
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Oct 2021 14:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f7kGYU9i8iehxQ7ed0jxcX484pBLuV+nP2UpT0YHga0=;
-        b=KCFo1XEywDIaVfsHl65LLQZLhInq0HBpq3+oWSErEM00ItsX5IHl+xXjsw30f5qNfY
-         GcJPfDhslBinoV++447QA+WNp9oVKL7+UjxlR2Pj+mPLnS+/l/jt+r0XEpvWam0MWV7b
-         K+enVYzKefruDJIA3vIq2R5OCTWMbBL9aX626+JXAQ9ZrL4vl2/Lagt2QU5iaWlkxM08
-         xcuyL7xPiIxL74Mvp36cToiPtTIQgfPY7bGXJeo1oziAMObwXHIyYZy06bFc/T2TFmrH
-         Fyrl4AkwSpuPBIAzGiwICybIH/KuXgmFZfW4DOWGun16Bjb6knwM/KAf5cpdvnXXzL8u
-         cbCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f7kGYU9i8iehxQ7ed0jxcX484pBLuV+nP2UpT0YHga0=;
-        b=lWRzy/IBcNiASVeFUTU+eGA8aU6btR3nqK2iO6rSD7pNYtuaCzgdDLqLsz2vYWXrgN
-         MgyqxiOuj9zRbHD641G7Axol454L0iBHEUsQT6J4RYuxaJ2GZq/Wm52b7xoeSQ5nuAqu
-         UE4vKvBefQVpGe9tTlv9CbN8mtNAD/NR8nOBcbz9EBNlGDGOWTkQQa0K/TyedkwZU/OV
-         wnSxcI03uyCPHtD7HWmA+kc00ILw4JMm//ZZhHWqyA+4lqAGVT4teP/NuqXiNMSP2wo4
-         Wz0H4yDLBAOJyfbGL05culLSgdcZEdKRpTFffM0GQ6g/FqmKCYcVULB3+1Rx2rp35EpC
-         vSBA==
-X-Gm-Message-State: AOAM53329DPXvBnFsAS0Pn6UflrxzDH4ByA983Ra44L3jyu71iNZkObF
-        VGXg7191cLi5ybXFYoNU1vsBSsV3lGKG7gvKKC5jMQ==
-X-Google-Smtp-Source: ABdhPJzhI8aTPmQj2TCDJhpk71KTGItBNrMGOeuXQgD40I3hEWBhRl+v6gpth7rPwL1yQxOj5GJoI1Mw+eknEQj7Zp0=
-X-Received: by 2002:aa7:959a:0:b0:43b:adeb:ef58 with SMTP id
- z26-20020aa7959a000000b0043badebef58mr16909160pfj.19.1633208592223; Sat, 02
- Oct 2021 14:03:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210928235635.1348330-1-willmcvicker@google.com>
- <7766faf8-2dd1-6525-3b9a-8ba790c29cff@canonical.com> <CABYd82YodFDwBxexCv+0hpYrdYEX1Z1CvnRkmnBPkEJNJ4bssQ@mail.gmail.com>
- <CAOesGMgSt_mYvRzF0rC=fnjMYGO9EX0_Ow2cD1d8XKLD5pHsZA@mail.gmail.com>
- <CAGETcx-b0ea-rqH+fj37sq9SLWY=+ePK94Y6rnLPuNbqFVBWmw@mail.gmail.com>
- <CAMuHMdWhCB_zg6TwjYfz+=vc+_Wd5yzuAAzk=2ToZOQSAyaiJA@mail.gmail.com>
- <CAK8P3a10R-Q8hB-piH_QT0hzkaAZTczLbM=6WmgoMHYL8EhZ4g@mail.gmail.com>
- <CAOesGMhHK7Z8Ki+UFRi24dXTdk4=YC6ExneOnfkVmG2HFiVMKw@mail.gmail.com> <CAGETcx_UFLCwmqs_d5c8JY8Je9r=jy=KnELz1h91Qbrw9z+kaw@mail.gmail.com>
-In-Reply-To: <CAGETcx_UFLCwmqs_d5c8JY8Je9r=jy=KnELz1h91Qbrw9z+kaw@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Sat, 2 Oct 2021 14:03:00 -0700
-Message-ID: <CAOesGMjn-RKqRBL_A2bYjOb4jVhMbjvJs4JGtrQzX-WVSvJ6dQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] arm64: Kconfig: Update ARCH_EXYNOS select configs
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sun, 3 Oct 2021 09:27:06 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FBEFC0613EC;
+        Sun,  3 Oct 2021 06:25:19 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F2ADA2A;
+        Sun,  3 Oct 2021 15:25:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1633267514;
+        bh=VHWbPfGiA5vgTAu1+k5AM/WGLi1c7AUlzQbdWY3enhc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h/2eYjwJbH2EhjYD40qxfbcEgYr3mE2IAAas4v5feH+XAkkT1BgxIkzYa06DtV8ZJ
+         EGzSpMCGvRfSWCjwZLJzUC8o7X3Bf6J0UPkB/gHZWzl2XGBTtdBn6f67BRJU7V8OWE
+         df/2bykLM9Wcuj02kfnm0rlzKLBpNTFJPdjZTaAU=
+Date:   Sun, 3 Oct 2021 16:25:09 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-kernel@vger.kernel.org,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org,
         John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v4 00/24] drm/bridge: Make panel and bridge probe order
+ consistent
+Message-ID: <YVmvNTzZyqQHI4Co@pendragon.ideasonboard.com>
+References: <20210910101218.1632297-1-maxime@cerno.tech>
+ <YVTg8nqA9obYokxT@pendragon.ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YVTg8nqA9obYokxT@pendragon.ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 1, 2021 at 12:26 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> On Fri, Oct 1, 2021 at 8:27 AM Olof Johansson <olof@lixom.net> wrote:
-> >
-> > On Fri, Oct 1, 2021 at 2:01 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Fri, Oct 1, 2021 at 10:19 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > On Fri, Oct 1, 2021 at 7:24 AM Saravana Kannan <saravanak@google.com> wrote:
-> > > > > GIC and arch timer. Basically the minimal kernel would need a timer
-> > > > > for the scheduler tick and IRQ controller to get the timer IRQ and the
-> > > > > fixed clock driver if the archtimer uses one to get its frequency and
-> > > > > the early UART console is pointless as a module (so build it in to
-> > > > > allow debugging/development).
-> > > > >
-> > > > > And then all new drivers, we should make sure are implemented as
-> > > > > tristate drivers. And we can go back and slowly work on converting
-> > > > > existing drivers to modules (community effort -- not one person or
-> > > > > entity) -- at least the ones where the author has hardware or ones
-> > > > > where the change is very likely to be correct and someone else is
-> > > > > willing to test it. We'll never be able to support some/all ARM32 (do
-> > > > > they even have a GIC/arch timer standard?), but at least for ARM64,
-> > > > > this seems like a viable goal.
-> > > >
-> > > > Cortex-A7/A15 and later have GIC and architectured timer, so it should
-> > > > work for contemporary systems.
-> > > > Cortex-A9 systems may have GIC, and TWD and/or Global Timer (but I've
-> > > > seen SoCs where the interrupt for the latter was not wired :-(.
-> > >
-> > > There are a number of well-known examples even with 64-bit chips or
-> > > Cortex-A7/A15 based SoCs that can't use the architected timer,
-> > > irqchip or iommu.
-> > >
-> > > Apple M1, Broadcom BCM283x, Samsung Exynos5 and
-> > > some Hisilicon server parts come to mind, I'm sure there
-> > > are more.
-> >
-> > There's also more and more movement towards having coprocessors with
-> > standardized interfaces dealing with this functionality. We're
-> > currently at the point where they have coprocessors with
-> > non-standardized interfaces, and it's useful to keep encouraging
-> > convergence in this area to everybody's benefit. I don't find it
-> > particularly useful to make life easier for the custom solutions at
-> > the expense of others like this patchset does, when that's (just
-> > beyond? on?) the horizon.
-> >
-> > > > What are the plans for other architectures?
-> > > > I've seen similar patches being applied for e.g. MIPS.
-> > >
-> > > There is some work in the more actively maintained MIPS
-> > > platforms to make those behave more like Arm/powerpc/riscv/m68k
-> > > platforms, using a single image and moving drivers into modules.
-> > > Most MIPS platforms seem unlikely to get updated to this,
-> > > and will continue to require a SoC specific kernel binary forever,
-> > > similar to the renesas superh platforms. Most of the less
-> > > common architectures (arc, csky, hexagon, nios2, xtensa,
-> > > microblaze, nds32, openrisc, sparc/leon) are way behind that
-> > > though, and generally don't work at all without out-of-tree
-> > > code.
-> >
-> > One of the arguments for needing some of these core drivers in-kernel
-> > is that some platforms boot at very conservative DVFS operating
-> > points, to a degree that you really want to turn up the CPU clocks
-> > fairly early during boot.
-> >
-> > If you don't have the drivers built-in, you can't do that and/or you
-> > create possible fragile or awkward inter-module dependencies with
-> > deferred probing, etc. We do care about boot time enough to prefer to
-> > just build them in for this reason.
->
-> Go look at a Pixel 5, we got this working just fine with all these
-> drivers as modules and we definitely care about boot time. You just
-> need to load your CPU freq driver and the other ones it needs early
-> on. And with fw_devlink=on (default in upstream), there's hardly any
-> deferred probing.
+Hi Maxime,
 
-Unfortunately these problems are usually easier to fix on new
-platforms, especially during new product development. The hard part is
-making sure you haven't regressed any of the legacy platforms when
-you're changing the implementation for them as well.
+On Thu, Sep 30, 2021 at 12:56:02AM +0300, Laurent Pinchart wrote:
+> On Fri, Sep 10, 2021 at 12:11:54PM +0200, Maxime Ripard wrote:
+> > Hi,
+> > 
+> > We've encountered an issue with the RaspberryPi DSI panel that prevented the
+> > whole display driver from probing.
+> > 
+> > The issue is described in detail in the commit 7213246a803f ("drm/vc4: dsi:
+> > Only register our component once a DSI device is attached"), but the basic idea
+> > is that since the panel is probed through i2c, there's no synchronization
+> > between its probe and the registration of the MIPI-DSI host it's attached to.
+> > 
+> > We initially moved the component framework registration to the MIPI-DSI Host
+> > attach hook to make sure we register our component only when we have a DSI
+> > device attached to our MIPI-DSI host, and then use lookup our DSI device in our
+> > bind hook.
+> > 
+> > However, all the DSI bridges controlled through i2c are only registering their
+> > associated DSI device in their bridge attach hook, meaning with our change
+> > above, we never got that far, and therefore ended up in the same situation than
+> > the one we were trying to fix for panels.
+> > 
+> > The best practice to avoid those issues is to register its functions only after
+> > all its dependencies are live. We also shouldn't wait any longer than we should
+> > to play nice with the other components that are waiting for us, so in our case
+> > that would mean moving the DSI device registration to the bridge probe.
+> > 
+> > I also had a look at all the DSI hosts, and it seems that exynos, kirin and msm
+> > would be affected by this and wouldn't probe anymore after those changes.
+> > Exynos and kirin seems to be simple enough for a mechanical change (that still
+> > requires to be tested), but the changes in msm seemed to be far more important
+> > and I wasn't confortable doing them.
+> > 
+> > Let me know what you think,
+> 
+> I've tested this series on my RPi CM4-based board, and there's a clear
+> improvement: the sn65dsi83 now probes successfully !
+> 
+> The downside is that I can now look at a panel that desperately refuses
+> to display anything. That's a separate issue, but it prevents me from
+> telling whether this series introduces regressions :-S I'll try to debug
+> that separately.
 
+I managed to (partly) fix that issue with a few backports from the RPi
+kernel, making me confident enough to say
 
-> > If vmlinux binary size is a concern, maybe it's time to consider
-> > splitting the drivers into a bare-minimum piece that's not a module
-> > for early setup, and the rest that can be loaded post-boot.
->
-> Isn't this literally what I was suggesting with my
-> ARM64_MINIMAL_GENERIC_KERNEL suggestion? Build in all the bare minimum
-> drivers that are needed before module loading can happen? You'd just
-> select them all under that config. And any existing platform that
-> wants to use it would break up their drivers into modules and switch
-> to it.
+Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Do you understand the implications of your proposal on the complexity
-for those who care about making sure different config combinations
-keep building and working, i.e. both the minimal-generic-kernel and
-the regular generic version? You've doubled the testing workload for
-all of those folks. It's a different mindset from when you mostly need
-to care about your one config and platform.
+for
 
+drivers/gpu/drm/bridge/ti-sn65dsi83.c
+drivers/gpu/drm/drm_bridge.c
+drivers/gpu/drm/drm_mipi_dsi.c
+include/drm/drm_mipi_dsi.h
 
--Olof
+> Also, Kieran, would you be able to test this with the SN65DSI86 ?
+> 
+> > ---
+> > 
+> > Changes from v3:
+> >   - Converted exynos and kirin
+> >   - Converted all the affected bridge drivers
+> >   - Reworded the documentation a bit
+> > 
+> > Changes from v2:
+> >   - Changed the approach as suggested by Andrzej, and aligned the bridge on the
+> >     panel this time.
+> >   - Fixed some typos
+> > 
+> > Changes from v1:
+> >   - Change the name of drm_of_get_next function to drm_of_get_bridge
+> >   - Mention the revert of 87154ff86bf6 and squash the two patches that were
+> >     reverting that commit
+> >   - Add some documentation
+> >   - Make drm_panel_attach and _detach succeed when no callback is there
+> > 
+> > Maxime Ripard (24):
+> >   drm/bridge: Add documentation sections
+> >   drm/bridge: Document the probe issue with MIPI-DSI bridges
+> >   drm/mipi-dsi: Create devm device registration
+> >   drm/mipi-dsi: Create devm device attachment
+> >   drm/bridge: adv7533: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: adv7511: Register and attach our DSI device at probe
+> >   drm/bridge: anx7625: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: anx7625: Register and attach our DSI device at probe
+> >   drm/bridge: lt8912b: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: lt8912b: Register and attach our DSI device at probe
+> >   drm/bridge: lt9611: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: lt9611: Register and attach our DSI device at probe
+> >   drm/bridge: lt9611uxc: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: lt9611uxc: Register and attach our DSI device at probe
+> >   drm/bridge: ps8640: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: ps8640: Register and attach our DSI device at probe
+> >   drm/bridge: sn65dsi83: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: sn65dsi83: Register and attach our DSI device at probe
+> >   drm/bridge: sn65dsi86: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: sn65dsi86: Register and attach our DSI device at probe
+> >   drm/bridge: tc358775: Switch to devm MIPI-DSI helpers
+> >   drm/bridge: tc358775: Register and attach our DSI device at probe
+> >   drm/kirin: dsi: Adjust probe order
+> >   drm/exynos: dsi: Adjust probe order
+> > 
+> >  Documentation/gpu/drm-kms-helpers.rst        |  12 +++
+> >  drivers/gpu/drm/bridge/adv7511/adv7511.h     |   1 -
+> >  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |  15 ++-
+> >  drivers/gpu/drm/bridge/adv7511/adv7533.c     |  20 +---
+> >  drivers/gpu/drm/bridge/analogix/anx7625.c    |  40 ++++----
+> >  drivers/gpu/drm/bridge/lontium-lt8912b.c     |  31 ++----
+> >  drivers/gpu/drm/bridge/lontium-lt9611.c      |  62 +++++-------
+> >  drivers/gpu/drm/bridge/lontium-lt9611uxc.c   |  65 +++++-------
+> >  drivers/gpu/drm/bridge/parade-ps8640.c       | 101 ++++++++++---------
+> >  drivers/gpu/drm/bridge/tc358775.c            |  50 +++++----
+> >  drivers/gpu/drm/bridge/ti-sn65dsi83.c        |  86 ++++++++--------
+> >  drivers/gpu/drm/bridge/ti-sn65dsi86.c        |  94 ++++++++---------
+> >  drivers/gpu/drm/drm_bridge.c                 |  69 ++++++++++++-
+> >  drivers/gpu/drm/drm_mipi_dsi.c               |  81 +++++++++++++++
+> >  drivers/gpu/drm/exynos/exynos_drm_dsi.c      |  19 ++--
+> >  drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c |  27 +++--
+> >  include/drm/drm_mipi_dsi.h                   |   4 +
+> >  17 files changed, 460 insertions(+), 317 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
