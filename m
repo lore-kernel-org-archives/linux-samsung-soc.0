@@ -2,82 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E8FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Oct 2021 14:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A12C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Oct 2021 14:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C9116136F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Oct 2021 14:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E7636108E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Oct 2021 14:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234145AbhJDOc3 (ORCPT
+        id S234349AbhJDOdx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Oct 2021 10:32:29 -0400
-Received: from mail-oi1-f175.google.com ([209.85.167.175]:34472 "EHLO
-        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234090AbhJDOc2 (ORCPT
+        Mon, 4 Oct 2021 10:33:53 -0400
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:33363 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234201AbhJDOdw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Oct 2021 10:32:28 -0400
-Received: by mail-oi1-f175.google.com with SMTP id z11so21761334oih.1;
-        Mon, 04 Oct 2021 07:30:39 -0700 (PDT)
+        Mon, 4 Oct 2021 10:33:52 -0400
+Received: by mail-oi1-f182.google.com with SMTP id 24so21802302oix.0;
+        Mon, 04 Oct 2021 07:32:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=a9zD/WBW5Hz9Wbj7mkvEMcchgoWJqrmdeX9RgY0E/wU=;
-        b=aeV1sirvt3QF4KUWKUPkvx/qoekKXFBToOUt7rDuXgBY1mkCcjbzPsnu5nGhkcEgUj
-         Wrq0hGo/ZD7mqc35jICmtwtgIe3zrx+8kFsmnvnLJb2X45XArwZeLBUw/g30Xthx5n+u
-         cu8gLE6Tnatgp/dQaZ52VnSZS/AQ2+4dYXaxFE4WJE0dSKc8ztdhhyY3jr4TFWC4z/4+
-         P+XRp4viW/8veJWAqN3USnOLw0k1Javx0HEzKyN6Uy6+QXyuKSifsPdARk2bLEBa0SBz
-         iJS3aAJWJZCYUEzGCfO5INpIrGlMxHGSxGhy82Kzi5eb7rp9BKvKgcIHvxfORIrBQ08i
-         yVvA==
-X-Gm-Message-State: AOAM530wpRGppPXoW50G1Qp/cKwOda5Tde+a2AkrKfJfNt2k01Qd7Gso
-        EAKHhmYrHnyNoA2srFcigQ==
-X-Google-Smtp-Source: ABdhPJw0qPkWepgb0uvjHPu9uBtVnZouewBkX0+v9I8COR5y2JIcsHRgXM/4MUSz+0ng2hCnGmcYEg==
-X-Received: by 2002:a05:6808:309f:: with SMTP id bl31mr13593551oib.41.1633357839352;
-        Mon, 04 Oct 2021 07:30:39 -0700 (PDT)
+        bh=q9RpayVmV6dz7BE0rFofENAU5jVyhNoIcnSv0poP0Ow=;
+        b=FlI7ix+7PfH3/yRxG538x+KNUagB1ygk6uIQEYeHtiM+Kk53gzPho3WWN+kLip+H3y
+         Uwg6a535mWkNjz2T7OswhJ8xXGXi4wDZeDzV1bm3uB37G+W06vmFyAPdrjmYxtd20yjz
+         tJ4kVTTrNObFv5h7w1PNegtGXI3Bg7J3qmoCYLykRpX5CERVwXC+z9TnEfD/53z8k7AI
+         2jssnGlpgqTPu/fKnYsRSM5ILfMke5xISjBHYgnhwYqKuRUjeXJQ7Xp0Whc+tLqxrUDv
+         9PahcXY01DX7FVnJLwOJG2wJ9sqvH0lmr0DzMhZCzbs1NNUetEL8F0+VWoHhet9m4M/S
+         QxBg==
+X-Gm-Message-State: AOAM5304uDl8gRHs66Wv2xirVLT4XPLjeHR38ix4fcxzPM6KNJ6zDVwD
+        lBW2RF+AgarKsgqwwJXiKA==
+X-Google-Smtp-Source: ABdhPJz8ctFv6k91eGqdhbNzgQH2rc5RqKI1GU8kBpw45f0kwDChGQUvPqHMsyVjdYn03lAKyAuJ2Q==
+X-Received: by 2002:aca:aa12:: with SMTP id t18mr13675233oie.25.1633357922564;
+        Mon, 04 Oct 2021 07:32:02 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bj33sm2914658oib.31.2021.10.04.07.30.38
+        by smtp.gmail.com with ESMTPSA id d7sm2907554otl.19.2021.10.04.07.32.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 07:30:38 -0700 (PDT)
-Received: (nullmailer pid 1245728 invoked by uid 1000);
-        Mon, 04 Oct 2021 14:30:37 -0000
-Date:   Mon, 4 Oct 2021 09:30:37 -0500
+        Mon, 04 Oct 2021 07:32:02 -0700 (PDT)
+Received: (nullmailer pid 1247990 invoked by uid 1000);
+        Mon, 04 Oct 2021 14:32:01 -0000
+Date:   Mon, 4 Oct 2021 09:32:01 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+Cc:     Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 02/10] regulator: dt-bindings: samsung,s5m8767:
- correct s5m8767,pmic-buck-default-dvs-idx property
-Message-ID: <YVsQDaiRXCYdVy80@robh.at.kernel.org>
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 03/10] dt-bindings: clock: samsung,s2mps11: convert to
+ dtschema
+Message-ID: <YVsQYV1sA7m8l5LN@robh.at.kernel.org>
 References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
- <20211001094106.52412-3-krzysztof.kozlowski@canonical.com>
+ <20211001094106.52412-4-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211001094106.52412-3-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211001094106.52412-4-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 01 Oct 2021 11:40:58 +0200, Krzysztof Kozlowski wrote:
-> The driver was always parsing "s5m8767,pmic-buck-default-dvs-idx", not
-> "s5m8767,pmic-buck234-default-dvs-idx".
+On Fri, 01 Oct 2021 11:40:59 +0200, Krzysztof Kozlowski wrote:
+> Convert the clock provider of Samsung S2MPS11 family of PMICs to DT
+> schema format.
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 26aec009f6b6 ("regulator: add device tree support for s5m8767")
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/clock/samsung,s2mps11.txt        | 49 -------------------
+>  .../bindings/clock/samsung,s2mps11.yaml       | 45 +++++++++++++++++
+>  MAINTAINERS                                   |  2 +-
+>  3 files changed, 46 insertions(+), 50 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
