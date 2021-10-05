@@ -2,122 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A892C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166B5C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA5361502
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFFD6614C8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234572AbhJEMMi (ORCPT
+        id S234496AbhJEMQl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Oct 2021 08:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234388AbhJEMMh (ORCPT
+        Tue, 5 Oct 2021 08:16:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38874 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233808AbhJEMQk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Oct 2021 08:12:37 -0400
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38964C061749
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 05:10:47 -0700 (PDT)
-Received: by mail-vs1-xe2d.google.com with SMTP id f2so22485244vsj.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 05:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a+FpzWH2ZIdZS8P9itXj17dRdXa9ruIevTcz0+5q7b4=;
-        b=aEQ2lypF9WQGoGPdcJLUpnDkTaoqHtURxtHwBWjypLxQS8mzf1Yhik2f1k4oyyevB+
-         v5JWYANFC7eDUs2ckJJj+NPbd6QMWEmrQXkJ1R7I1U1/q5IjAxzXMuVLB4wkZXQ3ad27
-         h3RiUotm3GY8rlULHtMoBV24PMHZGcA3nCAAd7b5zurKu+MCtR0RfEE90U1PODP6QwIJ
-         GVcGhoG9UnAjRZrdu636fj3X49dKe94ShjN4rdcakPLQrDPU6Bcyae2uI4hkNkVkbSLc
-         ZnIWqtI3yOPnGq17eny2S1CdLo8I8MJSIuyVoC3jgKRXZjPWCpxD9kwiIA6QzdYgEzEJ
-         G2fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a+FpzWH2ZIdZS8P9itXj17dRdXa9ruIevTcz0+5q7b4=;
-        b=Sk6jChho5OlgEBj4mDRKXATE6gzMRU1UdWyzhgp4Te447wZBfCHd/Gj6HcqpE3FhMZ
-         n1RpFRo2TKGB7rxQ6Sul+9V/Uv26EKpccWBmNfybBBBz8Ocojvhr82JZy7Yd3vDNeJKJ
-         lCaDIZR8lbohbnVOWKLBnKUWu2nl2bC/OaVzoFTI/4UVP9++hilSOG2juonzEKZyHOiZ
-         eB7rz4q3DZVcjaCT0N09hNsP8vAYA/47n0g3M6uKDcK6p5bQe+J3apf6BakRlk5bXqlN
-         EMTNvFCR2g8l6JnkT0dVQ0j8FiBKAmSwCXhGZyzwIJdkkPNEu1TD3i4IYgNzcpmwf0cP
-         zqZw==
-X-Gm-Message-State: AOAM5300KlwpMV9dJPmwpElX1QIjXpiBsWnjz23OPtqJims32ViSsvGX
-        LlmivbdyHCeot1dphIimJA00PYp8JjuatAaMkAlHnA==
-X-Google-Smtp-Source: ABdhPJwQPm67yxGJ4FtMJNzBWUpDBn/qkdjLiKqVJgWGXq0/bbGz9rz8oI9e2wECpt3qr8rlikCAs/B7DNWrOT5XQuM=
-X-Received: by 2002:a67:1781:: with SMTP id 123mr17945675vsx.1.1633435846315;
- Tue, 05 Oct 2021 05:10:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210919093114.35987-1-krzysztof.kozlowski@canonical.com> <20210919093114.35987-4-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20210919093114.35987-4-krzysztof.kozlowski@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 5 Oct 2021 15:10:34 +0300
-Message-ID: <CAPLW+4=0K-BLGSR2O05OmRNaLuHaYandZBBUTRYm6-JnBT7QrA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] soc: samsung: exynos-chipid: do not enforce built-in
+        Tue, 5 Oct 2021 08:16:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EAA5B61166;
+        Tue,  5 Oct 2021 12:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633436090;
+        bh=DeaHbSCWFT8NlzFI7wJri1fE1dG3RGKllnRW0mksoIo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CUNgIxvsTj9HQ9K9IbRnK/q5KeNl3Eq9UZtsxwYap6OhnKEBUkVz79qVWZIJA9OV0
+         IqB9kLaFnP60wlAm0vYZYd2qO5B/pEgLAI0xfqKMM9a9rAJ9HvzzyWorat3pC0a5EJ
+         RU80Mk5SupjC+SM+9lN4zx/oblJStStnqNrCbTjhFhKvSEUFGp1CKPGx8deEnKxNIz
+         GX4qNwgH9EQHKAB4yRD3nkX4q9HGl5hvluanRCXqM2F1Y8kBwY33MxnAPpzQu/GRm+
+         kMg0VaiExald2jB4tap1QTznzfe3UHVJfxC0s80FgZaDMlKgKbrUCaTbO4XqCOLP5o
+         hda23Jz+1GW/Q==
+Date:   Tue, 5 Oct 2021 13:14:48 +0100
+From:   Mark Brown <broonie@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
+ and S5M to dtschema
+Message-ID: <YVxBuEvHVdyDvaGD@sirena.org.uk>
+References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NHJ+x3vjgC+S2IOr"
+Content-Disposition: inline
+In-Reply-To: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
+X-Cookie: A is for Apple.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 19 Sept 2021 at 12:31, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> After converting the Exynos ChipID and ASV driver to a module, allow to
-> actually choose it to be a module, while being a default built-in.  The
-> side effect is that driver could be now entirely disabled even for
-> kernel with ARCH_EXYNOS, but this is not a critical issue because driver
-> is not necessary for the proper platform boot.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+--NHJ+x3vjgC+S2IOr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  arch/arm/mach-exynos/Kconfig | 1 -
->  drivers/soc/samsung/Kconfig  | 3 ++-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 5a48abac6af4..30f930e20599 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -13,7 +13,6 @@ menuconfig ARCH_EXYNOS
->         select ARM_GIC
->         select EXYNOS_IRQ_COMBINER
->         select COMMON_CLK_SAMSUNG
-> -       select EXYNOS_CHIPID
->         select EXYNOS_THERMAL
->         select EXYNOS_PMU
->         select EXYNOS_SROM
-> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> index fe139f26d093..e2cedef1e8d1 100644
-> --- a/drivers/soc/samsung/Kconfig
-> +++ b/drivers/soc/samsung/Kconfig
-> @@ -13,8 +13,9 @@ config EXYNOS_ASV_ARM
->         depends on EXYNOS_CHIPID
->
->  config EXYNOS_CHIPID
-> -       tristate "Exynos ChipID controller and ASV driver" if COMPILE_TEST
-> +       tristate "Exynos ChipID controller and ASV driver"
->         depends on ARCH_EXYNOS || COMPILE_TEST
-> +       default ARCH_EXYNOS
->         select EXYNOS_ASV_ARM if ARM && ARCH_EXYNOS
->         select MFD_SYSCON
->         select SOC_BUS
-> --
-> 2.30.2
->
+On Fri, Oct 01, 2021 at 11:40:56AM +0200, Krzysztof Kozlowski wrote:
+
+> Merging/dependencies
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. Regulator related binding changes depend on first two commits (the
+>    fixes), because of context.
+> 2. The mfd bindings depend on clock and regulator bindings.
+>=20
+> The fixes and bindings changes (patches 1-10) should go via the same
+> tree.  For example regulator or mfd tree.  I propose the regulator tree,
+> since it will have also one driver change (the fix, first commit).
+
+Lee, Stephen, Michael does Krzysztof's plan make sense to you?
+
+--NHJ+x3vjgC+S2IOr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFcQbcACgkQJNaLcl1U
+h9B78Qf8DbtcL1OFNxmK5o5qziAQ7pj3GzOOi+h25mAQirGBLDoUxNGTTzs57/8f
+kSK2LEvstzQMBEUeZtXSOzhHzLjAGRahEWlwNLmYP/8hSAlY+y9VJCEBbYbeWnbl
+qm5Zy/rDqH8I9dKMWvTcMA6V2AfcGczQ6UnlObIdsO3+FYYRKvB9qxmQQaro8d8/
+s3Eq8je14T6lQ+AITujDiWEoxUzJsrPX8WxZQAiKjmJjl/RB/sjI8bN1i0UImjws
+IYvv3DYnFKTcyQzLXeBkstB/mmUaTAgdz9DzChh6j9StHXkI0h83/so2pp3Ys+09
+1mV23wOM9a2muVldboi23vvDpWBjSQ==
+=E3E1
+-----END PGP SIGNATURE-----
+
+--NHJ+x3vjgC+S2IOr--
