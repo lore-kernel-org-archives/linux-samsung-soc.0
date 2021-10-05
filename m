@@ -2,109 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF675C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 13:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78F9C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 16:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEC556138F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 13:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 895C661354
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 16:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234170AbhJENQy (ORCPT
+        id S236348AbhJEQKO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Oct 2021 09:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55612 "EHLO
+        Tue, 5 Oct 2021 12:10:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234825AbhJENQy (ORCPT
+        with ESMTP id S234539AbhJEQKN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Oct 2021 09:16:54 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AAF8C061755
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 06:15:03 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id v17so37251753wrv.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 06:15:03 -0700 (PDT)
+        Tue, 5 Oct 2021 12:10:13 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 509E5C061749
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 09:08:22 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id g41so88088135lfv.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 09:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=C7t36aQJ/HdVD4haldIX8sv1hXdH5zMENhm9qykkDX0=;
-        b=u/W41neVt5urYn/aY5Lkl4TT8qiB8LAHeqCJ1PtTbbe+W7kGbk1QoUtfLs5mDnG9TQ
-         Jj1ySQu0udLwMDJ4GpmxcQqsmCEnTMqFD0kd0y9PgA3xRWiGHvwk0uTovGmPoju5mQth
-         Q9DCqXk4Eo/lldLxH6LsZtKnqKTMeH3Bmm7cttIylM5HawltyfbY7gqkuuu0kbVn7waY
-         ToFLue9dvcQfauTseB+5VSd0jXUYFx2gRrUNTtsmk6fX9Ha4G6XOIGwrdwaAj5NxmSL8
-         xrLoK2hn4K6oJ3cpfEUc1CVG+qvFLKnJVlA4Y68fC07b7PitzDR+U4e8gcloSFlZSxkh
-         Kyuw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dzfx3fsRo7F5xw3fHSg8nKJV024hLxYFAlzOMQp4+E4=;
+        b=uFqA5Cc3evmiBrUl9z6ToXQIVBU296s5VunLco/GeXPzwXHxuPpMdOxZBBU7FsQwzb
+         ohznDJht5Qkj9hI2kFgCESrzSMkuWoMc90R6zOxOlAA2xntHYdgt90DkQVT5LQ8qb588
+         yeaPyQhKooeku/8QQQEEN67WGwghh7Y3uBzNWseOHcM4GkhJ7PxJERPwq8fjoQgRjhKu
+         ektxYB62gxECriYpa30+gxG5IcaPhA8YZ6wowtlTqeamGaePiWoxBgyJjGgLIysYZXUa
+         yUCFn8xxFpTQScVpxMRkJM2ZQ7x9YmbSz3Ut/7OJ3qYgAhFiQhHy8Zv0Z/J+7G8gKW2K
+         wx0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=C7t36aQJ/HdVD4haldIX8sv1hXdH5zMENhm9qykkDX0=;
-        b=Pq2zi6oytfgbP6cMg5fUcRDx8tBi/7PwttdTjPEcxUTgEG9PkYZenLsf9txemHQvyc
-         iYqlUzsr08Fk9q2lMHLMun2LyakSDaMS7AypX0Wg0urv0nOcCcSmSg8sh8UiD0ky2WQH
-         rIZZU6t5GRV91MVKSd5A9vj4Qml34zZPm8YxPsnbikbNCkQvLS1s9hhQLFy3u5MRnKZ/
-         iXUAfZtJCaYx666Kb0qSTK8Q4xJCk+jqepNbIzPdQdMmGKV9BWISNeOKmn/vkZa3MxDo
-         wPkeazsXsjoUUDBbVWNqFBZ8tkFXZaA0FLQIv+/FASOJmirPsDF8a9FP9+UoXxCLhGWo
-         JOWQ==
-X-Gm-Message-State: AOAM532HGtJIsLq0clz/EcVgIBqX3fcvioPz6i298Z8olqGY7/LY6aTN
-        vvFdkJqFOXBeN+4bYIxU4j1mKw==
-X-Google-Smtp-Source: ABdhPJx+AvsAM1xJpR4F7gOV4Bz1IXec3HMpD2aJxgbeZYeQpGFuhMEfzND1sQXGP/vcePMxxmG4qg==
-X-Received: by 2002:a5d:64ca:: with SMTP id f10mr21231328wri.93.1633439701937;
-        Tue, 05 Oct 2021 06:15:01 -0700 (PDT)
-Received: from google.com ([95.148.6.175])
-        by smtp.gmail.com with ESMTPSA id k18sm1171078wrn.81.2021.10.05.06.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 06:15:01 -0700 (PDT)
-Date:   Tue, 5 Oct 2021 14:14:59 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
- and S5M to dtschema
-Message-ID: <YVxP0+kVxI0xQmQQ@google.com>
-References: <20211001094106.52412-1-krzysztof.kozlowski@canonical.com>
- <YVxBuEvHVdyDvaGD@sirena.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dzfx3fsRo7F5xw3fHSg8nKJV024hLxYFAlzOMQp4+E4=;
+        b=YPcOiqR98O23ttqzciXMtDVbypnqtJDUX0DT9K5Nno7Hw289xLArUAAt8WvXaZUYEv
+         8U+w1GxI34aFJslpXb+jA4u43vfE3ePns0nYpco6TbGUJUbfBFzMH1/2PCa0QR2K6qRM
+         NneJq6R0Y0s2i3nPOs8udLr2Uq5y4oFOlTnPK1cSTqUVrlm0GGlVVDXabds1sBm6IbRU
+         7Vlqb+9gHMS2GnOleYf/+U63DKyFhvHg7LUcB/22a5oRltw1N89WXrpKR4CfXG2Y2zg1
+         7RX6ZjZM5X6xQHPMczj6T9vVLzpvXiSj21ctdOfqDMBDVN8XccGmh68KwgHC40DJv2We
+         pQzw==
+X-Gm-Message-State: AOAM531fkzhna7viCpePTITtLmmwmU1yu8rtxfaOUB8ftKFjh0OJjANa
+        6E/A5OPp74wmMY6LUInB4bfpu33XbVs5yCPFWfqwBw==
+X-Google-Smtp-Source: ABdhPJwnC31+Ik6u2dpcC0CWhMVXL1AHvSjtDIcmiq1/SWE794/6DgQfUSDzkEj3yIm9x+wD7DVu/FMKUe34DDg+Je4=
+X-Received: by 2002:a05:6512:10cc:: with SMTP id k12mr4520941lfg.72.1633450099935;
+ Tue, 05 Oct 2021 09:08:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YVxBuEvHVdyDvaGD@sirena.org.uk>
+References: <20211005155923.173399-1-marcan@marcan.st> <20211005155923.173399-4-marcan@marcan.st>
+In-Reply-To: <20211005155923.173399-4-marcan@marcan.st>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 5 Oct 2021 18:08:08 +0200
+Message-ID: <CACRpkdanbovvXXLAGGZEEiKXXrNnW+8p1sCONQYWmAjVi-m-9A@mail.gmail.com>
+Subject: Re: [PATCH 3/7] soc: apple: Add driver for Apple PMGR power state controls
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 05 Oct 2021, Mark Brown wrote:
+Hi Hector,
 
-> On Fri, Oct 01, 2021 at 11:40:56AM +0200, Krzysztof Kozlowski wrote:
-> 
-> > Merging/dependencies
-> > ====================
-> > 1. Regulator related binding changes depend on first two commits (the
-> >    fixes), because of context.
-> > 2. The mfd bindings depend on clock and regulator bindings.
-> > 
-> > The fixes and bindings changes (patches 1-10) should go via the same
-> > tree.  For example regulator or mfd tree.  I propose the regulator tree,
-> > since it will have also one driver change (the fix, first commit).
-> 
-> Lee, Stephen, Michael does Krzysztof's plan make sense to you?
+On Tue, Oct 5, 2021 at 6:00 PM Hector Martin <marcan@marcan.st> wrote:
 
-I tend to take cross subsystem patches.  MFD is usually in the centre
-of these scenarios and I have tooling to easily set-up immutable
-branches/pull-requests.
+>  drivers/soc/apple/Kconfig               |  21 ++
+>  drivers/soc/apple/Makefile              |   2 +
+>  drivers/soc/apple/apple-pmgr-pwrstate.c | 281 ++++++++++++++++++++++++
 
-Always happy to discuss if others have different/better ideas though.
+This is traditionally where we put the ARM SoC drivers, but
+Mac has traditionally used drivers/macintosh for their custom
+board etc stuff. Or is that just for any off-chip stuff?
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I suppose it doesn't matter much (unless there is code under
+drivers/macintosh we want to reuse for M1), but it could be a bit
+confusing?
+
+Yours,
+Linus Walleij
