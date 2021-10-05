@@ -2,298 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B19A0C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 11:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E98C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95B2F615E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 11:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0512613D5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233672AbhJELuc (ORCPT
+        id S233808AbhJEMFj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Oct 2021 07:50:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
+        Tue, 5 Oct 2021 08:05:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234437AbhJELua (ORCPT
+        with ESMTP id S230500AbhJEMFi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Oct 2021 07:50:30 -0400
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42779C061755
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 04:48:40 -0700 (PDT)
-Received: by mail-ua1-x936.google.com with SMTP id i8so14631138uae.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 04:48:40 -0700 (PDT)
+        Tue, 5 Oct 2021 08:05:38 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69679C06174E
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 05:03:48 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id g10so5845267vsb.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 05:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=w65gTJxFbz04XwSU8/KjiORdSOZVddCyDuIADwGWUVo=;
-        b=pVpIu+3+mS7gUHBUVpY693C3LuXW04O+gYVeyHbFPmO1aG6RSZTvqlaQ0v/3SGtMX5
-         fju5Vba9+it7sm7o8WdycLWAuF0te34boZFUYC74pmygqBhqkJd26jdWqQ+s87Fl0H1O
-         CRZ6JsLSqGL9N+GSXIfrMsOo8BWF2/njuMRD6VMJYcDVKueyzYTugNk+daStm2CxRTqG
-         zBP7PUDwwyYDSR2HWqvxGHcpyK+zWpos/zPG4L3MNANOPe2eYBYJ/29pJewVBCeV8sOx
-         7n7XbtL7JhEnTA6xakQWQGCoqhjXRY3RmE0b9yGrU48IS4Pa173eGCke1uQkUdKWeZg5
-         CA7Q==
+        bh=HqbKX+VNWiRtUH7hwIBdqXVzeWXo/aDW9j/mMe6CT9Q=;
+        b=Jxx52nQjwLKwrPqBK5J9SqX3ZpzNBu7vyOyPdeW82CnOQSqmG0hIH1TByL+Leycwup
+         XBWkH06NvGKXQQNai223elsh1KL6akW6OCQYempohuiwSEpdxtDVayFwGBAgoCpFRif1
+         KjKqA22rrpT32g7m5WSKcOJiUCpUkvH/FT4MYxS3475s4QuVy9xCAJvzfsBkIUDa2Dd8
+         IM76MjcI1JX8JJgSgh3vEuFn2Yo2H48DRKjUkzbLvapE4c4LFKX2e41Qc8uc9FZ9zB4c
+         Fa2Ml2CwlR6/n3p3aypY6V9b03+KPOb4rrQiNl+nssGzCeGPuvodSU9A9w1t1V9CLsMr
+         KI7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w65gTJxFbz04XwSU8/KjiORdSOZVddCyDuIADwGWUVo=;
-        b=lV/Cdannji1mJg98Mp+XSll8VbcZgbel9q5grjUgsclaVHXk97eS4uN+iWs58OjxGd
-         J9HIT/g9NhDfAGZNER18pLFWbVULqZf+UbQLJdGZ9kHSCDxb8q2uKK4AfGKlSJpkKjjb
-         UATKQsglXwGWta9897icJ7kgA/JVnGvHsKel0i+kPJ5Yc37XNBnG+IqQZQ9mc2yWKMMu
-         dXwuSWEEj1qvxHOxVKIglxpIdu2MSsqsrJF0Dj/it+vHVkMyXSZ7TUtD4jfFJ9xi80v6
-         2MKDzUWi5mAdxvUmoZnWcatoiTAj0+WjzHqrJoye616Bp9+xteVhAXc1ftM8l0FbD1KJ
-         9yDw==
-X-Gm-Message-State: AOAM531LGy0RXlPNbtjkYtQwZH9z18ELOqXWslqVKBjmPTx9KAvFndwx
-        poQ326yv6sP8iJZNEQVKVV8L5Hd5vTLvm9fmhe3Uyg==
-X-Google-Smtp-Source: ABdhPJw/I5mt3Hf/TSbz237Lk4ZVdt2chbbjsovFphVnPIQOclGA3DiQ//ElU7McIxpgXpURCPqlh/fpctCt1JhFbQk=
-X-Received: by 2002:ab0:208b:: with SMTP id r11mr1074086uak.104.1633434519318;
- Tue, 05 Oct 2021 04:48:39 -0700 (PDT)
+        bh=HqbKX+VNWiRtUH7hwIBdqXVzeWXo/aDW9j/mMe6CT9Q=;
+        b=7/y3d4Yaa08FSjgsRcpkBdHi7sfGmybW+wDXnt0xd9PcV5w7ptpy9wfmxxeCKGnaMo
+         epSDl12qzknkVjX5UE8hAngMyyU8ew+dUKtNa1Pva22t8A8aDTduA2wXyG/V3Kddvl4n
+         D3AtLYNxc3SlvIAhjsE0KWJLImMK/uWhjtG518Zhj46Gox8Rl2y2vIxoCj5jt52nAbqi
+         Qu0XliQAjr0QQ3d2cgqgH2nXmp/9OIJYGYY3uq0uhD8yh8Z83wLmRyYoUuffH2kV/mKC
+         EwPHObnLs2uUeC2d/R53Qz/2GhV8K6OSV6SfgY0q5ntlIDY+rfTrmjAHtV+8/G+j/VhJ
+         tomQ==
+X-Gm-Message-State: AOAM530YkIg/SVt8iL4DMeb3qWQK7BFyqlb6uG8qmWLdhwNr1lTm71++
+        y2J2yzjM9L5TkHREDberU0ltvc6H9HZDkVbzGpWadg==
+X-Google-Smtp-Source: ABdhPJza1u3lC+ZNbsp5i9/gcvrItb0CCbFgI4/IPF66MKhw0dUbPR0x2t27G0thTcZVDx5m2/P9sFyOeuf5o6HYyDY=
+X-Received: by 2002:a67:d289:: with SMTP id z9mr8927314vsi.39.1633435427435;
+ Tue, 05 Oct 2021 05:03:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210914155607.14122-1-semen.protsenko@linaro.org>
- <20210914155607.14122-6-semen.protsenko@linaro.org> <b7fd881e-b027-fb87-3740-69cf00f795c0@canonical.com>
-In-Reply-To: <b7fd881e-b027-fb87-3740-69cf00f795c0@canonical.com>
+References: <20210917175134.252882-1-krzysztof.kozlowski@canonical.com> <20210917175134.252882-3-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210917175134.252882-3-krzysztof.kozlowski@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 5 Oct 2021 14:48:27 +0300
-Message-ID: <CAPLW+4nSSQ3uR+ojzd=Ab6qQzXLxdLvBdwLgSHynXCLat30rvg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] dt-bindings: clock: Document Exynos850 CMU bindings
+Date:   Tue, 5 Oct 2021 15:03:35 +0300
+Message-ID: <CAPLW+4mweQxF38hZZQHQR6JXpoMfQyu2AUX+r8xFvN_vj=ALGQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: samsung: exynos-chipid: convert to a module
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 15 Sept 2021 at 11:28, Krzysztof Kozlowski
+On Fri, 17 Sept 2021 at 20:51, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> On 14/09/2021 17:56, Sam Protsenko wrote:
-> > Provide dt-schema documentation for Exynos850 SoC clock controller.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  .../clock/samsung,exynos850-clock.yaml        | 190 ++++++++++++++++++
-> >  1 file changed, 190 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> > new file mode 100644
-> > index 000000000000..b69ba4125421
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-> > @@ -0,0 +1,190 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/samsung,exynos850-clock.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Samsung Exynos850 SoC clock controller
-> > +
-> > +maintainers:
-> > +  - Sam Protsenko <semen.protsenko@linaro.org>
-> > +  - Chanwoo Choi <cw00.choi@samsung.com>
-> > +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > +  - Tomasz Figa <tomasz.figa@gmail.com>
-> > +
-> > +description: |
-> > +  Exynos850 clock controller is comprised of several CMU units, generating
-> > +  clocks for different domains. Those CMU units are modeled as separate device
-> > +  tree nodes, and might depend on each other. Root clocks in that clock tree are
-> > +  two external clocks:: OSCCLK (26 MHz) and RTCCLK (32768 Hz). Those external
-> > +  clocks must be defined as fixed-rate clocks in dts.
-> > +
-> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
-> > +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
-> > +
-> > +  Each clock is assigned an identifier and client nodes can use this identifier
-> > +  to specify the clock which they consume. All clocks that available for usage
-> > +  in clock consumer nodes are defined as preprocessor macros in
-> > +  'dt-bindings/clock/exynos850.h' header.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - samsung,exynos850-cmu-top
-> > +      - samsung,exynos850-cmu-core
-> > +      - samsung,exynos850-cmu-hsi
-> > +      - samsung,exynos850-cmu-peri
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 5
-> > +
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 5
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: samsung,exynos850-cmu-top
-> > +
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: External reference clock (26 MHz)
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: oscclk
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: samsung,exynos850-cmu-core
-> > +
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: External reference clock (26 MHz)
-> > +            - description: CMU_CORE bus clock (from CMU_TOP)
-> > +            - description: CCI clock (from CMU_TOP)
-> > +            - description: eMMC clock (from CMU_TOP)
-> > +            - description: SSS clock (from CMU_TOP)
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: oscclk
-> > +            - const: dout_core_bus
-> > +            - const: dout_core_cci
-> > +            - const: dout_core_mmc_embd
-> > +            - const: dout_core_sss
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: samsung,exynos850-cmu-hsi
-> > +
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: External reference clock (26 MHz)
-> > +            - description: External RTC clock (32768 Hz)
-> > +            - description: CMU_HSI bus clock (from CMU_TOP)
-> > +            - description: SD card clock (from CMU_TOP)
-> > +            - description: "USB 2.0 DRD clock (from CMU_TOP)"
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: oscclk
-> > +            - const: rtcclk
-> > +            - const: dout_hsi_bus
-> > +            - const: dout_hsi_mmc_card
-> > +            - const: dout_hsi_usb20drd
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: samsung,exynos850-cmu-peri
-> > +
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: External reference clock (26 MHz)
-> > +            - description: CMU_PERI bus clock (from CMU_TOP)
-> > +            - description: UART clock (from CMU_TOP)
-> > +            - description: Parent clock for HSI2C and SPI (from CMU_TOP)
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: oscclk
-> > +            - const: dout_peri_bus
-> > +            - const: dout_peri_uart
-> > +            - const: dout_peri_ip
-> > +
-> > +required:
-> > +  - compatible
-> > +  - "#clock-cells"
-> > +  - clocks
-> > +  - clock-names
-> > +  - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  # Clock controller node for CMU_PERI
-> > +  - |
-> > +    #include <dt-bindings/clock/exynos850.h>
-> > +
-> > +    cmu_peri: clock-controller@10030000 {
-> > +        compatible = "samsung,exynos850-cmu-peri";
-> > +        reg = <0x10030000 0x8000>;
-> > +        #clock-cells = <1>;
-> > +
-> > +        clocks = <&oscclk>, <&cmu_top DOUT_PERI_BUS>,
-> > +                 <&cmu_top DOUT_PERI_UART>,
-> > +                 <&cmu_top DOUT_PERI_IP>;
-> > +        clock-names = "oscclk", "dout_peri_bus",
-> > +                      "dout_peri_uart", "dout_peri_ip";
-> > +    };
-> > +
-> > +  # External reference clock (should be provided in particular board DTS)
-> > +  - |
-> > +    oscclk: clock-oscclk {
-> > +        compatible = "fixed-clock";
-> > +        #clock-cells = <0>;
-> > +        clock-output-names = "oscclk";
-> > +        clock-frequency = <26000000>;
-> > +    };
+> Exynos ChipID and ASV (Adaptive Supply Voltage) driver is not essential
+> to system boot and it can successfully be built and loaded as module.
 >
-> Skip ossclk - it's trivial and not related to these bindings.
+> This makes core kernel image smaller and reduces the memory footprint
+> when multi-platform kernel is booted on non-Exynos board.  Usually it is
+> also distro-friendly.
 >
-> > +
-> > +  # UART controller node that consumes the clock generated by CMU_PERI
-> > +  - |
-> > +    #include <dt-bindings/clock/exynos850.h>
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    serial_0: serial@13820000 {
-> > +        compatible = "samsung,exynos850-uart";
-> > +        reg = <0x13820000 0x100>;
-> > +        interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-> > +        pinctrl-names = "default";
-> > +        pinctrl-0 = <&uart0_pins>;
-> > +        clocks = <&cmu_peri GOUT_UART_PCLK>, <&cmu_peri GOUT_UART_IPCLK>;
-> > +        clock-names = "uart", "clk_uart_baud0";
+> Add multiple authors of the driver since its conversion from
+> mach-exynos, ordered alphabetically by first name.
 >
-> The same, skip it because it is trivial and common with all clock providers.
->
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
 
-Sure, will do in v2.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-> Also Rob's robot checker complains about it.
+>  drivers/soc/samsung/Kconfig          |  3 ++-
+>  drivers/soc/samsung/Makefile         |  3 ++-
+>  drivers/soc/samsung/exynos-chipid.c  | 11 ++++++++++-
+>  drivers/soc/samsung/exynos5422-asv.c |  1 +
+>  4 files changed, 15 insertions(+), 3 deletions(-)
 >
-> Best regards,
-> Krzysztof
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 1f643c0f5c93..fe139f26d093 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -13,13 +13,14 @@ config EXYNOS_ASV_ARM
+>         depends on EXYNOS_CHIPID
+>
+>  config EXYNOS_CHIPID
+> -       bool "Exynos ChipID controller and ASV driver" if COMPILE_TEST
+> +       tristate "Exynos ChipID controller and ASV driver" if COMPILE_TEST
+>         depends on ARCH_EXYNOS || COMPILE_TEST
+>         select EXYNOS_ASV_ARM if ARM && ARCH_EXYNOS
+>         select MFD_SYSCON
+>         select SOC_BUS
+>         help
+>           Support for Samsung Exynos SoC ChipID and Adaptive Supply Voltage.
+> +         This driver can also be built as module (exynos_chipid).
+>
+>  config EXYNOS_PMU
+>         bool "Exynos PMU controller driver" if COMPILE_TEST
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 0c523a8de4eb..2ae4bea804cf 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -1,8 +1,9 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>
+>  obj-$(CONFIG_EXYNOS_ASV_ARM)   += exynos5422-asv.o
+> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos_chipid.o
+> +exynos_chipid-y                        += exynos-chipid.o exynos-asv.o
+>
+> -obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o exynos-asv.o
+>  obj-$(CONFIG_EXYNOS_PMU)       += exynos-pmu.o
+>
+>  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   += exynos3250-pmu.o exynos4-pmu.o \
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> index 5c1d0f97f766..5e8c957231ff 100644
+> --- a/drivers/soc/samsung/exynos-chipid.c
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/device.h>
+>  #include <linux/errno.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+> @@ -129,6 +130,7 @@ static const struct of_device_id exynos_chipid_of_device_ids[] = {
+>         { .compatible = "samsung,exynos4210-chipid" },
+>         {}
+>  };
+> +MODULE_DEVICE_TABLE(of, exynos_chipid_of_device_ids);
+>
+>  static struct platform_driver exynos_chipid_driver = {
+>         .driver = {
+> @@ -138,4 +140,11 @@ static struct platform_driver exynos_chipid_driver = {
+>         .probe  = exynos_chipid_probe,
+>         .remove = exynos_chipid_remove,
+>  };
+> -builtin_platform_driver(exynos_chipid_driver);
+> +module_platform_driver(exynos_chipid_driver);
+> +
+> +MODULE_DESCRIPTION("Samsung Exynos ChipID controller and ASV driver");
+
+Just curious, how exactly ASV is related to chip-id driver?
+
+> +MODULE_AUTHOR("Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>");
+> +MODULE_AUTHOR("Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>");
+> +MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
+> +MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/soc/samsung/exynos5422-asv.c b/drivers/soc/samsung/exynos5422-asv.c
+> index ca409a976e34..475ae5276529 100644
+> --- a/drivers/soc/samsung/exynos5422-asv.c
+> +++ b/drivers/soc/samsung/exynos5422-asv.c
+> @@ -503,3 +503,4 @@ int exynos5422_asv_init(struct exynos_asv *asv)
+>
+>         return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(exynos5422_asv_init);
+> --
+> 2.30.2
+>
