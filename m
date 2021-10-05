@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8A8C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A892C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E845761507
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CA5361502
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 12:10:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234639AbhJEMJa (ORCPT
+        id S234572AbhJEMMi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Oct 2021 08:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39580 "EHLO
+        Tue, 5 Oct 2021 08:12:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234628AbhJEMJ2 (ORCPT
+        with ESMTP id S234388AbhJEMMh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Oct 2021 08:09:28 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DF34C06174E
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 05:07:37 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id 66so7079560vsd.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 05:07:37 -0700 (PDT)
+        Tue, 5 Oct 2021 08:12:37 -0400
+Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38964C061749
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Oct 2021 05:10:47 -0700 (PDT)
+Received: by mail-vs1-xe2d.google.com with SMTP id f2so22485244vsj.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2021 05:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NMod5kv6mgBP+Lyuh+sVjFWXXjpByRzbJbxi4k3EgsI=;
-        b=dKw9bQhzayOGjFRE3NoOdUQWH6uCbVW9FfwtlS53KSymDvI19CKdfrKmX4kio/TAU3
-         0Jn5zcm9ITLezTMjCY2YQTAceLs8c56SZI+78Kub+aBf9DKi3Nt1doq4P9JblkI+hFGz
-         pD8HBW34/F8SanhmG42y2fvoUu/6vjVDcQp2GZLaYh8avPeeXo9VgiPa7jVn6kMBsWd9
-         doCLBRX4X4bZeG1E7J1yT0saKVyTFjN1i165ZKVdyySLsB1iNUaVpwrKPhUQdnszS4gM
-         hN8JpbHN7UxS2XE9SceLySXOouV4JQf93DgjMpdy9L290wcId5KJ9ob5cQanl36JWBJo
-         U19Q==
+        bh=a+FpzWH2ZIdZS8P9itXj17dRdXa9ruIevTcz0+5q7b4=;
+        b=aEQ2lypF9WQGoGPdcJLUpnDkTaoqHtURxtHwBWjypLxQS8mzf1Yhik2f1k4oyyevB+
+         v5JWYANFC7eDUs2ckJJj+NPbd6QMWEmrQXkJ1R7I1U1/q5IjAxzXMuVLB4wkZXQ3ad27
+         h3RiUotm3GY8rlULHtMoBV24PMHZGcA3nCAAd7b5zurKu+MCtR0RfEE90U1PODP6QwIJ
+         GVcGhoG9UnAjRZrdu636fj3X49dKe94ShjN4rdcakPLQrDPU6Bcyae2uI4hkNkVkbSLc
+         ZnIWqtI3yOPnGq17eny2S1CdLo8I8MJSIuyVoC3jgKRXZjPWCpxD9kwiIA6QzdYgEzEJ
+         G2fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NMod5kv6mgBP+Lyuh+sVjFWXXjpByRzbJbxi4k3EgsI=;
-        b=VGvZoYTZWXVGNU8RLWEnvbt8Qeue7rsEYJjDDThvznEGEERr5FZIgTJ+HQt6iAgm8C
-         LflU7633hlS3vZwb3ZBiKMFFx9WLV8Q8GdQLeLY+a1psncyb3rgreI86GB1BMftOql8S
-         5rTuPGVOPmJ8Kx230s7t9tFf9Ey+9U8v0Q4uf+tY1PXDqlq8QMMv6urKYyCExmYe0Par
-         XdQPx/LwgHBm9YoDftMyFQoU2JYWQO8F9pVkHR2RyPp0Z0GxxqaVH3zhU+ZlESTXBJce
-         65r9q5Ua7cKtD2bpxLZerKUgnPg+XSWcL6DQEiLqfng+x/Gtd2PqGv01p+y2SygcTq5P
-         bz8g==
-X-Gm-Message-State: AOAM530V0dy8jAaIROstPf+P46boAHLbbUqCy/Pvlwonwdr9mG60CT8Z
-        DmgcwHLBh0TJXqDdqkJsvpss6CwJkdeNB7jTAQfK7A==
-X-Google-Smtp-Source: ABdhPJynizbQFCeZG9BwAOTaCKB+w3D26HKETWiOzcDEcyyn503ncEKZty/6FmuTlm97gQ7yAvJmmpNAZBJh/8IDf/E=
-X-Received: by 2002:a67:1781:: with SMTP id 123mr17925487vsx.1.1633435656646;
- Tue, 05 Oct 2021 05:07:36 -0700 (PDT)
+        bh=a+FpzWH2ZIdZS8P9itXj17dRdXa9ruIevTcz0+5q7b4=;
+        b=Sk6jChho5OlgEBj4mDRKXATE6gzMRU1UdWyzhgp4Te447wZBfCHd/Gj6HcqpE3FhMZ
+         n1RpFRo2TKGB7rxQ6Sul+9V/Uv26EKpccWBmNfybBBBz8Ocojvhr82JZy7Yd3vDNeJKJ
+         lCaDIZR8lbohbnVOWKLBnKUWu2nl2bC/OaVzoFTI/4UVP9++hilSOG2juonzEKZyHOiZ
+         eB7rz4q3DZVcjaCT0N09hNsP8vAYA/47n0g3M6uKDcK6p5bQe+J3apf6BakRlk5bXqlN
+         EMTNvFCR2g8l6JnkT0dVQ0j8FiBKAmSwCXhGZyzwIJdkkPNEu1TD3i4IYgNzcpmwf0cP
+         zqZw==
+X-Gm-Message-State: AOAM5300KlwpMV9dJPmwpElX1QIjXpiBsWnjz23OPtqJims32ViSsvGX
+        LlmivbdyHCeot1dphIimJA00PYp8JjuatAaMkAlHnA==
+X-Google-Smtp-Source: ABdhPJwQPm67yxGJ4FtMJNzBWUpDBn/qkdjLiKqVJgWGXq0/bbGz9rz8oI9e2wECpt3qr8rlikCAs/B7DNWrOT5XQuM=
+X-Received: by 2002:a67:1781:: with SMTP id 123mr17945675vsx.1.1633435846315;
+ Tue, 05 Oct 2021 05:10:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210919093114.35987-1-krzysztof.kozlowski@canonical.com> <20210919093114.35987-3-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20210919093114.35987-3-krzysztof.kozlowski@canonical.com>
+References: <20210919093114.35987-1-krzysztof.kozlowski@canonical.com> <20210919093114.35987-4-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20210919093114.35987-4-krzysztof.kozlowski@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 5 Oct 2021 15:07:25 +0300
-Message-ID: <CAPLW+4mf4cYEJHTuVoibVU8Wcr_2w5opJ3Jmc+a7HXnzDbo8Zg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] soc: samsung: exynos-chipid: convert to a module
+Date:   Tue, 5 Oct 2021 15:10:34 +0300
+Message-ID: <CAPLW+4=0K-BLGSR2O05OmRNaLuHaYandZBBUTRYm6-JnBT7QrA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] soc: samsung: exynos-chipid: do not enforce built-in
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
@@ -76,104 +76,48 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 On Sun, 19 Sept 2021 at 12:31, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> Exynos ChipID and ASV (Adaptive Supply Voltage) driver is not essential
-> to system boot and it can successfully be built and loaded as module.
->
-> This makes core kernel image smaller and reduces the memory footprint
-> when multi-platform kernel is booted on non-Exynos board.  Usually it is
-> also distro-friendly.
->
-> Add multiple authors of the driver since its conversion from
-> mach-exynos, ordered alphabetically by first name.
+> After converting the Exynos ChipID and ASV driver to a module, allow to
+> actually choose it to be a module, while being a default built-in.  The
+> side effect is that driver could be now entirely disabled even for
+> kernel with ARCH_EXYNOS, but this is not a critical issue because driver
+> is not necessary for the proper platform boot.
 >
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
->  drivers/soc/samsung/Kconfig          |  3 ++-
->  drivers/soc/samsung/Makefile         |  3 ++-
->  drivers/soc/samsung/exynos-chipid.c  | 11 ++++++++++-
->  drivers/soc/samsung/exynos5422-asv.c |  1 +
->  4 files changed, 15 insertions(+), 3 deletions(-)
+>  arch/arm/mach-exynos/Kconfig | 1 -
+>  drivers/soc/samsung/Kconfig  | 3 ++-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 >
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 5a48abac6af4..30f930e20599 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -13,7 +13,6 @@ menuconfig ARCH_EXYNOS
+>         select ARM_GIC
+>         select EXYNOS_IRQ_COMBINER
+>         select COMMON_CLK_SAMSUNG
+> -       select EXYNOS_CHIPID
+>         select EXYNOS_THERMAL
+>         select EXYNOS_PMU
+>         select EXYNOS_SROM
 > diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> index 1f643c0f5c93..fe139f26d093 100644
+> index fe139f26d093..e2cedef1e8d1 100644
 > --- a/drivers/soc/samsung/Kconfig
 > +++ b/drivers/soc/samsung/Kconfig
-> @@ -13,13 +13,14 @@ config EXYNOS_ASV_ARM
+> @@ -13,8 +13,9 @@ config EXYNOS_ASV_ARM
 >         depends on EXYNOS_CHIPID
 >
 >  config EXYNOS_CHIPID
-> -       bool "Exynos ChipID controller and ASV driver" if COMPILE_TEST
-> +       tristate "Exynos ChipID controller and ASV driver" if COMPILE_TEST
+> -       tristate "Exynos ChipID controller and ASV driver" if COMPILE_TEST
+> +       tristate "Exynos ChipID controller and ASV driver"
 >         depends on ARCH_EXYNOS || COMPILE_TEST
+> +       default ARCH_EXYNOS
 >         select EXYNOS_ASV_ARM if ARM && ARCH_EXYNOS
 >         select MFD_SYSCON
 >         select SOC_BUS
->         help
->           Support for Samsung Exynos SoC ChipID and Adaptive Supply Voltage.
-> +         This driver can also be built as module (exynos_chipid).
->
->  config EXYNOS_PMU
->         bool "Exynos PMU controller driver" if COMPILE_TEST
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index 0c523a8de4eb..2ae4bea804cf 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -1,8 +1,9 @@
->  # SPDX-License-Identifier: GPL-2.0
->
->  obj-$(CONFIG_EXYNOS_ASV_ARM)   += exynos5422-asv.o
-> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos_chipid.o
-> +exynos_chipid-y                        += exynos-chipid.o exynos-asv.o
->
-> -obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o exynos-asv.o
->  obj-$(CONFIG_EXYNOS_PMU)       += exynos-pmu.o
->
->  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   += exynos3250-pmu.o exynos4-pmu.o \
-> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-> index dcd9a08ce706..b2627a3a127a 100644
-> --- a/drivers/soc/samsung/exynos-chipid.c
-> +++ b/drivers/soc/samsung/exynos-chipid.c
-> @@ -15,6 +15,7 @@
->  #include <linux/device.h>
->  #include <linux/errno.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> @@ -128,6 +129,7 @@ static const struct of_device_id exynos_chipid_of_device_ids[] = {
->         { .compatible = "samsung,exynos4210-chipid" },
->         {}
->  };
-> +MODULE_DEVICE_TABLE(of, exynos_chipid_of_device_ids);
->
->  static struct platform_driver exynos_chipid_driver = {
->         .driver = {
-> @@ -137,4 +139,11 @@ static struct platform_driver exynos_chipid_driver = {
->         .probe  = exynos_chipid_probe,
->         .remove = exynos_chipid_remove,
->  };
-> -builtin_platform_driver(exynos_chipid_driver);
-> +module_platform_driver(exynos_chipid_driver);
-> +
-> +MODULE_DESCRIPTION("Samsung Exynos ChipID controller and ASV driver");
-> +MODULE_AUTHOR("Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>");
-> +MODULE_AUTHOR("Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>");
-> +MODULE_AUTHOR("Pankaj Dubey <pankaj.dubey@samsung.com>");
-> +MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/soc/samsung/exynos5422-asv.c b/drivers/soc/samsung/exynos5422-asv.c
-> index ca409a976e34..475ae5276529 100644
-> --- a/drivers/soc/samsung/exynos5422-asv.c
-> +++ b/drivers/soc/samsung/exynos5422-asv.c
-> @@ -503,3 +503,4 @@ int exynos5422_asv_init(struct exynos_asv *asv)
->
->         return 0;
->  }
-> +EXPORT_SYMBOL_GPL(exynos5422_asv_init);
 > --
 > 2.30.2
 >
