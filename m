@@ -2,31 +2,30 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E28C4707E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 16:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A47C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 16:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBC1E6137C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 16:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90C3561354
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Oct 2021 16:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236419AbhJEQLR (ORCPT
+        id S236428AbhJEQLS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Oct 2021 12:11:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41318 "EHLO
+        Tue, 5 Oct 2021 12:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234405AbhJEQLP (ORCPT
+        with ESMTP id S236399AbhJEQLR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Oct 2021 12:11:15 -0400
-X-Greylist: delayed 576 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Oct 2021 09:09:24 PDT
+        Tue, 5 Oct 2021 12:11:17 -0400
 Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2CAC06174E;
-        Tue,  5 Oct 2021 09:09:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55D09C061749;
+        Tue,  5 Oct 2021 09:09:26 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: hector@marcansoft.com)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 650CB41EA7;
-        Tue,  5 Oct 2021 15:59:46 +0000 (UTC)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 8840642481;
+        Tue,  5 Oct 2021 16:00:11 +0000 (UTC)
 From:   Hector Martin <marcan@marcan.st>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Hector Martin <marcan@marcan.st>, Marc Zyngier <maz@kernel.org>,
@@ -42,9 +41,9 @@ Cc:     Hector Martin <marcan@marcan.st>, Marc Zyngier <maz@kernel.org>,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-serial@vger.kernel.org
-Subject: [PATCH 1/7] dt-bindings: arm: apple: Add apple,pmgr binding
-Date:   Wed,  6 Oct 2021 00:59:17 +0900
-Message-Id: <20211005155923.173399-2-marcan@marcan.st>
+Subject: [PATCH 6/7] tty: serial: samsung_tty: Support runtime PM
+Date:   Wed,  6 Oct 2021 00:59:22 +0900
+Message-Id: <20211005155923.173399-7-marcan@marcan.st>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211005155923.173399-1-marcan@marcan.st>
 References: <20211005155923.173399-1-marcan@marcan.st>
@@ -54,116 +53,189 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The PMGR block in Apple Silicon SoCs is responsible for SoC power
-management. There are two PMGRs in T8103, with different register
-layouts but compatible registers. In order to support this as well
-as future SoC generations with backwards-compatible registers, we
-declare these blocks as syscons and bind to individual registers
-in child nodes. Each register controls one SoC device.
-
-The respective apple compatibles are defined in case device-specific
-quirks are necessary in the future, but currently these nodes are
-expected to be bound by the generic syscon driver.
+This allows idle UART devices to be suspended using the standard
+runtime-PM framework. The logic is modeled after stm32-usart.
 
 Signed-off-by: Hector Martin <marcan@marcan.st>
 ---
- .../bindings/arm/apple/apple,pmgr.yaml        | 74 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
+ drivers/tty/serial/samsung_tty.c | 88 ++++++++++++++++++++------------
+ 1 file changed, 54 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml b/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
-new file mode 100644
-index 000000000000..0304164e4140
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/apple/apple,pmgr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index e2f49863e9c2..d68e3341adc6 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -40,6 +40,7 @@
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
+ #include <linux/of.h>
++#include <linux/pm_runtime.h>
+ #include <asm/irq.h>
+ 
+ /* UART name and device definitions */
+@@ -1381,31 +1382,49 @@ static void exynos_usi_init(struct uart_port *port)
+ 
+ /* power power management control */
+ 
+-static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
+-			      unsigned int old)
++static int __maybe_unused s3c24xx_serial_runtime_suspend(struct device *dev)
+ {
++	struct uart_port *port = dev_get_drvdata(dev);
+ 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+ 	int timeout = 10000;
+ 
+-	ourport->pm_level = level;
++	while (--timeout && !s3c24xx_serial_txempty_nofifo(port))
++		udelay(100);
+ 
+-	switch (level) {
+-	case 3:
+-		while (--timeout && !s3c24xx_serial_txempty_nofifo(port))
+-			udelay(100);
++	if (!IS_ERR(ourport->baudclk))
++		clk_disable_unprepare(ourport->baudclk);
+ 
+-		if (!IS_ERR(ourport->baudclk))
+-			clk_disable_unprepare(ourport->baudclk);
++	clk_disable_unprepare(ourport->clk);
++	return 0;
++};
+ 
+-		clk_disable_unprepare(ourport->clk);
+-		break;
++static int __maybe_unused s3c24xx_serial_runtime_resume(struct device *dev)
++{
++	struct uart_port *port = dev_get_drvdata(dev);
++	struct s3c24xx_uart_port *ourport = to_ourport(port);
+ 
+-	case 0:
+-		clk_prepare_enable(ourport->clk);
++	clk_prepare_enable(ourport->clk);
+ 
+-		if (!IS_ERR(ourport->baudclk))
+-			clk_prepare_enable(ourport->baudclk);
++	if (!IS_ERR(ourport->baudclk))
++		clk_prepare_enable(ourport->baudclk);
++	return 0;
++};
 +
-+title: Apple SoC Power Manager (PMGR)
++static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
++			      unsigned int old)
++{
++	struct s3c24xx_uart_port *ourport = to_ourport(port);
 +
-+maintainers:
-+  - Hector Martin <marcan@marcan.st>
++	ourport->pm_level = level;
+ 
++	switch (level) {
++	case UART_PM_STATE_OFF:
++		pm_runtime_mark_last_busy(port->dev);
++		pm_runtime_put_sync(port->dev);
++		break;
 +
-+description: |
-+  Apple SoCs include a PMGR block responsible for power management,
-+  which can control various clocks, resets, power states, and
-+  performance features. This node represents the PMGR as a syscon,
-+  with sub-nodes representing individual features.
++	case UART_PM_STATE_ON:
++		pm_runtime_get_sync(port->dev);
+ 		exynos_usi_init(port);
+ 		break;
+ 	default:
+@@ -2282,18 +2301,15 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	pm_runtime_get_noresume(&pdev->dev);
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
 +
-+  Apple SoCs may have a secondary "mini-PMGR"; it is represented
-+  separately in the device tree, but works the same way.
+ 	dev_dbg(&pdev->dev, "%s: adding port\n", __func__);
+ 	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
+ 	platform_set_drvdata(pdev, &ourport->port);
+ 
+-	/*
+-	 * Deactivate the clock enabled in s3c24xx_serial_init_port here,
+-	 * so that a potential re-enablement through the pm-callback overlaps
+-	 * and keeps the clock enabled in this case.
+-	 */
+-	clk_disable_unprepare(ourport->clk);
+-	if (!IS_ERR(ourport->baudclk))
+-		clk_disable_unprepare(ourport->baudclk);
++	pm_runtime_put_sync(&pdev->dev);
+ 
+ 	ret = s3c24xx_serial_cpufreq_register(ourport);
+ 	if (ret < 0)
+@@ -2309,8 +2325,14 @@ static int s3c24xx_serial_remove(struct platform_device *dev)
+ 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
+ 
+ 	if (port) {
++		pm_runtime_get_sync(&dev->dev);
 +
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - apple,t8103-pmgr
-+          - apple,t8103-minipmgr
-+          - apple,pmgr
+ 		s3c24xx_serial_cpufreq_deregister(to_ourport(port));
+ 		uart_remove_one_port(&s3c24xx_uart_drv, port);
 +
-+  required:
-+    - compatible
++		pm_runtime_disable(&dev->dev);
++		pm_runtime_set_suspended(&dev->dev);
++		pm_runtime_put_noidle(&dev->dev);
+ 	}
+ 
+ 	uart_unregister_driver(&s3c24xx_uart_drv);
+@@ -2319,8 +2341,8 @@ static int s3c24xx_serial_remove(struct platform_device *dev)
+ }
+ 
+ /* UART power management code */
+-#ifdef CONFIG_PM_SLEEP
+-static int s3c24xx_serial_suspend(struct device *dev)
 +
-+properties:
-+  $nodename:
-+    pattern: "^power-management@[0-9a-f]+$"
-+
-+  compatible:
-+    items:
-+      - enum:
-+          - apple,t8103-pmgr
-+          - apple,t8103-minipmgr
-+      - const: apple,pmgr
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        power-management@23b700000 {
-+            compatible = "apple,t8103-pmgr", "apple,pmgr", "syscon", "simple-mfd";
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            reg = <0x2 0x3b700000 0x0 0x14000>;
-+        };
-+
-+        power-management@23b700000 {
-+            compatible = "apple,t8103-minipmgr", "apple,pmgr", "syscon", "simple-mfd";
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            reg = <0x2 0x3d280000 0x0 0xc000>;
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index abdcbcfef73d..d25598842d15 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1719,6 +1719,7 @@ B:	https://github.com/AsahiLinux/linux/issues
- C:	irc://irc.oftc.net/asahi-dev
- T:	git https://github.com/AsahiLinux/linux.git
- F:	Documentation/devicetree/bindings/arm/apple.yaml
-+F:	Documentation/devicetree/bindings/arm/apple/*
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	arch/arm64/boot/dts/apple/
++static int __maybe_unused s3c24xx_serial_suspend(struct device *dev)
+ {
+ 	struct uart_port *port = s3c24xx_dev_to_port(dev);
+ 
+@@ -2330,7 +2352,7 @@ static int s3c24xx_serial_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int s3c24xx_serial_resume(struct device *dev)
++static int __maybe_unused s3c24xx_serial_resume(struct device *dev)
+ {
+ 	struct uart_port *port = s3c24xx_dev_to_port(dev);
+ 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+@@ -2350,7 +2372,7 @@ static int s3c24xx_serial_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int s3c24xx_serial_resume_noirq(struct device *dev)
++static int __maybe_unused s3c24xx_serial_resume_noirq(struct device *dev)
+ {
+ 	struct uart_port *port = s3c24xx_dev_to_port(dev);
+ 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+@@ -2420,16 +2442,14 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops s3c24xx_serial_pm_ops = {
++#ifdef CONFIG_PM_SLEEP
+ 	.suspend = s3c24xx_serial_suspend,
+ 	.resume = s3c24xx_serial_resume,
+ 	.resume_noirq = s3c24xx_serial_resume_noirq,
++#endif
++	SET_RUNTIME_PM_OPS(s3c24xx_serial_runtime_suspend,
++			   s3c24xx_serial_runtime_resume, NULL)
+ };
+-#define SERIAL_SAMSUNG_PM_OPS	(&s3c24xx_serial_pm_ops)
+-
+-#else /* !CONFIG_PM_SLEEP */
+-
+-#define SERIAL_SAMSUNG_PM_OPS	NULL
+-#endif /* CONFIG_PM_SLEEP */
+ 
+ /* Console code */
+ 
+@@ -2924,7 +2944,7 @@ static struct platform_driver samsung_serial_driver = {
+ 	.id_table	= s3c24xx_serial_driver_ids,
+ 	.driver		= {
+ 		.name	= "samsung-uart",
+-		.pm	= SERIAL_SAMSUNG_PM_OPS,
++		.pm	= &s3c24xx_serial_pm_ops,
+ 		.of_match_table	= of_match_ptr(s3c24xx_uart_dt_match),
+ 	},
+ };
 -- 
 2.33.0
 
