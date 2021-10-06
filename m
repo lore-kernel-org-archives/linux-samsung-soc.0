@@ -2,89 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C31B2C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 16:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09DA9C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 19:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF29361215
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 16:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E326A6117A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 19:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239363AbhJFQNG (ORCPT
+        id S232060AbhJFTLq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Oct 2021 12:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33510 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239335AbhJFQNF (ORCPT
+        Wed, 6 Oct 2021 15:11:46 -0400
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:38738 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239343AbhJFTLp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Oct 2021 12:13:05 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637A7C061755;
-        Wed,  6 Oct 2021 09:11:13 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 1C27B41EA7;
-        Wed,  6 Oct 2021 16:11:06 +0000 (UTC)
-Subject: Re: [PATCH 3/7] soc: apple: Add driver for Apple PMGR power state
- controls
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marc Zyngier <maz@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-References: <20211005155923.173399-1-marcan@marcan.st>
- <20211005155923.173399-4-marcan@marcan.st>
- <59334bc1f64926f8106a9b1e885dd88971d34117.camel@pengutronix.de>
-From:   Hector Martin <marcan@marcan.st>
-Message-ID: <2f590036-52db-bcdc-571a-361dd8b8dc19@marcan.st>
-Date:   Thu, 7 Oct 2021 01:11:04 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 6 Oct 2021 15:11:45 -0400
+Received: by mail-ot1-f50.google.com with SMTP id c6-20020a9d2786000000b005471981d559so4406860otb.5;
+        Wed, 06 Oct 2021 12:09:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XXPzrlRNSvZUe4SiE0xybZeK1VafzSZG6M/PPM6Jsqc=;
+        b=0xr3aEcPAY0zJIjgCVOwSo8gUl1uZwEqsCarWnj22R2NOeNwm8nLzst+EhTcUTcy8d
+         m8ZFjzy7q4Yij0TbtFU4YIRmUtd4mxiVZKQDBT3ty2wYAvK7RU+3rndj3vmEfEvEyCZI
+         07EO3e5GFQM0nJL+iBTAslYetEKgkYAwjIdVe0hBmfAgBqjaA1KMA5CtrGnVf7zx34Sr
+         JfYkQhKWDc17coFuTe8OK3PwCJgVuPdZ8ywZS/Vj9yxMAOdWjEC3SIuh725i6us6ePeG
+         6f2ne/iaereFqkAU152EFONmVxdis/mx1v3OzaQB2tngH9EhrDAPWXQajrYwCLCLARqD
+         SMQw==
+X-Gm-Message-State: AOAM531u8OtrGYnPgfdelvgJSLE/ks+prdLQiFPjTkUrvTd1+6WAgSXR
+        9khRYmF8breI4ks4OE1YQA==
+X-Google-Smtp-Source: ABdhPJx15PPZ/Sp4jiguY2xyGQXBzop3CVtvzjN4FK7KhMUcxyeAfU1Rz92H7nLnJ0892+RoMu9+Fw==
+X-Received: by 2002:a05:6830:1513:: with SMTP id k19mr389585otp.41.1633547392838;
+        Wed, 06 Oct 2021 12:09:52 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id a9sm4279056otk.3.2021.10.06.12.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Oct 2021 12:09:52 -0700 (PDT)
+Received: (nullmailer pid 2227188 invoked by uid 1000);
+        Wed, 06 Oct 2021 19:09:51 -0000
+Date:   Wed, 6 Oct 2021 14:09:51 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 06/10] regulator: dt-bindings: samsung,s5m8767:
+ convert to dtschema
+Message-ID: <YV30fzEB/NlNhA+C@robh.at.kernel.org>
+References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
+ <20211006132324.76008-7-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <59334bc1f64926f8106a9b1e885dd88971d34117.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211006132324.76008-7-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/10/2021 18.24, Philipp Zabel wrote:
->> +static int apple_pmgr_reset_reset(struct reset_controller_dev *rcdev, unsigned long id)
->> +{
->> +	int ret;
->> +
->> +	ret = apple_pmgr_reset_assert(rcdev, id);
->> +	if (ret)
->> +		return ret;
->> +
->> +	usleep_range(APPLE_PMGR_RESET_TIME, 2 * APPLE_PMGR_RESET_TIME);
+On Wed, 06 Oct 2021 15:23:20 +0200, Krzysztof Kozlowski wrote:
+> Convert the regulators of Samsung S5M8767 PMIC to DT schema format.
 > 
-> Is this delay known to be long enough for all consumers using the
-> reset_control_reset() functionality? Are there any users at all?
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  .../bindings/regulator/samsung,s5m8767.txt    | 140 ------------------
+>  .../bindings/regulator/samsung,s5m8767.yaml   |  74 +++++++++
+>  MAINTAINERS                                   |   2 +-
+>  3 files changed, 75 insertions(+), 141 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
+>  create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
+> 
 
-I tested this for UART and ANS outside of Linux, and found that even 
-back to back register writes worked, so the 1us thing is already 
-conservative. I have no idea if we'll run into some weirdo block that 
-needs more time, though. If we do then this will have to be bumped or 
-turned into a property.
-
-> Is it ok for a genpd transition to happen during this sleep?
-
-I expect consumers to call reset while the device is active; it won't 
-even work without that, as the reset is synchronous and just doesn't 
-take effect while clock gated (at least for UART). See the dev_err()s 
-that fire when that happens.
-
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+Reviewed-by: Rob Herring <robh@kernel.org>
