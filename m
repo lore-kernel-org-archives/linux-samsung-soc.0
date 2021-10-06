@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22F6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 820D1C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB8D76115A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 708266113E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Oct 2021 13:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238569AbhJFN0G (ORCPT
+        id S238934AbhJFN0I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Oct 2021 09:26:06 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:37864
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238793AbhJFNZz (ORCPT
+        Wed, 6 Oct 2021 09:26:08 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51754
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238875AbhJFNZ4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Oct 2021 09:25:55 -0400
+        Wed, 6 Oct 2021 09:25:56 -0400
 Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9107B3FFE4
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Oct 2021 13:24:02 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5CEE13FFF5
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Oct 2021 13:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633526642;
-        bh=dPbx/8KTnDIjXlUljsgyPIndd3ltzWoSPxnPkixkLcA=;
+        s=20210705; t=1633526643;
+        bh=3lioRcCn3/5I7Byd/FEr0VTjZpCEaYjPURKLlNwW7t4=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=QEPK3PODXV8v3ZY1rRBpQr9S+ytSjT84+o5ogKdJWIWmTWWZ9p5a0KVIfEVAXvqiE
-         8SmUz+iaBr8z7u3OX+/0xuKAEZhfvIHwPusxCWsYPENm44ys8Z+0jy0Q4+hKbEVzcu
-         ocr9j3N0ST8IxVQo3hJmu7Z98DF56qzu7FBPIRFs3Po+tMfgRTxrTkYRrrVL0Qyt00
-         23EeJsPFvUeh/a2DbhL98C8A8RcyRtD4WWg9kfh5m+JMnjM1t7JKRHwsxGScnxh2xw
-         hGdNXsOTLBgwiImbWqId6i1Kn1t7hUCLHCMG9s68a5FxCi18WhF119XSi+Le0PkPMx
-         0qVpvLPwfYxgg==
-Received: by mail-lf1-f69.google.com with SMTP id bp11-20020a056512158b00b003fc7d722819so1995164lfb.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Oct 2021 06:24:02 -0700 (PDT)
+        b=r1eWgXa3APdCPGG4W7Ve9jB2tA56dtl8ZHU0Pjbh0iY3pieHPH9eONpQSVIewXLp8
+         7GjuqFx/jtQQivhGxTOkIOkQDTfpBncsN/6ipERkhKX1TuCDv2Lz4y0hFSKcte0e3B
+         GuMeHG0SpnBv+l0XhbFo97IBDV8mXPBZmWU4j0fa/x4zP1j5DgEmWGPEvLnzfYOcAN
+         k0wJQgu3a3blLugImxGjpzms/2QuwtZAA+Db4gHc+OBt6aEW9BB6XNSQWI63yJt02I
+         CAJA42OO+PPFZauDPaFPRjfy5Oix9km5vzuCXVYjubg60lKeuGsJWLvyQPHpNTAHxi
+         6EUK4NNpGv3vQ==
+Received: by mail-lf1-f69.google.com with SMTP id t14-20020ac24c0e000000b003fd392f9a5eso1970381lfq.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Oct 2021 06:24:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dPbx/8KTnDIjXlUljsgyPIndd3ltzWoSPxnPkixkLcA=;
-        b=pP5zSiDwGMmvLiRKWbz9MBARAlWActkpQFWY5WFit5bFRXCPWN2oyGQHquKvTEpkhu
-         wpZwxGeCKi3M5q9Odnh3rW0IyS0NMpY1Gw057QtUY1xWB62c8GVzXJSao+IGxjebxfe6
-         WODt3Y0ivI6sm2nb94o+RieGdrtHcOCG8I02Us8LEOUW4mxqe92vj+Jx1QWbYYJgeplG
-         /oK1QExstBMZXphrjJn+r7mPYbBaEWwXWAHRnUhwOvuuxKs0FaMSkaFN1RxvHB/VfLfw
-         VmNl5XDKt9vCn25F28Ebs4yhJfvF1umdGjd7x55y5xwvdRxgfNzf5YkbUY7v19lxYE8A
-         D7eQ==
-X-Gm-Message-State: AOAM533CuCUpvwEqGPZedkF+fGFT0xufuDGZB0KD1sUf6SNBWYxYwqmf
-        cyAFRtDi/ub3p7c2relelBmL7zdMBo0qINTmzbdwgxvEPfyFU8odWfUIl5EKR/jH8l1xIBqypJB
-        UPgCK6eM/S0UXwkJcVUJbW9giwMs5v/bTwGU8q3Go9IGuS/qc
-X-Received: by 2002:a05:6512:2625:: with SMTP id bt37mr9836398lfb.138.1633526641884;
-        Wed, 06 Oct 2021 06:24:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzkUZUJ4M1hszT+YuyspWj5jh2xn4+DUJA8NLpdPhMeyMYZzcDu2Upn1TN6D4bQjaFwmIIqZQ==
-X-Received: by 2002:a05:6512:2625:: with SMTP id bt37mr9836348lfb.138.1633526641272;
-        Wed, 06 Oct 2021 06:24:01 -0700 (PDT)
+        bh=3lioRcCn3/5I7Byd/FEr0VTjZpCEaYjPURKLlNwW7t4=;
+        b=gobA8C2KGO3CMOm+NYUWis8DCEZWD296Imaal+dql7Dl3KbOpi+JZH9QqlWrI2K90V
+         To/P0epWl+xeLI65bXRDV9r3Klk3ecln328evXHZ1/0kptwLamglbLWMSLqDiorV3Yim
+         NIhLJa3CiOU9LwnBusF6ZOTVygMuNuWHnf3/TU72zzTj7AjbDxt3UdZok10j66F30UOq
+         z0MOrXl6K88+qtoq2aqTF8fB6gEo8RWdFGFn98yShjURqiF/HgiSGoE4Kr6nQ6AK+Z0D
+         Zb0cKO5HfCqzOU6D8mxY5jfN5nEtttfi0J8GFkraxZxpohF5R/zOEt7kW/gYE7fI05f6
+         h5Rw==
+X-Gm-Message-State: AOAM533UOVtFZY8fMZjVJsAKbXe79ibR4Vf/jZ9mRMn4JE5zDqyB9MgZ
+        NS4J0WQkNHWnsF6EDbUrgihbiOIpHxZw/Hw1uSMa85YWefQ9jQy7aCCGLlgOGaX+gQ/qeAE4o/V
+        UNqEVPy/WxDwugJC2fNFznXMeMu+iR+D2NVzwxm5HDtIxShHY
+X-Received: by 2002:a05:651c:1792:: with SMTP id bn18mr30305326ljb.521.1633526642688;
+        Wed, 06 Oct 2021 06:24:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwnenvoq3tDN9Esj44Bs9yNQL95YRsv/Hr54UrHpzJFpiudu/3kvNFtA7qttRx9JwIFy+Tk9A==
+X-Received: by 2002:a05:651c:1792:: with SMTP id bn18mr30305298ljb.521.1633526642355;
+        Wed, 06 Oct 2021 06:24:02 -0700 (PDT)
 Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id y12sm2002819lfg.115.2021.10.06.06.24.00
+        by smtp.gmail.com with ESMTPSA id y12sm2002819lfg.115.2021.10.06.06.24.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 06:24:00 -0700 (PDT)
+        Wed, 06 Oct 2021 06:24:02 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -73,9 +73,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 Cc:     stable@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 01/10] regulator: s5m8767: do not use reset value as DVS voltage if GPIO DVS is disabled
-Date:   Wed,  6 Oct 2021 15:23:15 +0200
-Message-Id: <20211006132324.76008-2-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v3 02/10] regulator: dt-bindings: samsung,s5m8767: correct s5m8767,pmic-buck-default-dvs-idx property
+Date:   Wed,  6 Oct 2021 15:23:16 +0200
+Message-Id: <20211006132324.76008-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
 References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
@@ -85,111 +85,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The driver and its bindings, before commit 04f9f068a619 ("regulator:
-s5m8767: Modify parsing method of the voltage table of buck2/3/4") were
-requiring to provide at least one safe/default voltage for DVS registers
-if DVS GPIO is not being enabled.
-
-IOW, if s5m8767,pmic-buck2-uses-gpio-dvs is missing, the
-s5m8767,pmic-buck2-dvs-voltage should still be present and contain one
-voltage.
-
-This requirement was coming from driver behavior matching this condition
-(none of DVS GPIO is enabled): it was always initializing the DVS
-selector pins to 0 and keeping the DVS enable setting at reset value
-(enabled).  Therefore if none of DVS GPIO is enabled in devicetree,
-driver was configuring the first DVS voltage for buck[234].
-
-Mentioned commit 04f9f068a619 ("regulator: s5m8767: Modify parsing
-method of the voltage table of buck2/3/4") broke it because DVS voltage
-won't be parsed from devicetree if DVS GPIO is not enabled.  After the
-change, driver will configure bucks to use the register reset value as
-voltage which might have unpleasant effects.
-
-Fix this by relaxing the bindings constrain: if DVS GPIO is not enabled
-in devicetree (therefore DVS voltage is also not parsed), explicitly
-disable it.
+The driver was always parsing "s5m8767,pmic-buck-default-dvs-idx", not
+"s5m8767,pmic-buck234-default-dvs-idx".
 
 Cc: <stable@vger.kernel.org>
-Fixes: 04f9f068a619 ("regulator: s5m8767: Modify parsing method of the voltage table of buck2/3/4")
+Fixes: 26aec009f6b6 ("regulator: add device tree support for s5m8767")
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/regulator/samsung,s5m8767.txt    | 21 +++++++------------
- drivers/regulator/s5m8767.c                   | 21 ++++++++-----------
- 2 files changed, 17 insertions(+), 25 deletions(-)
+ Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-index 093edda0c8df..d9cff1614f7a 100644
+index d9cff1614f7a..6cd83d920155 100644
 --- a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
 +++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.txt
-@@ -13,6 +13,14 @@ common regulator binding documented in:
+@@ -39,7 +39,7 @@ Optional properties of the main device node (the parent!):
  
+ Additional properties required if either of the optional properties are used:
  
- Required properties of the main device node (the parent!):
-+ - s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's used
-+   for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio lines.
-+
-+ [1] If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
-+     property is specified, then all the eight voltage values for the
-+     's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
-+
-+Optional properties of the main device node (the parent!):
-  - s5m8767,pmic-buck2-dvs-voltage: A set of 8 voltage values in micro-volt (uV)
-    units for buck2 when changing voltage using gpio dvs. Refer to [1] below
-    for additional information.
-@@ -25,19 +33,6 @@ Required properties of the main device node (the parent!):
-    units for buck4 when changing voltage using gpio dvs. Refer to [1] below
-    for additional information.
- 
-- - s5m8767,pmic-buck-ds-gpios: GPIO specifiers for three host gpio's used
--   for selecting GPIO DVS lines. It is one-to-one mapped to dvs gpio lines.
--
-- [1] If none of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
--     property is specified, the 's5m8767,pmic-buck[2/3/4]-dvs-voltage'
--     property should specify atleast one voltage level (which would be a
--     safe operating voltage).
--
--     If either of the 's5m8767,pmic-buck[2/3/4]-uses-gpio-dvs' optional
--     property is specified, then all the eight voltage values for the
--     's5m8767,pmic-buck[2/3/4]-dvs-voltage' should be specified.
--
--Optional properties of the main device node (the parent!):
-  - s5m8767,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gpio dvs.
-  - s5m8767,pmic-buck3-uses-gpio-dvs: 'buck3' can be controlled by gpio dvs.
-  - s5m8767,pmic-buck4-uses-gpio-dvs: 'buck4' can be controlled by gpio dvs.
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 7c111bbdc2af..35269f998210 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -850,18 +850,15 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
- 	/* DS4 GPIO */
- 	gpio_direction_output(pdata->buck_ds[2], 0x0);
- 
--	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
--	   pdata->buck4_gpiodvs) {
--		regmap_update_bits(s5m8767->iodev->regmap_pmic,
--				S5M8767_REG_BUCK2CTRL, 1 << 1,
--				(pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
--		regmap_update_bits(s5m8767->iodev->regmap_pmic,
--				S5M8767_REG_BUCK3CTRL, 1 << 1,
--				(pdata->buck3_gpiodvs) ? (1 << 1) : (0 << 1));
--		regmap_update_bits(s5m8767->iodev->regmap_pmic,
--				S5M8767_REG_BUCK4CTRL, 1 << 1,
--				(pdata->buck4_gpiodvs) ? (1 << 1) : (0 << 1));
--	}
-+	regmap_update_bits(s5m8767->iodev->regmap_pmic,
-+			   S5M8767_REG_BUCK2CTRL, 1 << 1,
-+			   (pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
-+	regmap_update_bits(s5m8767->iodev->regmap_pmic,
-+			   S5M8767_REG_BUCK3CTRL, 1 << 1,
-+			   (pdata->buck3_gpiodvs) ? (1 << 1) : (0 << 1));
-+	regmap_update_bits(s5m8767->iodev->regmap_pmic,
-+			   S5M8767_REG_BUCK4CTRL, 1 << 1,
-+			   (pdata->buck4_gpiodvs) ? (1 << 1) : (0 << 1));
- 
- 	/* Initialize GPIO DVS registers */
- 	for (i = 0; i < 8; i++) {
+- - s5m8767,pmic-buck234-default-dvs-idx: Default voltage setting selected from
++ - s5m8767,pmic-buck-default-dvs-idx: Default voltage setting selected from
+    the possible 8 options selectable by the dvs gpios. The value of this
+    property should be between 0 and 7. If not specified or if out of range, the
+    default value of this property is set to 0.
 -- 
 2.30.2
 
