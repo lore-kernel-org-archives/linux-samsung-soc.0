@@ -2,195 +2,134 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32230C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 18:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6416C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 19:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0883861040
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 18:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC6D61038
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 19:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbhJGScq (ORCPT
+        id S232867AbhJGTnT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Oct 2021 14:32:46 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38250
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229511AbhJGScq (ORCPT
+        Thu, 7 Oct 2021 15:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232604AbhJGTnL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:32:46 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 55DFE3FFFD
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Oct 2021 18:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633631451;
-        bh=udvQb5YkJZw9BC1VpFEKFml8jvra6kBTS8xwiHMdWjo=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=PidBQAMKAqlqRGuycfRit5J9xXYiA/nbivBPe8xwK/0vJ6rX3lATVTM8NVfhXsDe2
-         d516+gs5IuCR+JyuoEgA6fSLW4fonQF6202cNhgDQslyyx/nwoLwcH24bt4uWbxeUn
-         YwgHykYX70QzRQh2s/k0dNM+f8mzhDWjGtKyxJDT1jx91aUUgmDsWq/T9h/E7Hsxr2
-         n/+kaEjlfeevta+jCQNBQXaXaYrwf6o/uA+laN5I7lnhr1ofdteks7Zbe0bZpfWMbU
-         p6qw9R3X8WiGRMOIi/wg3qYle/2fIbvwQ0eRcSaoCGcZFDgrjGZ2wKCPcoGE6t/cnM
-         l6Q9JjRnhehkw==
-Received: by mail-wr1-f71.google.com with SMTP id j19-20020adfb313000000b00160a9de13b3so5389904wrd.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Oct 2021 11:30:51 -0700 (PDT)
+        Thu, 7 Oct 2021 15:43:11 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E08CC061760
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Oct 2021 12:41:17 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id z11so21043594lfj.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Oct 2021 12:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WZ5raaSJ3Kh1m3565MHsi6//vzYo4hkeevp5MNSOJt4=;
+        b=AbO00kxEwuBcmi49QesZN1giMt72iFySJuAC6O7CpoMTKLLnWY/Sm5SunfqzMIKY5/
+         C1SG32C3bS0r14x8qS4oc8JtpiMTvT9heLEvBMaxgEfvnbQHsHeE13t2MINGg+TV7fg6
+         xUdfOK4wwvvDRZ8HAlBsXczfALPPImI5rYrLlXVx2UnKjCHfF+6ibK65xcAMpJv0y8Yv
+         dnf6Oo6uPsYNpHAmGfVrtfYY//4eknVUUwg0ddRACIFXA7Wci6Mwtsp+uIp7YH2ULlBJ
+         tSfK9kTpDB95S/BRzc6kfCntUuG5GrB98Em6b+GZipoJlmLithRsUAtMMglT4qt/RPq7
+         1Ung==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=udvQb5YkJZw9BC1VpFEKFml8jvra6kBTS8xwiHMdWjo=;
-        b=CBCIjMH8MHqv2k0R4hfPAeL5TPrQ/D69Q4+KLRpl7VQnlP9dxczNTPB9DFKeyvGIMP
-         2P+Mx1He2Z2z2e9s81ZZgeuQyFItGR1/Nj4KoYjSFg/QcLFTlfY5uL6LHS9RfyJ6wJbR
-         h/+0iRzne+PJiEK+44ReDd68UWtdUVhFCwK2x0ukY9E4wD81OnkWG8TF2+gm6qTwgndu
-         XYZ2u8OdzRaJR/XtJPSuuwy2o2RFqLT7ZTiR3WQlAHmQoT/zXDcApWTQtQF7NKaZetT4
-         IUzZ1FzRB59UT7gWXYEzMhGYhC2IYwFACwc/Hq0MZL/EMm7jLAK5KZrhQjd+NicI6CIy
-         lRvA==
-X-Gm-Message-State: AOAM530ueS08yappr+bBK6TQJ014RoHdiD9lMUQbpYCl4o8hsBPXNdLM
-        j9YMFzR1NGoVpBDt6WufX1B5GfEARQ/0W+OruqsXJp/IFjZ0N1OgUplWmm0X8p7OcviO3WrLluQ
-        T9w/klI90ZVLzRaqU1B+XNQ2Itv1nc4l9m24au8ZhUs/aBxN4
-X-Received: by 2002:a05:600c:198e:: with SMTP id t14mr6479271wmq.124.1633631451019;
-        Thu, 07 Oct 2021 11:30:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyT2n5BgOJPrzei+gD8cQeD3zwKMCoP1yPY+ofWDlle/pakNskAkBXVb2MkecmqRlMJyRGQpQ==
-X-Received: by 2002:a05:600c:198e:: with SMTP id t14mr6479248wmq.124.1633631450810;
-        Thu, 07 Oct 2021 11:30:50 -0700 (PDT)
-Received: from [192.168.1.24] (xdsl-188-155-186-13.adslplus.ch. [188.155.186.13])
-        by smtp.gmail.com with ESMTPSA id k17sm9578584wmj.0.2021.10.07.11.30.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Oct 2021 11:30:50 -0700 (PDT)
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        bh=WZ5raaSJ3Kh1m3565MHsi6//vzYo4hkeevp5MNSOJt4=;
+        b=DgoR30hn/lMx/QGIjfwxhG91BqDlSI3ZGLFyJZtWf/Ll0F4Uap5da+EEcpkJbCt7tJ
+         nN5l2iIs6Hy/33W8sBZXGur6VXL2M6itYdnxIfbMO3R67mOVd2JKaPSixBSh5Ewj3DhZ
+         bjW/dt+7TW2Ci3axHBgVaHn0DQjsYaW4/cnTSWxVEWo3gNs7H9I8iORC74lXt+0JR9iU
+         crNv+yELKo4YuSbp7yT4d0sOqi2SVh3QzpVrDo9YFEBW2oQdCEQGbWrSv4mK5elKyKhb
+         m3nueczS8fUfQHcZ2gcijc0rDvfIUCNBTu8kmd+ln+Hu8TQxCZSgA7zNhh/msh/o8gtF
+         JFhg==
+X-Gm-Message-State: AOAM533cgz/1oL7sLW5KvbkROA5+3llIR+r2bJk7GlkAFylIT9Nh17IY
+        M3sxlM9+T7ICggE7PW2LyV7G3g==
+X-Google-Smtp-Source: ABdhPJx72lBMBm4B023ZywQIdYifb6RLPIYCHYxT2sMbt3Qa4kMZYvce/V4Tfti1jFrhxzvQgWKFgA==
+X-Received: by 2002:a05:6512:13a5:: with SMTP id p37mr6066109lfa.403.1633635675174;
+        Thu, 07 Oct 2021 12:41:15 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id q8sm23879lfd.126.2021.10.07.12.41.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Oct 2021 12:41:14 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20211007120855.56555-1-chanho61.park@samsung.com>
- <CGME20211007121055epcas2p3257cda61bd7f28f8ac9f3ba126b8fd41@epcas2p3.samsung.com>
- <20211007120855.56555-4-chanho61.park@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: add minimal support for
- exynosautov9 sadk board
-Message-ID: <67df638a-5415-0107-1b83-287f0f871817@canonical.com>
-Date:   Thu, 7 Oct 2021 20:30:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 0/5] clk: samsung: Introduce Exynos850 SoC clock driver
+Date:   Thu,  7 Oct 2021 22:41:08 +0300
+Message-Id: <20211007194113.10507-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211007120855.56555-4-chanho61.park@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/10/2021 14:08, Chanho Park wrote:
-> SADK(Samsung Automotive Development Kit) is the development kit to
-> evaluate Exynos Auto v9 SoC. It has 16GB LPDDR4 DRAM and two
-> 256GB Samsung UFS. This patch enables only serial console and ufs0
-> device.
-> 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->  .../bindings/arm/samsung/samsung-boards.yaml  |  6 +++
->  .../boot/dts/exynos/exynosautov9-sadk.dts     | 52 +++++++++++++++++++
+This patch series provides the implementation for Exynos850 clock
+driver, its documentation and corresponding changes for Samsung clock
+infrastructure (adds new PLL types used in Exynos850 SoC, following
+TRM).
 
-You need also Makefile entry.
+I tried to follow already established design for Samsung clock drivers
+(getting most insights from Exynos5433 clock driver), and integrate the
+driver into existing infrastructure. The whole driver was implemented
+from scratch, using mostly TRM and downstream kernel for clock
+dependencies/hierarchy info.
 
->  2 files changed, 58 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index 0796f0c87727..2147e664d5bc 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -199,6 +199,12 @@ properties:
->                - samsung,exynos7-espresso        # Samsung Exynos7 Espresso
->            - const: samsung,exynos7
->  
-> +      - description: Exynos Auto v9 based boards
-> +        items:
-> +          - enum:
-> +              - samsung,samsung,exynosautov9-sadk   # Samsung Exynos Auto v9 SADK
+For now only basic clocks are implemented, including next blocks:
+  - CMU_TOP
+  - CMU_PERI
+  - CMU_CORE
+  - CMU_HSI
+  - CMU_DPU
 
-Double samsung.
+Some CMUs are still not implemented, but that can be added in future,
+when the need arises. The driver also lacks CLKOUT support, PM ops and
+automatic clocks control (using Q-Channel protocol). All that can be
+added independently later.
 
-> +          - const: samsung,exynosautov9
-> +
->  required:
->    - compatible
->  
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> new file mode 100644
-> index 000000000000..e59ef39a368f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> @@ -0,0 +1,52 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung ExynosAutov9 SADK board device tree source
+Implemented clock tree was tested via UART and MMC drivers, and using
+DebugFS clk support (e.g. using 'clk_summary' file). In order to keep
+all clocks running I added 'clk_ignore_unused' kernel param in my local
+tree, and defined CLOCK_ALLOW_WRITE_DEBUGFS in clk.c for actually
+testing the clocks via DebugFS.
 
-Any Copyrights? Not needed, just mentioning...
+Changes in v2:
+  - Added CMU_DPU implementation
+  - Moved bus clock enablement to clk-exynos850.c
+  - See also "v2 changes" list in each particular patch
 
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynosautov9.dtsi"
+Sam Protsenko (5):
+  clk: samsung: clk-pll: Implement pll0822x PLL type
+  clk: samsung: clk-pll: Implement pll0831x PLL type
+  dt-bindings: clock: Add bindings definitions for Exynos850 CMU
+  dt-bindings: clock: Document Exynos850 CMU bindings
+  clk: samsung: Introduce Exynos850 clock driver
 
-Include gpio.h here, because it is used. Probably you can also remove it
-from dtsi - I did not see it being used in there.
+ .../clock/samsung,exynos850-clock.yaml        | 185 ++++
+ drivers/clk/samsung/Makefile                  |   1 +
+ drivers/clk/samsung/clk-exynos850.c           | 835 ++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 | 196 ++++
+ drivers/clk/samsung/clk-pll.h                 |   2 +
+ include/dt-bindings/clock/exynos850.h         | 141 +++
+ 6 files changed, 1360 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos850.c
+ create mode 100644 include/dt-bindings/clock/exynos850.h
 
-> +
-> +/ {
-> +	model = "Samsung ExynosAutov9 SADK board";
-> +	compatible = "samsung,exynosautov9-sadk", "samsung,exynosautov9";
-> +
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	aliases {
-> +		serial0 = &serial_0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &serial_0;
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x0 0x77000000>,
-> +		      <0x8 0x80000000 0x1 0x7ba00000>,
-> +		      <0xa 0x00000000 0x2 0x00000000>;
-> +	};
-> +
-> +	ufs_0_fixed_vcc: fixedregulator@0 {
+-- 
+2.30.2
 
-Node name: "regulator" or "regulator-0" if you think you will have more
-of them.
-
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "ufs-vcc";
-> +		gpio = <&gpq0 1 GPIO_ACTIVE_HIGH>;
-> +		regulator-boot-on;
-> +		enable-active-high;
-> +	};
-> +};
-> +
-> +&serial_0 {
-> +	status = "okay";
-> +};
-> +
-> +&ufs_0_phy {
-> +	status = "okay";
-> +};
-> +
-> +&ufs_0 {
-> +	status = "okay";
-> +	vcc-supply = <&ufs_0_fixed_vcc>;
-> +	vcc-fixed-regulator;
-> +};
-> 
-
-
-Best regards,
-Krzysztof
