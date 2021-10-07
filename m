@@ -2,56 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E7DC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 19:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03375C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 19:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 182856128C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 19:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3EA760FC4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Oct 2021 19:41:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233546AbhJGTnV (ORCPT
+        id S240913AbhJGTnX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Oct 2021 15:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45818 "EHLO
+        Thu, 7 Oct 2021 15:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240659AbhJGTnP (ORCPT
+        with ESMTP id S240916AbhJGTnQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Oct 2021 15:43:15 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA3FC061762
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Oct 2021 12:41:20 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id i24so27974915lfj.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Oct 2021 12:41:20 -0700 (PDT)
+        Thu, 7 Oct 2021 15:43:16 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC85BC061760
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Oct 2021 12:41:21 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id n8so27620735lfk.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Oct 2021 12:41:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=szxH1FnfcHfKXdtE0K3unySFXk1kX+p4ZYvH7RQ+sno=;
-        b=pmapE8BcM9IcbxXcabEA81HjyNhL1LeYKC+1wU4C9hFMclfBhgQyXFuDFBY1aso3eW
-         Q/aocdYRTmP+SUMcJDJEtI4LhFQF98hQ+JNm/ExImAg6sXu4oCXPBO0NidkBbfy/uh41
-         J271ecpLK8FKPQEIVKcCzxbNzNdeGeP6+qBaIpx9Bv2UxnDw7beBVQScrEBQlJtNMZT2
-         IUyLa9fDq9rW3XFdU1Eboob0KQ0D3vt2A8q4ulxKvTZea6p5P/MfXcH//HmD/8on4UQl
-         B5LekOB5WLMn6IgF7BDYQKfyUJK4IHFqnQJVo/cs/27OKnQrkcKzBjdByGh5xvwMpLRv
-         zdTw==
+        bh=46iuhOb9uD5HMcYrx3e2dCS6IBSe8aDIKLjR7qB7Wnw=;
+        b=WTFx9T9C0qLb2ShAwHl4LdZ7kljyeIuarX39bl2xJ7vuEaerr9/CQiIKQ/S093wMmh
+         tMGnaeJd0uK/Jt81rt2S/mIyji6wlbGc41uFBGZVMskxD/WgYd2gWB7YqwsOuq3uSqJX
+         pB8jfxhU1mL7C3lw0sa/r6IJzv8dWIf/bxjKPv4gr6pfYOaOegpVSnyzqYiIPQmlJSaZ
+         h9kNstHPAacH9OkL5VX+f6G23ZuhfgTLFgUk6to6U+48KiVz6Djcsi4396LkvVvybA2r
+         PJimHajunXYEW7MKaEObuL96Msa66t1wnuRdGsv3WId0NJcMgGtHId6LcaE4FDCKlkgf
+         RJnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=szxH1FnfcHfKXdtE0K3unySFXk1kX+p4ZYvH7RQ+sno=;
-        b=4jRUPxjpwWN8rXvjEYyeXvMBiJP93Y7XJ5RdyEW9C9zAmQ9bBB/0zkChfvydotdXHN
-         Nd1TjVzznegpw+9mJbexqahZYhgHpM23PlJ8iRw6/8CFILIsqRZB5kYDuQGEvAYMfs7t
-         C1u2uexS5WqP0LHMM/IjXMqw0hFjtqjm+qKlrb4TWsFtSpN+hk3wGw7N64fYvvLFzuRt
-         L3DrfE8fbPvxm01EQEXQ1qYRKD27vdgIb/OpT0cAbFni1C2Uo+dBRuP4mOrtctxgy+PZ
-         BsChQxD/5DQVE5EqBXAbhYSyb2eT3+nPbeIt+P+WT89pkAvAHNh9/zntnoO/baxo3+Pj
-         wO6A==
-X-Gm-Message-State: AOAM531ExrXo1WRQdKok3gxcr5NI+2qmyvXFyIngfM3CoDqjXDiu9srK
-        DgFRteg6hqhUIl6GxP4a1XYT7w==
-X-Google-Smtp-Source: ABdhPJy+idmh6ArX2mvYOeEExL9vWJRmnj/dvH7Px73ZSky/FieDaKme08oFQKLjinkGKmo5AmXE6w==
-X-Received: by 2002:ac2:54a6:: with SMTP id w6mr5984234lfk.510.1633635678541;
-        Thu, 07 Oct 2021 12:41:18 -0700 (PDT)
+        bh=46iuhOb9uD5HMcYrx3e2dCS6IBSe8aDIKLjR7qB7Wnw=;
+        b=I51pBR3fB6Ddi5lV7as+1KgISEjhAsdVkC6C91GWc3ejRanB+lz8fOS+RDwyqnJybQ
+         gMK1Ab7ztFgH31LLT31T1720gw+8CLtnuAnW7m+Ktq6llv94PdYFlzSGABUfKVGdJD0u
+         bKMHmV0Vz7yNhxKJeHen/qgrs5kO/UXTUXQZEmXhx/DRpoZDK0rz8tTv0YeYhGwAIotE
+         jsXx4cHNoS687tos6NcujlCKa87U+m/y4hKr+JUHsJSdO0wAGmVuEjekozTUAl+oEJGq
+         lDYSmha1LCtNc0XmdV+5MhddkTavZEmy6BgDGxjxYztdb4LliT/0XI9gYL8flaOfagST
+         HyoA==
+X-Gm-Message-State: AOAM532rGn4EVWjMVkUcrZ/i3dm9ePyzmBGJpEckJv8Ai2xoledCVTMv
+        igxF2DOXiSMCOTGwHMwoVKc8Dg==
+X-Google-Smtp-Source: ABdhPJywEe3ssZX1R30cigIvdDneToqP9gIQk/6ExXsJJIqw5FZGY0VntlfY4kPbpDHG9Ucw/svIow==
+X-Received: by 2002:a05:6512:10cf:: with SMTP id k15mr5888412lfg.617.1633635680035;
+        Thu, 07 Oct 2021 12:41:20 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id t17sm21503lft.296.2021.10.07.12.41.17
+        by smtp.gmail.com with ESMTPSA id n7sm21269lft.309.2021.10.07.12.41.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 12:41:18 -0700 (PDT)
+        Thu, 07 Oct 2021 12:41:19 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -68,9 +68,9 @@ Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: samsung: clk-pll: Implement pll0831x PLL type
-Date:   Thu,  7 Oct 2021 22:41:10 +0300
-Message-Id: <20211007194113.10507-3-semen.protsenko@linaro.org>
+Subject: [PATCH v2 3/5] dt-bindings: clock: Add bindings definitions for Exynos850 CMU
+Date:   Thu,  7 Oct 2021 22:41:11 +0300
+Message-Id: <20211007194113.10507-4-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211007194113.10507-1-semen.protsenko@linaro.org>
 References: <20211007194113.10507-1-semen.protsenko@linaro.org>
@@ -80,186 +80,171 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-pll0831x PLL is used in Exynos850 SoC for top-level fractional PLLs. The
-code was derived from very similar pll36xx type, with next differences:
-
-1. Lock time for pll0831x is 500*P_DIV, when for pll36xx it's 3000*P_DIV
-2. It's not suggested in Exynos850 TRM that S_DIV change doesn't require
-   performing PLL lock procedure (which is done in pll36xx
-   implementation)
-3. The offset from PMS-values register to K-value register is 0x8 for
-   pll0831x, when for pll36xx it's 0x4
-
-When defining pll0831x type, CON3 register offset should be provided as
-a "con" parameter of PLL() macro, like this:
-
-    PLL(pll_0831x, 0, "fout_mmc_pll", "oscclk",
-        PLL_LOCKTIME_PLL_MMC, PLL_CON3_PLL_MMC, pll0831x_26mhz_tbl),
-
-To define PLL rates table, one can use PLL_36XX_RATE() macro, e.g.:
-
-    PLL_36XX_RATE(26 * MHZ, 799999877, 31, 1, 0, -15124)
-
-as it's completely appropriate for pl0831x type and there is no sense in
-duplicating that.
-
-If bit #1 (MANUAL_PLL_CTRL) is not set in CON1 register, it won't be
-possible to set new rate, with next error showing in kernel log:
-
-    Could not lock PLL fout_mmc_pll
-
-That can happen for example if bootloader clears that bit beforehand.
-PLL driver doesn't account for that, so if MANUAL_PLL_CTRL bit was
-cleared, it's assumed it was done for a reason and it shouldn't be
-possible to change that PLL's rate at all.
+Clock controller driver is designed to have separate instances for each
+particular CMU. So clock IDs in this bindings header also start from 1
+for each CMU.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
 Changes in v2:
+  - Added all clock ids
+  - Added CLK_ prefix for all clock constants
   - Added R-b tag by Krzysztof Kozlowski
-  - Added Ack tag by Chanwoo Choi
+  - Added Ack tag by Rob Herring
 
- drivers/clk/samsung/clk-pll.c | 105 ++++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk-pll.h |   1 +
- 2 files changed, 106 insertions(+)
+ include/dt-bindings/clock/exynos850.h | 141 ++++++++++++++++++++++++++
+ 1 file changed, 141 insertions(+)
+ create mode 100644 include/dt-bindings/clock/exynos850.h
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 03131b149c0b..83d1b03647db 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -498,6 +498,103 @@ static const struct clk_ops samsung_pll0822x_clk_min_ops = {
- 	.recalc_rate = samsung_pll0822x_recalc_rate,
- };
- 
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+new file mode 100644
+index 000000000000..a44c5f91d3c7
+--- /dev/null
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -0,0 +1,141 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * PLL0831x Clock Type
++ * Copyright (C) 2021 Linaro Ltd.
++ * Author: Sam Protsenko <semen.protsenko@linaro.org>
++ *
++ * Device Tree binding constants for Exynos850 clock controller.
 + */
-+/* Maximum lock time can be 500 * PDIV cycles */
-+#define PLL0831X_LOCK_FACTOR		(500)
 +
-+#define PLL0831X_KDIV_MASK		(0xFFFF)
-+#define PLL0831X_MDIV_MASK		(0x1FF)
-+#define PLL0831X_PDIV_MASK		(0x3F)
-+#define PLL0831X_SDIV_MASK		(0x7)
-+#define PLL0831X_MDIV_SHIFT		(16)
-+#define PLL0831X_PDIV_SHIFT		(8)
-+#define PLL0831X_SDIV_SHIFT		(0)
-+#define PLL0831X_KDIV_SHIFT		(0)
-+#define PLL0831X_LOCK_STAT_SHIFT	(29)
-+#define PLL0831X_ENABLE_SHIFT		(31)
++#ifndef _DT_BINDINGS_CLOCK_EXYNOS_850_H
++#define _DT_BINDINGS_CLOCK_EXYNOS_850_H
 +
-+static unsigned long samsung_pll0831x_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 mdiv, pdiv, sdiv, pll_con3, pll_con5;
-+	s16 kdiv;
-+	u64 fvco = parent_rate;
++/* CMU_TOP */
++#define CLK_FOUT_SHARED0_PLL		1
++#define CLK_FOUT_SHARED1_PLL		2
++#define CLK_FOUT_MMC_PLL		3
++#define CLK_MOUT_SHARED0_PLL		4
++#define CLK_MOUT_SHARED1_PLL		5
++#define CLK_MOUT_MMC_PLL		6
++#define CLK_MOUT_CORE_BUS		7
++#define CLK_MOUT_CORE_CCI		8
++#define CLK_MOUT_CORE_MMC_EMBD		9
++#define CLK_MOUT_CORE_SSS		10
++#define CLK_MOUT_DPU			11
++#define CLK_MOUT_HSI_BUS		12
++#define CLK_MOUT_HSI_MMC_CARD		13
++#define CLK_MOUT_HSI_USB20DRD		14
++#define CLK_MOUT_PERI_BUS		15
++#define CLK_MOUT_PERI_UART		16
++#define CLK_MOUT_PERI_IP		17
++#define CLK_DOUT_SHARED0_DIV3		18
++#define CLK_DOUT_SHARED0_DIV2		19
++#define CLK_DOUT_SHARED1_DIV3		20
++#define CLK_DOUT_SHARED1_DIV2		21
++#define CLK_DOUT_SHARED0_DIV4		22
++#define CLK_DOUT_SHARED1_DIV4		23
++#define CLK_DOUT_CORE_BUS		24
++#define CLK_DOUT_CORE_CCI		25
++#define CLK_DOUT_CORE_MMC_EMBD		26
++#define CLK_DOUT_CORE_SSS		27
++#define CLK_DOUT_DPU			28
++#define CLK_DOUT_HSI_BUS		29
++#define CLK_DOUT_HSI_MMC_CARD		30
++#define CLK_DOUT_HSI_USB20DRD		31
++#define CLK_DOUT_PERI_BUS		32
++#define CLK_DOUT_PERI_UART		33
++#define CLK_DOUT_PERI_IP		34
++#define CLK_GOUT_CORE_BUS		35
++#define CLK_GOUT_CORE_CCI		36
++#define CLK_GOUT_CORE_MMC_EMBD		37
++#define CLK_GOUT_CORE_SSS		38
++#define CLK_GOUT_DPU			39
++#define CLK_GOUT_HSI_BUS		40
++#define CLK_GOUT_HSI_MMC_CARD		41
++#define CLK_GOUT_HSI_USB20DRD		42
++#define CLK_GOUT_PERI_BUS		43
++#define CLK_GOUT_PERI_UART		44
++#define CLK_GOUT_PERI_IP		45
++#define TOP_NR_CLK			46
 +
-+	pll_con3 = readl_relaxed(pll->con_reg);
-+	pll_con5 = readl_relaxed(pll->con_reg + 8);
-+	mdiv = (pll_con3 >> PLL0831X_MDIV_SHIFT) & PLL0831X_MDIV_MASK;
-+	pdiv = (pll_con3 >> PLL0831X_PDIV_SHIFT) & PLL0831X_PDIV_MASK;
-+	sdiv = (pll_con3 >> PLL0831X_SDIV_SHIFT) & PLL0831X_SDIV_MASK;
-+	kdiv = (s16)((pll_con5 >> PLL0831X_KDIV_SHIFT) & PLL0831X_KDIV_MASK);
++/* CMU_HSI */
++#define CLK_MOUT_HSI_BUS_USER		1
++#define CLK_MOUT_HSI_MMC_CARD_USER	2
++#define CLK_MOUT_HSI_USB20DRD_USER	3
++#define CLK_MOUT_HSI_RTC		4
++#define CLK_GOUT_USB_RTC_CLK		5
++#define CLK_GOUT_USB_REF_CLK		6
++#define CLK_GOUT_USB_PHY_REF_CLK	7
++#define CLK_GOUT_USB_PHY_ACLK		8
++#define CLK_GOUT_USB_BUS_EARLY_CLK	9
++#define CLK_GOUT_GPIO_HSI_PCLK		10
++#define CLK_GOUT_MMC_CARD_ACLK		11
++#define CLK_GOUT_MMC_CARD_SDCLKIN	12
++#define CLK_GOUT_SYSREG_HSI_PCLK	13
++#define HSI_NR_CLK			14
 +
-+	fvco *= (mdiv << 16) + kdiv;
-+	do_div(fvco, (pdiv << sdiv));
-+	fvco >>= 16;
++/* CMU_PERI */
++#define CLK_MOUT_PERI_BUS_USER		1
++#define CLK_MOUT_PERI_UART_USER		2
++#define CLK_MOUT_PERI_HSI2C_USER	3
++#define CLK_MOUT_PERI_SPI_USER		4
++#define CLK_DOUT_PERI_HSI2C0		5
++#define CLK_DOUT_PERI_HSI2C1		6
++#define CLK_DOUT_PERI_HSI2C2		7
++#define CLK_DOUT_PERI_SPI0		8
++#define CLK_GOUT_PERI_HSI2C0		9
++#define CLK_GOUT_PERI_HSI2C1		10
++#define CLK_GOUT_PERI_HSI2C2		11
++#define CLK_GOUT_GPIO_PERI_PCLK		12
++#define CLK_GOUT_HSI2C0_IPCLK		13
++#define CLK_GOUT_HSI2C0_PCLK		14
++#define CLK_GOUT_HSI2C1_IPCLK		15
++#define CLK_GOUT_HSI2C1_PCLK		16
++#define CLK_GOUT_HSI2C2_IPCLK		17
++#define CLK_GOUT_HSI2C2_PCLK		18
++#define CLK_GOUT_I2C0_PCLK		19
++#define CLK_GOUT_I2C1_PCLK		20
++#define CLK_GOUT_I2C2_PCLK		21
++#define CLK_GOUT_I2C3_PCLK		22
++#define CLK_GOUT_I2C4_PCLK		23
++#define CLK_GOUT_I2C5_PCLK		24
++#define CLK_GOUT_I2C6_PCLK		25
++#define CLK_GOUT_MCT_PCLK		26
++#define CLK_GOUT_PWM_MOTOR_PCLK		27
++#define CLK_GOUT_SPI0_IPCLK		28
++#define CLK_GOUT_SPI0_PCLK		29
++#define CLK_GOUT_SYSREG_PERI_PCLK	30
++#define CLK_GOUT_UART_IPCLK		31
++#define CLK_GOUT_UART_PCLK		32
++#define CLK_GOUT_WDT0_PCLK		33
++#define CLK_GOUT_WDT1_PCLK		34
++#define PERI_NR_CLK			35
 +
-+	return (unsigned long)fvco;
-+}
++/* CMU_CORE */
++#define CLK_MOUT_CORE_BUS_USER		1
++#define CLK_MOUT_CORE_CCI_USER		2
++#define CLK_MOUT_CORE_MMC_EMBD_USER	3
++#define CLK_MOUT_CORE_SSS_USER		4
++#define CLK_MOUT_CORE_GIC		5
++#define CLK_DOUT_CORE_BUSP		6
++#define CLK_GOUT_CCI_ACLK		7
++#define CLK_GOUT_GIC_CLK		8
++#define CLK_GOUT_MMC_EMBD_ACLK		9
++#define CLK_GOUT_MMC_EMBD_SDCLKIN	10
++#define CLK_GOUT_SSS_ACLK		11
++#define CLK_GOUT_SSS_PCLK		12
++#define CORE_NR_CLK			13
 +
-+static int samsung_pll0831x_set_rate(struct clk_hw *hw, unsigned long drate,
-+				     unsigned long parent_rate)
-+{
-+	const struct samsung_pll_rate_table *rate;
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
-+	u32 pll_con3, pll_con5;
++/* CMU_DPU */
++#define CLK_MOUT_DPU_USER		1
++#define CLK_DOUT_DPU_BUSP		2
++#define CLK_GOUT_DPU_CMU_DPU_PCLK	3
++#define CLK_GOUT_DPU_DECON0_ACLK	4
++#define CLK_GOUT_DPU_DMA_ACLK		5
++#define CLK_GOUT_DPU_DPP_ACLK		6
++#define CLK_GOUT_DPU_PPMU_ACLK		7
++#define CLK_GOUT_DPU_PPMU_PCLK		8
++#define CLK_GOUT_DPU_SMMU_CLK		9
++#define CLK_GOUT_DPU_SYSREG_PCLK	10
++#define DPU_NR_CLK			11
 +
-+	/* Get required rate settings from table */
-+	rate = samsung_get_pll_settings(pll, drate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-+			drate, clk_hw_get_name(hw));
-+		return -EINVAL;
-+	}
-+
-+	pll_con3 = readl_relaxed(pll->con_reg);
-+	pll_con5 = readl_relaxed(pll->con_reg + 8);
-+
-+	/* Change PLL PMSK values */
-+	pll_con3 &= ~((PLL0831X_MDIV_MASK << PLL0831X_MDIV_SHIFT) |
-+			(PLL0831X_PDIV_MASK << PLL0831X_PDIV_SHIFT) |
-+			(PLL0831X_SDIV_MASK << PLL0831X_SDIV_SHIFT));
-+	pll_con3 |= (rate->mdiv << PLL0831X_MDIV_SHIFT) |
-+			(rate->pdiv << PLL0831X_PDIV_SHIFT) |
-+			(rate->sdiv << PLL0831X_SDIV_SHIFT);
-+	pll_con5 &= ~(PLL0831X_KDIV_MASK << PLL0831X_KDIV_SHIFT);
-+	/*
-+	 * kdiv is 16-bit 2's complement (s16), but stored as unsigned int.
-+	 * Cast it to u16 to avoid leading 0xffff's in case of negative value.
-+	 */
-+	pll_con5 |= ((u16)rate->kdiv << PLL0831X_KDIV_SHIFT);
-+
-+	/* Set PLL lock time */
-+	writel_relaxed(rate->pdiv * PLL0831X_LOCK_FACTOR, pll->lock_reg);
-+
-+	/* Write PMSK values */
-+	writel_relaxed(pll_con3, pll->con_reg);
-+	writel_relaxed(pll_con5, pll->con_reg + 8);
-+
-+	/* Wait for PLL lock if the PLL is enabled */
-+	if (pll_con3 & BIT(pll->enable_offs))
-+		return samsung_pll_lock_wait(pll, BIT(pll->lock_offs));
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops samsung_pll0831x_clk_ops = {
-+	.recalc_rate = samsung_pll0831x_recalc_rate,
-+	.set_rate = samsung_pll0831x_set_rate,
-+	.round_rate = samsung_pll_round_rate,
-+	.enable = samsung_pll3xxx_enable,
-+	.disable = samsung_pll3xxx_disable,
-+};
-+
-+static const struct clk_ops samsung_pll0831x_clk_min_ops = {
-+	.recalc_rate = samsung_pll0831x_recalc_rate,
-+};
-+
- /*
-  * PLL45xx Clock Type
-  */
-@@ -1407,6 +1504,14 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 		else
- 			init.ops = &samsung_pll36xx_clk_ops;
- 		break;
-+	case pll_0831x:
-+		pll->enable_offs = PLL0831X_ENABLE_SHIFT;
-+		pll->lock_offs = PLL0831X_LOCK_STAT_SHIFT;
-+		if (!pll->rate_table)
-+			init.ops = &samsung_pll0831x_clk_min_ops;
-+		else
-+			init.ops = &samsung_pll0831x_clk_ops;
-+		break;
- 	case pll_6552:
- 	case pll_6552_s3c2416:
- 		init.ops = &samsung_pll6552_clk_ops;
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index 213e94a97f23..a739f2b7ae80 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -37,6 +37,7 @@ enum samsung_pll_type {
- 	pll_1452x,
- 	pll_1460x,
- 	pll_0822x,
-+	pll_0831x,
- };
- 
- #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
++#endif /* _DT_BINDINGS_CLOCK_EXYNOS_850_H */
 -- 
 2.30.2
 
