@@ -2,65 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5DFC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Oct 2021 01:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D10EC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Oct 2021 04:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51B9960FD9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Oct 2021 01:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AA8760F51
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Oct 2021 04:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbhJHBOu (ORCPT
+        id S229632AbhJHEdi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Oct 2021 21:14:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54270 "EHLO mail.kernel.org"
+        Fri, 8 Oct 2021 00:33:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230156AbhJHBOu (ORCPT
+        id S229501AbhJHEdh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Oct 2021 21:14:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D844F6120C;
-        Fri,  8 Oct 2021 01:12:55 +0000 (UTC)
+        Fri, 8 Oct 2021 00:33:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 033DA60F3A;
+        Fri,  8 Oct 2021 04:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633655575;
-        bh=z7lw/oarDgJeAdFRkuApXzkQK/1CKC2C1T2gfDGbCLg=;
+        s=k20201202; t=1633667503;
+        bh=utkmbRIJp7j/rfAwWkG5g17O9iieLqyGctrPZuR07oU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=rQPWiLw2cCMlvoz0b2t9Mg5/7yHgMoUHNChODTwyVyNlBJLEukF5mCpKXfRZbeIOC
-         AzKCngxpEHWYnNHhkTXg2JYiAOpfnma7QC70nKHbcAZzpv22GjcjntJEqI+DlZMuQ8
-         iUnuM/HRfRFbVbsGIjInwAJzHjBpJ6otfZBrH13JD6hRQBJulKHAsJXT5q6AdP4R2C
-         Y5ST2S5avHBYDcDccCspP1gJ0KQ+T7Uh6tjMS9IyNgETU0U2iQ1qEsgCUAMTvh/lA7
-         P1cct9WuvqDyDZ9xx4+n+eB8j2WcjpC7fYw0Wc65O1cva8d8glBVu+fGuWwepRpDqm
-         ZX6oz47q69sTA==
+        b=qAUKYUF8o2QxOtUmCJZ48ELFKpXhVoh0lmGpW/9Yrizk/L0xmbw2xWVeRq2FEcHFt
+         v2CF9AVbbmsDs6U8M4mOosI6yO5gGQTNAnacbBueWdQErGMgBFJCxh+hobHhc3yP0Y
+         e6bmdQi72UHTMnXyeRBAwxG0mqrluG5ekjkebg9Y2SNybbxxjg1NrcyQgz9UA4vg9T
+         OTaE5JZDQO+ydlV8oOQLsM1prBeI3J/Sen6ncqrRGHWkoEpX2WogMj4zo23wl3gzzT
+         RCpMBsLyR/rAOB+W0pwOG3yR9kMeKB7cqDEqP5rimbX4exKM1wSpm+9dMf4kvsk//i
+         +kLtlDYUDQNFQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211006132324.76008-4-krzysztof.kozlowski@canonical.com>
-References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com> <20211006132324.76008-4-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v3 03/10] dt-bindings: clock: samsung,s2mps11: convert to dtschema
+In-Reply-To: <20210928235635.1348330-6-willmcvicker@google.com>
+References: <20210928235635.1348330-1-willmcvicker@google.com> <20210928235635.1348330-6-willmcvicker@google.com>
+Subject: Re: [PATCH v2 05/12] clk: export __clk_lookup
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        John Stultz <john.stultz@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date:   Thu, 07 Oct 2021 18:12:54 -0700
-Message-ID: <163365557460.2041162.5688299364943292354@swboyd.mtv.corp.google.com>
+        Will Deacon <will@kernel.org>,
+        Will McVicker <willmcvicker@google.com>
+Date:   Thu, 07 Oct 2021 21:31:41 -0700
+Message-ID: <163366750168.2041162.10913803047304286656@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2021-10-06 06:23:17)
-> Convert the clock provider of Samsung S2MPS11 family of PMICs to DT
-> schema format.
+Quoting Will McVicker (2021-09-28 16:56:22)
+> This symbol is needed to modularize the samsung clk drivers. It's used
+> to get the clock using the clock name.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
 > ---
+>  drivers/clk/clk.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 65508eb89ec9..f2aa4b49adfc 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -612,6 +612,7 @@ struct clk *__clk_lookup(const char *name)
+> =20
+>         return !core ? NULL : core->hw->clk;
+>  }
+> +EXPORT_SYMBOL_GPL(__clk_lookup);
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I'd prefer we deleted this API. Can you make the samsung clk driver stop
+using it instead?
