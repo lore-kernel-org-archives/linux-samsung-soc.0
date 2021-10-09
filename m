@@ -2,64 +2,58 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D560BC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 18:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36258C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 20:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCDF5610A4
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 18:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17D7160F9C
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 20:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbhJISvm (ORCPT
+        id S230139AbhJIU1A (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Oct 2021 14:51:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
+        Sat, 9 Oct 2021 16:27:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229601AbhJISvk (ORCPT
+        id S229806AbhJIU07 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Oct 2021 14:51:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B513C60F6B;
-        Sat,  9 Oct 2021 18:49:39 +0000 (UTC)
+        Sat, 9 Oct 2021 16:26:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F2F8360F6E;
+        Sat,  9 Oct 2021 20:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633805383;
-        bh=CvKTdCN1yIArwD+iF2n19tqqgAX1lw8yOSLPhHar5Fo=;
+        s=k20201202; t=1633811102;
+        bh=d+01LSE2G4B7F5/XtrWaFaDt4UeXHeAWwv79TeuwqsU=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OV+IrVObRpcFO+czVbwRillFts8rECpgCtAbF/Gw5dwiHkVQb3wJVmy0L95GjG8dD
-         7MnwXudGRDnGl5Dv5pDEDE8KeLPKULPSmjQ8uUKDf4Nr21Xnulz8zR5aC1iGGkyy+I
-         TjYcydOh0482oIDE3JTSpMfntyK8VD122GAlq+789XJIlffAat5nGwZC8oL5v6Kk6F
-         0VkjBlbzFsCANpDxVWlISquQy6MYfWPDxbQwXEeRBiAlkRAnTNpzhEZwxnY8aRimoF
-         XEls+HExuBYmKRNBGzzqOOMPCinMjdVKqsdkkc2KyhUinFqY0cJKy3/+IHOVw8fk4v
-         YwJTv2jy57uWw==
-Subject: Re: [PATCH 1/6] clk: samsung: Enable bus clock on init
+        b=hELJYZmCo9pdyOh2ZT72pmWE2JVXx07bY6qDt+j9FyK0P7s9qdFFGWSp/ZZc0w5ce
+         UOy4pAroFcaYc2YwSTHidsmTB/wLalioef2fyGAFo+4G3fpL80QYEo/p1hIXc6YDom
+         3lQN7qAG5NyLgKWBHD/K+m2D99/Ccpwhf1zSk9dTxa3Byokcwv5bF2nNY4KZVVCp/w
+         7lJ8bK1mKWO4aVGZ15BHRDqsezk74zn1xLZ6Wh7fuXl2LDZGIo1KdJ9wg2S+oWl3V5
+         H1qBCe7UKrPybxfvXAvn7efa8HXedcD/dzhkmTBHQWDf/Ta34LqUCPMXmk1bQ5Ku0H
+         AdZ7od8LoJJWg==
+Subject: Re: [PATCH v3 1/5] clk: samsung: clk-pll: Implement pll0822x PLL type
 To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Ryu Euiyoul <ryu.real@samsung.com>,
-        Tom Gall <tom.gall@linaro.org>,
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
         Sumit Semwal <sumit.semwal@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
         Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-References: <20210914155607.14122-1-semen.protsenko@linaro.org>
- <CGME20210914155621eucas1p18e0f1f50fe42af4f8048ed88507219ed@eucas1p1.samsung.com>
- <20210914155607.14122-2-semen.protsenko@linaro.org>
- <b44e1c4a-5abc-7a27-e9ae-d4645d04527a@samsung.com>
- <CAPLW+4=cL00WxQpobovE3Jo62RijOpqwYNAF8TJHXQTdGxNHHg@mail.gmail.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+References: <20211008154352.19519-1-semen.protsenko@linaro.org>
+ <20211008154352.19519-2-semen.protsenko@linaro.org>
 From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <356ecdc2-6059-b89c-9956-7aafc33456ac@kernel.org>
-Date:   Sat, 9 Oct 2021 20:49:37 +0200
+Message-ID: <76d164d0-dc1a-5941-c66b-959e88e736d5@kernel.org>
+Date:   Sat, 9 Oct 2021 22:24:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=cL00WxQpobovE3Jo62RijOpqwYNAF8TJHXQTdGxNHHg@mail.gmail.com>
+In-Reply-To: <20211008154352.19519-2-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,176 +61,41 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06.10.2021 13:18, Sam Protsenko wrote:
-> On Wed, 15 Sept 2021 at 15:51, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> On 14.09.2021 17:56, Sam Protsenko wrote:
->>> By default if bus clock has no users its "enable count" value is 0. It
->>> might be actually running if it's already enabled in bootloader, but
->>> then in some cases it can be disabled by mistake. For example, such case
->>> was observed when dw_mci_probe() enabled bus clock, then failed to do
->>> something and disabled that bus clock on error path. After that even
->>> attempt to read the 'clk_summary' file in DebugFS freezed forever, as
->>> CMU bus clock ended up being disabled and it wasn't possible to access
->>> CMU registers anymore.
->>>
->>> To avoid such cases, CMU driver must increment the ref count for that
->>> bus clock by running clk_prepare_enable(). There is already existing
->>> '.clk_name' field in struct samsung_cmu_info, exactly for that reason.
->>> It was added in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
->>> support for runtime PM"). But the clock is actually enabled only in
->>> Exynos5433 clock driver. Let's mimic what is done there in generic
->>> samsung_cmu_register_one() function, so other drivers can benefit from
->>> that `.clk_name' field. As was described above, it might be helpful not
->>> only for PM reasons, but also to prevent possible erroneous clock gating
->>> on error paths.
-
->>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
->>> index 1949ae7851b2..da65149fa502 100644
->>> --- a/drivers/clk/samsung/clk.c
->>> +++ b/drivers/clk/samsung/clk.c
->>> @@ -357,6 +357,19 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
->>>
->>>        ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
->>>
->>> +     /* Keep bus clock running, so it's possible to access CMU registers */
->>> +     if (cmu->clk_name) {
->>> +             struct clk *bus_clk;
->>> +
->>> +             bus_clk = __clk_lookup(cmu->clk_name);
->>> +             if (bus_clk) {
->>> +                     clk_prepare_enable(bus_clk);
->>> +             } else {
->>> +                     pr_err("%s: could not find bus clock %s\n", __func__,
->>> +                            cmu->clk_name);
->>> +             }
->>> +     }
->>> +
->>>        if (cmu->pll_clks)
->>>                samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks,
->>>                        reg_base);
->>
->> I would suggest to implement runtime PM ops in your driver instead, even though
->> those would initially only contain single clk enable/disable. Things like
->> the clk_summary will work then thanks to runtime PM support in the clk core
->> (see clk_pm_runtime_* calls).
+On 08.10.2021 17:43, Sam Protsenko wrote:
+> pll0822x PLL is used in Exynos850 SoC for top-level integer PLLs. The
+> code was derived from very similar pll35xx type, with next differences:
 > 
-> Can you please elaborate more? I don't see how adding PM ops would
-> solve the problem I'm trying to address, which is keeping core bus
-> clocks always running. For example, I'm looking at clk-exynos5433.c
-
-I missed the fact that there is usually a specific SFR sequence required
-for disabling the CMU root (and APB) clock. We would need to figure out what
-an exact sequence is for each CMU, similarly as is done in clk-exynos5433,
-then keeping the CMU source clock always enabled shouldn't be required.
-I'm fine with just enabling the APB clocks in probe() until proper CMU
-suspend/resume support is added.
-
-> implementation, which enables bus clock on resume path:
+> 1. Lock time for pll0822x is 150*P_DIV, when for pll35xx it's 270*P_DIV
+> 2. It's not suggested in Exynos850 TRM that S_DIV change doesn't require
+>     performing PLL lock procedure (which is done in pll35xx
+>     implementation)
 > 
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
-> static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
-> {
->      ...
->      clk_prepare_enable(data->clk);
->      ...
-> }
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> When defining pll0822x type, CON3 register offset should be provided as
+> a "con" parameter of PLL() macro, like this:
 > 
-> But that resume operation won't be called on driver init, because it
-> configures runtime PM like this:
+>      PLL(pll_0822x, 0, "fout_shared0_pll", "oscclk",
+>          PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0,
+>          exynos850_shared0_pll_rates),
 > 
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
-> static int __init exynos5433_cmu_probe(struct platform_device *pdev)
-> {
->      ...
->      /*
->       * Enable runtime PM here to allow the clock core using runtime PM
->       * for the registered clocks. Additionally, we increase the runtime
->       * PM usage count before registering the clocks, to prevent the
->       * clock core from runtime suspending the device.
->       */
->      pm_runtime_get_noresume(dev);
->      pm_runtime_set_active(dev);
->      pm_runtime_enable(dev);
->      ...
->      pm_runtime_put_sync(dev);
->      ...
-> }
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> To define PLL rates table, one can use PLL_35XX_RATE() macro, e.g.:
 > 
-> When I tried to implement the same in my driver, only suspend function
-> is called during kernel startup.
-
-I think some of the clocks supplied by a CMU need to be in use
-(e.g. clk_prepare()) to get the resume op in the CMU driver invoked.
-
-> Anyway, even clk-exynos5433.c driver (which also implements PM ops)
-> does the same for core bus clocks:
+>      PLL_35XX_RATE(26 * MHZ, 1600 * MHZ, 800, 13, 0)
 > 
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
-> static int __init exynos5433_cmu_probe(struct platform_device *pdev)
-> {
->      ...
->      if (info->clk_name)
->          data->clk = clk_get(dev, info->clk_name);
->      clk_prepare_enable(data->clk);
->      ...
-> }
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
-
-Enabling the clock corresponds with the pm_runtime_set_active() call you
-pointed out above. Such pattern also ensures the clock will stay enabled
-when CONFIG_PM_RUNTIME is disabled.
-
-> So it looks like separate feature to me. Not sure how that can be
-> implemented only by adding PM ops. Also, my board lacks PM support in
-> upstream kernel right now, so I probably won't be able to test PM ops
-> if I implement those, that's why I decided to skip it for now.
-
-It is not really a separate feature, I think having the clocks permanently
-enabled is not something we would like to end up with. It would need to be
-revisited anyway when adding the power domains support.
-
->> We could also make common runtime PM suspend/resume helpers but I wouldn't 
->> focus on that too much now, it could well be done later.
->> And please avoid introducing new __clk_lookup() calls.
+> as it's completely appropriate for pl0822x type and there is no sense in
+> duplicating that.
 > 
-> The reason I used __clk_lookup() is that it's the only API that works
-> in that case. I tried to use clk_get(), but we lack 'struct dev'
-> pointer in samsung_cmu_register_one(), so when providing dev=NULL into
-> clk_get() it fails to get the clock. That's happening because
-> LIST_HEAD(clocks) is probably empty in clkdev.c. So this chain fails:
+> If bit #1 (MANUAL_PLL_CTRL) is not set in CON1 register, it won't be
+> possible to set new rate, with next error showing in kernel log:
 > 
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
-> clk_get()    // dev = NULL
->    v
-> __clk_get_sys()
->    v
-> clk_find_hw()
->    v
-> clk_find()   // returns 0, because LIST_HEAD(clocks) is empty
-> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+>      Could not lock PLL fout_shared1_pll
 > 
-> I saw your patches which get rid of __clk_lookup() usage by accessing
-> ctx->clk_data.hws[], but that requires using clock index, not name.
-> 'struct samsung_cmu_info' only stores bus clock name (.clk_name),
-> which seems logical to me, so we can't get away from using
-> __clk_lookup() in that case without refactoring 'struct
-> samsung_cmu_info' first.
+> That can happen for example if bootloader clears that bit beforehand.
+> PLL driver doesn't account for that, so if MANUAL_PLL_CTRL bit was
+> cleared, it's assumed it was done for a reason and it shouldn't be
+> possible to change that PLL's rate at all.
+> 
+> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
+> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
 
-You need device pointer to get the CMU input clocks as specified in DT.
-clk_get with NULL device pointer and global clock name will now only work
-on Samsung non-DT platforms, for DT-only SoCs we don't register clkdev
-entries at all (see samsung_clk_register_alias()).
-
-> All that said, I suggest next: I'll pull the code from this patch into
-> clk-exynos850.c, adding platform_driver registration there, so I can
-> actually use clk_get() for getting bus clocks. As for PM ops, I'd like
-> to skip it for now, if you don't mind, as I can't fully test those.
-
-Sounds good to me, thank you for working on this.
-
---
-Regards,
-Sylwester
+Applied, thanks.
