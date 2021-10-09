@@ -2,101 +2,241 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDEDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 18:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D560BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 18:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 238AD60F23
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 18:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCDF5610A4
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Oct 2021 18:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbhJIS1T (ORCPT
+        id S229676AbhJISvm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Oct 2021 14:27:19 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:50260
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229518AbhJIS1S (ORCPT
+        Sat, 9 Oct 2021 14:51:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229601AbhJISvk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Oct 2021 14:27:18 -0400
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A778B3FFDE
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Oct 2021 18:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633803920;
-        bh=wlbnTkKYemCYKZ41QPVkxa7i9iVewjJvs0FxDMBEsWE=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=KrSq0h5aj7gKs0VULHAxGkn8bKSA+R7Ve5CdZwFJTgdlLfPHBfBaEsoAFI6s8nr8G
-         OSgaNTb4ut6yLbUxm2kPlRsbWexmIn61AcVEA6zARp+oF3mLX6VGo64yWXIWYqrGLW
-         1GeigRokghjjOdZmW4FflVKQ7JnkfwgaZGrO2jwo/anH4tvl8Rz0r5Mwvn/XDRNPIx
-         FmZOrpquY/dBXf+6fFLjB7pj7DwsCzVj4owACRAoozEeHOnZJ+NMYaOfORUjhguvLR
-         j5sY3hitLW/wRZYtlXeYVAQznv5mJckqzlFMh0q1fQZV5Ks4JNNuKG4+wcAUOpiJ62
-         m9ZCaV7B7qVJg==
-Received: by mail-ed1-f72.google.com with SMTP id l10-20020a056402230a00b003db6977b694so3673371eda.23
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Oct 2021 11:25:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wlbnTkKYemCYKZ41QPVkxa7i9iVewjJvs0FxDMBEsWE=;
-        b=yuU7qAvbuPSYOVrAP4hTANzcGMckWgk/VcFZ/mLra9ubuvIZkpPAT+/2E6RB981Be/
-         5/wYrV5o9Nm3svfZxqp3W4qyleyY8L8pIdgbRidCMzCfMKLWBoqTTFwe6ViKzPnNX1Mw
-         Oq5wz98mBPeK3preRvqk0lEZzv3IJDStx690v8/4tJspGGLX1pBgeqsZDIendRawWVyj
-         BQR0C4/qXHtS0nt/BIB2+w5TzHwWkWvx16e9H1r/4W5hb5Yh+jYjN6MfJAcawFCDZ1zQ
-         OUJbADfhpcnoGQo808tTLTmTCQVUnSJ1kHne+9OPccQf/y1bQ9a9ymPsGGBINmjsCQJt
-         ZCSg==
-X-Gm-Message-State: AOAM531binilCQ8zHtKWuSgGyDNUhJeT2l95ObzKT4llWSvKT9UGYs+M
-        F/xAUUeLy8Y8u2ZxuHNkOvmpnjqfivztTtwIu2jxkYpAb5pgM2s5nYuroSDWn1UrBc4nyGo7usT
-        NAeL6FHRETALXRl1Lsnsagd1G9ZaIGd+9lmlXWjiprOfBxjAq
-X-Received: by 2002:a05:6402:34d0:: with SMTP id w16mr17935067edc.98.1633803920393;
-        Sat, 09 Oct 2021 11:25:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxxJ6vT8epLq4/sHoyK2Ek+9c00fAYi5vRAvUPqzr0xeEKdSbxL/EJrVVRzyd6dHkIE+A3rxg==
-X-Received: by 2002:a05:6402:34d0:: with SMTP id w16mr17935045edc.98.1633803920222;
-        Sat, 09 Oct 2021 11:25:20 -0700 (PDT)
-Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id e22sm1563564edu.35.2021.10.09.11.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Oct 2021 11:25:19 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
+        Sat, 9 Oct 2021 14:51:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B513C60F6B;
+        Sat,  9 Oct 2021 18:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633805383;
+        bh=CvKTdCN1yIArwD+iF2n19tqqgAX1lw8yOSLPhHar5Fo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OV+IrVObRpcFO+czVbwRillFts8rECpgCtAbF/Gw5dwiHkVQb3wJVmy0L95GjG8dD
+         7MnwXudGRDnGl5Dv5pDEDE8KeLPKULPSmjQ8uUKDf4Nr21Xnulz8zR5aC1iGGkyy+I
+         TjYcydOh0482oIDE3JTSpMfntyK8VD122GAlq+789XJIlffAat5nGwZC8oL5v6Kk6F
+         0VkjBlbzFsCANpDxVWlISquQy6MYfWPDxbQwXEeRBiAlkRAnTNpzhEZwxnY8aRimoF
+         XEls+HExuBYmKRNBGzzqOOMPCinMjdVKqsdkkc2KyhUinFqY0cJKy3/+IHOVw8fk4v
+         YwJTv2jy57uWw==
+Subject: Re: [PATCH 1/6] clk: samsung: Enable bus clock on init
+To:     Sam Protsenko <semen.protsenko@linaro.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: (subset) [PATCH v2 1/3] pinctrl: samsung: support ExynosAutov9 SoC pinctrl
-Date:   Sat,  9 Oct 2021 20:25:17 +0200
-Message-Id: <163380389051.31398.17039007223856436934.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211008091443.44625-2-chanho61.park@samsung.com>
-References: <20211008091443.44625-1-chanho61.park@samsung.com> <CGME20211008091639epcas2p28339f2f73755a3c842fbb95f313bf7d9@epcas2p2.samsung.com> <20211008091443.44625-2-chanho61.park@samsung.com>
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Ryu Euiyoul <ryu.real@samsung.com>,
+        Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <20210914155607.14122-1-semen.protsenko@linaro.org>
+ <CGME20210914155621eucas1p18e0f1f50fe42af4f8048ed88507219ed@eucas1p1.samsung.com>
+ <20210914155607.14122-2-semen.protsenko@linaro.org>
+ <b44e1c4a-5abc-7a27-e9ae-d4645d04527a@samsung.com>
+ <CAPLW+4=cL00WxQpobovE3Jo62RijOpqwYNAF8TJHXQTdGxNHHg@mail.gmail.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <356ecdc2-6059-b89c-9956-7aafc33456ac@kernel.org>
+Date:   Sat, 9 Oct 2021 20:49:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPLW+4=cL00WxQpobovE3Jo62RijOpqwYNAF8TJHXQTdGxNHHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 8 Oct 2021 18:14:41 +0900, Chanho Park wrote:
-> Add pinctrl data for ExynosAuto v9 SoC.
+On 06.10.2021 13:18, Sam Protsenko wrote:
+> On Wed, 15 Sept 2021 at 15:51, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> On 14.09.2021 17:56, Sam Protsenko wrote:
+>>> By default if bus clock has no users its "enable count" value is 0. It
+>>> might be actually running if it's already enabled in bootloader, but
+>>> then in some cases it can be disabled by mistake. For example, such case
+>>> was observed when dw_mci_probe() enabled bus clock, then failed to do
+>>> something and disabled that bus clock on error path. After that even
+>>> attempt to read the 'clk_summary' file in DebugFS freezed forever, as
+>>> CMU bus clock ended up being disabled and it wasn't possible to access
+>>> CMU registers anymore.
+>>>
+>>> To avoid such cases, CMU driver must increment the ref count for that
+>>> bus clock by running clk_prepare_enable(). There is already existing
+>>> '.clk_name' field in struct samsung_cmu_info, exactly for that reason.
+>>> It was added in commit 523d3de41f02 ("clk: samsung: exynos5433: Add
+>>> support for runtime PM"). But the clock is actually enabled only in
+>>> Exynos5433 clock driver. Let's mimic what is done there in generic
+>>> samsung_cmu_register_one() function, so other drivers can benefit from
+>>> that `.clk_name' field. As was described above, it might be helpful not
+>>> only for PM reasons, but also to prevent possible erroneous clock gating
+>>> on error paths.
+
+>>> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+>>> index 1949ae7851b2..da65149fa502 100644
+>>> --- a/drivers/clk/samsung/clk.c
+>>> +++ b/drivers/clk/samsung/clk.c
+>>> @@ -357,6 +357,19 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+>>>
+>>>        ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
+>>>
+>>> +     /* Keep bus clock running, so it's possible to access CMU registers */
+>>> +     if (cmu->clk_name) {
+>>> +             struct clk *bus_clk;
+>>> +
+>>> +             bus_clk = __clk_lookup(cmu->clk_name);
+>>> +             if (bus_clk) {
+>>> +                     clk_prepare_enable(bus_clk);
+>>> +             } else {
+>>> +                     pr_err("%s: could not find bus clock %s\n", __func__,
+>>> +                            cmu->clk_name);
+>>> +             }
+>>> +     }
+>>> +
+>>>        if (cmu->pll_clks)
+>>>                samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks,
+>>>                        reg_base);
+>>
+>> I would suggest to implement runtime PM ops in your driver instead, even though
+>> those would initially only contain single clk enable/disable. Things like
+>> the clk_summary will work then thanks to runtime PM support in the clk core
+>> (see clk_pm_runtime_* calls).
 > 
-> - GPA0, GPA1: 10, External wake up interrupt
-> - GPQ0: 2, XbootLDO, Speedy PMIC I/F
-> - GPB0, GPB1, GPB2, GPB3: 29, I2S 7 CH
-> - GPF0, GPF1, GPF2, GPF3,GPF4, GPF5, GPF6, GPF8: 52, FSYS
-> - GPG0, GPG1, GPG2, GPG3: 25, GPIO x 24, SMPL_INT
-> - GPP0, GPP1, GPP2, GPP3, GPP4, GPP5: 48, USI 12 CH
+> Can you please elaborate more? I don't see how adding PM ops would
+> solve the problem I'm trying to address, which is keeping core bus
+> clocks always running. For example, I'm looking at clk-exynos5433.c
+
+I missed the fact that there is usually a specific SFR sequence required
+for disabling the CMU root (and APB) clock. We would need to figure out what
+an exact sequence is for each CMU, similarly as is done in clk-exynos5433,
+then keeping the CMU source clock always enabled shouldn't be required.
+I'm fine with just enabling the APB clocks in probe() until proper CMU
+suspend/resume support is added.
+
+> implementation, which enables bus clock on resume path:
 > 
-> [...]
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
+> {
+>      ...
+>      clk_prepare_enable(data->clk);
+>      ...
+> }
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> 
+> But that resume operation won't be called on driver init, because it
+> configures runtime PM like this:
+> 
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+> {
+>      ...
+>      /*
+>       * Enable runtime PM here to allow the clock core using runtime PM
+>       * for the registered clocks. Additionally, we increase the runtime
+>       * PM usage count before registering the clocks, to prevent the
+>       * clock core from runtime suspending the device.
+>       */
+>      pm_runtime_get_noresume(dev);
+>      pm_runtime_set_active(dev);
+>      pm_runtime_enable(dev);
+>      ...
+>      pm_runtime_put_sync(dev);
+>      ...
+> }
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> 
+> When I tried to implement the same in my driver, only suspend function
+> is called during kernel startup.
 
-Applied, thanks!
+I think some of the clocks supplied by a CMU need to be in use
+(e.g. clk_prepare()) to get the resume op in the CMU driver invoked.
 
-[1/3] pinctrl: samsung: support ExynosAutov9 SoC pinctrl
-      commit: f9d8de699ac4a059e30cf0e84e7027f1058b9163
+> Anyway, even clk-exynos5433.c driver (which also implements PM ops)
+> does the same for core bus clocks:
+> 
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+> {
+>      ...
+>      if (info->clk_name)
+>          data->clk = clk_get(dev, info->clk_name);
+>      clk_prepare_enable(data->clk);
+>      ...
+> }
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Enabling the clock corresponds with the pm_runtime_set_active() call you
+pointed out above. Such pattern also ensures the clock will stay enabled
+when CONFIG_PM_RUNTIME is disabled.
+
+> So it looks like separate feature to me. Not sure how that can be
+> implemented only by adding PM ops. Also, my board lacks PM support in
+> upstream kernel right now, so I probably won't be able to test PM ops
+> if I implement those, that's why I decided to skip it for now.
+
+It is not really a separate feature, I think having the clocks permanently
+enabled is not something we would like to end up with. It would need to be
+revisited anyway when adding the power domains support.
+
+>> We could also make common runtime PM suspend/resume helpers but I wouldn't 
+>> focus on that too much now, it could well be done later.
+>> And please avoid introducing new __clk_lookup() calls.
+> 
+> The reason I used __clk_lookup() is that it's the only API that works
+> in that case. I tried to use clk_get(), but we lack 'struct dev'
+> pointer in samsung_cmu_register_one(), so when providing dev=NULL into
+> clk_get() it fails to get the clock. That's happening because
+> LIST_HEAD(clocks) is probably empty in clkdev.c. So this chain fails:
+> 
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> clk_get()    // dev = NULL
+>    v
+> __clk_get_sys()
+>    v
+> clk_find_hw()
+>    v
+> clk_find()   // returns 0, because LIST_HEAD(clocks) is empty
+> <<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>
+> 
+> I saw your patches which get rid of __clk_lookup() usage by accessing
+> ctx->clk_data.hws[], but that requires using clock index, not name.
+> 'struct samsung_cmu_info' only stores bus clock name (.clk_name),
+> which seems logical to me, so we can't get away from using
+> __clk_lookup() in that case without refactoring 'struct
+> samsung_cmu_info' first.
+
+You need device pointer to get the CMU input clocks as specified in DT.
+clk_get with NULL device pointer and global clock name will now only work
+on Samsung non-DT platforms, for DT-only SoCs we don't register clkdev
+entries at all (see samsung_clk_register_alias()).
+
+> All that said, I suggest next: I'll pull the code from this patch into
+> clk-exynos850.c, adding platform_driver registration there, so I can
+> actually use clk_get() for getting bus clocks. As for PM ops, I'd like
+> to skip it for now, if you don't mind, as I can't fully test those.
+
+Sounds good to me, thank you for working on this.
+
+--
+Regards,
+Sylwester
