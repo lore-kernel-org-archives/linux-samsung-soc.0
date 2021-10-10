@@ -2,76 +2,72 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E4AC4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Oct 2021 17:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA77C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Oct 2021 17:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66929610C7
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Oct 2021 17:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A044560F39
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Oct 2021 17:18:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232452AbhJJRTc (ORCPT
+        id S231196AbhJJRU4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 Oct 2021 13:19:32 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:33690
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232469AbhJJRTb (ORCPT
+        Sun, 10 Oct 2021 13:20:56 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:47214
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230490AbhJJRUz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 Oct 2021 13:19:31 -0400
+        Sun, 10 Oct 2021 13:20:55 -0400
 Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 22A813FFF4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Oct 2021 17:17:31 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 854243FFE0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Oct 2021 17:18:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633886251;
-        bh=u0/mmDKbEck8WeT+fwXTrJ3+XiT83o8RI6Fb1vkOIIs=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+        s=20210705; t=1633886336;
+        bh=4qntQH6iTVpY2LlsjZficLjwmHfD3YcYFwNAdv68/mo=;
+        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=raJkXc79xY6YBhrzXmFfp1WOp0xNQgC+HhfeSWsaBOxvGQ9c2inTNCaheCavbULcg
-         +6k1TUF1ElhhJjm8eALNAvWMP2Q6zypgtNtxmMhO731UEt9X5xstj3hDwRU29jH16d
-         e5N5l1Nshx9Nf/ckX9W//aCp44J4auDevn6UZC4fKpfXFFcpxBM3erd9JWkYrgK5iO
-         nrm1L/8wQ4iy3fV0me2YZok0wCrj5VQ7cqwQwdo76lR6kDIUN5f2hAuy3vAt3qPVn9
-         oeG/YYIVNRWaR6LtpmYEf6FWp+x6h3tvG+TgWTnJk6Fg5bu8k5bdQkKN+07Yufx6DX
-         jp77JVRl5Vpfw==
-Received: by mail-ed1-f71.google.com with SMTP id u24-20020aa7db98000000b003db57b1688aso8299913edt.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Oct 2021 10:17:31 -0700 (PDT)
+        b=iB6QNWE73oao3wOJHt5CczYwkUiP1SwNqftNBNjOMVodIUgaiQlTkL0iAsIYuCGId
+         Eqkg7oeBXFz1KmbFU0BQX4B5g7LNxhrCF8A9ZHrAETTTfsyH96Ao9LkFMtT+O+gmD+
+         2Bv9ifqJj/xe2RS9VV+pd/Igj6FGNJIpSddSa66ir+Ph/Gnm3t6mtP4apdH85lRrFt
+         uaXWOjMlDgjTid9GFgzf7acehacCITl/ebjjrW6xNqXKvjgTX0mqDXYdquJ6y0Qg8/
+         t/nsUuziunniB6UMMskgDo1LrGBDJ1P1+SulKj1OcXhDtzw1mU2uzTNQuDHSpoWAWw
+         yivGJozg9AHkA==
+Received: by mail-ed1-f71.google.com with SMTP id v9-20020a50d849000000b003db459aa3f5so11084788edj.15
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Oct 2021 10:18:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=u0/mmDKbEck8WeT+fwXTrJ3+XiT83o8RI6Fb1vkOIIs=;
-        b=XM3YbC5CTQNRsw/iGhQM93Z39Smr61SOFCHf2AuAbcD8cgb3QgzDM+lxUNhD5Uv4zO
-         a+8tEgVqDUMfMO957YdQ8jcgc0R+IENG7PmMHMOO4RYBiarcQi4ZkQXxh1qoVu2zPUhh
-         a+aPOsg+y96mfpxmPXBHAEpI1Q3JQa7qSjzsRPOEi8dGTaF58PnzGWhrsHrAqDXDqBx1
-         xcTiKBrmtEy3dfYKAUbdenbI/BuKgIukEpcbRaDnAhfQwQ8s+jVWUy/ruWqTsJVuBLEy
-         IbQsgvGS/bv63D0h2NldMzeotdvFNGlTY5CTJj91S9oKJoxFWGVr5ty3HRAXGNw2D1NQ
-         +0PQ==
-X-Gm-Message-State: AOAM531/D1ZUkWAG02PqJ4K3VL9cnQCVMpMOKxj5W2o2Om03VioU6R1b
-        BBh6agSBitbf3lrAVICu2ocetsosSG6R5cfte8tbZYneeTyImpAXYvAJUyaEoYHkZX9ILvLyGly
-        n09uNXsRuyJh+ECfGCM9Ls7dhPPZyiRHTmSojCQxQpehmg9so
-X-Received: by 2002:a17:906:3d72:: with SMTP id r18mr6466779ejf.525.1633886250842;
-        Sun, 10 Oct 2021 10:17:30 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwULoe1r7gtplsH7VwMtTw7dZPaE/oWFm+Yvn4E8fkz/wvGMrgbSxgA6IUKhjcqCIHOcnMyWw==
-X-Received: by 2002:a17:906:3d72:: with SMTP id r18mr6466764ejf.525.1633886250723;
-        Sun, 10 Oct 2021 10:17:30 -0700 (PDT)
+        bh=4qntQH6iTVpY2LlsjZficLjwmHfD3YcYFwNAdv68/mo=;
+        b=rMTSi5XxfNrdvM90R8tkB214Qj2IJr6O4oEiN4ZmX8h+lApfjbZGuCesEKt76A4gPk
+         FLA9/AuqTEcgEpiSxVLzvCglIrY+QztNMitjaN99NGP3+xxABh+KKFnbQgDPMyXyG3x+
+         fVbqkgLcQ2ba9rTMqimSbYwdg6+E6OQYului7RnW3TBr6F6sSuL+Ks6g6zeV2oSKk1x3
+         FN/LzDfglQEYri603huClz/7NPKfDnjAvYWHPgwAPgJZlx0F16vzaSMCLx/Vw/vUbE8+
+         yaRtV3n5j//XwM0oP8MlQ+aWoPexbUsP2+sFaBCF5ASzopiOtlUM+wxL/O5P6EV2WL5r
+         XWhA==
+X-Gm-Message-State: AOAM530ppFC1v4YOf5WyM++4r2YWRxGSCdhGprbEsTJStooOfpDSN0yX
+        B/zEkHzYJ2jK4XQPT8PJrkNqXtzNM1CayX2+jlYo2bkeDSYEMKy+ApyRPwRtOc19JaimLVZTdSj
+        jSQnCiU/o0n047tFSG5L0G/sjX/m9qVCZ+RVXZHzt+cy7N9Pd
+X-Received: by 2002:a17:906:4a09:: with SMTP id w9mr18305483eju.419.1633886336076;
+        Sun, 10 Oct 2021 10:18:56 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzR3op9vPfBpT/Rur3yAGyVqNTQAFkiXYhxIGK/aJsucDUphDJMtt0Mbk2Xsc0fWr/HMgUcmQ==
+X-Received: by 2002:a17:906:4a09:: with SMTP id w9mr18305471eju.419.1633886335878;
+        Sun, 10 Oct 2021 10:18:55 -0700 (PDT)
 Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id p6sm2792009edi.18.2021.10.10.10.17.29
+        by smtp.gmail.com with ESMTPSA id x14sm2952429edd.25.2021.10.10.10.18.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Oct 2021 10:17:30 -0700 (PDT)
+        Sun, 10 Oct 2021 10:18:55 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: (subset) [PATCH v3 3/3] arm64: dts: exynos: add minimal support for exynosautov9 sadk board
-Date:   Sun, 10 Oct 2021 19:17:26 +0200
-Message-Id: <163388622665.8712.16297389599779361113.b4-ty@canonical.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH] soc: samsung: pm_domains: drop unused is_off field
+Date:   Sun, 10 Oct 2021 19:18:53 +0200
+Message-Id: <163388632924.9226.9866323662921764229.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211010032246.146939-4-chanho61.park@samsung.com>
-References: <20211010032246.146939-1-chanho61.park@samsung.com> <CGME20211010032456epcas2p15f951954f7bc7ca505806fdcea4e6390@epcas2p1.samsung.com> <20211010032246.146939-4-chanho61.park@samsung.com>
+In-Reply-To: <20211008075253.67961-1-krzysztof.kozlowski@canonical.com>
+References: <20211008075253.67961-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -79,18 +75,16 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 10 Oct 2021 12:22:46 +0900, Chanho Park wrote:
-> SADK(Samsung Automotive Development Kit) is the development kit to
-> evaluate Exynos Auto v9 SoC. It has 16GB LPDDR4 DRAM and two
-> 256GB Samsung UFS. This patch enables only serial console and ufs0
-> device.
+On Fri, 8 Oct 2021 09:52:53 +0200, Krzysztof Kozlowski wrote:
+> The 'is_off' member of internal state structure 'exynos_pm_domain' is
+> not used anymore.
 > 
 > 
 
 Applied, thanks!
 
-[3/3] arm64: dts: exynos: add minimal support for exynosautov9 sadk board
-      commit: a89d8b5ce9af2128db074a5f0f5096b2716085aa
+[1/1] soc: samsung: pm_domains: drop unused is_off field
+      commit: 178d6c1b83e5244b866d90071246b3b0135c3f7d
 
 Best regards,
 -- 
