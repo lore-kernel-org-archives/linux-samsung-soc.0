@@ -2,96 +2,234 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45BCC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Oct 2021 12:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CC2C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B06F5610E5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Oct 2021 12:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D5CC6108F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236410AbhJLM0m (ORCPT
+        id S231826AbhJLRSa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Oct 2021 08:26:42 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34972
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236281AbhJLM0l (ORCPT
+        Tue, 12 Oct 2021 13:18:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231672AbhJLRS3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Oct 2021 08:26:41 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5A87E3FFE7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Oct 2021 12:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634041479;
-        bh=2KycfGF86kW+RwIJHs6Giwt5ePbEo0G3cAzDX2fNLuM=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=PKzf0Bz2KLeXtMcRGTqKdAtlT4jvAn1B7fjDlk5FAs6dfNu4i9vNTuClyo6nSoeJe
-         Ajpf96+sQqVLVD/aqGVXsUJO9XD9AXhC2sk1yxisQ0k+jsvFEyP+N6j18ZwmKdFiOm
-         fGr7adTa8jDZ+EZ3x2UahUIpJkelXzKB61Wjgwz0NkndkINz8voEd8ZqdA+4ZopxVN
-         2OR4S8MKP4LvDYuvlFtIARp0qZ121ONNjBLqHjAeLNl6jdqazXpCc/IWHWYG2M6UQT
-         26So0aNieNLTYj4sGd+2+MFzW+Bd6owdaTOaMXY27koGGx7Z6YpVU1HPPUe/edWTwp
-         RtfPX0o15RyjA==
-Received: by mail-lf1-f70.google.com with SMTP id i6-20020a056512318600b003fd8c8c2677so4762644lfe.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Oct 2021 05:24:39 -0700 (PDT)
+        Tue, 12 Oct 2021 13:18:29 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B9EC061745
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:16:27 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id j21so265857lfe.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YOJAucMV9YyITMCE0dWFpzbbe0z6mKCttuxJLNpSrfw=;
+        b=sn5K8s+BAtX7xFh/Ec7Zp5MyJ6HKMfNJXpN2dWbsenSFa4yKInkQ+UouIMFmGDY/W2
+         5LChKxp6S6zwDUHlVK9MKCw4/IfB6bKl62m/zB8/KftWIVf0co/lMX3FILvhTmpfQE1Y
+         ZHK1LRp/y3l2yCjj3zUNJ8VQR8hyE9OVWMMi2J6yke7/HFksUNNfQJRjhszSqTVP926f
+         KAo9yBu20v1Iw77cedd+kZH9+L1fQL1DENHiNHxMuDJc3SHnmWhu+WErjDhGW5YnEIWO
+         m4g2Ohc8KKy5t3YVAucV130BH04foDHg2q8Cdscg+cz6Cfl3x0QHKpHJs4Em6pm8GkHO
+         RcWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2KycfGF86kW+RwIJHs6Giwt5ePbEo0G3cAzDX2fNLuM=;
-        b=HbWz/QedORuTSN3k5dTG1GXa2uNaDVmyBslUiRGi6Dpja3EfEq7rHm/ae2rwQjhqaQ
-         yqnGJhJEAox4ODj7qPvBCl6mBrsMZJtNTxoBc09u2xNhYzHfNhEbBQJ0cvBT61/tQ0H7
-         vAQzeGDzw7tnabS+EZEQQogfanwdPI7owALwfe7h5OQpggRUVWlfFEsGMAMSGm6lSpgK
-         fRCP9iw+Tda10TMPSN9XS52UJQR+Vke8opMLYo8O7lf3bepfyf2upbwI96oRkeTH3Sj9
-         FBl3+8tlHTpO8WSfwRAqIjbtlayqwq5qq432AEwm9RvPtm8HLeycs02LJr9pxx6Z4dyz
-         DSHA==
-X-Gm-Message-State: AOAM5301OWzUSOQAmFNWh5vqUK8VJro0YBKTu+m1T06+f54jwfNg6XOz
-        FVYnUSGplD2+UPBgDEHlvHMxnEFReK9xqomREN26dBVvv81yKMIUESo3wlq7Vh3mDhC/nxRVMRH
-        AyjTDBxeJjapV7fpGB2g81z5+nYwJO4zLPRo4NInHrOUD+pXy
-X-Received: by 2002:a2e:95c6:: with SMTP id y6mr28676833ljh.201.1634041477349;
-        Tue, 12 Oct 2021 05:24:37 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyYKFUYAP+5FQx+G63kZ8qWv7l02qPx+Yoh7RlTIig0VJnn9ivipTNU1F6A6FXA5ZuP01sCIw==
-X-Received: by 2002:a2e:95c6:: with SMTP id y6mr28676776ljh.201.1634041476653;
-        Tue, 12 Oct 2021 05:24:36 -0700 (PDT)
-Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id t22sm1116873ljj.61.2021.10.12.05.24.35
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YOJAucMV9YyITMCE0dWFpzbbe0z6mKCttuxJLNpSrfw=;
+        b=YSeaw9Rbms4trU/zH7ymjfYKtRUPRfX2LmBENk9mgBZ0RUypxBvZOI6AzB1JS+IP03
+         7g+9sj0BBPCcCX7FoH0rQzGkBX8efPxvbv/tGpl7aDiCSIai389lPFI6MwK4BlkEPllh
+         7Di1K9rRgn4quPM3fVbVabsSDlY7WG8sPg2bWymeLFJUd39BgSEH19CjCQWTI1Jn5W8W
+         VDP8XIMSTDGlX8cmKYY6Oc+cC8Vs7UMugATq5vLyrIMICIiGIOO0IHfksv+AdImFfWVc
+         GvmobJr29udjNmVnb/6zXj6WuMCX7D1LbXcTVi7OVQoPblQ3j2/Lwg/a5+YRcROXubV1
+         fbgA==
+X-Gm-Message-State: AOAM531MvPphZD7bqZv2J9G5PilRDFe+RZvAmgDBis5mNjy6tf4EwoV5
+        H07Gpa0pF58DkZZFaI8CHj6/YQ==
+X-Google-Smtp-Source: ABdhPJxIR+R0Uxc0QaF6AWCzzBDS6hvjuiFcAIky+SXxmGPpShYTTfu10/C013pd01tdqiPErm8aDA==
+X-Received: by 2002:a05:6512:400e:: with SMTP id br14mr10159122lfb.23.1634058985720;
+        Tue, 12 Oct 2021 10:16:25 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id s14sm1085022lfe.14.2021.10.12.10.16.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 05:24:36 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 3/3] arm64: dts: exynos: add minimal support for exynosautov9 sadk board
-Date:   Tue, 12 Oct 2021 14:23:59 +0200
-Message-Id: <163404143358.133839.2794709357328521339.b4-ty@canonical.com>
+        Tue, 12 Oct 2021 10:16:25 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] soc: samsung: exynos-chipid: Pass revision reg offsets
+Date:   Tue, 12 Oct 2021 20:16:22 +0300
+Message-Id: <20211012171624.14338-1-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211012002314.38965-4-chanho61.park@samsung.com>
-References: <20211012002314.38965-1-chanho61.park@samsung.com> <CGME20211012002533epcas2p10315d89423e02bf36a5e0c404268ca1f@epcas2p1.samsung.com> <20211012002314.38965-4-chanho61.park@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 12 Oct 2021 09:23:14 +0900, Chanho Park wrote:
-> SADK(Samsung Automotive Development Kit) is the development kit to
-> evaluate Exynos Auto v9 SoC. It has 16GB LPDDR4 DRAM and two
-> 256GB Samsung UFS. This patch enables only serial console and ufs0
-> device.
-> 
-> 
+Old Exynos SoCs have both Product ID and Revision ID in one single
+register, while new SoCs tend to have two separate registers for those
+IDs. Implement handling of both cases by passing Revision ID register
+offsets in driver data.
 
-Applied, thanks!
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/soc/samsung/exynos-chipid.c       | 67 +++++++++++++++++++----
+ include/linux/soc/samsung/exynos-chipid.h |  6 +-
+ 2 files changed, 58 insertions(+), 15 deletions(-)
 
-[3/3] arm64: dts: exynos: add minimal support for exynosautov9 sadk board
-      commit: 2b663ae7152f785732d35ce38ad20ad10aca3116
-
-Best regards,
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 5c1d0f97f766..1264a18aef97 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -16,6 +16,7 @@
+ #include <linux/errno.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+@@ -24,6 +25,17 @@
+ 
+ #include "exynos-asv.h"
+ 
++struct exynos_chipid_variant {
++	unsigned int rev_reg;		/* revision register offset */
++	unsigned int main_rev_bit;	/* main revision offset */
++	unsigned int sub_rev_bit;	/* sub revision offset */
++};
++
++struct exynos_chipid_info {
++	u32 product_id;
++	u32 revision;
++};
++
+ static const struct exynos_soc_id {
+ 	const char *name;
+ 	unsigned int id;
+@@ -49,31 +61,55 @@ static const char *product_id_to_soc_id(unsigned int product_id)
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+-		if ((product_id & EXYNOS_MASK) == soc_ids[i].id)
++		if (product_id == soc_ids[i].id)
+ 			return soc_ids[i].name;
+ 	return NULL;
+ }
+ 
++static int exynos_chipid_get_chipid_info(struct regmap *regmap,
++		const struct exynos_chipid_variant *data,
++		struct exynos_chipid_info *soc_info)
++{
++	int ret;
++	unsigned int val, main_rev, sub_rev;
++
++	ret = regmap_read(regmap, EXYNOS_CHIPID_REG_PRO_ID, &val);
++	if (ret < 0)
++		return ret;
++	soc_info->product_id = val & EXYNOS_MASK;
++
++	ret = regmap_read(regmap, data->rev_reg, &val);
++	if (ret < 0)
++		return ret;
++	main_rev = (val >> data->main_rev_bit) & EXYNOS_REV_PART_LEN;
++	sub_rev = (val >> data->sub_rev_bit) & EXYNOS_REV_PART_LEN;
++	soc_info->revision = (main_rev << EXYNOS_REV_PART_OFF) | sub_rev;
++
++	return 0;
++}
++
+ static int exynos_chipid_probe(struct platform_device *pdev)
+ {
++	const struct exynos_chipid_variant *drv_data;
++	struct exynos_chipid_info soc_info;
+ 	struct soc_device_attribute *soc_dev_attr;
+ 	struct soc_device *soc_dev;
+ 	struct device_node *root;
+ 	struct regmap *regmap;
+-	u32 product_id;
+-	u32 revision;
+ 	int ret;
+ 
++	drv_data = of_device_get_match_data(&pdev->dev);
++	if (!drv_data)
++		return -EINVAL;
++
+ 	regmap = device_node_to_regmap(pdev->dev.of_node);
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	ret = regmap_read(regmap, EXYNOS_CHIPID_REG_PRO_ID, &product_id);
++	ret = exynos_chipid_get_chipid_info(regmap, drv_data, &soc_info);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	revision = product_id & EXYNOS_REV_MASK;
+-
+ 	soc_dev_attr = devm_kzalloc(&pdev->dev, sizeof(*soc_dev_attr),
+ 				    GFP_KERNEL);
+ 	if (!soc_dev_attr)
+@@ -86,8 +122,8 @@ static int exynos_chipid_probe(struct platform_device *pdev)
+ 	of_node_put(root);
+ 
+ 	soc_dev_attr->revision = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+-						"%x", revision);
+-	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
++						"%x", soc_info.revision);
++	soc_dev_attr->soc_id = product_id_to_soc_id(soc_info.product_id);
+ 	if (!soc_dev_attr->soc_id) {
+ 		pr_err("Unknown SoC\n");
+ 		return -ENODEV;
+@@ -106,7 +142,7 @@ static int exynos_chipid_probe(struct platform_device *pdev)
+ 
+ 	dev_info(soc_device_to_device(soc_dev),
+ 		 "Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
+-		 soc_dev_attr->soc_id, product_id, revision);
++		 soc_dev_attr->soc_id, soc_info.product_id, soc_info.revision);
+ 
+ 	return 0;
+ 
+@@ -125,9 +161,18 @@ static int exynos_chipid_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct exynos_chipid_variant exynos4210_chipid_drv_data = {
++	.rev_reg	= 0x0,
++	.main_rev_bit	= 0,
++	.sub_rev_bit	= 4,
++};
++
+ static const struct of_device_id exynos_chipid_of_device_ids[] = {
+-	{ .compatible = "samsung,exynos4210-chipid" },
+-	{}
++	{
++		.compatible	= "samsung,exynos4210-chipid",
++		.data		= &exynos4210_chipid_drv_data,
++	},
++	{ }
+ };
+ 
+ static struct platform_driver exynos_chipid_driver = {
+diff --git a/include/linux/soc/samsung/exynos-chipid.h b/include/linux/soc/samsung/exynos-chipid.h
+index 8bca6763f99c..5270725ba408 100644
+--- a/include/linux/soc/samsung/exynos-chipid.h
++++ b/include/linux/soc/samsung/exynos-chipid.h
+@@ -9,10 +9,8 @@
+ #define __LINUX_SOC_EXYNOS_CHIPID_H
+ 
+ #define EXYNOS_CHIPID_REG_PRO_ID	0x00
+-#define EXYNOS_SUBREV_MASK		(0xf << 4)
+-#define EXYNOS_MAINREV_MASK		(0xf << 0)
+-#define EXYNOS_REV_MASK			(EXYNOS_SUBREV_MASK | \
+-					 EXYNOS_MAINREV_MASK)
++#define EXYNOS_REV_PART_LEN		0xf
++#define EXYNOS_REV_PART_OFF		4
+ #define EXYNOS_MASK			0xfffff000
+ 
+ #define EXYNOS_CHIPID_REG_PKG_ID	0x04
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+2.30.2
+
