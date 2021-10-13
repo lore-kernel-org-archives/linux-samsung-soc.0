@@ -2,115 +2,207 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E2EC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12820C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 13:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0FD60E74
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E78EA60F94
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 13:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbhJLRUI (ORCPT
+        id S233226AbhJMNrV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Oct 2021 13:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232300AbhJLRSc (ORCPT
+        Wed, 13 Oct 2021 09:47:21 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:43331 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229611AbhJMNrV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Oct 2021 13:18:32 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E09C1C061570
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:16:30 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id c16so73295lfb.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WFagVVyJxqKqo+ujXIDBsFHUAz6WyHhioBswXi9enzg=;
-        b=l8tZ/XIpe2FjRZm6OpvZ89THhtR+7+bJk8clRVzRy77EY2k97mh4wp6d6tFOppLwB1
-         g6melgiBFoChsTlxxWF2hnj8l4krWFPiogh86W0M2J971xPgUfjylimzBUq2uUDCSfDO
-         MRGgM++68kRYWN+ibHvoxuibIUlhJwuiN452gnwI/EPDmodSdio9xc64/e3I7+J3tOKx
-         mWmwCyB4uK2fsFZQhH5Ac0U2t13dzPmwybMhQWqRsZPuiNo5++w1yf/yzgDFfIV0840Q
-         K1MON+2CB14+D0+h6aap2878Nsw1PL28BWSROpuHzdkYulIKZZpr+fTWVc/fTuUBXCy2
-         1GBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WFagVVyJxqKqo+ujXIDBsFHUAz6WyHhioBswXi9enzg=;
-        b=dvGoq2aiAB4bm0Cxaq99D4u9tPBIvS2540Wf2fMQAJhUo5Bz4VsgDENPZ+JR7tPf6k
-         8OaQodaM/tp25gDY4/xsk4nNGNSTL/PvDnTm9DJgFYbzvEp8QEwesIELsSrl21GNqA/9
-         c5Ov25XR1+TY7liyaQ3cXXv5FBGHk9ux+APBief4gEPB7gub4lIbnxHsTssan2RY4hCM
-         /ws9XCoWQzSzjkd16+pXrUx3H8byh8679edYDZ+LoaBWvCB3XgUXFUmhoUOsHqqT3eBJ
-         +9J6MZamLNh5Jgq/u3u0BWm0M2pdDm94qokU7Fslkl54+QSBCXgS0GxWoRSDN+e6BMSt
-         AHUw==
-X-Gm-Message-State: AOAM532OQzr8m2WAvQSi7B0HB5rd5XyVvK32eTE+fT1JSOae0CGAkJnI
-        Wz867TETuFqvGfQOeg5TE+kXpEAuBZUNG9Jr
-X-Google-Smtp-Source: ABdhPJxCbQwIeJWlyTDgoEFoTvwbUkzTmQ1L43vpOdiNZ2m5MzmzHVSa5dNqORrTV4PL9kSTf2ZptA==
-X-Received: by 2002:a2e:9c92:: with SMTP id x18mr3738268lji.445.1634058988981;
-        Tue, 12 Oct 2021 10:16:28 -0700 (PDT)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id v3sm713082lfr.61.2021.10.12.10.16.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 10:16:28 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] soc: samsung: exynos-chipid: Add Exynos850 support
-Date:   Tue, 12 Oct 2021 20:16:24 +0300
-Message-Id: <20211012171624.14338-3-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211012171624.14338-1-semen.protsenko@linaro.org>
-References: <20211012171624.14338-1-semen.protsenko@linaro.org>
+        Wed, 13 Oct 2021 09:47:21 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 6E91658109A;
+        Wed, 13 Oct 2021 09:45:17 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 13 Oct 2021 09:45:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=FgY2hnPsjJYOKFF2DfGAEdLl833
+        3nbKBOAi3tBKnQlQ=; b=ILAGaEIzzGT1Crwgs6sVwiM8jp7fDV292TfRxD9WjM3
+        nLQuvEp7LxnDwPl1JxXScK1ThPlXr4Wf49BDFVjOdlOqjYi4pTMXr45knwt8FhRO
+        ckI1ffIItH6jTDPHsxyOee0Vp6brQISi1OJuf4jMReH/04LAi2CeRvWmCnxI+jJf
+        6RTKViyIiRk/EzZf8+voCBu1+rodC5nYkFMtqnrOm46yKv/SRareb1ZcSBA8kNgh
+        6nInIt13Gs3YMi77ME49LtJtwSCSbP2zHBOECWl1vOcrDVOwmi/IykIIIsN76YIv
+        9rq4xzNZB4B8ghtuVHx0fjuDbd19pbONRY5JR96sClw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=FgY2hn
+        PsjJYOKFF2DfGAEdLl8333nbKBOAi3tBKnQlQ=; b=MCzneJUdJskivibM/B8m58
+        p2fJLYMp7cyea/+gacO5Q5XzORoDOfwMLAuHquGTCq+IubJQtv8azQTrSFtmfY+T
+        xI3QG2RpB71HWqh/nV2uukpdKivNfJmIMX1UtjwghV2kEvwi5oS5GpPDHwdujSyD
+        eu1HU7jVf4oMxdjgMJ9GpsZcIfrAHk+ngxFzOLWShE+blBVtTKn4gJkS269elpSU
+        cO4AOodQSEOOr50Ur7bJ6wfWzqSoAzEnuIBbsz82iFFUUmewYkzlPJsCpFBUY1lx
+        6m8Be/NzoY4gM7vBWt38OSeYvkBgWr8SadMPsgQlpyfhLVJ1sc/riwGsoVB8op7Q
+        ==
+X-ME-Sender: <xms:6-JmYT_Z-TnrdWsnG0qgims4_VgA5CMDoXKnsChz4Hi9tQEkX9i40g>
+    <xme:6-JmYfs1mlil60fbhZCpXwSBBQhGDAbSiWZlMPPM8xuLcufbMIM-lLYKPZVhHrT3C
+    Oc8oDIMSVglG0qVfKs>
+X-ME-Received: <xmr:6-JmYRDW7Ko8H9rRg5acJMSiNT3bm9NH7S1_rjcsTzsk9GgmguxJX8lqdPGfBiPNPrB_C19niqYJQIXemaYSb42GMmHmW18oBwdGDBbP>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddutddgieejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepudfhgeffjedvueegudehgeevgefhgfdujeeguedvgeelgeeuffeifedtheet
+    leeinecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdhlihhnrghrohdroh
+    hrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
+    rgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:6-JmYffwzApL3L4WQhcOYb-3771Otqxn9jsWg_yLnO87TsS8nZvBEg>
+    <xmx:6-JmYYNHuEuEJKhvTyNMtYEUHSe7hNvRytMC7_3KoGGmt-qktJ1vbQ>
+    <xmx:6-JmYRnBYNUJTjZusigkIzqQJ_hxZTVsvrH6WhonWbSoc8PzZNOQbA>
+    <xmx:7eJmYbioKLHlBrVGP2IgnvTOW-FAvO43thR-PKrmfHMMsh-wnfd0Cw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Oct 2021 09:45:15 -0400 (EDT)
+Date:   Wed, 13 Oct 2021 15:45:13 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v4 00/24] drm/bridge: Make panel and bridge probe order
+ consistent
+Message-ID: <20211013134513.hm6ftktkbh4kpudv@gilmour>
+References: <20210910101218.1632297-1-maxime@cerno.tech>
+ <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
+ <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
+ <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com>
+ <CALAqxLW=dJSmfaHAL=BfYVVxZHQvzJWu4UjMixwgM=Nh85JVNw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yp3sab3u3qe3qd7a"
+Content-Disposition: inline
+In-Reply-To: <CALAqxLW=dJSmfaHAL=BfYVVxZHQvzJWu4UjMixwgM=Nh85JVNw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add chip-id support for Exynos850 SoC. Despite its "E3830" ID, the
-actual SoC name is Exynos850 (Exynos3830 name is internal and outdated).
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/soc/samsung/exynos-chipid.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+--yp3sab3u3qe3qd7a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index 1264a18aef97..d160f9b082c4 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -54,6 +54,7 @@ static const struct exynos_soc_id {
- 	{ "EXYNOS5440", 0xE5440000 },
- 	{ "EXYNOS5800", 0xE5422000 },
- 	{ "EXYNOS7420", 0xE7420000 },
-+	{ "EXYNOS850", 0xE3830000 },
- };
- 
- static const char *product_id_to_soc_id(unsigned int product_id)
-@@ -167,10 +168,19 @@ static const struct exynos_chipid_variant exynos4210_chipid_drv_data = {
- 	.sub_rev_bit	= 4,
- };
- 
-+static const struct exynos_chipid_variant exynos850_chipid_drv_data = {
-+	.rev_reg	= 0x10,
-+	.main_rev_bit	= 20,
-+	.sub_rev_bit	= 16,
-+};
-+
- static const struct of_device_id exynos_chipid_of_device_ids[] = {
- 	{
- 		.compatible	= "samsung,exynos4210-chipid",
- 		.data		= &exynos4210_chipid_drv_data,
-+	}, {
-+		.compatible	= "samsung,exynos850-chipid",
-+		.data		= &exynos850_chipid_drv_data,
- 	},
- 	{ }
- };
--- 
-2.30.2
+Hi John,
 
+On Wed, Sep 29, 2021 at 04:29:42PM -0700, John Stultz wrote:
+> On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.org> wrot=
+e:
+> >
+> > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro.org> wr=
+ote:
+> > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@linaro.org> =
+wrote:
+> > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno.tech> w=
+rote:
+> > > > > The best practice to avoid those issues is to register its functi=
+ons only after
+> > > > > all its dependencies are live. We also shouldn't wait any longer =
+than we should
+> > > > > to play nice with the other components that are waiting for us, s=
+o in our case
+> > > > > that would mean moving the DSI device registration to the bridge =
+probe.
+> > > > >
+> > > > > I also had a look at all the DSI hosts, and it seems that exynos,=
+ kirin and msm
+> > > > > would be affected by this and wouldn't probe anymore after those =
+changes.
+> > > > > Exynos and kirin seems to be simple enough for a mechanical chang=
+e (that still
+> > > > > requires to be tested), but the changes in msm seemed to be far m=
+ore important
+> > > > > and I wasn't confortable doing them.
+> > > >
+> > > >
+> > > > Hey Maxime,
+> > > >   Sorry for taking so long to get to this, but now that plumbers is
+> > > > over I've had a chance to check it out on kirin
+> > > >
+> > > > Rob Clark pointed me to his branch with some fixups here:
+> > > >    https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripar=
+d/bridge-rework
+> > > >
+> > > > But trying to boot hikey with that, I see the following loop indefi=
+nitely:
+> > > > [    4.632132] adv7511 2-0039: supply avdd not found, using dummy r=
+egulator
+> > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using dummy r=
+egulator
+> > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using dummy r=
+egulator
+> > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, using dummy =
+regulator
+> > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using dummy r=
+egulator
+> > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using dummy r=
+egulator
+> > > > [    4.681898] adv7511 2-0039: failed to find dsi host
+> > >
+> > > I just realized Rob's tree is missing the kirin patch. My apologies!
+> > > I'll retest and let you know.
+> >
+> > Ok, just retested including the kirin patch and unfortunately I'm
+> > still seeing the same thing.  :(
+> >
+> > Will dig a bit and let you know when I find more.
+>=20
+> Hey Maxime!
+>   I chased down the issue. The dsi probe code was still calling
+> drm_of_find_panel_or_bridge() in order to succeed.
+>=20
+> I've moved the logic that looks for the bridge into the bridge_init
+> and with that it seems to work.
+>=20
+> Feel free (assuming it looks ok) to fold this change into your kirin patc=
+h:
+>   https://git.linaro.org/people/john.stultz/android-dev.git/commit/?id=3D=
+4a35ccc4d7a53f68d6d93da3b47e232a7c75b91d
+
+Thanks for testing, I've picked and squashed your fixup
+
+Maxime
+
+--yp3sab3u3qe3qd7a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYWbi6QAKCRDj7w1vZxhR
+xWrqAQDj1jImF6Y4lt74Rko+bxO0mdKNx+0pGLW7VlQhBEicrwEAk7tEp5uOOwcw
+jaEEUSlRzwDB0bV4i3OaMZN48bhI7wA=
+=KNVX
+-----END PGP SIGNATURE-----
+
+--yp3sab3u3qe3qd7a--
