@@ -2,228 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E11C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 14:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD25C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 15:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75A30610A2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 14:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4FFA60F23
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 15:03:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232587AbhJMOSg (ORCPT
+        id S236703AbhJMPFH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Oct 2021 10:18:36 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:59829 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229562AbhJMOSg (ORCPT
+        Wed, 13 Oct 2021 11:05:07 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59524
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237769AbhJMPDV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Oct 2021 10:18:36 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 7EFE4580693;
-        Wed, 13 Oct 2021 10:16:32 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 13 Oct 2021 10:16:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=rGNU8kUNWf7tAnmnlNM2GITTDVA
-        GlhsbYEpSWnytylk=; b=BVPqeKTkvAtWIQoRe2eSalP7zJRo/c68m9s3z16Zfqc
-        nn2Rnfo+w+6k3PzVho1ftDBv2ds4RFbIglm3+t47r7J90w11TqUk/OxGLYNm85Gg
-        BdLq1lZlJTSYGuG9BFNRUOdUbfCai9/BZhlBjPqVblqKAEpN60WSWmwSK8t+s3lh
-        riPJRLwYBkKw+j8cEFAmUbjwoIf3FWhDEYFAvJ0xl04gZvrPwqH0lrOF+0LbWj8F
-        Xm2kSIA1sPHQGF+H0Cgo/quR0FpcOGN/cnb3KKIjorI9WbBeXoviFs65d7dbcDq9
-        LSyCVR2m4/hubErBvPhk5Fn9/cRxzT+UXMl6/oSm6Xw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=rGNU8k
-        UNWf7tAnmnlNM2GITTDVAGlhsbYEpSWnytylk=; b=LuQ5gvEGAGY9AFPS1OJ8R8
-        6PH5lRPtp7oFk21QzE/+4qPUqskShFmaJxlabtL8IKUGyxjkxkllcIhBs6nuiMZs
-        2RoJf/akIMmKZ5kcTXXGVnWoHjKm1bxiI4yNdFa1zxE5zzgCrTp2utAy2BqsiX0N
-        zNW1j53byqhxa/yrbVliTVahpFcOqMrT/4a5l8VGLo3MWcVl1cHfuq4O4Q5+qfqj
-        P8ycTu5tpv/fGw8yAylyJ+OKk+bn4kJ2dwXnVKS8wwcJYTBaV6VH34Z8aJVLFcHc
-        YDMLDg7jz9UHuE5fAqg+vc2buz3FIfs+aUNjZ8685IGiFAo2GN49xiSW4A7yCCSg
-        ==
-X-ME-Sender: <xms:P-pmYdns-rWvS-4r6xyklkIGU14AVU2a8X46PWxo5g6i8UVbaid1Og>
-    <xme:P-pmYY3qo7or-LaQDNj3r0Ky1em9nALLkqD06phYlYjJWX-C6z0qu4JYoQQMsTBre
-    jObXWOhODy1pYvVjWQ>
-X-ME-Received: <xmr:P-pmYTrk4TPDWI52t0Cqc8mIS_4BvPQJ2WYKpRdyfYvtKVIf4e3TUSllNy3g0wyREPaFmF1pVwEn5tBUjknHO2zWz8u3HlvsYCfHgLvs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddutddgjedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepkefgffekffelgfeukedvhffggeehtedugfekgeeihfefhfehieeukeevffev
-    hfefnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgtrghlvggsshdrug
-    gvvhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
-    rgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:P-pmYdm0lQBxSkcxsDnGJq7LCQdLAuBnaJgtAAK_4Fvyv0PhjW42bg>
-    <xmx:P-pmYb26iOIzYfale8JdDrWm9VKEfeNVRnzXgLcWxM0dG8YxgeZZSQ>
-    <xmx:P-pmYcvsH9lWxXJjCtMV0ppzt9f5o2_TNeqbfNrdfxmLTc1MVTHd7g>
-    <xmx:QOpmYaBNUIPJQ_ZlRoLIc31Ei5BVLrlUt7xRfhbvD4fNU7nWbYnKVw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Oct 2021 10:16:30 -0400 (EDT)
-Date:   Wed, 13 Oct 2021 16:16:29 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Rob Clark <robdclark@gmail.com>,
-        Caleb Connolly <caleb.connolly@linaro.org>
-Cc:     Amit Pundir <amit.pundir@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v4 00/24] drm/bridge: Make panel and bridge probe order
- consistent
-Message-ID: <20211013141629.qfeqwsyi5yobzjca@gilmour>
-References: <20210910101218.1632297-1-maxime@cerno.tech>
- <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
- <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
- <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com>
- <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
- <YXiZIuao6wNch7j-D3ZktdSR3_IRAQ3oSeL8sLCCX8lEhwsoWaouE6_eV6C2Zv9r2_dww_Mtal18UBJfc4fz4g==@protonmail.internalid>
- <CAMi1Hd0sUUFvNzYwt29af9d99o1-x+LiXBPCrQ8=9H0tHvxVHg@mail.gmail.com>
- <b57fbc24-9ef3-a57b-17d4-2cb33fb409d4@linaro.org>
+        Wed, 13 Oct 2021 11:03:21 -0400
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 53CF03FFEE
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Oct 2021 15:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634137276;
+        bh=xYuV2MmQladXcPP7bw44n/vAd85hc1wnSNxzKdpoKHU=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=h/QXGNQ6m1uR7tRK3CIgv+bWw+nupVn7pe1kAe5t9gLcWICbqxFktHubqMlefJyXZ
+         r9h/t08O0MBlx3IK3OB0k+exGFDs55Zs+JezlrzE6UtYngOOJQsf6SVXd2+QPql2Ex
+         omo5Zh/p+ywpyP2Z4NPqn0X9bmxlz2Bzi3lDwV4tC5uZ9Vg8Wbs93ORlvyuZRZ20rQ
+         9o69lMx7hNW9oRyHC/o09MJSDcgx8mpp4P/vShDjdMR/yR1U1xyQFxyumsND5uE59I
+         I9+CwOPfynNFba8zHE7e7RDXwvUUBp03k6Le/XRWTqfNbsXtAIR2jD6uK+8cDnHxem
+         T9zFtS9pJZ13w==
+Received: by mail-ed1-f69.google.com with SMTP id p20-20020a50cd94000000b003db23619472so2471264edi.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Oct 2021 08:01:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xYuV2MmQladXcPP7bw44n/vAd85hc1wnSNxzKdpoKHU=;
+        b=y/UNCxTgrUGnq33BgrzR6bVU5qMd8jHtKJm51I2ucCZlO5uQwWG5yV0GpactOeJENM
+         GDk9x1HDCkNO9xu5PVpDSD0SfWOAFgX0KC/SDDtTTJboBC4K+h0+1+1IIjnQJhwwdfdz
+         lSl8XgcCOK8Pll5IEsORahjqJ+Xv0Yz88Gx1l13jcKKrek8e//wtpZ/vXeuGGUnSYk23
+         wy6n6O0HDc3EYNMjdC70DC2UDpMYb94KjkdzQzEF/CmbHdtuuo8LHNhemB91b4i93lAr
+         iav6El/izJmJNdppItLMQg0gG/hLTs8gABP1j8FqmAo1miiu+1OiSOPHTR03lKpk5bAL
+         sWbg==
+X-Gm-Message-State: AOAM530yK7wlGFzdjHAJTXCwAH2wFLhbFJ+x9ZijbIuUs7BXLdmzKtwE
+        mb1FDP9qC525shTBAfVTbwV7eJfVAepdeu+waLS6ZxvtdTdm2mDWzTTiiFKhUiKj8HzlXTzYtv/
+        xBbIqQe+gNDUy2Ps2z6sqUF4dS+xzpsvzlKLRVc84jpztWUa79d1KMUPXhDLE3f6A
+X-Received: by 2002:a50:cf87:: with SMTP id h7mr10281321edk.330.1634137275950;
+        Wed, 13 Oct 2021 08:01:15 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwegVNQSzIUZzqwL+kBl/pg71DIpq9sCZIiDU4Wb8xJespMOYwK9v10kYYfIdkQ4bJOR0ucGyI5yMK1rTxX1ro=
+X-Received: by 2002:a50:cf87:: with SMTP id h7mr10281285edk.330.1634137275716;
+ Wed, 13 Oct 2021 08:01:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bigl5w3rjallwyk4"
-Content-Disposition: inline
-In-Reply-To: <b57fbc24-9ef3-a57b-17d4-2cb33fb409d4@linaro.org>
+References: <20211013143810.2101838-1-arnd@kernel.org> <20211013143810.2101838-2-arnd@kernel.org>
+In-Reply-To: <20211013143810.2101838-2-arnd@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Date:   Wed, 13 Oct 2021 17:01:04 +0200
+Message-ID: <CA+Eumj5Fx6tQv9B9R9iBCP4C=f2dk3szCGcisvPHYfMWpsCCfw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: exynos: fix cpu unit name warnings
+To:     Arnd Bergmann <arnd@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>, soc@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Wed, 13 Oct 2021 at 16:38, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> dtc started warning about some of the CPU addresses:
+>
+> arch/arm64/boot/dts/exynos/exynosautov9.dtsi:78.20-83.5: Warning (unit_address_format): /cpus/cpu@000000: unit name should not have leading 0s
+> arch/arm64/boot/dts/exynos/exynosautov9.dtsi:85.20-90.5: Warning (unit_address_format): /cpus/cpu@000100: unit name should not have leading 0s
+> arch/arm64/boot/dts/exynos/exynosautov9.dtsi:92.20-97.5: Warning (unit_address_format): /cpus/cpu@000200: unit name should not have leading 0s
+> arch/arm64/boot/dts/exynos/exynosautov9.dtsi:99.20-104.5: Warning (unit_address_format): /cpus/cpu@000300: unit name should not have leading 0s
+>
+> Remove the leading zeroes.
+>
+> Fixes: f695b3f4c45d ("arm64: dts: exynos: add initial support for exynosautov9 SoC")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
---bigl5w3rjallwyk4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks Arnd, but this was fixed with the next version of patchset.
+It's my bad because I did not drop the patch from my next branch after
+spotting it, knowing that Chanho will resubmit the next day and then I
+would replace it. This replacement happened next day but linux next
+got the older/buggy patch.
 
-Hi Caleb,
 
-On Thu, Sep 30, 2021 at 09:20:52PM +0100, Caleb Connolly wrote:
-> Hi,
->=20
-> On 30/09/2021 20:49, Amit Pundir wrote:
-> > On Thu, 30 Sept 2021 at 04:50, Rob Clark <robdclark@gmail.com> wrote:
-> > >=20
-> > > On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.org> =
-wrote:
-> > > >=20
-> > > > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro.org=
-> wrote:
-> > > > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@linaro.o=
-rg> wrote:
-> > > > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno.tec=
-h> wrote:
-> > > > > > > The best practice to avoid those issues is to register its fu=
-nctions only after
-> > > > > > > all its dependencies are live. We also shouldn't wait any lon=
-ger than we should
-> > > > > > > to play nice with the other components that are waiting for u=
-s, so in our case
-> > > > > > > that would mean moving the DSI device registration to the bri=
-dge probe.
-> > > > > > >=20
-> > > > > > > I also had a look at all the DSI hosts, and it seems that exy=
-nos, kirin and msm
-> > > > > > > would be affected by this and wouldn't probe anymore after th=
-ose changes.
-> > > > > > > Exynos and kirin seems to be simple enough for a mechanical c=
-hange (that still
-> > > > > > > requires to be tested), but the changes in msm seemed to be f=
-ar more important
-> > > > > > > and I wasn't confortable doing them.
-> > > > > >=20
-> > > > > >=20
-> > > > > > Hey Maxime,
-> > > > > >    Sorry for taking so long to get to this, but now that plumbe=
-rs is
-> > > > > > over I've had a chance to check it out on kirin
-> > > > > >=20
-> > > > > > Rob Clark pointed me to his branch with some fixups here:
-> > > > > >     https://gitlab.freedesktop.org/robclark/msm/-/commits/for-m=
-ripard/bridge-rework
-> > > > > >=20
-> > > > > > But trying to boot hikey with that, I see the following loop in=
-definitely:
-> > > > > > [    4.632132] adv7511 2-0039: supply avdd not found, using dum=
-my regulator
-> > > > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using dum=
-my regulator
-> > > > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using dum=
-my regulator
-> > > > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, using du=
-mmy regulator
-> > > > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using dum=
-my regulator
-> > > > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using dum=
-my regulator
-> > > > > > [    4.681898] adv7511 2-0039: failed to find dsi host
-> > > > >=20
-> > > > > I just realized Rob's tree is missing the kirin patch. My apologi=
-es!
-> > > > > I'll retest and let you know.
-> > > >=20
-> > > > Ok, just retested including the kirin patch and unfortunately I'm
-> > > > still seeing the same thing.  :(
-> > > >=20
-> > > > Will dig a bit and let you know when I find more.
-> > >=20
-> > > Did you have a chance to test it on anything using drm/msm with DSI
-> > > panels?  That would at least confirm that I didn't miss anything in
-> > > the drm/msm patch to swap the dsi-host vs bridge ordering..
-> >=20
-> > Hi, smoke tested
-> > https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridg=
-e-rework
-> > on Pocophone F1 (sdm845 / A630) with v5.15-rc3. I see no obvious
-> > regressions in my limited testing so far including video (youtube)
-> > playback.
-> Tested on the OnePlus 6 too booting AOSP, works fine. This *fixes*
-> FBDEV_EMULATION (so we can get a working framebuffer console) which was
-> otherwise broken on 5.15.
->=20
-> However it spits out some warnings during boot: https://p.calebs.dev/gucy=
-sowyna.yaml
-
-Thanks for testing. It looks like the runtime_pm ordering between the
-msm devices changed a bit with the conversion Rob did.
-
-Rob, do you know what could be going on?
-
-Thanks!
-Maxime
-
---bigl5w3rjallwyk4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYWbqPQAKCRDj7w1vZxhR
-xdOTAQDjb3huzaE7pHvCyz07hJC57832ndc9T6cZOvvFbklnIQD7BQXSVG/1e0Hb
-rq4X+WgysJ3GbuqAFdQEOjb839HmzAE=
-=KNRT
------END PGP SIGNATURE-----
-
---bigl5w3rjallwyk4--
+Best regards,
+Krzysztof
