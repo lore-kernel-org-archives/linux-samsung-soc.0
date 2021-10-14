@@ -2,63 +2,63 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972A6C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 11:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985E7C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 11:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DEEF61053
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 11:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A31A610CB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 11:49:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231248AbhJNLqT (ORCPT
+        id S231300AbhJNLvN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Oct 2021 07:46:19 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:50808
+        Thu, 14 Oct 2021 07:51:13 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:50920
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231194AbhJNLqO (ORCPT
+        by vger.kernel.org with ESMTP id S231279AbhJNLu4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Oct 2021 07:46:14 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        Thu, 14 Oct 2021 07:50:56 -0400
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DA4C04000F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Oct 2021 11:44:06 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 154E540018
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Oct 2021 11:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634211846;
-        bh=YPH2WVu5uDitMh1aWqloZ1ZtuO3sS7qJNLEyKSmSBJE=;
+        s=20210705; t=1634212129;
+        bh=+QucqtrNNe6d3rRVyubBLIdJbWx18EKgEONOiKaaLaU=;
         h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=LzddoGzSKTefcJ2k9L/kwzLDThvp541Tp8/qjghOlInoSpz3eIhCxBTi/RdxIYKfH
-         2sNXub6rwoUI8mv+VTOw9fG1jLeVW+q5+3EGcqBWvC5NFo3sq9216g4DqEn2WU139k
-         vbkHGX69ep1MeZpgTpI1iYJDCBbya4Nm0DCKgcdZQIBjtJQPxlK+ogxyARcgZbnP0s
-         4S8BXIZAIm0vZS3A2Zj12uzN6NSYT0xhaeHr3zP0UyON8eRwVZxdHZurIYWkWWgF5H
-         1+4fe6aKkMj2nEfV8D5gyiwIop4QNqXiZEb9oFpV8bNDS8qfEbqaqC+B/NKqPjHJwL
-         wGv7pvAWHBnxQ==
-Received: by mail-lf1-f70.google.com with SMTP id i6-20020a056512318600b003fd8c8c2677so4175144lfe.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Oct 2021 04:44:06 -0700 (PDT)
+        b=KXCUsGn2bsEPUBY8QNCytMxxpV+PnMOmRvb3NBQm7b5o7kXN6mxXsDxfg1ho0S5ia
+         ddJAzRe35tdeCOy40C81BeEYxThgsfj/RQj05h4e7H1uVUzPPfwxmWQUQKxaziqlvj
+         k+2sPDyEOeF1g/YtiWc41KGtEAu4MnTDC3n70tSoXf6CkDpf0lL3za4B9cU9XfRqoX
+         p12VYG2Xj+mSpDvSkkMQk8ItNS9A/1KSVGsAufNezxy7SQV/xFlnSvSXGYbo57O9f6
+         FKArD1kCDVT35terkFeS25PHYP6qkevglJr+6PMc8m/Z2S4ciFuvdW3YxHmNyN53Ml
+         EImtJIlFEgIAg==
+Received: by mail-lf1-f69.google.com with SMTP id u17-20020a05651206d100b003fd714d9a38so4185227lff.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Oct 2021 04:48:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=YPH2WVu5uDitMh1aWqloZ1ZtuO3sS7qJNLEyKSmSBJE=;
-        b=zxJad/XG9Dnre9swGn23PZxwldmDOVPhot52iY9BQ/92l38Xe0vyWCnv/TOeWSWeXo
-         FvF+Ev0FCgT99MKOQyhMM1OO28jlGVKQmKWld6/1DoB49/kM1T0RsGBTyNouf3cNmCyH
-         Tqbkxbg4QdqJc67zFVCdpuH4I1hEI38+O1x1eDJD7BtnMnsdJ4tvfb5MV7sxQINhn1j/
-         ydjlz4P04Wzq9+x9n6g7m8tew13vkJYhB4lhJAJElvDrHIXu8nSBhZl5zp4BeUWDklhF
-         b/POSGHsUSCjCKZS4DFMj940v23JX5E7B2Ax6d/7DmfOhAOFHF6P0gVRP1AIvRXF9+o4
-         gWPg==
-X-Gm-Message-State: AOAM5326SppbWS2VpzhfzLj+yA+Qmz8Lwir5GbMwxznYjrzm/04e8Zvy
-        nBYYkfQSfNnEf8Skl5uYhv16vud7kqewMc0wbQxHCryZTVZHhUJ2HxnIcWQHZEGB1BVDR3PiIV+
-        e+UKtIPx2kBpedwsH7OXRIfdLL8RscEXRZ51KA+tncyW7gg6W
-X-Received: by 2002:a05:6512:3b07:: with SMTP id f7mr4464259lfv.67.1634211845403;
-        Thu, 14 Oct 2021 04:44:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwLFOioy5nBCsU+Bnh4Jdc1/IvTUpnD/zPAtB+U5lrR/RgFHNx1XSSNThY8LhzFdmwR/kZAHw==
-X-Received: by 2002:a05:6512:3b07:: with SMTP id f7mr4464244lfv.67.1634211845204;
-        Thu, 14 Oct 2021 04:44:05 -0700 (PDT)
+        bh=+QucqtrNNe6d3rRVyubBLIdJbWx18EKgEONOiKaaLaU=;
+        b=uDRghH+9mJV97H5ZSQkwXgNE89fnCMO0gVoDhvro976f+JUBdqpmWHwR/FxwplzbjP
+         dd4zS8dUNiQnc4ACMZ+/oNa+KXe938SWPOVwhen1y2DMsPWPh0iLvHA6bd0Qt0eleM0x
+         SJjSGWoE1BjtIMxkQflahK7aJzinse8VGOomIzvwcH/oSVa1VW1usQqcxx++V4joLiXy
+         gddJaZeVZ1783FzQG779v48XD+yMdyFY8tsmBQIkqc6CF8V/UIQgwP01xtLiSLJ6ORUf
+         cw42gxcp2o/oRvtdoqK1xNZ+M9lOypVjcKLucS6+kAxIqiXlwoFtLYCgAB15/wvTTGny
+         Gp7A==
+X-Gm-Message-State: AOAM531BYyrxTmorDHkrDDRVzmWrn8bOI+6PIod6th6Ng08p1iZSOkpw
+        S/gr4IuizI4HGtH7GsSLUtO7mjwZ5PV7y+f9WlrBY4ULzL9+/rRhm1RZOZWqLsVq2umdiYOD12g
+        ET4nhf3CSEC1WaFMWC9riheVrA/4rwjmJF3A4nV6U+DZ5GkEd
+X-Received: by 2002:a05:651c:38c:: with SMTP id e12mr5437334ljp.292.1634212126949;
+        Thu, 14 Oct 2021 04:48:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyTmoDAukQG+HglITBNz+qRvcuRhzHlNt5dUpM/nqpNFtGelU3omyg5mS+6th9Ubg6fNz2+Lw==
+X-Received: by 2002:a05:651c:38c:: with SMTP id e12mr5437314ljp.292.1634212126730;
+        Thu, 14 Oct 2021 04:48:46 -0700 (PDT)
 Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id x4sm205011lfq.246.2021.10.14.04.44.03
+        by smtp.gmail.com with ESMTPSA id a19sm241434ljb.3.2021.10.14.04.48.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Oct 2021 04:44:04 -0700 (PDT)
+        Thu, 14 Oct 2021 04:48:46 -0700 (PDT)
 Subject: Re: [PATCH v2 1/3] soc: samsung: exynos-chipid: Pass revision reg
  offsets
 To:     Sam Protsenko <semen.protsenko@linaro.org>
@@ -69,15 +69,15 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <20211013202110.31701-1-semen.protsenko@linaro.org>
- <3460c787-0a72-3c37-1075-dfee9cc2c0b3@canonical.com>
- <CAPLW+4mw8e+r=Jf8unQtLGXHpxvioQinOjrDChdvs8S+hddotw@mail.gmail.com>
+ <1cd31098-ba9d-f2e3-e34c-5bada00a2696@canonical.com>
+ <CAPLW+4mtSnt8dCCtSeu-yNTR0F5ZO-hdjFjyGChi=tTWQQt85Q@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <d1a0dd67-6f29-1b4f-5cdf-5d203297adb9@canonical.com>
-Date:   Thu, 14 Oct 2021 13:44:03 +0200
+Message-ID: <dd61666c-fd1a-c152-9423-9dc6718b1626@canonical.com>
+Date:   Thu, 14 Oct 2021 13:48:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4mw8e+r=Jf8unQtLGXHpxvioQinOjrDChdvs8S+hddotw@mail.gmail.com>
+In-Reply-To: <CAPLW+4mtSnt8dCCtSeu-yNTR0F5ZO-hdjFjyGChi=tTWQQt85Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -85,8 +85,8 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/10/2021 13:25, Sam Protsenko wrote:
-> On Thu, 14 Oct 2021 at 09:41, Krzysztof Kozlowski
+On 14/10/2021 13:34, Sam Protsenko wrote:
+> On Thu, 14 Oct 2021 at 10:11, Krzysztof Kozlowski
 > <krzysztof.kozlowski@canonical.com> wrote:
 >>
 >> On 13/10/2021 22:21, Sam Protsenko wrote:
@@ -114,22 +114,152 @@ On 14/10/2021 13:25, Sam Protsenko wrote:
 >>>  #include <linux/regmap.h>
 >>>  #include <linux/slab.h>
 >>> @@ -24,6 +25,17 @@
+>>>
+>>>  #include "exynos-asv.h"
+>>>
+>>> +struct exynos_chipid_variant {
+>>> +     unsigned int rev_reg;           /* revision register offset */
+>>> +     unsigned int main_rev_shift;    /* main revision offset in rev_reg */
+>>> +     unsigned int sub_rev_shift;     /* sub revision offset in rev_reg */
+>>> +};
+>>> +
+>>> +struct exynos_chipid_info {
+>>> +     u32 product_id;
+>>> +     u32 revision;
+>>> +};
+>>> +
+>>>  static const struct exynos_soc_id {
+>>>       const char *name;
+>>>       unsigned int id;
+>>> @@ -49,31 +61,55 @@ static const char *product_id_to_soc_id(unsigned int product_id)
+>>>       int i;
+>>>
+>>>       for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+>>> -             if ((product_id & EXYNOS_MASK) == soc_ids[i].id)
+>>> +             if (product_id == soc_ids[i].id)
+>>>                       return soc_ids[i].name;
+>>>       return NULL;
+>>>  }
+>>>
+>>> +static int exynos_chipid_get_chipid_info(struct regmap *regmap,
+>>> +             const struct exynos_chipid_variant *data,
+>>> +             struct exynos_chipid_info *soc_info)
+>>> +{
+>>> +     int ret;
+>>> +     unsigned int val, main_rev, sub_rev;
+>>> +
+>>> +     ret = regmap_read(regmap, EXYNOS_CHIPID_REG_PRO_ID, &val);
+>>> +     if (ret < 0)
+>>> +             return ret;
+>>> +     soc_info->product_id = val & EXYNOS_MASK;
+>>> +
+>>> +     ret = regmap_read(regmap, data->rev_reg, &val);
 >>
->> Include a changelog please. Your patch does not apply and there is no
->> information on tree which it was based on.
+>> Isn't this the same register as EXYNOS_CHIPID_REG_PRO_ID?
 >>
 > 
-> Sorry, my bad. Will do in v3. As for the tree: it's based on the
-> latest mainline/master. I'll double check if patches apply correctly
-> to that before sending v3. Please let me know if you want me to rebase
-> this series on top of some other tree.
+> It is for Exynos4210, but it's not for Exynos850 (see PATCH 3/3), as
+> it's described in the commit message. I tried to keep this code
+> unified for all SoCs.
 
-Mainline/master won't work in most of the cases. You need to rebase your
-work on maintainer's tree. This is sometimes tricky, so usually it's
-enough to base on linux-next.
+Yeah, but for Exynos4210 you read the same register twice. It's
+confusing. Read only once. You could compare the offsets and skip second
+read.
 
-In this case, either use linux-next or for-next branch of my tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/
+> 
+>>> +     if (ret < 0)
+>>> +             return ret;
+>>> +     main_rev = (val >> data->main_rev_shift) & EXYNOS_REV_PART_MASK;
+>>> +     sub_rev = (val >> data->sub_rev_shift) & EXYNOS_REV_PART_MASK;
+>>> +     soc_info->revision = (main_rev << EXYNOS_REV_PART_SHIFT) | sub_rev;
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>>  static int exynos_chipid_probe(struct platform_device *pdev)
+>>>  {
+>>> +     const struct exynos_chipid_variant *drv_data;
+>>> +     struct exynos_chipid_info soc_info;
+>>>       struct soc_device_attribute *soc_dev_attr;
+>>>       struct soc_device *soc_dev;
+>>>       struct device_node *root;
+>>>       struct regmap *regmap;
+>>> -     u32 product_id;
+>>> -     u32 revision;
+>>>       int ret;
+>>>
+>>> +     drv_data = of_device_get_match_data(&pdev->dev);
+>>> +     if (!drv_data)
+>>> +             return -EINVAL;
+>>> +
+>>>       regmap = device_node_to_regmap(pdev->dev.of_node);
+>>>       if (IS_ERR(regmap))
+>>>               return PTR_ERR(regmap);
+>>>
+>>> -     ret = regmap_read(regmap, EXYNOS_CHIPID_REG_PRO_ID, &product_id);
+>>> +     ret = exynos_chipid_get_chipid_info(regmap, drv_data, &soc_info);
+>>>       if (ret < 0)
+>>>               return ret;
+>>>
+>>> -     revision = product_id & EXYNOS_REV_MASK;
+>>> -
+>>>       soc_dev_attr = devm_kzalloc(&pdev->dev, sizeof(*soc_dev_attr),
+>>>                                   GFP_KERNEL);
+>>>       if (!soc_dev_attr)
+>>> @@ -86,8 +122,8 @@ static int exynos_chipid_probe(struct platform_device *pdev)
+>>>       of_node_put(root);
+>>>
+>>>       soc_dev_attr->revision = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+>>> -                                             "%x", revision);
+>>> -     soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
+>>> +                                             "%x", soc_info.revision);
+>>> +     soc_dev_attr->soc_id = product_id_to_soc_id(soc_info.product_id);
+>>>       if (!soc_dev_attr->soc_id) {
+>>>               pr_err("Unknown SoC\n");
+>>>               return -ENODEV;
+>>> @@ -106,7 +142,7 @@ static int exynos_chipid_probe(struct platform_device *pdev)
+>>>
+>>>       dev_info(soc_device_to_device(soc_dev),
+>>>                "Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
+>>> -              soc_dev_attr->soc_id, product_id, revision);
+>>> +              soc_dev_attr->soc_id, soc_info.product_id, soc_info.revision);
+>>>
+>>>       return 0;
+>>>
+>>> @@ -125,9 +161,18 @@ static int exynos_chipid_remove(struct platform_device *pdev)
+>>>       return 0;
+>>>  }
+>>>
+>>> +static const struct exynos_chipid_variant exynos4210_chipid_drv_data = {
+>>> +     .rev_reg        = 0x0,
+>>> +     .main_rev_shift = 0,
+>>> +     .sub_rev_shift  = 4,
+>>
+>> The code does not look correct here. Subrev is at 0:3 bits, mainrev is
+>> at 4:7.
+>>
+> 
+> Right. I was confused by those existing macros:
+> 
+>     #define EXYNOS_SUBREV_MASK        (0xf << 4)
+>     #define EXYNOS_MAINREV_MASK        (0xf << 0)
+> 
+> Those were probably wrong the whole time? Anyway, now I've found
+> Exynos4412 User Manual and checked it there -- you are right about
+> offsets. Will fix in v3.
+
+They were not used, I think.
+
+> 
+>> Did you test it that it produces same result? Looks not - I gave it a
+>> try and got wrong revision.
+>>
+> 
+> I only have Exynos850 based board, and that has 0x0 in Revision ID
+> register. But for v3 I'll try to emulate register value in the code
+> and make sure that the read value does not change with patch applied.
+
+You should get one of Odroid boards to test it. The MC1 is fairly cheap.
 
 Best regards,
 Krzysztof
