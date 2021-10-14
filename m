@@ -2,168 +2,115 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB1FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 01:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE7DC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 06:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9B81611C7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 01:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9432B611C1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 06:42:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbhJNBvo (ORCPT
+        id S229613AbhJNGoG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Oct 2021 21:51:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229837AbhJNBvo (ORCPT
+        Thu, 14 Oct 2021 02:44:06 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:54324
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229538AbhJNGoG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Oct 2021 21:51:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 44B6B611BD;
-        Thu, 14 Oct 2021 01:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634176180;
-        bh=Gpv3ryCbvh3SBhygjmVyThiZtHe6Jj3RrBddgBX5+w8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ube5ZXQRlLZCU1G2o/8xD26TuZq/h7IELUmS0lwNKzsppCf8K8WgB8DB8LQUN0ZMp
-         gkNNdW4I2vD1jv+GwHuLqON9nUoyhPHxxABaXYDcdIsOBqOtSFQeXDP7zCy6bhPlui
-         0cr9Ycm2/a/171HhUCC1n8P+LcAP+r831fvJ/fxusG4eb5RwU6yXyzKrXgywfHLdu1
-         wYgMoP4UcK4Yym/UspWyPJPqM50XAbHM+GDOOQ6n9Yzrqq1wpE1ZhODhrAzDXjDhgI
-         oCE0mrfv1xaHGSc/kW4fD2rbSPiB0Syb/R6m5/RxDcto44Zs2WQETLuCoDOIndhYgy
-         9AxNeagdY9/Zg==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 14 Oct 2021 02:44:06 -0400
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 729AC3FFF3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Oct 2021 06:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634193719;
+        bh=CMmfj/ip+IGKBw8tWjgLAh8I3/FgLXWH7nylZ4BTcqA=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=And/g7krMcJTdwNNvmU+sLfSGaoHP9OYRVBt86yIVPoo67IiYU07ei07tlOQgXrjY
+         pwKDI49zNd01afiTMLkmlZDh6V9KK/V/pkqwsNxlzSk6dV0MCZDXTPC7zS10C3h/dL
+         YAoKuNkcWuptnAWJpZO+BAsOwT8C0KkRqklF59gWrkgEsIK+GjJTAaEyBWwoThYAJV
+         6wehBfWw7ATAo2bgD9+OM9jYT4pn5pjUfvouToGfb8hKVyQPKmWjmPs+NKpmihy/L8
+         frSsPYQQUlY7opSTVdrkMUn7Boc1VbcUr5Ar8k85nPaKCQkF0nZM5Hc3gsH+i1HJUy
+         96KdinLRMThwA==
+Received: by mail-lf1-f69.google.com with SMTP id bt36-20020a056512262400b003fd7e6a96e8so3625696lfb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Oct 2021 23:41:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CMmfj/ip+IGKBw8tWjgLAh8I3/FgLXWH7nylZ4BTcqA=;
+        b=a7TmxX8asWtIbaJaCacbhGprcpnfLMXCrguVwEqCk91bqwq5ouAEoNt1QT4PjUsgNx
+         RGccHkCAIuS2SWau5RlRAsolDkizqG32W5lVqah6lZbNCqKxkVznjRLZKSfXFmgfiNN6
+         KSyYGTKurWJTO/0nC94lQSOf7MDvhdnUHtWwdiDSN3vHZGrjl9Q3YI+VB+9yXLj0Qbg8
+         M/mXXh2OpxqSdfz1Ab6XpV/f7/m2DevE5voPJmcyt6nSvyIdeCuz2Zf/0CvaYWURSDGI
+         iCRHGPNTpEVIFrxl+vE1uafhBOGJ7PDI72M0gPkIACg6+FEDF/xWOuSBDzH8NYdpLAr4
+         BZbw==
+X-Gm-Message-State: AOAM533xs+C8GAREdSnJKNZ9/HjV68Ooe55TAbpHhlsVrgLMquPgSxiP
+        YAmkSzXosZj77FIsaAEWk9a7QjOTqolOIemUfoAYKjjlEQtx976eMYUjfuG0EuthNy/cvXKD80D
+        1AUWXRn8N4jmA2gktkWjJIInHldA5v/8kNP/NJu+atjrryGVz
+X-Received: by 2002:ac2:52b0:: with SMTP id r16mr3405370lfm.500.1634193717259;
+        Wed, 13 Oct 2021 23:41:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzFQjJUQipqmMTro8hRz6eMfXduPpPL0Xek7QIUsQK2i5IMv8MJSarYOB4NbF6Q6rvUma+yZw==
+X-Received: by 2002:ac2:52b0:: with SMTP id r16mr3405360lfm.500.1634193717105;
+        Wed, 13 Oct 2021 23:41:57 -0700 (PDT)
+Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id l24sm176616lji.25.2021.10.13.23.41.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Oct 2021 23:41:56 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] soc: samsung: exynos-chipid: Pass revision reg
+ offsets
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211013202110.31701-1-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <3460c787-0a72-3c37-1075-dfee9cc2c0b3@canonical.com>
+Date:   Thu, 14 Oct 2021 08:41:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211013221021.3433704-2-willmcvicker@google.com>
-References: <20211013221021.3433704-1-willmcvicker@google.com> <20211013221021.3433704-2-willmcvicker@google.com>
-Subject: Re: [PATCH v3 1/2] [RFT] clk: samsung: add support for CPU clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-team@android.com, Will McVicker <willmcvicker@google.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Will McVicker <willmcvicker@google.com>
-Date:   Wed, 13 Oct 2021 18:49:38 -0700
-Message-ID: <163417617897.936110.4798836682696423903@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20211013202110.31701-1-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Will McVicker (2021-10-13 15:10:19)
-> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-> index 00ef4d1b0888..b5017934fc41 100644
-> --- a/drivers/clk/samsung/clk-cpu.c
-> +++ b/drivers/clk/samsung/clk-cpu.c
-> @@ -469,3 +469,29 @@ int __init exynos_register_cpu_clock(struct samsung_=
-clk_provider *ctx,
->         kfree(cpuclk);
->         return ret;
->  }
-> +
-> +void samsung_clk_register_cpu(struct samsung_clk_provider *ctx,
-> +               const struct samsung_cpu_clock *list, unsigned int nr_clk)
-> +{
-> +       unsigned int idx;
-> +       unsigned int num_cfgs;
-> +       struct clk *parent_clk, *alt_parent_clk;
-> +       const struct clk_hw *parent_clk_hw =3D NULL;
-> +       const struct clk_hw *alt_parent_clk_hw =3D NULL;
-> +
-> +       for (idx =3D 0; idx < nr_clk; idx++, list++) {
-> +               /* find count of configuration rates in cfg */
-> +               for (num_cfgs =3D 0; list->cfg[num_cfgs].prate !=3D 0; )
-> +                       num_cfgs++;
-> +
-> +               parent_clk =3D __clk_lookup(list->parent_name);
+On 13/10/2021 22:21, Sam Protsenko wrote:
+> Old Exynos SoCs have both Product ID and Revision ID in one single
+> register, while new SoCs tend to have two separate registers for those
+> IDs. Implement handling of both cases by passing Revision ID register
+> offsets in driver data.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  drivers/soc/samsung/exynos-chipid.c       | 67 +++++++++++++++++++----
+>  include/linux/soc/samsung/exynos-chipid.h |  6 +-
+>  2 files changed, 58 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> index 5c1d0f97f766..7837331fb753 100644
+> --- a/drivers/soc/samsung/exynos-chipid.c
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/slab.h>
+> @@ -24,6 +25,17 @@
 
-Please stop using __clk_lookup()
+Include a changelog please. Your patch does not apply and there is no
+information on tree which it was based on.
 
-> +               if (parent_clk)
-> +                       parent_clk_hw =3D __clk_get_hw(parent_clk);
-> +               alt_parent_clk =3D __clk_lookup(list->alt_parent_name);
 
-Can the DT binding be updated?
-
-> +               if (alt_parent_clk)
-> +                       alt_parent_clk_hw =3D __clk_get_hw(alt_parent_clk=
-);
-> +
-> +               exynos_register_cpu_clock(ctx, list->id, list->name, pare=
-nt_clk_hw,
-> +                               alt_parent_clk_hw, list->offset, list->cf=
-g, num_cfgs, list->flags);
-> +       }
-> +}
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 1949ae7851b2..336243c6f120 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -378,6 +378,8 @@ struct samsung_clk_provider * __init samsung_cmu_regi=
-ster_one(
->                 samsung_clk_extended_sleep_init(reg_base,
->                         cmu->clk_regs, cmu->nr_clk_regs,
->                         cmu->suspend_regs, cmu->nr_suspend_regs);
-> +       if (cmu->cpu_clks)
-> +               samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_=
-clks);
-> =20
->         samsung_clk_of_add_provider(np, ctx);
-> =20
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index c1e1a6b2f499..a52a38cc1740 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -271,6 +271,27 @@ struct samsung_pll_clock {
->         __PLL(_typ, _id, _name, _pname, CLK_GET_RATE_NOCACHE, _lock,    \
->               _con, _rtable)
-> =20
-> +struct samsung_cpu_clock {
-> +       unsigned int            id;
-> +       const char              *name;
-> +       const char              *parent_name;
-> +       const char              *alt_parent_name;
-> +       unsigned long           flags;
-> +       int                     offset;
-> +       const struct exynos_cpuclk_cfg_data *cfg;
-> +};
-> +
-> +#define CPU_CLK(_id, _name, _pname, _apname, _flags, _offset, _cfg) \
-> +       {                                                           \
-> +               .id               =3D _id,                            \
-> +               .name             =3D _name,                          \
-> +               .parent_name      =3D _pname,                         \
-> +               .alt_parent_name  =3D _apname,                        \
-> +               .flags            =3D _flags,                         \
-> +               .offset           =3D _offset,                        \
-> +               .cfg              =3D _cfg,                           \
-> +       }
-> +
->  struct samsung_clock_reg_cache {
->         struct list_head node;
->         void __iomem *reg_base;
-> @@ -301,6 +322,9 @@ struct samsung_cmu_info {
->         unsigned int nr_fixed_factor_clks;
->         /* total number of clocks with IDs assigned*/
->         unsigned int nr_clk_ids;
-> +       /* list of cpu clocks and respective count */
-> +       const struct samsung_cpu_clock *cpu_clks;
-> +       unsigned int nr_cpu_clks;
-> =20
->         /* list and number of clocks registers */
->         const unsigned long *clk_regs;
-> @@ -350,6 +374,8 @@ extern void __init samsung_clk_register_gate(struct s=
-amsung_clk_provider *ctx,
->  extern void __init samsung_clk_register_pll(struct samsung_clk_provider =
-*ctx,
->                         const struct samsung_pll_clock *pll_list,
->                         unsigned int nr_clk, void __iomem *base);
-> +extern void __init samsung_clk_register_cpu(struct samsung_clk_provider =
-*ctx,
-
-__init in header files is useless.
-
-> +               const struct samsung_cpu_clock *list, unsigned int nr_clk=
-);
->
+Best regards,
+Krzysztof
