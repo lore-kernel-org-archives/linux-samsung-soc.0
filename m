@@ -2,228 +2,177 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B26C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 22:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967CEC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 00:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEE90611BD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Oct 2021 22:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D9C861154
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Oct 2021 00:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231294AbhJMWMf (ORCPT
+        id S229660AbhJNATZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Oct 2021 18:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        Wed, 13 Oct 2021 20:19:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230407AbhJMWMf (ORCPT
+        with ESMTP id S229496AbhJNATX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Oct 2021 18:12:35 -0400
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B46C061570
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Oct 2021 15:10:31 -0700 (PDT)
-Received: by mail-pf1-x449.google.com with SMTP id t4-20020a62ea04000000b0044b333f5d1bso2315179pfh.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Oct 2021 15:10:31 -0700 (PDT)
+        Wed, 13 Oct 2021 20:19:23 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBC7C061570;
+        Wed, 13 Oct 2021 17:17:12 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id o20so13921456wro.3;
+        Wed, 13 Oct 2021 17:17:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wqNELjpmtlGEH41rLEk9ERkQkG/0kIH/3vHQh1QjL18=;
-        b=shMjCyt21hCl3oG5ov9YV/koHCJMWMBpeRKIZiTz/TdlcaUZY4c5029DWcjOLBg55v
-         pP/p3ziQunijS7XGR4kOYNbDzOR6MtUq/BOKmmgTSddZKHNI0pM513UrfHdw8LpaxyAl
-         SIci4bHoNukoPscZnCMqpCstVAqQYHRiXBzxZahL991idYJeK0uCtq1IywfOAIE8AtVr
-         VCCKjdgwleV+Hu4O1F018Lc8VAqXJHmRKiuMmfA3yU1GIIiSYK8cKqfp7neNULCIjHiz
-         eArEfyh63J19/YrLexQIp4Uj2WlfTGHVcRz5R/C+noXT3JLTUEMpTr+H0fBM1ncPlnWa
-         QhgA==
+        bh=rDjhWTWe39jI0tVaVsIwJu3w3RaWMLFlHZz3rzeOD24=;
+        b=JdOQHZ5ZtzM7ARgznKsyJUwSb6+PhHX717J520KvwRnhOeNpb9yzZ5tCkg7Gs8ppT/
+         j7YUIMyKCtwBIeECn2FQ0OccTpq7g3FCOunnde/dNNXxD3eXZ5RyPUA+Xf5NNQ/aAlmi
+         4nup7/mgOd4XCYrd/RrMPlrVTqtDehBLy4MV93u1PBSHzqLbykFKspgxX4RAAZShbEhG
+         UqSWtS8UtzS2i69ifjwVeoneGrpdohfkKPo1KKQTINqw+7sVQU7m9krAiRY2TeFV0XIv
+         Nr4dXWccAp23SzFr7YgvjfBfR1QUK/ZAio/Yp/tIGKB12rpowHKdQD67l8pVPU5wZEtX
+         07tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=wqNELjpmtlGEH41rLEk9ERkQkG/0kIH/3vHQh1QjL18=;
-        b=LTzafX11CqNFSgzLKTP/3RbHIqRoPXpYTcdmqUdSs+rE4lpCe7QjIRymV8/cwQtV2F
-         uTVp9ZgUhXBRNZCIkbVqJwFeWlJqLwYI66nLWlZc7EoLxtfbx72qjBrhvTWLECTje7Wk
-         Cm5I48eINa9LxAlVwpwfZRy35Ab1/f7ou7f5w3K3D/bznQVfEoRyYEeUoUh6iz59hAIV
-         usDTJxiB1nqs46Q+Rj6apUNC0xYqXBKU327Ybv71RLZ1HgPb76AOSWkPZ12TPDgeKa9x
-         /l5LyVYxPkVJP7DXaGQb1MIbbcSGgPGPIkAYZkhy6pRUWHCapKiJUHytkocdIaPukqOJ
-         EcvA==
-X-Gm-Message-State: AOAM531eHwPWNSa8rfaEtcD3oibQYwNM+e1AeXLA3CSzx70vmKBCOxHU
-        FmxsoibS3tbhzTe81ltrCiJKlZzQFmcn+b4s6lU=
-X-Google-Smtp-Source: ABdhPJwSHq7t4EDLLAtv4RUzmCWL7n/SHCwJF1dRQXyJ3LKA9du+tmSUO665Mf74ZPLjq2ZJLDufZJT9YVDHODWdxaA=
-X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
- (user=willmcvicker job=sendgmr) by 2002:a17:902:8b81:b0:13f:3d30:f624 with
- SMTP id ay1-20020a1709028b8100b0013f3d30f624mr1635638plb.51.1634163031149;
- Wed, 13 Oct 2021 15:10:31 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 22:10:20 +0000
-In-Reply-To: <20211013221021.3433704-1-willmcvicker@google.com>
-Message-Id: <20211013221021.3433704-3-willmcvicker@google.com>
-Mime-Version: 1.0
-References: <20211013221021.3433704-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.33.0.1079.g6e70778dc9-goog
-Subject: [PATCH v3 2/2] [RFT] clk: samsung: exynos5433: update apollo and
- atlas clock probing
-From:   Will McVicker <willmcvicker@google.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     kernel-team@android.com, Will McVicker <willmcvicker@google.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rDjhWTWe39jI0tVaVsIwJu3w3RaWMLFlHZz3rzeOD24=;
+        b=x8j9HVLJ4T59GgLseFg8XSHc0yompaB5ltC/5qG3r55LCetkAZ64hz/CN/Hs3LqPMT
+         51F+urnF3CkqdcBqPd/XQvbOWn3lm7X4JUDslBXcRFoNWJALx1kgx1O+9F6edQueSNrc
+         ZI6rpD19ZGJC7Jl1LYMovGHJjWl3Gth4Ms4on9YMgPaSspM8Kc6m8Mw5um1rgUHFJR2y
+         mqFf0Im4ooToK9Cfbf8Gy3v8+jGsgC6cVGOFmsw/tBlTjm0Ikb3x9L3715B9jELsVy6g
+         VU7ZhXsbolmqA/3k0vr3RIyoDFhFZ41u4JzHawWGmFme5yqrP23KA7siaw5qm/z17fu1
+         DFfg==
+X-Gm-Message-State: AOAM5319Y5gGTXthj/fufK5PR1QtYgLU78/EOO4rxXQo/FEu2iyRrF+b
+        JRXBDvE2QcAn7S1BgJ0bNLCrSNtU4g8utLxh2X4=
+X-Google-Smtp-Source: ABdhPJxMNHNuDB+MA25s5aKeg0eD+rF7A5Qv31Rug4l1a5QZcltnDBgAHkjG+aO4fe51kSoiOYUxF2G1qCWgjpVJxas=
+X-Received: by 2002:a7b:c007:: with SMTP id c7mr75000wmb.101.1634170631010;
+ Wed, 13 Oct 2021 17:17:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210910101218.1632297-1-maxime@cerno.tech> <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
+ <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
+ <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com>
+ <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
+ <YXiZIuao6wNch7j-D3ZktdSR3_IRAQ3oSeL8sLCCX8lEhwsoWaouE6_eV6C2Zv9r2_dww_Mtal18UBJfc4fz4g==@protonmail.internalid>
+ <CAMi1Hd0sUUFvNzYwt29af9d99o1-x+LiXBPCrQ8=9H0tHvxVHg@mail.gmail.com>
+ <b57fbc24-9ef3-a57b-17d4-2cb33fb409d4@linaro.org> <20211013141629.qfeqwsyi5yobzjca@gilmour>
+In-Reply-To: <20211013141629.qfeqwsyi5yobzjca@gilmour>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 13 Oct 2021 17:16:58 -0700
+Message-ID: <CAF6AEGu2CyQA6XZ=r4c9Z0tiiPUxyhTf0OAu3v6w0oswJ3567w@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH v4 00/24] drm/bridge: Make panel and bridge
+ probe order consistent
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Caleb Connolly <caleb.connolly@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the samsung common clk driver to initialize and probe the apollo and
-atlas clocks. This removes their custom init functions and uses the
-samsung_cmu_register_one() instead.
+On Wed, Oct 13, 2021 at 7:16 AM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> Hi Caleb,
+>
+> On Thu, Sep 30, 2021 at 09:20:52PM +0100, Caleb Connolly wrote:
+> > Hi,
+> >
+> > On 30/09/2021 20:49, Amit Pundir wrote:
+> > > On Thu, 30 Sept 2021 at 04:50, Rob Clark <robdclark@gmail.com> wrote:
+> > > >
+> > > > On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.org> wrote:
+> > > > >
+> > > > > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro.org> wrote:
+> > > > > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@linaro.org> wrote:
+> > > > > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno.tech> wrote:
+> > > > > > > > The best practice to avoid those issues is to register its functions only after
+> > > > > > > > all its dependencies are live. We also shouldn't wait any longer than we should
+> > > > > > > > to play nice with the other components that are waiting for us, so in our case
+> > > > > > > > that would mean moving the DSI device registration to the bridge probe.
+> > > > > > > >
+> > > > > > > > I also had a look at all the DSI hosts, and it seems that exynos, kirin and msm
+> > > > > > > > would be affected by this and wouldn't probe anymore after those changes.
+> > > > > > > > Exynos and kirin seems to be simple enough for a mechanical change (that still
+> > > > > > > > requires to be tested), but the changes in msm seemed to be far more important
+> > > > > > > > and I wasn't confortable doing them.
+> > > > > > >
+> > > > > > >
+> > > > > > > Hey Maxime,
+> > > > > > >    Sorry for taking so long to get to this, but now that plumbers is
+> > > > > > > over I've had a chance to check it out on kirin
+> > > > > > >
+> > > > > > > Rob Clark pointed me to his branch with some fixups here:
+> > > > > > >     https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridge-rework
+> > > > > > >
+> > > > > > > But trying to boot hikey with that, I see the following loop indefinitely:
+> > > > > > > [    4.632132] adv7511 2-0039: supply avdd not found, using dummy regulator
+> > > > > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using dummy regulator
+> > > > > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using dummy regulator
+> > > > > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, using dummy regulator
+> > > > > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using dummy regulator
+> > > > > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using dummy regulator
+> > > > > > > [    4.681898] adv7511 2-0039: failed to find dsi host
+> > > > > >
+> > > > > > I just realized Rob's tree is missing the kirin patch. My apologies!
+> > > > > > I'll retest and let you know.
+> > > > >
+> > > > > Ok, just retested including the kirin patch and unfortunately I'm
+> > > > > still seeing the same thing.  :(
+> > > > >
+> > > > > Will dig a bit and let you know when I find more.
+> > > >
+> > > > Did you have a chance to test it on anything using drm/msm with DSI
+> > > > panels?  That would at least confirm that I didn't miss anything in
+> > > > the drm/msm patch to swap the dsi-host vs bridge ordering..
+> > >
+> > > Hi, smoke tested
+> > > https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridge-rework
+> > > on Pocophone F1 (sdm845 / A630) with v5.15-rc3. I see no obvious
+> > > regressions in my limited testing so far including video (youtube)
+> > > playback.
+> > Tested on the OnePlus 6 too booting AOSP, works fine. This *fixes*
+> > FBDEV_EMULATION (so we can get a working framebuffer console) which was
+> > otherwise broken on 5.15.
+> >
+> > However it spits out some warnings during boot: https://p.calebs.dev/gucysowyna.yaml
+>
+> Thanks for testing. It looks like the runtime_pm ordering between the
+> msm devices changed a bit with the conversion Rob did.
+>
+> Rob, do you know what could be going on?
+>
 
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
- 1 file changed, 48 insertions(+), 72 deletions(-)
+Not entirely sure.. I didn't see that first splat, but maybe I was
+missing some debug config? (The 2nd one is kind of "normal", I think
+related to bootloader leaving the display on)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index f203074d858b..0ef809c9e2da 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3675,44 +3675,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst
- 	{  0 },
- };
- 
-+static const struct samsung_cpu_clock apollo_cpu_clks[] __initconst = {
-+	CPU_CLK(CLK_SCLK_APOLLO, "apolloclk", "mout_apollo_pll",
-+			"mout_bus_pll_apollo_user",
-+			CLK_CPU_HAS_E5433_REGS_LAYOUT, 0x200,
-+			exynos5433_apolloclk_d),
-+};
-+
-+static const struct samsung_cmu_info apollo_cmu_info __initconst = {
-+	.pll_clks	= apollo_pll_clks,
-+	.nr_pll_clks	= ARRAY_SIZE(apollo_pll_clks),
-+	.mux_clks	= apollo_mux_clks,
-+	.nr_mux_clks	= ARRAY_SIZE(apollo_mux_clks),
-+	.div_clks	= apollo_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(apollo_div_clks),
-+	.gate_clks	= apollo_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(apollo_gate_clks),
-+	.cpu_clks	= apollo_cpu_clks,
-+	.nr_cpu_clks	= ARRAY_SIZE(apollo_cpu_clks),
-+	.nr_clk_ids	= APOLLO_NR_CLK,
-+	.clk_regs	= apollo_clk_regs,
-+	.nr_clk_regs	= ARRAY_SIZE(apollo_clk_regs),
-+};
-+
- static void __init exynos5433_cmu_apollo_init(struct device_node *np)
- {
--	void __iomem *reg_base;
--	struct samsung_clk_provider *ctx;
--	struct clk_hw **hws;
--
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
--		panic("%s: failed to map registers\n", __func__);
--		return;
--	}
--
--	ctx = samsung_clk_init(np, reg_base, APOLLO_NR_CLK);
--	if (!ctx) {
--		panic("%s: unable to allocate ctx\n", __func__);
--		return;
--	}
--
--	samsung_clk_register_pll(ctx, apollo_pll_clks,
--				 ARRAY_SIZE(apollo_pll_clks), reg_base);
--	samsung_clk_register_mux(ctx, apollo_mux_clks,
--				 ARRAY_SIZE(apollo_mux_clks));
--	samsung_clk_register_div(ctx, apollo_div_clks,
--				 ARRAY_SIZE(apollo_div_clks));
--	samsung_clk_register_gate(ctx, apollo_gate_clks,
--				  ARRAY_SIZE(apollo_gate_clks));
--
--	hws = ctx->clk_data.hws;
--
--	exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
--		hws[CLK_MOUT_APOLLO_PLL], hws[CLK_MOUT_BUS_PLL_APOLLO_USER], 0x200,
--		exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
--		CLK_CPU_HAS_E5433_REGS_LAYOUT);
--
--	samsung_clk_sleep_init(reg_base, apollo_clk_regs,
--			       ARRAY_SIZE(apollo_clk_regs));
--
--	samsung_clk_of_add_provider(np, ctx);
-+	samsung_cmu_register_one(np, &apollo_cmu_info);
- }
- CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
- 		exynos5433_cmu_apollo_init);
-@@ -3932,44 +3920,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_atlasclk_d[] __initconst =
- 	{  0 },
- };
- 
--static void __init exynos5433_cmu_atlas_init(struct device_node *np)
--{
--	void __iomem *reg_base;
--	struct samsung_clk_provider *ctx;
--	struct clk_hw **hws;
--
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
--		panic("%s: failed to map registers\n", __func__);
--		return;
--	}
--
--	ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
--	if (!ctx) {
--		panic("%s: unable to allocate ctx\n", __func__);
--		return;
--	}
--
--	samsung_clk_register_pll(ctx, atlas_pll_clks,
--				 ARRAY_SIZE(atlas_pll_clks), reg_base);
--	samsung_clk_register_mux(ctx, atlas_mux_clks,
--				 ARRAY_SIZE(atlas_mux_clks));
--	samsung_clk_register_div(ctx, atlas_div_clks,
--				 ARRAY_SIZE(atlas_div_clks));
--	samsung_clk_register_gate(ctx, atlas_gate_clks,
--				  ARRAY_SIZE(atlas_gate_clks));
--
--	hws = ctx->clk_data.hws;
--
--	exynos_register_cpu_clock(ctx, CLK_SCLK_ATLAS, "atlasclk",
--		hws[CLK_MOUT_ATLAS_PLL], hws[CLK_MOUT_BUS_PLL_ATLAS_USER], 0x200,
--		exynos5433_atlasclk_d, ARRAY_SIZE(exynos5433_atlasclk_d),
--		CLK_CPU_HAS_E5433_REGS_LAYOUT);
-+static const struct samsung_cpu_clock atlas_cpu_clks[] __initconst = {
-+	CPU_CLK(CLK_SCLK_ATLAS, "atlasclk", "mout_atlas_pll",
-+			"mout_bus_pll_atlas_user",
-+			CLK_CPU_HAS_E5433_REGS_LAYOUT, 0x200,
-+			exynos5433_atlasclk_d),
-+};
- 
--	samsung_clk_sleep_init(reg_base, atlas_clk_regs,
--			       ARRAY_SIZE(atlas_clk_regs));
-+static const struct samsung_cmu_info atlas_cmu_info __initconst = {
-+	.pll_clks	= atlas_pll_clks,
-+	.nr_pll_clks	= ARRAY_SIZE(atlas_pll_clks),
-+	.mux_clks	= atlas_mux_clks,
-+	.nr_mux_clks	= ARRAY_SIZE(atlas_mux_clks),
-+	.div_clks	= atlas_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(atlas_div_clks),
-+	.gate_clks	= atlas_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(atlas_gate_clks),
-+	.cpu_clks	= atlas_cpu_clks,
-+	.nr_cpu_clks	= ARRAY_SIZE(atlas_cpu_clks),
-+	.nr_clk_ids	= ATLAS_NR_CLK,
-+	.clk_regs	= atlas_clk_regs,
-+	.nr_clk_regs	= ARRAY_SIZE(atlas_clk_regs),
-+};
- 
--	samsung_clk_of_add_provider(np, ctx);
-+static void __init exynos5433_cmu_atlas_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &atlas_cmu_info);
- }
- CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
- 		exynos5433_cmu_atlas_init);
--- 
-2.33.0.882.g93a45727a2-goog
-
+BR,
+-R
