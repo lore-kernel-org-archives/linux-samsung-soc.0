@@ -2,278 +2,121 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37479C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0543FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19C466044F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D77FA61041
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235992AbhJOHR3 (ORCPT
+        id S229656AbhJOHbI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 03:17:29 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37228 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235962AbhJOHR2 (ORCPT
+        Fri, 15 Oct 2021 03:31:08 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40798
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233236AbhJOHbH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 03:17:28 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211015071521euoutp02c6c993f1db888bd1a7b244fddb0d9e14~uIu5IhhaO1851718517euoutp02q
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 07:15:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211015071521euoutp02c6c993f1db888bd1a7b244fddb0d9e14~uIu5IhhaO1851718517euoutp02q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1634282121;
-        bh=EaH3Cp31NHq2pqxFHdBRhJ/Un4ZPdVWsfbJ/WuIrQBo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=tlBxmQBb0N7ehEyqXq6CVsacR3WmMYIQYc8I6KQn7+SdQq8seut3P74lZ3e+wHfXi
-         t+L4rxjh3JQOt4XrjPtpLWNB312PMLuE43zJ6HiaSz+AB1ycghWODqRKYhBvKVKHu8
-         xZFovDMHNXpVi4BxQ8s3m2a9aH12hYejn+SROzWs=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20211015071521eucas1p2c840d078f4def7d20368dda7764c5e7e~uIu4psu8N1296312963eucas1p2L;
-        Fri, 15 Oct 2021 07:15:21 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id C6.EA.45756.88A29616; Fri, 15
-        Oct 2021 08:15:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20211015071520eucas1p2ba3bec44bfd9a672e4f2ab8b6d933a49~uIu4PZlH-1550115501eucas1p2U;
-        Fri, 15 Oct 2021 07:15:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211015071520eusmtrp1d5f6e0460dd2c3511e6be26e9d7dda45~uIu4OltbV0515805158eusmtrp1I;
-        Fri, 15 Oct 2021 07:15:20 +0000 (GMT)
-X-AuditID: cbfec7f2-7d5ff7000002b2bc-5a-61692a885572
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.80.20981.88A29616; Fri, 15
-        Oct 2021 08:15:20 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20211015071519eusmtip2fa306cf799a72e22d8683da45b5e5baf~uIu3co5bu2780827808eusmtip23;
-        Fri, 15 Oct 2021 07:15:19 +0000 (GMT)
-Subject: Re: [PATCH v4 2/2] [RFT] clk: samsung: exynos5433: update apollo
- and atlas clock probing
-To:     Will McVicker <willmcvicker@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     kernel-team@android.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 15 Oct 2021 03:31:07 -0400
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C16583FFF3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 07:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634282940;
+        bh=STxvpgXyUSvLYxw4ii45TmrwAbcDPMKJf5rkuTxXNX4=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=sLIYseEOv7DIC0Mm4PYjydVfFF5oId736llhk0t4KMV4m1JI69wZDfLFYHgk8ywui
+         IuJn4wqF8PkAI24KhNvze0M8Nskn+gqRyoktwv0laK6vz55b+yZQAQFDViSbdUc3wD
+         0KeEzpnjH8dURuHa7QD2sP0TitrsC/hsvgfD/+zR12Ci2zxz6AXeIlZyC8w6yUfjod
+         K+6YtR42T3u+IHHOyZ3mMgQiNT1zWrfjdD0UEsd4JZx/H0qBJZWTXxrOsBKPnkcXH1
+         ZGu6a98z64hoH+jGixsAYxn9qMCKSrbp/wbcz56AAQVo5tmnCBPresW+C2aon5n6Gr
+         CPKvxQxXaaGJg==
+Received: by mail-lf1-f70.google.com with SMTP id k18-20020a05651210d200b003fd86616d39so1158814lfg.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 00:29:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=STxvpgXyUSvLYxw4ii45TmrwAbcDPMKJf5rkuTxXNX4=;
+        b=XH3AfcKgJTNVJMVl+aMx+N6xGkkTLAMedhv0QRZHBJpO8C6ktdO+7rGKSPrWe7OC8l
+         khuYdNpNrm77N5aakf68CaH6rkbU7KpfYbTSTjaCX1492JksJH8nWHOa73AjekORD0V6
+         j8GYP265SSiV8dyPOPTs5/f7uw1yghrvx7ASxboXh/CcoJJmdomb4fhbHIufVeGo4stt
+         IrnAevDVHGwImKb+pvGZmKNAec6wD8QXYZcvushUF2CJDEbOayUddVikU04FMK+OtAaR
+         bCbYKfGV5+xyIeGxn2ysBKzJDMfo4Ou7jwaNkpe5YpUj3dSTbdIzvugni3BsqrxBMDhS
+         lfCg==
+X-Gm-Message-State: AOAM53368gi3GFE7mHp85HCa63Dwy8+BUqWx1jk3DlEk5KPz9qzP81Rm
+        E6ftNHyskXn6Pcqc4V+2ugongdpsMElBkL4piOHqNXNWoDD2g8b8bWeXx8cFxNA3Zy4TW9Bv21t
+        eTSAywR0mgZ+wQbPnAMhFLB+TE/StmNKkRtzKWlRayA5KUL56
+X-Received: by 2002:a2e:3315:: with SMTP id d21mr11110253ljc.377.1634282940229;
+        Fri, 15 Oct 2021 00:29:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx9+NLpbjYfYTu5GOLKMRlKSSfPe3h88aVfbR/xFBKM7+q/PPb60UM1KhCUR5XHhSH70vHI0w==
+X-Received: by 2002:a2e:3315:: with SMTP id d21mr11110245ljc.377.1634282940062;
+        Fri, 15 Oct 2021 00:29:00 -0700 (PDT)
+Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id r3sm431818lfc.114.2021.10.15.00.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 00:28:59 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <fdf392ee-ecdd-327f-1302-c8a2d216dd07@samsung.com>
-Date:   Fri, 15 Oct 2021 09:15:19 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.14.0
+Subject: [PATCH] dt-bindings: memory-controllers: correct path to LPDDR3 bindings
+Date:   Fri, 15 Oct 2021 09:28:57 +0200
+Message-Id: <20211015072857.9770-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211014195347.3635601-3-willmcvicker@google.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBKsWRmVeSWpSXmKPExsWy7djPc7odWpmJBl0NVhbXvzxntdixXcRi
-        49sfTBabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4vCbdlaLf9c2slis2vWH0WLVp/+MDjwe
-        23ZvY/V4f6OV3WNWQy+bx85Zd9k9Fmwq9di0qpPNY/OSeo++LasYPT5vkgvgjOKySUnNySxL
-        LdK3S+DKWN72nrmgR7di6a6/rA2MN1S7GDk5JARMJP62zGbvYuTiEBJYwSix78NcJgjnC6PE
-        n507WCCcz4wSJ1o3MsO0/N/VxQZiCwksZ5RouVgNUfSRUaLhyn4mkISwQLJE07c9YHNFBDYx
-        STTsfcoK4jALLGSUeLNxO1g7m4ChRNdbiFG8AnYSezfsAVvBIqAq0fFyMdgkUaBJ0/42MUPU
-        CEqcnPmEBcTmFLCXWL9hO1gNs4C8xPa3c5ghbHGJW0/mgz0hITCdU2LpmfVACziAHBeJ/iWe
-        EC8IS7w6voUdwpaROD25hwWivplR4uG5tewQTg+jxOWmGYwQVdYSd879AhvELKApsX6XPkTY
-        UeLmsU2sEPP5JG68FYS4gU9i0rbpzBBhXomONiGIajWJWcfXwa09eOES8wRGpVlIPpuF5JtZ
-        SL6ZhbB3ASPLKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k/NxNjMDEdvrf8U87GOe++qh3iJGJ
-        g/EQowQHs5II77sD6YlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVfNXhMvJJCeWJKanZpakFoE
-        k2Xi4JRqYCr8xacUU3aRQyYuVNPTIOza79m2Sm9uJT2fwyvZYBoxJ3aZxOI/Dkn+kZbyU8xk
-        hI6sUZtcanL6mbuQz34O5b+H+zh6v9paeeqcn7C3wNpyvpvUlMLNMz8GpFud6Un3WpKaffjn
-        I8vW03N3r7L0+9vW+uTu2SMyz7Z53nkv0O57JviZiPOyKeYtTTcOK9k/b+dbyzZzAtPkGZpT
-        cvWv7wwVtXN8Ed7VYb62QreiI6J5c/iDb9xFy7f92p69g9c5d/507junrbbd+/wlKlX/y9E3
-        kyzmvEr+m2AjyXfXwFGhZvGOGLb/quGbMtmfHltxt2xryKlm34meh57Xlmu2XnrG6hzQqDTb
-        8Mj6Kyuaw5VYijMSDbWYi4oTAT/RV9zbAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7odWpmJBrsvK1hc//Kc1WLHdhGL
-        jW9/MFlsenyN1eJjzz1Wi8u75rBZzDi/j8ni4ilXi8Nv2lkt/l3byGKxatcfRotVn/4zOvB4
-        bNu9jdXj/Y1Wdo9ZDb1sHjtn3WX3WLCp1GPTqk42j81L6j36tqxi9Pi8SS6AM0rPpii/tCRV
-        ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY3nbe+aCHt2Kpbv+
-        sjYw3lDtYuTkkBAwkfi/q4uti5GLQ0hgKaPE7lPTmCESMhInpzWwQtjCEn+uwRS9Z5TYf+wD
-        O0hCWCBZ4uf9bnaQhIjAJiaJvtPbwKqYBRYySrRseskC0XKcUWL2jolgc9kEDCW63oLM4uTg
-        FbCT2LthD1icRUBVouPlYiYQWxRo7NvX35kgagQlTs58wgJicwrYS6zfsB0szixgJjFv80Nm
-        CFteYvvbOVC2uMStJ/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeu
-        l5yfu4kRGM3bjv3csoNx5auPeocYmTgYDzFKcDArifC+O5CeKMSbklhZlVqUH19UmpNafIjR
-        FOificxSosn5wHSSVxJvaGZgamhiZmlgamlmrCTOa3JkTbyQQHpiSWp2ampBahFMHxMHp1QD
-        07wbYpZz1BI9dk14s5tJZePsNr7WPf5d5TqqkR9VViqW6Zk6FTf9YT4T8vh9Wv2Db2YizfOZ
-        XvZX3/2VwzX790Fr/x52+0fvnRKnfj7C7lB40+UMt8B3vnPrYs+q/vgpoXj32aqG+w+ZMqNT
-        gpim6VjdZF+j+1jxQ8uhE/LC/z5Pf3x4f9hCkcmzXzpravIc8CxZmsu64afcdN2LTb/uf15m
-        fMx+VfXVacwFWx/tW3MtWEpE+EKd1Mcbj6+bu65bWap38fbr7Zaed/J+F/hZhsy4/e1XFB/f
-        3/RS3T8FJ5Y1FjvN/tfxSkY41eFSVvHxg41Pbv/X4kmfJOsZ1X76R+Gu1e3q7eWO8T1Wc10V
-        KpVYijMSDbWYi4oTAYxNlgxvAwAA
-X-CMS-MailID: 20211015071520eucas1p2ba3bec44bfd9a672e4f2ab8b6d933a49
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20211014195400eucas1p2d462745cdc4cfb504bf2f265827f9c27
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20211014195400eucas1p2d462745cdc4cfb504bf2f265827f9c27
-References: <20211014195347.3635601-1-willmcvicker@google.com>
-        <CGME20211014195400eucas1p2d462745cdc4cfb504bf2f265827f9c27@eucas1p2.samsung.com>
-        <20211014195347.3635601-3-willmcvicker@google.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14.10.2021 21:53, Will McVicker wrote:
-> Use the samsung common clk driver to initialize the apollo and atlas
-> clocks. This removes their custom init functions and uses the
-> samsung_cmu_register_one() instead.
->
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
->   1 file changed, 48 insertions(+), 72 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index f203074d858b..cec66d2a4ee2 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -3675,44 +3675,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst
->   	{  0 },
->   };
->   
-> +static const struct samsung_cpu_clock apollo_cpu_clks[] __initconst = {
-> +	CPU_CLK(CLK_SCLK_APOLLO, "apolloclk", CLK_MOUT_APOLLO_PLL,
-> +			CLK_MOUT_BUS_PLL_APOLLO_USER,
-> +			CLK_CPU_HAS_E5433_REGS_LAYOUT, 0x200,
-> +			exynos5433_apolloclk_d),
-> +};
-> +
-> +static const struct samsung_cmu_info apollo_cmu_info __initconst = {
-> +	.pll_clks	= apollo_pll_clks,
-> +	.nr_pll_clks	= ARRAY_SIZE(apollo_pll_clks),
-> +	.mux_clks	= apollo_mux_clks,
-> +	.nr_mux_clks	= ARRAY_SIZE(apollo_mux_clks),
-> +	.div_clks	= apollo_div_clks,
-> +	.nr_div_clks	= ARRAY_SIZE(apollo_div_clks),
-> +	.gate_clks	= apollo_gate_clks,
-> +	.nr_gate_clks	= ARRAY_SIZE(apollo_gate_clks),
-> +	.cpu_clks	= apollo_cpu_clks,
-> +	.nr_cpu_clks	= ARRAY_SIZE(apollo_cpu_clks),
-> +	.nr_clk_ids	= APOLLO_NR_CLK,
-> +	.clk_regs	= apollo_clk_regs,
-> +	.nr_clk_regs	= ARRAY_SIZE(apollo_clk_regs),
-> +};
-> +
->   static void __init exynos5433_cmu_apollo_init(struct device_node *np)
->   {
-> -	void __iomem *reg_base;
-> -	struct samsung_clk_provider *ctx;
-> -	struct clk_hw **hws;
-> -
-> -	reg_base = of_iomap(np, 0);
-> -	if (!reg_base) {
-> -		panic("%s: failed to map registers\n", __func__);
-> -		return;
-> -	}
-> -
-> -	ctx = samsung_clk_init(np, reg_base, APOLLO_NR_CLK);
-> -	if (!ctx) {
-> -		panic("%s: unable to allocate ctx\n", __func__);
-> -		return;
-> -	}
-> -
-> -	samsung_clk_register_pll(ctx, apollo_pll_clks,
-> -				 ARRAY_SIZE(apollo_pll_clks), reg_base);
-> -	samsung_clk_register_mux(ctx, apollo_mux_clks,
-> -				 ARRAY_SIZE(apollo_mux_clks));
-> -	samsung_clk_register_div(ctx, apollo_div_clks,
-> -				 ARRAY_SIZE(apollo_div_clks));
-> -	samsung_clk_register_gate(ctx, apollo_gate_clks,
-> -				  ARRAY_SIZE(apollo_gate_clks));
-> -
-> -	hws = ctx->clk_data.hws;
-> -
-> -	exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
-> -		hws[CLK_MOUT_APOLLO_PLL], hws[CLK_MOUT_BUS_PLL_APOLLO_USER], 0x200,
-> -		exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
-> -		CLK_CPU_HAS_E5433_REGS_LAYOUT);
-> -
-> -	samsung_clk_sleep_init(reg_base, apollo_clk_regs,
-> -			       ARRAY_SIZE(apollo_clk_regs));
-> -
-> -	samsung_clk_of_add_provider(np, ctx);
-> +	samsung_cmu_register_one(np, &apollo_cmu_info);
->   }
->   CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
->   		exynos5433_cmu_apollo_init);
-> @@ -3932,44 +3920,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_atlasclk_d[] __initconst =
->   	{  0 },
->   };
->   
-> -static void __init exynos5433_cmu_atlas_init(struct device_node *np)
-> -{
-> -	void __iomem *reg_base;
-> -	struct samsung_clk_provider *ctx;
-> -	struct clk_hw **hws;
-> -
-> -	reg_base = of_iomap(np, 0);
-> -	if (!reg_base) {
-> -		panic("%s: failed to map registers\n", __func__);
-> -		return;
-> -	}
-> -
-> -	ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
-> -	if (!ctx) {
-> -		panic("%s: unable to allocate ctx\n", __func__);
-> -		return;
-> -	}
-> -
-> -	samsung_clk_register_pll(ctx, atlas_pll_clks,
-> -				 ARRAY_SIZE(atlas_pll_clks), reg_base);
-> -	samsung_clk_register_mux(ctx, atlas_mux_clks,
-> -				 ARRAY_SIZE(atlas_mux_clks));
-> -	samsung_clk_register_div(ctx, atlas_div_clks,
-> -				 ARRAY_SIZE(atlas_div_clks));
-> -	samsung_clk_register_gate(ctx, atlas_gate_clks,
-> -				  ARRAY_SIZE(atlas_gate_clks));
-> -
-> -	hws = ctx->clk_data.hws;
-> -
-> -	exynos_register_cpu_clock(ctx, CLK_SCLK_ATLAS, "atlasclk",
-> -		hws[CLK_MOUT_ATLAS_PLL], hws[CLK_MOUT_BUS_PLL_ATLAS_USER], 0x200,
-> -		exynos5433_atlasclk_d, ARRAY_SIZE(exynos5433_atlasclk_d),
-> -		CLK_CPU_HAS_E5433_REGS_LAYOUT);
-> +static const struct samsung_cpu_clock atlas_cpu_clks[] __initconst = {
-> +	CPU_CLK(CLK_SCLK_ATLAS, "atlasclk", CLK_MOUT_ATLAS_PLL,
-> +			CLK_MOUT_BUS_PLL_ATLAS_USER,
-> +			CLK_CPU_HAS_E5433_REGS_LAYOUT, 0x200,
-> +			exynos5433_atlasclk_d),
-> +};
->   
-> -	samsung_clk_sleep_init(reg_base, atlas_clk_regs,
-> -			       ARRAY_SIZE(atlas_clk_regs));
-> +static const struct samsung_cmu_info atlas_cmu_info __initconst = {
-> +	.pll_clks	= atlas_pll_clks,
-> +	.nr_pll_clks	= ARRAY_SIZE(atlas_pll_clks),
-> +	.mux_clks	= atlas_mux_clks,
-> +	.nr_mux_clks	= ARRAY_SIZE(atlas_mux_clks),
-> +	.div_clks	= atlas_div_clks,
-> +	.nr_div_clks	= ARRAY_SIZE(atlas_div_clks),
-> +	.gate_clks	= atlas_gate_clks,
-> +	.nr_gate_clks	= ARRAY_SIZE(atlas_gate_clks),
-> +	.cpu_clks	= atlas_cpu_clks,
-> +	.nr_cpu_clks	= ARRAY_SIZE(atlas_cpu_clks),
-> +	.nr_clk_ids	= ATLAS_NR_CLK,
-> +	.clk_regs	= atlas_clk_regs,
-> +	.nr_clk_regs	= ARRAY_SIZE(atlas_clk_regs),
-> +};
->   
-> -	samsung_clk_of_add_provider(np, ctx);
-> +static void __init exynos5433_cmu_atlas_init(struct device_node *np)
-> +{
-> +	samsung_cmu_register_one(np, &atlas_cmu_info);
->   }
->   CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
->   		exynos5433_cmu_atlas_init);
+The LPDDR3 bindings were moved to memory-controllers/ddr.
 
-Best regards
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+---
+
+I will fold it into original patch.
+---
+ .../devicetree/bindings/memory-controllers/ddr/lpddr3.txt    | 5 +++--
+ .../bindings/memory-controllers/samsung,exynos5422-dmc.yaml  | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt b/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
+index b221e653d384..031af5fb0379 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
+@@ -43,8 +43,9 @@ These values shall be obtained from the device data-sheet.
+ Child nodes:
+ - The lpddr3 node may have one or more child nodes of type "lpddr3-timings".
+   "lpddr3-timings" provides AC timing parameters of the device for
+-  a given speed-bin. Please see Documentation/devicetree/
+-  bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
++  a given speed-bin. Please see
++  Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3-timings.txt
++  for more information on "lpddr3-timings"
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+index 6f4fd5814bf4..fe8639dcffab 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
+@@ -51,7 +51,8 @@ properties:
+     $ref: '/schemas/types.yaml#/definitions/phandle'
+     description: |
+       phandle of the connected DRAM memory device. For more information please
+-      refer to documentation file: Documentation/devicetree/bindings/ddr/lpddr3.txt
++      refer to documentation file:
++      Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
+ 
+   operating-points-v2: true
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.30.2
 
