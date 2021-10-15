@@ -2,60 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F65C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 21:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBADFC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 22:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA63611EE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 21:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC04F611EE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 22:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243046AbhJOVCq (ORCPT
+        id S238906AbhJOWin (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 17:02:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34194 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243044AbhJOVCp (ORCPT
+        Fri, 15 Oct 2021 18:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235542AbhJOWin (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 17:02:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 996DF611C8;
-        Fri, 15 Oct 2021 21:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634331638;
-        bh=jV4KyGbDL34q+UN7wrCccWqes/lBQ9/L7MLZWze912E=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RPABZiw1ZO3SC10WKNSc1k2fTzrGkLy2jJat7ybVxoGHdYmByZ1UUtEizRxEiFWln
-         Cv9fCbWs7fxZ8OV2prDCN0/bKBxO6vBTIHSq/d5TmTOcOigFbVSHI0STRysBYIThVh
-         IjpmX0w+fKUuWNtUlP5l5Brz6w1wl5JpPOniDLETmwpD6+EpB1H9zG3m3SzvlDTJKj
-         skr4W5f/DkPR3/afE/eCMdG+78O6wYmocRjRzVAgJKQ1K8G6WOFw5lcXXtLvQsv8vH
-         m+41ZFPokuIBBn4/iSfWGvs3U4WFdL1XBf4dQ9xTx36kVeQRgexTqZHkSurl6Cb5u5
-         i1THfEwglPZEA==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 15 Oct 2021 18:38:43 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2A4C061570;
+        Fri, 15 Oct 2021 15:36:36 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id w14so7259504pll.2;
+        Fri, 15 Oct 2021 15:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YQxaOcZ/dqklpCTNGHeKXN2tK/O7rbUuAovDRSjUZyE=;
+        b=IyqFnELja/7KEsOzN2pHh0BvyUCGD+e6zYj+VTFH7cQYm9TuL7GAXeGJ9w9cD282Uz
+         53R3TIabBpCiPJQerjpCjcwd7o4aW9RCntoN+zDYFHU6nmFbALsVIyJ0MDgU98Jvr0+j
+         XFDW/qW6A2C/gX01OiUKo/snAOC7vTqauOGNkUsnACMH6GelGhOA6sYb4nTdX9vcsE5g
+         fTtb7PEkb4P7ND1hvS4OyMPA2hiZRnborE7P+rZ1Twl/giUf5ZFOt9yLR7YWvkeJElIk
+         bEpYAB1ibZoOAbhEmYlE0wnAfRUg7/lzL9jZ1PPHB6QTq7FKJie7nZMcSLGWj4KEZlo4
+         dJIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YQxaOcZ/dqklpCTNGHeKXN2tK/O7rbUuAovDRSjUZyE=;
+        b=6uMt2uTun6c9K/WZZpbXmg0SNPW5fHiKvPCybNC3Av90A7K1UV4CU0kqCq5RjlUALG
+         moKw4u+EJbjyFHVpXl/+tM3NAjXDL5qFhOb+RQVWZy2Gyr3IhhsmmPJLvPinF+D0mUT7
+         Y+wbwMbYqbnTxTEzUMOD6mK5O+Pt0tzbf0MGQycED8HPzVmmb+XpcskHX+4n5RfGX5Zv
+         a+5opkdqY5+wJbQxT66IurkFMj1slSAQJ47WvJVkf4uV6Ne1A2YEteLfKJr1aEzImv1S
+         6Fat+s1KhenocdcnALq+ifyVTuTRp+OOQYzV0aAhFvib8vxFb/8NLpYmHb/Mv1tDCcjJ
+         /ToQ==
+X-Gm-Message-State: AOAM533BbqN7OaWz8a9xkn9vyFzTb26Fo4PeHzFja6gxJlsV5egdUHPz
+        8Y4b5UgFtonca3ZnbjI5138=
+X-Google-Smtp-Source: ABdhPJy9eVEcn+64JdF9UWjF0GmxROZQH1Ez+dHOMD6+J/kMXpP/DlHxsQNZ36KfgNJd8IfbzMEp+A==
+X-Received: by 2002:a17:903:1252:b0:13d:f3f6:2e1c with SMTP id u18-20020a170903125200b0013df3f62e1cmr13326229plh.73.1634337396021;
+        Fri, 15 Oct 2021 15:36:36 -0700 (PDT)
+Received: from [172.30.1.32] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id k14sm5859982pji.45.2021.10.15.15.36.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Oct 2021 15:36:35 -0700 (PDT)
+Subject: Re: [PATCH] clk: samsung: remove __clk_lookup() usage
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <CGME20211015093935eucas1p2782d5f8263fd8843139f3e3e9c6caaa3@eucas1p2.samsung.com>
+ <20211015093931.28086-1-m.szyprowski@samsung.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <9d6496f8-3c9b-24d2-4dfd-6b6d9a0de10f@gmail.com>
+Date:   Sat, 16 Oct 2021 07:36:30 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211015151425.29743-1-s.nawrocki@samsung.com>
-References: <CGME20211015151438eucas1p1a784b8fb6bc20b01d4b1ec3634359df5@eucas1p1.samsung.com> <20211015151425.29743-1-s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Remove meaningless __init and extern from header files
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-clk@vger.kernel.org
-Date:   Fri, 15 Oct 2021 14:00:37 -0700
-Message-ID: <163433163729.1688384.6878958236847535617@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20211015093931.28086-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2021-10-15 08:14:25)
-> Remove useless __init atrribute and unneeded extern qualifier in function
-
-I prefer extern even if it is verbose but it doesn't really matter.
-
-> declarations in header files.
->=20
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On 21. 10. 15. 오후 6:39, Marek Szyprowski wrote:
+> __clk_lookup() interface is obsolete, so remove it from the Samsung clock
+> drivers. This has been achieved by getting rid of custom _get_rate()
+> helper and replacing it with clk_hw_get_rate().
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+> This patch is based on top of the "[RFT PATCH v4 0/2] clk: samsung: add
+> common support for CPU clocks" patchset:
+> https://lore.kernel.org/linux-samsung-soc/20211014195347.3635601-1-willmcvicker@google.com/
+> 
+> Tested on the following Exynos SoC based boards: 4210, 4412, 5250 and
+> 5422. S3C2410, S3C64XX and S5PV210 are only compile-tested.
+> ---
+>   drivers/clk/samsung/clk-exynos4.c      | 18 ++++++++++--------
+>   drivers/clk/samsung/clk-exynos5250.c   | 10 +++++-----
+>   drivers/clk/samsung/clk-exynos5420.c   |  2 +-
+>   drivers/clk/samsung/clk-s3c2410.c      |  6 ++++--
+>   drivers/clk/samsung/clk-s3c64xx.c      |  8 ++++++--
+>   drivers/clk/samsung/clk-s5pv210.c      |  8 ++++++--
+>   drivers/clk/samsung/clk.c              | 14 --------------
+>   drivers/clk/samsung/clk.h              |  2 --
+>   include/dt-bindings/clock/exynos4.h    |  4 +++-
+>   include/dt-bindings/clock/exynos5250.h |  4 +++-
+>   10 files changed, 38 insertions(+), 38 deletions(-)
+> 
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+(snip)
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
