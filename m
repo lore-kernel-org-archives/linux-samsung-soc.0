@@ -2,125 +2,115 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 786DFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 13:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EEFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 13:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB7A6115C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 13:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F16A61164
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 13:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240006AbhJONtL (ORCPT
+        id S236310AbhJONxH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 09:49:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236384AbhJONtL (ORCPT
+        Fri, 15 Oct 2021 09:53:07 -0400
+Received: from mail-oo1-f53.google.com ([209.85.161.53]:33442 "EHLO
+        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236238AbhJONxH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 09:49:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E703600D4;
-        Fri, 15 Oct 2021 13:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634305624;
-        bh=/Mbkfa1+NWegcrBQ2TkZ79kV27LgRGCLcWrVVKv5bso=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nFTGJ9ZoXcJf1EMxema9sKSnQ885ZjmovVsTDv7tZ14EqNpCbEkJMEgAJCSjLTdLJ
-         4XipYSuidch6U2ZFN2nyfVLs0UYmWMyAuzmgJuHypwT3VHaPpdLMZNCCxZZBjwj/3S
-         7Mv1mUFkyC7kQYmeb/HWfLNz2davT3oYGPFEDKxqq6HmyRDPa33Tvz7VKkv9zD6YrS
-         1b4XD29rPBJSXNO3/9nvgzVjYbiYB0BsY6xwp6w8AGGVssqc8DbkygbpG4z3mAlmnV
-         9dqzrCjox0hdfjn0Le1hQorrHmFWi1jcXl8/1AGiYHAhEwdAlcOkgJyj0Yw64T5A2U
-         TdMoBSeRJ5DcA==
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Document Exynos850 CMU
- bindings
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Fri, 15 Oct 2021 09:53:07 -0400
+Received: by mail-oo1-f53.google.com with SMTP id u5-20020a4ab5c5000000b002b6a2a05065so3021522ooo.0;
+        Fri, 15 Oct 2021 06:51:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZtB0WkE/Lu4IlxTPR48eAN+WhkzmHbXHnEMt9T2roUI=;
+        b=huNBTUtKdQUS22BYm3gSW1a1MNl7/l8hlEfcT+5A0OA8vvItlVFi/UK9BEOLKojRpD
+         9HPn0+lpuFOTV7aTf2NkWk9ycl2PNnBehfdpEjeqWzYdFuFC27oxfdsc8Mdi8+TZ3UZd
+         5CDy3D9pT4naUGrQtpl/RzocNmNJjoA78tUl/1J9Y/gP+Yabh988GhnK7+DRkyjtAuk9
+         vwNvN7/MpsQ0teCdp/fZwL+cu/YGRtlukbQlzSC2krsvE/weagt69Cg28i7B1tgRQdj7
+         rOkeLGhOOjm/DQVt29D6wBxPfiLWbnPB4muR4voNn46R51uBsyb6q/T0NgoDB8kCMH6T
+         UKCw==
+X-Gm-Message-State: AOAM532Z5TW4zLaKSV0z6v8gfy1HX8/YRv5XNVknBjHZDVa7Xhid0Tsn
+        XcrXhbDzWg4mPR6oN9f8N9KxwHAwEw==
+X-Google-Smtp-Source: ABdhPJypDm72yKy9VkOctsoOA3C2T2MPIY3sjyUSUpB7ucQTvL24O0xdWMN+sM9vZcTtx01k6MzztQ==
+X-Received: by 2002:a4a:8c01:: with SMTP id u1mr8941557ooj.85.1634305860736;
+        Fri, 15 Oct 2021 06:51:00 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id a15sm1358022oiw.53.2021.10.15.06.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 06:51:00 -0700 (PDT)
+Received: (nullmailer pid 1426158 invoked by uid 1000);
+        Fri, 15 Oct 2021 13:50:59 -0000
+Date:   Fri, 15 Oct 2021 08:50:59 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chanho Park <chanho61.park@samsung.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20211008154352.19519-1-semen.protsenko@linaro.org>
- <20211008154352.19519-5-semen.protsenko@linaro.org>
- <7049b3a9-dc8f-2ae9-01e6-eb3b6f461400@kernel.org>
- <CGME20211011101326eucas1p17e6deeaa2449bf3f0d6306fb930cce17@eucas1p1.samsung.com>
- <CAPLW+4kJK=kaiCLDXX1EGLhbKJo5pcHQY9QCj0SVyGQP1n7q0g@mail.gmail.com>
- <ef781890-76ca-3392-9a17-3856fa1834cf@samsung.com>
- <CAPLW+4mXMLadAi6U3GiXqRHAGnLH79rZeK6w=EcbOccjqH4N9w@mail.gmail.com>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <bfe13b9f-fcb5-18a5-c14f-6efa0f61909f@kernel.org>
-Date:   Fri, 15 Oct 2021 15:46:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Can Guo <cang@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
+        Sowon Na <sowon.na@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 13/16] dt-bindings: ufs: exynos-ufs: add io-coherency
+ property
+Message-ID: <YWmHQ5CVQd97JzHJ@robh.at.kernel.org>
+References: <20211007080934.108804-1-chanho61.park@samsung.com>
+ <CGME20211007081135epcas2p2d577fc8dec75471cf42024eda6a45690@epcas2p2.samsung.com>
+ <20211007080934.108804-14-chanho61.park@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4mXMLadAi6U3GiXqRHAGnLH79rZeK6w=EcbOccjqH4N9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211007080934.108804-14-chanho61.park@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12.10.2021 10:13, Sam Protsenko wrote:
-> On Mon, 11 Oct 2021 at 13:42, Sylwester Nawrocki<s.nawrocki@samsung.com>  wrote:
->> On 11.10.2021 12:13, Sam Protsenko wrote:
->>> On Sat, 9 Oct 2021 at 23:41, Sylwester Nawrocki<snawrocki@kernel.org>  wrote:
->>>> On 08.10.2021 17:43, Sam Protsenko wrote:
->>>>> Provide dt-schema documentation for Exynos850 SoC clock controller.
->>>>>
->>>>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
->>>>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
->>>>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
->> [...]
->>>>> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
->>>>> @@ -0,0 +1,185 @@
->> [...]
->>>>> +
->>>>> +title: Samsung Exynos850 SoC clock controller
->>>>> +
->>>>> +maintainers:
->>>>> +  - Sam Protsenko<semen.protsenko@linaro.org>
->>>>> +  - Chanwoo Choi<cw00.choi@samsung.com>
->>>>> +  - Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
->>>>> +  - Sylwester Nawrocki<s.nawrocki@samsung.com>
->>>>> +  - Tomasz Figa<tomasz.figa@gmail.com>
->>>>> +
->>>>> +description: |
->>>>> +  Exynos850 clock controller is comprised of several CMU units, generating
->>>>> +  clocks for different domains. Those CMU units are modeled as separate device
->>>>> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
->>>>> +  two external clocks:: OSCCLK (26 MHz) and RTCCLK (32768 Hz). Those external
->>>>> +  clocks must be defined as fixed-rate clocks in dts.
->>>>> +
->>>>> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
->>>>> +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
->>>>> +
->>>>> +  Each clock is assigned an identifier and client nodes can use this identifier
->>>>> +  to specify the clock which they consume. All clocks that available for usage
+On Thu, Oct 07, 2021 at 05:09:31PM +0900, Chanho Park wrote:
+> Add "samsung,sysreg" regmap and the offset to the ufs shareaibility
+> register for setting io coherency of the samsung ufs. "dma-coherent"
+> property is also required because the driver code needs to know.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>  .../devicetree/bindings/ufs/samsung,exynos-ufs.yaml   | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> index b9ca8ef4f2be..d9b7535b872f 100644
+> --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> @@ -54,6 +54,17 @@ properties:
+>    phy-names:
+>      const: ufs-phy
+>  
+> +  samsung,sysreg:
+> +    $ref: '/schemas/types.yaml#/definitions/phandle'
+> +    description: phandle for FSYSx sysreg interface, used to control
+> +                 sysreg register bit for UFS IO Coherency
+> +
+> +  samsung,ufs-shareability-reg-offset:
+> +    $ref: '/schemas/types.yaml#/definitions/uint32'
+> +    description: Offset to the shareability register for io-coherency
 
->>>> s/All clocks that available/All clocks available ?
->>>> No need to resend, I can amend it when applying.
->>>>
->>> Yeah, not a native speaker, I tend to do such mistakes sometimes:)
->>> Please fix when applying.
->>>
->>> Btw, I can see that you already applied 3 out of 5 patches from this
->>> patch series here: [1]. Can you please also apply the rest, or is
->>> there any outstanding comments that I missed?
->> The patches look good to me, I just wanted to allow some for Rob to have
->> a look and provide an Ack.
->>
-> Can you please review this one?
+Make these a single property: <phandle offset>
 
-The binding is rather straightforward so I applied the patch now, thank you.
-
-
-
+> +
+> +  dma-coherent: true
+> +
+>  required:
+>    - compatible
+>    - reg
+> -- 
+> 2.33.0
+> 
+> 
