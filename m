@@ -2,112 +2,173 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6223C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 10:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16730C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 11:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF9746101E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 10:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC4CA601FA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 11:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237893AbhJOKRA (ORCPT
+        id S238523AbhJOLqz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 06:17:00 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46284
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237912AbhJOKQ4 (ORCPT
+        Fri, 15 Oct 2021 07:46:55 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:23034 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235360AbhJOLqy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 06:16:56 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CAD6B3FFFB
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 10:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634292889;
-        bh=mNH6ovSrsZzXaFK7GnPEbneieuXh4e/GszJJRRWO4tU=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=PkpbG5x233bpjz4wrhW0qy1Uk5+8unxT8R5hGo+KOUkyct1yBCnjYaON0iiwB65uK
-         tgY9/K7bdxYAe0lVpXah49wlvAU9vHl4k4UpKvY97vzlYPmnVGPGGts0c7v/bKSqGi
-         NF0QNr8D4ASc+nKNxEcvOC+juxKOoGoyegBzVtCWkIQsrY9wUULnOeBa4itlkn5ym8
-         KknuJ94ZIFmvbiFY6CwKi8G/IAkvLezEkTZH0Ywfd5atELzP3ftNG0qcD1DsvYY/Xx
-         UHE/bTpY+5j5ryB6J1f12WJqAKb6NWaffGDguTWjUNOUW3CBW9E9HDyBYg1Wsm6Erg
-         IVtWJf42bYxfQ==
-Received: by mail-lf1-f70.google.com with SMTP id g10-20020a05651222ca00b003fda3f05c17so6357173lfu.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 03:14:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mNH6ovSrsZzXaFK7GnPEbneieuXh4e/GszJJRRWO4tU=;
-        b=vnbRR797bLP8RllQpMLCFTuu+zMi/4TLo4IlYX8f1KtJtGaSUfoXiBlF7GTRMqW7oL
-         NicWW8CtyKsGfRhdY2o7xdlYTk3CsQeohzS1gIgi2y1HC11SHKC3EWjYMzUZQqXD5GiD
-         yN+JiZ50n8LmGgbZCYE+UruXgnIwKtiyV8oR+uNiWX/wNrd2cB1YQmgo6xOTxmqhQygZ
-         PHOCLkrYouKJDyGG1NZ++QDT9HuUDau4TJtOaZhUbSIt1149IWQJ5Tn8rgJbIpdcttYL
-         7873yxt08mXuCw8MLdAJjk47bnNUqQdFCmG7+kuLzHJCYQeRroFissJh0toX4o8UzNoH
-         Oj2g==
-X-Gm-Message-State: AOAM532ddm8pNb0GD8Koh6iyBF9PWTUtBq24TRL3Vls68Rl/H/7JYz7a
-        5/REu7A2J0wGfzs04Ll5dq1bzT5BV0c1AnrQnHtFr8d8rI10rhsaYdBXz8jyTT03dZjRdONQfnx
-        RZT/b7az6PwbY5AEavoQi64wMT8gCxuXl1XWE1OOeXSNZoeUP
-X-Received: by 2002:a2e:b054:: with SMTP id d20mr11430707ljl.507.1634292889124;
-        Fri, 15 Oct 2021 03:14:49 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzj8pWt+ZNhjXMi79/AJl3fIpOyA6FNnV6Krm2En23aHOzWTdTC/H+JaioClNMPNag6ble8/A==
-X-Received: by 2002:a2e:b054:: with SMTP id d20mr11430687ljl.507.1634292888834;
-        Fri, 15 Oct 2021 03:14:48 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id 15sm465081lfy.86.2021.10.15.03.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Oct 2021 03:14:48 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] [RFT] clk: samsung: exynos5433: update apollo and
- atlas clock probing
-To:     Will McVicker <willmcvicker@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-team@android.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20211014195347.3635601-1-willmcvicker@google.com>
- <20211014195347.3635601-3-willmcvicker@google.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <7cd65a6c-4d6b-a287-9a12-c81eec87e9df@canonical.com>
-Date:   Fri, 15 Oct 2021 12:14:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Fri, 15 Oct 2021 07:46:54 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20211015114446epoutp044a02a96c9ed518ea2a16d5ec8c63e287~uMaITunUx0748507485epoutp04g
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 11:44:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20211015114446epoutp044a02a96c9ed518ea2a16d5ec8c63e287~uMaITunUx0748507485epoutp04g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1634298287;
+        bh=9ibLWWYXtqONpYsM+RPoBB6btYvbtxljbm2cBx/1ix0=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=cGwVQAwsLr7IhrPQfeMiDwGjOkoh7YQoUAeSOPIjOSL3I+QWWD9qnkZvbx7qWNOSy
+         zB3mTahWhSN+RsV60IIqKcKnMdlFa6FR2ZDWtQlPISgpBbbyd8jcd7rC79WkkGrGcF
+         bVpjD9sR8fAC0pH3owVrIOtbjajYgDHT7j+reyrM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20211015114445epcas2p4204a3597938779299794151157ce46ed~uMaHXXokb1732817328epcas2p4C;
+        Fri, 15 Oct 2021 11:44:45 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.98]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4HW4F74sbzz4x9Pt; Fri, 15 Oct
+        2021 11:44:43 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E6.4A.09717.BA969616; Fri, 15 Oct 2021 20:44:43 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20211015114442epcas2p4fb759f8baa5e5ca6aa4529ff1d196a3a~uMaDtdnoY3156031560epcas2p4O;
+        Fri, 15 Oct 2021 11:44:42 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20211015114442epsmtrp2c0b926d14c589ba5c544a2dd4a9c3cf6~uMaDrpsdS0939409394epsmtrp2M;
+        Fri, 15 Oct 2021 11:44:41 +0000 (GMT)
+X-AuditID: b6c32a45-4c1ff700000025f5-75-616969abc327
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        70.2E.09091.9A969616; Fri, 15 Oct 2021 20:44:41 +0900 (KST)
+Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20211015114441epsmtip2f1b8505a260d865937c24c392a8d17a0~uMaDb4j6G1883118831epsmtip2Z;
+        Fri, 15 Oct 2021 11:44:41 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Avri Altman'" <Avri.Altman@wdc.com>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
+        "'Martin K . Petersen'" <martin.petersen@oracle.com>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>
+Cc:     "'Bean Huo'" <beanhuo@micron.com>,
+        "'Bart Van Assche'" <bvanassche@acm.org>,
+        "'Adrian Hunter'" <adrian.hunter@intel.com>, <hch@infradead.org>,
+        "'Can Guo'" <cang@codeaurora.org>,
+        "'Jaegeuk Kim'" <jaegeuk@kernel.org>,
+        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
+        "'Gyunghoon Kwon'" <goodjob.kwon@samsung.com>,
+        "'Sowon Na'" <sowon.na@samsung.com>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        "'Kiwoong Kim'" <kwmad.kim@samsung.com>,
+        "'Inki Dae'" <inki.dae@samsung.com>
+In-Reply-To: <DM6PR04MB65750B8E2F84802BF0647D7EFCB89@DM6PR04MB6575.namprd04.prod.outlook.com>
+Subject: RE: [PATCH v4 14/16] scsi: ufs: ufs-exynos: multi-host
+ configuration for exynosauto
+Date:   Fri, 15 Oct 2021 20:44:41 +0900
+Message-ID: <001a01d7c1ba$0ab7bb50$202731f0$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20211014195347.3635601-3-willmcvicker@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQL83TaU2gFk6OcLuUCqdNaZ93XEzwJh+NfxAgJZnjEB7B3NeqlXF7wQ
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzOube9Lc7itTx2JOjwLs6IAVpG6UFA2UB3nW6iLs4sU7iBu9JR
+        2q4ti4+YYAiP8jAoYkd56JiCKVMGdC0jslUUecy5LIIKURQCWtxgSnEDFBjlso3/vu93vu/8
+        ft95CHHxGOEnVKoNrE7NqChiGc92bQMKqlUqGcm0yx91Dn1LoEeVNgKNTPUQ6OqAkYfOPJvC
+        0XhdNR8V/BCLfi6qwtCph0U8NFRnxlHVPRuG7k1n81H96CSGeq1tPPTVrz9iKP9uE4Fq2mcx
+        9HKqFYsR07e7d9DmjEKCvn2iEKMbLwbS31wZwegGi5Ggi6ocgP67Lpegnw/38egTVgugXQ1r
+        6BxHPha//JPUqBSWSWZ1Aaw6SZOsVCuiqR17E2ITZOESaZA0AsmpADWTxkZTcTvjg7YpVfPp
+        qIAvGVX6fCme0eupkM1ROk26gQ1I0egN0RSrTVZp5dpgPZOmT1crgtWsYZNUIgmVzQsTU1Nq
+        BqcxbcFrhyZKx4kMcFWYB4RCSIbBnLy1eWCZUEw2AWjq7ME4Mg5g+f2bfI78BeCcw0HkAY8F
+        x4u2wkVVC4BlHWWAI04AXQMTuFtFkCFwJNe2YPcm5wA8WeDE3QQnp3BoL34K3CoP8gB82OcU
+        uLEXeRDe6q9dqPPIdTAzsxN3TygiI6Dx5ofusohcCTtLh3hujJMbYfXXv+PcSAFwaria78be
+        5DZYWdst4DTesMyYvdAXkmUe8EbHA4JLHQePXz7Ieb3g03argMN+0DXWQnD6fACzBucWF2oB
+        NB7fyeEtcNpk5bv3wckNsK45hNvyTXi9b3E0T5h7bUbAlUUwN1vMGddDh93E4/BqmF/u4hcB
+        yrwkmHlJMPOSAOb/e50DPAvwZbX6NAWrD9VK/7vsJE1aA1h4+IFbm0Dx6LPgVoAJQSuAQpzy
+        Fo05FIxYlMwcPsLqNAm6dBWrbwWy+ZM+ifv5JGnmf47akCANi5CEhYdL5aEyiZx6XaSJVTJi
+        UsEY2FSW1bK6f32Y0MMvA7s4Ibj0ETp9vstuqhRdIK3H6OuPtz/pUEVOVsiO6gS7j7T0f3+n
+        t+SUx/bmsfuCdzdhiWOW2aq+Y9bkS9qK3XcyJi9cziSS3spRbE7SPNAUbnFkDT7pk01+FhH3
+        xT5GuKKrvtv6U9DHFTMlsu+y/f1FkdEv98rbV7eFHqouMdgNBxpXvL+/aMDW/MJu1Y2uFbBR
+        6wW9iWddu/aY3lge5NkQFeek/Q5fibGM9rxdcaPkbn/oKnqWdK7yrWnelfVb03hE/WzC/i6T
+        rcIn8s+jnjHlZ0/fqnmcUk/4vpKZf3n0eflzn+IPhjfuy2s8XyqzbP005I91XkZfcYjc951X
+        0vfq1szsyaV4+hRGGojr9Mw/FoSn7YEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsWy7bCSvO7KzMxEg70tZhYnn6xhs3gwbxub
+        xcufV9ksDj7sZLGY9uEns8Wn9ctYLXp2OlucnrCIyWLS/QksFk/Wz2K2WHRjG5PFjV9trBYb
+        3/5gsri55SiLxYzz+5gsuq/vYLNYfvwfk8Xvn4eYHIQ8Ll/x9pjV0Mvmcbmvl8lj8wotj8V7
+        XjJ5bFrVyeYxYdEBRo/v6zvYPD4+vcXi0bdlFaPH501yHu0HupkCeKK4bFJSczLLUov07RK4
+        MhYdOMVe0Mtd0b99A1MD4x6OLkZODgkBE4mvR3uZuhi5OIQEdjNKzNzVxgKRkJV49m4HO4Qt
+        LHG/5QgrRNEzRomb626BFbEJ6Eu87NgGlhARaGSSONfcxALiMAs0s0is/XkFqmU6k8S+LY3M
+        IC2cArES92+9AJsrLBAjcWjHdyYQm0VAVaK5+SRQDQcHr4ClROcZP5Awr4CgxMmZT8C2MQto
+        Szy9+RTOXrbwNTPEeQoSP58uYwWxRQTcJOatvsIOUSMiMbuzjXkCo/AsJKNmIRk1C8moWUha
+        FjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECE4AWpo7GLev+qB3iJGJg/EQowQH
+        s5II77sD6YlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnNTk0tSC2CyTJxcEo1
+        MG19ZOGVdfSYoEav2+9Wk0Mm7w+1iU6/dGPfd5ZgSwN2FuXgKQu6/7Dc77bc88BIpifvT/eZ
+        FYtu22psK3q1d0fmRfHFoiwztoRyxxyTmfhDY2Xk5fdvL4fWWGhe+vOD4ct07qLvIkl1aodt
+        JzHuvZ5Z/earzpO3MtM01GtElWwefr92bPLzj7O2fGTavjb8WbmD1JuXR8NWJT9dVPd7qtwf
+        r7V7Pu5+8PeOxPwIyUlnojccfcsg1zKneR0HU8FRi4yXCnoWxxZ8PvdAxTFkwrFHQityo8N+
+        deocnCL37trr5ZUslz6JbD64/OvLTA2DbTvq71otWaQmMTVae0qq8qufIvMXHlBru6ck8jnK
+        P2hLrxJLcUaioRZzUXEiAAceDvxvAwAA
+X-CMS-MailID: 20211015114442epcas2p4fb759f8baa5e5ca6aa4529ff1d196a3a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20211007081135epcas2p410e67850fdd25fc762b0bfa49c6e24f1
+References: <20211007080934.108804-1-chanho61.park@samsung.com>
+        <CGME20211007081135epcas2p410e67850fdd25fc762b0bfa49c6e24f1@epcas2p4.samsung.com>
+        <20211007080934.108804-15-chanho61.park@samsung.com>
+        <DM6PR04MB65750B8E2F84802BF0647D7EFCB89@DM6PR04MB6575.namprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/10/2021 21:53, Will McVicker wrote:
-> Use the samsung common clk driver to initialize the apollo and atlas
-> clocks. This removes their custom init functions and uses the
-> samsung_cmu_register_one() instead.
-> 
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
->  1 file changed, 48 insertions(+), 72 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index f203074d858b..cec66d2a4ee2 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -3675,44 +3675,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst
->  	{  0 },
->  };
+> > +static int exynosauto_ufs_post_hce_enable(struct exynos_ufs *ufs) =7B
+> > +       struct ufs_hba *hba =3D ufs->hba;
+> > +
+> > +       /* Enable Virtual Host =231 */
+> > +       ufshcd_rmwl(hba, MHCTRL_EN_VH_MASK, MHCTRL_EN_VH(1), MHCTRL);
+> > +       /* Default VH Transfer permissions */
+> > +       hci_writel(ufs, ALLOW_TRANS_VH_DEFAULT,
+> > HCI_MH_ALLOWABLE_TRAN_OF_VH);
+> > +       /* IID information is replaced in TASKTAG=5B7:5=5D instead of I=
+ID in
+> UCD */
+> > +       hci_writel(ufs, 0x1, HCI_MH_IID_IN_TASK_TAG);
+> If I understand correctly, once you set this register, the hw takes care
+> of properly arbitrating the requests - PH + up to 4 VHs total of 5
+> machines, each supporting 32 requests doorbell.
 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Actually, four Multi Hosts (1 for PH and 3 for VHs)
+
+> Can you share what policy the arbiter uses among the 5 doorbells?
+
+AFAIK, it is working something like round-robin. It also has a full checker=
+ so it will be acting as the RR arbiter until the requests are full not to =
+be handled by the controller (I'm not sure the exact number of the full cou=
+nt). If full, the lowest UTRD idx will be first.
 
 
-Best regards,
-Krzysztof
+>=20
+> You are designating this change to be used in a UFS2.1 platforms, correct=
+?
+
+Yes.
+
+> Are you planning to use the same framework for UFSHCI4.0, which uses MCQ?
+
+AFAIK, next chip will be compatible with 3.1 not 4.0.
+
+Best Regards,
+Chanho Park
+
