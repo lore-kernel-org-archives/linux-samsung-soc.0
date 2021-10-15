@@ -2,182 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 943ACC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 14:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60203C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 14:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B87261215
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 14:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 498006120D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 14:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240422AbhJOOiQ (ORCPT
+        id S240522AbhJOOjB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 10:38:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234872AbhJOOiP (ORCPT
+        Fri, 15 Oct 2021 10:39:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240409AbhJOOil (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 10:38:15 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AF8C061570;
-        Fri, 15 Oct 2021 07:36:08 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id q5so8784906pgr.7;
-        Fri, 15 Oct 2021 07:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=A1+buzEnWHFfl/ZaWbrWJXy+M9IGPXk9SXcGFxZnAfs=;
-        b=RPL7BCrK2/jYy7dA9EeV9fzfOZdBvV8FM1iW0gA441nrIxQ1xg44AUgbJZXbJN0dLZ
-         h8GZ848pgkw/SpggGk3Zko6r2dmRVDyVgm4Qzpu+JQZBNG9uUyRXcLcXSMbKPNZdxitc
-         /r2CDWerhToBA5WnN6QULeO+FTZ6euC8cju6Uchf4G5vUgen13X2ecOGczouC8L9W32b
-         3MlEbvo6LetX8BjoFIfC7+6AN6NRzKguY9vM57zS01VuXgIlLpDVdVL+ConAEe3b3USo
-         OdQi9coc7ijOlKl5z4CG4gkXjcOES8tkv7Dlj3zY2sw4Iv3ZuUxfFKTnCjHiYeOB4D8z
-         dzyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=A1+buzEnWHFfl/ZaWbrWJXy+M9IGPXk9SXcGFxZnAfs=;
-        b=3fIkL0CINc4xvO2LlhfiUwh6vIEOwxC/9Ln3HxL6SMGZPpOPeOp6te6Iy1ZNroLKs5
-         RgjKCdr1ogn27vzmkUjK/6uIsV7NbVfaL3OFd6HAh7EXlpEnLCKpuTRAQjT3XErbEpNK
-         cIXIS9YyOj1eraSCH1Tdcuk1te7pfaLAPihD9ocrURn5Hk23167E2jp4YZ3PXlyT/kzJ
-         iMc1bE5myvb6DnosqXwAW5iav+nGL2J+/UlZqlmE5sc/ZB/lEkUuWtuTK9GjC9+ypkVJ
-         rB4bme2m7PY6+hgQbHr/HtGcpxpMri5VToZJJdY2Aw+rnOw1ZndIesZU810SgnhhoN4L
-         ibpg==
-X-Gm-Message-State: AOAM531gPb8zQ1nYJemU56sqnvkwmZ5QJPeAQ9rJTYqkH1TCYIrzOGZ2
-        2ZUETzbIQ70Kq3QshMY8+T7xprWza0BtAgO/
-X-Google-Smtp-Source: ABdhPJyWuQ1K1JxflSMa0Mke7WMw5bxh8bvQ3ExR+gido75xKDvVtio4NGskzHymTTSJ5ZhB267d6g==
-X-Received: by 2002:a62:ed01:0:b0:44d:6aa6:30eb with SMTP id u1-20020a62ed01000000b0044d6aa630ebmr12041882pfh.53.1634308567962;
-        Fri, 15 Oct 2021 07:36:07 -0700 (PDT)
-Received: from localhost.localdomain ([2406:7400:63:4806:9a51:7f4b:9b5c:337a])
-        by smtp.gmail.com with ESMTPSA id x7sm11536941pjg.5.2021.10.15.07.36.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Oct 2021 07:36:07 -0700 (PDT)
-From:   Naveen Naidu <naveennaidu479@gmail.com>
-To:     bhelgaas@google.com
-Cc:     Naveen Naidu <naveennaidu479@gmail.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-Subject: [PATCH v2 00/24] Unify PCI error response checking
-Date:   Fri, 15 Oct 2021 20:05:51 +0530
-Message-Id: <cover.1634306198.git.naveennaidu479@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 15 Oct 2021 10:38:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5A519611C8;
+        Fri, 15 Oct 2021 14:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634308595;
+        bh=qiSxOHjVTjbYQll1RPDxZr+z5ma0kRqY3IsuLP+RIOs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Um4H778CxgGDe/VWH5/tv8c5ISYQ19U5AUSU2pbFLUi5SQTm9CjbZd8cOzZOCiiP6
+         QDIDZUB4eBjzMMkegxwsI0cY4YEvWTw2//UqshWbJB/IdL8fEPbtGmjheqfkmJVbjG
+         K+ZCUSJdrvk92w+lHVGE8EWs9RXUQ6FJsyfN2txLKnR3oUCou1jDI1lqe2kvgf3Bsl
+         UWXU1grw+cXGh016BWVD3JcrFR0+KP+LXY6fLnvjtwAPkXAn8f3omvp+Al1qDYTup5
+         HlqtGttgHeMxD2w8BR3sg5nKX0GlvuK/JW43pMBycvZLR2VMx7qgY/KewiMDRImIFn
+         AXlfXKk/Z2Fcg==
+Subject: Re: [PATCH v3 1/2] [RFT] clk: samsung: add support for CPU clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Will McVicker <willmcvicker@google.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Android Kernel <kernel-team@android.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20211013221021.3433704-1-willmcvicker@google.com>
+ <20211013221021.3433704-2-willmcvicker@google.com>
+ <163417617897.936110.4798836682696423903@swboyd.mtv.corp.google.com>
+ <CABYd82a7G7jAOMr=yjpkG6sbH+g0-r36NKSBwVEDZeEthuTTLA@mail.gmail.com>
+ <163424761868.1688384.7017177221097736499@swboyd.mtv.corp.google.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <e06cd125-cf18-9c2f-45c1-55be9c3f67b6@kernel.org>
+Date:   Fri, 15 Oct 2021 16:36:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <163424761868.1688384.7017177221097736499@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-An MMIO read from a PCI device that doesn't exist or doesn't respond
-causes a PCI error.  There's no real data to return to satisfy the 
-CPU read, so most hardware fabricates ~0 data.
+On 14.10.2021 23:40, Stephen Boyd wrote:
+> Quoting Will McVicker (2021-10-14 12:35:57)
+>> On Wed, Oct 13, 2021 at 6:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>> Quoting Will McVicker (2021-10-13 15:10:19)
+>>>> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
 
-This patch series adds PCI_ERROR_RESPONSE definition and other helper
-definition SET_PCI_ERROR_RESPONSE and RESPONSE_IS_PCI_ERROR and uses it
-where appropriate to make these checks consistent and easier to find.
+>>>
+>>>> +               if (parent_clk)
+>>>> +                       parent_clk_hw = __clk_get_hw(parent_clk);
+>>>> +               alt_parent_clk = __clk_lookup(list->alt_parent_name);
+>>>
+>>> Can the DT binding be updated?
+>>
+>> Are you referring to removing alt_parent and just adding it as another
+>> parent clock?
+>>
+> 
+> I was wondering if this is an external clk that feeds into here or if it
+> is all internal to the clk controller. It sounds like it's all internal
+> to the clk controller? In which case a binding update isn't needed.
 
-This helps unify PCI error response checking and make error check
-consistent and easier to find.
-
-This series also ensures that the error response fabrication now happens
-in the PCI_OP_READ and PCI_USER_READ_CONFIG. This removes the
-responsibility from controller drivers to do the error response setting. 
-
-Patch 1:
-    - Adds the PCI_ERROR_RESPONSE and other related defintions
-    - All other patches are dependent on this patch. This patch needs to
-      be applied first, before the others
-
-Patch 2:
-    - Error fabrication happens in PCI_OP_READ and PCI_USER_READ_CONFIG
-      whenever the data read via the controller driver fails.
-    - This patch needs to be applied before, Patch 4/24 to Patch 15/24 are
-      applied.
-
-Patch 3:
-    - Uses SET_PCI_ERROR_RESPONSE() when device is not found and
-      RESPONSE_IS_PCI_ERROR() to check hardware read from the hardware.
-
-Patch 4 - 15:
-    - Removes redundant error fabrication that happens in controller 
-      drivers when the read from a PCI device fails.
-    - These patches are dependent on Patch 2/24 of the series.
-    - These can be applied in any order.
-
-Patch 16 - 22:
-    - Uses RESPONSE_IS_PCI_ERROR() to check the reads from hardware
-    - Patches can be applied in any order.
-
-Patch 23 - 24:
-    - Edits the comments to include PCI_ERROR_RESPONSE alsong with
-      0xFFFFFFFF, so that it becomes easier to grep for faulty 
-      hardware reads.
-
-Changelog
-=========
-
-v2:
-    - Instead of using SET_PCI_ERROR_RESPONSE in all controller drivers
-      to fabricate error response, only use them in PCI_OP_READ and
-      PCI_USER_READ_CONFIG
-
-Naveen Naidu (24):
- [PATCH 1/24] PCI: Add PCI_ERROR_RESPONSE and it's related definitions
- [PATCH 2/24] PCI: Set error response in config access defines when ops->read() fails
- [PATCH 3/24] PCI: Unify PCI error response checking
- [PATCH 4/24] PCI: Remove redundant error fabrication when device read fails
- [PATCH 5/24] PCI: thunder: Remove redundant error fabrication when device read fails
- [PATCH 6/24] PCI: iproc: Remove redundant error fabrication when device read fails
- [PATCH 7/24] PCI: mediatek: Remove redundant error fabrication when device read fails
- [PATCH 8/24] PCI: exynos: Remove redundant error fabrication when device read fails
- [PATCH 9/24] PCI: histb: Remove redundant error fabrication when device read fails
- [PATCH 10/24] PCI: kirin: Remove redundant error fabrication when device read fails
- [PATCH 11/24] PCI: aardvark: Remove redundant error fabrication when device read fails
- [PATCH 12/24] PCI: mvebu: Remove redundant error fabrication when device read fails
- [PATCH 13/24] PCI: altera: Remove redundant error fabrication when device read fails
- [PATCH 14/24] PCI: rcar: Remove redundant error fabrication when device read fails
- [PATCH 15/24] PCI: rockchip: Remove redundant error fabrication when device read fails
- [PATCH 16/24] PCI/ERR: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
- [PATCH 17/24] PCI: vmd: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
- [PATCH 18/24] PCI: pciehp: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
- [PATCH 19/24] PCI/DPC: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
- [PATCH 20/24] PCI/PME: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
- [PATCH 21/24] PCI: cpqphp: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
- [PATCH 22/24] PCI: keystone: Use PCI_ERROR_RESPONSE to specify hardware error
- [PATCH 23/24] PCI: hv: Use PCI_ERROR_RESPONSE to specify hardware read error
- [PATCH 24/24] PCI: xgene: Use PCI_ERROR_RESPONSE to specify hardware error
-
- drivers/pci/access.c                        | 36 ++++++++--------
- drivers/pci/controller/dwc/pci-exynos.c     |  4 +-
- drivers/pci/controller/dwc/pci-keystone.c   |  4 +-
- drivers/pci/controller/dwc/pcie-histb.c     |  4 +-
- drivers/pci/controller/dwc/pcie-kirin.c     |  4 +-
- drivers/pci/controller/pci-aardvark.c       | 10 +----
- drivers/pci/controller/pci-hyperv.c         |  2 +-
- drivers/pci/controller/pci-mvebu.c          |  8 +---
- drivers/pci/controller/pci-thunder-ecam.c   | 46 +++++++--------------
- drivers/pci/controller/pci-thunder-pem.c    |  4 +-
- drivers/pci/controller/pci-xgene.c          |  8 ++--
- drivers/pci/controller/pcie-altera.c        |  4 +-
- drivers/pci/controller/pcie-iproc.c         |  4 +-
- drivers/pci/controller/pcie-mediatek.c      | 11 +----
- drivers/pci/controller/pcie-rcar-host.c     |  4 +-
- drivers/pci/controller/pcie-rockchip-host.c |  4 +-
- drivers/pci/controller/vmd.c                |  2 +-
- drivers/pci/hotplug/cpqphp_ctrl.c           |  4 +-
- drivers/pci/hotplug/pciehp_hpc.c            | 10 ++---
- drivers/pci/pci.c                           | 10 ++---
- drivers/pci/pcie/dpc.c                      |  4 +-
- drivers/pci/pcie/pme.c                      |  4 +-
- drivers/pci/probe.c                         | 10 ++---
- include/linux/pci.h                         |  9 ++++
- 24 files changed, 87 insertions(+), 123 deletions(-)
-
--- 
-2.25.1
+Yes, I double checked and the cpu parent clocks are always internal to
+the clock provider. There is one exception where physically a parent clock
+comes from other CMU (exynos5250), but in that case all CMUs are modeled
+as a single clk provider anyway. Thus we don't need a binding update.
+  
 
