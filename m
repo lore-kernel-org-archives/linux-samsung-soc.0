@@ -2,121 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0543FC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A573C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D77FA61041
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5854A611C2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbhJOHbI (ORCPT
+        id S236012AbhJOHwG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 03:31:08 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40798
+        Fri, 15 Oct 2021 03:52:06 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41348
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233236AbhJOHbH (ORCPT
+        by vger.kernel.org with ESMTP id S235761AbhJOHwG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 03:31:07 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        Fri, 15 Oct 2021 03:52:06 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C16583FFF3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 07:29:00 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4697B3FFF8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 07:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634282940;
-        bh=STxvpgXyUSvLYxw4ii45TmrwAbcDPMKJf5rkuTxXNX4=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=sLIYseEOv7DIC0Mm4PYjydVfFF5oId736llhk0t4KMV4m1JI69wZDfLFYHgk8ywui
-         IuJn4wqF8PkAI24KhNvze0M8Nskn+gqRyoktwv0laK6vz55b+yZQAQFDViSbdUc3wD
-         0KeEzpnjH8dURuHa7QD2sP0TitrsC/hsvgfD/+zR12Ci2zxz6AXeIlZyC8w6yUfjod
-         K+6YtR42T3u+IHHOyZ3mMgQiNT1zWrfjdD0UEsd4JZx/H0qBJZWTXxrOsBKPnkcXH1
-         ZGu6a98z64hoH+jGixsAYxn9qMCKSrbp/wbcz56AAQVo5tmnCBPresW+C2aon5n6Gr
-         CPKvxQxXaaGJg==
-Received: by mail-lf1-f70.google.com with SMTP id k18-20020a05651210d200b003fd86616d39so1158814lfg.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 00:29:00 -0700 (PDT)
+        s=20210705; t=1634284198;
+        bh=7smbl6eLUD4Ng7INT7EmfV0PC0U+CLmxI4ShvMsaSUI=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=B8i29hH4yogRx9ntY1Ljwr40zzj/pjFQxbj90LFOAFSKavo4ovlMg/8bSRJvM0slL
+         ITfSxTU0Tmc9bJq0nAisXtlVtjUK1+SZduLRGl5ZdzpWyfihE2zDqo8zbz7i8P0SX1
+         Efyc4RmfTnZ6/iX4jHmIUAjqxqL+MQmrvqO+rB/+Va0jzE7X4oC0+kSnvorr0oxJIR
+         WNIDm2sTl4qQF5KdWKAt4xeeuorlLf92/A6r4XeI2mqqJQX7Vqnx82nxUxfDUJ/56q
+         tC65OWVhd9+Dwge4pPdkwXJO7Atc+A4mCUs7tJ9GpYYdzbZTGPZwRwBZUiuMLIl+87
+         Kv6co+3BJ7hkQ==
+Received: by mail-lf1-f71.google.com with SMTP id x33-20020a0565123fa100b003fcfd99073dso6111183lfa.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Oct 2021 00:49:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=STxvpgXyUSvLYxw4ii45TmrwAbcDPMKJf5rkuTxXNX4=;
-        b=XH3AfcKgJTNVJMVl+aMx+N6xGkkTLAMedhv0QRZHBJpO8C6ktdO+7rGKSPrWe7OC8l
-         khuYdNpNrm77N5aakf68CaH6rkbU7KpfYbTSTjaCX1492JksJH8nWHOa73AjekORD0V6
-         j8GYP265SSiV8dyPOPTs5/f7uw1yghrvx7ASxboXh/CcoJJmdomb4fhbHIufVeGo4stt
-         IrnAevDVHGwImKb+pvGZmKNAec6wD8QXYZcvushUF2CJDEbOayUddVikU04FMK+OtAaR
-         bCbYKfGV5+xyIeGxn2ysBKzJDMfo4Ou7jwaNkpe5YpUj3dSTbdIzvugni3BsqrxBMDhS
-         lfCg==
-X-Gm-Message-State: AOAM53368gi3GFE7mHp85HCa63Dwy8+BUqWx1jk3DlEk5KPz9qzP81Rm
-        E6ftNHyskXn6Pcqc4V+2ugongdpsMElBkL4piOHqNXNWoDD2g8b8bWeXx8cFxNA3Zy4TW9Bv21t
-        eTSAywR0mgZ+wQbPnAMhFLB+TE/StmNKkRtzKWlRayA5KUL56
-X-Received: by 2002:a2e:3315:: with SMTP id d21mr11110253ljc.377.1634282940229;
-        Fri, 15 Oct 2021 00:29:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx9+NLpbjYfYTu5GOLKMRlKSSfPe3h88aVfbR/xFBKM7+q/PPb60UM1KhCUR5XHhSH70vHI0w==
-X-Received: by 2002:a2e:3315:: with SMTP id d21mr11110245ljc.377.1634282940062;
-        Fri, 15 Oct 2021 00:29:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7smbl6eLUD4Ng7INT7EmfV0PC0U+CLmxI4ShvMsaSUI=;
+        b=cLP98/I/2K/f7/+3gRy7DqZ6CZ26Q9aIo7N+DAXqKXsr2U6ShXZk6iEdjAOkdo191K
+         cdkJHnfUjyzQWCSY/h9/sgpT3wXy2m9NZd9Sxtw4bhZ/jZVljMIQnqqwoI6snw3zN5pj
+         0ejsf6DZKGq3YDfuJa9bTFkcnh8wD5VUXUrN6MG0FOYqh6Wgn30P6haEoIhmlORolGJH
+         KaMczzZT/QfPd6EBEIGNbmWBSzIMeSyW8/JzPInZ3OPtDeOC+FHb7kJk0L5tiflsIumu
+         45nlTVtww5lZ0TFctcl4LGt9ljqWfbpQ6gk8hSiqrxFRE9kA1f7GCuSt+zKyrRLpnQJy
+         TqQg==
+X-Gm-Message-State: AOAM533cMYZ4IPPzwS5HR51t+lObTQAeGcnoWW+pHUj1FSpRnzeDOWBS
+        SCv0Nos9/ssLlc+UXdTQKZwAmNZhAvp9L8HPOT2FABdmyT+fgj4oQy8uupg6W/LORq08NhXbU8k
+        ++TXCxiXDHKlazQ65jsSF10Xj8Dolq8wMEnVaUXb6WvqH9qjb
+X-Received: by 2002:ac2:518a:: with SMTP id u10mr9699296lfi.367.1634284197780;
+        Fri, 15 Oct 2021 00:49:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJziBffQry3SgAM9Levwhe7XIZoAbKqytJfrPn0AsnDIQAmbq2ACnGZxDC3eOF/mYKKppo+2ag==
+X-Received: by 2002:ac2:518a:: with SMTP id u10mr9699284lfi.367.1634284197607;
+        Fri, 15 Oct 2021 00:49:57 -0700 (PDT)
 Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id r3sm431818lfc.114.2021.10.15.00.28.59
+        by smtp.gmail.com with ESMTPSA id p16sm431493lfe.166.2021.10.15.00.49.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Oct 2021 00:28:59 -0700 (PDT)
+        Fri, 15 Oct 2021 00:49:56 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: memory-controllers: correct path to LPDDR3 bindings
-Date:   Fri, 15 Oct 2021 09:28:57 +0200
-Message-Id: <20211015072857.9770-1-krzysztof.kozlowski@canonical.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] soc: samsung: exynos-chipid: Pass revision reg offsets
+Date:   Fri, 15 Oct 2021 09:49:55 +0200
+Message-Id: <163428419206.64320.1460944164027641564.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211014133508.1210-1-semen.protsenko@linaro.org>
+References: <20211014133508.1210-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The LPDDR3 bindings were moved to memory-controllers/ddr.
+On Thu, 14 Oct 2021 16:35:06 +0300, Sam Protsenko wrote:
+> Old Exynos SoCs have both Product ID and Revision ID in one single
+> register, while new SoCs tend to have two separate registers for those
+> IDs. Implement handling of both cases by passing Revision ID register
+> offsets in driver data.
+> 
+> Previously existing macros for Exynos4210 (removed in this patch) were
+> incorrect:
+> 
+> [...]
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Applied, thanks!
 
----
+[1/3] soc: samsung: exynos-chipid: Pass revision reg offsets
+      commit: c072c4ef7ef09e1d6470c48cf52570487589b76a
+[2/3] dt-bindings: samsung: exynos-chipid: Document Exynos850 compatible
+      commit: 0a0124065fcd6b5e42968edbe33f85c7846d3f8c
+[3/3] soc: samsung: exynos-chipid: Add Exynos850 support
+      commit: 81a51eb6be3dbb76790b7353ec8dfaadfc751782
 
-I will fold it into original patch.
----
- .../devicetree/bindings/memory-controllers/ddr/lpddr3.txt    | 5 +++--
- .../bindings/memory-controllers/samsung,exynos5422-dmc.yaml  | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt b/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
-index b221e653d384..031af5fb0379 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
-@@ -43,8 +43,9 @@ These values shall be obtained from the device data-sheet.
- Child nodes:
- - The lpddr3 node may have one or more child nodes of type "lpddr3-timings".
-   "lpddr3-timings" provides AC timing parameters of the device for
--  a given speed-bin. Please see Documentation/devicetree/
--  bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
-+  a given speed-bin. Please see
-+  Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3-timings.txt
-+  for more information on "lpddr3-timings"
- 
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-index 6f4fd5814bf4..fe8639dcffab 100644
---- a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-@@ -51,7 +51,8 @@ properties:
-     $ref: '/schemas/types.yaml#/definitions/phandle'
-     description: |
-       phandle of the connected DRAM memory device. For more information please
--      refer to documentation file: Documentation/devicetree/bindings/ddr/lpddr3.txt
-+      refer to documentation file:
-+      Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
- 
-   operating-points-v2: true
- 
+Best regards,
 -- 
-2.30.2
-
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
