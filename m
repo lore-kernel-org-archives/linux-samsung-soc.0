@@ -2,115 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EEFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 13:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348C4C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 14:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F16A61164
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 13:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10AFF611EE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Oct 2021 14:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236310AbhJONxH (ORCPT
+        id S240203AbhJOO3U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 09:53:07 -0400
-Received: from mail-oo1-f53.google.com ([209.85.161.53]:33442 "EHLO
-        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236238AbhJONxH (ORCPT
+        Fri, 15 Oct 2021 10:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54472 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236991AbhJOO3T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 09:53:07 -0400
-Received: by mail-oo1-f53.google.com with SMTP id u5-20020a4ab5c5000000b002b6a2a05065so3021522ooo.0;
-        Fri, 15 Oct 2021 06:51:01 -0700 (PDT)
+        Fri, 15 Oct 2021 10:29:19 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7640EC061570;
+        Fri, 15 Oct 2021 07:27:13 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id q19so8512507pfl.4;
+        Fri, 15 Oct 2021 07:27:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A1+buzEnWHFfl/ZaWbrWJXy+M9IGPXk9SXcGFxZnAfs=;
+        b=mW0YwkEYI+SkJyiLxlQX3Zdlu5EyWW8zMrdZ1/82zOBc94fM7nZ5imuO8lI0tb5Mlc
+         GJX5XvSWu1L0mHI8nSrIRx+Do7SdcoiQJmua/qyhISbG1tvsgGAtKU2iaSZvTJBb65H4
+         yybCzMgblNgOoHva0cf/tJmCf6kFhrzB7ImRJELkl+97pLZdPXanfD/7ui3T8inIbbwi
+         STKVz/5qY9Dvta4IbwFgUI2HPfp+DgGS87+bamOPu7vRmCtOakuf4SGBbo8DvAGhvNNk
+         uMToZ3PnjDxeoU2qn1wjU0aa9BC12o3ATwUQxwGE8QbXhHsGamQhQZz4miZcGUh7D1CO
+         yNxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZtB0WkE/Lu4IlxTPR48eAN+WhkzmHbXHnEMt9T2roUI=;
-        b=huNBTUtKdQUS22BYm3gSW1a1MNl7/l8hlEfcT+5A0OA8vvItlVFi/UK9BEOLKojRpD
-         9HPn0+lpuFOTV7aTf2NkWk9ycl2PNnBehfdpEjeqWzYdFuFC27oxfdsc8Mdi8+TZ3UZd
-         5CDy3D9pT4naUGrQtpl/RzocNmNJjoA78tUl/1J9Y/gP+Yabh988GhnK7+DRkyjtAuk9
-         vwNvN7/MpsQ0teCdp/fZwL+cu/YGRtlukbQlzSC2krsvE/weagt69Cg28i7B1tgRQdj7
-         rOkeLGhOOjm/DQVt29D6wBxPfiLWbnPB4muR4voNn46R51uBsyb6q/T0NgoDB8kCMH6T
-         UKCw==
-X-Gm-Message-State: AOAM532Z5TW4zLaKSV0z6v8gfy1HX8/YRv5XNVknBjHZDVa7Xhid0Tsn
-        XcrXhbDzWg4mPR6oN9f8N9KxwHAwEw==
-X-Google-Smtp-Source: ABdhPJypDm72yKy9VkOctsoOA3C2T2MPIY3sjyUSUpB7ucQTvL24O0xdWMN+sM9vZcTtx01k6MzztQ==
-X-Received: by 2002:a4a:8c01:: with SMTP id u1mr8941557ooj.85.1634305860736;
-        Fri, 15 Oct 2021 06:51:00 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a15sm1358022oiw.53.2021.10.15.06.50.59
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A1+buzEnWHFfl/ZaWbrWJXy+M9IGPXk9SXcGFxZnAfs=;
+        b=t+tsIz5+Sg24GgOjSMYuazAyocM0enmt56f/QyIuHyye3njOijxqubLJIgPLZEfN47
+         /nbEQ+NCwSbqMfvDydQbfqYAaWKIImvC/FqRBy1zwyTyaAQfEiVgyIJ9g6Un1cAUIqx7
+         t4mcg+yMvP6phnCJJzf0mJrZDJ6/RCxup9JM90eMZGQaBdwC1Z48uHQ3XqVE1g2gBiQU
+         /Ez6Z3hpgxf8e0u3M/CpX6BnSC8deC+gmb/G0mhK6Qo3jKKFpg8iF2psm+6/bsbDQYZ5
+         xXz4NWuiCBArVMKdRoe8alK+XP44OtbpnAutK4VtfkHUBzap7XWyzBsEH+MSn2GyC94Y
+         wzSg==
+X-Gm-Message-State: AOAM531rLPG7JSs5VTJm27dTrwKTHPg+QUp9V+wUE+UfC7LCfG5FaYoS
+        kejn+XzrY/QSdjSwRZBF0Io=
+X-Google-Smtp-Source: ABdhPJxFKApjvWHOznC1si5BoWluKZQ8jEGESoKMvikMsJGlwrW7cHZUum4j158SdHMlbo9VkZ0e4A==
+X-Received: by 2002:a62:ab17:0:b0:44c:f727:98cd with SMTP id p23-20020a62ab17000000b0044cf72798cdmr12077120pff.35.1634308032813;
+        Fri, 15 Oct 2021 07:27:12 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:5414:a8c0:67be:6f68:5d31:1ee2])
+        by smtp.gmail.com with ESMTPSA id ls7sm5408396pjb.16.2021.10.15.07.27.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Oct 2021 06:51:00 -0700 (PDT)
-Received: (nullmailer pid 1426158 invoked by uid 1000);
-        Fri, 15 Oct 2021 13:50:59 -0000
-Date:   Fri, 15 Oct 2021 08:50:59 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Can Guo <cang@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
-        Sowon Na <sowon.na@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 13/16] dt-bindings: ufs: exynos-ufs: add io-coherency
- property
-Message-ID: <YWmHQ5CVQd97JzHJ@robh.at.kernel.org>
-References: <20211007080934.108804-1-chanho61.park@samsung.com>
- <CGME20211007081135epcas2p2d577fc8dec75471cf42024eda6a45690@epcas2p2.samsung.com>
- <20211007080934.108804-14-chanho61.park@samsung.com>
+        Fri, 15 Oct 2021 07:27:12 -0700 (PDT)
+From:   Naveen Naidu <naveennaidu479@gmail.com>
+To:     bhelgaas@google.com
+Cc:     Naveen Naidu <naveennaidu479@gmail.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+Subject: [PATCH v2 00/24] Unify PCI error response checking
+Date:   Fri, 15 Oct 2021 19:56:31 +0530
+Message-Id: <cover.1634300660.git.naveennaidu479@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211007080934.108804-14-chanho61.park@samsung.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 07, 2021 at 05:09:31PM +0900, Chanho Park wrote:
-> Add "samsung,sysreg" regmap and the offset to the ufs shareaibility
-> register for setting io coherency of the samsung ufs. "dma-coherent"
-> property is also required because the driver code needs to know.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->  .../devicetree/bindings/ufs/samsung,exynos-ufs.yaml   | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> index b9ca8ef4f2be..d9b7535b872f 100644
-> --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -54,6 +54,17 @@ properties:
->    phy-names:
->      const: ufs-phy
->  
-> +  samsung,sysreg:
-> +    $ref: '/schemas/types.yaml#/definitions/phandle'
-> +    description: phandle for FSYSx sysreg interface, used to control
-> +                 sysreg register bit for UFS IO Coherency
-> +
-> +  samsung,ufs-shareability-reg-offset:
-> +    $ref: '/schemas/types.yaml#/definitions/uint32'
-> +    description: Offset to the shareability register for io-coherency
+An MMIO read from a PCI device that doesn't exist or doesn't respond
+causes a PCI error.  There's no real data to return to satisfy the 
+CPU read, so most hardware fabricates ~0 data.
 
-Make these a single property: <phandle offset>
+This patch series adds PCI_ERROR_RESPONSE definition and other helper
+definition SET_PCI_ERROR_RESPONSE and RESPONSE_IS_PCI_ERROR and uses it
+where appropriate to make these checks consistent and easier to find.
 
-> +
-> +  dma-coherent: true
-> +
->  required:
->    - compatible
->    - reg
-> -- 
-> 2.33.0
-> 
-> 
+This helps unify PCI error response checking and make error check
+consistent and easier to find.
+
+This series also ensures that the error response fabrication now happens
+in the PCI_OP_READ and PCI_USER_READ_CONFIG. This removes the
+responsibility from controller drivers to do the error response setting. 
+
+Patch 1:
+    - Adds the PCI_ERROR_RESPONSE and other related defintions
+    - All other patches are dependent on this patch. This patch needs to
+      be applied first, before the others
+
+Patch 2:
+    - Error fabrication happens in PCI_OP_READ and PCI_USER_READ_CONFIG
+      whenever the data read via the controller driver fails.
+    - This patch needs to be applied before, Patch 4/24 to Patch 15/24 are
+      applied.
+
+Patch 3:
+    - Uses SET_PCI_ERROR_RESPONSE() when device is not found and
+      RESPONSE_IS_PCI_ERROR() to check hardware read from the hardware.
+
+Patch 4 - 15:
+    - Removes redundant error fabrication that happens in controller 
+      drivers when the read from a PCI device fails.
+    - These patches are dependent on Patch 2/24 of the series.
+    - These can be applied in any order.
+
+Patch 16 - 22:
+    - Uses RESPONSE_IS_PCI_ERROR() to check the reads from hardware
+    - Patches can be applied in any order.
+
+Patch 23 - 24:
+    - Edits the comments to include PCI_ERROR_RESPONSE alsong with
+      0xFFFFFFFF, so that it becomes easier to grep for faulty 
+      hardware reads.
+
+Changelog
+=========
+
+v2:
+    - Instead of using SET_PCI_ERROR_RESPONSE in all controller drivers
+      to fabricate error response, only use them in PCI_OP_READ and
+      PCI_USER_READ_CONFIG
+
+Naveen Naidu (24):
+ [PATCH 1/24] PCI: Add PCI_ERROR_RESPONSE and it's related definitions
+ [PATCH 2/24] PCI: Set error response in config access defines when ops->read() fails
+ [PATCH 3/24] PCI: Unify PCI error response checking
+ [PATCH 4/24] PCI: Remove redundant error fabrication when device read fails
+ [PATCH 5/24] PCI: thunder: Remove redundant error fabrication when device read fails
+ [PATCH 6/24] PCI: iproc: Remove redundant error fabrication when device read fails
+ [PATCH 7/24] PCI: mediatek: Remove redundant error fabrication when device read fails
+ [PATCH 8/24] PCI: exynos: Remove redundant error fabrication when device read fails
+ [PATCH 9/24] PCI: histb: Remove redundant error fabrication when device read fails
+ [PATCH 10/24] PCI: kirin: Remove redundant error fabrication when device read fails
+ [PATCH 11/24] PCI: aardvark: Remove redundant error fabrication when device read fails
+ [PATCH 12/24] PCI: mvebu: Remove redundant error fabrication when device read fails
+ [PATCH 13/24] PCI: altera: Remove redundant error fabrication when device read fails
+ [PATCH 14/24] PCI: rcar: Remove redundant error fabrication when device read fails
+ [PATCH 15/24] PCI: rockchip: Remove redundant error fabrication when device read fails
+ [PATCH 16/24] PCI/ERR: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
+ [PATCH 17/24] PCI: vmd: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
+ [PATCH 18/24] PCI: pciehp: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
+ [PATCH 19/24] PCI/DPC: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
+ [PATCH 20/24] PCI/PME: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
+ [PATCH 21/24] PCI: cpqphp: Use RESPONSE_IS_PCI_ERROR() to check read from hardware
+ [PATCH 22/24] PCI: keystone: Use PCI_ERROR_RESPONSE to specify hardware error
+ [PATCH 23/24] PCI: hv: Use PCI_ERROR_RESPONSE to specify hardware read error
+ [PATCH 24/24] PCI: xgene: Use PCI_ERROR_RESPONSE to specify hardware error
+
+ drivers/pci/access.c                        | 36 ++++++++--------
+ drivers/pci/controller/dwc/pci-exynos.c     |  4 +-
+ drivers/pci/controller/dwc/pci-keystone.c   |  4 +-
+ drivers/pci/controller/dwc/pcie-histb.c     |  4 +-
+ drivers/pci/controller/dwc/pcie-kirin.c     |  4 +-
+ drivers/pci/controller/pci-aardvark.c       | 10 +----
+ drivers/pci/controller/pci-hyperv.c         |  2 +-
+ drivers/pci/controller/pci-mvebu.c          |  8 +---
+ drivers/pci/controller/pci-thunder-ecam.c   | 46 +++++++--------------
+ drivers/pci/controller/pci-thunder-pem.c    |  4 +-
+ drivers/pci/controller/pci-xgene.c          |  8 ++--
+ drivers/pci/controller/pcie-altera.c        |  4 +-
+ drivers/pci/controller/pcie-iproc.c         |  4 +-
+ drivers/pci/controller/pcie-mediatek.c      | 11 +----
+ drivers/pci/controller/pcie-rcar-host.c     |  4 +-
+ drivers/pci/controller/pcie-rockchip-host.c |  4 +-
+ drivers/pci/controller/vmd.c                |  2 +-
+ drivers/pci/hotplug/cpqphp_ctrl.c           |  4 +-
+ drivers/pci/hotplug/pciehp_hpc.c            | 10 ++---
+ drivers/pci/pci.c                           | 10 ++---
+ drivers/pci/pcie/dpc.c                      |  4 +-
+ drivers/pci/pcie/pme.c                      |  4 +-
+ drivers/pci/probe.c                         | 10 ++---
+ include/linux/pci.h                         |  9 ++++
+ 24 files changed, 87 insertions(+), 123 deletions(-)
+
+-- 
+2.25.1
+
