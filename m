@@ -2,117 +2,98 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D443C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 17 Oct 2021 10:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66534C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 17 Oct 2021 17:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C35961245
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 17 Oct 2021 10:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C63261038
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 17 Oct 2021 17:17:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241743AbhJQKOp (ORCPT
+        id S1344357AbhJQRTi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 17 Oct 2021 06:14:45 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58856
+        Sun, 17 Oct 2021 13:19:38 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:35406
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241774AbhJQKOo (ORCPT
+        by vger.kernel.org with ESMTP id S229809AbhJQRTh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 17 Oct 2021 06:14:44 -0400
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
+        Sun, 17 Oct 2021 13:19:37 -0400
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 98BD13FFF8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Oct 2021 10:12:34 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D11943FFF9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Oct 2021 17:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634465554;
-        bh=z+Yvl5MxN7G24k69fezv+OIEbXw/e8Y8tbIyKV6Zeq0=;
+        s=20210705; t=1634491046;
+        bh=eVflprpswMNhSOShQaGnMDCR95Lqa8YXm16PQlN3/zc=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=kO/YApmHhqot8Q8hD8VannAf86TqIcrXttEJ2bYNydJS3QzdG9hKn/3f/n6YMljas
-         MU04B84mYC/kAwJ8YLcAwBXfKcO+xjHA0XnbAS2DWI+dCw4xMTmB73OoY2yA0nw7EI
-         nwoImBd1GhG/tt9Oxt3iiKAcGtH/AmAyM8arylRsW4M85xY6Rl1DK2DjhLDyNKucHz
-         ouXIijPmc6QvBYWgrkNZFmt8H9K454hFVJla9NvJleGeMOvoNXngm9aL5DGLTPxX8R
-         IaUTU8OvXiJxG+rPnBkdmYiHSdHIDjUb9XQR1pNJznvsOU2HMBbIC2XW95n0aeq2vj
-         RQrFKNEwDCwnQ==
-Received: by mail-lj1-f198.google.com with SMTP id t7-20020a2e7807000000b00210dad8b167so262544ljc.22
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Oct 2021 03:12:34 -0700 (PDT)
+         MIME-Version:Content-Type;
+        b=hZoMYaydGL0F06I/pOOLJa/6BxmrTRx12KrHpTbSNpq95VCYCAH3QXRV9hiRrvQVr
+         1hwVdgIgtlZUVr19ibMzqmhtRUTTqTa0JRvHu9rQ60iw/ai5xMdsGAt8T1c2hjsu3c
+         VKJ3Zk+rv5MV3oTe00MFKdblr1/TBYdvqz9ISHTXPsAhQCIFIG9DxsYEkgp/r1AloV
+         CZKKdRxYX5WaBDEUIhPj34gPNpy0Xr/zgZlIhAErK8SAMOoPfSuigE9zYDsRM+OtMs
+         9Xfk2PAD/kpCxWHbsiuW81wxoxem1Nu0p6mzM3ZF9Z36CBATYRQ/gBYpZGOXmW5McD
+         mVu24f+e5id/w==
+Received: by mail-lj1-f199.google.com with SMTP id y17-20020a2e95d1000000b00210c3d67c45so578523ljh.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Oct 2021 10:17:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=z+Yvl5MxN7G24k69fezv+OIEbXw/e8Y8tbIyKV6Zeq0=;
-        b=EZ7iVdqh3iQWIjqZokHH6j7zTI/KUvTlCAfzr5CLVFBQQDP2dIXzO2QiH/6isIV+uN
-         YH95KbjzYtkQnJuZfvv6+cJRmBdAm+KxKGrDpPo4sktrJ9sZ2nEPFuSLO5g3Tuy1eYSg
-         OMy9f3CpLYJEd6Xb2kyUUyEa80Qw+aNNlk90axdL8+l6iKu/oMg0WcTvOSHd/Daa9hy4
-         kkH0+VrsowGMkVYVEw5SDCmOvkDm41v4J7d3acGXHrQXQva++7qIiEXjtVaT8qLiGPHU
-         PbzzQPbDQMgwkC3OYADanJlj4cJhepvXlWsiUS4Z7NEFCrvGr/cS31pCut8/iDVF4S7v
-         tpBQ==
-X-Gm-Message-State: AOAM532N9dAM3IMkoPdetcl4S0iQA6FCzJi1Tdznh94w3pvfgFsB4T4E
-        Lb8A8Va7jtnoc+eTX0JXxtvG14RCFTfT32u5+24gKsZhEnfBfK7duMWlwmbBZic74lD7VfiA824
-        Fuy2XsfS4I6t2w1rRMvrwWPuNOHMGNCIHaZyMXWI2bTSPJgi3
-X-Received: by 2002:a2e:bf18:: with SMTP id c24mr25315238ljr.408.1634465554148;
-        Sun, 17 Oct 2021 03:12:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzMeE/7DuZbSRa6Q/OCAhMpCb6zaUHxq/kojV6hdGyM8OLwBKoP7thjhaN90iCO0nLQXUFFqw==
-X-Received: by 2002:a2e:bf18:: with SMTP id c24mr25315221ljr.408.1634465554013;
-        Sun, 17 Oct 2021 03:12:34 -0700 (PDT)
+        bh=eVflprpswMNhSOShQaGnMDCR95Lqa8YXm16PQlN3/zc=;
+        b=Eesx7QTRJ2AMKK910kVGJSLY3cJog9lR7ZfsxxHbCBHdRCVYGh49wFSutjYL85X6en
+         m0SZBdnOSOWVOONdC3kvCshl+GUD1UWNCcSFXQyz0CHx49scmrkSI/nrrbl71P35w74n
+         89Ck1mjG94h+Wc4+WomxsDM+E+gT7rWXqHsxIBdvHnqkvOWrdcPe2yQD/v9y6oFQvJj0
+         3bqCJNYJfWw9jpA+BRueUzCQ4EVuHbiZTgrQJ4kYjfbyTlvrgiGPZ7DPkV9yn1F3k/DF
+         R9QBzICP3H3TU1vqK7ctxPUvSCoVN9+t4MxZgJA565STti4yXvKl+exrvzV2CNdBN4tA
+         RV7g==
+X-Gm-Message-State: AOAM532bChXObRZnQaHMUN3IyB5quzbgvbvfO4FolDa6+8MGjpjliaKX
+        9UeoXNiwNNYm9PptqdK2sD9YAnuQ83B77Ibg1/OAeqadtPHXujSkvmKvf56Y6hsXaruMg8Va15z
+        jE4uCZeyzljziQNyOscsBQMzhkgwBfmV8vWIaKtLuj60Hqpcj
+X-Received: by 2002:a05:6512:1024:: with SMTP id r4mr24514271lfr.369.1634491045944;
+        Sun, 17 Oct 2021 10:17:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJye9QuKKUoWxFQss3whtnHm3R9a1la2Zo3yqht5gQUUcY0PsrMwRvY7S1sdqpmDQUgCISjEtg==
+X-Received: by 2002:a05:6512:1024:: with SMTP id r4mr24514255lfr.369.1634491045791;
+        Sun, 17 Oct 2021 10:17:25 -0700 (PDT)
 Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id o26sm1263077ljg.92.2021.10.17.03.12.32
+        by smtp.gmail.com with ESMTPSA id s17sm1286475lfe.10.2021.10.17.10.17.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Oct 2021 03:12:33 -0700 (PDT)
+        Sun, 17 Oct 2021 10:17:24 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 3/3] ARM: dts: s5pv210: add 'chassis-type' property
-Date:   Sun, 17 Oct 2021 12:12:28 +0200
-Message-Id: <20211017101228.19478-3-krzysztof.kozlowski@canonical.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3] rtc: s3c: remove HAVE_S3C_RTC in favor of direct dependencies
+Date:   Sun, 17 Oct 2021 19:17:23 +0200
+Message-Id: <163449103927.4649.126852181251730907.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211017101228.19478-1-krzysztof.kozlowski@canonical.com>
-References: <20211017101228.19478-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211013212256.3425889-1-willmcvicker@google.com>
+References: <20211013212256.3425889-1-willmcvicker@google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-A new 'chassis-type' root node property has recently been approved for
-the device-tree specification.
+On Wed, 13 Oct 2021 21:22:55 +0000, Will McVicker wrote:
+> The config HAVE_S3C_RTC is not really needed since we can simply just
+> add the dependencies directly to RTC_DRV_S3C. Also, one less config to
+> keep track of!
+> 
+> 
 
-Add this property for end-user devices (such as laptops,
-smartphones and tablets) based on Samsung S5Pv210 ARM SoCs.
+Applied, thanks!
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- arch/arm/boot/dts/s5pv210-fascinate4g.dts | 1 +
- arch/arm/boot/dts/s5pv210-galaxys.dts     | 1 +
- 2 files changed, 2 insertions(+)
+[1/1] rtc: s3c: remove HAVE_S3C_RTC in favor of direct dependencies
+      commit: d96890fca9fd429dd3834dae27e1047760da245b
 
-diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-index b47d8300e536..7427c84f1126 100644
---- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-+++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-@@ -8,6 +8,7 @@
- / {
- 	model = "Samsung Galaxy S Fascinate 4G (SGH-T959P) based on S5PV210";
- 	compatible = "samsung,fascinate4g", "samsung,aries", "samsung,s5pv210";
-+	chassis-type = "handset";
- 
- 	chosen {
- 		stdout-path = &uart2;
-diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
-index 560f830b6f6b..eeec2bdece11 100644
---- a/arch/arm/boot/dts/s5pv210-galaxys.dts
-+++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
-@@ -8,6 +8,7 @@
- / {
- 	model = "Samsung Galaxy S1 (GT-I9000) based on S5PV210";
- 	compatible = "samsung,galaxys", "samsung,aries", "samsung,s5pv210";
-+	chassis-type = "handset";
- 
- 	chosen {
- 		stdout-path = &uart2;
+Best regards,
 -- 
-2.30.2
-
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
