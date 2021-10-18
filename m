@@ -2,190 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5219DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 15:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827E7C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 17:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 321F260E8B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 15:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF7260230
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 17:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232376AbhJRPwl (ORCPT
+        id S233102AbhJRReQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 11:52:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39908 "EHLO
+        Mon, 18 Oct 2021 13:34:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231938AbhJRPwl (ORCPT
+        with ESMTP id S232211AbhJRReQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 11:52:41 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC71C06161C;
-        Mon, 18 Oct 2021 08:50:29 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id z77-20020a1c7e50000000b0030db7b70b6bso10825450wmc.1;
-        Mon, 18 Oct 2021 08:50:29 -0700 (PDT)
+        Mon, 18 Oct 2021 13:34:16 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC38C061745
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Oct 2021 10:32:04 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id i20so2059059edj.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Oct 2021 10:32:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=04HQg1igT3y085lM4epZO712BVwT6WH3aqTbKIYu7jw=;
-        b=lYjder3BqrUfwzd7MZypFzevH+f7lIHJmyhkDyUnUORjNOS51uP4BiEQiOua26lb+B
-         t9igwOD8J1VUuzhJoSCCJZ+hUEj/Wf1E8Z/s3PAoIDpvN8MC6oHPUL6oYg/SqRTD1+1M
-         DNt6atvsTa2qi/er/ul9fRhw9k9e4yfMbsNuLdZ3X/CRHERywVBPDBrt9IbLzcD4juZ2
-         QJwgjRhfpwlDRFE0JXUogx3KozXz6kSCXhbM68xkpJJ5PGe/Omu92eJ9sHkPl64M9lt4
-         tm0K5uSZ1D0uwElK+dhKun64cRkDecsJ+OkmlEgQ/xTJ8PO/ci47/ksLb9PuI+lafMju
-         gDaw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QcXTMSle67F0iHj+mrkZMW1lH8e/zEdbzDB64MF3Hvs=;
+        b=BcVd61Rq2NCn1GxP94JH5rzt+AoQTkkFGmeW2+2+kB5BdxHQWQhk8jgkdZACBlX80Z
+         hsQV+dyxwly5rGw+mlzWvn+jSYY8F4tnMfXvcDF0r/D9j4BzHX+8mEh0dPF4nhQOIWZc
+         GStKXraJtspGVDzioSG5ffyRhB3Kyt8UQxXPrpCLfQPB1X2FFKZ8KOBiDLFr3b1mMotY
+         dRsA2DSasWR/FI/TtfXdgu8ouMht07sF612sGQA5teORLVfVNe5jznmU3TPIwRxugyXx
+         QpnTqGi/j0sw8C9mXF65w1ypJPjloAo6655lcAZRsyvPVyfxof0LDnF5hHLftbCt4Bb0
+         wnZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=04HQg1igT3y085lM4epZO712BVwT6WH3aqTbKIYu7jw=;
-        b=G0ahLO2jU93ZHg9ge9YNgPq3J+TEe+2oyPPaN3xa2ryvheZNJ8OQmH9KEGDbyog/H+
-         7yTN4Ct7cVx3xBv5cYod32WfTa2t4ZxZmeCiqlRKr0dghuGcnk3Wr3TEk3Q56Dvp+qiZ
-         pRsvo0QQ8qxoimLBpRMkS1D5ctYarDslBAfyjZVlMuGlCu20fL5exIoF829voGJ9TTPp
-         HXPO4UUAWu06o7Wofi8oMoA/dgaQaW2g26Z+YYBd/CIa/mqYKJQkVn/rV8/1p1frdiA8
-         SwwL5KJJvhtwLeAmPQcgmeWV8U+8gouKrSEEjsgEBKUH9cTG5VElTrSFEnUK8zdQWgxj
-         ED5g==
-X-Gm-Message-State: AOAM531g2DYMdfzOS8fdC7Dq6e5ybPXwJejUnxeA8hkI3RsjpFO3V8Co
-        YLtJ+yQOQ/KadAZp33fnICCeLDGDWSyZlqLONoo=
-X-Google-Smtp-Source: ABdhPJygaWphYzwppUv6zCyL7pzBwLfl14v09zV1z2AwmiwVZVCRs/QEw0ZgVywEb6GF6/dSb33i+jlMmSjD/dwr4Hk=
-X-Received: by 2002:a1c:ac03:: with SMTP id v3mr32300015wme.127.1634572228379;
- Mon, 18 Oct 2021 08:50:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QcXTMSle67F0iHj+mrkZMW1lH8e/zEdbzDB64MF3Hvs=;
+        b=6ew3TKbijyfUX0Kk+pcWW4gTVWsSsUJA/ZZg3WC9EZESJMnS+8EAzprbx8M1VUkuTp
+         tVdtRUFw/FOCjYxwY5Mt7jEa1ZdXjZe4RbKlL4ZD5aU3yig4f4+jP4lQZsVzFHXs186B
+         IudNEyUpD5B2gYeyA6y9xWX3WnGBngNdcIvl46r5B9xUYmqhS0EvSZYHyr59SK3XrL+x
+         3pGa9P9mc0UhqjnlEsaiya/03i4sfwkSpv7P8l5s5KZJbVEd12+fcPyWWOhtueAhrRhC
+         pERh946W0UXWR9AwwrgvCHbre434BUcyyfMDvkaAi4oqMWP3FejRE80AAH/vNnN1pT0k
+         xhBw==
+X-Gm-Message-State: AOAM533kXO6WEfog3GHkqQeQdFRh7W2RikOTN8IWl3Pd6FVy63gK61mu
+        jQy3jGHZL91GrSjPHMz/O4cxLQ==
+X-Google-Smtp-Source: ABdhPJzrkfb8ujNn/nq10hWyW0cvZvpMkMTTpEmtgWG+N17RxIsfLFDczErL+gitqi6RrdEPrHUgqQ==
+X-Received: by 2002:a05:6402:2808:: with SMTP id h8mr46571650ede.394.1634578323076;
+        Mon, 18 Oct 2021 10:32:03 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id m3sm1244049edc.11.2021.10.18.10.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 10:32:02 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: s3c: Remove usage of devm_rtc_device_register()
+Date:   Mon, 18 Oct 2021 20:32:01 +0300
+Message-Id: <20211018173201.2166-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210910101218.1632297-1-maxime@cerno.tech> <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
- <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
- <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com>
- <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
- <YXiZIuao6wNch7j-D3ZktdSR3_IRAQ3oSeL8sLCCX8lEhwsoWaouE6_eV6C2Zv9r2_dww_Mtal18UBJfc4fz4g==@protonmail.internalid>
- <CAMi1Hd0sUUFvNzYwt29af9d99o1-x+LiXBPCrQ8=9H0tHvxVHg@mail.gmail.com>
- <b57fbc24-9ef3-a57b-17d4-2cb33fb409d4@linaro.org> <20211013141629.qfeqwsyi5yobzjca@gilmour>
- <CAF6AEGu2CyQA6XZ=r4c9Z0tiiPUxyhTf0OAu3v6w0oswJ3567w@mail.gmail.com> <20211018123452.efwx5varmxihsv6n@gilmour>
-In-Reply-To: <20211018123452.efwx5varmxihsv6n@gilmour>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Mon, 18 Oct 2021 08:55:06 -0700
-Message-ID: <CAF6AEGvXWzV2c4PZ-QbUUmn=cgXXtH_CSRC+uaPsp4+jRKmwVw@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH v4 00/24] drm/bridge: Make panel and bridge
- probe order consistent
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Caleb Connolly <caleb.connolly@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 5:34 AM Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Hi Rob,
->
-> On Wed, Oct 13, 2021 at 05:16:58PM -0700, Rob Clark wrote:
-> > On Wed, Oct 13, 2021 at 7:16 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> > >
-> > > Hi Caleb,
-> > >
-> > > On Thu, Sep 30, 2021 at 09:20:52PM +0100, Caleb Connolly wrote:
-> > > > Hi,
-> > > >
-> > > > On 30/09/2021 20:49, Amit Pundir wrote:
-> > > > > On Thu, 30 Sept 2021 at 04:50, Rob Clark <robdclark@gmail.com> wrote:
-> > > > > >
-> > > > > > On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.org> wrote:
-> > > > > > >
-> > > > > > > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro.org> wrote:
-> > > > > > > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@linaro.org> wrote:
-> > > > > > > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> > > > > > > > > > The best practice to avoid those issues is to register its functions only after
-> > > > > > > > > > all its dependencies are live. We also shouldn't wait any longer than we should
-> > > > > > > > > > to play nice with the other components that are waiting for us, so in our case
-> > > > > > > > > > that would mean moving the DSI device registration to the bridge probe.
-> > > > > > > > > >
-> > > > > > > > > > I also had a look at all the DSI hosts, and it seems that exynos, kirin and msm
-> > > > > > > > > > would be affected by this and wouldn't probe anymore after those changes.
-> > > > > > > > > > Exynos and kirin seems to be simple enough for a mechanical change (that still
-> > > > > > > > > > requires to be tested), but the changes in msm seemed to be far more important
-> > > > > > > > > > and I wasn't confortable doing them.
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > Hey Maxime,
-> > > > > > > > >    Sorry for taking so long to get to this, but now that plumbers is
-> > > > > > > > > over I've had a chance to check it out on kirin
-> > > > > > > > >
-> > > > > > > > > Rob Clark pointed me to his branch with some fixups here:
-> > > > > > > > >     https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridge-rework
-> > > > > > > > >
-> > > > > > > > > But trying to boot hikey with that, I see the following loop indefinitely:
-> > > > > > > > > [    4.632132] adv7511 2-0039: supply avdd not found, using dummy regulator
-> > > > > > > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using dummy regulator
-> > > > > > > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using dummy regulator
-> > > > > > > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, using dummy regulator
-> > > > > > > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using dummy regulator
-> > > > > > > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using dummy regulator
-> > > > > > > > > [    4.681898] adv7511 2-0039: failed to find dsi host
-> > > > > > > >
-> > > > > > > > I just realized Rob's tree is missing the kirin patch. My apologies!
-> > > > > > > > I'll retest and let you know.
-> > > > > > >
-> > > > > > > Ok, just retested including the kirin patch and unfortunately I'm
-> > > > > > > still seeing the same thing.  :(
-> > > > > > >
-> > > > > > > Will dig a bit and let you know when I find more.
-> > > > > >
-> > > > > > Did you have a chance to test it on anything using drm/msm with DSI
-> > > > > > panels?  That would at least confirm that I didn't miss anything in
-> > > > > > the drm/msm patch to swap the dsi-host vs bridge ordering..
-> > > > >
-> > > > > Hi, smoke tested
-> > > > > https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/bridge-rework
-> > > > > on Pocophone F1 (sdm845 / A630) with v5.15-rc3. I see no obvious
-> > > > > regressions in my limited testing so far including video (youtube)
-> > > > > playback.
-> > > > Tested on the OnePlus 6 too booting AOSP, works fine. This *fixes*
-> > > > FBDEV_EMULATION (so we can get a working framebuffer console) which was
-> > > > otherwise broken on 5.15.
-> > > >
-> > > > However it spits out some warnings during boot: https://p.calebs.dev/gucysowyna.yaml
-> > >
-> > > Thanks for testing. It looks like the runtime_pm ordering between the
-> > > msm devices changed a bit with the conversion Rob did.
-> > >
-> > > Rob, do you know what could be going on?
-> > >
-> >
-> > Not entirely sure.. I didn't see that first splat, but maybe I was
-> > missing some debug config? (The 2nd one is kind of "normal", I think
-> > related to bootloader leaving the display on)
->
-> So do you feel like this is a blocker or do you expect it to be fixed
-> sometime down the road?
+devm_rtc_device_register() is deprecated. Use devm_rtc_allocate_device()
+and devm_rtc_register_device() API instead.
 
-No
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/rtc/rtc-s3c.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-I can try and take a look at the 2nd splat, but shouldn't block your series
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index e57d3ca70a78..10e591794276 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -447,15 +447,18 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+ 
+-	/* register RTC and exit */
+-	info->rtc = devm_rtc_device_register(&pdev->dev, "s3c", &s3c_rtcops,
+-					     THIS_MODULE);
++	info->rtc = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(info->rtc)) {
+-		dev_err(&pdev->dev, "cannot attach rtc\n");
+ 		ret = PTR_ERR(info->rtc);
+ 		goto err_nortc;
+ 	}
+ 
++	info->rtc->ops = &s3c_rtcops;
++
++	ret = devm_rtc_register_device(info->rtc);
++	if (ret)
++		goto err_nortc;
++
+ 	ret = devm_request_irq(&pdev->dev, info->irq_alarm, s3c_rtc_alarmirq,
+ 			       0, "s3c2410-rtc alarm", info);
+ 	if (ret) {
+-- 
+2.30.2
 
-BR,
--R
