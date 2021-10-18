@@ -2,247 +2,162 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1A5C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 12:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB4FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 12:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B71B061212
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 12:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23B5E6126A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 12:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230350AbhJRMhJ (ORCPT
+        id S231745AbhJRMrZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 08:37:09 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:55861 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231615AbhJRMhJ (ORCPT
+        Mon, 18 Oct 2021 08:47:25 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:52708 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231601AbhJRMrY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 08:37:09 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6D747580B31;
-        Mon, 18 Oct 2021 08:34:57 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 18 Oct 2021 08:34:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=JDzR27XjpWVhhT/HjvP8lcBn6jm
-        H4lkGCuYgmDjihJ4=; b=lP2VOyWu1ebz/g4Gnn5VQRD5s0QN5vqebY4j2zGaQWZ
-        WxirDaLuYdegvSCbYQcWpbMgk2kt1mVFHBAC/CQuYAeZ9t4/zHxVBb19F84NUl16
-        rbAtFfmiHj4LoAeakBomh2yxd90TWjRzQkI0PAwkYhuuc3KWvh7Z/wqwSWiu6ynr
-        eGDU/62Xstk31q+Mqb3+VyX8SZc6MWh1bGeiLPFFKZcQxdrUgjoX8Aa1DJgsz7+O
-        JDpK72hPLV4P2C157FYmY4NG1xx/IZFhR+5v4SzbR27efC5VRMV8VOyc/VBf7Oaj
-        riXMnJsWzK13n2hQdvbZ6iRyKpOJTml2B+rDq2ez36g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=JDzR27
-        XjpWVhhT/HjvP8lcBn6jmH4lkGCuYgmDjihJ4=; b=WaqXf6aMKIlHL32mvYybKc
-        LHhkGBjGWj7hpFnq+KEqeKoT05o7i4KbxIMSDrHMPqp/rPTPou375bf0kL0v3XTY
-        6EVJAgIQEgKuWF8wsUE0WVQXSKFRWlkhJc0ZFbJEqv01FtGaSCGjrDd5y+ngwCvf
-        O1PGzqpMwtUFOwnCS2shCTx2POqnUlLNLg83hexSxk5DtSSfFr1AwehNlEb9oCdj
-        QSh0zhI72ScS+c35p76dxsJzZ0n7HNcz2d9u6DNZcREGNtgW11Ut9/LVihoNS4UU
-        YSUNXMkNDmcIwHTXl3ZWsxji1ULGBauRF3VvTHfegx3qzM6i1hBMoSFICkwET/JQ
-        ==
-X-ME-Sender: <xms:72ltYfGZfkfbWLlDXmlo5-6NjGjaTB8FKcsz-iH5q3UdKbj_aREffg>
-    <xme:72ltYcUtWF9kC4L5E93weNuRO9k73Z_HLfvrNZOwcaBTktE4md2HNEIhajFHcroL8
-    DIQkImIIaC85S_TwAk>
-X-ME-Received: <xmr:72ltYRLTptB_8B4nt9k0YGuSZOLfSzPKhFJh5EYsWDWRebxemxedsSotrZy9S69YF6-2eRDxuQdbzqELk7F29nHdedj7yUeDR0Wju9ak>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddvtddgheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepkefgffekffelgfeukedvhffggeehtedugfekgeeihfefhfehieeukeevffev
-    hfefnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgtrghlvggsshdrug
-    gvvhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
-    rgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:72ltYdF2JS4fmhrgUht9RogaVJ0XPeydDW9pm8WTFX0qukFuPQgvKw>
-    <xmx:72ltYVUho1H9PzUdDxtphBo4cAuil-eA0H3dV2AlIQc9MKPZ3CotuA>
-    <xmx:72ltYYMrqkOpAYz8dTqliKzZzTGe5iUrB2UC8utlt7YbD1XNFoOzDw>
-    <xmx:8WltYfhd9w57PWI7uceJqjcF6Tb3QT_hFL4q6wvZNey02HS6q4Pp9g>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Oct 2021 08:34:55 -0400 (EDT)
-Date:   Mon, 18 Oct 2021 14:34:52 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Caleb Connolly <caleb.connolly@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [Freedreno] [PATCH v4 00/24] drm/bridge: Make panel and bridge
- probe order consistent
-Message-ID: <20211018123452.efwx5varmxihsv6n@gilmour>
-References: <20210910101218.1632297-1-maxime@cerno.tech>
- <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
- <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
- <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com>
- <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
- <YXiZIuao6wNch7j-D3ZktdSR3_IRAQ3oSeL8sLCCX8lEhwsoWaouE6_eV6C2Zv9r2_dww_Mtal18UBJfc4fz4g==@protonmail.internalid>
- <CAMi1Hd0sUUFvNzYwt29af9d99o1-x+LiXBPCrQ8=9H0tHvxVHg@mail.gmail.com>
- <b57fbc24-9ef3-a57b-17d4-2cb33fb409d4@linaro.org>
- <20211013141629.qfeqwsyi5yobzjca@gilmour>
- <CAF6AEGu2CyQA6XZ=r4c9Z0tiiPUxyhTf0OAu3v6w0oswJ3567w@mail.gmail.com>
+        Mon, 18 Oct 2021 08:47:24 -0400
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20211018124509epoutp02f3d97b2833442e11554af0c0e14ea1f3~vIKs8bHE80057600576epoutp02e
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Oct 2021 12:45:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20211018124509epoutp02f3d97b2833442e11554af0c0e14ea1f3~vIKs8bHE80057600576epoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1634561109;
+        bh=8dvnhWSaJ+9vjb8lIZYUcv+yQGobrg6XUCfwveMvo1Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OtDB6yWhP4KHTeRcjG/uLs7u1OKHz9E1t5p2PH5ir0afge7JDZ3V6FtBTZDM1qQTx
+         0ZQljqHBrMam+jheEdKmlJBeM3c5HTqalJckh0JJvdy8ty03rUcPj+4B1pwAPIyu7R
+         /jgZ1TwKMoMoPvnFb6c4GJU8EwY3yxp4iEUEgpYk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20211018124508epcas2p4f9763b1bcf68f8eeacf90293f9b2336e~vIKr_Xdn52534425344epcas2p4x;
+        Mon, 18 Oct 2021 12:45:08 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.92]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4HXxRQ5LN0z4x9Q8; Mon, 18 Oct
+        2021 12:45:06 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6F.2C.10014.25C6D616; Mon, 18 Oct 2021 21:45:06 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+        20211018124506epcas2p25100e2163029de4ee8b8b87e7ff0f2a3~vIKp0MopA2095320953epcas2p2F;
+        Mon, 18 Oct 2021 12:45:06 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211018124506epsmtrp122fa173750b7b54e954f13994c97e9bc~vIKpzU7US1588315883epsmtrp1E;
+        Mon, 18 Oct 2021 12:45:06 +0000 (GMT)
+X-AuditID: b6c32a47-489ff7000000271e-8f-616d6c52cc00
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D7.50.08902.25C6D616; Mon, 18 Oct 2021 21:45:06 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20211018124505epsmtip249dd087dfefdf6cc81d95a82b08fb408~vIKpik-5U0378903789epsmtip2e;
+        Mon, 18 Oct 2021 12:45:05 +0000 (GMT)
+From:   Chanho Park <chanho61.park@samsung.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Can Guo <cang@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
+        Sowon Na <sowon.na@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v5 12/15] dt-bindings: ufs: exynos-ufs: add io-coherency
+ property
+Date:   Mon, 18 Oct 2021 21:42:13 +0900
+Message-Id: <20211018124216.153072-13-chanho61.park@samsung.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211018124216.153072-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c73vrvulwt5myj34"
-Content-Disposition: inline
-In-Reply-To: <CAF6AEGu2CyQA6XZ=r4c9Z0tiiPUxyhTf0OAu3v6w0oswJ3567w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJJsWRmVeSWpSXmKPExsWy7bCmhW5QTm6iwdtmNYuTT9awWTyYt43N
+        4uXPq2wWBx92slhM+/CT2eLT+mWsFpf3a1vMP3KO1aJnp7PF6QmLmCyerJ/FbLHoxjYmixu/
+        2lgtNr79wWQx4/w+Jovu6zvYLJYf/8dk0br3CLvF75+HmByEPS5f8faY1dDL5nG5r5fJY/MK
+        LY/Fe14yeWxa1cnmMWHRAUaP7+s72Dw+Pr3F4tG3ZRWjx+dNch7tB7qZAniism0yUhNTUosU
+        UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgD5UUihLzCkFCgUkFhcr
+        6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YWl+al6+WlllgZGhgYmQIVJmRnfDwxj73gPGfF
+        kU9pDYyf2LsYOTkkBEwkbp88zNzFyMUhJLCDUeLNswMsEM4nRomNX9cyQjjfGCVWbp7NAtPy
+        +chTqMReRonG791QzkdGiU9zv7OBVLEJ6Epsef4KLCEi8J5R4snjKewgDrNAA4vE61sdjCBV
+        wgLBEotmrGQGsVkEVCU2/F8HtoNXwEHiy8IzbBD75CWO/OoEq+EEivcsOsIEUSMocXLmE7B6
+        ZqCa5q2zwd6QEHjDIfH6XR9Us4tEw58ZzBC2sMSr41ug/paSeNnfxg7R0M0o0froP1RiNaNE
+        Z6MPhG0v8Wv6FtYuRg6gDZoS63fpg5gSAsoSR25B7eWT6Dj8lx0izCvR0SYE0agucWD7dGhw
+        yUp0z/nMCmF7SPx99BYaWpMZJR5sa2WawKgwC8k7s5C8Mwth8QJG5lWMYqkFxbnpqcVGBcbw
+        OE7Oz93ECE7zWu47GGe8/aB3iJGJg/EQowQHs5IIb5JrbqIQb0piZVVqUX58UWlOavEhRlNg
+        YE9klhJNzgdmmrySeEMTSwMTMzNDcyNTA3MlcV5L0exEIYH0xJLU7NTUgtQimD4mDk6pBiaT
+        /X7qKxsmzJSfYrnS78O3W31z5Kers6qWTp85rd77gUPwPY7yLWrXVMT2zN2al6qrojmtR9Os
+        LeJtQlvxuiMvW9bMumSkOT2wqvCJ4EXNlivZv3u69j+L+77wd6Z2pQW7SfOBxRktL37wiJw7
+        s8vwWuGsbWXh9om6iq3a3YvX2kZd6vL8fI3LchcbS+aaJbYHPx4Q9YwxvcrSH9Z39Kumy/JF
+        ywX2ZQfd/3J+6dGyG18Oejl8CVaS8v7rHfhm75wLG97F2ymHf/mmx7R96XSbau2TWtFt+s9P
+        V/hLTjuw4R/XyoCFTyWfBwgW3byyQL1uqfGbdJuWxu+Cfg43L5xeGxk75bYeg4Bynf3s5ElK
+        LMUZiYZazEXFiQC2WsZFfAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvG5QTm6iwax9bBYnn6xhs3gwbxub
+        xcufV9ksDj7sZLGY9uEns8Wn9ctYLS7v17aYf+Qcq0XPTmeL0xMWMVk8WT+L2WLRjW1MFjd+
+        tbFabHz7g8lixvl9TBbd13ewWSw//o/JonXvEXaL3z8PMTkIe1y+4u0xq6GXzeNyXy+Tx+YV
+        Wh6L97xk8ti0qpPNY8KiA4we39d3sHl8fHqLxaNvyypGj8+b5DzaD3QzBfBEcdmkpOZklqUW
+        6dslcGV8PDGPveA8Z8WRT2kNjJ/Yuxg5OSQETCQ+H3nK2MXIxSEksJtRYs/mt1AJWYln73ZA
+        2cIS91uOsEIUvWeUmNWzHizBJqArseX5K0YQW0TgI6PEnG9aIEXMAj0sEk+7W8ESwgKBEo2v
+        9jOD2CwCqhIb/q9jAbF5BRwkviw8wwaxQV7iyK9OsBpOoHjPoiNMILaQgL3E4pezmSHqBSVO
+        znwC1ssMVN+8dTbzBEaBWUhSs5CkFjAyrWKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93E
+        CI5GLc0djNtXfdA7xMjEwXiIUYKDWUmEN8k1N1GINyWxsiq1KD++qDQntfgQozQHi5I474Wu
+        k/FCAumJJanZqakFqUUwWSYOTqkGpobFv3/0HLrwcm3t80VyS+c+evx99doa6c8HGJgj4nZl
+        hE3VPsbvfjxNyNs4p12I40fst+8zY5+fvzC55Foi74RFC9JuWDx9Y/ruXOl9zQA3A46V6g+E
+        jere7v4kc2hm9vS51/bs/ybhwlTzJnW6JafC8ifCxxbF3vtpdnatc3ec2r3bNcFbv3+9v2MD
+        p3/JxH2eqVyLT/LqHFofsL1hS8Qvj7dT3/U3CovN/vRfX3OST+erI0dPlf+c9XHulUV8NTKF
+        K459iTT27WCtfqt9/NRrS/b1X+PqqqVCcvX+8ZnMdqqW+PVBQzXKOmVi2jNDN7bdp6Nj8yd3
+        WFaoVrxi8XKVTgizfb333OQPzCluTh+VWIozEg21mIuKEwHCKx6LNQMAAA==
+X-CMS-MailID: 20211018124506epcas2p25100e2163029de4ee8b8b87e7ff0f2a3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20211018124506epcas2p25100e2163029de4ee8b8b87e7ff0f2a3
+References: <20211018124216.153072-1-chanho61.park@samsung.com>
+        <CGME20211018124506epcas2p25100e2163029de4ee8b8b87e7ff0f2a3@epcas2p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Add "samsung,sysreg" regmap and the offset to the ufs shareability
+register for setting io coherency of the samsung ufs. "dma-coherent"
+property is also required because the driver code needs to know.
 
---c73vrvulwt5myj34
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+---
+ .../devicetree/bindings/ufs/samsung,exynos-ufs.yaml       | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Hi Rob,
+diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+index b9ca8ef4f2be..691741f9d6c0 100644
+--- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
++++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+@@ -54,6 +54,14 @@ properties:
+   phy-names:
+     const: ufs-phy
+ 
++  samsung,sysreg:
++    $ref: '/schemas/types.yaml#/definitions/phandle-array'
++    description: Should be phandle/offset pair. The phandle to the syscon node
++                 which indicates the FSYSx sysreg interface and the offset of
++                 the control register for UFS io coherency setting.
++
++  dma-coherent: true
++
+ required:
+   - compatible
+   - reg
+-- 
+2.33.0
 
-On Wed, Oct 13, 2021 at 05:16:58PM -0700, Rob Clark wrote:
-> On Wed, Oct 13, 2021 at 7:16 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > Hi Caleb,
-> >
-> > On Thu, Sep 30, 2021 at 09:20:52PM +0100, Caleb Connolly wrote:
-> > > Hi,
-> > >
-> > > On 30/09/2021 20:49, Amit Pundir wrote:
-> > > > On Thu, 30 Sept 2021 at 04:50, Rob Clark <robdclark@gmail.com> wrot=
-e:
-> > > > >
-> > > > > On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.o=
-rg> wrote:
-> > > > > >
-> > > > > > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro=
-=2Eorg> wrote:
-> > > > > > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@lina=
-ro.org> wrote:
-> > > > > > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno=
-=2Etech> wrote:
-> > > > > > > > > The best practice to avoid those issues is to register it=
-s functions only after
-> > > > > > > > > all its dependencies are live. We also shouldn't wait any=
- longer than we should
-> > > > > > > > > to play nice with the other components that are waiting f=
-or us, so in our case
-> > > > > > > > > that would mean moving the DSI device registration to the=
- bridge probe.
-> > > > > > > > >
-> > > > > > > > > I also had a look at all the DSI hosts, and it seems that=
- exynos, kirin and msm
-> > > > > > > > > would be affected by this and wouldn't probe anymore afte=
-r those changes.
-> > > > > > > > > Exynos and kirin seems to be simple enough for a mechanic=
-al change (that still
-> > > > > > > > > requires to be tested), but the changes in msm seemed to =
-be far more important
-> > > > > > > > > and I wasn't confortable doing them.
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > Hey Maxime,
-> > > > > > > >    Sorry for taking so long to get to this, but now that pl=
-umbers is
-> > > > > > > > over I've had a chance to check it out on kirin
-> > > > > > > >
-> > > > > > > > Rob Clark pointed me to his branch with some fixups here:
-> > > > > > > >     https://gitlab.freedesktop.org/robclark/msm/-/commits/f=
-or-mripard/bridge-rework
-> > > > > > > >
-> > > > > > > > But trying to boot hikey with that, I see the following loo=
-p indefinitely:
-> > > > > > > > [    4.632132] adv7511 2-0039: supply avdd not found, using=
- dummy regulator
-> > > > > > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using=
- dummy regulator
-> > > > > > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using=
- dummy regulator
-> > > > > > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, usin=
-g dummy regulator
-> > > > > > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using=
- dummy regulator
-> > > > > > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using=
- dummy regulator
-> > > > > > > > [    4.681898] adv7511 2-0039: failed to find dsi host
-> > > > > > >
-> > > > > > > I just realized Rob's tree is missing the kirin patch. My apo=
-logies!
-> > > > > > > I'll retest and let you know.
-> > > > > >
-> > > > > > Ok, just retested including the kirin patch and unfortunately I=
-'m
-> > > > > > still seeing the same thing.  :(
-> > > > > >
-> > > > > > Will dig a bit and let you know when I find more.
-> > > > >
-> > > > > Did you have a chance to test it on anything using drm/msm with D=
-SI
-> > > > > panels?  That would at least confirm that I didn't miss anything =
-in
-> > > > > the drm/msm patch to swap the dsi-host vs bridge ordering..
-> > > >
-> > > > Hi, smoke tested
-> > > > https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/b=
-ridge-rework
-> > > > on Pocophone F1 (sdm845 / A630) with v5.15-rc3. I see no obvious
-> > > > regressions in my limited testing so far including video (youtube)
-> > > > playback.
-> > > Tested on the OnePlus 6 too booting AOSP, works fine. This *fixes*
-> > > FBDEV_EMULATION (so we can get a working framebuffer console) which w=
-as
-> > > otherwise broken on 5.15.
-> > >
-> > > However it spits out some warnings during boot: https://p.calebs.dev/=
-gucysowyna.yaml
-> >
-> > Thanks for testing. It looks like the runtime_pm ordering between the
-> > msm devices changed a bit with the conversion Rob did.
-> >
-> > Rob, do you know what could be going on?
-> >
->=20
-> Not entirely sure.. I didn't see that first splat, but maybe I was
-> missing some debug config? (The 2nd one is kind of "normal", I think
-> related to bootloader leaving the display on)
-
-So do you feel like this is a blocker or do you expect it to be fixed
-sometime down the road?
-
-Maxime
-
---c73vrvulwt5myj34
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYW1p7AAKCRDj7w1vZxhR
-xfplAP4yJr2s6Y5qrWgoFIp1L95G4i4FWj0MWRxHMozE1tgeIgD/U5MlG7xXCrPy
-t96IzznNLtX+n7ec3+WzQhPM3z4qCA4=
-=l5hK
------END PGP SIGNATURE-----
-
---c73vrvulwt5myj34--
