@@ -2,194 +2,247 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17809C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 11:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1A5C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 12:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0D9060EBB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 11:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B71B061212
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 12:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbhJRLJ0 (ORCPT
+        id S230350AbhJRMhJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 07:09:26 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:48383 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbhJRLJZ (ORCPT
+        Mon, 18 Oct 2021 08:37:09 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:55861 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231615AbhJRMhJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 07:09:25 -0400
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20211018110713epoutp022cb5ead8dd5fc2b36cad2ec9b7d55858~vG1MAlP2f1731717317epoutp02f
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Oct 2021 11:07:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20211018110713epoutp022cb5ead8dd5fc2b36cad2ec9b7d55858~vG1MAlP2f1731717317epoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1634555233;
-        bh=A/dUew/0m6/p42js42mzhiPmTLpYJBiKwSk+vqXNOzc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=uLU/7R7xP9NrWMllQ+VM4MruRiPC9euupMiWyKOo5KJgvEAGz3OQ1408e6/5Qhj66
-         5zTNDpkncSkAfaeZiPz+RjQ9K8TMqs6J0El5BfYAOowJVsE5sNBkhjxpi0jleidjjM
-         tqRxST8FynFGS3I8IInyFEozsGv3oaqLi2U6Xzd0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20211018110712epcas2p4fac7cd4c0f64ebaa86e66b461207e418~vG1LKwHuo0168801688epcas2p46;
-        Mon, 18 Oct 2021 11:07:12 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4HXvGN59Vxz4x9Q9; Mon, 18 Oct
-        2021 11:07:08 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D4.B4.10018.C555D616; Mon, 18 Oct 2021 20:07:08 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20211018110707epcas2p3fe47df7f957cb4f0890c79187874f0eb~vG1G_4do50354303543epcas2p3y;
-        Mon, 18 Oct 2021 11:07:07 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20211018110707epsmtrp2743702753da6d454b12e7c665b3774a7~vG1G98RqF2483724837epsmtrp2T;
-        Mon, 18 Oct 2021 11:07:07 +0000 (GMT)
-X-AuditID: b6c32a46-a25ff70000002722-49-616d555c9e39
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B0.2C.08902.B555D616; Mon, 18 Oct 2021 20:07:07 +0900 (KST)
-Received: from KORCO039056 (unknown [10.229.8.156]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20211018110707epsmtip1b0a4042f0cac5b996d15985ca0823063~vG1Gurzph2206022060epsmtip1j;
-        Mon, 18 Oct 2021 11:07:07 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Rob Herring'" <robh@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>
-Cc:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'Avri Altman'" <avri.altman@wdc.com>,
-        "'James E . J . Bottomley'" <jejb@linux.ibm.com>,
-        "'Martin K . Petersen'" <martin.petersen@oracle.com>,
-        "'Bean Huo'" <beanhuo@micron.com>,
-        "'Bart Van Assche'" <bvanassche@acm.org>,
-        "'Adrian Hunter'" <adrian.hunter@intel.com>,
-        "'Christoph Hellwig'" <hch@infradead.org>,
-        "'Can Guo'" <cang@codeaurora.org>,
-        "'Jaegeuk Kim'" <jaegeuk@kernel.org>,
-        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
-        "'Gyunghoon Kwon'" <goodjob.kwon@samsung.com>,
-        "'Sowon Na'" <sowon.na@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-In-Reply-To: 
-Subject: RE: [PATCH v4 13/16] dt-bindings: ufs: exynos-ufs: add io-coherency
- property
-Date:   Mon, 18 Oct 2021 20:07:07 +0900
-Message-ID: <011e01d7c410$4a420340$dec609c0$@samsung.com>
+        Mon, 18 Oct 2021 08:37:09 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 6D747580B31;
+        Mon, 18 Oct 2021 08:34:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 18 Oct 2021 08:34:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=JDzR27XjpWVhhT/HjvP8lcBn6jm
+        H4lkGCuYgmDjihJ4=; b=lP2VOyWu1ebz/g4Gnn5VQRD5s0QN5vqebY4j2zGaQWZ
+        WxirDaLuYdegvSCbYQcWpbMgk2kt1mVFHBAC/CQuYAeZ9t4/zHxVBb19F84NUl16
+        rbAtFfmiHj4LoAeakBomh2yxd90TWjRzQkI0PAwkYhuuc3KWvh7Z/wqwSWiu6ynr
+        eGDU/62Xstk31q+Mqb3+VyX8SZc6MWh1bGeiLPFFKZcQxdrUgjoX8Aa1DJgsz7+O
+        JDpK72hPLV4P2C157FYmY4NG1xx/IZFhR+5v4SzbR27efC5VRMV8VOyc/VBf7Oaj
+        riXMnJsWzK13n2hQdvbZ6iRyKpOJTml2B+rDq2ez36g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=JDzR27
+        XjpWVhhT/HjvP8lcBn6jmH4lkGCuYgmDjihJ4=; b=WaqXf6aMKIlHL32mvYybKc
+        LHhkGBjGWj7hpFnq+KEqeKoT05o7i4KbxIMSDrHMPqp/rPTPou375bf0kL0v3XTY
+        6EVJAgIQEgKuWF8wsUE0WVQXSKFRWlkhJc0ZFbJEqv01FtGaSCGjrDd5y+ngwCvf
+        O1PGzqpMwtUFOwnCS2shCTx2POqnUlLNLg83hexSxk5DtSSfFr1AwehNlEb9oCdj
+        QSh0zhI72ScS+c35p76dxsJzZ0n7HNcz2d9u6DNZcREGNtgW11Ut9/LVihoNS4UU
+        YSUNXMkNDmcIwHTXl3ZWsxji1ULGBauRF3VvTHfegx3qzM6i1hBMoSFICkwET/JQ
+        ==
+X-ME-Sender: <xms:72ltYfGZfkfbWLlDXmlo5-6NjGjaTB8FKcsz-iH5q3UdKbj_aREffg>
+    <xme:72ltYcUtWF9kC4L5E93weNuRO9k73Z_HLfvrNZOwcaBTktE4md2HNEIhajFHcroL8
+    DIQkImIIaC85S_TwAk>
+X-ME-Received: <xmr:72ltYRLTptB_8B4nt9k0YGuSZOLfSzPKhFJh5EYsWDWRebxemxedsSotrZy9S69YF6-2eRDxuQdbzqELk7F29nHdedj7yUeDR0Wju9ak>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddvtddgheduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepkefgffekffelgfeukedvhffggeehtedugfekgeeihfefhfehieeukeevffev
+    hfefnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgtrghlvggsshdrug
+    gvvhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
+    rgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:72ltYdF2JS4fmhrgUht9RogaVJ0XPeydDW9pm8WTFX0qukFuPQgvKw>
+    <xmx:72ltYVUho1H9PzUdDxtphBo4cAuil-eA0H3dV2AlIQc9MKPZ3CotuA>
+    <xmx:72ltYYMrqkOpAYz8dTqliKzZzTGe5iUrB2UC8utlt7YbD1XNFoOzDw>
+    <xmx:8WltYfhd9w57PWI7uceJqjcF6Tb3QT_hFL4q6wvZNey02HS6q4Pp9g>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 18 Oct 2021 08:34:55 -0400 (EDT)
+Date:   Mon, 18 Oct 2021 14:34:52 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Caleb Connolly <caleb.connolly@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <freedreno@lists.freedesktop.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [Freedreno] [PATCH v4 00/24] drm/bridge: Make panel and bridge
+ probe order consistent
+Message-ID: <20211018123452.efwx5varmxihsv6n@gilmour>
+References: <20210910101218.1632297-1-maxime@cerno.tech>
+ <CALAqxLUqdkxXogmPhPgHv4Bgx-4b3mxe12LzzvWb07pLSnb2kA@mail.gmail.com>
+ <CALAqxLUYb=ge4AZZzmk71Qr-92vnnE6sJxwCNUdEz4=VDKr1kg@mail.gmail.com>
+ <CALAqxLX7oK6DeoCPZhMTpHKCihSYq7KZDrt5UKb46=ZBbJd9fA@mail.gmail.com>
+ <CAF6AEGuJgrYrg7FXpVj8P_qf73CXb4=0KysSYQaobJuheDeUSA@mail.gmail.com>
+ <YXiZIuao6wNch7j-D3ZktdSR3_IRAQ3oSeL8sLCCX8lEhwsoWaouE6_eV6C2Zv9r2_dww_Mtal18UBJfc4fz4g==@protonmail.internalid>
+ <CAMi1Hd0sUUFvNzYwt29af9d99o1-x+LiXBPCrQ8=9H0tHvxVHg@mail.gmail.com>
+ <b57fbc24-9ef3-a57b-17d4-2cb33fb409d4@linaro.org>
+ <20211013141629.qfeqwsyi5yobzjca@gilmour>
+ <CAF6AEGu2CyQA6XZ=r4c9Z0tiiPUxyhTf0OAu3v6w0oswJ3567w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQL83TaU2gFk6OcLuUCqdNaZ93XEzwFG39bFAmgxteoCt4IMOKlae17AgAC0YqA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNJsWRmVeSWpSXmKPExsWy7bCmhW5MaG6iwfWzqhYnn6xhs3gwbxub
-        xcufV9ksDj7sZLGY9uEns8Wn9ctYLeYfOcdq0bPT2eL0hEVMFk/Wz2K2WHRjG5PFjV9trBYb
-        3/5gsphxfh+TRff1HWwWy4//Y7L4v2cHu8Xvn4eYHIQ8Ll/x9pjV0Mvmcbmvl8lj8wotj8V7
-        XjJ5bFrVyeYxYdEBRo/v6zvYPD4+vcXi0bdlFaPH501yHu0HupkCeKKybTJSE1NSixRS85Lz
-        UzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAvlNSKEvMKQUKBSQWFyvp29kU
-        5ZeWpCpk5BeX2CqlFqTkFJgX6BUn5haX5qXr5aWWWBkaGBiZAhUmZGc0dZ9hKZjAX3Hrm2gD
-        4wSeLkZODgkBE4k3968xdjFycQgJ7GCUuDZjHSNIQkjgE6PEnXdlEIlvjBLXd11h6WLkAOuY
-        clEBIr6XUeLX6VnsEM4LRonDMz4ygXSzCehLvOzYxgrSICKQIvFzfiZIDbPAXFaJf0fngg3i
-        FOCVmPDPGqRcWCBcYt2xZWCtLAKqEg/ap7OA2LwClhIntn2DsgUlTs58AmYzC8hLbH87hxni
-        AwWJn0+XsYLYIgJ+El3vpzNC1IhIzO5sYwbZKyEwnVPi9beVjBANLhIr7l2EahaWeHV8CzuE
-        LSXx+d1eNoiGbkaJ1kf/oRKrGSU6G30gbHuJX9O3gD3GLKApsX6XPiRQlCWO3IK6jU+i4/Bf
-        dogwr0RHmxBEo7rEge0Qb0kIyEp0z/nMOoFRaRaSz2Yh+WwWkg9mIexawMiyilEstaA4Nz21
-        2KjACB7Tyfm5mxjBqV7LbQfjlLcf9A4xMnEwHmKU4GBWEuFNcs1NFOJNSaysSi3Kjy8qzUkt
-        PsRoCgzricxSosn5wGyTVxJvaGJpYGJmZmhuZGpgriTOaymanSgkkJ5YkpqdmlqQWgTTx8TB
-        KdXAJPxr8ZmXNcuikwoc9bbuF54jJaijbtt0s2eZsH0hw97oF4k/GDVf8HguYfJY9E9YsODB
-        JzctQ8m399xZyiR5HAtk5ZKcHrfUN0/S7WLSZbS2m7BdLvC+YcmvjDyGkpqm+5dOpL/NWl0W
-        uEGJrTfimam9zItJSysNgtqSgxeU3Zs15dDBaGeGJ//kxd6LLiv4EhIVfoNVSmzSos9tNR5d
-        DLtfG1SmzTp8LnlWGNOSR2UuMVb73ZaJTJDYqHs3uXvBmvqJn5+oHH61xmuuzvEvc3aHzCtk
-        n1F3tbbEPrnSk8XjkPuyb9LaMUsfqwr3p3toifwynzB5g0HQhXMnD6v1f7LKDTWZOUsymfNJ
-        9EslluKMREMt5qLiRACWpqShfgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA01RfUyMcRzf73meezx3Oh5XzY9CnbdkpSzbzzLvzWPMe7GynUc9LnR1u6cU
-        lt2wri7pESs9JMt6cUyE67wsddrRMrRYJ1mHrq2Rk3LEhKtM/332+X7eti+FK9qIqdTe5FRO
-        l8wmKUkZYX6onB4SF61hwwRXIGrqukoixwUziXoGX5Ko4W0OgQo/D+LoS3WFBJU2PpWgE3dW
-        oWahDENd1SKOyuxmDNl/ZEnQjd7vGDr7rA5DuW0WElU+GsLQ7/uWcejnoBVbrmBaX6xjRH0e
-        ybSezMOYm1XBzKX7PRhTY8ohGaGsHjDfqrNJps/ZTjAnb5kA018znTHU52KbvGJlSxK4pL0H
-        ON2CpbtkiUdznxBaYWJGu9tXDwQvI6AoSEfAMy0BRiCjFPQ9AK+9qyKNQPqXnwa7P1nGjWBv
-        2Hm8UTIi6gawqOrB8IGkF8CebLPEg33oBDhU/3xYhNOXJdBZK4ARRy+ABls56amT0nIoDEV6
-        DN50NNQX1A23EfRs6DAUER4spxfDx2b3KJ4Em4q7CI8Vp0Nh1g3goXF6BqztPY+PjAuAg86K
-        0Q0boNFVNKrxgedysnABeItjksT/SeKYJHGM4yIgTGAKp+U1ag0frg1P5tJDeVbDpyWrQ+NT
-        NDVg+PfB8yyg1vQ51AowClgBpHClj3x3lIZVyBPYg4c4XYpKl5bE8VbgRxHKyfLnxiaVglaz
-        qdx+jtNyun9XjJJO1WNs0J0MFVtpCHFf8SsKKT0mph96/0NVQE0Leh0VmCofv+3X2lex822m
-        w2En8ia0bLkkbTrYnPg2Zmb1KVadvrVvtjnxjetKAfe1eOuXWyUu38dBcedO7an0n1fgUNyt
-        6y/N7Fi4psNfmjAz4uZEP+ur/NYjK0o2dhhEwje/LL6wLaDdufNJZ/OvZSt7dmTErgf2cjF7
-        7Teb+HXAa8+qAZfaf1axc7venTZps8NYIqy20R/r6Ln8ypjv7NxYraN7vLq3f8Ymhe10xcN4
-        mb0h7syjp/s6NYURt+nO6JQLUdfmNESGCTHuyB12dLXv/dHMgYsW02vVh0x+kZZoS81vbCm/
-        riT4RDY8GNfx7B8Z4L6fagMAAA==
-X-CMS-MailID: 20211018110707epcas2p3fe47df7f957cb4f0890c79187874f0eb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211007081135epcas2p2d577fc8dec75471cf42024eda6a45690
-References: <20211007080934.108804-1-chanho61.park@samsung.com>
-        <CGME20211007081135epcas2p2d577fc8dec75471cf42024eda6a45690@epcas2p2.samsung.com>
-        <20211007080934.108804-14-chanho61.park@samsung.com>
-        <YWmHQ5CVQd97JzHJ@robh.at.kernel.org> 
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c73vrvulwt5myj34"
+Content-Disposition: inline
+In-Reply-To: <CAF6AEGu2CyQA6XZ=r4c9Z0tiiPUxyhTf0OAu3v6w0oswJ3567w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> > > +  samsung,sysreg:
-> > > +    $ref: '/schemas/types.yaml#/definitions/phandle'
-> > > +    description: phandle for FSYSx sysreg interface, used to control
-> > > +                 sysreg register bit for UFS IO Coherency
-> > > +
-> > > +  samsung,ufs-shareability-reg-offset:
-> > > +    $ref: '/schemas/types.yaml#/definitions/uint32'
-> > > +    description: Offset to the shareability register for
-> > > + io-coherency
+
+--c73vrvulwt5myj34
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Rob,
+
+On Wed, Oct 13, 2021 at 05:16:58PM -0700, Rob Clark wrote:
+> On Wed, Oct 13, 2021 at 7:16 AM Maxime Ripard <maxime@cerno.tech> wrote:
 > >
-> > Make these a single property: <phandle offset>
-> 
-> As I already mentioned previous e-mail [1], I need to support two ufs
-> instances for exynosauto v9 soc.
-> 
-> syscon_fsys2: syscon@17c20000 {
-> 	compatible = "samsung,exynosautov9-sysreg", "syscon";
-> 	reg = <0x17c20000 0x1000>;
-> };
-> 
-> ufs_0: ufs0@17e00000 {
-> 	<snip>
-> 	samsung,sysreg = <&syscon_fsys2>;
-> 	samsung,ufs-shareability-reg-offset = <0x710>; };
-> 
-> To be added ufs_1 like below
-> ufs_1: ufs0@17f00000 {
-> 	<snip>
-> 	samsung,sysreg = <&syscon_fsys2>;
-> 	samsung,ufs-shareability-reg-offset = <0x714>; };
-> 
-> [1]: https://lore.kernel.org/linux-
-> scsi/000901d7b0e0$e618b220$b24a1660$@samsung.com/
-> 
-> If you prefer them to be separated sysreg phandles which directly pointing
-> the register, I'm able to change it.
-> But, the syscon_fsys2 can be used for other IPs as well such as ethernet.
+> > Hi Caleb,
+> >
+> > On Thu, Sep 30, 2021 at 09:20:52PM +0100, Caleb Connolly wrote:
+> > > Hi,
+> > >
+> > > On 30/09/2021 20:49, Amit Pundir wrote:
+> > > > On Thu, 30 Sept 2021 at 04:50, Rob Clark <robdclark@gmail.com> wrot=
+e:
+> > > > >
+> > > > > On Wed, Sep 29, 2021 at 2:51 PM John Stultz <john.stultz@linaro.o=
+rg> wrote:
+> > > > > >
+> > > > > > On Wed, Sep 29, 2021 at 2:32 PM John Stultz <john.stultz@linaro=
+=2Eorg> wrote:
+> > > > > > > On Wed, Sep 29, 2021 at 2:27 PM John Stultz <john.stultz@lina=
+ro.org> wrote:
+> > > > > > > > On Fri, Sep 10, 2021 at 3:12 AM Maxime Ripard <maxime@cerno=
+=2Etech> wrote:
+> > > > > > > > > The best practice to avoid those issues is to register it=
+s functions only after
+> > > > > > > > > all its dependencies are live. We also shouldn't wait any=
+ longer than we should
+> > > > > > > > > to play nice with the other components that are waiting f=
+or us, so in our case
+> > > > > > > > > that would mean moving the DSI device registration to the=
+ bridge probe.
+> > > > > > > > >
+> > > > > > > > > I also had a look at all the DSI hosts, and it seems that=
+ exynos, kirin and msm
+> > > > > > > > > would be affected by this and wouldn't probe anymore afte=
+r those changes.
+> > > > > > > > > Exynos and kirin seems to be simple enough for a mechanic=
+al change (that still
+> > > > > > > > > requires to be tested), but the changes in msm seemed to =
+be far more important
+> > > > > > > > > and I wasn't confortable doing them.
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > Hey Maxime,
+> > > > > > > >    Sorry for taking so long to get to this, but now that pl=
+umbers is
+> > > > > > > > over I've had a chance to check it out on kirin
+> > > > > > > >
+> > > > > > > > Rob Clark pointed me to his branch with some fixups here:
+> > > > > > > >     https://gitlab.freedesktop.org/robclark/msm/-/commits/f=
+or-mripard/bridge-rework
+> > > > > > > >
+> > > > > > > > But trying to boot hikey with that, I see the following loo=
+p indefinitely:
+> > > > > > > > [    4.632132] adv7511 2-0039: supply avdd not found, using=
+ dummy regulator
+> > > > > > > > [    4.638961] adv7511 2-0039: supply dvdd not found, using=
+ dummy regulator
+> > > > > > > > [    4.645741] adv7511 2-0039: supply pvdd not found, using=
+ dummy regulator
+> > > > > > > > [    4.652483] adv7511 2-0039: supply a2vdd not found, usin=
+g dummy regulator
+> > > > > > > > [    4.659342] adv7511 2-0039: supply v3p3 not found, using=
+ dummy regulator
+> > > > > > > > [    4.666086] adv7511 2-0039: supply v1p2 not found, using=
+ dummy regulator
+> > > > > > > > [    4.681898] adv7511 2-0039: failed to find dsi host
+> > > > > > >
+> > > > > > > I just realized Rob's tree is missing the kirin patch. My apo=
+logies!
+> > > > > > > I'll retest and let you know.
+> > > > > >
+> > > > > > Ok, just retested including the kirin patch and unfortunately I=
+'m
+> > > > > > still seeing the same thing.  :(
+> > > > > >
+> > > > > > Will dig a bit and let you know when I find more.
+> > > > >
+> > > > > Did you have a chance to test it on anything using drm/msm with D=
+SI
+> > > > > panels?  That would at least confirm that I didn't miss anything =
+in
+> > > > > the drm/msm patch to swap the dsi-host vs bridge ordering..
+> > > >
+> > > > Hi, smoke tested
+> > > > https://gitlab.freedesktop.org/robclark/msm/-/commits/for-mripard/b=
+ridge-rework
+> > > > on Pocophone F1 (sdm845 / A630) with v5.15-rc3. I see no obvious
+> > > > regressions in my limited testing so far including video (youtube)
+> > > > playback.
+> > > Tested on the OnePlus 6 too booting AOSP, works fine. This *fixes*
+> > > FBDEV_EMULATION (so we can get a working framebuffer console) which w=
+as
+> > > otherwise broken on 5.15.
+> > >
+> > > However it spits out some warnings during boot: https://p.calebs.dev/=
+gucysowyna.yaml
+> >
+> > Thanks for testing. It looks like the runtime_pm ordering between the
+> > msm devices changed a bit with the conversion Rob did.
+> >
+> > Rob, do you know what could be going on?
+> >
+>=20
+> Not entirely sure.. I didn't see that first splat, but maybe I was
+> missing some debug config? (The 2nd one is kind of "normal", I think
+> related to bootloader leaving the display on)
 
-Finally, I got your point. You want me to drop
-"samsung,ufs-shareability-reg-offset" and put the offset like below.
+So do you feel like this is a blocker or do you expect it to be fixed
+sometime down the road?
 
-ufs_0: ufs0@17e00000 {
- 	<snip>
- 	samsung,sysreg = <&syscon_fsys2 0x710>;
+Maxime
 
-To be added ufs_1 like below
-ufs_1: ufs0@17f00000 {
- 	<snip>
- 	samsung,sysreg = <&syscon_fsys2 0x714>;
+--c73vrvulwt5myj34
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'll resend the patch with your suggestion.
+-----BEGIN PGP SIGNATURE-----
 
-Krzysztof, could you please hold below on? Or Do I need to make an
-additional patch?
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=nex
-t/dt64&id=31bbac5263aa63dfc8bfed2180bb6a5a3c531681
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYW1p7AAKCRDj7w1vZxhR
+xfplAP4yJr2s6Y5qrWgoFIp1L95G4i4FWj0MWRxHMozE1tgeIgD/U5MlG7xXCrPy
+t96IzznNLtX+n7ec3+WzQhPM3z4qCA4=
+=l5hK
+-----END PGP SIGNATURE-----
 
-Best Regards,
-Chanho Park
-
+--c73vrvulwt5myj34--
