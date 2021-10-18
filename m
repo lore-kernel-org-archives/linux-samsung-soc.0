@@ -2,125 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A67C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 13:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A9EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 14:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC8461378
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 13:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85A3E60555
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 14:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231848AbhJRN3C (ORCPT
+        id S233868AbhJROHC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 09:29:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231814AbhJRN1B (ORCPT
+        Mon, 18 Oct 2021 10:07:02 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:49202
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235580AbhJROE5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 09:27:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7A11C60EFE;
-        Mon, 18 Oct 2021 13:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634563490;
-        bh=Wrg1gLaNSkOVsbaHPa86t0+1ZCN45SC1LSyRyh0i74U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dV8KTEDh7BcIR0Kl17EbZu09NWj7MKmJPw9xQaxi57C14YUbnO+p+khtj6aDgUbMo
-         0v8qbcKBoGXJtRFQxAWqGZnAfztfLhsvnphvT32wtoqm37pVoWAUYqZSUxSvKmwKEu
-         r7A85x6fWT1YqKTiMAaJ1Zno9ooc97cud8ty4GyfWrNpjM6+abswBV3aMqLVzccJba
-         iy7WUw6gkFRgsG7OfBoir89POwWTCd+5RT3q53l1E5BFLvgv3RkYb9iI6Wbj/Bm7qD
-         6CfjdqfoaA5gPRZTkKR1L/9jVP9z/U1DxvU0w+ekKZUqG0QRh7QzbMPnFs3FnZJFt4
-         /2KKmyQrBDJuw==
-Received: by mail-ed1-f45.google.com with SMTP id a25so71209913edx.8;
-        Mon, 18 Oct 2021 06:24:50 -0700 (PDT)
-X-Gm-Message-State: AOAM532PI68+qW2OZNTdb5ac67gaPljtXoSX+QH5kpAaHG1NSfCA8aEL
-        hv5n9CaTQOUft+0KJB2UxK0xW1hHEkfcWwp3sw==
-X-Google-Smtp-Source: ABdhPJwJp66/mbeoS946PTfEodPH9WSktJ7q0aZ4rB1sYJUsau+I+zXONWG+AiPIJksRWj2sksZo3XrPPghjAb6gHxI=
-X-Received: by 2002:a50:da06:: with SMTP id z6mr45662114edj.355.1634563424098;
- Mon, 18 Oct 2021 06:23:44 -0700 (PDT)
+        Mon, 18 Oct 2021 10:04:57 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F1ACD40018
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Oct 2021 14:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634565765;
+        bh=n+gqCEKRjnF32ZwCp1GL3/Z2MQYyrJF+G4qgFNA43e0=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=o4YnGiLvyx2/v8P8oVboRzacLOU8XljM3eO36ioH4y9d4V128yD69Ajkgzdd51ntP
+         IQ/4ITDVUSaGN/LgAVmaTRtwMfFxr2YjRmJjN4pBEGgy9kTWLiA0SgzDRx6uo3bM6+
+         HFv7/9CzFbT1XgOPZW7nTUMStuM4F90y+ikzkzndRa1OJ1VjZKYgXw7IqcPQZSE3UX
+         C6i4SeZqMHPVm0b6ZWd7AfYkxMl1cqHBEo8d/oy/n71GLzq3cZ8Gx4C0yGnLQxTZWU
+         GF7rld2UYmvdDWLLRpuIjUMrnyLn6VLUa8Ngqg53Uow28CTm9q9laDfvdY4iCQVHFl
+         nWD0aGc4nieKA==
+Received: by mail-lf1-f72.google.com with SMTP id bi16-20020a0565120e9000b003fd56ef5a94so10027035lfb.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Oct 2021 07:02:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n+gqCEKRjnF32ZwCp1GL3/Z2MQYyrJF+G4qgFNA43e0=;
+        b=Zyuy3FX/EauPSa3OWTrjy5A5feyAywD7rL3S9gHthzzuztAmm6FKI/B6CbYygV0Au2
+         tN60XqOiZM0nzuDpE79LaKpUJBkG9DueS9ZE8UkuyJJvbJa5qQ2m+EvIgK4TXmrKcaBB
+         SUJM20VdX0eAx2wVoDoIDGqkkYhhdglJuCXvAfy71oTKls84GFv/9QtTp7TPIHNHXuFt
+         qrda9BtJrHsVu2QAkeG9ASbWz3eotHzZbLtTqkr/Q7dp4FINUjG305F/wnUACdM7+li5
+         P9D/1/dYLZvleO1PRkDLA6iWKTiQhFg0kklhoWZVJAusa14wvS195IOhlF2Ue4AhLAbI
+         tLkg==
+X-Gm-Message-State: AOAM531W2bM2cWTMuQEV0TkqfSZ1PY8Bex6WOaEkKmy5n/7PnhrfmUVq
+        KzbO/yi0SDzZfc2M3nrsNii/4BhH7eW7+UavvyFUVaJGZXCVAsejD1TkkSEvXARYNZb/pWjoRvv
+        t0BgSes3JDuOnEMz5zoXtEt4uqnuX+sTSixw3tZTc+5Fc5VRu
+X-Received: by 2002:a2e:b4b3:: with SMTP id q19mr31771853ljm.508.1634565765284;
+        Mon, 18 Oct 2021 07:02:45 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwvK1fNjhyEFS2oGW6l1ztV/o6AF6Lw+s7c27H0NgbVIkuDuZ7oTlW87vyRha/egtx0W7mJFA==
+X-Received: by 2002:a2e:b4b3:: with SMTP id q19mr31771832ljm.508.1634565765137;
+        Mon, 18 Oct 2021 07:02:45 -0700 (PDT)
+Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id d20sm1411576lfv.117.2021.10.18.07.02.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Oct 2021 07:02:44 -0700 (PDT)
+Subject: Re: [PATCH v4 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
+ and S5M to dtschema
+To:     Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>
+References: <20211008113723.134648-1-krzysztof.kozlowski@canonical.com>
+ <YWCT+YL/9qHbF9f0@sirena.org.uk>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <bb1f4be0-ca2a-e327-0831-f648a2ca3ab3@canonical.com>
+Date:   Mon, 18 Oct 2021 16:02:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20211007080934.108804-1-chanho61.park@samsung.com>
- <CGME20211007081135epcas2p2d577fc8dec75471cf42024eda6a45690@epcas2p2.samsung.com>
- <20211007080934.108804-14-chanho61.park@samsung.com> <YWmHQ5CVQd97JzHJ@robh.at.kernel.org>
- <003d01d7c3b6$dccac760$96605620$@samsung.com>
-In-Reply-To: <003d01d7c3b6$dccac760$96605620$@samsung.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 18 Oct 2021 08:23:31 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKkA3i=-uyEz81tscRSNa5-RisYa_b_VaJmOurkPz+f=g@mail.gmail.com>
-Message-ID: <CAL_JsqKkA3i=-uyEz81tscRSNa5-RisYa_b_VaJmOurkPz+f=g@mail.gmail.com>
-Subject: Re: [PATCH v4 13/16] dt-bindings: ufs: exynos-ufs: add io-coherency property
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Can Guo <cang@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
-        Sowon Na <sowon.na@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        SCSI <linux-scsi@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YWCT+YL/9qHbF9f0@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Oct 17, 2021 at 7:27 PM Chanho Park <chanho61.park@samsung.com> wrote:
->
-> > > +  samsung,sysreg:
-> > > +    $ref: '/schemas/types.yaml#/definitions/phandle'
-> > > +    description: phandle for FSYSx sysreg interface, used to control
-> > > +                 sysreg register bit for UFS IO Coherency
-> > > +
-> > > +  samsung,ufs-shareability-reg-offset:
-> > > +    $ref: '/schemas/types.yaml#/definitions/uint32'
-> > > +    description: Offset to the shareability register for io-coherency
-> >
-> > Make these a single property: <phandle offset>
->
-> As I already mentioned previous e-mail [1], I need to support two ufs
-> instances for exynosauto v9 soc.
+On 08/10/2021 20:54, Mark Brown wrote:
+> On Fri, Oct 08, 2021 at 01:37:12PM +0200, Krzysztof Kozlowski wrote:
+> 
+>> This patchset converts all devicetree bindings of Samsung S2M and S5M
+>> PMIC devices from txt to dtschema.
+> 
+> The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d3:
+> 
+>   Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/s2m_s5m_dtschema
+> 
+> for you to fetch changes up to fab58debc137f66cf97f60c8471ff2f1e3e1b44b:
+> 
+>   regulator: dt-bindings: samsung,s5m8767: convert to dtschema (2021-10-08 17:24:37 +0100)
+> 
 
-Don't expect me to remember. That was 100s of reviews ago.
+Thanks Mark for the branch.
 
->
-> syscon_fsys2: syscon@17c20000 {
->         compatible = "samsung,exynosautov9-sysreg", "syscon";
->         reg = <0x17c20000 0x1000>;
-> };
->
-> ufs_0: ufs0@17e00000 {
->         <snip>
->         samsung,sysreg = <&syscon_fsys2>;
->         samsung,ufs-shareability-reg-offset = <0x710>;
+Lee, can you merge it and apply the rest (MFD)?
 
-samsung,ufs-shareability-reg = <&syscon_fsys2 0x710>;
 
-> };
->
-> To be added ufs_1 like below
-> ufs_1: ufs0@17f00000 {
->         <snip>
->         samsung,sysreg = <&syscon_fsys2>;
->         samsung,ufs-shareability-reg-offset = <0x714>;
-
-samsung,ufs-shareability-reg = <&syscon_fsys2 0x714>;
-
-I still don't see what's the problem?
-
-> };
->
-> [1]:
-> https://lore.kernel.org/linux-scsi/000901d7b0e0$e618b220$b24a1660$@samsung.c
-> om/
->
-> If you prefer them to be separated sysreg phandles which directly pointing
-> the register, I'm able to change it.
-> But, the syscon_fsys2 can be used for other IPs as well such as ethernet.
->
-> Best Regards,
-> Chanho Park
->
+Best regards,
+Krzysztof
