@@ -2,74 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036F9C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 18:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD8FC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 18:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4AA460EB4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 18:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A144F60E97
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 18:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbhJRStS (ORCPT
+        id S231811AbhJRS7b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 14:49:18 -0400
-Received: from mxout02.lancloud.ru ([45.84.86.82]:55280 "EHLO
-        mxout02.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbhJRStS (ORCPT
+        Mon, 18 Oct 2021 14:59:31 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:58791 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229924AbhJRS7a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 14:49:18 -0400
-X-Greylist: delayed 451 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Oct 2021 14:49:17 EDT
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout02.lancloud.ru 280672072135
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-To:     <linux-usb@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH 01/22] usb: host: ehci-exynos: deny IRQ0
-Date:   Mon, 18 Oct 2021 21:39:09 +0300
-Message-ID: <20211018183930.8448-2-s.shtylyov@omp.ru>
-X-Mailer: git-send-email 2.26.3
-In-Reply-To: <20211018183930.8448-1-s.shtylyov@omp.ru>
-References: <20211018183930.8448-1-s.shtylyov@omp.ru>
+        Mon, 18 Oct 2021 14:59:30 -0400
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id D2BAC240006;
+        Mon, 18 Oct 2021 18:57:16 +0000 (UTC)
+Date:   Mon, 18 Oct 2021 20:57:16 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: s3c: Remove usage of devm_rtc_device_register()
+Message-ID: <YW3DjEuszEZ1Uw6/@piout.net>
+References: <20211018173201.2166-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211018173201.2166-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-If platform_get_irq() returns IRQ0 (considered invalid according to Linus)
-the driver blithely passes it to usb_add_hcd() that treats IRQ0 as no IRQ
-at all. Deny IRQ0 right away, returning -EINVAL from the probe() method...
+On 18/10/2021 20:32:01+0300, Sam Protsenko wrote:
+> devm_rtc_device_register() is deprecated. Use devm_rtc_allocate_device()
+> and devm_rtc_register_device() API instead.
+> 
 
-Fixes: 44ed240d6273 ("usb: host: ehci-exynos: Fix error check in exynos_ehci_probe()")
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
- drivers/usb/host/ehci-exynos.c | 4 ++++
- 1 file changed, 4 insertions(+)
+If you do that, please also set the range properly, either in the same
+patch or as a follow-up.
 
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 1a9b7572e17f..ff4e1261801a 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -207,6 +207,10 @@ static int exynos_ehci_probe(struct platform_device *pdev)
- 		err = irq;
- 		goto fail_io;
- 	}
-+	if (!irq) {
-+		err = -EINVAL;
-+		goto fail_io;
-+	}
- 
- 	err = exynos_ehci_phy_enable(&pdev->dev);
- 	if (err) {
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  drivers/rtc/rtc-s3c.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index e57d3ca70a78..10e591794276 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -447,15 +447,18 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+>  
+>  	device_init_wakeup(&pdev->dev, 1);
+>  
+> -	/* register RTC and exit */
+> -	info->rtc = devm_rtc_device_register(&pdev->dev, "s3c", &s3c_rtcops,
+> -					     THIS_MODULE);
+> +	info->rtc = devm_rtc_allocate_device(&pdev->dev);
+>  	if (IS_ERR(info->rtc)) {
+> -		dev_err(&pdev->dev, "cannot attach rtc\n");
+>  		ret = PTR_ERR(info->rtc);
+>  		goto err_nortc;
+>  	}
+>  
+> +	info->rtc->ops = &s3c_rtcops;
+> +
+> +	ret = devm_rtc_register_device(info->rtc);
+> +	if (ret)
+> +		goto err_nortc;
+> +
+>  	ret = devm_request_irq(&pdev->dev, info->irq_alarm, s3c_rtc_alarmirq,
+>  			       0, "s3c2410-rtc alarm", info);
+>  	if (ret) {
+> -- 
+> 2.30.2
+> 
+
 -- 
-2.26.3
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
