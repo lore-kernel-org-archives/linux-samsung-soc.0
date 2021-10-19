@@ -2,127 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B17C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFEFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67A0661372
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC0560D43
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234715AbhJSI0v (ORCPT
+        id S234561AbhJSJAh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Oct 2021 04:26:51 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:35678
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230082AbhJSI0u (ORCPT
+        Tue, 19 Oct 2021 05:00:37 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:51266
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229930AbhJSJAg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Oct 2021 04:26:50 -0400
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        Tue, 19 Oct 2021 05:00:36 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 692B93FFEE
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 08:24:37 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 78C683F4A4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 08:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634631877;
-        bh=Swi6Ddj8Xbp80QnpAWQNLdENzfNBX7zxXSg0uNaLjZ4=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=cCepZ2ALvBtLCAT3rf4ecpyPBaK0qnqF8X8A4aKwj3hC5XX2bgfMLNt1+LR/D7PzT
-         ZsFAOeneKYSpuZKXuXIDU965fjBhfxTWLM4aZFzPswBIuCqIF1FKfaQ8trNLRa7kfH
-         I2N4RpUVU/WLojDR2GffzcHnrz1Bd+581/iEYCu2OA5tuxwYIwHe/YljHCFZUyLC9J
-         JY0b4tOVoiBIDRkZ5q2r/Ff87cL/h6LdpLch2f8/nJ5J+dfriAI0a4YjpC/rL+tpwA
-         wyXB5w3GS0/JQh5EEQcbyliI+1U2s2zmyjQUJhThAbcWL3vernjSgsUbDPahACYPgy
-         9poyU8hLddm5A==
-Received: by mail-lj1-f199.google.com with SMTP id 136-20020a2e098e000000b002110b902242so587351ljj.20
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 01:24:37 -0700 (PDT)
+        s=20210705; t=1634633903;
+        bh=E3RamXCXwP7jsVW/jJ6Nnag1iblPhlMlnb88dq3fIKI=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=kXhhU3v5oCpvB7USzPLpfTOfL4Z6IXCXivWKFa5hR/qzSIn5uzP/T1VQVRcmGIbog
+         JdOmN1RTe19J9hzXEFR6M+WN2ynVDBjydZpTytdKHbYE7CDDbWVugN7R8tCXFJkYcp
+         4eYe0EHp34+731qGXTihnYDz4PGh4x1EfsCFkBeq7vieNJiSbWyRkM70ARkNl0rUef
+         WlTiMUlh/JRw6D5nEa2KuoPoZ/trAcaSaAn1y8eYbFH5TUnlCQBuvpvK6AC/g8DPKl
+         NXdmShb6H0Y5JT/kIzJIUDKRAl+S+7Zjd3eKnOd0ohHzaNPePlEmSL1DYxOjeyKA4s
+         eNnHL5cncNgxA==
+Received: by mail-lf1-f71.google.com with SMTP id y40-20020a0565123f2800b003fded085638so1192438lfa.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 01:58:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Swi6Ddj8Xbp80QnpAWQNLdENzfNBX7zxXSg0uNaLjZ4=;
-        b=dKHuApxYAfn0hP3RdsDNkcG5HvgEkG7QhInCVoPFy7laPopxYL3rDFHtkSuwkCRcMD
-         1aSrYbjiKRJI2rblEzoRpIhUTWuNF36sXRJRWc0Z4zuCHL+30fAT7M93QirhTDedyTbu
-         cgB1osPvbimwHOfhCzWw4JdX7FXm2iECzON9zNj+Tg2ctVq9mV6ANAUuJ7lwizF6Be3w
-         msLuFRdCzE2OWma2c6RS/+GJVf4Rcx4RRlXOhX3YVVojfJh8Vnl5Vz4sTV+JJUKoajO0
-         j1Jfqal7xKBssFNTW7v6Rcn4mIPz6LRcJvvCuVZzxdxmupnxcBPacQJt0y+LfhO4eO1Z
-         72oQ==
-X-Gm-Message-State: AOAM532E3wbKc7DeFbIZ+aNaeLV1GWDxoju9j20NvgAIr3DQ+712mesm
-        +MXa8nUA7G39O6qAjKs0lFWhmm7uLPCCQODyBzMUcfKx8PBMCTjRU6Bnj/qgeneO/PYB+pzTz8k
-        1b2VJ1Vzfy/RnI+7MUBZoB4M73VdoRfBiLr0rYPqv17gpe341
-X-Received: by 2002:a2e:9c92:: with SMTP id x18mr5094995lji.445.1634631876046;
-        Tue, 19 Oct 2021 01:24:36 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw/kAZBOxkypgv+WhYfxmIUQ9Io7rvWQf5Awb9V5Is54av5KHbiCRs1Zw9l65qYqDA79/DqWA==
-X-Received: by 2002:a2e:9c92:: with SMTP id x18mr5094971lji.445.1634631875874;
-        Tue, 19 Oct 2021 01:24:35 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id b43sm822485ljr.17.2021.10.19.01.24.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Oct 2021 01:24:35 -0700 (PDT)
-Subject: Re: [PATCH v3 22/23] regulator: dt-bindings: update
- samsung,s5m8767.yaml reference
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <cover.1634630485.git.mchehab+huawei@kernel.org>
- <63f3ac8bc958d65e4f31ad4a0060c21a7038cbde.1634630486.git.mchehab+huawei@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=E3RamXCXwP7jsVW/jJ6Nnag1iblPhlMlnb88dq3fIKI=;
+        b=0AYYs+2cIrWzOPFWVv5YdGDX9lHCtTLwLHKd4gAIwmnVF6JAkA4nQRL2o0WDe22qsd
+         jFCxFxPrwicA3w5a+iUobjlaJWtsR2To2pEm8jd8CSotJfezbYGsPlHgv4PC7tkOJgS9
+         QtrMJNr4ZXVGPzPHQSvJ/03qwwDQ9c/mFI+obigOK41T1ARvdEd/aI4Z9iXEXEs5fH/h
+         1o65aBVawWmTvK6OYqXX0X0CLgWNWcwx2Z8jmxpLCdeoH+CEBowvHFZFp5T0uRYML9KW
+         ZH/3XlbyCaXaL0za6MRfJkGDU5poUrLfx6VUZLsP87qrn0JRWcCv7HBLNo8L9cAdnoBT
+         NM/A==
+X-Gm-Message-State: AOAM531htQiwT2AjPvM+vmDlbS6rpGZLZjbQmGnxsANoS8HhIzfT3uAb
+        0K5xl+oxXQHtaV+U8E2URHSr9sMU4xtckoW3vywUeLgBfnAvauir1wNK1IVegR6IJODN5TZa3Io
+        HxJsksAyq2tXXVgzWjJIqZr2SUzRTbG1vldiAm3PRnGGzYCj0
+X-Received: by 2002:a2e:8041:: with SMTP id p1mr5465922ljg.158.1634633902909;
+        Tue, 19 Oct 2021 01:58:22 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzXkL9Oa/Mq5OcoNVFI8nJnyskwDrVCPs4JuPvw1CYnDmFE4T+a5DtFLuErnaFfLL3hKEIdaw==
+X-Received: by 2002:a2e:8041:: with SMTP id p1mr5465904ljg.158.1634633902777;
+        Tue, 19 Oct 2021 01:58:22 -0700 (PDT)
+Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id 195sm1869142ljf.13.2021.10.19.01.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Oct 2021 01:58:22 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <ac1445ce-8b60-c772-4c61-7cdfb8fe6ec6@canonical.com>
-Date:   Tue, 19 Oct 2021 10:24:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+To:     devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/3] arm64: dts: exynos: add 'chassis-type' property
+Date:   Tue, 19 Oct 2021 10:58:20 +0200
+Message-Id: <163463389698.22504.735636032751029230.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211017101228.19478-1-krzysztof.kozlowski@canonical.com>
+References: <20211017101228.19478-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <63f3ac8bc958d65e4f31ad4a0060c21a7038cbde.1634630486.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/10/2021 10:04, Mauro Carvalho Chehab wrote:
-> The file name: Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-> should be, instead: Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml.
+On Sun, 17 Oct 2021 12:12:26 +0200, Krzysztof Kozlowski wrote:
+> A new 'chassis-type' root node property has recently been approved for
+> the device-tree specification.
 > 
-> Update its cross-reference accordingly.
+> Add this property for end-user devices (such as laptops,
+> smartphones and tablets) based on Samsung Exynos ARM64 SoCs.
 > 
-> Fixes: fab58debc137 ("regulator: dt-bindings: samsung,s5m8767: convert to dtschema")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
 > 
-> To mailbombing on a large number of people, only mailing lists were C/C on the cover.
-> See [PATCH v3 00/23] at: https://lore.kernel.org/all/cover.1634630485.git.mchehab+huawei@kernel.org/
-> 
->  .../devicetree/bindings/regulator/samsung,s5m8767.yaml          | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-> index 80a63d47790a..4281f670c775 100644
-> --- a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-> @@ -15,7 +15,7 @@ description: |
->  
->    The S5M8767 provides buck and LDO regulators.
->  
-> -  See also Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml for
-> +  See also Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml for
->    additional information and example.
->  
->  patternProperties:
-> 
+> [...]
 
+Applied, thanks!
 
-Hi Mauro,
-
-Thanks for the patch but it is incorrect. Old path is proper, just the
-patch waits on merging.
-
-For this one: NAK.
+[1/3] arm64: dts: exynos: add 'chassis-type' property
+      commit: 4b1a78330df4742aa862468911b38c36d3edba30
+[2/3] ARM: dts: exynos: add 'chassis-type' property
+      commit: 2b91bd8d2bce958f75c97a9bb808a1844d2f5a53
+[3/3] ARM: dts: s5pv210: add 'chassis-type' property
+      commit: 7b06c1ad884ee80e43604ba2a0bbc5f8ef3524e1
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
