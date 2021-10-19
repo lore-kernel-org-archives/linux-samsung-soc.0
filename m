@@ -2,101 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFEFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBA2C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEC0560D43
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A3760F8F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234561AbhJSJAh (ORCPT
+        id S235514AbhJSMHf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Oct 2021 05:00:37 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:51266
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229930AbhJSJAg (ORCPT
+        Tue, 19 Oct 2021 08:07:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44186 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230267AbhJSMHe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Oct 2021 05:00:36 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 78C683F4A4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 08:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634633903;
-        bh=E3RamXCXwP7jsVW/jJ6Nnag1iblPhlMlnb88dq3fIKI=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=kXhhU3v5oCpvB7USzPLpfTOfL4Z6IXCXivWKFa5hR/qzSIn5uzP/T1VQVRcmGIbog
-         JdOmN1RTe19J9hzXEFR6M+WN2ynVDBjydZpTytdKHbYE7CDDbWVugN7R8tCXFJkYcp
-         4eYe0EHp34+731qGXTihnYDz4PGh4x1EfsCFkBeq7vieNJiSbWyRkM70ARkNl0rUef
-         WlTiMUlh/JRw6D5nEa2KuoPoZ/trAcaSaAn1y8eYbFH5TUnlCQBuvpvK6AC/g8DPKl
-         NXdmShb6H0Y5JT/kIzJIUDKRAl+S+7Zjd3eKnOd0ohHzaNPePlEmSL1DYxOjeyKA4s
-         eNnHL5cncNgxA==
-Received: by mail-lf1-f71.google.com with SMTP id y40-20020a0565123f2800b003fded085638so1192438lfa.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 01:58:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=E3RamXCXwP7jsVW/jJ6Nnag1iblPhlMlnb88dq3fIKI=;
-        b=0AYYs+2cIrWzOPFWVv5YdGDX9lHCtTLwLHKd4gAIwmnVF6JAkA4nQRL2o0WDe22qsd
-         jFCxFxPrwicA3w5a+iUobjlaJWtsR2To2pEm8jd8CSotJfezbYGsPlHgv4PC7tkOJgS9
-         QtrMJNr4ZXVGPzPHQSvJ/03qwwDQ9c/mFI+obigOK41T1ARvdEd/aI4Z9iXEXEs5fH/h
-         1o65aBVawWmTvK6OYqXX0X0CLgWNWcwx2Z8jmxpLCdeoH+CEBowvHFZFp5T0uRYML9KW
-         ZH/3XlbyCaXaL0za6MRfJkGDU5poUrLfx6VUZLsP87qrn0JRWcCv7HBLNo8L9cAdnoBT
-         NM/A==
-X-Gm-Message-State: AOAM531htQiwT2AjPvM+vmDlbS6rpGZLZjbQmGnxsANoS8HhIzfT3uAb
-        0K5xl+oxXQHtaV+U8E2URHSr9sMU4xtckoW3vywUeLgBfnAvauir1wNK1IVegR6IJODN5TZa3Io
-        HxJsksAyq2tXXVgzWjJIqZr2SUzRTbG1vldiAm3PRnGGzYCj0
-X-Received: by 2002:a2e:8041:: with SMTP id p1mr5465922ljg.158.1634633902909;
-        Tue, 19 Oct 2021 01:58:22 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzXkL9Oa/Mq5OcoNVFI8nJnyskwDrVCPs4JuPvw1CYnDmFE4T+a5DtFLuErnaFfLL3hKEIdaw==
-X-Received: by 2002:a2e:8041:: with SMTP id p1mr5465904ljg.158.1634633902777;
-        Tue, 19 Oct 2021 01:58:22 -0700 (PDT)
-Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id 195sm1869142ljf.13.2021.10.19.01.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 01:58:22 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Tue, 19 Oct 2021 08:07:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 909486113D;
+        Tue, 19 Oct 2021 12:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634645121;
+        bh=Yfzv3JLOoikBX5r0f6NfD+xVedKpz1VXqAirmc35zTA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YSVCkvJ4gbqhy5ptebDPhXkK7TvFGUETIaHbESiXy62S/1kmp4B2Nacw3b+in1DuY
+         662rjmB+Oxuyr9FpGGzTVO8UPVPZitMZoBAHD5g15s068GRXaAZfw+RdPAx97VzvdH
+         XpN6QAWEZuHnhrwILQpU8lp2/DZTo9JWrzRNN94AXGiEWkYjgbU1XaHbodaI9s+/Pj
+         s2WIe/vz2huIkSUv9JQ7N0Ufk6P/SWAOwgrcY59C8t3zhoFmvkFJpFKoq7bkILXgpH
+         YWXVMwsZ1z112/xiYfx00GJ3K9HFEn+gT37FkhbnIm5gV+QlFtXulENj+diC/CxHOU
+         vvQ7FrQ6iOsDA==
+Date:   Tue, 19 Oct 2021 13:04:59 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 1/3] arm64: dts: exynos: add 'chassis-type' property
-Date:   Tue, 19 Oct 2021 10:58:20 +0200
-Message-Id: <163463389698.22504.735636032751029230.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211017101228.19478-1-krzysztof.kozlowski@canonical.com>
-References: <20211017101228.19478-1-krzysztof.kozlowski@canonical.com>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 21/23] regulator: dt-bindings: update
+ samsung,s2mpa01.yaml reference
+Message-ID: <YW60a8z0JNDnTLV/@sirena.org.uk>
+References: <cover.1634630485.git.mchehab+huawei@kernel.org>
+ <9acc235dc4af794d18e1267371944a3955e1fb21.1634630486.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EWoxm8P8Rct2LAPY"
+Content-Disposition: inline
+In-Reply-To: <9acc235dc4af794d18e1267371944a3955e1fb21.1634630486.git.mchehab+huawei@kernel.org>
+X-Cookie: I program, therefore I am.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 17 Oct 2021 12:12:26 +0200, Krzysztof Kozlowski wrote:
-> A new 'chassis-type' root node property has recently been approved for
-> the device-tree specification.
-> 
-> Add this property for end-user devices (such as laptops,
-> smartphones and tablets) based on Samsung Exynos ARM64 SoCs.
-> 
-> 
-> [...]
 
-Applied, thanks!
+--EWoxm8P8Rct2LAPY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[1/3] arm64: dts: exynos: add 'chassis-type' property
-      commit: 4b1a78330df4742aa862468911b38c36d3edba30
-[2/3] ARM: dts: exynos: add 'chassis-type' property
-      commit: 2b91bd8d2bce958f75c97a9bb808a1844d2f5a53
-[3/3] ARM: dts: s5pv210: add 'chassis-type' property
-      commit: 7b06c1ad884ee80e43604ba2a0bbc5f8ef3524e1
+On Tue, Oct 19, 2021 at 09:04:20AM +0100, Mauro Carvalho Chehab wrote:
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> To mailbombing on a large number of people, only mailing lists were C/C on the cover.
+> See [PATCH v3 00/23] at: https://lore.kernel.org/all/cover.1634630485.git.mchehab+huawei@kernel.org/
+
+It'd be a bit easier to put a note in here about what the dependencies
+are rather than forcing people to go out to a link to figure out what's
+going on unless it's complicated.  For a case like this where there's no
+dependencies or real relationship between the patches it's probably
+better to just not thread everything and send the patches separately to
+everyone, the threading is just adding noise and confusion.
+
+--EWoxm8P8Rct2LAPY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFutGsACgkQJNaLcl1U
+h9CpcQf/eSHN/SxKNGSizt9rtPBAa8/G/yrOVJanFr1TpMgBqymW7cBkBbXTGEoz
+MlvVhYvaOC1OUl2Ov3V/R5vs4HmOXbFkm+uU3Hy0pdmuoR+xp2GXkRykwFp8VOo9
+u86bgJzCmE1vMGPs6CU5L/oLaZtgu2fOSkIddls4s2BzCEgj9RXCZVZZDuiwu1p5
+En59hCC7xvkrwl+DzR7ELgphtrGbhWP8udWOpispPKOra+L2fvck+d1CNHVWWx0T
+hHXnc2o0xvG2TVSXxxD14sYrgOOEPahJN1EFZSMqmo+1KDjK7lyXXsAkMNYAoTT5
+mdoz3TDNrINobQeldsheYs7AYnpjQQ==
+=OxCs
+-----END PGP SIGNATURE-----
+
+--EWoxm8P8Rct2LAPY--
