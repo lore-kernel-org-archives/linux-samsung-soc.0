@@ -2,120 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EDAC4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 16:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFF5C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 17:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAFD36113B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 16:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB4061355
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 17:46:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234319AbhJSQzv (ORCPT
+        id S233460AbhJSRsv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Oct 2021 12:55:51 -0400
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:39509 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbhJSQzt (ORCPT
+        Tue, 19 Oct 2021 13:48:51 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:49439 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231226AbhJSRsv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Oct 2021 12:55:49 -0400
-Received: by mail-oi1-f173.google.com with SMTP id s9so3552502oiw.6;
-        Tue, 19 Oct 2021 09:53:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fnwMHmBtcUTzeN7AT8ukQSoNU1knCjzi3Fwq9Ac0g90=;
-        b=HJdKu9Yc8oALg0EUXoUMBKenRfGSuc1q4BNOBnq1d3QPbXkCq0Q5jlBTo0ea8p8UZl
-         TFoRbrGnbWaGpIrHbQBqSuwUjDBjln3eaN2Tq7E0W56vbVBbTfmfC0AToRtbsfbJrN2f
-         TGQLAwhyx4BbOTgYtABGlXWrUetqHt59xqngUL10JUAD9n2+2D9oWEUJzviJL0Jxj5V5
-         1ehW808u32vCVZl2iVvCq3srHVgLn+AvHiMGVaozwkhe/dawpGSKvp7qDZAT2I5VNhxs
-         BJzngAMZ1t+SxOkjC/HJaDKF7a5CBdMUeB22usBCn/Xn19ZwnQcZOApGMc6tjISI+tdo
-         6Amw==
-X-Gm-Message-State: AOAM531GWuQFQ3L5WRDnGlhygdiI/0FEMysCTKio0KzcAOE7RqhVCKqw
-        nUgroemq5t+BnedFQmoE8w==
-X-Google-Smtp-Source: ABdhPJxG3M4MMDejwrse4k8mTAjT5I/40KR+eLLfq1+ZBF3yaKS308ugfGwsvK1xSATT6JQLbB2GBw==
-X-Received: by 2002:a05:6808:1185:: with SMTP id j5mr5157383oil.16.1634662416108;
-        Tue, 19 Oct 2021 09:53:36 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id l26sm3843004oti.45.2021.10.19.09.53.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 09:53:35 -0700 (PDT)
-Received: (nullmailer pid 427792 invoked by uid 1000);
-        Tue, 19 Oct 2021 16:53:33 -0000
-Date:   Tue, 19 Oct 2021 11:53:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Tony Luck <tony.luck@intel.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, bpf@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        KP Singh <kpsingh@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Shuah Khan <shuah@kernel.org>,
-        Colin Cross <ccross@android.com>, Alex Shi <alexs@kernel.org>,
-        Yonghong Song <yhs@fb.com>, Kees Cook <keescook@chromium.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>, kvm@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        sparmaintainer@unisys.com,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Atish Patra <atish.patra@wdc.com>, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v3 00/23] Fix some issues at documentation
-Message-ID: <YW74Dez4/3cIbe1Q@robh.at.kernel.org>
-References: <cover.1634630485.git.mchehab+huawei@kernel.org>
+        Tue, 19 Oct 2021 13:48:51 -0400
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id E870B1BF206;
+        Tue, 19 Oct 2021 17:46:36 +0000 (UTC)
+Date:   Tue, 19 Oct 2021 19:46:36 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-rtc@vger.kernel.org,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/4] rtc: s3c: Add time range
+Message-ID: <YW8EfIFolQ2SmBHt@piout.net>
+References: <20211019131724.3109-1-semen.protsenko@linaro.org>
+ <20211019131724.3109-3-semen.protsenko@linaro.org>
+ <YW7wTY5VOsPMAT3v@piout.net>
+ <CAPLW+4=nO8oPRnGL5PhRJyRZ6gEhA0pe2SOjQ6hrwo=SV_z1zA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1634630485.git.mchehab+huawei@kernel.org>
+In-Reply-To: <CAPLW+4=nO8oPRnGL5PhRJyRZ6gEhA0pe2SOjQ6hrwo=SV_z1zA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 19 Oct 2021 09:03:59 +0100, Mauro Carvalho Chehab wrote:
-> Hi Jon,
+On 19/10/2021 19:31:55+0300, Sam Protsenko wrote:
+> On Tue, 19 Oct 2021 at 19:20, Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > On 19/10/2021 16:17:22+0300, Sam Protsenko wrote:
+> > > This RTC driver only accepts dates from 2000 to 2099 year. It starts
+> > > counting from 2000 to avoid Y2K problem, and S3C RTC only supports 100
+> > > years range. Provide this info to RTC framework.
+> > >
+> > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > > ---
+> > >  drivers/rtc/rtc-s3c.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> > > index 10e591794276..d9994efd70ef 100644
+> > > --- a/drivers/rtc/rtc-s3c.c
+> > > +++ b/drivers/rtc/rtc-s3c.c
+> > > @@ -454,6 +454,8 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+> > >       }
+> > >
+> > >       info->rtc->ops = &s3c_rtcops;
+> > > +     info->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> > > +     info->rtc->range_max = RTC_TIMESTAMP_END_2099;
+> > >
+> >
+> > This change is missing the if (year < 0 || year >= 100)  removal in
+> > s3c_rtc_settime()
+> >
 > 
-> This series is against today's next (next-20211019) and addresses missing
-> links to Documentation/*.
+> It's not actually removed in [PATCH 3/4] (if I'm following you
+> correctly), it was replaced with this code:
 > 
-> The best would be to have the patches applied directly to the trees that
-> contain the patches that moved/renamed files, and then apply the
-> remaining ones either later during the merge window or just afterwards,
-> whatever works best for you.
+> <<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>
+>     if (rtc_tm.tm_year < 0 || rtc_tm.tm_year >= 100) {
+>         dev_err(dev, "rtc only supports 100 years\n");
+>         return -EINVAL;
+>     }
+> <<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>
 > 
-> Regards,
-> Mauro
-> 
-> Mauro Carvalho Chehab (23):
->   visorbus: fix a copyright symbol that was bad encoded
->   libbpf: update index.rst reference
->   docs: accounting: update delay-accounting.rst reference
->   MAINTAINERS: update arm,vic.yaml reference
->   MAINTAINERS: update aspeed,i2c.yaml reference
->   MAINTAINERS: update faraday,ftrtc010.yaml reference
->   MAINTAINERS: update ti,sci.yaml reference
->   MAINTAINERS: update intel,ixp46x-rng.yaml reference
->   MAINTAINERS: update nxp,imx8-jpeg.yaml reference
->   MAINTAINERS: update gemini.yaml reference
->   MAINTAINERS: update brcm,unimac-mdio.yaml reference
->   MAINTAINERS: update mtd-physmap.yaml reference
 
-Applied patches 3-12.
+After setting the range, the core will never pass values outside of this
+range so it is not necessary to check in the driver anymore.
 
->   Documentation: update vcpu-requests.rst reference
->   bpftool: update bpftool-cgroup.rst reference
->   docs: translations: zn_CN: irq-affinity.rst: add a missing extension
->   docs: translations: zh_CN: memory-hotplug.rst: fix a typo
->   docs: fs: locks.rst: update comment about mandatory file locking
->   fs: remove a comment pointing to the removed mandatory-locking file
->   Documentation/process: fix a cross reference
->   dt-bindings: mfd: update x-powers,axp152.yaml reference
->   regulator: dt-bindings: update samsung,s2mpa01.yaml reference
->   regulator: dt-bindings: update samsung,s5m8767.yaml reference
->   dt-bindings: reserved-memory: ramoops: update ramoops.yaml references
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
