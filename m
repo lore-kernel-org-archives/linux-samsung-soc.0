@@ -2,86 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD8FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 18:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07481C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 03:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A144F60E97
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Oct 2021 18:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF91861356
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 03:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231811AbhJRS7b (ORCPT
+        id S232488AbhJSDmU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 14:59:31 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:58791 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbhJRS7a (ORCPT
+        Mon, 18 Oct 2021 23:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232025AbhJSDmT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 14:59:30 -0400
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id D2BAC240006;
-        Mon, 18 Oct 2021 18:57:16 +0000 (UTC)
-Date:   Mon, 18 Oct 2021 20:57:16 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Mon, 18 Oct 2021 23:42:19 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42A6C06161C;
+        Mon, 18 Oct 2021 20:40:07 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id t184so15571360pfd.0;
+        Mon, 18 Oct 2021 20:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tOq8p3az740sR6QT9kkDjUVDdnMQ5++3NL//gil0HwI=;
+        b=K8MKZ5H8jRnQ8zDmTuMJKCCXSA5LbWuQqn+kYiyjRzTK2JSOwOu7w/DRLr2K/xnyr6
+         oI5BxJoHnYxTePO1mzqD//LDDijw61YN5EBAsJW/uvYZwOp1wWivmVwyCL1Oz5kftBYb
+         UQLf3UZIpzD9dRPvRqMHgTSjF+N9gP837HW53XWzL+LIfNjZ8VDflLc5lV3aynEXzvmy
+         /TAxSpVT5oFMTKf6KaDikAPVlp7bZ1koqqMYzj7xf/YpYmKmk7sRpyZzESlmskXkcTq/
+         5Dz/lux08DIRF8mvC/opESlcioD5vTPfOX4FGPtsGomydxGjU95gbqFAyHlnzv0A2obp
+         xxbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tOq8p3az740sR6QT9kkDjUVDdnMQ5++3NL//gil0HwI=;
+        b=xJ4QdKpzUzCdL3zGCnaUGpm1Pv3lh3RQqcE5NPDATrM+4Aiyu+x85FI82+u+d7k62/
+         279KborB0a0u+TC/f3dkN6ETXsmQtI14PT5+HNdoB5/+ISWMuH2vMYzDIk+97ZCXIMJs
+         2IqDTioubRIFCB8tu1sDni93z6q64MWH+jhKKbm6rXvA0exmAwNV7vfW6Wqdtw7MjVg2
+         FxE/ASq8vlqJKFvyU4sxAktY5zq01J/4HONG/J3MzRu+KG20vC+GrBExpnAB990JDWVy
+         rqSL/nS0qIpnFPN9QkT74lkAE6tGvhMWoJl/DZgSe69JIMel+7Pwu/agdKbaB9FzUGPN
+         pl2w==
+X-Gm-Message-State: AOAM5324cmnYlHF2Y0OLyOuUzXHKnD+9FiyW/eR5OB1K5iLHmP8vA5cY
+        DALUV4BcUbcoCzTleGrXBb/QzaehhEYxQmzQKFo=
+X-Google-Smtp-Source: ABdhPJy3OQcJks3p/zF6f6RTyJWmySP+ASYh672j3wgFkROgmDPkiKiprFxm6AB+daH639RcUIsCcA==
+X-Received: by 2002:a63:ce0a:: with SMTP id y10mr26643738pgf.133.1634614807117;
+        Mon, 18 Oct 2021 20:40:07 -0700 (PDT)
+Received: from localhost.localdomain ([94.177.118.15])
+        by smtp.gmail.com with ESMTPSA id s21sm7377955pfg.70.2021.10.18.20.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 20:40:06 -0700 (PDT)
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+To:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
+        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: s3c: Remove usage of devm_rtc_device_register()
-Message-ID: <YW3DjEuszEZ1Uw6/@piout.net>
-References: <20211018173201.2166-1-semen.protsenko@linaro.org>
+Subject: [PATCH] driver: s3c_camif: move s3c_camif_unregister_subdev out of camif_unregister_media_entities
+Date:   Tue, 19 Oct 2021 11:39:52 +0800
+Message-Id: <20211019033953.3328944-1-mudongliangabcd@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211018173201.2166-1-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 18/10/2021 20:32:01+0300, Sam Protsenko wrote:
-> devm_rtc_device_register() is deprecated. Use devm_rtc_allocate_device()
-> and devm_rtc_register_device() API instead.
-> 
+In the error handling of s3c_camif_probe, s3c_camif_unregister_subdev
+may be executed twice, one is from camif_unregister_media_entities.
+Although there is sanity check about the registration status,
+it is not good to call s3c_camif_unregister_subdev twice in the error
+handling code.
 
-If you do that, please also set the range properly, either in the same
-patch or as a follow-up.
+Fix this by moving s3c_camif_unregister_subdev out of
+camif_unregister_media_entities, and add a s3c_camif_unregister_subdev
+in the s3c_camif_remove.
 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  drivers/rtc/rtc-s3c.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index e57d3ca70a78..10e591794276 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -447,15 +447,18 @@ static int s3c_rtc_probe(struct platform_device *pdev)
->  
->  	device_init_wakeup(&pdev->dev, 1);
->  
-> -	/* register RTC and exit */
-> -	info->rtc = devm_rtc_device_register(&pdev->dev, "s3c", &s3c_rtcops,
-> -					     THIS_MODULE);
-> +	info->rtc = devm_rtc_allocate_device(&pdev->dev);
->  	if (IS_ERR(info->rtc)) {
-> -		dev_err(&pdev->dev, "cannot attach rtc\n");
->  		ret = PTR_ERR(info->rtc);
->  		goto err_nortc;
->  	}
->  
-> +	info->rtc->ops = &s3c_rtcops;
-> +
-> +	ret = devm_rtc_register_device(info->rtc);
-> +	if (ret)
-> +		goto err_nortc;
-> +
->  	ret = devm_request_irq(&pdev->dev, info->irq_alarm, s3c_rtc_alarmirq,
->  			       0, "s3c2410-rtc alarm", info);
->  	if (ret) {
-> -- 
-> 2.30.2
-> 
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+---
+ drivers/media/platform/s3c-camif/camif-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index e1d51fd3e700..ba91cf7d3ab0 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -292,7 +292,6 @@ static void camif_unregister_media_entities(struct camif_dev *camif)
+ {
+ 	camif_unregister_video_nodes(camif);
+ 	camif_unregister_sensor(camif);
+-	s3c_camif_unregister_subdev(camif);
+ }
+ 
+ /*
+@@ -524,6 +523,7 @@ static int s3c_camif_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 	camif_clk_put(camif);
++	s3c_camif_unregister_subdev(camif);
+ 	pdata->gpio_put();
+ 
+ 	return 0;
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.25.1
+
