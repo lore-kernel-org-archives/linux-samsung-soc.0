@@ -2,107 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07481C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 03:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2164FC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF91861356
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 03:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 097206112D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 08:04:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232488AbhJSDmU (ORCPT
+        id S234728AbhJSIGl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 23:42:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232025AbhJSDmT (ORCPT
+        Tue, 19 Oct 2021 04:06:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234699AbhJSIGk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 23:42:19 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B42A6C06161C;
-        Mon, 18 Oct 2021 20:40:07 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id t184so15571360pfd.0;
-        Mon, 18 Oct 2021 20:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tOq8p3az740sR6QT9kkDjUVDdnMQ5++3NL//gil0HwI=;
-        b=K8MKZ5H8jRnQ8zDmTuMJKCCXSA5LbWuQqn+kYiyjRzTK2JSOwOu7w/DRLr2K/xnyr6
-         oI5BxJoHnYxTePO1mzqD//LDDijw61YN5EBAsJW/uvYZwOp1wWivmVwyCL1Oz5kftBYb
-         UQLf3UZIpzD9dRPvRqMHgTSjF+N9gP837HW53XWzL+LIfNjZ8VDflLc5lV3aynEXzvmy
-         /TAxSpVT5oFMTKf6KaDikAPVlp7bZ1koqqMYzj7xf/YpYmKmk7sRpyZzESlmskXkcTq/
-         5Dz/lux08DIRF8mvC/opESlcioD5vTPfOX4FGPtsGomydxGjU95gbqFAyHlnzv0A2obp
-         xxbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tOq8p3az740sR6QT9kkDjUVDdnMQ5++3NL//gil0HwI=;
-        b=xJ4QdKpzUzCdL3zGCnaUGpm1Pv3lh3RQqcE5NPDATrM+4Aiyu+x85FI82+u+d7k62/
-         279KborB0a0u+TC/f3dkN6ETXsmQtI14PT5+HNdoB5/+ISWMuH2vMYzDIk+97ZCXIMJs
-         2IqDTioubRIFCB8tu1sDni93z6q64MWH+jhKKbm6rXvA0exmAwNV7vfW6Wqdtw7MjVg2
-         FxE/ASq8vlqJKFvyU4sxAktY5zq01J/4HONG/J3MzRu+KG20vC+GrBExpnAB990JDWVy
-         rqSL/nS0qIpnFPN9QkT74lkAE6tGvhMWoJl/DZgSe69JIMel+7Pwu/agdKbaB9FzUGPN
-         pl2w==
-X-Gm-Message-State: AOAM5324cmnYlHF2Y0OLyOuUzXHKnD+9FiyW/eR5OB1K5iLHmP8vA5cY
-        DALUV4BcUbcoCzTleGrXBb/QzaehhEYxQmzQKFo=
-X-Google-Smtp-Source: ABdhPJy3OQcJks3p/zF6f6RTyJWmySP+ASYh672j3wgFkROgmDPkiKiprFxm6AB+daH639RcUIsCcA==
-X-Received: by 2002:a63:ce0a:: with SMTP id y10mr26643738pgf.133.1634614807117;
-        Mon, 18 Oct 2021 20:40:07 -0700 (PDT)
-Received: from localhost.localdomain ([94.177.118.15])
-        by smtp.gmail.com with ESMTPSA id s21sm7377955pfg.70.2021.10.18.20.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 20:40:06 -0700 (PDT)
-From:   Dongliang Mu <mudongliangabcd@gmail.com>
-To:     Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] driver: s3c_camif: move s3c_camif_unregister_subdev out of camif_unregister_media_entities
-Date:   Tue, 19 Oct 2021 11:39:52 +0800
-Message-Id: <20211019033953.3328944-1-mudongliangabcd@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 19 Oct 2021 04:06:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 98FF46138D;
+        Tue, 19 Oct 2021 08:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634630667;
+        bh=2dwYW4dtVW8GPK2uMbwRzB/+mR8j/h2dEXeqrnCa8/Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rE8GYpDnOBLYFK0SsN7jmRbqdDmAWYVByzaGBrXPF3364cNIYLL7hIX0yrVHtbQLN
+         4Lki3oHCKsDJWPFn4g5XA/kr+TfmG+44lxhzmYfHyWBy+SaFLXfXAjZu/VC8Naey6S
+         IN9WUF+LbbnixI5q/7hIug8ZlIZcgPhxC4m6U7Vo7B/tsSuFqklV44RAVUN/0lS4oh
+         rTN+Sl+x/79oOPVYmnhlyYLBBQKpq1C5HxugUM923/C7/WwCgjP/a3HHkAJn3+BK38
+         f8fw03LLIKnMytYgjAdMtcs8/QHUgj49VsX+9L3dZDrE6xapepTZ8CH9zebH9vY7MN
+         six8cj5TxJefQ==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1mck6j-001oJp-AN; Tue, 19 Oct 2021 09:04:25 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v3 21/23] regulator: dt-bindings: update samsung,s2mpa01.yaml reference
+Date:   Tue, 19 Oct 2021 09:04:20 +0100
+Message-Id: <9acc235dc4af794d18e1267371944a3955e1fb21.1634630486.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1634630485.git.mchehab+huawei@kernel.org>
+References: <cover.1634630485.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In the error handling of s3c_camif_probe, s3c_camif_unregister_subdev
-may be executed twice, one is from camif_unregister_media_entities.
-Although there is sanity check about the registration status,
-it is not good to call s3c_camif_unregister_subdev twice in the error
-handling code.
+The file name: Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
+should be, instead: Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml.
 
-Fix this by moving s3c_camif_unregister_subdev out of
-camif_unregister_media_entities, and add a s3c_camif_unregister_subdev
-in the s3c_camif_remove.
+Update its cross-reference accordingly.
 
-Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+Fixes: a52afb0f54fa ("regulator: dt-bindings: samsung,s2mpa01: convert to dtschema")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/platform/s3c-camif/camif-core.c | 2 +-
+
+To mailbombing on a large number of people, only mailing lists were C/C on the cover.
+See [PATCH v3 00/23] at: https://lore.kernel.org/all/cover.1634630485.git.mchehab+huawei@kernel.org/
+
+ .../devicetree/bindings/regulator/samsung,s2mpa01.yaml          | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index e1d51fd3e700..ba91cf7d3ab0 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -292,7 +292,6 @@ static void camif_unregister_media_entities(struct camif_dev *camif)
- {
- 	camif_unregister_video_nodes(camif);
- 	camif_unregister_sensor(camif);
--	s3c_camif_unregister_subdev(camif);
- }
+diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+index 0627dec513da..0a564319f4b2 100644
+--- a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
++++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+@@ -15,7 +15,7 @@ description: |
  
- /*
-@@ -524,6 +523,7 @@ static int s3c_camif_remove(struct platform_device *pdev)
+   The S2MPA01 provides buck and LDO regulators.
  
- 	pm_runtime_disable(&pdev->dev);
- 	camif_clk_put(camif);
-+	s3c_camif_unregister_subdev(camif);
- 	pdata->gpio_put();
+-  See also Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml for
++  See also Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml for
+   additional information and example.
  
- 	return 0;
+ patternProperties:
 -- 
-2.25.1
+2.31.1
 
