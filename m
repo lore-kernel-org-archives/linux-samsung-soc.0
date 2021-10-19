@@ -2,106 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C20DC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 16:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EDAC4167D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 16:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 458F761372
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 16:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAFD36113B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Oct 2021 16:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234357AbhJSQhw (ORCPT
+        id S234319AbhJSQzv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Oct 2021 12:37:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234333AbhJSQhv (ORCPT
+        Tue, 19 Oct 2021 12:55:51 -0400
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:39509 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229774AbhJSQzt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Oct 2021 12:37:51 -0400
-Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3674C061749
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 09:35:38 -0700 (PDT)
-Received: by mail-vk1-xa32.google.com with SMTP id m199so10655508vka.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Oct 2021 09:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hcpunpJfD02BVk7gvPKYSvVCpndtXyJiwVOsvlKcqZI=;
-        b=BdQ2OzL6SWeWZ9lnMcxZWN5DaQ/d8jf2h45OJs9cH+GlYlrjJIzPQv/DepQEx0AVuv
-         GWiTPlZoXqr7Cy5NtlV+3wWBgyR+jVTfzAaFvSmKS8dWGevDt7UhY+6L0iEorvlsoL5J
-         1P+ObMZy40jiLfXR1cMZS5RKUUsOUcevGJNt1CczAFeX2ABB7TVvmfrByhRVJQYdP4ww
-         po/itndSylNqIpsco0VtIYqycpaCG0ykS21mfQb1sIzwGhUMUin7+QPSc4XvP2qjOvuF
-         drZXawwJ2H2xmZBU7yxOYB+Z1GROv1vQOl0WCCjGw20ACo8d0nKaUqK1TGVhF0EKUnXu
-         Mfsg==
+        Tue, 19 Oct 2021 12:55:49 -0400
+Received: by mail-oi1-f173.google.com with SMTP id s9so3552502oiw.6;
+        Tue, 19 Oct 2021 09:53:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hcpunpJfD02BVk7gvPKYSvVCpndtXyJiwVOsvlKcqZI=;
-        b=3L0pyOapbv16EIi4wE9nHaxLPasg3F10yFIu5nW6Gb76OkvMFUHx4IrB5LEutu4H1x
-         I18HVBbqQ4U2ErinKr99zfHLBnRQkU9kkIKw6+odK05INPO4LzhAzse4MXdJ1bjgMLVz
-         CDnEgcaI+oTwtcEiAHuWMv4U8HlbVkrrnWhuzpAW9HCwMXP5sp9fu6c9jEl2mdUp9mE8
-         0gBJlGYVoCYanvvuGxXD3VasAjMg+VwafeC5ILqTTZRrQGSr3wbDSOc7ImTIxNpafL+y
-         9RbfjK0K+H4sRFvgGkuvnE7ZaypzjxjW1BfeT2MOCq4CRbXD9D5A4TqqWaTAARmckY9N
-         jgUg==
-X-Gm-Message-State: AOAM530lCMkPVS9Gg26RicvFOCOW/DQJYEVUUnIbm/QLQHSsNszIr0zQ
-        rHRBbo+vL8/KA4SMTzl/th04cwkdb7p8nzU5QaI/IQ==
-X-Google-Smtp-Source: ABdhPJxiZkNnPp8L2tDYceQO0IZ4U2Vv1yzsBlHqRJNbQZbT3vX8Ww0HOFEE3jsk6TcubludTT/ovXMLWY9QcgDhjJM=
-X-Received: by 2002:a1f:f241:: with SMTP id q62mr13676041vkh.12.1634661338139;
- Tue, 19 Oct 2021 09:35:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fnwMHmBtcUTzeN7AT8ukQSoNU1knCjzi3Fwq9Ac0g90=;
+        b=HJdKu9Yc8oALg0EUXoUMBKenRfGSuc1q4BNOBnq1d3QPbXkCq0Q5jlBTo0ea8p8UZl
+         TFoRbrGnbWaGpIrHbQBqSuwUjDBjln3eaN2Tq7E0W56vbVBbTfmfC0AToRtbsfbJrN2f
+         TGQLAwhyx4BbOTgYtABGlXWrUetqHt59xqngUL10JUAD9n2+2D9oWEUJzviJL0Jxj5V5
+         1ehW808u32vCVZl2iVvCq3srHVgLn+AvHiMGVaozwkhe/dawpGSKvp7qDZAT2I5VNhxs
+         BJzngAMZ1t+SxOkjC/HJaDKF7a5CBdMUeB22usBCn/Xn19ZwnQcZOApGMc6tjISI+tdo
+         6Amw==
+X-Gm-Message-State: AOAM531GWuQFQ3L5WRDnGlhygdiI/0FEMysCTKio0KzcAOE7RqhVCKqw
+        nUgroemq5t+BnedFQmoE8w==
+X-Google-Smtp-Source: ABdhPJxG3M4MMDejwrse4k8mTAjT5I/40KR+eLLfq1+ZBF3yaKS308ugfGwsvK1xSATT6JQLbB2GBw==
+X-Received: by 2002:a05:6808:1185:: with SMTP id j5mr5157383oil.16.1634662416108;
+        Tue, 19 Oct 2021 09:53:36 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id l26sm3843004oti.45.2021.10.19.09.53.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Oct 2021 09:53:35 -0700 (PDT)
+Received: (nullmailer pid 427792 invoked by uid 1000);
+        Tue, 19 Oct 2021 16:53:33 -0000
+Date:   Tue, 19 Oct 2021 11:53:33 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, bpf@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        KP Singh <kpsingh@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-fsdevel@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Shuah Khan <shuah@kernel.org>,
+        Colin Cross <ccross@android.com>, Alex Shi <alexs@kernel.org>,
+        Yonghong Song <yhs@fb.com>, Kees Cook <keescook@chromium.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>, kvm@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        sparmaintainer@unisys.com,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v3 00/23] Fix some issues at documentation
+Message-ID: <YW74Dez4/3cIbe1Q@robh.at.kernel.org>
+References: <cover.1634630485.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-References: <20211019131724.3109-1-semen.protsenko@linaro.org>
- <20211019131724.3109-3-semen.protsenko@linaro.org> <6dbd4812-bac3-55dc-108e-c322e8a493de@canonical.com>
- <6ce55971-bee5-1bc9-c3a2-28e6ede37401@canonical.com>
-In-Reply-To: <6ce55971-bee5-1bc9-c3a2-28e6ede37401@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 19 Oct 2021 19:35:26 +0300
-Message-ID: <CAPLW+4mE09AOSco+X9qE=1sjXvNVkOxtJqur+HoBJExxiw0J=g@mail.gmail.com>
-Subject: Re: [PATCH 2/4] rtc: s3c: Add time range
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1634630485.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 19 Oct 2021 at 19:22, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 19/10/2021 18:17, Krzysztof Kozlowski wrote:
-> > On 19/10/2021 15:17, Sam Protsenko wrote:
-> >> This RTC driver only accepts dates from 2000 to 2099 year. It starts
-> >> counting from 2000 to avoid Y2K problem,
-> >
-> > 1. Where is the minimum (2000) year set in the RTC driver?
->
-> Ah, indeed. I found it now in the driver.
->
-> >
-> >> and S3C RTC only supports 100
-> >
-> > On some of the devices 100, on some 1000, therefore, no. This does not
-> > look correct.
->
-> That part of sentence is still incorrect, but change itself makes sense.
-> Driver does not support <2000.
->
+On Tue, 19 Oct 2021 09:03:59 +0100, Mauro Carvalho Chehab wrote:
+> Hi Jon,
+> 
+> This series is against today's next (next-20211019) and addresses missing
+> links to Documentation/*.
+> 
+> The best would be to have the patches applied directly to the trees that
+> contain the patches that moved/renamed files, and then apply the
+> remaining ones either later during the merge window or just afterwards,
+> whatever works best for you.
+> 
+> Regards,
+> Mauro
+> 
+> Mauro Carvalho Chehab (23):
+>   visorbus: fix a copyright symbol that was bad encoded
+>   libbpf: update index.rst reference
+>   docs: accounting: update delay-accounting.rst reference
+>   MAINTAINERS: update arm,vic.yaml reference
+>   MAINTAINERS: update aspeed,i2c.yaml reference
+>   MAINTAINERS: update faraday,ftrtc010.yaml reference
+>   MAINTAINERS: update ti,sci.yaml reference
+>   MAINTAINERS: update intel,ixp46x-rng.yaml reference
+>   MAINTAINERS: update nxp,imx8-jpeg.yaml reference
+>   MAINTAINERS: update gemini.yaml reference
+>   MAINTAINERS: update brcm,unimac-mdio.yaml reference
+>   MAINTAINERS: update mtd-physmap.yaml reference
 
-Driver itself does not allow setting year >= 2100:
+Applied patches 3-12.
 
-<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>
-    if (year < 0 || year >= 100) {
-        dev_err(dev, "rtc only supports 100 years\n");
-        return -EINVAL;
-    }
-<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>
-
-Devices might allow it, so the commit message phrasing is incorrect
-and should be replaced, yes. But the code should be correct. Should I
-send v2 with fixed commit message?
-
-> Best regards,
-> Krzysztof
+>   Documentation: update vcpu-requests.rst reference
+>   bpftool: update bpftool-cgroup.rst reference
+>   docs: translations: zn_CN: irq-affinity.rst: add a missing extension
+>   docs: translations: zh_CN: memory-hotplug.rst: fix a typo
+>   docs: fs: locks.rst: update comment about mandatory file locking
+>   fs: remove a comment pointing to the removed mandatory-locking file
+>   Documentation/process: fix a cross reference
+>   dt-bindings: mfd: update x-powers,axp152.yaml reference
+>   regulator: dt-bindings: update samsung,s2mpa01.yaml reference
+>   regulator: dt-bindings: update samsung,s5m8767.yaml reference
+>   dt-bindings: reserved-memory: ramoops: update ramoops.yaml references
