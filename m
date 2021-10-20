@@ -2,241 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6FCC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Oct 2021 17:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B134BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Oct 2021 18:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D467761391
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Oct 2021 17:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864AD610A2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Oct 2021 18:24:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231205AbhJTRn4 (ORCPT
+        id S230520AbhJTS0o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Oct 2021 13:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbhJTRnt (ORCPT
+        Wed, 20 Oct 2021 14:26:44 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:18264 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230052AbhJTS0o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Oct 2021 13:43:49 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F48C061760
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Oct 2021 10:41:34 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id gn3so3036386pjb.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Oct 2021 10:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tLS8+kBpzekWeBdekKGTRJk0E4srTCOVGmq4Px1Q8VQ=;
-        b=gJbARJpG2w9XXkcZ6CSy2/THoVI0FcFNYFPuofYL8NVisjqdt0X0eq+HH+reaQpVXm
-         5MI+SplxtlxvZ1E0OLUyfIl/XiVcXduiwQnprTmO3DEStW4HT30c1IoDI1oVZxm+iOAV
-         3/XJwkPNgY1b56D39N24JZYm6H5qZHpfKUBzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tLS8+kBpzekWeBdekKGTRJk0E4srTCOVGmq4Px1Q8VQ=;
-        b=HCh1K7BpqTmLFIAGD90jx/jFj+2xrOgJTiOrV+NpAA69MjkUOTZgxNoeIMGKXyzIaF
-         /xR3IL/Sf/Y9U5igP1eJ50CzTH3rouL5gkK01mD8GV6O9PIi1it+gBualyX4E0qX5sXP
-         5dXw1SPTQNT6Wp5bt1SuPrO5S+M34fvaxtovjMslfPaRQBxD/RC6WWg7Ry52z2zuav/j
-         +4KoTQsK/lhcb2kJS0OFdad16CwfWvJ4gdnAhGJv4tzn/J4NfXSk+wDKfJtjm2Cxc/lI
-         5uPDfNRwC//VYrIcXNJm9I56A0RYI0rZMnztmzIW0Sj+MNMCJHntsVsT92Bpn7MZuY7Q
-         KB0w==
-X-Gm-Message-State: AOAM5330yyUBrg/X4yBFF+QON+R7cxFrnAGUiznEdTaBQc7PZ739qj0L
-        T1S6w/Ic8/RhFZeJp/f9N6HVDw==
-X-Google-Smtp-Source: ABdhPJzlGMQDOJLoQZpO+D08HsHF1MsykzBHtuqJvEm206lRGp9Qb3pe7UydXadxkqIvENvT61l62w==
-X-Received: by 2002:a17:903:1ca:b0:13e:f367:9361 with SMTP id e10-20020a17090301ca00b0013ef3679361mr507344plh.3.1634751694235;
-        Wed, 20 Oct 2021 10:41:34 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:d5fe:85e9:caf2:ec4e])
-        by smtp.gmail.com with UTF8SMTPSA id i128sm3148602pfc.47.2021.10.20.10.41.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Oct 2021 10:41:33 -0700 (PDT)
-Date:   Wed, 20 Oct 2021 10:41:31 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Doug Anderson <dianders@chromium.org>,
+        Wed, 20 Oct 2021 14:26:44 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20211020182428euoutp0125b10e0eb94338bbe797f50272812d0e~v0FiIC0jb2425024250euoutp01w
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Oct 2021 18:24:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20211020182428euoutp0125b10e0eb94338bbe797f50272812d0e~v0FiIC0jb2425024250euoutp01w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1634754268;
+        bh=HnitCYaja0dwcrAEA7k5MibO/pq6vQ+8ynA45vV9VFE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GFmrTD9mOKExnOLIbdQm4zTpPDinYWz+Yc1AHCVZ77e/5h8zRrMqpJx5tLleD3WfQ
+         VqDu9e8hsMw/g8hleVyfyZRQvapdJUEU8Ht/TsoE9JTY9JciWw+f/m+77hK0je9BeT
+         fULeQVE81c+Vtme0Bx/pbO8y+e51WyK4ZR6XvvPE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20211020182427eucas1p1d36495d23671b88bcf4d194d9d8182d6~v0Fhsaylf2022720227eucas1p14;
+        Wed, 20 Oct 2021 18:24:27 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 12.5F.45756.BDE50716; Wed, 20
+        Oct 2021 19:24:27 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20211020182427eucas1p24d9415282c7310db08b449e4a9f431d1~v0FhPaiGt1699416994eucas1p2_;
+        Wed, 20 Oct 2021 18:24:27 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211020182427eusmtrp18d9fcb91f892d9c81d1cd1dd1eedada4~v0FhLj3vO2102421024eusmtrp1s;
+        Wed, 20 Oct 2021 18:24:27 +0000 (GMT)
+X-AuditID: cbfec7f2-7bdff7000002b2bc-36-61705edbd93f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 29.CE.31287.BDE50716; Wed, 20
+        Oct 2021 19:24:27 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20211020182427eusmtip19a8d4c2fa3ccb341c6d7f06410a9ac8d~v0Fg6DSZI2087820878eusmtip1d;
+        Wed, 20 Oct 2021 18:24:27 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        jim.cromie@gmail.com, Heiner Kallweit <hkallweit1@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Peter Chen <peter.chen@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        Bastien Nocera <hadess@hadess.net>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Roger Quadros <rogerq@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Al Cooper <alcooperx@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alexandre TORGUE - foss <alexandre.torgue@foss.st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jens Axboe <axboe@kernel.dk>, Johan Hovold <johan@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Lionel DEBIEVE <lionel.debieve@st.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Bart=C5=82omiej=20=C5=BBolnierkiewicz?= 
+        <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Martin =?utf-8?Q?J=C3=BCcker?= <martin.juecker@gmail.com>,
-        Nishanth Menon <nm@ti.com>,
-        Olivier MOYSAN <olivier.moysan@st.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Robert Richter <rric@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
-Subject: Re: [PATCH v16 0/7] usb: misc: Add onboard_usb_hub driver
-Message-ID: <YXBUywpxasyTtSCr@google.com>
-References: <20210813195228.2003500-1-mka@chromium.org>
- <YUoRq1RrOIoiBJ5+@google.com>
- <CAD=FV=WrddUhWT0wUVZD0gN_+8Zy1VGY77LYLYBvhaPQQ_SqZw@mail.gmail.com>
- <YWkiGGBKOVokBye9@kroah.com>
- <03f28680-35eb-25f4-5041-f3a56144da24@foss.st.com>
- <0739e563-c8e7-2a19-e440-4f32e7de3917@xilinx.com>
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH net-next v17 1/3] dt-bindings: vendor-prefixes: Add asix
+ prefix
+Date:   Wed, 20 Oct 2021 20:24:20 +0200
+Message-Id: <20211020182422.362647-2-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211020182422.362647-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0739e563-c8e7-2a19-e440-4f32e7de3917@xilinx.com>
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGKsWRmVeSWpSXmKPExsWy7djPc7q34woSDXbs0rM4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
+        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2C3+79nB7iDkcfnaRWaPLStvMnnsnHWX3WPTqk42
+        j81L6j127vjM5NG3ZRWjx+dNcgEcUVw2Kak5mWWpRfp2CVwZP6b8Yin4yVYxZ990tgbGn6xd
+        jJwcEgImEhvan7F3MXJxCAmsYJR4tnIqlPOFUWJH92QmCOczo8S8qXeYYFq6mtayQSSWM0p8
+        WfWTEcJ5zigx+/pjNpAqNgFHif6lJ1hBEiIC95glPh07DtbCLHCfUeLe89XMXYwcHMICgRKH
+        F6WDNLAIqEp8mvMLrJlXwEbi/eTPzBDr5CXark9nBLE5BWwluhf1MkPUCEqcnPmEBcTmF9CS
+        WNN0HcxmBqpv3jqbGWSXhMB+Tonmpd9ZIAa5SNy41AH1g7DEq+Nb2CFsGYnTk3tYQO6REKiX
+        mDzJDKK3h1Fi25wfUL3WEnfOgRzHAbRAU2L9Ln2IsKPE4c1LmSFa+SRuvBWEOIFPYtK26VBh
+        XomONiGIahWJdf17oAZKSfS+WsE4gVFpFpJnZiF5YBbCrgWMzKsYxVNLi3PTU4sN81LL9YoT
+        c4tL89L1kvNzNzECk97pf8c/7WCc++qj3iFGJg7GQ4wSHMxKIry7K/IThXhTEiurUovy44tK
+        c1KLDzFKc7AoifOumr0mXkggPbEkNTs1tSC1CCbLxMEp1cCUGyKZVOEfzOV0WKh2+ayV2+be
+        3iPJ6b8pT0awv5v797XZHsHKEbeqnGdXOX/UE+x6dyO+78uur3a1+/NXO0py6H04wq03SU7n
+        kNyvkyKzT0TqTLtwSS5tk+6VW8tKRHt2zb33ukft7nmGKLNn5Z2y8Z6pjNOL6+YwqX9802my
+        +sUBz+LHkesu2/T1vPN5KZjp/Nz7Y1JBgeY7Nik71dCJHfzPf9YvME3xvPqWfTrLx4PTEwUX
+        10nrq8xbatMp/+DEj/oFMt63Ht5f7XjvWbnMvGUKHi/8U0w6SpcoO0w6EeikJHzXCBjA1wP1
+        /7xk+fjY8Px6peJf5VJcb2dWfLt0ciWvf9aqpHbxVu/ffEosxRmJhlrMRcWJAM85o2npAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7q34woSDfaf5bE4f/cQs8XGGetZ
+        Leacb2GxmH/kHKvFovczWC2uvb3DatH/+DWzxfnzG9gtLmzrY7W4eWgFo8Wmx9dYLS7vmsNm
+        MeP8PiaLQ1P3MlqsPXKX3eLYAjGL1r1H2C3+79nB7iDkcfnaRWaPLStvMnnsnHWX3WPTqk42
+        j81L6j127vjM5NG3ZRWjx+dNcgEcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFW
+        RqZK+nY2Kak5mWWpRfp2CXoZP6b8Yin4yVYxZ990tgbGn6xdjJwcEgImEl1Na9m6GLk4hASW
+        Mkr8PzSDvYuRAyghJbFybjpEjbDEn2tdUDVPGSWe/upjA0mwCThK9C89ATZIROANs8TPXimQ
+        ImaB+4wSvz69YARJCAv4S3z+PRvMZhFQlfg05xdYM6+AjcT7yZ+ZITbIS7Rdnw5WwylgK9G9
+        qBcsLgRUc23Xeah6QYmTM5+wgBzHLKAusX6eEEiYX0BLYk3TdRYQmxloTPPW2cwTGIVmIemY
+        hdAxC0nVAkbmVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIERvu3Yz807GOe9+qh3iJGJg/EQ
+        owQHs5II7+6K/EQh3pTEyqrUovz4otKc1OJDjKZAn01klhJNzgemmLySeEMzA1NDEzNLA1NL
+        M2Mlcd6tc9fECwmkJ5akZqemFqQWwfQxcXBKNTDl/dj7beOeuMklaQrmPZIxDswHP+z4fTRG
+        aemerdt7TY7UbP+0eE8ok7xOr9bu049zYmK0CvYY6E9uXbxZU/6i6MyihcvbKyLyJkpoNKg1
+        r3x6cqv324kv9tjGe3dsq9z5aHPQqY0GB9JfK2mH2t56X36xVjXpsPSuV67znUNzBb7dcpn7
+        O7jy1qqkycrv5aR1Oe663D2Uol38Ymml1vR9dxY9s3Yz/8bfbOyaV2bTs3y/7g9L58dJGzPC
+        I6d5v9vf27U78+ThIzVxUiFd9s9cCspT8u6GeJesCcrw+dAv/HfBDcburSu4Di/sjXsbIhm3
+        eX3uz7fzAnd9CfN5xbT0wnYeExfeRZIxvRkfXQyUWIozEg21mIuKEwEVD5UzeQMAAA==
+X-CMS-MailID: 20211020182427eucas1p24d9415282c7310db08b449e4a9f431d1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20211020182427eucas1p24d9415282c7310db08b449e4a9f431d1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20211020182427eucas1p24d9415282c7310db08b449e4a9f431d1
+References: <20211020182422.362647-1-l.stelmach@samsung.com>
+        <CGME20211020182427eucas1p24d9415282c7310db08b449e4a9f431d1@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 08:21:21AM +0200, Michal Simek wrote:
-> 
-> 
-> On 10/19/21 18:04, Fabrice Gasnier wrote:
-> > On 10/15/21 8:39 AM, Greg Kroah-Hartman wrote:
-> > > On Thu, Oct 14, 2021 at 02:38:55PM -0700, Doug Anderson wrote:
-> > > > Hi,
-> > > > 
-> > > > On Tue, Sep 21, 2021 at 10:09 AM Matthias Kaehlcke <mka@chromium.org> wrote:
-> > > > > 
-> > > > > Hi Greg,
-> > > > > 
-> > > > > are there any actions pending or can this land in usb-testing?
-> > > > > 
-> > > > > I confirmed that this series can be rebased on top of v5.15-rc2
-> > > > > without conflicts.
-> > > > 
-> > > > I'm quite interested to know what the next action items are, too. This
-> > > > is one of the very few patches we have for trogdor (excluding MIPI
-> > > > camera, which is a long story) that we're carrying downstream, so I'm
-> > > > keenly interested in making sure it's unblocked (if, indeed, it's
-> > > > blocked on anything).
-> > > > 
-> > > > If folks feel that this needs more review eyes before landing again
-> > > > then I'll try to find some time in the next week or two. If it's just
-> > > > waiting for the merge window to open/close so it can have maximal bake
-> > > > time, that's cool too. Please yell if there's something that I can do
-> > > > to help, though! :-)
-> > > 
-> > > I would love more review-eyes on this please.
-> > > 
-> > 
-> > Hi,
-> > 
-> > I noticed this series some time ago, and wanted to take a closer look.
-> > 
-> > The same issue this series address is seen on stm32 board for instance.
-> > (arch/arm/boot/dts/stm32mp15xx-dkx.dtsi). On board HUB (not described in
-> > the DT) is supplied by an always-on regulator.
-> > So it could could be interesting/useful to address the same case ,
-> > on stm32 boards, where USB2 (ehci-platform driver) is used currently.
-> > 
-> > I noticed a few things, especially on the dt-bindings. I've some
-> > questions here.
-> > 
-> > In this series, RTS5411 is used. The dt-bindings documents it as a child
-> > node of the USB controller. E.g.
-> > 
-> > &usb {
-> > 	usb_hub_2_0: hub@1 {
-> > 		...
-> > 	};
-> > 
-> > 	usb_hub_3_0: hub@2 {
-> > 	};
-> > }
-> > 
-> > I had a quick look at RTS5411 datasheet. It looks like there's an i2c
-> > interface too.
-> > - I guess the I2C interface isn't used in your case ?
-> >    (I haven't checked what it could be used for...)
-> > 
-> > In the stm32 boards (stm32mp15xx-dkx), there's an usb2514b chip
-> > - that also could be wired on I2C interface (0R mount option)
-> > - unused on stm32 boards by default
-> > 
-> > usb2514b chip already has a dt-bindings (with compatible), and a driver:
-> > - drivers/usb/misc/usb251xb.c
-> > - Documentation/devicetree/bindings/usb/usb251xb.txt
-> > 
-> > It is defined more as an i2c chip, so I'd expect it as an i2c child,
-> > e.g. like:
-> > 
-> > &i2c {
-> > 	usb2514b@2c {
-> > 		compatible = "microchip,usb2514b";
-> > 		...
-> > 	};
-> > };
-> > 
-> > 
-> > This way, I don't see how it could be used together with onboard_usb_hub
-> > driver ? (But I may have missed it)
-> > Is it possible to use a phandle, instead of a child node ?
-> > 
-> > However, in the stm32mp15xx-dkx case, i2c interface isn't wired/used by
-> > default. So obviously the i2c driver isn't used. In this case, could the
-> > "microchip,usb2514b" be listed in onboard_usb_hub driver ?
-> > (wouldn't it be redundant ?)
-> > 
-> > In this case it would be a child node of the usb DT node... Maybe that's
-> > more a question for Rob: would it be "legal" regarding existing
-> > dt-bindings ?
-> 
-> We wanted to upstream driver for microchip usb5744 and based on this thread
-> with Rob
-> 
-> https://lore.kernel.org/all/CAL_JsqJZBbu+UXqUNdZwg-uv0PAsNg55026PTwhKr5wQtxCjVQ@mail.gmail.com/
-> 
-> the recommendation was to use i2c-bus link. And in our usb5744 case where
-> usb hub has only one i2c address we just hardcoded it in the driver. I
-> should be pushing this driver to xilinx soc tree soon if you want to take a
-> look.
+Add the prefix for ASIX Electronics Corporation.
 
-Interesting, with the 'i2c-bus' link it might be feasible to support the
-i2c functionality in the onboard_usb_hub driver if desired. Not sure how
-things would look when the hub can have different i2c addresses. Also in
-case of powering down the hub during system suspend any configuration
-through i2c would have to be done again on resume.
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index a867f7102c35..e2eb0c738f3a 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -131,6 +131,8 @@ patternProperties:
+     description: Asahi Kasei Corp.
+   "^asc,.*":
+     description: All Sensors Corporation
++  "^asix,.*":
++    description: ASIX Electronics Corporation
+   "^aspeed,.*":
+     description: ASPEED Technology Inc.
+   "^asus,.*":
+-- 
+2.30.2
+
