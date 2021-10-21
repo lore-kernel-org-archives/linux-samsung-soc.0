@@ -2,120 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A32BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 19:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5605C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 20:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04BE761251
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 19:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D82F60241
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 20:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231533AbhJUTvU (ORCPT
+        id S231976AbhJUUZR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 15:51:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
+        Thu, 21 Oct 2021 16:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbhJUTvU (ORCPT
+        with ESMTP id S231579AbhJUUZQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 15:51:20 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 441D9C0613B9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 12:49:04 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id q13so3459215uaq.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 12:49:04 -0700 (PDT)
+        Thu, 21 Oct 2021 16:25:16 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 070B4C061348
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 13:22:58 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id d3so3591992edp.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 13:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=506SnosJu2/k7veB5Auol9VGHyPyzo6ab/OrxVZJdFc=;
-        b=JZeRQvhOimryHQTO0F1yK8ihzbC/IVWHgTOcrfhaJ1QgKmHtIb9FPtaoXxJXzLCepk
-         0pc0gLbmtclOHyfWODXsmlN0T/zcv+5Bid66yCjZR28gKB4+ecuHtN+zZYfLpiQuJypb
-         9snbIJAmr2/89bUHVp+jINBxclOHw0uCjGV8hXoYu/MEazJ7bOsVUAMnALH5OlFviYEx
-         EOgXtMlWXrRf4q/CdZB4mSS9IOTXNfbvKgn4RNtkCrTX8r0IIt9fPmtZ49UhMB5w6LZj
-         wo2Nh0mBp0rHAznuCL6fMlVRUFPWy3vlVYZHk5I9FPTPwZKWbwjYfB5VzZTdfTfXiEi9
-         X1bQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T80sY77P49CzqkBALaNy1F1k3Uh9yhdfwkAHlGutXxg=;
+        b=mpr8kErdCV7sUm/XbyfJcxCKeOGw4geiYjdZu3EnPqJE6KQDeELPt6Tc71HvT/i0jk
+         T9RU8d3GNQJl+gWLhH80+va9tGv1Y2n09/FWB2NBSVtZvo3Uf5kRjkowqByhPp2gyLGZ
+         NBIQujgw75vCfARufR+rwueYBVp2dQrHhEBjcfnSS/+RG8l41OYPk20i9nex6eAsTalD
+         NnbSFM2THxIymS0T6JqthRcrjBeBQ8y3nZ8UigP/KvGwoZwXEsQ9M+kyJORtZNjMLAuS
+         aU0SLNx7238RXLJ+/brcRY7K+yZ57BfQjU/up7m3QNtgvmzKBWFGjcsUL8zIsMhqGyxK
+         tQSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=506SnosJu2/k7veB5Auol9VGHyPyzo6ab/OrxVZJdFc=;
-        b=1g7K6FghvFiwjno679cMXOfeziJpL2FD5wMfpM5MUAhCjX7qfWgCh4pKVfZ7T8ONDs
-         mV89y4GCeIgGqwu9PeDabI6N6Jdum/23LsJsXTTusNa1aknpc9Wu0qnl5Ze0TTjl+29Q
-         hM536r+ZRHNinUdVTddvHeM838SF8BupTOycJKfUWuG62OBYqjZGceia7ayU/aqcBk2H
-         jVPhtloAUT1PpTorTb7MdJP9qaGkvyGdXy7Gvu8lNhrAyD4zrJ4xV09EB6NjHWqQB2El
-         xSPoXYeNVkIiwD036dPtkw/1tKxyygdY10MtmNONrAHJIZvF8M1eHjmHuE+mb6pBg4ab
-         2I6g==
-X-Gm-Message-State: AOAM532SbetEKkUmjAXvdwFRjEu3qXaGW47ZJjA5bJbG75L0kcLjN83O
-        pqS1QFhxP+KGVLrua24yuFlTzN9zUuDlB/Rv0Hy41g==
-X-Google-Smtp-Source: ABdhPJz4I5Z/WBFSBkX6/q4/uVeYKIfIu9yEzNWeEn5ErrVs1m/Y7PwD0YcrX1Lkqqjdhm5YITQcRIqFFsa0Oxa4pTw=
-X-Received: by 2002:a67:d91b:: with SMTP id t27mr9275555vsj.55.1634845743358;
- Thu, 21 Oct 2021 12:49:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211019131724.3109-1-semen.protsenko@linaro.org>
- <20211019131724.3109-3-semen.protsenko@linaro.org> <6dbd4812-bac3-55dc-108e-c322e8a493de@canonical.com>
- <6ce55971-bee5-1bc9-c3a2-28e6ede37401@canonical.com> <CAPLW+4mE09AOSco+X9qE=1sjXvNVkOxtJqur+HoBJExxiw0J=g@mail.gmail.com>
- <YW8E6oeIoRdpmPL8@piout.net> <CAPLW+4k26qZDug4JkuPaM_gZMgz8LPg7GHe-5C7zKzEGtzdp=g@mail.gmail.com>
- <effeb83b-7923-7086-5b4f-36266015e137@canonical.com>
-In-Reply-To: <effeb83b-7923-7086-5b4f-36266015e137@canonical.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T80sY77P49CzqkBALaNy1F1k3Uh9yhdfwkAHlGutXxg=;
+        b=dgpKRn+lzAshKJfM27j0MgpzVIytqciIbc5rhkjh+bNM/M9K8tCAGETLK0cDA47rXB
+         XZ8Gb+44YGYoZHrg5GNXdZk1YAnMx56F3axMryfx0kFrJ7fDVcZBvxAqHV3aRlY/tX8j
+         5YWAqrsHynok7FemPqwKZmntPHcB53hMWwApn+5wbmO3sfr82mPqCgz3zAHCHA7+Bxi+
+         QwnHs6cK/XABEmQEt5gGYjhNERM1B1/i3S+cFYDoNpKfFgZpbJ7XmboYs7v1cQxbOQkb
+         f80c5FXOkzHzJ/xow/y1MoU2qjGjjYor+s0Dr6cU/rI6Blsm6yci/MapLDNJSVGwdGuY
+         On1w==
+X-Gm-Message-State: AOAM5300E+mJ3DmxYsdLP6NP3R4EtiYfXEefzraOutJKi6DBhW4Bd+2t
+        3DHdc6PoPqfsiFG1SGvkwU6k6g==
+X-Google-Smtp-Source: ABdhPJx0+JePp8cicOVplczmBdeekxsIj//rFIruiqx74JXCwnDTP+gqnS0/dJ2NlOl3UVi28xR4nw==
+X-Received: by 2002:a17:906:4310:: with SMTP id j16mr9886395ejm.48.1634847777469;
+        Thu, 21 Oct 2021 13:22:57 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id y22sm3696001edc.76.2021.10.21.13.22.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 13:22:57 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 21 Oct 2021 22:48:51 +0300
-Message-ID: <CAPLW+4=RuoT016zHotKvrNNxB_bZt4VXhZRWkGuJs22XeOpcpA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] rtc: s3c: Add time range
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] rtc: s3c: S3C driver improvements
+Date:   Thu, 21 Oct 2021 23:22:53 +0300
+Message-Id: <20211021202256.28517-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 20 Oct 2021 at 09:29, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 19/10/2021 21:12, Sam Protsenko wrote:
-> > Krzysztof, do you have by chance the doc for different SoCs supported
-> > by S3C RTC driver? I can implement proper values for min/max range for
-> > each SoC, as Alexandre asked, by adding those to driver data. But I
-> > need max year register value (100, 1000, etc) for each of those chips:
-> >
-> >   - "samsung,s3c2410-rtc"
-> >   - "samsung,s3c2416-rtc"
-> >   - "samsung,s3c2443-rtc"
-> >   - "samsung,s3c6410-rtc"
-> >   - "samsung,exynos3250-rtc"
-> >
-> > For example Exynos850 TRM states that BCDYEAR register has [11:0] bits
-> > for holding the year value in BCD format, so it's 10^(12/4)=1000 years
-> > max.
-> >
->
-> I think all S3C chips have only 8-bit wide year, so 2000-2099, while
-> S5Pv210 and Exynos has 12-bit (1000 years). However I doubt there is big
-> benefit of supporting more than 2100. :) If you still want, you would
-> need to create the patch carefully because not many people can test it...
->
+While working on Exynos850 support (where this driver works fine in its
+current state), I've stumbled upon some minor issue. This is the effort
+to fix those.
 
-Guys,
+  * [PATCH 1/3]: moves S3C RTC driver to newer API usage
+    (no functional changes)
+  * [PATCH 2/3]: refactoring/cleanup (no functional changes)
+  * [PATCH 3/3]: adds time range, as [PATCH 1/3] made it possible
 
-After testing thoroughly, I can confirm that Alexandre is right about
-leap years (Exynos850 RTC treats both 2000 and 2100 as leap years).
-And it also overflows internally on 2159 year, limiting the actual
-time range at 160 years. So I'll keep that range at 100 years for all
-RTCs. As Krzysztof said, there is no practical reasons in trying to
-increase it anyway. Will send v2 soon.
+Changes in v2:
+  - Dropped "rtc: s3c: Fix RTC read on first boot" patch
+  - Switched the order for [PATCH 2/3] and [PATCH 3/3], so that the
+    refactoring patch can stay w/o functional changes w.r.t. previous
+    state
+  - See also changelist for each particular patch
 
-What I'm curious about is RTC testing. I've found this test suite:
+Sam Protsenko (3):
+  rtc: s3c: Remove usage of devm_rtc_device_register()
+  rtc: s3c: Extract read/write IO into separate functions
+  rtc: s3c: Add time range
 
-    tools/testing/selftests/rtc/rtctest.c
+ drivers/rtc/rtc-s3c.c | 106 ++++++++++++++++++++++++++----------------
+ 1 file changed, 65 insertions(+), 41 deletions(-)
 
-But it doesn't seem to cover corner cases (like checking leap years,
-which was discussed here). Just a thought: maybe it should be added
-there, so everyone can benefit from that? For example, I know that in
-Linaro we are running LKFT tests for different boards, so that might
-theoretically reveal some bugs. Though I understand possible
-implications: we probably don't know which ranges are supported in
-driver that's being tested. Anyway, just saying.
+-- 
+2.30.2
 
->
-> Best regards,
-> Krzysztof
