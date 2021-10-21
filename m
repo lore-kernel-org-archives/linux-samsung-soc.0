@@ -2,137 +2,309 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ADDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 16:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A2AC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 16:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA86B6120C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 16:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A9DE6137F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 16:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230187AbhJUQK6 (ORCPT
+        id S229597AbhJUQ2T (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 12:10:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230103AbhJUQK5 (ORCPT
+        Thu, 21 Oct 2021 12:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39068 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231883AbhJUQ2S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 12:10:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AEFD611CB;
-        Thu, 21 Oct 2021 16:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634832521;
-        bh=3wcwNbtDNknQedZoy24cZfK1CiOqshIYIk3e2c4B9Rw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XWhJ08GGIqTZw+TvT/nMCDAy7quf2FJv33jj0Ily06vxkI8rUxTQELDkeHb0u+NFl
-         MD0Lx9+x7lhMM3GIAZfA1T2u0eNmQAG1bqpXTvz67evSI6p28cRymuvwfzx0MmCdPZ
-         Eu9kyx0IRx+BQHrjfg6pUkXIBKHVfUT3rJ6PyHjkKsGXSiMQ2s0MWrlq5f/6WPUXfA
-         12KC4ZTUvETH0cKn32kcKsPv7RGUIftWATLF8XYn+cHxWi3nvl7PC2jb98L+8EJMFN
-         xtCzC0AmpDoL2r37xWXDC3EUt/EyyEmL8iLEASXb2kkCdjx5XS/xqqOzJAGW3sGtIs
-         FzUF2rqmMe78Q==
-Received: by pali.im (Postfix)
-        id D8DB085E; Thu, 21 Oct 2021 18:08:38 +0200 (CEST)
-Date:   Thu, 21 Oct 2021 18:08:38 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Naveen Naidu <naveennaidu479@gmail.com>
-Cc:     bhelgaas@google.com,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        skhan@linuxfoundation.org, Robert Richter <rric@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Joyce Ooi <joyce.ooi@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Nirmal Patel <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Amey Narkhede <ameynarkhede03@gmail.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Sean V Kelley <sean.v.kelley@intel.com>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Marc Zyngier <maz@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Toan Le <toan@os.amperecomputing.com>
-Subject: Re: [PATCH v3 01/25] PCI: Add PCI_ERROR_RESPONSE and it's related
- definitions
-Message-ID: <20211021160838.r7t7fmmeseaecfac@pali>
-References: <cover.1634825082.git.naveennaidu479@gmail.com>
- <f7960a4dee0e417eedd7d2e031d04ac9016c6686.1634825082.git.naveennaidu479@gmail.com>
+        Thu, 21 Oct 2021 12:28:18 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D55C061764;
+        Thu, 21 Oct 2021 09:26:02 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id z11-20020a1c7e0b000000b0030db7b70b6bso307906wmc.1;
+        Thu, 21 Oct 2021 09:26:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MJX2i4HqBrM5vK2Tz/O1+2LEtyHzF3MISyrbDZ9H1L0=;
+        b=Ei/6JKliMFXsBAo5RU5GpOOPsS7XlFzAhvK8H56I9S/O8dxSN9/RULALxLfxuRbMuj
+         FLyXizJ3d75jhBhDABUjUAh3cIghGKGlS1MqR0SQQlhoBHiAx+eXzFdY+OpuKI+mr2g3
+         4Xm0/7J/FIE1xnZpo1dZUN8In7hgKaTV3xNLLuRgnc1Uh+ytshpF0U15u1Dxlup5aUz2
+         vUaxKT/nsqC8Q08oa3ZNyxO0cjW1oVVoiaoj3Fy3kptW2GdfJGMJgNACrO0OsfG4Jz4m
+         ucK9MQlVBQo81f8YudTvTZHNo+3bKMTNHpgm0MKAGMSXXhxMlVFo7PAU3MmjA8XJn5qD
+         O10w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MJX2i4HqBrM5vK2Tz/O1+2LEtyHzF3MISyrbDZ9H1L0=;
+        b=NxL1W44BDkjl89XHwLi8rhDurJWmpeBrgWAW6hxhHoD/o8bdeZ3gb774K30tmn7QZ/
+         vStAUhaZxytKUGPz9CBXsPQHi792AwL4q9gbl4Jb3KXlJiFMuoilFk31cDuGcYhJdY7I
+         +pX7ALasYUcICGMkGYb52pzXIq42Esr8L2kG8l/q/V26rUP4cVJC3kHIgZLT2QKqeCqP
+         Yz7KeP4Yhhhx/fNGPa6yFsyVNUg3IP0DfqGOsLsOE5IJWns58dL03jX1FJR0K4eA8oiJ
+         pER7/j3zqTBveUZ5G2ik7drL5oIvIVAFoyfvYOQSWPoJD6qHTX8b0y3DXB/v5ac7WsGe
+         AgNA==
+X-Gm-Message-State: AOAM532S+aLEM9W1Xb/k9+fYJ8NibhOnOtPOzb4/8UXacynWpnH6xQeY
+        vMT/8BEViZu3V5iddy0z6EFtUTLCbbxXRWtRIMQ=
+X-Google-Smtp-Source: ABdhPJxMMEpgJvFCUhkiPbr0GtGuVpBCjP3S4KkFi+sJX0HKzCpcukiyjXaKzSDNiLpZS2pS4vkln3p9WiZuTWqUWOs=
+X-Received: by 2002:a7b:c007:: with SMTP id c7mr22651421wmb.101.1634833560514;
+ Thu, 21 Oct 2021 09:26:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f7960a4dee0e417eedd7d2e031d04ac9016c6686.1634825082.git.naveennaidu479@gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20211021073947.499373-1-maxime@cerno.tech> <20211021073947.499373-22-maxime@cerno.tech>
+In-Reply-To: <20211021073947.499373-22-maxime@cerno.tech>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 21 Oct 2021 09:30:39 -0700
+Message-ID: <CAF6AEGvQzyzNs57nCuR5ZRC14kB8CscykJ+4=gmZB6==OXCQEA@mail.gmail.com>
+Subject: Re: [PATCH v5 21/21] drm/msm/dsi: Adjust probe order
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        "moderated list:ARM/S5P EXYNOS AR..." 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Caleb Connolly <caleb.connolly@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thursday 21 October 2021 20:37:26 Naveen Naidu wrote:
-> An MMIO read from a PCI device that doesn't exist or doesn't respond
-> causes a PCI error.  There's no real data to return to satisfy the
-> CPU read, so most hardware fabricates ~0 data.
-> 
-> Add a PCI_ERROR_RESPONSE definition for that and use it where
-> appropriate to make these checks consistent and easier to find.
-> 
-> Also add helper definitions SET_PCI_ERROR_RESPONSE and
-> RESPONSE_IS_PCI_ERROR to make the code more readable.
-> 
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Naveen Naidu <naveennaidu479@gmail.com>
+On Thu, Oct 21, 2021 at 12:41 AM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> Switch to the documented order dsi-host vs bridge probe.
+>
+> Tested-by: Amit Pundir <amit.pundir@linaro.org>
+> Tested-by: Caleb Connolly <caleb.connolly@linaro.org>
+> Tested-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Reviewed-by: Pali Rohár <pali@kernel.org>
+I guess this should probably land together w/ the rest of the series,
+so a-b for merging thru drm-misc
+
+BR,
+-R
 
 > ---
->  include/linux/pci.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index cd8aa6fce204..689c8277c584 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -154,6 +154,15 @@ enum pci_interrupt_pin {
->  /* The number of legacy PCI INTx interrupts */
->  #define PCI_NUM_INTX	4
->  
-> +/*
-> + * Reading from a device that doesn't respond typically returns ~0.  A
-> + * successful read from a device may also return ~0, so you need additional
-> + * information to reliably identify errors.
-> + */
-> +#define PCI_ERROR_RESPONSE     (~0ULL)
-> +#define SET_PCI_ERROR_RESPONSE(val)    (*(val) = ((typeof(*(val))) PCI_ERROR_RESPONSE))
-> +#define RESPONSE_IS_PCI_ERROR(val) ((val) == ((typeof(val)) PCI_ERROR_RESPONSE))
+>  drivers/gpu/drm/msm/dsi/dsi.c         | 50 ++++++++++++++++-----------
+>  drivers/gpu/drm/msm/dsi/dsi.h         |  2 +-
+>  drivers/gpu/drm/msm/dsi/dsi_host.c    | 22 ++++--------
+>  drivers/gpu/drm/msm/dsi/dsi_manager.c |  6 ++--
+>  drivers/gpu/drm/msm/msm_drv.h         |  2 ++
+>  5 files changed, 43 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi.c b/drivers/gpu/drm/msm/dsi/dsi.c
+> index 614dc7f26f2c..ad73ebb84b2d 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi.c
+> @@ -112,18 +112,7 @@ static int dsi_bind(struct device *dev, struct device *master, void *data)
+>  {
+>         struct drm_device *drm = dev_get_drvdata(master);
+>         struct msm_drm_private *priv = drm->dev_private;
+> -       struct platform_device *pdev = to_platform_device(dev);
+> -       struct msm_dsi *msm_dsi;
+> -
+> -       DBG("");
+> -       msm_dsi = dsi_init(pdev);
+> -       if (IS_ERR(msm_dsi)) {
+> -               /* Don't fail the bind if the dsi port is not connected */
+> -               if (PTR_ERR(msm_dsi) == -ENODEV)
+> -                       return 0;
+> -               else
+> -                       return PTR_ERR(msm_dsi);
+> -       }
+> +       struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+>
+>         priv->dsi[msm_dsi->id] = msm_dsi;
+>
+> @@ -136,12 +125,8 @@ static void dsi_unbind(struct device *dev, struct device *master,
+>         struct drm_device *drm = dev_get_drvdata(master);
+>         struct msm_drm_private *priv = drm->dev_private;
+>         struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+> -       int id = msm_dsi->id;
+>
+> -       if (priv->dsi[id]) {
+> -               dsi_destroy(msm_dsi);
+> -               priv->dsi[id] = NULL;
+> -       }
+> +       priv->dsi[msm_dsi->id] = NULL;
+>  }
+>
+>  static const struct component_ops dsi_ops = {
+> @@ -149,15 +134,40 @@ static const struct component_ops dsi_ops = {
+>         .unbind = dsi_unbind,
+>  };
+>
+> -static int dsi_dev_probe(struct platform_device *pdev)
+> +int dsi_dev_attach(struct platform_device *pdev)
+>  {
+>         return component_add(&pdev->dev, &dsi_ops);
+>  }
+>
+> -static int dsi_dev_remove(struct platform_device *pdev)
+> +void dsi_dev_detach(struct platform_device *pdev)
+>  {
+> -       DBG("");
+>         component_del(&pdev->dev, &dsi_ops);
+> +}
 > +
->  /*
->   * pci_power_t values must match the bits in the Capabilities PME_Support
->   * and Control/Status PowerState fields in the Power Management capability.
-> -- 
-> 2.25.1
-> 
+> +static int dsi_dev_probe(struct platform_device *pdev)
+> +{
+> +       struct msm_dsi *msm_dsi;
+> +
+> +       DBG("");
+> +       msm_dsi = dsi_init(pdev);
+> +       if (IS_ERR(msm_dsi)) {
+> +               /* Don't fail the bind if the dsi port is not connected */
+> +               if (PTR_ERR(msm_dsi) == -ENODEV)
+> +                       return 0;
+> +               else
+> +                       return PTR_ERR(msm_dsi);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int dsi_dev_remove(struct platform_device *pdev)
+> +{
+> +       struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
+> +
+> +       DBG("");
+> +       dsi_destroy(msm_dsi);
+> +
+>         return 0;
+>  }
+>
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
+> index b50db91cb8a7..83787cbee419 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi.h
+> +++ b/drivers/gpu/drm/msm/dsi/dsi.h
+> @@ -116,7 +116,7 @@ int msm_dsi_host_set_display_mode(struct mipi_dsi_host *host,
+>  struct drm_panel *msm_dsi_host_get_panel(struct mipi_dsi_host *host);
+>  unsigned long msm_dsi_host_get_mode_flags(struct mipi_dsi_host *host);
+>  struct drm_bridge *msm_dsi_host_get_bridge(struct mipi_dsi_host *host);
+> -int msm_dsi_host_register(struct mipi_dsi_host *host, bool check_defer);
+> +int msm_dsi_host_register(struct mipi_dsi_host *host);
+>  void msm_dsi_host_unregister(struct mipi_dsi_host *host);
+>  int msm_dsi_host_set_src_pll(struct mipi_dsi_host *host,
+>                         struct msm_dsi_phy *src_phy);
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index e269df285136..f741494b1bf6 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -1624,6 +1624,10 @@ static int dsi_host_attach(struct mipi_dsi_host *host,
+>         if (ret)
+>                 return ret;
+>
+> +       ret = dsi_dev_attach(msm_host->pdev);
+> +       if (ret)
+> +               return ret;
+> +
+>         DBG("id=%d", msm_host->id);
+>         if (msm_host->dev)
+>                 queue_work(msm_host->workqueue, &msm_host->hpd_work);
+> @@ -1636,6 +1640,8 @@ static int dsi_host_detach(struct mipi_dsi_host *host,
+>  {
+>         struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+>
+> +       dsi_dev_detach(msm_host->pdev);
+> +
+>         msm_host->device_node = NULL;
+>
+>         DBG("id=%d", msm_host->id);
+> @@ -1970,7 +1976,7 @@ int msm_dsi_host_modeset_init(struct mipi_dsi_host *host,
+>         return 0;
+>  }
+>
+> -int msm_dsi_host_register(struct mipi_dsi_host *host, bool check_defer)
+> +int msm_dsi_host_register(struct mipi_dsi_host *host)
+>  {
+>         struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+>         int ret;
+> @@ -1984,20 +1990,6 @@ int msm_dsi_host_register(struct mipi_dsi_host *host, bool check_defer)
+>                         return ret;
+>
+>                 msm_host->registered = true;
+> -
+> -               /* If the panel driver has not been probed after host register,
+> -                * we should defer the host's probe.
+> -                * It makes sure panel is connected when fbcon detects
+> -                * connector status and gets the proper display mode to
+> -                * create framebuffer.
+> -                * Don't try to defer if there is nothing connected to the dsi
+> -                * output
+> -                */
+> -               if (check_defer && msm_host->device_node) {
+> -                       if (IS_ERR(of_drm_find_panel(msm_host->device_node)))
+> -                               if (!of_drm_find_bridge(msm_host->device_node))
+> -                                       return -EPROBE_DEFER;
+> -               }
+>         }
+>
+>         return 0;
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> index c41d39f5b7cf..fc949a84cef6 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> @@ -72,7 +72,7 @@ static int dsi_mgr_setup_components(int id)
+>         int ret;
+>
+>         if (!IS_BONDED_DSI()) {
+> -               ret = msm_dsi_host_register(msm_dsi->host, true);
+> +               ret = msm_dsi_host_register(msm_dsi->host);
+>                 if (ret)
+>                         return ret;
+>
+> @@ -92,10 +92,10 @@ static int dsi_mgr_setup_components(int id)
+>                  * because only master DSI device adds the panel to global
+>                  * panel list. The panel's device is the master DSI device.
+>                  */
+> -               ret = msm_dsi_host_register(slave_link_dsi->host, false);
+> +               ret = msm_dsi_host_register(slave_link_dsi->host);
+>                 if (ret)
+>                         return ret;
+> -               ret = msm_dsi_host_register(master_link_dsi->host, true);
+> +               ret = msm_dsi_host_register(master_link_dsi->host);
+>                 if (ret)
+>                         return ret;
+>
+> diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+> index 8b005d1ac899..31d50e98a723 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.h
+> +++ b/drivers/gpu/drm/msm/msm_drv.h
+> @@ -344,6 +344,8 @@ int msm_edp_modeset_init(struct msm_edp *edp, struct drm_device *dev,
+>
+>  struct msm_dsi;
+>  #ifdef CONFIG_DRM_MSM_DSI
+> +int dsi_dev_attach(struct platform_device *pdev);
+> +void dsi_dev_detach(struct platform_device *pdev);
+>  void __init msm_dsi_register(void);
+>  void __exit msm_dsi_unregister(void);
+>  int msm_dsi_modeset_init(struct msm_dsi *msm_dsi, struct drm_device *dev,
+> --
+> 2.31.1
+>
