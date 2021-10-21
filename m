@@ -2,77 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77155C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 01:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAB7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 03:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50D6D61186
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 01:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D50F460E8C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 03:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbhJUBpv (ORCPT
+        id S231232AbhJUDm7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Oct 2021 21:45:51 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:10105 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230103AbhJUBpu (ORCPT
+        Wed, 20 Oct 2021 23:42:59 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:37370 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231378AbhJUDms (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Oct 2021 21:45:50 -0400
-X-Greylist: delayed 545 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Oct 2021 21:45:49 EDT
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.1]) by rmmx-syy-dmz-app12-12012 (RichMail) with SMTP id 2eec6170c3980c2-0f6a2; Thu, 21 Oct 2021 09:34:17 +0800 (CST)
-X-RM-TRANSID: 2eec6170c3980c2-0f6a2
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.112.105.130])
-        by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee16170c395d66-33509;
-        Thu, 21 Oct 2021 09:34:16 +0800 (CST)
-X-RM-TRANSID: 2ee16170c395d66-33509
-From:   Tang Bin <tangbin@cmss.chinamobile.com>
-To:     krzysztof.kozlowski@canonical.com, vz@mleia.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net
-Cc:     linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tang Bin <tangbin@cmss.chinamobile.com>, stable@vger.kernel.org
-Subject: [PATCH v3] crypto: s5p-sss - Add error handling in s5p_aes_probe()
-Date:   Thu, 21 Oct 2021 09:34:22 +0800
-Message-Id: <20211021013422.21396-1-tangbin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.20.1.windows.1
+        Wed, 20 Oct 2021 23:42:48 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19L1PdI5020879;
+        Thu, 21 Oct 2021 03:40:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=CzkR8azGvsNKNaGoumA0wTwBAEpNzSC1uNRPsZ/Le6g=;
+ b=OUvCTCHd4/5BR89oWiEN7brBM8OQC5yuid7uORVbKMvCzh2gcrlMvdjYi8cAr26074Bs
+ 2uK9B6ibVaGVecqWHX/GQRopnkLT+d4gFZF6/4QfispkaXT9OaMgrICznwWrB0ZA2KjY
+ LNuR8wGXSGn1kw9Mjv3g33Ys/EFTDyBJs0rEB5o2Sbre7WtLo/f658KAroKcm9f04eeH
+ dDR6kgMNGitFOSf0B7PkrlNfdzTy/UCTW2SSZPGssWWNZLDKMejWhe8BUzrsX33gkHUT
+ h5gXIDpiRcE+epVUAH0vmFc4WOPlohzUBgvko+c8r1IrOtq/zLL9i7xSRTj1GyuP2DVK NQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3btkx9v8ns-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Oct 2021 03:40:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 19L3Lb3G083822;
+        Thu, 21 Oct 2021 03:40:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 3br8gv83mc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Oct 2021 03:40:21 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 19L3eJZB135272;
+        Thu, 21 Oct 2021 03:40:21 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by userp3020.oracle.com with ESMTP id 3br8gv83k1-2;
+        Thu, 21 Oct 2021 03:40:20 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bean Huo <beanhuo@micron.com>,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Kiwoong Kim <kwmad.kim@samsung.com>
+Subject: Re: [PATCH] scsi: ufs: ufs-exynos: correct timeout value setting registers
+Date:   Wed, 20 Oct 2021 23:40:18 -0400
+Message-Id: <163478760939.6923.10515267994162668841.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211018062841.18226-1-chanho61.park@samsung.com>
+References: <CGME20211018063117epcas2p28bfc50a5d793abadf37291942e139448@epcas2p2.samsung.com> <20211018062841.18226-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: Oms91wQnADQJI_GDVLIMUvL-Q9Vk2oD7
+X-Proofpoint-GUID: Oms91wQnADQJI_GDVLIMUvL-Q9Vk2oD7
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The function s5p_aes_probe() does not perform sufficient error
-checking after executing platform_get_resource(), thus fix it.
+On Mon, 18 Oct 2021 15:28:41 +0900, Chanho Park wrote:
 
-Fixes: c2afad6c6105 ("crypto: s5p-sss - Add HASH support for Exynos")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
-Changes from v2
- - add Cc: <stable@vger.kernel.org>
+> PA_PWRMODEUSERDATA0 -> DL_FC0PROTTIMEOUTVAL
+> PA_PWRMODEUSERDATA1 -> DL_TC0REPLAYTIMEOUTVAL
+> PA_PWRMODEUSERDATA2 -> DL_AFC0REQTIMEOUTVAL
+> 
+> 
 
-Changes from v1
- - add fixed title
----
- drivers/crypto/s5p-sss.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to 5.15/scsi-fixes, thanks!
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 55aa3a711..7717e9e59 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -2171,6 +2171,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 
- 	variant = find_s5p_sss_version(pdev);
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
- 
- 	/*
- 	 * Note: HASH and PRNG uses the same registers in secss, avoid
+[1/1] scsi: ufs: ufs-exynos: correct timeout value setting registers
+      https://git.kernel.org/mkp/scsi/c/282da7cef078
+
 -- 
-2.20.1.windows.1
-
-
-
+Martin K. Petersen	Oracle Linux Engineering
