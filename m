@@ -2,100 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9162C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 12:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DF6C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 12:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAD096121F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 12:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAE8B6112D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 12:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbhJUMJN (ORCPT
+        id S230360AbhJUMKF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 08:09:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33888 "EHLO
+        Thu, 21 Oct 2021 08:10:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230231AbhJUMJN (ORCPT
+        with ESMTP id S230231AbhJUMKE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 08:09:13 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C25C061749
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 05:06:57 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id r18so724294wrg.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 05:06:57 -0700 (PDT)
+        Thu, 21 Oct 2021 08:10:04 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D4DC06161C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 05:07:48 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id m42so443190wms.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 05:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ZcFeRC73UKaa3p+nvjfoKXbuybNs1IiSI5VXt1+O0h8=;
-        b=QrMzCEsn+k+371RBMkTdnwTcdUtYRoptFxnkREZS4i5pLjW+7onXK1YMM/tKL7lsyV
-         kpg4iXvdTHlJB/QHKQM3dUBS8fyRkRAzNfu4Okn7PFyMWMN3rZ4i9p2EDyZrW2anQ3Ip
-         8EaYuoVwPghvk+I/YFpdeNGv0sKyy+lrC48pvvOft+dafq/YThbGYIkXo6F0uDxYAlmQ
-         UREbqAThRqFVEZlliCt69T2wf4MeiDquOno3WgmF6NpMrlc19noa25PUBXYgkPtV/+QG
-         SnPz0EB3Gecm6NfHUuyAvEmHQoojHkYjRNRjjpfgSqjYjPmE5/esF3mO0IoOg2TxoPzB
-         JX9A==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=jwitIqYt5KYJE8bMdOs497KWqf0OH0KRAwwe6MsrJao=;
+        b=pLY2deFY5fIj2lxUXtmdZECyualMiecCGsuTTxM0lO6aYU7z8en+Zveke4smY1w31S
+         YMP8mZJoktpcrbkeGPrQAz7yLYRlpe9thgQBPc5KN2ymEg90Pfb/Ytcrr730D87KcMB9
+         Yeq2eQIdjhFWSJcOMKGmGuE4ktWju8BP9Omwe2NwLloQaCfiumVSGAEUcZQaahpc03s0
+         FXa9pStbbkoRDhnGKW2twGt+9WG40oKmhA+RmKuUjaktDgH4CNi0pl5LrzQi+7g4ftzU
+         8JidS3DV9bdc0a5gztZyuHMySFEwm/aoMZ2AlxP5h/6Ge4CLt6FjZbOCx7PvqDJEmP6L
+         GB0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ZcFeRC73UKaa3p+nvjfoKXbuybNs1IiSI5VXt1+O0h8=;
-        b=chNGWlZWDQrIc6lmcM8vjKYxQxq/tkWnpo5L/fEexZ6X9kjkQGBbPsn+med2GQocZ7
-         7atq0vXJz9g2sQMuLZ+zsaFRqz90N73WcIWs11TD9IAn5Xys2gVm9osHn7iKvyxnE4BQ
-         nXhc4bGwMHyoXts7JeVIViAa4mrGY6ueRoyqnu4OOz8A1FhalrjPYkGZSv3tcq/7aSk9
-         bDDtCbgSC9Ob6bbh/hAWpeK2Gsets+MYHHZRJokFlAdYCrB9INmTEk2Qram8KH29aMtz
-         Y2QKo/mYqxVdVrCH0YvzwRO28Wg/LZjOK5AVxHhtxfFYlMVZiYNxNVM2H4ModhT4XomM
-         9CMg==
-X-Gm-Message-State: AOAM530wu/2ha1AvNiyDynqWqlw7IubOrqQ01V78aHzbdxF///TAiT8u
-        70KlpAhghs8RHj7rTuwwhzvrKg==
-X-Google-Smtp-Source: ABdhPJwjccrvXrRDtW8YC0zECaOaVmzzOrfXick8ROZdWaUbmP6uAMzl1Y7+N1i0guFas2iRBoq51g==
-X-Received: by 2002:adf:8b06:: with SMTP id n6mr6874271wra.5.1634818015858;
-        Thu, 21 Oct 2021 05:06:55 -0700 (PDT)
-Received: from google.com ([95.148.6.207])
-        by smtp.gmail.com with ESMTPSA id y26sm4401523wma.15.2021.10.21.05.06.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 05:06:55 -0700 (PDT)
-Date:   Thu, 21 Oct 2021 13:06:53 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: mfd: add samsung,exynosautov9-sysreg
- compatible
-Message-ID: <YXFX3QoKJ9Wk6miQ@google.com>
-References: <20211012002314.38965-1-chanho61.park@samsung.com>
- <CGME20211012002533epcas2p182112e07ea081957a0e54fea46c66816@epcas2p1.samsung.com>
- <20211012002314.38965-2-chanho61.park@samsung.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jwitIqYt5KYJE8bMdOs497KWqf0OH0KRAwwe6MsrJao=;
+        b=Y5MUBgL3/eTETSiuvrBH1mg8bPIjk6BWc2r+xoGte4Qq1HlILXhFtAC5tuu9qQQ7NY
+         0MtF59aHXaQ9rkvCCgsUIU2AAWovYTAGSkpb3n/Hj0hjur/WFKNiCCO3a4R+s2vZmwat
+         dpMirqihky9TCl6YoKUmeI0Y9gXOm+1a2b7Ea9Q6pwo6RniKD10WQPwF2NXj/7XYY3si
+         0BbUYFYIQdWKHrkQx75TU7nUxJZ6+YraaPU01NcfzxtWtHI+tul6DYeTHjBc/2asBiUQ
+         SmX0ARnDUSzh8J3AkIW2k2NkqFEonCrm8koIKxSWgzOVotZ2IqAUAG+R2qh7rW/HMnBW
+         4hLA==
+X-Gm-Message-State: AOAM530tqinrC3niKqEeg5z+Q8W6JYHOqOjAFdWO1NsA85tbX49Qrk8p
+        5ooPvPmmGkr0c5c0FOoEzzyE2ILPjq9Nf8Zf
+X-Google-Smtp-Source: ABdhPJwgnpojvUNOkm5X3VWBKYdeVxr+KSsIdG8ATeJn4nSKXQDUUeJUwhFeIWr2MSmdrT8fFwjyyQ==
+X-Received: by 2002:a1c:ac03:: with SMTP id v3mr6261500wme.127.1634818066843;
+        Thu, 21 Oct 2021 05:07:46 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:2a2c:7ed:66a0:d637? ([2a01:e34:ed2f:f020:2a2c:7ed:66a0:d637])
+        by smtp.googlemail.com with ESMTPSA id r5sm7503539wmh.28.2021.10.21.05.07.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Oct 2021 05:07:46 -0700 (PDT)
+Subject: Re: [PATCH] clocksource/drivers: depend on sub-architecture for
+ Exynos MCT and Samsung PWM
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20211021063500.39314-1-krzysztof.kozlowski@canonical.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <fc0e9d34-72f6-0d95-fa4f-a25f5d8e5125@linaro.org>
+Date:   Thu, 21 Oct 2021 14:07:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <20211021063500.39314-1-krzysztof.kozlowski@canonical.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211012002314.38965-2-chanho61.park@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 12 Oct 2021, Chanho Park wrote:
-
-> Add document Samsung's Exynos Auto v9 compatible for system registers.
+On 21/10/2021 08:35, Krzysztof Kozlowski wrote:
+> The Exynos MCT and Samsung PWM Timer clocksource drivers are not usable
+> on anything else than Samsung Exynos, S3C or S5P SoC platforms.  These
+> are integral parts of a SoC.  Even though the drivers are not user
+> selectable, still document the hardware architecture explicitly with
+> depends on ARCH_EXYNOS and others.  This also serves a purpose of
+> documenting use-case, if someone ever wonders whether to select the
+> driver for his platform.  No functional change, because drivers are
+> already selected by the platform described in depends. We follow similar
+> approach also for other SoC-specific drivers.
 > 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clocksource/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 0f5e3983951a..3ff6e1f87246 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -418,12 +418,14 @@ config ATMEL_TCB_CLKSRC
+>  config CLKSRC_EXYNOS_MCT
+>  	bool "Exynos multi core timer driver" if COMPILE_TEST
+>  	depends on ARM || ARM64
+> +	depends on ARCH_EXYNOS || COMPILE_TEST
+>  	help
+>  	  Support for Multi Core Timer controller on Exynos SoCs.
+>  
+>  config CLKSRC_SAMSUNG_PWM
+>  	bool "PWM timer driver for Samsung S3C, S5P" if COMPILE_TEST
+>  	depends on HAS_IOMEM
+> +	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || COMPILE_TEST
+>  	help
+>  	  This is a new clocksource driver for the PWM timer found in
+>  	  Samsung S3C, S5P and Exynos SoCs, replacing an earlier driver
+> 
 
-v3 of this patch has already been applied.
-
-I don't see any differences, so I'll keep v3 for now.
-
-In future, please provide a change-log under the '---' tag.
+Applied, thanks
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
