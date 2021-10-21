@@ -2,232 +2,193 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B369AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 08:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2DDC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 09:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B85260EBB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 08:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E528D6112D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 09:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231321AbhJUIJr (ORCPT
+        id S231433AbhJUJJZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 04:09:47 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41320
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231453AbhJUIJp (ORCPT
+        Thu, 21 Oct 2021 05:09:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231406AbhJUJJZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 04:09:45 -0400
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0CA763FFE2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 08:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634803648;
-        bh=sDS7GEvXSQom9VFLoatpvyQsvf0nO+8HlK0Txu0PTXQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=PADkPpd8mm9qlWsShd1/4Xd9MV8Vtkdyza6jqhuYVXB0CUWbqskRwFzekY7cmKIdZ
-         c05k/gph4IFaJeVJxG+VtODPiA5267V01ZMFOzaw88zOsm0+QE0SzQ1MHRlq9nhQDp
-         jnAbsKoc40EbsTSr/23jNyaG6Dup/Tbnx3+l7F8lVSG2xnVwQy4RwW9ue4v2lzh1Dy
-         eItPgGeIi+Cw5Y+Iex/p7L8qTzto8DRdtKm8xctThwc+2mCypQcj7h95OF5YCFSa29
-         cENwmwjSuRCYOn1t5wQgvv2N8ZgRBZ32FuT/KN2Nm40Qf8HOh5XGUBNJEGyp6vJ/12
-         lb0PJ0/mRV7TA==
-Received: by mail-lj1-f197.google.com with SMTP id o4-20020a2ebd84000000b00210ae894d18so2510047ljq.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 01:07:28 -0700 (PDT)
+        Thu, 21 Oct 2021 05:09:25 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4964DC06174E
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 02:07:09 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id m22so23323wrb.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 02:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=fa8qTNUMfdlm5vVlUvR29Di6jRAMYyn6oP+QaN90AGc=;
+        b=GJgVEZZOZYp+PLlgHwjiuMJ0smmcTiEeRFCpmRgAvtDPhVEyxooLd4PxqPk32F2yCn
+         HAVijInvS6hf+6qOwSa5NxtTfgxemgw3RO15ka8CSmmtCpEl5SG5dnE8aGmjdGTD/RRd
+         EAWScowWFcONLMtYxRsOmUxP0SW8eQRVea5mShWM3/1I1KUxFhA6heGkJMjxhubFbyui
+         hT57540L21MmRtgM2RfI9hhDgBWfWBDP0pjhmEcHasi5sKYuVmBwhaobY1nna1m5GX42
+         RXEePQr7gXWR0A8FDB5URysq2I2AJTVc4eRsh2wSJAfUaF5iVXUf4luG0KKw6VIs5SGK
+         bocw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sDS7GEvXSQom9VFLoatpvyQsvf0nO+8HlK0Txu0PTXQ=;
-        b=tGgh/oI2LeIi8K7yyo4XrFgAofYcs+85i+NAAJkjjX5TXUcw5xuciN0IzJkYPmbzqy
-         dtR2CHz4oacciit0l2M6HXOPhFz4uR+uBNQ0tuWouanxNUFPn1WGQy4z0KBWWQ7fvYGM
-         Wih2XdYWiWb2rDwoCCu6mJyvbKriRWNVGOT8WX143HrTeBGSUsCXB5nH+3uq5ofDGHSo
-         NPUAW1SfYNukEaWZfBpFam+JjPTXg2ud618O+pTjYh/ri+rc+RHzunhgH25iAHMvC6zr
-         b/NbrMPapYFPC9igOp7da+TOi9HF/jcidsfS/Qs7x26lLs+LYIJkhravRDd2vcWHeKEC
-         yqIQ==
-X-Gm-Message-State: AOAM5326sHjGaBCAnropPJlsskN064ldcnKrDDH06YotRTCvff5w+RTk
-        lKKFZcmmuBhE4yj3IdF4B77LhBKm1xEOfu3fhGCeyNg3+wTENC5R3FtL+l9lwGreczILawMSP2g
-        +mXlv3Z6s2bPAdq1jkqTthdQ68iknCZnYIobTc+IkvWs+vthx
-X-Received: by 2002:a05:6512:6c8:: with SMTP id u8mr4148821lff.453.1634803647450;
-        Thu, 21 Oct 2021 01:07:27 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwCtWxEEyx0fBceTd9UNL5kCdwBY0brNh3ylEHk3SSt0t9e/oUHzQ848C4wSrj0JPM+f588aQ==
-X-Received: by 2002:a05:6512:6c8:: with SMTP id u8mr4148795lff.453.1634803647253;
-        Thu, 21 Oct 2021 01:07:27 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id m29sm397146lfo.104.2021.10.21.01.07.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Oct 2021 01:07:26 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] clocksource/drivers/exynos_mct_v2: introduce
- Exynos MCT version 2 driver for next Exynos SoC
-To:     Youngmin Nam <youngmin.nam@samsung.com>
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, pullip.cho@samsung.com,
-        hoony.yu@samsung.com, hajun.sung@samsung.com,
-        myung-su.cha@samsung.com
-References: <20211021061804.39118-1-youngmin.nam@samsung.com>
- <CGME20211021055112epcas2p278145beb21cd6cc4217813a41c1e1407@epcas2p2.samsung.com>
- <20211021061804.39118-2-youngmin.nam@samsung.com>
- <0c5dcdab-7aa3-a98f-e615-acbe98489935@canonical.com>
- <20211021082650.GA30741@perf>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <1b93aaf3-ed64-b105-dec4-07b6f27b385b@canonical.com>
-Date:   Thu, 21 Oct 2021 10:07:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=fa8qTNUMfdlm5vVlUvR29Di6jRAMYyn6oP+QaN90AGc=;
+        b=pLOBef01IXwVr+UEsdx4e1xiYFrIR1kVjgtK+coPWTZyuKIlZxljrKxFra4fcAK/RS
+         +AZhO/XqwzEHSEMUmxTF23mpklK7fbycXdJCooyqZgaCDHnNLun8JqB2gh70tXGY/4Rg
+         4NY4YolP8ao5AHkf23l2DbW5ozn/PQqCDSN58+aEzL11f1FTWxczLBWprDKm+XuGksoA
+         kbE+jwU8hyZPHiQ3orvk9D0iIkszYizL9xcd8RZuc0sCUwTUzYlhr5m1gakXcfJ50Beb
+         nvY8eFC6FKFVTqc36/gY2HXsPa8o+HoAyQEOEpF65GHvkRIVJlr4iT2io5iamMeSTTdO
+         jUnQ==
+X-Gm-Message-State: AOAM532hPSzSltncmGzjFVapuKBrkKLswbOeViaBMJLr/Qe7lPFWBpPT
+        M+gaEUoNqWBO1q6yd5188pzAfg==
+X-Google-Smtp-Source: ABdhPJyLvrmnvqTWa0t6F6IhSJkal5/W1VnSEpvXXHa1yE5OnPVfRhps7Jd/HKqKroDO8CuXCMBanw==
+X-Received: by 2002:adf:b350:: with SMTP id k16mr5744094wrd.368.1634807227725;
+        Thu, 21 Oct 2021 02:07:07 -0700 (PDT)
+Received: from google.com ([95.148.6.207])
+        by smtp.gmail.com with ESMTPSA id d1sm4408449wrr.72.2021.10.21.02.07.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 02:07:07 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 10:07:05 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
+ and S5M to dtschema
+Message-ID: <YXEtuX5j9z8es0/i@google.com>
+References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
+ <YXA+GoTf6u/Y4qLX@google.com>
+ <16c79986-03b2-b74b-0de8-4118e2c4419f@canonical.com>
+ <b98bd487-6c55-d058-8073-689b9396b527@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20211021082650.GA30741@perf>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b98bd487-6c55-d058-8073-689b9396b527@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/10/2021 10:26, Youngmin Nam wrote:
-> On Thu, Oct 21, 2021 at 08:18:36AM +0200, Krzysztof Kozlowski wrote:
->> On 21/10/2021 08:18, Youngmin Nam wrote:
->>> Exynos MCT version 2 is composed of 1 FRC and 12 comparators.
->>> The 12 comparators can produces interrupts independently,
->>> so they can be used as local timer of each CPU.
->>>
->>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
->>> ---
->>>  drivers/clocksource/Kconfig         |   6 +
->>>  drivers/clocksource/Makefile        |   1 +
->>>  drivers/clocksource/exynos_mct_v2.c | 336 ++++++++++++++++++++++++++++
->>>  drivers/clocksource/exynos_mct_v2.h |  74 ++++++
->>>  4 files changed, 417 insertions(+)
->>>  create mode 100644 drivers/clocksource/exynos_mct_v2.c
->>>  create mode 100644 drivers/clocksource/exynos_mct_v2.h
->>>
->>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->>> index 0f5e3983951a..8ac04dd7f713 100644
->>> --- a/drivers/clocksource/Kconfig
->>> +++ b/drivers/clocksource/Kconfig
->>> @@ -421,6 +421,12 @@ config CLKSRC_EXYNOS_MCT
->>>  	help
->>>  	  Support for Multi Core Timer controller on Exynos SoCs.
->>>  
->>> +config CLKSRC_EXYNOS_MCT_V2
->>> +	bool "Exynos multi core timer (ver 2) driver" if COMPILE_TEST
->>> +	depends on ARM64
->>
->> depends on ARCH_EXYNOS.
->>
-> Okay
->>> +	help
->>> +	  Support for Multi Core Timer controller on Exynos SoCs.
->>> +
->>>  config CLKSRC_SAMSUNG_PWM
->>>  	bool "PWM timer driver for Samsung S3C, S5P" if COMPILE_TEST
->>>  	depends on HAS_IOMEM
->>> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
->>> index c17ee32a7151..dc7d5cf27516 100644
->>> --- a/drivers/clocksource/Makefile
->>> +++ b/drivers/clocksource/Makefile
->>> @@ -43,6 +43,7 @@ obj-$(CONFIG_CADENCE_TTC_TIMER)	+= timer-cadence-ttc.o
->>>  obj-$(CONFIG_CLKSRC_STM32)	+= timer-stm32.o
->>>  obj-$(CONFIG_CLKSRC_STM32_LP)	+= timer-stm32-lp.o
->>>  obj-$(CONFIG_CLKSRC_EXYNOS_MCT)	+= exynos_mct.o
->>> +obj-$(CONFIG_CLKSRC_EXYNOS_MCT_V2)	+= exynos_mct_v2.o
->>>  obj-$(CONFIG_CLKSRC_LPC32XX)	+= timer-lpc32xx.o
->>>  obj-$(CONFIG_CLKSRC_MPS2)	+= mps2-timer.o
->>>  obj-$(CONFIG_CLKSRC_SAMSUNG_PWM)	+= samsung_pwm_timer.o
->>> diff --git a/drivers/clocksource/exynos_mct_v2.c b/drivers/clocksource/exynos_mct_v2.c
->>> new file mode 100644
->>> index 000000000000..2da6d5401629
->>> --- /dev/null
->>> +++ b/drivers/clocksource/exynos_mct_v2.c
->>> @@ -0,0 +1,336 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2022 Samsung Electronics Co., Ltd.
->>> + *		http://www.samsung.com
->>> + *
->>> + * Exynos MCT(Multi-Core Timer) version 2 support
->>> + */
->>> +
->>> +#include <linux/interrupt.h>
->>> +#include <linux/irq.h>
->>> +#include <linux/err.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/clockchips.h>
->>> +#include <linux/cpu.h>
->>> +#include <linux/delay.h>
->>> +#include <linux/percpu.h>
->>> +#include <linux/of.h>
->>> +#include <linux/of_irq.h>
->>> +#include <linux/of_address.h>
->>> +#include <linux/clocksource.h>
->>> +#include "exynos_mct_v2.h"
->>> +
->>> +static void __iomem *reg_base;
->>> +static unsigned long osc_clk_rate;
->>> +static int mct_irqs[MCT_NR_COMPS];
->>> +
->>> +static void exynos_mct_set_compensation(unsigned long osc, unsigned long rtc)
->>> +{
->>> +	unsigned int osc_rtc;
->>> +	unsigned int incr_rtcclk;
->>> +	unsigned int compen_val;
->>> +
->>> +	osc_rtc = (unsigned int)(osc * 1000 / rtc);
->>> +
->>> +	/* MCT_INCR_RTCCLK is integer part of (OSCCLK frequency/RTCCLK frequency). */
->>> +	incr_rtcclk = (osc / rtc) + ((osc % rtc) ? 1 : 0);
->>> +
->>> +	/* MCT_COMPENSATE_VALUE is decimal part of (OSCCLK frequency/RTCCLK frequency). */
->>> +	compen_val = ((osc_rtc + 5) / 10) % 100;
->>> +	if (compen_val)
->>> +		compen_val = 100 - compen_val;
->>> +
->>> +	pr_info("MCT: osc-%lu rtc-%lu incr_rtcclk:0x%08x compen_val:0x%08x\n",
->>> +		osc, rtc, incr_rtcclk, compen_val);
->>> +
->>> +	writel_relaxed(incr_rtcclk, reg_base + EXYNOS_MCT_MCT_INCR_RTCCLK);
->>> +	writel_relaxed(compen_val, reg_base + EXYNOS_MCT_COMPENSATE_VALUE);
->>> +}
->>> +
->>> +/* Clocksource handling */
->>> +static void exynos_mct_frc_start(void)
->>> +{
->>> +	writel_relaxed(MCT_FRC_ENABLE, reg_base + EXYNOS_MCT_MCT_FRC_ENABLE);
->>> +}
->>> +
->>> +/**
->>> + * exynos_read_count_32 - Read the lower 32-bits of the global counter
->>> + *
->>> + * This will read just the lower 32-bits of the global counter.
->>> + *
->>> + * Returns the number of cycles in the global counter (lower 32 bits).
->>> + */
->>
->> All this looks like a modification of Exynos MCT driver, so you should
->> extend that one instead. It does not look like we need two drivers.
->> Please integrate it into existing driver instead of sending a new piece
->> of code copied from vendor tree.
->>
-> MCT version 2 is a completely different HW IP compared to previous MCT.
-> The new MCT has a lot of different resister sets and there are many changes on programming guide.
-> So we cannot share the previous code. At first, I also considered that way you mentioned,
-> but it would be better to implement the driver seperately to maintain the new driver cleanly.
+On Wed, 20 Oct 2021, Krzysztof Kozlowski wrote:
 
-We have several drivers supporting different devices and we avoid mostly
-duplicating new ones. The different register layout is not the valid
-reason - we support differences in several places. Just take a look at
-Samsung PMIC drivers where register layout is quite different between
-designs. Still one clock driver, one RTC driver and 2-3 regulator
-drivers (for ~7 devices).
+> On 20/10/2021 18:08, Krzysztof Kozlowski wrote:
+> > On 20/10/2021 18:04, Lee Jones wrote:
+> >> On Wed, 06 Oct 2021, Krzysztof Kozlowski wrote:
+> >>
+> >>> Hi All,
+> >>>
+> >>> Changes since v2
+> >>> ================
+> >>> 1. Add Rob's tags.
+> >>> 2. Remove "regulator-name" from properties (all regulator dtschema).
+> >>> 3. Move "unevaluatedProperties" higher to make code easier to read (all regulator dtschema).
+> >>> 4. Add ref-type to op-mode property (patch 6: s5m8767 regulators).
+> >>>
+> >>> Changes since v1
+> >>> ================
+> >>> 1. Drop DTS patches - applied.
+> >>> 2. Fully remove bindings/regulator/samsung,s5m8767.txt .
+> >>> 3. Minor subject reformatting and few typos in text.
+> >>>
+> >>>
+> >>> Intro
+> >>> =====
+> >>> This patchset converts all devicetree bindings of Samsung S2M and S5M
+> >>> PMIC devices from txt to dtschema.
+> >>>
+> >>> It includes also two fixes because later conversion depends on it
+> >>> (contextually).
+> >>>
+> >>>
+> >>> Merging/dependencies
+> >>> ====================
+> >>> 1. Regulator related binding changes depend on first two commits (the
+> >>>    fixes), because of context.
+> >>> 2. The mfd bindings depend on clock and regulator bindings.
+> >>>
+> >>> The fixes and bindings changes (patches 1-10) should go via the same
+> >>> tree.  For example regulator or mfd tree.
+> >>>
+> >>> Another alternative is that regulator patches (1-2, 4-6) go via Mark who
+> >>> later gives MFD a stable branch/tag to pull. Then the clock and MFD
+> >>> bindings would go on top via MFD tree. Or any other setup you would like
+> >>> to have. :)
+> >>>
+> >>>
+> >>> Overview of devices
+> >>> ===================
+> >>> Essentially all Samsung S2M and S5M PMICs are very similar devices. They
+> >>> provide the same functionality: regulators, RTC, 2 or 3 clocks and main
+> >>> power management (e.g. power cut to SoC).
+> >>>
+> >>> The differences are mostly in registers layout and number of regulators.
+> >>>
+> >>> The drivers are built around one common part, mfd/sec-core.c, and share
+> >>> some drivers between devices:
+> >>> 1. MFD sec-core for all devices,
+> >>> 1. one clock driver for most of devices,
+> >>> 2. one RTC driver for all devices,
+> >>> 3. three regulator drivers.
+> >>>
+> >>> The regulator drivers were implementing slightly different features,
+> >>> therefore one regulator binding for all devices does not make much
+> >>> sense.  However the clock device binding can be shared.
+> >>>
+> >>> The final dtschema bindings try to implement this - share only the clock
+> >>> bindings.
+> >>>
+> >>> Best regards,
+> >>> Krzysztof
+> >>>
+> >>> Krzysztof Kozlowski (10):
+> >>>   regulator: s5m8767: do not use reset value as DVS voltage if GPIO DVS
+> >>>     is disabled
+> >>>   regulator: dt-bindings: samsung,s5m8767: correct
+> >>>     s5m8767,pmic-buck-default-dvs-idx property
+> >>>   dt-bindings: clock: samsung,s2mps11: convert to dtschema
+> >>>   regulator: dt-bindings: samsung,s2m: convert to dtschema
+> >>>   regulator: dt-bindings: samsung,s2mpa01: convert to dtschema
+> >>>   regulator: dt-bindings: samsung,s5m8767: convert to dtschema
+> >>>   dt-bindings: mfd: samsung,s2mps11: convert to dtschema
+> >>>   dt-bindings: mfd: samsung,s2mpa01: convert to dtschema
+> >>>   dt-bindings: mfd: samsung,s5m8767: convert to dtschema
+> >>>   dt-bindings: mfd: samsung,s5m8767: document buck and LDO supplies
+> >>
+> >> Looks like these are ready to be pushed.
+> >>
+> >> However, I am not in receipt of patches 1-2.
+> >>
+> >> Am I okay to merge 3-10 right now?
+> > 
+> > No. This is v3, but we need v4. Please:
+> > 1. Merge tag from Mark:
+> > https://lore.kernel.org/lkml/YWCT+YL%2F9qHbF9f0@sirena.org.uk/
+> > 
+> > 2. Then apply patches 7-10 (MFD bindings).
+> 
+> ... patches 7-10 from that v4 of course. They start here:
+> https://lore.kernel.org/lkml/20211008113931.134847-4-krzysztof.kozlowski@canonical.com/
 
-Similarly to SoC clock, pinctrl, PMU and other drivers - we re-use
-instead of duplicating entire driver.
+... and these can do in on their own?  With no inter-dependencies?
 
-I am sorry but the argument that block is different is not enough. What
-is exactly not compatible with current driver which could not be modeled
-by different driver data (or structure with ops)?
+Or is Rob going to tell me off again?
 
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
