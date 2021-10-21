@@ -2,111 +2,216 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A680CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 06:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CC1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 07:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5D261372
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 06:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C943A60F6E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 07:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231238AbhJUGh3 (ORCPT
+        id S231424AbhJUHmP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 02:37:29 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:38394
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231208AbhJUGhU (ORCPT
+        Thu, 21 Oct 2021 03:42:15 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:56439 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231452AbhJUHmL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 02:37:20 -0400
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CFFAB3F4BA
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 06:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634798103;
-        bh=FmJ0rjr2j5+lZ1GrbJW3m6QcUxRmDvBVeUC/Lqmm3nw=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=WP18SOrx0BOOrHMAnutPxgIoglAs7Q5n7IJP0y53xk0WtLc4558xkVBkwFTLhDDLF
-         iI5xyjIRDR7htOcux+KRNo/MMF9Pq9ETFbTQyyhLRPh3MRNPUOVFXYGuWNopzXdUcb
-         uO0Up+0pByPgJbejYYF2UOJWMMAlNr7ldEmVZaTWhMv40DUrj7mV9FsdbNNcbw5uZT
-         Lws3VUT/lHyDrhnHFpcWhka74kZqj5klysqMS6Olg/yyshWZfu0EMJzD0B1wCev9d9
-         I/CWmcIydhpbTidXeVk3zWs8RMUESU/V3NWZ5wOIk+mASfg34BH81qkLb7VbCV/seN
-         Q4G0tKlPpvUxA==
-Received: by mail-lf1-f69.google.com with SMTP id f6-20020a056512228600b003fdc9741438so4227659lfu.18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Oct 2021 23:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FmJ0rjr2j5+lZ1GrbJW3m6QcUxRmDvBVeUC/Lqmm3nw=;
-        b=qtGTAtiP1ow9uKtw3zCSS0x/XBgxOcxnleqPS2MrDEvbGt4qMduaF3EF7ZWTr+EVDX
-         bnAHv+epSZ237FmjX7v7SqH0sywMBmfpkBUe/aeDTi1fwomEUtx78Jvs1kMMUikInAJ6
-         QV1oz3+3+2HK5/NXljwD5cTiDKovufNT5k102kii9X3xSoyISe3be2+UC68cAmvlljYB
-         k10PhnmNB7vH+ZhJ1CYXTS9mCllfFXl0f4Rfsm5cX+M/PRuKinqhom7MDaqF+eusWDsT
-         17oK9bhmQEUL6Sp0eHhhaBM5wER01tcqUCpxxJNIRsR+1nn5uS8YwMOdQb9QwxVO3KN5
-         Qq+A==
-X-Gm-Message-State: AOAM532cX5wrR5Z1Cp96+/oSIUs+Sb4KRzeUMJT+Jz2jYWiKuOYuCAGj
-        dosF1BT7fp0IJo9YKGMmKWbTg6+qoTznrBNypnEwFXKvfBARXueaiQwoYpgDzry3cpSrxMu/apv
-        l77ur7gQzPn56gOlZfHm8BnMHV1MtYyl5+N2h75KLEOoF5cnw
-X-Received: by 2002:ac2:5210:: with SMTP id a16mr3742221lfl.279.1634798103081;
-        Wed, 20 Oct 2021 23:35:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJza9ue2pg33DwBqRkVK1XuyGjUU2kIoIrQ+EuluMtZxge5KEKRL9s/NaBB4FHMl7nmgQnaK6w==
-X-Received: by 2002:ac2:5210:: with SMTP id a16mr3742195lfl.279.1634798102828;
-        Wed, 20 Oct 2021 23:35:02 -0700 (PDT)
-Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id q20sm423805ljp.61.2021.10.20.23.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Oct 2021 23:35:02 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] clocksource/drivers: depend on sub-architecture for Exynos MCT and Samsung PWM
-Date:   Thu, 21 Oct 2021 08:35:00 +0200
-Message-Id: <20211021063500.39314-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.30.2
+        Thu, 21 Oct 2021 03:42:11 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id D4BE92B012EA;
+        Thu, 21 Oct 2021 03:39:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 21 Oct 2021 03:39:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=Ig1NvDgki9mc/elboNYuCt9K83
+        3bzrfrL+LUGb9uXpg=; b=OGSlvN/lnYQBUsMdggz3wEVvHYB2Bn31n4plOWWkxM
+        rWRzs1wBWRYd7IFuHbQwgQcfYhPvt+y/1LLMygK+mH6OI2hOmSXlydu93E30/sOR
+        1LEuTnj4CAURh857bNT9PxwAeookSU4Qmx5ZSPT8luTCwmMFrJIqUcepQ+S2sLV+
+        wZfpCdl/pmxVpn4B2hV+NWEO0N0dOVaMbk8TKXUHyRDpNJOiNbR7sGnXyBFg8gj4
+        uFryvZUXIfQV+tsNmzN6hLcyjtTkyQVMF88ds5Wz4YLjbdfBmitsrdaZgOaoOaJ/
+        3IJIt81jgj+jagQY1pdvabkc4GyyYuFTuzepPnSxS4sw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Ig1NvD
+        gki9mc/elboNYuCt9K833bzrfrL+LUGb9uXpg=; b=jweG4n6R0zrCNasc0QxO8I
+        h+W74iVQQn0nFHhvtudyxSX/RSSRIzuJnzrTQGK/WDAai6DrVYIPSGF6QiP3uYMm
+        MnoBlnJH/8i9dQrJmS/H6ipPICqyVDGP+XSLcfPmKoia1TKijeFF4HQ9/rYzOa4W
+        g96ziizY0N1HpAwLiMDx/kHYZPX8arJcQdnsrotMLibbJSzUlsPZ4KdYgEerkyd8
+        8UvK51iSjHg0sT03VhFvNC/o85bmVpTgicfIzI9IXUZZOLyC8f0G6y9DdtZ/LrJ/
+        WOPyBQMVfvE34EztJ0fjgCkYSlQxzHkEEGA/TJHICwnEYBNYCAJi3mJOzNa0Z80A
+        ==
+X-ME-Sender: <xms:RRlxYcXFvwguWd3dmZWHRQ3WjV5Oy53_r1Rd7SDRjC12y_Qnw_kbPA>
+    <xme:RRlxYQlP6HTrl9SC6uWdf5yS6npjMLwFJrpbsmTCO6ea4fwIjkHHUu_qQhlopYjyj
+    AeEtdA1LQXnjsq487Q>
+X-ME-Received: <xmr:RRlxYQYVmB9ir25rs9tGYt71BZNF4VYBjbzD3NqGcuNuNIDY3bUoNbzfSWPmhmBInHcbd3THCu-dyRV5pB5iBAVV3HujMVBgWFkOG7Sg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddvhedgudduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgtggfgsehtqhertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepteeikefgffekgeekledtheduteetjefgkeeuvefhhfetgedugfektdeugeff
+    gfefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:RRlxYbXDD_GnPb0xAQgYrZ2-s_U5LgW5aB1f-iALx2cbvbwSAxuy9g>
+    <xmx:RRlxYWm2qmpQlplvdr0s0gxyTw91TUG3QLHX9wBqg5HzOD7jx8V8aQ>
+    <xmx:RRlxYQedRIIrJbFSpzTS_9N9pXBjGrxbeMkXe6D-vICqPbspx2rTJA>
+    <xmx:SBlxYU3ZFLlG9khXKHP-woEqyAQ5VoFfiOntNkv5kWRwQ1ocyNYdnUzHozY>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Oct 2021 03:39:48 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tian Tao <tiantao6@hisilicon.com>,
+        freedreno@lists.freedesktop.org,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v5 00/21] drm/bridge: Make panel and bridge probe order consistent
+Date:   Thu, 21 Oct 2021 09:39:26 +0200
+Message-Id: <20211021073947.499373-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.31.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Exynos MCT and Samsung PWM Timer clocksource drivers are not usable
-on anything else than Samsung Exynos, S3C or S5P SoC platforms.  These
-are integral parts of a SoC.  Even though the drivers are not user
-selectable, still document the hardware architecture explicitly with
-depends on ARCH_EXYNOS and others.  This also serves a purpose of
-documenting use-case, if someone ever wonders whether to select the
-driver for his platform.  No functional change, because drivers are
-already selected by the platform described in depends. We follow similar
-approach also for other SoC-specific drivers.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- drivers/clocksource/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 0f5e3983951a..3ff6e1f87246 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -418,12 +418,14 @@ config ATMEL_TCB_CLKSRC
- config CLKSRC_EXYNOS_MCT
- 	bool "Exynos multi core timer driver" if COMPILE_TEST
- 	depends on ARM || ARM64
-+	depends on ARCH_EXYNOS || COMPILE_TEST
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
- 
- config CLKSRC_SAMSUNG_PWM
- 	bool "PWM timer driver for Samsung S3C, S5P" if COMPILE_TEST
- 	depends on HAS_IOMEM
-+	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || COMPILE_TEST
- 	help
- 	  This is a new clocksource driver for the PWM timer found in
- 	  Samsung S3C, S5P and Exynos SoCs, replacing an earlier driver
--- 
-2.30.2
-
+Hi,=0D
+=0D
+We've encountered an issue with the RaspberryPi DSI panel that prevented th=
+e=0D
+whole display driver from probing.=0D
+=0D
+The issue is described in detail in the commit 7213246a803f ("drm/vc4: dsi:=
+=0D
+Only register our component once a DSI device is attached"), but the basic =
+idea=0D
+is that since the panel is probed through i2c, there's no synchronization=0D
+between its probe and the registration of the MIPI-DSI host it's attached t=
+o.=0D
+=0D
+We initially moved the component framework registration to the MIPI-DSI Hos=
+t=0D
+attach hook to make sure we register our component only when we have a DSI=
+=0D
+device attached to our MIPI-DSI host, and then use lookup our DSI device in=
+ our=0D
+bind hook.=0D
+=0D
+However, all the DSI bridges controlled through i2c are only registering th=
+eir=0D
+associated DSI device in their bridge attach hook, meaning with our change=
+=0D
+above, we never got that far, and therefore ended up in the same situation =
+than=0D
+the one we were trying to fix for panels.=0D
+=0D
+The best practice to avoid those issues is to register its functions only a=
+fter=0D
+all its dependencies are live. We also shouldn't wait any longer than we sh=
+ould=0D
+to play nice with the other components that are waiting for us, so in our c=
+ase=0D
+that would mean moving the DSI device registration to the bridge probe.=0D
+=0D
+This has been tested on vc4 (with sn65dsi83 and ps8640), msm (sn65dsi86,=0D
+lt9611), kirin (adv7511) and exynos.=0D
+=0D
+Let me know what you think,=0D
+Maxime=0D
+=0D
+---=0D
+=0D
+Changes from v4:=0D
+  - Rebased on current drm-misc-next=0D
+  - Collected the various tags=0D
+  - Fix for Kirin=0D
+  - Added conversion patch for msm=0D
+=0D
+Changes from v3:=0D
+  - Converted exynos and kirin=0D
+  - Converted all the affected bridge drivers=0D
+  - Reworded the documentation a bit=0D
+=0D
+Changes from v2:=0D
+  - Changed the approach as suggested by Andrzej, and aligned the bridge on=
+ the=0D
+    panel this time.=0D
+  - Fixed some typos=0D
+=0D
+Changes from v1:=0D
+  - Change the name of drm_of_get_next function to drm_of_get_bridge=0D
+  - Mention the revert of 87154ff86bf6 and squash the two patches that were=
+=0D
+    reverting that commit=0D
+  - Add some documentation=0D
+  - Make drm_panel_attach and _detach succeed when no callback is there=0D
+=0D
+Maxime Ripard (20):=0D
+  drm/bridge: adv7533: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: adv7511: Register and attach our DSI device at probe=0D
+  drm/bridge: anx7625: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: anx7625: Register and attach our DSI device at probe=0D
+  drm/bridge: lt8912b: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt8912b: Register and attach our DSI device at probe=0D
+  drm/bridge: lt9611: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt9611: Register and attach our DSI device at probe=0D
+  drm/bridge: lt9611uxc: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt9611uxc: Register and attach our DSI device at probe=0D
+  drm/bridge: ps8640: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: ps8640: Register and attach our DSI device at probe=0D
+  drm/bridge: sn65dsi83: Fix bridge removal=0D
+  drm/bridge: sn65dsi83: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: sn65dsi83: Register and attach our DSI device at probe=0D
+  drm/bridge: sn65dsi86: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: sn65dsi86: Register and attach our DSI device at probe=0D
+  drm/bridge: tc358775: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: tc358775: Register and attach our DSI device at probe=0D
+  drm/kirin: dsi: Adjust probe order=0D
+=0D
+Rob Clark (1):=0D
+  drm/msm/dsi: Adjust probe order=0D
+=0D
+ drivers/gpu/drm/bridge/adv7511/adv7511.h     |   1 -=0D
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |  15 ++-=0D
+ drivers/gpu/drm/bridge/adv7511/adv7533.c     |  20 +---=0D
+ drivers/gpu/drm/bridge/analogix/anx7625.c    |  40 ++++---=0D
+ drivers/gpu/drm/bridge/lontium-lt8912b.c     |  31 ++----=0D
+ drivers/gpu/drm/bridge/lontium-lt9611.c      |  62 ++++-------=0D
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c   |  65 +++++------=0D
+ drivers/gpu/drm/bridge/parade-ps8640.c       | 107 ++++++++++---------=0D
+ drivers/gpu/drm/bridge/tc358775.c            |  50 +++++----=0D
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c        |  88 ++++++++-------=0D
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c        | 101 +++++++++--------=0D
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c |  52 +++++----=0D
+ drivers/gpu/drm/msm/dsi/dsi.c                |  50 +++++----=0D
+ drivers/gpu/drm/msm/dsi/dsi.h                |   2 +-=0D
+ drivers/gpu/drm/msm/dsi/dsi_host.c           |  22 ++--=0D
+ drivers/gpu/drm/msm/dsi/dsi_manager.c        |   6 +-=0D
+ drivers/gpu/drm/msm/msm_drv.h                |   2 +=0D
+ 17 files changed, 348 insertions(+), 366 deletions(-)=0D
+=0D
+-- =0D
+2.31.1=0D
+=0D
