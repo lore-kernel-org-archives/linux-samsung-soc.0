@@ -2,78 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2633C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 20:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DDFC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 23:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B10FD61037
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 20:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC87D6128E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 23:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231822AbhJUU5V (ORCPT
+        id S232158AbhJUXmZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 16:57:21 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:46149 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbhJUU5U (ORCPT
+        Thu, 21 Oct 2021 19:42:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229512AbhJUXmZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 16:57:20 -0400
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id E2C0E20004;
-        Thu, 21 Oct 2021 20:55:02 +0000 (UTC)
-Date:   Thu, 21 Oct 2021 22:55:02 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] rtc: s3c: Add time range
-Message-ID: <YXHTptyzo8oMoKk2@piout.net>
-References: <20211019131724.3109-1-semen.protsenko@linaro.org>
- <20211019131724.3109-3-semen.protsenko@linaro.org>
- <6dbd4812-bac3-55dc-108e-c322e8a493de@canonical.com>
- <6ce55971-bee5-1bc9-c3a2-28e6ede37401@canonical.com>
- <CAPLW+4mE09AOSco+X9qE=1sjXvNVkOxtJqur+HoBJExxiw0J=g@mail.gmail.com>
- <YW8E6oeIoRdpmPL8@piout.net>
- <CAPLW+4k26qZDug4JkuPaM_gZMgz8LPg7GHe-5C7zKzEGtzdp=g@mail.gmail.com>
- <effeb83b-7923-7086-5b4f-36266015e137@canonical.com>
- <CAPLW+4=RuoT016zHotKvrNNxB_bZt4VXhZRWkGuJs22XeOpcpA@mail.gmail.com>
+        Thu, 21 Oct 2021 19:42:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id CB0D861208;
+        Thu, 21 Oct 2021 23:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634859608;
+        bh=TRjAishGZW/mEXzyo6a17dS1h5NFtEhAgreGj7cD/MY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=T8SQPXfJP7vEXxhrov9+kLkKPRmnzAMqGNa7NJp9tVU08qobJl241ezro29id3PwI
+         lxh/9QxECcW/U1E+f+J+Pz1qLHUTF+iIJ4P+vPuYhKTFHKh0Z1Y8Pe6jBSMMvOsa5W
+         f5zIWi31KFIIozWRK/zimVQ9sXXWlgmHtvP3I65U48uob2LaeafMPNbE1aYbLtWQdf
+         lsxAVkraK53s9UurYNpRx8iW0m8bf2ul+/pUjaPpaTTXLastBWiPiVq4F+Pf1ubcYd
+         0VZUUPkeqSW5+FPMI7rNE19nZPV4sUUt/AXm8tC5v5vEyElTHK1K3/+ynk4FAe7xP3
+         8hLHIsqIjhpVg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPLW+4=RuoT016zHotKvrNNxB_bZt4VXhZRWkGuJs22XeOpcpA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v17 0/3] AX88796C SPI Ethernet Adapter
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163485960876.25151.11012064455389480138.git-patchwork-notify@kernel.org>
+Date:   Thu, 21 Oct 2021 23:40:08 +0000
+References: <20211020182422.362647-1-l.stelmach@samsung.com>
+In-Reply-To: <20211020182422.362647-1-l.stelmach@samsung.com>
+To:     =?utf-8?q?=C5=81ukasz_Stelmach_=3Cl=2Estelmach=40samsung=2Ecom=3E?=@ci.codeaurora.org
+Cc:     davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch,
+        jim.cromie@gmail.com, hkallweit1@gmail.com, robh+dt@kernel.org,
+        kgene@kernel.org, krzk@kernel.org, linux@armlinux.org.uk,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/10/2021 22:48:51+0300, Sam Protsenko wrote:
-> After testing thoroughly, I can confirm that Alexandre is right about
-> leap years (Exynos850 RTC treats both 2000 and 2100 as leap years).
-> And it also overflows internally on 2159 year, limiting the actual
-> time range at 160 years. So I'll keep that range at 100 years for all
-> RTCs. As Krzysztof said, there is no practical reasons in trying to
-> increase it anyway. Will send v2 soon.
-> 
-> What I'm curious about is RTC testing. I've found this test suite:
-> 
->     tools/testing/selftests/rtc/rtctest.c
-> 
-> But it doesn't seem to cover corner cases (like checking leap years,
-> which was discussed here). Just a thought: maybe it should be added
-> there, so everyone can benefit from that? For example, I know that in
-> Linaro we are running LKFT tests for different boards, so that might
-> theoretically reveal some bugs. Though I understand possible
-> implications: we probably don't know which ranges are supported in
-> driver that's being tested. Anyway, just saying.
-> 
+Hello:
 
-Sorry, I should have pointed to:
-https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.git/tree/rtc-range.c
+This series was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-This does check for the actual range of an RTC.
+On Wed, 20 Oct 2021 20:24:19 +0200 you wrote:
+> This is a driver for AX88796C Ethernet Adapter connected in SPI mode as
+> found on ARTIK5 evaluation board. The driver has been ported from a
+> v3.10.9 vendor kernel for ARTIK5 board.
+> 
+> Changes in v17:
+>   - marked no_regs_list as const
+>   - added myself as MODULE_AUTHOR()
+>   - rearranged locking in ax88796c_close() to prevent race condition in
+>     case ax88796c_work() wakes the queue after trasmission.
+> 
+> [...]
 
+Here is the summary with links:
+  - [net-next,v17,1/3] dt-bindings: vendor-prefixes: Add asix prefix
+    https://git.kernel.org/netdev/net-next/c/4def0acb63ce
+  - [net-next,v17,2/3] dt-bindings: net: Add bindings for AX88796C SPI Ethernet Adapter
+    https://git.kernel.org/netdev/net-next/c/b13c7a88a7b6
+  - [net-next,v17,3/3] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter Driver
+    https://git.kernel.org/netdev/net-next/c/a97c69ba4f30
 
+You are awesome, thank you!
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
