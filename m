@@ -2,193 +2,126 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2DDC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 09:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0C9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 09:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E528D6112D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 09:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1024611C7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Oct 2021 09:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231433AbhJUJJZ (ORCPT
+        id S231371AbhJUJMa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Oct 2021 05:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbhJUJJZ (ORCPT
+        Thu, 21 Oct 2021 05:12:30 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:57908
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231321AbhJUJMa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Oct 2021 05:09:25 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4964DC06174E
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 02:07:09 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id m22so23323wrb.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 02:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=fa8qTNUMfdlm5vVlUvR29Di6jRAMYyn6oP+QaN90AGc=;
-        b=GJgVEZZOZYp+PLlgHwjiuMJ0smmcTiEeRFCpmRgAvtDPhVEyxooLd4PxqPk32F2yCn
-         HAVijInvS6hf+6qOwSa5NxtTfgxemgw3RO15ka8CSmmtCpEl5SG5dnE8aGmjdGTD/RRd
-         EAWScowWFcONLMtYxRsOmUxP0SW8eQRVea5mShWM3/1I1KUxFhA6heGkJMjxhubFbyui
-         hT57540L21MmRtgM2RfI9hhDgBWfWBDP0pjhmEcHasi5sKYuVmBwhaobY1nna1m5GX42
-         RXEePQr7gXWR0A8FDB5URysq2I2AJTVc4eRsh2wSJAfUaF5iVXUf4luG0KKw6VIs5SGK
-         bocw==
+        Thu, 21 Oct 2021 05:12:30 -0400
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4C0333F304
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 09:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634807411;
+        bh=bbSHRxsR73bGstaaNlqrnr2h4OekYl5/Y0NpOv9VPBw=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=GiU2ougumgmG6uUTccWbtxnuXlWgVr3da9PbCxCKBeDFG/r5nSGbd27f0fPQdp9Qk
+         zMpP8NuMd69UlfOcHqnQ2wZnV82hAZNalisRtj1eqeBRcX4D4uLIc8jwyzQhSEq/7W
+         oGoFINOMP3IKltFK04IK5U0dcuj+H8ta0hzy9ogjd5tnnHW7XNE8unhF6OeG4FHvNs
+         Dx1Cix6eB/TKFN6ovimHQqgNz7IoAiscFS9xU7rCyaP33b2fAFQAoAlMN2JYftnziW
+         kewhpBsjMhgQMIoumEls940J/I+TjLUzrGlioCZzxKr1NZw6MyS8/pZ6wTMgHxI5fP
+         lDYkka2ciCSOA==
+Received: by mail-lf1-f69.google.com with SMTP id br42-20020a056512402a00b003fd94a74905so4384584lfb.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2021 02:10:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=fa8qTNUMfdlm5vVlUvR29Di6jRAMYyn6oP+QaN90AGc=;
-        b=pLOBef01IXwVr+UEsdx4e1xiYFrIR1kVjgtK+coPWTZyuKIlZxljrKxFra4fcAK/RS
-         +AZhO/XqwzEHSEMUmxTF23mpklK7fbycXdJCooyqZgaCDHnNLun8JqB2gh70tXGY/4Rg
-         4NY4YolP8ao5AHkf23l2DbW5ozn/PQqCDSN58+aEzL11f1FTWxczLBWprDKm+XuGksoA
-         kbE+jwU8hyZPHiQ3orvk9D0iIkszYizL9xcd8RZuc0sCUwTUzYlhr5m1gakXcfJ50Beb
-         nvY8eFC6FKFVTqc36/gY2HXsPa8o+HoAyQEOEpF65GHvkRIVJlr4iT2io5iamMeSTTdO
-         jUnQ==
-X-Gm-Message-State: AOAM532hPSzSltncmGzjFVapuKBrkKLswbOeViaBMJLr/Qe7lPFWBpPT
-        M+gaEUoNqWBO1q6yd5188pzAfg==
-X-Google-Smtp-Source: ABdhPJyLvrmnvqTWa0t6F6IhSJkal5/W1VnSEpvXXHa1yE5OnPVfRhps7Jd/HKqKroDO8CuXCMBanw==
-X-Received: by 2002:adf:b350:: with SMTP id k16mr5744094wrd.368.1634807227725;
-        Thu, 21 Oct 2021 02:07:07 -0700 (PDT)
-Received: from google.com ([95.148.6.207])
-        by smtp.gmail.com with ESMTPSA id d1sm4408449wrr.72.2021.10.21.02.07.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bbSHRxsR73bGstaaNlqrnr2h4OekYl5/Y0NpOv9VPBw=;
+        b=1kUrJnzlIp3vblenUh7HE9aU2s6EwoCsnePGRDmK8BO4pVWsghw4gddFU8w38MG0Z8
+         XOQyNm4aajRf9BDaEMoGrGEvKhVKr/hJ/HdVcNGKD6Y/BptVAemstpaBCCC0djiWTTiB
+         q/PQgCrVvmjiMzMzN+GMW+8/9/UGutCB09H5iR3M4hG4S9P0u+6u7YuWcWl/20Qn+KXW
+         xLJpnxY3SG9wBgWaDBfQOuHtD3Kna7MMUEPtQKoUoKTF0JyuYm/3o2Mz8nLWjf6d76Uy
+         rSzBHmlHMMPwIVEAjHn7dedjCo/c5egirW05TYyozOvEqO3x0DHZeWgHnO7i0iWhUXIF
+         jWQw==
+X-Gm-Message-State: AOAM533/kuP4y5oYcGGOKMAKQjvaSOkDnH9NHiW8oygXUJv6+r9RTp0I
+        se/QpJMrBANC4Gen+j5DiQlYgzOrxFDXLCxm7QgChaVPK5+svpowjmBs8TWeYJ9ka5gI73Klb7u
+        hLTzEmjDeihn0ahbuoDztv79jZyCRafGzztWfNiVCz2G8lcyV
+X-Received: by 2002:a2e:a171:: with SMTP id u17mr4669564ljl.371.1634807410715;
+        Thu, 21 Oct 2021 02:10:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxJi51V3uLcQ6VQf22lZE+UEugXH6TyHQQH8xsi40Ilosw8EeaKsw6tjG5kUM2pWTCLIevk/g==
+X-Received: by 2002:a2e:a171:: with SMTP id u17mr4669547ljl.371.1634807410497;
+        Thu, 21 Oct 2021 02:10:10 -0700 (PDT)
+Received: from kozik-lap.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id v7sm523707lji.81.2021.10.21.02.10.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 02:07:07 -0700 (PDT)
-Date:   Thu, 21 Oct 2021 10:07:05 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
- and S5M to dtschema
-Message-ID: <YXEtuX5j9z8es0/i@google.com>
-References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
- <YXA+GoTf6u/Y4qLX@google.com>
- <16c79986-03b2-b74b-0de8-4118e2c4419f@canonical.com>
- <b98bd487-6c55-d058-8073-689b9396b527@canonical.com>
+        Thu, 21 Oct 2021 02:10:10 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+List-Id: <soc.lore.kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: [GIT PULL] riscv: dts: few cleanups for v5.16
+Date:   Thu, 21 Oct 2021 11:09:55 +0200
+Message-Id: <20211021090955.115005-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b98bd487-6c55-d058-8073-689b9396b527@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 20 Oct 2021, Krzysztof Kozlowski wrote:
+Hi Arnd and Olof,
 
-> On 20/10/2021 18:08, Krzysztof Kozlowski wrote:
-> > On 20/10/2021 18:04, Lee Jones wrote:
-> >> On Wed, 06 Oct 2021, Krzysztof Kozlowski wrote:
-> >>
-> >>> Hi All,
-> >>>
-> >>> Changes since v2
-> >>> ================
-> >>> 1. Add Rob's tags.
-> >>> 2. Remove "regulator-name" from properties (all regulator dtschema).
-> >>> 3. Move "unevaluatedProperties" higher to make code easier to read (all regulator dtschema).
-> >>> 4. Add ref-type to op-mode property (patch 6: s5m8767 regulators).
-> >>>
-> >>> Changes since v1
-> >>> ================
-> >>> 1. Drop DTS patches - applied.
-> >>> 2. Fully remove bindings/regulator/samsung,s5m8767.txt .
-> >>> 3. Minor subject reformatting and few typos in text.
-> >>>
-> >>>
-> >>> Intro
-> >>> =====
-> >>> This patchset converts all devicetree bindings of Samsung S2M and S5M
-> >>> PMIC devices from txt to dtschema.
-> >>>
-> >>> It includes also two fixes because later conversion depends on it
-> >>> (contextually).
-> >>>
-> >>>
-> >>> Merging/dependencies
-> >>> ====================
-> >>> 1. Regulator related binding changes depend on first two commits (the
-> >>>    fixes), because of context.
-> >>> 2. The mfd bindings depend on clock and regulator bindings.
-> >>>
-> >>> The fixes and bindings changes (patches 1-10) should go via the same
-> >>> tree.  For example regulator or mfd tree.
-> >>>
-> >>> Another alternative is that regulator patches (1-2, 4-6) go via Mark who
-> >>> later gives MFD a stable branch/tag to pull. Then the clock and MFD
-> >>> bindings would go on top via MFD tree. Or any other setup you would like
-> >>> to have. :)
-> >>>
-> >>>
-> >>> Overview of devices
-> >>> ===================
-> >>> Essentially all Samsung S2M and S5M PMICs are very similar devices. They
-> >>> provide the same functionality: regulators, RTC, 2 or 3 clocks and main
-> >>> power management (e.g. power cut to SoC).
-> >>>
-> >>> The differences are mostly in registers layout and number of regulators.
-> >>>
-> >>> The drivers are built around one common part, mfd/sec-core.c, and share
-> >>> some drivers between devices:
-> >>> 1. MFD sec-core for all devices,
-> >>> 1. one clock driver for most of devices,
-> >>> 2. one RTC driver for all devices,
-> >>> 3. three regulator drivers.
-> >>>
-> >>> The regulator drivers were implementing slightly different features,
-> >>> therefore one regulator binding for all devices does not make much
-> >>> sense.  However the clock device binding can be shared.
-> >>>
-> >>> The final dtschema bindings try to implement this - share only the clock
-> >>> bindings.
-> >>>
-> >>> Best regards,
-> >>> Krzysztof
-> >>>
-> >>> Krzysztof Kozlowski (10):
-> >>>   regulator: s5m8767: do not use reset value as DVS voltage if GPIO DVS
-> >>>     is disabled
-> >>>   regulator: dt-bindings: samsung,s5m8767: correct
-> >>>     s5m8767,pmic-buck-default-dvs-idx property
-> >>>   dt-bindings: clock: samsung,s2mps11: convert to dtschema
-> >>>   regulator: dt-bindings: samsung,s2m: convert to dtschema
-> >>>   regulator: dt-bindings: samsung,s2mpa01: convert to dtschema
-> >>>   regulator: dt-bindings: samsung,s5m8767: convert to dtschema
-> >>>   dt-bindings: mfd: samsung,s2mps11: convert to dtschema
-> >>>   dt-bindings: mfd: samsung,s2mpa01: convert to dtschema
-> >>>   dt-bindings: mfd: samsung,s5m8767: convert to dtschema
-> >>>   dt-bindings: mfd: samsung,s5m8767: document buck and LDO supplies
-> >>
-> >> Looks like these are ready to be pushed.
-> >>
-> >> However, I am not in receipt of patches 1-2.
-> >>
-> >> Am I okay to merge 3-10 right now?
-> > 
-> > No. This is v3, but we need v4. Please:
-> > 1. Merge tag from Mark:
-> > https://lore.kernel.org/lkml/YWCT+YL%2F9qHbF9f0@sirena.org.uk/
-> > 
-> > 2. Then apply patches 7-10 (MFD bindings).
-> 
-> ... patches 7-10 from that v4 of course. They start here:
-> https://lore.kernel.org/lkml/20211008113931.134847-4-krzysztof.kozlowski@canonical.com/
+I have an old patchset for RISC-V dts cleanups which I sent to mailing lists in
+August 2021 (v1, v2), resent in September and pinged two times.  They got some
+review (from Alexandre Ghiti for SiFive, from Conor Dooley for Microchip) but
+unfortunately Palmer (RISC-V maintainer) did not respond here.
 
-... and these can do in on their own?  With no inter-dependencies?
+The usual RISC-V patches go via Palmer to Linus and I am not planning to change
+that, but I want to get these fixed.
 
-Or is Rob going to tell me off again?
+Could you grab these to soc tree?
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Best regards,
+Krzysztof
+
+
+
+The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
+
+  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/riscv-sifive-dt-5.16
+
+for you to fetch changes up to 9962a066f3c1d4588d0dd876ceac2c03ef87acf3:
+
+  riscv: dts: sifive: add missing compatible for plic (2021-10-19 10:59:57 +0200)
+
+----------------------------------------------------------------
+RISC-V DTS changes for v5.16
+
+Cleanups of RISC-V SiFive and Microchip DTSes with dtschema.  These are
+few minor fixes to make DTSes pass the dtschema, without actual
+functional effect.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (5):
+      riscv: dts: sifive: use only generic JEDEC SPI NOR flash compatible
+      riscv: dts: sifive: fix Unleashed board compatible
+      riscv: dts: sifive: drop duplicated nodes and properties in sifive
+      riscv: dts: microchip: add missing compatibles for clint and plic
+      riscv: dts: sifive: add missing compatible for plic
+
+ arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi   |  4 ++--
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi          |  2 +-
+ arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts | 10 +++-------
+ arch/riscv/boot/dts/sifive/hifive-unmatched-a00.dts |  7 +------
+ 4 files changed, 7 insertions(+), 16 deletions(-)
