@@ -2,63 +2,63 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93244C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EF1C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 819A361027
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC4760F9D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233682AbhJYPS1 (ORCPT
+        id S233875AbhJYPSd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Oct 2021 11:18:27 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:37003 "EHLO
+        Mon, 25 Oct 2021 11:18:33 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:54651 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233097AbhJYPSX (ORCPT
+        by vger.kernel.org with ESMTP id S233721AbhJYPS3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Oct 2021 11:18:23 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 0EECC5806B0;
-        Mon, 25 Oct 2021 11:16:01 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 25 Oct 2021 11:16:01 -0400
+        Mon, 25 Oct 2021 11:18:29 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7626A5806B6;
+        Mon, 25 Oct 2021 11:16:06 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 25 Oct 2021 11:16:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=Z7ANxwSCuwS0R
-        URLyvuze3uqYVQmNE0MSkpaXoK8tPE=; b=lrLNFA1Vstcpm9VyxaiJVSWyu17AN
-        tRP5pPCm1GnQO4pW/Xdf9MTBUAD/MGrlzVifez0Ra0iJZyLY256gTYtDU9HZtWUC
-        70slgGnrYHqx+1QAxXtLKOVBd17kudsLt01LaAEFlkAPExyo3iq+Z06R8NvUZ6ag
-        vSERMbxXl7uZMlZXoNukNF6xheaA3+1www9lcAETz4p0Bos6VH1ANCAxOXX9wy4/
-        uu46tGjh6kFVL1UO1656Nu6G0FIOBts7Ry6/0Ao86x2q2O6qr0LSeMj4UWkhIVPS
-        UJ22wm8MPDksIlJEbhjnDsRBhIYNPDkOh3MrMFT/N8MSlsTSHKWKl/4mA==
+        :mime-version:content-transfer-encoding; s=fm1; bh=RyGY+A4bMARCP
+        Cc0cLwmXfEa8Ojs0eyLuWNCplLnI/w=; b=Z0d11qmfymG9+E6B+Q7a0NuoiiH09
+        OvsuHAMN29qJioXgVCllRB+3SmpDxNaOMiNZwYLmcJCqAcg6TVaPr7B21zQKWQ20
+        ZDwUiZrIJU3emGvOqqkS730pHN4F9MKcGODXnDlQyfsDVMu+h9A3Vh9f8nzwIbph
+        qKRQ5GD+g8OU6xkkuef3LYV9bgT7S6Ma7gAOxl5M45h/DvMKMeNFFJ9U+SwTnKSo
+        Z3NYK6oz2TQRfdC3rmLYLJyGwL+vKhPSKpDJq13hQdSZABCBlNUbiyYJEFvqKC37
+        TX17uJWC0ppD2To4QOYCG0lZMCQkqd3gUtpQtKKEMt+gdBZjpzBtXo6xA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=Z7ANxwSCuwS0RURLyvuze3uqYVQmNE0MSkpaXoK8tPE=; b=g6SZc2xU
-        CKtectEAIxdawUW7z8v7UYLFe6C5MG9X53x8wtaszUJtajPqVNmS1sxmxTY/dqwS
-        dBKNIh1FCfhpdh66KbOuH5DIqZM+w2/9ADd2gh/FjKaVtCgt/6Z/b85nMbRrCfUu
-        IYvSnHaUeSgfD0LF3/uPKQpConhvhf6WAB+DQvOEV/FSCeKgDX799zq5jwN7OVVz
-        Bb7lYHYnZF+d0U6WRoi/0YSPsrcHiJa+ZzZ1YSgxaN3k29eFKst4C6u7bZPZPM0Y
-        QVLpJKgCi8uTJZlrbu5M2R8NSlnvbKvVqLvIBASIka1StQxkPuVjGfslDelzHqnY
-        q0tQYLR/UdHhDA==
-X-ME-Sender: <xms:MMp2YYd2C-FMtTyCOTP1UkU1uNknadBvJjXDGpz5EzHeE2uVC1PhgQ>
-    <xme:MMp2YaPdyLxr2CQac7gQf0VUamkNSTDICppkKEumsqoyXXDw7786zx514dFefGAEk
-    o-Sx4x-ftpvdlwD66E>
-X-ME-Received: <xmr:MMp2YZgoS3xI5ksxjHDNh-CFmm2Ip_Rh05kivJ-Ct_EReUy-xInbc-eVyX-5GIbYGI6pGzNBLYI0W9nvqXGA7s4ka0Ndvxg1tjeXi1q_>
+        fm1; bh=RyGY+A4bMARCPCc0cLwmXfEa8Ojs0eyLuWNCplLnI/w=; b=dJSbZUIx
+        hJQy0NPOUflbdeJ1wS/6wuVXLO9Mk7+R8HtA/w3+LZ+9Oh5kAfztc8mRIQmpRMZn
+        dqyUSCVu/f5Hib+/jWSHT/3Z6Le/YKTCOepl25qXiR6Bxm9gHKL6uaEkZcSH+F6P
+        It6Khi41R3rXnjYUHYKGlNLnfEHWLc3LfTnWl8280ZYBTRLlFgoZr8MAAn7fCr0K
+        1zvJXP7wSObMfkV62fVWHzAxJzS3WGmTMhu2HZK0RrDyihiGIUSzTX3kUE4DLCjF
+        rXTaBl9KQfHEwtPSoFljr1VrU6BSjNy3T88c/gf88tZYqz7c1bFyEmXBcmfgZmLR
+        pDWJUg/5AETA8A==
+X-ME-Sender: <xms:Ncp2YRrhWBFz869LvrziZuE-3iqrx2Umhae-4z7aP6lGTljanKy2PQ>
+    <xme:Ncp2YTpQA5WB1kgxbEvanIyDJg81W10M_2JIKRCYGeFeys3eOyFLvacQbvxOVJn8L
+    5oOiE6S0vBYMPA7Nc4>
+X-ME-Received: <xmr:Ncp2YeOcVaWEYCtcnYMVvnUSRMZBbfKtoXHjhYCCPW_kisHA0_U9yPaClRpq3M4IBcPHTIPO3i2E5BPCbVJSU9ltdgLj_7qrILg6UihK>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdefhedgkeefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
     htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:MMp2Yd9EfPPm_EF08iHkVt8tQJyrcwVwAPRx5oCbYySTt2VVKqTz6w>
-    <xmx:MMp2YUtxoW17lpqM7W1fAxdFGMqGwENCv61f34lC04SX_1cGeyN87A>
-    <xmx:MMp2YUE7kbUWubwpxr85LzDNVuWZpvKeyv7mSB2HJ0VgyrFORS0CfA>
-    <xmx:Mcp2YYccv879PemulmAS8PkX4sEB_nSRcmQMqqP4xeWYC8gQGXrcpQ>
+X-ME-Proxy: <xmx:Ncp2Yc4qjxBeaAuI0Axga50lhhaZCAnOUWqhG5phxRzVTAU5g0O_SQ>
+    <xmx:Ncp2YQ4SlgNEp7bHbUCiVeb1sJkTychRyPcOpSTPqcGb2eqiI6RUwg>
+    <xmx:Ncp2YUjg7KRGLt2ICR57UNhIm4z5yBl0tGtfa-HOKHq0XG7wz0TSjg>
+    <xmx:Nsp2YQ7RTOKRbSLC8IIi2IbQJp_mVYA5PeqYllPDuwstwE2nqQAQRQ>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 25 Oct 2021 11:16:00 -0400 (EDT)
+ 25 Oct 2021 11:16:05 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -87,9 +87,9 @@ Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
         linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
         Sean Paul <sean@poorly.run>
-Subject: [PATCH v6 07/21] drm/bridge: lt9611: Switch to devm MIPI-DSI helpers
-Date:   Mon, 25 Oct 2021 17:15:22 +0200
-Message-Id: <20211025151536.1048186-8-maxime@cerno.tech>
+Subject: [PATCH v6 09/21] drm/bridge: lt9611uxc: Switch to devm MIPI-DSI helpers
+Date:   Mon, 25 Oct 2021 17:15:24 +0200
+Message-Id: <20211025151536.1048186-10-maxime@cerno.tech>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211025151536.1048186-1-maxime@cerno.tech>
 References: <20211025151536.1048186-1-maxime@cerno.tech>
@@ -103,83 +103,100 @@ Let's switch to the new devm MIPI-DSI function to register and attach
 our secondary device.
 
 Acked-by: Sam Ravnborg <sam@ravnborg.org>
-Tested-by: John Stultz <john.stultz@linaro.org>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/bridge/lontium-lt9611.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 38 +++++-----------------
+ 1 file changed, 8 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
-index 29b1ce2140ab..654131aca5ed 100644
---- a/drivers/gpu/drm/bridge/lontium-lt9611.c
-+++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
-@@ -760,6 +760,7 @@ static struct mipi_dsi_device *lt9611_attach_dsi(struct lt9611 *lt9611,
- 	const struct mipi_dsi_device_info info = { "lt9611", 0, NULL };
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+index 010657ea7af7..ab1a0c00aad8 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+@@ -258,17 +258,18 @@ static struct mipi_dsi_device *lt9611uxc_attach_dsi(struct lt9611uxc *lt9611uxc,
+ 	const struct mipi_dsi_device_info info = { "lt9611uxc", 0, NULL };
  	struct mipi_dsi_device *dsi;
  	struct mipi_dsi_host *host;
-+	struct device *dev = lt9611->dev;
++	struct device *dev = lt9611uxc->dev;
  	int ret;
  
  	host = of_find_mipi_dsi_host_by_node(dsi_node);
-@@ -768,7 +769,7 @@ static struct mipi_dsi_device *lt9611_attach_dsi(struct lt9611 *lt9611,
+ 	if (!host) {
+-		dev_err(lt9611uxc->dev, "failed to find dsi host\n");
++		dev_err(dev, "failed to find dsi host\n");
  		return ERR_PTR(-EPROBE_DEFER);
  	}
  
 -	dsi = mipi_dsi_device_register_full(host, &info);
 +	dsi = devm_mipi_dsi_device_register_full(dev, host, &info);
  	if (IS_ERR(dsi)) {
- 		dev_err(lt9611->dev, "failed to create dsi device\n");
+-		dev_err(lt9611uxc->dev, "failed to create dsi device\n");
++		dev_err(dev, "failed to create dsi device\n");
  		return dsi;
-@@ -779,29 +780,15 @@ static struct mipi_dsi_device *lt9611_attach_dsi(struct lt9611 *lt9611,
+ 	}
+ 
+@@ -277,10 +278,9 @@ static struct mipi_dsi_device *lt9611uxc_attach_dsi(struct lt9611uxc *lt9611uxc,
  	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
  			  MIPI_DSI_MODE_VIDEO_HSE;
  
 -	ret = mipi_dsi_attach(dsi);
 +	ret = devm_mipi_dsi_attach(dev, dsi);
  	if (ret < 0) {
--		dev_err(lt9611->dev, "failed to attach dsi to host\n");
+-		dev_err(lt9611uxc->dev, "failed to attach dsi to host\n");
 -		mipi_dsi_device_unregister(dsi);
 +		dev_err(dev, "failed to attach dsi to host\n");
  		return ERR_PTR(ret);
  	}
  
- 	return dsi;
+@@ -355,19 +355,6 @@ static int lt9611uxc_connector_init(struct drm_bridge *bridge, struct lt9611uxc
+ 	return drm_connector_attach_encoder(&lt9611uxc->connector, bridge->encoder);
  }
  
--static void lt9611_bridge_detach(struct drm_bridge *bridge)
+-static void lt9611uxc_bridge_detach(struct drm_bridge *bridge)
 -{
--	struct lt9611 *lt9611 = bridge_to_lt9611(bridge);
+-	struct lt9611uxc *lt9611uxc = bridge_to_lt9611uxc(bridge);
 -
--	if (lt9611->dsi1) {
--		mipi_dsi_detach(lt9611->dsi1);
--		mipi_dsi_device_unregister(lt9611->dsi1);
+-	if (lt9611uxc->dsi1) {
+-		mipi_dsi_detach(lt9611uxc->dsi1);
+-		mipi_dsi_device_unregister(lt9611uxc->dsi1);
 -	}
 -
--	mipi_dsi_detach(lt9611->dsi0);
--	mipi_dsi_device_unregister(lt9611->dsi0);
+-	mipi_dsi_detach(lt9611uxc->dsi0);
+-	mipi_dsi_device_unregister(lt9611uxc->dsi0);
 -}
 -
- static int lt9611_connector_init(struct drm_bridge *bridge, struct lt9611 *lt9611)
+ static int lt9611uxc_bridge_attach(struct drm_bridge *bridge,
+ 				   enum drm_bridge_attach_flags flags)
  {
- 	int ret;
-@@ -855,9 +842,7 @@ static int lt9611_bridge_attach(struct drm_bridge *bridge,
+@@ -388,19 +375,11 @@ static int lt9611uxc_bridge_attach(struct drm_bridge *bridge,
+ 	/* Attach secondary DSI, if specified */
+ 	if (lt9611uxc->dsi1_node) {
+ 		lt9611uxc->dsi1 = lt9611uxc_attach_dsi(lt9611uxc, lt9611uxc->dsi1_node);
+-		if (IS_ERR(lt9611uxc->dsi1)) {
+-			ret = PTR_ERR(lt9611uxc->dsi1);
+-			goto err_unregister_dsi0;
+-		}
++		if (IS_ERR(lt9611uxc->dsi1))
++			return PTR_ERR(lt9611uxc->dsi1);
+ 	}
+ 
  	return 0;
- 
- err_unregister_dsi0:
--	lt9611_bridge_detach(bridge);
- 	drm_connector_cleanup(&lt9611->connector);
--	mipi_dsi_device_unregister(lt9611->dsi0);
- 
- 	return ret;
+-
+-err_unregister_dsi0:
+-	mipi_dsi_detach(lt9611uxc->dsi0);
+-	mipi_dsi_device_unregister(lt9611uxc->dsi0);
+-
+-	return ret;
  }
-@@ -952,7 +937,6 @@ static void lt9611_bridge_hpd_enable(struct drm_bridge *bridge)
  
- static const struct drm_bridge_funcs lt9611_bridge_funcs = {
- 	.attach = lt9611_bridge_attach,
--	.detach = lt9611_bridge_detach,
- 	.mode_valid = lt9611_bridge_mode_valid,
- 	.enable = lt9611_bridge_enable,
- 	.disable = lt9611_bridge_disable,
+ static enum drm_mode_status
+@@ -544,7 +523,6 @@ static struct edid *lt9611uxc_bridge_get_edid(struct drm_bridge *bridge,
+ 
+ static const struct drm_bridge_funcs lt9611uxc_bridge_funcs = {
+ 	.attach = lt9611uxc_bridge_attach,
+-	.detach = lt9611uxc_bridge_detach,
+ 	.mode_valid = lt9611uxc_bridge_mode_valid,
+ 	.mode_set = lt9611uxc_bridge_mode_set,
+ 	.detect = lt9611uxc_bridge_detect,
 -- 
 2.31.1
 
