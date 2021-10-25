@@ -2,109 +2,221 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5211C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 14:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8AAC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9745460EBC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 14:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D02DF60F9D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:15:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233594AbhJYOvO (ORCPT
+        id S233843AbhJYPSI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Oct 2021 10:51:14 -0400
-Received: from marcansoft.com ([212.63.210.85]:38708 "EHLO mail.marcansoft.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233591AbhJYOuf (ORCPT
+        Mon, 25 Oct 2021 11:18:08 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:50339 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233777AbhJYPSI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Oct 2021 10:50:35 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: hector@marcansoft.com)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 5BD8541E57;
-        Mon, 25 Oct 2021 14:48:06 +0000 (UTC)
-From:   Hector Martin <marcan@marcan.st>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Hector Martin <marcan@marcan.st>, Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        Mark Kettenis <kettenis@openbsd.org>
-Subject: [PATCH v2 8/8] arm64: dts: apple: t8103: Add UART2
-Date:   Mon, 25 Oct 2021 23:47:18 +0900
-Message-Id: <20211025144718.157794-9-marcan@marcan.st>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211025144718.157794-1-marcan@marcan.st>
-References: <20211025144718.157794-1-marcan@marcan.st>
+        Mon, 25 Oct 2021 11:18:08 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C51E7580684;
+        Mon, 25 Oct 2021 11:15:44 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 25 Oct 2021 11:15:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:content-type:mime-version
+        :content-transfer-encoding; s=fm1; bh=diT2fj6PkuD69IpbJXNRqYXYKn
+        P5NvILTd/s9bJ0OlY=; b=VhHgFlMBiex3XRoKMVkP+MWPTu1mTWrGp4HgjCJft+
+        fHkLIUpdJGrXpdk0BZKDh0N1sigiQA3bm27LeWhFLC21sLCnDLFgfcb+Cv0SNR8U
+        tohUaqhOuqwc+1KuOXWtoe8CC/v1ugkxODW6w3gp/79FhR07P028s58b15qWqQuo
+        TW53Ucj3d+S0vfYZzHXDE/ObvS1xxnk9mYY0+qizTiINFyHnotoAgDrV3C9CbEeD
+        PLyfe9kLAShmsTe9vben4QH/GmZ2TQVQZH6rqeK++soiCr1YRvWTSASxvhfdi77s
+        TJnOsLV7v6sfOHsu1UCbobC/s2wa2tjRdFXAiAumU+OA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:message-id:mime-version:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=diT2fj
+        6PkuD69IpbJXNRqYXYKnP5NvILTd/s9bJ0OlY=; b=gaB3S8V7nuXn3MJq7kzo6d
+        d4Fp06+GtLqaQ5KXkUBaE5WWL//ewQTFZkT7eGQabm1x7ipCRO7mAj1S++bwpKx7
+        WlPX3MZh2+FJC0osKUtI23L5JD2A27pCnl8LQP8rZrIB+1NUNhHM34zBs4pvCVfW
+        5WwLYEkL2QzJZ4AlPdtBapgmwZlmJV9JQ31U7+lVzxIjowrW8h7O1TbSr4lVV5Ix
+        EY03X8IbPZIdmkIjems9awfdTKIoKGxBWHzJl5bTpwd/PcjA/1pjQPqZJ5EOByBO
+        Xq9pQ5WdiAYvNGKtfe2uUf3kpyHt56Q6Vt6IuMBqB2MfF1ko0PmM0Fk1qERGAUFQ
+        ==
+X-ME-Sender: <xms:G8p2YbjduyIs9HNx7cBAEAtontiOHY_jS-jmkObeZ94vetZX9eqg6w>
+    <xme:G8p2YYDTxtDtJpxDM63v_DyoGxxuDZW426cibcC6bQSOnDTLUgGd3p_JMSnScrPAP
+    P1BaCp7V2agX6reYAg>
+X-ME-Received: <xmr:G8p2YbFlDXgXfKfgO7g5j2-kTCFAp2v_8FrI3mbI1bXoVwMFnlvolDBPhz8oR_tl2upxI_ht9fmxL4co22guE-t6cz_fWHqABc4U51Qt>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdefhedgkeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffotggggfesthhqredtredtjeenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeetieekgfffkeegkeeltdehudetteejgfekueevhffhteegudfgkedtueegfffg
+    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:G8p2YYS-IKlGhVYjArQExuUKR87BklDnDhRBhhW0Wt7MdKK7geic9g>
+    <xmx:G8p2YYx6D8REvZ37THes66PRhnkNn4ws_YLk_AFPewIYJ42sz0DgJA>
+    <xmx:G8p2Ye6Rp0Sli7-vbb2yAR6hc2D382XbLOQRatF-PTTlMX7HbXZFWw>
+    <xmx:IMp2YbRN72csKs5h_Y3VhNJjZqJpThnblLDm2WRMg0A90KxxMn549Q>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Oct 2021 11:15:39 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-arm-msm@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Sean Paul <sean@poorly.run>
+Subject: [PATCH v6 00/21] drm/bridge: Make panel and bridge probe order consistent
+Date:   Mon, 25 Oct 2021 17:15:15 +0200
+Message-Id: <20211025151536.1048186-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.31.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This UART is connected to the debug port of the WLAN module. It is
-mostly useless, but makes for a good test case for runtime-pm without
-having to unbind the console from the main system UART.
-
-Reviewed-by: Mark Kettenis <kettenis@openbsd.org>
-Signed-off-by: Hector Martin <marcan@marcan.st>
----
- arch/arm64/boot/dts/apple/t8103-j274.dts |  5 +++++
- arch/arm64/boot/dts/apple/t8103.dtsi     | 12 ++++++++++++
- 2 files changed, 17 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/apple/t8103-j274.dts b/arch/arm64/boot/dts/apple/t8103-j274.dts
-index e0f6775b9878..16c5eb7f53b1 100644
---- a/arch/arm64/boot/dts/apple/t8103-j274.dts
-+++ b/arch/arm64/boot/dts/apple/t8103-j274.dts
-@@ -17,6 +17,7 @@ / {
- 
- 	aliases {
- 		serial0 = &serial0;
-+		serial2 = &serial2;
- 	};
- 
- 	chosen {
-@@ -43,3 +44,7 @@ memory@800000000 {
- &serial0 {
- 	status = "okay";
- };
-+
-+&serial2 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-index 1d0fac1747c7..92f938a1ad3b 100644
---- a/arch/arm64/boot/dts/apple/t8103.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-@@ -126,6 +126,18 @@ serial0: serial@235200000 {
- 			status = "disabled";
- 		};
- 
-+		serial2: serial@235208000 {
-+			compatible = "apple,s5l-uart";
-+			reg = <0x2 0x35208000 0x0 0x1000>;
-+			reg-io-width = <4>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 607 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkref>, <&clkref>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			power-domains = <&ps_uart2>;
-+			status = "disabled";
-+		};
-+
- 		aic: interrupt-controller@23b100000 {
- 			compatible = "apple,t8103-aic", "apple,aic";
- 			#interrupt-cells = <3>;
--- 
-2.33.0
-
+Hi,=0D
+=0D
+We've encountered an issue with the RaspberryPi DSI panel that prevented th=
+e=0D
+whole display driver from probing.=0D
+=0D
+The issue is described in detail in the commit 7213246a803f ("drm/vc4: dsi:=
+=0D
+Only register our component once a DSI device is attached"), but the basic =
+idea=0D
+is that since the panel is probed through i2c, there's no synchronization=0D
+between its probe and the registration of the MIPI-DSI host it's attached t=
+o.=0D
+=0D
+We initially moved the component framework registration to the MIPI-DSI Hos=
+t=0D
+attach hook to make sure we register our component only when we have a DSI=
+=0D
+device attached to our MIPI-DSI host, and then use lookup our DSI device in=
+ our=0D
+bind hook.=0D
+=0D
+However, all the DSI bridges controlled through i2c are only registering th=
+eir=0D
+associated DSI device in their bridge attach hook, meaning with our change=
+=0D
+above, we never got that far, and therefore ended up in the same situation =
+than=0D
+the one we were trying to fix for panels.=0D
+=0D
+The best practice to avoid those issues is to register its functions only a=
+fter=0D
+all its dependencies are live. We also shouldn't wait any longer than we sh=
+ould=0D
+to play nice with the other components that are waiting for us, so in our c=
+ase=0D
+that would mean moving the DSI device registration to the bridge probe.=0D
+=0D
+This has been tested on vc4 (with sn65dsi83 and ps8640), msm (sn65dsi86,=0D
+lt9611), kirin (adv7511) and exynos.=0D
+=0D
+Let me know what you think,=0D
+Maxime=0D
+=0D
+---=0D
+=0D
+Changes from v5:=0D
+  - Collected more tags=0D
+  - Fixed a compilation error for ps8640=0D
+=0D
+Changes from v4:=0D
+  - Rebased on current drm-misc-next=0D
+  - Collected the various tags=0D
+  - Fix for Kirin=0D
+  - Added conversion patch for msm=0D
+=0D
+Changes from v3:=0D
+  - Converted exynos and kirin=0D
+  - Converted all the affected bridge drivers=0D
+  - Reworded the documentation a bit=0D
+=0D
+Changes from v2:=0D
+  - Changed the approach as suggested by Andrzej, and aligned the bridge on=
+ the=0D
+    panel this time.=0D
+  - Fixed some typos=0D
+=0D
+Changes from v1:=0D
+  - Change the name of drm_of_get_next function to drm_of_get_bridge=0D
+  - Mention the revert of 87154ff86bf6 and squash the two patches that were=
+=0D
+    reverting that commit=0D
+  - Add some documentation=0D
+  - Make drm_panel_attach and _detach succeed when no callback is there=0D
+=0D
+Maxime Ripard (20):=0D
+  drm/bridge: adv7533: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: adv7511: Register and attach our DSI device at probe=0D
+  drm/bridge: anx7625: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: anx7625: Register and attach our DSI device at probe=0D
+  drm/bridge: lt8912b: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt8912b: Register and attach our DSI device at probe=0D
+  drm/bridge: lt9611: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt9611: Register and attach our DSI device at probe=0D
+  drm/bridge: lt9611uxc: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: lt9611uxc: Register and attach our DSI device at probe=0D
+  drm/bridge: ps8640: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: ps8640: Register and attach our DSI device at probe=0D
+  drm/bridge: sn65dsi83: Fix bridge removal=0D
+  drm/bridge: sn65dsi83: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: sn65dsi83: Register and attach our DSI device at probe=0D
+  drm/bridge: sn65dsi86: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: sn65dsi86: Register and attach our DSI device at probe=0D
+  drm/bridge: tc358775: Switch to devm MIPI-DSI helpers=0D
+  drm/bridge: tc358775: Register and attach our DSI device at probe=0D
+  drm/kirin: dsi: Adjust probe order=0D
+=0D
+Rob Clark (1):=0D
+  drm/msm/dsi: Adjust probe order=0D
+=0D
+ drivers/gpu/drm/bridge/adv7511/adv7511.h     |   1 -=0D
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |  15 ++-=0D
+ drivers/gpu/drm/bridge/adv7511/adv7533.c     |  20 +---=0D
+ drivers/gpu/drm/bridge/analogix/anx7625.c    |  40 ++++---=0D
+ drivers/gpu/drm/bridge/lontium-lt8912b.c     |  31 ++----=0D
+ drivers/gpu/drm/bridge/lontium-lt9611.c      |  62 ++++-------=0D
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c   |  65 +++++-------=0D
+ drivers/gpu/drm/bridge/parade-ps8640.c       | 105 ++++++++++---------=0D
+ drivers/gpu/drm/bridge/tc358775.c            |  50 +++++----=0D
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c        |  88 ++++++++--------=0D
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c        | 101 +++++++++---------=0D
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c |  52 +++++----=0D
+ drivers/gpu/drm/msm/dsi/dsi.c                |  50 +++++----=0D
+ drivers/gpu/drm/msm/dsi/dsi.h                |   2 +-=0D
+ drivers/gpu/drm/msm/dsi/dsi_host.c           |  22 ++--=0D
+ drivers/gpu/drm/msm/dsi/dsi_manager.c        |   6 +-=0D
+ drivers/gpu/drm/msm/msm_drv.h                |   2 +=0D
+ 17 files changed, 348 insertions(+), 364 deletions(-)=0D
+=0D
+-- =0D
+2.31.1=0D
+=0D
