@@ -2,247 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D2EC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF49C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFF0C60F9B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C5860F9B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Oct 2021 15:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233986AbhJYPT1 (ORCPT
+        id S233637AbhJYPTk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Oct 2021 11:19:27 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:53843 "EHLO
+        Mon, 25 Oct 2021 11:19:40 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:57703 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233989AbhJYPSz (ORCPT
+        by vger.kernel.org with ESMTP id S233872AbhJYPTM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Oct 2021 11:18:55 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 78AE75806CB;
-        Mon, 25 Oct 2021 11:16:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 25 Oct 2021 11:16:32 -0400
+        Mon, 25 Oct 2021 11:19:12 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C5BA45806D1;
+        Mon, 25 Oct 2021 11:16:38 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 25 Oct 2021 11:16:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=3aQjtC+OIX1dD
-        SUs4abOhDu7UcQuzLgRDPAEOeXSI5o=; b=DXVutIx4vLJSSVZuWU1+VeaaSvNhC
-        x5OCf3D5+/ShDtgWSnF4CyMsTej+0yeY7fWz3pTidlcNCLUqMYRlrz8TLCAdZ5Rm
-        iowNDegVwX52xr+CCKcJk3aYIF6q1UM+0csUyWrZAOxK0C9l4OW9YRXTBIfPEYQB
-        q7PXAZ86cShMXd5CCSFUy6TJnl9M5MwVDlp0/k8STuBQWLOwFvDmEndhi6s48aH6
-        KW7yyC84eQLG3LMVt+mnyOybB4iG7lTE0biD0zJXmtFBUtLQ4LwnK2em6gCXHv6+
-        GxB14oYuPcU7QtGEWzi4stI14o+TKEWpXG4BomLcFJKvA83nSFuAO31xQ==
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=D4bLfD9dgR7qDPZz1c2NJXrKeyz
+        Cs/YSQzcSXsgDvWg=; b=QCOs+ZNnLFEb1BYhWJdlYJEDlasbqwKAF0qVOeziiAI
+        K0Wn8u4hvJ6O9fhAwN+Vcq45oZZ3elyvAPkX9cuF1jIJu0O9zX1xknPWe7xw0klP
+        y2ZFbdgYyn7WFmChP8orE01Anpw6ZxSiIa+AzuGb0enpRRpSTlkqbVJUng/pOpCP
+        cvP8DIbeRzDY0g06WEOHqD0T7g8D/t+QXCUHi9BWHw+xdvrhaVPYj1pbO3FMfaWB
+        qK3gRf3HO3OW349bzNZNvn+CWG4hoN+h/ppU5v1DeCs5dE0qQOV9WI2SgnTloAvg
+        //adJ76SZXChxzVNid+3T1NlynwhoshxrJJsanlSTYQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=3aQjtC+OIX1dDSUs4abOhDu7UcQuzLgRDPAEOeXSI5o=; b=XvpO4CIX
-        M59z3QWJeiBot1DVWZ7MbO9wiSAIKCtCt4nWXfdO+qBNb9fj7ZYgiT1IhvasWoDx
-        v4aw4k8yxnPBhc63if+yfeaGff3BH1qKtbJWbfAopqE4VfRNeIMVrBW+8VNiki9y
-        l41/Sm4KEjlSv1ZJk8RaJUxufCwMA3nS0BKg41ekoKUSofSBpnOTgITsHEfuBPaq
-        clihJqApc3peNE5vDIRj/6cxI2e/YvQMlQ4RqTfrP25GTn/wH0FoMYz2WSYOAYF+
-        ZICiuY/6ig53o7rKY2SMlbh/QxEFh15NIIxALMT3y6qH8uMNUWteIIcQbdzQYpY+
-        /YVTAm+TWfE42g==
-X-ME-Sender: <xms:UMp2YS0WhDWH0Q8Np8QJl9eW20sleEXRW-vW6Dzip9AMgmAR01JnlA>
-    <xme:UMp2YVH7mzR8_nchJte47Y_47D_W42_LEdGV0Jl9g5hi-XKom4GTyKDMOOY0Ca5Js
-    m4xZbAZjnVga5sZyBM>
-X-ME-Received: <xmr:UMp2Ya4fQW72O78VLNCboxCjgDk5lnWjBcK05D5bkB2yfq4r-Jv5dy8Q0Fn62wW-8htM7RPw6sDN3xyIzl-gFMQGEdI_cRZ1TacnMzUS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdefhedgkeefucetufdoteggodetrfdotf
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=D4bLfD
+        9dgR7qDPZz1c2NJXrKeyzCs/YSQzcSXsgDvWg=; b=IP1xyiXuWxBCBd8vYnrWwC
+        chI+gem54xqqu9EFECP2wgiXsZJbEvD1X9N3SfnpdFoGabdjaVm11ScRzfk/ubex
+        +QVbfybZ4RUfvO9uw9UXZ5QirROap/xH+gB9xpIPgixzjF5sBLh/ybc6X0W2RqlP
+        CXHec+4bLFJAzIj1GcLZkf5zwqgze0p0g3amfOjJ3a+/49X4eveo76ICyojMVngf
+        YrGBIyEj4war4fnFBoeIJP1SWMWllOH4QhysvSQ+Mm3M7UH3C+g20q9Ec2BixwoX
+        oJ3vEHdBtu8fTh3GpWfKpEsNEF2Olq70p/ZkpnAoxYnQGPEThYQIKfLlyOmSiJ+g
+        ==
+X-ME-Sender: <xms:Vsp2YTzLI-lWf4gWFlFSIAr-KY96qgJ-fDpksW1oKYmu-oKUwWp8IA>
+    <xme:Vsp2YbSMGxh6EZaxcktQBOnL4zBBq5l0IWptj0fWFCrdCw8x1GugQ7EhZrfcCrROT
+    w2w0PPVUUUZPgi2P-8>
+X-ME-Received: <xmr:Vsp2YdX4dMnSvkLl-OsyXvG9gMXio7UHJG02W5wI3QYi0hOZal1mDXmsjp1HMXmajv0s3BGhSSf7vjzYs31YR3UYoAmlzQyv-G4az68N>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdefhedgheehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgepgeenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:UMp2YT09fNFdID_fXdl377iluV4MpJ9CUwqGl4AUGALE8dJP0xZRfw>
-    <xmx:UMp2YVGlameb3Thucmpvs2DZgmtWPxyZdBvxBQ_Oa9gchohdg5MbiA>
-    <xmx:UMp2Yc_Fgf5ltSITEcdyXO87-1yp-UFoMFoujanfAtvD5J3LkeirxA>
-    <xmx:UMp2YRUGPqzrchIK-mhNL8Fay_TAgfaEL2dbCHOBu2OypP5aQbGwxA>
+X-ME-Proxy: <xmx:Vsp2Ydi8nD0-KAhUReZShBdheQbeicblLxZVMH9F6YwnRgAGmCIshw>
+    <xmx:Vsp2YVA8yrCLKfNlUsf6mtu4-xEn4QTZptHVVfDtA1adJZz56XmLYw>
+    <xmx:Vsp2YWIq8nL2OQ_H_el1-60fX19AIQtgiqQe43U4nSish4LDC-H-Ag>
+    <xmx:Vsp2YQUIHmoQgLTv4MjLLPVJlKELz9QKKhYwyX7xdzp_WdJ8Q4kwvA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 25 Oct 2021 11:16:31 -0400 (EDT)
+ 25 Oct 2021 11:16:37 -0400 (EDT)
+Date:   Mon, 25 Oct 2021 17:16:36 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-arm-msm@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
         Xinliang Liu <xinliang.liu@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tian Tao <tiantao6@hisilicon.com>,
+        freedreno@lists.freedesktop.org,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         John Stultz <john.stultz@linaro.org>,
-        linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Sean Paul <sean@poorly.run>
-Subject: [PATCH v6 20/21] drm/kirin: dsi: Adjust probe order
-Date:   Mon, 25 Oct 2021 17:15:35 +0200
-Message-Id: <20211025151536.1048186-21-maxime@cerno.tech>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211025151536.1048186-1-maxime@cerno.tech>
-References: <20211025151536.1048186-1-maxime@cerno.tech>
+        Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v5 00/21] drm/bridge: Make panel and bridge probe order
+ consistent
+Message-ID: <20211025151636.dsc3akojm7ywoecm@gilmour>
+References: <20211021073947.499373-1-maxime@cerno.tech>
+ <YXGFz4o5fWrfGnGk@ravnborg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3qjpa2xa76ueomsl"
+Content-Disposition: inline
+In-Reply-To: <YXGFz4o5fWrfGnGk@ravnborg.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Without proper care and an agreement between how DSI hosts and devices
-drivers register their MIPI-DSI entities and potential components, we can
-end up in a situation where the drivers can never probe.
 
-Most drivers were taking evasive maneuvers to try to workaround this,
-but not all of them were following the same conventions, resulting in
-various incompatibilities between DSI hosts and devices.
+--3qjpa2xa76ueomsl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now that we have a sequence agreed upon and documented, let's convert
-kirin to it.
+Hi Sam,
 
-Tested-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 52 +++++++++++++-------
- 1 file changed, 33 insertions(+), 19 deletions(-)
+On Thu, Oct 21, 2021 at 05:22:55PM +0200, Sam Ravnborg wrote:
+> Hi Maxime,
+>=20
+> > Let me know what you think,
+>=20
+> apply the lot to drm-misc-next. Maybe wait for an r-b or a-b on the kirin
+> patch but the rest is IMO good to go.
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-index 952cfdb1961d..1d556482bb46 100644
---- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-@@ -81,7 +81,7 @@ struct dsi_hw_ctx {
- 
- struct dw_dsi {
- 	struct drm_encoder encoder;
--	struct drm_bridge *bridge;
-+	struct device *dev;
- 	struct mipi_dsi_host host;
- 	struct drm_display_mode cur_mode;
- 	struct dsi_hw_ctx *ctx;
-@@ -720,10 +720,13 @@ static int dw_drm_encoder_init(struct device *dev,
- 	return 0;
- }
- 
-+static const struct component_ops dsi_ops;
- static int dsi_host_attach(struct mipi_dsi_host *host,
- 			   struct mipi_dsi_device *mdsi)
- {
- 	struct dw_dsi *dsi = host_to_dsi(host);
-+	struct device *dev = host->dev;
-+	int ret;
- 
- 	if (mdsi->lanes < 1 || mdsi->lanes > 4) {
- 		DRM_ERROR("dsi device params invalid\n");
-@@ -734,13 +737,20 @@ static int dsi_host_attach(struct mipi_dsi_host *host,
- 	dsi->format = mdsi->format;
- 	dsi->mode_flags = mdsi->mode_flags;
- 
-+	ret = component_add(dev, &dsi_ops);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
- static int dsi_host_detach(struct mipi_dsi_host *host,
- 			   struct mipi_dsi_device *mdsi)
- {
--	/* do nothing */
-+	struct device *dev = host->dev;
-+
-+	component_del(dev, &dsi_ops);
-+
- 	return 0;
- }
- 
-@@ -768,7 +778,17 @@ static int dsi_host_init(struct device *dev, struct dw_dsi *dsi)
- static int dsi_bridge_init(struct drm_device *dev, struct dw_dsi *dsi)
- {
- 	struct drm_encoder *encoder = &dsi->encoder;
--	struct drm_bridge *bridge = dsi->bridge;
-+	struct drm_bridge *bridge;
-+	struct device_node *np = dsi->dev->of_node;
-+	int ret;
-+
-+	/*
-+	 * Get the endpoint node. In our case, dsi has one output port1
-+	 * to which the external HDMI bridge is connected.
-+	 */
-+	ret = drm_of_find_panel_or_bridge(np, 1, 0, NULL, &bridge);
-+	if (ret)
-+		return ret;
- 
- 	/* associate the bridge to dsi encoder */
- 	return drm_bridge_attach(encoder, bridge, NULL, 0);
-@@ -785,10 +805,6 @@ static int dsi_bind(struct device *dev, struct device *master, void *data)
- 	if (ret)
- 		return ret;
- 
--	ret = dsi_host_init(dev, dsi);
--	if (ret)
--		return ret;
--
- 	ret = dsi_bridge_init(drm_dev, dsi);
- 	if (ret)
- 		return ret;
-@@ -809,17 +825,7 @@ static const struct component_ops dsi_ops = {
- static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
- {
- 	struct dsi_hw_ctx *ctx = dsi->ctx;
--	struct device_node *np = pdev->dev.of_node;
- 	struct resource *res;
--	int ret;
--
--	/*
--	 * Get the endpoint node. In our case, dsi has one output port1
--	 * to which the external HDMI bridge is connected.
--	 */
--	ret = drm_of_find_panel_or_bridge(np, 1, 0, NULL, &dsi->bridge);
--	if (ret)
--		return ret;
- 
- 	ctx->pclk = devm_clk_get(&pdev->dev, "pclk");
- 	if (IS_ERR(ctx->pclk)) {
-@@ -852,6 +858,7 @@ static int dsi_probe(struct platform_device *pdev)
- 	dsi = &data->dsi;
- 	ctx = &data->ctx;
- 	dsi->ctx = ctx;
-+	dsi->dev = &pdev->dev;
- 
- 	ret = dsi_parse_dt(pdev, dsi);
- 	if (ret)
-@@ -859,12 +866,19 @@ static int dsi_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, data);
- 
--	return component_add(&pdev->dev, &dsi_ops);
-+	ret = dsi_host_init(&pdev->dev, dsi);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
- }
- 
- static int dsi_remove(struct platform_device *pdev)
- {
--	component_del(&pdev->dev, &dsi_ops);
-+	struct dsi_data *data = platform_get_drvdata(pdev);
-+	struct dw_dsi *dsi = &data->dsi;
-+
-+	mipi_dsi_host_unregister(&dsi->host);
- 
- 	return 0;
- }
--- 
-2.31.1
+I had a compilation error since the rebase of the v4, so I sent a new
+version. John Stultz has tested this series and given his tested-by, and
+is the kirin maintainer.
 
+I guess it's enough?
+
+Maxime
+
+--3qjpa2xa76ueomsl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYXbKVAAKCRDj7w1vZxhR
+xTxXAP98t442n6HxxRUgrl5mGMNjKHZ0TTJhGYni7sAlWVGvsAEAuk3303Gnx9f9
+LeU+JY3jE8IazEwdHOzyzxzY50X/LAU=
+=hbta
+-----END PGP SIGNATURE-----
+
+--3qjpa2xa76ueomsl--
