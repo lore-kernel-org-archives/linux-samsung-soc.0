@@ -2,82 +2,112 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C4FC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 15:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11BAC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 15:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD1C760F02
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 15:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4DBD60EDF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 15:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232783AbhJZPbd (ORCPT
+        id S235554AbhJZPcN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Oct 2021 11:31:33 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:40237 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230523AbhJZPbb (ORCPT
+        Tue, 26 Oct 2021 11:32:13 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41876
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235506AbhJZPcN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Oct 2021 11:31:31 -0400
-Received: from mail-wm1-f43.google.com ([209.85.128.43]) by
- mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MSKly-1mCt9W2ZC4-00Semh for <linux-samsung-soc@vger.kernel.org>; Tue, 26
- Oct 2021 17:29:06 +0200
-Received: by mail-wm1-f43.google.com with SMTP id 67-20020a1c1946000000b0030d4c90fa87so2580214wmz.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 08:29:06 -0700 (PDT)
-X-Gm-Message-State: AOAM530jVwSXp+jG1155YfWWb/pa40ORdSjwpyc2o5TQAnMaIU0UqgYw
-        tM4Zb0NHPflOPahbgQinN3eL902efAWJBE8vO5g=
-X-Google-Smtp-Source: ABdhPJwUHpsOrThxJ7PMSi5UMOgHC/s6cLM5xggqEP9OYbwlu2E+PpcpuWQjE6DvwVvK2nJqeunCdT5x05N4/EDXuMM=
-X-Received: by 2002:a7b:ce93:: with SMTP id q19mr15403059wmj.98.1635262146250;
- Tue, 26 Oct 2021 08:29:06 -0700 (PDT)
+        Tue, 26 Oct 2021 11:32:13 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4FE8A3F332
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 15:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1635262188;
+        bh=WSJF9KCqXo5B633RP/TS84McxX2RgkL3V5mZBciirmg=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=SpFEJpiCSMyUIFGSrjANcYREQx3NFW09vYCzAsM89Vcql+U/oItlal9xkoJ+BCUcP
+         6eK8IppgrvYjQC/u/rU54jp6NUdxFqSwHS7UqSR2UA3pP3T7sv4POaKPdUaMcnDt6T
+         8J2ePsZb8+TsFgcrZ925i7ZhZjrCEaLKACCojaJ21AVc34T6chtWZ46gboME0N5ONM
+         SmoZ7eUlSW8witUuAj3sMe8rvovxRKuN9A91rB8zLx/dRzY/z0teb3JkbNLtVrtAvi
+         hje9ubp12df/bTwvfe7t7v0u81yK5Dk8uM9jmFHnzoWY+rSekSzlOtud8MLVzmqcNC
+         hoVOej4tIG7dA==
+Received: by mail-lf1-f72.google.com with SMTP id d5-20020a0565123d0500b003ffbadeb642so757633lfv.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 08:29:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WSJF9KCqXo5B633RP/TS84McxX2RgkL3V5mZBciirmg=;
+        b=7tOOxAhmUZdmiY75VJZLNjCHQorfa4Gpwx7kpyC9RBO7hWmJOfqVYq2rdA75M1g7Rf
+         Cmyz0w7L7fWVmRcHhLaDyAFmJnUtG+kS1AU9uWMR0go4rPk/M9W8F2cVnrdL6XxQoaeK
+         ebE6F5ykbx2gW0gebuBptLhehWAl/yWiYbTEVlSToxDXbMQYaHhel9w5LKeUTnl1PgzP
+         eMkKx5dmzIJLY4A+RVVXPdbP8UCW/a82ukyUfjD0Wr+vumTs6+ZRApTy4G3Jya6O1ZeK
+         AVPyRqde1crVCegoTXDl++1krJN5wu4XcoIltXQmAc3HBOcneHHfq8PlmKzYjJ0vPeYt
+         LuTQ==
+X-Gm-Message-State: AOAM531Kaks0SCs+PiSakq+pE6FR9b0GNBQ94pym21tMTwhcg0vXajsv
+        KNBEAU6Vn2JmD8zlNdZV+sJN0X0BDGfdlQgHeWVDZUUVk4oJBTijcLJAC0mkjyiGTthymbPKcKK
+        RQJUwxtt7VXWHD2dqiv/+TRFeBiqTLaGCY7HiU9MzVH1V3k41
+X-Received: by 2002:a05:651c:230e:: with SMTP id bi14mr26414045ljb.467.1635262187755;
+        Tue, 26 Oct 2021 08:29:47 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyk7sNJbWjdv3xhjfE+UFgqNsGbUUen1K1mx8YhCM7+SWcWNWstn2HGR1lnvG7kYqDxBpr9RA==
+X-Received: by 2002:a05:651c:230e:: with SMTP id bi14mr26414022ljb.467.1635262187572;
+        Tue, 26 Oct 2021 08:29:47 -0700 (PDT)
+Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id bp40sm441461lfb.78.2021.10.26.08.29.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Oct 2021 08:29:47 -0700 (PDT)
+To:     Will McVicker <willmcvicker@google.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-team@android.com, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20211015190515.3760577-1-willmcvicker@google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v1] clk: samsung: update CPU clk registration
+Message-ID: <cbdbf565-6403-39d3-a4cd-817e515d89a0@canonical.com>
+Date:   Tue, 26 Oct 2021 17:29:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210901123557.1043953-1-liu.yun@linux.dev> <CAK8P3a2AxmdhGKhGxfQetfzE0nKaaTRBmX=0OEPoaxkkZwABNg@mail.gmail.com>
- <957585d9-2f0f-7181-bba3-69c690c92f6f@canonical.com>
-In-Reply-To: <957585d9-2f0f-7181-bba3-69c690c92f6f@canonical.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 26 Oct 2021 17:28:50 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2WwhA8Obz=1yoGbRTTS7w1VU1bUZKkSYxBFhGXo3woGQ@mail.gmail.com>
-Message-ID: <CAK8P3a2WwhA8Obz=1yoGbRTTS7w1VU1bUZKkSYxBFhGXo3woGQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: s3c: irq-s3c24xx: Fix return value check for s3c24xx_init_intc()
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Jackie Liu <liu.yun@linux.dev>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Jackie Liu <liuyun01@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:cQ+Of3HJw6ktGhxncg51t5DVQfzAAqFL5/Jh9l3E7ijrQYj10Nn
- QHpHXUB7MSYRmMfzAzRciYRNGAmZ3T8YSPd+/Bt+bUy+C7N+Q2hSa30I9UWphVC64UIydvm
- 7n4eRH0qUffJc34KyYZFpch5vmxGsHQk+lSegWFw1+6t7DNadJNVo7IJRwVgTLv36xn+m/A
- lJj87fmXya4MoXBDn4CjQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:sK5JzR4WDHc=:V3djjVp94wOdq2Iu2/p79h
- pPZfjhvtLTvyGfREgn2KKIfkWjFKoZzLubl1CXTyEKlzYbms4531vM45hcQKLdXyNanoaENFN
- rQaw5anr7vv0PaRH4U+8cy7STiZempyQsbrHht1mRZuCgyTeK7bHDQtxThIo/VqzPheaBbmL7
- J+XDonpOvGNQzXHCj1k/T2flki+Mwp9uBXo7GX0cgt5YzmHyGX+MeCP6IVMzwHQnRBL8swZXG
- WmDbPeznJSnF7IPQG4Ll5HEGAHx8+UkCmegecsycv/6MjTL4o9N9Ea19fLPsOlgIt5BKMcJ+J
- herZq1uOjbGrtnZpTonCJvi8oacN34788L7TYY1p9/o2TWYOFnkQzEs7SG+fyC8WTixpISZyL
- m13riz2C4uW7uhdB4J7S7qZnQDtnmos3AVVd9SUgPY/VpldpZMAZV+Aq6S3afOeF/7DTFQyPX
- Bh8U6JV7lEFdO2VXsoZZ1jDAoz/5M04RVcj8to4Tuh9X5yA0W4FQwT+iXEB/4Rt681sb4d6Kj
- 1DUNjpLXgXS1AQF+f7ao2WGaKo4cnjDoblai5QTGxQ+6czmo2qeXNj82ut8YuqTc3Xcs5r7em
- hIZMEucl7h6Z3ly+KUoHfkzXr8rRHx/z/n8qYK+9hIITjG+O5QpVKPEdBZ2OT7r9eAgptK5sm
- IMxZdOCJauGwXJjPcR7/ptwbRIwbMVLzoLvMTitI7SAqlRv99g4bGQk2n7MfmFH+ZAAiIX9hl
- JTZG4nMLbnHi3Gm6WlYSRuY2oHC/sWHAPmUwULozToc7xW5mmrXLQZP2WrxvdpVvJCZk8a/hg
- pNSpR4lsddg+FXr1yz2YQ63QD+ZIIrVnRoOpPjNDIwweOMH6W4=
+In-Reply-To: <20211015190515.3760577-1-willmcvicker@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 5:22 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
-> On 26/10/2021 17:10, Arnd Bergmann wrote:
-> > On Wed, Sep 1, 2021 at 2:35 PM Jackie Liu <liu.yun@linux.dev> wrote:
-...
-> > Nothing actually uses the return code of s3c24xx_init_intc(), so returning
-> > NULL on error there and changing all the checks to that would be a much
-> > more straightforward solution.
-> >
-> > Any chance you could send a follow-up to do that?
->
-> I can work on this but you know this is a legacy platform and none of us
-> can test it?
+On 15/10/2021 21:05, Will McVicker wrote:
+> Convert the remaining exynos clock drivers to use
+> samsung_clk_register_cpu() or if possible use
+> samsung_cmu_register_one(). With this we can now make
+> exynos_register_cpu_clock() a static function so that future CPU clock
+> registration changes will use the samsung common clock driver.
+> 
+> The main benefit of this change is that it standardizes the CPU clock
+> registration for the samsung clock drivers.
+> 
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
+> ---
+>  drivers/clk/samsung/clk-cpu.c        |  2 +-
+>  drivers/clk/samsung/clk-cpu.h        |  7 ----
+>  drivers/clk/samsung/clk-exynos3250.c | 54 ++++++++++++++--------------
+>  drivers/clk/samsung/clk-exynos4.c    | 25 +++++++------
+>  drivers/clk/samsung/clk-exynos5250.c | 13 +++----
+>  drivers/clk/samsung/clk-exynos5420.c | 27 +++++++++-----
+>  6 files changed, 67 insertions(+), 61 deletions(-)
+> 
 
-Sure. I was actually hoping for Jackie to send you that follow-up.
+Looks good. Tested also on Exynos5422 board:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-      Arnd
+Best regards,
+Krzysztof
