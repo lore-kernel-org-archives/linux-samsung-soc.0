@@ -2,63 +2,63 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD41CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 11:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25944C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 11:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5EB60EFF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 11:01:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0700D60F9B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Oct 2021 11:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235301AbhJZLD2 (ORCPT
+        id S235386AbhJZLD2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Tue, 26 Oct 2021 07:03:28 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:57520
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:57558
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235356AbhJZLDU (ORCPT
+        by vger.kernel.org with ESMTP id S235372AbhJZLDZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Oct 2021 07:03:20 -0400
+        Tue, 26 Oct 2021 07:03:25 -0400
 Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C8FFE40278
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 11:00:53 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BAFAC40278
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 11:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635246053;
+        s=20210705; t=1635246060;
         bh=saCQu9EKQs4I6SKXkv5FjAbPTAvRNyG3cbYVa3bkKDU=;
         h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=Z6cJ2pbbSnIn9uVxehdiOgI61pnh3GkFannE2EWHWf5bvqVeJLcFi8seGsGXtvYne
-         O6D7tI3wFUlcpSpqsZuwSkaF2vZFQ3Ajb68lmDNYIlLBv/8YWNCB7LWwNQnTG0sqK5
-         /UDOOZSBtq+x2ZPb42R49kcMtiH2mc9JdDgUdcXHJgvbwcmXgUZQdDMeoPVutH67EK
-         Vbc11/35yFp66kftX76j/qV+pCL1geZyhcJYkLxTdMMaMRxl/hpL5KkcsA3HgL+TH1
-         hNmpYSzgI0+Gt1fb+SBOIA0+TywovvBNuRuHsYphkC+6Ij0unZqr6oZmFac2aiXHeW
-         gZOMcjmb/Ga6g==
-Received: by mail-lj1-f200.google.com with SMTP id y2-20020a2e3202000000b0021196ec695eso349331ljy.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 04:00:53 -0700 (PDT)
+        b=AtabUELtunYvEKBaAWhHTSo9wen3CgzxJ0EHGKnFaOwGbj2qhj5WmZezOXpu8wIUP
+         QzEH45Myz/6kxrn+2upe1YWuyzaE/itRdjsvuWx7tkQ/FHXsueN23TICyHE1rFy6i9
+         YiEtzNyhwhl3uhmAer7FOOsXLVr+LQqGeGfoF2KCDtpIWFe2akiK3KhG7nOY6cssUr
+         aJ71b14TmbsTNB/aKhIQgyTaqlkFOXMV/qy2WLe/CTQGa1fx5EWYmOsjZY0FFRd/LY
+         mrjX0OXaYKXGQzRSqehwOpdruTjqDvBGGuAyyjIbkvvMsFS/L9/8HEO8fDXfGVm+M4
+         f+2/EkHS8RX+Q==
+Received: by mail-lj1-f200.google.com with SMTP id a20-20020a2eb554000000b0020de66f70bcso4175378ljn.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Oct 2021 04:01:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
         bh=saCQu9EKQs4I6SKXkv5FjAbPTAvRNyG3cbYVa3bkKDU=;
-        b=nnUOAXgHEebOv82yhtFGo1Deh/TWUJPSHcTt3da2a+RUNGx8lcFC89H4mGmDhdbNSN
-         lqWHrUveXKqRnXIFceL99FyioyZRDzLFyIenr7F1ZQtIFlc9S0OKgoddO62YBiqgwDVs
-         5/jhMbMuD7DqfRhZZMEBVGSkyIN28rgs6MzI3KIqSvsbgCM88Z5h/J8EJic8kyZJGHdU
-         W8UfSKS8gnYeDPb7GUJxAprUoebMd+t2b14g1GMj4X3uJVPQASAc6SPpK2CyGBcepqVw
-         uD8qTX4zFks36TlBmwK1g/clsHfI93hQ5D6hFT3L8GdjeAIvrfGaFn7D1fdzI9jWjD9Q
-         sF0g==
-X-Gm-Message-State: AOAM530zQ9td5kYZPxAxcUHH9cm8vjbYri6hF5qQs6sP0PVOBVMtFPjj
-        Ijpb9ijctPz8SsI7VGQXW6hCdc0U4ptBspOPatn+5z+xGEcjXwpjc1mF07SYGLDrv3284l7+9JK
-        9YnmlnCdn4TVqBnlflW4XpyUty8f6hitwjBD1iDw2ZOZWBqFY
-X-Received: by 2002:a2e:8605:: with SMTP id a5mr6638983lji.107.1635246053122;
-        Tue, 26 Oct 2021 04:00:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxu6cel0oQC1BuMesrfNH59P19SIT7Z0msL6k//HhV+BZ9TfGDzQ+R+3+GvGDhor/q3GvReFQ==
-X-Received: by 2002:a2e:8605:: with SMTP id a5mr6638964lji.107.1635246052925;
-        Tue, 26 Oct 2021 04:00:52 -0700 (PDT)
+        b=2OqugIVxhzdVrhJHu2mKRn1Sy8CXqg40RyJx2aQ35ei1/p05a2IbNet0di41nnKu8n
+         AcYBjmqLg6DsT65dv46fkbNSxO46rbyEJQtF+diPOvovh+lRe4ZFv8YYf1gvfjpXknGT
+         3qHQWmS7tRg/FWjd+mZxZ1tiCzAWcO9ZM+dmPHoRqZCBLeMopt9XQ7BtpgfKBCIHydti
+         CwIeeKyw+5Qqga+FrTImZxx42YZ4mwMXnqrPBk96xLFsw6DE7EpsXPQL/QncYyhWCFB0
+         DKs96FKi//V4rLYHt3fIdZm4UPjA9cEW8lLiCLfqLMc0DnEYJnKBDu9IKdaqFFk7gUyA
+         NrJQ==
+X-Gm-Message-State: AOAM531oX1bpT0TtxaI8EaElF5EIHr/sk2uetT91V1lh5MaMtGYm8jKO
+        ZTghBkWSxah0aEFv0ZmKmsIIi2cwKs7px2pIAEWyyw/WJVW+3VD5/TOcXwzwbKDoEup7qGZXdN8
+        0YyNkR3/HBDXtYnmU2OclNtrLaqPqIdpBtIt2vMwRwR5Qy0So
+X-Received: by 2002:a2e:9155:: with SMTP id q21mr2538926ljg.217.1635246060231;
+        Tue, 26 Oct 2021 04:01:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy0X6qDFP9FFCD5QwYHQV3v8kwvFuK6o5Wcp/OVDsZAZVQxLeOu6Nqkf7G3YizrzY3oQ+AghQ==
+X-Received: by 2002:a2e:9155:: with SMTP id q21mr2538905ljg.217.1635246060059;
+        Tue, 26 Oct 2021 04:01:00 -0700 (PDT)
 Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id n7sm1985531ljg.47.2021.10.26.04.00.51
+        by smtp.gmail.com with ESMTPSA id u4sm1893284lfs.153.2021.10.26.04.00.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Oct 2021 04:00:52 -0700 (PDT)
+        Tue, 26 Oct 2021 04:00:59 -0700 (PDT)
 To:     Youngmin Nam <youngmin.nam@samsung.com>,
         Will Deacon <will@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, daniel.lezcano@linaro.org
@@ -81,8 +81,8 @@ References: <20211021061804.39118-1-youngmin.nam@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Subject: Re: [PATCH v1 1/2] clocksource/drivers/exynos_mct_v2: introduce
  Exynos MCT version 2 driver for next Exynos SoC
-Message-ID: <cb5bd5a3-1c23-0dc5-9f77-112befd7269c@canonical.com>
-Date:   Tue, 26 Oct 2021 13:00:51 +0200
+Message-ID: <11ca846b-c8d6-37c9-8ee2-4740fa66d974@canonical.com>
+Date:   Tue, 26 Oct 2021 13:00:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
