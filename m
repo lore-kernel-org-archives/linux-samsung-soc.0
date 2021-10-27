@@ -2,108 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AB0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 18:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EA0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 20:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8716610A4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 18:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E0F260FC0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 20:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243572AbhJ0Sgr (ORCPT
+        id S240468AbhJ0UM3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Oct 2021 14:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44466 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243570AbhJ0Sgp (ORCPT
+        Wed, 27 Oct 2021 16:12:29 -0400
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:58109 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238558AbhJ0UM2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Oct 2021 14:36:45 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD294C0613B9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Oct 2021 11:34:19 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 205so6209702ljf.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Oct 2021 11:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oMasC2rgckEWdCe4DVz6in+O9oEmCriK7Q/BDKT8+60=;
-        b=BU9c4Kt2klb9pGlGYSH6N2/niQ4oNqfLZ0U1NjtsaTgg7k2zPmvXxZMNe4LsT/a25Y
-         FIhGhLYGlcZIbZ5j7j/wImxQN0EpLG2rhMuMjkY2ZOZtzRN9RqqqM2Z5uaL0wHre6mWM
-         X7XRH+g6SO72fi7HbBdQdNVRGP6vVPJBwpQNB051MQ98oMp8EsGzZR8rkERWdlg/ct9o
-         ddJXJKuqCo1GoTk5cB29k6H24t/jtwCG/qx/JiEgo0fh9G2BeRlLJWBsA8+ncOvhsWK7
-         4aJySPcTUrOnoJ4Ah5b9ngmkz6HfI8+bB1S/leVgn/9yzaNvwSOGDWeh+h8NSiDjQk22
-         DXhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oMasC2rgckEWdCe4DVz6in+O9oEmCriK7Q/BDKT8+60=;
-        b=w+qfAoQbT72kjouBn0koqLOzIsaqWrGRGKIH3pfx/TnvN3da79bOfsWVGQ4UjB4JaY
-         ZyF+eMtWmVhK/L9EZ5jGeMlvNk69iZEglvtupJuPS0QIPLELPRsoYcJfxy+/3PHfoLtW
-         Swxf6gV9fzZYNhfPwYpUcHHIDHtnIQWLg8BPf6YfaWVkSJ7AMLJPLVRrrzu7cdXAna/z
-         BpSamGjkFc2vJqwB8yCSGPs/Z4E9+6msjYdTx3QuTSFg4Wq1Lb6oiZW+N89OMQrhVdne
-         6OUIvSfClKMDun2EIQ1ubanzItX8HgCLXoG3r22IO4cX5n5hWtNLXkzgneAYOt36serN
-         gpKQ==
-X-Gm-Message-State: AOAM532Hm4gCGu8C29ExOq12KAORriBI2a1L59IY6jKYQWLAc9l1BYev
-        rvKp4GzyPeV8mzBrSA4P2w71FfDU1LSqLqyxuE5LLQ==
-X-Google-Smtp-Source: ABdhPJydr0p5R5kOrBi0cKjyUtJDjfb0NxbOwZhHcj6m+H19kxZT9BRZop/bB7yZsgjxXgCMaOYdHA2FjRV6asLzles=
-X-Received: by 2002:a05:651c:389:: with SMTP id e9mr14617679ljp.61.1635359656666;
- Wed, 27 Oct 2021 11:34:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211025151536.1048186-1-maxime@cerno.tech> <20211025151536.1048186-21-maxime@cerno.tech>
-In-Reply-To: <20211025151536.1048186-21-maxime@cerno.tech>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 27 Oct 2021 11:34:05 -0700
-Message-ID: <CALAqxLXG5R2ZN9gfFsGTLfdY8mhNhh=o8f1w5Axo8NSw8QanAQ@mail.gmail.com>
-Subject: Re: [PATCH v6 20/21] drm/kirin: dsi: Adjust probe order
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        Wed, 27 Oct 2021 16:12:28 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.west.internal (Postfix) with ESMTP id A99D62B01443;
+        Wed, 27 Oct 2021 16:10:00 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 27 Oct 2021 16:10:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=fm1; bh=
+        174Tv2ikzgiRBSTtownAlIa8Hc51jyjcuiG0KQ+hbd4=; b=klhpQktTVF61lxXN
+        z6RCvTo2tny/dJjRuxboJyG1CMUDkRlJEpybOBXpRKDEODVD4d9xuW1WYDpYdx+C
+        KulO2TB5DowEHlq8mZyvDiTPBqGYri8i3hOikVl1Dib0hjseyPj2m3Jt7bhpv1bW
+        CWBUOATejnIDgEb1BPneBdBQvHKxNzrQiB9yMhfeXmh614FK6O8NTbYvmv58qVWo
+        kLHHu2KwNA0kV70AXZQz/s8Wfk/6u1v2trJzo98j9ldksC3Cd3tfTYuG99vf2iSy
+        PrfZAJvoFLz8S5HIw5k2pKVN+ELyy9aVSKOtCZXKh7vKXVKhw8rcGRZgPatdVVxn
+        k8u44A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=174Tv2ikzgiRBSTtownAlIa8Hc51jyjcuiG0KQ+hb
+        d4=; b=axByOoFcgh/+Az9kxCAWrpeZ+pr1oBtjvspPcqjQDmggOrhT6eQp5dOyQ
+        f+dBmGLg57skwzqsyfsNvnC/IkfJ40ghAzlNUXnxt9O/vOAYx91mb3sA4e5kyp1G
+        9iRhLuNtAfD9cIKOT0z2snPjGjH+vMdZyvg9UAXfBAVLl2o/kB1jbxxblWbMc43I
+        8piqXiFWnD/ytNrYWExKS4Q47PiaG+MAcUTJVMIcq2D2esDjbdemR6Y1q2yt58qb
+        DGaTP5EEN+f4UcWsYvq3tQsPSH9q2VENRNQHyBqhk2QTV+Hj1ACJgfMETs7ssbVK
+        2uap3uKjqzPMG5qGJ4XSjKfvhMCUg==
+X-ME-Sender: <xms:E7J5YdAY0n9flJiRx5R0OECAz0MRM-T0-3OXKy0Besh0Rcrt8zH7Ow>
+    <xme:E7J5YbiMdbYr7gJWxYbszTBZxteZRqJaBXd0iTVipXlI-OLPv_XMOk7uW-pqhnxJw
+    ef3aMxyYLCY5hapZf4>
+X-ME-Received: <xmr:E7J5YYmSeo1YK4dfYwkF0CatVXGEjyK5u8Ec-hv0lu_pERSVwncofednqCWir9U0focRTQ0fGoHuY_EplfHuh7oHEXYVykjrXiUGe5qO>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdegtddguddutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhvffufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepjeeugfegkeffgfeuvedtvddufffhjeffjeejvddvudduteehhfefhfef
+    geeikeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:E7J5YXzmBoYwJDS2qv2M1HB3Uma-QDNHhBuH_lLh6v9Be4Bch1ji6g>
+    <xmx:E7J5YSRPl4I1q8F6RqB0KEMDScNFcGyKk2pIpURIof-etyvcqXKfcQ>
+    <xmx:E7J5YaamnTlyH3tkt3g4lPSW_1pfw3CaS4xPO9rlVqR_kLDTbNL5dg>
+    <xmx:GLJ5YWwe5m9gr5x4nWinl-9JeTHzLO56Nqf2In0qEr3XLcz6bnvpKQCWZ8Q>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Oct 2021 16:09:55 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Robert Foss <robert.foss@linaro.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        linux-arm-msm@vger.kernel.org,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Xinwei Kong <kong.kongxinwei@hisilicon.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Sean Paul <sean@poorly.run>
-Content-Type: text/plain; charset="UTF-8"
+        Tian Tao <tiantao6@hisilicon.com>,
+        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen Feng <puck.chen@hisilicon.com>,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>
+Subject: Re: (subset) [PATCH v6 01/21] drm/bridge: adv7533: Switch to devm MIPI-DSI helpers
+Date:   Wed, 27 Oct 2021 22:09:32 +0200
+Message-Id: <163532324662.18245.12411673920991418196.b4-ty@cerno.tech>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20211025151536.1048186-2-maxime@cerno.tech>
+References: <20211025151536.1048186-1-maxime@cerno.tech> <20211025151536.1048186-2-maxime@cerno.tech>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 8:16 AM Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Without proper care and an agreement between how DSI hosts and devices
-> drivers register their MIPI-DSI entities and potential components, we can
-> end up in a situation where the drivers can never probe.
->
-> Most drivers were taking evasive maneuvers to try to workaround this,
-> but not all of them were following the same conventions, resulting in
-> various incompatibilities between DSI hosts and devices.
->
-> Now that we have a sequence agreed upon and documented, let's convert
-> kirin to it.
->
-> Tested-by: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+On Mon, 25 Oct 2021 17:15:16 +0200, Maxime Ripard wrote:
+> Let's switch to the new devm MIPI-DSI function to register and attach
+> our secondary device. This also avoids leaking the device when we detach
+> the bridge.
+> 
+> 
 
-For this patch, and any others in this series folks see fit:
-   Acked-by: John Stultz <john.stultz@linaro.org>
+Applied to drm/drm-misc (drm-misc-next).
 
-thanks
--john
+Thanks!
+Maxime
