@@ -2,159 +2,125 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD59AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 13:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EC9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 14:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E77F610A5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 13:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6F8160F21
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 14:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236368AbhJ0NKl (ORCPT
+        id S229744AbhJ0Oqs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Oct 2021 09:10:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234339AbhJ0NKk (ORCPT
+        Wed, 27 Oct 2021 10:46:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229447AbhJ0Oqr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Oct 2021 09:10:40 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36379C061570;
-        Wed, 27 Oct 2021 06:08:15 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id s14so1167366wrb.3;
-        Wed, 27 Oct 2021 06:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uJds+IVoNkUWmdu46LtTG9grpI87Lx0MMvC2+LXmgro=;
-        b=Aju+1WNhnANTfLfuP1d2JmIn+yn/9MYcrflKZCDaRh8YD/iAYKvYArd3rXHHGktyo+
-         B2woyjjsVYhOGT9aB2GZc7YJ7YosfhJjj5fZDlWTjlKcjdHOrNsFW7rXaMC5bER/KbcY
-         R03WM6dSl8vbqDnOmFHkw/hlp9NqgOXvXQ31cmF+NKYrX+Q+rrZuI2c9IA1E8AdA4VRr
-         +qf7Wg2s2pkgytswTPzJme02TqxyDiFL2h/LuiJM1MtQq/NSok8bZQkX8TBQ0B3zYkRa
-         o3uy8B+L3Ikx+2YTwrpEwBUtvMC4UlNbwqoz9VesBTRkEi04QIiKpXwYMHGpW/YL3hlN
-         YPYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uJds+IVoNkUWmdu46LtTG9grpI87Lx0MMvC2+LXmgro=;
-        b=1zkdGzWSHPhayrHDZc1xKs5BrqIa1r3/Oo9w/M593u64qwitq0ndXMUwdeGl7LU58B
-         Hf7g9Y0i7IVxE4WQkXHWfYJYaSeDWLlJlVFYk8QrKh0ci6+0BxOrQNRKu7FWYGbsoe2t
-         wY5ysUSvQlxcHNOn9P6EoTCgCTrcd8qJa3O2Tr6S+XeqyTRyROps7irGwDd/gQt19Uio
-         aaUALNlcLMP6PNH7Xk9kF2Ani9s4PRjdtlodPf1Owxwmsdyh9VhYZBt0XQ3XxMtzocU/
-         cJBJnx6t5GhcIH7xr4iSlgvbmtOw33Kp0kIB1VU/ROhtyVAhyyAaca9pl/VkPFNVBlov
-         9p3w==
-X-Gm-Message-State: AOAM532z1k+qbv1iFROgPVnciiyI+HetaBeZPYZB0aZKbaqdD8G5SD+n
-        aunZEvAoz3fJ1w==
-X-Google-Smtp-Source: ABdhPJwz40kCBYqsoaPbVFPwg7+k2JSxN80ok3URyhQazdOUZLjwUzSQjFzLtt7Ki5Gx4IzoMMuW0g==
-X-Received: by 2002:a5d:6e8d:: with SMTP id k13mr40133468wrz.295.1635340093805;
-        Wed, 27 Oct 2021 06:08:13 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z5sm4279192wmp.26.2021.10.27.06.08.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Oct 2021 06:08:13 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mmc: dw_mmc: exynos: Fix spelling mistake "candiates" -> candidates
-Date:   Wed, 27 Oct 2021 14:08:12 +0100
-Message-Id: <20211027130812.426373-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        Wed, 27 Oct 2021 10:46:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E01E660F21;
+        Wed, 27 Oct 2021 14:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635345862;
+        bh=QkaH8i/IP3CIgA/bCVNmnPGWHjIMocsRPHDcPlLjhtw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QBDnQxRc9qXNWz75JROWosZmxmOsmsNEGEaXVE8jUNBYf26QeTA7w36x4CegZq8kX
+         3e0PmaUOkOTztgiWGxzYGAYj/nSNZWmPMxeDvJRNfNSw0oxD/r3iFzJByDP+KnpeA+
+         iBAnX/vQA3SFskmA1l5OjwZPDJbZBvNjJN0YHq72gfOzoSwt9XZ5vlOJPTMfM0IegE
+         cbA7g5Xfx6sZ9kfI7gPh6dqbVEZecZBvFkOg7WBqTT4QChasCZfq81728KLS0xm/Ed
+         Nrt8BvohV87fehXxiTjwR+b/GjrRbPnP9ZNdVjNThODvjzLr3955aWuISrUCK8eID2
+         tVaxKUDb4Lv+A==
+Received: by mail-ed1-f45.google.com with SMTP id m17so10848442edc.12;
+        Wed, 27 Oct 2021 07:44:21 -0700 (PDT)
+X-Gm-Message-State: AOAM530DRu/A9tEkI609X7JWG0CyjPzvoxt8ZJNdZQoxuJasO69pvzmv
+        zHHlxGONvQBJAkSvn5+aeXdqNIr8J6zNWxr4eQ==
+X-Google-Smtp-Source: ABdhPJzZb8un3hSlLPdikzo4LyAdNxP2rheUbz80i2Mi4iVmyOfTj91TmAOW+jBpNU7/41eeL8Fqjsu/ZlGUzLGLsIQ=
+X-Received: by 2002:a17:906:6a0a:: with SMTP id qw10mr23065885ejc.466.1635345846542;
+ Wed, 27 Oct 2021 07:44:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20211025144718.157794-1-marcan@marcan.st> <20211025144718.157794-3-marcan@marcan.st>
+ <YXhINE00HG6hbQI4@robh.at.kernel.org> <c0f2587c-ab69-8194-e618-ce7919c1aeb1@marcan.st>
+In-Reply-To: <c0f2587c-ab69-8194-e618-ce7919c1aeb1@marcan.st>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 27 Oct 2021 09:43:54 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJbVcqy8n0EroV=nFZoJ_WAr+JbrDf-c1jso856NghC2A@mail.gmail.com>
+Message-ID: <CAL_JsqJbVcqy8n0EroV=nFZoJ_WAr+JbrDf-c1jso856NghC2A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: arm: apple: Add apple,pmgr binding
+To:     Hector Martin <marcan@marcan.st>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Mark Kettenis <kettenis@openbsd.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There are several spelling mistakes in variable names and in a dev_warn
-message. Fix these.
+On Tue, Oct 26, 2021 at 10:38 PM Hector Martin <marcan@marcan.st> wrote:
+>
+> On 27/10/2021 03.25, Rob Herring wrote:
+> > On Mon, Oct 25, 2021 at 11:47:12PM +0900, Hector Martin wrote:
+> >> +  compatible:
+> >> +    items:
+> >> +      - enum:
+> >> +          - apple,t8103-pmgr
+> >> +          - apple,t8103-minipmgr
+> >> +      - const: apple,pmgr
+> >> +      - const: syscon
+> >> +      - const: simple-mfd
+> >
+> >
+> > 'simple-mfd' means 'there's nothing in this node that any of the child
+> > nodes depend on'. You should be somewhat certain as dropping it later
+> > creates compatibility issues.
+>
+> Hmm, I see simple-mfd turns this into a bus which I guess allows child
+> nodes to be probed without the parent node doing anything special (then
+> we use syscon_node_to_regmap to get the syscon instantiated). Do you
+> have a example use case for doing this without simple-mfd?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mmc/host/dw_mmc-exynos.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Drivers calling of_platform_populate or devm_of_platform_populate.
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 1f8a3c0ddfe1..c2dd29ef45c6 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -442,14 +442,14 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
- 	return sample;
- }
- 
--static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
-+static s8 dw_mci_exynos_get_best_clksmpl(u8 candidates)
- {
- 	const u8 iter = 8;
- 	u8 __c;
- 	s8 i, loc = -1;
- 
- 	for (i = 0; i < iter; i++) {
--		__c = ror8(candiates, i);
-+		__c = ror8(candidates, i);
- 		if ((__c & 0xc7) == 0xc7) {
- 			loc = i;
- 			goto out;
-@@ -457,7 +457,7 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
- 	}
- 
- 	for (i = 0; i < iter; i++) {
--		__c = ror8(candiates, i);
-+		__c = ror8(candidates, i);
- 		if ((__c & 0x83) == 0x83) {
- 			loc = i;
- 			goto out;
-@@ -466,11 +466,11 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
- 
- 	/*
- 	 * If there is no cadiates value, then it needs to return -EIO.
--	 * If there are candiates values and don't find bset clk sample value,
--	 * then use a first candiates clock sample value.
-+	 * If there are candidates values and don't find bset clk sample value,
-+	 * then use a first candidates clock sample value.
- 	 */
- 	for (i = 0; i < iter; i++) {
--		__c = ror8(candiates, i);
-+		__c = ror8(candidates, i);
- 		if ((__c & 0x1) == 0x1) {
- 			loc = i;
- 			goto out;
-@@ -485,7 +485,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 	struct dw_mci *host = slot->host;
- 	struct dw_mci_exynos_priv_data *priv = host->priv;
- 	struct mmc_host *mmc = slot->mmc;
--	u8 start_smpl, smpl, candiates = 0;
-+	u8 start_smpl, smpl, candidates = 0;
- 	s8 found;
- 	int ret = 0;
- 
-@@ -496,18 +496,18 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 		smpl = dw_mci_exynos_move_next_clksmpl(host);
- 
- 		if (!mmc_send_tuning(mmc, opcode, NULL))
--			candiates |= (1 << smpl);
-+			candidates |= (1 << smpl);
- 
- 	} while (start_smpl != smpl);
- 
--	found = dw_mci_exynos_get_best_clksmpl(candiates);
-+	found = dw_mci_exynos_get_best_clksmpl(candidates);
- 	if (found >= 0) {
- 		dw_mci_exynos_set_clksmpl(host, found);
- 		priv->tuned_sample = found;
- 	} else {
- 		ret = -EIO;
- 		dev_warn(&mmc->class_dev,
--			"There is no candiates value about clksmpl!\n");
-+			"There is no candidates value about clksmpl!\n");
- 	}
- 
- 	return ret;
--- 
-2.32.0
+That of course does mean you need a driver. We could probably make the
+syscon driver call these if needed.
 
+> At this point I can't think of anything we'd need from the parent node,
+> especially if we end up using this syscon strictly for pwrstate subnodes
+> (which seems likely at this point). One thing that comes to mind is
+> telling the PMP (a coprocessor in charge of power metrics/management)
+> about some domains being turned on/off, which is apparently a thing, but
+> that wouldn't even be in this node; that'd have to be a phandle property
+> in the child nodes referencing a PMP/coprocessor node elsewhere (none of
+> which is implemented right now, and which should be backwards compatible
+> once it is).
+>
+> If it turns out we do have a dep of some sort in the end, could we just
+> have the child node driver return -EPROBE_DEFER until the parent is
+> probed and has made whatever service available? That would allow us to
+> keep simple-mfd, right?
+
+That would have saved you, but deferred probe is now a fallback to
+fw_devlink and it makes sure parent driver probes first. That works
+unless there isn't a parent driver which is often the case for
+simple-bus[1]. I think you are okay since 'syscon' means there is a
+driver.
+
+> If it works for you, I'll also just squash the two bindings into one
+> commit for the next spin, since there is a direct dependency at this
+> point and it should make things easier. Otherwise, I can just swap the
+> order if you prefer it that way.
+
+Just swapping seems like less work, but either way.
+
+Rob
+
+[1] https://lore.kernel.org/all/CAL_JsqJcsqjJBe8aULYYMkFtx8OTj2wHANZ=83VMMyJ=AEgReg@mail.gmail.com/
