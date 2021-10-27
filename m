@@ -2,116 +2,150 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D00C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D90A4C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A692D61073
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23AC61090
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239354AbhJ0Iki (ORCPT
+        id S240960AbhJ0IrZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Oct 2021 04:40:38 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:38436
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239187AbhJ0Ikh (ORCPT
+        Wed, 27 Oct 2021 04:47:25 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:54271 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239544AbhJ0IrV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Oct 2021 04:40:37 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1050C3F17A
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Oct 2021 08:38:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635323891;
-        bh=lSRmd+bAt3G+a8pB1uQ3D1t4YJVVUpvOwAJD3U8R8rQ=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=vV8+IJX/iXU6XN8AzslCINldXcn+hLgIMkPUwuJOSRGocC1iap7nmWNdaMgaF61/9
-         8FOFvBC1ygrtvw0ff/gwnp50p76qnZPDa1jWFjE0gohmTiqJB/wqipl46tOrGPpLQh
-         bMA3ZnHnOIVc9VX9eCmdpU053nY1Fc/P330i5c2RqDqFA+8GdLY1IKKCvj2zpjzeuW
-         XqbL1UMu+msCbSoZyMR7rZm2oQfp2lvU8bG7wWTV4t5XND8Csx9ffth6GlD97NWtjg
-         rFlvAcVcf9RJScB4oXz2oevt1TNxmzm8bFCtPoa+rtPDPArrGqt0WAbXOMUwlHVXuL
-         DvoyCwsLgM7Hw==
-Received: by mail-lf1-f72.google.com with SMTP id i1-20020a056512318100b003ffd4e89eb9so453844lfe.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Oct 2021 01:38:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lSRmd+bAt3G+a8pB1uQ3D1t4YJVVUpvOwAJD3U8R8rQ=;
-        b=XMcK6+epiA7KU6y1Hy/Z/3ehjqvbEK8eAxHXO8wCzc6sfKjidVkxMOFVVh9iV7coPL
-         QtfSQpW6PLQK8TqoaV3j4Ozgg25KL6Dy4kHxZrYqs4RKsKkxz6I1wOmO6yUUPPHR63Zl
-         Hb3roYTyqK14TNq6sixhmbtZ8YKv0vAbFGXUpCM2eBIA3E4LdFrRlr/mqs+ItK2lFVIC
-         hJOfvLTOMZjuLZO1p6zbtA5oEg0ormxxPjsGl8FHzGb08ENIHZBNnEC8uq9h6I0Dha87
-         oyk7o0GVBmWQRYxJ490hmNmj8dPO4gq0PjM2an/wUWpI38Q+aNOyMhNIfPAiTWArvvvJ
-         Rmtg==
-X-Gm-Message-State: AOAM533iBq+e42/KwnSOtSiGTeK9FIev59NN12PnK1g5EmS+Xdl0Bl+v
-        8vRk4zQGQSIj6zpIptvuXje+EDagverJpacR+eT8E/WEma1hQwvZ73GPPSKh/nqjGiWF9MiPPkT
-        8c4ox8WBHCoDMYpxgk/ACsB43q+R7dkZ8Wlv/U0PapEPZppHe
-X-Received: by 2002:a2e:3504:: with SMTP id z4mr1120851ljz.437.1635323890455;
-        Wed, 27 Oct 2021 01:38:10 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzulrV6FlW9g2gi/5knG/ThdYkMqFE5BqsPFzsMZn9K+3XQGV4JppxbW4/p2BeNyTZi2gMgxQ==
-X-Received: by 2002:a2e:3504:: with SMTP id z4mr1120838ljz.437.1635323890316;
-        Wed, 27 Oct 2021 01:38:10 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id a28sm71719ljd.65.2021.10.27.01.38.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Oct 2021 01:38:09 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] clocksource/drivers/exynos_mct_v2: introduce
- Exynos MCT version 2 driver for next Exynos SoC
-To:     Youngmin Nam <youngmin.nam@samsung.com>
-Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, pullip.cho@samsung.com,
-        hoony.yu@samsung.com, hajun.sung@samsung.com,
-        myung-su.cha@samsung.com
-References: <20211021061804.39118-1-youngmin.nam@samsung.com>
- <CGME20211021055112epcas2p278145beb21cd6cc4217813a41c1e1407@epcas2p2.samsung.com>
- <20211021061804.39118-2-youngmin.nam@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <117dfec8-e417-642b-7647-9d17592826ad@canonical.com>
-Date:   Wed, 27 Oct 2021 10:38:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 27 Oct 2021 04:47:21 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 71C57580486;
+        Wed, 27 Oct 2021 04:44:55 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 27 Oct 2021 04:44:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=M3eCyMtSzQvSRfpY5rVVZ9RVkh6
+        FdSVbf6yAV0XO4K8=; b=NmzUZOWnydiuj2S8GXj5BmNeI6pr7rLla6OGpcy3C4x
+        SL8j7TvqoSbEzq1BnX6ggFJ9W+aANfQZl2j2oQi9v/Y1m5VlmUeid+r32/oNygjM
+        upk8Qq4jkUaPrI2deYOakvWggWGqh7tAdSbO6N9mvdMrVDLDIUmc5fbffoNGouNh
+        MZYmu70iQwwuO+33jBTTnjaDlpwybEj6wVjaiv8aAaEMS4OMe3eo5UBCx5C4kyQ4
+        amOz6taiTkfqGK39fTrH+gnmsS9doz5wve3bKXvLQgSrno6DoyVTo4WZEpLZxYlr
+        DBse/nwb8rbo5KaCwCVggb670luJpaZaFc+kQZnDktg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=M3eCyM
+        tSzQvSRfpY5rVVZ9RVkh6FdSVbf6yAV0XO4K8=; b=kLB2N0MuxPnehTteBVIRkX
+        /FWES0DM/0mOGMwFgIC9OXlHVkiq1CuZmq/W3sxWzGNh0crFYT0d+G0VEUjA2iQk
+        pa04vRIDZrh/PAvHzPbEjAS709vJwAf34g80ZGTsGDX3eelaifSfQtB8rWOuN/Yu
+        iXEjjmXGEfwmbn/SUTDOzRNqbHz6BPHJLfE1vKcLwTPm3ETQQL09KS6Id93j7/jU
+        um+uYClmfXLMaH86Ljyk4I0l26IQEHdyFK7KGVgDa+u+4uoOu0Y+8nGyyR+HfDQA
+        tW6jd3ix17HW+ZciU5Mau1fBru7L7L1EzBE35SoIp1vqYVN6UjSihcCj1e3YxnQg
+        ==
+X-ME-Sender: <xms:hBF5Yc7BzLyYRk4GGfOgPfbDwi-tlppOdcEnk6ov_Gx9a12rI5hQng>
+    <xme:hBF5Yd60K--rqAYW6wQgyM38yfJDwJ75W7rCk-uOFeWk_G4ANbXKO0HQF2GRzqsFs
+    wAEeethTYlTMbTHrlM>
+X-ME-Received: <xmr:hBF5YbfOI1J3dz9b8owKVh8tx87ejOgb4HxrCXD7nLcTpl3a4BWFzfyx1l2jGmgk3_CY57eC5E5-A0oKYCO7Wh2bSLCLLCDKHxMgSxJh>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdegtddgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:hBF5YRLajqxC-IThi0jmk6jZ-O0HSCCBD3mbj1wS6NLddJ2x3g8z4w>
+    <xmx:hBF5YQLKmrGZZMo_GHH5FieCkwvCNX5HJtD2SQ7m2_j4WOcF3nXv_Q>
+    <xmx:hBF5YSxrJCfl9CrpGyipV_FdO_GukTIjGidowzUsN_cGUsbkkxgyhw>
+    <xmx:hxF5YbdWEcCvXgYet2d3aj7yyvMAGIwE6wZItn1hxaP9XNTHrlLpqA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Oct 2021 04:43:52 -0400 (EDT)
+Date:   Wed, 27 Oct 2021 10:42:45 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tian Tao <tiantao6@hisilicon.com>,
+        freedreno@lists.freedesktop.org,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v5 00/21] drm/bridge: Make panel and bridge probe order
+ consistent
+Message-ID: <20211027084245.6wjqk3e6fa3jw5qg@gilmour>
+References: <20211021073947.499373-1-maxime@cerno.tech>
+ <YXGFz4o5fWrfGnGk@ravnborg.org>
+ <20211025151636.dsc3akojm7ywoecm@gilmour>
+ <YXbhSjsPXk944TlF@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <20211021061804.39118-2-youngmin.nam@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aobqxdixyoh4wxno"
+Content-Disposition: inline
+In-Reply-To: <YXbhSjsPXk944TlF@ravnborg.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/10/2021 08:18, Youngmin Nam wrote:
-> Exynos MCT version 2 is composed of 1 FRC and 12 comparators.
-> The 12 comparators can produces interrupts independently,
-> so they can be used as local timer of each CPU.
-> 
 
-...
+--aobqxdixyoh4wxno
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +static void exynos_mct_comp_start(struct mct_clock_event_device *mevt,
-> +				  bool periodic, unsigned long cycles)
-> +{
-> +	unsigned int index = mevt->comp_index;
-> +	unsigned int comp_enable;
-> +	unsigned int loop_cnt = 0;
-> +
-> +	comp_enable = readl_relaxed(reg_base + EXYNOS_MCT_COMP_ENABLE(index));
-> +	if (comp_enable == MCT_COMP_ENABLE)
-> +		exynos_mct_comp_stop(mevt);
-> +
-> +	if (periodic)
-> +		writel_relaxed(MCT_COMP_CIRCULAR_MODE, reg_base + EXYNOS_MCT_COMP_MODE(index));
-> +
-> +	writel_relaxed(cycles, reg_base + EXYNOS_MCT_COMP_PERIOD(index));
+On Mon, Oct 25, 2021 at 06:54:34PM +0200, Sam Ravnborg wrote:
+> Hi Maxime,
+>=20
+> On Mon, Oct 25, 2021 at 05:16:36PM +0200, Maxime Ripard wrote:
+> > Hi Sam,
+> >=20
+> > On Thu, Oct 21, 2021 at 05:22:55PM +0200, Sam Ravnborg wrote:
+> > > Hi Maxime,
+> > >=20
+> > > > Let me know what you think,
+> > >=20
+> > > apply the lot to drm-misc-next. Maybe wait for an r-b or a-b on the k=
+irin
+> > > patch but the rest is IMO good to go.
+> >=20
+> > I had a compilation error since the rebase of the v4, so I sent a new
+> > version. John Stultz has tested this series and given his tested-by, and
+> > is the kirin maintainer.
+> >=20
+> > I guess it's enough?
+>=20
+> Yeah, go ahead and get it applied.
 
-This is unsigned long, so 64-bit on your platform. Use writeq_relaxed or
-handle it somehow.
+It turns out dim is not happy with just a Tested-by :)
 
+I'll ask around for an acked-by or reviewed-by
 
-Best regards,
-Krzysztof
+Maxime
+
+--aobqxdixyoh4wxno
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYXkRBQAKCRDj7w1vZxhR
+xcX+AQDa5hm15ZvQWQkhoaM7QT0BYcG/8gBhyw2NycTLJeU50wEAsbuKE/SJt3yK
+G9CaUa4imA2133VPQCI/46bOj5VmbAs=
+=1uwT
+-----END PGP SIGNATURE-----
+
+--aobqxdixyoh4wxno--
