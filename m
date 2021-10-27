@@ -2,64 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86914C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 20:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C07C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 20:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E76C6103C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 20:11:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79FEC610A0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 20:11:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243932AbhJ0UNj (ORCPT
+        id S244026AbhJ0UNy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Oct 2021 16:13:39 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:49359 "EHLO
+        Wed, 27 Oct 2021 16:13:54 -0400
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:57607 "EHLO
         wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243855AbhJ0UNd (ORCPT
+        by vger.kernel.org with ESMTP id S243814AbhJ0UNn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Oct 2021 16:13:33 -0400
+        Wed, 27 Oct 2021 16:13:43 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id AC8462B0145C;
-        Wed, 27 Oct 2021 16:11:05 -0400 (EDT)
+        by mailnew.west.internal (Postfix) with ESMTP id 4C77E2B0145E;
+        Wed, 27 Oct 2021 16:11:15 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 27 Oct 2021 16:11:07 -0400
+  by compute4.internal (MEProxy); Wed, 27 Oct 2021 16:11:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
         :mime-version:content-type:content-transfer-encoding; s=fm1; bh=
-        fesgqNtZBG1OUNZNDS6pXSeSxFh1EPyXvlZgyE9FBR4=; b=iAVD9GNcqUaj8Obe
-        5t6IjgQP0jgoW0WLkA0e/DCNGDzmrz2FERKkJDmK54mjbam7GvTp4ZkPJm+ddkGs
-        0+ev6UoSQH3F8bgzl1c36W0tMtX8X8bB3MzOD16bTpkfrOeKWYj6X8d5N68xjF75
-        c/yK2raj1VzDhKPd68Xrjzht1c1H5p8HACsWqJ7Pl43szbZjV3Aic2JREUrXe2Iu
-        D9bQdKaANvbh84FqnmsPFO3dzP9IyTYF3TuNRWpac1robT91XcNyUwNBGHQLLPRS
-        20cwnclHSZCXFvNH8/vTlUMElYe8/W+FwrBioXINpWqDlQyYf3jHfaRX77+kAAKB
-        bJZq6A==
+        ySF9JRn706s7zmRIoAf9tZWmKkEHJFad5JFYbmq8svk=; b=CQasF4dn9WVlE6Xf
+        x41OY/DkqYhJHqfcH4Ra+nyQfOM5MraojRX6kEsaZ0WgaFaZM07NsFsA/w2Fek3y
+        xAA4G6iYxaY7slBDABBFE/ArcAxiQhqO4OHyCkePhFKmL79Ixm3MrrRga+BXffOj
+        xjEaTb6F2gRwqDlMF1iYCcJNXS5pdmK8sIvQDHBvWRmQBsdyl5Qg/s/eUVZjmHZN
+        FTWKby7+AqRhNHB/WgS6C5gdv9i6V3GfmMT11peM5hcsv57HqRM+6NcUcR/mJ0E5
+        OAuzcegix+VhF+zpNir3DahJNi4tI9PYkU9pLzTk8sT50cu2aZYLPc3P4pG79p5q
+        6ouKWA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=fesgqNtZBG1OUNZNDS6pXSeSxFh1EPyXvlZgyE9FB
-        R4=; b=Ef8UEmAIszXLXZC/rEb7t4jbsLyRmW9LLy0UmIaOnhmFWWEQiYVNjci4e
-        2SxjaBRbswO2QfhGnPQTS+9IBDXd9iKdl1wS/3ZgMxuyS/VkJ+7iSY9T9plpyCLE
-        4XCMXk1p9KrI3U6jLJw/7TkFhLXDzPofh7Dt61fHzBGyXZRAXZltcPnWynRi6EId
-        TbZEzMKVirorSJA5EElLIKjbc//TlTSAwJgdjvfRs97Os+l/9nrch8bYwlWsoofh
-        wQFH0lCMP1e8SPdYWN7O0IM+pPc8dUGU3ueAVRpBDE1rFo1FNsb5T3ThrOu1TEGI
-        mtrAzZe5aINui6ZmRXi285caKy/6Q==
-X-ME-Sender: <xms:WLJ5YUQh21HiTvBHQT2cQLVpsufTIOzTNh77lIyuzkgXg2LKWMWTfw>
-    <xme:WLJ5YRxe1qTuGsap7tvg6UJ-H1Cxa-09nRCI4kjGzHI_aj3Z2h2JZyWotccPtPBH1
-    ACJaOW7JcFKyN3anfo>
-X-ME-Received: <xmr:WLJ5YR2SA8k2Tj8cO2TN0tJOGutnibm425sOVjvAZ6nSaDLcw0ztXLGyYFvS1Y6WOn3AusokpXLNA-sySc7zUgW8ZqdbU4iwwg96x_fR>
+        :x-sasl-enc; s=fm1; bh=ySF9JRn706s7zmRIoAf9tZWmKkEHJFad5JFYbmq8s
+        vk=; b=UkLeJBWJESrGwVMNXQVn136H4VkMX2VMKLdDV4+o1nXMo/v6+7GSKujIj
+        eeufa5rMuhWb+5NitvkJ8PL9U12hQW7RGcKDq6u226Gj+0WLcbuweExSQmOHnf9D
+        IYENqGY+biQ4ltOByDnyjyY5W0V/zcQsjmfzkRJ070l6gqIHMB78qBhy5Q1noNs7
+        9IO8vNvtc56WsI1FcgErnuHXmniXkjEAYBnVp9dJxRfF1W0PSMztgjxKnCTDHRmO
+        eNSy2Sh/yuropT+QelfREAGVJ8YkhZzsoQI1ozOcdkIZJ+h+Zz9d/MbsVU910kmK
+        3yPp9dJmeLeJ1IPaQSPSHgrLrWJ+A==
+X-ME-Sender: <xms:YrJ5YeRmhzm4AXbDfo5tgonAyH8Ng8pSOsz7-HBjXhKeMyPTDZEMqw>
+    <xme:YrJ5YTzDPf_oCqSD8JDG9Qyt_R9ydfrmzP3IMvSHKU6-9GlR5w56vIXrX7skVUGq8
+    yr8DxKGyWdfnsfbLgc>
+X-ME-Received: <xmr:YrJ5Yb1gZCVLt1eJkUIjxQM9AnObCiEwdgvy_4dzI9pDZAdlsXNhbJdn--K-7tdK9X9eTPeLSJL7VotuLQmodeGFHivvQYP5-obO4n8V>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdegtddguddutdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpefhvffufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforgig
     ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
     grthhtvghrnhepjeeugfegkeffgfeuvedtvddufffhjeffjeejvddvudduteehhfefhfef
-    geeikeeknecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomh
+    geeikeeknecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehmrghilhhfrhhomh
     epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:WLJ5YYCwaumgaAFf8CID1ZhmQG7pHZtyg-kgmae_Rj5oIB9jPng7Qg>
-    <xmx:WLJ5YdjqQy80ptuStxRkSzwwGO6W2koiFMKc3sqKOXfcJqmYl0kLwQ>
-    <xmx:WLJ5YUqq73RFGc9R7TPjiA_pHxK4JGlVzLVHeNyVMaevRlgvnIKPpA>
-    <xmx:WbJ5YTMcSXa4l1Q_7dIflfLTGCCawJ5JxCZCZeIr0Rv4Ga6mG0IawJ0RcLA>
+X-ME-Proxy: <xmx:YrJ5YaBqxnNlYUDHMQ7wdrp8fbfvQGtRuoU2IHVZDowXAcUk-BAmuA>
+    <xmx:YrJ5YXjqCte8JJNJ7X6VpOHKR5XfF6abeYH4uvNeTscr3OBJAVGd-A>
+    <xmx:YrJ5YWpB1BXLc2BlWcJsrj4ddzqLFdkDAMkHnD1Vu7EHMwEVaYfaug>
+    <xmx:YrJ5YdMEfeCcUQAlfHckZDg0WyO6HquNWFv8KyopwdnsxzDpkJyFt6PMz7M>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Oct 2021 16:11:04 -0400 (EDT)
+ 27 Oct 2021 16:11:14 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Robert Foss <robert.foss@linaro.org>,
@@ -76,23 +76,24 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Jernej Skrabec <jernej.skrabec@gmail.com>
 Cc:     Xinwei Kong <kong.kongxinwei@hisilicon.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        linux-kernel@vger.kernel.org, Tian Tao <tiantao6@hisilicon.com>,
+        Rob Clark <robdclark@gmail.com>,
         John Stultz <john.stultz@linaro.org>,
-        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
+        dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>,
+        Inki Dae <inki.dae@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
         Chen Feng <puck.chen@hisilicon.com>,
-        linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Inki Dae <inki.dae@samsung.com>, Sean Paul <sean@poorly.run>,
         freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         Joonyoung Shim <jy0922.shim@samsung.com>,
         Xinliang Liu <xinliang.liu@linaro.org>
-Subject: Re: (subset) [PATCH v6 13/21] drm/bridge: sn65dsi83: Fix bridge removal
-Date:   Wed, 27 Oct 2021 22:09:44 +0200
-Message-Id: <163532324664.18245.16048406217124194602.b4-ty@cerno.tech>
+Subject: Re: (subset) [PATCH v6 15/21] drm/bridge: sn65dsi83: Register and attach our DSI device at probe
+Date:   Wed, 27 Oct 2021 22:09:46 +0200
+Message-Id: <163532324664.18245.6918999551451173330.b4-ty@cerno.tech>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211025151536.1048186-14-maxime@cerno.tech>
-References: <20211025151536.1048186-1-maxime@cerno.tech> <20211025151536.1048186-14-maxime@cerno.tech>
+In-Reply-To: <20211025151536.1048186-16-maxime@cerno.tech>
+References: <20211025151536.1048186-1-maxime@cerno.tech> <20211025151536.1048186-16-maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -100,16 +101,12 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 25 Oct 2021 17:15:28 +0200, Maxime Ripard wrote:
-> Commit 24417d5b0c00 ("drm/bridge: ti-sn65dsi83: Implement .detach
-> callback") moved the unregistration of the bridge DSI device and bridge
-> itself to the detach callback.
+On Mon, 25 Oct 2021 17:15:30 +0200, Maxime Ripard wrote:
+> In order to avoid any probe ordering issue, the best practice is to move
+> the secondary MIPI-DSI device registration and attachment to the
+> MIPI-DSI host at probe time. Let's do this.
 > 
-> While this is correct for the DSI device detach and unregistration, the
-> bridge is added in the driver probe, and should thus be removed as part
-> of its remove callback.
 > 
-> [...]
 
 Applied to drm/drm-misc (drm-misc-next).
 
