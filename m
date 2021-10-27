@@ -2,150 +2,159 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90A4C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD59AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 13:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B23AC61090
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E77F610A5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 13:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240960AbhJ0IrZ (ORCPT
+        id S236368AbhJ0NKl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Oct 2021 04:47:25 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:54271 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239544AbhJ0IrV (ORCPT
+        Wed, 27 Oct 2021 09:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234339AbhJ0NKk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Oct 2021 04:47:21 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 71C57580486;
-        Wed, 27 Oct 2021 04:44:55 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 27 Oct 2021 04:44:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=M3eCyMtSzQvSRfpY5rVVZ9RVkh6
-        FdSVbf6yAV0XO4K8=; b=NmzUZOWnydiuj2S8GXj5BmNeI6pr7rLla6OGpcy3C4x
-        SL8j7TvqoSbEzq1BnX6ggFJ9W+aANfQZl2j2oQi9v/Y1m5VlmUeid+r32/oNygjM
-        upk8Qq4jkUaPrI2deYOakvWggWGqh7tAdSbO6N9mvdMrVDLDIUmc5fbffoNGouNh
-        MZYmu70iQwwuO+33jBTTnjaDlpwybEj6wVjaiv8aAaEMS4OMe3eo5UBCx5C4kyQ4
-        amOz6taiTkfqGK39fTrH+gnmsS9doz5wve3bKXvLQgSrno6DoyVTo4WZEpLZxYlr
-        DBse/nwb8rbo5KaCwCVggb670luJpaZaFc+kQZnDktg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=M3eCyM
-        tSzQvSRfpY5rVVZ9RVkh6FdSVbf6yAV0XO4K8=; b=kLB2N0MuxPnehTteBVIRkX
-        /FWES0DM/0mOGMwFgIC9OXlHVkiq1CuZmq/W3sxWzGNh0crFYT0d+G0VEUjA2iQk
-        pa04vRIDZrh/PAvHzPbEjAS709vJwAf34g80ZGTsGDX3eelaifSfQtB8rWOuN/Yu
-        iXEjjmXGEfwmbn/SUTDOzRNqbHz6BPHJLfE1vKcLwTPm3ETQQL09KS6Id93j7/jU
-        um+uYClmfXLMaH86Ljyk4I0l26IQEHdyFK7KGVgDa+u+4uoOu0Y+8nGyyR+HfDQA
-        tW6jd3ix17HW+ZciU5Mau1fBru7L7L1EzBE35SoIp1vqYVN6UjSihcCj1e3YxnQg
-        ==
-X-ME-Sender: <xms:hBF5Yc7BzLyYRk4GGfOgPfbDwi-tlppOdcEnk6ov_Gx9a12rI5hQng>
-    <xme:hBF5Yd60K--rqAYW6wQgyM38yfJDwJ75W7rCk-uOFeWk_G4ANbXKO0HQF2GRzqsFs
-    wAEeethTYlTMbTHrlM>
-X-ME-Received: <xmr:hBF5YbfOI1J3dz9b8owKVh8tx87ejOgb4HxrCXD7nLcTpl3a4BWFzfyx1l2jGmgk3_CY57eC5E5-A0oKYCO7Wh2bSLCLLCDKHxMgSxJh>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdegtddgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:hBF5YRLajqxC-IThi0jmk6jZ-O0HSCCBD3mbj1wS6NLddJ2x3g8z4w>
-    <xmx:hBF5YQLKmrGZZMo_GHH5FieCkwvCNX5HJtD2SQ7m2_j4WOcF3nXv_Q>
-    <xmx:hBF5YSxrJCfl9CrpGyipV_FdO_GukTIjGidowzUsN_cGUsbkkxgyhw>
-    <xmx:hxF5YbdWEcCvXgYet2d3aj7yyvMAGIwE6wZItn1hxaP9XNTHrlLpqA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Oct 2021 04:43:52 -0400 (EDT)
-Date:   Wed, 27 Oct 2021 10:42:45 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tian Tao <tiantao6@hisilicon.com>,
-        freedreno@lists.freedesktop.org,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
-        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v5 00/21] drm/bridge: Make panel and bridge probe order
- consistent
-Message-ID: <20211027084245.6wjqk3e6fa3jw5qg@gilmour>
-References: <20211021073947.499373-1-maxime@cerno.tech>
- <YXGFz4o5fWrfGnGk@ravnborg.org>
- <20211025151636.dsc3akojm7ywoecm@gilmour>
- <YXbhSjsPXk944TlF@ravnborg.org>
+        Wed, 27 Oct 2021 09:10:40 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36379C061570;
+        Wed, 27 Oct 2021 06:08:15 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id s14so1167366wrb.3;
+        Wed, 27 Oct 2021 06:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uJds+IVoNkUWmdu46LtTG9grpI87Lx0MMvC2+LXmgro=;
+        b=Aju+1WNhnANTfLfuP1d2JmIn+yn/9MYcrflKZCDaRh8YD/iAYKvYArd3rXHHGktyo+
+         B2woyjjsVYhOGT9aB2GZc7YJ7YosfhJjj5fZDlWTjlKcjdHOrNsFW7rXaMC5bER/KbcY
+         R03WM6dSl8vbqDnOmFHkw/hlp9NqgOXvXQ31cmF+NKYrX+Q+rrZuI2c9IA1E8AdA4VRr
+         +qf7Wg2s2pkgytswTPzJme02TqxyDiFL2h/LuiJM1MtQq/NSok8bZQkX8TBQ0B3zYkRa
+         o3uy8B+L3Ikx+2YTwrpEwBUtvMC4UlNbwqoz9VesBTRkEi04QIiKpXwYMHGpW/YL3hlN
+         YPYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uJds+IVoNkUWmdu46LtTG9grpI87Lx0MMvC2+LXmgro=;
+        b=1zkdGzWSHPhayrHDZc1xKs5BrqIa1r3/Oo9w/M593u64qwitq0ndXMUwdeGl7LU58B
+         Hf7g9Y0i7IVxE4WQkXHWfYJYaSeDWLlJlVFYk8QrKh0ci6+0BxOrQNRKu7FWYGbsoe2t
+         wY5ysUSvQlxcHNOn9P6EoTCgCTrcd8qJa3O2Tr6S+XeqyTRyROps7irGwDd/gQt19Uio
+         aaUALNlcLMP6PNH7Xk9kF2Ani9s4PRjdtlodPf1Owxwmsdyh9VhYZBt0XQ3XxMtzocU/
+         cJBJnx6t5GhcIH7xr4iSlgvbmtOw33Kp0kIB1VU/ROhtyVAhyyAaca9pl/VkPFNVBlov
+         9p3w==
+X-Gm-Message-State: AOAM532z1k+qbv1iFROgPVnciiyI+HetaBeZPYZB0aZKbaqdD8G5SD+n
+        aunZEvAoz3fJ1w==
+X-Google-Smtp-Source: ABdhPJwz40kCBYqsoaPbVFPwg7+k2JSxN80ok3URyhQazdOUZLjwUzSQjFzLtt7Ki5Gx4IzoMMuW0g==
+X-Received: by 2002:a5d:6e8d:: with SMTP id k13mr40133468wrz.295.1635340093805;
+        Wed, 27 Oct 2021 06:08:13 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id z5sm4279192wmp.26.2021.10.27.06.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Oct 2021 06:08:13 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mmc: dw_mmc: exynos: Fix spelling mistake "candiates" -> candidates
+Date:   Wed, 27 Oct 2021 14:08:12 +0100
+Message-Id: <20211027130812.426373-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aobqxdixyoh4wxno"
-Content-Disposition: inline
-In-Reply-To: <YXbhSjsPXk944TlF@ravnborg.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+There are several spelling mistakes in variable names and in a dev_warn
+message. Fix these.
 
---aobqxdixyoh4wxno
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/mmc/host/dw_mmc-exynos.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-On Mon, Oct 25, 2021 at 06:54:34PM +0200, Sam Ravnborg wrote:
-> Hi Maxime,
->=20
-> On Mon, Oct 25, 2021 at 05:16:36PM +0200, Maxime Ripard wrote:
-> > Hi Sam,
-> >=20
-> > On Thu, Oct 21, 2021 at 05:22:55PM +0200, Sam Ravnborg wrote:
-> > > Hi Maxime,
-> > >=20
-> > > > Let me know what you think,
-> > >=20
-> > > apply the lot to drm-misc-next. Maybe wait for an r-b or a-b on the k=
-irin
-> > > patch but the rest is IMO good to go.
-> >=20
-> > I had a compilation error since the rebase of the v4, so I sent a new
-> > version. John Stultz has tested this series and given his tested-by, and
-> > is the kirin maintainer.
-> >=20
-> > I guess it's enough?
->=20
-> Yeah, go ahead and get it applied.
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 1f8a3c0ddfe1..c2dd29ef45c6 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -442,14 +442,14 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
+ 	return sample;
+ }
+ 
+-static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
++static s8 dw_mci_exynos_get_best_clksmpl(u8 candidates)
+ {
+ 	const u8 iter = 8;
+ 	u8 __c;
+ 	s8 i, loc = -1;
+ 
+ 	for (i = 0; i < iter; i++) {
+-		__c = ror8(candiates, i);
++		__c = ror8(candidates, i);
+ 		if ((__c & 0xc7) == 0xc7) {
+ 			loc = i;
+ 			goto out;
+@@ -457,7 +457,7 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
+ 	}
+ 
+ 	for (i = 0; i < iter; i++) {
+-		__c = ror8(candiates, i);
++		__c = ror8(candidates, i);
+ 		if ((__c & 0x83) == 0x83) {
+ 			loc = i;
+ 			goto out;
+@@ -466,11 +466,11 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
+ 
+ 	/*
+ 	 * If there is no cadiates value, then it needs to return -EIO.
+-	 * If there are candiates values and don't find bset clk sample value,
+-	 * then use a first candiates clock sample value.
++	 * If there are candidates values and don't find bset clk sample value,
++	 * then use a first candidates clock sample value.
+ 	 */
+ 	for (i = 0; i < iter; i++) {
+-		__c = ror8(candiates, i);
++		__c = ror8(candidates, i);
+ 		if ((__c & 0x1) == 0x1) {
+ 			loc = i;
+ 			goto out;
+@@ -485,7 +485,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+ 	struct dw_mci *host = slot->host;
+ 	struct dw_mci_exynos_priv_data *priv = host->priv;
+ 	struct mmc_host *mmc = slot->mmc;
+-	u8 start_smpl, smpl, candiates = 0;
++	u8 start_smpl, smpl, candidates = 0;
+ 	s8 found;
+ 	int ret = 0;
+ 
+@@ -496,18 +496,18 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+ 		smpl = dw_mci_exynos_move_next_clksmpl(host);
+ 
+ 		if (!mmc_send_tuning(mmc, opcode, NULL))
+-			candiates |= (1 << smpl);
++			candidates |= (1 << smpl);
+ 
+ 	} while (start_smpl != smpl);
+ 
+-	found = dw_mci_exynos_get_best_clksmpl(candiates);
++	found = dw_mci_exynos_get_best_clksmpl(candidates);
+ 	if (found >= 0) {
+ 		dw_mci_exynos_set_clksmpl(host, found);
+ 		priv->tuned_sample = found;
+ 	} else {
+ 		ret = -EIO;
+ 		dev_warn(&mmc->class_dev,
+-			"There is no candiates value about clksmpl!\n");
++			"There is no candidates value about clksmpl!\n");
+ 	}
+ 
+ 	return ret;
+-- 
+2.32.0
 
-It turns out dim is not happy with just a Tested-by :)
-
-I'll ask around for an acked-by or reviewed-by
-
-Maxime
-
---aobqxdixyoh4wxno
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYXkRBQAKCRDj7w1vZxhR
-xcX+AQDa5hm15ZvQWQkhoaM7QT0BYcG/8gBhyw2NycTLJeU50wEAsbuKE/SJt3yK
-G9CaUa4imA2133VPQCI/46bOj5VmbAs=
-=1uwT
------END PGP SIGNATURE-----
-
---aobqxdixyoh4wxno--
