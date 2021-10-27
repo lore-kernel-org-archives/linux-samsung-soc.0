@@ -2,142 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFD8C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 07:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D00C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAE6C610A4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 07:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A692D61073
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Oct 2021 08:38:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237095AbhJ0Hha (ORCPT
+        id S239354AbhJ0Iki (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Oct 2021 03:37:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230494AbhJ0Hh3 (ORCPT
+        Wed, 27 Oct 2021 04:40:38 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:38436
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239187AbhJ0Ikh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Oct 2021 03:37:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A02E86109E;
-        Wed, 27 Oct 2021 07:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635320104;
-        bh=vb5/UUmGuytMVQ4VOJsav4ATysXUmZVjZbbtwRDmqdA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sBAhtDYuLPTb0VW4inS89PEVfNVDqk/owmfiYVgUit6DOFXiC+DvpGdAsLIEkqQ83
-         U/i9gOF0yqD6OCaiKIda+RoNji+igQtEf94iaWZW0eZ9R6E8AMKN1fo6ZBpjY3Qh0c
-         AqhEaPsKd34we+35+ifseVtRirdfKeebQfH1ukQ8XQjtJbMgRp/K5ypZFBgrxCLnAR
-         tDj+LJb9seQMpbOTMgO0EORT7UbBoJrqJKYg0RagbiCdvuDeNNa765QxP90Yunl7hX
-         WWmGvGcH5X/YTrGhe4btqUVbFnq25IVvEncoE+QKuzAcaznFKaZOM4XxhC8FXewf+8
-         AOHRiZNQkpc7w==
-Date:   Wed, 27 Oct 2021 08:34:58 +0100
-From:   Will Deacon <will@kernel.org>
+        Wed, 27 Oct 2021 04:40:37 -0400
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1050C3F17A
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Oct 2021 08:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1635323891;
+        bh=lSRmd+bAt3G+a8pB1uQ3D1t4YJVVUpvOwAJD3U8R8rQ=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+         In-Reply-To:Content-Type;
+        b=vV8+IJX/iXU6XN8AzslCINldXcn+hLgIMkPUwuJOSRGocC1iap7nmWNdaMgaF61/9
+         8FOFvBC1ygrtvw0ff/gwnp50p76qnZPDa1jWFjE0gohmTiqJB/wqipl46tOrGPpLQh
+         bMA3ZnHnOIVc9VX9eCmdpU053nY1Fc/P330i5c2RqDqFA+8GdLY1IKKCvj2zpjzeuW
+         XqbL1UMu+msCbSoZyMR7rZm2oQfp2lvU8bG7wWTV4t5XND8Csx9ffth6GlD97NWtjg
+         rFlvAcVcf9RJScB4oXz2oevt1TNxmzm8bFCtPoa+rtPDPArrGqt0WAbXOMUwlHVXuL
+         DvoyCwsLgM7Hw==
+Received: by mail-lf1-f72.google.com with SMTP id i1-20020a056512318100b003ffd4e89eb9so453844lfe.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Oct 2021 01:38:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lSRmd+bAt3G+a8pB1uQ3D1t4YJVVUpvOwAJD3U8R8rQ=;
+        b=XMcK6+epiA7KU6y1Hy/Z/3ehjqvbEK8eAxHXO8wCzc6sfKjidVkxMOFVVh9iV7coPL
+         QtfSQpW6PLQK8TqoaV3j4Ozgg25KL6Dy4kHxZrYqs4RKsKkxz6I1wOmO6yUUPPHR63Zl
+         Hb3roYTyqK14TNq6sixhmbtZ8YKv0vAbFGXUpCM2eBIA3E4LdFrRlr/mqs+ItK2lFVIC
+         hJOfvLTOMZjuLZO1p6zbtA5oEg0ormxxPjsGl8FHzGb08ENIHZBNnEC8uq9h6I0Dha87
+         oyk7o0GVBmWQRYxJ490hmNmj8dPO4gq0PjM2an/wUWpI38Q+aNOyMhNIfPAiTWArvvvJ
+         Rmtg==
+X-Gm-Message-State: AOAM533iBq+e42/KwnSOtSiGTeK9FIev59NN12PnK1g5EmS+Xdl0Bl+v
+        8vRk4zQGQSIj6zpIptvuXje+EDagverJpacR+eT8E/WEma1hQwvZ73GPPSKh/nqjGiWF9MiPPkT
+        8c4ox8WBHCoDMYpxgk/ACsB43q+R7dkZ8Wlv/U0PapEPZppHe
+X-Received: by 2002:a2e:3504:: with SMTP id z4mr1120851ljz.437.1635323890455;
+        Wed, 27 Oct 2021 01:38:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzulrV6FlW9g2gi/5knG/ThdYkMqFE5BqsPFzsMZn9K+3XQGV4JppxbW4/p2BeNyTZi2gMgxQ==
+X-Received: by 2002:a2e:3504:: with SMTP id z4mr1120838ljz.437.1635323890316;
+        Wed, 27 Oct 2021 01:38:10 -0700 (PDT)
+Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id a28sm71719ljd.65.2021.10.27.01.38.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Oct 2021 01:38:09 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] clocksource/drivers/exynos_mct_v2: introduce
+ Exynos MCT version 2 driver for next Exynos SoC
 To:     Youngmin Nam <youngmin.nam@samsung.com>
-Cc:     krzysztof.kozlowski@canonical.com, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, tglx@linutronix.de,
+Cc:     daniel.lezcano@linaro.org, tglx@linutronix.de,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, pullip.cho@samsung.com,
         hoony.yu@samsung.com, hajun.sung@samsung.com,
-        myung-su.cha@samsung.com, kgene@kernel.org
-Subject: Re: [PATCH v1 1/2] clocksource/drivers/exynos_mct_v2: introduce
- Exynos MCT version 2 driver for next Exynos SoC
-Message-ID: <20211027073458.GA22231@willie-the-truck>
-References: <20211021082650.GA30741@perf>
- <1b93aaf3-ed64-b105-dec4-07b6f27b385b@canonical.com>
- <20211022042116.GA30645@perf>
- <da83de3a-e7a2-f9b2-80f2-25c39717c3e4@canonical.com>
- <20211026014732.GA45525@perf>
- <91e926c4-9a3a-196d-1451-d3e7d38fc132@canonical.com>
- <20211026104518.GA40630@perf>
- <cb5bd5a3-1c23-0dc5-9f77-112befd7269c@canonical.com>
- <CGME20211027011125epcas2p2916524051416ede854b750c91a19073b@epcas2p2.samsung.com>
- <20211027013709.GA17353@perf>
+        myung-su.cha@samsung.com
+References: <20211021061804.39118-1-youngmin.nam@samsung.com>
+ <CGME20211021055112epcas2p278145beb21cd6cc4217813a41c1e1407@epcas2p2.samsung.com>
+ <20211021061804.39118-2-youngmin.nam@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Message-ID: <117dfec8-e417-642b-7647-9d17592826ad@canonical.com>
+Date:   Wed, 27 Oct 2021 10:38:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211027013709.GA17353@perf>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211021061804.39118-2-youngmin.nam@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 27, 2021 at 10:38:37AM +0900, Youngmin Nam wrote:
-> On Tue, Oct 26, 2021 at 01:00:51PM +0200, Krzysztof Kozlowski wrote:
-> > On 26/10/2021 12:45, Youngmin Nam wrote:
-> > > On Tue, Oct 26, 2021 at 09:10:28AM +0200, Krzysztof Kozlowski wrote:
-> > >> On 26/10/2021 03:47, Youngmin Nam wrote:
-> > >>>> If everyone added a new driver to avoid integrating with existing code,
-> > >>>> we would have huge kernel with thousands of duplicated solutions. The
-> > >>>> kernel also would be unmaintained.
-> > >>>>
-> > >>>> Such arguments were brought before several times - "I don't want to
-> > >>>> integrating with existing code", "My use case is different", "I would
-> > >>>> need to test the other cases", "It's complicated for me".
-> > >>>>
-> > >>>> Instead of pushing a new vendor driver you should integrate it with
-> > >>>> existing code.
-> > >>>>
-> > >>> Let me ask you one question.
-> > >>> If we maintain as one driver, how can people who don't have the new MCT test the new driver?
-> > >>
-> > >> I assume you talk about a case when someone else later changes something
-> > >> in the driver. Such person doesn't necessarily have to test it. The same
-> > >> as in all other cases (Exynos MCT is not special here): just ask for
-> > >> testing on platform one doesn't have.
-> > >>
-> > >> Even if you submit this as separate driver, there is the exact same
-> > >> problem. People will change the MCTv2 driver without access to hardware.
-> > >>
-> > > Yes, I can test the new MCT driver if someone ask for testing after modifying the new driver.
-> > > But in this case, we don't need to test the previous MCT driver. We have only to test the new MCT driver.
-> > 
-> > Like with everything in Linux kernel. We merge instead of duplicate.
-> > It's not an argument.
-> > 
-> > >> None of these differ for Exynos MCT from other drivers, e.g. mentioned
-> > >> Samsung PMIC drivers, recently modified (by Will and Sam) the SoC clock
-> > >> drivers or the ChipID drivers (changed by Chanho).
-> > > From HW point of view, the previous MCT is almost 10-year-old IP without any major change and
-> > > it will not be used on next new Exynos SoC.
-> > > MCTv2 is the totally newly designed IP and it will replace the Exynos system timer.
-> > > Device driver would be dependent with H/W. We are going to apply a lot of changes for this new MCT.
-> > > For maintenance, I think we should separate the new MCT driver for maintenance.
-> > > 
-> > 
-> > There are several similarities which actually suggest that you
-> > exaggerate the differences.
-> > 
-> > The number of interrupts is the same (4+8 in older one, 12 in new one...).
+On 21/10/2021 08:18, Youngmin Nam wrote:
+> Exynos MCT version 2 is composed of 1 FRC and 12 comparators.
+> The 12 comparators can produces interrupts independently,
+> so they can be used as local timer of each CPU.
 > 
-> I didn't "exaggerate" at all.
-> The numer of interrups is the same. But their usage is completely different.
-> The type of each timer is different.
-> And previous MCT can only support upto 8 cores.
-> 
-> * MCTv1 (Let me call previous MCT as MCTv1)
->  - 4 global timer + 8 local timer
->  - Global timer and local timer are totally different.
->  - 4 global timer have only one 64bit FRC that serves as the "up-counter" with 4 "comparators"
->  - 8 local timer have 8 of 32bit FRC that serves as the "down-counter" without any "comparators".(just expire timer)
->  - local timer can be used as per-cpu event timer, so it can only support upto 8 cores.
-> 
-> * MCTv2
->  - There are no global timer and local timer anymore.
->  - 1 of 64bit FRC that serves as "up-counter" (just counter without "comparators")
->  - 12 comaprators (These are not "counter") can be used as per-cpu event timer so that it can support upto 12 cores.
->  - RTC source can be used as backup source.
-> 
-> > You assign the MCT priority also as higher than Architected Timer
-> > (+Cc Will and Mark - is it ok for you?)
-> >     evt->rating = 500;      /* use value higher than ARM arch timer *
-> > 
-> Yes, this is absolutely correct on event timer.
-> We cannot use arm arch timer which is operating based on PPI as per-cpu event timer because of poewr mode.
 
-You should be able to now that I've added support for per-cpu wakeup timers.
+...
 
-As long as the Arm arch timer is marked as C3STOP (e.g. by sticking the
-"local-timer-stop" property in the DT notes), then the MCT will be used
-as the wakeup source if you set the CLOCK_EVT_FEAT_PERCPU feature flag.
+> +
+> +static void exynos_mct_comp_start(struct mct_clock_event_device *mevt,
+> +				  bool periodic, unsigned long cycles)
+> +{
+> +	unsigned int index = mevt->comp_index;
+> +	unsigned int comp_enable;
+> +	unsigned int loop_cnt = 0;
+> +
+> +	comp_enable = readl_relaxed(reg_base + EXYNOS_MCT_COMP_ENABLE(index));
+> +	if (comp_enable == MCT_COMP_ENABLE)
+> +		exynos_mct_comp_stop(mevt);
+> +
+> +	if (periodic)
+> +		writel_relaxed(MCT_COMP_CIRCULAR_MODE, reg_base + EXYNOS_MCT_COMP_MODE(index));
+> +
+> +	writel_relaxed(cycles, reg_base + EXYNOS_MCT_COMP_PERIOD(index));
 
-Give it a try.
+This is unsigned long, so 64-bit on your platform. Use writeq_relaxed or
+handle it somehow.
 
-Will
+
+Best regards,
+Krzysztof
