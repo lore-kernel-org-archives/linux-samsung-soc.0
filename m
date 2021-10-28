@@ -2,224 +2,201 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0221C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 11:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB07C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 13:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9124E610FF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 11:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E25C61040
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 13:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbhJ1LeV (ORCPT
+        id S230157AbhJ1N2t (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Oct 2021 07:34:21 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:14825 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbhJ1LeV (ORCPT
+        Thu, 28 Oct 2021 09:28:49 -0400
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:41495 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229981AbhJ1N2t (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Oct 2021 07:34:21 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20211028113153epoutp04c5cbe15b05c5964a3ddaf3664c0da491~yLnlHH3-I3255632556epoutp047
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Oct 2021 11:31:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20211028113153epoutp04c5cbe15b05c5964a3ddaf3664c0da491~yLnlHH3-I3255632556epoutp047
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1635420713;
-        bh=qPKVtQyQQkGyv4J6n3UjORyRBa1GV5fSYB+lDWdWH5k=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JYtcVc6Q3E1wHyC1YJA1GQwbOIfwseNob9Dj2Bg91pwucdpz/acHgd7Qkdb5fMi06
-         YcT/C2QyweL8X22lPiVVOSuTTAsD054G/2/XOl/K1Ue3F2gpYL1SZhN5OYjImT4+2u
-         2hpY0JCG3wM8U/hguHKKnZGaa4AvTnJUp028XauY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20211028113152epcas1p2a3b506539472c1df47cdc2dc2dd1a5ac~yLnkyzaA71580015800epcas1p2q;
-        Thu, 28 Oct 2021 11:31:52 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.233]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Hg3LB2Zhpz4x9Q3; Thu, 28 Oct
-        2021 11:31:46 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8C.8E.09592.22A8A716; Thu, 28 Oct 2021 20:31:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20211028113145epcas1p1fc19a8a2beee5ba347c9cffed3f5784f~yLneK7daj0595105951epcas1p16;
-        Thu, 28 Oct 2021 11:31:45 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20211028113145epsmtrp20d676e36bdf69bb168a220efb0592a20~yLneS7pud1039910399epsmtrp2Y;
-        Thu, 28 Oct 2021 11:31:45 +0000 (GMT)
-X-AuditID: b6c32a37-2a5ff70000002578-dd-617a8a220806
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        66.70.08738.12A8A716; Thu, 28 Oct 2021 20:31:45 +0900 (KST)
-Received: from [10.113.113.235] (unknown [10.113.113.235]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20211028113145epsmtip1e067a91a5fb27c4c7988479d53a96720~yLnd8yVpt2523925239epsmtip1A;
-        Thu, 28 Oct 2021 11:31:45 +0000 (GMT)
-Subject: Re: [PATCH][next] mmc: dw_mmc: exynos: Fix spelling mistake
- "candiates" -> candidates
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Jaehoon Chung <jh80.chung@samsung.com>
-Message-ID: <e51c552a-0cab-10c0-1242-b69ea7707863@samsung.com>
-Date:   Thu, 28 Oct 2021 20:32:28 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
-        Thunderbird/78.13.0
+        Thu, 28 Oct 2021 09:28:49 -0400
+Received: by mail-ot1-f53.google.com with SMTP id v2-20020a05683018c200b0054e3acddd91so8546693ote.8;
+        Thu, 28 Oct 2021 06:26:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=o0MDpHg+qwd0y498s50siQnYNolrvZrYHlzVJE27GAg=;
+        b=d18eGZ8m6jpKVZ+RF3kIrpRl+MBerG/ax7/IfKKasRwN8ab18E9kbb+50BhvwkJMdn
+         atwlI3KncTpiOK3Rsdj9h8ifyk98OsxDuVWshquY3CzLQrTg9TGZS6blfjmiQmjTN6IB
+         bPbXF/6HuMbJpp/S1bNGKl/s7mPsZskVMHihCPwp4VC/dbed5TOKqqTvD2Wi+A0fBHQZ
+         dtNmBjR9pH2MMI/UOwF6EX1FnSbSm+fc5MhlwoyZfsl0ZM3fNqwlFqVdJQQAcEYq0230
+         QPTgnJzUDTAxDCeBJY33ts5Ng37jJQJkRtz3a45Z6WvXWPY//ntWfqeyCiBfffYLmey4
+         oCfg==
+X-Gm-Message-State: AOAM531s1xcUUheo6pqlhc5yBoPiN3LQPYa9fSzYiwDTz6lQ+m9SK+Yk
+        /ll9D9ShoXtmi4j/Ze9tUw==
+X-Google-Smtp-Source: ABdhPJx8GxhOFybZeNIJ9I1YlzitTOglwBqkmOhK6xW55NMWkGGr4N0Khl1/mbtSZFPcRndSVUIuLQ==
+X-Received: by 2002:a9d:2484:: with SMTP id z4mr3329118ota.183.1635427581781;
+        Thu, 28 Oct 2021 06:26:21 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id 3sm1038014oif.12.2021.10.28.06.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 06:26:21 -0700 (PDT)
+Received: (nullmailer pid 4060901 invoked by uid 1000);
+        Thu, 28 Oct 2021 13:26:20 -0000
+Date:   Thu, 28 Oct 2021 08:26:20 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chanho Park <chanho61.park@samsung.com>
+Cc:     linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Can Guo <cang@codeaurora.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Gyunghoon Kwon <goodjob.kwon@samsung.com>,
+        Sowon Na <sowon.na@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v5 00/15] introduce exynosauto v9 ufs driver
+Message-ID: <YXqk/DgEYh0y4YEm@robh.at.kernel.org>
+References: <CGME20211018124505epcas2p31437a0fae6711edeb9db5b49eb420e56@epcas2p3.samsung.com>
+ <20211018124216.153072-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqXQwfJuU_PPrfeNwh51UkhtVFJzZ71_0R6kcVuSM3bWw@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmrq5SV1WiwcIdihY7N/5gtdh6S9pi
-        49sfTBabHl9jtbi8aw6bxZH//YwWM87vY7I4vjbcgcNjVkMvm8fTCZPZPe5c28PmsXlJvcfn
-        TXIBrFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlA
-        hygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwL9IoTc4tL89L18lJLrAwNDIxM
-        gQoTsjMWPfvJUtAvV/Frc3oD40fhLkZODgkBE4mpbz6xdTFycQgJ7GCU2P3jDpTziVHi+I4N
-        7BDOZ0aJ7/s2scG1nLzBApHYxSjRM3UPE4TznlHiyOQm1i5GDg5hgQSJ40e5QRpEBCIkPmxa
-        zgpSwyzwhFFia/tsdpAEm4COxPZvx5lAbF4BO4nVE36xgNgsAqoSu/79BLNFBSIl/p7cxQpR
-        IyhxcuYTsDinQKBE8+bpYL3MAuISt57Mh7LlJba/ncMMskxCoJdDoufrE3aIs10kvjxtZoKw
-        hSVeHd8CFZeS+PxuL9Rr1RK7ms9ANXcwStza1gTVYCyxf+lkJpDPmAU0Jdbv0ocIK0rs/D2X
-        EWIxn8S7rz1gz0sI8Ep0tAlBlKhIXHr9kglm1d0n/1khbA+Jo8dXME9gVJyF5LVZSN6ZheSd
-        WQiLFzCyrGIUSy0ozk1PLTYsMIbHdnJ+7iZGcCLVMt/BOO3tB71DjEwcjIcYJTiYlUR4L88r
-        TxTiTUmsrEotyo8vKs1JLT7EaAoM7InMUqLJ+cBUnlcSb2hiaWBiZmRsYmFoZqgkzvtZrjBR
-        SCA9sSQ1OzW1ILUIpo+Jg1OqgSnKcOrfnU0LqnprBTS7jn+6cpjrosey+wZ3lxR/i6nbcbBi
-        o7+rHrOhW5rojDcPHtvNP3pEzMknNMiu2tfj6oZ9+27vmfI17+kts1WeL38VJYkr+P9byKNY
-        wzf71cxDT+/eNRAqMz3Nr7i8d+68qxsKOStmnOn4cenbv3iWOM9LgjfDZf/MOlQqIPZwy6Ut
-        U68fmv1bqMh9rfQXo0WdW2+eWP/e51HiFx6Nh/Ktcysb1l27JXFILnvxgeIbQRlrXfNv6cY+
-        7ZhwvuJG1nY9eya7mVJaswU+1RdY7pbpNpwkl71tQWV236oz06Yq+eyfKmh5rEVUQm1dDPOZ
-        Dxe37AzPULO6l8odcFKOxTR62t0VSizFGYmGWsxFxYkAvm0FVC0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK5iV1Wiwfb94hY7N/5gtdh6S9pi
-        49sfTBabHl9jtbi8aw6bxZH//YwWM87vY7I4vjbcgcNjVkMvm8fTCZPZPe5c28PmsXlJvcfn
-        TXIBrFFcNimpOZllqUX6dglcGYue/WQp6Jer+LU5vYHxo3AXIyeHhICJxNSTN1i6GLk4hAR2
-        MEos/7iDGSIhJfH56VS2LkYOIFtY4vDhYoiat4wSx5tb2UHiwgIJEsePcoOUiwhESLSdPMMK
-        UsMs8IRR4v6jT8wQDdcZJY5M7WEBqWIT0JHY/u04E4jNK2AnsXrCL7A4i4CqxK5/P8FsUYFI
-        iaYTW9kgagQlTs58AhbnFAiUaN48HayXWUBd4s+8S8wQtrjErSfzoeLyEtvfzmGewCg0C0n7
-        LCQts5C0zELSsoCRZRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnDkaGntYNyz6oPe
-        IUYmDsZDjBIczEoivJfnlScK8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1
-        ILUIJsvEwSnVwKR/cu3ppC/32YsMcqWqRc7q/rnN1Wlz7deWvBVshWZdk/zSRa/nKT3U3nP0
-        4qLNtswzBJf08i+bt7/k16HN15jv7uVa4rnna6R19wq3fO28fC85js1KVtOe1N2rq/+6p1xx
-        YXTHoY93wlVfyTDeafkTLq+gsmkde35t3mWJLbnxSs2rLu/csWoCh4fiNbXvt/Zu93TObop5
-        xFv/nrF2SkITMHqZK/i7diX+zVz8RqH1g17xQ6mA06t5Fvx6dsbyTtJO9SKfQon/MZwP6gpW
-        VCp7vPuak5akpzAnp03s1XdGn6XiscIX5l5+oz5JgDduveiMFc91u5nmCi8U63jFF6K7corT
-        AaeFAutX9q58qcRSnJFoqMVcVJwIAD4UfmYLAwAA
-X-CMS-MailID: 20211028113145epcas1p1fc19a8a2beee5ba347c9cffed3f5784f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211028100054epcas1p2767c48b7e47f6147c590f8a3edfc6b85
-References: <20211027130812.426373-1-colin.i.king@gmail.com>
-        <CGME20211028100054epcas1p2767c48b7e47f6147c590f8a3edfc6b85@epcas1p2.samsung.com>
-        <CAPDyKFqXQwfJuU_PPrfeNwh51UkhtVFJzZ71_0R6kcVuSM3bWw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211018124216.153072-1-chanho61.park@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/28/21 7:00 PM, Ulf Hansson wrote:
-> On Wed, 27 Oct 2021 at 15:08, Colin Ian King
-> <colin.i.king@googlemail.com> wrote:
->>
->> There are several spelling mistakes in variable names and in a dev_warn
->> message. Fix these.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Mon, 18 Oct 2021 21:42:01 +0900, Chanho Park wrote:
+> In ExynosAuto(variant of the Exynos for automotive), the UFS Storage needs
+> to be accessed from multiple VMs. Traditional virtualization solution
+> provides para-virtualized block driver such as virtio-blk. However, they
+> can be highly depends on the Dom0 where the backend of the PV is
+> located. When the system gets high cpu pressure, the performance of
+> guest VMs are also affected. To overcome this, the SoC implements the
+> virtualization concept as the H/W controller level.
 > 
-> Applied for next, thanks!
+> Below figure is a conceptual design of the UFS Multi Host architecture.
+> 
+>     +------+          +------+
+>     | OS#1 |          | OS#2 |
+>     +------+          +------+
+>        |                 |
+>  +------------+     +------------+
+>  |  Physical  |     |   Virtual  |
+>  |    Host    |     |    Host    |
+>  +------------+     +------------+
+>    |      |              | <-- UTP_CMD_SAP, UTP_TM_SAP
+>    |   +-------------------------+
+>    |   |    Function Arbiter     |
+>    |   +-------------------------+
+>  +-------------------------------+
+>  |           UTP Layer           |
+>  +-------------------------------+
+>  +-------------------------------+
+>  |           UIC Layer           |
+>  +-------------------------------+
+> 
+> There are two types of host controllers of the UFS host controller
+> that we designed. The controller has a Function Arbiter that arranges
+> commands of each hosts. It will arrange the doorbells among the PH and
+> VHs as Round-Robin. When each host transmits a command to the Arbiter,
+> the Arbiter transmits it to the UTP layer. Physical Host(PH) support all
+> UFSHCI functions(all SAPs) same as conventional UFSHCI.
+> Virtual Hosts(VHs) support only data transfer function(UTP_CMD_SAP and
+> UTP_TM_SAP).
+> 
+> In an environment where multiple VMs are used, the OS that has the
+> leadership of the system is called System OS(Dom0). This system OS will
+> own the PH and has a responsibility to handle UIC errors.
+> 
+> VHs can only supports data transfer functions compared with the PH,
+> they're necessary to send a request to the PH for error handling of VHs.
+> To interface among the PH and VHs, the UFSHCI controller supports mailbox.
+> The mailbox register has 8 bit fields and they can be used as
+> arguments of the mailbox protocol. In this initial patchset, the PH
+> ready message is supported and they will be implemented to the next
+> steps.
+> 
+> To support this virtual host type controller which only supports data
+> transfer function (TP_CMD_SAP and UTP_TM_SAP), we need to add below two
+> quirks.
+> - UFSHCD_QUIRK_BROKEN_UIC_CMD
+> - UFSHCD_QUIRK_SKIP_PH_CONFIGURATION
+> 
+> First two patches, I picked them up from Jonmin's patchset[1] and the third
+> patch has been dropped because it's not necessary anymore.
+> 
+> [1]: https://lore.kernel.org/linux-scsi/20210527030901.88403-1-jjmin.jeong@samsung.com/
+> 
+> Patch 0003 ~ 0010, they are changes of exynos7 ufs driver to apply
+> exynosauto v9 variant and PH/VH capabilities.
+> Patch 0011 ~ 0015, the patches introduce the exynosauto v9 ufs MHCI which
+> includes the PH and VHs.
+> 
+> Changes from v4:
+> - s/Arbitor/Arbiter/g of cover-letter.
+> - Rephrase descriptions of cover letter from original patchset.
+> - Except 0007-scsi-ufs-ufs-exynos-correct-timeout-value-setting-re.patch
+>   from this patchset and sent it independently
+> - Patch11/12: Consolidate sysreg and samsung,ufs-shareability-reg-offset
+>   property.
+> - Patch14:
+>   Drop wlun_dev_clr_ua configuration
+>   Add TODO: tag for further implementations
+> 
+> Changes from v3:
+> - Drop "[PATCH v3 06/17] scsi: ufs: ufs-exynos: get sysreg regmap for
+>   io-coherency" and squash it to Patch12
+> - Patch12: Use macro to avoid raw value usage and describe the value of M-Phy setting
+> - Patch13: Add dma-coherent property
+> - Patch14: Use macro to avoid raw value and describe the value of HCI_MH_ALLOWABLE_TRAN_OF_VH
+> 
+> Changes from v2:
+> - Separate dt-binding patches on top of
+>   https://lore.kernel.org/linux-devicetree/YUNdqnZ2kYefxFUC@robh.at.kernel.org/
+> 
+> Changes from v1:
+> - Change quirk name from UFSHCD_QUIRK_SKIP_INTERFACE_CONFIGURATION to
+>   UFSHCD_QUIRK_SKIP_PH_CONFIGURATION
+> - Add compatibles to Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+>   on top of https://lore.kernel.org/linux-scsi/20200613024706.27975-9-alim.akhtar@samsung.com/
+> 
+> Chanho Park (13):
+>   scsi: ufs: ufs-exynos: change pclk available max value
+>   scsi: ufs: ufs-exynos: simplify drv_data retrieval
+>   scsi: ufs: ufs-exynos: add refclkout_stop control
+>   scsi: ufs: ufs-exynos: add setup_clocks callback
+>   scsi: ufs: ufs-exynos: support custom version of ufs_hba_variant_ops
+>   scsi: ufs: ufs-exynos: add EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR option
+>   scsi: ufs: ufs-exynos: factor out priv data init
+>   scsi: ufs: ufs-exynos: add pre/post_hce_enable drv callbacks
+>   scsi: ufs: ufs-exynos: support exynosauto v9 ufs driver
+>   dt-bindings: ufs: exynos-ufs: add io-coherency property
+>   scsi: ufs: ufs-exynos: multi-host configuration for exynosauto
+>   scsi: ufs: ufs-exynos: introduce exynosauto v9 virtual host
+>   dt-bindings: ufs: exynos-ufs: add exynosautov9 compatible
+> 
+> jongmin jeong (2):
+>   scsi: ufs: add quirk to handle broken UIC command
+>   scsi: ufs: add quirk to enable host controller without ph
+>     configuration
+> 
+>  .../bindings/ufs/samsung,exynos-ufs.yaml      |  10 +
+>  drivers/scsi/ufs/ufs-exynos.c                 | 354 +++++++++++++++++-
+>  drivers/scsi/ufs/ufs-exynos.h                 |  27 +-
+>  drivers/scsi/ufs/ufshcd.c                     |   6 +
+>  drivers/scsi/ufs/ufshcd.h                     |  12 +
+>  5 files changed, 386 insertions(+), 23 deletions(-)
+> 
+> --
+> 2.33.0
+> 
+> 
+> 
+> 
 
-Thanks for fixing them!
-
-Best Regards,
-Jaehoon Chung
-
-> 
-> Kind regards
-> Uffe
-> 
-> 
->> ---
->>  drivers/mmc/host/dw_mmc-exynos.c | 20 ++++++++++----------
->>  1 file changed, 10 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->> index 1f8a3c0ddfe1..c2dd29ef45c6 100644
->> --- a/drivers/mmc/host/dw_mmc-exynos.c
->> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->> @@ -442,14 +442,14 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
->>         return sample;
->>  }
->>
->> -static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
->> +static s8 dw_mci_exynos_get_best_clksmpl(u8 candidates)
->>  {
->>         const u8 iter = 8;
->>         u8 __c;
->>         s8 i, loc = -1;
->>
->>         for (i = 0; i < iter; i++) {
->> -               __c = ror8(candiates, i);
->> +               __c = ror8(candidates, i);
->>                 if ((__c & 0xc7) == 0xc7) {
->>                         loc = i;
->>                         goto out;
->> @@ -457,7 +457,7 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
->>         }
->>
->>         for (i = 0; i < iter; i++) {
->> -               __c = ror8(candiates, i);
->> +               __c = ror8(candidates, i);
->>                 if ((__c & 0x83) == 0x83) {
->>                         loc = i;
->>                         goto out;
->> @@ -466,11 +466,11 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
->>
->>         /*
->>          * If there is no cadiates value, then it needs to return -EIO.
->> -        * If there are candiates values and don't find bset clk sample value,
->> -        * then use a first candiates clock sample value.
->> +        * If there are candidates values and don't find bset clk sample value,
->> +        * then use a first candidates clock sample value.
->>          */
->>         for (i = 0; i < iter; i++) {
->> -               __c = ror8(candiates, i);
->> +               __c = ror8(candidates, i);
->>                 if ((__c & 0x1) == 0x1) {
->>                         loc = i;
->>                         goto out;
->> @@ -485,7 +485,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
->>         struct dw_mci *host = slot->host;
->>         struct dw_mci_exynos_priv_data *priv = host->priv;
->>         struct mmc_host *mmc = slot->mmc;
->> -       u8 start_smpl, smpl, candiates = 0;
->> +       u8 start_smpl, smpl, candidates = 0;
->>         s8 found;
->>         int ret = 0;
->>
->> @@ -496,18 +496,18 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
->>                 smpl = dw_mci_exynos_move_next_clksmpl(host);
->>
->>                 if (!mmc_send_tuning(mmc, opcode, NULL))
->> -                       candiates |= (1 << smpl);
->> +                       candidates |= (1 << smpl);
->>
->>         } while (start_smpl != smpl);
->>
->> -       found = dw_mci_exynos_get_best_clksmpl(candiates);
->> +       found = dw_mci_exynos_get_best_clksmpl(candidates);
->>         if (found >= 0) {
->>                 dw_mci_exynos_set_clksmpl(host, found);
->>                 priv->tuned_sample = found;
->>         } else {
->>                 ret = -EIO;
->>                 dev_warn(&mmc->class_dev,
->> -                       "There is no candiates value about clksmpl!\n");
->> +                       "There is no candidates value about clksmpl!\n");
->>         }
->>
->>         return ret;
->> --
->> 2.32.0
->>
-> 
-
+Applied patches 12 and 15, thanks!
