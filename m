@@ -2,127 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92ADDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 14:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56465C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 14:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7881D60F58
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 14:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37A3E60FC4
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Oct 2021 14:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbhJ1Ohv (ORCPT
+        id S231211AbhJ1Opo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:37:51 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40886
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230406AbhJ1Ohu (ORCPT
+        Thu, 28 Oct 2021 10:45:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230258AbhJ1Opn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:37:50 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1ADA13F178
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Oct 2021 14:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635431718;
-        bh=UfC6Za7EDXnJsTRiZd6ux4jhSdUioPONKZicpxuGsRs=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=fnhFYy4c4Bt+u5eRwAL/KMxO86pfdwSXA0Y/yBOF7lmvN8DTyKOPmaS7xsQTHpN+F
-         fvUkEuVMGpB2T6Mh0XY76zGK2WUBxp8VnJ9mm4KpX4a7aO+rFuU3IGMfg8CRfRhBY4
-         x/l7hCXDGFU1oV6WoqrsT1KUIiTKDeK4cA1JQ5QHT2hEmOyIuVHeK9ZghQk6tW4KUm
-         erH25E2x7CZCQ1bG/Zksa5kUFLdWtaNWRS4uOZq7JX9yVhbqLtmmRMlc/p+Un47VUm
-         Ha1utDBNfqKRyQtjs5Ow/AY1Fj7lHPng4IcERo7uRWmjwl8x/lXAd6CF6TFVytmVH1
-         clfVZqogfhTOw==
-Received: by mail-lf1-f71.google.com with SMTP id g6-20020a0565123b8600b003ffa7685526so2914717lfv.21
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Oct 2021 07:35:18 -0700 (PDT)
+        Thu, 28 Oct 2021 10:45:43 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63597C061745
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Oct 2021 07:43:16 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id bq11so14074030lfb.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Oct 2021 07:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=148z8Jno5ibjrSfO3iE+zKfRZ+rTkFE53njyJOvaPpE=;
+        b=FM3+GGUSfg6YDOe1Wo1KLij7xyUbtrOhNvp+MkkZNaMFKzpKBK1xHqInpLPyQ6Fu5+
+         nCwUQODEkDLD+RMo4eYW6XVC8Dc2/aY+djYAUDLKaYKzxEtrl6Mw1M/BxJbOYOosRQuI
+         RSYZ+qCyKm4drPnOA+LrKBrBRhmUYu2nTiyLbGw/RkRHpla6vhj53vxN2YiYG7yDyA/I
+         K7t/VuQ4K3PPYlPOe2CsJEMnLVeK7lNZ7hfjBU0/vjlbCM8Lh783WXExHiU6NYakmIB7
+         h+4q6/zc4jCQW8LJOAsVce89xiPiRSWf+m3scb67KgBxMyzKCPmXVKoPf/2k4kVeuF4B
+         PCJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=UfC6Za7EDXnJsTRiZd6ux4jhSdUioPONKZicpxuGsRs=;
-        b=RsOdjVi+8GdsC6MbIhhRraZRHfUe+UHSaVYPA3pLF6kN1i+l2U4ByF9jCk8M38pZE6
-         WHMrbM8Y+qTMjzJwM6inzAo7s+kaQ++Z3XF1fJ6jVHAptAXTsqfPAM4xd7To1BFo/bmy
-         LLFjGLimVREA9QseFXAqbEp+vvfyHLnFMiutyqTLWKfV7nEeVG2BpTErUpqS4RaNiUsS
-         9dW6eMA2Oni7XllZLy6oUnPyY/Q50vqc0H31S8xXoQyX+1pI1qsl2nsJsGC7euThm6th
-         kPDzsn/1IELP7Ej0F8lbBBX894K1IKaL+/mjv42iqpFkeqgi2rxhKzRc5xMkWTarGrE/
-         sAhg==
-X-Gm-Message-State: AOAM532kSQVPS5Ka4kUna/g8J1RE4PVnq+a047FfyzpmIiy8cYcUOXl/
-        i5tX2/PiuPwopU5FP6x4CZmI6FKIbjpJnRTCSn+UVF0APD6BZbO72h6x0fAqjTxSrfOlPmrnKio
-        P5sMYFVsYonCRTBjCodZYlegKhrfbeodAQVo5PoDNp/pusuMQ
-X-Received: by 2002:a2e:a5c4:: with SMTP id n4mr5077031ljp.72.1635431717486;
-        Thu, 28 Oct 2021 07:35:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwOEC4wlvcyuWLOfhIzSL5cyZfWYsGZ42k2Uja8j5sZ/fOp+hWKTyEyakkGWhuywzdmU+vZXw==
-X-Received: by 2002:a2e:a5c4:: with SMTP id n4mr5077012ljp.72.1635431717324;
-        Thu, 28 Oct 2021 07:35:17 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id u7sm292697lju.103.2021.10.28.07.35.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Oct 2021 07:35:16 -0700 (PDT)
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Will Deacon <will@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <20211026115916.31553-1-semen.protsenko@linaro.org>
- <8b3466f1-2b16-80ca-79c7-577860fc90aa@canonical.com>
- <CAPLW+4=YizLzdiZ1mdCGxvPCTYhNjeiomO=q=4Xk-ZxqqH++nA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH] arm64: Kconfig: Enable MCT timer for ARCH_EXYNOS
-Message-ID: <e01b0072-008a-c83d-59b2-2174860c00fd@canonical.com>
-Date:   Thu, 28 Oct 2021 16:35:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        bh=148z8Jno5ibjrSfO3iE+zKfRZ+rTkFE53njyJOvaPpE=;
+        b=HDfqER4JXJcZ6MtCwDnjRvKP2U2+m5wh+NUnKZ2+dSdUWGKopBqmTHrtPSGBC7g2EA
+         xVq7oGBdjQrzZJZGhZyqge6vdhG1Cpb04lvHeWArOfRvibjauyvzfbLc2v/PeWnyssFM
+         4HxCEoEnd4XLW+coOS8y+i5QeclMtwBxLVYopoZXlymmK3MlTPKfhMfN3KJR2FJPAFrs
+         7Mv8E76qGDSOfSoSSaXpomRug3ZMJ+Sm8YyB9iozcHkyuWVYmgUpaxKxAKdUs4xf7goH
+         skA0YniIG6wscHQj3WwkSO/luug9fOshL8DJlZkvMbShxldTOKMul+aeTKHD7Jwq+PcQ
+         RpzA==
+X-Gm-Message-State: AOAM531/fA78q+rpumRCsg8Js6PE5DxAHuCMjq8UOITkMZz/S4XHWQo9
+        Nv7AzBoCKIphp4Fo1PJAu1tHHA==
+X-Google-Smtp-Source: ABdhPJwtVWJTLzQqQ6CF4sgcVaSbsL/TbZAhf+71RjlxI06EBTx9BcGPNlntpxY18ixgsSk2ylCj6A==
+X-Received: by 2002:ac2:4f02:: with SMTP id k2mr4657354lfr.415.1635432194696;
+        Thu, 28 Oct 2021 07:43:14 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id h31sm332844lfv.111.2021.10.28.07.43.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 07:43:14 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: samsung: pmu: Document Exynos850
+Date:   Thu, 28 Oct 2021 17:43:12 +0300
+Message-Id: <20211028144313.9444-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=YizLzdiZ1mdCGxvPCTYhNjeiomO=q=4Xk-ZxqqH++nA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/10/2021 16:22, Sam Protsenko wrote:
-> On Tue, 26 Oct 2021 at 17:03, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> On 26/10/2021 13:59, Sam Protsenko wrote:
->>> Some ARM64 Exynos SoCs have MCT timer block, e.g. Exynos850 and
->>> Exynos5433. CLKSRC_EXYNOS_MCT option is not visible unless COMPILE_TEST
->>> is enabled. Select CLKSRC_EXYNOS_MCT option for ARM64 ARCH_EXYNOS like
->>> it's done in arch/arm/mach-exynos/Kconfig, to enable MCT timer support
->>> for ARM64 Exynos SoCs.
->>>
->>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>> ---
->>>  arch/arm64/Kconfig.platforms | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>
->> +CC Marek, Marc, Mark and Chanwoo,
->> Looks like duplicated:
->> https://lore.kernel.org/lkml/20181018095708.1527-7-m.szyprowski@samsung.com/
->>
->> The topic stalled and I think this particular patch did not make sense
->> on its own, without rest of changes from Marek. I am not sure, though...
->>
-> 
-> Krzysztof, Marek,
-> 
-> That series looks nice, I'm quite interested in that being applied. Do
-> you think I can do something to help with that (e.g. rebasing,
-> re-sending on behalf of Marek, testing on Exynos850, etc)?
+Exynos850 SoC can reuse PMU driver functionality. Add corresponding
+compatible string to PMU bindings documentation.
 
-I think there were no objections against v4 of this patchset, but
-somehow it wasn't applied.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Marek,
-Does it make sense to try respinning your v4?
+diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+index 17678d9686c1..0bbd89265b28 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+@@ -24,6 +24,7 @@ select:
+           - samsung,exynos5420-pmu
+           - samsung,exynos5433-pmu
+           - samsung,exynos7-pmu
++          - samsung,exynos850-pmu
+           - samsung-s5pv210-pmu
+   required:
+     - compatible
+@@ -41,6 +42,7 @@ properties:
+           - samsung,exynos5420-pmu
+           - samsung,exynos5433-pmu
+           - samsung,exynos7-pmu
++          - samsung,exynos850-pmu
+           - samsung-s5pv210-pmu
+       - const: syscon
+ 
+-- 
+2.30.2
 
-Best regards,
-Krzysztof
