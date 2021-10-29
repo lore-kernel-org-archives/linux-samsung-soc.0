@@ -2,65 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD65C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 19:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05193C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 20:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F3C5610CF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 19:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD3DB61040
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 20:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230521AbhJ2T1q (ORCPT
+        id S230271AbhJ2UrW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Oct 2021 15:27:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56632 "EHLO
+        Fri, 29 Oct 2021 16:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230370AbhJ2T1p (ORCPT
+        with ESMTP id S230397AbhJ2UrW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Oct 2021 15:27:45 -0400
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CEA1C061714
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 12:25:16 -0700 (PDT)
-Received: by mail-ua1-x932.google.com with SMTP id v3so19964197uam.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 12:25:16 -0700 (PDT)
+        Fri, 29 Oct 2021 16:47:22 -0400
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75CF3C061767
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 13:44:53 -0700 (PDT)
+Received: by mail-ua1-x934.google.com with SMTP id e2so20361530uax.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 13:44:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=iOhkeO72w3GegdH+UyM0cQ4je/Oq7dw9gY0y8l00Dps=;
-        b=BpYkTOMfIuxl1LvyX+8FrzDYBlDk2ILzW92lnelWdll4LauIavVrbIPnAdsBba0Bay
-         9GJPOu/gc7iBsuroJcRmM5lFQTkB4KMxWzntnKzRtuF6APyI1rZYLwj1RWgS2b3AqL28
-         W1ZOYWW/N2Ert+OifD7ruHFgHUxPG7dTZIav8RyjyScTzUYcLo9O3a45doCe1j8rvHTM
-         4cJz19rDuihHt7YuFsYSwrKnZzIwaThqghVxPcpbJmMU2HXGA+43vMqONmFbciTK/TYL
-         GaZsyRWAUFJafjTZ4bOeV8XLUAVo7C+kccYIKaEwihABlZwGP36nNgrQTvIGBKkyl5nc
-         gx1g==
+        bh=khwee+o4BIEXlURemAxOIdbb1MWFYFtT0vHvBw+Nksk=;
+        b=fYHPHD1cpSxD1HuX6GBkp650+K5AQeXGHiyXjEqXajyjaNdVOFxAbt7T8l21wpClyT
+         J9di4Hv7YTgnZOlpN+ge3ymXROyrvAYtful4TOmblnfCk2B+IIEkWDnz6VgcS9qa1l7L
+         Dl9ReFkbVhSU9XPojwjYSjv3yjv/v6N8YlmivGXQ7bRXChw4p4Hgl7vZBrmB93+NT+T/
+         dfZhvGyp2jhkBPbxdue5NLMG1+IsB0zMbQK5ymHqv4HkDbbK2Gy8PCPGATnCcTfslSIK
+         0nAECJPlasKxAvdil6RETd4qYR+eq9EJdQRW74O8g+2KL5/pHVgpi5ZQtDT3TuQ4cJ7G
+         oTAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iOhkeO72w3GegdH+UyM0cQ4je/Oq7dw9gY0y8l00Dps=;
-        b=N429lE0xUnE5rwYpz8ZJvqdLEacUBlmcckHh137/5rND2mr1FLOf3QOLoQzmex+DVJ
-         c8BStC2p6SpgysKjh+ym0RMED6QYfPciR8A7zyLoYSGMFMXbV8pAXN5xeoTn7Vmr8wA7
-         IU0f0ZPAeGyfFAZutjbgRK1sLjDxTk4/BU1gcSgqZ1QDp9q35UWkqU5lzQawec7+mMdN
-         zP125M0NuUDo4X9cbrSTac9cJofXVjn+JbkLwVAkabSw63sAebQLTISixJfM7+V0+Lpe
-         tIstGojR/krm02zmDgJybkH4D3bHLCk2toubCEpC8eLka/ryTgDdm97NMyOCb0y4P4T2
-         tOrQ==
-X-Gm-Message-State: AOAM532PJKwG3bbfL8hM/jyRKEDexFXcxMmEkIuYqdTjm9N1lOhyhMKT
-        sRZACM7BN3VUqr4ouGtt+aKezk7uCM5M18mNC3Bh8Q==
-X-Google-Smtp-Source: ABdhPJxLz+zekne4P7GYaeUWmfz8nQqPqtIf+Pn0XUP0NhGOqQedWV6arFH39XiTpXDM/Najz07v14Z2+6erQK70Hlg=
-X-Received: by 2002:a67:f1ca:: with SMTP id v10mr15087571vsm.55.1635535515312;
- Fri, 29 Oct 2021 12:25:15 -0700 (PDT)
+        bh=khwee+o4BIEXlURemAxOIdbb1MWFYFtT0vHvBw+Nksk=;
+        b=kDx+fxfuSm01tISRnImXvWerwtiUWRfkYgUfwWGv2Q/+x1fcXtz8HonaTlzv3zK9Al
+         hZ5TDAYJuGJIZSeSoTUGczaCZ6fu+vsandj8TXyH2tO2RGV73EqohsglY7b4v/A5xGoo
+         HwO0qOaOiPBB64jIXhiBG5WF7LorT6eK5eDBPq4ZOwokTBtKdxGttMyLvyJiOX9HAEom
+         LqEYmMKye4HL9Z5rBKgSNIdMppzlNKELZgA3fIHvGUif+1cFz5W/rGuHIICxifJiOO+t
+         9676RfEkcDMBtqojPbr/zHgPEkQNybQilFCIQZaehDZ/hKkBpm2qbboR93KzJ76Lq7qN
+         YkIA==
+X-Gm-Message-State: AOAM533UKQnna0zPNBEjyefp8sxdTR5PB7rSZFDlmNVK83+txcDe5kpq
+        +gSbmDtNrq5nUPw7gHjtmJXiKIqr7J0/yxM2BQu1QA==
+X-Google-Smtp-Source: ABdhPJw3mDqd696wBkxMTGZ2S5RsKu9UN9jviWzgRv7mo5KIhIFNWcJZjahUk6mPGJocTM+tXQPlbXOHE/f6tlVxbjg=
+X-Received: by 2002:a67:1781:: with SMTP id 123mr15453627vsx.1.1635540292507;
+ Fri, 29 Oct 2021 13:44:52 -0700 (PDT)
 MIME-Version: 1.0
 References: <20211028183527.3050-1-semen.protsenko@linaro.org>
- <20211028183527.3050-4-semen.protsenko@linaro.org> <b9c33def-6b12-1e5a-4449-b1e0869a0e3a@roeck-us.net>
- <2a5ff8d0-c665-e25e-cb40-51326db2e26a@canonical.com>
-In-Reply-To: <2a5ff8d0-c665-e25e-cb40-51326db2e26a@canonical.com>
+ <20211028183527.3050-5-semen.protsenko@linaro.org> <e69282af-738b-e56e-026a-1e3adcec6a51@roeck-us.net>
+In-Reply-To: <e69282af-738b-e56e-026a-1e3adcec6a51@roeck-us.net>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 29 Oct 2021 22:25:03 +0300
-Message-ID: <CAPLW+4kd0Woxenf2DUJTRD2zCn9gSg6Wq0Vbt+EjSM5zeTDvHQ@mail.gmail.com>
-Subject: Re: [PATCH 3/7] watchdog: s3c2410: Make reset disable optional
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+Date:   Fri, 29 Oct 2021 23:44:40 +0300
+Message-ID: <CAPLW+4nn522iRbPViTybhN8=-pQBaQPCiAQAufzBHgnEMW3HmA@mail.gmail.com>
+Subject: Re: [PATCH 4/7] watchdog: s3c2410: Add support for WDT counter enable
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         linux-watchdog@vger.kernel.org,
         devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -71,33 +70,104 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 29 Oct 2021 at 11:04, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
+On Fri, 29 Oct 2021 at 03:16, Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> On 29/10/2021 02:16, Guenter Roeck wrote:
-> > On 10/28/21 11:35 AM, Sam Protsenko wrote:
-> >> Not all SoCs have AUTOMATIC_WDT_RESET_DISABLE register, examples are
-> >> Exynos850 and Exynos9. On such chips reset disable register shouldn't be
-> >> accessed. Provide a way to avoid handling that register. This is done by
-> >> introducing separate callbacks to driver data structure: one for reset
-> >> disable register, and one for mask reset register. Now those callbacks
-> >> can be checked and called only when those were set in driver data.
-> >>
-> >> This commit doesn't bring any functional change to existing devices, but
-> >> merely provides an infrastructure for upcoming chips support.
-> >>
+> On 10/28/21 11:35 AM, Sam Protsenko wrote:
+> > On new Exynos chips (like Exynos850) WDT counter must be enabled to make
+> > WDT functional. It's done via CLUSTERx_NONCPU_OUT register, in
+> > CNT_EN_WDT bit. Add infrastructure needed to enable that counter.
 > >
-> > That doesn't explain why the callbacks are needed instead of additional
-> > feature flags.
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >   drivers/watchdog/s3c2410_wdt.c | 28 ++++++++++++++++++++++++++++
+> >   1 file changed, 28 insertions(+)
 > >
+> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> > index 7c163a257d3c..a5ef7171a90e 100644
+> > --- a/drivers/watchdog/s3c2410_wdt.c
+> > +++ b/drivers/watchdog/s3c2410_wdt.c
+> > @@ -97,12 +97,16 @@ struct s3c2410_wdt;
+> >    * @rst_stat_reg: Offset in pmureg for the register that has the reset status.
+> >    * @rst_stat_bit: Bit number in the rst_stat register indicating a watchdog
+> >    * reset.
+> > + * @cnt_en_reg: Offset in pmureg for the register that enables WDT counter.
+> > + * @cnt_en_bit: Bit number for "watchdog counter enable" in cnt_en register.
+> >    * @quirks: A bitfield of quirks.
+> >    * @disable_auto_reset: If set, this function will be called to disable
+> >    * automatic setting the WDT as a reset reason in RST_STAT on CPU reset; uses
+> >    * disable_reg field.
+> >    * @mask_reset: If set, this function will be called to mask WDT reset request;
+> >    * uses mask_reset_reg and mask_bit fields.
+> > + * @enable_counter: If set, this function will be called to enable WDT counter;
+> > + * uses cnt_en_reg and cnt_en_bit fields.
+> >    */
+> >
+> >   struct s3c2410_wdt_variant {
+> > @@ -111,9 +115,12 @@ struct s3c2410_wdt_variant {
+> >       int mask_bit;
+> >       int rst_stat_reg;
+> >       int rst_stat_bit;
+> > +     int cnt_en_reg;
+> > +     int cnt_en_bit;
+> >       u32 quirks;
+> >       int (*disable_auto_reset)(struct s3c2410_wdt *wdt, bool mask);
+> >       int (*mask_reset)(struct s3c2410_wdt *wdt, bool mask);
+> > +     int (*enable_counter)(struct s3c2410_wdt *wdt, bool mask);
 >
-> Or why not skipping the disable operations if disable_reg is not provided?
+> Unless there are different enable functions in the future,
+> the function is unnecessary. This can be handled as feature bit.
 >
 
-Yeah, that was my first thought too :) Then I figured disable_reg is
-offset, and 0x0 is a valid offset too. Anyway, I'll rework this patch
-using quirks, as discussed above. Will send v2 soon.
+Thanks for review. I've reworked all patches to use quirk bits instead
+of callbacks. Will send v2 soon.
 
+> >   };
+> >
+> >   struct s3c2410_wdt {
+> > @@ -132,6 +139,7 @@ struct s3c2410_wdt {
+> >
+> >   static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool mask);
+> >   static int s3c2410wdt_mask_wdt_reset(struct s3c2410_wdt *wdt, bool mask);
+> > +static int s3c2410wdt_enable_counter(struct s3c2410_wdt *wdt, bool en);
+> >
+> >   static const struct s3c2410_wdt_variant drv_data_s3c2410 = {
+> >       .quirks = 0
+> > @@ -246,6 +254,20 @@ static int s3c2410wdt_mask_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
+> >       return ret;
+> >   }
+> >
+> > +static int s3c2410wdt_enable_counter(struct s3c2410_wdt *wdt, bool en)
+> > +{
+> > +     const u32 mask_val = 1 << wdt->drv_data->cnt_en_bit;
 >
-> Best regards,
-> Krzysztof
+> BIT()
+>
+> > +     const u32 val = en ? mask_val : 0;
+> > +     int ret;
+> > +
+> > +     ret = regmap_update_bits(wdt->pmureg, wdt->drv_data->cnt_en_reg,
+> > +                              mask_val, val);
+> > +     if (ret < 0)
+> > +             dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> >   static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
+> >   {
+> >       int ret;
+> > @@ -262,6 +284,12 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
+> >                       return ret;
+> >       }
+> >
+> > +     if (wdt->drv_data->enable_counter) {
+> > +             ret = wdt->drv_data->enable_counter(wdt, en);
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +     }
+> > +
+> >       return 0;
+> >   }
+> >
+> >
+>
