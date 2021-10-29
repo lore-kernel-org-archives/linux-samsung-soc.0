@@ -2,145 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3738AC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 00:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FB2C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 01:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD8461130
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 00:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A01AA60C40
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 01:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231384AbhJ2AdZ (ORCPT
+        id S231504AbhJ2CBG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Oct 2021 20:33:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55680 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231361AbhJ2AdY (ORCPT
+        Thu, 28 Oct 2021 22:01:06 -0400
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:38516 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231356AbhJ2CBF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Oct 2021 20:33:24 -0400
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45CD4C061570;
-        Thu, 28 Oct 2021 17:30:57 -0700 (PDT)
-Received: by mail-ot1-x32c.google.com with SMTP id x27-20020a9d459b000000b0055303520cc4so11116002ote.13;
-        Thu, 28 Oct 2021 17:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bvmi8DsyrWipthpn0ItITFLCLn9V8U2XeLVX9tq1EWI=;
-        b=UdhoI8+i5oUFI2wil6UpdvMWaICsJYyJ9oyQXmxsLos4lvVwRweK1YbKtGoyXHy/eK
-         Y0xcRdpJ0JSx1Q0waYIC924kb17fWxsyzTQSsWsBvzk+cpLn/rLw7sr87+7azqaZe+XT
-         Hb8C33JdEQf3DH5W6cit2sigGnayLge0WWxH/V/oFA6NmoKBWBlpZGPg88GOZW+ZDHOa
-         0Z1jXxOc0W5cyu+F1ZXYMrYcZcE26OV9olC6TG//XhNEh2kQrmi9hM9E3URs/FhARUtd
-         fXiXnDQnK9LiqBgMdDb8uRAtqBuH2q3CjKwj8NxbUNcBD4FDVBNypzbsDr/vSP9iqvll
-         E2dA==
+        Thu, 28 Oct 2021 22:01:05 -0400
+Received: by mail-oi1-f178.google.com with SMTP id t4so11138256oie.5;
+        Thu, 28 Oct 2021 18:58:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:to:cc:references:from:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bvmi8DsyrWipthpn0ItITFLCLn9V8U2XeLVX9tq1EWI=;
-        b=WB6USDvTgi+R0cr7rHTI/4YCiQ3nDd7O4Vbtl/rAYqd7ASEVgdxGldIk0Lk89wbWkb
-         3jbo6OH/rjQ4QEIs7SgKX8tMh3V3kmIZ0YAad3ndDCiqeUnlg7PcZ+xiTIiw25R9P2mL
-         D30lki1AzhKglY8UhvWjhazbZS0aVoV3ZX2mS8NMZlRVDVOmr+b2cliFMEihUAnaFUoa
-         re0PEonGv4bIJ6fCvY1eDJ6sFRjnwDybFc/rBYDaDWRNdJt2BoGOrJKb25xVTZBiNSGq
-         aHRT05cI3k1sD3jtSQy0YkbLAuHHn9Fzjr+E6khSzQA6R4uhntMTHBpzaT1q4jbb522r
-         2KLQ==
-X-Gm-Message-State: AOAM530yFujMvkT+kxwLLL8EJejsvLXvQDoyCBbdvRUGIwFJfEoyJEOL
-        iGLynNkPFVNfgEYH35DSOqZzla0BpVI=
-X-Google-Smtp-Source: ABdhPJwMWsxKBhaxoxjCqeI93dO9gfkpiTRMtByD/pm5SiVR8iDKiAHnAw7GnFd3+ltydMOt687HHQ==
-X-Received: by 2002:a05:6830:1af0:: with SMTP id c16mr5905034otd.16.1635467456422;
-        Thu, 28 Oct 2021 17:30:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w12sm1350126oop.19.2021.10.28.17.30.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Oct 2021 17:30:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=z0UqHSf36NPaWEAVne5fwEN/KtxfohQXpJllsTCMOqc=;
+        b=vqknArZdDSS6MZ+uww2HXMsoHsv/T7C7zB2/5R18JBFljQPOnAdG+EJ8imhFsr/ch2
+         W31VUF+PO+NOA0o0O/K3UuhM+sOjJOTpOlgcZGdyTWcbbHYttMOl1jQnH8tYmZiTTT87
+         dxsjeaP8D1yag3XYrv1L6MtlaMX7gqMntOeEGakdeWCWMIRm90EFkqyIPSrmhFY24TP+
+         p/cnb8NsyLpcKjEGnM+95Igu7P6QMlGXpdNrcc7bpmTokoMZGT2bDRIA5wvBa77GB1fa
+         4a3fLamxQZxPGBkJhd9nw4QCmsO0EVYwgC/b0fvllgKJJR65yoX2tmjEoJ46amU50CJf
+         h4qA==
+X-Gm-Message-State: AOAM532VwFV18c6chOavlsazBBQdAoHyjPRihwn59vKL8/0Y6tkCfnBd
+        kzNpWrcaX1N0ePfxxGbRBg==
+X-Google-Smtp-Source: ABdhPJysAYzw/Qv1ezOiO0OVA8kqP9HbWcx9H7aUqZxKkF7fuA6n0Nr1cOv3WsPgduNhbYqsmI2ZxA==
+X-Received: by 2002:a05:6808:8f6:: with SMTP id d22mr6078258oic.88.1635472717504;
+        Thu, 28 Oct 2021 18:58:37 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id f14sm1401069oop.8.2021.10.28.18.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 18:58:36 -0700 (PDT)
+Received: (nullmailer pid 1000466 invoked by uid 1000);
+        Fri, 29 Oct 2021 01:58:35 -0000
+Date:   Thu, 28 Oct 2021 20:58:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211028183527.3050-1-semen.protsenko@linaro.org>
- <20211028183527.3050-8-semen.protsenko@linaro.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 7/7] watchdog: s3c2410: Let kernel kick watchdog
-Message-ID: <1ad6b625-4388-bc78-e258-eae0b9357b96@roeck-us.net>
-Date:   Thu, 28 Oct 2021 17:30:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: samsung: Document Exynos850
+ CMU_APM
+Message-ID: <YXtVS1YrZqE5kW32@robh.at.kernel.org>
+References: <20211022224556.18742-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20211028183527.3050-8-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211022224556.18742-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/28/21 11:35 AM, Sam Protsenko wrote:
-> When "tmr_atboot" module param is set, the watchdog is started in
-> driver's probe. In that case, also set WDOG_HW_RUNNING bit to let
-> watchdog core driver know it's running. This way wathcdog core can kick
-> the watchdog for us (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED option is
-> enabled), until user space takes control.
+On Sat, 23 Oct 2021 01:45:55 +0300, Sam Protsenko wrote:
+> CMU_APM generates clocks for APM IP-core (Active Power Management). In
+> particular it generates RTC clocks, which are needed to enable rtc-s3c
+> driver on Exynos850 SoC.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->   drivers/watchdog/s3c2410_wdt.c | 26 +++++++++++++++-----------
->   1 file changed, 15 insertions(+), 11 deletions(-)
+> Changes in v2:
+>   - Added R-b tag by Krzysztof Kozlowski
+>   - Added Ack by Chanwoo Choi
 > 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index ca082b1226e3..9af014ff1468 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -732,6 +732,21 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->   	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
->   	wdt->wdt_device.parent = dev;
->   
-> +	/*
-> +	 * If "tmr_atboot" param is non-zero, start the watchdog right now. Also
-> +	 * set WDOG_HW_RUNNING bit, so that watchdog core can kick the watchdog.
-> +	 *
-> +	 * If we're not enabling the watchdog, then ensure it is disabled if it
-> +	 * has been left running from the bootloader or other source.
-> +	 */
-> +	if (tmr_atboot && started == 0) {
-> +		dev_info(dev, "starting watchdog timer\n");
-> +		s3c2410wdt_start(&wdt->wdt_device);
-> +		set_bit(WDOG_HW_RUNNING, &wdt->wdt_device.status);
-> +	} else if (!tmr_atboot) {
-> +		s3c2410wdt_stop(&wdt->wdt_device);
-> +	}
-> +
-
-This doesn't cover the case where the watchdog is already enabled by the BIOS.
-In that case, WDOG_HW_RUNNING won't be set, and the watchdog will time out
-if the userspace handler is not loaded fast enough. The code should consistently
-set WDOG_HW_RUNNING if the watchdog is running.
-
-Guenter
-
->   	ret = watchdog_register_device(&wdt->wdt_device);
->   	if (ret)
->   		goto err_cpufreq;
-> @@ -740,17 +755,6 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->   	if (ret < 0)
->   		goto err_unregister;
->   
-> -	if (tmr_atboot && started == 0) {
-> -		dev_info(dev, "starting watchdog timer\n");
-> -		s3c2410wdt_start(&wdt->wdt_device);
-> -	} else if (!tmr_atboot) {
-> -		/* if we're not enabling the watchdog, then ensure it is
-> -		 * disabled if it has been left running from the bootloader
-> -		 * or other source */
-> -
-> -		s3c2410wdt_stop(&wdt->wdt_device);
-> -	}
-> -
->   	platform_set_drvdata(pdev, wdt);
->   
->   	/* print out a statement of readiness */
+>  .../clock/samsung,exynos850-clock.yaml        | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
 
+Reviewed-by: Rob Herring <robh@kernel.org>
