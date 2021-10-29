@@ -2,95 +2,183 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D55EBC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 08:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D638FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 08:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCF8061167
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 08:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B664E61167
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Oct 2021 08:36:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbhJ2IeR (ORCPT
+        id S232478AbhJ2Iif (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Oct 2021 04:34:17 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41168
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232478AbhJ2IeQ (ORCPT
+        Fri, 29 Oct 2021 04:38:35 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52294 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232416AbhJ2Iie (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Oct 2021 04:34:16 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2ECA13F190
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 08:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635496307;
-        bh=f9xGfy2IVXtAZrt0FZMC98EWuEmmved4QRdbre5fxcg=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=QiCk8XpOVvEfRfn4Zn18AUJo9CsnumZzQY68YywMXP/hwhGUI0PCfiWVfCQrG8kee
-         yoeFi5smlIB1LK4kJeNmsjg6jzFzdFKr0I8V7gOv7/+3Rs9k6YQkak7/26tqpCGCXB
-         5VBrPi77S6IC+wVNBls3yMaw4LaQdMa+zpOdNEjYoN+671Pxf/DjDFdtbE9JCrPCHE
-         qGDVqlxCZkFwIxHQooAR7PL7rVz39Xcp92Vnn8u8Ihg+lb7hIxxEzdGONuJOYm8KuZ
-         8eSpRJIQyI/giJ3so7S/KQauMJIg0guiwYfYTPpvLtSS699a3xkXEOU50F7098WnqL
-         jRR8J6sMMTe2g==
-Received: by mail-lf1-f70.google.com with SMTP id g6-20020a0565123b8600b003ffa7685526so3866046lfv.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 01:31:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=f9xGfy2IVXtAZrt0FZMC98EWuEmmved4QRdbre5fxcg=;
-        b=21PKzIe/EeMqHtpGQGs0hAhjG7m1KeNcDBJUf+NqkWHu0Mq9+R7o/HQiSMb4kHEzgp
-         v+D2lNTi9LpXjj8D7o+We+Y/MIXuLFiG/Emg3yS/OsmM5ZYJnF9zltlBb7QVM5wHKofh
-         FS+Gx9OXuriiXT91AIfaEyYgMUkrhBc5G9ggVcATtBSkchvxrQfQDPSCZW0wKELvXefP
-         0Onc/446XkyRbkvAYM1PYn/PJ1hoXHDRJ3KAC6DhSI2mU3h8B41nZDiyvdZxGkisgkiv
-         wP5Z/j6uQSq5egfTytbVx7d16Ugx2G7QVRboWMZnmj28Pg3g6zPqZp1ZUpWV0o+tALgo
-         62BQ==
-X-Gm-Message-State: AOAM530OADloIgVwW0/lDON8TNnn5HuxfcjvIwhJUh+PtYQzodfoh0os
-        RJy9RST/n72nYbwloHUev3i7g3PgGm8mzY9MtRGXhmODWtDvmPOv8csViX5FsdZZRoWBiMaRRZq
-        FFMQAslS9EJs4K4YBLkk+S3caojSYPMsLap2ZtQvaLjL1Z0Tb
-X-Received: by 2002:a05:6512:1153:: with SMTP id m19mr9014911lfg.418.1635496306733;
-        Fri, 29 Oct 2021 01:31:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx9Hyrds2Q0O6D4rKzUGcomrQuWNDbWOqCF/kGuCYTGcoX6Ii/2ymVukRDR0lH5EXL4eD4+Rw==
-X-Received: by 2002:a05:6512:1153:: with SMTP id m19mr9014892lfg.418.1635496306554;
-        Fri, 29 Oct 2021 01:31:46 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id d27sm551447ljo.15.2021.10.29.01.31.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Oct 2021 01:31:46 -0700 (PDT)
-Subject: Re: [PATCH 1/2] dt-bindings: samsung: pmu: Document Exynos850
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211028144313.9444-1-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <53a13ca3-a83e-b9ad-192c-b711657e2979@canonical.com>
-Date:   Fri, 29 Oct 2021 10:31:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Fri, 29 Oct 2021 04:38:34 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211029083604euoutp022b925207804e31f86d91e37f100aaf96~yc3XdCLx92905729057euoutp02C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Oct 2021 08:36:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211029083604euoutp022b925207804e31f86d91e37f100aaf96~yc3XdCLx92905729057euoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1635496564;
+        bh=rGQtswDny4qK/UzHiFb+huxqfuzGLP8FOoXL2crr0fA=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=tcwko/MsS7BipXpl0EHdcjbWQhBbNIuA1kjkcdYixpmD0tyPpjWcyFNmTdWthSxEN
+         LkotWK8zO9Gb8VB1zXpfMFtNXtYmyElEy4yIXeC31pv0JCOjnQAznZgvCHy6GVyGAT
+         1y2xx7t4/JZfADf9K0gUxR/mAbDYw/oVXEFimIYs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20211029083604eucas1p1285bb75781ee522a82d2c225b2e1a2c6~yc3W4Do7c2420724207eucas1p1F;
+        Fri, 29 Oct 2021 08:36:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id F5.C8.45756.372BB716; Fri, 29
+        Oct 2021 09:36:03 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20211029083602eucas1p23bcb25ec288181943e83e9e1f1cd31ce~yc3VxKiVD2588125881eucas1p2g;
+        Fri, 29 Oct 2021 08:36:02 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20211029083602eusmtrp20534e587a8c486de19cc3b71c591b132~yc3VuwZfm0992409924eusmtrp22;
+        Fri, 29 Oct 2021 08:36:02 +0000 (GMT)
+X-AuditID: cbfec7f2-7bdff7000002b2bc-2c-617bb273cf56
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 49.D7.31287.272BB716; Fri, 29
+        Oct 2021 09:36:02 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20211029083601eusmtip1e121b0634bb0176f3cb82f735caa032e~yc3UAGYwb2760027600eusmtip1d;
+        Fri, 29 Oct 2021 08:36:00 +0000 (GMT)
+Message-ID: <f62174cf-5786-f9d0-3a3a-3c9919f27b1e@samsung.com>
+Date:   Fri, 29 Oct 2021 10:36:00 +0200
 MIME-Version: 1.0
-In-Reply-To: <20211028144313.9444-1-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.2.1
+Subject: Re: [v6,02/21] drm/bridge: adv7511: Register and attach our DSI
+ device at probe
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-arm-msm@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Sean Paul <sean@poorly.run>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20211029080521.6tmfq4kjngu5slv7@gilmour>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTVxzHd+69vfdSV3IpLhzUqKtxMAggEcdZXMzYI16XLEJGopElrJsX
+        NDzUFsTJsgEKgQ4YL11pBVbQgIAwHu2kQ6hEVoi0SAElDa4yuoE8BXQDNugoFzf++/we39/3
+        9zs5NC7+mdxGn45P4GTx0lgJKSR0vyz1+skbk6X7Kv4JQjnmbgxV9tThaODFLImujZkAKrDl
+        EWisrA6gnr/9UPfUIIHGf+0j0OJKmwCZ0qYolJV/nUL57SYK9euvkUjZ24YhzZyWQMrFVYA6
+        ciOQ7apqbYZmEUfzqhEcVS1pAXpceA8gZeFTEi3pSwlUM9lGoeapfAHqbK8WvLuDnR1Kp9hh
+        cy/JtqgeU+xoSQPFqjOLBWxF61OM7cqzYOzww1aS/enPJwK2tDuMtX1rxFij3kqx168Okmxu
+        czVgm+4nswuNO0OZE8J3TnKxp89zsoBDnwlP3e2boM4OiC78/jCFSAElWxTAhYZMECxzjBIK
+        IKTFTBWA32mWBXzwHMBH9gqKDxYAbF0pEryUGJpqSL5QCeAfD4wbXXMAFle9WOuiaRFzCBaO
+        X3AKCGYvXGjLJJwsYtxgd7F9nV9jPoeZM1nr7M6cgCs59ZSTccYDWu1lmJO3rmkHcu7gzvk4
+        Y6ahtiyLdBZIJhAqphXr7MK8BY1XDBgv3gUvadXrAsiYhLCkR4fxa38Anww9Azy7wwljM8Xz
+        Duhocbo5BZcAHDHfovggG8D+NOWG4iAcNi+TztNw5k1Yrw/g0yHQ2rmMO9OQcYVD0278Eq6w
+        QPf9RloEMzPEfPcbUGWs+8/27gMLngckqk3votp0v2rTOar/fX8ARDXw4BLlcdGcPDCeS/KX
+        S+PkifHR/l+ciWsEa//7/qpx/jYomZjz7wAYDToApHHJVtFUUbJULDop/fIiJzsTKUuM5eQd
+        YDtNSDxE1eraSDETLU3gYjjuLCd7WcVol20pmNg0ejlp7njJQEiEpa+/9dh0XWbT+0nns3H1
+        x59oznmWG/RMwIEhPyYy+MdQnQOXlPu6blkwLGVn9B/e7XGz3Nv+Vczz3xxptgPBF1NdDkcd
+        TC6MUFsmYwZ9rC07w728Z+5ouuL2eXUebQkvtRnGHYOGywW+DVEZN8pdQoqOK33nVnLjtu+q
+        ffSXZXnPUc1k5TfPDOFC8auihJkgFEArwma9exuYj1Jq0iNuzo+n6oyyoHTRXrP1yKfuXWjM
+        98b+DwO0DZGKPbXi/dJjXa/4ebY7xpo079nnv37dJ6I+7O0aZXC9W+m93bWpFrXP7ajQIyO0
+        pyvyal/1IbNuyWvOgUgJIT8lDfTBZXLpv/xr/nROBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsVy+t/xu7pFm6oTDW7c1rC4te4cq0XvuZNM
+        FsvPrGO2uPL1PZvFnOdnGS0m3Z/AYvF8/jpGizO/dS1OvrnKYvHi3kUWix9/97FanG16w27R
+        OXEJu8XE/WfZLS7vmsNmMeP8PiaLhR+3sljM+PGP0eJQX7TF/WmzgGYs/MFs8WnWQ2aLFT+3
+        MlrcnXyE0WLG5JdsFj93zWOxWP16H7vFljcTWS2O7l/F6iDr8f5GK7vHnXPn2Tx2zrrL7vF4
+        7kZ2j9kdM1k9Fu95yeRxYsIlJo871/aweWz/9oDVY97JQI/73ceZPI7vusXusWTaVTaPvi2r
+        GD02n672+LxJLkAgSs+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUn
+        syy1SN8uQS/j4MVX7AVXeCueXmtgaWCcy93FyMkhIWAicWDzarYuRi4OIYGljBL393WzQiRk
+        JE5Oa4CyhSX+XOuCKnrPKHF86VWWLkYODl4BO4nJLypAalgEVCU+7+tgAbF5BQQlTs58AmaL
+        CiRJbFvwkxHEFhaIkvjbu54dxGYWEJe49WQ+E4gtAtR7pXcvM8h8ZoFLHBI39r1kgVj2llFi
+        U9MkNpAqNgFDia63XWA2p4CZxPGpB5ggJplJdG3tYoSw5SWat85mnsAoNAvJIbOQLJyFpGUW
+        kpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAhPXtmM/N+9gnPfqo94hRiYOxkOMEhzM
+        SiK8b6ZUJwrxpiRWVqUW5ccXleakFh9iNAWGxkRmKdHkfGDqzCuJNzQzMDU0MbM0MLU0M1YS
+        5906d028kEB6YklqdmpqQWoRTB8TB6dUA5NmwZwDsV5p/Rs37ox6377sxd8GN3vl2sSiQyK8
+        k5+JC6v0fTtkd+H3Sfni7o01cpKRkpUGTsJsbfI7ur70ik4O362d1Ph+4qGeYxMTz+9947Fo
+        fdTZw7eLGQ9dL3530+6ZvKRgwbLjYdkueno/A1t0OiOFrHqkTTR8uer4zVMykmYpZ/qVnPtT
+        HZXX+Jan+7XY4uPFnqqGm+Kir/QLfd/5NFp6e5+BQIa9ter+T+uONWqWJ3KdvL/XUS/d4uoq
+        s7nmuWI7tUU1/ONv/r717LHQKkf+bZo7A/WaC0+qS09I+2u8WX7py6YJwfys15j8Zz77Fm3x
+        qCbMltXrw+TlNuHBya9X9kwqjO5TUNqpxFKckWioxVxUnAgAFetmzeUDAAA=
+X-CMS-MailID: 20211029083602eucas1p23bcb25ec288181943e83e9e1f1cd31ce
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20211029062347eucas1p1431402205321b066349e3ccf432d2452
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20211029062347eucas1p1431402205321b066349e3ccf432d2452
+References: <20211025151536.1048186-3-maxime@cerno.tech>
+        <CGME20211029062347eucas1p1431402205321b066349e3ccf432d2452@eucas1p1.samsung.com>
+        <73c13cf5-ca36-f47b-f53a-11d4f015505c@samsung.com>
+        <20211029080521.6tmfq4kjngu5slv7@gilmour>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/10/2021 16:43, Sam Protsenko wrote:
-> Exynos850 SoC can reuse PMU driver functionality. Add corresponding
-> compatible string to PMU bindings documentation.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Hi Mexime,
 
-Looks good, but will have to wait for merge window to finish.
+On 29.10.2021 10:05, Maxime Ripard wrote:
+> On Fri, Oct 29, 2021 at 08:23:45AM +0200, Marek Szyprowski wrote:
+>> On 25.10.2021 17:15, Maxime Ripard wrote:
+>>> In order to avoid any probe ordering issue, the best practice is to move
+>>> the secondary MIPI-DSI device registration and attachment to the
+>>> MIPI-DSI host at probe time. Let's do this.
+>>>
+>>> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+>>> Tested-by: John Stultz <john.stultz@linaro.org>
+>>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>> This patch landed in linux-next as commit 864c49a31d6b ("drm/bridge:
+>> adv7511: Register and attach our DSI device at probe"). Sadly it causes
+>> endless probe-fail-defer loop on DragonBoard 410c board
+>> (arch/arm64/boot/dts/qcom/apq8016-sbc.dts):
+> I'm sorry to hear that (but would have been surprised if it didn't occur)
+>
+> This is supposed to be fixed by 8f59ee9a570c ("drm/msm/dsi: Adjust probe
+> order"). Do you have that patch applied?
 
-Best regards,
-Krzysztof
+Yes, I did my test directly on linux next-20211028, which also contains 
+it. What might be important in my case, my DragonBoard 410c doesn't have 
+any display attached.
+
+I've also noticed the following error during boot:
+
+[   23.847651] msm_mdp 1a01000.mdp: Adding to iommu group 3
+[   23.866044] msm_mdp 1a01000.mdp: No interconnect support may cause 
+display underflows!
+[   23.957949] irq: no irq domain found for mdss@1a00000 !
+[   23.958014] msm_dsi 1a98000.dsi: failed to request IRQ0: -22
+[   23.962229] msm_dsi: probe of 1a98000.dsi failed with error -22
+
+The above errors appeared in next-20211028 for the first time. I assume 
+that they are related.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
