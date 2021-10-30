@@ -2,66 +2,181 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9448EC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 12:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36092C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 12:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60B3661038
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 12:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163CC60FC0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 12:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231875AbhJ3MQu (ORCPT
+        id S230082AbhJ3MmH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 30 Oct 2021 08:16:50 -0400
-Received: from aposti.net ([89.234.176.197]:59702 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231830AbhJ3MQu (ORCPT
+        Sat, 30 Oct 2021 08:42:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230478AbhJ3MmG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 30 Oct 2021 08:16:50 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH] ARM: dts: exynos/i9100: Fix Bluetooth node
-Date:   Sat, 30 Oct 2021 13:14:10 +0100
-Message-Id: <20211030121410.65834-1-paul@crapouillou.net>
+        Sat, 30 Oct 2021 08:42:06 -0400
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F46C061766
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 05:39:36 -0700 (PDT)
+Received: by mail-vk1-xa2b.google.com with SMTP id e64so5894343vke.4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 05:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6BWVd5QSBtmNHqdFIHqNMkh8yS32RlgmgzQWHgLjOEU=;
+        b=BIk7S5Jt5fOttx6WIIVZ4XVMO+4ht7jw3rzpyd4mZD3HIIQ4wH0lVisbqbM3rkraxb
+         0adAQWNStbetUIcfOku+EpFTBMsVEmmcy1b9LG5yb4lIzUVuws6f42N8bAuDAEOC7inL
+         3l1fPSPvos+CgQHtAk4yMbCtCoU5f/j9XEUBl26Y+IbRScrzjsbbz2ZLibAcUjddbHJ8
+         qSA5y/wyG/2p/B2QiAr/LlnZCx4iyv2eSbFHQRrUuVxAg6rVKwsIUw3FOekNySMUFSdo
+         /TDJprrbF8h9CDe5e3uE1dVq48gNGcS1MhON9R9tmo9dcDuXfS11SQtJdAL/Z35SjRtV
+         RCQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6BWVd5QSBtmNHqdFIHqNMkh8yS32RlgmgzQWHgLjOEU=;
+        b=mwieKEcSJwI1ti7n+cVk4PqhBDq17WpvtB+rr9CB77wUffhccGSVp6FzNH3FVzBgej
+         Nsn64BGV8Uix8bA/5GWEf1rf1O88bFzcyULhhPO5Cs3L31BztV0vyBC4LNuGQxK6E4Sw
+         Xc9Anyp+sLU1OjNFXxodM2IAREXv5jTYZ+BxG5QpQriEBMBPj/YBcJssTtysQ7xxzbTC
+         V660QVAabIvAlR9uHLHnoXeu3dQDxcSSNplxjYo7HUBfqPVmxL/6lCEB3+6H6VniMhb8
+         l8eFjUHrQQnPp5VxQwAmpa9IU6PJof6PmrtshBF4gJFJxGFQa0QFb53H+igTFPPH5i6M
+         fReQ==
+X-Gm-Message-State: AOAM5316DakCMcUzHdbKAfpjgEXPWroDjzilgegBXTA4VNRijad60eBg
+        WscT8IHyQPllgoubeHaaGWCZ1QnL1WOeU1HbGU+dFA==
+X-Google-Smtp-Source: ABdhPJz6tsNOjN5h6qxnvEq0t7Wd/uAi4kksAnKEO7rGE848rRZEP/NXJiVLxio4ezKk5aHVO15OqAgSNrAeSen2Pq0=
+X-Received: by 2002:a05:6122:da0:: with SMTP id bc32mr17945585vkb.4.1635597575199;
+ Sat, 30 Oct 2021 05:39:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211028183527.3050-1-semen.protsenko@linaro.org>
+ <20211028183527.3050-6-semen.protsenko@linaro.org> <51128b74-de5d-1758-282b-1d4c5250a38d@roeck-us.net>
+In-Reply-To: <51128b74-de5d-1758-282b-1d4c5250a38d@roeck-us.net>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sat, 30 Oct 2021 15:39:23 +0300
+Message-ID: <CAPLW+4mnAV0yHdYFtosYfS2jcAUa4qvScvmohBKvqTBHz-5CFQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7] watchdog: s3c2410: Introduce separate source clock
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-watchdog@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The reset GPIO was marked active-high, which is against what's specified
-in the documentation. Mark the reset GPIO as active-low. With this
-change, Bluetooth can now be used on the i9100.
+On Fri, 29 Oct 2021 at 03:21, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 10/28/21 11:35 AM, Sam Protsenko wrote:
+> > Some Exynos chips (like Exynos850) have dedicated source clock. That
+> > clock is provided from device tree as "watchdog_src" clock. In such
+> > case, "watchdog" clock is just a peripheral clock used for register
+> > interface. If "watchdog_src" is present, use its rate instead of
+> > "watchdog" for all timer related calculations.
+> >
+>
+> If the "watchdog_src" clock is present, is "watchdog" clock still needed ?
+> Please state that explicitly, since it is kind of unusual.
+>
 
-Also switch away from using the deprecated 'host-wakeup-gpios' property,
-and use a 'host-wakeup' interrupt instead.
+Done, I've reworded the commit message. Will send v2 soon, thanks.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/arm/boot/dts/exynos4210-i9100.dts | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index 55922176807e..76b1017e05e8 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -827,9 +827,12 @@ bluetooth {
- 		compatible = "brcm,bcm4330-bt";
- 
- 		shutdown-gpios = <&gpl0 4 GPIO_ACTIVE_HIGH>;
--		reset-gpios = <&gpl1 0 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpl1 0 GPIO_ACTIVE_LOW>;
- 		device-wakeup-gpios = <&gpx3 1 GPIO_ACTIVE_HIGH>;
--		host-wakeup-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-+
-+		interrupt-parent = <&gpx2>;
-+		interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
-+		interrupt-names = "host-wakeup";
- 	};
- };
- 
--- 
-2.33.0
-
+> Guenter
+>
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >   drivers/watchdog/s3c2410_wdt.c | 33 +++++++++++++++++++++++++++------
+> >   1 file changed, 27 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> > index a5ef7171a90e..bfc5872ca497 100644
+> > --- a/drivers/watchdog/s3c2410_wdt.c
+> > +++ b/drivers/watchdog/s3c2410_wdt.c
+> > @@ -126,6 +126,8 @@ struct s3c2410_wdt_variant {
+> >   struct s3c2410_wdt {
+> >       struct device           *dev;
+> >       struct clk              *clock;
+> > +     struct clk              *clock_src;
+> > +     unsigned long           freq_src;
+> >       void __iomem            *reg_base;
+> >       unsigned int            count;
+> >       spinlock_t              lock;
+> > @@ -213,10 +215,8 @@ MODULE_DEVICE_TABLE(platform, s3c2410_wdt_ids);
+> >
+> >   /* functions */
+> >
+> > -static inline unsigned int s3c2410wdt_max_timeout(struct clk *clock)
+> > +static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq)
+> >   {
+> > -     unsigned long freq = clk_get_rate(clock);
+> > -
+> >       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
+> >                                      / S3C2410_WTCON_MAXDIV);
+> >   }
+> > @@ -364,7 +364,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
+> >                                   unsigned int timeout)
+> >   {
+> >       struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
+> > -     unsigned long freq = clk_get_rate(wdt->clock);
+> > +     unsigned long freq = wdt->freq_src;
+> >       unsigned int count;
+> >       unsigned int divisor = 1;
+> >       unsigned long wtcon;
+> > @@ -627,13 +627,27 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >               return ret;
+> >       }
+> >
+> > +     /* "watchdog_src" clock is optional; if it's not present -- just skip */
+> > +     wdt->clock_src = devm_clk_get(dev, "watchdog_src");
+> > +     if (!IS_ERR(wdt->clock_src)) {
+> > +             ret = clk_prepare_enable(wdt->clock_src);
+> > +             if (ret < 0) {
+> > +                     dev_err(dev, "failed to enable source clock\n");
+> > +                     ret = PTR_ERR(wdt->clock_src);
+> > +                     goto err_clk;
+> > +             }
+> > +             wdt->freq_src = clk_get_rate(wdt->clock_src);
+> > +     } else {
+> > +             wdt->freq_src = clk_get_rate(wdt->clock);
+> > +     }
+> > +
+> >       wdt->wdt_device.min_timeout = 1;
+> > -     wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->clock);
+> > +     wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->freq_src);
+> >
+> >       ret = s3c2410wdt_cpufreq_register(wdt);
+> >       if (ret < 0) {
+> >               dev_err(dev, "failed to register cpufreq\n");
+> > -             goto err_clk;
+> > +             goto err_clk_src;
+> >       }
+> >
+> >       watchdog_set_drvdata(&wdt->wdt_device, wdt);
+> > @@ -707,6 +721,10 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >    err_cpufreq:
+> >       s3c2410wdt_cpufreq_deregister(wdt);
+> >
+> > + err_clk_src:
+> > +     if (!IS_ERR(wdt->clock_src))
+> > +             clk_disable_unprepare(wdt->clock_src);
+> > +
+> >    err_clk:
+> >       clk_disable_unprepare(wdt->clock);
+> >
+> > @@ -727,6 +745,9 @@ static int s3c2410wdt_remove(struct platform_device *dev)
+> >
+> >       s3c2410wdt_cpufreq_deregister(wdt);
+> >
+> > +     if (!IS_ERR(wdt->clock_src))
+> > +             clk_disable_unprepare(wdt->clock_src);
+> > +
+> >       clk_disable_unprepare(wdt->clock);
+> >
+> >       return 0;
+> >
+>
