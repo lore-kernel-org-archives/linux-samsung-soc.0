@@ -2,64 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA30C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 14:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BB8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 14:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B30861075
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 14:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 469A060E9C
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 14:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbhJ3OPC (ORCPT
+        id S230043AbhJ3Oc2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 30 Oct 2021 10:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47500 "EHLO
+        Sat, 30 Oct 2021 10:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229633AbhJ3OPB (ORCPT
+        with ESMTP id S229633AbhJ3Oc1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 30 Oct 2021 10:15:01 -0400
-Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A20E6C061714
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 07:12:31 -0700 (PDT)
-Received: by mail-vk1-xa32.google.com with SMTP id t127so5961668vke.13
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 07:12:31 -0700 (PDT)
+        Sat, 30 Oct 2021 10:32:27 -0400
+Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 997A7C061570
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 07:29:57 -0700 (PDT)
+Received: by mail-vk1-xa2e.google.com with SMTP id u207so1314422vkb.7
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 07:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kpQ4wcqWDco9KEWxIAvor31Yr5kfqXocG7YvRzlhiR8=;
-        b=DaZwNt1WOaxYkoaqxrYpP8w5dVGsP+iXrZEmlyyBRcZJlqf/aTlVy+WX4FNXNpWgI/
-         6QuTzMa1gJapN2AX3V9XsznBf5MlO5NsSh/X3aNINGiUDzV+eXT7V8Z4O1BjDDp2p/0v
-         NxKglTS6IA3EYESKj2w45Ra+GP+6AbL8jRl+ZivlAczg4mr6+C06XAWXCr7sANZqitI+
-         QSXcV+Ogiajmy3n1mSCn9JXLSi8vHShTJxZztKEMi+Jg21MNmRb6zZWCRGrLqcJ98yIz
-         R6vUSnxGUUWdp7krp3JURfbpksp4peyqRwDbPJt/uuYJZL8K+bDAoc4uOeTthW8Veqs6
-         OT5g==
+        bh=VMhKSdU6XagNLXTgt9QjxAYogFasaRabTgH/D5jR5AM=;
+        b=wk4c0Top+HACPm4/cX6Jg9EnZZnbUAD1f7LYK/iZiY50ThuaUqmmSeyOIwmhqsqXG4
+         7xXtrJ55s1G1N/VPfXw7Rlim8Ug0ucHpq751UaXmtKoaHAlm2NS12k02E8C0ao0cK2ig
+         8aOu6Nh7yatfeP1mxj9DshqTTDh5d9hW8Dt5Lc2cpMMEF+2K1IS1beaes+WaBIuV0jq+
+         ZukKhnAmRABQ4iLbTpS6AHmzBYAz8atWqGEjNPnl+oOmtlIrOxD9Y8nEGbZ8XqHe8bxR
+         nwkhuRSNMZTuhbc2b9n7veZyxxE/1IVLxXqbMxhYuuNRy1oiekZlonNLckjYudYC/LpS
+         o/ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kpQ4wcqWDco9KEWxIAvor31Yr5kfqXocG7YvRzlhiR8=;
-        b=B8Aeb7/nRSFxEyKNyb34a85491WomrFBVQ5ZaiA644hJVsNnxd7ZKlwYUAgx+p8y1/
-         pB2EmdhiCpC1wV5nkXXJTgSldtb8uQo+oeb5qKAgZgtDVxdUP6Tf3tN0iimpdntOzyyr
-         1dLtIhhsTb6l1d4+0PN4NRvZZDOxc9r6ZQqmWrKoYufGhxPWYR1UbliJKszvwvlLUU9r
-         nwRmFo2fBR8X2dNyL+ftFwtZXwwL/4IH856UzacaxUB84ldNNWWY786pdnPbmkx/T433
-         ePRKNX1EO+aIWVASK+AH8BTcQ2ZzFeMi8gZKoebuZVvZOoWGgKouf7T9tiV9PvLom6dg
-         D7TA==
-X-Gm-Message-State: AOAM533nDGxmifDDMWetil+hb691M7zLF7RgGVuA6FBZn58kdiKv0aTK
-        ROeJzfytjYkLvge9G6V3CmIm5jMmjfkyfBRreo2WAA==
-X-Google-Smtp-Source: ABdhPJxe/kwW5iZXwvnOZ7nxHWFEiYg6SdeSZCqwpLBJXkvvw7fi7LIEvty1l0+agNc9xw8rdSpGzSLFV2zjpReMnjA=
-X-Received: by 2002:a1f:7246:: with SMTP id n67mr18299671vkc.15.1635603150672;
- Sat, 30 Oct 2021 07:12:30 -0700 (PDT)
+        bh=VMhKSdU6XagNLXTgt9QjxAYogFasaRabTgH/D5jR5AM=;
+        b=f9LxdfkKCNL+40n+u5MEUmSGKCS3muwtv+WOD6IZMHs6UqMeR5T9Y0gJWuCrSWzBwt
+         EPcuTZVAmxGrZfDlcrzstmukd/lRGVWDfhnONQc+NcR50O5wHRgcdqhHJMFsskzW8auz
+         0PVaRAO0rftM7rGq+LjfgfJdp3EoNL+dr3AA/FZTM+EZj7rceUtwT4yGmUPFcKeJNQ4w
+         k6ohk2uex1tWr/c+xH6ydmxON8fB3hX5tWKMaVWsj2jyaJzEyg/3/s7HtJzmhQb81pSi
+         Q4U1CW6PAk/OcT9m4D/UkFcpL7z7g7eECW8VbnB5GUfL4Tujl8cPBMp/grH5+/pcVbwN
+         DXSw==
+X-Gm-Message-State: AOAM531kIlVIFtEG76yXJHLwoCJ2xGWEMKWwsswGXzKzeHk1M6Oj4MzA
+        VXt3DRCdVn566WPUdMVrcghRbxDxoUuHVp+N83oavAcKU91TVvUB
+X-Google-Smtp-Source: ABdhPJxaZ8cFeixxgFJVOy/L0An8U8TaIKGXQZ6pfcVVK7L6np/koDpst87RmD2gtupsxTmqOU30TOwNGydmoikZF6g=
+X-Received: by 2002:a05:6122:130c:: with SMTP id e12mr7364332vkp.12.1635604196137;
+ Sat, 30 Oct 2021 07:29:56 -0700 (PDT)
 MIME-Version: 1.0
 References: <20211028183527.3050-1-semen.protsenko@linaro.org>
- <20211028183527.3050-6-semen.protsenko@linaro.org> <76ca9492-3829-6d3b-580c-983bc8409b1f@canonical.com>
-In-Reply-To: <76ca9492-3829-6d3b-580c-983bc8409b1f@canonical.com>
+ <20211028183527.3050-8-semen.protsenko@linaro.org> <1ad6b625-4388-bc78-e258-eae0b9357b96@roeck-us.net>
+In-Reply-To: <1ad6b625-4388-bc78-e258-eae0b9357b96@roeck-us.net>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 30 Oct 2021 17:12:18 +0300
-Message-ID: <CAPLW+4mxE7MGH3_=xJXC1bh2iDWRLXzTorc8N=jDqG-KHT3O=Q@mail.gmail.com>
-Subject: Re: [PATCH 5/7] watchdog: s3c2410: Introduce separate source clock
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Date:   Sat, 30 Oct 2021 17:29:44 +0300
+Message-ID: <CAPLW+4kphtac24fcpVUENAMUAdHp2fkzJ0N_r_63Soq6R2VZBg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] watchdog: s3c2410: Let kernel kick watchdog
+To:     Guenter Roeck <linux@roeck-us.net>
 Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         linux-watchdog@vger.kernel.org,
         devicetree <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -70,148 +70,81 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 29 Oct 2021 at 11:18, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
+On Fri, 29 Oct 2021 at 03:30, Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> On 28/10/2021 20:35, Sam Protsenko wrote:
-> > Some Exynos chips (like Exynos850) have dedicated source clock. That
-> > clock is provided from device tree as "watchdog_src" clock. In such
-> > case, "watchdog" clock is just a peripheral clock used for register
-> > interface. If "watchdog_src" is present, use its rate instead of
-> > "watchdog" for all timer related calculations.
->
-> Please explain what is this source clock and remove the reference to
-> devicetree. Instead describe rather real HW. It's confusing now to have
-> one clock called watchdog and one watchdog source.
->
-> The source clock is the actual clock driving watchdog and it's counter,
-> right? Then let's document it and rename the variables to match reality
-> - one is pclk (or apb?) and second is counter or source?
->
-
-Done, will be present in v2.
-
+> On 10/28/21 11:35 AM, Sam Protsenko wrote:
+> > When "tmr_atboot" module param is set, the watchdog is started in
+> > driver's probe. In that case, also set WDOG_HW_RUNNING bit to let
+> > watchdog core driver know it's running. This way wathcdog core can kick
+> > the watchdog for us (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED option is
+> > enabled), until user space takes control.
 > >
 > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > > ---
-> >  drivers/watchdog/s3c2410_wdt.c | 33 +++++++++++++++++++++++++++------
-> >  1 file changed, 27 insertions(+), 6 deletions(-)
+> >   drivers/watchdog/s3c2410_wdt.c | 26 +++++++++++++++-----------
+> >   1 file changed, 15 insertions(+), 11 deletions(-)
 > >
 > > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > index a5ef7171a90e..bfc5872ca497 100644
+> > index ca082b1226e3..9af014ff1468 100644
 > > --- a/drivers/watchdog/s3c2410_wdt.c
 > > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > @@ -126,6 +126,8 @@ struct s3c2410_wdt_variant {
-> >  struct s3c2410_wdt {
-> >       struct device           *dev;
-> >       struct clk              *clock;
-> > +     struct clk              *clock_src;
-> > +     unsigned long           freq_src;
-> >       void __iomem            *reg_base;
-> >       unsigned int            count;
-> >       spinlock_t              lock;
-> > @@ -213,10 +215,8 @@ MODULE_DEVICE_TABLE(platform, s3c2410_wdt_ids);
+> > @@ -732,6 +732,21 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >       wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
+> >       wdt->wdt_device.parent = dev;
 > >
-> >  /* functions */
-> >
-> > -static inline unsigned int s3c2410wdt_max_timeout(struct clk *clock)
-> > +static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq)
-> >  {
-> > -     unsigned long freq = clk_get_rate(clock);
-> > -
-> >       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX + 1)
-> >                                      / S3C2410_WTCON_MAXDIV);
-> >  }
-> > @@ -364,7 +364,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd,
-> >                                   unsigned int timeout)
-> >  {
-> >       struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-> > -     unsigned long freq = clk_get_rate(wdt->clock);
-> > +     unsigned long freq = wdt->freq_src;
->
-> This does not look good. You are using fixed frequency (from probe).
->
-
-Ok, will avoid caching this value in v2.
-
-> >       unsigned int count;
-> >       unsigned int divisor = 1;
-> >       unsigned long wtcon;
-> > @@ -627,13 +627,27 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >               return ret;
-> >       }
-> >
-> > +     /* "watchdog_src" clock is optional; if it's not present -- just skip */
-> > +     wdt->clock_src = devm_clk_get(dev, "watchdog_src");
-> > +     if (!IS_ERR(wdt->clock_src)) {
-> > +             ret = clk_prepare_enable(wdt->clock_src);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to enable source clock\n");
-> > +                     ret = PTR_ERR(wdt->clock_src);
-> > +                     goto err_clk;
-> > +             }
-> > +             wdt->freq_src = clk_get_rate(wdt->clock_src);
-> > +     } else {
-> > +             wdt->freq_src = clk_get_rate(wdt->clock);
+> > +     /*
+> > +      * If "tmr_atboot" param is non-zero, start the watchdog right now. Also
+> > +      * set WDOG_HW_RUNNING bit, so that watchdog core can kick the watchdog.
+> > +      *
+> > +      * If we're not enabling the watchdog, then ensure it is disabled if it
+> > +      * has been left running from the bootloader or other source.
+> > +      */
+> > +     if (tmr_atboot && started == 0) {
+> > +             dev_info(dev, "starting watchdog timer\n");
+> > +             s3c2410wdt_start(&wdt->wdt_device);
+> > +             set_bit(WDOG_HW_RUNNING, &wdt->wdt_device.status);
+> > +     } else if (!tmr_atboot) {
+> > +             s3c2410wdt_stop(&wdt->wdt_device);
 > > +     }
 > > +
-> >       wdt->wdt_device.min_timeout = 1;
-> > -     wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->clock);
-> > +     wdt->wdt_device.max_timeout = s3c2410wdt_max_timeout(wdt->freq_src);
-> >
-> >       ret = s3c2410wdt_cpufreq_register(wdt);
-> >       if (ret < 0) {
-> >               dev_err(dev, "failed to register cpufreq\n");
-> > -             goto err_clk;
-> > +             goto err_clk_src;
-> >       }
-> >
-> >       watchdog_set_drvdata(&wdt->wdt_device, wdt);
-> > @@ -707,6 +721,10 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >   err_cpufreq:
-> >       s3c2410wdt_cpufreq_deregister(wdt);
-> >
-> > + err_clk_src:
-> > +     if (!IS_ERR(wdt->clock_src))
-> > +             clk_disable_unprepare(wdt->clock_src);
 >
-> No. Errors in getting source clock should not be ignored, so you should
-> never store here ERR. You could store NULL. If() is anyway not needed in
-> both cases.
->
-> You can simplify all this and take pclk twice if src clock is missing.
-> Or assign src=pclk...
+> This doesn't cover the case where the watchdog is already enabled by the BIOS.
+> In that case, WDOG_HW_RUNNING won't be set, and the watchdog will time out
+> if the userspace handler is not loaded fast enough. The code should consistently
+> set WDOG_HW_RUNNING if the watchdog is running.
 >
 
-Hmm, I don't want to take the same clock twice. It'll increase its
-refcount twice, which might be confusing in some cases. I guess I'll
-rework it to be like this in v2:
-  - add "has_src_clk" bool field to struct wdt
-  - if "watchdog_src" is provided: set has_src_clk "true"
-  - if "watchdog_src" is not provided: set has_src_clk "false"
-(default BSS val) and assign src=pclk
-  - only enable/disable src clock when has_src_clk is "true"
+As I understand, in the case when bootloader started the watchdog, the
+driver just stops it. You can see it in the code you replied to.
 
-That simplifies clock using, fixes stored pointer value, and avoids
-taking the clock twice, all at the same time. Hope that way is fine
-with you.
+    } else if (!tmr_atboot) {
+            s3c2410wdt_stop(&wdt->wdt_device);
 
-> > +
-> >   err_clk:
-> >       clk_disable_unprepare(wdt->clock);
+In other words, having "tmr_atboot" module param makes it irrelevant
+whether bootloader enabled WDT or no.
+
+> Guenter
+>
+> >       ret = watchdog_register_device(&wdt->wdt_device);
+> >       if (ret)
+> >               goto err_cpufreq;
+> > @@ -740,17 +755,6 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >       if (ret < 0)
+> >               goto err_unregister;
 > >
-> > @@ -727,6 +745,9 @@ static int s3c2410wdt_remove(struct platform_device *dev)
+> > -     if (tmr_atboot && started == 0) {
+> > -             dev_info(dev, "starting watchdog timer\n");
+> > -             s3c2410wdt_start(&wdt->wdt_device);
+> > -     } else if (!tmr_atboot) {
+> > -             /* if we're not enabling the watchdog, then ensure it is
+> > -              * disabled if it has been left running from the bootloader
+> > -              * or other source */
+> > -
+> > -             s3c2410wdt_stop(&wdt->wdt_device);
+> > -     }
+> > -
+> >       platform_set_drvdata(pdev, wdt);
 > >
-> >       s3c2410wdt_cpufreq_deregister(wdt);
-> >
-> > +     if (!IS_ERR(wdt->clock_src))
-> > +             clk_disable_unprepare(wdt->clock_src);
-> > +
-> >       clk_disable_unprepare(wdt->clock);
-> >
-> >       return 0;
+> >       /* print out a statement of readiness */
 > >
 >
->
-> Best regards,
-> Krzysztof
