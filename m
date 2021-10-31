@@ -2,97 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092BDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 21:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BAFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 21:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E296360C4B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 21:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFAF460FD9
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 21:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbhJaVEh (ORCPT
+        id S230088AbhJaVbg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 31 Oct 2021 17:04:37 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:48878
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229982AbhJaVEf (ORCPT
+        Sun, 31 Oct 2021 17:31:36 -0400
+Received: from h04mx17.reliablemail.org ([185.76.67.210]:39285 "EHLO
+        h04mx17.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229982AbhJaVbf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 31 Oct 2021 17:04:35 -0400
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 489903F166
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 21:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635714122;
-        bh=QbKbnaoV2KXGBM6TzkEibB/CEZ4oJ69i89CznmqAF6U=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=JTeq7pLNMPmxZ1OvFzeNXPVr0Lflu8YzDGp6zon7iA00LJ8b5BM+K4hqe5EJiADIn
-         Kfog8OF74BSecGGXV1Yg9BJrSemDWljrt3XKCAadSAcK2Z4U9l6Pc8ZT4zd3MRxZ1K
-         wr2ukWyeRrrqqy4tavAwaaEnyk0SmRlXorbVPyluItRwTBUqpBSEF2fT14ZbV+8qZz
-         3awOrlaRkVGZnLO5YLmZ4cbAWJ1/tmswYLPv12SZCJjKssBLIAsPDppHMkt+MHZuTO
-         0hxocVpukJke3XSwaMCGsmgnIq7XQ189XKWgqUvVZS6mlXDq5fFSOZ0S68e6HDTvsf
-         uS0wPIpK8IZlA==
-Received: by mail-lj1-f198.google.com with SMTP id q6-20020a2e2a06000000b00212c856abc8so1933393ljq.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 14:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=QbKbnaoV2KXGBM6TzkEibB/CEZ4oJ69i89CznmqAF6U=;
-        b=d5vKCTtRmyE7R2oPES68O9ErhsgcNOClC44jCTmN+T2qD+v7OFqQUNjlcHuDD9PQyr
-         PKsPL7+izIKQuzspLk8SU/5UgiRvSBSfX4//HBRP0tr7zWWpkvAtmRqH5KgELyyllJ48
-         XO6dsiNhxyknlKgS0PScPJNVuaZ7pEmMDW2fbaCrhOqFR684AIzcrfnaUN4YnljgwOx7
-         2Lg2eMq2z6AldoQOSBnYPSoLasXzWcyLD/0wOfmNmYYsd+iiVoa7Mi/cnu/WRYqUlC5z
-         88v+Uv5WEwgzNNHRSl1/XYA8A/BQRo7MD0jt9pcN7Lr6GRczjaCMbkknla2qnnrcjg7x
-         VoGw==
-X-Gm-Message-State: AOAM530yuCt7v0QYMoosxLisgAGgELFoN1Gwk6bCreDAbyr1Hbc6NVjJ
-        comM82AuAPcM8a6eUU5vn6eNLBXTXLTOfTCeY543pCJ/P2d+pV/OpfsfZ5AS+JjrTpc6aB5npSb
-        MP+tqN0DOHHxH+rvfyEAGMZLLq7GI2B7jUkYxLHsT4HYQjBAg
-X-Received: by 2002:a2e:9d8a:: with SMTP id c10mr19135173ljj.87.1635714121729;
-        Sun, 31 Oct 2021 14:02:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxW2R5HvD0SE2FYyrFy/3wQVAELnRelZMvlWsCFqGLWCrouWi+Gss03AKNkEEgXDI0wAJKyaw==
-X-Received: by 2002:a2e:9d8a:: with SMTP id c10mr19135156ljj.87.1635714121574;
-        Sun, 31 Oct 2021 14:02:01 -0700 (PDT)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id p17sm1236619lfu.209.2021.10.31.14.02.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Oct 2021 14:02:01 -0700 (PDT)
-Message-ID: <19c8e1e3-0958-afbf-a22d-47dd56da4485@canonical.com>
-Date:   Sun, 31 Oct 2021 22:02:00 +0100
+        Sun, 31 Oct 2021 17:31:35 -0400
+X-Halon-Out: 911449c8-3a91-11ec-a232-556aad082471
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
+        s=default; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=JeCHttEry3ORV5FIx1XciXwxFlHv3MV3D9HY2sgigoo=; b=CEw1tmR7b5zVP8DGoDmP1A97og
+        kUwEsjE1udsGkb6Zq5XwEln1Q1L7AwXRxc+vrlawbk4eOHRDmCn1/KdKkASa5aXsZ9vXCNkThCD18
+        R9vUlflwIrNeh3p0fT94eREqj4aiu3/62wSyz7g0BPNTjz70uingA/T6EfXu2yVXC/56EUhzmw6Xv
+        GRiVJBhPH7XGHb1uL6GVBDe/YjWF5KoZRqduCYVUpcX9EloW0Q6ifCtFWuxeQ6TEBw22uK5aW9duw
+        6lz88fISCqlxz+XI1PkxLDKkXp8P1NtBE+ZSpiuNopmFfFESQzS77TF4jyIZFUE65q+nxNbd2l143
+        FGyBGCjg==;
+Date:   Sun, 31 Oct 2021 22:29:00 +0100
+From:   Henrik Grimler <henrik@grimler.se>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     chanho61.park@samsung.com, semen.protsenko@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] soc: samsung: exynos-chipid: print entire PRO_ID reg
+ when probing
+Message-ID: <YX8KnNl0atfDwccR@grimlerstat.localdomain>
+References: <20211031165645.1182368-1-henrik@grimler.se>
+ <878a4657-c68a-743e-7c89-bf69b416b824@canonical.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Subject: Re: [PATCH] ARM: dts: exynos/i9100: Fix Bluetooth node
-Content-Language: en-US
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211030121410.65834-1-paul@crapouillou.net>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211030121410.65834-1-paul@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878a4657-c68a-743e-7c89-bf69b416b824@canonical.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - grimler.se
+X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
+X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/10/2021 14:14, Paul Cercueil wrote:
-> The reset GPIO was marked active-high, which is against what's specified
-> in the documentation. Mark the reset GPIO as active-low. With this
-> change, Bluetooth can now be used on the i9100.
-> 
-> Also switch away from using the deprecated 'host-wakeup-gpios' property,
-> and use a 'host-wakeup' interrupt instead.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Hi,
 
-Thanks for the patch, but please split it into two commits and add a
-"Fixes" tag for the "reset-gpios" one.
+On Sun, Oct 31, 2021 at 09:35:20PM +0100, Krzysztof Kozlowski wrote:
+> On 31/10/2021 17:56, Henrik Grimler wrote:
+> > Older Exynos socs has one reg PRO_ID containing both product id and
+> > revision information. Newer Exynos socs has one Product_ID reg with
+> > product id, and one CHIPID_REV reg with revision information.
+> > 
+> > In commit c072c4ef7ef0 ("soc: samsung: exynos-chipid: Pass revision
+> > reg offsets") the driver was changed so that the revision part of
+> > PRO_ID is masked to 0 when printed during probing. This can give a
+> > false impression that the revision is 0, so lets change so entire
+> > PRO_ID reg is printed again.
+> > 
+> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> > ---
+> > Has been tested on exynos4412-i9300, which is compatible with
+> > exynos4210-chipid, and on an exynos8895 device compatible with
+> > exynos850-chipid.
+> > ---
+> 
+> Hi,
+> 
+> Thanks for the patch.
+> 
+> I miss here however the most important information - why do you need it?
+> The answer to "why" should be in commit msg.
 
-All rest looks good, nice patch!
+In dmesg we currently print something like:
+
+    Exynos: CPU[EXYNOS4412] PRO_ID[0xe4412000] REV[0x11] Detected
+
+where PRO_ID is given in datasheet as:
+
+    [31:12] Product ID
+      [9:8] Package information
+      [7:4] Main Revision Number
+      [3:0] Sub Revision Number
+
+By printing PRO_ID[0xe4412000] it gives the impression that Package
+information, Main Revision Number and Sub Revision Number are all 0.
+
+> The change was kind of intentional and accepted, because revision ID is
+> printed next to the product ID. Printing revision ID with product ID
+> could be confusing...
+
+Sure, I see the reason for only printing the product id. Would you
+accept a patch write Product_ID instead of PRO_ID in the printed
+message? So that we print:
+
+    Exynos: CPU[EXYNOS4412] Product_ID[0xe4412000] REV[0x11] Detected
+
+There's then less room for confusion regarding the revision, since
+Product_ID should contain only the Product ID, unlike PRO_ID which
+should contain both Product ID and revision info.
+
+> Best regards,
+> Krzysztof
 
 Best regards,
-Krzysztof
+Henrik Grimler
