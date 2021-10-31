@@ -2,179 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0E3C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 19:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF39C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 12:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05DA460F56
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Oct 2021 19:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0CEE6023F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 12:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbhJ3T2K (ORCPT
+        id S231145AbhJaMYH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 30 Oct 2021 15:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
+        Sun, 31 Oct 2021 08:24:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbhJ3T2J (ORCPT
+        with ESMTP id S229798AbhJaMYG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 30 Oct 2021 15:28:09 -0400
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7768C061714
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 12:25:38 -0700 (PDT)
-Received: by mail-ua1-x932.google.com with SMTP id q13so24584354uaq.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Oct 2021 12:25:38 -0700 (PDT)
+        Sun, 31 Oct 2021 08:24:06 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A5FC061764
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 05:21:34 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id j21so32075454edt.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 05:21:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=339YdMyvVlDQzR8qX4adflLjle+i81v+0067miTPm1A=;
-        b=mlopcJSMuv/TwW2eeNNhbqVn+nWVcVCFBP7c7SKby7EOWQEJ22+cniUdI5MMoozh4A
-         JdHWCFCt61kBs2L8iDz/iFyCZJA9VoJgZz9/3hd85oERXB9AiwekDUcpzKueXxLPHGeZ
-         G4zJC5mDv8H3+YaeM6RqiGI281IopVjSV6HklZ2ivxugcUmbw8tzV7Q/3ndiy7B79YwU
-         7sAWwk5fTMgcs/ZjzWLnQAwh2PGq/LrDu1AyAMVY/yslMUZN6vA66yKHYff6JVgnv1+N
-         qnADt1ZgxFpH7BGcu8kk194YbwifwrgmaCAkzCUi+rBweHCXwbm9Q9eY4TsUMg0ivLTR
-         SYrg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n4WzQadX+RqazB/22Gcyj8+qG3ieppJrK8iuTkJY04o=;
+        b=ohtuIdd4vh9qNNrqP0VjTTJDPBrzB0ztQ0p8vC1WTfmdgdOsQ7a4fhhKuvoTknKvJ2
+         pBUe4pjmDRWlQtGyGIN7BMT4m5E43rWeUEhE13R+jk5eRo+INCNMvLU1NKUhsFyWy+Kz
+         yStHRoKMXIsuwCLobZixKYneIVHRvP4Hlx36ILnoGDfIcvNIj686xa02xepgHPcseiky
+         /Vve3f6VPZOTA1nphyBFJxKQYIJ1Dc2ccgCx80v6rIMo1TY4mW+dU+Yz43kY805au2OO
+         X+zSiZaIW1qfmCZVyOAHo+N31bcfHhq2Cjtjm1VV2bvR0Lhaxf9Eu7V9lweTYmoIiKpL
+         37Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=339YdMyvVlDQzR8qX4adflLjle+i81v+0067miTPm1A=;
-        b=q9ledHFBlutFESEe9SXl+4VcSUt48Tslna3BQ2k7J3qebQxZY+cHwHyPu/TcjD0sNS
-         OsRoGfdKFZ/SaZLR+gZhDl+qYQEDGBe6wsqt/jVid3yxbJfAS4creeV1pYi7TVYk/7j2
-         CTDQ6WQaSvzOIdJe0FcA53dNDRKp1l+9f69GnS5eu2OoHZC7SQYfcE+nb6JltbqGFQ0u
-         EfqPOqFNLl+1o6zCepfvoSeiXxarYttVNdOIsAmF9HGw54N5Ke0mJ5aiaUdihwgoIROb
-         UKafnp3Dr+Yuyi2lpwZk7MWte8fQAum+E8PwbJw4ZMx/WocjVLJyBfwrdZ4qP7DLR8qO
-         35yA==
-X-Gm-Message-State: AOAM533pUdTgI1eCasIQ3l9+hXzngtvnbeQyYQaXs/UZeWF/46vqnB1o
-        a9MFmwoOeC1SefH+W41jUcm1dkx2ypssEEkf3txKbw==
-X-Google-Smtp-Source: ABdhPJyFqdbXGPdxZ+9SomWA4bSCJ4RbHSRY8COcLw1K8qg6dICkUgpDvyeiNab2g+uE9/e36w8DQGJ9EyaaaD+IE/8=
-X-Received: by 2002:a05:6102:3ece:: with SMTP id n14mr2627951vsv.55.1635621937941;
- Sat, 30 Oct 2021 12:25:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211028183527.3050-1-semen.protsenko@linaro.org>
- <20211028183527.3050-8-semen.protsenko@linaro.org> <1ad6b625-4388-bc78-e258-eae0b9357b96@roeck-us.net>
- <CAPLW+4kphtac24fcpVUENAMUAdHp2fkzJ0N_r_63Soq6R2VZBg@mail.gmail.com>
- <7c9a8dd4-7607-55a2-3d65-a445fa246667@roeck-us.net> <CAPLW+4kTANfSaw5g=rnJUJTMcT_J1Z8ju09kzmAPE70U_8KWDQ@mail.gmail.com>
- <d07b0269-acff-b267-b90a-732502978712@roeck-us.net>
-In-Reply-To: <d07b0269-acff-b267-b90a-732502978712@roeck-us.net>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n4WzQadX+RqazB/22Gcyj8+qG3ieppJrK8iuTkJY04o=;
+        b=EaX3Y2mJKms6rBMBzfN4ZfpoLo6gTAzT0UH5lcjgG4FCqLa/GxYvKLdly8cu2+3BVO
+         zr4YkNZlUtn56wldc4VbH86RWGWbr0S8ZVyCfKM+bBGorBjJnfKZ3yrDA/laCRFpoQ+t
+         5U1EVxZMYZeUVZnhz+i1eGFnr8MTIKSFy/1RJTppOg93cyBFkiqwXvuOved12ZnClCJK
+         R6UYaa4sHY6YWkK9r5WC8iMNzJrw0P9PsbCDVaaZ/YglzGMQXzIdX7WXV2Sfq+XGnSJh
+         pDAEg1JqR+TtYtvQv+IEgdhlKTVl+6jW69UVUKzlWQmzx1y10Dco+KdNLaa8vstpC/as
+         46+w==
+X-Gm-Message-State: AOAM530Wx0nbXVCqqTD9xTo2lVbkRHrObLlxjHayY3EK9N3j0iUoZCCU
+        Q/1GICcZzfSXs3t9cpZ2otNVlg==
+X-Google-Smtp-Source: ABdhPJw0qzYV1pHGqTvipYoNRo19NlreHlylwDp56Zx9kLdJoDn/xaNBjZzq0ojs9jwRzRB9mYLyKg==
+X-Received: by 2002:a17:906:3947:: with SMTP id g7mr28787664eje.407.1635682892627;
+        Sun, 31 Oct 2021 05:21:32 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id s16sm7398690edd.32.2021.10.31.05.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Oct 2021 05:21:32 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 30 Oct 2021 22:25:25 +0300
-Message-ID: <CAPLW+4kRLtP-esSeNOwJFDpW8puoA3mNPbZWi-tcRz6tjmiQDQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] watchdog: s3c2410: Let kernel kick watchdog
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-watchdog@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/7] watchdog: s3c2410: Add Exynos850 support
+Date:   Sun, 31 Oct 2021 14:21:24 +0200
+Message-Id: <20211031122131.30097-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 30 Oct 2021 at 20:47, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 10/30/21 9:59 AM, Sam Protsenko wrote:
-> > On Sat, 30 Oct 2021 at 18:14, Guenter Roeck <linux@roeck-us.net> wrote:
-> >>
-> >> On 10/30/21 7:29 AM, Sam Protsenko wrote:
-> >>> On Fri, 29 Oct 2021 at 03:30, Guenter Roeck <linux@roeck-us.net> wrote:
-> >>>>
-> >>>> On 10/28/21 11:35 AM, Sam Protsenko wrote:
-> >>>>> When "tmr_atboot" module param is set, the watchdog is started in
-> >>>>> driver's probe. In that case, also set WDOG_HW_RUNNING bit to let
-> >>>>> watchdog core driver know it's running. This way wathcdog core can kick
-> >>>>> the watchdog for us (if CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED option is
-> >>>>> enabled), until user space takes control.
-> >>>>>
-> >>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >>>>> ---
-> >>>>>     drivers/watchdog/s3c2410_wdt.c | 26 +++++++++++++++-----------
-> >>>>>     1 file changed, 15 insertions(+), 11 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> >>>>> index ca082b1226e3..9af014ff1468 100644
-> >>>>> --- a/drivers/watchdog/s3c2410_wdt.c
-> >>>>> +++ b/drivers/watchdog/s3c2410_wdt.c
-> >>>>> @@ -732,6 +732,21 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >>>>>         wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
-> >>>>>         wdt->wdt_device.parent = dev;
-> >>>>>
-> >>>>> +     /*
-> >>>>> +      * If "tmr_atboot" param is non-zero, start the watchdog right now. Also
-> >>>>> +      * set WDOG_HW_RUNNING bit, so that watchdog core can kick the watchdog.
-> >>>>> +      *
-> >>>>> +      * If we're not enabling the watchdog, then ensure it is disabled if it
-> >>>>> +      * has been left running from the bootloader or other source.
-> >>>>> +      */
-> >>>>> +     if (tmr_atboot && started == 0) {
-> >>>>> +             dev_info(dev, "starting watchdog timer\n");
-> >>>>> +             s3c2410wdt_start(&wdt->wdt_device);
-> >>>>> +             set_bit(WDOG_HW_RUNNING, &wdt->wdt_device.status);
-> >>>>> +     } else if (!tmr_atboot) {
-> >>>>> +             s3c2410wdt_stop(&wdt->wdt_device);
-> >>>>> +     }
-> >>>>> +
-> >>>>
-> >>>> This doesn't cover the case where the watchdog is already enabled by the BIOS.
-> >>>> In that case, WDOG_HW_RUNNING won't be set, and the watchdog will time out
-> >>>> if the userspace handler is not loaded fast enough. The code should consistently
-> >>>> set WDOG_HW_RUNNING if the watchdog is running.
-> >>>>
-> >>>
-> >>> As I understand, in the case when bootloader started the watchdog, the
-> >>> driver just stops it. You can see it in the code you replied to.
-> >>>
-> >>>       } else if (!tmr_atboot) {
-> >>>               s3c2410wdt_stop(&wdt->wdt_device);
-> >>>
-> >>> In other words, having "tmr_atboot" module param makes it irrelevant
-> >>> whether bootloader enabled WDT or no.
-> >>>
-> >>
-> >> Sure, but I am concerned about "if (tmr_atboot && started)", which doesn't
-> >> set WDOG_HW_RUNNING with your current code, and I was looking for something
-> >> like
-> >>
-> >>          if (tmr_atboot) {
-> >>                  if (!started) {
-> >>                          dev_info(dev, "starting watchdog timer\n");
-> >>                          s3c2410wdt_start(&wdt->wdt_device);
-> >>                  }
-> >>                  set_bit(WDOG_HW_RUNNING, &wdt->wdt_device.status);
-> >>          } else {
-> >>                  s3c2410wdt_stop(&wdt->wdt_device);
-> >>          }
-> >>
-> >
-> > Wow, I really overlooked that case. Nice catch! Not having '} else {'
-> > section is vicious...
-> >
-> > Though if started != 0, it means s3c2410wdt_set_heartbeat() failed to
-> > set wdd->timeout, and without that the watchdog core won't be able to
-> > calculate correctly ping interval in watchdog_next_keepalive(), and
-> > WDOG_HW_RUNNING bit won't do much good, right? So I'll probably just
-> > call s3c2410wdt_stop() in that case, to be on the safe side.
-> >
-> > Also this 'started' variable name is misleading, I'll convert it to
-> > "bool timeout_ok" while at it.
-> >
->
-> This driver is a mess :-(. "started" true means that the driver doesn't
-> work as currently written because there is no known valid timeout. In
-> reality, s3c2410wdt_set_heartbeat() should in that case select a valid
-> timeout and set it. On top of that, a timeout value out of range should
-> never be passed to it in the first place. The check for "if (timeout < 1)"
-> is, in that context, pointless. The range check should happen in
-> s3c2410wdt_max_timeout(). If that range check is invalid, ie if
-> s3c2410wdt_set_heartbeat() fails even though the timeout is in the range
-> of 1 ..s3c2410wdt_max_timeout(), s3c2410wdt_max_timeout() is buggy.
->
-> The simplest fix (kludge/hack) might be to fail driver installation if
-> s3c2410wdt_set_heartbeat() fails.
->
+Exynos850 WDT IP-core differs a bit from existing platforms:
+  - Another set of PMU registers
+  - Separate WDT instance for each CPU cluster, having different PMU
+    registers/bits
+  - Source clock is different from PCLK
 
-Thanks for suggesting that. I'll send that change along in v2.
+Implement all missing features above and enable Exynos850 WDT support.
 
-> Guenter
+Sam Protsenko (7):
+  dt-bindings: watchdog: Require samsung,syscon-phandle for Exynos7
+  dt-bindings: watchdog: Document Exynos850 watchdog bindings
+  watchdog: s3c2410: Make reset disable optional
+  watchdog: s3c2410: Add support for WDT counter enable
+  watchdog: s3c2410: Introduce separate source clock
+  watchdog: s3c2410: Add Exynos850 support
+  watchdog: s3c2410: Let kernel kick watchdog
+
+ .../bindings/watchdog/samsung-wdt.yaml        |  17 +-
+ drivers/watchdog/s3c2410_wdt.c                | 215 ++++++++++++++----
+ 2 files changed, 190 insertions(+), 42 deletions(-)
+
+-- 
+2.30.2
+
