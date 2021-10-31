@@ -2,91 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC9BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 20:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4513C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 20:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E08B610A0
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 20:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8867A608FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 Oct 2021 20:52:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbhJaUia (ORCPT
+        id S230125AbhJaUyt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 31 Oct 2021 16:38:30 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:48618
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229946AbhJaUia (ORCPT
+        Sun, 31 Oct 2021 16:54:49 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34888
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229946AbhJaUys (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 31 Oct 2021 16:38:30 -0400
+        Sun, 31 Oct 2021 16:54:48 -0400
 Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 479B73F166
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 20:35:57 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ABF4B3F176
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 20:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635712557;
-        bh=VcWZQJi06AXVZEhAIYstyglUxmyXYWI1mUrqnbXvlNk=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=GG0BABG9j9B+CFjy68IyOIO39LGJiPr+b+jiYtUQzd8Ss/6Ig7kPUv07yaTmAFAxo
-         2L9VbZbLV7omCdSTKV5Yk6Sh9uI3CozwG+UoTe7sTI6TFHB88JgIVM+s+xxQ+XExp3
-         JRhWNo2rV5SRdcSPJytVrW1akeiMiVqTqvnGqGwO4a1SYym+A+Hb/z26ZvbGtcRqux
-         12bACSi7b7Xo2qAFUfFcDj6nVdklv4mvOHIUYAeSrgPgxIBIHwJtlOy6dRLJ0caea2
-         o6UG4I8Nrkm8IRyT68SLs3W7vURt9qPl78OukvXzn22umbl/dPZqiCf/vppm7BWVK3
-         OoD39dJhs8hBQ==
-Received: by mail-lj1-f199.google.com with SMTP id u12-20020a2e9b0c000000b00211a02bc7a6so5113000lji.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 13:35:57 -0700 (PDT)
+        s=20210705; t=1635713535;
+        bh=xqCsE/aHJs5ZoBOU3zIm5sgDqctAPmcQP3VY/zMUALg=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=i/aTVOxDPspzEPm8Xjv7FYk4Lj5YsPD7x5iVhNz/CroOJZUvTxA/DbVKS6bIj/Fbl
+         eGRjjClt8JhZgaRKsWa1HKfIu7wskK2zTURtOCYGfbhb8QPzczlqIzIdSkkaGu5yka
+         B3g9mRy0noQV5dkjBsaoZVq9Q0e9eveKyF2qUCEjS5XLs2AkOvdel/VKpaaLdFwZMr
+         sfYnltwvMBp4uPr77XyJpKQwzO8dFwIggGjV3RGSOrxCHHL/atuIjD6BEWheuNKe4d
+         qBdfIU/KM8Iy36PqUpoyIey2fV40Fus012UxaNpZtL66+zF8EbemWBOjZAg/P8GRMA
+         AiRJRXRotn7Sg==
+Received: by mail-lj1-f199.google.com with SMTP id 133-20020a2e098b000000b00212bd56bdccso3149439ljj.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 Oct 2021 13:52:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VcWZQJi06AXVZEhAIYstyglUxmyXYWI1mUrqnbXvlNk=;
-        b=fCOUQZBaRSXSItZzp2WX1yf5M9AHDaAKh0YxDNW4lLKi5Psm9NKkU35h+3fncdryj4
-         dKMOIs4vLN5T72Z0oFKnGd2Gxb+8lXcIBpuKhSrZ7nvhScjdVyzjjVhnFzaKZr6Dvdaq
-         KLz6eQPnGmvoX8kumMkztuUhZamzXrC06Dr3oIInDHkiP7lLa5zRKoMofSKveRVAfnoc
-         40RDBK63p+Vsp5cc5Bz5LBBbHhFEq6nT9Jj3Usud6WToOFqKZyOC7yyt/zU+fg7ShIXQ
-         xLmc94fKc1TRB+uCyFBPSZmFywRvEOBZm2BSCXqt2mG8GWkoey0HKy/kA9TMNgnioh/z
-         /75Q==
-X-Gm-Message-State: AOAM533MMCyKREF7MueOBBBE6+AA9/OjYaTF65WkdLL/EqQj0P2v7EMC
-        m5PxMBs6unhfoUYWm6NvgM4VK7vFyK4X8SmPV8vkCKqexsX0QaDJ/0EBLHcwjfnDSsA9vr9xtIV
-        CqE2hWGNGVl1SSNUhRr4OOscgORDSpfRIms5xErg7o2kwHOv6
-X-Received: by 2002:ac2:46e3:: with SMTP id q3mr6297792lfo.569.1635712556662;
-        Sun, 31 Oct 2021 13:35:56 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyqEaF0sAUt21q+kbgW+xAkSm6b4n3MXabMrAL0n4lOBNB++hoZYWsf1bbzv+SvGs13Xh82Wg==
-X-Received: by 2002:ac2:46e3:: with SMTP id q3mr6297784lfo.569.1635712556528;
-        Sun, 31 Oct 2021 13:35:56 -0700 (PDT)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id x5sm1229388lfr.307.2021.10.31.13.35.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Oct 2021 13:35:56 -0700 (PDT)
-Message-ID: <b90fa435-05bf-297b-cf6f-5c9fe3667401@canonical.com>
-Date:   Sun, 31 Oct 2021 21:35:55 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Subject: Re: [PATCH 2/2] soc: samsung: exynos-chipid: be more informative when
- soc is unknown
-Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>, chanho61.park@samsung.com,
-        semen.protsenko@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211031165645.1182368-1-henrik@grimler.se>
- <20211031165645.1182368-2-henrik@grimler.se>
+        bh=xqCsE/aHJs5ZoBOU3zIm5sgDqctAPmcQP3VY/zMUALg=;
+        b=SYmk3ovU6rBr3Ns3F0fbpFh1hJwppztebMglxaIa4jdhHdGOmvSKxpvCfu4t5OfdhW
+         BhvtvnCBtJZ/jVQRXM4CNVGraN/3HvXTA40Z6QjaVWz8I5fm5dzzhg8Hg2KETWQQYATF
+         R94hKkHPNSkrwohb4HZNmul/TC5m/sP2PPSo9AMWHHrmRv9jGhV+cwCmrrjl6J7LqeQ/
+         GWVihdpeX02lc7FQaiTvLYn51BfGs+dV67Vwvxo2jO7Mgg+3OuhbVG6jHX4TfVQ3LVFq
+         BY7OYxXolv10h8BZp/rDpv2xxeXpPW0FETyBMkkVjW23rSivbUUoXWmN0tzMHAN11yvI
+         Zfmw==
+X-Gm-Message-State: AOAM532DYtx42SG+i+y3g5xFQR6gXB76vBuJgz2fZ2FBUe8fdJ36BaSw
+        nJQ2EZMO8YgxIdSKgQssyQzRyjUq6NHE184VReXOt57Sxb4DTfSCGcuKO1u91SZjKldoOfwHU5d
+        nOP+/y+rQnSpyo46XQRSVVHn6Ft5EtL6GBj0Am0f5dMXW81/i
+X-Received: by 2002:a2e:b546:: with SMTP id a6mr17389317ljn.177.1635713535096;
+        Sun, 31 Oct 2021 13:52:15 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxYFvfcT9ZuKuLCScS0pjq4nYmoHdEKIO5HyNQrxc+9+E9mHbSyqnvub3G+p1XUdqCS3uK4Rw==
+X-Received: by 2002:a2e:b546:: with SMTP id a6mr17389305ljn.177.1635713534932;
+        Sun, 31 Oct 2021 13:52:14 -0700 (PDT)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id bt10sm1233007lfb.193.2021.10.31.13.52.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Oct 2021 13:52:14 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211031165645.1182368-2-henrik@grimler.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     David Virag <virag.david003@gmail.com>
+Subject: [PATCH] soc: samsung: exynos-chipid: describe which SoCs go with compatibles
+Date:   Sun, 31 Oct 2021 21:52:12 +0100
+Message-Id: <20211031205212.59505-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 31/10/2021 17:56, Henrik Grimler wrote:
-> Print the obtained product id that is incompatible.
-> 
+The Exynos ChipID driver, like most of the Exynos drivers, uses one
+compatible for entire family of compatible devices using one devicetree
+"compatible".  The compatibility is here described by programming
+interface (register layout), not by actual values, so the product ID
+register on one family of devices has different values for different
+SoCs.
 
-Why? Please mention it in the commit msg.
+Describe which SoC goes with which compatible for documentation
+purposes, if the DTS is not available in mainline.
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/soc/samsung/exynos-chipid.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index a28053ec7e6a..baf3afc69d79 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -42,6 +42,7 @@ static const struct exynos_soc_id {
+ 	unsigned int id;
+ } soc_ids[] = {
+ 	/* List ordered by SoC name */
++	/* Compatible with: samsung,exynos4210-chipid */
+ 	{ "EXYNOS3250", 0xE3472000 },
+ 	{ "EXYNOS4210", 0x43200000 },	/* EVT0 revision */
+ 	{ "EXYNOS4210", 0x43210000 },
+@@ -55,6 +56,7 @@ static const struct exynos_soc_id {
+ 	{ "EXYNOS5440", 0xE5440000 },
+ 	{ "EXYNOS5800", 0xE5422000 },
+ 	{ "EXYNOS7420", 0xE7420000 },
++	/* Compatible with: samsung,exynos850-chipid */
+ 	{ "EXYNOS850", 0xE3830000 },
+ 	{ "EXYNOSAUTOV9", 0xAAA80000 },
+ };
+-- 
+2.32.0
+
