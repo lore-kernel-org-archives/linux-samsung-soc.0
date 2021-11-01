@@ -2,56 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC89C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 19:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD0C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 19:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF13060FC4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 19:35:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3FD760F56
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 19:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbhKATiO (ORCPT
+        id S230028AbhKATiP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Nov 2021 15:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41212 "EHLO
+        Mon, 1 Nov 2021 15:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229966AbhKATiJ (ORCPT
+        with ESMTP id S229933AbhKATiI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Nov 2021 15:38:09 -0400
+        Mon, 1 Nov 2021 15:38:08 -0400
 Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2AA3C061767
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Nov 2021 12:35:35 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id f8so46352185edy.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Nov 2021 12:35:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65870C061714
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Nov 2021 12:35:34 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id w15so68044102edc.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Nov 2021 12:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wrNTYnU5dJFmytnZGsgc4/jUdnhKUI+zJ+eIyY+oL2E=;
-        b=rnJus9960Pg11/s7R96Y5kDBk2JWNu5m9t/hd9pG2GmTIF8McsTZCBAP0xyEpYtrLF
-         1rpMUgAvicPPP+LFJdYvs6oh5JAU8fruueXFBttNRffG4f0R2mQnBDnhLgaYcvPQALDM
-         Kr+gCYHC7zB/HLdry02QMo39np614hlKoCXLDSBQTye8nhGroN8h/wIJ2GKgG+WjsiOj
-         V0NI50gL+T5vwNppI962yvOI9OwRjua1f8iguGpEhmzj4tkEf8AAOEX4hMiHEjXuzkhZ
-         szacIxt5tZCqUY/5y8qiVYsJPZEebzLHzvw3FrKvRzKx+6aMXBYD0y8e2zArnknusIoS
-         D9PA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IHx+6RyAT00bbPl2zwH9JrS2kr0JH1+UQLDTyQafWP0=;
+        b=KyHC/2sMIjaigeVOlTGEGijkFCjfxxTwxhKSBqFgKNJl8gzl+JgEnm3ZVQRF6GoH6M
+         N93vex8ipcoeTJp3V6JdsA42l82+4Zf+2Xedthdz6ZmdGKVSwpMuE422AsiAGgt/WUOM
+         xmwtDwGMv9Dz/J9rKlAagS4nZ1evh/kgJTLKFMmgeXDKPDUqLeDCTPcaqSSV5CnkYfo6
+         wQ+7TEz+11owwdU922VEC3FuTGzcAK/B1L2ZH21Q3Jl6QySTTiMVgUSNwkDlsvl2U31U
+         NTwhWWFcROhYuh5KJmZLQU+hQMbTKY8ZZG1hzQrhS8Q9tYP3KaePClGEYbHTapzvdXmg
+         k3pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wrNTYnU5dJFmytnZGsgc4/jUdnhKUI+zJ+eIyY+oL2E=;
-        b=pDvJ9nBg4O/ZONdy5XOJSVsfKHY/7l4V91RokqsBV7/RKTaodDGVQbip5zBOldcwfj
-         JGL7UuseT3JOh7VP+suF4NotXOY19CxG/g18jvk+h5RUov2TBaNqRJ3ak2rkPZd19ccO
-         sthnmoEs78doh7jz58M5KixGgwHGOGOEglsbhz2y47MXaQil+KNZFeweaKavylA/8hQx
-         bln9tJ7J4AdzO7nZL9fo+DPGILCeQq7o6bczY/AhcIhQwLcadtj1w8/crVj8b31sx7qX
-         XU3lZDJ0UjrcLhf241wELDEGknk//Kk0aZt0wXuFwLTsFQB1yJwmjGO23+FrT7FShx+M
-         Pl7g==
-X-Gm-Message-State: AOAM532RDPntdMjdXCMEYH81v41uJ81HaRRiTTEfgPZ+mGUhxgd+ylXx
-        1bdd+BnQaHGZ8zvVoMsrJmxWww==
-X-Google-Smtp-Source: ABdhPJzNlTjfMObhgw4jZTyMJ+GtHPE5TorD33wLu6FC0OwZlKsSw0OsCM6bLUBGF6xNnnN3t1CVnA==
-X-Received: by 2002:a17:906:6849:: with SMTP id a9mr34358753ejs.370.1635795334570;
-        Mon, 01 Nov 2021 12:35:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IHx+6RyAT00bbPl2zwH9JrS2kr0JH1+UQLDTyQafWP0=;
+        b=1qiUZPjVFgR7xKIIK74K0L7dYkHe2k21p1SWhO5mGExD1KOs/DVUe1PTllrh5dtW6U
+         hoZ5deU3ljfpIjG+7PZfwMBQRny+2W8zi9woAQkcEx7wD5UIitRlJi9jv55gBxX+qYu3
+         t7/lgP+8AIkWoiaIwAJvGJW8gpohFlzS/3GIiBoV5DQlvQdjIqaA9s1wq8HTIHjf2ZF6
+         FsCjlg+UNamVVE38C9Dyx9mshVw510gFNL/vjZDjuy9Kbgvszz38snWBpyKS+x+2YyQq
+         NXvZlPOb8hBBr0DifsEJDwnrMYhGo+uMkT2cJ3YG6N85rPTOEDZZH+GWDMQTFPexhomM
+         WrWg==
+X-Gm-Message-State: AOAM531+NxbSesilF6HIIW61wS0kHXTYtMMVrkomVqpb7UqUrp0HCHN+
+        K3JiUkts6bYk5sVdpWQMxS1asw==
+X-Google-Smtp-Source: ABdhPJyYEGncnTnzkLTin5kRwPLyQGpRlYP737W+Tw3n8ODVeVmxndxYj5KOPtogv8tmWGduU4D2QA==
+X-Received: by 2002:a17:906:c1c9:: with SMTP id bw9mr38931001ejb.3.1635795332945;
+        Mon, 01 Nov 2021 12:35:32 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id i6sm7163043ejd.57.2021.11.01.12.35.33
+        by smtp.gmail.com with ESMTPSA id kw5sm7164357ejc.110.2021.11.01.12.35.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Nov 2021 12:35:34 -0700 (PDT)
+        Mon, 01 Nov 2021 12:35:32 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -61,116 +61,41 @@ To:     Catalin Marinas <catalin.marinas@arm.com>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 1/2] clocksource: exynos_mct: Refactor resources allocation
-Date:   Mon,  1 Nov 2021 21:35:30 +0200
-Message-Id: <20211101193531.15078-2-semen.protsenko@linaro.org>
+Subject: [PATCH 0/2] clocksource: exynos_mct: Enable MCT on ARM64
+Date:   Mon,  1 Nov 2021 21:35:29 +0200
+Message-Id: <20211101193531.15078-1-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211101193531.15078-1-semen.protsenko@linaro.org>
-References: <20211101193531.15078-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+This is re-submission of Marek Szyprowski patches, which were sent
+earlier [1], but weren't applied for some reason. Those two patches look
+helpful and benign:
 
-Move interrupts allocation from exynos4_timer_resources() into separate
-function together with the interrupt number parsing code from
-mct_init_dt(), so the code for managing interrupts is kept together.
-While touching exynos4_timer_resources() function, move of_iomap() to it.
-No functional changes.
+  - [PATCH 1/2]: cleanup MCT irqs setting up
+  - [PATCH 2/2]: enable MCT on ARM64
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
+I'm mostly interested in [PATCH 2/2], which allows one to test MCT on
+Exynos850 (architected timer works fine on Exynos850, but it's nice to
+have MCT for wakeup and testing too). But cleanup one seems desirable as
+well, so sending both.
+
+[PATCH 2/2] commit message was rewritten to provide new reasoning and
+background, as original commit message was related to [1] series.
+
+[1] https://patchwork.kernel.org/project/linux-samsung-soc/cover/20181018095708.1527-1-m.szyprowski@samsung.com/
+
+Marek Szyprowski (2):
+  clocksource: exynos_mct: Refactor resources allocation
+  arm64: platform: Enable Exynos Multi-Core Timer driver
+
+ arch/arm64/Kconfig.platforms     |  1 +
  drivers/clocksource/exynos_mct.c | 50 +++++++++++++++++++-------------
- 1 file changed, 30 insertions(+), 20 deletions(-)
+ 2 files changed, 31 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 5e3e96d3d1b9..857cf12ebe57 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -504,11 +504,14 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static int __init exynos4_timer_resources(struct device_node *np, void __iomem *base)
-+static int __init exynos4_timer_resources(struct device_node *np)
- {
--	int err, cpu;
- 	struct clk *mct_clk, *tick_clk;
- 
-+	reg_base = of_iomap(np, 0);
-+	if (!reg_base)
-+		panic("%s: unable to ioremap mct address space\n", __func__);
-+
- 	tick_clk = of_clk_get_by_name(np, "fin_pll");
- 	if (IS_ERR(tick_clk))
- 		panic("%s: unable to determine tick clock rate\n", __func__);
-@@ -519,9 +522,27 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 		panic("%s: unable to retrieve mct clock instance\n", __func__);
- 	clk_prepare_enable(mct_clk);
- 
--	reg_base = base;
--	if (!reg_base)
--		panic("%s: unable to ioremap mct address space\n", __func__);
-+	return 0;
-+}
-+
-+static int __init exynos4_timer_interrupts(struct device_node *np,
-+					   unsigned int int_type)
-+{
-+	int nr_irqs, i, err, cpu;
-+
-+	mct_int_type = int_type;
-+
-+	/* This driver uses only one global timer interrupt */
-+	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
-+
-+	/*
-+	 * Find out the number of local irqs specified. The local
-+	 * timer irqs are specified after the four global timer
-+	 * irqs are specified.
-+	 */
-+	nr_irqs = of_irq_count(np);
-+	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
-+		mct_irqs[i] = irq_of_parse_and_map(np, i);
- 
- 	if (mct_int_type == MCT_INT_PPI) {
- 
-@@ -581,24 +602,13 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 
- static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
- {
--	u32 nr_irqs, i;
- 	int ret;
- 
--	mct_int_type = int_type;
--
--	/* This driver uses only one global timer interrupt */
--	mct_irqs[MCT_G0_IRQ] = irq_of_parse_and_map(np, MCT_G0_IRQ);
--
--	/*
--	 * Find out the number of local irqs specified. The local
--	 * timer irqs are specified after the four global timer
--	 * irqs are specified.
--	 */
--	nr_irqs = of_irq_count(np);
--	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
--		mct_irqs[i] = irq_of_parse_and_map(np, i);
-+	ret = exynos4_timer_resources(np);
-+	if (ret)
-+		return ret;
- 
--	ret = exynos4_timer_resources(np, of_iomap(np, 0));
-+	ret = exynos4_timer_interrupts(np, int_type);
- 	if (ret)
- 		return ret;
- 
 -- 
 2.30.2
 
