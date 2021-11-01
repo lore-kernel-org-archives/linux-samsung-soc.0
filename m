@@ -2,100 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD0C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 19:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C95C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 20:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3FD760F56
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 19:35:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A994161051
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 20:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbhKATiP (ORCPT
+        id S229712AbhKAUlz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Nov 2021 15:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbhKATiI (ORCPT
+        Mon, 1 Nov 2021 16:41:55 -0400
+Received: from mxout03.lancloud.ru ([45.84.86.113]:50146 "EHLO
+        mxout03.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230246AbhKAUlu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Nov 2021 15:38:08 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65870C061714
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Nov 2021 12:35:34 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id w15so68044102edc.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Nov 2021 12:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IHx+6RyAT00bbPl2zwH9JrS2kr0JH1+UQLDTyQafWP0=;
-        b=KyHC/2sMIjaigeVOlTGEGijkFCjfxxTwxhKSBqFgKNJl8gzl+JgEnm3ZVQRF6GoH6M
-         N93vex8ipcoeTJp3V6JdsA42l82+4Zf+2Xedthdz6ZmdGKVSwpMuE422AsiAGgt/WUOM
-         xmwtDwGMv9Dz/J9rKlAagS4nZ1evh/kgJTLKFMmgeXDKPDUqLeDCTPcaqSSV5CnkYfo6
-         wQ+7TEz+11owwdU922VEC3FuTGzcAK/B1L2ZH21Q3Jl6QySTTiMVgUSNwkDlsvl2U31U
-         NTwhWWFcROhYuh5KJmZLQU+hQMbTKY8ZZG1hzQrhS8Q9tYP3KaePClGEYbHTapzvdXmg
-         k3pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IHx+6RyAT00bbPl2zwH9JrS2kr0JH1+UQLDTyQafWP0=;
-        b=1qiUZPjVFgR7xKIIK74K0L7dYkHe2k21p1SWhO5mGExD1KOs/DVUe1PTllrh5dtW6U
-         hoZ5deU3ljfpIjG+7PZfwMBQRny+2W8zi9woAQkcEx7wD5UIitRlJi9jv55gBxX+qYu3
-         t7/lgP+8AIkWoiaIwAJvGJW8gpohFlzS/3GIiBoV5DQlvQdjIqaA9s1wq8HTIHjf2ZF6
-         FsCjlg+UNamVVE38C9Dyx9mshVw510gFNL/vjZDjuy9Kbgvszz38snWBpyKS+x+2YyQq
-         NXvZlPOb8hBBr0DifsEJDwnrMYhGo+uMkT2cJ3YG6N85rPTOEDZZH+GWDMQTFPexhomM
-         WrWg==
-X-Gm-Message-State: AOAM531+NxbSesilF6HIIW61wS0kHXTYtMMVrkomVqpb7UqUrp0HCHN+
-        K3JiUkts6bYk5sVdpWQMxS1asw==
-X-Google-Smtp-Source: ABdhPJyYEGncnTnzkLTin5kRwPLyQGpRlYP737W+Tw3n8ODVeVmxndxYj5KOPtogv8tmWGduU4D2QA==
-X-Received: by 2002:a17:906:c1c9:: with SMTP id bw9mr38931001ejb.3.1635795332945;
-        Mon, 01 Nov 2021 12:35:32 -0700 (PDT)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id kw5sm7164357ejc.110.2021.11.01.12.35.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Nov 2021 12:35:32 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 0/2] clocksource: exynos_mct: Enable MCT on ARM64
-Date:   Mon,  1 Nov 2021 21:35:29 +0200
-Message-Id: <20211101193531.15078-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
+        Mon, 1 Nov 2021 16:41:50 -0400
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru A0A0320A6A22
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Subject: Re: [PATCH v2 01/22] usb: host: ehci-exynos: deny IRQ0
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+References: <20211026173943.6829-1-s.shtylyov@omp.ru>
+ <20211026173943.6829-2-s.shtylyov@omp.ru> <YX0IQ/boUgVseZvS@kroah.com>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <46d41d2b-4701-fb7f-9a0b-f4a35e59c3d3@omp.ru>
+Date:   Mon, 1 Nov 2021 23:39:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <YX0IQ/boUgVseZvS@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
+ LFEX1907.lancloud.ru (fd00:f066::207)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is re-submission of Marek Szyprowski patches, which were sent
-earlier [1], but weren't applied for some reason. Those two patches look
-helpful and benign:
+Hello!
 
-  - [PATCH 1/2]: cleanup MCT irqs setting up
-  - [PATCH 2/2]: enable MCT on ARM64
+On 10/30/21 11:54 AM, Greg Kroah-Hartman wrote:
 
-I'm mostly interested in [PATCH 2/2], which allows one to test MCT on
-Exynos850 (architected timer works fine on Exynos850, but it's nice to
-have MCT for wakeup and testing too). But cleanup one seems desirable as
-well, so sending both.
+>> If platform_get_irq() returns IRQ0 (considered invalid according to Linus)
+>> the driver blithely passes it to usb_add_hcd() that treats IRQ0 as no IRQ
+>> at all. Deny IRQ0 right away, returning -EINVAL from the probe() method...
+>>
+>> Fixes: 44ed240d6273 ("usb: host: ehci-exynos: Fix error check in exynos_ehci_probe()")
+>> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+>> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+>> ---
+>> Changes in version 2:
+>> - added Alan's ACK.
+>>
+>>  drivers/usb/host/ehci-exynos.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+>> index 1a9b7572e17f..ff4e1261801a 100644
+>> --- a/drivers/usb/host/ehci-exynos.c
+>> +++ b/drivers/usb/host/ehci-exynos.c
+>> @@ -207,6 +207,10 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>>  		err = irq;
+>>  		goto fail_io;
+>>  	}
+>> +	if (!irq) {
+>> +		err = -EINVAL;
+>> +		goto fail_io;
+>> +	}
+> 
+> This is a huge sign that the api being used here is broken.
 
-[PATCH 2/2] commit message was rewritten to provide new reasoning and
-background, as original commit message was related to [1] series.
+   And you're telling me that after I've wasted  time on v2? :-( Well, at least the series had
+couple blunders, so it couldn't merged for 5.16-rc1 anyway (not sure why these weren't detected
+in v1).
 
-[1] https://patchwork.kernel.org/project/linux-samsung-soc/cover/20181018095708.1527-1-m.szyprowski@samsung.com/
+> Please fix the root cause here, if returning a 0 is an error, then have
+> the function you called to get this irq return an error.
 
-Marek Szyprowski (2):
-  clocksource: exynos_mct: Refactor resources allocation
-  arm64: platform: Enable Exynos Multi-Core Timer driver
+   Well, technically not, although that doesn't match the kernel-doc for the function now.
+I only don't understand why returning IRQ0 hasn't been replaced still...
 
- arch/arm64/Kconfig.platforms     |  1 +
- drivers/clocksource/exynos_mct.c | 50 +++++++++++++++++++-------------
- 2 files changed, 31 insertions(+), 20 deletions(-)
+> Otherwise you
+> will have to fix ALL callers, and people will always get it wrong.
+> Fix the root cause here, don't paper it over.
 
--- 
-2.30.2
+   As I have already told you, I won't have to do it as filtering out is only needed iff 0 is
+used as an indication for something special. IRQ0 is still perfectly valid for request_irq()
+and is even called by arch/{aplha|mips|x86}...
 
+> thanks,
+> 
+> greg k-h
+
+MBR, Sergey
