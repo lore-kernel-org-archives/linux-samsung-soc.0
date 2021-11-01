@@ -2,157 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998FFC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 11:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688C1C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 18:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8409660FC4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 11:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E3886052B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Nov 2021 18:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232209AbhKALol (ORCPT
+        id S231980AbhKASiz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Nov 2021 07:44:41 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:27961 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232066AbhKALok (ORCPT
+        Mon, 1 Nov 2021 14:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55870 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232100AbhKASiy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Nov 2021 07:44:40 -0400
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20211101114205epoutp034c0a8e3008ccd3cf7f869aa07d7c2da3~zaVo0zx9D1398113981epoutp039
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Nov 2021 11:42:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20211101114205epoutp034c0a8e3008ccd3cf7f869aa07d7c2da3~zaVo0zx9D1398113981epoutp039
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1635766925;
-        bh=up1MO0KkPVwe2zBA55fSLzsTBsRC2h2hrtZ0viDd6Go=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I9RC8PHzHR32Pn0HNzdiN8y/XNCGmso5tjtkEFYp7+EpXBYQfLRdpk0U2nEJgttXc
-         2Zz1YHazqOxzA3g9O1dlYKV+wxqZJxbKnVDj0MWaKeZX3ySEHfmaDs0ZwkqKZzrikg
-         Br30owMXCYClQb7MzXx8rrt7KI0nRyfh3SHjIscY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20211101114205epcas2p2b8dd94830a757a67a328b683d4b98ca1~zaVoQ-pE_2816928169epcas2p2O;
-        Mon,  1 Nov 2021 11:42:05 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.99]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4HjWN66GQpz4x9Q5; Mon,  1 Nov
-        2021 11:41:58 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D5.D4.10018.682DF716; Mon,  1 Nov 2021 20:41:58 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed~zaVh9TBM30536905369epcas2p4e;
-        Mon,  1 Nov 2021 11:41:58 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211101114158epsmtrp1185644d28b8f56f44e29d22b58d872d9~zaVh5ESh21195811958epsmtrp1C;
-        Mon,  1 Nov 2021 11:41:58 +0000 (GMT)
-X-AuditID: b6c32a46-a25ff70000002722-f9-617fd2864ba1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B2.A4.29871.682DF716; Mon,  1 Nov 2021 20:41:58 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20211101114158epsmtip27bb411339cbb4c0d03b5abd790daeeca~zaVhvCua23134731347epsmtip2D;
-        Mon,  1 Nov 2021 11:41:58 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Wolfram Sang <wsa@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Chanho Park <chanho61.park@samsung.com>, linux-i2c@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH 2/2] dt-bindings: i2c: exynos5: add exynos-usi-hsi2c
- compatible
-Date:   Mon,  1 Nov 2021 20:38:19 +0900
-Message-Id: <20211101113819.50651-2-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211101113819.50651-1-jaewon02.kim@samsung.com>
+        Mon, 1 Nov 2021 14:38:54 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC858C061764
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Nov 2021 11:36:20 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id o26so33516001uab.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Nov 2021 11:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tO/sJOVXGu1XRctd0mIlL8N/rOf5z8jD5S9ZOoMr6sA=;
+        b=frqAOxOFRbIGvADBVTuSAriUmgCHoZ/CYC5iPcTxfPHcBNFBsImfPerdak2uyfweZt
+         39uELQ6rZ60s4TSuledNo8ZegjiyXUCj3YYgb9Vn8oBQjf0Pcjy/VQIzPT7g2adCx4NW
+         UlTWVETRO/NM9/HnhiGzizt74td5bUjqH97mgBlr6nbecT8YmDaa2t5Uk5UvLmd6c6jO
+         fbEwCWE0BB//Jkq5tGbfhuZQ6xnfgOTjzwJvyO1Hd+kCP9pTyyVBAJWGL0xcSwbZ4pIr
+         PiHVD/edvPxHCyv4N1Zk6FdMdkfGOr/3c4nnqksYNtcRCnE5u7jHNBfux+M80GI4gzr5
+         BEvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tO/sJOVXGu1XRctd0mIlL8N/rOf5z8jD5S9ZOoMr6sA=;
+        b=ae+AA5sYdZ+ci2y7N4g7DFct/6LCPI3PRcBq1C1EfozuLzLtVQfFofx6NGQpuxOooL
+         MaxI1PyG/zVJL1BMdhF/m9K7y5E/HCIvb9rkclloNjiyYSacn+He2opquZoVfSMVTkUC
+         SBgNhNNS9Mq5QvDidXBskgS/e+tYIFSmNz6QFzQGTxN8o9R4rWNpTUy0d1sigRVj6ink
+         9sf4EGk+gvYzPQSHjrznBHozg0VpSi0qwj39HItJtGV5Q194Hxz1rf5fZHaPe38BULd7
+         sSwunT+WLXtLjBFcRD9YeWXJsCw3ri0GTUrtcgnVm8tdEJ3VwGOscAbz1zlI9GTUIGAT
+         GRmw==
+X-Gm-Message-State: AOAM530aigrVAOskVYzeTUQflMpnCFAI3gQK+PbQuL8xGOWdx1Dsr2p7
+        4Q7trzpYnmTZN/xPKghEJLcFbzKbNIA4W6ycV68JQw==
+X-Google-Smtp-Source: ABdhPJxxjq8c8R6Qdvb63KamFUYIe0D4384RONh+9u++oFlaAHmRLO/1rp4h+nDtz1lq4Qr2SJUpuqnEc0NneC7ZWow=
+X-Received: by 2002:a67:1781:: with SMTP id 123mr31610936vsx.1.1635791779839;
+ Mon, 01 Nov 2021 11:36:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdljTVLftUn2iQc8ZI4vL+7UtdjQcYbXY
-        +PYHk0XH3y+MFpd3zWGzmHF+H5NF694j7BZ3989ldODwmNXQy+axaVUnm0ffllWMHp83yQWw
-        RGXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gBdoaRQ
-        lphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMC/QK07MLS7NS9fLSy2xMjQwMDIFKkzI
-        zvh27jVbwRnuir1nOlkaGLdwdjFycEgImEgsnWTUxcjFISSwg1Fi/+FVzBDOJ0aJG/PesEA4
-        3xgltsxeDZThBOvYsXU5VGIvo0Tv3i4mCOcjo8S6JZNYQKrYBLQlvq9fzApiiwjUSbQ9nQHW
-        wSywiVHiweQWZpDlwgKBEkd2WoLUsAioSkyZfoIRxOYVsJVYvrQJapu8xMQJ99hBbE4BO4l5
-        1zrYIGoEJU7OfAK2ixmopnnrbLC7JQResks8n9QH1ewi8eLfDBYIW1ji1fEt7BC2lMTL/jZ2
-        SADUS3y94QDR28MosabrFxNEjb3Er+lbWEFqmAU0Jdbv0ocoV5Y4cgtqLZ9Ex+G/UFN4JTra
-        hCAa1STuTz3HBmHLSEw6shJqoIdEb/NnaOhOZJR4Pu8W0wRGhVlIvpmF5JtZCIsXMDKvYhRL
-        LSjOTU8tNiowgkdwcn7uJkZwotRy28E45e0HvUOMTByMhxglOJiVRHgjLtQkCvGmJFZWpRbl
-        xxeV5qQWH2I0BYb1RGYp0eR8YKrOK4k3NLE0MDEzMzQ3MjUwVxLntRTNThQSSE8sSc1OTS1I
-        LYLpY+LglGpgmnomXkSN+/LxAzZ3+srLT35N9b7yaXKU8hPNTDPdbW0GmsGrEq7tUz042/em
-        w3433bJl+n6LGBscGA+cXvNSf7pzDMNVxz0J9eUTtz/OXHyF4/BX4zWHGCrcZVVZdlxe8Ixz
-        ScW/tDTbxbdO/jHe58EoyKDPl8J4dtryqZOKgrxSmUyOrNa9m7TcYMaL/HVHXCsMP/1frJyT
-        viAynuPn82K1yivCCZ+ybDf+Vy+Z4XMl3M+ycll+OO/F5gr5g+ysX83mfppsPfGs1mntILdP
-        9q971V4+6P76Zv2rqWVrmjRfaE39Z/fxjPn2Q/nmnP+/eJxaoqtZnnlkj4DEm/g3yd+LZ059
-        pCEu971FPuFNhhJLcUaioRZzUXEiAMnqr4YdBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsWy7bCSvG7bpfpEgwdLhCwu79e22NFwhNVi
-        49sfTBYdf78wWlzeNYfNYsb5fUwWrXuPsFvc3T+X0YHDY1ZDL5vHplWdbB59W1YxenzeJBfA
-        EsVlk5Kak1mWWqRvl8CV8e3ca7aCM9wVe890sjQwbuHsYuTkkBAwkdixdTkLiC0ksJtRYs0v
-        Voi4jMTyZ31sELawxP2WI0BxLqCa94wSf1fNYwZJsAloS3xfvxisQUSggVFiZ4stSBGzwDZG
-        icO3T4FNFRbwl3jz+RJYEYuAqsSU6ScYQWxeAVuJ5UubmCE2yEtMnHCPHcTmFLCTmHetA2gz
-        B9A2W4kNU4IgygUlTs58AjaSGai8eets5gmMArOQpGYhSS1gZFrFKJlaUJybnltsWGCYl1qu
-        V5yYW1yal66XnJ+7iREc0lqaOxi3r/qgd4iRiYPxEKMEB7OSCG/EhZpEId6UxMqq1KL8+KLS
-        nNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGph09rO2Wp6I66+4d2Xm5CRxV0Wn
-        SDuD6FyX+bOVt4dYts/ff41n60GpnXHytoevKjbfYFLa4H9VkumbAneJz9VrCpofl/Uedz6+
-        a+e/nRpTg12nbD/+OX6q+hZbu4NLbcVuKrUyLNQ92GdwcnJqe3NDnnT69xxJkadvvCZl/+9i
-        V4mTWLRyGkOY5DH55PeP+qtu7/qpuj+Jbw5fn+RdrsdGH2+fuH0naMqCat2T3UE1Rb1bGnI+
-        z+u7ZvIsVJX76vvf6jcPqpx+YWQp9tPSZ8b6+oXN6/uuv7HK9Xgh4P42aeeMXfd1p9fErvu1
-        0kR8bsf/F8sXJXJKhtRoLflrkhieanXMMTlYKO1DuVf/42lKLMUZiYZazEXFiQDHOBnF2AIA
-        AA==
-X-CMS-MailID: 20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed
-References: <20211101113819.50651-1-jaewon02.kim@samsung.com>
-        <CGME20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed@epcas2p4.samsung.com>
+References: <20211026115916.31553-1-semen.protsenko@linaro.org>
+ <8b3466f1-2b16-80ca-79c7-577860fc90aa@canonical.com> <CAPLW+4=YizLzdiZ1mdCGxvPCTYhNjeiomO=q=4Xk-ZxqqH++nA@mail.gmail.com>
+ <CGME20211028143524eucas1p16f240d8bc7e0d2c677fc54afde45957b@eucas1p1.samsung.com>
+ <e01b0072-008a-c83d-59b2-2174860c00fd@canonical.com> <d4398079-e512-e75b-92e9-51d590d8c240@samsung.com>
+ <CAPLW+4kKBXiwQF4qPTA04WCDb3PY365OORV4brtFxmQbSBxL8A@mail.gmail.com> <c888fc5e-4698-333f-6922-8b53f3efbe36@samsung.com>
+In-Reply-To: <c888fc5e-4698-333f-6922-8b53f3efbe36@samsung.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 1 Nov 2021 20:36:07 +0200
+Message-ID: <CAPLW+4kw-fz2=Hkhy-tJBOXW7j=Ok1GwUHAsZB2Bc53Uj+qzYg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Kconfig: Enable MCT timer for ARCH_EXYNOS
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Will Deacon <will@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch adds new "samsung,exynos-usi-hsi2c" compatible.
-It is for i2c compatible with HSI2C available on Exynos SoC with USI.
+On Fri, 29 Oct 2021 at 16:36, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> On 29.10.2021 15:15, Sam Protsenko wrote:
+> > On Fri, 29 Oct 2021 at 14:38, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >> On 28.10.2021 16:35, Krzysztof Kozlowski wrote:
+> >>> On 28/10/2021 16:22, Sam Protsenko wrote:
+> >>>> On Tue, 26 Oct 2021 at 17:03, Krzysztof Kozlowski
+> >>>> <krzysztof.kozlowski@canonical.com> wrote:
+> >>>>> On 26/10/2021 13:59, Sam Protsenko wrote:
+> >>>>>> Some ARM64 Exynos SoCs have MCT timer block, e.g. Exynos850 and
+> >>>>>> Exynos5433. CLKSRC_EXYNOS_MCT option is not visible unless COMPILE_TEST
+> >>>>>> is enabled. Select CLKSRC_EXYNOS_MCT option for ARM64 ARCH_EXYNOS like
+> >>>>>> it's done in arch/arm/mach-exynos/Kconfig, to enable MCT timer support
+> >>>>>> for ARM64 Exynos SoCs.
+> >>>>>>
+> >>>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >>>>>> ---
+> >>>>>>    arch/arm64/Kconfig.platforms | 1 +
+> >>>>>>    1 file changed, 1 insertion(+)
+> >>>>>>
+> >>>>> +CC Marek, Marc, Mark and Chanwoo,
+> >>>>> Looks like duplicated:
+> >>>>> https://lore.kernel.org/lkml/20181018095708.1527-7-m.szyprowski@samsung.com/
+> >>>>>
+> >>>>> The topic stalled and I think this particular patch did not make sense
+> >>>>> on its own, without rest of changes from Marek. I am not sure, though...
+> >>>>>
+> >>>> Krzysztof, Marek,
+> >>>>
+> >>>> That series looks nice, I'm quite interested in that being applied. Do
+> >>>> you think I can do something to help with that (e.g. rebasing,
+> >>>> re-sending on behalf of Marek, testing on Exynos850, etc)?
+> >>> I think there were no objections against v4 of this patchset, but
+> >>> somehow it wasn't applied.
+> >>>
+> >>> Marek,
+> >>> Does it make sense to try respinning your v4?
+> >> I think I've abandoned it, because I got a final NACK on the arch timer
+> >> change (support for 'not-fw-configured' timers). Without that the above
+> >> mentioned changes doesn't make much sense.
+> >>
+> >> I know that the Exynos5433 firmware breaks the defined protocol, but on
+> >> the other hand I can do nothing more than carrying internally those few
+> >> patches out of tree to keep it fully working with 'mainline'.
+> >>
+> >> I've observed the same problem with newer Exynos SoCs, but those so far
+> >> didn't get mainline support (yet), although there have been some
+> >> attempts from the community.
+> >>
+> > There is no such problem on Exynos850 SoC (which I'm trying to
+> > upstream right now), the architectured timer seems to be working fine
+> > there, as is. Or maybe everything is configured properly in
+> > bootloader, not sure. Also I managed to use MCT as a primary
+> > clocksource (for sched_clock, etc) by disabling arch timer in
+> > arch/arm64/kernel/time.c (just for the sake of test), and it works
+> > fine.  So I still would like to have MCT enabled in kernel: this way
+> > we can at least test the driver, as the clocksource can be changed to
+> > MCT via sysfs (or by disabling arch timer in time.c). And for that we
+> > need to at least enable CLKSRC_EXYNOS_MCT in ARCH_EXYNOS.
+> MCT can be also set as default by changing its rating, like it is done
+> under #ifdef CONFIG_ARM.
+> > I guess all your patches (except one you mentioned) from that series
+> > should be fine to apply. Do you mind if I re-send your patch series
+> > (minus one patch) on your behalf? That would spare you some boring
+> > work, and at least minimize your local delta you're carrying.
+>
+> Feel free to resend it.
+>
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- Documentation/devicetree/bindings/i2c/i2c-exynos5.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks! This patch of mine should be ignored then, I'll re-submit
+Marek's patches soon.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-index 2dbc0b62daa6..ce2373c7a357 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-@@ -14,6 +14,8 @@ Required properties:
- 				on Exynos5260 SoCs.
- 	-> "samsung,exynos7-hsi2c", for i2c compatible with HSI2C available
- 				on Exynos7 SoCs.
-+	-> "samsung,exynos-usi-hsi2c", for i2c compatible with HSI2C available
-+				on Exynos SoCs with USI.
- 
-   - reg: physical base address of the controller and length of memory mapped
-     region.
-@@ -31,6 +33,8 @@ Optional properties:
-        at 100khz.
-     -> If specified, the bus operates in high-speed mode only if the
-        clock-frequency is >= 1Mhz.
-+  - samsung,usi-sysreg : sysreg handle to control USI type.
-+    -> sysreg phandle for "samsung,exynos-usi-hsic" compatible.
- 
- Example:
- 
-@@ -46,6 +50,8 @@ hsi2c@12ca0000 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 
-+	samsung,usi-sysreg = <&usi_sysreg 0x28>;
-+
- 	s2mps11_pmic@66 {
- 		compatible = "samsung,s2mps11-pmic";
- 		reg = <0x66>;
--- 
-2.33.1
-
+> Best regards
+>
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
