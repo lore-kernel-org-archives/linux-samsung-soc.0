@@ -2,69 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39628C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Nov 2021 10:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1C4C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Nov 2021 10:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19FD060F4B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Nov 2021 10:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76CA360524
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Nov 2021 10:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbhKBKST (ORCPT
+        id S230128AbhKBKTj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Nov 2021 06:18:19 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:33524
+        Tue, 2 Nov 2021 06:19:39 -0400
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:33628
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229783AbhKBKSR (ORCPT
+        by vger.kernel.org with ESMTP id S229770AbhKBKTh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Nov 2021 06:18:17 -0400
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        Tue, 2 Nov 2021 06:19:37 -0400
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A619A3F1B3
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Nov 2021 10:15:42 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 515FB3F1B1
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Nov 2021 10:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635848142;
-        bh=DQUpFUGZ13OCH5xFHghe2q73BFVerQ09LvF/JJEZVyI=;
+        s=20210705; t=1635848222;
+        bh=ZnYrLeHuEgfuM05nu3pyL3JiHzUr3XDV8sCLOsuYLD4=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=Xp/QWP2bnD1hWBlIlP3z2V4+ZFMjIsH98Ps6eWDUWTSTUegLlEiEDe+ywZQ5Rt/J9
-         229QWYG5e0+bXFdN3m+6s+OmISfWxI8fXYieETJFD8ZrhyDF+X0Gaxvpwa7HeQyEyD
-         R1Y3pyBgeiI74wYumIG3HFL0ZVdSG9c34mYlcuz2qV1DZtTmeFWKKtQqwx8g6VERoG
-         pJZ1iki0GhqlxuJPvL2DsN235HpOy32hU6qZB82i7FqYLa5P7lyuPl/m4PAXI821jx
-         bOB9wGj2ppf34UuxefCTjfSTKJpzdg3wSWttM+bCHxqMJMaSKqcn7/CovvkVn1uXxA
-         Ju3/gIFVhbB5w==
-Received: by mail-lj1-f199.google.com with SMTP id j1-20020a2eb701000000b00212ac0666acso7159426ljo.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Nov 2021 03:15:42 -0700 (PDT)
+        b=hLB/bCAhzMR6TIiPREiBvv1yIeGe4AV3fipvh4gdbAu4BAKSrcxBxPy4y6ZpTDS95
+         IeaxGzVGygAsHfpqikn8IS5zLChTPNnWdBnNfP7/GZW+kp35ujp638T0706f/ft0fG
+         /AQbt8w6dvFf8kYmQ7CUmAINC4z4RxVLYuUP3TMNU1/UHz90VQeZysf11tUvVIAiZR
+         T92KV4c/1GEM3Ky/I+5z143Ic8axt6UGzNnXugognE4UdqVUaXG4CNI4tYRNSeCA9J
+         qjfy1ju4l3JH7wfISP42e2pfSUmisEPzAMK0eRSvBqnOrMSzoOBGzUSj0IrxjTSf6E
+         gBvrzdlyu6V4g==
+Received: by mail-lf1-f70.google.com with SMTP id i1-20020a056512340100b003fdd5b951e0so6841530lfr.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Nov 2021 03:17:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=DQUpFUGZ13OCH5xFHghe2q73BFVerQ09LvF/JJEZVyI=;
-        b=WjYfzlDXyTis4OSgt7lvRtnfQ88+n4wy3qo9mVfAjYN5fiWRsUKs64F0rZ3I6FB5MB
-         2VtpfuV6xi5w95W9hHDCF2ImqOOMRXvESB1DKIU6L7jG1xN185LEjSInqR0iKXhbpJs7
-         22ViCD80w1vNxF3/3knU3l2Wn9Hzud8W/gHXDOkVPeF7KMtgKQrt4MJoXeBKDY26W9lU
-         pE2PQy6bnOUcqoReP5nXrlqdPjj+iFFwZxqWmUEqxFpT5oxVOPoC7j0voDDy+twyrHRS
-         YaKgkUizrx/meDajnEa0ZyBzGpLgJqOBkRSl+V4Alv6IsgKmAz5uiMD//G1IVm5H3Ypo
-         WpAA==
-X-Gm-Message-State: AOAM530j6+N2TjT8vzPQ0qgQR8IwIGqrM1DyNAjK5hbjJLN9/XM0JMtR
-        xIkcQ4v3l0ewLeWwxl9kgAtVmynA7M8V0l0hNmwP/f1OW33aRhVAr8vPa4gRwe+ko+APdLiOTVF
-        /War20A9stZO7DYBQqH82oiupeVYI+X6qFond3Dc3/idQP9KP
-X-Received: by 2002:a2e:bd88:: with SMTP id o8mr27745388ljq.197.1635848142109;
-        Tue, 02 Nov 2021 03:15:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw19yBZU62Ix4yX551lPGweiYYrsBhZngk9OZDYsebEsKVhmI7gih9ogLJHPeQH/3HIlK/ycQ==
-X-Received: by 2002:a2e:bd88:: with SMTP id o8mr27745341ljq.197.1635848141759;
-        Tue, 02 Nov 2021 03:15:41 -0700 (PDT)
+        bh=ZnYrLeHuEgfuM05nu3pyL3JiHzUr3XDV8sCLOsuYLD4=;
+        b=xvkLA0zaiYseKyRc67HJfWwXkIZij1WGyQuWhAGhFpdNB3/gN5o3pDJC0jOOy37sA2
+         Mc5ulT7ZmSI3wqQero2cJnhPQmrUGUYN0z7nvfzHZlcJo6OWtsthw0PEaChcpQRSGho9
+         7EAnK1ocAHq088RJVqPj6s7EIRbl89hj+01fcYcBsggEHv8lk1N6NC1A8sP3wviMGMgE
+         0LyrcdnhE3sZjLE9BnErPknwdAUvey8XNHKQvrCzd6sYo19aeNWMnGCyO9uu6tEZssKm
+         GXxvfvDAjny6ZmMs/nVbU9tzHxdP1tDZPwF9NfwGzoVocJxKd2aBOxgmZKLI6MaVHq4D
+         trXw==
+X-Gm-Message-State: AOAM530cX8lX7Akptur3Hm5lB8YVVwDrWr4DqddUNHlVafx+iHP3LRu9
+        ZA00g8aO1RG4Idb793PO1UnfmgAuNhQn81Q/TZ1ty2juzG6PXVcFdt/EQJraPL2SGfUEGh4ZU0h
+        0hwgTi4OHonVFdvykgctcEqoYxqkJVd2aCJ21hRJqOKrgpveE
+X-Received: by 2002:ac2:5965:: with SMTP id h5mr1767551lfp.436.1635848221849;
+        Tue, 02 Nov 2021 03:17:01 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxw4CLm4v8vZx2M+lvaxwy0bY7pA4e/hJAEXJ8SsRUMw7zK5v0ms6nBbPJ5Yl+B9eg/oQapIg==
+X-Received: by 2002:ac2:5965:: with SMTP id h5mr1767539lfp.436.1635848221691;
+        Tue, 02 Nov 2021 03:17:01 -0700 (PDT)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id y7sm709265ljy.88.2021.11.02.03.15.40
+        by smtp.gmail.com with ESMTPSA id u19sm941645lfr.154.2021.11.02.03.17.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Nov 2021 03:15:41 -0700 (PDT)
-Message-ID: <a63f37a9-ea04-2606-e4f5-1170c4e59db2@canonical.com>
-Date:   Tue, 2 Nov 2021 11:15:40 +0100
+        Tue, 02 Nov 2021 03:17:01 -0700 (PDT)
+Message-ID: <645dbbca-eddb-52e6-5f7a-9eeb819e85a6@canonical.com>
+Date:   Tue, 2 Nov 2021 11:17:00 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.1.2
-Subject: Re: [PATCH v2 10/12] watchdog: s3c2410: Support separate source clock
+Subject: Re: [PATCH v2 11/12] watchdog: s3c2410: Remove superfluous err label
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
@@ -74,9 +74,9 @@ Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
 References: <20211031122216.30212-1-semen.protsenko@linaro.org>
- <20211031122216.30212-11-semen.protsenko@linaro.org>
+ <20211031122216.30212-12-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211031122216.30212-11-semen.protsenko@linaro.org>
+In-Reply-To: <20211031122216.30212-12-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -84,45 +84,24 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 31/10/2021 13:22, Sam Protsenko wrote:
-> Right now all devices supported in the driver have the single clock: it
-> acts simultaneously as a bus clock (providing register interface
-> clocking) and source clock (driving watchdog counter). Some newer Exynos
-> chips, like Exynos850, have two separate clocks for that. In that case
-> two clocks will be passed to the driver from the resource provider, e.g.
-> Device Tree. Provide necessary infrastructure to support that case:
->   - use source clock's rate for all timer related calculations
->   - use bus clock to gate/ungate the register interface
+> 'err' label in probe function is not really need, it just returns.
+> Remove it and replace all 'goto' statements with actual returns in
+> place.
 > 
-> All devices that use the single clock are kept intact: if only one clock
-> is passed from Device Tree, it will be used for both purposes as before.
+> No functional change here, just a cleanup patch.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
 > Changes in v2:
->   - Reworded commit message to be more formal
->   - Used separate "has_src_clk" trait to tell if source clock is present
->   - Renamed clock variables to match their purpose
->   - Removed caching source clock rate, obtaining it in place each time instead
->   - Renamed err labels for more consistency
+>   - (none): it's a new patch
 > 
->  drivers/watchdog/s3c2410_wdt.c | 52 +++++++++++++++++++++++++---------
->  1 file changed, 39 insertions(+), 13 deletions(-)
+>  drivers/watchdog/s3c2410_wdt.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index fdb1a1e9bd04..c733917c5470 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -118,7 +118,9 @@ struct s3c2410_wdt_variant {
->  
->  struct s3c2410_wdt {
->  	struct device		*dev;
-> -	struct clk		*clock;
-> +	struct clk		*bus_clk; /* for register interface (PCLK) */
-> +	struct clk		*src_clk; /* for WDT counter */
-> +	bool			has_src_clk;
 
-Why do you need the has_src_clk value? If clk_get() fails, just store
-there NULL and clk API will handle it.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
 
 Best regards,
 Krzysztof
