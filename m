@@ -2,241 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA14FC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Nov 2021 08:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C875BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Nov 2021 08:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDAE661184
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Nov 2021 08:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A936260EFE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Nov 2021 08:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbhKCIg6 (ORCPT
+        id S231629AbhKCIor (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 3 Nov 2021 04:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33482 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230463AbhKCIg5 (ORCPT
+        Wed, 3 Nov 2021 04:44:47 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:58078
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231361AbhKCIor (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 3 Nov 2021 04:36:57 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F5AC061714;
-        Wed,  3 Nov 2021 01:34:21 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id b203so1831870iof.1;
-        Wed, 03 Nov 2021 01:34:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jFave9Qo9BTxsM3PqmAtEeR+7yYOX2AlhHHLan6mN34=;
-        b=f/K/sGt8QpNUPsmYNDmfD6afH8xgXkMRBqhBMDGCoQ0OmUcWSnGQzMaypTXWXXfJg6
-         cfW/iFHEo8AkVqf32rhfCNfaQ3VONvz7j2fmdyuC4yYNcpqryDaYxGsMoibsYsdJmD6p
-         CV75BTv+KC3+AQ2w5Dr+Qqy8VPQ1k4GY4tos/f3gZsElJGrtpfaZLNDl2K9OnJ4DGRDE
-         GiEn/Gv4oRBwGFRHk/bYQcdxVMbNWNR2ZSmwJD8FshDTKAkxiP09elG3WYYRntcl78La
-         krPgOne/gUaYIZodbikHmz7A3j6Rt9a/FeOB/NpyPN9hOImkn1I4UiZYvFM9l2iNvXBr
-         /1tg==
+        Wed, 3 Nov 2021 04:44:47 -0400
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5FCAD3F1B1
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Nov 2021 08:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1635928930;
+        bh=kKZRZEPwd3etVyB2WM4q5L1wpzbHA8gGvbGv8rJ6kec=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=RnmcNgH0rg4wP+wUmIe59CkzhOAfKLy6SVi3RfGxSc+/qEztQsSRYw95PZNuUsJc6
+         0mBEREt1+0XOcpUyxXinxSTKd/L2n2Ve5gH/L8z2uO4XvxDcyBFhRb5q2wDiXJ7vEa
+         MarZT7avFlzhBzD50z2zIegUnjPRqhXC5Q2+Yo7LIJWu1JOCoIQL3oRxC62ZwvZKdx
+         VHRU06DynoPGCKwvDJcrYZvUoEUOIfaFPGQYZtMTVLBNpt1/Ilv+eKakEU9qrxQGPM
+         RTl0MyQ+ptNb5jgIWICSMVHEzlU8zOiwzNEf6xw+NvUixlaHSQ9F9u3VPz67hxjMHw
+         psjqN0T7SH0Lw==
+Received: by mail-lf1-f70.google.com with SMTP id t8-20020a056512030800b004017cf4c16dso94308lfp.14
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Nov 2021 01:42:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jFave9Qo9BTxsM3PqmAtEeR+7yYOX2AlhHHLan6mN34=;
-        b=ztzpxg7RsJ61Pp6VFBvfyRYR0c/R71X5eZ/c5JKKEA/oMV/b/q7HIusfMwbnfFkbeE
-         B/BweNarWic3e7FWtT7vwXJgxxE9f56a3Q0wyz/0y9wKXxaFgoDRvRDKFGaN7l263v+O
-         m7I0+wwv93ca15RrdhXC5uwYRqhpkMZqkpzvXyJCoQjsFIjpZTMJBSvYYj6hhUn7Opf5
-         ftowwsjmq/7Gy2yyaACWCCcI2I08+gC23xXeRcX8Lw2R5Z4bIhoEzdnmrwD5b8QMXlQM
-         rlYOv4um61nx2WN4FksND6ub2sv2ugdb9fPCbmgHh6Jct9sRLjg3rstjUgTXYn5BiW5h
-         70ZQ==
-X-Gm-Message-State: AOAM531LrZK9kfUG7d5SNDaWxrvAFPV2QtTKFlF/rGY0MVoKvWqdH7zc
-        7NOOkQiGbuXUOIVbhOzSynQwLSg7OxmmF0Mf0aT0sj4G
-X-Google-Smtp-Source: ABdhPJwux1JlB8bk3u/JZ946VuDOdJJ+Q/8i3YbUrf++jKJblYXCHXmLZL4jYvAt7ztMKECskXVFfmjSEsWnBRwhNm8=
-X-Received: by 2002:a05:6638:12cb:: with SMTP id v11mr2652907jas.13.1635928460829;
- Wed, 03 Nov 2021 01:34:20 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kKZRZEPwd3etVyB2WM4q5L1wpzbHA8gGvbGv8rJ6kec=;
+        b=YNbYeVjhFVpfkcGcKxO25R4F6g8STzSE0WnMfaGrwUMvv6WJk4PFGOmfPvwUzDLfkk
+         sy9NHc4M0v9BW9Y0Lsf49rwOveyVbMEX+VvnURxC3q81SxR3RFFm8Vce7BNK7rp1iCrD
+         vNLxa71bla+/eH5+dH+WRIeDnMqBAYHAlxXHf9yYAIZT96OMj/iauvt2DndPDLMGUrEp
+         zOEkHbC3SSD8Ur/lvg/j78JJdbKX/zU2K+3B+IrwzHHojGziSFt9lu4S1HJpMaZKpJMk
+         /Zqbb5s889IC64Cuu4O/YusLALqmLRo5qzbZ3gkP2ECFmf2ulykS0YELoTRCHQG4ojlo
+         ls6Q==
+X-Gm-Message-State: AOAM530SYwv62oTcbiIodbzKAlpr2GIimz/x+gX3E9VzuS/BMEG7fzou
+        n/fYw0pNfDDDWBxnTOAjhsJh0vzm9zPqfM47tUY8l8dcmSvodp4DRPtIPRjeypsTbFNavllqJwy
+        LTCMHrDqYFu0GtG8ws8f5qhF1Hddh1FpsVMHMrqRUW4Svms51
+X-Received: by 2002:a05:6512:238b:: with SMTP id c11mr23340535lfv.55.1635928929417;
+        Wed, 03 Nov 2021 01:42:09 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxoLYZQxp82GIsICfzZKnVOQP/gVDZZ1JYoK6fKha/wI/ZKZJTg775ib/aBhiilx9HsGfUCJA==
+X-Received: by 2002:a05:6512:238b:: with SMTP id c11mr23340519lfv.55.1635928929251;
+        Wed, 03 Nov 2021 01:42:09 -0700 (PDT)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id k16sm120594lfm.168.2021.11.03.01.42.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Nov 2021 01:42:08 -0700 (PDT)
+Message-ID: <c626abd9-eebb-3111-123d-7b2bea95b310@canonical.com>
+Date:   Wed, 3 Nov 2021 09:42:08 +0100
 MIME-Version: 1.0
-References: <20211102110519.142434-1-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211102110519.142434-1-krzysztof.kozlowski@canonical.com>
-From:   Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Wed, 3 Nov 2021 17:34:09 +0900
-Message-ID: <CA+Ln22HMFhiqqPTD+EibJ1zkd9CZb3BkrfZdsmxL1_NfKLMewA@mail.gmail.com>
-Subject: Re: [RFC PATCH] ARM: s3c: mark as deprecated and schedule removal
- after 2022
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>, Cedric Roux <sed@free.fr>,
-        Sam Van Den Berge <sam.van.den.berge@telenet.be>,
-        Lihua Yao <ylhuajnu@outlook.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.2
+Subject: Re: [PATCH 2/2] dt-bindings: i2c: exynos5: add exynos-usi-hsi2c
+ compatible
+Content-Language: en-US
+To:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Wolfram Sang <wsa@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>, linux-i2c@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211101113819.50651-1-jaewon02.kim@samsung.com>
+ <CGME20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed@epcas2p4.samsung.com>
+ <20211101113819.50651-2-jaewon02.kim@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211101113819.50651-2-jaewon02.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-2021=E5=B9=B411=E6=9C=882=E6=97=A5(=E7=81=AB) 20:05 Krzysztof Kozlowski <kr=
-zysztof.kozlowski@canonical.com>:
->
-> The Samsung S3C24xx and S3C64xx platforms are very old designs. S3C2416
-> was introduced in 2008 and S3C6410 in 2009/2010.  They are not widely
-> available anymore - out-of-stock on FriendlyArm (one of manufacturers of
+On 01/11/2021 12:38, Jaewon Kim wrote:
+> This patch adds new "samsung,exynos-usi-hsi2c" compatible.
+> It is for i2c compatible with HSI2C available on Exynos SoC with USI.
+> 
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-exynos5.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-FWIW, I still see mini6410 and (compatible) tiny6410 available on
-AliExpress, although it's not a good enough reason to keep a platform
-without active users.
-(and I also have one, but haven't made any use of it for 7 years or so
-and don't see myself finding time to invest into it)
+The bindings go as first patch, please.
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> index 2dbc0b62daa6..ce2373c7a357 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> @@ -14,6 +14,8 @@ Required properties:
+>  				on Exynos5260 SoCs.
+>  	-> "samsung,exynos7-hsi2c", for i2c compatible with HSI2C available
+>  				on Exynos7 SoCs.
+> +	-> "samsung,exynos-usi-hsi2c", for i2c compatible with HSI2C available
+> +				on Exynos SoCs with USI.
+
+I would prefer to describe the Exynos model, not the feature. USI might
+change between different SoCs, so then it will be "usiv2"?
+
+>  
+>    - reg: physical base address of the controller and length of memory mapped
+>      region.
+> @@ -31,6 +33,8 @@ Optional properties:
+>         at 100khz.
+>      -> If specified, the bus operates in high-speed mode only if the
+>         clock-frequency is >= 1Mhz.
+> +  - samsung,usi-sysreg : sysreg handle to control USI type.
+> +    -> sysreg phandle for "samsung,exynos-usi-hsic" compatible.
+
+s/sysreg/system registers controller/
+s/handle/phandle/
+
+Please document to what is this phandle. To which block.
+
+Why it cannot be the existing generic samsung,sysreg?
+
+>  
+>  Example:
+>  
+> @@ -46,6 +50,8 @@ hsi2c@12ca0000 {
+>  	#address-cells = <1>;
+>  	#size-cells = <0>;
+>  
+> +	samsung,usi-sysreg = <&usi_sysreg 0x28>;
+
+This does not look correct for this compatible. We should really convert
+the bindings to YAML...
+
+> +
+>  	s2mps11_pmic@66 {
+>  		compatible = "samsung,s2mps11-pmic";
+>  		reg = <0x66>;
+> 
+
 
 Best regards,
-Tomasz
-
-> boards) and only few specialist stores still offer them for quite a high
-> price.
->
-> The community around these platforms was not very active, so I suspect
-> no one really uses them anymore. Maintenance takes precious time so
-> there is little sense in keeping them alive if there are no real users.
->
-> Let's mark all S3C24xx and S3C64xx platforms as deprecated and mention
-> possible removal in one year (after 2022).  The deprecation message will
-> be as text in Kconfig, build message (not a warning though) and runtime
-> print error.
->
-> If there are any users, they might respond and postpone the removal.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  arch/arm/Kconfig                  | 7 ++++++-
->  arch/arm/mach-s3c/Kconfig.s3c64xx | 7 ++++++-
->  arch/arm/mach-s3c/cpu.c           | 1 +
->  arch/arm/mach-s3c/init.c          | 2 ++
->  arch/arm/mach-s3c/s3c24xx.c       | 5 +++++
->  arch/arm/mach-s3c/s3c64xx.c       | 5 +++++
->  6 files changed, 25 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index f0f9e8bec83a..bd8237c7e7f1 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -473,7 +473,7 @@ config ARCH_SA1100
->           Support for StrongARM 11x0 based boards.
->
->  config ARCH_S3C24XX
-> -       bool "Samsung S3C24XX SoCs"
-> +       bool "Samsung S3C24XX SoCs (deprecated, see help)"
->         select ATAGS
->         select CLKSRC_SAMSUNG_PWM
->         select GPIO_SAMSUNG
-> @@ -491,6 +491,11 @@ config ARCH_S3C24XX
->           (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 o=
-r the
->           Samsung SMDK2410 development board (and derivatives).
->
-> +         The platform is deprecated and scheduled in removal. Please rea=
-ch to
-> +         the maintainers of the platform and linux-samsung-soc@vger.kern=
-el.org if
-> +         you still use it.
-> +         Without such feedback, the platform will be removed after 2022.
-> +
->  config ARCH_OMAP1
->         bool "TI OMAP1"
->         depends on MMU
-> diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfi=
-g.s3c64xx
-> index f3fcb570edf5..3b090ae72bbd 100644
-> --- a/arch/arm/mach-s3c/Kconfig.s3c64xx
-> +++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
-> @@ -4,7 +4,7 @@
->  #      Simtec Electronics, Ben Dooks <ben@simtec.co.uk>
->
->  menuconfig ARCH_S3C64XX
-> -       bool "Samsung S3C64XX"
-> +       bool "Samsung S3C64XX (deprecated, see help)"
->         depends on ARCH_MULTI_V6
->         select ARM_AMBA
->         select ARM_VIC
-> @@ -25,6 +25,11 @@ menuconfig ARCH_S3C64XX
->         help
->           Samsung S3C64XX series based systems
->
-> +         The platform is deprecated and scheduled in removal. Please rea=
-ch to
-> +         the maintainers of the platform and linux-samsung-soc@vger.kern=
-el.org if
-> +         you still use it.
-> +         Without such feedback, the platform will be removed after 2022.
-> +
->  if ARCH_S3C64XX
->
->  # Configuration options for the S3C6410 CPU
-> diff --git a/arch/arm/mach-s3c/cpu.c b/arch/arm/mach-s3c/cpu.c
-> index 6e9772555f0d..3b16cf42910f 100644
-> --- a/arch/arm/mach-s3c/cpu.c
-> +++ b/arch/arm/mach-s3c/cpu.c
-> @@ -28,4 +28,5 @@ void __init s3c64xx_init_cpu(void)
->         }
->
->         pr_info("Samsung CPU ID: 0x%08lx\n", samsung_cpu_id);
-> +       pr_err("The platform is deprecated and scheduled in removal. Plea=
-se reach to the maintainers of the platform and linux-samsung-soc@vger.kern=
-el.org if you still use it.  Without such feedback, the platform will be re=
-moved after 2022.\n");
->  }
-> diff --git a/arch/arm/mach-s3c/init.c b/arch/arm/mach-s3c/init.c
-> index 9d92f03e9bc1..5db7dc54340c 100644
-> --- a/arch/arm/mach-s3c/init.c
-> +++ b/arch/arm/mach-s3c/init.c
-> @@ -59,6 +59,8 @@ void __init s3c_init_cpu(unsigned long idcode,
->
->         if (cpu->map_io)
->                 cpu->map_io();
-> +
-> +       pr_err("The platform is deprecated and scheduled in removal. Plea=
-se reach to the maintainers of the platform and linux-samsung-soc@vger.kern=
-el.org if you still use it.  Without such feedback, the platform will be re=
-moved after 2022.\n");
->  }
->
->  /* s3c24xx_init_clocks
-> diff --git a/arch/arm/mach-s3c/s3c24xx.c b/arch/arm/mach-s3c/s3c24xx.c
-> index ccfed48c98aa..2ea1cb21dfbc 100644
-> --- a/arch/arm/mach-s3c/s3c24xx.c
-> +++ b/arch/arm/mach-s3c/s3c24xx.c
-> @@ -678,3 +678,8 @@ struct platform_device s3c2410_device_dclk =3D {
->         },
->  };
->  #endif
-> +
-> +#pragma message "The platform is deprecated and scheduled in removal (se=
-e platform help). " \
-> +               "Please reach to the maintainers of the platform " \
-> +               "and linux-samsung-soc@vger.kernel.org if you still use i=
-t." \
-> +               "Without such feedback, the platform will be removed afte=
-r 2022."
-> diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
-> index 4dfb648142f2..3e248f0e96a2 100644
-> --- a/arch/arm/mach-s3c/s3c64xx.c
-> +++ b/arch/arm/mach-s3c/s3c64xx.c
-> @@ -425,3 +425,8 @@ static int __init s3c64xx_init_irq_eint(void)
->         return 0;
->  }
->  arch_initcall(s3c64xx_init_irq_eint);
-> +
-> +#pragma message "The platform is deprecated and scheduled in removal (se=
-e platform help). " \
-> +               "Please reach to the maintainers of the platform " \
-> +               "and linux-samsung-soc@vger.kernel.org if you still use i=
-t." \
-> +               "Without such feedback, the platform will be removed afte=
-r 2022."
-> --
-> 2.32.0
->
+Krzysztof
