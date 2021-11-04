@@ -2,110 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F15B3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Nov 2021 09:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836D6C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Nov 2021 09:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9A6D611C1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Nov 2021 09:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 680CB61186
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Nov 2021 09:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231182AbhKDJdA (ORCPT
+        id S230479AbhKDJrl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 4 Nov 2021 05:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231150AbhKDJc6 (ORCPT
+        Thu, 4 Nov 2021 05:47:41 -0400
+Received: from foss.arm.com ([217.140.110.172]:45546 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231215AbhKDJrk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 4 Nov 2021 05:32:58 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC258C061714
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Nov 2021 02:30:20 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1miZ4a-00026b-Af; Thu, 04 Nov 2021 10:30:16 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1miZ4Z-0004wE-EV; Thu, 04 Nov 2021 10:30:15 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1miZ4Z-0006cE-Db; Thu, 04 Nov 2021 10:30:15 +0100
-Date:   Thu, 4 Nov 2021 10:30:15 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] pwm: samsung: describe driver in KConfig
-Message-ID: <20211104093015.url6pu2pj6yqqd4e@pengutronix.de>
-References: <20210924133148.111845-1-krzysztof.kozlowski@canonical.com>
+        Thu, 4 Nov 2021 05:47:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDD441063;
+        Thu,  4 Nov 2021 02:45:02 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 452CC3F719;
+        Thu,  4 Nov 2021 02:45:00 -0700 (PDT)
+Date:   Thu, 4 Nov 2021 09:44:53 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Youngmin Nam <youngmin.nam@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        will@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, pullip.cho@samsung.com,
+        hoony.yu@samsung.com, hajun.sung@samsung.com,
+        myung-su.cha@samsung.com, kgene@kernel.org
+Subject: Re: [PATCH v2 1/2] clocksource/drivers/exynos_mct_v2: introduce
+ Exynos MCT version 2 driver for next Exynos SoC
+Message-ID: <20211104094453.GA58798@C02TD0UTHF1T.local>
+References: <CGME20211101234500epcas2p2d0e5bc54615b635f6694bc1be4c89fb5@epcas2p2.samsung.com>
+ <20211102001122.27516-2-youngmin.nam@samsung.com>
+ <20211102102802.GA16545@C02TD0UTHF1T.local>
+ <20211103000945.GA48132@perf>
+ <83f6574b-bbab-f0c3-7198-f773c3dcfc63@canonical.com>
+ <20211103092444.GA7013@perf>
+ <f7871718-f244-8a9e-9302-c27bdb2d3cc1@canonical.com>
+ <20211103095727.GA19093@perf>
+ <20211103100407.GA35817@C02TD0UTHF1T.local>
+ <20211104002102.GA29618@perf>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dia4e4xjw5wmpq6c"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210924133148.111845-1-krzysztof.kozlowski@canonical.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20211104002102.GA29618@perf>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
---dia4e4xjw5wmpq6c
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 04, 2021 at 09:21:02AM +0900, Youngmin Nam wrote:
+> On Wed, Nov 03, 2021 at 10:04:18AM +0000, Mark Rutland wrote:
+> > On Wed, Nov 03, 2021 at 06:57:28PM +0900, Youngmin Nam wrote:
+> > > On Wed, Nov 03, 2021 at 10:04:36AM +0100, Krzysztof Kozlowski wrote:
+> > > > On 03/11/2021 10:24, Youngmin Nam wrote:
+> > > > > On Wed, Nov 03, 2021 at 09:18:07AM +0100, Krzysztof Kozlowski wrote:
+> > > > >> On 03/11/2021 01:09, Youngmin Nam wrote:
+> > > > >>> On Tue, Nov 02, 2021 at 10:28:10AM +0000, Mark Rutland wrote:
 
-On Fri, Sep 24, 2021 at 03:31:48PM +0200, Krzysztof Kozlowski wrote:
-> Describe better which driver applies to which SoC, to make configuring
-> kernel for Samsung SoC easier.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  drivers/pwm/Kconfig | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index aa29841bbb79..21e3b05a5153 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -476,7 +476,9 @@ config PWM_SAMSUNG
->  	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
->  	depends on HAS_IOMEM
->  	help
-> -	  Generic PWM framework driver for Samsung.
-> +	  Generic PWM framework driver for Samsung S3C24xx, S3C64xx, S5Pv210
-> +	  and Exynos SoCs.
-> +	  Choose Y here only if you build for such Samsung SoC.
+> > > > >>>> Previously Will asked you to try CLOCK_EVT_FEAT_PERCPU here, and to set
+> > > > >>>> the C3STOP flag on the arch timer via the DT when necessary, rather than
+> > > > >>>> trying to override the arch timer like this:
 
-Assuming this list is complete, I think this is a nice improvement.
+> > > > >>> Yes, I believe Will's suggestion definitely will work.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > > So, how about we control timer rating value with DT ?
+> > > Of course the default rating value should be lower than arm arch timer's.
+> > > Do you agree with this?
+> > 
+> > No; placing a rating value in the DT is a hack. That should *not* live
+> > in the DT because it's linux-internal detail and not a description of
+> > the HW.
+> 
+> So, how do we use MCTv2 only for clock event device if there are some
+> limitations caused by SoC design implemention ?
 
-thanks
-Uwe
+What limitations? Are you thinking of a known issue, or just in case
+there is a bug in future HW?
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+If there is a problem, we'll need to describe that in the DT somehow,
+and we need to know speciifcally what that limitation is.
 
---dia4e4xjw5wmpq6c
-Content-Type: application/pgp-signature; name="signature.asc"
+Above you said that Will's suggestion will definitely work, which
+implies no such limitations.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmGDqCQACgkQwfwUeK3K
-7AmbUQgAlMzCYfheBhJ9/DkHV0OReAztbiZh7PdQKsIyeqdzFZ795A857eAOEHGD
-a8W5ZqlJ9/Tqy2j99BO1nKpExjl2Nb8pxGVhikPS0NuwZZ0V9pGRukCPBNOU+7XK
-A+hPW0F78EK+Chxhk9WTraTORaH0lqbGIWwXGhfoHKEpb7Flu/g5wBroqsbc7wWA
-nxBhRy73JIlGoT9aCx3XGstsbsgbbkb44wEj8by3A9UyTcTY8AAWomyPqbGWKaXM
-20UG/QVQ7F1C/9OlmzxRRtnlPoIXiLZAimk60GAI/XyUeS3Oy1ziTV31jvgyITmm
-pUvpeUR/oV0p2APnfWVS3pdtzLnB2A==
-=GQCW
------END PGP SIGNATURE-----
-
---dia4e4xjw5wmpq6c--
+Thanks,
+Mark.
