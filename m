@@ -2,212 +2,212 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313AAC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Nov 2021 23:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81872C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Nov 2021 08:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5CD6113B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Nov 2021 23:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566DD611CE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Nov 2021 08:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229772AbhKCX4y (ORCPT
+        id S230363AbhKDIJR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 3 Nov 2021 19:56:54 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:44303 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbhKCX4x (ORCPT
+        Thu, 4 Nov 2021 04:09:17 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:25854 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230319AbhKDIJR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 3 Nov 2021 19:56:53 -0400
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20211103235415epoutp0316ae9cd88506a63eccfa4c8124241943~0LneDBK8s1658816588epoutp03K
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Nov 2021 23:54:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20211103235415epoutp0316ae9cd88506a63eccfa4c8124241943~0LneDBK8s1658816588epoutp03K
+        Thu, 4 Nov 2021 04:09:17 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20211104080637epoutp027fa89457466557b18130dec1550644a2~0SVXobm433181131811epoutp02U
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Nov 2021 08:06:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20211104080637epoutp027fa89457466557b18130dec1550644a2~0SVXobm433181131811epoutp02U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1635983655;
-        bh=OVv4jZn/9pTdUg42ZmDLrWXSti6Hsh3qLDnEAgGhi/Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FEy/CF6m7S9HUS9dNwmjzWC/351Qqr7Ta2XSP7IlKBaPeUukyf6Kb1Wxn5CTxkIqt
-         Ryyh0AeKgnzc+EbZ0JuoQ27tYTfid4tBr7qSvdUQRfnT1NtDsvNGi3XcEcwOqRNzcW
-         DkuRsxAIKbqVyiNwhb0AZufDylGBSzMeJwKy0aws=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20211103235414epcas2p330fd12a8b533acf77425fcf2040619e2~0LndidPqq1003110031epcas2p3E;
-        Wed,  3 Nov 2021 23:54:14 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.100]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Hl3Wm4WrWz4x9Pr; Wed,  3 Nov
-        2021 23:53:56 +0000 (GMT)
+        s=mail20170921; t=1636013198;
+        bh=qa/yzENbdpESw+Mno6H3EK3K6BEa4R6OD6RhKOMusLA=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=h2M38uzKob6BnqC/cSdiPsRuSjzn+A82Td2kEeFOQ8uf/L11YvrYqs+6oCOivdgXq
+         aITVghBYjYSQYQ9w6VoS7435xpkTsdHAzPKHoMkL0lGVPMv3dOJZJqeAMzjfiFnCcI
+         cEQEZLcIDs6l5R9EXYA+T5rcfdLT6SNvZzxFWMe4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20211104080637epcas2p2cca4486885e1d0608d6df461bbc3df4f~0SVXAG4Wh2014220142epcas2p2O;
+        Thu,  4 Nov 2021 08:06:37 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4HlGS32Rhmz4x9QJ; Thu,  4 Nov
+        2021 08:06:27 +0000 (GMT)
 Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        07.47.51767.D0123816; Thu,  4 Nov 2021 08:53:49 +0900 (KST)
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.3D.10014.08493816; Thu,  4 Nov 2021 17:06:24 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20211103235348epcas2p229a7c76e601f7f4a0ff3ea5bfa891bab~0LnE7qYgb1817018170epcas2p2H;
-        Wed,  3 Nov 2021 23:53:48 +0000 (GMT)
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20211104080623epcas2p4f952cd027035a60cf83ec5b9ba73eecf~0SVKfJf3X0860108601epcas2p4N;
+        Thu,  4 Nov 2021 08:06:23 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211103235348epsmtrp1a992d030333fcc2ff44084f5f4de7c39~0LnE60_iR1238012380epsmtrp1i;
-        Wed,  3 Nov 2021 23:53:48 +0000 (GMT)
-X-AuditID: b6c32a45-447ff7000000ca37-49-6183210d6cf9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20211104080623epsmtrp16763d4939bc8b92efbe71f7f972235b5~0SVKeMyDF3195431954epsmtrp1j;
+        Thu,  4 Nov 2021 08:06:23 +0000 (GMT)
+X-AuditID: b6c32a47-473ff7000000271e-43-61839480a765
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        95.36.08738.C0123816; Thu,  4 Nov 2021 08:53:48 +0900 (KST)
-Received: from perf (unknown [12.36.155.123]) by epsmtip1.samsung.com
+        AD.79.08738.F7493816; Thu,  4 Nov 2021 17:06:24 +0900 (KST)
+Received: from KORCO006858 (unknown [10.229.8.71]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20211103235348epsmtip14583ae3532e7d763099705ca919ced68~0LnEuRwlu1286412864epsmtip1O;
-        Wed,  3 Nov 2021 23:53:48 +0000 (GMT)
-Date:   Thu, 4 Nov 2021 09:21:02 +0900
-From:   Youngmin Nam <youngmin.nam@samsung.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        will@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, pullip.cho@samsung.com,
-        hoony.yu@samsung.com, hajun.sung@samsung.com,
-        myung-su.cha@samsung.com, kgene@kernel.org
-Subject: Re: [PATCH v2 1/2] clocksource/drivers/exynos_mct_v2: introduce
- Exynos MCT version 2 driver for next Exynos SoC
-Message-ID: <20211104002102.GA29618@perf>
+        20211104080623epsmtip2fbb6b5787fc5469638b711a1e2aff99c~0SVKRbXZ11933119331epsmtip2R;
+        Thu,  4 Nov 2021 08:06:23 +0000 (GMT)
+From:   "Jaewon Kim" <jaewon02.kim@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        "'Wolfram Sang'" <wsa@kernel.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>
+Cc:     "'Chanho Park'" <chanho61.park@samsung.com>,
+        <linux-i2c@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <c626abd9-eebb-3111-123d-7b2bea95b310@canonical.com>
+Subject: RE: [PATCH 2/2] dt-bindings: i2c: exynos5: add exynos-usi-hsi2c
+ compatible
+Date:   Thu, 4 Nov 2021 17:06:23 +0900
+Message-ID: <000f01d7d152$dbdd8410$93988c30$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20211103100407.GA35817@C02TD0UTHF1T.local>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEJsWRmVeSWpSXmKPExsWy7bCmhS6vYnOiwY07XBbzPstaNO2/xGxx
-        fO1rVov+x6+ZLTa+/cFksenxNVaLy7vmsFnMOL+PyWLp9YtMFosfr2Cy+Nd7kNFi86apzBYt
-        d0wdeD3WzFvD6DGroZfNY9OqTjaPO9f2sHm8O3eO3WPzknqPvi2rGD0+b5IL4IjKtslITUxJ
-        LVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOlhJoSwxpxQoFJBY
-        XKykb2dTlF9akqqQkV9cYquUWpCSU2BeoFecmFtcmpeul5daYmVoYGBkClSYkJ1xYvEpxoLp
-        qhX3d9g2MP6R7WLk5JAQMJH4segeSxcjF4eQwA5GiQ3LO5lAEkICnxglLjVoQCQ+AyVermeG
-        6TjyvIMRIrGLUeLd6/PMEM4jRomPSz+wg1SxCKhILP7UDNbBJqArse3EP0YQW0RAXaJn1xew
-        fcwC95gkJt9pBNsnLFAl8W3TTzCbV0BTYnPDQjYIW1Di5MwnLCA2p4CFxJ/bz8AGiQooSxzY
-        dpwJZJCEwB4Oie2zrrFB3OciceP0BSYIW1ji1fEt7BC2lMTL/jYou15i8balzBDNExgl5m/6
-        AJUwlpj1rB1sA7NAhsTWNw+BbA6guLLEkVssEGE+iY7Df9khwrwSHW1CEJ1qEr+mbGCEsGUk
-        di9eAQ0uD4neZQvYICH0ilnix7Z2lgmM8rOQ/DYLyTYIW0diwe5PbLOAVjALSEss/8cBYWpK
-        rN+lv4CRdRWjWGpBcW56arFRgSE8tpPzczcxghOzlusOxslvP+gdYmTiYDzEKMHBrCTC+3xD
-        U6IQb0piZVVqUX58UWlOavEhRlNgTE1klhJNzgfmhrySeEMTSwMTMzNDcyNTA3MlcV5L0exE
-        IYH0xJLU7NTUgtQimD4mDk6pBqa+1p1zc3be3hHDXtD8qffdpS17Om4xfeTyc4/9H/BuzcQl
-        9mU3pXZtmbHQwvfqpc40d7t7JhWX3q25IjmFz5/JRuSWTcNTGd7XL9uPTQtq4d3N8ObhnOZc
-        0dk6j3rPBrQ1pVw+UzFdfcb/l4bP5n+Q6HYuahduzV6/2uqvw5QVHjE6Hd+SRWZmsswPNDp/
-        3VPqTpgkf/CvlAXujlPUsz/4Ld07RyDyVMBPz48imx8tPiHuOHv+vtusLtvT1Nc+0VE3L5Bz
-        +RLg3me4Re/Wad4LTEf7rzS8aUjvWtL56GpiL+9q7Tlnpy/+0RsyaYZjEcdJ9hsP+N303137
-        e13ddrGGFnNO9I07Fkz8U+32ZsQpsRRnJBpqMRcVJwIAOm+IGlUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTpdHsTnR4NJDKYt5n2UtmvZfYrY4
-        vvY1q0X/49fMFhvf/mCy2PT4GqvF5V1z2CxmnN/HZLH0+kUmi8WPVzBZ/Os9yGixedNUZouW
-        O6YOvB5r5q1h9JjV0MvmsWlVJ5vHnWt72DzenTvH7rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSW
-        pRbp2yVwZSzcOZ+p4LpSxaars5kaGK9KdzFyckgImEgced7BCGILCexglGhaJQcRl5G4vfIy
-        K4QtLHG/5QiQzQVU84BR4t6MGWwgCRYBFYnFn5qZQWw2AV2JbSf+gQ0SEVCX6Nn1hQWkgVng
-        HpPEoX8HWUASwgJVEt82/WQCsXkFNCU2Nyxkg5j6jlni6++bUAlBiZMzn4A1MAtoSdz49xIo
-        zgFkS0ss/8cBEuYUsJD4c/sZ2DJRAWWJA9uOM01gFJyFpHsWku5ZCN0LGJlXMUqmFhTnpucW
-        GxYY5aWW6xUn5haX5qXrJefnbmIER5aW1g7GPas+6B1iZOJgPMQowcGsJML7fENTohBvSmJl
-        VWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNTUwtSi2CyTBycUg1M/Ymx+823fhe5w7cu
-        ec3MW+80rG6nfG7rVYtaf3Xv25ST36aXyfCHT21bLts11fa95+W1VvMuLzL8OvvZfpH5E2zN
-        n3i8FZPrrivjf78/prbp6Fs5/izfmOwrcy7uan103cN7JtOhhe97f1xWXvr8qXO12VfNKs/z
-        DPX8V5KDQppdfk3auTbjBpNdtG6Ox6XdLjt2lD6eP3m2e5BA5z//fKFLMT5rmC9v2zArSt7N
-        Zn2JwCWJ2WlLQta8+R2vdj7ixJ2MBc8W3DmbluhzK+X1s0em7az1EWfUDzca5lketLKXulyq
-        m9pt7lLNcjYycZdlX9z3lNbea1zTdNRNF+WvzZq9Kifred7EW8xC6ae5lViKMxINtZiLihMB
-        wNqTchsDAAA=
-X-CMS-MailID: 20211103235348epcas2p229a7c76e601f7f4a0ff3ea5bfa891bab
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGADPushVHyCl5/LZIyge1c8Sk7cAFDRVn/ASU+KdQBxreuHqyBETMw
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmhW7DlOZEgzkf2S0u79e22Pj2B5NF
+        x98vjBaXd81hs5hxfh+TReveI+wWd/fPZXRg95jV0MvmsWlVJ5tH35ZVjB6fN8kFsERl22Sk
+        JqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAHaCkUJaYUwoU
+        CkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM548LKb
+        vWC+WMXlW19YGxjXC3YxcnJICJhIPJp0i62LkYtDSGAHo8TzFxNYIZxPjBK7258zQzifGSXO
+        n5nGDNNyvnU3VMsuRokfayewgSSEBJ4zStyeow5iswnoSuzc+IodpEhEoItR4tKXHWAdzAJT
+        GSVu3OgCG8Up4Cix7uhmRhBbWCBUoufOInYQm0VAReL30QusIDavgKXEydkXmCBsQYmTM5+w
+        gNjMAvIS29/OgTpJQeLn02Vg9SICbhInHzxmh6gRkZjd2Qb2g4RAL4fE9zezGSEaXCR+zLkO
+        1Sws8er4FnYIW0riZX8bkM0BZNdLfL3hANHbwyixpusXE0SNvcSv6VtYQWqYBTQl1u/ShyhX
+        ljhyC+o0PomOw3+hpvBKdLQJQTSqSdyfeo4NwpaRmHRkJdMERqVZSB6bheSxWUgemIWwawEj
+        yypGsdSC4tz01GKjAmN4bCfn525iBCdOLfcdjDPeftA7xMjEwXiIUYKDWUmE9/mGpkQh3pTE
+        yqrUovz4otKc1OJDjKbAoJ7ILCWanA9M3Xkl8YYmlgYmZmaG5kamBuZK4ryWotmJQgLpiSWp
+        2ampBalFMH1MHJxSDUxMW9eLyCkm8s58Yd544OzXxL15wmd/iv0xKdB/7zN7skzWPB7lu3lH
+        NP0mzrh6i8c/uuxJzfFTsv+KTlxumZ7dVWv62MNgSjNvSe2KbeHpSvaVHIUbKtsXsu436OTI
+        e1Ap+s324ILDLcqP2fmvnD5wgO2L17fNxiq/BZ0mO6dzh89KVXktp7/vZ/wNpqXzr+7JUnju
+        s3Zh9hK/D+4PZrE8+DGj/bS5vqba8Xkx0/6JP9SaWHi6ZG+vUc/+STUq0XVVlyJ/nZvFKu1u
+        nOK7SjokRE36yI68uD8mevbZEysEftZXvFp7/0rv2xcNjJ/FmL15o/prRXtLZ3WwHtusweGi
+        +/L0NI0ZC9eqxuauyVJiKc5INNRiLipOBADWj6aWJQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsWy7bCSvG7DlOZEg5+9jBaX92tbbHz7g8mi
+        4+8XIG/XHDaLGef3MVm07j3CbnF3/1xGB3aPWQ29bB6bVnWyefRtWcXo8XmTXABLFJdNSmpO
+        Zllqkb5dAlfGg5fd7AXzxSou3/rC2sC4XrCLkZNDQsBE4nzrbrYuRi4OIYEdjBLXF3xggkjI
+        SCx/1scGYQtL3G85wgpR9BSo6MQidpAEm4CuxM6Nr8BsEYEeRolzPUIgRcwC0xklFq5uZIHo
+        +MYoMWfnfBaQKk4BR4l1RzczgtjCAsESP+4eArNZBFQkfh+9wApi8wpYSpycfYEJwhaUODnz
+        CVgvs4C2RO/DVkYIW15i+9s5zBDnKUj8fLqMFeIKN4mTDx6zQ9SISMzubGOewCg8C8moWUhG
+        zUIyahaSlgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYLjSEtrB+OeVR/0DjEy
+        cTAeYpTgYFYS4X2+oSlRiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalF
+        MFkmDk6pBiYtiUVBLoKinqGx/8SyPnznvbS06V/fojY/fk/NGdcXOp1db78l7tO0qwxmEvPu
+        TLfcXjv9itGpK5Fp95xYA6O0Zk0yt3BfM23j2VkNf/07RBx0C7f2Kr9fYuPlunPz5Pzti6Y8
+        mtRkI7S5dVvsWc358woWy6z9ECgnzze//aaM9EVGzwkv027c4r5ervP7hmOFRMO779zvvK/N
+        fKD35GZW/V29xRUpe03qBRp6S/k8z562nSfkbbBzrkWplIzdFXP7aIf5i5Q2JHDZXDY7d3WX
+        5dqVx7o/Xd22cVNF7eTPTsvPhG/8Nv/vnss/LSQ1wrgW792gMe9u6Iyfj7tbFFOWd3+x1Jh6
+        eVKgiITk3aj1SizFGYmGWsxFxYkAGsC/iBIDAAA=
+X-CMS-MailID: 20211104080623epcas2p4f952cd027035a60cf83ec5b9ba73eecf
 X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----Rk3zsqjqUKweF24zVwdvtl2y71nmD2FrmK.R7ke11MfHQlfJ=_ba61f_"
+Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211101234500epcas2p2d0e5bc54615b635f6694bc1be4c89fb5
-References: <20211102001122.27516-1-youngmin.nam@samsung.com>
-        <CGME20211101234500epcas2p2d0e5bc54615b635f6694bc1be4c89fb5@epcas2p2.samsung.com>
-        <20211102001122.27516-2-youngmin.nam@samsung.com>
-        <20211102102802.GA16545@C02TD0UTHF1T.local> <20211103000945.GA48132@perf>
-        <83f6574b-bbab-f0c3-7198-f773c3dcfc63@canonical.com>
-        <20211103092444.GA7013@perf>
-        <f7871718-f244-8a9e-9302-c27bdb2d3cc1@canonical.com>
-        <20211103095727.GA19093@perf> <20211103100407.GA35817@C02TD0UTHF1T.local>
+X-CMS-RootMailID: 20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed
+References: <20211101113819.50651-1-jaewon02.kim@samsung.com>
+        <CGME20211101114158epcas2p46b50f8d946d59ffaedd203370b81c6ed@epcas2p4.samsung.com>
+        <20211101113819.50651-2-jaewon02.kim@samsung.com>
+        <c626abd9-eebb-3111-123d-7b2bea95b310@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-------Rk3zsqjqUKweF24zVwdvtl2y71nmD2FrmK.R7ke11MfHQlfJ=_ba61f_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+Hello Krzysztof
 
-On Wed, Nov 03, 2021 at 10:04:18AM +0000, Mark Rutland wrote:
-> On Wed, Nov 03, 2021 at 06:57:28PM +0900, Youngmin Nam wrote:
-> > On Wed, Nov 03, 2021 at 10:04:36AM +0100, Krzysztof Kozlowski wrote:
-> > > On 03/11/2021 10:24, Youngmin Nam wrote:
-> > > > On Wed, Nov 03, 2021 at 09:18:07AM +0100, Krzysztof Kozlowski wrote:
-> > > >> On 03/11/2021 01:09, Youngmin Nam wrote:
-> > > >>> On Tue, Nov 02, 2021 at 10:28:10AM +0000, Mark Rutland wrote:
-> > > >>>> On Tue, Nov 02, 2021 at 09:11:21AM +0900, Youngmin Nam wrote:
+> On 01/11/2021 12:38, Jaewon Kim wrote:
+> > This patch adds new "samsung,exynos-usi-hsi2c" compatible.
+> > It is for i2c compatible with HSI2C available on Exynos SoC with USI.
+> >
+> > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> > ---
+> >  Documentation/devicetree/bindings/i2c/i2c-exynos5.txt | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
 > 
-> > > >>>>> +	evt->rating = 500;	/* use value higher than ARM arch timer */
-> > > >>>>
-> > > >>>> Previously Will asked you to try CLOCK_EVT_FEAT_PERCPU here, and to set
-> > > >>>> the C3STOP flag on the arch timer via the DT when necessary, rather than
-> > > >>>> trying to override the arch timer like this:
-> > > >>>>
-> > > >>>>   https://protect2.fireeye.com/v1/url?k=72526080-2dc9598b-7253ebcf-002590f5b904-ca603717c6462908&q=1&e=be56aa83-dbac-4639-913d-d388620fe3fc&u=https%3A%2F%2Flore.kernel.org%2Fr%2F20211027073458.GA22231%40willie-the-truck
+> The bindings go as first patch, please.
+
+Okay, I will change patch order in next.
+
 > 
-> > > >>> Hi Mark.
-> > > >>> It looks like you missed my previous mail.
-> > > >>> https://protect2.fireeye.com/v1/url?k=ab15817a-cbf71c27-ab140a35-000babd9f1ba-123b7f313b1b1ccc&q=1&e=34c8716e-6d2e-4d8e-82fe-04777ebc5eb3&u=https%3A%2F%2Flore.kernel.org%2Fall%2F20211029035422.GA30523%40perf%2F%23t
-> > > >>>
-> > > >>> Yes, I believe Will's suggestion definitely will work.
+> > diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> > b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> > index 2dbc0b62daa6..ce2373c7a357 100644
+> > --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> > +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> > @@ -14,6 +14,8 @@ Required properties:
+> >  				on Exynos5260 SoCs.
+> >  	-> "samsung,exynos7-hsi2c", for i2c compatible with HSI2C available
+> >  				on Exynos7 SoCs.
+> > +	-> "samsung,exynos-usi-hsi2c", for i2c compatible with HSI2C available
+> > +				on Exynos SoCs with USI.
 > 
-> Then please do so.
-> 
-> > > >>> But that is for performance not functionality.
-> 
-> No; it's about *consistency*, and avoiding unnecssary special cases. The
-> whole point is that marking the generic timer as C3STOP *accurately*
-> describes how the timer behaves on your platform, and marking the MCTv2
-> as a percpu timer which *can* act as a back-up also aligns with that.
-> 
-> That approach leaves the policy in the kernel, and we can play about
-> with that later without functional breakage.
-> 
-> > > >>> As a driver for new H/W IP I would like to confirm functionality first.
-> > > >>> We need more time to test this feature with our exynos core power down feature.
-> > > >>> And we need to do a various regression test whether there is another corner case or not.
-> > > >>> So, how about we apply Will's suggetion later after the current patchset is merged first?
-> > > >>> After doing our regression test with our exynos core power down feature, we can confirm this.
-> > > >>
-> > > >> Not really, because once it is merged there is no incentive to fix it or
-> > > >> simply changing it can be forgotten. Also similarly to commit
-> > > >> 6282edb72bed ("clocksource/drivers/exynos_mct: Increase priority over
-> > > >> ARM arch timer"), there should be a valid and serious reason to
-> > > >> prioritize Exynos MCT.
-> 
-> It's also worth nothing that the case described for 6282edb72bed is
-> really a system design erratum, since the counter is supposed to be in
-> an always-on power domain and should be counting well before a regular
-> OS kernel boots. The arm64 kernel requires the architected counter to be
-> running before it is entered, or there will be subtle breakage.
-> 
-> > > > No, it's not. I also want to decrease MCTv2 timer rating so that we want to use arm arch timer as a default.
-> > > > But this feature has to be confirmed with core power down feature enabled.
-> > > > Without core power down feature, we can't comfirm this.
-> > > > Ater that we need to check whether there is regression or not related power, stability, and so on.
-> > > > I'm not saying I will not apply Will's suggestion but I just want to apply later after some hard test.
-> > > 
-> > > You repeat the same argument, the same words. Nothing new. Repeating the
-> > > same won't change it, use the lower priority. This is a patch for new
-> > > kernel, so there is a plenty of time to test it and it won't affect your
-> > > production environment.
-> > > 
-> > So, how about we control timer rating value with DT ?
-> > Of course the default rating value should be lower than arm arch timer's.
-> > Do you agree with this?
-> 
-> No; placing a rating value in the DT is a hack. That should *not* live
-> in the DT because it's linux-internal detail and not a description of
-> the HW.
+> I would prefer to describe the Exynos model, not the feature. USI might change between different SoCs,
+> so then it will be "usiv2"?
 > 
 
-So, how do we use MCTv2 only for clock event device if there are some limitations caused by SoC design implemention ?
+Okay, I will use Exynos model instaed of feature name.
+"samsung,exynosautov9-hsi2c"
 
-> Thanks,
-> Mark.
+> >
+> >    - reg: physical base address of the controller and length of memory mapped
+> >      region.
+> > @@ -31,6 +33,8 @@ Optional properties:
+> >         at 100khz.
+> >      -> If specified, the bus operates in high-speed mode only if the
+> >         clock-frequency is >= 1Mhz.
+> > +  - samsung,usi-sysreg : sysreg handle to control USI type.
+> > +    -> sysreg phandle for "samsung,exynos-usi-hsic" compatible.
+> 
+> s/sysreg/system registers controller/
+> s/handle/phandle/
 > 
 
-------Rk3zsqjqUKweF24zVwdvtl2y71nmD2FrmK.R7ke11MfHQlfJ=_ba61f_
-Content-Type: text/plain; charset="utf-8"
+Okay, I will change it.
 
+> Please document to what is this phandle. To which block.
+> 
 
-------Rk3zsqjqUKweF24zVwdvtl2y71nmD2FrmK.R7ke11MfHQlfJ=_ba61f_--
+Okay, I will add below description in next patch.
+
+When using Exynos USI Block, it needs to select which type of Serial IPs(UART, SPI, I2C) to use with
+system control register. So, it requires system register control and needs offset value of system register.
+
+> Why it cannot be the existing generic samsung,sysreg?
+> 
+
+It is generic samsung,sysreg not for speical system register for USI.
+I will change property name to "samsung,sysreg".
+
+> >
+> >  Example:
+> >
+> > @@ -46,6 +50,8 @@ hsi2c@12ca0000 {
+> >  	#address-cells = <1>;
+> >  	#size-cells = <0>;
+> >
+> > +	samsung,usi-sysreg = <&usi_sysreg 0x28>;
+> 
+> This does not look correct for this compatible. We should really convert the bindings to YAML...
+> 
+
+I will remove this property example.
+
+> > +
+> >  	s2mps11_pmic@66 {
+> >  		compatible = "samsung,s2mps11-pmic";
+> >  		reg = <0x66>;
+> >
+> 
+> 
+> Best regards,
+> Krzysztof
+
+Thanks
+Jaewon Kim
+
