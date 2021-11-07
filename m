@@ -2,63 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB17C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 16:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C806DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 18:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2738560E78
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 16:17:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A203861357
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 18:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235168AbhKGQU0 (ORCPT
+        id S236152AbhKGSyf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 Nov 2021 11:20:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56486 "EHLO
+        Sun, 7 Nov 2021 13:54:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234805AbhKGQUZ (ORCPT
+        with ESMTP id S231135AbhKGSyf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Nov 2021 11:20:25 -0500
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9A13C061570
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Nov 2021 08:17:42 -0800 (PST)
-Received: by mail-ua1-x936.google.com with SMTP id i6so26922708uae.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Nov 2021 08:17:42 -0800 (PST)
+        Sun, 7 Nov 2021 13:54:35 -0500
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62193C061570
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Nov 2021 10:51:52 -0800 (PST)
+Received: by mail-ua1-x92f.google.com with SMTP id t13so12113905uad.9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Nov 2021 10:51:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=t7xMZVtk+GkT0Ad4djTgQGpUumW4/C6aQ//HAOY+M7k=;
-        b=qrkjoAs/fBxtAbYnZ//tjZPnT865qxaXGGjpBa7hi1+l9eLVjSIWrRmjwdU/2DcuaB
-         q1YPZQ2oFH9noFXS+zwtLwvw2axnbvQX6qvnJZEKI9dyBnavLeCiHcjw8GoQaXDLZ6ko
-         9/wD3aeoF8dYn8I3uKK2ujmCWzan2rnu691QND6pGPy3D6sotevEesRcDz0nxubKRi9D
-         +7PHD5XDQtKCGyaWHzarny+eELcTJ30JcDhmVu/bLlDouLtMXa6tqhJ8M+cA5ejVqkqV
-         gp+S5w1xNbvpL771+OZJSI6uj2gzJ8wGvjZEOvyqUOj8Pk2AKGviDFGkDBo3KSt3EYR3
-         HluQ==
+        bh=unKo15JzTOTFaWesFvijrWxvCyjo4F82rqmN0Z0VB08=;
+        b=EGPJwh6J+kr9X4pqliRLLDnvsjAufLqMhCfMsL1tt0vh0JjP0U6LeXXGxXUR1nT+Lr
+         UdKRhGMej2TR+7cOfQZOO1tqUltNVYuvxhmNuCdy2dn5t3+oP7bdKWjdYKBoqukscVSq
+         1SRH8c8WthZYefrriBk4pEvVpWyEYZLhRCtvDqpakfsaRPlUrAUaNIFozbGbg5rFFDqO
+         GJ2Z2XlUm6ar+AfzRnPLLriNS++hfmnFYE+ckuuUFyXx7pt/Xzn5Kv8Gg4wrQdFelLTV
+         3UthEI6FLjqhudMLMzF9rH48gUycDFY7zTw8ZCPcyS/ghwnoabTeAQ+/zdHhTWh9KVLW
+         vTEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=t7xMZVtk+GkT0Ad4djTgQGpUumW4/C6aQ//HAOY+M7k=;
-        b=S8RkeGHKIFLMPYTTLX075epg2pecRLIAXo2qqHvBUwC1/5HShjHqVfp9ajEKVr/BOZ
-         13xzPwwOX9UO0SADvLQwmJbSEuyAmH5aspGySMMqVzoGtbY/u02YmLVQp0llHyb+r04a
-         QpLdv+GbWepD73c3blisFmqzhkHCg0rVKg+lXXbdws4UDFVG4ndyhX1Wqcro49Kyyf+3
-         p0wMOk7utrDVfGYy0p1NuNg2wP7ra0jo4HyruJ5SPAo9KSyOXfDJcfP3/wyvRtTh0NGj
-         yJQoxs8rWuhelf1lmPuIc6UC514aQf+CII1IeGfML4ioKfiM3/WYQFceQbIp8azBGnIU
-         8s7w==
-X-Gm-Message-State: AOAM5331G9Wry9c7F37rp/Lddo6OQZkmyNzQ/44/pEUROQjjyYGq6s2i
-        ng5TImbz7uXPPCnJzyJXmSK3Y8m1EV5iOkjqh2qoqQ==
-X-Google-Smtp-Source: ABdhPJx9na6KgzgTa2a6Fl9rs1m4BaQVX93gFlqN9bcazVXIDAqBdVq9aYvXAF1znhsfu3tBctfOm+DOY0FYNuYX+Us=
-X-Received: by 2002:a67:ab48:: with SMTP id k8mr93223469vsh.30.1636301861809;
- Sun, 07 Nov 2021 08:17:41 -0800 (PST)
+        bh=unKo15JzTOTFaWesFvijrWxvCyjo4F82rqmN0Z0VB08=;
+        b=bcnzcHvgzcFd08v9Cp3AmfyhO3HDLMbDCF5nXaWVHzIl/VIf6qNgU33GP/9tWwHvdQ
+         yB0+aROPyTqJiGPtIhtmeOh1qvWTairKiauCVu3p6/Fe9B20hbUzhFDAY5p+B8bUVNHG
+         C+QhJFJ5RGoFLPZyMwbVQf68ZH2Ycs0C9l3H+gPqAIvUrVQ1gnhzllv3/6tyZ8y9vBp6
+         PVrccV4UsBFn3gTictIhQM91ItHkulqJfKp0vK+xVYNA7N+hIuoSIrXYpoyd1dBSd86I
+         m9hMICM+1zuLMqAAeV6BvGu+etZLUwcgbXnBhvh1F/K4SJH6dFGH1lZKZVDpyBbe7gm9
+         qIuA==
+X-Gm-Message-State: AOAM5318BOxsfCX5LDb50dyE7GvgILoNccO3PMILUlro+WgTUjfHc/LI
+        9reXKx50L0kHwleJU/HDHxVa4vDn8SawgkmLmPbpvg==
+X-Google-Smtp-Source: ABdhPJwqqi2DMaQIyZ7z2Ia6zXGDLQ21h1fqUJv0Ss86GFoLUFdkILfjNO5w/IJ3jA9aW5deaTVuJ2mwxgmTqs8YiBM=
+X-Received: by 2002:ab0:6002:: with SMTP id j2mr69495801ual.9.1636311111532;
+ Sun, 07 Nov 2021 10:51:51 -0800 (PST)
 MIME-Version: 1.0
 References: <20211031122216.30212-1-semen.protsenko@linaro.org>
- <20211031122216.30212-13-semen.protsenko@linaro.org> <02e4cd1f-47bf-9bc7-b46c-b6c30943c0b7@canonical.com>
-In-Reply-To: <02e4cd1f-47bf-9bc7-b46c-b6c30943c0b7@canonical.com>
+ <20211031122216.30212-11-semen.protsenko@linaro.org> <a63f37a9-ea04-2606-e4f5-1170c4e59db2@canonical.com>
+ <CAPLW+4mhD+k03S1cR-AdNk4etPiK=wsCoR4+o39gDe==XdoY8w@mail.gmail.com> <b65c74f3-0735-7b8b-888a-3b14aee55a4f@roeck-us.net>
+In-Reply-To: <b65c74f3-0735-7b8b-888a-3b14aee55a4f@roeck-us.net>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sun, 7 Nov 2021 18:17:29 +0200
-Message-ID: <CAPLW+4=HZytu3Cxsea_HjrR2FzAVd0uEVZvqp9pT4xB=WqhKUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] watchdog: s3c2410: Add Exynos850 support
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
+Date:   Sun, 7 Nov 2021 20:51:39 +0200
+Message-ID: <CAPLW+4=_dk50ESva1RwN3a9gtT2tJn2WT=m5C8Q9c1VTdemJxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/12] watchdog: s3c2410: Support separate source clock
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Rob Herring <robh+dt@kernel.org>,
         linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -68,172 +69,85 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2 Nov 2021 at 12:27, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
+On Sun, 7 Nov 2021 at 18:09, Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> On 31/10/2021 13:22, Sam Protsenko wrote:
-> > Exynos850 is a bit different from SoCs already supported in WDT driver:
-> >   - AUTOMATIC_WDT_RESET_DISABLE register is removed, so its value is
-> >     always 0; .disable_auto_reset callback is not set for that reason
-> >   - MASK_WDT_RESET_REQUEST register is replaced with
-> >     CLUSTERx_NONCPU_IN_EN register; instead of masking (disabling) WDT
-> >     reset interrupt it's now enabled with the same value; .mask_reset
-> >     callback is reused for that functionality though
-> >   - To make WDT functional, WDT counter needs to be enabled in
-> >     CLUSTERx_NONCPU_OUT register; it's done using .enable_counter
-> >     callback
+> On 11/7/21 7:55 AM, Sam Protsenko wrote:
+> > On Tue, 2 Nov 2021 at 12:15, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@canonical.com> wrote:
+> >>
+> >> On 31/10/2021 13:22, Sam Protsenko wrote:
+> >>> Right now all devices supported in the driver have the single clock: it
+> >>> acts simultaneously as a bus clock (providing register interface
+> >>> clocking) and source clock (driving watchdog counter). Some newer Exynos
+> >>> chips, like Exynos850, have two separate clocks for that. In that case
+> >>> two clocks will be passed to the driver from the resource provider, e.g.
+> >>> Device Tree. Provide necessary infrastructure to support that case:
+> >>>    - use source clock's rate for all timer related calculations
+> >>>    - use bus clock to gate/ungate the register interface
+> >>>
+> >>> All devices that use the single clock are kept intact: if only one clock
+> >>> is passed from Device Tree, it will be used for both purposes as before.
+> >>>
+> >>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >>> ---
+> >>> Changes in v2:
+> >>>    - Reworded commit message to be more formal
+> >>>    - Used separate "has_src_clk" trait to tell if source clock is present
+> >>>    - Renamed clock variables to match their purpose
+> >>>    - Removed caching source clock rate, obtaining it in place each time instead
+> >>>    - Renamed err labels for more consistency
+> >>>
+> >>>   drivers/watchdog/s3c2410_wdt.c | 52 +++++++++++++++++++++++++---------
+> >>>   1 file changed, 39 insertions(+), 13 deletions(-)
+> >>>
+> >>> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> >>> index fdb1a1e9bd04..c733917c5470 100644
+> >>> --- a/drivers/watchdog/s3c2410_wdt.c
+> >>> +++ b/drivers/watchdog/s3c2410_wdt.c
+> >>> @@ -118,7 +118,9 @@ struct s3c2410_wdt_variant {
+> >>>
+> >>>   struct s3c2410_wdt {
+> >>>        struct device           *dev;
+> >>> -     struct clk              *clock;
+> >>> +     struct clk              *bus_clk; /* for register interface (PCLK) */
+> >>> +     struct clk              *src_clk; /* for WDT counter */
+> >>> +     bool                    has_src_clk;
+> >>
+> >> Why do you need the has_src_clk value? If clk_get() fails, just store
+> >> there NULL and clk API will handle it.
+> >>
 > >
-> > Also Exynos850 has two CPU clusters, each has its own dedicated WDT
-> > instance. Different PMU registers and bits are used for each cluster. So
-> > driver data is now modified in probe, adding needed info depending on
-> > cluster index passed from device tree.
+> > I've added that 'has_src_clk' field for somewhat different reason.
 > >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> > Changes in v2:
-> >   - Used single compatible for Exynos850, populating missing driver data in
-> >     probe
-> >   - Added "index" property to specify CPU cluster index
+> > 1. As we discussed earlier, in case when src_clk is not present, I do
+> > 'src_clk = bus_clk' in v2. This way I don't have to check if src_clk
+> > is NULL every time and use bus_clk to get rate. If I set src_clk =
+> > NULL, I'll have to add selector code, which wouldn't be so elegant,
+> > and contradicts what we've discussed.
+> > 2. On the other hand, I don't want to enable bus_clk twice in case
+> > when src_clk is not present, that just doesn't feel right (user would
+> > see incorrect refcount value in DebugFS, etc). And if "clk_src =
+> > bus_clk', and I haven't enabled it second time, then I shouldn't try
+> > to disable it second time, right?
 > >
-> >  drivers/watchdog/s3c2410_wdt.c | 68 +++++++++++++++++++++++++++++++++-
-> >  1 file changed, 66 insertions(+), 2 deletions(-)
+> > The only way I can see to accomplish (1) and (2) together, is to use
+> > that 'has_src_clk' flag. For me it still looks better than enabling
+> > bus_clk twice, or checking if clk_src is NULL every time we need to
+> > get clock rate. Please let me know if you still have a strong opinion
+> > on this one.
 > >
-> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > index 8fdda2ede1c3..457b725c30ac 100644
-> > --- a/drivers/watchdog/s3c2410_wdt.c
-> > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > @@ -56,6 +56,14 @@
-> >  #define EXYNOS5_RST_STAT_REG_OFFSET          0x0404
-> >  #define EXYNOS5_WDT_DISABLE_REG_OFFSET               0x0408
-> >  #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET    0x040c
-> > +#define EXYNOS850_CLUSTER0_NONCPU_OUT                0x1220
-> > +#define EXYNOS850_CLUSTER0_NONCPU_INT_EN     0x1244
-> > +#define EXYNOS850_CLUSTER1_NONCPU_OUT                0x1620
-> > +#define EXYNOS850_CLUSTER1_NONCPU_INT_EN     0x1644
-> > +
-> > +#define EXYNOS850_CLUSTER0_WDTRESET_BIT              24
-> > +#define EXYNOS850_CLUSTER1_WDTRESET_BIT              23
-> > +
-> >  #define QUIRK_HAS_WTCLRINT_REG                       (1 << 0)
-> >  #define QUIRK_HAS_PMU_MASK_RESET             (1 << 1)
-> >  #define QUIRK_HAS_PMU_RST_STAT                       (1 << 2)
-> > @@ -171,6 +179,21 @@ static const struct s3c2410_wdt_variant drv_data_exynos7 = {
-> >                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_AUTO_DISABLE,
-> >  };
-> >
-> > +static const struct s3c2410_wdt_variant drv_data_exynos850 = {
-> > +     /*
-> > +      * Next fields will be set in probe(), based on cluster index:
-> > +      *   - .mask_reset_reg
-> > +      *   - .rst_stat_bit
-> > +      *   - .cnt_en_reg
-> > +      */
-> > +     .mask_reset_inv = true,
-> > +     .mask_bit = 2,
-> > +     .rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-> > +     .cnt_en_bit = 7,
-> > +     .quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
-> > +               QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-> > +};
-> > +
-> >  static const struct of_device_id s3c2410_wdt_match[] = {
-> >       { .compatible = "samsung,s3c2410-wdt",
-> >         .data = &drv_data_s3c2410 },
-> > @@ -182,6 +205,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
-> >         .data = &drv_data_exynos5420 },
-> >       { .compatible = "samsung,exynos7-wdt",
-> >         .data = &drv_data_exynos7 },
-> > +     { .compatible = "samsung,exynos850-wdt",
-> > +       .data = &drv_data_exynos850 },
-> >       {},
-> >  };
-> >  MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-> > @@ -548,15 +573,51 @@ static inline const struct s3c2410_wdt_variant *
-> >  s3c2410_get_wdt_drv_data(struct platform_device *pdev)
-> >  {
-> >       const struct s3c2410_wdt_variant *variant;
-> > +     struct s3c2410_wdt_variant *data;
-> > +     struct device *dev = &pdev->dev;
-> >
-> > -     variant = of_device_get_match_data(&pdev->dev);
-> > +     variant = of_device_get_match_data(dev);
-> >       if (!variant) {
-> >               /* Device matched by platform_device_id */
-> >               variant = (struct s3c2410_wdt_variant *)
-> >                          platform_get_device_id(pdev)->driver_data;
-> >       }
-> >
-> > -     return variant;
-> > +     /* Have to copy driver data over to keep its const qualifier intact */
-> > +     data = devm_kmemdup(dev, variant, sizeof(*variant), GFP_KERNEL);
-> > +     if (!data)
-> > +             return NULL;
-> > +
-> > +     /* Populate missing fields for Exynos850 w.r.t. cluster index */
-> > +     if (variant == &drv_data_exynos850) {
-> > +             u32 index;
-> > +             int err;
 >
-> Another approach is to:
-> 1. Define two variants for Exynos850 (s3c2410_wdt_variants), kind of
-> like before,
-> 2. if (variant == &drv_data_exynos850)
-> a. Read the index
-> b. If index is 0, return first variant,
-> c. If index is 1, return the second variant,
-> d. Else - NULL.
->
-> This way you won't need to copy the memory on the fly, just use
-> different const data. Benefits: less memory allocations, entire drvdata
-> set in one place (so nicely visible), drvdata populated safely via const.
+> This is odd. Why do you need to get the clock rate more than once,
+> instead of getting it once and storing it locally ? If the clock rate
+> can change, the watchdog timeout would be unpredictable.
 >
 
-That's definitely better. Not sure how I missed that. Anyway, thanks
-for review. Will send v3 soon, addressing all your comments (except
-the one about src_clk in PATCH 10/12 -- need to discuss it further, I
-guess).
+For this particular driver it seems to be needed though. The driver
+tracks CPU freq change and tries to adjust timeout w.r.t. new clock
+frequency, as implemented in s3c2410wdt_cpufreq_*() functions. I don't
+really want to touch that functionality in my series, my goal here is
+to add Exynos850 support in the first place. But yeah, I did some
+analysis, and it seems like 25 out of 35 watchdog drivers (that call
+clk_get_rate()) just store the rate in probe.
 
-> > +
-> > +             err = of_property_read_u32(dev->of_node, "samsung,index",
-> > +                                        &index);
-> > +             if (err) {
-> > +                     dev_err(dev, "failed to get cluster index\n");
-> > +                     return NULL;
-> > +             }
-> > +
-> > +             switch (index) {
-> > +             case 0:
-> > +                     data->mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN;
-> > +                     data->rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT;
-> > +                     data->cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT;
-> > +                     break;
-> > +             case 1:
-> > +                     data->mask_reset_reg = EXYNOS850_CLUSTER1_NONCPU_INT_EN;
-> > +                     data->rst_stat_bit = EXYNOS850_CLUSTER1_WDTRESET_BIT;
-> > +                     data->cnt_en_reg = EXYNOS850_CLUSTER1_NONCPU_OUT;
-> > +                     break;
-> > +             default:
-> > +                     dev_err(dev, "wrong cluster index: %u\n", index);
-> > +                     return NULL;
-> > +             }
-> > +     }
-> > +
-> > +     return data;
-> >  }
-> >
-> >  static int s3c2410wdt_probe(struct platform_device *pdev)
-> > @@ -576,6 +637,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >       wdt->wdt_device = s3c2410_wdd;
-> >
-> >       wdt->drv_data = s3c2410_get_wdt_drv_data(pdev);
-> > +     if (!wdt->drv_data)
-> > +             return -EINVAL;
-> > +
-> >       if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
-> >               wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> >                                               "samsung,syscon-phandle");
-> >
->
->
-> Best regards,
-> Krzysztof
+> Guenter
