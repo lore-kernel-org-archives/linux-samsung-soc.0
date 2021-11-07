@@ -2,56 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AE3C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 20:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35D3C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 20:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12BF361075
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 20:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC2DC61101
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 20:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236436AbhKGUcd (ORCPT
+        id S236489AbhKGUch (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 Nov 2021 15:32:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55524 "EHLO
+        Sun, 7 Nov 2021 15:32:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236428AbhKGUcc (ORCPT
+        with ESMTP id S236460AbhKGUce (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Nov 2021 15:32:32 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E106CC061746
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Nov 2021 12:29:48 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id s24so25467686lji.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Nov 2021 12:29:48 -0800 (PST)
+        Sun, 7 Nov 2021 15:32:34 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76957C061764
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Nov 2021 12:29:50 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id j10so6103043lfu.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Nov 2021 12:29:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fB9ob4LNIR2u2sgphH9lU6cuRm+hn58c7lOXUO4ktBs=;
-        b=vOL0kGMnYshUb/PsTpfeURp/YT0JgkqGon/OnJhKim1Adc8XVKRrxPVgNyQoYylGHD
-         L3IWHdIHRKXBKxeCjfaLS72gyENJ/duhyiIes3IrZyeYVXCKvPwHjIpxpZQMAkqu7kQM
-         +uGZKzzkmL+VjCNtBKNMHsErHMFADkZplOGhAnpPoBzNMeWYxTi0RPYxaIA/57ZcPZmW
-         C5kkzzwGn0numO3nZZtPe9pO5QFwkrtsUjX96IrAR83qQLcjvY3fGLRCOMmkvBtCBICm
-         byK3XC3fQtwwozC8MwCsrh1XV7IioiM99V4oWDBXb/AOPfa6rAmYTd7Q88xW1JIhEUVz
-         oPtA==
+        bh=nZiUTPwWjkOdBHnULu9dBeBF/zY+4JoUi8RSPmG0iiA=;
+        b=FeTRKWrf1EcOADes4il6+1ExbX+gdlwMW/ismfIc+/8SatZ6TsM6OGOd9w+5pAQ2rK
+         3/73FA4/5gKyCCdr25TErb2fNhukBiS3SvG+WwI/wCJfS9bN0KnbRQY6hN+GS5jgNtir
+         n1x5vcrNu5BWlhzucZEspUS7l1fbAufLc3OHIvzwtAw1749yCyl5Tq4nUwUFltPczhx9
+         g2bnY4bFp4vspcz7Ku8DsprIizk85EpbYzodwY694uchVR9Zd2Bevd2c3Nf6L8/HlLIS
+         0TUlQ25rgFh2e6oyA3nWE8jv2zurcztW9YxJfKPluijrlts1IquB5kgTC5BmDPspN3sf
+         czXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fB9ob4LNIR2u2sgphH9lU6cuRm+hn58c7lOXUO4ktBs=;
-        b=O6mhZFoAiHRbF3v9UHEZqLHpPuTyyybG5oDMOcBQAdgHbSfazRgnTDSGK7fjGGfBdP
-         YwEdML6eV+kPD9MHnMlzvgIpcq/oX1HL+Ybr4A92q9TpivDTHoQowp107Y3G9bCRJiRL
-         jcndIm1G2sMcE0GFfYMqNYWLkUm28bJtbX3+4aJYxcgGvVTyQ4LPZuZmGgrpu2XQ1HKK
-         rvPJA606kywbvtiVplCPMpbUjSU0Yd4iulf/IZJWLECINV4DZO4YEuaQyjs3AdNsuNnK
-         2rVt+1R5IwMXvsakHmQnkOrZAdmuiMaXtQPYTXu5HRKoyIvoLy8fSHcFiyQuFU+QQ3Io
-         lC8A==
-X-Gm-Message-State: AOAM533A0uCDzHf4s4unEyGZKJ2A8xL8y1rt5FdZ5FtypjXnJ6XXlln/
-        ti/eJ2DmDM3+aLJFwmsl4ACocg==
-X-Google-Smtp-Source: ABdhPJy4vBcWfqjg1/hSuRkd/Z+6z/H7WYEzyZLU7G4cAO8MPEkz6SfknIAVDTKCh4XzvQxKHD3YLQ==
-X-Received: by 2002:a2e:391b:: with SMTP id g27mr78258688lja.126.1636316987253;
-        Sun, 07 Nov 2021 12:29:47 -0800 (PST)
+        bh=nZiUTPwWjkOdBHnULu9dBeBF/zY+4JoUi8RSPmG0iiA=;
+        b=qLZqxPMcYPIrufWVvUhlJno3XeOqko67hlc+QdzSeVrgMpTNJfUvnMcPSzb3NXnT9o
+         FwXbWJNggqLRp0H2DLc1u2dDKZD2QWshryXX3kUqcbageWqw3SZ9oSHl6MhH8ZN+1CCm
+         4nfZ0Fr5SrW+4uD1kkJBswFbzHGTVdo/PybI07FyjDf3gpEAty5RYJH2sAu+qTF1Ewp/
+         SDejt2DJMb2az0udn2Kli9OK6wnoyVhliFZglkAirGLQPHxZgH8wk8vyAJautqNMz/Np
+         WU9cMqSYn+JgSi7nxdH1x6deAT7Ebq5JsGyuYoqbYXa8X5efNi3lzfTahBcVhHlxx6le
+         rl6Q==
+X-Gm-Message-State: AOAM532xP77E/j6KmkvDq1p83yjh+koXDLkkdfUTKVs6m8+/01He185s
+        Uw48uBoPRfLDc0R/MqX8SAQJEw==
+X-Google-Smtp-Source: ABdhPJwJJvFZw/4s3IzDhE9M4P9lg7qJbQ2fV6fToqvaB0czT5ovF1/6caVUFBNRlFOUx0s7YDVosw==
+X-Received: by 2002:a05:6512:220d:: with SMTP id h13mr46645691lfu.326.1636316988883;
+        Sun, 07 Nov 2021 12:29:48 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id o14sm1566490lfu.253.2021.11.07.12.29.46
+        by smtp.gmail.com with ESMTPSA id k12sm1571487lfg.31.2021.11.07.12.29.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Nov 2021 12:29:46 -0800 (PST)
+        Sun, 07 Nov 2021 12:29:48 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -60,9 +60,9 @@ To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
 Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 01/12] dt-bindings: watchdog: Require samsung,syscon-phandle for Exynos7
-Date:   Sun,  7 Nov 2021 22:29:32 +0200
-Message-Id: <20211107202943.8859-2-semen.protsenko@linaro.org>
+Subject: [PATCH v3 02/12] dt-bindings: watchdog: Document Exynos850 watchdog bindings
+Date:   Sun,  7 Nov 2021 22:29:33 +0200
+Message-Id: <20211107202943.8859-3-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211107202943.8859-1-semen.protsenko@linaro.org>
 References: <20211107202943.8859-1-semen.protsenko@linaro.org>
@@ -72,47 +72,117 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Exynos7 watchdog driver is clearly indicating that its dts node must
-define syscon phandle property. That was probably forgotten, so add it.
+Exynos850 SoC has two CPU clusters:
+  - cluster 0: contains CPUs #0, #1, #2, #3
+  - cluster 1: contains CPUs #4, #5, #6, #7
+
+Each cluster has its own dedicated watchdog timer. Those WDT instances
+are controlled using different bits in PMU registers, new
+"samsung,index" property is added to tell the driver which bits to use
+for defined watchdog node.
+
+Also on Exynos850 the peripheral clock and the source clock are two
+different clocks. Provide a way to specify two clocks in watchdog device
+tree node.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Fixes: 2b9366b66967 ("watchdog: s3c2410_wdt: Add support for Watchdog device on Exynos7")
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes in v3:
-  - Added R-b tag by Rob Herring
+  - Renamed "samsung,index" property to more descriptive
+    "samsung,cluster-index"
+  - Disabled "samsung,cluster-index" property for SoCs other than
+    Exynos850
 
 Changes in v2:
-  - Added R-b tag by Krzysztof Kozlowski
-  - Added "Fixes" tag
+  - Stated explicitly that Exynos850 driver requires 2 clocks
+  - Used single compatible for Exynos850
+  - Added "index" property to specify CPU cluster index
+  - Fixed a typo in commit message: dedicater -> dedicated
 
- Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ .../bindings/watchdog/samsung-wdt.yaml        | 45 +++++++++++++++++--
+ 1 file changed, 41 insertions(+), 4 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-index 76cb9586ee00..93cd77a6e92c 100644
+index 93cd77a6e92c..b08373336b16 100644
 --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
 +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-@@ -39,8 +39,8 @@ properties:
+@@ -22,25 +22,32 @@ properties:
+       - samsung,exynos5250-wdt                # for Exynos5250
+       - samsung,exynos5420-wdt                # for Exynos5420
+       - samsung,exynos7-wdt                   # for Exynos7
++      - samsung,exynos850-wdt                 # for Exynos850
+ 
+   reg:
+     maxItems: 1
+ 
+   clocks:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 2
+ 
+   clock-names:
+-    items:
+-      - const: watchdog
++    minItems: 1
++    maxItems: 2
+ 
+   interrupts:
+     maxItems: 1
+ 
++  samsung,cluster-index:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Index of CPU cluster on which watchdog is running (in case of Exynos850)
++
    samsung,syscon-phandle:
      $ref: /schemas/types.yaml#/definitions/phandle
      description:
--      Phandle to the PMU system controller node (in case of Exynos5250
--      and Exynos5420).
-+      Phandle to the PMU system controller node (in case of Exynos5250,
-+      Exynos5420 and Exynos7).
+       Phandle to the PMU system controller node (in case of Exynos5250,
+-      Exynos5420 and Exynos7).
++      Exynos5420, Exynos7 and Exynos850).
  
  required:
    - compatible
-@@ -58,6 +58,7 @@ allOf:
-             enum:
+@@ -59,9 +66,39 @@ allOf:
                - samsung,exynos5250-wdt
                - samsung,exynos5420-wdt
-+              - samsung,exynos7-wdt
+               - samsung,exynos7-wdt
++              - samsung,exynos850-wdt
      then:
        required:
          - samsung,syscon-phandle
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynos850-wdt
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Bus clock, used for register interface
++            - description: Source clock (driving watchdog counter)
++        clock-names:
++          items:
++            - const: watchdog
++            - const: watchdog_src
++        samsung,cluster-index:
++          enum: [0, 1]
++      required:
++        - samsung,cluster-index
++    else:
++      properties:
++        clocks:
++          items:
++            - description: Bus clock, which is also a source clock
++        clock-names:
++          items:
++            - const: watchdog
++        samsung,cluster-index: false
+ 
+ unevaluatedProperties: false
+ 
 -- 
 2.30.2
 
