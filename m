@@ -2,216 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D209FC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 20:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59BEC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Nov 2021 10:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B517361360
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Nov 2021 20:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F6F61352
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Nov 2021 10:28:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236610AbhKGUdW (ORCPT
+        id S237941AbhKHKbe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 Nov 2021 15:33:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236573AbhKGUdJ (ORCPT
+        Mon, 8 Nov 2021 05:31:34 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:34342 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237913AbhKHKbd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Nov 2021 15:33:09 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13350C061767
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Nov 2021 12:30:07 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id bu18so31738684lfb.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Nov 2021 12:30:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FXAys4F2ibTIQs+sq0fDW6xOS098cuDbLHdnNGTjsAo=;
-        b=TkttbcRZ4B7USPq/+cSBKyyTionhl3NhWWD4lovc5vz/QV0NeK0mrbvr5LtvPdmrDa
-         SfmED1rAsKRuSSlGFiApJwVLDx/+3uacTUz1Q0R1Iedh4vqBLvaLTLZAJppnKwGFnITd
-         YBy35o1eeS22GuOEn0+F9GS7H/4qqZHiS0Kbf6EKVHEr9pA54/XpKf+wfTxzO5dOwvzc
-         cN5ul3eWVGK1kMyq5FYTP51NRbOZwDV7VDTjg5P7wg5yndvx5DReKGqmeCID/v4ey55c
-         QHv1uli/5BDrL2iMuyO2b2vWcq/zReOoAlaD2i17PINdF5B23C5AHHGzdULIspfog/og
-         qgvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FXAys4F2ibTIQs+sq0fDW6xOS098cuDbLHdnNGTjsAo=;
-        b=j3DdZVQUvOcyCfL7Y2VKJpGB5sdbuu+LUjwr/gdIY4xus5xRDGQ5/LjEjVWfPav20+
-         x2ylAt9jOrWMrJnzDogo/Drfpgwe/W8fO7rnUl7m/bRGjnq7Mnno+7daXVQCwm/EH4dp
-         8yL9xxlxlWEgtjkaDDIaafUZqlW+5y4ogSmMYZ4j6UKihNHoxpkMesz89VFp+XR1JIB9
-         2bUBMOwtKhKRTh6q70BxDDuAv4tXn1UMoJn6lDWTZVed7M9UkoStM/10YLdbJcX33NRF
-         gPb94RySNncywOrV4MeLY3252meLOAnaiPmladnTnBPtUvY0hpu/2lLoPHdWjWUeo9gO
-         8qUw==
-X-Gm-Message-State: AOAM531CKHmUbi7lCNZFF8cFk5ZCeK9sk0+jwh86FT5LVVhBxPQOTkw0
-        emaOYb6xyy0zpnHgIBYH48XK+A==
-X-Google-Smtp-Source: ABdhPJy7PfblvJlOuqmcggvbIIQA3eZk0eKINJ61c90bjZv+IxrgEF3WVnQJqRpOa81qvpIrkxVokQ==
-X-Received: by 2002:a19:7b1b:: with SMTP id w27mr27302828lfc.379.1636317005429;
-        Sun, 07 Nov 2021 12:30:05 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id a23sm440816ljh.140.2021.11.07.12.30.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Nov 2021 12:30:05 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 12/12] watchdog: s3c2410: Add Exynos850 support
-Date:   Sun,  7 Nov 2021 22:29:43 +0200
-Message-Id: <20211107202943.8859-13-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211107202943.8859-1-semen.protsenko@linaro.org>
-References: <20211107202943.8859-1-semen.protsenko@linaro.org>
+        Mon, 8 Nov 2021 05:31:33 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7500A21B01;
+        Mon,  8 Nov 2021 10:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1636367328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=/iioiyH4Q966bbevxkXK56U3XXUi7baEWWvNDv45N6I=;
+        b=y2mnRHjthYiK1CtCkk4q71zzlkNuHVsebrPumY2Fu7DDVSrRnyO5GaTNtLwTi2xWYb/BSb
+        Rn69kVxMfbCSXHyInCxS9JxJMQIiUWfoMW5FhckULdu7fjBZqCfQJ/lUzBzsWz9gwqMxp3
+        lTFCBh6nknNSMYVqqqvdqFAhESuSw4Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1636367328;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=/iioiyH4Q966bbevxkXK56U3XXUi7baEWWvNDv45N6I=;
+        b=EwpwY9IHQCBU7TChVkU3KtD5D8ovEskvbAZPMYTuu+tpo3oPg6W7WVj2uxGV29yONBwiA5
+        uYgsfCzhBUU0XvBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1D7FC13B37;
+        Mon,  8 Nov 2021 10:28:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Y+crBuD7iGHPHQAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Mon, 08 Nov 2021 10:28:48 +0000
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+To:     daniel@ffwll.ch, airlied@linux.ie,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@canonical.com, oleksandr_andrushchenko@epam.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [RESEND PATCH 0/3] drm/{exynos,xen}: Implement gem_prime_mmap with drm_gem_prime_mmap()
+Date:   Mon,  8 Nov 2021 11:28:43 +0100
+Message-Id: <20211108102846.309-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Exynos850 is a bit different from SoCs already supported in WDT driver:
-  - AUTOMATIC_WDT_RESET_DISABLE register is removed, so its value is
-    always 0; .disable_auto_reset callback is not set for that reason
-  - MASK_WDT_RESET_REQUEST register is replaced with
-    CLUSTERx_NONCPU_IN_EN register; instead of masking (disabling) WDT
-    reset interrupt it's now enabled with the same value; .mask_reset
-    callback is reused for that functionality though
-  - To make WDT functional, WDT counter needs to be enabled in
-    CLUSTERx_NONCPU_OUT register; it's done using .enable_counter
-    callback
+(Resending the patchset from [1]. Most drivers have already been updated and
+only two drivers are left.)
 
-Also Exynos850 has two CPU clusters, each has its own dedicated WDT
-instance. Different PMU registers and bits are used for each cluster. So
-driver data is now modified in probe, adding needed info depending on
-cluster index passed from device tree.
+Replace all remaining implementations of struct drm_driver.gem_prime_mmap
+with use drm_gem_prime_mmap(). For each affected driver, put the mmap code
+into struct drm_gem_object_funcs.mmap. With the latter change in place,
+create struct file_operations via DEFINE_DRM_GEM_FOPS().
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v3:
-  - Renamed "samsung,index" property to more descriptive
-    "samsung,cluster-index"
-  - Used pre-defined and completely set driver data for cluster0 and
-    cluster1
+As next steps, drivers can be converted to use drm_gem_prime_mmap() and
+drm_gem_mmap() (e.g., Tegra). The default mmap code in drm_gem_prime_mmap()
+can be pushed into affected drivers or a helper function. The gem_prime_mmap
+hook can probably be removed at some point.
 
-Changes in v2:
-  - Used single compatible for Exynos850, populating missing driver data
-    in probe
-  - Added "index" property to specify CPU cluster index
+[1] https://lore.kernel.org/dri-devel/20210609112012.10019-1-tzimmermann@suse.de/
 
- drivers/watchdog/s3c2410_wdt.c | 62 +++++++++++++++++++++++++++++++++-
- 1 file changed, 61 insertions(+), 1 deletion(-)
+Thomas Zimmermann (3):
+  drm/exynox: Implement mmap as GEM object function
+  drm/xen: Implement mmap as GEM object function
+  drm: Update documentation and TODO of gem_prime_mmap hook
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 96aa5d9c6ed4..1456201f27de 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -56,6 +56,13 @@
- #define EXYNOS5_RST_STAT_REG_OFFSET		0x0404
- #define EXYNOS5_WDT_DISABLE_REG_OFFSET		0x0408
- #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET	0x040c
-+#define EXYNOS850_CLUSTER0_NONCPU_OUT		0x1220
-+#define EXYNOS850_CLUSTER0_NONCPU_INT_EN	0x1244
-+#define EXYNOS850_CLUSTER1_NONCPU_OUT		0x1620
-+#define EXYNOS850_CLUSTER1_NONCPU_INT_EN	0x1644
-+
-+#define EXYNOS850_CLUSTER0_WDTRESET_BIT		24
-+#define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
- 
- /**
-  * Quirk flags for different Samsung watchdog IP-cores.
-@@ -205,6 +212,30 @@ static const struct s3c2410_wdt_variant drv_data_exynos7 = {
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_AUTO_DISABLE,
- };
- 
-+static const struct s3c2410_wdt_variant drv_data_exynos850_cl0 = {
-+	.mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN,
-+	.mask_bit = 2,
-+	.mask_reset_inv = true,
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT,
-+	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
-+	.cnt_en_bit = 7,
-+	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+};
-+
-+static const struct s3c2410_wdt_variant drv_data_exynos850_cl1 = {
-+	.mask_reset_reg = EXYNOS850_CLUSTER1_NONCPU_INT_EN,
-+	.mask_bit = 2,
-+	.mask_reset_inv = true,
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = EXYNOS850_CLUSTER1_WDTRESET_BIT,
-+	.cnt_en_reg = EXYNOS850_CLUSTER1_NONCPU_OUT,
-+	.cnt_en_bit = 7,
-+	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-+};
-+
- static const struct of_device_id s3c2410_wdt_match[] = {
- 	{ .compatible = "samsung,s3c2410-wdt",
- 	  .data = &drv_data_s3c2410 },
-@@ -216,6 +247,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
- 	  .data = &drv_data_exynos5420 },
- 	{ .compatible = "samsung,exynos7-wdt",
- 	  .data = &drv_data_exynos7 },
-+	{ .compatible = "samsung,exynos850-wdt",
-+	  .data = &drv_data_exynos850_cl0 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-@@ -587,14 +620,38 @@ static inline const struct s3c2410_wdt_variant *
- s3c2410_get_wdt_drv_data(struct platform_device *pdev)
- {
- 	const struct s3c2410_wdt_variant *variant;
-+	struct device *dev = &pdev->dev;
- 
--	variant = of_device_get_match_data(&pdev->dev);
-+	variant = of_device_get_match_data(dev);
- 	if (!variant) {
- 		/* Device matched by platform_device_id */
- 		variant = (struct s3c2410_wdt_variant *)
- 			   platform_get_device_id(pdev)->driver_data;
- 	}
- 
-+	/* Choose Exynos850 driver data w.r.t. cluster index */
-+	if (variant == &drv_data_exynos850_cl0) {
-+		u32 index;
-+		int err;
-+
-+		err = of_property_read_u32(dev->of_node,
-+					   "samsung,cluster-index", &index);
-+		if (err) {
-+			dev_err(dev, "failed to get cluster index\n");
-+			return NULL;
-+		}
-+
-+		switch (index) {
-+		case 0:
-+			return &drv_data_exynos850_cl0;
-+		case 1:
-+			return &drv_data_exynos850_cl1;
-+		default:
-+			dev_err(dev, "wrong cluster index: %u\n", index);
-+			return NULL;
-+		}
-+	}
-+
- 	return variant;
- }
- 
-@@ -615,6 +672,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	wdt->wdt_device = s3c2410_wdd;
- 
- 	wdt->drv_data = s3c2410_get_wdt_drv_data(pdev);
-+	if (!wdt->drv_data)
-+		return -EINVAL;
-+
- 	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
- 		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
- 						"samsung,syscon-phandle");
--- 
-2.30.2
+ Documentation/gpu/todo.rst                |  11 ---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   |  13 +--
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  20 +---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c   |  43 ++-------
+ drivers/gpu/drm/exynos/exynos_drm_gem.h   |   5 -
+ drivers/gpu/drm/xen/xen_drm_front.c       |  16 +---
+ drivers/gpu/drm/xen/xen_drm_front_gem.c   | 108 +++++++++-------------
+ drivers/gpu/drm/xen/xen_drm_front_gem.h   |   7 --
+ include/drm/drm_drv.h                     |  11 ++-
+ 9 files changed, 64 insertions(+), 170 deletions(-)
+
+
+base-commit: 215295e7b0a3deb2015c6d6b343b319e4f6d9a1d
+prerequisite-patch-id: c2b2f08f0eccc9f5df0c0da49fa1d36267deb11d
+prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
+--
+2.33.1
 
