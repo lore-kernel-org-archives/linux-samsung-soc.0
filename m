@@ -2,98 +2,282 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED8BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Nov 2021 15:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F3BC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Nov 2021 15:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC7F96115A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Nov 2021 15:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AF036108E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Nov 2021 15:29:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238917AbhKHPQG (ORCPT
+        id S240843AbhKHPcJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Nov 2021 10:16:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51118 "EHLO
+        Mon, 8 Nov 2021 10:32:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237670AbhKHPPw (ORCPT
+        with ESMTP id S240762AbhKHPcI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Nov 2021 10:15:52 -0500
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A07DC061208
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Nov 2021 07:12:58 -0800 (PST)
-Received: by mail-ua1-x935.google.com with SMTP id s13so16578076uaj.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Nov 2021 07:12:58 -0800 (PST)
+        Mon, 8 Nov 2021 10:32:08 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19BAC061570
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Nov 2021 07:29:23 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id t30so27568774wra.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Nov 2021 07:29:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9UlUS6saUywHZK/umS0DUBOD5AkBYetajHFNSpyoE4w=;
-        b=DOcAXZ4Mw2ea+GyAjENB23bTtsIuOKuEdvjP+XRgtsReT5UUBjNtxggSSHvwj6MdR8
-         V1+45UigKcj1QpVD+lmvp+U5Ibx93g+Eg1cvWvUM+mbtLBoTKvCS/9CMdFiN0mXO0mlz
-         5FmGehJD++jz8ghPFbjeJp+omeR8ITegBIet9Hx6WXG9x3lox7s/1+Jn3C/FUm38gOrH
-         z8Aq/5yqJWPYvOtpapyknlpcmGVFkA+aQhwhcO3MP6FIbH0LWdNE14hlOJb6V7zlZjLE
-         4P0N1a5gsR40AhaMiXjGk9HkIfCkgYHI3HOh/ioR5P3Fj+Pt4D1+LQrlK92yfLcYdqLs
-         xLqw==
+        d=ffwll.ch; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=c1Vs+8e8CI/eQJgbpfI/Ztxvzb9lQKxlTgF3ypUWX2Q=;
+        b=EvlGKfzWf4YR8a+ai4RU3CDMnu3ajWJwo8Sp6Li16gYPErtkuf7ySvMFaMs3zqU6i/
+         ekw32AsoVDd52jHf+vVFPbMOH91z7Cj9FjCy9/QctcBukSoXe60I7bH9hY3/3TUo9+d6
+         J0ZpzzHXIqYXbJmYZukljOghYAs4PpBo3VFnU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9UlUS6saUywHZK/umS0DUBOD5AkBYetajHFNSpyoE4w=;
-        b=et+B4DboNaEr4qcXAR7e6NXkILkTHq9UWIHRu7ndLf5XApkfuhUjL4Xo6j674+2enx
-         ptdRM9v1ilgDO/gY6WQGo1z3bW6MM2xjQTjn3u0JJU/pedmF+EkAK0jH+cN9UzTpX9/h
-         Dp8Xhuqa/zoF3jN57XZJujPut14tvlBTr1jKeGwH36M2C96My+LUVHNOrgtcSfV8bd1y
-         mrHhpNFNs+27h6UILN+SwTfIamDYgbJVP1xurHIZijx06UXSLFDq5Z5QkTGZkTvb/KnQ
-         dHDi36QGl4tHHbFUrIcaG26Jhmlkq95kHkgoDJDwL6Nfrqox/pTvmrOiAwAvgyxO+Hc4
-         FPXw==
-X-Gm-Message-State: AOAM533zrN7ICI2952hWQ24ebTh6WLzPaabw10lz0w1rHa1YYa14RidS
-        H3vdkj9SRXLlHOwUH4C9m9pxOqw5258cekwcnbQPyA==
-X-Google-Smtp-Source: ABdhPJxGuRiXWJL0tUJhvhSH15xu8O6PSly0XUSVcpnNraXIznd7K+XJ1EfcXrgS3fbjV/7ZTx1T0mHyGs+pQ/qL0zs=
-X-Received: by 2002:a05:6102:3ece:: with SMTP id n14mr108075vsv.55.1636384376768;
- Mon, 08 Nov 2021 07:12:56 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=c1Vs+8e8CI/eQJgbpfI/Ztxvzb9lQKxlTgF3ypUWX2Q=;
+        b=ZCXEQYJE7wX0cQjLpxGsLYBXjfKqauMOHe/z6alaBHp/GXUQoWhHGs8WqOnjHhHHVV
+         e4ug1dfg5lliHHxma7f4sIOMyph99HfgFeG0SCLBoeY0S7W351nmQIy4D9g54+qnylpm
+         yIf3b4KSmuEeAmkJEAr9PfsuNj/S88hhTjScsoWqDqvu+qiVDiHURL3nBXWTbpblI1Uc
+         hxg+QsOW9dTupEpeXzLJbczFZptg1HcieP2yxhSE69HDvv6MCHirpk2O2b16c8gedF4A
+         pWB3j66uoGseg8xK7/MRW8QJK0NGBbq7FbNSGitqV/tF4UT0FbA/sTF6GJSVXnms7W5C
+         zYQQ==
+X-Gm-Message-State: AOAM530J3CBSJ6ApFQZJhRv8zhO4C5FB2+Jf2fMcLnlGSAi9uxv8xJYc
+        6CVI9X5F1BF+uqCkCYzs1JbzrA==
+X-Google-Smtp-Source: ABdhPJwb/aFbIu8dIyZ/rHwVyiCtAdp7dmdzWNFLSsD1GwQ69nph/cPeSUCecltAOeJjHsbs2fHFGQ==
+X-Received: by 2002:adf:e6c5:: with SMTP id y5mr664478wrm.79.1636385362480;
+        Mon, 08 Nov 2021 07:29:22 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id z135sm24083422wmc.45.2021.11.08.07.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Nov 2021 07:29:21 -0800 (PST)
+Date:   Mon, 8 Nov 2021 16:29:20 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     daniel@ffwll.ch, airlied@linux.ie,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        krzysztof.kozlowski@canonical.com,
+        oleksandr_andrushchenko@epam.com, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH 1/3] drm/exynox: Implement mmap as GEM object function
+Message-ID: <YYlCUOgd1/GBluE7@phenom.ffwll.local>
+References: <20211108102846.309-1-tzimmermann@suse.de>
+ <20211108102846.309-2-tzimmermann@suse.de>
 MIME-Version: 1.0
-References: <20211108134901.20490-1-semen.protsenko@linaro.org>
- <20211108134901.20490-2-semen.protsenko@linaro.org> <433f2d77-90d0-53d9-2e04-a8c5feb16349@canonical.com>
-In-Reply-To: <433f2d77-90d0-53d9-2e04-a8c5feb16349@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 8 Nov 2021 17:12:44 +0200
-Message-ID: <CAPLW+4=RMfTmLnOiC+=rAB1c0+rTqpqDpc-1UO+0BOmP3+0Z_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: defconfig: Enable Samsung I2C driver
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211108102846.309-2-tzimmermann@suse.de>
+X-Operating-System: Linux phenom 5.10.0-8-amd64 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 8 Nov 2021 at 16:18, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 08/11/2021 14:49, Sam Protsenko wrote:
-> > i2c-s3c2410 driver is needed for some arm64 Exynos SoCs, e.g. Exynos850.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  arch/arm64/configs/defconfig | 1 +
-> >  1 file changed, 1 insertion(+)
->
-> Hm, that's a little bit unexpected. I thought you will be also using the
-> HSI2C driver (where Jaewon is adding USI support).
->
+On Mon, Nov 08, 2021 at 11:28:44AM +0100, Thomas Zimmermann wrote:
+> Moving the driver-specific mmap code into a GEM object function allows
+> for using DRM helpers for various mmap callbacks.
+> 
+> The respective exynos functions are being removed. The file_operations
+> structure exynos_drm_driver_fops is now being created by the helper macro
+> DEFINE_DRM_GEM_FOPS().
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Thought you'd ask :) Exynos850 has both I2C and HSI2C blocks:
-  - I2C is a regular I2C, and uses s3c2410-i2c driver
-  - whilst HSI2C is a high-speed I2C (used for example for cameras),
-and uses exynos5-hsi2c driver
+s/exynox/exynos in the subject.
 
-I'll look into HSI2C enablement on Exynos850 soon as well, so Jaewon's
-patches might be helpful for my case too -- didn't check that yet.
+Patch lgtm, but would still be good if exynos maintainers would
+ack/review/test it. But if you don't get anything within 2 weeks here's
+my:
 
-> Best regards,
-> Krzysztof
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 13 ++-----
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 20 ++---------
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c   | 43 +++++------------------
+>  drivers/gpu/drm/exynos/exynos_drm_gem.h   |  5 ---
+>  4 files changed, 13 insertions(+), 68 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index d8f1cf4d6b69..9743b6b17447 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -102,16 +102,7 @@ static const struct drm_ioctl_desc exynos_ioctls[] = {
+>  			DRM_RENDER_ALLOW),
+>  };
+>  
+> -static const struct file_operations exynos_drm_driver_fops = {
+> -	.owner		= THIS_MODULE,
+> -	.open		= drm_open,
+> -	.mmap		= exynos_drm_gem_mmap,
+> -	.poll		= drm_poll,
+> -	.read		= drm_read,
+> -	.unlocked_ioctl	= drm_ioctl,
+> -	.compat_ioctl = drm_compat_ioctl,
+> -	.release	= drm_release,
+> -};
+> +DEFINE_DRM_GEM_FOPS(exynos_drm_driver_fops);
+>  
+>  static const struct drm_driver exynos_drm_driver = {
+>  	.driver_features	= DRIVER_MODESET | DRIVER_GEM
+> @@ -124,7 +115,7 @@ static const struct drm_driver exynos_drm_driver = {
+>  	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+>  	.gem_prime_import	= exynos_drm_gem_prime_import,
+>  	.gem_prime_import_sg_table	= exynos_drm_gem_prime_import_sg_table,
+> -	.gem_prime_mmap		= exynos_drm_gem_prime_mmap,
+> +	.gem_prime_mmap		= drm_gem_prime_mmap,
+>  	.ioctls			= exynos_ioctls,
+>  	.num_ioctls		= ARRAY_SIZE(exynos_ioctls),
+>  	.fops			= &exynos_drm_driver_fops,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 5147f5929be7..02c97b9ca926 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -15,6 +15,7 @@
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_fourcc.h>
+> +#include <drm/drm_prime.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/exynos_drm.h>
+>  
+> @@ -39,25 +40,8 @@ static int exynos_drm_fb_mmap(struct fb_info *info,
+>  	struct drm_fb_helper *helper = info->par;
+>  	struct exynos_drm_fbdev *exynos_fbd = to_exynos_fbdev(helper);
+>  	struct exynos_drm_gem *exynos_gem = exynos_fbd->exynos_gem;
+> -	unsigned long vm_size;
+> -	int ret;
+> -
+> -	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
+> -
+> -	vm_size = vma->vm_end - vma->vm_start;
+> -
+> -	if (vm_size > exynos_gem->size)
+> -		return -EINVAL;
+>  
+> -	ret = dma_mmap_attrs(to_dma_dev(helper->dev), vma, exynos_gem->cookie,
+> -			     exynos_gem->dma_addr, exynos_gem->size,
+> -			     exynos_gem->dma_attrs);
+> -	if (ret < 0) {
+> -		DRM_DEV_ERROR(to_dma_dev(helper->dev), "failed to mmap.\n");
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> +	return drm_gem_prime_mmap(&exynos_gem->base, vma);
+>  }
+>  
+>  static const struct fb_ops exynos_drm_fb_ops = {
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index 4396224227d1..c4b63902ee7a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -17,6 +17,8 @@
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_gem.h"
+>  
+> +static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
+> +
+>  static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem, bool kvmap)
+>  {
+>  	struct drm_device *dev = exynos_gem->base.dev;
+> @@ -135,6 +137,7 @@ static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+>  static const struct drm_gem_object_funcs exynos_drm_gem_object_funcs = {
+>  	.free = exynos_drm_gem_free_object,
+>  	.get_sg_table = exynos_drm_gem_prime_get_sg_table,
+> +	.mmap = exynos_drm_gem_mmap,
+>  	.vm_ops = &exynos_drm_gem_vm_ops,
+>  };
+>  
+> @@ -354,12 +357,16 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+>  	return 0;
+>  }
+>  
+> -static int exynos_drm_gem_mmap_obj(struct drm_gem_object *obj,
+> -				   struct vm_area_struct *vma)
+> +static int exynos_drm_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+>  {
+>  	struct exynos_drm_gem *exynos_gem = to_exynos_gem(obj);
+>  	int ret;
+>  
+> +	if (obj->import_attach)
+> +		return dma_buf_mmap(obj->dma_buf, vma, 0);
+> +
+> +	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
+> +
+>  	DRM_DEV_DEBUG_KMS(to_dma_dev(obj->dev), "flags = 0x%x\n",
+>  			  exynos_gem->flags);
+>  
+> @@ -385,26 +392,6 @@ static int exynos_drm_gem_mmap_obj(struct drm_gem_object *obj,
+>  	return ret;
+>  }
+>  
+> -int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> -{
+> -	struct drm_gem_object *obj;
+> -	int ret;
+> -
+> -	/* set vm_area_struct. */
+> -	ret = drm_gem_mmap(filp, vma);
+> -	if (ret < 0) {
+> -		DRM_ERROR("failed to mmap.\n");
+> -		return ret;
+> -	}
+> -
+> -	obj = vma->vm_private_data;
+> -
+> -	if (obj->import_attach)
+> -		return dma_buf_mmap(obj->dma_buf, vma, 0);
+> -
+> -	return exynos_drm_gem_mmap_obj(obj, vma);
+> -}
+> -
+>  /* low-level interface prime helpers */
+>  struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device *dev,
+>  					    struct dma_buf *dma_buf)
+> @@ -466,15 +453,3 @@ exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+>  	exynos_gem->sgt = sgt;
+>  	return &exynos_gem->base;
+>  }
+> -
+> -int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
+> -			      struct vm_area_struct *vma)
+> -{
+> -	int ret;
+> -
+> -	ret = drm_gem_mmap_obj(obj, obj->size, vma);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return exynos_drm_gem_mmap_obj(obj, vma);
+> -}
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> index a23272fb96fb..79d7e1a87419 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> @@ -96,9 +96,6 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+>  			       struct drm_device *dev,
+>  			       struct drm_mode_create_dumb *args);
+>  
+> -/* set vm_flags and we can change the vm attribute to other one at here. */
+> -int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> -
+>  /* low-level interface prime helpers */
+>  struct drm_gem_object *exynos_drm_gem_prime_import(struct drm_device *dev,
+>  					    struct dma_buf *dma_buf);
+> @@ -107,7 +104,5 @@ struct drm_gem_object *
+>  exynos_drm_gem_prime_import_sg_table(struct drm_device *dev,
+>  				     struct dma_buf_attachment *attach,
+>  				     struct sg_table *sgt);
+> -int exynos_drm_gem_prime_mmap(struct drm_gem_object *obj,
+> -			      struct vm_area_struct *vma);
+>  
+>  #endif
+> -- 
+> 2.33.1
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
