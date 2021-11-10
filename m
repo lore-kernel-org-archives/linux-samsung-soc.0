@@ -2,147 +2,181 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8CDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Nov 2021 10:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62F7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Nov 2021 12:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37F91611BF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Nov 2021 10:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A784461186
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Nov 2021 12:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbhKJKtk (ORCPT
+        id S229653AbhKJM6u (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Nov 2021 05:49:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47066 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbhKJKtj (ORCPT
+        Wed, 10 Nov 2021 07:58:50 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:42132 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231503AbhKJM6u (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Nov 2021 05:49:39 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5126C061764
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Nov 2021 02:46:51 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id x15so8862257edv.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Nov 2021 02:46:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CJ8BKvr5XUSO/Vo4sS7QvREYUZiUN+4dM8bteUPX/YU=;
-        b=a5PDaYRSHhLE0B/0FQ+MlW7rePX4lX8rMFt04k9jy714oeV6rCydngg+4chiEab4BB
-         0et1lR5054ugeHjiqzoRhGkDg1UoJWAzmwRFvIlBA+ugUkN39qs5cm5is5LIv5WH2xEf
-         oEhqQbxoFXx4fNzwMrzHIsDeA0puwKDSYP3nc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CJ8BKvr5XUSO/Vo4sS7QvREYUZiUN+4dM8bteUPX/YU=;
-        b=rgM31qFVmha0s6HK7S9kZZhx6B+5hUmpyLyu3pAaDs+gpb7kXKmSTfKqSMFgXFozWo
-         PWPbovZhkyWIyc4CYGGEJ/O4hTVVGFNfVj40CrHZUOzfyHg1MGyiSEC6drK4WbiZyhGu
-         SrFRomFA1Iwz1wYpm7Hnff7whIuoeXHdzMl/6RW+QYNNOWzgeQkGm8B8ppDlGLCaT0XS
-         1Zv2uznt4bU8lL8CzH+gDwkLwPzWxpIbVc8QuqAvzhE+x7E1H387R7pl/1K+1GTjArlI
-         924JfLlELt4doaSUhIIKP6RJt6CmK7rvUWhi7DUyKl8T+9JyL7zWtiNIm6dEWo5VPEMm
-         Qzmg==
-X-Gm-Message-State: AOAM530jYe72vbJk/LTmhf+tWLeNSsP1a1LCVOTRgzvxQQ2u2c32MOQc
-        f6norS6JKjYiKnNyqK0MM0KTLg==
-X-Google-Smtp-Source: ABdhPJzex3EJLJxKesbpcXVhuXhXz8mKsgkAvORtmUcskNu2IAPYg8LWXRVSpkQDC+igoNaKseVJbA==
-X-Received: by 2002:aa7:d546:: with SMTP id u6mr20545346edr.311.1636541210512;
-        Wed, 10 Nov 2021 02:46:50 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id z10sm14094307edd.12.2021.11.10.02.46.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 02:46:50 -0800 (PST)
-Date:   Wed, 10 Nov 2021 11:46:48 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     daniel@ffwll.ch, airlied@linux.ie,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        krzysztof.kozlowski@canonical.com,
-        oleksandr_andrushchenko@epam.com, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, xen-devel@lists.xenproject.org
+        Wed, 10 Nov 2021 07:58:50 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B672921921;
+        Wed, 10 Nov 2021 12:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1636548961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IbcrZNdGCCu9qg2Kk1Wawu7N5Sn+2bqvD1tsM0ThCa8=;
+        b=JSS7iyXOYhcE2A+amQG8b/os01cMRf22I3bMpMimqyssfIzQK5gq73EgXyOBEth6APqFZX
+        h+6QANyG5Vbpo+20BE+r66JYOsV3+8IVM3uuAWZbuqzvswBA/sABtNIdEMKrfF8KyD4jB8
+        E2GX6cX+y423i8iTn5hjvokpJH9iLHE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1636548961;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IbcrZNdGCCu9qg2Kk1Wawu7N5Sn+2bqvD1tsM0ThCa8=;
+        b=bO+GELzAiQX+Aw4orrOC1ndtvb3iJCup5CUSgEtVCLg32h7dU1Y3X3CfeeD8tdJ9DZPj2U
+        AK8OfsFfx+HO2EDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7A2B713C13;
+        Wed, 10 Nov 2021 12:56:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id W9DjHGHBi2F2DAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 10 Nov 2021 12:56:01 +0000
+Message-ID: <91b6dafa-de34-d972-50bc-b401820b5ccb@suse.de>
+Date:   Wed, 10 Nov 2021 13:56:00 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
 Subject: Re: [PATCH 3/3] drm: Update documentation and TODO of gem_prime_mmap
  hook
-Message-ID: <YYujGLFf+spiXMil@phenom.ffwll.local>
+Content-Language: en-US
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        krzysztof.kozlowski@canonical.com, airlied@linux.ie,
+        sw0312.kim@samsung.com, oleksandr_andrushchenko@epam.com,
+        kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org,
+        xen-devel@lists.xenproject.org,
+        linux-arm-kernel@lists.infradead.org
 References: <20211108102846.309-1-tzimmermann@suse.de>
  <20211108102846.309-4-tzimmermann@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211108102846.309-4-tzimmermann@suse.de>
-X-Operating-System: Linux phenom 5.10.0-8-amd64 
+ <YYujGLFf+spiXMil@phenom.ffwll.local>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <YYujGLFf+spiXMil@phenom.ffwll.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------1un6YQuZTKE0bDSxqwf0DnRw"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 11:28:46AM +0100, Thomas Zimmermann wrote:
-> The hook gem_prime_mmap in struct drm_driver is deprecated. Document
-> the new requirements.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------1un6YQuZTKE0bDSxqwf0DnRw
+Content-Type: multipart/mixed; boundary="------------APu0kFdmYGIun6HoTLUqXH0N";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+ krzysztof.kozlowski@canonical.com, airlied@linux.ie, sw0312.kim@samsung.com,
+ oleksandr_andrushchenko@epam.com, kyungmin.park@samsung.com,
+ dri-devel@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <91b6dafa-de34-d972-50bc-b401820b5ccb@suse.de>
+Subject: Re: [PATCH 3/3] drm: Update documentation and TODO of gem_prime_mmap
+ hook
+References: <20211108102846.309-1-tzimmermann@suse.de>
+ <20211108102846.309-4-tzimmermann@suse.de>
+ <YYujGLFf+spiXMil@phenom.ffwll.local>
+In-Reply-To: <YYujGLFf+spiXMil@phenom.ffwll.local>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+--------------APu0kFdmYGIun6HoTLUqXH0N
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-> ---
->  Documentation/gpu/todo.rst | 11 -----------
->  include/drm/drm_drv.h      | 11 +++++++----
->  2 files changed, 7 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-> index 60d1d7ee0719..6593c4c4006e 100644
-> --- a/Documentation/gpu/todo.rst
-> +++ b/Documentation/gpu/todo.rst
-> @@ -268,17 +268,6 @@ Contact: Daniel Vetter
->  
->  Level: Intermediate
->  
-> -Clean up mmap forwarding
-> -------------------------
-> -
-> -A lot of drivers forward gem mmap calls to dma-buf mmap for imported buffers.
-> -And also a lot of them forward dma-buf mmap to the gem mmap implementations.
-> -There's drm_gem_prime_mmap() for this now, but still needs to be rolled out.
-> -
-> -Contact: Daniel Vetter
-> -
-> -Level: Intermediate
-> -
->  Generic fbdev defio support
->  ---------------------------
->  
-> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-> index 0cd95953cdf5..a84eb4028e5b 100644
-> --- a/include/drm/drm_drv.h
-> +++ b/include/drm/drm_drv.h
-> @@ -345,11 +345,14 @@ struct drm_driver {
->  	 * mmap hook for GEM drivers, used to implement dma-buf mmap in the
->  	 * PRIME helpers.
->  	 *
-> -	 * FIXME: There's way too much duplication going on here, and also moved
-> -	 * to &drm_gem_object_funcs.
-> +	 * This hook only exists for historical reasons. Drivers must use
-> +	 * drm_gem_prime_mmap() to implement it.
-> +	 *
-> +	 * FIXME: Convert all drivers to implement mmap in struct
-> +	 * &drm_gem_object_funcs and inline drm_gem_prime_mmap() into
-> +	 * its callers. This hook should be removed afterwards.
+SGkNCg0KQW0gMTAuMTEuMjEgdW0gMTE6NDYgc2NocmllYiBEYW5pZWwgVmV0dGVyOg0KPiBP
+biBNb24sIE5vdiAwOCwgMjAyMSBhdCAxMToyODo0NkFNICswMTAwLCBUaG9tYXMgWmltbWVy
+bWFubiB3cm90ZToNCj4+IFRoZSBob29rIGdlbV9wcmltZV9tbWFwIGluIHN0cnVjdCBkcm1f
+ZHJpdmVyIGlzIGRlcHJlY2F0ZWQuIERvY3VtZW50DQo+PiB0aGUgbmV3IHJlcXVpcmVtZW50
+cy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1h
+bm5Ac3VzZS5kZT4NCj4gDQo+IFJldmlld2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwu
+dmV0dGVyQGZmd2xsLmNoPg0KDQpUaGFua3MgYSBsb3QhDQoNCldpdGggdGhlIHJlbWFpbmlu
+ZyBwYXRjaGVzIG1lcmdlZCwgYWxsIGRyaXZlcnMgd2lsbCBpbXBsZW1lbnQgDQpnZW1fcHJp
+bWVfbW1hcCB2aWEgZHJtX2dlbV9wcmltZV9tbWFwKCkgYW5kIHVzZSB0aGUgR0VNIG9iamVj
+dCdzIG1tYXAgDQpjYWxsYmFjayBmb3Igc3BlY2lmaWMgZGV0YWlscy4NCg0KVGhlIG5leHQg
+c3RlcCB3b3VsZCBiZSB0byBtb3ZlIGFsbCBjdXN0b20gaW1wbGVtZW50YXRpb25zIG9mIA0K
+ZmlsZV9vcGVyYXRpb25zLm1tYXAgaW50byB0aGUgR0VNIG9iamVjdCdzIG1tYXAgYW5kIGlt
+cGxlbWVudCB0aGUgDQpmaWxlX29wZXJhdGlvbnMgY2FsbGJhY2sgd2l0aCBkcm1fbW1hcCgp
+Lg0KDQpCZXN0IHJlZ2FyZHMNClRob21hcw0KDQo+IA0KPj4gLS0tDQo+PiAgIERvY3VtZW50
+YXRpb24vZ3B1L3RvZG8ucnN0IHwgMTEgLS0tLS0tLS0tLS0NCj4+ICAgaW5jbHVkZS9kcm0v
+ZHJtX2Rydi5oICAgICAgfCAxMSArKysrKysrLS0tLQ0KPj4gICAyIGZpbGVzIGNoYW5nZWQs
+IDcgaW5zZXJ0aW9ucygrKSwgMTUgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBh
+L0RvY3VtZW50YXRpb24vZ3B1L3RvZG8ucnN0IGIvRG9jdW1lbnRhdGlvbi9ncHUvdG9kby5y
+c3QNCj4+IGluZGV4IDYwZDFkN2VlMDcxOS4uNjU5M2M0YzQwMDZlIDEwMDY0NA0KPj4gLS0t
+IGEvRG9jdW1lbnRhdGlvbi9ncHUvdG9kby5yc3QNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24v
+Z3B1L3RvZG8ucnN0DQo+PiBAQCAtMjY4LDE3ICsyNjgsNiBAQCBDb250YWN0OiBEYW5pZWwg
+VmV0dGVyDQo+PiAgIA0KPj4gICBMZXZlbDogSW50ZXJtZWRpYXRlDQo+PiAgIA0KPj4gLUNs
+ZWFuIHVwIG1tYXAgZm9yd2FyZGluZw0KPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+Pj4gLQ0KPj4gLUEgbG90IG9mIGRyaXZlcnMgZm9yd2FyZCBnZW0gbW1hcCBjYWxscyB0byBk
+bWEtYnVmIG1tYXAgZm9yIGltcG9ydGVkIGJ1ZmZlcnMuDQo+PiAtQW5kIGFsc28gYSBsb3Qg
+b2YgdGhlbSBmb3J3YXJkIGRtYS1idWYgbW1hcCB0byB0aGUgZ2VtIG1tYXAgaW1wbGVtZW50
+YXRpb25zLg0KPj4gLVRoZXJlJ3MgZHJtX2dlbV9wcmltZV9tbWFwKCkgZm9yIHRoaXMgbm93
+LCBidXQgc3RpbGwgbmVlZHMgdG8gYmUgcm9sbGVkIG91dC4NCj4+IC0NCj4+IC1Db250YWN0
+OiBEYW5pZWwgVmV0dGVyDQo+PiAtDQo+PiAtTGV2ZWw6IEludGVybWVkaWF0ZQ0KPj4gLQ0K
+Pj4gICBHZW5lcmljIGZiZGV2IGRlZmlvIHN1cHBvcnQNCj4+ICAgLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tDQo+PiAgIA0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9k
+cnYuaCBiL2luY2x1ZGUvZHJtL2RybV9kcnYuaA0KPj4gaW5kZXggMGNkOTU5NTNjZGY1Li5h
+ODRlYjQwMjhlNWIgMTAwNjQ0DQo+PiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fZHJ2LmgNCj4+
+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9kcnYuaA0KPj4gQEAgLTM0NSwxMSArMzQ1LDE0IEBA
+IHN0cnVjdCBkcm1fZHJpdmVyIHsNCj4+ICAgCSAqIG1tYXAgaG9vayBmb3IgR0VNIGRyaXZl
+cnMsIHVzZWQgdG8gaW1wbGVtZW50IGRtYS1idWYgbW1hcCBpbiB0aGUNCj4+ICAgCSAqIFBS
+SU1FIGhlbHBlcnMuDQo+PiAgIAkgKg0KPj4gLQkgKiBGSVhNRTogVGhlcmUncyB3YXkgdG9v
+IG11Y2ggZHVwbGljYXRpb24gZ29pbmcgb24gaGVyZSwgYW5kIGFsc28gbW92ZWQNCj4+IC0J
+ICogdG8gJmRybV9nZW1fb2JqZWN0X2Z1bmNzLg0KPj4gKwkgKiBUaGlzIGhvb2sgb25seSBl
+eGlzdHMgZm9yIGhpc3RvcmljYWwgcmVhc29ucy4gRHJpdmVycyBtdXN0IHVzZQ0KPj4gKwkg
+KiBkcm1fZ2VtX3ByaW1lX21tYXAoKSB0byBpbXBsZW1lbnQgaXQuDQo+PiArCSAqDQo+PiAr
+CSAqIEZJWE1FOiBDb252ZXJ0IGFsbCBkcml2ZXJzIHRvIGltcGxlbWVudCBtbWFwIGluIHN0
+cnVjdA0KPj4gKwkgKiAmZHJtX2dlbV9vYmplY3RfZnVuY3MgYW5kIGlubGluZSBkcm1fZ2Vt
+X3ByaW1lX21tYXAoKSBpbnRvDQo+PiArCSAqIGl0cyBjYWxsZXJzLiBUaGlzIGhvb2sgc2hv
+dWxkIGJlIHJlbW92ZWQgYWZ0ZXJ3YXJkcy4NCj4gDQo+IEkgdGhpbmsgYXQgbGVhc3QgaTkx
+NSBoYXMgZGlmZmVyZW50IHNlbWFudGljcyBiZXR3ZWVuIGRtYS1idWYgbW1hcCBhbmQgZ2Vt
+DQo+IG1tYXAgaW4gc29tZSBjYXNlcywgc28gdGhpcyBtaWdodCBiZSB0cmlja3kgdG8gYWNo
+aWV2ZS4gQnV0IEkgdGhpbmsNCj4gZXZlcnl3aGVyZSBlbHNlIHRoaXMgc2hvdWxkIGJlIHNv
+bGlkLg0KPiAtRGFuaWVsDQo+IA0KPj4gICAJICovDQo+PiAtCWludCAoKmdlbV9wcmltZV9t
+bWFwKShzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKm9iaiwNCj4+IC0JCQkJc3RydWN0IHZtX2Fy
+ZWFfc3RydWN0ICp2bWEpOw0KPj4gKwlpbnQgKCpnZW1fcHJpbWVfbW1hcCkoc3RydWN0IGRy
+bV9nZW1fb2JqZWN0ICpvYmosIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKTsNCj4+ICAg
+DQo+PiAgIAkvKioNCj4+ICAgCSAqIEBkdW1iX2NyZWF0ZToNCj4+IC0tIA0KPj4gMi4zMy4x
+DQo+Pg0KPiANCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERl
+dmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpNYXhmZWxk
+c3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIgMzY4MDksIEFHIE7DvHJu
+YmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
 
-I think at least i915 has different semantics between dma-buf mmap and gem
-mmap in some cases, so this might be tricky to achieve. But I think
-everywhere else this should be solid.
--Daniel
+--------------APu0kFdmYGIun6HoTLUqXH0N--
 
->  	 */
-> -	int (*gem_prime_mmap)(struct drm_gem_object *obj,
-> -				struct vm_area_struct *vma);
-> +	int (*gem_prime_mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
->  
->  	/**
->  	 * @dumb_create:
-> -- 
-> 2.33.1
-> 
+--------------1un6YQuZTKE0bDSxqwf0DnRw
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmGLwWAFAwAAAAAACgkQlh/E3EQov+CA
+fBAAnt27HP1sslZ8zQ6FW7dhzL7+pCcCbrAWcp0h9im+1qFVDKWgYUEFnFGBrzAPC5YN+4Uqsvkc
+QIgkdKhBqxx35e7fCeQV83msFRb1kL/Y6FmLDbR+0RfqEkWmP3Fo3HIfgf9yL0Mho/lGcN/NF+qp
+YYXy9HdAm2wlzP8EEfEQfe2zEpWOCrM2QyJ3qIxMg6Qh/sbXjP3NftH5dZ9hlHF7l5CtzeP0IXhf
+EwNzkB2bz4Tl0Vf9QhUHN3+w24jYd/4dEAk45LfTqgEQZHEhd37O4x30VntBGsMTUi+psrvX+1HC
+tPraFA0ssZI97FAbU3DWYpf9ggRBD3A9W9drQ4xUbjVBCyBsFYo/1YW+hdJXbuyL1rM/wPXH4MQ8
+iAiBd37Cgjrvj1OMeEVXUERO/ve2ILcT4XeiQHJTk8qGchaSAn+M+qIxVn3q+IIsRJRXnfQJap7Z
+FGiwdC4g9BWDl8o4yoqDdq39ICvIu/27DEHhmVy3MnwlpEP0chUANtnm4842TazKhnXKHYe//G6/
+uojiuyyW4FA5+UVoWz7dLEqsf2PYz2MEGKrNPGrmqOX9XAk0Pm2CjvgqL4qz5J1GCfwGPZbhWZ4E
+ZzYoy6JTmq5DUUh7KdOfFXvBTT4YZligymd33irsEnpHUz1ivyK1zCb5T+fl3g3hNaDa2yVGdNoW
+LyM=
+=nP0D
+-----END PGP SIGNATURE-----
+
+--------------1un6YQuZTKE0bDSxqwf0DnRw--
