@@ -2,95 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CE0C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 16:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7986BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 17:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4819161264
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 16:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589F0611CE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 17:05:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234129AbhKKQo4 convert rfc822-to-8bit (ORCPT
+        id S234308AbhKKRIN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Nov 2021 11:44:56 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:56687 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232033AbhKKQo4 (ORCPT
+        Thu, 11 Nov 2021 12:08:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230034AbhKKRII (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Nov 2021 11:44:56 -0500
-Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
- mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1N8oKc-1mgNHX38OU-015uAI; Thu, 11 Nov 2021 17:42:05 +0100
-Received: by mail-wr1-f47.google.com with SMTP id r8so10767656wra.7;
-        Thu, 11 Nov 2021 08:42:05 -0800 (PST)
-X-Gm-Message-State: AOAM532Z+w+8SsgL78FVABcQUZaZ+T1ec2cuGNN8CKSDejqBWmygqN1F
-        eB9sA1ZCUIQBS2QLOEWcbmt38VeIawq/OClHTS0=
-X-Google-Smtp-Source: ABdhPJx5ixmh9byW4TqjJFz6i36pu47gOG4MxdfEYwBa5JydmjzUlgQx1s3/1U2xifm5YWSSfQVw+Cg26iEzj2rLnyo=
-X-Received: by 2002:adf:d1c2:: with SMTP id b2mr10347630wrd.369.1636648925333;
- Thu, 11 Nov 2021 08:42:05 -0800 (PST)
+        Thu, 11 Nov 2021 12:08:08 -0500
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AAD6C0613F5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 09:05:19 -0800 (PST)
+Received: by mail-ua1-x931.google.com with SMTP id ay21so13208971uab.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 09:05:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HpH5aIz9YnVDHI1tp8iTZZAenfgFZ0zd85byr9qx2Vg=;
+        b=UdpJvinnJT+rLEFmcyE1XHdkYN5/vP9xkk5tjrHpQIiw4ffxoGhvbphUSs2mcUdX4D
+         3r+xBe/0FJFrmNU4CbxYY2TdLL7CXWcvqB93caoIZdPwyJU/IgPt1NlEhwcFv53BWXf/
+         qXqQFrmYNBd8smXfy/EhORtC667VtYArv9JzSNOJXozAK/ywKHZEv1xASbPwo0dx/pjg
+         TktB1xI1teAGUwEa0ZB7Bkkun+VtcUmnNa38vGhhj+RHSYUllNIHBrRg1UA2SrZK34kR
+         INkzZajs/okE0aVh48P1gDCtumnEJ4UfVHj910U9DcCdjHeMcu9ltMNPEPYP+gsrM/RD
+         Ffpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HpH5aIz9YnVDHI1tp8iTZZAenfgFZ0zd85byr9qx2Vg=;
+        b=fkd4CFkGh66Z5Iuf9IAL2QDoTpNMJxPUWn/i5EuTh0I7gq9TC22Dvlm+FUsElwpkWp
+         0vbEZpYBECQG0hOYgw9OCeBsTOk4KD64QpvlOGEJM+juL9IdC1588zJaH9/wBUtMwZVz
+         +yRXE/rpNCoatkIip+zlX026OKtWzgagvaAxQfxI6BOzzp0wdYV+zWPD0+k6gyxP0y6g
+         bAruJXUYnggrXsaULVQY7N+Vp4UsWflKPUcIPnN3a+HIFmwoTZEY/2P22+yeGgmnW308
+         nOpv1vJuj7vYLB5XR18PXRQqaAD1B70n3M8RXIa9exGS4ohgxpaz6WKDWJt9og1kxzBc
+         ly7w==
+X-Gm-Message-State: AOAM5334gxXYGTVQCyhR1z2A2kMbG2+cPea47r16CP2wXFCBUzlZMbtA
+        ZGgWlQrJTohu+GKQGB2/oDeU/AWdtdAu7pN3z4vG3g==
+X-Google-Smtp-Source: ABdhPJzj9aD0XnB8FKZNP4f62gsXxPkbQXP07nxLWlCQRJ6aFNZfRb5dxpkDED6uVInZTLrnALcpuJSMqBG4Ju7YfXY=
+X-Received: by 2002:a67:1781:: with SMTP id 123mr488406vsx.1.1636650318135;
+ Thu, 11 Nov 2021 09:05:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20211111091123.50853-1-krzysztof.kozlowski@canonical.com>
- <CAK8P3a3MezegptR_-XPVm=RtOn4UYsb+TPEKjCGb-XRt9ke36A@mail.gmail.com> <16fbb472-4a82-1267-9971-db453ba009e3@canonical.com>
-In-Reply-To: <16fbb472-4a82-1267-9971-db453ba009e3@canonical.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 11 Nov 2021 17:41:49 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0iwx4vZD=_zLFh8ioSrE=M--c=yqRZjxV+bjV6vs8sNw@mail.gmail.com>
-Message-ID: <CAK8P3a0iwx4vZD=_zLFh8ioSrE=M--c=yqRZjxV+bjV6vs8sNw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: s3c: include header for prototype of s3c2410_modify_misccr
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>
+References: <20211021202256.28517-1-semen.protsenko@linaro.org> <163502632457.411308.6365977083733513077.b4-ty@bootlin.com>
+In-Reply-To: <163502632457.411308.6365977083733513077.b4-ty@bootlin.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 11 Nov 2021 19:05:06 +0200
+Message-ID: <CAPLW+4mBKH_-A5rWGKgpA=r8as6UqhmHf6h1DRg0fEY9jSmJQA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] rtc: s3c: S3C driver improvements
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:Cs/rc3gJ8ojIGgdSVIXXfhFLSRK8r4TlA31y65LNadohR+T0v2L
- s2Mt33oVTImE4oDEshV/YwvEwCxq1YEQWnvnZ+QAcO6p8ISgsWPYByEziMWJQvgJ8OpcWvt
- rTrEHL94Fv2q4D/U/e3SAPX/inWjEPldeTYfdR11w4GnsW9hvcusrX4yJN8C3o8eOB0rV8N
- wKS8vth2jV6C+hifG8esA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:M4rL7yPVZm8=:vnkqUG2+9anc8XP8PL1oyG
- TeSJDCe4OOdtj/xWUQ90OfoH2jqaxfHR5TsGcppIBg4f+2aDnxUk9+wIjR6CivQHHj0VLFxZy
- hij4Vinnp1Y0nV/H+WFGc15z7QmhjAFq4oE0LrV0TMKgfzNJKbfPN+AmfDlVKCTibcokFFxlJ
- Q3lW+q0yLYkK4vPlUgGfY41+pQO9hKReE/LLiUauCGGNxiWYATAxu+tInzOJd3IeLl0xsdOGX
- ej6yL77KrpQZWeZbLtxQTCorCMPFaNuYLSDBxSsClWqBlylCmuneYqO/8z5VDysRKjsrS2SAj
- jFe6+Dp+rHKR61TiwEhdu3nXKSZKR4t28FlWZCZdzMXYHXgqFLLHxUlHuIn3SAeWfbChR/TYb
- yJuNVvx19q14DevBAEn7hjnkrZsxDexgpja1CgZt3A0wB5F4yI0Ojf01hWwewahGG98GFEq6R
- Ul7VlpVt9yi3JhJoSuFjhgRFfa/dnLiyVwikxxx49zQqWjLOaZKDaQmF3SqDqIsD9PV19VHo5
- 3LtlAo3LQ7ZVrcudrUtxwr+Un15CR7MaogFH3wYYlYDiXjHRy7QuamqM1lBhnbwFvyOYgt6KK
- hi8uLAD95wH6av4J5PWBBXNQ2QLTNpgCBE9BXrUvV12Elg5ndtio67WAdiWqpyJlL/HnAqjkG
- QylQcU2hOJvLsOs5iGrsPjky4DsQsiTBOFs4LMIRp2+3X5383jKK0fpivue+Jh0/WdSw=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 11, 2021 at 10:56 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
+On Sun, 24 Oct 2021 at 00:58, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
 >
-> On 11/11/2021 10:46, Arnd Bergmann wrote:
-> > On Thu, Nov 11, 2021 at 10:11 AM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >>
-> >> Include the header with prototype of s3c2410_modify_misccr to fix W=1
-> >> warning:
-> >>
-> >>   arch/arm/mach-s3c/gpio-samsung.c:1309:14: warning:
-> >>     no previous prototype for ‘s3c2410_modify_misccr’ [-Wmissing-prototypes]
-> >>
-> >> Reported-by: kernel test robot <lkp@intel.com>
-> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> On Thu, 21 Oct 2021 23:22:53 +0300, Sam Protsenko wrote:
+> > While working on Exynos850 support (where this driver works fine in its
+> > current state), I've stumbled upon some minor issue. This is the effort
+> > to fix those.
 > >
-> > Thank you for fixing it,
+> >   * [PATCH 1/3]: moves S3C RTC driver to newer API usage
+> >     (no functional changes)
+> >   * [PATCH 2/3]: refactoring/cleanup (no functional changes)
+> >   * [PATCH 3/3]: adds time range, as [PATCH 1/3] made it possible
 > >
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > If you like, I can put it into the fixes branch of the soc tree directly,
-> > otherwise I expect you'll send it in a pull request later.
+> > [...]
 >
-> It's not a serious bug and was there since long time, so maybe let's
-> send it via regular pull request.
+> Applied, thanks!
+>
 
-Ok, sounds good. I was worried for a bit that this would break builds
-with CONFIG_WERROR, but of course that is already broken in
-many ways with W=1.
+Hi Alexandre,
 
-        Arnd
+Just want to check if this series is going to be merged during current
+merge window, or is it scheduled for the next one?
+
+Thanks!
+
+> [1/3] rtc: s3c: Remove usage of devm_rtc_device_register()
+>       commit: dba28c37f23a09fc32dbc37463ddb2feb3886f98
+> [2/3] rtc: s3c: Extract read/write IO into separate functions
+>       commit: e4a1444e10cbda2892a4ea7325ef5efa47c75cfb
+> [3/3] rtc: s3c: Add time range
+>       commit: a5feda3b361e11b291786d5c4ff86d4b9a55498f
+>
+> Best regards,
+> --
+> Alexandre Belloni <alexandre.belloni@bootlin.com>
