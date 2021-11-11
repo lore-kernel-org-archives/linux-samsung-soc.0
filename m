@@ -2,267 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5184C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 09:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D45C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 09:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B14CC61268
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 09:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BBC60698
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 09:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232520AbhKKJVz (ORCPT
+        id S230021AbhKKJt5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Nov 2021 04:21:55 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:59864 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232456AbhKKJVo (ORCPT
+        Thu, 11 Nov 2021 04:49:57 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:47965 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229668AbhKKJt5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Nov 2021 04:21:44 -0500
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20211111091854epoutp030b89ebf0edec44ee6c69a15e723a1267~2c1eRkPDd3193231932epoutp03H
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 09:18:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20211111091854epoutp030b89ebf0edec44ee6c69a15e723a1267~2c1eRkPDd3193231932epoutp03H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1636622334;
-        bh=wtCxQAquzIyQTsZujTOJ8QskfgRiqssK9QK0Ly/P6r0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=k7L23t4trqkBCOkNy0KDN9fZNMBa267m+7d5oXWvNPr3MjN3q2AXzo0UbJk6j/pN5
-         LSEwe3M8oLkswubT92bmAODvRYaq3ExjvfbRWaUKX8o5oWY5c1eCdAFBj+30RU8/ro
-         qQpgNh3/aJ9Z1qqw93szsK3FVwNZqYcS/Ap33iGo=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20211111091853epcas2p1b574fb643a18dfa17d591b5c7a73bb94~2c1dBqkqH2753227532epcas2p1U;
-        Thu, 11 Nov 2021 09:18:53 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.99]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4HqbkF0kMRz4x9QX; Thu, 11 Nov
-        2021 09:18:45 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FC.74.51767.4FFDC816; Thu, 11 Nov 2021 18:18:44 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20211111091844epcas2p3021786974697fb39e14fff83b4396364~2c1Ul8E880456504565epcas2p3H;
-        Thu, 11 Nov 2021 09:18:44 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211111091844epsmtrp1ba201431b2a56db79dc51a6972aaa1e6~2c1UlRbWZ0843708437epsmtrp1W;
-        Thu, 11 Nov 2021 09:18:44 +0000 (GMT)
-X-AuditID: b6c32a45-45dff7000000ca37-1c-618cdff49687
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DF.14.29871.4FFDC816; Thu, 11 Nov 2021 18:18:44 +0900 (KST)
-Received: from KORCO006858 (unknown [10.229.8.71]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20211111091843epsmtip17ee70bb120a8257b582aceb4367f559d~2c1Ucp_fE2976729767epsmtip1P;
-        Thu, 11 Nov 2021 09:18:43 +0000 (GMT)
-From:   "Jaewon Kim" <jaewon02.kim@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Wolfram Sang'" <wsa@kernel.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>
-Cc:     <linux-samsung-soc@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <chanho61.park@samsung.com>,
-        "'Sam Protsenko'" <semen.protsenko@linaro.org>
-In-Reply-To: <4f46fefc-09c9-f9ee-a456-382a64d4ed6f@canonical.com>
-Subject: RE: [PATCH 2/2] i2c: exynos5: add support for ExynosAutov9 SoC
-Date:   Thu, 11 Nov 2021 18:18:43 +0900
-Message-ID: <000201d7d6dd$1fd18420$5f748c60$@samsung.com>
+        Thu, 11 Nov 2021 04:49:57 -0500
+Received: from mail-wm1-f41.google.com ([209.85.128.41]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MORVA-1n4J2i35I6-00PuZE; Thu, 11 Nov 2021 10:47:06 +0100
+Received: by mail-wm1-f41.google.com with SMTP id p3-20020a05600c1d8300b003334fab53afso3878992wms.3;
+        Thu, 11 Nov 2021 01:47:06 -0800 (PST)
+X-Gm-Message-State: AOAM5336zBAUg7YcL11oBjuAS3tkHsTA+/9PuGLgVK83mw0ZV+yczodQ
+        wc8vO9onPvXqiaPWz5K3gyNLLxP/ZhBntdmqSZQ=
+X-Google-Smtp-Source: ABdhPJytHCAvrusWObWXzwN05EvfvHYgGKkC9PhNhP9qYR3xoRRQty5Xb2cddTFTIJyn31v4h0uZFAzmnl0NkLvvoPs=
+X-Received: by 2002:a05:600c:6d2:: with SMTP id b18mr6991598wmn.98.1636624026313;
+ Thu, 11 Nov 2021 01:47:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQCkbhN/M7EUb/u5BwPUYp0og6AbQQFvUiYiAmbXjY8BMemhEq48nBVw
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGJsWRmVeSWpSXmKPExsWy7bCmhe6X+z2JBnPXSVlc3q9tsfHtDyaL
-        jr9fGC1mnN/HZNG69wi7xfM+IOvu/rmMDuwesxp62Tw2repk87hzbQ+bR9+WVYwenzfJBbBG
-        ZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAF2hpFCW
-        mFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwL9ArTswtLs1L18tLLbEyNDAwMgUqTMjO
-        +Hmzl7Fgn0LF2XceDYxfJboYOTkkBEwkrp7ewN7FyMUhJLCDUeLE3/1MEM4nRoldXUdZIZxv
-        jBLbTnxihGnZ/vAxM0RiL6PE3ub/LBDOc0aJ/Y+3sYNUsQnoSuzc+ApssIhAF6PEpS872EAc
-        ZoHJjBL3jzxgBaniFHCUOPz6DDOILSzgLjH5+AsWEJtFQFXiw9xJQA0cHLwClhITb+SBhHkF
-        BCVOznwCVsIsIC+x/e0cZoiTFCR+Pl3GChEXkZjd2QYWFxFwkzh35xcjyF4JgYkcEt/2boT6
-        wUVi5e3XbBC2sMSr41vYIWwpiZf9bewgeyUE6iW+3nCA6O1hlFjT9YsJosZe4tf0LawgNcwC
-        mhLrd+lDlCtLHLkFdRqfRMfhv1BTeCU62oQgGtUk7k89B7VURmLSkZVMExiVZiF5bBaSx2Yh
-        eWYWwq4FjCyrGMVSC4pz01OLjQoM4ZGdnJ+7iRGcQLVcdzBOfvtB7xAjEwfjIUYJDmYlEd6E
-        Oz2JQrwpiZVVqUX58UWlOanFhxhNgSE9kVlKNDkfmMLzSuINTSwNTMzMDM2NTA3MlcR5LUWz
-        E4UE0hNLUrNTUwtSi2D6mDg4pRqYliSqLsw6W14lcyUqSvNV2lflHfOepNl4HDvY4hmy126r
-        QNnahY666w8K7JpruX/Zw1czPijlVky+9Vg84q7BPeaNXjyeBQwM98Rb4mOWrGkODLF5u/6F
-        FburjaLk0k+r7riXCK4VXSwo7162yPOoduHVx1P5JrgdtRbQTU58a+TffvSyLqt/1tI/PP/X
-        exY9uKjZcY7Z/41ssdCOk2vcPE9ezpLa/aH6453I1c/ZGpZtVHpyL7d/a9SBKb7GGSGL2vlv
-        Xww4Vxd9uF4z6qdZhZHd9A82ddVKEX/u7tp1v3DFD+2/BY87X5rNP/hR95WGY9zNlym1M1qm
-        Rm4tu+bIGVXYsHD7i4h76s6VNse5lFiKMxINtZiLihMB1ABEaikEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42LZdlhJTvfL/Z5EgxWbWC0u79e22Pj2B5NF
-        x98vjBYzzu9jsmjde4Td4nkfkHV3/1xGB3aPWQ29bB6bVnWyedy5tofNo2/LKkaPz5vkAlij
-        uGxSUnMyy1KL9O0SuDJ+3uxlLNinUHH2nUcD41eJLkZODgkBE4ntDx8zdzFycQgJ7GaU6Jhx
-        hg0iISOx/FkflC0scb/lCCtE0VNGif65/8ASbAK6Ejs3vmIHsUUEehglzvUIgdjMAtMZJVYe
-        tIdo+MEoseL4XUaQBKeAo8Th12eYQWxhAXeJycdfsIDYLAKqEh/mTgIaysHBK2ApMfFGHkiY
-        V0BQ4uTMJywQM7Ulnt58CmXLS2x/O4cZ4jgFiZ9Pl7FCxEUkZne2MUPc4yZx7s4vxgmMwrOQ
-        jJqFZNQsJKNmIWlfwMiyilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOJa0NHcwbl/1
-        Qe8QIxMH4yFGCQ5mJRHehDs9iUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1O
-        TS1ILYLJMnFwSjUwTZ3pPok/yKJD9ZxObTTjVj2PpqLO9b+F8++cZ7/8ZY/9hMdrxDy6+u/Y
-        HvOWmVA8J6b5tvS0Ca2PDL71BHga5alFXW7vNzz+/ECyHU/ztPmv4puqlwme35pwfIfbJ36u
-        38n/p2ySc7E4s+DaxeIVH87M3KQzOUD/xOKinJlVjgZ8b5bstLJ13S1x/YyGZFilgN7M54c6
-        d+25Zq84z9AlOeLTrZd3lzzztJ66TCAmOZWh5u+bgj/ReZvqK2dyFxmmRDTWvmM9tm+S4qkm
-        46xVrEe/ZP1gceHZ/fHbk7CN56ItIwo1pBUmqazYtfOiS2Xc7Zn3Hywp4lGa/GHTt5Trcpsc
-        61//Tt1eocjCun0mtxJLcUaioRZzUXEiALtEF9sUAwAA
-X-CMS-MailID: 20211111091844epcas2p3021786974697fb39e14fff83b4396364
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211111084749epcas2p1e80b3f3657310498bfdae65c425b3278
-References: <20211111084327.106696-1-jaewon02.kim@samsung.com>
-        <CGME20211111084749epcas2p1e80b3f3657310498bfdae65c425b3278@epcas2p1.samsung.com>
-        <20211111084327.106696-3-jaewon02.kim@samsung.com>
-        <4f46fefc-09c9-f9ee-a456-382a64d4ed6f@canonical.com>
+References: <20211111091123.50853-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211111091123.50853-1-krzysztof.kozlowski@canonical.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 11 Nov 2021 10:46:50 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3MezegptR_-XPVm=RtOn4UYsb+TPEKjCGb-XRt9ke36A@mail.gmail.com>
+Message-ID: <CAK8P3a3MezegptR_-XPVm=RtOn4UYsb+TPEKjCGb-XRt9ke36A@mail.gmail.com>
+Subject: Re: [PATCH] ARM: s3c: include header for prototype of s3c2410_modify_misccr
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:m9FBGnzcA+5320/xWvi5qaXZmde75/1th7Vy63Bfp8F3PqMcFHb
+ FxfOgwTYJaszbZeA80291gBme2xF3Q7yBiLJaf5x+tpH0IV5Fiz3LHeoPbLZpHOwohOMbcs
+ Z+I6SyzUECQ3IAfEt+ueNuvboaKIj+OHRvExfpHtD0dOWOKAz3Zan1fTyVnZQcepwherTeJ
+ kgdJyEq/psCjh7UPoWxzg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FRL8s1huR+Y=:qZ8r0wsFFbcw/1+z5yr6TL
+ mUqmsAaLtKhXGGCYYsfa+09n2YU2CCCLg18QcMeeJ7045cV2T7zlIKt3pZ6Cq+x/TTHLcJaId
+ FMytGVSdeU6EIseVTTG/j/SX+PwZXCsSV00CCCnVQbLMrvDqGlXO+xZKLo+a4tsKx0WulXvIx
+ Mo8aWXvSBuNYoMmwciMSxZpJRiEY4JsuZBo+OF1hi5HTXkGoU9dZ8TcJH3lJF/3CwYhO6jIRh
+ dqz3SGvpwGPqjzH6gjNNhpz0bOAABd5XK3BKXtKabGmzNJyu0HjjRu9fNTUJ3xdfs191gOpAn
+ 4/r0ipqlA09dZ2UtCPmg7sFMLb9hSNOU8ILxMjHCx60z7ORz2rGQxAv4eVaLhzWFpQg2wxQI3
+ WXToMZ4WinXoWNN2Lh/gakLQHd88G3IQMRj2lYb/IT17p3Xs5I/82NcwNxyTz+CCEnqdc3eFN
+ OZqwYUqggiRSQQkCfdbBn1QmRP1KSlHMpY83r043Zci7W/l5Y2TsiQ0r9gwqshXpkupM6CXIw
+ b7OreyUYKCVZrnLFL/aRAzjK2cPrHWF3VT3xuhpOY5NECBXDpTy9X3SZrlySuo9DlBt0Nwke3
+ aRtV4DFVddL1Wsdl9RK2jhGSEYS2CHJVFWh6jC8ngQonJJHUCHkQ4fse5sW8xGHHddqCvlowP
+ 2VRToLcohA/IPUF5cHVc8nQ+U3z69suhFZB4aeker2+s7Rh+MXvdPFAuCQnFUL+b5cvc=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof
+On Thu, Nov 11, 2021 at 10:11 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> Include the header with prototype of s3c2410_modify_misccr to fix W=1
+> warning:
+>
+>   arch/arm/mach-s3c/gpio-samsung.c:1309:14: warning:
+>     no previous prototype for ‘s3c2410_modify_misccr’ [-Wmissing-prototypes]
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
+Thank you for fixing it,
 
-> On 11/11/2021 09:43, Jaewon Kim wrote:
-> > Serial IPs(UART, I2C, SPI) are integrated into New IP-Core called
-> > USI(Universal Serial Interface).
-> >
-> > As it is integrated into USI, there are additinal HW changes.
-> > Registers to control USI and sysreg to set serial IPs have been added.
-> > Also, some timing registres have been changed.
-> >
-> > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> > ---
-> >  drivers/i2c/busses/i2c-exynos5.c | 133
-> > ++++++++++++++++++++++++++++---
-> >  1 file changed, 123 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-exynos5.c
-> > b/drivers/i2c/busses/i2c-exynos5.c
-> > index 97d4f3ac0abd..6a05af550aa5 100644
-> > --- a/drivers/i2c/busses/i2c-exynos5.c
-> > +++ b/drivers/i2c/busses/i2c-exynos5.c
-> > @@ -22,6 +22,8 @@
-> >  #include <linux/of_device.h>
-> >  #include <linux/of_irq.h>
-> >  #include <linux/spinlock.h>
-> > +#include <linux/mfd/syscon.h>
-> > +#include <linux/regmap.h>
-> >
-> >  /*
-> >   * HSI2C controller from Samsung supports 2 modes of operation @@
-> > -166,9 +168,21 @@
-> >
-> >  #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(100))
-> >
-> > +/* USI(Universal Serial Interface) Register map */
-> > +#define USI_CON					0xc4
-> > +#define USI_OPTION				0xc8
-> > +
-> > +/* USI(Universal Serial Interface) Register bits */
-> > +#define USI_CON_RESET				BIT(0)
-> > +
-> > +/* SYSREG Register bit */
-> > +#define SYSREG_USI_SW_CONF_MASK			(0x7 << 0)
-> > +#define SYSREG_I2C_SW_CONF			BIT(2)
-> > +
-> >  enum i2c_type_exynos {
-> >  	I2C_TYPE_EXYNOS5,
-> >  	I2C_TYPE_EXYNOS7,
-> > +	I2C_TYPE_EXYNOSAUTOV9,
-> 
-> The type in driver could stay USI, I only wanted the compatible to be using SoC product ID/number. But
-> current AUTOV9 is fine as well.
-> 
-> >  };
-> >
-> >  struct exynos5_i2c {
-> > @@ -199,6 +213,10 @@ struct exynos5_i2c {
-> >
-> >  	/* Version of HS-I2C Hardware */
-> >  	const struct exynos_hsi2c_variant *variant;
-> > +
-> > +	/* USI sysreg info */
-> > +	struct regmap		*usi_sysreg;
-> > +	unsigned int		usi_offset;
-> >  };
-> >
-> >  /**
-> > @@ -212,24 +230,34 @@ struct exynos5_i2c {
-> >   */
-> >  struct exynos_hsi2c_variant {
-> >  	unsigned int		fifo_depth;
-> > +	unsigned int		has_usi;
-> 
-> Sorry for not noticing it earlier, but this should be bool.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
+If you like, I can put it into the fixes branch of the soc tree directly,
+otherwise I expect you'll send it in a pull request later.
 
-Sorry, I miss latest change in 
-"tty: serial: samsung: Improve naming for common macro "
-
-I will change it to bool.
-
-> 
-> >  	enum i2c_type_exynos	hw;
-> >  };
-> >
-> >  static const struct exynos_hsi2c_variant exynos5250_hsi2c_data = {
-> >  	.fifo_depth	= 64,
-> > +	.has_usi	= 0,
-> 
-> And this should be "false".
-> 
-> >  	.hw		= I2C_TYPE_EXYNOS5,
-> >  };
-> >
-> >  static const struct exynos_hsi2c_variant exynos5260_hsi2c_data = {
-> >  	.fifo_depth	= 16,
-> > +	.has_usi	= 0,
-> >  	.hw		= I2C_TYPE_EXYNOS5,
-> >  };
-> >
-> >  static const struct exynos_hsi2c_variant exynos7_hsi2c_data = {
-> >  	.fifo_depth	= 16,
-> > +	.has_usi	= 0,
-> >  	.hw		= I2C_TYPE_EXYNOS7,
-> >  };
-> >
-> > +static const struct exynos_hsi2c_variant exynosautov9_hsi2c_data = {
-> > +	.fifo_depth	= 64,
-> > +	.has_usi	= 1,
-> > +	.hw		= I2C_TYPE_EXYNOSAUTOV9,
-> > +};
-> > +
-> >  static const struct of_device_id exynos5_i2c_match[] = {
-> >  	{
-> >  		.compatible = "samsung,exynos5-hsi2c", @@ -243,6 +271,9 @@ static
-> > const struct of_device_id exynos5_i2c_match[] = {
-> >  	}, {
-> >  		.compatible = "samsung,exynos7-hsi2c",
-> >  		.data = &exynos7_hsi2c_data
-> > +	}, {
-> > +		.compatible = "samsung,exynosautov9-hsi2c",
-> > +		.data = &exynosautov9_hsi2c_data
-> >  	}, {},
-> >  };
-> >  MODULE_DEVICE_TABLE(of, exynos5_i2c_match); @@ -281,6 +312,31 @@
-> > static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
-> >  		i2c->op_clock;
-> >  	int div, clk_cycle, temp;
-> >
-> > +	/* In case of HSI2C controllers in EXYNOSAUTOV9
-> 
-> Linux coding comment please, so with a separate /* :
-> 
-> /*
->  * In case of....
-
-I miss this.
-I will change it next version.
-
-> 
-> Rest looks good, thanks for the changes!
-> 
-> Best regards,
-> Krzysztof
-
-Thanks
-Jaewon Kim
-
+      Arnd
