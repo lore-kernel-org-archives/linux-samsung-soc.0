@@ -2,101 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7986BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 17:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E40C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 23:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 589F0611CE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 17:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C00361268
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 23:48:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234308AbhKKRIN (ORCPT
+        id S233647AbhKKXvT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Nov 2021 12:08:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
+        Thu, 11 Nov 2021 18:51:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbhKKRII (ORCPT
+        with ESMTP id S229952AbhKKXvS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Nov 2021 12:08:08 -0500
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AAD6C0613F5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 09:05:19 -0800 (PST)
-Received: by mail-ua1-x931.google.com with SMTP id ay21so13208971uab.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 09:05:19 -0800 (PST)
+        Thu, 11 Nov 2021 18:51:18 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2483CC061766
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 15:48:29 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id v23so9009545iom.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 15:48:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HpH5aIz9YnVDHI1tp8iTZZAenfgFZ0zd85byr9qx2Vg=;
-        b=UdpJvinnJT+rLEFmcyE1XHdkYN5/vP9xkk5tjrHpQIiw4ffxoGhvbphUSs2mcUdX4D
-         3r+xBe/0FJFrmNU4CbxYY2TdLL7CXWcvqB93caoIZdPwyJU/IgPt1NlEhwcFv53BWXf/
-         qXqQFrmYNBd8smXfy/EhORtC667VtYArv9JzSNOJXozAK/ywKHZEv1xASbPwo0dx/pjg
-         TktB1xI1teAGUwEa0ZB7Bkkun+VtcUmnNa38vGhhj+RHSYUllNIHBrRg1UA2SrZK34kR
-         INkzZajs/okE0aVh48P1gDCtumnEJ4UfVHj910U9DcCdjHeMcu9ltMNPEPYP+gsrM/RD
-         Ffpg==
+        bh=0JJWVJalP8CdFuuTjj01mh7dvetDFFkhbScBxvOmImE=;
+        b=eSPxiY6MEyQX62rXAkb0w5NNZxOWa7d9ff+SnhlWhS0oTPRJBa2CcaipLWPc0J0gKP
+         l053mItULP8bYA7RJDTqKIuh/aUAXRYJq7/ITIAGvRYRnTF+9kbGLe7DBD/rhP/0a1Em
+         gAQFu3Lzm+26xVXYz2R/xCLPJIf1sko7Ns7Jc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HpH5aIz9YnVDHI1tp8iTZZAenfgFZ0zd85byr9qx2Vg=;
-        b=fkd4CFkGh66Z5Iuf9IAL2QDoTpNMJxPUWn/i5EuTh0I7gq9TC22Dvlm+FUsElwpkWp
-         0vbEZpYBECQG0hOYgw9OCeBsTOk4KD64QpvlOGEJM+juL9IdC1588zJaH9/wBUtMwZVz
-         +yRXE/rpNCoatkIip+zlX026OKtWzgagvaAxQfxI6BOzzp0wdYV+zWPD0+k6gyxP0y6g
-         bAruJXUYnggrXsaULVQY7N+Vp4UsWflKPUcIPnN3a+HIFmwoTZEY/2P22+yeGgmnW308
-         nOpv1vJuj7vYLB5XR18PXRQqaAD1B70n3M8RXIa9exGS4ohgxpaz6WKDWJt9og1kxzBc
-         ly7w==
-X-Gm-Message-State: AOAM5334gxXYGTVQCyhR1z2A2kMbG2+cPea47r16CP2wXFCBUzlZMbtA
-        ZGgWlQrJTohu+GKQGB2/oDeU/AWdtdAu7pN3z4vG3g==
-X-Google-Smtp-Source: ABdhPJzj9aD0XnB8FKZNP4f62gsXxPkbQXP07nxLWlCQRJ6aFNZfRb5dxpkDED6uVInZTLrnALcpuJSMqBG4Ju7YfXY=
-X-Received: by 2002:a67:1781:: with SMTP id 123mr488406vsx.1.1636650318135;
- Thu, 11 Nov 2021 09:05:18 -0800 (PST)
+        bh=0JJWVJalP8CdFuuTjj01mh7dvetDFFkhbScBxvOmImE=;
+        b=vilyDR6E67rrCxld92ECaiyHL4xzIkCZzG06Ecq1w03wFEDSdN0uAvtzHOicAKg2p+
+         GHPTp510lUPEL1AGYVHpOSCCrh+5C7LNIYTA6opYfKh2TPcpluOkqYXRIFcQtxnMF6Q6
+         mPc8vVpZpn16WNR7yLArvR5rMSLG7BK7uNXwgsTvJVAsPmmB0grPBGFmaggs9soBD1AQ
+         2RG02dCH2Sy7OCM55ljQeYzDo077Q9mVWiW70DF56mUvYRWAFGdnuYoqVByCj8W8ydb8
+         nghP99Y6db4jPhH7WI+l/5sX7kGzLWJvLQJ8bii9eTuQQJygOclsL9EwLEHBDgDBCQlu
+         ltbg==
+X-Gm-Message-State: AOAM530mC1R3JYgBKRh9DO22DSLeAlmTsg0UgB2TanX1YfsKiHLv+std
+        RnzM9FU3ZfRSPo6z2Q09EAWinZbKUwLy7w==
+X-Google-Smtp-Source: ABdhPJzXVhWzyxFb4ReXKZYqCY/lUAdW4uv9yfJiyME0cyeEyISXSLUmKvAkMyjlAzc3v3SHV7hcgw==
+X-Received: by 2002:a02:9f87:: with SMTP id a7mr8458392jam.136.1636674508555;
+        Thu, 11 Nov 2021 15:48:28 -0800 (PST)
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com. [209.85.166.41])
+        by smtp.gmail.com with ESMTPSA id n14sm2921669ilm.18.2021.11.11.15.48.28
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Nov 2021 15:48:28 -0800 (PST)
+Received: by mail-io1-f41.google.com with SMTP id r8so9047453iog.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 15:48:28 -0800 (PST)
+X-Received: by 2002:a05:6e02:1a67:: with SMTP id w7mr6255484ilv.165.1636674497968;
+ Thu, 11 Nov 2021 15:48:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20211021202256.28517-1-semen.protsenko@linaro.org> <163502632457.411308.6365977083733513077.b4-ty@bootlin.com>
-In-Reply-To: <163502632457.411308.6365977083733513077.b4-ty@bootlin.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 11 Nov 2021 19:05:06 +0200
-Message-ID: <CAPLW+4mBKH_-A5rWGKgpA=r8as6UqhmHf6h1DRg0fEY9jSmJQA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] rtc: s3c: S3C driver improvements
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+References: <20210813195228.2003500-1-mka@chromium.org> <20210813125146.v16.5.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
+In-Reply-To: <20210813125146.v16.5.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 11 Nov 2021 15:48:06 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UFUFqojhws0MBqrq41gU9ww1h-T+OjzebFKVwzeC+LYQ@mail.gmail.com>
+Message-ID: <CAD=FV=UFUFqojhws0MBqrq41gU9ww1h-T+OjzebFKVwzeC+LYQ@mail.gmail.com>
+Subject: Re: [PATCH v16 5/7] usb: Specify dependencies on USB_XHCI_PLATFORM
+ with 'depends on'
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
+        Peter Chen <peter.chen@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Bastien Nocera <hadess@hadess.net>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Pawel Laszczak <pawell@cadence.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 24 Oct 2021 at 00:58, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
->
-> On Thu, 21 Oct 2021 23:22:53 +0300, Sam Protsenko wrote:
-> > While working on Exynos850 support (where this driver works fine in its
-> > current state), I've stumbled upon some minor issue. This is the effort
-> > to fix those.
-> >
-> >   * [PATCH 1/3]: moves S3C RTC driver to newer API usage
-> >     (no functional changes)
-> >   * [PATCH 2/3]: refactoring/cleanup (no functional changes)
-> >   * [PATCH 3/3]: adds time range, as [PATCH 1/3] made it possible
-> >
-> > [...]
->
-> Applied, thanks!
->
+Hi,
 
-Hi Alexandre,
-
-Just want to check if this series is going to be merged during current
-merge window, or is it scheduled for the next one?
-
-Thanks!
-
-> [1/3] rtc: s3c: Remove usage of devm_rtc_device_register()
->       commit: dba28c37f23a09fc32dbc37463ddb2feb3886f98
-> [2/3] rtc: s3c: Extract read/write IO into separate functions
->       commit: e4a1444e10cbda2892a4ea7325ef5efa47c75cfb
-> [3/3] rtc: s3c: Add time range
->       commit: a5feda3b361e11b291786d5c4ff86d4b9a55498f
+On Fri, Aug 13, 2021 at 12:52 PM Matthias Kaehlcke <mka@chromium.org> wrote:
 >
-> Best regards,
-> --
-> Alexandre Belloni <alexandre.belloni@bootlin.com>
+>  config USB_DWC3
+>         tristate "DesignWare USB3 DRD Core Support"
+> -       depends on (USB || USB_GADGET) && HAS_DMA
+> -       select USB_XHCI_PLATFORM if USB_XHCI_HCD
+> +       depends on ((USB && USB_XHCI_PLATFORM) || USB_GADGET) && HAS_DMA
+
+Technically you don't need the "USB &&", right? Since
+USB_XHCI_PLATFORM is defined in 'usb/host/Kconfig' and that's only
+even included if USB is defined. So it can be just:
+
+depends on (USB_XHCI_PLATFORM || USB_GADGET) && HAS_DMA
+
+That's not terribly important, though, so:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
