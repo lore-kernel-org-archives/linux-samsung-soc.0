@@ -2,181 +2,389 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62F7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Nov 2021 12:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1CEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 08:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A784461186
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Nov 2021 12:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C08A261208
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 08:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbhKJM6u (ORCPT
+        id S232256AbhKKIuz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Nov 2021 07:58:50 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:42132 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231503AbhKJM6u (ORCPT
+        Thu, 11 Nov 2021 03:50:55 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:25042 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229649AbhKKIuw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Nov 2021 07:58:50 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B672921921;
-        Wed, 10 Nov 2021 12:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636548961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IbcrZNdGCCu9qg2Kk1Wawu7N5Sn+2bqvD1tsM0ThCa8=;
-        b=JSS7iyXOYhcE2A+amQG8b/os01cMRf22I3bMpMimqyssfIzQK5gq73EgXyOBEth6APqFZX
-        h+6QANyG5Vbpo+20BE+r66JYOsV3+8IVM3uuAWZbuqzvswBA/sABtNIdEMKrfF8KyD4jB8
-        E2GX6cX+y423i8iTn5hjvokpJH9iLHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636548961;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IbcrZNdGCCu9qg2Kk1Wawu7N5Sn+2bqvD1tsM0ThCa8=;
-        b=bO+GELzAiQX+Aw4orrOC1ndtvb3iJCup5CUSgEtVCLg32h7dU1Y3X3CfeeD8tdJ9DZPj2U
-        AK8OfsFfx+HO2EDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7A2B713C13;
-        Wed, 10 Nov 2021 12:56:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id W9DjHGHBi2F2DAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 10 Nov 2021 12:56:01 +0000
-Message-ID: <91b6dafa-de34-d972-50bc-b401820b5ccb@suse.de>
-Date:   Wed, 10 Nov 2021 13:56:00 +0100
+        Thu, 11 Nov 2021 03:50:52 -0500
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20211111084801epoutp036aec85c25c71d62290cc67c59d68d902~2cagJfukr0336403364epoutp03q
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 08:48:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20211111084801epoutp036aec85c25c71d62290cc67c59d68d902~2cagJfukr0336403364epoutp03q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1636620481;
+        bh=vNRGDQawKCmuc0G3dkgEOTB1j1MIh4N0R+01yzMG9gU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V90y6LFK7dA56uZDHsjo4lpA6JB2pVBZXNfQQT6VsaR7kgUnqqAIvMQSOPSnonpKf
+         juysMPabFh78cmwPj893kBZcCHzf5ydxGhFY7FgFVSIDGNXEnZYzS1cCupjdSZsfo7
+         ECowbaR+gaeYzGkDUDGW5e37CDUq7L+xzFwHMAAE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20211111084800epcas2p1d9d057a7e2e48ae79b242af30d4c46a3~2caflhPQv0752207522epcas2p1b;
+        Thu, 11 Nov 2021 08:48:00 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.91]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4Hqb2h4qbZz4x9Q2; Thu, 11 Nov
+        2021 08:47:56 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DF.34.51767.5B8DC816; Thu, 11 Nov 2021 17:47:49 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20211111084749epcas2p1e80b3f3657310498bfdae65c425b3278~2caVMuCo20752207522epcas2p1_;
+        Thu, 11 Nov 2021 08:47:49 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211111084749epsmtrp1e5a3985c46446422d9b4062680b4b868~2caVMBTyl2177521775epsmtrp1Y;
+        Thu, 11 Nov 2021 08:47:49 +0000 (GMT)
+X-AuditID: b6c32a45-c69bba800000ca37-07-618cd8b5441f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B9.C8.08738.5B8DC816; Thu, 11 Nov 2021 17:47:49 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20211111084749epsmtip2ca99504cac0149ce945a00c71ce6451a~2caVClHu41450214502epsmtip2j;
+        Thu, 11 Nov 2021 08:47:49 +0000 (GMT)
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Wolfram Sang <wsa@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        chanho61.park@samsung.com,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH 2/2] i2c: exynos5: add support for ExynosAutov9 SoC
+Date:   Thu, 11 Nov 2021 17:43:27 +0900
+Message-Id: <20211111084327.106696-3-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211111084327.106696-1-jaewon02.kim@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [PATCH 3/3] drm: Update documentation and TODO of gem_prime_mmap
- hook
-Content-Language: en-US
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        krzysztof.kozlowski@canonical.com, airlied@linux.ie,
-        sw0312.kim@samsung.com, oleksandr_andrushchenko@epam.com,
-        kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org,
-        xen-devel@lists.xenproject.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20211108102846.309-1-tzimmermann@suse.de>
- <20211108102846.309-4-tzimmermann@suse.de>
- <YYujGLFf+spiXMil@phenom.ffwll.local>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <YYujGLFf+spiXMil@phenom.ffwll.local>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------1un6YQuZTKE0bDSxqwf0DnRw"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdljTTHfrjZ5Egyu/1Cwu79e22NFwhNVi
+        49sfTBYdf78wWsw4v4/JonXvEXaL531A1t39cxkdODxmNfSyeWxa1cnmcefaHjaPvi2rGD0+
+        b5ILYI3KtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wB
+        OkVJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BeoFecmFtcmpeul5daYmVoYGBk
+        ClSYkJ3x7+hOpoJPdhVrL5Y1ME416mLk5JAQMJFYOHU9axcjF4eQwA5GiR1f97JAOJ8YJTo3
+        dbBBOJ8ZJea1b2GDaZly5Rk7RGIXo8TJb8cZIZyPjBLtL7aDVbEJaEt8X7+YFcQWEaiT6N7V
+        ClbELLCJUeLih9lgRcICzhK7bq5l7mLk4GARUJU4sEMUJMwrYCex8vkEJoht8hITJ9xjB7E5
+        Bewl3k2YzQ5RIyhxcuYTFhCbGaimeetsZpD5EgIv2SX271zKCtHsIjHr2gUWCFtY4tXxLewQ
+        tpTEy/42dpC9EgL1El9vOED09jBKrOn6BbXYXuLX9C2sIDXMApoS63fpQ5QrSxy5BbWWT6Lj
+        8F+oKbwSHW1CEI1qEvennoOGlYzEpCMroQZ6SLT93wwN6kmMEqd3vmGZwKgwC8k3s5B8Mwth
+        8QJG5lWMYqkFxbnpqcVGBYbwCE7Oz93ECE6ZWq47GCe//aB3iJGJg/EQowQHs5II7/dLPYlC
+        vCmJlVWpRfnxRaU5qcWHGE2BQT2RWUo0OR+YtPNK4g1NLA1MzMwMzY1MDcyVxHktRbMThQTS
+        E0tSs1NTC1KLYPqYODilGphWLrhu5fkowdS74c/hVTHH9nW379Te9njRtoO9s/4wzwsv7FJe
+        o/f2ULe2S1rO/LJb2auW7HedxuEtEDe5cffxa1OeV0yv6P0zKUFtenp17q8SvxSx78ePMmlw
+        eFVnfYo5d6n80NGlAe+WeUa798a4hbZUPH0nPLPh/oJfjT8YdM2Clv6PvfVQsK7hX9CCUN/d
+        P2r5Ge7MvV+v0Vh/xX3ztGOX05ZsyT3MGZSYGtYhYXX3nEtJ6PPZ9+30FqvfCDhwdYrSmm28
+        KoZzLQ9PTcvz0vcRZIjmnVHeqztx983YD/+1TyaEXb3JNPOf+3ImHtVJV2Ysusso+sVCRWSj
+        9fJbH7ZeFnjTKVekodj/R6lTiaU4I9FQi7moOBEAKa9xISIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsWy7bCSvO7WGz2JBteXC1lc3q9tsaPhCKvF
+        xrc/mCw6/n5htJhxfh+TReveI+wWz/uArLv75zI6cHjMauhl89i0qpPN4861PWwefVtWMXp8
+        3iQXwBrFZZOSmpNZllqkb5fAlfHv6E6mgk92FWsvljUwTjXqYuTkkBAwkZhy5Rl7FyMXh5DA
+        DkaJznPfWSESMhLLn/WxQdjCEvdbjrBCFL1nlHi+dQ87SIJNQFvi+/rFYAkRgQZGibffFjGB
+        JJgFtjFKNDWUg9jCAs4Su26uZe5i5OBgEVCVOLBDFCTMK2AnsfL5BCaIBfISEyfcA5vJKWAv
+        8W7CbDBbCKhm4ernzBD1ghInZz5hgRgvL9G8dTbzBEaBWUhSs5CkFjAyrWKUTC0ozk3PLTYs
+        MMpLLdcrTswtLs1L10vOz93ECA5uLa0djHtWfdA7xMjEwXiIUYKDWUmE9/ulnkQh3pTEyqrU
+        ovz4otKc1OJDjNIcLErivBe6TsYLCaQnlqRmp6YWpBbBZJk4OKUamLzn9zXWrWBKX/O5rTWI
+        JfHIQf6C5K1Bqy85dCz+HGbyKmWm7s+Nnr57Y1tcFJK1kroW5rLfZZU5qFV8oVonfn/apyAn
+        rbKXOQzeRpNmse6riNuxs6X2rfnb/reRLSV6Mz5etM6rkGSu2clw93T9pJSeY/vZu149PvIx
+        vsM/pd5maoUpv3gNp86amX5NW4p2nEuqLNaczR/y2HJeA7v8qpLkYGkFXbaD82W8cl+cjJkT
+        NIc1I8snr28T16rq0rfZ0asDY30/LVM7t3ItQ87G3pyqhrhohkCXD3GTbnEF3ToVVcTdm8G2
+        TyHKgnn9y3eXq1YHsRyLqpuRWB0UXd/GZS/8r2tyYHJsZmy6hxJLcUaioRZzUXEiAK0giO/d
+        AgAA
+X-CMS-MailID: 20211111084749epcas2p1e80b3f3657310498bfdae65c425b3278
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20211111084749epcas2p1e80b3f3657310498bfdae65c425b3278
+References: <20211111084327.106696-1-jaewon02.kim@samsung.com>
+        <CGME20211111084749epcas2p1e80b3f3657310498bfdae65c425b3278@epcas2p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------1un6YQuZTKE0bDSxqwf0DnRw
-Content-Type: multipart/mixed; boundary="------------APu0kFdmYGIun6HoTLUqXH0N";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
- krzysztof.kozlowski@canonical.com, airlied@linux.ie, sw0312.kim@samsung.com,
- oleksandr_andrushchenko@epam.com, kyungmin.park@samsung.com,
- dri-devel@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <91b6dafa-de34-d972-50bc-b401820b5ccb@suse.de>
-Subject: Re: [PATCH 3/3] drm: Update documentation and TODO of gem_prime_mmap
- hook
-References: <20211108102846.309-1-tzimmermann@suse.de>
- <20211108102846.309-4-tzimmermann@suse.de>
- <YYujGLFf+spiXMil@phenom.ffwll.local>
-In-Reply-To: <YYujGLFf+spiXMil@phenom.ffwll.local>
+Serial IPs(UART, I2C, SPI) are integrated into New IP-Core
+called USI(Universal Serial Interface).
 
---------------APu0kFdmYGIun6HoTLUqXH0N
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+As it is integrated into USI, there are additinal HW changes.
+Registers to control USI and sysreg to set serial IPs have been added.
+Also, some timing registres have been changed.
 
-SGkNCg0KQW0gMTAuMTEuMjEgdW0gMTE6NDYgc2NocmllYiBEYW5pZWwgVmV0dGVyOg0KPiBP
-biBNb24sIE5vdiAwOCwgMjAyMSBhdCAxMToyODo0NkFNICswMTAwLCBUaG9tYXMgWmltbWVy
-bWFubiB3cm90ZToNCj4+IFRoZSBob29rIGdlbV9wcmltZV9tbWFwIGluIHN0cnVjdCBkcm1f
-ZHJpdmVyIGlzIGRlcHJlY2F0ZWQuIERvY3VtZW50DQo+PiB0aGUgbmV3IHJlcXVpcmVtZW50
-cy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1h
-bm5Ac3VzZS5kZT4NCj4gDQo+IFJldmlld2VkLWJ5OiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwu
-dmV0dGVyQGZmd2xsLmNoPg0KDQpUaGFua3MgYSBsb3QhDQoNCldpdGggdGhlIHJlbWFpbmlu
-ZyBwYXRjaGVzIG1lcmdlZCwgYWxsIGRyaXZlcnMgd2lsbCBpbXBsZW1lbnQgDQpnZW1fcHJp
-bWVfbW1hcCB2aWEgZHJtX2dlbV9wcmltZV9tbWFwKCkgYW5kIHVzZSB0aGUgR0VNIG9iamVj
-dCdzIG1tYXAgDQpjYWxsYmFjayBmb3Igc3BlY2lmaWMgZGV0YWlscy4NCg0KVGhlIG5leHQg
-c3RlcCB3b3VsZCBiZSB0byBtb3ZlIGFsbCBjdXN0b20gaW1wbGVtZW50YXRpb25zIG9mIA0K
-ZmlsZV9vcGVyYXRpb25zLm1tYXAgaW50byB0aGUgR0VNIG9iamVjdCdzIG1tYXAgYW5kIGlt
-cGxlbWVudCB0aGUgDQpmaWxlX29wZXJhdGlvbnMgY2FsbGJhY2sgd2l0aCBkcm1fbW1hcCgp
-Lg0KDQpCZXN0IHJlZ2FyZHMNClRob21hcw0KDQo+IA0KPj4gLS0tDQo+PiAgIERvY3VtZW50
-YXRpb24vZ3B1L3RvZG8ucnN0IHwgMTEgLS0tLS0tLS0tLS0NCj4+ICAgaW5jbHVkZS9kcm0v
-ZHJtX2Rydi5oICAgICAgfCAxMSArKysrKysrLS0tLQ0KPj4gICAyIGZpbGVzIGNoYW5nZWQs
-IDcgaW5zZXJ0aW9ucygrKSwgMTUgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBh
-L0RvY3VtZW50YXRpb24vZ3B1L3RvZG8ucnN0IGIvRG9jdW1lbnRhdGlvbi9ncHUvdG9kby5y
-c3QNCj4+IGluZGV4IDYwZDFkN2VlMDcxOS4uNjU5M2M0YzQwMDZlIDEwMDY0NA0KPj4gLS0t
-IGEvRG9jdW1lbnRhdGlvbi9ncHUvdG9kby5yc3QNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24v
-Z3B1L3RvZG8ucnN0DQo+PiBAQCAtMjY4LDE3ICsyNjgsNiBAQCBDb250YWN0OiBEYW5pZWwg
-VmV0dGVyDQo+PiAgIA0KPj4gICBMZXZlbDogSW50ZXJtZWRpYXRlDQo+PiAgIA0KPj4gLUNs
-ZWFuIHVwIG1tYXAgZm9yd2FyZGluZw0KPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-Pj4gLQ0KPj4gLUEgbG90IG9mIGRyaXZlcnMgZm9yd2FyZCBnZW0gbW1hcCBjYWxscyB0byBk
-bWEtYnVmIG1tYXAgZm9yIGltcG9ydGVkIGJ1ZmZlcnMuDQo+PiAtQW5kIGFsc28gYSBsb3Qg
-b2YgdGhlbSBmb3J3YXJkIGRtYS1idWYgbW1hcCB0byB0aGUgZ2VtIG1tYXAgaW1wbGVtZW50
-YXRpb25zLg0KPj4gLVRoZXJlJ3MgZHJtX2dlbV9wcmltZV9tbWFwKCkgZm9yIHRoaXMgbm93
-LCBidXQgc3RpbGwgbmVlZHMgdG8gYmUgcm9sbGVkIG91dC4NCj4+IC0NCj4+IC1Db250YWN0
-OiBEYW5pZWwgVmV0dGVyDQo+PiAtDQo+PiAtTGV2ZWw6IEludGVybWVkaWF0ZQ0KPj4gLQ0K
-Pj4gICBHZW5lcmljIGZiZGV2IGRlZmlvIHN1cHBvcnQNCj4+ICAgLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tDQo+PiAgIA0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9k
-cnYuaCBiL2luY2x1ZGUvZHJtL2RybV9kcnYuaA0KPj4gaW5kZXggMGNkOTU5NTNjZGY1Li5h
-ODRlYjQwMjhlNWIgMTAwNjQ0DQo+PiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fZHJ2LmgNCj4+
-ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9kcnYuaA0KPj4gQEAgLTM0NSwxMSArMzQ1LDE0IEBA
-IHN0cnVjdCBkcm1fZHJpdmVyIHsNCj4+ICAgCSAqIG1tYXAgaG9vayBmb3IgR0VNIGRyaXZl
-cnMsIHVzZWQgdG8gaW1wbGVtZW50IGRtYS1idWYgbW1hcCBpbiB0aGUNCj4+ICAgCSAqIFBS
-SU1FIGhlbHBlcnMuDQo+PiAgIAkgKg0KPj4gLQkgKiBGSVhNRTogVGhlcmUncyB3YXkgdG9v
-IG11Y2ggZHVwbGljYXRpb24gZ29pbmcgb24gaGVyZSwgYW5kIGFsc28gbW92ZWQNCj4+IC0J
-ICogdG8gJmRybV9nZW1fb2JqZWN0X2Z1bmNzLg0KPj4gKwkgKiBUaGlzIGhvb2sgb25seSBl
-eGlzdHMgZm9yIGhpc3RvcmljYWwgcmVhc29ucy4gRHJpdmVycyBtdXN0IHVzZQ0KPj4gKwkg
-KiBkcm1fZ2VtX3ByaW1lX21tYXAoKSB0byBpbXBsZW1lbnQgaXQuDQo+PiArCSAqDQo+PiAr
-CSAqIEZJWE1FOiBDb252ZXJ0IGFsbCBkcml2ZXJzIHRvIGltcGxlbWVudCBtbWFwIGluIHN0
-cnVjdA0KPj4gKwkgKiAmZHJtX2dlbV9vYmplY3RfZnVuY3MgYW5kIGlubGluZSBkcm1fZ2Vt
-X3ByaW1lX21tYXAoKSBpbnRvDQo+PiArCSAqIGl0cyBjYWxsZXJzLiBUaGlzIGhvb2sgc2hv
-dWxkIGJlIHJlbW92ZWQgYWZ0ZXJ3YXJkcy4NCj4gDQo+IEkgdGhpbmsgYXQgbGVhc3QgaTkx
-NSBoYXMgZGlmZmVyZW50IHNlbWFudGljcyBiZXR3ZWVuIGRtYS1idWYgbW1hcCBhbmQgZ2Vt
-DQo+IG1tYXAgaW4gc29tZSBjYXNlcywgc28gdGhpcyBtaWdodCBiZSB0cmlja3kgdG8gYWNo
-aWV2ZS4gQnV0IEkgdGhpbmsNCj4gZXZlcnl3aGVyZSBlbHNlIHRoaXMgc2hvdWxkIGJlIHNv
-bGlkLg0KPiAtRGFuaWVsDQo+IA0KPj4gICAJICovDQo+PiAtCWludCAoKmdlbV9wcmltZV9t
-bWFwKShzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKm9iaiwNCj4+IC0JCQkJc3RydWN0IHZtX2Fy
-ZWFfc3RydWN0ICp2bWEpOw0KPj4gKwlpbnQgKCpnZW1fcHJpbWVfbW1hcCkoc3RydWN0IGRy
-bV9nZW1fb2JqZWN0ICpvYmosIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKTsNCj4+ICAg
-DQo+PiAgIAkvKioNCj4+ICAgCSAqIEBkdW1iX2NyZWF0ZToNCj4+IC0tIA0KPj4gMi4zMy4x
-DQo+Pg0KPiANCg0KLS0gDQpUaG9tYXMgWmltbWVybWFubg0KR3JhcGhpY3MgRHJpdmVyIERl
-dmVsb3Blcg0KU1VTRSBTb2Z0d2FyZSBTb2x1dGlvbnMgR2VybWFueSBHbWJIDQpNYXhmZWxk
-c3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkNCihIUkIgMzY4MDksIEFHIE7DvHJu
-YmVyZykNCkdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYNCg==
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 133 ++++++++++++++++++++++++++++---
+ 1 file changed, 123 insertions(+), 10 deletions(-)
 
---------------APu0kFdmYGIun6HoTLUqXH0N--
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 97d4f3ac0abd..6a05af550aa5 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -22,6 +22,8 @@
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/spinlock.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
+ 
+ /*
+  * HSI2C controller from Samsung supports 2 modes of operation
+@@ -166,9 +168,21 @@
+ 
+ #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(100))
+ 
++/* USI(Universal Serial Interface) Register map */
++#define USI_CON					0xc4
++#define USI_OPTION				0xc8
++
++/* USI(Universal Serial Interface) Register bits */
++#define USI_CON_RESET				BIT(0)
++
++/* SYSREG Register bit */
++#define SYSREG_USI_SW_CONF_MASK			(0x7 << 0)
++#define SYSREG_I2C_SW_CONF			BIT(2)
++
+ enum i2c_type_exynos {
+ 	I2C_TYPE_EXYNOS5,
+ 	I2C_TYPE_EXYNOS7,
++	I2C_TYPE_EXYNOSAUTOV9,
+ };
+ 
+ struct exynos5_i2c {
+@@ -199,6 +213,10 @@ struct exynos5_i2c {
+ 
+ 	/* Version of HS-I2C Hardware */
+ 	const struct exynos_hsi2c_variant *variant;
++
++	/* USI sysreg info */
++	struct regmap		*usi_sysreg;
++	unsigned int		usi_offset;
+ };
+ 
+ /**
+@@ -212,24 +230,34 @@ struct exynos5_i2c {
+  */
+ struct exynos_hsi2c_variant {
+ 	unsigned int		fifo_depth;
++	unsigned int		has_usi;
+ 	enum i2c_type_exynos	hw;
+ };
+ 
+ static const struct exynos_hsi2c_variant exynos5250_hsi2c_data = {
+ 	.fifo_depth	= 64,
++	.has_usi	= 0,
+ 	.hw		= I2C_TYPE_EXYNOS5,
+ };
+ 
+ static const struct exynos_hsi2c_variant exynos5260_hsi2c_data = {
+ 	.fifo_depth	= 16,
++	.has_usi	= 0,
+ 	.hw		= I2C_TYPE_EXYNOS5,
+ };
+ 
+ static const struct exynos_hsi2c_variant exynos7_hsi2c_data = {
+ 	.fifo_depth	= 16,
++	.has_usi	= 0,
+ 	.hw		= I2C_TYPE_EXYNOS7,
+ };
+ 
++static const struct exynos_hsi2c_variant exynosautov9_hsi2c_data = {
++	.fifo_depth	= 64,
++	.has_usi	= 1,
++	.hw		= I2C_TYPE_EXYNOSAUTOV9,
++};
++
+ static const struct of_device_id exynos5_i2c_match[] = {
+ 	{
+ 		.compatible = "samsung,exynos5-hsi2c",
+@@ -243,6 +271,9 @@ static const struct of_device_id exynos5_i2c_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos7-hsi2c",
+ 		.data = &exynos7_hsi2c_data
++	}, {
++		.compatible = "samsung,exynosautov9-hsi2c",
++		.data = &exynosautov9_hsi2c_data
+ 	}, {},
+ };
+ MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
+@@ -281,6 +312,31 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+ 		i2c->op_clock;
+ 	int div, clk_cycle, temp;
+ 
++	/* In case of HSI2C controllers in EXYNOSAUTOV9
++	 * timing control formula changed.
++	 *
++	 * FSCL = IPCLK / ((CLK_DIV + 1) * 16)
++	 * T_SCL_LOW = IPCLK * (CLK_DIV + 1) * (N + M)
++	 *  [N : number of 0's in the TSCL_H_HS]
++	 *  [M : number of 0's in the TSCL_L_HS]
++	 * T_SCL_HIGH = IPCLK * (CLK_DIV + 1) * (N + M)
++	 *  [N : number of 1's in the TSCL_H_HS]
++	 *  [M : number of 1's in the TSCL_L_HS]
++	 *
++	 *  result of (N + M) is always 8.
++	 *  In general use case, we don't need to control timing_s1, timing_s2.
++	 */
++	if (i2c->variant->hw == I2C_TYPE_EXYNOSAUTOV9) {
++		div = ((clkin / (16 * i2c->op_clock)) - 1);
++		i2c_timing_s3 = div << 16;
++		if (hs_timings)
++			writel(i2c_timing_s3, i2c->regs + HSI2C_TIMING_HS3);
++		else
++			writel(i2c_timing_s3, i2c->regs + HSI2C_TIMING_FS3);
++
++		return 0;
++	}
++
+ 	/*
+ 	 * In case of HSI2C controller in Exynos5 series
+ 	 * FPCLK / FI2C =
+@@ -355,6 +411,20 @@ static int exynos5_hsi2c_clock_setup(struct exynos5_i2c *i2c)
+ 	return exynos5_i2c_set_timing(i2c, true);
+ }
+ 
++static void exynos_usi_reset(struct exynos5_i2c *i2c)
++{
++	u32 val;
++
++	val = readl(i2c->regs + USI_CON);
++	val |= USI_CON_RESET;
++	writel(val, i2c->regs + USI_CON);
++	udelay(1);
++
++	val = readl(i2c->regs + USI_CON);
++	val &= ~USI_CON_RESET;
++	writel(val, i2c->regs + USI_CON);
++}
++
+ /*
+  * exynos5_i2c_init: configures the controller for I2C functionality
+  * Programs I2C controller for Master mode operation
+@@ -385,6 +455,9 @@ static void exynos5_i2c_reset(struct exynos5_i2c *i2c)
+ {
+ 	u32 i2c_ctl;
+ 
++	if (i2c->variant->hw == I2C_TYPE_EXYNOSAUTOV9)
++		exynos_usi_reset(i2c);
++
+ 	/* Set and clear the bit for reset */
+ 	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
+ 	i2c_ctl |= HSI2C_SW_RST;
+@@ -422,7 +495,8 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+ 	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
+ 
+ 	/* handle interrupt related to the transfer status */
+-	if (i2c->variant->hw == I2C_TYPE_EXYNOS7) {
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS7 ||
++			i2c->variant->hw == I2C_TYPE_EXYNOSAUTOV9) {
+ 		if (int_status & HSI2C_INT_TRANS_DONE) {
+ 			i2c->trans_done = 1;
+ 			i2c->state = 0;
+@@ -569,13 +643,13 @@ static void exynos5_i2c_bus_check(struct exynos5_i2c *i2c)
+ {
+ 	unsigned long timeout;
+ 
+-	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS5)
+ 		return;
+ 
+ 	/*
+-	 * HSI2C_MASTER_ST_LOSE state in EXYNOS7 variant before transaction
+-	 * indicates that bus is stuck (SDA is low). In such case bus recovery
+-	 * can be performed.
++	 * HSI2C_MASTER_ST_LOSE state in EXYNOS7 or EXYNOSAUTOV9 variant before
++	 * transaction indicates that bus is stuck (SDA is low).
++	 * In such case bus recovery can be performed.
+ 	 */
+ 	timeout = jiffies + msecs_to_jiffies(100);
+ 	for (;;) {
+@@ -611,10 +685,10 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	unsigned long flags;
+ 	unsigned short trig_lvl;
+ 
+-	if (i2c->variant->hw == I2C_TYPE_EXYNOS7)
+-		int_en |= HSI2C_INT_I2C_TRANS;
+-	else
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS5)
+ 		int_en |= HSI2C_INT_I2C;
++	else
++		int_en |= HSI2C_INT_I2C_TRANS;
+ 
+ 	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
+ 	i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
+@@ -738,6 +812,41 @@ static const struct i2c_algorithm exynos5_i2c_algorithm = {
+ 	.functionality		= exynos5_i2c_func,
+ };
+ 
++static int exynos_usi_init(struct exynos5_i2c *i2c)
++{
++	struct device *dev = i2c->dev;
++	int ret;
++
++	if (!i2c->variant->has_usi)
++		return 0;
++
++	/* System Register has a field that can select the serial IP
++	 * provided by USI. We need to set it to I2C to use I2C.
++	 */
++	i2c->usi_sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
++							  "samsung,sysreg");
++	if (IS_ERR(i2c->usi_sysreg)) {
++		dev_err(dev, "Cannot find sysreg\n");
++		return PTR_ERR(i2c->usi_sysreg);
++	}
++
++	ret = of_property_read_u32_index(dev->of_node, "samsung,sysreg",
++					 1, &i2c->usi_offset);
++	if (ret) {
++		dev_err(dev, "sysreg offset is not specified\n");
++		return ret;
++	}
++
++	ret = regmap_update_bits(i2c->usi_sysreg, i2c->usi_offset,
++			SYSREG_USI_SW_CONF_MASK, SYSREG_I2C_SW_CONF);
++	if (ret < 0)
++		return ret;
++
++	exynos_usi_reset(i2c);
++
++	return 0;
++}
++
+ static int exynos5_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -777,6 +886,12 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.algo_data = i2c;
+ 	i2c->adap.dev.parent = &pdev->dev;
+ 
++	i2c->variant = of_device_get_match_data(&pdev->dev);
++
++	ret = exynos_usi_init(i2c);
++	if (ret)
++		return ret;
++
+ 	/* Clear pending interrupts from u-boot or misc causes */
+ 	exynos5_i2c_clr_pend_irq(i2c);
+ 
+@@ -794,8 +909,6 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
+ 
+-	i2c->variant = of_device_get_match_data(&pdev->dev);
+-
+ 	ret = exynos5_hsi2c_clock_setup(i2c);
+ 	if (ret)
+ 		goto err_clk;
+-- 
+2.33.1
 
---------------1un6YQuZTKE0bDSxqwf0DnRw
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmGLwWAFAwAAAAAACgkQlh/E3EQov+CA
-fBAAnt27HP1sslZ8zQ6FW7dhzL7+pCcCbrAWcp0h9im+1qFVDKWgYUEFnFGBrzAPC5YN+4Uqsvkc
-QIgkdKhBqxx35e7fCeQV83msFRb1kL/Y6FmLDbR+0RfqEkWmP3Fo3HIfgf9yL0Mho/lGcN/NF+qp
-YYXy9HdAm2wlzP8EEfEQfe2zEpWOCrM2QyJ3qIxMg6Qh/sbXjP3NftH5dZ9hlHF7l5CtzeP0IXhf
-EwNzkB2bz4Tl0Vf9QhUHN3+w24jYd/4dEAk45LfTqgEQZHEhd37O4x30VntBGsMTUi+psrvX+1HC
-tPraFA0ssZI97FAbU3DWYpf9ggRBD3A9W9drQ4xUbjVBCyBsFYo/1YW+hdJXbuyL1rM/wPXH4MQ8
-iAiBd37Cgjrvj1OMeEVXUERO/ve2ILcT4XeiQHJTk8qGchaSAn+M+qIxVn3q+IIsRJRXnfQJap7Z
-FGiwdC4g9BWDl8o4yoqDdq39ICvIu/27DEHhmVy3MnwlpEP0chUANtnm4842TazKhnXKHYe//G6/
-uojiuyyW4FA5+UVoWz7dLEqsf2PYz2MEGKrNPGrmqOX9XAk0Pm2CjvgqL4qz5J1GCfwGPZbhWZ4E
-ZzYoy6JTmq5DUUh7KdOfFXvBTT4YZligymd33irsEnpHUz1ivyK1zCb5T+fl3g3hNaDa2yVGdNoW
-LyM=
-=nP0D
------END PGP SIGNATURE-----
-
---------------1un6YQuZTKE0bDSxqwf0DnRw--
