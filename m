@@ -2,76 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4337FC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 15:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B6CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 22:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21B1C61057
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 15:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5063260F39
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 22:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235087AbhKLPc2 (ORCPT
+        id S233484AbhKLWWE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Nov 2021 10:32:28 -0500
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:36473 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbhKLPc2 (ORCPT
+        Fri, 12 Nov 2021 17:22:04 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:50789 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229634AbhKLWWE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Nov 2021 10:32:28 -0500
-Received: by mail-oi1-f169.google.com with SMTP id q124so18514645oig.3;
-        Fri, 12 Nov 2021 07:29:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NcKV1P8PtklrAEv0EqDF5emPk1NdNH66AlfbPOIsk58=;
-        b=IFWTClQIXqhlMQb8wr4Nbq+zYg6C+kr8BHnV70t6um0APLJfoy5B0vzvTZdfCeqAN8
-         2v+1G1x1w0Aud9NkwVp+z7MfHoF2cy3lSthCQ5qXeOqGEG0EEzAQD4U9QTmDIf29e3nv
-         Tz0pYbQgUFRWGk1vppKRQwKf3ZMm+xn1LEe/YzybqnZPIdiFszfawkZXkZA0pdqferPW
-         00uocr9lrZJ0cPgm/JmULiwuHd2Q0xynUziVx2EQibIlIipLhI983TF7F7IAfh+i94zE
-         9pKj6xirOiNVI5gO0g9uxk5j3hSWMA8ZeiV57RLyDxDveev+IuoROjhwT1DOU/i2ove9
-         k4vg==
-X-Gm-Message-State: AOAM532mRxBrd+QMGd3QTkoRpXcmudh7m+QFJ9hPQmidDxAS9HFJAFrK
-        kZ13PuX8gHc4i80tFORgNw==
-X-Google-Smtp-Source: ABdhPJwKyezcypEhopkQsqPZqd2bc/4EdlYNnybf6hgAvuR7p9iajdD+9EvTtzuxT+R2z7irxYQ5nQ==
-X-Received: by 2002:a05:6808:bc7:: with SMTP id o7mr10400028oik.172.1636730977266;
-        Fri, 12 Nov 2021 07:29:37 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id l2sm1262579otl.61.2021.11.12.07.29.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 07:29:36 -0800 (PST)
-Received: (nullmailer pid 2884680 invoked by uid 1000);
-        Fri, 12 Nov 2021 15:29:35 -0000
-Date:   Fri, 12 Nov 2021 09:29:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: samsung: Document Exynos7885
-Message-ID: <YY6IX0FYGfdP11zR@robh.at.kernel.org>
-References: <20211031231511.46856-1-virag.david003@gmail.com>
+        Fri, 12 Nov 2021 17:22:04 -0500
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id C4A6560007;
+        Fri, 12 Nov 2021 22:19:11 +0000 (UTC)
+Date:   Fri, 12 Nov 2021 23:19:11 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] rtc: s3c: S3C driver improvements
+Message-ID: <YY7oX8k3dTH6n5lp@piout.net>
+References: <20211021202256.28517-1-semen.protsenko@linaro.org>
+ <163502632457.411308.6365977083733513077.b4-ty@bootlin.com>
+ <CAPLW+4mBKH_-A5rWGKgpA=r8as6UqhmHf6h1DRg0fEY9jSmJQA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211031231511.46856-1-virag.david003@gmail.com>
+In-Reply-To: <CAPLW+4mBKH_-A5rWGKgpA=r8as6UqhmHf6h1DRg0fEY9jSmJQA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 01 Nov 2021 00:15:11 +0100, David Virag wrote:
-> Document compatible string for Exynos7885 SoC.
+On 11/11/2021 19:05:06+0200, Sam Protsenko wrote:
+> On Sun, 24 Oct 2021 at 00:58, Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > On Thu, 21 Oct 2021 23:22:53 +0300, Sam Protsenko wrote:
+> > > While working on Exynos850 support (where this driver works fine in its
+> > > current state), I've stumbled upon some minor issue. This is the effort
+> > > to fix those.
+> > >
+> > >   * [PATCH 1/3]: moves S3C RTC driver to newer API usage
+> > >     (no functional changes)
+> > >   * [PATCH 2/3]: refactoring/cleanup (no functional changes)
+> > >   * [PATCH 3/3]: adds time range, as [PATCH 1/3] made it possible
+> > >
+> > > [...]
+> >
+> > Applied, thanks!
+> >
 > 
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
-> Changes in v2:
->   - (none)
+> Hi Alexandre,
 > 
->  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Just want to check if this series is going to be merged during current
+> merge window, or is it scheduled for the next one?
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+This is now pulled by Linus.
+
+> Thanks!
+> 
+> > [1/3] rtc: s3c: Remove usage of devm_rtc_device_register()
+> >       commit: dba28c37f23a09fc32dbc37463ddb2feb3886f98
+> > [2/3] rtc: s3c: Extract read/write IO into separate functions
+> >       commit: e4a1444e10cbda2892a4ea7325ef5efa47c75cfb
+> > [3/3] rtc: s3c: Add time range
+> >       commit: a5feda3b361e11b291786d5c4ff86d4b9a55498f
+> >
+> > Best regards,
+> > --
+> > Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
