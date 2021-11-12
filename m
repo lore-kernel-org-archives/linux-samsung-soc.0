@@ -2,114 +2,142 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E40C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 23:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28027C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 01:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C00361268
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Nov 2021 23:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC47B61247
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 01:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233647AbhKKXvT (ORCPT
+        id S234685AbhKLBJF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Nov 2021 18:51:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41846 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbhKKXvS (ORCPT
+        Thu, 11 Nov 2021 20:09:05 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:19540 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234664AbhKLBJF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Nov 2021 18:51:18 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2483CC061766
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 15:48:29 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id v23so9009545iom.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 15:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0JJWVJalP8CdFuuTjj01mh7dvetDFFkhbScBxvOmImE=;
-        b=eSPxiY6MEyQX62rXAkb0w5NNZxOWa7d9ff+SnhlWhS0oTPRJBa2CcaipLWPc0J0gKP
-         l053mItULP8bYA7RJDTqKIuh/aUAXRYJq7/ITIAGvRYRnTF+9kbGLe7DBD/rhP/0a1Em
-         gAQFu3Lzm+26xVXYz2R/xCLPJIf1sko7Ns7Jc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0JJWVJalP8CdFuuTjj01mh7dvetDFFkhbScBxvOmImE=;
-        b=vilyDR6E67rrCxld92ECaiyHL4xzIkCZzG06Ecq1w03wFEDSdN0uAvtzHOicAKg2p+
-         GHPTp510lUPEL1AGYVHpOSCCrh+5C7LNIYTA6opYfKh2TPcpluOkqYXRIFcQtxnMF6Q6
-         mPc8vVpZpn16WNR7yLArvR5rMSLG7BK7uNXwgsTvJVAsPmmB0grPBGFmaggs9soBD1AQ
-         2RG02dCH2Sy7OCM55ljQeYzDo077Q9mVWiW70DF56mUvYRWAFGdnuYoqVByCj8W8ydb8
-         nghP99Y6db4jPhH7WI+l/5sX7kGzLWJvLQJ8bii9eTuQQJygOclsL9EwLEHBDgDBCQlu
-         ltbg==
-X-Gm-Message-State: AOAM530mC1R3JYgBKRh9DO22DSLeAlmTsg0UgB2TanX1YfsKiHLv+std
-        RnzM9FU3ZfRSPo6z2Q09EAWinZbKUwLy7w==
-X-Google-Smtp-Source: ABdhPJzXVhWzyxFb4ReXKZYqCY/lUAdW4uv9yfJiyME0cyeEyISXSLUmKvAkMyjlAzc3v3SHV7hcgw==
-X-Received: by 2002:a02:9f87:: with SMTP id a7mr8458392jam.136.1636674508555;
-        Thu, 11 Nov 2021 15:48:28 -0800 (PST)
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com. [209.85.166.41])
-        by smtp.gmail.com with ESMTPSA id n14sm2921669ilm.18.2021.11.11.15.48.28
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Nov 2021 15:48:28 -0800 (PST)
-Received: by mail-io1-f41.google.com with SMTP id r8so9047453iog.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Nov 2021 15:48:28 -0800 (PST)
-X-Received: by 2002:a05:6e02:1a67:: with SMTP id w7mr6255484ilv.165.1636674497968;
- Thu, 11 Nov 2021 15:48:17 -0800 (PST)
+        Thu, 11 Nov 2021 20:09:05 -0500
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20211112010613epoutp04bec7c83c17261a828e11582ac1d75b1c~2pwly0sBt2216422164epoutp04K
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Nov 2021 01:06:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20211112010613epoutp04bec7c83c17261a828e11582ac1d75b1c~2pwly0sBt2216422164epoutp04K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1636679173;
+        bh=dKeBiRvU5OdA4A+Gv8Y0NQfXa57ytQb7cj57ANQ3Yms=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=M5FBZdvvL3SuxS2IvaMXPQ6bhgzVdMS8PLC42lTrK/nuztKXKBuetVSUynt35eHQ2
+         fEK/ZMUN1CXzSNp2VOwpR9tvKtBBIeMcvwj2DcbJLrKmOmjbvQWvDdHbCyrJ+QeHwN
+         5VxsN4rs+aIEaERFy/Qhwy/AtmpAeKFtQ8shSt0k=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20211112010613epcas2p4296345d6a08ff7bb320870df79d1fdd5~2pwlPgxbr2822828228epcas2p4h;
+        Fri, 12 Nov 2021 01:06:13 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.102]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Hr0lN3R4Hz4x9Qg; Fri, 12 Nov
+        2021 01:06:08 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        59.60.10018.BFDBD816; Fri, 12 Nov 2021 10:06:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20211112010603epcas2p331fe717eabfd9fc0280792921b25c535~2pwcCQ57K3148131481epcas2p3_;
+        Fri, 12 Nov 2021 01:06:03 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20211112010603epsmtrp2e0557ed89c8504a22330dec0d1be85a0~2pwcBefSm2332823328epsmtrp2U;
+        Fri, 12 Nov 2021 01:06:03 +0000 (GMT)
+X-AuditID: b6c32a46-a0fff70000002722-33-618dbdfb5c1b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2E.6C.29871.BFDBD816; Fri, 12 Nov 2021 10:06:03 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20211112010602epsmtip2856e61c365cddc19b3276994e2382ac2~2pwb0h5i71804718047epsmtip2a;
+        Fri, 12 Nov 2021 01:06:02 +0000 (GMT)
+From:   Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Wolfram Sang <wsa@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH v3 0/2] i2c: exynos5: add support for ExynosAutov9 SoC
+Date:   Fri, 12 Nov 2021 10:01:35 +0900
+Message-Id: <20211112010137.149174-1-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <20210813195228.2003500-1-mka@chromium.org> <20210813125146.v16.5.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
-In-Reply-To: <20210813125146.v16.5.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 11 Nov 2021 15:48:06 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UFUFqojhws0MBqrq41gU9ww1h-T+OjzebFKVwzeC+LYQ@mail.gmail.com>
-Message-ID: <CAD=FV=UFUFqojhws0MBqrq41gU9ww1h-T+OjzebFKVwzeC+LYQ@mail.gmail.com>
-Subject: Re: [PATCH v16 5/7] usb: Specify dependencies on USB_XHCI_PLATFORM
- with 'depends on'
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
-        Peter Chen <peter.chen@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Bastien Nocera <hadess@hadess.net>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmhe7vvb2JBm8maFpc3q9tMf/IOVaL
+        HQ1HWC02vv3BZLHp8TVWi46/XxgtLu+aw2Yx4/w+JovWvUfYLZ73AVl3989ldOD2mNXQy+ax
+        aVUnm8eda3vYPDYvqffo27KK0ePzJrkAtqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwND
+        XUNLC3MlhbzE3FRbJRefAF23zByg65QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5
+        BeYFesWJucWleel6eaklVoYGBkamQIUJ2RlPXs5hLLjDXvHk7gbmBsZpbF2MnBwSAiYSX1cu
+        ZQWxhQR2MErsXGvUxcgFZH9ilLjwfR4LhPONUWLvpFusMB0t7y4yQST2MkpM3veSEcL5yCjx
+        58wXRpAqNgFtie/rF4N1iAjUSXTvagUrYhaYxiRxc9IRdpCEsICbxNFlt8FsFgFViQtt/8CO
+        4hWwk7j4eCI7xDp5iYkT7rFDxAUlTs58wgJiMwPFm7fOZgYZKiHwlV3i3fleRogGF4n3XRdZ
+        IGxhiVfHt0ANkpL4/G4v0AIOILte4usNB4jeHkaJNV2/mCBq7CV+Td/CClLDLKApsX6XPkS5
+        ssSRW1Br+SQ6Dv9lhwjzSnS0CUE0qkncn3oOGqQyEpOOrGSCKPGQWNhvBQndWIn5u2+xTGCU
+        n4Xkl1lIfpmFsHYBI/MqRrHUguLc9NRiowIjeJwm5+duYgSnTy23HYxT3n7QO8TIxMF4iFGC
+        g1lJhPf8wt5EId6UxMqq1KL8+KLSnNTiQ4ymwNCdyCwlmpwPTOB5JfGGJpYGJmZmhuZGpgbm
+        SuK8lqLZiUIC6YklqdmpqQWpRTB9TBycUg1MocetPISWaxj4HP4u2h9w69SqK6s/npUzenvR
+        pevbG81JqSYS9gn/I9Z8L9B0uB8xZXPfo+OlhhaxM7oTFwrqb7k5c/fxtAkaH17+CEzitWC0
+        LFq96sLeRzIBX/7eT/18PCWtdeLPgKtrF97fduq0TKmXQMn+B21arzdW+yZEZMwpaU/7Fux7
+        JvWo34PjkvsD0ox1V3VyBMROOucg9VXlytK5q8N+xMmmqfzd4n763t5nfOmzRc40vjwUZe8v
+        3vnT75zPXe6wQuNy5vSFbQdvZPgHrRT1fZc8f2udzcaV9V51t+Jtpv1cf+vgxZx1ezn/hKQ7
+        GJ3fx+HZpGP3+tqEWmV9x00zln1+1Nk9UfL7KSWW4oxEQy3mouJEAF106XMoBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSvO7vvb2JBpOXslhc3q9tMf/IOVaL
+        HQ1HWC02vv3BZLHp8TVWi46/XxgtLu+aw2Yx4/w+JovWvUfYLZ73AVl3989ldOD2mNXQy+ax
+        aVUnm8eda3vYPDYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujCcv5zAW3GGveHJ3A3MD
+        4zS2LkZODgkBE4mWdxeZuhi5OIQEdjNKHP33ghkiISOx/FkfVJGwxP2WI6wQRe8ZJS40NDGB
+        JNgEtCW+r18MlhARaGCUePttEdgoZoE5TBIL/r8DqxIWcJM4uuw2O4jNIqAqcaHtH9hYXgE7
+        iYuPJ7JDrJCXmDjhHjtEXFDi5MwnLCA2M1C8eets5gmMfLOQpGYhSS1gZFrFKJlaUJybnlts
+        WGCYl1quV5yYW1yal66XnJ+7iREc2FqaOxi3r/qgd4iRiYPxEKMEB7OSCO/5hb2JQrwpiZVV
+        qUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTDZPy25zWT3v+n0/omN
+        ma+jt6ttdGf8FMxqLR4cq9ozc/snph0NPZYz15+JfivtPSd12aaHxksv5TyzOqvgNOfC86vH
+        Ylcd2lB/73TzbsMpDB88FguLKUz64r1Xg+dh2J+yb/l3dE3vvo76svyabPv0f3sWXhLZn73q
+        UeNp3thX4hwzdpvklu769+7+xEd2cn82zXr4PyZswZRnTtv/LtK5fSP/4vOG2sOcLDtKvbpF
+        pr5r5zlef/HUZ4PzN/bls3kamG7dwce6kP/+tu4/t+/5qe+TiKs4u3L119fSFR9O/3jzv+6p
+        Alt4Q6JoQd5FlTkl6dlfjN/2vLfLmh9cqsb4cs67o0udedsrKyyUHWaa5yqxFGckGmoxFxUn
+        AgCxe/8X2wIAAA==
+X-CMS-MailID: 20211112010603epcas2p331fe717eabfd9fc0280792921b25c535
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20211112010603epcas2p331fe717eabfd9fc0280792921b25c535
+References: <CGME20211112010603epcas2p331fe717eabfd9fc0280792921b25c535@epcas2p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Serial IPs(UART, I2C, SPI) are integrated into New IP-Core
+called USI(Universal Serial Interface).
 
-On Fri, Aug 13, 2021 at 12:52 PM Matthias Kaehlcke <mka@chromium.org> wrote:
->
->  config USB_DWC3
->         tristate "DesignWare USB3 DRD Core Support"
-> -       depends on (USB || USB_GADGET) && HAS_DMA
-> -       select USB_XHCI_PLATFORM if USB_XHCI_HCD
-> +       depends on ((USB && USB_XHCI_PLATFORM) || USB_GADGET) && HAS_DMA
+As it is integrated into USI, there are additinal HW changes.
+Registers to control USI and sysreg to set serial IPs have been added.
+Also, some timing registres have been changed.
 
-Technically you don't need the "USB &&", right? Since
-USB_XHCI_PLATFORM is defined in 'usb/host/Kconfig' and that's only
-even included if USB is defined. So it can be just:
+Changes in v3:
+ - Changes has_usi variable type
+ - Changes comment style
 
-depends on (USB_XHCI_PLATFORM || USB_GADGET) && HAS_DMA
+Changes in v2:
+ - Changes compatible name to "samsung,exynosautov9-hsi2c"
+ - Changes I2C type name to "I2C_TYPE_EXYNOSAUTOV9" from "I2C_TYPE_USI"
+ - Changes to clear after reset instread of clearing reset
+ - Add description about system register for USI
+ - fix typo in description
 
-That's not terribly important, though, so:
+Jaewon Kim (2):
+  dt-bindings: i2c: exynos5: add exynosautov9-hsi2c compatible
+  i2c: exynos5: add support for ExynosAutov9 SoC
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+ .../devicetree/bindings/i2c/i2c-exynos5.txt   |   7 +
+ drivers/i2c/busses/i2c-exynos5.c              | 135 ++++++++++++++++--
+ 2 files changed, 132 insertions(+), 10 deletions(-)
+
+-- 
+2.33.1
+
