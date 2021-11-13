@@ -2,97 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B663C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 22:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BE7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 Nov 2021 03:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFE3A6108B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Nov 2021 22:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 337D860041
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 Nov 2021 03:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236027AbhKLWqQ (ORCPT
+        id S232571AbhKMDOy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Nov 2021 17:46:16 -0500
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:35716 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233013AbhKLWqP (ORCPT
+        Fri, 12 Nov 2021 22:14:54 -0500
+Received: from smtpbg604.qq.com ([59.36.128.82]:38370 "EHLO smtpbg604.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232113AbhKMDOy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Nov 2021 17:46:15 -0500
-Received: by mail-oi1-f173.google.com with SMTP id m6so20654966oim.2;
-        Fri, 12 Nov 2021 14:43:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dCuD+YjqtVnRtkWIUOOxbHP+fcjNzXnTv5I+4RHdVB0=;
-        b=ul1mq9zSpq5iHtigdIrTTCWqQikP+Zkfv7T5jbLbNDQ56hqydwmPKJTGBmSQM5iDhu
-         fl+mdP0EeNPT7zR8QXh7pgWjm8MpgOlvT52T3goSpIEqHGZdlSevf05Y0IPq/E/7P7iX
-         UDLOu6DKXdadzZRF4/k5OvBhOAh7UhKRrkxTUyvH6GOZ6Co1zWBvuqw15WM0HHK5XQJ6
-         P/xGSUvoTZ5NKV/UboskVPRYf/XGARADQAyd65IeBj7B+pBY5ZwFLecMTou0XLG6jjdN
-         ZIU9IUaD8WbmT1JPuiKU1NZcqi6970uKhETC24nRUFG9wGik5YlYWFwsUXZOneNg4utQ
-         QM8w==
-X-Gm-Message-State: AOAM532oddPnnad8aM7ISqnaIuLXH+92VTV+UqKYHtgLXRAph6tpHC1v
-        Vu3k2BXI+8ap0vp8myWkqQ==
-X-Google-Smtp-Source: ABdhPJw2PwOESQ+/jRCGL6gzFQuxnZMAfxJUgi0JcPErgF9CKwlxulleLUJxDTSFc3Lx1uAHlNMPBg==
-X-Received: by 2002:a05:6808:228c:: with SMTP id bo12mr15539917oib.93.1636757004240;
-        Fri, 12 Nov 2021 14:43:24 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id h1sm1424536otq.45.2021.11.12.14.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 14:43:23 -0800 (PST)
-Received: (nullmailer pid 3511445 invoked by uid 1000);
-        Fri, 12 Nov 2021 22:43:22 -0000
-Date:   Fri, 12 Nov 2021 16:43:22 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     devicetree@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-watchdog@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 02/12] dt-bindings: watchdog: Document Exynos850
- watchdog bindings
-Message-ID: <YY7uCs9gxBPoigOc@robh.at.kernel.org>
-References: <20211107202943.8859-1-semen.protsenko@linaro.org>
- <20211107202943.8859-3-semen.protsenko@linaro.org>
+        Fri, 12 Nov 2021 22:14:54 -0500
+X-QQ-mid: bizesmtp32t1636773081tu786nmz
+Received: from localhost.localdomain (unknown [125.69.41.88])
+        by esmtp6.qq.com (ESMTP) with 
+        id ; Sat, 13 Nov 2021 11:11:19 +0800 (CST)
+X-QQ-SSF: 01000000000000C0F000000A0000000
+X-QQ-FEAT: qfvbM89F700Weup9tOdjzXXvc8HF98cSSrZGlKTVRH4kBv4IPyPqPOMESiZ6V
+        RtwTh/SpUneGijNdySXGSjsjYcyMbVwaLRFNlU2NzDZwYnlSFRCYad+Bsz7SsERF2Dib2iN
+        HIwptU9I4eq/EizgfOTbcGPQ45m9W8k/Y3yBD6jBs1b9U3ywC4LgnXS2qalRv73Brf6nncr
+        7aEa1J2625wQnnzivUE1MAYb6mK1WGdwNpqOOwaH2/HFaaiCqavhJry0Ll+UZ6EbjJh3Xv2
+        6XWOza4jvXNrerMZMSdhFZKCUVL8zS/OG4fXIpRpCivJJtqL8lvOEWgM4W3t2ZBd90xEp51
+        wBL9di7jz6B4qKA/PIEoJj/RGeniw==
+X-QQ-GoodBg: 0
+From:   Jason Wang <wangborong@cdjrlc.com>
+To:     krzysztof.kozlowski@canonical.com
+Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jason Wang <wangborong@cdjrlc.com>
+Subject: [PATCH] ARM: s3c: Fix typo in one comment
+Date:   Sat, 13 Nov 2021 11:11:17 +0800
+Message-Id: <20211113031117.33727-1-wangborong@cdjrlc.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211107202943.8859-3-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybgspam:qybgspam4
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 07 Nov 2021 22:29:33 +0200, Sam Protsenko wrote:
-> Exynos850 SoC has two CPU clusters:
->   - cluster 0: contains CPUs #0, #1, #2, #3
->   - cluster 1: contains CPUs #4, #5, #6, #7
-> 
-> Each cluster has its own dedicated watchdog timer. Those WDT instances
-> are controlled using different bits in PMU registers, new
-> "samsung,index" property is added to tell the driver which bits to use
-> for defined watchdog node.
-> 
-> Also on Exynos850 the peripheral clock and the source clock are two
-> different clocks. Provide a way to specify two clocks in watchdog device
-> tree node.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> Changes in v3:
->   - Renamed "samsung,index" property to more descriptive
->     "samsung,cluster-index"
->   - Disabled "samsung,cluster-index" property for SoCs other than
->     Exynos850
-> 
-> Changes in v2:
->   - Stated explicitly that Exynos850 driver requires 2 clocks
->   - Used single compatible for Exynos850
->   - Added "index" property to specify CPU cluster index
->   - Fixed a typo in commit message: dedicater -> dedicated
-> 
->  .../bindings/watchdog/samsung-wdt.yaml        | 45 +++++++++++++++++--
->  1 file changed, 41 insertions(+), 4 deletions(-)
-> 
+The double `would' in the comment might be repeated. Remove one of them
+from the comment.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
+---
+ arch/arm/mach-s3c/mach-gta02.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-s3c/mach-gta02.c b/arch/arm/mach-s3c/mach-gta02.c
+index 418939ce0fc3..174b2e55ea16 100644
+--- a/arch/arm/mach-s3c/mach-gta02.c
++++ b/arch/arm/mach-s3c/mach-gta02.c
+@@ -393,9 +393,9 @@ static struct s3c2410_nand_set __initdata gta02_nand_sets[] = {
+ 	[0] = {
+ 		/*
+ 		 * This name is also hard-coded in the boot loaders, so
+-		 * changing it would would require all users to upgrade
+-		 * their boot loaders, some of which are stored in a NOR
+-		 * that is considered to be immutable.
++		 * changing it would require all users to upgrade their
++		 * boot loaders, some of which are stored in a NOR that
++		 * is considered to be immutable.
+ 		 */
+ 		.name		= "neo1973-nand",
+ 		.nr_chips	= 1,
+-- 
+2.33.0
+
