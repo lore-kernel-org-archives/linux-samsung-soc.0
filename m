@@ -2,95 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2971FC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Nov 2021 13:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D01C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 00:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8C961B2A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Nov 2021 13:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B234E6115B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 00:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233455AbhKONrK (ORCPT
+        id S1350480AbhKPAbr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Nov 2021 08:47:10 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:48542
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236497AbhKONo1 (ORCPT
+        Mon, 15 Nov 2021 19:31:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345573AbhKOT2m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Nov 2021 08:44:27 -0500
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 268EB3F19B
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 13:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1636983691;
-        bh=n5Hadb6xbkGaApkV40DUT8mQVW3mxdVMSv3mHiuuCFI=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=sJX5/MKUeQQeoxtuykbeBi3oVeXrAdV3P5dn3zCyi8yCQhb92hrFzmAHSOIMF/I7J
-         7x2IzMbve0Jb+qdQUofnQAjOTHGscxFl4a3BZomt/J+JPB3cg+mr8mvjn9iOg5xzNi
-         X7Jh6W1WcXwMmN3P3bYQcvalwKv9rGWF/N7wi2TwJKFg6oV70CO39mX8JMWvf1mjjV
-         cRwkDn2Q0hDdTZkqR59deZTY/6qoO37p1w6DLCnylj6S9KHaHfTALh490F75TiCqSF
-         inWLpkEy6+5dnlhXVOtT7Mpj2whJ/ulEXBBE6HuvlhsYOHHnxHyL+TUBCO6PB7jQww
-         KS0vRwfZvuGyA==
-Received: by mail-lj1-f200.google.com with SMTP id y11-20020a2e978b000000b00218df7f76feso5122131lji.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 05:41:31 -0800 (PST)
+        Mon, 15 Nov 2021 14:28:42 -0500
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C56C0AFD78
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 10:56:23 -0800 (PST)
+Received: by mail-ua1-x933.google.com with SMTP id az37so37000089uab.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 10:56:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wjFytYa62TwsRDtT9P+lI6l+ZPmY9Qu38r4fj9pXQeI=;
+        b=Et3mLJfVVa31pUjIiX3D9ldtHtwfS2Ty0ZDCKaDhjnrACzXviF+n5avqkd0wi52RbJ
+         x8B6+Y/Mrdqx7qBEUU7AMThPC/tfboVqIHcexrDStDQG4F6OuXJm7QybGYb4/PIefpiP
+         qdNa5kCUzqv+9tlXAWjZjq6k46+nKkyyj3ca3AJq+z73CvIReKUOSUP7yH7sAHD0khTj
+         ponfVix4Wzw1TnM2ady5uBFwE4d33Bo1+bZknSVPKjD4HedtWQClz32AwYdNZFtHh5Z7
+         BHVTOvFvAyl4pxfoavUjBnxwV1aP9Hb7IvY06fkY2g0G/yNZCGfX2Bpe1C2YWYlrYcEV
+         uNyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n5Hadb6xbkGaApkV40DUT8mQVW3mxdVMSv3mHiuuCFI=;
-        b=tJu/Zcb7jBOVQW79a2k+47ObPKgZ/7lh6tsHWSYNsdVY8n0Y00ltj/8NRzQzK/ovv0
-         ZJF5XvYclF5AFG0lnjvPytpg4ei9WoVFCqsf/IKevFlU4UtQr3XHve/E05P4B4ia5vNY
-         7Pm+4SMsNuwKQsL+SrwjyJX1mALpU2VWRr0eIcrj/hFjTO25ds7LwEoPXJI9o9lCIOox
-         akFbJfxmJC7LcvbTzP3EGxkAroYaGOVKUIa7P00toF+s6XQWtHwSoWT+QdCktidhKNBB
-         YutBCZjnod+qVnwU3MAuS1pfbmmi4hyrqPrwNVRrfQBqkpPy9i0wsZd7Zs+WqVTrvHKr
-         1hgg==
-X-Gm-Message-State: AOAM530D36M0F6OFNPtaS4zFuePZvC7i7UEpsIYtDmnrYEIvpEto9wK4
-        37SsNwjEDzrFFSlR7kBd8dHQLFASHyAPmF9HydzGItTVHq6DOdr2qR8ZvGcz3TTgdEuJoZSN9Ci
-        tdgTbS44T3mnV4R4AJop5kmImM3hoe5DnVD9kyQfDjfav1Z/7
-X-Received: by 2002:a05:6512:c19:: with SMTP id z25mr34685705lfu.60.1636983690561;
-        Mon, 15 Nov 2021 05:41:30 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxkpYeMAsCvuBUvs4Vf7PmAZoAzIjj2DCCMvm1MjqXaC8vi/q3I1PtjMWlG7VswioAqYx8hvg==
-X-Received: by 2002:a05:6512:c19:: with SMTP id z25mr34685689lfu.60.1636983690417;
-        Mon, 15 Nov 2021 05:41:30 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id i3sm1421786lfu.156.2021.11.15.05.41.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Nov 2021 05:41:29 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Virag <virag.david003@gmail.com>
-Subject: Re: [PATCH] soc: samsung: exynos-chipid: describe which SoCs go with compatibles
-Date:   Mon, 15 Nov 2021 14:41:25 +0100
-Message-Id: <163698368315.132512.16798807565852524443.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211031205212.59505-1-krzysztof.kozlowski@canonical.com>
-References: <20211031205212.59505-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wjFytYa62TwsRDtT9P+lI6l+ZPmY9Qu38r4fj9pXQeI=;
+        b=wHzdZl5iWQiVmSxpOr2QOxayZKVjXbR7rt3GME5CXlqW+VKIhiv4OVlg1+0a9E0xDy
+         gZ5adSnze9O2of9gU0FF2u8pWFlbrFrR1fyiVQtWeFElxLz1ZEaN/93Zobabrh15ENYE
+         G0SCA633zKuXzZJuHOdmd+1nXibO6Avx4NhFPGrm5cf1wrh02mjLbj2BmwCSPfkS17W4
+         t71Nuy0nJ3rHQmdp0Xt30ITp/7uEJfDYI4RqvmoYssGoKT6LtD5cG0JluFJED9RYBJ2r
+         xZNDBYqtNltdPf3CMlFsN9GvyO80weGas3TUO266wUs8zaRHMLNZl6/k78Ys51idTnsh
+         PhBw==
+X-Gm-Message-State: AOAM5309faCGmpO+PcmCHhycirA2hAuuQ8LFn56H9oNgfN3wypesfFHv
+        x2Q8H8UYvE8CPB35bOd+QGzLlEpRNbTGXqm33JOrWw==
+X-Google-Smtp-Source: ABdhPJylv9Dsbu7ZOrf0qTkvNNEqYiy+MbBLGYCd80FkaWunLT9ncwO+I1KUfsKqM53IfBUg2/slkF2dFCSNflVEqho=
+X-Received: by 2002:a67:d893:: with SMTP id f19mr45783283vsj.39.1637002581757;
+ Mon, 15 Nov 2021 10:56:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <CGME20211112010603epcas2p26c076e65e0cb286cb53f06053165ef60@epcas2p2.samsung.com>
+ <20211112010137.149174-1-jaewon02.kim@samsung.com> <20211112010137.149174-2-jaewon02.kim@samsung.com>
+In-Reply-To: <20211112010137.149174-2-jaewon02.kim@samsung.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 15 Nov 2021 20:56:10 +0200
+Message-ID: <CAPLW+4=QoTLzZsHHxM_E+WhzhYKsfEisFe_berH=i9G=TSb0ng@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: i2c: exynos5: add exynosautov9-hsi2c compatible
+To:     Jaewon Kim <jaewon02.kim@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chanho61.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 31 Oct 2021 21:52:12 +0100, Krzysztof Kozlowski wrote:
-> The Exynos ChipID driver, like most of the Exynos drivers, uses one
-> compatible for entire family of compatible devices using one devicetree
-> "compatible".  The compatibility is here described by programming
-> interface (register layout), not by actual values, so the product ID
-> register on one family of devices has different values for different
-> SoCs.
-> 
-> [...]
+On Fri, 12 Nov 2021 at 03:06, Jaewon Kim <jaewon02.kim@samsung.com> wrote:
+>
+> This patch adds new "samsung,exynosautov9-hsi2c" compatible.
+> It is for i2c compatible with HSI2C available on Exynos SoC with USI.
+>
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
 
-Applied, thanks!
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-[1/1] soc: samsung: exynos-chipid: describe which SoCs go with compatibles
-      commit: 569e45a1135497d8dddc647bc615e26c49b070a8
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>  Documentation/devicetree/bindings/i2c/i2c-exynos5.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> index 2dbc0b62daa6..39f4067d9d1f 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> @@ -14,6 +14,8 @@ Required properties:
+>                                 on Exynos5260 SoCs.
+>         -> "samsung,exynos7-hsi2c", for i2c compatible with HSI2C available
+>                                 on Exynos7 SoCs.
+> +       -> "samsung,exynosautov9-hsi2c", for i2c compatible with HSI2C available
+> +                               on ExynosAutov9 SoCs.
+>
+>    - reg: physical base address of the controller and length of memory mapped
+>      region.
+> @@ -31,6 +33,11 @@ Optional properties:
+>         at 100khz.
+>      -> If specified, the bus operates in high-speed mode only if the
+>         clock-frequency is >= 1Mhz.
+> +  - samsung,sysreg : system registers controller phandle to control USI.
+> +    -> If I2C integrated to USI(Universal Serial Interface), this property
+> +       is required. When using Exynos USI block, it needs to select which type
+> +       of Serial IPs(UART, SPI, I2C) to use with system register. So, it
+> +       requires samsung,sysreg phandle and offset value of system register.
+>
+>  Example:
+>
+> --
+> 2.33.1
+>
