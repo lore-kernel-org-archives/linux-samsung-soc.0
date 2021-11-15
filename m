@@ -2,80 +2,79 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B12C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Nov 2021 13:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB9FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Nov 2021 13:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99D5663220
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Nov 2021 13:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7580863222
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Nov 2021 13:36:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231789AbhKONjN (ORCPT
+        id S231215AbhKONjQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 15 Nov 2021 08:39:13 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:60438
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234702AbhKONel (ORCPT
+        Mon, 15 Nov 2021 08:39:16 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:48278
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231669AbhKONfA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 15 Nov 2021 08:34:41 -0500
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        Mon, 15 Nov 2021 08:35:00 -0500
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4EC463F19E
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 13:31:45 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1FB7D3F1A9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 13:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1636983105;
-        bh=ojqXvdJwzGTTkyeWkIs8mxvrFI+WspsP1IO2MdAm86c=;
+        s=20210705; t=1636983123;
+        bh=4YeUT5jAqk0hL94x45nFoxH/ZKvBxBqGJy25for+rc8=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=hfC9fRwGFv9emmeFqqm3yxIEZ7IXO9j8oEJ20y7cgRBQFa8hu6+HkZ6eN9N1WDYfL
-         afI5PuGPy8pzAXX0jKU7fC+hmIZcmiMu/on5Bk6iG8mWg/RYm38bmWb/mPS6a0kIvh
-         0gt4XPpY83ukS9MOCZSU560SHXtyYkMhvnKN/93d/pILJkIMDODQTkWf5XIja0Fl1S
-         eJZcIMjIkcIyipw/+So6IRb/1XLa4tkNTmmXmiHbsX5XX+KInsUYJA1KeWQd571VT/
-         gzNLSskMlcKg1Etv6WUd6gYzyxv/u1P2eODpIC/43JVRvpEz9ScprAzohEW9UuJUeB
-         xU5LxhqkptUHg==
-Received: by mail-lj1-f197.google.com with SMTP id o15-20020a2e90cf000000b00218dfebebdeso5084261ljg.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 05:31:45 -0800 (PST)
+        b=W/ZVY+hYY9S9jtgKPTB/DY3bEm338SQJBIkjffsn7zURWxlYi3kYIb2vD5v1UF6Ym
+         VbmAwUc+WnB2CpkXYXx/34n5B/1UZUEQqwCA7YOMRptdFjEWq8n9vizo+inZ0CU34K
+         kUIGjOh/knttN7O1h+osw4RjQ6PgKnGC/n4Yj8ARnMdGM9tOL4urXwJRHuID4i9ZpR
+         l5PkhDeiR+XGcTgksLi3OyKLeL+x7jZ7QsREf+UsgvvkIktkYDLlMiSjqm68jOhAEz
+         3Erv9zSLkvzfDk9ORKfUYaaRqyej5ccio4i0h3YSIQwcNjJILCGbTj8ofF+AJdOG0r
+         wZZItszMpdlkg==
+Received: by mail-lf1-f72.google.com with SMTP id k5-20020a05651210c500b0040934a07fbdso1055074lfg.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Nov 2021 05:32:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ojqXvdJwzGTTkyeWkIs8mxvrFI+WspsP1IO2MdAm86c=;
-        b=e/IR0o8UtHsie4tAzPApkGrUDQCGlR0ole8SE3EQ6VOJjgyiI8AgdQ4UkSPLmSRR2O
-         A+TLFqQj/XrCtWA98+2ZAy+u1JElVrn3AOHIICDinkp5Thrp3nyUqtVJogrE8FEaA3DT
-         034bNkiEmdmnO2wZRJh3M8D7rzmUcC8p0JP0cr/O6UyEu2+Oi06nxNAnWO16yh7O5tlH
-         nu+snH86Kdq9zFK6EcNip0pKcthvpVgEkFZlRy8mxhxkAMGFi46fugoUhecwLzE0RZ5R
-         +845x7497zDoBIBcUkTvSyG8FGB5DknqdLsG10GGiXmUFevH23Z1faltA8SRTDmtc8gY
-         Ffew==
-X-Gm-Message-State: AOAM532Qhh5koTbSry/X3vDpS/9dpkHSGNeB8OwFRwvVPU43ahkk90mm
-        ZE/sDc6qHrx2wWv2zJyMxVp44OGUkdl0PFoOp2pBH7kRlYP2PmvzK4O9WFtf1lJR7BXlE7N/hMI
-        5oNWBN2LWwSJDBDRbTG0/brUQKewXCRb4q/dvNpSgt21XS/KK
-X-Received: by 2002:a05:6512:12d3:: with SMTP id p19mr25334049lfg.53.1636983104676;
-        Mon, 15 Nov 2021 05:31:44 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxqp5859FRwLs3vmdFsfbBUc9BqBiGXS88gVU5mPrJzcrErPFY4HeUhmswDPzB6Oz2RO38LAA==
-X-Received: by 2002:a05:6512:12d3:: with SMTP id p19mr25334026lfg.53.1636983104533;
-        Mon, 15 Nov 2021 05:31:44 -0800 (PST)
+        bh=4YeUT5jAqk0hL94x45nFoxH/ZKvBxBqGJy25for+rc8=;
+        b=n4vtMG6tLKanMfOKNxBrVSYI3OpDPDIzvmdI9eOZ8Mht0Q3fvQvCgwLJdewXxLqd06
+         4ERbbf/q3tgZRRInjV+QVm/WfMO3RYZGLsdJX2DRKvaotuJav3Vy3Kzyu0jvalm/wPh6
+         IwNHXH8P+gwuyltYd27ZjXl5ZSbILbo/7q63NNAk7W+aeLWsBSYpMu4HRkK+4e/MwIN2
+         0RADsRfJ34grn+/frBByPxhnQA6HkWvtgPu9QjPwHA88bkF1OCGGY/Z4Wgqzs3jvi3XA
+         ZKNLDVL+knwBO0wR4xkQG8Gfp0CGtPGk0fTQ/3zDUW/1UqbiEI40nk6UPxmlK5K9i0ko
+         AJrw==
+X-Gm-Message-State: AOAM532UDaSEoSzY6bc9sjm1gRxfMc0adNn4KVVMMIdo6GxYHTsJvpt9
+        E3tl7G2wA3KvR0/HarKj8oBvkYODqK2Xg9u4th3mKADW1MJtTzUQmTr7IqgE1dLWlmFAJGZdiHe
+        q9OxuTLljQklPkeMtKtFktwhATN+nPBDoSuBXMCsJSiM79hff
+X-Received: by 2002:a05:651c:1a4:: with SMTP id c4mr38482902ljn.3.1636983122607;
+        Mon, 15 Nov 2021 05:32:02 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzZCMMOgRGTQGkon/VvgYoRe+dStOqy2AcMVVYD3PoKiLA0qrR2Le5MsQbPrj9XNSeu4+Sq0g==
+X-Received: by 2002:a05:651c:1a4:: with SMTP id c4mr38482881ljn.3.1636983122466;
+        Mon, 15 Nov 2021 05:32:02 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id z12sm1421048lfs.101.2021.11.15.05.31.43
+        by smtp.gmail.com with ESMTPSA id w15sm1418911lfe.184.2021.11.15.05.32.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Nov 2021 05:31:44 -0800 (PST)
-Message-ID: <d1786910-6bf7-9aa5-296d-a467e41fe861@canonical.com>
-Date:   Mon, 15 Nov 2021 14:31:43 +0100
+        Mon, 15 Nov 2021 05:32:02 -0800 (PST)
+Message-ID: <b565d1fa-3635-c0fb-1bd6-ce76874b4991@canonical.com>
+Date:   Mon, 15 Nov 2021 14:32:01 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.1
-Subject: Re: [PATCH v2 1/2] ARM: dts: exynos/i9100: Fix BCM4330 Bluetooth
- reset polarity
+Subject: Re: [PATCH] arm64: dts: exynosautov9: drop
+ samsung,ufs-shareability-reg-offset
 Content-Language: en-US
 To:     Rob Herring <robh+dt@kernel.org>,
-        Paul Cercueil <paul@crapouillou.net>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211031234137.87070-1-paul@crapouillou.net>
- <163698188786.128367.17376497674811914207.b4-ty@canonical.com>
+        Chanho Park <chanho61.park@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <CGME20211102065208epcas2p2213e346b2c37f315e73a04f511a1037c@epcas2p2.samsung.com>
+ <20211102064826.15796-1-chanho61.park@samsung.com>
+ <163698188786.128367.112304195355876732.b4-ty@canonical.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <163698188786.128367.17376497674811914207.b4-ty@canonical.com>
+In-Reply-To: <163698188786.128367.112304195355876732.b4-ty@canonical.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,24 +82,22 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 15/11/2021 14:11, Krzysztof Kozlowski wrote:
-> On Sun, 31 Oct 2021 23:41:36 +0000, Paul Cercueil wrote:
->> The reset GPIO was marked active-high, which is against what's specified
->> in the documentation. Mark the reset GPIO as active-low. With this
->> change, Bluetooth can now be used on the i9100.
+> On Tue, 2 Nov 2021 15:48:26 +0900, Chanho Park wrote:
+>> samsung,ufs-shareability-reg-offset is not necessary anymore since it
+>> was integrated into the second argument of samsung,sysreg.
 >>
 >>
 > 
 > Applied, thanks!
 > 
-> [1/2] ARM: dts: exynos/i9100: Fix BCM4330 Bluetooth reset polarity
->       commit: 9cb6de45a006a9799ec399bce60d64b6d4fcc4af
-> [2/2] ARM: dts: exynos/i9100: Use interrupt for BCM4330 host wakeup
->       commit: 8e14b530f8c90346eab43c7b59b03ff9fec7d171
+> [1/1] arm64: dts: exynosautov9: drop samsung,ufs-shareability-reg-offset
+>       commit: 4f5d06d381badc6e16f6d54eac7ab0125e9a7168
+> 
+> Best regards,
 > 
 
 Applied with fixed title. Please use prefix matching history (git log
 --oneline).
-
 
 Best regards,
 Krzysztof
