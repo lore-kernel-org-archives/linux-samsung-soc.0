@@ -2,106 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D54DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 16:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07381C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 18:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53C9761A56
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 16:00:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8EE661546
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 18:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238723AbhKPQDd (ORCPT
+        id S239326AbhKPSKX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Nov 2021 11:03:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32994 "EHLO
+        Tue, 16 Nov 2021 13:10:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238725AbhKPQDb (ORCPT
+        with ESMTP id S238883AbhKPSKP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Nov 2021 11:03:31 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F56C0613B9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 08:00:33 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id u18so38556609wrg.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 08:00:33 -0800 (PST)
+        Tue, 16 Nov 2021 13:10:15 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27014C061767
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 10:07:18 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id 200so18372637pga.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 10:07:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vivvsuH8s0Rlwy3Rc73sEbERCHnOl4u00Z/GA/x3G6g=;
-        b=nbFTZdxqyIjVmvoX+jQEDonrxfsgwvgcbWn7JBcn72B3lmU500wQqiPby9Dwjx4W2N
-         d/VAdkun5xUHfOy/a6s9eW7+76tsriYEsTi85gvFEZTsnIw5NGQyIcan/VvYqbC7bgAH
-         o3N3GMTH5BgniwzuS7AMq0yg+L7Si96FrP5+S7FQlzrfkIzfl0wvCfPKDqYrjrM6cTHx
-         NYEzdTVngxbrDuP9OP9jmPNnNV9QvIgGj8O5R1QafhV6/IBcFgxl3sl8Vxaop2wHGT/O
-         Gj8GjTLPRRh4FzfI+tHd/XpyCg1LbKxtST7/ev9qdQZtx0Tc43wQU0JO0LK+DAk2sS07
-         tqNg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dJLPLJIkQPjO7UzbeQTBcB7R7AACxPrWxl+uljB+ks4=;
+        b=MuEc9myys8soSc9S5p/9ZYxQFINzZE+kAA+k/U3FM52jlU+6MJ1sN342xuvi42MyiM
+         ZMBjLooJ7voz/onZnJrPlWcorIIuLCoKkgjvfuvaYADaSZoZDmAMeW84d3xwQVEbocct
+         qdT5YRu1/seNagLz3qhmq16768PfXRj60IRok=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vivvsuH8s0Rlwy3Rc73sEbERCHnOl4u00Z/GA/x3G6g=;
-        b=TxbVe4gm9npyJcjaVqOafY3XpOBLq7kfBCIIphEXGnaWXJBT7wudLbPSJvwFLQckep
-         TLUZcLGpaKoTEEAyeUARNHfokgNmtGM8OxIzLzAP0Vo5mHgC/w4xh/C8EV4wvpM9V+Kq
-         9T0hJeDvlJlI0YFNfw0bUw3CxALCMh8adpxtMB1h9Pniols4l19gOiIboZwI4bZMTuBu
-         zGF2Y6La0/UfUp/ctdH3lTzVIpPCreMivnaD47mDzvZ++pQ74CMYrzFTTyObIwDesHvs
-         hJ11hfRFHVCDc6Njw8XMSLaDI9YkdjtBsCZ/MeGT5503py5OvkcBl5ZlLwGK39vnOsjj
-         DliQ==
-X-Gm-Message-State: AOAM532UpY4ez8DJTbxwrsauVmDBctlZserymxZOKvPS6Eejr6bXzu+o
-        k3aLk5R2MT454E7E6KVh268c1kKa0uV0Xg==
-X-Google-Smtp-Source: ABdhPJyZehPq7JhDNNL/XDSuANWvtcj+10R5LKYSSihExPpAqdY0UUojx0svlCksSWQARPLgPwWa5w==
-X-Received: by 2002:adf:f64b:: with SMTP id x11mr10869001wrp.4.1637078431851;
-        Tue, 16 Nov 2021 08:00:31 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:6870:334:c3a9:fed2? ([2a01:e34:ed2f:f020:6870:334:c3a9:fed2])
-        by smtp.googlemail.com with ESMTPSA id h15sm3377964wmq.32.2021.11.16.08.00.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dJLPLJIkQPjO7UzbeQTBcB7R7AACxPrWxl+uljB+ks4=;
+        b=oALlG7zohV5kFfg6lCOYY+fL8hvyIaJ0uywsb86K3Bv75VPP2TgZPlqSon6Ty46csJ
+         JzRUDmC4whIvIBpT24LSpsj8pANLvkSnbJsNrUKu0wiTJB6UTlsQFoB2CgxxKa7+RAC+
+         /Luz+2JZV3t7/j13Z0xT32GqWZV68cten99WHqHobTnkmoc2nXCMIs/s2EBAE1CvETNw
+         x/rVL1aT21GGHWCWInyOlYYSGr/9BIXHmm70EOOEchKsvgvUu4IyXBUS+1BZtL+BCLnO
+         P/X8l2OuFxQlS/IrAiUlvyOF7lBqo0oCZVl+JF/iEV6g2uZH6V+QEkRaZzflwz4Zx3Ck
+         f7dw==
+X-Gm-Message-State: AOAM530BqP/uJEksztW4c672huTtDIXMYTr9qhVexUx84mAOKN79ekeg
+        oztHE3NfgXQ2XSeAGq6+rhDxaw==
+X-Google-Smtp-Source: ABdhPJwhmpm1yvMfuJzR2UucqZRo6IvMajPPkE5cdkExWK4ezhfJ19WuO6fjzPR4AH6ILz/jpNvTTw==
+X-Received: by 2002:a63:c61:: with SMTP id 33mr552897pgm.415.1637086037631;
+        Tue, 16 Nov 2021 10:07:17 -0800 (PST)
+Received: from localhost ([2620:15c:202:201:54aa:73ab:b480:41e2])
+        by smtp.gmail.com with UTF8SMTPSA id e7sm2315303pgj.11.2021.11.16.10.07.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Nov 2021 08:00:30 -0800 (PST)
-Subject: Re: [PATCH 1/2] clocksource: exynos_mct: Refactor resources
- allocation
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Tue, 16 Nov 2021 10:07:16 -0800 (PST)
+Date:   Tue, 16 Nov 2021 10:07:14 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
+        Peter Chen <peter.chen@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Bastien Nocera <hadess@hadess.net>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Pawel Laszczak <pawell@cadence.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-References: <20211101193531.15078-1-semen.protsenko@linaro.org>
- <20211101193531.15078-2-semen.protsenko@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <f7dd62c9-9c4d-4130-58ee-54ec2b7729f9@linaro.org>
-Date:   Tue, 16 Nov 2021 17:00:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+Subject: Re: [PATCH v16 5/7] usb: Specify dependencies on USB_XHCI_PLATFORM
+ with 'depends on'
+Message-ID: <YZPzUmwWuuiwqJ2b@google.com>
+References: <20210813195228.2003500-1-mka@chromium.org>
+ <20210813125146.v16.5.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
+ <CAD=FV=UFUFqojhws0MBqrq41gU9ww1h-T+OjzebFKVwzeC+LYQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20211101193531.15078-2-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UFUFqojhws0MBqrq41gU9ww1h-T+OjzebFKVwzeC+LYQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/11/2021 20:35, Sam Protsenko wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
+On Thu, Nov 11, 2021 at 03:48:06PM -0800, Doug Anderson wrote:
+> Hi,
 > 
-> Move interrupts allocation from exynos4_timer_resources() into separate
-> function together with the interrupt number parsing code from
-> mct_init_dt(), so the code for managing interrupts is kept together.
-> While touching exynos4_timer_resources() function, move of_iomap() to it.
-> No functional changes.
+> On Fri, Aug 13, 2021 at 12:52 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> >  config USB_DWC3
+> >         tristate "DesignWare USB3 DRD Core Support"
+> > -       depends on (USB || USB_GADGET) && HAS_DMA
+> > -       select USB_XHCI_PLATFORM if USB_XHCI_HCD
+> > +       depends on ((USB && USB_XHCI_PLATFORM) || USB_GADGET) && HAS_DMA
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+> Technically you don't need the "USB &&", right? Since
+> USB_XHCI_PLATFORM is defined in 'usb/host/Kconfig' and that's only
+> even included if USB is defined. So it can be just:
+> 
+> depends on (USB_XHCI_PLATFORM || USB_GADGET) && HAS_DMA
 
-Applied, thx
+True, the dependency on USB isn't strictly needed.
 
-[ ... ]
+> That's not terribly important, though, so:
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks!
