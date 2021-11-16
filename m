@@ -2,168 +2,106 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF73C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 15:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D54DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 16:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51C4761BFE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 15:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53C9761A56
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Nov 2021 16:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238285AbhKPPey (ORCPT
+        id S238723AbhKPQDd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Nov 2021 10:34:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54346 "EHLO
+        Tue, 16 Nov 2021 11:03:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238277AbhKPPex (ORCPT
+        with ESMTP id S238725AbhKPQDb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Nov 2021 10:34:53 -0500
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D0DAC061570
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 07:31:56 -0800 (PST)
-Received: by mail-ua1-x92a.google.com with SMTP id az37so43291449uab.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 07:31:56 -0800 (PST)
+        Tue, 16 Nov 2021 11:03:31 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F56C0613B9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 08:00:33 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id u18so38556609wrg.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Nov 2021 08:00:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tsrV+hfFCVu/lguKxyW5H34AzEuQICjVq9Wuxqx+30s=;
-        b=t5/2NAXadqXAMwAiI9RIP3gOoQY4iP2IRi9cf5GQoc3LIoPav3xQzx9O6dh8IWGd+B
-         S4VutQCpR3V9WIfTCmveVjh3KKjL7jILRXRqcRBgqReRwrHVt2uwRQJhtE+YbeXvdIcH
-         f2K1j30ztG6CwRB/8CgVoxgqEsZqtWFz1GIr7klc9YT1NDQqqUEZXQv4qTAVKo1vUeJ2
-         hReZoa+BfBUX7Um1+ZKMr27iclbkoSqEZQ8hk1szDHC6UDhAn9DnMLgoH50ozs4hHzQf
-         uEVcJma99XK7xK8meSQ/l9ZRmPmEBq5ylKKP3aGi5tXxKiN7Dk6Zp4qj2lxGtw3r4SQN
-         jnwA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vivvsuH8s0Rlwy3Rc73sEbERCHnOl4u00Z/GA/x3G6g=;
+        b=nbFTZdxqyIjVmvoX+jQEDonrxfsgwvgcbWn7JBcn72B3lmU500wQqiPby9Dwjx4W2N
+         d/VAdkun5xUHfOy/a6s9eW7+76tsriYEsTi85gvFEZTsnIw5NGQyIcan/VvYqbC7bgAH
+         o3N3GMTH5BgniwzuS7AMq0yg+L7Si96FrP5+S7FQlzrfkIzfl0wvCfPKDqYrjrM6cTHx
+         NYEzdTVngxbrDuP9OP9jmPNnNV9QvIgGj8O5R1QafhV6/IBcFgxl3sl8Vxaop2wHGT/O
+         Gj8GjTLPRRh4FzfI+tHd/XpyCg1LbKxtST7/ev9qdQZtx0Tc43wQU0JO0LK+DAk2sS07
+         tqNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tsrV+hfFCVu/lguKxyW5H34AzEuQICjVq9Wuxqx+30s=;
-        b=BOBv0IVQMNFQFGUYh8ZIS8k46kKnhQxnOZekn/UvzXmORh+k8pfR9hGwiS4Dl9AjSy
-         mBmBbGNHUwuWPYIi9iuV/EXC/PLSCXgrx8YR9c0UOvTXnMzCY38oMZWsbP7m3OePi4tr
-         clRXVwE8QvuABE1vV0SN0HY0ZcKOg9IR4n23VZ3Nc6itaEz49cwIrPRk+yF/IguG9sxn
-         BHPr8b16E6HPu2v33IOstC503/1pRiw8C6mT/viz5ohUBVdyLMGQbJCd+tS0qzNJkK3W
-         T7v4WTE85UIPBJhjHIOBrGtO/PHivaTfqE1zWm65oQVHsANGU2AQ5yP+VlSu5HQJAuyJ
-         pagQ==
-X-Gm-Message-State: AOAM533tMPr/FMn6E8udVzvkuHVTOdMmsho2UdxwqjynF3gvpuO6JDcF
-        N1LWsJoFs56sKctAru1bNyNM32OT8/EVQxZZmBQuKg==
-X-Google-Smtp-Source: ABdhPJzI1vYHs3IlbeTAF3zLZ2iugMLFFYsb7zRv/5mdhBpZbcKWUCT8T42LC150nqoSu9alCPYFu2j907jPq57oocE=
-X-Received: by 2002:ab0:458e:: with SMTP id u14mr12043487uau.104.1637076715001;
- Tue, 16 Nov 2021 07:31:55 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vivvsuH8s0Rlwy3Rc73sEbERCHnOl4u00Z/GA/x3G6g=;
+        b=TxbVe4gm9npyJcjaVqOafY3XpOBLq7kfBCIIphEXGnaWXJBT7wudLbPSJvwFLQckep
+         TLUZcLGpaKoTEEAyeUARNHfokgNmtGM8OxIzLzAP0Vo5mHgC/w4xh/C8EV4wvpM9V+Kq
+         9T0hJeDvlJlI0YFNfw0bUw3CxALCMh8adpxtMB1h9Pniols4l19gOiIboZwI4bZMTuBu
+         zGF2Y6La0/UfUp/ctdH3lTzVIpPCreMivnaD47mDzvZ++pQ74CMYrzFTTyObIwDesHvs
+         hJ11hfRFHVCDc6Njw8XMSLaDI9YkdjtBsCZ/MeGT5503py5OvkcBl5ZlLwGK39vnOsjj
+         DliQ==
+X-Gm-Message-State: AOAM532UpY4ez8DJTbxwrsauVmDBctlZserymxZOKvPS6Eejr6bXzu+o
+        k3aLk5R2MT454E7E6KVh268c1kKa0uV0Xg==
+X-Google-Smtp-Source: ABdhPJyZehPq7JhDNNL/XDSuANWvtcj+10R5LKYSSihExPpAqdY0UUojx0svlCksSWQARPLgPwWa5w==
+X-Received: by 2002:adf:f64b:: with SMTP id x11mr10869001wrp.4.1637078431851;
+        Tue, 16 Nov 2021 08:00:31 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:6870:334:c3a9:fed2? ([2a01:e34:ed2f:f020:6870:334:c3a9:fed2])
+        by smtp.googlemail.com with ESMTPSA id h15sm3377964wmq.32.2021.11.16.08.00.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Nov 2021 08:00:30 -0800 (PST)
+Subject: Re: [PATCH 1/2] clocksource: exynos_mct: Refactor resources
+ allocation
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20211101193531.15078-1-semen.protsenko@linaro.org>
+ <20211101193531.15078-2-semen.protsenko@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <f7dd62c9-9c4d-4130-58ee-54ec2b7729f9@linaro.org>
+Date:   Tue, 16 Nov 2021 17:00:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <CGME20211112010603epcas2p339d1a6ef3df7cdbe61c87c8afa541fd0@epcas2p3.samsung.com>
- <20211112010137.149174-1-jaewon02.kim@samsung.com> <20211112010137.149174-3-jaewon02.kim@samsung.com>
- <CAPLW+4==X+irRBKHiDfgJeAb0oDKkzbcWERFs7Y3=PSOg0+qAw@mail.gmail.com>
- <001401d7da86$f7ebd660$e7c38320$@samsung.com> <da9bd8cc-9415-6db7-024e-8d50b5f666f7@canonical.com>
-In-Reply-To: <da9bd8cc-9415-6db7-024e-8d50b5f666f7@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 16 Nov 2021 17:31:43 +0200
-Message-ID: <CAPLW+4n2hZ1c9BuOo4JtKLZp48fH81xUr0GSaJoc21=ad2vv1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] i2c: exynos5: add support for ExynosAutov9 SoC
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211101193531.15078-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 16 Nov 2021 at 11:32, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 16/11/2021 02:12, Chanho Park wrote:
-> >> With this patch the Exynos850 HSI2C becomes functional. The only nit-pick
-> >> from my side (just a food for thought): do we want to configure USI
-> >> related config inside of particular drivers (SPI, I2C, UART)? Or it would
-> >> be better design to implement some platform driver for that, so we can
-> >> choose USI configuration (SPI/I2C/UART) in device tree? I think this
-> >> series is good to be merged as is, but we should probably consider all
-> >> upsides and downsides of each option, for the future work.
-> >
-> > I'm also considering how to support this USI configuration gracefully.
-> > Current version of USI is v2 which means there is a v1 version as well. It might be a non-upstream SoC so we don't need to consider it so far.
-> > But, there is a possibility that the USI hw version can be bumped for future SoCs.
-> >
-> > As you probably know, earlier version of the product kernel has a USI SoC driver[1] and it was designed to be configured the USI settings by device tree.
-> >
-> > Option1) Make a USI driver under soc/samsung/ like [1].
-> > Option2) Use more generic driver such as "reset driver"? This might be required to extend the reset core driver.
-> > Option3) Each USI driver(uart/i2c/spi) has its own USI configurations respectively and expose some configurations which can be variable as device tree.
-> >
-> > [1]: https://github.com/ianmacd/d2s/blob/master/drivers/soc/samsung/usi_v2.c
->
-> I don't have user manuals, so all my knowledge here is based on
-> Exynos9825 vendor source code, therefore it is quite limited. In
-> devicetree the USI devices have their own nodes - but does it mean it's
-> separate SFR range dedicated to USI? Looks like that, especially that
-> address space is just for one register (4 bytes).
->
-> In such case having separate dedicated driver makes sense and you would
-> only have to care about driver ordering (e.g. via device links or phandles).
->
-> Option 2 looks interesting - reusing reset framework to set proper USI
-> mode, however this looks more like a hack. As you said Chanho, if there
-> is a USI version 3, this reset framework might not be sufficient.
->
-> In option 3 each driver (UART/I2C/SPI) would need to receive second IO
-> range and toggle some registers, which could be done via shared
-> function. If USI v3 is coming, all such drivers could get more complicated.
->
-> I think option 1 is the cleanest and extendable in future. It's easy to
-> add usi-v3 or whatever without modifying the UART/I2C/SPI drivers. It
-> also nicely encapsulates USI-related stuff in separate driver. Probe
-> ordering should not be a problem now.
->
-> But as I said, I don't have even the big picture here, so I rely on your
-> opinions more.
->
+On 01/11/2021 20:35, Sam Protsenko wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> Move interrupts allocation from exynos4_timer_resources() into separate
+> function together with the interrupt number parsing code from
+> mct_init_dt(), so the code for managing interrupts is kept together.
+> While touching exynos4_timer_resources() function, move of_iomap() to it.
+> No functional changes.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
 
-To provide more context, USI registers are split across two different
-register maps:
+Applied, thx
 
-    - USI protocol configuration (where we choose which protocol to
-use: HSI2C, SPI or UART) is done via *_SW_CONF registers, from System
-Register SFR range. To access those SW_CONF registers we need to
-either:
-        (Option 3) pass System Register registers to corresponding
-driver (HSI2C/SPI/UART) via syscon
-        (Option 1) or implement separate USI driver, so we can choose
-desired protocol in device tree; in that case I guess System Register
-registers should be passed via syscon to USI driver
-    - USI registers (like USI_CON register, which contains USI_RESET
-bit) are contained in the same SFR range as corresponding
-HSI2C/SPI/UART IP-core. Or rather HSI2C/SPI/UART IP-cores are
-encapsulated within USI block(s). So to access registers like USI_CON
-we only need to use memory already passed to corresponding
-HSI2C/SPI/UART driver via "reg" property.
+[ ... ]
 
-So I'd say ideally we should do next:
-  - modify USI registers (like USI_CON) in corresponding
-HSI2C/SPI/UART drivers; but because all HSI2C/SPI/UART drivers share
-the same USI registers, we might want to pull USI register offsets and
-bits to some common header file, for example (to not duplicate that
-code in drivers)
-  - implement separate USI driver to control SW_CONF registers from
-System Register module (Option 1), so we can choose desired protocol
-in device tree (in some USI node, not in HSI2C node)
-  - also, it probably makes sense to group all USI related nodes in
-some separate *-usi.dtsi file; that would reduce confusion, given that
-we have even more encapsulation in Exynos850 thanks to CMGP (Common
-GPIO) block
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-My suggestion is to take this patch as is, and then we can work on USI
-driver implementation/upstreaming. Right now we don't have much of
-device tree files that use USI HSI2C driver, so it'll be fairly easy
-to fix those dts's once we implemented USI driver. That will also
-unblock me with submitting dev board support (dts files) I'm working
-on right now. Krzysztof, please let me know if I'm wrong and if we
-shouldn't change dts API too much, so it's mandatory to implement USI
-driver before accepting this patch.
-
-Thanks!
-
-> Best regards,
-> Krzysztof
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
