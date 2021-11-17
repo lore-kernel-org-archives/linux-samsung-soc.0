@@ -2,222 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2D0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 13:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CC0C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 22:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F3AA61B44
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 13:38:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0804A61B3E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 22:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237803AbhKQNk6 (ORCPT
+        id S241127AbhKQWVN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Nov 2021 08:40:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44886 "EHLO
+        Wed, 17 Nov 2021 17:21:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237773AbhKQNk6 (ORCPT
+        with ESMTP id S241100AbhKQWVM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Nov 2021 08:40:58 -0500
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08313C061570;
-        Wed, 17 Nov 2021 05:38:00 -0800 (PST)
-Received: by mail-ot1-x32b.google.com with SMTP id w6-20020a9d77c6000000b0055e804fa524so4774844otl.3;
-        Wed, 17 Nov 2021 05:38:00 -0800 (PST)
+        Wed, 17 Nov 2021 17:21:12 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB12C061570;
+        Wed, 17 Nov 2021 14:18:13 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id y12so17611523eda.12;
+        Wed, 17 Nov 2021 14:18:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+Jk5JCFsIFWl2sySSKhWSLQ0MwixWIqkQO7z4AFIadg=;
-        b=oGn7Hmg7q1jQqPb1vHJiCoYKD3s+eAfxhkSmPjD2YX6B7uTLWGp902oNVuV9IYmHZ1
-         Zvh8lUUR9O4ubahJHNFJaSYpIGX8otwM+/TFlZKdwM2OTmmai8gIVS4RxqpG0QJ2Olzy
-         V4AysWp7A35C20SNJpKyhcFKmr1HTD6yM+AbzrQlUuJJUtRUOlWJwd+lwkpKgYf5SpB1
-         3gEYtLEeOXGrhWXO/ygQ7bGAz+Jm8LRLiRk7JyRuMW2G/bDH7A7zTdhMYHeLb5suWuVK
-         eCTyoItm+VzBlIAWU8xsxLZM3Hf/L2gvKtMPLamUX46UTN4sebqIkd4z39OIh4icNtQy
-         V+EA==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=uwaJGhx917BJGzmEA12X6fG6XxZWYSzTmRZkffjSJ9A=;
+        b=boPWvSAdRPsQcp1xrzCbOVLo6NvHJXRgB/uBhddLwm4vOztoJbDBHUFAg+9qNx/mIl
+         5OnQdDVbzgCYRSnSIuTxyCnZR6yzDB+FAsoJQ7wytbT94AKMT8QsIEoiittY3nve0oRI
+         Md1xWZhxdISj/QA5eSDWrsvjRfI5EWP06wQHaAIEAu628KxflvuzG3/LYfAKj+WHgeWc
+         JXhEtOyDJKkl59yXejYAPuPVMfpTdNcOHOr8vWMqCjU29TlhQLKh/Ks2fYN3OaagZftI
+         gYVt59QWip+XUyWuRfleqWbamEt1GeRWPuAlo8ur/kXLQX9GE3vyt572oGKLzaPFlHuz
+         hLrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=+Jk5JCFsIFWl2sySSKhWSLQ0MwixWIqkQO7z4AFIadg=;
-        b=MnpoDg66xfGM/eBoBfculXHInZrgwaqhrNpM3MSThVfB/Q7dXcbd+IBuZzqafVVYg8
-         wb0H+JAMT/7ydR4T/slnKJbXOxxt+YI9mqq8cNyP+GGfPp2qkyVGUZZa/5g3DPJuuqhJ
-         LXr2YDOGPTHA/cD4x45eGdTESrWYiob4e2J1cN8ch9GEzKoOBOjEKX9NVmGbEvRDa7VO
-         Besguwtqax42nEL7wdN+7TX7xF0jCCkuWqQiK3xJos8WQ5HA1B5utuA9eJmwLolWmjt/
-         rVMvwRTsi56aI/mevwbnFNgXHy5//DLtaLvIh+/bw3oYc8L966IY3hrhRa15797pxp6y
-         psjQ==
-X-Gm-Message-State: AOAM531iTf70DP4H/GKxvyJOXfZGUEHOwrhZVhSognmatbGCrZaKt6Nw
-        NBnPk/N/tsiWvjYi2OI6Wi0=
-X-Google-Smtp-Source: ABdhPJzk9xXT4CRTEWRKrUrCpIrdcwgB7W01tUG/FTb05rzFoExBdTzI0bdcjQ8MMz6zPQA+35SFhg==
-X-Received: by 2002:a05:6830:3499:: with SMTP id c25mr14207167otu.206.1637156279368;
-        Wed, 17 Nov 2021 05:37:59 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c9sm668940oog.43.2021.11.17.05.37.58
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=uwaJGhx917BJGzmEA12X6fG6XxZWYSzTmRZkffjSJ9A=;
+        b=HGpIlCZmuzvQrhoKUqMH2xxvfDZ2RT153ubEAlv2Zb11U0QmJ3Y9MQ6kxTOz9XTsoW
+         GZqvaHuiUVlrEj7uxEJbbY5XTQn128J+ZE2EWgtleQxe5D2YbmEeCdEwgbeVKj/7li9r
+         LsiHG5wyrzcYBNP6lieSw+TRpswOuLYKD17pLTDDQigcC8OkYd4LaJ4M93n+5jh1cX+W
+         wHd1WnfcywAXFzNU4fD7naq4AZvmeT3iQ5e7X6ndsZQGPRl8YEdqMSZqlCffWakjOeFS
+         ohHcV6wKhZ5exMYRnOdidtkbRj8yPqYnNqGwlVp3/pVuWr2BEinypuir7MkmePSkamxt
+         fV6g==
+X-Gm-Message-State: AOAM532KcP90tR51B0dN4Hi8FjEktp/FEAvsVnwGRuD/AY0nqOpIPo3H
+        jWjMN+RhPv3WarTuti9Qt5I=
+X-Google-Smtp-Source: ABdhPJy52mXAuwaFzuszO3cNDfb51dXVqQPAC0VHCpaWesxHmfSAxn9hxqCLxBnU1pZl/C/9iG28LQ==
+X-Received: by 2002:a05:6402:35d2:: with SMTP id z18mr3416427edc.188.1637187492003;
+        Wed, 17 Nov 2021 14:18:12 -0800 (PST)
+Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.gmail.com with ESMTPSA id mp5sm522733ejc.68.2021.11.17.14.18.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Nov 2021 05:37:58 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 17 Nov 2021 05:37:57 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 12/12] watchdog: s3c2410: Add Exynos850 support
-Message-ID: <20211117133757.GL2435591@roeck-us.net>
-References: <20211107202943.8859-1-semen.protsenko@linaro.org>
- <20211107202943.8859-13-semen.protsenko@linaro.org>
+        Wed, 17 Nov 2021 14:18:11 -0800 (PST)
+Message-ID: <9ee9584833d948188347414991a117ca86edfaaf.camel@gmail.com>
+Subject: Re: [PATCH v3 2/2] i2c: exynos5: add support for ExynosAutov9 SoC
+From:   David Virag <virag.david003@gmail.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Sam Protsenko' <semen.protsenko@linaro.org>,
+        'Jaewon Kim' <jaewon02.kim@samsung.com>
+Cc:     'Krzysztof Kozlowski' <krzysztof.kozlowski@canonical.com>,
+        'Wolfram Sang' <wsa@kernel.org>,
+        'Rob Herring' <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Wed, 17 Nov 2021 23:17:55 +0100
+In-Reply-To: <001401d7da86$f7ebd660$e7c38320$@samsung.com>
+References: <CGME20211112010603epcas2p339d1a6ef3df7cdbe61c87c8afa541fd0@epcas2p3.samsung.com>
+         <20211112010137.149174-1-jaewon02.kim@samsung.com>
+         <20211112010137.149174-3-jaewon02.kim@samsung.com>
+         <CAPLW+4==X+irRBKHiDfgJeAb0oDKkzbcWERFs7Y3=PSOg0+qAw@mail.gmail.com>
+         <001401d7da86$f7ebd660$e7c38320$@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211107202943.8859-13-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Nov 07, 2021 at 10:29:43PM +0200, Sam Protsenko wrote:
-> Exynos850 is a bit different from SoCs already supported in WDT driver:
->   - AUTOMATIC_WDT_RESET_DISABLE register is removed, so its value is
->     always 0; .disable_auto_reset callback is not set for that reason
->   - MASK_WDT_RESET_REQUEST register is replaced with
->     CLUSTERx_NONCPU_IN_EN register; instead of masking (disabling) WDT
->     reset interrupt it's now enabled with the same value; .mask_reset
->     callback is reused for that functionality though
->   - To make WDT functional, WDT counter needs to be enabled in
->     CLUSTERx_NONCPU_OUT register; it's done using .enable_counter
->     callback
-> 
-> Also Exynos850 has two CPU clusters, each has its own dedicated WDT
-> instance. Different PMU registers and bits are used for each cluster. So
-> driver data is now modified in probe, adding needed info depending on
-> cluster index passed from device tree.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Current version of USI is v2 which means there is a v1 version as well.
+> It might be a non-upstream SoC so we don't need to consider it so far.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+The Exynos7885 I'm working on has USI v1. It doesn't seem to be heavily
+used as the SoC has just 3 USI blocks if I didn't miss anything.
 
-> ---
-> Changes in v3:
->   - Renamed "samsung,index" property to more descriptive
->     "samsung,cluster-index"
->   - Used pre-defined and completely set driver data for cluster0 and
->     cluster1
-> 
-> Changes in v2:
->   - Used single compatible for Exynos850, populating missing driver data
->     in probe
->   - Added "index" property to specify CPU cluster index
-> 
->  drivers/watchdog/s3c2410_wdt.c | 62 +++++++++++++++++++++++++++++++++-
->  1 file changed, 61 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 96aa5d9c6ed4..1456201f27de 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -56,6 +56,13 @@
->  #define EXYNOS5_RST_STAT_REG_OFFSET		0x0404
->  #define EXYNOS5_WDT_DISABLE_REG_OFFSET		0x0408
->  #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET	0x040c
-> +#define EXYNOS850_CLUSTER0_NONCPU_OUT		0x1220
-> +#define EXYNOS850_CLUSTER0_NONCPU_INT_EN	0x1244
-> +#define EXYNOS850_CLUSTER1_NONCPU_OUT		0x1620
-> +#define EXYNOS850_CLUSTER1_NONCPU_INT_EN	0x1644
-> +
-> +#define EXYNOS850_CLUSTER0_WDTRESET_BIT		24
-> +#define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
->  
->  /**
->   * Quirk flags for different Samsung watchdog IP-cores.
-> @@ -205,6 +212,30 @@ static const struct s3c2410_wdt_variant drv_data_exynos7 = {
->  		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_AUTO_DISABLE,
->  };
->  
-> +static const struct s3c2410_wdt_variant drv_data_exynos850_cl0 = {
-> +	.mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN,
-> +	.mask_bit = 2,
-> +	.mask_reset_inv = true,
-> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-> +	.rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT,
-> +	.cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
-> +	.cnt_en_bit = 7,
-> +	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
-> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-> +};
-> +
-> +static const struct s3c2410_wdt_variant drv_data_exynos850_cl1 = {
-> +	.mask_reset_reg = EXYNOS850_CLUSTER1_NONCPU_INT_EN,
-> +	.mask_bit = 2,
-> +	.mask_reset_inv = true,
-> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-> +	.rst_stat_bit = EXYNOS850_CLUSTER1_WDTRESET_BIT,
-> +	.cnt_en_reg = EXYNOS850_CLUSTER1_NONCPU_OUT,
-> +	.cnt_en_bit = 7,
-> +	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
-> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
-> +};
-> +
->  static const struct of_device_id s3c2410_wdt_match[] = {
->  	{ .compatible = "samsung,s3c2410-wdt",
->  	  .data = &drv_data_s3c2410 },
-> @@ -216,6 +247,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
->  	  .data = &drv_data_exynos5420 },
->  	{ .compatible = "samsung,exynos7-wdt",
->  	  .data = &drv_data_exynos7 },
-> +	{ .compatible = "samsung,exynos850-wdt",
-> +	  .data = &drv_data_exynos850_cl0 },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-> @@ -587,14 +620,38 @@ static inline const struct s3c2410_wdt_variant *
->  s3c2410_get_wdt_drv_data(struct platform_device *pdev)
->  {
->  	const struct s3c2410_wdt_variant *variant;
-> +	struct device *dev = &pdev->dev;
->  
-> -	variant = of_device_get_match_data(&pdev->dev);
-> +	variant = of_device_get_match_data(dev);
->  	if (!variant) {
->  		/* Device matched by platform_device_id */
->  		variant = (struct s3c2410_wdt_variant *)
->  			   platform_get_device_id(pdev)->driver_data;
->  	}
->  
-> +	/* Choose Exynos850 driver data w.r.t. cluster index */
-> +	if (variant == &drv_data_exynos850_cl0) {
-> +		u32 index;
-> +		int err;
-> +
-> +		err = of_property_read_u32(dev->of_node,
-> +					   "samsung,cluster-index", &index);
-> +		if (err) {
-> +			dev_err(dev, "failed to get cluster index\n");
-> +			return NULL;
-> +		}
-> +
-> +		switch (index) {
-> +		case 0:
-> +			return &drv_data_exynos850_cl0;
-> +		case 1:
-> +			return &drv_data_exynos850_cl1;
-> +		default:
-> +			dev_err(dev, "wrong cluster index: %u\n", index);
-> +			return NULL;
-> +		}
-> +	}
-> +
->  	return variant;
->  }
->  
-> @@ -615,6 +672,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->  	wdt->wdt_device = s3c2410_wdd;
->  
->  	wdt->drv_data = s3c2410_get_wdt_drv_data(pdev);
-> +	if (!wdt->drv_data)
-> +		return -EINVAL;
-> +
->  	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
->  		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
->  						"samsung,syscon-phandle");
-> -- 
-> 2.30.2
-> 
+The most obvious difference I saw was instead of having 3 modes (SPI,
+UART, and HSI2C) It has:
+ - SPI
+ - HSI2C0 (meaning I2C pins are connected to the first 2 pins out of
+the 4 if I understand it correctly)
+ - HSI2C1 (connected to last 2 pins)
+ - HSI2C0_HSI2C1 (2 I2C devices connected to first 2 and last 2 pins)
+ - UART
+ - UART_HSI2C1 (first 2 pins are UART, rest is I2C)
+
+Also there doesn't seem to be any USI_CON or USI_OPTION registers in
+SPI, UART, or I2C. It seems like it's just the USI driver doing all the
+work (just setting up the SYSREG) and the I2C driver writing values to
+the SYSREG at suspend/resume for some reason. 
+
+From the looks of it, it doesn't look like it'd be hard to add this to
+USI v2 drivers when needed. (USI driver (if that's the way it will go)
+would just need minor modifications to add v1 modes and UART/SPI/I2C
+drivers may just work with non-USI compatibles/would only need SoC
+specific data added).
+
+Best Regards,
+David
