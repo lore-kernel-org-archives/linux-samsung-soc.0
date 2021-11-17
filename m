@@ -2,109 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CC0C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 22:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F30C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 23:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0804A61B3E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 22:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2894761ABF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Nov 2021 23:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241127AbhKQWVN (ORCPT
+        id S241750AbhKRABW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 17 Nov 2021 17:21:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241100AbhKQWVM (ORCPT
+        Wed, 17 Nov 2021 19:01:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241730AbhKRABN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 17 Nov 2021 17:21:12 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB12C061570;
-        Wed, 17 Nov 2021 14:18:13 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id y12so17611523eda.12;
-        Wed, 17 Nov 2021 14:18:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=uwaJGhx917BJGzmEA12X6fG6XxZWYSzTmRZkffjSJ9A=;
-        b=boPWvSAdRPsQcp1xrzCbOVLo6NvHJXRgB/uBhddLwm4vOztoJbDBHUFAg+9qNx/mIl
-         5OnQdDVbzgCYRSnSIuTxyCnZR6yzDB+FAsoJQ7wytbT94AKMT8QsIEoiittY3nve0oRI
-         Md1xWZhxdISj/QA5eSDWrsvjRfI5EWP06wQHaAIEAu628KxflvuzG3/LYfAKj+WHgeWc
-         JXhEtOyDJKkl59yXejYAPuPVMfpTdNcOHOr8vWMqCjU29TlhQLKh/Ks2fYN3OaagZftI
-         gYVt59QWip+XUyWuRfleqWbamEt1GeRWPuAlo8ur/kXLQX9GE3vyt572oGKLzaPFlHuz
-         hLrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=uwaJGhx917BJGzmEA12X6fG6XxZWYSzTmRZkffjSJ9A=;
-        b=HGpIlCZmuzvQrhoKUqMH2xxvfDZ2RT153ubEAlv2Zb11U0QmJ3Y9MQ6kxTOz9XTsoW
-         GZqvaHuiUVlrEj7uxEJbbY5XTQn128J+ZE2EWgtleQxe5D2YbmEeCdEwgbeVKj/7li9r
-         LsiHG5wyrzcYBNP6lieSw+TRpswOuLYKD17pLTDDQigcC8OkYd4LaJ4M93n+5jh1cX+W
-         wHd1WnfcywAXFzNU4fD7naq4AZvmeT3iQ5e7X6ndsZQGPRl8YEdqMSZqlCffWakjOeFS
-         ohHcV6wKhZ5exMYRnOdidtkbRj8yPqYnNqGwlVp3/pVuWr2BEinypuir7MkmePSkamxt
-         fV6g==
-X-Gm-Message-State: AOAM532KcP90tR51B0dN4Hi8FjEktp/FEAvsVnwGRuD/AY0nqOpIPo3H
-        jWjMN+RhPv3WarTuti9Qt5I=
-X-Google-Smtp-Source: ABdhPJy52mXAuwaFzuszO3cNDfb51dXVqQPAC0VHCpaWesxHmfSAxn9hxqCLxBnU1pZl/C/9iG28LQ==
-X-Received: by 2002:a05:6402:35d2:: with SMTP id z18mr3416427edc.188.1637187492003;
-        Wed, 17 Nov 2021 14:18:12 -0800 (PST)
-Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
-        by smtp.gmail.com with ESMTPSA id mp5sm522733ejc.68.2021.11.17.14.18.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Nov 2021 14:18:11 -0800 (PST)
-Message-ID: <9ee9584833d948188347414991a117ca86edfaaf.camel@gmail.com>
-Subject: Re: [PATCH v3 2/2] i2c: exynos5: add support for ExynosAutov9 SoC
-From:   David Virag <virag.david003@gmail.com>
-To:     Chanho Park <chanho61.park@samsung.com>,
-        'Sam Protsenko' <semen.protsenko@linaro.org>,
-        'Jaewon Kim' <jaewon02.kim@samsung.com>
-Cc:     'Krzysztof Kozlowski' <krzysztof.kozlowski@canonical.com>,
-        'Wolfram Sang' <wsa@kernel.org>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Wed, 17 Nov 2021 23:17:55 +0100
-In-Reply-To: <001401d7da86$f7ebd660$e7c38320$@samsung.com>
-References: <CGME20211112010603epcas2p339d1a6ef3df7cdbe61c87c8afa541fd0@epcas2p3.samsung.com>
-         <20211112010137.149174-1-jaewon02.kim@samsung.com>
-         <20211112010137.149174-3-jaewon02.kim@samsung.com>
-         <CAPLW+4==X+irRBKHiDfgJeAb0oDKkzbcWERFs7Y3=PSOg0+qAw@mail.gmail.com>
-         <001401d7da86$f7ebd660$e7c38320$@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.1 
+        Wed, 17 Nov 2021 19:01:13 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C8D5A61AD2;
+        Wed, 17 Nov 2021 23:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637193494;
+        bh=jt1bptChpIJAfJm7hhcvnL0z6T39eDJjHsyLzG8zD1Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=lyKjNjZh0qOCqIMVIpeRoNDwhdUJ/tL20BWpiwNwGttOe0RfGC7KJ4PhUovOify8k
+         CPIwK9uSUQMg7VMxx+ystTmi5eBYFIkTtVD4sE8ulLOvbgkfTXGOpyI5/5ntrQgvl0
+         CfZ1WfNlECodqxIGcyQGBzURqYPwL89BjB4irtfrZDGz99G0bGiOvyoqAHp04d3fBv
+         aBxC568xp2R7kzM9biPqbt5SZcYkGOgkMTsagR6oWZfjlJq8OfZ4tIYBwT1Dm+Bjb+
+         xfWKIqeKqVbpwaZ3tBQdETriNpArC0Ads/tlo1ukjZbgXjypi2+h68mtdIpt5Dhoxd
+         4UKc+KstDfPQQ==
+Date:   Wed, 17 Nov 2021 17:58:12 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Naveen Naidu <naveennaidu479@gmail.com>
+Cc:     bhelgaas@google.com,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        linux-hyperv@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        linux-pci@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Russell Currey <ruscur@russell.cc>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Toan Le <toan@os.amperecomputing.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Nirmal Patel <nirmal.patel@linux.intel.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Rob Herring <robh@kernel.org>, Wei Liu <wei.liu@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Joyce Ooi <joyce.ooi@intel.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Jianjun Wang <jianjun.wang@mediatek.com>,
+        linux-rockchip@lists.infradead.org,
+        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Jonathan Derrick <jonathan.derrick@linux.dev>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Robert Richter <rric@kernel.org>,
+        Sean V Kelley <sean.v.kelley@intel.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Subject: Re: [PATCH v3 01/25] PCI: Add PCI_ERROR_RESPONSE and it's related
+ definitions
+Message-ID: <20211117235812.GA1786428@bhelgaas>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7960a4dee0e417eedd7d2e031d04ac9016c6686.1634825082.git.naveennaidu479@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> Current version of USI is v2 which means there is a v1 version as well.
-> It might be a non-upstream SoC so we don't need to consider it so far.
+On Thu, Oct 21, 2021 at 08:37:26PM +0530, Naveen Naidu wrote:
+> An MMIO read from a PCI device that doesn't exist or doesn't respond
+> causes a PCI error.  There's no real data to return to satisfy the
+> CPU read, so most hardware fabricates ~0 data.
+> 
+> Add a PCI_ERROR_RESPONSE definition for that and use it where
+> appropriate to make these checks consistent and easier to find.
+> 
+> Also add helper definitions SET_PCI_ERROR_RESPONSE and
+> RESPONSE_IS_PCI_ERROR to make the code more readable.
+> 
+> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Naveen Naidu <naveennaidu479@gmail.com>
+> ---
+>  include/linux/pci.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index cd8aa6fce204..689c8277c584 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -154,6 +154,15 @@ enum pci_interrupt_pin {
+>  /* The number of legacy PCI INTx interrupts */
+>  #define PCI_NUM_INTX	4
+>  
+> +/*
+> + * Reading from a device that doesn't respond typically returns ~0.  A
+> + * successful read from a device may also return ~0, so you need additional
+> + * information to reliably identify errors.
+> + */
+> +#define PCI_ERROR_RESPONSE     (~0ULL)
+> +#define SET_PCI_ERROR_RESPONSE(val)    (*(val) = ((typeof(*(val))) PCI_ERROR_RESPONSE))
+> +#define RESPONSE_IS_PCI_ERROR(val) ((val) == ((typeof(val)) PCI_ERROR_RESPONSE))
 
-The Exynos7885 I'm working on has USI v1. It doesn't seem to be heavily
-used as the SoC has just 3 USI blocks if I didn't miss anything.
+Beautiful!  I really like this.
 
-The most obvious difference I saw was instead of having 3 modes (SPI,
-UART, and HSI2C) It has:
- - SPI
- - HSI2C0 (meaning I2C pins are connected to the first 2 pins out of
-the 4 if I understand it correctly)
- - HSI2C1 (connected to last 2 pins)
- - HSI2C0_HSI2C1 (2 I2C devices connected to first 2 and last 2 pins)
- - UART
- - UART_HSI2C1 (first 2 pins are UART, rest is I2C)
+I would prefer the macros to start with "PCI_", e.g.,
+PCI_SET_ERROR_RESPONSE().
 
-Also there doesn't seem to be any USI_CON or USI_OPTION registers in
-SPI, UART, or I2C. It seems like it's just the USI driver doing all the
-work (just setting up the SYSREG) and the I2C driver writing values to
-the SYSREG at suspend/resume for some reason. 
+I think "RESPONSE_IS_PCI_ERROR()" is too strong because (as the
+comment says), ~0 *may* indicate an error.  Or it may be a successful
+read of a register that happens to contain ~0.
 
-From the looks of it, it doesn't look like it'd be hard to add this to
-USI v2 drivers when needed. (USI driver (if that's the way it will go)
-would just need minor modifications to add v1 modes and UART/SPI/I2C
-drivers may just work with non-USI compatibles/would only need SoC
-specific data added).
+Possibilities to convey the idea that this isn't definitive:
 
-Best Regards,
-David
+  PCI_POSSIBLE_ERROR_RESPONSE(val)  # a little long
+  PCI_LIKELY_ERROR(val)             # we really have no idea whether
+  PCI_PROBABLE_ERROR(val)           #   likely or probable
+  PCI_POSSIBLE_ERROR(val)           # promising?
+
+Can you rebase to my "main" branch (v5.16-rc1), tweak the above, and
+collect up the acks/reviews?
+
+We should also browse drivers outside drivers/pci for places we could
+use these.  Not necessarily as part of this series, although if
+authors there object, it would be good to learn that earlier than
+later.
+
+Drivers that implement pci_error_handlers might be a fruitful place to
+start.  But you've done a great job finding users of ~0 and 0xffff...
+in drivers/pci/, too.
+
+> +
+>  /*
+>   * pci_power_t values must match the bits in the Capabilities PME_Support
+>   * and Control/Status PowerState fields in the Power Management capability.
+> -- 
+> 2.25.1
+> 
+> _______________________________________________
+> Linux-kernel-mentees mailing list
+> Linux-kernel-mentees@lists.linuxfoundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/linux-kernel-mentees
