@@ -2,173 +2,134 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C713C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Nov 2021 17:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0D7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Nov 2021 19:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04F05613DB
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Nov 2021 17:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D4461353
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Nov 2021 19:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234029AbhKRRTR (ORCPT
+        id S233419AbhKRT6o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 18 Nov 2021 12:19:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54800 "EHLO
+        Thu, 18 Nov 2021 14:58:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234014AbhKRRTR (ORCPT
+        with ESMTP id S229576AbhKRT6n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 18 Nov 2021 12:19:17 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1E3CC061574
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Nov 2021 09:16:16 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id n15-20020a17090a160f00b001a75089daa3so8785921pja.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Nov 2021 09:16:16 -0800 (PST)
+        Thu, 18 Nov 2021 14:58:43 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36765C061574
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Nov 2021 11:55:43 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id o1so16352484uap.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Nov 2021 11:55:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FndYr0qwU2GRfRJE7/Zc89ZCgTNkWQJ8LHvpWcp9GA0=;
-        b=Ju1LRNiA/W27gB9xy5brMPAbwNd4NIS3O7OF0tQibcdx032Yx3q/JWBgfrbj1EqMkv
-         hv06mzH/wUfCORLxtFPCTXHRUlKNvNmhX5HS15pGodQhDjmbZ6x6SJ7YLG2nKfjSsN7C
-         K3lvdbNgasHvN50bbOnOWjxuF3XPJFtWoTEs8=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SSd0Cyuv9cBODmrFRgSe8o1nIwm4sr0eWjwIoBSPHXk=;
+        b=UX5927ShpKzjRcmzPgd3fgzWkbVY15csEPbZfVFBxK2meRkhSSSd31OQQNPuxyP+9h
+         naNuw606mUpB7J3afr6Mhbc1xEGznUtN9nA08LFrwBGTO6NP8r7cZ5dnpYRNPOzkMaKs
+         nkPAHtyCMekP3Y8aFPmRcy0guFRBpdbzBNWGVPRRzGTrzEkw5GNMNzUh8e3dN9F+5EHh
+         VCKLfUtSceYkGtwxiT0QHSvCp0hCEHgKG1a3XhqQgSXBRpH7ubwniI/JW8tun4oT1E5Y
+         yO89lEuJm2ZVT5xdul3rI2XPG6KIIPQhZTgIqqqhy3b6KngxbDyPuVzBBGrgl6AfL+2A
+         ki1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FndYr0qwU2GRfRJE7/Zc89ZCgTNkWQJ8LHvpWcp9GA0=;
-        b=uOBYOriymirt9t+LywIsrN31Hu+ZNQ3ItLfAsL2M4OHcweIT+Yt7UJqhMZLwmaqKOH
-         bLuXgTJdfiC5JDOMadxOas/j4gkFsPVVrhlGzw1HRr3sq+hYh5refty/rITGdgQaaDn0
-         fhj57UkPuxRa5FJFn+gFatkh57Gb9or1C3/6u0Ad9vDjpCXnuqKxUup8JK9BMkoG6mdY
-         qvOI/OkrR6ktU/lMtGZHuBWqmp5X+PtLpztpIeXjj3mCSaY7jCb7d/6xebnm4fj7O1HG
-         0a/ImOFY3LdGEfnICAyQYc3QxodNGrukGvk48G71xSgGhFiDQQ4UEVRWhYBU1aP3w0F4
-         /5qw==
-X-Gm-Message-State: AOAM5330bk5ORFk1WJmSq5giLjhNv8VWES43gfQdNIRkKe28CehZNPWI
-        ByYAu9ROoniNmYQUpwwuAhkYMg==
-X-Google-Smtp-Source: ABdhPJy+MBB6lHWPY8+YDrYXHI/xPNJN9EJi9uDlOmPn4pR0RXebX/Mx/tnu+yfFjq9XXjvqeAmu0Q==
-X-Received: by 2002:a17:90b:97:: with SMTP id bb23mr12331985pjb.201.1637255776529;
-        Thu, 18 Nov 2021 09:16:16 -0800 (PST)
-Received: from localhost ([2620:15c:202:201:8ceb:c68a:21af:bebe])
-        by smtp.gmail.com with UTF8SMTPSA id k3sm190564pff.211.2021.11.18.09.16.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Nov 2021 09:16:16 -0800 (PST)
-Date:   Thu, 18 Nov 2021 09:16:14 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Peter Chen <peter.chen@kernel.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Roger Quadros <rogerq@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Bastien Nocera <hadess@hadess.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v17 7/7] usb: Specify dependencies on USB_XHCI_PLATFORM
- with 'depends on'
-Message-ID: <YZaKXtRW7oO1SNbG@google.com>
-References: <20211116200739.924401-1-mka@chromium.org>
- <20211116120642.v17.7.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
- <20211117022144.GA158646@rowland.harvard.edu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SSd0Cyuv9cBODmrFRgSe8o1nIwm4sr0eWjwIoBSPHXk=;
+        b=oCZ+F+7IpFKhKXtDVkOPkuZvLx8QznNMYl6etBYPokovMBJX6kiYZejE2xmhvIeWZe
+         Gf+5ciDrN7b2DPqS5SYLkL6vE7qXoic/oqtzBbmIZcVKIf2nQFSkItfCCytEzQzQb7ej
+         UzO+0W5vqQ3t8/OmahaQJbLbHkrJp62x+vzEvfp5QokkxbOTbcso772hCetHkkE1+vz2
+         8mV3PtF+HAS7z6b6BIzHGQu8S3Y9Z8u3giN/2SkCZk6STZFHP8aI+0sRv5oxB4LjUBXF
+         B56K7y5iNY311pJB5vDMVoNoQxY5Lo41jqTUjmI0PK6jsI4hzkHoU6sD5YXi76+LtI22
+         OhNA==
+X-Gm-Message-State: AOAM530MRo3tKSVXONJqDz+mMBSQQqxh6WXyolI2fPCGOAj63c/PpuPO
+        KclcvCN6ms2D3Jiv/s6/ZPGUHR2nSYQWnEYRMPvRrQ==
+X-Google-Smtp-Source: ABdhPJza1OFpR9DqJC5nA8lGb/hAIiBNmJcgpCYVHmRO/QWzHosbmHDHX32aMabXVmkISVpvhcg0aigUuqaZ0tjo0Hs=
+X-Received: by 2002:a05:6102:4192:: with SMTP id cd18mr85905750vsb.35.1637265342337;
+ Thu, 18 Nov 2021 11:55:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211117022144.GA158646@rowland.harvard.edu>
+References: <20211109164436.11098-1-semen.protsenko@linaro.org>
+In-Reply-To: <20211109164436.11098-1-semen.protsenko@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 18 Nov 2021 21:55:30 +0200
+Message-ID: <CAPLW+4nphz7WEVAFye4tZNsYC3XqVGNCpVACCF6UAKXoUFthJQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: samsung: exynos850: Implement CMU_CMGP
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 09:21:44PM -0500, Alan Stern wrote:
-> On Tue, Nov 16, 2021 at 12:07:39PM -0800, Matthias Kaehlcke wrote:
-> > Some USB controller drivers that depend on the xhci-plat driver
-> > specify this dependency using 'select' in Kconfig. This is not
-> > recommended for symbols that have other dependencies as it may
-> > lead to invalid configurations. Use 'depends on' to specify the
-> > dependency instead of 'select'.
-> > 
-> > For dwc3 specify the dependency on USB_XHCI_PLATFORM in
-> > USB_DWC3_HOST and USB_DWC3_DUAL_ROLE. Also adjust the
-> > dependencies of USB_DWC3_CORE to make sure that at least one
-> > of USB_DWC3_HOST, USB_DWC3_GADGET or USB_DWC3_DUAL_ROLE can be
-> > selected.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > Reviewed-by: Roger Quadros <rogerq@kernel.org>
-> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > 
-> > Changes in v17:
-> > - removed explicit dependency on USB from USB_DWC3
-> > - added 'Reviewed-by' tags from Roger and Doug
-> > 
-> > Changes in v16:
-> > - none
-> > 
-> > Changes in v15:
-> > - adjusted dependencies of USB_DWC3_CORE to make sure it can only
-> >   be enabled when at least one of USB_DWC3_HOST, USB_DWC3_GADGET
-> >   or USB_DWC3_DUAL_ROLE is selectable
-> > - updated commit message
-> > 
-> > Changes in v14:
-> > - none
-> > 
-> > Changes in v13:
-> > - patch added to the series
-> 
-> > diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> > index d1d926f8f9c2..e5e612f143a1 100644
-> > --- a/drivers/usb/host/Kconfig
-> > +++ b/drivers/usb/host/Kconfig
-> > @@ -80,7 +80,7 @@ config USB_XHCI_MTK
-> >  
-> >  config USB_XHCI_MVEBU
-> >  	tristate "xHCI support for Marvell Armada 375/38x/37xx"
-> > -	select USB_XHCI_PLATFORM
-> > +	depends on USB_XHCI_PLATFORM
-> >  	depends on HAS_IOMEM
-> >  	depends on ARCH_MVEBU || COMPILE_TEST
-> >  	help
-> > @@ -112,9 +112,9 @@ config USB_EHCI_BRCMSTB
-> >  config USB_BRCMSTB
-> >  	tristate "Broadcom STB USB support"
-> >  	depends on (ARCH_BRCMSTB && PHY_BRCM_USB) || COMPILE_TEST
-> > +	depends on !USB_XHCI_HCD || USB_XHCI_PLATFORM
-> >  	select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
-> >  	select USB_EHCI_BRCMSTB if USB_EHCI_HCD
-> > -	select USB_XHCI_PLATFORM if USB_XHCI_HCD
-> >  	help
-> >  	  Enables support for XHCI, EHCI and OHCI host controllers
-> >  	  found in Broadcom STB SoC's.
-> 
-> It should be pointed out that this now requires people with xHCI systems 
-> to actively turn on CONFIG_USB_XHCI_PLATFORM before they can enable 
-> CONFIG_USB_BRCMSTB.  Before, that was not necessary.  Some users might 
-> get confused and not realize what is needed.  Perhaps something should 
-> be added to the "help" text.
+On Tue, 9 Nov 2021 at 18:44, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> This series adds CMU_CMGP clock domain to Exynos850 clock driver. In
+> particular it needs to enable HSI2C (High-Speed I2C) nodes. This series
+> depends on CMU_APM series [1].
+>
+> Tested via /sys/kernel/debug/clk/clk_summary:
+>
+> <<<<<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>                                  enable  prepare  protect
+>    clock                          count    count    count        rate
+> ---------------------------------------------------------------------
+>
+> clk_rco_cmgp                         0        0        0    49152000
+> oscclk                               1        1        0    26000000
+>     mout_cmgp_adc                    0        0        0    26000000
+> ...
+>     gout_clkcmu_cmgp_bus             1        1        0   399750000
+>        gout_cmgp_usi1_pclk           0        0        0   399750000
+>        gout_cmgp_usi0_pclk           0        0        0   399750000
+>        gout_gpio_cmgp_pclk           0        0        0   399750000
+>        dout_cmgp_adc                 0        0        0    28553572
+>        mout_cmgp_usi1                0        0        0   399750000
+>           dout_cmgp_usi1             0        0        0   199875000
+>              gout_cmgp_usi1_ipclk    0        0        0   199875000
+>        mout_cmgp_usi0                0        0        0   399750000
+>           dout_cmgp_usi0             0        0        0   199875000
+>              gout_cmgp_usi0_ipclk    0        0        0   199875000
+> <<<<<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>
+> [1] https://lkml.org/lkml/2021/10/22/979
+>
+> Sam Protsenko (2):
+>   dt-bindings: clock: samsung: Document Exynos850 CMU_CMGP
+>   clk: samsung: exynos850: Implement CMU_CMGP domain
+>
+>  .../clock/samsung,exynos850-clock.yaml        |  19 ++++
+>  drivers/clk/samsung/clk-exynos850.c           | 100 ++++++++++++++++++
+>  include/dt-bindings/clock/exynos850.h         |  17 +++
+>  3 files changed, 136 insertions(+)
+>
+> --
 
-I agree that the change could cause confusion, I'm not sure though if
-adding something to the "help" text is a good mitigation. Users won't see
-the text unless they can select the option, which requires
-CONFIG_USB_XHCI_PLATFORM to be enabled. Also the dependencies are specified
-nearby (and displayed), so it seems similar to a code comment on something
-that the code evidently does (e.g. "initialize foobar with 0").
+Hi Sylwester,
 
-On a different note: I'm considering to break the CONFIG_USB_XHCI_PLATFORM
-related patches out of the onboard_usb_hub series, since the driver
-doesn't any longer depend on xhci_plat. In that sense I'm also open
-to abandon those patches, if they aren't considered an improvement on
-their own.
+Can you please review my patches I've submitted recently? Those are:
+
+  - [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850 CMU_APM
+  - [PATCH 2/2] clk: samsung: exynos850: Implement CMU_APM domain
+  - [PATCH 1/1] clk: samsung: exynos850: Register clocks early
+  - [PATCH 0/2] clk: samsung: exynos850: Implement CMU_CMGP
+  - [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850 CMU_CMGP
+  - [PATCH 2/2] clk: samsung: exynos850: Implement CMU_CMGP domain
+
+My further series (like device tree patches for new dev board support)
+depend on the status of above patches. So it'd great if those can be
+reviewed and applied if it's feasible.
+
+Thanks!
+
+> 2.30.2
+>
