@@ -2,107 +2,98 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2CDC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 20 Nov 2021 16:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A270CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 20 Nov 2021 17:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237787AbhKTQ5o (ORCPT
+        id S237684AbhKTRlW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 20 Nov 2021 11:57:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbhKTQ5n (ORCPT
+        Sat, 20 Nov 2021 12:41:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230190AbhKTRlW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 20 Nov 2021 11:57:43 -0500
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CEAC06173E
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 20 Nov 2021 08:54:40 -0800 (PST)
-Received: by mail-ua1-x92f.google.com with SMTP id r15so27698938uao.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 20 Nov 2021 08:54:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TPe5rIg5TAJI+Z4BdmZVWGXS9QlQ4oinDcrlr5ohhMI=;
-        b=hk+V1mjCFyV7kWilf668mlvKtSxX46rCHM1Y+gJ5vLFU8C4AZXmNM67255K2CEQYuA
-         MB+vbS6TstZbRrARWMzRcx5+jsdVXT4f6nOukmW2bGldXyBXIuFSTwIB0JoEAqsKVIFC
-         JsNPLZu8XLrQXqGIaJuT07+zv1D0Pcb4llROOHbAkmI3Mrtw9o5wTEQLf0BTrCWJS2uY
-         DWIV4nakBajx9KWf4Zf9megx7KgIjE69XsIjQmFmwkg4ItrYngS8vTy7+mdl8hMPfuc2
-         eiGnVWGCanDdQfD+YInqB/9gjUPcsRmL+dWikVhHBW1rgJBZw+6unJCPLCn50QG0TMHb
-         kn3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TPe5rIg5TAJI+Z4BdmZVWGXS9QlQ4oinDcrlr5ohhMI=;
-        b=FsIowXEfWFaiNWojCT68KyuFthD7/FwBe6tJf5ZdRuwj9+fwBqAiMqdoQBjnoaofJ2
-         ZUa5NXFMU3IRES/DUlpfqHcCEmIEKB/T+y+3rEyuCbHia31ixQJBEnnDIWeXHMcLAScl
-         uhSBLVO1Ny/cavJNset2afC6brfn4f1AjK2Q3u6fBgph6zBSwiRECrvXC+ZcAv73v0Zc
-         w/XfL2KiaZ3+jvplTRiiRTZi6gISZy/H2B6qKl68FewOTT9+uubgEsgxM7+TpwbPd5zl
-         B3LdqIVY93Kwit4xK048gNfDGdJtlaxkypOFeoPO+K600LLxeKoWzMo5P0WgwOQDQxKf
-         f9yg==
-X-Gm-Message-State: AOAM530cqHtwVhZatn3mjqdGcg094ZUBTVl80az47dmRnU5xXn6nmtw/
-        zoYJeGM0JF6ZKkSs8WAHJ9UKOEcxZEFZoer5YCMudg==
-X-Google-Smtp-Source: ABdhPJyqXt7//qPUJhC6V71L3N6YBn8dxnpYFuoyKTVt4HRPFa5PUvUogS3a/dbak0HIiFSvASmvXDNaeHDC45Sr6N4=
-X-Received: by 2002:a05:6102:4192:: with SMTP id cd18mr109156605vsb.35.1637427279366;
- Sat, 20 Nov 2021 08:54:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20211022224556.18742-1-semen.protsenko@linaro.org>
- <20211022224556.18742-2-semen.protsenko@linaro.org> <81df1c60-36b7-7b42-3bc8-2c3c7cc02c33@kernel.org>
-In-Reply-To: <81df1c60-36b7-7b42-3bc8-2c3c7cc02c33@kernel.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 20 Nov 2021 18:54:27 +0200
-Message-ID: <CAPLW+4m5X5LK0TLbzo40c4JC+Be21rgr_0Qck2=FsRGRVeHQnw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: samsung: exynos850: Implement CMU_APM domain
-To:     Sylwester Nawrocki <snawrocki@kernel.org>
+        Sat, 20 Nov 2021 12:41:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E54AF60E9C;
+        Sat, 20 Nov 2021 17:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637429898;
+        bh=DJSZbPQnZbwd2WMtdienM58036xGViO7g+aTcGftKeI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ij/1yDQcdlKUSKM1H8ayOJ/NvPGBUdIxKJeNyVarsxGdAYhx+3v76Px/H1/3g/EEW
+         4mXlQ6AvqfrehgbZJKRAZVC1nYdC360Od70A0ZLoLdKxarrT4gIqxc8k1D/jszy+oc
+         ZEsZweJ5FO37763k8ef+KNiNPf2TfcpCliBve4nQQD9r3AVzOfyuLHgw8U/Kin5bkp
+         7cHNRsr3JkStorMI9pMKMI2p3KRbUM6m5rHcQ9su9ac7XqjJ358BiWW02CRGzeZFDo
+         0MxhKxxdu6LetUNVFLNg64Ewgigi3Lh77Co/Kwq2JamPvNHu/tjZ5VR1d3OTmBI9ST
+         F0R+Fl3Pzb/Sg==
+Subject: Re: [PATCH v2 1/1] clk: samsung: exynos850: Register clocks early
+To:     Sam Protsenko <semen.protsenko@linaro.org>
 Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+References: <CGME20211025161302eucas1p2f50ef29a0bba69c13deaf1ad31a8439c@eucas1p2.samsung.com>
+ <20211025161254.5575-1-semen.protsenko@linaro.org>
+ <fcc939e6-50b4-1847-c738-db940d0c5bd4@samsung.com>
+ <CAPLW+4nnyPAMRcAzDjJ-uygm8bjncNp_rTLKdY5cywcpf5vg=w@mail.gmail.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <b5ac9e36-235c-906c-9f95-80dabd971be5@kernel.org>
+Date:   Sat, 20 Nov 2021 18:38:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <CAPLW+4nnyPAMRcAzDjJ-uygm8bjncNp_rTLKdY5cywcpf5vg=w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 20 Nov 2021 at 14:26, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
->
-> On 23.10.2021 00:45, Sam Protsenko wrote:
-> > CMU_APM clock domain provides clocks for APM IP-core (Active Power
-> > Management). According to Exynos850 TRM, CMU_APM generates I3C, Mailbox,
-> > Speedy, Timer, WDT, RTC and PMU clocks for BLK_ALIVE.
-> >
-> > This patch adds next clocks:
-> >    - bus clocks in CMU_TOP needed for CMU_APM
-> >    - all internal CMU_APM clocks
-> >    - leaf clocks for I3C, Speedy and RTC IP-cores
-> >    - bus clocks for CMU_CMGP and CMU_CHUB
-> >
-> > CMU_APM doesn't belong to Power Domains, but platform driver is used for
-> > its registration to keep its bus clock always running. Otherwise rtc-s3c
-> > driver disables that clock and system freezes.
-> >
-> > Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
-> > Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
-> > ---
-> > Changes in v2:
-> >    - Reworked clock IDs to be contiguous (don't break ABI)
-> >    - Added R-b tag by Krzysztof Kozlowski
-> >
-> >   drivers/clk/samsung/clk-exynos850.c   | 142 +++++++++++++++++++++++++-
->
-> >   include/dt-bindings/clock/exynos850.h |  29 +++++-
->
-> Looks good, could you just resend with the DT binding header changes moved
-> to the first patch?
->
+On 20.11.2021 17:47, Sam Protsenko wrote:
+>>> @@ -920,8 +929,12 @@ static int __init exynos850_cmu_probe(struct platform_device *pdev)
+>>>        struct device_node *np = dev->of_node;
+>>>
+>>>        info = of_device_get_match_data(dev);
+>>> -     exynos850_init_clocks(np, info->clk_regs, info->nr_clk_regs);
+>>> -     samsung_cmu_register_one(np, info);
+>>> +
+>>> +     /* Early clocks are already registered using CLK_OF_DECLARE_DRIVER() */
+>>> +     if (info != &peri_cmu_info) {
+>>> +             exynos850_init_clocks(np, info->clk_regs, info->nr_clk_regs);
+>>> +             samsung_cmu_register_one(np, info);
+>>> +     }
+>> Don't you also need to register early CMU_TOP, which provides clocks
+>> for CMU_PERI? I'm afraid it might not work properly when you register
+>> CMU_PERI clocks early and only later in probe() you enable parent clock
+>> required for the already registered clocks to be usable.
 
-Thanks, will do.
+> Good point, I'll do that in v2. Not sure how I missed that dependency
+> point, but thank you for noticing that. Guess it only works for me
+> because clocks are already enabled in bootloader, and I'm using
+> "clk_ignore_unused" param for now.
+> 
+>> How about registering also CMU_TOP early and enabling parent clock
+>> also in OF_CLK_DECLARE init callback, i.e. using either OF_CLK_DECLARE
+>> or platform driver for a CMU?
+>>
+> If you mean doing clk_prepare_enable() for "dout_peri_bus" clock in
+> exynos850_cmu_peri_init(), I don't think it's possible. clk_get()
+> needs "struct device *dev", and we only have that in platform driver
+> probe. Trying to pass dev=NULL won't work, so that's why I'm enabling
+> parent clocks in platform driver probe.
 
-> Regards,
-> Sylwester
+Sorry, I didn't notice it earlier, actually CMU_TOP is already being
+initialized with OF_CLK_DECLARE.
+
+You could use of_clk_get() to get the clock, the consumer clock indexes
+are fixed and defined in the DT binding. There is also
+of_clk_get_by_name() which works similarly to clk_get().
+
+
