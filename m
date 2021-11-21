@@ -2,171 +2,186 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A09AAC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 15:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BECC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 16:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238404AbhKUPJN (ORCPT
+        id S238480AbhKUQ2b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 21 Nov 2021 10:09:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46852 "EHLO
+        Sun, 21 Nov 2021 11:28:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238405AbhKUPJK (ORCPT
+        with ESMTP id S238477AbhKUQ2b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 21 Nov 2021 10:09:10 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3044CC061574
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 07:06:05 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id t26so67991605lfk.9
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 07:06:05 -0800 (PST)
+        Sun, 21 Nov 2021 11:28:31 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F01C06173E
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 08:25:26 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id b17so31773938uas.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 08:25:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VknmVIVQtpeIlKFvp4NDo9zu3CxNfNa1g3Yr7yIWmJk=;
-        b=Ll/IjdvDuPwah2VbxQIdOX2xomjWiVg5upazdhEsnIkAciBneanNGI2JEsomxjjbH2
-         25LZtLfkmcLNYMAbF6blY+TprZc4rYNi8396NNltEuoccvGgXDBeX+8hBD+7nOHXbJ4q
-         9ANiWnxFL9PAHJrpTZV7U1r0djWJUpuSiDwcgyqIhS6n8xxurz22sMNyODg8Uo2YK8wX
-         OoWDzNM7RluugG5wTkiNypfjrkuYaQet0JwSHHdV1b44lFif/3HuQYxsfFibPYkeoQVE
-         /BGIoZNZ/IvhmaZT9I3hdo4dCb8peQP7hhOsHO7L4ppvkiU1MDcoEJxzvudhBsuHENZf
-         W2sA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lyWVrwoC5gH3Towkzk80K7hVwLuSw7kjiF0rQebdy+8=;
+        b=gTYBxDOoMtEHSvOHP4PPRHLfeh7NFe0mU90SdM91np1JWQDSoFwyqKF+iwyK4W+kTO
+         yUkM/gzcXk0w8D/LyOYg6fJz4wR6bmVMTdfpmkj2ZDdQvSUKYU5EVxmK8cdctqq1LWdA
+         +W8SLVEYdFCQGlyijJfo822IGP+P/WXfcPfuWNAv49nGwhJsKNFtLk8QRNbZ4aDD1qH/
+         Y3GcMyegoFgcMlvej+P3iYEd8NA82EnNj4qi//76aCWnaRMz9JHPtZnaBMU7iQmq2VW3
+         yuuQ6epti1GKQ70j8w1NPQz2Vc+o1iyz4aWlmy5kIAunb3xI2qaItbnjv6fvsagHLOSb
+         1TfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VknmVIVQtpeIlKFvp4NDo9zu3CxNfNa1g3Yr7yIWmJk=;
-        b=lhwTg+PuCK3v+Dq309SOvvSsumpK1zdUUt3vF7lRaOzl/gkzuB5por8GYsFEBB2oJ3
-         PknakbmBl4E1qsex7NjcJK8vkKIjl7qAhjteMeniPJ4EHLIK6VtbK3M+L4xdgUxEwTsI
-         Nt2DmIamWtSGJ0l3PVy+j04ABe6HpGvCJdjgwUZSIaQuO4oBaJvOJK4r2vGyywdWnCDm
-         sz5moqYZS4mDl26iOJtQOsHexDYNyyou8AdM2J77EK240ECmEYa7+fnGAk2UbBN3PXAS
-         Nbh6hbsBaxBTp1ETt7JnacEEZcVdAM2Qx23FAk41soAkSG9J5wtaIi5hAYjt8K/MT0yM
-         YZIg==
-X-Gm-Message-State: AOAM531I/fInUETfkR2Mo+XngVgJy40tGjLrYHOd3vyZl3WOwKp65zSk
-        Eu4KIcXjhDuwLwa4gtm99Tlhyw==
-X-Google-Smtp-Source: ABdhPJztqj1Ylj8HogWMOo0X+vPq5SNdvEt7B+jz9CdXA9h6cCZRGvoxZLKdWC9xTnfZ9Jp2n6OxwA==
-X-Received: by 2002:a2e:b177:: with SMTP id a23mr42946273ljm.2.1637507163592;
-        Sun, 21 Nov 2021 07:06:03 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id t196sm665562lff.75.2021.11.21.07.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Nov 2021 07:06:02 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: [PATCH v2 2/2] arm: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
-Date:   Sun, 21 Nov 2021 17:05:58 +0200
-Message-Id: <20211121150558.21801-2-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211121150558.21801-1-semen.protsenko@linaro.org>
-References: <20211121150558.21801-1-semen.protsenko@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lyWVrwoC5gH3Towkzk80K7hVwLuSw7kjiF0rQebdy+8=;
+        b=bW+8Atj5XUmJgT+rO9OXecmPIZCZMAuwUha2ilSktj1VR9D9+2U61ooVktPjQDl2HE
+         tm7SIhfNnBaChBwlYXBaCnemEzxqd3hY4poOFrk7vnC6AmUnaN//i/TdVdDHXYkISVaS
+         MKVY1+NUpZ1S4F4cYX4n+yJ3nBvMdIbX5CtfMWRDpn4WqxQ5ajY5tI6DN3Z1kMQrXkOM
+         +vreJ03Hml7b06Ez804vm9+1xXsVlKDigUaFBD0bkhOaG2IsmbJ2Lpwc55jbW4GYkEMB
+         fW93Ocy6zl69LeqxtjbgHXRyB7tTVD+9mA98SxJkcJ+LdRd/eSmYHdgK+N0BiN4NV2T9
+         mPoQ==
+X-Gm-Message-State: AOAM533GEWws4WLPP3Yv7np+xnsRz0XWuflHvSf751UF3x9qi0KKZMt5
+        YZyC3+822WVnbYa82XHRQjCRNQJy4YabBjuEaRO38IWNoZcO3A==
+X-Google-Smtp-Source: ABdhPJyOCVZWZ9dT1IZQS+yhLWWTW8zTyfIHH1f+CrFME+pLCGJh1pGLyOvJJcDLXeeBhraFl79zuExeBHpFFoUmHe0=
+X-Received: by 2002:a05:6102:ac3:: with SMTP id m3mr104759337vsh.1.1637511925245;
+ Sun, 21 Nov 2021 08:25:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211107202943.8859-1-semen.protsenko@linaro.org>
+ <20211107202943.8859-13-semen.protsenko@linaro.org> <2c0e5b23-92c5-70c9-3460-e9748f8a869e@roeck-us.net>
+In-Reply-To: <2c0e5b23-92c5-70c9-3460-e9748f8a869e@roeck-us.net>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sun, 21 Nov 2021 18:25:13 +0200
+Message-ID: <CAPLW+4mJYBhrYo58oF7hYXi+5Nt2ROvqDXB_=zezJsuExW6oBA@mail.gmail.com>
+Subject: Re: [PATCH v3 12/12] watchdog: s3c2410: Add Exynos850 support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-A separate Kconfig option HAVE_S3C2410_I2C for Samsung SoCs is not
-really needed and the i2c-s3c24xx driver can depend on Samsung ARM
-architectures instead. This also enables i2c-s3c2410 for arm64 Exynos
-SoCs, which is required for example by Exynos850.
+On Sat, 20 Nov 2021 at 22:29, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 11/7/21 12:29 PM, Sam Protsenko wrote:
+> > Exynos850 is a bit different from SoCs already supported in WDT driver:
+> >    - AUTOMATIC_WDT_RESET_DISABLE register is removed, so its value is
+> >      always 0; .disable_auto_reset callback is not set for that reason
+> >    - MASK_WDT_RESET_REQUEST register is replaced with
+> >      CLUSTERx_NONCPU_IN_EN register; instead of masking (disabling) WDT
+> >      reset interrupt it's now enabled with the same value; .mask_reset
+> >      callback is reused for that functionality though
+> >    - To make WDT functional, WDT counter needs to be enabled in
+> >      CLUSTERx_NONCPU_OUT register; it's done using .enable_counter
+> >      callback
+> >
+> > Also Exynos850 has two CPU clusters, each has its own dedicated WDT
+> > instance. Different PMU registers and bits are used for each cluster. So
+> > driver data is now modified in probe, adding needed info depending on
+> > cluster index passed from device tree.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Changes in v3:
+> >    - Renamed "samsung,index" property to more descriptive
+> >      "samsung,cluster-index"
+> >    - Used pre-defined and completely set driver data for cluster0 and
+> >      cluster1
+> >
+> > Changes in v2:
+> >    - Used single compatible for Exynos850, populating missing driver data
+> >      in probe
+> >    - Added "index" property to specify CPU cluster index
+> >
+> >   drivers/watchdog/s3c2410_wdt.c | 62 +++++++++++++++++++++++++++++++++-
+> >   1 file changed, 61 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> > index 96aa5d9c6ed4..1456201f27de 100644
+> > --- a/drivers/watchdog/s3c2410_wdt.c
+> > +++ b/drivers/watchdog/s3c2410_wdt.c
+> > @@ -56,6 +56,13 @@
+> >   #define EXYNOS5_RST_STAT_REG_OFFSET         0x0404
+> >   #define EXYNOS5_WDT_DISABLE_REG_OFFSET              0x0408
+> >   #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET   0x040c
+> > +#define EXYNOS850_CLUSTER0_NONCPU_OUT                0x1220
+> > +#define EXYNOS850_CLUSTER0_NONCPU_INT_EN     0x1244
+> > +#define EXYNOS850_CLUSTER1_NONCPU_OUT                0x1620
+> > +#define EXYNOS850_CLUSTER1_NONCPU_INT_EN     0x1644
+> > +
+> > +#define EXYNOS850_CLUSTER0_WDTRESET_BIT              24
+> > +#define EXYNOS850_CLUSTER1_WDTRESET_BIT              23
+> >
+> >   /**
+> >    * Quirk flags for different Samsung watchdog IP-cores.
+> > @@ -205,6 +212,30 @@ static const struct s3c2410_wdt_variant drv_data_exynos7 = {
+> >                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_AUTO_DISABLE,
+> >   };
+> >
+> > +static const struct s3c2410_wdt_variant drv_data_exynos850_cl0 = {
+> > +     .mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN,
+> > +     .mask_bit = 2,
+> > +     .mask_reset_inv = true,
+> > +     .rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> > +     .rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT,
+> > +     .cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
+> > +     .cnt_en_bit = 7,
+> > +     .quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
+> > +               QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
+> > +};
+> > +
+> > +static const struct s3c2410_wdt_variant drv_data_exynos850_cl1 = {
+> > +     .mask_reset_reg = EXYNOS850_CLUSTER1_NONCPU_INT_EN,
+> > +     .mask_bit = 2,
+> > +     .mask_reset_inv = true,
+> > +     .rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> > +     .rst_stat_bit = EXYNOS850_CLUSTER1_WDTRESET_BIT,
+> > +     .cnt_en_reg = EXYNOS850_CLUSTER1_NONCPU_OUT,
+> > +     .cnt_en_bit = 7,
+> > +     .quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
+> > +               QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
+> > +};
+> > +
+> >   static const struct of_device_id s3c2410_wdt_match[] = {
+> >       { .compatible = "samsung,s3c2410-wdt",
+> >         .data = &drv_data_s3c2410 },
+> > @@ -216,6 +247,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+> >         .data = &drv_data_exynos5420 },
+> >       { .compatible = "samsung,exynos7-wdt",
+> >         .data = &drv_data_exynos7 },
+> > +     { .compatible = "samsung,exynos850-wdt",
+> > +       .data = &drv_data_exynos850_cl0 },
+> >       {},
+> >   };
+> >   MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+> > @@ -587,14 +620,38 @@ static inline const struct s3c2410_wdt_variant *
+> >   s3c2410_get_wdt_drv_data(struct platform_device *pdev)
+> >   {
+> >       const struct s3c2410_wdt_variant *variant;
+> > +     struct device *dev = &pdev->dev;
+> >
+> > -     variant = of_device_get_match_data(&pdev->dev);
+> > +     variant = of_device_get_match_data(dev);
+> >       if (!variant) {
+> >               /* Device matched by platform_device_id */
+> >               variant = (struct s3c2410_wdt_variant *)
+> >                          platform_get_device_id(pdev)->driver_data;
+> >       }
+> >
+> > +     /* Choose Exynos850 driver data w.r.t. cluster index */
+> > +     if (variant == &drv_data_exynos850_cl0) {
+>
+> 0-day has a point here. drv_data_exynos850_cl0 is declared inside a CONFIG_OF
+> conditional, causing compile failure if CONFIG_OF is not enabled.
+>
+> Please fix and resubmit.
+>
 
-This is basically continuation of work made in following commits:
-  - commit d96890fca9fd ("rtc: s3c: remove HAVE_S3C_RTC in favor of
-    direct dependencies")
-  - commit 7dd3cae90d85 ("ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
-    use direct dependencies")
+Right. I missed that this driver has also platform device table. Will
+send v4 soon.
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
-  - Rebased on latest linux-next
-
- arch/arm/Kconfig                  |  1 -
- arch/arm/mach-exynos/Kconfig      |  1 -
- arch/arm/mach-s3c/Kconfig.s3c64xx |  1 -
- arch/arm/mach-s5pv210/Kconfig     |  1 -
- drivers/i2c/busses/Kconfig        | 10 ++--------
- 5 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f0f9e8bec83a..391f07c17096 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -479,7 +479,6 @@ config ARCH_S3C24XX
- 	select GPIO_SAMSUNG
- 	select GPIOLIB
- 	select GENERIC_IRQ_MULTI_HANDLER
--	select HAVE_S3C2410_I2C if I2C
- 	select NEED_MACH_IO_H
- 	select S3C2410_WATCHDOG
- 	select SAMSUNG_ATAGS
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index dd1ae5571f43..f7d993628cb7 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -20,7 +20,6 @@ menuconfig ARCH_EXYNOS
- 	select GPIOLIB
- 	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
- 	select HAVE_ARM_SCU if SMP
--	select HAVE_S3C2410_I2C if I2C
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
- 	select PM_GENERIC_DOMAINS if PM
-diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
-index f3fcb570edf5..af01675d8769 100644
---- a/arch/arm/mach-s3c/Kconfig.s3c64xx
-+++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
-@@ -12,7 +12,6 @@ menuconfig ARCH_S3C64XX
- 	select COMMON_CLK_SAMSUNG
- 	select GPIO_SAMSUNG if ATAGS
- 	select GPIOLIB
--	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_TCM
- 	select PLAT_SAMSUNG
- 	select PM_GENERIC_DOMAINS if PM
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 5a96099af991..055de578b57f 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -12,7 +12,6 @@ config ARCH_S5PV210
- 	select CLKSRC_SAMSUNG_PWM
- 	select COMMON_CLK_SAMSUNG
- 	select GPIOLIB
--	select HAVE_S3C2410_I2C if I2C
- 	select PINCTRL
- 	select PINCTRL_EXYNOS
- 	select SOC_SAMSUNG
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index dce392839017..c6b854a9e476 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -963,16 +963,10 @@ config I2C_RK3X
- 	  This driver can also be built as a module. If so, the module will
- 	  be called i2c-rk3x.
- 
--config HAVE_S3C2410_I2C
--	bool
--	help
--	  This will include I2C support for Samsung SoCs. If you want to
--	  include I2C support for any machine, kindly select this in the
--	  respective Kconfig file.
--
- config I2C_S3C2410
- 	tristate "S3C/Exynos I2C Driver"
--	depends on HAVE_S3C2410_I2C || COMPILE_TEST
-+	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || \
-+		   ARCH_S5PV210 || COMPILE_TEST
- 	help
- 	  Say Y here to include support for I2C controller in the
- 	  Samsung SoCs (S3C, S5Pv210, Exynos).
--- 
-2.30.2
-
+> Guenter
