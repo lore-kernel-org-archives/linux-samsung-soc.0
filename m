@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D883BC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 23:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877BCC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 23:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbhKUXbD (ORCPT
+        id S231974AbhKUXbE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 21 Nov 2021 18:31:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43428 "EHLO
+        Sun, 21 Nov 2021 18:31:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231678AbhKUXbA (ORCPT
+        with ESMTP id S231709AbhKUXbC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 21 Nov 2021 18:31:00 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E7DC061758
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:53 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id y26so72019878lfa.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:53 -0800 (PST)
+        Sun, 21 Nov 2021 18:31:02 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1288C061763
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:54 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id bi37so72135977lfb.5
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ASvzk7ohHyiTP3YMvvAST+eBDkFoGlnVX0ALjg78UAc=;
-        b=SNK18cDfgnV/g2hvAq8DXWOiW6z5wss10k0z6+X4KtVMTsHxppPlFQPrB4m5rPHoMc
-         puyBZt0Mu+1tOKVTAJf28wlSKfMB/re3wZsryRf4Kf/kyyKd8eV74RY4II8KVE9scbhF
-         SA4Umlr3ynyheVernvW8XrU4eRL0p7POuV1t4LxUxtYeRJD0GdAPTk/OyrVd3p/RcwDS
-         4GombRiX4dUu8zXjR6aUfKQQchz39qD1yN85R9WHzdboT/GgAaoYULpRqwcErdbwbh8O
-         c9GpGwOp7+KCLBcokbFUtQPfffKL411LShZummAlfWYPUQi3KnwCSbFfpI2/OkEL6Tck
-         LWow==
+        bh=6aqpdUn2ADmAje4X3NYNku5B4XO9mUxiC98/Xj1uCXg=;
+        b=vpJc6TLBfNnEFinKdNtG8MKQSF+JD1sNhlYhlunu3mk0YFsKMbPc/rPmDVXqQrHU2C
+         lD2wx3/ZKq9UdyxV5vVPbBCm/C/KIphlIUA2loHUAgLTeQrIxQHt9cGZVigM/D3grRFO
+         wUps0JEOEzGpQdUEWCDryN9TQWzKkvrwFzYjEdXolKEAnR96frGJz/kgp/lmeC/+RFwK
+         dALpG1m65xJX7zhVghz/DeLHUKZiLoAab4RLlDnUmAWLS+OYK3rrTLCxRepv9hIfajPI
+         uF1xZ3aj3XWejROFYTr0/BN1A/ZImsn7d8c7Q94T0njqfB9YYbAq/af+kOKxaU8IRd63
+         K2ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ASvzk7ohHyiTP3YMvvAST+eBDkFoGlnVX0ALjg78UAc=;
-        b=RMml4pVMVewYUmQBjO/Q3VDeTqV9vvOVBuRo3sR3cemh7yfdt+37KNcMk2TpQYc142
-         Gf4932rWGIWylCpbbks0BW6VUyHUmNWM3NhhZMgiHCKX48PW/xSBO5E1/mDeBdsmwQ4p
-         YUnRuHefvuDe1kBrTWeY7aODn3hRpLWT+DYtemQhOjWp291YYdyd/OdFRuFcqnayOeFS
-         D3NtAVpkJ14NtH6e2CP7cYKwzZTN2XOVeInOWROPrppwE8AX9F/txswllBa/HEHD1J8t
-         WiaIlojbKWBmNJOs8EPxXAMVXRJOlf41jU78qgtG3Gl5UDH5cH37AJB4mvOwo0hfMXYe
-         Ja/w==
-X-Gm-Message-State: AOAM530nA/GNQl0Yy0jFX1DppEoMvRuKlLmLaetGcHqyJjlrqFHqt2wo
-        7lnSi9Bi2+rSIvUT6vyEXszcUw==
-X-Google-Smtp-Source: ABdhPJwtGR/mGT3UelM1AbYFFy9HrkIkg9VjocR5ySYmzAvkZVbdsD2rBubXI6grFTWAgbjb3xc0Lw==
-X-Received: by 2002:a2e:9703:: with SMTP id r3mr46831569lji.422.1637537271615;
-        Sun, 21 Nov 2021 15:27:51 -0800 (PST)
+        bh=6aqpdUn2ADmAje4X3NYNku5B4XO9mUxiC98/Xj1uCXg=;
+        b=mCg3pNcA3vNR5fSplpACyikjxr4kz6QlpvWQrrJJGVLo24x1FVRPr37kppPYGZlpVX
+         3H+zrGLAC5c3Q16ZCc8j8B1iKw3Ric/dki8YqL+NP75G8iXxO1zIgYigv4EI3GiXBXu2
+         m6ZSghaEe1WBFc3RPjGzlI8JpDjMC+ltG/5hYWVXCNVj3uxjfHd5w98JcjpAnCDhcpnG
+         qJ9EoUqpKwBKskfdk5+kcpMpWV4JkOrmU290Yr7HpFBl9iZ482/jimylLO4zf3goyTbk
+         eRUIw0E9nfU6x92bzbi2ecmwOdDqaGuvDlK48fCq+JRajj8N4LdB75ebGiHHbxfgYN4O
+         9bHg==
+X-Gm-Message-State: AOAM530eDE3qgcp+/KHQ4H5dHX/BrKNUu6eVYQDOpWvPZk7gmMASRQtm
+        pJ5p0alTW21csOeOZie2jG5l4g==
+X-Google-Smtp-Source: ABdhPJz+S1jtyGQkCNs22HZj8wJZpFPp/LS44MVhNbn0orvX/Q2jDmdyb1HX35k+HJwKcz9RG2JgpQ==
+X-Received: by 2002:a05:6512:128f:: with SMTP id u15mr52325994lfs.92.1637537273121;
+        Sun, 21 Nov 2021 15:27:53 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id v6sm888012lfa.170.2021.11.21.15.27.50
+        by smtp.gmail.com with ESMTPSA id x6sm777498lfu.79.2021.11.21.15.27.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Nov 2021 15:27:51 -0800 (PST)
+        Sun, 21 Nov 2021 15:27:52 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -62,9 +62,9 @@ Cc:     David Virag <virag.david003@gmail.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 5/6] clk: samsung: exynos850: Register clocks early
-Date:   Mon, 22 Nov 2021 01:27:40 +0200
-Message-Id: <20211121232741.6967-6-semen.protsenko@linaro.org>
+Subject: [PATCH 6/6] clk: samsung: exynos850: Keep some crucial clocks running
+Date:   Mon, 22 Nov 2021 01:27:41 +0200
+Message-Id: <20211121232741.6967-7-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211121232741.6967-1-semen.protsenko@linaro.org>
 References: <20211121232741.6967-1-semen.protsenko@linaro.org>
@@ -74,142 +74,112 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some clocks must be registered before init calls. For example MCT clock
-(from CMU_PERI) is needed for MCT timer driver, which is registered
-with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-clk-exynos850 platform driver init, it's already too late. Inability to
-get "mct" clock in MCT driver leads to kernel panic, as functions
-registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-can't be fixed either, as it's acting as a clock source and it's
-essential to register it in start_kernel() -> time_init().
+Some clocks shouldn't be automatically disabled in clk_disable_unused(),
+otherwise kernel hangs. Mark those clocks with:
+  - CLK_IS_CRITICAL flag, when there won't be any consumers for that
+    clock, but system can't function when it's gated
+  - CLK_IGNORE_UNUSED flag, when consumer driver will be probably added
+    later
 
-Let's register CMU_PERI clocks early, using CLK_OF_DECLARE_DRIVER(), and
-do all stuff relying on "struct dev" object (like runtime PM) later in
-platform driver probe. Basically CLK_OF_DECLARE_DRIVER() matches CMU
-compatible, but clears OF_POPULATED flag, which allows the same device
-to be matched again later. CMU_TOP generates clocks needed for CMU_PERI,
-but it's already registered early.
+That makes it possible to run the kernel without passing the
+"clk_ignore_unused" param.
 
-While at it, let's cleanup the code a bit, by extracting everything
-related to CMU initialization and registration to the separate function.
+Next clocks were modified:
+  - "gout_dpu_cmu_dpu_pclk":	CLK_IGNORE_UNUSED
 
-Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-drivers/clk/mediatek/clk-mt2712.c.
+    Will be enabled later in DSIM driver (Display Serial Interface
+    Master).
 
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
+  - "gout_gpio_peri_pclk":	CLK_IGNORE_UNUSED
+    "gout_gpio_cmgp_pclk":	CLK_IGNORE_UNUSED
+    "gout_gpio_hsi_pclk":	CLK_IGNORE_UNUSED
+
+    Should be probably enabled in corresponding GPIO driver later, or
+    made CLK_IS_CRITICAL. "gout_gpio_peri_clk" is actually used by LEDs
+    on Exynos850-based dev board, so kernel hangs if this clock is not
+    running. Other clocks were marked as "ignore unused" to prevent
+    similar issues for other use cases or boards that might be added
+    later.
+
+  - "gout_cci_aclk":		CLK_IS_CRITICAL
+
+    CCI (Cache Coherent Interconnect): obviously is critical.
+
+  - "gout_gic_clk":		CLK_IS_CRITICAL
+
+    GIC (Generic Interrupt Controller): obviously is critical.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/clk/samsung/clk-exynos850.c | 68 +++++++++++++++++++++--------
- 1 file changed, 51 insertions(+), 17 deletions(-)
+ drivers/clk/samsung/clk-exynos850.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 0eab7a115b44..1d257bca8b37 100644
+index 1d257bca8b37..c885ffb1aa24 100644
 --- a/drivers/clk/samsung/clk-exynos850.c
 +++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -60,6 +60,43 @@ static void __init exynos850_init_clocks(struct device_node *np,
- 	iounmap(reg_base);
- }
- 
-+/**
-+ * exynos850_register_cmu - Register specified Exynos850 CMU domain
-+ * @dev:	Device object; may be NULL if this function is not being
-+ *		called from platform driver probe function
-+ * @np:		CMU device tree node
-+ * @cmu:	CMU data
-+ *
-+ * Register specified CMU domain, which includes next steps:
-+ *
-+ * 1. Enable parent clock of @cmu CMU
-+ * 2. Set initial registers configuration for @cmu CMU clocks
-+ * 3. Register @cmu CMU clocks using Samsung clock framework API
-+ */
-+static void __init exynos850_register_cmu(struct device *dev,
-+		struct device_node *np, const struct samsung_cmu_info *cmu)
-+{
-+	/* Keep CMU parent clock running (needed for CMU registers access) */
-+	if (cmu->clk_name) {
-+		struct clk *parent_clk;
-+
-+		if (dev)
-+			parent_clk = clk_get(dev, cmu->clk_name);
-+		else
-+			parent_clk = of_clk_get_by_name(np, cmu->clk_name);
-+
-+		if (IS_ERR(parent_clk)) {
-+			pr_err("%s: could not find bus clock %s; err = %ld\n",
-+			       __func__, cmu->clk_name, PTR_ERR(parent_clk));
-+		} else {
-+			clk_prepare_enable(parent_clk);
-+		}
-+	}
-+
-+	exynos850_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+	samsung_cmu_register_one(np, cmu);
-+}
-+
- /* ---- CMU_TOP ------------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_TOP (0x120e0000) */
-@@ -367,10 +404,10 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
- 
- static void __init exynos850_cmu_top_init(struct device_node *np)
- {
--	exynos850_init_clocks(np, top_clk_regs, ARRAY_SIZE(top_clk_regs));
--	samsung_cmu_register_one(np, &top_cmu_info);
-+	exynos850_register_cmu(NULL, np, &top_cmu_info);
- }
- 
-+/* Register CMU_TOP early, as it's a dependency for other early domains */
- CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
- 	       exynos850_cmu_top_init);
- 
-@@ -850,6 +887,15 @@ static const struct samsung_cmu_info peri_cmu_info __initconst = {
- 	.clk_name		= "dout_peri_bus",
+@@ -596,9 +596,10 @@ static const struct samsung_gate_clock cmgp_gate_clks[] __initconst = {
+ 	GATE(CLK_GOUT_CMGP_ADC_S1_PCLK, "gout_adc_s1_pclk",
+ 	     "gout_clkcmu_cmgp_bus",
+ 	     CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S1, 21, 0, 0),
++	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
+ 	GATE(CLK_GOUT_CMGP_GPIO_PCLK, "gout_gpio_cmgp_pclk",
+ 	     "gout_clkcmu_cmgp_bus",
+-	     CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_CMGP_USI0_IPCLK, "gout_cmgp_usi0_ipclk", "dout_cmgp_usi0",
+ 	     CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_IPCLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_CMGP_USI0_PCLK, "gout_cmgp_usi0_pclk",
+@@ -685,8 +686,9 @@ static const struct samsung_gate_clock hsi_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_HSI_USB20DRD_TOP_I_REF_CLK_50, 21, 0, 0),
+ 	GATE(CLK_GOUT_USB_PHY_REF_CLK, "gout_usb_phy_ref", "oscclk",
+ 	     CLK_CON_GAT_HSI_USB20DRD_TOP_I_PHY_REFCLK_26, 21, 0, 0),
++	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
+ 	GATE(CLK_GOUT_GPIO_HSI_PCLK, "gout_gpio_hsi_pclk", "mout_hsi_bus_user",
+-	     CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_HSI_GPIO_HSI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_MMC_CARD_ACLK, "gout_mmc_card_aclk", "mout_hsi_bus_user",
+ 	     CLK_CON_GAT_GOUT_HSI_MMC_CARD_I_ACLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
+@@ -869,9 +871,10 @@ static const struct samsung_gate_clock peri_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_PERI_WDT_0_PCLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_WDT1_PCLK, "gout_wdt1_pclk", "mout_peri_bus_user",
+ 	     CLK_CON_GAT_GOUT_PERI_WDT_1_PCLK, 21, 0, 0),
++	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
+ 	GATE(CLK_GOUT_GPIO_PERI_PCLK, "gout_gpio_peri_pclk",
+ 	     "mout_peri_bus_user",
+-	     CLK_CON_GAT_GOUT_PERI_GPIO_PERI_PCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_PERI_GPIO_PERI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
  };
  
-+static void __init exynos850_cmu_peri_init(struct device_node *np)
-+{
-+	exynos850_register_cmu(NULL, np, &peri_cmu_info);
-+}
-+
-+/* Register CMU_PERI early, as it's needed for MCT timer */
-+CLK_OF_DECLARE_DRIVER(exynos850_cmu_peri, "samsung,exynos850-cmu-peri",
-+		      exynos850_cmu_peri_init);
-+
- /* ---- CMU_CORE ------------------------------------------------------------ */
+ static const struct samsung_cmu_info peri_cmu_info __initconst = {
+@@ -954,10 +957,12 @@ static const struct samsung_div_clock core_div_clks[] __initconst = {
+ };
  
- /* Register Offset definitions for CMU_CORE (0x12000000) */
-@@ -1014,24 +1060,12 @@ static int __init exynos850_cmu_probe(struct platform_device *pdev)
- {
- 	const struct samsung_cmu_info *info;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
+ static const struct samsung_gate_clock core_gate_clks[] __initconst = {
++	/* CCI (interconnect) clock must be always running */
+ 	GATE(CLK_GOUT_CCI_ACLK, "gout_cci_aclk", "mout_core_cci_user",
+-	     CLK_CON_GAT_GOUT_CORE_CCI_550_ACLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_CORE_CCI_550_ACLK, 21, CLK_IS_CRITICAL, 0),
++	/* GIC (interrupt controller) clock must be always running */
+ 	GATE(CLK_GOUT_GIC_CLK, "gout_gic_clk", "mout_core_gic",
+-	     CLK_CON_GAT_GOUT_CORE_GIC_CLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_CORE_GIC_CLK, 21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_MMC_EMBD_ACLK, "gout_mmc_embd_aclk", "dout_core_busp",
+ 	     CLK_CON_GAT_GOUT_CORE_MMC_EMBD_I_ACLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_MMC_EMBD_SDCLKIN, "gout_mmc_embd_sdclkin",
+@@ -1023,8 +1028,10 @@ static const struct samsung_div_clock dpu_div_clks[] __initconst = {
+ };
  
- 	info = of_device_get_match_data(dev);
--	exynos850_init_clocks(np, info->clk_regs, info->nr_clk_regs);
--	samsung_cmu_register_one(np, info);
- 
--	/* Keep bus clock running, so it's possible to access CMU registers */
--	if (info->clk_name) {
--		struct clk *bus_clk;
--
--		bus_clk = clk_get(dev, info->clk_name);
--		if (IS_ERR(bus_clk)) {
--			pr_err("%s: could not find bus clock %s; err = %ld\n",
--			       __func__, info->clk_name, PTR_ERR(bus_clk));
--		} else {
--			clk_prepare_enable(bus_clk);
--		}
--	}
-+	/* Early clocks are already registered using CLK_OF_DECLARE_DRIVER() */
-+	if (info != &peri_cmu_info)
-+		exynos850_register_cmu(dev, dev->of_node, info);
- 
- 	return 0;
- }
+ static const struct samsung_gate_clock dpu_gate_clks[] __initconst = {
++	/* TODO: Should be enabled in DSIM driver */
+ 	GATE(CLK_GOUT_DPU_CMU_DPU_PCLK, "gout_dpu_cmu_dpu_pclk",
+-	     "dout_dpu_busp", CLK_CON_GAT_CLK_DPU_CMU_DPU_PCLK, 21, 0, 0),
++	     "dout_dpu_busp",
++	     CLK_CON_GAT_CLK_DPU_CMU_DPU_PCLK, 21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_DPU_DECON0_ACLK, "gout_dpu_decon0_aclk", "mout_dpu_user",
+ 	     CLK_CON_GAT_GOUT_DPU_ACLK_DECON0, 21, 0, 0),
+ 	GATE(CLK_GOUT_DPU_DMA_ACLK, "gout_dpu_dma_aclk", "mout_dpu_user",
 -- 
 2.30.2
 
