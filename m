@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A09BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 15:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09AAC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 15:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238398AbhKUPJI (ORCPT
+        id S238404AbhKUPJN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 21 Nov 2021 10:09:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        Sun, 21 Nov 2021 10:09:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238395AbhKUPJH (ORCPT
+        with ESMTP id S238405AbhKUPJK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 21 Nov 2021 10:09:07 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA37AC06173E
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 07:06:02 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id bu18so68452915lfb.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 07:06:02 -0800 (PST)
+        Sun, 21 Nov 2021 10:09:10 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3044CC061574
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 07:06:05 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id t26so67991605lfk.9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 07:06:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k8vZd6v9v9+rdgKV/PqzJo8VveO9M9COmbjdbxILTmY=;
-        b=T2epvNnR/erfzq7gZjzmw5DBnXb43OC0XHNHflZQZwKGVhk6X6ovTmVXeJ1TsGMdSz
-         DQi0nRto2Wd1WHdiGwF++7+syR8m6i/ShNRApO17Z9Nx45f2wsIULpKiDDFOcbV/hhPt
-         LqDEfEF5Hc/d4C4CG78rP1Yg4H5hT+rsBYRzTgJtjgslK3z4pmSu3zPPvWUQUA7dtmbl
-         3oK7VhXehX+RN0I68oOgFkeqY6PqSyamTIuA+ltpooetsMxtzOEmJPRHvoy94RjlDr8T
-         fzQhe85iirJSN6f/7gpEG75jTSM/Wm/OKY8XlQrW+o7y4/r5R4D+NNgn4DMlVbHX0F+5
-         SXxQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VknmVIVQtpeIlKFvp4NDo9zu3CxNfNa1g3Yr7yIWmJk=;
+        b=Ll/IjdvDuPwah2VbxQIdOX2xomjWiVg5upazdhEsnIkAciBneanNGI2JEsomxjjbH2
+         25LZtLfkmcLNYMAbF6blY+TprZc4rYNi8396NNltEuoccvGgXDBeX+8hBD+7nOHXbJ4q
+         9ANiWnxFL9PAHJrpTZV7U1r0djWJUpuSiDwcgyqIhS6n8xxurz22sMNyODg8Uo2YK8wX
+         OoWDzNM7RluugG5wTkiNypfjrkuYaQet0JwSHHdV1b44lFif/3HuQYxsfFibPYkeoQVE
+         /BGIoZNZ/IvhmaZT9I3hdo4dCb8peQP7hhOsHO7L4ppvkiU1MDcoEJxzvudhBsuHENZf
+         W2sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k8vZd6v9v9+rdgKV/PqzJo8VveO9M9COmbjdbxILTmY=;
-        b=Bvha8E8q8WecwV18efTsbclalCNFSVGEaACh09LLN9HkIKiD9bAoP7cxzekhG87Y9H
-         mFJZ2/ne7jb6buiraISS8g1PZxsm/aounC6bB3uHF48sDbY0NotmJZu+IfyMq5+XsNC7
-         7T2ILIxNW3PoCYE8LyJ2xTgxFGIeApN3ESE0LzEEuKGAQeja4nBhMYB1QYRuoTV8KalB
-         ODSS2e1eNZyLAinUDJXsOYRTXk+kWuS1TGjCCdDuT1AAMnxfJNBJJUDZKBF4oktMGEyU
-         KrkpjKnpNjmd/6yzLnTwHe5BImv30hF/wW6wPSAOE3Iqzmc4xC/whmz95IWgGO5iOCVx
-         BlqA==
-X-Gm-Message-State: AOAM530oZjyhWOXZ6zbkk48s9Na/C+i7gFV1OVO4LY4BLH8GuOX+/gVz
-        o5jkxomwGjGrivK/Wn+pXvt3Zg==
-X-Google-Smtp-Source: ABdhPJxfPdCz9cplT/BecIooFLfm3HHfz5dDCAwheJVLk50og2S+UyVylGS1Lj8vXq4tE9zkADh3DQ==
-X-Received: by 2002:ac2:464f:: with SMTP id s15mr48950544lfo.590.1637507160860;
-        Sun, 21 Nov 2021 07:06:00 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VknmVIVQtpeIlKFvp4NDo9zu3CxNfNa1g3Yr7yIWmJk=;
+        b=lhwTg+PuCK3v+Dq309SOvvSsumpK1zdUUt3vF7lRaOzl/gkzuB5por8GYsFEBB2oJ3
+         PknakbmBl4E1qsex7NjcJK8vkKIjl7qAhjteMeniPJ4EHLIK6VtbK3M+L4xdgUxEwTsI
+         Nt2DmIamWtSGJ0l3PVy+j04ABe6HpGvCJdjgwUZSIaQuO4oBaJvOJK4r2vGyywdWnCDm
+         sz5moqYZS4mDl26iOJtQOsHexDYNyyou8AdM2J77EK240ECmEYa7+fnGAk2UbBN3PXAS
+         Nbh6hbsBaxBTp1ETt7JnacEEZcVdAM2Qx23FAk41soAkSG9J5wtaIi5hAYjt8K/MT0yM
+         YZIg==
+X-Gm-Message-State: AOAM531I/fInUETfkR2Mo+XngVgJy40tGjLrYHOd3vyZl3WOwKp65zSk
+        Eu4KIcXjhDuwLwa4gtm99Tlhyw==
+X-Google-Smtp-Source: ABdhPJztqj1Ylj8HogWMOo0X+vPq5SNdvEt7B+jz9CdXA9h6cCZRGvoxZLKdWC9xTnfZ9Jp2n6OxwA==
+X-Received: by 2002:a2e:b177:: with SMTP id a23mr42946273ljm.2.1637507163592;
+        Sun, 21 Nov 2021 07:06:03 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id bj11sm578251ljb.62.2021.11.21.07.05.58
+        by smtp.gmail.com with ESMTPSA id t196sm665562lff.75.2021.11.21.07.06.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Nov 2021 07:05:59 -0800 (PST)
+        Sun, 21 Nov 2021 07:06:02 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -61,38 +61,112 @@ Cc:     Will McVicker <willmcvicker@google.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: [PATCH v2 1/2] arm64: defconfig: Enable Samsung I2C driver
-Date:   Sun, 21 Nov 2021 17:05:57 +0200
-Message-Id: <20211121150558.21801-1-semen.protsenko@linaro.org>
+Subject: [PATCH v2 2/2] arm: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
+Date:   Sun, 21 Nov 2021 17:05:58 +0200
+Message-Id: <20211121150558.21801-2-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211121150558.21801-1-semen.protsenko@linaro.org>
+References: <20211121150558.21801-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-i2c-s3c2410 driver is needed for some arm64 Exynos SoCs, e.g. Exynos850.
+A separate Kconfig option HAVE_S3C2410_I2C for Samsung SoCs is not
+really needed and the i2c-s3c24xx driver can depend on Samsung ARM
+architectures instead. This also enables i2c-s3c2410 for arm64 Exynos
+SoCs, which is required for example by Exynos850.
+
+This is basically continuation of work made in following commits:
+  - commit d96890fca9fd ("rtc: s3c: remove HAVE_S3C_RTC in favor of
+    direct dependencies")
+  - commit 7dd3cae90d85 ("ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
+    use direct dependencies")
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v2:
   - Rebased on latest linux-next
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/Kconfig                  |  1 -
+ arch/arm/mach-exynos/Kconfig      |  1 -
+ arch/arm/mach-s3c/Kconfig.s3c64xx |  1 -
+ arch/arm/mach-s5pv210/Kconfig     |  1 -
+ drivers/i2c/busses/Kconfig        | 10 ++--------
+ 5 files changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f2e2b9bdd702..0da6a944d5cd 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -461,6 +461,7 @@ CONFIG_I2C_QCOM_GENI=m
- CONFIG_I2C_QUP=y
- CONFIG_I2C_RIIC=y
- CONFIG_I2C_RK3X=y
-+CONFIG_I2C_S3C2410=y
- CONFIG_I2C_SH_MOBILE=y
- CONFIG_I2C_TEGRA=y
- CONFIG_I2C_UNIPHIER_F=y
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index f0f9e8bec83a..391f07c17096 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -479,7 +479,6 @@ config ARCH_S3C24XX
+ 	select GPIO_SAMSUNG
+ 	select GPIOLIB
+ 	select GENERIC_IRQ_MULTI_HANDLER
+-	select HAVE_S3C2410_I2C if I2C
+ 	select NEED_MACH_IO_H
+ 	select S3C2410_WATCHDOG
+ 	select SAMSUNG_ATAGS
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index dd1ae5571f43..f7d993628cb7 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -20,7 +20,6 @@ menuconfig ARCH_EXYNOS
+ 	select GPIOLIB
+ 	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
+ 	select HAVE_ARM_SCU if SMP
+-	select HAVE_S3C2410_I2C if I2C
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+ 	select PM_GENERIC_DOMAINS if PM
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index f3fcb570edf5..af01675d8769 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -12,7 +12,6 @@ menuconfig ARCH_S3C64XX
+ 	select COMMON_CLK_SAMSUNG
+ 	select GPIO_SAMSUNG if ATAGS
+ 	select GPIOLIB
+-	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_TCM
+ 	select PLAT_SAMSUNG
+ 	select PM_GENERIC_DOMAINS if PM
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 5a96099af991..055de578b57f 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -12,7 +12,6 @@ config ARCH_S5PV210
+ 	select CLKSRC_SAMSUNG_PWM
+ 	select COMMON_CLK_SAMSUNG
+ 	select GPIOLIB
+-	select HAVE_S3C2410_I2C if I2C
+ 	select PINCTRL
+ 	select PINCTRL_EXYNOS
+ 	select SOC_SAMSUNG
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index dce392839017..c6b854a9e476 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -963,16 +963,10 @@ config I2C_RK3X
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called i2c-rk3x.
+ 
+-config HAVE_S3C2410_I2C
+-	bool
+-	help
+-	  This will include I2C support for Samsung SoCs. If you want to
+-	  include I2C support for any machine, kindly select this in the
+-	  respective Kconfig file.
+-
+ config I2C_S3C2410
+ 	tristate "S3C/Exynos I2C Driver"
+-	depends on HAVE_S3C2410_I2C || COMPILE_TEST
++	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || \
++		   ARCH_S5PV210 || COMPILE_TEST
+ 	help
+ 	  Say Y here to include support for I2C controller in the
+ 	  Samsung SoCs (S3C, S5Pv210, Exynos).
 -- 
 2.30.2
 
