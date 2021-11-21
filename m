@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6A7C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 23:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FA5C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 23:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbhKUXau (ORCPT
+        id S230123AbhKUXaw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 21 Nov 2021 18:30:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43332 "EHLO
+        Sun, 21 Nov 2021 18:30:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbhKUXau (ORCPT
+        with ESMTP id S230199AbhKUXav (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 21 Nov 2021 18:30:50 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633A5C061714
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:44 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id y26so72018811lfa.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:44 -0800 (PST)
+        Sun, 21 Nov 2021 18:30:51 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 170F4C061748
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:46 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id t26so71888648lfk.9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 15:27:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=S/y2Kn8oygwVIw9lHmxg8VDs1DipgumUOS8XzTiyOsU=;
-        b=eV49/GXY3ZioR5KCVbQdQdb0HGYbBDnWGEI7zVz5iAJxaBoHolB7hBvjl/b+xC6xCc
-         EcjjTCKhCfWAzb93zYheTsWA0lt4hPkCLZL9HtQRFZnFcZfYRCoG0ZeNvrM07hwsFoCV
-         mGKXU8qXUOtTin1366adw7r5Km6ZsIjf32NKre6QTokEjz92J3Jd6JW9uwHhgeYIdNn8
-         Ro7KM34j6ZMdOatdOgzVKAmO8ko6wEGF0+nu2w9wi6dmTudea0kZR0BaNTLxrgGphdJu
-         6nhHjaDAhH2nUVG4CB7ZLDEZ7YFTc2utNuC3Tira+a3zbVcAWu+NaEjHV+jWI+IfoWJ7
-         qxZw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=I8O/n1Ie/UbOS/EduUejrCjqvr8VQYVRUpYpuvXrET0=;
+        b=Mmz2WKwJO5Qp3cKlMmxw2glQgjHd6nl7HErF7E3fwIYWukRgvVUCnXL9lweZgLlGKL
+         K4+wrnTgQJapZ5ZuDzBbPSseOer+4kTq8+/X8eioKmUyQI3BVXTNnoiDcec3Hu7eqWVx
+         Zbz0ACsNenCZ2k9dOiQA7OsigE3IMeivpTGCHMrECJAZBCFDhJTBjHFQnU0mdjSgcAwz
+         G5fxrNBizn6QFqShZ4V6/B7nwyL8nsiDV/judEdxeLqsIXoXQtUb+iXsSJ22ZsMRZfO+
+         U/D0DHwT4VO7ObOOv45Av4l09YpgG0qSna5uusKm8NgU71874caH6KgaGPyPKdpu8+4G
+         vQTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=S/y2Kn8oygwVIw9lHmxg8VDs1DipgumUOS8XzTiyOsU=;
-        b=mH2PWR8oDj7G39CJucf4fNWhAFh/65RzxGuEE8TpS/yu8PnCDRAj8/H5iUxsl5F0QJ
-         mPqRmsx+gAFsa+ZYcP32t6LK3WLanLrwKzWJqZEQkea1kV1TvRCNVBXm5/SjvV85nrcE
-         HR8C2062RG8eSSsSi8T1DabE6pJwGevvd/G29ACyNMd2UOAkQF4E41JflEPfS3vRqF8e
-         SBxAls9Wt3xhPDSz6TelnLTe3b7ty1O3s6dX2aAFboCMlOfSixrt3TxH0ACIr28Cv7AP
-         qBuK8ixRROkygjFp+ADmT59J3lB1NSQym158YGS9fRXW5md7Z/oVD2osZBoyu0dBt/9b
-         4b3Q==
-X-Gm-Message-State: AOAM531gY0XBZYPhraFbtNL+98m8Vq1KVzI+gd5sDt2L1rcxKIys3Ay2
-        qaiCdBjT2fZn+slnsDxmSkiwqQ==
-X-Google-Smtp-Source: ABdhPJwR3sqr8nwxIXnSTyEMLZqeyhXKmPjaWT8w9k9jEqiYszGxV9YsWV6WDGESVr+GY1ln3aaeiQ==
-X-Received: by 2002:a05:6512:159d:: with SMTP id bp29mr51450000lfb.257.1637537262579;
-        Sun, 21 Nov 2021 15:27:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=I8O/n1Ie/UbOS/EduUejrCjqvr8VQYVRUpYpuvXrET0=;
+        b=UseF0Jx9h/mNUltWleJiqxCnEh5kn9su0nButekmhBnHcxIEcI0pJPNfK5oeFX60KZ
+         vdl1Glf660eteDIw+0qDYOiBMRZsb4j0hhdT9GfzVUIFLQXIxGuBoZ2b9tsZMWcn9BSl
+         81ChoVQ4mkYpmkbbcv5VJsRfgQStcHrGukHs61Sg/jXJvQikF6r6w1P4in9gX9654sk9
+         HpZMmx7GMsaljf4lisBkM2kkkQUDMlqR6qGfeFpR23jKtsCB9hFLZDPORHX/KvH6yfIW
+         NCbjoqDYqUm3CZSdQZC3W1UJO8qI4qF+T3sjlHAgWTtDpMduZppV4vzf0C+wpQrJDGfm
+         neRA==
+X-Gm-Message-State: AOAM533iRggUeDnbs1sp0Gpdu/jDyI2hiyJvyHEuCRom2Ld1rwwbqyET
+        SafwVajZoepax1RUrAl9aa4Y1M90k3Fboo8U
+X-Google-Smtp-Source: ABdhPJy9dPhCFajzOs/PwYrCnY8LelX6uygETxdMwGJqlcbwy6x6400fj/ZEIfHHeGRc2PPBfgpqwA==
+X-Received: by 2002:a19:770a:: with SMTP id s10mr55262400lfc.234.1637537264317;
+        Sun, 21 Nov 2021 15:27:44 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id z3sm780779lfh.17.2021.11.21.15.27.41
+        by smtp.gmail.com with ESMTPSA id s9sm773698lfr.304.2021.11.21.15.27.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Nov 2021 15:27:42 -0800 (PST)
+        Sun, 21 Nov 2021 15:27:43 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -62,50 +62,110 @@ Cc:     David Virag <virag.david003@gmail.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 0/6] clk: samsung: exynos850: Clock driver improvements
-Date:   Mon, 22 Nov 2021 01:27:35 +0200
-Message-Id: <20211121232741.6967-1-semen.protsenko@linaro.org>
+Subject: [PATCH 1/6] dt-bindings: clock: Add bindings for Exynos850 CMU_APM
+Date:   Mon, 22 Nov 2021 01:27:36 +0200
+Message-Id: <20211121232741.6967-2-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211121232741.6967-1-semen.protsenko@linaro.org>
+References: <20211121232741.6967-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This cumulative series supersedes next patches/series:
-  1. CMU_APM domain implementation series [1]
-  2. CMU_CMGP domain implementation series [2]
-  3. "Register clocks early" patch [3]
+CMU_APM generates clocks for APM IP-core (Active Power Management). In
+particular it generates RTC clocks, which are needed to enable rtc-s3c
+driver on Exynos850 SoC.
 
-with changes as follows:
-  - add "Keep some crucial clocks running" patch [6/6]
-  - enable CMU_PERI parent clock early
-  - move bindings headers changes into bindings doc patches
+Add clock indices and binding documentation for CMU_APM.
 
-Tested:
-  - CMU_TOP is registered before CMU_PERI
-  - CMU_PERI parent clock is enabled early and successfully, and running
-    before any access to CMU_PERI registers
-  - kernel boots successfully without "clk_ignore_unused" param
-  - MCT timer works fine and doesn't panic during bootup
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ .../clock/samsung,exynos850-clock.yaml        | 19 ++++++++++++
+ include/dt-bindings/clock/exynos850.h         | 29 ++++++++++++++++++-
+ 2 files changed, 47 insertions(+), 1 deletion(-)
 
-[1] https://lkml.org/lkml/2021/10/22/978
-[2] https://lkml.org/lkml/2021/11/9/660
-[3] https://lkml.org/lkml/2021/10/25/818
-
-Sam Protsenko (6):
-  dt-bindings: clock: Add bindings for Exynos850 CMU_APM
-  clk: samsung: exynos850: Implement CMU_APM domain
-  dt-bindings: clock: Add bindings for Exynos850 CMU_CMGP
-  clk: samsung: exynos850: Implement CMU_CMGP domain
-  clk: samsung: exynos850: Register clocks early
-  clk: samsung: exynos850: Keep some crucial clocks running
-
- .../clock/samsung,exynos850-clock.yaml        |  38 ++
- drivers/clk/samsung/clk-exynos850.c           | 327 ++++++++++++++++--
- include/dt-bindings/clock/exynos850.h         |  46 ++-
- 3 files changed, 387 insertions(+), 24 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+index 7f8c91a29b91..5618cfa62f80 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+@@ -32,6 +32,7 @@ properties:
+   compatible:
+     enum:
+       - samsung,exynos850-cmu-top
++      - samsung,exynos850-cmu-apm
+       - samsung,exynos850-cmu-core
+       - samsung,exynos850-cmu-dpu
+       - samsung,exynos850-cmu-hsi
+@@ -68,6 +69,24 @@ allOf:
+           items:
+             - const: oscclk
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-apm
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_APM bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_apm_bus
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+index 8999184f94a2..df3978b58304 100644
+--- a/include/dt-bindings/clock/exynos850.h
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -55,7 +55,34 @@
+ #define CLK_GOUT_PERI_BUS		43
+ #define CLK_GOUT_PERI_UART		44
+ #define CLK_GOUT_PERI_IP		45
+-#define TOP_NR_CLK			46
++#define CLK_MOUT_CLKCMU_APM_BUS		46
++#define CLK_DOUT_CLKCMU_APM_BUS		47
++#define CLK_GOUT_CLKCMU_APM_BUS		48
++#define TOP_NR_CLK			49
++
++/* CMU_APM */
++#define CLK_RCO_I3C_PMIC		1
++#define OSCCLK_RCO_APM			2
++#define CLK_RCO_APM__ALV		3
++#define CLK_DLL_DCO			4
++#define CLK_MOUT_APM_BUS_USER		5
++#define CLK_MOUT_RCO_APM_I3C_USER	6
++#define CLK_MOUT_RCO_APM_USER		7
++#define CLK_MOUT_DLL_USER		8
++#define CLK_MOUT_CLKCMU_CHUB_BUS	9
++#define CLK_MOUT_APM_BUS		10
++#define CLK_MOUT_APM_I3C		11
++#define CLK_DOUT_CLKCMU_CHUB_BUS	12
++#define CLK_DOUT_APM_BUS		13
++#define CLK_DOUT_APM_I3C		14
++#define CLK_GOUT_CLKCMU_CMGP_BUS	15
++#define CLK_GOUT_CLKCMU_CHUB_BUS	16
++#define CLK_GOUT_RTC_PCLK		17
++#define CLK_GOUT_TOP_RTC_PCLK		18
++#define CLK_GOUT_I3C_PCLK		19
++#define CLK_GOUT_I3C_SCLK		20
++#define CLK_GOUT_SPEEDY_PCLK		21
++#define APM_NR_CLK			22
+ 
+ /* CMU_HSI */
+ #define CLK_MOUT_HSI_BUS_USER		1
 -- 
 2.30.2
 
