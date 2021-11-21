@@ -2,97 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D271C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 16:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B48FC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 21 Nov 2021 16:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233693AbhKUQuk (ORCPT
+        id S230330AbhKUQ74 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 21 Nov 2021 11:50:40 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60952
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232018AbhKUQuk (ORCPT
+        Sun, 21 Nov 2021 11:59:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237971AbhKUQ74 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 21 Nov 2021 11:50:40 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CF90340022
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 16:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1637513252;
-        bh=XsoOn3ND/sAh8NvQQ/Y8cZAkyJcKJL0OKHYA60c2Nrg=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=J57g+2R4lZJY1pViwSwuno+DQRf18ijqYdd3Mo+sVbYuz8RUyBz8I5XoIp2EiJumL
-         Yp7qz7YT2cehe3O9HDO4098syfFw3f8ADCJ+Qev1VO639CTpDH2Vwgz3dz2vMKT0Vu
-         1VtAQKCEuA1+ACTBglrm/WUWhGlEeBEj7ncL15O861gAm5IUIlnCTpA7kZRWBV32fz
-         Qh42f3U/J7lx16lNIPbahDznxp6X16PVO3fdX0O5JnocJFz++ocCaZMh9U1njctfx6
-         gPmJHMeF36J0QOWkAKr/3cxjMhZGVSjlcB6UIQlUtpLpk4Gav9Jwk3WfntyK3exrjT
-         kILr5IeazFz7g==
-Received: by mail-lf1-f72.google.com with SMTP id z1-20020a056512308100b003ff78e6402bso10268605lfd.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 08:47:32 -0800 (PST)
+        Sun, 21 Nov 2021 11:59:56 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285AAC061748
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 08:56:51 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id u3so69093298lfl.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 08:56:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7osbeXL+1CyqsigAAd8jmW1+rCcPt1AGKsERDXyK0YI=;
+        b=WUPLA7RjKT3xPKZygE2w3taTSB5twgC2eq9PDKRSfa1PPRPzL8+MkrBce6yGyEQAF3
+         mch1OD1BCukVhN6aLSfIVkkcG0gMVKtrHW1pG6CDGBi6xuiUvY10g5mkWODWvIxjtDT/
+         CqWkbj/89y2AA5AqjgVj1mgOKlVbu06qKpMHEATr0ktsCsf7EYNtlAReE76UNjnUF+0V
+         g5sZTk9B5EisOc+ijKVqOct9b8Z8atujfDodfxJ4G3YyvUiLbcIaH5EPLFLw/soSbG9U
+         VPkHAdl8YpHZg/PfDSsksahOIPDbJEJpSv4JTwE8r9wF3tU5HMIC0bfe0A7CZ+cc87qR
+         2wcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XsoOn3ND/sAh8NvQQ/Y8cZAkyJcKJL0OKHYA60c2Nrg=;
-        b=7wO5uRLcVbKte4sTza4hjnuZl2rmqoFH2VvRX1swQJ8Kdp4183crSTHmfZrH1cPb0s
-         q1dMDIe6lXyXAmgSbwCNmS7Jo9twoS3XPHN7dACoiOP1W4dxexdSSKUUkaM5DeGSCkZE
-         qvXa3vYX/weoz61Tz6JkmwdLOrNofasTIB9cvZhl3OpJmvsD5oUGm0ei2e8RnIEPh7tN
-         JdsLkrvq3Sju4+5pBUW6iuK11+gJpUtxWolE77a4k6/kH8LyKwvKMAU92/dYHa1VdGqo
-         eD/kXE+UqermXHBN3zR+MXEqvMFretUmS6/fP5tFt5kbEmfPiRbA6Z4NCZSfSkbVVsfZ
-         mvyQ==
-X-Gm-Message-State: AOAM530lqNQccvywwUKqCEWX60zUblTtAOpOhQZ9B2Rd2WZsPUiEU5cw
-        FIX7pKmXxdy/IKl0V6u5DKTVwVsvIZ7fxKBUIaZDywo/Gad+5LfTC09x+sV0WuTLAMeqWmT+5dM
-        FRwFs6Bdqbxc7quPrKrbi8GTWWVGInF0FA5aW4nAwZ7h7qYks
-X-Received: by 2002:ac2:42c6:: with SMTP id n6mr48523140lfl.553.1637513252033;
-        Sun, 21 Nov 2021 08:47:32 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy4hlDfeLcmS9sY/YWfSzCQe00z2kJ8KKHqYotO5YUEAImib8DLKRzP+dSEWcZ5jYW2Y1Jxyg==
-X-Received: by 2002:ac2:42c6:: with SMTP id n6mr48523115lfl.553.1637513251856;
-        Sun, 21 Nov 2021 08:47:31 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id s15sm631835ljj.14.2021.11.21.08.47.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7osbeXL+1CyqsigAAd8jmW1+rCcPt1AGKsERDXyK0YI=;
+        b=NhtE5dNfhhNLah78RkJyceVhSb46ly0LAJQa8o67zDr4VPWzoFUGXSOaN6LEH/j/ZX
+         XZ9WCdR+dB+N1YhoRFs31BkLUusriu0n4N70i7ZOhzVHzsq2sF82kC1iDbhbdtKVehZH
+         0w9VO95WizuhpNG0QtZd6266s0XfzyY2w8asVQwjFr8dygTvZqvISVtG9PUi+p8N9KKX
+         eviJJsx8VSYYw6hZVJwU0PJhO2xRUbeaqGLq6tYhZXeb7vCLtY7LNFv49UuJyrPmkEhg
+         1cwrvWVRqMafwOERs4/AOKwk/jSYMb0YxSC3aeoFx8dnAI3VdZXjZTRgaCeLE7NVAAGx
+         wDjA==
+X-Gm-Message-State: AOAM533Fw5vJpRX8weqxotR3Tac6y6bbuhCAoq+tsfszK7BtgkvYv5ab
+        r6Tg9atWFJ5KvDV/exJXZxmdPg==
+X-Google-Smtp-Source: ABdhPJzKRvqwD4Q6Xp7gSwZpW/mjFpjkrELigO8PKAoLdpnI45QpaFepdc7bJOl5p9prPFM6xBC0eA==
+X-Received: by 2002:a2e:a593:: with SMTP id m19mr46616034ljp.407.1637513809310;
+        Sun, 21 Nov 2021 08:56:49 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id g30sm614429lja.22.2021.11.21.08.56.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Nov 2021 08:47:31 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Will McVicker <willmcvicker@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] arm64: defconfig: Enable Samsung I2C driver
-Date:   Sun, 21 Nov 2021 17:47:29 +0100
-Message-Id: <163751324653.4740.10340111836301836511.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211121150558.21801-1-semen.protsenko@linaro.org>
-References: <20211121150558.21801-1-semen.protsenko@linaro.org>
+        Sun, 21 Nov 2021 08:56:48 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4 00/12] watchdog: s3c2410: Add Exynos850 support
+Date:   Sun, 21 Nov 2021 18:56:35 +0200
+Message-Id: <20211121165647.26706-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 21 Nov 2021 17:05:57 +0200, Sam Protsenko wrote:
-> i2c-s3c2410 driver is needed for some arm64 Exynos SoCs, e.g. Exynos850.
-> 
-> 
+Exynos850 WDT IP-core differs a bit from existing platforms:
+  - Another set of PMU registers
+  - Separate WDT instance for each CPU cluster, having different PMU
+    registers/bits
+  - Source clock is different from PCLK
 
-Applied, thanks!
+Implement all missing features above and enable Exynos850 WDT support.
+While at it, do a bit of cleaning up.
 
-[1/2] arm64: defconfig: Enable Samsung I2C driver
-      commit: 0e9a9debf0427164fb845403a6eb9439558f1684
-[2/2] arm: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
-      commit: 3ac5f9db26bb7a227ccbf160c36a5567b5394299
+Changes in v4:
+  - Fixed build error when CONFIG_OF is disabled (found by 0-day)
+  - Added R-b tag by Guenter Roeck to all patches
 
-Best regards,
+Changes in v3:
+  - Renamed "samsung,index" property to more descriptive
+    "samsung,cluster-index"
+  - bindings: Disabled "samsung,cluster-index" property for SoCs other
+    than Exynos850
+  - Added quirks documentation
+  - Removed has_src_clk field: clk framework can handle NULL clk; added
+    s3c2410wdt_get_freq() function instead, to figure out which clock to
+    use for getting the rate
+  - Used pre-defined and completely set driver data for cluster0 and
+    cluster1
+  - Coding style changes
+  - Added R-b tags
+
+Changes in v2:
+  - Added patch to fail probe if no valid timeout was found, as
+    suggested by Guenter Roeck (03/12)
+  - Extracted code for separating disable/mask functions into separate
+    patch (06/12)
+  - Added patch for inverting mask register value (07/12)
+  - Extracted PMU cleanup code to separate patch, to ease the review and
+    porting (09/12)
+  - Added patch for removing not needed 'err' label in probe function
+    (11/12)
+  - Addressed all outstanding review comments on mailing list
+
+Sam Protsenko (12):
+  dt-bindings: watchdog: Require samsung,syscon-phandle for Exynos7
+  dt-bindings: watchdog: Document Exynos850 watchdog bindings
+  watchdog: s3c2410: Fail probe if can't find valid timeout
+  watchdog: s3c2410: Let kernel kick watchdog
+  watchdog: s3c2410: Make reset disable register optional
+  watchdog: s3c2410: Extract disable and mask code into separate
+    functions
+  watchdog: s3c2410: Implement a way to invert mask reg value
+  watchdog: s3c2410: Add support for WDT counter enable register
+  watchdog: s3c2410: Cleanup PMU related code
+  watchdog: s3c2410: Support separate source clock
+  watchdog: s3c2410: Remove superfluous err label
+  watchdog: s3c2410: Add Exynos850 support
+
+ .../bindings/watchdog/samsung-wdt.yaml        |  48 ++-
+ drivers/watchdog/s3c2410_wdt.c                | 324 +++++++++++++-----
+ 2 files changed, 289 insertions(+), 83 deletions(-)
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+2.30.2
+
