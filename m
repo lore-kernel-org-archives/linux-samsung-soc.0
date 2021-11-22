@@ -2,225 +2,227 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D24C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Nov 2021 14:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BF0C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Nov 2021 15:14:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239768AbhKVOpR (ORCPT
+        id S239496AbhKVPRy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Nov 2021 09:45:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
+        Mon, 22 Nov 2021 10:17:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233247AbhKVOpQ (ORCPT
+        with ESMTP id S232963AbhKVPRy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Nov 2021 09:45:16 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE61AC061574
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 06:42:09 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id f18so82002211lfv.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 06:42:09 -0800 (PST)
+        Mon, 22 Nov 2021 10:17:54 -0500
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA82AC061714
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 07:14:47 -0800 (PST)
+Received: by mail-ua1-x935.google.com with SMTP id p37so37183189uae.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 07:14:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JY9o9Qw6OAmM2h7GF5DXcC1VsO28vOcpSP4iXZPByYc=;
-        b=UHDbtxGzA/5hiFwXBixij0WHcZACiUNY6U5OUIqC4pMhb/7nls3bOLzuU9mPEAQ7h/
-         iV6nS/1dxSQSdCk1k9VNfjLBjJnAJ4dFpmMcBVlzybOuJqOZPXdQ8HKbILGAtAPCv+oU
-         khBui81vf01KJaujHuCNxJ679lrQJ3bzRq3uxOjimkOIt6t+rFc+BjmGN+X5Avkg3JxD
-         yodg2ybtR2ixMT2O+OdCuWsnDhM4phmWc5cDVhskI5HRFAWe4pjIBUTU5IorGkXY8ZMp
-         sh5qyVjwD70a+DOcNGb0m9ek3IeXUPEFHu9nS2QtFZkTIv+3SF08AFXm8rgZou6T4EBu
-         Pr1A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=poS5/ZkkPxvtzD22F0lVSI3r9e0b9RG+7VJETyoPoIg=;
+        b=TywNwI4xVcUHaTxzzNsfna40gripLivuJ7MFTK83mECnSR4WEvMLG4GGh/WxqLhgSQ
+         iVNbugZvKmwY34OT7zb+LLIevaJIMtjOXZbQLsVQEV72+tmu2G3E/x2v7aIrcu318Pnh
+         LKurfoWikwicl+phNM17yy1abyVKwWOmz56eASAScq5NSXcZfZBkmDcT5MgqIofw0dA2
+         knCYy+4qh1KV15oU/bG3fVjj3zwQY/ZZ3cNevac5AT+TzKwCBKYg1J2NOwpGK53yZmKk
+         0Hj/314aubMIvQhOxEjydfa9oKJPmY20KcwEz/WGVLtg1aHKb2EZ4+9tpfDK7vSt9C1Q
+         1tJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JY9o9Qw6OAmM2h7GF5DXcC1VsO28vOcpSP4iXZPByYc=;
-        b=ItIq27uKezl7g4MiNLJINzJ67YoNcTTMGiIsRg72kfZRngGtPvvxZK4T8vDXj3yA7W
-         XONNb1CnOXjGnzaAheERgqUuD7M2ks6UfIH2FKpcVVuSPAzsG8b+LyYeCCzlHXUBIqfp
-         wudHiNt8RBCFmFjo/jUwG3m1d2QJkxN6JUQiUDQca73XILrp1UoIO3oqcPdhs4Ec1LmI
-         tQrgpRZIj4yg5VVOiGk3etEgnzBXUGbz6pc9uH2Bd8PvIGAZDB/tlq1Z6kN1L1AEOdbi
-         JoPf3VSC0Gbbjdf1Jea1+KLwUzAJjD+nV3U/E56R8yS4nvvNZga+OraSHV+23QB7cRdG
-         FM0w==
-X-Gm-Message-State: AOAM530V2Kt+Dfk7IvcNMF6dcav/jgPlMOo6U/kYKiYjTR2GgrBWklOZ
-        nrQRf3ZANnLTYRi2lGyZJ0O1rA==
-X-Google-Smtp-Source: ABdhPJxMdHB47e9WyBvRhkaCVvTJFHk1GZPxZIy4C6Igcqz3WurfOJOB7T0ZdbmuMdgykSdyQR7Pbg==
-X-Received: by 2002:a2e:b7d4:: with SMTP id p20mr51346402ljo.248.1637592128216;
-        Mon, 22 Nov 2021 06:42:08 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id f9sm614684lfu.10.2021.11.22.06.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 06:42:07 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Virag <virag.david003@gmail.com>,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 1/1] clk: samsung: exynos850: Register clocks early
-Date:   Mon, 22 Nov 2021 16:42:06 +0200
-Message-Id: <20211122144206.23134-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=poS5/ZkkPxvtzD22F0lVSI3r9e0b9RG+7VJETyoPoIg=;
+        b=Ms2hluOb0ZeCOyP+pd/I9VPc/kFB3A0kmMB4QxZhCP/YLmVZraRP8JSRutjzNYzg0h
+         DugwbBXk+x/Fp6cM612wEVm4nqy64xYtvqN4cN+efVbzhqv6JPYOz0kU1Aq6Xa85TLj5
+         o9o2RD1R+aW5LgEUp4VBRG0Y/MQudza8sMKJDaE+VWL88PyDubwBoLsPgxHhFI+aEk1l
+         ezbTV/KOk3M/ctlvYa27VhYkH+gVAoMF5uhJP7tdiyLnZ2SpdG91h/3vkEeaIghMe1ia
+         4oiMueohFRcpmBzjnBhHgpzmDexaDAljNX4g5COzvb2qHZjP40KEjpjtrHgw8ExZnMAO
+         OBnQ==
+X-Gm-Message-State: AOAM532QytK35YcQritJGEWSm6QeUnSvtWQVh/eaKVSdapxrj4TalfA3
+        1OtnuVOVlJkgQDZAxV0AyLHnE7GZ8bzghuAQMtWA2A==
+X-Google-Smtp-Source: ABdhPJw1wNxRm9yPXD1GQ+f/A1NtWJ2Stf4A605YHIA5GbkNnFK9OsunsY4bFzRgCO2pMCIgmqkZo9kmM3qJVwwLmhY=
+X-Received: by 2002:a05:6102:4192:: with SMTP id cd18mr132128250vsb.35.1637594086878;
+ Mon, 22 Nov 2021 07:14:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211121165647.26706-1-semen.protsenko@linaro.org> <20211121165647.26706-13-semen.protsenko@linaro.org>
+In-Reply-To: <20211121165647.26706-13-semen.protsenko@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 22 Nov 2021 17:14:35 +0200
+Message-ID: <CAPLW+4myd2JDEKmv+E1HsxK_yNaLC+iUWSo99+Lqujof3MGpCg@mail.gmail.com>
+Subject: Re: [PATCH v4 12/12] watchdog: s3c2410: Add Exynos850 support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some clocks must be registered before init calls. For example MCT clock
-(from CMU_PERI) is needed for MCT timer driver, which is registered
-with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-clk-exynos850 platform driver init, it's already too late. Inability to
-get "mct" clock in MCT driver leads to kernel panic, as functions
-registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-can't be fixed either, as it's acting as a clock source and it's
-essential to register it in start_kernel() -> time_init().
+On Sun, 21 Nov 2021 at 18:57, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> Exynos850 is a bit different from SoCs already supported in WDT driver:
+>   - AUTOMATIC_WDT_RESET_DISABLE register is removed, so its value is
+>     always 0; .disable_auto_reset callback is not set for that reason
+>   - MASK_WDT_RESET_REQUEST register is replaced with
+>     CLUSTERx_NONCPU_IN_EN register; instead of masking (disabling) WDT
+>     reset interrupt it's now enabled with the same value; .mask_reset
+>     callback is reused for that functionality though
+>   - To make WDT functional, WDT counter needs to be enabled in
+>     CLUSTERx_NONCPU_OUT register; it's done using .enable_counter
+>     callback
+>
+> Also Exynos850 has two CPU clusters, each has its own dedicated WDT
+> instance. Different PMU registers and bits are used for each cluster. So
+> driver data is now modified in probe, adding needed info depending on
+> cluster index passed from device tree.
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> ---
 
-Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
-generates clocks needed for CMU_PERI, but it's already registered early.
+Hi Guenter,
 
-While at it, let's cleanup the code a bit, by extracting everything
-related to CMU initialization and registration to the separate function.
+I've resent the whole series, but I can see you already applied my
+previous series to your watchdog-next branch. So this patch is the
+only one that actually changed in the whole series (with fixes for
+0-day warning).
 
-Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-drivers/clk/mediatek/clk-mt2712.c.
-
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
-
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
-Changes in v2:
-  - Use of_clk_get_by_name() API to get parent clock when registering
-    CMU early (as suggested by Sylwester Nawrocki)
-  - Extracted CMU registration code to separate routine
-  - Use CLK_OF_DECLARE() for CMU_PERI init, instead of
-    CLK_OF_DECLARE_DRIVER(), as parent clock now can be enabled early
-  - Remove "samsung,exynos850-cmu-peri" from exynos850_cmu_of_match[]
-  - Add some comments for early domains
-
- drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 04a8d202c939..568ac97c8120 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -60,6 +60,43 @@ static void __init exynos850_init_clocks(struct device_node *np,
- 	iounmap(reg_base);
- }
- 
-+/**
-+ * exynos850_register_cmu - Register specified Exynos850 CMU domain
-+ * @dev:	Device object; may be NULL if this function is not being
-+ *		called from platform driver probe function
-+ * @np:		CMU device tree node
-+ * @cmu:	CMU data
-+ *
-+ * Register specified CMU domain, which includes next steps:
-+ *
-+ * 1. Enable parent clock of @cmu CMU
-+ * 2. Set initial registers configuration for @cmu CMU clocks
-+ * 3. Register @cmu CMU clocks using Samsung clock framework API
-+ */
-+static void __init exynos850_register_cmu(struct device *dev,
-+		struct device_node *np, const struct samsung_cmu_info *cmu)
-+{
-+	/* Keep CMU parent clock running (needed for CMU registers access) */
-+	if (cmu->clk_name) {
-+		struct clk *parent_clk;
-+
-+		if (dev)
-+			parent_clk = clk_get(dev, cmu->clk_name);
-+		else
-+			parent_clk = of_clk_get_by_name(np, cmu->clk_name);
-+
-+		if (IS_ERR(parent_clk)) {
-+			pr_err("%s: could not find bus clock %s; err = %ld\n",
-+			       __func__, cmu->clk_name, PTR_ERR(parent_clk));
-+		} else {
-+			clk_prepare_enable(parent_clk);
-+		}
-+	}
-+
-+	exynos850_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+	samsung_cmu_register_one(np, cmu);
-+}
-+
- /* ---- CMU_TOP ------------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_TOP (0x120e0000) */
-@@ -367,10 +404,10 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
- 
- static void __init exynos850_cmu_top_init(struct device_node *np)
- {
--	exynos850_init_clocks(np, top_clk_regs, ARRAY_SIZE(top_clk_regs));
--	samsung_cmu_register_one(np, &top_cmu_info);
-+	exynos850_register_cmu(NULL, np, &top_cmu_info);
- }
- 
-+/* Register CMU_TOP early, as it's a dependency for other early domains */
- CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
- 	       exynos850_cmu_top_init);
- 
-@@ -853,6 +890,15 @@ static const struct samsung_cmu_info peri_cmu_info __initconst = {
- 	.clk_name		= "dout_peri_bus",
- };
- 
-+static void __init exynos850_cmu_peri_init(struct device_node *np)
-+{
-+	exynos850_register_cmu(NULL, np, &peri_cmu_info);
-+}
-+
-+/* Register CMU_PERI early, as it's needed for MCT timer */
-+CLK_OF_DECLARE(exynos850_cmu_peri, "samsung,exynos850-cmu-peri",
-+	       exynos850_cmu_peri_init);
-+
- /* ---- CMU_CORE ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_CORE (0x12000000) */
-@@ -1021,24 +1067,9 @@ static int __init exynos850_cmu_probe(struct platform_device *pdev)
- {
- 	const struct samsung_cmu_info *info;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
- 
- 	info = of_device_get_match_data(dev);
--	exynos850_init_clocks(np, info->clk_regs, info->nr_clk_regs);
--	samsung_cmu_register_one(np, info);
--
--	/* Keep bus clock running, so it's possible to access CMU registers */
--	if (info->clk_name) {
--		struct clk *bus_clk;
--
--		bus_clk = clk_get(dev, info->clk_name);
--		if (IS_ERR(bus_clk)) {
--			pr_err("%s: could not find bus clock %s; err = %ld\n",
--			       __func__, info->clk_name, PTR_ERR(bus_clk));
--		} else {
--			clk_prepare_enable(bus_clk);
--		}
--	}
-+	exynos850_register_cmu(dev, dev->of_node, info);
- 
- 	return 0;
- }
-@@ -1053,9 +1084,6 @@ static const struct of_device_id exynos850_cmu_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-hsi",
- 		.data = &hsi_cmu_info,
--	}, {
--		.compatible = "samsung,exynos850-cmu-peri",
--		.data = &peri_cmu_info,
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-core",
- 		.data = &core_cmu_info,
--- 
-2.30.2
-
+> Changes in v4:
+>   - Fixed build error when CONFIG_OF is disabled (found by 0-day):
+>     added #ifdef CONFIG_OF guard in s3c2410_get_wdt_drv_data()
+>   - Added R-b tag by Guenter Roeck
+>
+> Changes in v3:
+>   - Renamed "samsung,index" property to more descriptive
+>     "samsung,cluster-index"
+>   - Used pre-defined and completely set driver data for cluster0 and
+>     cluster1
+>
+> Changes in v2:
+>   - Used single compatible for Exynos850, populating missing driver data
+>     in probe
+>   - Added "index" property to specify CPU cluster index
+>
+>  drivers/watchdog/s3c2410_wdt.c | 64 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 63 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index 96aa5d9c6ed4..115a6fe7da57 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -56,6 +56,13 @@
+>  #define EXYNOS5_RST_STAT_REG_OFFSET            0x0404
+>  #define EXYNOS5_WDT_DISABLE_REG_OFFSET         0x0408
+>  #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET      0x040c
+> +#define EXYNOS850_CLUSTER0_NONCPU_OUT          0x1220
+> +#define EXYNOS850_CLUSTER0_NONCPU_INT_EN       0x1244
+> +#define EXYNOS850_CLUSTER1_NONCPU_OUT          0x1620
+> +#define EXYNOS850_CLUSTER1_NONCPU_INT_EN       0x1644
+> +
+> +#define EXYNOS850_CLUSTER0_WDTRESET_BIT                24
+> +#define EXYNOS850_CLUSTER1_WDTRESET_BIT                23
+>
+>  /**
+>   * Quirk flags for different Samsung watchdog IP-cores.
+> @@ -205,6 +212,30 @@ static const struct s3c2410_wdt_variant drv_data_exynos7 = {
+>                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_AUTO_DISABLE,
+>  };
+>
+> +static const struct s3c2410_wdt_variant drv_data_exynos850_cl0 = {
+> +       .mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN,
+> +       .mask_bit = 2,
+> +       .mask_reset_inv = true,
+> +       .rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> +       .rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT,
+> +       .cnt_en_reg = EXYNOS850_CLUSTER0_NONCPU_OUT,
+> +       .cnt_en_bit = 7,
+> +       .quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
+> +                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
+> +};
+> +
+> +static const struct s3c2410_wdt_variant drv_data_exynos850_cl1 = {
+> +       .mask_reset_reg = EXYNOS850_CLUSTER1_NONCPU_INT_EN,
+> +       .mask_bit = 2,
+> +       .mask_reset_inv = true,
+> +       .rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> +       .rst_stat_bit = EXYNOS850_CLUSTER1_WDTRESET_BIT,
+> +       .cnt_en_reg = EXYNOS850_CLUSTER1_NONCPU_OUT,
+> +       .cnt_en_bit = 7,
+> +       .quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET | \
+> +                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
+> +};
+> +
+>  static const struct of_device_id s3c2410_wdt_match[] = {
+>         { .compatible = "samsung,s3c2410-wdt",
+>           .data = &drv_data_s3c2410 },
+> @@ -216,6 +247,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+>           .data = &drv_data_exynos5420 },
+>         { .compatible = "samsung,exynos7-wdt",
+>           .data = &drv_data_exynos7 },
+> +       { .compatible = "samsung,exynos850-wdt",
+> +         .data = &drv_data_exynos850_cl0 },
+>         {},
+>  };
+>  MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+> @@ -587,14 +620,40 @@ static inline const struct s3c2410_wdt_variant *
+>  s3c2410_get_wdt_drv_data(struct platform_device *pdev)
+>  {
+>         const struct s3c2410_wdt_variant *variant;
+> +       struct device *dev = &pdev->dev;
+>
+> -       variant = of_device_get_match_data(&pdev->dev);
+> +       variant = of_device_get_match_data(dev);
+>         if (!variant) {
+>                 /* Device matched by platform_device_id */
+>                 variant = (struct s3c2410_wdt_variant *)
+>                            platform_get_device_id(pdev)->driver_data;
+>         }
+>
+> +#ifdef CONFIG_OF
+> +       /* Choose Exynos850 driver data w.r.t. cluster index */
+> +       if (variant == &drv_data_exynos850_cl0) {
+> +               u32 index;
+> +               int err;
+> +
+> +               err = of_property_read_u32(dev->of_node,
+> +                                          "samsung,cluster-index", &index);
+> +               if (err) {
+> +                       dev_err(dev, "failed to get cluster index\n");
+> +                       return NULL;
+> +               }
+> +
+> +               switch (index) {
+> +               case 0:
+> +                       return &drv_data_exynos850_cl0;
+> +               case 1:
+> +                       return &drv_data_exynos850_cl1;
+> +               default:
+> +                       dev_err(dev, "wrong cluster index: %u\n", index);
+> +                       return NULL;
+> +               }
+> +       }
+> +#endif
+> +
+>         return variant;
+>  }
+>
+> @@ -615,6 +674,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>         wdt->wdt_device = s3c2410_wdd;
+>
+>         wdt->drv_data = s3c2410_get_wdt_drv_data(pdev);
+> +       if (!wdt->drv_data)
+> +               return -EINVAL;
+> +
+>         if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+>                 wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+>                                                 "samsung,syscon-phandle");
+> --
+> 2.30.2
+>
