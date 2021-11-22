@@ -2,131 +2,140 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705F8C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Nov 2021 07:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B176FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Nov 2021 09:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238855AbhKVIAb (ORCPT
+        id S238934AbhKVJci (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Nov 2021 03:00:31 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:60904
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238812AbhKVIAa (ORCPT
+        Mon, 22 Nov 2021 04:32:38 -0500
+Received: from mga05.intel.com ([192.55.52.43]:53776 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230447AbhKVJch (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Nov 2021 03:00:30 -0500
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5A16F3F1B9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 07:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1637567840;
-        bh=PcxoRBTZGSYTTVWVxfthK4uXynQwbLiAr353aFZB84s=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=p5T2qcZ7KDTuDJwXxKe2m5bZhj5EWvEhLTD46E8K1vlGTXOxXPDpVTYKx1873/7HE
-         H0btM6J3CXQn46pqXzVVvLETXZSuhtnYgTyioCYfQcSG16zaxL5URDIAWjdCytljTw
-         ugUMAEe1HwC+gbWxBW8haaa1sXTSOwXxeVeF+3efRviOt0JyA3I2lE7ux/UAvi9fYS
-         g0MGgNksjWmKJ3WOFpELBZivJdEXPNRR0zKUsumu4BbIam0VJnHlgVsxDEzOAdNPu1
-         c+MkCSlv64H6GIZdZ7yFlUEfPXrIAyRCbeQySz/QBX0y2WdllBpgGcNx0oRjyozF44
-         fdUS1waTgQQ8w==
-Received: by mail-lf1-f70.google.com with SMTP id g38-20020a0565123ba600b004036147023bso11566375lfv.10
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Nov 2021 23:57:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=PcxoRBTZGSYTTVWVxfthK4uXynQwbLiAr353aFZB84s=;
-        b=E+vC8LB7bAatxcnnr9fgfwa9GlKjyVVHP0FtjyW5LJ0sWUN2XUt3bxi4o/88kSZrRk
-         CGL/B3u/nMpnJatFXvYKu/rV+1imSQ95htRPDmU04w2cL1rrHWm1Bsx7VzSHlSZHPSA9
-         +066THk79SAEygpA8y5TYDb4PviAEmjq0W3nowj4bHLQ1cfgbYrxnIZkOu30GOwpnvbM
-         j1u3M2RQ34LGst3bVn+TI6uBbi5BKQLgA11xp10BtdtriKh5z22vX3q/NxEQO89ij8rT
-         Lvb0okvVnZWzBb1ndqUz9CxGw2BtpT4a/CrYIG5a+3oj9VxQCI9lh9fLGfXoXYRrmaQH
-         16gQ==
-X-Gm-Message-State: AOAM533IE1PzSKRSU8nPhj4BAU2EDa1nyDO3CWXP5aO58/RjCG8JGgUP
-        ZgquvX7q+H3AyhAkBtKqA3q1XutX1y7GkQOb74MTah+J9fLDI8DIcGhKHZEX3/qgnWMPSHtZfP8
-        uMZCv9saq0aDH/AzsZuiug/NEEU2mxjGv5sJRK07RCWt46QVp
-X-Received: by 2002:a05:6512:1296:: with SMTP id u22mr54114410lfs.296.1637567838203;
-        Sun, 21 Nov 2021 23:57:18 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxm5yi0jg4wyKx59FrIXG+M0rioU4VgvmaVZqCRxWzwHhoZyOEN8fz79drw2KNpAE4E/QC5YQ==
-X-Received: by 2002:a05:6512:1296:: with SMTP id u22mr54114381lfs.296.1637567837963;
-        Sun, 21 Nov 2021 23:57:17 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id o11sm837418ljc.100.2021.11.21.23.57.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Nov 2021 23:57:17 -0800 (PST)
-Message-ID: <706cd9c2-5eeb-fd56-a7de-045796584797@canonical.com>
-Date:   Mon, 22 Nov 2021 08:57:16 +0100
+        Mon, 22 Nov 2021 04:32:37 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10175"; a="320980423"
+X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
+   d="scan'208";a="320980423"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 01:29:31 -0800
+X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
+   d="scan'208";a="508879579"
+Received: from rmcdonax-mobl.ger.corp.intel.com (HELO localhost) ([10.252.19.217])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 01:29:13 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>, bpf@vger.kernel.org
+Cc:     Jakub Kicinski <kuba@kernel.org>, axboe@kernel.dk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        yuq825@gmail.com, robdclark@gmail.com, sean@poorly.run,
+        christian.koenig@amd.com, ray.huang@amd.com, sgoutham@marvell.com,
+        gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
+        jingoohan1@gmail.com, lorenzo.pieralisi@arm.com, robh@kernel.org,
+        kw@linux.com, bhelgaas@google.com,
+        krzysztof.kozlowski@canonical.com, mani@kernel.org,
+        pawell@cadence.com, peter.chen@kernel.org, rogerq@kernel.org,
+        a-govindraju@ti.com, gregkh@linuxfoundation.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sj@kernel.org, akpm@linux-foundation.org,
+        thomas.hellstrom@linux.intel.com, matthew.auld@intel.com,
+        colin.king@intel.com, geert@linux-m68k.org,
+        linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH bpf] treewide: add missing includes masked by cgroup ->
+ bpf dependency
+In-Reply-To: <20211120035253.72074-1-kuba@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20211120035253.72074-1-kuba@kernel.org>
+Date:   Mon, 22 Nov 2021 11:29:10 +0200
+Message-ID: <87fsroo7x5.fsf@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [PATCH 6/6] clk: samsung: exynos850: Keep some crucial clocks
- running
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Virag <virag.david003@gmail.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211121232741.6967-1-semen.protsenko@linaro.org>
- <20211121232741.6967-7-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211121232741.6967-7-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 22/11/2021 00:27, Sam Protsenko wrote:
-> Some clocks shouldn't be automatically disabled in clk_disable_unused(),
-> otherwise kernel hangs. Mark those clocks with:
->   - CLK_IS_CRITICAL flag, when there won't be any consumers for that
->     clock, but system can't function when it's gated
->   - CLK_IGNORE_UNUSED flag, when consumer driver will be probably added
->     later
-> 
-> That makes it possible to run the kernel without passing the
-> "clk_ignore_unused" param.
-> 
-> Next clocks were modified:
->   - "gout_dpu_cmu_dpu_pclk":	CLK_IGNORE_UNUSED
-> 
->     Will be enabled later in DSIM driver (Display Serial Interface
->     Master).
-> 
->   - "gout_gpio_peri_pclk":	CLK_IGNORE_UNUSED
->     "gout_gpio_cmgp_pclk":	CLK_IGNORE_UNUSED
->     "gout_gpio_hsi_pclk":	CLK_IGNORE_UNUSED
-> 
->     Should be probably enabled in corresponding GPIO driver later, or
->     made CLK_IS_CRITICAL. "gout_gpio_peri_clk" is actually used by LEDs
->     on Exynos850-based dev board, so kernel hangs if this clock is not
->     running. Other clocks were marked as "ignore unused" to prevent
->     similar issues for other use cases or boards that might be added
->     later.
-> 
->   - "gout_cci_aclk":		CLK_IS_CRITICAL
-> 
->     CCI (Cache Coherent Interconnect): obviously is critical.
-> 
->   - "gout_gic_clk":		CLK_IS_CRITICAL
-> 
->     GIC (Generic Interrupt Controller): obviously is critical.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+On Fri, 19 Nov 2021, Jakub Kicinski <kuba@kernel.org> wrote:
+> cgroup.h (therefore swap.h, therefore half of the universe)
+> includes bpf.h which in turn includes module.h and slab.h.
+> Since we're about to get rid of that dependency we need
+> to clean things up.
+>
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 > ---
->  drivers/clk/samsung/clk-exynos850.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
+> CC: axboe@kernel.dk
+> CC: maarten.lankhorst@linux.intel.com
+> CC: mripard@kernel.org
+> CC: tzimmermann@suse.de
+> CC: airlied@linux.ie
+> CC: daniel@ffwll.ch
+> CC: jani.nikula@linux.intel.com
+> CC: joonas.lahtinen@linux.intel.com
+> CC: rodrigo.vivi@intel.com
+> CC: yuq825@gmail.com
+> CC: robdclark@gmail.com
+> CC: sean@poorly.run
+> CC: christian.koenig@amd.com
+> CC: ray.huang@amd.com
+> CC: sgoutham@marvell.com
+> CC: gakula@marvell.com
+> CC: sbhatta@marvell.com
+> CC: hkelam@marvell.com
+> CC: jingoohan1@gmail.com
+> CC: lorenzo.pieralisi@arm.com
+> CC: robh@kernel.org
+> CC: kw@linux.com
+> CC: bhelgaas@google.com
+> CC: krzysztof.kozlowski@canonical.com
+> CC: mani@kernel.org
+> CC: pawell@cadence.com
+> CC: peter.chen@kernel.org
+> CC: rogerq@kernel.org
+> CC: a-govindraju@ti.com
+> CC: gregkh@linuxfoundation.org
+> CC: ast@kernel.org
+> CC: daniel@iogearbox.net
+> CC: andrii@kernel.org
+> CC: kafai@fb.com
+> CC: songliubraving@fb.com
+> CC: yhs@fb.com
+> CC: john.fastabend@gmail.com
+> CC: kpsingh@kernel.org
+> CC: sj@kernel.org
+> CC: akpm@linux-foundation.org
+> CC: thomas.hellstrom@linux.intel.com
+> CC: matthew.auld@intel.com
+> CC: colin.king@intel.com
+> CC: geert@linux-m68k.org
+> CC: linux-block@vger.kernel.org
+> CC: dri-devel@lists.freedesktop.org
+> CC: intel-gfx@lists.freedesktop.org
+> CC: lima@lists.freedesktop.org
+> CC: linux-arm-msm@vger.kernel.org
+> CC: freedreno@lists.freedesktop.org
+> CC: linux-pci@vger.kernel.org
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-samsung-soc@vger.kernel.org
+> CC: linux-usb@vger.kernel.org
+> CC: bpf@vger.kernel.org
+> CC: linux-mm@kvack.org
+>
+> Well, let's see if this makes it thru email servers...
+> ---
+>  block/fops.c                                          | 1 +
+>  drivers/gpu/drm/drm_gem_shmem_helper.c                | 1 +
+>  drivers/gpu/drm/i915/gt/intel_gtt.c                   | 1 +
+>  drivers/gpu/drm/i915/i915_request.c                   | 1 +
+
+For the i915 parts,
+
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+-- 
+Jani Nikula, Intel Open Source Graphics Center
