@@ -2,58 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7733C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Nov 2021 09:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F50C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Nov 2021 09:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239204AbhKVJ5q (ORCPT
+        id S239217AbhKVJ6G (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Nov 2021 04:57:46 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53531 "EHLO
+        Mon, 22 Nov 2021 04:58:06 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53861 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239200AbhKVJ5q (ORCPT
+        with ESMTP id S239209AbhKVJ6E (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Nov 2021 04:57:46 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20211122095439euoutp01b65e87657011f9ea6445aef3d8814bc0~51a0uoBbU2170221702euoutp01H
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 09:54:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20211122095439euoutp01b65e87657011f9ea6445aef3d8814bc0~51a0uoBbU2170221702euoutp01H
+        Mon, 22 Nov 2021 04:58:04 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20211122095457euoutp01d978a8ef01a7eb4cf4864d0e706f4867~51bFWp1ur2170221702euoutp01Y
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Nov 2021 09:54:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20211122095457euoutp01d978a8ef01a7eb4cf4864d0e706f4867~51bFWp1ur2170221702euoutp01Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1637574879;
-        bh=MRPGcvLQlo8KtyewSfkdbMJy1scWhdHHOm6M3SxEdko=;
+        s=mail20170921; t=1637574897;
+        bh=F3Skvzj/P56Y6MwM/7dKiA/OVXU6pP/WVS2qkxGn+F0=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=aT1KVBlVjJF/cEO8YV2kMRX/jV5wZvbdMiD488JdK80pv5sWaC0F1/9Zq7oLo+Dtn
-         GGH4wAMZJbdSN9gVWNWgofpeacrCb2BcnrjhlMn+d1m7GBGdI63x+l/eRUEf3x9qer
-         2NYXiD9B1OzSzu8/pqMOH6JJPrpFC8YJZMj2mm0c=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=Fu8chUbQyfvYqx4fOHdD9FMcGnL3DmbJX5D4zenK+jFJPXdU2aZ/RQiLp1s1+n/J6
+         zcsSBJN1P4uqltbWgj8+sJVpi5MkEkONbGugWu7SLS21z0mKspP15CRR/A0ER+rtGR
+         X0zP6IEFOeoc7yMH4DTYPKcn6/1LgMpOExd28g/A=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20211122095438eucas1p100a2e90cde9899b18c8873f040e6d556~51a0Wi2NW1463414634eucas1p1v;
-        Mon, 22 Nov 2021 09:54:38 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 29.16.09887.ED86B916; Mon, 22
-        Nov 2021 09:54:38 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20211122095438eucas1p202403e849791a578b9b04303fbf7c8c1~51az0tebc1626616266eucas1p2Y;
-        Mon, 22 Nov 2021 09:54:38 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211122095438eusmtrp1ac06a4576ea99d00ebb4ddfd79666b11~51azyum1m2007420074eusmtrp1w;
-        Mon, 22 Nov 2021 09:54:38 +0000 (GMT)
-X-AuditID: cbfec7f4-471ff7000000269f-48-619b68de4cde
+        20211122095456eucas1p1292295d1f937200c68fed349dabbfe64~51bE832Ze1462314623eucas1p18;
+        Mon, 22 Nov 2021 09:54:56 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 83.68.10260.0F86B916; Mon, 22
+        Nov 2021 09:54:56 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20211122095456eucas1p1aa15b18d34d0b32557925341541b5c29~51bEhezWk0350703507eucas1p1E;
+        Mon, 22 Nov 2021 09:54:56 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20211122095456eusmtrp2c9968882fec6351c6f05d8f56fa04f24~51bEgaoFP0445604456eusmtrp2K;
+        Mon, 22 Nov 2021 09:54:56 +0000 (GMT)
+X-AuditID: cbfec7f5-bf3ff70000002814-b7-619b68f07bd6
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id ED.9F.09522.ED86B916; Mon, 22
-        Nov 2021 09:54:38 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9C.6A.09404.0F86B916; Mon, 22
+        Nov 2021 09:54:56 +0000 (GMT)
 Received: from [106.210.134.141] (unknown [106.210.134.141]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20211122095437eusmtip2a490d540b87f41ca18df9c6398e56eb0~51azIjE760164001640eusmtip2m;
-        Mon, 22 Nov 2021 09:54:37 +0000 (GMT)
-Message-ID: <10138d79-bb29-3609-3fb2-890cf2f9328f@samsung.com>
-Date:   Mon, 22 Nov 2021 10:54:37 +0100
+        20211122095455eusmtip2a49a495da7729d8839fd70c47e782073~51bD2ZKqe0343803438eusmtip2J;
+        Mon, 22 Nov 2021 09:54:55 +0000 (GMT)
+Message-ID: <190aa098-6653-bdcd-3476-574b4bed8496@samsung.com>
+Date:   Mon, 22 Nov 2021 10:54:55 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
         Gecko/20100101 Thunderbird/91.3.1
-Subject: Re: [PATCH 3/6] dt-bindings: clock: Add bindings for Exynos850
- CMU_CMGP
+Subject: Re: [PATCH 4/6] clk: samsung: exynos850: Implement CMU_CMGP domain
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -68,64 +67,64 @@ Cc:     David Virag <virag.david003@gmail.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20211121232741.6967-4-semen.protsenko@linaro.org>
+In-Reply-To: <20211121232741.6967-5-semen.protsenko@linaro.org>
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAKsWRmVeSWpSXmKPExsWy7djP87r3MmYnGizp1LO4/uU5q8X8I+dY
-        LTa+/cFksenxNVaLjz33WC0u75rDZjHj/D4mi4unXC1+HO9jtmjde4Td4t+1jSwWz/uA4qt2
-        /WG0OP7+MaMDn8f7G63sHrMaetk8ds66y+6xaVUnm8eda3vYPDYvqffo27KK0ePzJrkAjigu
-        m5TUnMyy1CJ9uwSujHdP3rEUHGeuuPJzDWsD43+mLkZODgkBE4nnm2YwdjFycQgJrGCU+Ljm
-        DwuE84VR4s6yU8wQzmdGiY0bTjDCtJxqOMgCYgsJLGeUePBEAaLoI6PE7re9bCAJXgE7iVtX
-        W8CKWARUJXpXbGOBiAtKnJz5BMwWFUiSON06iRnEFhYIkpg09xE7iM0sIC5x68l8JpChIgIr
-        mCQeTJ/FCuIwC/QxSZz5AnE5m4ChRO/RPrCTOAXsJSa3L2eF6JaX2P52DtjdEgKrOSXm/HnL
-        DHG3i8SL89/ZIGxhiVfHt7BD2DISpyf3sEA0NDNK9Oy+zQ7hTGCUuH98AdTX1hJ3zv0C6uYA
-        WqEpsX6XPkTYUeJRw0MmkLCEAJ/EjbeCEEfwSUzaNp0ZIswr0dEmBFGtIvF71XRoyEtJdD/5
-        zzKBUWkWUsDMQgqAWUjemYWwdwEjyypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzARHf6
-        3/EvOxiXv/qod4iRiYPxEKMEB7OSCC/HhumJQrwpiZVVqUX58UWlOanFhxilOViUxHlF/jQk
-        CgmkJ5akZqemFqQWwWSZODilGpjSG67zLxDdmqpoyLdGW5vnYc+OBK0wv16NJ8b31tuXrLqi
-        o9quaXXrZ6LrvBMvHi9KtdGd8OrI4xgL1YZVB+a1Vt1UmuSXF5Oym/9Hnu/xzFfGR9Ls/ty7
-        +LDIrmiX2rol+z99Cd6QOju69vgT48lT0lKiZix/W/8tP/7iofbAN3uEYz1e70ieU+QYW9d9
-        T239/ujNE0SKWE8wJOYpmPOK+jDw1uUulXSSurPvSoGF5a6n/t9NHG2q/LvPuttXGle9WrRf
-        Zrrk/dVSEgk7rN/yGD6v8G58Z5Hi7Lbrt42W1+vAV0t6Xn5ftmStwLWM4IW+k/2dP2v9uOxb
-        ci+ly3B3Vvwk1qxrMrzWXX4X4pRYijMSDbWYi4oTASUxwQPjAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsVy+t/xe7r3MmYnGvzo4rW4/uU5q8X8I+dY
-        LTa+/cFksenxNVaLjz33WC0u75rDZjHj/D4mi4unXC1+HO9jtmjde4Td4t+1jSwWz/uA4qt2
-        /WG0OP7+MaMDn8f7G63sHrMaetk8ds66y+6xaVUnm8eda3vYPDYvqffo27KK0ePzJrkAjig9
-        m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jHdP3rEU
-        HGeuuPJzDWsD43+mLkZODgkBE4lTDQdZuhi5OIQEljJK9JzcBZTgAEpIScxvUYKoEZb4c62L
-        DaLmPaPEl57HbCAJXgE7iVtXW1hAbBYBVYneFdtYIOKCEidnPgGzRQWSJPq/72IGsYUFgiQm
-        zX3EDmIzC4hL3HoynwlkqIjAKiaJFw/6GEEcZoEJTBJzOvcyQqw7zijRuuc02Cg2AUOJ3qMg
-        VZwcnAL2EpPbl7OCnMosoC6xfp4QxFR5ie1v5zBPYBSaheSQWUgWzkLomIWkYwEjyypGkdTS
-        4tz03GJDveLE3OLSvHS95PzcTYzAqN527OfmHYzzXn3UO8TIxMF4iFGCg1lJhJdjw/REId6U
-        xMqq1KL8+KLSnNTiQ4ymwMCYyCwlmpwPTCt5JfGGZgamhiZmlgamlmbGSuK8ngUdiUIC6Ykl
-        qdmpqQWpRTB9TBycUg1Maf7iE7VeZKwrfb8xPKJ4n/2kyW0S/r6iLY4iNxmPJ9muOTKl3kZj
-        2+OtNfWPO6Zwm7mVnTtmaV+mpmVrl205bcnPj3NU6iJ2dVs4tdtfPbPyptlqxmf7f8XfO/s5
-        +WTnbaWd6jte3E6S3PotNPXrjnd2mr/5JlpzONmtjXZiOSz47i9TQNGT+uTw95uFZ84tcsxf
-        fD9GaNEtjom5E6zNzv0+duyyzJ6Kg8tKJyyfcEDt+gLn1RvfcqusO7uVszB7QtfF61ozVxeu
-        NT7z/zXju4KDOW7S6X/sjd/8itXYKeCfe+lR+sywKxLTz5xWnlXZ8PuKSRpzsp3V5IWpoprs
-        Jcfne/OeTV2ieTN2pUTGKyWW4oxEQy3mouJEALnBFCxzAwAA
-X-CMS-MailID: 20211122095438eucas1p202403e849791a578b9b04303fbf7c8c1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsWy7djPc7ofMmYnGryapWpx/ctzVov5R86x
+        Wmx8+4PJYtPja6wWH3vusVpc3jWHzWLG+X1MFhdPuVr8ON7HbNG69wi7xb9rG1ksnvcBxVft
+        +sNocfz9Y0YHPo/3N1rZPWY19LJ57Jx1l91j06pONo871/aweWxeUu/Rt2UVo8fnTXIBHFFc
+        NimpOZllqUX6dglcGW8vXWUtOMxc8X3Ja+YGxrdMXYycHBICJhJTNs8Esrk4hARWMEpcunaK
+        BcL5wiix8EU/I4TzmVHi+5uz7DAtt74+hEosZ5ToPrEDyvnIKLF460VmkCpeATuJQ0+/sIDY
+        LAKqEv/a9rJAxAUlTs58AmaLCiRJnG6dBFYvLOAt8evINLCjmAXEJW49mQ92lIjACiaJB9Nn
+        sYI4zAJ9TBJnvvwHq2ITMJToPdoHtJqDg1PAXmLffUmIZnmJ7W/nMIPUSwgs55T4vnc5M0iN
+        hICLxOU/uhAvCEu8Or4F6h0Zif87IZZJCDQzSvTsvs0O4UxglLh/fAEjRJW1xJ1zv9hABjEL
+        aEqs36UPEXaUeLbhEtR8PokbbwUhbuCTmLRtOlSYV6KjTQiiWkXi96rp0ICXkuh+8p9lAqPS
+        LKRgmYXk/VlIvpmFsHcBI8sqRvHU0uLc9NRi47zUcr3ixNzi0rx0veT83E2MwDR3+t/xrzsY
+        V7z6qHeIkYmD8RCjBAezkggvx4bpiUK8KYmVValF+fFFpTmpxYcYpTlYlMR5Rf40JAoJpCeW
+        pGanphakFsFkmTg4pRqYFAJWlLRzbdomumFTreoO+53RT6Jkj5759/Qj03T3QoO2p20XeV0W
+        +Py7US/scOGjKqvHtt6N+yvWBkyRufN108QX8ocDtjRMudB9TnjPcbfN88KUutkVkyIDs7Qf
+        rmdvOnsu7K3/fNNVDUkOD18zB4T3MhQZZXzU2a9mOel+0cb43R8d7gR6zHxVI8pkYWbX3rsj
+        WO770pXXf7zd+/7+S4Y0fqb+G76X9jWc73mW9SnAI00pPsH5t6Xd3mrxeLlXRvqdavILhbtC
+        bqcdClrkqh3g2cs2LYHPcP023ZziuE8RUsLP1rxZtaDP6nq7RkpRlszTP8mRhz6KSoZN6Tks
+        WiZcp/jmgMcK0cKp2QZKLMUZiYZazEXFiQCUQhmc4gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsVy+t/xe7ofMmYnGmyez21x/ctzVov5R86x
+        Wmx8+4PJYtPja6wWH3vusVpc3jWHzWLG+X1MFhdPuVr8ON7HbNG69wi7xb9rG1ksnvcBxVft
+        +sNocfz9Y0YHPo/3N1rZPWY19LJ57Jx1l91j06pONo871/aweWxeUu/Rt2UVo8fnTXIBHFF6
+        NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GW8vXWUt
+        OMxc8X3Ja+YGxrdMXYycHBICJhK3vj5k7GLk4hASWMoocefoHfYuRg6ghJTE/BYliBphiT/X
+        utggat4zSnRPX88KkuAVsJM49PQLC4jNIqAq8a9tLwtEXFDi5MwnYLaoQJJE//ddzCC2sIC3
+        xK8j08AWMwuIS9x6Mp8JZKiIwComiRcP+sCuYBaYwCQxp3Mv1EnHGSWaV58EW8cmYCjRexSk
+        ioODU8BeYt99SRCTWUBdYv08IYih8hLb385hnsAoNAvJHbOQ7JuF0DELSccCRpZVjCKppcW5
+        6bnFRnrFibnFpXnpesn5uZsYgTG97djPLTsYV776qHeIkYmD8RCjBAezkggvx4bpiUK8KYmV
+        ValF+fFFpTmpxYcYTYFhMZFZSjQ5H5hU8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1Kz
+        U1MLUotg+pg4OKUamDJtk06rCx1nNpHq/nAu8rOFvZVXeFxIf/Iqs8ePu699DJPWm58bxmgy
+        8Z/Cvtu/rGsi6k3+mRz7mLHHceajPdf/TQ0I71r05VD7ukLNrLj2XbuY5S61JXw7rXaUqbzQ
+        5wxLxNZMkykz7Vp2mk5hDzt8/v8ClaIfIX1St1PefJqlqH/9e9yTV1JxD1VPX3GMvGOectat
+        UalcLWbqy6lCloubOH6yOEiZXc9e6RXq8vnWnm0vX1sci5Co6ZCzbfEQUHVS0pbPvm5t8GmD
+        Tb5mVIRA3JWQ/Uz554RzH2pvtWF3C3v/Xnmt+9956VXisw0v9ida2f69XhazZOej30q39k1N
+        W+XmdGW2x1kdSasSJZbijERDLeai4kQAGsESeHIDAAA=
+X-CMS-MailID: 20211122095456eucas1p1aa15b18d34d0b32557925341541b5c29
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20211121232752eucas1p1d1402531905dc7e3b1c88818638e61a8
+X-RootMTR: 20211121232752eucas1p1c108fca5bdac6e74006cf32b912d27d5
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20211121232752eucas1p1d1402531905dc7e3b1c88818638e61a8
+X-CMS-RootMailID: 20211121232752eucas1p1c108fca5bdac6e74006cf32b912d27d5
 References: <20211121232741.6967-1-semen.protsenko@linaro.org>
-        <CGME20211121232752eucas1p1d1402531905dc7e3b1c88818638e61a8@eucas1p1.samsung.com>
-        <20211121232741.6967-4-semen.protsenko@linaro.org>
+        <CGME20211121232752eucas1p1c108fca5bdac6e74006cf32b912d27d5@eucas1p1.samsung.com>
+        <20211121232741.6967-5-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 22.11.2021 00:27, Sam Protsenko wrote:
-> CMU_CMGP generates USI and ADC clocks for BLK_ALIVE. In particular USI
-> clocks are needed for HSI2C_3 and HSI2C_4 instances.
-> 
-> Add clock indices and bindings documentation for CMU_CMGP domain.
+> CMU_CMGP clock domain provides clocks for CMGP IP-core (Common GPIO).
+> CMGP module encapsulates next blocks:
+>   - 8 GPIO lines
+>   - 1 GPADC
+>   - 2 USI blocks, each can be configured to provide one of
+>     UART/SPI/HSI2C serial interfaces
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 Applied, thanks.
-
