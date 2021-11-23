@@ -2,99 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81261C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Nov 2021 12:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D0EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Nov 2021 13:29:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236620AbhKWMyq (ORCPT
+        id S235055AbhKWNcL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Nov 2021 07:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234548AbhKWMyq (ORCPT
+        Tue, 23 Nov 2021 08:32:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234338AbhKWNcL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Nov 2021 07:54:46 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 57D3560F9F;
-        Tue, 23 Nov 2021 12:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637671898;
-        bh=wIrWQf7YDEFEE/QQ99FQt/AhMw3wdmvSFHVUP3uKPJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QGkZLrvRZ8KTMwcjmn6QaI1qSGzu+DoXhu8PQwdm/+cC5pDtmTATs6POIbgvzvvxo
-         dvx+KAr/Q+u+JS9xVPk6U+7MmUsBqP+41x4NGLkHYCxIDvlSTvBzSwwSfjybOfj2nq
-         TWRsQoUsqmsGmFLBAmPGIX/fzXnDaxy9cZciaQXE+GdZ9Q0gggepiKZXZcNrbqfcrR
-         nHkhXzC+DvQ0+sPze3evyAcW6a63+vYer0kxBjG7JGzCBaYsm5sgS1HDHOjsFSlWxO
-         c9lRiHDTKp2sG2VkVB8n9OMhlpaRH11oqA5Gp/3+CBjyqqPEmeO+zBNBu7sa5kiK9F
-         SG13871QjbYqQ==
-Date:   Tue, 23 Nov 2021 20:51:08 +0800
-From:   Peter Chen <peter.chen@kernel.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     bpf@vger.kernel.org, axboe@kernel.dk,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, yuq825@gmail.com, robdclark@gmail.com,
-        sean@poorly.run, christian.koenig@amd.com, ray.huang@amd.com,
-        sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-        hkelam@marvell.com, jingoohan1@gmail.com,
-        lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
-        bhelgaas@google.com, krzysztof.kozlowski@canonical.com,
-        mani@kernel.org, pawell@cadence.com, rogerq@kernel.org,
-        a-govindraju@ti.com, gregkh@linuxfoundation.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sj@kernel.org, akpm@linux-foundation.org,
-        thomas.hellstrom@linux.intel.com, matthew.auld@intel.com,
-        colin.king@intel.com, geert@linux-m68k.org,
-        linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH bpf] treewide: add missing includes masked by cgroup ->
- bpf dependency
-Message-ID: <20211123125108.GA4453@Peter>
-References: <20211120035253.72074-1-kuba@kernel.org>
- <20211120073011.GA36650@Peter>
- <20211120072602.22f9e722@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        Tue, 23 Nov 2021 08:32:11 -0500
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D47FC061714
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Nov 2021 05:29:03 -0800 (PST)
+Received: by mail-ua1-x931.google.com with SMTP id t13so43663308uad.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Nov 2021 05:29:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sXFNEr7bt67n8VDV4U18M9iV94NtVvGwfpDSHWxuDDc=;
+        b=VIuHbVCbHKgc+4BML7WAxDuy3yk9WBLcCtvyQW75aO+glesRe1Erv+3Mt9vObWlRbK
+         /6y6H9R9FOJv/ezPXiokzKXB7ptnlb21/uy4Hh9BZo/jH4DcOl38pYDL63AUDIou/j/o
+         tyHBDdUbkF46SlYgtRxfA2zV0BI6HfI1j5iLPihbJpx5kyvkd+/AlwFsdVG5GNbnKQdt
+         nFX75TsSEtZqSQKJKytclkpORI2vZnhLVlbB14VxxBCTesd6YgHdnrrDVcbuiFKascWo
+         WAPY7Gw+4UqhsYScbc+Hisu6NHuJ1jK05YKmGswLK2U4OcmYPObydMZ4UDnot4QA2t+E
+         R+mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sXFNEr7bt67n8VDV4U18M9iV94NtVvGwfpDSHWxuDDc=;
+        b=mAdc7JWnST74PKpOWKk4OOn3mUPsMSoMuexNmojWDUpsOqs9PSD8PXpXv1MwK5LYUr
+         l4IAeTdpvcD+DvPqA2U/IG8iIUjnggaTBEstU3FTLRP9AS5LeTF+P/O8LauYTUPTQewE
+         hMVE4SCO1QIIBxr8dG803OASOI1o7QibQMqCNDvT442RYUg8jYIhex9QPltKdeIr3JRM
+         VcyCppBzlAX6NEJaMpusV6Kyy8I71twPzFR2xqNpDZw8cUdoWtKOBiLXBb2e0R8HJaq3
+         COl2UPqn9eYoQlmqjuMOxDne4XUnlxidBWJwCNViLlYShWFmIyIMl43WirPF76UZ/8fb
+         LEIg==
+X-Gm-Message-State: AOAM533smo5nKum2zc7zhfRV+zX7eRgCxYRWmPDk+rUthwRq+Ci+YeMf
+        I6g0LdQfJZ1WbWtwMsWzJnAJVyNjEqOk6N+I9p6OXA==
+X-Google-Smtp-Source: ABdhPJyniR7xoa91LB2UyWWzz1h/PRN2VNMVG4SXjDejgjUpZoSu7WMj43cIgMMaAh9ZTURRCTlyPw2GoMwNx8aKWy0=
+X-Received: by 2002:a05:6102:4192:: with SMTP id cd18mr9063225vsb.35.1637674142289;
+ Tue, 23 Nov 2021 05:29:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211120072602.22f9e722@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+References: <20211101193531.15078-1-semen.protsenko@linaro.org>
+ <20211101193531.15078-2-semen.protsenko@linaro.org> <f7dd62c9-9c4d-4130-58ee-54ec2b7729f9@linaro.org>
+In-Reply-To: <f7dd62c9-9c4d-4130-58ee-54ec2b7729f9@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 23 Nov 2021 15:28:50 +0200
+Message-ID: <CAPLW+4=+_oHGsjo=k3AJXAmeH+dqQoknZVAsO6Fhex2gvJFq2g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clocksource: exynos_mct: Refactor resources allocation
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21-11-20 07:26:02, Jakub Kicinski wrote:
-> On Sat, 20 Nov 2021 15:30:11 +0800 Peter Chen wrote:
-> > > diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
-> > > index 84dadfa726aa..9643b905e2d8 100644
-> > > --- a/drivers/usb/cdns3/host.c
-> > > +++ b/drivers/usb/cdns3/host.c
-> > > @@ -10,6 +10,7 @@
-> > >   */
-> > >  
-> > >  #include <linux/platform_device.h>
-> > > +#include <linux/slab.h>  
-> > 
-> > Should be "#include <linux/module.h>"?
-> 
-> Why? Different files are missing different includes, this one needs
-> slab.h:
-> 
-> ../drivers/usb/cdns3/host.c: In function ‘__cdns_host_init’:
-> ../drivers/usb/cdns3/host.c:86:2: error: implicit declaration of function ‘kfree’; did you mean ‘vfree’? [-Werror=implicit-function-declaration]
->   kfree(cdns->xhci_plat_data);
->   ^~~~~
->   vfree
+On Tue, 16 Nov 2021 at 18:00, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On 01/11/2021 20:35, Sam Protsenko wrote:
+> > From: Marek Szyprowski <m.szyprowski@samsung.com>
+> >
+> > Move interrupts allocation from exynos4_timer_resources() into separate
+> > function together with the interrupt number parsing code from
+> > mct_init_dt(), so the code for managing interrupts is kept together.
+> > While touching exynos4_timer_resources() function, move of_iomap() to i=
+t.
+> > No functional changes.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+>
+> Applied, thx
+>
 
-Oh, my fault.
+Hi Daniel,
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+Can you please let me know the URL for your tree where you applied
+this one? I checked [1] and linux-next, but this patch seems nowhere
+to be found.
 
--- 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/daniel.lezcano/linux.gi=
+t/
 
-Thanks,
-Peter Chen
+Thanks!
 
+> [ ... ]
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
