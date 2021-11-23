@@ -2,110 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB21FC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Nov 2021 09:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81261C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Nov 2021 12:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232307AbhKWKAL (ORCPT
+        id S236620AbhKWMyq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Nov 2021 05:00:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35496 "EHLO mail.kernel.org"
+        Tue, 23 Nov 2021 07:54:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231221AbhKWKAL (ORCPT
+        id S234548AbhKWMyq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Nov 2021 05:00:11 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D01B561028;
-        Tue, 23 Nov 2021 09:57:02 +0000 (UTC)
+        Tue, 23 Nov 2021 07:54:46 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 57D3560F9F;
+        Tue, 23 Nov 2021 12:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637661423;
-        bh=xib1MyFysIEFpi5wKdkHIX0kAoP6COLUiFqb5gge5z8=;
+        s=k20201202; t=1637671898;
+        bh=wIrWQf7YDEFEE/QQ99FQt/AhMw3wdmvSFHVUP3uKPJM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eE++Cr9oeXHvdHjmAZBRMyck/Ekq8F3RYniKH6UgXekzIhjFreeBpZbxgHwDtPnt8
-         lSEzaIltnZtFjH2XFzImToYNA7jPdjo5LCjo0tUFdNa1BHnDquMWmCTSgNww6P7hM0
-         Tv+4Kwn9aEG584Rhg1zFJkphnaloM7o2dzDcOHztJq4B/5QO4YwPKCAbQIqmkyzQ11
-         NO1ONSHe+b/UN4f7+nwVTQMMT3RaNlCL4kE528A6ijB8OHu57VrdvsldbTfXiIX/L+
-         T5ds3lRn6Y4So8+DZJdOl/kp1L9fieRFAF6wWm+pi+RCKnTlIsck6Btvg//7eNYAsr
-         xZUwzKUMht5Cw==
-Date:   Tue, 23 Nov 2021 10:56:59 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm: samsung: Remove HAVE_S3C2410_I2C and use
- direct dependencies
-Message-ID: <YZy669iBa5Wgxwj/@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Will McVicker <willmcvicker@google.com>,
-        Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20211121150558.21801-1-semen.protsenko@linaro.org>
- <20211121150558.21801-2-semen.protsenko@linaro.org>
+        b=QGkZLrvRZ8KTMwcjmn6QaI1qSGzu+DoXhu8PQwdm/+cC5pDtmTATs6POIbgvzvvxo
+         dvx+KAr/Q+u+JS9xVPk6U+7MmUsBqP+41x4NGLkHYCxIDvlSTvBzSwwSfjybOfj2nq
+         TWRsQoUsqmsGmFLBAmPGIX/fzXnDaxy9cZciaQXE+GdZ9Q0gggepiKZXZcNrbqfcrR
+         nHkhXzC+DvQ0+sPze3evyAcW6a63+vYer0kxBjG7JGzCBaYsm5sgS1HDHOjsFSlWxO
+         c9lRiHDTKp2sG2VkVB8n9OMhlpaRH11oqA5Gp/3+CBjyqqPEmeO+zBNBu7sa5kiK9F
+         SG13871QjbYqQ==
+Date:   Tue, 23 Nov 2021 20:51:08 +0800
+From:   Peter Chen <peter.chen@kernel.org>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     bpf@vger.kernel.org, axboe@kernel.dk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, yuq825@gmail.com, robdclark@gmail.com,
+        sean@poorly.run, christian.koenig@amd.com, ray.huang@amd.com,
+        sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+        hkelam@marvell.com, jingoohan1@gmail.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
+        bhelgaas@google.com, krzysztof.kozlowski@canonical.com,
+        mani@kernel.org, pawell@cadence.com, rogerq@kernel.org,
+        a-govindraju@ti.com, gregkh@linuxfoundation.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sj@kernel.org, akpm@linux-foundation.org,
+        thomas.hellstrom@linux.intel.com, matthew.auld@intel.com,
+        colin.king@intel.com, geert@linux-m68k.org,
+        linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH bpf] treewide: add missing includes masked by cgroup ->
+ bpf dependency
+Message-ID: <20211123125108.GA4453@Peter>
+References: <20211120035253.72074-1-kuba@kernel.org>
+ <20211120073011.GA36650@Peter>
+ <20211120072602.22f9e722@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sNu4a5mlsQWhPPCD"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211121150558.21801-2-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211120072602.22f9e722@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 21-11-20 07:26:02, Jakub Kicinski wrote:
+> On Sat, 20 Nov 2021 15:30:11 +0800 Peter Chen wrote:
+> > > diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
+> > > index 84dadfa726aa..9643b905e2d8 100644
+> > > --- a/drivers/usb/cdns3/host.c
+> > > +++ b/drivers/usb/cdns3/host.c
+> > > @@ -10,6 +10,7 @@
+> > >   */
+> > >  
+> > >  #include <linux/platform_device.h>
+> > > +#include <linux/slab.h>  
+> > 
+> > Should be "#include <linux/module.h>"?
+> 
+> Why? Different files are missing different includes, this one needs
+> slab.h:
+> 
+> ../drivers/usb/cdns3/host.c: In function ‘__cdns_host_init’:
+> ../drivers/usb/cdns3/host.c:86:2: error: implicit declaration of function ‘kfree’; did you mean ‘vfree’? [-Werror=implicit-function-declaration]
+>   kfree(cdns->xhci_plat_data);
+>   ^~~~~
+>   vfree
 
---sNu4a5mlsQWhPPCD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oh, my fault.
 
-On Sun, Nov 21, 2021 at 05:05:58PM +0200, Sam Protsenko wrote:
-> A separate Kconfig option HAVE_S3C2410_I2C for Samsung SoCs is not
-> really needed and the i2c-s3c24xx driver can depend on Samsung ARM
-> architectures instead. This also enables i2c-s3c2410 for arm64 Exynos
-> SoCs, which is required for example by Exynos850.
->=20
-> This is basically continuation of work made in following commits:
->   - commit d96890fca9fd ("rtc: s3c: remove HAVE_S3C_RTC in favor of
->     direct dependencies")
->   - commit 7dd3cae90d85 ("ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
->     use direct dependencies")
->=20
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C
+-- 
 
+Thanks,
+Peter Chen
 
---sNu4a5mlsQWhPPCD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmGcuusACgkQFA3kzBSg
-KbbdEg//XuarRI9p2hxj6PVmOAMirP+5fjySqNXaskUYP4Dli1OToOpHfCLiTGCU
-AzEP45X8tObS0vU+KO0/Sj9tC+RHHNCNpD9QW5J7VE8Bbb9TuXQkb2vFxhSuaxrz
-z9h3BQVBrbXitg52TbRecmXnaNUnKxaKV4v7JUtiEayWhxIHtuM5KnBLCB73yOBH
-DFhQWsLX5nLZH2gOcZxtIALjU6OKa52vAPczhoA9oBkCmCVTtxBEh/KzQ+xniARy
-RIACHSPNlCImq4ep4A0ZkEti+3ygCtt9qQilGvvmfFyUrcUsA6IgZbztvnM2vRPE
-d6QMA/0wKYGnsoITE0sSQtlOnZLUdPvLe6emlSqMWxYYU+GmXfp235JofcOIVkpI
-ARKgn/DYP7KFryWdjsfY+n/3P73iTJJneRTREw9pMbHyNVrznu/WC3nj0fXxDbQV
-cda7klwPzG8zXHjH6yFLvsl+uT8/vvj/v5avTX1yfQ3e7W/0vjcDmONzGRPiNHXo
-ILGoe9mHbCEyY1J1bbi7Xw9d2iNtuwIOGChMPusLmGyYxr5P14JQcYW2TuEU87dI
-aaq4Z/CXYltsoF+/MpCS85yZa2Ewhyx6UdBjUwgh2FnzdJPRqgBiGDRntoAO141x
-/2o6WkQjHZZYBiG3P0O7Zs+YZbI2bmmzfB/sU7wOYYuYbYc6Klg=
-=FBiF
------END PGP SIGNATURE-----
-
---sNu4a5mlsQWhPPCD--
