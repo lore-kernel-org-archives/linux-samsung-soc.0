@@ -2,147 +2,160 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61011C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Nov 2021 23:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30204C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Nov 2021 07:34:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232269AbhKWXdp (ORCPT
+        id S241133AbhKXHhr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Nov 2021 18:33:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbhKWXdo (ORCPT
+        Wed, 24 Nov 2021 02:37:47 -0500
+Received: from marcansoft.com ([212.63.210.85]:52548 "EHLO mail.marcansoft.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234291AbhKXHhq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Nov 2021 18:33:44 -0500
-Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEB10C061714
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Nov 2021 15:30:35 -0800 (PST)
-Received: by mail-ua1-x92e.google.com with SMTP id p2so1169677uad.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Nov 2021 15:30:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3uH2JEgWqlojJT+gIT9qwTADRtilTdk+WNcpN0oAZvQ=;
-        b=TbsN1JEoVY3coBHtA1QUvJt29+ocfTE4puD82o8SA8CpuYfpew5eojbhBQF0udbQos
-         Ycw5YJSOSkhuDBvAra8mhEJyNReY33YhLiETQEfGpk/VGlDX6FG9jcgI6d9uhqyMdU6j
-         eAM0mbcFOyFgBfLUOWE9V8f/vpQ2NrEU+iwSRaWzUSV9Af6jZ7393a768iA4pPyXiAFJ
-         wi9KRy9lj63AhPHgksco4Qnhm/SConqZrP55CAxZ8vyBYeB0bNaOcCjN90SgWnHzQSFX
-         FuEt2erenHe+XJOziuPoMAlmIZFNFNt8RuDpb5qYpZpTuSANmV2jDRaGEus/VY7aOLIA
-         FmhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3uH2JEgWqlojJT+gIT9qwTADRtilTdk+WNcpN0oAZvQ=;
-        b=0mQs5+60Q+ryi7bs0oEKDdLHG+X45MWmJ/bpHX4GbxzsI1gD1w4iSothr0oUfSJaJ1
-         jiGqcLd789oNKpCLyInMeE+bXmxngDUVdFOHP/42qBRkuKPccVBwl1ztHSMjpHQlSjZ7
-         epUPDS4LOMKnoZ+FD+l8OX0yaMKVd2W0n/oDm52QqNdx6dLF3vuUqlL52Y4Q9PpQBCFI
-         504gdNSqJ32rhDLpwC/3PC+KZY7DFZa3gL9bUIR61C0YY6sQuU2XA6fn2SSEVJxFh3gl
-         F8GSil/o3aJfnJpxqstc+P/f82j8Axy6GpWzjlE9ec/1S70WJSvtUM4m5t/n1ejJaWwn
-         4agg==
-X-Gm-Message-State: AOAM531Rz7wU4xkRNlVmlETg0tN/VzZIT7uGMVA2bdVGpSr1Thm2/Tjn
-        uzUamgYKZYdO5v9VH/9Zjx+eAWHiv/1dMhOmfh18EA==
-X-Google-Smtp-Source: ABdhPJz1klqwCzocaTGDtjBLzJU441KZakT44KfwMrLKAtO8PAfpBMoKjJIcO/CPGTx2WiiCI5gOBsKRA8/VomglBtQ=
-X-Received: by 2002:a9f:2431:: with SMTP id 46mr2194379uaq.114.1637710234844;
- Tue, 23 Nov 2021 15:30:34 -0800 (PST)
-MIME-Version: 1.0
-References: <20211121165647.26706-1-semen.protsenko@linaro.org>
- <20211121165647.26706-10-semen.protsenko@linaro.org> <20211123160623.GB2326185@roeck-us.net>
- <CAPLW+4mwhH5C6zSxWDboNucZPvt2c=F7Qaa9V_XJHbJzbFNL3w@mail.gmail.com> <c16afd75-f54c-6c2b-7f61-1f1c7a4b3c46@roeck-us.net>
-In-Reply-To: <c16afd75-f54c-6c2b-7f61-1f1c7a4b3c46@roeck-us.net>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 24 Nov 2021 01:30:23 +0200
-Message-ID: <CAPLW+4kmUqg=2vYOiWfMhQFqFw1sh0Eo6Yqv8nPEbV_0MObn5A@mail.gmail.com>
-Subject: Re: [PATCH v4 09/12] watchdog: s3c2410: Cleanup PMU related code
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Wed, 24 Nov 2021 02:37:46 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: hector@marcansoft.com)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 4D1ED4267B;
+        Wed, 24 Nov 2021 07:34:31 +0000 (UTC)
+From:   Hector Martin <marcan@marcan.st>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Hector Martin <marcan@marcan.st>, Marc Zyngier <maz@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Arnd Bergmann <arnd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH v3 00/11] Apple SoC PMGR device power states driver
+Date:   Wed, 24 Nov 2021 16:34:10 +0900
+Message-Id: <20211124073419.181799-1-marcan@marcan.st>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 24 Nov 2021 at 00:33, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 11/23/21 8:17 AM, Sam Protsenko wrote:
-> > On Tue, 23 Nov 2021 at 18:06, Guenter Roeck <linux@roeck-us.net> wrote:
-> >>
-> >> On Sun, Nov 21, 2021 at 06:56:44PM +0200, Sam Protsenko wrote:
-> >>> Now that PMU enablement code was extended for new Exynos SoCs, it
-> >>> doesn't look very cohesive and consistent anymore. Do a bit of renaming,
-> >>> grouping and style changes, to make it look good again. While at it, add
-> >>> quirks documentation as well.
-> >>>
-> >>> No functional change, just a refactoring commit.
-> >>>
-> >>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> >>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> >>> ---
-> >>> Changes in v4:
-> >>>    - Added R-b tag by Guenter Roeck
-> >>>
-> >>> Changes in v3:
-> >>>    - Added quirks documentation
-> >>>    - Added R-b tag by Krzysztof Kozlowski
-> >>>
-> >>> Changes in v2:
-> >>>    - (none): it's a new patch
-> >>>
-> >>>   drivers/watchdog/s3c2410_wdt.c | 83 ++++++++++++++++++++++++----------
-> >>>   1 file changed, 58 insertions(+), 25 deletions(-)
-> >>>
-> >>> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> >>> index ec341c876225..f211be8bf976 100644
-> >>> --- a/drivers/watchdog/s3c2410_wdt.c
-> >>> +++ b/drivers/watchdog/s3c2410_wdt.c
-> >>> @@ -56,17 +56,51 @@
-> >>>   #define EXYNOS5_RST_STAT_REG_OFFSET          0x0404
-> >>>   #define EXYNOS5_WDT_DISABLE_REG_OFFSET               0x0408
-> >>>   #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET    0x040c
-> >>> -#define QUIRK_HAS_PMU_CONFIG                 (1 << 0)
-> >>> -#define QUIRK_HAS_RST_STAT                   (1 << 1)
-> >>> -#define QUIRK_HAS_WTCLRINT_REG                       (1 << 2)
-> >>> +
-> >>> +/**
-> >>
-> >> 0-day complains:
-> >>
-> >> drivers/watchdog/s3c2410_wdt.c:94: warning: expecting prototype for Quirk flags for different Samsung watchdog IP(). Prototype was for QUIRK_HAS_WTCLRINT_REG() instead
-> >>
-> >> It doesn't seem to like the idea of documented bit masks. Not really sure
-> >> what to do here. I am inclined to ignore it, but I don't want to get flooded
-> >> by 0-day complaints until I retire either. Any idea ?
-> >>
-> >
-> > Seems like 0-day thinks this kernel-doc comment is for the first
-> > define only, and thus the comment has wrong format, or something like
-> > that. I tried to follow the same style as GFP_KERNEL and others are
-> > documented.
-> >
-> > Anyway, if you don't like 0-day complaints, can you please just
-> > replace kernel-doc comment (/**) with regular comment (/*), by
-> > removing one asterisk in the patch? Or I can re-send the patch
-> > correspondingly -- then just let me know.
-> >
->
-> Oh, never mind. Let's just hope that 0-day stops complaining at some point.
->
+This series adds the driver for the Apple PMGR device power state
+registers. These registers can clockgate and (in some cases) powergate
+specific SoC blocks. They also control the reset line, and can have
+additional features such as automatic power management.
 
-Just sent v5 for this patch, fixing that 0-day warning properly. Found
-info about it here: [1]. So to check that warning, apparently it's
-enough to run "make W=n" build, or dry-run for kernel-doc script like
-this:
+The current driver supports only the lowest/highest power states,
+provided via the genpd framework, plus reset support provided via
+the reset subsystem.
 
-    $ scripts/kernel-doc -v -none drivers/watchdog/s3c2410_wdt.c
+Apple's PMGRs (there are two in the T8103) have a uniform register
+bit layout (sometimes with varying features). To be able to support
+multiple SoC generations as well as express pd relationships
+dynamically, this binding describes each PMGR power state control
+as a single devicetree node. Future SoC generations are expected to
+retain backwards compatibility, allowing this driver to work on them
+with only DT changes.
 
-Anyway, please take v4 series + v5 for this patch. Hope that'll be all
-for 0-day swearing :)
+#1: MAINTAINERS updates, to go via the SoC tree to avert merge hell
+#2-#5: Adds power-domains properties to existing device bindings
+#6-#7: Adds the new pmgr device tree bindings
+#8: The driver itself.
+#9: Instantiates the driver in t8103.dtsi. This adds the entire PMGR
+    node tree and references the relevant nodes from existing devices.
+#7: Adds runtime-pm support to the Samsung UART driver, as a first
+    working consumer.
+#8: Instantiates a second UART, to more easily test this.
 
-[1] https://github.com/torvalds/linux/blob/master/Documentation/doc-guide/kernel-doc.rst
+There are currently no consumers for the reset functionality, so
+it is untested, but we will be testing it soon with the NVMe driver
+(as it is required to allow driver re-binding to work properly).
 
-> Guenter
+== Changes since v2 ==
+- DT schema review comments & patch order fix
+- Added the power-domains properties to devices that already mainlined
+- Now adds the entire PMGR tree. This turns off all devices we do not
+  currently instantiate, and adds power-domains to those we do. The
+  nodes were initially generated with [1] and manually tweaked. all
+  the labels match the ADT labels (lowercased), which might be used
+  by the bootloader in the future to conditionally disable nodes
+  based on hardware configuration.
+- Dropped apple,t8103-minipmgr, since I don't expect we will ever need
+  to tell apart multiple PMGR instances within a SoC, and added
+  apple,t6000-pmgr{-pwrstate} for the new SoCs.
+- Driver now unconditionally enables auto-PM for all devices. This
+  seems to be safe and should save power (it is not implemented for
+  all devices; if not implemented, the bit just doesn't exist and is
+  ignored).
+- If an always-on device is not powered on at boot, turn it on and
+  print a warning. This avoids the PM core complaining. We still
+  want to know if/when this happens, but let's not outright fail.
+- Other minor fixes (use PS names instead of offsets for messages,
+  do not spuriously clear flag bits).
+
+On the way the parent node is handled: I've decided that these syscon
+nodes will only ever contain pwrstates and nothing else. We now size
+them based on the register range that contains pwrstate controls
+(rounded up to page size). t6000 has 3 PMGRs and t6001 has 4, and
+we shouldn't have to care about telling apart the multiple instances.
+Anything else PMGR does that needs a driver will be handled by
+entirely separate nodes in the future.
+
+Re t6001 and t6000 (and the rumored t6002), t6000 is basically a
+cut-down version of t6001 (and t6002 is rumored to be two t6001
+dies), down to the die floorplan, so I'm quite certain we won't need
+t6001/2-specific compatibles for anything shared. The t6000 devicetree
+will just #include the t6001 one and remove the missing devices.
+Hence, everything for this SoC series is going to have compatibles
+named apple,t6000-* (except the extra instances of some blocks in
+t6001 which look like they may have differences; PMGR isn't one of
+them, but some multimedia stuff might).
+
+[1] https://github.com/AsahiLinux/m1n1/blob/main/proxyclient/tools/pmgr_adt2dt.py
+
+Hector Martin (11):
+  MAINTAINERS: Add PMGR power state files to ARM/APPLE MACHINE
+  dt-bindings: i2c: apple,i2c: Add power-domains property
+  dt-bindings: iommu: apple,dart: Add power-domains property
+  dt-bindings: pinctrl: apple,pinctrl: Add power-domains property
+  dt-bindings: interrupt-controller: apple,aic: Add power-domains
+    property
+  dt-bindings: power: Add apple,pmgr-pwrstate binding
+  dt-bindings: arm: apple: Add apple,pmgr binding
+  soc: apple: Add driver for Apple PMGR power state controls
+  arm64: dts: apple: t8103: Add PMGR nodes
+  tty: serial: samsung_tty: Support runtime PM
+  arm64: dts: apple: t8103: Add UART2
+
+ .../bindings/arm/apple/apple,pmgr.yaml        |  134 ++
+ .../devicetree/bindings/i2c/apple,i2c.yaml    |    3 +
+ .../interrupt-controller/apple,aic.yaml       |    3 +
+ .../devicetree/bindings/iommu/apple,dart.yaml |    3 +
+ .../bindings/pinctrl/apple,pinctrl.yaml       |    3 +
+ .../bindings/power/apple,pmgr-pwrstate.yaml   |   71 ++
+ MAINTAINERS                                   |    3 +
+ arch/arm64/boot/dts/apple/t8103-j274.dts      |    5 +
+ arch/arm64/boot/dts/apple/t8103-pmgr.dtsi     | 1136 +++++++++++++++++
+ arch/arm64/boot/dts/apple/t8103.dtsi          |   36 +
+ drivers/soc/Kconfig                           |    1 +
+ drivers/soc/Makefile                          |    1 +
+ drivers/soc/apple/Kconfig                     |   21 +
+ drivers/soc/apple/Makefile                    |    2 +
+ drivers/soc/apple/apple-pmgr-pwrstate.c       |  317 +++++
+ drivers/tty/serial/samsung_tty.c              |   93 +-
+ 16 files changed, 1798 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/apple/apple,pmgr.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/apple,pmgr-pwrstate.yaml
+ create mode 100644 arch/arm64/boot/dts/apple/t8103-pmgr.dtsi
+ create mode 100644 drivers/soc/apple/Kconfig
+ create mode 100644 drivers/soc/apple/Makefile
+ create mode 100644 drivers/soc/apple/apple-pmgr-pwrstate.c
+
+-- 
+2.33.0
+
