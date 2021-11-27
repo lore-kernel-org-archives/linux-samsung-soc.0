@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF89C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38FBC4332F
 	for <linux-samsung-soc@archiver.kernel.org>; Sat, 27 Nov 2021 22:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233753AbhK0Wna (ORCPT
+        id S1356631AbhK0Wnb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 27 Nov 2021 17:43:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57402 "EHLO
+        Sat, 27 Nov 2021 17:43:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237316AbhK0Wla (ORCPT
+        with ESMTP id S1356436AbhK0Wla (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sat, 27 Nov 2021 17:41:30 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763D2C061785
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Nov 2021 14:33:04 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id q3so4442229wru.5
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Nov 2021 14:33:04 -0800 (PST)
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1673AC061799
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Nov 2021 14:33:06 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id t9so10303810wrx.7
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Nov 2021 14:33:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Eab++JQKTWieWxUPdwWrny+Cg0zAmtZZr/nwpMif+DE=;
-        b=yGZGSVVRzUf9cZUMw8LyTLxjkeRYtIq1AOYpIQsrkiIspRfifmI5NVRntzAvhde54n
-         wbRB/vEE6ZL5dZbGsOAnkEdPfeUXxpJMfqcvNacAAHTdTwd+LjNTFIeYlpeMJshR1nmw
-         7wU9TYiuZHjLjjeoQORW8NZZwUw/Ps5Jc3KHIuegAyA34sdEt8NCXxdede7AGKHGslrM
-         3JkVu+2MMXQaFHERh1ZpvMbOSwjP/ySPIanXHOTF4yfFIBbLPLjfxBMcOwdOSd5srKGj
-         DzMWqzb16oiZonh84HGyJxGrFRb+lGDprwd6q78YBK2vZDMTlKPBHcLXynr8ncjG2AvJ
-         b9vQ==
+        bh=9NMCVGl7pMsP+zITp732vJFcoSeQrkG2e1B5Kv1EgeM=;
+        b=P7FFAPYPl9oHx2XJn0Ef0hHwk1zUdCFTfwaNbFWhLzSvk7Z9SFqd/u3s1IvpTe9VTn
+         KJnO4eUi/gKznSWazaqBWdBjiBfyU97p90nL2oldEsvmb2b0X5CBo3uN1p2T72MNeEcW
+         DxtZtjjAjXZ5oZorBJNnyprY9+16TYmXoq+U9CfOzxA/Iv5iJSRv4Xu6co18W5zvHgn8
+         7GsQSTBlZyC+l8G+NsEMpcnU2+c8V524I3mRaxOT3JphaipOD1VnUgasXNGgI6mMb+BK
+         4Gtt6xYG/fXAerGCDpU11WkeD+UjCQvUBQRvirsh+iZ62YmKUxRTSipYtPcXrzvtEPlR
+         65Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Eab++JQKTWieWxUPdwWrny+Cg0zAmtZZr/nwpMif+DE=;
-        b=C2WvKOrYm2x4eMlFgF5inV3J+hrIsDs3jBuJNwsd/aVQr+tghGOgBh4a9+Ksm5NzdQ
-         Oh/jmPbhF3SNECO+sDd3jj0RpCn/9mE1t1o2dY1sqDFcrI5IX7E/0kR/yJFcFv4iBwzV
-         czcrT607G4MAzELtJR0WmMwfCqwLyz0/cxkRP9JyaFaiFIwqOFWansbQbLjRf3AhrevH
-         PyWpHotc2DpOCI3OcHWGZ3YGXjsCD4EDBbc4ZD5O4EJiapr8Y/8mq93kkcNalzpfg+5A
-         Eplp84Y1rO4Im3YjAhv8xPLHDpM+qYhL/3uUjCRS+JEY5Oxzlh8B0m+AfljWC9weEZvh
-         OGYA==
-X-Gm-Message-State: AOAM533O7VoOmuQNq/avn8wBQLtKw6Hy4y66aTjlEJzFP6/Qn6JjlqFE
-        04IgjqQDzzjPzzBM5xS09Dt8LA==
-X-Google-Smtp-Source: ABdhPJyL2mAryHmmtJFRX/GY9sBnSIoMeA19jp4H2xYBLuhEL2xt3dkFWZiKKEuqSKk5dwOjaJLcmw==
-X-Received: by 2002:adf:9d82:: with SMTP id p2mr22717648wre.414.1638052383014;
-        Sat, 27 Nov 2021 14:33:03 -0800 (PST)
+        bh=9NMCVGl7pMsP+zITp732vJFcoSeQrkG2e1B5Kv1EgeM=;
+        b=V03Hq4O5SpEmlsPldc/wIidNdU+rZAR2L3K7JZB15PUL3xO22sMGnQQY8mhZ2W5MWw
+         LMn/YBkiegZtFPrAXFKkR5qokAvImJrR9vBjk8KNOGV46sxl8+MwAknzoG46gHkAFdRi
+         fGRoWYln2sBcD4XLZeo3bKrWLi1YowlQHT4q512qS/iQUY21CHmU0Bdzx/gk2/4nk4o+
+         o/wzXLePjtSPyulB2yzmjZd53Q77+HM1Nr4YtkzuPyqBxKg21C37OWjT4377HBJoudfT
+         6fMu+BIlH9PVQnAk6gWrEEwEtqi4i66mf8V1qdFRgOr+WYRR8snqeEXkcA0GDW8ZAtfe
+         WYTg==
+X-Gm-Message-State: AOAM531ptgKTQRhWSpaApmh2QqkRpyCw6B33O6fSf2rUeOXm5iN4k7ou
+        NLuxU5f6iCWfrCO5vzwZ1qqehA==
+X-Google-Smtp-Source: ABdhPJzy5nxx9DYCtcxYRuTdufcTHhm0DmVTtGPh8cq7SXftXb7s3K4I29+XG8BwPobfnQxmaynjlg==
+X-Received: by 2002:a5d:6acc:: with SMTP id u12mr23231855wrw.628.1638052384715;
+        Sat, 27 Nov 2021 14:33:04 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id i15sm17872965wmq.18.2021.11.27.14.33.02
+        by smtp.gmail.com with ESMTPSA id r17sm17128027wmq.5.2021.11.27.14.33.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 14:33:02 -0800 (PST)
+        Sat, 27 Nov 2021 14:33:04 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-i2c@vger.kernel.org
-Subject: [PATCH 5/8] tty: serial: samsung: Enable console as module
-Date:   Sun, 28 Nov 2021 00:32:50 +0200
-Message-Id: <20211127223253.19098-6-semen.protsenko@linaro.org>
+Subject: [PATCH 6/8] tty: serial: Make SERIAL_SAMSUNG=y impossible when EXYNOS_USI_V2=m
+Date:   Sun, 28 Nov 2021 00:32:51 +0200
+Message-Id: <20211127223253.19098-7-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211127223253.19098-1-semen.protsenko@linaro.org>
 References: <20211127223253.19098-1-semen.protsenko@linaro.org>
@@ -74,77 +74,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Enable serial driver to be built as a module. To do so, init the console
-support on driver/module load instead of using console_initcall().
-
-This is needed for proper support of USIv2 driver (which can be built as
-a module, which in turn makes SERIAL_SAMSUNG be a module too). It also
-might be useful for Android GKI modularization efforts.
-
-Inspired by commit 87a0b9f98ac5 ("tty: serial: meson: enable console as
-module").
+When UART is encapsulated in USIv2 block (e.g. in Exynos850), USIv2
+driver must be loaded first, as it's preparing USI hardware for
+particular protocol use. Make it impossible for Samsung serial driver to
+be built-in when USIv2 driver is built as a module, to prevent incorrect
+booting order for those drivers.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- drivers/tty/serial/Kconfig       |  2 +-
- drivers/tty/serial/samsung_tty.c | 21 +++++++++++++++++++--
- 2 files changed, 20 insertions(+), 3 deletions(-)
+ drivers/tty/serial/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index fc543ac97c13..0e5ccb25bdb1 100644
+index 0e5ccb25bdb1..47bc24e74041 100644
 --- a/drivers/tty/serial/Kconfig
 +++ b/drivers/tty/serial/Kconfig
-@@ -263,7 +263,7 @@ config SERIAL_SAMSUNG_UARTS
- 
- config SERIAL_SAMSUNG_CONSOLE
- 	bool "Support for console on Samsung SoC serial port"
--	depends on SERIAL_SAMSUNG=y
-+	depends on SERIAL_SAMSUNG
- 	select SERIAL_CORE_CONSOLE
- 	select SERIAL_EARLYCON
+@@ -237,6 +237,7 @@ config SERIAL_CLPS711X_CONSOLE
+ config SERIAL_SAMSUNG
+ 	tristate "Samsung SoC serial support"
+ 	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_APPLE || COMPILE_TEST
++	depends on EXYNOS_USI_V2 || !EXYNOS_USI_V2
+ 	select SERIAL_CORE
  	help
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index f986a9253dc8..92a63e9392ed 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1720,10 +1720,10 @@ static int __init s3c24xx_serial_console_init(void)
- 	register_console(&s3c24xx_serial_console);
- 	return 0;
- }
--console_initcall(s3c24xx_serial_console_init);
- 
- #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
- #else
-+static inline int s3c24xx_serial_console_init(void) { return 0; }
- #define S3C24XX_SERIAL_CONSOLE NULL
- #endif
- 
-@@ -2898,7 +2898,24 @@ static struct platform_driver samsung_serial_driver = {
- 	},
- };
- 
--module_platform_driver(samsung_serial_driver);
-+static int __init samsung_serial_init(void)
-+{
-+	int ret;
-+
-+	ret = s3c24xx_serial_console_init();
-+	if (ret)
-+		return ret;
-+
-+	return platform_driver_register(&samsung_serial_driver);
-+}
-+
-+static void __exit samsung_serial_exit(void)
-+{
-+	platform_driver_unregister(&samsung_serial_driver);
-+}
-+
-+module_init(samsung_serial_init);
-+module_exit(samsung_serial_exit);
- 
- #ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
- /*
+ 	  Support for the on-chip UARTs on the Samsung
 -- 
 2.30.2
 
