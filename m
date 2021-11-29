@@ -2,100 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1463DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Nov 2021 08:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DADC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Nov 2021 08:35:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243808AbhK2I2G (ORCPT
+        id S242938AbhK2Iic (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Nov 2021 03:28:06 -0500
-Received: from mail-vk1-f173.google.com ([209.85.221.173]:38795 "EHLO
-        mail-vk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243301AbhK2I0F (ORCPT
+        Mon, 29 Nov 2021 03:38:32 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58384
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243539AbhK2Igc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Nov 2021 03:26:05 -0500
-Received: by mail-vk1-f173.google.com with SMTP id s17so10463738vka.5;
-        Mon, 29 Nov 2021 00:22:47 -0800 (PST)
+        Mon, 29 Nov 2021 03:36:32 -0500
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8F54A3F1D7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 08:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1638174791;
+        bh=aCARnuWDBDtCC7T3FRwThc50ZrhDk+owTuPeR9h19HA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=FI3z5ezaC3s8HhhE21gtwHDViP7ndcx5dTwf5PE36Y5/1ahvRkUZTT9C4H9CnDAAK
+         E5cGQsmOzTGq2vuJFTl6Srk12X0ezJwOLbizVKomMMHp0VW+ApuW+nuh2wNZq58RVN
+         hsJkg5LLo9eTcGi+jHv9S45tq6aNcbjfDp0n5aZQGONZmUMu1IPRfyg+p/0guuVp1e
+         pfJdvsSvBPdFI/05B+W0A+7Y4G851eIGXU7+s96fhiR9Q8nRyzXQR2yG0AO/gN6v/W
+         oMKbVLNw/3qhVGhzNIxy9njwx4ExVzTsQ5dGvtjvY3hAxg6QzA5XUu0CF4/2bzZMQU
+         qAnnSoQdkLUUQ==
+Received: by mail-lj1-f197.google.com with SMTP id a7-20020a05651c210700b00219132ab503so6537222ljq.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 00:33:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AMG52Q67pGPYOq1nBleIjVZNUPk0ygNagAeG5Cgw18Q=;
-        b=Co0qhlQ1QTKJjTy7MMeod3hH4Ha8+tmq1tR6eEftNpRNZBk2H+Lcth/YAZXkqqMUiS
-         9xDVmImfwJUs3KkZSqWgIEo7AYIPW/DlgqtHJgtPmYaOTchcR1/CB3cmVD1XvS/8WJ3Y
-         LM2HC8uFZWZaNkdIoE2OtRQfw+HbwCGyTsw6teVvEybBqanSsEbbWI+ET98gIBSx2lbf
-         UX+HUXfvAYgfdVMcFIdg3GQ/5m3im6NvMMQ0GHqcFQ4qPbu7KAV23z9mzKIZKIju+RBd
-         aVx4tA29YmyhZzqXUppNcveKeX86e49wtqOvV8p0CDno38uQDjmSDxHpWK8ZBOFD4fTp
-         4REA==
-X-Gm-Message-State: AOAM533BkAX2LPg2xxriaUTQlqMkKosBA8DEyLs8kouSq8HwHkvkbPnb
-        ZWgmCfxQ46q9nb52PDQv5KkrGB1OJaXWuw==
-X-Google-Smtp-Source: ABdhPJz8YNe0F3bJpoq5qnbaIgLS+s2/6NAX/Hp8wfGygMNkrSH1MWnf3vLtgv41UhFIc8SKGziI6w==
-X-Received: by 2002:a1f:2b4a:: with SMTP id r71mr29181743vkr.37.1638174167142;
-        Mon, 29 Nov 2021 00:22:47 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id n10sm8769775uaj.20.2021.11.29.00.22.46
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=aCARnuWDBDtCC7T3FRwThc50ZrhDk+owTuPeR9h19HA=;
+        b=eWpxS7EZeSDukc/Rbi3PLGhZ93++9hVkWRLt8j6mjJvGTuPIQgJ//Lkt70qSSa2TmO
+         hfD/RgSa3fqsTPETAqrCfm6Uc4Sf4duUbx/iDXG+eTzvqypsn+Fcl4+wU+fj6g5LH8m7
+         0+1RTeJMA0VU2UsVGD0Q0iegX/JiuGviBB/E/QRPHUSBLdB6PpNUmoMIYANQ2wAvYSz+
+         hwQ1G/NV1Vy/tbWCPTVD8hdvnZpSURjEdTQJIec512o/m/UrXABwybs4v0zLm3F3dnjd
+         nP1uP/xaxh/frdma+l+kudqOr+lDBPqfeIUbiFRaL71QkZ+V9IVx1QfayJHiWvQhOGZ6
+         U0yA==
+X-Gm-Message-State: AOAM533aDhPQoyWFMc8isldybiyHyruAsNfIbQAr43guaxNf1GmcfgHR
+        8jpdLAhtPylcA7O1TWUEf4AS37jGhR8iDv9r/l0mbSCCo26YyKBbb1glpeh9lMt6ao4Lnysto8O
+        DbxEVWNmL4B5PUhTbbsfM0RCpy0hhjzkR2S6F6W/voO4yPtTZ
+X-Received: by 2002:a2e:b907:: with SMTP id b7mr47798057ljb.214.1638174789568;
+        Mon, 29 Nov 2021 00:33:09 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx+HqYaIWrUgOtsIwWv3NVax4MJeBvRWzGCQC326fhRonBcNHs6JMwj77zI5nkCDsHZVk4s+w==
+X-Received: by 2002:a2e:b907:: with SMTP id b7mr47798035ljb.214.1638174789408;
+        Mon, 29 Nov 2021 00:33:09 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id u2sm1268765lfi.108.2021.11.29.00.33.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Nov 2021 00:22:46 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id i6so32267464uae.6;
-        Mon, 29 Nov 2021 00:22:46 -0800 (PST)
-X-Received: by 2002:a9f:248b:: with SMTP id 11mr47461078uar.14.1638174166538;
- Mon, 29 Nov 2021 00:22:46 -0800 (PST)
+        Mon, 29 Nov 2021 00:33:08 -0800 (PST)
+Message-ID: <b757dcc7-7262-1f17-1889-6159015f2dc6@canonical.com>
+Date:   Mon, 29 Nov 2021 09:33:07 +0100
 MIME-Version: 1.0
-References: <20211125152154.162780-1-geert@linux-m68k.org> <3fec093a-df46-6096-3f66-891734a5f140@canonical.com>
- <20211127174343.1b9dcabe@jic23-huawei>
-In-Reply-To: <20211127174343.1b9dcabe@jic23-huawei>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 29 Nov 2021 09:22:35 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVWZEai-EYvoWc5eToSqK9N8KsXi6u0Ej6fQzQE77aNoA@mail.gmail.com>
-Message-ID: <CAMuHMdVWZEai-EYvoWc5eToSqK9N8KsXi6u0Ej6fQzQE77aNoA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: iio: adc: exynos-adc: Fix node name in example
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-iio@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 2/8] dt-bindings: soc: samsung: Add Exynos USIv2 bindings
+ doc
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <20211127223253.19098-1-semen.protsenko@linaro.org>
+ <20211127223253.19098-3-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211127223253.19098-3-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan,
+On 27/11/2021 23:32, Sam Protsenko wrote:
+> Document USIv2 IP-core bindings.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../bindings/soc/samsung/exynos-usi-v2.yaml   | 124 ++++++++++++++++++
+>  1 file changed, 124 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi-v2.yaml
+> 
 
-On Sat, Nov 27, 2021 at 6:38 PM Jonathan Cameron <jic23@kernel.org> wrote:
-> On Thu, 25 Nov 2021 16:26:16 +0100
-> Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
-> > On 25/11/2021 16:21, Geert Uytterhoeven wrote:
-> > > "make dt_binding_check":
-> > >
-> > >     Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.example.dt.yaml: ncp15wb473: $nodename:0: 'ncp15wb473' does not match '^thermistor(.*)?$'
-> > >         From schema: Documentation/devicetree/bindings/hwmon/ntc-thermistor.yaml
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > ---
-> > >  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml         | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> >
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> >
-> This doesn't particularly feel like we need to rush it in, so applied
-> to the togreg branch of iio.git which will go in next merge window.
->
-> Shout if I should pull it to a fixes branch.
+I propose to squash it with patch #1.
 
-Thank you, that's fine. We're still far from the point where we can start
-enforcing "no errors" in "make dt_binding_check dtbs_check".
+Rest looks good to me.
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
