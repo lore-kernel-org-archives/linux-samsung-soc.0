@@ -2,82 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C107C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Nov 2021 01:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1463DC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Nov 2021 08:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbhK2BEA (ORCPT
+        id S243808AbhK2I2G (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 28 Nov 2021 20:04:00 -0500
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:34490 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376621AbhK2BCA (ORCPT
+        Mon, 29 Nov 2021 03:28:06 -0500
+Received: from mail-vk1-f173.google.com ([209.85.221.173]:38795 "EHLO
+        mail-vk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243301AbhK2I0F (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 28 Nov 2021 20:02:00 -0500
-Received: by mail-oi1-f171.google.com with SMTP id t19so31478356oij.1;
-        Sun, 28 Nov 2021 16:58:43 -0800 (PST)
+        Mon, 29 Nov 2021 03:26:05 -0500
+Received: by mail-vk1-f173.google.com with SMTP id s17so10463738vka.5;
+        Mon, 29 Nov 2021 00:22:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=y/a5SrGnb/XTLo71HExkMxJ2aSc5igObTMGYH6iJqxw=;
-        b=MaxgrEJ9kVXY5XXDOdy+s9uzR4eVG+3gcFhOeO+yJlNEMnvTLk4q9UBxVuVYT/1akW
-         /folIEtQiJMbuRVRkCF6DP2t7SFWeu1zB6mvd0D+C4+j5ZsVlrZQ9qDpr6U2bW/O/gIw
-         V1GBESEOuATPStDxSLKS6aoiS3XurdSS5erjAw5vLMN2I2dUhN3JrzDGTjIvQ1yJdova
-         Kh76EEmPMvA2oCSG/mwYfCjWLOvPEGBQEP3i0CKujZXzotlB75OR2lC+V9zx5WrqRlcZ
-         SQa2eL2lt6sVk2b0dL9UQC6opk54LHeXYZ8p3uKJzKwMlep9fke01gjgwAB7wCsi5qWM
-         0CFQ==
-X-Gm-Message-State: AOAM532w21deBJt8YPOHGaqjpxMSC4wEMnmHtHBHCqroOfuex4kTwZdT
-        wV/oqqTnOvUByIkUJRiL+g==
-X-Google-Smtp-Source: ABdhPJypRIoiUvevacnf9rYH5eAOux+cJILxVBt+msqxtvl/I+4yRYtPnywHby5kj39GYE4ENE/MNQ==
-X-Received: by 2002:a05:6808:1308:: with SMTP id y8mr38686417oiv.49.1638147523460;
-        Sun, 28 Nov 2021 16:58:43 -0800 (PST)
-Received: from robh.at.kernel.org ([172.58.99.229])
-        by smtp.gmail.com with ESMTPSA id 69sm2382500otf.33.2021.11.28.16.58.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Nov 2021 16:58:42 -0800 (PST)
-Received: (nullmailer pid 2931465 invoked by uid 1000);
-        Mon, 29 Nov 2021 00:58:40 -0000
-Date:   Sun, 28 Nov 2021 18:58:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Hector Martin <marcan@marcan.st>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>, devicetree@vger.kernel.org,
-        Arnd Bergmann <arnd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Johan Hovold <johan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 05/11] dt-bindings: interrupt-controller: apple,aic:
- Add power-domains property
-Message-ID: <YaQlwK4IxxC2bX3I@robh.at.kernel.org>
-References: <20211124073419.181799-1-marcan@marcan.st>
- <20211124073419.181799-6-marcan@marcan.st>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AMG52Q67pGPYOq1nBleIjVZNUPk0ygNagAeG5Cgw18Q=;
+        b=Co0qhlQ1QTKJjTy7MMeod3hH4Ha8+tmq1tR6eEftNpRNZBk2H+Lcth/YAZXkqqMUiS
+         9xDVmImfwJUs3KkZSqWgIEo7AYIPW/DlgqtHJgtPmYaOTchcR1/CB3cmVD1XvS/8WJ3Y
+         LM2HC8uFZWZaNkdIoE2OtRQfw+HbwCGyTsw6teVvEybBqanSsEbbWI+ET98gIBSx2lbf
+         UX+HUXfvAYgfdVMcFIdg3GQ/5m3im6NvMMQ0GHqcFQ4qPbu7KAV23z9mzKIZKIju+RBd
+         aVx4tA29YmyhZzqXUppNcveKeX86e49wtqOvV8p0CDno38uQDjmSDxHpWK8ZBOFD4fTp
+         4REA==
+X-Gm-Message-State: AOAM533BkAX2LPg2xxriaUTQlqMkKosBA8DEyLs8kouSq8HwHkvkbPnb
+        ZWgmCfxQ46q9nb52PDQv5KkrGB1OJaXWuw==
+X-Google-Smtp-Source: ABdhPJz8YNe0F3bJpoq5qnbaIgLS+s2/6NAX/Hp8wfGygMNkrSH1MWnf3vLtgv41UhFIc8SKGziI6w==
+X-Received: by 2002:a1f:2b4a:: with SMTP id r71mr29181743vkr.37.1638174167142;
+        Mon, 29 Nov 2021 00:22:47 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id n10sm8769775uaj.20.2021.11.29.00.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Nov 2021 00:22:46 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id i6so32267464uae.6;
+        Mon, 29 Nov 2021 00:22:46 -0800 (PST)
+X-Received: by 2002:a9f:248b:: with SMTP id 11mr47461078uar.14.1638174166538;
+ Mon, 29 Nov 2021 00:22:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211124073419.181799-6-marcan@marcan.st>
+References: <20211125152154.162780-1-geert@linux-m68k.org> <3fec093a-df46-6096-3f66-891734a5f140@canonical.com>
+ <20211127174343.1b9dcabe@jic23-huawei>
+In-Reply-To: <20211127174343.1b9dcabe@jic23-huawei>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Nov 2021 09:22:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVWZEai-EYvoWc5eToSqK9N8KsXi6u0Ej6fQzQE77aNoA@mail.gmail.com>
+Message-ID: <CAMuHMdVWZEai-EYvoWc5eToSqK9N8KsXi6u0Ej6fQzQE77aNoA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: iio: adc: exynos-adc: Fix node name in example
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-iio@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 24 Nov 2021 16:34:15 +0900, Hector Martin wrote:
-> This will bind to the PMGR pwrstate nodes that control power/clock
-> gating to SoC blocks. The AIC driver doesn't do runtime-pm and likely
-> never will (since it is system-critical), but it makes sense to describe
-> the power domain relationship the devicetree properly.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> ---
->  .../devicetree/bindings/interrupt-controller/apple,aic.yaml    | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Hi Jonathan,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On Sat, Nov 27, 2021 at 6:38 PM Jonathan Cameron <jic23@kernel.org> wrote:
+> On Thu, 25 Nov 2021 16:26:16 +0100
+> Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+> > On 25/11/2021 16:21, Geert Uytterhoeven wrote:
+> > > "make dt_binding_check":
+> > >
+> > >     Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.example.dt.yaml: ncp15wb473: $nodename:0: 'ncp15wb473' does not match '^thermistor(.*)?$'
+> > >         From schema: Documentation/devicetree/bindings/hwmon/ntc-thermistor.yaml
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > ---
+> > >  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml         | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> >
+> >
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> >
+> This doesn't particularly feel like we need to rush it in, so applied
+> to the togreg branch of iio.git which will go in next merge window.
+>
+> Shout if I should pull it to a fixes branch.
+
+Thank you, that's fine. We're still far from the point where we can start
+enforcing "no errors" in "make dt_binding_check dtbs_check".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
