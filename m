@@ -2,160 +2,179 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6F1C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Nov 2021 17:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E4CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Nov 2021 22:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349639AbhK2RlT (ORCPT
+        id S230402AbhK2W1Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Nov 2021 12:41:19 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52212
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347180AbhK2RjT (ORCPT
+        Mon, 29 Nov 2021 17:27:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231583AbhK2WXr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Nov 2021 12:39:19 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 79F534001C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 17:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638207354;
-        bh=iK3riauy7r4LiWngeJOokJxhZZPLu5etYNKqwE1epw0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=LS2LaSBCKz4bkvVqvJ8ua7GA5+5R6U4AFL6HSLOeIRXkn7OM5VZXwB+hg0HpFPqQT
-         Gw3XUSBBJ83GLJqlwtXFZzKGA6+eFRLuilhAQdoYKacUNzfa0lHl1joOvMeiB/J1ce
-         PbCLo6nhr0TwjNcyLwydZovdN8vrcAFPBVXBhukajvFwH21N8LK9hyVmSWiYnAliNq
-         tRE1JeRx0gb2o+6lQlI4VKlVCNYjoGZBWb4yEhPTEdzBxQbrGK2Hzn46ogluwDRDS6
-         qFYTraome7P99+Fw5NVX9U9nfv1aRGOBR88vNyxC7WFwfmXdPWM28TVn2E2DTGKlxH
-         f/9FgDSsluHbA==
-Received: by mail-lf1-f72.google.com with SMTP id n18-20020a0565120ad200b004036c43a0ddso6351447lfu.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 09:35:54 -0800 (PST)
+        Mon, 29 Nov 2021 17:23:47 -0500
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4CDDC096770
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 12:38:59 -0800 (PST)
+Received: by mail-ua1-x92f.google.com with SMTP id a14so36893952uak.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 12:38:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UONcs7N6LGxVu2k8VNIBFR8w78/QJ3sPH/s1Z5GJbro=;
+        b=noH8p60w0Jb98Gun1YSBguriftRk73erhwNTOPAf0Xyfpd3cQ8YQLdk0dHdFCR1L/V
+         VrbMrAhXcw1OzPppMd1vEqZMILJq4Be4I+3XY4YrVFi+ez8sbi2I10v75Hzf1oAKt7Md
+         Q+cvz1xKXfTgGvcmKkzceKwtuG2XPov5wncs00SjT30lSAPi0nz1rgj5LYqDrXjXbwrd
+         7qJ2K/OlJwBdQB+TZLO+Uy7e1hft0Au/MPm+8zOCJqUVXLzTHyR5Ted8dz9vzXFYRmAv
+         pFLYaHJJ3SzU0UlR3r5WXbyN0td2n1zWE0TOOJKSdPvYoBjSfIBXLpFKtsOyF1bjh5D1
+         IQuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=iK3riauy7r4LiWngeJOokJxhZZPLu5etYNKqwE1epw0=;
-        b=l0zZpp2suCgPUlHmTzMRfoXFKWoySYtOifaIwfhZaPqFQcSFYmMNE+6v1pV+MVsKkn
-         +oAyYOf+uxo5vtg4Hijp5q7wZqmYgybnQtCNffKn8TEvzTokdaOvbMOJEjau1Vb+ddyv
-         sKqeE8rBYAt0IOg2nm7n7ZX/lwbsfsBQYKl5BETDTn6AEi6BrQ90JA9EftLS0L/CuaSd
-         OnVtoMluFGnop2AcUFoBmCLCE/bUBIb30gw9+HY0RmMknuG8TtsWs76Z1vb3hcJBNkXb
-         rHq4EI0H6ua7HLVSRvS1H7IeJNg5jHAzveWR93rPZYPpsIwPDp1yDjjyC2H3Rs49Y2fq
-         nWMw==
-X-Gm-Message-State: AOAM530B7bz51tBtJZ7lqudF6hfPd6VyaQ0hT6eQyf0cXfh6Qid3qmoc
-        VATisyLreT+dPfg+Y7xGJjoDlu7u6Fwb4t1IRG2PzcB0xGVwYsgUU7m2L7CvWgpmRP4OFt5a896
-        KjPlR8N0s/Sv84y6FtBWW/sC8iXi+8zHfjMznOWSicRPoJ/QB
-X-Received: by 2002:a05:651c:545:: with SMTP id q5mr48531715ljp.202.1638207353498;
-        Mon, 29 Nov 2021 09:35:53 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwCdgVQtvrXN9pR82hH5Jlf+5Oj6LFpV+QeH8GC4DH4X/4Agtjois4piKytzHJd5SDX416Alg==
-X-Received: by 2002:a05:651c:545:: with SMTP id q5mr48531704ljp.202.1638207353283;
-        Mon, 29 Nov 2021 09:35:53 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id w14sm1339120ljj.7.2021.11.29.09.35.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Nov 2021 09:35:52 -0800 (PST)
-Message-ID: <5687bb27-973e-b774-b876-46c8dffc1176@canonical.com>
-Date:   Mon, 29 Nov 2021 18:35:51 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UONcs7N6LGxVu2k8VNIBFR8w78/QJ3sPH/s1Z5GJbro=;
+        b=1o6wZ7xtoIMQQXKcjCCv80Quc1Hn8/BrFIIG1SI+J3eR9tVLY1MEvt8NbYWew8v7CV
+         vwhFBo/otXnfxKOiomr8UnQBMiZj621btI8a4nVVZkJ/V2LJGtArb5ykVJ9gh5qQmC+f
+         XzBo/GMSOkb92K/7HAA29L0TtH1hw2Dcg/uQIBkIPBc3lR+7le4VXMifPoiAWfI2TJ4u
+         JhsPXJGR8Gi6946ejIXFwcg4pArAHI/ejn28bCa6eqjj3d9kgPGNF40UWgTp6yXbeIvY
+         HlwNU/qh6FQmyG9q5GyLG5gyjpS+VVuSEUGdSYEZzgfyJvHiHcpIl926B03D3mGAOmf4
+         X/8Q==
+X-Gm-Message-State: AOAM532m7C1t7JLZ+Aq0hacPcCV+QoZlylXl1wxNvhCOG2oSxBHSUhQ9
+        9WBibzViC8nsxbDiJPqbLTyAmS4kV6bfl717sEtpuw==
+X-Google-Smtp-Source: ABdhPJzhebEttD8OzDSAnlep6FeEbByTFuexl48l99GbNggwLSd6/VU+oEF2UMCz1+jFsh7LSdV7Dujt31QbGYN5BvA=
+X-Received: by 2002:a67:be0f:: with SMTP id x15mr36219046vsq.86.1638218338933;
+ Mon, 29 Nov 2021 12:38:58 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 0/8] soc: samsung: Add USIv2 driver
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        David Virag <virag.david003@gmail.com>
+References: <20211127223253.19098-1-semen.protsenko@linaro.org>
+ <20211127223253.19098-6-semen.protsenko@linaro.org> <9a51b37b-d2c4-fb73-bd3f-447c94a66c82@canonical.com>
+ <CAPLW+4=Xp0m3ycm5c1WSJGtr6vRxx1fsW0MOo65fXMfaB1sR+w@mail.gmail.com>
+In-Reply-To: <CAPLW+4=Xp0m3ycm5c1WSJGtr6vRxx1fsW0MOo65fXMfaB1sR+w@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 29 Nov 2021 22:38:47 +0200
+Message-ID: <CAPLW+4n+y2cARyeV53hBfUdbyy5ZtCCisDQ20ANF7mM0uh_V4g@mail.gmail.com>
+Subject: Re: [PATCH 5/8] tty: serial: samsung: Enable console as module
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
         Youngmin Nam <youngmin.nam@samsung.com>,
         devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-i2c@vger.kernel.org
-References: <20211127223253.19098-1-semen.protsenko@linaro.org>
- <b9807fcc69713fb016838958a3df1c4e54309fc4.camel@gmail.com>
- <CAPLW+4kkVNSvEQjVnSWA2BjkWJXzV-4n1i+10a9FCNL0sD0n3A@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAPLW+4kkVNSvEQjVnSWA2BjkWJXzV-4n1i+10a9FCNL0sD0n3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/11/2021 14:56, Sam Protsenko wrote:
-> On Sun, 28 Nov 2021 at 05:15, David Virag <virag.david003@gmail.com> wrote:
->>
->> Also this way is pretty USIv2 centric. Adding USIv1 support to this
->> driver is difficult this way because of the the lack of USI_CON and
->> USI_OPTION registers as a whole (so having nowhere to actually set the
->> reg of the USI node to, as the only thing USIv1 has is the SW_CONF
->> register). In my opinion being able to use the same driver and same
->> device tree layout for USIv1 and USIv2 is a definite plus
->>
-> 
-> Well, it's USIv2 driver after all. I never expected it can be extended
-> for USIv1 support. If you think it can be reused for USIv1, it's fine
-> by me. But we need to consider next things:
->   - rename the driver to just "usi.c" (and also its configuration symbol)
->   - provide different compatible for USIv1 (and maybe corresponding driver data)
->   - rework bindings (header and doc); make sure existing bindings are
-> intact (we shouldn't change already introduced interfaces)
->   - in case of USIv1 compatible; don't try to tinker with USIv2 registers
->   - samsung,clkreq-on won't be available in case of USIv1 compatible
+On Mon, 29 Nov 2021 at 22:18, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> On Mon, 29 Nov 2021 at 10:52, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+> >
+> > On 27/11/2021 23:32, Sam Protsenko wrote:
+> > > Enable serial driver to be built as a module. To do so, init the console
+> > > support on driver/module load instead of using console_initcall().
+> > >
+> > > This is needed for proper support of USIv2 driver (which can be built as
+> > > a module, which in turn makes SERIAL_SAMSUNG be a module too). It also
+> > > might be useful for Android GKI modularization efforts.
+> > >
+> > > Inspired by commit 87a0b9f98ac5 ("tty: serial: meson: enable console as
+> > > module").
+> > >
+> > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > > ---
+> > >  drivers/tty/serial/Kconfig       |  2 +-
+> > >  drivers/tty/serial/samsung_tty.c | 21 +++++++++++++++++++--
+> > >  2 files changed, 20 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> > > index fc543ac97c13..0e5ccb25bdb1 100644
+> > > --- a/drivers/tty/serial/Kconfig
+> > > +++ b/drivers/tty/serial/Kconfig
+> > > @@ -263,7 +263,7 @@ config SERIAL_SAMSUNG_UARTS
+> > >
+> > >  config SERIAL_SAMSUNG_CONSOLE
+> > >       bool "Support for console on Samsung SoC serial port"
+> > > -     depends on SERIAL_SAMSUNG=y
+> > > +     depends on SERIAL_SAMSUNG
+> > >       select SERIAL_CORE_CONSOLE
+> > >       select SERIAL_EARLYCON
+> > >       help
+> > > diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> > > index f986a9253dc8..92a63e9392ed 100644
+> > > --- a/drivers/tty/serial/samsung_tty.c
+> > > +++ b/drivers/tty/serial/samsung_tty.c
+> > > @@ -1720,10 +1720,10 @@ static int __init s3c24xx_serial_console_init(void)
+> > >       register_console(&s3c24xx_serial_console);
+> > >       return 0;
+> > >  }
+> > > -console_initcall(s3c24xx_serial_console_init);
+> > >
+> > >  #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
+> > >  #else
+> > > +static inline int s3c24xx_serial_console_init(void) { return 0; }
+> > >  #define S3C24XX_SERIAL_CONSOLE NULL
+> > >  #endif
+> > >
+> > > @@ -2898,7 +2898,24 @@ static struct platform_driver samsung_serial_driver = {
+> > >       },
+> > >  };
+> > >
+> > > -module_platform_driver(samsung_serial_driver);
+> > > +static int __init samsung_serial_init(void)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     ret = s3c24xx_serial_console_init();
+> > > +     if (ret)
+> > > +             return ret;
+> >
+> > This will trigger warns on module re-loading, won't it? Either suppress
+> > unbind or cleanup in module exit.
+> >
+>
+> I guess that's already taken care of in  samsung_serial_remove(): it's
+> doing uart_remove_one_port(), which in turn does unregister_console().
+> So I don't think anything extra should be done on module exit. Or I'm
+> missing something?
+>
+> That case (unload/load) actually doesn't work well in my case: serial
+> console doesn't work after doing "modprobe -r samsung_tty; modprobe
+> samsung_tty" (but it works fine e.g. in case of i2c_exynos5 driver).
+> Not sure what is wrong, but I can see that my board keeps running
+> (heartbeat LED is still blinking). Not even sure if that use case
+> (unload/load) was ever functional before.
+>
+> Anyway, please let me know if you think something should be done about
+> this particular patch. Right now I don't see anything missing.
+>
 
-I expect this driver to be in future extended for USIv1 and I do not see
-any problems in doing that for current Sam's approach. Most of our
-drivers support several devices, sometimes with differences, and we
-already have patterns solving it, e.g. ops structure or quirks bitmap.
-Driver for new USIv1 compatible would skip setting USI_CON (or any other
-unrelated register). Modification of SW_CONF could be shared or could be
-also split, depending on complexity.
+...But I'll actually add proper error path handling in
+samsung_serial_init(), i.e. unregister console if
+platform_driver_register() fails. And I'll add the same console
+unregister in samsung_serial_exit(), just in case.
 
-> 
-> Because I don't have USIv1 SoC TRM (and neither do I possess some
-> USIv1 board which I can use for test), I don't think it's my place to
-> add USIv1 support. But I think it's possible to do so, using my input
-> above.
-> 
-> I can see how it might be frustrating having to do some extra work
-> (comparing to just using the code existing in downstream). But I guess
-> that's the difference: vendor is mostly concerned about competitive
-> advantage and getting to market fast, while upstream is more concerned
-> about quality, considering all use cases, and having proper design.
-> Anyway, we can work together to make it right, and to have both
-> IP-cores support. In the worst case, if those are too different, we
-> can have two separate drivers for those.
-> 
->> The only real drawback of that way is having to add code for USIv2
->> inside the UART, HSI2C, and SPI drivers but in my opinion the benefits
->> overweigh the drawbacks greatly. We could even make the uart/spi/hsi2c
->> drivers call a helper function in the USI driver to set their USI_CON
->> and USI_OPTION registers up so that code would be shared and not
->> duplicated. Wether this patch gets applied like this is not my choice
->> though, I'll let the people responsible decide
->> :-)
->>
-> 
-> I'd argue that there are a lot of real drawbacks of using downstream
-> driver as is. That's why I completely re-designed and re-implemented
-> it. Downstream driver can't be built and function as a module, it
-> doesn't respect System Register sharing between consumers, it leads to
-> USI reset code duplication scattered across protocol drivers (that
-> arguably shouldn't even be aware of that), it doesn't reflect HW
-> structure clearly, it's not holding clocks needed for registers access
-> (btw, sysreg clock can be provided in syscon node, exactly for that
-> reason). As Krzysztof said, it also can't handle correct probe order
-> and deferred probes. Downstream driver might work fine for some
-> particular use-cases the vendor has, but in upstream it's better to
-> cover more cases we can expect, as upstream kernel is used on more
-> platforms, with more user space variants, etc.
-
-Implementing USI in each of I2C/SPI/UART drivers is a big minus. Current
-approach nicely encapsulates USI in dedicated driver without polluting
-the other drivers with unrelated bus/protocol stuff.
-
-Best regards,
-Krzysztof
+> > > +
+> > > +     return platform_driver_register(&samsung_serial_driver);
+> > > +}
+> > > +
+> > > +static void __exit samsung_serial_exit(void)
+> > > +{
+> > > +     platform_driver_unregister(&samsung_serial_driver);
+> > > +}
+> > > +
+> > > +module_init(samsung_serial_init);
+> > > +module_exit(samsung_serial_exit);
+> > >
+> > >  #ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
+> > >  /*
+> > >
+> >
+> >
+> > Best regards,
+> > Krzysztof
