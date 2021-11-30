@@ -2,68 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8459BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 08:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBB9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 11:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239596AbhK3I2c (ORCPT
+        id S237520AbhK3LQt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Nov 2021 03:28:32 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:58986
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235299AbhK3I2b (ORCPT
+        Tue, 30 Nov 2021 06:16:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237447AbhK3LQs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Nov 2021 03:28:31 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C6D4D3F1F0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 08:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638260707;
-        bh=3p+JKumUVKLGKnRDqiGTb6SvutQxVEuErwdRZXy1umI=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=RGpTrwsBKOV0Vn1FU03b4NvZ1F+NDNXmVPUjE4BTB4JXjm4myOYoVtbpl1Tw0k2+5
-         RHepkFUtEa5ErPiiEdR61CZjkIfz8nbqs0JA6fT4Nxpg29x7vgw/fcn2l/uEPJKnLn
-         EjHGvlZnsOWhvxJ2hYyU1sWSxaywnfUZMz7pt+QsOfUFY7ZNCujCgpNK5BqhXgxtG3
-         fp0ud9iznLTLNHIZlecob9acbDzxM/YNBvMGnbgrAYbKXqoWmq63oR85IpOSp8Ydjm
-         2SYQxtyuvlPPopPt3zXRI+N5TUBB9Zm7vdRpH99Ak2qP5LtBM1TYTiYF2rLA1QshV5
-         U6Ixlxhgy9fqw==
-Received: by mail-lf1-f72.google.com with SMTP id h40-20020a0565123ca800b00402514d959fso7577851lfv.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 00:25:07 -0800 (PST)
+        Tue, 30 Nov 2021 06:16:48 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D538C061746
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 03:13:29 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id u3so52835706lfl.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 03:13:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=skodrfetI6sQYeMS84TqmzdXMiAWMy4xHtCAByWVHFI=;
+        b=NN1gLQ6ZhDhSiyAh6hHxZjFFbU+o0aZMHv0WdzvXxzujKnmjbroGcnNEYvup4NVhvO
+         zyHF49SMxTWzu+MDfYNdIqoMonEtgXLYfHmm/Hmo6038EqrL2w6wlfQVsWfEkX6fAN+I
+         vuJpKn4n5vq22jHEIQezZN65K81Gqq/qNONPAUd7hOQ6Dz+Yoj23cNh3H00kv789YBm9
+         RqU3EuEn/NdRjgukedVz/yjXwHU/4+AvMUnwsDKJIvBqjWmiUHVjfYu05qxwiJh8dxeh
+         I/bbgVvF1S+LlGpb0M11cwgYLBcVFBlATV8hSV8l77FTGw3wm7UlMfni/nm8GDRTno+2
+         6BPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3p+JKumUVKLGKnRDqiGTb6SvutQxVEuErwdRZXy1umI=;
-        b=SYg4Yj31269T7NGxFUfYlHWeJx88BRKcL8bP2g+BU554nf+/MY/nv+N2QmPAfiL6Bd
-         NNV65j5tdsrN04Mp6eog811HRUkC9MCLPSF1k1XKLj4O7bc2A1lymDqZQe0duvrJ7eeU
-         x8Ha5Rba1C4Niq3nLiY14W+MFCp4DUpLDbImNWVM7wOXWBT5yw8JaWESLQ5i1brg0J89
-         p3oqyOy9Fptks4vNbNPcAZ/sleovxkKS3h+Odn4S+7hy10vDmGGOyetDf53N4WafNr9/
-         gjOuZ8S6e9YEASHHKOpljaGGw/nmi+q9CkdaIpxN/FrZmgII3pZYITbKj6e7b6vj7lg2
-         3tvA==
-X-Gm-Message-State: AOAM533s59+Qa73pQcyCGJqRGfduQxdYL+wv1zNr5BhgdTz2x2fT0hlo
-        4HJd+oKIpA3LvofblFKqF12clNWuMe8RhpoQ0TdwL0VwJrIHKer0sIc6iaeSYScTnn9D8vnl5mT
-        iA4K/AgoE1AN22rxeV2GEXcgRUD8+AmVcDtufxsn+pv/43rhF
-X-Received: by 2002:a2e:8691:: with SMTP id l17mr52337005lji.119.1638260707139;
-        Tue, 30 Nov 2021 00:25:07 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzdw4vqCeU9ExJ30tnXrnx/idsd2AeWPGkG2nc5MgwnfQ943t0An/5UqXHsZhtvNTbME+PtHw==
-X-Received: by 2002:a2e:8691:: with SMTP id l17mr52336973lji.119.1638260706847;
-        Tue, 30 Nov 2021 00:25:06 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id v6sm1644426lfo.19.2021.11.30.00.25.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Nov 2021 00:25:06 -0800 (PST)
-Message-ID: <3d3c201c-fcfe-0ebc-5a09-52ba2220bc35@canonical.com>
-Date:   Tue, 30 Nov 2021 09:25:00 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v2 2/5] soc: samsung: Add USI driver
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        bh=skodrfetI6sQYeMS84TqmzdXMiAWMy4xHtCAByWVHFI=;
+        b=Jc4uhu9qgj9oWnEFMxUpMotx+Nu2mp1mZt1AbF7MtpgcqWM6B2lipr6InFHJF+air0
+         9kLFgbUzdrS9dl/ohHKGSdGyJ4yr0Vwn4A1GjJ9TEZgdTIn44qZHl3yKBpTXogf0xbFf
+         NFl3rY15V+rEF+rDUm5fooM1OQkE9aUTk/vXQOq1CNHaXGk9d7JubWijWfbd0iQ7wH1I
+         59BSGkRRjtxC1tgJjdhrh4nfoiMmjKGf8v/PQcibGrpZxnSmgUW256Mm1kVEht4EmOhf
+         SIYYKypTjmzcRp6M0EFfZeY+npH90sTUGnkaJooDM6j6KX38y382QXsE3TlwDzfGaw9Z
+         a7ig==
+X-Gm-Message-State: AOAM5323C9oPUNOycx0kMtw8YNPke0CkLEYKGIfjmagItslRKGQ/qaGo
+        Mp6yFA5y0MjImhgsyKGrGgqa3w==
+X-Google-Smtp-Source: ABdhPJxi5miZzbt8q+GI/aVfntdWzDkTcjLze8k3gHSi7jFuDn7DNzNHUChiiCmEdpxUddEvmIHGrA==
+X-Received: by 2002:a05:6512:1094:: with SMTP id j20mr51460255lfg.237.1638270807395;
+        Tue, 30 Nov 2021 03:13:27 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id b13sm1903706lfv.200.2021.11.30.03.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Nov 2021 03:13:26 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Jiri Slaby <jirislaby@kernel.org>,
@@ -74,83 +61,89 @@ Cc:     Jiri Slaby <jirislaby@kernel.org>,
         devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-References: <20211130022453.28648-1-semen.protsenko@linaro.org>
- <CAPLW+4=BcQPqyW4gkq1BTYErv_StqvdLNMwbNWEizz1CEL7mnA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAPLW+4=BcQPqyW4gkq1BTYErv_StqvdLNMwbNWEizz1CEL7mnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v2 RESEND 0/5] soc: samsung: Add USI driver
+Date:   Tue, 30 Nov 2021 13:13:20 +0200
+Message-Id: <20211130111325.29328-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/11/2021 03:31, Sam Protsenko wrote:
-> On Tue, 30 Nov 2021 at 04:24, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->>
->> USIv2 IP-core is found on modern ARM64 Exynos SoCs (like Exynos850) and
->> provides selectable serial protocol (one of: UART, SPI, I2C). USIv2
->> registers usually reside in the same register map as a particular
->> underlying protocol it implements, but have some particular offset. E.g.
->> on Exynos850 the USI_UART has 0x13820000 base address, where UART
->> registers have 0x00..0x40 offsets, and USI registers have 0xc0..0xdc
->> offsets. Desired protocol can be chosen via SW_CONF register from System
->> Register block of the same domain as USI.
->>
->> Before starting to use a particular protocol, USIv2 must be configured
->> properly:
->>   1. Select protocol to be used via System Register
->>   2. Clear "reset" flag in USI_CON
->>   3. Configure HWACG behavior (e.g. for UART Rx the HWACG must be
->>      disabled, so that the IP clock is not gated automatically); this is
->>      done using USI_OPTION register
->>   4. Keep both USI clocks (PCLK and IPCLK) running during USI registers
->>      modification
->>
->> This driver implements above behavior. Of course, USIv2 driver should be
->> probed before UART/I2C/SPI drivers. It can be achived by embedding
->> UART/I2C/SPI nodes inside of USI node (in Device Tree); driver then
->> walks underlying nodes and instantiates those. Driver also handles USI
->> configuration on PM resume, as register contents can be lost during CPU
->> suspend.
->>
->> This driver is designed with different USI versions in mind. So it
->> should be relatively easy to add new USI revisions to it later.
->>
->> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->> ---
-> 
-> I'm sorry for sending this v2 series as a bunch of separate mails. My
-> msmtp failed in the middle of submission, two times in a row. If it's
-> a bother, please tell me and I'll re-send as v3.
-> 
+USIv2 IP-core provides selectable serial protocol (UART, SPI or
+High-Speed I2C); only one can be chosen at a time. This series
+implements USIv2 driver, which allows one to select particular USI
+function in device tree, and also performs USI block initialization.
 
-You can always fix it by using --in-reply-to and --no-thread. This
-unfortunately breaks b4, so please resend (can be v2 RESEND):
+With that driver implemented, it's not needed to do USI initialization
+in protocol drivers anymore, so that code is removed from the serial
+driver.
 
-Looking up
-https://lore.kernel.org/r/20211130022250.28519-1-semen.protsenko%40linaro.org
+Because USI driver is tristate (can be built as a module), serial driver
+was reworked so it's possible to use its console part as a module too.
+This way we can load serial driver module from user space and still have
+serial console functional.
 
-Grabbing thread from
-lore.kernel.org/all/20211130022250.28519-1-semen.protsenko%40linaro.org/t.mbox.gz
+Make it impossible to build UART/SPI/I2C driver as a built-in when USIv2
+driver built as a module: USIv2 configuration must be always done before
+tinkering with particular protocol it implements.
 
-Analyzing 2 messages in the thread
+Design features:
+  - "reg" property contains USI registers start address (0xc0 offset);
+    it's used in the driver to access USI_CON and USI_OPTION registers.
+    This way all USI initialization (reset, HWACG, etc) can be done in
+    USIv2 driver separately, rather than duplicating that code over
+    UART/SPI/I2C drivers
+  - System Register (system controller node) and its SW_CONF register
+    offset are provided in "samsung,sysreg" property; it's used to
+    select USI function (protocol to be used)
+  - USI function is specified in "samsung,mode" property; integer value
+    is used to simplify parsing
+  - there is "samsung,clkreq-on" bool property, which makes driver
+    disable HWACG control (needed for UART to work properly)
+  - PCLK and IPCLK clocks are both provided to USI node; apparently both
+    need to be enabled to access USI registers
+  - protocol nodes are embedded (as a child nodes) in USI node; it
+    allows correct init order, and reflects HW properly
+  - USIv2 driver is a tristate: can be also useful from Android GKI
+    requirements point of view
+  - driver functions are implemented with further development in mind:
+    we might want to add some SysFS interface later for example, or
+    provide some functions to serial drivers with EXPORT_SYMBOL(), etc;
+    also another USI revisions could be added (like USIv1)
 
-Checking attestation on all messages, may take a moment...
+Changes in v2:
+  - Renamed all 'usi_v2' wording to just 'usi' everywhere
+  - Removed patches adding dependency on EXYNOS_USI for UART/I2C/SPI
+    drivers
+  - Added patch: "tty: serial: samsung: Fix console registration from
+    module"
+  - Combined dt-bindings doc and dt-bindings header patches
+  - Reworked USI driver to be ready for USIv1 addition
+  - Improved dt-bindings
+  - Added USI_V2_NONE mode value
 
-  ✓ [PATCH v2 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
+Sam Protsenko (5):
+  dt-bindings: soc: samsung: Add Exynos USI bindings
+  soc: samsung: Add USI driver
+  tty: serial: samsung: Remove USI initialization
+  tty: serial: samsung: Enable console as module
+  tty: serial: samsung: Fix console registration from module
 
-    ✓ Signed: DKIM/linaro.org
+ .../bindings/soc/samsung/exynos-usi.yaml      | 135 +++++++++
+ drivers/soc/samsung/Kconfig                   |  14 +
+ drivers/soc/samsung/Makefile                  |   2 +
+ drivers/soc/samsung/exynos-usi.c              | 274 ++++++++++++++++++
+ drivers/tty/serial/Kconfig                    |   2 +-
+ drivers/tty/serial/samsung_tty.c              |  78 ++---
+ include/dt-bindings/soc/samsung,exynos-usi.h  |  17 ++
+ include/linux/serial_s3c.h                    |   9 -
+ 8 files changed, 483 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+ create mode 100644 drivers/soc/samsung/exynos-usi.c
+ create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
 
-  ERROR: missing [2/5]!
+-- 
+2.30.2
 
-  ERROR: missing [3/5]!
-
-  ERROR: missing [4/5]!
-
-  ERROR: missing [5/5]!
-
-
-
-
-Best regards,
-Krzysztof
