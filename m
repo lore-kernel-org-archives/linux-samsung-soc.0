@@ -2,452 +2,148 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216AAC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 00:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A732C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 02:22:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbhK3AGM (ORCPT
+        id S237427AbhK3C0N (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Nov 2021 19:06:12 -0500
-Received: from mail-ua1-f45.google.com ([209.85.222.45]:46681 "EHLO
-        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbhK3AGM (ORCPT
+        Mon, 29 Nov 2021 21:26:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58520 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231642AbhK3C0M (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Nov 2021 19:06:12 -0500
-Received: by mail-ua1-f45.google.com with SMTP id az37so37685053uab.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 16:02:53 -0800 (PST)
+        Mon, 29 Nov 2021 21:26:12 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F6DC061714
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 18:22:54 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id e11so38054997ljo.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2021 18:22:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HZZygbV7zHiCmGrUMXtbzzqKRXX6tbAL/5OPMq1714E=;
-        b=oJCQ/KaJVsHQLKIhT8kk4itVbP+m+S7/9pS73damHBFlR4Cy9JN7I5G4Pk/Mm7U0+c
-         EnZpbucbd3Ay4dGISIOaBBscAZoYfqiTK1cDrzdZNfrzml1vQlWUUi/jFunYmvV5k+Eb
-         Mk0uHjPpuxK0/isebgZyN6x2zDY7mdFQdi8+t0zoVwKIn+N9AjyNE2V7XOvVo2VPZIe+
-         xNArko7IhH/7O6Iz4NdIotvaqWVGaqCsafkwfjw2wHG9Xdb5XeU+QbTiigj8RuCviA+c
-         ExSL3kQsusiAlP6V0g3VcsGGeoavMvCNLIBtnR/zHaJcMOaA/J8LSh3jSmhchjUJ6XkZ
-         Q+bw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=skodrfetI6sQYeMS84TqmzdXMiAWMy4xHtCAByWVHFI=;
+        b=bbVlySitNulojxKNQQ8ngwgYFkULqgbWWmRVoRSk3H8bMyFfkSoSLBJgHIWIfGbDgu
+         iFCTjlBS3fcCA0S0un3T2LwZic9OyCDZtw5Jokcyj99g1178UlQBzzjLjC2uXINhJiwP
+         MeSAm6xWoK/aXDNmHlPoYb37Xavs+6DlD0ScFYO+zALf06yEgEcRKFF78jyarpF1CGZ3
+         s+90ffS3b2yUK6ZuHhdQUEUclTwrxcZvSNFD6rznZ7YARbHw7vg487xzvs0Ova2XxYFi
+         V3K4D9W+qsY8K343GvJjmUFbxHXza3W/m6c6QCpLwSMgLZu0+F/GaIalUos5uc9QyxA8
+         t7Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HZZygbV7zHiCmGrUMXtbzzqKRXX6tbAL/5OPMq1714E=;
-        b=U6uOeDqeAf2h6BrAwySIUkaiPYGBgqKRIS/qcDnQXL0qBMwvwix2xcyItILUmaTuCj
-         DPQYFHQIa0EiM+kn8bytBji6JknAGEjs05zIvv3TZMMvc85MqQKMIC/QJZg99/T50Xm8
-         hp4zTuWW1j9Rytv/TlCxLt7cnQq5DTiEHCODWDsReC84w+6p8ocCqX+6g0g3K4d5fMUJ
-         XyGIJJtWpjtzxA2J9BD+u0K2+Rkbosywo2dDK5YUsul+y4QVDB7diJ0gzwAZ/Lt3rYNe
-         DL3ezQFD6hCszJpIh+W9m2g0JT6c+u+SC7lqjCCHGAqzEok6goKVWplKSqgzfJL6Rskd
-         iRgg==
-X-Gm-Message-State: AOAM530WvhND/S9AcHqRoTXRj3g+tZHrWI1ra29YbB5Fnt5JKztTmrgh
-        Qp9F+foeKMYfpmrXNeaMHwvNSbkO7gDOOouoMx2fvvO9R+kZC+O2
-X-Google-Smtp-Source: ABdhPJzhgbadz/Hl0DuwolR2Pr9IAPkXYvVqh3xdRefwOraLF3I+ir2hY+/JWz/ZI13Fp1T9ykYi+4docnwwAsi0g3Y=
-X-Received: by 2002:a05:6102:f10:: with SMTP id v16mr38425789vss.86.1638230513148;
- Mon, 29 Nov 2021 16:01:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20211127223253.19098-1-semen.protsenko@linaro.org>
- <b9807fcc69713fb016838958a3df1c4e54309fc4.camel@gmail.com>
- <CAPLW+4kkVNSvEQjVnSWA2BjkWJXzV-4n1i+10a9FCNL0sD0n3A@mail.gmail.com> <97a28ade85f31f709c7848da5ebab0bdc802afd2.camel@gmail.com>
-In-Reply-To: <97a28ade85f31f709c7848da5ebab0bdc802afd2.camel@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=skodrfetI6sQYeMS84TqmzdXMiAWMy4xHtCAByWVHFI=;
+        b=d/3ua/pY/t08PqMCoC28skQnGq1iozZjnGb9b5Dzgrjhk9jAnFuaXDlbArmEhbBmQ/
+         3AdycyKRmm56H3S2gsSAHhZPJ6KpT1Xqk+QMW58daJ43m2Vz3zS4eq2tml1Ly2lqlVIT
+         2+pZ9fUKgsvsHB4RvF+4X+ex1H+ttYlqtatGPvZeTSSUED6KOhaqpcSGNG3VeeGmv0A8
+         1WIxignr5gaHzszwVCBPLR+mqiRO1YKQu476jwkyknn+l3G57aLEaz4PEYEiyVQ5YkEy
+         zFWnr9XIMO5zg6l427+7v0vLxKayJNmRcRjAENQ0552Pm8uFi17k0A0EIp0v+15Juu/G
+         wk1A==
+X-Gm-Message-State: AOAM53350yrLYWIQiY+aFEIHtBbgWC67tLKp3rq8Uu0XPCS1I4oScD41
+        sbc4rwgUueZRQNDdr0ViRPy3ag==
+X-Google-Smtp-Source: ABdhPJzbQjHPWKFGyNsFRwbVGmhUdKhSrsWJwMsK/Qyy5iQbpNmLx265oR/zw1HBJOxgDvAso0jIwQ==
+X-Received: by 2002:a2e:b816:: with SMTP id u22mr32739595ljo.51.1638238972342;
+        Mon, 29 Nov 2021 18:22:52 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id e11sm1539911lfq.65.2021.11.29.18.22.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Nov 2021 18:22:51 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 30 Nov 2021 02:01:40 +0200
-Message-ID: <CAPLW+4=wfAHRi5CvzcyZf6R2sCQ1WMC11MFwqfLnzPbXMyUTtA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] soc: samsung: Add USIv2 driver
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jirislaby@kernel.org>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
         Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 0/5] soc: samsung: Add USI driver
+Date:   Tue, 30 Nov 2021 04:22:45 +0200
+Message-Id: <20211130022250.28519-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 29 Nov 2021 at 21:19, David Virag <virag.david003@gmail.com> wrote:
->
-> On Mon, 2021-11-29 at 15:56 +0200, Sam Protsenko wrote:
-> > On Sun, 28 Nov 2021 at 05:15, David Virag <virag.david003@gmail.com>
-> > wrote:
-> > >
-> > > On Sun, 2021-11-28 at 00:32 +0200, Sam Protsenko wrote:
-> > > > USIv2 IP-core provides selectable serial protocol (UART, SPI or
-> > > > High-Speed I2C); only one can be chosen at a time. This series
-> > > > implements USIv2 driver, which allows one to select particular USI
-> > > > function in device tree, and also performs USI block
-> > > > initialization.
-> > > >
-> > > > With that driver implemented, it's not needed to do USI
-> > > > initialization
-> > > > in protocol drivers anymore, so that code is removed from the
-> > > > serial
-> > > > driver.
-> > > >
-> > >
-> > > I think the downstream way of doing this (USI node reg being on the
-> > > SW_CONF register itself rather than an offset from uart/i2c/spi, the
-> > > USI driver only controlling the SW_CONF, and the uart/i2c/spi drivers
-> > > controlling their USI_CON and USI_OPTION regs) is cleaner, better,
-> > > and
-> > > easier to adapt to USIv1 too.
-> > >
-> >
-> > One reason why I think it's better to provide SW_CONF register via
-> > syscon node, is that it helps us to avoid possible register access
-> > conflicts in future, and also conflicts when requesting corresponding
-> > resources. In other words, the System Register block can be used by
-> > many consumers (drivers) in future; those consumers might try to
-> > modify the same registers simultaneously, which might lead to race
-> > conditions (as RMW operation is not atomic), so some kind of
-> > serialization should be done (like locking in regmap), which is
-> > provided by syscon. Also, that wouldn't even come to that: you just
-> > can't request the same I/O area twice in Linux. So if SW_CONF is
-> > passed via "reg" property to USI driver, and then we try to map the
-> > whole System Register (or its portion that includes SW_CONF), that
-> > request would fail.
->
-> I've got to admit, that's something I didn't think about much, partly
-> because the lack of TRM on my hand, as I'm working with just vendor
-> kernel sources and consumer phones. What other things are in the sysreg
-> in your case? Looking at my vendor device tree, the USI SW_CONF
-> registers are at 0x10032000-0x10032008 in my case and the DT lacks
-> anything else close by (in the 0x1003xxxx region).
->
+USIv2 IP-core provides selectable serial protocol (UART, SPI or
+High-Speed I2C); only one can be chosen at a time. This series
+implements USIv2 driver, which allows one to select particular USI
+function in device tree, and also performs USI block initialization.
 
-Just in case, System Register is not a single register, but a register
-block. In case of Exynos850 I have all sorts of registers in SYSREG.
-Basically I have one SYSREG per domain, e.g. for PERI domain I have
-SYSREG_PERI. Registers inside of each SYSREG may vary. SYREG_PERI has
-IPCLK control register, SW_CONF registers, APB register, some USER
-registers, etc, etc...
+With that driver implemented, it's not needed to do USI initialization
+in protocol drivers anymore, so that code is removed from the serial
+driver.
 
-You can use something like this to find SYSREG info in your kernel:
+Because USI driver is tristate (can be built as a module), serial driver
+was reworked so it's possible to use its console part as a module too.
+This way we can load serial driver module from user space and still have
+serial console functional.
 
-    $ find drivers/ -type f -name '*7885*' -exec grep -Hni 'SYSREG' {} \;
-    $ git grep -n --all-match -e SYSREG -e 1003 -- drivers/*7885*
+Make it impossible to build UART/SPI/I2C driver as a built-in when USIv2
+driver built as a module: USIv2 configuration must be always done before
+tinkering with particular protocol it implements.
 
-Looking at Exynos7885 downstream kernel, you have next SYSREGs:
+Design features:
+  - "reg" property contains USI registers start address (0xc0 offset);
+    it's used in the driver to access USI_CON and USI_OPTION registers.
+    This way all USI initialization (reset, HWACG, etc) can be done in
+    USIv2 driver separately, rather than duplicating that code over
+    UART/SPI/I2C drivers
+  - System Register (system controller node) and its SW_CONF register
+    offset are provided in "samsung,sysreg" property; it's used to
+    select USI function (protocol to be used)
+  - USI function is specified in "samsung,mode" property; integer value
+    is used to simplify parsing
+  - there is "samsung,clkreq-on" bool property, which makes driver
+    disable HWACG control (needed for UART to work properly)
+  - PCLK and IPCLK clocks are both provided to USI node; apparently both
+    need to be enabled to access USI registers
+  - protocol nodes are embedded (as a child nodes) in USI node; it
+    allows correct init order, and reflects HW properly
+  - USIv2 driver is a tristate: can be also useful from Android GKI
+    requirements point of view
+  - driver functions are implemented with further development in mind:
+    we might want to add some SysFS interface later for example, or
+    provide some functions to serial drivers with EXPORT_SYMBOL(), etc;
+    also another USI revisions could be added (like USIv1)
 
-    SYSREG_PERI    0x10030000
-    SYSREG_MIF0    0x10470000
-    SYSREG_MIF1    0x10570000
-    SYSREG_CPUCL0    0x10910000
-    SYSREG_CPUCL1    0x10810000
-    SYSREG_CPUCL2    0x10A10000
-    SYSREG_APM    0x11C20000
-    SYSREG_CORE    0x12010000
-    SYSREG_FSYS    0x13420000
+Changes in v2:
+  - Renamed all 'usi_v2' wording to just 'usi' everywhere
+  - Removed patches adding dependency on EXYNOS_USI for UART/I2C/SPI
+    drivers
+  - Added patch: "tty: serial: samsung: Fix console registration from
+    module"
+  - Combined dt-bindings doc and dt-bindings header patches
+  - Reworked USI driver to be ready for USIv1 addition
+  - Improved dt-bindings
+  - Added USI_V2_NONE mode value
 
-Those are base addresses for each sysreg. My wild guess, each SYSREG
-size would be at least 0x10000.
+Sam Protsenko (5):
+  dt-bindings: soc: samsung: Add Exynos USI bindings
+  soc: samsung: Add USI driver
+  tty: serial: samsung: Remove USI initialization
+  tty: serial: samsung: Enable console as module
+  tty: serial: samsung: Fix console registration from module
 
-SYSREG which contains SW_CONF registers for USI blocks is apparently
-SYSREG_PERI. And SW_CONF offsets for each USI (inside of SYSREG_PERIO)
-are:
+ .../bindings/soc/samsung/exynos-usi.yaml      | 135 +++++++++
+ drivers/soc/samsung/Kconfig                   |  14 +
+ drivers/soc/samsung/Makefile                  |   2 +
+ drivers/soc/samsung/exynos-usi.c              | 274 ++++++++++++++++++
+ drivers/tty/serial/Kconfig                    |   2 +-
+ drivers/tty/serial/samsung_tty.c              |  78 ++---
+ include/dt-bindings/soc/samsung,exynos-usi.h  |  17 ++
+ include/linux/serial_s3c.h                    |   9 -
+ 8 files changed, 483 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+ create mode 100644 drivers/soc/samsung/exynos-usi.c
+ create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
 
-    USI0: 0x2000
-    USI1: 0x2004
-    USI2: 0x2008
+-- 
+2.30.2
 
-> >
-> > Although passing one SW_CONF register via "reg" might look easier to
-> > implement, it might also bring us all sort of problems later on. And I
-> > think a good design should account for such pitfalls.
-> >
-> > As for the USI registers: I really don't think that duplicating the
-> > code for USI block reset across uart/i2c/spi drivers would help us to
-> > accomplish anything. Why those drivers should be even aware of USI
-> > reset? At least in USIv2 block, the USI registers and uart/i2c/spi
-> > registers are not mixed: they are located at different and always
-> > fixed addresses. We can benefit from that fact, and provide Device
-> > Tree structure which reflects the hardware one, separating USI control
-> > from actual protocol nodes.
-> >
-> > > For example: I'm sure this is the case on USIv2 devices too, but on
-> > > Exynos7885, different devices have USI modes configured differently.
-> > > For example a Samsung Galaxy A8 (2018) has all the USI blocks
-> > > configured as SPI while a Samsung Galaxy M20 has the first USI
-> > > configured as dual HSI2C, the second as HSI2C on the first 2 pins and
-> > > the third as HSI2C on the last 2 pins. With this way of doing
-> > > everything on USIv2 we'd need 3 disabled USIv2 nodes in the SoC DTSI
-> > > for one USI block, each for every protocol the USI block can do, all
-> > > having a single child for their protocol and each referencing the
-> > > same
-> > > sysreg (not even sure if that's even supported). Then the board DTS
-> > > could enable the USI node it needs.
-> > >
-> >
-> > If I'm following you correctly, then it's not like that. I guess
-> > Krzysztof already replied to that, so I'll probably just repeat his
-> > words. In that case you'll have something like this in your SoC dtsi
-> > (for your USIv1 case of course, because dual HSI2C is not present in
-> > USIv2):
-> >
-> > <<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>
-> > usi1 {
-> >     spi1 {
-> >     };
-> >
-> >     hsi2c1_1 {
-> >     };
-> >
-> >     hsi2c1_2 {
-> >     };
-> > };
-> >
-> > usi2 {
-> >     spi2 {
-> >     };
-> >
-> >     hsi2c2_1 {
-> >     };
-> > };
-> >
-> >
-> > usi3 {
-> >     spi3 {
-> >     };
-> >
-> >     hsi2c2_2 {
-> >     };
-> > };
-> > <<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>
-> >
-> > and then in your board dts you just have to enable corresponding usi's
-> > with proper modes, and enable chosen protocol nodes, like this:
-> >
-> > <<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>
-> > &usi1 {
-> >     status = "okay"
-> >     samsung,mode = <USI_V1_DUAL_I2C>;
-> > };
-> >
-> > &hsi2c1_1 {
-> >     status = "okay"
-> > };
-> >
-> > &hsi2c1_2 {
-> >     status = "okay"
-> > };
-> > <<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>
->
-> What got me confused is the following: Upon checking vendor drivers I
-> was under the impression that we have all 3 protocols at seperate
-> addresses, and the USI SW_CONF register kind of works like a
-> multiplexer for the USI pins to switch between protocols. Now I see
-> that I was wrong, and the addresses are in fact the same. Now on a
-> hardware level it might still work just as a multiplexer but it
-> swithches the entire address space for a whole different protocol
-> block. Dumb little misunderstanding on my part, never mind! They are on
-> the same address even on USIv1. Not sure how I haven't noticed that
-> before, I guess since I never started experimenting with USI before,
-> just looked at the code as a reference I assumed a lot of things.
->
-
-Ah, yeah, USI block actually shares most of its internal circuits
-within each protocol. So you can only choose one protocol per USI. I
-should probably add that info to the bindings doc.
-
-> >
-> > > With the downstream way we could have just one USI node and we could
-> > > add the 3 protocols it can do disabled as seperate or child nodes.
-> > > This
-> > > way the board DTS only needs to set the appropriate mode setting and
-> > > enable the protocol it needs. I'd say much better than having 3 USI
-> > > nodes for the same USI block.
-> > >
-> >
-> > Not sure if with downstream USI driver you can actually have protocols
-> > as sub-nodes in USI node though. It doesn't do anything like
-> > of_platform_populate().
->
-> It can't as far as I'm aware, I was just thinking that did seem like a
-> good idea to keep.
->
-> >
-> > Also, with this USIv2 driver you can do the same thing you described:
-> > you can have just one USI node with 3 protocols as sub-nodes (or you
-> > can even have protocol nodes outside of USI node, but I'd not
-> > recommend that).
-> >
-> > Actually I can see that it's my fault for not describing that case in
-> > bindings example. I'll make sure to do that in v2. You also got me
-> > thinking about default mode: sometimes SW_CONF reset value chooses
-> > some protocol. In that case maybe it'd useful to have something like
-> > USI_V2_DEFAULT, to tell driver to not touch SW_CONF at all.
->
-> Not sure if that's useful, I'm thinking we specify some protocol for
-> the USIs in board dts anyways, and if we don't, then we probably don't
-> use that USI block anyways, so at a minimum all protocols should be
-> probably disabled in that case, and probably the USI block as a whole
-> too. (SoC dtsi has them disabled, board dts doesn't touch them, so they
-> remain disabled). May I know how do you think a defult mode would be
-> useful?
->
-
-Yeah, you are right. I'll probably add USI_NONE configuration for 0x0.
-Default one is really of no use.
-
-> > And also I
-> > can add USI_V2_NONE while at it, so that driver can write 0x0 to
-> > SW_CONF: that way no protocol will be selected. Maybe that can be
-> > beneficial for PM reasons, if some board doesn't use some USI blocks
-> > at all. Do you think it's feasible to add those two values to
-> > dt-bindings header? And is it possible to do so in USIv1?
->
-> I think I saw some downstream driver do something similiar, that sounds
-> like a good idea. In USIv1 I can see the HSI2C driver writing 0 to the
-> SW_CONF register at pm suspend. Not sure why that's in the HSI2C driver
-> rather than the USI but I'm guessing it should do the same thing as for
-> you. I have no TRM though, so not sure. We'll probably just have to
-> assume that's how it works here, maybe someone that has access to an
-> USIv1 SoC TRM could confirm? Probably won't get any response from
-> anyone who has it though.
->
-
-I guess it's enough to have that kernel source code to figure out
-essentials. When you set 0x0, no protocol is chosen, so we can imagine
-roughly what happens inside of USI IP-core (internal circuits are not
-connected, muxes are opened, etc). As I understand, 0x0 might be the
-reset value for some SW_CONF registers, so it'll appear on PM resume,
-so one should set SW_CONF on resume again (which is done in my driver
-already).
-
-> >
-> > > Also this way is pretty USIv2 centric. Adding USIv1 support to this
-> > > driver is difficult this way because of the the lack of USI_CON and
-> > > USI_OPTION registers as a whole (so having nowhere to actually set
-> > > the
-> > > reg of the USI node to, as the only thing USIv1 has is the SW_CONF
-> > > register). In my opinion being able to use the same driver and same
-> > > device tree layout for USIv1 and USIv2 is a definite plus
-> > >
-> >
-> > Well, it's USIv2 driver after all. I never expected it can be extended
-> > for USIv1 support. If you think it can be reused for USIv1, it's fine
-> > by me. But we need to consider next things:
-> >   - rename the driver to just "usi.c" (and also its configuration
-> > symbol)
-> >   - provide different compatible for USIv1 (and maybe corresponding
-> > driver data)
-> >   - rework bindings (header and doc); make sure existing bindings are
-> > intact (we shouldn't change already introduced interfaces)
-> >   - in case of USIv1 compatible; don't try to tinker with USIv2
-> > registers
-> >   - samsung,clkreq-on won't be available in case of USIv1 compatible
-> >
-> > Because I don't have USIv1 SoC TRM (and neither do I possess some
-> > USIv1 board which I can use for test), I don't think it's my place to
-> > add USIv1 support. But I think it's possible to do so, using my input
-> > above.
-> >
-> > I can see how it might be frustrating having to do some extra work
-> > (comparing to just using the code existing in downstream). But I guess
-> > that's the difference: vendor is mostly concerned about competitive
-> > advantage and getting to market fast, while upstream is more concerned
-> > about quality, considering all use cases, and having proper design.
->
-> It's not really the extra work, I just didn't see the benefits of this
-> way, and my misunderstanding caused me to not see how this would work.
-> I never really wanted to use the downstream driver as is, but in my
-> head I was thinking that "layout" should work.
->
-> > Anyway, we can work together to make it right, and to have both
-> > IP-cores support. In the worst case, if those are too different, we
-> > can have two separate drivers for those.
-> >
-> > > The only real drawback of that way is having to add code for USIv2
-> > > inside the UART, HSI2C, and SPI drivers but in my opinion the
-> > > benefits
-> > > overweigh the drawbacks greatly. We could even make the
-> > > uart/spi/hsi2c
-> > > drivers call a helper function in the USI driver to set their
-> > > USI_CON
-> > > and USI_OPTION registers up so that code would be shared and not
-> > > duplicated. Wether this patch gets applied like this is not my
-> > > choice
-> > > though, I'll let the people responsible decide
-> > > :-)
-> > >
-> >
-> > I'd argue that there are a lot of real drawbacks of using downstream
-> > driver as is. That's why I completely re-designed and re-implemented
-> > it. Downstream driver can't be built and function as a module, it
-> > doesn't respect System Register sharing between consumers, it leads
-> > to
-> > USI reset code duplication scattered across protocol drivers (that
-> > arguably shouldn't even be aware of that), it doesn't reflect HW
-> > structure clearly, it's not holding clocks needed for registers
-> > access
-> > (btw, sysreg clock can be provided in syscon node, exactly for that
-> > reason). As Krzysztof said, it also can't handle correct probe order
-> > and deferred probes. Downstream driver might work fine for some
-> > particular use-cases the vendor has, but in upstream it's better to
-> > cover more cases we can expect, as upstream kernel is used on more
-> > platforms, with more user space variants, etc.
->
-> I do agree now, as I said a bit of a misunderstanding made me believe
-> this was wrong. (as if the addresses were different and the downstream
-> drivers worked the same way that would mean each USIv2 would have 3
-> sets of USI_CON and USI_OPTION registers for each protocol which would
-> definitely have to be handled somewhat differently.
->
-
-I've checked USIv2 driver code in Exynos7885 kernel (publicly
-available), and it looks like it would be relatively easy to add that
-to the driver I submitted. Please wait for my series to be Acked or
-applied, then you can go ahead and send your additions on top of that.
-I don't want to do that, as I don't have any HW I can validate that,
-so it doesn't make much sense.
-
-> >
-> > I don't really think protocol drivers should be aware of USI
-> > registers
-> > at all, but if we they do -- we can provide some API from USIv2
-> > driver
-> > later, with EXPORT_SYMBOL(), referencing corresponding USI instance
-> > by
-> > phandle or using some other mechanism for inter-driver communication.
-> >
-> > Of course, it's not my place to decide on patch acceptance too. But I
-> > was under the impression that maintainers would be ok with this
-> > course
-> > of actions. Also, upstream kernel seems to already follow the same
-> > design for some similar drivers. See for example
-> > drivers/soc/qcom/qcom_gsbi.c.
-> >
-> > > Anyways, soon enough I can write an USIv1 driver after I submit all
-> > > the
-> > > 7885 stuff I'm working on currently. If you want to, you can add
-> > > USIv2
-> > > support to that driver, or if an USIv2 driver is already in
-> > > upstream at
-> > > that point, if it is written in the downstream way I can add v1
-> > > support
-> > > to that, or if it's like this I'll have to make a whole seperate
-> > > driver
-> > > with a whole seperate DT structure.
-> > >
-> >
-> > If it's like you said (USIv1 only touches the SW_CONF register), I
-> > guess USIv2 driver can be extended for USIv1 case. I already provided
-> > my thoughts on such rework above. It's probably better to consult
-> > with
-> > Krzysztof first. I guess the only way to figure out if it's feasible
-> > or it's better to have separate exynos-usi-v1.c for USIv1, is to try
-> > and add USIv1 support into USIv2 driver and see how pretty or ugly it
-> > is :) Whatever the way you decide to go with, please add me to Cc
-> > list
-> > when sending USIv1 patches.
->
-> Sure, I'll try doing it on top of the final version of your driver
-> then! Sorry for the misunderstanding there!
->
-> >
-> > > Best regards,
-> > > David
->
