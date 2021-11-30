@@ -2,150 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED562C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 11:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E40C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 17:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238190AbhK3LRI (ORCPT
+        id S239029AbhK3Rq0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Nov 2021 06:17:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37504 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237918AbhK3LQ5 (ORCPT
+        Tue, 30 Nov 2021 12:46:26 -0500
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:41704 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238847AbhK3RqZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Nov 2021 06:16:57 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF3DC06175F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 03:13:36 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id t26so52760707lfk.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 03:13:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Sw2B10ZabkZdmPrt9wGzMiX2Z/pOJb9hGFk18ZvN3TQ=;
-        b=KyQMaENJy/y9ufWjeUtozEDTjYQDfgjJ/84QCGlkPy8EDG1tSFROm5+nnIOverfwwl
-         DdldrQB6r+hLkqulPqffzTt8mYrayukNi+gOo86hTUg61GGbRlXMqpPLP18kgVr4B6qC
-         se5EYcpoF8AzAFKlmtXyELufXHGw8wgTD6wi7ral3bOxLBgOell2JWUM3VzvcqTgLY2Z
-         6aD2R4UYc6HlD+ga4w6EVkGxIhYKK5ujr5sRlvNq+CUGEBDpAEC0SUvfhzGAIKpoQgMV
-         D9xRZZPmYXsr/ACwNDo+QT52Esxr54rY3wI1EFpifeGU3VIL4uqDic7t5q4k73lQg7pg
-         SPGQ==
+        Tue, 30 Nov 2021 12:46:25 -0500
+Received: by mail-oi1-f175.google.com with SMTP id u74so42743562oie.8;
+        Tue, 30 Nov 2021 09:43:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Sw2B10ZabkZdmPrt9wGzMiX2Z/pOJb9hGFk18ZvN3TQ=;
-        b=GIZ6jPEutDF0SuzDCj5XlIVWlF8HTha7KB7y3yZQlkcUz7wSUUfjvgSk8BoyBcOLkW
-         tEOa2fKvae0T27zfqbXOxNIWA6UiHQ4wO2jy92Q7xt9bIuQhhWIJx3wZCy1p9hDaz8G3
-         x0FIC+OviwLqViLhMmE26TwaVLnPCVxh318P4PFHiUrUEOvTQEz//9RO0Ty6Lg6ZzaSS
-         cd1eOu1xJJ39tdwYFFoQmrnfdt3UbIR7CANsoNJQDcMneiQxHPCSGEEHpljkbESEpUXF
-         L6xTkpJmXxCUm8bQG3b9WHfj82beodVSJlV9TILQPmyg2tCnalgqUeZkkmdb8ro3RdkX
-         goVw==
-X-Gm-Message-State: AOAM530W93/B9Xo7LOqIvzPal+mZp5TQZBPuBniiftCKlyLiq6z7iLY1
-        yFKiWav9rHmuDmh15AHsBFiiuQ==
-X-Google-Smtp-Source: ABdhPJwSJTHwzr6Ih07eZr4IZE7hEJcEmFr6lYjOOM69O7BbJUiCHOOLbYNE1SiwRIixP/tjCrzb5Q==
-X-Received: by 2002:a05:6512:310e:: with SMTP id n14mr55417635lfb.475.1638270815283;
-        Tue, 30 Nov 2021 03:13:35 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id m24sm1678428lfc.208.2021.11.30.03.13.34
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=ybArtp5NAo1h9pHzQHYt4+Qs6w6iIvokhHnIINTzz0I=;
+        b=qftcKr4sOsBIREMtVai33g8u791raNbou+On9oUBMNdjgb19mw06ybGKdw8ACaqm+T
+         sdvFJ+Tc0bcU4cdMgPyGc7ZQjQ5wU0r2UGkkaKFt/4eo67cLCYJHz7akQq4NfzoAHXOo
+         lGame3nv6g49nxTuOz3peByCEgcK6GtFuOi/IMsoSbu+V87kQK35k68TSWpzqb4eGDdm
+         REKGlhfilQMygH0bR5dgz/DCeR1aKVUItplASTrq4yGZDmacq163qN9cIFp6tv479djs
+         npceBK6Ks9sta4jmdVZ+SnrXU5vsR3Ohzlpny3BJ4+soxDGU2cPm+E0e+xcG2IcKdXGa
+         7LMw==
+X-Gm-Message-State: AOAM533AaRDR2LJ4Om1NeR3MROi/pFId4cvt50wrb77Ts/uFlGZv/P9v
+        gPaOrTcYxHyPanj/IqW1Qg==
+X-Google-Smtp-Source: ABdhPJxpfwZHaJJsQJrxxxdGKQhKNwmK7qoAn5Ox2tfeIPsdhQ8/yFLYB/VG+xooU2jW+OEAPMZFqg==
+X-Received: by 2002:a05:6808:144f:: with SMTP id x15mr329339oiv.157.1638294185979;
+        Tue, 30 Nov 2021 09:43:05 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id v19sm3208026ott.13.2021.11.30.09.43.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 03:13:34 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Tue, 30 Nov 2021 09:43:05 -0800 (PST)
+Received: (nullmailer pid 2713643 invoked by uid 1000);
+        Tue, 30 Nov 2021 17:43:04 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
+        linux-serial@vger.kernel.org,
         Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 RESEND 5/5] tty: serial: samsung: Fix console registration from module
-Date:   Tue, 30 Nov 2021 13:13:25 +0200
-Message-Id: <20211130111325.29328-6-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211130111325.29328-1-semen.protsenko@linaro.org>
-References: <20211130111325.29328-1-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        David Virag <virag.david003@gmail.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20211130111325.29328-2-semen.protsenko@linaro.org>
+References: <20211130111325.29328-1-semen.protsenko@linaro.org> <20211130111325.29328-2-semen.protsenko@linaro.org>
+Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
+Date:   Tue, 30 Nov 2021 11:43:04 -0600
+Message-Id: <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On modern Exynos SoCs (like Exynos850) the UART can be implemented as a
-part of USI IP-core. In such case, USI driver is used to initialize USI
-registers, and it also calls of_platform_populate() to instantiate all
-sub-nodes (e.g. serial node) of USI node. When serial driver is
-built-in, but USI driver is a module, and CONFIG_SERIAL_SAMSUNG_CONSOLE
-is enabled, next call chain will happen when loading USI module from
-user space:
+On Tue, 30 Nov 2021 13:13:21 +0200, Sam Protsenko wrote:
+> Add constants for choosing USIv2 configuration mode in device tree.
+> Those are further used in USI driver to figure out which value to write
+> into SW_CONF register. Also document USIv2 IP-core bindings.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+> Changes in v2:
+>   - Combined dt-bindings doc and dt-bindings header patches
+>   - Added i2c node to example in bindings doc
+>   - Added mentioning of shared internal circuits
+>   - Added USI_V2_NONE value to bindings header
+> 
+>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
+>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
+>  2 files changed, 152 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
+> 
 
-    usi_init
-      v
-    usi_probe
-      v
-    of_platform_populate
-      v
-    s3c24xx_serial_probe
-      v
-    uart_add_one_port
-      v
-    uart_configure_port
-      v
-    register_console
-      v
-    try_enable_new_console
-      v
-    s3c24xx_serial_console_setup
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-But because the serial driver is built-in, and
-s3c24xx_serial_console_setup() is marked with __init keyword, that
-symbol will discarded and long gone by that time already, causing failed
-paging request.
+yamllint warnings/errors:
 
-That happens during the next config combination:
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dts:35.39-42.15: Warning (unique_unit_address): /example-0/usi@138200c0/serial@13820000: duplicate unit-address (also used in node /example-0/usi@138200c0/i2c@13820000)
+Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dt.yaml:0:0: /example-0/usi@138200c0/i2c@13820000: failed to match any schema with compatible: ['samsung,exynosautov9-hsi2c']
 
-    EXYNOS_USI=m
-    SERIAL_SAMSUNG=y
-    SERIAL_SAMSUNG_CONSOLE=y
+doc reference errors (make refcheckdocs):
 
-That config should be completely possible, so rather than limiting
-SERIAL_SAMSUNG choice to "m" only when USI=m, remove __init keyword for
-all affected functions.
+See https://patchwork.ozlabs.org/patch/1561571
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
-  - This patch is added in v2
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
- drivers/tty/serial/samsung_tty.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 61ccb359620a..d002a4e48ed9 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2500,7 +2500,8 @@ s3c24xx_serial_console_write(struct console *co, const char *s,
- 	uart_console_write(cons_uart, s, count, s3c24xx_serial_console_putchar);
- }
- 
--static void __init
-+/* Shouldn't be __init, as it can be instantiated from other module */
-+static void
- s3c24xx_serial_get_options(struct uart_port *port, int *baud,
- 			   int *parity, int *bits)
- {
-@@ -2563,7 +2564,8 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
- 	}
- }
- 
--static int __init
-+/* Shouldn't be __init, as it can be instantiated from other module */
-+static int
- s3c24xx_serial_console_setup(struct console *co, char *options)
- {
- 	struct uart_port *port;
--- 
-2.30.2
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
