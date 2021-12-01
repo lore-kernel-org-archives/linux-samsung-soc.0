@@ -2,88 +2,85 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBB0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Dec 2021 10:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3F9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Dec 2021 15:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348833AbhLAK6S (ORCPT
+        id S1351069AbhLAPlm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Dec 2021 05:58:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52936 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbhLAK6R (ORCPT
+        Wed, 1 Dec 2021 10:41:42 -0500
+Received: from smtp1.axis.com ([195.60.68.17]:57178 "EHLO smtp1.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351054AbhLAPll (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Dec 2021 05:58:17 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F93C061574;
-        Wed,  1 Dec 2021 02:54:56 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id t5so100233644edd.0;
-        Wed, 01 Dec 2021 02:54:56 -0800 (PST)
+        Wed, 1 Dec 2021 10:41:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OvJoAjsiwp/bIqgJqHb/Ct3NhVVdCidlBQIJ1jfhjxs=;
-        b=Ta5UwXQvxUApA7IqpY3NDy68+xmL0+wr28tsdHISkNUFTGtfo7ptrUvzPoouoG4Nx2
-         osPBXDez94IdJ/Ji8qVLfg69ULnlL2GEWjuFInCCKrQbi65AUPgw6NbEIRVdzbIEYR7c
-         x0Kx4WQK+IbDaVrUC13ojGgd4ckfNAl8tl3vooROqTe/KKn31IOCSbXfp8NcdnqCbwNZ
-         HhRk+c3bxQxbAaQ1j+L9xwtBKR1zEm0vc9H1nR8oDadA8hNUjk7SQDDuOCI+SFCINZda
-         zEvhNiVGZOXCBPwzExF5WQL8TDmt6z++I6hoKF3dxWZ9NbfFynMR8FEXS5ipoSL6ZrI0
-         vZCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OvJoAjsiwp/bIqgJqHb/Ct3NhVVdCidlBQIJ1jfhjxs=;
-        b=yqd5SbaBrEzWwBTYSkqe+cZsDB/Xunii04SG5bulXfXrMS2nYz564EbCKjuaumqD6k
-         n6796NcGaKfKpnUVxsR2hsAgifMIcvl0jpdEqAkG5mWwn2a6GyNZ299xSZwDtD1FsBz3
-         SthpDFng+T66beaxVaqGNEK4aVOOxwi7WPzrcjGH3Z7DmzDWl4/vNyS7lvf+tjryGQTF
-         ZkQp9U9MNvX4CBYdvmeieW/qDP3vr84wCVDBopp0iQ41HxLN5uyfrTmISHvG3F/MvmYD
-         eBQt3d0S7EbPd3zCiRAwz5N7kZIqG60wycopw7yn+8bvmqa0INXr2IjQUtqaMU/OFJ/s
-         D1hg==
-X-Gm-Message-State: AOAM533zJeUFcbcLubPTxb5VDJt1v/84cyNf4gxYOQ7feuhFCylWUL2T
-        b8kMm92cdWlcZXAZYEi2NH+iTtKHd5y/FbioYc0=
-X-Google-Smtp-Source: ABdhPJyMWHVjrLETt3XzlgtJwBoFDiG2sOhLr7LzkkX2v2atvCCOmIF8fnH8GGIVBIfk+JoF72F7zcD7q9iN3fMwxgw=
-X-Received: by 2002:aa7:db8d:: with SMTP id u13mr7199099edt.111.1638356095305;
- Wed, 01 Dec 2021 02:54:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20211130111325.29328-1-semen.protsenko@linaro.org> <20211130111325.29328-4-semen.protsenko@linaro.org>
-In-Reply-To: <20211130111325.29328-4-semen.protsenko@linaro.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 1 Dec 2021 12:54:19 +0200
-Message-ID: <CAHp75Vd8PFhs8_Ji5x1X2Ph5ey+8JrRuneWCrG=5a+52Lh-ptQ@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 3/5] tty: serial: samsung: Remove USI initialization
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+  d=axis.com; q=dns/txt; s=axis-central1; t=1638373101;
+  x=1669909101;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gRz4HOaI2cGK+bxLSJG/rA1CRIX2yJP88+KYxiGCaX0=;
+  b=j49QbukY6BckPfsnWMnYywPJv7l5/ACIr10GMDkO+QCUND8dozZAnzKj
+   a3KYwlEsDoaAHsvniDlMGfXPWN+QzlK2SXmfezY9QpRpauDj3yktmqgUk
+   FwqCOsTm9wEPoX6eRYJZj0DTe2NhjSMMQJChlmDHTsUhIYIJvMj5QF52h
+   DNIkpJKB9Yr+mSYlZe+RbFxFPznzaQImLYVnAocIKnTgn9ldJkJm2EfVD
+   R2Ggo7OZ/rHUkyMdfgmmxg1l1+TZWZ9giZXdbs3RJq3OVpynSYuaEwwF7
+   9uZFroDEf5E01MGfYjC278ZuphUbZjT6YjfUsG+zvgeVQzwCdmF4yaIbn
+   A==;
+From:   =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+CC:     Doug Anderson <dianders@google.com>, <kernel@axis.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
+Subject: [PATCH 0/4] Add ARTPEC-8 support to DWMMC controller
+Date:   Wed, 1 Dec 2021 16:38:00 +0100
+Message-ID: <20211201153804.27655-1-marten.lindahl@axis.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 1, 2021 at 12:42 AM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
->
-> USI control is now extracted to dedicated USI driver. Remove USI related
+Hi!
 
-the dedicated
+The ARTPEC-8 SoC has a DWMMC controller that is compatible with the
+Exynos 7 version v2.70a. The main differences from Exynos 7 is that it
+does not support HS400 and has an extended data read timeout. To run
+this controller we need to add compatibility for ARTPEC-8, because we
+need a quirk to separate the configuration of the TMOUT register from
+the non ARTPEC-8 versions.
 
-> code from serial driver to avoid conflicts and code duplication.
+This patchset is dependent on 2 changes that has been added to the mmc
+git next branch, but has not yet been merged to mainline:
 
-Would it break run-time bisectability?
-If so, why is it not a problem?
+Patch 2 of this patchset depends on commit 0e6f2c4c2072b ("mmc: dw_mmc:
+add common capabilities to replace caps").
 
+Patch 3 of this patchset depends on commit d5bc33487eab3 ("mmc: dw_mmc:
+Allow lower TMOUT value than maximum").
+
+Kind regards
+Mårten Lindahl
+
+
+Mårten Lindahl (4):
+  dt-bindings: mmc: exynos-dw-mshc: Add support for ARTPEC-8
+  mmc: dw_mmc-exynos: Add support for ARTPEC-8
+  mmc: dw_mmc: Add quirk for extended data read timeout
+  mmc: dw_mmc: Do not wait for DTO in case of error
+
+ .../bindings/mmc/exynos-dw-mshc.txt           |  2 +
+ drivers/mmc/host/dw_mmc-exynos.c              | 52 +++++++++++++++----
+ drivers/mmc/host/dw_mmc.c                     | 41 +++++++++++++--
+ drivers/mmc/host/dw_mmc.h                     |  7 +++
+ 4 files changed, 87 insertions(+), 15 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
