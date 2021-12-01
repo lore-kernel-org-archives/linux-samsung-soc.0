@@ -2,140 +2,151 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D851C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Nov 2021 20:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E547C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Dec 2021 02:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343584AbhK3UH1 (ORCPT
+        id S1346140AbhLACdR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Nov 2021 15:07:27 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35188
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240034AbhK3UH0 (ORCPT
+        Tue, 30 Nov 2021 21:33:17 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:33298 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346141AbhLACdQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Nov 2021 15:07:26 -0500
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 736F13F1F7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 20:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638302645;
-        bh=fw6PzsUlrYkA4VQaJdC32HD2E/40nvvVW3E5iBZZ8sw=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=D44YIkTxWqwQifW6mQtA3mvIIotwVBf3/L//41gQAcpFO0gO0e2lLKcdGf80Io0I+
-         A4tObL84HgkB60VEFTEuN0FEOc6B45mHHW6u4QXVzz6T17kHupyGoFKxLpqtQ4wb4N
-         GLoC9cea1lioI4q/5W53oGwln5Wsba84ZEY1d9rIQVQbBCP+LsylGxvQ60OUO3qKMf
-         3/6XXSzoFGnidY3yzcza60RSoa2p+xA5OJLE8Yppb/LJjAMeCTS7/WZfnoSpSuqBCm
-         WbaCjjtljH/UWjeZIm0jJfBwVoOd/K8ieR7bc5iUMcHRIMCZsNmJzjYLxcL41u62lu
-         i3sZrPOLkCEBA==
-Received: by mail-lj1-f198.google.com with SMTP id y11-20020a2e978b000000b00218df7f76feso7969858lji.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2021 12:04:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=fw6PzsUlrYkA4VQaJdC32HD2E/40nvvVW3E5iBZZ8sw=;
-        b=EdU0nZiMizBKjR+RS/62pJwgADeZFqUN/geNniBC+MhZrnP623Y2OtdRUSjU5Q8+oa
-         sfhAimqeIXVHi2sSR/oCkDzEK2b3fK9vlOQgVxiCVCt9oHjg17FwTzAukFcgIePZWhOT
-         I06A+V8TuC8yrDB6C0FkNiHhckBdrZUtDKmVQVxaTxf8q5rmoN/FPQuPxeKZEON/vGNW
-         tm4mFBd7GkHB/PmyT8ozaFh/ZlA9L56iQu0CK2h9tS3shZfkEV4Rmt/QXpgHcUAKPB/U
-         uKPLgvzFy6ejeD1mmcCbBPFSUOgqzIss5FAOf8dnU7rK6odQEBxjdNomAtGLxWpK5dVE
-         l2vg==
-X-Gm-Message-State: AOAM533wrdVPacLCzM3krY2+x2NdD02p8TN7PhTMibLsaY3TFe55rshi
-        mSOtiv8xsAMKMmf/BcAmI1jEdMhEjmH9esoOT7X3ZZPJCcxzD3RLAXkSSe8oz/Ubg4QItig9n4U
-        stQrBdRgH4YnX9niNMGIXBi9B2ZmxF5uZucMfAhPBqa9kMF/o
-X-Received: by 2002:a05:6512:1313:: with SMTP id x19mr1315896lfu.279.1638302642882;
-        Tue, 30 Nov 2021 12:04:02 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwFLghjinwu+ez5oEJYvHxibl/oZqNQ9vjDrtAMuAhvpEiBodlkvDGbx0fxE9dNxNZ4Hjs+pg==
-X-Received: by 2002:a05:6512:1313:: with SMTP id x19mr1315862lfu.279.1638302642618;
-        Tue, 30 Nov 2021 12:04:02 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id v17sm1816842lfd.287.2021.11.30.12.04.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Nov 2021 12:04:02 -0800 (PST)
-Message-ID: <4b5bebb0-ed74-8132-1e6b-cb7cbc21439c@canonical.com>
-Date:   Tue, 30 Nov 2021 21:04:01 +0100
+        Tue, 30 Nov 2021 21:33:16 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20211201022954epoutp03d40a8d04775c1f46bd9ba5c7d1029fe2~8gKE7AA5Z0770307703epoutp03X
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Dec 2021 02:29:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20211201022954epoutp03d40a8d04775c1f46bd9ba5c7d1029fe2~8gKE7AA5Z0770307703epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1638325794;
+        bh=f0bhbVDABH/keU3Qir8aHIW3gODMDiP8eVq5hhBDS8k=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=TBEWxXNf34FoHchRnNKlJvbSn8lwuzUs+ZVLtVcA+/g5Q5JqjVH6SDR/JQTQs4sVn
+         QDNqKZ7SmACL3mQ5uAe2F9ZdpDusJH8jtf9ecZ5HfstSw5RrnD3b1VAEvi5ukx8XEh
+         GiYhGv0Yv6KoRaMgwjuCsEraFMIHLYLnOUQjYdVo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20211201022953epcas1p40ce3fe155004d33477b9bc4d7c3ce227~8gKEgAiMN2079020790epcas1p4h;
+        Wed,  1 Dec 2021 02:29:53 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.234]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4J3jj51QGzz4x9Q0; Wed,  1 Dec
+        2021 02:29:45 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        20.12.21932.0BDD6A16; Wed,  1 Dec 2021 11:28:00 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20211201022937epcas1p43cd1c33af30edc7c31d9428307c329d5~8gJ06CX510855508555epcas1p4F;
+        Wed,  1 Dec 2021 02:29:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211201022937epsmtrp1efc26ce946d955a1e6a5fb76aaa4c829~8gJ05Ue1e1086010860epsmtrp1Q;
+        Wed,  1 Dec 2021 02:29:37 +0000 (GMT)
+X-AuditID: b6c32a38-929ff700000255ac-ee-61a6ddb07683
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        41.53.29871.11ED6A16; Wed,  1 Dec 2021 11:29:37 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20211201022937epsmtip1f86ffd1daea65c0cd910c03b56686ea6~8gJ0xHXRy2915729157epsmtip1f;
+        Wed,  1 Dec 2021 02:29:37 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] drm/exynos: drop the use of label from
+ exynos_dsi_register_te_irq
+Date:   Wed,  1 Dec 2021 11:40:39 +0900
+Message-Id: <20211201024039.226386-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI
- bindings
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        linux-serial@vger.kernel.org,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        David Virag <virag.david003@gmail.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-References: <20211130111325.29328-1-semen.protsenko@linaro.org>
- <20211130111325.29328-2-semen.protsenko@linaro.org>
- <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7bCmvu6Gu8sSDY7uMba48vU9m8Wk+xNY
+        LGac38dk8ar5EZsDi8fiPS+ZPO53H2fy6NuyitHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRb
+        Je/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoJVKCmWJOaVAoYDE4mIlfTubovzSklSF
+        jPziElul1IKUnALTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMP0v+Mhds4a5o6PvA3sB4lLOL
+        kZNDQsBEYuXnp0xdjFwcQgI7GCW6dh1nAUkICXxilDi6VBwi8Y1RYkHnR2aYjsUHXzJCJPYy
+        Skxqv8QG4XxhlFi34As7SBWbgKrExBX32UBsEQFlib8TVzGC2MwC2RITPpwBs4UFQiSmfG5g
+        BbFZgOrfbXsF1MvBwStgJfGkvRhimbzEzEvfwUbyCghKnJz5hAVijLxE89bZzCB7JQTWsUtM
+        f7qOBaLBRaLn+2yoS4UlXh3fwg5hS0m87G9jh2hYxShxe95nqO71jBLNL96xQVQZS+xfOpkJ
+        5ApmAU2J9bv0IcKKEjt/z4V6gE/i3dceVpASCQFeiY42IYgSJYljF28wQtgSEheWTGSDKPGQ
+        6F5uCWIKCcRKbP9iOIFRfhaSb2Yh+WYWwtoFjMyrGMVSC4pz01OLDQtM4HGanJ+7iRGc6LQs
+        djDOfftB7xAjEwfjIUYJDmYlEV75mcsShXhTEiurUovy44tKc1KLDzGaAoN3IrOUaHI+MNXm
+        lcQbmlgamJgZGZtYGJoZKonzPvefnigkkJ5YkpqdmlqQWgTTx8TBKdXAFDDRtN1i2+sXXMu0
+        7aylP/tP/2x4dHr/1Y9dGc6mKwwYrj0zSuQwPO9i/1Lb5POWBycWrla74dLCdP3Ecs67U0PO
+        JRll338X2bjzrZ9wFd8ztkl7pmoFJjhwTyw57y2g+Kzx7ansCTclDU7MKZ3h6VmbHz2noT5X
+        699+q1XXGjindPNmqm/Z8cbx9/RJdd1ni93mXPzssHTzm4N+17Q7hK917DXaGbL1+ML3E6bc
+        W2QczirduuxltbnI1nzxvBjV5g4rH4XQj6UtHUbqex2UX/L66nAW52zdcVVA7ajV48f5DLY8
+        v9/NTP66vOEU2+uXexdstTG9wLc0YYuX7J19N7wZAmcv2BY5ZcXedyXmxUosxRmJhlrMRcWJ
+        ACl+AYn9AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGLMWRmVeSWpSXmKPExsWy7bCSnK7gvWWJBmeucVlc+fqezWLS/Qks
+        FjPO72OyeNX8iM2BxWPxnpdMHve7jzN59G1ZxejxeZNcAEsUl01Kak5mWWqRvl0CV8afJX+Z
+        C7ZwVzT0fWBvYDzK2cXIySEhYCKx+OBLRhBbSGA3o8S6FRFdjBxAcQmJLVs5IExhicOHiyEq
+        PjFKfNiSDGKzCahKTFxxnw3EFhFQlvg7cRXYFGaBXIm/Rz+yg9jCAkESb08uZgKxWYDq3217
+        xQ4yklfASuJJezHEAfISMy99ByvnFRCUODnzCQvEGHmJ5q2zmScw8s1CkpqFJLWAkWkVo2Rq
+        QXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZw0Glp7mDcvuqD3iFGJg7GQ4wSHMxKIrzyM5cl
+        CvGmJFZWpRblxxeV5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cB0pKal7tTm
+        CWc/O1RPT1yq1n3mcOm6ssMsLwX5zpw9HeDn8P3pxvvbXn59GV96sEy6fDmToUbVsoBYBdNT
+        Sd2RTKdKgnpbLrg9WbKa4/anBTZNDZ3diraxXEu/8ryY+PCOkUyXTO7so9J2JiKzJgjXfTec
+        vf5NpOYy7laLiOOrmOvq5+4rn5gfF9eXkW77oHcKX4bD3V62xdaO3BFh/Z5+WTa60uuStfZy
+        njj4X6L2/fP6wsdVj1m/h9w19bGwDZ23yujmd61jH+yvndoiI/5J4DlPpCBnumZBnuc++2vv
+        34WcCI+ZunjXEvMU2faiH33blm37cP9QveW+WdMXdRybsyxJnjuU31Kft+auko8SS3FGoqEW
+        c1FxIgANpP/DqQIAAA==
+X-CMS-MailID: 20211201022937epcas1p43cd1c33af30edc7c31d9428307c329d5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20211201022937epcas1p43cd1c33af30edc7c31d9428307c329d5
+References: <CGME20211201022937epcas1p43cd1c33af30edc7c31d9428307c329d5@epcas1p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/11/2021 18:43, Rob Herring wrote:
-> On Tue, 30 Nov 2021 13:13:21 +0200, Sam Protsenko wrote:
->> Add constants for choosing USIv2 configuration mode in device tree.
->> Those are further used in USI driver to figure out which value to write
->> into SW_CONF register. Also document USIv2 IP-core bindings.
->>
->> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->> ---
->> Changes in v2:
->>   - Combined dt-bindings doc and dt-bindings header patches
->>   - Added i2c node to example in bindings doc
->>   - Added mentioning of shared internal circuits
->>   - Added USI_V2_NONE value to bindings header
->>
->>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
->>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
->>  2 files changed, 152 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
->>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dts:35.39-42.15: Warning (unique_unit_address): /example-0/usi@138200c0/serial@13820000: duplicate unit-address (also used in node /example-0/usi@138200c0/i2c@13820000)
+Dropped the use of 'out' label from exynos_dsi_register_te_irq function
+because the label isn't needed. This patch returns an error in each
+error case directly not going to 'out' label.
 
-Rob,
+With this patch build warning[1] is also fixed, which was reported by
+kernel test robot <lkp@intel.com>
 
-The checker complains about two nodes with same unit-address, even
-though the node name is different. Does it mean that our idea of
-embedding two children in USI and having enabled only one (used one) is
-wrong?
+[1] https://www.spinics.net/lists/dri-devel/msg323803.html
 
-  usi0: usi@138200c0 {
-    // enabled device/child
-    serial@13820000 {
-      status = "okay";
-    };
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-    // disabled device, keep for reference and for boards which
-    // would like to use it
-    i2c@13820000 {
-      status = "disabled";
-    };
-  };
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index b0b1acb7e712..32a36572b894 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1338,7 +1338,7 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
+ 	if (IS_ERR(dsi->te_gpio)) {
+ 		dev_err(dsi->dev, "gpio request failed with %ld\n",
+ 				PTR_ERR(dsi->te_gpio));
+-		goto out;
++		return PTR_ERR(dsi->te_gpio);
+ 	}
+ 
+ 	te_gpio_irq = gpiod_to_irq(dsi->te_gpio);
+@@ -1348,11 +1348,10 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
+ 	if (ret) {
+ 		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
+ 		gpiod_put(dsi->te_gpio);
+-		goto out;
++		return ret;
+ 	}
+ 
+-out:
+-	return ret;
++	return 0;
+ }
+ 
+ static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
+-- 
+2.25.1
 
-
-Best regards,
-Krzysztof
