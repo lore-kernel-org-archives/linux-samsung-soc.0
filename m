@@ -2,103 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECF2C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Dec 2021 15:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E679EC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Dec 2021 16:20:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351086AbhLAPlw (ORCPT
+        id S1349828AbhLAQX1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Dec 2021 10:41:52 -0500
-Received: from smtp2.axis.com ([195.60.68.18]:17640 "EHLO smtp2.axis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1350676AbhLAPlv (ORCPT
+        Wed, 1 Dec 2021 11:23:27 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:45418 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349782AbhLAQX0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Dec 2021 10:41:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1638373111;
-  x=1669909111;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NeRpLsWyPIeNTXYAGIU96z1OBWXWfVQIvsePl4gHj9M=;
-  b=fHASomY4GU3ZzBQf75XYjJSL/37kC//KhEbSXDndOjDr2prdja1/2bSc
-   3WVT1ITxEA+QNLMP3EHjW6qN+lW0XJtKz5f3CH8bLmBH09PsAKaEU8UB4
-   89K4/JFLdIhkwaoUkhKmACGIyhAfwN2+QmGeS4DvLFz74mvMTmj0UsH6v
-   0BW9In852l7J69hUdg1DL0YMmrxBJ08h1XUJNrmur60K6nvSdDrCaOXIL
-   RbOLtcTbTb6DuXn3/pMJkYWHTGsAoFNEu6lb9fyF7CdHuE0Up3pPgU6V5
-   1ii7sUNarz5+k4/TZyF2C7tpODHW6ipIuEnzqU+xuMTsY9PTkMCvVJDDv
-   w==;
-From:   =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-CC:     Doug Anderson <dianders@google.com>, <kernel@axis.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
-Subject: [PATCH 4/4] mmc: dw_mmc: Do not wait for DTO in case of error
-Date:   Wed, 1 Dec 2021 16:38:04 +0100
-Message-ID: <20211201153804.27655-5-marten.lindahl@axis.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20211201153804.27655-1-marten.lindahl@axis.com>
-References: <20211201153804.27655-1-marten.lindahl@axis.com>
+        Wed, 1 Dec 2021 11:23:26 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 90F00B82029;
+        Wed,  1 Dec 2021 16:20:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49C7CC53FD3;
+        Wed,  1 Dec 2021 16:20:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638375601;
+        bh=chsce8M78mn7kNe7wC0N7oHoRMbGOLek3debSSI71+U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cOHW0jivGD0sfUuHQrNLVKjiJehBs8ZawhYoqnMartRIDeDkWgV74ilz7OXDlVCkN
+         +F0ifWgvBBNNuAq5MPgxaSbi8Vle1M4cJJq7s+e8f8qdRC+CummIDpIYL+EQ13rO+o
+         3TqlCrkrtINshCtdxo1+qycfrp6K25s/uZ8ltNjv2/1H5x2ARqIof1dw7YJNEuCjmj
+         bEdC9jgx0i2b2PqMRUzDoSGktdmu+xzt0Bt3Cc2qFJuqAdDFfMGBxUnpA0YhLG4jEN
+         2zikKuE6iMcOTjWICvatacH9slk7rtuWYMJCVlhaiqYW9fs1itREqj6w/KjqoTap5i
+         Xno431a5VIOrA==
+Received: by mail-ed1-f48.google.com with SMTP id g14so104034017edb.8;
+        Wed, 01 Dec 2021 08:20:01 -0800 (PST)
+X-Gm-Message-State: AOAM530XBdkTiFZIdxAn2liuwr6EUuHRVV3CGC8WCVTAMg+hvqdD/VlT
+        WkvfV6mm8C+TEAhU7drq5Si30BjD1kwr8TkFdA==
+X-Google-Smtp-Source: ABdhPJwKFJXoFi/lkb4UGy5sVWQhcLaVrvx8NVkmo+iI+WLXt6vMQKMq3z2rVrv63RjM2MV7aMTzUWqe4fCNNlPByts=
+X-Received: by 2002:a05:6402:35ce:: with SMTP id z14mr9697479edc.197.1638375599265;
+ Wed, 01 Dec 2021 08:19:59 -0800 (PST)
 MIME-Version: 1.0
+References: <20211130111325.29328-1-semen.protsenko@linaro.org>
+ <20211130111325.29328-2-semen.protsenko@linaro.org> <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
+ <4b5bebb0-ed74-8132-1e6b-cb7cbc21439c@canonical.com>
+In-Reply-To: <4b5bebb0-ed74-8132-1e6b-cb7cbc21439c@canonical.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 1 Dec 2021 10:19:47 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJb4nMBoGLcf-bKpi5kEE+zXQ=dfo5JSBhrqPFeLnCsHw@mail.gmail.com>
+Message-ID: <CAL_JsqJb4nMBoGLcf-bKpi5kEE+zXQ=dfo5JSBhrqPFeLnCsHw@mail.gmail.com>
+Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        linux-serial@vger.kernel.org,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        David Virag <virag.david003@gmail.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When running the ARTPEC-8 DWMMC IP version, and a data error interrupt
-comes during a data read transfer, there is no guarantee for the data
-transfer over interrupt (DTO) to come within the specified data timeout.
-This case is handled by the dto_timer handler which will complete the
-request with the comment:
+On Tue, Nov 30, 2021 at 2:04 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 30/11/2021 18:43, Rob Herring wrote:
+> > On Tue, 30 Nov 2021 13:13:21 +0200, Sam Protsenko wrote:
+> >> Add constants for choosing USIv2 configuration mode in device tree.
+> >> Those are further used in USI driver to figure out which value to write
+> >> into SW_CONF register. Also document USIv2 IP-core bindings.
+> >>
+> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >> ---
+> >> Changes in v2:
+> >>   - Combined dt-bindings doc and dt-bindings header patches
+> >>   - Added i2c node to example in bindings doc
+> >>   - Added mentioning of shared internal circuits
+> >>   - Added USI_V2_NONE value to bindings header
+> >>
+> >>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
+> >>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
+> >>  2 files changed, 152 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> >>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
+> >>
+> >
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> >
+> > yamllint warnings/errors:
+> >
+> > dtschema/dtc warnings/errors:
+> > Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dts:35.39-42.15: Warning (unique_unit_address): /example-0/usi@138200c0/serial@13820000: duplicate unit-address (also used in node /example-0/usi@138200c0/i2c@13820000)
+>
+> Rob,
+>
+> The checker complains about two nodes with same unit-address, even
+> though the node name is different. Does it mean that our idea of
+> embedding two children in USI and having enabled only one (used one) is
+> wrong?
 
- /*
-  * If DTO interrupt does NOT come in sending data state,
-  * we should notify the driver to terminate current transfer
-  * and report a data timeout to the core.
-  */
+IIRC, we allow for this exact scenario, and there was a change in dtc
+for it. So I'm not sure why this triggered.
 
-But since the ARTPEC-8 DWMMC IP version, supports an extended TMOUT
-register which allows longer timeouts than the non ARTPEC-8 version
-does, waiting for the dto_timer to complete the request in error cases
-may cause the request to take significantly longer time than necessary.
-This is specifically true for the failing steps during tuning of a
-device.
-
-Fix this by completing the request when the error interrupt comes.
-
-Signed-off-by: Mårten Lindahl <marten.lindahl@axis.com>
----
- drivers/mmc/host/dw_mmc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 45ea9fd97a6a..d6b76f47b1a2 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -2777,11 +2777,19 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
- 		if (pending & DW_MCI_DATA_ERROR_FLAGS) {
- 			spin_lock(&host->irq_lock);
- 
-+			if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
-+				del_timer(&host->dto_timer);
-+
- 			/* if there is an error report DATA_ERROR */
- 			mci_writel(host, RINTSTS, DW_MCI_DATA_ERROR_FLAGS);
- 			host->data_status = pending;
- 			smp_wmb(); /* drain writebuffer */
- 			set_bit(EVENT_DATA_ERROR, &host->pending_events);
-+
-+			if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
-+				/* In case of error, we cannot expect a DTO */
-+				set_bit(EVENT_DATA_COMPLETE, &host->pending_events);
-+
- 			tasklet_schedule(&host->tasklet);
- 
- 			spin_unlock(&host->irq_lock);
--- 
-2.20.1
-
+Rob
