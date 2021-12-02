@@ -2,101 +2,224 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D25C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Dec 2021 08:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21FCC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Dec 2021 08:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356140AbhLBIcw (ORCPT
+        id S1345719AbhLBIm6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 03:32:52 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:47516
+        Thu, 2 Dec 2021 03:42:58 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:47860
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1356126AbhLBIcv (ORCPT
+        by vger.kernel.org with ESMTP id S1345634AbhLBImz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Dec 2021 03:32:51 -0500
+        Thu, 2 Dec 2021 03:42:55 -0500
 Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AB38640013
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Dec 2021 08:29:28 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8637340036
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Dec 2021 08:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638433768;
-        bh=YD7mUj+VeYPuZolMYaACkW8aNIy8jYTBKxq4B2rUYBM=;
+        s=20210705; t=1638434372;
+        bh=bzHPDCQxivWPQ9IWDe85z++O9zhlMxtBFGzHj4yUahI=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=H7nYT/aK+7qH/dXa58e2YAeDyPz058zl1kfjECgVhiDPjlKJBE7K2gB5RwKlrbByl
-         5elgyV8v3b5Uv1SNNCqxac0k7xqnXJhs1EOWUyv63tN5NWJw7WRQ4l0P3qfHMBInZF
-         SQImp0rXfUHVY+Lo+O1k2IVN27P30eeMxecWDEXKTYZE02ChmKJUiJuf0gzqFXSzQ6
-         f7H6/tpPLV5chMR3LMoOm1K4EHWFQFzKRNpm2ZQet7fqBm2s/dIKTi7g8Hfa5e7J2c
-         r75DrESzGkvuuFVzuLoIlVCD8kRXB+x9XAT+mx8xoXa8Wgz9tpkMtcikaom/QxQZKd
-         cCzMtgwSbEoLg==
-Received: by mail-lj1-f200.google.com with SMTP id d20-20020a05651c111400b00218c6372b7eso9322347ljo.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2021 00:29:28 -0800 (PST)
+        b=JgxLBl1sSbuKFYSMie2j5k+UiGdvwO70sgAZqu6bWcccGWQ91PZ93hd2p71DQ6w9O
+         Vmd0teYK9Y8pUu/nfLbD+4tdymJPSD8u2RC9NSK9Dc1+pB4ZvWWh/A/xE9/GLznSLe
+         uQg241mmk5gM9WxD37sKE3y8gMYXIimxGu9nPgIWm3y+894E7wX11WqYghzgTNPeKg
+         adA+vq6oxOi772XQoywM5cUukqMVs+m8XedNVUdUj70fAMa/9SMQs5n5WlGOmocKjE
+         OiTHuyqrE780IHZITjDYpfJnWKYjHncMkCP9tFPMkRY19JC6f6u37hzd6S5HkA47jP
+         wwnzrfGP/VdNg==
+Received: by mail-lj1-f200.google.com with SMTP id y11-20020a2e978b000000b00218df7f76feso9332064lji.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2021 00:39:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=YD7mUj+VeYPuZolMYaACkW8aNIy8jYTBKxq4B2rUYBM=;
-        b=fgnGRwU7UW1JJMgcVptN2jLEIl4rg5LACYMuRG9INxHWjkPT5dXy2Ozim6LCFpoeGC
-         zpT5rWf4JSUmw3MmiQ/mgLCnybpj1NAQQ59EVaSd9siOJf8WofC8TQ1M17Ri3fmtqtZx
-         tpmdi5tqUJ7iLgm5issdaVuyTHctCUKdWVY0seQjMibeW+ygno5E6huh0CiOJNdre3C7
-         6/F0bac0d1O7HsXUw+iUBW0badSC715DOk1ERkRGawrQwgHenPbbWYp7CR8KC9WTLUFY
-         NjIfVYu9uMpPV6TLmLwML2kX8o9aB1eD79cEjWNe+0H7SKIYAaVsllQ8UCmS+Z0IvYN+
-         Ny8g==
-X-Gm-Message-State: AOAM533M6BHr4oXf6AG5Z9GGfP3UibFJHjq0xi9VPbjmszDhkQrp54dt
-        R7PMI8cZUV5npdDWG2Cp46xX9+HozsQFDQ8IMzYwaxWkAmwPzFVR05yPh53ptnMYqORmzrXL5wX
-        y6M30uem/yz8PJui+HF9J6glPnIQN2IO/5Pd94W0gYs7sLFQc
-X-Received: by 2002:a05:6512:3117:: with SMTP id n23mr10923748lfb.16.1638433768180;
-        Thu, 02 Dec 2021 00:29:28 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwmYh1KFdoBF3+bod0WLIOsobg9H0TiGRupimh+bPu0ZdrM1+TaVxC7h+94IiGAH4+zbwKxZA==
-X-Received: by 2002:a05:6512:3117:: with SMTP id n23mr10923729lfb.16.1638433768027;
-        Thu, 02 Dec 2021 00:29:28 -0800 (PST)
+        bh=bzHPDCQxivWPQ9IWDe85z++O9zhlMxtBFGzHj4yUahI=;
+        b=syj6JfCBA8xVeF0Qbitibbga8tuBiSVs7C3wCs6Z7KSe3CuTuPtBCxYaG3ZgkKjx8Y
+         t0z+RNRjDpVT/Ysjb3ool4/kh0cCXZ6oJfKdm7LqVojV4sfhhtpbAvxMKaUAcs1yecDs
+         R2OowAeA96fk3NTcw/5rlzqMhz+pk9rupYD8bx7/JGye+OgS4su3XmP7869v+I9ZTcsh
+         vaVBW5BDzUzl/2QpTTSkZagcz8YInSoV+b3MFqKa7BPe3k/0GygjoWX3CobDHHJ8Kn13
+         H6bsmUPwupbmN9rrco8iF5A5HA4jGIVjKr+gZ14L1Rm1SsQQhpAd98mtD6p0Aa6SAB7q
+         u0NQ==
+X-Gm-Message-State: AOAM530nQwoqWTDbGrJMnINx3xFYsIW7jlFOw72bHrVPq1VXSVsG/S15
+        6oiLiz1WUitTEgBkldLJl1PBx6nDJaYTIZZ8/IrWT9CuxA7HeEFlsfABq4biYkPTtPXUa81qFl/
+        yw8qfpP1k8TkYaoHcO5TUAfsteHZzn+evS77UYs0k7sYkdhwJ
+X-Received: by 2002:a05:6512:3322:: with SMTP id l2mr10573108lfe.556.1638434371892;
+        Thu, 02 Dec 2021 00:39:31 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJza7lLCAo9zxOj1HYXolUOQdlHjybMWwBpr86P/vqEMZGuzy2NQ5lsVP5PlD1kw9r9I8wo+IA==
+X-Received: by 2002:a05:6512:3322:: with SMTP id l2mr10573087lfe.556.1638434371687;
+        Thu, 02 Dec 2021 00:39:31 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id q6sm258654lfa.133.2021.12.02.00.29.27
+        by smtp.gmail.com with ESMTPSA id z14sm260458lfg.173.2021.12.02.00.39.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Dec 2021 00:29:27 -0800 (PST)
-Message-ID: <307f3c64-9ccc-44c9-ebb3-f9ddc29ac11b@canonical.com>
-Date:   Thu, 2 Dec 2021 09:29:26 +0100
+        Thu, 02 Dec 2021 00:39:31 -0800 (PST)
+Message-ID: <2875d5c8-dc98-0e3c-41b8-c71bd439ced4@canonical.com>
+Date:   Thu, 2 Dec 2021 09:39:30 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH 6/6] i2c: exynos5: Mention Exynos850 and ExynosAutoV9 in
- Kconfig
+Subject: Re: [PATCH 3/4] mmc: dw_mmc: Add quirk for extended data read timeout
 Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Wolfram Sang <wsa@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     =?UTF-8?Q?M=c3=a5rten_Lindahl?= <marten.lindahl@axis.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Cc:     Doug Anderson <dianders@google.com>, kernel@axis.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-References: <20211201190455.31646-1-semen.protsenko@linaro.org>
- <20211201190455.31646-7-semen.protsenko@linaro.org>
+References: <20211201153804.27655-1-marten.lindahl@axis.com>
+ <20211201153804.27655-4-marten.lindahl@axis.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211201190455.31646-7-semen.protsenko@linaro.org>
+In-Reply-To: <20211201153804.27655-4-marten.lindahl@axis.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 01/12/2021 20:04, Sam Protsenko wrote:
-> I2C controller chosen by I2C_EXYNOS5 config option is also suitable for
-> Exynos850 and ExynosAutoV9 SoCs. State that specifically in I2C_EXYNOS5
-> symbol help section.
+On 01/12/2021 16:38, Mårten Lindahl wrote:
+> Current dw_mci driver supports a TMOUT register which consists of a 24
+> bit field (TMOUT[31:8]) for the DATA_TIMEOUT. The maximum value of this
+> field is 0xFFFFFF, which with a 200MHz clock will give a full DRTO of:
 > 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> 0xFFFFFF / 200000000 => ~84 ms
+> 
+> However, the ARTPEC-8 SoC DWMMC IP version has a TMOUT register with an
+> extended DATA_TIMEOUT field, which supports longer timers for the DRTO.
+> In this version the DATA_TIMEOUT field is split into two, which with the
+> same 200MHz clock as above will allow a maximum timeout of:
+> 
+> ((TMOUT[10:8] -1) * 0xFFFFFF + TMOUT[31:11] * 8) / 200000000 => ~587 ms
+> 
+> Add a quirk to support this. The quirk is enabled for ARTPEC-8 SoCs.
+> 
+> Signed-off-by: Mårten Lindahl <marten.lindahl@axis.com>
 > ---
->  drivers/i2c/busses/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mmc/host/dw_mmc-exynos.c |  5 +++++
+>  drivers/mmc/host/dw_mmc.c        | 33 ++++++++++++++++++++++++++++----
+>  drivers/mmc/host/dw_mmc.h        |  7 +++++++
+>  3 files changed, 41 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index cae7c94b5d6e..6ae9c0ec1282 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -127,6 +127,11 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>  				DQS_CTRL_GET_RD_DELAY(priv->saved_strobe_ctrl);
+>  	}
+>  
+> +	if (priv->ctrl_type == DW_MCI_TYPE_ARTPEC8) {
+> +		/* Quirk needed for ARTPEC-8 SoCs */
+> +		host->quirks |= DW_MMC_QUIRK_EXTENDED_TMOUT;
+> +	}
+> +
+>  	host->bus_hz /= (priv->ciu_div + 1);
+>  
+>  	return 0;
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index f2a14a434bef..45ea9fd97a6a 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1289,6 +1289,7 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
+>  {
+>  	u32 clk_div, tmout;
+>  	u64 tmp;
+> +	unsigned int tmp2;
+>  
+>  	clk_div = (mci_readl(host, CLKDIV) & 0xFF) * 2;
+>  	if (clk_div == 0)
+> @@ -1301,10 +1302,28 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
+>  	tmout = 0xFF; /* Set maximum */
+>  
+>  	/* TMOUT[31:8] (DATA_TIMEOUT) */
+> -	if (!tmp || tmp > 0xFFFFFF)
+> -		tmout |= (0xFFFFFF << 8);
+> -	else
+> -		tmout |= (tmp & 0xFFFFFF) << 8;
+> +	if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT) {
+> +		/*
+> +		 * Extended HW timer (max = 0x6FFFFF2):
+> +		 * ((TMOUT[10:8] - 1) * 0xFFFFFF + TMOUT[31:11] * 8)
+> +		 */
+> +		if (!tmp || tmp > 0x6FFFFF2)
+> +			tmout |= (0xFFFFFF << 8);
+> +		else {
+> +			/* TMOUT[10:8] */
+> +			tmp2 = (((unsigned int)tmp / 0xFFFFFF) + 1) & 0x7;
+> +			tmout |= tmp2 << 8;
+> +
+> +			/* TMOUT[31:11] */
+> +			tmp = tmp - ((tmp2 - 1) * 0xFFFFFF);
+> +			tmout |= (tmp & 0xFFFFF8) << 8;
+> +		}
+> +	} else {
+> +		if (!tmp || tmp > 0xFFFFFF)
+> +			tmout |= (0xFFFFFF << 8);
+> +		else
+> +			tmout |= (tmp & 0xFFFFFF) << 8;
+> +	}
+>  
+>  	mci_writel(host, TMOUT, tmout);
+>  	dev_dbg(host->dev, "timeout_ns: %u => TMOUT[31:8]: 0x%#08x",
+> @@ -2005,9 +2024,15 @@ static void dw_mci_set_drto(struct dw_mci *host)
+>  	if (drto_div == 0)
+>  		drto_div = 1;
+>  
+> +	if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
+> +		drto_clks = (((drto_clks & 0x7) - 1) * 0xFFFFFF) +
+> +			((drto_clks & 0xFFFFF8));
+> +
+>  	drto_ms = DIV_ROUND_UP_ULL((u64)MSEC_PER_SEC * drto_clks * drto_div,
+>  				   host->bus_hz);
+>  
+> +	dev_dbg(host->dev, "drto_ms: %u\n", drto_ms);
+> +
+>  	/* add a bit spare time */
+>  	drto_ms += 10;
+>  
+> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> index 771d5afa3136..071f4479f166 100644
+> --- a/drivers/mmc/host/dw_mmc.h
+> +++ b/drivers/mmc/host/dw_mmc.h
+> @@ -118,6 +118,7 @@ struct dw_mci_dma_slave {
+>   * @part_buf: Simple buffer for partial fifo reads/writes.
+>   * @push_data: Pointer to FIFO push function.
+>   * @pull_data: Pointer to FIFO pull function.
+> + * @quirks: Set of quirks that apply to specific versions of the IP.
+>   * @vqmmc_enabled: Status of vqmmc, should be true or false.
+>   * @irq_flags: The flags to be passed to request_irq.
+>   * @irq: The irq value to be passed to request_irq.
+> @@ -223,6 +224,9 @@ struct dw_mci {
+>  	void (*push_data)(struct dw_mci *host, void *buf, int cnt);
+>  	void (*pull_data)(struct dw_mci *host, void *buf, int cnt);
+>  
+> +	/* Workaround flags */
 
+No need for this comment - you already described the field in kerneldoc.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> +	u32			quirks;
+> +
+>  	bool			vqmmc_enabled;
+>  	unsigned long		irq_flags; /* IRQ flags */
+>  	int			irq;
+> @@ -274,6 +278,9 @@ struct dw_mci_board {
+>  	struct dma_pdata *data;
+>  };
+>  
+> +/* Support for longer data read timeout */
+> +#define DW_MMC_QUIRK_EXTENDED_TMOUT	(1<<0)
+
+BIT()
+
+> +
+>  #define DW_MMC_240A		0x240a
+>  #define DW_MMC_280A		0x280a
+>  
+> 
 
 
 Best regards,
