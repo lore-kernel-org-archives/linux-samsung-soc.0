@@ -2,140 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADF4C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Dec 2021 10:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4CDC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Dec 2021 11:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356972AbhLBKdk (ORCPT
+        id S1357101AbhLBLEa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 05:33:40 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:18695 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356948AbhLBKdj (ORCPT
+        Thu, 2 Dec 2021 06:04:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346147AbhLBLE3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Dec 2021 05:33:39 -0500
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20211202103015epoutp026f5b94d298704d6984dfb047c4165173~86WxRVph32568725687epoutp02Z
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Dec 2021 10:30:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20211202103015epoutp026f5b94d298704d6984dfb047c4165173~86WxRVph32568725687epoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1638441015;
-        bh=8eXxum7S0l0cge2okJ0tZV6fIkWy7PAqtaXy4/mv+yk=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=B8EO/PbFPU9UrgZNlAD71OqXftUHzpryyNpm6Ne105849mRqq1O1qyEg2XjVH/n4X
-         ULYyOzUrwY1quEEmtlYzVBMg4x6depnzY+3Z/pjN+WfNAEpVvi5CJqrWX+nIQTm+qg
-         UkgrUAfy9hKxOAJgWY33ViN5wD/6eObygch7szzY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20211202103015epcas2p1fcaa00c2220f62ca37dc8abe129cb0a7~86Wwsj8uk0368403684epcas2p19;
-        Thu,  2 Dec 2021 10:30:15 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4J4XK16WFxz4x9Pq; Thu,  2 Dec
-        2021 10:30:13 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9E.E0.12141.530A8A16; Thu,  2 Dec 2021 19:30:13 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20211202103012epcas2p25c34dfb8cc9890403e8d131f40aee909~86WuchWFj2597025970epcas2p2w;
-        Thu,  2 Dec 2021 10:30:12 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211202103012epsmtrp188b64721acdff3a180bba7eceadad119~86WuanaTF1095010950epsmtrp1f;
-        Thu,  2 Dec 2021 10:30:12 +0000 (GMT)
-X-AuditID: b6c32a48-d73ff70000002f6d-89-61a8a0351ed8
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        38.3D.29871.330A8A16; Thu,  2 Dec 2021 19:30:11 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20211202103012epsmtip1968abd75f39b11d978c2dc2d0588f649~86WuLiK1S1878818788epsmtip1h;
-        Thu,  2 Dec 2021 10:30:12 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Rob Herring'" <robh+dt@kernel.org>
-Cc:     "'Jaewon Kim'" <jaewon02.kim@samsung.com>,
-        "'David Virag'" <virag.david003@gmail.com>,
-        "'Youngmin Nam'" <youngmin.nam@samsung.com>,
-        "'Wolfram Sang'" <wsa@kernel.org>,
-        "'Arnd Bergmann'" <arnd@arndb.de>, <linux-i2c@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20211201190455.31646-6-semen.protsenko@linaro.org>
-Subject: RE: [PATCH 5/6] i2c: exynos5: Add bus clock support
-Date:   Thu, 2 Dec 2021 19:30:11 +0900
-Message-ID: <002f01d7e767$96417940$c2c46bc0$@samsung.com>
+        Thu, 2 Dec 2021 06:04:29 -0500
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A667C061759
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Dec 2021 03:01:07 -0800 (PST)
+Received: by mail-ua1-x92b.google.com with SMTP id az37so54978778uab.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2021 03:01:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pk9D0BkgKy2MkHQjOsND26zq44gMYDCnDDc5CGOG3Eo=;
+        b=MQzwMbtX3OEq3xFhbvNV9fwEHoed0BB6w8bpPjpAnSKvxey0w7jr842wcnlTfvUu6S
+         cPvjz+MuNSnBKEyKITaKbLtK3qhcHMKkOEL3TahZ3cY3Id64C34xaAEtURku7txrqTZP
+         TEwzb8URr+IVTqCc78y2Cubsmy4cpXUIop6Si1LFZ8LKATTmVpTz1DqnbTXTm78cmLla
+         JFq0oK5fhC4CXugex+FXNY91Oq1Byoi6ik7eWr7Cq0n3Up3qRQqgxz+Menrr/elTmYWh
+         3rLbGd7mZmQx/ap6gV64cLo0CenIJ5oz3BJaFmcbCq2rsURgqYh9KLdIOeE8/jE/iO4N
+         oD5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pk9D0BkgKy2MkHQjOsND26zq44gMYDCnDDc5CGOG3Eo=;
+        b=PnrzuzEOr9xyUXkR7OIe6Vs3sfDaTB1AfvUGDAokYRTTlZic6aYsOEElIu7LSLdJA8
+         wMzHrwKxuhPnhS+ZvE2IPxCkCBlgfxlmkvtaHitDrADcssa6UPNrsE71PL0Vd2CD1iF6
+         ENNCtVTL/mG6OrIkO7pn0yXf/4ng8fqRBRYzGjlQ3P/pc0AjFmgwQi7HgzPBR/jWamTL
+         xX0oLjeEWZg+H2rN6WTB5c2P8AGDcc9WoKJNiDkqNxiobKBJADlDF8JWYVamsAA6842C
+         teUr5jY5GOMrryVH9Q0Dmmtl9NqkBuK6VWdKPIXjoD/TTEoJHqzp00PYnaJMeyocX/C2
+         CqTQ==
+X-Gm-Message-State: AOAM533TWTRuydAClev/6Zjg24Jqa/SRafEHOq2ngPUqVFyIt5ovo0nB
+        i5ggq0bNau15ERPa4nXkjVGiR42DI+GAvT3ozdGrLw==
+X-Google-Smtp-Source: ABdhPJxakVPbeV3zYAuA0ClGNGeLE4yam1HSOcyPA7SQE2XyjCmXcnqQqxD6K9GyotZiEP2pJrwvkeSJ6r0RxEK755w=
+X-Received: by 2002:a67:be0f:: with SMTP id x15mr13744954vsq.86.1638442866176;
+ Thu, 02 Dec 2021 03:01:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ+Fna5aS4J9DFonoTtOdjbcAGMmgHjBJAzAvyntMCqq6ShkA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmqa7pghWJBu/Wslj8nXSM3WL+kXOs
-        FjsajrBabHz7g8li0+NrrBYdf78wWlzeNYfNYsb5fUwWrXuPsFs87wOyjr9/zGhxd/9cRovF
-        Bz6xO/B6/P41idFjVkMvm8fOWXfZPTat6mTzuHNtD5vH5iX1Hn1bVjF6fN4kF8ARlW2TkZqY
-        klqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SykkJZYk4pUCgg
-        sbhYSd/Opii/tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE748LmXWwF
-        +1grZiz/zdjAuJGli5GTQ0LAROLv2uVMXYxcHEICOxgllu26wQySEBL4xCixbUEoROIbo0Tb
-        xa3sMB1zDvewQiT2Mkq86HnPBuG8YJTY+WUPG0gVm4C+xMuObWBVIgLTGSWOd65jB3GYBf4x
-        SbQ2/gCbxSngILG+9yTYQmEBG4nu03MZQWwWARWJY+tWg13IK2Apcb7lFyOELShxcuYTsDiz
-        gLzE9rdzmCFuUpD4+XQZK4gtIuAksf3bc1aIGhGJ2Z1tzCCLJQRucEi8f3gT6m0XiY/LlrFB
-        2MISr45vgXpOSuJlfxs7REM3o0Tro/9QidWMEp2NPhC2vcSv6VuANnAAbdCUWL9LH8SUEFCW
-        OHIL6jY+iY7Df9khwrwSHW1CEI3qEge2T4e6QFaie85n1gmMSrOQfDYLyWezkHwwC2HXAkaW
-        VYxiqQXFuempxUYFJvDoTs7P3cQITs9aHjsYZ7/9oHeIkYmD8RCjBAezkgiv/MxliUK8KYmV
-        ValF+fFFpTmpxYcYTYFhPZFZSjQ5H5gh8kriDU0sDUzMzAzNjUwNzJXEeT/4T08UEkhPLEnN
-        Tk0tSC2C6WPi4JRqYJqyz27yrxPSHafypLTfGkw0/ugwO2Ztvmutd+DbO5rMn5e8nZ/19cSX
-        tcssv+WGzhDblBErdvyliuQ8mY6Pd/i/XCxe4Be+d2PwRGvHJ/d3HS8IYjOzlNlQvUkg7HSz
-        sa/0mfNdXGdFpnZUPrddHDtB5WVR2bMwqxs6q+/9npUcf0ywvaLU4rDF0iLryXK95xdv2OXk
-        k+V6Y+nv+9LHAtzaF2s3Sh+ymTkx+P+9AC/Onc3NUjdrbp3w//N7vpGD36+TPYsWNu5/OjHi
-        yiw9ll5V+RZhx8qdN6+95ZJ7ba2508ectX9Bn+s5nepPb3wCrqW0/9aJ5uzIOpyh6Phd8IWF
-        3seI4i0vSqPLHZeI2iuxFGckGmoxFxUnAgADhhjiWAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsWy7bCSnK7xghWJBjceWlr8nXSM3WL+kXOs
-        FjsajrBabHz7g8li0+NrrBYdf78wWlzeNYfNYsb5fUwWrXuPsFs87wOyjr9/zGhxd/9cRovF
-        Bz6xO/B6/P41idFjVkMvm8fOWXfZPTat6mTzuHNtD5vH5iX1Hn1bVjF6fN4kF8ARxWWTkpqT
-        WZZapG+XwJVxYfMutoJ9rBUzlv9mbGDcyNLFyMkhIWAiMedwD2sXIxeHkMBuRolz23eyQyRk
-        JZ692wFlC0vcbzkCVfSMUaL5XTcjSIJNQF/iZcc2sISIwExGieNf57KBOMwCbcwS3199Zodo
-        Ocoo0bDpN9hCTgEHifW9J5lBbGEBG4nu03PBRrEIqEgcW7carIZXwFLifMsvRghbUOLkzCdA
-        cQ6gqXoSbRvBwswC8hLb385hhjhPQeLn02WsILaIgJPE9m/PWSFqRCRmd7YxT2AUnoVk0iyE
-        SbOQTJqFpGMBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgSNXS3MG4fdUHvUOM
-        TByMhxglOJiVRHjlZy5LFOJNSaysSi3Kjy8qzUktPsQozcGiJM57oetkvJBAemJJanZqakFq
-        EUyWiYNTqoHJMUhlvcGtBeGt0XM8TYxTMqYbVOQ7llyVcuiaoqHDtql5Q/Nv26vvgpzvuiUK
-        mv5V99ntuu6TcpOv+ZKUT9tntNxTeBKnJjD57ZaWAxMUwxIFWkWmZ73uK0h2nxbM8bW0M3LS
-        9AXzVrPrcr5YGLDYuO/xEr73yf3FZyeuFYyVZihwZayeqzp7y84sTfWHNhteK+ncKFBcFqcQ
-        /ZhtS1z+e9/gylbxVU+SKzdmK+x2mh917p+U8to3wiumPip4+j/k+hMezZCTvR48/29z/A5d
-        sJRlutqC561PNxsvc5z2MfNVwr2/udWud099tH6yIffJivvik2Iryp7cXhP2n0/290u1JULH
-        g/1tWmNLY14qsRRnJBpqMRcVJwIA5f39DkMDAAA=
-X-CMS-MailID: 20211202103012epcas2p25c34dfb8cc9890403e8d131f40aee909
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211201190525epcas2p3f2915664524b53bf72c69f46e1c13844
-References: <20211201190455.31646-1-semen.protsenko@linaro.org>
-        <CGME20211201190525epcas2p3f2915664524b53bf72c69f46e1c13844@epcas2p3.samsung.com>
-        <20211201190455.31646-6-semen.protsenko@linaro.org>
+References: <20211130111325.29328-1-semen.protsenko@linaro.org>
+ <20211130111325.29328-2-semen.protsenko@linaro.org> <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
+ <4b5bebb0-ed74-8132-1e6b-cb7cbc21439c@canonical.com> <CAL_JsqJb4nMBoGLcf-bKpi5kEE+zXQ=dfo5JSBhrqPFeLnCsHw@mail.gmail.com>
+In-Reply-To: <CAL_JsqJb4nMBoGLcf-bKpi5kEE+zXQ=dfo5JSBhrqPFeLnCsHw@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 2 Dec 2021 13:00:54 +0200
+Message-ID: <CAPLW+4=Zdvf4HRNUeVMR9URLSdA867hdXVLYy+k47yLH82uTnA@mail.gmail.com>
+Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        linux-serial@vger.kernel.org,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        David Virag <virag.david003@gmail.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> In new Exynos SoCs (like Exynos850) where HSI2C is implemented as a part
-> of USIv2 block, there are two clocks provided to HSI2C controller:
->   - PCLK: bus clock (APB), provides access to register interface
->   - IPCLK: operating IP-core clock; SCL is derived from this one
-> 
-> Both clocks have to be asserted for HSI2C to be functional in that case.
-> 
-> Add code to obtain and enable/disable PCLK in addition to already handled
-> operating clock. Make it optional though, as older Exynos SoC variants
-> only have one HSI2C clock.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+On Wed, 1 Dec 2021 at 18:20, Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Nov 30, 2021 at 2:04 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+> >
+> > On 30/11/2021 18:43, Rob Herring wrote:
+> > > On Tue, 30 Nov 2021 13:13:21 +0200, Sam Protsenko wrote:
+> > >> Add constants for choosing USIv2 configuration mode in device tree.
+> > >> Those are further used in USI driver to figure out which value to write
+> > >> into SW_CONF register. Also document USIv2 IP-core bindings.
+> > >>
+> > >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > >> ---
+> > >> Changes in v2:
+> > >>   - Combined dt-bindings doc and dt-bindings header patches
+> > >>   - Added i2c node to example in bindings doc
+> > >>   - Added mentioning of shared internal circuits
+> > >>   - Added USI_V2_NONE value to bindings header
+> > >>
+> > >>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
+> > >>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
+> > >>  2 files changed, 152 insertions(+)
+> > >>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> > >>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
+> > >>
+> > >
+> > > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > >
+> > > yamllint warnings/errors:
+> > >
+> > > dtschema/dtc warnings/errors:
+> > > Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dts:35.39-42.15: Warning (unique_unit_address): /example-0/usi@138200c0/serial@13820000: duplicate unit-address (also used in node /example-0/usi@138200c0/i2c@13820000)
+> >
+> > Rob,
+> >
+> > The checker complains about two nodes with same unit-address, even
+> > though the node name is different. Does it mean that our idea of
+> > embedding two children in USI and having enabled only one (used one) is
+> > wrong?
+>
+> IIRC, we allow for this exact scenario, and there was a change in dtc
+> for it. So I'm not sure why this triggered.
+>
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+It's triggered from WARNING(unique_unit_address, ...), because it
+calls static void check_unique_unit_address_common() function with
+disable_check=false. I guess we should interpret that this way: the
+warning makes sense in regular case, when having the same unit address
+for two nodes is wrong. So the warning is reasonable, it's just not
+relevant in this particular case. What can be done:
 
-Best Regards,
-Chanho Park
+  1. We can introduce some specific property to mark nodes with
+duplicated address as intentional. check_unique_unit_address_common()
+can be extended then to omit checking the nodes if that property is
+present.
+  2. We can just ignore that warning in this particular case (and
+similar cases).
+  3. We can add some disambiguation note to that warning message, like
+"if it's intentional -- please ignore this message"
 
+I'm all for option (3), as it's the easiest one, and still reasonable.
+Rob, what do you think? Can we just ignore that warning in further
+versions of this patch series?
 
+> Rob
