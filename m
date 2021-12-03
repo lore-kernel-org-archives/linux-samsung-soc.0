@@ -2,151 +2,122 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D3FC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Dec 2021 18:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE35BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Dec 2021 19:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235835AbhLCSnY (ORCPT
+        id S1353200AbhLCTMu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Dec 2021 13:43:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54960 "EHLO
+        Fri, 3 Dec 2021 14:12:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232222AbhLCSnX (ORCPT
+        with ESMTP id S1344093AbhLCTMt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Dec 2021 13:43:23 -0500
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B16C061353
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Dec 2021 10:39:58 -0800 (PST)
-Received: by mail-ua1-x92a.google.com with SMTP id n6so7264261uak.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Dec 2021 10:39:58 -0800 (PST)
+        Fri, 3 Dec 2021 14:12:49 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B19C061751;
+        Fri,  3 Dec 2021 11:09:25 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id y8so2771388plg.1;
+        Fri, 03 Dec 2021 11:09:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b5p3ztxRNGHTryECHF1HMG/gYrhBfwJYEjUwDGuarzA=;
-        b=F9+NXkfAn7qWTyNBpgH+F8s1jl70XfqRKv24CTx6q8kWm9ziIds9qi9GpCvPCRbEla
-         P+oYUrVaWbQo0Um8iugAtOoiHU2lg2T17KCHt/tDMIlWbvExmWAyDl4Ilkr4hnfO5Cs/
-         T7+puOuC0ieEp+xllRPUwcQphG+2lYnQ43XjTtwOK1E6ie2WRXrWY2+pksimxZBW5x85
-         qFcLmzPR7v1Q3ffkcp7ycqRfWEJGMcrJDG0+d4ZOAFDnar26/IthG8pHajcR+FQGto2l
-         Qho1y5EAVBnR5Kf5wbfgdoitWwB96YA2BViX+48hTCeBtE7K5GFgvzk3gMycOpagDPpx
-         S1KQ==
+         :cc:content-transfer-encoding;
+        bh=IoBuVhCiR9BrSiQMh75XUsvklE4yOFaQXUkrNsUI+/Y=;
+        b=o+MayrhIXhy6Tn8p5jFoe3c6UEGzOvhNMOZ3TtvQekj4JCNjdsawVl2u3l5SENbfof
+         TNfIHy73jO38Cwwn82y0/O0BIKnFHjyLPXQJDzy7qycQOBmCsMlzDh1Q2DR/dDfUPV+T
+         r18zoZXJa+kuffykx6WxpgSUqIrRhMh+5seYzmBeIdQgodapeD3BgFIao8z0z3xul5DI
+         zzfBS7ojv+CsTNBmtiL+bcj2r2Be0KmQr05NMIrnRPld2usPWmwa7QKmH4TJixqKzBoT
+         zvPWSf1nPvABpim+20Hg6l+G/t1o5CzzG1XTTa95NmXosfCoW+SB7in29LfUrsF96+Pj
+         5kKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b5p3ztxRNGHTryECHF1HMG/gYrhBfwJYEjUwDGuarzA=;
-        b=u8qt8aYcJ3nXE3rqIjFEVSGJ2wmKIK5adDzuWncqWfuvEB9e6bBK8ZQNCUxQnBvruH
-         NPwzIMVtOJf22VTIaVc1vUaR86VIBsLGBTqEcf4V4wAMU/kWapXFr/0lpNSHwKoRi1eh
-         QL3wvdj2hiX15JauhJCf9e5p0E7rHG1J5zLQEchzZNPndXUwbE3HGonpvcp2269Jq1T8
-         7mNiqs44pceIhj4H/T9t2BjDuFc6gXo1q8t58Ml36vDd7eCc05pCSnjYGQfMq3qqZ9LZ
-         ytRp4p5zjo4/HPJR2AwsmFgl9wyJ/5wKEJ8ZCnNT4M/bN3KPci+F1P3seyR5cRL81tOx
-         gwpw==
-X-Gm-Message-State: AOAM533c1ht3Iop2+twcVlkShsncpQxlxScf0pPrDT4eKx3n4lzPUC4V
-        Sv5uhvph958vLvi5d3xHksSV6YCrVjrRxF+3ZH0qAA==
-X-Google-Smtp-Source: ABdhPJxoN0d+Ha4ydEmot87mUT0b4uygWp+/4MhofvqZsJysvO/S1XvMIB/hIYACy+ZMw6KdNYPl1P9orZjjE+00clM=
-X-Received: by 2002:a9f:2431:: with SMTP id 46mr23233053uaq.114.1638556797916;
- Fri, 03 Dec 2021 10:39:57 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IoBuVhCiR9BrSiQMh75XUsvklE4yOFaQXUkrNsUI+/Y=;
+        b=ZXaOe5keT66gzNdrFNH1gMj5L8sQA6Ftlox4P2TRU2/0gALcEp1WciHqtWBh1Sa9Fi
+         ufNc6h8CoCnYfeL1C37StgZs3EsJx8J8IdR575YwwB6XgzZIhD5zflkF+ITf+SUPPzmC
+         UTi7yZCO26G8kEDiHucBwqk/rGVQhUH30yhCj84tz7ek2K3DVyMnrbmJ5x9l7abOwEgm
+         HUpRmuLn3w4NYEqt2p9virR+qWYgUDyZhxwNoYeJqlhP/MnQFloeyn6H9L8dJlVpPqDe
+         5ApJEPzDcS2twiz/O/oiFb0Hsky/xqrTSqxjyftDGc6txgrapU/kkvusWCXkG75Mg86R
+         aptQ==
+X-Gm-Message-State: AOAM533bFrv9KdfdKcHhHUbvYgEQLQJNgHT6njgGJyyn5KtgXK0fV20E
+        nNKt4UiJV9grAz9VOMtk8DYfOBNs/ESX4kiQhcE=
+X-Google-Smtp-Source: ABdhPJxZJvNEr3MwGMO10MxWXmKiW1dA8s8jvQruDvE9ccjiUSFfbFTenWOarBOh/3TPJbQ4+kPRDOmSReFhkMMc+GI=
+X-Received: by 2002:a17:90a:17a5:: with SMTP id q34mr15942710pja.122.1638558564703;
+ Fri, 03 Dec 2021 11:09:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20211130111325.29328-1-semen.protsenko@linaro.org>
- <20211130111325.29328-2-semen.protsenko@linaro.org> <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
- <4b5bebb0-ed74-8132-1e6b-cb7cbc21439c@canonical.com> <CAL_JsqJb4nMBoGLcf-bKpi5kEE+zXQ=dfo5JSBhrqPFeLnCsHw@mail.gmail.com>
- <CAPLW+4=Zdvf4HRNUeVMR9URLSdA867hdXVLYy+k47yLH82uTnA@mail.gmail.com> <CAL_Jsq+FTB+mWOyCBwLFifk8obpMh1ysJ6pqpUzSoW7jzo5FAg@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+FTB+mWOyCBwLFifk8obpMh1ysJ6pqpUzSoW7jzo5FAg@mail.gmail.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 3 Dec 2021 20:39:46 +0200
-Message-ID: <CAPLW+4nPrGRHbHPfNX0q0O26hDLBiV0s_FRWOUfALNg8kbqgKA@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        linux-serial@vger.kernel.org,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        David Virag <virag.david003@gmail.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        linux-kernel@vger.kernel.org
+References: <20211202203400.1208663-1-kuba@kernel.org> <YanDM7hD9KucIRq6@kroah.com>
+In-Reply-To: <YanDM7hD9KucIRq6@kroah.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 3 Dec 2021 11:09:13 -0800
+Message-ID: <CAADnVQJXSksytrk5aLGQzgzaoGB9xFWqXWSTj0AmkEWiEs2jWg@mail.gmail.com>
+Subject: Re: [PATCH bpf v2] treewide: add missing includes masked by cgroup ->
+ bpf dependency
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Jakub Kicinski <kuba@kernel.org>, bpf <bpf@vger.kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        SeongJae Park <sj@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, David Airlie <airlied@linux.ie>,
+        daniel@ffwll.ch, Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, yuq825@gmail.com,
+        robdclark@gmail.com, sean@poorly.run, christian.koenig@amd.com,
+        ray.huang@amd.com, Sunil Goutham <sgoutham@marvell.com>,
+        gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
+        jingoohan1@gmail.com, lorenzo.pieralisi@arm.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski@canonical.com,
+        mani@kernel.org, pawell@cadence.com, rogerq@kernel.org,
+        a-govindraju@ti.com, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        thomas.hellstrom@linux.intel.com,
+        Matthew Auld <matthew.auld@intel.com>, colin.king@intel.com,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-pci@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 2 Dec 2021 at 22:44, Rob Herring <robh@kernel.org> wrote:
+On Thu, Dec 2, 2021 at 11:11 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> On Thu, Dec 2, 2021 at 5:01 AM Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> On Thu, Dec 02, 2021 at 12:34:00PM -0800, Jakub Kicinski wrote:
+> > cgroup.h (therefore swap.h, therefore half of the universe)
+> > includes bpf.h which in turn includes module.h and slab.h.
+> > Since we're about to get rid of that dependency we need
+> > to clean things up.
 > >
-> > On Wed, 1 Dec 2021 at 18:20, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Tue, Nov 30, 2021 at 2:04 PM Krzysztof Kozlowski
-> > > <krzysztof.kozlowski@canonical.com> wrote:
-> > > >
-> > > > On 30/11/2021 18:43, Rob Herring wrote:
-> > > > > On Tue, 30 Nov 2021 13:13:21 +0200, Sam Protsenko wrote:
-> > > > >> Add constants for choosing USIv2 configuration mode in device tree.
-> > > > >> Those are further used in USI driver to figure out which value to write
-> > > > >> into SW_CONF register. Also document USIv2 IP-core bindings.
-> > > > >>
-> > > > >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > > > >> ---
-> > > > >> Changes in v2:
-> > > > >>   - Combined dt-bindings doc and dt-bindings header patches
-> > > > >>   - Added i2c node to example in bindings doc
-> > > > >>   - Added mentioning of shared internal circuits
-> > > > >>   - Added USI_V2_NONE value to bindings header
-> > > > >>
-> > > > >>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
-> > > > >>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
-> > > > >>  2 files changed, 152 insertions(+)
-> > > > >>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> > > > >>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
-> > > > >>
-> > > > >
-> > > > > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> > > > > on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> > > > >
-> > > > > yamllint warnings/errors:
-> > > > >
-> > > > > dtschema/dtc warnings/errors:
-> > > > > Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dts:35.39-42.15: Warning (unique_unit_address): /example-0/usi@138200c0/serial@13820000: duplicate unit-address (also used in node /example-0/usi@138200c0/i2c@13820000)
-> > > >
-> > > > Rob,
-> > > >
-> > > > The checker complains about two nodes with same unit-address, even
-> > > > though the node name is different. Does it mean that our idea of
-> > > > embedding two children in USI and having enabled only one (used one) is
-> > > > wrong?
-> > >
-> > > IIRC, we allow for this exact scenario, and there was a change in dtc
-> > > for it. So I'm not sure why this triggered.
-> > >
+> > v2: drop the cpu.h include from cacheinfo.h, it's not necessary
+> > and it makes riscv sensitive to ordering of include files.
 > >
-> > It's triggered from WARNING(unique_unit_address, ...), because it
-> > calls static void check_unique_unit_address_common() function with
-> > disable_check=false. I guess we should interpret that this way: the
-> > warning makes sense in regular case, when having the same unit address
-> > for two nodes is wrong. So the warning is reasonable, it's just not
-> > relevant in this particular case. What can be done:
-> >
-> >   1. We can introduce some specific property to mark nodes with
-> > duplicated address as intentional. check_unique_unit_address_common()
-> > can be extended then to omit checking the nodes if that property is
-> > present.
-> >   2. We can just ignore that warning in this particular case (and
-> > similar cases).
-> >   3. We can add some disambiguation note to that warning message, like
-> > "if it's intentional -- please ignore this message"
-> >
-> > I'm all for option (3), as it's the easiest one, and still reasonable.
-> > Rob, what do you think? Can we just ignore that warning in further
-> > versions of this patch series?
+> > Link: https://lore.kernel.org/all/20211120035253.72074-1-kuba@kernel.or=
+g/  # v1
+> > Link: https://lore.kernel.org/all/20211120165528.197359-1-kuba@kernel.o=
+rg/ # cacheinfo discussion
+> > Acked-by: Krzysztof Wilczy=C5=84ski <kw@linux.com>
+> > Acked-by: Peter Chen <peter.chen@kernel.org>
+> > Acked-by: SeongJae Park <sj@kernel.org>
+> > Acked-by: Jani Nikula <jani.nikula@intel.com>
+> > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 >
-> Just change the dtc flags to '-Wno-unique_unit_address
-> -Wunique_unit_address_if_enabled' for both examples and dtbs.
->
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Thanks. Submitted that separately from this series: [1].
-
-[1] https://lkml.org/lkml/2021/12/3/762
-
-> Rob
+I'm not sure how to test that it helps to reduce build deps,
+but it builds and passes tests, so applied to bpf tree.
+Jakub, you'll soon get it back via bpf tree PR :)
