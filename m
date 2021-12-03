@@ -2,137 +2,75 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9538C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Dec 2021 20:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7AFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Dec 2021 06:59:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348961AbhLBUsD (ORCPT
+        id S1378742AbhLCHDH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Dec 2021 15:48:03 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:51170 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348866AbhLBUsC (ORCPT
+        Fri, 3 Dec 2021 02:03:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34842 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345605AbhLCHDH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Dec 2021 15:48:02 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CE617B82478;
-        Thu,  2 Dec 2021 20:44:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BB8C53FD1;
-        Thu,  2 Dec 2021 20:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638477877;
-        bh=D+XIVtJBMJs6vJlJVkfubqTw2gl+Mh7CJ9ZRrFKA0R4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hiHyCQ1237rTv8Tp6276FGKCYm3JCk6Ml5zsrxqfAXeGJnuDaKMDQnVTeCNEZ7870
-         Gnkgx7FG3lxMdmu+ndqjYmhw5GJRY/M8Kr3T3qMnfHXQUR+m8iiXdpsIF1YI2sQjve
-         pjTNZziNRSNXti7JgKMutTGlyeSc+6yUHZl9FL/5LiZltOny0oZxUflB1oAYjGQesb
-         D4uH6VXNWpDsWNLnfddncksvWOXxSh7i8KLfeh+GmVm3hjK8KFs5BuhaTjhFeEbFYs
-         rCIn5SDcCqJ+tYLV0ZPDXMGe0RsiQQ9UNry92rgEmnFPMuWCP36JHaujE2C6ICdHuk
-         Z7h4AY8tDFmJA==
-Received: by mail-ed1-f53.google.com with SMTP id z5so3045942edd.3;
-        Thu, 02 Dec 2021 12:44:37 -0800 (PST)
-X-Gm-Message-State: AOAM533hw/+V4v5uQJuCV3SfYj/oj73STwuhiwRQRedFD6g/uHknPjDX
-        Nb5edHdNLU5vcZE0AMwlDi+9mAEmaXllYcaWLA==
-X-Google-Smtp-Source: ABdhPJyzThOhhiZuR6ye1HIiOYkJBH+7pZpAES4RrvIAKS54c2WOOBHFZcf0F8jp2b9OzH5zBx/GUv/DYwgH126mvgg=
-X-Received: by 2002:a17:906:bccc:: with SMTP id lw12mr17641007ejb.128.1638477875718;
- Thu, 02 Dec 2021 12:44:35 -0800 (PST)
+        Fri, 3 Dec 2021 02:03:07 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77174C06174A;
+        Thu,  2 Dec 2021 22:59:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=L9TEsOSb6kRI6cv6AHNLCgEMmFVJ2TwOFsBuT0mf2uI=; b=WJ8/zUe+SXuI4BfCR+BUL7Vkst
+        WOwpe629JqT5Ndyc5srczyQ4GFkF24TYiT9Ch+yu8WMHtIQ/kJXhe/tuz17Cebczq4jV8M3AysQi5
+        IgnYWA1kanCUQrzI2U5A3adQJk08pfuWgEJBtPO/lspAYfPYeqYQt8PgEhjJ0Qd/1dSX8qSaPZBFp
+        VDcLl0khw9Eoc+u80YauIiJ5fAb/cmt5z3dorT2qy/OKtIwbKJDwXRoiU0cYCt2N1MD16BOV5V7Ow
+        A1b7zYc8+EHrUAHlxpQL3ln0AcvSdc3xmv6xquHn5CofPFcYFWarkubJ7fDXuxOSQm8ryuWQcS3Se
+        gQvjr07w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mt2Xj-00EeJY-SA; Fri, 03 Dec 2021 06:59:39 +0000
+Date:   Thu, 2 Dec 2021 22:59:39 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     bpf@vger.kernel.org,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        SeongJae Park <sj@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>, axboe@kernel.dk,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@linux.ie, daniel@ffwll.ch,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, yuq825@gmail.com, robdclark@gmail.com,
+        sean@poorly.run, christian.koenig@amd.com, ray.huang@amd.com,
+        sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+        hkelam@marvell.com, jingoohan1@gmail.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org, bhelgaas@google.com,
+        krzysztof.kozlowski@canonical.com, mani@kernel.org,
+        pawell@cadence.com, rogerq@kernel.org, a-govindraju@ti.com,
+        gregkh@linuxfoundation.org, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        akpm@linux-foundation.org, thomas.hellstrom@linux.intel.com,
+        matthew.auld@intel.com, colin.king@intel.com, geert@linux-m68k.org,
+        linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH bpf v2] treewide: add missing includes masked by cgroup
+ -> bpf dependency
+Message-ID: <YanAW6KnyNQ1V34r@infradead.org>
+References: <20211202203400.1208663-1-kuba@kernel.org>
 MIME-Version: 1.0
-References: <20211130111325.29328-1-semen.protsenko@linaro.org>
- <20211130111325.29328-2-semen.protsenko@linaro.org> <1638294184.179325.2713642.nullmailer@robh.at.kernel.org>
- <4b5bebb0-ed74-8132-1e6b-cb7cbc21439c@canonical.com> <CAL_JsqJb4nMBoGLcf-bKpi5kEE+zXQ=dfo5JSBhrqPFeLnCsHw@mail.gmail.com>
- <CAPLW+4=Zdvf4HRNUeVMR9URLSdA867hdXVLYy+k47yLH82uTnA@mail.gmail.com>
-In-Reply-To: <CAPLW+4=Zdvf4HRNUeVMR9URLSdA867hdXVLYy+k47yLH82uTnA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 2 Dec 2021 14:44:24 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+FTB+mWOyCBwLFifk8obpMh1ysJ6pqpUzSoW7jzo5FAg@mail.gmail.com>
-Message-ID: <CAL_Jsq+FTB+mWOyCBwLFifk8obpMh1ysJ6pqpUzSoW7jzo5FAg@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        linux-serial@vger.kernel.org,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        David Virag <virag.david003@gmail.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211202203400.1208663-1-kuba@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 2, 2021 at 5:01 AM Sam Protsenko <semen.protsenko@linaro.org> wrote:
->
-> On Wed, 1 Dec 2021 at 18:20, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Tue, Nov 30, 2021 at 2:04 PM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> > >
-> > > On 30/11/2021 18:43, Rob Herring wrote:
-> > > > On Tue, 30 Nov 2021 13:13:21 +0200, Sam Protsenko wrote:
-> > > >> Add constants for choosing USIv2 configuration mode in device tree.
-> > > >> Those are further used in USI driver to figure out which value to write
-> > > >> into SW_CONF register. Also document USIv2 IP-core bindings.
-> > > >>
-> > > >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > > >> ---
-> > > >> Changes in v2:
-> > > >>   - Combined dt-bindings doc and dt-bindings header patches
-> > > >>   - Added i2c node to example in bindings doc
-> > > >>   - Added mentioning of shared internal circuits
-> > > >>   - Added USI_V2_NONE value to bindings header
-> > > >>
-> > > >>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
-> > > >>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
-> > > >>  2 files changed, 152 insertions(+)
-> > > >>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> > > >>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
-> > > >>
-> > > >
-> > > > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> > > > on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> > > >
-> > > > yamllint warnings/errors:
-> > > >
-> > > > dtschema/dtc warnings/errors:
-> > > > Documentation/devicetree/bindings/soc/samsung/exynos-usi.example.dts:35.39-42.15: Warning (unique_unit_address): /example-0/usi@138200c0/serial@13820000: duplicate unit-address (also used in node /example-0/usi@138200c0/i2c@13820000)
-> > >
-> > > Rob,
-> > >
-> > > The checker complains about two nodes with same unit-address, even
-> > > though the node name is different. Does it mean that our idea of
-> > > embedding two children in USI and having enabled only one (used one) is
-> > > wrong?
-> >
-> > IIRC, we allow for this exact scenario, and there was a change in dtc
-> > for it. So I'm not sure why this triggered.
-> >
->
-> It's triggered from WARNING(unique_unit_address, ...), because it
-> calls static void check_unique_unit_address_common() function with
-> disable_check=false. I guess we should interpret that this way: the
-> warning makes sense in regular case, when having the same unit address
-> for two nodes is wrong. So the warning is reasonable, it's just not
-> relevant in this particular case. What can be done:
->
->   1. We can introduce some specific property to mark nodes with
-> duplicated address as intentional. check_unique_unit_address_common()
-> can be extended then to omit checking the nodes if that property is
-> present.
->   2. We can just ignore that warning in this particular case (and
-> similar cases).
->   3. We can add some disambiguation note to that warning message, like
-> "if it's intentional -- please ignore this message"
->
-> I'm all for option (3), as it's the easiest one, and still reasonable.
-> Rob, what do you think? Can we just ignore that warning in further
-> versions of this patch series?
+Thanks, always good to see someone else helping to unwind our include
+dependency mess..
 
-Just change the dtc flags to '-Wno-unique_unit_address
--Wunique_unit_address_if_enabled' for both examples and dtbs.
-
-Rob
+Reviewed-by: Christoph Hellwig <hch@lst.de>
