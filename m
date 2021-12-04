@@ -2,265 +2,140 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747E9C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Dec 2021 00:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A0EC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Dec 2021 11:23:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354068AbhLDAWd (ORCPT
+        id S1376792AbhLDL00 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Dec 2021 19:22:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383563AbhLDAWb (ORCPT
+        Sat, 4 Dec 2021 06:26:26 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:42248
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1354425AbhLDL00 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Dec 2021 19:22:31 -0500
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B843EC061354
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Dec 2021 16:18:55 -0800 (PST)
-Received: by mail-ua1-x932.google.com with SMTP id t13so8518504uad.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Dec 2021 16:18:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nUnZRxTL6ognPaiE7BB97hG4ug8rkGAOljqHJFVZ5r4=;
-        b=aQfwEJSLSdf67rkRPangsInyk0VPOSvzVsdYMS1VWq+PjubUwHEIw6nd8IFiYJg4Zp
-         K3sxb+/aU9cS7nei/9iiWESXaKpF0U50RT36VnMmycHHhdwc2Yty9cFwbKE9CDuS2eaH
-         We/6RIqJgf9BIjUrGYz3UvnYFuxokFY95KBcICPTw3EvUmje9CvgDGk1xiY3DbyTdBQW
-         wiCU9yqXFO3a3poIA+tndxufY869OZl2qMrKq06nplWk3pLs3WKlLryyBFAl2n1ctI7G
-         OLOWu6+XeLzDm8fsDsU4HCePkWReTxWUTw221/M0LqxELuhjPQPqpogVIIX8ds3rrrPr
-         V4PA==
+        Sat, 4 Dec 2021 06:26:26 -0500
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 80A2F3F1F5
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Dec 2021 11:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1638616978;
+        bh=VWrgPdQvcehxcTv/NTpHcumL9ZsfNr4LJN61gCWR58c=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=YuNyNiuQ3L/IiHQ7Q8vRWjZtKM1fd9bQ5fXsMmmls5iTTzo0l+HfZOPfmMA2gZR26
+         3nMOj1JoRpgvwRtA7OkdEAl6U6L+YeSrZa/CCqXbq7wvEKKl7znYtvKui07LFk79au
+         MkkJmWyN5DYMdkNPMBEHjb4Ok5ICzzlPNPNH7FErKqwgxSWwBGxDaK8i45ZxwjGVbl
+         7Sn6iU+c79SiGZMsmg3vANHfjIjrLeYy7pw73WjqD5BGCLD6diO3BFUJ4nyj0joZIP
+         ih7/RnN19me5s+YNF+fA8ylKMAF1vZci2KQvtW2OeoQDVslHkhLEUTJebOaBhnY0eX
+         qf04TQrRDhGcg==
+Received: by mail-lj1-f197.google.com with SMTP id y23-20020a2e3217000000b00218c6ede162so2112306ljy.23
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Dec 2021 03:22:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nUnZRxTL6ognPaiE7BB97hG4ug8rkGAOljqHJFVZ5r4=;
-        b=eWtzSWnhg+m7jot9e2zjj+yCIcTtyweWg80WjwykN1PhyAB7zOHA486nNCo7OJtI1M
-         8QGeRnu3glPtGV3BZ8XrsikgbTLZsIYEanD6Xn/ygHWDSu23odoH8iCSwbN0TcoMW2Na
-         G4MUJad7qa4w3wnGxVQmGhgKny2bSxev7xk6P28Jt3RF4A/MBpqgRo4AO+A2ZMDFfS1B
-         U1xcar/+l4sTmnYSNvTOfNIF3kYVS40YZkUaEn4it494B0+wK55Gu4ySxQ9s7lHAA1iH
-         8bOi7ME1Eoqormq150iQ3IFviMVENozeKjPiaovI8HIBxvLteH4KKQbJCTDh8PzkDVHj
-         dFhg==
-X-Gm-Message-State: AOAM532DZJyVSEorZqZFvLn/Kl4keHqznTAiOnnVyUpT9WTOttzIbofn
-        Y7OKqDlp2/PR59iGN+dYDk3mkLftbrT0wklUAAW3Ow==
-X-Google-Smtp-Source: ABdhPJxv7l/eQFFci2XCPTiX4KBmCNHGcXRuO+2735BU5+2FzBKDMNBN2407vdfc2vhyk8/WVJO5qNG0YDPgo2FpdJM=
-X-Received: by 2002:a05:6102:f10:: with SMTP id v16mr25678337vss.86.1638577134675;
- Fri, 03 Dec 2021 16:18:54 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=VWrgPdQvcehxcTv/NTpHcumL9ZsfNr4LJN61gCWR58c=;
+        b=aQOk3lGdg1tW606Mg4FpZy4aAXyAXziuuL6P+Anrgj3bpj/kHCyqq3Nj1zXrdhTUoU
+         nav9NGaC1A3Vfe6B5SbJZRn85DVGuTfZqXQo9qb7M7JPpO/u/aiL3yv/TsmVTz87sJrt
+         FM3aH2Vz5S7EuOOirMpSo3t72uOxRmdRCIaowvkXlfoQAfJjTRr5xyKksZpRzS0IRTLy
+         pAT+HSs/cvYV9vB7YAbI+tYolMEErxgkv2D5zurDl2JpLH0jpzNQIsi7vobBdWCC9OV5
+         WdjLwe6GLmIKaSF1oQikqwUVLsmoxYCnMCh0U8iupErbFSOfdNKrOiwGoQgdBbS4yCh5
+         MlAA==
+X-Gm-Message-State: AOAM5303K5XFyMLiG8g5fqXMUMx/eui4bpqH7vnvXv0qsRoBUj8eN/Sj
+        y3kmkw5kBJUzQnnNbkSuRDfvCjQJtlcRCtqO1pafMyljd7yUpz9mG9SatSzF6QBk7iuxAOIiT5q
+        Qdq+ma39Aqg2Sc/RvfqBm5q8qWeLssX+uoGQ//syUaIgumccc
+X-Received: by 2002:a05:6512:11c5:: with SMTP id h5mr23522438lfr.431.1638616977750;
+        Sat, 04 Dec 2021 03:22:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJze2o9ZJ1AQBAsY7I2NINj1v4O5RSoJKKQqolS4JwELuRVFLJalwqvb2oNZ+ZlVRDVHdcFmuw==
+X-Received: by 2002:a05:6512:11c5:: with SMTP id h5mr23522413lfr.431.1638616977476;
+        Sat, 04 Dec 2021 03:22:57 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id k22sm731492lfu.95.2021.12.04.03.22.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Dec 2021 03:22:56 -0800 (PST)
+Message-ID: <f8f9fab1-cea2-ebc6-6870-4929edfaef77@canonical.com>
+Date:   Sat, 4 Dec 2021 12:22:55 +0100
 MIME-Version: 1.0
-References: <20211130111325.29328-1-semen.protsenko@linaro.org>
- <20211130111325.29328-2-semen.protsenko@linaro.org> <YaZ8BpUaaC+sJYqx@robh.at.kernel.org>
- <CAPLW+4kGGk+umKTVRPNM7R=GaUQa31Uid=K+9ofq8w2mqzGAEA@mail.gmail.com> <CAL_JsqLopqkOEWmnvMDWr2rBa5Dm3jf17soqVA=Jx5Hn9BDS_g@mail.gmail.com>
-In-Reply-To: <CAL_JsqLopqkOEWmnvMDWr2rBa5Dm3jf17soqVA=Jx5Hn9BDS_g@mail.gmail.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 4 Dec 2021 02:18:42 +0200
-Message-ID: <CAPLW+4=i0hncEjNAYTyGRxd7Y3peDEgMf-Kw8qGhMW-kpNVv2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v2 RESEND 3/5] tty: serial: samsung: Remove USI
+ initialization
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chanho Park <chanho61.park@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
         David Virag <virag.david003@gmail.com>,
         Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+References: <20211130111325.29328-1-semen.protsenko@linaro.org>
+ <20211130111325.29328-4-semen.protsenko@linaro.org>
+ <CAHp75Vd8PFhs8_Ji5x1X2Ph5ey+8JrRuneWCrG=5a+52Lh-ptQ@mail.gmail.com>
+ <CAPLW+4mEw0x_rZ19h+rbz4qm=6OVgQvvbEJWL0wWQguMiWB7-g@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4mEw0x_rZ19h+rbz4qm=6OVgQvvbEJWL0wWQguMiWB7-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 3 Dec 2021 at 22:40, Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Dec 3, 2021 at 1:36 PM Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >
-> > On Tue, 30 Nov 2021 at 21:31, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Tue, Nov 30, 2021 at 01:13:21PM +0200, Sam Protsenko wrote:
-> > > > Add constants for choosing USIv2 configuration mode in device tree.
-> > > > Those are further used in USI driver to figure out which value to write
-> > > > into SW_CONF register. Also document USIv2 IP-core bindings.
-> > > >
-> > > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > > > ---
-> > > > Changes in v2:
-> > > >   - Combined dt-bindings doc and dt-bindings header patches
-> > > >   - Added i2c node to example in bindings doc
-> > > >   - Added mentioning of shared internal circuits
-> > > >   - Added USI_V2_NONE value to bindings header
-> > > >
-> > > >  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
-> > > >  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
-> > > >  2 files changed, 152 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> > > >  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..a822bc62b3cd
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> > > > @@ -0,0 +1,135 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/soc/samsung/exynos-usi.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Samsung's Exynos USI (Universal Serial Interface) binding
-> > > > +
-> > > > +maintainers:
-> > > > +  - Sam Protsenko <semen.protsenko@linaro.org>
-> > > > +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > > > +
-> > > > +description: |
-> > > > +  USI IP-core provides selectable serial protocol (UART, SPI or High-Speed I2C).
-> > > > +  USI shares almost all internal circuits within each protocol, so only one
-> > > > +  protocol can be chosen at a time. USI is modeled as a node with zero or more
-> > > > +  child nodes, each representing a serial sub-node device. The mode setting
-> > > > +  selects which particular function will be used.
-> > > > +
-> > > > +  Refer to next bindings documentation for information on protocol subnodes that
-> > > > +  can exist under USI node:
-> > > > +
-> > > > +  [1] Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > +  [2] Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-> > > > +  [3] Documentation/devicetree/bindings/spi/spi-samsung.txt
-> > > > +
-> > > > +properties:
-> > > > +  $nodename:
-> > > > +    pattern: "^usi@[0-9a-f]+$"
-> > > > +
-> > > > +  compatible:
-> > > > +    const: samsung,exynos-usi-v2
-> > >
-> > > Use SoC based compatibles.
-> > >
-> >
-> > In this particular case, I'd really prefer to have it like this. Most
-> > likely we'll only have USIv1 and USIv1 in the end, and I think that
-> > would be more clear to have USI version in compatible, rather than SoC
-> > name. Please let me know if you have a strong opinion on this one --
-> > if so I'll re-send.
->
-> Fine if you have some evidence the ratio of versions to SoC are much
-> more than 1:1 and the versions correspond to something (IOW, you
-> aren't making them up).
->
+On 03/12/2021 17:22, Sam Protsenko wrote:
+> On Wed, 1 Dec 2021 at 12:54, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>>
+>> On Wed, Dec 1, 2021 at 12:42 AM Sam Protsenko
+>> <semen.protsenko@linaro.org> wrote:
+>>>
+>>> USI control is now extracted to dedicated USI driver. Remove USI related
+>>
+>> the dedicated
+>>
+>>> code from serial driver to avoid conflicts and code duplication.
+>>
+>> Would it break run-time bisectability?
+>> If so, why is it not a problem?
+>>
+> 
+> It shouldn't. This patch is [3/5], and USI driver (which takes the
+> control over the USI registers) is [2/5]. As for Device Tree, the only
+> platform using "samsung,exynos850-uart" right now is Exynos Auto V9
+> SADK (serial node is declared in exynosautov9.dtsi). I don't have
+> Exynos Auto V9 datasheet, so I can't really add the USI node properly
+> there, nor I can test that. I guess it should be done separately from
+> this patch series.
+> 
+> Chanho, Krzysztof:
+> 
+> Guys, what are your thoughts on this? Basically with this patch series
+> applied, Exynos Auto V9 serial might become not functional. New USI
+> node should be added for UART case in Exynos Auto V9 dtsi (providing
+> correct sysreg, SW_CONF offset, clocks, etc), and serial node should
+> be encapsulated inside of that USI node. Also, USI node should be
+> referenced and enabled in SADK dts, providing also "clkreq-on"
+> property. More details can be found in [PATCH 1/5]. Do you think it's
+> ok to take this series as is, and add that later? Because otherwise we
+> might need to collaborate to add that Exynos Auto V9 enablement into
+> this patch series, which might take more time...
 
-Yes, it's documented in TRM for different SoCs (USI version 2), and
-there are even dedicated registers where you can read the USI IP-core
-version. Right now we only know about two USI versions: v1 and v2 (can
-be found for example from different published Samsung downstream
-kernels, and from TRMs). So the USI block is standardized and
-versioned.
+The patch in current state will probably break Exynos Auto v9 boards,
+including the in-tree one, unless bootloader sets the USI to serial. The
+trouble is that. Changing the Exynos Auto v9 DTSI in these series would
+solve it only partially, because the kernel still won't be bisectable.
 
-> We went down the version # path with QCom and in the end about every
-> SoC had a different version.
->
-> >
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  clocks:
-> > > > +    items:
-> > > > +      - description: Bus (APB) clock
-> > > > +      - description: Operating clock for UART/SPI/I2C protocol
-> > > > +
-> > > > +  clock-names:
-> > > > +    items:
-> > > > +      - const: pclk
-> > > > +      - const: ipclk
-> > > > +
-> > > > +  ranges: true
-> > > > +
-> > > > +  "#address-cells":
-> > > > +    const: 1
-> > > > +
-> > > > +  "#size-cells":
-> > > > +    const: 1
-> > > > +
-> > > > +  samsung,sysreg:
-> > > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > > +    description:
-> > > > +      Should be phandle/offset pair. The phandle to System Register syscon node
-> > > > +      (for the same domain where this USI controller resides) and the offset
-> > > > +      of SW_CONF register for this USI controller.
-> > > > +
-> > > > +  samsung,mode:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +    description:
-> > > > +      Selects USI function (which serial protocol to use). Refer to
-> > > > +      <include/dt-bindings/soc/samsung,exynos-usi.h> for valid USI mode values.
-> > >
-> > > This seems to be redundant. Just check which child is enabled.
-> > >
-> >
-> > I think it's not that easy. Soon we'll have USIv1 support added, and
-> > that has some weird configurations, like having dual I2C mode (two
-> > child I2C nodes must be enabled) and UART+I2C mode, etc.
->
-> So you are going to turn around and make this an array? If you already
-> know you have changes, I'd rather review this all at once.
->
+Breaking Auto v9 serial within a kernel is okay for me, because the
+board was added recently, I don't expect products using it and it is
+still development phase. This of course assuming that it's users agree,
+so the question is to Chanho and other folks.
 
-No, I'd imagine that would be just a bunch of new dt-bindings
-constants, for USI_V1. For example, for USI_V2 you already can see
-these:
-
-    #define USI_V2_NONE        0
-    #define USI_V2_UART        1
-    #define USI_V2_SPI        2
-    #define USI_V2_I2C        3
-
-and for USI_V1 it would probably be something like this, judging from [1]:
-
-    #define USI_V1_NONE        4
-    #define USI_V1_I2C0  5
-    #define USI_V1_I2C1  6
-    #define USI_V1_I2C0_I2C1_DUAL  7
-    #define USI_V1_SPI  8
-    #define USI_V1_UART  9
-    #define USI_V1_UART_I2C1_DUAL  10
-
-Guess in that case parsing enabled nodes and figuring out which mode
-we have, and which value should be written into SW_CONF -- might be
-not trivial. Having explicit "mode" property simplifies things.
-
-[1] https://github.com/ibanezbass/universal7885/blob/oneui/drivers/soc/samsung/usi.c
-
-> > Looks like it
-> > might take some not very elegant logic to figure out which exactly
-> > mode value should be written in SW_CONF register in that way, it's
-> > much easier to just specify mode in USI node. Also, that reflects
-> > hardware better: we actually write that specified mode to SW_CONF
-> > register.
->
-> You just have to compare the child node names or compatibles.
->
-
-For USIv1 that would allow for some invalid combinations (e.g.
-UART+I2C1 is possible, but SPI+I2C1 can't be configured). Also, the
-list of supported compatibles might grow in future, which will have us
-constantly add the list to the driver. And node names might be not
-valid (e.g. you can see @hsi2c names are used in some dts's instead of
-@i2c; also downstream kernels might have all kinds of names -- not a
-strong point, but still).
-
-Anyway, it can be implemented, and maybe I'm a bit biased here; so if
-I still didn't convince you that benefits of having "mode" property
-outweigh the disadvantages, please let me know -- I can send it in
-next submission.
-
-> > Also, later we might want to be able to switch that mode via
-> > SysFS, e.g. for testing purposes. Current design seems to be better
-> > suited for some things like that.
->
-> The binding should have no impact on that. If for testing, use debugfs.
->
-> > Please let me know if you have a strong opinion on this one, or it's
-> > ok to leave it as is.
-> >
-> > All other comments are addressed and will be present in v3. Thanks for
-> > the review!
+Best regards,
+Krzysztof
