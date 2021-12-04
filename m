@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B61C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Dec 2021 21:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B3CC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Dec 2021 21:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379222AbhLDVyO (ORCPT
+        id S1379726AbhLDVyU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Dec 2021 16:54:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45614 "EHLO
+        Sat, 4 Dec 2021 16:54:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379264AbhLDVyK (ORCPT
+        with ESMTP id S1379479AbhLDVyO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Dec 2021 16:54:10 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7CFC061359
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Dec 2021 13:50:43 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id n33-20020a05600c502100b0032fb900951eso7533145wmr.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Dec 2021 13:50:43 -0800 (PST)
+        Sat, 4 Dec 2021 16:54:14 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6A7C061354
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Dec 2021 13:50:48 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id l16so13612245wrp.11
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Dec 2021 13:50:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pVkIUWY0OSvWRa+LskKzcmg/hbEtnNu06lHh+/SBJ88=;
-        b=FpJlj8JqtuSaC21wsmqZDhvAYKWzvMA5cei5fusZjowiLmCrphGiOdzasy8e4fUpEz
-         MoCdSAuC6Yyqpf0gEqhux7DWayKOff556o3FMgJPrdy0sfzk/75DgbkvDundR4zStIoU
-         x3fhnvpJH/u9TopmkgxTklKzXAnk4JFKItqsTfp5rS0G5ZkjiWbU0mZH8k44JR/xvdwL
-         BvnYd4VPvrlwaX2gZt+hbFx2WzAaQHBX+aGoFgJ15Om2C/2HkLB2JZ6RugBUzz36SVUz
-         DeMFw+H+xbQbGiIIL7SYo00MARX/A/I5aB607hlLyty4vz+9WxohxIp1tpM6YhcvygD3
-         q6Eg==
+        bh=K3czBnhF20hlEpxNiPEsab7v5hRpy0g/kc9Op3PQw6E=;
+        b=ZkRzTnvt4ql3CNJptSHFHFnqI6C0lMOaG5TjlPGifpfU50QCdUjEzFiS7b6rEhmKvr
+         8nuIX6W7DrSblZO7lPHCnTUzn5zNW93DeVQY4qXa3CkOigSRLyBmAYwF9TpTIC/NMwAf
+         IYud44IcJYiTXYQmsNrsE4ApFzhHRB5NADKQc9xmQt7FWH8+8/P77xyW8QY3o5g/yTTK
+         h2sQlAI/KPcD/13lQEA/3fTPK4ajIYxuyf5+VsAhXwMP2O0+t0kjTxXybL4VCvITsjeC
+         SaobDJfJpOJZ7dxJ85gr8F7WBYqNfdtxCMg94cHPPD/wrHE9DuQxx9P/aZuC+GWWXanF
+         VUTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pVkIUWY0OSvWRa+LskKzcmg/hbEtnNu06lHh+/SBJ88=;
-        b=gCxVZ/eSnrFnZO0+r6DzR5nSlQxVvuyw/6v8Iqk9QAzgZqCNxQnUTBXlnJA5HHZNlM
-         xDZfRbBbkZ3v5v44hRMQKAJmJ4jPNNlXD1V2KilXKK2G5boA6VjiOLz9Nx+uA81gMdAR
-         KzW5f41B6Tp3L5C5SLAN+J/E4HD+4dbuPTPXOdWjgL/wBZ9QSSyW3gD9HDEuaWl5qgby
-         Fw1uSHLeUpfy/GctIhjMIZ9P/JYH6fgHsDw3KcUgbRODEvH8Kv8XQbSTxKBozIPvhF79
-         JKTuQoLX5QXz633sRXhuwGtVV6aKsThEtn1OSNgS0DLbpXQnCatbMLUO4kF/L4/DXHev
-         PfrA==
-X-Gm-Message-State: AOAM531cbj7kMStevOhKkJ72r7MSOiiQhm+RUGRP79+8ninVF79LFvx7
-        wXoyThUHIiYI0MUiBx1qzomoLg==
-X-Google-Smtp-Source: ABdhPJzlV1DW8PKUpxjP73QanGy9XDrP9z1KHI3+n/qz+wxRQ/2ZHlW5QhepDn2YDnt1aTVmYxzZpg==
-X-Received: by 2002:a05:600c:1d97:: with SMTP id p23mr26535412wms.186.1638654642106;
-        Sat, 04 Dec 2021 13:50:42 -0800 (PST)
+        bh=K3czBnhF20hlEpxNiPEsab7v5hRpy0g/kc9Op3PQw6E=;
+        b=IgaigIKx3NDaeTMouTRdqvLMzXy6iYDD0wSAUtq3/HNchsUdxgZ58CEN8/LfWQWmLw
+         KeJaFpC7l4v3zshqEaAI7qA6BU+TKqM8DLZb9oikkROBYFl8aUDywdI25KJHnKPmPhuF
+         55P8TC+L0JkT7/mzcW/Kv0b5vM9MkZFNyZkbKE2CPPE9gBJDDhIfJepdtreoZ20ihD4j
+         QIGOW+bD/lTBJdY4+ywYgcZttJC8c4pOSbgZWNOZncRyxqKWIVroeoeNxCFHz7gKndg/
+         VtXPIcGdQCtT6iJo5sdaTSVuUGtNp6eZ/2MUAI2CsRSxml1h4nWpmdHh99Ug0/rRf5lA
+         Qlzw==
+X-Gm-Message-State: AOAM532AW+tiDeJr7tRpfdMRSFRcpeqrwi+4B4GBCjH/SFGNVmhxsN/f
+        YhQELjz6l9vAh4RqGPNTdAL1IA==
+X-Google-Smtp-Source: ABdhPJwYgQXAcOt8EZ1YPq7ydpSLx6y+FyyhU59Ff+vkJaMhr6uqXvFRjh/OIA+LCk2bppXI13r9eg==
+X-Received: by 2002:adf:fa81:: with SMTP id h1mr30980791wrr.27.1638654646727;
+        Sat, 04 Dec 2021 13:50:46 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id i17sm7355238wmq.48.2021.12.04.13.50.41
+        by smtp.gmail.com with ESMTPSA id r17sm7385255wmq.11.2021.12.04.13.50.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 13:50:41 -0800 (PST)
+        Sat, 04 Dec 2021 13:50:46 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -60,9 +60,9 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 5/8] i2c: exynos5: Add bus clock support
-Date:   Sat,  4 Dec 2021 23:50:30 +0200
-Message-Id: <20211204215033.5134-6-semen.protsenko@linaro.org>
+Subject: [PATCH v2 8/8] arm64: dts: exynos: Rename hsi2c nodes to i2c for Exynos5433 and Exynos7
+Date:   Sat,  4 Dec 2021 23:50:33 +0200
+Message-Id: <20211204215033.5134-9-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211204215033.5134-1-semen.protsenko@linaro.org>
 References: <20211204215033.5134-1-semen.protsenko@linaro.org>
@@ -72,157 +72,249 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In new Exynos SoCs (like Exynos850) where HSI2C is implemented as a
-part of USIv2 block, there are two clocks provided to HSI2C controller:
-  - PCLK: bus clock (APB), provides access to register interface
-  - IPCLK: operating IP-core clock; SCL is derived from this one
+In Device Tree specification it's recommended to use "i2c" name for I2C
+nodes. Now that i2c-exynos5 dt-schema binding was added, it shows some
+warnings like this when validating HS-I2C nodes:
 
-Both clocks have to be asserted for HSI2C to be functional in that case.
+    hsi2c@xxxxxxxxx: $nodename:0: 'hsi2c@xxxxxxxx' does not match
+                                  '^i2c(@.*)?'
+    From schema: Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
 
-Add code to obtain and enable/disable PCLK in addition to already
-handled operating clock. Make it optional though, as older Exynos SoC
-variants only have one HSI2C clock.
+Rename hsi2c@* to i2c@* to fix those warnings.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
 ---
 Changes in v2:
-  - Added R-b tag by Krzysztof Kozlowski
-  - Added R-b tag by Chanho Park
+  - This patch was added in v2
 
- drivers/i2c/busses/i2c-exynos5.c | 46 ++++++++++++++++++++++++++------
- 1 file changed, 38 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 24 +++++++++++-----------
+ arch/arm64/boot/dts/exynos/exynos7.dtsi    | 24 +++++++++++-----------
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 5198e71e8dab..9cde5ecb9449 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -182,7 +182,8 @@ struct exynos5_i2c {
- 	unsigned int		irq;
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 4422021cf4b2..bfe4ed8a23d6 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1585,7 +1585,7 @@ pwm: pwm@14dd0000 {
+ 			status = "disabled";
+ 		};
  
- 	void __iomem		*regs;
--	struct clk		*clk;
-+	struct clk		*clk;		/* operating clock */
-+	struct clk		*pclk;		/* bus clock */
- 	struct device		*dev;
- 	int			state;
+-		hsi2c_0: hsi2c@14e40000 {
++		hsi2c_0: i2c@14e40000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e40000 0x1000>;
+ 			interrupts = <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1598,7 +1598,7 @@ hsi2c_0: hsi2c@14e40000 {
+ 			status = "disabled";
+ 		};
  
-@@ -757,10 +758,14 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
- 	struct exynos5_i2c *i2c = adap->algo_data;
- 	int i, ret;
+-		hsi2c_1: hsi2c@14e50000 {
++		hsi2c_1: i2c@14e50000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e50000 0x1000>;
+ 			interrupts = <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1611,7 +1611,7 @@ hsi2c_1: hsi2c@14e50000 {
+ 			status = "disabled";
+ 		};
  
--	ret = clk_enable(i2c->clk);
-+	ret = clk_enable(i2c->pclk);
- 	if (ret)
- 		return ret;
+-		hsi2c_2: hsi2c@14e60000 {
++		hsi2c_2: i2c@14e60000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e60000 0x1000>;
+ 			interrupts = <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1624,7 +1624,7 @@ hsi2c_2: hsi2c@14e60000 {
+ 			status = "disabled";
+ 		};
  
-+	ret = clk_enable(i2c->clk);
-+	if (ret)
-+		goto err_pclk;
-+
- 	for (i = 0; i < num; ++i) {
- 		ret = exynos5_i2c_xfer_msg(i2c, msgs + i, i + 1 == num);
- 		if (ret)
-@@ -768,6 +773,8 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
- 	}
+-		hsi2c_3: hsi2c@14e70000 {
++		hsi2c_3: i2c@14e70000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e70000 0x1000>;
+ 			interrupts = <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1637,7 +1637,7 @@ hsi2c_3: hsi2c@14e70000 {
+ 			status = "disabled";
+ 		};
  
- 	clk_disable(i2c->clk);
-+err_pclk:
-+	clk_disable(i2c->pclk);
+-		hsi2c_4: hsi2c@14ec0000 {
++		hsi2c_4: i2c@14ec0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14ec0000 0x1000>;
+ 			interrupts = <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1650,7 +1650,7 @@ hsi2c_4: hsi2c@14ec0000 {
+ 			status = "disabled";
+ 		};
  
- 	return ret ?: num;
- }
-@@ -807,10 +814,18 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
+-		hsi2c_5: hsi2c@14ed0000 {
++		hsi2c_5: i2c@14ed0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14ed0000 0x1000>;
+ 			interrupts = <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1663,7 +1663,7 @@ hsi2c_5: hsi2c@14ed0000 {
+ 			status = "disabled";
+ 		};
  
--	ret = clk_prepare_enable(i2c->clk);
-+	i2c->pclk = devm_clk_get(&pdev->dev, "hsi2c_pclk");
-+	if (IS_ERR(i2c->pclk))
-+		i2c->pclk = NULL; /* pclk is optional */
-+
-+	ret = clk_prepare_enable(i2c->pclk);
- 	if (ret)
- 		return ret;
+-		hsi2c_6: hsi2c@14ee0000 {
++		hsi2c_6: i2c@14ee0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14ee0000 0x1000>;
+ 			interrupts = <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1676,7 +1676,7 @@ hsi2c_6: hsi2c@14ee0000 {
+ 			status = "disabled";
+ 		};
  
-+	ret = clk_prepare_enable(i2c->clk);
-+	if (ret)
-+		goto err_pclk;
-+
- 	i2c->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(i2c->regs)) {
- 		ret = PTR_ERR(i2c->regs);
-@@ -853,6 +868,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, i2c);
+-		hsi2c_7: hsi2c@14ef0000 {
++		hsi2c_7: i2c@14ef0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14ef0000 0x1000>;
+ 			interrupts = <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1689,7 +1689,7 @@ hsi2c_7: hsi2c@14ef0000 {
+ 			status = "disabled";
+ 		};
  
- 	clk_disable(i2c->clk);
-+	clk_disable(i2c->pclk);
+-		hsi2c_8: hsi2c@14d90000 {
++		hsi2c_8: i2c@14d90000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14d90000 0x1000>;
+ 			interrupts = <GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1702,7 +1702,7 @@ hsi2c_8: hsi2c@14d90000 {
+ 			status = "disabled";
+ 		};
  
- 	dev_info(&pdev->dev, "%s: HSI2C adapter\n", dev_name(&i2c->adap.dev));
+-		hsi2c_9: hsi2c@14da0000 {
++		hsi2c_9: i2c@14da0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14da0000 0x1000>;
+ 			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1715,7 +1715,7 @@ hsi2c_9: hsi2c@14da0000 {
+ 			status = "disabled";
+ 		};
  
-@@ -860,6 +876,9 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+-		hsi2c_10: hsi2c@14de0000 {
++		hsi2c_10: i2c@14de0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14de0000 0x1000>;
+ 			interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1728,7 +1728,7 @@ hsi2c_10: hsi2c@14de0000 {
+ 			status = "disabled";
+ 		};
  
-  err_clk:
- 	clk_disable_unprepare(i2c->clk);
-+
-+ err_pclk:
-+	clk_disable_unprepare(i2c->pclk);
- 	return ret;
- }
+-		hsi2c_11: hsi2c@14df0000 {
++		hsi2c_11: i2c@14df0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14df0000 0x1000>;
+ 			interrupts = <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index c73a597ca66e..c3efbc8add38 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -359,7 +359,7 @@ pinctrl_bus1: pinctrl@14870000 {
+ 			interrupts = <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
-@@ -870,6 +889,7 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
- 	i2c_del_adapter(&i2c->adap);
+-		hsi2c_0: hsi2c@13640000 {
++		hsi2c_0: i2c@13640000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13640000 0x1000>;
+ 			interrupts = <GIC_SPI 441 IRQ_TYPE_LEVEL_HIGH>;
+@@ -372,7 +372,7 @@ hsi2c_0: hsi2c@13640000 {
+ 			status = "disabled";
+ 		};
  
- 	clk_unprepare(i2c->clk);
-+	clk_unprepare(i2c->pclk);
+-		hsi2c_1: hsi2c@13650000 {
++		hsi2c_1: i2c@13650000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13650000 0x1000>;
+ 			interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
+@@ -385,7 +385,7 @@ hsi2c_1: hsi2c@13650000 {
+ 			status = "disabled";
+ 		};
  
- 	return 0;
- }
-@@ -881,6 +901,7 @@ static int exynos5_i2c_suspend_noirq(struct device *dev)
+-		hsi2c_2: hsi2c@14e60000 {
++		hsi2c_2: i2c@14e60000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e60000 0x1000>;
+ 			interrupts = <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>;
+@@ -398,7 +398,7 @@ hsi2c_2: hsi2c@14e60000 {
+ 			status = "disabled";
+ 		};
  
- 	i2c_mark_adapter_suspended(&i2c->adap);
- 	clk_unprepare(i2c->clk);
-+	clk_unprepare(i2c->pclk);
+-		hsi2c_3: hsi2c@14e70000 {
++		hsi2c_3: i2c@14e70000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e70000 0x1000>;
+ 			interrupts = <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>;
+@@ -411,7 +411,7 @@ hsi2c_3: hsi2c@14e70000 {
+ 			status = "disabled";
+ 		};
  
- 	return 0;
- }
-@@ -890,21 +911,30 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
- 	struct exynos5_i2c *i2c = dev_get_drvdata(dev);
- 	int ret = 0;
+-		hsi2c_4: hsi2c@13660000 {
++		hsi2c_4: i2c@13660000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13660000 0x1000>;
+ 			interrupts = <GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>;
+@@ -424,7 +424,7 @@ hsi2c_4: hsi2c@13660000 {
+ 			status = "disabled";
+ 		};
  
--	ret = clk_prepare_enable(i2c->clk);
-+	ret = clk_prepare_enable(i2c->pclk);
- 	if (ret)
- 		return ret;
+-		hsi2c_5: hsi2c@13670000 {
++		hsi2c_5: i2c@13670000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13670000 0x1000>;
+ 			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
+@@ -437,7 +437,7 @@ hsi2c_5: hsi2c@13670000 {
+ 			status = "disabled";
+ 		};
  
-+	ret = clk_prepare_enable(i2c->clk);
-+	if (ret)
-+		goto err_pclk;
-+
- 	ret = exynos5_hsi2c_clock_setup(i2c);
--	if (ret) {
--		clk_disable_unprepare(i2c->clk);
--		return ret;
--	}
-+	if (ret)
-+		goto err_clk;
+-		hsi2c_6: hsi2c@14e00000 {
++		hsi2c_6: i2c@14e00000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e00000 0x1000>;
+ 			interrupts = <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>;
+@@ -450,7 +450,7 @@ hsi2c_6: hsi2c@14e00000 {
+ 			status = "disabled";
+ 		};
  
- 	exynos5_i2c_init(i2c);
- 	clk_disable(i2c->clk);
-+	clk_disable(i2c->pclk);
- 	i2c_mark_adapter_resumed(&i2c->adap);
+-		hsi2c_7: hsi2c@13e10000 {
++		hsi2c_7: i2c@13e10000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13e10000 0x1000>;
+ 			interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>;
+@@ -463,7 +463,7 @@ hsi2c_7: hsi2c@13e10000 {
+ 			status = "disabled";
+ 		};
  
- 	return 0;
-+
-+err_clk:
-+	clk_disable_unprepare(i2c->clk);
-+err_pclk:
-+	clk_disable_unprepare(i2c->pclk);
-+	return ret;
- }
- #endif
+-		hsi2c_8: hsi2c@14e20000 {
++		hsi2c_8: i2c@14e20000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x14e20000 0x1000>;
+ 			interrupts = <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>;
+@@ -476,7 +476,7 @@ hsi2c_8: hsi2c@14e20000 {
+ 			status = "disabled";
+ 		};
  
+-		hsi2c_9: hsi2c@13680000 {
++		hsi2c_9: i2c@13680000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13680000 0x1000>;
+ 			interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+@@ -489,7 +489,7 @@ hsi2c_9: hsi2c@13680000 {
+ 			status = "disabled";
+ 		};
+ 
+-		hsi2c_10: hsi2c@13690000 {
++		hsi2c_10: i2c@13690000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13690000 0x1000>;
+ 			interrupts = <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>;
+@@ -502,7 +502,7 @@ hsi2c_10: hsi2c@13690000 {
+ 			status = "disabled";
+ 		};
+ 
+-		hsi2c_11: hsi2c@136a0000 {
++		hsi2c_11: i2c@136a0000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x136a0000 0x1000>;
+ 			interrupts = <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>;
 -- 
 2.30.2
 
