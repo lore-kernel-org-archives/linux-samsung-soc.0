@@ -2,140 +2,179 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A0EC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Dec 2021 11:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F696C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Dec 2021 11:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376792AbhLDL00 (ORCPT
+        id S233930AbhLDLbp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Dec 2021 06:26:26 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:42248
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1354425AbhLDL00 (ORCPT
+        Sat, 4 Dec 2021 06:31:45 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56110
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234381AbhLDLbn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Dec 2021 06:26:26 -0500
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        Sat, 4 Dec 2021 06:31:43 -0500
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 80A2F3F1F5
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Dec 2021 11:22:58 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 220463F316
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Dec 2021 11:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638616978;
-        bh=VWrgPdQvcehxcTv/NTpHcumL9ZsfNr4LJN61gCWR58c=;
+        s=20210705; t=1638617297;
+        bh=cDMOprbCNmVrnhTq2DA/P4ce01dr6plcdtHOsOupZhI=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=YuNyNiuQ3L/IiHQ7Q8vRWjZtKM1fd9bQ5fXsMmmls5iTTzo0l+HfZOPfmMA2gZR26
-         3nMOj1JoRpgvwRtA7OkdEAl6U6L+YeSrZa/CCqXbq7wvEKKl7znYtvKui07LFk79au
-         MkkJmWyN5DYMdkNPMBEHjb4Ok5ICzzlPNPNH7FErKqwgxSWwBGxDaK8i45ZxwjGVbl
-         7Sn6iU+c79SiGZMsmg3vANHfjIjrLeYy7pw73WjqD5BGCLD6diO3BFUJ4nyj0joZIP
-         ih7/RnN19me5s+YNF+fA8ylKMAF1vZci2KQvtW2OeoQDVslHkhLEUTJebOaBhnY0eX
-         qf04TQrRDhGcg==
-Received: by mail-lj1-f197.google.com with SMTP id y23-20020a2e3217000000b00218c6ede162so2112306ljy.23
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Dec 2021 03:22:58 -0800 (PST)
+        b=oVfZYn4yHd5QdQFQM6BfJ6fjo0SlkmZDtBWGvueAR9EiiHxOEDYe616hPBiPkCSnF
+         GH4dHihdzUuS6AymrEJtMdZxEB1jBTHRGq7Wvn1rVSSul0QM4ACeOh2cXIsWedEAd4
+         y8k2X6rTRXt+9tjSFeYuHC/VFOtYYlRE+gmvhQ/JmZFbd4S95rapr3aQJUuYJrvDv1
+         Nsg5UIuPLp+RotsafmA/jiBMMC/VwJX3Sbyd9Jr0nPwd5TjkkBjRjCUynhngbcqcOB
+         Z/UyrIRQle2/HwGyU4XAN0nRoEB7CxUqw7N+2rx1IMkefyce6D7tGgq8jnkfcA9XYC
+         nHIE4+4Onc8Sw==
+Received: by mail-lj1-f199.google.com with SMTP id u28-20020a2ea17c000000b0021126b5cca2so2117403ljl.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Dec 2021 03:28:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=VWrgPdQvcehxcTv/NTpHcumL9ZsfNr4LJN61gCWR58c=;
-        b=aQOk3lGdg1tW606Mg4FpZy4aAXyAXziuuL6P+Anrgj3bpj/kHCyqq3Nj1zXrdhTUoU
-         nav9NGaC1A3Vfe6B5SbJZRn85DVGuTfZqXQo9qb7M7JPpO/u/aiL3yv/TsmVTz87sJrt
-         FM3aH2Vz5S7EuOOirMpSo3t72uOxRmdRCIaowvkXlfoQAfJjTRr5xyKksZpRzS0IRTLy
-         pAT+HSs/cvYV9vB7YAbI+tYolMEErxgkv2D5zurDl2JpLH0jpzNQIsi7vobBdWCC9OV5
-         WdjLwe6GLmIKaSF1oQikqwUVLsmoxYCnMCh0U8iupErbFSOfdNKrOiwGoQgdBbS4yCh5
-         MlAA==
-X-Gm-Message-State: AOAM5303K5XFyMLiG8g5fqXMUMx/eui4bpqH7vnvXv0qsRoBUj8eN/Sj
-        y3kmkw5kBJUzQnnNbkSuRDfvCjQJtlcRCtqO1pafMyljd7yUpz9mG9SatSzF6QBk7iuxAOIiT5q
-        Qdq+ma39Aqg2Sc/RvfqBm5q8qWeLssX+uoGQ//syUaIgumccc
-X-Received: by 2002:a05:6512:11c5:: with SMTP id h5mr23522438lfr.431.1638616977750;
-        Sat, 04 Dec 2021 03:22:57 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJze2o9ZJ1AQBAsY7I2NINj1v4O5RSoJKKQqolS4JwELuRVFLJalwqvb2oNZ+ZlVRDVHdcFmuw==
-X-Received: by 2002:a05:6512:11c5:: with SMTP id h5mr23522413lfr.431.1638616977476;
-        Sat, 04 Dec 2021 03:22:57 -0800 (PST)
+        bh=cDMOprbCNmVrnhTq2DA/P4ce01dr6plcdtHOsOupZhI=;
+        b=Z6uQVCv8sAxzbrpHjI7y/MaZgcwhsbOhuroxZCDV6RYj5c6QggRcgv0Ti4+GfWRdZO
+         67lV3e/XSIpIr/Elh0oBMp4pdDfXPdWtqKv1Kp4twU0SNgAr+q3jSSt0xAlERIQTTn0x
+         Fbh/sh+fdQMd+6orIC2BW5kDgbrZtcwZn80Z3zja8joI0xNbXj/guJ8lLlYCyD3OZc60
+         p4BPkCd+LOLOWVjLLkg1m8LhiXs9fKKmyuTqL6T2ATi7nhV76tpJHW1kTpZ+3540wBf5
+         aTXiXhO5onqInwb4mEgc8AEw+tIczIkd4E34WChncZ3wsVW1YJksmX5OfoA2BrHhoCgj
+         6/Sw==
+X-Gm-Message-State: AOAM533wXVVB7bem7uN4YITptAuGyeUaXkcayvT9NcVJpBq0aut2OouL
+        LDJ/akr76118hbHQ68n7Cs1HMl4kKBdkH8XPnDgBeMZSH8eRAVcQLQCnq346AnZq25STFlV7iwG
+        6SliJMFe5jAU3FtSlJhCGf5+0es2i9DqyGoLuajXBMMnmQodh
+X-Received: by 2002:a2e:3304:: with SMTP id d4mr23451840ljc.377.1638617296340;
+        Sat, 04 Dec 2021 03:28:16 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyhvd6fygIOdZn6G780jNIdTGMMEUfzDuyEWxxWX82QhGFjy1oOU5we3bEx/4VWOfGcbNpMyg==
+X-Received: by 2002:a2e:3304:: with SMTP id d4mr23451815ljc.377.1638617296080;
+        Sat, 04 Dec 2021 03:28:16 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id k22sm731492lfu.95.2021.12.04.03.22.56
+        by smtp.gmail.com with ESMTPSA id d15sm730421lfq.38.2021.12.04.03.28.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 Dec 2021 03:22:56 -0800 (PST)
-Message-ID: <f8f9fab1-cea2-ebc6-6870-4929edfaef77@canonical.com>
-Date:   Sat, 4 Dec 2021 12:22:55 +0100
+        Sat, 04 Dec 2021 03:28:15 -0800 (PST)
+Message-ID: <8460edd6-efaf-3ae7-594c-0d1495d57abf@canonical.com>
+Date:   Sat, 4 Dec 2021 12:28:14 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH v2 RESEND 3/5] tty: serial: samsung: Remove USI
- initialization
+Subject: Re: [PATCH v2 RESEND 1/5] dt-bindings: soc: samsung: Add Exynos USI
+ bindings
 Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chanho Park <chanho61.park@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Rob Herring <robh@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
         David Virag <virag.david003@gmail.com>,
         Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
 References: <20211130111325.29328-1-semen.protsenko@linaro.org>
- <20211130111325.29328-4-semen.protsenko@linaro.org>
- <CAHp75Vd8PFhs8_Ji5x1X2Ph5ey+8JrRuneWCrG=5a+52Lh-ptQ@mail.gmail.com>
- <CAPLW+4mEw0x_rZ19h+rbz4qm=6OVgQvvbEJWL0wWQguMiWB7-g@mail.gmail.com>
+ <20211130111325.29328-2-semen.protsenko@linaro.org>
+ <YaZ8BpUaaC+sJYqx@robh.at.kernel.org>
+ <CAPLW+4kGGk+umKTVRPNM7R=GaUQa31Uid=K+9ofq8w2mqzGAEA@mail.gmail.com>
+ <CAL_JsqLopqkOEWmnvMDWr2rBa5Dm3jf17soqVA=Jx5Hn9BDS_g@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAPLW+4mEw0x_rZ19h+rbz4qm=6OVgQvvbEJWL0wWQguMiWB7-g@mail.gmail.com>
+In-Reply-To: <CAL_JsqLopqkOEWmnvMDWr2rBa5Dm3jf17soqVA=Jx5Hn9BDS_g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 03/12/2021 17:22, Sam Protsenko wrote:
-> On Wed, 1 Dec 2021 at 12:54, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On 03/12/2021 21:40, Rob Herring wrote:
+> On Fri, Dec 3, 2021 at 1:36 PM Sam Protsenko <semen.protsenko@linaro.org> wrote:
 >>
->> On Wed, Dec 1, 2021 at 12:42 AM Sam Protsenko
->> <semen.protsenko@linaro.org> wrote:
+>> On Tue, 30 Nov 2021 at 21:31, Rob Herring <robh@kernel.org> wrote:
 >>>
->>> USI control is now extracted to dedicated USI driver. Remove USI related
+>>> On Tue, Nov 30, 2021 at 01:13:21PM +0200, Sam Protsenko wrote:
+>>>> Add constants for choosing USIv2 configuration mode in device tree.
+>>>> Those are further used in USI driver to figure out which value to write
+>>>> into SW_CONF register. Also document USIv2 IP-core bindings.
+>>>>
+>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>>>> ---
+>>>> Changes in v2:
+>>>>   - Combined dt-bindings doc and dt-bindings header patches
+>>>>   - Added i2c node to example in bindings doc
+>>>>   - Added mentioning of shared internal circuits
+>>>>   - Added USI_V2_NONE value to bindings header
+>>>>
+>>>>  .../bindings/soc/samsung/exynos-usi.yaml      | 135 ++++++++++++++++++
+>>>>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 +++
+>>>>  2 files changed, 152 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+>>>>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..a822bc62b3cd
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+>>>> @@ -0,0 +1,135 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/soc/samsung/exynos-usi.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Samsung's Exynos USI (Universal Serial Interface) binding
+>>>> +
+>>>> +maintainers:
+>>>> +  - Sam Protsenko <semen.protsenko@linaro.org>
+>>>> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>>>> +
+>>>> +description: |
+>>>> +  USI IP-core provides selectable serial protocol (UART, SPI or High-Speed I2C).
+>>>> +  USI shares almost all internal circuits within each protocol, so only one
+>>>> +  protocol can be chosen at a time. USI is modeled as a node with zero or more
+>>>> +  child nodes, each representing a serial sub-node device. The mode setting
+>>>> +  selects which particular function will be used.
+>>>> +
+>>>> +  Refer to next bindings documentation for information on protocol subnodes that
+>>>> +  can exist under USI node:
+>>>> +
+>>>> +  [1] Documentation/devicetree/bindings/serial/samsung_uart.yaml
+>>>> +  [2] Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+>>>> +  [3] Documentation/devicetree/bindings/spi/spi-samsung.txt
+>>>> +
+>>>> +properties:
+>>>> +  $nodename:
+>>>> +    pattern: "^usi@[0-9a-f]+$"
+>>>> +
+>>>> +  compatible:
+>>>> +    const: samsung,exynos-usi-v2
+>>>
+>>> Use SoC based compatibles.
+>>>
 >>
->> the dedicated
->>
->>> code from serial driver to avoid conflicts and code duplication.
->>
->> Would it break run-time bisectability?
->> If so, why is it not a problem?
->>
+>> In this particular case, I'd really prefer to have it like this. Most
+>> likely we'll only have USIv1 and USIv1 in the end, and I think that
+>> would be more clear to have USI version in compatible, rather than SoC
+>> name. Please let me know if you have a strong opinion on this one --
+>> if so I'll re-send.
 > 
-> It shouldn't. This patch is [3/5], and USI driver (which takes the
-> control over the USI registers) is [2/5]. As for Device Tree, the only
-> platform using "samsung,exynos850-uart" right now is Exynos Auto V9
-> SADK (serial node is declared in exynosautov9.dtsi). I don't have
-> Exynos Auto V9 datasheet, so I can't really add the USI node properly
-> there, nor I can test that. I guess it should be done separately from
-> this patch series.
+> Fine if you have some evidence the ratio of versions to SoC are much
+> more than 1:1 and the versions correspond to something (IOW, you
+> aren't making them up).
 > 
-> Chanho, Krzysztof:
-> 
-> Guys, what are your thoughts on this? Basically with this patch series
-> applied, Exynos Auto V9 serial might become not functional. New USI
-> node should be added for UART case in Exynos Auto V9 dtsi (providing
-> correct sysreg, SW_CONF offset, clocks, etc), and serial node should
-> be encapsulated inside of that USI node. Also, USI node should be
-> referenced and enabled in SADK dts, providing also "clkreq-on"
-> property. More details can be found in [PATCH 1/5]. Do you think it's
-> ok to take this series as is, and add that later? Because otherwise we
-> might need to collaborate to add that Exynos Auto V9 enablement into
-> this patch series, which might take more time...
+> We went down the version # path with QCom and in the end about every
+> SoC had a different version.
 
-The patch in current state will probably break Exynos Auto v9 boards,
-including the in-tree one, unless bootloader sets the USI to serial. The
-trouble is that. Changing the Exynos Auto v9 DTSI in these series would
-solve it only partially, because the kernel still won't be bisectable.
+I am against v1/v2 versions. The documentation in Samsung was always
+poor in that matter. There were mistakes or confusions so it wasn't
+always obvious which IP-block version comes with which SoC. Not
+mentioning that several contributors do not have access to Samsung
+datasheets and they submit code based on GPL compliance packages, so
+they won't know which version they have for given SoC.
 
-Breaking Auto v9 serial within a kernel is okay for me, because the
-board was added recently, I don't expect products using it and it is
-still development phase. This of course assuming that it's users agree,
-so the question is to Chanho and other folks.
+OTOH there is no single benefit of using USI v1/v2, except "liking".
 
 Best regards,
 Krzysztof
