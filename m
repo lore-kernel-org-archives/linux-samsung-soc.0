@@ -2,60 +2,58 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45584C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Dec 2021 18:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 856C0C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Dec 2021 22:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237108AbhLESSg (ORCPT
+        id S232884AbhLEWPs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Dec 2021 13:18:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56538 "EHLO
+        Sun, 5 Dec 2021 17:15:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237102AbhLESSg (ORCPT
+        with ESMTP id S230153AbhLEWPr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Dec 2021 13:18:36 -0500
+        Sun, 5 Dec 2021 17:15:47 -0500
 Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3552C061714;
-        Sun,  5 Dec 2021 10:15:08 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id y12so33518734eda.12;
-        Sun, 05 Dec 2021 10:15:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AF0C061714;
+        Sun,  5 Dec 2021 14:12:19 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id y13so35033278edd.13;
+        Sun, 05 Dec 2021 14:12:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=SqpxYZMXggh8b1bfYQBh49tAcZib8Y6s1iaC8Hm+BT4=;
-        b=Sqf4i4BaUOCNXqqYbfnTwk1s9f/lrX0Np2cQAFBFhMaSWKhpbAVN+uKijYpPO93A6Y
-         N2YywPQC7L0sBTosu96xEiMfWJI32nUNaZ3ko77p2epREaMe3SwiuxteLrCSqbi2ucy5
-         mv/5evqFx5sHDNNHSGI1+WwdlufINIDaYHqI5a3QnR+F5V5dn0JWuUuklzsRhk6CaDaV
-         vhX8KP1SJ5yeff9CZvLdwcBbIANQWJhLuJ//D7cs1ITxAOAoGbc94+LCWOX/cEmpOPUj
-         BMnxp2mallUK8Ky1I6q9WyP06rSdXSu+sSnGBpPGm/4H4fx2m4Fli+d5qd+7rkNlHi/O
-         TVQQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/0+D7LVpx2b7+YEMHYNQ4sHzfEasm4IIQFuQ89JA1j8=;
+        b=F1ShzJNVmwrJpSJSRSW9i78hXffC6SmbOrZhsVhVWauFzMa2QgZ5ZEiL3yjxKcWWl/
+         b3mZcfV2vMjsBoxTguBJ2/Fj4TLrJGB5PBWZnTceQvBlrC9J+xIYPw+9L5sknnwRVyOe
+         Tj4zoIDtHFctHEmv4nyiv2dHBXa3cfQlYV4Bfi9/NI2W62m8e1X9tC4WoalYvLJQaVSc
+         1Yf3y95KIX8VTuzYd+xcG/t+qKei2WJXaV0ka/zSMq6pJuVioghBpp+li4gX61+y0s07
+         eGFs1sGzLxp/r/Teac8JLFi0QKh1nO3mPGPpTfVQRh7oHq+4JvvVlHmdi8V7cD1ujyK0
+         zFUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=SqpxYZMXggh8b1bfYQBh49tAcZib8Y6s1iaC8Hm+BT4=;
-        b=STwecnBTO4Ze5j4ZBI22yA2yH6SCFXHFdz+wwoJer5M4XqNXZrPMtZ0QNtdiVC3TU2
-         osfkZqHuay3O8Q0qt+v5pR4XS+uJKwskAfgn4rO3z2KgMO37q+jauAqAgnzCdfilflSf
-         0ehw7YvgQR9FdVwQ0A6VNT89AC3lw1HxbmjzxKvBGGYx0v/lcG0PE9sWIzRh+jR5/Ts2
-         1VIxl1dBMibSAME54PCcSsDl1X9XhzBU8WUpl2hpxp4AzQVyUXhfi0Pz236dYtuzQ+1i
-         q2f/Euo1NSV1vvYXNqgOE8VFnumiSUBQmuYnIqqvcTz8N11x3QusQWFDw1EIsahzmMb3
-         S0zA==
-X-Gm-Message-State: AOAM533mcLJ+BzMFhm7niF9OyuhsVnw4doOOv+hJpjM73D1Kqj6arbT9
-        FOc8SPf3DXpTnqaOpqXtvvAl9aJ7p3+pDJrY
-X-Google-Smtp-Source: ABdhPJwMG/LiVD2dLyeMtVmYcHkmckkGlgfY5QHSjrklYHMCivYr9eaW6k2dbUhYmswDoH6czVEmYA==
-X-Received: by 2002:a05:6402:440b:: with SMTP id y11mr47249774eda.25.1638728107268;
-        Sun, 05 Dec 2021 10:15:07 -0800 (PST)
-Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
-        by smtp.gmail.com with ESMTPSA id l16sm6567822edb.59.2021.12.05.10.15.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/0+D7LVpx2b7+YEMHYNQ4sHzfEasm4IIQFuQ89JA1j8=;
+        b=no614cVfOAo7oaf5p9lsaZZJmqR5gI4k1dqW7kkKnNoQ3iqV45yb7ZnUoDIaX8vTVA
+         FaHZIyUmXIQdKsfccoXiC4GxMJe+u5ObaPbtnenVlD9962VsgIojn1w/5aF5xxpCH0WO
+         FoisrjvPW57+L4Xq2cWT1dpluBN53w8gY+40rihsmpzymdTKcZggR9eo2fACAQ0aIhJd
+         +2s0md1UVUaUjts/ir0mPpVLfREf4+70dKydypmbj6r9v5dPMFzt4yJEPfVNNcEItgfU
+         yr1WrUL+pOCtefjauuyNEUz9hvQHDr2sQejH865CsWYULkXyQ4zRq7cu65KZzxvZpyzX
+         qJXg==
+X-Gm-Message-State: AOAM531B2oAPaQ1SgJtJ0FOj6zWkSVZClsnNy4fsKGKVHn6FACQ1sFMq
+        wFms2ulwXoDxWY7vaG+luE0=
+X-Google-Smtp-Source: ABdhPJwNJVY/pPrZpgLhM+zElauLpEyy+O+9rCOEWxON+LxRF3Qjo0Yh25DR1b0Y1aOy0+uHn21Xww==
+X-Received: by 2002:a17:906:f74a:: with SMTP id jp10mr39938596ejb.358.1638742338498;
+        Sun, 05 Dec 2021 14:12:18 -0800 (PST)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.googlemail.com with ESMTPSA id gb18sm5608079ejc.95.2021.12.05.14.12.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Dec 2021 10:15:06 -0800 (PST)
-Message-ID: <60f5c2e98e3a2048f86a79c3aa1ed945dc0cb4aa.camel@gmail.com>
-Subject: Re: [PATCH 6/6] arm64: dts: exynos: Add initial device tree support
- for Exynos7885 SoC
+        Sun, 05 Dec 2021 14:12:18 -0800 (PST)
 From:   David Virag <virag.david003@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        David Virag <virag.david003@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -64,112 +62,84 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date:   Sun, 05 Dec 2021 19:14:23 +0100
-In-Reply-To: <de24b968-f359-25bf-76d7-69328401f83d@canonical.com>
-References: <20211205153302.76418-1-virag.david003@gmail.com>
-         <20211205153302.76418-7-virag.david003@gmail.com>
-         <de24b968-f359-25bf-76d7-69328401f83d@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.2 
+Subject: [PATCH v2 0/7] Initial Samsung Galaxy A8 (2018) support
+Date:   Sun,  5 Dec 2021 23:10:59 +0100
+Message-Id: <20211205221108.193400-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 2021-12-05 at 18:31 +0100, Krzysztof Kozlowski wrote:
+Add basic initial support for the Samsung Galaxy A8 (2018) smartphone.
+This phone is also known as "jackpotlte" and under the model name
+"SM-A530F". In its current state this should work on most if not all
+Exynos7885 phones/devices released.
 
-[...]
+As of now, it supports I2C nodes (all disabled by default) and UART
+console with basic clock support in place.
 
-> > +       fimc_is_mclk0_in: fimc_is_mclk0_in {
-> > +               samsung,pins = "gpc0-0";
-> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> > +               samsung,pin-drv = <2>;
-> > +       };
-> > +
-> > +       fimc_is_mclk0_out: fimc_is_mclk0_out {
-> > +               samsung,pins = "gpc0-0";
-> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> > +               samsung,pin-drv = <2>;
-> > +       };
-> > +
-> > +       fimc_is_mclk0_fn: fimc_is_mclk0_fn {
-> 
-> I cannot get the point of these pin configurations - three groups
-> with
-> only function difference. How this would be used by the driver? Maybe
-> just keep the one really used. Same for others below.
-> 
+To access the UART console on the A8, there are two methods:
+  -You can open up the device and solder directly to some debug pins
+   close to the display connector.
+  -Through I2C you can set the S2MU004 MFD chip to multiplex the SoC's
+   UART lines to the d+ and d- on the USB Type-C port of the device.
 
-They seem to be changed in some cases by the FIMC-IS and/or Camera
-module drivers in the downstream kernel. I'm not exactly sure about why
-and how are they needed, as the code for FIMC-IS is quite large and
-it's not my priority to work on it right now. I can remove these
-configurations for now if that's okay, maybe I, or someone else will
-re-add it later if it's needed.
+Note that UART works on 1.8 volts, so plugging in a normal USB cable
+while multiplexed to UART may fry the SoC.
 
-> 
-> > +               samsung,pins = "gpc0-0";
-> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> > +               samsung,pin-drv = <2>;
-> > +       };
-> > +
+Everything was tested through UART by using a minimal driver that sets
+the S2MU004 to multiplex UART.
 
-[...]
+The preferred way to boot this device is by using my Minimal S-Boot
+Wrapper [1] to work around some issues caused by the stock, and
+non-replacable Samsung S-Boot bootloader.
 
-> > +
-> > +       arm-pmu {
-> > +               compatible = "arm,armv8-pmuv3";
-> 
-> Wrong compatible. Please use specific, although I don't know which
-> one
-> you have - 53 or 73... since you have two clusters, I would expect
-> two
-> PMUs, hmm....
+Changes in v2:
+- Added R-b tags by Krzysztof Kozlowski
+- Moved dt-bindings patches to the beginning of the series
+- Fixed double : in 7885 CMU bindings
+- Fixed multiple double line breaks
+- Made Exynos850 and 7885 clock drivers share some code in a new patch
+- Lots of dts/dtsi fixes
 
-I was thinking the same, but there's a problem: As I'm also guessing we
-have two PMUs for the a53 and a73 cores, we'd need to seperate it but I
-have no access to the documentation that would let me know which
-interrupts we would need for both of these PMUs. The downstream dts
-doesn't tell us anything specific in this case, and I have no idea how
-else am I supposed to know which interrupts are right without a TRM.
+[1] https://github.com/VDavid003/minimal_sboot_wrapper
 
-I'd be guessing either the 82, 83 or the 218, 219 interrupts would be
-the right one for the a73 cores, and I suspect that it should be 82 and
-83, but I can't really confirm this.
+David Virag (7):
+  dt-bindings: clock: Add bindings definitions for Exynos7885 CMU
+  dt-bindings: clock: Document Exynos7885 CMU bindings
+  dt-bindings: arm: samsung: document jackpotlte board binding
+  clk: samsung: Make exynos850_register_cmu shared
+  clk: samsung: clk-pll: Add support for pll1417x
+  clk: samsung: Add initial Exynos7885 clock driver
+  arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC
 
-Do you have any idea how to proceed in this case? Maybe there is a way
-to test which ones would be right?
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../clock/samsung,exynos7885-clock.yaml       | 166 ++++
+ arch/arm64/boot/dts/exynos/Makefile           |   7 +-
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts |  95 ++
+ .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 865 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 438 +++++++++
+ drivers/clk/samsung/Makefile                  |   2 +
+ drivers/clk/samsung/clk-exynos-arm64.c        |  94 ++
+ drivers/clk/samsung/clk-exynos-arm64.h        |  20 +
+ drivers/clk/samsung/clk-exynos7885.c          | 593 ++++++++++++
+ drivers/clk/samsung/clk-exynos850.c           |  94 +-
+ drivers/clk/samsung/clk-pll.c                 |   1 +
+ drivers/clk/samsung/clk-pll.h                 |   1 +
+ include/dt-bindings/clock/exynos7885.h        | 115 +++
+ 14 files changed, 2404 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos-arm64.c
+ create mode 100644 drivers/clk/samsung/clk-exynos-arm64.h
+ create mode 100644 drivers/clk/samsung/clk-exynos7885.c
+ create mode 100644 include/dt-bindings/clock/exynos7885.h
 
-> 
-> > +               interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>;
-> > +               interrupt-affinity = <&cpu6>,
-> > +                                    <&cpu7>,
-> > +                                    <&cpu0>,
-> > +                                    <&cpu1>,
-> > +                                    <&cpu2>,
-> > +                                    <&cpu3>,
-> > +                                    <&cpu4>,
-> > +                                    <&cpu5>;
-> > +       };
-> > +
+-- 
+2.34.1
 
-[...]
-
-> Best regards,
-> Krzysztof
-
-The rest of the things you mentioned will be fixed in v2
-
-Best Regards,
-David
