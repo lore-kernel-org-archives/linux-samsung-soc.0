@@ -2,188 +2,158 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB83C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 14:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B126C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 15:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242410AbhLFOd0 (ORCPT
+        id S1385784AbhLFPrE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 09:33:26 -0500
-Received: from smtp1.axis.com ([195.60.68.17]:52820 "EHLO smtp1.axis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242092AbhLFOdZ (ORCPT
+        Mon, 6 Dec 2021 10:47:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1390784AbhLFPmu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Dec 2021 09:33:25 -0500
+        Mon, 6 Dec 2021 10:42:50 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE571C08E852;
+        Mon,  6 Dec 2021 07:32:17 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id y12so44274360eda.12;
+        Mon, 06 Dec 2021 07:32:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1638800997;
-  x=1670336997;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=oMIQqZW8PBJSiuntECWVbhUwyE6oY/NcOyzE/8jFkzs=;
-  b=Zjm1QzhdnHGg+ZhjLOTmpE8IziUycyhULpf03M1iMApc3+syLKR0vU+N
-   DBUH4KtXlYt/FuwdZnTyLYvWTqDNDy/ZH1tmSvli/KtRlGPB7gnAwgxK4
-   7fU7bMDiCk6yVajJVx3TD0aFIXdbz6mI4WeTA4C9O0JhBLtUvMSsWcNDf
-   qSsF/0PFYn+AFSkL/HFcrLPv1cLeNQ1aqaOPFZc0EBtQ0gq23ySDruhNH
-   ykvX/6rAqe13EmrDDIPJtN9kiOgD6rqJWPuVar7E4ZSNlrnphMgexGhgi
-   c4uWgi7TV9lYS96Vy0GrOZVzvVmjjLr/RSXiRArK5TyY/3aaPq9U0IK17
-   A==;
-From:   =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jA0/Vjs8HTmbMPDycewEdsM7ryNAIr3rJJKIVuOBXQc=;
+        b=jD0l0RMMRQH80ctwcpGj3byfYrfKGQ8gME4jJ3W9eBNZRv2zYUkXOCgbaYsosE7o+p
+         lcbMIRgRMjr/hskND+XKbxGRQtamjSrY9CR4vJHMWeYK2DnDJjMvaylyMhWF2Jr1cVuk
+         y0qDtwDP5MfWISlT8GBY2saM6/H6w4yzNi+N6xvdNxWy2Wz7EIy+mn8OVb7/AKLhlsnS
+         icnHPV3qcZoQssViNggvUFbj6CR5Dpca7bRI2XOrGHMf7h2R1Ppnht5JeFx3bSJisWLC
+         XnYHRQYcdxo7IfPHQ4CgMiheO0wjR/okvvvvjbbjqSXazHgBbLxso+G4nOkHChgXu6BQ
+         E2eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jA0/Vjs8HTmbMPDycewEdsM7ryNAIr3rJJKIVuOBXQc=;
+        b=HDDycVUnoXF6k1laMzMb9BQotxL6MSgk2CLemsiRdiZjhTi4pE/ldHpbj17sGsJfWT
+         7M5yWhL68d5EoNOEPALJHsXoZxLYpmx9kEg+b6FC5lSzYBMqQEKhLb5MtflJdfiLEJby
+         khN/ThAYaAZ2eg43AOsWeEcdC0e9trXUgmtplNI7hnIsMbewGyWqewBz94M+Y8Bqjnjk
+         LekuJKFvbjthY077USsLa0IOG38CtB4NLSYJPchPd4VUxT/jbN1KHU+lAdPQ31x4Y5bZ
+         27DrLY4nZ4FiGfn7RvBmjDcIua+CvxDqVfzKrBhecl20romxqJwCKw9ch24koTgHI7Rd
+         +YBQ==
+X-Gm-Message-State: AOAM532earI/58x8rQ7gZ4KShp5SyM80r94kmwZshMdar13jYfyGDXdf
+        bGeOWZIiBmLi2ciw0esXIEM=
+X-Google-Smtp-Source: ABdhPJyElICCwzglnbsKWrwExz94gKjSFu9kQNBc2/inrAfLJnJFdelTd1WFkEkfIxu5bDdrxN2VFg==
+X-Received: by 2002:aa7:c415:: with SMTP id j21mr56343729edq.357.1638804736486;
+        Mon, 06 Dec 2021 07:32:16 -0800 (PST)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.googlemail.com with ESMTPSA id d19sm7364688edt.34.2021.12.06.07.32.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Dec 2021 07:32:15 -0800 (PST)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        David Virag <virag.david003@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-CC:     Doug Anderson <dianders@google.com>, <kernel@axis.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
-Subject: [PATCH v2 3/4] mmc: dw_mmc: Add quirk for extended data read timeout
-Date:   Mon, 6 Dec 2021 15:29:28 +0100
-Message-ID: <20211206142929.26729-4-marten.lindahl@axis.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20211206142929.26729-1-marten.lindahl@axis.com>
-References: <20211206142929.26729-1-marten.lindahl@axis.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v4 0/7] Initial Samsung Galaxy A8 (2018) support
+Date:   Mon,  6 Dec 2021 16:31:14 +0100
+Message-Id: <20211206153124.427102-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Current dw_mci driver supports a TMOUT register which consists of a 24
-bit field (TMOUT[31:8]) for the DATA_TIMEOUT. The maximum value of this
-field is 0xFFFFFF, which with a 200MHz clock will give a full DRTO of:
+Add basic initial support for the Samsung Galaxy A8 (2018) smartphone.
+This phone is also known as "jackpotlte" and under the model name
+"SM-A530F". In its current state this should work on most if not all
+Exynos7885 phones/devices released.
 
-0xFFFFFF / 200000000 => ~84 ms
+As of now, it supports I2C nodes (all disabled by default) and UART
+console with basic clock support in place.
 
-However, the ARTPEC-8 SoC DWMMC IP version has a TMOUT register with an
-extended DATA_TIMEOUT field, which supports longer timers for the DRTO.
-In this version the DATA_TIMEOUT field is split into two, which with the
-same 200MHz clock as above will allow a maximum timeout of:
+To access the UART console on the A8, there are two methods:
+  -You can open up the device and solder directly to some debug pins
+   close to the display connector.
+  -Through I2C you can set the S2MU004 MFD chip to multiplex the SoC's
+   UART lines to the d+ and d- on the USB Type-C port of the device.
 
-((TMOUT[10:8] -1) * 0xFFFFFF + TMOUT[31:11] * 8) / 200000000 => ~587 ms
+Note that UART works on 1.8 volts, so plugging in a normal USB cable
+while multiplexed to UART may fry the SoC.
 
-Add a quirk to support this. The quirk is enabled for ARTPEC-8 SoCs.
+Everything was tested through UART by using a minimal driver that sets
+the S2MU004 to multiplex UART.
 
-Signed-off-by: Mårten Lindahl <marten.lindahl@axis.com>
----
+The preferred way to boot this device is by using my Minimal S-Boot
+Wrapper [1] to work around some issues caused by the stock, and
+non-replacable Samsung S-Boot bootloader.
 
-v2:
- - Removed unnecessary comment
- - Change 1<<0 to BIT(0)
+Changes in v2:
+- Added R-b tags by Krzysztof Kozlowski
+- Moved dt-bindings patches to the beginning of the series
+- Fixed double : in 7885 CMU bindings
+- Fixed multiple double line breaks
+- Made Exynos850 and 7885 clock drivers share some code in a new patch
+- Lots of dts/dtsi fixes
 
- drivers/mmc/host/dw_mmc-exynos.c |  5 +++++
- drivers/mmc/host/dw_mmc.c        | 33 ++++++++++++++++++++++++++++----
- drivers/mmc/host/dw_mmc.h        |  6 ++++++
- 3 files changed, 40 insertions(+), 4 deletions(-)
+Changes in v3:
+- Fix SPDX comment style in clk-exynos-arm64.h
+- Fix typo in dts comment
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 86486e6659de..1b625642c5b4 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -127,6 +127,11 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
- 				DQS_CTRL_GET_RD_DELAY(priv->saved_strobe_ctrl);
- 	}
- 
-+	if (priv->ctrl_type == DW_MCI_TYPE_ARTPEC8) {
-+		/* Quirk needed for ARTPEC-8 SoCs */
-+		host->quirks |= DW_MMC_QUIRK_EXTENDED_TMOUT;
-+	}
-+
- 	host->bus_hz /= (priv->ciu_div + 1);
- 
- 	return 0;
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index f2a14a434bef..45ea9fd97a6a 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1289,6 +1289,7 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
- {
- 	u32 clk_div, tmout;
- 	u64 tmp;
-+	unsigned int tmp2;
- 
- 	clk_div = (mci_readl(host, CLKDIV) & 0xFF) * 2;
- 	if (clk_div == 0)
-@@ -1301,10 +1302,28 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
- 	tmout = 0xFF; /* Set maximum */
- 
- 	/* TMOUT[31:8] (DATA_TIMEOUT) */
--	if (!tmp || tmp > 0xFFFFFF)
--		tmout |= (0xFFFFFF << 8);
--	else
--		tmout |= (tmp & 0xFFFFFF) << 8;
-+	if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT) {
-+		/*
-+		 * Extended HW timer (max = 0x6FFFFF2):
-+		 * ((TMOUT[10:8] - 1) * 0xFFFFFF + TMOUT[31:11] * 8)
-+		 */
-+		if (!tmp || tmp > 0x6FFFFF2)
-+			tmout |= (0xFFFFFF << 8);
-+		else {
-+			/* TMOUT[10:8] */
-+			tmp2 = (((unsigned int)tmp / 0xFFFFFF) + 1) & 0x7;
-+			tmout |= tmp2 << 8;
-+
-+			/* TMOUT[31:11] */
-+			tmp = tmp - ((tmp2 - 1) * 0xFFFFFF);
-+			tmout |= (tmp & 0xFFFFF8) << 8;
-+		}
-+	} else {
-+		if (!tmp || tmp > 0xFFFFFF)
-+			tmout |= (0xFFFFFF << 8);
-+		else
-+			tmout |= (tmp & 0xFFFFFF) << 8;
-+	}
- 
- 	mci_writel(host, TMOUT, tmout);
- 	dev_dbg(host->dev, "timeout_ns: %u => TMOUT[31:8]: 0x%#08x",
-@@ -2005,9 +2024,15 @@ static void dw_mci_set_drto(struct dw_mci *host)
- 	if (drto_div == 0)
- 		drto_div = 1;
- 
-+	if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
-+		drto_clks = (((drto_clks & 0x7) - 1) * 0xFFFFFF) +
-+			((drto_clks & 0xFFFFF8));
-+
- 	drto_ms = DIV_ROUND_UP_ULL((u64)MSEC_PER_SEC * drto_clks * drto_div,
- 				   host->bus_hz);
- 
-+	dev_dbg(host->dev, "drto_ms: %u\n", drto_ms);
-+
- 	/* add a bit spare time */
- 	drto_ms += 10;
- 
-diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-index 771d5afa3136..3b6510d4a684 100644
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -118,6 +118,7 @@ struct dw_mci_dma_slave {
-  * @part_buf: Simple buffer for partial fifo reads/writes.
-  * @push_data: Pointer to FIFO push function.
-  * @pull_data: Pointer to FIFO pull function.
-+ * @quirks: Set of quirks that apply to specific versions of the IP.
-  * @vqmmc_enabled: Status of vqmmc, should be true or false.
-  * @irq_flags: The flags to be passed to request_irq.
-  * @irq: The irq value to be passed to request_irq.
-@@ -223,6 +224,8 @@ struct dw_mci {
- 	void (*push_data)(struct dw_mci *host, void *buf, int cnt);
- 	void (*pull_data)(struct dw_mci *host, void *buf, int cnt);
- 
-+	u32			quirks;
-+
- 	bool			vqmmc_enabled;
- 	unsigned long		irq_flags; /* IRQ flags */
- 	int			irq;
-@@ -274,6 +277,9 @@ struct dw_mci_board {
- 	struct dma_pdata *data;
- };
- 
-+/* Support for longer data read timeout */
-+#define DW_MMC_QUIRK_EXTENDED_TMOUT		BIT(0)
-+
- #define DW_MMC_240A		0x240a
- #define DW_MMC_280A		0x280a
- 
+Changes in v4:
+- Fixed leading 0x in clock-controller nodes
+- Fixed missing headers in clock driver patches
+- "__SAMSUNG_CLK_ARM64_H" -> "__CLK_EXYNOS_ARM64_H" in
+  clk-exynos-arm64.h everywhere (only the comment at the end had the
+  latter by accident)
+- Added R-b tag by Krzysztof Kozlowski to pll1417x patch
+- Actually suffixed pin configuration node names with "-pins"
+- Seperated Cortex-A53 and Cortex-A73 PMU
+
+[1] https://github.com/VDavid003/minimal_sboot_wrapper
+
+David Virag (7):
+  dt-bindings: clock: Add bindings definitions for Exynos7885 CMU
+  dt-bindings: clock: Document Exynos7885 CMU bindings
+  dt-bindings: arm: samsung: document jackpotlte board binding
+  clk: samsung: Make exynos850_register_cmu shared
+  clk: samsung: clk-pll: Add support for pll1417x
+  clk: samsung: Add initial Exynos7885 clock driver
+  arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../clock/samsung,exynos7885-clock.yaml       | 166 ++++
+ arch/arm64/boot/dts/exynos/Makefile           |   7 +-
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts |  95 ++
+ .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 865 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 438 +++++++++
+ drivers/clk/samsung/Makefile                  |   2 +
+ drivers/clk/samsung/clk-exynos-arm64.c        |  94 ++
+ drivers/clk/samsung/clk-exynos-arm64.h        |  20 +
+ drivers/clk/samsung/clk-exynos7885.c          | 597 ++++++++++++
+ drivers/clk/samsung/clk-exynos850.c           |  88 +-
+ drivers/clk/samsung/clk-pll.c                 |   1 +
+ drivers/clk/samsung/clk-pll.h                 |   1 +
+ include/dt-bindings/clock/exynos7885.h        | 115 +++
+ 14 files changed, 2408 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos-arm64.c
+ create mode 100644 drivers/clk/samsung/clk-exynos-arm64.h
+ create mode 100644 drivers/clk/samsung/clk-exynos7885.c
+ create mode 100644 include/dt-bindings/clock/exynos7885.h
+
 -- 
-2.20.1
+2.34.1
 
