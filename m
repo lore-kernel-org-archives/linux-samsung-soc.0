@@ -2,131 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE5FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 12:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C915C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 14:25:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243304AbhLFMrS (ORCPT
+        id S1344237AbhLFO26 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 07:47:18 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:50712
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243292AbhLFMrR (ORCPT
+        Mon, 6 Dec 2021 09:28:58 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:35646 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344236AbhLFO25 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Dec 2021 07:47:17 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6176E3F1E5
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Dec 2021 12:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638794627;
-        bh=2ccnvvjzh+vr27cmDIxMLKkuyPKdTXHoRsCzeOVPF7c=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=eEmJYfaiZO+/iHRvWxq8KF1GbQir4H1bi4y4JgahBCNZVqqIT9ihpBxN96LgC7NKQ
-         dy2oIc0VlduOjJijtyz4aCMYi4VtN4ZPYzk1nfh9dw3iqYkoYLiL0ufzj3B/LRGjx3
-         3cAqCAeAgxpBBCbHNfztfVHGD3uYcxJu/B/HbexftnWtT7seEz6p8Kq0FlcPP/JZXH
-         R2V1eLvbfXXbVKHog2Nt14KEH8eSaC8C78TCUle1bRqfXQ/1kFsmdz6pOaQfdKsvxs
-         ztO4+pc1yL4VIX0Fq38VunhuN7VW1ubc8ZP+0U5AIXCok8G1zRpNJ/WjWo28O7rSkM
-         DgzTSZRjksvhg==
-Received: by mail-lj1-f199.google.com with SMTP id w16-20020a05651c103000b00218c9d46faeso3412145ljm.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Dec 2021 04:43:47 -0800 (PST)
+        Mon, 6 Dec 2021 09:28:57 -0500
+Received: by mail-ot1-f46.google.com with SMTP id x43-20020a056830246b00b00570d09d34ebso13837178otr.2;
+        Mon, 06 Dec 2021 06:25:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2ccnvvjzh+vr27cmDIxMLKkuyPKdTXHoRsCzeOVPF7c=;
-        b=seK/3LHt7Jzwbwz+0dESdtEXcxV8P4F8Nl5u6I49QZoDwujLr0Kj0sn6ERKdfm1S4r
-         LQNXpH2+PUsS23bUGhLw9guIDskyBh80gLbJb6yfUoQ+JwRqr61Mu5nDdK5RByIEjDOL
-         PJ/04PSah2N3MHu51449cUD1z6xNeyjz4601qmhLQfezmqHsgKJhDzJKXIA/WduYuwJK
-         1IDBB37TdDTm0rSzO6skZTSzJD+BvQV0w+rpCkOwto4EX9t2rJhmoco2OsI0J7WVvDmn
-         9Nl02yuTXRHTT/yp7CNkaakqqiKMT8pbZckdvoeB1P00mPo5D9cA7O+JC6OIZbKix8uD
-         gCvQ==
-X-Gm-Message-State: AOAM532fraRuQ/pYytdH2J7GKXogeSbx3cwRZ0G103VaiiZJ5ah/AA8p
-        6UlINL5QgPcxHcPQR1vyIbvUYt8nkcx240BI8JWYHMtlOEMjHWBUIKRprA1gTbJqnKB5GVHEP1S
-        OVWydRRxrf88m++mGylM1Bz7go6NYZrPLdj2qTZvAoCkFVNi8
-X-Received: by 2002:a05:6512:1313:: with SMTP id x19mr35524135lfu.279.1638794626788;
-        Mon, 06 Dec 2021 04:43:46 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxEMmT5tdvgU9TQ9t8yV5F7fDNCa+/K4eYR8uaI1kK7FvQ6ULIl3dE3GYPMmHi49FXSHjzxDw==
-X-Received: by 2002:a05:6512:1313:: with SMTP id x19mr35524106lfu.279.1638794626513;
-        Mon, 06 Dec 2021 04:43:46 -0800 (PST)
-Received: from localhost.localdomain (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id u14sm1296006ljd.12.2021.12.06.04.43.45
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=CWGHOhMZUfniE+Y2ng6wuO7zGULF9CPIy3yGJ1kJWX0=;
+        b=DgwFIAmc9k2dWMF6EQVDHIiNE35cuKEvoa+pjnuDeEpoU1T9GbQbFPHDX0ItXFnlwY
+         ddRE4uy8P1xniuAKAitMKdSo4lZwJ3GJNZWMq4J+hQndcEwYphV6FuJysgne/pqPSfcw
+         uKKRU+YgChofbHOQCk0QhwL6P97XQiQBgIav/9/UTfZr9De6WGWtkblnH9e6AxfPlhbm
+         uTQbWHRjacuypQvvrFtke+Ns08YssWEPkGzTiuoNtc949z5Nmq37UvnmHKXZCKB69UZb
+         A6BJMbFvASPBGFL59M+GF6AiW7RI4VTr5x1V/IaEfEKM3wnDijThouPnBSfokHFORpX5
+         viQw==
+X-Gm-Message-State: AOAM533JlCKddPbz3MaK9BV/OnSMpny5CgEvxXy3hMcpEA4kDTlFMhdk
+        R+VvpghYxn4GoSlytayN6Q==
+X-Google-Smtp-Source: ABdhPJyfp+sRZSmmxcQQNS5FVwHTA4gbp/9HMnapB0bZgOO+3eG1BRDTnxJZIBTFqjfhvJMpWKKcbg==
+X-Received: by 2002:a9d:12c:: with SMTP id 41mr30003581otu.322.1638800727961;
+        Mon, 06 Dec 2021 06:25:27 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id s2sm2197803otr.69.2021.12.06.06.25.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 04:43:46 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        Mon, 06 Dec 2021 06:25:27 -0800 (PST)
+Received: (nullmailer pid 1976294 invoked by uid 1000);
+        Mon, 06 Dec 2021 14:25:22 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
         Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH] regulator: dt-bindings: samsung,s5m8767: add missing op_mode to bucks
-Date:   Mon,  6 Dec 2021 13:43:06 +0100
-Message-Id: <20211206124306.14006-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20211205230804.202292-3-virag.david003@gmail.com>
+References: <20211205230804.202292-1-virag.david003@gmail.com> <20211205230804.202292-3-virag.david003@gmail.com>
+Subject: Re: [PATCH v3 2/7] dt-bindings: clock: Document Exynos7885 CMU bindings
+Date:   Mon, 06 Dec 2021 08:25:22 -0600
+Message-Id: <1638800722.490043.1976293.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-While converting bindings to dtschema, the buck regulators lost
-"op_mode" property.  The "op_mode" is a valid property for all
-regulators (both LDOs and bucks), so add it.
+On Mon, 06 Dec 2021 00:07:56 +0100, David Virag wrote:
+> Provide dt-schema documentation for Exynos7885 SoC clock controller.
+> Description is modified from Exynos850 clock controller documentation as
+> I couldn't describe it any better, that was written by Sam Protsenko.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
+> Changes in v2:
+>   - Fixed double : in description
+>   - Added R-b tag by Krzysztof Kozlowski
+> 
+> Changes in v3:
+>   - Nothing
+> 
+>  .../clock/samsung,exynos7885-clock.yaml       | 166 ++++++++++++++++++
+>  1 file changed, 166 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
+> 
 
-Reported-by: Rob Herring <robh@kernel.org>
-Fixes: fab58debc137 ("regulator: dt-bindings: samsung,s5m8767: convert to dtschema")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../bindings/regulator/samsung,s5m8767.yaml   | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-index 80a63d47790a..c98929a213e9 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-@@ -51,6 +51,19 @@ patternProperties:
-     description:
-       Properties for single BUCK regulator.
- 
-+    properties:
-+      op_mode:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1, 2, 3]
-+        default: 1
-+        description: |
-+          Describes the different operating modes of the regulator with power
-+          mode change in SOC. The different possible values are:
-+            0 - always off mode
-+            1 - on in normal mode
-+            2 - low power mode
-+            3 - suspend mode
-+
-     required:
-       - regulator-name
- 
-@@ -63,6 +76,18 @@ patternProperties:
-       Properties for single BUCK regulator.
- 
-     properties:
-+      op_mode:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1, 2, 3]
-+        default: 1
-+        description: |
-+          Describes the different operating modes of the regulator with power
-+          mode change in SOC. The different possible values are:
-+            0 - always off mode
-+            1 - on in normal mode
-+            2 - low power mode
-+            3 - suspend mode
-+
-       s5m8767,pmic-ext-control-gpios:
-         maxItems: 1
-         description: |
--- 
-2.32.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.example.dts:21.47-46.11: Warning (unit_address_format): /example-0/clock-controller@0x10010000: unit name should not have leading "0x"
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.example.dt.yaml: example-0: 'clock-controller@0x10010000' does not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', 'pinctrl-[0-9]+'
+	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/dt-core.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1563783
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
