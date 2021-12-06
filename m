@@ -2,213 +2,119 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40695C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 18:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E12C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 20:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346777AbhLFS1T (ORCPT
+        id S1349249AbhLFUWh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 13:27:19 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:39406
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345671AbhLFS1T (ORCPT
+        Mon, 6 Dec 2021 15:22:37 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:36536 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238795AbhLFUWc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Dec 2021 13:27:19 -0500
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AA6773F317
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Dec 2021 18:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638815026;
-        bh=m+Y+zzpIB5GIy+YUjbHo+5oo+uTb5hKaf1A0Q7oyy+s=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=PdbKZg3FnucDabPOIEUCAXgRJMO5aLObkHd6jQIagFMjBN2uhNpZgEjeYDUVbCYIW
-         /2ZBlPWDsibhjv9cLZEX6fvr4TBRgVSgO1oIVja5dxKvy6fovKQAD+wyqj2+qJZ8op
-         iy5sIZHi3gr+XiQHXM4yMAYiy+i1iFeZ4vEcqSN8r+5o99y0gyR5xM5SS1+j5tWUeR
-         Q7krGj2okn161XWXtl4rBCjrLd1U+ec9hn7wmJcGXvX9kOCfm55ay6TTpNqobjTHL7
-         sxZxaIhUIB9+jMtuQ3yyKggrS0aIUCBg+zmjjFfnf0dPBGJgH3ACRCmL5s3ptV33UN
-         tnsCVM+b2CpBw==
-Received: by mail-lf1-f71.google.com with SMTP id k32-20020a0565123da000b0041643c6a467so4135018lfv.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Dec 2021 10:23:46 -0800 (PST)
+        Mon, 6 Dec 2021 15:22:32 -0500
+Received: by mail-ot1-f46.google.com with SMTP id w6-20020a9d77c6000000b0055e804fa524so15172442otl.3;
+        Mon, 06 Dec 2021 12:19:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=m+Y+zzpIB5GIy+YUjbHo+5oo+uTb5hKaf1A0Q7oyy+s=;
-        b=rh730hqLQ8SrJA72Q5Hvd5Ut2QPCSQRKbtjMn/7ys9SiEDYJ1HjEOuxlzz7F92V4eX
-         imoq31dFAhwJd6uxl/UgMFNbMZnT80MotfujkYIJ2h+7oHKS5rRuT4YfPf/jayi+t0Xw
-         N/Z0EXjZwN6sj+Tu4rSf8NGUq6rr1YdU3+BWeUnRjLTa7xIYF9H+6Sb9h41eas+g/QLK
-         y8Tky14ZiJz5UQUo9cvn3ZUYE4PViNMr6vHieCiFwxClmlGpq1UDrfQVzG8kh3NZpwlc
-         ywRl1E05Cz6C1gnAA0sNfVf+F33zlvstyBiA5ZsppeIELdNuMqB8KgW5AU9P7wXZ8o8i
-         JtFg==
-X-Gm-Message-State: AOAM5323ON0f6dmgcKf/ir6sdwmEmq6Sx6imHiZj1lnwNKmqo5H2/OF0
-        jlBdGIsGjwwr8w02iFVQqAHX/lcqkYHDwaHKwa9Jnd+czyRczkDrx9LjN+eowJsNXHLZvyQujmd
-        tSIzHfdfU/Hd00yf7tr1rc8tc9HOVgIBCRBtqQha4cHyrfHb7
-X-Received: by 2002:a05:6512:4017:: with SMTP id br23mr36582984lfb.270.1638815025913;
-        Mon, 06 Dec 2021 10:23:45 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwsda21I2pfpKdjSZzpnnNHKn2hzGNbL7KfVX1haF180FhDWe9RMB4LGNKD3NaXvvmyV+VvtA==
-X-Received: by 2002:a05:6512:4017:: with SMTP id br23mr36582939lfb.270.1638815025529;
-        Mon, 06 Dec 2021 10:23:45 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id b12sm1422783lfv.91.2021.12.06.10.23.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Dec 2021 10:23:44 -0800 (PST)
-Message-ID: <14731ee8-bc9a-8973-2bcf-e7a771ac3c07@canonical.com>
-Date:   Mon, 6 Dec 2021 19:23:43 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3 0/5] soc: samsung: Add USI driver
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=YVW8zpVhLHzE5XFjWmEUZ+W6XLWFa8cwXoH0Ysa7j5g=;
+        b=qMSn7dI2ryWAjsezWDXOHbOmTFJiDCRH+jBd0ysKQ7QfWwrhKKJ1dfXYoqC3fJQa7D
+         TTqnmWXyBBAD5kGMh7fZH4sNkxn2EDMoN3mdCXPpOCdPb3+12ZHM97GMWZApayhCrLZ3
+         qbcB6HT7wSeEjUtrJoeqEPda1FT27S+0zEZqrP5r5LiMGthC9QHJz4jGbK/N6ESBQB6g
+         A0sIwOlNT2CGQf8AjExRvc16WIHE9F7zDIxYdpcaxpiXYkDJqQgpvIzXwJ5afVmk1m4k
+         rOWYm8ngSS8fF/tBltyO1c5hgL4Pr3//9mKU9mr/8tTaEMYu52uF6qe/OS3uclESoOsj
+         +p9g==
+X-Gm-Message-State: AOAM533TXHWvyvK1e42fctGn3axc4FPbAeyif0yqWQS0N/6y8bXltfj7
+        vwBdGeoGTpjfiVUwmiD/Eg==
+X-Google-Smtp-Source: ABdhPJxv20guxGntftXScTUMofA+uI9MxsKRf3XufpJ2T+JuE0n3hGdob5jyY8JbStEiAmKhxzTDrA==
+X-Received: by 2002:a05:6830:453:: with SMTP id d19mr31740183otc.72.1638821942757;
+        Mon, 06 Dec 2021 12:19:02 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id r22sm2787324oij.36.2021.12.06.12.19.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Dec 2021 12:19:02 -0800 (PST)
+Received: (nullmailer pid 2516444 invoked by uid 1000);
+        Mon, 06 Dec 2021 20:19:00 -0000
+Date:   Mon, 6 Dec 2021 14:19:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Masahiro Yamada <masahiroy@kernel.org>,
         David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-References: <20211204195757.8600-1-semen.protsenko@linaro.org>
- <fb31a159-6d2e-6c9a-439f-f19ef4fd4732@canonical.com>
-In-Reply-To: <fb31a159-6d2e-6c9a-439f-f19ef4fd4732@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Only show unique unit address warning for
+ enabled nodes
+Message-ID: <Ya5wNM/cAt1rwazv@robh.at.kernel.org>
+References: <20211203183517.11390-1-semen.protsenko@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211203183517.11390-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/12/2021 17:24, Krzysztof Kozlowski wrote:
-> On 04/12/2021 20:57, Sam Protsenko wrote:
->> USIv2 IP-core provides selectable serial protocol (UART, SPI or
->> High-Speed I2C); only one can be chosen at a time. This series
->> implements USIv2 driver, which allows one to select particular USI
->> function in device tree, and also performs USI block initialization.
->>
->> With that driver implemented, it's not needed to do USI initialization
->> in protocol drivers anymore, so that code is removed from the serial
->> driver.
->>
->> Because USI driver is tristate (can be built as a module), serial driver
->> was reworked so it's possible to use its console part as a module too.
->> This way we can load serial driver module from user space and still have
->> serial console functional.
->>
->> Design features:
->>   - "reg" property contains USI registers start address (0xc0 offset);
->>     it's used in the driver to access USI_CON and USI_OPTION registers.
->>     This way all USI initialization (reset, HWACG, etc) can be done in
->>     USIv2 driver separately, rather than duplicating that code over
->>     UART/SPI/I2C drivers
->>   - System Register (system controller node) and its SW_CONF register
->>     offset are provided in "samsung,sysreg" property; it's used to
->>     select USI function (protocol to be used)
->>   - USI function is specified in "samsung,mode" property; integer value
->>     is used to simplify parsing
->>   - there is "samsung,clkreq-on" bool property, which makes driver
->>     disable HWACG control (needed for UART to work properly)
->>   - PCLK and IPCLK clocks are both provided to USI node; apparently both
->>     need to be enabled to access USI registers
->>   - protocol nodes are embedded (as a child nodes) in USI node; it
->>     allows correct init order, and reflects HW properly
->>   - USI driver is a tristate: can be also useful from Android GKI
->>     requirements point of view
->>   - driver functions are implemented with further development in mind:
->>     - we might want to add some DebugFs interface later
->>     - some functions might need to be revealed to serial drivers with
->>       EXPORT_SYMBOL(), and provide somehow pointer to needed USI driver
->>       instance
->>     - another USI revisions could be added (like USIv1)
->>
->> Changes in v3:
->>   - Renamed compatible from samsung,exynos-usi-v2 to samsung,exynos850-usi
->>   - Used clk_bulk API instead of handling each clock separately
->>   - Spell check fixes and coding style fixes
->>   - Improved dt-bindings doc
->>
->> Changes in v2:
->>   - Renamed all 'usi_v2' wording to just 'usi' everywhere
->>   - Removed patches adding dependency on EXYNOS_USI for UART/I2C/SPI
->>     drivers
->>   - Added patch: "tty: serial: samsung: Fix console registration from
->>     module"
->>   - Combined dt-bindings doc and dt-bindings header patches
->>   - Reworked USI driver to be ready for USIv1 addition
->>   - Improved dt-bindings
->>   - Added USI_V2_NONE mode value
->>
->> Sam Protsenko (5):
->>   dt-bindings: soc: samsung: Add Exynos USI bindings
->>   soc: samsung: Add USI driver
->>   tty: serial: samsung: Remove USI initialization
->>   tty: serial: samsung: Enable console as module
->>   tty: serial: samsung: Fix console registration from module
->>
+On Fri, Dec 03, 2021 at 08:35:17PM +0200, Sam Protsenko wrote:
+> There are valid cases when two nodes can have the same address. For
+> example, in Exynos SoCs there is USI IP-core, which might be configured
+> to provide UART, SPI or I2C block, all of which having the same base
+> register address. But only one can be enabled at a time. That looks like
+> this:
 > 
-> All this looks good to me. The serial driver changes should come
-> together with this one (usi driver is now a dependency for them). If I
-> am correct, mention this please in future cover letter (if there is such).
+>     usi@138200c0 {
+>         serial@13820000 {
+>             status = "okay";
+>         };
 > 
-> I will still need DTSI changes for Exynos Auto v9 and confirmation that
-> is not being used downstream and breaking DTB ABI is okay. Because this
-> will be a non-bisctable and also a DTB ABI break.
+>         i2c@13820000 {
+>             status = "disabled";
+>         };
+>     };
+> 
+> When running "make dt_binding_check", it reports next warning:
+> 
+>     Warning (unique_unit_address):
+>     /example-0/usi@138200c0/serial@13820000:
+>     duplicate unit-address (also used in node
+>     /example-0/usi@138200c0/i2c@13820000)
+> 
+> Disable "unique_unit_address" in DTC_FLAGS to suppress warnings like
+> that, but enable "unique_unit_address_if_enabled" warning, so that dtc
+> still reports a warning when two enabled nodes are having the same
+> address.
 
-+CC Arnd and Olof,
+Presumably you have a dts file needing the same thing, so I'll be 
+expecting a patch for that too. That's in scripts/Makefile.lib BTW.
 
-Dear Arnd and Olof,
-
-The patchset discussed here reworks recently added USI code to Samsung
-Exynos UART driver in a non-bisectable and ABI-breaking way. The
-existing code in serial driver was added in v5.15-rc1, however first
-user - Exyons Auto v9 - appeared in v5.16-rc1.
-
-The bisectability and ABI break will affect only newly upstreamed
-Samsung Exynos SoC, so for now only Exynos Auto v9.
-
-The early code has some drawbacks and limitations which came up now when
-we want to extend the USI code to support more blocks (I2C, SPI) and
-devices (including older Exynos chipsets). Therefore I am planning to
-make an ABI break of this features because:
-1. The code was added recently (v5.15-rc1) and users even later (v5.16-rc1).
-2. Even though code was merged, I consider it still development phase.
-Kernel development goes very fast and we do not defer patches waiting
-for perfect solution.
-3. There are no known out-of-tree users of this because this is fairly
-new. For this I am waiting for confirmation from Chanho (and/or other
-Samsung folks). I don't expect there are out of tree users because any
-mobile or automotive product will take Samsung vendor sources and recent
-kernels are not a base for Samsung vendor kernels.
-4. Keeping it backwards compatible will be a pain.
-
-The alternative is to keep old code in Samsung Serial driver and try to
-detect the case when driver is probed in old way (with old DTB). This
-won't be trivial, because there will be no properties change, but
-devicetree hierarchy change like:
-
-from:
-soc@0 {
-  serial@0xabcd0123 {
-    ...
-  }
-}
-
-into:
-soc@0 {
-  usi@0x12345678 {
-    serial@0xabcd0123 {
-      ...
-    }
-  }
-}
-
-
-Are you okay with such planned ABI break?
-
-Best regards,
-Krzysztof
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reported-by: Rob Herring <robh@kernel.org>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/Makefile | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/Makefile b/Documentation/devicetree/bindings/Makefile
+> index c9abfbe3f0aa..41c555181b6f 100644
+> --- a/Documentation/devicetree/bindings/Makefile
+> +++ b/Documentation/devicetree/bindings/Makefile
+> @@ -65,7 +65,9 @@ DT_DOCS = $(patsubst $(srctree)/%,%,$(shell $(find_all_cmd)))
+>  override DTC_FLAGS := \
+>  	-Wno-avoid_unnecessary_addr_size \
+>  	-Wno-graph_child_address \
+> -	-Wno-interrupt_provider
+> +	-Wno-interrupt_provider \
+> +	-Wno-unique_unit_address \
+> +	-Wunique_unit_address_if_enabled
+>  
+>  # Disable undocumented compatible checks until warning free
+>  override DT_CHECKER_FLAGS ?=
+> -- 
+> 2.30.2
+> 
+> 
