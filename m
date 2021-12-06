@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F249DC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 15:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47345C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 15:43:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386109AbhLFPrK (ORCPT
+        id S1386322AbhLFPrO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 10:47:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33514 "EHLO
+        Mon, 6 Dec 2021 10:47:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390787AbhLFPmv (ORCPT
+        with ESMTP id S1390806AbhLFPmv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Mon, 6 Dec 2021 10:42:51 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85252C07E5E3;
-        Mon,  6 Dec 2021 07:32:32 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id y12so44277607eda.12;
-        Mon, 06 Dec 2021 07:32:32 -0800 (PST)
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BD5C08ED35;
+        Mon,  6 Dec 2021 07:32:41 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id l25so44391381eda.11;
+        Mon, 06 Dec 2021 07:32:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W4TkEoi0AihbG2VpDaDF3HniM6xDXUj46TSgW3UMkbs=;
-        b=cFfaVEt+gm9AiFmdegia5qcNEQfrKy7lm/GikjO514YcydZqMaIsGxjKEIKuSe1Uja
-         8LObRrt1I/9pEI4kZxyswyRnBlDnrOlAAjEMtIRF7HYgEE+5MHsSBx4Dvlaw/vN0ZIHJ
-         g8keqCVou/q64Mtc2qkZCdsjVrHJ3tuVl3Gr4MhspLYOjhjtsYm6FBS47cNAKmt5rFDT
-         wUARhuWm1Y6QE8tTV8Dqs9MxnOW8meN6DRD+R+Pt9h48o67/elWsSBERS+mf3101vqe0
-         WbFjRZ4o723Dxcub7v8Xff3IorMCWm0bpqevGOcB5V4o16L+0SPBF4hdNfCYEv2LaKhb
-         5DXA==
+        bh=ZgC4TMcfmLrJP/yb6/KvI+5qK1sc/7oD0RhyaOBjmB0=;
+        b=cYh/7CPda6Mkod1VoX6HF0g3CQQR6DODP7ou+ibBOd0FcD/9g7MPhRT4+k888QWuwp
+         y+t4CMXHxIOiQlhl+pRrJ8uy8zqXofvHUrenxdRV+8LNQvue/qOugyc9CLng5GbPQVcx
+         n+6aiC0sMr27RjwArSDV7MYH7tLsL66d+do+jZEfpRBeGci2v8uX/w37zQxiaEm+Vleb
+         fDY9i+/UqpbMlmPScG6nUK0XKrrhKZQp7O0fVvLzXTuqIKqaZOaD9soFiCBac80MMdrr
+         MW7/AHmseZAgRZDFnoITD/fBj0G96I+tr+VcoSQLFtJ/Zbb7PT67m3Y3yTLc1iMFrHba
+         1Atg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W4TkEoi0AihbG2VpDaDF3HniM6xDXUj46TSgW3UMkbs=;
-        b=sEd8nzhcySVgQKKPyWsqqUmjxzLEL7PPxG3izT6rp1jOzkXV9x0UzYbz8Ba1QXoDhR
-         EIQyBb5YCSjM2zGk2njTNKMQrxo9CPF9QpqnZEdjoaDhu7wjwfcRIKqZhpyyIqx1GhVM
-         j5WgLSASdz9kV9lQ8dd8M9E6i/LtCyMLHXwiTWJjeKbs2f8YHJvy0FVQhkhMEgSj8OIx
-         hAOV21oZmmKHfKRoYYIxg4aaTtyA8sGW4EXIBUXPz69RWfTeyMnjGDc3wn8zhorsNicx
-         vSW2pQ5fObwRvOD4LRP6KFsdcL9hgcXWLyJRp/KF9YHkGidKgQ5/3sveD2Q/IlnOD1+b
-         hGYA==
-X-Gm-Message-State: AOAM533QrYYh5VrmEzvfA9eg4uOyn7UshOCg9K9r/xt3stOlOS3NUqsE
-        +6PVPUihtYS6goRG+ZnFrmo=
-X-Google-Smtp-Source: ABdhPJxHng3wYY3SUeJ6F5E9y+CDHD7CL5TzL+3GArJJw4MpQfu11NdV8ryBtqDsYxMibTHfdoA4Zw==
-X-Received: by 2002:a17:907:7ea6:: with SMTP id qb38mr45856370ejc.248.1638804751148;
-        Mon, 06 Dec 2021 07:32:31 -0800 (PST)
+        bh=ZgC4TMcfmLrJP/yb6/KvI+5qK1sc/7oD0RhyaOBjmB0=;
+        b=7twXJoAJhNkiBf0Udg1bQWcuNRowArzx5O7KeHp/vm93/C+a8kJCD/w7RH227le+QK
+         Gq2F7B3/BEyfd9iiuWXlZ/Iwpa32B/A3alStKVz/YDHDffaI4NmvuYsWWJl/nbp8gG4t
+         +FWcE8WKZlvfUeh6OM6w5K7xL7KpZa+U8mJMeArnMDC8DjX3sg/fpvehu4mnfCHo9+nn
+         Hpl/4sYXkJkURV90EAFdFZVGqFmjSYQj6qu+vePoEj99CHFV3QrDcsb6v5h8KX9Lr91d
+         rgZLBtCZrSSmaoikjXT7DrbyHXZY+cNX6Uwf4q07G2Pi+wkqx1VBtgU36h16l++/xUTx
+         icOw==
+X-Gm-Message-State: AOAM5321ZSsGI+bJDz0T6ysoxxarAamPQ2y9qluqgNGMxd1N/DzmQKkT
+        8AxFst6trpYIPCG1uRgbL1g=
+X-Google-Smtp-Source: ABdhPJw6LCeQjYIhwJ5ApOgw0Lrb9jfgl0R6gWBzhG7gNC3cfdjFD8/g0jkKoYmBGdBL4R6S8gIjhw==
+X-Received: by 2002:a05:6402:11d2:: with SMTP id j18mr57708325edw.318.1638804759696;
+        Mon, 06 Dec 2021 07:32:39 -0800 (PST)
 Received: from localhost.localdomain ([2a02:ab88:368f:2080:eab:126a:947d:3008])
-        by smtp.googlemail.com with ESMTPSA id d19sm7364688edt.34.2021.12.06.07.32.29
+        by smtp.googlemail.com with ESMTPSA id d19sm7364688edt.34.2021.12.06.07.32.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 07:32:30 -0800 (PST)
+        Mon, 06 Dec 2021 07:32:39 -0800 (PST)
 From:   David Virag <virag.david003@gmail.com>
 Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         David Virag <virag.david003@gmail.com>,
@@ -62,9 +62,9 @@ Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v4 3/7] dt-bindings: arm: samsung: document jackpotlte board binding
-Date:   Mon,  6 Dec 2021 16:31:17 +0100
-Message-Id: <20211206153124.427102-4-virag.david003@gmail.com>
+Subject: [PATCH v4 5/7] clk: samsung: clk-pll: Add support for pll1417x
+Date:   Mon,  6 Dec 2021 16:31:19 +0100
+Message-Id: <20211206153124.427102-6-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20211206153124.427102-1-virag.david003@gmail.com>
 References: <20211206153124.427102-1-virag.david003@gmail.com>
@@ -75,8 +75,17 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add binding for the jackpotlte board (Samsung Galaxy A8 (2018)).
+pll1417x is used in Exynos7885 SoC for top-level integer PLLs.
+It is similar enough to pll0822x that practically the same code can
+handle both. The difference that's to be noted is that when defining a
+pl1417x PLL, the "con" parameter of the PLL macro should be set to the
+CON1 register instead of CON3, like this:
 
+    PLL(pll_1417x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
+        PLL_LOCKTIME_PLL_SHARED0, PLL_CON0_PLL_SHARED0,
+        NULL),
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
 Changes in v2:
@@ -86,28 +95,36 @@ Changes in v3:
   - Nothing
 
 Changes in v4:
-  - Nothing
+  - Added R-b tag by Krzysztof Kozlowski
 
- .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/samsung/clk-pll.c | 1 +
+ drivers/clk/samsung/clk-pll.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-index ef6dc14be4b5..d88571202713 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-@@ -199,6 +199,12 @@ properties:
-               - samsung,exynos7-espresso        # Samsung Exynos7 Espresso
-           - const: samsung,exynos7
- 
-+      - description: Exynos7885 based boards
-+        items:
-+          - enum:
-+              - samsung,jackpotlte              # Samsung Galaxy A8 (2018)
-+          - const: samsung,exynos7885
-+
-       - description: Exynos Auto v9 based boards
-         items:
-           - enum:
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 83d1b03647db..70cdc87f714e 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1476,6 +1476,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		else
+ 			init.ops = &samsung_pll35xx_clk_ops;
+ 		break;
++	case pll_1417x:
+ 	case pll_0822x:
+ 		pll->enable_offs = PLL0822X_ENABLE_SHIFT;
+ 		pll->lock_offs = PLL0822X_LOCK_STAT_SHIFT;
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index a739f2b7ae80..c83a20195f6d 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -32,6 +32,7 @@ enum samsung_pll_type {
+ 	pll_2550xx,
+ 	pll_2650x,
+ 	pll_2650xx,
++	pll_1417x,
+ 	pll_1450x,
+ 	pll_1451x,
+ 	pll_1452x,
 -- 
 2.34.1
 
