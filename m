@@ -2,105 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C915C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 14:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204CFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 14:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344237AbhLFO26 (ORCPT
+        id S1343524AbhLFOdT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 09:28:58 -0500
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:35646 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344236AbhLFO25 (ORCPT
+        Mon, 6 Dec 2021 09:33:19 -0500
+Received: from smtp2.axis.com ([195.60.68.18]:10552 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S245601AbhLFOdT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Dec 2021 09:28:57 -0500
-Received: by mail-ot1-f46.google.com with SMTP id x43-20020a056830246b00b00570d09d34ebso13837178otr.2;
-        Mon, 06 Dec 2021 06:25:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=CWGHOhMZUfniE+Y2ng6wuO7zGULF9CPIy3yGJ1kJWX0=;
-        b=DgwFIAmc9k2dWMF6EQVDHIiNE35cuKEvoa+pjnuDeEpoU1T9GbQbFPHDX0ItXFnlwY
-         ddRE4uy8P1xniuAKAitMKdSo4lZwJ3GJNZWMq4J+hQndcEwYphV6FuJysgne/pqPSfcw
-         uKKRU+YgChofbHOQCk0QhwL6P97XQiQBgIav/9/UTfZr9De6WGWtkblnH9e6AxfPlhbm
-         uTQbWHRjacuypQvvrFtke+Ns08YssWEPkGzTiuoNtc949z5Nmq37UvnmHKXZCKB69UZb
-         A6BJMbFvASPBGFL59M+GF6AiW7RI4VTr5x1V/IaEfEKM3wnDijThouPnBSfokHFORpX5
-         viQw==
-X-Gm-Message-State: AOAM533JlCKddPbz3MaK9BV/OnSMpny5CgEvxXy3hMcpEA4kDTlFMhdk
-        R+VvpghYxn4GoSlytayN6Q==
-X-Google-Smtp-Source: ABdhPJyfp+sRZSmmxcQQNS5FVwHTA4gbp/9HMnapB0bZgOO+3eG1BRDTnxJZIBTFqjfhvJMpWKKcbg==
-X-Received: by 2002:a9d:12c:: with SMTP id 41mr30003581otu.322.1638800727961;
-        Mon, 06 Dec 2021 06:25:27 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id s2sm2197803otr.69.2021.12.06.06.25.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 06:25:27 -0800 (PST)
-Received: (nullmailer pid 1976294 invoked by uid 1000);
-        Mon, 06 Dec 2021 14:25:22 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mon, 6 Dec 2021 09:33:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1638800991;
+  x=1670336991;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=I56fq9oOSQa7fp6BC7G0m8hJ7yaBpxzTKGiw2H8tVwA=;
+  b=TISV0DnlKjS6fIIxpx2SG+06+Tpg/xNg+jx2FesOuL8EGEyGkFYfvjcb
+   UZ0feUcmeUL3QhNrfDtGPcLVeN9cxWoU2+mZ0luOzOmKf2SKgWS8hha4m
+   zPJSHz/dr9UcW4SaxvoY4GK+sVkX0Lv5KRhVmziMxsbX2JuZXDlnz6ODF
+   glYngvngFvkzI3BgT3FoSLvq99eNto73UgGy6L4+Z+fjP8j81bTnwsXva
+   GYdQnxKrVyBQM/PuQIZgUQLlShYr8TzV4wBGJ4jg2DqPRXUdaxZEisSJg
+   PDH+s8ZgjLJvyQLYiwWO7J7VtqgSW86LMW7o7barDojQP53abLeThFWZD
+   w==;
+From:   =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20211205230804.202292-3-virag.david003@gmail.com>
-References: <20211205230804.202292-1-virag.david003@gmail.com> <20211205230804.202292-3-virag.david003@gmail.com>
-Subject: Re: [PATCH v3 2/7] dt-bindings: clock: Document Exynos7885 CMU bindings
-Date:   Mon, 06 Dec 2021 08:25:22 -0600
-Message-Id: <1638800722.490043.1976293.nullmailer@robh.at.kernel.org>
+        Jaehoon Chung <jh80.chung@samsung.com>
+CC:     Doug Anderson <dianders@google.com>, <kernel@axis.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
+Subject: [PATCH v2 0/4] Add ARTPEC-8 support to DWMMC controller
+Date:   Mon, 6 Dec 2021 15:29:25 +0100
+Message-ID: <20211206142929.26729-1-marten.lindahl@axis.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 06 Dec 2021 00:07:56 +0100, David Virag wrote:
-> Provide dt-schema documentation for Exynos7885 SoC clock controller.
-> Description is modified from Exynos850 clock controller documentation as
-> I couldn't describe it any better, that was written by Sam Protsenko.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
-> Changes in v2:
->   - Fixed double : in description
->   - Added R-b tag by Krzysztof Kozlowski
-> 
-> Changes in v3:
->   - Nothing
-> 
->  .../clock/samsung,exynos7885-clock.yaml       | 166 ++++++++++++++++++
->  1 file changed, 166 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
-> 
+Hi!
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The ARTPEC-8 SoC has a DWMMC controller that is compatible with the
+Exynos 7 version v2.70a. The main differences from Exynos 7 is that it
+does not support HS400 and has an extended data read timeout. To run
+this controller we need to add compatibility for ARTPEC-8, because we
+need a quirk to separate the configuration of the TMOUT register from
+the non ARTPEC-8 versions.
 
-yamllint warnings/errors:
+This patchset is dependent on 2 changes that has been added to the mmc
+git next branch, but has not yet been merged to mainline:
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.example.dts:21.47-46.11: Warning (unit_address_format): /example-0/clock-controller@0x10010000: unit name should not have leading "0x"
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.example.dt.yaml: example-0: 'clock-controller@0x10010000' does not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', 'pinctrl-[0-9]+'
-	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/dt-core.yaml
+Patch 2 of this patchset depends on commit 0e6f2c4c2072b ("mmc: dw_mmc:
+add common capabilities to replace caps").
 
-doc reference errors (make refcheckdocs):
+Patch 3 of this patchset depends on commit d5bc33487eab3 ("mmc: dw_mmc:
+Allow lower TMOUT value than maximum").
 
-See https://patchwork.ozlabs.org/patch/1563783
+Kind regards
+Mårten Lindahl
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Changes in v2:
+ - Change compatible string vendor prefix
+ - Removed unnecessary comment
+ - Change 1<<0 to BIT(0)
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Mårten Lindahl (4):
+  dt-bindings: mmc: exynos-dw-mshc: Add support for ARTPEC-8
+  mmc: dw_mmc-exynos: Add support for ARTPEC-8
+  mmc: dw_mmc: Add quirk for extended data read timeout
+  mmc: dw_mmc: Do not wait for DTO in case of error
 
-pip3 install dtschema --upgrade
+ .../bindings/mmc/exynos-dw-mshc.txt           |  2 +
+ drivers/mmc/host/dw_mmc-exynos.c              | 52 +++++++++++++++----
+ drivers/mmc/host/dw_mmc.c                     | 41 +++++++++++++--
+ drivers/mmc/host/dw_mmc.h                     |  6 +++
+ 4 files changed, 86 insertions(+), 15 deletions(-)
 
-Please check and re-submit.
+-- 
+2.20.1
 
