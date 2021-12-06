@@ -2,98 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86B7C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 20:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C227CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Dec 2021 21:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349495AbhLFUXA (ORCPT
+        id S233522AbhLFVFy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Dec 2021 15:23:00 -0500
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:39853 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349642AbhLFUWu (ORCPT
+        Mon, 6 Dec 2021 16:05:54 -0500
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:46054 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231419AbhLFVFy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Dec 2021 15:22:50 -0500
-Received: by mail-oi1-f172.google.com with SMTP id bf8so23598108oib.6;
-        Mon, 06 Dec 2021 12:19:20 -0800 (PST)
+        Mon, 6 Dec 2021 16:05:54 -0500
+Received: by mail-oi1-f182.google.com with SMTP id 7so23722247oip.12;
+        Mon, 06 Dec 2021 13:02:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=1Tqf0IF8fIl+oxxxaQiInxDbNA4xfQa3nl9Y2AxI8zY=;
-        b=ZjE3YPQJG0NrlVxIc4G9L+BIXQlgEDChqUNmrCuiqBNqnIDcmlRl+UM+MXvmNbBDIX
-         yCZZDw63AYEeWEhVyCXd/Hnq+i5IxheNWPPhvTOD8Do+dTWw07iRkzChcbnU7v2Crihm
-         yMxrlCIO6UsLzxZmbHF4MZNeNo2ZF7IRtZWpbqCTQTeTXvG1RRTeQAg5FOD8oMGcFL7m
-         gP3GBNuuIYZNa3NwfI2cu0QYz9VK+KYrHjhnyg0XUaYaip41JpcKsiIiLPdd+YtCSVsB
-         f1gKvAIJxE+WJGkKN9mxv9OQXCVbBtbEIcKfpcsd8j9CnAL6Eb/etIc7Yyz6QxVuu9C6
-         Q9Hg==
-X-Gm-Message-State: AOAM531dyYpH32Y+3AZfEoFSJnZx6habsVQoa6EIz6QOafKScAuimY8J
-        G9nB03qu+DmDc2r+qgyyTA==
-X-Google-Smtp-Source: ABdhPJzWMpEnHhfr7zGyJytVxG58jTwg3k0MPNXP2xd8f6+1bXYrIBj6//1jpgCs7lCTA6RcnkXJ5Q==
-X-Received: by 2002:a05:6808:bc3:: with SMTP id o3mr828054oik.151.1638821960508;
-        Mon, 06 Dec 2021 12:19:20 -0800 (PST)
+        bh=2oyty0xsfvWrj6OhLFZNGZUWW1B8YFU5eRdWHSgy7PU=;
+        b=4F5gAx53T53CjEiED9+rus1WqRh8/wbVtz4FnltunhTiKC0fbbSk0xN1XaexLP6IYH
+         3HMyT3Cwll1P3x/QImftg6amol/NvaUgWM0fastEB+j6/d3Vx7rJ/5wiid1RMJ/yy8oo
+         iWK3BAEutBCF4ghR/ak1e+MSb5JSnOFd3au/axspXKfYW6D0PezeAQt9KB3Ngsgtvdju
+         Bnkk6hyJUYkAfC8tYxSH0+TiNEybfIQCzYI1i5S2yuRSIZa93HjtXBZj33gO7kEj+jYI
+         orhMOkdNmsE1LcqXGxN97BZyDxyEPaJST3AosGV5TUP/NHqBhF3aNGjOqw05xDvGzH/T
+         vY6w==
+X-Gm-Message-State: AOAM530NODCEf2yjIsrM9cTNZ8gDxN4VNsjH0BmJPW8qDCgTxoy3R3Tk
+        Ibr7hl+fpqsomCQ8YgjK6g==
+X-Google-Smtp-Source: ABdhPJyfMRSShzT8CkbeQSkFjn7ORJQDpLrQTHZobuuL2O9psekoj85E7ZUONGsrgCATLaREROS/5A==
+X-Received: by 2002:a05:6808:209b:: with SMTP id s27mr1079807oiw.43.1638824544805;
+        Mon, 06 Dec 2021 13:02:24 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a12sm2409235otk.35.2021.12.06.12.19.19
+        by smtp.gmail.com with ESMTPSA id 3sm2825327oif.12.2021.12.06.13.02.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 12:19:19 -0800 (PST)
-Received: (nullmailer pid 2516937 invoked by uid 1000);
-        Mon, 06 Dec 2021 20:19:19 -0000
-Date:   Mon, 6 Dec 2021 14:19:19 -0600
+        Mon, 06 Dec 2021 13:02:24 -0800 (PST)
+Received: (nullmailer pid 2578233 invoked by uid 1000);
+        Mon, 06 Dec 2021 21:02:23 -0000
+Date:   Mon, 6 Dec 2021 15:02:23 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
         David Virag <virag.david003@gmail.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Only show unique unit address warning for
- enabled nodes
-Message-ID: <Ya5wRwx9xZX9pQBV@robh.at.kernel.org>
-References: <20211203183517.11390-1-semen.protsenko@linaro.org>
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 1/5] dt-bindings: soc: samsung: Add Exynos USI bindings
+Message-ID: <Ya56X9CJrXWw8rm3@robh.at.kernel.org>
+References: <20211204195757.8600-1-semen.protsenko@linaro.org>
+ <20211204195757.8600-2-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211203183517.11390-1-semen.protsenko@linaro.org>
+In-Reply-To: <20211204195757.8600-2-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 03 Dec 2021 20:35:17 +0200, Sam Protsenko wrote:
-> There are valid cases when two nodes can have the same address. For
-> example, in Exynos SoCs there is USI IP-core, which might be configured
-> to provide UART, SPI or I2C block, all of which having the same base
-> register address. But only one can be enabled at a time. That looks like
-> this:
-> 
->     usi@138200c0 {
->         serial@13820000 {
->             status = "okay";
->         };
-> 
->         i2c@13820000 {
->             status = "disabled";
->         };
->     };
-> 
-> When running "make dt_binding_check", it reports next warning:
-> 
->     Warning (unique_unit_address):
->     /example-0/usi@138200c0/serial@13820000:
->     duplicate unit-address (also used in node
->     /example-0/usi@138200c0/i2c@13820000)
-> 
-> Disable "unique_unit_address" in DTC_FLAGS to suppress warnings like
-> that, but enable "unique_unit_address_if_enabled" warning, so that dtc
-> still reports a warning when two enabled nodes are having the same
-> address.
+On Sat, 04 Dec 2021 21:57:53 +0200, Sam Protsenko wrote:
+> Add constants for choosing USIv2 configuration mode in device tree.
+> Those are further used in USI driver to figure out which value to write
+> into SW_CONF register. Also document USIv2 IP-core bindings.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reported-by: Rob Herring <robh@kernel.org>
-> Suggested-by: Rob Herring <robh@kernel.org>
 > ---
->  Documentation/devicetree/bindings/Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Changes in v3:
+>   - Removed usi0 "status" property from the example
+>   - Made child nodes pattern allow only serial/spi/i2c node names
+>   - Moved all USIv2 specific properties under corresponding "if:"
+>   - Renamed compatible from samsung,exynos-usi-v2 to samsung,exynos850-usi
+>   - Related: submitted separate patch removing warning on
+>     "make dt_binding_check" for USI bindings
+> 
+> Changes in v2:
+>   - Combined dt-bindings doc and dt-bindings header patches
+>   - Added i2c node to example in bindings doc
+>   - Added mentioning of shared internal circuits
+>   - Added USI_V2_NONE value to bindings header
+> 
+>  .../bindings/soc/samsung/exynos-usi.yaml      | 159 ++++++++++++++++++
+>  include/dt-bindings/soc/samsung,exynos-usi.h  |  17 ++
+>  2 files changed, 176 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+>  create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
 > 
 
-Applied, thanks!
+Reviewed-by: Rob Herring <robh@kernel.org>
