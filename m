@@ -2,104 +2,121 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE546C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 09:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493A7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 09:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbhLGJWP (ORCPT
+        id S233938AbhLGJgN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Dec 2021 04:22:15 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59442
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233730AbhLGJWP (ORCPT
+        Tue, 7 Dec 2021 04:36:13 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:36534
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233765AbhLGJgM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Dec 2021 04:22:15 -0500
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        Tue, 7 Dec 2021 04:36:12 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 98D3B3F208
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Dec 2021 09:18:44 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 52B754003E
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Dec 2021 09:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1638868724;
-        bh=mbVZsPIKFmlo4NdLQ32VSh3peIplR0eL3tdmg/4c8Qc=;
+        s=20210705; t=1638869561;
+        bh=T6+9s82eszvtvdECt4LjIhYDKx4D2t9XfbY0joue/Fo=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=U6gu73HkHd2dN3Qeu+fI9ZHS1qrwFpu4j1sYz6S/nkjZKRCcgp1oWuoWxJ6qGbdW8
-         FziQ64OYfT3Q7qCjvchem2rjosCAFQt4B1URQOpbsdfSbwmr867bnpLIINMjw4lh+K
-         Z1iq0dbxlFHJIu+OEcbmg+leZVk15YLa6KOcUdLfygdk5PqQdStHOcSevksDDlP9TQ
-         OGaZH4MCrULpJNM9eHFbriEYirgtI7DBr1GaTdVCEU71/5mxTRMixqqXU9DSjhadcf
-         QyZKe6AsanRL+69smh3UaIRKGZe8Q8ndhbgww7r6bpKdduquQ874VtWRTcEjl3Wa+A
-         in31+sPzOE+Gg==
-Received: by mail-lf1-f71.google.com with SMTP id k32-20020a0565123da000b0041643c6a467so5043519lfv.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Dec 2021 01:18:44 -0800 (PST)
+        b=Jm/Hyhx5pGgs/QGzfTB/OsnrNBMqsQU9++qLk3/KoWnoQ4UHRZLulY0Mk3AiPqjmq
+         smFLibq2s9roLJVdkjNgDZ4eYO2c9YFNdfCMrO7YRZUBtr0ZIu/mledv+VMGjtwGsy
+         fGlNzPB/2wK6CoW8CJKxwvp3yGROf0c4VWEfjoWuZ2OJxzL7lTuBtnCchc06T8Md+2
+         0eHrN5jH+dNzzVDyxGP6RoJPIhNOjmv2oCrtw4WTa3Qg1nj6gei2ttffpOKJlcPFQ7
+         1a0gxN1vu9U4dVYCXQQXdW39961opiE42Xw901EkT5iuixKg4Y26RGOhXOOvbrrr4H
+         fPIytuhbIPv+w==
+Received: by mail-lf1-f69.google.com with SMTP id f15-20020a056512228f00b004037c0ab223so5091558lfu.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Dec 2021 01:32:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=mbVZsPIKFmlo4NdLQ32VSh3peIplR0eL3tdmg/4c8Qc=;
-        b=rfRGM5aJX1J+J26S0Qu5rEiftS0T+AFswJJEHFF1GBIeR2pm9724OL8Kb85BScbByF
-         6BPZTfchhSSH+h8dGkAV2GypDAM3GPpUANTBpE44MothnXcUVI5hz3KBu+FepOOUYYdU
-         Sn5/HuoxWddYAjFE/DkzMtsiXiXpaIrAu498NVnUj5ybUbkaa/c/0mDfu9fjgUK4nPJ2
-         2aaeoJJbK3dm0baGA1v3j6VpofEcZ99WXsNxdyZBWmu155mthVhaeh6sSO8OvHHWF/QB
-         I5sBpAQdY3KY2BBlIEtwJlI3e0lGWMLfqaqyEORQH5aQHfl2zX8+XY+GMzicvNxNLLfP
-         PKmA==
-X-Gm-Message-State: AOAM532AzTQOMGv9AytEoVMvesKMkO0bezhgGxI9uCb9GZdOHZCTtrIQ
-        1ry0NG1yuFDGK7RxaYDzrEWfUR6WKXYBYQVfQKo+t2iLqkEz9s3KUISD0fnOOYu5N+pkl5ybL6D
-        G+W1NATetJ9wFS9SerdnRMhG66czY69eer1aoILUVa/mAGBZJ
-X-Received: by 2002:ac2:46c8:: with SMTP id p8mr40346936lfo.174.1638868723827;
-        Tue, 07 Dec 2021 01:18:43 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwE/X3GbUfZYbh0b1cJH+6HgAy41W8jeJ0LU1fZHzlDTEz3mdy4mHHqcZGQE/cHscY2fRtLzA==
-X-Received: by 2002:ac2:46c8:: with SMTP id p8mr40346902lfo.174.1638868723556;
-        Tue, 07 Dec 2021 01:18:43 -0800 (PST)
+        bh=T6+9s82eszvtvdECt4LjIhYDKx4D2t9XfbY0joue/Fo=;
+        b=Hm42NCY7GhcWlve/3GXhYudxDVJx8Ipwy9JhLzIw8zRZZMICyKhPvEuUx+DKqBd2BO
+         1Z/egxdhJsBDwF6PvqCc0RTZK2AIxk6RhBJzS9+RI9on4pjE3vcCklMJolCL5uaFdsW3
+         wHp9YNGluwaPshbQChXD6S1w319uP5ALdtks/LmWKXtDtgQMuhuAurQg2vNm7LCnsT00
+         fh+WtV9UjRfY4xI34n+6568UZOMe0ObpsqASGGWDHzLix+gubnJd+ZDAKw3jAMvW4b7k
+         00fQaMuD+dq6XeHAgQ7PBYxUtuJYJDsHvemnNYt0y3jvvmzsGhS+Ln09rdebnE+k4Z9K
+         bwjg==
+X-Gm-Message-State: AOAM532vR/K3+oheynFng84DO6YDc5q0vbDsgKDGPDr7g/N/K/XcgYxN
+        svsM4wpT2tU5c19WBnQ3cwGQBNpVj/VXaP/y9BxNPruC+RTpIbR0hwgnCuH35XaU2R0FIIqM7p4
+        6cxM5MD2YcK60WkuD+5t2fnrgJVNMLXkaWaZTsl1ZNDkxa6/B
+X-Received: by 2002:a2e:994a:: with SMTP id r10mr41066368ljj.301.1638869560737;
+        Tue, 07 Dec 2021 01:32:40 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwKyBwQ35QuPUmJsbOyAfvODA2PllK81Af6yVKERMwFTiAYBejXq04Tp3ARzZKlv7wtY5zCdQ==
+X-Received: by 2002:a2e:994a:: with SMTP id r10mr41066327ljj.301.1638869560444;
+        Tue, 07 Dec 2021 01:32:40 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id b12sm1621027lfb.146.2021.12.07.01.18.42
+        by smtp.gmail.com with ESMTPSA id l5sm1553374ljh.66.2021.12.07.01.32.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 01:18:42 -0800 (PST)
-Message-ID: <78ce61a9-b345-437a-df02-49951eb3f31e@canonical.com>
-Date:   Tue, 7 Dec 2021 10:18:41 +0100
+        Tue, 07 Dec 2021 01:32:39 -0800 (PST)
+Message-ID: <f2f2a084-9362-db44-27e9-19b54d350775@canonical.com>
+Date:   Tue, 7 Dec 2021 10:32:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH v3 10/11] tty: serial: samsung_tty: Support runtime PM
+Subject: Re: [PATCH v4 4/7] clk: samsung: Make exynos850_register_cmu shared
 Content-Language: en-US
-To:     Hector Martin <marcan@marcan.st>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marc Zyngier <maz@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20211124073419.181799-1-marcan@marcan.st>
- <20211124074625.182815-11-marcan@marcan.st>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20211206153124.427102-1-virag.david003@gmail.com>
+ <20211206153124.427102-5-virag.david003@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211124074625.182815-11-marcan@marcan.st>
+In-Reply-To: <20211206153124.427102-5-virag.david003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 24/11/2021 08:46, Hector Martin wrote:
-> This allows idle UART devices to be suspended using the standard
-> runtime-PM framework. The logic is modeled after stm32-usart.
+On 06/12/2021 16:31, David Virag wrote:
+> Rename exynos850_register_cmu to exynos_arm64_register_cmu and move it
+> to a new file called "clk-exynos-arm64.c".
 > 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
+> This should have no functional changes, but it will allow this code to
+> be shared between other arm64 Exynos SoCs, like the Exynos7885 and
+> possibly ExynosAuto V9.
+> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
 > ---
->  drivers/tty/serial/samsung_tty.c | 93 ++++++++++++++++++++------------
->  1 file changed, 59 insertions(+), 34 deletions(-)
+> Changes in v2:
+>   - New patch
+> 
+> Changes in v3:
+>   - Fix SPDX comment style in clk-exynos-arm64.h
+> 
+> Changes in v4:
+>   - Fix missing headers but still remove of_address.h
+>   - "__SAMSUNG_CLK_ARM64_H" -> "__CLK_EXYNOS_ARM64_H" in
+>     clk-exynos-arm64.h everywhere (only the comment at the end had the
+>     latter by accident)
+> 
+>  drivers/clk/samsung/Makefile           |  1 +
+>  drivers/clk/samsung/clk-exynos-arm64.c | 94 ++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk-exynos-arm64.h | 20 ++++++
+>  drivers/clk/samsung/clk-exynos850.c    | 88 ++----------------------
+>  4 files changed, 119 insertions(+), 84 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-exynos-arm64.c
+>  create mode 100644 drivers/clk/samsung/clk-exynos-arm64.h
 > 
 
-Looks good.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
 
 Best regards,
