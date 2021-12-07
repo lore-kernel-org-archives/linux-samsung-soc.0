@@ -2,85 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F148C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 15:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8E4C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 16:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238656AbhLGPNX (ORCPT
+        id S234957AbhLGQiu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Dec 2021 10:13:23 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:57330 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238670AbhLGPNS (ORCPT
+        Tue, 7 Dec 2021 11:38:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230168AbhLGQis (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Dec 2021 10:13:18 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id DCFADCE1B74;
-        Tue,  7 Dec 2021 15:09:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6029C341CB;
-        Tue,  7 Dec 2021 15:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638889785;
-        bh=JvT5n2TkUUdJIO4FQcbzdIygDF+w/eZYOg/L1l3ghB4=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=L4RfbcTyhuoz0ds+TVKJVVXQfBJJmFeaW40RIMybb3IILPzBLZ4dHuElzAdTxZfKz
-         s736ZyhP/eza/CU4SJFNh3e9/MviKasbMURxtdhCmanlyE6Fk9iryB49sYA8Yr8mqU
-         gR25WtDQ6r6XLtFfGbhDs1KC7yNUsMZmibD1p57C5382CwPzFEzjyKKag57V46UXg+
-         MTwD4yfCqjFD6+m4b2qDJ4bVAqcEN1zjT0t7gz9GLF9WxpODhFuqZ5NFk1M3Ayvf73
-         3+vaTOf0q0oA8rWZx61gJxu6zwzPUZTw0cY6mApM+YVrSFrEN7LgKEc6d5/4m55xvU
-         0Ikmdq8NnaCcA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
+        Tue, 7 Dec 2021 11:38:48 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B04C061574;
+        Tue,  7 Dec 2021 08:35:18 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id v11so30644672wrw.10;
+        Tue, 07 Dec 2021 08:35:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=nBq4z9ubkSuyUZ2LTFKYRzb3ppMDEl5CP7+PtRSNmXc=;
+        b=D0IRMe2Htb9T/77xDfXkyxJINLH0czmMGkVrouVFzqVMSOZOrsylqTk/YrKWdWVVHy
+         KpFhEHpGO5nf2x5Tt6dDSidZ8o3v9ZMuYv1ufOhaKFobyPmAw2IPyFV6vwY0KAOKRV7h
+         Cs+Bhcy+ZA8w5EVwCP/n4+ykr3kICEtRT/mLPrXuBrBNw5IQfGcjUyUUSsDfUurZIBhk
+         XvzVmUlETE3hvSdtfFFpy+7cmLXEVfsaVuYe7y90IRg3V3UNhWUJTzjzdWG5o7jy9JPm
+         dVJQKr+NhKzoAGGMz8HptWrwE4MyYj9lOTebF30CyGtm4gh1MCVIwKaAYvmPTwSw3NCp
+         zUlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=nBq4z9ubkSuyUZ2LTFKYRzb3ppMDEl5CP7+PtRSNmXc=;
+        b=4I+OF+70TTjpD8CxeokEEc5h/8rkxFaP0ljDG3LFVRw78OXwdrfraycioaIRTjxo0Y
+         3orPrlGbnLSCsBqcy4uE4DDmyvDH24EKV8Jc+wlIPri8smlZeRM7R72jkFw0O1Od6Wf+
+         pH+9ypJ84uIFDrZF/TItyRVGNNFT46B/SjXz/1uCwdan8NbSwMx5b/4APPF/Yn6gu4hi
+         KsOz9SJwGPiyZUeeglRpAY1bgLZpoxzXry+DBCw22owaFKdKTfRYzECVzZ236cY8Vxok
+         jWSx3KtVQxi7nMEsDoNU7FaKv0YS7Zj2LlmxLD7xtBbcMm1oOAM1XQNTS5sxj05SZH5S
+         rYHA==
+X-Gm-Message-State: AOAM532q2RE5zz+YN/FvQymB8WQYn82L0b80VxeXI690tWbDoHdVs371
+        WLhqMEeMDzvTdmMhMoEly+Y=
+X-Google-Smtp-Source: ABdhPJyErV7Ldoev0AkP7ge08IK0PwnZRV4VTGR3iDstNcFEMnhrUQP8nEqTFb67Xngi/5irPBooBQ==
+X-Received: by 2002:adf:8bda:: with SMTP id w26mr52392964wra.440.1638894916603;
+        Tue, 07 Dec 2021 08:35:16 -0800 (PST)
+Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.gmail.com with ESMTPSA id p8sm189854wrx.25.2021.12.07.08.35.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 08:35:16 -0800 (PST)
+Message-ID: <d54b9767cf76e7d4cf1a1dcf8f7efae12d0f25e3.camel@gmail.com>
+Subject: Re: [PATCH 0/6] Initial Samsung Galaxy A8 (2018) support
+From:   David Virag <virag.david003@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, stable@vger.kernel.org
-In-Reply-To: <20211206124306.14006-1-krzysztof.kozlowski@canonical.com>
-References: <20211206124306.14006-1-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH] regulator: dt-bindings: samsung,s5m8767: add missing op_mode to bucks
-Message-Id: <163888978258.1135169.15249431060250011640.b4-ty@kernel.org>
-Date:   Tue, 07 Dec 2021 15:09:42 +0000
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Date:   Tue, 07 Dec 2021 17:34:28 +0100
+In-Reply-To: <20211207082656.GA12097@duo.ucw.cz>
+References: <20211205153302.76418-1-virag.david003@gmail.com>
+         <20211207082656.GA12097@duo.ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 6 Dec 2021 13:43:06 +0100, Krzysztof Kozlowski wrote:
-> While converting bindings to dtschema, the buck regulators lost
-> "op_mode" property.  The "op_mode" is a valid property for all
-> regulators (both LDOs and bucks), so add it.
+Hi!
+
+On Tue, 2021-12-07 at 09:26 +0100, Pavel Machek wrote:
+> Hi!
 > 
+> > Add basic initial support for the Samsung Galaxy A8 (2018)
+> > smartphone.
+> > This phone is also known as "jackpotlte" and under the model name
+> > "SM-A530F". In its current state this should work on most if not
+> > all
+> > Exynos7885 phones/devices released.
+> 
+> Thank you, it is good to see support for more hardware.
+> 
+> Can I get you to cc phone-devel@vger.kernel.org mailing list in
+> future?
+
+Sure, I did not know about this mailing list. I will CC it in the
+future!
+
+> 
+> Besst regards,
+>                                                                 Pavel
+>                                                                 
 > 
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-linus
-
-Thanks!
-
-[1/1] regulator: dt-bindings: samsung,s5m8767: add missing op_mode to bucks
-      commit: 85223d609c99eaa07cc598632b426cb33753526f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+David
