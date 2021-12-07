@@ -2,57 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C20BC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 18:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B57BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 18:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235936AbhLGSTK (ORCPT
+        id S235634AbhLGS1P (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Dec 2021 13:19:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43296 "EHLO
+        Tue, 7 Dec 2021 13:27:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235907AbhLGSTK (ORCPT
+        with ESMTP id S235340AbhLGS1O (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Dec 2021 13:19:10 -0500
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C828C061746
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Dec 2021 10:15:39 -0800 (PST)
-Received: by mail-ua1-x92d.google.com with SMTP id ay21so28304933uab.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Dec 2021 10:15:39 -0800 (PST)
+        Tue, 7 Dec 2021 13:27:14 -0500
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DA28C061756
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Dec 2021 10:23:44 -0800 (PST)
+Received: by mail-ua1-x930.google.com with SMTP id 30so7835uag.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Dec 2021 10:23:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=CmeohJcS2Epr7P3xI26c5pQsNz0HFkIzREwgJpwxmZ4=;
-        b=oxMD4DrbNKr9RhHiJ+IDUnFEQh2RjFrrY8g7m4WHzups5XW2f7U5Eg1zmWGlBZyX5V
-         6ts5QDeBsX/btBbXHXEv8l9N8XmTniwKSk6WJRGQEyan5kl5Cho6pkPdDQdhh9HMtm4O
-         pq/+SqssNo3hqn+eBd20xrNIVVqnbRAUv4fOBEfCX8khJlAmpybruN447o2WDXcTPnHq
-         e+XpSnOvTdH8TXp3i31fNR5jfZNC2ADmYs+RxNvSWuzW8RBhs5hU9q3tpgVkVXkthufQ
-         fTsW/BDdA6ahClMXZ/aSMc1hQZQoXy7qvSyM0qHp+/UONauPmU3MqtT7or4gscR+W+3s
-         W8jA==
+        bh=WFFnGguuAfJNNlyzWzYsEDjqWn3Es8o9KH8UkSEiIJg=;
+        b=QXZdsesh40yspp/vuC5Vm4kMeddsWnQpKc0BAPZaKnCnpIg7QL+i3AYQbm/r10ITsH
+         kCH+skGM9Kvqr0wsMAM4D0rE5+zGBHo33hoCIH6hI3VPck20O82PjYLJWHBJn6TrUoD5
+         fge5j2BSWbIn2Gi8Lxu55GIILQB7foQ2bwRNfILJZYG9WhX11A/tjE0Ns06xbKV8Sdho
+         Ftpv2zumMtcyoz8/eGZGylQK3VBRYyXJYXuM3NSXp2IQu143V1XWo/80J/YCte/zlfXs
+         tnugYlYug+jWNblRHSs5zDksVV3Xh7DvY4QYxU727mRn4P22JNaLfq+VdlhBlo+Rg3FB
+         71nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CmeohJcS2Epr7P3xI26c5pQsNz0HFkIzREwgJpwxmZ4=;
-        b=RXdHg9G1Ba2qONOE+WODrVdQbMTAh/nSRAmhNNkhxxHxiGlGhufq1wOQwYAl83qniK
-         Q4wNan95V5q2SEpUvAjNvdhcVJ2LnRCZDj7YLusOQWlH5xHfFvCbP7mrm+9JwV80W68l
-         13cmtN6HxEXzqD4+jrsPyZsdu+e0eHOvlsrolqRYULONgB0a16eqfgc3A9VAmDKQfXSD
-         e0pRD/uP0YZGvOXWvtsVU3HT+B78Jyp/Y9MixhDXQbayvF9VfV90g9b9QynU2oWh4Nlt
-         Xry3/jPBsCrc85LGK02atcn3kTPIeRESrM696+aFDHWxnLoLjIgHJeu9XR4vzHb6Ck+f
-         rASg==
-X-Gm-Message-State: AOAM533N4z+kWoZbWtbO/PgbVN3yrRUanMKbIhynUdvcRQ7nNSYNdIG2
-        Xk/ld72I2ow0c2r7NxzXnWNp8xqvhHH3N/Bb1eGfEQ==
-X-Google-Smtp-Source: ABdhPJy95aqLQ+mcXCYI+jih5YSp1vafbNSIfDwe3iW5WSwU+1KiZ85Qvvve9jZ8iRceWuYEHGU5kotTaVk85cwYyv0=
-X-Received: by 2002:a67:d31c:: with SMTP id a28mr47411614vsj.20.1638900938710;
- Tue, 07 Dec 2021 10:15:38 -0800 (PST)
+        bh=WFFnGguuAfJNNlyzWzYsEDjqWn3Es8o9KH8UkSEiIJg=;
+        b=dQJQWuhnl4cCbK8XTM17godFqLXSMIGaipFiiD0okqyaYE42mBEsph8bfWUu+Pf6se
+         vlLVKIzW5WaC3585WeFiivjybg5meQYyVraSRm0u1+HVRcEW7TNUewPwJ/NkZvs77kRL
+         Q8Nr8jIOtonTTue6f1wBd5qfI1PzUUa5/3TH825/eGxeGsiW7BEwa/+J0Sh+aJGz0VgM
+         9dB5PYI9LMEXVV+iAzfy5JTxoxFzQ1kscXqx9F7JUrymn3EZfZYFz2pQGTQAxusWlvfg
+         hYXnclPiyKrT/fwhn8gUBBUDH5eA41CGgkYR/MMCOB/wYTlLl+f1NcwZjxss7BlsUBb/
+         fzIQ==
+X-Gm-Message-State: AOAM533sotXysl9yy8m2ZJzV1n6kvOeiBCyPVaKOAN0CcroHT3Eu8tuH
+        zLynnjTo8LiL7RSydBN2m9VJl3GIJ4Ayl4W8IcxzkA==
+X-Google-Smtp-Source: ABdhPJzhaNDn+hR8Qy06/GBXd2FkzRqewGIyrqT1j1J8CgqqD8P0mc41IH5Pb0jPdTIcD/UIQ3uJiyVReoJxL8RZWu4=
+X-Received: by 2002:ab0:6f4f:: with SMTP id r15mr962993uat.17.1638901423133;
+ Tue, 07 Dec 2021 10:23:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20211206153124.427102-1-virag.david003@gmail.com> <20211206153124.427102-2-virag.david003@gmail.com>
-In-Reply-To: <20211206153124.427102-2-virag.david003@gmail.com>
+References: <20211206153124.427102-1-virag.david003@gmail.com> <20211206153124.427102-3-virag.david003@gmail.com>
+In-Reply-To: <20211206153124.427102-3-virag.david003@gmail.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 7 Dec 2021 20:15:27 +0200
-Message-ID: <CAPLW+4k-PAqOkqEOaV-1HbNZu1qR89r6y9prU3Uet0vCYx_cjA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add bindings definitions for
- Exynos7885 CMU
+Date:   Tue, 7 Dec 2021 20:23:31 +0200
+Message-ID: <CAPLW+4ndzvks6os2W1o+_7dyi_DZKjgqpoFfsS90pzXWVTpkGg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: clock: Document Exynos7885 CMU bindings
 To:     David Virag <virag.david003@gmail.com>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,9 +71,9 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On Mon, 6 Dec 2021 at 17:32, David Virag <virag.david003@gmail.com> wrote:
 >
-> Just like on Exynos850, the clock controller driver is designed to have
-> separate instances for each particular CMU, so clock IDs start from 1
-> for each CMU in this bindings header too.
+> Provide dt-schema documentation for Exynos7885 SoC clock controller.
+> Description is modified from Exynos850 clock controller documentation as
+> I couldn't describe it any better, that was written by Sam Protsenko.
 >
 > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > Signed-off-by: David Virag <virag.david003@gmail.com>
@@ -83,140 +82,203 @@ On Mon, 6 Dec 2021 at 17:32, David Virag <virag.david003@gmail.com> wrote:
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
 > Changes in v2:
+>   - Fixed double : in description
 >   - Added R-b tag by Krzysztof Kozlowski
 >
 > Changes in v3:
 >   - Nothing
 >
 > Changes in v4:
->   - Nothing
+>   - Fix leading 0x in example.
 >
->  include/dt-bindings/clock/exynos7885.h | 115 +++++++++++++++++++++++++
->  1 file changed, 115 insertions(+)
->  create mode 100644 include/dt-bindings/clock/exynos7885.h
+>  .../clock/samsung,exynos7885-clock.yaml       | 166 ++++++++++++++++++
+>  1 file changed, 166 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exyno=
+s7885-clock.yaml
 >
-> diff --git a/include/dt-bindings/clock/exynos7885.h b/include/dt-bindings=
-/clock/exynos7885.h
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos7885-c=
+lock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos7885-cloc=
+k.yaml
 > new file mode 100644
-> index 000000000000..1f8701691d62
+> index 000000000000..7e5a9cac2fd2
 > --- /dev/null
-> +++ b/include/dt-bindings/clock/exynos7885.h
-> @@ -0,0 +1,115 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2021 D=C3=A1vid Vir=C3=A1g
-> + *
-> + * Device Tree binding constants for Exynos7885 clock controller.
-> + */
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.ya=
+ml
+> @@ -0,0 +1,166 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/samsung,exynos7885-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +#ifndef _DT_BINDINGS_CLOCK_EXYNOS_7885_H
-> +#define _DT_BINDINGS_CLOCK_EXYNOS_7885_H
+> +title: Samsung Exynos7885 SoC clock controller
 > +
-> +/* CMU_TOP */
-> +#define CLK_FOUT_SHARED0_PLL           1
-> +#define CLK_FOUT_SHARED1_PLL           2
-> +#define CLK_DOUT_SHARED0_DIV2          3
-> +#define CLK_DOUT_SHARED0_DIV3          4
-> +#define CLK_DOUT_SHARED0_DIV4          5
-> +#define CLK_DOUT_SHARED0_DIV5          6
-> +#define CLK_DOUT_SHARED1_DIV2          7
-> +#define CLK_DOUT_SHARED1_DIV3          8
-> +#define CLK_DOUT_SHARED1_DIV4          9
-> +#define CLK_MOUT_CORE_BUS              10
-> +#define CLK_MOUT_CORE_CCI              11
-> +#define CLK_MOUT_CORE_G3D              12
-> +#define CLK_DOUT_CORE_BUS              13
-> +#define CLK_DOUT_CORE_CCI              14
-> +#define CLK_DOUT_CORE_G3D              15
-> +#define CLK_GOUT_CORE_BUS              16
-> +#define CLK_GOUT_CORE_CCI              17
-> +#define CLK_GOUT_CORE_G3D              18
-> +#define CLK_MOUT_PERI_BUS              19
-> +#define CLK_MOUT_PERI_SPI0             20
-> +#define CLK_MOUT_PERI_SPI1             21
-> +#define CLK_MOUT_PERI_UART0            22
-> +#define CLK_MOUT_PERI_UART1            23
-> +#define CLK_MOUT_PERI_UART2            24
-> +#define CLK_MOUT_PERI_USI0             25
-> +#define CLK_MOUT_PERI_USI1             26
-> +#define CLK_MOUT_PERI_USI2             27
-> +#define CLK_DOUT_PERI_BUS              28
-> +#define CLK_DOUT_PERI_SPI0             29
-> +#define CLK_DOUT_PERI_SPI1             30
-> +#define CLK_DOUT_PERI_UART0            31
-> +#define CLK_DOUT_PERI_UART1            32
-> +#define CLK_DOUT_PERI_UART2            33
-> +#define CLK_DOUT_PERI_USI0             34
-> +#define CLK_DOUT_PERI_USI1             35
-> +#define CLK_DOUT_PERI_USI2             36
-> +#define CLK_GOUT_PERI_BUS              37
-> +#define CLK_GOUT_PERI_SPI0             38
-> +#define CLK_GOUT_PERI_SPI1             39
-> +#define CLK_GOUT_PERI_UART0            40
-> +#define CLK_GOUT_PERI_UART1            41
-> +#define CLK_GOUT_PERI_UART2            42
-> +#define CLK_GOUT_PERI_USI0             43
-> +#define CLK_GOUT_PERI_USI1             44
-> +#define CLK_GOUT_PERI_USI2             45
-> +#define TOP_NR_CLK                     46
+> +maintainers:
+> +  - D=C3=A1vid Vir=C3=A1g <virag.david003@gmail.com>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +  - Tomasz Figa <tomasz.figa@gmail.com>
 > +
-> +/* CMU_CORE */
-> +#define CLK_MOUT_CORE_BUS_USER         1
-> +#define CLK_MOUT_CORE_CCI_USER         2
-> +#define CLK_MOUT_CORE_G3D_USER         3
-> +#define CLK_MOUT_CORE_GIC              4
-> +#define CLK_DOUT_CORE_BUSP             5
-> +#define CLK_GOUT_CCI_ACLK              6
-> +#define CLK_GOUT_GIC400_CLK            7
-> +#define CORE_NR_CLK                    8
+> +description: |
+> +  Exynos7885 clock controller is comprised of several CMU units, generat=
+ing
+> +  clocks for different domains. Those CMU units are modeled as separate =
+device
+> +  tree nodes, and might depend on each other. The root clock in that roo=
+t tree
+> +  is an external clock: OSCCLK (26 MHz). This external clock must be def=
+ined
+> +  as a fixed-rate clock in dts.
 > +
-> +/* CMU_PERI */
-> +#define CLK_MOUT_PERI_BUS_USER         1
-> +#define CLK_MOUT_PERI_SPI0_USER                2
-> +#define CLK_MOUT_PERI_SPI1_USER                3
-> +#define CLK_MOUT_PERI_UART0_USER       4
-> +#define CLK_MOUT_PERI_UART1_USER       5
-> +#define CLK_MOUT_PERI_UART2_USER       6
-> +#define CLK_MOUT_PERI_USI0_USER                7
-> +#define CLK_MOUT_PERI_USI1_USER                8
-> +#define CLK_MOUT_PERI_USI2_USER                9
-> +#define CLK_GOUT_GPIO_TOP_PCLK         10
-> +#define CLK_GOUT_HSI2C0_PCLK           11
-> +#define CLK_GOUT_HSI2C1_PCLK           12
-> +#define CLK_GOUT_HSI2C2_PCLK           13
-> +#define CLK_GOUT_HSI2C3_PCLK           14
-> +#define CLK_GOUT_I2C0_PCLK             15
-> +#define CLK_GOUT_I2C1_PCLK             16
-> +#define CLK_GOUT_I2C2_PCLK             17
-> +#define CLK_GOUT_I2C3_PCLK             18
-> +#define CLK_GOUT_I2C4_PCLK             19
-> +#define CLK_GOUT_I2C5_PCLK             20
-> +#define CLK_GOUT_I2C6_PCLK             21
-> +#define CLK_GOUT_I2C7_PCLK             22
-> +#define CLK_GOUT_PWM_MOTOR_PCLK                23
-> +#define CLK_GOUT_SPI0_PCLK             24
-> +#define CLK_GOUT_SPI0_EXT_CLK          25
-> +#define CLK_GOUT_SPI1_PCLK             26
-> +#define CLK_GOUT_SPI1_EXT_CLK          27
-> +#define CLK_GOUT_UART0_EXT_UCLK                28
-> +#define CLK_GOUT_UART0_PCLK            29
-> +#define CLK_GOUT_UART1_EXT_UCLK                30
-> +#define CLK_GOUT_UART1_PCLK            31
-> +#define CLK_GOUT_UART2_EXT_UCLK                32
-> +#define CLK_GOUT_UART2_PCLK            33
-> +#define CLK_GOUT_USI0_PCLK             34
-> +#define CLK_GOUT_USI0_SCLK             35
-> +#define CLK_GOUT_USI1_PCLK             36
-> +#define CLK_GOUT_USI1_SCLK             37
-> +#define CLK_GOUT_USI2_PCLK             38
-> +#define CLK_GOUT_USI2_SCLK             39
-> +#define CLK_GOUT_MCT_PCLK              40
-> +#define CLK_GOUT_SYSREG_PERI_PCLK      41
-> +#define CLK_GOUT_WDT0_PCLK             42
-> +#define CLK_GOUT_WDT1_PCLK             43
-> +#define PERI_NR_CLK                    44
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using P=
+LLs and
+> +  dividers; all other leaf clocks (other CMUs) are usually derived from =
+CMU_TOP.
 > +
-> +#endif /* _DT_BINDINGS_CLOCK_EXYNOS_7885_H */
+> +  Each clock is assigned an identifier and client nodes can use this ide=
+ntifier
+> +  to specify the clock which they consume. All clocks available for usag=
+e
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'dt-bindings/clock/exynos7885.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynos7885-cmu-top
+> +      - samsung,exynos7885-cmu-core
+> +      - samsung,exynos7885-cmu-peri
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 10
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 10
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7885-cmu-top
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7885-cmu-core
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +            - description: CMU_CORE bus clock (from CMU_TOP)
+> +            - description: CCI clock (from CMU_TOP)
+> +            - description: G3D clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_core_bus
+> +            - const: dout_core_cci
+> +            - const: dout_core_g3d
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos7885-cmu-peri
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +            - description: CMU_PERI bus clock (from CMU_TOP)
+> +            - description: SPI0 clock (from CMU_TOP)
+> +            - description: SPI1 clock (from CMU_TOP)
+> +            - description: UART0 clock (from CMU_TOP)
+> +            - description: UART1 clock (from CMU_TOP)
+> +            - description: UART2 clock (from CMU_TOP)
+> +            - description: USI0 clock (from CMU_TOP)
+> +            - description: USI1 clock (from CMU_TOP)
+> +            - description: USI2 clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_peri_bus
+> +            - const: dout_peri_spi0
+> +            - const: dout_peri_spi1
+> +            - const: dout_peri_uart0
+> +            - const: dout_peri_uart1
+> +            - const: dout_peri_uart2
+> +            - const: dout_peri_usi0
+> +            - const: dout_peri_usi1
+> +            - const: dout_peri_usi2
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock controller node for CMU_PERI
+> +  - |
+> +    #include <dt-bindings/clock/exynos7885.h>
+> +
+> +    cmu_peri: clock-controller@10010000 {
+> +        compatible =3D "samsung,exynos7885-cmu-peri";
+> +        reg =3D <0x10010000 0x8000>;
+> +        #clock-cells =3D <1>;
+> +
+> +        clocks =3D <&oscclk>,
+> +                 <&cmu_top CLK_DOUT_PERI_BUS>,
+> +                 <&cmu_top CLK_DOUT_PERI_SPI0>,
+> +                 <&cmu_top CLK_DOUT_PERI_SPI1>,
+> +                 <&cmu_top CLK_DOUT_PERI_UART0>,
+> +                 <&cmu_top CLK_DOUT_PERI_UART1>,
+> +                 <&cmu_top CLK_DOUT_PERI_UART2>,
+> +                 <&cmu_top CLK_DOUT_PERI_USI0>,
+> +                 <&cmu_top CLK_DOUT_PERI_USI1>,
+> +                 <&cmu_top CLK_DOUT_PERI_USI2>;
+> +        clock-names =3D "oscclk",
+> +                      "dout_peri_bus",
+> +                      "dout_peri_spi0",
+> +                      "dout_peri_spi1",
+> +                      "dout_peri_uart0",
+> +                      "dout_peri_uart1",
+> +                      "dout_peri_uart2",
+> +                      "dout_peri_usi0",
+> +                      "dout_peri_usi1",
+> +                      "dout_peri_usi2";
+> +    };
+> +
+> +...
 > --
 > 2.34.1
 >
