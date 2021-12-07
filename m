@@ -2,102 +2,85 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49D4C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 14:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F148C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Dec 2021 15:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237533AbhLGOHJ (ORCPT
+        id S238656AbhLGPNX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Dec 2021 09:07:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237518AbhLGOHI (ORCPT
+        Tue, 7 Dec 2021 10:13:23 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:57330 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238670AbhLGPNS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Dec 2021 09:07:08 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDF3DC061746
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Dec 2021 06:03:37 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id e3so57543762edu.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Dec 2021 06:03:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4QaFJr9Kj7W1E5J0O0glmrUNqwId/EqvnwB8+dCfYBU=;
-        b=QrCmwezXgDffYu3BYDFeZy4MmR2Bcvm/db80gHwidFga+NwxX3y+rcY846l2UQdA9F
-         uQR0l0gkJConYz8JyaPYkdCoeqml2PcMm+HRWvsJ5OWJhLEjTKwnQ1993B2TwqJaIUJC
-         qVgrZQQF08nhrZuXpSeha15CpfCFQetTqqcHCEzMRpX+ftTjhR+0igzGere/eweQRSp7
-         0h2rssfxGJvXtnkAusZ6KIle3uX41hQL5XG6+dLl+EiIukCFtIxUGd7JROI1RBLDef55
-         PC2ei026in6pMihQjWFpxRsYT07bIokDyl5DnDr9XlIOUrBe/y4SjW5nROtUmeJX/moX
-         /W6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4QaFJr9Kj7W1E5J0O0glmrUNqwId/EqvnwB8+dCfYBU=;
-        b=3r8Ic/DGuEuZWzKO6h0aRlwX32zQlHnBpTLvIT3fSfellNbiXDdGSVQj/z50CZ1Dh3
-         ITuNm+zudFKQVSWtiuaWl4DShNLtW1sUxs6XAbHKQXeUrSAxqEciqyerheDjObgIzdM5
-         OH4mNMtrIUVk0ah6AgF0S+vUYVmdVeF0bhaYtNuJMtPyn7Sz3dp67KUHcd0CS7RqdqAN
-         2TjRJB9jvRiyHCZenb6Z21nOEMk6LeMnQQ4BWm34IEoUryci+8IyfpcCGdSzGDBSloRf
-         uRiCO0THHwT6jtrLN31XsSxVFCc4QfNrJMr0DPHpqShZRka0axlzBm2PnbVUQ/bWfnup
-         N8dA==
-X-Gm-Message-State: AOAM533Uri+9xaB1Jb9IAjsXLwY6EIFQAIGWW5XzlaUEdiCXKq+11+fq
-        ibyLrBOYft50rmMGMgs+yOcckg==
-X-Google-Smtp-Source: ABdhPJzbnSFGpYaz1Y0yAN5niqLJAa8lYqVYXK9DdlHCE5yqsGkSEplPM3PLY6SPPooXRSpN84dB7Q==
-X-Received: by 2002:a17:906:ae48:: with SMTP id lf8mr53950076ejb.451.1638885816143;
-        Tue, 07 Dec 2021 06:03:36 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id sg17sm8644501ejc.72.2021.12.07.06.03.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Dec 2021 06:03:35 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tue, 7 Dec 2021 10:13:18 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id DCFADCE1B74;
+        Tue,  7 Dec 2021 15:09:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6029C341CB;
+        Tue,  7 Dec 2021 15:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638889785;
+        bh=JvT5n2TkUUdJIO4FQcbzdIygDF+w/eZYOg/L1l3ghB4=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=L4RfbcTyhuoz0ds+TVKJVVXQfBJJmFeaW40RIMybb3IILPzBLZ4dHuElzAdTxZfKz
+         s736ZyhP/eza/CU4SJFNh3e9/MviKasbMURxtdhCmanlyE6Fk9iryB49sYA8Yr8mqU
+         gR25WtDQ6r6XLtFfGbhDs1KC7yNUsMZmibD1p57C5382CwPzFEzjyKKag57V46UXg+
+         MTwD4yfCqjFD6+m4b2qDJ4bVAqcEN1zjT0t7gz9GLF9WxpODhFuqZ5NFk1M3Ayvf73
+         3+vaTOf0q0oA8rWZx61gJxu6zwzPUZTw0cY6mApM+YVrSFrEN7LgKEc6d5/4m55xvU
+         0Ikmdq8NnaCcA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] kbuild: Report enabled nodes with duplicated address
-Date:   Tue,  7 Dec 2021 16:03:34 +0200
-Message-Id: <20211207140334.10461-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>, stable@vger.kernel.org
+In-Reply-To: <20211206124306.14006-1-krzysztof.kozlowski@canonical.com>
+References: <20211206124306.14006-1-krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH] regulator: dt-bindings: samsung,s5m8767: add missing op_mode to bucks
+Message-Id: <163888978258.1135169.15249431060250011640.b4-ty@kernel.org>
+Date:   Tue, 07 Dec 2021 15:09:42 +0000
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Duplicated unit address is a normal case, as long as no more than one
-node using that address is enabled. Having duplicated addresses is
-already allowed by '-Wno-unique_unit_address' in DTC_FLAGS. But two
-simultaneously enabled nodes sharing the same address is usually
-incorrect. Add '-Wunique_unit_address_if_enabled' flag to report
-warnings for such case when doing "make dtbs_check".
+On Mon, 6 Dec 2021 13:43:06 +0100, Krzysztof Kozlowski wrote:
+> While converting bindings to dtschema, the buck regulators lost
+> "op_mode" property.  The "op_mode" is a valid property for all
+> regulators (both LDOs and bucks), so add it.
+> 
+> 
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reported-by: Rob Herring <robh@kernel.org>
-Suggested-by: Rob Herring <robh@kernel.org>
----
-NOTE: After applying this patch, a lot of warnings appear on "make
-dtbs_check". I'm not completely sure if it's ok, so feel free to Nack.
+Applied to
 
- scripts/Makefile.lib | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-linus
 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index ce6142238835..2f00c996d2e3 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -315,7 +315,8 @@ DTC_FLAGS += -Wno-unit_address_vs_reg \
- 	-Wno-alias_paths \
- 	-Wno-graph_child_address \
- 	-Wno-simple_bus_reg \
--	-Wno-unique_unit_address
-+	-Wno-unique_unit_address \
-+	-Wunique_unit_address_if_enabled
- endif
- 
- ifneq ($(findstring 2,$(KBUILD_EXTRA_WARN)),)
--- 
-2.30.2
+Thanks!
 
+[1/1] regulator: dt-bindings: samsung,s5m8767: add missing op_mode to bucks
+      commit: 85223d609c99eaa07cc598632b426cb33753526f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
