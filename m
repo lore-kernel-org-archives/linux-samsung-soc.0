@@ -2,443 +2,226 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 920C4C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Dec 2021 16:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411C8C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Dec 2021 21:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234532AbhLHQza (ORCPT
+        id S236999AbhLHVIZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Dec 2021 11:55:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbhLHQza (ORCPT
+        Wed, 8 Dec 2021 16:08:25 -0500
+Received: from smtp2.axis.com ([195.60.68.18]:45831 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236037AbhLHVIZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Dec 2021 11:55:30 -0500
-Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0987CC0617A1
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Dec 2021 08:51:58 -0800 (PST)
-Received: by mail-ua1-x933.google.com with SMTP id i6so5781880uae.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Dec 2021 08:51:57 -0800 (PST)
+        Wed, 8 Dec 2021 16:08:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NsPq00yIfOBpAmL7EJoPHmZ49H4SAg5EXmPB7erQLMw=;
-        b=lCsuLSwfSHmuaosWw8kbB4sTHJM+gA9ROusB9lhNrc6AHVX4eoWNGLJZPvq3A9Is/X
-         +yhiCcI6gAZOEqxAOj2JvxzFYF1oaqvqSrFdgzuvV0ce6ajuHiuSt3cdWMbNZ4XsCfBD
-         KKmKh1TZ2r3Eah//Zt8W4aFIuTu1e7N/cQcJ3gy5GFmbhhYosku2DIORF6iQQRJMTjeN
-         vI8vYD1IAT2WDk3ja8KebpdcIZCX+YqoBL/XRvr7+hGNaS6eCWyH6uQ8TUxixSXc9NUS
-         dKIhAvuoYDZ4huagX2FbEk4uOS0N5Wo+1bIoLgz0Ej38FtICaclo3T7sgvdFaxnd5SRX
-         S+KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NsPq00yIfOBpAmL7EJoPHmZ49H4SAg5EXmPB7erQLMw=;
-        b=lhOl4GZHBSmm7Cgcl2vEJQTnXjo148flDYwf2gkeL2y/hyH+lTDIUTCzq02H63L1eB
-         fyjdbGBh884dzELYUdss6sxvVfvVVTjDZew466/b1PWuFnkmemQEkciPvt3dg1oGLSh0
-         UWvaTGoGJgCKz6Viwyt61hLd9eqcBDSweARsWQC5JKNjmAOh6S4IIXpXtleLyijJyhp6
-         6/FNQC9f+MM3Ppbrdt7zMz2XfwF9C1toDymI43anpFIU4PuqNAGR5GbjezvtoenpP65p
-         lurSqW8VqgKtbI/+Xpsvp96MwCSyEW1wA+SdxdLsOQU1keSaPRe2sd7ULLU2BEoq2pka
-         3ztA==
-X-Gm-Message-State: AOAM531tXYo8Vmo7SUHl/FnR1XYSIJjXjNX/oc2EhuqAbuT2OzdQrMIL
-        9hDCnpsCVizK+R3Qhzz7SHf57HYf3qLs3zCnwSitLw==
-X-Google-Smtp-Source: ABdhPJzSp7LNFdlDZQpDLMZULnPfdtRwmUOM/YhcHaNNHYhtbRZiyC2gxLf1d4O1CceWOQkIDkA3Xah8GvhA+bVPr+A=
-X-Received: by 2002:ab0:6002:: with SMTP id j2mr9946991ual.9.1638982316992;
- Wed, 08 Dec 2021 08:51:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20211206153124.427102-1-virag.david003@gmail.com>
- <20211206153124.427102-8-virag.david003@gmail.com> <CAPLW+4k3Vmg0W0jVsTChHTG8+eeg=5QF+actz1Tk0vNV9w-y-A@mail.gmail.com>
- <0c7fc14b-a0d0-7d31-3a33-623f07114a80@canonical.com> <CAPLW+4=ioLewf5Hv5FO1jXjxaLrgedrzyKNtNtevTGADF9rBmw@mail.gmail.com>
- <a7d5f290-7992-b37c-fe2c-90bf3e5e83ce@canonical.com>
-In-Reply-To: <a7d5f290-7992-b37c-fe2c-90bf3e5e83ce@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 8 Dec 2021 18:51:45 +0200
-Message-ID: <CAPLW+4kmt1fEWG14jLJmPM0uHoyf017U7rigri47KT9Tamto=Q@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] arm64: dts: exynos: Add initial device tree
- support for Exynos7885 SoC
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     David Virag <virag.david003@gmail.com>,
+  d=axis.com; q=dns/txt; s=axis-central1; t=1638997493;
+  x=1670533493;
+  h=date:to:cc:subject:message-id:references:mime-version:
+   content-transfer-encoding:in-reply-to:from;
+  bh=DGK9XEt1aEm76L0x0Ug5M8TPT3GfMlbVsBIFV31De0s=;
+  b=glOQoJ6+m2ptka/fkW1Unalz3+cqOq5gGljxBHwhz9a+vIMJiiKYK3I0
+   oMjELHSGhHyd1kldoVrNhwJoLHZ5zdUoOM2Jo9jx+h4sO2Sm7CinPzjGY
+   nh7/csZo0jg8iA1Z+YvKPclrJyNWrpnoG4nTiUiVDEjZ8kioCIUvmE85G
+   3RsbtqHurOju6u+kLiVcAzI5QzHYndbeqdZkNFu+OqJO+HU0itkM947+N
+   jrtA+Bad4rbXOUyZaGwuBquLV7Wq6t3Ck+bhl3ubi1CErGwChzUVZGuRw
+   seBGwa0tfNBas3Gm024AXwWKVjSgKb2CyyR2FVoHSYpnKNkoZ4QFrZaih
+   g==;
+Date:   Wed, 8 Dec 2021 22:04:51 +0100
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     =?iso-8859-1?Q?M=E5rten?= Lindahl <Marten.Lindahl@axis.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Doug Anderson <dianders@google.com>, kernel <kernel@axis.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] mmc: dw_mmc: Add quirk for extended data read
+ timeout
+Message-ID: <20211208210451.GA9552@axis.com>
+References: <20211206142929.26729-1-marten.lindahl@axis.com>
+ <20211206142929.26729-4-marten.lindahl@axis.com>
+ <CAPDyKFqB9EV9ZGwnJ+dddJGMXUpv8OpvgY5ta_a_=_An=Ca2SQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFqB9EV9ZGwnJ+dddJGMXUpv8OpvgY5ta_a_=_An=Ca2SQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Marten Lindahl <martenli@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 8 Dec 2021 at 18:29, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 08/12/2021 16:37, Sam Protsenko wrote:
-> > On Wed, 8 Dec 2021 at 11:05, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >>
-> >> On 07/12/2021 21:19, Sam Protsenko wrote:
-> >>> On Mon, 6 Dec 2021 at 17:32, David Virag <virag.david003@gmail.com> w=
-rote:
-> >>>>
-> >>>> Add initial Exynos7885 device tree nodes with dts for the Samsung Ga=
-laxy
-> >>>> A8 (2018), a.k.a. "jackpotlte", with model number "SM-A530F".
-> >>>> Currently this includes some clock support, UART support, and I2C no=
-des.
-> >>>>
-> >>>> Signed-off-by: David Virag <virag.david003@gmail.com>
-> >>>> ---
-> >>>> Changes in v2:
-> >>>>   - Remove address-cells, and size-cells from dts, since they are
-> >>>>     already in the dtsi.
-> >>>>   - Lower case hex in memory node
-> >>>>   - Fix node names with underscore instead of hyphen
-> >>>>   - Fix line breaks
-> >>>>   - Fix "-key" missing from gpio keys node names
-> >>>>   - Use the form without "key" in gpio key labels on all keys
-> >>>>   - Suffix pin configuration node names with "-pins"
-> >>>>   - Remove "fimc_is_mclk" nodes from pinctrl dtsi for now
-> >>>>   - Use macros for "samsung,pin-con-pdn", and "samsung,pin-con-pdn"
-> >>>>   - Add comment about Arm PMU
-> >>>>   - Rename "clock-oscclk" to "osc-clock"
-> >>>>   - Include exynos-syscon-restart.dtsi instead of rewriting its cont=
-ents
-> >>>>
-> >>>> Changes in v3:
-> >>>>   - Fix typo (seperate -> separate)
-> >>>>
-> >>>> Changes in v4:
-> >>>>   - Fixed leading 0x in clock-controller nodes
-> >>>>   - Actually suffixed pin configuration node names with "-pins"
-> >>>>   - Seperated Cortex-A53 and Cortex-A73 PMU
-> >>>>
-> >>>>  arch/arm64/boot/dts/exynos/Makefile           |   7 +-
-> >>>>  .../boot/dts/exynos/exynos7885-jackpotlte.dts |  95 ++
-> >>>>  .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 865 +++++++++++++++=
-+++
-> >>>>  arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 438 +++++++++
-> >>>>  4 files changed, 1402 insertions(+), 3 deletions(-)
-> >>>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte=
-.dts
-> >>>
-> >>> Shouldn't SoC and board files be sent as two separate patches? For
-> >>> example, I've checked exynos5433 and exynos7, SoC support
-> >>
-> >> Does not have to be. DTSI by itself cannot be even compiled, so keepin=
-g
-> >> it a separate commit does not bring that much benefits. Especially if =
-it
-> >> is only one DTSI and one DTS.
-> >>
+On Wed, Dec 08, 2021 at 03:41:24PM +0100, Ulf Hansson wrote:
+> On Mon, 6 Dec 2021 at 15:29, Mårten Lindahl <marten.lindahl@axis.com> wrote:
 > >
-> > Right, the only theoretical benefit I can see is reverting the board
-> > dts in future, if another board already uses SoC dtsi. Or
-> > cherry-picking in similar manner. Not my call though, for me it just
-> > seems easier to review it that way, and more atomic.
+> > Current dw_mci driver supports a TMOUT register which consists of a 24
+> > bit field (TMOUT[31:8]) for the DATA_TIMEOUT. The maximum value of this
+> > field is 0xFFFFFF, which with a 200MHz clock will give a full DRTO of:
 > >
-> >>>
-> >>>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dt=
-si
-> >>>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
-> >>>>
-> >>>> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/d=
-ts/exynos/Makefile
-> >>>> index b41e86df0a84..c68c4ad577ac 100644
-> >>>> --- a/arch/arm64/boot/dts/exynos/Makefile
-> >>>> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> >>>> @@ -1,6 +1,7 @@
-> >>>>  # SPDX-License-Identifier: GPL-2.0
-> >>>>  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
-> >>>> -       exynos5433-tm2.dtb      \
-> >>>> -       exynos5433-tm2e.dtb     \
-> >>>> -       exynos7-espresso.dtb    \
-> >>>> +       exynos5433-tm2.dtb              \
-> >>>> +       exynos5433-tm2e.dtb             \
-> >>>> +       exynos7-espresso.dtb            \
-> >>>> +       exynos7885-jackpotlte.dtb       \
-> >>>>         exynosautov9-sadk.dtb
-> >>>> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/=
-arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> >>>> new file mode 100644
-> >>>> index 000000000000..f5941dc4c374
-> >>>> --- /dev/null
-> >>>> +++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> >>>> @@ -0,0 +1,95 @@
-> >>>> +// SPDX-License-Identifier: GPL-2.0
-> >>>> +/*
-> >>>> + * Samsung Galaxy A8 2018 (jackpotlte/SM-A530F) device tree source
-> >>>> + *
-> >>>> + * Copyright (c) 2021 Samsung Electronics Co., Ltd.
-> >>>> + * Copyright (c) 2021 D=C3=A1vid Vir=C3=A1g
-> >>>> + *
-> >>>
-> >>> This line is not needed.
-> >>>
-> >>>> + */
-> >>>> +
-> >>>> +/dts-v1/;
-> >>>
-> >>> Suggest adding empty line here.
-> >>>
-> >>>> +#include "exynos7885.dtsi"
-> >>>> +#include <dt-bindings/gpio/gpio.h>
-> >>>> +#include <dt-bindings/input/input.h>
-> >>>> +#include <dt-bindings/interrupt-controller/irq.h>
-> >>>> +
-> >>>> +/ {
-> >>>> +       model =3D "Samsung Galaxy A8 (2018)";
-> >>>> +       compatible =3D "samsung,jackpotlte", "samsung,exynos7885";
-> >>>> +       chassis-type =3D "handset";
-> >>>> +
-> >>>> +       aliases {
-> >>>> +               serial0 =3D &serial_0;
-> >>>> +               serial1 =3D &serial_1;
-> >>>> +               serial2 =3D &serial_2;
-> >>>
-> >>> Suggestion: add aliases also for i2c nodes, to keep i2c instance
-> >>> numbers fixed in run-time (e.g. in "i2cdetect -l" output).
-> >>>
-> >>>> +       };
-> >>>> +
-> >>>> +       chosen {
-> >>>> +               stdout-path =3D &serial_2;
-> >>>> +       };
-> >>>> +
-> >>>> +       memory@80000000 {
-> >>>> +               device_type =3D "memory";
-> >>>> +               reg =3D <0x0 0x80000000 0x3da00000>,
-> >>>> +                     <0x0 0xc0000000 0x40000000>,
-> >>>> +                     <0x8 0x80000000 0x40000000>;
-> >>>> +       };
-> >>>> +
-> >>>> +       gpio-keys {
-> >>>> +               compatible =3D "gpio-keys";
-> >>>> +               pinctrl-names =3D "default";
-> >>>> +               pinctrl-0 =3D <&key_volup &key_voldown &key_power>;
-> >>>> +
-> >>>> +               volup-key {
-> >>>> +                       label =3D "Volume Up";
-> >>>> +                       interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH 0>;
-> >>>
-> >>> Here and below: what is 0, why it's needed? Also, isn't it enough to
-> >>> have just "gpios", and remove interrupt*? Need to check "gpio-keys"
-> >>> driver and bindings doc, but AFAIR it should be enough to have just
-> >>> "gpios =3D" or just "interrupts =3D".
-> >>
-> >> "gpios" is enough, because the IRQ line is derived from it. However
-> >> explicitly describing interrupts seems like a more detailed hardware
-> >> description.
-> >>
+> > 0xFFFFFF / 200000000 => ~84 ms
 > >
-> > Frankly I don't think it's more detailed, it states the same thing
-> > (gpa1 controller, line=3D5).
->
-> It states that interrupt is exactly the same as GPIO which not
-> explicitly coming from bindings.
->
-> > Also not sure if level interrupt is needed
-> > for a key, maybe edge type would be better. Also, I still don't
-> > understand 0 in the end.
->
-> Indeed this part looks not correct - the leve and 0 at the end. In such
-> case better to skip it then define misleading property.
->
-> > Checking existing dts's, most of those only
-> > define "gpios". I'd say having only "gpios" is more obvious, and will
-> > work the same way. But that's not a strong preference on my side, just
-> > think it's a bit misleading right now.
->
-> Yep.
->
+> > However, the ARTPEC-8 SoC DWMMC IP version has a TMOUT register with an
+> > extended DATA_TIMEOUT field, which supports longer timers for the DRTO.
+> > In this version the DATA_TIMEOUT field is split into two, which with the
+> > same 200MHz clock as above will allow a maximum timeout of:
 > >
-> >>>
-> >>>
-> >>>> +                       interrupt-parent =3D <&gpa1>;
-> >>>> +                       linux,code =3D <KEY_VOLUMEUP>;
-> >>>> +                       gpios =3D <&gpa1 5 GPIO_ACTIVE_LOW>;
-> >>>> +               };
-> >>>> +
-> >>>> +               voldown-key {
-> >>>> +                       label =3D "Volume Down";
-> >>>> +                       interrupts =3D <6 IRQ_TYPE_LEVEL_HIGH 0>;
-> >>>> +                       interrupt-parent =3D <&gpa1>;
-> >>>> +                       linux,code =3D <KEY_VOLUMEDOWN>;
-> >>>> +                       gpios =3D <&gpa1 6 GPIO_ACTIVE_LOW>;
-> >>>> +               };
-> >>>> +
-> >>>> +               power-key {
-> >>>> +                       label =3D "Power";
-> >>>> +                       interrupts =3D <7 IRQ_TYPE_LEVEL_HIGH 0>;
-> >>>> +                       interrupt-parent =3D <&gpa1>;
-> >>>> +                       linux,code =3D <KEY_POWER>;
-> >>>> +                       gpios =3D <&gpa1 7 GPIO_ACTIVE_LOW>;
-> >>>> +                       wakeup-source;
-> >>>> +               };
-> >>>> +       };
-> >>>> +};
-> >>>> +
-> >>>
-> >>> If there are some LEDs by chance on that board -- it might be useful
-> >>> to define those here with "gpio-leds" as well. Maybe even set some
-> >>> default trigger like "heartbeat".
-> >>>
-> >>>> +&serial_2 {
-> >>>> +       status =3D "okay";
-> >>>> +};
-> >>>> +
-> >>>> +&pinctrl_alive {
-> >>>> +       key_volup: key-volup-pins {
-> >>>> +               samsung,pins =3D "gpa1-5";
-> >>>> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
-> >>>
-> >>> Maybe EXYNOS_PIN_FUNC_EINT is more self-explanatory? Just a suggestio=
-n though.
-> >>>
-> >>>> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-> >>>> +               samsung,pin-drv =3D <0>;
-> >>>
-> >>> Here and below: please use EXYNOS5420_PIN_DRV_LV1 (means drive level =
-=3D 1x).
-> >>
-> >> But are these drive level 1x? The Exynos Auto v9 has different values
-> >> than older ones.
-> >>
+> > ((TMOUT[10:8] -1) * 0xFFFFFF + TMOUT[31:11] * 8) / 200000000 => ~587 ms
 > >
-> > It should be that. One way to implicitly figure that out is to look at
-> > nodes like "sd0_clk_fast_slew_rate_3x" and those pin-drv properties.
-> > Also, in Exynos850 for most of domains those constants are
-> > appropriate, that's why I mentioned that.
->
-> Then I agree, use existing macros. The macros can be skipped for cases
-> when the meaning is different.
->
+> > Add a quirk to support this. The quirk is enabled for ARTPEC-8 SoCs.
 > >
-> >>>
-> >>>> +       };
-> >>>> +
-> >>>> +       key_voldown: key-voldown-pins {
-> >>>> +               samsung,pins =3D "gpa1-6";
-> >>>> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
-> >>>> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-> >>>> +               samsung,pin-drv =3D <0>;
-> >>>> +       };
-> >>>> +
-> >>>> +       key_power: key-power-pins {
-> >>>> +               samsung,pins =3D "gpa1-7";
-> >>>> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
-> >>>> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-> >>>> +               samsung,pin-drv =3D <0>;
-> >>>> +       };
-> >>>> +};
-> >>>> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi b/ar=
-ch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
-> >>>> new file mode 100644
-> >>>> index 000000000000..8336b2e48858
-> >>>> --- /dev/null
-> >>>> +++ b/arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
-> >>>> @@ -0,0 +1,865 @@
-> >>>> +// SPDX-License-Identifier: GPL-2.0
-> >>>> +/*
-> >>>> + * Samsung Exynos7885 SoC pin-mux and pin-config device tree source
-> >>>> + *
-> >>>> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-> >>>> + * Copyright (c) 2021 D=C3=A1vid Vir=C3=A1g
-> >>>> + *
-> >>>> + * Samsung's Exynos7885 SoC pin-mux and pin-config options are list=
-ed as
-> >>>> + * device tree nodes in this file.
-> >>>> + */
-> >>>> +
-> >>>> +#include <dt-bindings/pinctrl/samsung.h>
-> >>>
-> >>> You probably also need <dt-bindings/interrupt-controller/arm-gic.h>
-> >>> here for GIC_SPI definition.
-> >>>
-> >>>> +
-> >>>> +&pinctrl_alive {
-> >>>> +       etc0: etc0 {
-> >>>> +               gpio-controller;
-> >>>> +               #gpio-cells =3D <2>;
-> >>>> +
-> >>>> +               interrupt-controller;
-> >>>> +               #interrupt-cells =3D <2>;
-> >>>> +       };
-> >>>> +
-> >>>> +       etc1: etc1 {
-> >>>> +               gpio-controller;
-> >>>> +               #gpio-cells =3D <2>;
-> >>>> +
-> >>>> +               interrupt-controller;
-> >>>> +               #interrupt-cells =3D <2>;
-> >>>> +       };
-> >>>
-> >>> Hmm, what are these two? I can't find anything related in
-> >>> exynos7885.dtsi. If it's just some leftover from downstream vendor
-> >>> kernel -- please remove it.
-> >>
-> >> This is a pinctrl DTSI file. What do you expect to find in
-> >> exynos7885.dtsi for these? Why removing them?
+> > Signed-off-by: Mårten Lindahl <marten.lindahl@axis.com>
+> > ---
 > >
-> > etc0 and etc1 nodes are defined as gpio-controller and
-> > interrupt-controller. So "compatible" should be provided somewhere for
-> > those nodes. For example, for "gpa0" node below you can find its
-> > compatible in exynos7885.dtsi.
->
-> I am sorry, I still don't get it. gpa0 below does not have compatible.
->
+> > v2:
+> >  - Removed unnecessary comment
+> >  - Change 1<<0 to BIT(0)
+> >
+> >  drivers/mmc/host/dw_mmc-exynos.c |  5 +++++
+> >  drivers/mmc/host/dw_mmc.c        | 33 ++++++++++++++++++++++++++++----
+> >  drivers/mmc/host/dw_mmc.h        |  6 ++++++
+> >  3 files changed, 40 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> > index 86486e6659de..1b625642c5b4 100644
+> > --- a/drivers/mmc/host/dw_mmc-exynos.c
+> > +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> > @@ -127,6 +127,11 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+> >                                 DQS_CTRL_GET_RD_DELAY(priv->saved_strobe_ctrl);
+> >         }
+> >
+> > +       if (priv->ctrl_type == DW_MCI_TYPE_ARTPEC8) {
+> > +               /* Quirk needed for ARTPEC-8 SoCs */
+> > +               host->quirks |= DW_MMC_QUIRK_EXTENDED_TMOUT;
+> > +       }
+> > +
+> >         host->bus_hz /= (priv->ciu_div + 1);
+> >
+> >         return 0;
+> > diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> > index f2a14a434bef..45ea9fd97a6a 100644
+> > --- a/drivers/mmc/host/dw_mmc.c
+> > +++ b/drivers/mmc/host/dw_mmc.c
+> > @@ -1289,6 +1289,7 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
+> >  {
+> >         u32 clk_div, tmout;
+> >         u64 tmp;
+> > +       unsigned int tmp2;
+> >
+> >         clk_div = (mci_readl(host, CLKDIV) & 0xFF) * 2;
+> >         if (clk_div == 0)
+> > @@ -1301,10 +1302,28 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
+> >         tmout = 0xFF; /* Set maximum */
+> >
+> >         /* TMOUT[31:8] (DATA_TIMEOUT) */
+> > -       if (!tmp || tmp > 0xFFFFFF)
+> > -               tmout |= (0xFFFFFF << 8);
+> > -       else
+> > -               tmout |= (tmp & 0xFFFFFF) << 8;
+> > +       if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT) {
+> 
+> Adding an option for dealing with quirks, should be avoided if
+> possible. That's because we want to avoid sprinkling common dw_mmc
+> code with variant specific code, as it will sooner or later turn into
+> a nightmare to maintain.
+> 
+> In this case, I suggest you look into extending the struct
+> dw_mci_drv_data with some new callback (perhaps ->set_data_timeout())
+> and then implement it for your variant.
+> If that callback is present, it should take precedence over the
+> generic dw_mci_set_data_timeout(), if you get what I mean.
 
-I was probably groggy and missed the fact those etc* nodes are child
-nodes of pinctrl_alive :) And now I can see those are actually
-described in pinctrl-exynos-arm64.c (in linux-next, where 7885 pinctrl
-support is added). Please ignore my request w.r.t. etc* nodes, those
-should stay of course.
+Hi Ulf!
 
-> > Right now I don't understand how those
-> > etc0 and etc1 can be used at all.
->
-> Exactly the same as gpa0, nothing changes here.
->
-> >  So maybe it's better to just remove
-> > those? Those are not used anywhere and we probably don't even know
-> > what those nodes represent. My point is, if those are actually some
-> > leftovers from vendor kernel and those are not going to be used (and I
-> > don't see how, without "compatible"), then we probablly better off
-> > without those.
->
-> I don't have the manual but in other SoCs these are not left-overs, but
-> real GPIO banks. Their configurability depends on the SoCs. I agree that
-> usually they are not used (because one of the uses is debugging), but
-> they can be included for completness of HW description. Assuming they exi=
-st.
->
-> (...)
->
-> >>>> +#include "exynos7885-pinctrl.dtsi"
-> >>>> +#include "arm/exynos-syscon-restart.dtsi"
-> >>>
-> >>> Have you verified both reboot and power off functions from this file?
-> >>> I guess if some doesn't work, it's better to avoid including this, bu=
-t
-> >>> instead add corresponding sub-nodes into your pmu_sytem_controller.
-> >>
-> >> Why open-coding same code work and including would not? Assuming that =
-it
-> >> compiles, of course.
-> >>
+Thanks! That's a good idea. I will implement the callback approach
+instead of a quirk for this patch. It will be two callbacks; one for the
+set_data_timeout(), and one for the set_drto().
+
+> 
+> Moreover, if some common dw_mmc code needs to be called from your
+> callback, I suggest we make that code available through exported
+> dw_mmc library functions instead.
+> 
+I don't think I need to export anything for this patch.
+
+Kind regards
+Mårten
+
+> > +               /*
+> > +                * Extended HW timer (max = 0x6FFFFF2):
+> > +                * ((TMOUT[10:8] - 1) * 0xFFFFFF + TMOUT[31:11] * 8)
+> > +                */
+> > +               if (!tmp || tmp > 0x6FFFFF2)
+> > +                       tmout |= (0xFFFFFF << 8);
+> > +               else {
+> > +                       /* TMOUT[10:8] */
+> > +                       tmp2 = (((unsigned int)tmp / 0xFFFFFF) + 1) & 0x7;
+> > +                       tmout |= tmp2 << 8;
+> > +
+> > +                       /* TMOUT[31:11] */
+> > +                       tmp = tmp - ((tmp2 - 1) * 0xFFFFFF);
+> > +                       tmout |= (tmp & 0xFFFFF8) << 8;
+> > +               }
+> > +       } else {
+> > +               if (!tmp || tmp > 0xFFFFFF)
+> > +                       tmout |= (0xFFFFFF << 8);
+> > +               else
+> > +                       tmout |= (tmp & 0xFFFFFF) << 8;
+> > +       }
 > >
-> > For example, in case of Exynos850 the "power off" node from this file
-> > wasn't suitable. In that case it's not worth including it. But David
-> > already confirmed both work fine for him, so it doesn't matter
-> > anymore.
->
-> These nodes were here before and since they duplicated common syscon, I
-> asked to use DTSI. The boards which do not use the same syscon
-> registers/methods should not include it, obviously. :)
->
->
-> Best regards,
-> Krzysztof
+> >         mci_writel(host, TMOUT, tmout);
+> >         dev_dbg(host->dev, "timeout_ns: %u => TMOUT[31:8]: 0x%#08x",
+> > @@ -2005,9 +2024,15 @@ static void dw_mci_set_drto(struct dw_mci *host)
+> >         if (drto_div == 0)
+> >                 drto_div = 1;
+> >
+> > +       if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
+> > +               drto_clks = (((drto_clks & 0x7) - 1) * 0xFFFFFF) +
+> > +                       ((drto_clks & 0xFFFFF8));
+> > +
+> >         drto_ms = DIV_ROUND_UP_ULL((u64)MSEC_PER_SEC * drto_clks * drto_div,
+> >                                    host->bus_hz);
+> >
+> > +       dev_dbg(host->dev, "drto_ms: %u\n", drto_ms);
+> > +
+> >         /* add a bit spare time */
+> >         drto_ms += 10;
+> >
+> > diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> > index 771d5afa3136..3b6510d4a684 100644
+> > --- a/drivers/mmc/host/dw_mmc.h
+> > +++ b/drivers/mmc/host/dw_mmc.h
+> > @@ -118,6 +118,7 @@ struct dw_mci_dma_slave {
+> >   * @part_buf: Simple buffer for partial fifo reads/writes.
+> >   * @push_data: Pointer to FIFO push function.
+> >   * @pull_data: Pointer to FIFO pull function.
+> > + * @quirks: Set of quirks that apply to specific versions of the IP.
+> >   * @vqmmc_enabled: Status of vqmmc, should be true or false.
+> >   * @irq_flags: The flags to be passed to request_irq.
+> >   * @irq: The irq value to be passed to request_irq.
+> > @@ -223,6 +224,8 @@ struct dw_mci {
+> >         void (*push_data)(struct dw_mci *host, void *buf, int cnt);
+> >         void (*pull_data)(struct dw_mci *host, void *buf, int cnt);
+> >
+> > +       u32                     quirks;
+> > +
+> >         bool                    vqmmc_enabled;
+> >         unsigned long           irq_flags; /* IRQ flags */
+> >         int                     irq;
+> > @@ -274,6 +277,9 @@ struct dw_mci_board {
+> >         struct dma_pdata *data;
+> >  };
+> >
+> > +/* Support for longer data read timeout */
+> > +#define DW_MMC_QUIRK_EXTENDED_TMOUT            BIT(0)
+> > +
+> >  #define DW_MMC_240A            0x240a
+> >  #define DW_MMC_280A            0x280a
+> >
+> 
+> Kind regards
+> Uffe
