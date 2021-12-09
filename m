@@ -2,113 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B24AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 09:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D52C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 10:49:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230308AbhLIJPb (ORCPT
+        id S235776AbhLIKxP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Dec 2021 04:15:31 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:44344 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbhLIJPb (ORCPT
+        Thu, 9 Dec 2021 05:53:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234661AbhLIKxO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Dec 2021 04:15:31 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D6E07B8235A;
-        Thu,  9 Dec 2021 09:11:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 046E8C004DD;
-        Thu,  9 Dec 2021 09:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639041115;
-        bh=4HYZmqSualm6r0O+iSth2hV1upnEAYO2YGj0dwO4aio=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=htWdFp5+38ANXG5FL6pqVERh7jreG+jaOQmd6F4xLKfzHrNOwt6l7wfCtBQ62PiX5
-         s19yH3sQAdYcRqbFf0izs8LOSqAVIKtpoqypuGm1KqaHQq2wKZfcflggL+vQ/rpb0x
-         oM+cRfLfz8DmD9OGiTA9DjbiQghQvTXqK9TUJbLF3ILn//6B9xweyAFxXXpMRiL8m7
-         w+VJBebSbdttACiLJR2o+qH/M+i+UZZjs7iT0JOQMZO6R6aBgrT+xj2USQH2EEBfEf
-         XcP7jEBqazy5GttKk72O8rzAskTAQkkjT6rjdvDPmPB/VZ5rPvSOL7i31Q1h1T2Ieh
-         4Rm50OjZrsKOw==
-Date:   Thu, 9 Dec 2021 10:11:52 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 RESEND 5/8] i2c: exynos5: Add bus clock support
-Message-ID: <YbHIWBa4VFEK1wKR@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20211204215820.17378-1-semen.protsenko@linaro.org>
- <20211204215820.17378-6-semen.protsenko@linaro.org>
+        Thu, 9 Dec 2021 05:53:14 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C03C061746;
+        Thu,  9 Dec 2021 02:49:41 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id x15so18305115edv.1;
+        Thu, 09 Dec 2021 02:49:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rn5yiHEVIcPf8apFH8WOG/o386JPX61QJAV5CIBGr5o=;
+        b=SceT5lGxXiYZEVyNTiTvxpynV6odUf/rM3ek99juOQusZAe0MnwqtotI/GjRMXc8WC
+         t/K94bZZr9Kf2T1NkpDkI0mq+u9cAGAQ0skR7sY0DWu6JMTDxFaUFRx3YgyRNSiWSB1t
+         D0Fg+JS354vAwJjvr5WPxEDduxeOxsA8vgUosDeahAhRmWEvfLywmn4Wonf2ic8RZ865
+         0HTBy6meUvnwB4r2ZJHAcaqhvpezaGhk1UGVBFOyPGcERDplhk+2Mllr6DoqYKN79H+1
+         yWFi3JLEA9RRXUDwEu3ZmaDsIlToImzSzYtXp+iQ1/W6XZOoIVnaP/PP7SdK8ywoYpxG
+         Vzew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rn5yiHEVIcPf8apFH8WOG/o386JPX61QJAV5CIBGr5o=;
+        b=iG0e0WOqOK/44Ga/TGHSYCTlctNeuwTZ6gwDk4JhW/EHaEOe1emHsmkQssgPTYScvm
+         AZbmedcP2E+tjxODPDMmKofed/f21JhJDxYT8hYZc9UrP3L4QALbRiDlAs0HbQBAz5oQ
+         xax/XxfJdxsVK2uQP5kMhO4CxulDMj8Nrbf0VIqofPACyRBes8R62GpsUFtccbbmmcTP
+         BBktRUHQLEyu/jAkYOJdqwsu72Q2kgEuBctMTBVWh+OuWdVQjalOl/X7xyKB/EeqUlLH
+         JMBREzB4oXpGCw+umXfJolE6Uw6FOWgw1yyESZ8Ypl8qUDjD8ESyqzV5CPGd6W5Zqxdw
+         66Kw==
+X-Gm-Message-State: AOAM530URH+2F8xe611q/muhM7Ke5BpNtz/ITONWY/v8mXKcM4X2in1H
+        gxBaAEugXd1sqhWNB0ciu9I4vFiQMdUzshoF86Q=
+X-Google-Smtp-Source: ABdhPJxlRS6j6rkvUOvm4x+7k8ZlYSH6E7d9IqpkhN2VYrbnf2Ir6tr8DLFWXU0HKJiIwY9yqWcQeXDz5qcn4YRzYaQ=
+X-Received: by 2002:a17:906:ecac:: with SMTP id qh12mr14231892ejb.377.1639046979775;
+ Thu, 09 Dec 2021 02:49:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oh3cTo1WoclFiwg3"
-Content-Disposition: inline
-In-Reply-To: <20211204215820.17378-6-semen.protsenko@linaro.org>
+References: <20211124073419.181799-1-marcan@marcan.st> <20211124074625.182815-11-marcan@marcan.st>
+ <78ce61a9-b345-437a-df02-49951eb3f31e@canonical.com>
+In-Reply-To: <78ce61a9-b345-437a-df02-49951eb3f31e@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 9 Dec 2021 12:48:06 +0200
+Message-ID: <CAHp75VetdyXbeQ7hie2Oae6J0qn+fMmz+YN2zYXK+X0vppapEQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/11] tty: serial: samsung_tty: Support runtime PM
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Hector Martin <marcan@marcan.st>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, Dec 7, 2021 at 4:39 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+> On 24/11/2021 08:46, Hector Martin wrote:
+> > This allows idle UART devices to be suspended using the standard
+> > runtime-PM framework. The logic is modeled after stm32-usart.
 
---oh3cTo1WoclFiwg3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Guys, have you seen this activity:
+https://lore.kernel.org/linux-serial/YbGyNW2EQlA%2F+VIg@atomide.com/T/#t?
 
-On Sat, Dec 04, 2021 at 11:58:17PM +0200, Sam Protsenko wrote:
-> In new Exynos SoCs (like Exynos850) where HSI2C is implemented as a
-> part of USIv2 block, there are two clocks provided to HSI2C controller:
->   - PCLK: bus clock (APB), provides access to register interface
->   - IPCLK: operating IP-core clock; SCL is derived from this one
->=20
-> Both clocks have to be asserted for HSI2C to be functional in that case.
->=20
-> Add code to obtain and enable/disable PCLK in addition to already
-> handled operating clock. Make it optional though, as older Exynos SoC
-> variants only have one HSI2C clock.
->=20
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+The idea eventually is to bring the serial core to do this for us. Can
+you test that series and see if it has a use in your case?
 
-This one doesn't apply here? What tree is this based on?
-
-
---oh3cTo1WoclFiwg3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmGxyFgACgkQFA3kzBSg
-KbaP0A/+NPOn/NtI0IdhiYFVt0Utf0/aPYwHAd6cku/QMII7ILbSpDGr+vCWlD9u
-RHflrQ7IrkqwF1Tk026PT1zjx12vhFFDAxfBInaRhggDLCAW4fEwPtLzaGWANZMk
-yz3wW63pBTqeKFRcOf3OKoNGOJ8rlYNSKP07GfoBcG9MdUViwTuxIrvw0kDyceq5
-a8UJWaM+OHge+bA8eCGoXzSbG8qcre5fz8RYKK4mTLOOzRyGEaX+XvNxIlJh/V7g
-2z0qB/N90WeKdRXZUpPLwNuHrQlVpck3J459uAz/nbC2kEeBIck83mt15XSC1GPM
-E0ACdNgaPwW+rF0hy/T0QJi+xv9nRNrcIP5++rwPDxTXMSshFf80yHd1l1giQHZb
-bYSDRwww74tK9O2L2d/zqR036P/mehoErrDmlbKjJVFamk9uAP4x5qVmViQ/si/f
-cEb2EPnlqVItVBye/+z6tC6NUprPojU/w/KrYkdx9mw/iSqqZUsw3w4dGf7pHQ1B
-0Lxa4FPnlNQ3PJoGtRNh9R6f8GqTHTxlyJohZ681RU96A3kfylykxUEibMzbxnxn
-ar7mfMkom1MTMeQgdAZNBEXwTg49s2Q7R5b1m8HAU1VJRdR+lFQR0EUc2UfrylC/
-uSyGZb6fjd4aWdDWF8yHO7bbJSzo5sHb+IWydqpqigXyxpRPb/E=
-=f68N
------END PGP SIGNATURE-----
-
---oh3cTo1WoclFiwg3--
+-- 
+With Best Regards,
+Andy Shevchenko
