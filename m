@@ -2,92 +2,196 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EB6C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 15:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6A8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 16:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236199AbhLIP0Y (ORCPT
+        id S232752AbhLIQoA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Dec 2021 10:26:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
+        Thu, 9 Dec 2021 11:44:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234646AbhLIP0Y (ORCPT
+        with ESMTP id S241166AbhLIQn6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Dec 2021 10:26:24 -0500
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A67C0617A1
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Dec 2021 07:22:50 -0800 (PST)
-Received: by mail-ua1-x931.google.com with SMTP id p2so11321275uad.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Dec 2021 07:22:50 -0800 (PST)
+        Thu, 9 Dec 2021 11:43:58 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DE2C0617A1
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Dec 2021 08:40:24 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id np6-20020a17090b4c4600b001a90b011e06so5270397pjb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Dec 2021 08:40:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=1J+XmU+DI+E9grUJzbC6kqmpdJljZUH9ERdWF3VqDW4=;
-        b=wdLsu7dxo6JsUsOMFhDQbVF/7k6JWW4SfduROl3lRRispvueS+VzjduoBSJdTfWBEd
-         6WSFxBtUmOKlOmMhQ3z/jkIE7pzpINk0xwSI/SPkCItxTti5tDk/k0IhLQHC+8Px4tjb
-         opJUQAh2haWglvTbBYOWb8wBDboplqK/k1wz7pMdWd6wdnUQ/lntzIFt6iSZTILpnD8i
-         54xvkltZMUQI8d/TgbxN0KHDTzZgDh9qR2+z7YHpzTmSmEOViRiW6faiJb/MrojlY22z
-         iqhnQCWYXF/aRrptPwEpnmuIlyCMxU2JXz5pvmM6Y/9El6BpFI85smH7ropsRnktM+lU
-         pV4w==
+        d=gateworks-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XjBC6XUZJtPnhjTwfnkF808Zuq6NSOID5LVmEgkaOSQ=;
+        b=w7Km7X5aTXVv4afJepuvvxUzlxaeKJkB6sKRFHDAPKphveY5UYuehMBl5Zgkz0c48s
+         YW0+gmxf9V2Rn4oBHSkEY+MkK/J2o8HT5yUcBuotgbi/x1Odki/kiCJhSyeB7riY6+MD
+         cBfNgfvIHQD33UUdIa9M2zULndAZv97MPUEOdlV7TLd1uqfCgKd8ipQkXx91qxCkq2xg
+         17Q20lXqHkjWN3telzgJhms20L7mwI+EZUmNZXX39+EIZPqVOcZ6WeWf+nI+oApi6cvV
+         jcnrdiMnASvfcpGnePC4rZ3bsOYr82BR5kCL7XWML42AipHPxITYKGmEekVIaU2dYZBx
+         9byQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=1J+XmU+DI+E9grUJzbC6kqmpdJljZUH9ERdWF3VqDW4=;
-        b=L/695KThhxyIqcvptLlSHlVWW9Mb6NkoNR3KY5Jsx3LgjmQRB+OrLxHKQhUbuEA6de
-         BWtLr4BJoxuErL/RI/RiOQgzenVNyYKii0UGixBPDp40bZsL/1fltgm5Myn5Hk0dEHg0
-         gYgc19+Z9hJchaRsEd5ky9SdB98pBbE1ufQeqZ9nEuGNc1PH13oi6fZ1MGz8IvjVjrmS
-         WCOQma/48G83JPS7EgywPaOzHT3AQJarE9EUeJEa7mA9EGRVLDloFynmhYtpmlrNhub6
-         1gd2Q9GP5lxhhOMjQEd/NGA3a/kH85tdswfo6PDa6TVijSqsCD4jEIeWc1olkysPhjMi
-         YVog==
-X-Gm-Message-State: AOAM530CuMgtcZOqed6hQagCgyeJ62btAemTD5dyMA/p1MmDLa5iKflf
-        mQy+lnsQ5qcv5w/5Xen3JUf6KNi0KHJT/5Iu6coc5A==
-X-Google-Smtp-Source: ABdhPJzCfp+KpbSMOwI8zmZeJ5bMvIl0+2m+q7morIH15CbHe7sXKx+R0flGIAcP0B04JBjStSt4FQXkkLNvJzN85pA=
-X-Received: by 2002:a67:3382:: with SMTP id z124mr7978137vsz.57.1639063370025;
- Thu, 09 Dec 2021 07:22:50 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=XjBC6XUZJtPnhjTwfnkF808Zuq6NSOID5LVmEgkaOSQ=;
+        b=vzxpDrVV4reQ4u0ogDtbrFCAPDy+4dXG4Ms2fjlGLxjLDM6JiOJZXw7IHlMQGAeLPB
+         h4GoFuWBeLqHFIn9rfV9MV2XjNKLJeFUmqIi7Yuq7+kUlySNsh/6IDdlr5ZSU0OQM1fv
+         0Df3kroV3tyTHzx9ng3cjVpG8N3HMUf5heAjJ1AJSl5DPPkLmdizlQm+f0rbq/TN0crR
+         9Qzmn9pyH2wTOCOnDckYdLOyadv8Y+SZh8u+E4LWMP8O+XUbChI5RX9rcEf33eUWui0K
+         4hPEiXYgwRRX7sx0Ulem9D2TJiNW8fye/hp8HMy9h4vbVGBA9uy0ZAsiN6rltHLrYBof
+         boPA==
+X-Gm-Message-State: AOAM5315IQzKLUNSlvHZrp3KTSyHmsjx97tjGywHSpB+71zcWUsE/OyN
+        EBLNtNARwkvJMrf238MY7AsPspkUM2uMuSMa6Xnn1w==
+X-Google-Smtp-Source: ABdhPJzx3c4r0U+1q6LMafUGVo/WqdHyJSDJX1lRvhv0uEvpW1qCUNrk01ja1Jr5pkapoYydNfefkbMsZ9ornAF1028=
+X-Received: by 2002:a17:90b:4b4c:: with SMTP id mi12mr16962368pjb.66.1639068023870;
+ Thu, 09 Dec 2021 08:40:23 -0800 (PST)
 MIME-Version: 1.0
-References: <20211204215820.17378-1-semen.protsenko@linaro.org>
- <20211204215820.17378-8-semen.protsenko@linaro.org> <YbIXVw+as1Sj6yDW@ninjato>
-In-Reply-To: <YbIXVw+as1Sj6yDW@ninjato>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 9 Dec 2021 17:22:38 +0200
-Message-ID: <CAPLW+4kOr8NBUpgDXCcALP0BbnQ=w0v_oW24Vsa3e90TBxrHyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 7/8] arm: dts: exynos: Rename hsi2c nodes to i2c
- for Exynos5260
-To:     Wolfram Sang <wsa@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
+References: <20210704090230.26489-1-jagan@amarulasolutions.com>
+ <YP2ZvoVQyvwTXP++@ravnborg.org> <CAMty3ZANJz=HSKFzZ8gn896uw98iVwMEpGhmanXNbj77Ren4hw@mail.gmail.com>
+ <CAJ+vNU1Hy_94TYgs0isNc2pmiH2sOReZJLhphzQFTN2Z50JPrA@mail.gmail.com> <CAOf5uwm6+tFS8temhPmSx6nFVTSyk0Ckd9eDEToQNmNaiO2c=A@mail.gmail.com>
+In-Reply-To: <CAOf5uwm6+tFS8temhPmSx6nFVTSyk0Ckd9eDEToQNmNaiO2c=A@mail.gmail.com>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Thu, 9 Dec 2021 08:40:12 -0800
+Message-ID: <CAJ+vNU2pQCHqnyNJnz_rhczGRwcU=9XDFG1ix_V=Sc-1oWvhjA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/17] drm: bridge: Samsung MIPI DSIM bridge
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Marek Vasut <marex@denx.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 9 Dec 2021 at 16:49, Wolfram Sang <wsa@kernel.org> wrote:
+On Thu, Dec 9, 2021 at 12:36 AM Michael Nazzareno Trimarchi
+<michael@amarulasolutions.com> wrote:
 >
-> On Sat, Dec 04, 2021 at 11:58:19PM +0200, Sam Protsenko wrote:
-> > In Device Tree specification it's recommended to use "i2c" name for I2C
-> > nodes. Now that i2c-exynos5 dt-schema binding was added, it shows some
-> > warnings like this when validating HS-I2C nodes:
-> >
-> >     hsi2c@xxxxxxxxx: $nodename:0: 'hsi2c@xxxxxxxx' does not match
-> >                                   '^i2c(@.*)?'
-> >     From schema: Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> >
-> > Rename hsi2c@* to i2c@* to fix those warnings.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Hi Tim
 >
-> Applied to for-next, thanks!
+> On Tue, Oct 5, 2021 at 11:43 PM Tim Harvey <tharvey@gateworks.com> wrote:
+> >
+> > On Sun, Jul 25, 2021 at 10:14 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > Hi Sam,
+> > >
+> > > On Sun, Jul 25, 2021 at 10:35 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > > >
+> > > > Hi Jagan,
+> > > >
+> > > > On Sun, Jul 04, 2021 at 02:32:13PM +0530, Jagan Teki wrote:
+> > > > > This series supports common bridge support for Samsung MIPI DSIM
+> > > > > which is used in Exynos and i.MX8MM SoC's.
+> > > > >
+> > > > > The final bridge supports both the Exynos and i.MX8MM DSI devices.
+> > > > >
+> > > > > Right now bridge offers two sets of implementations.
+> > > > >
+> > > > > A. With component_ops and exynos specific code exclusively for
+> > > > >    exynos dsi drivers and it's legacy bindings.
+> > > > >
+> > > > > B. Without componenet_ops for newly implemented bridges and its
+> > > > >    users like i.MX8MM.
+> > > > >
+> > > > > The future plan is to fix the implementation A) by dropping
+> > > > > component_ops and fixing exynos specific code in order to make
+> > > > > the bridge more mature to use and the same is mentioned in
+> > > > > drivers TODO.
+> > > > >
+> > > > > Patch 0001 - 0006: Bridge conversion
+> > > > > Patch 0007 - 0017: Samsung MIPI DSIM bridge fixes, additions
+> > > > >
+> > > > > Tested in Engicam i.Core MX8M Mini SoM.
+> > > > >
+> > > > > Anyone interest, please have a look on this repo
+> > > > > https://github.com/openedev/linux/tree/070421-imx8mm-dsim
+> > > > >
+> > > > > Would appreciate anyone from the exynos team to test it on
+> > > > > the exynos platform?
+> > > > >
+> > > > > Any inputs?
+> > > >
+> > > > I really like where you are headign with this!
+> > > > No testing - sorry. But I will try to provide a bit of feedback on the
+> > > > individual patches.
+> > > >
+> > > > I hope you find a way to move forward with this.
+> > >
+> > > Thanks for the response.
+> > >
+> > > We have found some issues with Bridge conversion on existing exynos
+> > > drivers. The component based DSI drivers(like exynos) are difficult to
+> > > attach if it involves kms hotplug. kms hotplug would require drm
+> > > pointer and that pointer would only available after the bind call
+> > > finishes. But the bridge attach in bind call will defer till it find
+> > > the attached bridge.
+> > >
+> > > Right now I'm trying to find the proper way to attach the bridges for
+> > > component based DSI drivers which involves kms hot-plug.
+> > >
+> > > If you have any ideas on this, please let me know.
+> > >
+> >
+> > Jagan,
+> >
+> > How is your progress on this series? Looking at your repo it looks
+> > like you've rebased on top of 5.13-rc3 in your 070121-imx8mm-dsim
+> > branch but you've got a lot of things there that are likely not
+> > related to this series?
+>
+> I have a bit of work on those patches and tested on imx8mn. Basically:
+>
+> - add the dsi timing calculation
+> - change few difference with samsung bridge
+> - fix crashes of my dsi panels
+> - compare with NXP driver the final results
+>
+> I found that I have one problem that gives me some instability. In the
+> NXP original driver the panel needs to be
+> enabled in bridge_enable before out the standby. If I understand
+> correctly, our standby should be done after.
+> I would like to have some feedback and help and testing on other
+> boards/devices and some suggestions on how to handle
+> some of the differences. Another big problem is etnavi that is not stable
 >
 
-Just a heads up: Krzysztof has already taken patches #7 and #8 to his
-tree: [1]. Other than that, thanks a lot for handling this series!
+Michael,
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-next
+Where can I find your patches?
+
+What do you mean by etnaviv not being stable?
+
+I did some limited testing with etnaviv on imx8mm with 5.15 + dsi
+patches on an Ubuntu focal root filesystem by:
+apt update
+apt install gnome-session gnome-terminal
+^^^ 2D hardware acceleration appears to be working (dragging opaque
+windows around)
+apt install mesa-utils glmark2
+glxgears
+^^^ ~160fps on IMX8MM
+glmark2
+^^^ score of 39 on IMX8MM
+
+I haven't seen any updates from Jagan since Nov 24
+(https://www.spinics.net/lists/dri-devel/msg324059.html) and am not
+sure if he's been able to work through drm/exynos issues that have
+been blocking his progress.
+
+Best regards,
+
+Tim
