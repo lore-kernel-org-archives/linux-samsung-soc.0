@@ -2,274 +2,242 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F13BC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 17:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11BEC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 17:57:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242982AbhLIRdr (ORCPT
+        id S237682AbhLISAq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Dec 2021 12:33:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
+        Thu, 9 Dec 2021 13:00:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242968AbhLIRdr (ORCPT
+        with ESMTP id S237566AbhLISAq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Dec 2021 12:33:47 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6BBBC061746;
-        Thu,  9 Dec 2021 09:30:13 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id d9so10976819wrw.4;
-        Thu, 09 Dec 2021 09:30:13 -0800 (PST)
+        Thu, 9 Dec 2021 13:00:46 -0500
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 892D3C0617A1
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Dec 2021 09:57:12 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id g18so6114807pfk.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Dec 2021 09:57:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v/OOoi3SmexEsu6wx5v8tEWhhsw2vNL3yCuakv1MHRQ=;
-        b=iNBC+9Iod7E1Z7aIofR98DHqPx7qrzbItF/+Ue/aDZIfopvmfTFy1DZyoYogZibrFX
-         yXjNKIHcMNL2hwTewS5LZKWthbq1LIgts7TyjIvrkaf3mKIlwTUxH4n3nffxhbAtDout
-         yxHMdFIQpInfOCqU4DsC8SQ3omRmaXqbfs65raYOeFR/pJm8BRYqqACdHSSR0rpgpWBu
-         k308y2CA1FSEq+0s/LiF4pWYRqiMuP5fe1rMVnsk5YUtNZ2OIBgHOeJ3a50BMPEqXC5G
-         V2nMnguSaJcKJK/uJMqMKKEHzC1ZEkEzmQg3Jr+8WnQY8huzuTjAmaii8lZDXo3oyKaS
-         RI/A==
+        d=gateworks-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z5+7qgzAffjpX4D95KV24/hFMJKfChebjkYZm32y/ck=;
+        b=jyspa9LuAGELzKCkE/6331dnNKz+fXgXIkDJg0UAW3jIHrGlb+2HZyHuAvVu/+bidM
+         HxB+px2X0+5PBTPriw6JeTqrk5jxe47Gh7bi3vhkpkgatveqszajG6VJe0xUvU4O3LSM
+         PnUQ/UwihSWvqoNW8suzbtZ6WRI1l4J0NJKsX15oQ2tRUcrCKim5VWBKn5ZEFqJ/BAkV
+         hZY4LlOhknxyeJ7ace8N5RT2mufFJwAXxZIq/ybTHU7CW+M0RiuEiPAuniK1k+tvbI4M
+         T7md4t7amc3xbtjWIw+SDGpWSiaILycQPD1iq2cXg+0n180ZdNdYRGe0cNifQqSPKk0t
+         Sb5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v/OOoi3SmexEsu6wx5v8tEWhhsw2vNL3yCuakv1MHRQ=;
-        b=rg6wSjqgGSFJNNoTrrNvMci1RG6UwPMrWHpbWaa562qNmuTq+ZgFLN4aKTHdEy9rHL
-         RjsRsySw6cZuzme5gld7GXQH/sag9IO/YMDax42cIh6P/GZ1urCxBWT1kb40GlD1nn6t
-         o1thbzVBtoaCBwIqpD2Vhc07/TTlPU1tuRNh11vJ4Bb8Sw71fgObHbgbTVXis4kVGOzC
-         IbETXk3jrQ8d/NhXMvxEbVUULj75m/Cxzp+RE6pNpDyit1dX7LQ5uAdjYPQQhxqmuq5W
-         oKGxkDaFBu5XJV2dNmCD5ZeQYE9Um3qlFbMkb+vtBvl9pGODSiclZhPHulGsGyk1Z3Yj
-         IjiA==
-X-Gm-Message-State: AOAM532zLVQ2bJ5UFUOwilZsA2fF4iHWyc4TSukxkGCnxf1s6vgWoiC6
-        gxblMiq97KNPu91IdilqWUg=
-X-Google-Smtp-Source: ABdhPJy3Dw6JhZlTIC3VpksDXRSio5Dn+L8aoonIVGqISxVTbi0QyphXCqfQa3s9BiA/uT5AGz5ggA==
-X-Received: by 2002:a5d:4ccc:: with SMTP id c12mr8103683wrt.453.1639071012171;
-        Thu, 09 Dec 2021 09:30:12 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id g5sm418009wri.45.2021.12.09.09.30.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Dec 2021 09:30:11 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: Remove unsupported properties for STMPE MFD
-Date:   Thu,  9 Dec 2021 18:30:09 +0100
-Message-Id: <20211209173009.618162-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z5+7qgzAffjpX4D95KV24/hFMJKfChebjkYZm32y/ck=;
+        b=fRni5biioT9KD5A5VgGyYbITUd1pTSzwwQET8JB29cS2XxONdb4O+hMIZs2AbyBNYH
+         uJO5BdEjve5k7ql1ciFen+Xm4sPNyEJeZtURchH4swIdaEjhjpIIW8NLIZ6nlGX3prqi
+         f+xQunztp1bUxkLwB4dpaMJv/46RW9yjyrAR3ltMhGHh8m6hb0fx5FvfPuhn2Ygu6jJS
+         uIzGxRc7gayQsxA9cgenLoCqF0sTdIobB5fIQUwOou54PpY3MiZd5I5OzVfLaK9aIhDw
+         yojULQhxoBxa51bC5BGqypRIUBAKJ5nLycEH2luvl5VRBFSiixnbN2YIzsnpREmxRbpa
+         DsXw==
+X-Gm-Message-State: AOAM533N9vg1wnMsEFBs9Upa9px3Yi3zEH5WIYwDwCDYHf+1fQMuxWD/
+        g4Lid7Zui5o58zQHFHC4j/+fUCymeTkHh6XOhUpXdA==
+X-Google-Smtp-Source: ABdhPJx6hBQ91azuKOfGobN3Ack6F3SygyEarJ5hhT0+0li8k4m/3gKLjBxF2S8c7NTS1BnlwndszH4XY3pW8v//DII=
+X-Received: by 2002:a62:8786:0:b0:4b1:1ef1:2063 with SMTP id
+ i128-20020a628786000000b004b11ef12063mr1114345pfe.73.1639072631890; Thu, 09
+ Dec 2021 09:57:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210704090230.26489-1-jagan@amarulasolutions.com>
+ <YP2ZvoVQyvwTXP++@ravnborg.org> <CAMty3ZANJz=HSKFzZ8gn896uw98iVwMEpGhmanXNbj77Ren4hw@mail.gmail.com>
+ <CAJ+vNU1Hy_94TYgs0isNc2pmiH2sOReZJLhphzQFTN2Z50JPrA@mail.gmail.com>
+ <CAOf5uwm6+tFS8temhPmSx6nFVTSyk0Ckd9eDEToQNmNaiO2c=A@mail.gmail.com>
+ <CAJ+vNU2pQCHqnyNJnz_rhczGRwcU=9XDFG1ix_V=Sc-1oWvhjA@mail.gmail.com> <CAOf5uw=Cts+V+amSrTzVyRyFZA=eKSVtRPtXae40-4M0bu6pwg@mail.gmail.com>
+In-Reply-To: <CAOf5uw=Cts+V+amSrTzVyRyFZA=eKSVtRPtXae40-4M0bu6pwg@mail.gmail.com>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Thu, 9 Dec 2021 09:57:00 -0800
+Message-ID: <CAJ+vNU0_CguvaLjGEQ3tTiJq1bqOQYb+o1e1OvbPCmtTW9iGiA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/17] drm: bridge: Samsung MIPI DSIM bridge
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Marek Vasut <marex@denx.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Dec 9, 2021 at 9:09 AM Michael Nazzareno Trimarchi
+<michael@amarulasolutions.com> wrote:
+>
+> Hi Tim
+>
+> On Thu, Dec 9, 2021 at 5:40 PM Tim Harvey <tharvey@gateworks.com> wrote:
+> >
+> > On Thu, Dec 9, 2021 at 12:36 AM Michael Nazzareno Trimarchi
+> > <michael@amarulasolutions.com> wrote:
+> > >
+> > > Hi Tim
+> > >
+> > > On Tue, Oct 5, 2021 at 11:43 PM Tim Harvey <tharvey@gateworks.com> wrote:
+> > > >
+> > > > On Sun, Jul 25, 2021 at 10:14 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > >
+> > > > > Hi Sam,
+> > > > >
+> > > > > On Sun, Jul 25, 2021 at 10:35 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > > > > >
+> > > > > > Hi Jagan,
+> > > > > >
+> > > > > > On Sun, Jul 04, 2021 at 02:32:13PM +0530, Jagan Teki wrote:
+> > > > > > > This series supports common bridge support for Samsung MIPI DSIM
+> > > > > > > which is used in Exynos and i.MX8MM SoC's.
+> > > > > > >
+> > > > > > > The final bridge supports both the Exynos and i.MX8MM DSI devices.
+> > > > > > >
+> > > > > > > Right now bridge offers two sets of implementations.
+> > > > > > >
+> > > > > > > A. With component_ops and exynos specific code exclusively for
+> > > > > > >    exynos dsi drivers and it's legacy bindings.
+> > > > > > >
+> > > > > > > B. Without componenet_ops for newly implemented bridges and its
+> > > > > > >    users like i.MX8MM.
+> > > > > > >
+> > > > > > > The future plan is to fix the implementation A) by dropping
+> > > > > > > component_ops and fixing exynos specific code in order to make
+> > > > > > > the bridge more mature to use and the same is mentioned in
+> > > > > > > drivers TODO.
+> > > > > > >
+> > > > > > > Patch 0001 - 0006: Bridge conversion
+> > > > > > > Patch 0007 - 0017: Samsung MIPI DSIM bridge fixes, additions
+> > > > > > >
+> > > > > > > Tested in Engicam i.Core MX8M Mini SoM.
+> > > > > > >
+> > > > > > > Anyone interest, please have a look on this repo
+> > > > > > > https://github.com/openedev/linux/tree/070421-imx8mm-dsim
+> > > > > > >
+> > > > > > > Would appreciate anyone from the exynos team to test it on
+> > > > > > > the exynos platform?
+> > > > > > >
+> > > > > > > Any inputs?
+> > > > > >
+> > > > > > I really like where you are headign with this!
+> > > > > > No testing - sorry. But I will try to provide a bit of feedback on the
+> > > > > > individual patches.
+> > > > > >
+> > > > > > I hope you find a way to move forward with this.
+> > > > >
+> > > > > Thanks for the response.
+> > > > >
+> > > > > We have found some issues with Bridge conversion on existing exynos
+> > > > > drivers. The component based DSI drivers(like exynos) are difficult to
+> > > > > attach if it involves kms hotplug. kms hotplug would require drm
+> > > > > pointer and that pointer would only available after the bind call
+> > > > > finishes. But the bridge attach in bind call will defer till it find
+> > > > > the attached bridge.
+> > > > >
+> > > > > Right now I'm trying to find the proper way to attach the bridges for
+> > > > > component based DSI drivers which involves kms hot-plug.
+> > > > >
+> > > > > If you have any ideas on this, please let me know.
+> > > > >
+> > > >
+> > > > Jagan,
+> > > >
+> > > > How is your progress on this series? Looking at your repo it looks
+> > > > like you've rebased on top of 5.13-rc3 in your 070121-imx8mm-dsim
+> > > > branch but you've got a lot of things there that are likely not
+> > > > related to this series?
+> > >
+> > > I have a bit of work on those patches and tested on imx8mn. Basically:
+> > >
+> > > - add the dsi timing calculation
+> > > - change few difference with samsung bridge
+> > > - fix crashes of my dsi panels
+> > > - compare with NXP driver the final results
+> > >
+> > > I found that I have one problem that gives me some instability. In the
+> > > NXP original driver the panel needs to be
+> > > enabled in bridge_enable before out the standby. If I understand
+> > > correctly, our standby should be done after.
+> > > I would like to have some feedback and help and testing on other
+> > > boards/devices and some suggestions on how to handle
+> > > some of the differences. Another big problem is etnavi that is not stable
+> > >
+> >
+> > Michael,
+> >
+> > Where can I find your patches?
+> >
+>
+> I will push on some tree and share
+>
+> > What do you mean by etnaviv not being stable?
+> >
+> > I did some limited testing with etnaviv on imx8mm with 5.15 + dsi
+>
+>
+>
+> > patches on an Ubuntu focal root filesystem by:
+> > apt update
+> > apt install gnome-session gnome-terminal
+> > ^^^ 2D hardware acceleration appears to be working (dragging opaque
+> > windows around)
+> > apt install mesa-utils glmark2
+> > glxgears
+> > ^^^ ~160fps on IMX8MM
+> > glmark2
+> > ^^^ score of 39 on IMX8MM
+> >
+> > I haven't seen any updates from Jagan since Nov 24
+> > (https://www.spinics.net/lists/dri-devel/msg324059.html) and am not
+> > sure if he's been able to work through drm/exynos issues that have
+> > been blocking his progress.
+>
+> I plan to push on github
+>
+> [17:07:42.315] Sending ready to systemd
+> [  214.052085] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> [  214.595998] etnaviv-gpu 38000000.gpu: recover hung GPU!
+>
+> ** (maynard:386): WARNING **: 17:07:43.874: failed to setup mixer: Success
+> [17:07:44.175] Added surface 0xaaab02630440, app_id (null) to pending list
+> [17:07:44.176] Added surface 0xaaab026172b0, app_id (null) to pending list
+> ** Message: 17:07:44.289: New advertisement app id maynard
+> ** Message: 17:07:44.290: New advertisement app id maynard
+> [17:07:45.171] (background) position view 0xaaab0261f860, x 0, y 0, on
+> output DSI-1
+> [17:07:45.171] (panel) geom.width 100, geom.height 480, geom.x 0, geom.y 0
+> [17:07:45.171] (panel) edge 2 position view 0xaaab02634510, x 0, y 0
+> [17:07:45.172] panel type 2 inited on output DSI-1
+> [17:07:45.172] Usable area: 380x480+100,0
+> [  216.932080] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> [  217.476015] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> [  218.020157] etnaviv-gpu 38000000.gpu: recover hung GPU!
+>
+> This is my problem on imx8mn
+>
 
-Some users of the STMPE MFD bindings use unsupported properties such as
-"id", "blocks" and "irq-trigger". These look like they may have been
-under discussion at some point but never made it into the bindings that
-were accepted upstream.
+Do you have an imx8mm to compare with? Unfortunately I do not have an
+imx8mn with a MIPI DSI connector and can only test with imx8mm.
 
-Remove these unknown properties from the device trees to avoid errors
-during validation against the DT schema.
+What software (other than kernel which you will share) do you have
+installed above and how is it configured or run to show the issue?
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/boot/dts/am5729-beagleboneai.dts  | 3 ---
- arch/arm/boot/dts/exynos4412-p4note.dtsi   | 1 -
- arch/arm/boot/dts/imx53-m53.dtsi           | 3 ---
- arch/arm/boot/dts/imx6q-novena.dts         | 3 ---
- arch/arm/boot/dts/imx6qdl-apalis.dtsi      | 3 ---
- arch/arm/boot/dts/imx6qdl-colibri.dtsi     | 3 ---
- arch/arm/boot/dts/spear1310-evb.dts        | 1 -
- arch/arm/boot/dts/spear1340-evb.dts        | 2 --
- arch/arm/boot/dts/spear320-hmi.dts         | 3 ---
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 3 ---
- arch/arm/boot/dts/tegra30-apalis.dtsi      | 3 ---
- arch/arm/boot/dts/tegra30-colibri.dtsi     | 3 ---
- 12 files changed, 31 deletions(-)
+Best regards,
 
-diff --git a/arch/arm/boot/dts/am5729-beagleboneai.dts b/arch/arm/boot/dts/am5729-beagleboneai.dts
-index 149cfafb90bf..ab5b2e3b2b65 100644
---- a/arch/arm/boot/dts/am5729-beagleboneai.dts
-+++ b/arch/arm/boot/dts/am5729-beagleboneai.dts
-@@ -416,9 +416,6 @@ stmpe811@41 {
- 		interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-parent = <&gpio2>;
- 		interrupt-controller;
--		id = <0>;
--		blocks = <0x5>;
--		irq-trigger = <0x1>;
- 		st,mod-12b = <1>; /* 12-bit ADC */
- 		st,ref-sel = <0>; /* internal ADC reference */
- 		st,adc-freq = <1>; /* 3.25 MHz ADC clock speed */
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 22c3086e0076..8f5fbb4125b7 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -169,7 +169,6 @@ adc@41 {
- 			interrupt-parent = <&gpx0>;
- 			interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-controller;
--			irq-trigger = <0x1>;
- 			st,adc-freq = <3>;
- 			st,mod-12b = <1>;
- 			st,ref-sel = <0>;
-diff --git a/arch/arm/boot/dts/imx53-m53.dtsi b/arch/arm/boot/dts/imx53-m53.dtsi
-index fe5e0d308e99..e5c43cb6f784 100644
---- a/arch/arm/boot/dts/imx53-m53.dtsi
-+++ b/arch/arm/boot/dts/imx53-m53.dtsi
-@@ -49,11 +49,8 @@ &i2c2 {
- 	touchscreen@41 {
- 		compatible = "st,stmpe610";
- 		reg = <0x41>;
--		id = <0>;
--		blocks = <0x5>;
- 		interrupts = <6 0x0>;
- 		interrupt-parent = <&gpio7>;
--		irq-trigger = <0x1>;
- 
- 		stmpe_touchscreen {
- 			compatible = "st,stmpe-ts";
-diff --git a/arch/arm/boot/dts/imx6q-novena.dts b/arch/arm/boot/dts/imx6q-novena.dts
-index 225cf6b7a7a4..448a09369e18 100644
---- a/arch/arm/boot/dts/imx6q-novena.dts
-+++ b/arch/arm/boot/dts/imx6q-novena.dts
-@@ -280,9 +280,6 @@ touch: stmpe811@44 {
- 		compatible = "st,stmpe811";
- 		reg = <0x44>;
- 		irq-gpio = <&gpio5 13 GPIO_ACTIVE_HIGH>;
--		id = <0>;
--		blocks = <0x5>;
--		irq-trigger = <0x1>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_stmpe_novena>;
- 		vio-supply = <&reg_3p3v>;
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index ed2739e39085..5e36fc7015cd 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -301,9 +301,6 @@ stmpe811@41 {
- 		interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-parent = <&gpio4>;
- 		interrupt-controller;
--		id = <0>;
--		blocks = <0x5>;
--		irq-trigger = <0x1>;
- 		/* 3.25 MHz ADC clock speed */
- 		st,adc-freq = <1>;
- 		/* 12-bit ADC */
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 4e2a309c93fa..c2f3cb633ac8 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -246,9 +246,6 @@ stmpe811@41 {
- 		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-parent = <&gpio6>;
- 		interrupt-controller;
--		id = <0>;
--		blocks = <0x5>;
--		irq-trigger = <0x1>;
- 		/* 3.25 MHz ADC clock speed */
- 		st,adc-freq = <1>;
- 		/* 12-bit ADC */
-diff --git a/arch/arm/boot/dts/spear1310-evb.dts b/arch/arm/boot/dts/spear1310-evb.dts
-index 8fcb6be6e7c7..29a26995c82e 100644
---- a/arch/arm/boot/dts/spear1310-evb.dts
-+++ b/arch/arm/boot/dts/spear1310-evb.dts
-@@ -363,7 +363,6 @@ stmpe610@0 {
- 					pl022,duplex = <0>;
- 					interrupts = <6 0x4>;
- 					interrupt-parent = <&gpio1>;
--					irq-trigger = <0x2>;
- 
- 					stmpe_touchscreen {
- 						compatible = "st,stmpe-ts";
-diff --git a/arch/arm/boot/dts/spear1340-evb.dts b/arch/arm/boot/dts/spear1340-evb.dts
-index f70ff56d4542..58136577a6a1 100644
---- a/arch/arm/boot/dts/spear1340-evb.dts
-+++ b/arch/arm/boot/dts/spear1340-evb.dts
-@@ -319,7 +319,6 @@ stmpe801@41 {
- 					reg = <0x41>;
- 					interrupts = <4 0x4>;
- 					interrupt-parent = <&gpio0>;
--					irq-trigger = <0x2>;
- 
- 					stmpegpio: stmpe_gpio {
- 						compatible = "st,stmpe-gpio";
-@@ -472,7 +471,6 @@ stmpe610@1 {
- 					pl022,duplex = <0>;
- 					interrupts = <100 0>;
- 					interrupt-parent = <&gpiopinctrl>;
--					irq-trigger = <0x2>;
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 
-diff --git a/arch/arm/boot/dts/spear320-hmi.dts b/arch/arm/boot/dts/spear320-hmi.dts
-index 367ba48aac3e..f522c5cca4e9 100644
---- a/arch/arm/boot/dts/spear320-hmi.dts
-+++ b/arch/arm/boot/dts/spear320-hmi.dts
-@@ -237,9 +237,6 @@ stmpe811@41 {
- 					reg = <0x41>;
- 					irq-over-gpio;
- 					irq-gpios = <&gpiopinctrl 29 0x4>;
--					id = <0>;
--					blocks = <0x5>;
--					irq-trigger = <0x1>;
- 
- 					stmpegpio: stmpe-gpio {
- 						compatible = "stmpe,gpio";
-diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-index 6a3a72f81c44..e4e17c0e01fd 100644
---- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
-@@ -992,9 +992,6 @@ touchscreen@41 {
- 			reg = <0x41>;
- 			irq-gpio = <&gpio TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-controller;
--			id = <0>;
--			blocks = <0x5>;
--			irq-trigger = <0x1>;
- 			/* 3.25 MHz ADC clock speed */
- 			st,adc-freq = <1>;
- 			/* 12-bit ADC */
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index b2ac51fb15b1..28e7d445c076 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -975,9 +975,6 @@ touchscreen@41 {
- 			reg = <0x41>;
- 			irq-gpio = <&gpio TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-controller;
--			id = <0>;
--			blocks = <0x5>;
--			irq-trigger = <0x1>;
- 			/* 3.25 MHz ADC clock speed */
- 			st,adc-freq = <1>;
- 			/* 12-bit ADC */
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 413e35215804..88b7f2925e9e 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -844,9 +844,6 @@ touchscreen@41 {
- 			reg = <0x41>;
- 			irq-gpio = <&gpio TEGRA_GPIO(V, 0) IRQ_TYPE_LEVEL_LOW>;
- 			interrupt-controller;
--			id = <0>;
--			blocks = <0x5>;
--			irq-trigger = <0x1>;
- 			/* 3.25 MHz ADC clock speed */
- 			st,adc-freq = <1>;
- 			/* 12-bit ADC */
--- 
-2.34.1
-
+Tim
