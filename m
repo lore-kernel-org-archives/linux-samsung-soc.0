@@ -2,107 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754DDC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 18:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B03C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 18:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238098AbhLIS36 (ORCPT
+        id S243326AbhLISbC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Dec 2021 13:29:58 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58350
+        Thu, 9 Dec 2021 13:31:02 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58406
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229504AbhLIS35 (ORCPT
+        by vger.kernel.org with ESMTP id S238208AbhLISbC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Dec 2021 13:29:57 -0500
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
+        Thu, 9 Dec 2021 13:31:02 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 609A83F1BC
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Dec 2021 18:26:18 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E12183F1B7
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Dec 2021 18:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639074378;
-        bh=bnnx6rQGK8n7h6ddt6DQom8TrVyPspLo7R1sX2CesnA=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+        s=20210705; t=1639074447;
+        bh=7MMZq0hIb3eR8oUwilVI+A8i34AgFBxa5Ka85QzcfFY=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=Az07j4PMtkxjV12gLkaWoxA0nwnXVT/T9K3dcrzSAVRPysrfxTc3Sbl8uRPpkTFLT
-         HqXm1L0/+Gzc1ET3ERcQfygbqWH1hwllw8LA+trjsACdXqgfSqGQu0eadnBE2AmYgI
-         7zSqn8YjXNzqDV/0zT5aGC3wBQ4+V7NXrUDgouU+Ocmr2XnJ6e9zDEli/TgA68wrhu
-         k8BLDKN8K7BQ4lKzYXAqGSIO2Ex9Ap9xEXVvmwwgYx6HbvOPOSav3gLikCsEeqoQlv
-         DbflfoDjXU4NYbMd89/0dLRIHakWEe8h7qgM+zUbo6IQilYZlKO7VpDsxhEpy/U5pe
-         KrUw8rT0ikiQQ==
-Received: by mail-lj1-f200.google.com with SMTP id 83-20020a2e0556000000b00218db3260bdso2189929ljf.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Dec 2021 10:26:18 -0800 (PST)
+        b=lmZ/+Pcf9J+jIMTbMywzzvjooWzRH43kZx0ahc4YMzXwwN+InCT1pgjPaN6fwLRk0
+         D6VjiKgeZf9Mu1Yzks6nMRBrbz3GWUR43bRtjtU0p53l3tG75vlBigIjLASpIWxgS4
+         sut9QovFbW54LrotajFkd4b3W+S28HUhCGnjuhBepJM2uIW/fm84dqYbU3Nlz3iCn4
+         tbV3WQTQk3bfzn0C+tkLLi2xLhfZOm/9qQlFI8453zb85QEloyTGBs9PvfLT90QLNm
+         dO6hSVn3xDAZZWsrAGXD+crYHwHUVhXSUDps+fWygWX+R0rzH3MnjjP3/ThDnF0ApJ
+         CupmhUht95y2w==
+Received: by mail-lf1-f69.google.com with SMTP id m1-20020ac24281000000b004162863a2fcso2956189lfh.14
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Dec 2021 10:27:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=bnnx6rQGK8n7h6ddt6DQom8TrVyPspLo7R1sX2CesnA=;
-        b=IepXSL4zF91Ct6UFiFxu34BGU6Q6ExPUpHjf7CK8Ff35um6jX1/dR/0rZkfD2xyaLX
-         g8kVUr5MMUvd7vEcxoHyE4YchPiFG7osio6ZNfvZr4Wax7ZYeDLQYy+TF9iacbN7s4JA
-         wVBLUgNHqmsXtA7aRAdORANZWdPxI4K4GFi0z0fFGZXGSZLnaHMrf6tI9WIXXxrZrPFe
-         umSeMPssVen9q/r81qmqCaU2XOJ9JsvaFv3mwBfLoBNuUtJWWwAXa00jakwTNUMLn9Ri
-         vMxiopmWY+hLVoiU4X6+dHNA7tP0rbEQ2bGfn3Zqh0OjVPXjV7t0ufKekgqTFR6A4RAA
-         dg3A==
-X-Gm-Message-State: AOAM532NV9pnusKKYiGCci3GR/1NnBSMxjlnv426iWBoTRD5g4QlPu32
-        UV9cT/8ZInwsMj027q3dH3Z2tOsAlfqzAZ8Khce7mp/d7ADUjNwtTiCQOn51BQ/fNrfurmbMb0R
-        Wfeg4PIqPYzQBmqCTLcO/lV8cSj/LWh+Y5kKEynKfjLMMNKag
-X-Received: by 2002:a2e:b907:: with SMTP id b7mr8105552ljb.214.1639074377379;
-        Thu, 09 Dec 2021 10:26:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwbURx088TRAYYq+SKkON5HsFd14aKjJlvCcvIqppT8KViqIKSlq9u0BdyeXxUl2UrGefiszw==
-X-Received: by 2002:a2e:b907:: with SMTP id b7mr8105529ljb.214.1639074377174;
-        Thu, 09 Dec 2021 10:26:17 -0800 (PST)
+        bh=7MMZq0hIb3eR8oUwilVI+A8i34AgFBxa5Ka85QzcfFY=;
+        b=bVek8ZaTv5rxP2VAOBd6WQAz1MFzvQplw52Km1q0ssjwbhYv2172sziil0Eik1iGS7
+         zSdYCNWEdNWQW21BXtIHffEmwzvvQG+lte85qtyj2ELX6n2dAyHTT3FipKlO5mt7T5F8
+         YVVROebpl8dHgQ3KyMZ4QdnKfs0Wuw8ZjAT2iXurFZTirE9+jsnH7dJ95MahpGrJJBpy
+         LYWbRL7RnzjkOpeLR+pszXP1y0ToRkzL+/hjYIaYM8KVQ+CLt7R8AZgvML6IC7OghyA+
+         rycejRwiWDF+N/rx+n2/VwwF4PtN6uX2jXC5klvJ/wuKbAXB8HNvHNpLjeh/eas+Ifww
+         /e7g==
+X-Gm-Message-State: AOAM530Gsm2T3lFdtcFMzAxrWOotbWJuEHp2gcu/R2y+j/47j32Kkkk1
+        CfTDADV2byXvxi/NoAzygPnernWSILolx7cqrDQ2lr3ZzkvgxGem2gJG+VcFVWOy5QXgdSTBoxk
+        CpjtNCivwrtnJWMMqtHRlyWxipFBVZK473Yp29pp+Vfi096Ut
+X-Received: by 2002:a05:6512:3084:: with SMTP id z4mr7402046lfd.330.1639074447357;
+        Thu, 09 Dec 2021 10:27:27 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzFTHICovFbRNrnIcqijBCIzldopHWrU33OIjD8u3dhRnkf0VqswJDI7rEJaO6c3iWhQ46Bdg==
+X-Received: by 2002:a05:6512:3084:: with SMTP id z4mr7402032lfd.330.1639074447186;
+        Thu, 09 Dec 2021 10:27:27 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id s6sm58531lfo.48.2021.12.09.10.26.15
+        by smtp.gmail.com with ESMTPSA id x15sm50007ljc.124.2021.12.09.10.27.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 10:26:16 -0800 (PST)
-Message-ID: <f0e01fda-b153-9d74-ae7d-7ef0fc2112aa@canonical.com>
-Date:   Thu, 9 Dec 2021 19:26:15 +0100
+        Thu, 09 Dec 2021 10:27:26 -0800 (PST)
+Message-ID: <5f74a62f-fb94-72d3-341c-e2921faa4282@canonical.com>
+Date:   Thu, 9 Dec 2021 19:27:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH v2 RESEND 7/8] arm: dts: exynos: Rename hsi2c nodes to i2c
- for Exynos5260
+Subject: Re: [PATCH v3 1/4] dt-bindings: mmc: exynos-dw-mshc: Add support for
+ ARTPEC-8
 Content-Language: en-US
-To:     Wolfram Sang <wsa@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
+To:     =?UTF-8?Q?M=c3=a5rten_Lindahl?= <marten.lindahl@axis.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20211204215820.17378-1-semen.protsenko@linaro.org>
- <20211204215820.17378-8-semen.protsenko@linaro.org>
- <YbIXVw+as1Sj6yDW@ninjato>
+        Jaehoon Chung <jh80.chung@samsung.com>
+Cc:     Doug Anderson <dianders@google.com>, kernel@axis.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20211209164558.13729-1-marten.lindahl@axis.com>
+ <20211209164558.13729-2-marten.lindahl@axis.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <YbIXVw+as1Sj6yDW@ninjato>
+In-Reply-To: <20211209164558.13729-2-marten.lindahl@axis.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/12/2021 15:48, Wolfram Sang wrote:
-> On Sat, Dec 04, 2021 at 11:58:19PM +0200, Sam Protsenko wrote:
->> In Device Tree specification it's recommended to use "i2c" name for I2C
->> nodes. Now that i2c-exynos5 dt-schema binding was added, it shows some
->> warnings like this when validating HS-I2C nodes:
->>
->>     hsi2c@xxxxxxxxx: $nodename:0: 'hsi2c@xxxxxxxx' does not match
->>                                   '^i2c(@.*)?'
->>     From schema: Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
->>
->> Rename hsi2c@* to i2c@* to fix those warnings.
->>
->> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+On 09/12/2021 17:45, Mårten Lindahl wrote:
+> The ARTPEC-8 SoC has a DWMMC controller that is compatible with the
+> Exynos 7 version v2.70a. The main differences from Exynos 7 is that it
+> does not support HS400 and has extended data read timeout.
 > 
-> Applied to for-next, thanks!
+> Add compatibility string "axis,artpec8-dw-mshc" for ARTPEC-8.
+> 
+> Signed-off-by: Mårten Lindahl <marten.lindahl@axis.com>
+> ---
+> 
+> v2:
+>  - Change compatible string vendor prefix
+> 
+>  Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> index 0419a63f73a0..753e9d7d8956 100644
+> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> @@ -22,6 +22,8 @@ Required Properties:
+>  	  specific extensions.
+>  	- "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+>  	  specific extensions having an SMU.
+> +	- "axis,artpec8-dw-mshc": for controllers with ARTPEC-8 specific
+> +	  extensions.
+>  
 
-I applied the DTS patches, because they should go via arm-soc tree.
-Please drop them from I2C.
+Any reason why you ignored my tag?
+
 
 Best regards,
 Krzysztof
