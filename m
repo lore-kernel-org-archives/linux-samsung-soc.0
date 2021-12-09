@@ -2,53 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBA7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 14:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EB6C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Dec 2021 15:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238887AbhLIOwq (ORCPT
+        id S236199AbhLIP0Y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Dec 2021 09:52:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38188 "EHLO
+        Thu, 9 Dec 2021 10:26:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229753AbhLIOwp (ORCPT
+        with ESMTP id S234646AbhLIP0Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Dec 2021 09:52:45 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14F61C061746;
-        Thu,  9 Dec 2021 06:49:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D4BFDB8232B;
-        Thu,  9 Dec 2021 14:49:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F6B0C341C3;
-        Thu,  9 Dec 2021 14:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639061349;
-        bh=fncNNwEZZ13cx/cFlMkuO4R/u4X00Tt6BQorHaAhDvE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p4igpzns9W6eNGFejOTyyo77pIkgrOPO8MOq/j0CVeBg8KVjkCXDR17gIeBoeVlCt
-         hjM3J1oGxumw2RgcQC/+NHgYBzetBeW6pwveH1rwJhTSy61G3u0u9wUAmr7VqlxUDa
-         CXdXaJAbrs5+mLA6GJTf6ktA/Qdt5LHTZzbyeYRxZ+Kfxy6uveLSiuUDxuqIOX5IOh
-         0f8j+NXNH0936YRVqGZwU0isBOF62/B1okv0X/4QXmFk7rgD0xoksK8Rsql3SwNC15
-         cJOt15rSLJZJWl3N4wI6Tgvi447mXGZBaucC9fHckXQrINzldjKK85BVASoIC6Pgoq
-         jSwlGBJngP5rw==
-Date:   Thu, 9 Dec 2021 15:49:06 +0100
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: exynos5: Add bus clock support
-Message-ID: <YbIXYinx3J9cfYrr@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Thu, 9 Dec 2021 10:26:24 -0500
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A67C0617A1
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Dec 2021 07:22:50 -0800 (PST)
+Received: by mail-ua1-x931.google.com with SMTP id p2so11321275uad.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Dec 2021 07:22:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=1J+XmU+DI+E9grUJzbC6kqmpdJljZUH9ERdWF3VqDW4=;
+        b=wdLsu7dxo6JsUsOMFhDQbVF/7k6JWW4SfduROl3lRRispvueS+VzjduoBSJdTfWBEd
+         6WSFxBtUmOKlOmMhQ3z/jkIE7pzpINk0xwSI/SPkCItxTti5tDk/k0IhLQHC+8Px4tjb
+         opJUQAh2haWglvTbBYOWb8wBDboplqK/k1wz7pMdWd6wdnUQ/lntzIFt6iSZTILpnD8i
+         54xvkltZMUQI8d/TgbxN0KHDTzZgDh9qR2+z7YHpzTmSmEOViRiW6faiJb/MrojlY22z
+         iqhnQCWYXF/aRrptPwEpnmuIlyCMxU2JXz5pvmM6Y/9El6BpFI85smH7ropsRnktM+lU
+         pV4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=1J+XmU+DI+E9grUJzbC6kqmpdJljZUH9ERdWF3VqDW4=;
+        b=L/695KThhxyIqcvptLlSHlVWW9Mb6NkoNR3KY5Jsx3LgjmQRB+OrLxHKQhUbuEA6de
+         BWtLr4BJoxuErL/RI/RiOQgzenVNyYKii0UGixBPDp40bZsL/1fltgm5Myn5Hk0dEHg0
+         gYgc19+Z9hJchaRsEd5ky9SdB98pBbE1ufQeqZ9nEuGNc1PH13oi6fZ1MGz8IvjVjrmS
+         WCOQma/48G83JPS7EgywPaOzHT3AQJarE9EUeJEa7mA9EGRVLDloFynmhYtpmlrNhub6
+         1gd2Q9GP5lxhhOMjQEd/NGA3a/kH85tdswfo6PDa6TVijSqsCD4jEIeWc1olkysPhjMi
+         YVog==
+X-Gm-Message-State: AOAM530CuMgtcZOqed6hQagCgyeJ62btAemTD5dyMA/p1MmDLa5iKflf
+        mQy+lnsQ5qcv5w/5Xen3JUf6KNi0KHJT/5Iu6coc5A==
+X-Google-Smtp-Source: ABdhPJzCfp+KpbSMOwI8zmZeJ5bMvIl0+2m+q7morIH15CbHe7sXKx+R0flGIAcP0B04JBjStSt4FQXkkLNvJzN85pA=
+X-Received: by 2002:a67:3382:: with SMTP id z124mr7978137vsz.57.1639063370025;
+ Thu, 09 Dec 2021 07:22:50 -0800 (PST)
+MIME-Version: 1.0
+References: <20211204215820.17378-1-semen.protsenko@linaro.org>
+ <20211204215820.17378-8-semen.protsenko@linaro.org> <YbIXVw+as1Sj6yDW@ninjato>
+In-Reply-To: <YbIXVw+as1Sj6yDW@ninjato>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 9 Dec 2021 17:22:38 +0200
+Message-ID: <CAPLW+4kOr8NBUpgDXCcALP0BbnQ=w0v_oW24Vsa3e90TBxrHyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 RESEND 7/8] arm: dts: exynos: Rename hsi2c nodes to i2c
+ for Exynos5260
+To:     Wolfram Sang <wsa@kernel.org>,
         Sam Protsenko <semen.protsenko@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
         David Virag <virag.david003@gmail.com>,
@@ -56,59 +64,30 @@ Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20211209140313.14926-1-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DEQvb2BR+ftSzNBZ"
-Content-Disposition: inline
-In-Reply-To: <20211209140313.14926-1-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, 9 Dec 2021 at 16:49, Wolfram Sang <wsa@kernel.org> wrote:
+>
+> On Sat, Dec 04, 2021 at 11:58:19PM +0200, Sam Protsenko wrote:
+> > In Device Tree specification it's recommended to use "i2c" name for I2C
+> > nodes. Now that i2c-exynos5 dt-schema binding was added, it shows some
+> > warnings like this when validating HS-I2C nodes:
+> >
+> >     hsi2c@xxxxxxxxx: $nodename:0: 'hsi2c@xxxxxxxx' does not match
+> >                                   '^i2c(@.*)?'
+> >     From schema: Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+> >
+> > Rename hsi2c@* to i2c@* to fix those warnings.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>
+> Applied to for-next, thanks!
+>
 
---DEQvb2BR+ftSzNBZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just a heads up: Krzysztof has already taken patches #7 and #8 to his
+tree: [1]. Other than that, thanks a lot for handling this series!
 
-On Thu, Dec 09, 2021 at 04:03:13PM +0200, Sam Protsenko wrote:
-> In new Exynos SoCs (like Exynos850) where HSI2C is implemented as a
-> part of USIv2 block, there are two clocks provided to HSI2C controller:
->   - PCLK: bus clock (APB), provides access to register interface
->   - IPCLK: operating IP-core clock; SCL is derived from this one
->=20
-> Both clocks have to be asserted for HSI2C to be functional in that case.
->=20
-> Add code to obtain and enable/disable PCLK in addition to already
-> handled operating clock. Make it optional though, as older Exynos SoC
-> variants only have one HSI2C clock.
->=20
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Chanho Park <chanho61.park@samsung.com>
-
-Applied to for-next, thanks!
-
-
---DEQvb2BR+ftSzNBZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmGyF2IACgkQFA3kzBSg
-KbadixAAth7qW3Rnrv1+LKeOBXDyB7R6MKGLgThiQop8aOkeCFKx6EEDoCvwR63l
-MC6zQlref+iiRUFzRX0AERM0vZN+q4qGXw6RQ+6V05mRmZ7hM3JHvMNtPwHHH7ET
-8qbZDc1OBr/1CEZAwN0S49WRo4VlntZnv9fkZjGF2Ow2wyjMF+0MHsroHg+pqVTU
-yLYApaLmUf+yGD+0BYLsdKCgD995pv0SAy3aEpwGRXwncbYYGGwaGrIf2GRawiyo
-iykjcH+6pjAJPVN1c4T1O+81htqfBYlytstXPNoYw+rrCeTIg5Rv2E51PLsHm+T5
-71DQt4B1/W/ZTXgjW6UySt6N1YkISIvC32RrZM+bX2Nk/m9mdX8CooZRH+GklSHo
-znfqQ5j2rLJfyTXYBGnJo8mA79eBbi0Xr8ln4+pYxYW9Gkl0DkZsX9JObvNaKhoM
-JiWWhh6UXFKQTz00CoHawzQTE7Selopy9B469R03z+nATAqAr3KTnQSwy5+dUPVA
-ScZT+uva4D7lWKT8CzFZDQFOakinkmGG5BnaEf5IEy4NLavkL5SR+sE3lj4iHEUJ
-68Tlk0SRJGpQ47tRGHXaau/gNw5Y9n9klnEy3eyOPfnx/oWy7pNgm7ZofBBwtF0D
-D1JjAWttjsNpJlbd5ja3sCuvVDCfnVwnB8vtIJ3IG77VBYI05YE=
-=6qqn
------END PGP SIGNATURE-----
-
---DEQvb2BR+ftSzNBZ--
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-next
