@@ -2,89 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B15C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Dec 2021 21:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29A7C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Dec 2021 21:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239331AbhLJVbz (ORCPT
+        id S1344389AbhLJVdl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Dec 2021 16:31:55 -0500
-Received: from mail-oo1-f51.google.com ([209.85.161.51]:45643 "EHLO
-        mail-oo1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230509AbhLJVby (ORCPT
+        Fri, 10 Dec 2021 16:33:41 -0500
+Received: from mail-oi1-f173.google.com ([209.85.167.173]:33281 "EHLO
+        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239964AbhLJVdl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Dec 2021 16:31:54 -0500
-Received: by mail-oo1-f51.google.com with SMTP id v30-20020a4a315e000000b002c52d555875so2703094oog.12;
-        Fri, 10 Dec 2021 13:28:19 -0800 (PST)
+        Fri, 10 Dec 2021 16:33:41 -0500
+Received: by mail-oi1-f173.google.com with SMTP id q25so15107854oiw.0;
+        Fri, 10 Dec 2021 13:30:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=AEGxhPGSJ0DPsy5LNBN3m1DeP3hKNjSMYLrcuOnRxIU=;
-        b=QCZs88LXN5wmQK5xt8UlCyIeHrqTEWSc16sfcQTlnD8S/rjxwi+5o0rg8ESmVraUUg
-         6NFfFQvh2VvKaJEX7FmEoLN6+7bRLz5i20rF2OSDkNaqwrUBLcEDDOLYrPU8Ohu0E1cR
-         ENmKGcpjHxUkbDECin1v1HU7hziAW6fIPjiGV7FpcTon2myoReKYD/tyOtepNu1FNWqK
-         c48HlW3kN3GAAVLKyEsc1TSf4eCw/D4twkcGfXlMw9kualPhhbJVvwkU6QLSmv+18iEG
-         G9dJ9qkxYSxa+VdIx8Sfcu5I2E3fg3+DVYSv3iO3E3BuVZrn/A9fT026SRZiIny28UQr
-         FLNA==
-X-Gm-Message-State: AOAM532UUVJ3GFmfxqhfHczTltV/cj2vSl8OI0mN1XFBhdH8mQE+dWgI
-        JApSO5SB5ijeQv86UuvxYw==
-X-Google-Smtp-Source: ABdhPJwUvDMhOZ0QuT0/xwOAD4OVc8DPYqtAh+nU2te8BpCzdVHRhTpUzHc72Xdxdr31SC6HQ3CdOA==
-X-Received: by 2002:a4a:d98c:: with SMTP id k12mr9815755oou.82.1639171698662;
-        Fri, 10 Dec 2021 13:28:18 -0800 (PST)
+        bh=6v3vN5bs9G7pQvp2EOZLbvwUUvDXnLawwef/8iJSg/0=;
+        b=Ecpc2c2B7WutVfOHpkO/5glFsuZlo5tqgZ5aICqcB5Pf8Bo4FSRhKsLM9NR6eQmg2d
+         6RS47oVChldRNb6yaW54jMHqC9XZRebwY7AA2W/Nl+C25o6sfx4DVNXtwdgywFrmJM4P
+         K7YKf4kMDpFASvUUEUQG74b/8Ypi10Eu/ai2W6tV6A22LBZV1OWzmHx6DW3gv1oKZcMx
+         B7zPPeYjj7Pe0MHVxIHbg6EA0x8IY4dSqTByU8rs0pLeZOvRwnKyba36qDPWlkncMq5A
+         BQ/2ee123k2Pljc3/qTtrVaMHvnNQwnyhW0HdUUu6z1Ram3j6isQ4+NOgaoax/WvdGT9
+         sSVA==
+X-Gm-Message-State: AOAM530jA1zF6loCNi2rKzlXwMrww8rjTrx+WAfrJ665p/JoaOpcnF7x
+        bIVhSAo4m9vbekEgt3VKug==
+X-Google-Smtp-Source: ABdhPJwy/OrkyQw56ZeeKtO0RyeKqKnvGMGF9EFgNo9NjmFHmDgnSGZxC4isABGYcBGzO/56rrJFIw==
+X-Received: by 2002:a05:6808:3c2:: with SMTP id o2mr15202275oie.112.1639171805326;
+        Fri, 10 Dec 2021 13:30:05 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id t14sm739797oth.81.2021.12.10.13.28.17
+        by smtp.gmail.com with ESMTPSA id o14sm710550ote.41.2021.12.10.13.30.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 13:28:18 -0800 (PST)
-Received: (nullmailer pid 1936301 invoked by uid 1000);
-        Fri, 10 Dec 2021 21:28:17 -0000
-Date:   Fri, 10 Dec 2021 15:28:17 -0600
+        Fri, 10 Dec 2021 13:30:04 -0800 (PST)
+Received: (nullmailer pid 1944929 invoked by uid 1000);
+        Fri, 10 Dec 2021 21:30:03 -0000
+Date:   Fri, 10 Dec 2021 15:30:03 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     David Virag <virag.david003@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
         Sam Protsenko <semen.protsenko@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
         linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v4 2/7] dt-bindings: clock: Document Exynos7885 CMU
- bindings
-Message-ID: <YbPGcXcj5Is6aj2t@robh.at.kernel.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: arm: samsung: document jackpotlte
+ board binding
+Message-ID: <YbPG27SFtOXa3NOH@robh.at.kernel.org>
 References: <20211206153124.427102-1-virag.david003@gmail.com>
- <20211206153124.427102-3-virag.david003@gmail.com>
+ <20211206153124.427102-4-virag.david003@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211206153124.427102-3-virag.david003@gmail.com>
+In-Reply-To: <20211206153124.427102-4-virag.david003@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 06 Dec 2021 16:31:16 +0100, David Virag wrote:
-> Provide dt-schema documentation for Exynos7885 SoC clock controller.
-> Description is modified from Exynos850 clock controller documentation as
-> I couldn't describe it any better, that was written by Sam Protsenko.
+On Mon, 06 Dec 2021 16:31:17 +0100, David Virag wrote:
+> Add binding for the jackpotlte board (Samsung Galaxy A8 (2018)).
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > Signed-off-by: David Virag <virag.david003@gmail.com>
 > ---
 > Changes in v2:
->   - Fixed double : in description
->   - Added R-b tag by Krzysztof Kozlowski
+>   - Nothing
 > 
 > Changes in v3:
 >   - Nothing
 > 
 > Changes in v4:
->   - Fix leading 0x in example.
+>   - Nothing
 > 
->  .../clock/samsung,exynos7885-clock.yaml       | 166 ++++++++++++++++++
->  1 file changed, 166 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
+>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
