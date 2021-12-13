@@ -2,108 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6264C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Dec 2021 11:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F57C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Dec 2021 11:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbhLMLAb (ORCPT
+        id S234405AbhLMLL4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Dec 2021 06:00:31 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:45272
+        Mon, 13 Dec 2021 06:11:56 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:45936
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232422AbhLMLAa (ORCPT
+        by vger.kernel.org with ESMTP id S229836AbhLMLL4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Dec 2021 06:00:30 -0500
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        Mon, 13 Dec 2021 06:11:56 -0500
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BD0CF4003A
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Dec 2021 11:00:28 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1CC6B4005B
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Dec 2021 11:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639393228;
-        bh=oPxIYppN3M08WPSh+FUwx/WTHd0f19tpTgpTR+J0vso=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=QEJQT1gCS2301OpKRzovG+KaKoPdq+9rSYdbrqwfp1g4lZ5rPHvFfawU2nXA4gcad
-         1jvbgAlhf6lTtvuO4odJKuhp65uIlnMmp4c1OkIOf5FSrB5Cz6wd+alrsFaJExAP+3
-         OrTkiIclSBI0FKoSiN/1z4XmS9oOnjV56NbYbUoAWczYAAI3GryG7/wdwqCfOGqKPe
-         jQAY7M0mLHbUtkECLKaMKlT/hL0BSs84OuSvW8VV5znc09TeHesCrhi994hxhpk+lw
-         Hi99iBCkf7pP4zmJT5iy+Clp7goBhHnm06Q8ucHarinHCYT1CrpEtKeX5A6p0lafLX
-         g6BdG2EQaDSUA==
-Received: by mail-lf1-f71.google.com with SMTP id e23-20020a196917000000b0041bcbb80798so7345043lfc.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Dec 2021 03:00:28 -0800 (PST)
+        s=20210705; t=1639393915;
+        bh=TWX9z7B2SDW6pKVI7CzKeQKxNaS8eqsqW7IHGzb9lGc=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=hvGsRPHH6yOZKiGMzHS3xbYMRc5kYRHK5/hRcp/3Xwe0cL3McN+40i/wn8/+HxbOE
+         CebspWW6O4QGfW1nsPmH6xCeESjiSQ1sccoJzkoI5tC5Acqy9SoPhmPb9P9QmCvkqu
+         oBZGLfcVgN4Dc7VNccn8p4EUJvsnO1KxCIstgZz4whKi7TSZgUEg39pzgcZ87izhst
+         kg7Fx0+BtdLUqo2L92sLfIB1RzKyny805+FOwMgqdJyoo1SUaEke86O3KpkT+7RNxm
+         tFcx0CNy61/ALByRxuzg/0cC2HMuuOq32kVK7GB9OHAZy6sSS3OXioE66pAZeurQMJ
+         iM4pCt2bqlaBg==
+Received: by mail-lf1-f70.google.com with SMTP id q13-20020a19f20d000000b0041fcb65b6c7so5130486lfh.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Dec 2021 03:11:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=oPxIYppN3M08WPSh+FUwx/WTHd0f19tpTgpTR+J0vso=;
-        b=vzzem1ZXMOnsiT6Y34eD0fMi0FeWaOqxPfHPMV1w18A+QhyIQSaL3/28VugcihVWgU
-         yaisiwqaGL+lGxs98DzJo7WHMD3+3e32l0kd86IiwiJNcyTzgfAiUu/HsgwM66l/Mv1y
-         2aRe3Gd9LRUfddSH2WQYCXgYf+jyzV4JH69JgOsCvO9ryYQnimyWEJ8Wh0DLT7bMkGMd
-         Q6FmaYs/MA5OkTfbT/6zlIZYyGs6er3auali6Z2OuY40U3RuFtkMRjh/bLqIE1z/+LIT
-         ADjkjnT0NxRu3dSnE2ovnbusC81vJ/BO0d4C6ysQwJilxD1zNCImGK8ueMwZq6YQys9T
-         TKqQ==
-X-Gm-Message-State: AOAM532VSs/DFyRm/StF3pZriIsZ6jBuqMxnQzg+rFpKukNOy/qQ+Bck
-        lSd7KcCRJm+JUOp7x1TRSul2iJWtfDYxo5QwUzs494M1pfkg+OtsVWFLHJH7FEKPKjqLYLmFc91
-        kG48IqoKfe+3LdK9xRRdygbeMKqibHMXfjhI7FVceIj3zTgUS
-X-Received: by 2002:a05:6512:c25:: with SMTP id z37mr27246227lfu.160.1639393228061;
-        Mon, 13 Dec 2021 03:00:28 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyAhZVupAQj4Ctos4E4tzeNhHXTV3N6ad1L0/m+9uXiWRs4tbCEa22HF2XhyXJEMAq2lBo4Dg==
-X-Received: by 2002:a05:6512:c25:: with SMTP id z37mr27246200lfu.160.1639393227812;
-        Mon, 13 Dec 2021 03:00:27 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id g10sm1388745lfv.113.2021.12.13.03.00.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Dec 2021 03:00:27 -0800 (PST)
-Message-ID: <e9472cec-7aca-92c4-6184-f442c0f88d56@canonical.com>
-Date:   Mon, 13 Dec 2021 12:00:26 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3 3/5] tty: serial: samsung: Remove USI initialization
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211204195757.8600-1-semen.protsenko@linaro.org>
- <20211204195757.8600-4-semen.protsenko@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TWX9z7B2SDW6pKVI7CzKeQKxNaS8eqsqW7IHGzb9lGc=;
+        b=Verl0C4St1ZPvcia93gt6ukfWOvP5C9h7wDOODNjVjFA+ImBdgp+A2Dme/Vyraj7na
+         4cgf7QRWAr3hzMeNDyC2S6gfOr5GszhRJ5jcZ1M5GveblStXEZ6d1Oq7wwzo4EddRSnG
+         gnnFZeTB9lI6RXsi0Gu/eiXCyUhQ/I0b6tpkUDZ+jDEISxmKb+kyWLaRXqFIvRzyOEvr
+         IOXsAzsdPBNEcTsoDW77MlIjyNZV2xZ4fwb7kCo1mqTSerQLfInCDp/K5rz/dRvqkCuS
+         1s5co2fqi8ZYNIYT+iLvPI1nMVpyl3h9hKghdp2mK05ITDokgLbSGbJujzUpfzHHSX5x
+         s69Q==
+X-Gm-Message-State: AOAM530SmXg4uOSUDj2AufqiKOpd9AOj4o6GzYxi6pWDg6TYCz7WIJ6v
+        HNjpmvE/aiIUg/0HG/jeyPJajq9KYr5NlzAWXq7ySQHSrM1KIWDwDOx06Vh8rzK2wsjrjAFG4aY
+        XwCgnJdLKhMgSqsUVuPiB2uaXuLkcCnsVKrixq+Lf3AbNbCwL
+X-Received: by 2002:a05:6512:1324:: with SMTP id x36mr28203962lfu.495.1639393912436;
+        Mon, 13 Dec 2021 03:11:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwWh2zPqaJCAX9RF6Y9SF7zloH0bH/lomW9IUo3wlZ0O8nMKVcivVd3yVJlmERwPsJCKZYgAQ==
+X-Received: by 2002:a05:6512:1324:: with SMTP id x36mr28203947lfu.495.1639393912237;
+        Mon, 13 Dec 2021 03:11:52 -0800 (PST)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id q19sm1381070lfa.266.2021.12.13.03.11.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Dec 2021 03:11:51 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211204195757.8600-4-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Rob Herring <robh+dt@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: exynosautov9: convert serial_0 for USI
+Date:   Mon, 13 Dec 2021 12:11:47 +0100
+Message-Id: <163939390678.7492.11668777657755718143.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211208091853.8557-1-chanho61.park@samsung.com>
+References: <CGME20211208092527epcas2p28f6688d5a2742c03cf474d8b2fa773cd@epcas2p2.samsung.com> <20211208091853.8557-1-chanho61.park@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04/12/2021 20:57, Sam Protsenko wrote:
-> USI control is now extracted to the dedicated USI driver. Remove USI
-> related code from serial driver to avoid conflicts and code duplication.
+On Wed, 8 Dec 2021 18:18:53 +0900, Chanho Park wrote:
+> According to USI v2 driver change[1], serial_0 node should be converted to
+> use the USI node hierarchy. syscon_peric0 will be used as a syscon node
+> to control the USI00_USI_SW_CONF register.
+> This also changes the serial node name from uart@ to serial@.
 > 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> Changes in v3:
->   - Spell check fixes in commit message
+> [1]: https://lore.kernel.org/linux-samsung-soc/20211204195757.8600-2-semen.protsenko@linaro.org/
 > 
-> Changes in v2:
->   - (none)
-> 
->  drivers/tty/serial/samsung_tty.c | 36 ++++----------------------------
->  include/linux/serial_s3c.h       |  9 --------
->  2 files changed, 4 insertions(+), 41 deletions(-)
-> 
+> [...]
 
-Hi Sam,
+Applied, thanks!
 
-Does this patch depend on USI driver? In cover letter you did not
-mention any dependency, so this can go via Greg's tree, right?
+[1/1] arm64: dts: exynosautov9: convert serial_0 for USI
+      commit: 7836149e155bd3c554571f135619f95932c841fc
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
