@@ -2,105 +2,323 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0792C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Dec 2021 07:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB181C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Dec 2021 13:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236088AbhLOHgo (ORCPT
+        id S242890AbhLONeT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Dec 2021 02:36:44 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54718
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240622AbhLOHgl (ORCPT
+        Wed, 15 Dec 2021 08:34:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37502 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242909AbhLONeT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Dec 2021 02:36:41 -0500
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 33B7A3F1AA
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Dec 2021 07:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639553800;
-        bh=F6A76TBrmUtFWX3VCIsN07CYhL6FGO84vIVFcKsHMuk=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=HBhtqH1ftR+JE8s30I5DsAG0EuWjU+L6cYe5RU3DMx6TTR2l1POXl4JAJfUEU21W6
-         j3BSoVnYkjcx9YjGGZccgnSmS5RQFEW1Fr/DdC61vvWnQjehz75pOIghLlyARcWSMB
-         33HTuXB4CsxWmFzT+YvsOsVPkQAO8WOdBkU987uEpVShT8eRsXSY05ibMYgKsC6sA5
-         lNcKKMBJaHRxD+iQZ8PafGHPCd333khRvEV3x3iGjUDidWJ5013WUPl9fkyuIVL5pI
-         jb/yS+DraClm4KTIzSp0DzQal5w27BTJoMtVZOCb+Uu5FUUBq2Iwpekqv8Y64Ko/+N
-         oh3GQkpRyU39g==
-Received: by mail-lf1-f70.google.com with SMTP id e23-20020a196917000000b0041bcbb80798so9373030lfc.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Dec 2021 23:36:40 -0800 (PST)
+        Wed, 15 Dec 2021 08:34:19 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F651C061574;
+        Wed, 15 Dec 2021 05:34:19 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id y22so3830456edq.2;
+        Wed, 15 Dec 2021 05:34:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j83riijwkCGvjUh7Adz6XzCw5n1IEjGb/VrFZUAe4F8=;
+        b=ZeSpMXbrIhP/htoOtQwRrekNkWMdpf3EEk1eT/8CDPHo0zVuSPCe/zjHnMdWUnZUWr
+         stZdaBTu/q7znkoDE/+GMZ+I0fV/Q3zwGyV4ItCHSPNL934Lgfnigq/SPtZlYTBzFRLA
+         KoRmkE+pjK/4+8x50BEq+LHgDSzS4DjCx5c95HdaBS6cqPpDNYHkatxIcgGjD7AmCYDT
+         wgExYl9/AW5KpGegWdyQwpf6l8os4SSOD0JP8SxGkKWblzJwSt9AvmEI6BIsQZ9MwddH
+         j1U3Mw5lTZUwsSkAzgmP2tcfAHpTheqJWu2OjuzEQUNniz7SFIRLtHXBpxoARCOh5w+z
+         ETCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=F6A76TBrmUtFWX3VCIsN07CYhL6FGO84vIVFcKsHMuk=;
-        b=piGR/PgL34nU3vcCGZ4AHHV2kUlG2O6/EBKHGq2q71/ETs9cTj9V32GNYP7+fP8jpt
-         w0Aujdtl6m6Ia7TuD4QoP9XaiPuOGiOaMHbA8CPB0qNEmIPLftOy/FffP4QFH/eU0avW
-         m9LjI6NZVRD8f2RCzFAGumMKrpAqLfcVx6Dlu/JMzGMXn5Rs+aAx2d6Gv7kbmZYRohPd
-         3bz3CsYKMuGFrGyf+3M8YzkktCCul7bZecT0NEibd9PixeXC4nkFVMLuJqv0lNu5dmCS
-         UQ1b4dN0trKG72GwQBsWmJfP32s3Bqei1WanvSLjIkXqREVI+0iBRphBOXCiBa00Yowi
-         GNRQ==
-X-Gm-Message-State: AOAM531Cwdg4F5OhyPEH6ue6EZUST52rIDC+egqeVFCY4OjxpJ4LQtlT
-        7d24ade4fnEcQBqSFsC2fCGi8jfkAKt4OdtcNeBnmRE2Alc/gU3hUeZWQNWxTP7du9EzVYthHsA
-        XqmJNrPsXNDZQkbQ7lcRkLHDW5JKTL73MWar1+3fAyGdrHrvC
-X-Received: by 2002:a05:6512:4022:: with SMTP id br34mr8848173lfb.530.1639553799647;
-        Tue, 14 Dec 2021 23:36:39 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyzPtDMOJasNzOvdacYEtvNk/bKv5BWr0rmdGjWr2pcPixNzBSY/JytR3tWeRLhzvX45bRflw==
-X-Received: by 2002:a05:6512:4022:: with SMTP id br34mr8848159lfb.530.1639553799518;
-        Tue, 14 Dec 2021 23:36:39 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id bp15sm188546lfb.176.2021.12.14.23.36.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Dec 2021 23:36:39 -0800 (PST)
-Message-ID: <27e76745-090c-36c5-78b8-aeda58c91034@canonical.com>
-Date:   Wed, 15 Dec 2021 08:36:38 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j83riijwkCGvjUh7Adz6XzCw5n1IEjGb/VrFZUAe4F8=;
+        b=7g4YA9Y9HRTZYfDm12EE0mjKTM4zkNzDAunICRwYPa4pOLQQlre2toRLbkdgyShxxL
+         LwXcqk3YeOLlSRpny801e1/AMf87yjU43wBzoLZMY+j4P0WP6x0Qz6YUWWOhs//8WE3R
+         QfZkW53F9yyB09D+Yx1D3a6zjbhxcQTXN4K2c10exFIV9CzLZ3UZVFPYocFrATDKJRqh
+         Vv6A4W1B13E9tpmmt4nwx3C8r7CupRct7FgBiGpzgo1e0+Yx1B5KKqJv18EyL6Ew2gR0
+         DX1s2dESPPFzyvWrmfhMzkC9sTJWuQq/9rmwxe0yWsjcN2Y6mtZ+UVL1hJymuQ1+2hlS
+         EXkQ==
+X-Gm-Message-State: AOAM530G3AqYIBS3bkyaAFe2AIQgCAPl3IaHJnTpkz12Rzq1/YVdyknR
+        vKOuTRGxP+2ILnG0EK8mbbSTMKEJCUu2VQixJ6s=
+X-Google-Smtp-Source: ABdhPJx+lyo2eDU/yymI7uUr7Q0TQbS4aqYdE/gnmRWCO7rej1mxW1Okk54UFTfheTG/NmgfINc9s9Sx486rmDzuL8g=
+X-Received: by 2002:a17:906:6dce:: with SMTP id j14mr2997439ejt.305.1639575257245;
+ Wed, 15 Dec 2021 05:34:17 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH] dt-bindings: soc: samsung: Fix I2C clocks order in USI
- binding example
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211214170924.27998-1-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211214170924.27998-1-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20210704090230.26489-1-jagan@amarulasolutions.com>
+ <YP2ZvoVQyvwTXP++@ravnborg.org> <CAMty3ZANJz=HSKFzZ8gn896uw98iVwMEpGhmanXNbj77Ren4hw@mail.gmail.com>
+ <CAJ+vNU1Hy_94TYgs0isNc2pmiH2sOReZJLhphzQFTN2Z50JPrA@mail.gmail.com>
+ <CAOf5uwm6+tFS8temhPmSx6nFVTSyk0Ckd9eDEToQNmNaiO2c=A@mail.gmail.com>
+ <CAJ+vNU2pQCHqnyNJnz_rhczGRwcU=9XDFG1ix_V=Sc-1oWvhjA@mail.gmail.com>
+ <CAOf5uw=Cts+V+amSrTzVyRyFZA=eKSVtRPtXae40-4M0bu6pwg@mail.gmail.com>
+ <ad3feb990ea73d258075e9bf3d3034189266bad2.camel@lynxeye.de> <CAOf5uwnSd0fBLHRgM2qvTH+4EorYamoED+XKL7dX=gA-eFKjkQ@mail.gmail.com>
+In-Reply-To: <CAOf5uwnSd0fBLHRgM2qvTH+4EorYamoED+XKL7dX=gA-eFKjkQ@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 15 Dec 2021 07:34:05 -0600
+Message-ID: <CAHCN7x+aQ3g3pb_w_DJ1oDcE6gRgpYDayemQrj-6Pn2bhKrDvA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/17] drm: bridge: Samsung MIPI DSIM bridge
+To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc:     Lucas Stach <dev@lynxeye.de>, Marek Vasut <marex@denx.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        NXP Linux Team <Linux-imx@nxp.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/12/2021 18:09, Sam Protsenko wrote:
-> Now that HSI2C binding [1] is converted to dt-schema format, it reveals
-> incorrect HSI2C clocks order in USI binding example:
-> 
->     .../exynos-usi.example.dt.yaml:
->     i2c@13820000: clock-names:0: 'hsi2c' was expected
->     From schema: .../i2c-exynos5.yaml
-> 
->     .../exynos-usi.example.dt.yaml:
->     i2c@13820000: clock-names:1: 'hsi2c_pclk' was expected
->     From schema: .../i2c-exynos5.yaml
-> 
-> Change HSI2C clock order in USI binding example to satisfy HSI2C binding
-> requirements and fix above warnings.
-> 
-> [1] Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> NOTE: If possible, it can be squashed into "dt-bindings: soc: samsung:
->       Add Exynos USI bindings" patch (already applied in Krzysztof tree)
-> 
+On Thu, Dec 9, 2021 at 3:24 PM Michael Nazzareno Trimarchi
+<michael@amarulasolutions.com> wrote:
+>
+> Hi
+>
+> On Thu, Dec 9, 2021 at 9:24 PM Lucas Stach <dev@lynxeye.de> wrote:
+> >
+> > Am Donnerstag, dem 09.12.2021 um 18:09 +0100 schrieb Michael Nazzareno
+> > Trimarchi:
+> > > Hi Tim
+> > >
+> > > On Thu, Dec 9, 2021 at 5:40 PM Tim Harvey <tharvey@gateworks.com> wrote:
+> > > >
+> > > > On Thu, Dec 9, 2021 at 12:36 AM Michael Nazzareno Trimarchi
+> > > > <michael@amarulasolutions.com> wrote:
+> > > > >
+> > > > > Hi Tim
+> > > > >
+> > > > > On Tue, Oct 5, 2021 at 11:43 PM Tim Harvey <tharvey@gateworks.com> wrote:
+> > > > > >
+> > > > > > On Sun, Jul 25, 2021 at 10:14 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > > > >
+> > > > > > > Hi Sam,
+> > > > > > >
+> > > > > > > On Sun, Jul 25, 2021 at 10:35 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > > > > > > >
+> > > > > > > > Hi Jagan,
+> > > > > > > >
+> > > > > > > > On Sun, Jul 04, 2021 at 02:32:13PM +0530, Jagan Teki wrote:
+> > > > > > > > > This series supports common bridge support for Samsung MIPI DSIM
+> > > > > > > > > which is used in Exynos and i.MX8MM SoC's.
+> > > > > > > > >
+> > > > > > > > > The final bridge supports both the Exynos and i.MX8MM DSI devices.
+> > > > > > > > >
+> > > > > > > > > Right now bridge offers two sets of implementations.
+> > > > > > > > >
+> > > > > > > > > A. With component_ops and exynos specific code exclusively for
+> > > > > > > > >    exynos dsi drivers and it's legacy bindings.
+> > > > > > > > >
+> > > > > > > > > B. Without componenet_ops for newly implemented bridges and its
+> > > > > > > > >    users like i.MX8MM.
+> > > > > > > > >
+> > > > > > > > > The future plan is to fix the implementation A) by dropping
+> > > > > > > > > component_ops and fixing exynos specific code in order to make
+> > > > > > > > > the bridge more mature to use and the same is mentioned in
+> > > > > > > > > drivers TODO.
+> > > > > > > > >
+> > > > > > > > > Patch 0001 - 0006: Bridge conversion
+> > > > > > > > > Patch 0007 - 0017: Samsung MIPI DSIM bridge fixes, additions
+> > > > > > > > >
+> > > > > > > > > Tested in Engicam i.Core MX8M Mini SoM.
+> > > > > > > > >
+> > > > > > > > > Anyone interest, please have a look on this repo
+> > > > > > > > > https://github.com/openedev/linux/tree/070421-imx8mm-dsim
+> > > > > > > > >
+> > > > > > > > > Would appreciate anyone from the exynos team to test it on
+> > > > > > > > > the exynos platform?
+> > > > > > > > >
+> > > > > > > > > Any inputs?
+> > > > > > > >
+> > > > > > > > I really like where you are headign with this!
+> > > > > > > > No testing - sorry. But I will try to provide a bit of feedback on the
+> > > > > > > > individual patches.
+> > > > > > > >
+> > > > > > > > I hope you find a way to move forward with this.
+> > > > > > >
+> > > > > > > Thanks for the response.
+> > > > > > >
+> > > > > > > We have found some issues with Bridge conversion on existing exynos
+> > > > > > > drivers. The component based DSI drivers(like exynos) are difficult to
+> > > > > > > attach if it involves kms hotplug. kms hotplug would require drm
+> > > > > > > pointer and that pointer would only available after the bind call
+> > > > > > > finishes. But the bridge attach in bind call will defer till it find
+> > > > > > > the attached bridge.
+> > > > > > >
+> > > > > > > Right now I'm trying to find the proper way to attach the bridges for
+> > > > > > > component based DSI drivers which involves kms hot-plug.
+> > > > > > >
+> > > > > > > If you have any ideas on this, please let me know.
+> > > > > > >
+> > > > > >
+> > > > > > Jagan,
+> > > > > >
+> > > > > > How is your progress on this series? Looking at your repo it looks
+> > > > > > like you've rebased on top of 5.13-rc3 in your 070121-imx8mm-dsim
+> > > > > > branch but you've got a lot of things there that are likely not
+> > > > > > related to this series?
+> > > > >
+> > > > > I have a bit of work on those patches and tested on imx8mn. Basically:
+> > > > >
+> > > > > - add the dsi timing calculation
+> > > > > - change few difference with samsung bridge
+> > > > > - fix crashes of my dsi panels
+> > > > > - compare with NXP driver the final results
+> > > > >
+> > > > > I found that I have one problem that gives me some instability. In the
+> > > > > NXP original driver the panel needs to be
+> > > > > enabled in bridge_enable before out the standby. If I understand
+> > > > > correctly, our standby should be done after.
+> > > > > I would like to have some feedback and help and testing on other
+> > > > > boards/devices and some suggestions on how to handle
+> > > > > some of the differences. Another big problem is etnavi that is not stable
+> > > > >
+> > > >
+> > > > Michael,
+> > > >
+> > > > Where can I find your patches?
+> > > >
+> > >
+> > > I will push on some tree and share
+> > >
+> > > > What do you mean by etnaviv not being stable?
+> > > >
+> > > > I did some limited testing with etnaviv on imx8mm with 5.15 + dsi
+> > >
+> > >
+> > >
+> > > > patches on an Ubuntu focal root filesystem by:
+> > > > apt update
+> > > > apt install gnome-session gnome-terminal
+> > > > ^^^ 2D hardware acceleration appears to be working (dragging opaque
+> > > > windows around)
+> > > > apt install mesa-utils glmark2
+> > > > glxgears
+> > > > ^^^ ~160fps on IMX8MM
+> > > > glmark2
+> > > > ^^^ score of 39 on IMX8MM
+> > > >
+> > > > I haven't seen any updates from Jagan since Nov 24
+> > > > (https://www.spinics.net/lists/dri-devel/msg324059.html) and am not
+> > > > sure if he's been able to work through drm/exynos issues that have
+> > > > been blocking his progress.
+> > >
+> > > I plan to push on github
+> > >
+> > > [17:07:42.315] Sending ready to systemd
+> > > [  214.052085] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> > > [  214.595998] etnaviv-gpu 38000000.gpu: recover hung GPU!
 
-I already merged it between branches, so no squashing.
+Which Nano variant do you have?  Not all Nano's have a GPU.  I know
+Tim Harvey was having a similar issue, but it turns out his variant of
+the Nano did not include a GPU.
 
-Best regards,
-Krzysztof
+> > >
+> > > ** (maynard:386): WARNING **: 17:07:43.874: failed to setup mixer: Success
+> > > [17:07:44.175] Added surface 0xaaab02630440, app_id (null) to pending list
+> > > [17:07:44.176] Added surface 0xaaab026172b0, app_id (null) to pending list
+> > > ** Message: 17:07:44.289: New advertisement app id maynard
+> > > ** Message: 17:07:44.290: New advertisement app id maynard
+> > > [17:07:45.171] (background) position view 0xaaab0261f860, x 0, y 0, on
+> > > output DSI-1
+> > > [17:07:45.171] (panel) geom.width 100, geom.height 480, geom.x 0, geom.y 0
+> > > [17:07:45.171] (panel) edge 2 position view 0xaaab02634510, x 0, y 0
+> > > [17:07:45.172] panel type 2 inited on output DSI-1
+> > > [17:07:45.172] Usable area: 380x480+100,0
+> > > [  216.932080] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> > > [  217.476015] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> > > [  218.020157] etnaviv-gpu 38000000.gpu: recover hung GPU!
+> > >
+> > > This is my problem on imx8mn
+> >
+> > Note that the GPU on the 8MN is from the GC7000 generation, which
+> > genreally has bogus feature registers, as VeriSilicon stopped using
+> > them in favor of a hardware database. To get the GPu working you need
+> > to transcribe the entry for this specific GPU from the downstream GPU
+> > driver into the etanviv HWDB format, to make the kernel and userspace
+> > driver aware of how to drive this GPU.
+>
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
+> b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
+> index f2fc645c7956..724f78fd37e5 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
+> @@ -68,6 +68,37 @@ static const struct etnaviv_chip_identity
+> etnaviv_chip_identities[] = {
+>                 .minor_features10 = 0x00004040,
+>                 .minor_features11 = 0x00000024,
+>         },
+> +       {
+> +               .model = 0x7000,
+> +               .revision = 0x6203,
+> +               .product_id = ~0U,
+> +               .customer_id = ~0U,
+> +               .eco_id = 0,
+> +               .stream_count = 16,
+> +               .register_max = 64,
+> +               .thread_count = 512,
+> +               .shader_core_count = 2,
+> +               .vertex_cache_size = 16,
+> +               .vertex_output_buffer_size = 1024,
+> +               .pixel_pipes = 1,
+> +               .instruction_count = 512,
+> +               .num_constants = 320,
+> +               .buffer_size = 0,
+> +               .varyings_count = 16,
+> +               .features = 0xe0287c8c,
+> +               .minor_features0 = 0xc1589eff,
+> +               .minor_features1 = 0xfefbfad9,
+> +               .minor_features2 = 0xeb9d4fbf,
+> +               .minor_features3 = 0xedfffced,
+> +               .minor_features4 = 0xdb0dafc7,
+> +               .minor_features5 = 0x3b5ac333,
+> +               .minor_features6 = 0xfcce6000,
+> +               .minor_features7 = 0xfffbfa6f,
+> +               .minor_features8 = 0x00e10ef3,
+> +               .minor_features9 = 0x00c8003c,
+> +               .minor_features10 = 0x00004040,
+> +               .minor_features11 = 0x00000024,
+> +       },
+>         {
+>                 .model = 0x7000,
+>                 .revision = 0x6204,
+>
+> Ok, should something like this. Only does not know about this
+> gcFEATURE_BIT_DE_2D_FAST_CLEAR. I put in features but can even a
+> minor. Do you know the right mapping?
+>
+> Michael
+>
+> Michael
+>
+> >
+> > Regards,
+> > Lucas
+> >
+>
+>
+> --
+> Michael Nazzareno Trimarchi
+> Co-Founder & Chief Executive Officer
+> M. +39 347 913 2170
+> michael@amarulasolutions.com
+> __________________________________
+>
+> Amarula Solutions BV
+> Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+> T. +31 (0)85 111 9172
+> info@amarulasolutions.com
+> www.amarulasolutions.com
