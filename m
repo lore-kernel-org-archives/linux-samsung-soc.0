@@ -2,93 +2,119 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2318FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Dec 2021 15:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F50C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Dec 2021 16:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243895AbhLOPTn (ORCPT
+        id S235139AbhLOQJK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Dec 2021 10:19:43 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51660
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243890AbhLOPTm (ORCPT
+        Wed, 15 Dec 2021 11:09:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235124AbhLOQJJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Dec 2021 10:19:42 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B810E3F1F6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Dec 2021 15:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639581581;
-        bh=YsgM5wVM9boJb3f4RQ+uT9iXUGMe1XTlP9oHfwmk45A=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=da8DrCSKINZY/HNf9Gvm61nO1yqjgrZw8eZ3TGBy7b4NGX3XNiippjrtFY1FhTKll
-         FL8kY0vpY34za/7RRAeM7Afs05x0DuYofo5sZ7Sr4Lf1FjHIJZzvj5HJZ8QocYEYRJ
-         YTYg3nyz2HRK8/VyR6k7RwgBe6XJMFd/C9RqCtakTZ1tBkb6WnpFwwSC5dF9n9WCcJ
-         N5h0eCBsa7BIrMxltNq3+ZvLdzqoCjw7TckKQVPhNJb+aL2ixZiH6aKZOnSpvnVPvu
-         hDyDUnpncF/xAUS8hOmu2LB9CGk9ekU/kLweCFWesjfUcYYTslc5ITEKh+Oc9RS3VF
-         9G3H3Q7x/v6ZA==
-Received: by mail-lf1-f72.google.com with SMTP id h40-20020a0565123ca800b00402514d959fso9773629lfv.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Dec 2021 07:19:41 -0800 (PST)
+        Wed, 15 Dec 2021 11:09:09 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EEEFC061401
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Dec 2021 08:09:09 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id s1so4929492wrg.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Dec 2021 08:09:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=miak/i2hpYLrUnHAJtCSqYH++KiQVAx0lzOfX3VFDhs=;
+        b=YLi+Map8CrZDUMzwjQftVbIvXrD/TGP48S7VMuAlfV4OA9QBsCobU0lZvNTKgmO4Bd
+         VMiaDUtne7LqIdkK4A1i7n5NOio6+cRyMfqvu+gXr4R4HjDpPe0327RaIaYUMKLRZlhI
+         o2OzS2sZLp9WdYnoVswGfp0ECWlMrrilKGoIrpa8nWY8dGafejh9sTAaUW2dK5nBhy81
+         lIdvX6E11MUFCyfZOXP7ppSiwuK7lCE/8QCC+bYxrUk+mBQnemzNiPWrmpWeAiHdgcCH
+         5+SLT9bgqXasuDO12QP/FFuh9kzHPw6+B7mDzvfyRliLar2Cl3mwfOnI6JEztIORZW43
+         iCNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YsgM5wVM9boJb3f4RQ+uT9iXUGMe1XTlP9oHfwmk45A=;
-        b=cXR9Mp8bI8ICHfqh2xH/OwncUvvHyIMwafARUq//QDN56Sw38u3Q1Q9m629kRXoPqG
-         egqfgQUwjarJOA0MWXkWyZmfvAjmFf87DdsIuy9LbCP7md6kZzBGsshnS93bkc+72KQ2
-         ZZ0rlwIRpi4oviVUH4MMwzBsxnrc3Ra5BYM+6bwg2fF9d/FXt9gJZmS5v8yJ/0LaVnF3
-         usLsAKvd2sfp+tzogss80+I7SZnNl9GSMeBj/IDQAN7RoNhvn7nXSXqoei3BzGhis5aE
-         hWL89JMl9Cad+snWzDp1Qu9TZXnulrBQmzLYlGokRilaY6pIRGaXOY6qw2Igxn1wYhln
-         8RSQ==
-X-Gm-Message-State: AOAM531Tti3phUpNI71qVY/P30//4PgQPAw1HRq2eFS5lq9befP6l0ic
-        S4YsxU0wqa3wS7z629QhNt9xqdSf4kKvEhn3PMo4NL1sBs/Ft31Q4xCF1IYEea0yf/yEKEH7ATK
-        tYev9jxUe3pjQdqtXhoGI+5tnjPKCsxuMe4H98yjosCjOvnNN
-X-Received: by 2002:a2e:a69f:: with SMTP id q31mr11141851lje.236.1639581581021;
-        Wed, 15 Dec 2021 07:19:41 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx2IsUQ0xYTrqnY6XxwscM20tZetyuhv4/dvH5xU4yzBjcJu2+c20b2h6TUw6oAw3b4SkqOpg==
-X-Received: by 2002:a2e:a69f:: with SMTP id q31mr11141835lje.236.1639581580840;
-        Wed, 15 Dec 2021 07:19:40 -0800 (PST)
-Received: from localhost.localdomain (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id k14sm364798lfu.210.2021.12.15.07.19.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=miak/i2hpYLrUnHAJtCSqYH++KiQVAx0lzOfX3VFDhs=;
+        b=7oue6pFzyDuNK0J4bIpM3cggMb9q4O76pmHU6QVn/L8eQrB+yGB3UrpjkzREAGtZBE
+         GL8d0OAuNvsAdOqYMl3thyrfUKQtMO9o8JVeTIL4r0Wg2uRl85RE960GWMS7E7u1MNT4
+         GGzPqy7VnJr69DBHinhihJGj8H3j2Bafnf3xwvBYjB7+cXq/S+kg6buSNG1DIXn03p1r
+         2BfR0vkc5nFBM23vvGxrf8V94w629JwZLpunS6c8taZX3xYicjebj4weCAFXqNCm/QKG
+         znWm+gHZ/JBK9w4FO+k2RhhUgKeDsLutHZsyLamQK6/wrhAnCCsaoz/hPX7tKWf0XGDu
+         SioA==
+X-Gm-Message-State: AOAM5336JbWtyTDGkuM8vY98htrKY+VvEj9sDZz8JThA9vcmQdIB04Oq
+        NGSy0JRckRnTU5ylqD0vFRxYBV3gwYhM6KWF
+X-Google-Smtp-Source: ABdhPJzsGRd487Qtry582CfMd10zTS8QWxJIAZQOiMVPhG3S8uwc8QKnH4OH3ZsHO9NGfYMgiYPcwQ==
+X-Received: by 2002:adf:d1c1:: with SMTP id b1mr4932000wrd.296.1639584547840;
+        Wed, 15 Dec 2021 08:09:07 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id bg34sm5861786wmb.47.2021.12.15.08.09.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 07:19:40 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: soc: samsung: keep SoC driver bindings together
-Date:   Wed, 15 Dec 2021 16:19:04 +0100
-Message-Id: <163958149735.164220.7940374210521750754.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211213112057.16709-1-krzysztof.kozlowski@canonical.com>
-References: <20211213112057.16709-1-krzysztof.kozlowski@canonical.com>
+        Wed, 15 Dec 2021 08:09:07 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 0/7] arm64: dts: exynos: Add E850-96 board support
+Date:   Wed, 15 Dec 2021 18:08:59 +0200
+Message-Id: <20211215160906.17451-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 13 Dec 2021 12:20:57 +0100, Krzysztof Kozlowski wrote:
-> Recently added Samsung Exynos USI driver devicetree bindings were added
-> under ../bindings/soc/samsung/exynos-usi.yaml, so move there also two
-> other bindings for Exynos SoC drivers: the PMU and ChipID.
-> 
-> Update Samsung Exynos MAINTAINERS entry to include this new path.
-> 
-> 
-> [...]
+WinLink's E850-96 is a dev board based on Exynos850 SoC [1]. The board's
+design follows 96boards specifications, hence it's compatible with
+96boards mezzanines [2].
 
-Applied, thanks!
+This patch series adds the initial support for E850-96 board and
+Exynos850 SoC, along with corresponding bindings. Only basic platform
+components are enabled at the moment (like serial, I2C, eMMC, RTC, WDT,
+clock driver, etc). Right now with this patch series it's possible to
+run the kernel with BusyBox rootfs as a RAM disk. More features are
+coming soon.
 
-[1/1] dt-bindings: soc: samsung: keep SoC driver bindings together
-      commit: 69bac8e4260865ab56d565593c44a519291f36ff
+[1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
+[2] https://www.96boards.org/products/mezzanine/
 
-Best regards,
+Sam Protsenko (7):
+  dt-bindings: clock: exynos850: Add bindings for Exynos850 sysreg
+    clocks
+  clk: samsung: exynos850: Add missing sysreg clocks
+  dt-bindings: Add vendor prefix for WinLink
+  dt-bindings: arm: samsung: Document E850-96 board binding
+  dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850
+  arm64: dts: exynos: Add initial Exynos850 SoC support
+  arm64: dts: exynos: Add initial E850-96 board support
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/exynos/Makefile           |   3 +-
+ .../boot/dts/exynos/exynos850-e850-96.dts     | 157 ++++
+ .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 755 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     | 755 ++++++++++++++++++
+ drivers/clk/samsung/clk-exynos850.c           |  29 +
+ include/dt-bindings/clock/exynos850.h         |  12 +-
+ include/dt-bindings/pinctrl/samsung.h         |  13 +-
+ 9 files changed, 1727 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+2.30.2
+
