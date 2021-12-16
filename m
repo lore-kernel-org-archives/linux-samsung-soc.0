@@ -2,82 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99C6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Dec 2021 16:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A7EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Dec 2021 17:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239007AbhLPQKh (ORCPT
+        id S240462AbhLPRsg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 11:10:37 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:56577 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S239015AbhLPQKh (ORCPT
+        Thu, 16 Dec 2021 12:48:36 -0500
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:33501 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235886AbhLPRsg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:10:37 -0500
-Received: (qmail 819193 invoked by uid 1000); 16 Dec 2021 11:10:36 -0500
-Date:   Thu, 16 Dec 2021 11:10:36 -0500
-From:   Alan Stern <stern@rowland.harvard.edu>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thu, 16 Dec 2021 12:48:36 -0500
+Received: by mail-oi1-f182.google.com with SMTP id q25so68344oiw.0;
+        Thu, 16 Dec 2021 09:48:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=o2JZCbz8Avj0lvEIZyPPiYT7pEQh5cOWFHLlHKH+zGo=;
+        b=zVjoExj1874wHfzv0AC/3cVxY2flDY8yCv2pkuN+OXHpjGL+LcrnoWcL+C3iOLCdkt
+         wpe8dj4fDnobN2jDHJ+znyCO7j16FvXInBuraGlm1lyM6EsfWulgyEUeIrz0D9TBoeSa
+         DNkdbYvlPP21EZ8FWEvB1uLDhP3nRW4S1PgNZetxpe9wJNcmKYFz0YxL8mdo+tDGLDjU
+         J/HshgsabnCX8MHzi1cYE07CGB2I7GQ96E31QxfMhJ3Ylet5pFaxXcMFKDyIENFnebHc
+         U1w0Y3wAG6dUlMcO197UsmDkzLOS5rIIsPS8PxcH8bj7nMAB7iiaaNJ2OXMx31s0F9Ev
+         du6A==
+X-Gm-Message-State: AOAM53132fbkJLusdwmcBxIMUBzGqmp8fQmtrHb4m5ga8fWeOqIK4SJO
+        kyhHpQUPQyDrZ64ce/nsug==
+X-Google-Smtp-Source: ABdhPJzqxF2ClTUqx7Cq8pma6B2pY+ysF0xPZipJknlo450iLFwctAIxCVl4l1Y1qlNu/o6L9npzIQ==
+X-Received: by 2002:aca:2319:: with SMTP id e25mr5107591oie.164.1639676915516;
+        Thu, 16 Dec 2021 09:48:35 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id b1sm1143229otj.5.2021.12.16.09.48.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 09:48:33 -0800 (PST)
+Received: (nullmailer pid 462419 invoked by uid 1000);
+        Thu, 16 Dec 2021 17:48:32 -0000
+Date:   Thu, 16 Dec 2021 11:48:32 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        David Virag <virag.david003@gmail.com>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: ohci-s3c2410: Use platform_get_irq() to get the
- interrupt
-Message-ID: <Ybtk/KaLV6h+U9h5@rowland.harvard.edu>
-References: <20211215225358.1993774-1-robh@kernel.org>
+        linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Hao Fang <fanghao11@huawei.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+Message-ID: <Ybt78LP4KDYoQrDy@robh.at.kernel.org>
+References: <20211215160906.17451-1-semen.protsenko@linaro.org>
+ <20211215160906.17451-2-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211215225358.1993774-1-robh@kernel.org>
+In-Reply-To: <20211215160906.17451-2-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 04:53:57PM -0600, Rob Herring wrote:
-> Accessing platform device resources directly has long been deprecated for
-> DT as IRQ resources may not be available at device creation time. Drivers
-> relying on the static IRQ resources is blocking removing the static setup
-> from the DT core code.
+On Wed, 15 Dec 2021 18:09:00 +0200, Sam Protsenko wrote:
+> System Register is used to configure system behavior, like USI protocol,
+> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+> make it possible to modify SYSREG registers.
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> While at it, add also missing PMU and GPIO clocks, which looks necessary
+> and might be needed for corresponding Exynos850 features soon.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
->  drivers/usb/host/ohci-s3c2410.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-> index 1bec9b585e2d..12264c048601 100644
-> --- a/drivers/usb/host/ohci-s3c2410.c
-> +++ b/drivers/usb/host/ohci-s3c2410.c
-> @@ -356,7 +356,7 @@ static int ohci_hcd_s3c2410_probe(struct platform_device *dev)
->  {
->  	struct usb_hcd *hcd = NULL;
->  	struct s3c2410_hcd_info *info = dev_get_platdata(&dev->dev);
-> -	int retval;
-> +	int retval, irq;
->  
->  	s3c2410_usb_set_power(info, 1, 1);
->  	s3c2410_usb_set_power(info, 2, 1);
-> @@ -388,9 +388,15 @@ static int ohci_hcd_s3c2410_probe(struct platform_device *dev)
->  		goto err_put;
->  	}
->  
-> +	irq = platform_get_irq(dev, 0);
-> +	if (irq < 0) {
-> +		retval = irq;
-> +		goto err_put;
-> +	}
-> +
->  	s3c2410_start_hc(dev, hcd);
->  
-> -	retval = usb_add_hcd(hcd, dev->resource[1].start, 0);
-> +	retval = usb_add_hcd(hcd, irq, 0);
->  	if (retval != 0)
->  		goto err_ioremap;
->  
-> -- 
-> 2.32.0
-> 
+
+
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
+
