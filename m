@@ -2,83 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BECC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Dec 2021 20:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26621C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Dec 2021 21:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233887AbhLPUZg (ORCPT
+        id S236743AbhLPVWh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 15:25:36 -0500
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:35806 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240687AbhLPUZf (ORCPT
+        Thu, 16 Dec 2021 16:22:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57070 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229459AbhLPVWh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 15:25:35 -0500
-Received: by mail-oi1-f170.google.com with SMTP id m6so590586oim.2;
-        Thu, 16 Dec 2021 12:25:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o1JFD4cNZTx567owOuKOKb/ZI5BNAf0I4tx7WOMLMP4=;
-        b=icWjCeFcNjjKc51imT13BbJ/oBQtYngujEw5D8gYoltdUaq4XerLOpVUM/T1ueStdQ
-         +5RYSQeusFYBDjlnF6f5uXwjNVtmhKLpPHqwbyACsL0UMRH6mWcYoNBdH4Apl7oIcVU2
-         QH5NUP5wr56eDUzmyCFE/uupMo/vj2UTkG8ym2NMmUdMpsLu+aj0xa7/GO+q9xmRYFk/
-         J3pe/pEnVaGz/32Fw3O/hIMGIr1IrCqv6NBiLdjb7gJTiMiz2dt5DERl9G/FXCCelOyg
-         pDOOnb6B9Bos7sgSPCYrT2tm4jdi/eo8I/zy9iAjC5RkrvoJI3O7f0qxI+aprXDwpQWU
-         +kaQ==
-X-Gm-Message-State: AOAM531apWOWbcIRQy+1uz89PxmnJPwpbzNwmp8gcbHbKXi1onQ6am7C
-        MndZMvS443nnkyK6Q8W9ig==
-X-Google-Smtp-Source: ABdhPJwU+vaHoQ8PTMCCCR5TMFV7Wl/9PlgwfvZBBRErJadoIJmW7E/7xE2eRZKjPhChZ89BBDMcVA==
-X-Received: by 2002:a05:6808:4d9:: with SMTP id a25mr5497400oie.52.1639686334775;
-        Thu, 16 Dec 2021 12:25:34 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bb8sm1173912oib.9.2021.12.16.12.25.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 12:25:34 -0800 (PST)
-Received: (nullmailer pid 696786 invoked by uid 1000);
-        Thu, 16 Dec 2021 20:25:32 -0000
-Date:   Thu, 16 Dec 2021 14:25:32 -0600
-From:   Rob Herring <robh@kernel.org>
+        Thu, 16 Dec 2021 16:22:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3322C061574;
+        Thu, 16 Dec 2021 13:22:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 808D4B82322;
+        Thu, 16 Dec 2021 21:22:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF66C36AE2;
+        Thu, 16 Dec 2021 21:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639689754;
+        bh=0kQfGM1RjxfYWvw20Tn73hc189zljonNHseVbqgTbXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NawKA1i+IWMOt72tRl6CiCFVJ9g7ci2uwJmnnnhRwxp9oi1PWf3D+XOqSd5W2ju4s
+         lTVpnA+IrGBZtGDzns4vqH86j2VY+P6hzxDpDvSynkJw12plUoDVKk1mQKbqfBG/a7
+         Jj9KhpAr5SCjkdhYwO5nDaYdXZ9Y5iXAbTVfqlLQ0pYnmPpagXECe9jPWcZkDbx1b3
+         V4zFlp/3irinh9roalIKeKZd1dlViQBV+VPwjYrvminP1D15Qy9Bh7+3sVybC3FryZ
+         qvDRW3hOKeDhwSgEjmVtyzLviM2yDic+z2rTsZEWmMcW6UF0V1+guztEN9HAF2AMtQ
+         ctbx7QWfkWnFw==
+Date:   Thu, 16 Dec 2021 22:22:31 +0100
+From:   Wolfram Sang <wsa@kernel.org>
 To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Daniel Palmer <daniel@0x0f.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Chanho Park <chanho61.park@samsung.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Hao Fang <fanghao11@huawei.com>, linux-clk@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        David Virag <virag.david003@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: exynos5: Fix getting the optional clock
+Message-ID: <YbuuFztynhVUcyTM@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>, linux-i2c@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Youngmin Nam <youngmin.nam@samsung.com>
-Subject: Re: [PATCH 5/7] dt-bindings: pinctrl: samsung: Add pin drive
- definitions for Exynos850
-Message-ID: <YbugvLe2Su/LtNyn@robh.at.kernel.org>
-References: <20211215160906.17451-1-semen.protsenko@linaro.org>
- <20211215160906.17451-6-semen.protsenko@linaro.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211212181057.20210-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LGkMuXw0gDA0VW0U"
 Content-Disposition: inline
-In-Reply-To: <20211215160906.17451-6-semen.protsenko@linaro.org>
+In-Reply-To: <20211212181057.20210-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 15 Dec 2021 18:09:04 +0200, Sam Protsenko wrote:
-> All Exynos850 GPIO blocks can use EXYNOS5420_PIN_DRV* definitions,
-> except GPIO_HSI block. Add pin drive strength definitions for GPIO_HSI
-> block correspondingly.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  include/dt-bindings/pinctrl/samsung.h | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+--LGkMuXw0gDA0VW0U
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Dec 12, 2021 at 08:10:57PM +0200, Sam Protsenko wrote:
+> "hsi2c_pclk" clock is optional and may not be present for some SoCs
+> supported by this driver. Nevertheless, in case the clock is provided
+> but some error happens during its getting, that error should be handled
+> properly. Use devm_clk_get_optional() API for that. Also report possible
+> errors using dev_err_probe() to handle properly -EPROBE_DEFER error (if
+> clock provider is not ready by the time I2C probe function is executed).
+>=20
+> Fixes: c93ac09df2a8 ("i2c: exynos5: Add bus clock support")
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Applied to for-next, thanks! But I needed to fix the Fixes tag?
+
+
+--LGkMuXw0gDA0VW0U
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmG7rhcACgkQFA3kzBSg
+KbYuLg//V9a0VnkNuZFXzKPpM+/5MOfxH5zynk2LD1STaEvo0YaCaTI1W6JJ0pEI
+uUikJ9YyxnXgz7KuOVEl0yWavW3xm9v25OAHOCzuK9v4iVTLJZkY0/Ya21Hik4x5
+twOe282/lGfIGsmmZ5X8a+3Ul/1ZiIDi7c96MEwOwQpTQWK2UgTcswmKKsmUG2ps
+KUAmqnUf75IkjKtu2wNBCDl6CSkRpudKSSNslKv5Berg4O7R/NWVQl8FlDdwR5qP
+2zX1NUvZF9IREz6mKclsrXFeyi/Jfp0F/AfI4+ArSSIGMF5uFaxQGpYEpyokGpDd
+OLwK4YJ7ughim9FjdcMAIllFAEFtgSIdW+5zkV1U5m/KnM8zYA43hXYHB7191ekI
+2m1fg9aTV+EITF9Y9ErezNjHyr5LKC3jC805/AnvyDF+38mhHSRIJlUIg26hQ2tq
+2vSotv3yh9tqfvgR8kd1RM2LpoPu354TYFjOXGMyI0BNQkNKKTkzWl/8MGhEiCFc
+QqlySBDQ1Y57xjdTmHM1Uw+BYmLS6/Pqzh7tOPX29ocE1BZmiuzkwwCGuwCefgv5
+mxyTyyH9iR25lWm6KzYIFgx/fbBjLyv9n3z/GUCVQtvGVNIz1piTy0n168T/r3qM
+Q+MCKF7E7oLy9L+o/GIij734gan/g1pBatK7x+hNh8XClF/V16Q=
+=5alG
+-----END PGP SIGNATURE-----
+
+--LGkMuXw0gDA0VW0U--
