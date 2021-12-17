@@ -2,132 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D591C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Dec 2021 00:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DDEC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Dec 2021 00:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231203AbhLQAr3 (ORCPT
+        id S231301AbhLQAuF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 19:47:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47352 "EHLO
+        Thu, 16 Dec 2021 19:50:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbhLQAr3 (ORCPT
+        with ESMTP id S231276AbhLQAuE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 19:47:29 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B357CC061574;
-        Thu, 16 Dec 2021 16:47:28 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id d10so1299012lfg.6;
-        Thu, 16 Dec 2021 16:47:28 -0800 (PST)
+        Thu, 16 Dec 2021 19:50:04 -0500
+Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3CA0C061401
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Dec 2021 16:50:03 -0800 (PST)
+Received: by mail-vk1-xa33.google.com with SMTP id s144so515262vkb.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Dec 2021 16:50:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AAR+6gokDhVIrnm7EiJygBmXr48WtYzlLYW9kUrZk1I=;
-        b=Qka8zTqjm+QroCBjjfHEMnmj8WmNq3H2uQ1IBvFtxQ11GghpAW1o0uk8IX/TbF+RWb
-         mJkNqP0NwlZW1KHZjLnP+VrX7wSnwe+c8/0K/HotoiBvwiHeqkXahdNNnKIL0Zrggpg1
-         Ysezta2LMpajRr/gzWm/xvzVr00vqjjLz8gbrePUtoPSA0x/4cZxwChelODhjiQYK7va
-         PwS3KyJRwhf1P67jOy8cMoeb7dYVUcHvIULSj9lrvLeepc8ErwHj/yEDEJChjPYVS5FY
-         IobM4twqG0RBriMG+CKfyth4HUbNMOg3hnVKL6wH2h9Rh4tTY66hZfIVTkaFyX11nxMb
-         SWmg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vl85UXIit3TIRb2ymMVxHwpC9u9xdrSW91+paUDgSN0=;
+        b=duqyeaUHQBzLD52wIiydGrGC2oyy4uqZrpPOBRN+8H1AO5vvXpVvIkGli6XtP8P3TI
+         1S2fndLHDjBje3AfMdJ3LHxJMhFyu4suQR78Gcx2NLSl+Bb5niwRt9P9LqS8CXaHmDi4
+         5iNZMpDXDgfaJ7TbYKb/NFN25Vqw+t836zpMiuUoljxUo3pNn1yowcMq8WVMZski45y4
+         tOR+mM9WhflisonozTdmAeNV4EKKBZb3p3u6E2k3maI7jtXGtVwR8ko9648AFUA+a5bE
+         +2rdOVvhbTZkCVgeYVV8XtLYLq+mCm6IExP3JnvaV3jNS5/yUVP4jZcf/dNik7QG8DAF
+         XGyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AAR+6gokDhVIrnm7EiJygBmXr48WtYzlLYW9kUrZk1I=;
-        b=TLZ9fChpmDo5+kJJkmxjNWJbl6NsQNFXh1yx/PoUUVMuv8aA76bcmzQ59C7IkVcZzq
-         EePeLxGlzFyt2e0nXTo8nl42iJopUQTjGBqEpdmO7vID+bGZKqYh+TxXaiQcPmtOu2Yb
-         XeO5vJhTvourpbpGipLGtH+sx0ohY1l344UYKAjlKhX58G+pqxxoQzTqimxzc3KUknFl
-         axwfeg7Qvm0eEZMeFe6BQtQQjRYqG6A5ZSWbKmgPnVZqlTxDBuyRKFA4mYcQeBLYeKXF
-         8IzIm6KTdmuFFhyYhOJHcsPAl4JnwZWFCx/Ls6/RB542VbwxUvY5yWuGhSWQfwKD3e9b
-         3ybg==
-X-Gm-Message-State: AOAM533mLOgd6E42mLnphHUClGSo5naEa/ntGP8u2W+zfgB9HiKEO2mA
-        cNcI08YoKM/6oGSHA5n0YVaDe0jgYyU=
-X-Google-Smtp-Source: ABdhPJxmEjB5n5f5oNzo1e6e3pmj4zBm9PN4yweFZPbD0q0qCiRmk0H/reVmoYCFx2qlpB6falgcZQ==
-X-Received: by 2002:a05:6512:1113:: with SMTP id l19mr667843lfg.184.1639702046863;
-        Thu, 16 Dec 2021 16:47:26 -0800 (PST)
-Received: from [192.168.2.145] (94-29-63-156.dynamic.spd-mgts.ru. [94.29.63.156])
-        by smtp.googlemail.com with ESMTPSA id z8sm1413490ljj.86.2021.12.16.16.47.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 16:47:26 -0800 (PST)
-Subject: Re: [PATCH v17 7/7] usb: Specify dependencies on USB_XHCI_PLATFORM
- with 'depends on'
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Felipe Balbi <balbi@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Peter Chen <peter.chen@kernel.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Roger Quadros <rogerq@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Bastien Nocera <hadess@hadess.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Aswath Govindraju <a-govindraju@ti.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Pawel Laszczak <pawell@cadence.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20211116200739.924401-1-mka@chromium.org>
- <20211116120642.v17.7.If248f05613bbb06a44eb0b0909be5d97218f417b@changeid>
- <YbvSNta4jCxizaTa@google.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b0b69294-e7fb-5e7a-80f3-466dd4bdc88a@gmail.com>
-Date:   Fri, 17 Dec 2021 03:47:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vl85UXIit3TIRb2ymMVxHwpC9u9xdrSW91+paUDgSN0=;
+        b=GnL7QRCtFKPsuSSkk6Glx3Ppbb7BKKBWtfQJtD0uQGH/URHNkn71rxXOBv5ThGnj7Z
+         /zfHP2Lj9QzPThUIVJlz2I0vMg08tEITrQF8DmJEKdQhFPmn/tM0BT47vXrNUISNiavK
+         Xv/XTcbjK/0FvMRGpHs+cnPcfnmokFCRFdG+HRe4y0KcuCsDOHhorLlFdaeajSEN3q19
+         aYvJ5q/+Jj1RoHyP7F2EXzkXok7dIwYxZi63CNF1oygIyz4ApMOSh7xTE2XQdg+tlWab
+         WEKBNz6CIPXMup8VQ3PDpdnnE37f38twTtsrlimCx6f8yVZKskj/445X6bkxaX+vU26Q
+         RMlA==
+X-Gm-Message-State: AOAM530aCBLrUk0TcufYYV/Zm63EbTmXRoVnGpadYVznfeExzlkzmqu9
+        umREWnD8cSmotdhIItyjs289UfcvBtrbSVY4AP3TXA==
+X-Google-Smtp-Source: ABdhPJwnNXczPxAyQGL0JVZoJtWfIEz5rAUElbIOw96rnz1W3Cel/D7Jq+MOvVqHlEcF5howTnnC7fxOVXRdJ4C7ECo=
+X-Received: by 2002:a05:6122:2158:: with SMTP id m24mr256841vkd.1.1639702202870;
+ Thu, 16 Dec 2021 16:50:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <YbvSNta4jCxizaTa@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211215160906.17451-1-semen.protsenko@linaro.org>
+ <20211215160906.17451-8-semen.protsenko@linaro.org> <b998809c-9d33-cd42-ebfd-7cce620a6ed8@canonical.com>
+In-Reply-To: <b998809c-9d33-cd42-ebfd-7cce620a6ed8@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 17 Dec 2021 02:49:51 +0200
+Message-ID: <CAPLW+4=KLUnNo1xYqqiZqi2+QPi0mKgFmnRk3+1Tw-OS_Bb03w@mail.gmail.com>
+Subject: Re: [PATCH 7/7] arm64: dts: exynos: Add initial E850-96 board support
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-17.12.2021 02:56, Matthias Kaehlcke пишет:
-> On Tue, Nov 16, 2021 at 12:07:39PM -0800, Matthias Kaehlcke wrote:
->> Some USB controller drivers that depend on the xhci-plat driver
->> specify this dependency using 'select' in Kconfig. This is not
->> recommended for symbols that have other dependencies as it may
->> lead to invalid configurations. Use 'depends on' to specify the
->> dependency instead of 'select'.
->>
->> For dwc3 specify the dependency on USB_XHCI_PLATFORM in
->> USB_DWC3_HOST and USB_DWC3_DUAL_ROLE. Also adjust the
->> dependencies of USB_DWC3_CORE to make sure that at least one
->> of USB_DWC3_HOST, USB_DWC3_GADGET or USB_DWC3_DUAL_ROLE can be
->> selected.
->>
->> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
->> Reviewed-by: Roger Quadros <rogerq@kernel.org>
->> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
-> Note: This patch has been removed from the onboard_usb_hub series,
-> together with "ARM: configs: Explicitly enable USB_XHCI_PLATFORM
-> where needed" and "arm64: defconfig: Explicitly enable
-> USB_XHCI_PLATFORM". These patches aren't any longer needed for the
-> series. If maintainers think they are useful independently from
-> the series please pick them or let me know what needs to be
-> changed to get them landed.
-> 
+On Wed, 15 Dec 2021 at 19:04, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 15/12/2021 17:09, Sam Protsenko wrote:
+> > E850-96 is a 96boards development board manufactured by WinLink. It
+> > incorporates Samsung Exynos850 SoC, and is compatible with 96boards
+> > mezzanine boards [1], as it follows 96boards standards.
+> >
+> > This patch adds minimal support for E850-96 board. Next features are
+> > enabled in board dts file and verified with minimal BusyBox rootfs:
+> >
+> >  * User buttons
+> >  * LEDs
+> >  * Serial console
+> >  * Watchdog timers
+> >  * RTC
+> >  * eMMC
+> >
+> > [1] https://www.96boards.org/products/mezzanine/
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/exynos/Makefile           |   3 +-
+> >  .../boot/dts/exynos/exynos850-e850-96.dts     | 157 ++++++++++++++++++
+> >  2 files changed, 159 insertions(+), 1 deletion(-)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> > index b41e86df0a84..803548ccc537 100644
+> > --- a/arch/arm64/boot/dts/exynos/Makefile
+> > +++ b/arch/arm64/boot/dts/exynos/Makefile
+> > @@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+> >       exynos5433-tm2.dtb      \
+> >       exynos5433-tm2e.dtb     \
+> >       exynos7-espresso.dtb    \
+> > -     exynosautov9-sadk.dtb
+> > +     exynosautov9-sadk.dtb   \
+> > +     exynos850-e850-96.dtb
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+> > new file mode 100644
+> > index 000000000000..fd611906d81c
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+> > @@ -0,0 +1,157 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * WinLink E850-96 board device tree source
+> > + *
+> > + * Copyright (C) 2018 Samsung Electronics Co., Ltd.
+> > + * Copyright (C) 2021 Linaro Ltd.
+> > + *
+> > + * Device tree source file for WinLink's E850-96 board which is based on
+> > + * Samsung Exynos850 SoC.
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "exynos850.dtsi"
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/input/input.h>
+> > +
+> > +#define BOARD_ID     0x0
+> > +#define BOARD_REV    0x2
+> > +
+> > +/ {
+> > +     model = "WinLink E850-96 board";
+> > +     compatible = "winlink,e850-96", "samsung,exynos850";
+> > +     board_id = <BOARD_ID>;
+> > +     board_rev = <BOARD_REV>;
+> > +
+> > +     chosen {
+> > +             stdout-path = &serial_0;
+> > +     };
+> > +
+>
+> You did not define memory node. Do you expect bootloader to fill it?
+> Does it change between different boards?
+>
 
-Hi,
+Yeah, bootloader fills it. But now I can see it's probably better to
+specify it explicitly specify it in dts. Will do in v2.
 
-I don't know what this all is about, perhaps I'm CC'ed semi-randomly
-because touched that Kconfig once.
-
-All I can say here is that the commit message tells us "This is not
-recommended" and doesn't explain what's the actual problem is being
-solved. If there is no real problem, why bother?
+>
+> Best regards,
+> Krzysztof
