@@ -2,54 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4414CC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Dec 2021 01:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 833D0C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Dec 2021 01:37:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231945AbhLQBaY (ORCPT
+        id S229708AbhLQBh1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56802 "EHLO
+        Thu, 16 Dec 2021 20:37:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231919AbhLQBaV (ORCPT
+        with ESMTP id S229532AbhLQBh1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 20:30:21 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA348C06173F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Dec 2021 17:30:20 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id d38so1563946lfv.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Dec 2021 17:30:20 -0800 (PST)
+        Thu, 16 Dec 2021 20:37:27 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A94C061574
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Dec 2021 17:37:26 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id y22so1607430uap.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Dec 2021 17:37:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0EaeJHVapfeG+0ow4kbqvK0MBEVKM2dNg2z2A86xtXI=;
-        b=qCLFxkn1Oxg3mgj5UDpi8TECWroR+JgiKV/Js3+lYAk4UXybclOAziiyNnicrX+o36
-         7pHNQjXCJ949VL0WqCUY7MSS7YZGOLGcO4gy+FwwBzGJC5CGVPH+tJzYHOTN7c/PwraY
-         /cco9CyY3KAmBLWmz+G6u9R+SyQ5iOP1IsajXVzwTLFQeVO2C838MXr4wQUhfmhUUiRP
-         KXyCmus6zkuhS9bzdTDlJEIJ2gojIXNR2bThpq4SI9dqkhSh6IiLnNhxrx7U58839XGY
-         5iqjUTHj8H18ESB2zxnZUh2MsX+LScrjHpw9sFtf3IQJVgyHdLIpGQpbpqg8qtN6HUCo
-         4YMw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ULm8F1jUKPQA5lXk5boYZppCWt+QFr5wkiSxlguZEnY=;
+        b=l1c1ElnqZemsukJbKE2Rxh6HSF2h/6AZiWfJIH4M9AMKhIbyhoRoe/Bcdbvd3uOPxF
+         yAJd1J4PRKLinEyqo0HJ7VMgLw45f6qYxCbHIGEJjC44QDM3gZUDhVZN7Qsk2OqvmT6m
+         PKelgt0+2CGU59vWqD/NCh3hPsmCt1fc+H+AOzzJRKZ0HIdJg+fjIL3+6pFt2EQ5lXgQ
+         dK6QkrkBWqurcgSqHIk39b4eRtfWc6QYk/Md6YPbI420uTx+KnMCsZsMrmVgwnp6aeEK
+         ogC+9wxuqGZ5A40JgL5Q4MIrJk/x33EDYdz/3uWShhq5BK0ePiRDygnlqxHBEf3I9mDk
+         +GXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0EaeJHVapfeG+0ow4kbqvK0MBEVKM2dNg2z2A86xtXI=;
-        b=BmnGBsA2U21pNSvZ9p+xe0u+9TLcXEIjuxg1XUpmg1Xfg70f1AuXPX+FXgVQpNceXB
-         9afxICWR5CZDAl5j4MxdhsF2IVWtFYHxoNImWtPCEymMvnC8buBaj7hktPx2mzUDd4p3
-         ShgRZcyHfpVoIQPqBRTZFJdcmzV2uJaRdINiun92BHuZhn18StlPP9yCAAkl8/IDj1aM
-         brVvWCeWGi2pe4THp75JQaN9bMkTOuqCDDq/1abY4fxyq1q3Ou9vyVE8L2WyVsez9C9B
-         txlAcB1RE4tc2oajOU7KRvCWPFIQS6rZ48NDsI9vMMg/Rry0JIfX9MSkPqT1vOCgUxbk
-         iNTQ==
-X-Gm-Message-State: AOAM531axH++iwavCqr0GmPbgKcXyvJaWFvW1pA57KQoLRj1Ta7V/gTr
-        dbeUZ6Ku46jv1nrXsqw9BN5ZLA==
-X-Google-Smtp-Source: ABdhPJyBeQGZz7+zmb0FO0BdsfqamVmyBShDesR+suzc3yUz9WoSpS+we4qdDYL/DsrOkkvER/cBQQ==
-X-Received: by 2002:a05:6512:c0b:: with SMTP id z11mr721871lfu.343.1639704619194;
-        Thu, 16 Dec 2021 17:30:19 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id bt18sm53317lfb.50.2021.12.16.17.30.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 17:30:18 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ULm8F1jUKPQA5lXk5boYZppCWt+QFr5wkiSxlguZEnY=;
+        b=5HICrAzaXzMWIfrc3YQ4EB+tHTQpAOH4E8cdoZxFOC1elG4QpOdm0lG3oKn/nPfOFR
+         DnayBm5iiBTrNk+uzVPHglmP1UyysbFQYxmq2DcV5IadM98SbrPZ07f9dKzUUrJw+GbF
+         qWdflhfD3NgUVtoFtveUlR+NewzZgxgy6+g/F+rfnIFg7+xMSPdRiZ+KYtxGO6V1S7IW
+         KfFaWAIwhazSdJUBaqY17LZR/OE0V6O28E6BVgq81XPjXRdK9drMG7kco+RD9Vw74N+h
+         PaPN4+huo097rrd4CNqAMXiFBLdLTTL7okUPebfRQMUamd0vBUCJZfpFi/Ik/yP0YYHW
+         sjIw==
+X-Gm-Message-State: AOAM532Nn3OEACHH1ZF1+fIJvWrfweMuGpVranrIZpJREUWIZP7x2ozF
+        OYsW0Iu5m+H0wTsgdCDBl0la92nPdZHPzz/W/u6wRw==
+X-Google-Smtp-Source: ABdhPJyruSK7tH/BTjcldQoAu0YUpSBd65lTPCLNFuSaDsp8UC1z/jZAcY7igh5H6TK/nb71yxIS9+VyqE6JrTxpzpg=
+X-Received: by 2002:ab0:61d9:: with SMTP id m25mr213664uan.114.1639705045957;
+ Thu, 16 Dec 2021 17:37:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20211217013005.16646-1-semen.protsenko@linaro.org> <20211217013005.16646-8-semen.protsenko@linaro.org>
+In-Reply-To: <20211217013005.16646-8-semen.protsenko@linaro.org>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 17 Dec 2021 03:37:14 +0200
+Message-ID: <CAPLW+4nSAjugncJkr49k=nkWiKXs-mo16_qfq1KRGkaaWu-R7Q@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: exynos: Add initial E850-96 board support
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -67,241 +69,239 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: dts: exynos: Add initial E850-96 board support
-Date:   Fri, 17 Dec 2021 03:30:05 +0200
-Message-Id: <20211217013005.16646-8-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211217013005.16646-1-semen.protsenko@linaro.org>
-References: <20211217013005.16646-1-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-E850-96 is a 96boards development board manufactured by WinLink. It
-incorporates Samsung Exynos850 SoC, and is compatible with 96boards
-mezzanine boards [1], as it follows 96boards standards.
+On Fri, 17 Dec 2021 at 03:30, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> E850-96 is a 96boards development board manufactured by WinLink. It
+> incorporates Samsung Exynos850 SoC, and is compatible with 96boards
+> mezzanine boards [1], as it follows 96boards standards.
+>
+> This patch adds minimal support for E850-96 board. Next features are
+> enabled in board dts file and verified with minimal BusyBox rootfs:
+>
+>  * User buttons
+>  * LEDs
+>  * Serial console
+>  * Watchdog timers
+>  * RTC
+>  * eMMC
+>
+> [1] https://www.96boards.org/products/mezzanine/
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+> Changes in v2:
+>   - Removed board_id and board_rev properties
+>   - Removed BOARD_ID and BOARD_REV constants
+>   - Put dtb in alphabetical order in Makefile
+>   - Added "color" and "function" properties to LED nodes
+>   - Sorted all phandle overrides by phandle name
+>   - Removed 'broken-cd' property in eMMC node
+>   - Added memory node
+>
+>  arch/arm64/boot/dts/exynos/Makefile           |   1 +
+>  .../boot/dts/exynos/exynos850-e850-96.dts     | 175 ++++++++++++++++++
+>  2 files changed, 176 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+>
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index b41e86df0a84..be9df8e85c59 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+>         exynos5433-tm2.dtb      \
+>         exynos5433-tm2e.dtb     \
+>         exynos7-espresso.dtb    \
+> +       exynos850-e850-96.dtb   \
+>         exynosautov9-sadk.dtb
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+> new file mode 100644
+> index 000000000000..952a47c417d4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+> @@ -0,0 +1,175 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * WinLink E850-96 board device tree source
+> + *
+> + * Copyright (C) 2018 Samsung Electronics Co., Ltd.
+> + * Copyright (C) 2021 Linaro Ltd.
+> + *
+> + * Device tree source file for WinLink's E850-96 board which is based on
+> + * Samsung Exynos850 SoC.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "exynos850.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +
+> +/ {
+> +       model = "WinLink E850-96 board";
+> +       compatible = "winlink,e850-96", "samsung,exynos850";
+> +
+> +       chosen {
+> +               stdout-path = &serial_0;
+> +       };
+> +
+> +       /*
+> +        * 4 GiB eMCP:
+> +        *   - 2 GiB at 0x80000000
+> +        *   - 2 GiB at 0x880000000
+> +        *
+> +        * 0xbab00000..0xbfffffff: secure memory (85 MiB).
+> +        */
+> +       memory@80000000 {
+> +               device_type = "memory";
+> +               reg = <0x0 0x80000000 0x3ab00000>,
+> +                     <0x0 0xc0000000 0x40000000>,
+> +                     <0x8 0x80000000 0x80000000>;
+> +       };
+> +
+> +       gpio-keys {
+> +               compatible = "gpio-keys";
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&key_voldown_pins &key_volup_pins>;
+> +
+> +               volume-down-key {
+> +                       label = "Volume Down";
+> +                       linux,code = <KEY_VOLUMEDOWN>;
+> +                       gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
+> +               };
+> +
+> +               volume-up-key {
+> +                       label = "Volume Up";
+> +                       linux,code = <KEY_VOLUMEUP>;
+> +                       gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
+> +               };
+> +       };
+> +
+> +       leds {
+> +               compatible = "gpio-leds";
+> +
+> +               /* HEART_BEAT_LED */
+> +               user_led1: led-1 {
+> +                       label = "yellow:user1";
+> +                       gpios = <&gpg2 2 GPIO_ACTIVE_HIGH>;
+> +                       color = <LED_COLOR_ID_YELLOW>;
+> +                       function = LED_FUNCTION_HEARTBEAT;
+> +                       linux,default-trigger = "heartbeat";
+> +               };
+> +
+> +               /* eMMC_LED */
+> +               user_led2: led-2 {
+> +                       label = "yellow:user2";
+> +                       gpios = <&gpg2 3 GPIO_ACTIVE_HIGH>;
+> +                       color = <LED_COLOR_ID_YELLOW>;
+> +                       linux,default-trigger = "mmc0";
+> +               };
+> +
+> +               /* SD_LED */
+> +               user_led3: led-3 {
+> +                       label = "white:user3";
+> +                       gpios = <&gpg2 4 GPIO_ACTIVE_HIGH>;
+> +                       color = <LED_COLOR_ID_WHITE>;
+> +                       function = LED_FUNCTION_SD;
+> +                       linux,default-trigger = "mmc2";
+> +               };
+> +
+> +               /* WIFI_LED */
+> +               wlan_active_led: led-4 {
+> +                       label = "yellow:wlan";
+> +                       gpios = <&gpg2 6 GPIO_ACTIVE_HIGH>;
+> +                       color = <LED_COLOR_ID_YELLOW>;
+> +                       function = LED_FUNCTION_WLAN;
+> +                       linux,default-trigger = "phy0tx";
+> +                       default-state = "off";
+> +               };
+> +
+> +               /* BLUETOOTH_LED */
+> +               bt_active_led: led-5 {
+> +                       label = "blue:bt";
+> +                       gpios = <&gpg2 7 GPIO_ACTIVE_HIGH>;
+> +                       color = <LED_COLOR_ID_BLUE>;
+> +                       function = LED_FUNCTION_BLUETOOTH;
+> +                       linux,default-trigger = "hci0rx";
+> +                       default-state = "off";
+> +               };
+> +       };
+> +};
+> +
+> +&mmc_0 {
+> +       status = "okay";
+> +       mmc-hs200-1_8v;
+> +       mmc-hs400-1_8v;
+> +       cap-mmc-highspeed;
+> +       non-removable;
+> +       mmc-hs400-enhanced-strobe;
+> +       card-detect-delay = <200>;
+> +       clock-frequency = <800000000>;
+> +       bus-width = <8>;
+> +       samsung,dw-mshc-ciu-div = <3>;
+> +       samsung,dw-mshc-sdr-timing = <0 4>;
+> +       samsung,dw-mshc-ddr-timing = <2 4>;
+> +       samsung,dw-mshc-hs400-timing = <0 2>;
+> +
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
+> +                    &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
+> +};
+> +
+> +&oscclk {
+> +       clock-frequency = <26000000>;
+> +};
+> +
+> +&rtc {
+> +       status = "okay";
+> +};
+> +
+> +&rtcclk {
+> +       clock-frequency = <32768>;
+> +};
+> +
+> +&serial_0 {
+> +       status = "okay";
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&uart1_pins>;
+> +};
+> +
+> +&usi_uart {
+> +       samsung,clkreq-on; /* needed for UART mode */
+> +       status = "okay";
+> +};
+> +
+> +&watchdog_cl0 {
+> +       status = "okay";
+> +};
+> +
+> +&watchdog_cl1 {
+> +       status = "okay";
+> +};
+> +
+> +&pinctrl_alive {
 
-This patch adds minimal support for E850-96 board. Next features are
-enabled in board dts file and verified with minimal BusyBox rootfs:
+Forgot to order pinctrl node. Will send v3 soon, sorry for the noise.
 
- * User buttons
- * LEDs
- * Serial console
- * Watchdog timers
- * RTC
- * eMMC
-
-[1] https://www.96boards.org/products/mezzanine/
-
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
-  - Removed board_id and board_rev properties
-  - Removed BOARD_ID and BOARD_REV constants
-  - Put dtb in alphabetical order in Makefile
-  - Added "color" and "function" properties to LED nodes
-  - Sorted all phandle overrides by phandle name
-  - Removed 'broken-cd' property in eMMC node
-  - Added memory node
-
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../boot/dts/exynos/exynos850-e850-96.dts     | 175 ++++++++++++++++++
- 2 files changed, 176 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index b41e86df0a84..be9df8e85c59 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos5433-tm2.dtb	\
- 	exynos5433-tm2e.dtb	\
- 	exynos7-espresso.dtb	\
-+	exynos850-e850-96.dtb	\
- 	exynosautov9-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-new file mode 100644
-index 000000000000..952a47c417d4
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * WinLink E850-96 board device tree source
-+ *
-+ * Copyright (C) 2018 Samsung Electronics Co., Ltd.
-+ * Copyright (C) 2021 Linaro Ltd.
-+ *
-+ * Device tree source file for WinLink's E850-96 board which is based on
-+ * Samsung Exynos850 SoC.
-+ */
-+
-+/dts-v1/;
-+
-+#include "exynos850.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "WinLink E850-96 board";
-+	compatible = "winlink,e850-96", "samsung,exynos850";
-+
-+	chosen {
-+		stdout-path = &serial_0;
-+	};
-+
-+	/*
-+	 * 4 GiB eMCP:
-+	 *   - 2 GiB at 0x80000000
-+	 *   - 2 GiB at 0x880000000
-+	 *
-+	 * 0xbab00000..0xbfffffff: secure memory (85 MiB).
-+	 */
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3ab00000>,
-+		      <0x0 0xc0000000 0x40000000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&key_voldown_pins &key_volup_pins>;
-+
-+		volume-down-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volume-up-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		/* HEART_BEAT_LED */
-+		user_led1: led-1 {
-+			label = "yellow:user1";
-+			gpios = <&gpg2 2 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		/* eMMC_LED */
-+		user_led2: led-2 {
-+			label = "yellow:user2";
-+			gpios = <&gpg2 3 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		/* SD_LED */
-+		user_led3: led-3 {
-+			label = "white:user3";
-+			gpios = <&gpg2 4 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_SD;
-+			linux,default-trigger = "mmc2";
-+		};
-+
-+		/* WIFI_LED */
-+		wlan_active_led: led-4 {
-+			label = "yellow:wlan";
-+			gpios = <&gpg2 6 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_WLAN;
-+			linux,default-trigger = "phy0tx";
-+			default-state = "off";
-+		};
-+
-+		/* BLUETOOTH_LED */
-+		bt_active_led: led-5 {
-+			label = "blue:bt";
-+			gpios = <&gpg2 7 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			function = LED_FUNCTION_BLUETOOTH;
-+			linux,default-trigger = "hci0rx";
-+			default-state = "off";
-+		};
-+	};
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	cap-mmc-highspeed;
-+	non-removable;
-+	mmc-hs400-enhanced-strobe;
-+	card-detect-delay = <200>;
-+	clock-frequency = <800000000>;
-+	bus-width = <8>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
-+		     &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&rtcclk {
-+	clock-frequency = <32768>;
-+};
-+
-+&serial_0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+};
-+
-+&usi_uart {
-+	samsung,clkreq-on; /* needed for UART mode */
-+	status = "okay";
-+};
-+
-+&watchdog_cl0 {
-+	status = "okay";
-+};
-+
-+&watchdog_cl1 {
-+	status = "okay";
-+};
-+
-+&pinctrl_alive {
-+	key_voldown_pins: key-voldown-pins {
-+		samsung,pins = "gpa1-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup_pins: key-volup-pins {
-+		samsung,pins = "gpa0-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
--- 
-2.30.2
-
+> +       key_voldown_pins: key-voldown-pins {
+> +               samsung,pins = "gpa1-0";
+> +               samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> +               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> +       };
+> +
+> +       key_volup_pins: key-volup-pins {
+> +               samsung,pins = "gpa0-7";
+> +               samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> +               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> +       };
+> +};
+> --
+> 2.30.2
+>
