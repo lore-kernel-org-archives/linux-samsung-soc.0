@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95175C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Dec 2021 16:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AABBEC4167E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Dec 2021 16:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238968AbhLQQP7 (ORCPT
+        id S238974AbhLQQQA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:15:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40532 "EHLO
+        Fri, 17 Dec 2021 11:16:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238940AbhLQQP4 (ORCPT
+        with ESMTP id S238954AbhLQQP5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Dec 2021 11:15:56 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA398C06173F
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Dec 2021 08:15:55 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id 207so4115475ljf.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Dec 2021 08:15:55 -0800 (PST)
+        Fri, 17 Dec 2021 11:15:57 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33717C06173E
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Dec 2021 08:15:57 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id v15so4245210ljc.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Dec 2021 08:15:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hbVunj4DiulOq72QGN7i8jgBynbdYLJAfBOBvJBQ35Q=;
-        b=H1MZhGpjstB+rzzDzsZ2KveQtYR5ZqwtjjTv8AS1hZ+72PwQf2I6tT4QBp4hQ25mJW
-         eW4esGPaqbFomtsHUprp4MddWgNJutpqBjudJXzcmoQeWGvOVw5UzOzMSwnAM9t+meY4
-         6mCi/bEY//i1JgumFE5pejuy9SDdDqmMCFbOGnEQL33v2+BJVVqPRDwWkIuSGwk3aynq
-         FcvGU7ekISZSTERf3ccWWG8IgrO2pkqqEN1qqhGul6a7Dq/z/xlp+4WDi/M0gYoQJq5s
-         UwpMa3xR9hD9AWUu7wKEzGRFN79wMN+NTeY2uNeTRuYcVmhvQEC5skguaz2ih6HoVvSS
-         Vwmg==
+        bh=15f+Ze6FNJittgFADDHtUgTTcR8503nXs41Ek9JpvtE=;
+        b=VbD2B0rwV8JxtTK9S3if64JlLCTU1+5bDRJEaKt2+UYbSqd1c/OxESWU/3Y9zpMOIp
+         xORL74GWvGiHXlztq+1LW0UCfy+igFf9w1Jdu7K3HqLiFVk+l5pE5abZt8W5xNDMysQb
+         qPfKGAXBnFTmeWw3njr5rer6bTHUcqXan0QYVjZTeHDdgGM8xHoTxbyClEO85YlrWxVL
+         T/Q/1PNSV8AGTPboOBoUiOT+wNhZlWG3fwTttJlM1H2dHtlW5EE0XME16ajRXWYowCPq
+         jNcnGhYz4Nb8taN4UIiBpVAlZVBLvacuRf/tQrV1Ztk4GPPl1KZvLewAFzHGNR9kqZ16
+         IrIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hbVunj4DiulOq72QGN7i8jgBynbdYLJAfBOBvJBQ35Q=;
-        b=GJlYB54PpRhcqrJbosF5KbwReEls+NgGmm/ivhmF1zHJz+bGbsyu3nVZPGV4srOg+d
-         UzEXV7JRLQwPcBoK4cOTIJyapYz/QfvGfVDv48S+4wuuQy8WekVs9d9WpAoOLRaRraoq
-         Sf/ajpw1QyBPX59+N4o0lEn2tJK34ANiTbq3Egl5x44JEBgcS4zEPMntDlkeQsROleCz
-         TxaUJ4ayC1yOzIdP1m6/A6moq/mnhlG4wq43T7iy9ZznO01fD/jiBj4NWHXlZblVON+9
-         kge07FRkGHEiBDWtJ39pG57LE6yAgKwp3TIWV8N0bahS3cE6gMxzn655ySW8ZQNf/oN6
-         Zmuw==
-X-Gm-Message-State: AOAM533ENYeu+xc14qrj8EvtClue8GNg4r8jjhOjU9Ry7ySVJcUj1JHn
-        0pl+ngCtopF1+vTdAktdchu+Hw==
-X-Google-Smtp-Source: ABdhPJwdsp4C+V+qaI5f6pfgtX4o7+noH34MrZahp923g2BZtVAVdiQWDRr464PahZmJI8kLhrWUQQ==
-X-Received: by 2002:a2e:a7c6:: with SMTP id x6mr3411560ljp.328.1639757753939;
-        Fri, 17 Dec 2021 08:15:53 -0800 (PST)
+        bh=15f+Ze6FNJittgFADDHtUgTTcR8503nXs41Ek9JpvtE=;
+        b=LijnDp2x/9XWI9aPkEWV8eHz+oNL9Kxto311cufesjABT77rmdr1WP1EU2yZkoriD8
+         40zXOA6EiQ+XoUhC9fZg4vsqr+7KMjhZqxmY4BCBFJpqUMjrUYXI7dvE8ggYISw8rt6g
+         sO530Y8zhQMgGHnOibcI2aMDhpFnUDumVlmG1XlSaey4DnITAjfgpW50y6gSv2zz2kqC
+         0QD/S/zWLudv+jaqzXL6wq0swMMvZ/deUgl5uE6+sFGyU9xGY135WGPO9/GpSBcnxPUd
+         Uv9UxjFVRYw+lnxbnAWAdkJIDxXAvTSkPn0/K/xyFZaOpxhNoKn8oV5ITb0T+SPeRMLZ
+         sQfA==
+X-Gm-Message-State: AOAM531PuNWcKIgrJN5ve/S67uqNCP0C1LfNlW+A14soKUisiYekbttQ
+        +F6MkwqYyhklhSgq0HXpOe1PRA==
+X-Google-Smtp-Source: ABdhPJw+UbN8zwav66L+P3QZG0al+Rw25j2hqujD+XhCzFJatRciH4W39QillkSQFhbPjp34jDPPzA==
+X-Received: by 2002:a2e:808a:: with SMTP id i10mr3348752ljg.329.1639757755453;
+        Fri, 17 Dec 2021 08:15:55 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id 15sm1732114ljs.68.2021.12.17.08.15.53
+        by smtp.gmail.com with ESMTPSA id i18sm1453775lfu.67.2021.12.17.08.15.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:15:53 -0800 (PST)
+        Fri, 17 Dec 2021 08:15:55 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -67,9 +67,9 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v4 2/7] clk: samsung: exynos850: Add missing sysreg clocks
-Date:   Fri, 17 Dec 2021 18:15:44 +0200
-Message-Id: <20211217161549.24836-3-semen.protsenko@linaro.org>
+Subject: [PATCH v4 3/7] dt-bindings: Add vendor prefix for WinLink
+Date:   Fri, 17 Dec 2021 18:15:45 +0200
+Message-Id: <20211217161549.24836-4-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211217161549.24836-1-semen.protsenko@linaro.org>
 References: <20211217161549.24836-1-semen.protsenko@linaro.org>
@@ -79,15 +79,12 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-System Register is used to configure system behavior, like USI protocol,
-etc. SYSREG clocks should be provided to corresponding syscon nodes, to
-make it possible to modify SYSREG registers.
+WinLink Co., Ltd is a hardware design and manufacturing company based in
+South Korea. Official web-site: [1].
 
-While at it, add also missing PMU and GPIO clocks, which looks necessary
-and might be needed for corresponding Exynos850 features soon.
+[1] http://win-link.net/
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v4:
@@ -97,126 +94,24 @@ Changes in v3:
   - (none)
 
 Changes in v2:
-  - Added R-b tag by Krzysztof Kozlowski
-  - Added Ack tag by Chanwoo Choi
+  - Added Ack tag by Rob Herring
 
- drivers/clk/samsung/clk-exynos850.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 568ac97c8120..4799771d09bc 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -426,11 +426,14 @@ CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
- #define CLK_CON_DIV_DIV_CLK_APM_I3C			0x1808
- #define CLK_CON_GAT_CLKCMU_CMGP_BUS			0x2000
- #define CLK_CON_GAT_GATE_CLKCMU_CHUB_BUS		0x2014
-+#define CLK_CON_GAT_GOUT_APM_APBIF_GPIO_ALIVE_PCLK	0x2018
-+#define CLK_CON_GAT_GOUT_APM_APBIF_PMU_ALIVE_PCLK	0x2020
- #define CLK_CON_GAT_GOUT_APM_APBIF_RTC_PCLK		0x2024
- #define CLK_CON_GAT_GOUT_APM_APBIF_TOP_RTC_PCLK		0x2028
- #define CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK	0x2034
- #define CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK	0x2038
- #define CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK		0x20bc
-+#define CLK_CON_GAT_GOUT_APM_SYSREG_APM_PCLK		0x20c0
- 
- static const unsigned long apm_clk_regs[] __initconst = {
- 	PLL_CON0_MUX_CLKCMU_APM_BUS_USER,
-@@ -445,11 +448,14 @@ static const unsigned long apm_clk_regs[] __initconst = {
- 	CLK_CON_DIV_DIV_CLK_APM_I3C,
- 	CLK_CON_GAT_CLKCMU_CMGP_BUS,
- 	CLK_CON_GAT_GATE_CLKCMU_CHUB_BUS,
-+	CLK_CON_GAT_GOUT_APM_APBIF_GPIO_ALIVE_PCLK,
-+	CLK_CON_GAT_GOUT_APM_APBIF_PMU_ALIVE_PCLK,
- 	CLK_CON_GAT_GOUT_APM_APBIF_RTC_PCLK,
- 	CLK_CON_GAT_GOUT_APM_APBIF_TOP_RTC_PCLK,
- 	CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK,
- 	CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK,
- 	CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK,
-+	CLK_CON_GAT_GOUT_APM_SYSREG_APM_PCLK,
- };
- 
- /* List of parent clocks for Muxes in CMU_APM */
-@@ -512,6 +518,14 @@ static const struct samsung_gate_clock apm_gate_clks[] __initconst = {
- 	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
- 	GATE(CLK_GOUT_SPEEDY_PCLK, "gout_speedy_pclk", "dout_apm_bus",
- 	     CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK, 21, 0, 0),
-+	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
-+	GATE(CLK_GOUT_GPIO_ALIVE_PCLK, "gout_gpio_alive_pclk", "dout_apm_bus",
-+	     CLK_CON_GAT_GOUT_APM_APBIF_GPIO_ALIVE_PCLK, 21, CLK_IGNORE_UNUSED,
-+	     0),
-+	GATE(CLK_GOUT_PMU_ALIVE_PCLK, "gout_pmu_alive_pclk", "dout_apm_bus",
-+	     CLK_CON_GAT_GOUT_APM_APBIF_PMU_ALIVE_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_SYSREG_APM_PCLK, "gout_sysreg_apm_pclk", "dout_apm_bus",
-+	     CLK_CON_GAT_GOUT_APM_SYSREG_APM_PCLK, 21, 0, 0),
- };
- 
- static const struct samsung_cmu_info apm_cmu_info __initconst = {
-@@ -541,6 +555,7 @@ static const struct samsung_cmu_info apm_cmu_info __initconst = {
- #define CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S0	0x200c
- #define CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S1	0x2010
- #define CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK		0x2018
-+#define CLK_CON_GAT_GOUT_CMGP_SYSREG_CMGP_PCLK	0x2040
- #define CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_IPCLK	0x2044
- #define CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_PCLK	0x2048
- #define CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_IPCLK	0x204c
-@@ -556,6 +571,7 @@ static const unsigned long cmgp_clk_regs[] __initconst = {
- 	CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S0,
- 	CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S1,
- 	CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK,
-+	CLK_CON_GAT_GOUT_CMGP_SYSREG_CMGP_PCLK,
- 	CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_IPCLK,
- 	CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_PCLK,
- 	CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_IPCLK,
-@@ -610,6 +626,9 @@ static const struct samsung_gate_clock cmgp_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_CMGP_USI1_PCLK, "gout_cmgp_usi1_pclk",
- 	     "gout_clkcmu_cmgp_bus",
- 	     CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_SYSREG_CMGP_PCLK, "gout_sysreg_cmgp_pclk",
-+	     "gout_clkcmu_cmgp_bus",
-+	     CLK_CON_GAT_GOUT_CMGP_SYSREG_CMGP_PCLK, 21, 0, 0),
- };
- 
- static const struct samsung_cmu_info cmgp_cmu_info __initconst = {
-@@ -910,10 +929,12 @@ CLK_OF_DECLARE(exynos850_cmu_peri, "samsung,exynos850-cmu-peri",
- #define CLK_CON_DIV_DIV_CLK_CORE_BUSP		0x1800
- #define CLK_CON_GAT_GOUT_CORE_CCI_550_ACLK	0x2038
- #define CLK_CON_GAT_GOUT_CORE_GIC_CLK		0x2040
-+#define CLK_CON_GAT_GOUT_CORE_GPIO_CORE_PCLK	0x2044
- #define CLK_CON_GAT_GOUT_CORE_MMC_EMBD_I_ACLK	0x20e8
- #define CLK_CON_GAT_GOUT_CORE_MMC_EMBD_SDCLKIN	0x20ec
- #define CLK_CON_GAT_GOUT_CORE_SSS_I_ACLK	0x2128
- #define CLK_CON_GAT_GOUT_CORE_SSS_I_PCLK	0x212c
-+#define CLK_CON_GAT_GOUT_CORE_SYSREG_CORE_PCLK	0x2130
- 
- static const unsigned long core_clk_regs[] __initconst = {
- 	PLL_CON0_MUX_CLKCMU_CORE_BUS_USER,
-@@ -924,10 +945,12 @@ static const unsigned long core_clk_regs[] __initconst = {
- 	CLK_CON_DIV_DIV_CLK_CORE_BUSP,
- 	CLK_CON_GAT_GOUT_CORE_CCI_550_ACLK,
- 	CLK_CON_GAT_GOUT_CORE_GIC_CLK,
-+	CLK_CON_GAT_GOUT_CORE_GPIO_CORE_PCLK,
- 	CLK_CON_GAT_GOUT_CORE_MMC_EMBD_I_ACLK,
- 	CLK_CON_GAT_GOUT_CORE_MMC_EMBD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_CORE_SSS_I_ACLK,
- 	CLK_CON_GAT_GOUT_CORE_SSS_I_PCLK,
-+	CLK_CON_GAT_GOUT_CORE_SYSREG_CORE_PCLK,
- };
- 
- /* List of parent clocks for Muxes in CMU_CORE */
-@@ -972,6 +995,12 @@ static const struct samsung_gate_clock core_gate_clks[] __initconst = {
- 	     CLK_CON_GAT_GOUT_CORE_SSS_I_ACLK, 21, 0, 0),
- 	GATE(CLK_GOUT_SSS_PCLK, "gout_sss_pclk", "dout_core_busp",
- 	     CLK_CON_GAT_GOUT_CORE_SSS_I_PCLK, 21, 0, 0),
-+	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
-+	GATE(CLK_GOUT_GPIO_CORE_PCLK, "gout_gpio_core_pclk", "dout_core_busp",
-+	     CLK_CON_GAT_GOUT_CORE_GPIO_CORE_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_GOUT_SYSREG_CORE_PCLK, "gout_sysreg_core_pclk",
-+	     "dout_core_busp",
-+	     CLK_CON_GAT_GOUT_CORE_SYSREG_CORE_PCLK, 21, 0, 0),
- };
- 
- static const struct samsung_cmu_info core_cmu_info __initconst = {
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 4698213611db..25f94c723cbc 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1328,6 +1328,8 @@ patternProperties:
+     description: Wiligear, Ltd.
+   "^winbond,.*":
+     description: Winbond Electronics corp.
++  "^winlink,.*":
++    description: WinLink Co., Ltd
+   "^winstar,.*":
+     description: Winstar Display Corp.
+   "^wits,.*":
 -- 
 2.30.2
 
