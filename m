@@ -2,123 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E57C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Dec 2021 01:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40412C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Dec 2021 08:57:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbhLRBOx (ORCPT
+        id S232390AbhLRI5q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Dec 2021 20:14:53 -0500
-Received: from condef-02.nifty.com ([202.248.20.67]:60212 "EHLO
-        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbhLRBOx (ORCPT
+        Sat, 18 Dec 2021 03:57:46 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:15936 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232081AbhLRI5q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Dec 2021 20:14:53 -0500
-X-Greylist: delayed 386 seconds by postgrey-1.27 at vger.kernel.org; Fri, 17 Dec 2021 20:14:52 EST
-Received: from conssluserg-02.nifty.com ([10.126.8.81])by condef-02.nifty.com with ESMTP id 1BI13CuM013741;
-        Sat, 18 Dec 2021 10:03:12 +0900
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 1BI12mhi002928;
-        Sat, 18 Dec 2021 10:02:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 1BI12mhi002928
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1639789369;
-        bh=g8kubEqzXtZebCqaSj9BAbqYgVkf91ju4F7inIn8m3A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HQhqD+YdFOz/Ik3CiDJJHisluY+hIeooMONVi2AArR7U/FX/HzVd8IQPGdAODydCU
-         FNjE9bOyfEOSwSifeecA3gLKsW1OeiMGuTRF4p7WiSmz9gLip48gyo3Dy3GDQrKS4D
-         LOZWV0SE6kKGk+CyfUOud5w7gK9r4yLdvr811KXpFX7oy6mbjVFL3kgDnJv4ek0O1B
-         kQAUP+umUawzx50N10vOdSECmnsLS3QGSgkM/6vjyLN77LAuEYxZDE7IpH2xlhb0bB
-         9yAFWDIo5vxC6MS8Bu/iDnJNyUao+sOksgnxRbTJAtVpytt3LcNZDWHSl3inv/OaeH
-         wQVzPFOAI2/lg==
-X-Nifty-SrcIP: [209.85.210.173]
-Received: by mail-pf1-f173.google.com with SMTP id k64so3555716pfd.11;
-        Fri, 17 Dec 2021 17:02:48 -0800 (PST)
-X-Gm-Message-State: AOAM533XZVhXvQpb233pLg2ZOVwCaA41kqestkwg1nF0Ea10zRhz11H3
-        j+vhuor31e9rGKj8HLWNVL9ibSCrD2Zv4ppeujw=
-X-Google-Smtp-Source: ABdhPJzGjAbGv+I/bTwhfwziv7WOMTBsph6E+WB3YL1WNppfKcKxQIdMdXPcqqda5/GSDFyziRC3MBP9P76MWkCI0SA=
-X-Received: by 2002:a05:6a00:2d1:b0:4af:437c:5f50 with SMTP id
- b17-20020a056a0002d100b004af437c5f50mr5577166pft.32.1639789367863; Fri, 17
- Dec 2021 17:02:47 -0800 (PST)
+        Sat, 18 Dec 2021 03:57:46 -0500
+Received: from dggeme762-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4JGKRN5P1CzZcWc;
+        Sat, 18 Dec 2021 16:54:40 +0800 (CST)
+Received: from ubuntu1804.huawei.com (10.67.174.44) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.20; Sat, 18 Dec 2021 16:57:44 +0800
+From:   Gaosheng Cui <cuigaosheng1@huawei.com>
+To:     <linux@armlinux.org.uk>, <krzysztof.kozlowski@canonical.com>,
+        <andrew@lunn.ch>, <gregory.clement@bootlin.com>,
+        <sebastian.hesselbarth@gmail.com>, <vireshk@kernel.org>,
+        <shiraz.linux.kernel@gmail.com>, <soc@kernel.org>,
+        <linus.walleij@linaro.org>, <ardb@kernel.org>,
+        <cuigaosheng1@huawei.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <gongruiqi1@huawei.com>,
+        <wangweiyang2@huawei.com>
+Subject: [PATCH -next 0/3] replace open coded VA->PA calculation
+Date:   Sat, 18 Dec 2021 16:58:40 +0800
+Message-ID: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-References: <20211207140334.10461-1-semen.protsenko@linaro.org> <CAPLW+4n-BjSHK4gdP=cGvAE+pZDfvYTO4yy09yNRJgSXt2VArg@mail.gmail.com>
-In-Reply-To: <CAPLW+4n-BjSHK4gdP=cGvAE+pZDfvYTO4yy09yNRJgSXt2VArg@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 18 Dec 2021 10:02:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQdPMjZozjuwp5Z=_pXi-7JMXXcG0CMW+dWWX4GxJX-qg@mail.gmail.com>
-Message-ID: <CAK7LNAQdPMjZozjuwp5Z=_pXi-7JMXXcG0CMW+dWWX4GxJX-qg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Report enabled nodes with duplicated address
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.174.44]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 1:11 AM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
->
-> On Tue, 7 Dec 2021 at 16:03, Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >
-> > Duplicated unit address is a normal case, as long as no more than one
-> > node using that address is enabled. Having duplicated addresses is
-> > already allowed by '-Wno-unique_unit_address' in DTC_FLAGS. But two
-> > simultaneously enabled nodes sharing the same address is usually
-> > incorrect. Add '-Wunique_unit_address_if_enabled' flag to report
-> > warnings for such case when doing "make dtbs_check".
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Reported-by: Rob Herring <robh@kernel.org>
-> > Suggested-by: Rob Herring <robh@kernel.org>
-> > ---
-> > NOTE: After applying this patch, a lot of warnings appear on "make
-> > dtbs_check". I'm not completely sure if it's ok, so feel free to Nack.
-> >
->
-> Hi Rob,
->
-> Do you think this patch is feasible? You asked me to send it before,
-> though I now see it leads to a lot of errors being revealed when doing
-> "make dtbs" and "make dtbs_check". Please let me know if it's Ack or
-> Nack -- I'm fine with any resolution, just want to know if I should
-> continue to carry it in my local branch or drop it.
->
-> Thanks!
+These patches replace an open coded calculation to obtain the physical
+address of a far symbol with a call to the new ldr_l etc macro, and they
+belong to the kaslr patch set of arm32.
 
+Reference: https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=arm-kaslr-latest
 
-This is up to Rob.
-I do not mind either way.
+Ard Biesheuvel (3):
+  arm-soc: exynos: replace open coded VA->PA conversions
+  arm-soc: mvebu: replace open coded VA->PA conversion
+  arm-soc: various: replace open coded VA->PA calculation
 
->
-> >  scripts/Makefile.lib | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index ce6142238835..2f00c996d2e3 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -315,7 +315,8 @@ DTC_FLAGS += -Wno-unit_address_vs_reg \
-> >         -Wno-alias_paths \
-> >         -Wno-graph_child_address \
-> >         -Wno-simple_bus_reg \
-> > -       -Wno-unique_unit_address
-> > +       -Wno-unique_unit_address \
-> > +       -Wunique_unit_address_if_enabled
-> >  endif
-> >
-> >  ifneq ($(findstring 2,$(KBUILD_EXTRA_WARN)),)
-> > --
-> > 2.30.2
-> >
-
-
+ arch/arm/mach-exynos/headsmp.S     |  9 +--------
+ arch/arm/mach-exynos/sleep.S       | 26 +++++---------------------
+ arch/arm/mach-mvebu/coherency_ll.S |  8 +-------
+ arch/arm/mach-spear/headsmp.S      | 11 +++--------
+ arch/arm/plat-versatile/headsmp.S  |  9 +--------
+ 5 files changed, 11 insertions(+), 52 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.30.0
+
