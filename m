@@ -2,20 +2,20 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40412C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Dec 2021 08:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1708C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Dec 2021 08:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232390AbhLRI5q (ORCPT
+        id S232401AbhLRI5r (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 18 Dec 2021 03:57:46 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:15936 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232081AbhLRI5q (ORCPT
+        Sat, 18 Dec 2021 03:57:47 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:28328 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232378AbhLRI5q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sat, 18 Dec 2021 03:57:46 -0500
-Received: from dggeme762-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4JGKRN5P1CzZcWc;
-        Sat, 18 Dec 2021 16:54:40 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JGKVX3K2JzbjGm;
+        Sat, 18 Dec 2021 16:57:24 +0800 (CST)
 Received: from ubuntu1804.huawei.com (10.67.174.44) by
  dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
@@ -31,10 +31,12 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <gongruiqi1@huawei.com>,
         <wangweiyang2@huawei.com>
-Subject: [PATCH -next 0/3] replace open coded VA->PA calculation
-Date:   Sat, 18 Dec 2021 16:58:40 +0800
-Message-ID: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+Subject: [PATCH -next 2/3] arm-soc: mvebu: replace open coded VA->PA conversion
+Date:   Sat, 18 Dec 2021 16:58:42 +0800
+Message-ID: <20211218085843.212497-3-cuigaosheng1@huawei.com>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+References: <20211218085843.212497-1-cuigaosheng1@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -46,24 +48,40 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-These patches replace an open coded calculation to obtain the physical
-address of a far symbol with a call to the new ldr_l etc macro, and they
-belong to the kaslr patch set of arm32.
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Reference: https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=arm-kaslr-latest
+This replaces an open coded calculation to obtain the physical
+address of a far symbol with a call to the new ldr_l etc macro.
 
-Ard Biesheuvel (3):
-  arm-soc: exynos: replace open coded VA->PA conversions
-  arm-soc: mvebu: replace open coded VA->PA conversion
-  arm-soc: various: replace open coded VA->PA calculation
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+ arch/arm/mach-mvebu/coherency_ll.S | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
- arch/arm/mach-exynos/headsmp.S     |  9 +--------
- arch/arm/mach-exynos/sleep.S       | 26 +++++---------------------
- arch/arm/mach-mvebu/coherency_ll.S |  8 +-------
- arch/arm/mach-spear/headsmp.S      | 11 +++--------
- arch/arm/plat-versatile/headsmp.S  |  9 +--------
- 5 files changed, 11 insertions(+), 52 deletions(-)
-
+diff --git a/arch/arm/mach-mvebu/coherency_ll.S b/arch/arm/mach-mvebu/coherency_ll.S
+index a3a64bf97250..9ae65b1e9745 100644
+--- a/arch/arm/mach-mvebu/coherency_ll.S
++++ b/arch/arm/mach-mvebu/coherency_ll.S
+@@ -37,9 +37,7 @@ ENTRY(ll_get_coherency_base)
+ 	 * MMU is disabled, use the physical address of the coherency
+ 	 * base address, (or 0x0 if the coherency fabric is not mapped)
+ 	 */
+-	adr	r1, 3f
+-	ldr	r3, [r1]
+-	ldr	r1, [r1, r3]
++	ldr_l	r1, coherency_phys_base
+ 	b	2f
+ 1:
+ 	/*
+@@ -155,7 +153,3 @@ ENTRY(ll_disable_coherency)
+ 	dsb
+ 	ret	lr
+ ENDPROC(ll_disable_coherency)
+-
+-	.align 2
+-3:
+-	.long	coherency_phys_base - .
 -- 
 2.30.0
 
