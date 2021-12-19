@@ -2,135 +2,139 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC58C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Dec 2021 10:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D6CC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Dec 2021 11:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231761AbhLRKuy (ORCPT
+        id S235609AbhLSLSZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 18 Dec 2021 05:50:54 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:56912
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229480AbhLRKuy (ORCPT
+        Sun, 19 Dec 2021 06:18:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38366 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229801AbhLSLSZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 18 Dec 2021 05:50:54 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5641E3FFDB
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Dec 2021 10:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639824653;
-        bh=Wa9ILGMaRHRGBy0aLVrTaW+lHyiaTJlPeVGkAqUVXAA=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=eyaMlDydNFdKarqgfHMjOPQAyYlqUCOSzWfK816ES8G/0agnxMyZWUTfBPQIQEUDu
-         GCOYGaYpuQOFUVryDoKLU0PHwANrzqkSy2TR13Wfpx0Vcd6undnwTVE1c+UsHXcZqh
-         i9ZYvSPJy4CP3qFGfj1/Knd32PLRwPQWxPCQlozW8Ow/gy1+mi+IEGxcbuRvB+TYyp
-         JjJUKgEhiAysiytfyQ6u/48Ug1xjzkwa37TBis/0kGYiB2CqEMi8XCnxPgDrXgqDxu
-         8MtuN/0j6hf43NyF6Yz7II+aAZQbp4lsq0vZnKz8gVXi8JkGK2o5IPeOcd8Siu5qZS
-         IkBuRQDUEKiow==
-Received: by mail-lf1-f72.google.com with SMTP id n18-20020a0565120ad200b004036c43a0ddso2158252lfu.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Dec 2021 02:50:53 -0800 (PST)
+        Sun, 19 Dec 2021 06:18:25 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAE07C061574;
+        Sun, 19 Dec 2021 03:18:24 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id c3so9572898iob.6;
+        Sun, 19 Dec 2021 03:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SaqxcOL4Lplrqp4ydrgNsbAAystgqbZByphef5IAeVk=;
+        b=WimBmUTpSol2/yjNRgufQXKLeAW5g4J0U3g+BX8HdSLHuK+bwqF069Z950xZFp2uo0
+         wjJxjGXLPE3uA2ZaX533nhv4v6m4FtgJbGi9W3Tr8pCQSujr7CXyoouT05+NJWYilZvX
+         ZuQU42CmjlHsPa87yrgA9EHgq8xaKfMNMitw06iPUDmGjQZwIqV5WF/aT81wfT89xTte
+         N9RhhLmY8nuDsC5SVkUesgZusmw8IscJruHBnXfDfzR/hoef3Co+nNT7qS+Dc6eVsvrb
+         tbG/tFaRIR5qU410QZtbpIiN9gf2j09aGII5jyRvkLXlusR8g/nQKudfbXekIPS2aT9z
+         1BiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=Wa9ILGMaRHRGBy0aLVrTaW+lHyiaTJlPeVGkAqUVXAA=;
-        b=lL87W9XfXD1awrEEVt25QN+Jb3THGLqVw3eEc64vBHvfyS6rVMjeOuYtp8aymcF4ZU
-         QPCfW14vKeBatHBN7W6wU8StCpcTca5JoYCV4GZduqE1MRbhZDCtXdxPOyUBe24XobQ+
-         rTwGUizhukStaEqIaiLJLckkBfb8H/qiNWmF2iCH4p4ziA/RQYEIU0sUcotm6HfSxHq9
-         mV3d10XWYxH7ABy8w1EhVMDAaoMs3QvfFRnkl5JId8VYrWmgDwSZXvqEFUQz5LOQxcti
-         HsspEXDnbIu96u1kR3B0/dSLkBLk5z4qwuo8Xqr/JXbDrS22GignbGKuYNLhCw3reEVu
-         FpdA==
-X-Gm-Message-State: AOAM530w19XfBMhNxP84CFqruNJjea4D3fIM3z7ktIupi361HYVSQm+X
-        12bncKkxpPOafuaiGH+N+ohYaVE96wjyFV9HthoAYUS1+/XjQr4slFnybF/tCLKONzVcSTql9SC
-        RGlL1YWL/Kf3sa15w0lWvY0c7yds+WZV9FIpve6PXYQ4HNvAE
-X-Received: by 2002:a05:6512:33a6:: with SMTP id i6mr5149398lfg.663.1639824652343;
-        Sat, 18 Dec 2021 02:50:52 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzI58O3aQ14JoDf1qzpEQ5Fr4XSXIQcCangkv6BKEfjOW3enxwPtjDy0n9OK2tsKPthEVp8EA==
-X-Received: by 2002:a05:6512:33a6:: with SMTP id i6mr5149381lfg.663.1639824652175;
-        Sat, 18 Dec 2021 02:50:52 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id s4sm1676721lfp.198.2021.12.18.02.50.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Dec 2021 02:50:51 -0800 (PST)
-Message-ID: <5ad0b0e7-1c09-b7eb-87a3-e62e9e3d12af@canonical.com>
-Date:   Sat, 18 Dec 2021 11:50:50 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SaqxcOL4Lplrqp4ydrgNsbAAystgqbZByphef5IAeVk=;
+        b=xNhvgc/F6TeonNSaqTwXG6b2yNwqLtpOVQbU6oqLBa+4AkeB7JQgr8kaP/7g+1dETd
+         FQOPiCVdoiXy8PpqI5/jXlgKgvn5ZkV4mzHN/okpGF1CMZsa/qhYfWxP4+IEvq7yVxrM
+         fi7gUeUzMZJwO0zF5ZulT1Kp8MZXa8sek5NzBDGhmfdqnVTTEdhP3FYA2udh/q/UJCzr
+         q24YbzlMsazbeTan3sybrzZ94v6IrQxrRb3rxBz4qJE0byDRKyMJ76G4k+FyxGTwNN+u
+         PXlqHiTTsncdKdmmh5Lu5ZOoNu+WFn/wZUSv/+PAaO5A3oFdPrPm5fI34STBQPYkP8VC
+         nQ4Q==
+X-Gm-Message-State: AOAM531bRZr08auUNBoS/E6tNrBWov9cNp3Zd68zawCQ/D7SoKsz3kEl
+        2jmMVMEFSg30MwcCm2jcpvMZGm3Zn0IqQvauInA=
+X-Google-Smtp-Source: ABdhPJxaLugeQ30fi+U6ruTyYEcXUrrjpSQdpWG/8MJ1Vs3FcxjB5GlNshM9fBY+w2yB5WCx2wjTN+YuGR1rMVeUCZs=
+X-Received: by 2002:a5d:9d92:: with SMTP id ay18mr5874393iob.130.1639912703839;
+ Sun, 19 Dec 2021 03:18:23 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
+References: <20211126203641.24005-1-semen.protsenko@linaro.org>
+In-Reply-To: <20211126203641.24005-1-semen.protsenko@linaro.org>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Sun, 19 Dec 2021 16:47:47 +0530
+Message-ID: <CAGOxZ51nmoiiWdr3FYLBpg+WSyfnK3wsK+aDi_Q7NAxVVBQWHQ@mail.gmail.com>
 Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add bindings for
  Exynos850 sysreg clocks
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        David Virag <virag.david003@gmail.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh@kernel.org>
-References: <20211126203641.24005-1-semen.protsenko@linaro.org>
- <YagPWOj0CLxE/+ER@robh.at.kernel.org>
- <CAPLW+4=LTd8i2Tqr7Wa0NDRTJ5mRJXP=EvRCx84WxnwCDQ1eVg@mail.gmail.com>
- <CAPLW+4nk7Y8Psg9ZVacvzJeAV3VAGWfi+9hTPWgTeAWqh67AKQ@mail.gmail.com>
- <146b173e-f445-bebc-d44c-afd41123eb80@canonical.com>
-In-Reply-To: <146b173e-f445-bebc-d44c-afd41123eb80@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        David Virag <virag.david003@gmail.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/12/2021 17:20, Krzysztof Kozlowski wrote:
-> On 14/12/2021 17:15, Sam Protsenko wrote:
->> On Tue, 7 Dec 2021 at 22:54, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->>>
->>> On Thu, 2 Dec 2021 at 02:12, Rob Herring <robh@kernel.org> wrote:
->>>>
->>>> On Fri, 26 Nov 2021 22:36:40 +0200, Sam Protsenko wrote:
->>>>> System Register is used to configure system behavior, like USI protocol,
->>>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
->>>>> make it possible to modify SYSREG registers.
->>>>>
->>>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
->>>>> and might be needed for corresponding Exynos850 features soon.
->>>>>
->>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>>>> ---
->>>>>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
->>>>>  1 file changed, 9 insertions(+), 3 deletions(-)
->>>>>
->>>>
->>>> Acked-by: Rob Herring <robh@kernel.org>
->>>
->>> Hi Sylwester,
->>>
->>> Can you please review and apply this series, if it's ok?
->>>
->>
->> Hi Krzysztof,
->>
->> Do you think it's possible to take this series in your tree? Once it's
->> applied, I can send the board support (dts) series -- this is the only
->> remaining blocker for that right now.
-> 
-> I would need an Ack from Sylwester anyway. If you have dependencies (the
-> DTS), you should send them together with it. Once Sylwester applies this
-> patch, the DTS either waits till next release or it has to be modified
-> to not depend on this patch.
+On Mon, Nov 29, 2021 at 7:08 PM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
+>
+> System Register is used to configure system behavior, like USI protocol,
+> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+> make it possible to modify SYSREG registers.
+>
+> While at it, add also missing PMU and GPIO clocks, which looks necessary
+> and might be needed for corresponding Exynos850 features soon.
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+Looks good, feel free to add
 
-Sylwester,
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-We need decision from your side. The apply-window is slowly closing, so
-at least take it so DTSI will be free to go next cycle.
 
-Best regards,
-Krzysztof
+
+> diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+> index 8aa5e82af0d3..0b6a3c6a7c90 100644
+> --- a/include/dt-bindings/clock/exynos850.h
+> +++ b/include/dt-bindings/clock/exynos850.h
+> @@ -82,7 +82,10 @@
+>  #define CLK_GOUT_I3C_PCLK              19
+>  #define CLK_GOUT_I3C_SCLK              20
+>  #define CLK_GOUT_SPEEDY_PCLK           21
+> -#define APM_NR_CLK                     22
+> +#define CLK_GOUT_GPIO_ALIVE_PCLK       22
+> +#define CLK_GOUT_PMU_ALIVE_PCLK                23
+> +#define CLK_GOUT_SYSREG_APM_PCLK       24
+> +#define APM_NR_CLK                     25
+>
+>  /* CMU_CMGP */
+>  #define CLK_RCO_CMGP                   1
+> @@ -99,7 +102,8 @@
+>  #define CLK_GOUT_CMGP_USI0_PCLK                12
+>  #define CLK_GOUT_CMGP_USI1_IPCLK       13
+>  #define CLK_GOUT_CMGP_USI1_PCLK                14
+> -#define CMGP_NR_CLK                    15
+> +#define CLK_GOUT_SYSREG_CMGP_PCLK      15
+> +#define CMGP_NR_CLK                    16
+>
+>  /* CMU_HSI */
+>  #define CLK_MOUT_HSI_BUS_USER          1
+> @@ -167,7 +171,9 @@
+>  #define CLK_GOUT_MMC_EMBD_SDCLKIN      10
+>  #define CLK_GOUT_SSS_ACLK              11
+>  #define CLK_GOUT_SSS_PCLK              12
+> -#define CORE_NR_CLK                    13
+> +#define CLK_GOUT_GPIO_CORE_PCLK                13
+> +#define CLK_GOUT_SYSREG_CORE_PCLK      14
+> +#define CORE_NR_CLK                    15
+>
+>  /* CMU_DPU */
+>  #define CLK_MOUT_DPU_USER              1
+> --
+> 2.30.2
+>
+
+
+-- 
+Regards,
+Alim
