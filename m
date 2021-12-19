@@ -2,74 +2,73 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6A3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Dec 2021 14:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0750C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Dec 2021 14:54:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233161AbhLSOhT (ORCPT
+        id S233338AbhLSOyg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Dec 2021 09:37:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52884 "EHLO
+        Sun, 19 Dec 2021 09:54:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230483AbhLSOhT (ORCPT
+        with ESMTP id S233146AbhLSOyf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Dec 2021 09:37:19 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C66EC061574;
-        Sun, 19 Dec 2021 06:37:19 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id e3so27962947edu.4;
-        Sun, 19 Dec 2021 06:37:18 -0800 (PST)
+        Sun, 19 Dec 2021 09:54:35 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDE1C061574;
+        Sun, 19 Dec 2021 06:54:35 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id z5so28081974edd.3;
+        Sun, 19 Dec 2021 06:54:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=u2C58Qi3vb54QmI4e1AHKNijekgERo9skjEIXUUovfk=;
-        b=d+xFCA0DmryqNr7Q2/XOn6ZcLLwYoPgTigUHBKiFiDvLu/W3lbTZi0rBLjioW/Gzcr
-         xXm1LSdJg/vJf6iJkMN4qKqshQjrUi+P1bxEavtjgO+AhAomRX22AB1l75xPI9ubkzhW
-         W3jiVoPsg7LLudUB23e4iGPEuqTkG1SsT3dpVZbbgbYQOLEpxqbO8iRUjrHNmszwfjdk
-         rh8kJ59csG3IHaaXK/1yUXPCKpcTpY0/4D9xa8r22aLg1AUg730BdhW7H2lk+8+dvDcz
-         wQZkokR8Oc8G/CQF1bcE/rnbGxsSQUMjNsAv6K99m4p/J6IZtoqSWThM4AefOlXKGEzK
-         WCfw==
+        bh=97q7sg0TD+CFNjCZu+yqt+zOFqMiYIbWb3t36ZIak30=;
+        b=pFN23c6IE7GHNyY1lrHvdR6qK+ws6rcviNC/bAeDyKxtjctrPyWsEBHD9px91B4TFU
+         XRqcKkBPN7TfDLY2hZ6TQMHtVESzgq0DShrU2vEuUTIVmA7GnDtqJ9GAaN8MaG+x0uKV
+         MAW2VTfa1ReT6Ie6NrgSfz/CWqljNEg4cHUUo/AxBlnanGPZN68m4q6x7AngWcOmo4gV
+         WjYYzn8izyiRudP6U2ttfthE7qA92G4TDzzCb8GX78/Ey7OJnDXIvNzD8Z+qysuSlb1a
+         ApnhaSH7v9iMJ7NpjQrIbZjVqUcIt2BrIW3AquJqVXaf82gxGr/VfPzmcmGQabu4rzrd
+         quCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=u2C58Qi3vb54QmI4e1AHKNijekgERo9skjEIXUUovfk=;
-        b=aw7jryvoReS3rYUNtPdQj68NudO9l+H88rsP/SMiEE48rUc1SaeDQhUm/dJTtZaDTB
-         v3pgdz99JmS4xhzd4gGi7yfjLQWNRSxLnd24W0fQ9aMgwN+Jaau0ieVAJ97wcYpGFZFC
-         HvHgA7seAcW31Ja6PlFfA+zkCTBPYMW6BnHFU+1oBAGdfv3B4IClRKu2PheM18xJsMq3
-         ipPE34D1jLEwT22sFfU56Z7kVAMDkE3jpI/r5xsGnhvIIQjYeQFYvdUKZdI6n8Ze0s00
-         EoNBO/APM5Bnl7mmSLyjMDmxkhHTJFL4tk4uDfRzy06d88WdZUFfYOdeKTBdzdDxf0ra
-         Jk9A==
-X-Gm-Message-State: AOAM5316yPgs4A0C6E75IbgyZpEkJRZxouFDpkiKtNMZzUnFCeDWX7gj
-        cJIlGtQsoyzabG6Ly1lli/0=
-X-Google-Smtp-Source: ABdhPJzTD5T7sNxYkWs3Xb1a9cHuHPhEG7tWJB9oARXo+VmyQsN3aR/Loo/BAps3N7FB2XfybEnIBA==
-X-Received: by 2002:a05:6402:2814:: with SMTP id h20mr11746954ede.288.1639924637585;
-        Sun, 19 Dec 2021 06:37:17 -0800 (PST)
+        bh=97q7sg0TD+CFNjCZu+yqt+zOFqMiYIbWb3t36ZIak30=;
+        b=pR1BSIHdXUv8x1Kp5tbPNXn82J3j/zGBHmKf3HbYe7JI1vE5rgK8dc6NBM1gP+sDtX
+         2R95yxbAnW7upIatD0tWLAxGRYVRMofaiT/u3ooqvbCu/Whc+8wBVCykl1tRzOk/YQoy
+         qxQ7S+8PkuNctzslh3FQivlAuuu3RN+/kB2fnbDxSAHDrWcqRzBqP/yfZXpXDDGa437f
+         5jLeuLXIZOIDYlQ1b4z6S/nt37mHAPfNTuToljyw5RgT7BqNnxH5WrpTFGlxnKTyyh0D
+         XRaeBlbshU7opkQNK5MBwaqfb8eal8kfZy3YsSqJ93Tn6OwBImDOz/gmXEKakB3LiUfI
+         r24g==
+X-Gm-Message-State: AOAM5315A1MAbSs14kHZJDrkGMve31fZmDzFCUOp3MYgHkdsPXHI1rRQ
+        r6DXI8pYeBKEg/Bz1OcBG6Q=
+X-Google-Smtp-Source: ABdhPJzondZ2Fr1IDbk1rclTZfI5kulmoCZ7vS+Z/X5MrLtC4IIs/5DFD7TnaBMwzKgs71VYe4iJhg==
+X-Received: by 2002:aa7:de86:: with SMTP id j6mr11678743edv.1.1639925673880;
+        Sun, 19 Dec 2021 06:54:33 -0800 (PST)
 Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
-        by smtp.gmail.com with ESMTPSA id cs12sm4512689ejc.15.2021.12.19.06.37.16
+        by smtp.gmail.com with ESMTPSA id dm7sm1505647edb.7.2021.12.19.06.54.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Dec 2021 06:37:16 -0800 (PST)
-Message-ID: <cc27e22d9945b1ab5ccc7ef20eb36af63402ef54.camel@gmail.com>
-Subject: Re: [PATCH v4 7/7] arm64: dts: exynos: Add initial device tree
- support for Exynos7885 SoC
+        Sun, 19 Dec 2021 06:54:33 -0800 (PST)
+Message-ID: <b244735f83010fe198ead3b818ee0718dc654879.camel@gmail.com>
+Subject: Re: (subset) [PATCH v4 3/7] dt-bindings: arm: samsung: document
+ jackpotlte board binding
 From:   David Virag <virag.david003@gmail.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     devicetree@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date:   Sun, 19 Dec 2021 15:36:20 +0100
-In-Reply-To: <b0f95b77e335596ee567ae83c1cbe549@misterjones.org>
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Date:   Sun, 19 Dec 2021 15:53:36 +0100
+In-Reply-To: <163958527260.183299.17749602272220762675.b4-ty@canonical.com>
 References: <20211206153124.427102-1-virag.david003@gmail.com>
-         <20211206153124.427102-8-virag.david003@gmail.com>
-         <b0f95b77e335596ee567ae83c1cbe549@misterjones.org>
+         <20211206153124.427102-4-virag.david003@gmail.com>
+         <163958527260.183299.17749602272220762675.b4-ty@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.42.2 
 MIME-Version: 1.0
@@ -78,62 +77,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2021-12-07 at 19:42 +0000, Marc Zyngier wrote:
-> On 2021-12-06 15:31, David Virag wrote:
-> > Add initial Exynos7885 device tree nodes with dts for the Samsung 
-> > Galaxy
-> > A8 (2018), a.k.a. "jackpotlte", with model number "SM-A530F".
-> > Currently this includes some clock support, UART support, and I2C 
-> > nodes.
+On Wed, 2021-12-15 at 17:21 +0100, Krzysztof Kozlowski wrote:
+> On Mon, 6 Dec 2021 16:31:17 +0100, David Virag wrote:
+> > Add binding for the jackpotlte board (Samsung Galaxy A8 (2018)).
 > > 
-> > Signed-off-by: David Virag <virag.david003@gmail.com>
+> > 
 > 
-> [...]
+> Applied, thanks!
 > 
-> > +       psci {
-> > +               compatible = "arm,psci";
-> > +               method = "smc";
-> > +               cpu_suspend = <0xc4000001>;
-> > +               cpu_off = <0x84000002>;
-> > +               cpu_on = <0xc4000003>;
+> [3/7] dt-bindings: arm: samsung: document jackpotlte board binding
+>       commit: c96ebc5fde274edcc02543dcfb6a1ee097f98070
 > 
-> Aren't these the standard PSCI 0.2 function numbers? Can't you
-> make the compatible "arm,psci-0.2" instead?
+> Best regards,
 
-This is not a proper PSCI 0.2 implementation. For example 0.2 has a get
-version call which is definitely not implemented properly as after
-setting the compatible to 0.2 I get the following:
+Hi Krzysztof!
 
-[    0.000000] psci: PSCIv65535.65535 detected in firmware.
+Thanks! As I'll be sending v5 of this series soon (only really adding
+r-by, acked-by tags and only real changes in dts/dtsi patch), should I
+omit this patch from it since it has been applied? Or should I really
+only send the dts/dtsi patch at this point? Sorry if this is obvious, I
+just haven't sent that many patches before to know this.
 
-Which is obviously not right.
-
-> 
-> > +       };
-> > +
-> > +       timer {
-> > +               compatible = "arm,armv8-timer";
-> > +               /* Hypervisor Virtual Timer interrupt is not wired
-> > to GIC */
-> 
-> I don't understand this comment. You seem to have a bunch of
-> ARMv8.0 cores, for which there is no such thing as a hypervisor
-> virtual timer (this is an ARMv8.1 addition).
-
-My bad, will remove it! Should have read docs better.
-
-> 
-> > +               interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | 
-> > IRQ_TYPE_LEVEL_LOW)>,
-> > +                            <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) |
-> > IRQ_TYPE_LEVEL_LOW)>,
-> > +                            <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) |
-> > IRQ_TYPE_LEVEL_LOW)>,
-> > +                            <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) |
-> > IRQ_TYPE_LEVEL_LOW)>;
-> > +       };
-> 
-> Thanks,
-> 
->          M.
-
+Best regards,
+David
