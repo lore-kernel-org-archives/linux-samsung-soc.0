@@ -2,36 +2,38 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13E4C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Dec 2021 22:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B29C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 19 Dec 2021 22:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236805AbhLSW35 (ORCPT
+        id S233675AbhLSWbX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 19 Dec 2021 17:29:57 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:57076 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236798AbhLSW34 (ORCPT
+        Sun, 19 Dec 2021 17:31:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42766 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231651AbhLSWbX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 19 Dec 2021 17:29:56 -0500
+        Sun, 19 Dec 2021 17:31:23 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115E0C061574;
+        Sun, 19 Dec 2021 14:31:23 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1DDCDB80D13;
-        Sun, 19 Dec 2021 22:29:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFA2EC36AE0;
-        Sun, 19 Dec 2021 22:29:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A6AC760F2A;
+        Sun, 19 Dec 2021 22:31:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8F2C36AE0;
+        Sun, 19 Dec 2021 22:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639952993;
-        bh=WZHvYM1NaHiC+0EkPRsy6OrrEhMLzt7zU2cxnh2rPcM=;
+        s=k20201202; t=1639953082;
+        bh=/w8VSLnCpu7KBXLumH6V2wW2v/0w4xv8E3n6JwbadOM=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=msm8uPWbIVFV1zp4KyQd5KTQPgh1DkMt34qrc+jB/9UOM+d7HSd8v7WFfNDG9p5GR
-         CNXYWcNYEQyOt5dME5KbNO1a3v0imrFe7pycama1lyrrlSPil87SPzU3HwW2y1wvAa
-         q69D6DTafHQPfXbIpxvhbUxCJPDfsBSqEGEDqf0Q2dMxeLY40x3fZXV3DEGQb4WZ5H
-         WuCei8RUY9kBziqG+zhk6tEHdZg5k8xehM0DE3sGQ4rUz/LxNfK1O6lwXcj+7kPQMT
-         h+i6yxIqcf0KRX5ISPNxRgBm3gu34oFmDQom/ZzPoAU01VAQZUnrIYrrim6LR7nX2B
-         COOvIJxXM9IBQ==
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
+        b=noz5d9WRawspaO6OvMFZOQY9zV7k9Tlpn5wVc36PGDQWjcQoV7WIEG8uogYuJMFr9
+         e3vLWX1IOEgNTHbv4Jo781rtxrhWgSelf8BFi2ORscrhrD8yb59cyYZ7peU/vPKoo9
+         SMeZUAhPbSgQXQluWLmoIMuU4EOByZhk0v0ts5Ug8/4l/6HAezFEiBT4MZ80xpomQj
+         a6ut1WCsTpFjMpq0qLqLlHBveBV+DQsoYa5lCrw9PbIjc7nzmabD2zg0aSSJ4VHlT9
+         BgNAS6PIB62DzPgxgK8dgq/ljdlKwI+U3H6l933QihTODh+3wbEljpdmIKY3+xho4T
+         PTyESvL0Fk0gw==
+Subject: Re: [PATCH v4 2/7] clk: samsung: exynos850: Add missing sysreg clocks
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
@@ -51,14 +53,14 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Rob Herring <robh+dt@kernel.org>
 References: <20211217161549.24836-1-semen.protsenko@linaro.org>
- <20211217161549.24836-2-semen.protsenko@linaro.org>
+ <20211217161549.24836-3-semen.protsenko@linaro.org>
 From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
-Date:   Sun, 19 Dec 2021 23:29:47 +0100
+Message-ID: <664ee391-f220-1864-3897-15f8d96b470a@kernel.org>
+Date:   Sun, 19 Dec 2021 23:31:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211217161549.24836-2-semen.protsenko@linaro.org>
+In-Reply-To: <20211217161549.24836-3-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,8 +77,8 @@ On 17.12.2021 17:15, Sam Protsenko wrote:
 > and might be needed for corresponding Exynos850 features soon.
 > 
 > Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
-> Acked-by: Rob Herring<robh@kernel.org>
 > Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
 > Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
 
-Apologies for late reply, this patch is applied now.
+Applied, thanks.
+
