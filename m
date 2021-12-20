@@ -2,131 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C23BC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 17:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7DEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 18:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232743AbhLTRVe (ORCPT
+        id S233501AbhLTSGT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 12:21:34 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40960
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240165AbhLTRVc (ORCPT
+        Mon, 20 Dec 2021 13:06:19 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:35290 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230489AbhLTSGT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 12:21:32 -0500
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 61C7C3FDC3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 17:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640020890;
-        bh=9uepcdD/+xGrreEt0EvBxw805TxTK4a1Lcw9AZ0HvjU=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=bCTLqeZZJwy6zqvEnkQO5WUdJCftFGLdAXpUiknXtqg9T/RFdDcOvVoXNwdObbunJ
-         hgDIQympugumfMr33GAQi8bcUmA9NXXrqdi8Wy2uik9FzXsTSK/oizuAeI5DapAcO1
-         pY/1HBAvEM7pZv+GSGI55+mq2QFLSY/d2OzW3TkFnjaA7QWxl0vcNfTfNaHZRG8LCK
-         DG1Ig+Q13qlSonTSGAlFaTYYlJupy6y8TOyiY59QzHCRtS3bjZyh0i7+TDaJuZvkHi
-         13IaICJyFxMCOgq8XtakOX5MuPB8+4atEn22eV7hU4qe2llkbiXqPMfSFP5rYeCh+4
-         zuWMAtZZTDmiw==
-Received: by mail-lf1-f69.google.com with SMTP id cf27-20020a056512281b00b004259e7fce67so1237205lfb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 09:21:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=9uepcdD/+xGrreEt0EvBxw805TxTK4a1Lcw9AZ0HvjU=;
-        b=lEdZL8tamhA8BQzg+m9dqi2j9z80hUtATXdsYmhUkEZRLCZzUvspgWNtiYI1XI34Zm
-         zbdvM575L9d6MPlbS3nwkMMmhiAtAjRyR0uxftmUStDZ6H2shPPcmedwSL+ItL1dEMbB
-         zMCjy7IGO9QFtYvIPxTaGzfXLrHcxc9489ifKbcWDqZ8krc+b8APJcLWvO66vi2Ppkv5
-         B6P1iQ/7ZVRj2vJUFYrljpMhYA/yM3poQHkRjSrHK2TB69XIUacTK4/EzyC0gjMe62bZ
-         veJ9mvu5JKAKrg9G24+7oERa6/FH9ykDDRVX6ecUeZgzO1RNxstI+XSUHsf6dmsgo9DK
-         rRqQ==
-X-Gm-Message-State: AOAM532crGn2rbHAdbsJzS+SO3UulpvX0pBOoFQ+u5Jz4c9pUHJrSxqq
-        6Zmt+3NFZx/uyMExuErvLU/OE2ei1HyM6dpfoDmrblk9vDOhZQ4VQJQx5okZwOfNOOjWCUDI9+h
-        uGcWDSErLJfSy1Fx/MJi3zvw5iuMWzMMlgDM88pD/+hO64LZC
-X-Received: by 2002:a2e:a176:: with SMTP id u22mr15640201ljl.116.1640020889001;
-        Mon, 20 Dec 2021 09:21:29 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw12jXDaIaPutKBaiiF5L53Z9AtdC+YiU2FcIO9qaPe7iaLjXk+j/FyWgm2N7as2oT8PjAU/A==
-X-Received: by 2002:a2e:a176:: with SMTP id u22mr15640183ljl.116.1640020888803;
-        Mon, 20 Dec 2021 09:21:28 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id y4sm2568279ljp.16.2021.12.20.09.21.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Dec 2021 09:21:27 -0800 (PST)
-Message-ID: <09d4e9d8-6bfa-5676-50cc-49bfc947b444@canonical.com>
-Date:   Mon, 20 Dec 2021 18:21:24 +0100
+        Mon, 20 Dec 2021 13:06:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=F2yXVlUie46ploGVEKTVoENJ3NUWMLnJ1b5tqhVQaJ8=; b=sRKEgiDutdKLfiIWGcZwR6DJjY
+        tkJpVp4UrKYNEvC1+bCY38BOs5h9PuBYHQIs5nK4hYza8WEvPxf4TlqPKv5F2ByyB5LXEFYQ9hnez
+        yU4Az32dJqGLoCM3dhIg3hPraYOUfTArs1JHlPSERJk8eIUXqdsh+rY4mu3ThMuQEIeY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1mzN2y-00H47W-Bl; Mon, 20 Dec 2021 19:06:04 +0100
+Date:   Mon, 20 Dec 2021 19:06:04 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Gaosheng Cui <cuigaosheng1@huawei.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        SoC Team <soc@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gongruiqi1@huawei.com, wangweiyang2@huawei.com
+Subject: Re: [PATCH -next 0/3] replace open coded VA->PA calculation
+Message-ID: <YcDGDLScE+3ZlU8/@lunn.ch>
+References: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+ <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [GIT PULL 4/6] ARM: samsung: for v5.17
-Content-Language: en-US
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
- <20211220115530.30961-3-krzysztof.kozlowski@canonical.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211220115530.30961-3-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/12/2021 12:55, Krzysztof Kozlowski wrote:
-> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+On Mon, Dec 20, 2021 at 04:39:43PM +0100, Arnd Bergmann wrote:
+> On Sat, Dec 18, 2021 at 9:58 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
+> >
+> > These patches replace an open coded calculation to obtain the physical
+> > address of a far symbol with a call to the new ldr_l etc macro, and they
+> > belong to the kaslr patch set of arm32.
+> >
+> > Reference: https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=arm-kaslr-latest
+> >
+> > Ard Biesheuvel (3):
+> >   arm-soc: exynos: replace open coded VA->PA conversions
+> >   arm-soc: mvebu: replace open coded VA->PA conversion
+> >   arm-soc: various: replace open coded VA->PA calculation
 > 
->   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+> Usually these patches should go through the respective platform
+> maintainer trees,
+> and from there into the soc tree, but time is a little short here.
 > 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.17
-> 
-> for you to fetch changes up to 3ac5f9db26bb7a227ccbf160c36a5567b5394299:
-> 
->   ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies (2021-11-21 17:46:18 +0100)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v5.17
-> 
-> 1. Minor fixes for S3C platforms.
-> 2. Remove HAVE_S3C2410_I2C Kconfig symbol - not really useful.
-> 
-> ----------------------------------------------------------------
-> Arnd Bergmann (1):
->       ARM: s3c: add one more "fallthrough" statement in Jive
-> 
-> Krzysztof Kozlowski (1):
->       ARM: s3c: include header for prototype of s3c2410_modify_misccr
-> 
-> Sam Protsenko (1):
->       ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
-> 
+> I could apply them directly with the maintainer Acks
 
-Hi Arnd and Olof,
+Sorry, but this is too low level for me to understand what is going
+on, and so feel confident actually giving an ACK for the mvebu change.
 
-I forgot to mention possible conflict here with arm tree. Conflict is
-easy to resolve - just remove lines in all cases like:
+Should the resulting assembly be exactly the same? Has the submitter
+disassembled the object code and shown there is no actual difference
+in the assembler output?
 
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -471,7 -478,7 +471,6 @@@ config ARCH_S3C24X
-  	select CLKSRC_SAMSUNG_PWM
-  	select GPIO_SAMSUNG
-  	select GPIOLIB
-- 	select HAVE_S3C2410_I2C if I2C
- -	select GENERIC_IRQ_MULTI_HANDLER
-  	select NEED_MACH_IO_H
-  	select S3C2410_WATCHDOG
-  	select SAMSUNG_ATAGS
-
-
-Best regards,
-Krzysztof
+   Andrew
