@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDA1C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C85DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232126AbhLTLzg (ORCPT
+        id S232135AbhLTLzh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 06:55:36 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59376
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231644AbhLTLzg (ORCPT
+        Mon, 20 Dec 2021 06:55:37 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34724
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232114AbhLTLzg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Mon, 20 Dec 2021 06:55:36 -0500
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1FA823F32C
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A92C63F207
         for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 11:55:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
         s=20210705; t=1640001335;
-        bh=wmQkxgphrK4eSzvvYZb7picZLOO5tZUm1QhLP98g8vw=;
+        bh=Cu4+11DOXZRrdhilEoPCVYJODFzNISiCGs5MUOme0+k=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=pWv3sdcmcZY24xV83545NmPQP0PrMja33LfTDDhAS/I09ER68a5iQeZXxvbo3vzos
-         r7FnoCy+stO8UN5nm0LFvGA/SWvBa96wfdXFtdH2EbMvqAzNxLP4hT0yszRk0Ies0g
-         G3g/RovbExxPPsc6O2wMlSBWhA3cbX0SjZxq2osXkBw4CDA70Ytt0Q9x3j485YGOO6
-         9z0UbsrpHEjtNFgTzyB5rkLVzK7xjptbDXbED0l85hIJ1mABWCtgFsnMJmwOgl+DIZ
-         B7UJHn4kSQNN8s7V4EfYMLyVxEc3+Q3ae7doUeKJsBLsuLHUcW/a10NVIQqpWG77DJ
-         Wcd7m2xg3iLgw==
-Received: by mail-lf1-f70.google.com with SMTP id i16-20020a056512319000b00425efb1c65eso765872lfe.5
+        b=gWbccULEuHjPvE0f3+Ss/T97vrALZs+Aj3U08m9RRdVT1MtLsWX6ZpqrqIoyLtf3V
+         c1uYVR7iSX4jPV8c2lFnAmj0bpYw6H0rnw8liRkyxkN+z+xLLz6I+9Bfsg8VWNd7aJ
+         TEHI7RZYw5nu5wB7PZMbOo9bsgyo6VdqD5BkLtw7t9fxvVRHRluW1ZcYj8AAZ4m661
+         0kFglbx9AwBDk7v9NM+oKzBI+kkQcTLJImzvBDj5o5QpKW2byE5pLDxQkYtb4OlqGM
+         z9lDwsq+Ji5F0v5diDP3GCxByDCaJk4o8uftm79COg1W9c++sWFxi0ZE1mDbXBcqEC
+         v5vD/CP3i+TNA==
+Received: by mail-lf1-f71.google.com with SMTP id w21-20020a197b15000000b00422b0797fa3so4419400lfc.4
         for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 03:55:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wmQkxgphrK4eSzvvYZb7picZLOO5tZUm1QhLP98g8vw=;
-        b=f9PC+7IixaV34oLl9bKoY+Agcamjz8cn8/jUd4u+iD1K17kNnucFKEND7ulCTFvNoa
-         hQmNqYOml7Cc9Lnq7VN4PFIgmwhkJZSMR1Wbxa7+RkCOi0VRYvbrZm5G80i3PpR1oDNo
-         CvI4bCtnMMMPgety6ZZg0sApM/iobvsXurPAezo0G4snnLtffdD54w1LSx0rYt8qDo5c
-         FLPjkAfsPZKSeztMgJK2Gj5URjZhQww7suClJzlLyqeu58UcKnLBMEqNeqQ8qkntBngQ
-         9nTTaOdhG1xGNRB3s9FSwadM7moMBIKUCRoPkzCbqlIw5XLkNFpOgKMhWXXbVGSNNqMr
-         TgOw==
-X-Gm-Message-State: AOAM533G5RbWYuPWw2r9rGffLKZ7Zv77qt2v5Op4z3hmn/lyfOfUJ9Og
-        /cixcdcZGW8WTjNotGrslRhgfQsYTolIuOg1W7LUzPZvvM0x0WeQnYpWkI57OqZjUUf7Ul5ilzR
-        1EYh3lMaUUCBdzWei9MGDL07xWHnDOGZvfjQCmabrvrD5bPza
-X-Received: by 2002:a2e:94d7:: with SMTP id r23mr13742779ljh.11.1640001333921;
-        Mon, 20 Dec 2021 03:55:33 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx4pOCUOSS32zHR96WEP/TLPmxEy9A2PeWFDvgVU+Jy9Y/NtOqa5tk0sidYan4xX0D45X6FMw==
-X-Received: by 2002:a2e:94d7:: with SMTP id r23mr13742763ljh.11.1640001333766;
-        Mon, 20 Dec 2021 03:55:33 -0800 (PST)
+        bh=Cu4+11DOXZRrdhilEoPCVYJODFzNISiCGs5MUOme0+k=;
+        b=VWFYp/azQX/wj1B1Pg6e+3seiP8iLYtsihWq7Tj9FSo5yb47K3o9ff8LMV5J8hb0ex
+         Y8e/jo0ziepu+wJ4B++2VSxJF5gGqif+WG1HftnA1znTlm7GlBBrXWTPP9iO6dHASJtL
+         jWp8uwFrpToYPilKi6aEj56S24auRhn8bPMIH+iN2pLmVsZvwFgvCw9B1oTCu8W7SDrG
+         iq4EAnExreCe7A92JSsaSLYC0cK+7dwJKn9YbGKuGTEDuX8x/BRejAhWoTclu6LSFHoj
+         45Ke23Dv+yuyr18Ytf7Ca/+QYn4ffVVtkrdgVpaYGx1y0EbfUyJo+AtSkABySYWgC26F
+         7R2g==
+X-Gm-Message-State: AOAM53105bB4j0ElrQmoRxxDpGCA42AfAweFBw7+pgh/JkC1d4XfgUiK
+        +/g8j6IfVU6qEelXuAUJjJaNHQylt5Vo2iT/9+hWy1w/i2e7sikIFZzmULvY5l7NK5fDU+OXCpE
+        NPWSh/sCCV4zx87rciuLyKx8XMy5M8GcjqnyxZ6Z+XStEYq6X
+X-Received: by 2002:a2e:97cb:: with SMTP id m11mr14450442ljj.324.1640001335171;
+        Mon, 20 Dec 2021 03:55:35 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyGhcJV5zeGlTyPSC5Du9hpwQvZ9l7m0zQ8PCOvgtcgSgSX7pPLOaZ60p72RxVXeQ9BYz4bew==
+X-Received: by 2002:a2e:97cb:: with SMTP id m11mr14450429ljj.324.1640001334960;
+        Mon, 20 Dec 2021 03:55:34 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id n2sm2523746ljq.30.2021.12.20.03.55.32
+        by smtp.gmail.com with ESMTPSA id n2sm2523746ljq.30.2021.12.20.03.55.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 03:55:33 -0800 (PST)
+        Mon, 20 Dec 2021 03:55:34 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org, soc@kernel.org
@@ -64,9 +64,9 @@ Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/6] ARM: dts: samsung: for v5.17
-Date:   Mon, 20 Dec 2021 12:55:26 +0100
-Message-Id: <20211220115530.30961-1-krzysztof.kozlowski@canonical.com>
+Subject: [GIT PULL 3/6] arm64: dts: samsung: for v5.17
+Date:   Mon, 20 Dec 2021 12:55:27 +0100
+Message-Id: <20211220115530.30961-2-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
 References: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
@@ -82,26 +82,49 @@ The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.17
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-5.17
 
-for you to fetch changes up to 29bf0ff5ae18ad1a6dd183569cc097e578052c57:
+for you to fetch changes up to 51b1a5729469cef57a3c97aa014aa6e1d2b8d864:
 
-  ARM: dts: exynos: Rename hsi2c nodes to i2c for Exynos5260 (2021-12-06 09:29:01 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v5.17
-
-1. Fix Bluetooth GPIO on GT-I9100.
-2. Minor improvements and dtschema fixes.
+  dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850 (2021-12-20 10:35:32 +0100)
 
 ----------------------------------------------------------------
-Paul Cercueil (2):
-      ARM: dts: exynos: Fix BCM4330 Bluetooth reset polarity in I9100
-      ARM: dts: exynos: Use interrupt for BCM4330 host wakeup in I9100
+Samsung DTS ARM64 changes for v5.17
 
-Sam Protsenko (1):
-      ARM: dts: exynos: Rename hsi2c nodes to i2c for Exynos5260
+1. Add bindings for: Exynos USI, Samsung Galaxy A8 (2018) board, WinLink
+   E850-96 board and WinLink vendor prefix.
+2. Add pinctrl definitions used for Exynos850.
+3. Minor fixes and improvements.
+4. Convert serial on ExynosAutov9 to new hierarchy where serial is part
+   of USI node.
 
- arch/arm/boot/dts/exynos4210-i9100.dts | 7 +++++--
- arch/arm/boot/dts/exynos5260.dtsi      | 8 ++++----
- 2 files changed, 9 insertions(+), 6 deletions(-)
+----------------------------------------------------------------
+Chanho Park (1):
+      arm64: dts: exynos: convert serial_0 to USI on ExynosAutov9
+
+David Virag (1):
+      dt-bindings: arm: samsung: document jackpotlte board binding
+
+Krzysztof Kozlowski (1):
+      Merge branch 'for-v5.17/dt-usi' into next/dt64
+
+Sam Protsenko (6):
+      arm64: dts: exynos: Rename hsi2c nodes to i2c for Exynos5433 and Exynos7
+      dt-bindings: soc: samsung: Add Exynos USI bindings
+      dt-bindings: soc: samsung: Fix I2C clocks order in USI binding example
+      dt-bindings: Add vendor prefix for WinLink
+      dt-bindings: arm: samsung: Document E850-96 board binding
+      dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850
+
+ .../bindings/arm/samsung/samsung-boards.yaml       |  12 ++
+ .../bindings/soc/samsung/exynos-usi.yaml           | 159 +++++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  24 ++--
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  24 ++--
+ arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts   |   4 +
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  36 +++--
+ include/dt-bindings/pinctrl/samsung.h              |  13 +-
+ include/dt-bindings/soc/samsung,exynos-usi.h       |  17 +++
+ 9 files changed, 258 insertions(+), 33 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+ create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
