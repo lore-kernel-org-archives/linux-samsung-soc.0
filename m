@@ -2,158 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34E4C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CEFC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231856AbhLTLao (ORCPT
+        id S232072AbhLTLyX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 06:30:44 -0500
-Received: from smtp2.axis.com ([195.60.68.18]:48924 "EHLO smtp2.axis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231831AbhLTLan (ORCPT
+        Mon, 20 Dec 2021 06:54:23 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59328
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230511AbhLTLyX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 06:30:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1639999843;
-  x=1671535843;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0SNKihJIxusapvakMuJ2Rl8gGEXUWqARlz6agx/hpEY=;
-  b=hJaq4XVa0crNbD5HbU+Hwpht1J7Sd7j9ditgzV8hQGprGaeJNnHsAsXr
-   gwVjxtEOa3VfDNUUfz5HitcoXpjPi0hzNi27n9Y5pWuHeZdG9Uf/NIvir
-   q/fn/roa/WDJQ9BYRNXXnuAeeJXR8D7EwYsguKS4jB7HP86koCmEitlKi
-   J8lsnWfDlNWPxA83a7PFDFeaIoNftmVAdFzy8ZA7oDLdlAZJ//Hxq2WRK
-   XsMj3bOxlTTHLwK2oShhhJPnAmDp5/twZl/vL2Rn0/OOSO/6wKsR7lifU
-   GnTPVzZzaAiZQD52nsMHFlIR/UmzW07V506lQ32JVOimhIQ8Ea/y8R9Nt
-   Q==;
-From:   =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 20 Dec 2021 06:54:23 -0500
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1019B3FFD9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 11:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640001255;
+        bh=5eM8zfWkW/pWK8AnysGnJolct8dbP/FVpa+LnPDHIiQ=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=hpqZXvQpsNkUr5FeeYuCdTeM7uCRqBbMGqvIflj5IrcDemIRNHBi8SvMpwa54n59E
+         jOvWHeyGEaSw8rFRdaFKYXyl9AgeODJw20YvEIyLGifMMFdpLuN1XdgimJF9OqTdQ4
+         UrgSbW0m5Sd8RE4u05uqSha2haO3qvRqyRQePvnm6et3mYWAPY5bFCUGpVVpVnPzle
+         l3aaM0qdDRZa5awrW+KIS7NItTKwWjCF6KHMABeN48DmbUHUMKAG3K7jh+Jb9rzC/t
+         /Iv1wr5ISTbu1egOm69g9n9m7iExPWrSTctRk8H7giA6qso5txYeVrSx5dG+ja2mYU
+         2hlB2pGIGI/8g==
+Received: by mail-lf1-f70.google.com with SMTP id w18-20020a194912000000b004254e83978cso3947803lfa.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 03:54:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5eM8zfWkW/pWK8AnysGnJolct8dbP/FVpa+LnPDHIiQ=;
+        b=vU9kbYYBoJPnnlhImeHzxwTx5tqMRwIXb1xEOgdJGI50DuMmzTO/orseeKfoG5MbAd
+         j+6Jl4wSZXntqaIRn3BwJtvKFL7AVJf3YPfa6yYkED6g9dG5/zIHyM726hyqGGXMQlbQ
+         SUe9+XG1iaxTTl9NZe4E7L1XiQALwe7AhrxC3Has0yb5/QJiA3JYp9WJuClup8AsmwvZ
+         oesdyHVtIAtOqlYGWfxkp6NmJy/MoNyM7DBUhvxFxBCFqrWslB+BxBYnU4t9ddi5IjjY
+         gGcnaBe6InsWZgOvQPlf51uD2izhH97+WZJ3V8Hoaz9adFQP2j4mbI4PawQSTeWzAlux
+         JOeg==
+X-Gm-Message-State: AOAM5337GvIYV7rePr6W0mGutrVTMqgU2Gz76UakiUF+jQjodSKoFgzQ
+        NsocU3HbqsEFxJFNv8aHLppN1q7L2k7es2+YmBUkUJzleorYRtIu82v6K2avp8KSN+xUZKwhHO3
+        if/cveyxh5FwRNaR6Au026d2J9X473iFXoNzkyDzc/1lMHkNv
+X-Received: by 2002:a2e:8848:: with SMTP id z8mr14290845ljj.429.1640001254382;
+        Mon, 20 Dec 2021 03:54:14 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyncoh05JrY8CfHDFYfJ23eACvQDvVEoyPx5BQRDX8S1cvSRccYHmnJfLGek7iKuSmCNJeorw==
+X-Received: by 2002:a2e:8848:: with SMTP id z8mr14290820ljj.429.1640001253937;
+        Mon, 20 Dec 2021 03:54:13 -0800 (PST)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id a4sm2339486lfo.96.2021.12.20.03.54.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Dec 2021 03:54:13 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-CC:     Doug Anderson <dianders@google.com>, <kernel@axis.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        =?UTF-8?q?M=C3=A5rten=20Lindahl?= <marten.lindahl@axis.com>
-Subject: [PATCH v5 4/4] mmc: dw_mmc: Do not wait for DTO in case of error
-Date:   Mon, 20 Dec 2021 12:30:26 +0100
-Message-ID: <20211220113026.21129-5-marten.lindahl@axis.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20211220113026.21129-1-marten.lindahl@axis.com>
-References: <20211220113026.21129-1-marten.lindahl@axis.com>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 0/6] Samsung for v5.17
+Date:   Mon, 20 Dec 2021 12:53:59 +0100
+Message-Id: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When running the ARTPEC-8 DWMMC IP version, and a data error interrupt
-comes during a data read transfer, there is no guarantee for the data
-transfer over interrupt (DTO) to come within the specified data timeout.
-This case is handled by the dto_timer handler which will complete the
-request with the comment:
+Hi Arnd, Olof,
 
- /*
-  * If DTO interrupt does NOT come in sending data state,
-  * we should notify the driver to terminate current transfer
-  * and report a data timeout to the core.
-  */
+Four pull requests and two separate, trailing patches (arm64 and defconfig).
 
-But since the ARTPEC-8 DWMMC IP version, supports an extended TMOUT
-register which allows longer timeouts than the non ARTPEC-8 version
-does, waiting for the dto_timer to complete the request in error cases
-may cause the request to take significantly longer time than necessary.
-This is specifically true for the failing steps during tuning of a
-device.
+Please see the "[GIT PULL 1/6] samsung: soc: drivers: for v5.17" for future ABI
+break explanation.
 
-Fix this by completing the request when the error interrupt comes. Since
-this fix is specific for the ARTPEC-8, a quirk is added.
-
-Signed-off-by: Mårten Lindahl <marten.lindahl@axis.com>
----
-
-v3:
- - Define DW_MMC_QUIRK_EXTENDED_TMOUT.
- - Implement DW_MMC_QUIRK_EXTENDED_TMOUT for the ARTPEC-8 SoC.
-
- drivers/mmc/host/dw_mmc-exynos.c | 5 +++++
- drivers/mmc/host/dw_mmc.c        | 9 +++++++++
- drivers/mmc/host/dw_mmc.h        | 5 +++++
- 3 files changed, 19 insertions(+)
-
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 3914024cf415..ca5be4445ae0 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -127,6 +127,11 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
- 				DQS_CTRL_GET_RD_DELAY(priv->saved_strobe_ctrl);
- 	}
- 
-+	if (priv->ctrl_type == DW_MCI_TYPE_ARTPEC8) {
-+		/* Quirk needed for the ARTPEC-8 SoC */
-+		host->quirks |= DW_MMC_QUIRK_EXTENDED_TMOUT;
-+	}
-+
- 	host->bus_hz /= (priv->ciu_div + 1);
- 
- 	return 0;
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index a7745e193afa..da09a06898c9 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -2762,11 +2762,20 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
- 		if (pending & DW_MCI_DATA_ERROR_FLAGS) {
- 			spin_lock(&host->irq_lock);
- 
-+			if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
-+				del_timer(&host->dto_timer);
-+
- 			/* if there is an error report DATA_ERROR */
- 			mci_writel(host, RINTSTS, DW_MCI_DATA_ERROR_FLAGS);
- 			host->data_status = pending;
- 			smp_wmb(); /* drain writebuffer */
- 			set_bit(EVENT_DATA_ERROR, &host->pending_events);
-+
-+			if (host->quirks & DW_MMC_QUIRK_EXTENDED_TMOUT)
-+				/* In case of error, we cannot expect a DTO */
-+				set_bit(EVENT_DATA_COMPLETE,
-+					&host->pending_events);
-+
- 			tasklet_schedule(&host->tasklet);
- 
- 			spin_unlock(&host->irq_lock);
-diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-index 0a85d05eaf12..7f1e38621d13 100644
---- a/drivers/mmc/host/dw_mmc.h
-+++ b/drivers/mmc/host/dw_mmc.h
-@@ -118,6 +118,7 @@ struct dw_mci_dma_slave {
-  * @part_buf: Simple buffer for partial fifo reads/writes.
-  * @push_data: Pointer to FIFO push function.
-  * @pull_data: Pointer to FIFO pull function.
-+ * @quirks: Set of quirks that apply to specific versions of the IP.
-  * @vqmmc_enabled: Status of vqmmc, should be true or false.
-  * @irq_flags: The flags to be passed to request_irq.
-  * @irq: The irq value to be passed to request_irq.
-@@ -223,6 +224,7 @@ struct dw_mci {
- 	void (*push_data)(struct dw_mci *host, void *buf, int cnt);
- 	void (*pull_data)(struct dw_mci *host, void *buf, int cnt);
- 
-+	u32			quirks;
- 	bool			vqmmc_enabled;
- 	unsigned long		irq_flags; /* IRQ flags */
- 	int			irq;
-@@ -274,6 +276,9 @@ struct dw_mci_board {
- 	struct dma_pdata *data;
- };
- 
-+/* Support for longer data read timeout */
-+#define DW_MMC_QUIRK_EXTENDED_TMOUT            BIT(0)
-+
- #define DW_MMC_240A		0x240a
- #define DW_MMC_280A		0x280a
- 
--- 
-2.20.1
-
+Best regards,
+Krzysztof
