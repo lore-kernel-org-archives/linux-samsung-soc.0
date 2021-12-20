@@ -2,113 +2,115 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABC6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D634C43217
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 15:10:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232146AbhLTLzk (ORCPT
+        id S239584AbhLTPKj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 06:55:40 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59440
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231644AbhLTLzi (ORCPT
+        Mon, 20 Dec 2021 10:10:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38140 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238783AbhLTPJ3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 06:55:38 -0500
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E1C023F32C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 11:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640001336;
-        bh=toOeqdy9uQSYnwOmuCCMP7VCCN8CJiS3LeSVrO9Suis=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=wER4aBeAydVTJdAGk4emSBf1/bVeu7jBKe3n7J9o3IemU4y4x5b2B266Llp8faxn7
-         VBnX4BsGBQUmwbQx8DlvSHwevks5i4s+DMGUdNbqzYXetL7VrvEA27PUFJYX3De3AU
-         4Dzx+boGeo8eTQ0R3YPQ0m1r3CWEuyALuTZBgDzlJhrYLClp2Y4GUbpqzAXYoiq553
-         AVuPlgP20PuG5eaEHfRqCdjeoVcE281LNxxLAaP3VCRQoKOT1sNE+GLFSY309yrfG0
-         P9TJdaJOQIzo2FSRXCEK6LV0ASehOoE1CXDNn90WeA6YcyTIkQEtqI11/wO3BcJCo0
-         XNHxmlh30i33w==
-Received: by mail-lf1-f71.google.com with SMTP id 28-20020ac24d5c000000b00425c507cfc0so1585504lfp.20
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 03:55:36 -0800 (PST)
+        Mon, 20 Dec 2021 10:09:29 -0500
+Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 624B9C07E5C4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 06:55:15 -0800 (PST)
+Received: by mail-ua1-x931.google.com with SMTP id y22so18171695uap.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 06:55:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rNVouqrIPLa6IQqV3TFqg00sda6K3zfXkEQ5RkNQthc=;
+        b=Vs5G4lopykIYb4h8vBTDM9CYQ8PnUX0O1E+KebdgJWkRhAY0eTOhzAA6q/x/4tU8G7
+         XNeLaYhuWGpBT9hUY8zVXJ9uz+lAjPVLMXXga9gAcScDBLA4bAncaBxU+o/eg9lLfelb
+         VgpU5eGoKnh+vTMDzuZJLy/AAuJS5XwJkHqDOewCTm4ZpuOQ2nLPF/DfJxLFkGGT+ufj
+         pCCm2gjjOnkXQcAqfN2HEYRIF2aHeHxEwfAGwIVDpGeAXi6SjH3TFDIk6MV/r0hjGBI2
+         sAGpibkP6SuLv+/lKMQwlkNTKkiq8COSVqBB0WIetakx72YUMSp5AZ0R679IvQqpTERr
+         gAkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=toOeqdy9uQSYnwOmuCCMP7VCCN8CJiS3LeSVrO9Suis=;
-        b=tUgBZIDo3ZOBpJf8ITAYGqk/mjIUMZvT0iRnr3V4My3s7VZHgQgk2hsISUXlA3dCxa
-         bAAnsak4WSOQgMizWq3gCbuTHkF+ojp+/K6l7vk5K5PNLedmkFTW5lY4FEDfRXyu5vtG
-         yc9qdswkQqwQY01cG8GI7K5cYooJS4QvXD77FjJIuhV5hk3PeZpVM1ZG5IkBNrEfQQlH
-         0dPMHiAZkk2AADksaXKrmsrVgk8iZNCiNgO1Eu6K7LOQse0RoeCg1MiSmQlb9HnmG08I
-         5oi4/4kGJxfEa5X9B7tKrFBaISCFlO60AoBHaJy5/YWX26lvr/dyliISjcJbws0xdr/5
-         DXrQ==
-X-Gm-Message-State: AOAM533ZVyIic/MVuXnjmdmEkA0O5dw4HQ/sAw8gDAFolXZhN6yId+Ji
-        vTXozqzs7HQWwVC2hjYStOheEtuNVGZs1q2oeHuhzQhGj0QBo7PpKDHuKkgYgEG5/hpghnd255H
-        wwtoF8vO1rVrtGJYtlibssMqfd3i6Aq+rWgQ9Qx6ZHtzM7L+A
-X-Received: by 2002:a2e:860e:: with SMTP id a14mr14714119lji.67.1640001336428;
-        Mon, 20 Dec 2021 03:55:36 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzqcyC9yQY5wCTjgw0YN2+mTfZbYV2uSnGv31jQVsI4zyIsitWLPMpFJTQFiX7+xP/fh9EnqQ==
-X-Received: by 2002:a2e:860e:: with SMTP id a14mr14714102lji.67.1640001336271;
-        Mon, 20 Dec 2021 03:55:36 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id n2sm2523746ljq.30.2021.12.20.03.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 03:55:35 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 4/6] ARM: samsung: for v5.17
-Date:   Mon, 20 Dec 2021 12:55:28 +0100
-Message-Id: <20211220115530.30961-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
-References: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rNVouqrIPLa6IQqV3TFqg00sda6K3zfXkEQ5RkNQthc=;
+        b=QB9ph10svPrckR+zvSMDbhKa3MslbgT+IaM2TDUK0/6J98KwOcqGKnNwDZJmGSh+P+
+         p62yZLA4JUNeuQj7UTzQrcPgZ3UsnhjKD7prlwSgxdJfNyGPa7FvUXcAi4KJWpLO/ipm
+         e2Re9VmaFbYkFNI7231g3sTX5H8O8NSBW+5st9yjJm0dCa1x+XqL7XI+cqfnxfRMe7ua
+         VN4/1aSFcmZNoun5LVZEiM1lFNg+LyFWGaqyCE+G6XwH7pPoNVxNxUaxoZTOBIyHU4yI
+         TJnW0wu6tJxaAEgFzyTcnchoSqnL5gEKvHy93lkBXG0q8E+cujvd1s6APb18i9SZlTpE
+         V+mg==
+X-Gm-Message-State: AOAM530uWpjU7wjs9eJTbg0XdgGRi0OFlORFibq0x58YPHTbRumO8t+F
+        obYZk+UHl4npbgVeAORVzAnS4vRMOIMLPct3p5bHkbofkXiYBQ==
+X-Google-Smtp-Source: ABdhPJzR/B260rIdEoX2NmWjpHz2CNBlx4uO7asCMUb8tRADJxGEUQFMbOXQNsBGusXKtt9JcUIhvqvaOkdm5hZTzOo=
+X-Received: by 2002:a67:be12:: with SMTP id x18mr5032857vsq.86.1640012114496;
+ Mon, 20 Dec 2021 06:55:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211217161549.24836-1-semen.protsenko@linaro.org>
+ <20211217161549.24836-2-semen.protsenko@linaro.org> <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
+ <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
+In-Reply-To: <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 20 Dec 2021 16:55:03 +0200
+Message-ID: <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+On Mon, 20 Dec 2021 at 11:31, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 19/12/2021 23:29, Sylwester Nawrocki wrote:
+> > On 17.12.2021 17:15, Sam Protsenko wrote:
+> >> System Register is used to configure system behavior, like USI protocol,
+> >> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+> >> make it possible to modify SYSREG registers.
+> >>
+> >> While at it, add also missing PMU and GPIO clocks, which looks necessary
+> >> and might be needed for corresponding Exynos850 features soon.
+> >>
+> >> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
+> >> Acked-by: Rob Herring<robh@kernel.org>
+> >> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
+> >> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+> >
+> > Apologies for late reply, this patch is applied now.
+> >
+>
+> Sam,
+>
+> The clock is used in the DTSI, so since this was applied, there are only
+> two choices now:
+> 1. wait for next cycle with DTSI and DTS,
+> 2. Resubmit with replacing the newly added clocks in DTSI/DTS with
+> numbers and a TODO note.
+>
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+But why? I thought because Sylwester applied my clock patches, those
+will get into v5.17, and so DTSI/DTS might rely on those clocks? If I
+get it wrong, please let me know why, and I'll go with item (2) you
+suggested.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.17
-
-for you to fetch changes up to 3ac5f9db26bb7a227ccbf160c36a5567b5394299:
-
-  ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies (2021-11-21 17:46:18 +0100)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.17
-
-1. Minor fixes for S3C platforms.
-2. Remove HAVE_S3C2410_I2C Kconfig symbol - not really useful.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: s3c: add one more "fallthrough" statement in Jive
-
-Krzysztof Kozlowski (1):
-      ARM: s3c: include header for prototype of s3c2410_modify_misccr
-
-Sam Protsenko (1):
-      ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
-
- arch/arm/Kconfig                  |  1 -
- arch/arm/mach-exynos/Kconfig      |  1 -
- arch/arm/mach-s3c/Kconfig.s3c64xx |  1 -
- arch/arm/mach-s3c/gpio-samsung.c  |  1 +
- arch/arm/mach-s3c/mach-jive.c     |  1 +
- arch/arm/mach-s5pv210/Kconfig     |  1 -
- drivers/i2c/busses/Kconfig        | 10 ++--------
- 7 files changed, 4 insertions(+), 12 deletions(-)
+> Best regards,
+> Krzysztof
