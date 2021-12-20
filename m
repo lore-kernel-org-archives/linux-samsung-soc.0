@@ -2,105 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D11C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 15:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DE2C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 15:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240057AbhLTPaa (ORCPT
+        id S231956AbhLTPkC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 10:30:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240172AbhLTP3m (ORCPT
+        Mon, 20 Dec 2021 10:40:02 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:49347 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231255AbhLTPkB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 10:29:42 -0500
-Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED3EC061D5F
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 07:21:29 -0800 (PST)
-Received: by mail-vk1-xa31.google.com with SMTP id g65so3410233vkf.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 07:21:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7hAp0PfmGB2pMZBztL7AeQzwUtbDOof2ro2NrJ2jvCs=;
-        b=M+kLpz7Y9EgeUAfkXzReP8pE7rXZLW0/U1Va9YBYOrr7qJWrE06Wt5wA5hc2AkOOnS
-         aEDjRMxFcoAKhXyQ0hR+pii4XM1Qyy4qa6yardk03OgJtjRzJlGGldw1Tt8qc4QXUCSk
-         oiv/kFWlK2pooudkx3ErmtmvhmKbq5pe0zZYVhaln/r8Glw1kOgRvA6+Cwj8KnSStIP7
-         cAewagXibrjGcVn/NhdqnxGhI06M4Cvje+W3sF2NjE2w7w0GculzSfbnOzMfpVmaO5vM
-         FOWEzfqQuAAZbKtQo337v2aowvdwYGBjyT4AHdeZAzIn38m+sN5zT02UNAw8PQI20ExE
-         SYUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7hAp0PfmGB2pMZBztL7AeQzwUtbDOof2ro2NrJ2jvCs=;
-        b=Hug/WSOKH+YO3oZIM9p/WNr48lN/DJ3wbSXjM9/8fBuj3eUT8FpClyg5UmZLfirgOF
-         +S0hKEz9PQNGRpIHTsAthSLPZsWoW/wSHZpGT+CxfVKcJsEULQTngqsgMhxuMXGfkYIf
-         fE4k7kTVmErUE854chtDxp7sfSepO2W066ntIX48obnJiTREuxg0GaUReeyb3zhToR6l
-         h7Aa6AaVmMwxpYkuODF2PNJhHJVj5V97jHBBDV/rrutMTz927qQzvxf0gGXJ7cFmx+Pj
-         yu7zf2EfCvpCgs7UdzRiA7yTk/3izyI66H/xAhC5t6kCATEWozCtPmc42Wl0ntNMBJPi
-         iGzg==
-X-Gm-Message-State: AOAM5305Uu8WEF+i2/uLE0jhE3ZOGOsZ8KElkcmo0GJpamitiL4yRW7o
-        37UInDlvx7aU7k4RHaT4m8gN7Obe6KdkeNKWY07W+A==
-X-Google-Smtp-Source: ABdhPJyTNBpocGV7qtoeL6omBq4tJSpIoSxwQjpiDZ4N44pUz6MFxLuf0bHfL20uGAilVIycAEo0wvXpTET3t9N+9K0=
-X-Received: by 2002:a05:6122:c9b:: with SMTP id ba27mr5956186vkb.14.1640013688504;
- Mon, 20 Dec 2021 07:21:28 -0800 (PST)
+        Mon, 20 Dec 2021 10:40:01 -0500
+Received: from mail-wr1-f54.google.com ([209.85.221.54]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M8hMt-1n41bK3RBJ-004jkf; Mon, 20 Dec 2021 16:39:59 +0100
+Received: by mail-wr1-f54.google.com with SMTP id j18so21002597wrd.2;
+        Mon, 20 Dec 2021 07:39:59 -0800 (PST)
+X-Gm-Message-State: AOAM531K4tCtk58OTys5yK8vogqrbO3YF9GlwaxJz8YbT2J8+Idw7LlE
+        JeHE46iDXibwkbbEEd1qG7PMYr6Gob5e2RunbN8=
+X-Google-Smtp-Source: ABdhPJwyf1gl42e1+1ii3zT0maFx9sw6pqM+dmpJrc6Cp5f8QnUR5djHD7r/X/OWPoyaJf/hbjF5DreC2K3feE7WjvE=
+X-Received: by 2002:adf:f051:: with SMTP id t17mr13408714wro.192.1640014799482;
+ Mon, 20 Dec 2021 07:39:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20211204195757.8600-1-semen.protsenko@linaro.org>
- <20211204195757.8600-4-semen.protsenko@linaro.org> <ab15a97b-9351-4d50-f392-21cbfdec1289@canonical.com>
-In-Reply-To: <ab15a97b-9351-4d50-f392-21cbfdec1289@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 20 Dec 2021 17:21:16 +0200
-Message-ID: <CAPLW+4m0vYZUujki6D4KHV3TjBCZvnO-cZuoOatefQpfTEV3Yw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] tty: serial: samsung: Remove USI initialization
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+References: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+In-Reply-To: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Dec 2021 16:39:43 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com>
+Message-ID: <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com>
+Subject: Re: [PATCH -next 0/3] replace open coded VA->PA calculation
+To:     Gaosheng Cui <cuigaosheng1@huawei.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        SoC Team <soc@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gongruiqi1@huawei.com, wangweiyang2@huawei.com
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:0gArGAU/6xkyPS/OO+lrntkvNVVGNM1vGVCTqQ7uZnBtlqSoIE6
+ VjFtW3tUIEw5Sq6L5XGRHwtl7142fPoTYCgVGL5oV3uCiZks1xXVL6sN2OqRYZM79KLCdrX
+ NjM9D8Rfz0wdgxQF3w9uowT7ilSXe8U3BWlOtU/v6qoR+bxjK6f9K2tIVKLyZ7BZBgNw/pG
+ 391KbQxz6cw4WMQV92lrA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/cmRBXKXLEc=:RfvIVqDBoEDZIaNLseXoCB
+ o8z1MEJkl6yTEeOHwy2MfKsNo3+1EzdiyWtA3LpYO+ItCYqvQhMYfkrp6IuWunYijaqZui7Yz
+ Qtg7hbgSolFRbwvuuOp+gyTYEgJHSlOuS+jpIXCzG3mOyrLl2fYHEjwuL418qjKJEdSmqippp
+ SFBLewJ+A88DkJKJ/nSTtQbNwqdzftA9lvT6PwYTswmV3h3oJ5NMQ+4X3cywoxN+FaCtvfgu0
+ 35DUh4bnEsci2KsCojmb+LbIpHJITABjlbdc150+iHUMYt7V3NZiZtncNrRZ4YEGY3OXnSVhJ
+ mDQwIpgoTkJa8D3TDml85JfuKIUv8pJVHayv8cvIY72EHD58likXt2w56UnOBzScQ8aZdjwHD
+ Qe5Dpb0VkfqVgn8BviVUIwofLYYHdjZ4o3iD2ZLuLc4ulhM2/+oDh+ndnJE38REUJTP0mlg5c
+ u4qstfFA0MA94+obUgOhgsqCdVOHZIJcY6Sylsja1JZYC1blpnejai0PBtpHORkmnhdoIWLgT
+ bIVeBiim7qVimcPRaTv/hLUKCjBjib/xXAWCeo9lvldmUR2njk3aKgqME4aMIKsW2Od56r0k9
+ XPWNqn/h5rVvePNNAsRB1Wrer+hFa3LyBMl+O67KyFyHryO7e7qVvvbCwZKbiDv2kQ7PbbmCj
+ fb1tMNrK/YeFlgB9GxV6eEhpEuu3n0SwysfvJxAAyn8x4ikbiBQYVeJagatQSIYGDMUB7gz+i
+ gJQc+3y9K3Tg59YVfQheiCW701FwVoQ7K0jJbwzXNI5cvqmFqr7D9HFI06FznJNle1SvCSpBW
+ 4L/zKGD4zw14LHgj68837WDkZKQhEaOfeQIFgK98blhzCgeV04=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 13 Dec 2021 at 13:35, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
+On Sat, Dec 18, 2021 at 9:58 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
 >
-> On 04/12/2021 20:57, Sam Protsenko wrote:
-> > USI control is now extracted to the dedicated USI driver. Remove USI
-> > related code from serial driver to avoid conflicts and code duplication.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> > Changes in v3:
-> >   - Spell check fixes in commit message
-> >
-> > Changes in v2:
-> >   - (none)
-> >
-> >  drivers/tty/serial/samsung_tty.c | 36 ++++----------------------------
-> >  include/linux/serial_s3c.h       |  9 --------
-> >  2 files changed, 4 insertions(+), 41 deletions(-)
-> >
+> These patches replace an open coded calculation to obtain the physical
+> address of a far symbol with a call to the new ldr_l etc macro, and they
+> belong to the kaslr patch set of arm32.
 >
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reference: https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=arm-kaslr-latest
 >
-> Greg,
-> If you are fine with the changes, please take the serial driver changes
-> via your tree.
->
+> Ard Biesheuvel (3):
+>   arm-soc: exynos: replace open coded VA->PA conversions
+>   arm-soc: mvebu: replace open coded VA->PA conversion
+>   arm-soc: various: replace open coded VA->PA calculation
 
-Hi Greg,
+Usually these patches should go through the respective platform
+maintainer trees,
+and from there into the soc tree, but time is a little short here.
 
-If it's ok with you, can you please apply patches 3, 4 and 5 from this
-series? If it's possible, would be nice to see those in v5.17.
+I could apply them directly with the maintainer Acks, but I don't understand
+the significance of you sending them now. Is something broken without the
+three patches? Are these the only ones missing from Ard's original series,
+or is this preparation? Would you expect the patches to get backported to
+stable kernels?
 
-Thanks!
-
-> Best regards,
-> Krzysztof
+       Arnd
