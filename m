@@ -2,70 +2,70 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B234C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 09:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6F8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 09:36:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbhLTJbp (ORCPT
+        id S229612AbhLTJgO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 04:31:45 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59328
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229575AbhLTJbp (ORCPT
+        Mon, 20 Dec 2021 04:36:14 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:55322
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229602AbhLTJgO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 04:31:45 -0500
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        Mon, 20 Dec 2021 04:36:14 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 520C83FFDF
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 09:31:40 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 42D7D4005A
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 09:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639992700;
-        bh=q7I5LUCu0tEwQU8mlJ01Zkswbw7h7CV+lz20uT47oA0=;
+        s=20210705; t=1639992973;
+        bh=IwmUkfQQuaN3okDT7GWPwPvdQQAzqCja/1LenmoCoEo=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=UnAtfDVqH5nO07QRByZ/jipV5qcR4Mu/Q8EUoz0ehmuvMn0IVatgft7vL6J9xAAhh
-         MCcTSL5Rxlyhh+sXwENcE+cOMq2fiH1kIOAoga9jB39FGnUIvnrgY1cJF/6MjGugDa
-         QWXyXLp6TakDqD3xJvdXJ2y660ANSnvnDjMxSyx/qysLdUnC95B1kOB5Y0LQbQUvkN
-         Q3fiepwPMWV7gNkCaLZV7wEsScmn88mIWFfmARYRDfciT5mpgYRiHRj6YPOSCeflC0
-         TMsKLYuQH6VSBt8/wwi1hP/d9LPF66TSNqLzXNZASNqDZDhFGOJQbWx1pUyq54qfnE
-         xTCUnOZggDvug==
-Received: by mail-lf1-f70.google.com with SMTP id r21-20020ac25f95000000b004259e6ab262so2348969lfe.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 01:31:40 -0800 (PST)
+        b=cuHLRV2s+FQEY0qQh2SN5okGBDBUW59LkXj48OfyzLcmBEN5kErLq8D9E93tLpFCM
+         0XCFjwV09UYpcvZI2doQuXtLIz3hAqz2rV4LJRLWx3MM1qCH3sRzRwW42T8GOBUTsV
+         iQE0nsDwjIZOzb6n+GMRAc0yAnGfH4Smu2BngRxdEL9OSZnrpbNbXPSbbg3PX5GfU0
+         qUY3BReTsmUtf3plPgGGKUyz5Aogut9UWMc1XaIFvA1qywqHAkiHzNzB8epPUp4w3Y
+         vBsw7+FGcOitbKfON6g8HM8RHFBP0urb3mbu7BAQD/YEcxdwSjiV/VGCxg0phDi+1P
+         +61TigIUaQvLg==
+Received: by mail-lf1-f69.google.com with SMTP id j9-20020a05651231c900b004037efe9fddso4251653lfe.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 01:36:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=q7I5LUCu0tEwQU8mlJ01Zkswbw7h7CV+lz20uT47oA0=;
-        b=MAyO/jbKiO+0pWQMZjNO15ec3UWPahsarq38Pqirt1f4XZYPul4BQcCN+0Oj9lanjC
-         Rm4st5EVX5qZU/gv2rdfR7EiiE2GbEgXyN07pAOQr8TrmXzrra+5nEW9EAFNKoPlHVZA
-         pMf8zyDto+a/dIn+slvNwnA31+qN5Hj6JdU6lSswSXph81ia2OeZFCgMQNEgeVH58oAh
-         ePXDSoW8+jKOoyy1nMbmXQf7gvAvx33JTdFnypGivNJ2toaklSIxND4isk0384Igu2MH
-         mWGnkx0w3RuX9cYPr+xinDFvin51xI5GWIDpt9NwJ+yupHGg32Vj2WlU5jT7L/anKFjZ
-         m7rw==
-X-Gm-Message-State: AOAM531eThcemY5CdGreffL5PVgvW+zpMw+BF7q1zSWijMnz++fqIQvt
-        tTIREbPt6WTVNGvCXV96FVSlYC3gHMmWOvMS2EzGYMINdQLu0ZhZIz4NJVC4YGIwh2lKv+tf2EJ
-        mzKO8B2y4muqw89XI+Rv9ing4yr/aS9L4ZMp62F4oUCgX59HA
-X-Received: by 2002:a05:651c:503:: with SMTP id o3mr14038811ljp.249.1639992696180;
-        Mon, 20 Dec 2021 01:31:36 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzgVVgGiKkGKbx4ide5sjyVaqJ3UmUjO0Zkflx9HK1jDuh36xwydUtGqYdkrGBefX8MPBCelg==
-X-Received: by 2002:a05:651c:503:: with SMTP id o3mr14038784ljp.249.1639992695825;
-        Mon, 20 Dec 2021 01:31:35 -0800 (PST)
+        bh=IwmUkfQQuaN3okDT7GWPwPvdQQAzqCja/1LenmoCoEo=;
+        b=d/NSV8SHFLKXqPfer0nJlbFuV+7vUtRL3bgyPsTfZK/ilZ5uSixCMYE8SeAhsbuQp2
+         /Ml7lInm68mEvlxyaAc75Q4Kz12UA4JKnZW/HYcbcnaxcZcnmPQhb2dQU0w+0EJjtoRw
+         e3an4zwosvr2w+WgkTkL5hzz3Xy5L5tEnMChV1hcd7YBtGUKkzCOezTmQOJTdqnkSpAH
+         WvTly8z6bmfpfQ093jaz/dJdaYqI/TT2iePS+sV3qcCHOQhDYMEdriDspHezS96mgwTV
+         1j6+gStWWNmF9Mdu44+qp3yniYg7p9TM0XWSE3PXXMWrlpY7VCY20z/+TTSFqJ6u31gC
+         7CUg==
+X-Gm-Message-State: AOAM531Dqhcv19T46IhEdu6MRjtXkm8EFVmY6suLVPKnLX1RF5Txv3G+
+        InVfa5qlWXI+szazAoceibDS/ffcRV+FIMbrU55N6VdsEhXdnyKXsq4x0i/drtH8VH7e8I6q1LM
+        84bsd0h1RskZ00WTLgkx3hNGdMVgoIyxxc2XG07BkA1qgv0kU
+X-Received: by 2002:a05:6512:4028:: with SMTP id br40mr522661lfb.365.1639992972624;
+        Mon, 20 Dec 2021 01:36:12 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyT/5JqRisnSYB/tPDmuH5uFX9Zpw1WHoE/0Ws/4gk4AqKHpkLfVxOtQaWkZ1afKZK2oRKW0g==
+X-Received: by 2002:a05:6512:4028:: with SMTP id br40mr522641lfb.365.1639992972442;
+        Mon, 20 Dec 2021 01:36:12 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id j19sm2466716lji.94.2021.12.20.01.31.33
+        by smtp.gmail.com with ESMTPSA id p18sm959112lfc.297.2021.12.20.01.36.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Dec 2021 01:31:34 -0800 (PST)
-Message-ID: <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
-Date:   Mon, 20 Dec 2021 10:31:33 +0100
+        Mon, 20 Dec 2021 01:36:10 -0800 (PST)
+Message-ID: <cc1c2906-60c2-7d4a-78c3-014f6712f9b2@canonical.com>
+Date:   Mon, 20 Dec 2021 10:36:08 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
+Subject: Re: [PATCH v4 3/7] dt-bindings: Add vendor prefix for WinLink
 Content-Language: en-US
-To:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
         David Virag <virag.david003@gmail.com>,
@@ -79,44 +79,29 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         Hao Fang <fanghao11@huawei.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20211217161549.24836-1-semen.protsenko@linaro.org>
- <20211217161549.24836-2-semen.protsenko@linaro.org>
- <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
+ <20211217161549.24836-4-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
+In-Reply-To: <20211217161549.24836-4-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 19/12/2021 23:29, Sylwester Nawrocki wrote:
-> On 17.12.2021 17:15, Sam Protsenko wrote:
->> System Register is used to configure system behavior, like USI protocol,
->> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
->> make it possible to modify SYSREG registers.
->>
->> While at it, add also missing PMU and GPIO clocks, which looks necessary
->> and might be needed for corresponding Exynos850 features soon.
->>
->> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
->> Acked-by: Rob Herring<robh@kernel.org>
->> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
->> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+On 17/12/2021 17:15, Sam Protsenko wrote:
+> WinLink Co., Ltd is a hardware design and manufacturing company based in
+> South Korea. Official web-site: [1].
 > 
-> Apologies for late reply, this patch is applied now.
+> [1] http://win-link.net/
 > 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Sam,
+Ack goes after your SoB. First you create patch, sign it and then Rob
+sees it and acks it.
 
-The clock is used in the DTSI, so since this was applied, there are only
-two choices now:
-1. wait for next cycle with DTSI and DTS,
-2. Resubmit with replacing the newly added clocks in DTSI/DTS with
-numbers and a TODO note.
 
 Best regards,
 Krzysztof
