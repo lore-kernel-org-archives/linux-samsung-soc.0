@@ -2,138 +2,130 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BFFC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 16:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C23BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 17:21:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239182AbhLTQs4 (ORCPT
+        id S232743AbhLTRVe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 11:48:56 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40200
+        Mon, 20 Dec 2021 12:21:34 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40960
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237816AbhLTQs4 (ORCPT
+        by vger.kernel.org with ESMTP id S240165AbhLTRVc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 11:48:56 -0500
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        Mon, 20 Dec 2021 12:21:32 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DE0F63F044
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 16:48:54 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 61C7C3FDC3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 17:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640018934;
-        bh=DYfa/5ectGQzZ8y3l+jSOjS0qhsMHbXVqnPyDEeUiM4=;
+        s=20210705; t=1640020890;
+        bh=9uepcdD/+xGrreEt0EvBxw805TxTK4a1Lcw9AZ0HvjU=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=TIXx80+zy2LTFIhlQ46XTw3DOH2m8rTDF6jOFdcIE4a1R6vPaE43eDzOciKl4J2Sc
-         x+mScT9KR78TrtqbTBptretqGAiuL8C6Cb2hfDzQbzy/BPFIbuk/8+Gs2Su/5ievq+
-         Bj4bfpq88gS4WQYUm6J+vF4m629eP2r8bLJEa55WJgJwsgFrvUbesHDIPJHO4KgCs/
-         QN+jNc4gcjvJuVooxPv6i5+z0/M3u29LgNpuZeyR8ZjlskGfvWzcjgpO6yabUF9F9X
-         IHsUfDZN/1uLPQf9dSYtXFi2UHY8QOkNaSGP+ReNZiTxbs4Gao85EZe5EdAx5HxBVQ
-         b4N7ihIDOYTsg==
-Received: by mail-lf1-f71.google.com with SMTP id h7-20020ac24da7000000b0042521f16f1fso4779360lfe.21
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 08:48:54 -0800 (PST)
+        b=bCTLqeZZJwy6zqvEnkQO5WUdJCftFGLdAXpUiknXtqg9T/RFdDcOvVoXNwdObbunJ
+         hgDIQympugumfMr33GAQi8bcUmA9NXXrqdi8Wy2uik9FzXsTSK/oizuAeI5DapAcO1
+         pY/1HBAvEM7pZv+GSGI55+mq2QFLSY/d2OzW3TkFnjaA7QWxl0vcNfTfNaHZRG8LCK
+         DG1Ig+Q13qlSonTSGAlFaTYYlJupy6y8TOyiY59QzHCRtS3bjZyh0i7+TDaJuZvkHi
+         13IaICJyFxMCOgq8XtakOX5MuPB8+4atEn22eV7hU4qe2llkbiXqPMfSFP5rYeCh+4
+         zuWMAtZZTDmiw==
+Received: by mail-lf1-f69.google.com with SMTP id cf27-20020a056512281b00b004259e7fce67so1237205lfb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 09:21:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=DYfa/5ectGQzZ8y3l+jSOjS0qhsMHbXVqnPyDEeUiM4=;
-        b=NrnPH+0M+9wzavLf0r6eJN5lTLsftF1Con+kESLAvnVcwNY7+1omaPVbY0hIvzG9u7
-         GTweUU6Z6VWv1wpyDtKf0L8C1uqNaJGobdPjdHthHkX4UoWaUThT6mKi641+q24bZhUV
-         kwLQFp4qqDkYxgsawxIlXQSthX0/Xwe9awO/N/wtSKqZ7o8H3NkuYNV+M+SOPP7En2PG
-         DfN7z0RkMTDBNJ2Wzcu7m708a7iDyyQoY4WoKQYkOazX+lQ4O2vL3oRBpwde8/LIo0o7
-         4CRbj0aDB65zxNxbnSqbzqOfS80XfcP2TQnwBXTS+Da80RmqY0yFWR0mQBaV+7PdjPlJ
-         oDWw==
-X-Gm-Message-State: AOAM530LR3KmalthSzBeqtjWXqerEtrThSSiEsx+Y5soedr5MfebAdAC
-        EE+L4trSVXY8uR+T+Qnp+jH3YKn20JSDdiC3ygvqgdZCNXMhWoFgPFG7Y3ZI1Uetfc3h1AdM2xj
-        5of7yMwYTRAKveLx7WCaxVVJND1epk7Kp/CsO/Hrex1HH7ROV
-X-Received: by 2002:ac2:48ae:: with SMTP id u14mr17041110lfg.610.1640018934343;
-        Mon, 20 Dec 2021 08:48:54 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy8yqg4GqMCAMMT7Glf5y+TjFZrXMjASbZ479SQVeZWWxSO+eS7MRPqHEL0i+Cg7sbAuuZLPQ==
-X-Received: by 2002:ac2:48ae:: with SMTP id u14mr17041093lfg.610.1640018934138;
-        Mon, 20 Dec 2021 08:48:54 -0800 (PST)
+        bh=9uepcdD/+xGrreEt0EvBxw805TxTK4a1Lcw9AZ0HvjU=;
+        b=lEdZL8tamhA8BQzg+m9dqi2j9z80hUtATXdsYmhUkEZRLCZzUvspgWNtiYI1XI34Zm
+         zbdvM575L9d6MPlbS3nwkMMmhiAtAjRyR0uxftmUStDZ6H2shPPcmedwSL+ItL1dEMbB
+         zMCjy7IGO9QFtYvIPxTaGzfXLrHcxc9489ifKbcWDqZ8krc+b8APJcLWvO66vi2Ppkv5
+         B6P1iQ/7ZVRj2vJUFYrljpMhYA/yM3poQHkRjSrHK2TB69XIUacTK4/EzyC0gjMe62bZ
+         veJ9mvu5JKAKrg9G24+7oERa6/FH9ykDDRVX6ecUeZgzO1RNxstI+XSUHsf6dmsgo9DK
+         rRqQ==
+X-Gm-Message-State: AOAM532crGn2rbHAdbsJzS+SO3UulpvX0pBOoFQ+u5Jz4c9pUHJrSxqq
+        6Zmt+3NFZx/uyMExuErvLU/OE2ei1HyM6dpfoDmrblk9vDOhZQ4VQJQx5okZwOfNOOjWCUDI9+h
+        uGcWDSErLJfSy1Fx/MJi3zvw5iuMWzMMlgDM88pD/+hO64LZC
+X-Received: by 2002:a2e:a176:: with SMTP id u22mr15640201ljl.116.1640020889001;
+        Mon, 20 Dec 2021 09:21:29 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw12jXDaIaPutKBaiiF5L53Z9AtdC+YiU2FcIO9qaPe7iaLjXk+j/FyWgm2N7as2oT8PjAU/A==
+X-Received: by 2002:a2e:a176:: with SMTP id u22mr15640183ljl.116.1640020888803;
+        Mon, 20 Dec 2021 09:21:28 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id j10sm548950lfp.286.2021.12.20.08.48.53
+        by smtp.gmail.com with ESMTPSA id y4sm2568279ljp.16.2021.12.20.09.21.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Dec 2021 08:48:53 -0800 (PST)
-Message-ID: <81b39068-a06f-a4c9-bca7-6fb296d4b05d@canonical.com>
-Date:   Mon, 20 Dec 2021 17:48:52 +0100
+        Mon, 20 Dec 2021 09:21:27 -0800 (PST)
+Message-ID: <09d4e9d8-6bfa-5676-50cc-49bfc947b444@canonical.com>
+Date:   Mon, 20 Dec 2021 18:21:24 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [GIT PULL 1/6] samsung: soc: drivers: for v5.17
+Subject: Re: [GIT PULL 4/6] ARM: samsung: for v5.17
 Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         Chanho Park <chanho61.park@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>
 References: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
- <20211220115405.30434-2-krzysztof.kozlowski@canonical.com>
- <CAK8P3a1A+6f1OsJ-8-8kbmXXbbsrQZTQywOAy59tJoUmdDN49g@mail.gmail.com>
+ <20211220115530.30961-3-krzysztof.kozlowski@canonical.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAK8P3a1A+6f1OsJ-8-8kbmXXbbsrQZTQywOAy59tJoUmdDN49g@mail.gmail.com>
+In-Reply-To: <20211220115530.30961-3-krzysztof.kozlowski@canonical.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/12/2021 17:26, Arnd Bergmann wrote:
-> On Mon, Dec 20, 2021 at 12:54 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->> ----------------------------------------------------------------
->> Samsung SoC drivers changes for v5.17
->>
->> 1. Exynos ChipID: add Exynos7885 support.
->> 2. Exynos PMU: add Exynos850 support.
->> 3. Minor bindings cleanup.
->> 4. Add Exynos USIv2 (Universal Serial Interface) driver. The USI block is
->>    a shared IP block between I2C, UART/serial and SPI. Basically one has
->>    to choose which feature the USI block will support and later the
->>    regular I2C/serial/SPI driver will bind and work.
->>    This merges also one commit with dt-binding headers from my dts64
->>    pull request.
->>
->>    Together with a future serial driver change, this will break the ABI.
->>
->>    Affected: Serial on ExynosAutov9 SADK and out-of-tree ExynosAutov9 boards
->>
->>    Why: To properly and efficiently support the USI with new hierarchy
->>    of USI-{serial,SPI,I2C} devicetree nodes.
->>
->>    Rationale:
->>    Recently added serial and USI support was short-sighted and did not
->>    allow to smooth support of other features (SPI and I2C). Adding
->>    support for USI-SPI and USI-I2C would effect in code duplication.
->>    Adding support for different USI versions (currently supported is
->>    USIv2 but support for v1 is planned) would cause even more code
->>    duplication and create a solution difficult to maintain.
->>    Since USI-serial and ExynosAutov9 have been added recently, are
->>    considered fresh development features and there are no supported
->>    products using them, the code/solution is being refactored in
->>    non-backwards compatible way.  The compatibility is not broken yet.
->>    It will be when serial driver changes are accepted.
->>    The ABI break was discussed with only known users of ExynosAutov9 and
->>    received their permission.
+On 20/12/2021 12:55, Krzysztof Kozlowski wrote:
+> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 > 
-> Thanks a lot for the detailed description, very helpful!
+>   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
 > 
-> I've applied pull requests 1 through 4, though it seems that once more
-> the automated emails did not go out.
+> are available in the Git repository at:
 > 
-> I can't find the two defconfig patches you mentioned in the introductory
-> mail, neither in patchwork nor in my inbox, I assume these were
-> numbered 5/6 and 6/6?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.17
+> 
+> for you to fetch changes up to 3ac5f9db26bb7a227ccbf160c36a5567b5394299:
+> 
+>   ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies (2021-11-21 17:46:18 +0100)
+> 
+> ----------------------------------------------------------------
+> Samsung mach/soc changes for v5.17
+> 
+> 1. Minor fixes for S3C platforms.
+> 2. Remove HAVE_S3C2410_I2C Kconfig symbol - not really useful.
+> 
+> ----------------------------------------------------------------
+> Arnd Bergmann (1):
+>       ARM: s3c: add one more "fallthrough" statement in Jive
+> 
+> Krzysztof Kozlowski (1):
+>       ARM: s3c: include header for prototype of s3c2410_modify_misccr
+> 
+> Sam Protsenko (1):
+>       ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
 > 
 
-Yes, these were patches 5/6 and 6/6 but maybe I made mistakes in address
-list. Let me resend them now.
+Hi Arnd and Olof,
+
+I forgot to mention possible conflict here with arm tree. Conflict is
+easy to resolve - just remove lines in all cases like:
+
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -471,7 -478,7 +471,6 @@@ config ARCH_S3C24X
+  	select CLKSRC_SAMSUNG_PWM
+  	select GPIO_SAMSUNG
+  	select GPIOLIB
+- 	select HAVE_S3C2410_I2C if I2C
+ -	select GENERIC_IRQ_MULTI_HANDLER
+  	select NEED_MACH_IO_H
+  	select S3C2410_WATCHDOG
+  	select SAMSUNG_ATAGS
 
 
 Best regards,
