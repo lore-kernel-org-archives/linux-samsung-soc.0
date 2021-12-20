@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C85DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABC6C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 11:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbhLTLzh (ORCPT
+        id S232146AbhLTLzk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 06:55:37 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34724
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232114AbhLTLzg (ORCPT
+        Mon, 20 Dec 2021 06:55:40 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59440
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231644AbhLTLzi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 06:55:36 -0500
+        Mon, 20 Dec 2021 06:55:38 -0500
 Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A92C63F207
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 11:55:35 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E1C023F32C
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 11:55:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640001335;
-        bh=Cu4+11DOXZRrdhilEoPCVYJODFzNISiCGs5MUOme0+k=;
+        s=20210705; t=1640001336;
+        bh=toOeqdy9uQSYnwOmuCCMP7VCCN8CJiS3LeSVrO9Suis=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=gWbccULEuHjPvE0f3+Ss/T97vrALZs+Aj3U08m9RRdVT1MtLsWX6ZpqrqIoyLtf3V
-         c1uYVR7iSX4jPV8c2lFnAmj0bpYw6H0rnw8liRkyxkN+z+xLLz6I+9Bfsg8VWNd7aJ
-         TEHI7RZYw5nu5wB7PZMbOo9bsgyo6VdqD5BkLtw7t9fxvVRHRluW1ZcYj8AAZ4m661
-         0kFglbx9AwBDk7v9NM+oKzBI+kkQcTLJImzvBDj5o5QpKW2byE5pLDxQkYtb4OlqGM
-         z9lDwsq+Ji5F0v5diDP3GCxByDCaJk4o8uftm79COg1W9c++sWFxi0ZE1mDbXBcqEC
-         v5vD/CP3i+TNA==
-Received: by mail-lf1-f71.google.com with SMTP id w21-20020a197b15000000b00422b0797fa3so4419400lfc.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 03:55:35 -0800 (PST)
+        b=wER4aBeAydVTJdAGk4emSBf1/bVeu7jBKe3n7J9o3IemU4y4x5b2B266Llp8faxn7
+         VBnX4BsGBQUmwbQx8DlvSHwevks5i4s+DMGUdNbqzYXetL7VrvEA27PUFJYX3De3AU
+         4Dzx+boGeo8eTQ0R3YPQ0m1r3CWEuyALuTZBgDzlJhrYLClp2Y4GUbpqzAXYoiq553
+         AVuPlgP20PuG5eaEHfRqCdjeoVcE281LNxxLAaP3VCRQoKOT1sNE+GLFSY309yrfG0
+         P9TJdaJOQIzo2FSRXCEK6LV0ASehOoE1CXDNn90WeA6YcyTIkQEtqI11/wO3BcJCo0
+         XNHxmlh30i33w==
+Received: by mail-lf1-f71.google.com with SMTP id 28-20020ac24d5c000000b00425c507cfc0so1585504lfp.20
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2021 03:55:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Cu4+11DOXZRrdhilEoPCVYJODFzNISiCGs5MUOme0+k=;
-        b=VWFYp/azQX/wj1B1Pg6e+3seiP8iLYtsihWq7Tj9FSo5yb47K3o9ff8LMV5J8hb0ex
-         Y8e/jo0ziepu+wJ4B++2VSxJF5gGqif+WG1HftnA1znTlm7GlBBrXWTPP9iO6dHASJtL
-         jWp8uwFrpToYPilKi6aEj56S24auRhn8bPMIH+iN2pLmVsZvwFgvCw9B1oTCu8W7SDrG
-         iq4EAnExreCe7A92JSsaSLYC0cK+7dwJKn9YbGKuGTEDuX8x/BRejAhWoTclu6LSFHoj
-         45Ke23Dv+yuyr18Ytf7Ca/+QYn4ffVVtkrdgVpaYGx1y0EbfUyJo+AtSkABySYWgC26F
-         7R2g==
-X-Gm-Message-State: AOAM53105bB4j0ElrQmoRxxDpGCA42AfAweFBw7+pgh/JkC1d4XfgUiK
-        +/g8j6IfVU6qEelXuAUJjJaNHQylt5Vo2iT/9+hWy1w/i2e7sikIFZzmULvY5l7NK5fDU+OXCpE
-        NPWSh/sCCV4zx87rciuLyKx8XMy5M8GcjqnyxZ6Z+XStEYq6X
-X-Received: by 2002:a2e:97cb:: with SMTP id m11mr14450442ljj.324.1640001335171;
-        Mon, 20 Dec 2021 03:55:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyGhcJV5zeGlTyPSC5Du9hpwQvZ9l7m0zQ8PCOvgtcgSgSX7pPLOaZ60p72RxVXeQ9BYz4bew==
-X-Received: by 2002:a2e:97cb:: with SMTP id m11mr14450429ljj.324.1640001334960;
-        Mon, 20 Dec 2021 03:55:34 -0800 (PST)
+        bh=toOeqdy9uQSYnwOmuCCMP7VCCN8CJiS3LeSVrO9Suis=;
+        b=tUgBZIDo3ZOBpJf8ITAYGqk/mjIUMZvT0iRnr3V4My3s7VZHgQgk2hsISUXlA3dCxa
+         bAAnsak4WSOQgMizWq3gCbuTHkF+ojp+/K6l7vk5K5PNLedmkFTW5lY4FEDfRXyu5vtG
+         yc9qdswkQqwQY01cG8GI7K5cYooJS4QvXD77FjJIuhV5hk3PeZpVM1ZG5IkBNrEfQQlH
+         0dPMHiAZkk2AADksaXKrmsrVgk8iZNCiNgO1Eu6K7LOQse0RoeCg1MiSmQlb9HnmG08I
+         5oi4/4kGJxfEa5X9B7tKrFBaISCFlO60AoBHaJy5/YWX26lvr/dyliISjcJbws0xdr/5
+         DXrQ==
+X-Gm-Message-State: AOAM533ZVyIic/MVuXnjmdmEkA0O5dw4HQ/sAw8gDAFolXZhN6yId+Ji
+        vTXozqzs7HQWwVC2hjYStOheEtuNVGZs1q2oeHuhzQhGj0QBo7PpKDHuKkgYgEG5/hpghnd255H
+        wwtoF8vO1rVrtGJYtlibssMqfd3i6Aq+rWgQ9Qx6ZHtzM7L+A
+X-Received: by 2002:a2e:860e:: with SMTP id a14mr14714119lji.67.1640001336428;
+        Mon, 20 Dec 2021 03:55:36 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzqcyC9yQY5wCTjgw0YN2+mTfZbYV2uSnGv31jQVsI4zyIsitWLPMpFJTQFiX7+xP/fh9EnqQ==
+X-Received: by 2002:a2e:860e:: with SMTP id a14mr14714102lji.67.1640001336271;
+        Mon, 20 Dec 2021 03:55:36 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id n2sm2523746ljq.30.2021.12.20.03.55.33
+        by smtp.gmail.com with ESMTPSA id n2sm2523746ljq.30.2021.12.20.03.55.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 03:55:34 -0800 (PST)
+        Mon, 20 Dec 2021 03:55:35 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org, soc@kernel.org
@@ -64,9 +64,9 @@ Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/6] arm64: dts: samsung: for v5.17
-Date:   Mon, 20 Dec 2021 12:55:27 +0100
-Message-Id: <20211220115530.30961-2-krzysztof.kozlowski@canonical.com>
+Subject: [GIT PULL 4/6] ARM: samsung: for v5.17
+Date:   Mon, 20 Dec 2021 12:55:28 +0100
+Message-Id: <20211220115530.30961-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
 References: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com>
@@ -82,49 +82,33 @@ The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-5.17
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.17
 
-for you to fetch changes up to 51b1a5729469cef57a3c97aa014aa6e1d2b8d864:
+for you to fetch changes up to 3ac5f9db26bb7a227ccbf160c36a5567b5394299:
 
-  dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850 (2021-12-20 10:35:32 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v5.17
-
-1. Add bindings for: Exynos USI, Samsung Galaxy A8 (2018) board, WinLink
-   E850-96 board and WinLink vendor prefix.
-2. Add pinctrl definitions used for Exynos850.
-3. Minor fixes and improvements.
-4. Convert serial on ExynosAutov9 to new hierarchy where serial is part
-   of USI node.
+  ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies (2021-11-21 17:46:18 +0100)
 
 ----------------------------------------------------------------
-Chanho Park (1):
-      arm64: dts: exynos: convert serial_0 to USI on ExynosAutov9
+Samsung mach/soc changes for v5.17
 
-David Virag (1):
-      dt-bindings: arm: samsung: document jackpotlte board binding
+1. Minor fixes for S3C platforms.
+2. Remove HAVE_S3C2410_I2C Kconfig symbol - not really useful.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      ARM: s3c: add one more "fallthrough" statement in Jive
 
 Krzysztof Kozlowski (1):
-      Merge branch 'for-v5.17/dt-usi' into next/dt64
+      ARM: s3c: include header for prototype of s3c2410_modify_misccr
 
-Sam Protsenko (6):
-      arm64: dts: exynos: Rename hsi2c nodes to i2c for Exynos5433 and Exynos7
-      dt-bindings: soc: samsung: Add Exynos USI bindings
-      dt-bindings: soc: samsung: Fix I2C clocks order in USI binding example
-      dt-bindings: Add vendor prefix for WinLink
-      dt-bindings: arm: samsung: Document E850-96 board binding
-      dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850
+Sam Protsenko (1):
+      ARM: samsung: Remove HAVE_S3C2410_I2C and use direct dependencies
 
- .../bindings/arm/samsung/samsung-boards.yaml       |  12 ++
- .../bindings/soc/samsung/exynos-usi.yaml           | 159 +++++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  24 ++--
- arch/arm64/boot/dts/exynos/exynos7.dtsi            |  24 ++--
- arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts   |   4 +
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  36 +++--
- include/dt-bindings/pinctrl/samsung.h              |  13 +-
- include/dt-bindings/soc/samsung,exynos-usi.h       |  17 +++
- 9 files changed, 258 insertions(+), 33 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
- create mode 100644 include/dt-bindings/soc/samsung,exynos-usi.h
+ arch/arm/Kconfig                  |  1 -
+ arch/arm/mach-exynos/Kconfig      |  1 -
+ arch/arm/mach-s3c/Kconfig.s3c64xx |  1 -
+ arch/arm/mach-s3c/gpio-samsung.c  |  1 +
+ arch/arm/mach-s3c/mach-jive.c     |  1 +
+ arch/arm/mach-s5pv210/Kconfig     |  1 -
+ drivers/i2c/busses/Kconfig        | 10 ++--------
+ 7 files changed, 4 insertions(+), 12 deletions(-)
