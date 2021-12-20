@@ -2,93 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37774C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 15:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2644C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 16:26:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234471AbhLTPzG (ORCPT
+        id S237701AbhLTQ0g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 10:55:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50150 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231790AbhLTPzF (ORCPT
+        Mon, 20 Dec 2021 11:26:36 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:58285 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232694AbhLTQ0f (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 10:55:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4544FC061574;
-        Mon, 20 Dec 2021 07:55:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D61E5611DF;
-        Mon, 20 Dec 2021 15:55:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B207DC36AE7;
-        Mon, 20 Dec 2021 15:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1640015704;
-        bh=dUn/siHCed+00iFm6+pbfrfR17i6Fgn0zXZ5qKc0C9g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SPqciD3W7ys3TkAP7vRIEcOvkw/yVFTld83zJs9H67NGf+/y92yA4sRT6n5/ex7vk
-         OOC2FYgA/dVG65wUoL0/mLtPiHF0yX1gl295zBN6vPBD9+rPqbPVImHIkb4IEmAn2Q
-         I27qoKpzCP8WgIaJ1uHV05gnX/eFWbFkw45cU+F4=
-Date:   Mon, 20 Dec 2021 16:55:01 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v3 3/5] tty: serial: samsung: Remove USI initialization
-Message-ID: <YcCnVfp2DWuVlXIw@kroah.com>
-References: <20211204195757.8600-1-semen.protsenko@linaro.org>
- <20211204195757.8600-4-semen.protsenko@linaro.org>
- <ab15a97b-9351-4d50-f392-21cbfdec1289@canonical.com>
- <CAPLW+4m0vYZUujki6D4KHV3TjBCZvnO-cZuoOatefQpfTEV3Yw@mail.gmail.com>
+        Mon, 20 Dec 2021 11:26:35 -0500
+Received: from mail-wm1-f53.google.com ([209.85.128.53]) by
+ mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MjSPq-1mbVvE0QTy-00kvTN; Mon, 20 Dec 2021 17:26:34 +0100
+Received: by mail-wm1-f53.google.com with SMTP id d198-20020a1c1dcf000000b0034569cdd2a2so253952wmd.5;
+        Mon, 20 Dec 2021 08:26:33 -0800 (PST)
+X-Gm-Message-State: AOAM530RcqF5pDNv/pc0dYzWMFSQfbrsMk2l2Vi4TNA9RpDNJYzXIXvP
+        pUpK6JQ3+UBm9ovL1lwMWcDb5u4E6FxTArupyDs=
+X-Google-Smtp-Source: ABdhPJzwLrcEdHroPABlE7IJDleIxx8hF8kMeanu6+6idToBCIFPiLRY1JmE/9PmnlEOMB7YuxOroFdtYAkUkDWN3xs=
+X-Received: by 2002:a7b:cc90:: with SMTP id p16mr4058397wma.98.1640017593504;
+ Mon, 20 Dec 2021 08:26:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPLW+4m0vYZUujki6D4KHV3TjBCZvnO-cZuoOatefQpfTEV3Yw@mail.gmail.com>
+References: <20211220115405.30434-1-krzysztof.kozlowski@canonical.com> <20211220115405.30434-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211220115405.30434-2-krzysztof.kozlowski@canonical.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Dec 2021 17:26:17 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1A+6f1OsJ-8-8kbmXXbbsrQZTQywOAy59tJoUmdDN49g@mail.gmail.com>
+Message-ID: <CAK8P3a1A+6f1OsJ-8-8kbmXXbbsrQZTQywOAy59tJoUmdDN49g@mail.gmail.com>
+Subject: Re: [GIT PULL 1/6] samsung: soc: drivers: for v5.17
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:eWOF60gc+LvbFpDhWKiA/GiiQT+oM6NriT55/Wr0+bkXD8ns8ir
+ GCIZd+t1nGwzfd7l1DPQZVGIKP7bcI3WaPbhgvbPHrEesXHRsyHaYtUhJrTP43nkv6aJNbD
+ FK9qilSiyi6ffP1xvkpnkVZBneThyuq6SA3H1QA2+ZA0/S3TV6ZXZjpOm8z2gyuK+iAEtbs
+ spvRTueMTfHBXC82LB2yA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uZCFLVqlupU=:ZWzRH0QDIgZnGVckRRNSYT
+ lteOKfSY4es1dRM+pZBpcPXKUX0YPj731Hu7x1eBIfzTECC0NcNd0K8UCaklMyIbuJnAdhC/T
+ cRpXNYn/giAvM4PexNWatiduU0WTjkKuIsOJ5xQiou+9fDy51N/+TYvLUjtbqrsoR0ocJWClX
+ RjdHN66fKmfjaV4sVNzXx/jQpkYyOZEG7HjdWIDoPKbQ/pqN6isMq/2OAwPVwO+UEzIozfwGm
+ L1jkEMmvkAWmBBV11dtzdG0naL6sTwskGBJSvUGQ/QuBPCoDaSYEMVnEhWEBlZ+t+/nZ+tOdD
+ G53ekIme1W1UIZGJPL4TqkQfZmmFsoImmFqyefbNwwxJgyH9hO0Zjww/gOd4UHWieFXno+bBm
+ TeINxiMF1VdD8se5vqCUkeVj5azS+bmvNYkd94J2ZcNTbw1r9nJ6MGENlJiBKhOnN9ro0uU5r
+ NdYscGNceXg2wuYw61IDjpT9uzvFBhkYAsQLr7TK8pf6VJ4ytbbSbaL4JJzyMkRzKTGjayzEm
+ vcUlZiEVV+yEbI8x0361KdynNrAOKEIQHJeZAuf8UK63fFyuPAdtS9PltK1pYQ6MSYBfLStOK
+ 6u9avEQ0nERESJODAh8p+ZW/H1+Saa8R4zZwlx7+tYXA6hHezGh7bpUl9ctSti0urHdP26jOF
+ qB7kVwqzT56eRyPg9K0zRqMCw8+gwYY/zZ3IC7/g2bEmcH+btfUK6a6vTtJtRWfPKK+bREm6p
+ kAVGsAr+bKva15wwNu27ODmCJZswI/1fcMUoRq1TJ810Er30u6j2M/dtL4r7rJHdngxLVusk3
+ ZmsGD/EvWcv8ECA/Yc96NhC2UvSsObT3iGcTavZ4K7YqZujGOY=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 20, 2021 at 05:21:16PM +0200, Sam Protsenko wrote:
-> On Mon, 13 Dec 2021 at 13:35, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
-> >
-> > On 04/12/2021 20:57, Sam Protsenko wrote:
-> > > USI control is now extracted to the dedicated USI driver. Remove USI
-> > > related code from serial driver to avoid conflicts and code duplication.
-> > >
-> > > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > > ---
-> > > Changes in v3:
-> > >   - Spell check fixes in commit message
-> > >
-> > > Changes in v2:
-> > >   - (none)
-> > >
-> > >  drivers/tty/serial/samsung_tty.c | 36 ++++----------------------------
-> > >  include/linux/serial_s3c.h       |  9 --------
-> > >  2 files changed, 4 insertions(+), 41 deletions(-)
-> > >
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> >
-> > Greg,
-> > If you are fine with the changes, please take the serial driver changes
-> > via your tree.
-> >
-> 
-> Hi Greg,
-> 
-> If it's ok with you, can you please apply patches 3, 4 and 5 from this
-> series? If it's possible, would be nice to see those in v5.17.
+On Mon, Dec 20, 2021 at 12:54 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+> ----------------------------------------------------------------
+> Samsung SoC drivers changes for v5.17
+>
+> 1. Exynos ChipID: add Exynos7885 support.
+> 2. Exynos PMU: add Exynos850 support.
+> 3. Minor bindings cleanup.
+> 4. Add Exynos USIv2 (Universal Serial Interface) driver. The USI block is
+>    a shared IP block between I2C, UART/serial and SPI. Basically one has
+>    to choose which feature the USI block will support and later the
+>    regular I2C/serial/SPI driver will bind and work.
+>    This merges also one commit with dt-binding headers from my dts64
+>    pull request.
+>
+>    Together with a future serial driver change, this will break the ABI.
+>
+>    Affected: Serial on ExynosAutov9 SADK and out-of-tree ExynosAutov9 boards
+>
+>    Why: To properly and efficiently support the USI with new hierarchy
+>    of USI-{serial,SPI,I2C} devicetree nodes.
+>
+>    Rationale:
+>    Recently added serial and USI support was short-sighted and did not
+>    allow to smooth support of other features (SPI and I2C). Adding
+>    support for USI-SPI and USI-I2C would effect in code duplication.
+>    Adding support for different USI versions (currently supported is
+>    USIv2 but support for v1 is planned) would cause even more code
+>    duplication and create a solution difficult to maintain.
+>    Since USI-serial and ExynosAutov9 have been added recently, are
+>    considered fresh development features and there are no supported
+>    products using them, the code/solution is being refactored in
+>    non-backwards compatible way.  The compatibility is not broken yet.
+>    It will be when serial driver changes are accepted.
+>    The ABI break was discussed with only known users of ExynosAutov9 and
+>    received their permission.
 
-All now queued up, thanks.
+Thanks a lot for the detailed description, very helpful!
 
-greg k-h
+I've applied pull requests 1 through 4, though it seems that once more
+the automated emails did not go out.
+
+I can't find the two defconfig patches you mentioned in the introductory
+mail, neither in patchwork nor in my inbox, I assume these were
+numbered 5/6 and 6/6?
+
+        Arnd
