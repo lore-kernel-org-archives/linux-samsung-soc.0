@@ -2,94 +2,165 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A3DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 15:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEF9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 16:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238906AbhLUPFN (ORCPT
+        id S239668AbhLUQUU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Dec 2021 10:05:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238890AbhLUPFM (ORCPT
+        Tue, 21 Dec 2021 11:20:20 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:52088 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236213AbhLUQUT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Dec 2021 10:05:12 -0500
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EB26C061401;
-        Tue, 21 Dec 2021 07:05:12 -0800 (PST)
-Received: by mail-ot1-x32d.google.com with SMTP id r10-20020a056830080a00b0055c8fd2cebdso16936597ots.6;
-        Tue, 21 Dec 2021 07:05:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FRnXnmyb6lR/XMncjwgJbPcN41DhJNw4ep7y8f1hKDM=;
-        b=ffNL9EpvuvXuDSU8RMtnu6zASE/YCJmFachFtfhhpJLzcMVGzaniQO4UQ5EGEls7Ev
-         CAUbWxvcoyUxw2VTT10hfE/5QLf4dD5/Moo83UtWvQzunzGawdTGU8uAv0pG/jBFImg1
-         gfhcBgHqwuIKWZ7oRh7ecec4hz7XBlkylj3X9rtGkmc0dMkQb2ApcvcNfGp7/r7Nqhvs
-         Utx/IALmT6KytVNckfN1RsPtvtCqmbtgDC/JcOsf65UTbRNf6kIllW4G7FMQOlIZnv3n
-         Lpp3K8sHdMal9YiqB4xtlyEKOjsc5af1PqstP51PBjJTWWAFdQfLD3gajVTL6b7ZtGHy
-         /Jow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=FRnXnmyb6lR/XMncjwgJbPcN41DhJNw4ep7y8f1hKDM=;
-        b=XfFggdbNMkEhkWE8fNvlHH6etXmPLOhZPYgrsEJhs6nmt441efJ42GyVEr57SZNPUV
-         y90iwYqrmX2o7Ot+2MkoMdm48YlFJs20uHFOfxTzBvMiCb5VBY7tvh1RkePtxTxCpJle
-         iMh5rltDVfjVTsZwg0WaAvYkUNC46faNHIg+ZS+0F/ZNIZPITm9VmZA79w5//p7FKdwB
-         6Ig/kSROQwjksoDrMtOvYnvm+kT93EedT+uEqs0HYJmpNtrmBzbCWNZtrrLTfuF9PrF1
-         rud+8+ywBCngKOqTZz7qo3WrUNw5qdjWaOh0j5thFs/bOSvjFsz8rlJOX3WGKisQkyOe
-         5Itw==
-X-Gm-Message-State: AOAM532u32OCZ8SmAXQgf/4BeeP2tJSneyK3TOP3bfCqtx5Ae9mHdeWm
-        R9/6rwDEiUHzo7lEPcownBs=
-X-Google-Smtp-Source: ABdhPJyFyyoABDklh1XSAhlx5q0txC/kSLkBjaQ3+0khy4kqEpH7sWJSVYbNE09esExfw8jjT0fdzQ==
-X-Received: by 2002:a9d:75d4:: with SMTP id c20mr2496050otl.85.1640099111852;
-        Tue, 21 Dec 2021 07:05:11 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w22sm3520214ooc.47.2021.12.21.07.05.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 07:05:10 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Tue, 21 Dec 2021 07:05:09 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: s3c2410: Fix getting the optional clock
-Message-ID: <20211221150509.GA2753412@roeck-us.net>
-References: <20211212170247.30646-1-semen.protsenko@linaro.org>
- <b618ff5b-ee41-2c29-5074-24fd4d0f0933@canonical.com>
- <CAPLW+4=wcWv4P_M8kQDjB=QfT5N+mFKm0mUdSDjGSgLg=pRGSw@mail.gmail.com>
- <4ad8719c-1476-3226-e426-a171b46ca568@roeck-us.net>
- <CAPLW+4=ZoBqhLpNPiknTjqMXK5wJtOJtn4=99_kvaC3DBb_eqQ@mail.gmail.com>
+        Tue, 21 Dec 2021 11:20:19 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 981266167A
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 16:20:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F118BC36AF0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 16:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640103619;
+        bh=usw0hQYTeheHZ8dExDfMKf4IRSf4uY3lhBFyF5ZhSBA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fkJA/S8w28g4ISqDHtJEUQuhCMG+Qg4Cc8Y4VApQXQVERTOVnKvPAAT1FfOxHlN8O
+         Vac0n45klqFGgb0vG4o/Gz5C+p+ZJTQ0YmEjsU5O2vf2Y9WcQYHVYP60YiOvGt/ZpP
+         afhnKLklltkiV0r05svVlp2NKRyP3J8S06wbtk9jiOdFZvNR9HcwlqcIPOG7D0kuqP
+         OBXGrsmsGOxXupj4TSevz87MpCHrZXvORtu3FzXno6kTP8Bv6IJGQo4cKJ5uKvu8uS
+         ag3RJqR98eo8LfaDQo0FEx6YXxT0yDhCk4mXWeeyFgmQxf2IMywCN7vwG405QMgLNB
+         UwFcCLFfcbm4g==
+Received: by mail-wr1-f54.google.com with SMTP id s1so22603415wra.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 08:20:18 -0800 (PST)
+X-Gm-Message-State: AOAM533cDs7DGRZb69senOJpnVrgn0k9WrlfVY1OD+ZgW4mfiMcw5/RO
+        D5aMgd8Ci8FyDI0u9CXMm3DN3h38O6kK2pRc1MU=
+X-Google-Smtp-Source: ABdhPJwMunvK4wCgDEblWmVbWZ/liIAsWgH88NA9m86D3PVveWuXNyuIuGR9Lzt/EjvLJ+S6DQr4nQLNDzAUlta5b7c=
+X-Received: by 2002:adf:9bdb:: with SMTP id e27mr3256450wrc.417.1640103617104;
+ Tue, 21 Dec 2021 08:20:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPLW+4=ZoBqhLpNPiknTjqMXK5wJtOJtn4=99_kvaC3DBb_eqQ@mail.gmail.com>
+References: <20211122092816.2865873-1-ardb@kernel.org> <CGME20211221103854eucas1p2592e38fcc84c1c3506fce87f1dab6739@eucas1p2.samsung.com>
+ <20211122092816.2865873-8-ardb@kernel.org> <0ffc858f-27e7-6789-4be1-c4c5ad61eb9d@samsung.com>
+ <CAMj1kXG+P5AU-26t_16FL5xfQNd+ByQH_cfBLiwMSdoGPmvCuw@mail.gmail.com>
+ <e07a229a-e565-0077-9f8a-a24ffa45f395@samsung.com> <CAMj1kXG3neg0riLAaU32KLvB2PLBNzwqgO0F21nbK1ivS=FwMg@mail.gmail.com>
+ <b22077f6-0925-ee00-41ea-3e52241926e2@samsung.com>
+In-Reply-To: <b22077f6-0925-ee00-41ea-3e52241926e2@samsung.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue, 21 Dec 2021 17:20:05 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHQrqZSE1kHaQyQyK6R58EV3cUyvJFmM1JYifaMemyUhQ@mail.gmail.com>
+Message-ID: <CAMj1kXHQrqZSE1kHaQyQyK6R58EV3cUyvJFmM1JYifaMemyUhQ@mail.gmail.com>
+Subject: Re: [PATCH v4 7/7] ARM: implement support for vmap'ed stacks
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Keith Packard <keithpac@amazon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 01:52:32PM +0200, Sam Protsenko wrote:
-> On Mon, 20 Dec 2021 at 23:08, Guenter Roeck <linux@roeck-us.net> wrote:
-[ ... ]
-> >
-> > I added the patch to my watchdog-next tree, but Wim handles all pull
-> > requests.
-> >
-> 
-> Thanks, Guenter! Do I need to take any other actions, or Wim is going
-> to take patches from your tree? I just checked [1] (master branch),
-> and I can't see my patches there yet.
-> 
-> [1] git://www.linux-watchdog.org/linux-watchdog-next.git
-> 
-Wim usually takes patches either from my tree or from the list,
-but he does so shortly before the commit window opens. You don't
-need to do anything else.
+On Tue, 21 Dec 2021 at 14:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Hi,
+>
+> On 21.12.2021 14:34, Ard Biesheuvel wrote:
+> > On Tue, 21 Dec 2021 at 12:15, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >> Hi Ard,
+> >>
+> >> On 21.12.2021 11:44, Ard Biesheuvel wrote:
+> >>> On Tue, 21 Dec 2021 at 11:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >>>> On 22.11.2021 10:28, Ard Biesheuvel wrote:
+> >>>>> Wire up the generic support for managing task stack allocations via vmalloc,
+> >>>>> and implement the entry code that detects whether we faulted because of a
+> >>>>> stack overrun (or future stack overrun caused by pushing the pt_regs array)
+> >>>>>
+> >>>>> While this adds a fair amount of tricky entry asm code, it should be
+> >>>>> noted that it only adds a TST + branch to the svc_entry path. The code
+> >>>>> implementing the non-trivial handling of the overflow stack is emitted
+> >>>>> out-of-line into the .text section.
+> >>>>>
+> >>>>> Since on ARM, we rely on do_translation_fault() to keep PMD level page
+> >>>>> table entries that cover the vmalloc region up to date, we need to
+> >>>>> ensure that we don't hit such a stale PMD entry when accessing the
+> >>>>> stack. So we do a dummy read from the new stack while still running from
+> >>>>> the old one on the context switch path, and bump the vmalloc_seq counter
+> >>>>> when PMD level entries in the vmalloc range are modified, so that the MM
+> >>>>> switch fetches the latest version of the entries.
+> >>>>>
+> >>>>> Note that we need to increase the per-mode stack by 1 word, to gain some
+> >>>>> space to stash a GPR until we know it is safe to touch the stack.
+> >>>>> However, due to the cacheline alignment of the struct, this does not
+> >>>>> actually increase the memory footprint of the struct stack array at all.
+> >>>>>
+> >>>>> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> >>>>> Tested-by: Keith Packard <keithpac@amazon.com>
+> >>>> This patch landed recently in linux-next 20211220 as commit a1c510d0adc6
+> >>>> ("ARM: implement support for vmap'ed stacks"). Sadly it breaks
+> >>>> suspend/resume operation on all ARM 32bit Exynos SoCs. Probably the
+> >>>> suspend/resume related code must be updated somehow (it partially works
+> >>>> on physical addresses and disabled MMU), but I didn't analyze it yet. If
+> >>>> you have any hints, let me know.
+> >>>>
+> >>> Are there any such systems in KernelCI? We caught a suspend/resume
+> >>> related issue in development, which is why the hunk below was added.
+> >>
+> >> I think that some Exynos-based Odroids (U3 and XU3) were some time ago
+> >> available in KernelCI, but I don't know if they are still there.
+> >>
+> >>
+> >>> In general, any virt-to-phys translation involving and address on the
+> >>> stack will become problematic.
+> >>>
+> >>> Could you please confirm whether the issue persists with the patch
+> >>> applied but with CONFIG_VMAP_STACK turned off? Just so we know we are
+> >>> looking in the right place?
+> >>
+> >> I've just checked. After disabling CONFIG_VMAP_STACK suspend/resume
+> >> works fine both on commit a1c510d0adc6 and linux-next 20211220.
+> >>
+> > Thanks. Any other context you can provide beyond 'does not work' ?
+>
+> Well, the board properly suspends, but it doesn't wake then (tested
+> remotely with rtcwake command). So far I cannot provide anything more.
+>
 
-Guenter
+Thanks. Does the below help? Or otherwise, could you try doubling the
+size of the overflow stack at arch/arm/include/asm/thread_info.h:34?
+
+
+diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
+index b062b3738bc6..a59bd03a3f2e 100644
+--- a/arch/arm/kernel/sleep.S
++++ b/arch/arm/kernel/sleep.S
+@@ -67,7 +67,7 @@ ENTRY(__cpu_suspend)
+        ldr     r4, =cpu_suspend_size
+ #endif
+        mov     r5, sp                  @ current virtual SP
+-#ifdef CONFIG_VMAP_STACK
++#if 0 //def CONFIG_VMAP_STACK
+        @ Run the suspend code from the overflow stack so we don't have to rely
+        @ on vmalloc-to-phys conversions anywhere in the arch suspend code.
+        @ The original SP value captured in R5 will be restored on the way out.
+diff --git a/arch/arm/kernel/suspend.c b/arch/arm/kernel/suspend.c
+index 43f0a3ebf390..ab1218ac5b4a 100644
+--- a/arch/arm/kernel/suspend.c
++++ b/arch/arm/kernel/suspend.c
+@@ -76,7 +76,9 @@ void __cpu_suspend_save(u32 *ptr, u32 ptrsz, u32 sp,
+u32 *save_ptr)
+ {
+        u32 *ctx = ptr;
+
+-       *save_ptr = virt_to_phys(ptr);
++       *save_ptr = IS_ENABLED(CONFIG_VMAP_STACK)
++                   ? __pfn_to_phys(vmalloc_to_pfn(ptr)) + offset_in_page(ptr)
++                   : virt_to_phys(ptr);
+
+        /* This must correspond to the LDM in cpu_resume() assembly */
+        *ptr++ = virt_to_phys(idmap_pgd);
