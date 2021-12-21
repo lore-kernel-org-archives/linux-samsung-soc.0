@@ -2,154 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640C0C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 08:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17594C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 09:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234784AbhLUIVB (ORCPT
+        id S232169AbhLUJQS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:21:01 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:53830
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232095AbhLUIVB (ORCPT
+        Tue, 21 Dec 2021 04:16:18 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:37335 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236205AbhLUJQS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Dec 2021 03:21:01 -0500
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 007553F1BA
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 08:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640074859;
-        bh=v0pYSSp/PcIv+PEuO43VB0PAVYtz/J9iayLFB3j6wVE=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=nkOOewOrIJMJrlKiNQWt4QLhTWCV6+7PRgZzLS5VpO/lVAc9kWT2vUQ+EZGu6iy4V
-         B3rYtbC0oJw69XqZeLxnvXTK2tssIf9zXq/HFTwZPWEBe1ye9i2/0RUrxzeVr3bi3O
-         3Dnotrb56u7nbRshIZgIZjeeuDQJICDToIjqfQWXjNvJEejxeF0ISREXvuGW+1wwH+
-         8VTQTl1aK99YEpXQ3mltfEb+RWXgGM9/NuRJMLzpDFr72xSB9dRay0/4o9HqmkaxdU
-         ZQJmNJ1EOLWAFO90ZCQ7gbw7FewEU8m/Rvv4wgqctSIfPDBC4PMe/cthbA8YotNFhr
-         dCHfn9Jxeq2Rg==
-Received: by mail-lf1-f69.google.com with SMTP id i16-20020a056512319000b00425efb1c65eso2220976lfe.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 00:20:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=v0pYSSp/PcIv+PEuO43VB0PAVYtz/J9iayLFB3j6wVE=;
-        b=ed4EUGjJ4ggxkjaNg6qHyndU9OcVnCqHMZSAI1kpqEcii/G8HPAR7nnNCmJ9ZooAzF
-         +eDhx3OD19oGqF3XMGzHx35lzj2eUI5sn1ttaCzn3GKmhPXk6FbySedKYTzwZA6BQsDg
-         WW6CIxOAwlQ+vWU6LkFIAubBtm6Q4ij4hoioUgXFWDvRpz4phrpoKGNjoLD/1wvn+UMT
-         376xMxbSoL98P+XO1P8jiLangr8rFAgLshGr+j8M96hacMkXhtI/GPBjeOq3nStZVDru
-         YRkRp3AyydveWTMj0PEgBvk4qD3C9uIk57YCpjME6hqwAF2Sy1qf/EftuBr1M7tqtxAl
-         CwJg==
-X-Gm-Message-State: AOAM530bPrJSn6/Z/adP0t0EDm2NuYLxTrZQwZ7gRYrpjnkD00OGAYlV
-        T4cowT79DzzsDz7pBcJUJ8ouqsa7gsXoDecGoa7hzAUo5EifBgnBr7ziSrdZOSSC747NwmVK+2r
-        eqXie1RrX4yEZFe7PoqLc79FznJQrCV5SgPmIOy8KDlzUv5IM
-X-Received: by 2002:a2e:9003:: with SMTP id h3mr1760359ljg.68.1640074858376;
-        Tue, 21 Dec 2021 00:20:58 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy0OZUFkiXcgS9OL3e05QKQSZ+sUUPAqqBNMDEDrcXVHl2uJzLoQrvQudPyTdiPoAXlwrDzKA==
-X-Received: by 2002:a2e:9003:: with SMTP id h3mr1760338ljg.68.1640074858075;
-        Tue, 21 Dec 2021 00:20:58 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id w12sm881619lfe.256.2021.12.21.00.20.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 00:20:57 -0800 (PST)
-Message-ID: <d10584ac-9ce6-9f8d-aeb9-8497e32f1661@canonical.com>
-Date:   Tue, 21 Dec 2021 09:20:56 +0100
+        Tue, 21 Dec 2021 04:16:18 -0500
+Received: from mail-wr1-f49.google.com ([209.85.221.49]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MAORn-1nAteV1M3X-00Bppp; Tue, 21 Dec 2021 10:16:16 +0100
+Received: by mail-wr1-f49.google.com with SMTP id v7so18213114wrv.12;
+        Tue, 21 Dec 2021 01:16:16 -0800 (PST)
+X-Gm-Message-State: AOAM530fbHOl5il2ljn1FhA4COoKsuLIJDsLKyFwRHVX4esi6IpdtuIz
+        pxZ7S+m2H5CqNNYWEmdKbfxR/VyX/78c7+jDQlA=
+X-Google-Smtp-Source: ABdhPJx9Io4wbdq+1IzDizMc/1NQgxlt0NBkcspgb9PgBIVFPO0KlDZf3O7JLbMTa4+qFamZN9MU3ZDjBxCGAtpSd58=
+X-Received: by 2002:a5d:6989:: with SMTP id g9mr1797985wru.12.1640078175904;
+ Tue, 21 Dec 2021 01:16:15 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+References: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+ <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com> <dfc25b22-2f66-4404-66c4-44c9c8c3bab4@huawei.com>
+In-Reply-To: <dfc25b22-2f66-4404-66c4-44c9c8c3bab4@huawei.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 21 Dec 2021 10:15:59 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0aNoU693ft3pHCPJOcGubZ1dMFyOmWozO0N_8-F_JkLQ@mail.gmail.com>
+Message-ID: <CAK8P3a0aNoU693ft3pHCPJOcGubZ1dMFyOmWozO0N_8-F_JkLQ@mail.gmail.com>
+Subject: Re: [PATCH -next 0/3] replace open coded VA->PA calculation
+To:     cuigaosheng <cuigaosheng1@huawei.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        SoC Team <soc@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20211217161549.24836-1-semen.protsenko@linaro.org>
- <20211217161549.24836-2-semen.protsenko@linaro.org>
- <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
- <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
- <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
- <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
-In-Reply-To: <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gongruiqi1@huawei.com, wangweiyang2@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:RXEaeH3nBegkLgZfgx9t7rLv38M8HHElpuZdzHblYHKxPP9a4OX
+ BBP1OSZ6a7tf3Iyc1vticcuiLajy/qzjxS0mtvJW6/rSxYdG7267ONfLaePEPi/NKPkjkVL
+ KxBqFev5ALDQ0QPgdTkmApRbaRTG2A5QGVUGtERp3AEnunyUpeH9z3z+1rOkaBHGwir4Sq4
+ HDIF/rXTSWb48a0CHD1vA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BqzGCKWClw4=:wNKDXLu15+S1DvrVALIeKB
+ KrNXXUahM8FWa4FlF2xZNmU4BJEA0nZMEkCoYN5Y2tGMutQNTDBqee+kni0eLLkh9KmRSKrg3
+ 9BpHjOrq+kxEnX+GjkNV3hK7IJJsHkJAD1gJbIvUe8ge2bTAsxNyRUh6Ec0Q1aoXYjrUeQUaD
+ 7BZP7SujEP++has03OTePNDikM2WX/s+6pYzna6sjWjbcVArX/fGfYk/lNAuo3iIWxosUTCaP
+ vttrT8Krc1S/M5aLNXlyfcGgHfVARtt69n2HQGx1VWLZl1hmjEC3lnzKCHECPsd+EkzXQlYCn
+ +PDbY74CqUmfp/QLG8slqqinz0gu5tfaIgwBarrQsAmPPnUMZ3E8O54KGfondtV78tt8l/ivk
+ tUnc08WsGTlCq6cPNjOQgoWevlTBybMj0wUzoIV9BRvmM0FKI8uIO41v80BPPfppY6ngI0ZOp
+ lERRJ8/Lluvb5QAdZvvzeP28UctvlneskNkoCml40kGzTdAd+/ULauIP0NyvYLVP0O+KM3Fzq
+ Cu3jVOm9BJoketLZR2DxRaEatABqq2hdg9fpEJmhZgX42EToBe1SC1jg5NV7HqA5zvmGdBaUX
+ UDa1eB2WVNAV+qGaCvLqAh9xRfupcyrUj6rNTlUjnjFbQMuD9Y9d45XHAlEOIvPBdLHLBfYox
+ tLE6E03u48xAGZsu78SWBtcbx1dHnm/vFabISe5P+HfRNriyEvgIGFlrHi+xGMjubNnjCXGrr
+ CUHWqQYE7mTt7pIsNReK+FRqVvL/nHMKS8b0KFOh/RQhfTmebeUVS2dzduHlRBXXzAAVhp1PZ
+ 9NBquEv0WrWkLlZTZ+V6dUtcqO1pymf5EsqDpN8wGW12LVQM+8=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/12/2021 09:19, Krzysztof Kozlowski wrote:
-> On 20/12/2021 15:55, Sam Protsenko wrote:
->> On Mon, 20 Dec 2021 at 11:31, Krzysztof Kozlowski
->> <krzysztof.kozlowski@canonical.com> wrote:
->>>
->>> On 19/12/2021 23:29, Sylwester Nawrocki wrote:
->>>> On 17.12.2021 17:15, Sam Protsenko wrote:
->>>>> System Register is used to configure system behavior, like USI protocol,
->>>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
->>>>> make it possible to modify SYSREG registers.
->>>>>
->>>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
->>>>> and might be needed for corresponding Exynos850 features soon.
->>>>>
->>>>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
->>>>> Acked-by: Rob Herring<robh@kernel.org>
->>>>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
->>>>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
->>>>
->>>> Apologies for late reply, this patch is applied now.
->>>>
->>>
->>> Sam,
->>>
->>> The clock is used in the DTSI, so since this was applied, there are only
->>> two choices now:
->>> 1. wait for next cycle with DTSI and DTS,
->>> 2. Resubmit with replacing the newly added clocks in DTSI/DTS with
->>> numbers and a TODO note.
->>>
->>
->> But why? I thought because Sylwester applied my clock patches, those
->> will get into v5.17, and so DTSI/DTS might rely on those clocks? If I
->> get it wrong, please let me know why, and I'll go with item (2) you
->> suggested.
-> 
-> If I apply the DTSI+DTS, all my builds will start failing. The
-> linux-next (since Sylwester's tree is included) should build fine, but
-> my tree won't be buildable anymore. Then arm-soc pulls my tree and gets
-> said because it does not build. Later, Linus will be unhappy if he pulls
+On Tue, Dec 21, 2021 at 2:41 AM cuigaosheng <cuigaosheng1@huawei.com> wrote:
+>
+> > I could apply them directly with the maintainer Acks, but I don't understand
+> > the significance of you sending them now. Is something broken without the
+> > three patches? Are these the only ones missing from Ard's original series,
+> > or is this preparation? Would you expect the patches to get backported to
+> > stable kernels?
+>
+> Thanks for your reply.
+>
+> This is preparation work for arm32 kaslr,and I want to continue to improve
+> the solution based on the work of Ard. These patches are relatively
+> independent, so I submit these patches first.
 
-s/said/sad/ obviously :)
+The approach of merging support incrementally is good in principle, but in this
+case I think we first need to agree on the overall direction first.
+How far have you
+come rebasing Ard's patches, do you have KASLR working yet? This is information
+that should go into the [PATCH 0/3] cover letter.
 
-> arm-soc (thus mine) before clock tree.
-> 
-> Other solution, instead of using raw numbers, is to copy-paste the clock
-> macros you use directly in DTSI and do not include the clock header.
-> This actually might be cleaner choice - changes will be limited to one
-> place in DTSI.
-> 
-> Best regards,
-> Krzysztof
-> 
+Do you have a particular target platform in mind?
 
+I think for CPUs that can use LPAE, we want to eventually move to the 4G:4G
+memory model, which in turn depends on having the kernel in vmalloc space, as
+implemented by Linus Walleij in
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-integrator.git/log/?h=kernel-in-vmalloc-v5.14-rc1
 
-Best regards,
-Krzysztof
+With this work, the randomization will look quite different, on the one hand it
+leaves less room for relocating the kernel within the smaller 256MB vmalloc
+space, while on the other hand it does open the possibility of complete
+randomization by scrambling the virt-to-phys mapping in vmalloc space,
+using linear virtual addresses to refer to a randomized set of
+physical addresses.
+(this is just a wild idea that one could implement, nobody has actual plans for
+it at the moment, and it comes with additional runtime overhead).
+
+        Arnd
