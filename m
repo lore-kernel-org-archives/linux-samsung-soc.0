@@ -2,83 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F5BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 14:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A3DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 15:05:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238578AbhLUOnY (ORCPT
+        id S238906AbhLUPFN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Dec 2021 09:43:24 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:37842 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232589AbhLUOnY (ORCPT
+        Tue, 21 Dec 2021 10:05:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238890AbhLUPFM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Dec 2021 09:43:24 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 797586162C;
-        Tue, 21 Dec 2021 14:43:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BA0C36AEC;
-        Tue, 21 Dec 2021 14:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640097802;
-        bh=zs0pRYfzDm3/92K39XTHazInHRGHzlCY1oDliqEaOWg=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=EIwg3vm8l3VYBpxKKzXdVD7DyH73kBkDVGdZnD79uyYAcAc1z3+LJa5BvgxxZhcHH
-         xDku7+yt84zAOs0yhNGIwiEEvgd02ejnwFhmdkjQBcBD57F/PGm9F8H3sjeqGXA6cG
-         k1uYyFGcoCeZLUixQ5b9n9GXIeVe6p9DXj09bXwP7Q+Vrp8e/5B3bsDbiFnmlhlFa5
-         pVmXs08BzUGAuC96XJMaWkjBKxy7U3i6HAj5XfFMiQ7tfEuXOnDJoJWMwBjQfQKYiN
-         77+3txuAk+P8vZaur8bMK0O4LjdwPINsv9KwN5NYwUQqTM8tm+7wJKY6Rs1knPCImR
-         nfAMgupR89zcw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tue, 21 Dec 2021 10:05:12 -0500
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EB26C061401;
+        Tue, 21 Dec 2021 07:05:12 -0800 (PST)
+Received: by mail-ot1-x32d.google.com with SMTP id r10-20020a056830080a00b0055c8fd2cebdso16936597ots.6;
+        Tue, 21 Dec 2021 07:05:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FRnXnmyb6lR/XMncjwgJbPcN41DhJNw4ep7y8f1hKDM=;
+        b=ffNL9EpvuvXuDSU8RMtnu6zASE/YCJmFachFtfhhpJLzcMVGzaniQO4UQ5EGEls7Ev
+         CAUbWxvcoyUxw2VTT10hfE/5QLf4dD5/Moo83UtWvQzunzGawdTGU8uAv0pG/jBFImg1
+         gfhcBgHqwuIKWZ7oRh7ecec4hz7XBlkylj3X9rtGkmc0dMkQb2ApcvcNfGp7/r7Nqhvs
+         Utx/IALmT6KytVNckfN1RsPtvtCqmbtgDC/JcOsf65UTbRNf6kIllW4G7FMQOlIZnv3n
+         Lpp3K8sHdMal9YiqB4xtlyEKOjsc5af1PqstP51PBjJTWWAFdQfLD3gajVTL6b7ZtGHy
+         /Jow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=FRnXnmyb6lR/XMncjwgJbPcN41DhJNw4ep7y8f1hKDM=;
+        b=XfFggdbNMkEhkWE8fNvlHH6etXmPLOhZPYgrsEJhs6nmt441efJ42GyVEr57SZNPUV
+         y90iwYqrmX2o7Ot+2MkoMdm48YlFJs20uHFOfxTzBvMiCb5VBY7tvh1RkePtxTxCpJle
+         iMh5rltDVfjVTsZwg0WaAvYkUNC46faNHIg+ZS+0F/ZNIZPITm9VmZA79w5//p7FKdwB
+         6Ig/kSROQwjksoDrMtOvYnvm+kT93EedT+uEqs0HYJmpNtrmBzbCWNZtrrLTfuF9PrF1
+         rud+8+ywBCngKOqTZz7qo3WrUNw5qdjWaOh0j5thFs/bOSvjFsz8rlJOX3WGKisQkyOe
+         5Itw==
+X-Gm-Message-State: AOAM532u32OCZ8SmAXQgf/4BeeP2tJSneyK3TOP3bfCqtx5Ae9mHdeWm
+        R9/6rwDEiUHzo7lEPcownBs=
+X-Google-Smtp-Source: ABdhPJyFyyoABDklh1XSAhlx5q0txC/kSLkBjaQ3+0khy4kqEpH7sWJSVYbNE09esExfw8jjT0fdzQ==
+X-Received: by 2002:a9d:75d4:: with SMTP id c20mr2496050otl.85.1640099111852;
+        Tue, 21 Dec 2021 07:05:11 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id w22sm3520214ooc.47.2021.12.21.07.05.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Dec 2021 07:05:10 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 21 Dec 2021 07:05:09 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20211221120744.1118518-1-robh@kernel.org>
-References: <20211221120744.1118518-1-robh@kernel.org>
-Subject: Re: [PATCH] regulator: dt-bindings: samsung,s5m8767: Move fixed string BUCK9 to 'properties'
-Message-Id: <164009780128.868718.2419980624533374160.b4-ty@kernel.org>
-Date:   Tue, 21 Dec 2021 14:43:21 +0000
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog: s3c2410: Fix getting the optional clock
+Message-ID: <20211221150509.GA2753412@roeck-us.net>
+References: <20211212170247.30646-1-semen.protsenko@linaro.org>
+ <b618ff5b-ee41-2c29-5074-24fd4d0f0933@canonical.com>
+ <CAPLW+4=wcWv4P_M8kQDjB=QfT5N+mFKm0mUdSDjGSgLg=pRGSw@mail.gmail.com>
+ <4ad8719c-1476-3226-e426-a171b46ca568@roeck-us.net>
+ <CAPLW+4=ZoBqhLpNPiknTjqMXK5wJtOJtn4=99_kvaC3DBb_eqQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPLW+4=ZoBqhLpNPiknTjqMXK5wJtOJtn4=99_kvaC3DBb_eqQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 21 Dec 2021 08:07:43 -0400, Rob Herring wrote:
-> There's no need for a fixed string like 'BUCK9' to be under
-> 'patternProperties', so move it under 'properties' instead.
+On Tue, Dec 21, 2021 at 01:52:32PM +0200, Sam Protsenko wrote:
+> On Mon, 20 Dec 2021 at 23:08, Guenter Roeck <linux@roeck-us.net> wrote:
+[ ... ]
+> >
+> > I added the patch to my watchdog-next tree, but Wim handles all pull
+> > requests.
+> >
 > 
+> Thanks, Guenter! Do I need to take any other actions, or Wim is going
+> to take patches from your tree? I just checked [1] (master branch),
+> and I can't see my patches there yet.
 > 
+> [1] git://www.linux-watchdog.org/linux-watchdog-next.git
+> 
+Wim usually takes patches either from my tree or from the list,
+but he does so shortly before the commit window opens. You don't
+need to do anything else.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: dt-bindings: samsung,s5m8767: Move fixed string BUCK9 to 'properties'
-      commit: 5d55cbc720cc3650aafed6c1f5dbcf7e3f276312
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Guenter
