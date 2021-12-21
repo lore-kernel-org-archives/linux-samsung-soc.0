@@ -2,116 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45118C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Dec 2021 21:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AE5C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Dec 2021 01:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbhLTVIQ (ORCPT
+        id S231282AbhLUBle (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Dec 2021 16:08:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbhLTVIP (ORCPT
+        Mon, 20 Dec 2021 20:41:34 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:16841 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231151AbhLUBle (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Dec 2021 16:08:15 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5A4C061574;
-        Mon, 20 Dec 2021 13:08:15 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id v22-20020a9d4e96000000b005799790cf0bso1582698otk.5;
-        Mon, 20 Dec 2021 13:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Q3PZVJSo3K5moB8cqKpexhdnP7Dl9gnH5q2mQZQj/Dg=;
-        b=SVAIos+NLdgiWDje7800YGBZ7Dstmx3Slww0isIeWDsXcW6dx5lykhwL9PBjUVlqQ4
-         dcK41zxHWDHffRdMwxWU3qALoxILTLzO8sI+HYZqBRFafMHxsVxqIr0AY1zIcG5kkBOQ
-         fyiCVOoh3EpUmyH0TCjKqXBlqQoP2XJ2fVmP9K4teV6Ur58kz6sE08FDbj4bLY1JBAwa
-         8Ryrkt7nO+Ew8ViqiV+W9qjxsBAvWhy1uJW4mcoGIq2NIZOsJOGKDUMsLRlvvaHz3J3M
-         QLCNf4xeWc7vPacL+y/DJiiFb9myOi72+QyU6illTdtq7oB9GOXLae6PpjwqKmiejY2W
-         BnqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Q3PZVJSo3K5moB8cqKpexhdnP7Dl9gnH5q2mQZQj/Dg=;
-        b=JG98tPKBS2oAE6VJ2P5Jg3aQ9bB1/v1T/HNNTTzkfdH9D4rse57cUo9B5tNtaDarBI
-         S4Zvjsrm+s6cqQotZ5WtNSVxcVkguIet531yXmjxFrP4yv3eEPeNevFgDUid3kUKVLrV
-         MwcIK8Y+IIPQa5Eu/bkD5wF+qbHvPbWRyMX+hzbpPDGAP0AKgNo1sXa9KB2FVAFS3Lf8
-         AcDeVB9jrvW3T4Weesz/y9ALL6f10v2GAKjjukLAtGEfQyt6O70KWcw3sVtXwxz7GlES
-         JwbzbVZdCfiqCU6Jql/ymK12IQ8fyOK2OA10YwGOe4DiQfPthvctuqdyQVUHr7QIzapm
-         s6bQ==
-X-Gm-Message-State: AOAM53025Dar+MchkX/B8Y719kdHgYYlcZuu9i0XAFww7Cxu4BsNKByq
-        yBVvNaZ3EOOXKNajaz48dz0ZkQaIKSM=
-X-Google-Smtp-Source: ABdhPJx05JabQpq/ut8e8/5ioqnIN+RlsCKYp/ex9IygkcdWQUen1wpYPyvnQVZtVPKMiFCg5W3lOQ==
-X-Received: by 2002:a9d:6394:: with SMTP id w20mr12681958otk.248.1640034494688;
-        Mon, 20 Dec 2021 13:08:14 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e3sm3426950otk.71.2021.12.20.13.08.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Dec 2021 13:08:12 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH] watchdog: s3c2410: Fix getting the optional clock
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org,
+        Mon, 20 Dec 2021 20:41:34 -0500
+Received: from dggeme762-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JHzgH5X0Vz91rV;
+        Tue, 21 Dec 2021 09:40:43 +0800 (CST)
+Received: from [10.67.110.176] (10.67.110.176) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.20; Tue, 21 Dec 2021 09:41:32 +0800
+Subject: Re: [PATCH -next 0/3] replace open coded VA->PA calculation
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Russell King - ARM Linux <linux@armlinux.org.uk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211212170247.30646-1-semen.protsenko@linaro.org>
- <b618ff5b-ee41-2c29-5074-24fd4d0f0933@canonical.com>
- <CAPLW+4=wcWv4P_M8kQDjB=QfT5N+mFKm0mUdSDjGSgLg=pRGSw@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <4ad8719c-1476-3226-e426-a171b46ca568@roeck-us.net>
-Date:   Mon, 20 Dec 2021 13:08:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        SoC Team <soc@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <gongruiqi1@huawei.com>, <wangweiyang2@huawei.com>
+References: <20211218085843.212497-1-cuigaosheng1@huawei.com>
+ <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com>
+From:   cuigaosheng <cuigaosheng1@huawei.com>
+Message-ID: <dfc25b22-2f66-4404-66c4-44c9c8c3bab4@huawei.com>
+Date:   Tue, 21 Dec 2021 09:41:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAPLW+4=wcWv4P_M8kQDjB=QfT5N+mFKm0mUdSDjGSgLg=pRGSw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK8P3a1-0u4VCCfgc7tjmnANM0yr7oUrQX2y-ZSVvZHDN191BQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.176]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/20/21 7:15 AM, Sam Protsenko wrote:
-> On Sun, 12 Dec 2021 at 19:50, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> On 12/12/2021 18:02, Sam Protsenko wrote:
->>> "watchdog_src" clock is optional and may not be present for some SoCs
->>> supported by this driver. Nevertheless, in case the clock is provided
->>> but some error happens during its getting, that error should be handled
->>> properly. Use devm_clk_get_optional() API for that. Also report possible
->>> errors using dev_err_probe() to handle properly -EPROBE_DEFER error (if
->>> clock provider is not ready by the time WDT probe function is executed).
->>>
->>> Fixes: a4f3dc8d5fbc ("watchdog: s3c2410: Support separate source clock")
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> Suggested-by: Guenter Roeck <linux@roeck-us.net>
->>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>> ---
->>>   drivers/watchdog/s3c2410_wdt.c | 22 ++++++++++++----------
->>>   1 file changed, 12 insertions(+), 10 deletions(-)
->>>
->>
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->>
-> 
-> Hi Guenter,
-> 
-> If there are no outstanding concerns, can you please apply this one?
-> Would be nice to see it in v5.17 if that's possible.
-> 
+> I could apply them directly with the maintainer Acks, but I don't understand
+> the significance of you sending them now. Is something broken without the
+> three patches? Are these the only ones missing from Ard's original series,
+> or is this preparation? Would you expect the patches to get backported to
+> stable kernels?
 
-I added the patch to my watchdog-next tree, but Wim handles all pull
-requests.
+Thanks for your reply.
 
-Thanks,
-Guenter
+This is preparation work for arm32 kaslr,and I want to continue to improve
+the solution based on the work of Ard. These patches are relatively
+independent, so I submit these patches first.
 
+Gaosheng.
 
+在 2021/12/20 23:39, Arnd Bergmann 写道:
+> On Sat, Dec 18, 2021 at 9:58 AM Gaosheng Cui <cuigaosheng1@huawei.com> wrote:
+>> These patches replace an open coded calculation to obtain the physical
+>> address of a far symbol with a call to the new ldr_l etc macro, and they
+>> belong to the kaslr patch set of arm32.
+>>
+>> Reference: https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=arm-kaslr-latest
+>>
+>> Ard Biesheuvel (3):
+>>    arm-soc: exynos: replace open coded VA->PA conversions
+>>    arm-soc: mvebu: replace open coded VA->PA conversion
+>>    arm-soc: various: replace open coded VA->PA calculation
+> Usually these patches should go through the respective platform
+> maintainer trees,
+> and from there into the soc tree, but time is a little short here.
+>
+> I could apply them directly with the maintainer Acks, but I don't understand
+> the significance of you sending them now. Is something broken without the
+> three patches? Are these the only ones missing from Ard's original series,
+> or is this preparation? Would you expect the patches to get backported to
+> stable kernels?
+>
+>         Arnd
+> .
