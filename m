@@ -2,116 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9D1C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Dec 2021 03:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8F2C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Dec 2021 11:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232553AbhLVDxu (ORCPT
+        id S229962AbhLVLcP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Dec 2021 22:53:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232444AbhLVDxu (ORCPT
+        Wed, 22 Dec 2021 06:32:15 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:54758
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231983AbhLVLcO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Dec 2021 22:53:50 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157CDC061574
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 19:53:50 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id s15so1125263pfk.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Dec 2021 19:53:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9+ILluygVf09oo0/ytFG0XaIKzjqiECjOUqJvlR//O8=;
-        b=niCGrvMli4Kq1cYMkwRNJ96Mt4j9E0O91ceJnWmHM2Y9V+kpZl3Pznlp9rosRKYHsp
-         59vhTPh9bvH3TbPhaSbXbFzAPB8TZ/Ih9ZX+NDfbTwcJS4sZkEcBYDH3HajhvcDrfzFN
-         ioAt5R6q/pOsS7np+F7fWGwsViHeOHbc+SHwz26ApzsBOjZhrWt6kwn52sRAvAhYvfVS
-         TrarxLcJyrfEsAK0XYu2sjqh943QQVk/0gv5y+gzTxa2SIz1Al7drRkN4/TQIUYANIbg
-         014haQM4DJG9KIrRPHGAigXkbVljj1S/ACj0eC/eY0xerkPYvw9+E1XM5fVyzLnzSu/m
-         WmPw==
+        Wed, 22 Dec 2021 06:32:14 -0500
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 7D9A63F1AB
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Dec 2021 11:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640172733;
+        bh=FuPIM1jE2tm3DbiV/kB10h6tVDci7NzWCYK8hlw9B18=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=Ihw/JmAAkysyU3sCqLD3ofalgwV0uzCEmIwDUvdLJf0yEt5e3xtpPOgJuv7CuBo1t
+         qKCPECuHHNLdDZ77F8cB4tAIFEfdoh/NLQAwRtoKwYPrnaZAWjZn8ClcWEPUvSAdIM
+         orrK7cdA6MIDvn4WpoZqFPycIPbag03nNgb8FYS29U7bAXADEizShG5lygxeL6l+Uq
+         SzLj2NAi6ADBynMSvkBF+XrxDpIqYQAeM32U1tYVe/VonTxQBL04oqhUIBjueVZ+sD
+         JjKqdpJPIH+SJxGoz+C8PZLuGsE3cqp7uOvBfE75poV0/fUCZcTgyTfaeXw0hm9V89
+         8Sz/g2k/ML+wA==
+Received: by mail-lf1-f72.google.com with SMTP id q13-20020a19f20d000000b0041fcb65b6c7so1107628lfh.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Dec 2021 03:32:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=9+ILluygVf09oo0/ytFG0XaIKzjqiECjOUqJvlR//O8=;
-        b=v8Jv7MRvL3LgyctycIuyl6KqD2J1FfYw3Ul0oeO/4N0LwEU8euv5H5CyUeWwaB8S4Q
-         qSJzLw25krYg8aQF/sCY3rUevNtKjspHNsX0Gp407pZRaCmMe8IPQ42dKzQotyY53Wh3
-         uOY4o9IdiYzEy6tmSw6HTtClaT4VePB+c6NHnErCDaKR/XUcaS87Kzw/8PM3QeXxvMXK
-         ei/vxtIFYZDVG41BNvmbqw7wyaywVzC5+y5gL488JBPOB9Tur0wvrbi4ZwDhUUpIPWsO
-         Dr///jHAfI9jRWDytq6DmT5HbAsajuALu+iwdFSPQokNBbBu4BftF0jLtTwIulN2WZPu
-         o/Sw==
-X-Gm-Message-State: AOAM530X60l0qm9wdux7SIpxx2oT29Ld6OU4EXCECPCFEzFp2uSR9Cbf
-        534FwcBuGwrlV/UNxzTLs4LRZt5raZw=
-X-Google-Smtp-Source: ABdhPJwk2yejgoUrXXjC4TJ7R2fFVhDaeMWhvItOkiihrqRrLTpWGdZ0LnLCRXngku5C5OAIOgrHkQ==
-X-Received: by 2002:a63:1f5b:: with SMTP id q27mr1255936pgm.608.1640145229393;
-        Tue, 21 Dec 2021 19:53:49 -0800 (PST)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id np17sm438165pjb.8.2021.12.21.19.53.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FuPIM1jE2tm3DbiV/kB10h6tVDci7NzWCYK8hlw9B18=;
+        b=ZUU0kBbR6EjwL+wMFcYDnu2wLwMxcTug4nRWwKdFfWmFIu7PO5ElWNJx0gNqgR6zHZ
+         Yu+s0QMAx+Daa/O3KDKRpq0umfjuJgbW9SATV84wHTReQVJMUomx7bedtsVIXSZCPLHL
+         3UdoMv5sDeL7NAaU5mPywCXF7nSM3L1f38cqUtE/hymqXwzpPlWFaHSuvl37lM5ybqOu
+         SYTGzYRSmVUyX1jIZWVxrTKUU3AeJNnHSvqTIX4twZ1/kkUbhBvs448pmbWW44TBPq0q
+         X1wqMzHDLx58LsfFOogwcOf1A6f7jYR9ZJDO719k5NXv7IN1HFBHNGckVwm3GTTmWia9
+         umZg==
+X-Gm-Message-State: AOAM532N20dpv04wSg221Cn+fjXkoWF16ldUuSdwCIcw1wyzxAM64O4T
+        0JO74E/61nWPYp7+nYc7weLPEsq34vMFmN0cKr5VbbXGlF2r1WEkBIE8PNQEeFXM9BibsuNHq/3
+        zcJ0bFesSiJWDeISNMSeUicVyJs8SQ8fnjL2HDx3FM7Qvr/tB
+X-Received: by 2002:a05:6512:3242:: with SMTP id c2mr2053246lfr.182.1640172732774;
+        Wed, 22 Dec 2021 03:32:12 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxTQClBFH+V+bQmMAmrHl2mhT026gZtfmG+JyRmuVav1QUCt2b6jxUtWx3oqT6AcQedHKCs7g==
+X-Received: by 2002:a05:6512:3242:: with SMTP id c2mr2053224lfr.182.1640172732615;
+        Wed, 22 Dec 2021 03:32:12 -0800 (PST)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id e12sm188013lfr.179.2021.12.22.03.32.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 19:53:48 -0800 (PST)
-Sender: Inki Dae <daeinki@gmail.com>
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel.vetter@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Wed, 22 Dec 2021 12:53:45 +0900
-Message-Id: <20211222035345.26595-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 22 Dec 2021 03:32:09 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] arm64: dts: exynos: Add E850-96 board support
+Date:   Wed, 22 Dec 2021 12:32:01 +0100
+Message-Id: <164017271643.8698.16296972273474442218.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211221142417.19312-1-semen.protsenko@linaro.org>
+References: <20211221142417.19312-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave and Daniel,
+On Tue, 21 Dec 2021 16:24:15 +0200, Sam Protsenko wrote:
+> WinLink's E850-96 is a dev board based on Exynos850 SoC [1]. The board's
+> design follows 96boards specifications, hence it's compatible with
+> 96boards mezzanines [2].
+> 
+> This patch series adds the initial support for E850-96 board and
+> Exynos850 SoC. Only basic platform components are enabled at the moment
+> (like serial, I2C, eMMC, RTC, WDT, clock driver, etc). Right now with
+> this patch series it's possible to run the kernel with BusyBox rootfs as
+> a RAM disk. More features are coming soon.
+> 
+> [...]
 
-   Just four cleanups such as replacing the use of legacy interface, implementing generic gem mmap,
-   fixing a build warning and dropping unnecessary code.
+Applied, thanks!
 
-Please let me know if there is any problem.
+[1/2] arm64: dts: exynos: Add initial Exynos850 SoC support
+      commit: e3493220fd3e474abcdcefbe14fb60485097ce06
+[2/2] arm64: dts: exynos: Add initial E850-96 board support
+      commit: a1828d772e0738c30a383a7d335aded2f2baf908
 
-Thanks,
-Inki Dae
-
-The following changes since commit 1c405ca11bf563de1725e5ecfb4a74ee289d2ee9:
-
-  Merge tag 'mediatek-drm-next-5.17' of https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux into drm-next (2021-12-17 16:16:16 +1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.17
-
-for you to fetch changes up to 760cceff996135fd4830f3d339446a04bd37ca0c:
-
-  drm/exynos: drop the use of label from exynos_dsi_register_te_irq (2021-12-22 11:39:39 +0900)
-
-----------------------------------------------------------------
-Four cleanups
-- Replacing lagacy gpio interface of dsi driver with gpiod one.
-- Implementing a generic GEM object mmap and use it instead of
-  exynos specific one.
-- Dropping the use of label from dsi driver. Which also fixes
-  a build warning.
-- Just trivial cleanup by dropping unnecessay code.
-
-----------------------------------------------------------------
-Bernard Zhao (1):
-      drm/exynos: remove useless type conversion
-
-Inki Dae (1):
-      drm/exynos: drop the use of label from exynos_dsi_register_te_irq
-
-Maíra Canal (1):
-      drm/exynos: Replace legacy gpio interface for gpiod interface
-
-Thomas Zimmermann (1):
-      drm/exynos: Implement mmap as GEM object function
-
- drivers/gpu/drm/exynos/exynos_drm_drv.c   | 13 ++------
- drivers/gpu/drm/exynos/exynos_drm_dsi.c   | 49 +++++++++++--------------------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 20 ++-----------
- drivers/gpu/drm/exynos/exynos_drm_fimc.c  |  4 +--
- drivers/gpu/drm/exynos/exynos_drm_gem.c   | 43 ++++++---------------------
- drivers/gpu/drm/exynos/exynos_drm_gem.h   |  5 ----
- 6 files changed, 32 insertions(+), 102 deletions(-)
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
