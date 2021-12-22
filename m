@@ -2,24 +2,24 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC4AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Dec 2021 19:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46A0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Dec 2021 19:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344986AbhLVTCB (ORCPT
+        id S1344994AbhLVTCE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Dec 2021 14:02:01 -0500
+        Wed, 22 Dec 2021 14:02:04 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:26471 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231511AbhLVTCA (ORCPT
+        by vger.kernel.org with ESMTP id S1344978AbhLVTCD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Dec 2021 14:02:00 -0500
+        Wed, 22 Dec 2021 14:02:03 -0500
 X-IronPort-AV: E=Sophos;i="5.88,227,1635174000"; 
-   d="scan'208";a="104382683"
+   d="scan'208";a="104382689"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Dec 2021 04:01:59 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Dec 2021 04:02:02 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D650940DF447;
-        Thu, 23 Dec 2021 04:01:56 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3F4440DF258;
+        Thu, 23 Dec 2021 04:01:59 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
@@ -34,9 +34,9 @@ To:     Inki Dae <inki.dae@samsung.com>,
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/5] drm/exynos: mixer: Use platform_get_irq() to get the interrupt
-Date:   Wed, 22 Dec 2021 19:01:31 +0000
-Message-Id: <20211222190134.24866-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/5] drm/exynos/exynos_drm_fimd: Use platform_get_irq_byname() to get the interrupt
+Date:   Wed, 22 Dec 2021 19:01:32 +0000
+Message-Id: <20211222190134.24866-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211222190134.24866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20211222190134.24866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -44,59 +44,52 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
+platform_get_resource_byname(pdev, IORESOURCE_IRQ, ..) relies on static
 allocation of IRQ resources in DT core code, this causes an issue
 when using hierarchical interrupt domains using "interrupts" property
 in the node as this bypassed the hierarchical setup and messed up the
 irq chaining.
 
 In preparation for removal of static setup of IRQ resource from DT core
-code use platform_get_irq().
+code use platform_get_irq_byname().
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Hi,
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-Ideally I would expect the mixer_resources_init() to be called from probe
-instead from the bind callback. If platform_get_irq() returns -EPROBE_DEFER
-the bind callback will fail :(
-
-Cheers,
-Prabhakar
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 41c54f1f60bc..e5204be86093 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -809,19 +809,17 @@ static int mixer_resources_init(struct mixer_context *mixer_ctx)
- 		return -ENXIO;
- 	}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index c735e53939d8..7d5a483a54de 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -1133,7 +1133,6 @@ static int fimd_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct fimd_context *ctx;
+ 	struct device_node *i80_if_timings;
+-	struct resource *res;
+ 	int ret;
  
--	res = platform_get_resource(mixer_ctx->pdev, IORESOURCE_IRQ, 0);
--	if (res == NULL) {
--		dev_err(dev, "get interrupt resource failed.\n");
+ 	if (!dev->of_node)
+@@ -1206,15 +1205,11 @@ static int fimd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ctx->regs))
+ 		return PTR_ERR(ctx->regs);
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
+-					   ctx->i80_if ? "lcd_sys" : "vsync");
+-	if (!res) {
+-		dev_err(dev, "irq request failed.\n");
 -		return -ENXIO;
 -	}
-+	ret = platform_get_irq(mixer_ctx->pdev, 0);
++	ret = platform_get_irq_byname(pdev, ctx->i80_if ? "lcd_sys" : "vsync");
 +	if (ret < 0)
 +		return ret;
-+	mixer_ctx->irq = ret;
  
--	ret = devm_request_irq(dev, res->start, mixer_irq_handler,
--						0, "drm_mixer", mixer_ctx);
-+	ret = devm_request_irq(dev, mixer_ctx->irq, mixer_irq_handler,
-+			       0, "drm_mixer", mixer_ctx);
+-	ret = devm_request_irq(dev, res->start, fimd_irq_handler,
+-							0, "drm_fimd", ctx);
++	ret = devm_request_irq(dev, ret, fimd_irq_handler, 0, "drm_fimd", ctx);
  	if (ret) {
- 		dev_err(dev, "request interrupt failed.\n");
+ 		dev_err(dev, "irq request failed.\n");
  		return ret;
- 	}
--	mixer_ctx->irq = res->start;
- 
- 	return 0;
- }
 -- 
 2.17.1
 
