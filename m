@@ -2,115 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A76C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Dec 2021 10:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9CCC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Dec 2021 15:35:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbhLYKlh (ORCPT
+        id S232086AbhLYPfI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 25 Dec 2021 05:41:37 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52790
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229728AbhLYKlg (ORCPT
+        Sat, 25 Dec 2021 10:35:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232046AbhLYPfI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 25 Dec 2021 05:41:36 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B8F263F163
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Dec 2021 10:41:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640428895;
-        bh=QauqV2pTGxSKDYX2CC7YbyGe29QyyH/cOCLamRKi74c=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=k6RSmyukQKrar1hdhfhDJ5N6bWvPhaQAna8hnJgPSfvuiLG61Z8b7a4VMYSMxn+CL
-         mbymK63MwA6w4fdgWU1WlQrS0IQ33wNL52TQvi+nhqzD4b1UFLOIyW6l7HSEexVCeE
-         Ow/MHvnglv+SRqUnUfRWpm2V3nRnxwMxOPmPFjtHZ712e4ABMqvufjXI6c4Nuix/KG
-         +kQMycqGba24nFXySx+fhr8T6EtXzrxzDNASTwn5NlNL5fpIUC6tjGn3pa+wby15GP
-         FlyWsH/LkOJWKyMPsDFou4N+E38Kn3kqapvJSe9ZcdRgu0xtPe1RbyMtSKb99HjSnw
-         y5GCzAFEfiLGg==
-Received: by mail-lj1-f199.google.com with SMTP id w16-20020a05651c103000b00218c9d46faeso2889466ljm.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Dec 2021 02:41:35 -0800 (PST)
+        Sat, 25 Dec 2021 10:35:08 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92FDC061401;
+        Sat, 25 Dec 2021 07:35:07 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id o20so43878106eds.10;
+        Sat, 25 Dec 2021 07:35:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wwWnH1EnSh3qhn957NvdbdCF9PgHWAaScmOUyji2gkQ=;
+        b=EPNgsB487pYyKh4iO5aOKcn6aA0Y8nPPIhZgWoaSPgnWxBBrHJh4GJdyZF5BafD1Oj
+         EpSyBT4ZN0efi96hz4OpY6nw5IurBZaAH67jijDJZS7N5w6LJYkqiED7nTXYgpFygM/A
+         7XIxBZe0MmfQwh/GbbwuI0HK0zn8vFpv+0WpJsCkX4ZvbBV+lGlKO22dHSmpeKjnNabI
+         jDT9/6fJ6B0HCWPBRzF+O5D8vafqzzrBoVpjuA4cdxk1O94zDX6V5j1eYo9oiBFG7mbS
+         wBxSZLcBadKIqa7ZrPbbZ2WO1TPraL0JrMuMiTa8Izn1dCPehE9Eji27ZW3u7/OYcrSL
+         kG5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QauqV2pTGxSKDYX2CC7YbyGe29QyyH/cOCLamRKi74c=;
-        b=KtfGlThlwmCnO+WXwjib+hxRyJR5lS+jOTzX87tWpE5EOpkrqTTDx6K5Ox+VwNgaYm
-         0F29FXpOeUG4P6+62aO09U9IDDHi2TgTvpNSDruglNOXfbXTtH9eCw0P47yhIks6hOaY
-         8TwcGiqP7roJe/jM8VXhBAHetRtf+NojRZx+2xQzjGGOmAOPJUGEez5Wb7KdDO386KQi
-         RNIh34L2VQIkjCi0eKEaVgk8QABwDJPpS+FELPu9wxRMHBu3lKfCz1135j8IqWKBApIt
-         H2mMm9OdMK5uInldhYIWWzewB/GB6gLRry53x+lMkEEl5kodDPzROBONn1TEEdVCbRVL
-         w6xQ==
-X-Gm-Message-State: AOAM532ON4Ji79lbrbSqp/ZhqErrIhIQCJA7wpbu3Zcsy7zmtoKM0jEI
-        C+OwWEoEV6AWPYTAW9lmzlB7V+S53QIgGvt7eX9WcCYXatpZ8K3bCMNlPYETCppSB5YkeiEIhx2
-        I0x0wPvXHa0Bl6rtOhaI/c29JQ7Tp9CV+ZffqZR2+N9BBL5tk
-X-Received: by 2002:a2e:9d4:: with SMTP id 203mr3998872ljj.437.1640428895150;
-        Sat, 25 Dec 2021 02:41:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw+fdyArzWCtOfCrFbRkFIfMjOff+PenYaeghN2vyX7RnRFogTvS0/Oy2lypvtzNtOU6hdlYA==
-X-Received: by 2002:a2e:9d4:: with SMTP id 203mr3998847ljj.437.1640428894858;
-        Sat, 25 Dec 2021 02:41:34 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id e12sm1077330lfr.179.2021.12.25.02.41.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Dec 2021 02:41:34 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: drivers for v5.17
-Date:   Sat, 25 Dec 2021 11:41:29 +0100
-Message-Id: <20211225104129.56077-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wwWnH1EnSh3qhn957NvdbdCF9PgHWAaScmOUyji2gkQ=;
+        b=OpAKw86j35iwbSNuD7rKnt4Om4MfP9UGfKy+Y7ikN10+Q5MR/549k83lumejbDtJiO
+         Zs1CaQeZ097ak6iVV4aI2teFOeizyDui5gXDfjbVZkCMS+84Mi6fax2MQ415MT8UINMT
+         Vc6O+PFIuWvHR0cX6vmP3CxsEi824D1TN043sqxCjVnYu3JkXkIyzrc4OGi53Su2MwJ4
+         6j3UNLhOEESJ5OmZolkhJGSPjPk29zef6bH+Dka+2AMnstjkMjhx+f7djXx3McB7p6AJ
+         yCeCF/HLjBievBb7Uw69THkr0kY+JdDBZq1c4pvu4+I+F/G9GmQBEKLupfHFLt21rfZB
+         6Lmw==
+X-Gm-Message-State: AOAM5314D6O3kn3qwZTIeRrDnj97uivCD4tNuIo7tqGU8Bt9aqqmTaI0
+        0Cmvg9mPl0JMWR2QQyORciydlUlTar2lHAOd9b8=
+X-Google-Smtp-Source: ABdhPJzerhu6pktkMKMdH2AqWbHs7Twn3IOVJ59Ezh3yEGgMFSACBN4rZHZDYwK1ndf9kq5HP6IUiceq+DdDkvMmCGE=
+X-Received: by 2002:a17:907:6d8d:: with SMTP id sb13mr8614464ejc.132.1640446506459;
+ Sat, 25 Dec 2021 07:35:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211224145748.18754-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20211224145748.18754-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20211224145748.18754-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 25 Dec 2021 17:34:30 +0200
+Message-ID: <CAHp75VdSBYGTqHUH6=ZW5_LUat3Rg_TW_jNDvbjkU5Q9R4YFig@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: samsung: Use platform_get_irq_optional() to
+ get the interrupt
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Linus,
+On Sat, Dec 25, 2021 at 3:59 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
+> allocation of IRQ resources in DT core code, this causes an issue
+> when using hierarchical interrupt domains using "interrupts" property
+> in the node as this bypasses the hierarchical setup and messes up the
+> irq chaining.
+>
+> In preparation for removal of static setup of IRQ resource from DT core
+> code use platform_get_irq_optional().
 
-Samsung stuff for v5.17.
+> +       ret = platform_get_irq_optional(pdev, 0);
+> +       if (ret < 0 && ret != -ENXIO)
+> +               return ret;
+> +       if (ret > 0)
+> +               drvdata->irq = ret;
 
-Best regards,
-Krzysztof
+Yes, this is how platform_get_irq_optional() is expected to be used
+right now. We are going to fix it a bit, so this code won't be
+affected.
 
-
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
-
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-5.17
-
-for you to fetch changes up to a382d568f144b9e533ad210117c6c50d8dbdcaf1:
-
-  pinctrl: samsung: Use platform_get_irq_optional() to get the interrupt (2021-12-25 11:18:06 +0100)
-
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v5.17
-
-1. Add support for Exynos7885.
-2. Drop usage of platform_get_resource().
-
-----------------------------------------------------------------
-David Virag (2):
-      dt-bindings: pinctrl: samsung: Document Exynos7885
-      pinctrl: samsung: Add Exynos7885 SoC specific data
-
-Lad Prabhakar (1):
-      pinctrl: samsung: Use platform_get_irq_optional() to get the interrupt
-
-Wei Yongjun (1):
-      pinctrl: samsung: Make symbol 'exynos7885_pin_ctrl' static
-
- .../bindings/pinctrl/samsung-pinctrl.txt           |  1 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 81 ++++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          | 11 +--
- drivers/pinctrl/samsung/pinctrl-samsung.h          |  1 +
- 4 files changed, 90 insertions(+), 4 deletions(-)
+-- 
+With Best Regards,
+Andy Shevchenko
