@@ -2,95 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9CCC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 25 Dec 2021 15:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB8AC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Dec 2021 03:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232086AbhLYPfI (ORCPT
+        id S231226AbhLZDe4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 25 Dec 2021 10:35:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36128 "EHLO
+        Sat, 25 Dec 2021 22:34:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbhLYPfI (ORCPT
+        with ESMTP id S231221AbhLZDez (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 25 Dec 2021 10:35:08 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92FDC061401;
-        Sat, 25 Dec 2021 07:35:07 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id o20so43878106eds.10;
-        Sat, 25 Dec 2021 07:35:07 -0800 (PST)
+        Sat, 25 Dec 2021 22:34:55 -0500
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B6A1C061759
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Dec 2021 19:34:55 -0800 (PST)
+Received: by mail-oi1-x230.google.com with SMTP id be32so19722780oib.11
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Dec 2021 19:34:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wwWnH1EnSh3qhn957NvdbdCF9PgHWAaScmOUyji2gkQ=;
-        b=EPNgsB487pYyKh4iO5aOKcn6aA0Y8nPPIhZgWoaSPgnWxBBrHJh4GJdyZF5BafD1Oj
-         EpSyBT4ZN0efi96hz4OpY6nw5IurBZaAH67jijDJZS7N5w6LJYkqiED7nTXYgpFygM/A
-         7XIxBZe0MmfQwh/GbbwuI0HK0zn8vFpv+0WpJsCkX4ZvbBV+lGlKO22dHSmpeKjnNabI
-         jDT9/6fJ6B0HCWPBRzF+O5D8vafqzzrBoVpjuA4cdxk1O94zDX6V5j1eYo9oiBFG7mbS
-         wBxSZLcBadKIqa7ZrPbbZ2WO1TPraL0JrMuMiTa8Izn1dCPehE9Eji27ZW3u7/OYcrSL
-         kG5g==
+        bh=8KU7qyVWCeCPhrgSi7WlMC4yfAlwyr+FRaOQribuaQs=;
+        b=brOuap0t2AD/GGjjhEn5TAeC5+UUW0xmzP361kI7ixJHUVcKIp5lYQjBX7VLjQFIFq
+         LCV1OWhaA3Feg9qHemx4H8Gwtqiufe6s6df35XyBAt+LNcfCSHGX88D5sx8CzG4u1CgP
+         UhK/zLHFrXR92zRIQkgM0mVpvBX3MMRgLgJQMn8XxtGpgHMVsfqkp8w6yxf5XmqABUvD
+         GBB+G1ivvfhHha1CjlZlXVZ7ZBeDUKwEUGnyUPtLbdEjCWKF99dTNuHNkcrni94iJGjN
+         yC+F+Df7hfbmxSxb238Os89lCmzjeXp4NfUx0oEs6N2fNA1TKxWE/0sZvd/Fi+yjAe8h
+         rRgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wwWnH1EnSh3qhn957NvdbdCF9PgHWAaScmOUyji2gkQ=;
-        b=OpAKw86j35iwbSNuD7rKnt4Om4MfP9UGfKy+Y7ikN10+Q5MR/549k83lumejbDtJiO
-         Zs1CaQeZ097ak6iVV4aI2teFOeizyDui5gXDfjbVZkCMS+84Mi6fax2MQ415MT8UINMT
-         Vc6O+PFIuWvHR0cX6vmP3CxsEi824D1TN043sqxCjVnYu3JkXkIyzrc4OGi53Su2MwJ4
-         6j3UNLhOEESJ5OmZolkhJGSPjPk29zef6bH+Dka+2AMnstjkMjhx+f7djXx3McB7p6AJ
-         yCeCF/HLjBievBb7Uw69THkr0kY+JdDBZq1c4pvu4+I+F/G9GmQBEKLupfHFLt21rfZB
-         6Lmw==
-X-Gm-Message-State: AOAM5314D6O3kn3qwZTIeRrDnj97uivCD4tNuIo7tqGU8Bt9aqqmTaI0
-        0Cmvg9mPl0JMWR2QQyORciydlUlTar2lHAOd9b8=
-X-Google-Smtp-Source: ABdhPJzerhu6pktkMKMdH2AqWbHs7Twn3IOVJ59Ezh3yEGgMFSACBN4rZHZDYwK1ndf9kq5HP6IUiceq+DdDkvMmCGE=
-X-Received: by 2002:a17:907:6d8d:: with SMTP id sb13mr8614464ejc.132.1640446506459;
- Sat, 25 Dec 2021 07:35:06 -0800 (PST)
+        bh=8KU7qyVWCeCPhrgSi7WlMC4yfAlwyr+FRaOQribuaQs=;
+        b=0qANQzWbaCWZ6MNKA5GXCrc+Q4xJQE1g0obCH4og/njRuDYJLprMuos7nuFvMOLaXm
+         YJ7zXxRI3L77D5cN6l08XykI74hV/UukrfrhCOyZ7nqCuIcdJ9ppySKeoHAy8sIftg9Q
+         rerIRrxwA3Doai6hUhK4Nh5dtZjFn0h/tD7OmZo7UvB0zvpnlo5W519sM3PDtCswH1xj
+         7gGTIP7Y4L6PjD93sLxJRQ2cZaFOOhSB2YdsWRLr3CeVT/4aLxk19WD1arZBdxruro4X
+         5xpb+/svIQbx1qo+t/HtAFm8E6qkmqzD+IjFr32YwhBMYjD1piUfNxIWpaXrhgjWe6P7
+         52og==
+X-Gm-Message-State: AOAM532HAej54YkzzpP5TJWfDx1uArdAlcW4RpdBSJzlScHo9hq9wJRD
+        zNYufevGblvRHA9CZXB/YJ69FnA0TMpXIX9XYXqv2A==
+X-Google-Smtp-Source: ABdhPJxsyZ12l/8bne3hB0Nc/6/qpU+8uLgJXjDkYJntGVFZtUPE+k2NElPi6OpYSWuYp7PlDdCDJUCIqE8uXK1g0jM=
+X-Received: by 2002:aca:120f:: with SMTP id 15mr9087993ois.132.1640489694029;
+ Sat, 25 Dec 2021 19:34:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20211224145748.18754-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20211224145748.18754-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20211224145748.18754-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 25 Dec 2021 17:34:30 +0200
-Message-ID: <CAHp75VdSBYGTqHUH6=ZW5_LUat3Rg_TW_jNDvbjkU5Q9R4YFig@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: samsung: Use platform_get_irq_optional() to
- get the interrupt
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+References: <20211225104129.56077-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211225104129.56077-1-krzysztof.kozlowski@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 26 Dec 2021 04:34:42 +0100
+Message-ID: <CACRpkdbDuC5wbPcQBuP0WfXZ_JtF6Hh4vmY9fxFo57arb4kENQ@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v5.17
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Dec 25, 2021 at 3:59 AM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
-> allocation of IRQ resources in DT core code, this causes an issue
-> when using hierarchical interrupt domains using "interrupts" property
-> in the node as this bypasses the hierarchical setup and messes up the
-> irq chaining.
->
-> In preparation for removal of static setup of IRQ resource from DT core
-> code use platform_get_irq_optional().
+On Sat, Dec 25, 2021 at 11:41 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 
-> +       ret = platform_get_irq_optional(pdev, 0);
-> +       if (ret < 0 && ret != -ENXIO)
-> +               return ret;
-> +       if (ret > 0)
-> +               drvdata->irq = ret;
+> Samsung stuff for v5.17.
 
-Yes, this is how platform_get_irq_optional() is expected to be used
-right now. We are going to fix it a bit, so this code won't be
-affected.
+Pulled in!
+Merry christmas!
 
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
