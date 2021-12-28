@@ -2,110 +2,191 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A1AC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Dec 2021 11:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F561C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Dec 2021 14:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233528AbhL0LaN (ORCPT
+        id S233858AbhL1Oj0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Dec 2021 06:30:13 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:53064
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233522AbhL0LaN (ORCPT
+        Tue, 28 Dec 2021 09:39:26 -0500
+Received: from mail-ua1-f47.google.com ([209.85.222.47]:35469 "EHLO
+        mail-ua1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233497AbhL1Oj0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Dec 2021 06:30:13 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5950C3FFD5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Dec 2021 11:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640604612;
-        bh=aWHjr9hGiX3Xkq17ZpqoeHCadE3NVT5LQHwejDb2nGg=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=XeRhOYM4+t0pxs2rOT4djeQD0GiEZJFp9Yv/pf/6T8lBHafJAch9Jz/eaMS8R3Z3o
-         3jkAqP39xmGYLkQN7MXPyjdyhTycgXNebr1omCXR2om6jsL2ExtmcSbgy3KxfgFVhj
-         hfMZ/zoK5CRuyko8nfJ+MFQvBRaXK/99CkfJabOXCyBuT8IBrh9oMPqRWsnC9kj31K
-         384+xZVgbXyHPHYiTFv/rbTRATCkJb1l7PeTg3ZgDf3m5cv2njXnMIhc066vnCSQoW
-         hF2GQXH3ehJkXBs6dyW3NgvPNgJDEvxAnGfUQsUDbb6/auEJjr86m8VjudZOtIyFls
-         P/DjnKj4ygAkQ==
-Received: by mail-lj1-f199.google.com with SMTP id o11-20020a2e90cb000000b0022dd251d30aso1231938ljg.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Dec 2021 03:30:11 -0800 (PST)
+        Tue, 28 Dec 2021 09:39:26 -0500
+Received: by mail-ua1-f47.google.com with SMTP id v14so14799276uau.2;
+        Tue, 28 Dec 2021 06:39:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aWHjr9hGiX3Xkq17ZpqoeHCadE3NVT5LQHwejDb2nGg=;
-        b=cwhJHgTYdVZ2nHi/D6A9rHouK96HhxwimWQW7QBz8Vf1zvWOIU6FMwZeWykFUqTDkQ
-         Om05c4isoTYTXKY4n/mZUMRx4UQnrMbEXEY0nMsmGgZVe0QcWno0ha2CixM+wv6YtSob
-         MVFx2uPRKqDd9XAH2EE75I6zJWwYA1oNKfWOaBykn48LuDsIhABzQ7wvm1NBGVme3oQ1
-         jUY4va1W3DzL7hdZRFa6FdQS+siYPIqbSZZXgapFMgT1Z5TjxHISLxqaGW3Y9Cz2VKpE
-         EajpuGyRQ8so3E7pEOi9Ln8/oDCXh418dn3mjtWc+cnQQWI1CRFysoCNGHA47TOEAuXs
-         YOCg==
-X-Gm-Message-State: AOAM533AzDyjDJWjoGjPB2byBbE+aDeSBjqwwkKVhaUQh9Q9yeoJcC7f
-        TW177vbQ87CvHt/k0Kc2ssPzytmCxT+jukXyYZ0VB+hP+jfvWM5hYFpO5Aj1yFL5zH8v0MbvrvU
-        HEz3hxzRidVMcP03+s020VutAUueDJYeShLPaYQDQEIeMRWJT
-X-Received: by 2002:a05:6512:b1f:: with SMTP id w31mr15148509lfu.240.1640604609991;
-        Mon, 27 Dec 2021 03:30:09 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzqmovMOAurIAVtXtVAkod909IMEuDYkOk35Wo6mVXh3Ui2RjRndjpYwT1yH9TfhijrlWPqnA==
-X-Received: by 2002:a05:6512:b1f:: with SMTP id w31mr15148503lfu.240.1640604609760;
-        Mon, 27 Dec 2021 03:30:09 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id s10sm1623075lfr.45.2021.12.27.03.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Dec 2021 03:30:09 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
-Date:   Mon, 27 Dec 2021 12:29:59 +0100
-Message-Id: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kpKebKhTPkAf5g+7wJecDZs+7FWqimgm1MM7GRPt3OU=;
+        b=BYPeeVGBeI05WcUXpkB5nZzUWMDVpOeLgiPQciBMWfzDm0rME8mdY8A5JFrvVdl69I
+         Gkbw641ogVTLr+C/jHw/8qc2JFJXj08/s3keuj17SJq08L7UNe+HM2FOKsXKR9Z9HCoC
+         wJxPQjVzBRrhZUGzsIhEIHwcyGF0WKHAGSEDd1QZ6LUUqVaMOVSvjTrmkT9S2SRALCFx
+         QCC+0Pru7A2Dbhsb7l/ITaTJmzK4pOtFrZwoW331hdfPgrCZnui57GgIBR+64PLgeqhg
+         jGZmj6BNBe/8soTN0jRhGDVdwIlu/lr2tBaS4QRLNVT0+CaJGbfToquCU/yW7CWQmFaU
+         594A==
+X-Gm-Message-State: AOAM5317bsiTRGKvdfCKSajgvjC31EI2yMx5AzGuZBR2jh+9VG3CjHJt
+        8maaKVr55EyC/blVITOWxQlgidaLdSP58w==
+X-Google-Smtp-Source: ABdhPJxCk+nr+FHmcvl/qBgSlh3lHEc5LdIGNQBeuCphSvhWynkoZDCbv06JTchYCeUjU8a50XYxAQ==
+X-Received: by 2002:a67:b143:: with SMTP id z3mr6313194vsl.66.1640702365077;
+        Tue, 28 Dec 2021 06:39:25 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id x19sm3788139vsh.6.2021.12.28.06.39.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Dec 2021 06:39:24 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id i6so32172900uae.6;
+        Tue, 28 Dec 2021 06:39:24 -0800 (PST)
+X-Received: by 2002:a05:6102:21dc:: with SMTP id r28mr6366856vsg.57.1640702364070;
+ Tue, 28 Dec 2021 06:39:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211122092816.2865873-1-ardb@kernel.org> <CGME20211221103854eucas1p2592e38fcc84c1c3506fce87f1dab6739@eucas1p2.samsung.com>
+ <20211122092816.2865873-8-ardb@kernel.org> <0ffc858f-27e7-6789-4be1-c4c5ad61eb9d@samsung.com>
+ <CAMj1kXG+P5AU-26t_16FL5xfQNd+ByQH_cfBLiwMSdoGPmvCuw@mail.gmail.com>
+ <e07a229a-e565-0077-9f8a-a24ffa45f395@samsung.com> <CAMj1kXG3neg0riLAaU32KLvB2PLBNzwqgO0F21nbK1ivS=FwMg@mail.gmail.com>
+ <b22077f6-0925-ee00-41ea-3e52241926e2@samsung.com> <CAMj1kXHQrqZSE1kHaQyQyK6R58EV3cUyvJFmM1JYifaMemyUhQ@mail.gmail.com>
+ <f469726d-86fb-cf54-2775-d4658d2f3a5d@samsung.com> <CAMj1kXGyL7yTV4+pOs9iBWYuVvVmPTZrV5r=nzqttqpZ6-vYJA@mail.gmail.com>
+In-Reply-To: <CAMj1kXGyL7yTV4+pOs9iBWYuVvVmPTZrV5r=nzqttqpZ6-vYJA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 28 Dec 2021 15:39:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWNuCVeFiDrhnFmX0F1jxz8Fs4eFx55ojJF3d2ro-udrA@mail.gmail.com>
+Message-ID: <CAMuHMdWNuCVeFiDrhnFmX0F1jxz8Fs4eFx55ojJF3d2ro-udrA@mail.gmail.com>
+Subject: Re: [PATCH v4 7/7] ARM: implement support for vmap'ed stacks
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Keith Packard <keithpac@amazon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Ard,
 
-Second pull with DTS for ARM64, on top of previous pull.
+On Thu, Dec 23, 2021 at 3:30 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+> On Tue, 21 Dec 2021 at 22:56, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > On 21.12.2021 17:20, Ard Biesheuvel wrote:
+> > > On Tue, 21 Dec 2021 at 14:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > >> On 21.12.2021 14:34, Ard Biesheuvel wrote:
+> > >>> On Tue, 21 Dec 2021 at 12:15, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > >>>> On 21.12.2021 11:44, Ard Biesheuvel wrote:
+> > >>>>> On Tue, 21 Dec 2021 at 11:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > >>>>>> On 22.11.2021 10:28, Ard Biesheuvel wrote:
+> > >>>>>>> Wire up the generic support for managing task stack allocations via vmalloc,
+> > >>>>>>> and implement the entry code that detects whether we faulted because of a
+> > >>>>>>> stack overrun (or future stack overrun caused by pushing the pt_regs array)
+> > >>>>>>>
+> > >>>>>>> While this adds a fair amount of tricky entry asm code, it should be
+> > >>>>>>> noted that it only adds a TST + branch to the svc_entry path. The code
+> > >>>>>>> implementing the non-trivial handling of the overflow stack is emitted
+> > >>>>>>> out-of-line into the .text section.
+> > >>>>>>>
+> > >>>>>>> Since on ARM, we rely on do_translation_fault() to keep PMD level page
+> > >>>>>>> table entries that cover the vmalloc region up to date, we need to
+> > >>>>>>> ensure that we don't hit such a stale PMD entry when accessing the
+> > >>>>>>> stack. So we do a dummy read from the new stack while still running from
+> > >>>>>>> the old one on the context switch path, and bump the vmalloc_seq counter
+> > >>>>>>> when PMD level entries in the vmalloc range are modified, so that the MM
+> > >>>>>>> switch fetches the latest version of the entries.
+> > >>>>>>>
+> > >>>>>>> Note that we need to increase the per-mode stack by 1 word, to gain some
+> > >>>>>>> space to stash a GPR until we know it is safe to touch the stack.
+> > >>>>>>> However, due to the cacheline alignment of the struct, this does not
+> > >>>>>>> actually increase the memory footprint of the struct stack array at all.
+> > >>>>>>>
+> > >>>>>>> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > >>>>>>> Tested-by: Keith Packard <keithpac@amazon.com>
+> > >>>>>> This patch landed recently in linux-next 20211220 as commit a1c510d0adc6
+> > >>>>>> ("ARM: implement support for vmap'ed stacks"). Sadly it breaks
+> > >>>>>> suspend/resume operation on all ARM 32bit Exynos SoCs. Probably the
+> > >>>>>> suspend/resume related code must be updated somehow (it partially works
+> > >>>>>> on physical addresses and disabled MMU), but I didn't analyze it yet. If
+> > >>>>>> you have any hints, let me know.
+> > >>>>>>
+> > >>>>> Are there any such systems in KernelCI? We caught a suspend/resume
+> > >>>>> related issue in development, which is why the hunk below was added.
+> > >>>> I think that some Exynos-based Odroids (U3 and XU3) were some time ago
+> > >>>> available in KernelCI, but I don't know if they are still there.
+> > >>>>
+> > >>>>
+> > >>>>> In general, any virt-to-phys translation involving and address on the
+> > >>>>> stack will become problematic.
+> > >>>>>
+> > >>>>> Could you please confirm whether the issue persists with the patch
+> > >>>>> applied but with CONFIG_VMAP_STACK turned off? Just so we know we are
+> > >>>>> looking in the right place?
+> > >>>> I've just checked. After disabling CONFIG_VMAP_STACK suspend/resume
+> > >>>> works fine both on commit a1c510d0adc6 and linux-next 20211220.
+> > >>>>
+> > >>> Thanks. Any other context you can provide beyond 'does not work' ?
+> > >> Well, the board properly suspends, but it doesn't wake then (tested
+> > >> remotely with rtcwake command). So far I cannot provide anything more.
+> > >>
+> > > Thanks. Does the below help? Or otherwise, could you try doubling the
+> > > size of the overflow stack at arch/arm/include/asm/thread_info.h:34?
+> >
+> > I've tried both (but not at the same time) on the current linux-next and
+> > none helped. This must be something else... :/
+> >
+>
+> Thanks.
+>
+> As i don't have access to this hardware, I am going to have to rely on
+> someone who does to debug this further. The only alternative is
+> marking CONFIG_VMAP_STACK broken on MACH_EXYNOS but that would be
+> unfortunate.
 
-Best regards,
-Krzysztof
+Wish I had seen this thread before...
 
+I've just bisected a resume after s2ram failure on R-Car Gen2 to the same
+commit a1c510d0adc604bb ("ARM: implement support for vmap'ed stacks")
+in arm/for-next.
 
-The following changes since commit 51b1a5729469cef57a3c97aa014aa6e1d2b8d864:
+Expected output:
 
-  dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850 (2021-12-20 10:35:32 +0100)
+    PM: suspend entry (deep)
+    Filesystems sync: 0.000 seconds
+    Freezing user space processes ... (elapsed 0.010 seconds) done.
+    OOM killer disabled.
+    Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
+    Disabling non-boot CPUs ...
 
-are available in the Git repository at:
+[system suspended, this is also where it hangs on failure]
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-5.17-2
+    Enabling non-boot CPUs ...
+    CPU1 is up
+    sh-eth ee700000.ethernet eth0: Link is Down
+    Micrel KSZ8041RNLI ee700000.ethernet-ffffffff:01: attached PHY
+driver (mii_bus:phy_addr=ee700000.ethernet-ffffffff:01, irq=193)
+    OOM killer enabled.
+    Restarting tasks ... done.
+    PM: suspend exit
 
-for you to fetch changes up to a1828d772e0738c30a383a7d335aded2f2baf908:
+Both wake-on-LAN and wake-up by gpio-keys fail.
+Nothing interesting in the kernel log, cfr. above.
 
-  arm64: dts: exynos: Add initial E850-96 board support (2021-12-22 12:31:13 +0100)
+Disabling CONFIG_VMAP_STACK fixes the issue for me.
 
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v5.17, part two
+Just like arch/arm/mach-exynos/ (and others), arch/arm/mach-shmobile/
+has several *.S files related to secondary CPU bringup.
 
-Add initial Exynos850 support and WinLink E850-96 board using it.
+Gr{oetje,eeting}s,
 
-----------------------------------------------------------------
-Sam Protsenko (2):
-      arm64: dts: exynos: Add initial Exynos850 SoC support
-      arm64: dts: exynos: Add initial E850-96 board support
+                        Geert
 
- arch/arm64/boot/dts/exynos/Makefile               |   1 +
- arch/arm64/boot/dts/exynos/exynos850-e850-96.dts  | 195 ++++++
- arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi | 643 ++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos850.dtsi         | 759 ++++++++++++++++++++++
- 4 files changed, 1598 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
