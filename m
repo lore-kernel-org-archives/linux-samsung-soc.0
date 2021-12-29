@@ -2,337 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D240DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Dec 2021 16:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5221C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Dec 2021 12:47:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235757AbhL1QnU (ORCPT
+        id S238511AbhL2MrD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Dec 2021 11:43:20 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:49440
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236122AbhL1QnR (ORCPT
+        Wed, 29 Dec 2021 07:47:03 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:34416
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233041AbhL2MrC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Dec 2021 11:43:17 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        Wed, 29 Dec 2021 07:47:02 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3694E3FFD2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Dec 2021 16:43:16 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1226B3FFDE
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Dec 2021 12:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640709796;
-        bh=LWpKLoE0BQYAlN39yeK9QxixT3GtLXrh/TOWUi443sk=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=UD10wK1l3fra7k2cRA4axQyRx3re7NECH5jbylFxBuwi2GPChUwJ8JArKF/S3/DAz
-         20iJK42Qfx5KzKRN1HoLspdqGipqnrE9j2Tv5zk/D70gXjE+8DHETcjWFzeHHGQHzF
-         aoSCQbJc94wGtKlg0oHlEKUh+lqmMPA9pS/9UkSP4vI4xkGHo5Oj0MxvFL9CBLF/lG
-         /VcO463VK3Au+LITw7RUQeX5tgxxh86hzd9VnPT9gGr5F+lLo4UNxLJ2/S9H2/u/fS
-         UOmXq2yGgstIjT29Z6oLeKnF8wVnXv4tZp91njUYNbiRaOECXodynEapW3fyJJOtk2
-         nY6KUSkKMJXCQ==
-Received: by mail-lj1-f199.google.com with SMTP id l6-20020a2e8686000000b0022d9a4d18d5so5217739lji.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Dec 2021 08:43:16 -0800 (PST)
+        s=20210705; t=1640782021;
+        bh=EiFThceYXJIfaUy1FiYlSzDZJI3YYnQAhDfGO4ROhTw=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=DERWsw6mtJjJxtBo/02tikpkcHlkFI5jGSoJowuWIOunHxSWRCDp77cM8EVj+CYg4
+         x/tt5WAoxiZ7YPyDPz0JZERopmNXjYx+YpUF+ZLSWj06hxiej2ThKO+GqdGkmUDCZD
+         INEZdax4sC9NLSpzJdrzkovW61inmMmovA+HtzcnvtmHo90/MDyqdT89MROsE/sRBX
+         fM/I5i5O/S4BSd6OI8ctJ2uNjRLVoy9YwXjX1LbCTeLrDKb6RbEo3VqNyW/Y3Kr/Ix
+         AMTtSK3hjjBNJPmr50i/+SIG8IWhS/YTFvj9MLa01lf3IExSacWPakSvD3ey/4/Sra
+         hS7eYQE8v7i3w==
+Received: by mail-lf1-f69.google.com with SMTP id b19-20020ac24113000000b004297f324073so2053140lfi.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Dec 2021 04:47:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LWpKLoE0BQYAlN39yeK9QxixT3GtLXrh/TOWUi443sk=;
-        b=rfljQG6KFVYmRZVGuvUgdtJI6ojHHXz0M3BLQphwiFjNtjjUgpbtknTEmoeOTc5aGp
-         kptfb2LSnD+XWOEy7wazPWoNZ9kImN0pEsFlFLq4fVPraYpHrnQqHyX17UBpLVXOm3Zt
-         2R3J+WZ6OO0xoZeRktikPedtXpYsZyZA718qMVlOG0BLM13Ybj5T/1jVk9DgWuZ2ZPRg
-         LQ1Pbs7pN4AYVSfbxE+gh6hbSnX91LC/4ANOjJg9foK1GlSXPcRah7EBiaMhvQ1kyagy
-         go3sUdS6qmxLqIy6A7d3xaA8+zd5GND8T8z0X9uEBhaeDzGzX6iwHQN8XXe8jqZl0noj
-         XLBA==
-X-Gm-Message-State: AOAM531dH8hpYOOjcSetFoO/odSM4t98csXGzgSwB7ezwqTvLgyMhsGT
-        Cb26hH8/X2MV8QjkELdins4+9ZKW6RBcl42twDGQsk2hBbmIiIjxVBCUBy/jlNk9EQTWMk3P72K
-        IC/gQtoFOYSID6FrEuoG4AAKLRvM0l0AXj5TOw7s0hwx8dKmK
-X-Received: by 2002:a19:dc57:: with SMTP id f23mr19029406lfj.245.1640709795544;
-        Tue, 28 Dec 2021 08:43:15 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwqseq4Sp84ozRpaHHxcVhWgWfB1NTN6A3uTXObXh7HWRmTjja6ZjpvU7bvJhugOhfxG2UJVg==
-X-Received: by 2002:a19:dc57:: with SMTP id f23mr19029393lfj.245.1640709795305;
-        Tue, 28 Dec 2021 08:43:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EiFThceYXJIfaUy1FiYlSzDZJI3YYnQAhDfGO4ROhTw=;
+        b=2qAT9W3FSSn4HhrSkYW7q9PC+o61xX+O+YLaRgsjWzckyf9vmg8x/wnLjhiYBent3B
+         H8a5Rv1kNw3ZWBrLNVXVz8DXrBpDv4woPA1vFAA/frxsCgzWy+4YXBYXTfZbWdW2d5pg
+         +/nBteOXFpylqi38qDUWpFFIUf82GxT5rZghFJcP49FY0aGPP80cDoC3DdVXRP9RIrpY
+         d/+rU7dXnMSVcai4gSwZ0hYW26ipptLLKm0hGa1mcNuiQBpl3omBhBAKDGfiX5c1C6qv
+         5z8FuMeDYazo4tEIZuxYnU0lWnguNqcB2ez2ssXrs6NxfgtnAVBtsR38zwRXfw3vElmH
+         4chQ==
+X-Gm-Message-State: AOAM533ek9FCzuDQTlRcEg5jsU+vx4N8Cv8UsAcOyV7tfQXC5BGg/soX
+        qAnUf434kRuvP7edOBPf3uM/ptdlMz1rvy3YVNhjtl+yu+/5WIyNgtd9e0KIVE+ldXIQYuYrA7j
+        mHPsM4LEL6TrC1uQ6OqvZuSFRRaqySk2y826t+WWFfRPzq+4k
+X-Received: by 2002:ac2:5f0d:: with SMTP id 13mr23094264lfq.584.1640782020444;
+        Wed, 29 Dec 2021 04:47:00 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxpQql3Aar4Mwf1v33RisqPFjfwL9ts2alHH57FGrI6mbQVzAUGmcSa9BNYuLmqblZ4JTIcfw==
+X-Received: by 2002:ac2:5f0d:: with SMTP id 13mr23094236lfq.584.1640782020117;
+        Wed, 29 Dec 2021 04:47:00 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id u5sm968701lja.36.2021.12.28.08.43.14
+        by smtp.gmail.com with ESMTPSA id e11sm711158ljn.73.2021.12.29.04.46.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Dec 2021 08:43:14 -0800 (PST)
+        Wed, 29 Dec 2021 04:46:59 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: mfd: maxim,max77802: Convert to dtschema
-Date:   Tue, 28 Dec 2021 17:43:05 +0100
-Message-Id: <20211228164305.35877-4-krzysztof.kozlowski@canonical.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Beomho Seo <beomho.seo@samsung.com>
+Subject: [PATCH 0/5] mfd/extcon/regulators: max77843: add dtschema/bindings
+Date:   Wed, 29 Dec 2021 13:46:26 +0100
+Message-Id: <20211229124631.21576-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211228164305.35877-1-krzysztof.kozlowski@canonical.com>
-References: <20211228164305.35877-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the MFD part of Maxim MAX77802 PMIC to DT schema format.  The
-example DTS was copied from existing DTS (exynos5800-peach-pi.dts), so
-keep the license as GPL-2.0-only.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../devicetree/bindings/mfd/max77802.txt      |  25 ---
- .../bindings/mfd/maxim,max77802.yaml          | 194 ++++++++++++++++++
- MAINTAINERS                                   |   2 +-
- 3 files changed, 195 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
+The max77843 shares some parts with max77693 but it lacked bindings.  All
+its compatibles were undocumented.  Add basic bindings for max77843,
+matching existing devicetree.  These are not complete bindings, but
+rather reverse-engineered to match current state.
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
-deleted file mode 100644
-index 09decac20d91..000000000000
---- a/Documentation/devicetree/bindings/mfd/max77802.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--Maxim MAX77802 multi-function device
--
--The Maxim MAX77802 is a Power Management IC (PMIC) that contains 10 high
--efficiency Buck regulators, 32 Low-DropOut (LDO) regulators used to power
--up application processors and peripherals, a 2-channel 32kHz clock outputs,
--a Real-Time-Clock (RTC) and a I2C interface to program the individual
--regulators, clocks outputs and the RTC.
--
--Bindings for the built-in 32k clock generator block and
--regulators are defined in ../clk/maxim,max77802.txt and
--../regulator/max77802.txt respectively.
--
--Required properties:
--- compatible		: Must be "maxim,max77802"
--- reg			: Specifies the I2C slave address of PMIC block.
--- interrupts		: I2C device IRQ line connected to the main SoC.
--
--Example:
--
--	max77802: pmic@9 {
--		compatible = "maxim,max77802";
--		interrupt-parent = <&intc>;
--		interrupts = <26 IRQ_TYPE_NONE>;
--		reg = <0x09>;
--	};
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
-new file mode 100644
-index 000000000000..26f49fbace18
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
-@@ -0,0 +1,194 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/maxim,max77802.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Maxim MAX77802 Power Management IC
-+
-+maintainers:
-+  - Javier Martinez Canillas <javier@dowhile0.org>
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+description: |
-+  This is a part of device tree bindings for Maxim MAX77802 Power Management
-+  Integrated Circuit (PMIC).
-+
-+  The Maxim MAX77802 is a Power Management IC which includes voltage and
-+  current regulators (10 high efficiency Buck regulators and 32 Low-DropOut
-+  (LDO)), RTC and clock outputs.
-+
-+  The MAX77802 provides two 32.768khz clock outputs that can be controlled
-+  (gated/ungated) over I2C.  The clock IDs are defined as preprocessor macros
-+  in dt-bindings/clock/maxim,max77802.h.
-+
-+properties:
-+  compatible:
-+    const: maxim,max77802
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  regulators:
-+    $ref: ../regulator/maxim,max77802.yaml
-+    description:
-+      List of child nodes that specify the regulators.
-+
-+  inb1-supply:
-+    description: Power supply for buck1
-+  inb2-supply:
-+    description: Power supply for buck2
-+  inb3-supply:
-+    description: Power supply for buck3
-+  inb4-supply:
-+    description: Power supply for buck4
-+  inb5-supply:
-+    description: Power supply for buck5
-+  inb6-supply:
-+    description: Power supply for buck6
-+  inb7-supply:
-+    description: Power supply for buck7
-+  inb8-supply:
-+    description: Power supply for buck8
-+  inb9-supply:
-+    description: Power supply for buck9
-+  inb10-supply:
-+    description: Power supply for buck10
-+
-+  inl1-supply:
-+    description: Power supply for LDO8, LDO15
-+  inl2-supply:
-+    description: Power supply for LDO17, LDO27, LDO30, LDO35
-+  inl3-supply:
-+    description: Power supply for LDO3, LDO5, LDO7, LDO7
-+  inl4-supply:
-+    description: Power supply for LDO10, LDO11, LDO13, LDO14
-+  inl5-supply:
-+    description: Power supply for LDO9, LDO19
-+  inl6-supply:
-+    description: Power supply for LDO4, LDO21, LDO24, LDO33
-+  inl7-supply:
-+    description: Power supply for LDO18, LDO20, LDO28, LDO29
-+  inl9-supply:
-+    description: Power supply for LDO12, LDO23, LDO25, LDO26, LDO32, LDO34
-+  inl10-supply:
-+    description: Power supply for LDO1, LDO2
-+
-+  wakeup-source: true
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/regulator/maxim,max77802.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@9 {
-+            compatible = "maxim,max77802";
-+            interrupt-parent = <&gpx3>;
-+            interrupts = <1 IRQ_TYPE_NONE>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&max77802_irq>, <&pmic_selb>,
-+                        <&pmic_dvs_1>, <&pmic_dvs_2>, <&pmic_dvs_3>;
-+            wakeup-source;
-+            reg = <0x9>;
-+            #clock-cells = <1>;
-+
-+            inb1-supply = <&tps65090_dcdc2>;
-+            inb2-supply = <&tps65090_dcdc1>;
-+            inb3-supply = <&tps65090_dcdc2>;
-+            inb4-supply = <&tps65090_dcdc2>;
-+            inb5-supply = <&tps65090_dcdc1>;
-+            inb6-supply = <&tps65090_dcdc2>;
-+            inb7-supply = <&tps65090_dcdc1>;
-+            inb8-supply = <&tps65090_dcdc1>;
-+            inb9-supply = <&tps65090_dcdc1>;
-+            inb10-supply = <&tps65090_dcdc1>;
-+
-+            inl1-supply = <&buck5_reg>;
-+            inl2-supply = <&buck7_reg>;
-+            inl3-supply = <&buck9_reg>;
-+            inl4-supply = <&buck9_reg>;
-+            inl5-supply = <&buck9_reg>;
-+            inl6-supply = <&tps65090_dcdc2>;
-+            inl7-supply = <&buck9_reg>;
-+            inl9-supply = <&tps65090_dcdc2>;
-+            inl10-supply = <&buck7_reg>;
-+
-+            regulators {
-+                BUCK1 {
-+                    regulator-name = "vdd_mif";
-+                    regulator-min-microvolt = <800000>;
-+                    regulator-max-microvolt = <1300000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    regulator-ramp-delay = <12500>;
-+                    regulator-state-mem {
-+                        regulator-off-in-suspend;
-+                    };
-+                };
-+
-+                BUCK2 {
-+                    regulator-name = "vdd_arm";
-+                    regulator-min-microvolt = <800000>;
-+                    regulator-max-microvolt = <1500000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    regulator-ramp-delay = <12500>;
-+                    regulator-coupled-with = <&buck3_reg>;
-+                    regulator-coupled-max-spread = <300000>;
-+                    regulator-state-mem {
-+                        regulator-off-in-suspend;
-+                    };
-+                };
-+
-+                // ...
-+
-+                BUCK10 {
-+                    regulator-name = "vdd_1v8";
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <1800000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    regulator-state-mem {
-+                        regulator-on-in-suspend;
-+                    };
-+                };
-+
-+                LDO1 {
-+                    regulator-name = "vdd_1v0";
-+                    regulator-min-microvolt = <1000000>;
-+                    regulator-max-microvolt = <1000000>;
-+                    regulator-always-on;
-+                    regulator-initial-mode = <MAX77802_OPMODE_NORMAL>;
-+                    regulator-state-mem {
-+                        regulator-on-in-suspend;
-+                        regulator-mode = <MAX77802_OPMODE_LP>;
-+                    };
-+                };
-+
-+                // ...
-+
-+                LDO35 {
-+                    regulator-name = "ldo_35";
-+                    regulator-min-microvolt = <1200000>;
-+                    regulator-max-microvolt = <1200000>;
-+                };
-+            };
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5ea5655a29c3..b5e4f14f6768 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11666,7 +11666,7 @@ MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
- M:	Javier Martinez Canillas <javier@dowhile0.org>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
--F:	Documentation/devicetree/bindings/*/*max77802.txt
-+F:	Documentation/devicetree/bindings/*/*max77802.yaml
- F:	drivers/regulator/max77802-regulator.c
- F:	include/dt-bindings/*/*max77802.h
- 
+I do not have access to device with MAX77843, so if anyone else
+volunteers to be the bindings maintainer, please join.
+
+Dependencies
+============
+1. Patch 1/5 (dts): nothing depends on it, sending here so Rob's automatic
+   checker won't complain about DTS.
+   I will take it via Samsung SoC tree.
+
+2. The patch 4/5 (mfd bindings) depends on regulator and extcon, so they
+   should come together (3+4+5).
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (5):
+  arm64: dts: exynos: Align MAX77843 nodes with dtschema on TM2
+  dt-bindings: extcon: maxim,max77843: add MAX77843 bindings
+  regulator: dt-bindings:  maxim,max77843: add MAX77843 bindings
+  dt-bindings: mfd: maxim,max77843: add MAX77843 bindings
+  MAINTAINERS: mfd: cover MAX77843 by Maxim PMIC/MUIC for Exynos boards
+    entry
+
+ .../bindings/extcon/maxim,max77843.yaml       |  40 +++++
+ .../bindings/mfd/maxim,max77843.yaml          | 144 ++++++++++++++++++
+ .../bindings/regulator/maxim,max77843.yaml    |  55 +++++++
+ MAINTAINERS                                   |   2 +
+ .../dts/exynos/exynos5433-tm2-common.dtsi     |  17 ++-
+ 5 files changed, 255 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
+
 -- 
 2.32.0
 
