@@ -2,465 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECA5C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Dec 2021 14:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAB1C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Dec 2021 16:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236855AbhL2OPp (ORCPT
+        id S237138AbhL2QKe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Dec 2021 09:15:45 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41090
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240185AbhL2OPn (ORCPT
+        Wed, 29 Dec 2021 11:10:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57112 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229528AbhL2QKe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Dec 2021 09:15:43 -0500
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Wed, 29 Dec 2021 11:10:34 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D723C061574;
+        Wed, 29 Dec 2021 08:10:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DECF23FFDF
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Dec 2021 14:15:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640787341;
-        bh=QHqw1S0TFvvvkO/nTuql74lpAGezNX5L1cEqNCQ3zIg=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=aR0gZafkzgEqW3fOF8dLq4RZM+tNiN4Fp4nSqV0R+fOS05MUiddqIalOwo88I+uwS
-         3YYsXx/pjwrlyFMyD4YLuZi2VSPePnlQBQJCQmvo14Ir/xm+FBPQ4n6CEEP6kBLlQr
-         jbNyY0+RnMURqDEYakedKwg/FOD8Nggma9tYGU3zlEhwMcFNJiu0tA1uwNAZMQZClF
-         mLK61BIfwZrvKIATWXW3O/oy8/PvRo+JDq7QZejPrK4D6sjEE1T4V5aZ6MiFQ9x4os
-         q6EXBb0NoOh/kY8gvSIBlFr7pMGAf+IYBttN7/DfG8a4fTD2oDXj35QarXj48xF6eF
-         xikJWVTaMZwHQ==
-Received: by mail-lj1-f200.google.com with SMTP id y4-20020a2e95c4000000b0022dbab5f69eso4540449ljh.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Dec 2021 06:15:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QHqw1S0TFvvvkO/nTuql74lpAGezNX5L1cEqNCQ3zIg=;
-        b=Euxk2cIJkFt+oK3JtcI8EtnF3WyO6wX6aiezOP/yNjJrV+Wqwx9XAWERtgRzlcfrXz
-         TzZMXtWjVX30499qPgaYMVnSCJGj+2UZebMhkjEQ7hxrm8qwPgKG706oqwkXVOMKJwcL
-         6vwqYT5vyyuGzmEiIWv5LFkY+dXnqEOaaR4vAdhP1quLoIA6cE6GmBsf5alXeENYLTMh
-         F3Ob3zhlZjgM5Yeni2wjsFWxpcZ4vmf3XRth7oQF5L/UVJwDy1EaFxJT03noEXr8cHi0
-         ApASATOTrqRMI/pexDFX+nNH/0XFbpeN9bu0irZP8LeiYi+ewBpbyolVmgwcN/HurAGV
-         EQwA==
-X-Gm-Message-State: AOAM531RftM0jFZReJwxvvLwZosbwS5lC/rWIKBHgmLSewK6MONnhhWp
-        CFuj0iKmcfiwpSbz6Py/rTCBjucyN+0VjnzS9270XCQfmNNBn1UvCtwFBbUtegaiocVQKmZJ/r+
-        yllChznpIurrYodFv+gCDMiDaZt0REqQ5XvMmdlUmQFdrrbta
-X-Received: by 2002:a2e:8051:: with SMTP id p17mr18820310ljg.231.1640787341196;
-        Wed, 29 Dec 2021 06:15:41 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx35P8eRibVJR1f07nmNJJ02YFr9k9trcfOSQbzXcQ1Vu81UtP7wH5W7PkJP8YQiZAhGDx55Q==
-X-Received: by 2002:a2e:8051:: with SMTP id p17mr18820286ljg.231.1640787340948;
-        Wed, 29 Dec 2021 06:15:40 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id a16sm1316164ljm.98.2021.12.29.06.15.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Dec 2021 06:15:38 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 40133B81904;
+        Wed, 29 Dec 2021 16:10:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B02C36AE9;
+        Wed, 29 Dec 2021 16:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640794230;
+        bh=8t7mrNFu3LPmCwf7053YLkDEk1ZfHFwv2/JCjqAhjJ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kdKr/oV/pCcCp2EJq7Pm/JFgmwkuhph7KGIe+5GWj7NGSsVpSI9WMKtSCBkkzI5U8
+         jrAwi95tGe0HIOHDNvwwvLktREFIL8JRi0VcYFWJ2TyaLsbKzi7LcOVutXbP7Yx2ul
+         Fn0trEk1mkbxK1Eh3rWDcGIAFz2fUM3UFxzm/IKWcyu6ipI9ojgMPgjltluiHgZdrZ
+         s0M39YiIAGOrm8zrgexTH9WOr/bnhr/WtTWbsJpkONnLfSOaIBQmlPDfsUM8MC1cd0
+         Uhn5+7/wKRQFaA1fVlJjve6wvBOdtaPsum+h2/gRFXeG+BdDLZqOfErofvWIfP6OdI
+         h3tJPnYSU9Xnw==
+From:   Jisheng Zhang <jszhang@kernel.org>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 4/4] dt-bindings: mfd: maxim,max14577: convert to dtschema
-Date:   Wed, 29 Dec 2021 15:15:24 +0100
-Message-Id: <20211229141524.34174-5-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211229141524.34174-1-krzysztof.kozlowski@canonical.com>
-References: <20211229141524.34174-1-krzysztof.kozlowski@canonical.com>
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 0/7] arm/arm64: dts: Remove unused num-viewport from pcie node
+Date:   Thu, 30 Dec 2021 00:02:38 +0800
+Message-Id: <20211229160245.1338-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the MFD part of Maxim MAX14577/MAX77836 MUIC to DT schema
-format.  The example DTS was copied from existing DTS
-(exynos3250-rinato.dts), so keep the license as GPL-2.0-only.
+After commit 281f1f99cf3a("PCI: dwc: Detect number of iATU windows"),
+the number of iATU windows is detected at runtime, what's more,
+the 'num-viewport' property parsing has been removed, so remove the
+unused num-viewport from pcie node(s).
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../devicetree/bindings/mfd/max14577.txt      | 147 -------------
- .../bindings/mfd/maxim,max14577.yaml          | 195 ++++++++++++++++++
- MAINTAINERS                                   |   2 +-
- 3 files changed, 196 insertions(+), 148 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/max14577.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max14577.yaml
+It's too late for linux-5.17-rc1, I will rebase and send out v2 if
+necessary when 5.17-rc1 is released.
 
-diff --git a/Documentation/devicetree/bindings/mfd/max14577.txt b/Documentation/devicetree/bindings/mfd/max14577.txt
-deleted file mode 100644
-index be11943a0560..000000000000
---- a/Documentation/devicetree/bindings/mfd/max14577.txt
-+++ /dev/null
-@@ -1,147 +0,0 @@
--Maxim MAX14577/77836 Multi-Function Device
--
--MAX14577 is a Multi-Function Device with Micro-USB Interface Circuit, Li+
--Battery Charger and SFOUT LDO output for powering USB devices. It is
--interfaced to host controller using I2C.
--
--MAX77836 additionally contains PMIC (with two LDO regulators) and Fuel Gauge.
--For the description of Fuel Gauge low SOC alert interrupt see:
--../power/supply/max17040_battery.txt
--
--
--Required properties:
--- compatible : Must be "maxim,max14577" or "maxim,max77836".
--- reg : I2C slave address for the max14577 chip (0x25 for max14577/max77836)
--- interrupts : IRQ line for the chip.
--
--
--Required nodes:
-- - charger :
--	Node for configuring the charger driver.
--	Required properties:
--		- compatible : "maxim,max14577-charger"
--			or "maxim,max77836-charger"
--		- maxim,fast-charge-uamp : Current in uA for Fast Charge;
--			Valid values:
--			- for max14577: 90000 - 950000;
--			- for max77836: 45000 - 475000;
--		- maxim,eoc-uamp : Current in uA for End-Of-Charge mode;
--			Valid values:
--			- for max14577: 50000 - 200000;
--			- for max77836: 5000 - 100000;
--		- maxim,ovp-uvolt : OverVoltage Protection Threshold in uV;
--			In an overvoltage condition, INT asserts and charging
--			stops. Valid values:
--			- 6000000, 6500000, 7000000, 7500000;
--		- maxim,constant-uvolt : Battery Constant Voltage in uV;
--			Valid values:
--			- 4000000 - 4280000 (step by 20000);
--			- 4350000;
--
--
--Optional nodes:
--- max14577-muic/max77836-muic :
--	Node used only by extcon consumers.
--	Required properties:
--		- compatible : "maxim,max14577-muic" or "maxim,max77836-muic"
--
--- regulators :
--	Required properties:
--		- compatible : "maxim,max14577-regulator"
--			or "maxim,max77836-regulator"
--
--	May contain a sub-node per regulator from the list below. Each
--	sub-node should contain the constraints and initialization information
--	for that regulator. See regulator.txt for a description of standard
--	properties for these sub-nodes.
--
--	List of valid regulator names:
--	- for max14577: CHARGER, SAFEOUT.
--	- for max77836: CHARGER, SAFEOUT, LDO1, LDO2.
--
--	The SAFEOUT is a fixed voltage regulator so there is no need to specify
--	voltages for it.
--
--
--Example:
--
--#include <dt-bindings/interrupt-controller/irq.h>
--
--max14577@25 {
--	compatible = "maxim,max14577";
--	reg = <0x25>;
--	interrupt-parent = <&gpx1>;
--	interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
--
--	muic: max14577-muic {
--		compatible = "maxim,max14577-muic";
--	};
--
--	regulators {
--		compatible = "maxim,max14577-regulator";
--
--		SAFEOUT {
--			regulator-name = "SAFEOUT";
--		};
--		CHARGER {
--			regulator-name = "CHARGER";
--			regulator-min-microamp = <90000>;
--			regulator-max-microamp = <950000>;
--			regulator-boot-on;
--		};
--	};
--
--	charger {
--		compatible = "maxim,max14577-charger";
--
--		maxim,constant-uvolt = <4350000>;
--		maxim,fast-charge-uamp = <450000>;
--		maxim,eoc-uamp = <50000>;
--		maxim,ovp-uvolt = <6500000>;
--	};
--};
--
--
--max77836@25 {
--	compatible = "maxim,max77836";
--	reg = <0x25>;
--	interrupt-parent = <&gpx1>;
--	interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
--
--	muic: max77836-muic {
--		compatible = "maxim,max77836-muic";
--	};
--
--	regulators {
--		compatible = "maxim,max77836-regulator";
--
--		SAFEOUT {
--			regulator-name = "SAFEOUT";
--		};
--		CHARGER {
--			regulator-name = "CHARGER";
--			regulator-min-microamp = <90000>;
--			regulator-max-microamp = <950000>;
--			regulator-boot-on;
--		};
--		LDO1 {
--			regulator-name = "LDO1";
--			regulator-min-microvolt = <2700000>;
--			regulator-max-microvolt = <2700000>;
--		};
--		LDO2 {
--			regulator-name = "LDO2";
--			regulator-min-microvolt = <800000>;
--			regulator-max-microvolt = <3950000>;
--		};
--	};
--
--	charger {
--		compatible = "maxim,max77836-charger";
--
--		maxim,constant-uvolt = <4350000>;
--		maxim,fast-charge-uamp = <225000>;
--		maxim,eoc-uamp = <7500>;
--		maxim,ovp-uvolt = <6500000>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml b/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml
-new file mode 100644
-index 000000000000..512fd671595c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml
-@@ -0,0 +1,195 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/maxim,max14577.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Maxim MAX14577/MAX77836 MicroUSB and Companion Power Management IC
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+description: |
-+  This is a part of device tree bindings for Maxim MAX14577/MAX77836 MicroUSB
-+  Integrated Circuit (MUIC).
-+
-+  The Maxim MAX14577 is a MicroUSB and Companion Power Management IC which
-+  includes voltage safeout regulators, charger and MicroUSB management IC.
-+
-+  The Maxim MAX77836 is a MicroUSB and Companion Power Management IC which
-+  includes voltage safeout and LDO regulators, charger, fuel-gauge and MicroUSB
-+  management IC.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - maxim,max14577
-+      - maxim,max77836
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  wakeup-source: true
-+
-+  charger:
-+    $ref: ../power/supply/maxim,max14577.yaml
-+
-+  extcon:
-+    type: object
-+    properties:
-+      compatible:
-+        enum:
-+          - maxim,max14577-muic
-+          - maxim,max77836-muic
-+
-+    required:
-+      - compatible
-+
-+  regulators:
-+    $ref: ../regulator/maxim,max14577.yaml
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - reg
-+  - charger
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: maxim,max14577
-+    then:
-+      properties:
-+        charger:
-+          properties:
-+            compatible:
-+              const: maxim,max14577-charger
-+        extcon:
-+          properties:
-+            compatible:
-+              const: maxim,max14577-muic
-+        regulator:
-+          properties:
-+            compatible:
-+              const: maxim,max14577-regulator
-+    else:
-+      properties:
-+        charger:
-+          properties:
-+            compatible:
-+              const: maxim,max77836-charger
-+        extcon:
-+          properties:
-+            compatible:
-+              const: maxim,max77836-muic
-+        regulator:
-+          properties:
-+            compatible:
-+              const: maxim,max77836-regulator
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@25 {
-+            compatible = "maxim,max14577";
-+            reg = <0x25>;
-+            interrupt-parent = <&gpx1>;
-+            interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
-+
-+            extcon {
-+                compatible = "maxim,max14577-muic";
-+            };
-+
-+            regulators {
-+                compatible = "maxim,max14577-regulator";
-+
-+                SAFEOUT {
-+                    regulator-name = "SAFEOUT";
-+                };
-+
-+                CHARGER {
-+                    regulator-name = "CHARGER";
-+                    regulator-min-microamp = <90000>;
-+                    regulator-max-microamp = <950000>;
-+                    regulator-boot-on;
-+                };
-+            };
-+
-+            charger {
-+                compatible = "maxim,max14577-charger";
-+
-+                maxim,constant-uvolt = <4350000>;
-+                maxim,fast-charge-uamp = <450000>;
-+                maxim,eoc-uamp = <50000>;
-+                maxim,ovp-uvolt = <6500000>;
-+            };
-+        };
-+    };
-+
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@25 {
-+            compatible = "maxim,max77836";
-+            interrupt-parent = <&gpx1>;
-+            interrupts = <5 IRQ_TYPE_NONE>;
-+            reg = <0x25>;
-+            wakeup-source;
-+
-+            extcon {
-+                compatible = "maxim,max77836-muic";
-+            };
-+
-+            regulators {
-+                compatible = "maxim,max77836-regulator";
-+
-+                SAFEOUT {
-+                  regulator-name = "SAFEOUT";
-+                };
-+
-+                CHARGER {
-+                  regulator-name = "CHARGER";
-+                  regulator-min-microamp = <45000>;
-+                  regulator-max-microamp = <475000>;
-+                  regulator-boot-on;
-+                };
-+
-+                LDO1 {
-+                  regulator-name = "MOT_2.7V";
-+                  regulator-min-microvolt = <1100000>;
-+                  regulator-max-microvolt = <2700000>;
-+                };
-+
-+                LDO2 {
-+                  regulator-name = "UNUSED_LDO2";
-+                  regulator-min-microvolt = <800000>;
-+                  regulator-max-microvolt = <3950000>;
-+                };
-+            };
-+
-+            charger {
-+                compatible = "maxim,max77836-charger";
-+
-+                maxim,constant-uvolt = <4350000>;
-+                maxim,fast-charge-uamp = <225000>;
-+                maxim,eoc-uamp = <7500>;
-+                maxim,ovp-uvolt = <6500000>;
-+            };
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 13e21c229c5d..af392bd04874 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11692,11 +11692,11 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
- M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
-+F:	Documentation/devicetree/bindings/*/maxim,max14577.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77693.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77843.yaml
- F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
--F:	Documentation/devicetree/bindings/mfd/max14577.txt
- F:	drivers/*/*max77843.c
- F:	drivers/*/max14577*.c
- F:	drivers/*/max77686*.c
+Jisheng Zhang (7):
+  ARM: dts: ls1021a: remove unused num-viewport from pcie nodes
+  arm64: dts: visconti: Remove unused num-viewport from pcie node
+  arm64: dts: uniphier: Remove unused num-viewport from pcie node
+  arm64: tegra: Remove unused num-viewport from pcie node
+  arm64: dts: marvell: Remove unused num-viewport from pcie node
+  arm64: dts: freescale: Remove unused num-viewport from pcie node
+  arm64: dts: exynos: Remove unused num-viewport from pcie node
+
+ arch/arm/boot/dts/ls1021a.dtsi                          | 2 --
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi              | 1 -
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi          | 1 -
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi          | 2 --
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi          | 3 ---
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi          | 3 ---
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi          | 3 ---
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi          | 4 ----
+ arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi      | 1 -
+ arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts | 1 -
+ arch/arm64/boot/dts/marvell/cn9130-crb-A.dts            | 1 -
+ arch/arm64/boot/dts/marvell/cn9130-crb-B.dts            | 1 -
+ arch/arm64/boot/dts/marvell/cn9130-db.dtsi              | 1 -
+ arch/arm64/boot/dts/marvell/cn9131-db.dtsi              | 1 -
+ arch/arm64/boot/dts/marvell/cn9132-db.dtsi              | 2 --
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi                | 6 ------
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi        | 1 -
+ arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi        | 1 -
+ arch/arm64/boot/dts/toshiba/tmpv7708.dtsi               | 1 -
+ 19 files changed, 36 deletions(-)
+
 -- 
-2.32.0
+2.34.1
 
