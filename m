@@ -2,64 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE35CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Dec 2021 19:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4663C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Dec 2021 19:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237298AbhL3Te4 (ORCPT
+        id S240621AbhL3TmE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Dec 2021 14:34:56 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:33438
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233850AbhL3Tez (ORCPT
+        Thu, 30 Dec 2021 14:42:04 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:35952
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240611AbhL3TmE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Dec 2021 14:34:55 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        Thu, 30 Dec 2021 14:42:04 -0500
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B21A13F1AF
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Dec 2021 19:34:53 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 761873FFE5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Dec 2021 19:42:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640892893;
-        bh=shZCFiS+ib8mHhXNKkuXNTy39TEUCiC0ufCAqLJtIC4=;
-        h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type;
-        b=hiRgtvZvCAXXpf7b8oKHAA9GOLoRcrJ6Br4LsmCzvJl/MAKCkoidHeWrdVFneVktF
-         x8NlS09AdA4w9KYNu2Bj/c6viFM332ybAl/KUVYKoOpGIVs78rOhubysLYnREpgeQr
-         BjSqqf8VoJ96ttVlrpi48npLYNCoYwSZVI6d4oiXItQ419EpQo0qW1QqNxiZzFIMAo
-         bNfRgav6BgE4vadajTAqVqKIXy0LaluAk56pihmeYIpSskhlgJMGHK1kAq9x+E50LX
-         vKcXeXbsCXncq2kPbT8f+IEffn4ftpFxIxSNgS5xoaB4fmvjJzSJ/tNUl7NHG39vGe
-         8KX0+NFq5+0sQ==
-Received: by mail-lj1-f199.google.com with SMTP id k20-20020a2e9214000000b0022d6b13bc8aso8471366ljg.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Dec 2021 11:34:53 -0800 (PST)
+        s=20210705; t=1640893323;
+        bh=7AmioCkJUoaV5KEZ7nDRZ+lrq8M0NvYRcknuM8019yg=;
+        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+         In-Reply-To:Content-Type;
+        b=JwyRT8pyJzZNwc2TF/1yxiLe9U7FH20x+17FOzIfd6Auvt9rhcTlIcDHVzwOVXyLw
+         AHdHvEg6QCi45+A9o/lzkCeooHNkad9/zGx/1uIJZaiLZVsUWN4TChDTB85glfoZ33
+         8d3JGZQRr6ffL/QhDCPyPd9ssoiiXK0tDqAulmC9lMZuKm5MsN2ZapSWHu2v0KjAJK
+         h+yYj6SvbGUpZQQrYCj5vqVka32gI1tC3JXiVKVnpuL5gniUqtolOsX9fDLoJmlo8w
+         3Lk7wn8b84QnCtBWbshoRT2UNt4q1o15Uu6Eow9i3nelcAAFmDPHJtk8Qifo4gynlu
+         g4NjvOYawCtsQ==
+Received: by mail-lj1-f200.google.com with SMTP id r20-20020a2eb894000000b0021a4e932846so8528465ljp.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Dec 2021 11:42:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:from:subject:content-transfer-encoding;
-        bh=shZCFiS+ib8mHhXNKkuXNTy39TEUCiC0ufCAqLJtIC4=;
-        b=fn26UQdOMUMybqNI8ldLuylLdCbGwSfIrtQDZJS0jXqQE6p/K/B2Ngm4o3QSTK+BFn
-         slxLxRUpcfNI8QPhZBvs00mqpKh00iKQVdFJMPLJNOw1Z9/pgphzPnD4kGOAxXU9TTZ7
-         ElnKNJi3WoBR7CRCZBCnsY4CVHAX5G6rYslet0t+KkHz4RSYAW1haSGuExj45ItSg9iR
-         cVJUWMTnR7JCtGV2eWSEJT3VekKXkBVTgx5jUXvia0j9xfPgtiwfj0phDpmodb5IJzHX
-         MY4J95LlprIkUf4ewewYHqHBRt2EHunXfQ5A7rgkVM3dtkE66GKMbVA6CXtE/DjZdxUQ
-         xm4g==
-X-Gm-Message-State: AOAM533/BfI/uGG7WRobUoSqrlRMmiCp0r9W+1DPKIYyi3OCu29e38G3
-        HIjfKo9a7zOqba3d8W82uTdrIDIMpalx0so+3RrXaNHcGiwXTU03cMNxa58w10mBe/jPlPLT2qt
-        3E1t9dJgCjGmGTJ9NeLPrV/wTSOT7olSfskQcJcKZP1mgjASC
-X-Received: by 2002:a2e:978a:: with SMTP id y10mr23513565lji.210.1640892892904;
-        Thu, 30 Dec 2021 11:34:52 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzyM5o5yeD33DV/nSADMs6S9OOkMSN+9tPSwlMg7sd7VUhE41JFJI5x8oTqjA5sQdyrfX2daw==
-X-Received: by 2002:a2e:978a:: with SMTP id y10mr23513558lji.210.1640892892737;
-        Thu, 30 Dec 2021 11:34:52 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=7AmioCkJUoaV5KEZ7nDRZ+lrq8M0NvYRcknuM8019yg=;
+        b=lxgpEes0dP1TXhrebZLLTUN0S5whXKrn+1/P0SvaQJpArcvnzSnCtZVWSXLuyLB1PL
+         BXp/v77u5o+68cItNTJh59tzA5+AJBxhJjLE9EEwiauEQokuO5ROnPaprvBWsujHkxLz
+         Dw+KdPnpQZaJUUMzo35o7sRA8LIBd0QRmgEh5Preeua0AEoY7S1cAnDf3JZe3nuddZ26
+         tVKgTj5NTlw1BTjQXRJPcfPmzXxwqYYLHwWSjAynv1S3Jc12Q3fI0D0VgfAmdlxkbPm3
+         7+9TwJg9ojNY95FAfDMFB7oPU1Xgbya6OrUfXBQGaSRZ7BYPqxE2zKhk6teKyBDsyWyv
+         RWtQ==
+X-Gm-Message-State: AOAM531k3NnSS9+ft/kY2c6jIFaL8zy6H4EP4JF94XT5219VO5ecDGF/
+        1REfg7MkQDx6d5E53d9So4XnYZ2nri8522Mb3D8yp0UNaDoWnnQOU+5CcJcE6ChL4YhffhgLcsk
+        0LuIxHUbCeSSGBeXYRGK1ED1V3wTznC05lQAcsByahDaM2DJj
+X-Received: by 2002:a05:6512:220f:: with SMTP id h15mr28544196lfu.137.1640893322924;
+        Thu, 30 Dec 2021 11:42:02 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwikFBFCGTECtglqH5hREBXZdnSFKZjK3Dcp9RQIDLCjyKmXNp7Ggu0IP0SiZ3FzyPJRyuzCQ==
+X-Received: by 2002:a05:6512:220f:: with SMTP id h15mr28544179lfu.137.1640893322677;
+        Thu, 30 Dec 2021 11:42:02 -0800 (PST)
 Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id j1sm2549752ljg.45.2021.12.30.11.34.51
+        by smtp.gmail.com with ESMTPSA id y11sm2565604lfe.252.2021.12.30.11.42.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Dec 2021 11:34:52 -0800 (PST)
-Message-ID: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
-Date:   Thu, 30 Dec 2021 20:34:51 +0100
+        Thu, 30 Dec 2021 11:42:02 -0800 (PST)
+Message-ID: <88e6c551-b6ef-4676-ff85-6bc725d7d767@canonical.com>
+Date:   Thu, 30 Dec 2021 20:42:01 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
+Subject: Re: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
 Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Chanho Park <chanho61.park@samsung.com>,
         Sam Protsenko <semen.protsenko@linaro.org>,
         "linux-samsung-soc@vger.kernel.org" 
@@ -67,32 +71,47 @@ To:     Chanho Park <chanho61.park@samsung.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
+References: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
+In-Reply-To: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Chanho and Sam,
+On 30/12/2021 20:34, Krzysztof Kozlowski wrote:
+> Hi Chanho and Sam,
+> 
+> I am slowly finishing dtschema for Samsung pinctrl drivers [1] and I
+> noticed that Exynos850 and Auto v9 do not define interrupt in pinctrl
+> node with: wakeup-interrupt-controller. This is an interrupt muxing
+> several external wakeup interrupts, e.g. EINT16 - EINT31.
+> 
+> For Exynos5433 this looks like:
+> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/exynos/exynos5433.dtsi#L857
+> 
+> Missing muxed interrupt for Exynos850 and Autov9 might be fine, although
+> you should see in dmesg error log like:
+>     "irq number for muxed EINTs not found"
+> 
+> Can you check that your wakeup-interrupt-controller is properly defined
+> in DTSI? If yes, I will need to include such differences in the dtschema.
+> 
 
-I am slowly finishing dtschema for Samsung pinctrl drivers [1] and I
-noticed that Exynos850 and Auto v9 do not define interrupt in pinctrl
-node with: wakeup-interrupt-controller. This is an interrupt muxing
-several external wakeup interrupts, e.g. EINT16 - EINT31.
+Exynos850 DTSI additionally defines 32 interrupts for ALIVE pinctrl and
+8 for CMGP. This looks suspicious - driver does not support multiple
+interupts and how would they even work? What would be the source? It
+seems that Exynos850 should move these interrupts to wakeup pinctrl
+banks (actually - they are defined there!).
 
-For Exynos5433 this looks like:
-https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/exynos/exynos5433.dtsi#L857
+I'll send a patch for this.
 
-Missing muxed interrupt for Exynos850 and Autov9 might be fine, although
-you should see in dmesg error log like:
-    "irq number for muxed EINTs not found"
+> [1] https://github.com/krzk/linux/tree/n/dt-bindings-samsung-pinctrl-schema
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Can you check that your wakeup-interrupt-controller is properly defined
-in DTSI? If yes, I will need to include such differences in the dtschema.
-
-[1] https://github.com/krzk/linux/tree/n/dt-bindings-samsung-pinctrl-schema
 
 Best regards,
 Krzysztof
