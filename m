@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73974C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Dec 2021 16:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFEEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Dec 2021 16:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbhLaQUY (ORCPT
+        id S229494AbhLaQWM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 31 Dec 2021 11:20:24 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46598
+        Fri, 31 Dec 2021 11:22:12 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46740
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231299AbhLaQUW (ORCPT
+        by vger.kernel.org with ESMTP id S229623AbhLaQWM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Dec 2021 11:20:22 -0500
+        Fri, 31 Dec 2021 11:22:12 -0500
 Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 59ECD3F1A5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Dec 2021 16:20:21 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3A7DB3F1A4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Dec 2021 16:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640967621;
-        bh=TH0oF15Kc0CqVuAFXtLabbq4xKOXn0YXSWaECUHYifY=;
+        s=20210705; t=1640967731;
+        bh=vwFJRx2gAmVsM2SjiJl4digFkX/7ORkgzXaTv+w0Ivo=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=ohQsEGxu6dujPF8hDVfREz1EEvvQnEnyhJVwDbWg0uxA95gQl7q3cfRBPOKa/R6Dn
-         Uvt8fbMTyknOlQU9QBQxCu4FnZjkA9DvLtLp3SrhO/bL/JmyXWzjnCU1mv8OM9ZSwx
-         WKpC5Ov/10nU1ttIvgJEYV2dSLCJphkFcF2QN+KDgLDCkOO6YZlhpP0/UiVCuRWxYg
-         9a+3xrryVwXFXfDv1PSPT6pSU/oKTituxnfZud0hUE+mUXxRnjj1qASNwF6i/1WIKh
-         Bbr/Se5i2LiNazEc5E1t5DpAfivHyCNM2Mjb2rqMleDgVXnKX3qG1XDGyuhV+gt34z
-         DfPwVBKZF2NyA==
-Received: by mail-lj1-f199.google.com with SMTP id o11-20020a2e90cb000000b0022dd251d30aso5854625ljg.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Dec 2021 08:20:21 -0800 (PST)
+        b=hpxgekz8NkXlGlghY0JTiGLu63GmvGZBt+Uj01P0AuEcFDINVXN6ORuoNa/vCmX76
+         VdXEo9+Iu8jbLNHEyygRATY/KvBQWVCuImFb6nruQYoh9VXTh8JkJSELNOI5AIH8sX
+         K3hc+DNbnm3W66MUMqQZdZhf0NjnySrjr1NZxtJq18erl7YV8PV4U0X4nQiNwhz+nG
+         TEbmrXSXRRUl4k257jiDi2KzlYCa72u1kgk9mx86e64Gn4MrBCimZHmXjovIxw8Nqv
+         6/e1hwhlbhQ7XPuBb7Hchjq/Izc/hbL30AUnzYtIMhudMwdqg6AuFkcYG/PjeZDqkk
+         YDMcHHPKNTEBg==
+Received: by mail-lj1-f199.google.com with SMTP id k20-20020a2e9214000000b0022d6b13bc8aso9440586ljg.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Dec 2021 08:22:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TH0oF15Kc0CqVuAFXtLabbq4xKOXn0YXSWaECUHYifY=;
-        b=SDfHdLw7Jj4TwSqqQ4PaKIXuClI9ENNAmSfWM6MswqjoM7fFE8VAYn+Cmgm0Gn+FQx
-         YOjWqEKmqHspf5MXwtGFCW7mZcCQCm/eXSBENP/hS4uryIWltK94ZoKhmYkp+YD/Jhwp
-         ms6lELO0oIWXZaa75aNTj2KXMIVp8twf/m03un62i4gzrguyRi2vQaSATvoLEshH3zJx
-         mTbTkNDCvPoDaunx2OXpcLQ4FYlZltC0C52u+4+KOtyv+lFekBKagutVCusWNG/31iwR
-         qt/VzzkD/XwHyXQgN+XivOVWKo0oQX6LoK/LlyDLDnGwK5yD3F6BX7zFsWrojAaEoiI7
-         Rb3A==
-X-Gm-Message-State: AOAM533ObBs6wc+HBjRy1kfj4F8M1Pvjxn3EH/K/3oMObmKDzL0Q9B/X
-        RUYxOptpLvSDdSgRMapvTL1bqucTlES0mTjmFUtYUPffkHGN1Y2Z0ICNgmGcmGsc5/0K4wAPkzw
-        aMac5QYanIyW9rhC0i/Uxns6z2SNYLcYLVbk6GqPdZY7pXNZh
-X-Received: by 2002:a05:6512:50c:: with SMTP id o12mr31325052lfb.41.1640967620201;
-        Fri, 31 Dec 2021 08:20:20 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxMqE/akwbQRGAl1EyK9nwLMn8n/FHmUvm7r3qWQZB4T8laq8h6qcWctul6RIR1PWEOXiId6w==
-X-Received: by 2002:a05:6512:50c:: with SMTP id o12mr31325047lfb.41.1640967620036;
-        Fri, 31 Dec 2021 08:20:20 -0800 (PST)
+        bh=vwFJRx2gAmVsM2SjiJl4digFkX/7ORkgzXaTv+w0Ivo=;
+        b=FKxgnj2HMOczDs0fzFjKl4Y4RkGleBrhiqaj83Z44FluuuVzK4BC/6RWXZcHE2rGmG
+         b+rtoqVx2fFMD2APocqX6z9w7Z2KeoAX6h0MXy5F0VayvQuo+9zhZ8mbe5AUY/u/akvd
+         pYkYZnW89WR+59P7/2nVJyVXPF6VtLXHc+bgchBw+4opOTUAJcg3SLNo+dQYcE05uQ4m
+         GfzXiFqjjdzstsFZMWDlhZjbPchVSzzQSZaK1hcrhBza79jIVOQuIoRnrKdWgrYHJzz4
+         /atAeV5gv8h/F7gmWTx0SAdfO0izn5vq8ylmTiUG//2+tMD9YZ/hM2e0c+yNbbfVHvxE
+         3MRg==
+X-Gm-Message-State: AOAM531aPp/ouhR7x43sLtsXPng3WHuFaODV8UFYT6Btn/o/Dh/09yGA
+        ItyMG27/AV0LpLpchInotFnb1+xHgdrg7jeb6RT+0cGjd2v3AgRxPp7qHDC02K1GvNXkwLCQ33f
+        dL2ytsyS4KXrGJikmmuYRGfD4n6NuEHkFEmQiJYV7EC7+ghsT
+X-Received: by 2002:a2e:a406:: with SMTP id p6mr24918855ljn.13.1640967730327;
+        Fri, 31 Dec 2021 08:22:10 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzRePFA1r4rMy5Stjb0m7lcPfHvozVux5rIote82Iw0v7IO7g4e2eHmUiX9FdO04m0djEyVQQ==
+X-Received: by 2002:a2e:a406:: with SMTP id p6mr24918843ljn.13.1640967730180;
+        Fri, 31 Dec 2021 08:22:10 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id bx10sm2817607ljb.3.2021.12.31.08.20.18
+        by smtp.gmail.com with ESMTPSA id y36sm2796514lfa.75.2021.12.31.08.22.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Dec 2021 08:20:19 -0800 (PST)
+        Fri, 31 Dec 2021 08:22:09 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -68,9 +68,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Sam Protsenko <semen.protsenko@linaro.org>,
         Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH 05/24] ARM: dts: exynos: override pins by label in Peach Pit
-Date:   Fri, 31 Dec 2021 17:19:11 +0100
-Message-Id: <20211231161930.256733-6-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 07/24] ARM: dts: exynos: override pins by label in Peach Pi
+Date:   Fri, 31 Dec 2021 17:21:50 +0100
+Message-Id: <20211231162207.257478-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com>
 References: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com>
@@ -90,14 +90,14 @@ A mistyped label on the other hand, will cause a dtc compile error
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 44 +++++++++++-----------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/exynos5800-peach-pi.dts | 33 +++++++++++------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index e76fb104db19..1ae5528e9ebf 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -868,27 +868,26 @@ pmic_dvs_1: pmic-dvs-1 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 77013ee586f8..6bf3fd37fb2b 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -850,27 +850,26 @@ pmic_dvs_1: pmic-dvs-1 {
  	};
  };
  
@@ -141,25 +141,6 @@ index e76fb104db19..1ae5528e9ebf 100644
  };
  
  &pinctrl_2 {
-@@ -907,12 +906,13 @@ pmic_dvs_3: pmic-dvs-3 {
- 	};
- };
- 
--&pinctrl_3 {
--	/* Drive SPI lines at x2 for better integrity */
--	spi2-bus {
--		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV3>;
--	};
-+/* pinctrl_3*/
-+/* Drive SPI lines at x2 for better integrity */
-+&spi2_bus {
-+	samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV3>;
-+};
- 
-+&pinctrl_3 {
- 	/* Drive SPI chip select at x2 for better integrity */
- 	ec_spi_cs: ec-spi-cs {
- 		samsung,pins = "gpb1-2";
 -- 
 2.32.0
 
