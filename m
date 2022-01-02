@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE63C4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  2 Jan 2022 11:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC776C2BBC7
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  2 Jan 2022 11:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233017AbiABLyJ (ORCPT
+        id S232996AbiABLyL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 2 Jan 2022 06:54:09 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59542
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232994AbiABLyI (ORCPT
+        Sun, 2 Jan 2022 06:54:11 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39964
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232991AbiABLyJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 2 Jan 2022 06:54:08 -0500
+        Sun, 2 Jan 2022 06:54:09 -0500
 Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BE1F040710
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Jan 2022 11:54:02 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 076DC402E9
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Jan 2022 11:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641124442;
-        bh=PYVPvF74SBOWa9/k92S7rpFE0dteEa1FzvINjf+Vn48=;
+        s=20210705; t=1641124448;
+        bh=8Iiswqq3lRgfFSSwuunIJRGY+0Um9RImCxO/Z027Tqk=;
         h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=YTrsD/ZHke7KYtYAb/k1YbnRluHfSaHpXOhu7X+x/2BSkwrOulAmrsGCeH0oClgEt
-         6OJyE4i0HwREAX8zg2PxbKtziTFmQU47hSEaWWiRDCgFCy71sC8oO4pRTc+eMbcia4
-         MOy63fzuniE4y79Mk0mw+Vf2aRPYSlzaHA9rm/gDCtYWcEKjX2AZ8cZHGdOxB0p6WV
-         D3hjBK0JJd8mL/ZVtvl/3b8sAWNkmR5+IkZa9Fa1sivLtR5Oz3FuhyTOEXartFSRjZ
-         /Y7XqRJDctMpKzbdPOePb0CYekfAM+fFHyy9esg6apcS7uJqVn3gfrIv/IfZjoLERf
-         lpoqIotRkqf3g==
-Received: by mail-lf1-f69.google.com with SMTP id i16-20020a056512319000b00425efb1c65eso5736500lfe.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Jan 2022 03:54:02 -0800 (PST)
+        b=YIQE4WFbCgTWZVcHGeIChkCjXArbnI+6wjpVxr3J4UjVhTuz2fDqxja8dqjIxpI6g
+         OaLB/V0pDTs7KsJDoHRQgrGCGpVttNJWdIbFVbLuMDMwYvPO6OEJVPjjG/hVwSaw+t
+         H5OD27M4pwMYgB385AJK9NkjVkd8djcoSWGRqUMJwU3ZGBzHc4kTpyClFTkOopDNjW
+         eOSNSVXoxb542cJRguUzkU9frg4sBP023CD0W3KHV5TN8gQdlJ8xOHUWnZQigQX72n
+         bYVLbqtzR2nFg44C8EjW6xLuJZzjGdg9ph6CqcQAK2AGpZWiRk2eCq8Sm0auwJ3at6
+         6Hsi/L2lvHu3g==
+Received: by mail-lf1-f69.google.com with SMTP id t196-20020a19c3cd000000b0042a2598bebaso1478063lff.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Jan 2022 03:54:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PYVPvF74SBOWa9/k92S7rpFE0dteEa1FzvINjf+Vn48=;
-        b=AIXQhJ5sGpoJXBumMACu4GdzTCuFHOdH64lDYSUxCeWDUurYSIktXVdjfCyZSk//3c
-         I8ZDGjXK0uDT/9GON2U0Ax90WxeWffLPp2HQG8Aixqy1nliy5H/Cnlcl5bt76ABUs59Y
-         f9kJ+ejD0UUpXkCab8M8RbMtyhJNW4Ieg28MfAtJBcAIDPmYCWMljT9RFYOsBqmNXwfm
-         G+s9Q+ZUgYoSKdGwXhh8vZtC5DYpGqQAx5SrbbAcJugkhmDM5F6bdmt11izXix65yJbv
-         O9M9TSV49+DR/Duxr7Xi+/XBcHFGhYOlEhif691iMEaEOineJkW7x57ODzA7Uq6YdsBf
-         NAaQ==
-X-Gm-Message-State: AOAM530o/j+R4I/CKWclb0DGAdiwzp7f/l+kG9TNm7BIzFFlp/XImViM
-        sO+3s+LdF3dvWxmv8c3i43Nq5LrWTjNhFMiWuHqlxEr8H5/9tFjt8iPrveDdGMIqzEtipduoZcU
-        AuiDzFng8a1o14mVEds4qW9/43hGwwkY7mFDsafRxfV6pHYn2
-X-Received: by 2002:a05:6512:2305:: with SMTP id o5mr37998525lfu.564.1641124442035;
-        Sun, 02 Jan 2022 03:54:02 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzkbntghZTvhtOFsV3NRi7zM2S6Qwme5B8dsNVqtjEkVoqNAWLZ6h5gWbJHITN8oagYoXcFxw==
-X-Received: by 2002:a05:6512:2305:: with SMTP id o5mr37998513lfu.564.1641124441849;
-        Sun, 02 Jan 2022 03:54:01 -0800 (PST)
+        bh=8Iiswqq3lRgfFSSwuunIJRGY+0Um9RImCxO/Z027Tqk=;
+        b=QMNQ4fL0pd/syMgMBZ/vPaioHdiOUDFzBd1e4oxGRZDdGK6YSiPAasSb4bpN4+aWB/
+         WUccxbGq01jpjZ8YFW49mwlv6deXNcuizC3fr0BuzaeTF4GUcZDss/5CYBeHIgf87Uh1
+         JhSeqreAPhuEXGSdntAJfHOblZN9YLx+bqOJ6Ma4M98r8qoZIcIThM6rGyHODLGmzOSx
+         qYvG/FMGTd/rNA4DPcRzdHpu+j0oig94kqhJvjWK38WHxNC2FqriVRS599SLZUT6wT3F
+         z8sZowLlmOC4wPIm2ES+VWEKTQwyLgBSO4CDw8QdnYcXB1f8OFmFhh11/C+C3fW7Qn2B
+         Omag==
+X-Gm-Message-State: AOAM533MhZMHyXHWLOVNNwREfcL3Rhi4a6P4RuHBKwVkhazCQxxQEwA1
+        MD75+QcAxzBXYrIdtpYy6m/JAUJ/12il4m7iY99xk0F/Mapjq0wKR/kM0Gb5lsF/DT+XF0qWLGr
+        /CMD+vtfXY4TcKRl7RkbPCU1EWDrzEAXDetqsLjsu8YqwDlWy
+X-Received: by 2002:ac2:490f:: with SMTP id n15mr20601496lfi.141.1641124445746;
+        Sun, 02 Jan 2022 03:54:05 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw1GLEvNRCyNXDFJt1JJlRQIBOZJk+LUIbE17ZkCXTGpyGMuiMGyECp9GHjOloBT5pb9ZPESQ==
+X-Received: by 2002:ac2:490f:: with SMTP id n15mr20601481lfi.141.1641124445591;
+        Sun, 02 Jan 2022 03:54:05 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id l2sm2368014lja.51.2022.01.02.03.54.00
+        by smtp.gmail.com with ESMTPSA id l2sm2368014lja.51.2022.01.02.03.54.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jan 2022 03:54:01 -0800 (PST)
+        Sun, 02 Jan 2022 03:54:04 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -66,9 +66,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] ARM: dts: exynos: add necessary clock controller inputs in Exynos5260
-Date:   Sun,  2 Jan 2022 12:53:50 +0100
-Message-Id: <20220102115356.75796-2-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 5/8] dt-bindings: clock: samsung: extend Exynos7 bindings with UFS
+Date:   Sun,  2 Jan 2022 12:53:53 +0100
+Message-Id: <20220102115356.75796-5-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
 References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
@@ -78,261 +78,42 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Exynos5260 bindings require to feed clock controllers with certain clock
-inputs.  The IO clocks are expected to be provided by the board.  The
-PHY clocks are usually followed by mux which can choose between the PHY
-clock and main 24 MHz oscillator, so skip defining them and just use the
-latter one.
+The UFS for Exynos7 SoC clock controller requires additional input
+clocks for the FSYS1 clock controller.  Update the bindings to reflect
+this, at least in theory.  In practice, these input clocks are ignored,
+so it is rather adjusting of bindings to existing DTS, without affecting
+any real users.  I understand that is not how it should be done,
+though...
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/exynos5260-xyref5260.dts |  21 ++++
- arch/arm/boot/dts/exynos5260.dtsi          | 128 +++++++++++++++++++++
- 2 files changed, 149 insertions(+)
+ .../devicetree/bindings/clock/samsung,exynos7-clock.yaml   | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-index 0dc2ec16aa0a..c404fdb0fe19 100644
---- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
-+++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
-@@ -29,6 +29,27 @@ fin_pll: xxti {
- 		#clock-cells = <0>;
- 	};
- 
-+	ioclk_pcm: clock-pcm-ext {
-+		compatible = "fixed-clock";
-+		clock-frequency = <2048000>;
-+		clock-output-names = "ioclk_pcm_extclk";
-+		#clock-cells = <0>;
-+	};
-+
-+	ioclk_i2s: clock-i2s-cd {
-+		compatible = "fixed-clock";
-+		clock-frequency = <147456000>;
-+		clock-output-names = "ioclk_i2s_cdclk";
-+		#clock-cells = <0>;
-+	};
-+
-+	ioclk_spdif: clock-spdif-ext {
-+		compatible = "fixed-clock";
-+		clock-frequency = <49152000>;
-+		clock-output-names = "ioclk_spdif_extclk";
-+		#clock-cells = <0>;
-+	};
-+
- 	xrtcxti: xrtcxti {
- 		compatible = "fixed-clock";
- 		clock-frequency = <32768>;
-diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-index 524d244050e0..56271e7c4587 100644
---- a/arch/arm/boot/dts/exynos5260.dtsi
-+++ b/arch/arm/boot/dts/exynos5260.dtsi
-@@ -113,78 +113,206 @@ clock_top: clock-controller@10010000 {
- 			compatible = "samsung,exynos5260-clock-top";
- 			reg = <0x10010000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_mif MIF_DOUT_MEM_PLL>,
-+				 <&clock_mif MIF_DOUT_BUS_PLL>,
-+				 <&clock_mif MIF_DOUT_MEDIA_PLL>;
-+			clock-names = "fin_pll",
-+				      "dout_mem_pll",
-+				      "dout_bus_pll",
-+				      "dout_media_pll";
- 		};
- 
- 		clock_peri: clock-controller@10200000 {
- 			compatible = "samsung,exynos5260-clock-peri";
- 			reg = <0x10200000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&ioclk_pcm>,
-+				 <&ioclk_i2s>,
-+				 <&ioclk_spdif>,
-+				 <&fin_pll>,
-+				 <&clock_top TOP_DOUT_ACLK_PERI_66>,
-+				 <&clock_top TOP_DOUT_SCLK_PERI_UART0>,
-+				 <&clock_top TOP_DOUT_SCLK_PERI_UART1>,
-+				 <&clock_top TOP_DOUT_SCLK_PERI_UART2>,
-+				 <&clock_top TOP_DOUT_SCLK_PERI_SPI0_B>,
-+				 <&clock_top TOP_DOUT_SCLK_PERI_SPI1_B>,
-+				 <&clock_top TOP_DOUT_SCLK_PERI_SPI2_B>,
-+				 <&clock_top TOP_DOUT_ACLK_PERI_AUD>;
-+			clock-names = "fin_pll",
-+				      "ioclk_pcm_extclk",
-+				      "ioclk_i2s_cdclk",
-+				      "ioclk_spdif_extclk",
-+				      "phyclk_hdmi_phy_ref_cko",
-+				      "dout_aclk_peri_66",
-+				      "dout_sclk_peri_uart0",
-+				      "dout_sclk_peri_uart1",
-+				      "dout_sclk_peri_uart2",
-+				      "dout_sclk_peri_spi0_b",
-+				      "dout_sclk_peri_spi1_b",
-+				      "dout_sclk_peri_spi2_b",
-+				      "dout_aclk_peri_aud";
- 		};
- 
- 		clock_egl: clock-controller@10600000 {
- 			compatible = "samsung,exynos5260-clock-egl";
- 			reg = <0x10600000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_mif MIF_DOUT_BUS_PLL>;
-+			clock-names = "fin_pll",
-+				      "dout_bus_pll";
- 		};
- 
- 		clock_kfc: clock-controller@10700000 {
- 			compatible = "samsung,exynos5260-clock-kfc";
- 			reg = <0x10700000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_mif MIF_DOUT_MEDIA_PLL>;
-+			clock-names = "fin_pll",
-+				      "dout_media_pll";
- 		};
- 
- 		clock_g2d: clock-controller@10a00000 {
- 			compatible = "samsung,exynos5260-clock-g2d";
- 			reg = <0x10A00000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_top TOP_DOUT_ACLK_G2D_333>;
-+			clock-names = "fin_pll",
-+				      "dout_aclk_g2d_333";
- 		};
- 
- 		clock_mif: clock-controller@10ce0000 {
- 			compatible = "samsung,exynos5260-clock-mif";
- 			reg = <0x10CE0000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>;
-+			clock-names = "fin_pll";
- 		};
- 
- 		clock_mfc: clock-controller@11090000 {
- 			compatible = "samsung,exynos5260-clock-mfc";
- 			reg = <0x11090000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_top TOP_DOUT_ACLK_MFC_333>;
-+			clock-names = "fin_pll",
-+				      "dout_aclk_mfc_333";
- 		};
- 
- 		clock_g3d: clock-controller@11830000 {
- 			compatible = "samsung,exynos5260-clock-g3d";
- 			reg = <0x11830000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>;
-+			clock-names = "fin_pll";
- 		};
- 
- 		clock_fsys: clock-controller@122e0000 {
- 			compatible = "samsung,exynos5260-clock-fsys";
- 			reg = <0x122E0000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&clock_top TOP_DOUT_ACLK_FSYS_200>;
-+			clock-names = "fin_pll",
-+				      "phyclk_usbhost20_phy_phyclock",
-+				      "phyclk_usbhost20_phy_freeclk",
-+				      "phyclk_usbhost20_phy_clk48mohci",
-+				      "phyclk_usbdrd30_udrd30_pipe_pclk",
-+				      "phyclk_usbdrd30_udrd30_phyclock",
-+				      "dout_aclk_fsys_200";
- 		};
- 
- 		clock_aud: clock-controller@128c0000 {
- 			compatible = "samsung,exynos5260-clock-aud";
- 			reg = <0x128C0000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_top TOP_FOUT_AUD_PLL>,
-+				 <&ioclk_i2s>,
-+				 <&ioclk_pcm>;
-+			clock-names = "fin_pll",
-+				      "fout_aud_pll",
-+				      "ioclk_i2s_cdclk",
-+				      "ioclk_pcm_extclk";
- 		};
- 
- 		clock_isp: clock-controller@133c0000 {
- 			compatible = "samsung,exynos5260-clock-isp";
- 			reg = <0x133C0000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_top TOP_DOUT_ACLK_ISP1_266>,
-+				 <&clock_top TOP_DOUT_ACLK_ISP1_400>,
-+				 <&clock_top TOP_MOUT_ACLK_ISP1_266>;
-+			clock-names = "fin_pll",
-+				      "dout_aclk_isp1_266",
-+				      "dout_aclk_isp1_400",
-+				      "mout_aclk_isp1_266";
- 		};
- 
- 		clock_gscl: clock-controller@13f00000 {
- 			compatible = "samsung,exynos5260-clock-gscl";
- 			reg = <0x13F00000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&clock_top TOP_DOUT_ACLK_GSCL_400>,
-+				 <&clock_top TOP_DOUT_ACLK_GSCL_333>;
-+			clock-names = "fin_pll",
-+				      "dout_aclk_gscl_400",
-+				      "dout_aclk_gscl_333";
- 		};
- 
- 		clock_disp: clock-controller@14550000 {
- 			compatible = "samsung,exynos5260-clock-disp";
- 			reg = <0x14550000 0x10000>;
- 			#clock-cells = <1>;
-+			clocks = <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&fin_pll>,
-+				 <&ioclk_spdif>,
-+				 <&clock_top TOP_DOUT_ACLK_PERI_AUD>,
-+				 <&clock_top TOP_DOUT_ACLK_DISP_222>,
-+				 <&clock_top TOP_DOUT_SCLK_DISP_PIXEL>,
-+				 <&clock_top TOP_DOUT_ACLK_DISP_333>;
-+			clock-names = "fin_pll",
-+				      "phyclk_dptx_phy_ch3_txd_clk",
-+				      "phyclk_dptx_phy_ch2_txd_clk",
-+				      "phyclk_dptx_phy_ch1_txd_clk",
-+				      "phyclk_dptx_phy_ch0_txd_clk",
-+				      "phyclk_hdmi_phy_tmds_clko",
-+				      "phyclk_hdmi_phy_ref_clko",
-+				      "phyclk_hdmi_phy_pixel_clko",
-+				      "phyclk_hdmi_link_o_tmds_clkhi",
-+				      "phyclk_mipi_dphy_4l_m_txbyte_clkhs",
-+				      "phyclk_dptx_phy_o_ref_clk_24m",
-+				      "phyclk_dptx_phy_clk_div2",
-+				      "phyclk_mipi_dphy_4l_m_rxclkesc0",
-+				      "phyclk_hdmi_phy_ref_cko",
-+				      "ioclk_spdif_extclk",
-+				      "dout_aclk_peri_aud",
-+				      "dout_aclk_disp_222",
-+				      "dout_sclk_disp_pixel",
-+				      "dout_aclk_disp_333";
- 		};
- 
- 		gic: interrupt-controller@10481000 {
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
+index f3fa6c7ef48b..599baf0b7231 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
+@@ -209,14 +209,17 @@ allOf:
+     then:
+       properties:
+         clocks:
+-          minItems: 4
+-          maxItems: 4
++          minItems: 7
++          maxItems: 7
+         clock-names:
+           items:
+             - const: fin_pll
+             - const: dout_aclk_fsys1_200
+             - const: dout_sclk_mmc0
+             - const: dout_sclk_mmc1
++            - const: dout_sclk_ufsunipro20
++            - const: dout_sclk_phy_fsys1
++            - const: dout_sclk_phy_fsys1_26m
+       required:
+         - clock-names
+         - clocks
 -- 
 2.32.0
 
