@@ -2,173 +2,149 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EFAC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Jan 2022 18:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FABC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Jan 2022 20:59:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233686AbiACSnP (ORCPT
+        id S229702AbiACU7X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Jan 2022 13:43:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41774 "EHLO
+        Mon, 3 Jan 2022 15:59:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231545AbiACSnP (ORCPT
+        with ESMTP id S229699AbiACU7X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Jan 2022 13:43:15 -0500
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2EB6C061785
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Jan 2022 10:43:14 -0800 (PST)
-Received: by mail-ua1-x92f.google.com with SMTP id p1so37164363uap.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jan 2022 10:43:14 -0800 (PST)
+        Mon, 3 Jan 2022 15:59:23 -0500
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC49DC061784
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Jan 2022 12:59:22 -0800 (PST)
+Received: by mail-ua1-x92b.google.com with SMTP id o63so59794807uao.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jan 2022 12:59:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nJQBNk6axtfRB7RGJeAUInYTBuvs/80E/DpFdWXcxTw=;
-        b=pueGbZ3h1ny2MEwEmNqEHMbRlcfwFBhSTwqfKj2WWvApEm70cprF6KcJ53sOijU058
-         IoukxZWHD0gHF4wofYp76S2O9pc2etOve+cWkVIlbZVKb0B46/deu5gdZkND9LlYFn1f
-         da9jT5L4o/+uQT/JP9op+Ax37qefK0CNsWdsH1zG6FnVUR105MK8QvPlgGLvxVkGgjP6
-         h2joz/eltAq8qB5f/gaRLRix7OrdnlYgpoCWWHnQ9o8faMDwCQwA7no4/9P+Fe/vIWSZ
-         G2uu0JCH3A4fh0JACBouWNBKODRc9XtiD5BP602i9W3l9ITWxqh7d7T1l0IW7amxW30N
-         L3Pg==
+        bh=9DI7U33XnwqMBqIYYTvY19UtR18aJdkAMIqCMnWY6O8=;
+        b=uWmTvM9lJIr1+KHyjNcMXJUC571AxiXGhpJKCO94UujqnDReRrxk3QqtSDFEPnkwFk
+         mU+y9+j9FjMR0AIAZnXfWISDfFf+F1FuWi4GV4mIrguP71w4NqFwyaOnJtf2Tiiddefk
+         7ktYER/Jg23rRejddi9cj1wH3lCyADoYqi6xbXdYoBbwMSRuRFsFfpdMiM3cnbxwG0f/
+         Q7GVE+FGdkskwr5po5SJ/90rBRdvffKQOY71iZ6W+Vmt3VOYOwj0eW+fyeJ1IVQeLPqJ
+         8uuLlGqMqYicbiolFKAZLyr/PZed6XVseIfia3hPlliN2g/K59MpEX8dYyXbnU0Xi3VM
+         tf9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nJQBNk6axtfRB7RGJeAUInYTBuvs/80E/DpFdWXcxTw=;
-        b=FmN5g689XQlLDxDpd2s+0INO5SZNZtAvA+xji3vJaALinp/D7csilHQPlFcLCYtjVN
-         r4AbWZQk9KHyj0l1fpUCJmhZRCL4/LKA7Nrx8YeapFM38eHpb8q7Ou49KuBFWs+xytm8
-         FmYEjXpRl7XplcV3UC6WAk7gh95nunvxzCsc77HLWWs55thTJEaTiHS9ZgOZMGSBHjo0
-         GaLOPwHOKBnMw9laUtzkVB1Dye5NcRuvlLDF694pM3InOmtqnMYWrds4RCPjUyTZGHla
-         rwKTwCnOvlE/lXspdpW5nzmN2Kt7qE9Omt0ECdJ9pOgAnUgap7MAWliQ6Rh0cleh0dDA
-         lysg==
-X-Gm-Message-State: AOAM533kD6ZAG5/VQN3SJsWU5fCqIKJIrlbgsPr/5r9/BMSeRQ/4+XEY
-        p9J4Ro1UHERnXHqOCfQn8559gveiPZMBkcYIm+F6Vw==
-X-Google-Smtp-Source: ABdhPJwX2k6vaWwYLozxhBfsZvEvo2FdmoJsPYoTEOsunSCI8p/WioPIFzSX+cajzPMg+b6x7iY6xl2+GwAUad8DJt0=
-X-Received: by 2002:a67:e10c:: with SMTP id d12mr13619941vsl.20.1641235393823;
- Mon, 03 Jan 2022 10:43:13 -0800 (PST)
+        bh=9DI7U33XnwqMBqIYYTvY19UtR18aJdkAMIqCMnWY6O8=;
+        b=RyzLuScVd1Oo6mZfx02dS50JHXdKIfkT8Pdnw4X/+hqgtXGi8GkGiK5mmvT3Qjg750
+         9YBCFpovsaOhM7pNeG4/4narpoQ2qpJJOMiDX6LiRg4PuM9Udq4WV0W1fwpYJpjfXs5e
+         C7iZVkOuW+7i42ODynUvwOO+Hl0LW5TlLGV3vHls9JXJLWEXgMKzVFn9Agn4BSAW2aY1
+         rlCBNfwmOfCOLjd5trNJanPtaxizHBFODU+6gO7krNtFfy9mtBEfJnWlVVhBqjN5djgS
+         WJEhOOMHu+TJ/sTPz6sWw0vCEKt5/wAiNfEzzkTYDHiZkf+z+M6yuQlpyPRswJKVI3Sw
+         7laA==
+X-Gm-Message-State: AOAM530F6iLzrK29fzdB24Hv969JawIfxvvsIlreRiZdt5nO6Cwo1DDh
+        Lkd4EFUdIFYWKQsi/nDZy7vLn4SjPLanyUptSU6Xmg==
+X-Google-Smtp-Source: ABdhPJz565d48havHy/Fmp/TH4dis1kq3/Wnv+KXzc+hm2za8waxX8fvzxdpx/tqIvMh9wV2Vt2R9ZePnPbk02nbMKE=
+X-Received: by 2002:ab0:1d8c:: with SMTP id l12mr9711603uak.114.1641243561934;
+ Mon, 03 Jan 2022 12:59:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com> <20211231161930.256733-3-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211231161930.256733-3-krzysztof.kozlowski@canonical.com>
+References: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
+In-Reply-To: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 3 Jan 2022 20:43:02 +0200
-Message-ID: <CAPLW+4kVjswvcx7PjkBq_cPrmoi1_yJw9qGOO2tcRCDm27zKmA@mail.gmail.com>
-Subject: Re: [PATCH 02/24] pinctrl: samsung: accept GPIO bank nodes with a suffix
+Date:   Mon, 3 Jan 2022 22:59:10 +0200
+Message-ID: <CAPLW+4nrPKA66GrF4XukyHWHJ=wBycjyK3ZPLCofEFe-VJ9wWg@mail.gmail.com>
+Subject: Re: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanho Park <chanho61.park@samsung.com>
+        Tomasz Figa <tomasz.figa@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 31 Dec 2021 at 18:20, Krzysztof Kozlowski
+On Thu, 30 Dec 2021 at 21:34, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> Existing dt-bindings expected that each GPIO/pin bank within pin
-> controller has its own node with name matching the bank (e.g. gpa0,
-> gpx2) and "gpio-controller" property.  The node name is then used for
-> matching between driver data and DTS.
+> Hi Chanho and Sam,
 >
-> Newly introduced dtschema expects to have nodes ending with "-gpio-bank"
-> suffix, so rewrite bank-devicetree matching to look for old and new
-> style of naming.
+> I am slowly finishing dtschema for Samsung pinctrl drivers [1] and I
+> noticed that Exynos850 and Auto v9 do not define interrupt in pinctrl
+> node with: wakeup-interrupt-controller. This is an interrupt muxing
+> several external wakeup interrupts, e.g. EINT16 - EINT31.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 57 ++++++++++++++++++-----
->  1 file changed, 45 insertions(+), 12 deletions(-)
+> For Exynos5433 this looks like:
+> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/exynos/exynos5433.dtsi#L857
 >
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index f2864a7869b3..561853df8ef7 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1011,13 +1011,56 @@ static void samsung_banks_of_node_put(struct samsung_pinctrl_drv_data *d)
->                 of_node_put(bank->of_node);
->  }
+> Missing muxed interrupt for Exynos850 and Autov9 might be fine, although
+> you should see in dmesg error log like:
+>     "irq number for muxed EINTs not found"
 >
-> +/*
-> + * Iterate over all driver pin banks to find one matching the name of node,
-> + * skipping optional "-gpio" node suffix. When found, assign node to the bank.
-> + */
-> +static void samsung_banks_of_node_get(struct device *dev,
-> +                                     struct samsung_pinctrl_drv_data *d,
-> +                                     struct device_node *node)
-> +{
-> +       const char *suffix = "-gpio-bank";
-> +       struct samsung_pin_bank *bank;
-> +       struct device_node *child;
-> +       /* Pin bank names are up to 4 characters */
-> +       char node_name[20];
-> +       unsigned int i;
-> +       size_t len;
-> +
-> +       bank = d->pin_banks;
-> +       for (i = 0; i < d->nr_banks; ++i, ++bank) {
-> +               strscpy(node_name, bank->name, sizeof(node_name));
-> +               len = strlcat(node_name, suffix, sizeof(node_name));
-> +               if (len == sizeof(sizeof(node_name))) {
+> Can you check that your wakeup-interrupt-controller is properly defined
+> in DTSI? If yes, I will need to include such differences in the dtschema.
+>
 
-Double sizeof is probably wrong?
+In case of Exynos850, no muxed interrupts exist for wakeup GPIO
+domains. Basically, "pinctrl_alive" and "pinctrl_cmgp" domains are
+wake-up capable, and they have dedicated interrupt for each particular
+GPIO pin. All those interrupts are defined in exynos850-pinctrl.dtsi
+file, in next nodes:
+  - pinctrl_alive: gpa0..gpa4 (interrupt numbers 1..36)
+  - pinctrl_cmgp: gpm0..gpm7 (interrupt numbers 39..46)
 
-> +                       dev_err(dev, "Too long pin bank name '%s', ignoring\n",
-> +                               bank->name);
-> +                       continue;
-> +               }
-> +
-> +               for_each_child_of_node(node, child) {
-> +                       if (!of_find_property(child, "gpio-controller", NULL))
-> +                               continue;
-> +                       if (of_node_name_eq(child, node_name))
-> +                               break;
-> +                       else if (of_node_name_eq(child, bank->name))
-> +                               break;
-> +               }
-> +
-> +               if (child)
-> +                       bank->of_node = child;
-> +               else
-> +                       dev_warn(dev, "Missing node for bank %s - invalid DTB\n",
-> +                                bank->name);
-> +               /* child reference dropped in samsung_drop_banks_of_node() */
-> +       }
-> +}
-> +
->  /* retrieve the soc specific data */
->  static const struct samsung_pin_ctrl *
->  samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->                              struct platform_device *pdev)
->  {
->         struct device_node *node = pdev->dev.of_node;
-> -       struct device_node *np;
->         const struct samsung_pin_bank_data *bdata;
->         const struct samsung_pin_ctrl *ctrl;
->         struct samsung_pin_bank *bank;
-> @@ -1081,17 +1124,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->          */
->         d->virt_base = virt_base[0];
+All mentioned interrupts are wakeup interrupts, and there are no muxed
+ones. So it seems like it's not possible to specify "interrupts"
+property in pinctrl nodes with wakeup-interrupt-controller. The PM is
+not enabled in Exynos850 platform yet, so I can't really test if
+interrupts I mentioned are able to wake up the system.
+
+After adding this patch ("arm64: dts: exynos: Add missing gpm6 and
+gpm7 nodes to Exynos850"), I can't see this error message anymore:
+
+    samsung-pinctrl 11c30000.pinctrl: irq number for muxed EINTs not found
+
+That's because exynos_eint_wkup_init() function exits in this check:
+
+    if (!muxed_banks) {
+        of_node_put(wkup_np);
+        return 0;
+    }
+
+But I actually can see another error message, printed in
+exynos_eint_gpio_init() function (for wake-up capable pinctrl nodes,
+because those nodes don't have "interrupts" property now -- you
+removed those in your patch):
+
+    samsung-pinctrl 11850000.pinctrl: irq number not available
+    samsung-pinctrl 11c30000.pinctrl: irq number not available
+
+which in turn leads to exynos_eint_gpio_init() function to exit with
+-EINVAL code in the very beginning, and I'm not sure if it's ok? As I
+said, those errors only appear after your patch ("arm64: dts: exynos:
+drop incorrectly placed wakeup interrupts in Exynos850").
+
+It raises next questions, which I'm trying to think over right now.
+Krzysztof, please let me know if you already have answers to those:
+
+1. Regarding "wakeup-interrupt-controller" node (and
+exynos_eint_wkup_init() function): is it ok to not have "interrupts"
+property in there? Would corresponding interrupts specified in child
+nodes (gpa0..gpa4) function as wake-up interrupts in this case? Or
+pinctrl driver should be reworked somehow?
+
+2. Regarding missing interrupts in pinctrl nodes (and corresponding
+error in exynos_eint_gpio_init() function): should it be reworked in
+some way for Exynos850? Error message seems invalid in Exynos850 case,
+and I'm not even sure if it's ok exynos_eint_gpio_init() fails. Should
+it be modified to work that error around, in case of Exynos850?
+
+All other pinctrl nodes have a muxed interrupt (except pinctrl_aud,
+but that's probably fine).
+
+Thanks!
+
+> [1] https://github.com/krzk/linux/tree/n/dt-bindings-samsung-pinctrl-schema
 >
-> -       for_each_child_of_node(node, np) {
-> -               if (!of_find_property(np, "gpio-controller", NULL))
-> -                       continue;
-> -               bank = d->pin_banks;
-> -               for (i = 0; i < d->nr_banks; ++i, ++bank) {
-> -                       if (of_node_name_eq(np, bank->name)) {
-> -                               bank->of_node = np;
-> -                               break;
-> -                       }
-> -               }
-> -       }
-> +       samsung_banks_of_node_get(&pdev->dev, d, node);
->
->         d->pin_base = pin_base;
->         pin_base += d->nr_pins;
-> --
-> 2.32.0
->
+> Best regards,
+> Krzysztof
