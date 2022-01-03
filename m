@@ -2,149 +2,161 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FABC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Jan 2022 20:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F7FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Jan 2022 21:10:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbiACU7X (ORCPT
+        id S229697AbiACVKE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Jan 2022 15:59:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44062 "EHLO
+        Mon, 3 Jan 2022 16:10:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbiACU7X (ORCPT
+        with ESMTP id S229692AbiACVKE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Jan 2022 15:59:23 -0500
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC49DC061784
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Jan 2022 12:59:22 -0800 (PST)
-Received: by mail-ua1-x92b.google.com with SMTP id o63so59794807uao.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jan 2022 12:59:22 -0800 (PST)
+        Mon, 3 Jan 2022 16:10:04 -0500
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35366C061785
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Jan 2022 13:10:04 -0800 (PST)
+Received: by mail-ua1-x932.google.com with SMTP id p37so59620484uae.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jan 2022 13:10:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9DI7U33XnwqMBqIYYTvY19UtR18aJdkAMIqCMnWY6O8=;
-        b=uWmTvM9lJIr1+KHyjNcMXJUC571AxiXGhpJKCO94UujqnDReRrxk3QqtSDFEPnkwFk
-         mU+y9+j9FjMR0AIAZnXfWISDfFf+F1FuWi4GV4mIrguP71w4NqFwyaOnJtf2Tiiddefk
-         7ktYER/Jg23rRejddi9cj1wH3lCyADoYqi6xbXdYoBbwMSRuRFsFfpdMiM3cnbxwG0f/
-         Q7GVE+FGdkskwr5po5SJ/90rBRdvffKQOY71iZ6W+Vmt3VOYOwj0eW+fyeJ1IVQeLPqJ
-         8uuLlGqMqYicbiolFKAZLyr/PZed6XVseIfia3hPlliN2g/K59MpEX8dYyXbnU0Xi3VM
-         tf9A==
+        bh=vRvdJMDdSlp7AoT9THjTeWXGcO2IOGUNMerMmkmxg10=;
+        b=WOjwnvaTgAlrCij4xYZRumTZR8tjB95ysob+/TvcGExl2jQfAUw2CrouqACMBFPTvP
+         EQZy+73qWuBO65Tjag++bE37GQelP59TglP9mKmJKtKQUI9J/EYTIhzYg1Xobl4x3I7g
+         Iq4QubmAYOY9jc7XLam1El4zmGsi4fOcp/vG8Il7yav2XYb588fY2DVmK2IlSuc0H/eJ
+         mfA2YZ1n6JGVG8M+C7A8wrYyYGsiAjyTpn6DjQlRtU7974mFv8+OEF5kAlWhVi0Lgi6W
+         +7JECNjUBayrFsgC9b38ejuMrXfOGh8fdmit7e1OBX5tCTJJ/2Ij6+kcjv7qYKeq1x9w
+         Wbng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9DI7U33XnwqMBqIYYTvY19UtR18aJdkAMIqCMnWY6O8=;
-        b=RyzLuScVd1Oo6mZfx02dS50JHXdKIfkT8Pdnw4X/+hqgtXGi8GkGiK5mmvT3Qjg750
-         9YBCFpovsaOhM7pNeG4/4narpoQ2qpJJOMiDX6LiRg4PuM9Udq4WV0W1fwpYJpjfXs5e
-         C7iZVkOuW+7i42ODynUvwOO+Hl0LW5TlLGV3vHls9JXJLWEXgMKzVFn9Agn4BSAW2aY1
-         rlCBNfwmOfCOLjd5trNJanPtaxizHBFODU+6gO7krNtFfy9mtBEfJnWlVVhBqjN5djgS
-         WJEhOOMHu+TJ/sTPz6sWw0vCEKt5/wAiNfEzzkTYDHiZkf+z+M6yuQlpyPRswJKVI3Sw
-         7laA==
-X-Gm-Message-State: AOAM530F6iLzrK29fzdB24Hv969JawIfxvvsIlreRiZdt5nO6Cwo1DDh
-        Lkd4EFUdIFYWKQsi/nDZy7vLn4SjPLanyUptSU6Xmg==
-X-Google-Smtp-Source: ABdhPJz565d48havHy/Fmp/TH4dis1kq3/Wnv+KXzc+hm2za8waxX8fvzxdpx/tqIvMh9wV2Vt2R9ZePnPbk02nbMKE=
-X-Received: by 2002:ab0:1d8c:: with SMTP id l12mr9711603uak.114.1641243561934;
- Mon, 03 Jan 2022 12:59:21 -0800 (PST)
+        bh=vRvdJMDdSlp7AoT9THjTeWXGcO2IOGUNMerMmkmxg10=;
+        b=eSi7JNhQ69mha4YOVbKd3s1/hPrgyfBV1qQgmgamKl3G+8QgOc/tZ0layjPP72qEpy
+         5Y30DSdiWbZKAfqjtcb3zSiA4lSyN8kMG+W6c2BoeNXw0nfK5yryyCJMtylKQd6KEyUL
+         p44kYz1otyhI/7zEWK7D8v/L8yNuDmYYyzae9a6ns+Xs4SuFwyA7aMkAGwe/1VXgWLP1
+         BqzE/Yavitl0zrGiKHWvAeRcnggBc4RQGJvnmOHVqOCIlRhAwqzX4upqIvu/zIjcvZP/
+         EkfV+mYwJZ1XFTyhKTkt4bDTnn3TYBLT8j3ddB5BqGShgcu7YHFPOOpNXsknIoTxb6y2
+         MfBQ==
+X-Gm-Message-State: AOAM532IeK4wYJBFGv5an/IFvvtKX70yKWY0EcKhq2m+SqBXq5/9pws9
+        yfWIMoxN2q9qeWGO3bG3x26YDj4xCsY8TjiMqaaAIA==
+X-Google-Smtp-Source: ABdhPJxgDRFmMhl+sVYsOfiFZMynbkisWLJLKAi7qKcUhIzO0pWMhKFaFJjDOQ757xspze60MfFqmt9CuZ/stZqOr3Q=
+X-Received: by 2002:ab0:5a46:: with SMTP id m6mr12827954uad.104.1641244203176;
+ Mon, 03 Jan 2022 13:10:03 -0800 (PST)
 MIME-Version: 1.0
-References: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
-In-Reply-To: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
+References: <20211230195325.328220-1-krzysztof.kozlowski@canonical.com> <20211230195325.328220-3-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211230195325.328220-3-krzysztof.kozlowski@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 3 Jan 2022 22:59:10 +0200
-Message-ID: <CAPLW+4nrPKA66GrF4XukyHWHJ=wBycjyK3ZPLCofEFe-VJ9wWg@mail.gmail.com>
-Subject: Re: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
+Date:   Mon, 3 Jan 2022 23:09:51 +0200
+Message-ID: <CAPLW+4mDWg1xAGEALNVN1vs8jb3rzH2VqEBfacTkM_gNxeuhRg@mail.gmail.com>
+Subject: Re: [RFT][PATCH 3/3] arm64: dts: exynos: drop incorrectly placed
+ wakeup interrupts in Exynos850
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 30 Dec 2021 at 21:34, Krzysztof Kozlowski
+On Thu, 30 Dec 2021 at 21:53, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> Hi Chanho and Sam,
+> The pin controller device node is expected to have one (optional)
+> interrupt.  Its pin banks capable of external interrupts, should define
+> interrupts for each pin, unless a muxed interrupt is used.
 >
-> I am slowly finishing dtschema for Samsung pinctrl drivers [1] and I
-> noticed that Exynos850 and Auto v9 do not define interrupt in pinctrl
-> node with: wakeup-interrupt-controller. This is an interrupt muxing
-> several external wakeup interrupts, e.g. EINT16 - EINT31.
+> Exynos850 defined the second part - interrupt for each pin in wake-up
+> pin controller - but also added these interrupts in main device node,
+> which is not correct.
 >
-> For Exynos5433 this looks like:
-> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/exynos/exynos5433.dtsi#L857
->
-> Missing muxed interrupt for Exynos850 and Autov9 might be fine, although
-> you should see in dmesg error log like:
->     "irq number for muxed EINTs not found"
->
-> Can you check that your wakeup-interrupt-controller is properly defined
-> in DTSI? If yes, I will need to include such differences in the dtschema.
->
+> Fixes: e3493220fd3e ("arm64: dts: exynos: Add initial Exynos850 SoC support")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
 
-In case of Exynos850, no muxed interrupts exist for wakeup GPIO
-domains. Basically, "pinctrl_alive" and "pinctrl_cmgp" domains are
-wake-up capable, and they have dedicated interrupt for each particular
-GPIO pin. All those interrupts are defined in exynos850-pinctrl.dtsi
-file, in next nodes:
-  - pinctrl_alive: gpa0..gpa4 (interrupt numbers 1..36)
-  - pinctrl_cmgp: gpm0..gpm7 (interrupt numbers 39..46)
+Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-All mentioned interrupts are wakeup interrupts, and there are no muxed
-ones. So it seems like it's not possible to specify "interrupts"
-property in pinctrl nodes with wakeup-interrupt-controller. The PM is
-not enabled in Exynos850 platform yet, so I can't really test if
-interrupts I mentioned are able to wake up the system.
-
-After adding this patch ("arm64: dts: exynos: Add missing gpm6 and
-gpm7 nodes to Exynos850"), I can't see this error message anymore:
-
-    samsung-pinctrl 11c30000.pinctrl: irq number for muxed EINTs not found
-
-That's because exynos_eint_wkup_init() function exits in this check:
-
-    if (!muxed_banks) {
-        of_node_put(wkup_np);
-        return 0;
-    }
-
-But I actually can see another error message, printed in
-exynos_eint_gpio_init() function (for wake-up capable pinctrl nodes,
-because those nodes don't have "interrupts" property now -- you
-removed those in your patch):
+Despite some errors brought by this change:
 
     samsung-pinctrl 11850000.pinctrl: irq number not available
     samsung-pinctrl 11c30000.pinctrl: irq number not available
 
-which in turn leads to exynos_eint_gpio_init() function to exit with
--EINVAL code in the very beginning, and I'm not sure if it's ok? As I
-said, those errors only appear after your patch ("arm64: dts: exynos:
-drop incorrectly placed wakeup interrupts in Exynos850").
+the interrupts seem to be functional still. Tested on E850-96 board,
+by pressing buttons connected to gpa0..gpa1, and checking
+/proc/interrupts info. I guess it's ok to merge this one as is, and
+then work further to fix the driver (or dts?) accordingly.
 
-It raises next questions, which I'm trying to think over right now.
-Krzysztof, please let me know if you already have answers to those:
+Also, I submitted related patch ("arm64: dts: exynos: Add missing gpm6
+and gpm7 nodes to Exynos850"), please take a look.
 
-1. Regarding "wakeup-interrupt-controller" node (and
-exynos_eint_wkup_init() function): is it ok to not have "interrupts"
-property in there? Would corresponding interrupts specified in child
-nodes (gpa0..gpa4) function as wake-up interrupts in this case? Or
-pinctrl driver should be reworked somehow?
-
-2. Regarding missing interrupts in pinctrl nodes (and corresponding
-error in exynos_eint_gpio_init() function): should it be reworked in
-some way for Exynos850? Error message seems invalid in Exynos850 case,
-and I'm not even sure if it's ok exynos_eint_gpio_init() fails. Should
-it be modified to work that error around, in case of Exynos850?
-
-All other pinctrl nodes have a muxed interrupt (except pinctrl_aud,
-but that's probably fine).
-
-Thanks!
-
-> [1] https://github.com/krzk/linux/tree/n/dt-bindings-samsung-pinctrl-schema
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 40 -----------------------
+>  1 file changed, 40 deletions(-)
 >
-> Best regards,
-> Krzysztof
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> index 2abbb972b610..4f0a40de5e67 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> @@ -344,38 +344,6 @@ cmu_hsi: clock-controller@13400000 {
+>                 pinctrl_alive: pinctrl@11850000 {
+>                         compatible = "samsung,exynos850-pinctrl";
+>                         reg = <0x11850000 0x1000>;
+> -                       interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+>
+>                         wakeup-interrupt-controller {
+>                                 compatible = "samsung,exynos7-wakeup-eint";
+> @@ -385,14 +353,6 @@ wakeup-interrupt-controller {
+>                 pinctrl_cmgp: pinctrl@11c30000 {
+>                         compatible = "samsung,exynos850-pinctrl";
+>                         reg = <0x11c30000 0x1000>;
+> -                       interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
+> -                                    <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+>
+>                         wakeup-interrupt-controller {
+>                                 compatible = "samsung,exynos7-wakeup-eint";
+> --
+> 2.32.0
+>
