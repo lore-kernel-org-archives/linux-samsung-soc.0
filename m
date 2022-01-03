@@ -2,456 +2,323 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78203C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Jan 2022 14:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67053C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Jan 2022 14:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234944AbiACOmo (ORCPT
+        id S231484AbiACOpQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Jan 2022 09:42:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42028 "EHLO
+        Mon, 3 Jan 2022 09:45:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235703AbiACOmP (ORCPT
+        with ESMTP id S231309AbiACOpP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Jan 2022 09:42:15 -0500
-Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71BBCC0698CA
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Jan 2022 06:41:50 -0800 (PST)
-Received: by mail-vk1-xa2f.google.com with SMTP id b77so18933364vka.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jan 2022 06:41:50 -0800 (PST)
+        Mon, 3 Jan 2022 09:45:15 -0500
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF75C061785
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Jan 2022 06:45:14 -0800 (PST)
+Received: by mail-ua1-x92c.google.com with SMTP id c36so32543962uae.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Jan 2022 06:45:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lXu+eAxVrOafQVNXECDh/gEYPMoQSH/1TSVOA9T/LKU=;
-        b=Xd641+phK+FoWL9Vy/Y5lbukPnz+EvT7+aaECzJJggJ52GBih2eg9HE5fkWnwgBLy4
-         RnYksCTJ4Wa1p6bHABNNtF2L4X3My48BDZJqVabuHWD2d/nlcIuw9OG2da/wllt1eBUi
-         yUbixulpb590RBrblnIFyWPGxUsHS8fEOblvHOA5KmH81Ubb2l30vgtUeFG27/7w3C+b
-         VxA25mOCsKEhT0WjldQSyX+4MRsbRCbLS9dBAkmnYHtSvS1Xj0tWKWwFU78bubxKdqBX
-         1YS5lIFlZ2OV+3HortrNBDOdDJ8elBNQDASAFQuvt0jKvCxI6WNcRBB/ssx4yuO52eIe
-         07bw==
+        bh=07X0VtNLR2uHgUz3pskrvCYaEAcog26tD4bSPZFPOqk=;
+        b=pVjQa+kWqYrvvPrR0TlyTZKq4kLdmKSQ5hElY6Z1WrJmG3BXHKJCn4tEA55hBVBxqm
+         swT8goVTvWgnPTHT7/cGAiKbu++CGFIcoWl2TS21lPkxLrI7Slg1BTW4E9XiR42aI3Y9
+         aQftXTYscdUQWZ9EKZdT1OQPTYIsTfYcLhwu50thb0N6Y12aTrhOK0FFMmEyxRqi9gGf
+         97HfJthjuRTIv+WISTR8/eq6JBvZf71Co7Bqo1uICk5QbRGj2ZMGh/Bn9VdJ75T+iuZ0
+         Y0jRgFDqsu+clFYb0TRtQSD0rbr3NLhSrv+JOe8wzGE9hM0P19YpT3x0sE8unkqqDx3C
+         JV3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lXu+eAxVrOafQVNXECDh/gEYPMoQSH/1TSVOA9T/LKU=;
-        b=j41yBLSk1Jk9kglE9rPYQXUo21y379oiVlIcsUU++UyDDUkc1VHyLz2RTQ3D+GLt2p
-         KpB4/zW2G0peF+G5FmntTamQSYtEh7A/W69g9fM693KfXfqxXLPDbBNjTc65A428SKoz
-         W79kGBe68vTEQZ3eZE07oFizp35cnmiXajFXb43NvudbILtyn9ax0aJXMQ1dkAQ8nTzP
-         sTd50f+lM1TDIlZjK4qvFvQeAJ3dqDs2Ay2IY8J2LpfywCiG0gyiTqsT7fLnMtrs15va
-         oAEcVh58RkOSY8DoI/H+vnr/+5cFzL2sUGoOS0E3derr8TZaMpC5Kx9NwlKXiw1cQhn8
-         S1ZQ==
-X-Gm-Message-State: AOAM530NIUYRTuIrmgqodEZkCESxIFb4TVKpcbb4VeA15o3puC7BagDf
-        i/IFNBAoLhZCTGSIqvbrtkLGLCkbxMS9zNH7y0p2bw==
-X-Google-Smtp-Source: ABdhPJxDh+E1kFMN7s4xKtTPYudvgXDPui2GZorqtSQcvQY1d6Je5o4y3A5cY4c+Oa1Rfed/5Vhbbl1SQij69eQAwFY=
-X-Received: by 2002:a1f:b20b:: with SMTP id b11mr14819029vkf.13.1641220909472;
- Mon, 03 Jan 2022 06:41:49 -0800 (PST)
+        bh=07X0VtNLR2uHgUz3pskrvCYaEAcog26tD4bSPZFPOqk=;
+        b=32wVUzSQh5swUI2XtUhb+dkUOQDwyQ8lNlEn6/rXztkHjVE7tSy4E5J5NDRnSzQ/do
+         8qnmwhQRHQOSMnX60+UsbyYHZJ2IzQjhAS8axLH4Ioj8pBYwOS5bvgSvsMVffhaTkq8G
+         aGpPBuzPESKpU/LP8SloT7RZv60baDbtQOWhsGlhN15kwKQ5sM53nhmU1IQINVFFesB1
+         f/g1lTfgWnm1tj66v7/y+tka9n7GceyTCftZZaXaG9eMxOshLthKb6s1WaMVE1q5zt0N
+         fUhwAc/lfsf2/hX5reqHBQdFXNUG43FygeAlF2redK0u95ZdGLC/dva9ogvmm47vI2tj
+         Ctgg==
+X-Gm-Message-State: AOAM530eKWXuwVYjaBakLupxDXrSnBTqetFeNdSWYwjUFva6iFRfA7qv
+        RjwFW1H2JbYG842ez7mnVlHSbYGs3lglzLLpqWGLTw==
+X-Google-Smtp-Source: ABdhPJx9+/wKkUsISVpXJe9Z+IOc2TM3l7b4zKIAons8L3ryF2j89sp4/mHE9glwo/uYG4mSTc57A2UcSMuyR77x4hc=
+X-Received: by 2002:a67:e10c:: with SMTP id d12mr13248417vsl.20.1641221113752;
+ Mon, 03 Jan 2022 06:45:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20220102155807.42758-1-krzysztof.kozlowski@canonical.com> <20220102155807.42758-2-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220102155807.42758-2-krzysztof.kozlowski@canonical.com>
+References: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com> <20211231162309.257587-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211231162309.257587-2-krzysztof.kozlowski@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 3 Jan 2022 16:41:37 +0200
-Message-ID: <CAPLW+4miCOwFR11gdaU1nMQZdk8zVcWOcSK=Wjd3AaCagGLyug@mail.gmail.com>
-Subject: Re: [PATCH 2/2] spi: dt-bindings: samsung: convert to dtschema
+Date:   Mon, 3 Jan 2022 16:45:02 +0200
+Message-ID: <CAPLW+4k5cMUNvLkZNsJCqTfrFWOGiakerYHY3kc+xQAvQ2Ce6w@mail.gmail.com>
+Subject: Re: [PATCH 19/24] arm64: dts: exynos: align pinctrl with dtschema in Exynos850
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 2 Jan 2022 at 17:58, Krzysztof Kozlowski
+On Fri, 31 Dec 2021 at 18:23, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
-> controller bindings to DT schema format
+> Align the pin controller related nodes with dtschema.  No functional
+> change expected.
 >
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  .../devicetree/bindings/spi/samsung,spi.yaml  | 220 ++++++++++++++++++
->  .../devicetree/bindings/spi/spi-samsung.txt   | 122 ----------
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 221 insertions(+), 123 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
->
-> diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-> new file mode 100644
-> index 000000000000..195bfafe05fd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-> @@ -0,0 +1,220 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/samsung,spi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S3C/S5P/Exynos SoC SPI controller
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +
-> +description:
-> +  All the SPI controller nodes should be represented in the aliases node using
-> +  the following format 'spi{n}' where n is a unique number for the alias.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - samsung,s3c2443-spi
-
-Maybe add the list of supported platforms for each compatible (in a
-comment on the same line), like it was done in .txt binding?
-
-Other than that:
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-> +          - samsung,s3c6410-spi
-> +          - samsung,s5pv210-spi
-> +          - samsung,exynos5433-spi
-> +      - const: samsung,exynos7-spi
-> +        deprecated: true
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  cs-gpios: true
-> +
-> +  dmas:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  dma-names:
-> +    items:
-> +      - const: tx
-> +      - const: rx
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  no-cs-readback:
-> +    description:
-> +      The CS line is disconnected, therefore the device should not operate
-> +      based on CS signalling.
-> +    type: boolean
-> +
-> +  num-cs:
-> +    minimum: 1
-> +    maximum: 4
-> +    default: 1
-> +
-> +  samsung,spi-src-clk:
-> +    description:
-> +      If the spi controller includes a internal clock mux to select the clock
-> +      source for the spi bus clock, this property can be used to indicate the
-> +      clock to be used for driving the spi bus clock. If not specified, the
-> +      clock number 0 is used as default.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 0
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^.*@[0-9a-f]+$":
-> +    type: object
-> +
-> +    allOf:
-> +      - $ref: spi-peripheral-props.yaml
-> +
-> +    properties:
-> +      controller-data:
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        properties:
-> +          samsung,spi-feedback-delay:
-> +            description: |
-> +              The sampling phase shift to be applied on the miso line (to account
-> +              for any lag in the miso line). Valid values:
-> +               - 0: No phase shift.
-> +               - 1: 90 degree phase shift sampling.
-> +               - 2: 180 degree phase shift sampling.
-> +               - 3: 270 degree phase shift sampling.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1, 2, 3]
-> +
-> +        required:
-> +          - samsung,spi-feedback-delay
-> +
-> +    required:
-> +      - controller-data
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - dmas
-> +  - dma-names
-> +  - interrupts
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: spi-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos5433-spi
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          maxItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: spi
-> +            - enum:
-> +                - spi_busclk0
-> +                - spi_busclk1
-> +                - spi_busclk2
-> +                - spi_busclk3
-> +            - const: spi_ioclk
-> +    else:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: spi
-> +            - enum:
-> +                - spi_busclk0
-> +                - spi_busclk1
-> +                - spi_busclk2
-> +                - spi_busclk3
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/exynos5433.h>
-> +    #include <dt-bindings/clock/samsung,s2mps11.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    spi@14d30000 {
-> +        compatible = "samsung,exynos5433-spi";
-> +        reg = <0x14d30000 0x100>;
-> +        interrupts = <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>;
-> +        dmas = <&pdma0 11>, <&pdma0 10>;
-> +        dma-names = "tx", "rx";
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        clocks = <&cmu_peric CLK_PCLK_SPI1>,
-> +                 <&cmu_peric CLK_SCLK_SPI1>,
-> +                 <&cmu_peric CLK_SCLK_IOCLK_SPI1>;
-> +        clock-names = "spi",
-> +                      "spi_busclk0",
-> +                      "spi_ioclk";
-> +        samsung,spi-src-clk = <0>;
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&spi1_bus>;
-> +        num-cs = <1>;
-> +
-> +        cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
-> +        status = "okay";
-> +
-> +        audio-codec@0 {
-> +            compatible = "wlf,wm5110";
-> +            reg = <0x0>;
-> +            spi-max-frequency = <20000000>;
-> +            interrupt-parent = <&gpa0>;
-> +            interrupts = <4 IRQ_TYPE_NONE>;
-> +            clocks = <&pmu_system_controller 0>,
-> +                     <&s2mps13_osc S2MPS11_CLK_BT>;
-> +            clock-names = "mclk1", "mclk2";
-> +
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
-> +
-> +            wlf,micd-detect-debounce = <300>;
-> +            wlf,micd-bias-start-time = <0x1>;
-> +            wlf,micd-rate = <0x7>;
-> +            wlf,micd-dbtime = <0x2>;
-> +            wlf,micd-force-micbias;
-> +            wlf,micd-configs = <0x0 1 0>;
-> +            wlf,hpdet-channel = <1>;
-> +            wlf,gpsw = <0x1>;
-> +            wlf,inmode = <2 0 2 0>;
-> +
-> +            wlf,reset = <&gpc0 7 GPIO_ACTIVE_HIGH>;
-> +            wlf,ldoena = <&gpf0 0 GPIO_ACTIVE_HIGH>;
-> +
-> +            /* core supplies */
-> +            AVDD-supply = <&ldo18_reg>;
-> +            DBVDD1-supply = <&ldo18_reg>;
-> +            CPVDD-supply = <&ldo18_reg>;
-> +            DBVDD2-supply = <&ldo18_reg>;
-> +            DBVDD3-supply = <&ldo18_reg>;
-> +            SPKVDDL-supply = <&ldo18_reg>;
-> +            SPKVDDR-supply = <&ldo18_reg>;
-> +
-> +            controller-data {
-> +                samsung,spi-feedback-delay = <0>;
-> +            };
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-> deleted file mode 100644
-> index 49028a4f5df1..000000000000
-> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-> +++ /dev/null
-> @@ -1,122 +0,0 @@
-> -* Samsung SPI Controller
-> -
-> -The Samsung SPI controller is used to interface with various devices such as flash
-> -and display controllers using the SPI communication interface.
-> -
-> -Required SoC Specific Properties:
-> -
-> -- compatible: should be one of the following.
-> -    - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
-> -    - samsung,s3c6410-spi: for s3c6410 platforms
-> -    - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
-> -    - samsung,exynos5433-spi: for exynos5433 compatible controllers
-> -    - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
-> -
-> -- reg: physical base address of the controller and length of memory mapped
-> -  region.
-> -
-> -- interrupts: The interrupt number to the cpu. The interrupt specifier format
-> -  depends on the interrupt controller.
-> -
-> -- dmas : Two or more DMA channel specifiers following the convention outlined
-> -  in bindings/dma/dma.txt
-> -
-> -- dma-names: Names for the dma channels. There must be at least one channel
-> -  named "tx" for transmit and named "rx" for receive.
-> -
-> -- clocks: specifies the clock IDs provided to the SPI controller; they are
-> -  required for interacting with the controller itself, for synchronizing the bus
-> -  and as I/O clock (the latter is required by exynos5433 and exynos7).
-> -
-> -- clock-names: string names of the clocks in the 'clocks' property; for all the
-> -  the devices the names must be "spi", "spi_busclkN" (where N is determined by
-> -  "samsung,spi-src-clk"), while Exynos5433 should specify a third clock
-> -  "spi_ioclk" for the I/O clock.
-> -
-> -Required Board Specific Properties:
-> -
-> -- #address-cells: should be 1.
-> -- #size-cells: should be 0.
-> -
-> -Optional Board Specific Properties:
-> -
-> -- samsung,spi-src-clk: If the spi controller includes a internal clock mux to
-> -  select the clock source for the spi bus clock, this property can be used to
-> -  indicate the clock to be used for driving the spi bus clock. If not specified,
-> -  the clock number 0 is used as default.
-> -
-> -- num-cs: Specifies the number of chip select lines supported. If
-> -  not specified, the default number of chip select lines is set to 1.
-> -
-> -- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
-> -
-> -- no-cs-readback: the CS line is disconnected, therefore the device should not
-> -  operate based on CS signalling.
-> -
-> -SPI Controller specific data in SPI slave nodes:
-> -
-> -- The spi slave nodes should provide the following information which is required
-> -  by the spi controller.
-> -
-> -  - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
-> -    miso line (to account for any lag in the miso line). The following are the
-> -    valid values.
-> -
-> -      - 0: No phase shift.
-> -      - 1: 90 degree phase shift sampling.
-> -      - 2: 180 degree phase shift sampling.
-> -      - 3: 270 degree phase shift sampling.
-> -
-> -Aliases:
-> -
-> -- All the SPI controller nodes should be represented in the aliases node using
-> -  the following format 'spi{n}' where n is a unique number for the alias.
-> -
-> -
-> -Example:
-> -
-> -- SoC Specific Portion:
-> -
-> -       spi_0: spi@12d20000 {
-> -               compatible = "samsung,exynos4210-spi";
-> -               reg = <0x12d20000 0x100>;
-> -               interrupts = <0 66 0>;
-> -               dmas = <&pdma0 5
-> -                       &pdma0 4>;
-> -               dma-names = "tx", "rx";
-> -               #address-cells = <1>;
-> -               #size-cells = <0>;
-> -       };
-> -
-> -- Board Specific Portion:
-> -
-> -       spi_0: spi@12d20000 {
-> -               #address-cells = <1>;
-> -               #size-cells = <0>;
-> -               pinctrl-names = "default";
-> -               pinctrl-0 = <&spi0_bus>;
-> -               cs-gpios = <&gpa2 5 0>;
-> -
-> -               w25q80bw@0 {
-> -                       #address-cells = <1>;
-> -                       #size-cells = <1>;
-> -                       compatible = "w25x80";
-> -                       reg = <0>;
-> -                       spi-max-frequency = <10000>;
-> -
-> -                       controller-data {
-> -                               samsung,spi-feedback-delay = <0>;
-> -                       };
-> -
-> -                       partition@0 {
-> -                               label = "U-Boot";
-> -                               reg = <0x0 0x40000>;
-> -                               read-only;
-> -                       };
-> -
-> -                       partition@40000 {
-> -                               label = "Kernel";
-> -                               reg = <0x40000 0xc0000>;
-> -                       };
-> -               };
-> -       };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index af392bd04874..572eb97f1855 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17058,7 +17058,7 @@ M:      Andi Shyti <andi@etezian.org>
->  L:     linux-spi@vger.kernel.org
->  L:     linux-samsung-soc@vger.kernel.org
->  S:     Maintained
-> -F:     Documentation/devicetree/bindings/spi/spi-samsung.txt
-> +F:     Documentation/devicetree/bindings/spi/samsung,spi.yaml
->  F:     drivers/spi/spi-s3c*
->  F:     include/linux/platform_data/spi-s3c64xx.h
->  F:     include/linux/spi/s3c24xx-fiq.h
+>  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 52 +++++++++----------
+>  1 file changed, 26 insertions(+), 26 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> index f576b29c9b16..a71acf358d2d 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> @@ -13,7 +13,7 @@
+>  #include <dt-bindings/pinctrl/samsung.h>
+>
+>  &pinctrl_alive {
+> -       gpa0: gpa0 {
+> +       gpa0: gpa0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -30,7 +30,7 @@ gpa0: gpa0 {
+>                              <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpa1: gpa1 {
+> +       gpa1: gpa1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -47,7 +47,7 @@ gpa1: gpa1 {
+>                              <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpa2: gpa2 {
+> +       gpa2: gpa2-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -64,7 +64,7 @@ gpa2: gpa2 {
+>                              <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpa3: gpa3 {
+> +       gpa3: gpa3-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -81,7 +81,7 @@ gpa3: gpa3 {
+>                              <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpa4: gpa4 {
+> +       gpa4: gpa4-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -94,7 +94,7 @@ gpa4: gpa4 {
+>                              <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpq0: gpq0 {
+> +       gpq0: gpq0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -134,7 +134,7 @@ uart1_pins: uart1-pins {
+>  };
+>
+>  &pinctrl_cmgp {
+> -       gpm0: gpm0 {
+> +       gpm0: gpm0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -144,7 +144,7 @@ gpm0: gpm0 {
+>                 interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpm1: gpm1 {
+> +       gpm1: gpm1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -154,7 +154,7 @@ gpm1: gpm1 {
+>                 interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpm2: gpm2 {
+> +       gpm2: gpm2-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -164,7 +164,7 @@ gpm2: gpm2 {
+>                 interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpm3: gpm3 {
+> +       gpm3: gpm3-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -174,7 +174,7 @@ gpm3: gpm3 {
+>                 interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpm4: gpm4 {
+> +       gpm4: gpm4-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -184,7 +184,7 @@ gpm4: gpm4 {
+>                 interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+>         };
+>
+> -       gpm5: gpm5 {
+> +       gpm5: gpm5-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -256,7 +256,7 @@ spi2_pins: spi2-pins {
+>  };
+>
+>  &pinctrl_aud {
+> -       gpb0: gpb0 {
+> +       gpb0: gpb0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -264,7 +264,7 @@ gpb0: gpb0 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpb1: gpb1 {
+> +       gpb1: gpb1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -322,7 +322,7 @@ aud_fm_idle_pins: aud-fm-idle-pins {
+>  };
+>
+>  &pinctrl_hsi {
+> -       gpf2: gpf2 {
+> +       gpf2: gpf2-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -367,7 +367,7 @@ sd2_pdn_pins: sd2-pdn-pins {
+>  };
+>
+>  &pinctrl_core {
+> -       gpf0: gpf0 {
+> +       gpf0: gpf0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -375,7 +375,7 @@ gpf0: gpf0 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpf1: gpf1 {
+> +       gpf1: gpf1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -434,7 +434,7 @@ sd0_bus8_pins: sd0-bus8-pins {
+>  };
+>
+>  &pinctrl_peri {
+> -       gpc0: gpc0 {
+> +       gpc0: gpc0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -442,7 +442,7 @@ gpc0: gpc0 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpc1: gpc1 {
+> +       gpc1: gpc1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -450,7 +450,7 @@ gpc1: gpc1 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpg0: gpg0 {
+> +       gpg0: gpg0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -458,7 +458,7 @@ gpg0: gpg0 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpg1: gpg1 {
+> +       gpg1: gpg1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -466,7 +466,7 @@ gpg1: gpg1 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpg2: gpg2 {
+> +       gpg2: gpg2-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -474,7 +474,7 @@ gpg2: gpg2 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpg3: gpg3 {
+> +       gpg3: gpg3-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -482,14 +482,14 @@ gpg3: gpg3 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpp0: gpp0 {
+> +       gpp0: gpp0-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+>                 interrupt-controller;
+>                 #interrupt-cells = <2>;
+>         };
+> -       gpp1: gpp1 {
+> +       gpp1: gpp1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
+> @@ -497,7 +497,7 @@ gpp1: gpp1 {
+>                 #interrupt-cells = <2>;
+>         };
+>
+> -       gpp2: gpp2 {
+> +       gpp2: gpp2-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells = <2>;
+>
 > --
 > 2.32.0
 >
