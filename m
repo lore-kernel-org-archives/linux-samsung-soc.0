@@ -2,155 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D16C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Jan 2022 15:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333D0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Jan 2022 15:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233679AbiADPfe (ORCPT
+        id S233590AbiADPmg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Jan 2022 10:35:34 -0500
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:38858 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233658AbiADPfd (ORCPT
+        Tue, 4 Jan 2022 10:42:36 -0500
+Received: from mail-oi1-f170.google.com ([209.85.167.170]:33730 "EHLO
+        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232689AbiADPme (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jan 2022 10:35:33 -0500
-Received: by mail-oi1-f182.google.com with SMTP id s73so60026210oie.5;
-        Tue, 04 Jan 2022 07:35:33 -0800 (PST)
+        Tue, 4 Jan 2022 10:42:34 -0500
+Received: by mail-oi1-f170.google.com with SMTP id w7so39264719oiw.0;
+        Tue, 04 Jan 2022 07:42:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6Sl1wdkIsl6Ta/19UixjKojjWof/12N54aS+vBUZ0xc=;
-        b=zyTDkDiWAzIE8PwCSzwAUhgUKgZ07VB9aFc1AITBY+7XkBKj3o+gEYUCoVu1uN42rs
-         KJ6fn+H7VjudyguJ03IbzAyryLe8xgLwv+5Rf1/mNyRAESeiGXKNtAlMi8/faLxpuY9k
-         /APKkL+1pEej6Fr7OpTOTSjxPFbmjOkiO9rZp8kBpRSNCC9VwHYYTcBKmmJgKXZXh5B4
-         n1hjSIXbN1HV+/chPGSuirw8gHBFEAHcBoYhQoa+6U7NxYRm4lWSuvAlrKUF7SJH5p5b
-         A0nv/StVBCyIMynXCTb2eL6RSn7BN4b/B/C8lH+W2zXhswizvWQ8FAEWv28nDyW0csRz
-         R7SA==
-X-Gm-Message-State: AOAM533FIEL4M31CxrIY6a+utqLM9PXDJ++vYBxCLIqOGhl5AHTYEApS
-        AcKH4bADuYR0bPjC6fNn0g==
-X-Google-Smtp-Source: ABdhPJy3731bmsVn395Zgfp+Qv6gBMK6U2osV7TqAWwszox9XQnqwhNjbfGVtivA0qvptS70MfJ14w==
-X-Received: by 2002:a05:6808:16a3:: with SMTP id bb35mr40606254oib.72.1641310533059;
-        Tue, 04 Jan 2022 07:35:33 -0800 (PST)
+        bh=xJ2M22MiC6qHtE01uvX9QDbyqekJ6ZeZPa/LG0UiJNs=;
+        b=EgfNG7WEHh6yBy2mz7PHOfYMGTX7ix6TXxX4R08vTsTdW7vNg2yNM8UOXYnTO93MaC
+         oV6zzfyU9MN+23ulCkEvXt2wHyaU9q7o/JDzKRnKJXZ/IPQSf/GyfOsfqrq596LgVTnv
+         E4oUY4kRWCnUXAGj4TI3EnnvX0/5+BSX3xuMFMrRFWkvYG6vd8Ed+D608/sanuMILLe6
+         ZdULsZI4gXKk1D+XEf0/j1tLCinuemuTMLQ+UHma679huD+Eio6N9Di4+yLg5pTph89q
+         Jo8zGAIEWFHP65dMXuyP38K4ZSsDXC8FWrG+Nbu8g3jN9MTtBxMn47M+Gm8LMzJNRc+Q
+         BJeA==
+X-Gm-Message-State: AOAM530DKxZNKCYV9o1EMab1p3bUbiHI2NuZyXhrxJTxfPJJvsjIsGHS
+        uDIqGzIV7BDjOjze92mUhw==
+X-Google-Smtp-Source: ABdhPJzDLVAwUvkByszELJtXBV7b/HRkCQx6r7Ervxr45GWOAK69qShhw8QwUnKn7yf6JlY5Qz8nIg==
+X-Received: by 2002:aca:dbd5:: with SMTP id s204mr40194703oig.41.1641310954075;
+        Tue, 04 Jan 2022 07:42:34 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bk41sm9969116oib.31.2022.01.04.07.35.32
+        by smtp.gmail.com with ESMTPSA id 184sm9755640oih.58.2022.01.04.07.42.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 07:35:32 -0800 (PST)
-Received: (nullmailer pid 882418 invoked by uid 1000);
-        Tue, 04 Jan 2022 15:35:31 -0000
-Date:   Tue, 4 Jan 2022 09:35:31 -0600
+        Tue, 04 Jan 2022 07:42:33 -0800 (PST)
+Received: (nullmailer pid 893832 invoked by uid 1000);
+        Tue, 04 Jan 2022 15:42:32 -0000
+Date:   Tue, 4 Jan 2022 09:42:32 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>,
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: mfd: maxim,max77802: Convert to dtschema
-Message-ID: <YdRpQ2jIJ+vvg33q@robh.at.kernel.org>
-References: <20211228164305.35877-1-krzysztof.kozlowski@canonical.com>
- <20211228164305.35877-4-krzysztof.kozlowski@canonical.com>
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Beomho Seo <beomho.seo@samsung.com>
+Subject: Re: [PATCH 2/5] dt-bindings: extcon: maxim,max77843: add MAX77843
+ bindings
+Message-ID: <YdRq6JVeeOVJj8ww@robh.at.kernel.org>
+References: <20211229124631.21576-1-krzysztof.kozlowski@canonical.com>
+ <20211229124631.21576-3-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211228164305.35877-4-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211229124631.21576-3-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 28, 2021 at 05:43:05PM +0100, Krzysztof Kozlowski wrote:
-> Convert the MFD part of Maxim MAX77802 PMIC to DT schema format.  The
-> example DTS was copied from existing DTS (exynos5800-peach-pi.dts), so
-> keep the license as GPL-2.0-only.
+On Wed, Dec 29, 2021 at 01:46:28PM +0100, Krzysztof Kozlowski wrote:
+> Document the bindings for MAX77843 MUIC/extcon driver, based on
+> Exynos5433 TM2 devicetree.  These are neither accurate nor finished
+> bindings but at least allow parsing existing DTS files.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  .../devicetree/bindings/mfd/max77802.txt      |  25 ---
->  .../bindings/mfd/maxim,max77802.yaml          | 194 ++++++++++++++++++
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 195 insertions(+), 26 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
+>  .../bindings/extcon/maxim,max77843.yaml       | 40 +++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
-> deleted file mode 100644
-> index 09decac20d91..000000000000
-> --- a/Documentation/devicetree/bindings/mfd/max77802.txt
-> +++ /dev/null
-> @@ -1,25 +0,0 @@
-> -Maxim MAX77802 multi-function device
-> -
-> -The Maxim MAX77802 is a Power Management IC (PMIC) that contains 10 high
-> -efficiency Buck regulators, 32 Low-DropOut (LDO) regulators used to power
-> -up application processors and peripherals, a 2-channel 32kHz clock outputs,
-> -a Real-Time-Clock (RTC) and a I2C interface to program the individual
-> -regulators, clocks outputs and the RTC.
-> -
-> -Bindings for the built-in 32k clock generator block and
-> -regulators are defined in ../clk/maxim,max77802.txt and
-> -../regulator/max77802.txt respectively.
-> -
-> -Required properties:
-> -- compatible		: Must be "maxim,max77802"
-> -- reg			: Specifies the I2C slave address of PMIC block.
-> -- interrupts		: I2C device IRQ line connected to the main SoC.
-> -
-> -Example:
-> -
-> -	max77802: pmic@9 {
-> -		compatible = "maxim,max77802";
-> -		interrupt-parent = <&intc>;
-> -		interrupts = <26 IRQ_TYPE_NONE>;
-> -		reg = <0x09>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
+> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
 > new file mode 100644
-> index 000000000000..26f49fbace18
+> index 000000000000..1f15a6c700f6
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
-> @@ -0,0 +1,194 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
+> +++ b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/mfd/maxim,max77802.yaml#
+> +$id: http://devicetree.org/schemas/extcon/maxim,max77843.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Maxim MAX77802 Power Management IC
+> +title: Maxim MAX77843 MicroUSB and Companion Power Management IC Extcon
 > +
 > +maintainers:
-> +  - Javier Martinez Canillas <javier@dowhile0.org>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
 > +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > +
 > +description: |
-> +  This is a part of device tree bindings for Maxim MAX77802 Power Management
-> +  Integrated Circuit (PMIC).
+> +  This is a part of device tree bindings for Maxim MAX77843 MicroUSB
+> +  Integrated Circuit (MUIC).
 > +
-> +  The Maxim MAX77802 is a Power Management IC which includes voltage and
-> +  current regulators (10 high efficiency Buck regulators and 32 Low-DropOut
-> +  (LDO)), RTC and clock outputs.
-> +
-> +  The MAX77802 provides two 32.768khz clock outputs that can be controlled
-> +  (gated/ungated) over I2C.  The clock IDs are defined as preprocessor macros
-> +  in dt-bindings/clock/maxim,max77802.h.
+> +  See also Documentation/devicetree/bindings/mfd/maxim,max77843.yaml for
+> +  additional information and example.
 > +
 > +properties:
 > +  compatible:
-> +    const: maxim,max77802
+> +    const: maxim,max77843-muic
 > +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  regulators:
-> +    $ref: ../regulator/maxim,max77802.yaml
+> +  connector:
+> +    $ref: ../connector/usb-connector.yaml#
 
-Use absolute path: /schemas/regulator/...
+/schemas/connector/...
 
 With that,
 
 Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/port
+> +    description:
+> +      Any connector to the data bus of this controller should be modelled using
+> +      the OF graph bindings specified
+> +    properties:
+> +      port:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +
+> +required:
+> +  - compatible
+> +  - connector
+> +
+> +additionalProperties: false
+> -- 
+> 2.32.0
+> 
+> 
