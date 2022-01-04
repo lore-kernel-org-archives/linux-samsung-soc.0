@@ -2,42 +2,42 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333D0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Jan 2022 15:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CFCC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Jan 2022 15:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233590AbiADPmg (ORCPT
+        id S233916AbiADPo1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 4 Jan 2022 10:42:36 -0500
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:33730 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232689AbiADPme (ORCPT
+        Tue, 4 Jan 2022 10:44:27 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:43993 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232657AbiADPo0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 4 Jan 2022 10:42:34 -0500
-Received: by mail-oi1-f170.google.com with SMTP id w7so39264719oiw.0;
-        Tue, 04 Jan 2022 07:42:34 -0800 (PST)
+        Tue, 4 Jan 2022 10:44:26 -0500
+Received: by mail-ot1-f42.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so47784214otu.10;
+        Tue, 04 Jan 2022 07:44:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xJ2M22MiC6qHtE01uvX9QDbyqekJ6ZeZPa/LG0UiJNs=;
-        b=EgfNG7WEHh6yBy2mz7PHOfYMGTX7ix6TXxX4R08vTsTdW7vNg2yNM8UOXYnTO93MaC
-         oV6zzfyU9MN+23ulCkEvXt2wHyaU9q7o/JDzKRnKJXZ/IPQSf/GyfOsfqrq596LgVTnv
-         E4oUY4kRWCnUXAGj4TI3EnnvX0/5+BSX3xuMFMrRFWkvYG6vd8Ed+D608/sanuMILLe6
-         ZdULsZI4gXKk1D+XEf0/j1tLCinuemuTMLQ+UHma679huD+Eio6N9Di4+yLg5pTph89q
-         Jo8zGAIEWFHP65dMXuyP38K4ZSsDXC8FWrG+Nbu8g3jN9MTtBxMn47M+Gm8LMzJNRc+Q
-         BJeA==
-X-Gm-Message-State: AOAM530DKxZNKCYV9o1EMab1p3bUbiHI2NuZyXhrxJTxfPJJvsjIsGHS
-        uDIqGzIV7BDjOjze92mUhw==
-X-Google-Smtp-Source: ABdhPJzDLVAwUvkByszELJtXBV7b/HRkCQx6r7Ervxr45GWOAK69qShhw8QwUnKn7yf6JlY5Qz8nIg==
-X-Received: by 2002:aca:dbd5:: with SMTP id s204mr40194703oig.41.1641310954075;
-        Tue, 04 Jan 2022 07:42:34 -0800 (PST)
+        bh=88ToW1HxpPdWlQecnSmTubeVq6bgfhtdA0w+XJ2iNAI=;
+        b=bFSxP3i1ZXPo6uSeUP6W0FYHfjiO4KjGeki2++UJ8VOQQLHcUj9WPtttOFxRhoPGn5
+         947f1Zvug/i/M+JGoe5WLLsYHQeogYkHWcpnXo+zGoLcH/YM3ip1j/xEY6H0X4lqd9KW
+         b5GUXrHv9NASiNh+ikUryItFFXz2wT55x78bAn0zc5V0WsPynAG7BvWWa06tIIvdWzsl
+         3Yw7zcpBnhqtgqv35kJCnY6nIH56bftMvrLYPrbA/gQhK7X4o6g9yLlMYQpMs42tRdmr
+         mfLi3kWUrbeEKkEVHlWyB1P8bX/IRHfotx+fcR2B4badpWUTu4i3slgbeLLPqYUd72mC
+         VxFw==
+X-Gm-Message-State: AOAM531vC4xDAenhENwDhQ/omEHtiYDbjSpYM3q1QPq+Edcpz3mEsgPU
+        nHGVzvWPxS8UTYSaPNebtg==
+X-Google-Smtp-Source: ABdhPJxTKO48T7iMJ0FASBAz6U0gvPANFg6vuYbCKuBo12BXIhtRIkIl/HxfUzDKoNRt0JgdLt1R4w==
+X-Received: by 2002:a05:6830:1f3a:: with SMTP id e26mr36840685oth.233.1641311065950;
+        Tue, 04 Jan 2022 07:44:25 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id 184sm9755640oih.58.2022.01.04.07.42.32
+        by smtp.gmail.com with ESMTPSA id c9sm7944529oog.43.2022.01.04.07.44.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 07:42:33 -0800 (PST)
-Received: (nullmailer pid 893832 invoked by uid 1000);
-        Tue, 04 Jan 2022 15:42:32 -0000
-Date:   Tue, 4 Jan 2022 09:42:32 -0600
+        Tue, 04 Jan 2022 07:44:25 -0800 (PST)
+Received: (nullmailer pid 896773 invoked by uid 1000);
+        Tue, 04 Jan 2022 15:44:24 -0000
+Date:   Tue, 4 Jan 2022 09:44:24 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
@@ -53,81 +53,92 @@ Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
         Beomho Seo <beomho.seo@samsung.com>
-Subject: Re: [PATCH 2/5] dt-bindings: extcon: maxim,max77843: add MAX77843
- bindings
-Message-ID: <YdRq6JVeeOVJj8ww@robh.at.kernel.org>
+Subject: Re: [PATCH 3/5] regulator: dt-bindings:  maxim,max77843: add
+ MAX77843 bindings
+Message-ID: <YdRrWGry08M+h2IZ@robh.at.kernel.org>
 References: <20211229124631.21576-1-krzysztof.kozlowski@canonical.com>
- <20211229124631.21576-3-krzysztof.kozlowski@canonical.com>
+ <20211229124631.21576-4-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211229124631.21576-3-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211229124631.21576-4-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 29, 2021 at 01:46:28PM +0100, Krzysztof Kozlowski wrote:
-> Document the bindings for MAX77843 MUIC/extcon driver, based on
-> Exynos5433 TM2 devicetree.  These are neither accurate nor finished
-> bindings but at least allow parsing existing DTS files.
+On Wed, Dec 29, 2021 at 01:46:29PM +0100, Krzysztof Kozlowski wrote:
+> Document the bindings for MAX77843 regulator driver.  The bindings are
+> almost identical to MAX77693 bindings, except the actual names of
+> regulators.
+
+Same issues here as your other Maxim regulator conversions.
+
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  .../bindings/extcon/maxim,max77843.yaml       | 40 +++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
+>  .../bindings/regulator/maxim,max77843.yaml    | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
+> diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
 > new file mode 100644
-> index 000000000000..1f15a6c700f6
+> index 000000000000..1ab58c756d7c
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
-> @@ -0,0 +1,40 @@
+> +++ b/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
+> @@ -0,0 +1,55 @@
 > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/extcon/maxim,max77843.yaml#
+> +$id: http://devicetree.org/schemas/regulator/maxim,max77843.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Maxim MAX77843 MicroUSB and Companion Power Management IC Extcon
+> +title: Maxim MAX77843 MicroUSB and Companion Power Management IC regulators
 > +
 > +maintainers:
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
 > +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > +
 > +description: |
-> +  This is a part of device tree bindings for Maxim MAX77843 MicroUSB
-> +  Integrated Circuit (MUIC).
+> +  This is a part of device tree bindings for Maxim MAX77843 MicroUSB Integrated
+> +  Circuit (MUIC).
 > +
 > +  See also Documentation/devicetree/bindings/mfd/maxim,max77843.yaml for
 > +  additional information and example.
 > +
 > +properties:
 > +  compatible:
-> +    const: maxim,max77843-muic
+> +    const: maxim,max77843-regulator
 > +
-> +  connector:
-> +    $ref: ../connector/usb-connector.yaml#
-
-/schemas/connector/...
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+> +patternProperties:
+> +  "^SAFEOUT[12]$":
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +    description: |
+> +      Safeout LDO regulator.
 > +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    description:
-> +      Any connector to the data bus of this controller should be modelled using
-> +      the OF graph bindings specified
 > +    properties:
-> +      port:
-> +        $ref: /schemas/graph.yaml#/properties/port
+> +      regulator-min-microvolt: true
+> +      regulator-max-microvolt: true
+> +
+> +    required:
+> +      - regulator-name
+> +
+> +  "^CHARGER$":
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
+> +    description: |
+> +      Current regulator.
+> +
+> +    properties:
+> +      regulator-min-microamp: true
+> +      regulator-max-microamp: true
+> +
+> +    required:
+> +      - regulator-name
 > +
 > +required:
 > +  - compatible
-> +  - connector
 > +
 > +additionalProperties: false
 > -- 
