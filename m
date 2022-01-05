@@ -2,127 +2,128 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C168C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jan 2022 17:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30479C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  5 Jan 2022 20:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242097AbiAERCk (ORCPT
+        id S244021AbiAEU0i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 5 Jan 2022 12:02:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49098 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242066AbiAERCk (ORCPT
+        Wed, 5 Jan 2022 15:26:38 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:44408
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244007AbiAEUYh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 5 Jan 2022 12:02:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0251C061245;
-        Wed,  5 Jan 2022 09:02:39 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 5 Jan 2022 15:24:37 -0500
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 85A56B81CB8;
-        Wed,  5 Jan 2022 17:02:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F22C36AF3;
-        Wed,  5 Jan 2022 17:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641402157;
-        bh=agAGFH0HuJNX1dFurn+XgzdOr9v79jF+jFSDsYByp2g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=f8X1BmB95VuA6GntisoCzO+HDZ1MD/Q+Pp0J+KCof9JSEJJ9WBcvStZ4tpiDALgMH
-         z+DK0bk3WI/fRi8CarP5ohMI1rogq2hZOOG2bp6v4Z9l4ChBS9gW4aLTq2J/1udE0K
-         kt7QKZlU38hSVF0wg3sEeqC4w4tN3Puck5DURX+l2Q8ALU1iR0dnaLnX6zKueEMJpj
-         IAozcC/DVRNGTCuhfcPnSVztpx6rxCSlqMvReoLqcaqflIQlE4XTdBs7pr4Gsv2Y9i
-         0jbp+pXiuv3CMQOfX5GfxiuK/Xl7ep/gIzjUQlc7orN4F4jRjSGXZwjk4ZNcATYvoK
-         HK6HamaDC0aaA==
-Received: by mail-wr1-f54.google.com with SMTP id o3so26168409wrh.10;
-        Wed, 05 Jan 2022 09:02:37 -0800 (PST)
-X-Gm-Message-State: AOAM530LkH09/MxmP+lDXaQ3s3VdU86pEUEiUg+a0TguuYKaZzuTx2CX
-        ThQqy+V+Ff0Wu2xKBUIuIT+PAOyzX2aJuZMMA3w=
-X-Google-Smtp-Source: ABdhPJyIdN7vrQm6ItyKzUVZWpAWOssMuqHPz6++VKuQFZMem72pI+XYNHgwX0j5r7c3iHDljbvK3ge2T46qzMVNjk0=
-X-Received: by 2002:a5d:6b8f:: with SMTP id n15mr47099998wrx.189.1641402155495;
- Wed, 05 Jan 2022 09:02:35 -0800 (PST)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CE5474002A
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jan 2022 20:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1641414273;
+        bh=Z7Q01MgSEbyZYHT3rk+3A+kephcacvWRoAm/f2TTeCA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=CwlomVquiDB7eJaEX3kTbcFp0MAequdVgGHnzkdMbn0G1IuDjxAwQCoZ9MQ9MyRJO
+         7PcLlKy5Ox17Tl7VAVsKXHfKOmL/AG0u1GqxbW48PkgExLmwHvqMaSLKT5ucMZ3QL9
+         zSdC49vZNNUUCXe2qPzZTnqN72YgwJYQrhgyWcjKwcliaXFG3EiycnIBLNuD1LHy3y
+         8FIp/WeHruWJU5DUrAMJJVOAlzCgikxfZxQLlkA3nFTcpG6XbawEMyWFFKjJu4A+EQ
+         2HqMXnbdHjaJCuxPXj0WKJyi4u3i3OcWJH9KotpEY+7XggXRh+H1uXsSXFW/nq5Kjx
+         dGHRLFhOAxcbQ==
+Received: by mail-wr1-f69.google.com with SMTP id f13-20020adfe90d000000b001a15c110077so127486wrm.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Jan 2022 12:24:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Z7Q01MgSEbyZYHT3rk+3A+kephcacvWRoAm/f2TTeCA=;
+        b=ijMYyXthHGlNhIX9ZvT0l42LPRxZs/N2oM4K5oWVBQA3afyNgExGcm18+UCxSGSShI
+         nakei4XfUKsc+Li8SaVYCrk0UQtPUKCHL5KT2t58sKDpN8J0w+S8h/z1wqJo4ZtjXnzC
+         I9C1cYwYXGu/IPgkRPX9G2umeTdVYDOEsk+Zjp2z57QFgR0iVWU/OImKAiE3t3+gIOQa
+         cMBh+o+AyX9NhamVV11d5BTSoP0CSsmdI4F48tT9AgXHYtSSpjdKE5eviqoDMjSHMyE8
+         Se0dYjM2+iQdbS+iG0ckvZCqplU9pswQGoC+DU0qFFVqfuF2pM/pP7l2WyyY3GCvqGWa
+         5oVQ==
+X-Gm-Message-State: AOAM532t0VQChUB2dWJNaBX0nzjko9ZLXELWY2rey0l/ijLurFV3xHdB
+        ClZEPht/t4FCDS/gZjAXlmmEdLyPTihQsSHYggX6bIEaNoSgWzwysnhxjyHMGVDPbtwKf8SIlgh
+        P6b1/XgcoGVZ+FsMYCjfN4J05F3hmVaHtvS4zJOA/Z8N09NmW
+X-Received: by 2002:a1c:9856:: with SMTP id a83mr4298312wme.157.1641414271345;
+        Wed, 05 Jan 2022 12:24:31 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyDOoioCbtDcfutGP5nnn1CRcSrlm9FAZ0/AwZzVCuwcbxtjswiY565cQifCl/khgMGZCxOOw==
+X-Received: by 2002:a1c:9856:: with SMTP id a83mr4298293wme.157.1641414271152;
+        Wed, 05 Jan 2022 12:24:31 -0800 (PST)
+Received: from [192.168.1.124] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id l26sm41211495wrz.44.2022.01.05.12.24.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jan 2022 12:24:30 -0800 (PST)
+Message-ID: <e54c289c-6aeb-fcf4-67fe-fc8e375149f9@canonical.com>
+Date:   Wed, 5 Jan 2022 21:24:29 +0100
 MIME-Version: 1.0
-References: <20211122092816.2865873-1-ardb@kernel.org> <CGME20211221103854eucas1p2592e38fcc84c1c3506fce87f1dab6739@eucas1p2.samsung.com>
- <20211122092816.2865873-8-ardb@kernel.org> <0ffc858f-27e7-6789-4be1-c4c5ad61eb9d@samsung.com>
- <CAMj1kXG+P5AU-26t_16FL5xfQNd+ByQH_cfBLiwMSdoGPmvCuw@mail.gmail.com>
- <e07a229a-e565-0077-9f8a-a24ffa45f395@samsung.com> <CAMj1kXG3neg0riLAaU32KLvB2PLBNzwqgO0F21nbK1ivS=FwMg@mail.gmail.com>
- <b22077f6-0925-ee00-41ea-3e52241926e2@samsung.com> <CAMj1kXHQrqZSE1kHaQyQyK6R58EV3cUyvJFmM1JYifaMemyUhQ@mail.gmail.com>
- <f469726d-86fb-cf54-2775-d4658d2f3a5d@samsung.com> <CAMj1kXGyL7yTV4+pOs9iBWYuVvVmPTZrV5r=nzqttqpZ6-vYJA@mail.gmail.com>
- <CAMuHMdWNuCVeFiDrhnFmX0F1jxz8Fs4eFx55ojJF3d2ro-udrA@mail.gmail.com>
- <bbb0c788-bd83-833c-9445-87cff525f728@nvidia.com> <CAMj1kXEYjUspxOnvK=3O4pkVtXT+iBPz6mkskn=K6TTUZc+W2g@mail.gmail.com>
- <c0d71f87-1329-205c-c4fb-d82d0f118a7b@nvidia.com>
-In-Reply-To: <c0d71f87-1329-205c-c4fb-d82d0f118a7b@nvidia.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 5 Jan 2022 18:02:23 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXG5+jH9kLLeeArPpDQr8fhKOYYutRqJ4Qusb5+brs+tzg@mail.gmail.com>
-Message-ID: <CAMj1kXG5+jH9kLLeeArPpDQr8fhKOYYutRqJ4Qusb5+brs+tzg@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] ARM: implement support for vmap'ed stacks
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Keith Packard <keithpac@amazon.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 01/24] pinctrl: samsung: drop pin banks references on
+ error paths
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>, stable@vger.kernel.org
+References: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com>
+ <20211231161930.256733-2-krzysztof.kozlowski@canonical.com>
+ <CAPLW+4mosbk2_NPFFP=sUmKjBoZOG3vNcmT+7sMtTunhbVqcxA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4mosbk2_NPFFP=sUmKjBoZOG3vNcmT+7sMtTunhbVqcxA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 5 Jan 2022 at 17:50, Jon Hunter <jonathanh@nvidia.com> wrote:
->
->
-> On 05/01/2022 11:12, Ard Biesheuvel wrote:
->
-> ...
->
-> > Thanks for the report.
-> >
-> > It would be helpful if you could provide some more context:
-> > - does it happen on a LPAE build too?
->
-> Enabling CONFIG_ARM_LPAE does work.
->
-> > - does it only happen on SMP capable systems?
-> > - does it reproduce on such systems when using only a single CPU?
-> > (i.e., pass 'nosmp' on the kernel command line)
->
-> Adding 'nosmp' does not help.
->
-> > - when passing 'no_console_suspend' on the kernel command line, are
-> > any useful diagnostics produced?
->
-> Adding 'no_console_suspend' does not produce any interesting logs.
->
-> > - is there any way you could tell whether the crash/hang (assuming
-> > that is what you are observing) occurs on the suspend path or on
-> > resume?
->
-> That is not clear. I see it entering suspend, but not clear if it is
-> failing on entering suspend or resuming.
->
+On 03/01/2022 15:49, Sam Protsenko wrote:
+> On Fri, 31 Dec 2021 at 18:20, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> The driver iterates over its devicetree children with
+>> for_each_child_of_node() and stores for later found node pointer.  This
+>> has to be put in error paths to avoid leak during re-probing.
+>>
+>> Fixes: ab663789d697 ("pinctrl: samsung: Match pin banks with their device nodes")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> ---
+>>  drivers/pinctrl/samsung/pinctrl-samsung.c | 29 +++++++++++++++++------
+>>  1 file changed, 22 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+>> index 8941f658e7f1..f2864a7869b3 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+>> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+>> @@ -1002,6 +1002,15 @@ samsung_pinctrl_get_soc_data_for_of_alias(struct platform_device *pdev)
+>>         return &(of_data->ctrl[id]);
+>>  }
+>>
+>> +static void samsung_banks_of_node_put(struct samsung_pinctrl_drv_data *d)
+>> +{
+>> +       struct samsung_pin_bank *bank;
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < d->nr_banks; ++i, ++bank)
+>> +               of_node_put(bank->of_node);
+> 
+> But "bank" variable wasn't actually assigned before, only declared?
 
-Thanks a lot for providing this info.
+Good point, bank has to be assigned just like in patch 2/24.
 
-The fact that enabling LPAE makes the issue go away is a fairly strong
-hint that one of the CPUs comes up running in an address space that
-lacks the stack's vmapping in its copy of the swapper_pg_dir region -
-LPAE builds map swapper_pg_dir directly so there it can never go out
-of sync.
+> 
+>> +}
+>> +
 
-Given that vmappings are global, and therefore cached in the TLB
-across context switches, it is not unlikely that the missing vmapping
-of the stack is in a task that runs before suspend, but does not cause
-any issues until after the CPU is reset completely (which takes cached
-TLB entries down with it)
-
-So in summary, this gives me something to chew on, and hopefully, I
-will be able to provide a proper fix shortly.
+Best regards,
+Krzysztof
