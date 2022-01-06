@@ -2,102 +2,126 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFB2C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Jan 2022 18:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66168C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Jan 2022 18:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241781AbiAFSNm (ORCPT
+        id S242647AbiAFSVd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Jan 2022 13:13:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51694 "EHLO
+        Thu, 6 Jan 2022 13:21:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241192AbiAFSNm (ORCPT
+        with ESMTP id S242610AbiAFSVd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Jan 2022 13:13:42 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBADC061245;
-        Thu,  6 Jan 2022 10:13:41 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id 19so4134684ioz.4;
-        Thu, 06 Jan 2022 10:13:41 -0800 (PST)
+        Thu, 6 Jan 2022 13:21:33 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E87C061245;
+        Thu,  6 Jan 2022 10:21:32 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id p65so4179401iof.3;
+        Thu, 06 Jan 2022 10:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qEtJLoaA5iONOvnEVWtg5iP2Ussm1/FGTAkvl8oexE4=;
-        b=DU+rXY8T5G10Gr4qPrA8xqxZOy3OkFDI5RIxobVhOj0lBBWQpL2HI/Mfjt1tvGc9LP
-         U+1NePR+011SMkc/U3NJCZCscp/bkCkRRQQetZ78Y7Qycks2Si2+uDn7Nt3Bc00VsBUf
-         svS/n/rJa1kvYx0KDyAilDYl8qSL+ZE44aVmB4T40m3+9BkkV2eazFqDKacPxQkH5RfQ
-         l7Ug+5eMDF/84sr7U6+qabi2CqMr+twhuLitR7OlMHs4ogCzqZ8901VleubUayxML//J
-         eGdd+NgMRCwQrHdZdGTVxIjlsEPoMZntjKncXXbG7tCRi8aBpYohgyEyw4uJ29trCxBS
-         bqtA==
+        bh=u8PUM8urpd0DlumCQ6HFzJRnLfbm6k/u/SEQzO1ZixQ=;
+        b=JSO6SdtWZPDHtHmO9+Gd4ccCnwDAdiwIw83TCUdJm4givFE6rNf+5bx8Hb13PRHvX1
+         kZDIE/WxOomL6ZkJaqMJ3fTIvoEAHHYlY88B9yNJkSNyTkiKMRVeuwOhGl1byQlbTYIh
+         s+6HatHxg2Ma5NqFf3WyhsbmYtvobug7eaMzm4atAIwACA1YTtpR7PqAX/cIXrO5gXA7
+         z5FPqCnlyZuMWQtoNQTENppMZ7wREFEiYI7GE0kCST0Z/Iy5PPpFNm6JZv/M3TqXzLp4
+         UCmJ8w2xgraE34WqSXFrWDMnLWPV7UBViGHYP3DriB2DZ9+pxPfpHAE+JU/Xcjn4InPY
+         fu7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qEtJLoaA5iONOvnEVWtg5iP2Ussm1/FGTAkvl8oexE4=;
-        b=NFa6mI0k7QqMpRFj4N9j453i7Cyrh0q8QjGgzblcfwmNzxc1PbcK1yPh2cmh64uAM2
-         GbJ4Eop9Fwz5AtSeuXxJQ5foz+wT9IcSx+INDUnjRoAvejyTkO2y2y1qLfIbC7PdtiEb
-         AH6pvO6eGAncfhO9BtUw9kFHI6Hg2KB4xuPmO3plrbz+LowPoz0j76LPlJz2YLXeVB/w
-         6PN8uaCawuNJ38YRbqXKFFtQ+M1+W9cvpxyhTQo1K/kwIqPRrXgTAkDY6EhPHOYdjhC7
-         Vc589c0KmxBh3eURXe8IZrwJjXDjHSVuBiSHEZWECElItvQ5euhC7qmiQP+37EC5pqPA
-         /QiQ==
-X-Gm-Message-State: AOAM532fR6/33BGnuhwBs0e/pAdX3hLiHtG55SpcBcfMlAM2qljFpsOo
-        BYuEoXjELljMyKoWO/sGIOyN6RbEAgetsgPc2tP427hk
-X-Google-Smtp-Source: ABdhPJyhr3snTkGgNEkVx77B7Srk7PUlnDiZW9SzjEH7pRqrqPmlLFCj8DeDA6goEYe4mUJvzOfpnE0tQxhwUNteq5A=
-X-Received: by 2002:a05:6638:14c2:: with SMTP id l2mr28020601jak.276.1641492821017;
- Thu, 06 Jan 2022 10:13:41 -0800 (PST)
+        bh=u8PUM8urpd0DlumCQ6HFzJRnLfbm6k/u/SEQzO1ZixQ=;
+        b=wsrJwWZrRgcneY7jvj+V6G5kxbpbGSVrvoAfdJIQ/yB3WngHyEJDR1o8fNYUalNnci
+         F7DZA1J4PJNprxhOcHMu8BDOTOiAp5kyXYJkvTnBySUM3o2hXBHDIiK7hZlgbkiJfUhl
+         Hf9hio+981OagQEDji8UiGgWBb9mR33+ZCu1GRb1HyU5/yAmu5Wp1SMrdIWgKegF5dxg
+         Bcnh+vfgMny/6IeRri8jxh2VtihUE8sw+0MJZZJjsez3vcQez68PGPAG+GfPMDpEgOyb
+         04dH4PBEgU9h+Nt67y1z7w322mnsDRtPteNXTF69xJLaNdjp0ovJgFx4N0U9Ab9OdbEG
+         47mQ==
+X-Gm-Message-State: AOAM531p9lh4bgGcSCURNUl71FCkA8xKm/eBeqjSEXkLjbBCsm50bJpO
+        2hQu5jR/VdZfVybF2ViXY7VmVrW0s2+IdAXM8rk=
+X-Google-Smtp-Source: ABdhPJzY3+2ThXwMJw9yk0og+D6oKUxAyjl8KnT5uG3I140A+SYP0sC3mm/izURJuOZOF9vwnYg9BstEsPptSKj1Azk=
+X-Received: by 2002:a02:b384:: with SMTP id p4mr26798509jan.167.1641493292213;
+ Thu, 06 Jan 2022 10:21:32 -0800 (PST)
 MIME-Version: 1.0
-References: <20211230195325.328220-1-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211230195325.328220-1-krzysztof.kozlowski@canonical.com>
+References: <20211231161930.256733-1-krzysztof.kozlowski@canonical.com> <20211231161930.256733-4-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211231161930.256733-4-krzysztof.kozlowski@canonical.com>
 From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Thu, 6 Jan 2022 23:43:05 +0530
-Message-ID: <CAGOxZ52GgtkJ6RStGXik7PmMNfaisrqRojmsvQZWUPaNR8Qp+g@mail.gmail.com>
-Subject: Re: [RFT][PATCH 1/3] ARM: dts: exynos: fix UART3 pins configuration
- in Exynos5250
+Date:   Thu, 6 Jan 2022 23:50:56 +0530
+Message-ID: <CAGOxZ51OdwYFpzz1JaqHRUi3ruwqgEkLiQCCz+Yg9ROCHSQBeQ@mail.gmail.com>
+Subject: Re: [PATCH 03/24] ARM: dts: exynos: drop unused pinctrl defines in Exynos3250
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
-        stable@vger.kernel.org
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof
+Hello Krzysztof
 
-On Fri, Dec 31, 2021 at 4:02 PM Krzysztof Kozlowski
+On Sat, Jan 1, 2022 at 10:42 AM Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> The gpa1-4 pin was put twice in UART3 pin configuration of Exynos5250,
-> instead of proper pin gpa1-5.
+> The PIN_OUT/PIN_OUT_SET/PIN_CFG defines for pin controller pin
+> configuration are not used.
 >
-> Fixes: f8bfe2b050f3 ("ARM: dts: add pin state information in client nodes for Exynos5 platforms")
-> Cc: <stable@vger.kernel.org>
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
-Thanks for fixing this.
+Thanks!
 Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi | 25 -----------------------
+>  1 file changed, 25 deletions(-)
 >
-> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> index d31a68672bfa..d7d756614edd 100644
-> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> @@ -260,7 +260,7 @@ i2c3_hs_bus: i2c3-hs-bus {
->         };
+> diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+> index dff3c6e3aa1f..a616cb1aca29 100644
+> --- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+> @@ -19,31 +19,6 @@ _pin {                                                               \
+>                 samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;            \
+>         }
 >
->         uart3_data: uart3-data {
-> -               samsung,pins = "gpa1-4", "gpa1-4";
-> +               samsung,pins = "gpa1-4", "gpa1-5";
->                 samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
->                 samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->                 samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+> -#define PIN_OUT(_pin, _drv)                                            \
+> -       _pin {                                                          \
+> -               samsung,pins = #_pin;                                   \
+> -               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;        \
+> -               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;               \
+> -               samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;            \
+> -       }
+> -
+> -#define PIN_OUT_SET(_pin, _val, _drv)                                  \
+> -       _pin {                                                          \
+> -               samsung,pins = #_pin;                                   \
+> -               samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;        \
+> -               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;               \
+> -               samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;            \
+> -               samsung,pin-val = <_val>;                               \
+> -       }
+> -
+> -#define PIN_CFG(_pin, _sel, _pull, _drv)                               \
+> -       _pin {                                                          \
+> -               samsung,pins = #_pin;                                   \
+> -               samsung,pin-function = <_sel>;                          \
+> -               samsung,pin-pud = <EXYNOS_PIN_PULL_ ##_pull>;           \
+> -               samsung,pin-drv = <EXYNOS4_PIN_DRV_ ##_drv>;            \
+> -       }
+> -
+>  #define PIN_SLP(_pin, _mode, _pull)                                    \
+>         _pin {                                                          \
+>                 samsung,pins = #_pin;                                   \
 > --
 > 2.32.0
 >
