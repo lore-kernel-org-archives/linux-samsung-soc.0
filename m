@@ -2,122 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4CEC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Jan 2022 10:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFB2C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Jan 2022 18:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238118AbiAFKv1 (ORCPT
+        id S241781AbiAFSNm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Jan 2022 05:51:27 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54926
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238102AbiAFKv0 (ORCPT
+        Thu, 6 Jan 2022 13:13:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51694 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241192AbiAFSNm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Jan 2022 05:51:26 -0500
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 33D743F1EE
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Jan 2022 10:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641466278;
-        bh=Z8uVFl91LVSZAsJ7llhtIxSOJQsIP7V3CT2J91myL5s=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=pWyjd/7bDk8di1FhkNAT4XJoG00EUwkgxOVR+loalyaeKanGuHPiVrf89/Puqj9Mv
-         3Fns0QBtYb+1/hzL1mnPzRX+TSlsbzI23vSJzzTWvzQ0U1knc6mDqF+IogQig2qxBm
-         tEgyroe5RrkNysRSMHpxrKbAlq18DRXNBMvs/rgnITGrgYUIU8v0zK0DSq2tnvnNiJ
-         bsFp2aB+rNMyH970/EyVA8JTSnsS8cz2K+kWiXqg2pdvflpfIDMGcW8kO1T7uLq4Sv
-         jbliWf39vqngKJG7LS+VT/XzK0zKX1gQK0bXhRh8k+TOBy6RUrE7MGyPmbPNyLN0li
-         FpSKyFZkNv5Mw==
-Received: by mail-wr1-f72.google.com with SMTP id v14-20020adfa1ce000000b001a49d6587ceso1018996wrv.21
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Jan 2022 02:51:18 -0800 (PST)
+        Thu, 6 Jan 2022 13:13:42 -0500
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBADC061245;
+        Thu,  6 Jan 2022 10:13:41 -0800 (PST)
+Received: by mail-io1-xd2f.google.com with SMTP id 19so4134684ioz.4;
+        Thu, 06 Jan 2022 10:13:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qEtJLoaA5iONOvnEVWtg5iP2Ussm1/FGTAkvl8oexE4=;
+        b=DU+rXY8T5G10Gr4qPrA8xqxZOy3OkFDI5RIxobVhOj0lBBWQpL2HI/Mfjt1tvGc9LP
+         U+1NePR+011SMkc/U3NJCZCscp/bkCkRRQQetZ78Y7Qycks2Si2+uDn7Nt3Bc00VsBUf
+         svS/n/rJa1kvYx0KDyAilDYl8qSL+ZE44aVmB4T40m3+9BkkV2eazFqDKacPxQkH5RfQ
+         l7Ug+5eMDF/84sr7U6+qabi2CqMr+twhuLitR7OlMHs4ogCzqZ8901VleubUayxML//J
+         eGdd+NgMRCwQrHdZdGTVxIjlsEPoMZntjKncXXbG7tCRi8aBpYohgyEyw4uJ29trCxBS
+         bqtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Z8uVFl91LVSZAsJ7llhtIxSOJQsIP7V3CT2J91myL5s=;
-        b=dATtW9zQiRLIQqw7J4E2wNK3GK5G7LCrSCNCvqeA95HxvwZ1b3JZX99mc1YqsZDDGk
-         0prteu+bd+mcDyCzxa0iJMhmvlEJTuEOd3mOxavLrmAjmgL8bGqi43Loz5Bjg5GTuARb
-         MeQSw1iL/QFOo7Oq3F5wvm7sS1fBo640gdV6atFI9NXCVAvw1USWgkDVusYpUT58YjUg
-         JvKnHWFF6XG86P1FA3cFUmEyVQJqZTzagfmwVEYLTzMHL/sBgDN/dlClCgEeYsZSnkJZ
-         N9ixDE4wNZZIx/UGd35+/qpS/JCZetkQOHXzCVHIvnBcat9GAJBw/jBc2Zi4mKPng6u4
-         fFQw==
-X-Gm-Message-State: AOAM532cs3UexOr1MhtQtsk68pN1ZwwKf1Ea0I4JxV7id5nhroHXqUTJ
-        myQXWj4HUMMx0tsLTk0JcsXDZxPGGjMqw6HNQJx86ABcKtwWVaFtOLJMwQ02G1C0Dc/JhYemWT/
-        ObDP9VjizMftVcXIDTzgDxzjbsajp6S/gIDjHf0UEe9Xo4rsc
-X-Received: by 2002:a05:6000:1088:: with SMTP id y8mr51799858wrw.53.1641466277939;
-        Thu, 06 Jan 2022 02:51:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzvwPlNNr4r+ARSGVb+q8oYwovGI0EfhupJ2baWh7BPrAI0n0mOlcmsVpv6UwYxMeHYDKJutQ==
-X-Received: by 2002:a05:6000:1088:: with SMTP id y8mr51799848wrw.53.1641466277791;
-        Thu, 06 Jan 2022 02:51:17 -0800 (PST)
-Received: from [192.168.1.125] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id l4sm1702147wrm.62.2022.01.06.02.51.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jan 2022 02:51:17 -0800 (PST)
-Message-ID: <6e9b1512-c9bd-f072-ed89-5c0f7cb02909@canonical.com>
-Date:   Thu, 6 Jan 2022 11:51:16 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qEtJLoaA5iONOvnEVWtg5iP2Ussm1/FGTAkvl8oexE4=;
+        b=NFa6mI0k7QqMpRFj4N9j453i7Cyrh0q8QjGgzblcfwmNzxc1PbcK1yPh2cmh64uAM2
+         GbJ4Eop9Fwz5AtSeuXxJQ5foz+wT9IcSx+INDUnjRoAvejyTkO2y2y1qLfIbC7PdtiEb
+         AH6pvO6eGAncfhO9BtUw9kFHI6Hg2KB4xuPmO3plrbz+LowPoz0j76LPlJz2YLXeVB/w
+         6PN8uaCawuNJ38YRbqXKFFtQ+M1+W9cvpxyhTQo1K/kwIqPRrXgTAkDY6EhPHOYdjhC7
+         Vc589c0KmxBh3eURXe8IZrwJjXDjHSVuBiSHEZWECElItvQ5euhC7qmiQP+37EC5pqPA
+         /QiQ==
+X-Gm-Message-State: AOAM532fR6/33BGnuhwBs0e/pAdX3hLiHtG55SpcBcfMlAM2qljFpsOo
+        BYuEoXjELljMyKoWO/sGIOyN6RbEAgetsgPc2tP427hk
+X-Google-Smtp-Source: ABdhPJyhr3snTkGgNEkVx77B7Srk7PUlnDiZW9SzjEH7pRqrqPmlLFCj8DeDA6goEYe4mUJvzOfpnE0tQxhwUNteq5A=
+X-Received: by 2002:a05:6638:14c2:: with SMTP id l2mr28020601jak.276.1641492821017;
+ Thu, 06 Jan 2022 10:13:41 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH] MAINTAINERS: add reviewer entry for Samsung/Exynos
- platform
-Content-Language: en-US
-To:     Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org
-Cc:     s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org
-References: <CGME20220105165351epcas5p100b28a19d5a5e5614ea82adf5e0037b0@epcas5p1.samsung.com>
- <20220105164341.27479-1-alim.akhtar@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220105164341.27479-1-alim.akhtar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20211230195325.328220-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211230195325.328220-1-krzysztof.kozlowski@canonical.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Thu, 6 Jan 2022 23:43:05 +0530
+Message-ID: <CAGOxZ52GgtkJ6RStGXik7PmMNfaisrqRojmsvQZWUPaNR8Qp+g@mail.gmail.com>
+Subject: Re: [RFT][PATCH 1/3] ARM: dts: exynos: fix UART3 pins configuration
+ in Exynos5250
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/01/2022 17:43, Alim Akhtar wrote:
-> Adds myself as reviewer for Samsung/Exynos platform to help
-> in review of current and upcoming SoCs patches.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Hi Krzysztof
+
+On Fri, Dec 31, 2021 at 4:02 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> The gpa1-4 pin was put twice in UART3 pin configuration of Exynos5250,
+> instead of proper pin gpa1-5.
+>
+> Fixes: f8bfe2b050f3 ("ARM: dts: add pin state information in client nodes for Exynos5 platforms")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  MAINTAINERS | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 13f9a84a617e..ddc8e8552e8b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2544,6 +2544,7 @@ N:	rockchip
->  
->  ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES
->  M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +R:	Alim Akhtar <alim.akhtar@samsung.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
-> @@ -15110,6 +15111,7 @@ PIN CONTROLLER - SAMSUNG
->  M:	Tomasz Figa <tomasz.figa@gmail.com>
->  M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +R:	Alim Akhtar <alim.akhtar@samsung.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
-> @@ -16868,6 +16870,7 @@ SAMSUNG SOC CLOCK DRIVERS
->  M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->  M:	Tomasz Figa <tomasz.figa@gmail.com>
->  M:	Chanwoo Choi <cw00.choi@samsung.com>
-> +R:	Alim Akhtar <alim.akhtar@samsung.com>
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
-> 
-> base-commit: 2585cf9dfaaddf00b069673f27bb3f8530e2039c
-> 
+Thanks for fixing this.
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-It's fine with me for the SoC and Pinctrl, but for clock I will need acks.
+>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> index d31a68672bfa..d7d756614edd 100644
+> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> @@ -260,7 +260,7 @@ i2c3_hs_bus: i2c3-hs-bus {
+>         };
+>
+>         uart3_data: uart3-data {
+> -               samsung,pins = "gpa1-4", "gpa1-4";
+> +               samsung,pins = "gpa1-4", "gpa1-5";
+>                 samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+>                 samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>                 samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+> --
+> 2.32.0
+>
 
-Best regards,
-Krzysztof
+
+-- 
+Regards,
+Alim
