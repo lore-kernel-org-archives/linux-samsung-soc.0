@@ -2,43 +2,40 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B0DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jan 2022 01:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8554C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jan 2022 01:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345272AbiAGBto (ORCPT
+        id S1345232AbiAGBuR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Jan 2022 20:49:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43274 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345244AbiAGBto (ORCPT
+        Thu, 6 Jan 2022 20:50:17 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:55086 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344434AbiAGBuN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Jan 2022 20:49:44 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B3E4C061245;
-        Thu,  6 Jan 2022 17:49:44 -0800 (PST)
+        Thu, 6 Jan 2022 20:50:13 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BFD6B61E4E;
-        Fri,  7 Jan 2022 01:49:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2217BC36AE3;
-        Fri,  7 Jan 2022 01:49:43 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 73245B824B7;
+        Fri,  7 Jan 2022 01:50:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C20C36AE3;
+        Fri,  7 Jan 2022 01:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641520183;
-        bh=7d6SgrBTM7S5WXqCXMhmurIE7717FogEGCjrXrv3vNs=;
+        s=k20201202; t=1641520210;
+        bh=/CgJHQ+YbZ1KI/MydlOsveZ/TMMheplQgs1E/1qx9YA=;
         h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=d+xhBy74LrN6Sb/QggJ7OKzlHuZxjslCB4LRGh5et4f8eDo655gw1ZVAKJ1sKAJvy
-         oqVGXK7T3IRVRoT5x3jCMGX6KbBCSNIx3OmtPbZkTntgbAesxJgOi7rgIC6wDwqHEr
-         Yoxrf2n3/Am+NbybnmgdeA7RLJ8kNMW2fKdingF4HrW6ZsFXLXQ653b5qkOwLGoUn4
-         b1t3+tYSWFD67dZfjd0U4+1hD81Nr6Nfu0enAD+JHE1sci7FQPFHwxTA37/OdCHuML
-         eM5XXvo7tB18uJS02UmPU03IgBDYZp8oF++LJIou/DgRVQF1k/vG5YsG6PZjsUBCT/
-         UMxW6qcN08PTA==
+        b=Y8XMs2kkaavo25wkHJxpUgvA/g2vKO+qhyRC+QguYGg+2uG5791mZ10MRhYxj8suG
+         iaBiq+rQ/AaGH2ntgTPKysJHnw46v9gD4KfrNyMu5AZmYJbdFn8z5ok919MPE8ZGZI
+         pXxYdmBftdi36NfmibDD5AkI1loHuI0wfqhxUSugaFeuzgOU+IO/p2XKPa/jRxmwmX
+         oUfNPZgq7WHc8wWy+g2lPt88bTRgAEEvoH5x0hkXxaFiRbHPE1ISC+ULzCWIRmOXtY
+         dhSyWuN8tTtd+p134W0lQGp6pE9mhMBRkofLnZOTWrn7KG0w2bfibDXhM5FjcnJHHD
+         xHJdP4+2tjFZw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220102115356.75796-6-krzysztof.kozlowski@canonical.com>
-References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com> <20220102115356.75796-6-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 6/8] dt-bindings: clock: samsung: convert Exynos5260 to dtschema
+In-Reply-To: <20220102115356.75796-7-krzysztof.kozlowski@canonical.com>
+References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com> <20220102115356.75796-7-krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH 7/8] dt-bindings: clock: samsung: convert Exynos5410 to dtschema
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -49,18 +46,18 @@ To:     Chanwoo Choi <cw00.choi@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Date:   Thu, 06 Jan 2022 17:49:41 -0800
+Date:   Thu, 06 Jan 2022 17:50:08 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220107014943.2217BC36AE3@smtp.kernel.org>
+Message-Id: <20220107015010.14C20C36AE3@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-01-02 03:53:54)
-> Convert Samsung Exynos5260 SoC clock controller bindings to DT schema
+Quoting Krzysztof Kozlowski (2022-01-02 03:53:55)
+> Convert Samsung Exynos5410 SoC clock controller bindings to DT schema
 > format.
 >=20
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
