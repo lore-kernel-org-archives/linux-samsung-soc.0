@@ -2,182 +2,121 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0470AC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jan 2022 08:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83010C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Jan 2022 12:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235807AbiAGIQM (ORCPT
+        id S232111AbiAGMrH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 7 Jan 2022 03:16:12 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38266
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235738AbiAGIQM (ORCPT
+        Fri, 7 Jan 2022 07:47:07 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52838
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229624AbiAGMrG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Jan 2022 03:16:12 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        Fri, 7 Jan 2022 07:47:06 -0500
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 54A673F337
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jan 2022 08:16:11 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4A0954001B
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jan 2022 12:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641543371;
-        bh=0ETHx7IxO/XI5yIDbHt0JLKs0xDRg+pSbg1JFz236sQ=;
+        s=20210705; t=1641559625;
+        bh=mw0ExawwR8ahd9kK1BIGn/SS/zU5Dv8XgcJ3wXAs/II=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=UEiwGjJnrmfiPlQgvsiLZ/nmhRXsS5MKQ0gs05CwnFmWZavr7qkZzLRo2eXBOfhLL
-         3cCmI+fl3vFk5nM41Na0z7vL4hdv6NdkohlEUUmiAc4xE/m4iYWCDI0tqOQo6Q7zGL
-         PtQKQXkFLtxz6ocI9RFUXB8F/9iSrekepahIzsM38A6xo2LIm9a8BLcaNeB6J1kjpt
-         adxIOlJcYbBTNFuKNF8C9K7nwUHczlhAeNYVx2m7jttSofSg3dZvlEYYx9q3IR/ufO
-         WvCFgeD9qzZBE8eBuMuSUJE3SH8BlAP2YYvLtqDkAsghvf7vLItyyWPBUL5mqPBw7X
-         Kru3Ca4rx9cdQ==
-Received: by mail-ed1-f69.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso4005238edt.20
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jan 2022 00:16:11 -0800 (PST)
+        b=U0wKWHqcpGm/m+00m1PkET9TAVO1BlVbVgB4HVn7x8iXja77UaTu6IJFhaCUkvpXh
+         0QPLXd9eHk86R8sVAKvuItU+lz62HvFpBnfexDk7i3Hb6JOvfnBavQ/MDnTuHAUZ7A
+         xFvRWEdvUyQueOWzdwK5HdrWgupNdraQVIQrDGS5bhXuAWsZrNhWp1HBsSW1k6EjVS
+         887SaP0Ioc4C26bLHekWAN5K7vwh8u7dy6jxkcoWZOpxZPVkNaulT70DTa2fhdSsb0
+         8Q4GvnrvT+FAOeSwi/NyoOy82OHnd5kTuzeijznImSqES1ztiV+QEUSQAYOt9SihXT
+         e9Uz5j2P8y6zA==
+Received: by mail-wr1-f71.google.com with SMTP id i23-20020adfaad7000000b001a6320b66b9so311319wrc.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jan 2022 04:47:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=0ETHx7IxO/XI5yIDbHt0JLKs0xDRg+pSbg1JFz236sQ=;
-        b=E1qEKwOSM+1tIwz09AS/FzEplG8JjuCXQ/7SUTSeyMSK9QL694hvB271V4aAf5ZHaA
-         XY01g0Cgqzw0Ny1Q1ZppPfJaYceUM020bxW6YBVXKRuq72Fgt2QOFnZ0+DB9MQO+BDsu
-         nbxLxL6vwmP3bxWHdd/a7/6NTKKjhJflU6gwiIaKgE7i5SYiMi6nh0uOBfnBGxgdjwEJ
-         633RG0cZISDR/L/l4uhOvLbXhi3rlPZGEMtJbAt3M+8REfQzO3eiHtrcnWFbSH2+d6OA
-         TIBjqroJ+qNYSoQlzkv7p5QY+2np1w9bw4wNT4n3vdiw5cdhY9OzUqPatAmjQN/ETC1z
-         XGxg==
-X-Gm-Message-State: AOAM532iVxeAnvwuiZCqsEbEP1ye/JxYWgK2K7acQ7mZTPbA2MZ9tEiS
-        7poePqItggXwAu3GBXYpRBsen8E/OKnir0T9MAN3qrBmmmgNQ2n7ifpcTp45oTCQpqlE1FGpxED
-        3/ffGX0ASuzX2AQQEniIbkqQIYyOe2bPebd3LjILDST18ScdN
-X-Received: by 2002:a17:906:4556:: with SMTP id s22mr49094542ejq.321.1641543370855;
-        Fri, 07 Jan 2022 00:16:10 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzxJAm9A5L/ysD8uvohTI87Y9b3PV1DnZGH/7gSFBXzSBxRB+4tVyd7e8dsIFzgTftrZrj+Gw==
-X-Received: by 2002:a17:906:4556:: with SMTP id s22mr49094525ejq.321.1641543370622;
-        Fri, 07 Jan 2022 00:16:10 -0800 (PST)
+        bh=mw0ExawwR8ahd9kK1BIGn/SS/zU5Dv8XgcJ3wXAs/II=;
+        b=jDsp8Z40xc/TvCOF6vGu5pT1V12iMFMvppCDi7Rn4FFWpOXMktFOu2+ezwRD6/+tF4
+         YNXzhiHntKUBLEnnJm+/hp6mMLn+cnpNaU5U574DrGDQspwsx96550F582DzU6HtGaDv
+         33CqqleszL+BlbZduDJTt2y1tOFEYueA8QIFFWhw2bfNdirsKQ5mXWv84tzZO0/PHnU1
+         A9AYpqx/cqDzv6SM2b+EhTHtkpjainxBWVp0YKyvqXZwSItJ2yuQUy2x6PpgxMIO+C2B
+         xDlZ7dn+yNMkFYZ339FrqDfgE9kqD0BuALFQ6Xu4s0avjTOIrcuZkumP+YFpopohblR9
+         92Mg==
+X-Gm-Message-State: AOAM530Mz3fVTyigEkfP/OVLBjwMlkayyPahiTHEgfVe7oNlWDbNM8az
+        HLTgVn/3ZqIXx9N1z3vqyPsCGle/JpxW849Q7Xk7zXYLPkAfVHMl6cJ9j/d6WhGCmhg7GdBnC0U
+        esrzuJycVtmUsSpw3OFztYyYvd+M4RLkbPZC0wS8ikf+tuDRG
+X-Received: by 2002:a1c:7908:: with SMTP id l8mr10769068wme.16.1641559624910;
+        Fri, 07 Jan 2022 04:47:04 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw2FsvDO60VgGxZNwGuql9jeQSwLbf8fwlr9vig9/8LpbnhuhXAEvvUqztMYtnXUorH1j6+bA==
+X-Received: by 2002:a1c:7908:: with SMTP id l8mr10769046wme.16.1641559624685;
+        Fri, 07 Jan 2022 04:47:04 -0800 (PST)
 Received: from [192.168.1.126] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id 2sm223915ejt.224.2022.01.07.00.16.10
+        by smtp.gmail.com with ESMTPSA id y8sm5941569wma.19.2022.01.07.04.47.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jan 2022 00:16:10 -0800 (PST)
-Message-ID: <06320ea8-9297-1e90-dafd-978f73c22fff@canonical.com>
-Date:   Fri, 7 Jan 2022 09:16:09 +0100
+        Fri, 07 Jan 2022 04:47:04 -0800 (PST)
+Message-ID: <99115cc4-32f6-d217-68be-33256a6993a8@canonical.com>
+Date:   Fri, 7 Jan 2022 13:47:03 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
+Subject: Re: [PATCH 0/7] arm/arm64: dts: Remove unused num-viewport from pcie
+ node
 Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-References: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
- <CAPLW+4nrPKA66GrF4XukyHWHJ=wBycjyK3ZPLCofEFe-VJ9wWg@mail.gmail.com>
+To:     Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Jisheng Zhang <jszhang@kernel.org>
+Cc:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
+        linux@armlinux.org.uk, andrew@lunn.ch,
+        sebastian.hesselbarth@gmail.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
+        mhiramat@kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20211229160245.1338-1-jszhang@kernel.org>
+ <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAPLW+4nrPKA66GrF4XukyHWHJ=wBycjyK3ZPLCofEFe-VJ9wWg@mail.gmail.com>
+In-Reply-To: <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 03/01/2022 21:59, Sam Protsenko wrote:
-> On Thu, 30 Dec 2021 at 21:34, Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
+On 29/12/2021 17:50, Mark Kettenis wrote:
+>> From: Jisheng Zhang <jszhang@kernel.org>
+>> Date: Thu, 30 Dec 2021 00:02:38 +0800
 >>
->> Hi Chanho and Sam,
+>> After commit 281f1f99cf3a("PCI: dwc: Detect number of iATU windows"),
+>> the number of iATU windows is detected at runtime, what's more,
+>> the 'num-viewport' property parsing has been removed, so remove the
+>> unused num-viewport from pcie node(s).
 >>
->> I am slowly finishing dtschema for Samsung pinctrl drivers [1] and I
->> noticed that Exynos850 and Auto v9 do not define interrupt in pinctrl
->> node with: wakeup-interrupt-controller. This is an interrupt muxing
->> several external wakeup interrupts, e.g. EINT16 - EINT31.
->>
->> For Exynos5433 this looks like:
->> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/exynos/exynos5433.dtsi#L857
->>
->> Missing muxed interrupt for Exynos850 and Autov9 might be fine, although
->> you should see in dmesg error log like:
->>     "irq number for muxed EINTs not found"
->>
->> Can you check that your wakeup-interrupt-controller is properly defined
->> in DTSI? If yes, I will need to include such differences in the dtschema.
->>
+>> It's too late for linux-5.17-rc1, I will rebase and send out v2 if
+>> necessary when 5.17-rc1 is released.
 > 
-> In case of Exynos850, no muxed interrupts exist for wakeup GPIO
-> domains. Basically, "pinctrl_alive" and "pinctrl_cmgp" domains are
-> wake-up capable, and they have dedicated interrupt for each particular
-> GPIO pin. All those interrupts are defined in exynos850-pinctrl.dtsi
-> file, in next nodes:
->   - pinctrl_alive: gpa0..gpa4 (interrupt numbers 1..36)
->   - pinctrl_cmgp: gpm0..gpm7 (interrupt numbers 39..46)
-> 
-> All mentioned interrupts are wakeup interrupts, and there are no muxed
-> ones. So it seems like it's not possible to specify "interrupts"
-> property in pinctrl nodes with wakeup-interrupt-controller. The PM is
-> not enabled in Exynos850 platform yet, so I can't really test if
-> interrupts I mentioned are able to wake up the system.
+> Please no.  This only makes the device trees unnecessarily
+> incompatible with older kernels
 
-Thanks for confirming, I'll adjust the schema.
+Anyone who is running a new DTB with older kernel is doomed anyway, not
+only because of this change but hundreds of other similar cleanups, e.g.
+making DTS conforming to dtschema. Are you sure there are such use cases
+of using new DTB with old kernel? I cannot imagine making a stable
+product with such scenario...
 
-> 
-> After adding this patch ("arm64: dts: exynos: Add missing gpm6 and
-> gpm7 nodes to Exynos850"), I can't see this error message anymore:
-> 
->     samsung-pinctrl 11c30000.pinctrl: irq number for muxed EINTs not found
-> 
-> That's because exynos_eint_wkup_init() function exits in this check:
-> 
->     if (!muxed_banks) {
->         of_node_put(wkup_np);
->         return 0;
->     }
-> 
-> But I actually can see another error message, printed in
-> exynos_eint_gpio_init() function (for wake-up capable pinctrl nodes,
-> because those nodes don't have "interrupts" property now -- you
-> removed those in your patch):
-> 
->     samsung-pinctrl 11850000.pinctrl: irq number not available
->     samsung-pinctrl 11c30000.pinctrl: irq number not available
-> 
-> which in turn leads to exynos_eint_gpio_init() function to exit with
-> -EINVAL code in the very beginning, and I'm not sure if it's ok? As I
-> said, those errors only appear after your patch ("arm64: dts: exynos:
-> drop incorrectly placed wakeup interrupts in Exynos850").
+> and other OSes that do rely on the
+> "num-viewport" property.
 
-Yeah, I replied to this next to my patch. I think my patch was not
-correct and you need one - exactly one - interrupt for regular GPIO
-interrupts.
+Right. We should have move the DTS out of the kernel when it was still
+small. :)
 
-> 
-> It raises next questions, which I'm trying to think over right now.
-> Krzysztof, please let me know if you already have answers to those:
-> 
-> 1. Regarding "wakeup-interrupt-controller" node (and
-> exynos_eint_wkup_init() function): is it ok to not have "interrupts"
-> property in there? Would corresponding interrupts specified in child
-> nodes (gpa0..gpa4) function as wake-up interrupts in this case? Or
-> pinctrl driver should be reworked somehow?
+> It really doesn't hurt to keep this property
+> even if future Linux kernels no longer look at it.
 
-Yes, it should be fine. The message should be changed from error to info
-or even debug, maybe depending on SoC-type (so define in struct
-samsung_pin_ctrl whether exynos_eint_wkup_init expects muxed wake-ip
-interrupts).
-
-> 
-> 2. Regarding missing interrupts in pinctrl nodes (and corresponding
-> error in exynos_eint_gpio_init() function): should it be reworked in
-> some way for Exynos850? Error message seems invalid in Exynos850 case,
-> and I'm not even sure if it's ok exynos_eint_gpio_init() fails. Should
-> it be modified to work that error around, in case of Exynos850?
-> 
-> All other pinctrl nodes have a muxed interrupt (except pinctrl_aud,
-> but that's probably fine).
-
-The error message is valid - correctly points to wrong configuration.
-All pinctrl nodes should have one interrupt, if they have GPIOs capable
-of interrupt as a function (usually 0xf as GPIO CON register). Why
-pinctrl_aud does not have it? Maybe the function EXT_INT (0xf) is not
-available for its pins?
+For Exynos PCIe, the property is still required by bindings, so
+definitely it cannot be removed from DTS. I did not check the other
+bindings.
 
 Best regards,
 Krzysztof
