@@ -2,149 +2,173 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61594C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jan 2022 09:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184A6C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jan 2022 11:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242800AbiAJJVa (ORCPT
+        id S244419AbiAJLIz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Jan 2022 04:21:30 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51112
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229517AbiAJJV1 (ORCPT
+        Mon, 10 Jan 2022 06:08:55 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34007 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239571AbiAJLIo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Jan 2022 04:21:27 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 154CB3FFDD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jan 2022 09:21:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641806486;
-        bh=+nJaduhPmVzgxWjNKs+nFWjH5kVSJ3Nlk+J2KS381O0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=CIpeGV7pvbKME6OgLRczGvG1luKaRhZrytpJZV79q5nJPiMkH2D/q57wLIpEKa3k/
-         QAMx914OJZBwNPGpRKPnKd5Rr0rMFWDOWcjjcIGarCweWO9JMWNWtbI7j7lN/AqvNS
-         2aRiOHeNLJmZWza3lNpbdMkGM01o6Y1PjLoS/3oeFRX5TYMgUB19/JtyaX0spPBJBA
-         mEx4lasLaDihSrQljpMTXgIVFsLfwbrCmmoWJzBYw3cibvgsRArVVBr6huFKFtVFU/
-         fjL0ZEbaY0FXItmZHtjYzXfk4Ol1R7XMEkRUe9f7Vp+eGSDCr/jqH4afCd1+dS77jX
-         DgwSwI0KTWWHw==
-Received: by mail-ed1-f71.google.com with SMTP id g2-20020a056402424200b003f8ee03207eso9623636edb.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jan 2022 01:21:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+nJaduhPmVzgxWjNKs+nFWjH5kVSJ3Nlk+J2KS381O0=;
-        b=qAh+ZOWgVsJbgtG0CZ5gOHhuxGtu8Oeg0JkT6PEfBYcaNUeuJZT0TrelWj6QxIG5kr
-         FfF0+XkNnCVaTneLYSoc68Nbk3HwTjTEJ3t4zOWlV/z9eRtnmHgcDuoDrpU8BxtWjH62
-         17kU7oiWyv3DSSvADtR9xzCXTr0YrDJteLssoKglHwOwvpcJMFxGsToAydEHyeqICn+7
-         PdwHtsNg3F/edgvHZ2CBHAViZl2QnzDqLvbM74JGh4TxYJICQApgVqYRtzly+FECqUKC
-         aNnicKOekWrKQcJg451b056iSNF8iZWul4GxBu1xuCnG7gWbVqhSwTRSwK2/2M6zaC8U
-         UrEg==
-X-Gm-Message-State: AOAM532R4eJ22GUGJS02MAkX0Li19BIaAmeaPTgvsG++jjXwIS2RNo65
-        5eSc3KOqP7hnK7/NMAK1TjuZ9uz85pDr/PiOkz84T6IO2OypEVgn+KlsMiZsur9cf+qG/WC2FSV
-        04AQoTqu4KOTBSF6ZiHOFNs6HqbMmAXrLM36LiB5NbojX2vOe
-X-Received: by 2002:a50:cc07:: with SMTP id m7mr71953597edi.4.1641806485812;
-        Mon, 10 Jan 2022 01:21:25 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxmEmnXL1pZn58kxnt+WXeidMJmzjqQOx68VtLwlRjQqmdUwMASOr7ymat7HHWFkjneIavIrQ==
-X-Received: by 2002:a50:cc07:: with SMTP id m7mr71953588edi.4.1641806485641;
-        Mon, 10 Jan 2022 01:21:25 -0800 (PST)
-Received: from [192.168.1.126] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id 17sm1865199ejo.27.2022.01.10.01.21.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jan 2022 01:21:25 -0800 (PST)
-Message-ID: <2ee68b52-bb73-e013-d722-0c033391b704@canonical.com>
-Date:   Mon, 10 Jan 2022 10:21:24 +0100
+        Mon, 10 Jan 2022 06:08:44 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220110110841euoutp0228d824161240c252a1d8e9aabbc0f0ac~I5CdhhZrk0129901299euoutp02J
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220110110841euoutp0228d824161240c252a1d8e9aabbc0f0ac~I5CdhhZrk0129901299euoutp02J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1641812922;
+        bh=vfJN9qXsLzdmiJkxf0cKKLnMign+JyjSOrL6jW+vGUc=;
+        h=Date:Subject:To:From:In-Reply-To:References:From;
+        b=qlLltjyaxOm1yoFOgURrGQ/PvtbW4OMgC7B4VwC/H6fKmrO8s57BTQmVFcIHJ9U1U
+         A7naApcY95vI8aKhgXceWdE73MMVKNC8DMN/QQm4fczNXJEFAvC51UF/F+jia0FXTi
+         FXr62U4Clx4oM8cw9pp5Eg6h63dsAhdxGXiqkwD4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220110110841eucas1p219dd1e6490323bd43a965c8fede3b03e~I5CdQFgaw3109831098eucas1p2z;
+        Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id FC.98.10009.9B31CD16; Mon, 10
+        Jan 2022 11:08:41 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220110110841eucas1p1083af0dc54a4ce2658c8332b98230bd8~I5CcxQ87c1391313913eucas1p1U;
+        Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220110110841eusmtrp2e31e1dfc1b1ec4b552789bf6b20ab473~I5CcwL6eg3063530635eusmtrp2E;
+        Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
+X-AuditID: cbfec7f2-e7fff70000002719-67-61dc13b95c7a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 79.F3.09404.8B31CD16; Mon, 10
+        Jan 2022 11:08:41 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220110110840eusmtip209c412701d4035db740c43ed0614fe72~I5CcVW8Kv3137631376eusmtip2k;
+        Mon, 10 Jan 2022 11:08:40 +0000 (GMT)
+Message-ID: <2202f06f-e901-44bb-b6dc-7225dd093e1b@samsung.com>
+Date:   Mon, 10 Jan 2022 12:08:40 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 0/7] arm/arm64: dts: Remove unused num-viewport from pcie
- node
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.4.1
+Subject: Re: [RFC PATCH 1/1] ARM: exynos: only do SMC_CMD_CPU1BOOT call on
+ Exynos4
 Content-Language: en-US
-To:     Mark Kettenis <mark.kettenis@xs4all.nl>
-Cc:     jszhang@kernel.org, shawnguo@kernel.org, leoyang.li@nxp.com,
-        robh+dt@kernel.org, linux@armlinux.org.uk, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, hayashi.kunihiko@socionext.com,
-        mhiramat@kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20211229160245.1338-1-jszhang@kernel.org>
- <d3cb7b8439ee3d06@bloch.sibelius.xs4all.nl>
- <99115cc4-32f6-d217-68be-33256a6993a8@canonical.com>
- <d3cb933f371ab5b5@bloch.sibelius.xs4all.nl>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <d3cb933f371ab5b5@bloch.sibelius.xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
+To:     Henrik Grimler <henrik@grimler.se>, linux@armlinux.org.uk,
+        krzysztof.kozlowski@canonical.com, semen.protsenko@linaro.org,
+        martin.juecker@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220108215733.705865-2-henrik@grimler.se>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se1BMcRT2u/e2e2tm13XbpjMeGY23aYn+2DB5jMc1Y4zXGGM8unJbjUp2
+        y6Mhi/VapBDbLaKaWmaoXWmtFJZkyRZL0lRErDJrqi0TEdob+u/7zvnO73zfmR+J0wavoWRU
+        bDynimWjA0U+RPHDb1VBFt96dkpJ/hiFK/cWUhhd3ZjC9L7GS6GvKsMU1rRSpKjsTSMUzuQy
+        bLaYcdQ8wxlec0LEWPgGMVP+otGLqa+5LWKu5+5l3KaApeI1PjM3cdFR2znV5LBwn80pDos4
+        7oJs52d7E65BlsE65E0CFQKZxgxCh3xImjIgaMprEQukE0FhRwcuEDeCd6Y08d+RrxYtJjTy
+        EZTWdvaTdgRH8swiHSJJCRUG5pbhfQMENQZ6stuJPiyhhoAtvdmD/aiN0PT2uwf7UivhY1G3
+        Vx/GKX+oa87yvCmjPiB4adJ4RCIqGHQunagPe1MKOJhmw4WBkWB2ZXqsAvWJhH03DLhgdR48
+        OJjVj32htaKoP8Jw+GURNgB14E9q+1WxQI4jcOzXI0E1A+rt3z1xcGoCFNyaLJTnwLlX+Z4y
+        UFKodQ0RTEjhVPE5XChL4MghWlCPBb7i2r+196qf99thILNSi6WgUfyAu/AD8vMDovH/PVxE
+        xBXkzyWoY5ScOjiW2yFXszHqhFilPGJrjAn9+UxPeis6bqLzre1yK8JIZEVA4oEySWl1HUtL
+        NrG7EjnV1g2qhGhObUXDSCLQXxIRVcjSlJKN57ZwXByn+tvFSO+hGmznipKnftPiDPSUSV92
+        n3DbVu3xDjEFJWmzRbSzxHLdlhz5LLVlwSyj4XPOiNC7bdNnZwTYe076SYvCNReS1UnzXy+P
+        fL0uXeaIzLx2vyeU1zd0LS7ofDP+udj/lEvpHve4d2xQQNbCl3OP3unSRlSlMpHxZyShvvex
+        xMWa9rzDxpEh6Xpixpq9zkmyqatt9sacgrIwftEuuWPwrG3rf5o/ObuVP85crqjW0gwTSt/r
+        ynCjtZbVj49Jvz0y112atm+BRn66ra6W2fJzQqXt7JKkYzkN9Ymm0SiH7KqUWq3LGreV6Y3l
+        qzBoa0j5cbH8ZOqe5sKVrkHhv84Xp7wrX+ZkAgn1ZjZ4Iq5Ss78BVKpEX7sDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsVy+t/xe7o7he8kGvRNYrJ4u2QXo8XGtz+Y
+        LDY9vsZqMeP8PiaLQ1P3Mlqc+TeVxeJ53z4mB3aPy9cuMnvMauhl89g56y67x9Er91g97lzb
+        w+axeUm9x+dNcgHsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
+        mWWpRfp2CXoZEy7vZC+YJ1Lx+txD5gbGnfxdjJwcEgImEt92tjB1MXJxCAksZZQ4MekJE0RC
+        RuLktAZWCFtY4s+1LjaIoveMEic3L2LvYuTg4BWwk9j+UgakhkVAVeL3oo8sIDavgKDEyZlP
+        WEBKRAWSJD5s8QMJCwuESDzb8gNsJLOAuMStJ/PB9ooIPGWU+LN2EyPE/J2MEgv7djGCVLEJ
+        GEp0vQVZzMnBKWAh0Tr1JDNEt5lE19YuRghbXmL72znMExgFZyHZPQvJkllIWmYhaVnAyLKK
+        USS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMN62Hfu5ZQfjylcf9Q4xMnEwHmKU4GBWEuHde+FW
+        ohBvSmJlVWpRfnxRaU5q8SFGU2AATGSWEk3OB0Z8Xkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQ
+        QHpiSWp2ampBahFMHxMHp1QD0zbhRM2WdTIXnm6aa6MbaDPxyWUhLZ1a895rX4W5PmXrTzLN
+        +1km0bySLVjfw2KXruPWLr/jMidbcsTm5DZetLnjYmv/Sj/90cW/DUnnz8g6i3dcMJ45abFp
+        buSOTye9djVoT/ml9El60kzBN1nC7RcqHz+eV31lR4KIXO29zs93tHdYz57Ot6PHlenpsct5
+        u93E79VUKFY13lW7vMmCPeT79g1Ty2asOzNzq9iZim9ai+bM7t/1sn7RcTcFx4MrtifMqkte
+        cXHz9kPTD+tdNZ746Btrw6+kDStK/PqldH2mT1e/LR4/p/RekTzf0W0HU/ZI7bqTHtAs/ey4
+        /J3IxU+33Jhr+MHSZ3WmxsZfZ9WUWIozEg21mIuKEwFRSCYNQAMAAA==
+X-CMS-MailID: 20220110110841eucas1p1083af0dc54a4ce2658c8332b98230bd8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220108215952eucas1p1bb9bc56c7f8ac7117b5e5576635460d5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220108215952eucas1p1bb9bc56c7f8ac7117b5e5576635460d5
+References: <20220108215733.705865-1-henrik@grimler.se>
+        <CGME20220108215952eucas1p1bb9bc56c7f8ac7117b5e5576635460d5@eucas1p1.samsung.com>
+        <20220108215733.705865-2-henrik@grimler.se>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/01/2022 20:39, Mark Kettenis wrote:
->> Date: Fri, 7 Jan 2022 13:47:03 +0100
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->>
->> On 29/12/2021 17:50, Mark Kettenis wrote:
->>>> From: Jisheng Zhang <jszhang@kernel.org>
->>>> Date: Thu, 30 Dec 2021 00:02:38 +0800
->>>>
->>>> After commit 281f1f99cf3a("PCI: dwc: Detect number of iATU windows"),
->>>> the number of iATU windows is detected at runtime, what's more,
->>>> the 'num-viewport' property parsing has been removed, so remove the
->>>> unused num-viewport from pcie node(s).
->>>>
->>>> It's too late for linux-5.17-rc1, I will rebase and send out v2 if
->>>> necessary when 5.17-rc1 is released.
->>>
->>> Please no.  This only makes the device trees unnecessarily
->>> incompatible with older kernels
->>
->> Anyone who is running a new DTB with older kernel is doomed anyway, not
->> only because of this change but hundreds of other similar cleanups, e.g.
->> making DTS conforming to dtschema. Are you sure there are such use cases
->> of using new DTB with old kernel? I cannot imagine making a stable
->> product with such scenario...
-> 
-> Well, many of those changes just affect the node names, which aren't
-> part of the ABI.  And adding missing properties or compatibles doesn't
-> break things either.  But yes, we keep seeing diffs to "cleanup"
-> bindings and device trees, especially in the context of converting
-> them to dtschema.  And that's just wrong.  If old device trees don't
-> pass validation, the default assumption should be that the schema is
-> wrong; not the other way around.
+On 08.01.2022 22:57, Henrik Grimler wrote:
+> On Exynos5 the call is simply ignored by most variants of the
+> trustzone firmware.  However, on some devices it instead causes the
+> device to hang, so let's avoid the call for the SoCs where it should
+> not be needed.
+>
+> To see that the call is ignored, we can look into sboot/tzsw.  On most
+> of the Exynos{4,5} devices the part of sboot/tzsw that seem to handle
+> the secure monitor calls is quite easy to recognise, the SMC number is
+> compared to known ones, and if equal it branches to the relevant
+> function.  In assembly this looks something like:
+>
+> ;-- handle_smc:
+> 0x00000514      650070e3       cmn r0, 0x65
+> 0x00000518      0a00000a       beq loc.smc_cmd_reg
+> 0x0000051c      010070e3       cmn r0, 1
+> 0x00000520      6c00000a       beq loc.smc_cmd_init
+> 0x00000524      020070e3       cmn r0, 2
+> 0x00000528      6b00000a       beq loc.smc_cmd_info
+> 0x0000052c      030070e3       cmn r0, 3
+> 0x00000530      6e00000a       beq loc.smc_cmd_sleep
+> 0x00000534      060070e3       cmn r0, 6
+> 0x00000538      ae00000a       beq loc.smc_cmd_save_state
+> 0x0000053c      070070e3       cmn r0, 7
+> 0x00000540      b400000a       beq loc.smc_cmd_standby
+> 0x00000544      2b01001a       bne loc.smc_return_minus1
+>
+> where above example is from exynos5420-arndale-octa.  As can be seen
+> the case where r0 is 4 (i.e. SMC_CMD_CPU1BOOT) is not handled.  The
+> annotations are taken from github.com/hsnaves/exynos5410-firmware,
+> where a large part of the exynos5410 trustzone firmware has been
+> reverse-engineered.
+>
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
 
-I cannot get how you reached a conclusion that old device tree could be
-good, but old bindings would be bad... Both were developed without
-consistency, sometimes without proper review. Simply both can be wrong
-and now we fix them - the bindings by converting to stricter schema and
-DTS files by aligning them with new schema.
+Works fine on all ARM 32bit Exynos-based boards I have for tests.
 
-There was never a contract between us and users that OLD kernel will
-work with NEW DTB. The only contract we made was the other way around -
-NEW kernel will work with OLD DTB.
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-I understand that it is useful to have new DTB working with old kernel.
-I consider it as a "nice to have" feature but:
-1. Still there are no real users of such pattern (new DTB with old
-kernel), around Linux kernel. If they are - I am repaeting - their Linux
-project is already broken.
+> ---
+>   arch/arm/mach-exynos/firmware.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index 2eaf2dbb8e81..2da5b60b59e2 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -60,8 +60,10 @@ static int exynos_cpu_boot(int cpu)
+>   	/*
+>   	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
+>   	 * because Exynos3250 removes WFE in secure mode.
+> +	 *
+> +	 * On Exynos5 devices the call is ignored by trustzone firmware.
+>   	 */
+> -	if (soc_is_exynos3250())
+> +	if (!soc_is_exynos4210() && !soc_is_exynos4412())
+>   		return 0;
+>   
+>   	/*
 
-2. If Linux drivers or other projects depend on node names and anything
-not being part of bindings (the ABI), they are broken by design. They
-should either be fixed or accept that might get broken anytime soon
-because they do not use bindings but undocumented parts (which are not ABI).
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-3. "Nice to have" should not stop us in improving out codebase and
-making it easier to maintain for us. We do not make these "dtschema
-align" changes for pure fun, but to make everything easier for us in the
-longterm. The dtschema checks I was running (and converting to dtschema)
-already found errors in DTS. These are real bugs which are fixed by this
-stricter dtschema.
-
-Best regards,
-Krzysztof
