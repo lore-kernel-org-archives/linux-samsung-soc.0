@@ -2,173 +2,134 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184A6C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jan 2022 11:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115AEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Jan 2022 15:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244419AbiAJLIz (ORCPT
+        id S235972AbiAJPLG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Jan 2022 06:08:55 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34007 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239571AbiAJLIo (ORCPT
+        Mon, 10 Jan 2022 10:11:06 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:51670
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235940AbiAJPLG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Jan 2022 06:08:44 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220110110841euoutp0228d824161240c252a1d8e9aabbc0f0ac~I5CdhhZrk0129901299euoutp02J
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220110110841euoutp0228d824161240c252a1d8e9aabbc0f0ac~I5CdhhZrk0129901299euoutp02J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1641812922;
-        bh=vfJN9qXsLzdmiJkxf0cKKLnMign+JyjSOrL6jW+vGUc=;
-        h=Date:Subject:To:From:In-Reply-To:References:From;
-        b=qlLltjyaxOm1yoFOgURrGQ/PvtbW4OMgC7B4VwC/H6fKmrO8s57BTQmVFcIHJ9U1U
-         A7naApcY95vI8aKhgXceWdE73MMVKNC8DMN/QQm4fczNXJEFAvC51UF/F+jia0FXTi
-         FXr62U4Clx4oM8cw9pp5Eg6h63dsAhdxGXiqkwD4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220110110841eucas1p219dd1e6490323bd43a965c8fede3b03e~I5CdQFgaw3109831098eucas1p2z;
-        Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id FC.98.10009.9B31CD16; Mon, 10
-        Jan 2022 11:08:41 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220110110841eucas1p1083af0dc54a4ce2658c8332b98230bd8~I5CcxQ87c1391313913eucas1p1U;
-        Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220110110841eusmtrp2e31e1dfc1b1ec4b552789bf6b20ab473~I5CcwL6eg3063530635eusmtrp2E;
-        Mon, 10 Jan 2022 11:08:41 +0000 (GMT)
-X-AuditID: cbfec7f2-e7fff70000002719-67-61dc13b95c7a
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 79.F3.09404.8B31CD16; Mon, 10
-        Jan 2022 11:08:41 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220110110840eusmtip209c412701d4035db740c43ed0614fe72~I5CcVW8Kv3137631376eusmtip2k;
-        Mon, 10 Jan 2022 11:08:40 +0000 (GMT)
-Message-ID: <2202f06f-e901-44bb-b6dc-7225dd093e1b@samsung.com>
-Date:   Mon, 10 Jan 2022 12:08:40 +0100
+        Mon, 10 Jan 2022 10:11:06 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4C45740A56
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jan 2022 15:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1641827462;
+        bh=tX3h7hnt8kxt/dVYtcBgB0Ej6aT/jkR+7hhXYExraYQ=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=wGSybXT0T13FsDNhbOXR6vxo2ngu/3N2vuSKfzlEtHBveDYADtNoT/ghFH9/vVUSY
+         fxrGN1Azil0wylAjqt91vHLl/aHcTmHFCh3RMgzIaLdReoT3FfejCRSqCOwRnpvSJK
+         KSzy79wkOTPuBIAJ7t9pwljyLjr9/ezGawh1ZI1/xCKeCNx5gXCOYefEv29syOIVjw
+         t4MQOI0aacWp4WOhDYa8E6E1Hddi10lQTeorjSbn1gPIb4WPW9FFyHa8/5fIPfMERY
+         hiG5gH5ChXKSXbW14Qc34j0rr5l7Mopat4YqqCfVn7EBimz+iPeLksIxy76h5Y2rBq
+         9PqlyLb2EgBig==
+Received: by mail-ed1-f71.google.com with SMTP id s7-20020a056402520700b003f841380832so10390370edd.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jan 2022 07:11:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=tX3h7hnt8kxt/dVYtcBgB0Ej6aT/jkR+7hhXYExraYQ=;
+        b=UN5v3xD7ObrnLk2h8f81H5xTsu3RxTMADWfuvYoYRu0/DC/BurAI9H7nL8mcskt6N8
+         +ICnCpzPqL5eWa9D1xb0SLxQBCjLig6fq1riMcnXfL+mt77LxDcxdMeRtC5S6l0DQbR4
+         qdPhjtbKyBSBkwiGkMTCjR7q9ktCjuU0aXBgHQvwIMjTPtIYX75wB0jtJPY6PR2AEKeN
+         i+WIMWX4oCINv111p5zSOkjPjVK9LBQStUwdaITPZfjqDzjarq2fXM+7hFhjF+lKgnA0
+         M+ECrPqGlBzODSgQ1zdiZEL6l0DuGCJsgBwp4ed3DgIYT+OZ2ZNICc6OA8Q9mBM+piKk
+         JgXg==
+X-Gm-Message-State: AOAM5303GCbYly1DiAqRkrLfOldfqL/rVr2o+KIZp6fhv61o6m385eSt
+        BCMYKYPAbaGm+elg8siNPNiungnR3n8I+kpmzYhL6nafTjeVF/IRjLVMB/PEI48XqnMpTa4VZYc
+        YTYQv06f3oO6FvmuqdCEK6ryb9goLv2r41pCt98GI+6rZ4TFm
+X-Received: by 2002:a05:6402:2756:: with SMTP id z22mr74500edd.255.1641827460972;
+        Mon, 10 Jan 2022 07:11:00 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxwxpZo2R3+fpKQFtBTyG7e4TaBBMrhOqAuzK/7sAzUdh6Cil2bZ3WxmZvF685+f8JUGO5VTA==
+X-Received: by 2002:a05:6402:2756:: with SMTP id z22mr74475edd.255.1641827460801;
+        Mon, 10 Jan 2022 07:11:00 -0800 (PST)
+Received: from [192.168.1.126] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id c1sm2548737ejf.92.2022.01.10.07.11.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jan 2022 07:11:00 -0800 (PST)
+Message-ID: <372040ab-6ada-62e9-727f-6daeba8e73f8@canonical.com>
+Date:   Mon, 10 Jan 2022 16:10:59 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.4.1
-Subject: Re: [RFC PATCH 1/1] ARM: exynos: only do SMC_CMD_CPU1BOOT call on
- Exynos4
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 2/2] spi: dt-bindings: samsung: convert to dtschema
 Content-Language: en-US
-To:     Henrik Grimler <henrik@grimler.se>, linux@armlinux.org.uk,
-        krzysztof.kozlowski@canonical.com, semen.protsenko@linaro.org,
-        martin.juecker@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220108215733.705865-2-henrik@grimler.se>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220102155807.42758-1-krzysztof.kozlowski@canonical.com>
+ <20220102155807.42758-2-krzysztof.kozlowski@canonical.com>
+ <CAPLW+4miCOwFR11gdaU1nMQZdk8zVcWOcSK=Wjd3AaCagGLyug@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4miCOwFR11gdaU1nMQZdk8zVcWOcSK=Wjd3AaCagGLyug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se1BMcRT2u/e2e2tm13XbpjMeGY23aYn+2DB5jMc1Y4zXGGM8unJbjUp2
-        y6Mhi/VapBDbLaKaWmaoXWmtFJZkyRZL0lRErDJrqi0TEdob+u/7zvnO73zfmR+J0wavoWRU
-        bDynimWjA0U+RPHDb1VBFt96dkpJ/hiFK/cWUhhd3ZjC9L7GS6GvKsMU1rRSpKjsTSMUzuQy
-        bLaYcdQ8wxlec0LEWPgGMVP+otGLqa+5LWKu5+5l3KaApeI1PjM3cdFR2znV5LBwn80pDos4
-        7oJs52d7E65BlsE65E0CFQKZxgxCh3xImjIgaMprEQukE0FhRwcuEDeCd6Y08d+RrxYtJjTy
-        EZTWdvaTdgRH8swiHSJJCRUG5pbhfQMENQZ6stuJPiyhhoAtvdmD/aiN0PT2uwf7UivhY1G3
-        Vx/GKX+oa87yvCmjPiB4adJ4RCIqGHQunagPe1MKOJhmw4WBkWB2ZXqsAvWJhH03DLhgdR48
-        OJjVj32htaKoP8Jw+GURNgB14E9q+1WxQI4jcOzXI0E1A+rt3z1xcGoCFNyaLJTnwLlX+Z4y
-        UFKodQ0RTEjhVPE5XChL4MghWlCPBb7i2r+196qf99thILNSi6WgUfyAu/AD8vMDovH/PVxE
-        xBXkzyWoY5ScOjiW2yFXszHqhFilPGJrjAn9+UxPeis6bqLzre1yK8JIZEVA4oEySWl1HUtL
-        NrG7EjnV1g2qhGhObUXDSCLQXxIRVcjSlJKN57ZwXByn+tvFSO+hGmznipKnftPiDPSUSV92
-        n3DbVu3xDjEFJWmzRbSzxHLdlhz5LLVlwSyj4XPOiNC7bdNnZwTYe076SYvCNReS1UnzXy+P
-        fL0uXeaIzLx2vyeU1zd0LS7ofDP+udj/lEvpHve4d2xQQNbCl3OP3unSRlSlMpHxZyShvvex
-        xMWa9rzDxpEh6Xpixpq9zkmyqatt9sacgrIwftEuuWPwrG3rf5o/ObuVP85crqjW0gwTSt/r
-        ynCjtZbVj49Jvz0y112atm+BRn66ra6W2fJzQqXt7JKkYzkN9Ymm0SiH7KqUWq3LGreV6Y3l
-        qzBoa0j5cbH8ZOqe5sKVrkHhv84Xp7wrX+ZkAgn1ZjZ4Iq5Ss78BVKpEX7sDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsVy+t/xe7o7he8kGvRNYrJ4u2QXo8XGtz+Y
-        LDY9vsZqMeP8PiaLQ1P3Mlqc+TeVxeJ53z4mB3aPy9cuMnvMauhl89g56y67x9Er91g97lzb
-        w+axeUm9x+dNcgHsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
-        mWWpRfp2CXoZEy7vZC+YJ1Lx+txD5gbGnfxdjJwcEgImEt92tjB1MXJxCAksZZQ4MekJE0RC
-        RuLktAZWCFtY4s+1LjaIoveMEic3L2LvYuTg4BWwk9j+UgakhkVAVeL3oo8sIDavgKDEyZlP
-        WEBKRAWSJD5s8QMJCwuESDzb8gNsJLOAuMStJ/PB9ooIPGWU+LN2EyPE/J2MEgv7djGCVLEJ
-        GEp0vQVZzMnBKWAh0Tr1JDNEt5lE19YuRghbXmL72znMExgFZyHZPQvJkllIWmYhaVnAyLKK
-        USS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMN62Hfu5ZQfjylcf9Q4xMnEwHmKU4GBWEuHde+FW
-        ohBvSmJlVWpRfnxRaU5q8SFGU2AATGSWEk3OB0Z8Xkm8oZmBqaGJmaWBqaWZsZI4r2dBR6KQ
-        QHpiSWp2ampBahFMHxMHp1QD0zbhRM2WdTIXnm6aa6MbaDPxyWUhLZ1a895rX4W5PmXrTzLN
-        +1km0bySLVjfw2KXruPWLr/jMidbcsTm5DZetLnjYmv/Sj/90cW/DUnnz8g6i3dcMJ45abFp
-        buSOTye9djVoT/ml9El60kzBN1nC7RcqHz+eV31lR4KIXO29zs93tHdYz57Ot6PHlenpsct5
-        u93E79VUKFY13lW7vMmCPeT79g1Ty2asOzNzq9iZim9ai+bM7t/1sn7RcTcFx4MrtifMqkte
-        cXHz9kPTD+tdNZ746Btrw6+kDStK/PqldH2mT1e/LR4/p/RekTzf0W0HU/ZI7bqTHtAs/ey4
-        /J3IxU+33Jhr+MHSZ3WmxsZfZ9WUWIozEg21mIuKEwFRSCYNQAMAAA==
-X-CMS-MailID: 20220110110841eucas1p1083af0dc54a4ce2658c8332b98230bd8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220108215952eucas1p1bb9bc56c7f8ac7117b5e5576635460d5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220108215952eucas1p1bb9bc56c7f8ac7117b5e5576635460d5
-References: <20220108215733.705865-1-henrik@grimler.se>
-        <CGME20220108215952eucas1p1bb9bc56c7f8ac7117b5e5576635460d5@eucas1p1.samsung.com>
-        <20220108215733.705865-2-henrik@grimler.se>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08.01.2022 22:57, Henrik Grimler wrote:
-> On Exynos5 the call is simply ignored by most variants of the
-> trustzone firmware.  However, on some devices it instead causes the
-> device to hang, so let's avoid the call for the SoCs where it should
-> not be needed.
->
-> To see that the call is ignored, we can look into sboot/tzsw.  On most
-> of the Exynos{4,5} devices the part of sboot/tzsw that seem to handle
-> the secure monitor calls is quite easy to recognise, the SMC number is
-> compared to known ones, and if equal it branches to the relevant
-> function.  In assembly this looks something like:
->
-> ;-- handle_smc:
-> 0x00000514      650070e3       cmn r0, 0x65
-> 0x00000518      0a00000a       beq loc.smc_cmd_reg
-> 0x0000051c      010070e3       cmn r0, 1
-> 0x00000520      6c00000a       beq loc.smc_cmd_init
-> 0x00000524      020070e3       cmn r0, 2
-> 0x00000528      6b00000a       beq loc.smc_cmd_info
-> 0x0000052c      030070e3       cmn r0, 3
-> 0x00000530      6e00000a       beq loc.smc_cmd_sleep
-> 0x00000534      060070e3       cmn r0, 6
-> 0x00000538      ae00000a       beq loc.smc_cmd_save_state
-> 0x0000053c      070070e3       cmn r0, 7
-> 0x00000540      b400000a       beq loc.smc_cmd_standby
-> 0x00000544      2b01001a       bne loc.smc_return_minus1
->
-> where above example is from exynos5420-arndale-octa.  As can be seen
-> the case where r0 is 4 (i.e. SMC_CMD_CPU1BOOT) is not handled.  The
-> annotations are taken from github.com/hsnaves/exynos5410-firmware,
-> where a large part of the exynos5410 trustzone firmware has been
-> reverse-engineered.
->
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+On 03/01/2022 15:41, Sam Protsenko wrote:
+> On Sun, 2 Jan 2022 at 17:58, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
+>> controller bindings to DT schema format
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> ---
+>>  .../devicetree/bindings/spi/samsung,spi.yaml  | 220 ++++++++++++++++++
+>>  .../devicetree/bindings/spi/spi-samsung.txt   | 122 ----------
+>>  MAINTAINERS                                   |   2 +-
+>>  3 files changed, 221 insertions(+), 123 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+>> new file mode 100644
+>> index 000000000000..195bfafe05fd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+>> @@ -0,0 +1,220 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/spi/samsung,spi.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Samsung S3C/S5P/Exynos SoC SPI controller
+>> +
+>> +maintainers:
+>> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> +
+>> +description:
+>> +  All the SPI controller nodes should be represented in the aliases node using
+>> +  the following format 'spi{n}' where n is a unique number for the alias.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - enum:
+>> +          - samsung,s3c2443-spi
+> 
+> Maybe add the list of supported platforms for each compatible (in a
+> comment on the same line), like it was done in .txt binding?
+> 
+> Other than that:
+> 
 
-Works fine on all ARM 32bit Exynos-based boards I have for tests.
+Sure.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> ---
->   arch/arm/mach-exynos/firmware.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index 2eaf2dbb8e81..2da5b60b59e2 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -60,8 +60,10 @@ static int exynos_cpu_boot(int cpu)
->   	/*
->   	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
->   	 * because Exynos3250 removes WFE in secure mode.
-> +	 *
-> +	 * On Exynos5 devices the call is ignored by trustzone firmware.
->   	 */
-> -	if (soc_is_exynos3250())
-> +	if (!soc_is_exynos4210() && !soc_is_exynos4412())
->   		return 0;
->   
->   	/*
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best regards,
+Krzysztof
