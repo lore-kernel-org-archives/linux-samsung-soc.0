@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F15BC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4519C433FE
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 20:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346370AbiAKUTA (ORCPT
+        id S1350714AbiAKUTB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jan 2022 15:19:00 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60218
+        Tue, 11 Jan 2022 15:19:01 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60380
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346392AbiAKUS2 (ORCPT
+        by vger.kernel.org with ESMTP id S1346390AbiAKUS2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 11 Jan 2022 15:18:28 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B1CA640A8D
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 20:18:21 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 71AD140A74
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 20:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641932301;
-        bh=3im6DR0tfQSvVQYJAITaAc2sEgTm9ctnw8/dFQunAY0=;
+        s=20210705; t=1641932300;
+        bh=Qlnwbd6fk1GAVHv44UFEkb4MIEQM8+1pdzBh/ez3KZQ=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=EY9oUbCyFsfXJ3jXUrvifmCoF6dNLNdpaYqolLGZekEH+oor4ouhzkH9nT2xLFZbH
-         ngoQ/ziELdL3dp/5oyQVP1M1BZIWk356QREgZXrRUcAXdyur9KU+wR+3frFQTSkJdH
-         ynJqiq8kB2sTyGNDuCHkFYqGPKs5VYdrhf/YPc7llFcxpR0+J8ypquQBRmmjpimLHw
-         AWKPueBkxGXCmpMbZkPJX0R6D7LJObv+Uqwut4GhLuZfvZJ/hnR4lDuOr5iSQjDDE5
-         iK1VCKw6pPj7nI0MkJ8LolxHaf16xcyLeVbqTUUNj6QazwyWtrGRGfjFl84b3EQSvC
-         lpmbpzAIlXRDA==
-Received: by mail-ed1-f69.google.com with SMTP id o20-20020a056402439400b003f83cf1e472so163831edc.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 12:18:21 -0800 (PST)
+        b=QkZOlQa5xYHr34nh1BjmgEroYXEU3QeBlFnUH8yt5pdneD4IkRXtrN4N8S5LZ4k+o
+         NOE6XR6nXZQTE2LHkAt0u1mF7mwK93fF7qIxpdfhn/jpF3jsHa5EKZ3ItfBs52J43o
+         KGna0GCptV7YoN75C1Mo1KPcFQtFsPAuAMfurocNtQeEY1u4BeqAuBhA6FGCNWnYPA
+         vzAVfFlNypIS9ivtBKv9/KHfpLSuAO6bUmtzHv2jU+sDy9b9W1Iuv2x5b4fEgEQCEc
+         c2yU8IBOAKDhu/EUhYzvdKHo2fW3O3s6JY57SgiaxnK8oPScqPclY3IFWChkPbHYu9
+         cAo0cHTpXAMvA==
+Received: by mail-ed1-f72.google.com with SMTP id h11-20020a05640250cb00b003fa024f87c2so211989edb.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 12:18:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3im6DR0tfQSvVQYJAITaAc2sEgTm9ctnw8/dFQunAY0=;
-        b=aVgxA+eoEZhI66cXvC68oLgR9da0nptvjs1ci4S+YKFFo2lN3XdA0aP1Chx4EZ14Ib
-         DZtYBkiRCkpDliiatP8HcYwiBaNj5ZSlRa5B6B41KQizhMndg7hMoY3ySoZMqROmydGv
-         OwPJIOvRxNcy7QiHMqTLRRSrBIFkjWYvWAlJd91h72famix8B4dTVzMyMTN7nZTKx4gP
-         IDMBzVVt/m+aRTmH/6AGBNdxihqRwtphXnkP4SW6LbRjRGxzZtuou5dwGaWyCH9Ai3cG
-         nxz1TROge09jzCg0FlTfhQQ2R27iTaZDUQzqnhv3caQXVFL5tfINw3hQBPalSUWLi1Nd
-         88Wg==
-X-Gm-Message-State: AOAM530bLb2KE9/e4saEClam5gjcoX4ja19SD7B58rKF49O9SeBTynG5
-        bx3uv1ouo/88XWgJR2weMINXwqvrvayMOZHoiFWtz79/vMo9OYix58PM0mcRTaXFhlEsxH5rYZ5
-        nAJp76KdXM8JBGBx75hI5+8j7HRzbSZ9T77kGPOiqwt7BCkFN
-X-Received: by 2002:a05:6402:1047:: with SMTP id e7mr4254582edu.274.1641932301356;
-        Tue, 11 Jan 2022 12:18:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwuNNnKbwjenV7EEj0Vko4eTPjFtdB7emwJIo+qGaPlmYoH4ymm0zVXP0Saautd3Wo4zKleIw==
-X-Received: by 2002:a05:6402:1047:: with SMTP id e7mr4254562edu.274.1641932301205;
-        Tue, 11 Jan 2022 12:18:21 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id e4sm4030881ejs.13.2022.01.11.12.18.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=Qlnwbd6fk1GAVHv44UFEkb4MIEQM8+1pdzBh/ez3KZQ=;
+        b=KIcNnKUL8ZQkt20Jj98LIgfRRhLXmzXw2KoHTC4zbuAww4Vw41EHEhbuc8p2KXYJGV
+         1iVy/9b6IYpsxjsrL37woSR7AQcB9j3NtHmc5DR3WS8ZkJ8JUhVMvRGyU95ssx+lYys7
+         A+E9x9n5T1ZX4vOKECWcjYs6hi0UTCMRhKu+/dHBhfe7f6kJQKUUPoblvzQi+x6Gvt/h
+         HeVnLKaBE+XDGrV6BvTgQmsqq4Pg7vBGU/ehbLcp1KZpYO6evLCHG+QH8rzSzRu8oTMY
+         JFMu6+PsBTQlxreKz1/jVqzXvxYM0B/CSZkuDtkN4MssIOekaJ41d/wE4wdBG8O+yEG5
+         D5VA==
+X-Gm-Message-State: AOAM532h1tOV6i7HWm8bRHTGhiHB3buR3Ubo9ghdTjphRv4/b8KEuwIG
+        sMK0oJx9i1q+M3yxRpyvUBnq+Uh9cwMMUFA0Fe5J+f9ZLm1ZV49V6SnPiOsU2OqoQ08le6u1+qL
+        1voR2PV1lTZlHAQGyV6Id3BsQ19buK/oQe0RwfZbESYTfN/Un
+X-Received: by 2002:a17:906:f1c1:: with SMTP id gx1mr5115807ejb.554.1641932300102;
         Tue, 11 Jan 2022 12:18:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyjg8XXXEtJLzZGyVnTOplVIASttt5k3NI3JcN11jWvuGHGfSah9kGC+WsunAadBmsLBsMRZQ==
+X-Received: by 2002:a17:906:f1c1:: with SMTP id gx1mr5115789ejb.554.1641932299934;
+        Tue, 11 Jan 2022 12:18:19 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id e4sm4030881ejs.13.2022.01.11.12.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jan 2022 12:18:19 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -68,9 +68,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sam Protsenko <semen.protsenko@linaro.org>,
         Chanho Park <chanho61.park@samsung.com>,
         Alim Akhtar <alim.akhtar@gmail.com>
-Subject: [PATCH v2 21/28] ARM: dts: s3c24xx: align pinctrl with dtschema
-Date:   Tue, 11 Jan 2022 21:17:15 +0100
-Message-Id: <20220111201722.327219-15-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 20/28] arm64: dts: exynos: align pinctrl with dtschema in ExynosAutov9
+Date:   Tue, 11 Jan 2022 21:17:14 +0100
+Message-Id: <20220111201722.327219-14-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
 References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
@@ -85,203 +85,238 @@ change expected.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/s3c2416-pinctrl.dtsi | 60 +++++++++++++-------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ .../boot/dts/exynos/exynosautov9-pinctrl.dtsi | 50 +++++++++----------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s3c2416-pinctrl.dtsi b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-index 92439ee5d7de..20a7d72827c2 100644
---- a/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/s3c2416-pinctrl.dtsi
-@@ -12,66 +12,66 @@ &pinctrl_0 {
- 	 * Pin banks
- 	 */
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi
+index 2407b03b5404..ef0349d1c3d0 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9-pinctrl.dtsi
+@@ -11,7 +11,7 @@
+ #include <dt-bindings/pinctrl/samsung.h>
  
--	gpa: gpa {
-+	gpa: gpa-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
- 
--	gpb: gpb {
-+	gpb: gpb-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
- 
--	gpc: gpc {
-+	gpc: gpc-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
- 
--	gpd: gpd {
-+	gpd: gpd-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
- 
--	gpe: gpe {
-+	gpe: gpe-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 	};
- 
--	gpf: gpf {
-+	gpf: gpf-gpio-bank {
+ &pinctrl_alive {
+-	gpa0: gpa0 {
++	gpa0: gpa0-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
  		interrupt-controller;
- 		#interrupt-cells = <2>;
+@@ -27,7 +27,7 @@ gpa0: gpa0 {
+ 			     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
  	};
  
--	gpg: gpg {
-+	gpg: gpg-gpio-bank {
+-	gpa1: gpa1 {
++	gpa1: gpa1-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
  		interrupt-controller;
+@@ -47,7 +47,7 @@ dp1_hpd: dp1-hpd-pins {
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+ 	};
+ 
+-	gpq0: gpq0 {
++	gpq0: gpq0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -69,7 +69,7 @@ speedy1_bus: speedy1-bus-pins {
+ };
+ 
+ &pinctrl_aud {
+-	gpb0: gpb0 {
++	gpb0: gpb0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -77,7 +77,7 @@ gpb0: gpb0 {
  		#interrupt-cells = <2>;
  	};
  
--	gph: gph {
-+	gph: gph-gpio-bank {
+-	gpb1: gpb1 {
++	gpb1: gpb1-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
+ 
+@@ -85,7 +85,7 @@ gpb1: gpb1 {
+ 		#interrupt-cells = <2>;
  	};
  
--	gpj: gpj {
-+	gpj: gpj-gpio-bank {
+-	gpb2: gpb2 {
++	gpb2: gpb2-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
+ 
+@@ -93,7 +93,7 @@ gpb2: gpb2 {
+ 		#interrupt-cells = <2>;
  	};
  
--	gpk: gpk {
-+	gpk: gpk-gpio-bank {
+-	gpb3: gpb3 {
++	gpb3: gpb3-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
- 	};
  
--	gpl: gpl {
-+	gpl: gpl-gpio-bank {
+@@ -199,7 +199,7 @@ aud_i2s6_idle: aaud-i2s6-idle-pins {
+ };
+ 
+ &pinctrl_fsys0 {
+-	gpf0: gpf0 {
++	gpf0: gpf0-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
+ 
+@@ -207,7 +207,7 @@ gpf0: gpf0 {
+ 		#interrupt-cells = <2>;
  	};
  
--	gpm: gpm {
-+	gpm: gpm-gpio-bank {
+-	gpf1: gpf1 {
++	gpf1: gpf1-gpio-bank {
  		gpio-controller;
  		#gpio-cells = <2>;
- 	};
-@@ -80,92 +80,92 @@ gpm: gpm {
- 	 * Pin groups
- 	 */
  
--	uart0_data: uart0-data {
-+	uart0_data: uart0-data-pins {
- 		samsung,pins = "gph-0", "gph-1";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
+@@ -355,7 +355,7 @@ pcie_perst5_in: pcie-perst5-in-pins {
+ };
  
--	uart0_fctl: uart0-fctl {
-+	uart0_fctl: uart0-fctl-pins {
- 		samsung,pins = "gph-8", "gph-9";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
+ &pinctrl_fsys1 {
+-	gpf8: gpf8 {
++	gpf8: gpf8-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  
--	uart1_data: uart1-data {
-+	uart1_data: uart1-data-pins {
- 		samsung,pins = "gph-2", "gph-3";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
+@@ -393,7 +393,7 @@ sd2_bus4: sd2-bus-width4-pins {
+ };
  
--	uart1_fctl: uart1-fctl {
-+	uart1_fctl: uart1-fctl-pins {
- 		samsung,pins = "gph-10", "gph-11";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+ &pinctrl_fsys2 {
+-	gpf2: gpf2 {
++	gpf2: gpf2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -401,7 +401,7 @@ gpf2: gpf2 {
+ 		#interrupt-cells = <2>;
  	};
  
--	uart2_data: uart2-data {
-+	uart2_data: uart2-data-pins {
- 		samsung,pins = "gph-4", "gph-5";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpf3: gpf3 {
++	gpf3: gpf3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -409,7 +409,7 @@ gpf3: gpf3 {
+ 		#interrupt-cells = <2>;
  	};
  
--	uart2_fctl: uart2-fctl {
-+	uart2_fctl: uart2-fctl-pins {
- 		samsung,pins = "gph-6", "gph-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpf4: gpf4 {
++	gpf4: gpf4-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -417,7 +417,7 @@ gpf4: gpf4 {
+ 		#interrupt-cells = <2>;
  	};
  
--	uart3_data: uart3-data {
-+	uart3_data: uart3-data-pins {
- 		samsung,pins = "gph-6", "gph-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpf5: gpf5 {
++	gpf5: gpf5-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -425,7 +425,7 @@ gpf5: gpf5 {
+ 		#interrupt-cells = <2>;
  	};
  
--	extuart_clk: extuart-clk {
-+	extuart_clk: extuart-clk-pins {
- 		samsung,pins = "gph-12";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpf6: gpf6 {
++	gpf6: gpf6-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -499,7 +499,7 @@ eth1_pps_out: eth1-pps-out-pins {
+ };
+ 
+ &pinctrl_peric0 {
+-	gpp0: gpp0 {
++	gpp0: gpp0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -507,7 +507,7 @@ gpp0: gpp0 {
+ 		#interrupt-cells = <2>;
  	};
  
--	i2c0_bus: i2c0-bus {
-+	i2c0_bus: i2c0-bus-pins {
- 		samsung,pins = "gpe-14", "gpe-15";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpp1: gpp1 {
++	gpp1: gpp1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -515,7 +515,7 @@ gpp1: gpp1 {
+ 		#interrupt-cells = <2>;
  	};
  
--	spi0_bus: spi0-bus {
-+	spi0_bus: spi0-bus-pins {
- 		samsung,pins = "gpe-11", "gpe-12", "gpe-13";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpp2: gpp2 {
++	gpp2: gpp2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -523,7 +523,7 @@ gpp2: gpp2 {
+ 		#interrupt-cells = <2>;
  	};
  
--	sd0_clk: sd0-clk {
-+	sd0_clk: sd0-clk-pins {
- 		samsung,pins = "gpe-5";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpg0: gpg0 {
++	gpg0: gpg0-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -833,7 +833,7 @@ uart5_bus_dual: uart5-bus-dual-pins {
+ };
+ 
+ &pinctrl_peric1 {
+-	gpp3: gpp3 {
++	gpp3: gpp3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -841,7 +841,7 @@ gpp3: gpp3 {
+ 		#interrupt-cells = <2>;
  	};
  
--	sd0_cmd: sd0-cmd {
-+	sd0_cmd: sd0-cmd-pins {
- 		samsung,pins = "gpe-6";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpp4: gpp4 {
++	gpp4: gpp4-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -849,7 +849,7 @@ gpp4: gpp4 {
+ 		#interrupt-cells = <2>;
  	};
  
--	sd0_bus1: sd0-bus1 {
-+	sd0_bus1: sd0-bus1-pins {
- 		samsung,pins = "gpe-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpp5: gpp5 {
++	gpp5: gpp5-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -857,7 +857,7 @@ gpp5: gpp5 {
+ 		#interrupt-cells = <2>;
  	};
  
--	sd0_bus4: sd0-bus4 {
-+	sd0_bus4: sd0-bus4-pins {
- 		samsung,pins = "gpe-8", "gpe-9", "gpe-10";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpg1: gpg1 {
++	gpg1: gpg1-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -865,7 +865,7 @@ gpg1: gpg1 {
+ 		#interrupt-cells = <2>;
  	};
  
--	sd1_cmd: sd1-cmd {
-+	sd1_cmd: sd1-cmd-pins {
- 		samsung,pins = "gpl-8";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+-	gpg2: gpg2 {
++	gpg2: gpg2-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+@@ -873,7 +873,7 @@ gpg2: gpg2 {
+ 		#interrupt-cells = <2>;
  	};
  
--	sd1_clk: sd1-clk {
-+	sd1_clk: sd1-clk-pins {
- 		samsung,pins = "gpl-9";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
+-	gpg3: gpg3 {
++	gpg3: gpg3-gpio-bank {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
  
--	sd1_bus1: sd1-bus1 {
-+	sd1_bus1: sd1-bus1-pins {
- 		samsung,pins = "gpl-0";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
- 
--	sd1_bus4: sd1-bus4 {
-+	sd1_bus4: sd1-bus4-pins {
- 		samsung,pins = "gpl-1", "gpl-2", "gpl-3";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
- 	};
 -- 
 2.32.0
 
