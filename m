@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84656C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 17:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24275C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 17:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344614AbiAKRsw (ORCPT
+        id S1344169AbiAKRsv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jan 2022 12:48:52 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:32918
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344515AbiAKRsv (ORCPT
-        <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 11 Jan 2022 12:48:51 -0500
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:32866
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241290AbiAKRss (ORCPT
+        <rfc822;linux-samsung-soc@vger.kernel.org>);
+        Tue, 11 Jan 2022 12:48:48 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 1B36940037
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 17:48:50 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9449440047
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 17:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641923330;
-        bh=ZnuinRIJ3lwFEAR4y2+anLAVZYP6shQkyVJQl1fjr+Y=;
+        s=20210705; t=1641923327;
+        bh=KtzaeAS3vHdxLiX+UAOcYpw4x029KYpzx4CNQuL/lKY=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=WoDS9RsVjBJTajEhMN7VVCAUmxXK8S679XXdDQyLRfTyrQgHMnWDm02EwaVmft1P+
-         PGuc1od+VdnfZlrZsTuec5xMunm2g84JHRbGnrXoh7iYyAdarrilLJcDb2VcKV5dAs
-         QEU+3TX21dvsZY1rybLsPCMD9jX0/eKuZ0GMSOmxF8WC+SHkCmmvoeayt2Zs3coihL
-         p0fYQ0n9P0E8J3sIj0LN5eIrjG9Kd5qTIaW/jn9T1uheMokC96/PJJEBmmcu7bt92g
-         /Ay+LVW8noqX33Um9oSJG2i02auDVACPzC6/fLe4kZYL8j4Wpb6Ine7hi/D4pZnw4J
-         YthtNvpU7J18Q==
-Received: by mail-ed1-f70.google.com with SMTP id p8-20020aa7d308000000b003fe9b0c4760so3835800edq.17
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 09:48:50 -0800 (PST)
+        b=QqoXNe126LMEbui0jdtl1XY0PTGNk+bQAEt+2X+dsgkPraYGEaH8ODy3nFVpReTRm
+         gZxDcxV0m5t+2WLQVHINOjM88Nl78rL1kwcA5mBVBZ8kBJ4on6x3VzE8U0zIRx7Owx
+         QRlJuuXBBiNLv7AaHDl6Jik5MFdrFNBekhC6FfqpsN+2Tmola4qBxwJTit2HpMQEC6
+         +qy4wI0+u9hDNWQ4BPzLJ7KXgPiHfcavOT2TRQf3TITtWWYKCrmt7iXgcoCXRrO1Vi
+         gwwRO6qWiSMUR0Kg4uRayhhya03/gQabXm3I2FFvjb9Px8J1qnwubLztaHT1t2jvv3
+         fbHF8/DVmp6Dg==
+Received: by mail-ed1-f71.google.com with SMTP id j10-20020a05640211ca00b003ff0e234fdfso1348681edw.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 09:48:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZnuinRIJ3lwFEAR4y2+anLAVZYP6shQkyVJQl1fjr+Y=;
-        b=Pz4U6ZlvZlua7Lmg06JvqhSjOQ7eCuufb+pN0jzoONgF0tBYb4mez3CV+gndzOiLg6
-         anDpR6+0U3dI9Ysvx6jgWzNVcqG1Lb3aTBAhn99VArxTRDPUV2k59rWSGjIvhdIAWIY5
-         dfWPJV81LHk+Wkn6i3ATPY+QTyx+FxH5klOl/95f5kKjCrf9UOSpcmbgGguz7pH5kgWr
-         +t0cWoNZ2knspj92EQLxCMX9bzZfDqcKPFi0PI9N8KVRF5Fe88gmpPyAQoy1mfLyiqAU
-         V/LZb9zNANoVB80cATGmhe9WoT8Zqces1f8O2mkXGrDBBsIbejZWzCkRII+AySGsAL22
-         3xQg==
-X-Gm-Message-State: AOAM533ByXi51mvYW9jV6t764SQjUowUoHY/A8a1h4fbwTAxFQGidgCV
-        5JpHkhtFklHSeasPF+ia/bxTv9SXhKuUQQumDS6G2+UpKKY3iLZsK1qNN3eb0axI7E4TEfHYVrL
-        fnzZbZHrS79pRTGAEd7cfdQYcKzPykQzkKOQO1K2H6dI08B1n
-X-Received: by 2002:a17:907:1b29:: with SMTP id mp41mr4841117ejc.591.1641923329549;
-        Tue, 11 Jan 2022 09:48:49 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyOJF1zICLEmpK0IleOo2vl9NWSe0ASojjhQJ61G5WSvc3ti1P6uZ55rmKdhqD41LQqLvUr+g==
-X-Received: by 2002:a17:907:1b29:: with SMTP id mp41mr4841098ejc.591.1641923329335;
-        Tue, 11 Jan 2022 09:48:49 -0800 (PST)
+        bh=KtzaeAS3vHdxLiX+UAOcYpw4x029KYpzx4CNQuL/lKY=;
+        b=jAl//27ouf0RNzRz2FIlCz5iJSM8PypIlt6nlCPJriuUjmEaPAQLmKi9b/8f05+mZ+
+         DeBruF68T2QX2/0ETfzRYB7uH3ZZzcgUpqYwnJO8VacH/rehvXZJuhwOSr1ILq04OXiU
+         rQwXX8qQcm5NmHErK+fWvVqIQCIud2w2cRA2ow7+xWDmHjxAhVR9YzBMrMHjGPQg8Dqk
+         u7AhsYT3wpbyAJxhtST5WLCl5TjCabk1IRF0YDbA/fB8kgp47JyhkkuPpBcNfW3mGTRK
+         z+SeUyiqr1VbvarTt9mMxU2mrbbZaK22dafUZfsWj/KohlfrB72w69pS7BLXqHpBHKJa
+         uR9g==
+X-Gm-Message-State: AOAM530y4tvBPQDsGDibl94tFkF8GjfpzMmZvDckGw3OzuE6TQuKthNi
+        h1Ybt07ZMjhZOmSmEOGSsJBjUg5aWmk976yMm0A/E4CwgxeDLvSHsfWgllVy5Plmh29u3ih1TCH
+        vVXJ3nQcWYxqfkLJTPWBCn5Kiz03jvdKNZ0M/EDRyvsBJfTtL
+X-Received: by 2002:a17:907:6da0:: with SMTP id sb32mr4730971ejc.455.1641923327243;
+        Tue, 11 Jan 2022 09:48:47 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyOxlUAVlC4YuYQpRipmbsqUYnDmolm/iGG7kaEKNH1SQBIaGmimpIrXXHt3wLrnMj/QIsfRw==
+X-Received: by 2002:a17:907:6da0:: with SMTP id sb32mr4730956ejc.455.1641923327047;
+        Tue, 11 Jan 2022 09:48:47 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id i23sm5224489edt.93.2022.01.11.09.48.48
+        by smtp.gmail.com with ESMTPSA id i23sm5224489edt.93.2022.01.11.09.48.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jan 2022 09:48:48 -0800 (PST)
+        Tue, 11 Jan 2022 09:48:46 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
@@ -66,9 +66,9 @@ To:     Chanwoo Choi <cw00.choi@samsung.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
 Cc:     Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 4/5] dt-bindings: mfd: maxim,max77843: add MAX77843 bindings
-Date:   Tue, 11 Jan 2022 18:48:04 +0100
-Message-Id: <20220111174805.223732-5-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 2/5] dt-bindings: extcon: maxim,max77843: add MAX77843 bindings
+Date:   Tue, 11 Jan 2022 18:48:02 +0100
+Message-Id: <20220111174805.223732-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
 References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
@@ -78,170 +78,63 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Document the bindings for MAX77843 MFD driver, based on Exynos5433 TM2
-devicetree.  These are neither accurate nor finished bindings but at
-least allow parsing existing DTS files.
-
-The example DTS was copied from existing DTS
-(exynos5433-tm2-common.dtsi), so keep the license as GPL-2.0-only.
+Document the bindings for MAX77843 MUIC/extcon driver, based on
+Exynos5433 TM2 devicetree.  These are neither accurate nor finished
+bindings but at least allow parsing existing DTS files.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/mfd/maxim,max77843.yaml          | 144 ++++++++++++++++++
- 1 file changed, 144 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
+ .../bindings/extcon/maxim,max77843.yaml       | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
 
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
+diff --git a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
 new file mode 100644
-index 000000000000..61a0f9dcb983
+index 000000000000..f9ffe3d6f957
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
-@@ -0,0 +1,144 @@
-+# SPDX-License-Identifier: GPL-2.0-only
++++ b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mfd/maxim,max77843.yaml#
++$id: http://devicetree.org/schemas/extcon/maxim,max77843.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Maxim MAX77843 MicroUSB and Companion Power Management IC
++title: Maxim MAX77843 MicroUSB and Companion Power Management IC Extcon
 +
 +maintainers:
++  - Chanwoo Choi <cw00.choi@samsung.com>
 +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 +
 +description: |
 +  This is a part of device tree bindings for Maxim MAX77843 MicroUSB
 +  Integrated Circuit (MUIC).
 +
-+  The Maxim MAX77843 is a MicroUSB and Companion Power Management IC which
-+  includes voltage current regulators, charger, fuel-gauge, haptic motor driver
-+  and MicroUSB management IC.
++  See also Documentation/devicetree/bindings/mfd/maxim,max77843.yaml for
++  additional information and example.
 +
 +properties:
 +  compatible:
-+    const: maxim,max77843
++    const: maxim,max77843-muic
 +
-+  interrupts:
-+    maxItems: 1
++  connector:
++    $ref: /schemas/connector/usb-connector.yaml#
 +
-+  reg:
-+    maxItems: 1
-+
-+  extcon:
-+    $ref: /schemas/extcon/maxim,max77843.yaml
-+
-+  motor-driver:
-+    type: object
++  ports:
++    $ref: /schemas/graph.yaml#/properties/port
++    description:
++      Any connector to the data bus of this controller should be modelled using
++      the OF graph bindings specified
 +    properties:
-+      compatible:
-+        const: maxim,max77843-haptic
-+
-+      haptic-supply:
-+        description: Power supply to the haptic motor
-+
-+      pwms:
-+        maxItems: 1
-+
-+    required:
-+      - compatible
-+      - haptic-supply
-+      - pwms
-+
-+  regulators:
-+    $ref: /schemas/regulator/maxim,max77843.yaml
++      port:
++        $ref: /schemas/graph.yaml#/properties/port
 +
 +required:
 +  - compatible
-+  - interrupts
-+  - reg
++  - connector
 +
 +additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@66 {
-+            compatible = "maxim,max77843";
-+            interrupt-parent = <&gpa1>;
-+            interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+            reg = <0x66>;
-+
-+            extcon {
-+                compatible = "maxim,max77843-muic";
-+
-+                connector {
-+                    compatible = "samsung,usb-connector-11pin",
-+                                 "usb-b-connector";
-+                    label = "micro-USB";
-+                    type = "micro";
-+
-+                    ports {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+
-+                        port@0 {
-+                            /*
-+                             * TODO: The DTS this is based on does not have
-+                             * port@0 which is a required property. The ports
-+                             * look incomplete and need fixing.
-+                             * Add a disabled port just to satisfy dtschema.
-+                             */
-+                            reg = <0>;
-+                            status = "disabled";
-+                        };
-+
-+                        port@3 {
-+                            reg = <3>;
-+                            endpoint {
-+                                remote-endpoint = <&mhl_to_musb_con>;
-+                            };
-+                        };
-+                    };
-+                };
-+
-+                ports {
-+                    port {
-+                        endpoint {
-+                            remote-endpoint = <&usb_to_muic>;
-+                        };
-+                    };
-+                };
-+            };
-+
-+            regulators {
-+                compatible = "maxim,max77843-regulator";
-+
-+                SAFEOUT1 {
-+                    regulator-name = "SAFEOUT1";
-+                    regulator-min-microvolt = <3300000>;
-+                    regulator-max-microvolt = <4950000>;
-+                };
-+
-+                SAFEOUT2 {
-+                    regulator-name = "SAFEOUT2";
-+                    regulator-min-microvolt = <3300000>;
-+                    regulator-max-microvolt = <4950000>;
-+                };
-+
-+                CHARGER {
-+                    regulator-name = "CHARGER";
-+                    regulator-min-microamp = <100000>;
-+                    regulator-max-microamp = <3150000>;
-+                };
-+            };
-+
-+            motor-driver {
-+                compatible = "maxim,max77843-haptic";
-+                haptic-supply = <&ldo38_reg>;
-+                pwms = <&pwm 0 33670 0>;
-+            };
-+        };
-+    };
 -- 
 2.32.0
 
