@@ -2,162 +2,208 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4166C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 17:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A9FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 20:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344626AbiAKRsy (ORCPT
+        id S242397AbiAKUPS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jan 2022 12:48:54 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:32892
+        Tue, 11 Jan 2022 15:15:18 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37690
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344117AbiAKRst (ORCPT
+        by vger.kernel.org with ESMTP id S242379AbiAKUPS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Jan 2022 12:48:49 -0500
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Tue, 11 Jan 2022 15:15:18 -0500
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B7C1140023
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 17:48:48 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9A9033F17B
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 20:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641923328;
-        bh=LcRt8+t0LEGVlfTku7gPMrViX/Nt71eS6TfrRb0aKjQ=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=O1wJau/yx+I7et521BeX5dRieFSaZAwFxiXMhUAJGwVmmeadC5d9quw1XMTcqW9ek
-         q2NX1Ktslo7P8lMVmoQq+jUzriaophinVHadxN5jVUht5CFoVI/v4UXUfKdefVgTvy
-         YKEnHH7NWSjWx50xLdNYTfvco2uZpZPiRFfWOJPLnbEfnEscxkoebzD8kHrcif6qSo
-         q89VJhTqJ3o2+PoKddn4GCuso3VTmQeBSu/+6Ar9FATGyMwLWTStY9JFDsQ50YyziD
-         HQ+mfmUMkjxgbMgiWUupLNjPjn7FJLyMyyxJdpWovSFvATgFoi44LmC+UBm9H1CZF9
-         Hb51UUWPl2DvQ==
-Received: by mail-ed1-f70.google.com with SMTP id v18-20020a056402349200b003f8d3b7ee8dso14010710edc.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 09:48:48 -0800 (PST)
+        s=20210705; t=1641932116;
+        bh=lPhJuPIv3O/CdoWKkJQZ8TgTKphU5KVeriAN8qLF+3w=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=KUBP2Ir70IWvqjEXw0EGDTz9JhaWbWSu8CdRwBru0AzZ3qdi9gNvcA1ikSXEnrbuK
+         VMHAnnXpO5hdLreCfsgPrIJMeK3vOKQv3ds3Xru0bhlHxsZjmBV0g6uo7EtiKTIQY3
+         FD7uz4+P4EHjTOVOOxbqLjD7RIsSSxvz+Uo+VqfkzOdpREBCiGLYeITiIvkfGfTF2s
+         SBAEPqhpV8bwsniKmJ+t2clIPY2vu6YVpgbIBrDzMupYIuWjH8T8hBe3+q0L6JeFOo
+         OAz4WkcbtnLMBr5QVCIzIiWbzaDHinf9vTLJgTDH+s39FbA9mwrrlO7/3j4UrcLyJu
+         N/Gtn8TwKYeFQ==
+Received: by mail-ed1-f69.google.com with SMTP id m16-20020a056402431000b003fb60bbe0e2so209137edc.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 12:15:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LcRt8+t0LEGVlfTku7gPMrViX/Nt71eS6TfrRb0aKjQ=;
-        b=m3E2kc058cH6orsCJXIM8xEUDnsTEKL/7d12gBxCE4MBnfBM/9SqfmOhZPIzU1BNop
-         9G76ZnGiSW4M+/7Dfsi9gLS6udxgMjgpf+HtXmSptq8dmgCqYj853pvnQQRDdI3Bw0zw
-         ggXWxvcPWz9EiukLubMAgiU2sCzdYT7504fTVteeD7D7Felpkv1xMF0SmVBh1ZroEZnt
-         LmiN+Oh0M1jBvwtIkqM8qAarW2orV7Chz+aQ7OGWMxfzsp1rCDleEOvgig3od1ye1n6c
-         93xGJlncQqyP1d0jEL/OeMqbJZcQL6OZ75BRJu/sMgKjS4iI+9p+TxBanMldsCZhGqqn
-         c+IQ==
-X-Gm-Message-State: AOAM530UOkma89NWIZNmZmAaHVJ9aw6Jn1HbiMCXUio8nJww28MZo1oP
-        svNk+YfUYJKkOqUzVa4KagnKqv7pxlpi1oAT/haVNTPisB5ZgOwzmxC8gZfHy3Zgv91qobvJSzC
-        CaLHUAFZkIeVKbpWTcEnD3e8A4Gm1Cj9itZALRCwmRsUBnoAt
-X-Received: by 2002:a50:ce4a:: with SMTP id k10mr5454003edj.31.1641923328390;
-        Tue, 11 Jan 2022 09:48:48 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxgF1x3XntlDy5p/SEguWc1VAocNbGh5alkcyHXD9/D2HpsqnHXUWInQydT3dqUznGBo75t3A==
-X-Received: by 2002:a50:ce4a:: with SMTP id k10mr5453985edj.31.1641923328228;
-        Tue, 11 Jan 2022 09:48:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lPhJuPIv3O/CdoWKkJQZ8TgTKphU5KVeriAN8qLF+3w=;
+        b=hq5exMjw9vNqloDb5vNiFmYjOSKgo5usI1d5IOzQ6x2+WWlG9pWktc8PEIO0fxC5HX
+         3v24xqWoQ7914GYCYaWkc6HCWlNWHXihE2H8u6T6ytvLdRD0+IRRY6FlfvBj2RtB7zIy
+         Fs5h6U7fhBUf4sztTsdM8ldWF59sAZFkKMQs+g9vfg7psVol+9RREWjjPAE5y5NhIt3J
+         d4a2FoK1p2jSwG0mTxoSQNIe6Aipz5EZpVesPdDkDKN5PjiA0e1rrnqsUWaL7p3kvaZP
+         oyMGvqKJLn+7puFGQ8mOxV4Is/6B1OUfI9m7EulrC2KhNXl7fG+/91yvLugaSF0MAj8q
+         qDCw==
+X-Gm-Message-State: AOAM531ymQcFXfuJY433jbIM+kw0sA9yRfV4ywg2BW7SoMPjP1XmyMf8
+        4BpIKFu2uU0hV6zVg4fv8WwoZAFaGvhRR53lx6fQQVBGqboiVv8BGBMAyWGoLUPEZgVrU+Tf+kh
+        CPDrdCEeVlPxW7Z7i2e2Tlu+/+jgFznH132GmQOTXeNOy8Sc2
+X-Received: by 2002:a17:906:1405:: with SMTP id p5mr4956195ejc.113.1641932116241;
+        Tue, 11 Jan 2022 12:15:16 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwaxUmxBzgzWGTbTGdz1mYjm0oVEAku2/BN2r0BtcEZ2s0exOxr22WH6LCKYnzoXk7FithEBQ==
+X-Received: by 2002:a17:906:1405:: with SMTP id p5mr4956173ejc.113.1641932116052;
+        Tue, 11 Jan 2022 12:15:16 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id i23sm5224489edt.93.2022.01.11.09.48.47
+        by smtp.gmail.com with ESMTPSA id f23sm3852212ejj.128.2022.01.11.12.15.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jan 2022 09:48:47 -0800 (PST)
+        Tue, 11 Jan 2022 12:15:15 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 3/5] regulator: dt-bindings: maxim,max77843: add MAX77843 bindings
-Date:   Tue, 11 Jan 2022 18:48:03 +0100
-Message-Id: <20220111174805.223732-4-krzysztof.kozlowski@canonical.com>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@gmail.com>
+Subject: [PATCH v2 00/28] pinctrl: dt-bindings: samsung: convert to dtschema
+Date:   Tue, 11 Jan 2022 21:13:58 +0100
+Message-Id: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
-References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Document the bindings for MAX77843 regulator driver.  The bindings are
-almost identical to MAX77693 bindings, except the actual names of
-regulators.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../bindings/regulator/maxim,max77843.yaml    | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
+Changes since v1
+================
+1. Patch #1: add missing pin assignment (Alim).
+2. Patch #2: correct double sizeof() (Alim).
+3. Patch #7, #8: put label-override in proper patch (Alim).
+4. Patch #24: Extend doc, change the 'if' clause for wake-up interrupts.
+5. New patches: #25 - #28.
+   Exynos850 and ExynosAutov9 seems to be different in pin ctrl interrupt
+   handling, so they need their own compatibles.
+   Please kindly review and provide feedback on these as I do not have
+   details.
+6. Add review tags.
 
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
-new file mode 100644
-index 000000000000..a963025e96c1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
-@@ -0,0 +1,65 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/maxim,max77843.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Maxim MAX77843 MicroUSB and Companion Power Management IC regulators
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+description: |
-+  This is a part of device tree bindings for Maxim MAX77843 MicroUSB Integrated
-+  Circuit (MUIC).
-+
-+  See also Documentation/devicetree/bindings/mfd/maxim,max77843.yaml for
-+  additional information and example.
-+
-+properties:
-+  compatible:
-+    const: maxim,max77843-regulator
-+
-+  CHARGER:
-+    type: object
-+    $ref: regulator.yaml#
-+    additionalProperties: false
-+    description: |
-+      Current regulator.
-+
-+    properties:
-+      regulator-name: true
-+      regulator-always-on: true
-+      regulator-boot-on: true
-+      regulator-min-microamp:
-+        minimum: 100000
-+      regulator-max-microamp:
-+        maximum: 3150000
-+
-+    required:
-+      - regulator-name
-+
-+patternProperties:
-+  "^SAFEOUT[12]$":
-+    type: object
-+    $ref: regulator.yaml#
-+    additionalProperties: false
-+    description: |
-+      Safeout LDO regulator.
-+
-+    properties:
-+      regulator-name: true
-+      regulator-always-on: true
-+      regulator-boot-on: true
-+      regulator-min-microvolt:
-+        minimum: 3300000
-+      regulator-max-microvolt:
-+        maximum: 4950000
-+
-+    required:
-+      - regulator-name
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
+Dependencies
+============
+1. Patch #2 ("pinctrl: samsung: accept GPIO bank nodes with a suffix") is
+   necessary for DTS patches.
+
+2. Last patches #27 and #28 depend on patch #26 adding the compatibles.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (28):
+  pinctrl: samsung: drop pin banks references on error paths
+  pinctrl: samsung: accept GPIO bank nodes with a suffix
+  ARM: dts: exynos: drop unused pinctrl defines in Exynos3250
+  ARM: dts: exynos: simplify PMIC DVS pin configuration in Odroid XU
+  ARM: dts: exynos: override pins by label in Peach Pit
+  ARM: dts: exynos: simplify PMIC DVS pin configuration in Peach Pit
+  ARM: dts: exynos: override pins by label in Peach Pi
+  ARM: dts: exynos: simplify PMIC DVS pin configuration in Peach Pi
+  ARM: dts: s3c64xx: drop unneeded pinctrl wake-up interrupt mapping
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos3250
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos4210
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos4412
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos5250
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos5260
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos5410
+  ARM: dts: exynos: align pinctrl with dtschema in Exynos542x/5800
+  arm64: dts: exynos: align pinctrl with dtschema in Exynos5433
+  arm64: dts: exynos: align pinctrl with dtschema in Exynos7
+  arm64: dts: exynos: align pinctrl with dtschema in Exynos850
+  arm64: dts: exynos: align pinctrl with dtschema in ExynosAutov9
+  ARM: dts: s3c24xx: align pinctrl with dtschema
+  ARM: dts: s3c64xx: align pinctrl with dtschema
+  ARM: dts: s5pv210: align pinctrl with dtschema
+  dt-bindings: pinctrl: samsung: convert to dtschema
+  dt-bindings: pinctrl: samsung: describe Exynos850 and ExynosAutov9
+    wake-ups
+  pinctrl: samsung: add support for Exynos850 and ExynosAutov9 wake-ups
+  arm64: dts: exynos: use dedicated wake-up pinctrl compatible in
+    Exynos850
+  arm64: dts: exynos: use dedicated wake-up pinctrl compatible in
+    ExynosAutov9
+
+ .../pinctrl/samsung,pinctrl-gpio-bank.yaml    |  52 +++
+ .../pinctrl/samsung,pinctrl-pins-cfg.yaml     |  81 ++++
+ .../samsung,pinctrl-wakeup-interrupt.yaml     | 106 +++++
+ .../bindings/pinctrl/samsung,pinctrl.yaml     | 392 ++++++++++++++++++
+ .../bindings/pinctrl/samsung-pinctrl.txt      | 383 -----------------
+ MAINTAINERS                                   |   2 +-
+ arch/arm/boot/dts/exynos3250-artik5.dtsi      |  10 +-
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi     | 165 ++++----
+ arch/arm/boot/dts/exynos4210-i9100.dts        |  30 +-
+ arch/arm/boot/dts/exynos4210-origen.dts       |   2 +-
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi     | 226 +++++-----
+ arch/arm/boot/dts/exynos4210-smdkv310.dts     |   4 +-
+ arch/arm/boot/dts/exynos4210-trats.dts        |   6 +-
+ .../boot/dts/exynos4210-universal_c210.dts    |  12 +-
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi   |   4 +-
+ arch/arm/boot/dts/exynos4412-itop-elite.dts   |   2 +-
+ .../boot/dts/exynos4412-itop-scp-core.dtsi    |   2 +-
+ arch/arm/boot/dts/exynos4412-midas.dtsi       |  30 +-
+ .../boot/dts/exynos4412-odroid-common.dtsi    |   8 +-
+ arch/arm/boot/dts/exynos4412-odroidx.dts      |   2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts       |   4 +-
+ arch/arm/boot/dts/exynos4412-p4note.dtsi      |  44 +-
+ arch/arm/boot/dts/exynos4412-pinctrl.dtsi     | 252 +++++------
+ arch/arm/boot/dts/exynos4412-smdk4412.dts     |   4 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts      |   2 +-
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi     | 220 +++++-----
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |   2 +-
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi |  22 +-
+ arch/arm/boot/dts/exynos5250-snow-rev5.dts    |   2 +-
+ arch/arm/boot/dts/exynos5250-snow.dts         |   2 +-
+ arch/arm/boot/dts/exynos5250-spring.dts       |  20 +-
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi     | 148 +++----
+ arch/arm/boot/dts/exynos5260-xyref5260.dts    |   2 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts     |  22 +-
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi     | 170 ++++----
+ arch/arm/boot/dts/exynos5410-smdk5410.dts     |   4 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |   2 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |  89 ++--
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi     | 194 ++++-----
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |   6 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   2 +-
+ .../boot/dts/exynos5422-odroidxu3-common.dtsi |   6 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |  89 ++--
+ arch/arm/boot/dts/s3c2416-pinctrl.dtsi        |  60 +--
+ arch/arm/boot/dts/s3c6410-mini6410.dts        |   4 +-
+ arch/arm/boot/dts/s3c64xx-pinctrl.dtsi        | 210 +++++-----
+ arch/arm/boot/dts/s3c64xx.dtsi                |  16 +-
+ arch/arm/boot/dts/s5pv210-aquila.dts          |   2 +-
+ arch/arm/boot/dts/s5pv210-aries.dtsi          |  40 +-
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts     |  12 +-
+ arch/arm/boot/dts/s5pv210-galaxys.dts         |  16 +-
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi        | 226 +++++-----
+ .../boot/dts/exynos/exynos5433-pinctrl.dtsi   | 211 +++++-----
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 259 ++++++------
+ .../boot/dts/exynos/exynos7-espresso.dts      |   6 +-
+ .../boot/dts/exynos/exynos7-pinctrl.dtsi      | 176 ++++----
+ .../boot/dts/exynos/exynos850-pinctrl.dtsi    |  52 +--
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |   4 +-
+ .../boot/dts/exynos/exynosautov9-pinctrl.dtsi |  50 +--
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi  |   2 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c      |   4 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |  87 +++-
+ 62 files changed, 2261 insertions(+), 2003 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+
 -- 
 2.32.0
 
