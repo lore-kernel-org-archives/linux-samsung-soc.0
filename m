@@ -2,134 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D95C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 00:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D405BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 07:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345991AbiAKAYC (ORCPT
+        id S235877AbiAKHur (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Jan 2022 19:24:02 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:57594 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1345920AbiAKAXy (ORCPT
+        Tue, 11 Jan 2022 02:50:47 -0500
+Received: from mail.BETTERBIZ.PL ([45.86.209.138]:53202 "EHLO
+        mail.betterbiz.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235852AbiAKHur (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Jan 2022 19:23:54 -0500
-X-IronPort-AV: E=Sophos;i="5.88,278,1635174000"; 
-   d="scan'208";a="106595559"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Jan 2022 09:23:53 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 376C44157D34;
-        Tue, 11 Jan 2022 09:23:51 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/13] media: exynos4-is: Use platform_get_irq() to get the interrupt
-Date:   Tue, 11 Jan 2022 00:23:11 +0000
-Message-Id: <20220111002314.15213-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220111002314.15213-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20220111002314.15213-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 11 Jan 2022 02:50:47 -0500
+Received: by mail.betterbiz.pl (Postfix, from userid 1001)
+        id E0E8382B3C; Tue, 11 Jan 2022 02:45:48 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=betterbiz.pl; s=mail;
+        t=1641887446; bh=07NAgW1e0WiNB9zqagiM2BnwZfWBCpNa2E4+ccxBPgw=;
+        h=Date:From:To:Subject:From;
+        b=eUzbvfSKXGeSybKjSJ5/aW8M9t3tYWyYcJNUOi+U8F8LeX50jdLgX9r3vdkCO9p11
+         aLby7ouOWR+RGNdOFJ74dk885tcWA92JWk+GuPlX3QVGRyy/9IIQNgE8+l93ulxE+R
+         8x+M6ZZinKZNbovalvbQoTrNfPl5/Q2Zqws1c9Lw+Amr8xC3N+YEXxiGWg4DPqMk9S
+         NhfXpCtC2iy9hWVkI4y41JmOypYpWfqkzgKxtkAgYBQNLGTCPw4w+pOA0bbNiNoTxu
+         C3q4suDlxVoCA+zw2UciDlx3MPnIfMKmusZDWrE/h1C8eRt6UnT1iUyZgcAtolHPH5
+         YfnK3OdGVGqmQ==
+Received: by mail.betterbiz.pl for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 07:45:45 GMT
+Message-ID: <20220111024500-0.1.o.10ia.0.ljmec2h1bo@betterbiz.pl>
+Date:   Tue, 11 Jan 2022 07:45:45 GMT
+From:   "Jakub Daroch" <jakub.daroch@betterbiz.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.betterbiz.pl
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
-allocation of IRQ resources in DT core code, this causes an issue
-when using hierarchical interrupt domains using "interrupts" property
-in the node as this bypasses the hierarchical setup and messes up the
-irq chaining.
+Dzie=C5=84 dobry,
 
-In preparation for removal of static setup of IRQ resource from DT core
-code use platform_get_irq().
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-* No change.
----
- drivers/media/platform/exynos4-is/fimc-core.c | 11 +++++------
- drivers/media/platform/exynos4-is/fimc-lite.c | 11 +++++------
- 2 files changed, 10 insertions(+), 12 deletions(-)
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/media/platform/exynos4-is/fimc-core.c
-index bfdee771cef9..91cc8d58a663 100644
---- a/drivers/media/platform/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/exynos4-is/fimc-core.c
-@@ -926,6 +926,7 @@ static int fimc_probe(struct platform_device *pdev)
- 	struct fimc_dev *fimc;
- 	struct resource *res;
- 	int ret = 0;
-+	int irq;
- 
- 	fimc = devm_kzalloc(dev, sizeof(*fimc), GFP_KERNEL);
- 	if (!fimc)
-@@ -965,11 +966,9 @@ static int fimc_probe(struct platform_device *pdev)
- 	if (IS_ERR(fimc->regs))
- 		return PTR_ERR(fimc->regs);
- 
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (res == NULL) {
--		dev_err(dev, "Failed to get IRQ resource\n");
--		return -ENXIO;
--	}
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
- 
- 	ret = fimc_clk_get(fimc);
- 	if (ret)
-@@ -986,7 +985,7 @@ static int fimc_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = devm_request_irq(dev, res->start, fimc_irq_handler,
-+	ret = devm_request_irq(dev, irq, fimc_irq_handler,
- 			       0, dev_name(dev), fimc);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to install irq (%d)\n", ret);
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index aaa3af0493ce..9b7cc9564cf1 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -1454,6 +1454,7 @@ static int fimc_lite_probe(struct platform_device *pdev)
- 	struct fimc_lite *fimc;
- 	struct resource *res;
- 	int ret;
-+	int irq;
- 
- 	if (!dev->of_node)
- 		return -ENODEV;
-@@ -1485,17 +1486,15 @@ static int fimc_lite_probe(struct platform_device *pdev)
- 	if (IS_ERR(fimc->regs))
- 		return PTR_ERR(fimc->regs);
- 
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (res == NULL) {
--		dev_err(dev, "Failed to get IRQ resource\n");
--		return -ENXIO;
--	}
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
- 
- 	ret = fimc_lite_clk_get(fimc);
- 	if (ret)
- 		return ret;
- 
--	ret = devm_request_irq(dev, res->start, flite_irq_handler,
-+	ret = devm_request_irq(dev, irq, flite_irq_handler,
- 			       0, dev_name(dev), fimc);
- 	if (ret) {
- 		dev_err(dev, "Failed to install irq (%d)\n", ret);
--- 
-2.17.1
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
 
+
+Pozdrawiam,
+Jakub Daroch
