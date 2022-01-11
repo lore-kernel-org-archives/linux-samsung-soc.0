@@ -2,161 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DB2C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 09:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74633C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Jan 2022 10:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349283AbiAKJdh (ORCPT
+        id S1348547AbiAKKNo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Jan 2022 04:33:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349270AbiAKJdg (ORCPT
+        Tue, 11 Jan 2022 05:13:44 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41794
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237471AbiAKKNn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Jan 2022 04:33:36 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6782C06173F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 01:33:31 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id u25so64704277edf.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 01:33:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X8bneVZ+qC15M11+UEogNTqMcApOjWyY+lQpeNZkiXo=;
-        b=MDG3t1FDU8XXB0ZGubfHzYuh/BCkX+jsYiXrFKFfWtqDltvGakGb2KF668ymmoEEQp
-         05b9nH/on0byJC71ajqLPicmF45UQb2HJdLibllWuzqE2y7BexMLJLy8lZvHaRNM1ccn
-         8C9i1xwsQW0Qz9obrqWG37k0NhMOyc89UIhDo=
+        Tue, 11 Jan 2022 05:13:43 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id F1B283F207
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 10:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1641896021;
+        bh=dor9qMPQ0mrrX4bfZ8uDHf6Jen+W2LQ6ZgWRYFeDuWA=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=mBHpXTQ9NSk07MLK7pvpGDnTRvRdw2s3kyy3kNedNQv2oFrKpxRaRJf/BN712aaR3
+         UqHnsGjhVYeGIltNvVDaPGX1w3FTgb6sSNohtO3Yv7gXGq+hvwZ9bLRquFuwOwyjr/
+         GolYdnMoH8dhagiaQ/63aHVvyKN5y/7UGouAt3bfchsHmV4mqeVFGnLIxmvmL+9TxN
+         e6m/EhMorqK1thDUBHqivWSyKQzqZVQirbWuHMyP+g6AtfSo8X97eYNmoLLlkXckDN
+         13jGPAohD7gpkJPjjJEXKgDz9vLFoXmDk1gswtGiAu0b2LxbNWE7sFjGJlGUys5ICX
+         M95h7GKuxg1WA==
+Received: by mail-ed1-f71.google.com with SMTP id q15-20020a056402518f00b003f87abf9c37so12845424edd.15
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jan 2022 02:13:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X8bneVZ+qC15M11+UEogNTqMcApOjWyY+lQpeNZkiXo=;
-        b=cfZAnDumv+uxObX7XYd9lmThS7QKgI+MbPzr+xg4dPQu2KkFNmdJCQw/kgKOJsHyXk
-         9P3hJbpaHO1Hbq/rqHUX80KgoknFT9QxBUQAOAoS/JjAFpLA6D48bxClFWTEKlcNCTO6
-         h1awj2ZHGEF52p0H1aQ6DzSW5uVDMmmjEEEDaUGmVVjv7Ubwjxx72ggdwfayzGc9hrAH
-         flHjZFSLiqodmc6xEmH6Yc8Ft24jETO/8bk+jHF01ctznJHJC1FipA2hIMn02D5+qTPD
-         Z8jWpwmhlG3gUM2muTMjGaQXqbBhw/Ygb4Xe0WqgYKWFYWSayLkWAgdW1naXvGNewox6
-         Jp7A==
-X-Gm-Message-State: AOAM532KophIQn5713dQLquCtuvGbCF3k9VnZsxZgnBvAx+fQWyd/2Ia
-        ckHskeFAk+PLY00hdhr2hzUxK/CoG9RAsMBYbT5U4Q==
-X-Google-Smtp-Source: ABdhPJyFng5l8FDcltBOzaC7Q+BUfc4C2MuIm8fya/CGbULn+72c0lC2c+/0gRyMdBsFYI1M/uk1b8A58qoDK8H9wBI=
-X-Received: by 2002:a05:6402:5214:: with SMTP id s20mr3549866edd.13.1641893610416;
- Tue, 11 Jan 2022 01:33:30 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dor9qMPQ0mrrX4bfZ8uDHf6Jen+W2LQ6ZgWRYFeDuWA=;
+        b=nCGqfQ7/PAmemFEU82RgYDvbbhtiQo1BS8v9SSdutCleqhZZgXVC4i0Fm442rj66Ov
+         KpQu+SWTI4BcydteNoqExtlmfP3evXS2JbpeCdvCu2Q22f8cVmFicpz4A81BNJzNutlY
+         9tz2BRHWX630nR/03BYu6sqrkkyN3tPK07Z0dZGXlr+8AQgbW4l8rIeXEC3+J5r5WVdE
+         U5lxWMrroPlIc+7W1UeG5DU0ld+H8I/Bcns/JDZgJVAy1uHo2D5P7np0vjrRffdzswKt
+         mSABqEcCc98DsCs0pDva/As5C7O2Fm73ocp5GdsTtS2EXRJHS0VOqQVcq5IBGXZFjZRw
+         iFmQ==
+X-Gm-Message-State: AOAM53323m3EJzg9sdZ8q1FDF9BgLw/0EXnpA+NKvWU43YXESY/USYVk
+        IcvZUvouFHI0TxvwJ/in6ehjae1PXf/Nm3z36OEMNcxZe3NrJbST/B/ooVvYIi3IBG4Qz0EhLoG
+        J7plzcLoEnLNoFNsd7C84DwBcKLz1XCvacZ8+siUwkLbW1zM2
+X-Received: by 2002:a17:907:7812:: with SMTP id la18mr2985719ejc.361.1641896021583;
+        Tue, 11 Jan 2022 02:13:41 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzS+KRg2Po2ZmPguoYjn6vWAcaef7toI3fl6TH95T7A0/0ObQGfS0r1niugTRZEPPNRwiEOTw==
+X-Received: by 2002:a17:907:7812:: with SMTP id la18mr2985700ejc.361.1641896021430;
+        Tue, 11 Jan 2022 02:13:41 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id 26sm3431268ejk.138.2022.01.11.02.13.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jan 2022 02:13:41 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pratyush Yadav <p.yadav@ti.com>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>
+Subject: [PATCH v2 0/4] spi: dt-bindings: samsung: convert to dtschema
+Date:   Tue, 11 Jan 2022 11:13:34 +0100
+Message-Id: <20220111101338.58630-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20220110152714.58220-1-jagan@amarulasolutions.com> <9912c743-8acb-c59a-760a-a9b79ed48784@intel.com>
-In-Reply-To: <9912c743-8acb-c59a-760a-a9b79ed48784@intel.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 11 Jan 2022 15:03:19 +0530
-Message-ID: <CAMty3ZDF8jjoOx_qHsFAVKGDPqrOaiwSFkCikrHZQLRd-OV0pQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: exynos: Link DSI panel at port@1 for TM2 board
-To:     Andrzej Hajda <andrzej.hajda@intel.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amarula@amarulasolutions.com,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
+Hi,
 
-On Tue, Jan 11, 2022 at 2:05 PM Andrzej Hajda <andrzej.hajda@intel.com> wrote:
->
-> +CC: dri-devel
->
-> On 10.01.2022 16:27, Jagan Teki wrote:
-> > TM2 board DSI pipeline has input from MIC and output to
-> > s6e3ha2 panel.
-> >
-> > The existing pipeline has child nodes of ports, panel and
-> > MIC is remote-endpoint reference of port@0 of ports.
-> >
-> > Adding panel as another child node to DSI is unconventional
-> > as pipeline has ports child. However it can be true if MIC
-> > is added inside port node like this.
-> >
-> > dsi {
-> >       compatible = "samsung,exynos5433-mipi-dsi";
-> >       #address-cells = <1>;
-> >       #size-cells = <0>;
-> >
-> >       port {
-> >               dsi_to_mic: endpoint {
-> >                       remote-endpoint = <&mic_to_dsi>;
-> >               };
-> >       };
-> >
-> >       panel@0 {
-> >               compatible = "samsung,s6e3hf2";
-> >                  reg = <0>;
-> >                  vdd3-supply = <&ldo27_reg>;
-> >                  vci-supply = <&ldo28_reg>;
-> >                  reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
-> >                  enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
-> >       };
-> > };
-> >
-> > The above pipeline is proper but it requires the DSI input MIC
-> > pipeline to update.
-> >
-> > This patch is trying to add panel at port@1 so-that the entire
-> > pipeline before to panel output is untouched.
-> >
-> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >   arch/arm64/boot/dts/exynos/exynos5433-tm2.dts | 16 ++++++++++++++++
-> >   1 file changed, 16 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> > index aca01709fd29..e13210c8d7e0 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> > +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2.dts
-> > @@ -53,6 +53,16 @@ &cmu_disp {
-> >   };
-> >
-> >   &dsi {
-> > +     ports {
-> > +             port@1 {
-> > +                     reg = <1>;
-> > +
-> > +                     dsi_out_panel: endpoint {
-> > +                             remote-endpoint = <&dsi_in_panel>;
-> > +                     };
-> > +             };
-> > +     };
-> > +
-> >       panel@0 {
-> >               compatible = "samsung,s6e3ha2";
-> >               reg = <0>;
-> > @@ -60,6 +70,12 @@ panel@0 {
-> >               vci-supply = <&ldo28_reg>;
-> >               reset-gpios = <&gpg0 0 GPIO_ACTIVE_LOW>;
-> >               enable-gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>;
-> > +
-> > +             port {
-> > +                     dsi_in_panel: endpoint {
-> > +                             remote-endpoint = <&dsi_out_panel>;
-> > +                     };
-> > +             };
->
->
-> As I already wrote in Exynos thread, DSI host has already parent-child
-> relation with the panel - DSI host knows well who is connected to it.
-> Adding another links between them is redundant and has no value added.
->
-> I have already answered in Exynos thread[1] how could you deal with the
-> issue, you have.
->
-> [1]:
-> https://lore.kernel.org/dri-devel/e541c52b-9751-933b-5eac-783dd0ed9056@intel.com/
+Changes since v1
+================
+1. Patch 2: describe devices matching compatible, correct issues pointed out by
+   Rob, add reviewed-by tag.
+2. New patches 3 and 4.
 
-I have commented on this thread for better understanding. Please have
-a look and respond.
+Best regards,
+Krzysztof
 
-Thanks,
-Jagan.
+Krzysztof Kozlowski (4):
+  ARM: dts: exynos: split dmas into array of phandles in Exynos5250
+  spi: dt-bindings: samsung: convert to dtschema
+  spi: dt-bindings: samsung: allow controller-data to be optional
+  spi: s3c64xx: allow controller-data to be optional
+
+ .../spi/samsung,spi-peripheral-props.yaml     |  36 ++++
+ .../devicetree/bindings/spi/samsung,spi.yaml  | 195 ++++++++++++++++++
+ .../bindings/spi/spi-peripheral-props.yaml    |   1 +
+ .../devicetree/bindings/spi/spi-samsung.txt   | 122 -----------
+ MAINTAINERS                                   |   2 +-
+ arch/arm/boot/dts/exynos5250.dtsi             |   9 +-
+ drivers/spi/spi-s3c64xx.c                     |  14 +-
+ 7 files changed, 242 insertions(+), 137 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
+
+-- 
+2.32.0
+
