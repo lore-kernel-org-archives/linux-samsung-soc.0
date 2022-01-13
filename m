@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E31CC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 13:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3315C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 13:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235082AbiAMNVF (ORCPT
+        id S235108AbiAMNYj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Jan 2022 08:21:05 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52412
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233400AbiAMNVF (ORCPT
+        Thu, 13 Jan 2022 08:24:39 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:55900
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235104AbiAMNYi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Jan 2022 08:21:05 -0500
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        Thu, 13 Jan 2022 08:24:38 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D983A3F1C8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 13:21:03 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C183B4000F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 13:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642080063;
-        bh=wDhZU+ZCOzAWYEfifJv+1WyYVoJtwb8GVGdyzI9FKek=;
+        s=20210705; t=1642080277;
+        bh=jgEXa3jIbZdSwQdiBctgazOr3O8giX16P/36cdj/vYs=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=pqN6GfjGuLLF7dAWn1l5yicJ7pHbLVX/bXW48Rst2RSwxV1ABeYo2bHI1j0YDOk+I
-         awmyaVtD8g56CYYXRPSB61T6gy3326SRxSehzf0/wwnEPQIGLbk7LghVCniflx8BPK
-         60VEnj1sS0SXbW4qvAvJvw4MYT5dDRFobYm5djmhtSytRLKbNlAX8JdkY2teuHJAwb
-         t1tyAMFzgCsSwFXdbWAASvNqI/ywHTE0rE5GQRs/v2iQ19wKRp6BGS7IMhDl8qzxpl
-         zJgNw5MgvynWH0HrCpmqh3Pp4BBC5+179HFpJ9zArGuWVWcUm/B3vELtkCK1F0yAS2
-         06dj6tV5ZZnrw==
-Received: by mail-ed1-f72.google.com with SMTP id m16-20020a056402431000b003fb60bbe0e2so5313300edc.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 05:21:03 -0800 (PST)
+        b=A+LcaMb+vNTyK+jwIwwLGaLyoopwwYV3qwNAditX8h4dAEcI41gQQNz9929fTppK7
+         GjrlUgpStGWwRirmQc0nrzKlWav7en1kd/352Q73YZYL8ZI9jAfhdiFwyOC/McVB/p
+         mtjs/SwQwmrljHB+5gLjopSwIgcWG4N9+4WvmEYv56wyRZOXR+78ctTid/iWFJgD7Z
+         +QJMiCUOayb/c9I8WkXG/giqJezVsaKtQFq1uRpdDdPeZQIUL/8AM91edlVWy7cKLT
+         88n5lyC9td3g/f1C7xbS8IR+Cm4OzKUdamKwZhZOX/qUo9klOGi84UIiQMHCIFyvIt
+         NkJeS0qmTfTkg==
+Received: by mail-ed1-f71.google.com with SMTP id m8-20020a056402510800b003f9d22c4d48so5296434edd.21
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 05:24:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=wDhZU+ZCOzAWYEfifJv+1WyYVoJtwb8GVGdyzI9FKek=;
-        b=Fk5cdbcUoCTvKaE+Eje4EqQ6k6LjuP43d5894VuA93a6csFJ/fzmwI4IftbppRMMcz
-         jqnMNgHET/GYKGRvMYwPdDm6zMLdmotGlt1HuVmbvVIVxEnbDqC54N+W/fEfKn6XSHeg
-         +15Wx5X9ePwDBMGj6X/zRLIlq3LE6mBVUSr2Yw+xTwuyNG/9tGHwjZkghAo2iZxEE2On
-         f/xdKXk/hEESyRmBASiqaBE23/6dvgZEA6p/1jI4eckQrnxLI41fr8llYZR+qH4sodyJ
-         JRX83bW1cFTWq8Elq1Fg92SAN7GxcvOzx4vi5DfYQednQcVGtpxzXFj06tfiX6mZ1QqJ
-         NZbQ==
-X-Gm-Message-State: AOAM532Puqh5k5EokSTZInXW/VHiyGfmbNKYo58D/XXB0KQf0jtIpH2U
-        rBB8IbGKZ8A5pD6eVBsDo8HDOknWFgAVjPnCc+loET8dF3vYRaa7urNl/5txtCD/D5vTDXoJsf3
-        xCD91wyVOSC9mV+Ox72qNLqboGmxrS/Kwjgt2Jk3rI8l+xz7r
-X-Received: by 2002:a17:906:478a:: with SMTP id cw10mr3411062ejc.39.1642080063227;
-        Thu, 13 Jan 2022 05:21:03 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzjpHVm/kyvq/k9DvoV9wE1ANwk87SXDg69GoUVpA6UcGba7Z0TUVTx/35US4JZ+QG3PKmo5Q==
-X-Received: by 2002:a17:906:478a:: with SMTP id cw10mr3411040ejc.39.1642080063052;
-        Thu, 13 Jan 2022 05:21:03 -0800 (PST)
+        bh=jgEXa3jIbZdSwQdiBctgazOr3O8giX16P/36cdj/vYs=;
+        b=UbDWXD25YVTsiweT1I5No6aUpFyupeyuw1mMD480gZOCOoryx1OUpdOdKZYvEO+432
+         g9X/GQXxiNdSYS5VVwLV9+9glyun4Q/ONJ+6Z54UnUv8uiSVPpBVyoKLV5H8RhUNJ6RW
+         9KdewvUIEBLycupALCVT2eN8K8LRaUFsURO3XgW5BCPJJGZYo6ZVR/dmFqoYTat6XinJ
+         OT+kYhkZ7mATtJzyQbdZQOa9NI2SARW9gBFVgGH105/xGyDbq/wnbvnF225Dsv6wwXok
+         Xc6mhMwZvYSfnNHbG3FLTuRjufnwW5FR8d+MdvpKqD1lJrjd3y9+vm96g2SfuOQM+qcj
+         rYvA==
+X-Gm-Message-State: AOAM531R85vnURkaIBZWbvxWH3oOYLCGFllUHxQHVnDkq0LDTq7bplr2
+        EYMV31QaJTVvdvliI7PkkgoPlygWM2mVrjcYZA0on3wZ0/CtrOLP60HBLDZc6CywbCjQBf6yfTC
+        N38kYSltm1Isy5RPH/v3o5LKQK2eLKaVlbSUUWm1WxNQ904/7
+X-Received: by 2002:a17:906:7e57:: with SMTP id z23mr3540844ejr.674.1642080277465;
+        Thu, 13 Jan 2022 05:24:37 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwS4LnTV4+PzPZuQbqmHmEZJRNcweUCHmK6aMYoKKN4T0AB3VCXZZ9fkpjjEJwNNdQtq4JXPQ==
+X-Received: by 2002:a17:906:7e57:: with SMTP id z23mr3540832ejr.674.1642080277270;
+        Thu, 13 Jan 2022 05:24:37 -0800 (PST)
 Received: from [192.168.0.30] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id e18sm873252ejs.78.2022.01.13.05.21.02
+        by smtp.gmail.com with ESMTPSA id mp12sm905633ejc.19.2022.01.13.05.24.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jan 2022 05:21:02 -0800 (PST)
-Message-ID: <138009e6-6097-3ebf-fd20-ca9babb156e8@canonical.com>
-Date:   Thu, 13 Jan 2022 14:21:01 +0100
+        Thu, 13 Jan 2022 05:24:36 -0800 (PST)
+Message-ID: <0d4c7a40-5eec-2cc5-82bc-d0ba4910d665@canonical.com>
+Date:   Thu, 13 Jan 2022 14:24:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
@@ -95,7 +95,8 @@ On 13/01/2022 13:11, Alim Akhtar wrote:
 >  1 file changed, 1 insertion(+)
 > 
 
-Please rebase on upcoming Samsung SPI dtschema patches.
+Also: subject prefix:
+spi: dt-bindings: samsung:
 
 > diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
 > index 49028a4f5df1..3af2408454b4 100644
@@ -106,9 +107,6 @@ Please rebase on upcoming Samsung SPI dtschema patches.
 >      - samsung,exynos5433-spi: for exynos5433 compatible controllers
 >      - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
 > +    - tesla,fsd-spi: spi controller support for Tesla Full Self-Driving SoC
-
-Compatible - same discussions/questions as with other ones.
-
 >  
 >  - reg: physical base address of the controller and length of memory mapped
 >    region.
