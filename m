@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282C6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 12:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F6FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 12:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234595AbiAMMZs (ORCPT
+        id S232182AbiAMM02 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Jan 2022 07:25:48 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:34407 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234788AbiAMMZH (ORCPT
+        Thu, 13 Jan 2022 07:26:28 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:25180 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234676AbiAMMYN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Jan 2022 07:25:07 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220113122506epoutp0185ed436275ee938e5ed23c4a2dbe21e4~J1BBvnRUB2106021060epoutp01J
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:25:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220113122506epoutp0185ed436275ee938e5ed23c4a2dbe21e4~J1BBvnRUB2106021060epoutp01J
+        Thu, 13 Jan 2022 07:24:13 -0500
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220113122411epoutp03623d9a7304f29e7b8f23910bdd283c56~J1AO4bPf51725217252epoutp03F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:24:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220113122411epoutp03623d9a7304f29e7b8f23910bdd283c56~J1AO4bPf51725217252epoutp03F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642076706;
-        bh=K8vTbIvFIBqHtyyqH6gBJua5O8SlNOOefAJIAr14Cl8=;
+        s=mail20170921; t=1642076651;
+        bh=EeAR0+rYj37Bb1eESVetyYRLJrzbLdsy0CHLNkqHpQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHNBy2aKz0QjFpiYdBn3z76ataNtd5dBWQbkKH8wnTW5I74A5vNhfqsOALjjb0LDC
-         btar4iYmPSrOtzQtuHNdQI16jE8CTk3Jftm41Qvso9hQMy4s9O4TXcR/r/e15WMrQR
-         r808U/IIrf1Xz9PpW/BDgDaz1VJFdwirL5yqwbQ8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220113122505epcas5p1c815dc2d2ae118cae897ce96e82e58b7~J1BBNhJCe2652426524epcas5p1g;
-        Thu, 13 Jan 2022 12:25:05 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4JZNt65JQYz4x9Pp; Thu, 13 Jan
-        2022 12:25:02 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        b=ceOwbCRBXWCjg3DElaefQk7O7k9MXTDQWqQhdNdanJ48LDWtyGVdfpzZDmBDgDfOG
+         UrYvfeXPQiVcaDZ0ItRdtUrZsrqmPSsbhn5uu7oMI5Pg2LEAWNrT3LgoQbOgHy2ghO
+         GLU8n4L6Hx7LiL0yxcQS/6tVcL23O8my+aKpg774=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220113122410epcas5p22418da837de3df13d3bf23579c8b9800~J1AN4G0MD0949509495epcas5p27;
+        Thu, 13 Jan 2022 12:24:10 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4JZNs13Whcz4x9Pw; Thu, 13 Jan
+        2022 12:24:05 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
         epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8F.D6.06423.E1A10E16; Thu, 13 Jan 2022 21:25:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c~J1A94d_951006210062epcas5p3p;
-        Thu, 13 Jan 2022 12:25:02 +0000 (GMT)
+        C1.C6.06423.4E910E16; Thu, 13 Jan 2022 21:24:04 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220113122404epcas5p4aa1c3ac09510eb55cce5fdd0791993a6~J1AIENwhj3143231432epcas5p46;
+        Thu, 13 Jan 2022 12:24:04 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220113122502epsmtrp28d725e966cfd99cee4a4c476022a6bf5~J1A95ADUY3235332353epsmtrp2d;
-        Thu, 13 Jan 2022 12:25:02 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-3d-61e01a1ee6cf
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220113122404epsmtrp12067e84df56a8022e5df48c606c0232a~J1AIEw8p71911119111epsmtrp1V;
+        Thu, 13 Jan 2022 12:24:04 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-cc-61e019e4a2d5
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C2.B8.29871.D1A10E16; Thu, 13 Jan 2022 21:25:01 +0900 (KST)
+        21.A8.29871.3E910E16; Thu, 13 Jan 2022 21:24:03 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220113122459epsmtip2e5b4002f52af13c0bc060d4cb53c7683~J1A7RzPuN1246812468epsmtip2J;
-        Thu, 13 Jan 2022 12:24:59 +0000 (GMT)
+        20220113122401epsmtip254c6116eb94f14a9ffb459ee92f517d3~J1AFXm4yK1245212452epsmtip2r;
+        Thu, 13 Jan 2022 12:24:01 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
@@ -57,96 +57,80 @@ Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         linus.walleij@linaro.org, catalin.marinas@arm.com,
         robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
         s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, Aswani Reddy <aswani.reddy@samsung.com>,
-        linux-fsd@tesla.com, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 23/23] clocksource: exynos_mct: Add support for handling
- three clusters
-Date:   Thu, 13 Jan 2022 17:41:43 +0530
-Message-Id: <20220113121143.22280-24-alim.akhtar@samsung.com>
+        pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-fsd@tesla.com
+Subject: [PATCH 12/23] dt-bindings: add vendor prefix for Tesla
+Date:   Thu, 13 Jan 2022 17:41:32 +0530
+Message-Id: <20220113121143.22280-13-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220113121143.22280-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmlq6c1INEg/VfRCwezNvGZnFo81Z2
-        i/fLehgt5h85x2qx8e0PJospf5YzWWx6fI3V4mPPPVaLh6/CLS7vmsNmMeP8PiaLU9c/s1ks
-        2vqF3aJ17xF2i8Nv2lktHl//w+Yg4LFm3hpGj1kNvWwem1Z1snncubaHzWPzknqPKyeaWD36
-        tqxi9PjXNJfd4/MmuQDOqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTc
-        VFslF58AXbfMHKAvlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFJgV6xYm5xaV5
-        6Xp5qSVWhgYGRqZAhQnZGTeXv2cqeMJeseXdDtYGxn1sXYycHBICJhK7p/eygthCArsZJT7N
-        re5i5AKyPzFKtK34ygzhfGOU+DF9GSNMx7PDG9khEnsZJe6+7IFyWpgkVrW3soBUsQloS9yd
-        voUJxBYRcJO40djBBFLELNDOLHFnwl4gh4NDWCBS4tgqc5AaFgFViUu7v4HdwStgK/Fx2SGo
-        bfISqzccYAYp5wSK312VBzJGQmAph8Sir5dZIWpcJM5s3swCYQtLvDq+hR3ClpL4/G4vG0iv
-        hEC2RM8uY4hwjcTSecegyu0lDlyZwwJSwiygKbF+lz5ImFmAT6L39xMmiE5eiY42IYhqVYnm
-        d1ehOqUlJnZ3Qx3gITGpYys0FCYwShw+e419AqPsLISpCxgZVzFKphYU56anFpsWGOallsOj
-        KTk/dxMjOGlqee5gvPvgg94hRiYOxkOMEhzMSiK8/UX3E4V4UxIrq1KL8uOLSnNSiw8xmgJD
-        bCKzlGhyPjBt55XEG5pYGpiYmZmZWBqbGSqJ855O35AoJJCeWJKanZpakFoE08fEwSnVwNSv
-        NeNB7xGtNb7FB1o3Tvt7YPPEVVFNN6b3HGBTWc6437VJTGWmMjPvC8aNSuFLyh7siAyxzpNI
-        6MwX/3S+w3+zv8GKxPlxNb/38Mr9Y+Xx2SfI8OxH3NrMvhmdrw9X5hycHPlXnuEOR4tfZaT5
-        x45VJrnZ55/ZPLOZwhInxmTEIece9Mpb4FbcFm+dOeuYeHZqGSZqhdotrGMKyZzje9hn6cGL
-        eY/0WPa/3ZLyJVRq62GTLIZzj/5zznp5vo3zuRbrnAdtfiVv1x5iyUv6osnRFtaq7SQZ7bm5
-        6r/omtWzzBLS7LJeZ8qaBu2/tKBMdEdRX9VDWbfX226fk33m9yElUWrada438+sKFzRzKbEU
-        ZyQaajEXFScCAPi3N+0jBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSvK6s1INEg32zVC0ezNvGZnFo81Z2
-        i/fLehgt5h85x2qx8e0PJospf5YzWWx6fI3V4mPPPVaLh6/CLS7vmsNmMeP8PiaLU9c/s1ks
-        2vqF3aJ17xF2i8Nv2lktHl//w+Yg4LFm3hpGj1kNvWwem1Z1snncubaHzWPzknqPKyeaWD36
-        tqxi9PjXNJfd4/MmuQDOKC6blNSczLLUIn27BK6Mm8vfMxU8Ya/Y8m4HawPjPrYuRk4OCQET
-        iWeHN7J3MXJxCAnsZpR4cfAfVEJa4vrGCewQtrDEyn/PwWwhgSYmia+7TEBsNgFtibvTtzCB
-        2CICHhJt/+4xgwxiFpjOLHFg2zeWLkYODmGBcIn9fZ4gNSwCqhKXdn9jBbF5BWwlPi47xAgx
-        X15i9YYDzCDlnEDxu6vyIFbZSJx7tZ5tAiPfAkaGVYySqQXFuem5xYYFhnmp5XrFibnFpXnp
-        esn5uZsYwQGvpbmDcfuqD3qHGJk4GA8xSnAwK4nw9hfdTxTiTUmsrEotyo8vKs1JLT7EKM3B
-        oiTOe6HrZLyQQHpiSWp2ampBahFMlomDU6qBKVtCMUj4/q1jm4O6V9st4F3CH1lg3CARo/FO
-        Jy013OjaW8fFFftlHos+u5bFsHSDFFdfnG3U3s7FvK3T0n+7nzSMuBWspW77sXu+/7LLU36L
-        Hk566KD5beua4FVfBJJ/CkvFS3IY3WEIanbeJ/Poh9PZvO//2q8v2cFpsqE/yv5U7I2mvnmW
-        Z0Kskq5Es6eFm8yblnWa50Lb96abbE/abh1JfX/5lZF77ZXeQxskgpMlg91P/apP6hafL/++
-        8/n0J1krjz/ZqGi8SLZUXH/67Ls2zyz37b+yzGAOv9viWX71nOdXRz4ra/KSramsnXFiy1TG
-        WVb68yNLuW559Xoz+t7/HDNxO9OUlcopfUttlFiKMxINtZiLihMBC8F3kOcCAAA=
-X-CMS-MailID: 20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTQ/ep5INEg50eFg/mbWOzeL+sh9Fi
+        /pFzrBYb3/5gspjyZzmTxabH11gtPvbcY7V4+Crc4vKuOWwWM87vY7I4df0zm8WirV/YLVr3
+        HmG3OPymndXi8fU/bA78HmvmrWH0mNXQy+axaVUnm8eda3vYPDYvqfe4cqKJ1aNvyypGj39N
+        c9k9Pm+SC+CMyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQ
+        dcvMAbpfSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeXWmJl
+        aGBgZApUmJCd0b7nHHvBBraKrVcvsjYwbmftYuTkkBAwkdizYRpLFyMXh5DAbkaJtz3NTBDO
+        J0aJQ033GCGcb4wSHdOXMncxcoC1HFiiAxHfyygxf3o3M4TTwiQx+8ozdpC5bALaEnenb2EC
+        sUUE3CRuNHaAjWUWuMck8eNwAzNIQljAXuLMzh3sIFNZBFQlrn/NBAnzCthKTH96gA3iPnmJ
+        1RsOgC3mBIrfXZUHMkZCYCGHxKf+XqgfXCQ+nV3JAmELS7w6voUdwpaSeNnfxg5xdLZEzy5j
+        iHCNxNJ5x6DK7SUOXJnDAlLCLKApsX6XPkiYWYBPovf3EyaITl6JjjYhiGpVieZ3V6E6pSUm
+        dndDHeAhMftcLzskFCYwShz5+phlAqPsLISpCxgZVzFKphYU56anFpsWGOallsOjKTk/dxMj
+        OFFqee5gvPvgg94hRiYOxkOMEhzMSiK8/UX3E4V4UxIrq1KL8uOLSnNSiw8xmgIDbCKzlGhy
+        PjBV55XEG5pYGpiYmZmZWBqbGSqJ855O35AoJJCeWJKanZpakFoE08fEwSnVwMRvrHuvwWBp
+        4GRPLy4rY7OogGWlm7pb9h2Y5b2+iJl7n/K6c0FXNS2m+k/pKS5aEep1+Vtkn3rWyQfiSQsT
+        GOQW9J0JX3xa7+Tifz7umXvO3b56MGWG1BdXu4k2U6PWV3JovZmh+bUsv3vH2gsH/+2oe+4R
+        MPum+kObpXNrp6nbOho6Z2XpiEbPefObsc/Ux+/6bx3Wso7Ywg0cF45Of+Eq77Lp8f/I5Blv
+        e6rS6uS3K/UK91r9XNxemRXZWrhOK2pRZNTUw3y8Z57lezTYXVjmydBy7frl0/uNGwKmbOJd
+        y67+69Dtr5yr5OJnTrrh8dHglYOpZd63eSmTPy1xPnPWbsKLc672D/IOxs5Us1JiKc5INNRi
+        LipOBABPs5J0HQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsWy7bCSvO5jyQeJBh0zzSwezNvGZvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdq8fBVuMXlXXPYLGac38dkcer6ZzaLRVu/sFu0
+        7j3CbnH4TTurxePrf9gc+D3WzFvD6DGroZfNY9OqTjaPO9f2sHlsXlLvceVEE6tH35ZVjB7/
+        muaye3zeJBfAGcVlk5Kak1mWWqRvl8CV0b7nHHvBBraKrVcvsjYwbmftYuTgkBAwkTiwRKeL
+        kYtDSGA3o8S+vjnMXYycQHFpiesbJ7BD2MISK/89Z4coamKS2HvkFRNIgk1AW+Lu9C1gtoiA
+        h0Tbv3vMIEXMAm+YJP7fn8MCkhAWsJc4s3MHO8g2FgFVietfM0HCvAK2EtOfHmCDWCAvsXrD
+        AWaQEk6g+N1VeSBhIQEbiXOv1rNNYORbwMiwilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/
+        dxMjOMy1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHe/qL7iUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+        L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwuRjGNHyYePKJe3Ujz8xLn7unbDAW51P4tsdG0ZVJ
+        8bf8sohoqRq7AgPrh3avz+eJfUySettZy+a4TS6jbnn6vxtOC1b7W7wryj6/L//0v7zEjlX+
+        vx703Xy0sCyBW9YmPFzn9mTdeQ4PdgnYHTnS2P1HLJ81vGTTzC+Sbu/8JS6zqoVGvdv0Wjfp
+        Qd6xvhnzVLSPFZ2oXr6o4VdGrNi2CONrW5TZL2dv37thi89W3y8vRdcJrfK5l5Tz6yTX1BLz
+        NfODlSzWRK81Y9K35LPl3XF8R941kac/OA5OXVu2Vsv+mtPN3DzG7A2C56UlnXIDGqdUqB3J
+        mhQ3e67ClNyZu7oPlUUueHfYbb3LSrunSizFGYmGWsxFxYkAG30VH+ICAAA=
+X-CMS-MailID: 20220113122404epcas5p4aa1c3ac09510eb55cce5fdd0791993a6
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c
+X-CMS-RootMailID: 20220113122404epcas5p4aa1c3ac09510eb55cce5fdd0791993a6
 References: <20220113121143.22280-1-alim.akhtar@samsung.com>
-        <CGME20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c@epcas5p3.samsung.com>
+        <CGME20220113122404epcas5p4aa1c3ac09510eb55cce5fdd0791993a6@epcas5p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Aswani Reddy <aswani.reddy@samsung.com>
-
-This patch adds support for handling thress clusters
-(upto 12 CPUs)
+Add vendor prefix for the Tesla (https://www.tesla.com)
 
 Cc: linux-fsd@tesla.com
-Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 5e3e96d3d1b9..ba3af940a687 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -78,6 +78,10 @@ enum {
- 	MCT_L5_IRQ,
- 	MCT_L6_IRQ,
- 	MCT_L7_IRQ,
-+	MCT_L8_IRQ,
-+	MCT_L9_IRQ,
-+	MCT_L10_IRQ,
-+	MCT_L11_IRQ,
- 	MCT_NR_IRQS,
- };
- 
-@@ -89,7 +93,7 @@ static int mct_irqs[MCT_NR_IRQS];
- struct mct_clock_event_device {
- 	struct clock_event_device evt;
- 	unsigned long base;
--	char name[10];
-+	char name[11];
- };
- 
- static void exynos4_mct_write(unsigned int value, unsigned long offset)
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 66d6432fd781..af71d00f1092 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1189,6 +1189,8 @@ patternProperties:
+     description: Shenzhen Techstar Electronics Co., Ltd.
+   "^terasic,.*":
+     description: Terasic Inc.
++  "^tesla,.*":
++    description: Tesla, Inc.
+   "^tfc,.*":
+     description: Three Five Corp
+   "^thine,.*":
 -- 
 2.17.1
 
