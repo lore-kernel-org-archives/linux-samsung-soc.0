@@ -2,109 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BFEC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 18:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C4DC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 20:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237675AbiAMSyI (ORCPT
+        id S233085AbiAMUh6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Jan 2022 13:54:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40338 "EHLO
+        Thu, 13 Jan 2022 15:37:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237671AbiAMSyI (ORCPT
+        with ESMTP id S232965AbiAMUh5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Jan 2022 13:54:08 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE001C06161C
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 10:54:07 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id m21so688452pfd.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 10:54:07 -0800 (PST)
+        Thu, 13 Jan 2022 15:37:57 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D39C061574
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:37:57 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id o12so7021012lfu.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:37:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tb5858QqXIcL5etsmWCS0ZKhHGEgdWFwctSsz78MvDI=;
-        b=UK7Pq02IigfJ4UwrZ8hJfii4Xs3neqjQIZcCnn8iEJ2HaSzAsOFfNWUOvyqHby6xZ3
-         RPlt+Q9ETiZ57YNEA2lks/Dmj+Yk5qVw6hReh/CyXQxkUhA9iluXR8+lFYLBQ6QHkhM/
-         n2ilJTcMm9FfoIvY9Pc/SVqd5ihJfZNoRu56K6O5UOOWWjHBbiczhjlaF92FQkLDeZZm
-         Na/p4eIaTEnhyy5sMOVTJTMbbIUFAHYkfchs8yApFNnFluEjW71UU0DvNSBgg1u1x70O
-         rdrXoDDPa4vNGbC08xoLC6Fkxa2SJR0HokkgcJz1d/qarYXgH+CmInrAtTcqudfn2bNH
-         TnYg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VEcTviwAJjTA/PedVKsrB+d6L5irDjmQTiLW4y3/Af0=;
+        b=BWfjSwRoeU2riXY1ZPs/XI/Cc41g7MMSZ2xpawgbbGgzFPgPOw2eueTj6hVygqycaV
+         lJ0A1IhD9mYvyeDXOkma1D56qzPoGGFrLuiYegOTECpdoqU/yOs7lZ3i/4+wp0d3qMvG
+         QJug3Z2HmY95KrlrKqteLfl9SytEMuYbAbDFRWrMLCGBePSANq49WJG68k9VG3m8qzus
+         JARfZubi/QnSxI1Clp9O3fCW+0zkb3tJX3iSemRcepW5ZG7HCaci8Tfhv6HVrXU04NqB
+         cmx3OV90nC5USr8gjbpiy5ODdw5CuPYmJwPZMneRWV7g4kZg7ykyHZhhuTBmJVSeftVM
+         XIJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tb5858QqXIcL5etsmWCS0ZKhHGEgdWFwctSsz78MvDI=;
-        b=H1ONK2ByEQLQphXkwyD1OaTPpcrmH/0E/e31E/16MSujmoB13B7iQysXetYv0WSBG0
-         LRo4riNn3OmzsfXzwGCbAbrrggQG2fYlj4o50URwXF07yFrwzjVJuNgZc5rpRF1yECfw
-         U3tF7rQV55Rgo3qA7o815VKO6owQtC3CkQFEKO14LZt8rFv9qxx5Nt0RmA57IE58Q4Qo
-         LVS4SCsmqbjym3GvuprW3sy5bPwXD/0BA9UOnpLwJOde9hU8tYkspnPOPKlYf2Hd51vF
-         bUQDDGVOXJj4Iaj5z5VO/u1nzJKtMWP5C16Ogws1MjEKUt+KuUETiI4NYZGVatzOmaNu
-         8G/w==
-X-Gm-Message-State: AOAM5316yj2bTntx9dJuL2xbUneAk/00D+CE+nh6hVH3rbpp2ThGhaaP
-        9DpmC0lHXuEAXVdLDnMx5yJojaBxxS2nrnQGAkjMYw==
-X-Google-Smtp-Source: ABdhPJzXlahtnsFy6IBae/4XXtwKfp3ieNHsHEWW/ixmJdS+WTYxk6qaqsRZoeKRiQr50fLtEznw6+6eMB/iQsmKuX4=
-X-Received: by 2002:a05:6a00:16c7:b0:4a5:d9c1:89da with SMTP id
- l7-20020a056a0016c700b004a5d9c189damr5491085pfc.34.1642100047311; Thu, 13 Jan
- 2022 10:54:07 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4@epcas5p1.samsung.com>
- <20220113121143.22280-1-alim.akhtar@samsung.com> <d1a852e1-c4c2-b7c4-ddeb-7fbcfd9b4e58@canonical.com>
-In-Reply-To: <d1a852e1-c4c2-b7c4-ddeb-7fbcfd9b4e58@canonical.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Thu, 13 Jan 2022 10:53:55 -0800
-Message-ID: <CAOesGMjZ8X3r2KvPLWWwJj1ckTruiGOjx9wLyu8YbCxW+OaZgQ@mail.gmail.com>
-Subject: Re: [PATCH 00/23] Add support for Tesla Full Self-Driving (FSD) SoC
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VEcTviwAJjTA/PedVKsrB+d6L5irDjmQTiLW4y3/Af0=;
+        b=w16YoXsimbTM8rx41hmWEu4aKeQ7h1H+luYNdt0f9g6PuVyvOYnk0G61ABzqKXLE3H
+         dI/ruWjy/LfNGwHRPEIoBDebG9kF8RiMg3Oewgn0BdFgvGocNGdE+d41Dad2pzJqsL21
+         o3tY9OyFgBDW4DYQF7OfytAkPaByDrq+KMzXmSlVaiVdyv+9pqHm1rhgoaTP8g1MJniz
+         U6MAG8dAVc2jg5WF5SzzIABnOarNx4WQtx4diTrkmdi4XHwjIxm/vcyK8IEn4FU1egwH
+         3PtbU0NNnoEkjTLHCzigyCYFP6ZeHf4Ah2pALFQKWFI8G6wahsMvj2LWikO91qGs3WLc
+         IFyw==
+X-Gm-Message-State: AOAM533ASZXwwxCOaKfU2wLICJ1C+JHi/pid5/nSBGD/Rch7aERv4rov
+        QIQ1YeWyPd63XkUfw+idZ03VHZmxLPSeuzSu
+X-Google-Smtp-Source: ABdhPJxP+YP/Eo4PH5vp+BdZtCJMRAcFlg33a6l/fZVWsMv6jFQDaXEv33wymB1vK3cCcpq1V6TvRQ==
+X-Received: by 2002:a2e:a7d6:: with SMTP id x22mr4055309ljp.76.1642106275601;
+        Thu, 13 Jan 2022 12:37:55 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id k21sm363298ljh.65.2022.01.13.12.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jan 2022 12:37:55 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SoC Team <soc@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LinusW <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: samsung: Fix typo in CONFIG_EXYNOS_USI description
+Date:   Thu, 13 Jan 2022 22:37:54 +0200
+Message-Id: <20220113203754.23197-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 4:32 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 13/01/2022 13:11, Alim Akhtar wrote:
-> > This patch set adds basic support for the Tesla Full Self-Driving (FSD)
-> > SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
-> > as well as several IPs.
-> >
-> > Patches 1 to 8 provide support for the clock controller
-> > (which is designed similarly to Exynos SoCs).
-> >
-> > The remaining changes provide pinmux support, initial device tree support,
-> > and SPI, ADC, and MCT IP functionality.
->
-> Does FSD have some version number? The FDS, especially in compatibles,
-> looks quite generic, so what will happen if a newer SoC comes later? You
-> would have:
->  - tesla,fsd-pinctrl
->  - tesla,fsd-xxxx-pinctrl (where xxxx could be some new version)
->
-> This will be extra confusing, because fsd-pinctrl looks like the generic
-> one, while it is specific...
+The proper name is Exynos Auto V9, not V0. It was the typo slipped in
+unnoticed, fix it.
 
-The public sources from Tesla on github uses "turbo,trav" here, but
-that's also not a versioned name. The platform itself (hw3/hw31 -- 3.1
-I presume?) has numbering, but that's system and not SoC:
-https://github.com/teslamotors/linux/tree/tesla-4.14-hw3/arch/arm64/boot/dts/turbo
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ drivers/soc/samsung/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It would be easy to do "fsd2" for naming/numbering if needed for
-future versions, for example. I'm not so worried about this,
-especially if there's no corresponding internal version numbering that
-this would map naturally to.
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index a9f8b224322e..02e319508cc6 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -31,7 +31,7 @@ config EXYNOS_USI
+ 	help
+ 	  Enable support for USI block. USI (Universal Serial Interface) is an
+ 	  IP-core found in modern Samsung Exynos SoCs, like Exynos850 and
+-	  ExynosAutoV0. USI block can be configured to provide one of the
++	  ExynosAutoV9. USI block can be configured to provide one of the
+ 	  following serial protocols: UART, SPI or High Speed I2C.
+ 
+ 	  This driver allows one to configure USI for desired protocol, which
+-- 
+2.30.2
 
-
--Olof
