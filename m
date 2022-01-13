@@ -2,214 +2,186 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE53C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Jan 2022 11:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF15C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 12:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240049AbiALL3K (ORCPT
+        id S232789AbiAMMXN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Jan 2022 06:29:10 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60808 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238954AbiALL3J (ORCPT
+        Thu, 13 Jan 2022 07:23:13 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:33375 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231209AbiAMMXN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Jan 2022 06:29:09 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 076061F44D4F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1641986948;
-        bh=rf9+cWrdS7JD3Gpgve/3SFu8AlosMnzAoPUmyjtiX0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UsBWJsJh7Wrzd43FvdNEfV89QxymsJMEBZsbSfswWhLTrGtlVSJeNWr5I6qwnSq7I
-         k2GQwMqoiArHnkhMG0vM4Bwprw2lp+udd2OENyBS8FxugRZhJ4tZoTI/d3RKKs3daa
-         CSG3vlcEmLBYTQPXHky07U91jYlT9FrOKunQ+9v5yhucgj7QRwD5cr8EtL27RppzBo
-         zENFULOAK78taU6Ud5kHeStCh2PnAuSCmkZ2a29LCdzuhQk9tajKHONxOhibF13KDl
-         kKVPqlJDNbk9dGNNF4NGMvIH4H1lH8ExGkzGoIYrIVut7X1DJo6ELEEGe8lU3PYMlk
-         FAKLn+ceCtdlg==
-Received: by earth.universe (Postfix, from userid 1000)
-        id 597503C0CB7; Wed, 12 Jan 2022 12:29:05 +0100 (CET)
-Date:   Wed, 12 Jan 2022 12:29:05 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: power: supply: maxim,max14577:
- convert to dtschema
-Message-ID: <20220112112905.n6zb36kwop2kfm2n@earth.universe>
-References: <20220111174337.223320-1-krzysztof.kozlowski@canonical.com>
- <20220111174337.223320-3-krzysztof.kozlowski@canonical.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yxq3ixy3tyzmqoc5"
-Content-Disposition: inline
-In-Reply-To: <20220111174337.223320-3-krzysztof.kozlowski@canonical.com>
+        Thu, 13 Jan 2022 07:23:13 -0500
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220113122311epoutp014534d003456012da0823dec4d745f32d~J0-XG6iIG1887018870epoutp01l
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:23:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220113122311epoutp014534d003456012da0823dec4d745f32d~J0-XG6iIG1887018870epoutp01l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642076591;
+        bh=f2jeQ0YdCrDx1DRJgpdBMus0XrvXmwz726NZp51/TAo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=p9ZSFNjXLWbzJqhcYtnK7afdWpDofA4vhZAfnYRHfKOCT6P9/miXwUqzIUbNdnW1F
+         3w7WNEQGC8ojsNVna8EcW75oDo+nrPdHsyYwvNFaZN6CiFXHs3VAKkhn4FGMDmAuwu
+         1b6pXIr+PcX506ldiYwdNH0mfJuS/2BOXows6Nn8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220113122310epcas5p3f5eae1624d297ef13f8dee0d34f13273~J0-WY_tM31599415994epcas5p3j;
+        Thu, 13 Jan 2022 12:23:10 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4JZNqr0n5fz4x9Px; Thu, 13 Jan
+        2022 12:23:04 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        58.21.05590.7A910E16; Thu, 13 Jan 2022 21:23:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4~J0-O9iT1H0848308483epcas5p1o;
+        Thu, 13 Jan 2022 12:23:02 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220113122302epsmtrp2f88be838e6f95b4079030f95d5f872ae~J0-O8Vik93027830278epsmtrp25;
+        Thu, 13 Jan 2022 12:23:02 +0000 (GMT)
+X-AuditID: b6c32a4b-739ff700000015d6-5f-61e019a745cd
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E0.99.08738.6A910E16; Thu, 13 Jan 2022 21:23:02 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220113122300epsmtip2cbdf8491e4b5dc362dabbd687259cd22~J0-Mr3ZbO0676806768epsmtip2j;
+        Thu, 13 Jan 2022 12:23:00 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH 00/23] Add support for Tesla Full Self-Driving (FSD) SoC
+Date:   Thu, 13 Jan 2022 17:41:20 +0530
+Message-Id: <20220113121143.22280-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmuu5yyQeJBpdb1CwezNvGZvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdqcXnXHDaLGef3MVmcuv6ZzWLR1i/sFq17j7Bb
+        HH7Tzmrx+PofNgc+jzXz1jB6zGroZfPYtKqTzePOtT1sHpuX1HtcOdHE6tG3ZRWjx+dNcgEc
+        Udk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUB3KymU
+        JeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOy
+        M9bPjirYKVuxv3EqWwPjDrEuRg4OCQETifvnmboYuTiEBHYzSnzfvoe1i5ETyPnEKPHpqzNE
+        4jOjRMv2cywgCZCGGVP7mSGKdjFKzPptDVHUwiTRd6oDrIhNQFvi7vQtTCC2iICbxI3GDrAV
+        zALHmST2t29gBEkIC3hInJg7HayBRUBVYtuCo2CreQVsJJat/M8MsU1eYvWGA8wgzRICX9kl
+        XnTPYoRIuEgsnHKJDcIWlnh1fAs7hC0l8fndXjaI37IlenYZQ4RrJJbOOwb1gb3EgStzWEBK
+        mAU0Jdbv0gcJMwvwSfT+fsIE0ckr0dEmBFGtKtH87ipUp7TExO5uVgjbQ2LrrfnQwIqVmPxs
+        EdsERplZCEMXMDKuYpRMLSjOTU8tNi0wzksth0dMcn7uJkZw8tPy3sH46MEHvUOMTByMhxgl
+        OJiVRHj7i+4nCvGmJFZWpRblxxeV5qQWH2I0BYbSRGYp0eR8YPrNK4k3NLE0MDEzMzOxNDYz
+        VBLnPZW+IVFIID2xJDU7NbUgtQimj4mDU6qBaf/tVHOh99UBnO3+a3ILphz4+iKp+bNnRUxZ
+        qN/M+gRWeSX1g+pykTsWR7m9ur0zJ/AAb8D8vlJhlZp7nz33G93bcODwg53hZyaEJCg9WXcj
+        OufU6eTzU85+2r+m3vVYSg3T7VSGzD9qXbPuLz3xrfnQnjs6kh9fLmE4lb5RI3zOkspURrOZ
+        185cPDPLL0Gw30x9Zsy08g35Emd/7S21STzUpzCpK99h9/mbOzJeBArsvdI2p5RHgdF/N0tI
+        toVoE/vqsNvzd4qlyQlm/TX+drqy6779on8tnNLaqQslhAtUGU43X39RdPCDfcO0htbLP7s5
+        xYKlK/bx7DRUVY7saLIW3HbtgsS9JSaLFy28p8RSnJFoqMVcVJwIAJ3DeOAHBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvO4yyQeJBh97RC0ezNvGZvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdqcXnXHDaLGef3MVmcuv6ZzWLR1i/sFq17j7Bb
+        HH7Tzmrx+PofNgc+jzXz1jB6zGroZfPYtKqTzePOtT1sHpuX1HtcOdHE6tG3ZRWjx+dNcgEc
+        UVw2Kak5mWWpRfp2CVwZ62dHFeyUrdjfOJWtgXGHWBcjJ4eEgInEjKn9zF2MXBxCAjsYJQ40
+        PGWGSEhLXN84gR3CFpZY+e85O0RRE5PEjW0nGEESbALaEnenb2ECsUUEPCTa/t0Dm8QscJVJ
+        4sfmeWAJYaDEibnTWUBsFgFViW0LjrKC2LwCNhLLVv6H2iYvsXrDAeYJjDwLGBlWMUqmFhTn
+        pucWGxYY5aWW6xUn5haX5qXrJefnbmIEB6qW1g7GPas+6B1iZOJgPMQowcGsJMLbX3Q/UYg3
+        JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQYmUa79NWEGZU9j
+        Fb8vVD5UzbpQ6UnlLOGJ38Of7BLXz/aTX6qz551mQcTbCdPMeoVkp1zsrmaddSilI931lv2M
+        SqlJl1edfLM47PH0npVhunqZOs9v7bzCLly6Sbk0/6eH2dILdfMX97gtXZawp0uqZ/FaLdes
+        K/v866b3BBvwbG5JCciPiV1XzXna2PgZn+jLiR55LQE7P00TeGNjtKMjMPKOtK/TSrPPasrX
+        umurC9cdS17SUzE/jpPv+FOGhe+PWxekXyi7WcM1j/OKwrNi/SsW1pURR3f+k7ks5CPJu6bh
+        aOetY6xMxocOyhyu5k7Q02G+dUZYe77c8he61TvyXXc15ay7vbV/cWhKyTQlluKMREMt5qLi
+        RAC5UrUdwwIAAA==
+X-CMS-MailID: 20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4
+References: <CGME20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+This patch set adds basic support for the Tesla Full Self-Driving (FSD)
+SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
+as well as several IPs.
 
---yxq3ixy3tyzmqoc5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patches 1 to 8 provide support for the clock controller
+(which is designed similarly to Exynos SoCs).
 
-Hi,
+The remaining changes provide pinmux support, initial device tree support,
+and SPI, ADC, and MCT IP functionality.
 
-On Tue, Jan 11, 2022 at 06:43:35PM +0100, Krzysztof Kozlowski wrote:
-> Convert the Charger bindings of Maxim MAX14577/MAX77836 MUIC to DT
-> schema format.  The existing bindings were defined in
-> ../bindings/mfd/max14577.txt.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
 
-I expect this to be merged through MFD:
+Alim Akhtar (21):
+  dt-bindings: clock: Document FSD CMU bindings
+  dt-bindings: clock: Add bindings definitions for FSD CMU blocks
+  clk: samsung: fsd: Add initial clock support
+  clk: samsung: fsd: Add cmu_peric block clock information
+  clk: samsung: fsd: Add cmu_fsys0 clock information
+  clk: samsung: fsd: Add cmu_fsys1 clock information
+  clk: samsung: fsd: Add cmu_imem block clock information
+  clk: samsung: fsd: Add cmu_mfc block clock information
+  clk: samsung: fsd: Add cam_csi block clock information
+  dt-bindings: pinctrl: samsung: Add compatible for Tesla FSD SoC
+  pinctrl: samsung: add FSD SoC specific data
+  dt-bindings: add vendor prefix for Tesla
+  dt-bindings: arm: add Tesla FSD ARM SoC
+  arm64: dts: fsd: Add initial device tree support
+  arm64: dts: fsd: Add initial pinctrl support
+  arm64: defconfig: Enable Tesla FSD SoC
+  Documentation: bindings: Add fsd spi compatible in dt-bindings
+    document
+  spi: s3c64xx: Add spi port configuration for Tesla FSD SoC
+  dt-bindings: iio: adc: exynos-adc: Add ADC-V3 variant
+  iio: adc: exynos-adc: Add support for ADC V3 controller
+  arm64: dts: fsd: Add ADC device tree node
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Aswani Reddy (2):
+  arm64: dts: fsd: Add SPI device nodes
+  clocksource: exynos_mct: Add support for handling three clusters
 
--- Sebastian
+ .../devicetree/bindings/arm/tesla.yaml        |   25 +
+ .../bindings/clock/tesla,fsd-clock.yaml       |  212 ++
+ .../bindings/iio/adc/samsung,exynos-adc.yaml  |    1 +
+ .../bindings/pinctrl/samsung-pinctrl.txt      |    1 +
+ .../devicetree/bindings/spi/spi-samsung.txt   |    1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/Kconfig.platforms                  |    6 +
+ arch/arm64/boot/dts/Makefile                  |    1 +
+ arch/arm64/boot/dts/tesla/Makefile            |    3 +
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    |  338 +++
+ arch/arm64/boot/dts/tesla/fsd.dts             |  156 ++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  805 +++++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-fsd.c                 | 1858 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |    1 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ drivers/clocksource/exynos_mct.c              |    6 +-
+ drivers/iio/adc/exynos_adc.c                  |   74 +-
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |   71 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+ drivers/spi/spi-s3c64xx.c                     |   13 +
+ include/dt-bindings/clock/fsd-clk.h           |  146 ++
+ 25 files changed, 3731 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tesla.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/tesla/Makefile
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd.dts
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd.dtsi
+ create mode 100644 drivers/clk/samsung/clk-fsd.c
+ create mode 100644 include/dt-bindings/clock/fsd-clk.h
 
->  .../bindings/power/supply/maxim,max14577.yaml | 84 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 85 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,=
-max14577.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max1457=
-7.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
-> new file mode 100644
-> index 000000000000..3978b48299de
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/supply/maxim,max14577.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX14577/MAX77836 MicroUSB and Companion Power Management I=
-C Charger
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +
-> +description: |
-> +  This is a part of device tree bindings for Maxim MAX14577/MAX77836 Mic=
-roUSB
-> +  Integrated Circuit (MUIC).
-> +
-> +  See also Documentation/devicetree/bindings/mfd/maxim,max14577.yaml for
-> +  additional information and example.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - maxim,max14577-charger
-> +      - maxim,max77836-charger
-> +
-> +  maxim,constant-uvolt:
-> +    description:
-> +      Battery Constant Voltage in uV
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 4000000
-> +    maximum: 4350000
-> +
-> +  maxim,eoc-uamp:
-> +    description: |
-> +      Current in uA for End-Of-Charge mode.
-> +      MAX14577: 50000-20000
-> +      MAX77836: 5000-100000
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  maxim,fast-charge-uamp:
-> +    description: |
-> +      Current in uA for Fast Charge
-> +      MAX14577: 90000-950000
-> +      MAX77836: 45000-475000
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  maxim,ovp-uvolt:
-> +    description:
-> +      OverVoltage Protection Threshold in uV; In an overvoltage conditio=
-n, INT
-> +      asserts and charging stops.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [6000000, 6500000, 7000000, 7500000]
-> +
-> +required:
-> +  - compatible
-> +  - maxim,constant-uvolt
-> +  - maxim,eoc-uamp
-> +  - maxim,fast-charge-uamp
-> +  - maxim,ovp-uvolt
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: maxim,max14577-charger
-> +    then:
-> +      properties:
-> +        maxim,eoc-uamp:
-> +          minimum: 50000
-> +          maximum: 200000
-> +        maxim,fast-charge-uamp:
-> +          minimum: 90000
-> +          maximum: 950000
-> +    else:
-> +      # max77836
-> +      properties:
-> +        maxim,eoc-uamp:
-> +          minimum: 5000
-> +          maximum: 100000
-> +        maxim,fast-charge-uamp:
-> +          minimum: 45000
-> +          maximum: 475000
-> +
-> +additionalProperties: false
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d1f8f312f322..13e21c229c5d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11681,6 +11681,7 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@canon=
-ical.com>
->  M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->  L:	linux-pm@vger.kernel.org
->  S:	Supported
-> +F:	Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
->  F:	Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml
->  F:	drivers/power/supply/max14577_charger.c
->  F:	drivers/power/supply/max77693_charger.c
-> --=20
-> 2.32.0
->=20
 
---yxq3ixy3tyzmqoc5
-Content-Type: application/pgp-signature; name="signature.asc"
+base-commit: c9e6606c7fe92b50a02ce51dda82586ebdf99b48
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmHeu3QACgkQ2O7X88g7
-+polkBAAiCtY5s8LmSHJ4Lsi/ZvlsYjjvE/LAPdmalhgw0yZxeDZ0Dl2DerTtnMe
-xHjAVa0GEzkI/Qv1v5LGdGZ9ExaYRz+u7fIDo2SaTMUQjL/sFExcdW1v7KIQX94m
-Qnl81HKs+niXLOs1yaZwEJxbNJwu/Sg8siz9CCV2kffCVM/fa6ysq91jdqSaYN1O
-m/DXz9uDZjQkMmyuDJXskoYBGrQcIkhgrRCmNwWfLr+Q5hiF4/jWXR73zgsiiDXv
-Z1IaYa6Ri2SBEU8IDLuI6mGgnuKI1gYazzp6u+57vBBtm9T79TYpS8W5z7l0VPZ8
-4LyAoLJ7aFwM6ynd9l296RkpDt9eAD44LMLhAfYQkrvoEB5LF2mlQ9hMZkF7UuPs
-vbNMilk4RTWuCO9z6xDwgDwuLBrqGxY1iCVBOqJtzVVyWfOzi9jLSii5WOv2/lGC
-Jhr0h9YpbEdMtH39h4XTnnepCVcBoh3EESr8tzLVL5GzShpVSWquM0cALb/g1M1c
-2HPnhy7Al8a12IHtZnIA39QCPA1XPYNWoB2+BfGyp60W2hj3cZDDJYYaRpz+5pAK
-XfjbyK75Hov/FgFubRaoz4MFojXlgSN1ianDCFTi0SpuF5w0RLDuSE1D96e5d0Lu
-ag6QPQzTgw7KrufOVVl0PeYXUzRx15aQ/i8r0bFUW4z/CWXAQ4M=
-=YZJc
------END PGP SIGNATURE-----
-
---yxq3ixy3tyzmqoc5--
