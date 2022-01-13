@@ -2,88 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C4DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 20:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A086C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Jan 2022 23:33:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233085AbiAMUh6 (ORCPT
+        id S235573AbiAMXd5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Jan 2022 15:37:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232965AbiAMUh5 (ORCPT
+        Thu, 13 Jan 2022 18:33:57 -0500
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:42873 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230181AbiAMXd5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Jan 2022 15:37:57 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D39C061574
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:37:57 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id o12so7021012lfu.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jan 2022 12:37:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VEcTviwAJjTA/PedVKsrB+d6L5irDjmQTiLW4y3/Af0=;
-        b=BWfjSwRoeU2riXY1ZPs/XI/Cc41g7MMSZ2xpawgbbGgzFPgPOw2eueTj6hVygqycaV
-         lJ0A1IhD9mYvyeDXOkma1D56qzPoGGFrLuiYegOTECpdoqU/yOs7lZ3i/4+wp0d3qMvG
-         QJug3Z2HmY95KrlrKqteLfl9SytEMuYbAbDFRWrMLCGBePSANq49WJG68k9VG3m8qzus
-         JARfZubi/QnSxI1Clp9O3fCW+0zkb3tJX3iSemRcepW5ZG7HCaci8Tfhv6HVrXU04NqB
-         cmx3OV90nC5USr8gjbpiy5ODdw5CuPYmJwPZMneRWV7g4kZg7ykyHZhhuTBmJVSeftVM
-         XIJQ==
+        Thu, 13 Jan 2022 18:33:57 -0500
+Received: by mail-oi1-f178.google.com with SMTP id y14so10030719oia.9;
+        Thu, 13 Jan 2022 15:33:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VEcTviwAJjTA/PedVKsrB+d6L5irDjmQTiLW4y3/Af0=;
-        b=w16YoXsimbTM8rx41hmWEu4aKeQ7h1H+luYNdt0f9g6PuVyvOYnk0G61ABzqKXLE3H
-         dI/ruWjy/LfNGwHRPEIoBDebG9kF8RiMg3Oewgn0BdFgvGocNGdE+d41Dad2pzJqsL21
-         o3tY9OyFgBDW4DYQF7OfytAkPaByDrq+KMzXmSlVaiVdyv+9pqHm1rhgoaTP8g1MJniz
-         U6MAG8dAVc2jg5WF5SzzIABnOarNx4WQtx4diTrkmdi4XHwjIxm/vcyK8IEn4FU1egwH
-         3PtbU0NNnoEkjTLHCzigyCYFP6ZeHf4Ah2pALFQKWFI8G6wahsMvj2LWikO91qGs3WLc
-         IFyw==
-X-Gm-Message-State: AOAM533ASZXwwxCOaKfU2wLICJ1C+JHi/pid5/nSBGD/Rch7aERv4rov
-        QIQ1YeWyPd63XkUfw+idZ03VHZmxLPSeuzSu
-X-Google-Smtp-Source: ABdhPJxP+YP/Eo4PH5vp+BdZtCJMRAcFlg33a6l/fZVWsMv6jFQDaXEv33wymB1vK3cCcpq1V6TvRQ==
-X-Received: by 2002:a2e:a7d6:: with SMTP id x22mr4055309ljp.76.1642106275601;
-        Thu, 13 Jan 2022 12:37:55 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id k21sm363298ljh.65.2022.01.13.12.37.54
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=nnDiZcTRb0Vq5tmUrkIdnau18hy40OrJF8krgzeHM4s=;
+        b=XQz6Z4t+F3adhTYOXt0nwVLR33gepgs6+MGttHR8b5LmIwWgoyPXy0p70UCjphieTh
+         5MJzQDVgIfqBjo3+RcSMAdX9gPWyojBSpNCn3ddA92e8E7H+eWXCufB+H/eRQ8MgntMw
+         fqDqhyncKrKkVyr4RT7QvtbhnYaIIugqtFOS56+9ZHnHZSOPi2GTJg83Tjq31Loug4Us
+         8gGLlh+O1cr9UN2fydJiNxgDCuwOlelg08RLyRSLtAMSKuqKmGzFgJWFnTM++EzpZOcK
+         aiIBRRS5Q3aJVxKip4A+pmMzsWalqfvUEmO7FWVHQU2XWkDDoj0nKg8musqQRw69sqo4
+         ++8g==
+X-Gm-Message-State: AOAM533TzdRrSyLQn/XwHYf0TrUwDA3c61pRQm3qZimvdj/oFvy9cDCU
+        JtwASTXP8HC2G5+1L8ZOWA==
+X-Google-Smtp-Source: ABdhPJx0Y77Qvs2DmF3Cj72zTuxyrO8FZtkPJTHmtmi99ENq20DZ3v9GIO8BFW0+Lhurn8Yq7qzA/g==
+X-Received: by 2002:a05:6808:15a0:: with SMTP id t32mr4881818oiw.60.1642116836724;
+        Thu, 13 Jan 2022 15:33:56 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id j77sm1154569oih.35.2022.01.13.15.33.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jan 2022 12:37:55 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+        Thu, 13 Jan 2022 15:33:56 -0800 (PST)
+Received: (nullmailer pid 374229 invoked by uid 1000);
+        Thu, 13 Jan 2022 23:33:55 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: samsung: Fix typo in CONFIG_EXYNOS_USI description
-Date:   Thu, 13 Jan 2022 22:37:54 +0200
-Message-Id: <20220113203754.23197-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        s.nawrocki@samsung.com, linus.walleij@linaro.org, soc@kernel.org,
+        olof@lixom.net, pankaj.dubey@samsung.com, linux-fsd@tesla.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        catalin.marinas@arm.com
+In-Reply-To: <20220113121143.22280-2-alim.akhtar@samsung.com>
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>        <CGME20220113122311epcas5p4b7c253b49dce3bd3580407fcf312e70e@epcas5p4.samsung.com> <20220113121143.22280-2-alim.akhtar@samsung.com>
+Subject: Re: [PATCH 01/23] dt-bindings: clock: Document FSD CMU bindings
+Date:   Thu, 13 Jan 2022 17:33:55 -0600
+Message-Id: <1642116835.548930.374228.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The proper name is Exynos Auto V9, not V0. It was the typo slipped in
-unnoticed, fix it.
+On Thu, 13 Jan 2022 17:41:21 +0530, Alim Akhtar wrote:
+> Add dt-schema documentation for Tesla FSD SoC clock controller.
+> 
+> Cc: linux-fsd@tesla.com
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  .../bindings/clock/tesla,fsd-clock.yaml       | 212 ++++++++++++++++++
+>  1 file changed, 212 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+> 
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/soc/samsung/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index a9f8b224322e..02e319508cc6 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -31,7 +31,7 @@ config EXYNOS_USI
- 	help
- 	  Enable support for USI block. USI (Universal Serial Interface) is an
- 	  IP-core found in modern Samsung Exynos SoCs, like Exynos850 and
--	  ExynosAutoV0. USI block can be configured to provide one of the
-+	  ExynosAutoV9. USI block can be configured to provide one of the
- 	  following serial protocols: UART, SPI or High Speed I2C.
- 
- 	  This driver allows one to configure USI for desired protocol, which
--- 
-2.30.2
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/tesla,fsd-clock.example.dts:19:18: fatal error: dt-bindings/clock/fsd-clk.h: No such file or directory
+   19 |         #include <dt-bindings/clock/fsd-clk.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[1]: *** [scripts/Makefile.lib:373: Documentation/devicetree/bindings/clock/tesla,fsd-clock.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1413: dt_binding_check] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1579595
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
