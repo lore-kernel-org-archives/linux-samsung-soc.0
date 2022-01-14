@@ -2,56 +2,56 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AA9C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 11:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1768C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 11:36:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbiANLIi (ORCPT
+        id S240759AbiANLgW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 06:08:38 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:47934 "EHLO
+        Fri, 14 Jan 2022 06:36:22 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:64464 "EHLO
         mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230362AbiANLIh (ORCPT
+        with ESMTP id S240750AbiANLgV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 06:08:37 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220114110835epoutp01e0a37438b8e0d3b4ff73d7f0ada04441~KHng-uXZs2726527265epoutp01U
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 11:08:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220114110835epoutp01e0a37438b8e0d3b4ff73d7f0ada04441~KHng-uXZs2726527265epoutp01U
+        Fri, 14 Jan 2022 06:36:21 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220114113619epoutp018c5cd5014ffac59df148e94c9fc9b2b3~KH-uvFK9O1673716737epoutp01d
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 11:36:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220114113619epoutp018c5cd5014ffac59df148e94c9fc9b2b3~KH-uvFK9O1673716737epoutp01d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642158515;
-        bh=pfGpD4W/035PIQFiX2KcbGP5G2igcYQwaHKPpL7Giy0=;
+        s=mail20170921; t=1642160180;
+        bh=ldgDTIYJIP1P8SsZdmNML1GNaShxKbRNmOuT6WfsyN4=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=HKiTUHeDSRXA9XZBOrcp/StY3e841AUXt+cW9DUbeaYl+lwzlU6J+NLZr00zCIfrd
-         2pkT7+bFa1bdEGHlBFfgm+quSPuvnTextW/+xT/yIwkdEDJ2fl7Xi8/gN/JdPjQBWE
-         3wR4fBeivh6fX1Tgz5MYuwlm2Z6xBHKk+ZsYe3jI=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        b=YUjJdDMTRq1+dzEFhF2YdZ5t042080u86KL8O0+2CpRpdcRAtlWsb5/+K9lNMeEMz
+         s4Z4lrO1jHra5PFKC/pXTTZiGIk9MXijeCA4MQbTpFBFXvH1+CW5gcFIkY3avhl9xD
+         KeIqq/oZKva1+pYfaRDye9CLBvl1YKTDip1/MYJE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
         epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20220114110835epcas1p4645b1409d138b857ec3d09d45e343215~KHngXeTgv1939919399epcas1p4O;
-        Fri, 14 Jan 2022 11:08:35 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.38.236]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4JZz7M1BLZz4x9QC; Fri, 14 Jan
-        2022 11:08:31 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.4E.08277.EA951E16; Fri, 14 Jan 2022 20:08:31 +0900 (KST)
+        20220114113619epcas1p474f7fe7f5d8387bdb51c0f3038232fd3~KH-t-w6J31357213572epcas1p42;
+        Fri, 14 Jan 2022 11:36:19 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.38.233]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4JZzlL4Fckz4x9Pw; Fri, 14 Jan
+        2022 11:36:14 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D7.0F.28648.E2061E16; Fri, 14 Jan 2022 20:36:14 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220114110830epcas1p2d601346f9591baf7d3be1b35c241a98b~KHncFpt0H2954829548epcas1p2c;
-        Fri, 14 Jan 2022 11:08:30 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220114113613epcas1p142ecd07beda2e089ef396337bef33430~KH-pFrFO20920009200epcas1p1J;
+        Fri, 14 Jan 2022 11:36:13 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220114110830epsmtrp297cb7564b27abc70954122c59f9aaf4f~KHncEk13Z2598625986epsmtrp2G;
-        Fri, 14 Jan 2022 11:08:30 +0000 (GMT)
-X-AuditID: b6c32a36-1edff70000002055-33-61e159aebae5
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        71.28.29871.EA951E16; Fri, 14 Jan 2022 20:08:30 +0900 (KST)
+        20220114113613epsmtrp20e515ca91ebf90c07c355577956604ba~KH-pEzF461051610516epsmtrp2j;
+        Fri, 14 Jan 2022 11:36:13 +0000 (GMT)
+X-AuditID: b6c32a39-003ff70000006fe8-78-61e1602e1a32
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        55.4B.08738.D2061E16; Fri, 14 Jan 2022 20:36:13 +0900 (KST)
 Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220114110830epsmtip1be0a3b40cd19968fcc2612b6e1d47d54~KHnbvW7E51013810138epsmtip12;
-        Fri, 14 Jan 2022 11:08:30 +0000 (GMT)
-Subject: Re: [PATCH 2/5] drm/exynos: mixer: Use platform_get_irq() to get
- the interrupt
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220114113613epsmtip287078b9706440aaa79f3d601cb9987d3~KH-om5nca0503005030epsmtip2G;
+        Fri, 14 Jan 2022 11:36:13 +0000 (GMT)
+Subject: Re: [PATCH 0/5] drm/exynos: Use platform_get_irq*() variants to
+ fetch IRQ's
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
@@ -65,129 +65,100 @@ To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 Cc:     Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>
 From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <a95b74fd-7118-b0fe-26b9-4665c719f1a0@samsung.com>
-Date:   Fri, 14 Jan 2022 20:20:05 +0900
+Message-ID: <6f044839-e1d8-b9a8-90c3-7e929d498838@samsung.com>
+Date:   Fri, 14 Jan 2022 20:47:48 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
         Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211222190134.24866-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20211222190134.24866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPJsWRmVeSWpSXmKPExsWy7bCmvu76yIeJBjNOM1r0njvJZPF/20Rm
-        iytf37NZvLh3kcVi49sfTBZnm96wW2x6fI3V4vKuOWwWM87vY7J4eX8Fs0Xfm3XMFq17j7Bb
-        zJj8ks2B12Pli9nsHrMaetk89n5bwOKxc9Zddo9NqzrZPLZ/e8Dqcb/7OJPH5iX1Hn1bVjF6
-        fN4kF8AVlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZ
-        A3S8kkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAtECvODG3uDQvXS8vtcTK0MDA
-        yBSoMCE7Y3JbM3tBi1DF7c/b2BsYz/N1MXJySAiYSPzp+MfWxcjFISSwg1Hiy/PPLCAJIYFP
-        jBLnFrJCJL4xSixaNhvI4QDraJsnAhHfyyhxY/I8RgjnPaPEghUbmUG6hQUiJc53tbGAJEQE
-        ljNLPGw6ATaWWSBHYkrPMrAiNgFViYkr7rOB2LwCdhLvzzwEi7MAxe9+6mQCsUWBBt3/sZwd
-        okZQ4uTMJ2BzOAV8Jd4sOMUKMVNc4taT+UwQtrxE89bZzCCLJQRucEjs/3iRHeJRF4mWfdeY
-        IGxhiVfHt0DFpSQ+v9vLBtGwj1Fi+a6T7BDOYUaJ5p3NUB3GEvuXTmYCBQCzgKbE+l36EGFF
-        iZ2/5zJCbOaTePe1BxpGvBIdbUIQJUoSxy7eYISwJSQuLJnIBmF7SPTtusY0gVFxFpLfZiH5
-        ZxaSf2YhLF7AyLKKUSy1oDg3PbXYsMAIHt3J+bmbGMEpW8tsB+Oktx/0DjEycTAeYpTgYFYS
-        4e0vup8oxJuSWFmVWpQfX1Sak1p8iNEUGNoTmaVEk/OBWSOvJN7QxNLAxMzI2MTC0MxQSZx3
-        1bTTiUIC6YklqdmpqQWpRTB9TBycUg1M2kt3vLro0n30g6CA/dnyX9WvN/Q96zLds4L3d3n+
-        ptN32AsF2M2EuBQZI162zeOKOaeRHVq/1+ihIKNL40LJO6/1ywpKLA/v4Jc7mll1aZ+XNhMP
-        z6n2r339GjmvRI9K6s7p3TE5tcSAmT06PNKwZu21Rlv+G/7HX3fNkolSZu9b/etbl+9jwx9u
-        1Vv9X6dYTvvGsYbnzNeIb9afewxuV4kENvnEPN8psoGbIWKK2cfTjMX3GYLeXDr3Yv/L9e93
-        qD7bMVG3adbs7afKWbzufOu++1fGytpydYPyHa4P/ttX8bB8+qTu4n++X2Cj54os5hNZF7NP
-        tHRM0jf5eOC3S3Hc5u/Nl1msNvNtWcKvxFKckWioxVxUnAgAccoLBmIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnO66yIeJBp9Oylv0njvJZPF/20Rm
-        iytf37NZvLh3kcVi49sfTBZnm96wW2x6fI3V4vKuOWwWM87vY7J4eX8Fs0Xfm3XMFq17j7Bb
-        zJj8ks2B12Pli9nsHrMaetk89n5bwOKxc9Zddo9NqzrZPLZ/e8Dqcb/7OJPH5iX1Hn1bVjF6
-        fN4kF8AVxWWTkpqTWZZapG+XwJUxua2ZvaBFqOL2523sDYzn+boYOTgkBEwk2uaJdDFycQgJ
-        7GaU2LHmHAtEXEJiy1YOCFNY4vDhYoiSt4wSS3raGbsYOTmEBSIl9n74zQKSEBFYzSxx/vQf
-        VpAEs0CORNPMVUwQHY8ZJb427wbrYBNQlZi44j4biM0rYCfx/sxDZhCbBSh+91MnE4gtCjR1
-        3fFl7BA1ghInZz5hAbE5BXwl3iw4BbVAXeLPvEvMELa4xK0n85kgbHmJ5q2zmScwCs1C0j4L
-        ScssJC2zkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHKFamjsYt6/6oHeI
-        kYmD8RCjBAezkghvf9H9RCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeWpGanphak
-        FsFkmTg4pRqYmL2fTOU/yrrTd5/mg8NmoSHfH/Sda9xbeWTzE+GcyyVJelYvZqTPie2xaWtx
-        nZJStSNj0rNr8+I95W91FLoUu0REONXML5A2LLrFmdx5Q3fyRj/Oz1b35BfNC9WbY3PMqHz+
-        zw6RJV9mmrkU6vG3u04r4+JeGuu7n8f7wuq95cuuqW90qnwXaL12wo/5PW3ZFYefa9rLqy/Y
-        N8GvikPctDD8stQ2wewLr/y2RRtvFb76/pIWq+VbQ4cbj02Ylh7rmb7CfZfUpWlpX/nyL+wL
-        dzcS81u20bmlVInPLVDu6sP5dy/c10//uMVPb8bEFd+VnTmWOM1KP871oT136ZI9sZo7vPTz
-        33w723K4/+FrJZbijERDLeai4kQA7ONwvT8DAAA=
-X-CMS-MailID: 20220114110830epcas1p2d601346f9591baf7d3be1b35c241a98b
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmnq5ewsNEg3trZC16z51ksvi/bSKz
+        xZWv79ksXty7yGKx8e0PJouzTW/YLTY9vsZqcXnXHDaLGef3MVm8vL+C2aLvzTpmi9a9R9gt
+        Zkx+yebA67HyxWx2j1kNvWwee78tYPHYOesuu8emVZ1sHtu/PWD1uN99nMlj85J6j74tqxg9
+        Pm+SC+CKyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvM
+        ATpeSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgWqBXnJhbXJqXrpeXWmJlaGBg
+        ZApUmJCd8WDaROaCvVwVqz8cYWxgPMHRxcjBISFgItEx17CLkYtDSGAHo8TRlU9Yuhg5gZxP
+        jBLt9xwhEp8ZJf6tP8MMkgBpOHWkhQ0isYtR4vSRrywQzntGicOT/jGCVAkLhEm0PbzHDJIQ
+        EVjOLPGw6QTYXGaBHIkpPcvARrEJqEpMXHGfDcTmFbCTWHLiKjuIzQIU/9C/nRXEFhWIlLj/
+        Yzk7RI2gxMmZIPdxcHAK+ErMW+QDMVJc4taT+UwQtrxE89bZYHslBG5wSPxoncUGcbaLxMHd
+        h9ghbGGJV8e3QNlSEp/f7WWDaNjHKLF810l2COcwo0TzzmYmiCpjif1LJzOBbGYW0JRYv0sf
+        IqwosfP3XEaIzXwS7772sEIClVeio00IokRJ4tjFG4wQtoTEhSUToe7xkJj8YiX7BEbFWUhe
+        m4Xkn1lI/pmFsHgBI8sqRrHUguLc9NRiwwJTeGwn5+duYgQnbC3LHYzT337QO8TIxMF4iFGC
+        g1lJhLe/6H6iEG9KYmVValF+fFFpTmrxIUZTYGBPZJYSTc4H5oy8knhDE0sDEzMjYxMLQzND
+        JXHeVdNOJwoJpCeWpGanphakFsH0MXFwSjUwFXzRLV/3vntaVmVlOLsUm/SCe/XPFe+/8Y8r
+        v+FYz37I0y9L6/ppA3uVD3sPnOv1Zyn7svKDY3R8hfLiOxmsag+/qm3X27frdkhsdUSgZG/U
+        x0/HylQ3K67N9qjb/smAfcrViFrJu+IHJxfvbF1zYjlLA9P5xoM2YYar7pz9YPZ5pnFb8MQ/
+        62cr7a0O/TyvRdKjbOmjK27GTDKKv8w3+qasbRb6smj/+V1LtNweb9umXV3BZiUk/HXzbFVX
+        08cnxfcqCm6Rl0o717LzR/m3vSE8n728or5M3KL540UTlyD7fWPn2O8ZT03P1087JH/4j0/a
+        U99Tu15d58xj3CGnJONrWvrmlIboo1u9v8/nKLEUZyQaajEXFScCAAVyIPthBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSvK5uwsNEg4VnDSx6z51ksvi/bSKz
+        xZWv79ksXty7yGKx8e0PJouzTW/YLTY9vsZqcXnXHDaLGef3MVm8vL+C2aLvzTpmi9a9R9gt
+        Zkx+yebA67HyxWx2j1kNvWwee78tYPHYOesuu8emVZ1sHtu/PWD1uN99nMlj85J6j74tqxg9
+        Pm+SC+CK4rJJSc3JLEst0rdL4Mp4MG0ic8FerorVH44wNjCe4Ohi5OSQEDCROHWkha2LkYtD
+        SGAHo8SP002MXYwcQAkJiS1bOSBMYYnDh4shSt4ySrx4e4UFJC4sECbx5YEvSFxEYDWzxPnT
+        f1hBZjIL5Eg0zVzFBNGwgFHi06wt7CAJNgFViYkr7rOB2LwCdhJLTlwFi7MAxT/0bwdrFhWI
+        lFh3fBk7RI2gxMmZT8CWcQr4Ssxb5AMxX13iz7xLzBC2uMStJ/OZIGx5ieats5knMArNQtI9
+        C0nLLCQts5C0LGBkWcUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERyfWlo7GPes+qB3
+        iJGJg/EQowQHs5IIb3/R/UQh3pTEyqrUovz4otKc1OJDjNIcLErivBe6TsYLCaQnlqRmp6YW
+        pBbBZJk4OKUamNa/fFFxbiun/NQIPd6ge3xJEkzNEl9PLuMITS6Pam7+M9ua8+X+V3MaVpT5
+        rMqNNrDK28sxxSvtvnC0OP8SO801S978jhCvP764/7prVfSBL6sOtuWFbN1UXLbfy/Cva6uo
+        qvjDXfNU2iWCHFj2p64UXXP7WL3hiqLEs2Etn7bZWyYo1rZsqz6lYZ/GJnOIbbLB3AeXZOPD
+        3zzVtz66jVX8k2KaQOXEpS8aeT/EJ9zri/2WxMCg6/Pug/Z9jn3bUyKsSrtXG2ge3Ja5YmOk
+        vu2l2RN33Mvbn1RZvnY3i0/GJPcDdbqP125KDj2U+k6r0CGk7uG/vwcZ7FiO7rs55YiY6xch
+        2UfVL9ma2OqClViKMxINtZiLihMBRM9FvD4DAAA=
+X-CMS-MailID: 20220114113613epcas1p142ecd07beda2e089ef396337bef33430
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211222190203epcas1p2a7647eb2c09c29587b70982744c1a912
-References: <20211222190134.24866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <CGME20211222190203epcas1p2a7647eb2c09c29587b70982744c1a912@epcas1p2.samsung.com>
-        <20211222190134.24866-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-CMS-RootMailID: 20211222190157epcas1p1d556269940101a49ab245a4f1d7d45c0
+References: <CGME20211222190157epcas1p1d556269940101a49ab245a4f1d7d45c0@epcas1p1.samsung.com>
+        <20211222190134.24866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Lad Prabhakar,
+Hi,
 
 21. 12. 23. 오전 4:01에 Lad Prabhakar 이(가) 쓴 글:
-> platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
-> allocation of IRQ resources in DT core code, this causes an issue
-> when using hierarchical interrupt domains using "interrupts" property
-> in the node as this bypassed the hierarchical setup and messed up the
-> irq chaining.
+> Hi All,
 > 
-> In preparation for removal of static setup of IRQ resource from DT core
-> code use platform_get_irq().
+> This patch series aims to drop using platform_get_resource() for IRQ types
+> in preparation for removal of static setup of IRQ resource from DT core
+> code.
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> Hi,
+> Dropping usage of platform_get_resource() was agreed based on
+> the discussion [0].
 > 
-> Ideally I would expect the mixer_resources_init() to be called from probe
-> instead from the bind callback. If platform_get_irq() returns -EPROBE_DEFER
-> the bind callback will fail :(
+> [0] https://patchwork.kernel.org/project/linux-renesas-soc/
+> patch/20211209001056.29774-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+>
 
-If the bind callback failed then probe function of exynos drm driver will call -EPROBE_DEFER like below so it must be no problem :),
---------------------------------------------
-in exynos_drm_platform_probe function
-    component_master_add_with_match()
-
-in component_master_add_with_match function
-    try_to_bring_up_master()
+Applied.
 
 Thanks,
 Inki Dae
 
-> 
+ 
 > Cheers,
 > Prabhakar
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 41c54f1f60bc..e5204be86093 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -809,19 +809,17 @@ static int mixer_resources_init(struct mixer_context *mixer_ctx)
->  		return -ENXIO;
->  	}
->  
-> -	res = platform_get_resource(mixer_ctx->pdev, IORESOURCE_IRQ, 0);
-> -	if (res == NULL) {
-> -		dev_err(dev, "get interrupt resource failed.\n");
-> -		return -ENXIO;
-> -	}
-> +	ret = platform_get_irq(mixer_ctx->pdev, 0);
-> +	if (ret < 0)
-> +		return ret;
-> +	mixer_ctx->irq = ret;
->  
-> -	ret = devm_request_irq(dev, res->start, mixer_irq_handler,
-> -						0, "drm_mixer", mixer_ctx);
-> +	ret = devm_request_irq(dev, mixer_ctx->irq, mixer_irq_handler,
-> +			       0, "drm_mixer", mixer_ctx);
->  	if (ret) {
->  		dev_err(dev, "request interrupt failed.\n");
->  		return ret;
->  	}
-> -	mixer_ctx->irq = res->start;
->  
->  	return 0;
->  }
+> Lad Prabhakar (5):
+>   drm/exynos/exynos7_drm_decon: Use platform_get_irq_byname() to get the
+>     interrupt
+>   drm/exynos: mixer: Use platform_get_irq() to get the interrupt
+>   drm/exynos/exynos_drm_fimd: Use platform_get_irq_byname() to get the
+>     interrupt
+>   drm/exynos/fimc: Use platform_get_irq() to get the interrupt
+>   drm/exynos: gsc: Use platform_get_irq() to get the interrupt
+> 
+>  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 12 +++---------
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 13 +++++--------
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 13 ++++---------
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 10 +++-------
+>  drivers/gpu/drm/exynos/exynos_mixer.c      | 14 ++++++--------
+>  5 files changed, 21 insertions(+), 41 deletions(-)
 > 
