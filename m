@@ -2,143 +2,209 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BACC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 05:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A959C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 06:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239234AbiANF56 (ORCPT
+        id S229760AbiANGQS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 00:57:58 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:50685 "EHLO
+        Fri, 14 Jan 2022 01:16:18 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:17614 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239201AbiANF56 (ORCPT
+        with ESMTP id S239190AbiANGQR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 00:57:58 -0500
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220114055756epoutp036d909861e6954346025d17493c614c9e~KDYRaqFKi0643706437epoutp03K
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 05:57:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220114055756epoutp036d909861e6954346025d17493c614c9e~KDYRaqFKi0643706437epoutp03K
+        Fri, 14 Jan 2022 01:16:17 -0500
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220114061613epoutp03de9f089a3a5cdbc7202cdf5d8bd76780~KDoPQSiVZ2397123971epoutp03b
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 06:16:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220114061613epoutp03de9f089a3a5cdbc7202cdf5d8bd76780~KDoPQSiVZ2397123971epoutp03b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642139876;
-        bh=oXZI/5pHmSIV2rnVkqX/WYgr+6bWc30NCtFRJUIazl0=;
+        s=mail20170921; t=1642140973;
+        bh=/jJg+HLwuIlmsM6ENqFjZzDJD1HfIhHE7HBn+iaWwm4=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=OJLNsXR++SlHmzP1kzNzmugZ9JylVbdQMElnPkWSK9If/a23Fk1vJKvG/G+jo9neb
-         6c6DemCmvCfMndOH59wifK4RsBzO3bCyHEmDQlliMTpcJc/VP+E4vUfu5vh0y3C01r
-         Fcg9rKmq0GSJZ5wUfQh8lfLujJUg5vyWx0KA4Wlk=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20220114055755epcas2p4b205348d35d4207e815fc4c86e20c304~KDYQ7DEfi0272902729epcas2p4D;
-        Fri, 14 Jan 2022 05:57:55 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.91]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4JZrDv6GG1z4x9Pv; Fri, 14 Jan
-        2022 05:57:51 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        74.7E.10014.04011E16; Fri, 14 Jan 2022 14:55:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220114055749epcas2p45a47db370d61851761daf6103c7bcdb9~KDYLWL-dT2225622256epcas2p4S;
-        Fri, 14 Jan 2022 05:57:49 +0000 (GMT)
+        b=SFRMF0egY6dX6n3/7vKEOk/3dXckKAoW/r54gKD+Anp4RiuNHVsVt+9HXcl7lw8gP
+         JDNMwAsZomBDDkNbk7E8uxQMhXLzZx+YK0R+hndQ9inCpfkin5eiSj9ilGFv8lhj63
+         SqNFUV1jwqNL1N2Kmr0naQ643cYDbRc3+qZQr4Tk=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220114061612epcas5p109458634755b92a6432019cefa2fd3e1~KDoOxf4BL1055410554epcas5p1m;
+        Fri, 14 Jan 2022 06:16:12 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4JZrf11L44z4x9Q8; Fri, 14 Jan
+        2022 06:16:09 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4F.1C.05590.92511E16; Fri, 14 Jan 2022 15:16:09 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220114061608epcas5p2c16b3ad7c52a441f240d1d1ea93cc4a1~KDoKk_K4b2842728427epcas5p2M;
+        Fri, 14 Jan 2022 06:16:08 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220114055749epsmtrp1a2efe03d0dd74a6658c6441bbcf0b074~KDYLVKm2H2498824988epsmtrp1d;
-        Fri, 14 Jan 2022 05:57:49 +0000 (GMT)
-X-AuditID: b6c32a47-489ff7000000271e-53-61e11040422d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220114061608epsmtrp2129819ac708d9691c45f1aafd2897541~KDoKjllmq1575215752epsmtrp2P;
+        Fri, 14 Jan 2022 06:16:08 +0000 (GMT)
+X-AuditID: b6c32a4b-723ff700000015d6-eb-61e11529a639
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        11.8C.08738.DD011E16; Fri, 14 Jan 2022 14:57:49 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
+        C2.9E.08738.82511E16; Fri, 14 Jan 2022 15:16:08 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220114055749epsmtip2b88ba33f957f8f72949f589f757f9189~KDYLD_lax3237232372epsmtip2g;
-        Fri, 14 Jan 2022 05:57:49 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
+        20220114061605epsmtip18357d3467cbd8470473eac9672fb7a7c~KDoH3KHd03210332103epsmtip1t;
+        Fri, 14 Jan 2022 06:16:05 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Andi Shyti'" <andi@etezian.org>,
-        "'Mark Brown'" <broonie@kernel.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Pratyush Yadav'" <p.yadav@ti.com>, <linux-spi@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        "'Rob Herring'" <robh@kernel.org>
-In-Reply-To: <20220112100046.68068-5-krzysztof.kozlowski@canonical.com>
-Subject: RE: [PATCH v3 4/4] spi: s3c64xx: allow controller-data to be
- optional
-Date:   Fri, 14 Jan 2022 14:57:49 +0900
-Message-ID: <00a601d8090b$a92da220$fb88e660$@samsung.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <olof@lixom.net>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <robh+dt@kernel.org>, <s.nawrocki@samsung.com>,
+        <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
+        <linux-fsd@tesla.com>, "'Jayati Sahu'" <jayati.sahu@samsung.com>,
+        "'Ajay Kumar'" <ajaykumar.rs@samsung.com>
+In-Reply-To: <b9fac286-9227-b26b-221b-7f54b63e6b0b@canonical.com>
+Subject: RE: [PATCH 03/23] clk: samsung: fsd: Add initial clock support
+Date:   Fri, 14 Jan 2022 11:46:04 +0530
+Message-ID: <077d01d8090e$37f75da0$a7e618e0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLMnbI1WsUjdTWr/4z1tM/QIKR8oQM1ZV57AYRzuIOqUwzpEA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmha6DwMNEg/3PzS0W/3jOZDH14RM2
-        i/lHzrFabHz7g8li0+NrrBaXd81hs5hxfh+TRePHm+wWd5//YLdo3XuE3eL/nh3sFs/79jE5
-        8HjMauhl87i+5BOzx6ZVnWwed67tYfPYvKTe4/iN7UwenzfJBbBHZdtkpCampBYppOYl56dk
-        5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAB2qpFCWmFMKFApILC5W0rezKcov
-        LUlVyMgvLrFVSi1IySkwL9ArTswtLs1L18tLLbEyNDAwMgUqTMjO2PO6g7lgMkfF81lnmRsY
-        O9i7GDk5JARMJJb9fsbaxcjFISSwg1GiZ9UeJgjnE6PEqbX/2CCcz4wS75YfYYRp2XLlAguI
-        LSSwi1Fi8dNoiKIXjBJrfjewgSTYBPQlXnZsA5srItDCLPHiwwSwbmaBcIkd8/+A2ZwC7hJ/
-        7r8HmyQsECDx7PgfZhCbRUBVYnHHf7AaXgFLidPH+tghbEGJkzOfsEDMkZfY/nYOM8RFChI/
-        ny5jBbFFBJwkvnyGeI5ZQERidmcbM8gREgInOCS+nm5hhWhwkXh+eAkLhC0s8er4FmhoSEm8
-        7G9jh2joZpSY9PIuVGIGMABu5kDYxhKznrUDXccBtEFTYv0ufRBTQkBZ4sgtqNv4JDoO/2WH
-        CPNKdLQJQTSqSxzYPh1qq6xE95zPrBMYlWYh+WwWks9mIflgFsKuBYwsqxjFUguKc9NTi40K
-        jOGxnZyfu4kRnIi13Hcwznj7Qe8QIxMH4yFGCQ5mJRHe/qL7iUK8KYmVValF+fFFpTmpxYcY
-        TYFhPZFZSjQ5H5gL8kriDU0sDUzMzAzNjUwNzJXEeb1SNiQKCaQnlqRmp6YWpBbB9DFxcEo1
-        MG05LOjNe6rBN5E5lWNPVgEzl8vMsxf2eWnWCr+OCmhg2/GR0XSmzsnKcCc7Fukz/G1+74re
-        Ke6qXKXN4XJiyl6Dyoce8XHX3M7+YyxfdLr7v1bDLhWT5TPjuhcGpnaEpLNveHUvetbG+Yy7
-        ztzwe5wS7Z3HyLBglnH9M8apN2snubqZOmyLKvqodPFq0Hu1c64ejPdS80w8X+eEPTy07PKx
-        A1VHUudtOLf5ivj7i3+O+4aZrU+I/2rstSmlp1yz6kP5z+KtUUdjNzNfXrC1YdIPGZ7nX60L
-        nnyZJPr9gtDed74JjPZX630lv/JUTL7nHpZVstHJt2dW9aHnS7JXnjyjon6TP0PrZoOS4AVW
-        ayWW4oxEQy3mouJEAFTMdtxNBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvO5dgYeJBk8OKlks/vGcyWLqwyds
-        FvOPnGO12Pj2B5PFpsfXWC0u75rDZjHj/D4mi8aPN9kt7j7/wW7RuvcIu8X/PTvYLZ737WNy
-        4PGY1dDL5nF9ySdmj02rOtk87lzbw+axeUm9x/Eb25k8Pm+SC2CP4rJJSc3JLEst0rdL4MrY
-        87qDuWAyR8XzWWeZGxg72LsYOTkkBEwktly5wNLFyMUhJLCDUWLqo6OsEAlZiWfvdkAVCUvc
-        bzkCFhcSeMYo8eS8N4jNJqAv8bJjGytIs4hAD7PE5OVbmUASzALhEh+e3YCaeplRYuLnTWDd
-        nALuEn/uv2cBsYUF/CTuNGwBi7MIqEos7vjPCGLzClhKnD7Wxw5hC0qcnPmEBWKonsT69XMY
-        IWx5ie1v5zBDXKcg8fPpMrA5IgJOEl8+Q7zGLCAiMbuzjXkCo/AsJKNmIRk1C8moWUhaFjCy
-        rGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI5KLa0djHtWfdA7xMjEwXiIUYKDWUmE
-        t7/ofqIQb0piZVVqUX58UWlOavEhRmkOFiVx3gtdJ+OFBNITS1KzU1MLUotgskwcnFINTKv2
-        7zSxsbxzoFEmtWtBuqunyPN454tzjolHnbrywq33mYXBXJs4hfabV8/WfhJ92iU1je/QNnnu
-        rGmWLarGzoVMejcfaRtGavt+8/miFqIQ3PPHf0vInPR+nwdHOZ9eTjnLYirFfrW0wi72fdX8
-        O8VXq+669EhMm+ufXWj172n65w4d82xbc94PWUaZZjdd0j5GyHVxcZntPHGj3vlwi1rS3+wH
-        Ux7ESzVwhSUufbDSh9vde+O03bJfY/9febNWY+NuRs5XqfH7PT+zPT+YayxXyq5ZayI9OVP2
-        162O1StN7Z7PnLJ+feKcD/ozjM/ebkvVFDi0YYa699LKDAtX9aX6PEc0C20u3V6p0i6lxFKc
-        kWioxVxUnAgAuK2ibDkDAAA=
-X-CMS-MailID: 20220114055749epcas2p45a47db370d61851761daf6103c7bcdb9
+Thread-Index: AQKuNmZ/+9PJHbdzezyQqzGEXzr0sgIsF/K0AhOIyekBxha2S6qFgZWg
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wbZRjed3e9Xklqzg7CN/BHbbYYMEArbb0uQ53O7Sb8QZyRDaPshBs0
+        lLbptU50ZoWFKQME6jTadbVOBgRwQoENWyCzKzJAKQsIsiyOMRCZMEAwA0eYLceU/573/Z7n
+        e5/n+0Ggkut4FKHVm1mTntHJ8DDs4pWYmLiYiFuMvLQdpy7P/YBRc9WlgPrK3y+g/L1VCNU0
+        u4xQp1drEMp9e1hALZT+JqBu3UmjBj0OnPoi0IlQvSOLOHWudUlIFXX4hdSVmY8E1O2RVfxF
+        km5wNgDabi3DaXddMU7fGG7H6eaq4/TQ1UIB/UlLHaDXCs8K6UX3E6mi9NxdOSyTxZqkrD7T
+        kKXVZyfJkg9kvJyhUssVcQoN9ZxMqmfy2CTZnpTUuL1aXTCFTPouo7MEW6kMx8kSnt9lMljM
+        rDTHwJmTZKwxS2dUGuM5Jo+z6LPj9ax5p0Iuf1YVJB7Ozbk2WQeMrdveG2yYFlhBIOIUEBGQ
+        VMIFW0BwCoQREtILYF//5zhf/AVgV/PvGF8sAni2qAd5KOmcdwn5BQ+As733Eb6YBrDbvQJC
+        LJyMg23fnFzfK5wsBrD+3so6CyWtKBxbuS4IsUTkbuh/YEdDeCu5D/7stwXVBIGRO6B1KSXU
+        FpMa6B0dw3n8KOz5cgILYZR8El6adaC8JSlcmaxe3zKc3AsfrA4CnhMJp7v861YhuURAr7dW
+        wAv2wIrWpQ3xVninu0XI4yi4eLcDD3mAZC4s9STy7WPwvPNHjMcvwMtDDixEQckY+J0ngR/1
+        CCy7P4HwSjH8+KSEZ++AJ+7+sqGMhpUlJRsGaDi8XItVgKfsm4LZNwWzbwpg/3+YC2B1YBtr
+        5PKyWU5lTNSzR/+78ExDnhusP/LY5DYwPjYf7wMIAXwAEqgsXFxuuslIxFlM/vusyZBhsuhY
+        zgdUwcOuRKMiMg3BX6I3ZyiUGrlSrVYrNYlqhSxS3JvdyEjIbMbM5rKskTU91CGEKMqKsAP6
+        txr6t2OeuZ6OWRFao0NHBhrDlrQ/FXzoij7DRWsx9cIWh3QcuTBnnwyw9bZX8mvXnqk7XFvm
+        fXPq1al0Mfp0f7nvXKBz9OivF4bMXmiNbN3pruhm7n1/ZAY9GO4XuK5O+SsUZ1R/+tK6LB+o
+        C9uW5/OnZtbIGKdHWKukLRM4Md/4+KcqYx/orOoI8+8uTzDZLjk1++mG3q5Df5tFqm/Pl+4T
+        XnspOemQsei0q7nbGZEyV3DkWHHH/r7AxdHK9tea0hNuqKmS1/PJpvq03JvjM48NHH9bteVg
+        rOPrauREyx+SAwXb/ykYna4peSMyuW/qs9RFW1TSO7oWYbhGhnE5jCIWNXHMv3W9yEBtBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsWy7bCSnK6G6MNEgykrhCwOvD/IYvF+WQ+j
+        xfwj51gtjpxawmSx8e0PJospf5YzWWx6fI3V4mPPPVaLh6/CLS7vmsNmMeP8PiaLU9c/s1ks
+        2vqF3aJ17xF2i8Nv2lktHl//w+Yg4LFm3hpGj1kNvWwem1Z1snncubaHzWPzknqPKyeaWD36
+        tqxi9PjXNJfd4/MmuQDOKC6blNSczLLUIn27BK6Mi09XMRZslay4vOYlawPjedEuRk4OCQET
+        iX0fFrB3MXJxCAnsYJR4Pm8yM0RCWuL6xgnsELawxMp/z6GKnjNKbDzcBZZgE9CV2LG4jQ0k
+        ISLQzShxpWcmI4jDLNDHLHFv0w8miJYvjBKbri8Fa+EUcJQ48n8W2A5hAXeJs0cmAXVwcLAI
+        qEo0fPEBCfMKWErsvvmADcIWlDg58wkLiM0soC3R+7CVEcKWl9j+dg7UqQoSP58uYwWxRQTc
+        JP7/uQxVIy7x8ugR9gmMwrOQjJqFZNQsJKNmIWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4
+        NC9dLzk/dxMjOKK1tHYw7ln1Qe8QIxMH4yFGCQ5mJRHe/qL7iUK8KYmVValF+fFFpTmpxYcY
+        pTlYlMR5L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwHeKrUTkyl4Oz85P8jdbyDY9vFtmFsDPN
+        eGqhc7dz3umvFZM09vHZvOdvy3sz+8h2/SCDNp5ZfII+m0TCDl6RC4qIllgd0azZWSAeen8T
+        27sDjDlRbv8kDm3b43D/mAH7Lc5ilzXeDk4yd+YyiYmbP0qad3hT/jz/mee0/Nx1lk+wfp3+
+        pzh98dnChIgWl/3q/584r9I6fPyJUvrzntgNXIw87x06bn6V2Ohx/tHkd5umbE29VDjjhg+/
+        S2iZxi/HS4+XNj7y57rT1qa+d+2WpFP6atmP1Dhb7/BOuusswFY/LzmpTdifTVmqMWBt9scv
+        fhyhbCs9p/9dItf1eRaH6D6LDUJ3dr07VFLhPkdQiaU4I9FQi7moOBEA1lcVD1cDAAA=
+X-CMS-MailID: 20220114061608epcas5p2c16b3ad7c52a441f240d1d1ea93cc4a1
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
+CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220112100121epcas2p1ba2f59e6fa405e10e9daa80403ec17e2
-References: <20220112100046.68068-1-krzysztof.kozlowski@canonical.com>
-        <CGME20220112100121epcas2p1ba2f59e6fa405e10e9daa80403ec17e2@epcas2p1.samsung.com>
-        <20220112100046.68068-5-krzysztof.kozlowski@canonical.com>
+X-CMS-RootMailID: 20220113122324epcas5p105c53b448b5801813a02a88c6107a2f3
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>
+        <CGME20220113122324epcas5p105c53b448b5801813a02a88c6107a2f3@epcas5p1.samsung.com>
+        <20220113121143.22280-4-alim.akhtar@samsung.com>
+        <b9fac286-9227-b26b-221b-7f54b63e6b0b@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Sent: Wednesday, January 12, 2022 7:01 PM
-> To: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>; Andi Shyti
-> <andi@etezian.org>; Mark Brown <broonie@kernel.org>; Rob Herring
-> <robh+dt@kernel.org>; Pratyush Yadav <p.yadav@ti.com>; linux-
-> spi@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Cc: Sam Protsenko <semen.protsenko@linaro.org>; Rob Herring
-> <robh@kernel.org>
-> Subject: [PATCH v3 4/4] spi: s3c64xx: allow controller-data to be optional
-> 
-> The Samsung SoC SPI driver requires to provide controller-data node for
-> each of SPI peripheral device nodes.  Make this controller-data node
-> optional, so DTS could be simpler.
-> 
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
+>-----Original Message-----
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>Sent: Thursday, January 13, 2022 6:20 PM
+>To: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
+>kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>Cc: soc@kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
+>olof@lixom.net; linus.walleij@linaro.org; catalin.marinas@arm.com;
+>robh+dt@kernel.org; s.nawrocki@samsung.com; linux-samsung-
+>soc@vger.kernel.org; pankaj.dubey@samsung.com; linux-fsd@tesla.com;
+>Jayati Sahu <jayati.sahu@samsung.com>; Ajay Kumar
+><ajaykumar.rs@samsung.com>
+>Subject: Re: [PATCH 03/23] clk: samsung: fsd: Add initial clock support
+>
+>On 13/01/2022 13:11, Alim Akhtar wrote:
+>> Add initial clock support for FSD (Full Self-Driving) SoC which is
+>> required to bring-up platforms based on this SoC.
+>>
+>> Cc: linux-fsd@tesla.com
+>> Signed-off-by: Jayati Sahu <jayati.sahu@samsung.com>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>  drivers/clk/samsung/Makefile  |   1 +
+>>  drivers/clk/samsung/clk-fsd.c | 308
+>++++++++++++++++++++++++++++++++++
+>>  drivers/clk/samsung/clk-pll.c |   1 +
+>>  drivers/clk/samsung/clk-pll.h |   1 +
+>>  4 files changed, 311 insertions(+)
+>>  create mode 100644 drivers/clk/samsung/clk-fsd.c
+>>
+>> diff --git a/drivers/clk/samsung/Makefile
+>> b/drivers/clk/samsung/Makefile index c46cf11e4d0b..d66b2ede004c 100644
+>> --- a/drivers/clk/samsung/Makefile
+>> +++ b/drivers/clk/samsung/Makefile
+>> @@ -18,6 +18,7 @@ obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-
+>exynos-audss.o
+>>  obj-$(CONFIG_EXYNOS_CLKOUT)	+= clk-exynos-clkout.o
+>>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+>>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
+>> +obj-$(CONFIG_ARCH_TESLA_FSD)         += clk-fsd.o
+>
+>It should be rather it's own CONFIG_TESLA_FSD_CLK option, just like other
+>Exynos designs. This keeps unified approach with existing Samsung clock
+>Kconfig.
+>
+Ok, will add a separate config for this 
+
+>>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+>> obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+>> obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o diff --git
+>> a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c new
+>> file mode 100644 index 000000000000..e47523106d9e
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-fsd.c
+>> @@ -0,0 +1,308 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Common Clock Framework support for FSD SoC.
+>> + *
+>> + * Copyright (c) 2017-2022 Samsung Electronics Co., Ltd.
+>> + *             https://www.samsung.com
+>> + * Copyright (c) 2017-2022 Tesla, Inc.
+>> + *             https://www.tesla.com
+>> + *
+>
+>Drop the line break with empty * comment.
+Will fix in next version
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of.h>
+>> +
+>> +#include "clk.h"
+>> +#include <dt-bindings/clock/fsd-clk.h>
+>
+>dt-bindings headers before local clk.h.
+>
+Noted, thanks
+>> +
+>> +/* Register Offset definitions for CMU_CMU (0x11c10000) */
+>
+>
+>
+>Best regards,
+>Krzysztof
 
