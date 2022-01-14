@@ -2,131 +2,171 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BCFC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 19:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A139C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 19:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234013AbiANTnU (ORCPT
+        id S244131AbiANToP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 14:43:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38172 "EHLO
+        Fri, 14 Jan 2022 14:44:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbiANTnU (ORCPT
+        with ESMTP id S229720AbiANToO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 14:43:20 -0500
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E530C06173E
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 11:43:20 -0800 (PST)
-Received: by mail-ua1-x92a.google.com with SMTP id m15so18750761uap.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 11:43:20 -0800 (PST)
+        Fri, 14 Jan 2022 14:44:14 -0500
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43ADFC06161C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 11:44:14 -0800 (PST)
+Received: by mail-ua1-x934.google.com with SMTP id r15so18823177uao.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 11:44:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SuDrM47lFk/xDnPQavWDEhpvX1OVCj87e4C8wMv47ek=;
-        b=uU0y8MeH7ve3HVo6h9z/sLq34dpYEr+rV2qzGcCr4pvByRsnTngS3RdUC929Q5Dg3a
-         MNHT6FEFCpjGpCIUCNfZ63m1xfrbIoVSY7mkvVbrn97TRWm7hYztComguPi9lLrvt+tj
-         K9itw2i0WKtyXbLQwfyRtRf8tqfLa51Kp1KRkABTRJfNhhFvCMr31GE6BcfkpTYe6UB5
-         74P5fMJxMcHiPeXjBF6PBn7JWkCMk1TE2IAWkGsK9Mrwt+1FxI72fj+7/ZkC5DgZM/bs
-         hYcuaPnqNkBuGvXpNsoVi12P2Uj25JPYntMniKtJ6cvZHUZJHVoRHGcnzmAjVLrBEBlr
-         khZQ==
+        bh=dJwo/s0+Rc0eQOHKUUuPigE1fDH9XGzotavYCOzNXD8=;
+        b=VU4KUwt/Tr60y5OcD7lGeZ4iqhOuQpB0rJIp+JJDe9auj39wn0SNCqzCbSHPZZvZcm
+         KzzpLJAUph0oIQtHvzda9jYDtk7yarbxgwScNzwthEuQSSAOs+8A1Tz7kOGBwqJeWBvS
+         8dxhsHVYZIUExjtrEz0jY2P6BRb9x6epZ/BCRM8RXUbuvqHOl4DRqEJAahzd12JhkbaM
+         POQV/yAlb2eeZ8UrptPQRPyRCOj6D8O67lE5/jOhxOqZmjvOX4O311JM+518DkLY3VBX
+         QgsGERpDbu3N1QZ6+XTgBVdbKmzbRlwAARQeqGVctyZxpPa2P3EX4Y6DgAxuye3QlCFS
+         pdag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SuDrM47lFk/xDnPQavWDEhpvX1OVCj87e4C8wMv47ek=;
-        b=zscwjAqBBgJQStBMHwndqowDBlGLT+KqVJsgkzElaJFApqk8ZRFlvab14ES7Kd2LF8
-         FxNdmdH33uNjm1MDRQPKxsbg1rwt0DrhBwbVXIRWhcYDyJdu28flxMsIL8O6t/7DUwkb
-         OaGlja8Pl9muq9qC2/EZVuNgVktr21zhr6QNOPX0+LPYNd4VlK21wdeIbsaiUiZqvUkN
-         afaoaVldPPw7obSX8Tf4gLHc6I/jAojFUe6KZ3Zbko1Gn1e8QaVHH3P+KAS8nZT3xQfs
-         I3ErUXFv370mNuonwr727Ykj2Wu7vrVdUKzlD6bnN1eLGBlOPIxjEVPcopGWOVlAaTpu
-         HVVQ==
-X-Gm-Message-State: AOAM532a98yKf46v0R9Oh6EX266YcOWB2XUtK2KuMrlCWQsJKCF84NVS
-        2fuqitE1AJJRzzw6/+ldcpT9AbB2O8cF2Iv6388Ixg==
-X-Google-Smtp-Source: ABdhPJyeMH1f9mXJzL3vPuJzvceBqGFTOKsg1Rw8BBDEk0mroinGSUCRlAly7dYzr6vVxaSCf8tdOhRcDxTleLBBqN0=
-X-Received: by 2002:a9f:3e09:: with SMTP id o9mr4836020uai.114.1642189399311;
- Fri, 14 Jan 2022 11:43:19 -0800 (PST)
+        bh=dJwo/s0+Rc0eQOHKUUuPigE1fDH9XGzotavYCOzNXD8=;
+        b=EoUDD4XKCqXdkwOyX+fWtXn8Nxz7TToKRCbvg9Xi1ybwxqtOhvr8VnNwodpS8prWUt
+         gAos/oITlKfIH26rnmzpjLBmnf1IJC+k3LNX70NW44p4hZT9K63DunbyDu6YzZyRvEkz
+         iszn7txlwbiVDWrImas2rBbxw8AwlUxwrcwzys4avvFN+4aE+BPcL/haUS3Zfn5KcleY
+         qLr8TUNG3K3NRHyOtc7ip9PH91bK4eiaUt7+AIt/kB2yHvFnmR6Us7ZpXHwiQR+6QH9E
+         8Iz4BsJ+8ctU/oVkKppi2kuBonpgZEaYMcH/AZM2HaKCObKff6UZYeZ45iqYuGtK6uZX
+         brCg==
+X-Gm-Message-State: AOAM533AqeieeIOr5advio5Jr204hBzqj2QYfA9OQ8uhFLTYFAERM++y
+        i6ExhomMREFXHaxYbR20B8Dkzy6wMCPt6ywnpjpqWA==
+X-Google-Smtp-Source: ABdhPJzvX1gfxrvD0KqCKoIZ0gtEGerrArvAnqtuAR9K17w7Zmq/f6VA7N0SrwIXOGieZ8tG75VjrE+70/sbOWCKB84=
+X-Received: by 2002:ab0:13ee:: with SMTP id n43mr4749955uae.9.1642189453386;
+ Fri, 14 Jan 2022 11:44:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20220103181826.2136-1-semen.protsenko@linaro.org> <b40fedf8-73d7-6f4e-d26e-2f274b15228a@canonical.com>
-In-Reply-To: <b40fedf8-73d7-6f4e-d26e-2f274b15228a@canonical.com>
+References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com> <20220111201722.327219-19-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220111201722.327219-19-krzysztof.kozlowski@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 14 Jan 2022 21:43:07 +0200
-Message-ID: <CAPLW+4k7VEh0E312Cw=AjufOo_OisJ5yrLm1QdhAcHFqayVv+w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Add missing gpm6 and gpm7 nodes to Exynos850
+Date:   Fri, 14 Jan 2022 21:44:00 +0200
+Message-ID: <CAPLW+4=FGEuaMYWXewkhzsPz1GgCsPJQAg5WKm_OOSxNmP-Uxg@mail.gmail.com>
+Subject: Re: [PATCH v2 25/28] dt-bindings: pinctrl: samsung: describe
+ Exynos850 and ExynosAutov9 wake-ups
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+        Alim Akhtar <alim.akhtar@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 7 Jan 2022 at 10:05, Krzysztof Kozlowski
+On Tue, 11 Jan 2022 at 22:18, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> On 03/01/2022 19:18, Sam Protsenko wrote:
-> > gpm6 and gpm7 nodes are missing in Exynos850 device tree. Next errors
-> > are reported because of that:
-> >
-> >     Missing node for bank gpm6 - invalid DTB
-> >     Missing node for bank gpm7 - invalid DTB
-> >
-> > Add missing nodes to make those available to use, and to fix boot
-> > errors.
-> >
-> > Fixes: e3493220fd3e ("arm64: dts: exynos: Add initial Exynos850 SoC support")
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> > NOTES:
-> >   - Recommend to apply this patch after "arm64: dts: exynos: align
-> >     pinctrl with dtschema in Exynos850"
-> >   - This patch also brings back two interrupts removed in "arm64:
-> >     dts: exynos: drop incorrectly placed wakeup interrupts in Exynos850"
+> Older Samsung Exynos SoC pin controller nodes (Exynos3250, Exynos4,
+> Exynos5, Exynos5433) with external wake-up interrupts, expected to have
+> one interrupt for multiplexing these wake-up interrupts.  Also they
+> expected to have exactly one pin controller capable of external wake-up
+> interrupts.
 >
-> I'll take it after the merge window and apply it before my series (so
-> without -gpio-bank suffix).
+> It seems however that newer ARMv8 Exynos SoC like Exynos850 and
+> ExynosAutov9 have differences of their pin controller node capable of
+> external wake-up interrupts:
+> 1. No multiplexed external wake-up interrupt, only direct,
+> 2. More than one pin controller capable of external wake-up interrupts.
 >
+> Add dedicated Exynos850 and ExynosAutov9 compatibles.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
 
-Sure, whatever you think is best.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-> >
-> >  .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 20 +++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
-> > index a71acf358d2d..f43e4a206282 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
-> > @@ -194,6 +194,26 @@ gpm5: gpm5-gpio-bank {
-> >               interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> >       };
-> >
-> > +     gpm6: gpm6-gpio-bank {
-> > +             gpio-controller;
-> > +             #gpio-cells = <2>;
-> > +
-> > +             interrupt-controller;
-> > +             #interrupt-cells = <2>;
-> > +             interrupt-parent = <&gic>;
-> > +             interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-> > +     };
-> > +
-> > +     gpm7: gpm7-gpio-bank {
-> > +             gpio-controller;
-> > +             #gpio-cells = <2>;
-> > +
-> > +             interrupt-controller;
-> > +             #interrupt-cells = <2>;
-> > +             interrupt-parent = <&gic>;
-> > +             interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-> > +     };
-> > +
-> >       /* USI_CMGP0: HSI2C function */
-> >       hsi2c3_pins: hsi2c3-pins {
-> >               samsung,pins = "gpm0-0", "gpm1-0";
-> >
+>  .../samsung,pinctrl-wakeup-interrupt.yaml     | 27 ++++++++++++++++---
+>  1 file changed, 24 insertions(+), 3 deletions(-)
 >
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> index 6b684a53119b..a822f70f5702 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+> @@ -16,9 +16,12 @@ description: |
+>    controller.
 >
-> Best regards,
-> Krzysztof
+>    External wake-up interrupts for Samsung S3C/S5P/Exynos SoC pin controller.
+> -  Only one pin-controller device node can include external wake-up interrupts
+> -  child node (in other words, only one External wake-up interrupts
+> +  For S3C24xx, S3C64xx, S5PV210 and Exynos4210 compatible wake-up interrupt
+> +  controllers, only one pin-controller device node can include external wake-up
+> +  interrupts child node (in other words, only one External wake-up interrupts
+>    pin-controller is supported).
+> +  For newer controllers, multiple pin-controller device node can include
+> +  external wake-up interrupts child node.
+>
+>    See also Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml for
+>    additional information and example.
+> @@ -32,6 +35,8 @@ properties:
+>        - samsung,s5pv210-wakeup-eint
+>        - samsung,exynos4210-wakeup-eint
+>        - samsung,exynos7-wakeup-eint
+> +      - samsung,exynos850-wakeup-eint
+> +      - samsung,exynosautov9-wakeup-eint
+>
+>    interrupts:
+>      description:
+> @@ -41,7 +46,6 @@ properties:
+>
+>  required:
+>    - compatible
+> -  - interrupts
+>
+>  allOf:
+>    - if:
+> @@ -56,6 +60,8 @@ allOf:
+>          interrupts:
+>            minItems: 6
+>            maxItems: 6
+> +      required:
+> +        - interrupts
+>
+>    - if:
+>        properties:
+> @@ -67,6 +73,8 @@ allOf:
+>          interrupts:
+>            minItems: 4
+>            maxItems: 4
+> +      required:
+> +        - interrupts
+>
+>    - if:
+>        properties:
+> @@ -81,5 +89,18 @@ allOf:
+>          interrupts:
+>            minItems: 1
+>            maxItems: 1
+> +      required:
+> +        - interrupts
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos850-wakeup-eint
+> +              - samsung,exynosautov9-wakeup-eint
+> +    then:
+> +      properties:
+> +        interrupts: false
+>
+>  additionalProperties: false
+> --
+> 2.32.0
+>
