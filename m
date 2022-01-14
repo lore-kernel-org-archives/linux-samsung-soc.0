@@ -2,95 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432E5C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 14:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E03C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 16:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241949AbiANOqK (ORCPT
+        id S243205AbiANQNs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 09:46:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54474 "EHLO
+        Fri, 14 Jan 2022 11:13:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241959AbiANOqK (ORCPT
+        with ESMTP id S243190AbiANQNk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 09:46:10 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8F0C061574
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 06:46:09 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id b14so12523731lff.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 06:46:09 -0800 (PST)
+        Fri, 14 Jan 2022 11:13:40 -0500
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6B60C06173F
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 08:13:39 -0800 (PST)
+Received: by mail-ua1-x929.google.com with SMTP id m90so17822819uam.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 08:13:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CSKRUaLsfJfUnzvmnBvx1Gx7Z4MA4RF1gGT6nyveJj0=;
-        b=l+aO4kxL+2IolvBE1/PZe4caAKQ+C4QQRKMRUspMhpn0bG6GPSCcVbqEwcExCyi4Dr
-         myngy1BLNt86v5Ywzk09729EHCzCVerjZOCjTzu6C8aMlmkH2eu475hmKlnAjaEnnVt1
-         9Cf4NX46x23ppQPniRKPgz7TNXwj0dUwld7XCaNUJir/kdfZNqGcYtK94mVBfjFT4OZn
-         Pde+62KnnP4VlUN7ocEDzcyM1uG7XcxheMKSl6n6Z1DsRCv2WdSpovOYOD7cKk3mkbqd
-         4EVFQzKZmX2VHy57rr3WZrTpurgTIowrWfnjWCN/Yn+B14YYFApnTqBI0kOv9c6J+whg
-         EfEw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qxkpv3eNiRdJcWaLuANiCoD4pI3qvbrsDdQYc45dZk8=;
+        b=goCpoT6iIjZHX/StCqxQby/LS7loOLRpEO/Y1+Fj6M2kXs38lG7f13W8ikbjrmBMCB
+         OnFyQXUuaTcCidVWULOBJLIvx/O/tI14Z/F4AqdGWKvBoErCdpyWjtBMdyDgcX26Jfur
+         P7tevqaqFwc2lNh+GQupHifgTHk1QgJ0IulZyqJpHw93YdOpRSB30jRvKA//YtZrz3uy
+         /rLzNvL+AP0sqJ3Gw46gtEEyJHSgy+hlpmuz9XhnzfG6TSHUx8NMiint7b7kMzgahLzi
+         uyYTcPOibvNGpK23+DpgqR2j4PPmT16QhZWV9UBCLL4NKQuKJeBHXJ6hFknVvbMD9Vjx
+         Z9Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CSKRUaLsfJfUnzvmnBvx1Gx7Z4MA4RF1gGT6nyveJj0=;
-        b=ot/b7zMurvznQNjCyNGjKsLc/HCgdbGfAf5l2YIBex3HNLu6uTEU9CMqV2dzvxeDWO
-         NxXFYLHy2NcEgBhfrgkCt0oeEc3P9Z9nYUrWz7/tLugGekNw9JpOSRUdN7O3dfVMSaGO
-         ZsageDCjL7DFkKKDtTw0RUg97HohzUgUV7c4/KMxkpXF6ggxFzyziaSQl8i+iNqz8L2D
-         2eQXrxWg7jEsT0bL1IX/+GOUdGb8WYrCbh1fInsql0FGTfRg2Dz1cZPMm0Dq1pR+fGTI
-         FdKafqIM3oxZnuLQuaBz9K9UUhTrUgHN5lXUE4ixMwvjJbKb0M+sfRoY3CyVLXIBiarq
-         y0zg==
-X-Gm-Message-State: AOAM531A/rWahfj8UQK2jNUMO5gGUYYlvykFstfOF6CrEZkJVsV9jXxX
-        5z/dpuw/woSw0g9AWGQnO5zy1l0O/zG4dqhi
-X-Google-Smtp-Source: ABdhPJy75c34uMOZTp1fMT1cUhgs2/p0FZuOt7qJKZIOS0vbBgCNSStp6M8LTRjt6Ovtac0R1MC5vA==
-X-Received: by 2002:ac2:4a8e:: with SMTP id l14mr7049062lfp.520.1642171568006;
-        Fri, 14 Jan 2022 06:46:08 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id b17sm364093ljr.86.2022.01.14.06.46.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jan 2022 06:46:07 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Chanho Park <chanho61.park@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] soc: samsung: Fix typo in CONFIG_EXYNOS_USI description
-Date:   Fri, 14 Jan 2022 16:46:06 +0200
-Message-Id: <20220114144606.24358-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qxkpv3eNiRdJcWaLuANiCoD4pI3qvbrsDdQYc45dZk8=;
+        b=QNRgKXoMbiKcbWxn2pZjSSaomX+aVqh8jZ0ogbXcGzUltkAFYKtPgxMhD6tU0ZF7Kv
+         QSpGShgSN8567LmzBx/FfrbMvyWGW1W77huB717MzHzo258KngokQs/1SpaZa79YbIEn
+         nNQoElc12ooKKA86UV56Hv9yl4pJ7y44pb02VL+Jb871IgCZ5gbr13dBRH1bxBDke+tG
+         ECWih+s4StEq76+ogetLXy/RxO831rGYCYVQaI6nwY0j+lhM+aa0kHjy06dB1uQRd5z4
+         uxoLK8MgsfMr+nvPMYMO8h+TIb11f0d2OlzGxsHg33EnR2nqsKIlI/+NAVJGbrizapj2
+         tI1g==
+X-Gm-Message-State: AOAM531OpZ29S6e95XKIgIayHRfsKf4uvKaNT8t0ZWjnK+//Pr5RsZMC
+        jlv5INNCjqJFztgVn0KPUEQQgpBxLM+miHUbhjS6YdY8q6j9iQ==
+X-Google-Smtp-Source: ABdhPJzWflgFRWJp52JXGQ6mFbqqIxK3ZZYuUMkUM0idCjp2RCLsqwd6kxDjkUeOcXkWzHUSz8ObECiekIGt+opAxuw=
+X-Received: by 2002:ab0:13ee:: with SMTP id n43mr4421442uae.9.1642176818829;
+ Fri, 14 Jan 2022 08:13:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220112100046.68068-1-krzysztof.kozlowski@canonical.com> <20220112100046.68068-5-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220112100046.68068-5-krzysztof.kozlowski@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 14 Jan 2022 18:13:27 +0200
+Message-ID: <CAPLW+4mRY7diuP8Ts_pnY6M0TeK9OmxPe+fh_K0YBBzvitRNbw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] spi: s3c64xx: allow controller-data to be optional
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pratyush Yadav <p.yadav@ti.com>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The proper name is Exynos Auto V9, not V0. It was the typo slipped in
-unnoticed, fix it.
+On Wed, 12 Jan 2022 at 12:00, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> The Samsung SoC SPI driver requires to provide controller-data node
+> for each of SPI peripheral device nodes.  Make this controller-data node
+> optional, so DTS could be simpler.
+>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
 
-Fixes: b603377e408f ("soc: samsung: Add USI driver")
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
----
-Changes in v2:
-  - Add "Fixes" tag
-  - Add R-b tag by Chanho Park
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
- drivers/soc/samsung/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index a9f8b224322e..02e319508cc6 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -31,7 +31,7 @@ config EXYNOS_USI
- 	help
- 	  Enable support for USI block. USI (Universal Serial Interface) is an
- 	  IP-core found in modern Samsung Exynos SoCs, like Exynos850 and
--	  ExynosAutoV0. USI block can be configured to provide one of the
-+	  ExynosAutoV9. USI block can be configured to provide one of the
- 	  following serial protocols: UART, SPI or High Speed I2C.
- 
- 	  This driver allows one to configure USI for desired protocol, which
--- 
-2.30.2
-
+>  drivers/spi/spi-s3c64xx.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 8755cd85e83c..769d958a2f86 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -796,16 +796,14 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       data_np = of_get_child_by_name(slave_np, "controller-data");
+> -       if (!data_np) {
+> -               dev_err(&spi->dev, "child node 'controller-data' not found\n");
+> -               return ERR_PTR(-EINVAL);
+> -       }
+> -
+>         cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+> -       if (!cs) {
+> -               of_node_put(data_np);
+> +       if (!cs)
+>                 return ERR_PTR(-ENOMEM);
+> +
+> +       data_np = of_get_child_by_name(slave_np, "controller-data");
+> +       if (!data_np) {
+> +               dev_info(&spi->dev, "child node 'controller-data' not found, using defaults\n");
+> +               return cs;
+>         }
+>
+>         of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+> --
+> 2.32.0
+>
