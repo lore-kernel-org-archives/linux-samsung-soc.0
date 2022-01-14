@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F18C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 05:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF50C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 05:48:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236491AbiANFpE (ORCPT
+        id S239209AbiANFs0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 00:45:04 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:34707 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236438AbiANFpD (ORCPT
+        Fri, 14 Jan 2022 00:48:26 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:40004 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239169AbiANFsX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 00:45:03 -0500
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220114054502epoutp022c88b09020391dc790839e4671b63cba~KDNAuS88v0979109791epoutp02R
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 05:45:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220114054502epoutp022c88b09020391dc790839e4671b63cba~KDNAuS88v0979109791epoutp02R
+        Fri, 14 Jan 2022 00:48:23 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220114054821epoutp01996b2bb9804357dafc58e0ccd9f25209~KDP6Xn0UW3071230712epoutp01F
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 05:48:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220114054821epoutp01996b2bb9804357dafc58e0ccd9f25209~KDP6Xn0UW3071230712epoutp01F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642139102;
-        bh=w47xkFujfC1ZtjvVcAlZUxxUPRzZ9XLi8/PhdkNW0dU=;
+        s=mail20170921; t=1642139301;
+        bh=X1p948d3urtpJlqPdW8m16ZXR/ar2loRfYP3r8Kfsl8=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Ra++L0KTQkLlfxU5EwhapTZvBH6BoY7/5jf6vUXfjrfA/fnRgNch/WkivgvqB5m5D
-         Y5SfGv5ecnNkXZ3qzk0Zyf5+M72vd11r0a4Q6ZA3U/qoup3pB8q7sUcD3EJ53DepPo
-         dShBrl89p/KbjpoXoVE6hMZHCvZ7w54J1rCh/H8c=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220114054501epcas5p2ed4f0a645cdb5246410e5d4aeb380118~KDNAMnWzz1615416154epcas5p2G;
-        Fri, 14 Jan 2022 05:45:01 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4JZqxy0ZP7z4x9Q3; Fri, 14 Jan
-        2022 05:44:54 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        b=d8LqBGm5XUnBVtBaLXpUf4bcHlpl/X+ZVzm8y5AOwNI7Jwro+xeAdP5RP7n6uMsiI
+         URNwn7FLi8K/AQrbDqY+58IbuX4csy0vHvfjf5NE3q59TDlsp/P71ajrPsicmwANIq
+         ERIrVBenfsqoYqmSBimbzhT4ZySzTWvKSLX+iHTE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220114054821epcas5p4b47e131c31988fd6037a9a84b043455a~KDP578VlL1083810838epcas5p4h;
+        Fri, 14 Jan 2022 05:48:21 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4JZr1p47bNz4x9Q0; Fri, 14 Jan
+        2022 05:48:14 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.36.46822.DCD01E16; Fri, 14 Jan 2022 14:44:45 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220114054445epcas5p47f19a2afcff3ad5f01d66a47586c6f56~KDMwz_PzY1547315473epcas5p4z;
-        Fri, 14 Jan 2022 05:44:45 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220114054445epsmtrp132fe461cb0578c60aab4aa97c9556c80~KDMwzJsKc1830318303epsmtrp1J;
-        Fri, 14 Jan 2022 05:44:45 +0000 (GMT)
-X-AuditID: b6c32a4a-dfbff7000000b6e6-b3-61e10dcdf66f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7A.FA.08738.DCD01E16; Fri, 14 Jan 2022 14:44:45 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        1E.07.46822.E9E01E16; Fri, 14 Jan 2022 14:48:14 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220114054814epcas5p3616ca028567371af18120160419632b6~KDPzPMTlN2280222802epcas5p30;
+        Fri, 14 Jan 2022 05:48:14 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220114054814epsmtrp2402acd7717c9c658516bb090dc187e1c~KDPzOLyhv3095230952epsmtrp2y;
+        Fri, 14 Jan 2022 05:48:14 +0000 (GMT)
+X-AuditID: b6c32a4a-dfbff7000000b6e6-c8-61e10e9e00d9
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A5.B9.29871.D9E01E16; Fri, 14 Jan 2022 14:48:14 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220114054443epsmtip14d9ec385250ecc599f85ac6f880ebd47~KDMutVFPP1319713197epsmtip13;
-        Fri, 14 Jan 2022 05:44:42 +0000 (GMT)
+        20220114054811epsmtip25906b32e7d241eede493cc5f22ad5104~KDPw9j-7u2435124351epsmtip2e;
+        Fri, 14 Jan 2022 05:48:11 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -60,61 +60,60 @@ Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
         <robh+dt@kernel.org>, <s.nawrocki@samsung.com>,
         <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
         <linux-fsd@tesla.com>
-In-Reply-To: <849c7772-0f7e-32ff-6ea6-c46aa6837bb4@canonical.com>
-Subject: RE: [PATCH 10/23] dt-bindings: pinctrl: samsung: Add compatible for
- Tesla FSD SoC
-Date:   Fri, 14 Jan 2022 11:14:41 +0530
-Message-ID: <076101d80909$d5849060$808db120$@samsung.com>
+In-Reply-To: <c87f500e-e43e-465c-94fa-050c2b0de083@canonical.com>
+Subject: RE: [PATCH 01/23] dt-bindings: clock: Document FSD CMU bindings
+Date:   Fri, 14 Jan 2022 11:18:10 +0530
+Message-ID: <076201d8090a$5208eff0$f61acfd0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKuNmZ/+9PJHbdzezyQqzGEXzr0sgL8ryguAaBfAcEA6PFKo6qJdmUg
+Thread-Index: AQKuNmZ/+9PJHbdzezyQqzGEXzr0sgK+Rz8NAfWcy00CRGI64ap95Tsg
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAJsWRmVeSWpSXmKPExsWy7bCmuu5Z3oeJBjtvW1i8X9bDaDH/yDlW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmhu48voeJBnsXylm8X9bDaDH/yDlW
         i41vfzBZTPmznMli0+NrrBYfe+6xWjx8FW5xedccNosZ5/cxWZy6/pnNYtHWL+wWrXuPsFsc
         ftPOavH4+h82Bz6PNfPWMHrMauhl89i0qpPN4861PWwem5fUe1w50cTq0bdlFaPHv6a57B6f
         N8kFcEZl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA
         3a6kUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAy
-        BSpMyM64d3QxS8F9gYrXHycwNTAe5Oti5OSQEDCRWPf4GVsXIxeHkMBuRokNiy8yQzifGCUO
-        N65ngXA+M0pMXbqaBabl36ZmRojELkaJn4dmQDkvGSXmNfQxg1SxCehK7FjcBjZYRKCTUWL1
-        959MIA6zwAomifmn7oLN4hRwlPj0fD8biC0sECOx7es9dhCbRUBV4s/ZSUBxDg5eAUuJ97NL
-        QMK8AoISJ2c+AWtlFtCWWLbwNTPESQoSP58uYwWxRQTcJC7Pu8cIUSMu8fLoEXaQvRICLzgk
-        rqw+APWDi8Tac0uhbGGJV8e3sEPYUhIv+9vYQfZKCGRL9OwyhgjXSCyddwyq3F7iwJU5LCAl
-        zAKaEut36UOs4pPo/f2ECaKTV6KjTQiiWlWi+d1VqE5piYnd3awQtofE0RvNbBMYFWcheWwW
-        ksdmIXlgFsKyBYwsqxglUwuKc9NTi00LjPJSy+ERnpyfu4kRnLS1vHYwPnzwQe8QIxMH4yFG
-        CQ5mJRHe/qL7iUK8KYmVValF+fFFpTmpxYcYTYGBPZFZSjQ5H5g38kriDU0sDUzMzMxMLI3N
-        DJXEeU+nb0gUEkhPLEnNTk0tSC2C6WPi4JRqYAoL9Pyt/m59gUeorVaPUNRmkcm5h7tUPldl
-        ndie8jBL1Vrw/G4Lg+lrWpv/pQg7vJ3sFjc94mQL588w63OnlXI+fPJZ4H/rmJbDlf18CzrC
-        U/YInnR54fqtTPNGVvF1Fot/6V8XBOUlvzt5xkZnQ+mEB7aHK782qXovPGxms7l/waybrk6t
-        s6N4wvtedfDsi1Wo3PeV98/ds3rzxJsm6M9d+PPyc3nHOo+izSsuLn9fv06TYYPtJ6FFDzp6
-        pA+ud/bn+na/dP9qjm3mpWn3FswrV8jM+ceyjdtvlVnPUjOGc8zBnG2pSXbeKWbbtqQLlB7U
-        Sftt3lHrz5X803ybWGZL2tdijq85C4zUVX+qK7EUZyQaajEXFScCAKgT4QZjBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsWy7bCSnO5Z3oeJBp2N3Bbvl/UwWsw/co7V
-        YuPbH0wWU/4sZ7LY9Pgaq8XHnnusFg9fhVtc3jWHzWLG+X1MFqeuf2azWLT1C7tF694j7BaH
-        37SzWjy+/ofNgc9jzbw1jB6zGnrZPDat6mTzuHNtD5vH5iX1HldONLF69G1Zxejxr2kuu8fn
-        TXIBnFFcNimpOZllqUX6dglcGR3tn1kLZgtUnP84m72B8S9vFyMnh4SAicS/Tc2MXYxcHEIC
-        Oxglep48YINISEtc3ziBHcIWllj57zk7RNFzRon5zR+ZQRJsAroSOxa3sYEkRAS6GSWu9MwE
-        G8UssIVJovPFGbAqIYGvjBIzPpuD2JwCjhKfnu8HWyEsECVx+u0tJhCbRUBV4s/ZSUBxDg5e
-        AUuJ97NLQMK8AoISJ2c+YQGxmQW0JXoftjLC2MsWvmaGuE5B4ufTZawgtoiAm8TlefegasQl
-        Xh49wj6BUXgWklGzkIyahWTULCQtCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525i
-        BMeultYOxj2rPugdYmTiYDzEKMHBrCTC2190P1GINyWxsiq1KD++qDQntfgQozQHi5I474Wu
-        k/FCAumJJanZqakFqUUwWSYOTqkGptbl8g4fy+qVT0cn+pQWLnrlqRjy68WN3tmpW27sTzvd
-        X7ekxZ7fRHfd7TI+tbqbvx7d9q6TyI5e55fs/l135ZPrMoYZjRr/3GMCpOWcr5/j+KZwZsss
-        yQbBtori4DdxOW/PL1tWk28neDVE+t2K+Oyz339FzVkT2CzDvNXTW9/LTPuKpW+JsBwf+84n
-        zg/4bBPtRL9Nqb3TUe88//VVk+2p7zI9CiS3qP+/8Pzc7ybhwkbJY9p3t1ou1s44/WXr9J+1
-        tX+K+Vazu3QmnGv8J7/H8l4h17nteq3a+yIlw2fFrrZ2aL68wqnym+LJH779tjFajsk+gdrr
-        PkdOO5TnnpQjuWiadt2VLTMfGcsrsRRnJBpqMRcVJwIAbZ6TTkwDAAA=
-X-CMS-MailID: 20220114054445epcas5p47f19a2afcff3ad5f01d66a47586c6f56
+        BSpMyM5oOv2RqWCSTEXj3n/MDYwfxLoYOTgkBEwk2q/kdjFycQgJ7GaUWPn6FAuE84lRYt2u
+        K6wQzjdGie935gI5nGAdn86/ZIRI7GWUOL96IVhCSOAlo8T1exIgNpuArsSOxW1sIEUiAp2M
+        Equ//2QCcZgFVjBJzD91lwWkilPAUeJA3xYmEFtYwENi5+cZbCA2i4CqxLGl89hADuQVsJTY
+        P9MeJMwrIChxcuYTsFZmAXmJ7W/nMENcpCDx8+kysCNEBNwkNvztYIOoEZd4efQIO8heCYEX
+        HBLPDq+CesFF4vjdP2wQtrDEq+Nb2CFsKYnP7/ayQQImW6JnlzFEuEZi6bxjLBC2vcSBK3NY
+        QEqYBTQl1u/Sh1jFJ9H7+wkTRCevREebEES1qkTzu6tQndISE7u7oQ7wkFh6djH7BEbFWUge
+        m4XksVlIHpiFsGwBI8sqRsnUguLc9NRi0wKjvNRyeHQn5+duYgQnbC2vHYwPH3zQO8TIxMF4
+        iFGCg1lJhLe/6H6iEG9KYmVValF+fFFpTmrxIUZTYGBPZJYSTc4H5oy8knhDE0sDEzMzMxNL
+        YzNDJXHe0+kbEoUE0hNLUrNTUwtSi2D6mDg4pRqYlp19+k52vTvXCsWVj6d/OzR7TqbaiZsW
+        Xlrp6yQ3Kl2VNr6WvvwV+7zVVU5iu5bb/PzJulj5aG3zslPNH17unuEsmmoTV39Nqvj3vlP3
+        SmWryvZn7r8uEVvqpH9UR0VLK8zHjJ+r/1hQ2oKlRZK29c4nN184qu4g6ijzdcLpPY2Nmhd3
+        qJTemHGkZU6gDW+10bWdRvZedtGKF/rSGbKmvFq8foHFdg2X6wL79Oun79iiwZFlkvvrX6t7
+        rF+3t0/TjRMM8r2Lb2f6Lgh8z98Z0jO3aaOa2u2tS4SvrdyffITde+q3WPnMHXM2WE8XtPmz
+        8POG6DMffuv2GFduaeNeZCvvz6wvsffMwnecSwytlViKMxINtZiLihMBLwQdMWEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsWy7bCSvO48voeJBjebGS3eL+thtJh/5Byr
+        xca3P5gspvxZzmSx6fE1VouPPfdYLR6+Cre4vGsOm8WM8/uYLE5d/8xmsWjrF3aL1r1H2C0O
+        v2lntXh8/Q+bA5/HmnlrGD1mNfSyeWxa1cnmcefaHjaPzUvqPa6caGL16NuyitHjX9Ncdo/P
+        m+QCOKO4bFJSczLLUov07RK4MppOf2QqmCRT0bj3H3MD4wexLkZODgkBE4lP518ydjFycQgJ
+        7GaUOPb0PzNEQlri+sYJ7BC2sMTKf8/BbCGB54wS73v1QWw2AV2JHYvb2ECaRQS6GSWu9MwE
+        m8QssIVJovPFGWaIsV8YJY7P/MMC0sIp4ChxoG8LE4gtLOAhsfPzDDYQm0VAVeLY0nlANgcH
+        r4ClxP6Z9iBhXgFBiZMzn4C1MgtoS/Q+bGWEsOUltr+dA3WpgsTPp8tYQWwRATeJDX872CBq
+        xCVeHj3CPoFReBaSUbOQjJqFZNQsJC0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefn
+        bmIEx66W5g7G7as+6B1iZOJgPMQowcGsJMLbX3Q/UYg3JbGyKrUoP76oNCe1+BCjNAeLkjjv
+        ha6T8UIC6YklqdmpqQWpRTBZJg5OqQam3W28UQtP7Wg/b21TY3T2ePtnv2yeLYXtbTvdZXZ2
+        LMu97NIWmBp35E5O6JPLuvELkrb9Mm+oEalOWuWlfPRO9RRHnt5Cd8mkH6+rLCa9nJsu/MBz
+        dtGxpYdmRDIX2e1b26tUeGLbauHo45f+rOh/EaQk/FWY17SDiT8xXnRuYflkST/7Fc+vGS8y
+        9DBiPMrA+HtJQPGz9ms2uzwkG93NdmQ3u8xjNAlKff/Jw/tK34z3Clqm/4v3NZllViUcybiS
+        zHZU5l6+VJvBY//WeRK1E4VTSnYYh0dPnbyM8Wz/zY/79Q/lCjSkr1aSYX0aKLNS3HBFYSjX
+        r8d/k6XOHhXj1q+x9Fl1a/ulMuX3GkosxRmJhlrMRcWJAGN4rGVMAwAA
+X-CMS-MailID: 20220114054814epcas5p3616ca028567371af18120160419632b6
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220113122354epcas5p19e5cebe9e85e9ba1758fa0b9d7d1ef75
+X-CMS-RootMailID: 20220113122311epcas5p4b7c253b49dce3bd3580407fcf312e70e
 References: <20220113121143.22280-1-alim.akhtar@samsung.com>
-        <CGME20220113122354epcas5p19e5cebe9e85e9ba1758fa0b9d7d1ef75@epcas5p1.samsung.com>
-        <20220113121143.22280-11-alim.akhtar@samsung.com>
-        <849c7772-0f7e-32ff-6ea6-c46aa6837bb4@canonical.com>
+        <CGME20220113122311epcas5p4b7c253b49dce3bd3580407fcf312e70e@epcas5p4.samsung.com>
+        <20220113121143.22280-2-alim.akhtar@samsung.com>
+        <c87f500e-e43e-465c-94fa-050c2b0de083@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -122,54 +121,116 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 >-----Original Message-----
->From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=5D
->Sent: Thursday, January 13, 2022 5:57 PM
->To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
->kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
->Cc: soc=40kernel.org; linux-clk=40vger.kernel.org; devicetree=40vger.kerne=
-l.org;
->olof=40lixom.net; linus.walleij=40linaro.org; catalin.marinas=40arm.com;
->robh+dt=40kernel.org; s.nawrocki=40samsung.com; linux-samsung-
->soc=40vger.kernel.org; pankaj.dubey=40samsung.com; linux-fsd=40tesla.com
->Subject: Re: =5BPATCH 10/23=5D dt-bindings: pinctrl: samsung: Add compatib=
-le for
->Tesla FSD SoC
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>Sent: Thursday, January 13, 2022 6:11 PM
+>To: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
+>kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>Cc: soc@kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
+>olof@lixom.net; linus.walleij@linaro.org; catalin.marinas@arm.com;
+>robh+dt@kernel.org; s.nawrocki@samsung.com; linux-samsung-
+>soc@vger.kernel.org; pankaj.dubey@samsung.com; linux-fsd@tesla.com
+>Subject: Re: [PATCH 01/23] dt-bindings: clock: Document FSD CMU bindings
 >
 >On 13/01/2022 13:11, Alim Akhtar wrote:
->> Add compatible for Tesla Full Self-Driving SoC. The pinctrl hardware
->> IP is similar to what found on most of the exynos series of SoC, so
->> this new compatible is added in samsung pinctrl binding.
+>> Add dt-schema documentation for Tesla FSD SoC clock controller.
 >>
->> Cc: linux-fsd=40tesla.com
->> Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+>> Cc: linux-fsd@tesla.com
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 >> ---
->>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt =7C 1 +
->>  1 file changed, 1 insertion(+)
+>>  .../bindings/clock/tesla,fsd-clock.yaml       | 212 ++++++++++++++++++
+>>  1 file changed, 212 insertions(+)
+>>  create mode 100644
+>> Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
 >>
 >> diff --git
->> a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->> b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->> index b8b475967ff9..ba972998a0e4 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->> =40=40 -24,6 +24,7 =40=40 Required Properties:
->>    - =22samsung,exynos7-pinctrl=22: for Exynos7 compatible pin-controlle=
-r.
->>    - =22samsung,exynos850-pinctrl=22: for Exynos850 compatible pin-contr=
-oller.
->>    - =22samsung,exynosautov9-pinctrl=22: for ExynosAutov9 compatible pin=
--
->controller.
->> +  - =22tesla,fsd-pinctrl=22: for Tesla FSD SoC compatible pin-controlle=
-r.
->>
+>> a/Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+>> b/Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+>> new file mode 100644
+>> index 000000000000..58f341e5004d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+>> @@ -0,0 +1,212 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+>> +---
+>> +$id:
+>> +https://protect2.fireeye.com/v1/url?k=7e607c7a-1f1d943d-7e61f735-74fe
+>> +485fff30-a4acf0e03cbf256d&q=1&e=05b30de9-b535-49f7-9359-
+>77edd951da07&
+>> +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Ftesla%2Cfsd-
+>clock.y
+>> +aml%23
+>> +$schema:
+>> +https://protect2.fireeye.com/v1/url?k=5c769dcb-3d0b758c-5c771684-74fe
+>> +485fff30-b4007a892a5a3e44&q=1&e=05b30de9-b535-49f7-9359-
+>77edd951da07&
+>> +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+>> +
+>> +title: Tesla FSD (Full Self-Driving) SoC clock controller
+>> +
+>> +maintainers:
+>> +  - Alim Akhtar <alim.akhtar@samsung.com>
+>> +  - linux-fsd@tesla.com
+>> +
+>> +description: |
+>> +  FSD clock controller consist of several clock management unit
+>> +  (CMU), which generates clocks for various inteernal SoC blocks.
+>> +  The root clock comes from external OSC clock (24 MHz).
+>> +
+>> +  All available clocks are defined as preprocessor macros in
+>> + 'dt-bindings/clock/fsd-clk.h' header.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - tesla,fsd-clock-cmu
+>> +      - tesla,fsd-clock-imem
+>> +      - tesla,fsd-clock-peric
+>> +      - tesla,fsd-clock-fsys0
+>> +      - tesla,fsd-clock-fsys1
+>> +      - tesla,fsd-clock-mfc
+>> +      - tesla,fsd-clock-cam_csi
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 6
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 6
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: tesla,fsd-clock-cmu
+>> +
 >
->Please rebase this on my latest Samsung pinctrl dtschema patches. You also
->need a tesla vendor prefix patch (separate).
+>Nitpick: Drop the white-spaces between if-then. It's easier to spot the if-
+>blocks if they are together.
 >
-Sure will rebase when sending v2, your latest patches are in Linux-next or =
-still in your tree?
+Thanks will fix in next version
 
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (24 MHz)
+>> +
+>
+>Drop this whitespace as well.
+>
+Noted
+
+>Rest looks good to me, except the discussion about the compatible.
+>
+Have replied to the original question thread. 
 >
 >Best regards,
 >Krzysztof
