@@ -2,173 +2,163 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F2DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 17:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62B7C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Jan 2022 17:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243682AbiANRAw (ORCPT
+        id S229758AbiANRaG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 12:00:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243669AbiANRAw (ORCPT
+        Fri, 14 Jan 2022 12:30:06 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:55472
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239452AbiANRaG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 12:00:52 -0500
-Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064DDC06161C
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 09:00:52 -0800 (PST)
-Received: by mail-ua1-x933.google.com with SMTP id l15so17913843uai.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 09:00:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oKmCN3yojMQ2wi56P4UR8ruDKIpKUs7zR5mIdUilTLs=;
-        b=c/em2xklv+/oiPVG3wTsLIBI/PYz+iiwoQwDyRu0z2WGsetY8k58VlWYjZ74jknml7
-         6Km598wDrpzl0CGzCrAAR0yygQgYzQ70RNZmob1m3aoLEx7l4GAI2MsvP59jQoQuy2Ev
-         q4UZ6uROQCaS4wDF1vEQWhZr42h6gvMrUReP4y2T+g/YFirmZyzn1NT0at9oT5nU6Mwz
-         ONVcyHYScnayivUGaX9SjAgUUCbcHcJ27ckCH4T659y6ApgoD7aJZfjZVgfJLKDKLY7m
-         BahChZQZ20cJ2K/Iq7ycKTmXSrs5eMoA4S3dRodPxwbKWs+uKs15irLcXcp0Ub6akDqb
-         BGxQ==
+        Fri, 14 Jan 2022 12:30:06 -0500
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3828A4005A
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 17:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642181398;
+        bh=kSUOA6eu0O+UW0vLcKxkWwcyF3yL+qtVXixl34s36ws=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=SsZuJhDF4/A60OUePqrIgbKflA7so1GGzLNQqk9zLIVrf9EapcT7NKhctCMZtKvsd
+         wo6jmBTbauVubpQgrt7BDWNOS4nsvvEYKoY0PWRooM3fpiAquEkUO6BVSoYCGdIDN1
+         qFf80BwejyrQqn7FxwFumakjEPCcOlyY6pFh1y8Pxfm/7+woKmuDXn+Tdm+e+T7JBA
+         +rSRORsNoav244dVqhu6x9iyuteJpKwTy2dHEV4z/wLd/JtVUyVOOq970qLLxQ43Pe
+         TV7jEwJqOH57m/vcvNr56evGPwf9jcrI6GvOwcJid+EXUcltb4ROvkhGXtRql/HM/T
+         COdkhbX+Ud/Eg==
+Received: by mail-wm1-f71.google.com with SMTP id c5-20020a1c3505000000b00345c92c27c6so8408165wma.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jan 2022 09:29:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oKmCN3yojMQ2wi56P4UR8ruDKIpKUs7zR5mIdUilTLs=;
-        b=dFLlf5OezIoL6JVRaap1xM8CLTeBrfgduFAN/cwdgq0nWHYTpg2orTRH8Adel0tHFx
-         GiSP1SYWCTq/KYktG1TaU5lboGaAIO4vAtDsbfhKy2HlZgIrH4fta/s0x9aZyyVymxpC
-         +Gd+p+2y5ZmtyEDpARJejuVLUMhNoSO8k35zvZX/3paDt/U0kjVf0oHUzZB4gGzMIuuz
-         jiZ0XwZEtkTi0ipotgdgsv/d+n+JikgvrlWkW3TYsZJAncKpwKSj+Lfyiu7jqY7pTG+A
-         W+UxfwAX81wKWA9uy82oppJxo4A3AS8Ijoh0jX5UwganqN7ezsMIfwLrqU2t/zh23Rhr
-         eyZw==
-X-Gm-Message-State: AOAM532XwlVpnh1m7TvYwH8HGPMXFQO9zyMtkqZPlFFEhc0W7RgIQEsL
-        l4fARludq1IBnkGpYkig/YbFvoD4EFxnkiSdXxX5XQ==
-X-Google-Smtp-Source: ABdhPJzfMi5FAUwNLZJsBuj9+B3iYoKBkW9szO1rxl+UwYt/p1RLjf/xabkqjabSLUaCla5a0sBWNjE9cL/zlpKHmDk=
-X-Received: by 2002:ab0:5a46:: with SMTP id m6mr4357760uad.104.1642179651179;
- Fri, 14 Jan 2022 09:00:51 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kSUOA6eu0O+UW0vLcKxkWwcyF3yL+qtVXixl34s36ws=;
+        b=JDcsmCFjAOVpzVjPO/hc0/dxfLigwFSMsC5ddMkk/r7kSW9oOn3pGnadUXHtX06QFP
+         m0laWoU9Gd7PQB96yEvHtMUGfnYPVckS2jqjSkFKPp0Lm8rT9IWOnxNhZ3aUqpUqvGA9
+         P8jcpHVbKvpTvfvBZQMXxJhOmaQkOvHB4B97ZxFXdEP29SfZWNu7qGkMT2oYsgDlhYyr
+         YEX8mfuUVExPfdd034ZsYoyJZOvFLnBywqV2Eak140boKTn4VknAPMyOgd503wCmY37X
+         A1yLtd/2bAEtZj3kFem7HQYUeuT6WjdNZoe1gQZxFVavy/aYC6t0oqgY/itJlyjzP04x
+         k7Zg==
+X-Gm-Message-State: AOAM532wPLCSFZ5lnE2PWO49CrYl+NUHeYoFOa+Xzx9Kta88hPXPrSaZ
+        lDPciDT5nn2it/CuMk4HnxG2UK8u/o+67aBWcCMptfoFu7OoINBJdpP+PioIPWa3IcdlalKlq2f
+        Av1dLVO/dKWqiBWEQHl6oXRcJerqo+9bvm534GG1iVrEYUXLN
+X-Received: by 2002:a05:600c:4111:: with SMTP id j17mr16217229wmi.7.1642181397871;
+        Fri, 14 Jan 2022 09:29:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzhY93VtI7Hfef3tetrtvklPvij90gP8kRdDlDMTKls2xXg+wMF2VUZtbhFCZaNJhKvsY7+jw==
+X-Received: by 2002:a05:600c:4111:: with SMTP id j17mr16217205wmi.7.1642181397684;
+        Fri, 14 Jan 2022 09:29:57 -0800 (PST)
+Received: from [192.168.0.31] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id b6sm6496840wri.56.2022.01.14.09.29.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jan 2022 09:29:56 -0800 (PST)
+Message-ID: <5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com>
+Date:   Fri, 14 Jan 2022 18:29:55 +0100
 MIME-Version: 1.0
-References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com> <20220111201426.326777-3-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220111201426.326777-3-krzysztof.kozlowski@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 14 Jan 2022 19:00:39 +0200
-Message-ID: <CAPLW+4=TMyytDPO0t4c0Kayy9HAAja6dVq9L8_ic3vf_1LpSRA@mail.gmail.com>
-Subject: Re: [PATCH v2 02/28] pinctrl: samsung: accept GPIO bank nodes with a suffix
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 13/23] dt-bindings: arm: add Tesla FSD ARM SoC
+Content-Language: en-US
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, s.nawrocki@samsung.com,
+        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
+        linux-fsd@tesla.com
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>
+ <CGME20220113122408epcas5p45053d1bf0acf2d8233a98b6c1abab6eb@epcas5p4.samsung.com>
+ <20220113121143.22280-14-alim.akhtar@samsung.com>
+ <53c17ddc-a049-72ed-7237-de23db7889da@canonical.com>
+ <085801d80967$e4b8fe00$ae2afa00$@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <085801d80967$e4b8fe00$ae2afa00$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 11 Jan 2022 at 22:15, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> Existing dt-bindings expected that each GPIO/pin bank within pin
-> controller has its own node with name matching the bank (e.g. gpa0,
-> gpx2) and "gpio-controller" property.  The node name is then used for
-> matching between driver data and DTS.
->
-> Newly introduced dtschema expects to have nodes ending with "-gpio-bank"
-> suffix, so rewrite bank-devicetree matching to look for old and new
-> style of naming.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
+On 14/01/2022 17:57, Alim Akhtar wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>> Sent: Thursday, January 13, 2022 6:03 PM
+>> To: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
+>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Cc: soc@kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
+>> olof@lixom.net; linus.walleij@linaro.org; catalin.marinas@arm.com;
+>> robh+dt@kernel.org; s.nawrocki@samsung.com; linux-samsung-
+>> soc@vger.kernel.org; pankaj.dubey@samsung.com; linux-fsd@tesla.com
+>> Subject: Re: [PATCH 13/23] dt-bindings: arm: add Tesla FSD ARM SoC
+>>
+>> On 13/01/2022 13:11, Alim Akhtar wrote:
+>>> Add device tree bindings for the Tesla FSD ARM SoC.
+>>>
+>>> Cc: linux-fsd@tesla.com
+>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/arm/tesla.yaml        | 25 +++++++++++++++++++
+>>>  1 file changed, 25 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/arm/tesla.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/tesla.yaml
+>>> b/Documentation/devicetree/bindings/arm/tesla.yaml
+>>> new file mode 100644
+>>> index 000000000000..9f89cde76c85
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/tesla.yaml
+>>> @@ -0,0 +1,25 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause %YAML 1.2
+>>> +---
+>>> +$id:
+>>> +https://protect2.fireeye.com/v1/url?k=2f0fac44-70949546-2f0e270b-0cc4
+>>> +7a312ab0-50c826f7b1999a5f&q=1&e=bcbf277f-4e93-4705-8f6a-
+>> 2beaa7eb31e2&
+>>> +u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Farm%2Ftesla.yaml%23
+>>> +$schema:
+>>> +https://protect2.fireeye.com/v1/url?k=d8493fe2-87d206e0-d848b4ad-0cc4
+>>> +7a312ab0-f4e5046adc7da972&q=1&e=bcbf277f-4e93-4705-8f6a-
+>> 2beaa7eb31e2&
+>>> +u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+>>> +
+>>> +title: Tesla Full Self Driving(FSD) platforms device tree bindings
+>>> +
+>>> +maintainers:
+>>> +  - Alim Akhtar <alim.akhtar@samsung.com>
+>>> +  - linux-fsd@tesla.com
+>>> +
+>>> +properties:
+>>> +  $nodename:
+>>> +    const: '/'
+>>> +  compatible:
+>>> +    oneOf:
+>>> +
+>>> +      - description: FSD SoC board
+>>> +        items:
+>>> +          - const: tesla,fsd
+>>
+>> Either this is a SoC or a board compatible... Cannot be both.
+>>
+> Actually we call this as fsd board, so let me add accordingly compatible (fsd-baord) for board.
+> Thanks
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+It's confusing and probably not accurate. In your series fsd is three
+things in the same time: an architecture, a SoC and a board (DTS). The
+last two should definitely be different. You probably have some eval
+board (how it is called also in Tesla open source git) or some specific
+product board.
 
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 57 ++++++++++++++++++-----
->  1 file changed, 45 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index b19ebc43d886..b3a5bc473841 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1012,13 +1012,56 @@ static void samsung_banks_of_node_put(struct samsung_pinctrl_drv_data *d)
->                 of_node_put(bank->of_node);
->  }
->
-> +/*
-> + * Iterate over all driver pin banks to find one matching the name of node,
-> + * skipping optional "-gpio" node suffix. When found, assign node to the bank.
-> + */
-> +static void samsung_banks_of_node_get(struct device *dev,
-> +                                     struct samsung_pinctrl_drv_data *d,
-> +                                     struct device_node *node)
-> +{
-> +       const char *suffix = "-gpio-bank";
-> +       struct samsung_pin_bank *bank;
-> +       struct device_node *child;
-> +       /* Pin bank names are up to 4 characters */
-> +       char node_name[20];
-> +       unsigned int i;
-> +       size_t len;
-> +
-> +       bank = d->pin_banks;
-> +       for (i = 0; i < d->nr_banks; ++i, ++bank) {
-> +               strscpy(node_name, bank->name, sizeof(node_name));
-> +               len = strlcat(node_name, suffix, sizeof(node_name));
-> +               if (len >= sizeof(node_name)) {
-> +                       dev_err(dev, "Too long pin bank name '%s', ignoring\n",
-> +                               bank->name);
-> +                       continue;
-> +               }
-> +
-> +               for_each_child_of_node(node, child) {
-> +                       if (!of_find_property(child, "gpio-controller", NULL))
-> +                               continue;
-> +                       if (of_node_name_eq(child, node_name))
-> +                               break;
-> +                       else if (of_node_name_eq(child, bank->name))
-> +                               break;
-> +               }
-> +
-> +               if (child)
-> +                       bank->of_node = child;
-> +               else
-> +                       dev_warn(dev, "Missing node for bank %s - invalid DTB\n",
-> +                                bank->name);
-> +               /* child reference dropped in samsung_drop_banks_of_node() */
-> +       }
-> +}
-> +
->  /* retrieve the soc specific data */
->  static const struct samsung_pin_ctrl *
->  samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->                              struct platform_device *pdev)
->  {
->         struct device_node *node = pdev->dev.of_node;
-> -       struct device_node *np;
->         const struct samsung_pin_bank_data *bdata;
->         const struct samsung_pin_ctrl *ctrl;
->         struct samsung_pin_bank *bank;
-> @@ -1082,17 +1125,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->          */
->         d->virt_base = virt_base[0];
->
-> -       for_each_child_of_node(node, np) {
-> -               if (!of_find_property(np, "gpio-controller", NULL))
-> -                       continue;
-> -               bank = d->pin_banks;
-> -               for (i = 0; i < d->nr_banks; ++i, ++bank) {
-> -                       if (of_node_name_eq(np, bank->name)) {
-> -                               bank->of_node = np;
-> -                               break;
-> -                       }
-> -               }
-> -       }
-> +       samsung_banks_of_node_get(&pdev->dev, d, node);
->
->         d->pin_base = pin_base;
->         pin_base += d->nr_pins;
-> --
-> 2.32.0
->
+I cannot judge how different this is from Exynos subarchitecture -
+looking at patches it is not different - so I could understand a FSD
+sub-arch with only one SoC.
+
+
+Best regards,
+Krzysztof
