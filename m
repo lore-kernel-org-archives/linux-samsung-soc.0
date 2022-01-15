@@ -2,30 +2,30 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F59C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 15 Jan 2022 16:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F04C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 15 Jan 2022 16:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233079AbiAOQ13 (ORCPT
+        id S233093AbiAOQ1e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 15 Jan 2022 11:27:29 -0500
-Received: from h04mx16.reliablemail.org ([185.76.67.209]:36543 "EHLO
-        h04mx16.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233076AbiAOQ12 (ORCPT
+        Sat, 15 Jan 2022 11:27:34 -0500
+Received: from h02mx15.reliablemail.org ([185.76.66.168]:59447 "EHLO
+        h02mx15.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233092AbiAOQ1c (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 15 Jan 2022 11:27:28 -0500
-X-Halon-Out: 06a35eb1-7620-11ec-a232-556aad082471
+        Sat, 15 Jan 2022 11:27:32 -0500
+X-Halon-Out: 091f04e8-7620-11ec-930f-f5be715b97e5
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
-        s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
         List-Post:List-Owner:List-Archive;
-        bh=ReV3cTCcQbwKTVST9aqNB4NI1KACvVlqj1N8uT56YnQ=; b=o6TkzjnLdEX9Xls8zB32N/0Cgr
-        4NHScSmIVW1HQZLcPwR4lL9pk9OVj/YhYe3aBUBrQE6NJpj0mK4B5BcbX94fRUkq1t90fXvKHgbSb
-        TAxm3RL6j8RthAnBilbBtNXCpcN/djiJEfDyHF9b0dVUitrobTdthhMSvR9odVdlR6xamrS5GtC1w
-        JIaDXOVgnUp49+/f5eHsdUhNyjcLdR3fKYVII2a+AX41v8tngWP1WAHmcEl0IBbCVrrO+5RsNQ38t
-        bmS6JPbvoKPd54uwnLrbT8zpos1wKwatG7yq3AVDAqpbnX/1UHkTVINb6zMWF8uWgiflv+3b/vZAS
-        DRrJBynA==;
+        bh=U6p2/hhR+trjs5sFnpqmdNqE9AKwpYpz7RTLmmUkLI0=; b=jXLzM+itShn61QuYA3FXuFrfoq
+        RrSV4tHDvTz9t2/S1TiyPEJkWDLXRzi5+MAV/fA6oPXmxuNd767X9MEDW+DQQANO5wvyGib46vGEV
+        sGmgaySUX/63CpageNjlZErMd7DgGYMQiXnvFnNC1YQ5TjR6cMgkiosYHAyg4xmA3OIAxyM+S46xz
+        xzeamdH+SYqaAcKQeyTMDr6mPnSUYfocGa1reMop9Vp+CxZwKpIowMdcPKC8WY7JgLwEylJd8KVih
+        aoxcWeKeSEVUB6E9Lz27Od1albWTbjDSkDP5C4XtEYSPDcEIjFqQahtvZGBehMV+X73EwT/QRK75g
+        s2fbC/JQ==;
 From:   Henrik Grimler <henrik@grimler.se>
 To:     semen.protsenko@linaro.org, virag.david003@gmail.com,
         martin.juecker@gmail.com, cw00.choi@samsung.com,
@@ -35,10 +35,12 @@ To:     semen.protsenko@linaro.org, virag.david003@gmail.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht
 Cc:     Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH v2 0/3] Add initial support for exynos5420-chagallwifi
-Date:   Sat, 15 Jan 2022 17:27:00 +0100
-Message-Id: <20220115162703.699347-1-henrik@grimler.se>
+Subject: [PATCH v2 1/3] dt-bindings: arm: samsung: document chagallwifi board binding
+Date:   Sat, 15 Jan 2022 17:27:01 +0100
+Message-Id: <20220115162703.699347-2-henrik@grimler.se>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220115162703.699347-1-henrik@grimler.se>
+References: <20220115162703.699347-1-henrik@grimler.se>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -55,40 +57,27 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Samsung's tablet Galaxy Tab S 10.5" (wifi) has codename chagallwifi
-and is one of several tablets released in 2013 - 2014 based on Exynos
-5420.  This initial devicetree adds support for accessing device over
-USB or UART, and allows using a rootfs in either the internal eMMC or
-an external sdcard.  4 out of 8 CPUs are brought up when device boots,
-which is the same as on the somewhat similar device
-exynos5420-arndale-octa.
+Add binding for Samsung Galaxy Tab S 10.5", based on Exynos 5420 with
+codename chagallwifi. It was released in 2014 and has several siblings
+with similar hardware.
 
-Patch 2 is necessary after a secure-firmware node is added, otherwise
-device hangs during the CPU1BOOT secure monitor call. Without the
-secure-firmware node we are not able to bring up any secondary CPUs.
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
+---
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes since v1
-================
-
-Fix mmc_0 and usbdrd in patch 3: 
-* Remove extra, non supported, options from mmc_0 node 
-* Do not set usbdrd supplies. Usb networking does not work with them 
-  specified, but it works fine with dummy regulators
-
-Henrik Grimler (3):
-  dt-bindings: arm: samsung: document chagallwifi board binding
-  ARM: exynos: only do SMC_CMD_CPU1BOOT call on Exynos4
-  ARM: dts: Add support for Samsung Chagallwifi
-
- .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/exynos5420-chagallwifi.dts  |  57 ++
- .../dts/exynos5420-galaxy-tab-common.dtsi     | 633 ++++++++++++++++++
- arch/arm/mach-exynos/firmware.c               |   4 +-
- 5 files changed, 695 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/exynos5420-chagallwifi.dts
- create mode 100644 arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index 052cd94113d4..3f2ffb0d7b46 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -140,6 +140,7 @@ properties:
+         items:
+           - enum:
+               - insignal,arndale-octa           # Insignal Arndale Octa
++              - samsung,chagallwifi             # Samsung SM-T800
+               - samsung,smdk5420                # Samsung SMDK5420 eval
+           - const: samsung,exynos5420
+           - const: samsung,exynos5
 -- 
 2.34.1
 
