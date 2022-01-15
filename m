@@ -2,114 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF8EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 15 Jan 2022 01:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AB8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 15 Jan 2022 15:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbiAOBkn (ORCPT
+        id S232253AbiAOPqP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Jan 2022 20:40:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34174 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiAOBkn (ORCPT
+        Sat, 15 Jan 2022 10:46:15 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:34560
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231994AbiAOPqP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Jan 2022 20:40:43 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8BAC061574;
-        Fri, 14 Jan 2022 17:40:42 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id v186so28657908ybg.1;
-        Fri, 14 Jan 2022 17:40:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4xj65T8RWG0+hHEFyJGBp3+1b5O20fwk4wK5S2rZsA4=;
-        b=n2Fh3NmLz2d6sp4Qmlto1f3BVHmjGrIadTEingnWHR7GDNCbwVjQlMWThWgGyU4E28
-         DHT0TPnsTlAYOCFfOoCNnU50H/VW2qNhGLXPC7jccvtejQ1Mfxqpg7uyfTCoI6WB75ab
-         YhvIdMMkOfR2anZ0T9NbNFyMZDuuqOZwAkPVVZh+dpsIXyKvoYSkCIvGZaT8BvzmwKDI
-         dukFPcnQaFXpI08r5yvgeNXNwe7J/yH6NkCEf6z16WLPxI8Pwf7e4y1mc0PUspJ9LMla
-         4hqQWOrlMzLMSL1pCG0sbRumBRZnogxzE7MLtCtm0KO4eiVvkShN9qc8vgYPvWFHzWra
-         VomA==
+        Sat, 15 Jan 2022 10:46:15 -0500
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3BF373F175
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Jan 2022 15:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642261568;
+        bh=IwcThkHD1M745uJYhI7iaznT2u01Lps6VJrALSxU+Rk=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=NxR/xxcZv2n1kUXvODvOxk9e7cdCJaeVBrs02WtaTXUHMTh9Vav0HgadvGNvacRSI
+         Wpn9HbwN8DOn3WXFkPMMGDt+JUbx82PCh9uXK8NFJfMO6TdUu8RdtFLIu7OIUmln/q
+         rWgm+xsP71ghBGNPg1oPKyjtneqm+7GZcb2pPsJlalMECOpfS9kc/x+ogGIBzsF39c
+         JQI6TdnkTG5zsYXbXnz0tfw43lM57RuZix8m3zseBxpqHDs1nIhhnappDZYl3VziLi
+         cOAQHvIHOIz4H/NZLzfI8I02lJ5fAKUAua6Hh7exWDolHSNc9fmUzag3ied8TRjm8q
+         O3ZYItVZPwKNg==
+Received: by mail-wm1-f72.google.com with SMTP id j18-20020a05600c1c1200b0034aeea95dacso4673951wms.8
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Jan 2022 07:46:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4xj65T8RWG0+hHEFyJGBp3+1b5O20fwk4wK5S2rZsA4=;
-        b=Re8QgbxKQDOa2H9XHBj9MiKe/Wys0EjIGQ6tsUdc5fdgxhQj8D5LvyaJzTpcgzAZ/V
-         MP9yC+03kyDxngXbocV9U2+C8Vawzy/g8EHU/s4DBniwtmJHu/IZ042W4I/46OCTw+zH
-         Jo1xqPb7A7yfvpBas6jILb/cUvnoBFdGz0j8N8XcYpa/KjRGWCQaPEABJ7JXJuNYn9n/
-         0Ng7n8oRk8RC0PEsOahsIjey174dmSpHzSOWrKewbAT0T+CsA0JIwjJkqRXGz+IKQwzr
-         u3/vYa/cjbmjKB5cOtxcaByJF1UvV7K7a2vsM0m6YcLItZQM2KRihaNgGkP4eWt43tL1
-         YwfA==
-X-Gm-Message-State: AOAM531QE78iFcah1zH/ev8k1vK7E0vauGfsvPhYprMLS5orTEfXCji7
-        gWLgp7UeizhSOQwbyxhyRFcNCElKCLKEv86moTA=
-X-Google-Smtp-Source: ABdhPJyZ+AMZzLKscGwgxAMno4/ugfReYdipnFkyZDavVf7WNx1MJDQkydIChF1IHAyV1XcTbxz3zozXhGWeu5tfH9I=
-X-Received: by 2002:a25:2cc7:: with SMTP id s190mr9088772ybs.186.1642210842195;
- Fri, 14 Jan 2022 17:40:42 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=IwcThkHD1M745uJYhI7iaznT2u01Lps6VJrALSxU+Rk=;
+        b=Bl0qaeOEWxmM1qHWnkkelX/kmUN/CEjL/ian27jN8+UTd5Jo3sy1+7FyQ3BE2LbSS8
+         ZNuq7YbNI9X1GpyjNb2CVTcJGDewVO9qw/shusbUmockZWJp4jPHNdt+1VyYJlh7thP1
+         UsK87TSB8Sa8vxasAJoKlyW8utJSlW+RRqinUHOzVRpB0XElZEKvBJy8Ad+WDl1gml0b
+         zaWkx8L0WOA+iAlbSi84aIf53ZtWTnzDbfQtXhirHFxbiIrxvjVy304xex5goPX6/G7M
+         N4YwniKQ1mGzFdUjjux+cKNnDNIhMdn8ogd+e67MK9eok6YPSG0cgA4d5qfclv9hgarW
+         kGAQ==
+X-Gm-Message-State: AOAM531sdf6306IcotwDVWYDFy9BrS9bHa+KTujf7RWYtc1HPMt+iBSi
+        TeUbt5YPpDGge/v38AVG8BKn/AxBJLY8yUjjvasuyIQAUKoN/DUvtWL7ENvLY43sBJDEp2hn/WU
+        07IORTy4cGap7yx3QeKEYBTnGWCR8k6t9RPCCefizRLV8sRts
+X-Received: by 2002:a05:600c:1d06:: with SMTP id l6mr10253008wms.174.1642261567816;
+        Sat, 15 Jan 2022 07:46:07 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyBbL9obDsMaUtfq0uDglT/AgPjn7nbgQzf/iMd3w1K/WEY44FZfb/7Q/pgfge3Qa3cELlqnQ==
+X-Received: by 2002:a05:600c:1d06:: with SMTP id l6mr10252993wms.174.1642261567624;
+        Sat, 15 Jan 2022 07:46:07 -0800 (PST)
+Received: from [192.168.0.35] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id l25sm8156419wmh.18.2022.01.15.07.46.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Jan 2022 07:46:07 -0800 (PST)
+Message-ID: <1a09cd4e-71da-43e6-9732-33d704e1744e@canonical.com>
+Date:   Sat, 15 Jan 2022 16:46:06 +0100
 MIME-Version: 1.0
-References: <20211222190134.24866-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CGME20211222190203epcas1p2a7647eb2c09c29587b70982744c1a912@epcas1p2.samsung.com>
- <20211222190134.24866-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <a95b74fd-7118-b0fe-26b9-4665c719f1a0@samsung.com>
-In-Reply-To: <a95b74fd-7118-b0fe-26b9-4665c719f1a0@samsung.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Sat, 15 Jan 2022 01:40:16 +0000
-Message-ID: <CA+V-a8tDqLWQXtZbjh=XwKaen1T-iXy=pP-Rn8GF9j_YA-8wdQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] drm/exynos: mixer: Use platform_get_irq() to get the interrupt
-To:     Inki Dae <inki.dae@samsung.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+References: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
+ <CAPLW+4nrPKA66GrF4XukyHWHJ=wBycjyK3ZPLCofEFe-VJ9wWg@mail.gmail.com>
+ <06320ea8-9297-1e90-dafd-978f73c22fff@canonical.com>
+ <CAPLW+4=xD5hM_tYDD+kwqkiVq5h0tjO+7q6Akbd6iO_Ou-g=0A@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4=xD5hM_tYDD+kwqkiVq5h0tjO+7q6Akbd6iO_Ou-g=0A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
+On 14/01/2022 21:32, Sam Protsenko wrote:
+> On Fri, 7 Jan 2022 at 10:16, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 03/01/2022 21:59, Sam Protsenko wrote:
+>>> On Thu, 30 Dec 2021 at 21:34, Krzysztof Kozlowski
+>>> <krzysztof.kozlowski@canonical.com> wrote:
+>>>>
+>>>> Hi Chanho and Sam,
+>>>>
+>>>> I am slowly finishing dtschema for Samsung pinctrl drivers [1] and I
+>>>> noticed that Exynos850 and Auto v9 do not define interrupt in pinctrl
+>>>> node with: wakeup-interrupt-controller. This is an interrupt muxing
+>>>> several external wakeup interrupts, e.g. EINT16 - EINT31.
+>>>>
+>>>> For Exynos5433 this looks like:
+>>>> https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/exynos/exynos5433.dtsi#L857
+>>>>
+>>>> Missing muxed interrupt for Exynos850 and Autov9 might be fine, although
+>>>> you should see in dmesg error log like:
+>>>>     "irq number for muxed EINTs not found"
+>>>>
+>>>> Can you check that your wakeup-interrupt-controller is properly defined
+>>>> in DTSI? If yes, I will need to include such differences in the dtschema.
+>>>>
+>>>
+>>> In case of Exynos850, no muxed interrupts exist for wakeup GPIO
+>>> domains. Basically, "pinctrl_alive" and "pinctrl_cmgp" domains are
+>>> wake-up capable, and they have dedicated interrupt for each particular
+>>> GPIO pin. All those interrupts are defined in exynos850-pinctrl.dtsi
+>>> file, in next nodes:
+>>>   - pinctrl_alive: gpa0..gpa4 (interrupt numbers 1..36)
+>>>   - pinctrl_cmgp: gpm0..gpm7 (interrupt numbers 39..46)
+>>>
+>>> All mentioned interrupts are wakeup interrupts, and there are no muxed
+>>> ones. So it seems like it's not possible to specify "interrupts"
+>>> property in pinctrl nodes with wakeup-interrupt-controller. The PM is
+>>> not enabled in Exynos850 platform yet, so I can't really test if
+>>> interrupts I mentioned are able to wake up the system.
+>>
+>> Thanks for confirming, I'll adjust the schema.
+>>
+>>>
+>>> After adding this patch ("arm64: dts: exynos: Add missing gpm6 and
+>>> gpm7 nodes to Exynos850"), I can't see this error message anymore:
+>>>
+>>>     samsung-pinctrl 11c30000.pinctrl: irq number for muxed EINTs not found
+>>>
+>>> That's because exynos_eint_wkup_init() function exits in this check:
+>>>
+>>>     if (!muxed_banks) {
+>>>         of_node_put(wkup_np);
+>>>         return 0;
+>>>     }
+>>>
+>>> But I actually can see another error message, printed in
+>>> exynos_eint_gpio_init() function (for wake-up capable pinctrl nodes,
+>>> because those nodes don't have "interrupts" property now -- you
+>>> removed those in your patch):
+>>>
+>>>     samsung-pinctrl 11850000.pinctrl: irq number not available
+>>>     samsung-pinctrl 11c30000.pinctrl: irq number not available
+>>>
+>>> which in turn leads to exynos_eint_gpio_init() function to exit with
+>>> -EINVAL code in the very beginning, and I'm not sure if it's ok? As I
+>>> said, those errors only appear after your patch ("arm64: dts: exynos:
+>>> drop incorrectly placed wakeup interrupts in Exynos850").
+>>
+>> Yeah, I replied to this next to my patch. I think my patch was not
+>> correct and you need one - exactly one - interrupt for regular GPIO
+>> interrupts.
+>>
+> 
+> I just need to remove ".eint_gpio_init" in exynos850_pin_ctrl[] for
+> pinctrl_alive and pinctrl_gpmc. Those already have ".eint_wkup_init",
+> which is enough to handle all interrupts (per-pin). GPIO_ALIVE and
+> GPIO_GPMC lack EINT capabilities: judging from TRM, there are no EINT
+> interrupts (like EINT_SVC, which is accessed in EINT ISR), and there
+> are no EINT interrupts wired to GIC (like INTREQ__GPIO_ALIVE or
+> INTREQ__GPIO_GPMC). With removed ".eint_gpio_init", I can see in
+> "/proc/interrupts" that corresponding interrupts are still handled
+> properly (because of .eint_wkup_init), and the error message is gone.
 
-On Fri, Jan 14, 2022 at 11:08 AM Inki Dae <inki.dae@samsung.com> wrote:
->
-> Hi Lad Prabhakar,
->
-> 21. 12. 23. =EC=98=A4=EC=A0=84 4:01=EC=97=90 Lad Prabhakar =EC=9D=B4(=EA=
-=B0=80) =EC=93=B4 =EA=B8=80:
-> > platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
-> > allocation of IRQ resources in DT core code, this causes an issue
-> > when using hierarchical interrupt domains using "interrupts" property
-> > in the node as this bypassed the hierarchical setup and messed up the
-> > irq chaining.
-> >
-> > In preparation for removal of static setup of IRQ resource from DT core
-> > code use platform_get_irq().
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > Hi,
-> >
-> > Ideally I would expect the mixer_resources_init() to be called from pro=
-be
-> > instead from the bind callback. If platform_get_irq() returns -EPROBE_D=
-EFER
-> > the bind callback will fail :(
->
-> If the bind callback failed then probe function of exynos drm driver will=
- call -EPROBE_DEFER like below so it must be no problem :),
-> --------------------------------------------
-> in exynos_drm_platform_probe function
->     component_master_add_with_match()
->
-> in component_master_add_with_match function
->     try_to_bring_up_master()
->
-Thank you for the clarification.
+This would mean that my dts patch removing all interrupts for alive and
+cmgp was correct:
+https://lore.kernel.org/linux-samsung-soc/66754058-187e-ffd5-71ba-4720101f5d98@canonical.com/T/#mf0b06ebdac554d57d8230dc546c3d57d59d7bd6b
+Was it?
 
-Cheers,
-Prabhakar
+> Will send the patch soon -- please add it to the beginning of your
+> series along with my other patch I already submitted.
+
+Sure.
+
+
+
+
+
+Best regards,
+Krzysztof
