@@ -2,116 +2,118 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC2CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jan 2022 17:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B88C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jan 2022 17:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235846AbiAPRKO (ORCPT
+        id S233505AbiAPRPW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Jan 2022 12:10:14 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:43042
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235775AbiAPRKN (ORCPT
+        Sun, 16 Jan 2022 12:15:22 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:49772
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233470AbiAPRPV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Jan 2022 12:10:13 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        Sun, 16 Jan 2022 12:15:21 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A0EB23F1EA
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 17:10:12 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9FD733F1DD
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 17:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642353012;
-        bh=EhxJCJbUdgTgKtzOcyBHRUPuVpieLDdqxSMQQuY+TMQ=;
+        s=20210705; t=1642353320;
+        bh=WxX9PqVqnoB087SnVZ/g7nOzuTnhj5somlhtfwJ+2L0=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=YbJL1MwIXhbAMcHxfbsiQMfuB6I4wov1U/tsdt1wnnCdHFTEHA9aUJc7ut/noXbju
-         EpNNJTRvdoDGBAq6ui0IVsmp5MoH47+WTgITMQs4lWTKpMc7kGlkM57s6imYFqJT3C
-         tgYsu0piRutUQNve6CoVPqY9UE7EWWYs2W8tNM7EJZPTTiGDrvDssBMU5YHsLId1of
-         z6KjtIAQxQ74jhBR7oWcXeyQJuW4zDTfjYqOtQNWHCxDYvZ1E5HXgn9f3kxeNOeZEY
-         YIJD1hFKOdG5GSJcMFKYaL0YejNGQyLgIRtiKvtiuqg5anRiJKEDgf4nIonFTEunSe
-         E1Lpu/R0QJqVA==
-Received: by mail-ed1-f69.google.com with SMTP id j10-20020a05640211ca00b003ff0e234fdfso12255112edw.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 09:10:12 -0800 (PST)
+        b=VTuZ5CLmf+df64oz0XrYGy2CBZ3mrVD5Juf/GeY9J+YjTQgyZqoOkQbCNBjm3ATE2
+         ilkK5FO7uUySZ1h2KD8fJ2I9oYnFjOupu2Xtbckpyt46kUja5hjCNAMSHp6p0enPsY
+         2ObKuyOHOejEKySCPewEk4Fd3z9EphQjaCIrdMqpupjivtiZCd5MQRZQT1UY5D8cEp
+         xQa8hXlo218wB6hOfpS8GNmrE/scBRrbSRy5FodDhAz4Qnx7i8nPd6SUE3A5zWr49D
+         rWaH7XeTmvnUsRaOyT7uwqVpCR/Ke9rhmDAbJZ5dkQOWQ70SZDDuOS50LObCoT3cyC
+         ScKq3ulcKkClw==
+Received: by mail-ed1-f72.google.com with SMTP id p14-20020aa7c88e000000b0040240401a02so1382906eds.14
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 09:15:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=EhxJCJbUdgTgKtzOcyBHRUPuVpieLDdqxSMQQuY+TMQ=;
-        b=XU9oLBSMrgsjk0iMkqFjyjWKvEQO2cGRBOweMP5HCXfTke1mfl6NO3FI5zo5Dz15hV
-         /Ociq/ZjKqQN/VMtDB7xB8o7ChuXVdBmKkqlwZpd/ouqqqE9z69oZqWK2J/Zry0j+nNV
-         WHgKW18NAhWQgV6BZbR/DsRi6OLWyNUBqurQAjpkKPI0qK3/SgVjkKQUNnwYXUwHgQBe
-         7NeV/gLldmVC9auaWAL9IWLbvPe5gYMy5qbxuqEgER5f9tVzx/SQCgQst5xHItyK8+vC
-         8u3eu0ESmIKiSdJgyYaago3hcLRckXgs6Wa6lYhGKuMu5bCT+b5jjVvas6j9YgG/ehq2
-         eQTg==
-X-Gm-Message-State: AOAM532kgmUm24JxgEWC8gIC206TWFqv/4bNiFd45w6761f5PYcifnIk
-        R+ZPtU6QmhxXLth5t5yakfLdHZ7L+8j1qvXJF9O4vEikK3XFmnM7ZpohLF1livx7hgBQr32Gzm5
-        uvAep6eWwTSRZ0zcMrEtDIP4le1NyrQli1dYz0Opi82kieVwC
-X-Received: by 2002:a05:6402:4382:: with SMTP id o2mr17362761edc.38.1642353012268;
-        Sun, 16 Jan 2022 09:10:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJza5CxAsjW3okTGXopRWNrhyQPGIvdCMmcUOjfP9egRyMTlefnsZXuW0WKLs2dmgxPbUpWabA==
-X-Received: by 2002:a05:6402:4382:: with SMTP id o2mr17362749edc.38.1642353012118;
-        Sun, 16 Jan 2022 09:10:12 -0800 (PST)
+        bh=WxX9PqVqnoB087SnVZ/g7nOzuTnhj5somlhtfwJ+2L0=;
+        b=iR+imlF9y550wJgRF/PK3hmsdlEF0qH/wvyAlozi8IdllCFTPKSlKc7I+wCr8x5EvH
+         nRTVwLVsCse9FfFmcpvifxWpl0gCqpDUE+iPHXEYfwdveMhdP4RaALzosKd9sG223/cu
+         ECnRPnkrTIh7qnqVNxZd/Li4xwQmmzL/XFQ0vC8zaE3OJ19Iw8YZ/Lh5/PW7XsUK5Hvp
+         Jmh8vxMUVG7WTdFBcd5qB9/PM3P3WaZ4r5xSPiPiMNdLtJPiGW7YIu9NkZcm2svmxLys
+         Q4paLjPMMy6qfiOMbqhoSYIKtUPv9w/vy8Y4QEtyGRLCkBWdr7+2UlFWKoECJPCu/LSr
+         QWmg==
+X-Gm-Message-State: AOAM530g+L0TcdVkoATqGMBjWu5AD8GgFslQ9NPeaGY0JKWXEs5M97dE
+        rxLMT2zAJFr/MhPZErusjzBO+vX5+Qb9UIQBhtYizAUsVxYdwFAnu6GzfJveswj+HG5YE5II1/z
+        Txb6QBsHP1X12dtKmz3bN1vJNtqmrxQCosZlAA6JKVUitKuXg
+X-Received: by 2002:a05:6402:942:: with SMTP id h2mr4660808edz.352.1642353320360;
+        Sun, 16 Jan 2022 09:15:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx05hTg774/4frTMC+NfLDsnFU3vWXZskBCDC006uOc1cdGn7ljtGBP291zHXmn/0GJYxwBug==
+X-Received: by 2002:a05:6402:942:: with SMTP id h2mr4660802edz.352.1642353320248;
+        Sun, 16 Jan 2022 09:15:20 -0800 (PST)
 Received: from [192.168.0.35] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id l2sm3117556ejk.187.2022.01.16.09.10.11
+        by smtp.gmail.com with ESMTPSA id n7sm1062460ejj.82.2022.01.16.09.15.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jan 2022 09:10:11 -0800 (PST)
-Message-ID: <5047da7c-d3a6-5472-b0ca-7ed3dbe8a5fe@canonical.com>
-Date:   Sun, 16 Jan 2022 18:10:10 +0100
+        Sun, 16 Jan 2022 09:15:19 -0800 (PST)
+Message-ID: <e966dfb3-0f90-68fe-f27e-caeda2abf0bd@canonical.com>
+Date:   Sun, 16 Jan 2022 18:15:19 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH v2 24/28] dt-bindings: pinctrl: samsung: convert to
- dtschema
+Subject: Re: Exynos850 and ExynosAuto v9 pinctrl wakeup muxed interrupt
 Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@gmail.com>,
-        Rob Herring <robh@kernel.org>
-References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
- <20220111201722.327219-18-krzysztof.kozlowski@canonical.com>
- <CACRpkdYTXSOW+sOX3wVtF4jj6xm0jr-F3HKQPGHOdAVjbasP3A@mail.gmail.com>
+        Tomasz Figa <tomasz.figa@gmail.com>
+References: <3c0087a9-5c3b-d665-136e-6110a0482775@canonical.com>
+ <CAPLW+4nrPKA66GrF4XukyHWHJ=wBycjyK3ZPLCofEFe-VJ9wWg@mail.gmail.com>
+ <06320ea8-9297-1e90-dafd-978f73c22fff@canonical.com>
+ <CAPLW+4=xD5hM_tYDD+kwqkiVq5h0tjO+7q6Akbd6iO_Ou-g=0A@mail.gmail.com>
+ <1a09cd4e-71da-43e6-9732-33d704e1744e@canonical.com>
+ <CAPLW+4kEQYrTvMwodbha4SV9mDS36sjxdsiCwVQptmoShb_5hQ@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CACRpkdYTXSOW+sOX3wVtF4jj6xm0jr-F3HKQPGHOdAVjbasP3A@mail.gmail.com>
+In-Reply-To: <CAPLW+4kEQYrTvMwodbha4SV9mDS36sjxdsiCwVQptmoShb_5hQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/01/2022 01:55, Linus Walleij wrote:
-> On Tue, Jan 11, 2022 at 9:18 PM Krzysztof Kozlowski
+On 15/01/2022 21:38, Sam Protsenko wrote:
+> On Sat, 15 Jan 2022 at 17:46, Krzysztof Kozlowski
 > <krzysztof.kozlowski@canonical.com> wrote:
-> 
->> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) pin
->> controller bindings to DT schema format.  Parts of description and DTS
->> example was copied from existing sources, so keep the license as
->> GPL-2.0-only.
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
->> Reviewed-by: Rob Herring <robh@kernel.org>
+>> This would mean that my dts patch removing all interrupts for alive and
+>> cmgp was correct:
+>> https://lore.kernel.org/linux-samsung-soc/66754058-187e-ffd5-71ba-4720101f5d98@canonical.com/T/#mf0b06ebdac554d57d8230dc546c3d57d59d7bd6b
+>> Was it?
+>>
 > 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Yep. But patches [1,2] I sent recently should be probably applied
+> before yours -- they belong together. Please take those in your patch
+> series (when sending the next version).
 > 
-> I expect that you will merge this into ARM SoC with the rest
-> of the DTS fixes?
+> Thanks!
+> 
+> [1] https://lkml.org/lkml/2022/1/14/861
+> [2] https://lkml.org/lkml/2022/1/3/680
+> 
+>>> Will send the patch soon -- please add it to the beginning of your
+>>> series along with my other patch I already submitted.
 
-Yes, that would be the most clean approach, although there is no strict
-dependency requirement between bindings and DTS. If they go via two
-separate trees (ARM SoC and pinctrl), there will be a branch when
-dtschema complains about DTS, which is not nice, but also not fatal.
+DTS and driver changes never go via same tree, so if you say there is
+such dependency, then my patch should wait till another release so your
+driver change will be in mainline.
 
-Anyway DTS and dtschema will have to wait for one release, because they
-depend on samsung pinctrl driver change (patch #2).
+What is actually the dependency here between my patch removing incorrect
+interrupts and yours:
+1. removing EINT for these GPIO banks from pinctrl driver,
+2. adding missing GPIO banks?
 
 
 Best regards,
