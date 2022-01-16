@@ -2,104 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDC8C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jan 2022 20:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABB3C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 16 Jan 2022 21:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236134AbiAPU7i (ORCPT
+        id S233715AbiAPVie (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 16 Jan 2022 15:59:38 -0500
-Received: from h01mx15.reliablemail.org ([173.236.5.211]:52055 "EHLO
-        h01mx15.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiAPU7h (ORCPT
+        Sun, 16 Jan 2022 16:38:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236218AbiAPVia (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 16 Jan 2022 15:59:37 -0500
-X-Halon-Out: 35737b2c-770f-11ec-90dc-00163c81f1a9
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
-        s=default; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=9T6zg3rrA/r9nj19nKbG/q9IZ+uuAlzg6gpYvQoELgU=; b=Ol1hBgaTct3AHEq/h0MRERUQMf
-        WtExaVZhadyU85sQiFyXYirwbsP/fvnJCOzLfQ7EJzSsxPudhlmml5EqsZaThU0u7YZtqptKwr6n9
-        J8FYHHi03cFJ6WmiObgC/UedELTxO8yIrbDTd3tbJUk8s4NR32VfRLt4jGizj6sB6X7QxFIRuSNWe
-        xOwRQG7wYyhc8Ol6YBoLx0aCdVZ+u5MABpGuOffqammWOz0UZ+rUbn+/5fNel+TacNbHV8UMhFsgw
-        RBeyoMa9pILGPpRMf/kEMELuWjgdGvnidDENbhQDRYwG4XJaEuvRhC+S6+gLRvR1nAt1VaJEtsXMj
-        4QMPZSeg==;
-Date:   Sun, 16 Jan 2022 21:59:32 +0100
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     semen.protsenko@linaro.org, virag.david003@gmail.com,
-        martin.juecker@gmail.com, cw00.choi@samsung.com,
-        m.szyprowski@samsung.com, alim.akhtar@samsung.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 3/3] ARM: dts: Add support for Samsung Chagall WiFi
-Message-ID: <YeSHNCywXhp8gHC7@L14.lan>
-References: <20220116165035.437274-1-henrik@grimler.se>
- <20220116165035.437274-4-henrik@grimler.se>
- <ca8c4613-a058-6cde-f9e6-8530f142a821@canonical.com>
+        Sun, 16 Jan 2022 16:38:30 -0500
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EEBDC06161C
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 13:38:30 -0800 (PST)
+Received: by mail-oi1-x230.google.com with SMTP id bx18so2500092oib.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 13:38:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HR3K23prsUMyCbrYWQNTlRCKaozXns392za1xGffNJE=;
+        b=PTHBntgNGcGtWqPyxE+jOxDaAOgIU1CCwc/x1QaLJzZTV6FEBjdXStTwqKGbaEaYhG
+         mQO0wuQgpopoZtaDw2iBlltBJUORg8pOj9HZFBKhbMd+wZ9UV6fM+ixKICzz5P7rpacO
+         7tjv0XHvP+zuM8nq1+JtNz0LZZUBMBuJeNAtwLef2i+Tow+kHGFjzOtdB9itBx9PNvbT
+         KH+md7dVrwj5mLisM6UK7NnzFd78TyeOsPop5ZbQqA5bealuon23ZOdWg9C6Z656L8b/
+         xrY3FlQkm16UNgKCX/Hno4CicAOkjMMkkz/xDWdQo1eurfJOeqiAMCxsEYLYrRKCNPkj
+         RNNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HR3K23prsUMyCbrYWQNTlRCKaozXns392za1xGffNJE=;
+        b=SWuApsEDoidPMB7XJ6S8DyRVhGrB/aSA7zWwz3hVfqfcIXhINug4k1ENfvNAhYRX6G
+         aHhwrIsbZKcFZxlKvsZZ437m+ka2eFdkhbs7gwjKDZ0pMdi00LVznvjUGyEBEKG31dZt
+         wUsv7tZwzHksYGqBDczGKzD3qZXWdokkR7tPPK3NL+bnJpUTHe254LuVGpz7c1dO9oD5
+         z9/d4vhHtJ23tIku+zz6N2O3pEZES2rFkH0sX5l5En/8RGaoub7dlT2d6D6iuKMqrYAm
+         oA7MgoKmZxqODSqIPPDdbfdr534qKiE0T0i1rEa4sIBvuLaukivtmuyQrp7vLhUwQhba
+         63+w==
+X-Gm-Message-State: AOAM531rMe4d3eQHoixcYon00DnCbI5+Q4lwryqwd2eeDMmce8wfKs5W
+        8iSHDQfWVuaPWg6NQZi/TZ0cPMRqcQ7BF+22V8/t/w==
+X-Google-Smtp-Source: ABdhPJzgjCBYMq6KY6MkbuygV1J/mBuVzD/YEm2ImA0kCK4gMfbXNFUBiT9ygVZV6q2XvrLyOHltZrObbbdPpw17Vxg=
+X-Received: by 2002:a05:6808:2097:: with SMTP id s23mr10857559oiw.132.1642369108822;
+ Sun, 16 Jan 2022 13:38:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca8c4613-a058-6cde-f9e6-8530f142a821@canonical.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - grimler.se
-X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
-X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
+ <20220111201722.327219-18-krzysztof.kozlowski@canonical.com>
+ <CACRpkdYTXSOW+sOX3wVtF4jj6xm0jr-F3HKQPGHOdAVjbasP3A@mail.gmail.com> <5047da7c-d3a6-5472-b0ca-7ed3dbe8a5fe@canonical.com>
+In-Reply-To: <5047da7c-d3a6-5472-b0ca-7ed3dbe8a5fe@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 16 Jan 2022 22:38:16 +0100
+Message-ID: <CACRpkdbhmJ91EW395C5F2WYjWJQdJ-SBHaDm7XnQsxMuyoMmLg@mail.gmail.com>
+Subject: Re: [PATCH v2 24/28] dt-bindings: pinctrl: samsung: convert to dtschema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On Sun, Jan 16, 2022 at 6:10 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 
-> > +/* External sdcard */
-> > +&mmc_2 {
-> > +	status = "okay";
-> > +	bus-width = <4>;
-> > +	cap-sd-highspeed;
-> > +	card-detect-delay = <200>;
-> > +	pinctrl-0 = <&sd2_clk &sd2_cmd &mmc2_cd &sd2_bus1 &sd2_bus4>;
-> > +	pinctrl-names = "default";
-> > +	samsung,dw-mshc-ciu-div = <3>;
-> > +	samsung,dw-mshc-ddr-timing = <0 2>;
-> > +	samsung,dw-mshc-sdr-timing = <0 4>;
-> > +	sd-uhs-sdr50;
-> > +	vmmc-supply = <&ldo19_reg>;
-> > +	vqmmc-supply = <&ldo13_reg>;
-> > +};
-> > +
-> > +&pinctrl_0 {
-> > +	mmc2_cd: sd2-cd-pins {
-> > +		samsung,pins = "gpx2-4";
-> 
-> Interesting... I looked at vendor sources to board-chagall and standard
-> pin gpc2-2 is mentioned as PULL down and not-connected comment.
-> 
-> gpx2-4 seems not mentioned at all, unless other board files are actually
-> used.
+> Anyway DTS and dtschema will have to wait for one release, because they
+> depend on samsung pinctrl driver change (patch #2).
 
-Gpio seems to be spread out. GPIO_T_FLASH_DETECT is defined as gpx2-4
-in board-universal5420-mmc.c, and then used for card detection.
-(Looking at it now again I see that write protection through sd2_wp
-should also be supported for mmc_2, can add that in next patch set.)
+What about I put that (and maybe this schema) on an immutable
+branch so you can pull the commit into your for-arm-soc branch and
+put the DTS changes on top?
 
-> Anyway, if it works for you, it's good.
-> 
-> Rest looks ok, I'll apply after the merge window.
-
-Thanks!
-
-> Best regards,
-> Krzysztof
-
-Best regards,
-Henrik Grimler
+Yours,
+Linus Walleij
