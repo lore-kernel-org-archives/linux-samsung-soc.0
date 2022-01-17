@@ -2,124 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6899C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 07:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2069FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 09:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237631AbiAQHpi (ORCPT
+        id S235994AbiAQJr3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 02:45:38 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:32906
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233264AbiAQHpi (ORCPT
+        Mon, 17 Jan 2022 04:47:29 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4415 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230076AbiAQJr2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jan 2022 02:45:38 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EB1413F1E1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 07:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642405536;
-        bh=BnlFRfnEyWAxe1fw6gmGyUXzbXb/Exxy2EiruYyTAbQ=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=UhrII8P1PQrDHaCJc3IQT47uBIirl6otb02sK/HujWRJ0ONalPXRkFCQH+xcWBsGj
-         /33xJoYHiotz84PLkwbsXdIFuqWs61NZcdGLR8tT1A59VjDfIbgMbK0Stco2o83uGQ
-         aV5YN8jQLpxZy9EZltz+NjojhByE3fpBUA0QzdAlyXcKxjT/1luvHBN7XnYOmianKO
-         5y00D6TUbnx2+swa3m9tv8mV0YpYeh6CxLQIkV2y3x2bNF3NzzC+wWUAuMmDFmgFw/
-         wtqo2mtnkFqG4YPL6StDuZR7hZjh/4t/NeVi5RKUNkXc3k++uxMfJrwkFh9vH6Hg2f
-         js9dhRMd8WxrA==
-Received: by mail-ed1-f71.google.com with SMTP id a8-20020a056402168800b004022fcdeb25so2685737edv.21
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jan 2022 23:45:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=BnlFRfnEyWAxe1fw6gmGyUXzbXb/Exxy2EiruYyTAbQ=;
-        b=4a8UEt2XZXunkNoMJIjGOLASB/TP1SuUrh+AyJXHhIEzjcwUPGimVvTbP8kv/HE0mO
-         t6sOnfRDm7+eNA8h8YlPRaBqY6M56kZRRo66TMZOEor29n9cHxElVpTGPnB+Yo84TOaj
-         DH5F9hKY8z3AkXYMi1YvmdYAozk5NTbo8Pi4o0fZXls80PIKEJVCTAkdw/MfX4bpX53T
-         HAv3Q5kKeRS2VmkqetWOf4i5zhs37pfBbAQrY4lUOLgj68/xlMjphTKsQzjkqdNwGtNd
-         yVitFq7GhbR7/TMmtvgRDBVxCeO4oj76FmSyc2XxgYLx03ZXFqk9f6DTG8ONrXW9FaXw
-         ATRg==
-X-Gm-Message-State: AOAM530TQbwTpPJ6SfaAJrvf3HLn8m5fdd8ygaeQBZ0RuT5EGMB6mnIO
-        sCTTnDSnhge9PPqReWNshuzfW8QI+Yo6TLhxaU5p5Gv8MS8E90oLcvAUqjRa5LUDM/B5QSkHor5
-        bZ7ov6RIA8yVyfPbKWluXHi8Am45UH9ru2Zz87nqCrcGibHL1
-X-Received: by 2002:a05:6402:50d3:: with SMTP id h19mr5266024edb.346.1642405536676;
-        Sun, 16 Jan 2022 23:45:36 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzMuqDcqMplgNTykVRmag/eEAnjZ76C8iPXMJNJiJNejm5c5xQel4/ESmkmvuy3yxY7PGuFQA==
-X-Received: by 2002:a05:6402:50d3:: with SMTP id h19mr5266017edb.346.1642405536552;
-        Sun, 16 Jan 2022 23:45:36 -0800 (PST)
-Received: from [192.168.0.35] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id hp14sm4151387ejc.97.2022.01.16.23.45.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jan 2022 23:45:36 -0800 (PST)
-Message-ID: <77bd8fa4-2b35-352c-da07-ef91fcbed454@canonical.com>
-Date:   Mon, 17 Jan 2022 08:45:35 +0100
+        Mon, 17 Jan 2022 04:47:28 -0500
+Received: from fraeml744-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JcnBC5TTSz67jnf;
+        Mon, 17 Jan 2022 17:47:15 +0800 (CST)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ fraeml744-chm.china.huawei.com (10.206.15.225) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 17 Jan 2022 10:47:26 +0100
+Received: from localhost (10.47.77.46) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.21; Mon, 17 Jan
+ 2022 09:47:25 +0000
+Date:   Mon, 17 Jan 2022 09:47:28 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <olof@lixom.net>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <robh+dt@kernel.org>,
+        <s.nawrocki@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
+        <pankaj.dubey@samsung.com>, <linux-fsd@tesla.com>,
+        Tamseel Shams <m.shams@samsung.com>
+Subject: Re: [PATCH 20/23] dt-bindings: iio: adc: exynos-adc: Add ADC-V3
+ variant
+Message-ID: <20220117094728.000051b8@Huawei.com>
+In-Reply-To: <75ae8b8c-e416-5007-b995-f1317ef207d4@canonical.com>
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>
+        <CGME20220113122447epcas5p266d44c8df143229d22dfa700c285a786@epcas5p2.samsung.com>
+        <20220113121143.22280-21-alim.akhtar@samsung.com>
+        <75ae8b8c-e416-5007-b995-f1317ef207d4@canonical.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.29; i686-w64-mingw32)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v2 24/28] dt-bindings: pinctrl: samsung: convert to
- dtschema
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Alim Akhtar <alim.akhtar@gmail.com>,
-        Rob Herring <robh@kernel.org>
-References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
- <20220111201722.327219-18-krzysztof.kozlowski@canonical.com>
- <CACRpkdYTXSOW+sOX3wVtF4jj6xm0jr-F3HKQPGHOdAVjbasP3A@mail.gmail.com>
- <5047da7c-d3a6-5472-b0ca-7ed3dbe8a5fe@canonical.com>
- <CACRpkdbhmJ91EW395C5F2WYjWJQdJ-SBHaDm7XnQsxMuyoMmLg@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CACRpkdbhmJ91EW395C5F2WYjWJQdJ-SBHaDm7XnQsxMuyoMmLg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.77.46]
+X-ClientProxiedBy: lhreml709-chm.china.huawei.com (10.201.108.58) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/01/2022 22:38, Linus Walleij wrote:
-> On Sun, Jan 16, 2022 at 6:10 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
+On Thu, 13 Jan 2022 14:32:12 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+
+> On 13/01/2022 13:11, Alim Akhtar wrote:
+> > This patch adds a new compatible string for exynos's ADC-V3 variant.
+> > 
+> > Cc: linux-fsd@tesla.com
+> > Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+Please cc linux-iio@vger.kernel.org for next version...
+
+> > ---
+> >  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml          | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> > index 81c87295912c..9303053759ca 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> > @@ -14,6 +14,7 @@ properties:
+> >      enum:
+> >        - samsung,exynos-adc-v1                 # Exynos5250
+> >        - samsung,exynos-adc-v2
+> > +      - samsung,exynos-adc-v3  
 > 
->> Anyway DTS and dtschema will have to wait for one release, because they
->> depend on samsung pinctrl driver change (patch #2).
+> Please use SoC-specific compatible. IP block versions are tricky because:
+> 1. Documentation/datasheet mentioning which SoC has which block version
+> are not public.
+> 2. Neither are public the datasheets for ADC blocks.
+> 3. The versioning of IP blocks can be inaccurate.
 > 
-> What about I put that (and maybe this schema) on an immutable
-> branch so you can pull the commit into your for-arm-soc branch and
-> put the DTS changes on top?
+> 
+> Best regards,
+> Krzysztof
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-That would be a solution if not a policy for arm-soc of keeping DTS
-separate. Arnd and Olof since some time are not happy when DTS branch
-receives any driver updates.
-
-Arnd, Olof,
-This is a set of dtschema conversion + DTS alignment with new schema:
-1. Driver change necessary to accept new DTS (driver depends on node
-names and this has to change because of dtschema),
-2. DTS commits depending on above, which convert node name to new format,
-3. Finally dtschema requiring new naming of the GPIO nodes.
-
-If I got correctly, the policy of not mixing drivers and DTS requires
-that #2 above (DTS changes) will wait for one more release. During the
-time, if dtschema (#3 above) is applied, there will be new warnings
-about non-compliant DTS.
-
-Do you see any chance of merging driver + DTS + dtschema via same tree
-in same release?
-
-
-Best regards,
-Krzysztof
