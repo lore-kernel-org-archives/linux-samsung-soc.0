@@ -2,42 +2,70 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFEBC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 14:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C668EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 15:00:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234278AbiAQOOb (ORCPT
+        id S234939AbiAQPAs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 09:14:31 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:53707 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbiAQOOa (ORCPT
+        Mon, 17 Jan 2022 10:00:48 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47470
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234786AbiAQPAs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jan 2022 09:14:30 -0500
-Received: from mail-ot1-f47.google.com ([209.85.210.47]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MW9zm-1mq5UX48xm-00XY0E; Mon, 17 Jan 2022 15:14:28 +0100
-Received: by mail-ot1-f47.google.com with SMTP id z25-20020a0568301db900b005946f536d85so10915434oti.9;
-        Mon, 17 Jan 2022 06:14:27 -0800 (PST)
-X-Gm-Message-State: AOAM533cx2DY4ezMGcz9Dp4SmrypnQ/rNQYkiAtJtCttThp0g2nXlTXB
-        wxJQx/LDtHODwg4xpn5PjmyB0qmy9Pn9bcWTrRw=
-X-Google-Smtp-Source: ABdhPJw1ZgWjaWLjO9h+cg20DOEimvvTBW13bNSm+HZXqb0f0qzN/HOYU/ee29hk5wVbuIP+kAiil5AV4Egwenxh/3Q=
-X-Received: by 2002:a05:6830:2095:: with SMTP id y21mr14368395otq.368.1642428866253;
- Mon, 17 Jan 2022 06:14:26 -0800 (PST)
+        Mon, 17 Jan 2022 10:00:48 -0500
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E0C293F1E4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 15:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642431646;
+        bh=P1t3TusiuWvEJQvj6KQ3UI4zLwE3rcF19O3O8iabinU=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=S+hn/P/+ORd5yFuloev1kgWwDaFAaeiN7nXsJ/Qp+89KwtPN2IBixal8kgeBesRlT
+         JuMKK4SrCzKujGFYUxxNKQOm0z40SXJhTOLhDq6j0VDJeJCpv8mH7761XWr1F55ZmH
+         hJ6gp4DxAbO+DO2M4AqyUubDXzpV8h+tekH2Au09TTKSWGEiW3p+iDEQWOH4Oa52oQ
+         Te3cUZi13alBYA2rH2c53+6rO+sWQgDlZw+xmz1+DhnLX3WgX7EiPopvGNz/ix18YE
+         oGpKWMwnMk5fZO+SJ/inzEoQh6y3cF13LtsklT1mh+862F2jLFwWz2QhcrJ7wYrqwZ
+         qQnXAJqSWbkpA==
+Received: by mail-ed1-f70.google.com with SMTP id j10-20020a05640211ca00b003ff0e234fdfso14467431edw.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 07:00:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=P1t3TusiuWvEJQvj6KQ3UI4zLwE3rcF19O3O8iabinU=;
+        b=Nom0izZMs6tOP51MLrxAxyGYW5fzEsQDyEGRLf+q0sPJGfamwOuQW9iaeY1ZhlmPBr
+         xrQ+3gddW6Ta1Hoab2KUhEFNQ2gtwDFvdHsUujLR9x1xOVPkM8CTKBJTuEppzEKWo26c
+         nG7NBuBQILDLrvALwIXEgIAXOBkkcV1Q71QYSMz4TMvf8tSI37ZgJ7iKP0Sy1FKweS+f
+         3XMuqEn/u08pX7tKdVeXAIl1m0tao6sej1e6gqCsd2LiC7NExhKKZ+auSlgFM5pPkwoe
+         PiXFu5HLZpPOcBAPurnLUw8VwGJJIpexAgcu80vIuZKR5PcjfNwW250mDDL7fUmIl52B
+         7tWg==
+X-Gm-Message-State: AOAM530FqWOroK5jd2mw1+Q/vxavU/QcHowE2Z6MUBAtZTMgkt3kr/gJ
+        5+mCors1eP4mWSFaduHSU0Ngktgc4ZId3ZZ2BKwNKJsxKyJgJabC6Y477NtddqcZTMbioRiAu7a
+        sXLAJDkfg221vipRY8GrmyKEAaBGE4XBezNqlhNbU1mZJawHD
+X-Received: by 2002:a17:906:8053:: with SMTP id x19mr11918940ejw.485.1642431646546;
+        Mon, 17 Jan 2022 07:00:46 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwi5fMBz8oaksx3ekbOg74TUZaXBrRwCj5lzvu6SsBncvDyD0ZOfpPjH3B+rGmVa8PY2miIKA==
+X-Received: by 2002:a17:906:8053:: with SMTP id x19mr11918904ejw.485.1642431646225;
+        Mon, 17 Jan 2022 07:00:46 -0800 (PST)
+Received: from [192.168.0.39] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id bg20sm3958261ejb.59.2022.01.17.07.00.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jan 2022 07:00:45 -0800 (PST)
+Message-ID: <9b98fd89-87b5-5026-fb0c-16bb956801ea@canonical.com>
+Date:   Mon, 17 Jan 2022 16:00:44 +0100
 MIME-Version: 1.0
-References: <20220113121143.22280-1-alim.akhtar@samsung.com>
- <CGME20220113122408epcas5p45053d1bf0acf2d8233a98b6c1abab6eb@epcas5p4.samsung.com>
- <20220113121143.22280-14-alim.akhtar@samsung.com> <53c17ddc-a049-72ed-7237-de23db7889da@canonical.com>
- <085801d80967$e4b8fe00$ae2afa00$@samsung.com> <5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com>
- <00c901d80ba5$c9ae6ab0$5d0b4010$@samsung.com>
-In-Reply-To: <00c901d80ba5$c9ae6ab0$5d0b4010$@samsung.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 17 Jan 2022 15:14:10 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
-Message-ID: <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
 Subject: Re: [PATCH 13/23] dt-bindings: arm: add Tesla FSD ARM SoC
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         SoC Team <soc@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
@@ -50,48 +78,74 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
         <linux-samsung-soc@vger.kernel.org>,
         Pankaj Dubey <pankaj.dubey@samsung.com>, linux-fsd@tesla.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:24N6xeoiYsAwDCwG/g1ccQwp/aLIZxRscTCgYfZBm6XDjm27c0j
- /tcPNW7VkzXi9kI4Zu7ZwMRVCHnM+CugzQpTyCePsAugiKnFwqRHEjroc1vFWIO9SiuFawj
- mJJwKNnvKOSuIn1PhT2fy7oRpqSvvbwJk3aNB/Z0ywPQqNwxz/QmBHWB69L6Ygzbag02u1y
- 1ANfl+bqeOiGmE2Lv0B+Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:imzZbDZYUKI=:YJPP852sg4V1fiKELbhu/u
- 429EhvznxoAnL6+f085u7xEKEKwHy6GTt4+ld1K/eaTF+St9C4Xoxq/aDhfmQcjNZ9gpjDq8e
- YnB0nlY6KKj5yWnIaHq29c6tK7aaRkUt690csAlO4wgtKsFRmTM3n5BuzddWMFDU2E7qDOKT3
- 8pPxz+UQkrh7ALvW1MAPZhUZSI3NsMyyc1qbwYQlUpK0EHoCfKqtPnosunX5JRQOVSrb7gDpb
- JOR85vmTCN9dEEC7MKtiXWsIO4RE6gdNkRpgXrmmfySvxNLz2Wq/fuDmxuFeL69JAGNY/08oL
- XNKsypMGqZMbf+qgYWuTe6gsNWF2E1MJbqwkubJBrMfRHtdrmzM/8/EsbJbDJlQxC7thQq2Wx
- qn3asg42y0bInflbRqaLFNPZH+DYBq2sTFIhFWExa7UrlNb8qIiShe+kssZjlsfnqj7zEtGcu
- sgDEmZpG9utUCOUYfpxnAV1AtpZvgPG2JflP2FCVZ7obqJcltUwftqDhIlc522jKFnYMtitDS
- qCoh8RIqu+1eq0IcGnrokcu5miUWielz69aDXtLCWLLeolI0Ybg6axWSnoQEsGsmbkyQgZk20
- 4k59xJZXNdxYEx9pRyIgHyEkXbXmPIjUEb2S3y4g/n8Vso+jCbDugCenRG0CMfKligzdo5csM
- 8NV/oLAL+w6sTT2ZrExlGZ4USQtL+NbxN1OtSuZRli4OmD6ie9vPxS2jTPnBKI80zv0VbhCG8
- sCgyCP8M39xFDLnOfk4RmKCk9iaEWbpDB+YzrOJDS9DKoG1SS0autHLoSM2kvIO1ciECU0UeA
- Z+R9fY/X6w8GWcwPKZJkAZPb3d7776PtL7sf3PcNdJOLf+ebxM=
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>
+ <CGME20220113122408epcas5p45053d1bf0acf2d8233a98b6c1abab6eb@epcas5p4.samsung.com>
+ <20220113121143.22280-14-alim.akhtar@samsung.com>
+ <53c17ddc-a049-72ed-7237-de23db7889da@canonical.com>
+ <085801d80967$e4b8fe00$ae2afa00$@samsung.com>
+ <5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com>
+ <00c901d80ba5$c9ae6ab0$5d0b4010$@samsung.com>
+ <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 2:26 PM Alim Akhtar <alim.akhtar@samsung.com> wrote:
->
-> >I cannot judge how different this is from Exynos subarchitecture - looking at
-> >patches it is not different - so I could understand a FSD sub-arch with only one
-> >SoC.
-> >
-> I understand, it is a bit difficult to visualize it with the current patch set.
-> As discuss on the other thread, FSD is different, more over the vendor is different, internal design is different.
+On 17/01/2022 15:14, Arnd Bergmann wrote:
+> On Mon, Jan 17, 2022 at 2:26 PM Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>>
+>>> I cannot judge how different this is from Exynos subarchitecture - looking at
+>>> patches it is not different - so I could understand a FSD sub-arch with only one
+>>> SoC.
+>>>
+>> I understand, it is a bit difficult to visualize it with the current patch set.
+>> As discuss on the other thread, FSD is different, more over the vendor is different, internal design is different.
+> 
+> Is it based on another SoC design then? Most new SoCs are derived from
+> some other
+> one, so it makes sense to put it into the same family. E.g. the Apple
+> M1 takes bits from
+> both Exynos and PA-Semi SoCs but has more newly added components than
+> either one.
 
-Is it based on another SoC design then? Most new SoCs are derived from
-some other
-one, so it makes sense to put it into the same family. E.g. the Apple
-M1 takes bits from
-both Exynos and PA-Semi SoCs but has more newly added components than
-either one.
+It seems Apple M1 shares only few bits with SoC. I am aware of only UART
+driver as directly re-usable.
 
-I would argue that if this SoC shares the pinctrl, clock, spi, adc,
-and timer implementation
-with Exynos, we should consider it part of the Exynos family,
-regardless of what other
-blocks may exist next to those.
+> 
+> I would argue that if this SoC shares the pinctrl, clock, spi, adc,
+> and timer implementation
 
-       Arnd
+Plus: UART, watchdog, PWM, I2C, I2S, USB PHY, DWC3 USB (in Exynos
+flavor), UFS (also in Exynos-looking flavor), MFC (video codec), some
+similarities in DW PCIe, TMU (thermal). Looking at DTS there are
+differences but just few comparing to most of shared blocks.
+
+Additionally SoC BSP (and maybe SoC itself...) was actually developed or
+co-developed by Samsung, judging by copyrights in the BSP code. Even the
+original DTSI has:
+
+	TURBO TRAV SoC device tree source
+	Copyright (c) 2017 Samsung Electronics Co., Ltd.
+
+
+Tesla could still customize it a lot, but it is a strong hint that most
+of it came from Samsung LSI and shares with existing Samsung designs.
+
+Have in mind that recent Exynos chips are significantly different than
+early ARMv7 or ARMv8 designs and we still consider them part of Exynos
+family.
+
+> with Exynos, we should consider it part of the Exynos family,
+> regardless of what other
+> blocks may exist next to those.
+
+Yes. I don't see the benefit of keeping it outside of Exynos. It will
+sprinkle "depends on ARCH_EXYNOS || ARCH_FSD" all over (or depend on
+Exynos like you suggested).
+
+
+Best regards,
+Krzysztof
