@@ -2,129 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13072C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 19:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53399C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 20:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242889AbiAQTS4 (ORCPT
+        id S243014AbiAQU0R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 14:18:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49088 "EHLO
+        Mon, 17 Jan 2022 15:26:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241547AbiAQTS4 (ORCPT
+        with ESMTP id S242633AbiAQU0R (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jan 2022 14:18:56 -0500
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF1AC06161C
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 11:18:55 -0800 (PST)
-Received: by mail-ua1-x92c.google.com with SMTP id 2so7576801uax.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 11:18:55 -0800 (PST)
+        Mon, 17 Jan 2022 15:26:17 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CEBC06173F
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 12:26:17 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id q30-20020a17090a752100b001b49f65ff61so778159pjk.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 12:26:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vjIp+UiqOSyx1wj8+g5PpQdrfx2cigslZ1HN9GuuKpo=;
-        b=k0CQ2BuChSX3ouSjKHcFaRNDMkbsOesrlL29L5az9lJ9/1ktY84vG3+v/Lakm4jKNU
-         RliGgEg4I/c0G7Bug565ulDJPXP7R7FM/LLuzVJ2HigfhjyaIYIPO23tPUZhLS5abj+p
-         fTblXAD6q3hh7vYlCJefU4J56xQD0qNNeebT56o4fGsz4t6gUaftpaHUYTb6oTQMrePc
-         tEgxcPmTMeqJXBMA7mRlpLUiprlfkPN3tyOlDVmxHXQiluax8S7Mh9bU+9gJ+wDZOMmc
-         3XV3wJgaxlujBi9H/Eikg8Jl5eztQ5mz4dM6XJ6GTFF93WjRIvY7NdjA75RPK6mDBG/J
-         ABcw==
+        bh=dX5BDdPmD+NPI6WaR8s/OfKSkKWqboFHvMNVeJ4mtho=;
+        b=BJHo0ew6lxRnbn+aN6pFlwQsdGTqnRA9NKFS6jblkxWxLayQuvtV333n7ZthAwgJnT
+         AXrDQvKS4+fj/sL/B1JrAkbxVoYUSWv+dNmoQiZ9CkAKJHZZE6iUXL3wElW5o66iMzyX
+         SDBnTISDGMd/utWP1KY0CK/G50WGQsCA/fUB6O5pCq9wE7v/zIMcsS0ldOfTGmslCNb/
+         gy0EWqOKlY/5t5UaXqYbhiqefybF7MLzq2GBsWuOb9+nYnudDoiw1o9Qo8Zw5q9OrmtP
+         lG2fGZEc6quxHMcBFNv5LsB1MZLspOb7joO3eS/Ta/sl/aQKXuffCQUAxFRFicczlZBU
+         /B7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vjIp+UiqOSyx1wj8+g5PpQdrfx2cigslZ1HN9GuuKpo=;
-        b=YLB8qmApgv+ig7/F2R1S6jTSFTujnFTRY8A3nhMK6iHaKlDyj2QuZwWCm2+G2fAPig
-         FkcB1+xODHx1uBfZNDq1OkIcTiiLTy/uaxoWOqEL4rFgFLHTqA8DlwpHyQkfgHt7mVN/
-         f/3tIXF/pN3fpGkVkdJ/xTnUK/T5kaG1vWE5DjhUhCe73CvFJyTo7xTIfLrX1xSbHMDM
-         CoA06cFkN+JwvZ/b9xljEHWAZ1reltBAn9sV2syhvLzdQhX4Catmc2fkmxDWNwM34ck3
-         djpbKb2BMNcjzOd6CKKceIQaPEtku9GJUhxiaLxDNfTawdfbMIsEBdWJaqv4xUGPxlUh
-         KDCw==
-X-Gm-Message-State: AOAM530N+N01L7aQtvv32/AdWELRoywd5R+875d0UDwPwohctVTiJ3+s
-        ESLSxVVlCb4bXjO4XNep7JRLYfGCw+QjcquDdK3Bxw==
-X-Google-Smtp-Source: ABdhPJz+X5MWtFkAgJasTOUIrA63AKIAhp56lHfcVLzDXVRUTOiKujTw8cigGH8PWhBTGZvMxIIzXHwASWHW+A1Toz4=
-X-Received: by 2002:a67:dd90:: with SMTP id i16mr8097549vsk.86.1642447134814;
- Mon, 17 Jan 2022 11:18:54 -0800 (PST)
+        bh=dX5BDdPmD+NPI6WaR8s/OfKSkKWqboFHvMNVeJ4mtho=;
+        b=yYeIon6sZNFjHO0UOSlkn5BXgMDutlPmCeVUDyApv12pLf6x30Bukln94LUYZ9HOgN
+         GkibnzA6ovtpafsTZFKEOvfc2yVPnD32bimwbeSfnkACUwsOl75UYVXLs1DVdVnwh4k7
+         uE0ywupwXOJsn2YyBvQo6Xbm79DdZCqRtrW3ymfBrgt1DKLB/q4J8RphGQK7rieXv8yI
+         /Qh7vev2u8O+9MzNw7BlZY7+RDyjfHxvsJbo49uLnne0/IsNVWgQusb/oYvqfrcqiZKK
+         ZvY7v7Kvd2e/96QXDysb3tIDshOZgcHBFXK2+jCHk1kr0ORRblaSAyZZmTCrS/G29rv9
+         cQYw==
+X-Gm-Message-State: AOAM530wgXdCMLiRpoHIE1GPZH2HVYGbb8kfCHV4SsquRt7OtU2lAjzf
+        125l7IDM9IVQBz/04SUm4zKDVrZ3MQl3LoUjzNklnA==
+X-Google-Smtp-Source: ABdhPJzs4NFch1IbJoePzGpRGSPF5a/BDJH4NeuYNKzRO9JLl6Xyd9LRCb0ktA169IQmhMKLm8A1K6VtC3RjJ2m+I+8=
+X-Received: by 2002:a17:902:b947:b0:14a:a6aa:4fa6 with SMTP id
+ h7-20020a170902b94700b0014aa6aa4fa6mr10975861pls.149.1642451176378; Mon, 17
+ Jan 2022 12:26:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20220117165853.1470420-1-sashal@kernel.org> <20220117165853.1470420-2-sashal@kernel.org>
- <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
-In-Reply-To: <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 17 Jan 2022 21:18:43 +0200
-Message-ID: <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register
- clocks early
+References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
+ <20220111201722.327219-18-krzysztof.kozlowski@canonical.com>
+ <CACRpkdYTXSOW+sOX3wVtF4jj6xm0jr-F3HKQPGHOdAVjbasP3A@mail.gmail.com>
+ <5047da7c-d3a6-5472-b0ca-7ed3dbe8a5fe@canonical.com> <CACRpkdbhmJ91EW395C5F2WYjWJQdJ-SBHaDm7XnQsxMuyoMmLg@mail.gmail.com>
+ <77bd8fa4-2b35-352c-da07-ef91fcbed454@canonical.com>
+In-Reply-To: <77bd8fa4-2b35-352c-da07-ef91fcbed454@canonical.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 17 Jan 2022 12:26:04 -0800
+Message-ID: <CAOesGMg2eH1B94h+etPBDW3B1LMeHBytz0v2e0GfVRDv8gU0YA@mail.gmail.com>
+Subject: Re: [PATCH v2 24/28] dt-bindings: pinctrl: samsung: convert to dtschema
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+        Rob Herring <robh+dt@kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@gmail.com>,
+        Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 17 Jan 2022 at 19:11, Krzysztof Kozlowski
+On Sun, Jan 16, 2022 at 11:45 PM Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> On 17/01/2022 17:58, Sasha Levin wrote:
-> > From: Sam Protsenko <semen.protsenko@linaro.org>
+> On 16/01/2022 22:38, Linus Walleij wrote:
+> > On Sun, Jan 16, 2022 at 6:10 PM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@canonical.com> wrote:
 > >
-> > [ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
+> >> Anyway DTS and dtschema will have to wait for one release, because they
+> >> depend on samsung pinctrl driver change (patch #2).
 > >
-> > Some clocks must be registered before init calls. For example MCT clock
-> > (from CMU_PERI) is needed for MCT timer driver, which is registered
-> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-> > clk-exynos850 platform driver init, it's already too late. Inability to
-> > get "mct" clock in MCT driver leads to kernel panic, as functions
-> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-> > can't be fixed either, as it's acting as a clock source and it's
-> > essential to register it in start_kernel() -> time_init().
-> >
-> > Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
-> > generates clocks needed for CMU_PERI, but it's already registered early.
-> >
-> > While at it, let's cleanup the code a bit, by extracting everything
-> > related to CMU initialization and registration to the separate function.
-> >
-> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-> > drivers/clk/mediatek/clk-mt2712.c.
-> >
-> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
-> >  1 file changed, 49 insertions(+), 21 deletions(-)
-> >
+> > What about I put that (and maybe this schema) on an immutable
+> > branch so you can pull the commit into your for-arm-soc branch and
+> > put the DTS changes on top?
 >
-> I propose to skip this one.
+> That would be a solution if not a policy for arm-soc of keeping DTS
+> separate. Arnd and Olof since some time are not happy when DTS branch
+> receives any driver updates.
 >
-> Backporting it to v5.16 does not hurt but also does not bring any
-> benefits for the upstream kernel users. There is no support for
-> mentioned Exynos850 in v5.16.
+> Arnd, Olof,
+> This is a set of dtschema conversion + DTS alignment with new schema:
+> 1. Driver change necessary to accept new DTS (driver depends on node
+> names and this has to change because of dtschema),
+> 2. DTS commits depending on above, which convert node name to new format,
+> 3. Finally dtschema requiring new naming of the GPIO nodes.
 >
-> It could have only meaning for some downstream, out-of-tree kernels
-> which apply Exynos850 support on top of v5.16, but then they can just
-> take this patch as well.
+> If I got correctly, the policy of not mixing drivers and DTS requires
+> that #2 above (DTS changes) will wait for one more release. During the
+> time, if dtschema (#3 above) is applied, there will be new warnings
+> about non-compliant DTS.
 >
+> Do you see any chance of merging driver + DTS + dtschema via same tree
+> in same release?
 
-Agreed. DTS patches will be merged only in v5.17, hopefully. Till that
-time the whole clock driver is floating with no users. That's
-historical thing -- I didn't have "Ack" to submit board dts at the
-time, and SoC dts couldn't be applied without users (board dts). So I
-focused on driver work, isolated. Not much sense to backport something
-without having real users.
+Our general guidance to separate DTS and driver changes is to avoid
+large entangled changes between the two, and to discourage a developer
+mentality of "the implementation is the binding".
 
->
-> Best regards,
-> Krzysztof
+I think this is a good example of when it makes sense to bring in what
+is a fairly small and clean driver change to deal with this. So the
+right answer here is to stage such a stable branch and merge into both
+arm-soc and the pinctrl subsystem trees as proposed.
+
+
+-Olof
