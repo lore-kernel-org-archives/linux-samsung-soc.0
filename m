@@ -2,342 +2,195 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF31AC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 12:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32183C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 17 Jan 2022 12:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239815AbiAQMUd (ORCPT
+        id S239979AbiAQMnH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 07:20:33 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:30501 "EHLO
+        Mon, 17 Jan 2022 07:43:07 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:42709 "EHLO
         mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237005AbiAQMUc (ORCPT
+        with ESMTP id S239973AbiAQMnG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jan 2022 07:20:32 -0500
+        Mon, 17 Jan 2022 07:43:06 -0500
 Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220117122030epoutp021d3b0b7b28d4aaffa6cf4aedc7c14263~LDiKFnjTW0761507615epoutp02J
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 12:20:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220117122030epoutp021d3b0b7b28d4aaffa6cf4aedc7c14263~LDiKFnjTW0761507615epoutp02J
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220117124305epoutp025664a77a3437dd6658ea8b2717aea593~LD13irrn52539125391epoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 12:43:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220117124305epoutp025664a77a3437dd6658ea8b2717aea593~LD13irrn52539125391epoutp02X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642422030;
-        bh=p28mpu+UhhDAsJxN5hx5T0EegAUdaGYN4Xh5Bl4SXFc=;
+        s=mail20170921; t=1642423385;
+        bh=y/fg2d2Xcr3JPdo/TQ/fdeipX9YDMvYtY3RetiGHpu0=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=oJYGllZ8MrJDtyrGwPt08yCZjiQCHp8YQQzB28WneEIVRgQkN8wadE456Y7S+lvyd
-         eg7P3c8CAsNC8gnSgrWMumpuHVqLTPJDgc6Wb0AXPyDpX6aBMbLwPCiBCxSXREPIR8
-         ow8GmQIvp6Wvpn1Ygb2rRXLQu/dtosMWqhycwnlA=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        b=fBz8lruy3E44o5B0QI/o23VlJXHhFDkd9Fm6X1kYODBJk9e3FvdxSTpp3u62+G/gL
+         60eS0LFXDwMdINgi7i6NUJzjNLlS21Boa2+qm47iwf1cXRYfJQlJtg64vIUKtD1ify
+         SY3TGr1KlLyCIvyBO+1cUejCy7liL4G5LnqomOS4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
         epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220117122029epcas5p126443cbfd86a063e572c8742deb014e6~LDiJhQCNU1253312533epcas5p1d;
-        Mon, 17 Jan 2022 12:20:29 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4JcrZx0rTVz4x9Q5; Mon, 17 Jan
-        2022 12:20:25 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        20220117124303epcas5p105edefeb35e132cc6983672399182cf4~LD12fhCE31151111511epcas5p1F;
+        Mon, 17 Jan 2022 12:43:03 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Jcs4x5RXxz4x9Pp; Mon, 17 Jan
+        2022 12:42:57 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
         epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2C.77.06423.80F55E16; Mon, 17 Jan 2022 21:20:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        47.7A.06423.15465E16; Mon, 17 Jan 2022 21:42:57 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220117122024epcas5p30804299cf49e8512b3149b37201d4864~LDiEP53Zi1158111581epcas5p3M;
-        Mon, 17 Jan 2022 12:20:24 +0000 (GMT)
+        20220117124256epcas5p31c0a87b82fa0b195caa4a1a8f2e905d1~LD1v1-8k90117401174epcas5p3F;
+        Mon, 17 Jan 2022 12:42:56 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220117122024epsmtrp21b0de4d9ed538c456670fc7d7f835a90~LDiEOG6ZN1623316233epsmtrp2c;
-        Mon, 17 Jan 2022 12:20:24 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-c0-61e55f08bc50
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220117124256epsmtrp12fbb2a834055f83a023ae7abd22ed805~LD1v0tZbQ2520925209epsmtrp1n;
+        Mon, 17 Jan 2022 12:42:56 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-2e-61e56451f7b9
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        02.A6.29871.80F55E16; Mon, 17 Jan 2022 21:20:24 +0900 (KST)
+        20.B7.29871.05465E16; Mon, 17 Jan 2022 21:42:56 +0900 (KST)
 Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220117122021epsmtip2de53ff3ecae89dceb41f71edd59234b2~LDiBoH9N20070500705epsmtip2M;
-        Mon, 17 Jan 2022 12:20:21 +0000 (GMT)
+        20220117124253epsmtip26e666f9119d6cdd8e7b59036fd7f472f~LD1swO4sw0708607086epsmtip2e;
+        Mon, 17 Jan 2022 12:42:53 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Jonathan Cameron'" <jic23@kernel.org>
+To:     "'Jonathan Cameron'" <Jonathan.Cameron@Huawei.com>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>
 Cc:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <olof@lixom.net>, <linus.walleij@linaro.org>,
         <catalin.marinas@arm.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski@canonical.com>, <s.nawrocki@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
-        <linux-fsd@tesla.com>, <linux-iio@vger.kernel.org>,
+        <s.nawrocki@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
+        <pankaj.dubey@samsung.com>, <linux-fsd@tesla.com>,
         "'Tamseel Shams'" <m.shams@samsung.com>
-In-Reply-To: <20220116111939.413ece7e@jic23-huawei>
-Subject: RE: [PATCH 21/23] iio: adc: exynos-adc: Add support for ADC V3
- controller
-Date:   Mon, 17 Jan 2022 17:50:19 +0530
-Message-ID: <00b201d80b9c$9a3de160$ceb9a420$@samsung.com>
+In-Reply-To: <20220117094728.000051b8@Huawei.com>
+Subject: RE: [PATCH 20/23] dt-bindings: iio: adc: exynos-adc: Add ADC-V3
+ variant
+Date:   Mon, 17 Jan 2022 18:12:52 +0530
+Message-ID: <00b301d80b9f$c06304d0$41290e70$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKuNmZ/+9PJHbdzezyQqzGEXzr0sgKiQ5pNAaVpUiICYznxwqqFdEWg
+Thread-Index: AQKuNmZ/+9PJHbdzezyQqzGEXzr0sgIwyL4qAholePgCN4X3HAEeB8w4qn3OlMA=
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJJsWRmVeSWpSXmKPExsWy7bCmui5n/NNEg7WbGC3eL+thtJh/5Byr
-        xYOmVUwWG9/+YLKY8mc5k8Wmx9dYLT723GO1ePgq3GLekXcsFpd3zWGzmHF+H5PF3dbF7Ban
-        rn9ms1i09Qu7ReveI+wWh9+0s1o8vv6HzUHQY828NYwesxp62Tw2repk87hzbQ+bx+Yl9R5X
-        TjSxevRtWcXo8a9pLrvH501yAZxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbm
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJsWRmVeSWpSXmKPExsWy7bCmhm5gytNEg1mTtSzeL+thtJh/5Byr
+        xaqF19gsNr79wWQx5c9yJotNj6+xWnzsucdq8fBVuMXlXXPYLGac38dkcbd1MbvFqeuf2SwW
+        bf3CbtG69wi7xeE37awWj6//YXMQ8Fgzbw2jx6yGXjaPliNvWT02repk87hzbQ+bx+Yl9R5X
+        TjSxevRtWcXo8a9pLrvH501yAVxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbm
         Sgp5ibmptkouPgG6bpk5QK8oKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSK
-        E3OLS/PS9fJSS6wMDQyMTIEKE7IzWq+9YyzYbVGx4NMy9gbGXXpdjJwcEgImEi0vuli7GLk4
-        hAR2M0q8WPeOHSQhJPCJUWLquWyIxDdGiae/NjJ2MXKAdfR+YoKo2cso8WaTPkTNS6Ca7nlg
-        zWwCuhI7FrexgdgiAtoSe98cZASxmQXuM0tcn54LYnMKGEvM/v6bGcQWFgiR+Dz3LBPIfBYB
-        VYmTn2pBwrwClhJbOs4xQdiCEidnPmGBGCMvsf3tHGaIBxQkfj5dxgqxyk3iy/obTBA14hIv
-        jx5hB7lNQuA/h0Tr162sEA0uEoffzGKCsIUlXh3fwg5hS0l8freXDeLHbImeXcYQ4RqJpfOO
-        sUDY9hIHrsxhASlhFtCUWL9LH2IVn0Tv7ydMEJ28Eh1tQhDVqhLN765CdUpLTOzuZoUo8ZDo
-        ++Q7gVFxFpK/ZiH5axaS+2ch7FrAyLKKUTK1oDg3PbXYtMAwL7UcHtXJ+bmbGMFpXMtzB+Pd
-        Bx/0DjEycTAeYpTgYFYS4T3G/SRRiDclsbIqtSg/vqg0J7X4EKMpMKwnMkuJJucDM0leSbyh
-        iaWBiZmZmYmlsZmhkjjv6fQNiUIC6YklqdmpqQWpRTB9TBycUg1MHRfDy3zP+F39bs0b+iz/
-        ofvqx39D06pm6Dzb3/R7xyzbRZm7z8x5qbP/Qs3WBV3vg2zeb7GfvkbuwjLjxsPlnbMK9KJ2
-        b5DdHvjd+IPyTq38uTwt4Qxyu08znhApWViz4YLZjRvbJq0oPX9T8aPxwh8395bwTwjZZDLP
-        UzPoKdOBLh/3mkQGpttL7/xKv3/2W/NB5r381hIJjY+9Vc9MLnq01zZfiCfo5W61m5E3laO+
-        HzHpUvKvvvyqh/daVuijR0sZzq+31N6W1eilcEBHdf+SiHqeKwceF/7RE2iXEvDZVXB17qaV
-        hs0Lpj+87S8f4m475/YelsTXDAWvxCoW/5jYyBEcd2L6jqdpXwOt7yixFGckGmoxFxUnAgBB
-        7Q5HbAQAAA==
-X-Brightmail-Tracker: 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
+        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
+        /hVxBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsWy7bCSvG5AytNEg97Xqhbvl/UwWsw/co7V
+        YtXCa2wWG9/+YLKY8mc5k8Wmx9dYLT723GO1ePgq3OLyrjlsFjPO72OyuNu6mN3i1PXPbBaL
+        tn5ht2jde4Td4vCbdlaLx9f/sDkIeKyZt4bRY1ZDL5tHy5G3rB6bVnWyedy5tofNY/OSeo8r
+        J5pYPfq2rGL0+Nc0l93j8ya5AK4oLpuU1JzMstQifbsEroxve56xFlwXqdhxdh9bA+MlwS5G
+        Tg4JAROJ75unMHYxcnEICexmlNjQMZkZIiEtcX3jBHYIW1hi5b/n7BBFzxklnrx6xgqSYBPQ
+        ldixuI0NxBYRKJVoObUZbBKzwGpmiebPW5ghOmYxSfSsfM0EUsUpYChxev9RsG5hgQCJjzev
+        gXWzCKhKPFh5FSzOK2ApceHZSkYIW1Di5MwnLF2MHEBT9STaNoKFmQXkJba/nQN1qYLEz6fL
+        WCGO8JM4c38lM0SNuMTLo0fYJzAKz0IyaRbCpFlIJs1C0rGAkWUVo2RqQXFuem6xYYFhXmq5
+        XnFibnFpXrpecn7uJkZwXGtp7mDcvuqD3iFGJg7GQ4wSHMxKIrzHuJ8kCvGmJFZWpRblxxeV
+        5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cDUG/7msoLl4kmT3y6ZemuqX3GI
+        Xr3v1tl30tgtQsJzN2+flaCuNK/1vGDbZlt9i7Id7Gan9infyb0beqH+3Iuzpzfk6ZW+USz/
+        6beD0bdxn6Tl6/0+HuY6Du9KlRi32qVtcg/c4PtZ7JdK3vyHEyyWvpNOFSuzDhflCf7TXuS/
+        9JVwQs3ixdn+8bJP+7mDnJY59015XTJb95aBzc9Umyl/dFsOFNZ1hx1a6nXFkmXW99Nrfs/e
+        tyNJn6n5/CTV4/MUPjFYvHr1ULXb7WHv9t+n/qxjeLzp/cJpXmeNo0t3zK19euBd/CYeTWk+
+        441/W3c1CRhJHdDrEGrp7v3Zxy2X0V4vW5bzRfq/e9osqcdKLMUZiYZazEXFiQAXSuOlWgMA
         AA==
-X-CMS-MailID: 20220117122024epcas5p30804299cf49e8512b3149b37201d4864
+X-CMS-MailID: 20220117124256epcas5p31c0a87b82fa0b195caa4a1a8f2e905d1
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220113122452epcas5p201a3a87d0e9c0e9f449a90ed62de1f1c
+X-CMS-RootMailID: 20220113122447epcas5p266d44c8df143229d22dfa700c285a786
 References: <20220113121143.22280-1-alim.akhtar@samsung.com>
-        <CGME20220113122452epcas5p201a3a87d0e9c0e9f449a90ed62de1f1c@epcas5p2.samsung.com>
-        <20220113121143.22280-22-alim.akhtar@samsung.com>
-        <20220116111939.413ece7e@jic23-huawei>
+        <CGME20220113122447epcas5p266d44c8df143229d22dfa700c285a786@epcas5p2.samsung.com>
+        <20220113121143.22280-21-alim.akhtar@samsung.com>
+        <75ae8b8c-e416-5007-b995-f1317ef207d4@canonical.com>
+        <20220117094728.000051b8@Huawei.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan
+
 
 >-----Original Message-----
->From: Jonathan Cameron [mailto:jic23@kernel.org]
->Sent: Sunday, January 16, 2022 4:50 PM
->To: Alim Akhtar <alim.akhtar@samsung.com>
->Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
->soc@kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
->olof@lixom.net; linus.walleij@linaro.org; catalin.marinas@arm.com;
->robh+dt@kernel.org; krzysztof.kozlowski@canonical.com;
+>From: Jonathan Cameron [mailto:Jonathan.Cameron@Huawei.com]
+>Sent: Monday, January 17, 2022 3:17 PM
+>To: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>Cc: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
+>kernel@lists.infradead.org; linux-kernel@vger.kernel.org; soc@kernel.org;
+>linux-clk@vger.kernel.org; devicetree@vger.kernel.org; olof@lixom.net;
+>linus.walleij@linaro.org; catalin.marinas@arm.com; robh+dt@kernel.org;
 >s.nawrocki@samsung.com; linux-samsung-soc@vger.kernel.org;
->pankaj.dubey@samsung.com; linux-fsd@tesla.com; linux-
->iio@vger.kernel.org; Tamseel Shams <m.shams@samsung.com>
->Subject: Re: [PATCH 21/23] iio: adc: exynos-adc: Add support for ADC V3
->controller
+>pankaj.dubey@samsung.com; linux-fsd@tesla.com; Tamseel Shams
+><m.shams@samsung.com>
+>Subject: Re: [PATCH 20/23] dt-bindings: iio: adc: exynos-adc: Add ADC-V3
+>variant
 >
->On Thu, 13 Jan 2022 17:41:41 +0530
->Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>On Thu, 13 Jan 2022 14:32:12 +0100
+>Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
 >
->> Exynos's ADC-V3 has some difference in registers set, number of
->> programmable channels (16 channel) etc. This patch adds support for
->> ADC-V3 controller version.
->>
->> Cc: linux-fsd@tesla.com
->> Cc: jic23@kernel.org
->> Cc: linux-iio@vger.kernel.org
->> Signed-off-by: Tamseel Shams <m.shams@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> On 13/01/2022 13:11, Alim Akhtar wrote:
+>> > This patch adds a new compatible string for exynos's ADC-V3 variant.
+>> >
+>> > Cc: linux-fsd@tesla.com
+>> > Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+>> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 >
->Hi Alim,
+>Please cc linux-iio@vger.kernel.org for next version...
 >
->A few minor suggestions below.  I'm not seeing a binding update though...
->
->I'd also suggest that it would be more appropriate to break this out as a
->separate mini series from the main support so that it can be reviewed and
->merge separately. It's not ideal when a list just gets patch 21 of
->23 with no cover letter etc sent to it.
->
-Thanks for the detailed review, I agree, will send as a separate patch set
-only related with ADC support.
-And addressing rest of your comments in this patch.
+Noted, will separate out these patches from the original series and send.
+Thanks
 
->Jonathan
->
->> ---
->>  drivers/iio/adc/exynos_adc.c | 74
->> +++++++++++++++++++++++++++++++++++-
->>  1 file changed, 72 insertions(+), 2 deletions(-)
+>> > ---
+>> >  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml          | 1 +
+>> >  1 file changed, 1 insertion(+)
+>> >
+>> > diff --git
+>> > a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+>> > b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+>> > index 81c87295912c..9303053759ca 100644
+>> > ---
+>> > a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+>> > +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-
+>adc.y
+>> > +++ aml
+>> > @@ -14,6 +14,7 @@ properties:
+>> >      enum:
+>> >        - samsung,exynos-adc-v1                 # Exynos5250
+>> >        - samsung,exynos-adc-v2
+>> > +      - samsung,exynos-adc-v3
 >>
->> diff --git a/drivers/iio/adc/exynos_adc.c
->> b/drivers/iio/adc/exynos_adc.c index 3b3868aa2533..61752e798fd6 100644
->> --- a/drivers/iio/adc/exynos_adc.c
->> +++ b/drivers/iio/adc/exynos_adc.c
->> @@ -55,6 +55,11 @@
->>  #define ADC_V2_INT_ST(x)	((x) + 0x14)
->>  #define ADC_V2_VER(x)		((x) + 0x20)
+>> Please use SoC-specific compatible. IP block versions are tricky because:
+>> 1. Documentation/datasheet mentioning which SoC has which block
+>> version are not public.
+>> 2. Neither are public the datasheets for ADC blocks.
+>> 3. The versioning of IP blocks can be inaccurate.
 >>
->> +/* ADC_V3 register definitions */
->> +#define ADC_V3_DAT(x)			((x) + 0x08)
->> +#define ADC_V3_DAT_SUM(x)		((x) + 0x0C)
->> +#define ADC_V3_DBG_DATA(x)		((x) + 0x1C)
->> +
->>  /* Bit definitions for ADC_V1 */
->>  #define ADC_V1_CON_RES		(1u << 16)
->>  #define ADC_V1_CON_PRSCEN	(1u << 14)
->> @@ -92,6 +97,7 @@
 >>
->>  /* Bit definitions for ADC_V2 */
->>  #define ADC_V2_CON1_SOFT_RESET	(1u << 2)
->> +#define ADC_V2_CON1_SOFT_NON_RESET	(1u << 1)
+>> Best regards,
+>> Krzysztof
 >>
->>  #define ADC_V2_CON2_OSEL	(1u << 10)
->>  #define ADC_V2_CON2_ESEL	(1u << 9)
->> @@ -100,6 +106,7 @@
->>  #define ADC_V2_CON2_ACH_SEL(x)	(((x) & 0xF) << 0)
->>  #define ADC_V2_CON2_ACH_MASK	0xF
->>
->> +#define MAX_ADC_V3_CHANNELS		16
->>  #define MAX_ADC_V2_CHANNELS		10
->>  #define MAX_ADC_V1_CHANNELS		8
->>  #define MAX_EXYNOS3250_ADC_CHANNELS	2
->
->Given we have a mixture of required an unrequired elements in this
-structure
->it might be a good idea to add some documentation.  Kernel-doc for the
->whole structure preferred.  Note this isn't necessarily something that
-needs
->to be in this patch given the lack of docs predates this and with the
-change to
->make
->adc_isr() required that I suggest below things aren't made worse by this
->patch.
->
->> @@ -164,6 +171,7 @@ struct exynos_adc_data {
->>  	void (*exit_hw)(struct exynos_adc *info);
->>  	void (*clear_irq)(struct exynos_adc *info);
->>  	void (*start_conv)(struct exynos_adc *info, unsigned long addr);
->> +	irqreturn_t (*adc_isr)(int irq, void *dev_id);
->>  };
->>
->>  static void exynos_adc_unprepare_clk(struct exynos_adc *info) @@
->> -484,6 +492,59 @@ static const struct exynos_adc_data exynos7_adc_data =
->{
->>  	.start_conv	= exynos_adc_v2_start_conv,
->>  };
->>
->> +static void exynos_adc_v3_init_hw(struct exynos_adc *info) {
->> +	u32 con2;
->> +
->> +	writel(ADC_V2_CON1_SOFT_RESET, ADC_V2_CON1(info->regs));
->> +
->> +	writel(ADC_V2_CON1_SOFT_NON_RESET, ADC_V2_CON1(info-
->>regs));
->> +
->> +	con2 = ADC_V2_CON2_C_TIME(6);
->> +	writel(con2, ADC_V2_CON2(info->regs));
->> +
->> +	/* Enable interrupts */
->> +	writel(1, ADC_V2_INT_EN(info->regs)); }
->> +
->> +static void exynos_adc_v3_exit_hw(struct exynos_adc *info) {
->> +	u32 con2;
->> +
->> +	con2 = readl(ADC_V2_CON2(info->regs));
->> +	con2 &= ~ADC_V2_CON2_C_TIME(7);
->> +	writel(con2, ADC_V2_CON2(info->regs));
->> +
->> +	/* Disable interrupts */
->> +	writel(0, ADC_V2_INT_EN(info->regs)); }
->> +
->> +static irqreturn_t exynos_adc_v3_isr(int irq, void *dev_id) {
->> +	struct exynos_adc *info = (struct exynos_adc *)dev_id;
->
->Shouldn't need the cast as cast from void * to another pointer is always
-valid
->in C without the explicit cast.
->
->> +	u32 mask = info->data->mask;
->> +
->> +	info->value = readl(ADC_V3_DAT(info->regs)) & mask;
->> +
->> +	if (info->data->clear_irq)
->> +		info->data->clear_irq(info);
->
->Don't need this currently as v3_isr() is always matched with clear_isr()
-being
->provided.  Having the check implies otherwise which is probably not a good
->thing to do until some future device support (maybe) needs it.
->
->> +
->> +	complete(&info->completion);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static const struct exynos_adc_data exynos_adc_v3_adc_data = {
->> +	.num_channels	= MAX_ADC_V3_CHANNELS,
->> +	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
->> +
->> +	.init_hw	= exynos_adc_v3_init_hw,
->> +	.exit_hw	= exynos_adc_v3_exit_hw,
->> +	.clear_irq	= exynos_adc_v2_clear_irq,
->> +	.start_conv	= exynos_adc_v2_start_conv,
->> +	.adc_isr	= exynos_adc_v3_isr,
->> +};
->> +
->>  static const struct of_device_id exynos_adc_match[] = {
->>  	{
->>  		.compatible = "samsung,s3c2410-adc", @@ -518,6 +579,9 @@
->static
->> const struct of_device_id exynos_adc_match[] = {
->>  	}, {
->>  		.compatible = "samsung,exynos7-adc",
->>  		.data = &exynos7_adc_data,
->> +	}, {
->> +		.compatible = "samsung,exynos-adc-v3",
->> +		.data = &exynos_adc_v3_adc_data,
->>  	},
->>  	{},
->>  };
->> @@ -719,6 +783,12 @@ static const struct iio_chan_spec
->exynos_adc_iio_channels[] = {
->>  	ADC_CHANNEL(7, "adc7"),
->>  	ADC_CHANNEL(8, "adc8"),
->>  	ADC_CHANNEL(9, "adc9"),
->> +	ADC_CHANNEL(10, "adc10"),
->> +	ADC_CHANNEL(11, "adc11"),
->> +	ADC_CHANNEL(12, "adc12"),
->> +	ADC_CHANNEL(13, "adc13"),
->> +	ADC_CHANNEL(14, "adc14"),
->> +	ADC_CHANNEL(15, "adc15"),
->>  };
->>
->>  static int exynos_adc_remove_devices(struct device *dev, void *c) @@
->> -885,8 +955,8 @@ static int exynos_adc_probe(struct platform_device
->> *pdev)
->>
->>  	mutex_init(&info->lock);
->>
->> -	ret = request_irq(info->irq, exynos_adc_isr,
->> -					0, dev_name(&pdev->dev), info);
->> +	ret = request_irq(info->irq, info->data->adc_isr ?
-info->data->adc_isr
->:
->> +				exynos_adc_isr, 0, dev_name(&pdev->dev),
->info);
->
->I'd rather see the slightly larger change of providing adc_isr for existing
-parts
->and the conditional part here going away.
->
->Jonathan
->
->
->>  	if (ret < 0) {
->>  		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
->>  							info->irq);
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> https://protect2.fireeye.com/v1/url?k=9dd88c77-fca326ff-9dd90738-74fe4
+>> 860018a-343cb1b0388f1560&q=1&e=61045889-dd66-417f-b142-
+>9e85b39f1676&u=
+>> http%3A%2F%2Flists.infradead.org%2Fmailman%2Flistinfo%2Flinux-arm-
+>kern
+>> el
 
 
