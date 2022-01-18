@@ -2,66 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1559C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 18:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C459C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 18:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348280AbiARSqr (ORCPT
+        id S1348299AbiARSrU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 13:46:47 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37224
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1348277AbiARSqr (ORCPT
+        Tue, 18 Jan 2022 13:47:20 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:44492
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1348291AbiARSrS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 13:46:47 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        Tue, 18 Jan 2022 13:47:18 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8D96B40028
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 18:46:45 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 928663F203
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 18:47:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642531605;
-        bh=32Jm3LsNIi8MgZskZsMja/2tuyI7FtQJGucbg9PscFM=;
+        s=20210705; t=1642531637;
+        bh=m+xP6bN0zKQ33R8bBjTU3wo4FVKXSjHRB56Y8SB1Y2Q=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=aVXZjKxZVWvhzcqaXzer00mZTKyo1/Osa6ZvMSbLjOI7AxxQknRxrimaN6mS7bUwh
-         e7AEyLMyCNfbOEaVKCy11aGPkXA37IQDlBRgwIFc4a446aV9RDQ+1rw8gjKzZrN9o3
-         DLOsYbnQis6/gqFz59LoUctadaxgd8Cl4C9iwF45h1SvpAXJ/9IlBrWVtvXoqts56e
-         yfSZ+3xb9B9dX5AgeLm/RjqI0bfAS+N2oNI3xySotSJOwpoiTXd+8WTBYFrbWm2/7+
-         EbTa2sBbRxKCHG9D917vB4lC2OUlYJsGJXTrHYNy+QjZY7HGpJpVUJSPwF06VJOxqE
-         OS5p0GT+HhvjA==
-Received: by mail-ed1-f71.google.com with SMTP id z6-20020a50eb46000000b00403a7687b5bso2034693edp.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 10:46:45 -0800 (PST)
+        b=G6ZqhmKcgjOcF0JxRVmPtTJA4zDGludRX+wN4e2R6EzX0tF54Ev/H4Ztr8W7JQXYa
+         YmWbaCAWFFXFMksZ3qkMSfSgv9sN5DJ0tDdMeRPNM7tM3nJQZwnUSzHQjd7fQynCd2
+         MaRuWrZIjFEwjYMjtQRiI10nJeKMhAF8hszXiMGtiEBfuHQ7pr5pzZx/YjjtmzDH8s
+         bQh3xaLkz71Hqn9rcHVZIVcv7TsvxA2Bmwfqxpx2tOI6NeJMN2oMx+YmW8SE11Y16q
+         rAn9ker+npplrvrD0opegA4h4wxNJze7zFINkUPyQIpNS7nlFWMiqZuIIP/2k0cRYX
+         jg8IhZkJJsuhA==
+Received: by mail-ed1-f72.google.com with SMTP id ej6-20020a056402368600b00402b6f12c3fso6444482edb.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 10:47:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=32Jm3LsNIi8MgZskZsMja/2tuyI7FtQJGucbg9PscFM=;
-        b=4sGbm2Vqi6UC6YCXF63h0dOCsW79nhoIF2ywG3aLryLXA9aDUzsUxYMTVCg1JRhGp6
-         8mUdSdMuP21Pkr7f3uYItyriDsB6aQjXj3RiC+ffRwGnly260atM9Tsim9ihF9NlxAAH
-         P9uxE4YlBFAvyMNYUwNuQu7d68M/FmP8maoO+QMj4h2ZjGyWj4J84rLqa8QSs335QNKb
-         JtUEtzF5k+sfJgB+0aE4VsRVKHuWCjeqTcndEmv2pU4T2bZIow+AbOTZx39EsiS1qpah
-         22bR00L3j5z/THZng4xJ+v7KIQ0qHgjIYv+iylk1b2tcNMiwD9+Oui4LEfMUMS7TAzfA
-         y47g==
-X-Gm-Message-State: AOAM531XWiULTJ2HVr1+rzTkUGW7Qah+DL/pgl8bly5OMcy0oyc89OWK
-        viSb/NRJTa0j0wpSlW7yUfZSCooyx1b8W3aGg7E+dKm3GckhMV0wPIrXHFGRVPCidA3ncBhQsv7
-        SJWuWTrJ+8l6pJJc/OpfR3IPfekxPBDlPA1VzR1ZEJtC2rOHD
-X-Received: by 2002:a05:6402:2142:: with SMTP id bq2mr26372720edb.5.1642531604952;
-        Tue, 18 Jan 2022 10:46:44 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyNQP2i4JQE0+D1DYZNiBilWJZE60/kSXWqat/1Nl7NRn1F91gmzNzAqP8SgNb/qGa5xoUbSw==
-X-Received: by 2002:a05:6402:2142:: with SMTP id bq2mr26372704edb.5.1642531604772;
-        Tue, 18 Jan 2022 10:46:44 -0800 (PST)
+        bh=m+xP6bN0zKQ33R8bBjTU3wo4FVKXSjHRB56Y8SB1Y2Q=;
+        b=4fItp3yyS/O5nf7WHCWBdRd3kR3A4mz0IMyG9dv++4kgbRbvN/sNpUTipF01vrRTmZ
+         u+m2kxBXvTqeOwo4nNlJdggxsFwiPN70O6BBDOmzQPB9GCStXn4v+YGJ4HgEF1dm2FCY
+         lqUshBSc7X3BRiAPePOpuYSOUMvRRHgrsqzkkTc8Z9kbHizPwBB17JeOvy0Oe2Pp0wzG
+         fNh3jhSzAHlGmMCSTfR5kcB7LbBdGKxixIAmFMI5FnpA3OGT1GBN7oWFV4FK/o05mDj+
+         jCsxXd6ml9j8/LAMZeI1bAlv3x1hBZAe/G7PXnt9xLa7ALD2HRST8JItiheRk5LdNIHF
+         HOag==
+X-Gm-Message-State: AOAM532BRmRTFpLxZ0zOP8QMtcpvizkaHijR6Nk1KI0UpGJcXP4lExDn
+        oG59UGPUvRPnB/GHgBytGhoRkmeY6aufes3FAcW1IAxsL2vxGyZ5NTI7oFj+HsZ/5Cm9qZ9OIey
+        8VYETw5VBcPf7A6QPXawCwoLS94PtCTjTj5+1mtXUf5XEvUiY
+X-Received: by 2002:a17:907:9810:: with SMTP id ji16mr21457483ejc.202.1642531637296;
+        Tue, 18 Jan 2022 10:47:17 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwhhrWDVROJkHhOAFBu8GoY4CzXaN/5V1ROMx/f1ASWRjjDQzxbHDuWfmOIns530yDN2yadsw==
+X-Received: by 2002:a17:907:9810:: with SMTP id ji16mr21457468ejc.202.1642531637135;
+        Tue, 18 Jan 2022 10:47:17 -0800 (PST)
 Received: from [192.168.0.42] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id z24sm973311ejd.3.2022.01.18.10.46.43
+        by smtp.gmail.com with ESMTPSA id nd10sm5603511ejc.214.2022.01.18.10.47.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jan 2022 10:46:44 -0800 (PST)
-Message-ID: <581732d1-8d86-f7c6-ebbf-795b48e5e67f@canonical.com>
-Date:   Tue, 18 Jan 2022 19:46:43 +0100
+        Tue, 18 Jan 2022 10:47:16 -0800 (PST)
+Message-ID: <ed1f3bd3-b17c-8c6e-35c6-c996cf0facfa@canonical.com>
+Date:   Tue, 18 Jan 2022 19:47:15 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH v2 15/16] arm64: dts: fsd: Add initial pinctrl support
+Subject: Re: [PATCH v2 16/16] arm64: defconfig: Enable Tesla FSD SoC
 Content-Language: en-US
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -70,13 +70,12 @@ Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         linus.walleij@linaro.org, catalin.marinas@arm.com,
         robh+dt@kernel.org, s.nawrocki@samsung.com,
         linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        linux-fsd@tesla.com, Shashank Prashar <s.prashar@samsung.com>,
-        Aswani Reddy <aswani.reddy@samsung.com>
+        linux-fsd@tesla.com
 References: <20220118144851.69537-1-alim.akhtar@samsung.com>
- <CGME20220118150112epcas5p4b63030d9bf136b4a91468b0d02e75cae@epcas5p4.samsung.com>
- <20220118144851.69537-16-alim.akhtar@samsung.com>
+ <CGME20220118150116epcas5p415b4b658b3ca3fe5e52e11a33546b926@epcas5p4.samsung.com>
+ <20220118144851.69537-17-alim.akhtar@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220118144851.69537-16-alim.akhtar@samsung.com>
+In-Reply-To: <20220118144851.69537-17-alim.akhtar@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -84,257 +83,16 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 18/01/2022 15:48, Alim Akhtar wrote:
-> Add initial pin configuration nodes for FSD SoC.
+> This patch enables the Tesla FSD SoC in arm64 defconfig.
 > 
 > Cc: linux-fsd@tesla.com
-> Signed-off-by: Shashank Prashar <s.prashar@samsung.com>
-> Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
->  arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 335 +++++++++++++++++++++
->  arch/arm64/boot/dts/tesla/fsd.dtsi         |  22 ++
->  2 files changed, 357 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> new file mode 100644
-> index 000000000000..371344e446f3
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-> @@ -0,0 +1,335 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Tesla Full Self-Driving SoC device tree source
-> + *
-> + * Copyright (c) 2017-2021 Samsung Electronics Co., Ltd.
-> + *		https://www.samsung.com
-> + * Copyright (c) 2017-2021 Tesla, Inc.
-> + *		https://www.tesla.com
-> + */
-> +
-> +#include <dt-bindings/pinctrl/samsung.h>
-> +
-> +&pinctrl_fsys0 {
-> +	gpf0: gpf0 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpf1: gpf1 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpf6: gpf6 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpf4: gpf4 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpf5: gpf5 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +};
-> +
-> +&pinctrl_peric {
-> +	gpc8: gpc8 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpf2: gpf2 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpf3: gpf3 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpd0: gpd0 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpb0: gpb0 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpb1: gpb1 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpb4: gpb4 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpb5: gpb5 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpb6: gpb6 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpb7: gpb7 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpd1: gpd1 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpd2: gpd2 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpd3: gpd3 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg0: gpg0 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg1: gpg1 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg2: gpg2 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg3: gpg3 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg4: gpg4 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg5: gpg5 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg6: gpg6 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg7: gpg7 {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	pwm0_out: pwm0-out {
-> +		samsung,pins = "gpb6-1";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;
-> +	};
 
-All pin configuration nodes with "-pins" suffix, even though current
-bindings do not mandate it. Less changes in the future.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
 Best regards,
 Krzysztof
