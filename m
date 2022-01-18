@@ -2,92 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482DCC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 17:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FDCC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 18:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243920AbiARRhN (ORCPT
+        id S1347801AbiARSMy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 12:37:13 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:54396 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236042AbiARRhN (ORCPT
+        Tue, 18 Jan 2022 13:12:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233793AbiARSMy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 12:37:13 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A2E35614C1;
-        Tue, 18 Jan 2022 17:37:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6990C340E0;
-        Tue, 18 Jan 2022 17:37:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642527432;
-        bh=x1BLHPxcoVZSC5nVm+cwZQtQDuWBtux2vZRrX8aTsEg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=guH7+VjWDKlCkIXn4z+FtjuwJid4/+Ubp11QEcHCXJ62gz1Pi2F6k3HqU+6m1Wpe4
-         yIjgMV7NJncSeZSpOg8P06rFyedIB5iN5i1NCtguk3+t0GxOW6Arz2GPdenW939D+Z
-         w/gDaCj3cJvvgI0YqxR0sv/Am0zIXsHNBUQ+2h71D6s1drT3w3mTKDJABHvjmUPJXD
-         0sBdyyhgL4br4fwnIhZheTTTNNqOqsfpT+NoGQhjBmbBWBXhWlbjruPY8LZmHDF/9x
-         oiIbVV4Lzuhl5fEmWP0Mw7Rz+anIhR5oD7oXH9zf/j8BClwmD+niHpkTPD74yUDbnz
-         XaDVOk9NIJ8mQ==
-Date:   Tue, 18 Jan 2022 17:37:07 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Tue, 18 Jan 2022 13:12:54 -0500
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5670C061574
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 10:12:53 -0800 (PST)
+Received: by mail-ua1-x92b.google.com with SMTP id m15so38400040uap.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 10:12:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1RQy1GPxyJOygdU8LSftSpYUEzrYqolvY3YbNsj+tk8=;
+        b=wkgKDyNNhufcfMfSVn1M8P+RYjxU4dw9Fpc6jaHKwhGyg+uqdeI0NuuDC8tjfNXvAZ
+         2lWO9Q9gB9nFOIbFez6V6AtTdsR/bEBos4Iybu/HMEBTDlCtHPt+Sp/i8xV5u9oLhK0g
+         rwIuODdpe/FFk90XeZ/AnOnUAib+0tZz8xNPoRQq34Pve+jX5B6M2Ga8jlLASOuwUzGX
+         OwFhmRc/m0LT/LO9qnAlwPj81uvSksN2ieADElhESn3nDSP/Awme6Xg8NJc5LfjCdoFj
+         MtNuEGA94kDywpALPqOyKXpuDa5aZ8gDe5k7s/CyBWlp3TBg+HQdC0797ZkGD1weB/e2
+         8pXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1RQy1GPxyJOygdU8LSftSpYUEzrYqolvY3YbNsj+tk8=;
+        b=b8dlrMPspwwWHuVBBHEA2XvIyQ8rxqcDEqjuSfKD3QWUizDoejJrS8UZUqP0iRSxTM
+         5abuxvNxElKE6rb6qs7yQ0yY8P3LWIx7b0xJBWFDMmohhFWJXti00ntT0j4n01VYELvk
+         70f15/3PUyK27kjYCveg/OKzX9FdSZ/ly0Uigh/kNwKBXDBv9uF3MwlDZptZrndoDAot
+         9YBvfMzgYPiAWubTTPFp28i6XbVw5KbBOfQ0k+njXF+UI/vof4ndmSrNIC7kkzG+Ey5B
+         q3ybl1asu7O385PeWmyq2reNXAA6Lc3Dq1RZiSi1fIUTfwXVqlGrQAepex0TfPAMjERf
+         YB3A==
+X-Gm-Message-State: AOAM533j3dJnQerjebujftVp5I67DTaWrveWHDhU4x9dTs+9O6Rw6Afc
+        TMxM+3mtyEsR+JiOsGU/sDzhCmMONecplNdcjnj39g==
+X-Google-Smtp-Source: ABdhPJxAmR9Afk9RB57wvNNnGDS3cjPfHig05+jDSqhX28ABw+Zb8v1etaQvVKTtq+8YoVUNG5DjCOZ0Fg7IkMisxME=
+X-Received: by 2002:ab0:5381:: with SMTP id k1mr10968965uaa.17.1642529573008;
+ Tue, 18 Jan 2022 10:12:53 -0800 (PST)
+MIME-Version: 1.0
+References: <20220118110928.120640-1-linus.walleij@linaro.org>
+ <20220118110928.120640-3-linus.walleij@linaro.org> <CAPLW+4kNbC2BNcC54evJL_9tYoY_S3hcski81KHUPughs3f0ag@mail.gmail.com>
+ <Yebx+BwFfKaXchtU@sirena.org.uk>
+In-Reply-To: <Yebx+BwFfKaXchtU@sirena.org.uk>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 18 Jan 2022 20:12:41 +0200
+Message-ID: <CAPLW+4kvurCoQ5kbvJ=CtrK=XzF5972bEcc=1UEhuiDh9zoMCw@mail.gmail.com>
+Subject: Re: [PATCH 3/3 v2] spi: s3c64xx: Convert to use GPIO descriptors
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH 3/3 v2] spi: s3c64xx: Convert to use GPIO descriptors
-Message-ID: <Yeb6w+fkD566wwVQ@sirena.org.uk>
-References: <20220118110928.120640-1-linus.walleij@linaro.org>
- <20220118110928.120640-3-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a9u+smHLJFfrHG9A"
-Content-Disposition: inline
-In-Reply-To: <20220118110928.120640-3-linus.walleij@linaro.org>
-X-Cookie: Do YOU have redeeming social value?
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, 18 Jan 2022 at 18:59, Mark Brown <broonie@kernel.org> wrote:
 
---a9u+smHLJFfrHG9A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[snip]
 
-On Tue, Jan 18, 2022 at 12:09:28PM +0100, Linus Walleij wrote:
+>
+> Please delete unneeded context from mails when replying.  Doing this
+> makes it much easier to find your reply in the message, helping ensure
+> it won't be missed by people scrolling through the irrelevant quoted
+> material.
 
-> @@ -655,6 +653,9 @@ static int s3c64xx_spi_prepare_message(struct spi_mas=
-ter *master,
->  	struct spi_device *spi =3D msg->spi;
->  	struct s3c64xx_spi_csinfo *cs =3D spi->controller_data;
-> =20
-> +	if (!cs)
-> +		return 0;
-> +
->  	/* Configure feedback delay */
->  	writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
-> =20
-
-If you do revise this that should probably just be a guard on
-configuring feedback delay rather than aborting out of the entire
-function since otherwise this isn't extensible if anything else gets
-added to the function.
-
---a9u+smHLJFfrHG9A
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmHm+sIACgkQJNaLcl1U
-h9BeGwf/Q2fr3dj6bkE2UhoXDm2yn0IG0b9XeavY3qEb8lC6qoas3KjN9aMGSaOF
-EwPHYy+oP6zleC899R23A360PMVv8L8FV8LbqiWPiHMKAbzG4TkHlMHkdRypMtaN
-hGjy1oG58yMyiVgdF8CDERVwbcSamOgrkEGSD4isOqYI/mFlJBiY5NM7uKF6UvkA
-JR9NLsgAYfW+V5hqrW/4zTgbA0KRHEoBZ1yTxNzSaoKo1qrHXc+Yr2f0Hzafej5i
-i13k4NGv8p5O+xN3Pxa/GVeFkzRueyhVEmyibq9gWFOkeEIxmJThzhZJ4AyiFZ7c
-QrW+STHy1Kz1I93PP4NZTEGpHFK6+Q==
-=2Frz
------END PGP SIGNATURE-----
-
---a9u+smHLJFfrHG9A--
+Sure. Thanks for pointing that out. Just forgot to do so this time :)
