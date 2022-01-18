@@ -2,503 +2,280 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A244C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 02:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBBEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 07:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344706AbiARCsx (ORCPT
+        id S245252AbiARH1e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 21:48:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345317AbiARCim (ORCPT
+        Tue, 18 Jan 2022 02:27:34 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:55072 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245171AbiARH05 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 17 Jan 2022 21:38:42 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C78C061776
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 18:35:11 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id x22so64807299lfd.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jan 2022 18:35:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9NY6N7G1IuqvhT8lNA29Gyx0ppaKBFNdVc52hk5T3xo=;
-        b=SMAy+Tp3CGjtqzH5gAATsxQr1D2GQDcx8jMZpPpLBWTuDfYL7blVFBQd0opFgwIkId
-         vj32eWMi+kRWtu3LtOwqaygpBFa6uDqO3M29wXBheEdISRGLnX5aN7AdtcECfhYew5jZ
-         DfX/5aMW5vzIBDE/fGD/W0oRow5IwoDnbHr2wVBE6QakMPpbZIFJsn9H04TU+ywtypPw
-         KsjOIeW2gd9Z+QOB04Kfcw4mjDB2DbwGvLd+XmLLLOBJHahdn9VQ5Q1RnL/w+Powvo99
-         Gle2OlD+YKMnpOAsgePMvi+E7gVgHlHD5DZU3xCfrbvrYbCFIhX+r2h5+tHzqM4VHKuE
-         Ny3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9NY6N7G1IuqvhT8lNA29Gyx0ppaKBFNdVc52hk5T3xo=;
-        b=EWyKXf3HJPnBmfD2e7mzJC1d+Ud93jbQkiJObjxIIIE+B/+bQALJdtcnDPPnGHeJce
-         yRJyBpMBTFU2mGLkyIItGmKBMJJdLhLHD8ixufIveM1tIBNzdwysv4PU4FQBHLrpTGwK
-         hVooBhricju/9QsIVEkhCum7nQUm/K0NY0cXcnUFETzcUFhbUk9h0GUQNKQPoLLIlZkc
-         WCuWq2Hhx+xAy4PtSMnf5YU9o8gHB1jgLBP3LeKG2ePuF3Sg5MokvshNrZZAAot05F7e
-         TDhLybH731l2YOsy3081iezDLOCw3yh4KvcgJO2QR1cWSti9S7LBcChwiVhWdBJ0KyIS
-         IAoA==
-X-Gm-Message-State: AOAM531OuAuBmGMBe3Xets9zgj3jmLPLcG5LCVSYMfMH5qBN+Rh6oGI9
-        ZEflvgLBzlMeIj+jLgSF8g6D6A==
-X-Google-Smtp-Source: ABdhPJwyliVhj5NDncxJX9H2FjKLo2EkRGUAonKMQ/S317sG6c6NYS2sN+NpaG37iNLfBPvwRKMhqw==
-X-Received: by 2002:a2e:a913:: with SMTP id j19mr19311821ljq.412.1642473309564;
-        Mon, 17 Jan 2022 18:35:09 -0800 (PST)
-Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id bp19sm1540707lfb.279.2022.01.17.18.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jan 2022 18:35:08 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH] spi: s3c64xx: Convert to use GPIO descriptors
-Date:   Tue, 18 Jan 2022 03:33:03 +0100
-Message-Id: <20220118023303.104419-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Tue, 18 Jan 2022 02:26:57 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220118072648epoutp029830859fe1e15d0bce0274140726a519~LTLAY4-k02081020810epoutp02d
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 07:26:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220118072648epoutp029830859fe1e15d0bce0274140726a519~LTLAY4-k02081020810epoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642490808;
+        bh=Zg0RU9t5W1nXKXsU2UNw4q6sL2viMGbVEqOgjrgpgsY=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=CNcB8ZoMoTnViy3OSGV6mMlqNTWjxffp9cQHpMPYzPKgebMx4MGbrnVEpZe68WaBN
+         M3u4hpsVOS5/8BBcKABoec0RwBXdjvJEwRdFims87SDPeCA7wcg3MGhdBZtYxjX7bA
+         3ThQrAm736d36D4TWi8dyJmSmqVMWX7dF4YIIiX0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220118072647epcas5p1419e8d3f15254d71568b1e88edca0923~LTK-3cT3s0182301823epcas5p17;
+        Tue, 18 Jan 2022 07:26:47 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4JdL1T2mZ1z4x9Q5; Tue, 18 Jan
+        2022 07:26:37 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        15.F2.06423.AAB66E16; Tue, 18 Jan 2022 16:26:34 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220118072633epcas5p484d86503f12b803cfb83cd20954b3626~LTKyyh9UU2404324043epcas5p4Y;
+        Tue, 18 Jan 2022 07:26:33 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220118072633epsmtrp19d54e1f50077be4c8e6b0ee62780545a~LTKyxqVGq1052610526epsmtrp17;
+        Tue, 18 Jan 2022 07:26:33 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-0f-61e66baa8d47
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        52.BD.08738.9AB66E16; Tue, 18 Jan 2022 16:26:33 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220118072631epsmtip213571a9cbf9be5f39b0a6df5f2326652~LTKwsg1SV0825508255epsmtip2f;
+        Tue, 18 Jan 2022 07:26:31 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Henrik Grimler'" <henrik@grimler.se>
+Cc:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        <semen.protsenko@linaro.org>, <virag.david003@gmail.com>,
+        <martin.juecker@gmail.com>, <cw00.choi@samsung.com>,
+        <m.szyprowski@samsung.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+In-Reply-To: <YeWgNJaDHxKROpQs@grimlerstat>
+Subject: RE: [PATCH v3 3/3] ARM: dts: Add support for Samsung Chagall WiFi
+Date:   Tue, 18 Jan 2022 12:56:30 +0530
+Message-ID: <01c501d80c3c$b820fb90$2862f2b0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKTrlzLhJbN5e22s0Ks3rGJhMIi0gCNReXFAo1zs98Cp4BzmQGZbeD4AaJ5xbYBhx1hmaqc71SA
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDJsWRmVeSWpSXmKPExsWy7bCmlu6q7GeJBhtP8Fhc//Kc1WL+kXOs
+        Fm+X7GK02Pj2B5PFpsfXWC0u75rDZjHj/D4mi7VH7rJbnPk3lcWide8RdovnfUCx4+8fM1ps
+        /v6X0YHXY1ZDL5vHzll32T2OXrnH6rFpVSebx51re9g8Ni+p9/h/Zy27R9+WVYwenzfJBXBG
+        ZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAN2tpFCW
+        mFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjO
+        +Pqlh7Xgp0nF2vY+1gbGqZpdjJwcEgImEk877zJ3MXJxCAnsZpS4uewLO4TziVHi+NbJrBDO
+        Z0aJV/fOs8C03P5ylQUisYtR4sv2/1DOS0aJJd1NjCBVbAK6EjsWt7GB2CICWhJTN3wAW8Is
+        sIBZ4k3HfLAEp4C2xJVVp5lBbGEBL4mfd3+zgtgsAqoSK05uAFvHK2Ap0d1wjhnCFpQ4OfMJ
+        WJxZQF5i+9s5zBAnKUj8fLqMFWJZlETrx5WsEDXiEi+PHgF7SELgAYfE28b9TBANLhL9l46y
+        QtjCEq+Ob2GHsKUkXva3AdkcQHa2RM8uY4hwjcTSeceg3reXOHBlDgtICbOApsT6XfoQq/gk
+        en8/YYLo5JXoaBOCqFaVaH53FapTWmJidzfUUg+Jly07WSYwKs5C8tgsJI/NQvLALIRlCxhZ
+        VjFKphYU56anFpsWGOallsMjPDk/dxMjOFlree5gvPvgg94hRiYOxkOMEhzMSiK8x7ifJArx
+        piRWVqUW5ccXleakFh9iNAWG9kRmKdHkfGC+yCuJNzSxNDAxMzMzsTQ2M1QS5z2dviFRSCA9
+        sSQ1OzW1ILUIpo+Jg1OqgcmL/05zL59rs1DZ+dbemmXiO4+HRvZfWmWjOoH5kVwYo+5dycMn
+        Hb83bFZay7DeJ71U6HTfXLujic9/zr/GxDbj2dxLnUrno56svTThNKts1oTXLX7pm3Oub2U8
+        9OrLVxujI+dXlij/8D8rJMrqIZ4x0d0yu/9wfxZHxmLtI43flU69+XHM7ebqmPnWanl9bxkz
+        rr9+LMRrFXL42KTdbw1+Zs54HGuaOnWlzYyrF4OXFDWznS9jzrt1qcl5H19E0Z2ru/JnLlld
+        aWgyvVClM7U08fy20ryftbIpBjyJ12UnqLz4cEosvlekWfhLuFRJ8N6bJWpzHd48X3Sk0IY5
+        7HOYYPchb76DizKiFf1usCqxFGckGmoxFxUnAgCw6mfJXwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsWy7bCSvO7K7GeJBgsPqllc//Kc1WL+kXOs
+        Fm+X7GK02Pj2B5PFpsfXWC0u75rDZjHj/D4mi7VH7rJbnPk3lcWide8RdovnfUCx4+8fM1ps
+        /v6X0YHXY1ZDL5vHzll32T2OXrnH6rFpVSebx51re9g8Ni+p9/h/Zy27R9+WVYwenzfJBXBG
+        cdmkpOZklqUW6dslcGV8/dLDWvDTpGJtex9rA+NUzS5GTg4JAROJ21+usnQxcnEICexglGjc
+        co0NIiEtcX3jBHYIW1hi5b/n7BBFzxklLrTvZwZJsAnoSuxY3AbWICKgJTF1wwdmkCJmgVXM
+        EmtvTYLquMQkcWbhO1aQKk4BbYkrq06DdQsLeEn8vPsbLM4ioCqx4uQGFhCbV8BSorvhHDOE
+        LShxcuYToDgH0FQ9ibaNjCBhZgF5ie1v5zBDXKcg8fPpMlaII6IkWj+uZIWoEZd4efQI+wRG
+        4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQIjlgtrR2M
+        e1Z90DvEyMTBeIhRgoNZSYT3GPeTRCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeW
+        pGanphakFsFkmTg4pRqYrO+tP1qb6rnVKIvPJlrx9XdJhRvTp5gyzxe/Okdw62atL3tyX91k
+        OVG3/pvGum1hRlcbxP/+bGNW//ruV96796uPFzwzVt4yWbXz2et9xWYndlcs33pj5Q3zgBDu
+        9VfCvNfq1uvoZAj5LLr1rWlS1I/8YN0n4bNeGvlnFuwyu7bmj8OygjUR56ulk/Q6zA56skhv
+        qFpzQEws9Z6m2MJTf/fNdOTp/dNwtu/Ur7PsfHVN1SGHHKakx+eq58bO+vmjWf+kx2q17NMv
+        3F/v137ufDnJ9NDLsqfPI24kzHktEbLBYN+KFz/9lonPyhSw2hldvu2gy8437S12T8+EiTG3
+        vm1/96ZiaR1r3dO19iZNS5RYijMSDbWYi4oTASmEpy9HAwAA
+X-CMS-MailID: 20220118072633epcas5p484d86503f12b803cfb83cd20954b3626
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220116205940epcas5p3dbab01fb6bb7a4af76169231e6d94469
+References: <20220116165035.437274-1-henrik@grimler.se>
+        <20220116165035.437274-4-henrik@grimler.se>
+        <ca8c4613-a058-6cde-f9e6-8530f142a821@canonical.com>
+        <CGME20220116205940epcas5p3dbab01fb6bb7a4af76169231e6d94469@epcas5p3.samsung.com>
+        <YeSHNCywXhp8gHC7@L14.lan> <001301d80b66$190901a0$4b1b04e0$@samsung.com>
+        <YeWgNJaDHxKROpQs@grimlerstat>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the S3C64xx SPI host to use GPIO descriptors.
+Hi Henrik
 
-In the process we tear out some unused code in the machine,
-such as the unused config options for SPI controller 1 and
-2. New systems should use the device tree boot to enable these
-SPI hosts.
+>-----Original Message-----
+>From: Henrik Grimler [mailto:henrik@grimler.se]
+>Sent: Monday, January 17, 2022 10:28 PM
+>To: Alim Akhtar <alim.akhtar@samsung.com>
+>Cc: 'Krzysztof Kozlowski' <krzysztof.kozlowski@canonical.com>;
+>semen.protsenko@linaro.org; virag.david003@gmail.com;
+>martin.juecker@gmail.com; cw00.choi@samsung.com;
+>m.szyprowski@samsung.com; robh+dt@kernel.org;
+>devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org; linux-arm-
+>kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>~postmarketos/upstreaming@lists.sr.ht
+>Subject: Re: [PATCH v3 3/3] ARM: dts: Add support for Samsung Chagall WiFi
+>
+>Hi Alim,
+>
+>> >> > +/* External sdcard */
+>> >> > +&mmc_2 {
+>> >> > +	status = "okay";
+>> >> > +	bus-width = <4>;
+>> >> > +	cap-sd-highspeed;
+>> >> > +	card-detect-delay = <200>;
+>> >> > +	pinctrl-0 = <&sd2_clk &sd2_cmd &mmc2_cd &sd2_bus1
+>&sd2_bus4>;
+>> >> > +	pinctrl-names = "default";
+>> >> > +	samsung,dw-mshc-ciu-div = <3>;
+>> >> > +	samsung,dw-mshc-ddr-timing = <0 2>;
+>> >> > +	samsung,dw-mshc-sdr-timing = <0 4>;
+>> >> > +	sd-uhs-sdr50;
+>> >> > +	vmmc-supply = <&ldo19_reg>;
+>> >> > +	vqmmc-supply = <&ldo13_reg>;
+>> >> > +};
+>> >> > +
+>> >> > +&pinctrl_0 {
+>> >> > +	mmc2_cd: sd2-cd-pins {
+>> >> > +		samsung,pins = "gpx2-4";
+>> >>
+>> >> Interesting... I looked at vendor sources to board-chagall and
+>> >> standard pin gpc2-2 is mentioned as PULL down and not-connected
+>> >comment.
+>> >>
+>> >> gpx2-4 seems not mentioned at all, unless other board files are
+>> >> actually used.
+>> >
+>> >Gpio seems to be spread out. GPIO_T_FLASH_DETECT is defined as gpx2-4
+>> >in board-universal5420-mmc.c, and then used for card detection.
+>> >(Looking at it now again I see that write protection through sd2_wp
+>> >should also be supported for mmc_2, can add that in next patch set.)
+>> >
+>> Card detect pin is generally a special function (dedicated pin) pin,
+>> directly connected from SoC to card external slot.
+>> And for exynos5420 it is gpc2-2 as pointed by Krzysztof.
+>
+>gpio/pinctrl is still not my area of expertise so your feedback is greatly
+>appreciated!
+>
+>gpc2-2 does not seem to be the card-detect pin for these tablets.  If I add
+>sd2_cd to pinctrl-0 above I am unable to use the sdcard at all, instead
+dmesg is
+>filled with repeating messages like:
+>
+>[  18.669050] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req
+>300000Hz, actual 297619HZ div = 84) [  18.703711] mmc_host mmc1: Bus speed
+>(slot 0) = 50000000Hz (slot req 200000Hz, actual 200000HZ div = 125) [
+>18.737167] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req
+>100000Hz, actual 100000HZ div = 250) [  19.058352] mmc_host mmc1: Bus
+>speed (slot 0) = 50000000Hz (slot req 400000Hz, actual 396825HZ div = 63) [
+>19.093037] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req
+>300000Hz, actual 297619HZ div = 84) [  19.127701] mmc_host mmc1: Bus speed
+>(slot 0) = 50000000Hz (slot req 200000Hz, actual 200000HZ div = 125) [
+>19.162380] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req
+>100000Hz, actual 100000HZ div = 250)
+>
+>gpx2-4 on the other hand switches state when an sdcard is inserted or
+>removed.  After exporting relevant pins I have, with the card
+>inserted:
+>
+># grep -A 2 gpx2 /sys/kernel/debug/gpio
+>gpiochip3: GPIOs 24-31, parent: platform/13400000.pinctrl, gpx2:
+> gpio-26  (                    |Power               ) in  hi IRQ ACTIVE LOW
+> gpio-28  (                    |sysfs               ) in  lo
+>
+>and when removed gpx2-4 changes to high:
+>
+>gpiochip3: GPIOs 24-31, parent: platform/13400000.pinctrl, gpx2:
+> gpio-26  (                    |Power               ) in  hi IRQ ACTIVE LOW
+> gpio-28  (                    |sysfs               ) in  hi
+>
+>All the gpc2 pins are low no matter if sdcard is inserted or removed:
+>
+>gpiochip7: GPIOs 56-62, parent: platform/13410000.pinctrl, gpc2:
+> gpio-56  (                    |sysfs               ) in  lo
+> gpio-57  (                    |sysfs               ) in  lo
+> gpio-58  (                    |sysfs               ) in  lo
+> gpio-59  (                    |sysfs               ) in  lo
+> gpio-60  (                    |sysfs               ) in  lo
+> gpio-61  (                    |sysfs               ) in  lo
+> gpio-62  (                    |sysfs               ) in  lo
+>
+>That being said, I am not sure if it is working properly:
+>
+>> Also PIN_FUNC_2 for gpx2-4 indicate that it is wakeup_int2 function.
+>> Do you get a card detect interrupt when removing and inserting the
+>> card to the card slot?
+> 
+This is the confirmation that this board does not uses gpc2-2 but gpx2-4. 
+Thanks for detailed log.
 
-We drop the ability to pass a custom pin config function
-to the device while registering since nothing was using this.
+>(What is the best way to check this?) I don't get any irq related messages
+in
 
-Provide GPIO descriptor tables for the one user with CS
-0 and 1.
+Probably if you are interested, you can enable few debug in dw-mmc driver to
+check a message like "card is present" etc.
 
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/mach-s3c/Kconfig                 | 12 ----
- arch/arm/mach-s3c/devs.c                  | 77 +----------------------
- arch/arm/mach-s3c/mach-crag6410-module.c  | 13 ----
- arch/arm/mach-s3c/mach-crag6410.c         | 13 +++-
- arch/arm/mach-s3c/setup-spi-s3c64xx.c     |  9 ---
- arch/arm/mach-s3c/spi-core-s3c24xx.h      |  6 --
- drivers/spi/spi-s3c64xx.c                 | 50 ++++-----------
- include/linux/platform_data/spi-s3c64xx.h | 16 +----
- 8 files changed, 27 insertions(+), 169 deletions(-)
+>dmesg, and I don't see any changes in /proc/interrupts if tracked with
+>something like `watch -n1 "cat /proc/interrupts"` when card is removed or
+>inserted, so seems likely that pin config is wrong.
+>All I can find in vendor kernel for this device is that pull config is set
+to
+>S3C_GPIO_PULL_NONE [1].  For some of the sibling tablets the pin is
+>configured as {S3C_GPIO_INPUT, GPIO_LV_N, S3C_GPIO_PULL_NONE} [2]
+>though, which I think should correspond to having:
+>
+>mmc2_cd: mmc2-cd-pins {
+>  samsung,pins = "gpx2-4";
+>  samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+>  samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>  samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV3>; };
+>
+>Changing to that does not seem to change anything though, I don't get any
+>interrupt, or any messages in dmesg, when inserting or removing the sdcard.
+>
+>> Also to avoid confusion, probably you can change the node name as
+>"mmc2_cd:
+>> mmc2-cd-pins"
+>> (as sd2-cd-pins is gpc2-2 for this SoC)
+>
+>Thanks, will fix in a v4 (after discussions here are settled).
+>
+I am convinced that gpc2-2 is not used for card detect for this board.
+So no other query on this patch.
+Thanks
 
-diff --git a/arch/arm/mach-s3c/Kconfig b/arch/arm/mach-s3c/Kconfig
-index 25606e668cf9..1899fc3f44fd 100644
---- a/arch/arm/mach-s3c/Kconfig
-+++ b/arch/arm/mach-s3c/Kconfig
-@@ -191,18 +191,6 @@ config S3C64XX_DEV_SPI0
- 	  Compile in platform device definitions for S3C64XX's type
- 	  SPI controller 0
- 
--config S3C64XX_DEV_SPI1
--	bool
--	help
--	  Compile in platform device definitions for S3C64XX's type
--	  SPI controller 1
--
--config S3C64XX_DEV_SPI2
--	bool
--	help
--	  Compile in platform device definitions for S3C64XX's type
--	  SPI controller 2
--
- config SAMSUNG_DEV_TS
- 	bool
- 	help
-diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
-index 06dec64848f9..1e266fc24f9b 100644
---- a/arch/arm/mach-s3c/devs.c
-+++ b/arch/arm/mach-s3c/devs.c
-@@ -1107,8 +1107,7 @@ struct platform_device s3c64xx_device_spi0 = {
- 	},
- };
- 
--void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
--						int num_cs)
-+void __init s3c64xx_spi0_set_platdata(int src_clk_nr, int num_cs)
- {
- 	struct s3c64xx_spi_info pd;
- 
-@@ -1120,80 +1119,8 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
--	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
-+	pd.cfg_gpio = s3c64xx_spi0_cfg_gpio;
- 
- 	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
- }
- #endif /* CONFIG_S3C64XX_DEV_SPI0 */
--
--#ifdef CONFIG_S3C64XX_DEV_SPI1
--static struct resource s3c64xx_spi1_resource[] = {
--	[0] = DEFINE_RES_MEM(S3C_PA_SPI1, SZ_256),
--	[1] = DEFINE_RES_IRQ(IRQ_SPI1),
--};
--
--struct platform_device s3c64xx_device_spi1 = {
--	.name		= "s3c6410-spi",
--	.id		= 1,
--	.num_resources	= ARRAY_SIZE(s3c64xx_spi1_resource),
--	.resource	= s3c64xx_spi1_resource,
--	.dev = {
--		.dma_mask		= &samsung_device_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	},
--};
--
--void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
--						int num_cs)
--{
--	struct s3c64xx_spi_info pd;
--
--	/* Reject invalid configuration */
--	if (!num_cs || src_clk_nr < 0) {
--		pr_err("%s: Invalid SPI configuration\n", __func__);
--		return;
--	}
--
--	pd.num_cs = num_cs;
--	pd.src_clk_nr = src_clk_nr;
--	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi1_cfg_gpio;
--
--	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi1);
--}
--#endif /* CONFIG_S3C64XX_DEV_SPI1 */
--
--#ifdef CONFIG_S3C64XX_DEV_SPI2
--static struct resource s3c64xx_spi2_resource[] = {
--	[0] = DEFINE_RES_MEM(S3C_PA_SPI2, SZ_256),
--	[1] = DEFINE_RES_IRQ(IRQ_SPI2),
--};
--
--struct platform_device s3c64xx_device_spi2 = {
--	.name		= "s3c6410-spi",
--	.id		= 2,
--	.num_resources	= ARRAY_SIZE(s3c64xx_spi2_resource),
--	.resource	= s3c64xx_spi2_resource,
--	.dev = {
--		.dma_mask		= &samsung_device_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	},
--};
--
--void __init s3c64xx_spi2_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
--						int num_cs)
--{
--	struct s3c64xx_spi_info pd;
--
--	/* Reject invalid configuration */
--	if (!num_cs || src_clk_nr < 0) {
--		pr_err("%s: Invalid SPI configuration\n", __func__);
--		return;
--	}
--
--	pd.num_cs = num_cs;
--	pd.src_clk_nr = src_clk_nr;
--	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi2_cfg_gpio;
--
--	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi2);
--}
--#endif /* CONFIG_S3C64XX_DEV_SPI2 */
-diff --git a/arch/arm/mach-s3c/mach-crag6410-module.c b/arch/arm/mach-s3c/mach-crag6410-module.c
-index 407ad493493e..5d1d4b67a4b7 100644
---- a/arch/arm/mach-s3c/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c/mach-crag6410-module.c
-@@ -32,10 +32,6 @@
- 
- #include "crag6410.h"
- 
--static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
--	.line = S3C64XX_GPC(3),
--};
--
- static struct wm0010_pdata wm0010_pdata = {
- 	.gpio_reset = S3C64XX_GPN(6),
- 	.reset_active_high = 1, /* Active high for Glenfarclas Rev 2 */
-@@ -49,7 +45,6 @@ static struct spi_board_info wm1253_devs[] = {
- 		.chip_select	= 0,
- 		.mode		= SPI_MODE_0,
- 		.irq		= S3C_EINT(4),
--		.controller_data = &wm0010_spi_csinfo,
- 		.platform_data = &wm0010_pdata,
- 	},
- };
-@@ -62,7 +57,6 @@ static struct spi_board_info balblair_devs[] = {
- 		.chip_select	= 0,
- 		.mode		= SPI_MODE_0,
- 		.irq		= S3C_EINT(4),
--		.controller_data = &wm0010_spi_csinfo,
- 		.platform_data = &wm0010_pdata,
- 	},
- };
-@@ -229,10 +223,6 @@ static struct arizona_pdata wm5102_reva_pdata = {
- 	},
- };
- 
--static struct s3c64xx_spi_csinfo codec_spi_csinfo = {
--	.line = S3C64XX_GPN(5),
--};
--
- static struct spi_board_info wm5102_reva_spi_devs[] = {
- 	[0] = {
- 		.modalias	= "wm5102",
-@@ -242,7 +232,6 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
- 		.mode		= SPI_MODE_0,
- 		.irq		= GLENFARCLAS_PMIC_IRQ_BASE +
- 				  WM831X_IRQ_GPIO_2,
--		.controller_data = &codec_spi_csinfo,
- 		.platform_data = &wm5102_reva_pdata,
- 	},
- };
-@@ -275,7 +264,6 @@ static struct spi_board_info wm5102_spi_devs[] = {
- 		.mode		= SPI_MODE_0,
- 		.irq		= GLENFARCLAS_PMIC_IRQ_BASE +
- 				  WM831X_IRQ_GPIO_2,
--		.controller_data = &codec_spi_csinfo,
- 		.platform_data = &wm5102_pdata,
- 	},
- };
-@@ -298,7 +286,6 @@ static struct spi_board_info wm5110_spi_devs[] = {
- 		.mode		= SPI_MODE_0,
- 		.irq		= GLENFARCLAS_PMIC_IRQ_BASE +
- 				  WM831X_IRQ_GPIO_2,
--		.controller_data = &codec_spi_csinfo,
- 		.platform_data = &wm5102_reva_pdata,
- 	},
- };
-diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index 4a12c75d407f..e3e0fe897bcc 100644
---- a/arch/arm/mach-s3c/mach-crag6410.c
-+++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -825,6 +825,15 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
- 
- static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
- 
-+static struct gpiod_lookup_table crag_spi0_gpiod_table = {
-+	.dev_id = "s3c6410-spi.0",
-+	.table = {
-+		GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
-+		{ },
-+	},
-+};
-+
- static void __init crag6410_machine_init(void)
- {
- 	/* Open drain IRQs need pullups */
-@@ -856,7 +865,9 @@ static void __init crag6410_machine_init(void)
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
- 	samsung_keypad_set_platdata(&crag6410_keypad_data);
--	s3c64xx_spi0_set_platdata(NULL, 0, 2);
-+
-+	gpiod_add_lookup_table(&crag_spi0_gpiod_table);
-+	s3c64xx_spi0_set_platdata(0, 2);
- 
- 	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
- 	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
-diff --git a/arch/arm/mach-s3c/setup-spi-s3c64xx.c b/arch/arm/mach-s3c/setup-spi-s3c64xx.c
-index efcf78d41585..497aff71c29c 100644
---- a/arch/arm/mach-s3c/setup-spi-s3c64xx.c
-+++ b/arch/arm/mach-s3c/setup-spi-s3c64xx.c
-@@ -16,12 +16,3 @@ int s3c64xx_spi0_cfg_gpio(void)
- 	return 0;
- }
- #endif
--
--#ifdef CONFIG_S3C64XX_DEV_SPI1
--int s3c64xx_spi1_cfg_gpio(void)
--{
--	s3c_gpio_cfgall_range(S3C64XX_GPC(4), 3,
--				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
--	return 0;
--}
--#endif
-diff --git a/arch/arm/mach-s3c/spi-core-s3c24xx.h b/arch/arm/mach-s3c/spi-core-s3c24xx.h
-index 057667469cc3..919c5fd0c9af 100644
---- a/arch/arm/mach-s3c/spi-core-s3c24xx.h
-+++ b/arch/arm/mach-s3c/spi-core-s3c24xx.h
-@@ -16,12 +16,6 @@ static inline void s3c24xx_spi_setname(char *name)
- #ifdef CONFIG_S3C64XX_DEV_SPI0
- 	s3c64xx_device_spi0.name = name;
- #endif
--#ifdef CONFIG_S3C64XX_DEV_SPI1
--	s3c64xx_device_spi1.name = name;
--#endif
--#ifdef CONFIG_S3C64XX_DEV_SPI2
--	s3c64xx_device_spi2.name = name;
--#endif
- }
- 
- #endif /* __PLAT_S3C_SPI_CORE_S3C24XX_H */
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 8755cd85e83c..5e03c9144bfe 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -13,10 +13,8 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/spi/spi.h>
--#include <linux/gpio.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- 
- #include <linux/platform_data/spi-s3c64xx.h>
- 
-@@ -655,6 +653,9 @@ static int s3c64xx_spi_prepare_message(struct spi_master *master,
- 	struct spi_device *spi = msg->spi;
- 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
- 
-+	if (!cs)
-+		return 0;
-+
- 	/* Configure feedback delay */
- 	writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
- 
-@@ -830,34 +831,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 	if (spi->dev.of_node) {
- 		cs = s3c64xx_get_slave_ctrldata(spi);
- 		spi->controller_data = cs;
--	} else if (cs) {
--		/* On non-DT platforms the SPI core will set spi->cs_gpio
--		 * to -ENOENT. The GPIO pin used to drive the chip select
--		 * is defined by using platform data so spi->cs_gpio value
--		 * has to be override to have the proper GPIO pin number.
--		 */
--		spi->cs_gpio = cs->line;
- 	}
- 
--	if (IS_ERR_OR_NULL(cs)) {
-+	/* NULL is fine, we just avoid using the FB delay (=0) */
-+	if (IS_ERR(cs)) {
- 		dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
- 		return -ENODEV;
- 	}
- 
--	if (!spi_get_ctldata(spi)) {
--		if (gpio_is_valid(spi->cs_gpio)) {
--			err = gpio_request_one(spi->cs_gpio, GPIOF_OUT_INIT_HIGH,
--					       dev_name(&spi->dev));
--			if (err) {
--				dev_err(&spi->dev,
--					"Failed to get /CS gpio [%d]: %d\n",
--					spi->cs_gpio, err);
--				goto err_gpio_req;
--			}
--		}
--
-+	if (!spi_get_ctldata(spi))
- 		spi_set_ctldata(spi, cs);
--	}
- 
- 	pm_runtime_get_sync(&sdd->pdev->dev);
- 
-@@ -909,11 +892,9 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 	/* setup() returns with device de-selected */
- 	s3c64xx_spi_set_cs(spi, false);
- 
--	if (gpio_is_valid(spi->cs_gpio))
--		gpio_free(spi->cs_gpio);
- 	spi_set_ctldata(spi, NULL);
- 
--err_gpio_req:
-+	/* This was dynamically allocated on the DT path */
- 	if (spi->dev.of_node)
- 		kfree(cs);
- 
-@@ -924,19 +905,9 @@ static void s3c64xx_spi_cleanup(struct spi_device *spi)
- {
- 	struct s3c64xx_spi_csinfo *cs = spi_get_ctldata(spi);
- 
--	if (gpio_is_valid(spi->cs_gpio)) {
--		gpio_free(spi->cs_gpio);
--		if (spi->dev.of_node)
--			kfree(cs);
--		else {
--			/* On non-DT platforms, the SPI core sets
--			 * spi->cs_gpio to -ENOENT and .setup()
--			 * overrides it with the GPIO pin value
--			 * passed using platform data.
--			 */
--			spi->cs_gpio = -ENOENT;
--		}
--	}
-+	/* This was dynamically allocated on the DT path */
-+	if (spi->dev.of_node)
-+		kfree(cs);
- 
- 	spi_set_ctldata(spi, NULL);
- }
-@@ -1131,6 +1102,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	master->prepare_message = s3c64xx_spi_prepare_message;
- 	master->transfer_one = s3c64xx_spi_transfer_one;
- 	master->num_chipselect = sci->num_cs;
-+	master->use_gpio_descriptors = true;
- 	master->dma_alignment = 8;
- 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
- 					SPI_BPW_MASK(8);
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index 773daf7915a3..391f4dc68742 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -16,15 +16,13 @@ struct platform_device;
-  * struct s3c64xx_spi_csinfo - ChipSelect description
-  * @fb_delay: Slave specific feedback delay.
-  *            Refer to FB_CLK_SEL register definition in SPI chapter.
-- * @line: Custom 'identity' of the CS line.
-  *
-- * This is per SPI-Slave Chipselect information.
-+ * This is per SPI-Slave FB delay information.
-  * Allocate and initialize one in machine init code and make the
-  * spi_board_info.controller_data point to it.
-  */
- struct s3c64xx_spi_csinfo {
- 	u8 fb_delay;
--	unsigned line;
- };
- 
- /**
-@@ -43,26 +41,16 @@ struct s3c64xx_spi_info {
- /**
-  * s3c64xx_spi_set_platdata - SPI Controller configure callback by the board
-  *				initialization code.
-- * @cfg_gpio: Pointer to gpio setup function.
-  * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
-  * @num_cs: Number of elements in the 'cs' array.
-  *
-  * Call this from machine init code for each SPI Controller that
-  * has some chips attached to it.
-  */
--extern void s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
--						int num_cs);
--extern void s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
--						int num_cs);
--extern void s3c64xx_spi2_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
--						int num_cs);
-+extern void s3c64xx_spi0_set_platdata(int src_clk_nr, int num_cs);
- 
- /* defined by architecture to configure gpio */
- extern int s3c64xx_spi0_cfg_gpio(void);
--extern int s3c64xx_spi1_cfg_gpio(void);
--extern int s3c64xx_spi2_cfg_gpio(void);
- 
- extern struct s3c64xx_spi_info s3c64xx_spi0_pdata;
--extern struct s3c64xx_spi_info s3c64xx_spi1_pdata;
--extern struct s3c64xx_spi_info s3c64xx_spi2_pdata;
- #endif /*__SPI_S3C64XX_H */
--- 
-2.34.1
+>[1] https://protect2.fireeye.com/v1/url?k=bba823ae-dad5cbe9-bba9a8e1-
+>74fe485fff30-b4ccbbe9776f501d&q=1&e=9951c78c-16c8-449e-913b-
+>d4d1f1f9bb6b&u=https%3A%2F%2Fgithub.com%2Fexynos5420%2Fandroid_k
+>ernel_samsung_exynos5420%2Fblob%2Flineage-
+>17.1%2Farch%2Farm%2Fmach-exynos%2Fboard-universal5420-
+>mmc.c%23L388
+>[2] https://protect2.fireeye.com/v1/url?k=97465c6e-f63bb429-9747d721-
+>74fe485fff30-4111389a6d2b68b4&q=1&e=9951c78c-16c8-449e-913b-
+>d4d1f1f9bb6b&u=https%3A%2F%2Fgithub.com%2Fexynos5420%2Fandroid_k
+>ernel_samsung_exynos5420%2Fblob%2Flineage-
+>17.1%2Farch%2Farm%2Fmach-exynos%2Fboard-n1-gpio.c%23L119
+>
+>Best regards,
+>Henrik Grimler
 
