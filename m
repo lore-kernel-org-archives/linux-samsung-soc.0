@@ -2,103 +2,264 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9C9C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 16:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C07EC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 16:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229843AbiARQIp (ORCPT
+        id S244321AbiARQTB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 11:08:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346547AbiARQIW (ORCPT
+        Tue, 18 Jan 2022 11:19:01 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59412
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243993AbiARQSc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 11:08:22 -0500
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E69DC06176C
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 08:08:15 -0800 (PST)
-Received: by mail-ot1-x32c.google.com with SMTP id t4-20020a05683022e400b00591aaf48277so24807342otc.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 08:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mEXlFWe/RRxSBawapRn9SDXx9+/QLY02dhjgwIQqPyM=;
-        b=iQFGf5IOoRW7z7O5Gn10aLK3jkjcFhIBlN2bJPhOgZ+rXrcW3DQWw39VBj12wBQy+r
-         bzrKzMosk7DN9UDljbad1JW7aC+LW0uO39Td7dydEVEm9OYafnvWtFVtmF/U73yNfaOI
-         DTYD2meRHvyT3fyz/Yx91ByNwWmuiev8ETpwagQKKVXAOi/O3H/YabzjSUxLaX6xD/VQ
-         hmSWz/pnPvTJJiiSwDA4iUkvdf8XsYl2DG/Dxj+ha6Ip9a+9F6LwTTSTHxtnPxS6ACwc
-         1MVX/8Q9OYQpj/AKwumngKdrGrCgYf0fuTcJLo1HTllAQKDAJ4iPYDhhXowZuiaM9FWF
-         gJWw==
+        Tue, 18 Jan 2022 11:18:32 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BF65A407F2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 16:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642522711;
+        bh=/saHFgfod+VllDCyIGCao3k0CHQX0T4IuTyB9aTiQuw=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=gsPqiM8e+YJ3xaRA3ZezbNLgIXuyDOVo9lBMt1/oU0IWXc8pRYrZ4YCiq3uz9gmYq
+         3yKqOdRHE6MrmtMzwCccHCibF0+l+4/x5veA6CDR4OdA6cjVF7e4/mD4H4OH5yvduU
+         sOcCwrhBwundJeEqIKOHnoyynBXnD2HYHm23sKuHe0OmxCVtpvvdIKh46IIo3udPVe
+         9OsgTteFGNYcNrs+SAQghU530OE/j6AReGtXsbYctGnBX5dJda5G8I9mSMjq9al7CJ
+         YkE4V9LYEy7oLM1ZENS2grwdIi35A8KEL+ZeZOWotmHFNIE9buyxJKj3m3ZjVFXsEu
+         tLJeMs30F6WTw==
+Received: by mail-ed1-f72.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso17429757edt.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 08:18:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mEXlFWe/RRxSBawapRn9SDXx9+/QLY02dhjgwIQqPyM=;
-        b=CWU1UKPEeVLjCLDeTxHxHP3EU0/4/1EunWINS0a6mUb4jCuBinpxA4yoDp0Pl+tHWq
-         Xoq/I24RRU9svcLeWxwMISYQUmwulL0mvoZPRcrl7v9uQClbI5FWtEzbiTwWmPTnXkB9
-         c/Fx7n9hHs0kAhyPU7/l+vvYQAIipPiLlpcDyLBl/9cpSZlcChb798pgmu+2xnPRCZjz
-         vEXBLBAcZzp/sDKJ5Lwj5xdfwWkkEdcHhvAE4p2Geue4f56l8Hf7wuQz2JiyzZGw0Awf
-         Yia/cgtfdfv77a+E86fVJOOVumNgzB3LH+2CuEP62ZFOymu+uoVgNaHs49WBBwgQ/VN+
-         Iu2A==
-X-Gm-Message-State: AOAM533HwhADAhBOJCeyp1Zo96iJIIJtT5xfvTZxJKQ5UUYkkajg1Kip
-        XVB1BKG5pWrbaq582ccuydHDhnEemVWUlVy/yZNZ4g==
-X-Google-Smtp-Source: ABdhPJw8GHcOEwEgXiJD4Ev84MPeeZxU0LFHDrAesZxnYaGJYwkd9eLiPxv9sEzfXEOPQwgLnB+/PWrQeUdHaHQYwEc=
-X-Received: by 2002:a9d:465:: with SMTP id 92mr20889618otc.35.1642522094495;
- Tue, 18 Jan 2022 08:08:14 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=/saHFgfod+VllDCyIGCao3k0CHQX0T4IuTyB9aTiQuw=;
+        b=KmS3y7qmU+uUH15MDvMxcTEfkqjrn7ArXqXbDLmFTHclz2UF5Myjqk9unCFVkmvrbg
+         OIS5vxN0Vv/PdZ7x3sD08jHxzds7amCWhrfTNg5i+pu8Qivq6ujztn4FNOoMpgBLWe8f
+         lBAbQKks5ZZSPCEJJQ2qdEX/A2lNpBiQ2Ruv0OCTbKR4W7v9hiRwQSxhzI6bW5QQ6+Gg
+         YFu8611HhsI3W6Ex0a7yF0/KLY1qoTDq9gqpacYWkDYi6BC9cH/laV2YypPmatqACN3K
+         xqPBU6wBBsY7SCQLK8YeM6PCT/BV5rYmN/k4ixYRtaqzrOKjmWXTp+PaMg2HsvJzY5Nl
+         qnug==
+X-Gm-Message-State: AOAM532TLG+DqSxhBHJao1NdKe73HtUwf6PSoAOdeBDrxJylL8jEJWqk
+        SJtIKhGJJRIV+8ThSx/f5v3wvkLGsXlvM2M3AXM7UnSpbeatYsfnTrqB6yvutvUr0kIlsguKU9l
+        L76Xx4eIKEy5aQhar4M6UZyI888jWJxz5981+mc+ruKUFaiXB
+X-Received: by 2002:a17:907:9622:: with SMTP id gb34mr20839795ejc.355.1642522710375;
+        Tue, 18 Jan 2022 08:18:30 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxfIifqQ4AVPmYgf7XBd2Pu5uw++MPB2xe5GXOSCfqiesyMFJpl04gNL7IFKznqIxQO1lmdgg==
+X-Received: by 2002:a17:907:9622:: with SMTP id gb34mr20839776ejc.355.1642522710089;
+        Tue, 18 Jan 2022 08:18:30 -0800 (PST)
+Received: from [192.168.0.42] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id qa35sm5431720ejc.67.2022.01.18.08.18.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jan 2022 08:18:29 -0800 (PST)
+Message-ID: <a7677638-8108-0bd7-19ca-0cfff5fcf534@canonical.com>
+Date:   Tue, 18 Jan 2022 17:18:28 +0100
 MIME-Version: 1.0
-References: <20220118110928.120640-1-linus.walleij@linaro.org>
- <20220118110928.120640-3-linus.walleij@linaro.org> <CAPLW+4kNbC2BNcC54evJL_9tYoY_S3hcski81KHUPughs3f0ag@mail.gmail.com>
-In-Reply-To: <CAPLW+4kNbC2BNcC54evJL_9tYoY_S3hcski81KHUPughs3f0ag@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 18 Jan 2022 17:08:02 +0100
-Message-ID: <CACRpkdaL3RFU-cJNW2e40RiHGP06BfunnmU73FK_6U=Syvx_Wg@mail.gmail.com>
-Subject: Re: [PATCH 3/3 v2] spi: s3c64xx: Convert to use GPIO descriptors
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v2 02/16] dt-bindings: clock: Add bindings definitions for
+ FSD CMU blocks
+Content-Language: en-US
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, s.nawrocki@samsung.com,
+        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
+        linux-fsd@tesla.com
+References: <20220118144851.69537-1-alim.akhtar@samsung.com>
+ <CGME20220118150018epcas5p32642af7af63869d08a861d00d97e3b68@epcas5p3.samsung.com>
+ <20220118144851.69537-3-alim.akhtar@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220118144851.69537-3-alim.akhtar@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 18, 2022 at 4:27 PM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
+On 18/01/2022 15:48, Alim Akhtar wrote:
+> Clock controller driver of FSD platform is designed to have separate
+> instances for each particular CMU. So clock IDs in this bindings header
+> also start from 1 for each CMU block.
+> 
+> Cc: linux-fsd@tesla.com
+> Reported-by: kernel test robot <lkp@intel.com>
+> [robot: reported missing #endif]
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  include/dt-bindings/clock/fsd-clk.h | 149 ++++++++++++++++++++++++++++
+>  1 file changed, 149 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/fsd-clk.h
+> 
+> diff --git a/include/dt-bindings/clock/fsd-clk.h b/include/dt-bindings/clock/fsd-clk.h
+> new file mode 100644
+> index 000000000000..8cf45d2430b0
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/fsd-clk.h
+> @@ -0,0 +1,149 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2017 - 2022: Samsung Electronics Co., Ltd.
+> + *             https://www.samsung.com
+> + * Copyright (c) 2017-2022 Tesla, Inc.
+> + *             https://www.tesla.com
+> + *
+> + * The constants defined in this header are being used in dts
+> + * and fsd platform driver.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_FSD_H
+> +#define _DT_BINDINGS_CLOCK_FSD_H
+> +
+> +/* CMU */
+> +#define DOUT_CMU_PLL_SHARED0_DIV4		1
+> +#define DOUT_CMU_PERIC_SHARED1DIV36		2
+> +#define DOUT_CMU_PERIC_SHARED0DIV3_TBUCLK	3
+> +#define DOUT_CMU_PERIC_SHARED0DIV20		4
+> +#define DOUT_CMU_PERIC_SHARED1DIV4_DMACLK	5
+> +#define DOUT_CMU_PLL_SHARED0_DIV6		6
+> +#define DOUT_CMU_FSYS0_SHARED1DIV4		7
+> +#define DOUT_CMU_FSYS0_SHARED0DIV4		8
+> +#define DOUT_CMU_FSYS1_SHARED0DIV8		9
+> +#define DOUT_CMU_FSYS1_SHARED0DIV4		10
+> +#define CMU_CPUCL_SWITCH_GATE			11
+> +#define DOUT_CMU_IMEM_TCUCLK			12
+> +#define DOUT_CMU_IMEM_ACLK			13
+> +#define DOUT_CMU_IMEM_DMACLK			14
+> +#define GAT_CMU_FSYS0_SHARED0DIV4		15
+> +#define CMU_NR_CLK				16
+> +
+> +/* PERIC */
+> +#define PERIC_SCLK_UART0			1
+> +#define PERIC_PCLK_UART0			2
+> +#define PERIC_SCLK_UART1			3
+> +#define PERIC_PCLK_UART1			4
+> +#define PERIC_DMA0_IPCLKPORT_ACLK		5
+> +#define PERIC_DMA1_IPCLKPORT_ACLK		6
+> +#define PERIC_PWM0_IPCLKPORT_I_PCLK_S0		7
+> +#define PERIC_PWM1_IPCLKPORT_I_PCLK_S0		8
+> +#define PERIC_PCLK_SPI0                         9
+> +#define PERIC_SCLK_SPI0                         10
+> +#define PERIC_PCLK_SPI1                         11
+> +#define PERIC_SCLK_SPI1                         12
+> +#define PERIC_PCLK_SPI2                         13
+> +#define PERIC_SCLK_SPI2                         14
+> +#define PERIC_PCLK_TDM0                         15
+> +#define PERIC_PCLK_HSI2C0			16
+> +#define PERIC_PCLK_HSI2C1			17
+> +#define PERIC_PCLK_HSI2C2			18
+> +#define PERIC_PCLK_HSI2C3			19
+> +#define PERIC_PCLK_HSI2C4			20
+> +#define PERIC_PCLK_HSI2C5			21
+> +#define PERIC_PCLK_HSI2C6			22
+> +#define PERIC_PCLK_HSI2C7			23
+> +#define PERIC_MCAN0_IPCLKPORT_CCLK		24
+> +#define PERIC_MCAN0_IPCLKPORT_PCLK		25
+> +#define PERIC_MCAN1_IPCLKPORT_CCLK		26
+> +#define PERIC_MCAN1_IPCLKPORT_PCLK		27
+> +#define PERIC_MCAN2_IPCLKPORT_CCLK		28
+> +#define PERIC_MCAN2_IPCLKPORT_PCLK		29
+> +#define PERIC_MCAN3_IPCLKPORT_CCLK		30
+> +#define PERIC_MCAN3_IPCLKPORT_PCLK		31
+> +#define PERIC_PCLK_ADCIF			32
+> +#define PERIC_EQOS_TOP_IPCLKPORT_CLK_PTP_REF_I  33
+> +#define PERIC_EQOS_TOP_IPCLKPORT_ACLK_I		34
+> +#define PERIC_EQOS_TOP_IPCLKPORT_HCLK_I		35
+> +#define PERIC_EQOS_TOP_IPCLKPORT_RGMII_CLK_I	36
+> +#define PERIC_EQOS_TOP_IPCLKPORT_CLK_RX_I	37
+> +#define PERIC_BUS_D_PERIC_IPCLKPORT_EQOSCLK	38
+> +#define PERIC_BUS_P_PERIC_IPCLKPORT_EQOSCLK	39
+> +#define PERIC_HCLK_TDM0				40
+> +#define PERIC_PCLK_TDM1				41
+> +#define PERIC_HCLK_TDM1				42
+> +#define PERIC_EQOS_PHYRXCLK_MUX			43
+> +#define PERIC_EQOS_PHYRXCLK			44
+> +#define PERIC_DOUT_RGMII_CLK			45
+> +#define PERIC_NR_CLK				46
+> +
+> +/* FSYS0 */
+> +#define UFS0_MPHY_REFCLK_IXTAL24		1
+> +#define UFS0_MPHY_REFCLK_IXTAL26		2
+> +#define UFS1_MPHY_REFCLK_IXTAL24		3
+> +#define UFS1_MPHY_REFCLK_IXTAL26		4
+> +#define UFS0_TOP0_HCLK_BUS			5
+> +#define UFS0_TOP0_ACLK				6
+> +#define UFS0_TOP0_CLK_UNIPRO			7
+> +#define UFS0_TOP0_FMP_CLK			8
+> +#define UFS1_TOP1_HCLK_BUS			9
+> +#define UFS1_TOP1_ACLK				10
+> +#define UFS1_TOP1_CLK_UNIPRO			11
+> +#define UFS1_TOP1_FMP_CLK			12
+> +#define PCIE_SUBCTRL_INST0_DBI_ACLK_SOC		13
+> +#define PCIE_SUBCTRL_INST0_AUX_CLK_SOC		14
+> +#define PCIE_SUBCTRL_INST0_MSTR_ACLK_SOC	15
+> +#define PCIE_SUBCTRL_INST0_SLV_ACLK_SOC		16
+> +#define FSYS0_EQOS_TOP0_IPCLKPORT_CLK_PTP_REF_I 17
+> +#define FSYS0_EQOS_TOP0_IPCLKPORT_ACLK_I	18
+> +#define FSYS0_EQOS_TOP0_IPCLKPORT_HCLK_I	19
+> +#define FSYS0_EQOS_TOP0_IPCLKPORT_RGMII_CLK_I	20
+> +#define FSYS0_EQOS_TOP0_IPCLKPORT_CLK_RX_I	21
+> +#define FSYS0_DOUT_FSYS0_PERIBUS_GRP		22
+> +#define FSYS0_NR_CLK				23
+> +
+> +/* FSYS1 */
+> +#define PCIE_LINK0_IPCLKPORT_DBI_ACLK		1
+> +#define PCIE_LINK0_IPCLKPORT_AUX_ACLK		2
+> +#define PCIE_LINK0_IPCLKPORT_MSTR_ACLK		3
+> +#define PCIE_LINK0_IPCLKPORT_SLV_ACLK		4
+> +#define PCIE_LINK1_IPCLKPORT_DBI_ACLK		5
+> +#define PCIE_LINK1_IPCLKPORT_AUX_ACLK		6
+> +#define PCIE_LINK1_IPCLKPORT_MSTR_ACLK		7
+> +#define PCIE_LINK1_IPCLKPORT_SLV_ACLK		8
+> +#define FSYS1_NR_CLK				9
+> +
+> +/* IMEM */
+> +#define IMEM_DMA0_IPCLKPORT_ACLK		1
+> +#define IMEM_DMA1_IPCLKPORT_ACLK		2
+> +#define IMEM_WDT0_IPCLKPORT_PCLK		3
+> +#define IMEM_WDT1_IPCLKPORT_PCLK		4
+> +#define IMEM_WDT2_IPCLKPORT_PCLK		5
+> +#define IMEM_MCT_PCLK				6
+> +#define IMEM_TMU_CPU0_IPCLKPORT_I_CLK_TS	7
+> +#define IMEM_TMU_CPU2_IPCLKPORT_I_CLK_TS	8
+> +#define IMEM_TMU_TOP_IPCLKPORT_I_CLK_TS		9
+> +#define IMEM_TMU_GPU_IPCLKPORT_I_CLK_TS		10
+> +#define IMEM_TMU_GT_IPCLKPORT_I_CLK_TS		11
+> +#define IMEM_NR_CLK				12
+> +
+> +/* MFC */
+> +#define MFC_MFC_IPCLKPORT_ACLK			1
+> +#define MFC_NR_CLK				2
+> +
+> +/* CAM_CSI */
+> +#define CAM_CSI0_0_IPCLKPORT_I_ACLK		1
+> +#define CAM_CSI0_1_IPCLKPORT_I_ACLK		2
+> +#define CAM_CSI0_2_IPCLKPORT_I_ACLK		3
+> +#define CAM_CSI0_3_IPCLKPORT_I_ACLK		4
+> +#define CAM_CSI1_0_IPCLKPORT_I_ACLK		5
+> +#define CAM_CSI1_1_IPCLKPORT_I_ACLK		6
+> +#define CAM_CSI1_2_IPCLKPORT_I_ACLK		7
+> +#define CAM_CSI1_3_IPCLKPORT_I_ACLK		8
+> +#define CAM_CSI2_0_IPCLKPORT_I_ACLK		9
+> +#define CAM_CSI2_1_IPCLKPORT_I_ACLK		10
+> +#define CAM_CSI2_2_IPCLKPORT_I_ACLK		11
+> +#define CAM_CSI2_3_IPCLKPORT_I_ACLK		12
+> +#define CAM_CSI_NR_CLK				13
 
-> > +       if (!cs)
-> > +               return 0;
->
-> Shouldn't some error code be returned in that case? Or is it normal case?
+One empty line would be nice here.
 
-No, because it just means the platform didn't define any fb_delay.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-> >         /* Configure feedback delay */
-> >         writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
+> +#endif /*_DT_BINDINGS_CLOCK_FSD_H */
+> 
 
-But maybe I should always write 0 into this then.
 
-> > - * This is per SPI-Slave Chipselect information.
-> > + * This is per SPI-Slave FB delay information.
->
-> Not sure if this change is needed: this comments will be incorrect if
-> some new fields are added in future. For example, downstream trees
-> like [1] have more fields there, not only feedback delay one.
-
-OK I fix
-
-> Other than minor comments above:
->
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
->
-> Btw, this SPI driver is used in Exynos850 SoC, which I'm working on
-> right now. It's the shame I didn't enable it yet on my board, so I
-> can't test the code. But I'm happy to see it's being modernized, kudos
-> for doing that!
-
-Yeah I saw it being used in the Tesla SoC and also Exynos850 so as
-I now know this is not going away any time soon we might as well just
-fix it up.
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
