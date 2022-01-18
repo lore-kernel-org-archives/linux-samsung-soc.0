@@ -2,313 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D892C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 11:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483CFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 12:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238838AbiARLLm (ORCPT
+        id S241191AbiARMCg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 06:11:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238759AbiARLLl (ORCPT
+        Tue, 18 Jan 2022 07:02:36 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47508
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241149AbiARMCf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 06:11:41 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB90C061574
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 03:11:41 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id p27so57412031lfa.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 03:11:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=brFYAC4Oht8wMKde70fhkKxcS7mYDxNF3cb1O1JTjW4=;
-        b=T/gjABw0cwSRaXKeRx9fFnxFx4dz55Rb4yZO4AttO63iskuLs2J9U5PUXWEcsLWlwu
-         EayOLw43yvYkAsMFJaWFZEChNqSAEyRqlJX5Boh/7pinR8j1gOeLH8yllJQ2JNsMoAfd
-         2WcaV89Mezad0vs5Z9I8846buK0N6LqK4fcApWlAG4V9YyWhj5NLjAuGFP6ZwBis2Dj/
-         9wEJGPeMfV8mFRMSIhb6GhgY7vyrPnqsiT52BnGXXouHrv1fmAajjwvf7RoeLKijmPKz
-         8OdMGkj4/ywdrIIMMMqauG8FTzaNNy//KV8+tAyPq9q3fi1zHxI+NexA7JPGpjNCvpYw
-         8F7w==
+        Tue, 18 Jan 2022 07:02:35 -0500
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A76DA3F1DD
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 12:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642507354;
+        bh=eZGgEJwb4k2AmPBX3xsd6X1+Izl+vWTMgTLmYq3TTjI=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=sZQ7N2mQJ3DPMnWzB9D4BjNp2O8Ynfl2Kq0eGb6acYRS1xlBjKlhwACb8J/ydaNrn
+         HK91zlP1MUUVyovVbeaMtekU86/bxoCK5HsA+rmzi0bxHjGqJe3XBSDfjNz75zKeqg
+         r4Ce5pZYrvCVD9uJ/JGLLbIJ/ZSDlxgZsIOyc80JxUY8ygrzSgz5TbhdZYkbwruzKL
+         gieW/IrMLTclAeRCd81/9ckGqdPCV11MU06s2Rp639DaVSnAZMmi0Z+SoUwU7TxGar
+         D7TrZjjkZKsz6bW/rj6HcTGPBrSOf1p8D8bNzuh3Jol/+z9FQHbe2yM24cV2VP3QZO
+         5G81vaXRMwvRA==
+Received: by mail-ed1-f70.google.com with SMTP id ee53-20020a056402293500b004022f34edcbso6104091edb.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 04:02:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=brFYAC4Oht8wMKde70fhkKxcS7mYDxNF3cb1O1JTjW4=;
-        b=UAO6hfJGk0Vk27Afyq/fDxwzBbbtFV0pA2aOf6SG0SDcH5zZlv5gwI/kYLKclIRZf8
-         Jvd06w3Rl0ttbB4rjS4XYkiPHeZsDGyLJIscXVxmwMB2WccFHSIJow0pNsGzDgn82JXt
-         nxVYywTJ9P1Z4C6xGAhovdtB9SxI73jod+Tc0ewpq0fskEfLawznpwPQH42DUbumtAMu
-         xVcQ8nWZygxT7snJ333Qov7yiT5X/S6DjKS3zK2Lj5ovyYd0idd9bimhOdOdhwU3w8YP
-         RBKI6AIVG45+72o31JeWe1eraxCWxGB7t6ncVSvexkwRbYfF/zcN6EhMcgIvRKGfCu3z
-         Ni/w==
-X-Gm-Message-State: AOAM532kDcbXXXMgrmECAtaqwpA4yoEjgTjb0CdXNDiSCPbVcFLvt2SK
-        Vt4Mubfna18AtP+03+SnUcLMsg==
-X-Google-Smtp-Source: ABdhPJzlcBZN69CdYA9GZFfOB0nJthnM0Hl0/NO+KvG96OSv/xLeWjKsILVmoKHQFFbPG+sS46a+Lg==
-X-Received: by 2002:ac2:4d96:: with SMTP id g22mr21879104lfe.339.1642504299519;
-        Tue, 18 Jan 2022 03:11:39 -0800 (PST)
-Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id o10sm918303lft.240.2022.01.18.03.11.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jan 2022 03:11:38 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH 3/3 v2] spi: s3c64xx: Convert to use GPIO descriptors
-Date:   Tue, 18 Jan 2022 12:09:28 +0100
-Message-Id: <20220118110928.120640-3-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220118110928.120640-1-linus.walleij@linaro.org>
-References: <20220118110928.120640-1-linus.walleij@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=eZGgEJwb4k2AmPBX3xsd6X1+Izl+vWTMgTLmYq3TTjI=;
+        b=aN0G4nmEKFGmu3VUVt5U2xakhHjEtWPHLQZK4xDESDVbIUNTTSbjN/pEE6fDWw9fp6
+         slqnWfbpclUleRZP/L2QkjAmGefMvRgtOQE1rwGDJ4UnovSQeBQqPAeRVAjnEg1y3KNC
+         72/ninvDI08gtXNqlpDBbD0UN1DNH0q7YuIg9P6xwq9yEo72GPeK7UiaXu0RUOGC8abg
+         oEpHptYMCNQKGSekIrruFARYP76n/DEm2rOBcvfZRW61kXv5A9tNYFFzEG7PXW4CGQhP
+         aVpKsrU+/8IGC0unje+6aBsFfQQpUonJM3iNS2k21qCDALTHKLs9wy1c5uEGC8H74RMH
+         uxVw==
+X-Gm-Message-State: AOAM531UgI/aHAYVT9bKXym249HZcRYwaLwPAa2mkGgqPAYAPyODRyjW
+        K98yTjqA5Ca/FWMdFp6NU2luhUaNuO0r1z1DinRKwf2N+54/rm5VCKkyWVv0pYSBNKqpeUz4B2p
+        k2Ho9NDAxkGhjMgCnuKMbojOvlk3zKItGNzazbhPE4Z+CCSwJ
+X-Received: by 2002:aa7:dc05:: with SMTP id b5mr25011243edu.46.1642507353965;
+        Tue, 18 Jan 2022 04:02:33 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz9dWZZ+YLLdAVoevXZjPfCjTYNF6Ad+CsqISTbe8L31l1U0/jf3wKJ12FmDq7FvmjyBa8V/A==
+X-Received: by 2002:aa7:dc05:: with SMTP id b5mr25011233edu.46.1642507353846;
+        Tue, 18 Jan 2022 04:02:33 -0800 (PST)
+Received: from [192.168.0.41] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id gn8sm5285150ejc.23.2022.01.18.04.02.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jan 2022 04:02:33 -0800 (PST)
+Message-ID: <48f61a86-e85c-2505-72f7-76ccae9a3817@canonical.com>
+Date:   Tue, 18 Jan 2022 13:02:32 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 1/3 v2] spi: s3c64xx: Delete unused boardfile helpers
+Content-Language: en-US
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+References: <20220118110928.120640-1-linus.walleij@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220118110928.120640-1-linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the S3C64xx SPI host to use GPIO descriptors.
+On 18/01/2022 12:09, Linus Walleij wrote:
+> The helpers to use SPI host 1 and 2 are unused in the kernel
+> and taking up space and maintenance hours. New systems should
+> use device tree and not this, so delete the code.
+> 
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1-v2:
+> - Split out to separate patch
+> ---
+>  arch/arm/mach-s3c/Kconfig                 | 12 ----
+>  arch/arm/mach-s3c/devs.c                  | 72 -----------------------
+>  arch/arm/mach-s3c/setup-spi-s3c64xx.c     |  9 ---
+>  arch/arm/mach-s3c/spi-core-s3c24xx.h      |  6 --
+>  include/linux/platform_data/spi-s3c64xx.h |  8 ---
+>  5 files changed, 107 deletions(-)
+> 
 
-Provide GPIO descriptor tables for the one user with CS
-0 and 1.
 
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1-v2:
-- Split off code cleaning to separate patches
----
- arch/arm/mach-s3c/mach-crag6410-module.c  | 13 ------
- arch/arm/mach-s3c/mach-crag6410.c         | 11 +++++
- drivers/spi/spi-s3c64xx.c                 | 50 +++++------------------
- include/linux/platform_data/spi-s3c64xx.h |  4 +-
- 4 files changed, 23 insertions(+), 55 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-diff --git a/arch/arm/mach-s3c/mach-crag6410-module.c b/arch/arm/mach-s3c/mach-crag6410-module.c
-index 407ad493493e..5d1d4b67a4b7 100644
---- a/arch/arm/mach-s3c/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c/mach-crag6410-module.c
-@@ -32,10 +32,6 @@
- 
- #include "crag6410.h"
- 
--static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
--	.line = S3C64XX_GPC(3),
--};
--
- static struct wm0010_pdata wm0010_pdata = {
- 	.gpio_reset = S3C64XX_GPN(6),
- 	.reset_active_high = 1, /* Active high for Glenfarclas Rev 2 */
-@@ -49,7 +45,6 @@ static struct spi_board_info wm1253_devs[] = {
- 		.chip_select	= 0,
- 		.mode		= SPI_MODE_0,
- 		.irq		= S3C_EINT(4),
--		.controller_data = &wm0010_spi_csinfo,
- 		.platform_data = &wm0010_pdata,
- 	},
- };
-@@ -62,7 +57,6 @@ static struct spi_board_info balblair_devs[] = {
- 		.chip_select	= 0,
- 		.mode		= SPI_MODE_0,
- 		.irq		= S3C_EINT(4),
--		.controller_data = &wm0010_spi_csinfo,
- 		.platform_data = &wm0010_pdata,
- 	},
- };
-@@ -229,10 +223,6 @@ static struct arizona_pdata wm5102_reva_pdata = {
- 	},
- };
- 
--static struct s3c64xx_spi_csinfo codec_spi_csinfo = {
--	.line = S3C64XX_GPN(5),
--};
--
- static struct spi_board_info wm5102_reva_spi_devs[] = {
- 	[0] = {
- 		.modalias	= "wm5102",
-@@ -242,7 +232,6 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
- 		.mode		= SPI_MODE_0,
- 		.irq		= GLENFARCLAS_PMIC_IRQ_BASE +
- 				  WM831X_IRQ_GPIO_2,
--		.controller_data = &codec_spi_csinfo,
- 		.platform_data = &wm5102_reva_pdata,
- 	},
- };
-@@ -275,7 +264,6 @@ static struct spi_board_info wm5102_spi_devs[] = {
- 		.mode		= SPI_MODE_0,
- 		.irq		= GLENFARCLAS_PMIC_IRQ_BASE +
- 				  WM831X_IRQ_GPIO_2,
--		.controller_data = &codec_spi_csinfo,
- 		.platform_data = &wm5102_pdata,
- 	},
- };
-@@ -298,7 +286,6 @@ static struct spi_board_info wm5110_spi_devs[] = {
- 		.mode		= SPI_MODE_0,
- 		.irq		= GLENFARCLAS_PMIC_IRQ_BASE +
- 				  WM831X_IRQ_GPIO_2,
--		.controller_data = &codec_spi_csinfo,
- 		.platform_data = &wm5102_reva_pdata,
- 	},
- };
-diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index 41f0aba2d2fd..e3e0fe897bcc 100644
---- a/arch/arm/mach-s3c/mach-crag6410.c
-+++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -825,6 +825,15 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
- 
- static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
- 
-+static struct gpiod_lookup_table crag_spi0_gpiod_table = {
-+	.dev_id = "s3c6410-spi.0",
-+	.table = {
-+		GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
-+		{ },
-+	},
-+};
-+
- static void __init crag6410_machine_init(void)
- {
- 	/* Open drain IRQs need pullups */
-@@ -856,6 +865,8 @@ static void __init crag6410_machine_init(void)
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
- 	samsung_keypad_set_platdata(&crag6410_keypad_data);
-+
-+	gpiod_add_lookup_table(&crag_spi0_gpiod_table);
- 	s3c64xx_spi0_set_platdata(0, 2);
- 
- 	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 8755cd85e83c..5e03c9144bfe 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -13,10 +13,8 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/spi/spi.h>
--#include <linux/gpio.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/of_gpio.h>
- 
- #include <linux/platform_data/spi-s3c64xx.h>
- 
-@@ -655,6 +653,9 @@ static int s3c64xx_spi_prepare_message(struct spi_master *master,
- 	struct spi_device *spi = msg->spi;
- 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
- 
-+	if (!cs)
-+		return 0;
-+
- 	/* Configure feedback delay */
- 	writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
- 
-@@ -830,34 +831,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 	if (spi->dev.of_node) {
- 		cs = s3c64xx_get_slave_ctrldata(spi);
- 		spi->controller_data = cs;
--	} else if (cs) {
--		/* On non-DT platforms the SPI core will set spi->cs_gpio
--		 * to -ENOENT. The GPIO pin used to drive the chip select
--		 * is defined by using platform data so spi->cs_gpio value
--		 * has to be override to have the proper GPIO pin number.
--		 */
--		spi->cs_gpio = cs->line;
- 	}
- 
--	if (IS_ERR_OR_NULL(cs)) {
-+	/* NULL is fine, we just avoid using the FB delay (=0) */
-+	if (IS_ERR(cs)) {
- 		dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
- 		return -ENODEV;
- 	}
- 
--	if (!spi_get_ctldata(spi)) {
--		if (gpio_is_valid(spi->cs_gpio)) {
--			err = gpio_request_one(spi->cs_gpio, GPIOF_OUT_INIT_HIGH,
--					       dev_name(&spi->dev));
--			if (err) {
--				dev_err(&spi->dev,
--					"Failed to get /CS gpio [%d]: %d\n",
--					spi->cs_gpio, err);
--				goto err_gpio_req;
--			}
--		}
--
-+	if (!spi_get_ctldata(spi))
- 		spi_set_ctldata(spi, cs);
--	}
- 
- 	pm_runtime_get_sync(&sdd->pdev->dev);
- 
-@@ -909,11 +892,9 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 	/* setup() returns with device de-selected */
- 	s3c64xx_spi_set_cs(spi, false);
- 
--	if (gpio_is_valid(spi->cs_gpio))
--		gpio_free(spi->cs_gpio);
- 	spi_set_ctldata(spi, NULL);
- 
--err_gpio_req:
-+	/* This was dynamically allocated on the DT path */
- 	if (spi->dev.of_node)
- 		kfree(cs);
- 
-@@ -924,19 +905,9 @@ static void s3c64xx_spi_cleanup(struct spi_device *spi)
- {
- 	struct s3c64xx_spi_csinfo *cs = spi_get_ctldata(spi);
- 
--	if (gpio_is_valid(spi->cs_gpio)) {
--		gpio_free(spi->cs_gpio);
--		if (spi->dev.of_node)
--			kfree(cs);
--		else {
--			/* On non-DT platforms, the SPI core sets
--			 * spi->cs_gpio to -ENOENT and .setup()
--			 * overrides it with the GPIO pin value
--			 * passed using platform data.
--			 */
--			spi->cs_gpio = -ENOENT;
--		}
--	}
-+	/* This was dynamically allocated on the DT path */
-+	if (spi->dev.of_node)
-+		kfree(cs);
- 
- 	spi_set_ctldata(spi, NULL);
- }
-@@ -1131,6 +1102,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	master->prepare_message = s3c64xx_spi_prepare_message;
- 	master->transfer_one = s3c64xx_spi_transfer_one;
- 	master->num_chipselect = sci->num_cs;
-+	master->use_gpio_descriptors = true;
- 	master->dma_alignment = 8;
- 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
- 					SPI_BPW_MASK(8);
-diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
-index 10890a4b55b9..391f4dc68742 100644
---- a/include/linux/platform_data/spi-s3c64xx.h
-+++ b/include/linux/platform_data/spi-s3c64xx.h
-@@ -16,15 +16,13 @@ struct platform_device;
-  * struct s3c64xx_spi_csinfo - ChipSelect description
-  * @fb_delay: Slave specific feedback delay.
-  *            Refer to FB_CLK_SEL register definition in SPI chapter.
-- * @line: Custom 'identity' of the CS line.
-  *
-- * This is per SPI-Slave Chipselect information.
-+ * This is per SPI-Slave FB delay information.
-  * Allocate and initialize one in machine init code and make the
-  * spi_board_info.controller_data point to it.
-  */
- struct s3c64xx_spi_csinfo {
- 	u8 fb_delay;
--	unsigned line;
- };
- 
- /**
--- 
-2.34.1
 
+Best regards,
+Krzysztof
