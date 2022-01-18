@@ -2,54 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E990BC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 15:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DC2C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 15:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345523AbiARPB4 (ORCPT
+        id S1345649AbiARPB7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 10:01:56 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:46041 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345500AbiARPAy (ORCPT
+        Tue, 18 Jan 2022 10:01:59 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:26782 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345740AbiARPBD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 10:00:54 -0500
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220118150051epoutp026def0f40bafb61645a0ad65c0e9af834~LZXc_Ij212350223502epoutp02H
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 15:00:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220118150051epoutp026def0f40bafb61645a0ad65c0e9af834~LZXc_Ij212350223502epoutp02H
+        Tue, 18 Jan 2022 10:01:03 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220118150101epoutp044e5ebf1543cab46fbfc3fd57f222223f~LZXmSLaJa1617916179epoutp04H
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 15:01:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220118150101epoutp044e5ebf1543cab46fbfc3fd57f222223f~LZXmSLaJa1617916179epoutp04H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642518051;
-        bh=2cglEQoN9bU/HQP5eTa878YzkuABJh2Crj7ue2w3RSc=;
+        s=mail20170921; t=1642518061;
+        bh=hPFsCr5uGHixwaTPZZs+M6uhKbY7FszPYRcuTll2uKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ebvZMo5dqjJqldta27MWjF81p25BzKCsygjtceGASl8ezUZohgoawfbmMWyruCocI
-         4WUaR+zx5hO9OiGFHCyOOuR1wtMS+OUXiQFly4R5DJpiZ16pSOx0vyFW4ix1giT65a
-         AvDABeNEro2suVPP5QqPwsyI7goAj68kj+GmNraA=
+        b=kGZdQk+YSNiBR5lKTIVfuaVUvsGWb+L34WP/PrzHi/4RaZtjX3vRlTsMxJl3xhEUo
+         +SVKOZon9Wdph4kuWYznwVJa9/ivVqWhwp2NsZepskXNN3JBsqBNVN3Mdzu7fnH5gM
+         zTwXmQRCYJbiRLXnX2oREQowgLjcH+tzrfkWZ2oA=
 Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220118150051epcas5p4a069b2488e4a13e81cdf967cc1d963a1~LZXcO5PVd0382903829epcas5p4V;
-        Tue, 18 Jan 2022 15:00:51 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4JdX5T3ZRyz4x9Pv; Tue, 18 Jan
-        2022 15:00:45 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220118150101epcas5p392feee7e29ab2d1a7048b3a9f7b84611~LZXliBHAJ0676106761epcas5p3m;
+        Tue, 18 Jan 2022 15:01:01 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4JdX5d2K6Wz4x9Pv; Tue, 18 Jan
+        2022 15:00:53 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        98.AE.46822.2C5D6E16; Tue, 18 Jan 2022 23:59:14 +0900 (KST)
+        FC.AE.46822.AC5D6E16; Tue, 18 Jan 2022 23:59:22 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220118150045epcas5p4e54922758fb7922b1fd8de0995d2127e~LZXWkiq8x1990519905epcas5p4F;
-        Tue, 18 Jan 2022 15:00:45 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220118150052epcas5p12efa399d1a59fc2fb0595eef128ffdf9~LZXd1g3g00561905619epcas5p1d;
+        Tue, 18 Jan 2022 15:00:52 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220118150045epsmtrp283dd76d5f7cdeb5b220e873a98f5ce55~LZXWji_M51935719357epsmtrp2h;
-        Tue, 18 Jan 2022 15:00:45 +0000 (GMT)
-X-AuditID: b6c32a4a-dfbff7000000b6e6-1c-61e6d5c2b435
+        20220118150052epsmtrp2f49caaeb66c47ec8b9d15d9f36a8b52a~LZXd0evlh2220222202epsmtrp2G;
+        Tue, 18 Jan 2022 15:00:52 +0000 (GMT)
+X-AuditID: b6c32a4a-dfbff7000000b6e6-32-61e6d5ca4eac
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A4.F0.08738.C16D6E16; Wed, 19 Jan 2022 00:00:44 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EE.A1.29871.426D6E16; Wed, 19 Jan 2022 00:00:52 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220118150042epsmtip15c44cd7dbfd032f2a12d2412024983c4~LZXUDiaer0468004680epsmtip1a;
-        Tue, 18 Jan 2022 15:00:42 +0000 (GMT)
+        20220118150050epsmtip1d6a5d0d76f2b537e3f511d8574787357~LZXbYHtO01212912129epsmtip1q;
+        Tue, 18 Jan 2022 15:00:50 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
@@ -58,368 +58,295 @@ Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
         s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
         pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-fsd@tesla.com, Arjun K V <arjun.kv@samsung.com>,
-        Tauseef Nomani <tauseef.n@samsung.com>
-Subject: [PATCH v2 08/16] clk: samsung: fsd: Add cmu_imem block clock
+        linux-fsd@tesla.com, Sathyakam M <sathya@samsung.com>
+Subject: [PATCH v2 10/16] clk: samsung: fsd: Add cam_csi block clock
  information
-Date:   Tue, 18 Jan 2022 20:18:43 +0530
-Message-Id: <20220118144851.69537-9-alim.akhtar@samsung.com>
+Date:   Tue, 18 Jan 2022 20:18:45 +0530
+Message-Id: <20220118144851.69537-11-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220118144851.69537-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmuu6hq88SDd49tLF4MG8bm8XylbtY
-        LP5OOsZu8X5ZD6PF/CPnWC02vv3BZDHlz3Imi02Pr7FafOy5x2rx8FW4xeVdc9gsZpzfx2Rx
-        6vpnNotFW7+wW7TuPcJucfhNO6vF4+t/2CwunZzM4iDksWbeGkaP378mMXrMauhl89i0qpPN
-        4861PWwem5fUe1w50cTq0bdlFaPHv6a57B6fN8kFcEVl22SkJqakFimk5iXnp2TmpdsqeQfH
-        O8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAPaWkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8u
-        sVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM44tvsaU8HyZsaK7S96WBsY55V2MXJy
-        SAiYSLyYMIW1i5GLQ0hgN6PEpje7mCCcT4wSy24cg8p8ZpR48uAhK0zL2vtTmCESuxglOh/8
-        YYdwWpgk/u4/wQJSxSagLXF3+hYmEFtEwE3iRmMH2FxmgZ3MElPvvQErEhYIlvhy4i5YEYuA
-        qsSM+VcZQWxeARuJm/O6mSHWyUus3nAAzOYUsJWY2jCVDWSQhMABDon7h1rYIYpcJE4eew3V
-        ICzx6vgWqLiUxOd3e4EaOIDsbImeXcYQ4RqJpfOOsUDY9hIHrsxhASlhFtCUWL9LHyTMLMAn
-        0fv7CRNEJ69ER5sQRLWqRPO7q1Cd0hITu7tZIUo8JJ5scAAJCwlMYJS49sBhAqPsLISZCxgZ
-        VzFKphYU56anFpsWGOWllsMjKjk/dxMjOK1qee1gfPjgg94hRiYOxkOMEhzMSiK8UvXPEoV4
-        UxIrq1KL8uOLSnNSiw8xmgIDbCKzlGhyPjCx55XEG5pYGpiYmZmZWBqbGSqJ855O35AoJJCe
-        WJKanZpakFoE08fEwSnVwKRfKvstV/dCdHnPBgkpvxtFuvn8f5y29VwyWjur5KK4kQnjmw27
-        /5yx28++cNujpAdnn55m067Vd8njON8bPImxJi216GbS20ABi4tGn+pELPW2RMwXNP46V+J9
-        Nt+pqx4xv9ewzzV2vd9xy0LcIN3s7E2rrDANc/mAP2e6CpiFv8fpKm1ffmCSlZjp1n8snF2d
-        69YU+TZrzHnyYq6ERyTTX9lV/gLvakteN84Xy5iuZnyv0KajrvDvfX69Hw7p7T5/4uRKdk1Z
-        GvvvN1OIS/+bhpq1Hy/cO/kw+YfzzYnnLDN3H260ZD29tdF6izHL9+qIwjnb+no8W0KknEq3
-        /xOyVrh//9s3Tl3x+9q2SizFGYmGWsxFxYkAX0wHIjQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSnK7MtWeJBs23bSwezNvGZrF85S4W
-        i7+TjrFbvF/Ww2gx/8g5VouNb38wWUz5s5zJYtPja6wWH3vusVo8fBVucXnXHDaLGef3MVmc
-        uv6ZzWLR1i/sFq17j7BbHH7Tzmrx+PofNotLJyezOAh5rJm3htHj969JjB6zGnrZPDat6mTz
-        uHNtD5vH5iX1HldONLF69G1Zxejxr2kuu8fnTXIBXFFcNimpOZllqUX6dglcGcd2X2MqWN7M
-        WLH9RQ9rA+O80i5GTg4JAROJtfenMHcxcnEICexglDh/vJ0FIiEtcX3jBHYIW1hi5b/n7BBF
-        TUwSV9btYwNJsAloS9ydvoUJxBYR8JBo+3cPbBKzwGlmid3bFoEVCQsESnRu38kIYrMIqErM
-        mH8VzOYVsJG4Oa+bGWKDvMTqDQfAbE4BW4mpDVPBeoWAai6unMY8gZFvASPDKkbJ1ILi3PTc
-        YsMCo7zUcr3ixNzi0rx0veT83E2M4LjQ0trBuGfVB71DjEwcjIcYJTiYlUR4peqfJQrxpiRW
-        VqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAxPf2p+ztRyf68qo3
-        MeV2/Y9dqHRm8rzDNx3nHnXSPHImiuuG0BO/pAszq6oPLshLqbgslCH0oqW/oeXh8XdmE/yf
-        drtvkdaQ1lf0ZWq4rPpJdU0kf6bc+VUfUuJk3Z48uH3koU6Isd7K/M62XtYJZsv8L4kfuN/5
-        7r/wzoObfpdMqHryvfrm1MKJz3s3/ZkdXiH0bGPT1u4ViYvvMivEHivr8cl0n8fQcClvftOR
-        z5p5U+a+WdXAzBGudJnl4tRth4O9U3nTfq3TzFvQZOn3Trlz6VWJx/bij1af/u6uGCYlGd2t
-        L5hU+DXneTjv5bsnJh+ZYBq/41Sh15MpsxkPzxPc8HvCi/mLEo/JBFy8s1eJpTgj0VCLuag4
-        EQDY+ywJ+gIAAA==
-X-CMS-MailID: 20220118150045epcas5p4e54922758fb7922b1fd8de0995d2127e
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmlu6pq88SDQ6eMbZ4MG8bm8XfScfY
+        Ld4v62G0mH/kHKvFxrc/mCym/FnOZLHp8TVWi48991gtHr4Kt7i8aw6bxYzz+5gsTl3/zGax
+        aOsXdovWvUfYLQ6/aWe1+HLkNaPF4+t/2BwEPdbMW8Po8fvXJEaPWQ29bB6bVnWyedy5tofN
+        Y/OSeo8rJ5pYPfq2rGL0+Nc0l93j8ya5AK6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMD
+        Q11DSwtzJYW8xNxUWyUXnwBdt8wcoH+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUp
+        OQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZE2ecZCpojK+4u+MhewPjlpAuRk4OCQETibeT
+        X7N2MXJxCAnsZpQ4vvMbE4TziVHi8OGNLBDON0aJM20fWGFazs7YwgiR2MsoMXn2XyinhUni
+        29sesCo2AW2Ju9O3MIHYIgJuEjcaO8DmMgtMZJbYtO0KI0hCWCBI4tjqC2A2i4CqxL/O2WAN
+        vAK2EpPmvGCDWCcvsXrDAWYQmxMoPrVhKhvIIAmBLRwSc+dOYIYocpHY92snVIOwxKvjW9gh
+        bCmJz+/2AsU5gOxsiZ5dxhDhGoml846xQNj2EgeuzGEBKWEW0JRYv0sfJMwswCfR+/sJE0Qn
+        r0RHmxBEtapE87urUJ3SEhO7u6GB4iExbVkzNBwmMEo8PrCfdQKj7CyEqQsYGVcxSqYWFOem
+        pxabFhjlpZbDYyo5P3cTIzidanntYHz44IPeIUYmDsZDjBIczEoivFL1zxKFeFMSK6tSi/Lj
+        i0pzUosPMZoCg2wis5Rocj4woeeVxBuaWBqYmJmZmVgamxkqifOeTt+QKCSQnliSmp2aWpBa
+        BNPHxMEp1cCk2PVunr0FX77B8VsHvU5yrjtc+Ez7TdYm6xMLWN+6LpI35UvV/3YlP2DN5FVJ
+        jBY1GxRfH9ybsfLg2hXH5y7Y9KlvOZO4eGLKxMjqfc8vVsmevtR0f4/1YfOpEmbLWM9tkXiq
+        NCtU9PpT765OOxEbD9EFfxJkqicfj02fmGD7a2mO65LUnc3dIQsa9/ww9Nwpvvx/d38tf8+N
+        B4lv+q5/65z2hK+br/TkLzOl3iuvap/r7cqOSZwnIxrgt/Xgs4a5XouXbv/5yobxYEPGte+s
+        U6MPFgszqM+4axCfc+7exqkpZ9eYrOSsqtioc3XDnN3vP72NTF7d1XJtctFGrm+5815rxXkF
+        VXhsz0kK1jB0UmIpzkg01GIuKk4EAEpxQ6QwBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrALMWRmVeSWpSXmKPExsWy7bCSnK7KtWeJBhMW6Vo8mLeNzeLvpGPs
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
+        tPULu0Xr3iPsFofftLNafDnymtHi8fU/bA6CHmvmrWH0+P1rEqPHrIZeNo9NqzrZPO5c28Pm
+        sXlJvceVE02sHn1bVjF6/Guay+7xeZNcAFcUl01Kak5mWWqRvl0CV8bEGSeZChrjK+7ueMje
+        wLglpIuRk0NCwETi7IwtjF2MXBxCArsZJfY+7meCSEhLXN84gR3CFpZY+e85O0RRE5PE6q+n
+        wRJsAtoSd6dvAWsQEfCQaPt3jxnEZhZYyCzx9EQmiC0sECBx7/wPRhCbRUBV4l/nbLB6XgFb
+        iUlzXrBBLJCXWL3hAFgvJ1B8asNUsLiQgI3ExZXTmCcw8i1gZFjFKJlaUJybnltsWGCYl1qu
+        V5yYW1yal66XnJ+7iREcCVqaOxi3r/qgd4iRiYPxEKMEB7OSCK9U/bNEId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpgy1hUmh0sv+cP3bfqZtB8/pi/3
+        PXtSe6bI9OrCX3VG8XsVCvhFS1Z+ZQ665tejGn7FSvTo9GW3jO5ezdnPcbi8b4ZzVnYAd/UX
+        n98ewiuWXtcrLjsTsHx7yJ+F86wbni4+OO266yaNcv1fe7zn67Jz/TlyVe9cd8SsLT7RDjZG
+        vf6xaVuXiIe6vtq61NLawKPnyr7w/V9X1y6b8/JwRrbJoUXJC8/YNbgazlCZGGmon3Lb/8mO
+        xVq7vd+VR7ld+rhfunnFTZ56Ls9s0V632XN6GvI15k9YeLPl2yzdpw2WDW4rDnuLb9RYo7lA
+        eu2+YLYH9qsnVnPmedu8f+lUuaSrPfqZ/1T+qVpFL6UUF/xTYinOSDTUYi4qTgQAh+mraPMC
+        AAA=
+X-CMS-MailID: 20220118150052epcas5p12efa399d1a59fc2fb0595eef128ffdf9
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220118150045epcas5p4e54922758fb7922b1fd8de0995d2127e
+X-CMS-RootMailID: 20220118150052epcas5p12efa399d1a59fc2fb0595eef128ffdf9
 References: <20220118144851.69537-1-alim.akhtar@samsung.com>
-        <CGME20220118150045epcas5p4e54922758fb7922b1fd8de0995d2127e@epcas5p4.samsung.com>
+        <CGME20220118150052epcas5p12efa399d1a59fc2fb0595eef128ffdf9@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Adds cmu_imem clock related code, imem block contains IPs
-like WDT, DMA, TMU etc, these clocks are required for such
-IP function.
+Adds clocks for BLK_CAM_CSI block, this is needed for CSI to work.
 
 Cc: linux-fsd@tesla.com
-Signed-off-by: Arjun K V <arjun.kv@samsung.com>
+Signed-off-by: Sathyakam M <sathya@samsung.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Tauseef Nomani <tauseef.n@samsung.com>
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clk/samsung/clk-fsd.c | 283 ++++++++++++++++++++++++++++++++++
- 1 file changed, 283 insertions(+)
+ drivers/clk/samsung/clk-fsd.c | 207 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 207 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
-index 97973a629453..8c879f7cb6a9 100644
+index 72a2b38524a1..afac8760ebe1 100644
 --- a/drivers/clk/samsung/clk-fsd.c
 +++ b/drivers/clk/samsung/clk-fsd.c
-@@ -1142,6 +1142,289 @@ static const struct samsung_cmu_info fsys1_cmu_info __initconst = {
- 	.clk_name		= "dout_cmu_fsys1_shared0div4",
+@@ -1543,6 +1543,210 @@ static const struct samsung_cmu_info mfc_cmu_info __initconst = {
+ 	.nr_clk_regs		= ARRAY_SIZE(mfc_clk_regs),
  };
  
-+/* Register Offset definitions for CMU_IMEM (0x10010000) */
-+#define PLL_CON0_CLK_IMEM_ACLK				0x100
-+#define PLL_CON0_CLK_IMEM_INTMEMCLK			0x120
-+#define PLL_CON0_CLK_IMEM_TCUCLK			0x140
-+#define DIV_OSCCLK_IMEM_TMUTSCLK			0x1800
-+#define GAT_IMEM_IMEM_CMU_IMEM_IPCLKPORT_PCLK		0x2000
-+#define GAT_IMEM_MCT_IPCLKPORT_OSCCLK__ALO		0x2004
-+#define GAT_IMEM_OTP_CON_TOP_IPCLKPORT_I_OSCCLK		0x2008
-+#define GAT_IMEM_RSTNSYNC_OSCCLK_IPCLKPORT_CLK		0x200c
-+#define GAT_IMEM_TMU_CPU0_IPCLKPORT_I_CLK		0x2010
-+#define GAT_IMEM_TMU_CPU0_IPCLKPORT_I_CLK_TS		0x2014
-+#define GAT_IMEM_TMU_CPU2_IPCLKPORT_I_CLK		0x2018
-+#define GAT_IMEM_TMU_CPU2_IPCLKPORT_I_CLK_TS		0x201c
-+#define GAT_IMEM_TMU_GPU_IPCLKPORT_I_CLK		0x2020
-+#define GAT_IMEM_TMU_GPU_IPCLKPORT_I_CLK_TS		0x2024
-+#define GAT_IMEM_TMU_GT_IPCLKPORT_I_CLK			0x2028
-+#define GAT_IMEM_TMU_GT_IPCLKPORT_I_CLK_TS		0x202c
-+#define GAT_IMEM_TMU_TOP_IPCLKPORT_I_CLK		0x2030
-+#define GAT_IMEM_TMU_TOP_IPCLKPORT_I_CLK_TS		0x2034
-+#define GAT_IMEM_WDT0_IPCLKPORT_CLK			0x2038
-+#define GAT_IMEM_WDT1_IPCLKPORT_CLK			0x203c
-+#define GAT_IMEM_WDT2_IPCLKPORT_CLK			0x2040
-+#define GAT_IMEM_ADM_AXI4ST_I0_IMEM_IPCLKPORT_ACLKM	0x2044
-+#define GAT_IMEM_ADM_AXI4ST_I1_IMEM_IPCLKPORT_ACLKM	0x2048
-+#define GAT_IMEM_ADM_AXI4ST_I2_IMEM_IPCLKPORT_ACLKM	0x204c
-+#define GAT_IMEM_ADS_AXI4ST_I0_IMEM_IPCLKPORT_ACLKS	0x2050
-+#define GAT_IMEM_ADS_AXI4ST_I1_IMEM_IPCLKPORT_ACLKS	0x2054
-+#define GAT_IMEM_ADS_AXI4ST_I2_IMEM_IPCLKPORT_ACLKS	0x2058
-+#define GAT_IMEM_ASYNC_DMA0_IPCLKPORT_PCLKM		0x205c
-+#define GAT_IMEM_ASYNC_DMA0_IPCLKPORT_PCLKS		0x2060
-+#define GAT_IMEM_ASYNC_DMA1_IPCLKPORT_PCLKM		0x2064
-+#define GAT_IMEM_ASYNC_DMA1_IPCLKPORT_PCLKS		0x2068
-+#define GAT_IMEM_AXI2APB_IMEMP0_IPCLKPORT_ACLK		0x206c
-+#define GAT_IMEM_AXI2APB_IMEMP1_IPCLKPORT_ACLK		0x2070
-+#define GAT_IMEM_BUS_D_IMEM_IPCLKPORT_MAINCLK		0x2074
-+#define GAT_IMEM_BUS_P_IMEM_IPCLKPORT_MAINCLK		0x2078
-+#define GAT_IMEM_BUS_P_IMEM_IPCLKPORT_PERICLK		0x207c
-+#define GAT_IMEM_BUS_P_IMEM_IPCLKPORT_TCUCLK		0x2080
-+#define GAT_IMEM_DMA0_IPCLKPORT_ACLK			0x2084
-+#define GAT_IMEM_DMA1_IPCLKPORT_ACLK			0x2088
-+#define GAT_IMEM_GIC500_INPUT_SYNC_IPCLKPORT_CLK	0x208c
-+#define GAT_IMEM_GIC_IPCLKPORT_CLK			0x2090
-+#define GAT_IMEM_INTMEM_IPCLKPORT_ACLK			0x2094
-+#define GAT_IMEM_MAILBOX_SCS_CA72_IPCLKPORT_PCLK	0x2098
-+#define GAT_IMEM_MAILBOX_SMS_CA72_IPCLKPORT_PCLK	0x209c
-+#define GAT_IMEM_MCT_IPCLKPORT_PCLK			0x20a0
-+#define GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSCO_IMEM__CLK_IMEM_D	0x20a4
-+#define GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSCO_IMEM__CLK_IMEM_TCU	0x20a8
-+#define GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSOC_IMEM__CLK_IMEM_P	0x20ac
-+#define GAT_IMEM_OTP_CON_TOP_IPCLKPORT_PCLK		0x20b0
-+#define GAT_IMEM_RSTNSYNC_ACLK_IPCLKPORT_CLK		0x20b4
-+#define GAT_IMEM_RSTNSYNC_INTMEMCLK_IPCLKPORT_CLK	0x20b8
-+#define GAT_IMEM_RSTNSYNC_TCUCLK_IPCLKPORT_CLK		0x20bc
-+#define GAT_IMEM_SFRIF_TMU0_IMEM_IPCLKPORT_PCLK		0x20c0
-+#define GAT_IMEM_SFRIF_TMU1_IMEM_IPCLKPORT_PCLK		0x20c4
-+#define GAT_IMEM_SYSREG_IMEM_IPCLKPORT_PCLK		0x20c8
-+#define GAT_IMEM_TBU_IMEM_IPCLKPORT_ACLK		0x20cc
-+#define GAT_IMEM_TCU_IPCLKPORT_ACLK			0x20d0
-+#define GAT_IMEM_WDT0_IPCLKPORT_PCLK			0x20d4
-+#define GAT_IMEM_WDT1_IPCLKPORT_PCLK			0x20d8
-+#define GAT_IMEM_WDT2_IPCLKPORT_PCLK			0x20dc
++/* Register Offset definitions for CMU_CAM_CSI (0x12610000) */
++#define PLL_LOCKTIME_PLL_CAM_CSI		0x0
++#define PLL_CON0_PLL_CAM_CSI			0x100
++#define DIV_CAM_CSI0_ACLK			0x1800
++#define DIV_CAM_CSI1_ACLK			0x1804
++#define DIV_CAM_CSI2_ACLK			0x1808
++#define DIV_CAM_CSI_BUSD			0x180c
++#define DIV_CAM_CSI_BUSP			0x1810
++#define GAT_CAM_CSI_CMU_CAM_CSI_IPCLKPORT_PCLK	0x2000
++#define GAT_CAM_AXI2APB_CAM_CSI_IPCLKPORT_ACLK	0x2004
++#define GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI0	0x2008
++#define GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI1	0x200c
++#define GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI2	0x2010
++#define GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_SOC_NOC	0x2014
++#define GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__NOC		0x2018
++#define GAT_CAM_CSI0_0_IPCLKPORT_I_ACLK		0x201c
++#define GAT_CAM_CSI0_0_IPCLKPORT_I_PCLK		0x2020
++#define GAT_CAM_CSI0_1_IPCLKPORT_I_ACLK		0x2024
++#define GAT_CAM_CSI0_1_IPCLKPORT_I_PCLK		0x2028
++#define GAT_CAM_CSI0_2_IPCLKPORT_I_ACLK		0x202c
++#define GAT_CAM_CSI0_2_IPCLKPORT_I_PCLK		0x2030
++#define GAT_CAM_CSI0_3_IPCLKPORT_I_ACLK		0x2034
++#define GAT_CAM_CSI0_3_IPCLKPORT_I_PCLK		0x2038
++#define GAT_CAM_CSI1_0_IPCLKPORT_I_ACLK		0x203c
++#define GAT_CAM_CSI1_0_IPCLKPORT_I_PCLK		0x2040
++#define GAT_CAM_CSI1_1_IPCLKPORT_I_ACLK		0x2044
++#define GAT_CAM_CSI1_1_IPCLKPORT_I_PCLK		0x2048
++#define GAT_CAM_CSI1_2_IPCLKPORT_I_ACLK		0x204c
++#define GAT_CAM_CSI1_2_IPCLKPORT_I_PCLK		0x2050
++#define GAT_CAM_CSI1_3_IPCLKPORT_I_ACLK		0x2054
++#define GAT_CAM_CSI1_3_IPCLKPORT_I_PCLK		0x2058
++#define GAT_CAM_CSI2_0_IPCLKPORT_I_ACLK		0x205c
++#define GAT_CAM_CSI2_0_IPCLKPORT_I_PCLK		0x2060
++#define GAT_CAM_CSI2_1_IPCLKPORT_I_ACLK		0x2064
++#define GAT_CAM_CSI2_1_IPCLKPORT_I_PCLK		0x2068
++#define GAT_CAM_CSI2_2_IPCLKPORT_I_ACLK		0x206c
++#define GAT_CAM_CSI2_2_IPCLKPORT_I_PCLK		0x2070
++#define GAT_CAM_CSI2_3_IPCLKPORT_I_ACLK		0x2074
++#define GAT_CAM_CSI2_3_IPCLKPORT_I_PCLK		0x2078
++#define GAT_CAM_NS_BRDG_CAM_CSI_IPCLKPORT_CLK__PSOC_CAM_CSI__CLK_CAM_CSI_D	0x207c
++#define GAT_CAM_NS_BRDG_CAM_CSI_IPCLKPORT_CLK__PSOC_CAM_CSI__CLK_CAM_CSI_P	0x2080
++#define GAT_CAM_SYSREG_CAM_CSI_IPCLKPORT_PCLK	0x2084
++#define GAT_CAM_TBU_CAM_CSI_IPCLKPORT_ACLK	0x2088
 +
-+static const unsigned long imem_clk_regs[] __initconst = {
-+	PLL_CON0_CLK_IMEM_ACLK,
-+	PLL_CON0_CLK_IMEM_INTMEMCLK,
-+	PLL_CON0_CLK_IMEM_TCUCLK,
-+	DIV_OSCCLK_IMEM_TMUTSCLK,
-+	GAT_IMEM_IMEM_CMU_IMEM_IPCLKPORT_PCLK,
-+	GAT_IMEM_MCT_IPCLKPORT_OSCCLK__ALO,
-+	GAT_IMEM_OTP_CON_TOP_IPCLKPORT_I_OSCCLK,
-+	GAT_IMEM_RSTNSYNC_OSCCLK_IPCLKPORT_CLK,
-+	GAT_IMEM_TMU_CPU0_IPCLKPORT_I_CLK,
-+	GAT_IMEM_TMU_CPU0_IPCLKPORT_I_CLK_TS,
-+	GAT_IMEM_TMU_CPU2_IPCLKPORT_I_CLK,
-+	GAT_IMEM_TMU_CPU2_IPCLKPORT_I_CLK_TS,
-+	GAT_IMEM_TMU_GPU_IPCLKPORT_I_CLK,
-+	GAT_IMEM_TMU_GPU_IPCLKPORT_I_CLK_TS,
-+	GAT_IMEM_TMU_GT_IPCLKPORT_I_CLK,
-+	GAT_IMEM_TMU_GT_IPCLKPORT_I_CLK_TS,
-+	GAT_IMEM_TMU_TOP_IPCLKPORT_I_CLK,
-+	GAT_IMEM_TMU_TOP_IPCLKPORT_I_CLK_TS,
-+	GAT_IMEM_WDT0_IPCLKPORT_CLK,
-+	GAT_IMEM_WDT1_IPCLKPORT_CLK,
-+	GAT_IMEM_WDT2_IPCLKPORT_CLK,
-+	GAT_IMEM_ADM_AXI4ST_I0_IMEM_IPCLKPORT_ACLKM,
-+	GAT_IMEM_ADM_AXI4ST_I1_IMEM_IPCLKPORT_ACLKM,
-+	GAT_IMEM_ADM_AXI4ST_I2_IMEM_IPCLKPORT_ACLKM,
-+	GAT_IMEM_ADS_AXI4ST_I0_IMEM_IPCLKPORT_ACLKS,
-+	GAT_IMEM_ADS_AXI4ST_I1_IMEM_IPCLKPORT_ACLKS,
-+	GAT_IMEM_ADS_AXI4ST_I2_IMEM_IPCLKPORT_ACLKS,
-+	GAT_IMEM_ASYNC_DMA0_IPCLKPORT_PCLKM,
-+	GAT_IMEM_ASYNC_DMA0_IPCLKPORT_PCLKS,
-+	GAT_IMEM_ASYNC_DMA1_IPCLKPORT_PCLKM,
-+	GAT_IMEM_ASYNC_DMA1_IPCLKPORT_PCLKS,
-+	GAT_IMEM_AXI2APB_IMEMP0_IPCLKPORT_ACLK,
-+	GAT_IMEM_AXI2APB_IMEMP1_IPCLKPORT_ACLK,
-+	GAT_IMEM_BUS_D_IMEM_IPCLKPORT_MAINCLK,
-+	GAT_IMEM_BUS_P_IMEM_IPCLKPORT_MAINCLK,
-+	GAT_IMEM_BUS_P_IMEM_IPCLKPORT_PERICLK,
-+	GAT_IMEM_BUS_P_IMEM_IPCLKPORT_TCUCLK,
-+	GAT_IMEM_DMA0_IPCLKPORT_ACLK,
-+	GAT_IMEM_DMA1_IPCLKPORT_ACLK,
-+	GAT_IMEM_GIC500_INPUT_SYNC_IPCLKPORT_CLK,
-+	GAT_IMEM_GIC_IPCLKPORT_CLK,
-+	GAT_IMEM_INTMEM_IPCLKPORT_ACLK,
-+	GAT_IMEM_MAILBOX_SCS_CA72_IPCLKPORT_PCLK,
-+	GAT_IMEM_MAILBOX_SMS_CA72_IPCLKPORT_PCLK,
-+	GAT_IMEM_MCT_IPCLKPORT_PCLK,
-+	GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSCO_IMEM__CLK_IMEM_D,
-+	GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSCO_IMEM__CLK_IMEM_TCU,
-+	GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSOC_IMEM__CLK_IMEM_P,
-+	GAT_IMEM_OTP_CON_TOP_IPCLKPORT_PCLK,
-+	GAT_IMEM_RSTNSYNC_ACLK_IPCLKPORT_CLK,
-+	GAT_IMEM_RSTNSYNC_INTMEMCLK_IPCLKPORT_CLK,
-+	GAT_IMEM_RSTNSYNC_TCUCLK_IPCLKPORT_CLK,
-+	GAT_IMEM_SFRIF_TMU0_IMEM_IPCLKPORT_PCLK,
-+	GAT_IMEM_SFRIF_TMU1_IMEM_IPCLKPORT_PCLK,
-+	GAT_IMEM_SYSREG_IMEM_IPCLKPORT_PCLK,
-+	GAT_IMEM_TBU_IMEM_IPCLKPORT_ACLK,
-+	GAT_IMEM_TCU_IPCLKPORT_ACLK,
-+	GAT_IMEM_WDT0_IPCLKPORT_PCLK,
-+	GAT_IMEM_WDT1_IPCLKPORT_PCLK,
-+	GAT_IMEM_WDT2_IPCLKPORT_PCLK,
++static const unsigned long cam_csi_clk_regs[] __initconst = {
++	PLL_LOCKTIME_PLL_CAM_CSI,
++	PLL_CON0_PLL_CAM_CSI,
++	DIV_CAM_CSI0_ACLK,
++	DIV_CAM_CSI1_ACLK,
++	DIV_CAM_CSI2_ACLK,
++	DIV_CAM_CSI_BUSD,
++	DIV_CAM_CSI_BUSP,
++	GAT_CAM_CSI_CMU_CAM_CSI_IPCLKPORT_PCLK,
++	GAT_CAM_AXI2APB_CAM_CSI_IPCLKPORT_ACLK,
++	GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI0,
++	GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI1,
++	GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI2,
++	GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_SOC_NOC,
++	GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__NOC,
++	GAT_CAM_CSI0_0_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI0_0_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI0_1_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI0_1_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI0_2_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI0_2_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI0_3_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI0_3_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI1_0_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI1_0_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI1_1_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI1_1_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI1_2_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI1_2_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI1_3_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI1_3_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI2_0_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI2_0_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI2_1_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI2_1_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI2_2_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI2_2_IPCLKPORT_I_PCLK,
++	GAT_CAM_CSI2_3_IPCLKPORT_I_ACLK,
++	GAT_CAM_CSI2_3_IPCLKPORT_I_PCLK,
++	GAT_CAM_NS_BRDG_CAM_CSI_IPCLKPORT_CLK__PSOC_CAM_CSI__CLK_CAM_CSI_D,
++	GAT_CAM_NS_BRDG_CAM_CSI_IPCLKPORT_CLK__PSOC_CAM_CSI__CLK_CAM_CSI_P,
++	GAT_CAM_SYSREG_CAM_CSI_IPCLKPORT_PCLK,
++	GAT_CAM_TBU_CAM_CSI_IPCLKPORT_ACLK,
 +};
 +
-+PNAME(mout_imem_clk_imem_tcuclk_p) = { "fin_pll", "dout_cmu_imem_tcuclk" };
-+PNAME(mout_imem_clk_imem_aclk_p) = { "fin_pll", "dout_cmu_imem_aclk" };
-+PNAME(mout_imem_clk_imem_intmemclk_p) = { "fin_pll", "dout_cmu_imem_dmaclk" };
-+
-+static const struct samsung_mux_clock imem_mux_clks[] __initconst = {
-+	MUX(0, "mout_imem_clk_imem_tcuclk", mout_imem_clk_imem_tcuclk_p,
-+	    PLL_CON0_CLK_IMEM_TCUCLK, 4, 1),
-+	MUX(0, "mout_imem_clk_imem_aclk", mout_imem_clk_imem_aclk_p, PLL_CON0_CLK_IMEM_ACLK, 4, 1),
-+	MUX(0, "mout_imem_clk_imem_intmemclk", mout_imem_clk_imem_intmemclk_p,
-+	    PLL_CON0_CLK_IMEM_INTMEMCLK, 4, 1),
++static const struct samsung_pll_rate_table pll_cam_csi_rate_table[] __initconst = {
++	PLL_35XX_RATE(24 * MHZ, 1066000000, 533, 12, 0),
 +};
 +
-+static const struct samsung_div_clock imem_div_clks[] __initconst = {
-+	DIV(0, "dout_imem_oscclk_imem_tmutsclk", "fin_pll", DIV_OSCCLK_IMEM_TMUTSCLK, 0, 4),
++static const struct samsung_pll_clock cam_csi_pll_clks[] __initconst = {
++	PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
++	    PLL_LOCKTIME_PLL_CAM_CSI, PLL_CON0_PLL_CAM_CSI, pll_cam_csi_rate_table),
 +};
 +
-+static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
-+	GATE(0, "imem_imem_cmu_imem_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_IMEM_CMU_IMEM_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_otp_con_top_ipclkport_i_oscclk", "fin_pll",
-+	     GAT_IMEM_OTP_CON_TOP_IPCLKPORT_I_OSCCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tmu_top_ipclkport_i_clk", "fin_pll",
-+	     GAT_IMEM_TMU_TOP_IPCLKPORT_I_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tmu_gt_ipclkport_i_clk", "fin_pll",
-+	     GAT_IMEM_TMU_GT_IPCLKPORT_I_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tmu_cpu0_ipclkport_i_clk", "fin_pll",
-+	     GAT_IMEM_TMU_CPU0_IPCLKPORT_I_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tmu_gpu_ipclkport_i_clk", "fin_pll",
-+	     GAT_IMEM_TMU_GPU_IPCLKPORT_I_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_mct_ipclkport_oscclk__alo", "fin_pll",
-+	     GAT_IMEM_MCT_IPCLKPORT_OSCCLK__ALO, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_wdt0_ipclkport_clk", "fin_pll",
-+	     GAT_IMEM_WDT0_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_wdt1_ipclkport_clk", "fin_pll",
-+	     GAT_IMEM_WDT1_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_wdt2_ipclkport_clk", "fin_pll",
-+	     GAT_IMEM_WDT2_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_TMU_CPU0_IPCLKPORT_I_CLK_TS, "imem_tmu_cpu0_ipclkport_i_clk_ts",
-+	     "dout_imem_oscclk_imem_tmutsclk",
-+	     GAT_IMEM_TMU_CPU0_IPCLKPORT_I_CLK_TS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_TMU_CPU2_IPCLKPORT_I_CLK_TS, "imem_tmu_cpu2_ipclkport_i_clk_ts",
-+	     "dout_imem_oscclk_imem_tmutsclk",
-+	     GAT_IMEM_TMU_CPU2_IPCLKPORT_I_CLK_TS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_TMU_GPU_IPCLKPORT_I_CLK_TS, "imem_tmu_gpu_ipclkport_i_clk_ts",
-+	     "dout_imem_oscclk_imem_tmutsclk",
-+	     GAT_IMEM_TMU_GPU_IPCLKPORT_I_CLK_TS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_TMU_GT_IPCLKPORT_I_CLK_TS, "imem_tmu_gt_ipclkport_i_clk_ts",
-+	     "dout_imem_oscclk_imem_tmutsclk",
-+	     GAT_IMEM_TMU_GT_IPCLKPORT_I_CLK_TS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_TMU_TOP_IPCLKPORT_I_CLK_TS, "imem_tmu_top_ipclkport_i_clk_ts",
-+	     "dout_imem_oscclk_imem_tmutsclk",
-+	     GAT_IMEM_TMU_TOP_IPCLKPORT_I_CLK_TS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_adm_axi4st_i0_imem_ipclkport_aclkm", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ADM_AXI4ST_I0_IMEM_IPCLKPORT_ACLKM, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_adm_axi4st_i1_imem_ipclkport_aclkm", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ADM_AXI4ST_I1_IMEM_IPCLKPORT_ACLKM, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_adm_axi4st_i2_imem_ipclkport_aclkm", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ADM_AXI4ST_I2_IMEM_IPCLKPORT_ACLKM, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_ads_axi4st_i0_imem_ipclkport_aclks", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ADS_AXI4ST_I0_IMEM_IPCLKPORT_ACLKS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_ads_axi4st_i1_imem_ipclkport_aclks", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ADS_AXI4ST_I1_IMEM_IPCLKPORT_ACLKS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_ads_axi4st_i2_imem_ipclkport_aclks", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ADS_AXI4ST_I2_IMEM_IPCLKPORT_ACLKS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_async_dma0_ipclkport_pclkm", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_ASYNC_DMA0_IPCLKPORT_PCLKM, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_async_dma0_ipclkport_pclks", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ASYNC_DMA0_IPCLKPORT_PCLKS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_async_dma1_ipclkport_pclkm", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_ASYNC_DMA1_IPCLKPORT_PCLKM, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_async_dma1_ipclkport_pclks", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_ASYNC_DMA1_IPCLKPORT_PCLKS, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_axi2apb_imemp0_ipclkport_aclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_AXI2APB_IMEMP0_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_axi2apb_imemp1_ipclkport_aclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_AXI2APB_IMEMP1_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_bus_d_imem_ipclkport_mainclk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_BUS_D_IMEM_IPCLKPORT_MAINCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_bus_p_imem_ipclkport_mainclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_BUS_P_IMEM_IPCLKPORT_MAINCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_bus_p_imem_ipclkport_pericclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_BUS_P_IMEM_IPCLKPORT_PERICLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_bus_p_imem_ipclkport_tcuclk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_BUS_P_IMEM_IPCLKPORT_TCUCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_DMA0_IPCLKPORT_ACLK, "imem_dma0_ipclkport_aclk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_DMA0_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED | CLK_IS_CRITICAL, 0),
-+	GATE(IMEM_DMA1_IPCLKPORT_ACLK, "imem_dma1_ipclkport_aclk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_DMA1_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED | CLK_IS_CRITICAL, 0),
-+	GATE(0, "imem_gic500_input_sync_ipclkport_clk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_GIC500_INPUT_SYNC_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_gic_ipclkport_clk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_GIC_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_intmem_ipclkport_aclk", "mout_imem_clk_imem_intmemclk",
-+	     GAT_IMEM_INTMEM_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_mailbox_scs_ca72_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_MAILBOX_SCS_CA72_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_mailbox_sms_ca72_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_MAILBOX_SMS_CA72_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_MCT_PCLK, "imem_mct_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_MCT_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_ns_brdg_imem_ipclkport_clk__psco_imem__clk_imem_d",
-+	     "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSCO_IMEM__CLK_IMEM_D, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_ns_brdg_imem_ipclkport_clk__psco_imem__clk_imem_tcu",
-+	     "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSCO_IMEM__CLK_IMEM_TCU, 21,
++PNAME(mout_cam_csi_pll_p) = { "fin_pll", "fout_pll_cam_csi" };
++
++static const struct samsung_mux_clock cam_csi_mux_clks[] __initconst = {
++	MUX(0, "mout_cam_csi_pll", mout_cam_csi_pll_p, PLL_CON0_PLL_CAM_CSI, 4, 1),
++};
++
++static const struct samsung_div_clock cam_csi_div_clks[] __initconst = {
++	DIV(0, "dout_cam_csi0_aclk", "mout_cam_csi_pll", DIV_CAM_CSI0_ACLK, 0, 4),
++	DIV(0, "dout_cam_csi1_aclk", "mout_cam_csi_pll", DIV_CAM_CSI1_ACLK, 0, 4),
++	DIV(0, "dout_cam_csi2_aclk", "mout_cam_csi_pll", DIV_CAM_CSI2_ACLK, 0, 4),
++	DIV(0, "dout_cam_csi_busd", "mout_cam_csi_pll", DIV_CAM_CSI_BUSD, 0, 4),
++	DIV(0, "dout_cam_csi_busp", "mout_cam_csi_pll", DIV_CAM_CSI_BUSP, 0, 4),
++};
++
++static const struct samsung_gate_clock cam_csi_gate_clks[] __initconst = {
++	GATE(0, "cam_csi_cmu_cam_csi_ipclkport_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI_CMU_CAM_CSI_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_axi2apb_cam_csi_ipclkport_aclk", "dout_cam_csi_busp",
++	     GAT_CAM_AXI2APB_CAM_CSI_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi_bus_d_cam_csi_ipclkport_clk__system__clk_csi0", "dout_cam_csi0_aclk",
++	     GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI0, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi_bus_d_cam_csi_ipclkport_clk__system__clk_csi1", "dout_cam_csi1_aclk",
++	     GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI1, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi_bus_d_cam_csi_ipclkport_clk__system__clk_csi2", "dout_cam_csi2_aclk",
++	     GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_CSI2, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi_bus_d_cam_csi_ipclkport_clk__system__clk_soc_noc", "dout_cam_csi_busd",
++	     GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__CLK_SOC_NOC, 21,
 +	     CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_ns_brdg_imem_ipclkport_clk__psoc_imem__clk_imem_p", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_NS_BRDG_IMEM_IPCLKPORT_CLK__PSOC_IMEM__CLK_IMEM_P, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_otp_con_top_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_OTP_CON_TOP_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_rstnsync_aclk_ipclkport_clk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_RSTNSYNC_ACLK_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_rstnsync_oscclk_ipclkport_clk", "fin_pll",
-+	     GAT_IMEM_RSTNSYNC_OSCCLK_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_rstnsync_intmemclk_ipclkport_clk", "mout_imem_clk_imem_intmemclk",
-+	     GAT_IMEM_RSTNSYNC_INTMEMCLK_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_rstnsync_tcuclk_ipclkport_clk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_RSTNSYNC_TCUCLK_IPCLKPORT_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_sfrif_tmu0_imem_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_SFRIF_TMU0_IMEM_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_sfrif_tmu1_imem_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_SFRIF_TMU1_IMEM_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tmu_cpu2_ipclkport_i_clk", "fin_pll",
-+	     GAT_IMEM_TMU_CPU2_IPCLKPORT_I_CLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_sysreg_imem_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_SYSREG_IMEM_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tbu_imem_ipclkport_aclk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_TBU_IMEM_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(0, "imem_tcu_ipclkport_aclk", "mout_imem_clk_imem_tcuclk",
-+	     GAT_IMEM_TCU_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_WDT0_IPCLKPORT_PCLK, "imem_wdt0_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_WDT0_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_WDT1_IPCLKPORT_PCLK, "imem_wdt1_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_WDT1_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(IMEM_WDT2_IPCLKPORT_PCLK, "imem_wdt2_ipclkport_pclk", "mout_imem_clk_imem_aclk",
-+	     GAT_IMEM_WDT2_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi_bus_d_cam_csi_ipclkport_clk__system__noc", "dout_cam_csi_busd",
++	     GAT_CAM_CSI_BUS_D_CAM_CSI_IPCLKPORT_CLK__SYSTEM__NOC, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI0_0_IPCLKPORT_I_ACLK, "cam_csi0_0_ipclkport_i_aclk", "dout_cam_csi0_aclk",
++	     GAT_CAM_CSI0_0_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi0_0_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI0_0_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI0_1_IPCLKPORT_I_ACLK, "cam_csi0_1_ipclkport_i_aclk", "dout_cam_csi0_aclk",
++	     GAT_CAM_CSI0_1_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi0_1_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI0_1_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI0_2_IPCLKPORT_I_ACLK, "cam_csi0_2_ipclkport_i_aclk", "dout_cam_csi0_aclk",
++	     GAT_CAM_CSI0_2_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi0_2_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI0_2_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI0_3_IPCLKPORT_I_ACLK, "cam_csi0_3_ipclkport_i_aclk", "dout_cam_csi0_aclk",
++	     GAT_CAM_CSI0_3_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi0_3_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI0_3_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI1_0_IPCLKPORT_I_ACLK, "cam_csi1_0_ipclkport_i_aclk", "dout_cam_csi1_aclk",
++	     GAT_CAM_CSI1_0_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi1_0_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI1_0_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI1_1_IPCLKPORT_I_ACLK, "cam_csi1_1_ipclkport_i_aclk", "dout_cam_csi1_aclk",
++	     GAT_CAM_CSI1_1_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi1_1_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI1_1_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI1_2_IPCLKPORT_I_ACLK, "cam_csi1_2_ipclkport_i_aclk", "dout_cam_csi1_aclk",
++	     GAT_CAM_CSI1_2_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi1_2_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI1_2_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI1_3_IPCLKPORT_I_ACLK, "cam_csi1_3_ipclkport_i_aclk", "dout_cam_csi1_aclk",
++	     GAT_CAM_CSI1_3_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi1_3_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI1_3_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI2_0_IPCLKPORT_I_ACLK, "cam_csi2_0_ipclkport_i_aclk", "dout_cam_csi2_aclk",
++	     GAT_CAM_CSI2_0_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi2_0_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI2_0_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI2_1_IPCLKPORT_I_ACLK, "cam_csi2_1_ipclkport_i_aclk", "dout_cam_csi2_aclk",
++	     GAT_CAM_CSI2_1_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi2_1_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI2_1_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI2_2_IPCLKPORT_I_ACLK, "cam_csi2_2_ipclkport_i_aclk", "dout_cam_csi2_aclk",
++	     GAT_CAM_CSI2_2_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi2_2_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI2_2_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CAM_CSI2_3_IPCLKPORT_I_ACLK, "cam_csi2_3_ipclkport_i_aclk", "dout_cam_csi2_aclk",
++	     GAT_CAM_CSI2_3_IPCLKPORT_I_ACLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_csi2_3_ipclkport_i_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_CSI2_3_IPCLKPORT_I_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_ns_brdg_cam_csi_ipclkport_clk__psoc_cam_csi__clk_cam_csi_d",
++	     "dout_cam_csi_busd",
++	     GAT_CAM_NS_BRDG_CAM_CSI_IPCLKPORT_CLK__PSOC_CAM_CSI__CLK_CAM_CSI_D, 21,
++	     CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_ns_brdg_cam_csi_ipclkport_clk__psoc_cam_csi__clk_cam_csi_p",
++	     "dout_cam_csi_busp",
++	     GAT_CAM_NS_BRDG_CAM_CSI_IPCLKPORT_CLK__PSOC_CAM_CSI__CLK_CAM_CSI_P, 21,
++	     CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_sysreg_cam_csi_ipclkport_pclk", "dout_cam_csi_busp",
++	     GAT_CAM_SYSREG_CAM_CSI_IPCLKPORT_PCLK, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(0, "cam_tbu_cam_csi_ipclkport_aclk", "dout_cam_csi_busd",
++	     GAT_CAM_TBU_CAM_CSI_IPCLKPORT_ACLK, 21, CLK_IGNORE_UNUSED, 0),
 +};
 +
-+static const struct samsung_cmu_info imem_cmu_info __initconst = {
-+	.mux_clks		= imem_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(imem_mux_clks),
-+	.div_clks		= imem_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(imem_div_clks),
-+	.gate_clks		= imem_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(imem_gate_clks),
-+	.nr_clk_ids		= IMEM_NR_CLK,
-+	.clk_regs		= imem_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(imem_clk_regs),
++static const struct samsung_cmu_info cam_csi_cmu_info __initconst = {
++	.pll_clks		= cam_csi_pll_clks,
++	.nr_pll_clks		= ARRAY_SIZE(cam_csi_pll_clks),
++	.mux_clks		= cam_csi_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(cam_csi_mux_clks),
++	.div_clks		= cam_csi_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(cam_csi_div_clks),
++	.gate_clks		= cam_csi_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(cam_csi_gate_clks),
++	.nr_clk_ids		= CAM_CSI_NR_CLK,
++	.clk_regs		= cam_csi_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(cam_csi_clk_regs),
 +};
-+
-+static void __init fsd_clk_imem_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &imem_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(fsd_clk_imem, "tesla,fsd-clock-imem", fsd_clk_imem_init);
 +
  /**
   * fsd_cmu_probe - Probe function for FSD platform clocks
   * @pdev: Pointer to platform device
+@@ -1574,6 +1778,9 @@ static const struct of_device_id fsd_cmu_of_match[] = {
+ 	}, {
+ 		.compatible = "tesla,fsd-clock-mfc",
+ 		.data = &mfc_cmu_info,
++	}, {
++		.compatible = "tesla,fsd-clock-cam_csi",
++		.data = &cam_csi_cmu_info,
+ 	}, {
+ 	},
+ };
 -- 
 2.25.1
 
