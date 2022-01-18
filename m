@@ -2,508 +2,329 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BFCC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 15:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695EDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 15:27:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346089AbiARPCS (ORCPT
+        id S1345601AbiARP1n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 10:02:18 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:46685 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345972AbiARPBz (ORCPT
+        Tue, 18 Jan 2022 10:27:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235669AbiARP1k (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 10:01:55 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220118150120epoutp02928ca189929136a957d557abe500bb94~LZX332p9_2355123551epoutp02K
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 15:01:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220118150120epoutp02928ca189929136a957d557abe500bb94~LZX332p9_2355123551epoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642518080;
-        bh=cFglFcscCWE+020B++Ruw/fvkQKIuXEhLC01z6Pd9BU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JmgfCPXWZUThx7bLy72JdBoKlrSaCJyw4tD+zCCtwf3xiPuXWxfWN3yM0fjMlOkPI
-         Ud4oY6BdtTCBRsQnUx8cR1Jh9S1pwR3DebeZu5FyNzLzEkKQDs4HRCt7n5S4Q2X8MF
-         9CPXF+Dnu7zsXjVElj+qIgz5wxqfTtECp6Rwq37w=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220118150120epcas5p3fe4f040e63c7f8e55dbe6b3a44528e3d~LZX3TOd_I2302623026epcas5p3B;
-        Tue, 18 Jan 2022 15:01:20 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4JdX610QMyz4x9Q7; Tue, 18 Jan
-        2022 15:01:13 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        36.BE.46822.ED5D6E16; Tue, 18 Jan 2022 23:59:42 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220118150112epcas5p4b63030d9bf136b4a91468b0d02e75cae~LZXwG0cK90382903829epcas5p43;
-        Tue, 18 Jan 2022 15:01:12 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220118150112epsmtrp197a52c43374e93f7d468a9215bf76b3d~LZXwF5rZR2079320793epsmtrp18;
-        Tue, 18 Jan 2022 15:01:12 +0000 (GMT)
-X-AuditID: b6c32a4a-de5ff7000000b6e6-59-61e6d5de2328
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F4.B1.29871.836D6E16; Wed, 19 Jan 2022 00:01:12 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220118150109epsmtip146663a6a065c861bdc7fc74a1bab247a~LZXtoVI940520405204epsmtip1Y;
-        Tue, 18 Jan 2022 15:01:09 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
-        linus.walleij@linaro.org, catalin.marinas@arm.com,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-fsd@tesla.com, Shashank Prashar <s.prashar@samsung.com>,
-        Aswani Reddy <aswani.reddy@samsung.com>
-Subject: [PATCH v2 15/16] arm64: dts: fsd: Add initial pinctrl support
-Date:   Tue, 18 Jan 2022 20:18:50 +0530
-Message-Id: <20220118144851.69537-16-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220118144851.69537-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmpu69q88SDZY2KVo8mLeNzeLvpGPs
-        Foc2b2W3eL+sh9Fi/pFzrBYb3/5gspjyZzmTxabH11gtPvbcY7V4+Crc4vKuOWwWM87vY7I4
-        df0zm8WirV/YLVr3HmG3OPymndVi3o65jBaPr/9hcxDyWDNvDaPH71+TGD1mNfSyeWxa1cnm
-        cefaHjaPzUvqPa6caGL16NuyitHjX9Ncdo/Pm+QCuKKybTJSE1NSixRS85LzUzLz0m2VvIPj
-        neNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAnlJSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX
-        2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGcs2vearaDHpWLfrMmsDYzLzboYOTkk
-        BEwkZl3+ztrFyMUhJLCbUWL/iZvsEM4nRomVN+6xQDjfGCXu7+1l6mLkAGv5uFMYIr6XUeLv
-        xN9sEE4Lk8S264dYQOayCWhL3J2+hQnEFhFwk7jR2MEEUsQscIhZ4uS5w+wgCWGgxM623awg
-        NouAqsSeSzfYQGxeAVuJ/3+uM0McKC+xesMBMJsTKD61YSrYNgmBAxwS648eYIM4yUXi9mc2
-        iHphiVfHt7BD2FISL/vb2CFKsiV6dhlDhGskls47xgJh20scuDKHBaSEWUBTYv0ufZAwswCf
-        RO/vJ1D/8kp0tAlBVKtKNL+7CtUpLTGxu5sVwvaQ+H18NyMkGCYwSqzZ+5ZtAqPsLISpCxgZ
-        VzFKphYU56anFpsWGOWllsPjKTk/dxMjOKlqee1gfPjgg94hRiYOxkOMEhzMSiK8UvXPEoV4
-        UxIrq1KL8uOLSnNSiw8xmgJDbCKzlGhyPjCt55XEG5pYGpiYmZmZWBqbGSqJ855O35AoJJCe
-        WJKanZpakFoE08fEwSnVwMSzlcH51A5u70XCDrp9RsqCkxmrTtnpT9ksxV/YUD95q7pJ0XmJ
-        uErOUNP8n7OS7zLeOZwbWpARYCZferTI0ixOc33YzRxhuy+FEYlPL7kdy9SZMuFuoLCeg1f6
-        l/NsbdP/5pmwp7l+7s1/9ERL/vWJ7s8TDN3lZh1uN4/6Y8QzWydhgsxGXWv2H0GXTl/ZpH+b
-        Z8OVux9cDihJ1TxaufaCopmfyN9C44Nbt2xh0D55IXipxye7HdUOmzj2+bQ+uMfdyjG3b+Ly
-        /xc3MzzmUzh/QG+7ef3ZR68ZOueF77VYU1b080aP2PIE85d8Pzu0dnUIie577jn/1Z51HKIS
-        W9S7vN/NOm32lavmdXyPpBJLcUaioRZzUXEiAA0C/pkzBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSnK7FtWeJBnN3iFo8mLeNzeLvpGPs
-        Foc2b2W3eL+sh9Fi/pFzrBYb3/5gspjyZzmTxabH11gtPvbcY7V4+Crc4vKuOWwWM87vY7I4
-        df0zm8WirV/YLVr3HmG3OPymndVi3o65jBaPr/9hcxDyWDNvDaPH71+TGD1mNfSyeWxa1cnm
-        cefaHjaPzUvqPa6caGL16NuyitHjX9Ncdo/Pm+QCuKK4bFJSczLLUov07RK4Mhbte81W0ONS
-        sW/WZNYGxuVmXYwcHBICJhIfdwp3MXJxCAnsZpRo2fuEuYuREyguLXF94wR2CFtYYuW/5+wQ
-        RU1MEv177rCCJNgEtCXuTt/CBGKLCHhItP27xwxSxCxwhVni5/sPLCAJYQE3iZ1tu8EaWARU
-        JfZcusEGYvMK2Er8/3Mdapu8xOoNB8BsTqD41IapYDVCAjYSF1dOY57AyLeAkWEVo2RqQXFu
-        em6xYYFhXmq5XnFibnFpXrpecn7uJkZwTGhp7mDcvuqD3iFGJg7GQ4wSHMxKIrxS9c8ShXhT
-        EiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCUamAqOlB2a6PWH0bT
-        CrXCx4y79rcaxOw/vOcc7+x3jbvn9i+SYMl4czg7XvBIwd6cezxvb4W1fV0bvKGeceldnluN
-        f54xnBdj/XxrjpX9tGflvounnJColJtUVRF8zyvsWP32yH8Sr95OuX8hV29i5epe5nd3Oy22
-        hKuaZmueNM3bFB/3u1k7Xe7d+0AdvyeZUobq86yc5grK3OGQKPGduE4jvaSTO05qw6apzjmW
-        929b2ksVO3VLcm48a7rwB/v9084PEjWeRhnHO7bP6Z9Tk24SyFKeFOvWX3B7Tswy7QnMjqG/
-        z35tm70qVMDuzw6Zh0yn85Nv3s5kjGR9pLFfcVJVuuOz27cNN9l8bd13fqISS3FGoqEWc1Fx
-        IgCrUUx++AIAAA==
-X-CMS-MailID: 20220118150112epcas5p4b63030d9bf136b4a91468b0d02e75cae
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220118150112epcas5p4b63030d9bf136b4a91468b0d02e75cae
-References: <20220118144851.69537-1-alim.akhtar@samsung.com>
-        <CGME20220118150112epcas5p4b63030d9bf136b4a91468b0d02e75cae@epcas5p4.samsung.com>
+        Tue, 18 Jan 2022 10:27:40 -0500
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CD3C061574
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 07:27:39 -0800 (PST)
+Received: by mail-ua1-x932.google.com with SMTP id p1so37370471uap.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 07:27:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=smPJ+PfHqIcEW/NreVTOjYiJFUQBiA/lKjwPSM2y5t4=;
+        b=ARaZHePHOEVVGfSjhj7Ci5ir5jS/g5U94NyvuxbRqmMJ7DpTaSjL3Z3Yi8GHWKObm1
+         BEfeHVCMnv9nM43xZl9tP0wowMrnSrBokPJ4EnMBXTxGXP9HF7HYugGDOcBVmH2asT5W
+         mQj8DtAnOVzXxYdgU8EUFl7dMxWUDE3jqAWR9mVc/wlTPsCDa0dUysD4WMYAdlKvMmgu
+         XjoihUHe0Xa4u8AY8MmKlJ+TDFDdWJNaNmsXinV4VnCfo1KogCPlg4If3cpZ/dIal/6V
+         M5b5012sWTF5mnCraALKrEoWUSwqLDTGLBErg+uEjIBZy277ouWHWkiFCpODL6xo8+z+
+         PVGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=smPJ+PfHqIcEW/NreVTOjYiJFUQBiA/lKjwPSM2y5t4=;
+        b=wJZDae9vln3XsvnvMtNP/E+FBNLWjKd2+dz1axuY7RhE2v1Ccc1nRMC0Vdg7+6C5FZ
+         LExughONpM/QPerNFcocceg9Ceo57ECZU/88ibPbXH8FdVQIW6X3Sd1vvd4999D3ENnZ
+         5wsdd9uSY1IC7SuDiQNHpDg5zgS7JG9jcocQL6ifWY4BffsEdgwvftt3I2YqD5AR+PMa
+         hT45xU+vi/fYPRyeA3s3eYDKqQsKpjibyCmdB62kS+EZBHV7t6h1dsAMWjJANeg/jG4I
+         QGPWOxms4yERvxN2qc+7Uf4zKxYB8KJ+yFifaLYkkxJ8KBFlnYjrZ6gW5rPM6mroUFnb
+         iSuw==
+X-Gm-Message-State: AOAM532ttgpoS9+K16A5dcWUDIlCXd+e33z3FWqy58IHnwoSEXFOjmbe
+        NcMVLtVniYOZR52t3Kp1sP9h9GmZypuZ/Kvt9IRNuw==
+X-Google-Smtp-Source: ABdhPJzquQf4mctI+Cw1mD1oGkRL4f93CVicKRsQaEKOZihqmwVKAZanUzPNdeLgVsz2Zt9vSDSDM8kp2yRDy0WS4N0=
+X-Received: by 2002:a05:6102:108c:: with SMTP id s12mr9823322vsr.20.1642519658515;
+ Tue, 18 Jan 2022 07:27:38 -0800 (PST)
+MIME-Version: 1.0
+References: <20220118110928.120640-1-linus.walleij@linaro.org> <20220118110928.120640-3-linus.walleij@linaro.org>
+In-Reply-To: <20220118110928.120640-3-linus.walleij@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 18 Jan 2022 17:27:27 +0200
+Message-ID: <CAPLW+4kNbC2BNcC54evJL_9tYoY_S3hcski81KHUPughs3f0ag@mail.gmail.com>
+Subject: Re: [PATCH 3/3 v2] spi: s3c64xx: Convert to use GPIO descriptors
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add initial pin configuration nodes for FSD SoC.
+On Tue, 18 Jan 2022 at 13:11, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> Convert the S3C64xx SPI host to use GPIO descriptors.
+>
+> Provide GPIO descriptor tables for the one user with CS
+> 0 and 1.
+>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1-v2:
+> - Split off code cleaning to separate patches
+> ---
+>  arch/arm/mach-s3c/mach-crag6410-module.c  | 13 ------
+>  arch/arm/mach-s3c/mach-crag6410.c         | 11 +++++
+>  drivers/spi/spi-s3c64xx.c                 | 50 +++++------------------
+>  include/linux/platform_data/spi-s3c64xx.h |  4 +-
+>  4 files changed, 23 insertions(+), 55 deletions(-)
+>
+> diff --git a/arch/arm/mach-s3c/mach-crag6410-module.c b/arch/arm/mach-s3c/mach-crag6410-module.c
+> index 407ad493493e..5d1d4b67a4b7 100644
+> --- a/arch/arm/mach-s3c/mach-crag6410-module.c
+> +++ b/arch/arm/mach-s3c/mach-crag6410-module.c
+> @@ -32,10 +32,6 @@
+>
+>  #include "crag6410.h"
+>
+> -static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
+> -       .line = S3C64XX_GPC(3),
+> -};
+> -
+>  static struct wm0010_pdata wm0010_pdata = {
+>         .gpio_reset = S3C64XX_GPN(6),
+>         .reset_active_high = 1, /* Active high for Glenfarclas Rev 2 */
+> @@ -49,7 +45,6 @@ static struct spi_board_info wm1253_devs[] = {
+>                 .chip_select    = 0,
+>                 .mode           = SPI_MODE_0,
+>                 .irq            = S3C_EINT(4),
+> -               .controller_data = &wm0010_spi_csinfo,
+>                 .platform_data = &wm0010_pdata,
+>         },
+>  };
+> @@ -62,7 +57,6 @@ static struct spi_board_info balblair_devs[] = {
+>                 .chip_select    = 0,
+>                 .mode           = SPI_MODE_0,
+>                 .irq            = S3C_EINT(4),
+> -               .controller_data = &wm0010_spi_csinfo,
+>                 .platform_data = &wm0010_pdata,
+>         },
+>  };
+> @@ -229,10 +223,6 @@ static struct arizona_pdata wm5102_reva_pdata = {
+>         },
+>  };
+>
+> -static struct s3c64xx_spi_csinfo codec_spi_csinfo = {
+> -       .line = S3C64XX_GPN(5),
+> -};
+> -
+>  static struct spi_board_info wm5102_reva_spi_devs[] = {
+>         [0] = {
+>                 .modalias       = "wm5102",
+> @@ -242,7 +232,6 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
+>                 .mode           = SPI_MODE_0,
+>                 .irq            = GLENFARCLAS_PMIC_IRQ_BASE +
+>                                   WM831X_IRQ_GPIO_2,
+> -               .controller_data = &codec_spi_csinfo,
+>                 .platform_data = &wm5102_reva_pdata,
+>         },
+>  };
+> @@ -275,7 +264,6 @@ static struct spi_board_info wm5102_spi_devs[] = {
+>                 .mode           = SPI_MODE_0,
+>                 .irq            = GLENFARCLAS_PMIC_IRQ_BASE +
+>                                   WM831X_IRQ_GPIO_2,
+> -               .controller_data = &codec_spi_csinfo,
+>                 .platform_data = &wm5102_pdata,
+>         },
+>  };
+> @@ -298,7 +286,6 @@ static struct spi_board_info wm5110_spi_devs[] = {
+>                 .mode           = SPI_MODE_0,
+>                 .irq            = GLENFARCLAS_PMIC_IRQ_BASE +
+>                                   WM831X_IRQ_GPIO_2,
+> -               .controller_data = &codec_spi_csinfo,
+>                 .platform_data = &wm5102_reva_pdata,
+>         },
+>  };
+> diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
+> index 41f0aba2d2fd..e3e0fe897bcc 100644
+> --- a/arch/arm/mach-s3c/mach-crag6410.c
+> +++ b/arch/arm/mach-s3c/mach-crag6410.c
+> @@ -825,6 +825,15 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
+>
+>  static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
+>
+> +static struct gpiod_lookup_table crag_spi0_gpiod_table = {
+> +       .dev_id = "s3c6410-spi.0",
+> +       .table = {
+> +               GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
+> +               GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
+> +               { },
+> +       },
+> +};
+> +
+>  static void __init crag6410_machine_init(void)
+>  {
+>         /* Open drain IRQs need pullups */
+> @@ -856,6 +865,8 @@ static void __init crag6410_machine_init(void)
+>         i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
+>
+>         samsung_keypad_set_platdata(&crag6410_keypad_data);
+> +
+> +       gpiod_add_lookup_table(&crag_spi0_gpiod_table);
+>         s3c64xx_spi0_set_platdata(0, 2);
+>
+>         pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 8755cd85e83c..5e03c9144bfe 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -13,10 +13,8 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/spi/spi.h>
+> -#include <linux/gpio.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> -#include <linux/of_gpio.h>
+>
+>  #include <linux/platform_data/spi-s3c64xx.h>
+>
+> @@ -655,6 +653,9 @@ static int s3c64xx_spi_prepare_message(struct spi_master *master,
+>         struct spi_device *spi = msg->spi;
+>         struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+>
+> +       if (!cs)
+> +               return 0;
 
-Cc: linux-fsd@tesla.com
-Signed-off-by: Shashank Prashar <s.prashar@samsung.com>
-Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 335 +++++++++++++++++++++
- arch/arm64/boot/dts/tesla/fsd.dtsi         |  22 ++
- 2 files changed, 357 insertions(+)
- create mode 100644 arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+Shouldn't some error code be returned in that case? Or is it normal case?
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-new file mode 100644
-index 000000000000..371344e446f3
---- /dev/null
-+++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-@@ -0,0 +1,335 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Tesla Full Self-Driving SoC device tree source
-+ *
-+ * Copyright (c) 2017-2021 Samsung Electronics Co., Ltd.
-+ *		https://www.samsung.com
-+ * Copyright (c) 2017-2021 Tesla, Inc.
-+ *		https://www.tesla.com
-+ */
-+
-+#include <dt-bindings/pinctrl/samsung.h>
-+
-+&pinctrl_fsys0 {
-+	gpf0: gpf0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf1: gpf1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf6: gpf6 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf4: gpf4 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf5: gpf5 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+};
-+
-+&pinctrl_peric {
-+	gpc8: gpc8 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf2: gpf2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpf3: gpf3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpd0: gpd0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb0: gpb0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb1: gpb1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb4: gpb4 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb5: gpb5 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb6: gpb6 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpb7: gpb7 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpd1: gpd1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpd2: gpd2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpd3: gpd3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg0: gpg0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg1: gpg1 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg2: gpg2 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg3: gpg3 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg4: gpg4 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg5: gpg5 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg6: gpg6 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	gpg7: gpg7 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
-+
-+	pwm0_out: pwm0-out {
-+		samsung,pins = "gpb6-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;
-+	};
-+
-+	pwm1_out: pwm1-out {
-+		samsung,pins = "gpb6-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;
-+	};
-+
-+	hs_i2c0_bus: hs-i2c0-bus {
-+		samsung,pins = "gpb0-0", "gpb0-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c1_bus: hs-i2c1-bus {
-+		samsung,pins = "gpb0-2", "gpb0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c2_bus: hs-i2c2-bus {
-+		samsung,pins = "gpb0-4", "gpb0-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c3_bus: hs-i2c3-bus {
-+		samsung,pins = "gpb0-6", "gpb0-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c4_bus: hs-i2c4-bus {
-+		samsung,pins = "gpb1-0", "gpb1-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c5_bus: hs-i2c5-bus {
-+		samsung,pins = "gpb1-2", "gpb1-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c6_bus: hs-i2c6-bus {
-+		samsung,pins = "gpb1-4", "gpb1-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	hs_i2c7_bus: hs-i2c7-bus {
-+		samsung,pins = "gpb1-6", "gpb1-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	uart0_data: uart0-data {
-+		samsung,pins = "gpb7-0", "gpb7-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	uart1_data: uart1-data {
-+		samsung,pins = "gpb7-4", "gpb7-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	spi0_bus: spi0-bus {
-+		samsung,pins = "gpb4-0", "gpb4-2", "gpb4-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	spi1_bus: spi1-bus {
-+		samsung,pins = "gpb4-4", "gpb4-6", "gpb4-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	spi2_bus: spi2-bus {
-+		samsung,pins = "gpb5-0", "gpb5-2", "gpb5-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+};
-+
-+&pinctrl_pmu {
-+	gpq0: gpq0 {
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index 9a2b88f58c13..bab63c9f79dc 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -26,6 +26,9 @@ aliases {
- 		i2c5 = &hsi2c_5;
- 		i2c6 = &hsi2c_6;
- 		i2c7 = &hsi2c_7;
-+		pinctrl0 = &pinctrl_fsys0;
-+		pinctrl1 = &pinctrl_peric;
-+		pinctrl2 = &pinctrl_pmu;
- 	};
- 
- 	cpus {
-@@ -647,5 +650,24 @@ hsi2c_7: hsi2c@14270000 {
- 			clock-names = "hsi2c";
- 			status = "disabled";
- 		};
-+
-+		pinctrl_pmu: pinctrl@114f0000 {
-+			compatible = "tesla,fsd-pinctrl";
-+			reg = <0x0 0x114f0000 0x0 0x1000>;
-+		};
-+
-+		pinctrl_peric: pinctrl@141f0000 {
-+			compatible = "tesla,fsd-pinctrl";
-+			reg = <0x0 0x141f0000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pinctrl_fsys0: pinctrl@15020000 {
-+			compatible = "tesla,fsd-pinctrl";
-+			reg = <0x0 0x15020000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- };
-+
-+#include "fsd-pinctrl.dtsi"
--- 
-2.25.1
+> +
+>         /* Configure feedback delay */
+>         writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
+>
+> @@ -830,34 +831,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>         if (spi->dev.of_node) {
+>                 cs = s3c64xx_get_slave_ctrldata(spi);
+>                 spi->controller_data = cs;
+> -       } else if (cs) {
+> -               /* On non-DT platforms the SPI core will set spi->cs_gpio
+> -                * to -ENOENT. The GPIO pin used to drive the chip select
+> -                * is defined by using platform data so spi->cs_gpio value
+> -                * has to be override to have the proper GPIO pin number.
+> -                */
+> -               spi->cs_gpio = cs->line;
+>         }
+>
+> -       if (IS_ERR_OR_NULL(cs)) {
+> +       /* NULL is fine, we just avoid using the FB delay (=0) */
+> +       if (IS_ERR(cs)) {
+>                 dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
+>                 return -ENODEV;
+>         }
+>
+> -       if (!spi_get_ctldata(spi)) {
+> -               if (gpio_is_valid(spi->cs_gpio)) {
+> -                       err = gpio_request_one(spi->cs_gpio, GPIOF_OUT_INIT_HIGH,
+> -                                              dev_name(&spi->dev));
+> -                       if (err) {
+> -                               dev_err(&spi->dev,
+> -                                       "Failed to get /CS gpio [%d]: %d\n",
+> -                                       spi->cs_gpio, err);
+> -                               goto err_gpio_req;
+> -                       }
+> -               }
+> -
+> +       if (!spi_get_ctldata(spi))
+>                 spi_set_ctldata(spi, cs);
+> -       }
+>
+>         pm_runtime_get_sync(&sdd->pdev->dev);
+>
+> @@ -909,11 +892,9 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>         /* setup() returns with device de-selected */
+>         s3c64xx_spi_set_cs(spi, false);
+>
+> -       if (gpio_is_valid(spi->cs_gpio))
+> -               gpio_free(spi->cs_gpio);
+>         spi_set_ctldata(spi, NULL);
+>
+> -err_gpio_req:
+> +       /* This was dynamically allocated on the DT path */
+>         if (spi->dev.of_node)
+>                 kfree(cs);
+>
+> @@ -924,19 +905,9 @@ static void s3c64xx_spi_cleanup(struct spi_device *spi)
+>  {
+>         struct s3c64xx_spi_csinfo *cs = spi_get_ctldata(spi);
+>
+> -       if (gpio_is_valid(spi->cs_gpio)) {
+> -               gpio_free(spi->cs_gpio);
+> -               if (spi->dev.of_node)
+> -                       kfree(cs);
+> -               else {
+> -                       /* On non-DT platforms, the SPI core sets
+> -                        * spi->cs_gpio to -ENOENT and .setup()
+> -                        * overrides it with the GPIO pin value
+> -                        * passed using platform data.
+> -                        */
+> -                       spi->cs_gpio = -ENOENT;
+> -               }
+> -       }
+> +       /* This was dynamically allocated on the DT path */
+> +       if (spi->dev.of_node)
+> +               kfree(cs);
+>
+>         spi_set_ctldata(spi, NULL);
+>  }
+> @@ -1131,6 +1102,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>         master->prepare_message = s3c64xx_spi_prepare_message;
+>         master->transfer_one = s3c64xx_spi_transfer_one;
+>         master->num_chipselect = sci->num_cs;
+> +       master->use_gpio_descriptors = true;
+>         master->dma_alignment = 8;
+>         master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+>                                         SPI_BPW_MASK(8);
+> diff --git a/include/linux/platform_data/spi-s3c64xx.h b/include/linux/platform_data/spi-s3c64xx.h
+> index 10890a4b55b9..391f4dc68742 100644
+> --- a/include/linux/platform_data/spi-s3c64xx.h
+> +++ b/include/linux/platform_data/spi-s3c64xx.h
+> @@ -16,15 +16,13 @@ struct platform_device;
+>   * struct s3c64xx_spi_csinfo - ChipSelect description
+>   * @fb_delay: Slave specific feedback delay.
+>   *            Refer to FB_CLK_SEL register definition in SPI chapter.
+> - * @line: Custom 'identity' of the CS line.
+>   *
+> - * This is per SPI-Slave Chipselect information.
+> + * This is per SPI-Slave FB delay information.
 
+Not sure if this change is needed: this comments will be incorrect if
+some new fields are added in future. For example, downstream trees
+like [1] have more fields there, not only feedback delay one.
+
+[1] https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviole-5.10-android12-d1/include/linux/platform_data/spi-s3c64xx.h#53
+
+>   * Allocate and initialize one in machine init code and make the
+>   * spi_board_info.controller_data point to it.
+>   */
+>  struct s3c64xx_spi_csinfo {
+>         u8 fb_delay;
+> -       unsigned line;
+>  };
+>
+>  /**
+> --
+> 2.34.1
+>
+
+Other than minor comments above:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Btw, this SPI driver is used in Exynos850 SoC, which I'm working on
+right now. It's the shame I didn't enable it yet on my board, so I
+can't test the code. But I'm happy to see it's being modernized, kudos
+for doing that!
