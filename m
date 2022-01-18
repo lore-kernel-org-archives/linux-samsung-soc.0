@@ -2,108 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DEBC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 18:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D576DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Jan 2022 18:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245011AbiARSsv (ORCPT
+        id S1348288AbiARS6J (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 13:48:51 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:37300
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244455AbiARSsu (ORCPT
+        Tue, 18 Jan 2022 13:58:09 -0500
+Received: from h03mx16.reliablemail.org ([173.236.90.20]:61466 "EHLO
+        h03mx16.reliablemail.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245203AbiARS6J (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 13:48:50 -0500
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 950823FFDE
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 18:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642531729;
-        bh=osZDE2qGikhWPKRozLWA0fiHv6mtb/zkWnvdgeIXyQ0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=tn708PlEAXS3uC9b/0dBREp55C1djsNVY6cjpTGDfyRhqZ1qBj7erMBxq7AeCmQ6i
-         xRdG2f/lw7eZydQ0p4PL9B38awbt1cUUppkysn/IAsMQvScmMKyks9/8AKHpSCARoX
-         Lnw43+1ZPsoJgErVVt4N6ivDlCBHRRfcC/fW5Rj1XcVYcngiX8VRsYPMAswBqUPGBm
-         MQdT4HbJa+CZnOlkpSux6TGaQ3QwxOvUHryJe3Bzsvif1jhjRgNhoWjJEQ+4FtGt03
-         nN0aEsMH5JdhjDUmRSJzLBwaV6b45QAcXY3G8cgPtbSIKf9R58+1Buf68xkRhm0Qmw
-         DmKxbhKq1g4Ig==
-Received: by mail-ed1-f70.google.com with SMTP id er7-20020a056402448700b00402bbb8ce8bso6390026edb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jan 2022 10:48:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=osZDE2qGikhWPKRozLWA0fiHv6mtb/zkWnvdgeIXyQ0=;
-        b=v/XHSowB46FAw9FxSrNol4timu5d0y/tinwguwz1jUincfVlGptT6vapnQrMRA7YkD
-         3bPcy4NprKBL08afBrV9lSRvDzUMsO2nLidnYSnoJKEsIH+VRA1W2P4Nr9Ji2+5Me2mt
-         5FujqeP5X5JxHbhU7dT7BiP54wCjpUlwAor5IZwEfiP6p4v/ilyW8me6YjFNSbWexXIx
-         eNv15rHeFAMxBkDqt6PlMDRJ2SG5ceodnzxRKQiiw4w8tR/2LQ8xaUDSrKiDgp1jruh9
-         rVYnGIj3MMxmU7r1vJ7DUAu5EcDLuvFTLuMECktlmvjR78JPPh0fZqUIDLdemebcRlwa
-         BYlw==
-X-Gm-Message-State: AOAM531W4wibEd1ieghV43MfEpWGttY1V5nLTUh8a5IF9ckKY4pAdsYi
-        ekY5eJHe3iooUkdiPoKmIgRidNImbM/ka8SGoxNHEIxzRRSa04LW2DYAdf0GoTa4Q4oTayJNFFo
-        1jH/aoPvWS3+psv7wbefNRuRh/ESJ91eXWPTjcvibh4XDl/IE
-X-Received: by 2002:a17:907:a41e:: with SMTP id sg30mr20960062ejc.249.1642531729180;
-        Tue, 18 Jan 2022 10:48:49 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxpN3EF5AfOUem/IDvegEXyXvqnsF247GmVHd467UwQ9IoE4dMFmiP2V+P6uDursbIxrwr+/w==
-X-Received: by 2002:a17:907:a41e:: with SMTP id sg30mr20960052ejc.249.1642531729018;
-        Tue, 18 Jan 2022 10:48:49 -0800 (PST)
-Received: from [192.168.0.42] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id ga7sm5590389ejc.50.2022.01.18.10.48.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jan 2022 10:48:48 -0800 (PST)
-Message-ID: <a1ca1ad2-5e24-0cd4-cbf2-bdf867cccbd7@canonical.com>
-Date:   Tue, 18 Jan 2022 19:48:47 +0100
+        Tue, 18 Jan 2022 13:58:09 -0500
+X-Halon-Out: 91c69fdc-7890-11ec-a67c-00163c72d6d3
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grimler.se;
+        s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=+Hxm+2JzccdefCJ/DBlvNAX4EJt3v+TxBW2isfP1H2w=; b=JVX+qQdtaUYDCp2DyxvWN7lAbI
+        yY9GlEbvCkRkBEx3rAGp2imLdyDG5twPnqJL7enNY2uzFj03srsDh0qy079EWnkUayd8RWOBLU6S5
+        QDZsk3FKWm6kdUq1p8TzL0sxsYG5C/Ar59nTfPnVuE9poWZnzyxvRiP/zZg3tCxfeY3NJtBoDcIMP
+        0iK0vd6BwVWCzQKzSEA4pm9471lmq39qUzgL4QauPNF7xFy6Zkho0yc6vjZWG/J7BkPtM/3BjcrMW
+        SbT+lZC6pKNNbUNVTLeu8HiWv2GCmgtMoC3eqeF9709B5MPI/DksJUNB7RxttiwoFvVN0GhZ+pBQ2
+        wLUyF0KQ==;
+From:   Henrik Grimler <henrik@grimler.se>
+To:     semen.protsenko@linaro.org, virag.david003@gmail.com,
+        martin.juecker@gmail.com, cw00.choi@samsung.com,
+        m.szyprowski@samsung.com, alim.akhtar@samsung.com,
+        krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH v3 0/3] Add initial support for exynos5420-chagall-wifi
+Date:   Tue, 18 Jan 2022 19:57:43 +0100
+Message-Id: <20220118185746.299832-1-henrik@grimler.se>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v2 12/16] pinctrl: samsung: add FSD SoC specific data
-Content-Language: en-US
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
-        linus.walleij@linaro.org, catalin.marinas@arm.com,
-        robh+dt@kernel.org, s.nawrocki@samsung.com,
-        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        linux-fsd@tesla.com, Ajay Kumar <ajaykumar.rs@samsung.com>
-References: <20220118144851.69537-1-alim.akhtar@samsung.com>
- <CGME20220118150100epcas5p3b7cf28e13fd177336dc9b06875d94f43@epcas5p3.samsung.com>
- <20220118144851.69537-13-alim.akhtar@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220118144851.69537-13-alim.akhtar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpsrv07.misshosting.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - grimler.se
+X-Get-Message-Sender-Via: cpsrv07.misshosting.com: authenticated_id: henrik@grimler.se
+X-Authenticated-Sender: cpsrv07.misshosting.com: henrik@grimler.se
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 18/01/2022 15:48, Alim Akhtar wrote:
-> Adds Tesla FSD SoC specific data to enable pinctrl.
-> FSD SoC has similar pinctrl controller as found in the most
-> samsung/exynos SoCs.
+Samsung's tablet Galaxy Tab S 10.5" (wifi) has codename Chagall WiFi
+and is one of several tablets released in 2014 based on Exynos 5420.
+This initial devicetree adds support for accessing device over USB or
+UART, and allows using a rootfs in either the internal eMMC or an
+external sdcard.  4 out of 8 CPUs are brought up when device boots,
+which is the same as on the somewhat similar board
+exynos5420-arndale-octa.
 
-s/samsung/Samsung/
-s/exynos/Exynos/
+Patch 2 is necessary after a secure-firmware node is added, otherwise
+device hangs during the CPU1BOOT secure monitor call. Without the
+secure-firmware node we are not able to bring up any secondary CPUs.
 
-> 
-> Cc: linux-fsd@tesla.com
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 71 +++++++++++++++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c     |  2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |  1 +
->  3 files changed, 74 insertions(+)
-> 
+Changes since v3:
+=================
 
-Looks good to me. I'll take it via Samsung pinctrl tree after the merge
-window.
+* Rename device specific regulators LDOx -> VDD_LDOx for consistency
+* Make LDO32 vary with device and add on/off-in-suspend to a couple
+  of more regulators, to match vendor kernel
+* Fix mmc2 card-detect, with cd-gpios defined and pin config
+  pin-pud=pin_pull_none sdcard insertion is detected and seen in dmesg
+* Rename sd2-cd-pins -> mmc2-cd-pins
 
-Best regards,
-Krzysztof
+Changes since v2
+================
+
+Addressing Krzysztof's feedback:
+* chagallwifi -> chagall-wifi and Chagall WiFi in messages and comments
+* Re-write commit message for patch 3, use commit hash and ("subject"),
+  move hint about bootloader issue to galaxy-tab-common.dtsi
+* Fix s2mps11 regulator nodes, use &ldoXX_reg handle for device customisation
+* Re-add usbdrd supplies (works after fixing regulator nodes)
+* Remove unnecessary, duplicate, compatible in galaxy-tab-common.dtsi
+* Remove extra clocks xxti and xusbxti
+* Prefix key- to gpio-keys
+* Add pinctrl pins to mmc_2. card-detect pin is different than for other
+  Exynos 5420 devices, so define and use mmc2_cd node under pinctrl_0
+
+Additional changes:
+* Add/fix supplies of mmc_0 and mmc_2 (vmmc-supply for mmc0 is unknown)
+* Sort mmc_X properties alphabetically
+* Fix IRQ pin for s2mps11, it was wrong (gpx3-2 -> gpx3-0)
+* Mark LDO31 as varying between devices as well, it differs between WiFi
+  and LTE tablet versions
+* Fix typo for LDO5 (regulato-name -> regulator-name)
+* Remove regulator-ramp-delay from buck regulators, based on
+  exynos5420-arndale-octa there should be no need to set it
+
+Changes since v1
+================
+
+Fix mmc_0 and usbdrd in patch 3:
+* Remove extra, non supported, options from mmc_0 node
+* Do not set usbdrd supplies. Usb networking does not work with them
+  specified, but it works fine with dummy regulators
+
+
+Henrik Grimler (3):
+  dt-bindings: arm: samsung: document Chagall WiFi board binding
+  ARM: exynos: only do SMC_CMD_CPU1BOOT call on Exynos4
+  ARM: dts: Add support for Samsung Chagall WiFi
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/exynos5420-chagall-wifi.dts |  75 ++
+ .../dts/exynos5420-galaxy-tab-common.dtsi     | 692 ++++++++++++++++++
+ arch/arm/mach-exynos/firmware.c               |   4 +-
+ 5 files changed, 772 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/exynos5420-chagall-wifi.dts
+ create mode 100644 arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
+
+-- 
+2.34.1
+
