@@ -2,117 +2,149 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC04C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jan 2022 19:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C94C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jan 2022 19:49:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357055AbiASTnl (ORCPT
+        id S1357191AbiASTtw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 14:43:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33086 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240726AbiASTnl (ORCPT
+        Wed, 19 Jan 2022 14:49:52 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:58020
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1357188AbiASTts (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Jan 2022 14:43:41 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE1EC061574
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 11:43:41 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id v11-20020a17090a520b00b001b512482f36so763635pjh.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 11:43:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2JxLZ3v4Bv8bpwHY46hEuPtIdRIXaUCCMTr9cL9Lo5Y=;
-        b=nr/v7Bo98eaUcUQlYthkka1KhZlp1Ut7bIDqOHADDCwAs/NYO/PVuJCoawnGAiknTO
-         5Jv2cD0EOg4fYZmS2HjiPFvpq+uyAPHyBvIXV/mhsHb7FRwH/siAKDtGVjYEl8f86oGQ
-         HvKQo2qtWrxEmlPjwgrrn3iDMbmTUqwKifIHUPxcYsMl/BTDZTY2Ev0t5n5NM5G9aPp6
-         gRVFwE5XuUxm/vTIw1yQpHfaYimX+8kYiarmziRxG3O6dnniK+gdLhfQtMdHUkDP+HGx
-         AL6YkvxFK4wf3lNdSgMBH6GnCt2MsAjCJA+Bsi/zeO5tBtKPJi+AFjcEiVjBL+a1GSh3
-         seEw==
+        Wed, 19 Jan 2022 14:49:48 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2EB763FFDD
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 19:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642621786;
+        bh=dmsErNaRfriLUQ7jgb1pj+z+Bm18TKaEXTieKxP3MNs=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=HlQzRz8+CRcEr+pFW51QBxf7CEhkxPNRB4cvj0Nzis4Hb5GpEkcer9G/pk2L6mpKa
+         AWbCrEh1CaMDW6B536RLMEx7Fbu/3WghxLJe0oFuk8jJZX34G1MBJlL+3GHB7KNmYq
+         M8D1uyJ4WV4ukzf2bmGiT+6io9xUZGTV2oXCp78tZx/qMA58GEHNkytCy5pU4mvHM3
+         EZLIejLIx612NsBdJxOERD5xsvEZB+fIWDQecQL8oow6wFVFUawfZpJ1tjF3ofnolK
+         hV8tUzZ57lSK0CnUMWnjiXjrMaU9dc5IrD941UW95n/ov5dNjYPhkp8V5x9UVPYNg7
+         TXn223KBzN+eA==
+Received: by mail-ed1-f72.google.com with SMTP id bs4-20020a056402304400b004032af6b7ebso3674447edb.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 11:49:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2JxLZ3v4Bv8bpwHY46hEuPtIdRIXaUCCMTr9cL9Lo5Y=;
-        b=rE+KZhWKDKt7xx3q1aUCFvFkGqj5TmXwvA7mU2EIPPjjSbJaFansHejx3AgtRH8t7K
-         ex07IWAUFxkU8YRx5V2HON6srZKTegT1/JJgazFMLE0gwTkbNWayO7YF90yGczANTiy/
-         l+kSkPbVqw14OopzwRawPK3OP9zo5cyUZjDxUN6qBXPjMSNy/BJ080T4jZp/J0zBaaD2
-         db1Def3DW/y4/Iqx90yyylt0r9n07lWm+Guw8rbIevaJm/Wlw6HvySxu7ZFb0OnaK8Dk
-         IsFOf8t00yB94VWjT4yyjG+tEo+9WGFCqhJEu1qiIo55lil94zU/vcqPTCq+5jdjN0AW
-         NciQ==
-X-Gm-Message-State: AOAM53191khtd+w+O11+eSpDiX01VjNL5cOhV8TxkSCjcoIjjy/Xxy7K
-        OVs4JGezPFEvXzPUrtZeCXFoTA2+4K1LaKH2lByCgg==
-X-Google-Smtp-Source: ABdhPJzXe7dJBFGrUenkqyUD6H0dibuwp58ksM51ItRoH4Zy7bxRPIQnoXriKBjPW4d8ewisdP6mPWQrBBWm0Ma26FY=
-X-Received: by 2002:a17:902:b947:b0:14a:a6aa:4fa6 with SMTP id
- h7-20020a170902b94700b0014aa6aa4fa6mr21067587pls.149.1642621420467; Wed, 19
- Jan 2022 11:43:40 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=dmsErNaRfriLUQ7jgb1pj+z+Bm18TKaEXTieKxP3MNs=;
+        b=P7LqHVs58g/bT5amGErF3lLsr8sliMrJ1Sgk+W1pnHkPyMHVusmgGsgpUgBdvpK9b5
+         udS7g+xuStbu2VgMGeiKm0YqfUYN2lpmsrSDq1qvKXZrul7tJwfWK7dqgHsX25qTZ0Td
+         HQUdJhbn8GzxorcxK74KkHUtSu7qE05bFz4fLB0McJmYXpTZeqfB3ZXPKxmMOKQmarH/
+         TRAlGmFzQpGz5GvW4PjY3CbzJdSvYEalNb3dPxiyzCSCRCkdil60Qk3gwB2vKBS0tLBK
+         Snofk8gGCpREUesSniR113nnU1jh83R5e1ihrNLKKU2sumTF2dA6xUbAZQ7k3YHN/+m0
+         XNUw==
+X-Gm-Message-State: AOAM5318+BzPtM7DsP3gwtNZN/7deNyWGwDEANsFf6jcKBymoX/g84lP
+        IlL1I5ZZ+5rxLGhezURv4EXFx2Keqc6G790hvkWWJA1mjaL+TyozNQ0qtfRx0im6Ip2jWRfqFdS
+        vJlAQBaVH2z7U3rIgVgtx1AZgPt6nVykkccZTGosNrg6Sv4hx
+X-Received: by 2002:aa7:db8f:: with SMTP id u15mr31741146edt.36.1642621785853;
+        Wed, 19 Jan 2022 11:49:45 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwm7E7JLHnP0IxJR0A8wZMRPT/L4qGOUdI9+u8XzF5UfnOBvGC8X9Rx6LzD1fgoC4pxVXU6Jg==
+X-Received: by 2002:aa7:db8f:: with SMTP id u15mr31741131edt.36.1642621785658;
+        Wed, 19 Jan 2022 11:49:45 -0800 (PST)
+Received: from [192.168.0.45] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id s7sm211711ejo.53.2022.01.19.11.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jan 2022 11:49:45 -0800 (PST)
+Message-ID: <5f912896-0635-fbe7-4fda-f4cb569190d9@canonical.com>
+Date:   Wed, 19 Jan 2022 20:49:44 +0100
 MIME-Version: 1.0
-References: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
- <CAPLW+4n-1H5Yu3wQaus-UJ_VW_TjHrNUHaPCGCMURXg8EqxjyA@mail.gmail.com>
- <CAK8P3a1ou-ZdrXN0MHQoJ+gGbvhXT-e2qt96_f9M8VwrdX0pAg@mail.gmail.com>
- <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com> <CA+Eumj5sosSkCCANOVqN8fVUDFaSNtB7+f95o+FAp7w6rM4A=A@mail.gmail.com>
-In-Reply-To: <CA+Eumj5sosSkCCANOVqN8fVUDFaSNtB7+f95o+FAp7w6rM4A=A@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 19 Jan 2022 11:43:29 -0800
-Message-ID: <CAOesGMiDqBPeNp8u_V0P6z0q+sHWhzwr+FbXrzXCRjnKu59TdQ@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 2/4] spi: dt-bindings: samsung: convert to dtschema
+Content-Language: en-US
+To:     Pratyush Yadav <p.yadav@ti.com>
+Cc:     Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sam Protsenko <semen.protsenko@linaro.org>
+References: <20220112100046.68068-1-krzysztof.kozlowski@canonical.com>
+ <20220112100046.68068-3-krzysztof.kozlowski@canonical.com>
+ <20220119192758.z3lvlkaeyeiqi73a@ti.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220119192758.z3lvlkaeyeiqi73a@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 19, 2022 at 9:01 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On Wed, 19 Jan 2022 at 17:53, Olof Johansson <olof@lixom.net> wrote:
-> >
-> > On Wed, Jan 19, 2022 at 8:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Wed, Jan 19, 2022 at 4:11 PM Sam Protsenko
-> > > <semen.protsenko@linaro.org> wrote:
-> > > > On Mon, 27 Dec 2021 at 13:30, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
-> > > >
-> > > > Hi Olof, Arnd,
-> > > >
-> > > > Just want to check if it's possible for those patches to be applied in
-> > > > v5.17? Sorry for the noise, but that's important to me.
-> > >
-> > > I can see that Olof merged merged this into the "arm/late" branch in
-> > > the soc tree,
-> > > so I assume he still plans to send it in the next few days.
-> >
-> > Yep, will be sent up today most likely.
-> >
-> > > With the timing over Christmas, I sent out the large bulk of the
-> > > contents (anything
-> > > I merged before Dec 23) last year, and Linus already merged it, the rest ended
-> > > up in the "late" branch.
-> > >
-> > > As usual, there is no guarantee that late changes make it in, but I have seen
-> > > no indication of any problems so far.
-> >
-> > Correct. Been sitting on it for a while in case there were fixes
-> > coming in for the first pieces that got merged, but in traditional
-> > fashion I'm guessing those will start to show up a few days after the
-> > late branch gets merged. :)
->
-> Actually I have such, but to prepare a pull with them, I would need to
-> base it on some random Linus' commit, not on v5.17-rc1. Therefore I
-> wait for v5.17-rc1. Would you prefer different approach?
+On 19/01/2022 20:31, Pratyush Yadav wrote:
+> On 12/01/22 11:00AM, Krzysztof Kozlowski wrote:
+>> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
+>> controller bindings to DT schema format
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> ---
+>>  .../spi/samsung,spi-peripheral-props.yaml     |  35 ++++
+>>  .../devicetree/bindings/spi/samsung,spi.yaml  | 187 ++++++++++++++++++
+>>  .../bindings/spi/spi-peripheral-props.yaml    |   1 +
+>>  .../devicetree/bindings/spi/spi-samsung.txt   | 122 ------------
+>>  MAINTAINERS                                   |   2 +-
+>>  5 files changed, 224 insertions(+), 123 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
+>>  delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+>> new file mode 100644
+>> index 000000000000..aa5a1f48494b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+>> @@ -0,0 +1,35 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/spi/samsung,spi-peripheral-props.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Peripheral-specific properties for Samsung S3C/S5P/Exynos SoC SPI controller
+>> +
+>> +maintainers:
+>> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> +
+>> +description:
+>> +  See spi-peripheral-props.yaml for more info.
+>> +
+>> +properties:
+>> +  controller-data:
+>> +    type: object
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      samsung,spi-feedback-delay:
+>> +        description: |
+>> +          The sampling phase shift to be applied on the miso line (to account
+>> +          for any lag in the miso line). Valid values:
+>> +           - 0: No phase shift.
+>> +           - 1: 90 degree phase shift sampling.
+>> +           - 2: 180 degree phase shift sampling.
+>> +           - 3: 270 degree phase shift sampling.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        enum: [0, 1, 2, 3]
+>> +
+>> +    required:
+>> +      - samsung,spi-feedback-delay
+> 
+> I am not quite sure if this required would work here. Let's say another 
+> controller also uses a controller-data node, but it contains a different 
+> set of properties. Won't this cause an error to be raised for that 
+> controller since this property is not there?
 
-If needed you can base it on Linus' last merge commit of arm-soc
-contents for the first set of fixes (or your topic branch that you
-sent the code up on), but it's also OK to wait if they're minor
-bugs/fixes.
+The controller-data is Samsung SPI specific (does not exist in any other
+binding), so why would controller-data get added to a different controller?
 
-
--Olof
+Best regards,
+Krzysztof
