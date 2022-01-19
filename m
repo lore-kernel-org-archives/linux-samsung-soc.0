@@ -2,122 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867C8C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jan 2022 20:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D8FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jan 2022 20:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357331AbiASUKZ (ORCPT
+        id S239761AbiASULk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 15:10:25 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:46358
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1357288AbiASUKV (ORCPT
+        Wed, 19 Jan 2022 15:11:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39456 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240108AbiASULg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Jan 2022 15:10:21 -0500
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 14A0D40052
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 20:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642623020;
-        bh=YwgxoMtmx5KJnuRvatZdCUmCdGzGOSTGdP5YKiFMjK8=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=O8tOWnIemRV7rnry0jL12PqDtVFswNrDW0NYG8kk/YGaPZy9zj1aYXxh65kfeeyc3
-         76LuvDosLqrU07lGnZsHE2ag4G3xsTUPJwldVXDBZWWQd2zr9IJYRmeb+DZhaHxCru
-         QENYo/J5yf8gjPsdOEMqwpRghqYYkSCiC69yqK8azbAfWKroLfZU80qaNL+zArZvNU
-         QZ3ozhD0gFNdn3PNiDe4fERIbXhHCELWp56uqXF6HLeFnUN2kowEizt8/j8+6wChxa
-         OOdWEFJKqIsDw4fZuEtgF1g+9KNU2qajFN5Tw2gSYwABiYXa4+j2Lrz7eLWs3cYSvk
-         YFwB9hrLEvCCg==
-Received: by mail-ed1-f72.google.com with SMTP id en7-20020a056402528700b00404aba0a6ffso2583842edb.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 12:10:20 -0800 (PST)
+        Wed, 19 Jan 2022 15:11:36 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01986C061401
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 12:11:36 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id s9so5965455oib.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 12:11:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=Ux0XE7RoJ9M9u9eFrS5FvbzwFObKaVh7eojK5revoSE=;
+        b=OppY9DT86SovagpCZvYO8aRmIb/yj57hBcyw+SsmOCeJ20AxLkGpxulk6NNYQ6W4Ll
+         YFleAZQ5HmGZoRqFDQosyuscrvxZvwTvD7RSIMRQwCnvoUV/XV/vX8pT8bxiMffSvWAd
+         pzizFhbXVg2xXF20pLLi1Q3zt7o9IVRJ+GkQA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YwgxoMtmx5KJnuRvatZdCUmCdGzGOSTGdP5YKiFMjK8=;
-        b=z3tqdgR+I3ichjky5HVT7+Fzm1iJIrteHLAA1WhvTJgazWFJf8aJsur25ql3nj+ETy
-         lm03Xrxkyal/OCrV2+PlMNAAIkdaUPeJCOJQHf8+Wi6BmZUi4sZgBOGxsziFOHXasmF3
-         jNNndfizmomP2PmGtN29nnsq9yVEfRvY49yFyYwmLQpgxLSurpF7x60HMWU2apVw1dn/
-         6EJSqhu/4DJ2BeF/LcaaYdIFPaG2mPbUi0nANrj7XsXIcpm0KHlfNF53NjGedKcwhi/U
-         UVcybvkChGcCf00WN++BaY+Yg9xwhXr7caLvCLnjZSfz+auv0LT0n+3CEpbaxRBjH/kT
-         mvQw==
-X-Gm-Message-State: AOAM532AhYOnFXkWMH7ehYCcHoRmRlNjE3ZI0pwW5PDNE/TxDauYjfht
-        fITpkf/PZWMZ1hEZM8CjFJjVpnzkG3WbwVIKWOH1FXSZXdlpq97JGh0tcDXP8WXcNBm791KP0CS
-        lvZWwj/vYez+iw+EmhNkYud3pSvd7uE9YP7gA6n3p19b2TuQU
-X-Received: by 2002:aa7:de97:: with SMTP id j23mr32294141edv.91.1642623019766;
-        Wed, 19 Jan 2022 12:10:19 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyzOqDSpL6eHRmaEIopRqHKYyS27y17ZeCOBY9lq/0sAt9XXAM673SNZJ69DyQ4BP6FLp/q6g==
-X-Received: by 2002:aa7:de97:: with SMTP id j23mr32294130edv.91.1642623019610;
-        Wed, 19 Jan 2022 12:10:19 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id a26sm215005ejr.213.2022.01.19.12.10.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 12:10:19 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Balletbo i Serra <enric.balletbo@collabora.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Pratyush Yadav <p.yadav@ti.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 5/5] spi: s3c64xx: allow controller-data to be optional
-Date:   Wed, 19 Jan 2022 21:10:05 +0100
-Message-Id: <20220119201005.13145-6-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220119201005.13145-1-krzysztof.kozlowski@canonical.com>
-References: <20220119201005.13145-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=Ux0XE7RoJ9M9u9eFrS5FvbzwFObKaVh7eojK5revoSE=;
+        b=FfShxqUDqFyS0SqtJi4cRc7bmgwp9hDGD5iv9jsrulqupmvHNlgjNyoLcY/Xc/egn1
+         d1eTOzJJM+mmehPCoqossy1+5mVMOjseHsahBjrR0qsf2JqCt4u8NtdCC2AUh8/HpO+K
+         zunpcClstFnmhHpFyQQjlVgZH/rCZJDGNGDoB35NoVYKj6cw5JWyrOxT3DB8ukA6wgql
+         vGomYGxgYqRY+8qB4mAKvwfFETT/PQo/8jzEVZuRVcxrX3a2rEszKxQ6RBfWYvrIa7bn
+         j0NLF5l8B5O97M74M/c1NLztowG7pBrWznYjAl8NaJ7I8Al3GeHT5pISKZ+Zs3KCWDs8
+         AAcQ==
+X-Gm-Message-State: AOAM531qGl3xnGs6cv3+Gzi2R1hGXTLxoUxrOfZeLb39vY0mxOUqc4Pu
+        ZvCZI5BqXOPYb+FBiKfWpfs3k6qnGdhS27muz3UFpA==
+X-Google-Smtp-Source: ABdhPJzEno0W0DnWhBvwsJjSg5D+E9lMOeYOjDKQVHxpxyCqvXx7BVqTDPR+FBASM48cOMdflS4bgsfc9irgl3siz98=
+X-Received: by 2002:aca:a953:: with SMTP id s80mr4673449oie.164.1642623095415;
+ Wed, 19 Jan 2022 12:11:35 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 19 Jan 2022 12:11:35 -0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220118144851.69537-3-alim.akhtar@samsung.com>
+References: <20220118144851.69537-1-alim.akhtar@samsung.com>
+ <CGME20220118150018epcas5p32642af7af63869d08a861d00d97e3b68@epcas5p3.samsung.com>
+ <20220118144851.69537-3-alim.akhtar@samsung.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Wed, 19 Jan 2022 12:11:34 -0800
+Message-ID: <CAE-0n51KLEbCsvR7ByzNXxKg7gK4y6UNvg5vfAJ4C87QUweC9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 02/16] dt-bindings: clock: Add bindings definitions for
+ FSD CMU blocks
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, linux-fsd@tesla.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Samsung SoC SPI driver requires to provide controller-data node
-for each of SPI peripheral device nodes.  Make this controller-data node
-optional, so DTS could be simpler.
+Quoting Alim Akhtar (2022-01-18 06:48:37)
+> Clock controller driver of FSD platform is designed to have separate
+> instances for each particular CMU. So clock IDs in this bindings header
+> also start from 1 for each CMU block.
+>
+> Cc: linux-fsd@tesla.com
+> Reported-by: kernel test robot <lkp@intel.com>
+> [robot: reported missing #endif]
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
 
-Suggested-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/spi/spi-s3c64xx.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 8755cd85e83c..769d958a2f86 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -796,16 +796,14 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	data_np = of_get_child_by_name(slave_np, "controller-data");
--	if (!data_np) {
--		dev_err(&spi->dev, "child node 'controller-data' not found\n");
--		return ERR_PTR(-EINVAL);
--	}
--
- 	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
--	if (!cs) {
--		of_node_put(data_np);
-+	if (!cs)
- 		return ERR_PTR(-ENOMEM);
-+
-+	data_np = of_get_child_by_name(slave_np, "controller-data");
-+	if (!data_np) {
-+		dev_info(&spi->dev, "child node 'controller-data' not found, using defaults\n");
-+		return cs;
- 	}
- 
- 	of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
--- 
-2.32.0
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
