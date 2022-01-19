@@ -2,59 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D44CC4167D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jan 2022 20:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 234EEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Jan 2022 20:10:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357277AbiASUKT (ORCPT
+        id S1357281AbiASUKV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 15:10:19 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:46244
+        Wed, 19 Jan 2022 15:10:21 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:46320
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1357257AbiASUKP (ORCPT
+        by vger.kernel.org with ESMTP id S1357276AbiASUKT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Jan 2022 15:10:15 -0500
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Wed, 19 Jan 2022 15:10:19 -0500
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 990C040050
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 20:10:14 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9DC8340045
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 20:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642623014;
-        bh=QjRllAYQYdOXGm303csM0n/kH3zayd8k8FhnaI7vQn0=;
+        s=20210705; t=1642623018;
+        bh=GRu1K5Z3B26B9M12OsHXKA/4Epty9FsW9mnGuNMchEQ=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=kHo8lpKjm7LCaQcCWqqmFL6qgi98t7m7pyG4gJWlKKYhTFxOWSsZDkwozoKE3+5Ak
-         Yjup2eAki2wlY9HSd6D/0Wf4gwaJBqWYNojG3WO7CBjbG9mYgqBMLFqgZQSoenoqsE
-         RSwprYK2MLlTzNbS0oEjvh0CiySvyK4gimf5SXvqY/lVwOaP9Pd5HQlF1SNQlxsl83
-         MLQ6G+m11xnM+vNAo75NrjCws0kO0Qe/oi7aQN7uVOm3e7dXYGdoeBxMC1HYH4yiWx
-         UlHcSw97eZLDpdi8VM4iZzZo9KpXRw/adusO1+u39fvnfmv0EOMsL2kF5EJaOWyvyf
-         C1n+dZb3tMU2w==
-Received: by mail-ed1-f70.google.com with SMTP id c11-20020a056402120b00b0040321cea9d4so3700886edw.23
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 12:10:14 -0800 (PST)
+        b=Ef73SsVzIsFg/zign28CXPuAF35dEXeYWtTH0hMuISwXS3XDW5GqZeM5QT5EsSL21
+         0ZPcSsmvkOS70EA8g/Y+BrAc2yIoYEeF4qXVzck3jxOivBLIj6UvuFv3U4xFpoZ4YP
+         TlRPH7hEz9nt29xkELqtvZqhftsGNi/AXByVDbyEv8q5P5KWCvdODiXhSx0EXeFR9J
+         UN0bLVapgs9P43BTwtNyHX3RR8Fn+xsJFJHQWQ37eL/7uqAS6JQzyhbtMEaO/7ad9l
+         8T1KG+weuPcvaH/cvUJCYKjj+TSBn6ZnKH07ssvQeCZ2BCPt8WTko/aGrDh2qWITha
+         5snK7MkgsFfuQ==
+Received: by mail-ed1-f69.google.com with SMTP id n16-20020aa7c690000000b00404cfbb888dso359077edq.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 12:10:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QjRllAYQYdOXGm303csM0n/kH3zayd8k8FhnaI7vQn0=;
-        b=TMIskBjdP2gdj+HP42IJ73Rw88pFfemYvLHgRzlIbwttyzuX4z1bCGUwoYtYiO3v0W
-         K1Rqg1peW/UazFubz2yDroj1ra7Y3f3DfCzgEZqNzT2gZQC7iy+Db2pdmmeG9OnsEmao
-         clg3jf6a3f8+LXjXz+muN/PwY5VETylhS7GKIbJwtnJZxlQ+DdDfxHy2OEnMLQP0EVYc
-         I8cT8KFWs3wTWnkoTFIpwSmOx/EWLc+Liby1AlL3ynhakclhutYDl3ZpPZyItgZJI9KM
-         2m1eJ+KCOXM7oQP8pRDhdaXOuJnjnK/+vUYoKZ1MBTNup+QWQbhnHQUUTvhFP+swZgDv
-         DhOQ==
-X-Gm-Message-State: AOAM530uNi/is+vqXDgAw7jnak/OM1X/8CrDVfgHIapYDsY/Qvuwe17A
-        DV4QuDZ/F5PR9ymqwBjj3Qb0BoOO0ENobYfYQb+lO8j8PUiaZoDu1sBZa4gRtHCe44JLL+H+kHl
-        W0mE/g09TW5JRolFABFaNOonCupoVi6+8weoG6DR3rhZ91YYx
-X-Received: by 2002:a17:907:7ea6:: with SMTP id qb38mr26154612ejc.557.1642623013555;
-        Wed, 19 Jan 2022 12:10:13 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyzJ5AD6sNzhhSvIxESEdGRpQTQiur9R3wawShtp7N+vDKaou3lbxl8avcAto0wenroeJINSA==
-X-Received: by 2002:a17:907:7ea6:: with SMTP id qb38mr26154590ejc.557.1642623013206;
-        Wed, 19 Jan 2022 12:10:13 -0800 (PST)
+        bh=GRu1K5Z3B26B9M12OsHXKA/4Epty9FsW9mnGuNMchEQ=;
+        b=WHxmYsqlzwIDvDZjMvFSv4sTKLdpZuUABxsxMEkjBzVfzK25BRWkJShtq04q5fU+n5
+         SdAh0lpVxIFtQ6Xw6vzYJ/5CRjThvLsu2NKcB5WefV1GtU5HbrMYfrZTu0lEfkOBwMC2
+         SjOOmXuhd1RteFw6J+bcYsfg+u0e8TPORx9S/s2U5hAHBi40mDCheUZmVWfr6Ch3Nfcq
+         QMwUbqOJHmV420qpyG36XmNnVKk8/VpoeJJKh7fWtJ2eBYGp7QygNoPgyVzXpXCPdDX8
+         OFtqqefD246Ho0JEX2zLMHWiSwl8nRtyTXjP31WRPOzAylymOOJTQYWwffcrW5xLIre+
+         RGtQ==
+X-Gm-Message-State: AOAM533+4eskdQHZCIn4t3Tay7kUB1KemooqQ7DTRCqu+JHunW7pCZ/H
+        UR+YJogj0U2c9JEv/TRROfBBrVxM/lY8Xf6CTiKW5G8q/n3YblgO6uCgunu8jNb/vag+eyU0F+q
+        UMcu9LfmDYwa5CVwt5TdxAfT0999/urzgEX8YgIUdK2UkgJpl
+X-Received: by 2002:a17:906:4fc4:: with SMTP id i4mr24859413ejw.81.1642623018342;
+        Wed, 19 Jan 2022 12:10:18 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxat/3cH7VlKTaOJ6D43ir//wPM5jj+urjF4BtAx24WJHWak7JOycKsnfW1x835sJOSJKku+Q==
+X-Received: by 2002:a17:906:4fc4:: with SMTP id i4mr24859404ejw.81.1642623018122;
+        Wed, 19 Jan 2022 12:10:18 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id a26sm215005ejr.213.2022.01.19.12.10.11
+        by smtp.gmail.com with ESMTPSA id a26sm215005ejr.213.2022.01.19.12.10.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 12:10:12 -0800 (PST)
+        Wed, 19 Jan 2022 12:10:15 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Benson Leung <bleung@chromium.org>,
@@ -67,9 +67,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v4 2/5] spi: dt-bindings: samsung: convert to dtschema
-Date:   Wed, 19 Jan 2022 21:10:02 +0100
-Message-Id: <20220119201005.13145-3-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v4 4/5] mfd: dt-bindings: google,cros-ec: reference Samsung SPI bindings
+Date:   Wed, 19 Jan 2022 21:10:04 +0100
+Message-Id: <20220119201005.13145-5-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220119201005.13145-1-krzysztof.kozlowski@canonical.com>
 References: <20220119201005.13145-1-krzysztof.kozlowski@canonical.com>
@@ -79,422 +79,62 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
-controller bindings to DT schema format
+The ChromeOS Embedded Controller appears on boards with Samsung Exynos
+SoC, where Exynos SPI bindings expect controller-data node.  Reference
+newly added dtschema for this property.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- .../bindings/soc/samsung/exynos-usi.yaml      |   2 +-
- .../spi/samsung,spi-peripheral-props.yaml     |  35 ++++
- .../devicetree/bindings/spi/samsung,spi.yaml  | 187 ++++++++++++++++++
- .../bindings/spi/spi-peripheral-props.yaml    |   1 +
- .../devicetree/bindings/spi/spi-samsung.txt   | 122 ------------
- MAINTAINERS                                   |   2 +-
- 6 files changed, 225 insertions(+), 124 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
- create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
+ .../bindings/mfd/google,cros-ec.yaml          | 29 ++++++++++---------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index 273f2d95a043..e72b6a3fae99 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -22,7 +22,7 @@ description: |
+diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+index d793dd0316b7..e9c46430fd8a 100644
+--- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
++++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+@@ -32,7 +32,7 @@ properties:
  
-   [1] Documentation/devicetree/bindings/serial/samsung_uart.yaml
-   [2] Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
--  [3] Documentation/devicetree/bindings/spi/spi-samsung.txt
-+  [3] Documentation/devicetree/bindings/spi/samsung,spi.yaml
+   controller-data:
+     description:
+-      SPI controller data, see bindings/spi/spi-samsung.txt
++      SPI controller data, see bindings/spi/samsung,spi-peripheral-props.yaml
+     type: object
  
- properties:
-   $nodename:
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
-new file mode 100644
-index 000000000000..aa5a1f48494b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/samsung,spi-peripheral-props.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Peripheral-specific properties for Samsung S3C/S5P/Exynos SoC SPI controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+description:
-+  See spi-peripheral-props.yaml for more info.
-+
-+properties:
-+  controller-data:
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      samsung,spi-feedback-delay:
-+        description: |
-+          The sampling phase shift to be applied on the miso line (to account
-+          for any lag in the miso line). Valid values:
-+           - 0: No phase shift.
-+           - 1: 90 degree phase shift sampling.
-+           - 2: 180 degree phase shift sampling.
-+           - 3: 270 degree phase shift sampling.
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        enum: [0, 1, 2, 3]
-+
-+    required:
-+      - samsung,spi-feedback-delay
-+
-+additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-new file mode 100644
-index 000000000000..61c77088e8ee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-@@ -0,0 +1,187 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/samsung,spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S3C/S5P/Exynos SoC SPI controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+description:
-+  All the SPI controller nodes should be represented in the aliases node using
-+  the following format 'spi{n}' where n is a unique number for the alias.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - samsung,s3c2443-spi # for S3C2443, S3C2416 and S3C2450
-+          - samsung,s3c6410-spi
-+          - samsung,s5pv210-spi # for S5PV210 and S5PC110
-+          - samsung,exynos5433-spi
-+      - const: samsung,exynos7-spi
-+        deprecated: true
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 3
-+
-+  clock-names:
-+    minItems: 2
-+    maxItems: 3
-+
-+  cs-gpios: true
-+
-+  dmas:
-+    minItems: 2
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  no-cs-readback:
-+    description:
-+      The CS line is disconnected, therefore the device should not operate
-+      based on CS signalling.
-+    type: boolean
-+
-+  num-cs:
-+    minimum: 1
-+    maximum: 4
-+    default: 1
-+
-+  samsung,spi-src-clk:
-+    description:
-+      If the spi controller includes a internal clock mux to select the clock
-+      source for the spi bus clock, this property can be used to indicate the
-+      clock to be used for driving the spi bus clock. If not specified, the
-+      clock number 0 is used as default.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 0
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - dmas
-+  - dma-names
-+  - interrupts
-+  - reg
-+
+   google,cros-ec-spi-pre-delay:
+@@ -149,18 +149,21 @@ patternProperties:
+ required:
+   - compatible
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        enum:
+-          - google,cros-ec-i2c
+-          - google,cros-ec-rpmsg
+-then:
+-  properties:
+-    google,cros-ec-spi-pre-delay: false
+-    google,cros-ec-spi-msg-delay: false
+-    spi-max-frequency: false
 +allOf:
-+  - $ref: spi-controller.yaml#
 +  - if:
 +      properties:
 +        compatible:
 +          contains:
-+            const: samsung,exynos5433-spi
++            enum:
++              - google,cros-ec-i2c
++              - google,cros-ec-rpmsg
 +    then:
 +      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: spi
-+            - enum:
-+                - spi_busclk0
-+                - spi_busclk1
-+                - spi_busclk2
-+                - spi_busclk3
-+            - const: spi_ioclk
-+    else:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: spi
-+            - enum:
-+                - spi_busclk0
-+                - spi_busclk1
-+                - spi_busclk2
-+                - spi_busclk3
++        google,cros-ec-spi-pre-delay: false
++        google,cros-ec-spi-msg-delay: false
++        spi-max-frequency: false
 +
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5433.h>
-+    #include <dt-bindings/clock/samsung,s2mps11.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    spi@14d30000 {
-+        compatible = "samsung,exynos5433-spi";
-+        reg = <0x14d30000 0x100>;
-+        interrupts = <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>;
-+        dmas = <&pdma0 11>, <&pdma0 10>;
-+        dma-names = "tx", "rx";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clocks = <&cmu_peric CLK_PCLK_SPI1>,
-+                 <&cmu_peric CLK_SCLK_SPI1>,
-+                 <&cmu_peric CLK_SCLK_IOCLK_SPI1>;
-+        clock-names = "spi",
-+                      "spi_busclk0",
-+                      "spi_ioclk";
-+        samsung,spi-src-clk = <0>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&spi1_bus>;
-+        num-cs = <1>;
-+
-+        cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
-+
-+        audio-codec@0 {
-+            compatible = "wlf,wm5110";
-+            reg = <0x0>;
-+            spi-max-frequency = <20000000>;
-+            interrupt-parent = <&gpa0>;
-+            interrupts = <4 IRQ_TYPE_NONE>;
-+            clocks = <&pmu_system_controller 0>,
-+                     <&s2mps13_osc S2MPS11_CLK_BT>;
-+            clock-names = "mclk1", "mclk2";
-+
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+
-+            wlf,micd-detect-debounce = <300>;
-+            wlf,micd-bias-start-time = <0x1>;
-+            wlf,micd-rate = <0x7>;
-+            wlf,micd-dbtime = <0x2>;
-+            wlf,micd-force-micbias;
-+            wlf,micd-configs = <0x0 1 0>;
-+            wlf,hpdet-channel = <1>;
-+            wlf,gpsw = <0x1>;
-+            wlf,inmode = <2 0 2 0>;
-+
-+            wlf,reset = <&gpc0 7 GPIO_ACTIVE_HIGH>;
-+            wlf,ldoena = <&gpf0 0 GPIO_ACTIVE_HIGH>;
-+
-+            /* core supplies */
-+            AVDD-supply = <&ldo18_reg>;
-+            DBVDD1-supply = <&ldo18_reg>;
-+            CPVDD-supply = <&ldo18_reg>;
-+            DBVDD2-supply = <&ldo18_reg>;
-+            DBVDD3-supply = <&ldo18_reg>;
-+            SPKVDDL-supply = <&ldo18_reg>;
-+            SPKVDDR-supply = <&ldo18_reg>;
-+
-+            controller-data {
-+                samsung,spi-feedback-delay = <0>;
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-index 5dd209206e88..df885eeb144f 100644
---- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-@@ -85,5 +85,6 @@ properties:
- # The controller specific properties go here.
- allOf:
-   - $ref: cdns,qspi-nor-peripheral-props.yaml#
-+  - $ref: samsung,spi-peripheral-props.yaml#
++  - $ref: /schemas/spi/samsung,spi-peripheral-props.yaml
  
- additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-deleted file mode 100644
-index 49028a4f5df1..000000000000
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ /dev/null
-@@ -1,122 +0,0 @@
--* Samsung SPI Controller
--
--The Samsung SPI controller is used to interface with various devices such as flash
--and display controllers using the SPI communication interface.
--
--Required SoC Specific Properties:
--
--- compatible: should be one of the following.
--    - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
--    - samsung,s3c6410-spi: for s3c6410 platforms
--    - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
--    - samsung,exynos5433-spi: for exynos5433 compatible controllers
--    - samsung,exynos7-spi: for exynos7 platforms <DEPRECATED>
--
--- reg: physical base address of the controller and length of memory mapped
--  region.
--
--- interrupts: The interrupt number to the cpu. The interrupt specifier format
--  depends on the interrupt controller.
--
--- dmas : Two or more DMA channel specifiers following the convention outlined
--  in bindings/dma/dma.txt
--
--- dma-names: Names for the dma channels. There must be at least one channel
--  named "tx" for transmit and named "rx" for receive.
--
--- clocks: specifies the clock IDs provided to the SPI controller; they are
--  required for interacting with the controller itself, for synchronizing the bus
--  and as I/O clock (the latter is required by exynos5433 and exynos7).
--
--- clock-names: string names of the clocks in the 'clocks' property; for all the
--  the devices the names must be "spi", "spi_busclkN" (where N is determined by
--  "samsung,spi-src-clk"), while Exynos5433 should specify a third clock
--  "spi_ioclk" for the I/O clock.
--
--Required Board Specific Properties:
--
--- #address-cells: should be 1.
--- #size-cells: should be 0.
--
--Optional Board Specific Properties:
--
--- samsung,spi-src-clk: If the spi controller includes a internal clock mux to
--  select the clock source for the spi bus clock, this property can be used to
--  indicate the clock to be used for driving the spi bus clock. If not specified,
--  the clock number 0 is used as default.
--
--- num-cs: Specifies the number of chip select lines supported. If
--  not specified, the default number of chip select lines is set to 1.
--
--- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
--
--- no-cs-readback: the CS line is disconnected, therefore the device should not
--  operate based on CS signalling.
--
--SPI Controller specific data in SPI slave nodes:
--
--- The spi slave nodes should provide the following information which is required
--  by the spi controller.
--
--  - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
--    miso line (to account for any lag in the miso line). The following are the
--    valid values.
--
--      - 0: No phase shift.
--      - 1: 90 degree phase shift sampling.
--      - 2: 180 degree phase shift sampling.
--      - 3: 270 degree phase shift sampling.
--
--Aliases:
--
--- All the SPI controller nodes should be represented in the aliases node using
--  the following format 'spi{n}' where n is a unique number for the alias.
--
--
--Example:
--
--- SoC Specific Portion:
--
--	spi_0: spi@12d20000 {
--		compatible = "samsung,exynos4210-spi";
--		reg = <0x12d20000 0x100>;
--		interrupts = <0 66 0>;
--		dmas = <&pdma0 5
--			&pdma0 4>;
--		dma-names = "tx", "rx";
--		#address-cells = <1>;
--		#size-cells = <0>;
--	};
--
--- Board Specific Portion:
--
--	spi_0: spi@12d20000 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&spi0_bus>;
--		cs-gpios = <&gpa2 5 0>;
--
--		w25q80bw@0 {
--			#address-cells = <1>;
--			#size-cells = <1>;
--			compatible = "w25x80";
--			reg = <0>;
--			spi-max-frequency = <10000>;
--
--			controller-data {
--				samsung,spi-feedback-delay = <0>;
--			};
--
--			partition@0 {
--				label = "U-Boot";
--				reg = <0x0 0x40000>;
--				read-only;
--			};
--
--			partition@40000 {
--				label = "Kernel";
--				reg = <0x40000 0xc0000>;
--			};
--		};
--	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5ea5655a29c3..1f951bc877f0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17054,7 +17054,7 @@ M:	Andi Shyti <andi@etezian.org>
- L:	linux-spi@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/spi/spi-samsung.txt
-+F:	Documentation/devicetree/bindings/spi/samsung,spi*.yaml
- F:	drivers/spi/spi-s3c*
- F:	include/linux/platform_data/spi-s3c64xx.h
- F:	include/linux/spi/s3c24xx-fiq.h
+ additionalProperties: false
+ 
 -- 
 2.32.0
 
