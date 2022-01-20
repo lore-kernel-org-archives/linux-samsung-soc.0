@@ -2,200 +2,159 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94626C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jan 2022 19:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666A0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jan 2022 20:20:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377458AbiATTge (ORCPT
+        id S1377598AbiATUUC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Jan 2022 14:36:34 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:23794 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377469AbiATTga (ORCPT
+        Thu, 20 Jan 2022 15:20:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229626AbiATUUC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Jan 2022 14:36:30 -0500
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220120193628epoutp025ee7ba979090652ddb6ddc66936a96f7~MEaqnMQpC0921709217epoutp020
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jan 2022 19:36:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220120193628epoutp025ee7ba979090652ddb6ddc66936a96f7~MEaqnMQpC0921709217epoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642707388;
-        bh=sAPYODDmKobS/13ARdP8DagXGjJLIEbBlus+ku63euc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onrN18kZy7JxGyElUrtg3rRVGFttnAp8Gyqo4sXR5uWGn9lZ3ZulUIDiumAwwwU9D
-         exEE1EoZ6HIftjJyhZE8dkMYPLrP4JBeB5329yXEkOW+1Tj8y930iguuVauEf28odO
-         m7rPSc+QrkcYlgLhLv/vHeBqbvbJeboWMvXUNZ1Y=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220120193628epcas5p3653549314ae792c4a72d61b5e687d4de~MEaqFJut70595105951epcas5p3F;
-        Thu, 20 Jan 2022 19:36:28 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Jft6Z4C31z4x9Pp; Thu, 20 Jan
-        2022 19:36:22 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3A.26.46822.DF8B9E16; Fri, 21 Jan 2022 04:33:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220120193622epcas5p3a65c8424c6a01aed9a87f5ac2a89eb06~MEakfKDpv1482614826epcas5p3M;
-        Thu, 20 Jan 2022 19:36:22 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220120193622epsmtrp13bb5c602dbd6b8bdbabb96ef9ec4a559~MEakeIEN82029720297epsmtrp1T;
-        Thu, 20 Jan 2022 19:36:22 +0000 (GMT)
-X-AuditID: b6c32a4a-dfbff7000000b6e6-cd-61e9b8fddcb0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D0.93.29871.5B9B9E16; Fri, 21 Jan 2022 04:36:22 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220120193619epsmtip2fa2f3bcf81e595e2d56979e6a574cef0~MEaiTpHlp2383823838epsmtip2K;
-        Thu, 20 Jan 2022 19:36:19 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        broonie@kernel.org, andi@etezian.org, linux-spi@vger.kernel.org,
-        Aswani Reddy <aswani.reddy@samsung.com>, linux-fsd@tesla.com,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 3/3] arm64: dts: fsd: Add SPI device nodes
-Date:   Fri, 21 Jan 2022 00:54:38 +0530
-Message-Id: <20220120192438.25555-4-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220120192438.25555-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTQ/fvjpeJBv1nBSwezNvGZrH4x3Mm
-        i0Obt7JbTH34hM1i/pFzrBYb3/5gspjyZzmTxabH11gtHr4Kt7i8aw6bxYzz+5gsGj/eZLdY
-        tPULu0Xr3iPsDnwesxp62TyuL/nE7LFpVSebx51re9g8Ni+p9+jbsorR41/TXHaPz5vkAjii
-        sm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgM5WUihL
-        zCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRn
-        zFnRzF5wSKRi4e5DjA2MkwS6GDk5JARMJJ6+e8MCYgsJ7GaUeNDq0cXIBWR/YpT4uewFI4Tz
-        jVHi9cctTDAdUzf+Z4NI7GWUeLl1PguE08IkceTKfbBZbALaEnenQ3SICLhJ3GjsYAIpYha4
-        wyTx7vojdpCEsICtxLc7/WANLAKqEi9/TQNr4BWwkZi/YhrUOnmJ1RsOMIPYnED13x//ALtJ
-        QmAih8SlCVNZIIpcJH5fuscMYQtLvDq+hR3ClpJ42d8GZHMA2dkSPbuMIcI1EkvnHYNqtZc4
-        cGUOC0gJs4CmxPpd+iBhZgE+id7fT5ggOnklOtqEIKpVJZrfXYXqlJaY2N3NCmF7SPy6MokZ
-        Eg4TGCWOLNzGPoFRdhbC1AWMjKsYJVMLinPTU4tNC4zyUsvhEZWcn7uJEZwatbx2MD588EHv
-        ECMTB+MhRgkOZiURXqn6Z4lCvCmJlVWpRfnxRaU5qcWHGE2BQTaRWUo0OR+YnPNK4g1NLA1M
-        zMzMTCyNzQyVxHlPp29IFBJITyxJzU5NLUgtgulj4uCUamDq2Pk6wtP6yNcTdomioUuFGGbF
-        zZS5bbm02Cija32qp92S2S8u779sxLiXy6dy5oEXdwJWBG/btHaV5RHHyKcKD1j6Dx1VDDm4
-        JbVl+zNV/pWmmYc83E6I9naddlj3+s30s2Uf+6aGatuZ+5lXTGrrSjHJ15C4z1ZpN/FG+5Q7
-        nuJKQlzn+k/7XGmyOmFusvpxcd2r+XGaKo/m/D/aVVvh8L2FZeOh49Fv+RZw3ioK2SJyY61A
-        K5/E047y7oPF9vJey8umMPI/m7ddV6FrUdiqff7W8+4WHPrBaJN/Stvh5lHtUxsPS3z4qOzo
-        KytdH5l5RShu1y/hxl/TGfYeExDdbNB+kytkmh//jIXKt/SUWIozEg21mIuKEwFQy+KVFgQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSvO62nS8TDS6vZrR4MG8bm8XiH8+Z
-        LA5t3spuMfXhEzaL+UfOsVpsfPuDyWLKn+VMFpseX2O1ePgq3OLyrjlsFjPO72OyaPx4k91i
-        0dYv7Bate4+wO/B5zGroZfO4vuQTs8emVZ1sHneu7WHz2Lyk3qNvyypGj39Nc9k9Pm+SC+CI
-        4rJJSc3JLEst0rdL4MqYs6KZveCQSMXC3YcYGxgnCXQxcnJICJhITN34n62LkYtDSGA3o8TE
-        A1vZIBLSEtc3TmCHsIUlVv57zg5R1MQkseTLHkaQBJuAtsTd6VuYQGwRAQ+Jtn/3mEGKmAVe
-        MEkc3NgMViQsYCvx7U4/C4jNIqAq8fLXNLAGXgEbifkrIGwJAXmJ1RsOMIPYnED13x//AOsV
-        Aqp5eH878wRGvgWMDKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3MYIDW0tzB+P2VR/0
-        DjEycTAeYpTgYFYS4ZWqf5YoxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdC18l4IYH0xJLU7NTU
-        gtQimCwTB6dUA1Ps3LjVy4/taM6xcj4m8+xW0OzSexrHVlw8OtG14d0nd4W7pgJXXrfJW3ts
-        mXt19a+qgND3Zu+LP24/rn22JSeWP+/zZU6N88Yzbxx8fFmbxW97q8eaKyt/MWaLbd29ei0z
-        74d9ah1Ve+MVp7wXqLnxqJfN4vT+R6bumZd2HHn8Y1bpAZ4yMQbJnaslFy/csdP2t1Hyg3UM
-        QeUbTmlcYuwtex7C/FvYsMEsc39VpvHOc8/vHMxszPIwe2w96R3vvOzgY4s+5RlIlnmIdXAs
-        Onp6WZ622VlR/T859Wdf7K6doRPkl9LBaXgz82rP7zuSey5lbfqRetQ94+KDgNszGqfnLK1y
-        s6q0Lbk643ma1DRpJZbijERDLeai4kQAFe203dsCAAA=
-X-CMS-MailID: 20220120193622epcas5p3a65c8424c6a01aed9a87f5ac2a89eb06
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220120193622epcas5p3a65c8424c6a01aed9a87f5ac2a89eb06
-References: <20220120192438.25555-1-alim.akhtar@samsung.com>
-        <CGME20220120193622epcas5p3a65c8424c6a01aed9a87f5ac2a89eb06@epcas5p3.samsung.com>
+        Thu, 20 Jan 2022 15:20:02 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB989C061574
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jan 2022 12:20:01 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id x22so25926473lfd.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jan 2022 12:20:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SV2+kbDgVtw0lV31uGNVO0MZ2UY0VfBryzePxW9RfDo=;
+        b=hjq4AM/+aWwjiHOTI1IslNvdQgEv7Wbun6S6h7xb8cEm5+1TLN/d0WYqA/mc6RvKNN
+         gQoe6LKKSpfjOZLCLTLw4Trrwoy5pXt9ZXEhM1B1luwTPNTaZHvZvecumQPBw/nPJ8Vb
+         ENXUAiSZ2tztrL1y2h31ulq2bhNPSHGHa5MWThKCSMSusMuK0rbzEQpVlpSLdzHb6Bpk
+         FmouJtfAYUYKVnFOUw5o0tObrSmDtyx8Zst5xGxBpe6NhnhpFeLs+PX4HmQJsf0jHfK7
+         yOZ9Wp7UrHJmxsXvIXLkY3xAI4Thzz/XA+rA0ufps2f8KuC/1LSFCNNgdMYPwAWozk0B
+         8qMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SV2+kbDgVtw0lV31uGNVO0MZ2UY0VfBryzePxW9RfDo=;
+        b=sZmjlW/43OXSeITGkNasAfVRCU3PVew942/D/GUTQyXni7T0+EOaSbiz/AEyixtkIk
+         hS4dqmgqk5YoqCuzUjxkd0rffG5K4kOIJlFp67n1oBwbFKVPX14y2aydcWsOhRcnfh5W
+         Xk0i7DCouUPHTZAEmVRSVsfSW7KsA5N3oJ+q+pf8ULKGm4F4m69o6chE5vlzndmlGYkM
+         jHgaJiA5UtkdajEa68ujDdBLB1BfpPXVAwEbx/wmBddau5bdvpFm0GzJqo9CzxrstzVo
+         S5hrBV8aISBrx0dK2CjxYZHte7HO9etKwrY/ClfANu9314PFxY/NXZXBJn6KN/vpVOo+
+         LX3Q==
+X-Gm-Message-State: AOAM532g4AmKa+iQQ8p58YWfUO+IJjthK4Gs1a0nlkcYEewEXMG1EHl9
+        IV6gv2oNt8B47gpp5g1IUOV+sw==
+X-Google-Smtp-Source: ABdhPJxE6MkmquotwQB0ocKSKdWoDh5ulhRTbJKLE+X/Kg/iQUIIWJNEWpJYx5Uhrcqz6/tpYGTFTw==
+X-Received: by 2002:a05:651c:511:: with SMTP id o17mr559195ljp.435.1642709999939;
+        Thu, 20 Jan 2022 12:19:59 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id q17sm21155lfb.271.2022.01.20.12.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jan 2022 12:19:59 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Hyesoo Yu <hyesoo.yu@samsung.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Jinkyu Yang <jinkyu1.yang@samsung.com>,
+        Alex <acnwigwe@google.com>, Carlos Llamas <cmllamas@google.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Erick Reyes <erickreyes@google.com>,
+        "J . Avila" <elavila@google.com>, Jonglin Lee <jonglin@google.com>,
+        Mark Salyzyn <salyzyn@google.com>,
+        Thierry Strudel <tstrudel@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC 0/3] iommu/samsung: Introduce Exynos sysmmu-v8 driver
+Date:   Thu, 20 Jan 2022 22:19:55 +0200
+Message-Id: <20220120201958.2649-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Aswani Reddy <aswani.reddy@samsung.com>
+This is a draft of a new IOMMU driver used in modern Exynos SoCs (like
+Exynos850) and Google's GS101 SoC (used in Pixel 6 phone). Most of its
+code were taken from GS101 downstream kernel [1], with some extra
+patches on top (fixes from Exynos850 downstream kernel and some porting
+changes to adapt it to the mainline kernel). All development history can
+be found at [2].
 
-Adds device tree node for SPI IPs
+Similarities with existing exynos-iommu.c is minimal. I did some
+analysis using similarity-tester tool:
 
-Cc: linux-fsd@tesla.com
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/boot/dts/tesla/fsd.dtsi | 57 ++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+8<-------------------------------------------------------------------->8
+    $ sim_c -peu -S exynos-iommu.c "|" samsung-*
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index bab63c9f79dc..86cf1446d1fc 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -29,6 +29,9 @@ aliases {
- 		pinctrl0 = &pinctrl_fsys0;
- 		pinctrl1 = &pinctrl_peric;
- 		pinctrl2 = &pinctrl_pmu;
-+		spi0 = &spi_0;
-+		spi1 = &spi_1;
-+		spi2 = &spi_2;
- 	};
- 
- 	cpus {
-@@ -667,6 +670,60 @@ pinctrl_fsys0: pinctrl@15020000 {
- 			reg = <0x0 0x15020000 0x0 0x1000>;
- 			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
- 		};
-+
-+		spi_0: spi@14140000 {
-+			compatible = "tesla,fsd-spi";
-+			reg = <0x0 0x14140000 0x0 0x100>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			dmas = <&pdma1 4>, <&pdma1 5>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&clock_peric PERIC_PCLK_SPI0>,
-+				<&clock_peric PERIC_SCLK_SPI0>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi0_bus>;
-+			num-cs = <1>;
-+			status = "disabled";
-+		};
-+
-+		spi_1: spi@14150000 {
-+			compatible = "tesla,fsd-spi";
-+			reg = <0x0 0x14150000 0x0 0x100>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			dmas = <&pdma1 6>, <&pdma1 7>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&clock_peric PERIC_PCLK_SPI1>,
-+				<&clock_peric PERIC_SCLK_SPI1>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi1_bus>;
-+			num-cs = <1>;
-+			status = "disabled";
-+		};
-+
-+		spi_2: spi@14160000 {
-+			compatible = "tesla,fsd-spi";
-+			reg = <0x0 0x14160000 0x0 0x100>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			dmas = <&pdma1 8>, <&pdma1 9>;
-+			dma-names = "tx", "rx";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&clock_peric PERIC_PCLK_SPI2>,
-+				<&clock_peric PERIC_SCLK_SPI2>;
-+			clock-names = "spi", "spi_busclk0";
-+			samsung,spi-src-clk = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi2_bus>;
-+			num-cs = <1>;
-+			status = "disabled";
-+		};
- 	};
- };
- 
+    exynos-iommu.c consists for 15 % of samsung-iommu.c material
+    exynos-iommu.c consists for 1 %  of samsung-iommu-fault.c material
+    exynos-iommu.c consists for 3 %  of samsung-iommu.h material
+8<-------------------------------------------------------------------->8
+
+So the similarity is very low, most of that code is some boilerplate
+that shouldn't be extracted to common code (like allocating the memory
+and requesting clocks/interrupts in probe function).
+
+It was tested on v5.4 Android kernel on Exynos850 (E850-96 board) with
+DPU use-case (displaying some graphics to the screen). Also it
+apparently works fine on v5.10 GS101 kernel (on Pixel 6). On mainline
+kernel I managed to build, match and bind the driver. No real world test
+was done, but the changes from v5.10 (where it works fine) are minimal
+(see [2] for details). So I'm pretty sure the driver is functional.
+
+For this patch series I'd like to receive some high-level review for
+driver's design and architecture. Coding style and API issues I can fix
+later, when sending real (not RFC) series. Particularly I'd like to hear
+some opinions about:
+  - namings: Kconfig option, file names, module name, compatible, etc
+  - modularity: should this driver be a different platform driver (like
+    in this series), or should it be integrated into existing
+    exynos-iommu.c driver somehow
+  - dt-bindings: does it look ok as it is, or some interface changes are
+    needed
+  - internal driver architecture: approach seems to be similar to
+    exynos-iommu.c, but any comments are welcome
+  - ongoing work: please let me know if you're aware of some efforts to
+    upstream this driver by some other party (e.g. Google engineers
+    might be working on something similar)
+
+Basically, I want to figure out what should be changed/fixed in this
+driver (on a high level), so it can be considered "upstreamable".
+
+[1] https://android.googlesource.com/kernel/gs/
+[2] https://github.com/joe-skb7/linux/commits/iommu-exynos850-dev
+
+Sam Protsenko (3):
+  dt-bindings: iommu: Add bindings for samsung,sysmmu-v8
+  iommu/samsung: Introduce Exynos sysmmu-v8 driver
+  arm64: defconfig: Enable sysmmu-v8 IOMMU
+
+ .../bindings/iommu/samsung,sysmmu-v8.txt      |   31 +
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/iommu/Kconfig                         |   13 +
+ drivers/iommu/Makefile                        |    3 +
+ drivers/iommu/samsung-iommu-fault.c           |  617 +++++++
+ drivers/iommu/samsung-iommu-group.c           |   50 +
+ drivers/iommu/samsung-iommu.c                 | 1521 +++++++++++++++++
+ drivers/iommu/samsung-iommu.h                 |  216 +++
+ include/dt-bindings/soc/samsung,sysmmu-v8.h   |   43 +
+ 9 files changed, 2496 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu-v8.txt
+ create mode 100644 drivers/iommu/samsung-iommu-fault.c
+ create mode 100644 drivers/iommu/samsung-iommu-group.c
+ create mode 100644 drivers/iommu/samsung-iommu.c
+ create mode 100644 drivers/iommu/samsung-iommu.h
+ create mode 100644 include/dt-bindings/soc/samsung,sysmmu-v8.h
+
 -- 
-2.25.1
+2.30.2
 
