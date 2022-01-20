@@ -2,102 +2,140 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E51AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jan 2022 01:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC1BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jan 2022 07:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231954AbiATBnK (ORCPT
+        id S238144AbiATHGp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 20:43:10 -0500
-Received: from 15.mo561.mail-out.ovh.net ([87.98.150.177]:60771 "EHLO
-        15.mo561.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232016AbiATBnI (ORCPT
+        Thu, 20 Jan 2022 02:06:45 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:57476 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237988AbiATHGo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Jan 2022 20:43:08 -0500
-X-Greylist: delayed 12599 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jan 2022 20:43:08 EST
-Received: from player791.ha.ovh.net (unknown [10.109.143.72])
-        by mo561.mail-out.ovh.net (Postfix) with ESMTP id BBA0422B61
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jan 2022 20:55:55 +0000 (UTC)
-Received: from etezian.org (82-181-27-157.bb.dnainternet.fi [82.181.27.157])
-        (Authenticated sender: andi@etezian.org)
-        by player791.ha.ovh.net (Postfix) with ESMTPSA id D597A266CDB75;
-        Wed, 19 Jan 2022 20:55:36 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-106R006390dcab6-99cd-4766-9f5f-a59f7922d779,
-                    EAD790EBCBC9E102087108CB0F5556A3B44BAE4B) smtp.auth=andi@etezian.org
-X-OVh-ClientIp: 82.181.27.157
-Date:   Wed, 19 Jan 2022 22:55:35 +0200
-From:   Andi Shyti <andi@etezian.org>
+        Thu, 20 Jan 2022 02:06:44 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 20K76M65127231;
+        Thu, 20 Jan 2022 01:06:22 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1642662382;
+        bh=M0/8q05itDPqP6RCFlk98+I7fWpYzKq2/D9K/g5UXrk=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=RwQssu2j63/LXha0sLRtd3tXceuaoQcUS+PHPcH7NCNhJ1G0twth6qtIQMlFkVq6J
+         HlrIbZEYMVSK/McnsqE2ChfjhwIcbUcJUMeq5laTqtrLxOmV35UR/IpaV7VoO16QR7
+         gK4uYyPSA/qET7hirTfLZJ/zkEKlgOVp5nkd+q+4=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 20K76Ml1098241
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Jan 2022 01:06:22 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Thu, 20
+ Jan 2022 01:06:21 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Thu, 20 Jan 2022 01:06:21 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 20K76L83091901;
+        Thu, 20 Jan 2022 01:06:21 -0600
+Date:   Thu, 20 Jan 2022 12:36:20 +0530
+From:   Pratyush Yadav <p.yadav@ti.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Balletbo i Serra <enric.balletbo@collabora.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Pratyush Yadav <p.yadav@ti.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 5/5] spi: s3c64xx: allow controller-data to be optional
-Message-ID: <Yeh6x6U3tA7y5gvF@jack.zhora.eu>
-References: <20220119201005.13145-1-krzysztof.kozlowski@canonical.com>
- <20220119201005.13145-6-krzysztof.kozlowski@canonical.com>
+CC:     Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Subject: Re: [PATCH v3 2/4] spi: dt-bindings: samsung: convert to dtschema
+Message-ID: <20220120070620.wyeosdstbfcsaplt@ti.com>
+References: <20220112100046.68068-1-krzysztof.kozlowski@canonical.com>
+ <20220112100046.68068-3-krzysztof.kozlowski@canonical.com>
+ <20220119192758.z3lvlkaeyeiqi73a@ti.com>
+ <5f912896-0635-fbe7-4fda-f4cb569190d9@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20220119201005.13145-6-krzysztof.kozlowski@canonical.com>
-X-Ovh-Tracer-Id: 8852669495508536017
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudeigdekgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughiucfuhhihthhiuceorghnughisegvthgviihirghnrdhorhhgqeenucggtffrrghtthgvrhhnpedtgfduudfhfeeuueejfeeihedtfeetgfegveehgfeuleelhfduteegieekudeifeenucfkpheptddrtddrtddrtddpkedvrddukedurddvjedrudehjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhlrgihvghrjeeluddrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpegrnhguihesvghtvgiiihgrnhdrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+In-Reply-To: <5f912896-0635-fbe7-4fda-f4cb569190d9@canonical.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Wed, Jan 19, 2022 at 09:10:05PM +0100, Krzysztof Kozlowski wrote:
-> The Samsung SoC SPI driver requires to provide controller-data node
-> for each of SPI peripheral device nodes.  Make this controller-data node
-> optional, so DTS could be simpler.
+On 19/01/22 08:49PM, Krzysztof Kozlowski wrote:
+> On 19/01/2022 20:31, Pratyush Yadav wrote:
+> > On 12/01/22 11:00AM, Krzysztof Kozlowski wrote:
+> >> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
+> >> controller bindings to DT schema format
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> >> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >> ---
+> >>  .../spi/samsung,spi-peripheral-props.yaml     |  35 ++++
+> >>  .../devicetree/bindings/spi/samsung,spi.yaml  | 187 ++++++++++++++++++
+> >>  .../bindings/spi/spi-peripheral-props.yaml    |   1 +
+> >>  .../devicetree/bindings/spi/spi-samsung.txt   | 122 ------------
+> >>  MAINTAINERS                                   |   2 +-
+> >>  5 files changed, 224 insertions(+), 123 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+> >>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
+> >>  delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+> >> new file mode 100644
+> >> index 000000000000..aa5a1f48494b
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+> >> @@ -0,0 +1,35 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/spi/samsung,spi-peripheral-props.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Peripheral-specific properties for Samsung S3C/S5P/Exynos SoC SPI controller
+> >> +
+> >> +maintainers:
+> >> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> >> +
+> >> +description:
+> >> +  See spi-peripheral-props.yaml for more info.
+> >> +
+> >> +properties:
+> >> +  controller-data:
+> >> +    type: object
+> >> +    additionalProperties: false
+> >> +
+> >> +    properties:
+> >> +      samsung,spi-feedback-delay:
+> >> +        description: |
+> >> +          The sampling phase shift to be applied on the miso line (to account
+> >> +          for any lag in the miso line). Valid values:
+> >> +           - 0: No phase shift.
+> >> +           - 1: 90 degree phase shift sampling.
+> >> +           - 2: 180 degree phase shift sampling.
+> >> +           - 3: 270 degree phase shift sampling.
+> >> +        $ref: /schemas/types.yaml#/definitions/uint32
+> >> +        enum: [0, 1, 2, 3]
+> >> +
+> >> +    required:
+> >> +      - samsung,spi-feedback-delay
+> > 
+> > I am not quite sure if this required would work here. Let's say another 
+> > controller also uses a controller-data node, but it contains a different 
+> > set of properties. Won't this cause an error to be raised for that 
+> > controller since this property is not there?
 > 
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  drivers/spi/spi-s3c64xx.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 8755cd85e83c..769d958a2f86 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -796,16 +796,14 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	data_np = of_get_child_by_name(slave_np, "controller-data");
-> -	if (!data_np) {
-> -		dev_err(&spi->dev, "child node 'controller-data' not found\n");
-> -		return ERR_PTR(-EINVAL);
-> -	}
-> -
->  	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
-> -	if (!cs) {
-> -		of_node_put(data_np);
-> +	if (!cs)
->  		return ERR_PTR(-ENOMEM);
-> +
-> +	data_np = of_get_child_by_name(slave_np, "controller-data");
-> +	if (!data_np) {
-> +		dev_info(&spi->dev, "child node 'controller-data' not found, using defaults\n");
+> The controller-data is Samsung SPI specific (does not exist in any other
+> binding), so why would controller-data get added to a different controller?
 
-"not found" sounds like an error; I would just write something
-like "feedback delay set to '0' dfault", you also tell that the
-default value is '0'.
+It does not as of now, but the name is fairly generic and some 
+controller in the future might use it. I do not think it is a good idea 
+to list required properties in X-peripheral-props.yaml in general since 
+all those will be collected by spi-peripheral-props.yaml and so will 
+apply to _all_ controllers that reference it.
 
-In any case,
-
-Reviewed-by: Andi Shyti <andi@etezian.org>
-
-Andi
+-- 
+Regards,
+Pratyush Yadav
+Texas Instruments Inc.
