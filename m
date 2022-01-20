@@ -2,95 +2,126 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C413C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jan 2022 15:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4464FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Jan 2022 17:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346402AbiATPpu (ORCPT
+        id S233173AbiATR5w (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Jan 2022 10:45:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346016AbiATPpu (ORCPT
+        Thu, 20 Jan 2022 12:57:52 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:33512
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232955AbiATR5w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Jan 2022 10:45:50 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DFCCC061574;
-        Thu, 20 Jan 2022 07:45:50 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id m11so30352234edi.13;
-        Thu, 20 Jan 2022 07:45:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bojt1cq8eqmehCFdf7q2oCFRQ8rKvEo0i4l4sBwygPU=;
-        b=qAYNgaEozdsfpabfPMCYsQnCjsGbRoQL3GhRsCiNxa78wkEQV0XxJZyA0taRKwd3od
-         7Si2s3y3I/5mp2hyJVM34lWEpuygDUJ8Q6nZvDB4Zqw3mMM8z/GYBHfmKoruMiZc7buI
-         CSnD4pn1VSfSnDPrZna+hS/zkxCH2MStkU4hWyp3Llg+eOXr0TUTMMixFl9t8e3GMF3d
-         eMy8xL+4eznGE949RJyHvWDumiohU5aIFvjY5Hthppky+OavJRTz5J115kseQnRkGx8E
-         f95LOFnq7nnPPdHGG6QMxP6bZy3MFP5sC/uFFACjPyc+uKBvPU6G1eHaZd/SuGNPpKRG
-         Czxg==
+        Thu, 20 Jan 2022 12:57:52 -0500
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6236A4004F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jan 2022 17:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642701471;
+        bh=H2cRLPPzz0F3JUaJ2WyT3i/SWYOSlJ82hwPSyocRI4o=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=e8vMj5brXLRp/pLbFQFcpPVZ7dVW2bPD24JVRGsKMrWEZr9El0gysfYgm8DAgdDtu
+         1hz3Qlhm06hMva2dhJbaiUcAV0Ly2XF+MAm6l7Y4/sXQymwwe38QaP0y2JrlCVN1Zs
+         gAa47qheybeOe0NT5NHDR5HvRRdWQS0PjKl9iXcOtFbvNkz1RNXGDtWQDae0uM/EkE
+         xE/wZG578Xy7/FwaKGJepEnPfymINRoQgSrm7be0hBsWwwieq5VLz12bS3hlxtfFd8
+         JPVPm1x44dHkxWAZGEUACTvp1RHIuNhRkRnJNjVaDIdsnaKEVZEcZgZEBIGMtoiMW1
+         Wuxkj3wjtjHcQ==
+Received: by mail-wm1-f70.google.com with SMTP id 14-20020a05600c024e00b0034a83f7391aso4572083wmj.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jan 2022 09:57:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bojt1cq8eqmehCFdf7q2oCFRQ8rKvEo0i4l4sBwygPU=;
-        b=8BuwgRC6hizRxy71cvvHI3tg5cKN4YXqQU++4F43zRrj0NOyw4R3n5q0bEO9wa03S+
-         2rUvuxkiRlX5zlu4PMytyna883Mb1CzzIBAmW44wC8NKch7B1hQ0oCXY1j2WkFJYr8FP
-         BhMDxG1Bu0Wf4k0Qb0KmZMc5jmuJJuDG1pgPhZlvgtQDpV7EgCzFvEI0JzAuyhmF4nGI
-         UnkDjwL6OsTX+yivAj3x/WemUmjrntzz4OHl4XGcL8vgr6W4eZGsBieRkIWo379PK6r9
-         qtXAp0nRiSkqgoGhI7ZBywf/eM7vL453xmY47/RHENiFWaz7N+ObCn5WQMxQvM2jjmBR
-         QiJg==
-X-Gm-Message-State: AOAM530xxgJVA2GKvzeJCZqaf6s8tk9FmaZInvFdhht+TBH13ExHVLGE
-        Y5YFEldz0hyPtrnv44PksJzgZInvpRF7BYFc7RI=
-X-Google-Smtp-Source: ABdhPJwSlmq5dL42E/rJ/5HNGr0ky2W7IX4dNnb+7dy+H7+8bfDWemciLlOKSVFP2kfwc8pIeNknLGlmldEhwnzPVZs=
-X-Received: by 2002:a17:906:7948:: with SMTP id l8mr11438618ejo.636.1642693548839;
- Thu, 20 Jan 2022 07:45:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20220118110928.120640-1-linus.walleij@linaro.org> <20220118110928.120640-3-linus.walleij@linaro.org>
-In-Reply-To: <20220118110928.120640-3-linus.walleij@linaro.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 20 Jan 2022 17:44:06 +0200
-Message-ID: <CAHp75Vev_xH_MPe0S1CDfC5tUetzfZEQVJpNsePRddK6czLnPA@mail.gmail.com>
-Subject: Re: [PATCH 3/3 v2] spi: s3c64xx: Convert to use GPIO descriptors
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H2cRLPPzz0F3JUaJ2WyT3i/SWYOSlJ82hwPSyocRI4o=;
+        b=Ampxknb+gPfsGz+NV7nwI3Ha2jdDi7uTqJSFc8pTPmDNNHT4m7RkiCTjL+guNX14Xw
+         euX6a+4M20CbFD11Q9TdLg6LBI7RYHStFaRxeBmBAxUxpa1vRZvi/MBFRu7ywld8jaqJ
+         BLBrMFdHJrC0ISCD6932wnsebUU+v/SVeW+yaEjtINgby32qM3vPCzHSICg3UdeZEM4s
+         9txdnUZqcoZjuooRFbhXhZ+TcKpLVAwlIY98s8WqltsNb4mjIBHGiibIUbX3hyKmD5qV
+         CgVfojjMdtI9rO7ihFqoUagpdgC+z224CwuIp0wJiAkT2z3UrpGBbtb5OAcyMdI78tca
+         Y/zQ==
+X-Gm-Message-State: AOAM531dQmJlln48Cs2c1AnuLmeiuibvjxHJBffXJNPV0ttdQ+9XZ//E
+        X5ies7qOqOME7RT6VO2ozRBvl99/6qPoWW13LwTeRcLNf6OEM/lRNgptt7bXI3iLVcif1fXLafm
+        dgKj9ZvQVVjFARDrE/ZGXBCQOxpMGKdg9tKVeg2xLkxvLX9R9
+X-Received: by 2002:a1c:4e13:: with SMTP id g19mr9968779wmh.109.1642701470789;
+        Thu, 20 Jan 2022 09:57:50 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw56dT1lF/ETeqcH6kQkH3+bC8cHsW8qZI7riVZOspMW5WbuM+u8GRe/kQSaObq8lAdFHgBmw==
+X-Received: by 2002:a1c:4e13:: with SMTP id g19mr9968756wmh.109.1642701470597;
+        Thu, 20 Jan 2022 09:57:50 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id a15sm3345248wrp.41.2022.01.20.09.57.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jan 2022 09:57:49 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Pratyush Yadav <p.yadav@ti.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v5 0/4] spi: dt-bindings: samsung: convert to dtschema
+Date:   Thu, 20 Jan 2022 18:57:43 +0100
+Message-Id: <20220120175747.43403-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 20, 2022 at 9:40 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi,
 
-...
+Changes since v4
+================
+1. Do not require samsung,spi-feedback-delay and fold patch 3 into patch 2.
+2. Rework message in patch 4.
+3. Add tags.
 
-> +static struct gpiod_lookup_table crag_spi0_gpiod_table = {
-> +       .dev_id = "s3c6410-spi.0",
-> +       .table = {
-> +               GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
-> +               GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
+Changes since v3
+================
+1. Patch 2: correct path in exynos-usi.yaml.
+2. Add patch 5.
+3. Add tags.
 
-> +               { },
+Changes since v2
+================
+1. Patch 2: drop child device schema, as Rob suggested.
 
-Since it will be v3 of the series, can we remove the comma in the
-terminator line?
+Changes since v1
+================
+1. Patch 2: describe devices matching compatible, correct issues pointed out by
+   Rob, add reviewed-by tag.
+2. New patches 3 and 4.
 
-> +       },
-> +};
+Best regards,
+Krzysztof
 
-...
+Krzysztof Kozlowski (4):
+  ARM: dts: exynos: split dmas into array of phandles in Exynos5250
+  spi: dt-bindings: samsung: convert to dtschema
+  mfd: dt-bindings: google,cros-ec: reference Samsung SPI bindings
+  spi: s3c64xx: allow controller-data to be optional
 
-> +       /* This was dynamically allocated on the DT path */
+ .../bindings/mfd/google,cros-ec.yaml          |  29 +--
+ .../bindings/soc/samsung/exynos-usi.yaml      |   2 +-
+ .../spi/samsung,spi-peripheral-props.yaml     |  33 ++++
+ .../devicetree/bindings/spi/samsung,spi.yaml  | 187 ++++++++++++++++++
+ .../bindings/spi/spi-peripheral-props.yaml    |   1 +
+ .../devicetree/bindings/spi/spi-samsung.txt   | 122 ------------
+ MAINTAINERS                                   |   2 +-
+ arch/arm/boot/dts/exynos5250.dtsi             |   9 +-
+ drivers/spi/spi-s3c64xx.c                     |  14 +-
+ 9 files changed, 248 insertions(+), 151 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
 
-> +       if (spi->dev.of_node)
+-- 
+2.32.0
 
-I believe we may survive w/o this check(s).
-
-> +               kfree(cs);
-
---
-With Best Regards,
-Andy Shevchenko
