@@ -2,66 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E217EC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 08:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA58CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 08:41:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231162AbiAUIfZ (ORCPT
+        id S234175AbiAUIlD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Jan 2022 03:35:25 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:58034
+        Fri, 21 Jan 2022 03:41:03 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:58380
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232805AbiAUIfY (ORCPT
+        by vger.kernel.org with ESMTP id S234243AbiAUIkk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jan 2022 03:35:24 -0500
+        Fri, 21 Jan 2022 03:40:40 -0500
 Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6FB354000F
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 08:35:22 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A575D3F19C
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 08:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642754122;
-        bh=h7b33DeTvzBNpVO9xtR6SrRKZdczqz3V7QKsSMc1HTE=;
+        s=20210705; t=1642754437;
+        bh=xUftNJDaok3Pg41c/BkGehEh6TjX1iR0pvhLTmUxMyU=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=A2Hur4/zqseoVGUm4gZnVoWWlVcUaOEaNTWwDL3DFhmjpNhWNS+Slhz9uGdn9zfLo
-         cG0bSMOohQU1AUsX6cKWu7+5cOGcv6ATrrLSAi4Kx6xAzEBrK4uwlvn+eSHGwV4lWB
-         2W2GSLkClNSuGQhmKa279Fa64hvCSG8jq1vINLEd4umeGsfaPiJ57SER+o3MWDlzW7
-         QNyqncIgPfTJHgYRLlX4SqK83yZbrpPubReh2R8GYl+1/eNrkiruYfy33zRWUk49Rj
-         Q7dgeP2xUAcjoCJoaQ5IRQISqip8ULHh86HqW978YSGHO/B0FwVm9rbFlJS2KnUSBT
-         aXmb2wOyEu1yg==
-Received: by mail-ed1-f69.google.com with SMTP id o10-20020a056402438a00b00403212b6b1aso8359950edc.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 00:35:22 -0800 (PST)
+        b=cUINlMlfY+Vm19935ZYsZ5n0gLwtFILv6539o4B4USki+iCirxH4B9TB6Tasj6ISP
+         y/evuf+nJjlewvTm6EhyVg2AEt4xMIQ5CvuTPU0eUl4bsqje1+hKD+k6hkPcULE4Q+
+         o/nrxtRU0XTVe0viFJ6YzEEYqeuMlI38KanUhKoCeuestClE/xv0PZXJO6HbnYe0ZT
+         jmgxcd3uxkeqFSScBpeO0xWKJqwmC8EfdzRuGY3xQFHHsoqJW1YEwDqPKO0ag3KuWK
+         DUJIuBombn8M1hOhkE99IlfAClgzTL+m4GEkomEvwRpQNoVfbrg6OMdVQHFAG/6tKW
+         0osCAbJmTaE/g==
+Received: by mail-ed1-f69.google.com with SMTP id w23-20020a50d797000000b00406d33c039dso925734edi.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 00:40:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=h7b33DeTvzBNpVO9xtR6SrRKZdczqz3V7QKsSMc1HTE=;
-        b=l1Dir6PPZfNJvx727kalxxKERQcQjQrL2TDv6+ZCj//X2cZ1meywDVwKHYfLEUZidP
-         aaHxFH46LivDbk41CPxKrH05XaZ+USahhdYPiz7nI1b7vIOnAeDw5mMPouH78bGzfFl7
-         qvTZ0eHvLzPXWqOg7koE7X8FENxKEO0mumam2fF9n8iTtWZ0d6OacV5ZeSgH2QrnW6/k
-         4pahV2HWhl68naHnkreV1daDSZFdOzopWSBOgo4WCyA7b10/usazehvBECO4xcny8kQC
-         kRNFwER2GtvbRmiOcwVImuWZL5Sw+yznVC4PqfzsA77LXwE7YiywcpwMA6pt/wMct1mY
-         HXqA==
-X-Gm-Message-State: AOAM533efoL4mnLOb3oznqo3vGeKhyHqMwATam03easU+mXAw/no8l9w
-        LdAdWbDV5Oi8zlJCtDS73E9m+ptg2+NWUKzmbNy6fqJJz8OQq/Z6/6ATMkkd21NKHnQ57Z9ZKfq
-        iM6hQrXWWcGniIMtHFiZ3hRtBwyAuN8hmjbMt/wuiRPTwWJZE
-X-Received: by 2002:aa7:d9d4:: with SMTP id v20mr3470524eds.234.1642754121941;
-        Fri, 21 Jan 2022 00:35:21 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxIYeq/Ed3URUhIn6WPpagBUgmUBHhym8SeaQc3F2a9sHPJ9ZLkk4zZZiOX2+0I08qYGOPgCA==
-X-Received: by 2002:aa7:d9d4:: with SMTP id v20mr3470511eds.234.1642754121737;
-        Fri, 21 Jan 2022 00:35:21 -0800 (PST)
+        bh=xUftNJDaok3Pg41c/BkGehEh6TjX1iR0pvhLTmUxMyU=;
+        b=yWA/mGm/en8Txxsvco64tWgXikJTMqhJf0ouI1LaS1cUH8AdZMVarCaQ9XR1sce9L6
+         fSFfb7dt+kctzawMFiQBGHAlH+N56wXCOpbeAhdCkhETEKo5q9yDCqThKedSdtS1F15Z
+         /d1b9tA7lEJxY6jjnG5+KhbrYLH2VIFoVhozrCc/L/Z2X4XFF6vrTO5bfs4h2QNcBf/j
+         MNMxlja0zwJ0o5r8isaWNgKBTGfiFgsQAz+cW23UcWsOEkemTt8/DL5lpuy46HxPY6Jl
+         2gw3KC12YnGGGRixJ1wc/twkca8xuNW/phGAxLyEJ7RSqlsjghBpcXe+UkW5RNkNctAl
+         9s8A==
+X-Gm-Message-State: AOAM531KyKy/6Rl+OfPQxhvCqR8eoMZMWPeX+eZtMX4FACzAOf94Kg7k
+        vjl5E7QrALDPl1pCYYRNm39BeVHeOVsvKMXAutZ7pkOYgx4ECKetDc/0kpJhFksJQKIsOTqL01l
+        ykXcw8WaYe+x+gBwc3prAJStKNeTdCqOo5wCJyWAo1s0MQkJW
+X-Received: by 2002:a05:6402:905:: with SMTP id g5mr3321709edz.30.1642754426514;
+        Fri, 21 Jan 2022 00:40:26 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwwUR+qQwnaFqphzLPwNcsoopVP4IbcqehJyUyMLY3yPSHFzVCOe0UwMbO/5cpPjAgxFJA9sQ==
+X-Received: by 2002:a05:6402:905:: with SMTP id g5mr3321679edz.30.1642754426297;
+        Fri, 21 Jan 2022 00:40:26 -0800 (PST)
 Received: from [192.168.0.50] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id s13sm1819610ejo.207.2022.01.21.00.35.20
+        by smtp.gmail.com with ESMTPSA id e19sm787750ejl.225.2022.01.21.00.40.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jan 2022 00:35:21 -0800 (PST)
-Message-ID: <32a92895-d724-c1bf-4eab-15c971625cf0@canonical.com>
-Date:   Fri, 21 Jan 2022 09:35:11 +0100
+        Fri, 21 Jan 2022 00:40:25 -0800 (PST)
+Message-ID: <a111932a-6685-2a9d-abce-87af26b121a4@canonical.com>
+Date:   Fri, 21 Jan 2022 09:40:21 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [RFC 0/3] iommu/samsung: Introduce Exynos sysmmu-v8 driver
+Subject: Re: [RFC 2/3] iommu/samsung: Introduce Exynos sysmmu-v8 driver
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
@@ -86,8 +86,9 @@ Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20220120201958.2649-1-semen.protsenko@linaro.org>
+ <20220120201958.2649-3-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220120201958.2649-1-semen.protsenko@linaro.org>
+In-Reply-To: <20220120201958.2649-3-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -95,76 +96,157 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 20/01/2022 21:19, Sam Protsenko wrote:
-> This is a draft of a new IOMMU driver used in modern Exynos SoCs (like
-> Exynos850) and Google's GS101 SoC (used in Pixel 6 phone). Most of its
-> code were taken from GS101 downstream kernel [1], with some extra
-> patches on top (fixes from Exynos850 downstream kernel and some porting
-> changes to adapt it to the mainline kernel). All development history can
-> be found at [2].
+> Introduce new driver for modern Exynos ARMv8 SoCs, e.g. Exynos850. Also
+> it's used for Google's GS101 SoC.
 > 
-> Similarities with existing exynos-iommu.c is minimal. I did some
-> analysis using similarity-tester tool:
+> This is squashed commit, contains next patches of different authors. See
+> `iommu-exynos850-dev' branch for details: [1].
 > 
-> 8<-------------------------------------------------------------------->8
->     $ sim_c -peu -S exynos-iommu.c "|" samsung-*
+> Original authors (Samsung):
 > 
->     exynos-iommu.c consists for 15 % of samsung-iommu.c material
->     exynos-iommu.c consists for 1 %  of samsung-iommu-fault.c material
->     exynos-iommu.c consists for 3 %  of samsung-iommu.h material
-> 8<-------------------------------------------------------------------->8
+>  - Cho KyongHo <pullip.cho@samsung.com>
+>  - Hyesoo Yu <hyesoo.yu@samsung.com>
+>  - Janghyuck Kim <janghyuck.kim@samsung.com>
+>  - Jinkyu Yang <jinkyu1.yang@samsung.com>
 > 
-> So the similarity is very low, most of that code is some boilerplate
-> that shouldn't be extracted to common code (like allocating the memory
-> and requesting clocks/interrupts in probe function).
-
-This is not a prove of lack of similarities. The vendor drivers have
-proven track of poor quality and a lot of code not compatible with Linux
-kernel style.
-
-Therefore comparing mainline driver, reviewed and well tested, with a
-vendor out-of-tree driver is wrong. You will almost always have 0% of
-similarities, because vendor kernel drivers are mostly developed from
-scratch instead of re-using existing drivers.
-
-Recently Samsung admitted it - if I extend existing driver, I will have
-to test old and new platform, so it is easier for me to write a new driver.
-
-No, this is not that approach we use it in mainline.
-
-Linaro should know it much better.
-
+> Some improvements were made by Google engineers:
 > 
-> It was tested on v5.4 Android kernel on Exynos850 (E850-96 board) with
-> DPU use-case (displaying some graphics to the screen). Also it
-> apparently works fine on v5.10 GS101 kernel (on Pixel 6). On mainline
-> kernel I managed to build, match and bind the driver. No real world test
-> was done, but the changes from v5.10 (where it works fine) are minimal
-> (see [2] for details). So I'm pretty sure the driver is functional.
-
-No, we do not take untested code or code for different out-of-tree
-kernels, not for mainline.
-
-I am pretty sure drivers is poor or not working.
-
+>  - Alex <acnwigwe@google.com>
+>  - Carlos Llamas <cmllamas@google.com>
+>  - Daniel Mentz <danielmentz@google.com>
+>  - Erick Reyes <erickreyes@google.com>
+>  - J. Avila <elavila@google.com>
+>  - Jonglin Lee <jonglin@google.com>
+>  - Mark Salyzyn <salyzyn@google.com>
+>  - Thierry Strudel <tstrudel@google.com>
+>  - Will McVicker <willmcvicker@google.com>
 > 
-> For this patch series I'd like to receive some high-level review for
-> driver's design and architecture. Coding style and API issues I can fix
-> later, when sending real (not RFC) series. Particularly I'd like to hear
-> some opinions about:
->   - namings: Kconfig option, file names, module name, compatible, etc
->   - modularity: should this driver be a different platform driver (like
->     in this series), or should it be integrated into existing
->     exynos-iommu.c driver somehow
->   - dt-bindings: does it look ok as it is, or some interface changes are
->     needed
+> [1] https://github.com/joe-skb7/linux/tree/iommu-exynos850-dev
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  drivers/iommu/Kconfig               |   13 +
+>  drivers/iommu/Makefile              |    3 +
+>  drivers/iommu/samsung-iommu-fault.c |  617 +++++++++++
+>  drivers/iommu/samsung-iommu-group.c |   50 +
+>  drivers/iommu/samsung-iommu.c       | 1521 +++++++++++++++++++++++++++
+>  drivers/iommu/samsung-iommu.h       |  216 ++++
+>  6 files changed, 2420 insertions(+)
+>  create mode 100644 drivers/iommu/samsung-iommu-fault.c
+>  create mode 100644 drivers/iommu/samsung-iommu-group.c
+>  create mode 100644 drivers/iommu/samsung-iommu.c
+>  create mode 100644 drivers/iommu/samsung-iommu.h
+> 
 
-You sent bindings in TXT with dead code inside, and you ask if it is ok.
-I consider this approach that you sent whatever junk to us hoping that
-we will point all the issues instead of finding them by yourself.
+Existing driver supports several different Exynos SysMMU IP block
+versions. Several. Please explain why it cannot support one more version?
 
-I am pretty sure you have several folks in Linaro who can perform first
-review and bring the code closer to mainline style.
+Similarity of vendor driver with mainline is not an argument.
 
+
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 3eb68fa1b8cc..78e7039f18aa 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -452,6 +452,19 @@ config QCOM_IOMMU
+>  	help
+>  	  Support for IOMMU on certain Qualcomm SoCs.
+>  
+> +config SAMSUNG_IOMMU
+> +	tristate "Samsung IOMMU Support"
+> +	select ARM_DMA_USE_IOMMU
+> +	select IOMMU_DMA
+> +	select SAMSUNG_IOMMU_GROUP
+> +	help
+> +	  Support for IOMMU on Samsung Exynos SoCs.
+> +
+> +config SAMSUNG_IOMMU_GROUP
+> +	tristate "Samsung IOMMU Group Support"
+> +	help
+> +	  Support for IOMMU group on Samsung Exynos SoCs.
+> +
+>  config HYPERV_IOMMU
+>  	bool "Hyper-V x2APIC IRQ Handling"
+>  	depends on HYPERV && X86
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index bc7f730edbb0..a8bdf449f1d4 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -27,6 +27,9 @@ obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
+>  obj-$(CONFIG_S390_IOMMU) += s390-iommu.o
+>  obj-$(CONFIG_HYPERV_IOMMU) += hyperv-iommu.o
+>  obj-$(CONFIG_VIRTIO_IOMMU) += virtio-iommu.o
+> +obj-$(CONFIG_SAMSUNG_IOMMU) += samsung_iommu.o
+> +samsung_iommu-objs += samsung-iommu.o samsung-iommu-fault.o
+> +obj-$(CONFIG_SAMSUNG_IOMMU_GROUP) += samsung-iommu-group.o
+>  obj-$(CONFIG_IOMMU_SVA_LIB) += iommu-sva-lib.o io-pgfault.o
+>  obj-$(CONFIG_SPRD_IOMMU) += sprd-iommu.o
+>  obj-$(CONFIG_APPLE_DART) += apple-dart.o
+> diff --git a/drivers/iommu/samsung-iommu-fault.c b/drivers/iommu/samsung-iommu-fault.c
+> new file mode 100644
+> index 000000000000..c6b4259976c4
+> --- /dev/null
+> +++ b/drivers/iommu/samsung-iommu-fault.c
+> @@ -0,0 +1,617 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
+> + */
+> +
+> +#define pr_fmt(fmt) "sysmmu: " fmt
+> +
+> +#include <linux/smc.h>
+> +#include <linux/arm-smccc.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include "samsung-iommu.h"
+> +
+> +#define MMU_TLB_INFO(n)			(0x2000 + ((n) * 0x20))
+> +#define MMU_CAPA1_NUM_TLB_SET(reg)	(((reg) >> 16) & 0xFF)
+> +#define MMU_CAPA1_NUM_TLB_WAY(reg)	((reg) & 0xFF)
+> +#define MMU_CAPA1_SET_TLB_READ_ENTRY(tid, set, way, line)		\
+> +					((set) | ((way) << 8) |		\
+> +					 ((line) << 16) | ((tid) << 20))
+> +
+> +#define MMU_TLB_ENTRY_VALID(reg)	((reg) >> 28)
+> +#define MMU_SBB_ENTRY_VALID(reg)	((reg) >> 28)
+> +#define MMU_VADDR_FROM_TLB(reg, idx)	((((reg) & 0xFFFFC) | ((idx) & 0x3)) << 12)
+> +#define MMU_VID_FROM_TLB(reg)		(((reg) >> 20) & 0x7U)
+> +#define MMU_PADDR_FROM_TLB(reg)		((phys_addr_t)((reg) & 0xFFFFFF) << 12)
+> +#define MMU_VADDR_FROM_SBB(reg)		(((reg) & 0xFFFFF) << 12)
+> +#define MMU_VID_FROM_SBB(reg)		(((reg) >> 20) & 0x7U)
+> +#define MMU_PADDR_FROM_SBB(reg)		((phys_addr_t)((reg) & 0x3FFFFFF) << 10)
+> +
+> +#define REG_MMU_INT_STATUS		0x060
+> +#define REG_MMU_INT_CLEAR		0x064
+> +#define REG_MMU_FAULT_RW_MASK		GENMASK(20, 20)
+> +#define IS_READ_FAULT(x)		(((x) & REG_MMU_FAULT_RW_MASK) == 0)
+> +
+> +#define SYSMMU_FAULT_PTW_ACCESS   0
+> +#define SYSMMU_FAULT_PAGE_FAULT   1
+> +#define SYSMMU_FAULT_ACCESS       2
+> +#define SYSMMU_FAULT_RESERVED     3
+> +#define SYSMMU_FAULT_UNKNOWN      4
+> +
+> +#define SYSMMU_SEC_FAULT_MASK		(BIT(SYSMMU_FAULT_PTW_ACCESS) | \
+> +					 BIT(SYSMMU_FAULT_PAGE_FAULT) | \
+> +					 BIT(SYSMMU_FAULT_ACCESS))
+> +
+> +#define SYSMMU_FAULTS_NUM         (SYSMMU_FAULT_UNKNOWN + 1)
+> +
+> +#if IS_ENABLED(CONFIG_EXYNOS_CONTENT_PATH_PROTECTION)
+
+You just copy-pasted vendor stuff, without actually going through it.
+
+It is very disappointing because instead of putting your own effort, you
+expect community to do your job.
+
+What the hell is CONFIG_EXYNOS_CONTENT_PATH_PROTECTION?
+
+I'll stop reviewing. Please work on extending existing driver. If you
+submitted something nice and clean, ready for upstream, instead of
+vendor junk, you could get away with separate driver. But you did not.
+It looks really bad.
 
 Best regards,
 Krzysztof
