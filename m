@@ -2,66 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04E8C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 08:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E217EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 08:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbiAUI03 (ORCPT
+        id S231162AbiAUIfZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Jan 2022 03:26:29 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:60530
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1379572AbiAUI02 (ORCPT
+        Fri, 21 Jan 2022 03:35:25 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:58034
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232805AbiAUIfY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jan 2022 03:26:28 -0500
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        Fri, 21 Jan 2022 03:35:24 -0500
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 583533F1DD
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 08:26:27 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6FB354000F
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 08:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642753587;
-        bh=WFaN2NaRLA9rIp327g1xVjFRTrxCMZQ865lGwbwG9Rk=;
+        s=20210705; t=1642754122;
+        bh=h7b33DeTvzBNpVO9xtR6SrRKZdczqz3V7QKsSMc1HTE=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=pbMqgdf7cLUM9m1JBICEkPgEsBqXJXfWDa9NdzCqfhVipR0GhI6Bw6lpU2H/Zw+3B
-         lMj+UXlE92CG1BDHrRSJVj8PKHJfJwt9ZqMBXT0wiuNIFLUeCoYn0VvAH/O7yuoOto
-         G8PdIDbEQrrqopLCjdoWo1vTDmv6qURRh1z+6vSj2rB3fyBfdsLbrvlkBIl4vg4bgo
-         M8QVboV6/jgg3fgHcLrtzoEavd+U4Z0C2i8FGs/RQ1Tmhmw0bXq8bMG0aTY0mFNJKk
-         68ICVRXjqiOcFAwSM5jefoxmUXvUnEU2nWjN+WCYvcY3hE9aGWE1Ssu1GvoX/RUbV2
-         W+3NH04lT/t7w==
-Received: by mail-ed1-f72.google.com with SMTP id en7-20020a056402528700b00404aba0a6ffso7248595edb.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 00:26:27 -0800 (PST)
+        b=A2Hur4/zqseoVGUm4gZnVoWWlVcUaOEaNTWwDL3DFhmjpNhWNS+Slhz9uGdn9zfLo
+         cG0bSMOohQU1AUsX6cKWu7+5cOGcv6ATrrLSAi4Kx6xAzEBrK4uwlvn+eSHGwV4lWB
+         2W2GSLkClNSuGQhmKa279Fa64hvCSG8jq1vINLEd4umeGsfaPiJ57SER+o3MWDlzW7
+         QNyqncIgPfTJHgYRLlX4SqK83yZbrpPubReh2R8GYl+1/eNrkiruYfy33zRWUk49Rj
+         Q7dgeP2xUAcjoCJoaQ5IRQISqip8ULHh86HqW978YSGHO/B0FwVm9rbFlJS2KnUSBT
+         aXmb2wOyEu1yg==
+Received: by mail-ed1-f69.google.com with SMTP id o10-20020a056402438a00b00403212b6b1aso8359950edc.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 00:35:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=WFaN2NaRLA9rIp327g1xVjFRTrxCMZQ865lGwbwG9Rk=;
-        b=RdoUbwtZREcufTbP9CAO3wxofR5gGDsgGrF/tY5h/BPCC12tSjc/5s3SMqOUzUDlaK
-         KlzH1+E5CT3WOW1MrtzJR6Wk5oYmkD9o2lubWw90tZyoomzpKCzz8r0s+KW8cWCL3oKL
-         sKzSLfOeKGh9ZuJPFD9pC5RctLS+z0ulm4C7/X+DGyR1u8/cgF1RFkBSy9MXSHBzblBA
-         OXl0g2KyLnNkbp41vbtuJtBxhBIp4mHEYl7oamBzwfzSlcDCiNzgCgzY/PmJUO6OhhIp
-         rz91gnAhg9JLXBsCqylJofunjP1ym0cKJcB2c7CWiJ0MbrbwoSdxHcDohKYpnfpuHONf
-         ELsw==
-X-Gm-Message-State: AOAM531rC1cNElgpdhavvPkZ6JbN0K+/290FkcQC6Wa/Dr8OHR32uzOP
-        NpmyZ6Ek1BTkZCcdLaZDMxRuPbDRKCV5MU4ohLgLoMoRsSYy2O2qBX1rUFLRhHWv/qnp8cPfdCW
-        MhLveo1rw22RSbx60zgWMpzDOoQkwy0hhfcMhB1UEqkkC29SE
-X-Received: by 2002:aa7:d949:: with SMTP id l9mr3339687eds.54.1642753576911;
-        Fri, 21 Jan 2022 00:26:16 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzM9vD86mwMtX+h2FjjQlccFgtkFev6o5qFbfunrbz4ISkFfscZEMnftrRS9hu6u4qvlPa49w==
-X-Received: by 2002:aa7:d949:: with SMTP id l9mr3339671eds.54.1642753576763;
-        Fri, 21 Jan 2022 00:26:16 -0800 (PST)
+        bh=h7b33DeTvzBNpVO9xtR6SrRKZdczqz3V7QKsSMc1HTE=;
+        b=l1Dir6PPZfNJvx727kalxxKERQcQjQrL2TDv6+ZCj//X2cZ1meywDVwKHYfLEUZidP
+         aaHxFH46LivDbk41CPxKrH05XaZ+USahhdYPiz7nI1b7vIOnAeDw5mMPouH78bGzfFl7
+         qvTZ0eHvLzPXWqOg7koE7X8FENxKEO0mumam2fF9n8iTtWZ0d6OacV5ZeSgH2QrnW6/k
+         4pahV2HWhl68naHnkreV1daDSZFdOzopWSBOgo4WCyA7b10/usazehvBECO4xcny8kQC
+         kRNFwER2GtvbRmiOcwVImuWZL5Sw+yznVC4PqfzsA77LXwE7YiywcpwMA6pt/wMct1mY
+         HXqA==
+X-Gm-Message-State: AOAM533efoL4mnLOb3oznqo3vGeKhyHqMwATam03easU+mXAw/no8l9w
+        LdAdWbDV5Oi8zlJCtDS73E9m+ptg2+NWUKzmbNy6fqJJz8OQq/Z6/6ATMkkd21NKHnQ57Z9ZKfq
+        iM6hQrXWWcGniIMtHFiZ3hRtBwyAuN8hmjbMt/wuiRPTwWJZE
+X-Received: by 2002:aa7:d9d4:: with SMTP id v20mr3470524eds.234.1642754121941;
+        Fri, 21 Jan 2022 00:35:21 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxIYeq/Ed3URUhIn6WPpagBUgmUBHhym8SeaQc3F2a9sHPJ9ZLkk4zZZiOX2+0I08qYGOPgCA==
+X-Received: by 2002:aa7:d9d4:: with SMTP id v20mr3470511eds.234.1642754121737;
+        Fri, 21 Jan 2022 00:35:21 -0800 (PST)
 Received: from [192.168.0.50] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id cf13sm1821768ejb.141.2022.01.21.00.26.15
+        by smtp.gmail.com with ESMTPSA id s13sm1819610ejo.207.2022.01.21.00.35.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jan 2022 00:26:16 -0800 (PST)
-Message-ID: <9a006308-cabb-7ee2-0556-860d425b251f@canonical.com>
-Date:   Fri, 21 Jan 2022 09:26:01 +0100
+        Fri, 21 Jan 2022 00:35:21 -0800 (PST)
+Message-ID: <32a92895-d724-c1bf-4eab-15c971625cf0@canonical.com>
+Date:   Fri, 21 Jan 2022 09:35:11 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [RFC 1/3] dt-bindings: iommu: Add bindings for samsung,sysmmu-v8
+Subject: Re: [RFC 0/3] iommu/samsung: Introduce Exynos sysmmu-v8 driver
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
@@ -86,9 +86,8 @@ Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20220120201958.2649-1-semen.protsenko@linaro.org>
- <20220120201958.2649-2-semen.protsenko@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220120201958.2649-2-semen.protsenko@linaro.org>
+In-Reply-To: <20220120201958.2649-1-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -96,61 +95,75 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 20/01/2022 21:19, Sam Protsenko wrote:
-> Only example of usage and header for now.
+> This is a draft of a new IOMMU driver used in modern Exynos SoCs (like
+> Exynos850) and Google's GS101 SoC (used in Pixel 6 phone). Most of its
+> code were taken from GS101 downstream kernel [1], with some extra
+> patches on top (fixes from Exynos850 downstream kernel and some porting
+> changes to adapt it to the mainline kernel). All development history can
+> be found at [2].
 > 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  .../bindings/iommu/samsung,sysmmu-v8.txt      | 31 +++++++++++++
-
-Please, don't copy paste bindings or entire drviers from vendor kernel.
-It looks very bad. Instead, submit them in dtschema.
-
-NAK.
-
->  include/dt-bindings/soc/samsung,sysmmu-v8.h   | 43 +++++++++++++++++++
->  2 files changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu-v8.txt
->  create mode 100644 include/dt-bindings/soc/samsung,sysmmu-v8.h
+> Similarities with existing exynos-iommu.c is minimal. I did some
+> analysis using similarity-tester tool:
 > 
-> diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu-v8.txt b/Documentation/devicetree/bindings/iommu/samsung,sysmmu-v8.txt
-> new file mode 100644
-> index 000000000000..d6004ea4a746
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu-v8.txt
-> @@ -0,0 +1,31 @@
-> +Example (Exynos850, IOMMU for DPU usage):
-> +
-> +	#include <dt-bindings/soc/samsung,sysmmu-v8.h>
-> +
-> +	/* IOMMU group info */
-> +	iommu_group_dpu: iommu_group_dpu {
-> +		compatible = "samsung,sysmmu-group";
-> +	};
-> +
-> +	sysmmu_dpu: sysmmu@130c0000 {
-> +		compatible = "samsung,sysmmu-v8";
-> +		reg = <0x130c0000 0x9000>;
-> +		interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-> +		qos = <15>;
-> +
-> +		clocks = <&cmu_dpu CLK_GOUT_DPU_SMMU_CLK>;
-> +		clock-names = "gate";
-> +
-> +		sysmmu,secure-irq;
-> +		sysmmu,secure_base = <0x130d0000>;
-> +		sysmmu,default_tlb = <TLB_CFG(BL1, PREFETCH_PREDICTION)>;
-> +		sysmmu,tlb_property =
-> +			<1 TLB_CFG(BL1, PREFETCH_PREDICTION) (DIR_READ | (1 << 16)) SYSMMU_ID_MASK(0x2, 0xF)>,
-> +			<2 TLB_CFG(BL1, PREFETCH_PREDICTION) (DIR_READ | (1 << 16)) SYSMMU_ID_MASK(0x4, 0xF)>,
-> +			<3 TLB_CFG(BL1, PREFETCH_PREDICTION) (DIR_READ | (1 << 16)) SYSMMU_ID_MASK(0x6, 0xF)>,
-> +			<4 TLB_CFG(BL1, PREFETCH_PREDICTION) (DIR_READ | (1 << 16)) SYSMMU_ID_MASK(0x8, 0xF)>;
-> +		port-name = "DPU";
-> +		#iommu-cells = <0>;
-> +		//power-domains = <&pd_dpu>;
+> 8<-------------------------------------------------------------------->8
+>     $ sim_c -peu -S exynos-iommu.c "|" samsung-*
+> 
+>     exynos-iommu.c consists for 15 % of samsung-iommu.c material
+>     exynos-iommu.c consists for 1 %  of samsung-iommu-fault.c material
+>     exynos-iommu.c consists for 3 %  of samsung-iommu.h material
+> 8<-------------------------------------------------------------------->8
+> 
+> So the similarity is very low, most of that code is some boilerplate
+> that shouldn't be extracted to common code (like allocating the memory
+> and requesting clocks/interrupts in probe function).
 
-We try not to store dead code in kernel.
+This is not a prove of lack of similarities. The vendor drivers have
+proven track of poor quality and a lot of code not compatible with Linux
+kernel style.
 
+Therefore comparing mainline driver, reviewed and well tested, with a
+vendor out-of-tree driver is wrong. You will almost always have 0% of
+similarities, because vendor kernel drivers are mostly developed from
+scratch instead of re-using existing drivers.
+
+Recently Samsung admitted it - if I extend existing driver, I will have
+to test old and new platform, so it is easier for me to write a new driver.
+
+No, this is not that approach we use it in mainline.
+
+Linaro should know it much better.
+
+> 
+> It was tested on v5.4 Android kernel on Exynos850 (E850-96 board) with
+> DPU use-case (displaying some graphics to the screen). Also it
+> apparently works fine on v5.10 GS101 kernel (on Pixel 6). On mainline
+> kernel I managed to build, match and bind the driver. No real world test
+> was done, but the changes from v5.10 (where it works fine) are minimal
+> (see [2] for details). So I'm pretty sure the driver is functional.
+
+No, we do not take untested code or code for different out-of-tree
+kernels, not for mainline.
+
+I am pretty sure drivers is poor or not working.
+
+> 
+> For this patch series I'd like to receive some high-level review for
+> driver's design and architecture. Coding style and API issues I can fix
+> later, when sending real (not RFC) series. Particularly I'd like to hear
+> some opinions about:
+>   - namings: Kconfig option, file names, module name, compatible, etc
+>   - modularity: should this driver be a different platform driver (like
+>     in this series), or should it be integrated into existing
+>     exynos-iommu.c driver somehow
+>   - dt-bindings: does it look ok as it is, or some interface changes are
+>     needed
+
+You sent bindings in TXT with dead code inside, and you ask if it is ok.
+I consider this approach that you sent whatever junk to us hoping that
+we will point all the issues instead of finding them by yourself.
+
+I am pretty sure you have several folks in Linaro who can perform first
+review and bring the code closer to mainline style.
 
 
 Best regards,
