@@ -2,136 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD865C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 17:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A5AC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 18:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382071AbiAURn0 (ORCPT
+        id S1351193AbiAUSd0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Jan 2022 12:43:26 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:22828 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381898AbiAURm5 (ORCPT
+        Fri, 21 Jan 2022 13:33:26 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56632
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346191AbiAUSdZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jan 2022 12:42:57 -0500
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220121174138epoutp04a115482b6a7616a1dcecad21fa58d1b4~MWfrkzeDf2854328543epoutp044
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 17:41:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220121174138epoutp04a115482b6a7616a1dcecad21fa58d1b4~MWfrkzeDf2854328543epoutp044
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642786898;
-        bh=4HkzwrHZHTOLVm8bvp/nAaK6ObaRJ0G92SKKDYrFwU8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ssfdm3WjliOWjIRehRMOE9SmqOuE0YjKl+ZPNk03AzNHev3LxnwC9NL8xoyXzxFfo
-         gHFM4M618Xh54ZSdSWp0cXNDOUD66MFGdgV4GnY5rztECoKaRvjgJJQ4Sy3Ld1NOF7
-         itjoyo2bbiR0EVdHN2VKQyZkkGTisXR77uIs561c=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220121174136epcas5p17ad3363fd52b2e7e4b25982b3c615580~MWfqRiIDd2780827808epcas5p1H;
-        Fri, 21 Jan 2022 17:41:36 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4JgRWY3t5Dz4x9Pp; Fri, 21 Jan
-        2022 17:41:29 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E1.C5.05590.640FAE16; Sat, 22 Jan 2022 02:41:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220121174126epcas5p281335ae041b65918d0e6675f5c6d44ba~MWfgPMdUM0949909499epcas5p2z;
-        Fri, 21 Jan 2022 17:41:26 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220121174126epsmtrp126cbf4ee1032cf6b671ed3380ad9bbb2~MWfgOWIX12608726087epsmtrp1m;
-        Fri, 21 Jan 2022 17:41:26 +0000 (GMT)
-X-AuditID: b6c32a4b-739ff700000015d6-54-61eaf0462d98
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A5.C7.08738.540FAE16; Sat, 22 Jan 2022 02:41:25 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220121174123epsmtip21d528796f6e18a757f022f8248ee18df~MWfd7CwK91229812298epsmtip2b;
-        Fri, 21 Jan 2022 17:41:23 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
-        linus.walleij@linaro.org, catalin.marinas@arm.com,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, sboyd@kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com
-Subject: [PATCH v3 16/16] arm64: defconfig: Enable Tesla FSD SoC
-Date:   Fri, 21 Jan 2022 22:58:40 +0530
-Message-Id: <20220121172840.12121-17-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220121172840.12121-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmlq77h1eJBmsPM1o8mLeNzeLvpGPs
-        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
-        tPULu0Xr3iPsFofftLNa/Lu2kcXi8fU/bA6CHmvmrWH0+P1rEqPHrIZeNo9NqzrZPO5c28Pm
-        sXlJvceVE02sHn1bVjF6/Guay+7xeZNcAFdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmB
-        oa6hpYW5kkJeYm6qrZKLT4CuW2YO0D9KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKU
-        nAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM31uOMhXsZ604vXEdYwPjE5YuRk4OCQETiV8X
-        TjN1MXJxCAnsZpR4ur+fFcL5xCix83EjO4TzmVFiy6/vzDAtjSdWMkIkdjFKfH5/DqqlhUli
-        7uEzjCBVbALaEnenb2ECsUUE3CRuNHaALWEW+M8ksbFnGRtIQljAQeL17yZWEJtFQFVi7tlL
-        YHFeAVuJFW8WskOsk5dYveEA2GpOoPjrs/OYQQZJCGzhkHi3fRvUTS4Sp5qPsEHYwhKvjm+B
-        apaSeNnfBmRzANnZEj27jCHCNRJL5x2DhoC9xIErc1hASpgFNCXW79IHCTML8En0/n7CBNHJ
-        K9HRJgRRrSrR/O4qVKe0xMTublaIEg+JmduzIcEwgVHiW9NUtgmMsrMQhi5gZFzFKJlaUJyb
-        nlpsWmCcl1oOj6jk/NxNjOBkquW9g/HRgw96hxiZOBgPMUpwMCuJ8Bbkv0oU4k1JrKxKLcqP
-        LyrNSS0+xGgKDLGJzFKiyfnAdJ5XEm9oYmlgYmZmZmJpbGaoJM57Kn1DopBAemJJanZqakFq
-        EUwfEwenVAMTk4rEs1anXWVmrww1/rKFZf5P42++s3SzpXN5m/oNgfkezd2/txje9f++0Fne
-        ++o7/cMtMawdKdav65NWPlnXe/+d1rM67SPyXIsmLG/Jc+PawdDwYF2kXMJL5ntHt0rl8icb
-        Mq0VOr7p1OQvaQ2T+7Sv6XRqObXM1uE8cqHIjt3ZYfWt/cWKW2R2Jrc8ZZo2u8O8/gBbTFFO
-        3dSDLd8rmlxYGKxSZxr+O+Sx+hPbpje814unN87bJZJ+9IDzrwk821quT9udfcFmZuvHjOMX
-        TMNivrSveVDYoPVMrWHZjs2KPrp1bA+Vq3gqjji5vfkxQ+20ccbji+7NGzZdODXDVsJGfyaz
-        xJs3MUem5U5UYinOSDTUYi4qTgQADxQjqi8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsWy7bCSvK7rh1eJBneXWVk8mLeNzeLvpGPs
-        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
-        tPULu0Xr3iPsFofftLNa/Lu2kcXi8fU/bA6CHmvmrWH0+P1rEqPHrIZeNo9NqzrZPO5c28Pm
-        sXlJvceVE02sHn1bVjF6/Guay+7xeZNcAFcUl01Kak5mWWqRvl0CV8bvLUeZCvazVpzeuI6x
-        gfEJSxcjJ4eEgIlE44mVjF2MXBxCAjsYJX687mWHSEhLXN84AcoWllj57zk7RFETk8S7R8vA
-        EmwC2hJ3p29hArFFBDwk2v7dYwYpYhaYyCyxce9ZsBXCAg4Sr383sYLYLAKqEnPPXmIDsXkF
-        bCVWvFkItUFeYvWGA8wgNidQ/PXZeWC2kICNRPOsrUwTGPkWMDKsYpRMLSjOTc8tNiwwykst
-        1ytOzC0uzUvXS87P3cQIjgUtrR2Me1Z90DvEyMTBeIhRgoNZSYS3IP9VohBvSmJlVWpRfnxR
-        aU5q8SFGaQ4WJXHeC10n44UE0hNLUrNTUwtSi2CyTBycUg1Mwi3bI8S3dUrb3K14KyTWusZ/
-        I/eRztjHn7McL1VtKY+cZLJY6dkcxX96bFWJs3clNNX1lzlKJFbtzpr/VbUmfNuDfbMZbp0o
-        d6u222jg5X22S8Rpy75y2W0lRkk7kmp29ojcb15068ka2+R/TwpX1dmkl7rIzBXzO/zqWcFB
-        lnYF9fJNDd4Xvi3fxJQa1hazZiXrC2bVxs7ZB3a2pB3nCGdw2t7hWqK3ttf9zqpNN0/E2pt5
-        Jzz6/WLbu+zbj2UE0oqYnjDUPzk+ddLSB6tF7pV9mFZeESjf7XDs8h7GTUZbNS/yeM6eukpS
-        YULVnEtnumfsiTw70X9asfeGy2tf94X2GO3aeCg7UmpV9MpIJZbijERDLeai4kQA1l3oAvQC
-        AAA=
-X-CMS-MailID: 20220121174126epcas5p281335ae041b65918d0e6675f5c6d44ba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220121174126epcas5p281335ae041b65918d0e6675f5c6d44ba
-References: <20220121172840.12121-1-alim.akhtar@samsung.com>
-        <CGME20220121174126epcas5p281335ae041b65918d0e6675f5c6d44ba@epcas5p2.samsung.com>
+        Fri, 21 Jan 2022 13:33:25 -0500
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F378B3F4B6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 18:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642789998;
+        bh=mXZlfPhqAVSv8NPi2Pl5gmTb003b75PhYIJqXglSUqA=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=ScuZp+mU2eQzCYxHGTbCUXx7f5+4brJfbIrULXfQn6Mk11IT6Fm6vIB1kc2pmCHCb
+         2+SDmdw6ozBrYVVdgG7KkY0ctNYlM0/0Wg7XFWjE5rsM1db83ffEkV2BU+sbSqJGkH
+         QT64XNHOqXXdUW/vZplcAAqd8hvXyNRQHysG6TPEXm/z1F+HtPfZlH4da0IiBP6s/O
+         G3pYka3XCDOUhbyqAh5QdIsIJXVAN0wGcYx+lFyWLUIJQfQkEzfnE3bHmZI9CVDnIX
+         K8Q/jIYYsoArOSp/PEnbiE2JjIAKLY2Ei6O9Y1VCE/R5jKIRqM3OzlWWGyDVNEbzUe
+         Sa6jcpBew5Ozw==
+Received: by mail-ej1-f72.google.com with SMTP id q3-20020a17090676c300b006a9453c33b0so407877ejn.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 10:33:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mXZlfPhqAVSv8NPi2Pl5gmTb003b75PhYIJqXglSUqA=;
+        b=iIalCEAh2piE0uoO8l7Jd7iduWDZqmj9H84bqsTIBph7x4YCP5QscMF+/Jbflc0wjB
+         7QtMr/o2P/NFOyW7vPyr0XKB0lSt7a6DlmBsZEox3rMv2t4WL9xs//vK6Dpu3YZ5TP0Y
+         6DPPFoZd1H+ItnRBvWMugCMOcWI+Bp7VzNS3TvUQehgxzwuVZrjZs7IeiueDk93m1C7H
+         ImDAnwTsy4EoCdvhEJupPkC+AY/vc9HI4FHXluAkdGxe1ZiUQIhA9UFwC/Xc6NvV597N
+         /IJQsYT+jzHjaunyT3KvJeEcCwBpWL+96+pPBCGmJ3eU8Vl32HzeFeGN0V+x0q1dXetF
+         Wy6g==
+X-Gm-Message-State: AOAM533XtI7RDGkR+kqujwIT+hoy9UasitjHrF4+idfz/PCLEF98GWRA
+        5G00ow8EcS+m1iS0JLDZdbKjzWBD5iOQWU/L3NaYUC1BqPez6KlTezR4mktoWe3jNWdE8Brj6WZ
+        vQ7eHx9iJtVueFjwJ1PEjpvAN4RFdUPjZ1lyqkP8Fwznxam7M
+X-Received: by 2002:a17:907:7858:: with SMTP id lb24mr4306543ejc.629.1642789997390;
+        Fri, 21 Jan 2022 10:33:17 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzOKjPuqYPtjHGgNKA+6097tyEbgBqQY22vvlACKfaO33upCODhf6sV7Otiz0IHhhh/a2hzSQ==
+X-Received: by 2002:a17:907:7858:: with SMTP id lb24mr4306522ejc.629.1642789997159;
+        Fri, 21 Jan 2022 10:33:17 -0800 (PST)
+Received: from [192.168.0.51] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id e11sm2268231ejd.188.2022.01.21.10.33.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jan 2022 10:33:16 -0800 (PST)
+Message-ID: <aa172f14-2328-fc7c-0063-5c0033970d1d@canonical.com>
+Date:   Fri, 21 Jan 2022 19:33:15 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v2 1/3] spi: dt-bindings: samsung: Add fsd spi compatible
+Content-Language: en-US
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, broonie@kernel.org, andi@etezian.org,
+        linux-spi@vger.kernel.org, linux-fsd@tesla.com,
+        Adithya K V <adithya.kv@samsung.com>
+References: <20220120192438.25555-1-alim.akhtar@samsung.com>
+ <CGME20220120193613epcas5p238851849d212e01d7d830d78ca7d6379@epcas5p2.samsung.com>
+ <20220120192438.25555-2-alim.akhtar@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220120192438.25555-2-alim.akhtar@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch enables the Tesla FSD SoC in arm64 defconfig.
+On 20/01/2022 20:24, Alim Akhtar wrote:
+> Adds spi controller dt-binding compatible information for
+> Tesla Full Self-Driving (FSD) SoC.
+> 
+> Cc: linux-fsd@tesla.com
+> Signed-off-by: Adithya K V <adithya.kv@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/spi/samsung,spi.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Cc: linux-fsd@tesla.com
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I think you forgot to mention - in cover letter - that this depends on
+my Samsung SPI bindings conversion to dtschema.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ee4bd7710a0d..7dd0693a233e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -54,6 +54,7 @@ CONFIG_ARCH_SEATTLE=y
- CONFIG_ARCH_INTEL_SOCFPGA=y
- CONFIG_ARCH_SYNQUACER=y
- CONFIG_ARCH_TEGRA=y
-+CONFIG_ARCH_TESLA_FSD=y
- CONFIG_ARCH_SPRD=y
- CONFIG_ARCH_THUNDER=y
- CONFIG_ARCH_THUNDER2=y
--- 
-2.25.1
+I'll be sending v6 of it after merge window, with minor changes.
 
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+> index 61c77088e8ee..bf9a76d931d2 100644
+> --- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
+> @@ -21,6 +21,7 @@ properties:
+>            - samsung,s3c6410-spi
+>            - samsung,s5pv210-spi # for S5PV210 and S5PC110
+>            - samsung,exynos5433-spi
+> +          - tesla,fsd-spi
+>        - const: samsung,exynos7-spi
+>          deprecated: true
+>  
+> 
+
+
+Best regards,
+Krzysztof
