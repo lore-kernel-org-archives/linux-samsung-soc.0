@@ -2,134 +2,269 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADFEC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 10:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1A9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Jan 2022 11:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349811AbiAUKAt (ORCPT
+        id S1380084AbiAULJJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Jan 2022 05:00:49 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50858 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346275AbiAUKAs (ORCPT
+        Fri, 21 Jan 2022 06:09:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55214 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380079AbiAULJI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Jan 2022 05:00:48 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220121100047euoutp01a30088f4200a8c6ca8491c82f4004b20~MQNTrUJj00847308473euoutp01i
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 10:00:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220121100047euoutp01a30088f4200a8c6ca8491c82f4004b20~MQNTrUJj00847308473euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642759247;
-        bh=5YdJW3+dhblkbIhtVX8cyt3XEV8kipJFF77dXWl7WbQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=qeF6k0ymqneiIF7MsJIApUv5SO6bmveHrMnc1YxdhOiGrCbvYlvOuZNN+9GIfsUic
-         owps+Un48R7wQVKTwWKS97jHL//ScvIp1L9bTvTkNEJBCFdgziDcxOVgG/vq+6h9W0
-         O9NVtJ/iRnVqXw2K9ue+tSwONgpIhSVOBif1eyiY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220121100046eucas1p285b561720d6d0cc65de79160c47442e4~MQNTAyivh1909319093eucas1p2I;
-        Fri, 21 Jan 2022 10:00:46 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7C.CC.10260.E448AE16; Fri, 21
-        Jan 2022 10:00:46 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220121100046eucas1p264ec703358da48f3cddec028425ba981~MQNSg0k713121431214eucas1p23;
-        Fri, 21 Jan 2022 10:00:46 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220121100046eusmtrp1a09b80923974277913806d1d2b9ff97a~MQNSfuPi40869008690eusmtrp1a;
-        Fri, 21 Jan 2022 10:00:46 +0000 (GMT)
-X-AuditID: cbfec7f5-bf3ff70000002814-64-61ea844e980f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 76.7D.09404.D448AE16; Fri, 21
-        Jan 2022 10:00:45 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220121100045eusmtip24dce8727c589245b275f53046aff84a9~MQNSGGdFH1840418404eusmtip2c;
-        Fri, 21 Jan 2022 10:00:45 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        =?UTF-8?q?Ma=C3=ADra=20Canal?= <maira.canal@usp.br>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH] drm/exynos: Don't fail if no TE-gpio is defined for DSI
- driver
-Date:   Fri, 21 Jan 2022 11:00:39 +0100
-Message-Id: <20220121100039.17316-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWy7djPc7p+La8SDU7eF7a48vU9m8Wk+xNY
-        LDa+/cFkMeP8PiaLtUfuslu0tVxnt5gx+SWbA7vHrIZeNo/73ceZPPq2rGL0ePCx1OPzJrkA
-        1igum5TUnMyy1CJ9uwSujANH25gLrnJW/L7ynb2BcSpHFyMnh4SAicS6bxdZuhi5OIQEVjBK
-        PL1znQ3C+cIo8f3YenaQKiGBz4wSx79awHRc3HYMqmM5o8SuFwtY4Dp+P9vOCFLFJmAo0fW2
-        iw3EFhFwk2g6PJMVpIhZ4A2jxM9Fs8HGCgsESrx6uZUZxGYRUJV43vEWqIGDg1fAVmLNRkmI
-        bfISqzccYAbplRD4yy6xvnkeO0TCRaKj9SErhC0s8er4Fqi4jMTpyT0sEA3NjBIPz61lh3B6
-        GCUuN81ghKiylrhz7hfYNmYBTYn1u/RBTAkBR4lzrZ4QJp/EjbeCIMXMQOakbdOZIcK8Eh1t
-        QhAz1CRmHV8Ht/XghUvMELaHRNP+yYyQgIuVeHj3PdsERrlZCKsWMDKuYhRPLS3OTU8tNs5L
-        LdcrTswtLs1L10vOz93ECEwEp/8d/7qDccWrj3qHGJk4GA8xSnAwK4nwFuS/ShTiTUmsrEot
-        yo8vKs1JLT7EKM3BoiTOm5y5IVFIID2xJDU7NbUgtQgmy8TBKdXANGXC1dg1/EYfjR9PNpjM
-        2/j80oUJkZNi7PWrmItE/pbXHd52wvF38Zz7E26x+F3rjbWN9donP11TIcntbz6jTvK8PhPu
-        s30ni/0qz1pkP1rTu/jNSpW2TI15XlbBbbLCIZEhuyZNfSl/4Zsar03Eapb1RplvDVikuVd2
-        slyufqp21EwiXeFWWuu1Irk7Tfa+rvJ3XtkeW716ldsPT6b2vhmKSot3tx9WmstpEXuI/cVW
-        bye9XN4OETfXC88ji40/JSpcqX3GkXD4xv55bQ++h9/a6/VSeaJkcUjw16Ql1Zx33XnvcXhZ
-        h2Rt/6Lg0ihYP+nSi8/Wcq9e7Pqs/b++ve1YqeMsq2du0ZW7Q1qVWIozEg21mIuKEwEzrbtq
-        cwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t/xe7q+La8SDebf17a48vU9m8Wk+xNY
-        LDa+/cFkMeP8PiaLtUfuslu0tVxnt5gx+SWbA7vHrIZeNo/73ceZPPq2rGL0ePCx1OPzJrkA
-        1ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jANH
-        25gLrnJW/L7ynb2BcSpHFyMnh4SAicTFbcdYuhi5OIQEljJKLLu7nw0iISNxcloDK4QtLPHn
-        WhcbRNEnRon+pomMIAk2AUOJrrddYA0iAh4Szd+Os4PYzALvGCXOLZMFsYUF/CVmHtkPFmcR
-        UJV43vEWqJ6Dg1fAVmLNRkmI+fISqzccYJ7AyLOAkWEVo0hqaXFuem6xkV5xYm5xaV66XnJ+
-        7iZGYABuO/Zzyw7Gla8+6h1iZOJgPMQowcGsJMJbkP8qUYg3JbGyKrUoP76oNCe1+BCjKdC6
-        icxSosn5wBjIK4k3NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgcv+i
-        VrNx3smTj752lufJWUUo3b6qyvpsH89vQ5OTr2bYW8x0CcibvPRv+PyH7FzBMbELZtzf4STI
-        mlU57cP3pCtlF7l1jIQvrNq89DZn5qQJjdKz5P+3xt1UfCsX1rI/qjJOrTBo/5aFYtM12bZv
-        jgnZckMx/uebSW6NJswhi4O17rkJP+079D1izrYI3kcMCQxK81xDq2udvQ6yxgSfLdVs94lx
-        7c/zO7CWydyNfd/zf79NMvYEzK+I8ozaFblxU8iiaz+23Tn5tuOx/Ltz9cfrlxcrJ75rcTzw
-        tEjy7opjBRVxykd379/zT/pb/KTzGge/zpP0kAqTtvq0Q/anjYuWYaNo42ytbAE1nbjZSizF
-        GYmGWsxFxYkAD5ISQskCAAA=
-X-CMS-MailID: 20220121100046eucas1p264ec703358da48f3cddec028425ba981
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220121100046eucas1p264ec703358da48f3cddec028425ba981
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220121100046eucas1p264ec703358da48f3cddec028425ba981
-References: <CGME20220121100046eucas1p264ec703358da48f3cddec028425ba981@eucas1p2.samsung.com>
+        Fri, 21 Jan 2022 06:09:08 -0500
+Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03304C06173F
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 03:09:08 -0800 (PST)
+Received: by mail-vk1-xa2c.google.com with SMTP id w17so1226279vko.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jan 2022 03:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WyUpFdPwwu3fMiJ/9hEV9RfL0IhWJOMBQfCbot0LIC0=;
+        b=cnj5NCChjX5Ou+ftTBTz2yzN1TY9qHPYzGBdKUozgVejGKurQCGa3Y8c/oiRKfrPbK
+         JxOC2mg8fLYIItO3UxjpbHqJ77jadUIaCm49C5uSNCt7KPdC06VPtZ2pnKJEpSSw0e7+
+         zqNbOQ5TgJ5cYC6pMicUGNhRbtOAxLDwAXO1DzpgNZH9KYiQEJ/5JaPmbSNuKH6yJG0U
+         UcHgiG9RJ6BTmfJyV8H0r2mw7zYhBiFSKnSaBzJuSLnKLtEwrcKwWGmnxFhhZh+Pqlk8
+         7q8u6/O3LP3SxhemjZOABgpiSIi9TOKsVYjhEOaUmUEjm/0McdfmnL/TciibrQOsc/4x
+         QJRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WyUpFdPwwu3fMiJ/9hEV9RfL0IhWJOMBQfCbot0LIC0=;
+        b=2SsNqbxGjRkn412ozRz90h6ysXNNjMtGWaKLe/yTgQ6ZZEcFPoR9Si/gbjMVmuJ8yu
+         PF4I8XJFVbG/Ps7ZjAZTvvbmWuBKOUgZcq95yXjVUHb7Y2HxN3NtjrZVjNIQa9Ok6bxS
+         VLVHBnHGmZFw77TnpOG3AACentbA/5JEn++EmqKTrnk+1Dw5F+cZ4tLGr7bwmwUUHAzl
+         VmI0VCUUHFnZftqEC1BkgNbodMO1j0uMYMgLOOhXrBWa+o8mmlyFwD6AFDTFewllB4K7
+         w/85QPB4RDNGPdNQc8eFCYLXSRf9+AcFO8j+GvcSjwrlhTk/q4dMI4N9ELCLG6zVBvLf
+         ImiA==
+X-Gm-Message-State: AOAM533wftz0RevdzJztVLauN9dlJ2ST1dleaHUiyssEj88RW1aCN24n
+        Dubb36yUu7B00VboIkbvLSiUYo7HSIjf/XxQRV/5Kg==
+X-Google-Smtp-Source: ABdhPJw3NIVk0qJHehAGeNccANJK4kjzFu1/gfyrccc/q61I7lCdu7fcP08+4G4KRhuu8RWU4ZOtNtN0oZ51DLmn6RU=
+X-Received: by 2002:ac5:cdb0:: with SMTP id l16mr1274338vka.14.1642763346996;
+ Fri, 21 Jan 2022 03:09:06 -0800 (PST)
+MIME-Version: 1.0
+References: <20220120201958.2649-1-semen.protsenko@linaro.org>
+ <20220120201958.2649-3-semen.protsenko@linaro.org> <a111932a-6685-2a9d-abce-87af26b121a4@canonical.com>
+In-Reply-To: <a111932a-6685-2a9d-abce-87af26b121a4@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 21 Jan 2022 13:08:55 +0200
+Message-ID: <CAPLW+4kKR+7hM-eZc8-v6Dzeaj+TPBRmCLDSVNEnfx2WmN2TJA@mail.gmail.com>
+Subject: Re: [RFC 2/3] iommu/samsung: Introduce Exynos sysmmu-v8 driver
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Hyesoo Yu <hyesoo.yu@samsung.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Jinkyu Yang <jinkyu1.yang@samsung.com>,
+        Alex <acnwigwe@google.com>, Carlos Llamas <cmllamas@google.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Erick Reyes <erickreyes@google.com>,
+        "J . Avila" <elavila@google.com>, Jonglin Lee <jonglin@google.com>,
+        Mark Salyzyn <salyzyn@google.com>,
+        Thierry Strudel <tstrudel@google.com>,
+        Will McVicker <willmcvicker@google.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-TE-gpio is optional and if it is not found then gpiod_get_optional()
-returns NULL. In such case the code will continue and try to convert NULL
-gpiod to irq what in turn fails. The failure is then propagated and driver
-is not registered.
+On Fri, 21 Jan 2022 at 10:40, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 20/01/2022 21:19, Sam Protsenko wrote:
+> > Introduce new driver for modern Exynos ARMv8 SoCs, e.g. Exynos850. Also
+> > it's used for Google's GS101 SoC.
+> >
+> > This is squashed commit, contains next patches of different authors. See
+> > `iommu-exynos850-dev' branch for details: [1].
+> >
+> > Original authors (Samsung):
+> >
+> >  - Cho KyongHo <pullip.cho@samsung.com>
+> >  - Hyesoo Yu <hyesoo.yu@samsung.com>
+> >  - Janghyuck Kim <janghyuck.kim@samsung.com>
+> >  - Jinkyu Yang <jinkyu1.yang@samsung.com>
+> >
+> > Some improvements were made by Google engineers:
+> >
+> >  - Alex <acnwigwe@google.com>
+> >  - Carlos Llamas <cmllamas@google.com>
+> >  - Daniel Mentz <danielmentz@google.com>
+> >  - Erick Reyes <erickreyes@google.com>
+> >  - J. Avila <elavila@google.com>
+> >  - Jonglin Lee <jonglin@google.com>
+> >  - Mark Salyzyn <salyzyn@google.com>
+> >  - Thierry Strudel <tstrudel@google.com>
+> >  - Will McVicker <willmcvicker@google.com>
+> >
+> > [1] https://github.com/joe-skb7/linux/tree/iommu-exynos850-dev
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/iommu/Kconfig               |   13 +
+> >  drivers/iommu/Makefile              |    3 +
+> >  drivers/iommu/samsung-iommu-fault.c |  617 +++++++++++
+> >  drivers/iommu/samsung-iommu-group.c |   50 +
+> >  drivers/iommu/samsung-iommu.c       | 1521 +++++++++++++++++++++++++++
+> >  drivers/iommu/samsung-iommu.h       |  216 ++++
+> >  6 files changed, 2420 insertions(+)
+> >  create mode 100644 drivers/iommu/samsung-iommu-fault.c
+> >  create mode 100644 drivers/iommu/samsung-iommu-group.c
+> >  create mode 100644 drivers/iommu/samsung-iommu.c
+> >  create mode 100644 drivers/iommu/samsung-iommu.h
+> >
+>
+> Existing driver supports several different Exynos SysMMU IP block
+> versions. Several. Please explain why it cannot support one more version?
+>
+> Similarity of vendor driver with mainline is not an argument.
+>
+>
+> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> > index 3eb68fa1b8cc..78e7039f18aa 100644
+> > --- a/drivers/iommu/Kconfig
+> > +++ b/drivers/iommu/Kconfig
+> > @@ -452,6 +452,19 @@ config QCOM_IOMMU
+> >       help
+> >         Support for IOMMU on certain Qualcomm SoCs.
+> >
+> > +config SAMSUNG_IOMMU
+> > +     tristate "Samsung IOMMU Support"
+> > +     select ARM_DMA_USE_IOMMU
+> > +     select IOMMU_DMA
+> > +     select SAMSUNG_IOMMU_GROUP
+> > +     help
+> > +       Support for IOMMU on Samsung Exynos SoCs.
+> > +
+> > +config SAMSUNG_IOMMU_GROUP
+> > +     tristate "Samsung IOMMU Group Support"
+> > +     help
+> > +       Support for IOMMU group on Samsung Exynos SoCs.
+> > +
+> >  config HYPERV_IOMMU
+> >       bool "Hyper-V x2APIC IRQ Handling"
+> >       depends on HYPERV && X86
+> > diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> > index bc7f730edbb0..a8bdf449f1d4 100644
+> > --- a/drivers/iommu/Makefile
+> > +++ b/drivers/iommu/Makefile
+> > @@ -27,6 +27,9 @@ obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
+> >  obj-$(CONFIG_S390_IOMMU) += s390-iommu.o
+> >  obj-$(CONFIG_HYPERV_IOMMU) += hyperv-iommu.o
+> >  obj-$(CONFIG_VIRTIO_IOMMU) += virtio-iommu.o
+> > +obj-$(CONFIG_SAMSUNG_IOMMU) += samsung_iommu.o
+> > +samsung_iommu-objs += samsung-iommu.o samsung-iommu-fault.o
+> > +obj-$(CONFIG_SAMSUNG_IOMMU_GROUP) += samsung-iommu-group.o
+> >  obj-$(CONFIG_IOMMU_SVA_LIB) += iommu-sva-lib.o io-pgfault.o
+> >  obj-$(CONFIG_SPRD_IOMMU) += sprd-iommu.o
+> >  obj-$(CONFIG_APPLE_DART) += apple-dart.o
+> > diff --git a/drivers/iommu/samsung-iommu-fault.c b/drivers/iommu/samsung-iommu-fault.c
+> > new file mode 100644
+> > index 000000000000..c6b4259976c4
+> > --- /dev/null
+> > +++ b/drivers/iommu/samsung-iommu-fault.c
+> > @@ -0,0 +1,617 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "sysmmu: " fmt
+> > +
+> > +#include <linux/smc.h>
+> > +#include <linux/arm-smccc.h>
+> > +#include <linux/pm_runtime.h>
+> > +
+> > +#include "samsung-iommu.h"
+> > +
+> > +#define MMU_TLB_INFO(n)                      (0x2000 + ((n) * 0x20))
+> > +#define MMU_CAPA1_NUM_TLB_SET(reg)   (((reg) >> 16) & 0xFF)
+> > +#define MMU_CAPA1_NUM_TLB_WAY(reg)   ((reg) & 0xFF)
+> > +#define MMU_CAPA1_SET_TLB_READ_ENTRY(tid, set, way, line)            \
+> > +                                     ((set) | ((way) << 8) |         \
+> > +                                      ((line) << 16) | ((tid) << 20))
+> > +
+> > +#define MMU_TLB_ENTRY_VALID(reg)     ((reg) >> 28)
+> > +#define MMU_SBB_ENTRY_VALID(reg)     ((reg) >> 28)
+> > +#define MMU_VADDR_FROM_TLB(reg, idx) ((((reg) & 0xFFFFC) | ((idx) & 0x3)) << 12)
+> > +#define MMU_VID_FROM_TLB(reg)                (((reg) >> 20) & 0x7U)
+> > +#define MMU_PADDR_FROM_TLB(reg)              ((phys_addr_t)((reg) & 0xFFFFFF) << 12)
+> > +#define MMU_VADDR_FROM_SBB(reg)              (((reg) & 0xFFFFF) << 12)
+> > +#define MMU_VID_FROM_SBB(reg)                (((reg) >> 20) & 0x7U)
+> > +#define MMU_PADDR_FROM_SBB(reg)              ((phys_addr_t)((reg) & 0x3FFFFFF) << 10)
+> > +
+> > +#define REG_MMU_INT_STATUS           0x060
+> > +#define REG_MMU_INT_CLEAR            0x064
+> > +#define REG_MMU_FAULT_RW_MASK                GENMASK(20, 20)
+> > +#define IS_READ_FAULT(x)             (((x) & REG_MMU_FAULT_RW_MASK) == 0)
+> > +
+> > +#define SYSMMU_FAULT_PTW_ACCESS   0
+> > +#define SYSMMU_FAULT_PAGE_FAULT   1
+> > +#define SYSMMU_FAULT_ACCESS       2
+> > +#define SYSMMU_FAULT_RESERVED     3
+> > +#define SYSMMU_FAULT_UNKNOWN      4
+> > +
+> > +#define SYSMMU_SEC_FAULT_MASK                (BIT(SYSMMU_FAULT_PTW_ACCESS) | \
+> > +                                      BIT(SYSMMU_FAULT_PAGE_FAULT) | \
+> > +                                      BIT(SYSMMU_FAULT_ACCESS))
+> > +
+> > +#define SYSMMU_FAULTS_NUM         (SYSMMU_FAULT_UNKNOWN + 1)
+> > +
+> > +#if IS_ENABLED(CONFIG_EXYNOS_CONTENT_PATH_PROTECTION)
+>
+> You just copy-pasted vendor stuff, without actually going through it.
+>
+> It is very disappointing because instead of putting your own effort, you
+> expect community to do your job.
+>
+> What the hell is CONFIG_EXYNOS_CONTENT_PATH_PROTECTION?
+>
+> I'll stop reviewing. Please work on extending existing driver. If you
+> submitted something nice and clean, ready for upstream, instead of
+> vendor junk, you could get away with separate driver. But you did not.
+> It looks really bad.
+>
 
-Fix this by returning early from exynos_dsi_register_te_irq() if no
-TE-gpio is found.
+Krzysztof, that's not what I asked in my patch 0/3. I probably wasn't
+really clear, sorry. Let me please try and describe that better, and
+maybe provide some context.
 
-Fixes: ee6c8b5afa62 ("drm/exynos: Replace legacy gpio interface for gpiod interface")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I'm just starting to work on that driver, it's basically downstream
+version of it. Of course I'm going to rework it before sending the
+actual patch series (that's why this series has RFC tag). I'd never
+asked community to do my job for me and really review the downstream
+driver! I just want to know from the starters some *very* basic and
+high-level info, which could help me to rework the driver in correct
+way. Like naming of files, compatible strings, should it be part of
+existing driver or it's ok to have it as another platform_driver. In
+other words, that kind of "review" shouldn't take more than 2 minutes
+of your time. And it could spare us all unneeded extra review rounds
+in future. Right now I don't need the code review per se (and I'm
+really sorry you had to spend your time on that, knowing how busy
+maintainers can be during the MW). I thought about omitting the code
+at all, only asking the questions, but then I figured it's a good idea
+to attach some code for the reference. Maybe it wasn't a good idea
+after all.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 32a36572b894..14ebbb124852 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1335,7 +1335,9 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
- 	int te_gpio_irq;
- 
- 	dsi->te_gpio = devm_gpiod_get_optional(dsi->dev, "te", GPIOD_IN);
--	if (IS_ERR(dsi->te_gpio)) {
-+	if (!dsi->te_gpio) {
-+		return 0;
-+	} else if (IS_ERR(dsi->te_gpio)) {
- 		dev_err(dsi->dev, "gpio request failed with %ld\n",
- 				PTR_ERR(dsi->te_gpio));
- 		return PTR_ERR(dsi->te_gpio);
--- 
-2.17.1
+For the record, I'm well aware that we don't send downstream code
+without making it upstreamable first, and I know it must be tested
+well, etc. For example, you already saw me sending clk-exynos850
+driver, which I re-implemented from scratch, and it has ~0.0% of
+downstream code. So why would I change my policy about that all of the
+sudden... Anyway, hope you understand now that there weren't any ill
+intentions on my side, w.r.t. this RFC.
 
+> Best regards,
+> Krzysztof
