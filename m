@@ -2,77 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29520C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Jan 2022 10:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4236C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Jan 2022 12:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233939AbiAVKsP (ORCPT
+        id S231761AbiAVMiV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Jan 2022 05:48:15 -0500
-Received: from 2.mo576.mail-out.ovh.net ([178.33.251.80]:37831 "EHLO
-        2.mo576.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233926AbiAVKsP (ORCPT
+        Sat, 22 Jan 2022 07:38:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56490 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229546AbiAVMiV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Jan 2022 05:48:15 -0500
-X-Greylist: delayed 324 seconds by postgrey-1.27 at vger.kernel.org; Sat, 22 Jan 2022 05:48:14 EST
-Received: from player687.ha.ovh.net (unknown [10.109.146.32])
-        by mo576.mail-out.ovh.net (Postfix) with ESMTP id 189DD229E0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 10:42:50 +0000 (UTC)
-Received: from etezian.org (82-181-27-157.bb.dnainternet.fi [82.181.27.157])
-        (Authenticated sender: andi@etezian.org)
-        by player687.ha.ovh.net (Postfix) with ESMTPSA id 855ED268D492D;
-        Sat, 22 Jan 2022 10:42:35 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-98R00227887125-d786-4907-a622-75ed417c6e98,
-                    7845C3D69A5FB83312AE15A7A84010493B023798) smtp.auth=andi@etezian.org
-X-OVh-ClientIp: 82.181.27.157
-Date:   Sat, 22 Jan 2022 12:42:33 +0200
-From:   Andi Shyti <andi@etezian.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        broonie@kernel.org, andi@etezian.org, linux-spi@vger.kernel.org,
-        Aswani Reddy <aswani.reddy@samsung.com>, linux-fsd@tesla.com
-Subject: Re: [PATCH v2 3/3] arm64: dts: fsd: Add SPI device nodes
-Message-ID: <YevfmeGwmwLml+6b@jack.zhora.eu>
-References: <20220120192438.25555-1-alim.akhtar@samsung.com>
- <CGME20220120193622epcas5p3a65c8424c6a01aed9a87f5ac2a89eb06@epcas5p3.samsung.com>
- <20220120192438.25555-4-alim.akhtar@samsung.com>
+        Sat, 22 Jan 2022 07:38:21 -0500
+Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13EAC06173B
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 04:38:20 -0800 (PST)
+Received: by mail-ua1-x936.google.com with SMTP id b16so21904089uaq.4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 04:38:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k4uslepZlx+doJxsNKmyezSBQMtw/R3k+N4S5l4lrBo=;
+        b=BsOpApkNdWIaU/sRtOQjwh4eUZx+LBSaRTuxHUaQyNWCQyCl8bai1Wx1qwWnoNC27H
+         UMptAV67VXy6USh28okTjWJFOwzkUvxxcLMSLabutXTFPFkNtnBbMa7eeEuwDF9073we
+         fZ42v9DyP2u9LYxoNaoBkYFla0cFFWJTgKvbYKo6jtRIKNaRM4r9fnxMTi2N2LASC/k9
+         X39719sqIGKXjMPBleMQhBU6ZNT6uQtRYekkR4ZsEjG8s5q28dme/sNuxTeRGLrTi/+J
+         rYybXofWvCBIJpgUyR+L0PKRAlkQvadEp4ZKYSPYub9VCRQ08Tx0DtOa0OrsEetEIl6F
+         +IBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k4uslepZlx+doJxsNKmyezSBQMtw/R3k+N4S5l4lrBo=;
+        b=uQciE3W2o14CwgtLNAMFCTUaQxr4/re0L6B3W+sDZ/B5yY0m078ev46tw/+1TQkgzA
+         hg+Ag2KMomptHFvN0cr3XNFBgr180oFTHvHJ9XcJG27f6SqqlkP9HAZi352fCv0XLj5j
+         PHocYbxOVzKhZ2fVLHKPVd/UAO7dKApAbP9z1vERx42JjzOsEnyIP8z5SnElBSopYy0K
+         JCzVapvHh20OULelklgolSU2do6LUxxOVFx1V44W3zt9dodwV7/z52XO+bVtF+VVo32U
+         I2zqLW8p5xeh/PNw6zEf4Na/WhmeaoMbgh90bZkKI4EXb3ECgKNxqIfDZH0FABnITUSe
+         wniQ==
+X-Gm-Message-State: AOAM531u3YL9A/MouUVfCQPyzu5zFvQebQtuvK6X3zIIyjtPyb2Od1OO
+        UMamMnTaYxdI19azcw18D8dyVvLOFPNcVlbhfcgMXg==
+X-Google-Smtp-Source: ABdhPJxAkMtrFRW4Pnd6Ntwnglxpjg12Vi1yx2PNmdt/WUzgwtaT1gqfGWUrAGaiAKvIFUvMWfcsFCo1mDlwWWDzqJ0=
+X-Received: by 2002:a67:c093:: with SMTP id x19mr1768383vsi.20.1642855099794;
+ Sat, 22 Jan 2022 04:38:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220120192438.25555-4-alim.akhtar@samsung.com>
-X-Ovh-Tracer-Id: 16116412745235499534
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrvddvgddulecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughiucfuhhihthhiuceorghnughisegvthgviihirghnrdhorhhgqeenucggtffrrghtthgvrhhnpedtgfduudfhfeeuueejfeeihedtfeetgfegveehgfeuleelhfduteegieekudeifeenucfkpheptddrtddrtddrtddpkedvrddukedurddvjedrudehjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhlrgihvghrieekjedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpegrnhguihesvghtvgiiihgrnhdrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+References: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
+ <CAPLW+4n-1H5Yu3wQaus-UJ_VW_TjHrNUHaPCGCMURXg8EqxjyA@mail.gmail.com>
+ <CAK8P3a1ou-ZdrXN0MHQoJ+gGbvhXT-e2qt96_f9M8VwrdX0pAg@mail.gmail.com> <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com>
+In-Reply-To: <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Sat, 22 Jan 2022 14:38:08 +0200
+Message-ID: <CAPLW+4k8=ymx56R7bKOt8kMVG_uUgrTsCkVd5wiY_rkYq8dYbQ@mail.gmail.com>
+Subject: Re: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Alim and Aswani,
+On Wed, 19 Jan 2022 at 18:53, Olof Johansson <olof@lixom.net> wrote:
+>
+> On Wed, Jan 19, 2022 at 8:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Wed, Jan 19, 2022 at 4:11 PM Sam Protsenko
+> > <semen.protsenko@linaro.org> wrote:
+> > > On Mon, 27 Dec 2021 at 13:30, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+> > >
+> > > Hi Olof, Arnd,
+> > >
+> > > Just want to check if it's possible for those patches to be applied in
+> > > v5.17? Sorry for the noise, but that's important to me.
+> >
+> > I can see that Olof merged merged this into the "arm/late" branch in
+> > the soc tree,
+> > so I assume he still plans to send it in the next few days.
+>
+> Yep, will be sent up today most likely.
+>
 
-On Fri, Jan 21, 2022 at 12:54:38AM +0530, Alim Akhtar wrote:
-> From: Aswani Reddy <aswani.reddy@samsung.com>
-> 
-> Adds device tree node for SPI IPs
-> 
-> Cc: linux-fsd@tesla.com
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Thanks for detailed answer! Glad to hear it's still a possibility.
+Please let me know if you need any actions on my side (like rebasing,
+etc).
 
-Reviewed-by: Andi Shyti <andi@etezian.org>
-
-Please, also allow me another nit-commnent for the next patches:
-the tag section is in chronological order. I suppose that first
-Aswani wrote the patch, then you sent it to the mailing list and
-at the end Krzysztof has reviewed it, this means that the right
-order is:
-
-  Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
-  Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-  Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Thank you,
-Andi
+> > With the timing over Christmas, I sent out the large bulk of the
+> > contents (anything
+> > I merged before Dec 23) last year, and Linus already merged it, the rest ended
+> > up in the "late" branch.
+> >
+> > As usual, there is no guarantee that late changes make it in, but I have seen
+> > no indication of any problems so far.
+>
+> Correct. Been sitting on it for a while in case there were fixes
+> coming in for the first pieces that got merged, but in traditional
+> fashion I'm guessing those will start to show up a few days after the
+> late branch gets merged. :)
+>
+>
+> -Olof
