@@ -2,115 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAE7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Jan 2022 13:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0469C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Jan 2022 18:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232999AbiAVN0G (ORCPT
+        id S230165AbiAVSjf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Jan 2022 08:26:06 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:44496
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233128AbiAVN0D (ORCPT
+        Sat, 22 Jan 2022 13:39:35 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:53950 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229379AbiAVSje (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Jan 2022 08:26:03 -0500
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sat, 22 Jan 2022 13:39:34 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A022440018
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 13:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642857962;
-        bh=BqbA7EkPEkiPvdyZCRRPSvgPxXK4nwiMlYWc8IskYBk=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=JVBmnUZdohntqKv6YtehxcysFpATEpMPwbqJ4y0e7blCiQ7sOaAuQ86HNrRAxm6KR
-         xXIEhrQgYgahfRWcXCiw9N4GuOjsBRps3gEGzxnNrCtJd+IS6+2r21uuYzuYlOcGv0
-         vG/f60nsu7ahNpiTWYfPueseavLefye7LoOfHsqrdoFNdGyDdFTBYq6acCo56OST/H
-         aUUeIw1zQq0oELscqYytUzJ3ajosbUzjl+ZfqVJlo3J3lUmoOTupGnWd0Nbpi9kuCU
-         hdNqIpJJcHnUoZZkttmbwA0l1vaYBa/YdRIABZ5kRRYNSQa2glv2+DTNiZm9U3ctGH
-         PB1s2nPyPMq3A==
-Received: by mail-ej1-f71.google.com with SMTP id rl11-20020a170907216b00b006b73a611c1aso252614ejb.22
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 05:26:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BqbA7EkPEkiPvdyZCRRPSvgPxXK4nwiMlYWc8IskYBk=;
-        b=Qc8r9yUtZvdlZFzZEvBEIQ6dgdmNb4n+G83KfGdCuiZQPgwyA62QA9y2wrRH7s5L5y
-         GLaO+1+n93mzjx8LYdPV5u5snXYvuJLfiNxnAPb8mqCxVHKk0mjmiFkX5L4j4fkNJOhQ
-         Oy9uKZxazYrtsSU0u3XtNfzBPPIQxmboEci/q+XinLelLwBrmE6jX62XE5zixGBw3m3r
-         EZlwahuCMH/gsNUGCy5a2ZsDZQgqAeWyL7ZhJ7fqrFhxZTeeMoPv3TXjYMN9u7glRmIe
-         48vZXR36TBdMllP7RB2PDvwkxD3PFm9SU9aIL8qIGFuQWmIxOIMnYQDBFgH9WtXpozJK
-         oryA==
-X-Gm-Message-State: AOAM532FGn6AYK0ve96xj+bfDwoAEGwmUCmQngADq9sEVNyC3nAsAWUt
-        LyKFAOToOMeSw+07GuG70DFvsYpkCZ8zqFGY5cAFnV5JlIKA1mtuk2m4x7qIt4iMo4bxhG6cux3
-        y8DM1iiyZBy6aLy9RFXc2DOSWoqLpH46E747XWvpO2CZIc4o7
-X-Received: by 2002:a17:907:96a3:: with SMTP id hd35mr6710107ejc.54.1642857961540;
-        Sat, 22 Jan 2022 05:26:01 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyCIMPDmVKcXXxAx4iet6N1pLQk9bbQfelsIWrYapFJ3WqFqZr3kDLh7HQhhUY2Ppfihyu2OQ==
-X-Received: by 2002:a17:907:96a3:: with SMTP id hd35mr6710090ejc.54.1642857961371;
-        Sat, 22 Jan 2022 05:26:01 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id v2sm2373060ejb.114.2022.01.22.05.25.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jan 2022 05:26:00 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 58D4C60EA1;
+        Sat, 22 Jan 2022 18:39:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A4FC004E1;
+        Sat, 22 Jan 2022 18:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642876773;
+        bh=n/B1FmyEoA1G3JCa6y+KvNFQMmHR9BMvLjaGYR7WJAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pz/YJD7W27+/z+O5KGHaCzHgh/dhwn9TP0dG8pYxyvv1ELB8OMLl+otmXC3zKiD3t
+         nHHKotzH6ewZmjHh55JM4Jr6lHTKDMrhYyh8M0zA3zJmUUe4KD74HWcyNEaoTsKsEk
+         EvIlYldlhW5vvP7iHpz69Ae6SKezkRcAO+7o+6d5BIAXjrOk/bT6lVCp8Nhu1ndDq6
+         z4FsozrFXyc0kYctK+o44AzkfdK3b7Db1bHwfPaVRDCCzcBjJbmIxZalMw/xZYXHg+
+         xfhU8fMj9KMrMSLKGBKhWvYilMStz50N3YRQi/gH2w/HDHTU7muhuOgGxQLTGfJTGt
+         I7kiMvZLFMAJQ==
+Date:   Sat, 22 Jan 2022 13:39:30 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] MAINTAINERS: thermal: samsung: drop obsolete properties
-Date:   Sat, 22 Jan 2022 14:25:54 +0100
-Message-Id: <20220122132554.65192-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220122132554.65192-1-krzysztof.kozlowski@canonical.com>
-References: <20220122132554.65192-1-krzysztof.kozlowski@canonical.com>
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register
+ clocks early
+Message-ID: <YexPYoPd5CTfNuId@sashalap>
+References: <20220117165853.1470420-1-sashal@kernel.org>
+ <20220117165853.1470420-2-sashal@kernel.org>
+ <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
+ <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Update the Samsung Exynos SoC thermal driver entry to match reality and
-add Krzysztof Kozlowski as co-maintainer (as he maintains entire Samsung
-SoC).  The rationale:
-1. Bartlomiej's Samsung email bounces, since he is not working in
-   Samsung for some time.
-2. The mentioned Lukasz Majewski's Git tree was not updated
-   since 2015.
+On Mon, Jan 17, 2022 at 09:18:43PM +0200, Sam Protsenko wrote:
+>On Mon, 17 Jan 2022 at 19:11, Krzysztof Kozlowski
+><krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 17/01/2022 17:58, Sasha Levin wrote:
+>> > From: Sam Protsenko <semen.protsenko@linaro.org>
+>> >
+>> > [ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
+>> >
+>> > Some clocks must be registered before init calls. For example MCT clock
+>> > (from CMU_PERI) is needed for MCT timer driver, which is registered
+>> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
+>> > clk-exynos850 platform driver init, it's already too late. Inability to
+>> > get "mct" clock in MCT driver leads to kernel panic, as functions
+>> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
+>> > can't be fixed either, as it's acting as a clock source and it's
+>> > essential to register it in start_kernel() -> time_init().
+>> >
+>> > Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
+>> > generates clocks needed for CMU_PERI, but it's already registered early.
+>> >
+>> > While at it, let's cleanup the code a bit, by extracting everything
+>> > related to CMU initialization and registration to the separate function.
+>> >
+>> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
+>> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
+>> > drivers/clk/mediatek/clk-mt2712.c.
+>> >
+>> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
+>> >
+>> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> > Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
+>> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> > ---
+>> >  drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
+>> >  1 file changed, 49 insertions(+), 21 deletions(-)
+>> >
+>>
+>> I propose to skip this one.
+>>
+>> Backporting it to v5.16 does not hurt but also does not bring any
+>> benefits for the upstream kernel users. There is no support for
+>> mentioned Exynos850 in v5.16.
+>>
+>> It could have only meaning for some downstream, out-of-tree kernels
+>> which apply Exynos850 support on top of v5.16, but then they can just
+>> take this patch as well.
+>>
+>
+>Agreed. DTS patches will be merged only in v5.17, hopefully. Till that
+>time the whole clock driver is floating with no users. That's
+>historical thing -- I didn't have "Ack" to submit board dts at the
+>time, and SoC dts couldn't be applied without users (board dts). So I
+>focused on driver work, isolated. Not much sense to backport something
+>without having real users.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- MAINTAINERS | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Dropped, thanks!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 27730a5a6345..928fb4cebe09 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17118,11 +17118,12 @@ S:	Supported
- F:	drivers/net/ethernet/samsung/sxgbe/
- 
- SAMSUNG THERMAL DRIVER
--M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-+M:	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
- L:	linux-pm@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
--S:	Supported
--T:	git https://github.com/lmajewski/linux-samsung-thermal.git
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
- F:	drivers/thermal/samsung/
- 
- SAMSUNG USB2 PHY DRIVER
 -- 
-2.32.0
-
+Thanks,
+Sasha
