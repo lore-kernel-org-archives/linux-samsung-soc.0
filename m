@@ -2,107 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4236C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Jan 2022 12:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90084C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Jan 2022 13:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231761AbiAVMiV (ORCPT
+        id S232812AbiAVNPF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 22 Jan 2022 07:38:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56490 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbiAVMiV (ORCPT
+        Sat, 22 Jan 2022 08:15:05 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:49200
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232711AbiAVNPE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 22 Jan 2022 07:38:21 -0500
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13EAC06173B
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 04:38:20 -0800 (PST)
-Received: by mail-ua1-x936.google.com with SMTP id b16so21904089uaq.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 04:38:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k4uslepZlx+doJxsNKmyezSBQMtw/R3k+N4S5l4lrBo=;
-        b=BsOpApkNdWIaU/sRtOQjwh4eUZx+LBSaRTuxHUaQyNWCQyCl8bai1Wx1qwWnoNC27H
-         UMptAV67VXy6USh28okTjWJFOwzkUvxxcLMSLabutXTFPFkNtnBbMa7eeEuwDF9073we
-         fZ42v9DyP2u9LYxoNaoBkYFla0cFFWJTgKvbYKo6jtRIKNaRM4r9fnxMTi2N2LASC/k9
-         X39719sqIGKXjMPBleMQhBU6ZNT6uQtRYekkR4ZsEjG8s5q28dme/sNuxTeRGLrTi/+J
-         rYybXofWvCBIJpgUyR+L0PKRAlkQvadEp4ZKYSPYub9VCRQ08Tx0DtOa0OrsEetEIl6F
-         +IBQ==
+        Sat, 22 Jan 2022 08:15:04 -0500
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B027640049
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 13:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642857303;
+        bh=sq+GqGoHGm/8ryzGZ8Mwkyq3rI/NbpNjgK3K63Ee+P8=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=bM6D4ueVZSs4micVd1HbbXDpXx8iPO4QeNglB/kaRoQdUTe4VlZ6WVl1X6J19v+zK
+         FsFw257c1NRV0EBwUUU9FFIWmM2uVDMAIrrNpJxPiv3kQkaaF35i06P2O3LMbzHXfi
+         gnBiuYMMkmEYwBBKacrs8Iy/tu9Io+OclDQX4NvY0k/0zdeHfuDXMgEWh2TEjMdOqT
+         8EwQQ0R7v5UKGn6wCxOsXSW9pJFZV8g3sT/92/PEdMteWCiTWZc8uC9Cvm/m8MED5r
+         ywhxf40yOlTyjbBu59ZXOM4wJCF6B1SgYFJuic9LfL30b3kuSkhf/GfGxbG8d4VEr7
+         +ZdgoN/lLOPZQ==
+Received: by mail-ej1-f70.google.com with SMTP id rl11-20020a170907216b00b006b73a611c1aso241765ejb.22
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jan 2022 05:15:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k4uslepZlx+doJxsNKmyezSBQMtw/R3k+N4S5l4lrBo=;
-        b=uQciE3W2o14CwgtLNAMFCTUaQxr4/re0L6B3W+sDZ/B5yY0m078ev46tw/+1TQkgzA
-         hg+Ag2KMomptHFvN0cr3XNFBgr180oFTHvHJ9XcJG27f6SqqlkP9HAZi352fCv0XLj5j
-         PHocYbxOVzKhZ2fVLHKPVd/UAO7dKApAbP9z1vERx42JjzOsEnyIP8z5SnElBSopYy0K
-         JCzVapvHh20OULelklgolSU2do6LUxxOVFx1V44W3zt9dodwV7/z52XO+bVtF+VVo32U
-         I2zqLW8p5xeh/PNw6zEf4Na/WhmeaoMbgh90bZkKI4EXb3ECgKNxqIfDZH0FABnITUSe
-         wniQ==
-X-Gm-Message-State: AOAM531u3YL9A/MouUVfCQPyzu5zFvQebQtuvK6X3zIIyjtPyb2Od1OO
-        UMamMnTaYxdI19azcw18D8dyVvLOFPNcVlbhfcgMXg==
-X-Google-Smtp-Source: ABdhPJxAkMtrFRW4Pnd6Ntwnglxpjg12Vi1yx2PNmdt/WUzgwtaT1gqfGWUrAGaiAKvIFUvMWfcsFCo1mDlwWWDzqJ0=
-X-Received: by 2002:a67:c093:: with SMTP id x19mr1768383vsi.20.1642855099794;
- Sat, 22 Jan 2022 04:38:19 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sq+GqGoHGm/8ryzGZ8Mwkyq3rI/NbpNjgK3K63Ee+P8=;
+        b=m0haf2IHb5dGl0kqvJ4U9Tx7YdJuaIgNK4PGzt+3qlHTIbatqreBd7FXZ7Ud/VBzbx
+         EBDYokWp3BBZKJ8v41oESmBDP1BoTCCabGyotf1+aoE86mkDyvpNxDxPBnYzCr+ID4SY
+         zIGbHkAW5zIcAVLjYjo5blsIem5/u46bGDVuZ7Z/NOt4kVIQLRoYOlZtLbhvhKHYPS8G
+         IjtD4tiFTT6eCw/FFqp99MFeFaSCmVLyprCAXnyXQ1C3IWwf6JiDEZBtQCF50e7mSMH3
+         BiFIPiOy6rEc7BbVpAdWwYV3GJ1dIUF3ScY0lSiXDLUU7L9RgVSDBGsznM7+4b9ACdEK
+         /Tlg==
+X-Gm-Message-State: AOAM532Q3Jz4wEWLVK2/DjarnWGdkH/xS+Wm+v/lXMshiy9PHHQPEjXD
+        PizXwzTj38x9oZXNQZhc7t1oYmTNf1TtfOFw7PTZz25Wie9KsQZS7rZMgfvEovcgsMoOSXsQsNP
+        9Raq5vqdTxDg+hyXe3hKy/NoteXxxS+Wsu47jQGUXlrvhv0Nj
+X-Received: by 2002:a05:6402:1d4d:: with SMTP id dz13mr8232526edb.80.1642857303215;
+        Sat, 22 Jan 2022 05:15:03 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyVyWY/MniL6pE8Qvx42ZDYAQcz+ygoyMbJ7Fg2vbPe6otymoWSlG8GropeNe8ENplv5ATIdA==
+X-Received: by 2002:a05:6402:1d4d:: with SMTP id dz13mr8232515edb.80.1642857303023;
+        Sat, 22 Jan 2022 05:15:03 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id k20sm2914823eja.14.2022.01.22.05.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jan 2022 05:15:02 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: exynos: use define for TMU clock on Exynos4412
+Date:   Sat, 22 Jan 2022 14:14:57 +0100
+Message-Id: <20220122131457.63304-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
- <CAPLW+4n-1H5Yu3wQaus-UJ_VW_TjHrNUHaPCGCMURXg8EqxjyA@mail.gmail.com>
- <CAK8P3a1ou-ZdrXN0MHQoJ+gGbvhXT-e2qt96_f9M8VwrdX0pAg@mail.gmail.com> <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com>
-In-Reply-To: <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sat, 22 Jan 2022 14:38:08 +0200
-Message-ID: <CAPLW+4k8=ymx56R7bKOt8kMVG_uUgrTsCkVd5wiY_rkYq8dYbQ@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 19 Jan 2022 at 18:53, Olof Johansson <olof@lixom.net> wrote:
->
-> On Wed, Jan 19, 2022 at 8:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Wed, Jan 19, 2022 at 4:11 PM Sam Protsenko
-> > <semen.protsenko@linaro.org> wrote:
-> > > On Mon, 27 Dec 2021 at 13:30, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
-> > >
-> > > Hi Olof, Arnd,
-> > >
-> > > Just want to check if it's possible for those patches to be applied in
-> > > v5.17? Sorry for the noise, but that's important to me.
-> >
-> > I can see that Olof merged merged this into the "arm/late" branch in
-> > the soc tree,
-> > so I assume he still plans to send it in the next few days.
->
-> Yep, will be sent up today most likely.
->
+Replace clock hard-coded number with a define from bindings.  No
+functional change.
 
-Thanks for detailed answer! Glad to hear it's still a possibility.
-Please let me know if you need any actions on my side (like rebasing,
-etc).
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > With the timing over Christmas, I sent out the large bulk of the
-> > contents (anything
-> > I merged before Dec 23) last year, and Linus already merged it, the rest ended
-> > up in the "late" branch.
-> >
-> > As usual, there is no guarantee that late changes make it in, but I have seen
-> > no indication of any problems so far.
->
-> Correct. Been sitting on it for a while in case there were fixes
-> coming in for the first pieces that got merged, but in traditional
-> fashion I'm guessing those will start to show up a few days after the
-> late branch gets merged. :)
->
->
-> -Olof
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index d3802046c8b8..aa0b61b59970 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -813,7 +813,7 @@ &tmu {
+ 	interrupt-parent = <&combiner>;
+ 	interrupts = <2 4>;
+ 	reg = <0x100C0000 0x100>;
+-	clocks = <&clock 383>;
++	clocks = <&clock CLK_TMU_APBIF>;
+ 	clock-names = "tmu_apbif";
+ 	status = "disabled";
+ };
+-- 
+2.32.0
+
