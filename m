@@ -2,71 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F97C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 17:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C806C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 19:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239185AbiAWRKz (ORCPT
+        id S234863AbiAWTPV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 12:10:55 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:43178
+        Sun, 23 Jan 2022 14:15:21 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:44704
         "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239188AbiAWRKu (ORCPT
+        by vger.kernel.org with ESMTP id S229533AbiAWTPV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 12:10:50 -0500
+        Sun, 23 Jan 2022 14:15:21 -0500
 Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0A9923F4B6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 17:10:49 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EE3F33F4B6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 19:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642957849;
-        bh=/2OIXme4ALl4DAjdA85FQwEEgnqTTVJ2eyUW6QlD2T8=;
+        s=20210705; t=1642965319;
+        bh=kttBDEdyIUQqupR/U1rqVQBMHSd3WLkJ4zI9eGg9wQQ=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=mqcxs7z2nNWaPEVMkFVpHCkuxBnL9FXDmOM3ssSKHoQsdqqfFq7d4Wjo7pXYwf+D4
-         tbjEL1R9JrGmew5c76DBv28PlPOWu/p/YWR5OmIq+BZFdPeoFQjVHyI8PYfBytSoSd
-         PkPV83CktdbESTBajrSSt76/S8HuTdF8LrR4HHUrpqQiuemLVYuuHcGzsXqrI/KP+v
-         rcydBSikuxPRn5j8JYxPGEJnS79rzaubLucFU6U+XIdWxSrN6wqXAaVZHz9MlTbfUu
-         lFvsSo6AApDGfQ+ALjBKvAjdaGEW9uDwAP8fU8L3o4mznHbx9bgqfnKtg1Bk0dOYwZ
-         kMQWOQb3jhXZA==
-Received: by mail-ed1-f69.google.com with SMTP id i22-20020a50fd16000000b00405039f2c59so7535681eds.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 09:10:49 -0800 (PST)
+        b=YO0xAS1j9zOoLmb6YoDfrPLh2cTRb4hmsAP4bYooJHOLgKLKhq41gcg2pZ1KkflNl
+         Otrd4EeE9BVwZeSnH9Ln5QtcXgtmekCHe5ddxRg7zgqj7lgRQTxsV+VNcEB6Y3DwGQ
+         D/rCHDl1no6RUW6mg9G/1bmQMOuE4XAl0ODsNNtK6D2rzaPtSf1PgG9oCnf8D8a/dB
+         1t2BuSuGKpl3ew78JjZz8Il99NmXHolHGlCQnutIdIrP8h48WNPskMx5iqUdB9lBvL
+         k0Gs5EsIAsl4ajJ3uiqTUBiXmKaGrr95G7B4vwmgSFasI7DIdWmAcg45NUbgCyHLhb
+         FINMYXwCGL+jg==
+Received: by mail-ed1-f69.google.com with SMTP id h11-20020a05640250cb00b003fa024f87c2so11722353edb.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 11:15:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/2OIXme4ALl4DAjdA85FQwEEgnqTTVJ2eyUW6QlD2T8=;
-        b=UCUi102EYCyMmeYssvNgByV0B1TFb0UIJn2xffdNVW7Qdh/+r02Lje4ojUnmhkVdcq
-         XXZxWjYlkqmpZ9ATLnvfSCHUoMLvUNM0vC/hlbHivxoS5506bp7+S12DpBr8ESPUbxmI
-         uRZSD0OkQdbdt/MmYFe7x6MZw7v/fRugP6xZkWXyxvEdM/IKs5ysxmx23f97lwrhi901
-         GmQb61hWPPpTVF6AmRIH4S8phE6OTfBqXFbaHYNczmEzqcGmhrS/bAtc0nvBdZIQjcua
-         kF9cZ/M5hq58ESpXJTf4ugCO3D5gWizRUloQt57i8+ZJvcOVQFSWHCzzijWTIly729+L
-         uNQQ==
-X-Gm-Message-State: AOAM532XUkOqMpdY/PJTEQktrUk449rKES6q5Mc06sMHPEE7AYKvPInc
-        z5mLc6g+Gl/Mf4LXXkv8bYRZrf+NRTKei0ee5qlvIC+hDMLi8ZI5zkaBA7535Xqjb6Tmob69rU7
-        JpoZ1MtP8PVGHTEHJ//boh+qJgjOXXqgZJ/+bkh+Wg3LaAmp4
-X-Received: by 2002:a17:907:c01:: with SMTP id ga1mr9855509ejc.719.1642957848625;
-        Sun, 23 Jan 2022 09:10:48 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy9xL/Mcl66pAOPBWGwufPt3D01t+dIls2WZgVjeMInLwmxcYSEx9LO5kA2ZiiRVdxKHoHp1Q==
-X-Received: by 2002:a17:907:c01:: with SMTP id ga1mr9855501ejc.719.1642957848428;
-        Sun, 23 Jan 2022 09:10:48 -0800 (PST)
+        bh=kttBDEdyIUQqupR/U1rqVQBMHSd3WLkJ4zI9eGg9wQQ=;
+        b=vCxhoZdEjRj77z+nIwietLu8veljp0yBm7zxQaHPgcln4Lzgitr3kPXsOaagiarqzb
+         JZsRpdwU4/4eVLq/jRqf8NJWioNCG4BnhLEQlC2MtTboLpB2KykytcqR1EqysnwOwobn
+         o5lW1V2SUKRgPN3umc+vxocfiGUn9o5cc02o7Rzz/+kJr5APPXvWhhvlJeF3OSFMoYFP
+         NhZUbJESk9M+E1PrucF7gtYFh1u78D3r5QA5iP630ca0g9Y/mtnBnFEdb2UGdrvzdOKL
+         jkEwfSCFNuU2wCp3CesuB37YYnCNHIWuUnvFB9JWC2kzsj+5aMgWxtm5w+oKJzULs5eC
+         pk3g==
+X-Gm-Message-State: AOAM531dR0mlEbZ8FrpfT3WPTAKIwV9zkoXwE2mDeFd0yC2FYbm3dQnQ
+        0TfwcbcQ3MXZSwXhX3Yp2sMIc4FZuE84ME+e9FDjtsgxiySA2iBkaU3Fajkju/clLZ7ZzW5sypz
+        ta699oHNAMAfp9qMZemGINLeeOSv2vwsnL7VTIavM2H7Z0dtf
+X-Received: by 2002:a17:907:3e23:: with SMTP id hp35mr10799026ejc.760.1642965319177;
+        Sun, 23 Jan 2022 11:15:19 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxrMCE5tnqRZTbX68vFuTajb/35wJ5WKt4eGBj0OadG/VHHPHLxoIH7afhLw/1dm8/A/bhcVg==
+X-Received: by 2002:a17:907:3e23:: with SMTP id hp35mr10799006ejc.760.1642965318935;
+        Sun, 23 Jan 2022 11:15:18 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id l2sm5208665eds.28.2022.01.23.09.10.47
+        by smtp.gmail.com with ESMTPSA id oz18sm4063910ejb.106.2022.01.23.11.15.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 09:10:47 -0800 (PST)
+        Sun, 23 Jan 2022 11:15:18 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: Re: [PATCH v2] soc: samsung: Fix typo in CONFIG_EXYNOS_USI description
-Date:   Sun, 23 Jan 2022 18:10:40 +0100
-Message-Id: <164295777264.25838.905366806236166301.b4-ty@canonical.com>
+To:     semen.protsenko@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Henrik Grimler <henrik@grimler.se>, cw00.choi@samsung.com,
+        linux-kernel@vger.kernel.org, virag.david003@gmail.com,
+        ~postmarketos/upstreaming@lists.sr.ht, robh+dt@kernel.org,
+        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
+        martin.juecker@gmail.com, alim.akhtar@samsung.com
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH v3 0/3] Add initial support for exynos5420-chagall-wifi
+Date:   Sun, 23 Jan 2022 20:15:16 +0100
+Message-Id: <164296530944.41526.610812018359584856.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220114144606.24358-1-semen.protsenko@linaro.org>
-References: <20220114144606.24358-1-semen.protsenko@linaro.org>
+In-Reply-To: <20220118185746.299832-1-henrik@grimler.se>
+References: <20220118185746.299832-1-henrik@grimler.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -74,16 +77,25 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 14 Jan 2022 16:46:06 +0200, Sam Protsenko wrote:
-> The proper name is Exynos Auto V9, not V0. It was the typo slipped in
-> unnoticed, fix it.
+On Tue, 18 Jan 2022 19:57:43 +0100, Henrik Grimler wrote:
+> Samsung's tablet Galaxy Tab S 10.5" (wifi) has codename Chagall WiFi
+> and is one of several tablets released in 2014 based on Exynos 5420.
+> This initial devicetree adds support for accessing device over USB or
+> UART, and allows using a rootfs in either the internal eMMC or an
+> external sdcard.  4 out of 8 CPUs are brought up when device boots,
+> which is the same as on the somewhat similar board
+> exynos5420-arndale-octa.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] soc: samsung: Fix typo in CONFIG_EXYNOS_USI description
-      commit: 442b0c08db7e35980bed6af091877f4dda72ffca
+[1/3] dt-bindings: arm: samsung: document Chagall WiFi board binding
+      commit: 9998104515d4197d774e5384df750c6384915707
+[2/3] ARM: exynos: only do SMC_CMD_CPU1BOOT call on Exynos4
+      commit: 534aaa1802eae339d0439feafe3c1217f5643b20
+[3/3] ARM: dts: Add support for Samsung Chagall WiFi
+      commit: 535f7fffed880312830c72d9c593b59ec741dd8e
 
 Best regards,
 -- 
