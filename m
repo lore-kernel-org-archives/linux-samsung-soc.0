@@ -2,136 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FDCC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 19:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38808C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 19:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240061AbiAWTVL (ORCPT
+        id S229995AbiAWT1r (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 14:21:11 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:41633 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240137AbiAWTUw (ORCPT
+        Sun, 23 Jan 2022 14:27:47 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:44880
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229846AbiAWT1r (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 14:20:52 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220123192051epoutp03e3151e62c6350bbb7ff6b2605f51dfc9~M-I4IX2bR2554925549epoutp036
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 19:20:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220123192051epoutp03e3151e62c6350bbb7ff6b2605f51dfc9~M-I4IX2bR2554925549epoutp036
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642965651;
-        bh=20DD9ZfqdzeIRvLdgr8SyGYaXTaluXzTMYIGxQu91xk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VIskFPMabVh418TRBqgXpYHn9dTRFg+9E5d6wQeOW3aDDZZkWM/63sUcT71g5NZu7
-         7oWBfk8Rp6831SAU/Z/yAElLXHDTC5fk+v9EvsW0Y0LMC26WjDenyhKUmcBuq3uMHD
-         D724GthEjUll14NriWuWP11gkhlWZg/o1NVC1fI8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220123192049epcas5p1f403eaed071cde30e464d74ddfed8f04~M-I3BHEPO0431504315epcas5p1C;
-        Sun, 23 Jan 2022 19:20:49 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Jhjd50M2Fz4x9Pv; Sun, 23 Jan
-        2022 19:20:41 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        87.FD.05590.88AADE16; Mon, 24 Jan 2022 04:20:40 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220123192039epcas5p3fc21ed81a383a05f1ea1704481641c69~M-ItyEnvt1076210762epcas5p3E;
-        Sun, 23 Jan 2022 19:20:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220123192039epsmtrp2e1c504a2666e3e37e5137a606b44bf3b~M-ItxG_EL2018820188epsmtrp2q;
-        Sun, 23 Jan 2022 19:20:39 +0000 (GMT)
-X-AuditID: b6c32a4b-723ff700000015d6-06-61edaa888ddc
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DD.F7.29871.78AADE16; Mon, 24 Jan 2022 04:20:39 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220123192037epsmtip14c08f325fa1cd561400ae42cf9667787~M-IreTbo30799407994epsmtip1F;
-        Sun, 23 Jan 2022 19:20:37 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
-        linus.walleij@linaro.org, catalin.marinas@arm.com,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, sboyd@kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com
-Subject: [PATCH v4 16/16] arm64: defconfig: Enable Tesla FSD SoC
-Date:   Mon, 24 Jan 2022 00:37:29 +0530
-Message-Id: <20220123190729.1852-17-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220123190729.1852-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBJsWRmVeSWpSXmKPExsWy7bCmlm7HqreJBi9Wmls8mLeNzeLvpGPs
-        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
-        tPULu0Xr3iPsFofftLNa/Lu2kcXi8fU/bA6CHmvmrWH0+P1rEqPHrIZeNo9NqzrZPO5c28Pm
-        sXlJvceVE02sHn1bVjF6/Guay+7xeZNcAFdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmB
-        oa6hpYW5kkJeYm6qrZKLT4CuW2YO0D9KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKU
-        nAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMM38XsxbsZ62Ytv48cwPjE5YuRk4OCQETiYYH
-        J1lBbCGB3YwS286KdzFyAdmfGCU+9v9ghnC+MUpseHubrYuRA6zjxL4siPheRokbnw6wQTgt
-        TBJPXi8FG8UmoC1xd/oWJhBbRMBN4kZjBxNIEbPAfyaJjT3LwCYJCzhI3GviBzFZBFQlfixi
-        BCnnFbCRuLzlJyvEdfISqzccYAaxOYHiva8+QMV3cEg0Hq2BsF0k/k35wARhC0u8Or6FHcKW
-        kvj8bi/UzdkSPbuMIcI1EkvnHYN63l7iwJU5LCAlzAKaEut36YOEmQX4JHp/P2GC6OSV6GgT
-        gqhWlWh+dxWqU1piYnc31DEeEk/+TWWEBEI/o8SzM0eZJjDKzkKYuoCRcRWjZGpBcW56arFp
-        gXFeajk8kpLzczcxgpOolvcOxkcPPugdYmTiYDzEKMHBrCTCW5D/KlGINyWxsiq1KD++qDQn
-        tfgQoykwwCYyS4km5wPTeF5JvKGJpYGJmZmZiaWxmaGSOO+p9A2JQgLpiSWp2ampBalFMH1M
-        HJxSDUx7tZRNRC2DMtMj/fYXXynXjDxez5ozp/fP+9d/lnFsyckQ/Lr556sTrK8Vp7IzmiQc
-        kVEUC46dzSP5u05x76srO757Ps3wvF12+ufLnsmakzfwPe++EK3wLMg8SEiycOGMveG/L9ex
-        18atTSudsdzxe8+dJ0Lhe0M0uvv2iGf1CXVdPrliQs76EPXpt6ovbXbaJ2bLuOSwt8DULXOe
-        WD35Nv/9ip+bwj59nHJy2sknvCr38zU2zZ/ZHW+jmRd6/YmD6e5/pjxSUw+fvWz/Or771QqW
-        9bGbPrzguHrk47GUO/cDmD2rXaetY924vM1rF9P1OWpnvn0v27Zu/aakJUsuzk7hmzLVI+7z
-        8WnvC10KnJVYijMSDbWYi4oTARlmgIkrBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSnG77qreJBov/61o8mLeNzeLvpGPs
-        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
-        tPULu0Xr3iPsFofftLNa/Lu2kcXi8fU/bA6CHmvmrWH0+P1rEqPHrIZeNo9NqzrZPO5c28Pm
-        sXlJvceVE02sHn1bVjF6/Guay+7xeZNcAFcUl01Kak5mWWqRvl0CV8aZv4tZC/azVkxbf565
-        gfEJSxcjB4eEgInEiX1ZXYxcHEICuxklTs+dwt7FyAkUl5a4vnEClC0ssfLfc3aIoiYmiTcX
-        ljGCJNgEtCXuTt/CBGKLCHhItP27xwxSxCwwkVli496zYBuEBRwk7jXxg5gsAqoSPxaBtfIK
-        2Ehc3vKTFWK+vMTqDQeYQWxOoHjvqw+sIOVCAtYSE47KTWDkW8DIsIpRMrWgODc9t9iwwDAv
-        tVyvODG3uDQvXS85P3cTIzgGtDR3MG5f9UHvECMTB+MhRgkOZiUR3oL8V4lCvCmJlVWpRfnx
-        RaU5qcWHGKU5WJTEeS90nYwXEkhPLEnNTk0tSC2CyTJxcEo1MEVMrFmZPtm9U2LG1FWJQS+L
-        pz7hWurvPDEv7Jvopb+BvfetFl34Yf5ZMMzBSJ/ptuGZZR+5RL/prA1s+bPozoEzH5O888/o
-        fy7Of6LU+4n7fS93lsz/++f+rC8+s4RPIPvsAVvzOMfmHbxnow9PZtR6tMc7Ot+f3X+FQb3n
-        HsuN0aK7HnuwqXmdWfx67vrFt+s3JJ95sfZi+KtJmW/OCF6dd1Ht7m/VbVK/bnErdSfzTw9S
-        m9dzS2rF9dTqlf67r88tZnUSZ//13F4ltb8gaukuru8i/6r/iBwz99vmPF3tz7MsH9EXN1Yu
-        c9sespfL8Xqnneejt36+n6cmuVz1frV1m8UFtmMVuzQyD2pfP/hfiaU4I9FQi7moOBEAJUax
-        Y/ACAAA=
-X-CMS-MailID: 20220123192039epcas5p3fc21ed81a383a05f1ea1704481641c69
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220123192039epcas5p3fc21ed81a383a05f1ea1704481641c69
-References: <20220123190729.1852-1-alim.akhtar@samsung.com>
-        <CGME20220123192039epcas5p3fc21ed81a383a05f1ea1704481641c69@epcas5p3.samsung.com>
+        Sun, 23 Jan 2022 14:27:47 -0500
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 84D5B40012
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 19:27:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642966066;
+        bh=ppmQZmGXEKGMtrtBOd5SScL6e8veRA8HtdHIjXJZG0w=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=YNGLBkoQhuf5rRR5RaqxyVIhCCXrEMAEcXJiFMCCACaguE+Clj4cps7r3V7tZUflN
+         GjJTCzy7hkr0NfB7QBoD2pouTz5SuXVAuG6OzfgLX+CKo2ZdXb4X9LckEiNU+R8Wbe
+         3sbrxIg6QlqkFG2cbfotof5dfHDIz/oaox7MGl8lpt+7zKZqhG73uGDIrA8zifZH4X
+         m6hs2LRzUqRJxQ2C7QW0UsMA7upxA/31bs0n6KJ9fDUvtgJrp5XzOmk3+0jPFLt7Cv
+         yXDzmW/aJLTm5J12+AxbjmNjnjLKOLwlSk1+pBkaEVuhPLunPH6BSNR9qIKnkAnYV/
+         u7KW2kG3qypxQ==
+Received: by mail-ed1-f70.google.com with SMTP id p17-20020aa7c891000000b004052d1936a5so7370152eds.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 11:27:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ppmQZmGXEKGMtrtBOd5SScL6e8veRA8HtdHIjXJZG0w=;
+        b=aoixbrGwBFbc0PmVcN4Tr293iOSn0cYgsxcRBZk5NFo3aSSVfVbWFsBRfbz4TxBFxV
+         HGx83p9Nsw+SnHlgAL3vAXVwlccipaeeQeN7JPZjEAvqINw4iTRc1ueTOoqidR/xghU4
+         5mPRsM36smDkQIAqdwDPSu88ng/3o/Q+f7eJpohpiz2vbyxVTN04bASZ3wVNqXVXDp3W
+         5c91z5WseXZvb6qNDjg8kezMU3ojMdOOCmlZGmrtZ3aG2mFjfBFs47F98vOlU/JXFyvS
+         1i4m1UwmjAJTuMGEQttG3SpJfYQQpXdqETTWjiqkjhTo9MKrSNHK3aZ8kEXmLxnki+fD
+         iPOw==
+X-Gm-Message-State: AOAM5301aWB0etfphvwN5sZ0oA93ttYNY5kKZlCWGxWhsSX1S+TmzTpk
+        xAK42161J4ubl/OYTvBQ66EudeBu5W+Zqyy8xXBhV1J8jGEVBq+gdA586Rh9zSY5wbX+kKgFN3a
+        NrPx2swHH7vV1Wy9LvYZCa7W3DLPJc0eeChc3soX6i4ZRHL/n
+X-Received: by 2002:a17:907:948d:: with SMTP id dm13mr10172420ejc.497.1642966065730;
+        Sun, 23 Jan 2022 11:27:45 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxYdWmSNLpkZ+Kmyls8Ku61DVbiK+Tc7UmnRy4ygyhjafJ3yLRtLz1Z7RyK/7j1hq0JpfWVcQ==
+X-Received: by 2002:a17:907:948d:: with SMTP id dm13mr10172415ejc.497.1642966065553;
+        Sun, 23 Jan 2022 11:27:45 -0800 (PST)
+Received: from [192.168.0.52] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id g15sm5380240edy.77.2022.01.23.11.27.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jan 2022 11:27:45 -0800 (PST)
+Message-ID: <72a50afd-df9f-ceb3-898e-070d70dc0221@canonical.com>
+Date:   Sun, 23 Jan 2022 20:27:44 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+References: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
+ <CAPLW+4n-1H5Yu3wQaus-UJ_VW_TjHrNUHaPCGCMURXg8EqxjyA@mail.gmail.com>
+ <CAK8P3a1ou-ZdrXN0MHQoJ+gGbvhXT-e2qt96_f9M8VwrdX0pAg@mail.gmail.com>
+ <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com>
+ <CAPLW+4k8=ymx56R7bKOt8kMVG_uUgrTsCkVd5wiY_rkYq8dYbQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4k8=ymx56R7bKOt8kMVG_uUgrTsCkVd5wiY_rkYq8dYbQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch enables the Tesla FSD SoC in arm64 defconfig.
+On 22/01/2022 13:38, Sam Protsenko wrote:
+> On Wed, 19 Jan 2022 at 18:53, Olof Johansson <olof@lixom.net> wrote:
+>>
+>> On Wed, Jan 19, 2022 at 8:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>>>
+>>> On Wed, Jan 19, 2022 at 4:11 PM Sam Protsenko
+>>> <semen.protsenko@linaro.org> wrote:
+>>>> On Mon, 27 Dec 2021 at 13:30, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+>>>>
+>>>> Hi Olof, Arnd,
+>>>>
+>>>> Just want to check if it's possible for those patches to be applied in
+>>>> v5.17? Sorry for the noise, but that's important to me.
+>>>
+>>> I can see that Olof merged merged this into the "arm/late" branch in
+>>> the soc tree,
+>>> so I assume he still plans to send it in the next few days.
+>>
+>> Yep, will be sent up today most likely.
+>>
+> 
+> Thanks for detailed answer! Glad to hear it's still a possibility.
+> Please let me know if you need any actions on my side (like rebasing,
+> etc).
+> 
+>>> With the timing over Christmas, I sent out the large bulk of the
+>>> contents (anything
+>>> I merged before Dec 23) last year, and Linus already merged it, the rest ended
+>>> up in the "late" branch.
+>>>
+>>> As usual, there is no guarantee that late changes make it in, but I have seen
+>>> no indication of any problems so far.
+>>
+>> Correct. Been sitting on it for a while in case there were fixes
+>> coming in for the first pieces that got merged, but in traditional
+>> fashion I'm guessing those will start to show up a few days after the
+>> late branch gets merged. :)
 
-Cc: linux-fsd@tesla.com
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Olof,
+v5.17-rc1 came earlier, so I see this part did not make into it. Is
+there a chance for a past-rc1 pull to Linus with it?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 30516dc0b70e..415fb3aca4b3 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -54,6 +54,7 @@ CONFIG_ARCH_SEATTLE=y
- CONFIG_ARCH_INTEL_SOCFPGA=y
- CONFIG_ARCH_SYNQUACER=y
- CONFIG_ARCH_TEGRA=y
-+CONFIG_ARCH_TESLA_FSD=y
- CONFIG_ARCH_SPRD=y
- CONFIG_ARCH_THUNDER=y
- CONFIG_ARCH_THUNDER2=y
--- 
-2.25.1
+Sam,
+Anyway the patches wont' get lost (you mentioned such worry in previous
+email to me). They might just need to wait. Unfortunately if patch,
+especially with new feature, is coming in the end of cycle, there is a
+risk it won't make it. The patches have to wait a few days in my trees
+before I send them to Arnd/Olof, so if the patch is coming after rc6, I
+can push it to Arnd/Olof around rc7, you see there is very little time.
 
+Best regards,
+Krzysztof
