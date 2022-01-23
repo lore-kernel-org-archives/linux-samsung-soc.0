@@ -2,78 +2,75 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC13EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 11:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A43CC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 11:47:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236175AbiAWLq4 (ORCPT
+        id S232966AbiAWLrB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 06:46:56 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:56400
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232966AbiAWLqz (ORCPT
+        Sun, 23 Jan 2022 06:47:01 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:38900
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236191AbiAWLq4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 06:46:55 -0500
+        Sun, 23 Jan 2022 06:46:56 -0500
 Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 732DE3F1C2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 11:46:54 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D59563F17B
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 11:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642938414;
-        bh=xW+YGmQiJJj1p1WWiVxHQ1OgGBd61Y3FjFC1VcuSj1s=;
+        s=20210705; t=1642938415;
+        bh=t1Mr2leewf+dJOw+raj7dTmlAldoGuESwLMLnJL3mUo=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=K+Y6HjLOPFh7cYPZKSkZglf1xG6ndj4QQ4CL/gGjiEoQt9f5aQPxrBosJ0UhZVptj
-         1lwRXJv7vzGlSjnc3iPENHvm3kYs2F4XB4FVaFzFGTQsZV/Dh4vbF8dR6ccmPg4Ofi
-         yiIancG+h0ytxJ8qWSbKEkRgSvo0SgFTKPfjIDMPE7mXylWeR91D7tdMKAIiG4TX1M
-         /8ZIaLJP2KVdrArsFeBM4A7RR1BHVwED0Y1nFf1NwAaEq02UDNi0OjI4NA0IvowTSi
-         udKX6JZQzv69mCkNI6RSQbLVsdfNlluPuQHOONDNDWRcBZKaq2d97guKJ2yA/H0lH1
-         Q3O73Eeq7yFbQ==
-Received: by mail-wm1-f71.google.com with SMTP id j6-20020a05600c1c0600b0034c02775da7so5341894wms.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 03:46:54 -0800 (PST)
+        b=UeSY7HEbDIEI29Yuog5Wc7qmAGEEkRRL4gUX8ShE0tLoKj/CAI5idXe2LkObNTRYT
+         GkDg9xVTO3wQ1QLw+ZubpMrqAnrabalTOTE0+qKgkCEstqIUpIqroVNnaVuawms4b/
+         AFYThjE8TMfGb6FJLrrVbANly3ZcIns76N0xF0yoJbaUUXlicLDeX1SsHn1Q4H0Hec
+         aQDXPRnAIqoH4xYj1E/bgQDS5Z36S39LSv6Fy76kP7o8Qo3Dup3Bkdvw5Bo2qJfx8+
+         wNO2IUzae016VE+1eY2mmCdKOSOQfR9yDvlxYpG2RWAM5QPmHYpZxTEvL8cSCYjje1
+         U8F4m4n891yzg==
+Received: by mail-wm1-f71.google.com with SMTP id bg32-20020a05600c3ca000b00349f2aca1beso8989437wmb.9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 03:46:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xW+YGmQiJJj1p1WWiVxHQ1OgGBd61Y3FjFC1VcuSj1s=;
-        b=WmzmqmXBlTRrwRin18Z1lWUjxpWL2AqChMBSZGMD9kN5haDWGs/eRwZ/yyqGZv0DIF
-         Qr9l/BDwcKoyNUDW76/GjXdzB8ZgJdI7/tlsBsKuiJ7x7DDXKMTOMaoKRNFAJugJGq7V
-         IniyZ4B5IIP1ph7rpDTWxSyYoHzfQjL0+JmjHAx+PH6SM4G5UbreFjK3LUiyLPov9Pyi
-         GJVhhdVGpEruR7CDEhORfAKbyf64NgfgeLKzelyO179wqpUFYnnerKY/6UepGKi5Bgpt
-         MG8IbPY5Rs30yNcjK77TidU0k1Fr6oiIyyN5yVuIbbdGPLmY0oLMlEmahl4gtNcJHGe2
-         is1w==
-X-Gm-Message-State: AOAM532GLVcxDrggXfRjVsyuuLf/8Br0IUdk3yCrh5duXkpu9wOGatq8
-        RIgIE99Wb22mmYxX8QTVey+/p5DUfjSgCbmZcLhAD73+YUzKzcK1wb58IMZVr2mqE0wUI7sdBPC
-        2qF3Fmj8pv+/1wWDv4IImdYzcYN2p35Wd3rWy+oddtwfG7g+e
-X-Received: by 2002:a5d:6309:: with SMTP id i9mr10510314wru.515.1642938414030;
-        Sun, 23 Jan 2022 03:46:54 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz3gjHuMG1cgKk2JjQFpBr5NwSCrmFi2W4JFjaulRbsjBoBRumkkLusFOIf5vI9TOY/6CyUzA==
-X-Received: by 2002:a5d:6309:: with SMTP id i9mr10510299wru.515.1642938413887;
-        Sun, 23 Jan 2022 03:46:53 -0800 (PST)
+        bh=t1Mr2leewf+dJOw+raj7dTmlAldoGuESwLMLnJL3mUo=;
+        b=CcW9jPMtT9Xy4V6SR+1N+jiF5URQ5f5EpDLGeMbxQzVecYA6lODTyM2HZYieL0iHkr
+         sWwj3257sk1zWPqLOpjSGvuxPpwNBUc9L82rSbvw9PAaIykte5/Q8V8zbnxKYjDiUDRj
+         ZQjsl8tTOFnA33AKDfCV+yYqaN+UdVKIoDyD7Nb/HzyExoHjYX2+4EGi52ufyb9q1nyk
+         wRPTNlwxew9gj95d7npmuIjgkMiDsMyraQLGMewQBgayIVF4+UwSZv+ZoTUE0AV8Z5zM
+         V4Mr3rESEI6FCj27VymdBsHKuigrEzc55ooH2RDpITUwhb+SjtM7taj6mg/wQL3P0irp
+         HjAA==
+X-Gm-Message-State: AOAM532lRFOPeawgGv/1mfBPP0SCvo5u622n1+cYpnFZO6uZUCjsrrYs
+        A2wZTcakqm9Wk8WfHqYijPxsaq+NGGI75FFOz9sYPCOqHsk++8fqhFu0D/bz3+hykHIvYO9o4sV
+        2eOTfbCO40LkgFRzOLZEHTGhEEGkKWh+Q2dtni5F62DRV9acZ
+X-Received: by 2002:a5d:6e83:: with SMTP id k3mr10395742wrz.506.1642938415402;
+        Sun, 23 Jan 2022 03:46:55 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzS480IySxN7r/zMW68vwN+Cqc0h0XRSdNUxo2T7syZh+fpKi38vkV6Glz0y+IeA+oKqVXahQ==
+X-Received: by 2002:a5d:6e83:: with SMTP id k3mr10395729wrz.506.1642938415273;
+        Sun, 23 Jan 2022 03:46:55 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id r2sm16992751wrz.99.2022.01.23.03.46.53
+        by smtp.gmail.com with ESMTPSA id r2sm16992751wrz.99.2022.01.23.03.46.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 03:46:53 -0800 (PST)
+        Sun, 23 Jan 2022 03:46:54 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Chanho Park <chanho61.park@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v2 00/28] pinctrl: dt-bindings: samsung: convert to dtschema
-Date:   Sun, 23 Jan 2022 12:46:50 +0100
-Message-Id: <164293835975.31601.16562955007803362485.b4-ty@canonical.com>
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: samsung: Remove EINT handler for Exynos850 ALIVE and CMGP gpios
+Date:   Sun, 23 Jan 2022 12:46:51 +0100
+Message-Id: <164293835975.31601.16620899683024964008.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
-References: <20220111201426.326777-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220114203757.4860-1-semen.protsenko@linaro.org>
+References: <20220114203757.4860-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -81,36 +78,20 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 11 Jan 2022 21:13:58 +0100, Krzysztof Kozlowski wrote:
-> Changes since v1
-> ================
-> 1. Patch #1: add missing pin assignment (Alim).
-> 2. Patch #2: correct double sizeof() (Alim).
-> 3. Patch #7, #8: put label-override in proper patch (Alim).
-> 4. Patch #24: Extend doc, change the 'if' clause for wake-up interrupts.
-> 5. New patches: #25 - #28.
->    Exynos850 and ExynosAutov9 seems to be different in pin ctrl interrupt
->    handling, so they need their own compatibles.
->    Please kindly review and provide feedback on these as I do not have
->    details.
-> 6. Add review tags.
+On Fri, 14 Jan 2022 22:37:57 +0200, Sam Protsenko wrote:
+> GPIO_ALIVE and GPIO_CMGP blocks in Exynos850 SoC don't have EINT
+> capabilities (like EINT_SVC register), and there are no corresponding
+> interrupts wired to GIC. Instead those blocks have wake-up interrupts
+> for each pin. The ".eint_gpio_init" callbacks were specified by mistake
+> for these blocks, when porting pinctrl code from downstream kernel. That
+> leads to error messages like this:
 > 
 > [...]
 
 Applied, thanks!
 
-To Samsung pinctrl tree:
-
-[01/28] pinctrl: samsung: drop pin banks references on error paths
-        commit: 50ebd19e3585b9792e994cfa8cbee8947fe06371
-[02/28] pinctrl: samsung: accept GPIO bank nodes with a suffix
-        commit: a29681b0cc3778c9ff6abdbcad579cba776dbb81
-[24/28] dt-bindings: pinctrl: samsung: convert to dtschema
-        commit: af030d83da1dc0d750d7bcc88d57dd1cae5f6b61
-[25/28] dt-bindings: pinctrl: samsung: describe Exynos850 and ExynosAutov9 wake-ups
-        commit: 1755e227c21636ade047dc9b920f647c1d53b4e9
-[26/28] pinctrl: samsung: add support for Exynos850 and ExynosAutov9 wake-ups
-        commit: 832ae134ccc1c78a2f5ec81b7010dd24c3c49535
+[1/1] pinctrl: samsung: Remove EINT handler for Exynos850 ALIVE and CMGP gpios
+      commit: 96f79935015cf3d7ca6fabf63cd13b8af45a7713
 
 Best regards,
 -- 
