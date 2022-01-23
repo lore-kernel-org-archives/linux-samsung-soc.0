@@ -2,101 +2,192 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C806C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 19:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F1EC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 23 Jan 2022 19:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234863AbiAWTPV (ORCPT
+        id S232410AbiAWTTl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 14:15:21 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:44704
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229533AbiAWTPV (ORCPT
+        Sun, 23 Jan 2022 14:19:41 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:45179 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234654AbiAWTTk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 14:15:21 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EE3F33F4B6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 19:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642965319;
-        bh=kttBDEdyIUQqupR/U1rqVQBMHSd3WLkJ4zI9eGg9wQQ=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=YO0xAS1j9zOoLmb6YoDfrPLh2cTRb4hmsAP4bYooJHOLgKLKhq41gcg2pZ1KkflNl
-         Otrd4EeE9BVwZeSnH9Ln5QtcXgtmekCHe5ddxRg7zgqj7lgRQTxsV+VNcEB6Y3DwGQ
-         D/rCHDl1no6RUW6mg9G/1bmQMOuE4XAl0ODsNNtK6D2rzaPtSf1PgG9oCnf8D8a/dB
-         1t2BuSuGKpl3ew78JjZz8Il99NmXHolHGlCQnutIdIrP8h48WNPskMx5iqUdB9lBvL
-         k0Gs5EsIAsl4ajJ3uiqTUBiXmKaGrr95G7B4vwmgSFasI7DIdWmAcg45NUbgCyHLhb
-         FINMYXwCGL+jg==
-Received: by mail-ed1-f69.google.com with SMTP id h11-20020a05640250cb00b003fa024f87c2so11722353edb.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 11:15:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kttBDEdyIUQqupR/U1rqVQBMHSd3WLkJ4zI9eGg9wQQ=;
-        b=vCxhoZdEjRj77z+nIwietLu8veljp0yBm7zxQaHPgcln4Lzgitr3kPXsOaagiarqzb
-         JZsRpdwU4/4eVLq/jRqf8NJWioNCG4BnhLEQlC2MtTboLpB2KykytcqR1EqysnwOwobn
-         o5lW1V2SUKRgPN3umc+vxocfiGUn9o5cc02o7Rzz/+kJr5APPXvWhhvlJeF3OSFMoYFP
-         NhZUbJESk9M+E1PrucF7gtYFh1u78D3r5QA5iP630ca0g9Y/mtnBnFEdb2UGdrvzdOKL
-         jkEwfSCFNuU2wCp3CesuB37YYnCNHIWuUnvFB9JWC2kzsj+5aMgWxtm5w+oKJzULs5eC
-         pk3g==
-X-Gm-Message-State: AOAM531dR0mlEbZ8FrpfT3WPTAKIwV9zkoXwE2mDeFd0yC2FYbm3dQnQ
-        0TfwcbcQ3MXZSwXhX3Yp2sMIc4FZuE84ME+e9FDjtsgxiySA2iBkaU3Fajkju/clLZ7ZzW5sypz
-        ta699oHNAMAfp9qMZemGINLeeOSv2vwsnL7VTIavM2H7Z0dtf
-X-Received: by 2002:a17:907:3e23:: with SMTP id hp35mr10799026ejc.760.1642965319177;
-        Sun, 23 Jan 2022 11:15:19 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxrMCE5tnqRZTbX68vFuTajb/35wJ5WKt4eGBj0OadG/VHHPHLxoIH7afhLw/1dm8/A/bhcVg==
-X-Received: by 2002:a17:907:3e23:: with SMTP id hp35mr10799006ejc.760.1642965318935;
-        Sun, 23 Jan 2022 11:15:18 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id oz18sm4063910ejb.106.2022.01.23.11.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 11:15:18 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     semen.protsenko@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Henrik Grimler <henrik@grimler.se>, cw00.choi@samsung.com,
-        linux-kernel@vger.kernel.org, virag.david003@gmail.com,
-        ~postmarketos/upstreaming@lists.sr.ht, robh+dt@kernel.org,
-        m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org,
-        martin.juecker@gmail.com, alim.akhtar@samsung.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH v3 0/3] Add initial support for exynos5420-chagall-wifi
-Date:   Sun, 23 Jan 2022 20:15:16 +0100
-Message-Id: <164296530944.41526.610812018359584856.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220118185746.299832-1-henrik@grimler.se>
-References: <20220118185746.299832-1-henrik@grimler.se>
-MIME-Version: 1.0
+        Sun, 23 Jan 2022 14:19:40 -0500
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220123191938epoutp047704db85fa66fcd48cfc9d5dbb77130c~M-H0TW5nY0640506405epoutp04Q
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jan 2022 19:19:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220123191938epoutp047704db85fa66fcd48cfc9d5dbb77130c~M-H0TW5nY0640506405epoutp04Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642965578;
+        bh=DsFfey4DK3A1Ho//27/+z58DaPrEa27+FlwKXNLvWtU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=a26iAg40lQi8X+Nq97GbIwXF6r8pBfDy+dIlyn6M857y/6A0+8Q07+bQ1hVRZdoPN
+         dsECBmP5CTrBTj3TVWCvuY/uzZ9bfFdZIw0VdnTg8TG4c1KSvXPkeCZNHoTWW8U2qy
+         ks+uYZQoTPaJGrYGYY6J6gJksE3PKkUMLI6RrCjM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220123191936epcas5p26c1115af494c399f05bf1d753a4029ac~M-HyvKOc82292122921epcas5p2g;
+        Sun, 23 Jan 2022 19:19:36 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Jhjbl2g0yz4x9Pp; Sun, 23 Jan
+        2022 19:19:31 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2B.37.06423.34AADE16; Mon, 24 Jan 2022 04:19:31 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220123191930epcas5p2572d936fab64a86238cab945171037d7~M-HssVdrh1893418934epcas5p2h;
+        Sun, 23 Jan 2022 19:19:30 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220123191930epsmtrp266334ddc0e2bbd3cfaea1c1d4a301748~M-HsrVOpm2018820188epsmtrp2M;
+        Sun, 23 Jan 2022 19:19:30 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-54-61edaa43355b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A0.C9.08738.14AADE16; Mon, 24 Jan 2022 04:19:29 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220123191927epsmtip150bc9d9804b88892e59871dc8d37c825~M-Hqi3Ecg0799807998epsmtip1D;
+        Sun, 23 Jan 2022 19:19:27 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, sboyd@kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v4 00/16] Add support for Tesla Full Self-Driving (FSD) SoC
+Date:   Mon, 24 Jan 2022 00:37:13 +0530
+Message-Id: <20220123190729.1852-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplk+LIzCtJLcpLzFFi42LZdlhTQ9d51dtEg84lfBYP5m1js/g76Ri7
+        xftlPYwW84+cY7XY+PYHk8WUP8uZLDY9vsZq8bHnHqvF5V1z2CxmnN/HZHHq+mc2i0Vbv7Bb
+        tO49wm5x+E07q8W/axtZLB5f/8PmIOCxZt4aRo/fvyYxesxq6GXz2LSqk83jzrU9bB6bl9R7
+        XDnRxOrRt2UVo8fnTXIBnFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
+        uam2Si4+AbpumTlAbygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL
+        89L18lJLrAwNDIxMgQoTsjP2XTvAXHBftuLS7n62BsZm8S5GTg4JAROJJ9uus4HYQgK7GSXm
+        TNeBsD8xSpydzdjFyAVkf2aU2HFpOQtMw+ymdjaIxC5Gia2nJzFBOC1MEitPtYGNYhPQlrg7
+        fQsTiC0i4CZxo7EDrIhZ4BWTxPV/q8GKhAW8JU7d/csKYrMIqEo0794L1sArYC2xYHMnM8Q6
+        eYnVGw4wgzRLCPRySDzp7WaFSLhIvJ2+D8oWlnh1fAs7hC0l8fndXqAFHEB2tkTPLmOIcI3E
+        0nnHoF6wlzhwZQ4LSAmzgKbE+l36IGFmAT6J3t9PmCA6eSU62oQgqoEue3cVqlNaYmI3zAEe
+        Els+HYKGXKxE47rVzBMYZWYhDF3AyLiKUTK1oDg3PbXYtMAwL7UcHjXJ+bmbGMHpUctzB+Pd
+        Bx/0DjEycTAeYpTgYFYS4S3If5UoxJuSWFmVWpQfX1Sak1p8iNEUGEoTmaVEk/OBCTqvJN7Q
+        xNLAxMzMzMTS2MxQSZz3dPqGRCGB9MSS1OzU1ILUIpg+Jg5OqQYmXXmWe1tXOO09LzfrU/r/
+        zXXH/+1cUmNuvEU1dYVSUdt50VWzw7TCSs635irHNT9pvpMzN9en0PyK4tbwtrz2Qpfbs3Zk
+        bHtSMeuDSpK+pGPBvtWbNbu3t5as4o/3bGVZFP22i1dufWMpU82S+kilE9GPbtUZ9E/SVq+f
+        4+p2ikO7YPLUmlbO61mKJZNdVucXtiuLGv9PzrDfsyGxtqP+2WlRdX6zK6/VO9ctsnYXkxTS
+        WF5ZsVSuYW3hm31+Z5k4+VYXKU7kqi7Ydm5jSaNfpvxkzeONa+su1ORmv20O9XKwni1w5urt
+        oOYTmgmHdLVDPuhGMm7y/22xRnHBJKlP+y9d9tvMsFFkV8buYCWW4oxEQy3mouJEALro2MQY
+        BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSnK7jqreJBs/PW1g8mLeNzeLvpGPs
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWl3fNYbOYcX4fk8Wp65/ZLBZt/cJu
+        0br3CLvF4TftrBb/rm1ksXh8/Q+bg4DHmnlrGD1+/5rE6DGroZfNY9OqTjaPO9f2sHlsXlLv
+        ceVEE6tH35ZVjB6fN8kFcEZx2aSk5mSWpRbp2yVwZey7doC54L5sxaXd/WwNjM3iXYycHBIC
+        JhKzm9rZQGwhgR2MEs2n5SHi0hLXN05gh7CFJVb+ew5kcwHVNDFJXNw8GayBTUBb4u70LUwg
+        toiAh0Tbv3vMIEXMAr+YJPb9vcEIkhAW8JY4dfcvK4jNIqAq0bx7L1gDr4C1xILNncwQG+Ql
+        Vm84wDyBkWcBI8MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgMNbS2sG4Z9UHvUOM
+        TByMhxglOJiVRHgL8l8lCvGmJFZWpRblxxeV5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1
+        CCbLxMEp1cCk9W/irYuqG1c2fbpsE1/uIfV+luAqIYebdV1nF9XLv7H/r3dxr3jWNNa6B04y
+        ey9cOjtj4Qe1RObEDytW1W3/MCnJgCv85fEp2nV8ng94HvIcLviqeeE2l2rJK+9Z83uYs97u
+        ZFBXS71qb7c/TYDv0zoDg+PxT+aem8d7Mijd6+VB1gPrVnoJf3m97sOMuvozL2Ntrxy0Src/
+        sHXTp85P/Geuaz52nzSh5e+r87Oneavn7GHyz9gsKOl6SmbB4fS5++dq3eHlYe696sKUceHx
+        iY3KeaFWybM7VZ+wSNizLHnKJvT/UOKUrowYTu93qWaKm1lClu24Wv288JL9jcCzXlOVpn2I
+        rKs+Pi1+3w3rKCWW4oxEQy3mouJEABd1kKbSAgAA
+X-CMS-MailID: 20220123191930epcas5p2572d936fab64a86238cab945171037d7
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220123191930epcas5p2572d936fab64a86238cab945171037d7
+References: <CGME20220123191930epcas5p2572d936fab64a86238cab945171037d7@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 18 Jan 2022 19:57:43 +0100, Henrik Grimler wrote:
-> Samsung's tablet Galaxy Tab S 10.5" (wifi) has codename Chagall WiFi
-> and is one of several tablets released in 2014 based on Exynos 5420.
-> This initial devicetree adds support for accessing device over USB or
-> UART, and allows using a rootfs in either the internal eMMC or an
-> external sdcard.  4 out of 8 CPUs are brought up when device boots,
-> which is the same as on the somewhat similar board
-> exynos5420-arndale-octa.
-> 
-> [...]
+Adds basic support for the Tesla Full Self-Driving (FSD)
+SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
+as well as several IPs.
 
-Applied, thanks!
+Patches 1 to 9 provide support for the clock controller
+(which is designed similarly to Exynos SoCs).
 
-[1/3] dt-bindings: arm: samsung: document Chagall WiFi board binding
-      commit: 9998104515d4197d774e5384df750c6384915707
-[2/3] ARM: exynos: only do SMC_CMD_CPU1BOOT call on Exynos4
-      commit: 534aaa1802eae339d0439feafe3c1217f5643b20
-[3/3] ARM: dts: Add support for Samsung Chagall WiFi
-      commit: 535f7fffed880312830c72d9c593b59ec741dd8e
+The remaining changes provide pinmux support, initial device tree support.
 
-Best regards,
+- Changes since v3
+* Addressed Stefen's review comments on patch 14/16
+* Fixed kernel test robot warning on patch 04/16
+* rebsaed this series on Krzysztof's pinmux new binding schema work [1]
+
+- Changes since v2
+* Addressed Krzysztof's and Stephen's review comments
+* Added Reviewed-by and Acked-by tags
+* Rebased on next-20220120
+
+- Changes since v1
+* fixed make dt_binding_check error as pointed by Rob
+* Addressed Krzysztof's and Rob's review comments
+* Added Reviewed-by and Acked-by tags
+* Dropped SPI, MCT and ADC from this series (to be posted in small sets)
+
+NOTE: These patches are based on Krzysztof's pinmux for-next branch
+      commit = 832ae134ccc1 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git/log/?h=for-next
+
+Alim Akhtar (16):
+  dt-bindings: add vendor prefix for Tesla
+  dt-bindings: clock: Add bindings definitions for FSD CMU blocks
+  dt-bindings: clock: Document FSD CMU bindings
+  clk: samsung: fsd: Add initial clock support
+  clk: samsung: fsd: Add cmu_peric block clock information
+  clk: samsung: fsd: Add cmu_fsys0 clock information
+  clk: samsung: fsd: Add cmu_fsys1 clock information
+  clk: samsung: fsd: Add cmu_imem block clock information
+  clk: samsung: fsd: Add cmu_mfc block clock information
+  clk: samsung: fsd: Add cam_csi block clock information
+  dt-bindings: pinctrl: samsung: Add compatible for Tesla FSD SoC
+  pinctrl: samsung: add FSD SoC specific data
+  dt-bindings: arm: add Tesla FSD ARM SoC
+  arm64: dts: fsd: Add initial device tree support
+  arm64: dts: fsd: Add initial pinctrl support
+  arm64: defconfig: Enable Tesla FSD SoC
+
+ .../devicetree/bindings/arm/tesla.yaml        |   27 +
+ .../bindings/clock/tesla,fsd-clock.yaml       |  198 ++
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/Kconfig.platforms                  |    6 +
+ arch/arm64/boot/dts/Makefile                  |    1 +
+ arch/arm64/boot/dts/tesla/Makefile            |    3 +
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         |   39 +
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    |  335 +++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  673 ++++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/Kconfig                   |    8 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-fsd.c                 | 1803 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |    1 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |   71 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+ include/dt-bindings/clock/fsd-clk.h           |  150 ++
+ 21 files changed, 3332 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tesla.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/tesla/Makefile
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd-evb.dts
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd.dtsi
+ create mode 100644 drivers/clk/samsung/clk-fsd.c
+ create mode 100644 include/dt-bindings/clock/fsd-clk.h
+
+
+base-commit: 832ae134ccc1c78a2f5ec81b7010dd24c3c49535
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+2.25.1
+
