@@ -2,55 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF54C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jan 2022 09:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE50CC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jan 2022 12:53:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236284AbiAXJGW (ORCPT
+        id S242338AbiAXMxt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 04:06:22 -0500
-Received: from mail.portyid.pl ([192.36.61.58]:47858 "EHLO mail.portyid.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233232AbiAXJGV (ORCPT
+        Mon, 24 Jan 2022 07:53:49 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:54040 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230123AbiAXMxt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 04:06:21 -0500
-Received: by mail.portyid.pl (Postfix, from userid 1001)
-        id 3874B4112F; Mon, 24 Jan 2022 10:06:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=portyid.pl; s=mail;
-        t=1643015180; bh=+PMi7irkA4XlRgpdW2HqpqcJeZNxKGysf407T0katTE=;
-        h=Date:From:To:Subject:From;
-        b=mhtaw4H4MRM+fatMC/G1p3xjGdgyybqMzNG6uu42KqBBMlBXKQ+yRRQ83dzduPmlr
-         EIcUu45oXN5Q3Qqwb2V7U/YtvM6TTKpdS1T5pPPE0DXF+fnvMozopH4s/B11PDXM/a
-         9awOqgwFeXTYbaIvR3jwiVL2pKxMrFzalyilqMriqN2gxNniZM5JrCgFokcuxHiHO1
-         wF6fRam1syA1b1j7uFybKTlkx+6K0oskS4IYhqpTQlsmhp28ZRrtWZNryJWb9+Qp+w
-         Yuhn0azzyKs2hJTSA7BIF0cv/BkZRdKDSuhMrVH3sCMuqEGj4QYu86lBIQVfSBJ3ir
-         3CXbveqq3O1kQ==
-Received: by mail.portyid.pl for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jan 2022 09:06:07 GMT
-Message-ID: <20220124084500-0.1.1b.5f4d.0.j572i646m5@portyid.pl>
-Date:   Mon, 24 Jan 2022 09:06:07 GMT
-From:   =?UTF-8?Q? "Pawe=C5=82_Jasi=C5=84ski" ?= 
-        <pawel.jasinski@portyid.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Fotowoltaika - nowe warunki
-X-Mailer: mail.portyid.pl
+        Mon, 24 Jan 2022 07:53:49 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A8F00B80F9E;
+        Mon, 24 Jan 2022 12:53:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C192FC340E1;
+        Mon, 24 Jan 2022 12:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643028826;
+        bh=Y0OL+x+SRLGEYswoXHiqhwdDrUNADi5qHnZQcYYK6X0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VQ1mA40JEOyF5ctlOBwPFol4BTafm2QYqPk03jsFzdeK8aiAM55Oz2rnt36TiiGdM
+         3hgnDdxsPg+ZI2A6fuWPAuzQFvzbJ2n464D38xZaKxMwA70Jm68DDS7Y/0TeyEVtpf
+         ElafEPLyRxQBEV4r6jrl2esTIanXCS7ncQb1Ln+UJEDCA0KWjiR4cZAkefa4xnpvzf
+         vt3bA95Ez7dvy3wXgA5EDAC75LasEtDdtJ7z/HejtlJSDKZ6m5YRoixE8407vOPE0j
+         esuEIz0XCj85LWQ7fQWVTti94spR/Ta9kbuqq5haQCPRq//1f5vxjdvBDKE+okucMY
+         bm2VKSQe+ZaSQ==
+Date:   Mon, 24 Jan 2022 12:53:41 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: Re: [PATCH 3/3 v3] spi: s3c64xx: Convert to use GPIO descriptors
+Message-ID: <Ye6hVXXjqq+Zvoyz@sirena.org.uk>
+References: <20220118230915.157797-1-linus.walleij@linaro.org>
+ <20220118230915.157797-3-linus.walleij@linaro.org>
+ <CAPLW+4=6A=FLKOum48VNUaGBUUXBa=sMYRn4n1_nTtR8a+0YQA@mail.gmail.com>
+ <CAHp75VftUNC6xFVRJqJhTqHwLvehtT+2+M9j_TsnhAyOf039rQ@mail.gmail.com>
+ <CAPLW+4mP0thEi0RbFa0p=_awMwRQ21T6JwW9tTz0gweP6ycVzA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="NDgO9ZN3DDnugHxw"
+Content-Disposition: inline
+In-Reply-To: <CAPLW+4mP0thEi0RbFa0p=_awMwRQ21T6JwW9tTz0gweP6ycVzA@mail.gmail.com>
+X-Cookie: The second best policy is dishonesty.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
 
-jeszcze w pierwszej po=C5=82owie 2022 roku wzrosn=C4=85 ceny za wykup ene=
-rgii dla posiadaczy fotowoltaiki.=20
+--NDgO9ZN3DDnugHxw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Aby unikn=C4=85=C4=87 umowy na nowych zasadach trzeba zdecydowa=C4=87 si=C4=
-=99 na instalacj=C4=99 paneli PV do ko=C5=84ca marca.=20
+On Sat, Jan 22, 2022 at 12:18:11AM +0200, Sam Protsenko wrote:
 
-Jako firma specjalizuj=C4=85ca si=C4=99 w monta=C5=BCu i serwisie fotowol=
-taiki ch=C4=99tnie podejmiemy si=C4=99 realizacji ca=C5=82ego projektu. S=
-=C4=85 Pa=C5=84stwo zainteresowani?
+> It was already pointed out earlier AFAIR. Personally I don't think
+> it's too major to send v4. But theoretically speaking, maybe it would
+> be even better this way:
 
+>     u32 fb_delay = cs ? cs->fb_delay & 0x3 : 0;
 
-Pozdrawiam
-Pawe=C5=82 Jasi=C5=84ski
+Please don't use the terery operator where not required, it's not a
+legibility aid.
+
+--NDgO9ZN3DDnugHxw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmHuoVQACgkQJNaLcl1U
+h9DPsQf+Pboi7lVBiMvo9vvQ7oCRon/RJd6wXKohFgdg6cUYyzRU2DpeYvAmLKn1
+HFgFfyUDtT2ewRBfFbspFsXYSW0skwZeuwEUF6nfRWtprwaOP5LiK9+a3i3fm76x
+w6cB0BFOwg9/BdSxWkOn79hrZloRwS73vjbrSASN3EOnlQUfr1U+n4qAngE5/Y7v
+EqLFq7CohWkT6+XtBaamjqM595qNjZnaawHcONRfrifZ/Bp8NlY9Ull/wl4pCo9C
+3i98/ZVSfHj5lKOPgFV8MH9JEn/kTWB0lCVG/wgyuVDft+CixsfeYskuRevEhafd
+WCXz33IIAt873iNiFjpMGVRYOAyY5g==
+=yxpg
+-----END PGP SIGNATURE-----
+
+--NDgO9ZN3DDnugHxw--
