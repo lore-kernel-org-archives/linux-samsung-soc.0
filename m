@@ -2,131 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B48C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jan 2022 13:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 047F3C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 24 Jan 2022 13:53:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231783AbiAXNuy (ORCPT
+        id S234942AbiAXNxC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 08:50:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55878 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229995AbiAXNuy (ORCPT
+        Mon, 24 Jan 2022 08:53:02 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38253 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234795AbiAXNxB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 08:50:54 -0500
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4513C06173D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jan 2022 05:50:53 -0800 (PST)
-Received: by mail-ua1-x931.google.com with SMTP id r15so31087995uao.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jan 2022 05:50:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=elnpBLQARnRLZNvPKlv8JLeoq3JtZl1fu0Kwxhb6W4Q=;
-        b=pOSKjTusGjLhqw45TfjvAeEDkHrppVglkaZ3biN4z+B1+eDjER6arxBNrUVxd9mTfB
-         UiKon0CaJtb/ljtfx0tbtXe0iCGZyasNfl+l+vP2P+Ug5yMmEpmwF19mvStimWu9gVnS
-         yvi50a5OOvl+pw6PX1wqAhCYu//gzXaz7WB3aOJW12F4aed4ECP1bZPZp5VkU3jJnXsC
-         WtjmgJmLBACrR/Yt3FwA15sBFuxnGhT4/6ceDUBAPfcIaUdTVVYyx+m1bv4eQoJxgjKa
-         aQQr5sBuQQkPnQqqnKkXWxWxj1H9VXJMNOuM7uHdW6AMeW/LyGGy8E82jDLKWqZtm5JI
-         QkxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=elnpBLQARnRLZNvPKlv8JLeoq3JtZl1fu0Kwxhb6W4Q=;
-        b=xaNlQQpuVk31/Q8jmCM26peVdWfUH7M/HSQ82C7iXmaMnN/URf6cQEdoh7kf/MfCjL
-         8BU/Gs1VLZU66UJasEHTk226cy3sjH7/+6TtzLCpeAQlRDPAM1KQ7AtpNlUTQJK+aHn0
-         9pOtegFm/GaeFbdu4y0YmTaMVyCdOurPkNHjquCzt+aA8tLgDz4gtfUHIBZhak53NR1g
-         hiaXn3RNku8ZE3KilAtCEra8C0OAvzpEKHPqrvAvFvAsq63c4gFp21omli8Lr/IyRMih
-         QqB079AjUbAvSkVbPifPmoxiLwyuC+CHhpPDY9WOsRBedcrmv3LQ4LbsvQ3NRHbG3loX
-         VjjQ==
-X-Gm-Message-State: AOAM532DZEQBj6GcI3Wy5SmVIn6sStjZVT5J5HaZQvTJoVJuSt9rzlsh
-        qpWZ5H8KsB0+oXkboA+rml9E4WDoLKz0Ro0RWNeqyA==
-X-Google-Smtp-Source: ABdhPJxvi5cZdB24aTyLiac3wH/da4Ee9sNkiG0jVsHFaPMStmGQ3+FEHBnkb+seTBGiIWnc3xn/pq1JWy1QVANrkXY=
-X-Received: by 2002:a67:c591:: with SMTP id h17mr4539820vsk.86.1643032252928;
- Mon, 24 Jan 2022 05:50:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
- <CAPLW+4n-1H5Yu3wQaus-UJ_VW_TjHrNUHaPCGCMURXg8EqxjyA@mail.gmail.com>
- <CAK8P3a1ou-ZdrXN0MHQoJ+gGbvhXT-e2qt96_f9M8VwrdX0pAg@mail.gmail.com>
- <CAOesGMgF3S5_XsWjEqq=-zfYXwOWFpFNA6afL81wceRUA_0FeQ@mail.gmail.com>
- <CAPLW+4k8=ymx56R7bKOt8kMVG_uUgrTsCkVd5wiY_rkYq8dYbQ@mail.gmail.com> <72a50afd-df9f-ceb3-898e-070d70dc0221@canonical.com>
-In-Reply-To: <72a50afd-df9f-ceb3-898e-070d70dc0221@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 24 Jan 2022 15:50:41 +0200
-Message-ID: <CAPLW+4=xaHA2a=-F4ikuUPDpoO8Waj7qrrfpgkift1aMi_hU+g@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 24 Jan 2022 08:53:01 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220124135300euoutp01cbabaf80f05493213e63e13aa6e1aede~NOT6X7jRu2683026830euoutp01I
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jan 2022 13:53:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220124135300euoutp01cbabaf80f05493213e63e13aa6e1aede~NOT6X7jRu2683026830euoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1643032380;
+        bh=0YQoKMTIRPHxjEEi8hAXo/s/AqCaIXQ1AcDjdTdMG5w=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=V07aYeTSbQdAP5335O/BtMfTszDDVWBpakxKrbgbtaoJ1Qx3WEobKY8BKGdtwBQSh
+         mkcmBbEqqmlRqDj0pE3errBuVcGID9japBeNu4n8MVurE4EmCidq3Yr1NGsTIDK2r8
+         H4FlsN5I0S9cFTA6I8Eo1CqmwIU1M7VqE4ib6h+0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220124135259eucas1p10978704fdcbbecf21eabd3b7610174e0~NOT5_NJcd1133911339eucas1p1Z;
+        Mon, 24 Jan 2022 13:52:59 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6F.60.10260.B3FAEE16; Mon, 24
+        Jan 2022 13:52:59 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e~NOT5k-JUx1356113561eucas1p1B;
+        Mon, 24 Jan 2022 13:52:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220124135259eusmtrp27dcaf37956b42441147c7d94055af2f2~NOT5b7U4J2196721967eusmtrp2M;
+        Mon, 24 Jan 2022 13:52:59 +0000 (GMT)
+X-AuditID: cbfec7f5-bf3ff70000002814-55-61eeaf3baa73
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id AA.FC.09404.A3FAEE16; Mon, 24
+        Jan 2022 13:52:58 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220124135258eusmtip1a45bdecf6d8eddeb1ff66f723a610f20~NOT4-rEXF1821618216eusmtip1b;
+        Mon, 24 Jan 2022 13:52:58 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        =?UTF-8?q?Ma=C3=ADra=20Canal?= <maira.canal@usp.br>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH] drm/exynos: Search for TE-gpio in DSI panel's node
+Date:   Mon, 24 Jan 2022 14:52:46 +0100
+Message-Id: <20220124135246.6998-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsWy7djP87rW698lGtz8Jmtx5et7NotJ9yew
+        WGx8+4PJYsb5fUwWa4/cZbdoa7nObjFj8ks2B3aPWQ29bB73u48zefRtWcXo8eBjqcfnTXIB
+        rFFcNimpOZllqUX6dglcGT+PLWcs+MtRcW2SXAPjRfYuRk4OCQETib2/mxm7GLk4hARWMEo8
+        P/qVFcL5wijxcP0SJgjnM6NE44LLTDAts/f/ZIFILGeU+P50FgtIAqzl/xOwuWwChhJdb7vY
+        QGwRATeJpsMzwcYyC7xhlPi5aDZQEQeHsICzxMSJfiA1LAKqEg1fVjOD2LwCNhLnLz6Buk9e
+        YvWGA8wgvRICf9klLh3qYYFIuEisfT+BEcIWlnh1fAtUg4zE/53zmSAamoF+OLeWHcLpYZS4
+        3DQDqsNa4s65X2wgVzALaEqs36UPYkoIOEo8e6ULYfJJ3HgrCFLMDGRO2jadGSLMK9HRJgQx
+        Q01i1vF1cFsPXrjEDGF7SHz+1cQICZJYidbphxgnMMrNQli1gJFxFaN4amlxbnpqsXFearle
+        cWJucWleul5yfu4mRmAaOP3v+NcdjCtefdQ7xMjEwXiIUYKDWUmEtyrlXaIQb0piZVVqUX58
+        UWlOavEhRmkOFiVx3uTMDYlCAumJJanZqakFqUUwWSYOTqkGptXdEdfXSRwT1g3wjbrA2nlp
+        u/aP/f8UPU5/Krn++VtJSe+GKdMqZ7n9nmlTPNfT2cL1Z05Ztd3BI753bnOsriiQ+dq34NjW
+        2y8+1l2vE998/5TP39Rr+wx+v7vcWnrl/f0VBr+WmXU7f+jiz1ttaKgonXDRen+NiPRWXv1H
+        eazin1dF2C7vsYnu40ySsH6U9P7tLb2DkrtElr3IK391r5Wzsu05/8uFq2Ydjms2DGf2+JV3
+        z3gGl8zLgldHtv9aqSgz4/P+czeWRi59cEGa62yMgePnpccPXDPcPy13w94VdkFMuU4BK8rT
+        zkR77qq4x7L2cubUol9LQ+OWvy+POadXy6JT8DlB08O1vKJVepMSS3FGoqEWc1FxIgDvVoiw
+        cgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsVy+t/xu7pW698lGpyZa2Zx5et7NotJ9yew
+        WGx8+4PJYsb5fUwWa4/cZbdoa7nObjFj8ks2B3aPWQ29bB73u48zefRtWcXo8eBjqcfnTXIB
+        rFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6GT+P
+        LWcs+MtRcW2SXAPjRfYuRk4OCQETidn7f7J0MXJxCAksZZQ43jMLKiEjcXJaAyuELSzx51oX
+        G0TRJ0aJRdM+M4Mk2AQMJbregiQ4OUQEPCSavx0Ha2YWeMcocW6ZbBcjB4ewgLPExIl+IGEW
+        AVWJhi+rwVp5BWwkzl98ArVLXmL1hgPMExh5FjAyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/d
+        xAgMv23Hfm7Zwbjy1Ue9Q4xMHIyHGCU4mJVEeKtS3iUK8aYkVlalFuXHF5XmpBYfYjQF2jeR
+        WUo0OR8YAXkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxSDUxsNbuk
+        zwf+El2+ikFiS11O68L598WzG8+ZxT/RspydcsXOzusyA0OSbXVvhtM+lRfvmRZ9fJXPZfc2
+        1n3Wd/mJ31bqWrn3LZTe8nyN4PXlJZ9Kprt88btVL6dxuHgFR3gEz7zt3tm/ivvsQjlWCSbU
+        Lrpdu1C4zFueZeuO0keX0u7ftNA0X3j2esP3Scu1vukUnL6QV//E+Lro3dZ4PcHpqcwav4KS
+        XS/t9cwOijii9XbZdV+FT7VtzAVKze1iL9Sjs8LO7yg8vXR7hiwnx+7/x0s0N0uvqT72i2fj
+        mU+nGUw/u8VvfOr5dKfyzuV/09crhxx9+eHa2+iZKiud7lksXqnVb8C8euovoUf23xcrsRRn
+        JBpqMRcVJwIAwde8nMgCAAA=
+X-CMS-MailID: 20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e
+References: <CGME20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 23 Jan 2022 at 21:27, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 22/01/2022 13:38, Sam Protsenko wrote:
-> > On Wed, 19 Jan 2022 at 18:53, Olof Johansson <olof@lixom.net> wrote:
-> >>
-> >> On Wed, Jan 19, 2022 at 8:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >>>
-> >>> On Wed, Jan 19, 2022 at 4:11 PM Sam Protsenko
-> >>> <semen.protsenko@linaro.org> wrote:
-> >>>> On Mon, 27 Dec 2021 at 13:30, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
-> >>>>
-> >>>> Hi Olof, Arnd,
-> >>>>
-> >>>> Just want to check if it's possible for those patches to be applied in
-> >>>> v5.17? Sorry for the noise, but that's important to me.
-> >>>
-> >>> I can see that Olof merged merged this into the "arm/late" branch in
-> >>> the soc tree,
-> >>> so I assume he still plans to send it in the next few days.
-> >>
-> >> Yep, will be sent up today most likely.
-> >>
-> >
-> > Thanks for detailed answer! Glad to hear it's still a possibility.
-> > Please let me know if you need any actions on my side (like rebasing,
-> > etc).
-> >
-> >>> With the timing over Christmas, I sent out the large bulk of the
-> >>> contents (anything
-> >>> I merged before Dec 23) last year, and Linus already merged it, the rest ended
-> >>> up in the "late" branch.
-> >>>
-> >>> As usual, there is no guarantee that late changes make it in, but I have seen
-> >>> no indication of any problems so far.
-> >>
-> >> Correct. Been sitting on it for a while in case there were fixes
-> >> coming in for the first pieces that got merged, but in traditional
-> >> fashion I'm guessing those will start to show up a few days after the
-> >> late branch gets merged. :)
->
-> Olof,
-> v5.17-rc1 came earlier, so I see this part did not make into it. Is
-> there a chance for a past-rc1 pull to Linus with it?
->
-> Sam,
-> Anyway the patches wont' get lost (you mentioned such worry in previous
-> email to me). They might just need to wait. Unfortunately if patch,
-> especially with new feature, is coming in the end of cycle, there is a
-> risk it won't make it. The patches have to wait a few days in my trees
-> before I send them to Arnd/Olof, so if the patch is coming after rc6, I
-> can push it to Arnd/Olof around rc7, you see there is very little time.
->
+TE-gpio, if defined, is placed in the panel's node, not the parent DSI
+node. Change the devm_gpiod_get_optional() to gpiod_get_optional() and
+pass proper device node to it. The code already has a proper cleanup
+path, so it looks that the devm_* variant has been applied assidentally
+during the conversion to gpiod API.
 
-Should I send the patch fixing hard-coded clock numbers though? I
-remember you said I should send it once -rc1 is out. But now that dts
-patches are not merged in mainline, I'm not sure it can still be
-applied?
+Fixes: ee6c8b5afa62 ("drm/exynos: Replace legacy gpio interface for gpiod interface")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Best regards,
-> Krzysztof
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 14ebbb124852..d13f5e3a030d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1334,7 +1334,7 @@ static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi,
+ 	int ret;
+ 	int te_gpio_irq;
+ 
+-	dsi->te_gpio = devm_gpiod_get_optional(dsi->dev, "te", GPIOD_IN);
++	dsi->te_gpio = gpiod_get_optional(panel, "te", GPIOD_IN);
+ 	if (!dsi->te_gpio) {
+ 		return 0;
+ 	} else if (IS_ERR(dsi->te_gpio)) {
+-- 
+2.17.1
+
