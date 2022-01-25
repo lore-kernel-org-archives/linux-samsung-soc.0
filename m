@@ -2,47 +2,47 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942DAC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E69C433FE
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Jan 2022 10:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245591AbiAYKbJ (ORCPT
+        id S1356578AbiAYKbS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 25 Jan 2022 05:31:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
+        Tue, 25 Jan 2022 05:31:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345567AbiAYKVR (ORCPT
+        with ESMTP id S1345774AbiAYKVV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Jan 2022 05:21:17 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA5EC061773;
-        Tue, 25 Jan 2022 02:21:16 -0800 (PST)
+        Tue, 25 Jan 2022 05:21:21 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822F2C061776;
+        Tue, 25 Jan 2022 02:21:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5A13F61640;
-        Tue, 25 Jan 2022 10:21:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C112EC340EC;
-        Tue, 25 Jan 2022 10:21:14 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3FC66B8174B;
+        Tue, 25 Jan 2022 10:21:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E48C340E0;
+        Tue, 25 Jan 2022 10:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643106075;
-        bh=Waq7iN55oJ8pZCq6646pwR8UIZfAhl1qVIhA0SINmac=;
+        s=k20201202; t=1643106079;
+        bh=qW9cVwE+5dH0IFpPL717Qa3dRXeY9HY/mvR982mEXgg=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=pvu50lKVRJh3onH/Z32EVmvRYm3q0PBN258cJjHpIaXsupS5fTTh6F2oMoNgrs3KR
-         s6Q55ltp8Oa8LkNSRW4OKStlf/tL3BEd4iwR8uSaNxdNmlodpefLvwEFSiAvSwRvBH
-         fwxCgj6I3VlHCIZpCqNBiK12CvzgeNCy1ZF8n1pPrUvJW7i3u3KsbLDBms+/z295PG
-         i30cE8f8o/rHBUX7Y5VxqokgaFvx3+68ImfR57mYdP9H6pQbISNeFv8M86sZ4TO/a6
-         HN+A/ikS0KiKx4J5YOlWMDLXvWG8wKBWG/QiMp/0QrvF11t43Bbz0Rd14r9LyQAm3T
-         n7M3hrwixwh2A==
+        b=V9GfVxyUJnASYIat8Btt3+WCQtL+zj5T+rpF3/pF/WJoqaf9VtgJZgm3xsddJ3fA+
+         Xmwe3uY4NuYHM3FFkQAK1Q6aoQNtFsbxFXkgSp9Z/yTEIw+Mtuo96BLQGYFoqLoSkZ
+         EZhma67xO+X5p3KrQwzMLgV7w4UpjcEEZ8DkyLjs2S+3L3338t52EMlMx5t2zJzzdy
+         Mj1k0rqW1OCjCOhxqTs035xtGm4ZHpcw4fy7QEidogFRaHd6jS+DPOejFTlpSf46FR
+         E/rL4UgbF3Ag1kL3sSQocX6TiQTFO4y71Tu+fN2hjATeClF8kADjPabP5gtUPjFzPA
+         +isGN27WsBORg==
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>, linux-spi@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20220118110928.120640-1-linus.walleij@linaro.org>
-References: <20220118110928.120640-1-linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3 v2] spi: s3c64xx: Delete unused boardfile helpers
-Message-Id: <164310607451.75071.12191982229329069475.b4-ty@kernel.org>
-Date:   Tue, 25 Jan 2022 10:21:14 +0000
+In-Reply-To: <20220119000914.192553-1-linus.walleij@linaro.org>
+References: <20220119000914.192553-1-linus.walleij@linaro.org>
+Subject: Re: [PATCH] spi: s3c24xx: Convert to GPIO descriptors
+Message-Id: <164310607765.75071.12847134364885643457.b4-ty@kernel.org>
+Date:   Tue, 25 Jan 2022 10:21:17 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,12 +50,17 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 18 Jan 2022 12:09:26 +0100, Linus Walleij wrote:
-> The helpers to use SPI host 1 and 2 are unused in the kernel
-> and taking up space and maintenance hours. New systems should
-> use device tree and not this, so delete the code.
+On Wed, 19 Jan 2022 01:09:14 +0100, Linus Walleij wrote:
+> This driver has a bunch of custom oldstyle GPIO number-passing
+> fields and a custom set-up callback.
 > 
+> The good thing is: nothing in the kernel is using it.
 > 
+> Convert the driver to use GPIO descriptors with a SPI_MASTER_GPIO_SS
+> flag so that the local CS callback also get invoked as the hardware
+> needs this.
+> 
+> [...]
 
 Applied to
 
@@ -63,12 +68,8 @@ Applied to
 
 Thanks!
 
-[1/3] spi: s3c64xx: Delete unused boardfile helpers
-      commit: f1ba938e4f98941dc2b77795062e49444ec1fee1
-[2/3] spi: s3c64xx: Drop custom gpio setup argument
-      commit: 3b5529ae7f3578da633e8ae2ec0715a55a248f9f
-[3/3] spi: s3c64xx: Convert to use GPIO descriptors
-      commit: a45cf3cc72dd9cfde9db8af32cdf9c431f53f9bc
+[1/1] spi: s3c24xx: Convert to GPIO descriptors
+      commit: 7f2a3cf4e6077a1525092f114be7819e505773a1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
