@@ -2,55 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA2CC4167B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Jan 2022 09:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942DAC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Jan 2022 10:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1457535AbiAYJPx (ORCPT
+        id S245591AbiAYKbJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 25 Jan 2022 04:15:53 -0500
-Received: from mail.belongsenergy.pl ([185.45.112.191]:33988 "EHLO
-        mail.belongsenergy.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1455709AbiAYJGG (ORCPT
+        Tue, 25 Jan 2022 05:31:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345567AbiAYKVR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Jan 2022 04:06:06 -0500
-X-Greylist: delayed 628 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jan 2022 04:06:06 EST
-Received: by mail.belongsenergy.pl (Postfix, from userid 1001)
-        id B3DB9265A2; Tue, 25 Jan 2022 08:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=belongsenergy.pl;
-        s=mail; t=1643100933;
-        bh=JAEkA4FCBmQ7T7M+WVau75EdqeDf4MEEr9hE2/l61BA=;
-        h=Date:From:To:Subject:From;
-        b=kgrIVjmPuZWJYXEN8dDKLI7lQK/4NM12nI3SSDuopb2advWB/0IoJN3NT8pMZAzwV
-         XLweIeZbNzbk8Nsll8tT5nZ/KoxeUAXYftYXb0LdWrCy5m7pPTRExbo32GlHeDHrNv
-         2GHmojihOV3xb8S55DutDqMlTSg/MUMyyoqVhwX/BiNxrKsEoC/AvAkg99/IX9Cq5J
-         C6KDcwUYB79coeYhlivyysaru9sasV++zEzq/qyCIdpVNRr7M/hnguTB3vVsn35vF9
-         CPE1KB6yxs3TNhY2p6/X6SOM1zbGt/IUTlx8HIUyOEc7fSpylrKx9aBrQh4D7ZDEPA
-         LumYp0x7IppMw==
-Received: by mail.belongsenergy.pl for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Jan 2022 08:55:14 GMT
-Message-ID: <20220125074500-0.1.7.1rr.0.bdq1cotgdk@belongsenergy.pl>
-Date:   Tue, 25 Jan 2022 08:55:14 GMT
-From:   "Maciej Nitycz" <maciej.nitycz@belongsenergy.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.belongsenergy.pl
+        Tue, 25 Jan 2022 05:21:17 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCA5EC061773;
+        Tue, 25 Jan 2022 02:21:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5A13F61640;
+        Tue, 25 Jan 2022 10:21:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C112EC340EC;
+        Tue, 25 Jan 2022 10:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643106075;
+        bh=Waq7iN55oJ8pZCq6646pwR8UIZfAhl1qVIhA0SINmac=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=pvu50lKVRJh3onH/Z32EVmvRYm3q0PBN258cJjHpIaXsupS5fTTh6F2oMoNgrs3KR
+         s6Q55ltp8Oa8LkNSRW4OKStlf/tL3BEd4iwR8uSaNxdNmlodpefLvwEFSiAvSwRvBH
+         fwxCgj6I3VlHCIZpCqNBiK12CvzgeNCy1ZF8n1pPrUvJW7i3u3KsbLDBms+/z295PG
+         i30cE8f8o/rHBUX7Y5VxqokgaFvx3+68ImfR57mYdP9H6pQbISNeFv8M86sZ4TO/a6
+         HN+A/ikS0KiKx4J5YOlWMDLXvWG8wKBWG/QiMp/0QrvF11t43Bbz0Rd14r9LyQAm3T
+         n7M3hrwixwh2A==
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>, linux-spi@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20220118110928.120640-1-linus.walleij@linaro.org>
+References: <20220118110928.120640-1-linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3 v2] spi: s3c64xx: Delete unused boardfile helpers
+Message-Id: <164310607451.75071.12191982229329069475.b4-ty@kernel.org>
+Date:   Tue, 25 Jan 2022 10:21:14 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Tue, 18 Jan 2022 12:09:26 +0100, Linus Walleij wrote:
+> The helpers to use SPI host 1 and 2 are unused in the kernel
+> and taking up space and maintenance hours. New systems should
+> use device tree and not this, so delete the code.
+> 
+> 
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+Applied to
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+Thanks!
 
+[1/3] spi: s3c64xx: Delete unused boardfile helpers
+      commit: f1ba938e4f98941dc2b77795062e49444ec1fee1
+[2/3] spi: s3c64xx: Drop custom gpio setup argument
+      commit: 3b5529ae7f3578da633e8ae2ec0715a55a248f9f
+[3/3] spi: s3c64xx: Convert to use GPIO descriptors
+      commit: a45cf3cc72dd9cfde9db8af32cdf9c431f53f9bc
 
-Pozdrawiam,
-Maciej Nitycz
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
