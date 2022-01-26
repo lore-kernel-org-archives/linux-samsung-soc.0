@@ -2,103 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E9DC28CF5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jan 2022 11:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 330A4C28CF5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jan 2022 12:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233693AbiAZL5K (ORCPT
+        id S241186AbiAZMUP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jan 2022 06:57:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241002AbiAZL5K (ORCPT
+        Wed, 26 Jan 2022 07:20:15 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59342
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241182AbiAZMUP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jan 2022 06:57:10 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E57C061744
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 03:57:09 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id k18so25337266wrg.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 03:57:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=+sDiqoAJOrfRogurdk0Dhb2t5N6DFNFBvxVjM1SRD9c=;
-        b=BLZ2z3i/uG0fFoNgk9obov7QqIMqTbuOtNpD733i1x5E5ynRFrWMD7MV+zAkhAdh2G
-         Tn8Swt3wZOsV5mrTe61xN+NAlX9v78/r2D91GLkbPL0l+QGSdciUWd0/62Uf4rOkvDCO
-         +KvyCNIDl3joOvlg9+PJ0V0lGjMfDi5yurz+FUEC5xzV7SIYPPEQyFL7MFxhAVQy2wIN
-         ELdlpTsyFCKUscHzcRdrynZpmaF/xUFnAD1iwWCRQ5CmdchphCJyIMkZYG3+X4N8LT8K
-         Ek2RkEwqw5GE1v+EgAbvSisWPjrA/kSru/bhlyyIL8pi8y7Ou363KFinH97lx8/EfYGr
-         vU3g==
+        Wed, 26 Jan 2022 07:20:15 -0500
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2B8833F197
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 12:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643199614;
+        bh=Zy1mWsJIGrWjngZWHcXr/+Qcbe/NYONm87sNBe72gBM=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=bugqfrJaZb9GYlBqvooakLl8ZqtCMB0fVi7WfuHPUHeWGUMbvYMSOfPVy+oK5f4mC
+         oWYuzqelwLVaDTzkmt4LQcnOFw3RW+USmrcOm/oseMuTt98Gi+/mJSHRYWEN2yrqXg
+         X2X103hF8HmCaCP6q+aFPY0LYB5Hx0YPbhUurGCxPCKD+KgWac2ADFObvCyrkK2GyE
+         b2Q+xk6ZIMgJDO8mrx20LRIbLp5LJvXZhsYp2i/muV/pr/1Gf0VpM4uazZOiAf44fJ
+         eCvyo4wNgtEASDjfZnVbABEyGNtJR42kidhhJsif0hU9gJl4of4BdXRSpgpm3lRyQM
+         eiRj5S65ZzFgA==
+Received: by mail-ej1-f72.google.com with SMTP id lb14-20020a170907784e00b006aa178894fcso4807166ejc.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 04:20:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+sDiqoAJOrfRogurdk0Dhb2t5N6DFNFBvxVjM1SRD9c=;
-        b=2gFykauFxzWPLD2g/l9dRWyuv3YdjhUhUoMOcKpebbZLQvaEIDwesRbTD8G9UK/BDv
-         Wbvq+J+rJsluoow4FsltfOnMur2WgYGEaMa/0QY1TGp1Bg1qqp3jkGLR11he+vC3Ihrg
-         d7c1tL+J0l2NGC7nCnVgb7XPfDkyiuYnLaBONBARl5f/9lecUAB/svbGsk6u8OLxJ5HL
-         ymvrg+dHJRP5uRR8hSsOHo2gQHdGS1i8dW346SFL+H7qcls3vmYeCQMDYrjENP38EgcA
-         ZICGpdt3lvKU2nqhw9eQ+zQeMcOEMix4Cquz8lTp1hZkbX0jfF5FTsbKumeD384hto/l
-         eBJg==
-X-Gm-Message-State: AOAM531t4azYjw7hzjhctH3FjX32MMEvmG6kUthRVrnUp888PvBDEx1u
-        AESpBlyMHZmf+/K6Bammpj/7OdmmQ+2d4w==
-X-Google-Smtp-Source: ABdhPJwvFiWQmnLxmbLCubDFaS53TCJwcofdqT+kHyjit5OJpNOW52yfgJxIOmUzSM0XMynmEK6F4w==
-X-Received: by 2002:adf:fb0b:: with SMTP id c11mr12509098wrr.699.1643198227874;
-        Wed, 26 Jan 2022 03:57:07 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:f589:cf7d:b2ee:bb5e? ([2a01:e34:ed2f:f020:f589:cf7d:b2ee:bb5e])
-        by smtp.googlemail.com with ESMTPSA id i2sm3403595wmq.23.2022.01.26.03.57.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jan 2022 03:57:07 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zy1mWsJIGrWjngZWHcXr/+Qcbe/NYONm87sNBe72gBM=;
+        b=k/wN1fv281nVHK2iIjIvS7hAbrFVC71L7Osy+wrj/MHdkpZTEnijeBKdXJFG5+Qhd1
+         AV471eC/zFnVO79zqMtCkfpZ9Vn0hFxMVql+ivWYtVRZmyh81QLT7ZXWnTIhNOAHIyeL
+         jbuZzYba8TLBcTUPZ5Tj/zw+L4xcWAm9t5pqyO2K4IzNhSN/UGPeVWXsNGsfxYEJ9CYw
+         B4g1I4QNH0bqSIQ0b9dS2PJs3QQUSP/JhMeC15rc99X2RdQRJJUaRe/b9gvjCs/cQVjj
+         ZX+Qk19knPfIT0PD5ae+9rMW6j13iSNfHp/va9Aou5yaNKpMDjuUyFhjulzqK2BGDX0p
+         kkqw==
+X-Gm-Message-State: AOAM532KiR5KQtyKSLXqimLft2+lzqfhwDtiVgeLgTsBrDXJcu3g4005
+        MrJ8ZdOFGxoYe6XepkyRqfxlFdBPJww2h++4/6fHxjCXxDVnEiWV7TkJtlcWoxyRL5+agmTKDKS
+        /qlHJ5MuZZwRjbaUA7OoqD5v/y/WxXndRfMDfO7282x3j6hZsTh3WqRXgUQwYyTF2
+X-Received: by 2002:aa7:d9d4:: with SMTP id v20mr25242673eds.234.1643199613929;
+        Wed, 26 Jan 2022 04:20:13 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwPDDizeCtdPTrTut64wf6EiUCUrIfWcLoLXQhowkQAazriFsywtmIt6LfySdWJze1nv+DKgt/4Jih/Izt5wng=
+X-Received: by 2002:aa7:d9d4:: with SMTP id v20mr25242649eds.234.1643199613727;
+ Wed, 26 Jan 2022 04:20:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20220122132554.65192-1-krzysztof.kozlowski@canonical.com>
+ <164313029072.79782.14492454091056440886.b4-ty@canonical.com> <c4a6d5a4-647a-f80c-e487-a5434e744bae@linaro.org>
+In-Reply-To: <c4a6d5a4-647a-f80c-e487-a5434e744bae@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Date:   Wed, 26 Jan 2022 13:20:02 +0100
+Message-ID: <CA+Eumj6rUZ=e6oOZyRMEEoXn2uh0FpuUQbJaT3rsX3rhXT67pQ@mail.gmail.com>
 Subject: Re: (subset) [PATCH 1/3] ARM: dts: exynos: drop old thermal
  properties from Exynos4210
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
         linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
         Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-References: <20220122132554.65192-1-krzysztof.kozlowski@canonical.com>
- <164313029072.79782.14492454091056440886.b4-ty@canonical.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c4a6d5a4-647a-f80c-e487-a5434e744bae@linaro.org>
-Date:   Wed, 26 Jan 2022 12:57:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <164313029072.79782.14492454091056440886.b4-ty@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25/01/2022 18:04, Krzysztof Kozlowski wrote:
-> On Sat, 22 Jan 2022 14:25:52 +0100, Krzysztof Kozlowski wrote:
->> The samsung,tmu_gain and samsung,tmu_reference_voltage properties of
->> Exynos Thermal Management Unit driver are not used since April 2018.
->> They were removed with commit fccfe0993b5d ("thermal: exynos: remove
->> parsing of samsung,tmu_gain property") and commit 61020d189dbc
->> ("thermal: exynos: remove parsing of samsung, tmu_reference_voltage
->> property"), so drop them also from Exynos4210 DTS.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/3] ARM: dts: exynos: drop old thermal properties from Exynos4210
->       commit: e20bd06fc421fba4099be51d3f56b9b1741b499b
-> 
+On Wed, 26 Jan 2022 at 12:57, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> On 25/01/2022 18:04, Krzysztof Kozlowski wrote:
+> > On Sat, 22 Jan 2022 14:25:52 +0100, Krzysztof Kozlowski wrote:
+> >> The samsung,tmu_gain and samsung,tmu_reference_voltage properties of
+> >> Exynos Thermal Management Unit driver are not used since April 2018.
+> >> They were removed with commit fccfe0993b5d ("thermal: exynos: remove
+> >> parsing of samsung,tmu_gain property") and commit 61020d189dbc
+> >> ("thermal: exynos: remove parsing of samsung, tmu_reference_voltage
+> >> property"), so drop them also from Exynos4210 DTS.
+> >>
+> >> [...]
+> >
+> > Applied, thanks!
+> >
+> > [1/3] ARM: dts: exynos: drop old thermal properties from Exynos4210
+> >       commit: e20bd06fc421fba4099be51d3f56b9b1741b499b
+> >
+>
+> I guess up to me to pick 2 and 3
 
-I guess up to me to pick 2 and 3
+Yes, please.
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Best regards,
+Krzysztof
