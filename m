@@ -2,137 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D38C28CF5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jan 2022 09:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11AFC2BA4C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jan 2022 09:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239008AbiAZJVh (ORCPT
+        id S239199AbiAZJcQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jan 2022 04:21:37 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41542 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238999AbiAZJVh (ORCPT
+        Wed, 26 Jan 2022 04:32:16 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47566
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239195AbiAZJcP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jan 2022 04:21:37 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220126092136euoutp01041a774048d23e5c95440ba8e4d326f7~Nx5hTMqlK0368303683euoutp01L
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 09:21:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220126092136euoutp01041a774048d23e5c95440ba8e4d326f7~Nx5hTMqlK0368303683euoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1643188896;
-        bh=FPzpBP6nJNWCXtxCcT6xJXmWCA6rvKk9U6lL/nJB2EI=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=IkbdMx0KElJbM1Z6GwCZEYtfgKREmGHGGy5auc4/U0535+VIENKYr6wpTaroP7J6X
-         8zuA4n5A4b1vgpet8fOvIwc7EaNvfj9qyh16go0CFYffAtst1IIwc8RGNDeVLo/z+C
-         o3Ol+cfpZvqaPVlnbHl9wRJMYqUfbpEOYYJGrZFk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220126092135eucas1p1c3d505b503cbd0207b0fe66dab8a2935~Nx5g7SWJk0449204492eucas1p1G;
-        Wed, 26 Jan 2022 09:21:35 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 13.10.10009.F9211F16; Wed, 26
-        Jan 2022 09:21:35 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220126092135eucas1p17003e792756fa2420bb90147093a3ab3~Nx5gcdI1f0518105181eucas1p17;
-        Wed, 26 Jan 2022 09:21:35 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220126092135eusmtrp15c821d1363b93c47c1eb6eb9e85b65a6~Nx5gbDGw31737217372eusmtrp1v;
-        Wed, 26 Jan 2022 09:21:35 +0000 (GMT)
-X-AuditID: cbfec7f2-e95ff70000002719-7c-61f1129f8c48
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id B6.34.09522.E9211F16; Wed, 26
-        Jan 2022 09:21:34 +0000 (GMT)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220126092134eusmtip17721ac7a373325afbce9d9c84fc9e32c~Nx5fbHaaN2733627336eusmtip1I;
-        Wed, 26 Jan 2022 09:21:34 +0000 (GMT)
-Message-ID: <bccd3ad0-7862-ef3b-246c-71463baaca52@samsung.com>
-Date:   Wed, 26 Jan 2022 10:21:33 +0100
+        Wed, 26 Jan 2022 04:32:15 -0500
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 838003F1C9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 09:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643189533;
+        bh=WceKU4GUOCSUXAyG5xoO2f2JwW1Wck3xgW1eUWgUNkY=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=CyqsGe+edJ6joSpjo3TOlvrZRv///kII0v+38SMlYB9Be2UvyD6asRcozd49vS3mY
+         wTjmnurH5m8m8CoqQlDAgwCoYNUwlzk+XKiG+7NBSNTlm+qIEukfr1+ovHliiPEgeZ
+         ryrs1xd6PbcnbVjfn7CMO7wF1ZWqwGOwxjdu1ImC7e6VBxTf7dumCf/mdOY7htrbuG
+         QZRvJ0HbtyvkCaXffNtZ+4F+tVqS2vLHroASrMk9MSKH2bHJ/7mPB1RR0zGVBxS7qb
+         /ZvpbYENsTgBh8DZ5qb/KqaJyT8lwYNCj2lMudD+G7hl9dtDi9XVIHTcmn7ytnHNTx
+         eVebGYshOEdRQ==
+Received: by mail-wm1-f70.google.com with SMTP id d140-20020a1c1d92000000b0034edefd55caso2299175wmd.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 01:32:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=WceKU4GUOCSUXAyG5xoO2f2JwW1Wck3xgW1eUWgUNkY=;
+        b=lbGRf8gIf01hOeNDLTwbMW9Ns0peq1GqElpvPZsG7cUNL9KA91GUD8lxY3wcZ2ml2V
+         C9RA9OLgdvzPjnaEDxTsAx6lSlwBwLTCFWOvOVv2c5iAwe1MBDyDuztRJZdccgKlt0AB
+         tGoQidvDD84yAWyXPC9pdhfIC8M2Pqf67Y7Q4pzocP97Y52HqrJdzEGqqsbBByUadxL1
+         NIvSRnjhgxp1CdV/p8YFzUJoCm2Nb3ZsXgxlmWmafoa6G+vgHBU9Wu63UiMXxrvzUEd4
+         TBrSSB3jKwH0Blv+TDztrlgccvH2XL9AmZTlHc01KE6V8nVcpAacxWnH/C0DK6vdIY3O
+         Vw9g==
+X-Gm-Message-State: AOAM5327idtup72jARoRuzD2MVekugX8YKFvpQDyO//0RHoWbh2wOAjg
+        dcmCVSgwe4sA9Hrepyw8//F7sLsKuV/R4511V9iFmb3cN9PnRcwqA7liT8bTyDXPKCxdE3OYg0e
+        JGDkyoWZJxxc5KsKyAqrk5bGyrKineGmvcn69uHH1OH9/FlPB
+X-Received: by 2002:a05:600c:6028:: with SMTP id az40mr6581975wmb.33.1643189532244;
+        Wed, 26 Jan 2022 01:32:12 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwDMFOPvmZNRYM0TyiLEwnvFjDMYmMANHOlkBtlXLzmxVacPKfbDDZu4cfqCpl6GROy6Yd5rA==
+X-Received: by 2002:a05:600c:6028:: with SMTP id az40mr6581951wmb.33.1643189532005;
+        Wed, 26 Jan 2022 01:32:12 -0800 (PST)
+Received: from [192.168.0.60] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id i6sm2803605wma.22.2022.01.26.01.32.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jan 2022 01:32:11 -0800 (PST)
+Message-ID: <31da451b-a36c-74fb-5667-d4193284c6cd@canonical.com>
+Date:   Wed, 26 Jan 2022 10:32:10 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.5.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
 Subject: Re: [PATCH v5 00/16] Add support for Tesla Full Self-Driving (FSD)
  SoC
 Content-Language: en-US
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        'Krzysztof Kozlowski' <krzysztof.kozlowski@canonical.com>,
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
         linus.walleij@linaro.org, catalin.marinas@arm.com,
         robh+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
         pankaj.dubey@samsung.com, sboyd@kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <063601d81281$5492d620$fdb88260$@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfVCTdRy/356XPVs3fBwY36OSbkUGl1MO4n6Kt7PEespe/9POwid8BBIG
-        t4lmL4aUGjZsAoYtZUgpusMTHnEi7wKKsAvyqk1QfAkCIwfNmYcbsNwevPjv8/l+P5/v230Z
-        Qt1PRTGZ+i2CQc9naWglab/4oG+xVe3hlxZeWohvlttpPF18UY4njpkQtnb2UrjWPSnDpVNV
-        MiwOOSnsMV2n8K8Nh2h8sK9FhntcXhpXnrknx7uaO+V4xllL4iHXFL1yHlddXo04v68YcZb8
-        IpoTbYU0d83ZRHOnf/qC++1SAcXtq7MhzisufEfxnnLFRiErc6tgWKLboMxwDpykcyvJjwdv
-        XaDz0XFiL1IwwCaC9cwg2ouUjJo9juDI6HlSIvcQnPxrXC4RLwK354bskeUf8ylCSlQhGGgT
-        Zy0eBOXTI3RQpWJ1cPSgI9SEZGNg5PaPpBSfD93fDz/EDLOA/RBMX60KhsPZd2HosjckJ9hI
-        GBi2hppFsNUIRivWBusT7G4ZNN6qDdWn2XgourAPBbGCXQ4FJfdpyRwNZ92HQtMBe1YBl8f6
-        ZzdNgaHTjZSEw2Gsq04u4SfBUWIiJcOXCEyNV+USMSO40VWBJFUyXOv10cGxCTYWTjUsCUJg
-        XwJLPynBMLjini/NEAbF9jJCCqvg691qqcaz4LeVzR4xCr4ZDpBmpLHMuYplzvqWOdtY/m9b
-        gUgbihTyjNnpgjFeL2zTGvlsY54+XZuWky2ih9/nmOm6W48Oj3m07UjGoHYEDKGJUAXWTPBq
-        1UZ++yeCISfVkJclGNvREwypiVSlZdbwajad3yJsFoRcwfAoK2MUUfky5WOvoqI7rY8Hwo+k
-        LPo9jq3Rd2c8v3beiQ9y7yb+3fHpfsFd17Y8IaLVeXPDZ0TrlK2yeVXCD/bi1fW+uGOblIEk
-        e2tNx2qfM1a7p8iAt+pf6WyxOipNPq3N03Gl6f1NCbd1n2/uG51cdjh58E3mhWXPpR4o2G74
-        ri/BuBN+fmbHy46JpXvO3/nW0kU15VEP1H/OmM+JOtXTbTi3PslbeDU6Y/0vpeayHvy2KJ5w
-        qRL/9ff0/pGyopndFUOWOMfXOH1PJVHbwnpKd9RPX5dz0VXuBX5Xt1y9KJD6Ysxr2e7XG1wj
-        NZM56W+kjWv8LZ3nlLp1yYth/K14k3j0wEex63eu05DGDD4+jjAY+f8A0hIi9ewDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsVy+t/xu7rzhD4mGhy4a2rxYN42Nou/k46x
-        W7xf1sNoMf/IOVaLjW9/MFlM+bOcyWLT42usFh977rFaXN41h81ixvl9TBanrn9ms1i09Qu7
-        ReveI+wW/65tZLF4fP0PmwO/x5p5axg9fv+axOgxq6GXzWPTqk42jzvX9rB5bF5S73HlRBOr
-        R9+WVYwenzfJBXBG6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZk
-        lqUW6dsl6GVcu7WWrWARS8Xdh0fZGhhXMHcxcnJICJhIfJiwHsjm4hASWMoosfhKB0sXIwdQ
-        QkpifosSRI2wxJ9rXWwQNe8ZJfYvnM4IkuAVsJNYOuM02CAWAVWJZy8Ws0DEBSVOznwCZosK
-        JEk0HOtmA7GFBQIlHl/8DFbPLCAucevJfCaQoSICaxglVr05wgSRaGGSeLkzEGLbd0aJHWd+
-        gnWwCRhK9B7tA9vMKWAl0TT5GxvIpcwC6hLr5wlB9MpLbH87h3kCo9AsJHfMQrJvFkLHLCQd
-        CxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG+rZjPzfvYJz36qPeIUYmDsZDjBIczEoi
-        vP+93ycK8aYkVlalFuXHF5XmpBYfYjQFhsVEZinR5HxgqskriTc0MzA1NDGzNDC1NDNWEuf1
-        LOhIFBJITyxJzU5NLUgtgulj4uCUamBatH6nU8pbT/bos6FX9vydtWzXnymKPY+0lZ9qnvwy
-        0YbVIcfn6XUhCbefv5jzg1jXfHn+LnBzQvu0La+evb/utsKhzDQ/7GuiilZeL/9F8fnu2j/8
-        Fk1S3aw2TUhFjqXgxYeJX2ee1DrNeiXEpThRpmy2ecumxW83rFENfbt2rfSy/U0L8i1etdp/
-        /jzVe+Y5R7vHsc6L1+dGha+eLrftvxhLRU6AdrSx8tLe107WbtJ75G64NeXHXM/7qaTKUZOj
-        VhlodNhPt2PnnQUttyW3We6eXJPZ/rH2hOkhd6esXacaTKOyJi8+7+7I5bPgn0Ig67v5D7kW
-        lO9PYInIbC9ba7fjxzzxPfc/eHifE2ZQYinOSDTUYi4qTgQA9g850H0DAAA=
-X-CMS-MailID: 20220126092135eucas1p17003e792756fa2420bb90147093a3ab3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b
 References: <CGME20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b@epcas5p2.samsung.com>
-        <20220124141644.71052-1-alim.akhtar@samsung.com>
-        <d9682f16-13b7-b6dc-5afd-b2d319143de5@canonical.com>
-        <063601d81281$5492d620$fdb88260$@samsung.com>
+ <20220124141644.71052-1-alim.akhtar@samsung.com>
+ <d9682f16-13b7-b6dc-5afd-b2d319143de5@canonical.com>
+ <063601d81281$5492d620$fdb88260$@samsung.com>
+ <bccd3ad0-7862-ef3b-246c-71463baaca52@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <bccd3ad0-7862-ef3b-246c-71463baaca52@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 26.01.2022 07:52, Alim Akhtar wrote:
->>
->> Thanks, applied DTS/soc and pinctrl patches.
->>
-> Thanks Krzysztof
+On 26/01/2022 10:21, Sylwester Nawrocki wrote:
+> Hi,
 > 
->> I expect Sylwester will pick up the clock ones. Otherwise please let me know
->> to pick it up as well.
+> On 26.01.2022 07:52, Alim Akhtar wrote:
+>>>
+>>> Thanks, applied DTS/soc and pinctrl patches.
+>>>
+>> Thanks Krzysztof
 >>
-> Hi Sylwester, hope you will be taking clock changes, or let Krzysztof know otherwise.
-> Thanks
+>>> I expect Sylwester will pick up the clock ones. Otherwise please let me know
+>>> to pick it up as well.
+>>>
+>> Hi Sylwester, hope you will be taking clock changes, or let Krzysztof know otherwise.
+>> Thanks
+> 
+> Krzysztof, can you also take the clk patches through your tree?
+> If you prefer to avoid it I will create a topic branch with the
+> clk headers and DT bindings documentation.
 
-Krzysztof, can you also take the clk patches through your tree?
-If you prefer to avoid it I will create a topic branch with the
-clk headers and DT bindings documentation.
+No problem, I'll consume everything I encounter :)
 
 
--- 
-Regards,
-Sylwester
+Best regards,
+Krzysztof
