@@ -2,127 +2,165 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077EEC28CF5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jan 2022 09:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2874C63684
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 26 Jan 2022 09:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238957AbiAZJSk (ORCPT
+        id S230127AbiAZJTm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 26 Jan 2022 04:18:40 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63207 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238961AbiAZJSj (ORCPT
+        Wed, 26 Jan 2022 04:19:42 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:47798
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238977AbiAZJTk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 26 Jan 2022 04:18:39 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220126091838euoutp0292f3dfc2fbe49194cfbd10afd579e6c8~Nx275aGm-2426624266euoutp02H
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 09:18:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220126091838euoutp0292f3dfc2fbe49194cfbd10afd579e6c8~Nx275aGm-2426624266euoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1643188718;
-        bh=LPAYLyF4QsiHciH8ArQT53ok2zxlzpWAqbb9wZYwAq8=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=KNHcCMLgHQ5hBYbMhZF1shtaUChbHYwwp+ZLg+pvscOe9IQd2y3oK7jJ9sPR/iDy5
-         v8mNepknet7LLs/oPEMIuKoYO5PXGZXsl99eBJhGpd6jlNTXK+4G319QBleH577DQH
-         YDU1gbnBYrk26ZiGRc+Sh9umu+JKbVDgBLYU3ESc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220126091837eucas1p289744b1f18352532c357d6e57acf1fc8~Nx27aBe8U1489914899eucas1p2b;
-        Wed, 26 Jan 2022 09:18:37 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 4F.5F.10009.DE111F16; Wed, 26
-        Jan 2022 09:18:37 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220126091837eucas1p2c627c791555397d10d0dd7660d4bea0f~Nx264U_3n0148501485eucas1p2z;
-        Wed, 26 Jan 2022 09:18:37 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220126091837eusmtrp20ab39d4d7d76b15505aa27ff6a1f684a~Nx263Sw_83212632126eusmtrp2A;
-        Wed, 26 Jan 2022 09:18:37 +0000 (GMT)
-X-AuditID: cbfec7f2-e95ff70000002719-c3-61f111ed2f76
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 60.A3.09522.DE111F16; Wed, 26
-        Jan 2022 09:18:37 +0000 (GMT)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220126091836eusmtip10ab6b391dafde68e58733d1141268b23~Nx254yeEl2412724127eusmtip17;
-        Wed, 26 Jan 2022 09:18:36 +0000 (GMT)
-Message-ID: <6844bdae-9823-cfc3-4acb-d547c559ae15@samsung.com>
-Date:   Wed, 26 Jan 2022 10:18:36 +0100
+        Wed, 26 Jan 2022 04:19:40 -0500
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 53F333FFFD
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 09:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643188779;
+        bh=pBqXXr3PeJ7ykOBVowRPGxEs/0VxNU9EERyHzmf0x6M=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=iNqWtQm3lLA8yk1z2SWWMaeQXgd8k2V1cE0sL87ksuidOQKIwAu76/c5h2gTx3jUO
+         mbstyX/+O355Zf13yo87zGC7vlNbFWbyeR6RVAIjdwigysu/EtAf/Ez6RY06cKFq3o
+         6cb4TH1rhPFVNadqopdOkDY2Y5TxUsbQTK0BixVTqnxQTD7lO6pgf35isKVl6cX8wR
+         G7iEbGJFk3x3nvXH4Wg0d0NpwqkUj7jef/ZuVG26gY01jYOW+QJa2cu1Ow4okMksWD
+         RPKnzwaSS7j+SPtGpLCVceY6ic/fKjuoljsBocRAL3/nhfzT2MnbwJzhtocLojvvLO
+         htqsT1J7fp2ww==
+Received: by mail-wr1-f69.google.com with SMTP id g6-20020adfbc86000000b001a2d62be244so4015467wrh.23
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2022 01:19:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=pBqXXr3PeJ7ykOBVowRPGxEs/0VxNU9EERyHzmf0x6M=;
+        b=t+0u2gkdCAVT8Hn1ZGivPZErN+ZWEBDlUkVx9HLT2iFT8RgGtHYbp611O/mYec/Tcr
+         LBAdW/GQUuAICdL6bBfzZp12dZT0Pl2eBGixVIcSl5qENp599y2Q8rGGK6hA1gpupt+o
+         gnoc73uAOwiFFfJe4SG9ub8noo+koL42iUStpeuva05hY9r6dvYvl1EWB3Shr2SgCM8L
+         Y19svh8uOd6DM/3I8BcZITJPnf0Qb0RVw0/A12XQioQWNXI4sMzdOUH5vCl5j/QY28Zi
+         Yqj/pnjWgSrFjdxmhXYZgjH4Pn7Tq/v+EEYEionzZB4QC9t4tzFZOrKYQL4L2VHBFr7r
+         D30w==
+X-Gm-Message-State: AOAM533m4qOAkslg/7wYahgA+VHWUOhMzv7ok0rtYc6YPct8iW2JTlMA
+        F0RggurumyGxhF3hUxySf6bJuD/1t7W9Mb9Ua9dQAfN8nEDIt/ZpnH50n9odU+wYYcHebnQqzPM
+        JQGkUp2ZtzN4f5CaTD6cF6iSF3kSii/wWEE6OLPuwmiJhXzZq
+X-Received: by 2002:adf:eb87:: with SMTP id t7mr21742783wrn.147.1643188778818;
+        Wed, 26 Jan 2022 01:19:38 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwEP5/lu7fbvZTNXya5lAtVgrXBoVxZH1tRfgYLoGaoAPtg9tM6DO08WcYy4M6fXSv2af6NTA==
+X-Received: by 2002:adf:eb87:: with SMTP id t7mr21742754wrn.147.1643188778608;
+        Wed, 26 Jan 2022 01:19:38 -0800 (PST)
+Received: from [192.168.0.60] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id j2sm3230420wms.2.2022.01.26.01.19.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jan 2022 01:19:38 -0800 (PST)
+Message-ID: <4c029f92-ece7-78c1-e64b-cbe438b45a5f@canonical.com>
+Date:   Wed, 26 Jan 2022 10:19:36 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.5.0
-Subject: Re: [PATCH v5 10/16] clk: samsung: fsd: Add cam_csi block clock
- information
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v5 00/16] Add support for Tesla Full Self-Driving (FSD)
+ SoC
 Content-Language: en-US
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
         linus.walleij@linaro.org, catalin.marinas@arm.com,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        robh+dt@kernel.org, s.nawrocki@samsung.com,
         linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        sboyd@kernel.org, linux-fsd@tesla.com,
-        Sathyakam M <sathya@samsung.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20220124141644.71052-11-alim.akhtar@samsung.com>
+        sboyd@kernel.org
+References: <CGME20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b@epcas5p2.samsung.com>
+ <20220124141644.71052-1-alim.akhtar@samsung.com>
+ <d9682f16-13b7-b6dc-5afd-b2d319143de5@canonical.com>
+ <4cfcde38-50cb-646a-0d17-c2cb2977a2e4@canonical.com>
+ <063501d81281$10e5b3c0$32b11b40$@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <063501d81281$10e5b3c0$32b11b40$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf0wTZxjOd3e9Ht3KjsrGG2TTdO6PLYIj849L2IhOnZcgk4lB0myRQy6U
-        AUV7ZQVnZkXdHKs/6BbFAkKIG9jIWMsPEYEmBGVM1mWTALFsMEEXmKV0bXVFLOM4zPjved/3
-        eb73ed58FK76SxZL5ekMvF7HFahJBdF+K+SK90T5uDetlQnMxKV2knlquSVnvN+ZEVPb55Ix
-        ds+/GPPNQgPGOCaHZYzP/IeM+XNmH3Ons5pkKn/pwZifRvwkU98WkDMnu/vkTKDvb8SEh+0E
-        MzmyQG6JYq9euorYJ/MWxFpNp0nWYfuSZMeGu0i25fJRdujHMhl7ptWG2HBZjZz1O15JU2gU
-        b+fwBXmf8PpNyVkKbXlVE3mwFS+xzD3ETCiElaMICujNYBp4uoxVdCOCQFNWOVIs4QCChmAL
-        kgo/gqY5v/yZYsLRiEmDBgSu/sGVwofgxHQZIbKUdDI4z3bhIibo1yC40COX+lEwcHFqiUNR
-        L9LZYD6xTWyvoTOg026WiRinY+DuVO2ypWi6CELh64T4Pk7fw8Bq8pPigKQT4fTNM0jEEUu7
-        7HcfyiXxOrjmqcZFAdC/RUBNqI6QbG8Ht7tKJuE1MNPfuhInDhav12KS4DgC8w23XCrOIRjv
-        r0MSKwnGXPOkaBunX4fmzk1Seyt4Zm8spwE6EkY9UZKJSLC0X8ClthJOfa6S2Bvgie3Cyt1j
-        4aupReIcUltXncW6Kr91VRzr/3vrEGFDMXyxUJjLC4k63pggcIVCsS434UBRoQMt/cXb4f5/
-        OlDNjC+hF2EU6kVA4epo5WKKl1Mpc7jSw7y+aL++uIAXetFailDHKA/k/cCp6FzOwOfz/EFe
-        /2yKURGxJiw+Y276BXdQ22x4d36u6/H9tOnuQ8pq58fdg/nJfHpbT2TSLEFuVLwXrlif/c7X
-        w9npPZqbez41ZplSS5/nTnYMYtuPx1+LDl/5uaEi53DqUMyjXCGxbcKZ/sg3gK70udxFY4b1
-        dOnt2Q/dR9ZtO2+9P440ZsF+r8S4MHq+w7vXsk/XZbK73081GI/tdRrsmUdyHmhPhS57vw06
-        H4fqP/tgy6TSUFLl2MVmpAR2VGqi635XZRbsya+A7zMHx4+Gz77kDO4s/HU+Sa/p3XHM+LIZ
-        Fi9aRndu2FW//zk2bXrE1J2ENa1N1X5x6K3G8KstzUN3bLs/Mmwt9T7YuDklTuiIUxOClkt8
-        A9cL3H94nq1C+gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsVy+t/xu7pvBT8mGtz7w2nxYN42Nou/k46x
-        W7xf1sNoMf/IOVaLjW9/MFlM+bOcyWLT42usFh977rFaPHwVbnF51xw2ixnn9zFZnLr+mc1i
-        0dYv7Bate4+wW3w58prR4t+1jSwWj6//YXMQ9Fgzbw2jx+9fkxg9ZjX0snlsWtXJ5nHn2h42
-        j81L6j2unGhi9ejbsorR41/TXHaPz5vkArii9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1
-        DI3NY62MTJX07WxSUnMyy1KL9O0S9DK6Zq9lK9jCXDHpwxumBsafTF2MnBwSAiYSDzatALK5
-        OIQEljJKXJ79n7mLkQMoISUxv0UJokZY4s+1LjaImveMEk1HVoE18wrYSezv38MMYrMIqEp8
-        /bOPHSIuKHFy5hMWEFtUIEmi4Vg3G4gtLBAmsWtjDyuIzSwgLnHryXywOSIC+RJ/+j+ygixg
-        FnjEJDH/yzt2iG1HGCVuPJsMNolNwFCi92gfI4jNCbR546037CCXMguoS6yfJwQxVF5i+9s5
-        zBMYhWYhuWMWkn2zEDpmIelYwMiyilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzAJbDv2c/MO
-        xnmvPuodYmTiYDzEKMHBrCTC+9/7faIQb0piZVVqUX58UWlOavEhRlNgWExklhJNzgemobyS
-        eEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQimD4mDk6pBqblwYErxMMWX2Xm3O64
-        S+tDHfeL2uPHfimJdmc/EXfiKp1npH76VQbflHJ2r382hz/VfN4pe+VZh8/X/qQP6v//1zMs
-        fxLA4//wy5vOh8u2H/+ZMe/dFYapZWEi04qn1a1nLjpUuG77M6/bE3WXnotbtPkPw/tF3seP
-        FIUbat9X3Xzjff7EFcKG/7TP8X5/w7qhbf1mHhPVn2zrevmOu+82uFR7isehLYb5QHXdw7nM
-        YaJyu8PLchkOVDnLOa/XYtc//WSHW22Jj97xUk4Fhyy/7Xfua8+oXall/UDtUXbuDp05UgsP
-        fGvZdnd27m2zCP/4/xFT3sxxPTnF+MG6NwHzJm+LrNbR71MIl2UyOsilxFKckWioxVxUnAgA
-        pgUAtYsDAAA=
-X-CMS-MailID: 20220126091837eucas1p2c627c791555397d10d0dd7660d4bea0f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220124142937epcas5p3bdce50bbaa02bbd762cf000401e03ade
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220124142937epcas5p3bdce50bbaa02bbd762cf000401e03ade
-References: <20220124141644.71052-1-alim.akhtar@samsung.com>
-        <CGME20220124142937epcas5p3bdce50bbaa02bbd762cf000401e03ade@epcas5p3.samsung.com>
-        <20220124141644.71052-11-alim.akhtar@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 24.01.2022 15:16, Alim Akhtar wrote:
-> Adds clocks for BLK_CAM_CSI block, this is needed for CSI to work.
+On 26/01/2022 07:50, Alim Akhtar wrote:
+> Hi Krzysztof
 > 
-> Cc: linux-fsd@tesla.com
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Signed-off-by: Sathyakam M <sathya@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>> Sent: Tuesday, January 25, 2022 10:56 PM
+>> To: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
+>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Cc: soc@kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
+>> olof@lixom.net; arnd@arndb.de; linus.walleij@linaro.org;
+>> catalin.marinas@arm.com; robh+dt@kernel.org; s.nawrocki@samsung.com;
+>> linux-samsung-soc@vger.kernel.org; pankaj.dubey@samsung.com;
+>> sboyd@kernel.org
+>> Subject: Re: [PATCH v5 00/16] Add support for Tesla Full Self-Driving (FSD) SoC
+>>
+>> On 25/01/2022 18:12, Krzysztof Kozlowski wrote:
+>>> On 24/01/2022 15:16, Alim Akhtar wrote:
+>>>> Adds basic support for the Tesla Full Self-Driving (FSD) SoC. This
+>>>> SoC contains three clusters of four Cortex-A72 CPUs, as well as
+>>>> several IPs.
+>>>>
+>>>> Patches 1 to 9 provide support for the clock controller (which is
+>>>> designed similarly to Exynos SoCs).
+>>>>
+>>>> The remaining changes provide pinmux support, initial device tree support.
+>>>>
+>>>> - Changes since v4
+>>>> * fixed 'make dtbs_check' warnings on patch 14/16
+>>>>
+>>>> - Changes since v3
+>>>> * Addressed Stefen's review comments on patch 14/16
+>>>> * Fixed kernel test robot warning on patch 04/16
+>>>> * rebsaed this series on Krzysztof's pinmux new binding schema work
+>>>> [1]
+>>>>
+>>>> - Changes since v2
+>>>> * Addressed Krzysztof's and Stephen's review comments
+>>>> * Added Reviewed-by and Acked-by tags
+>>>> * Rebased on next-20220120
+>>>>
+>>>> - Changes since v1
+>>>> * fixed make dt_binding_check error as pointed by Rob
+>>>> * Addressed Krzysztof's and Rob's review comments
+>>>> * Added Reviewed-by and Acked-by tags
+>>>> * Dropped SPI, MCT and ADC from this series (to be posted in small
+>>>> sets)
+>>>>
+>>>> NOTE: These patches are based on Krzysztof's pinmux for-next branch
+>>>> commit 832ae134ccc1 ("pinctrl: samsung: add support for Exynos850 and
+>>>> ExynosAutov9 wake-ups") [1]
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git/l
+>>>> og/?h=for-next
+>>>>
+>>>>
+>>>
+>>> Thanks, applied DTS/soc and pinctrl patches.
+>>>
+>>> I expect Sylwester will pick up the clock ones. Otherwise please let
+>>> me know to pick it up as well.
+>>
+>> I forgot that clock macros are used in DTS. This does not compile and I cannot
+>> take drivers into DTS branch.
+>>
+>> Alim,
+>> DTS changes dropped. Please resend with the same trick we did for
+>> Exynos850 board - hard-coded clock IDs as defines. See:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/diff/arch/arm6
+>> 4/boot/dts/exynos/exynos850.dtsi?h=samsung-dt64-5.17-
+>> 2&id=e3493220fd3e474abcdcefbe14fb60485097ce06
+>>
+> Ok, I will resend patch 14 and 15 (DTS changes) only as suggested above.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+I see Sylwester acked clock patches, so I will take them. No need to
+resend, I'll organize the patches so they will compile.
+
+
+Best regards,
+Krzysztof
