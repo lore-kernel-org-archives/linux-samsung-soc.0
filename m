@@ -2,87 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6501C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jan 2022 00:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03B0C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jan 2022 06:12:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344738AbiA1A3N (ORCPT
+        id S235572AbiA1GMf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 27 Jan 2022 19:29:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47890 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344756AbiA1A3H (ORCPT
+        Fri, 28 Jan 2022 01:12:35 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:10599 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234289AbiA1GMe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 27 Jan 2022 19:29:07 -0500
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E96F9C061747
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jan 2022 16:29:06 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id m6so13667679ybc.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jan 2022 16:29:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SO2+JzxHK+hKl3eAB0fkaCgW98RekOQd64uNGQYxMeU=;
-        b=tEgpyG1lXt0DjR3AdBgGkabdtrfj9LRT3HUHI47f9rGTsSjqr2C38Vin5QdmK7XsEd
-         LiWEkikozqK+Kxlh+Xl5xcNMDicAGx5q+dZYYWj+Ted6Pf3/7HNoXuWRwf9WIA8Hc2x0
-         NS5kVyApME5k2VYVyW2kTETR0E1Obydbc5FW+XOqiv10EuDZGN1S5kgRJtu/4j6MFso7
-         VDVvfzbrkfN3Oje9jhVXLpRvwmeREmJr4V01GVQtJIUyKfX4DRuCnh89mhCXhJ5Qtktq
-         +i1Go/887jxK6IWTNlHheHVqJsFWXKgcJIUSzZdbAwMgm2+J9BOuI7xXuSbknth+kxT4
-         4cNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SO2+JzxHK+hKl3eAB0fkaCgW98RekOQd64uNGQYxMeU=;
-        b=H3PidIogp173sK5cVdToNZfeIxCt/0IbZGEmlL44HMSEzMji+6ru111AlGlUBQKAWg
-         P68upCx2dgWt02H8tk5B4f9mB1kL8x2vaRoxPqge7IAUIZJVkdKmDkBYmRuO3DSMPf+5
-         wixarEQKDSl/jCYlaXeswu/SoiyL6kh85U1pY1C8KvmcnyfD4J0YMGm3iH6o/nmTbnjS
-         gauaNWpfj5OOzZu+gBvOwKgeqdfGspO1GWLQEud1qH3HW9bdK7BjBaVSzM1VIFyFZYg2
-         xpDf5F6IdblLfqgw6+NsRZNP9Pj6xtORK+b8IwDkDUqe8TLTBDjuwpR52XjlmBjzU1F9
-         wbeA==
-X-Gm-Message-State: AOAM530IWrPGktNMhL+E1a8zrpcHpZkWFZbT+dBSsANPgczbHDN8ACKj
-        mpEyaJNvK+nyAYVJQW6XO6ml/po1O0jX6kJXh3Xnfw==
-X-Google-Smtp-Source: ABdhPJxkmqd4rValskDxRgzWGaJtqXQJNt0ZByBJH6fpmka7ZQcBPZ1gNxy5VQjSGPh1I9735XssXyVx0g5aUk+VlaA=
-X-Received: by 2002:a25:cfc6:: with SMTP id f189mr8954363ybg.322.1643329746206;
- Thu, 27 Jan 2022 16:29:06 -0800 (PST)
+        Fri, 28 Jan 2022 01:12:34 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220128061232epoutp03af8c6498a6664e7a6d835c0d63087755~OWnBd5PUN0523905239epoutp038
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Jan 2022 06:12:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220128061232epoutp03af8c6498a6664e7a6d835c0d63087755~OWnBd5PUN0523905239epoutp038
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1643350352;
+        bh=MbLJF+5xtGen4XZ3RVT24EqEA0afz/T4l55VWWf62fQ=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=MtWJ1dFwvPzs+vPo36OvTwL34v/N1IFbZbPML3cdhc6Q0uqAV2/WhqTEx9YFJu0+Q
+         bN5mOHurtvMQoXbNefrrrA4P+YMaJDsQ9iGenjaz0bYZLCUet66de16aud2MmbOlQ+
+         /1qya0IRcUH9TUX2fcQu7GR2WcUPSKDBgYwoJeOc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220128061232epcas1p1162e53f505fd0305b691469539ca58f2~OWnBHSzU32599625996epcas1p1c;
+        Fri, 28 Jan 2022 06:12:32 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.233]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4JlRvG5jhVz4x9Pp; Fri, 28 Jan
+        2022 06:12:26 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FA.28.64085.44983F16; Fri, 28 Jan 2022 15:12:20 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220128061219epcas1p454b4d788f3722f2fa9fb810f34329e1d~OWm1hGpfp0727307273epcas1p4s;
+        Fri, 28 Jan 2022 06:12:19 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220128061219epsmtrp2291f8ddf7fb2d3ca5fe3b809da879edb~OWm1gYR_s1543815438epsmtrp22;
+        Fri, 28 Jan 2022 06:12:19 +0000 (GMT)
+X-AuditID: b6c32a35-1d2f0a800000fa55-2f-61f38944a9ef
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C2.D9.08738.34983F16; Fri, 28 Jan 2022 15:12:19 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220128061219epsmtip2f1e9296506f22d0e8784353e3da04edc~OWm1A8hNZ2641026410epsmtip2W;
+        Fri, 28 Jan 2022 06:12:19 +0000 (GMT)
+Message-ID: <66453144-dae3-4389-4150-36dfa7dbeaa1@samsung.com>
+Date:   Fri, 28 Jan 2022 15:24:03 +0900
 MIME-Version: 1.0
-References: <CGME20220125032825epcas5p2c5cf48a773fd26e089b31b0f6ddde83f@epcas5p2.samsung.com>
- <20220125031604.76009-1-alim.akhtar@samsung.com> <20220125031604.76009-3-alim.akhtar@samsung.com>
-In-Reply-To: <20220125031604.76009-3-alim.akhtar@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Jan 2022 01:28:55 +0100
-Message-ID: <CACRpkdZeXKmKtzZseJA36qQnHen1psjcXqy4tN+pJH2y9XZFzQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] spi: s3c64xx: Add spi port configuration for Tesla
- FSD SoC
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski@canonical.com,
-        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        broonie@kernel.org, andi@etezian.org, linux-spi@vger.kernel.org,
-        linux-fsd@tesla.com, Aswani Reddy <aswani.reddy@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+        Thunderbird/91.5.0
+Subject: Re: [PATCH] drm/exynos: Search for TE-gpio in DSI panel's node
+Content-Language: en-US
+To:     Henrik Grimler <henrik@grimler.se>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        =?UTF-8?Q?Ma=c3=adra_Canal?= <maira.canal@usp.br>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+From:   Inki Dae <inki.dae@samsung.com>
+In-Reply-To: <Ye7EQRefzECSqVOe@grimlerstat>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmnq5L5+dEg/aD7BZXvr5ns3i7ZBej
+        xca3P5gsZpzfx2Sx9shddou2luvsFjMmv2RzYPeY1dDL5nH0yj1Wj/vdx5k8+rasYvR48LHU
+        4/MmuQC2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfM
+        HKBTlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFpgV6xYm5xaV56Xp5qSVWhgYG
+        RqZAhQnZGX/29DMXnGGtuH1lPnMDYwtLFyMnh4SAicTdaduZuxi5OIQEdjBKTFh/kRHC+cQo
+        MWNJCxOE85lR4unhGewwLf8/32eBSOxilDi3djWU855R4njvREaQKl4BO4l7v/vZuhg5OFgE
+        VCUubBKDCAtKnJz5BGy3qECExMsjf5lAbGEBd4mf26cxg9jMAuISt57MB4uLCIRKLOnfDnYS
+        s8ADRok173+BFbEBzZy44j4biM0poC3xY+ksVohmeYnmrbPBHpIQmMgh0bjzDxvE2S4SG1e+
+        hnpBWOLV8S1QtpTE53d72SAaJjNK3Lm+ggXCmcEocfjndUaIKmOJ/UsnM4G8wyygKbF+lz5E
+        WFFi5++5jBCb+STefe1hBSmREOCV6GgTgihRkjh28QbUFAmJC0smQt3jIfH5VxPjBEbFWUgB
+        MwspAGYh+WcWwuIFjCyrGMVSC4pz01OLDQsM4fGdnJ+7iRGcULVMdzBOfPtB7xAjEwfjIUYJ
+        DmYlEd4Zmz4lCvGmJFZWpRblxxeV5qQWH2I0BcbORGYp0eR8YErPK4k3NLE0MDEzMjaxMDQz
+        VBLnXTXtdKKQQHpiSWp2ampBahFMHxMHp1QDU8S//edLNubZPd2SZMK/lDG9z5dRY5FIYqtf
+        ztH+aVObNZTvpfH6y0+Z0Ta7JOLOlzvnq91yv+arfktZWGT3btoZhfgFd9YWbU+c7uw9kXF2
+        heNaA3u7eVYa0yLnqBx5c8Qvl0dXOmpZqytjpF1ysPXhf/cfrrVn9JHLSlIsul56wnXq9Vm/
+        lLZFPE4Om8jkWMXsUppc82KuxFND4w7RK2UrVp42FHojtXXqquo9i6cd4LywhtutNy27+nXv
+        wna1iAkCHbJ1l1oK9zfv+Hn2gTWDxWz2G+57zc/oe2pHyj+/qrzYbs1aff7HmgUx6+y39B5d
+        17ROlHmd90av/rvNuzM3Pjrom7TJfM7fKS/OKbEUZyQaajEXFScCAFs9Sl0xBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvK5z5+dEg3UL9SyufH3PZvF2yS5G
+        i41vfzBZzDi/j8li7ZG77BZtLdfZLWZMfsnmwO4xq6GXzePolXusHve7jzN59G1Zxejx4GOp
+        x+dNcgFsUVw2Kak5mWWpRfp2CVwZf/b0MxecYa24fWU+cwNjC0sXIyeHhICJxP/P94FsLg4h
+        gR2MErdur2DsYuQASkhIbNnKAWEKSxw+XAxR8pZR4tPJx0wgvbwCdhL3fvezgdSwCKhKXNgk
+        BhEWlDg58wnYeFGBCIm2ZVOYQWxhAXeJn9ungdnMAuISt57MBxsjIhAqMfvKF1aQ+cwC9xgl
+        diybAHXPRkaJH4v/gFWxAS2YuOI+G4jNKaAt8WPpLFaQxcwC6hLr5wlBDJWXaN46m3kCo9As
+        JHfMQrJvFkLHLCQdCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEeOltYOxj2r
+        PugdYmTiYDzEKMHBrCTCO2PTp0Qh3pTEyqrUovz4otKc1OJDjNIcLErivBe6TsYLCaQnlqRm
+        p6YWpBbBZJk4OKUamNb8ncUusPJ8Uv3ltfFZwscesusqrG2Vc7i61kB0icuVmXWPXWU1a1gO
+        fj6r9tw9VGKvo1DIFhvGloyDjGozpPhqb4lsTBWIO3cnn3398b/H1FYq3w+0Y2z7K7fh5IYE
+        fWldhos8WVYPNhkISt/PiZ/JMEXCrOP60gm/78e7MFQtzjgyr0a8Vi7w3gVjxmKjm2p/3+V0
+        yRVdP27CKaF43iLeump+z4+KqVs7REvWM02uClslNb/h42Tx1uuy1lOebFwiJRcqHu0wYY2i
+        wm3hh9cPsK+vOh3zWeCQn4XVNK78XmEJR26Ho8eTrCX/TBRP4nuxzrtx/Q8uK/b78j+YJ1YV
+        7DJPVLqW2SgX7hmgxFKckWioxVxUnAgArs6LcgsDAAA=
+X-CMS-MailID: 20220128061219epcas1p454b4d788f3722f2fa9fb810f34329e1d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e
+References: <CGME20220124135259eucas1p1ed3c76ef23d30afe620e06a419540c9e@eucas1p1.samsung.com>
+        <20220124135246.6998-1-m.szyprowski@samsung.com>
+        <Ye7EQRefzECSqVOe@grimlerstat>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 4:28 AM Alim Akhtar <alim.akhtar@samsung.com> wrote:
+Hi,
 
-> Add compatible and port configuration for spi controller
-> for Tesla Full Self-Driving SoC.
->
-> Cc: linux-fsd@tesla.com
-> Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Andi Shyti <andi@etezian.org>
+22. 1. 25. 00:22에 Henrik Grimler 이(가) 쓴 글:
+> Hi Marek,
+> 
+> On Mon, Jan 24, 2022 at 02:52:46PM +0100, Marek Szyprowski wrote:
+>> TE-gpio, if defined, is placed in the panel's node, not the parent DSI
+>> node. Change the devm_gpiod_get_optional() to gpiod_get_optional() and
+>> pass proper device node to it. The code already has a proper cleanup
+>> path, so it looks that the devm_* variant has been applied assidentally
+>                                                              ~~~~~~~~~~~~
+> Small observation: the spelling above should probably be    "accidentally".
+> 
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I can fix it. Thanks.
 
-Now I however remember that there was some discussion around
-the compatible naming. I do not especially care which naming we end
-up with but just make sure the compatible naming is the same in
-this compatible as in the rest of the platform.
-
-Yours,
-Linus Walleij
+>> during the conversion to gpiod API.
+> 
+> Best regards,
+> Henrik Grimler
+> 
