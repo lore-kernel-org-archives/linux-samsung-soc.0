@@ -2,116 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD93C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Jan 2022 10:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951CDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Jan 2022 11:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242760AbiA1KHn (ORCPT
+        id S235570AbiA2L32 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Jan 2022 05:07:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbiA1KHm (ORCPT
+        Sat, 29 Jan 2022 06:29:28 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:60336
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235103AbiA2L31 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Jan 2022 05:07:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB239C061714;
-        Fri, 28 Jan 2022 02:07:42 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 29 Jan 2022 06:29:27 -0500
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 82EA1B824A6;
-        Fri, 28 Jan 2022 10:07:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5551C340E6;
-        Fri, 28 Jan 2022 10:07:38 +0000 (UTC)
-Message-ID: <aed1f16a-4b28-8da9-728a-3151a75b1f5f@xs4all.nl>
-Date:   Fri, 28 Jan 2022 11:07:36 +0100
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E6BC63F4BE
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 11:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643455766;
+        bh=mQWIhzfALzmhNvVwAVuvuNXj69s9Y0aV8nVP8i/ovfg=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=NFg+xFE44e5U+WJh7VaXUwffiot4vxAky2m9/yZxJQtp7TSkUid89L5/vVIHpDMgT
+         KWVVa0FLcp9yPw4RzVCdF5A6+DRPBybgsaMHnQdBL8wyEbik3wqRzUhXln5Fqn98dA
+         37SK8oPG6b/B6OJulLR5FRwAjCFwPx6lL58hqjqmDeA09O495CVUNR1eS8O1L/qIIz
+         wzQ8TZoA5jXTlmbVDzSj1aaG//EYvNd/4KltR+QIGynW37PgJbUOBlvPVpWJNFesj9
+         EGrleRpg3taeDpu9BONvk9j0h0lewi9nLO5F74gkO9v4UhgmboRLo9RDSTQd/ijsTL
+         1/t09QVSTsybw==
+Received: by mail-ed1-f69.google.com with SMTP id eg24-20020a056402289800b00407f95c4c35so4388816edb.10
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 03:29:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mQWIhzfALzmhNvVwAVuvuNXj69s9Y0aV8nVP8i/ovfg=;
+        b=ymUZeb6BpHOBbhgfz4xz6vyk7YY7bgb/zbYSDGM93wKfossu7cT3SL8kM3G+bakseQ
+         jy5xxRCtzBeu7OVrJ3Uze/L2h5f34mVIlCvoGM7y3ccEgWGwXkHLr3AVC4URlarlGLMZ
+         AB+slSwnT4pFKK9tIaQyoHRO2I+UKJZNHjzH4iD1mv/xPcvAExMaQLWngqr2JXCCMnau
+         g/uoqE1kvojYVRFezRG5D+2AFYFFF/AfktIircqj3akGnPUt6Rhl9naDKO+UuApn0cgF
+         m9IftmdAtgb1q5KjZU2Hn6uV0gbm3GM5uTJv31Up12zVltDZeCJeiW1PY29ZfYnnIe8v
+         KnHg==
+X-Gm-Message-State: AOAM533lGKpKjlRDd/bpTGVyBoixbkrRjiRpGP27b8dYeArnyoT5LrVW
+        2f93EYt1J1Irtbv96jkd2aaWV4LpNIMhr3vDJ/vpD8B9Fq13XP6aljZRHJFz/f5eMRcKopJGZil
+        zoFajqrPVTzafPZwAew9uSXOq1TQZZOojr++dJ8riJrlpKbUc
+X-Received: by 2002:a17:907:3f99:: with SMTP id hr25mr10190848ejc.588.1643455765339;
+        Sat, 29 Jan 2022 03:29:25 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzUWK6qByvVxIBS+9uu2vdLsOAJFd0ApGv7Ogy0hcRemfHrZnMyIWyq6RHHSeL54zf6jeCBQw==
+X-Received: by 2002:a17:907:3f99:: with SMTP id hr25mr10190835ejc.588.1643455765142;
+        Sat, 29 Jan 2022 03:29:25 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id jt17sm10943147ejb.161.2022.01.29.03.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jan 2022 03:29:24 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linus.walleij@linaro.org, Aswani Reddy <aswani.reddy@samsung.com>,
+        linux-fsd@tesla.com, robh+dt@kernel.org, linux-spi@vger.kernel.org,
+        pankaj.dubey@samsung.com, devicetree@vger.kernel.org,
+        andi@etezian.org, linux-samsung-soc@vger.kernel.org,
+        broonie@kernel.org
+Subject: Re: (subset) [PATCH v3 3/3] arm64: dts: fsd: Add SPI device nodes
+Date:   Sat, 29 Jan 2022 12:29:22 +0100
+Message-Id: <164345575829.11115.173136141798893555.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220125031604.76009-4-alim.akhtar@samsung.com>
+References: <20220125031604.76009-1-alim.akhtar@samsung.com> <CGME20220125032828epcas5p22fbacf42ebfb1b78c1f74f48d37aa381@epcas5p2.samsung.com> <20220125031604.76009-4-alim.akhtar@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 0/4] Exynos4 media drivers: adapt for the planned ARM
- IOMMU-DMA changes
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>
-References: <CGME20200918144852eucas1p2cd6ec1d5fb76d5c472a7ff966e0c3e8e@eucas1p2.samsung.com>
- <20200918144833.14618-1-m.szyprowski@samsung.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <20200918144833.14618-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
-
-I'm going through a bunch of (very) old patches in my patchwork TODO list
-that for one reason or another I never processed. This series is one of them.
-Patch 1/4 has been accepted, but not the other three.
-
-Patches 2-4 still apply without problems, so is it OK if I apply them?
-Better late than never...
-
-Regards,
-
-	Hans
-
-On 18/09/2020 16:48, Marek Szyprowski wrote:
-> Hi,
+On Tue, 25 Jan 2022 08:46:04 +0530, Alim Akhtar wrote:
+> From: Aswani Reddy <aswani.reddy@samsung.com>
 > 
-> This patchset updates Exynos4-IS and S5P-MFC drivers for the planned
-> kernel changes in the area of ARM DMA-mapping and IOMMU integration [1].
-> Those patches are intedependent, they can be applied separately from the
-> ARM DMA-mapping changes.
+> Adds device tree node for SPI IPs
 > 
-> Best regards,
-> Marek Szyprowski
-> 
-> 
-> References:
-> 
-> [1] https://lore.kernel.org/lkml/cover.1597931875.git.robin.murphy@arm.com/
-> 
-> 
-> Changelog:
-> 
-> v2:
-> - added patch for S5P-MFC driver
-> - simplified code for Exynos4-IS (use the iommu_get_domain_for_dev()
->   instead of creating a separate domain)
-> 
-> v1: https://lore.kernel.org/linux-samsung-soc/20200915133256.1210-1-m.szyprowski@samsung.com/T/#t
-> - initial version (only Exynos4-IS patch)
-> 
-> Patch summary:
-> 
-> Marek Szyprowski (4):
->   media: platform: exynos4-is: remove all references to physicall
->     addresses
->   media: platform: exynos4-is: add support for generic IOMMU-DMA glue
->     code
->   media: platform: s5p-mfc: properly assign device to both vb2 queues
->   media: platform: s5p-mfc: add support for generic DMA-IOMMU glue code
-> 
->  .../media/platform/exynos4-is/fimc-capture.c  |  6 +-
->  drivers/media/platform/exynos4-is/fimc-core.c | 28 ++++----
->  drivers/media/platform/exynos4-is/fimc-core.h | 18 ++---
->  drivers/media/platform/exynos4-is/fimc-is.c   | 72 +++++++++++++++----
->  drivers/media/platform/exynos4-is/fimc-is.h   |  8 ++-
->  .../media/platform/exynos4-is/fimc-lite-reg.c |  4 +-
->  drivers/media/platform/exynos4-is/fimc-lite.c |  2 +-
->  drivers/media/platform/exynos4-is/fimc-lite.h |  4 +-
->  drivers/media/platform/exynos4-is/fimc-m2m.c  |  8 +--
->  drivers/media/platform/exynos4-is/fimc-reg.c  | 18 ++---
->  drivers/media/platform/exynos4-is/fimc-reg.h  |  4 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc.c      | 37 +++++++++-
->  .../media/platform/s5p-mfc/s5p_mfc_common.h   |  2 +
->  13 files changed, 148 insertions(+), 63 deletions(-)
 > 
 
+Applied, thanks!
+
+[3/3] arm64: dts: fsd: Add SPI device nodes
+      commit: bd1e3696a052b9b2bd3c1c72ef4bf800a3a1e286
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
