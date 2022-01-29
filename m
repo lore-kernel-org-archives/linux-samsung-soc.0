@@ -2,287 +2,223 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D5DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Jan 2022 19:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AD3C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Jan 2022 22:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353176AbiA2ThX (ORCPT
+        id S242724AbiA2WB7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Jan 2022 14:37:23 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60374
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1353144AbiA2ThS (ORCPT
+        Sat, 29 Jan 2022 17:01:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229737AbiA2WB6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Jan 2022 14:37:18 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C9732407B2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 19:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643485031;
-        bh=v3MaE4YE81127QeF4TU2Qxtg0ok0vmr5F1s7ZnnGBgk=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=Mdcv8aHzmOU+HGPqXsl/p9v+P3RSOg8+ecPVqa1gYYsbC7pzlyaHBTjRI6QipRin/
-         8L07fG2HyswAMXjSt99VtNqi/7gMpR21TTrVpjrRlTX3dFm0Bkly6pR59fYDQyo2Z9
-         wWpLAwQp5dbQhkpEzlIw4u/ipyi0QygNMudb36HqhK56eNIGBWY6x4fjgRGE9UmS0x
-         4oA75nxIALYRoCeT60o3Hfg+0QstJsefdJWN0uwxa/bnM9Eefe1I1xEzpqarblR4eC
-         +oRhl+Y7pPLrXZEIT4jCW/UIrcsafkDJEJKs7s5eKQ5pwdU/BXpUr3qztEGbtEKdQ3
-         Uwtt+qiXSW99w==
-Received: by mail-ed1-f71.google.com with SMTP id o5-20020a50c905000000b00403bbdcef64so4303110edh.14
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 11:37:11 -0800 (PST)
+        Sat, 29 Jan 2022 17:01:58 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62619C061714;
+        Sat, 29 Jan 2022 14:01:58 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id s5so29226273ejx.2;
+        Sat, 29 Jan 2022 14:01:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=yjUU9ER/vIEGLeysJCo+/yYTdTjRHWEWnfNYddtn3aA=;
+        b=GasqK6RF2C1NLwNFKTrQaUjs2o8JvlWlPo88Gk33v2yX68jTVNTX8RuL9WeODxuYgI
+         0zVfdFLvDQ6Scm07F8G4M28CBxrFgmgzFCZN1YPFJOzIwEZtqfGnmpEunqvqASO6YJln
+         Ync30uNDDbpnXWDLMpetV3oG0ExsqVaZqaLvT6dCXDjteTaouVkFwgpWOx4bV27QHNEy
+         F7vqwf6ejDMbcH1ZrwJR177hpWXMzpm/Z3N3VNSo/1OHYAd9Bsz2df5sPio+OqhWcHZh
+         LF/FInpELUZKeDEjeZyr1LsbNVfm1SYbnkZy0JFf+3/1ZopOuaeHe2zmd1Z9XxqiP/rV
+         B77w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v3MaE4YE81127QeF4TU2Qxtg0ok0vmr5F1s7ZnnGBgk=;
-        b=0pwfU6KL9olapOl2WEAXKWdV8j0lCbv4gE8JPFRR8gqvKiw+jU2wY0MA6w/AuZjC3U
-         2ltvYjgJe1PmosyEH5xQG7d7ib0ikC6gFPHuG+2qAGtKNUNi/OVrbadF1DS2qZcS5P+V
-         UAFc39Ksk8Z2ulIoiWF7yDd7d6X75si0nQbNLp7ub3kiF0tfOWzFOrUzJhK9bXMhzEPC
-         j8rVEv6wFymmWTHovA4zUiq2nStyhg4QI5KOXtJl0t8ed3E1ByfEMzfek0xYbC2C+0/b
-         2/3tXsPWzGUqHkjAyXtVj4lIS+IFwe9irCea4QR1j7KUwJ1XYmLVcXJ9BWdcLipbhLxJ
-         Ep7w==
-X-Gm-Message-State: AOAM53240mmzyNXVAK2ZGrzjSHoho1Bc0tBvvFPpzKdMZM4dvZSm2nT5
-        Bn13eiud8B/GRQrTtNfoWgfnV3L9gAN43JRcrtpsHw4Vn8FdEq56gmaSTusBDhzfkJuIsjluqlL
-        KqbHljI0m9NjPdTnw0REj4AOJP7f6e7VI991K2QFlHtF33HKE
-X-Received: by 2002:aa7:d709:: with SMTP id t9mr13957573edq.216.1643485019380;
-        Sat, 29 Jan 2022 11:36:59 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzxLkvcLW6BLxgIqLjTWWRLCLYPN6D4UhxKK1OqrkVsROsoJ44oBC30s8nc7egAVFljLNwTyw==
-X-Received: by 2002:aa7:d709:: with SMTP id t9mr13957561edq.216.1643485019174;
-        Sat, 29 Jan 2022 11:36:59 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id bf21sm14968026edb.2.2022.01.29.11.36.57
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=yjUU9ER/vIEGLeysJCo+/yYTdTjRHWEWnfNYddtn3aA=;
+        b=PFIyxWs9xH1k1t2z1X8kVsyV1cR+aaIU/nUzL/AQcnLvL8jAdq69q3z7WRJKcz4EGF
+         SBp3dMpd/hnFfv9zPu8IoknRR7mIrILvK4SjpmwBeLz7+Ypf+dEiW5xe0Faa3tvDQIFY
+         mxKSYbYtuw8Kxyx5OT2b1HYBpm1Lyz09VNePbw1YR6Bqo1ToPM7eP8u0t47vCidpzQo9
+         FFHoJMcyjFT/5+K+nbclNb1C7S8J7PcAIEHyv1U3C1nSKe+AG1jgYlzgVIMNBXwHs578
+         Hu7r5bq/Sxq0oING4LcfN1z27CV8Iirixy9wkhcoX7PfAN5/lrmaFLMIXH/LbGr5xgCS
+         PGIw==
+X-Gm-Message-State: AOAM530t03m1zwyzI77WbnL5lzOIQJc1s2l0q+eQj6KLBSyPyp1BazyX
+        IHEnXoWJScfQsZll11s3eKo=
+X-Google-Smtp-Source: ABdhPJyn9Tnz9SCtDypxoXBmZOjSdAvG+KAgXi0wQd7Ix3xNYlAf5Zop3ncrx+pbyhT4baltFFW5EQ==
+X-Received: by 2002:a17:907:94d2:: with SMTP id dn18mr4507899ejc.304.1643493716705;
+        Sat, 29 Jan 2022 14:01:56 -0800 (PST)
+Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
+        by smtp.gmail.com with ESMTPSA id ry6sm3338861ejc.45.2022.01.29.14.01.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jan 2022 11:36:58 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Sat, 29 Jan 2022 14:01:56 -0800 (PST)
+Date:   Sat, 29 Jan 2022 23:01:53 +0100
+From:   Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 8/8] dt-bindings: phy: samsung,usb3-drd-phy: convert to dtschema
-Date:   Sat, 29 Jan 2022 20:36:46 +0100
-Message-Id: <20220129193646.372481-8-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220129193646.372481-1-krzysztof.kozlowski@canonical.com>
-References: <20220129193646.372481-1-krzysztof.kozlowski@canonical.com>
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+Subject: [PATCH] drm/exynos: fimd: add BGR support for exynos4/5
+Message-ID: <20220129220153.GA33165@adroid>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung Exynos USB 3.0 DRD PHY bindings to DT schema format.
+In the downstream kernels for exynos4 and exynos5 devices, there is an
+undocumented register that controls the order of the RGB output. It can
+be set to either normal order or reversed, which enables BGR support for
+those SoCs.
 
-Except the conversion, add also vbus-supply and vbus-boost-supply
-properties which were already used by the driver and DTS.
+This patch enables the BGR support for all the SoCs that were found to
+have at least one device with this logic in the corresponding downstream
+kernels.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
 ---
- .../bindings/phy/samsung,usb3-drd-phy.yaml    | 126 ++++++++++++++++++
- .../devicetree/bindings/phy/samsung-phy.txt   |  53 --------
- 2 files changed, 126 insertions(+), 53 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
- delete mode 100644 Documentation/devicetree/bindings/phy/samsung-phy.txt
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 42 ++++++++++++++++++++++--
+ include/video/samsung_fimd.h             |  4 +++
+ 2 files changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-new file mode 100644
-index 000000000000..f83f0f8135b9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-@@ -0,0 +1,126 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/samsung,usb3-drd-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index c735e53939d8..cb632360c968 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -109,6 +109,7 @@ struct fimd_driver_data {
+ 	unsigned int has_dp_clk:1;
+ 	unsigned int has_hw_trigger:1;
+ 	unsigned int has_trigger_per_te:1;
++	unsigned int has_bgr_support:1;
+ };
+ 
+ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+@@ -138,6 +139,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ 	.lcdblk_bypass_shift = 1,
+ 	.has_shadowcon = 1,
+ 	.has_vtsel = 1,
++	.has_bgr_support = 1,
+ };
+ 
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+@@ -149,6 +151,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.has_vidoutcon = 1,
+ 	.has_vtsel = 1,
+ 	.has_dp_clk = 1,
++	.has_bgr_support = 1,
+ };
+ 
+ static struct fimd_driver_data exynos5420_fimd_driver_data = {
+@@ -162,6 +165,7 @@ static struct fimd_driver_data exynos5420_fimd_driver_data = {
+ 	.has_vtsel = 1,
+ 	.has_mic_bypass = 1,
+ 	.has_dp_clk = 1,
++	.has_bgr_support = 1,
+ };
+ 
+ struct fimd_context {
+@@ -226,6 +230,18 @@ static const uint32_t fimd_formats[] = {
+ 	DRM_FORMAT_ARGB8888,
+ };
+ 
++static const uint32_t fimd_extended_formats[] = {
++	DRM_FORMAT_C8,
++	DRM_FORMAT_XRGB1555,
++	DRM_FORMAT_XBGR1555,
++	DRM_FORMAT_RGB565,
++	DRM_FORMAT_BGR565,
++	DRM_FORMAT_XRGB8888,
++	DRM_FORMAT_XBGR8888,
++	DRM_FORMAT_ARGB8888,
++	DRM_FORMAT_ABGR8888,
++};
 +
-+title: Samsung Exynos SoC USB 3.0 DRD PHY USB 2.0 PHY
+ static const unsigned int capabilities[WINDOWS_NR] = {
+ 	0,
+ 	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
+@@ -673,21 +689,25 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 		val |= WINCONx_BYTSWP;
+ 		break;
+ 	case DRM_FORMAT_XRGB1555:
++	case DRM_FORMAT_XBGR1555:
+ 		val |= WINCON0_BPPMODE_16BPP_1555;
+ 		val |= WINCONx_HAWSWP;
+ 		val |= WINCONx_BURSTLEN_16WORD;
+ 		break;
+ 	case DRM_FORMAT_RGB565:
++	case DRM_FORMAT_BGR565:
+ 		val |= WINCON0_BPPMODE_16BPP_565;
+ 		val |= WINCONx_HAWSWP;
+ 		val |= WINCONx_BURSTLEN_16WORD;
+ 		break;
+ 	case DRM_FORMAT_XRGB8888:
++	case DRM_FORMAT_XBGR8888:
+ 		val |= WINCON0_BPPMODE_24BPP_888;
+ 		val |= WINCONx_WSWP;
+ 		val |= WINCONx_BURSTLEN_16WORD;
+ 		break;
+ 	case DRM_FORMAT_ARGB8888:
++	case DRM_FORMAT_ABGR8888:
+ 	default:
+ 		val |= WINCON1_BPPMODE_25BPP_A1888;
+ 		val |= WINCONx_WSWP;
+@@ -695,6 +715,18 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+ 		break;
+ 	}
+ 
++	switch (pixel_format) {
++	case DRM_FORMAT_XBGR1555:
++	case DRM_FORMAT_XBGR8888:
++	case DRM_FORMAT_ABGR8888:
++	case DRM_FORMAT_BGR565:
++		writel(WIN_RGB_ORDER_REVERSE, ctx->regs + WIN_RGB_ORDER(win));
++		break;
++	default:
++		writel(WIN_RGB_ORDER_FORWARD, ctx->regs + WIN_RGB_ORDER(win));
++		break;
++	}
 +
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Marek Szyprowski <m.szyprowski@samsung.com>
-+  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+ 	/*
+ 	 * Setting dma-burst to 16Word causes permanent tearing for very small
+ 	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
+@@ -1074,8 +1106,14 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 	ctx->drm_dev = drm_dev;
+ 
+ 	for (i = 0; i < WINDOWS_NR; i++) {
+-		ctx->configs[i].pixel_formats = fimd_formats;
+-		ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
++		if (ctx->driver_data->has_bgr_support) {
++			ctx->configs[i].pixel_formats = fimd_extended_formats;
++			ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_extended_formats);
++		} else {
++			ctx->configs[i].pixel_formats = fimd_formats;
++			ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
++		}
 +
-+description: |
-+  For samsung,exynos5250-usbdrd-phy and samsung,exynos5420-usbdrd-phy
-+  compatible PHYs, the second cell in the PHY specifier identifies the
-+  PHY id, which is interpreted as follows::
-+    0 - UTMI+ type phy,
-+    1 - PIPE3 type phy.
+ 		ctx->configs[i].zpos = i;
+ 		ctx->configs[i].type = fimd_win_types[i];
+ 		ctx->configs[i].capabilities = capabilities[i];
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index c4a93ce1de48..e6966d187591 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -476,6 +476,10 @@
+  * 1111		-none-	 -none-   -none-   -none-    -none-
+ */
+ 
++#define WIN_RGB_ORDER(_win)			(0x2020 + ((_win) * 4))
++#define WIN_RGB_ORDER_FORWARD			(0 << 11)
++#define WIN_RGB_ORDER_REVERSE			(1 << 11)
 +
-+  For SoCs like Exynos5420 having multiple USB 3.0 DRD PHY controllers,
-+  'usbdrd_phy' nodes should have numbered alias in the aliases node, in the
-+  form of usbdrdphyN, N = 0, 1... (depending on number of controllers).
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos5250-usbdrd-phy
-+      - samsung,exynos5420-usbdrd-phy
-+      - samsung,exynos5433-usbdrd-phy
-+      - samsung,exynos7-usbdrd-phy
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 5
-+
-+  clock-names:
-+    minItems: 2
-+    maxItems: 5
-+    description: |
-+      At least two clocks::
-+        - Main PHY clock (same as USB DRD controller i.e. DWC3 IP clock), used
-+          for register access.
-+        - PHY reference clock (usually crystal clock), used for PHY operations,
-+          associated by phy name. It is used to determine bit values for clock
-+          settings register.  For Exynos5420 this is given as 'sclk_usbphy30'
-+          in the CMU.
-+
-+  "#phy-cells":
-+    const: 1
-+
-+  port:
-+    $ref: /schemas/graph.yaml#/properties/port
-+    description:
-+      Any connector to the data bus of this controller should be modelled using
-+      the OF graph bindings specified.
-+
-+  reg:
-+    maxItems: 1
-+
-+  samsung,pmu-syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to PMU system controller interface.
-+
-+  vbus-supply:
-+    description:
-+      VBUS power source.
-+
-+  vbus-boost-supply:
-+    description:
-+      VBUS Boost 5V power source.
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - "#phy-cells"
-+  - reg
-+  - samsung,pmu-syscon
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos5433-usbdrd-phy
-+              - samsung,exynos7-usbdrd-phy
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 5
-+          maxItems: 5
-+        clock-names:
-+          items:
-+            - const: phy
-+            - const: ref
-+            - const: phy_utmi
-+            - const: phy_pipe
-+            - const: itp
-+    else:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: phy
-+            - const: ref
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5420.h>
-+
-+    phy@12100000 {
-+        compatible = "samsung,exynos5420-usbdrd-phy";
-+        reg = <0x12100000 0x100>;
-+        #phy-cells = <1>;
-+        clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBPHY300>;
-+        clock-names = "phy", "ref";
-+        samsung,pmu-syscon = <&pmu_system_controller>;
-+        vbus-supply = <&usb300_vbus_reg>;
-+    };
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-deleted file mode 100644
-index b0abeb4ac0a2..000000000000
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--Samsung Exynos5 SoC series USB DRD PHY controller
----------------------------------------------------
--
--Required properties:
--- compatible : Should be set to one of the following supported values:
--	- "samsung,exynos5250-usbdrd-phy" - for exynos5250 SoC,
--	- "samsung,exynos5420-usbdrd-phy" - for exynos5420 SoC.
--	- "samsung,exynos5433-usbdrd-phy" - for exynos5433 SoC.
--	- "samsung,exynos7-usbdrd-phy" - for exynos7 SoC.
--- reg : Register offset and length of USB DRD PHY register set;
--- clocks: Clock IDs array as required by the controller
--- clock-names: names of clocks correseponding to IDs in the clock property;
--	       Required clocks:
--	- phy: main PHY clock (same as USB DRD controller i.e. DWC3 IP clock),
--	       used for register access.
--	- ref: PHY's reference clock (usually crystal clock), used for
--	       PHY operations, associated by phy name. It is used to
--	       determine bit values for clock settings register.
--	       For Exynos5420 this is given as 'sclk_usbphy30' in CMU.
--	- optional clocks: Exynos5433 & Exynos7 SoC has now following additional
--			   gate clocks available:
--			   - phy_pipe: for PIPE3 phy
--			   - phy_utmi: for UTMI+ phy
--			   - itp: for ITP generation
--- samsung,pmu-syscon: phandle for PMU system controller interface, used to
--		      control pmu registers for power isolation.
--- #phy-cells : from the generic PHY bindings, must be 1;
--
--For "samsung,exynos5250-usbdrd-phy" and "samsung,exynos5420-usbdrd-phy"
--compatible PHYs, the second cell in the PHY specifier identifies the
--PHY id, which is interpreted as follows:
--  0 - UTMI+ type phy,
--  1 - PIPE3 type phy,
--
--Example:
--	usbdrd_phy: usbphy@12100000 {
--		compatible = "samsung,exynos5250-usbdrd-phy";
--		reg = <0x12100000 0x100>;
--		clocks = <&clock 286>, <&clock 1>;
--		clock-names = "phy", "ref";
--		samsung,pmu-syscon = <&pmu_system_controller>;
--		#phy-cells = <1>;
--	};
--
--- aliases: For SoCs like Exynos5420 having multiple USB 3.0 DRD PHY controllers,
--	   'usbdrd_phy' nodes should have numbered alias in the aliases node,
--	   in the form of usbdrdphyN, N = 0, 1... (depending on number of
--	   controllers).
--Example:
--	aliases {
--		usbdrdphy0 = &usb3_phy0;
--		usbdrdphy1 = &usb3_phy1;
--	};
+ /* FIMD Version 8 register offset definitions */
+ #define FIMD_V8_VIDTCON0	0x20010
+ #define FIMD_V8_VIDTCON1	0x20014
 -- 
-2.32.0
+2.25.1
 
