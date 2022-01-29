@@ -2,69 +2,72 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17486C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Jan 2022 11:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B94C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 29 Jan 2022 17:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239851AbiA2Lyu (ORCPT
+        id S244388AbiA2ReO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Jan 2022 06:54:50 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:60642
+        Sat, 29 Jan 2022 12:34:14 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:35960
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239048AbiA2Lyt (ORCPT
+        by vger.kernel.org with ESMTP id S241070AbiA2ReN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Jan 2022 06:54:49 -0500
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        Sat, 29 Jan 2022 12:34:13 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DA7D83F1C6
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 11:54:46 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 493EF3F1D1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 17:34:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643457286;
-        bh=Ijka2jOdpqFz2YrK3+F7qMhZIXOz2gEU2sD1tESTLRA=;
+        s=20210705; t=1643477652;
+        bh=ZuEiDOWhV4/MXvSraxhDORfUTCUItaxIltcgFzmODQE=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-        b=tJ8GVkNl+57fkdsI8qjnk58UKYoucIRIkQgzlH9ibur0EoB+XyzyCNHlKrSTEz/tP
-         EVQ8hvJZEl4YPK0Bd8JI1AtiK8hflnxfEwBfCR+7c+v8jAKpcT6m5M1ezFQihynkxN
-         JG3vZla6fXS4Kv/IzI9lusi6okqaOtBltsPvQP3xVZVHfhxVk4DG1C6mSSZM79em51
-         rkE6X8IRycXZYNq9oNRwXzz9nWzNn2nd/OxQ4zNgPmxDhWmbN8574HkfoTdMe0VfHv
-         fXxidM8YepdrTPYnlMrDijG2lR9rm+xCxMoP/hqYkv4rFeSc3bLmTMIoV3/6y7FPhr
-         QJMrBX9Bm0RIw==
-Received: by mail-ej1-f72.google.com with SMTP id k16-20020a17090632d000b006ae1cdb0f07so3693458ejk.16
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 03:54:46 -0800 (PST)
+        b=OsaYhI0gc6zmL8d5whKQhGM88RTgDF7yXiBeQGoJuU+K1Kzkq9eA0LkK73H7cpLn7
+         eZf4wX0HydSC3cJAF0+OBJxqtb4bKGuY2n0+jgtL2GGAObP/fnZSh7B+qyJVMBlqqw
+         4y7j7kkPyTzP0EqMeP2rZQWIB4XsvKDSPtwY2viY1UX3X86m0fbc7+ZDH+5FZ9OMN6
+         nzjTzZSJ7umgMBHV22wiP0WXeppw1avQwftEkvrfS+pFh+xQIQP+wbhZW3Q6YUR+wA
+         nNgQEKBcG2Cy5TOqMvrFguf0Ec93E5SGwUihfmcgQr3GIe1FDIwwe5H/zk9AR98Ako
+         lsScWgIhM2fdQ==
+Received: by mail-ed1-f71.google.com with SMTP id w3-20020a50c443000000b0040696821132so4649896edf.22
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 09:34:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Ijka2jOdpqFz2YrK3+F7qMhZIXOz2gEU2sD1tESTLRA=;
-        b=NfGuRAsGHSsoyJ0iWQt/hcAzQCLjVYbOKstmL/hB3Kx0hyS69F4ruSNLowcfvXX2DP
-         w/XzKH65Km8jgnfty8k7EZXKjEJSP2IcDUioAqouifH4ZWzrKgHEE3mdCpF0EB+B3FcV
-         PpAMt/TgaQYWPOfAOoR3JYNNRORANS536rnkGBQWpT9SrLu8kDktGtmZ3wxw6Ywew82V
-         37wjmdF7FKRJIyOZARuyQd1ytL2eGj0nA9gttuxyxNrr/SrNX1kn/55a9s4X2QNNB0EY
-         CjMluSog+zaIhMCoIjB+iGeKbndx/wj/rJt26WczmtVF9E+U4kDZ9rfDw8jPXZkOc0xd
-         FwLA==
-X-Gm-Message-State: AOAM533mVAsKSAFSq3pk8TOBDh8+wmtqg65nDXHdl7AxHFwH6fy+PAgP
-        WBey46Vm2YNt2EfedzyWwYJyOt44WeVwcf6OzONzn4UVk/Qb8+AUNbaO4vDZN5NGXuiXx7Kc5kq
-        DnhVhJkU9IQyM85s6P/FDDTVlaXPHalg9t/NMr7gbJEIK5S+Z
-X-Received: by 2002:a17:906:31d0:: with SMTP id f16mr10332125ejf.627.1643457285827;
-        Sat, 29 Jan 2022 03:54:45 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwl4F8K9oN0osyeshGAGks4kNiiTjSReACDvep5GAMERd/Swk/uXL7hADTVqMn//NHDVdJ/cA==
-X-Received: by 2002:a17:906:31d0:: with SMTP id f16mr10332112ejf.627.1643457285661;
-        Sat, 29 Jan 2022 03:54:45 -0800 (PST)
+        bh=ZuEiDOWhV4/MXvSraxhDORfUTCUItaxIltcgFzmODQE=;
+        b=cMb/x6CDW5rJyos+x1tCVyZygtUktmWIE8Tw9sAzGwy0GI8zFG6ErqFOKfdw1gVpVm
+         6dOQNO60dzCpRzOd7lK5HraAmjH9DPz4AV9XqGw9X52Pjtub+i9dIxE95qJdqwfjDLk9
+         q8gcIqnKrC+J2VDPQUteSGCKD0DjlOKKQL9QOIajL1OY9bXLyN7G7PvmHasxjeRn+ZyG
+         u7c7xMr1s0rxmt/e7SiF4E4ZlcihiN5SlPh68LbQ38X/qbaQp01FoC1YTtolDCbKAhIS
+         wwNlYx8bu/nbA7enVtAIs9KyvJrhVB4cxoHecxJfD7X7xI/472MDB3ibvgtOQfI0tEgW
+         8vjw==
+X-Gm-Message-State: AOAM531Zd+0gsgtGEiCUwFA6Dnzxq7wMUZAGiaTP/V5r6COVFlF6bEwg
+        q9UtVM478V8Jzu8XfGYls3wtIdbOM3gRsHvMSMZGAu4KSO46ihTt5y7/9qYpiOOUrD+7g1JRqrm
+        Vv36kadl4RgEbv6x2r433dzBv6ZRk/UFdUI+qUWAL0L84+llu
+X-Received: by 2002:a17:907:2cc7:: with SMTP id hg7mr5203859ejc.288.1643477651647;
+        Sat, 29 Jan 2022 09:34:11 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwiwyRKb0YWVvVPEq/FWwv5yWs8r/pn2KnZovPieiPe70Duqq+TiEIpanQItvzLIpNIJNkH6w==
+X-Received: by 2002:a17:907:2cc7:: with SMTP id hg7mr5203843ejc.288.1643477651452;
+        Sat, 29 Jan 2022 09:34:11 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id b30sm14571734edn.16.2022.01.29.03.54.44
+        by smtp.gmail.com with ESMTPSA id e18sm14886981edj.85.2022.01.29.09.34.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jan 2022 03:54:45 -0800 (PST)
+        Sat, 29 Jan 2022 09:34:11 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [GIT PULL] Samsung fixes for v5.17
-Date:   Sat, 29 Jan 2022 12:54:42 +0100
-Message-Id: <20220129115442.13474-1-krzysztof.kozlowski@canonical.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: samsung: fix missing Tesla FSD dependency on Exynos
+Date:   Sat, 29 Jan 2022 18:34:07 +0100
+Message-Id: <20220129173407.278591-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,31 +75,32 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
+The Tesla FSD clock controller driver uses shared parts from Exynos
+ARM64 clock drivers, so add proper dependency to fix COMPILE_TEST build
+errors like:
 
-  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
+  /usr/bin/aarch64-linux-gnu-ld: drivers/clk/samsung/clk-fsd.o: in function `fsd_cmu_probe':
+  clk-fsd.c:(.init.text+0x9c): undefined reference to `exynos_arm64_register_cmu'
 
-are available in the Git repository at:
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: e3f3dc3810d3 ("clk: samsung: fsd: Add cmu_peric block clock information")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/clk/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-5.17
+diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+index 5f64c58f120f..8e8245ab3fd1 100644
+--- a/drivers/clk/samsung/Kconfig
++++ b/drivers/clk/samsung/Kconfig
+@@ -129,6 +129,7 @@ config S3C2443_COMMON_CLK
+ config TESLA_FSD_COMMON_CLK
+ 	bool "Tesla FSD clock controller support" if COMPILE_TEST
+ 	depends on COMMON_CLK_SAMSUNG
++	depends on EXYNOS_ARM64_COMMON_CLK
+ 	help
+ 	  Support for the clock controller present on the Tesla FSD SoC.
+ 	  Choose Y here only if you build for this SoC.
+-- 
+2.32.0
 
-for you to fetch changes up to 442b0c08db7e35980bed6af091877f4dda72ffca:
-
-  soc: samsung: Fix typo in CONFIG_EXYNOS_USI description (2022-01-23 18:05:41 +0100)
-
-----------------------------------------------------------------
-Samsung fixes for v5.17
-
-1. Typo in CONFIG_EXYNOS_USI description.
-2. Add Alim Akhtar as a reviewer for Samsung Exynos platform.
-
-----------------------------------------------------------------
-Alim Akhtar (1):
-      MAINTAINERS: add reviewer entry for Samsung/Exynos platform
-
-Sam Protsenko (1):
-      soc: samsung: Fix typo in CONFIG_EXYNOS_USI description
-
- MAINTAINERS                 | 3 +++
- drivers/soc/samsung/Kconfig | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
