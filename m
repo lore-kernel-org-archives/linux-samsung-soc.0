@@ -2,96 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45587C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Jan 2022 00:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0AAC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Jan 2022 01:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353556AbiA3AWZ (ORCPT
+        id S1353624AbiA3BgX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 29 Jan 2022 19:22:25 -0500
-Received: from mail-oo1-f44.google.com ([209.85.161.44]:33658 "EHLO
-        mail-oo1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353551AbiA3AWX (ORCPT
+        Sat, 29 Jan 2022 20:36:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57096 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346537AbiA3BgW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 29 Jan 2022 19:22:23 -0500
-Received: by mail-oo1-f44.google.com with SMTP id f11-20020a4abb0b000000b002e9abf6bcbcso2335160oop.0;
-        Sat, 29 Jan 2022 16:22:23 -0800 (PST)
+        Sat, 29 Jan 2022 20:36:22 -0500
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 851F8C06173B
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 17:36:22 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id c19so1014693ybf.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Jan 2022 17:36:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ePWnPQTx8X6MYeBISgp7KTdEgQnoqyN/q/sb9qzde8E=;
+        b=MVYYp87Ald/WvBJI0FeEtTwNTEL8ZX5BKn5Gopf+hawZh0s0006iGXxczWIORh0D9I
+         YAWEfVnJXa1SI6A9PKoXdO7N16Mp3SHAFaWEp9IwpFlfEVxDdkn4E6CbOQDjtbxN91GC
+         QSHcdjfi+G1YzQArUH9SzTkQh5WF9PGNGTef4yrXFnInEja3CgdtoBYinMfqirqRevDb
+         JspXlNrfCynypoWIKPb2yTdvZhuFupywOIazhqK0PfvpTQoWeJSy84O9RAsc4QfPgrLR
+         bbLeVifMqFRRjo2QNoFgZK856VokJFzS3VT96XMJthOnLkwJxAR0W/dRnOfzDeY94TJ4
+         h2vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=EfijCJEIDI95t04URhCJ7b9hoUPag07U2dCpls06Eik=;
-        b=JhHE04OF2lliw5yGEpzyjqRnUgZoqiiZLd9cWnowQf5M2oxk40vHvBpj20Fq62/JrM
-         ongtsV+8JLKqACT5/NOc8WNvv7pxF9HbaghV1e01uzm76cZCtvkS49Vcidl9/jISTQ2a
-         +wgVan3CbxwO2aO1Az2zGhv4e8dl4wcJuL8n03jQswr6RXqKnPj3hS77uflmgymYi02W
-         Y/IdD7S2AEtaO2KbBQr4udGlOd8TV223VP8nt7qn4/nbXuTprlMfGNLahkGIHVjg4Xy5
-         lofzB2oW2+i3pc5qav9rLNOkwpSKF7R172qIFhlKj3q8IhQuRLMNy1P7VIcE/9fptN61
-         M+lQ==
-X-Gm-Message-State: AOAM533zpir0RVAPTG7DTfRGEUrQSg4chlimopsWqXC+/e7MbT7h1j2H
-        JptL+F42BBv9Eu+93ipF9w==
-X-Google-Smtp-Source: ABdhPJzW9TIDgKljbL7MzxDrITFkNShplHNt3Q47D8MGi0MWITbw0U9uYUJ/2JZjHJ8jPJ4oCclLUg==
-X-Received: by 2002:a4a:1505:: with SMTP id 5mr7233951oon.10.1643502142610;
-        Sat, 29 Jan 2022 16:22:22 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id f17sm1443383ots.40.2022.01.29.16.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jan 2022 16:22:21 -0800 (PST)
-Received: (nullmailer pid 416954 invoked by uid 1000);
-        Sun, 30 Jan 2022 00:22:17 -0000
-From:   Rob Herring <robh@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ePWnPQTx8X6MYeBISgp7KTdEgQnoqyN/q/sb9qzde8E=;
+        b=54AXW8rJVRetMY05Mp2spSuTxgClV6HItah8YnNtFri3s1pQlnwYdLcNjJH42X5Gku
+         u3qCWma7euDLQ63JDvShnHTB4NMRumyrJqSHgSf5vIf7C9/4sVxp7T0HugsLfcxT5tLT
+         B2ZLj4bhSMIRHG0e6Pmjuk6XhckCIyTn7N1uavEBNYB7uc8857L5IMrtodcaG4Vy4ZO8
+         SScD4tX3/wSVHKqHAb1W2fKZCOH80MRbPJOl3J3eHnBOoiXPZ4XniAym1guGkz/8epM0
+         7OgDJVr7iuxdvTERq3b2qIvYgobJd1bBkSNDYQbKdtqEl5DSYfmEWMlHi81SsbVu/4Dq
+         SOlQ==
+X-Gm-Message-State: AOAM533VVgzf0n+KRQcvScXFkgFgWIY6jT7H8kq9fLKgB91mA9gl/SE3
+        Kt0c8oZrNQcEx0oQFmIGDXBBjLIZyucbbmSV6kx3VQ==
+X-Google-Smtp-Source: ABdhPJxhoLeKPAxrSTTOVHmmuO/wKAH6jov5kna/TtVWgdNXPxRG1wPA5Qbv6Ikjg7GGti3nfiG7wePGvRBsfe1+8cw=
+X-Received: by 2002:a25:5143:: with SMTP id f64mr23694467ybb.520.1643506581687;
+ Sat, 29 Jan 2022 17:36:21 -0800 (PST)
+MIME-Version: 1.0
+References: <20220129115352.13274-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220129115352.13274-1-krzysztof.kozlowski@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 30 Jan 2022 02:36:10 +0100
+Message-ID: <CACRpkdYt1qM2gBefaWbWyh-a09c++wgR+12QrHZMneRK1mA9Xg@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: dts/drivers: samsung pinctrl for v5.18
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>
-In-Reply-To: <20220129175332.298666-4-krzysztof.kozlowski@canonical.com>
-References: <20220129175332.298666-1-krzysztof.kozlowski@canonical.com> <20220129175332.298666-4-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 4/5] dt-bindings: mfd: samsung,exynos5433-lpass: Convert to dtschema
-Date:   Sat, 29 Jan 2022 18:22:17 -0600
-Message-Id: <1643502137.259074.416953.nullmailer@robh.at.kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 29 Jan 2022 18:53:31 +0100, Krzysztof Kozlowski wrote:
-> Convert the Exynos5433 LPASS bindings to DT schema format.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../bindings/mfd/samsung,exynos5433-lpass.txt |  72 -----------
->  .../mfd/samsung,exynos5433-lpass.yaml         | 119 ++++++++++++++++++
->  2 files changed, 119 insertions(+), 72 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-> 
+On Sat, Jan 29, 2022 at 12:54 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> Linus,
+> I will send the pinctrl driver bits in separate pull to you.
 
-yamllint warnings/errors:
+OK I'll wait for it.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.example.dt.yaml: audio-subsystem@11400000: serial@11460000:compatible:0: 'samsung,exynos5433-uart' is not one of ['apple,s5l-uart', 'samsung,s3c2410-uart', 'samsung,s3c2412-uart', 'samsung,s3c2440-uart', 'samsung,s3c6400-uart', 'samsung,s5pv210-uart', 'samsung,exynos4210-uart', 'samsung,exynos850-uart']
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.example.dt.yaml:0:0: /example-0/audio-subsystem@11400000/serial@11460000: failed to match any schema with compatible: ['samsung,exynos5433-uart']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1586234
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Yours,
+Linus Walleij
