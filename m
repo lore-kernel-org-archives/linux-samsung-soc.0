@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C676BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 11:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC361C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 12:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378263AbiAaLw1 (ORCPT
+        id S1359658AbiAaMQE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jan 2022 06:52:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53820 "EHLO
+        Mon, 31 Jan 2022 07:16:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378084AbiAaLuJ (ORCPT
+        with ESMTP id S237457AbiAaMQD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jan 2022 06:50:09 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4906C09426A;
-        Mon, 31 Jan 2022 03:36:19 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id d10so42135428eje.10;
-        Mon, 31 Jan 2022 03:36:19 -0800 (PST)
+        Mon, 31 Jan 2022 07:16:03 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EABAC061714;
+        Mon, 31 Jan 2022 04:16:03 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id jx6so42830132ejb.0;
+        Mon, 31 Jan 2022 04:16:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=m7A4pVSNJzjFxlNDUBif0ZSjzzxnHlIlhqH9+88MCVE=;
-        b=nLY0dw1UbRO4nmzzwMHn2iPJSCTIQbwe0J1U5nCM53blsnqZM3dTetobnp/HM/KOIP
-         WWnAAVCjZNvGMTy2kKFM0xg4+rZXzlZ2c5GSdvnS9L27TCy23ROd3dO/4xJPPAQGJ5EF
-         uwr7alA8vx5rkSNppkJx/7LoGyNHO4/sMY596xAjHmJOEPJtm9bSLh31koHzzAnamm/D
-         F/PWxFJyDAzdCww/4fXc1BoKmN36S/xxiclOylv8kKakNrw1Er8+zHVg/P3TkY2RpbSj
-         2AFGfKb/00Y5X53/MMTRCiw80oxYzAXB2Rdezy1o1AqgltWEaQPVpOU8I1AEPkxod69A
-         ho5Q==
+        bh=wNg7k8KGRXZqz1GErRZAiyrRK14ro0vTHrrnr73crWw=;
+        b=mfGPj/eNstpblm1dIutlRbUAmZFkY8qc56QvqOE+UihGt6vnkO2WziLqOTM1Crd3Ne
+         lyy3szZFQJfX1dMtnsFr0na+VviKrfs0XYGuzXWnU7ZfODeEcQe1SOfWkRfK8Hk9oATk
+         MvMa/s4+u6FWgOf49E9jOTg0lc/zGgf9jzTwbrKsKodb8jZ9XEGJRQvePaNy44CWHlRr
+         wQPiaya50xQRj9Eiai+yTeX0xHFdEWU0OPo1IBhpuxB9y/PiTUYvCo7xqzr0koNLS8PY
+         NcUIPhZ42hN5GHS/JZjx99zaGdYAdmfEkZMJvPOQ5KtvW6F8YmvROTMJ3XCMSHN22ZsR
+         vYAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=m7A4pVSNJzjFxlNDUBif0ZSjzzxnHlIlhqH9+88MCVE=;
-        b=xqERVj+X+E/Nhr+jEZbhvCnhb15/XxY2nhwRKpX1bqmFqcosVVZTBtmKkHD1s6E44Y
-         BniWLVyXAVirfRuMCH1bnIjpt+ooep27n0z15GNQOX/j0sT9EnIhOn6mpmNo8ubfbwk0
-         8ldB1m83RNNIvAJd6GkCX49Eaa8PgJ0fRlCd3qNgAhm31aUwl93lVgTDE6HqNm7UxVjU
-         U9VkUlGLa8Rgpge69l49d97AOcdpmoIkKueLrTXzIJXjyZxq5QDRtYqEOiXRTOxT601Y
-         qaoLsyBn0MzegwbrQHn4svE1qp8emIJwbZ7fcdV4bREm6dMaD04MQV80x/wTM3Bmw4QF
-         0fUw==
-X-Gm-Message-State: AOAM531C70MFgvJgg6w19+r0hDLPIMNPJAo+VGEr10YwQeH4kAcThZjO
-        prE0jK8hCsW5+YY2OID8vdwuMRfL/80KHA==
-X-Google-Smtp-Source: ABdhPJzNa2PvryNQRXW9SMrFZ8YqhBpr8tgJS1NdRci1rCS3yirNO2SWtbmF4gBWcUsjX5C7xw2BoA==
-X-Received: by 2002:a17:907:6eaa:: with SMTP id sh42mr16701737ejc.388.1643628978367;
-        Mon, 31 Jan 2022 03:36:18 -0800 (PST)
+        bh=wNg7k8KGRXZqz1GErRZAiyrRK14ro0vTHrrnr73crWw=;
+        b=i81CVx9+l7w9A3HDCQ4bFnWJO//ORJZlUmc9kLBWxi0J1jVY7C9cohh1r+S0/GBlHz
+         HBO/uGxieEX/IWiDwvgSwZsUkAp4P+2s6YUMj8OISYuG4NcTbv7KcMIo9BlKelFkHHjK
+         djWDuKa95/OBpiytODHD6JusLCjUeXrbJPOIJEGiU4yrRaQbrx88F3TvNMpk9fMxNH4l
+         5aNWddYp9Sq8Qt3w/SrW1GeQvDNWhQ00sXXIu99ew8W+fqXqGqC/I3MIYUlk0s3IbGAJ
+         tsgx/NapmlqlAu+nBlxvyf0QzGaxNbBNURZn5CCIxVux7mbnBPl7rAiEZw7TG0HgFpC5
+         xzQg==
+X-Gm-Message-State: AOAM530nL37Mck4Sx4l0OMrwXczMjg/wkqO+YIQhSn/eT3489mvQs+dT
+        ujpQjXd/zYmgiXoIxQEDh7s=
+X-Google-Smtp-Source: ABdhPJxDem+jS2SwEyfZ48s++v74UjuU+T7SnLMwq7xTeOMEu/UwzL7ENSL7qPJhDM3y9tgB/XqApg==
+X-Received: by 2002:a17:907:7da4:: with SMTP id oz36mr4950145ejc.416.1643631361803;
+        Mon, 31 Jan 2022 04:16:01 -0800 (PST)
 Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
-        by smtp.gmail.com with ESMTPSA id d2sm13343309ejw.70.2022.01.31.03.36.16
+        by smtp.gmail.com with ESMTPSA id bv2sm13385358ejb.155.2022.01.31.04.16.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jan 2022 03:36:17 -0800 (PST)
-Date:   Mon, 31 Jan 2022 12:36:15 +0100
+        Mon, 31 Jan 2022 04:16:01 -0800 (PST)
+Date:   Mon, 31 Jan 2022 13:15:59 +0100
 From:   Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
@@ -58,7 +58,7 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
 Subject: Re: [PATCH] ARM: dts: add 533 MHz step to p4note GPU opp table
-Message-ID: <20220131113615.GA4916@adroid>
+Message-ID: <20220131121559.GA4022@adroid>
 References: <20220129221452.GA36524@adroid>
  <131c9bd9-b035-8a75-ca27-f9c2b3993566@canonical.com>
 MIME-Version: 1.0
@@ -78,9 +78,6 @@ On Mon, Jan 31, 2022 at 09:54:00AM +0100, Krzysztof Kozlowski wrote:
 > If there is going to be resend, please add prefix "exynos:" in subject.
 > Just like other commits (git log --oneline arch/arm/boot/dts/exynos*).
 > 
-
-Okay.
-
 > > Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
 > > ---
 > >  arch/arm/boot/dts/exynos4412-p4note.dtsi | 7 +++++++
@@ -104,18 +101,6 @@ Okay.
 > This looks like Exynos4412 Prime. Please check also CPU frequencies and
 > if they match, just include exynos4412-prime.dtsi (like Odroid U3).
 > 
-
-I thought so as well, but unfortunately it's not. The chip id is
-0xe4412211 and according to the vendor kernel, the prime version would
-need to have the last two digits being 0x20 or higher. See:
-
-https://github.com/Viciouss/samsung_p4note_kernel_backup/blob/da306e1846bb4b9682f46be1b23b05d6fbebffba/arch/arm/mach-exynos/cpufreq-4x12.c#L619
-
-On the other hand, this kernel has the 533 MHz step unlocked for all
-versions:
-
-https://github.com/Viciouss/samsung_p4note_kernel_backup/blob/da306e1846bb4b9682f46be1b23b05d6fbebffba/drivers/gpu/mali400/r3p2/mali/platform/pegasus-m400/exynos4_pmm.c#L88
-
 > > +
 > >  &hsotg {
 > >  	vusb_a-supply = <&ldo12_reg>;
@@ -124,6 +109,10 @@ https://github.com/Viciouss/samsung_p4note_kernel_backup/blob/da306e1846bb4b9682
 > 
 > Best regards,
 > Krzysztof
+
+I just noticed, that I overlooked a condition in the code which
+decreases the step count by one which eliminates the 533 MHz step.
+Please ignore this patch.
 
 Kind Regards
 Martin
