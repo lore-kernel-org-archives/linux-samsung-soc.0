@@ -2,131 +2,330 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C05C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 15:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71313C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 17:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379386AbiAaPfV (ORCPT
+        id S1380955AbiAaR15 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jan 2022 10:35:21 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51048
+        Mon, 31 Jan 2022 12:27:57 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:56456
         "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349575AbiAaPfU (ORCPT
+        by vger.kernel.org with ESMTP id S1380941AbiAaR15 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jan 2022 10:35:20 -0500
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        Mon, 31 Jan 2022 12:27:57 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6212E3F20A
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 15:35:19 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9FEB33F1BE
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 17:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643643319;
-        bh=Z5b/EBNw9uOt5Huvnc3qpF7pqyx4e7DzrtSCyAXGzd0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=b5bQdf95YzBLarC7FApKHouhzqdNZA0cBvLdwL+Ukig92iFlScZGVR6Ii81Ixdxxa
-         uuTjO00tWSm3UEl36EpfV2h+vvEGPOK8Fhc14wmfymk1Or1WALW6PFHq8MLcikZz4h
-         9gw+ILW84M18gehjhnwKxpNrjxZD1p/wGMhT4nyaDsH1EH+RHFIjjd06VaC2NPRUYF
-         k5DdtjCvbh4+71/ymPwwoq/i1uhSG26VrpcZsAv8FMgSQ83Iemc2kEso0FyoWCkXNR
-         QBx95te/p+qhQPMgnG2nDH6OtJXL6PFBh16Dgar4boAf65mKgxmxDn1IZV1msW0Tjv
-         un5B89BXviXMA==
-Received: by mail-ej1-f70.google.com with SMTP id i21-20020a1709063c5500b006b4c7308c19so5149745ejg.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 07:35:19 -0800 (PST)
+        s=20210705; t=1643650075;
+        bh=LMogPhxfL2VV23EwnIvho4hqsJaI2tQRJB5PamGe9m8=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=B96KtbTbs2eoQa5szNBLtfYXBQBhO+36JBhD9rA0gUWuwLtGMIWK08hoKq6NPTetY
+         RSqKDncgTpR5eeL8Sg4ClkodOhLkhlmHE2nZlpwp9N8gZvi+GrohmCTvIA12LM2zMf
+         0xm4iJuqB9mgAdJLPoD9FCmWFXm16qRX2opkGECsmdm2biLSiAfr4pecZg6WLCPRVG
+         4hyvHEtM8x20ydP7id3C7vQotptyjQbpB+MadKkZ0yDsuA26DFVFs2KoBZqiljYA4M
+         5W9dBSKgwlk9z5+WVO6DjEYMpiBHzNzoejAytwKHGB8rHMOD63BBG28wJSKYxbTiOR
+         cOu2hxlGL2VKA==
+Received: by mail-ed1-f71.google.com with SMTP id bc24-20020a056402205800b00407cf07b2e0so7342729edb.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 09:27:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Z5b/EBNw9uOt5Huvnc3qpF7pqyx4e7DzrtSCyAXGzd0=;
-        b=Cz4uYoawi5QPJfxEG8vF5Y+CRk6YFRva0S3t6NnAnSetYiK1ACYASGCwjVjL5gEmjT
-         ZjJDNepo8JBE+xWtiF71bDYHFU4GQkiL1Ak1+/RLSnjKv5Qz9RvxqLYpxR1jlEIAyum3
-         e23OwHO+ttflFMD+VxcODxgKB+Gcw/cdYzsFvDRQ9/RMg8d/eJM6ipkUxVFFTT8aiYwC
-         uSrUYq1zFTLlZHl/qVQ7p3CZEia+MRVE+WygxHJTCkSw1bbCTECb2nxvIyRklBuTcgQU
-         VLuwOU1ir6Yu4Q27EkqNDEXjQ8LoFWl2KPOi0aNmhpCk18iYMtastwHGUyJn5IVGYzxj
-         47Kg==
-X-Gm-Message-State: AOAM533Y5I0OSchcgL9PzAR/rdG07N67YRalDtJKnus9nNqoKsYazpTR
-        b8rbFd3K9B+9NbqCB7ArY3odCtxKOs4V2h0FBGmylLXRLtqFehCyRIzYvQYn+3vzJxDuJOg+HBc
-        bIkyqMaYNcXMVqcQDYpM1JsnVdmjUHHKwMKo5mkl5syLgyJtH
-X-Received: by 2002:a50:ef16:: with SMTP id m22mr20906051eds.340.1643643318895;
-        Mon, 31 Jan 2022 07:35:18 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzvhi9AwQxRpZJOEpikHkJ1BPhM8MD3Qh6i+q7FjAIG86ry6+d6e16F+8z0bK3phu/eNvlQlQ==
-X-Received: by 2002:a50:ef16:: with SMTP id m22mr20906022eds.340.1643643318699;
-        Mon, 31 Jan 2022 07:35:18 -0800 (PST)
-Received: from [192.168.0.74] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id qa30sm6667123ejc.158.2022.01.31.07.35.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jan 2022 07:35:17 -0800 (PST)
-Message-ID: <7941a6b8-4bca-797e-2fa9-ebd82bed70fa@canonical.com>
-Date:   Mon, 31 Jan 2022 16:35:16 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v4 7/7] arm64: dts: exynos: Add initial device tree
- support for Exynos7885 SoC
-Content-Language: en-US
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20211206153124.427102-1-virag.david003@gmail.com>
- <20211206153124.427102-8-virag.david003@gmail.com>
+        bh=LMogPhxfL2VV23EwnIvho4hqsJaI2tQRJB5PamGe9m8=;
+        b=thIZZCOW3cWPEr3hXH6JRLnj5ePMKOVxn8A2Hf5vLCY4lmwuQ72tAbOFT3YpzhzTDy
+         FGuSJlPOjB3EL+1tAvdSMdF7LkN04jzIHcGPQldArzAQ0rmPD2bx2ZVFPS8o/2Qo8Mk5
+         EB+IRPBpsyZEsIs7arN2V48YVOusCLrpufLKbK/C39ma8+bTKpE4G9C5r+COMFIIHPNE
+         pQ4wAzWD0MUBqUcwlFPqVVko2b8OsVbhvubs+a/wo7husSLb4ZQeYnf61NKhE7F7JRub
+         wl7WTDTjl5tfscMbgierAaPf74AebAYANB96XGmVz0ecLjiIeGS2nXWdRu4YhdPjj3U7
+         w7Sg==
+X-Gm-Message-State: AOAM531iZ/Wco0W+2bMrEqxJ4GhB9d/zaoZ0xQQlgBTj40snWk2UlHxK
+        DkNQZL7QEb/WN0l9qBizdRGiOnnRgmLUrYJcIfoV+u3Ty6x6a5XSS6dAOcWWWMaz/YkaQxzknC4
+        7HxeX7GYuC8gZjFEWVbmAIzVLYEy8zYuEzLB1MdvS6GSNIN+z
+X-Received: by 2002:a17:907:6d99:: with SMTP id sb25mr17612457ejc.10.1643650075153;
+        Mon, 31 Jan 2022 09:27:55 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJznSv93p9sJfV0aRi56Nu2+poMrKt0bMKxjCqtn9Gconec/5E965GpUkgcfZUbs0BlToDogDg==
+X-Received: by 2002:a17:907:6d99:: with SMTP id sb25mr17612442ejc.10.1643650074923;
+        Mon, 31 Jan 2022 09:27:54 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id u14sm18119855eds.1.2022.01.31.09.27.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 09:27:54 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211206153124.427102-8-virag.david003@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [PATCH] dt-bindings: i2c: samsung,s3c2410-i2c: convert to dtschema
+Date:   Mon, 31 Jan 2022 18:27:13 +0100
+Message-Id: <20220131172713.208976-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/12/2021 16:31, David Virag wrote:
-> Add initial Exynos7885 device tree nodes with dts for the Samsung Galaxy
-> A8 (2018), a.k.a. "jackpotlte", with model number "SM-A530F".
-> Currently this includes some clock support, UART support, and I2C nodes.
-> 
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
-> Changes in v2:
->   - Remove address-cells, and size-cells from dts, since they are
->     already in the dtsi.
->   - Lower case hex in memory node
->   - Fix node names with underscore instead of hyphen
->   - Fix line breaks
->   - Fix "-key" missing from gpio keys node names
->   - Use the form without "key" in gpio key labels on all keys
->   - Suffix pin configuration node names with "-pins"
->   - Remove "fimc_is_mclk" nodes from pinctrl dtsi for now
->   - Use macros for "samsung,pin-con-pdn", and "samsung,pin-con-pdn"
->   - Add comment about Arm PMU
->   - Rename "clock-oscclk" to "osc-clock"
->   - Include exynos-syscon-restart.dtsi instead of rewriting its contents
-> 
-> Changes in v3:
->   - Fix typo (seperate -> separate)
-> 
-> Changes in v4:
->   - Fixed leading 0x in clock-controller nodes
->   - Actually suffixed pin configuration node names with "-pins"
->   - Seperated Cortex-A53 and Cortex-A73 PMU
-> 
+Convert the Samsung S3C24xx/S3C64xx/S5PV210/Exynos SoC I2C Controller
+bindings to DT schema format.
 
+The conversion includes also changes/fixes to the bindings, matching the
+real hardware and existing Linux driver:
+1. Do not require interrupts on samsung,exynos5-sata-phy-i2c, because
+   there is no such.
+2. Do not allow gpios on samsung,exynos5-sata-phy-i2c, because they are
+   hard-wired just like for HDMI phy.
+3. Do not require samsung,i2c-sda-delay and use default of 0.
+4. Require clock, which was always required but missing in bindings.
 
-Hi David,
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ .../devicetree/bindings/i2c/i2c-s3c2410.txt   |  58 -------
+ .../bindings/i2c/samsung,s3c2410-i2c.yaml     | 164 ++++++++++++++++++
+ 2 files changed, 164 insertions(+), 58 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
 
-I hope you are well and did not get discouraged with this patchset. The
-clock changes got merged, so if you fix the comments pointed here, I
-could merge it.
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+deleted file mode 100644
+index 66ae46d3bc2f..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
++++ /dev/null
+@@ -1,58 +0,0 @@
+-* Samsung's I2C controller
+-
+-The Samsung's I2C controller is used to interface with I2C devices.
+-
+-Required properties:
+-  - compatible: value should be either of the following.
+-      (a) "samsung, s3c2410-i2c", for i2c compatible with s3c2410 i2c.
+-      (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
+-      (c) "samsung, s3c2440-hdmiphy-i2c", for s3c2440-like i2c used
+-          inside HDMIPHY block found on several samsung SoCs
+-      (d) "samsung, exynos5-sata-phy-i2c", for s3c2440-like i2c used as
+-	   a host to SATA PHY controller on an internal bus.
+-  - reg: physical base address of the controller and length of memory mapped
+-    region.
+-  - interrupts: interrupt number to the cpu.
+-  - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
+-
+-Required for all cases except "samsung,s3c2440-hdmiphy-i2c":
+-  - Samsung GPIO variant (deprecated):
+-    - gpios: The order of the gpios should be the following: <SDA, SCL>.
+-      The gpio specifier depends on the gpio controller. Required in all
+-      cases except for "samsung,s3c2440-hdmiphy-i2c" whose input/output
+-      lines are permanently wired to the respective clienta
+-  - Pinctrl variant (preferred, if available):
+-    - pinctrl-0: Pin control group to be used for this controller.
+-    - pinctrl-names: Should contain only one value - "default".
+-
+-Optional properties:
+-  - samsung,i2c-slave-addr: Slave address in multi-master environment. If not
+-    specified, default value is 0.
+-  - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
+-    specified, the default value in Hz is 100000.
+-  - samsung,sysreg-phandle - handle to syscon used to control the system registers
+-
+-Example:
+-
+-	i2c@13870000 {
+-		compatible = "samsung,s3c2440-i2c";
+-		reg = <0x13870000 0x100>;
+-		interrupts = <345>;
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <100000>;
+-		/* Samsung GPIO variant begins here */
+-		gpios = <&gpd1 2 0 /* SDA */
+-			 &gpd1 3 0 /* SCL */>;
+-		/* Samsung GPIO variant ends here */
+-		/* Pinctrl variant begins here */
+-		pinctrl-0 = <&i2c3_bus>;
+-		pinctrl-names = "default";
+-		/* Pinctrl variant ends here */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		wm8994@1a {
+-			compatible = "wlf,wm8994";
+-			reg = <0x1a>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
+new file mode 100644
+index 000000000000..84051b0129c2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
+@@ -0,0 +1,164 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/samsung,s3c2410-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung S3C/S5P/Exynos SoC I2C Controller
++
++maintainers:
++  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
++
++properties:
++  compatible:
++    enum:
++      - samsung,s3c2410-i2c
++      - samsung,s3c2440-i2c
++        # For s3c2440-like I2C used inside HDMIPHY block found on several SoCs:
++      - samsung,s3c2440-hdmiphy-i2c
++        # For s3c2440-like I2C used as a host to SATA PHY controller on an
++        # internal bus:
++      - samsung,exynos5-sata-phy-i2c
++
++  '#address-cells':
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: i2c
++
++  gpios:
++    description: |
++      The order of the GPIOs should be the following:: <SDA, SCL>.  The GPIO
++      specifier depends on the gpio controller. Required in all cases except
++      for "samsung,s3c2440-hdmiphy-i2c" whose input/output lines are
++      permanently wired to the respective client.
++      This property is deprecated. Use "pinctrl-0" and "pinctrl-names" instead.
++    deprecated: yes
++
++  interrupts:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++  samsung,i2c-max-bus-freq:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Desired frequency in Hz of the bus.
++    default: 100000
++
++  samsung,i2c-sda-delay:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Delay (in ns) applied to data line (SDA) edges.
++    default: 0
++
++  samsung,i2c-slave-addr:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Slave address in multi-master environment.
++    default: 0
++
++  samsung,sysreg-phandle:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Pandle to syscon used to control the system registers.
++
++  '#size-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,s3c2440-hdmiphy-i2c
++              - samsung,exynos5-sata-phy-i2c
++    then:
++      properties:
++        gpios: false
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,s3c2410-i2c
++              - samsung,s3c2440-i2c
++              - samsung,s3c2440-hdmiphy-i2c
++    then:
++      required:
++        - interrupts
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos5250.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    i2c@12c60000 {
++        compatible = "samsung,s3c2440-i2c";
++        reg = <0x12C60000 0x100>;
++        interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        clocks = <&clock CLK_I2C0>;
++        clock-names = "i2c";
++        pinctrl-names = "default";
++        pinctrl-0 = <&i2c0_bus>;
++
++        samsung,sysreg-phandle = <&sysreg_system_controller>;
++        samsung,i2c-sda-delay = <100>;
++        samsung,i2c-max-bus-freq = <20000>;
++        samsung,i2c-slave-addr = <0x66>;
++
++        eeprom@50 {
++            compatible = "samsung,s524ad0xd1";
++            reg = <0x50>;
++        };
++    };
++
++    i2c@12ce0000 {
++        compatible = "samsung,s3c2440-hdmiphy-i2c";
++        reg = <0x12CE0000 0x1000>;
++        interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        clocks = <&clock CLK_I2C_HDMI>;
++        clock-names = "i2c";
++
++        samsung,i2c-sda-delay = <100>;
++        samsung,i2c-max-bus-freq = <66000>;
++
++        phy-i2c@38 {
++            compatible = "samsung,exynos4212-hdmiphy";
++            reg = <0x38>;
++        };
++    };
++
++    i2c@121d0000 {
++        compatible = "samsung,exynos5-sata-phy-i2c";
++        reg = <0x121D0000 0x100>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        clocks = <&clock CLK_SATA_PHYI2C>;
++        clock-names = "i2c";
++
++        samsung,i2c-sda-delay = <100>;
++        samsung,i2c-max-bus-freq = <40000>;
++
++        phy-i2c@38 {
++            compatible = "samsung,exynos-sataphy-i2c";
++            reg = <0x38>;
++        };
++    };
+-- 
+2.32.0
 
-One more change will be needed - use "-gpio-bank" suffix, like here:
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=for-v5.18/dt-pinctrl&id=71b8d1253b7fe0be0ecf79a7249389c8711f0f94
-
-
-Best regards,
-Krzysztof
