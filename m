@@ -2,330 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71313C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 17:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3A2C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 18:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380955AbiAaR15 (ORCPT
+        id S1356852AbiAaSlE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jan 2022 12:27:57 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:56456
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1380941AbiAaR15 (ORCPT
+        Mon, 31 Jan 2022 13:41:04 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:30919 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351014AbiAaSlD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jan 2022 12:27:57 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9FEB33F1BE
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 17:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643650075;
-        bh=LMogPhxfL2VV23EwnIvho4hqsJaI2tQRJB5PamGe9m8=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=B96KtbTbs2eoQa5szNBLtfYXBQBhO+36JBhD9rA0gUWuwLtGMIWK08hoKq6NPTetY
-         RSqKDncgTpR5eeL8Sg4ClkodOhLkhlmHE2nZlpwp9N8gZvi+GrohmCTvIA12LM2zMf
-         0xm4iJuqB9mgAdJLPoD9FCmWFXm16qRX2opkGECsmdm2biLSiAfr4pecZg6WLCPRVG
-         4hyvHEtM8x20ydP7id3C7vQotptyjQbpB+MadKkZ0yDsuA26DFVFs2KoBZqiljYA4M
-         5W9dBSKgwlk9z5+WVO6DjEYMpiBHzNzoejAytwKHGB8rHMOD63BBG28wJSKYxbTiOR
-         cOu2hxlGL2VKA==
-Received: by mail-ed1-f71.google.com with SMTP id bc24-20020a056402205800b00407cf07b2e0so7342729edb.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 09:27:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LMogPhxfL2VV23EwnIvho4hqsJaI2tQRJB5PamGe9m8=;
-        b=thIZZCOW3cWPEr3hXH6JRLnj5ePMKOVxn8A2Hf5vLCY4lmwuQ72tAbOFT3YpzhzTDy
-         FGuSJlPOjB3EL+1tAvdSMdF7LkN04jzIHcGPQldArzAQ0rmPD2bx2ZVFPS8o/2Qo8Mk5
-         EB+IRPBpsyZEsIs7arN2V48YVOusCLrpufLKbK/C39ma8+bTKpE4G9C5r+COMFIIHPNE
-         pQ4wAzWD0MUBqUcwlFPqVVko2b8OsVbhvubs+a/wo7husSLb4ZQeYnf61NKhE7F7JRub
-         wl7WTDTjl5tfscMbgierAaPf74AebAYANB96XGmVz0ecLjiIeGS2nXWdRu4YhdPjj3U7
-         w7Sg==
-X-Gm-Message-State: AOAM531iZ/Wco0W+2bMrEqxJ4GhB9d/zaoZ0xQQlgBTj40snWk2UlHxK
-        DkNQZL7QEb/WN0l9qBizdRGiOnnRgmLUrYJcIfoV+u3Ty6x6a5XSS6dAOcWWWMaz/YkaQxzknC4
-        7HxeX7GYuC8gZjFEWVbmAIzVLYEy8zYuEzLB1MdvS6GSNIN+z
-X-Received: by 2002:a17:907:6d99:: with SMTP id sb25mr17612457ejc.10.1643650075153;
-        Mon, 31 Jan 2022 09:27:55 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJznSv93p9sJfV0aRi56Nu2+poMrKt0bMKxjCqtn9Gconec/5E965GpUkgcfZUbs0BlToDogDg==
-X-Received: by 2002:a17:907:6d99:: with SMTP id sb25mr17612442ejc.10.1643650074923;
-        Mon, 31 Jan 2022 09:27:54 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id u14sm18119855eds.1.2022.01.31.09.27.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jan 2022 09:27:54 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH] dt-bindings: i2c: samsung,s3c2410-i2c: convert to dtschema
-Date:   Mon, 31 Jan 2022 18:27:13 +0100
-Message-Id: <20220131172713.208976-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Mon, 31 Jan 2022 13:41:03 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220131184102epoutp032c0534589889c8e5cb62889fb486ca42~PbwZcUSYR1736017360epoutp03R
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 18:41:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220131184102epoutp032c0534589889c8e5cb62889fb486ca42~PbwZcUSYR1736017360epoutp03R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1643654462;
+        bh=+Eb/ge6U8qUjxg2a+FfLkVgW+b7TqJ+I4nHa/jChYAQ=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=hyecUWzEii5i7bzuDkk7K21gMlfP5kq+qGx5YYAd7ylXfjIuKZX7g4fn5emsHF6sU
+         0UKnSteGucVpZoRSMCV6BypyONhRluhdSWSUkeJpmTpacPbnBUOwm/F8j8lgHj2WWM
+         cAL59gk10PG+EJyfH8wMBrdxIBHLFz8LP8KuDnJ8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220131184101epcas5p28175108bbc81852fac172c5dc1c22f83~PbwY8-1gN1134311343epcas5p2F;
+        Mon, 31 Jan 2022 18:41:01 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4JncMV74B0z4x9Pt; Mon, 31 Jan
+        2022 18:40:54 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0A.AF.05590.63D28F16; Tue,  1 Feb 2022 03:40:55 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220131184054epcas5p35bb3491004ca6c7ceaea16d71cf6ac72~PbwSRnELA0527205272epcas5p3U;
+        Mon, 31 Jan 2022 18:40:54 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220131184054epsmtrp1f144e4eea65586c8a5a7aa7d88865fa4~PbwSQgks80798507985epsmtrp1f;
+        Mon, 31 Jan 2022 18:40:54 +0000 (GMT)
+X-AuditID: b6c32a4b-723ff700000015d6-e8-61f82d36d765
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9C.33.08738.33D28F16; Tue,  1 Feb 2022 03:40:51 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220131184053epsmtip25d2058f1bc952c10a4e195cfbe87c92d~PbwRQqUuh1034310343epsmtip20;
+        Mon, 31 Jan 2022 18:40:53 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh+dt@kernel.org>
+In-Reply-To: <164361952065.14120.582076973615108824.b4-ty@canonical.com>
+Subject: RE: [PATCH 1/3] ARM: dts: exynos: update dma nodename for
+ exynos3250
+Date:   Tue, 1 Feb 2022 00:10:51 +0530
+Message-ID: <02cb01d816d2$13f75870$3be60950$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJST+FB4v64CXjUV2A/uk/xJfagJgFYGszNAVup0+erc2XuYA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdlhTQ9dc90eiwYelTBbzj5xjtdj49geT
+        xabH11gtLu+aw2Yx4/w+JovWvUfYHdg8ZjX0snlsWtXJ5rF5Sb3H501yASxR2TYZqYkpqUUK
+        qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
+        +nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZV9dtYynYy1Xx
+        bFkHUwPjG44uRk4OCQETiUkHrzN2MXJxCAnsZpR4uuEJlPOJUeL16y1sEM5nRokX3xeww7Q8
+        7L3MBJHYxSix/NgWVgjnJaPE95trwKrYBHQldixuA2sXEehklFj9/ScTSIJZIFbi7v7PzF2M
+        HBycAh4SnbNiQcLCAv4Sz9ZtB+tlEVCR+HdoOZjNK2ApMeP7flYIW1Di5MwnLBBj5CW2v53D
+        DHGRgsTPp8vAakQEnCTuvD8DVSMu8fLoEXaQGyQEOjkkOu6/Z4JocJF4ML2XFcIWlnh1fAvU
+        a1ISL/vb2EFukxDIlujZZQwRrpFYOu8YC4RtL3HgyhwWkBJmAU2J9bv0IVbxSfT+fsIE0ckr
+        0dEmBFGtKtH87ipUp7TExO5uqKUeEp/P/mWfwKg4C8ljs5A8NgvJA7MQli1gZFnFKJlaUJyb
+        nlpsWmCcl1oOj+/k/NxNjOCUqeW9g/HRgw96hxiZOBgPMUpwMCuJ8O5d+D1RiDclsbIqtSg/
+        vqg0J7X4EKMpMLQnMkuJJucDk3ZeSbyhiaWBiZmZmYmlsZmhkjjvqfQNiUIC6YklqdmpqQWp
+        RTB9TBycUg1MRnsibpqJuxbaK7jv7T2kVrvc1nx3UNnv2N25jvZ9HXwvH5rOZYxUdp55rMib
+        1af7pe5NF7GlBfNUn/ydY7rkpNxGsQ8+GXYSBo5Oe02v55ee5Vr0cM2Lb0/Pv//eYqcWwHN9
+        u+3VKy5fp/249H/GUrs9m2I2XfyyZbnY6ziFeq4Nc4M/nuad90V0l9rThlfVTY9YY9tfJ38J
+        YXvUcvFWKPOTi0rP0ngup/39a143/W42u0z5rbgrE5m19nBcOdZ96n5ZskSGeMOGgEOyl/q8
+        ROQlqsJ9xRV+lrIaNP7IlVh0u7h2+v12d0FDHQ7TbdN+/d7n1v3LemrhErODYqbcjwVaVuz8
+        KXpdN2XRLx8OJZbijERDLeai4kQAIZRIDSIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvK6x7o9Eg1MLRC3mHznHarHx7Q8m
+        i02Pr7FaXN41h81ixvl9TBate4+wO7B5zGroZfPYtKqTzWPzknqPz5vkAliiuGxSUnMyy1KL
+        9O0SuDKurtvGUrCXq+LZsg6mBsY3HF2MnBwSAiYSD3svM3UxcnEICexglFjZNIsNIiEtcX3j
+        BHYIW1hi5b/nYLaQwHNGiRPPykFsNgFdiR2L29hAmkUEuhklrvTMZARJMAvES8y71MEMMfUU
+        o8SBzc0sXYwcHJwCHhKds2JBaoQFfCVOL53KCmKzCKhI/Du0HGwBr4ClxIzv+1khbEGJkzOf
+        sEDM1JZ4evMplC0vsf3tHGaI4xQkfj5dBlYvIuAkcef9GagacYmXR4+wT2AUnoVk1Cwko2Yh
+        GTULScsCRpZVjJKpBcW56bnFhgVGeanlesWJucWleel6yfm5mxjBkaOltYNxz6oPeocYmTgY
+        DzFKcDArifDuXfg9UYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZ
+        Jg5OqQamMycWzT0baLY87OrnnitzP+hamTcxl178wbfunp6EmcuzgztUps37e8wv16+8ejaH
+        veafm+ETRfacm7Pqy8+rrJsmuHk8lMh3kX5+WuHNiaR1vEniN88mSXM12F+o8vmm+jjr2uET
+        T7d1HSgU4IlrXcST0vJOxLdjlWpuybQ1uleX2/33vsA+x+hz6EkF664VuSuXuC+4d0C1bBuf
+        mHHNt82HjGZMffbFi/HmIqa1Wy7M9Sxs7n0bUrnll842u4vTlvzXuKnAFurgw+smv23v0ysf
+        J3LKHti45PSK0BVdB9I2nVBOYyhrEpte7ifPXK2zXysiuerEvqZu8Wc1lW/qfd+86UkufuP+
+        6GPpj1v8FUosxRmJhlrMRcWJAMgQ3gULAwAA
+X-CMS-MailID: 20220131184054epcas5p35bb3491004ca6c7ceaea16d71cf6ac72
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220130080810epcas5p425f29e7a017b4b1690509e60651d4245
+References: <CGME20220130080810epcas5p425f29e7a017b4b1690509e60651d4245@epcas5p4.samsung.com>
+        <20220130075520.49193-1-alim.akhtar@samsung.com>
+        <164361952065.14120.582076973615108824.b4-ty@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung S3C24xx/S3C64xx/S5PV210/Exynos SoC I2C Controller
-bindings to DT schema format.
 
-The conversion includes also changes/fixes to the bindings, matching the
-real hardware and existing Linux driver:
-1. Do not require interrupts on samsung,exynos5-sata-phy-i2c, because
-   there is no such.
-2. Do not allow gpios on samsung,exynos5-sata-phy-i2c, because they are
-   hard-wired just like for HDMI phy.
-3. Do not require samsung,i2c-sda-delay and use default of 0.
-4. Require clock, which was always required but missing in bindings.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../devicetree/bindings/i2c/i2c-s3c2410.txt   |  58 -------
- .../bindings/i2c/samsung,s3c2410-i2c.yaml     | 164 ++++++++++++++++++
- 2 files changed, 164 insertions(+), 58 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
- create mode 100644 Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
+>-----Original Message-----
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>Sent: Monday, January 31, 2022 2:29 PM
+>To: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Alim
+>Akhtar <alim.akhtar@samsung.com>
+>Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>; linux-samsung-
+>soc@vger.kernel.org; devicetree@vger.kernel.org; robh+dt@kernel.org
+>Subject: Re: [PATCH 1/3] ARM: dts: exynos: update dma nodename for
+>exynos3250
+>
+>On Sun, 30 Jan 2022 13:25:18 +0530, Alim Akhtar wrote:
+>> Currently dma node name does not matches the pl330 dt schema and make
+>> dtbs_check report below warning
+>>
+>> 'pdma@12680000' does not match '^dma-controller(@.*)?$'
+>>
+>> Update the dma node name to match pl330 dt schema
+>>
+>> [...]
+>
+>Squashed into one commit, that's a tiny change in each file.
+>
+Ok, Thanks Krzysztof.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-deleted file mode 100644
-index 66ae46d3bc2f..000000000000
---- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--* Samsung's I2C controller
--
--The Samsung's I2C controller is used to interface with I2C devices.
--
--Required properties:
--  - compatible: value should be either of the following.
--      (a) "samsung, s3c2410-i2c", for i2c compatible with s3c2410 i2c.
--      (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
--      (c) "samsung, s3c2440-hdmiphy-i2c", for s3c2440-like i2c used
--          inside HDMIPHY block found on several samsung SoCs
--      (d) "samsung, exynos5-sata-phy-i2c", for s3c2440-like i2c used as
--	   a host to SATA PHY controller on an internal bus.
--  - reg: physical base address of the controller and length of memory mapped
--    region.
--  - interrupts: interrupt number to the cpu.
--  - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
--
--Required for all cases except "samsung,s3c2440-hdmiphy-i2c":
--  - Samsung GPIO variant (deprecated):
--    - gpios: The order of the gpios should be the following: <SDA, SCL>.
--      The gpio specifier depends on the gpio controller. Required in all
--      cases except for "samsung,s3c2440-hdmiphy-i2c" whose input/output
--      lines are permanently wired to the respective clienta
--  - Pinctrl variant (preferred, if available):
--    - pinctrl-0: Pin control group to be used for this controller.
--    - pinctrl-names: Should contain only one value - "default".
--
--Optional properties:
--  - samsung,i2c-slave-addr: Slave address in multi-master environment. If not
--    specified, default value is 0.
--  - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
--    specified, the default value in Hz is 100000.
--  - samsung,sysreg-phandle - handle to syscon used to control the system registers
--
--Example:
--
--	i2c@13870000 {
--		compatible = "samsung,s3c2440-i2c";
--		reg = <0x13870000 0x100>;
--		interrupts = <345>;
--		samsung,i2c-sda-delay = <100>;
--		samsung,i2c-max-bus-freq = <100000>;
--		/* Samsung GPIO variant begins here */
--		gpios = <&gpd1 2 0 /* SDA */
--			 &gpd1 3 0 /* SCL */>;
--		/* Samsung GPIO variant ends here */
--		/* Pinctrl variant begins here */
--		pinctrl-0 = <&i2c3_bus>;
--		pinctrl-names = "default";
--		/* Pinctrl variant ends here */
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		wm8994@1a {
--			compatible = "wlf,wm8994";
--			reg = <0x1a>;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-new file mode 100644
-index 000000000000..84051b0129c2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-@@ -0,0 +1,164 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/i2c/samsung,s3c2410-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S3C/S5P/Exynos SoC I2C Controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,s3c2410-i2c
-+      - samsung,s3c2440-i2c
-+        # For s3c2440-like I2C used inside HDMIPHY block found on several SoCs:
-+      - samsung,s3c2440-hdmiphy-i2c
-+        # For s3c2440-like I2C used as a host to SATA PHY controller on an
-+        # internal bus:
-+      - samsung,exynos5-sata-phy-i2c
-+
-+  '#address-cells':
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: i2c
-+
-+  gpios:
-+    description: |
-+      The order of the GPIOs should be the following:: <SDA, SCL>.  The GPIO
-+      specifier depends on the gpio controller. Required in all cases except
-+      for "samsung,s3c2440-hdmiphy-i2c" whose input/output lines are
-+      permanently wired to the respective client.
-+      This property is deprecated. Use "pinctrl-0" and "pinctrl-names" instead.
-+    deprecated: yes
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  samsung,i2c-max-bus-freq:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Desired frequency in Hz of the bus.
-+    default: 100000
-+
-+  samsung,i2c-sda-delay:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Delay (in ns) applied to data line (SDA) edges.
-+    default: 0
-+
-+  samsung,i2c-slave-addr:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Slave address in multi-master environment.
-+    default: 0
-+
-+  samsung,sysreg-phandle:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Pandle to syscon used to control the system registers.
-+
-+  '#size-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,s3c2440-hdmiphy-i2c
-+              - samsung,exynos5-sata-phy-i2c
-+    then:
-+      properties:
-+        gpios: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,s3c2410-i2c
-+              - samsung,s3c2440-i2c
-+              - samsung,s3c2440-hdmiphy-i2c
-+    then:
-+      required:
-+        - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5250.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    i2c@12c60000 {
-+        compatible = "samsung,s3c2440-i2c";
-+        reg = <0x12C60000 0x100>;
-+        interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clocks = <&clock CLK_I2C0>;
-+        clock-names = "i2c";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&i2c0_bus>;
-+
-+        samsung,sysreg-phandle = <&sysreg_system_controller>;
-+        samsung,i2c-sda-delay = <100>;
-+        samsung,i2c-max-bus-freq = <20000>;
-+        samsung,i2c-slave-addr = <0x66>;
-+
-+        eeprom@50 {
-+            compatible = "samsung,s524ad0xd1";
-+            reg = <0x50>;
-+        };
-+    };
-+
-+    i2c@12ce0000 {
-+        compatible = "samsung,s3c2440-hdmiphy-i2c";
-+        reg = <0x12CE0000 0x1000>;
-+        interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clocks = <&clock CLK_I2C_HDMI>;
-+        clock-names = "i2c";
-+
-+        samsung,i2c-sda-delay = <100>;
-+        samsung,i2c-max-bus-freq = <66000>;
-+
-+        phy-i2c@38 {
-+            compatible = "samsung,exynos4212-hdmiphy";
-+            reg = <0x38>;
-+        };
-+    };
-+
-+    i2c@121d0000 {
-+        compatible = "samsung,exynos5-sata-phy-i2c";
-+        reg = <0x121D0000 0x100>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        clocks = <&clock CLK_SATA_PHYI2C>;
-+        clock-names = "i2c";
-+
-+        samsung,i2c-sda-delay = <100>;
-+        samsung,i2c-max-bus-freq = <40000>;
-+
-+        phy-i2c@38 {
-+            compatible = "samsung,exynos-sataphy-i2c";
-+            reg = <0x38>;
-+        };
-+    };
--- 
-2.32.0
+
+>Applied, thanks!
+>
+>[1/3] ARM: dts: exynos: update dma nodename for exynos3250
+>      commit: a5a881a33f8d6d5427a4150ee1a24a8790ada270
+>[2/3] ARM: dts: exynos: update dma nodename for exynos4
+>      commit: 0e1434e19717309c2c3a0770bd4ef5c3a937fe03
+>[3/3] ARM: dts: exynos: update dma nodename for exynos5
+>      commit: 51d6d2cb2523c3d979e94efc065a7c88a9c8dd61
+>
+>Best regards,
+>--
+>Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
