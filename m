@@ -2,124 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33569C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 13:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D085C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 14:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237380AbiAaNPo (ORCPT
+        id S236924AbiAaOfq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jan 2022 08:15:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234808AbiAaNPo (ORCPT
+        Mon, 31 Jan 2022 09:35:46 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47648
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236910AbiAaOfq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jan 2022 08:15:44 -0500
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2222C06173B
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 05:15:43 -0800 (PST)
-Received: by mail-vs1-xe2f.google.com with SMTP id x13so11729225vsl.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 05:15:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ipkj5NQgewYwcirkC14ppPiVF1og9gtn+2K+RG2IIQU=;
-        b=T+opQyN0UjbrtKQNYPePvH3nZo+gxTny2tnIjrLlZ6Mu/EMFt5xUjf6YksjwBazO+s
-         1vWJK2iJ1WXUz9ZD5CJHDElUKo7l/b19FRLeJXlbL4NsVm9nHmjMogfBMWnAuUC3FGo3
-         2YMzeEMdQQKF23qcbbSSlNgoe2ZnTPM+PNDvbkFATGDMI6RA6qF8RPhxP3pzrhXXwsiM
-         Xbec2B7tgCzghyWyZvoBzeQ458vNjDtZOID6uDf8nou8w3ItB0/DuHR9t+gik02aXhRE
-         2Wr4xEnTSiFyduevUlqfRMQ/zTr88Vz1P7SnQn5Tt4ubCXM9XXIuaJ34w36MT0qAfNMr
-         emcw==
+        Mon, 31 Jan 2022 09:35:46 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3F3F63F043
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 14:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643639739;
+        bh=mN1fqbFpMzpoEmtDuIC6Dm/iTWIjedREVpcgBANl36k=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=v34Oew5qCDIwwmEhPjtMinFxId7UG7xobhvEKyqWKyxjGjeQZnh7Jgaes+YLIJS18
+         It5D9yX/+mxuOHC/KlGKiN6SGIyO1CCA5TLbhoXfs55NlvLHWdqZR7JhhjqWjdBSV7
+         XEE2Egb8ZkoZySepjye3gZE/bgGSpU8vUe86l3EVDMGH/St3PPZvxlqhLSshzLKJ36
+         EpJFHy7BmAWdg9aqcabyITZX2T5USHsCmrWBPrUkQ8Vm89cfP685d27KXj21lNZibl
+         hxsf35B2TAhGMcz7KdIHvbHuPifE/dUa4LyR7zqOndCGEoZChg99w69UaZE1JlO2Py
+         RWCI6XJAr4lDQ==
+Received: by mail-ed1-f72.google.com with SMTP id o5-20020a50c905000000b00403bbdcef64so6568319edh.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 06:35:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ipkj5NQgewYwcirkC14ppPiVF1og9gtn+2K+RG2IIQU=;
-        b=yfi0obNeIsOQuaU+DaEObba4UN08znqmALIT8D/eGAptgRb/DALvQCI9+xiabTo2Zp
-         raRvAPpynSjPIOev56rm8zJl+SVVcel++FFyrIVzF+4ZqBVyp8RgRN9obr9n1y+UoqvR
-         qZLX1gez4h0ybsGn2rrS0HF1WTMFwOL0c1jmdwyu3B1f4TG4fiHNH542XYdkhrZW+MMd
-         siLgSSxTZQssuX4opzrQUZaT10SrXLJN5TF34+X2J7maiOhsiV9ht2pZEo2KLCKRagbD
-         FQamolaPOyiJKAdg8gFnM0X85/Ba2eVPs/FU+L1O0zK19+MfQ8+EMFNnWO6sYWDh7EcH
-         kb7w==
-X-Gm-Message-State: AOAM530CiXhula7KVKT37aLqUEY2aGJLBgo2JU81cDr4x4akmlPQ3o0y
-        sddGBP0Or6BYX0X2x8/UVAQn0lyzqOrsB18kjlunPw==
-X-Google-Smtp-Source: ABdhPJxEOKUEWCzILNauqLlTJF9iFhrzAq8fmSlLI7Tkxf8To//0DUiH7TaeLvj6uEcDBJ7wbJpn5wxfsdrmlxVznVk=
-X-Received: by 2002:a67:df83:: with SMTP id x3mr7975308vsk.86.1643634943091;
- Mon, 31 Jan 2022 05:15:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20211227112959.7325-1-krzysztof.kozlowski@canonical.com>
- <cb11d2e0-dd03-9a48-74f3-0a22f49f16b5@canonical.com> <CAPLW+4=Hj-vamn5EoV-SmB5JwEbuik9hF2XuhB+tU11GwXPQdg@mail.gmail.com>
- <51ce758d-b96d-c9b1-b439-e97cc59d1052@canonical.com>
-In-Reply-To: <51ce758d-b96d-c9b1-b439-e97cc59d1052@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 31 Jan 2022 15:15:31 +0200
-Message-ID: <CAPLW+4muLWfOsVodZkxEDsAdUYFnsjA2ajg5JVryZ0tYyxARGQ@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64: dts: samsung: Second pull for v5.17
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mN1fqbFpMzpoEmtDuIC6Dm/iTWIjedREVpcgBANl36k=;
+        b=RFwfA3wE4pOucD3LzI37lj6L+ci4PQKcqzJm8Qm4c25sejWc6df/FVJdfLVD3+ua6x
+         HnqnHUBWQ9zvCs2AllIAeYBW750HzoAXtCrjF2bAfvTwIkq1/H+7dCEyfcOUkSLpIkpl
+         Navwkr08NTgBRXj/PKi0FTfMJX2YN9jUi4TuLDplg4ugMMTepsFQtms5cXh4RF2k9sbs
+         mp2cS9b56HmfYqskKOSXurP6XRJ0eypmSlPLWD5QDerKFyh+2whUIDhlMJS8WfM33Fg5
+         8f0JyT7L0Njm8sO6MAPk683zRhCc6UOKYaJ0NYxG4PhupzIyhShS5mt3OUqKHRGKvkFU
+         Of4Q==
+X-Gm-Message-State: AOAM531HsjJqXMoXZZ0IM0vbXq2wHAQTpURjlX32kc7JFUFE9Ow/kUQL
+        OwO+D7T6iXTxNbBna372jDSoyWxJilveVFoQ7KOyCuWGuMTFfeNJpBm72Wy9rbLYDhxbr/aYVny
+        m0szuaWU8XqDHJtYKq0EMzArBpyl0Y5bbfFjqdVG6QmCLXv++
+X-Received: by 2002:a17:907:3da1:: with SMTP id he33mr16949203ejc.603.1643639738964;
+        Mon, 31 Jan 2022 06:35:38 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJy4GNJxyhqwfB03F6E6tsE1hPORTToge8FEFloC2ibh4V7CNNEKMKGR1HGsnKFgfIpvlFrbiw==
+X-Received: by 2002:a17:907:3da1:: with SMTP id he33mr16949190ejc.603.1643639738818;
+        Mon, 31 Jan 2022 06:35:38 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id m16sm9971298eji.110.2022.01.31.06.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 06:35:37 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        David Virag <virag.david003@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Youngmin Nam <youngmin.nam@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v6 0/2] arm64: dts: exynos: Add E850-96 board support
+Date:   Mon, 31 Jan 2022 15:35:00 +0100
+Message-Id: <164363969164.158734.10738186621268035629.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220131130849.2667-1-semen.protsenko@linaro.org>
+References: <20220131130849.2667-1-semen.protsenko@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 28 Jan 2022 at 09:46, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 27/01/2022 17:58, Sam Protsenko wrote:
-> > On Thu, 27 Jan 2022 at 11:33, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >>
-> >> On 27/12/2021 12:29, Krzysztof Kozlowski wrote:
-> >>> Hi,
-> >>>
-> >>> Second pull with DTS for ARM64, on top of previous pull.
-> >>>
-> >>> Best regards,
-> >>> Krzysztof
-> >>>
-> >>>
-> >>> The following changes since commit 51b1a5729469cef57a3c97aa014aa6e1d2b8d864:
-> >>>
-> >>>   dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850 (2021-12-20 10:35:32 +0100)
-> >>>
-> >>> are available in the Git repository at:
-> >>>
-> >>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-5.17-2
-> >>>
-> >>> for you to fetch changes up to a1828d772e0738c30a383a7d335aded2f2baf908:
-> >>>
-> >>>   arm64: dts: exynos: Add initial E850-96 board support (2021-12-22 12:31:13 +0100)
-> >>>
-> >>> ----------------------------------------------------------------
-> >>> Samsung DTS ARM64 changes for v5.17, part two
-> >>>
-> >>> Add initial Exynos850 support and WinLink E850-96 board using it.
-> >>>
-> >>> ----------------------------------------------------------------
-> >>> Sam Protsenko (2):
-> >>>       arm64: dts: exynos: Add initial Exynos850 SoC support
-> >>>       arm64: dts: exynos: Add initial E850-96 board support
-> >>>
-> >>
-> >> I'll send all this as v5.18 material, so this pull-req can be skipped.
-> >>
-> >
-> > Krzysztof,
-> >
-> > As clock changes are merged in mainline now, do you want me to re-send
-> > those two dts patches using corresponding clock constants, instead of
-> > hard-coded numbers?
->
-> Yes, please.
->
+On Mon, 31 Jan 2022 15:08:47 +0200, Sam Protsenko wrote:
+> WinLink's E850-96 is a dev board based on Exynos850 SoC [1]. The board's
+> design follows 96boards specifications, hence it's compatible with
+> 96boards mezzanines [2].
+> 
+> This patch series adds the initial support for E850-96 board and
+> Exynos850 SoC. Only basic platform components are enabled at the moment
+> (like serial, I2C, eMMC, RTC, WDT, clock driver, etc). Right now with
+> this patch series it's possible to run the kernel with BusyBox rootfs as
+> a RAM disk. More features are coming soon.
+> 
+> [...]
 
-Sent out v6. Please check notes in [0/2], if something is not right,
-just let me know.
+Applied, thanks!
 
-Thanks!
+[1/2] arm64: dts: exynos: Add initial Exynos850 SoC support
+      commit: bfb3c7fa3950f2dece0bfec1df5fbce7117345af
+[2/2] arm64: dts: exynos: Add initial E850-96 board support
+      commit: 363e52998c839ce77d7d5dd6f3e575bb68449afd
 
-> Best regards,
-> Krzysztof
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
