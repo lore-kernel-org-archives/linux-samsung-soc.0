@@ -2,95 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8DBC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 30 Jan 2022 23:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6083CC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 08:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233857AbiA3XV2 (ORCPT
+        id S1347131AbiAaItM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 30 Jan 2022 18:21:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbiA3XV1 (ORCPT
+        Mon, 31 Jan 2022 03:49:12 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:37880
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346926AbiAaItM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 30 Jan 2022 18:21:27 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63AABC061714;
-        Sun, 30 Jan 2022 15:21:26 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id s13so37106206ejy.3;
-        Sun, 30 Jan 2022 15:21:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=B9+YmLMz9I8JI2bkFvn0VlkY5FsMRd/W96Q8oAu4JeY=;
-        b=jzltUS/OOqnoq0aCALuHKrCgY1M33O8WdCBO0Ku4iUFPWnc8bguxpdqaBP8zJ266K4
-         q+NGPjI7PR4xyUD0mc/xT1b8rYhQw6KmbthYcRqkEniWEszdbvHQ8ENZvOvC1Y2bSeGQ
-         5QXcXOzqjSXVLsVLpdEXC1Em/cOokai5wz2V5dyHk4KmaUes/WniOEw3WycxXs2my6mw
-         oNkybyMgakseYn3zInHsKpiKstboRSRRWiMRb/84D776NTfxL25ap2dPu2u/BjIUlW6Y
-         GnQpT4pBT+b6aHVVrgI5P3xhZ6k4dOpEOILYtVBJ33HY+9FShe4oCbGzx/zSd2Q6/65H
-         1Z4Q==
+        Mon, 31 Jan 2022 03:49:12 -0500
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 266D13F4B6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 08:49:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643618950;
+        bh=svjshNSefoEJYwgVi4BAg4xIyTtW+DljH24XBOGceLE=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=J4mbK4rV4czGz0m3S17DJDhD7DWcwhB8Qfvvf9yFooKKX/z2VgNNSktf8FotwWA3/
+         2hp+5t+B6I28nQ3Wt7kOyTpt7hTeWLVAeBdE0xcHl7FF1Mt7sLI3e13Eck3yz2lfNJ
+         LAbBWyVKmon7p6W8k9dnJb8RMVSFknsGm3bJXhq1ZYa7o2b2labPYuoZsYlPw21w1q
+         A5knLSLdlageVNYEICrcdQGfP2A/WzZMaHbs5rFdsoLvgHieHkCaJRrCY8t7kNiDA5
+         ol7yTJyvrI/x+N51OSEj6QpgCShnSYVCSGMEw8TQrv3rAUQt60GXTsNgKreistccT2
+         VSYav/lwXs1dQ==
+Received: by mail-wr1-f69.google.com with SMTP id g8-20020adfa488000000b001d8e6467fe8so4524668wrb.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 00:49:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding;
-        bh=B9+YmLMz9I8JI2bkFvn0VlkY5FsMRd/W96Q8oAu4JeY=;
-        b=Yz017GmFX9nFKohNt6pEQzVbPQoMxbghaRX5Uiy02XwIGZZkspVBl4sieDxxFZUxqK
-         hhXSl9o5icT7HWE7TEyXCskies7a4qUrgUakAkihuaTDybiTVDKU0dkqt5j7sz7wHZv0
-         2N4/WhoA45maFW208mKOVUDLZ79SoJbK60PRDTmNdlulKSE7ru7VTRq4WtsEOcodwqYA
-         TzgGxe/n7Nce/0UCHANDdmayRgg1ADJ+2P+IhVU6PaCUcDDxplRWxyskOsW1R1aFUDL3
-         cHfmPx09MUWmDrztV0i7vJrGjPe22WGcHrK+1EnJCF+MUXSw659FNRdlDWXEteS2m5AT
-         W54g==
-X-Gm-Message-State: AOAM530rhQTf9VUsUcNdaQzZJefFrETaBe+JwIqm1TicUnbbr5CPYEDV
-        6dC7f94P+iP3HBUW+6m6Q2Q=
-X-Google-Smtp-Source: ABdhPJyQajb/lyPVjck/laY6fY4dUFQYyCHEEkgA3IzlEV7WHTV13LQtR0ycykAIf9lTT8Ag9hCIMQ==
-X-Received: by 2002:a17:907:3e16:: with SMTP id hp22mr14901004ejc.710.1643584884841;
-        Sun, 30 Jan 2022 15:21:24 -0800 (PST)
-Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
-        by smtp.gmail.com with ESMTPSA id h3sm12472945ejl.193.2022.01.30.15.21.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jan 2022 15:21:24 -0800 (PST)
-Date:   Mon, 31 Jan 2022 00:21:22 +0100
-From:   Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
-Subject: [PATCH] pinctrl: samsung: improve wake irq info on console
-Message-ID: <20220130232122.GA119248@adroid>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=svjshNSefoEJYwgVi4BAg4xIyTtW+DljH24XBOGceLE=;
+        b=6mIlSfgq5+oICQFLzxDzUU2NEK5A5/9LeZIUMOK5ZgmPFuGOJyVg/R4A3Ip/SZ+GMk
+         AcbtN5UdDB8Z4wbIOv9O7e/x4TXX5h2VhbJVmGmUu5Ga+Rg6ELg0ZlaTy1po3w9glZnm
+         94bYp6EPmdcHjgkK8fAdKrKE8rXyT0phdVI8iJop0RAf++r7mhnwOZ0VZacV/QSbczVy
+         mxX1R8CmM2ecA0DTgmAuuJhFYd2RNeOwrQ2wiN2ex1jq5PMuAiXyPPXIvoLBBXgBtpsG
+         t7klNivbbz7XsCdgPqBCjDmQMLKJGKqeqO3q+6ahbN9atRrXr1cSi97xoBhSnIPCnLek
+         JOVQ==
+X-Gm-Message-State: AOAM530HagXBFtGrugzCbh9j/IgSYBFk5GfsGoL6J4vvhabzzwjWki5L
+        w3Hz9FhqegRkfO93TNP8TsmrHeGJGE7V5WkMCH+6/I7MecqSvl0779Ecy9y+4WkNo/qN6kC2UeQ
+        V1dnDGvdeiJj8DF9iOnh1Q4A4Z+CkVvwIodYfsy5yRHM0cwTC
+X-Received: by 2002:a05:600c:1d85:: with SMTP id p5mr17270867wms.36.1643618949715;
+        Mon, 31 Jan 2022 00:49:09 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzTATDXDctIwTtRUD/606FhJvoSauau1EJCnIlBOADEWwRuCy3sgT02rkUzCFPNUfk/CwaMZA==
+X-Received: by 2002:a05:600c:1d85:: with SMTP id p5mr17270857wms.36.1643618949560;
+        Mon, 31 Jan 2022 00:49:09 -0800 (PST)
+Received: from [192.168.0.71] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id y6sm8169021wma.48.2022.01.31.00.49.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Jan 2022 00:49:08 -0800 (PST)
+Message-ID: <0e5263dc-d4ba-45e9-a38f-9db127d67334@canonical.com>
+Date:   Mon, 31 Jan 2022 09:49:07 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 4/5] dt-bindings: mfd: samsung,exynos5433-lpass: Convert
+ to dtschema
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>
+References: <20220129175332.298666-1-krzysztof.kozlowski@canonical.com>
+ <20220129175332.298666-4-krzysztof.kozlowski@canonical.com>
+ <1643502137.259074.416953.nullmailer@robh.at.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <1643502137.259074.416953.nullmailer@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Improve the wake irq message by also printing the bank name and hwirq
-number that matches this irq number.
+On 30/01/2022 01:22, Rob Herring wrote:
+> On Sat, 29 Jan 2022 18:53:31 +0100, Krzysztof Kozlowski wrote:
+>> Convert the Exynos5433 LPASS bindings to DT schema format.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> ---
+>>  .../bindings/mfd/samsung,exynos5433-lpass.txt |  72 -----------
+>>  .../mfd/samsung,exynos5433-lpass.yaml         | 119 ++++++++++++++++++
+>>  2 files changed, 119 insertions(+), 72 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
+>>
+> 
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.example.dt.yaml: audio-subsystem@11400000: serial@11460000:compatible:0: 'samsung,exynos5433-uart' is not one of ['apple,s5l-uart', 'samsung,s3c2410-uart', 'samsung,s3c2412-uart', 'samsung,s3c2440-uart', 'samsung,s3c6400-uart', 'samsung,s5pv210-uart', 'samsung,exynos4210-uart', 'samsung,exynos850-uart']
+> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
+> Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.example.dt.yaml:0:0: /example-0/audio-subsystem@11400000/serial@11460000: failed to match any schema with compatible: ['samsung,exynos5433-uart']
+> 
 
-Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is false positive or rather my patch-ordering issue. I fixed it up
+in patch 5/5 of this series.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 0489c899b401..30293fc23354 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -344,7 +344,8 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
- 	unsigned long bit = 1UL << (2 * bank->eint_offset + irqd->hwirq);
- 
--	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
-+	pr_info("wake %s for irq %u (%s-%lu)\n", on ? "enabled" : "disabled",
-+		irqd->irq, bank->name, irqd->hwirq);
- 
- 	if (!on)
- 		*our_chip->eint_wake_mask_value |= bit;
--- 
-2.25.1
 
+Best regards,
+Krzysztof
