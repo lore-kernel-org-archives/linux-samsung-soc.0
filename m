@@ -2,153 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3A2C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 31 Jan 2022 18:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51FAC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Feb 2022 00:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356852AbiAaSlE (ORCPT
+        id S231290AbiBAAtj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 31 Jan 2022 13:41:04 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:30919 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351014AbiAaSlD (ORCPT
+        Mon, 31 Jan 2022 19:49:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231274AbiBAAti (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 31 Jan 2022 13:41:03 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220131184102epoutp032c0534589889c8e5cb62889fb486ca42~PbwZcUSYR1736017360epoutp03R
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Jan 2022 18:41:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220131184102epoutp032c0534589889c8e5cb62889fb486ca42~PbwZcUSYR1736017360epoutp03R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1643654462;
-        bh=+Eb/ge6U8qUjxg2a+FfLkVgW+b7TqJ+I4nHa/jChYAQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=hyecUWzEii5i7bzuDkk7K21gMlfP5kq+qGx5YYAd7ylXfjIuKZX7g4fn5emsHF6sU
-         0UKnSteGucVpZoRSMCV6BypyONhRluhdSWSUkeJpmTpacPbnBUOwm/F8j8lgHj2WWM
-         cAL59gk10PG+EJyfH8wMBrdxIBHLFz8LP8KuDnJ8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220131184101epcas5p28175108bbc81852fac172c5dc1c22f83~PbwY8-1gN1134311343epcas5p2F;
-        Mon, 31 Jan 2022 18:41:01 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4JncMV74B0z4x9Pt; Mon, 31 Jan
-        2022 18:40:54 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0A.AF.05590.63D28F16; Tue,  1 Feb 2022 03:40:55 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220131184054epcas5p35bb3491004ca6c7ceaea16d71cf6ac72~PbwSRnELA0527205272epcas5p3U;
-        Mon, 31 Jan 2022 18:40:54 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220131184054epsmtrp1f144e4eea65586c8a5a7aa7d88865fa4~PbwSQgks80798507985epsmtrp1f;
-        Mon, 31 Jan 2022 18:40:54 +0000 (GMT)
-X-AuditID: b6c32a4b-723ff700000015d6-e8-61f82d36d765
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9C.33.08738.33D28F16; Tue,  1 Feb 2022 03:40:51 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220131184053epsmtip25d2058f1bc952c10a4e195cfbe87c92d~PbwRQqUuh1034310343epsmtip20;
-        Mon, 31 Jan 2022 18:40:53 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Cc:     <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>
-In-Reply-To: <164361952065.14120.582076973615108824.b4-ty@canonical.com>
-Subject: RE: [PATCH 1/3] ARM: dts: exynos: update dma nodename for
- exynos3250
-Date:   Tue, 1 Feb 2022 00:10:51 +0530
-Message-ID: <02cb01d816d2$13f75870$3be60950$@samsung.com>
+        Mon, 31 Jan 2022 19:49:38 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6729EC061714;
+        Mon, 31 Jan 2022 16:49:38 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id p12so30549648edq.9;
+        Mon, 31 Jan 2022 16:49:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=RARgbp3ziHgqJwdAQ5KpgTd/M+ZUGVAZa9+lSQVJ96k=;
+        b=HtT6XDBMjS1UuNBFkJ0yT2Z3RDXoeYjbKE84Mjn1d6JDMP84LvoPeOGdhOsKk85xFI
+         1wspImMxqaTwTg3c7o1WTfzbhxyR9S4XTt7KNWOEOtAJX4ztbQzq0QYW8cU1MLyj2SR9
+         F/elTYQQpvw+xs+xIQ8XN7Aqk37qsj255jXuToupQ1YPhvUSLsQe0swqkPlLJj/GyO6B
+         4GZAC7Rj6oD4Cx8nIRB+AMR0dauBA/Lbbm5S9Latn7oHcGc2JRzpt5oCQmOJvALujY4L
+         ROTEGTpdUHKqcg/wIMHt0KgSptaomcEuCw1yXe34m0hBgCijVd4hAWzC17shN34NUTVf
+         LLHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=RARgbp3ziHgqJwdAQ5KpgTd/M+ZUGVAZa9+lSQVJ96k=;
+        b=k7sbRrM87B1cOfzX2WO7OJ6Xx8Jp2GtoKcCLREcBitvsutXQFr+WK8t1hpgIk67P/j
+         xKZV7Qx0ASxc/0OB0fNKXTP0V+2lYNsJcNWTCqHiEwUHKXS/imHIPyoHQJGAn5gTC4wA
+         p3xbY50IhR9SHEE4fjYkNRVN5KrOFF1NweJAgaNvt9lyqI4GngwRfLJmqH+PR0Q7GFwu
+         QcRTSrgKJRaTfA8dAFlybyB0IRLMEdGql3fTg8+axuLQc+ul4FaGBJVgaSSq/tzfnEn9
+         m30LMo9Jz8JP0au5zHyBcu29/x1q3dyJaRsPPPB0A7u69bqkRprGK6bJuRshm+50UuwP
+         Garw==
+X-Gm-Message-State: AOAM531lphOsR+lJYmsj5SCqjAJdrv+15h/8FGKZH75ci1VyBfTSlo1q
+        eeKozVXEZcEwPDweByiucx0=
+X-Google-Smtp-Source: ABdhPJyXKIGyslT2Qo6ReOdkNzk+C59P6xyAbbDYfL2TOdwpxgU8+m/yIHNBwxH75J1z3CVchti63g==
+X-Received: by 2002:aa7:d312:: with SMTP id p18mr22152047edq.49.1643676576936;
+        Mon, 31 Jan 2022 16:49:36 -0800 (PST)
+Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.gmail.com with ESMTPSA id lt12sm13858809ejb.166.2022.01.31.16.49.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 16:49:36 -0800 (PST)
+Message-ID: <5e6a3b378f08a809a05933b3c978a6a320ffe3f2.camel@gmail.com>
+Subject: Re: [PATCH v4 7/7] arm64: dts: exynos: Add initial device tree
+ support for Exynos7885 SoC
+From:   David Virag <virag.david003@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Date:   Tue, 01 Feb 2022 01:47:56 +0100
+In-Reply-To: <7941a6b8-4bca-797e-2fa9-ebd82bed70fa@canonical.com>
+References: <20211206153124.427102-1-virag.david003@gmail.com>
+         <20211206153124.427102-8-virag.david003@gmail.com>
+         <7941a6b8-4bca-797e-2fa9-ebd82bed70fa@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.3 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJST+FB4v64CXjUV2A/uk/xJfagJgFYGszNAVup0+erc2XuYA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdlhTQ9dc90eiwYelTBbzj5xjtdj49geT
-        xabH11gtLu+aw2Yx4/w+JovWvUfYHdg8ZjX0snlsWtXJ5rF5Sb3H501yASxR2TYZqYkpqUUK
-        qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
-        +nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZV9dtYynYy1Xx
-        bFkHUwPjG44uRk4OCQETiUkHrzN2MXJxCAnsZpR4uuEJlPOJUeL16y1sEM5nRokX3xeww7Q8
-        7L3MBJHYxSix/NgWVgjnJaPE95trwKrYBHQldixuA2sXEehklFj9/ScTSIJZIFbi7v7PzF2M
-        HBycAh4SnbNiQcLCAv4Sz9ZtB+tlEVCR+HdoOZjNK2ApMeP7flYIW1Di5MwnLBBj5CW2v53D
-        DHGRgsTPp8vAakQEnCTuvD8DVSMu8fLoEXaQGyQEOjkkOu6/Z4JocJF4ML2XFcIWlnh1fAvU
-        a1ISL/vb2EFukxDIlujZZQwRrpFYOu8YC4RtL3HgyhwWkBJmAU2J9bv0IVbxSfT+fsIE0ckr
-        0dEmBFGtKtH87ipUp7TExO5uqKUeEp/P/mWfwKg4C8ljs5A8NgvJA7MQli1gZFnFKJlaUJyb
-        nlpsWmCcl1oOj+/k/NxNjOCUqeW9g/HRgw96hxiZOBgPMUpwMCuJ8O5d+D1RiDclsbIqtSg/
-        vqg0J7X4EKMpMLQnMkuJJucDk3ZeSbyhiaWBiZmZmYmlsZmhkjjvqfQNiUIC6YklqdmpqQWp
-        RTB9TBycUg1MRnsibpqJuxbaK7jv7T2kVrvc1nx3UNnv2N25jvZ9HXwvH5rOZYxUdp55rMib
-        1af7pe5NF7GlBfNUn/ydY7rkpNxGsQ8+GXYSBo5Oe02v55ee5Vr0cM2Lb0/Pv//eYqcWwHN9
-        u+3VKy5fp/249H/GUrs9m2I2XfyyZbnY6ziFeq4Nc4M/nuad90V0l9rThlfVTY9YY9tfJ38J
-        YXvUcvFWKPOTi0rP0ngup/39a143/W42u0z5rbgrE5m19nBcOdZ96n5ZskSGeMOGgEOyl/q8
-        ROQlqsJ9xRV+lrIaNP7IlVh0u7h2+v12d0FDHQ7TbdN+/d7n1v3LemrhErODYqbcjwVaVuz8
-        KXpdN2XRLx8OJZbijERDLeai4kQAIZRIDSIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvK6x7o9Eg1MLRC3mHznHarHx7Q8m
-        i02Pr7FaXN41h81ixvl9TBate4+wO7B5zGroZfPYtKqTzWPzknqPz5vkAliiuGxSUnMyy1KL
-        9O0SuDKurtvGUrCXq+LZsg6mBsY3HF2MnBwSAiYSD3svM3UxcnEICexglFjZNIsNIiEtcX3j
-        BHYIW1hi5b/nYLaQwHNGiRPPykFsNgFdiR2L29hAmkUEuhklrvTMZARJMAvES8y71MEMMfUU
-        o8SBzc0sXYwcHJwCHhKds2JBaoQFfCVOL53KCmKzCKhI/Du0HGwBr4ClxIzv+1khbEGJkzOf
-        sEDM1JZ4evMplC0vsf3tHGaI4xQkfj5dBlYvIuAkcef9GagacYmXR4+wT2AUnoVk1Cwko2Yh
-        GTULScsCRpZVjJKpBcW56bnFhgVGeanlesWJucWleel6yfm5mxjBkaOltYNxz6oPeocYmTgY
-        DzFKcDArifDuXfg9UYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZ
-        Jg5OqQamMycWzT0baLY87OrnnitzP+hamTcxl178wbfunp6EmcuzgztUps37e8wv16+8ejaH
-        veafm+ETRfacm7Pqy8+rrJsmuHk8lMh3kX5+WuHNiaR1vEniN88mSXM12F+o8vmm+jjr2uET
-        T7d1HSgU4IlrXcST0vJOxLdjlWpuybQ1uleX2/33vsA+x+hz6EkF664VuSuXuC+4d0C1bBuf
-        mHHNt82HjGZMffbFi/HmIqa1Wy7M9Sxs7n0bUrnll842u4vTlvzXuKnAFurgw+smv23v0ysf
-        J3LKHti45PSK0BVdB9I2nVBOYyhrEpte7ifPXK2zXysiuerEvqZu8Wc1lW/qfd+86UkufuP+
-        6GPpj1v8FUosxRmJhlrMRcWJAMgQ3gULAwAA
-X-CMS-MailID: 20220131184054epcas5p35bb3491004ca6c7ceaea16d71cf6ac72
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220130080810epcas5p425f29e7a017b4b1690509e60651d4245
-References: <CGME20220130080810epcas5p425f29e7a017b4b1690509e60651d4245@epcas5p4.samsung.com>
-        <20220130075520.49193-1-alim.akhtar@samsung.com>
-        <164361952065.14120.582076973615108824.b4-ty@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, 2022-01-31 at 16:35 +0100, Krzysztof Kozlowski wrote:
+> Hi David,
+> 
+> I hope you are well and did not get discouraged with this patchset.
+> The
+> clock changes got merged, so if you fix the comments pointed here, I
+> could merge it.
+> 
+> One more change will be needed - use "-gpio-bank" suffix, like here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=for-v5.18/dt-pinctrl&id=71b8d1253b7fe0be0ecf79a7249389c8711f0f94
+> 
+> 
+> Best regards,
+> Krzysztof
 
+Hi Krzysztof, thanks for reaching out!
 
->-----Original Message-----
->From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
->Sent: Monday, January 31, 2022 2:29 PM
->To: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Alim
->Akhtar <alim.akhtar@samsung.com>
->Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>; linux-samsung-
->soc@vger.kernel.org; devicetree@vger.kernel.org; robh+dt@kernel.org
->Subject: Re: [PATCH 1/3] ARM: dts: exynos: update dma nodename for
->exynos3250
->
->On Sun, 30 Jan 2022 13:25:18 +0530, Alim Akhtar wrote:
->> Currently dma node name does not matches the pl330 dt schema and make
->> dtbs_check report below warning
->>
->> 'pdma@12680000' does not match '^dma-controller(@.*)?$'
->>
->> Update the dma node name to match pl330 dt schema
->>
->> [...]
->
->Squashed into one commit, that's a tiny change in each file.
->
-Ok, Thanks Krzysztof.
+I did not get discouraged, in fact I'm excited to be able to do this.
+I will send the dts for sure, I just haven't had the time right now for
+personal reasons. I expect to be able to send it in a few days!
 
-
->Applied, thanks!
->
->[1/3] ARM: dts: exynos: update dma nodename for exynos3250
->      commit: a5a881a33f8d6d5427a4150ee1a24a8790ada270
->[2/3] ARM: dts: exynos: update dma nodename for exynos4
->      commit: 0e1434e19717309c2c3a0770bd4ef5c3a937fe03
->[3/3] ARM: dts: exynos: update dma nodename for exynos5
->      commit: 51d6d2cb2523c3d979e94efc065a7c88a9c8dd61
->
->Best regards,
->--
->Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
+Thanks, and best regards,
+David
