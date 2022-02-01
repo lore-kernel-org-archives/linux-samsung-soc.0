@@ -2,76 +2,78 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2808C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Feb 2022 08:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3230EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Feb 2022 08:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235377AbiBAIRO (ORCPT
+        id S235402AbiBAISc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Feb 2022 03:17:14 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56656
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235371AbiBAIRO (ORCPT
+        Tue, 1 Feb 2022 03:18:32 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47790
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235394AbiBAISc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Feb 2022 03:17:14 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        Tue, 1 Feb 2022 03:18:32 -0500
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3125A3FFD8
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Feb 2022 08:17:13 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 41BA33F20A
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Feb 2022 08:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643703433;
-        bh=MItxx70iFew0YeZnNA7KR41aDD2ctvR1pwd1gDOLhyA=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+        s=20210705; t=1643703511;
+        bh=4OMJ5aSVw9egu+KfVN6MouMq2XmyI041S1HUizk8CCg=;
+        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=Y1yoJxBzrWfZFtnox+3UoAyTyMYpLsHg/B8PgoKuYofffqTwhPVl3C/wph68c64SX
-         RskxcC3bol3BRKvO3Wceo7SYFl1UMaLFJR3Ezihu2InRlVIZ4ehBVOO4ik7XIO8Ln2
-         IGNd1BSuXjCZZQy0VbapVuylcFVzja00ALlGagp0LTvXYpDKp9CuFORbjrSDAuc1mU
-         jwPc7QSHRJop064vo8GGL5m7P6iu0mJ9HyY7B/nVXTzFeQ0rsTGruI/2Kxmmim12iD
-         LtSiRoW/sbDUomHW0guZE+FHurxvogQvskw3dmC3OrMEPDl34Cml2emv/D9zbOUeUU
-         jEMvox/3dlYVg==
-Received: by mail-ed1-f71.google.com with SMTP id w15-20020a056402268f00b00408234dc1dfso8275454edd.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Feb 2022 00:17:13 -0800 (PST)
+        b=QeJWjHOs/TDyxxegU58iKapFRF0SpMTyDqhr9fyHhcS1hIhXhDpfrSAcNAMnVbdlG
+         i8QzN0hGObFje/MwGyuENHxe4Hn4a51kayL8tVqaD5GS3HEyVmTKpTE7Kqbek8jmx2
+         yD3B3e/A3PBo8k13rnq48GU65DbKStdGJ+SNy+VbSAdpFWbwGe9tUXoyR4wUGyF1RU
+         GCXCPIn7ZbuQpoSiVsyJ7TAzLJWL+ccauWcZooHnh8ilwPsoYDRubBxcy3EdPzYzxj
+         rMqnuAORQEvfLrs/JXkRio3O28mNaJBJhtWlRc5bupj7PLPRiJGEG2IP/+yTMxfvmA
+         yP5qJfJa3A/1A==
+Received: by mail-ej1-f71.google.com with SMTP id rl11-20020a170907216b00b006b73a611c1aso6147328ejb.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Feb 2022 00:18:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MItxx70iFew0YeZnNA7KR41aDD2ctvR1pwd1gDOLhyA=;
-        b=20VE9uACXDw1DXg7q5yzaptFe8QT5JhZUydj0t+nZkzpaduhPRuQKS7l8nV2z4hLpI
-         14LoHWpxQkGSv66N4ltKt5blKHmV8Wxc5M0GbiqYngWrCpHQWyTTtEKOjgQwQh93cKzO
-         keJvAJcnwrye0z3+J0lpM12q5EyW8/AnJL56DYdZacsqmy9Jl7S0ZQyndTurC0EC42oz
-         gGpJqkL2XbdvI9sKkyuLxOwSBNiKZ8PTOBwvakkU9q3vOMHWOebVqqza0H5ae4+lS/sb
-         UEi8uKmFT9Jsw7d63aVaHzYlMF+43SuRPBnnNwsmyj89sHZZYB0GUFdwuVCTTcL7NbjL
-         ayqw==
-X-Gm-Message-State: AOAM532UqioCSc4kQdptV+Yp/87wBXeMrh4OCSmvmgiIMDeNEdspWKmE
-        pj9eRYWWCjdeetFwRcWhmHovrtwPqPkS+WyHDLmNdjEhJkYYkZ+k4EH5DuzkO0nsCyehEca4Npe
-        Tk3s1d7S7tsd/oQlU53IVqxxgyfL1/9SrnCHeJxRGjVXheAjt
-X-Received: by 2002:a17:907:7e82:: with SMTP id qb2mr19890303ejc.496.1643703432584;
-        Tue, 01 Feb 2022 00:17:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwhOxyC/yzDk+upGVDMqjGzeMIciEE57Rpod35Osx007NQEYEitTAQ3J3/YfgtY6KfuQqdjZA==
-X-Received: by 2002:a17:907:7e82:: with SMTP id qb2mr19890296ejc.496.1643703432455;
-        Tue, 01 Feb 2022 00:17:12 -0800 (PST)
+        bh=4OMJ5aSVw9egu+KfVN6MouMq2XmyI041S1HUizk8CCg=;
+        b=4yIAqcVFPTGZLyAKLvfS62yFzqKPwsxAeFRBKTe3HPfuKgBWdec9yznMFc07byawuT
+         zvX/+pPeadniFpDP9JOxZZTwD/Gd1paJedjk7SI+GxgMB4jakP+Pm1zCoLSWaTVijtVU
+         3DjMdPFfsJkr9zvupcNaSJBYK6MztyLTh6Q9KvVBvAzm8woJCh2uR4W1T2GU+YFtQFSE
+         F4rUQdnDkVtPKOs4/b4sG2BE5dugF2064ZG7iOwGJABtXJIG3un/eNZ4tr+Usw7irre+
+         HTi6O9hFoocwbqcbkVmw6P9Rr0+UOwISxhxcWS8HpX8rsuTn+Cr5Ym6zY3YxtmuVYsiQ
+         rHqg==
+X-Gm-Message-State: AOAM533KgoPqG7ge5I4MurEmh8wT7uoywj21Ko0uo7aTJRArnqmne9ub
+        xAtZbfuDHEuMCH0kkPCymT2Yel5Jdg3gMIPgS2JrDMHQBwRX1CvGQ8QpFFFKsDwRYevjnVuVI/H
+        z6Re+JEA7Fs7ovcoUsR1Lf6zQEo32mN1VdZFvmCSA2YUj2vXW
+X-Received: by 2002:a17:906:19ce:: with SMTP id h14mr20919928ejd.407.1643703510616;
+        Tue, 01 Feb 2022 00:18:30 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwi9GBsiIiYtp42mt15Psk7ObFdzcgWoYjLwVXsinm40dgxMTPh5vnURxVxv53FfpPvG7hEKQ==
+X-Received: by 2002:a17:906:19ce:: with SMTP id h14mr20919913ejd.407.1643703510486;
+        Tue, 01 Feb 2022 00:18:30 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id v8sm14179485eju.57.2022.02.01.00.17.11
+        by smtp.gmail.com with ESMTPSA id r3sm14368372ejd.129.2022.02.01.00.18.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Feb 2022 00:17:11 -0800 (PST)
+        Tue, 01 Feb 2022 00:18:30 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+To:     linux-phy@lists.infradead.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] clk: samsung: fix missing Tesla FSD dependency on Exynos
-Date:   Tue,  1 Feb 2022 09:16:36 +0100
-Message-Id: <164370330545.12265.2531636049712194501.b4-ty@canonical.com>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: (subset) [PATCH 1/8] arm64: dts: exynos: adjust USB DRD clocks with dtschema in Exynos7
+Date:   Tue,  1 Feb 2022 09:17:55 +0100
+Message-Id: <164370347107.13100.9120518363426119036.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220129173407.278591-1-krzysztof.kozlowski@canonical.com>
-References: <20220129173407.278591-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220129193646.372481-1-krzysztof.kozlowski@canonical.com>
+References: <20220129193646.372481-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -79,20 +81,15 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 29 Jan 2022 18:34:07 +0100, Krzysztof Kozlowski wrote:
-> The Tesla FSD clock controller driver uses shared parts from Exynos
-> ARM64 clock drivers, so add proper dependency to fix COMPILE_TEST build
-> errors like:
+On Sat, 29 Jan 2022 20:36:39 +0100, Krzysztof Kozlowski wrote:
+> Use the same order of USB 3.0 DRD controller clocks as in Exynos5433.
 > 
->   /usr/bin/aarch64-linux-gnu-ld: drivers/clk/samsung/clk-fsd.o: in function `fsd_cmu_probe':
->   clk-fsd.c:(.init.text+0x9c): undefined reference to `exynos_arm64_register_cmu'
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] clk: samsung: fix missing Tesla FSD dependency on Exynos
-      commit: 0b59bc00a6936e8670b58d4307a2cfba341d40d0
+[1/8] arm64: dts: exynos: adjust USB DRD clocks with dtschema in Exynos7
+      commit: a0d5455330ece6f50ddf9e71d530f91c302803e9
 
 Best regards,
 -- 
