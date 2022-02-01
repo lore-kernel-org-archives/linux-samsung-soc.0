@@ -2,80 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED17C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Feb 2022 20:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C639C4167B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Feb 2022 11:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236683AbiBAUbK (ORCPT
+        id S1343629AbiBBLCM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Feb 2022 15:31:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234508AbiBAUbJ (ORCPT
+        Wed, 2 Feb 2022 06:02:12 -0500
+Received: from mail.profitfirm24.com.pl ([212.237.10.110]:58974 "EHLO
+        mail.profitfirm24.com.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343646AbiBBLCL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Feb 2022 15:31:09 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74515C061714;
-        Tue,  1 Feb 2022 12:31:09 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id ah7so57646663ejc.4;
-        Tue, 01 Feb 2022 12:31:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=871htcl5Y6GDsL/12E1mDAY6z1Cjye967VwgYm9q+Gg=;
-        b=hvlVn+CVcEnV+tlmPHp78A14rGo2OGfM2X0oCX7frzFrhbwbvUT4M7Dyq3fYezi/aZ
-         hQrJXfo/LL7uwEIF/G2UWjjeOSmQk9g/CX+qc/oq7KOqiZY+Q725ENqrUq8YDOD+Udia
-         4XgQgOqyVWv3w/QlWp/S9Afui0CuUPZu3en+9BrEXn1+ikqrWOSFiudaFmNLcOWi9TwN
-         Ka6ymt53BBUJl0zhiemfQQED/2Wy5aq+fweFEruWk0YkzJ3rQbE3CfOCfauJjhSa08QX
-         smgFEHiXMSrtlRiziaW6bNwHOEOvB+lq4ak4OFt4MYzx1bkT7jqvKwNodj1jZwQADeb8
-         3JIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=871htcl5Y6GDsL/12E1mDAY6z1Cjye967VwgYm9q+Gg=;
-        b=d3tV/EO4W1ZS9weoIo1cTe5SkQ5A2awVu9azIoouqD4mBY+QkE4IAUoYtd2NhAvkcr
-         vDnUYJ7So8VRyL2QR6nDvyxw6QmHsPT8dNNc5mEOJyP0rq9/fmGW228RMJccX8xegJpx
-         3558vvP1Xh1d3iTT1BxnJt07ccz6Z4oUXPClrILTFIRt+rlInKNSwDdu9rUFZ97De8WT
-         VhpPqQSzvdgeEl/qTb28/8PMCacKu6sAhhobo8NBV/7qGqJwem+mNGYthxVlYMJ6gOq6
-         klHuPtLIQcdNuSGLgw822voaGuYeW+O/UIgBEvlKpZVnhgLAaOkCUH4S1+YBzbhV939+
-         fN7g==
-X-Gm-Message-State: AOAM530HHRFv8KQ0Lys5pEJ12ddfTBOGMAJeegg0WESvUpz5PeidC2eT
-        KxBgzy9czsiIEA/R1bBIsE5/gndPJlvcQlCUpyA=
-X-Google-Smtp-Source: ABdhPJxkt038fDi0CxsQYm22/dTA7Yyk8WXF4gwZgsFk7C6/L85VmkSfCoJ3PfkU6B3/uMwgE0DALb5sA11SzLIxvto=
-X-Received: by 2002:a17:907:a40a:: with SMTP id sg10mr23120532ejc.44.1643747467808;
- Tue, 01 Feb 2022 12:31:07 -0800 (PST)
+        Wed, 2 Feb 2022 06:02:11 -0500
+Received: by mail.profitfirm24.com.pl (Postfix, from userid 1001)
+        id 0DCA0AABED; Tue,  1 Feb 2022 09:17:43 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitfirm24.com.pl;
+        s=mail; t=1643707258;
+        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
+        h=Date:From:To:Subject:From;
+        b=XYzlM+ujxiOXPe5WHzQnMkGft8+q5S2EhMroEHKMAa+a28XfkEUvwBKupyIV0UpPk
+         WXXR76WqVS1TFkL7/TZhJgU47qgXydAVqz90HERAVt1sZBYhJmn5Ks1+H8W39pEJig
+         cOz//gB82AzAEjkSDoQD3IAArH/Iej23MP4x8AsR1vJmNx5EYabHAtGCN1bHLVvGvq
+         FiY0NFyjun1xmpZXbOZWweWSO7E7iZWYx0XMsDnosjdL0KLccYrDYRJBHY2v0HIb0B
+         VqEFBIGw0DDueYkna2ZMQd0LzlF7kC3M7yLzDOsNfVd5bejFiQIJeqCRepUng7VS7y
+         KKjpLhNHrCS4Q==
+Received: by profitfirm24.com.pl for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Feb 2022 09:17:20 GMT
+Message-ID: <20220201074652-0.1.b.2zer.0.n484iel1er@profitfirm24.com.pl>
+Date:   Tue,  1 Feb 2022 09:17:20 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@profitfirm24.com.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.profitfirm24.com.pl
 MIME-Version: 1.0
-References: <20220130232122.GA119248@adroid>
-In-Reply-To: <20220130232122.GA119248@adroid>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 1 Feb 2022 22:29:32 +0200
-Message-ID: <CAHp75VdAo9BzQ+PnH5v1P2GZTjbYPqiEhp+j6H5+fbX+2o=76g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: improve wake irq info on console
-To:     =?UTF-8?Q?Martin_J=C3=BCcker?= <martin.juecker@gmail.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 1, 2022 at 5:11 PM Martin J=C3=BCcker <martin.juecker@gmail.com=
-> wrote:
->
-> Improve the wake irq message by also printing the bank name and hwirq
-> number that matches this irq number.
+Dzie=C5=84 dobry,
 
-Perhaps wait a bit and replace the first argument with str_enabled_disabled=
-()?
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
 
---=20
-With Best Regards,
-Andy Shevchenko
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
+
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
+
+
+Pozdrawiam
+Arkadiusz Soko=C5=82owski
