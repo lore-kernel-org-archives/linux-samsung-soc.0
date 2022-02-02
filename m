@@ -2,107 +2,133 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F179C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Feb 2022 16:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FC5C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Feb 2022 23:06:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345876AbiBBQhH (ORCPT
+        id S1347998AbiBBXGe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Feb 2022 11:37:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239809AbiBBQhG (ORCPT
+        Wed, 2 Feb 2022 18:06:34 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40996 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239283AbiBBXGd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Feb 2022 11:37:06 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3072AC061714;
-        Wed,  2 Feb 2022 08:37:06 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id me13so67466785ejb.12;
-        Wed, 02 Feb 2022 08:37:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Cd2L7uJjqX5X65ANfXGFgzVTnafQ2XhujK8sHBCfjuk=;
-        b=SRa8Io2MbRzk3l5SK9isqBAaRwOJc8Lms8I0mHmPtJzBhhrio5x2R1NTl50VfftL5i
-         wtZavavJmWgy37uwUClyHPoC+KmvVKr2ow002HwiK5UvTdwmIBdqOymwIaTMuwORSJHx
-         WgcRS/Wp8yOVxfbLNvV1Ikf1dtZyMeLYSxpeWqPFKTF85VY9yZUA2iiDkVuFMtfflpV/
-         ZNqs0F+e10o96wz9lfIMMFAgIJxZrF4CiVHQLZIIs5c1hdxE8cFZMVY5mmXOLy4LQM3N
-         KQQN6NqlX2OUKlvJme5z6msZ9HBTQujNrjQd3DVjRhmrKINPZRUla2sRzS+fNov8GP+v
-         vOIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Cd2L7uJjqX5X65ANfXGFgzVTnafQ2XhujK8sHBCfjuk=;
-        b=iRGW75rPQDCEwTcAdC88NZvXRmW+eGJ+crVlRyxywQ54zqv0MIPVXZBLoW+C3J847h
-         ASK7ShSooIGqhep8NdBMPT91TYo0aViQ//GAGpjcvfg8chPFwnNSqGmjH7nIh1LKuIJX
-         ozWSQY1idNXv21UY+a85XCqYIblL0+KRK05i3wzhWYEopJ7cohqqwVjrCdj+iuzkdz6f
-         IWNFCu5zPIQdau0Ivpf1XVK/TEDY7/7Wy2YvAOfreTyC6w8FR87oCAvDL0OwKQfZ+gnM
-         j5xa4kYk/PyRWx5MKu9LgRgvOIsXcq7Gfti2UzUNpx3us54LfSN1VVV8NrbIAMukzmEN
-         EdSA==
-X-Gm-Message-State: AOAM531wo3pLSBNl9xe935IBUqqEG98DU5b59jCLj7Gg4Y+zOXNcDqC6
-        s2ru7ONjUSya+biIVbruJcY=
-X-Google-Smtp-Source: ABdhPJy1r4v5P6yPdGmqIX4qx7EFiacE68y8GIyjMzqFVYw5OA2PnEyoN79TNPqHpQWIFetOU5hgPA==
-X-Received: by 2002:a17:906:7712:: with SMTP id q18mr21712684ejm.434.1643819824755;
-        Wed, 02 Feb 2022 08:37:04 -0800 (PST)
-Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
-        by smtp.gmail.com with ESMTPSA id w22sm8282605ejc.137.2022.02.02.08.37.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 08:37:04 -0800 (PST)
-From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
-Subject: [PATCH 3/3] ARM: defconfig: add smb347 charger driver for p4note
-Date:   Wed,  2 Feb 2022 17:34:17 +0100
-Message-Id: <aba0d1ffe6a34ed09022cb8ea6e780b01b7d70c0.1643757744.git.martin.juecker@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <5d15937b6a7c4ae82a8f0d164fa28a4d4ad46325.1643757744.git.martin.juecker@gmail.com>
-References: <5d15937b6a7c4ae82a8f0d164fa28a4d4ad46325.1643757744.git.martin.juecker@gmail.com>
+        Wed, 2 Feb 2022 18:06:33 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220202230631euoutp01ca0284b1a7d789ebfaf2fdd23827f56f~QGqxtQ3QM2536125361euoutp01L
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Feb 2022 23:06:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220202230631euoutp01ca0284b1a7d789ebfaf2fdd23827f56f~QGqxtQ3QM2536125361euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1643843191;
+        bh=oI6rA4dWwd/CR2IxUjBGN/DOwLIbzh3/ZIZp+dIPzMU=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=C4JYXpQmrAAn1hYow1+HsGQhjP7cWnrmMzvvvlPEQb1qFmEHoaZtGS8fqTJ9JK8Zb
+         DT9+H5VcDcWiMiiT88vpYzolMScNbhcSDWVyABU2fIY3XN4DHIu4WcsZqawRY+avka
+         UInC2EEwPBa2JuU5mVYDnfXqERHM0BesTZjjG6Vk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220202230631eucas1p1b7c5f38441aeb5400a8e027e086e7bc8~QGqxYlEGh2765427654eucas1p1g;
+        Wed,  2 Feb 2022 23:06:31 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 80.17.09887.77E0BF16; Wed,  2
+        Feb 2022 23:06:31 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220202230630eucas1p26dac8edc8ee041c7b19eb6d4fc77798c~QGqwBleqH1639116391eucas1p23;
+        Wed,  2 Feb 2022 23:06:30 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220202230630eusmtrp13a21c892cbe8cb79ff4946c0b23fb2b5~QGqwA2Lbq1254812548eusmtrp1M;
+        Wed,  2 Feb 2022 23:06:30 +0000 (GMT)
+X-AuditID: cbfec7f4-45bff7000000269f-a7-61fb0e773215
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id B3.3F.09404.57E0BF16; Wed,  2
+        Feb 2022 23:06:29 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220202230629eusmtip2785025a18fcb9826c752c75d51023ebd~QGqvb-35i1591715917eusmtip2I;
+        Wed,  2 Feb 2022 23:06:29 +0000 (GMT)
+Message-ID: <dbdcba1a-3913-49e1-660c-784f450acd66@samsung.com>
+Date:   Thu, 3 Feb 2022 00:06:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.5.1
+Subject: Re: [PATCH v2 0/4] Exynos4 media drivers: adapt for the planned ARM
+ IOMMU-DMA changes
+Content-Language: en-US
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <aed1f16a-4b28-8da9-728a-3151a75b1f5f@xs4all.nl>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djPc7rlfL8TDV6tELE4NfkZk8X58xvY
+        LXo2bGW1mHF+H5PFsk1/mCwOfnjCatH+9CWzxefWf2wOHB5r5q1h9JjdcJHFY9OqTjaPz5vk
+        PE59/cwewBrFZZOSmpNZllqkb5fAlXFh3nXmgm+sFXt2dbM1MF5h6WLk5JAQMJH4ueARexcj
+        F4eQwApGiakbl7FAOF8YJSZ+3soI4XxmlNiw/hITTEvX6maoxHJGiV9Hb7BCOB8ZJToOLgHq
+        5+DgFbCTuDNRGqSBRUBFYvvHFrBmXgFBiZMzn4DtFhVIkrjcc5wRxBYWSJC4POkBmM0sIC5x
+        68l8sHoRgXSJE90HoeLNTBJv/4LF2QQMJbredrGB2JwCthL3O1YxQ9TIS2x/O4cZ4tAvHBIr
+        FphD2C4SU3a8g/pZWOLV8S3sELaMxOnJPWAvSwg0M0o8PLeWHcLpYZS43DSDEaLKWuLOuV9s
+        II8xC2hKrN+lDxF2lJh07SjYvxICfBI33gpC3MAnMWnbdGaIMK9ER5sQRLWaxKzj6+DWHrxw
+        iXkCo9IspFCZheT7WUi+mYWwdwEjyypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAZHT6
+        3/EvOxiXv/qod4iRiYPxEKMEB7OSCO/ehd8ThXhTEiurUovy44tKc1KLDzFKc7AoifMmZ25I
+        FBJITyxJzU5NLUgtgskycXBKNTCtlKmrTX7hwGB55+K3/hMXeo888ZTzfy1UcWinhW+hbKmx
+        xt2r4uEyPHrtd542zrlm3Lughis659QR5+WPFixdq2m5I7ZKrmf6Dt/r4tw/JebMC/7g4PHj
+        7R73NPXzwuf+RHTlnYmV+ObuY1VybsbHuznX6vKCHXO/VYblLPOY+uXXxrqmHS1eG9+4fr25
+        v5dZx85JQe6apHSi3Uaen9+KZ71b8ubb8StbX9oq7VW+d7ti++NUi+vbOjbvaBf08tY6pc60
+        Q/NMRMvvTapBKYFPLzkvXRVbre596mlTIkeRkEug2f3t69wXrd27IvqFwPEb+24+tb7xefoz
+        qX5Oy91B0WE8/J5SnClBO5bWmiYpsRRnJBpqMRcVJwIAfZwc/rUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsVy+t/xe7qlfL8TDS6uNrfYOGM9q8Wpyc+Y
+        LM6f38Bu0bNhK6vFjPP7mCyWbfrDZHHwwxNWi/anL5ktPrf+Y3Pg9Fgzbw2jx+yGiywem1Z1
+        snn0bVnF6PF5k5zHqa+f2QPYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
+        9O1sUlJzMstSi/TtEvQyLsy7zlzwjbViz65utgbGKyxdjJwcEgImEl2rmxm7GLk4hASWMkps
+        2/yPCSIhI3FyWgMrhC0s8edaFxtE0XtGicm7FwN1c3DwCthJ3JkoDVLDIqAisf1jC1gvr4Cg
+        xMmZT8AWiAokSTxc/I4NxBYWSJC4POkBI4jNLCAucevJfLB6EYF0iVmP9oEdwSzQzCQxp+cv
+        O8SyI4wSSxoug01iEzCU6HrbBTaJU8BW4n7HKmaISWYSXVu7oKbKS2x/O4d5AqPQLCSHzEKy
+        cBaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjMptx35u2cG48tVHvUOMTByM
+        hxglOJiVRHj3LvyeKMSbklhZlVqUH19UmpNafIjRFBgaE5mlRJPzgWkhryTe0MzA1NDEzNLA
+        1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBafqr1ZuOhV9WiZp3afqBvz8dfZ+eWHLM
+        e/2nh3Eq5xrnv/YUbxE+w2lVG3bRcG/mVrHki/1KQeZfvK9N9qpgu6y/q0g8cKrz7MLlkd02
+        GquU3sk90GaJ032585Dft+BIrrbpMaWXmissHIt2fuHyMz/q8OW+tNOFqpQDSgkm4tVZIhGH
+        7l7403l+vpb7+5m+/x+Hfr/PwNPEke/0kv0TY+9Ftu1LVjTvnVYhb+9iuO/d4hWxKiL/stz0
+        rziLKOdXs8vtWqckxLgzK7e3zjfz1lMe08MrH6k6n3CQ/Zj+o3Tu25xTEuYxa7IDbO7L24ic
+        OljWn7a67EvcFcUfcXu266T/OuH9QzzXiqtB+jGfEktxRqKhFnNRcSIA6EDhtVMDAAA=
+X-CMS-MailID: 20220202230630eucas1p26dac8edc8ee041c7b19eb6d4fc77798c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200918144852eucas1p2cd6ec1d5fb76d5c472a7ff966e0c3e8e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200918144852eucas1p2cd6ec1d5fb76d5c472a7ff966e0c3e8e
+References: <CGME20200918144852eucas1p2cd6ec1d5fb76d5c472a7ff966e0c3e8e@eucas1p2.samsung.com>
+        <20200918144833.14618-1-m.szyprowski@samsung.com>
+        <aed1f16a-4b28-8da9-728a-3151a75b1f5f@xs4all.nl>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Summit SMB347 charger has been added to the p4note device tree,
-enable the driver in exynos and multi_v7 defconfigs.
+On 28.01.2022 11:07, Hans Verkuil wrote:
+> Hi Marek,
+>
+> I'm going through a bunch of (very) old patches in my patchwork TODO list
+> that for one reason or another I never processed. This series is one of them.
+> Patch 1/4 has been accepted, but not the other three.
+>
+> Patches 2-4 still apply without problems, so is it OK if I apply them?
+> Better late than never...
 
-Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
----
- arch/arm/configs/exynos_defconfig   | 1 +
- arch/arm/configs/multi_v7_defconfig | 1 +
- 2 files changed, 2 insertions(+)
+Well, there is no hurry ;) Patches which switch ARM 32bit architecture 
+to DMA-IOMMU framework still didn't reach mainline, so this patchset is 
+not really needed yet. I will check them soon (there have been some 
+changes in the IOMMU framework last year) and resend also with some 
+typos fixed.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c58877cfdc9d..9d3191de96b6 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -159,6 +159,7 @@ CONFIG_CHARGER_MAX14577=y
- CONFIG_CHARGER_MAX77693=y
- CONFIG_CHARGER_MAX8997=y
- CONFIG_CHARGER_MAX8998=y
-+CONFIG_CHARGER_SMB347=y
- CONFIG_CHARGER_TPS65090=y
- CONFIG_SENSORS_LM90=y
- CONFIG_SENSORS_NTC_THERMISTOR=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 1c2c3e9f0e05..bfbcb57e2083 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -510,6 +510,7 @@ CONFIG_CHARGER_MAX14577=m
- CONFIG_CHARGER_MAX77693=m
- CONFIG_CHARGER_MAX8997=m
- CONFIG_CHARGER_MAX8998=m
-+CONFIG_CHARGER_SMB347=m
- CONFIG_CHARGER_TPS65090=y
- CONFIG_SENSORS_ARM_SCMI=y
- CONFIG_SENSORS_ASPEED=m
+Best regards
 -- 
-2.25.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
