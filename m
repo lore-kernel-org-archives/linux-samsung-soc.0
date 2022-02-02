@@ -2,294 +2,120 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F98C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Feb 2022 15:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A7FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Feb 2022 16:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345402AbiBBPNg (ORCPT
+        id S243072AbiBBQfy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Feb 2022 10:13:36 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:51546
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345384AbiBBPNd (ORCPT
+        Wed, 2 Feb 2022 11:35:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236774AbiBBQfx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Feb 2022 10:13:33 -0500
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 582AC4030F
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Feb 2022 15:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643814812;
-        bh=iLc3G6YH7/qnd/6MBLVC0gYFOAHbytgg/CHu+i+G3Xk=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=l0RjJPeRobWl8E4JtBIW+/tfP0baT0FPo1eU33y/YIi8zjHNK3UNZRGJmcuERh2T6
-         hKfwMJPvAvCqQXbFoyVyHvVbso5LWzprGAfrQPWiB6F8SmM//LaIeKNni8KYGXkGVn
-         5V1zpBslkDDHPQvj1Jyr9rj48afnscPVymIFc14Bd528TI+kE6rGs+bFDeIoE/LHAy
-         AAdUp4raMvTunV0JmvoDU9pBh7MzdQs+rZBRNQHcciC+S81R1kZss6pqOxXe0njYmB
-         5QUnE9au+q9y/eDZmRNkDajLcBu5NzlvZ78OPIsc2VU8m5AiBNe5038sH3Duykk7H+
-         2LJ0ay8Yaw7Tg==
-Received: by mail-wm1-f71.google.com with SMTP id bg32-20020a05600c3ca000b00349f2aca1beso2608416wmb.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Feb 2022 07:13:32 -0800 (PST)
+        Wed, 2 Feb 2022 11:35:53 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D77FC06173B;
+        Wed,  2 Feb 2022 08:35:53 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id c24so43714746edy.4;
+        Wed, 02 Feb 2022 08:35:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rolQc+QeV6/sWeHuoVWITOz2rFwUTuSxmkxEOlEseaw=;
+        b=gejAnHy0niTm6ryHaBOrZMXupGOWpng/HKnLZPpUJD3zqobwsXOV17Xmtf8tHZmTMN
+         xGAbwZyLrwMhQzrkKAURJiWApWMWHARvmXtDPhGo7qPHz8P2j9m7z2GWyzu5BPeCwyC9
+         bxIt6uEK1Kk3Kv+FfwmS+Crusw/Yo9yuCaNGQvAsht54CChxrnR7+3e35bQxWudnEo30
+         qGLh/kc0eLnyylMr8o8GPgkU+SvMuJHCAc/Dl95J2gvItadkKaTVK/rqcP8lT3NoCPuE
+         ZMPgUV1H6zJhh06PUdyGuExmRkc/T/wZJ4meGgY5JjodFvb8rUisCn2Opj9gqQaF/NEN
+         4vGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iLc3G6YH7/qnd/6MBLVC0gYFOAHbytgg/CHu+i+G3Xk=;
-        b=bfXA6XWHVRgY/yGaslCnrx3Y5SJYBkKyZx2KVsEkXyYaT9/ty3LJU65hP8oSMgZy9m
-         4TmeiSG3eWPmPRCiJQu6AufSKHfqRLgEbNQ/NaMF+KUT/M6VG+BSpeEbqkHLeIA0tfJW
-         mFteB3Hd+RZTQj9APO52P3CbPI0E/hEAengR4kbSGqqPKq/6/wodlobeyomeuBPKx1FG
-         fMpQOE5E3Gnem2zdZJM73reuSI3pfQxK2ItiySUnHl3+A3sDMnggxCEsgiCFxCeXChNJ
-         Bts367UfsGsLvbYfjq6hWks8PjC6kd4LXTx+KJehbMi01pOmOg9/QPhwAlui2urZAjZA
-         rRqA==
-X-Gm-Message-State: AOAM533fRFkU8cjOoAP759fELeU0Aw20GYy1+DpxNnWQynkCdeMWVXRg
-        Y8phm4lJoHhaYsGVJU8HK1tq0/U8P8beR9IHyz23tn/BRKHKYt3cUljomWUrUbcT6icyfanh/Wn
-        le4eoMnxEw2Jye5U7U/CVvxvKaz0E66DOML3J8RoO6tbpYpHI
-X-Received: by 2002:a05:6000:156d:: with SMTP id 13mr20021679wrz.700.1643814811989;
-        Wed, 02 Feb 2022 07:13:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw74yve7th3H3L856WxT+OL6uQFH9rhguofhpxZXCx5JlJrmjaGkzwUXjdw3yHNp9V3hNbiSA==
-X-Received: by 2002:a05:6000:156d:: with SMTP id 13mr20021662wrz.700.1643814811802;
-        Wed, 02 Feb 2022 07:13:31 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id p7sm5098872wmq.20.2022.02.02.07.13.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rolQc+QeV6/sWeHuoVWITOz2rFwUTuSxmkxEOlEseaw=;
+        b=Ecp23G3fEHC4stZVyJgv+tIoQlYCEIdNhjhgAZJXuUoE4o09v1CsLfbXYoXdrItf9Q
+         cw0ZAdeBIKlpKvvPySLTj0WRfw5JATGbm9t8shrcRS1SCiCl5JGWFYlqe2gmcNKBJhk2
+         fgTCgw67q5RC0UvivkaWcNBda2lZ0thFD/rCJwF3CVNFYMREy78M7Lxoqts8n+3a87Qy
+         7Pk1lJZcZ1AXKHC5fw5lNLX2WewGd3AGfpktWUb5ozvyHxX8bAy3gTMHfwUaq+lFkH1X
+         0RBLgWzevzMV4Doi7Kw9YGGFcpe4JCwqXI9My7VIu8wnR930e7PEy0PMWPR8ZZd2WS64
+         Pmwg==
+X-Gm-Message-State: AOAM5317OqonlE2cosIs7F31FkOwSa4ilTCyZVoSgR6u6248k3L+9uzN
+        FuDafwvn7BbVeSzGnYadSPY=
+X-Google-Smtp-Source: ABdhPJwFlGZfn+kMbwxHye6FyfkNQU+NCfAvvYTMvd0GGVS3QiH5QHxa4gtDRQtgqtohXSLx3IsWCw==
+X-Received: by 2002:aa7:d913:: with SMTP id a19mr30936284edr.123.1643819752031;
+        Wed, 02 Feb 2022 08:35:52 -0800 (PST)
+Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
+        by smtp.gmail.com with ESMTPSA id lc22sm15806551ejc.76.2022.02.02.08.35.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 07:13:31 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Wed, 02 Feb 2022 08:35:51 -0800 (PST)
+From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 3/3] dt-bindings: mfd: samsung,exynos5433-lpass: Convert to dtschema
-Date:   Wed,  2 Feb 2022 16:13:10 +0100
-Message-Id: <20220202151310.285561-4-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220202151310.285561-1-krzysztof.kozlowski@canonical.com>
-References: <20220202151310.285561-1-krzysztof.kozlowski@canonical.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
+Subject: [PATCH 1/3] ARM: dts: exynos: add smb347 charger to p4note
+Date:   Wed,  2 Feb 2022 17:34:12 +0100
+Message-Id: <5d15937b6a7c4ae82a8f0d164fa28a4d4ad46325.1643757744.git.martin.juecker@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Exynos5433 LPASS bindings to DT schema format.
+Add device tree entry to support the Summit SMB347 charger which is
+built into the p4note devices.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
 ---
- .../bindings/mfd/samsung,exynos5433-lpass.txt |  72 -----------
- .../mfd/samsung,exynos5433-lpass.yaml         | 117 ++++++++++++++++++
- 2 files changed, 117 insertions(+), 72 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
+ arch/arm/boot/dts/exynos4412-p4note.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-deleted file mode 100644
-index 30ea27c3936d..000000000000
---- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-+++ /dev/null
-@@ -1,72 +0,0 @@
--Samsung Exynos SoC Low Power Audio Subsystem (LPASS)
--
--Required properties:
--
-- - compatible		: "samsung,exynos5433-lpass"
-- - reg			: should contain the LPASS top SFR region location
--			  and size
-- - clock-names		: should contain following required clocks: "sfr0_ctrl"
-- - clocks		: should contain clock specifiers of all clocks, which
--			  input names have been specified in clock-names
--			  property, in same order.
-- - #address-cells	: should be 1
-- - #size-cells		: should be 1
-- - ranges		: must be present
--
--Each IP block of the Low Power Audio Subsystem should be specified as
--an optional sub-node. For "samsung,exynos5433-lpass" compatible this includes:
--UART, SLIMBUS, PCM, I2S, DMAC, Timers 0...4, VIC, WDT 0...1 devices.
--
--Bindings of the sub-nodes are described in:
--  ../serial/samsung_uart.yaml
--  ../sound/samsung-i2s.txt
--  ../dma/arm-pl330.txt
--
--
--Example:
--
--audio-subsystem {
--	compatible = "samsung,exynos5433-lpass";
--	reg = <0x11400000 0x100>, <0x11500000 0x08>;
--	clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
--	clock-names = "sfr0_ctrl";
--	#address-cells = <1>;
--	#size-cells = <1>;
--	ranges;
--
--	adma: adma@11420000 {
--		compatible = "arm,pl330", "arm,primecell";
--		reg = <0x11420000 0x1000>;
--		interrupts = <0 73 0>;
--		clocks = <&cmu_aud CLK_ACLK_DMAC>;
--		clock-names = "apb_pclk";
--		#dma-cells = <1>;
--		#dma-channels = <8>;
--		#dma-requests = <32>;
--	};
--
--	i2s0: i2s0@11440000 {
--		compatible = "samsung,exynos7-i2s";
--		reg = <0x11440000 0x100>;
--		dmas = <&adma 0 &adma 2>;
--		dma-names = "tx", "rx";
--		interrupts = <0 70 0>;
--		clocks = <&cmu_aud CLK_PCLK_AUD_I2S>,
--			 <&cmu_aud CLK_SCLK_AUD_I2S>,
--			 <&cmu_aud CLK_SCLK_I2S_BCLK>;
--		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
--		pinctrl-names = "default";
--		pinctrl-0 = <&i2s0_bus>;
--	};
--
--	serial_3: serial@11460000 {
--		compatible = "samsung,exynos5433-uart";
--		reg = <0x11460000 0x100>;
--		interrupts = <0 67 0>;
--		clocks = <&cmu_aud CLK_PCLK_AUD_UART>,
--			 <&cmu_aud CLK_SCLK_AUD_UART>;
--		clock-names = "uart", "clk_uart_baud0";
--		pinctrl-names = "default";
--		pinctrl-0 = <&uart_aud_bus>;
--	};
-- };
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-new file mode 100644
-index 000000000000..bae55c98961c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-@@ -0,0 +1,117 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/samsung,exynos5433-lpass.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
+index b386a9b8e188..63459db653ea 100644
+--- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
++++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
+@@ -16,6 +16,7 @@
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/pinctrl/samsung.h>
++#include <dt-bindings/power/summit,smb347-charger.h>
+ 
+ / {
+ 	compatible = "samsung,p4note", "samsung,exynos4412", "samsung,exynos4";
+@@ -182,6 +183,27 @@ stmpe_adc {
+ 			};
+ 		};
+ 	};
 +
-+title: Samsung Exynos SoC Low Power Audio Subsystem (LPASS)
++	i2c-gpio-4 {
++		compatible = "i2c-gpio";
++		sda-gpios = <&gpm2 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpm2 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 +
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+properties:
-+  compatible:
-+    const: samsung,exynos5433-lpass
++		charger@6 {
++			compatible = "summit,smb347";
++			reg = <0x6>;
++			summit,enable-usb-charging;
++			summit,enable-charge-control = <SMB3XX_CHG_ENABLE_SW>;
++			summit,fast-voltage-threshold-microvolt = <2600000>;
++			summit,chip-temperature-threshold-celsius = <130>;
++			summit,usb-current-limit-microamp = <1800000>;
++		};
++	};
 +
-+  '#address-cells':
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: sfr0_ctrl
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  ranges: true
-+
-+  reg:
-+    minItems: 2
-+    maxItems: 2
-+
-+  '#size-cells':
-+    const: 1
-+
-+patternProperties:
-+  "^dma-controller@[0-9a-f]+$":
-+    $ref: /schemas/dma/arm,pl330.yaml
-+
-+  "^i2s@[0-9a-f]+$":
-+    $ref: /schemas/sound/samsung-i2s.yaml
-+
-+  "^serial@[0-9a-f]+$":
-+    $ref: /schemas/serial/samsung_uart.yaml
-+
-+required:
-+  - compatible
-+  - '#address-cells'
-+  - clocks
-+  - clock-names
-+  - ranges
-+  - reg
-+  - '#size-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5433.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    audio-subsystem@11400000 {
-+        compatible = "samsung,exynos5433-lpass";
-+        reg = <0x11400000 0x100>, <0x11500000 0x08>;
-+        clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
-+        clock-names = "sfr0_ctrl";
-+        power-domains = <&pd_aud>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges;
-+
-+        dma-controller@11420000 {
-+            compatible = "arm,pl330", "arm,primecell";
-+            reg = <0x11420000 0x1000>;
-+            interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cmu_aud CLK_ACLK_DMAC>;
-+            clock-names = "apb_pclk";
-+            #dma-cells = <1>;
-+            #dma-channels = <8>;
-+            #dma-requests = <32>;
-+            power-domains = <&pd_aud>;
-+        };
-+
-+        i2s@11440000 {
-+            compatible = "samsung,exynos7-i2s";
-+            reg = <0x11440000 0x100>;
-+            dmas = <&adma 0>, <&adma 2>;
-+            dma-names = "tx", "rx";
-+            interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            clocks = <&cmu_aud CLK_PCLK_AUD_I2S>,
-+                     <&cmu_aud CLK_SCLK_AUD_I2S>,
-+                     <&cmu_aud CLK_SCLK_I2S_BCLK>;
-+            clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
-+            #clock-cells = <1>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&i2s0_bus>;
-+            power-domains = <&pd_aud>;
-+            #sound-dai-cells = <1>;
-+        };
-+
-+        serial@11460000 {
-+            compatible = "samsung,exynos5433-uart";
-+            reg = <0x11460000 0x100>;
-+            interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cmu_aud CLK_PCLK_AUD_UART>,
-+                     <&cmu_aud CLK_SCLK_AUD_UART>;
-+            clock-names = "uart", "clk_uart_baud0";
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&uart_aud_bus>;
-+            power-domains = <&pd_aud>;
-+        };
-+    };
+ };
+ 
+ &adc {
 -- 
-2.32.0
+2.25.1
 
