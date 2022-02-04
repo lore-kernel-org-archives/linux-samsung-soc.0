@@ -2,100 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAE9C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Feb 2022 19:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A052EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Feb 2022 22:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234464AbiBDTsq (ORCPT
+        id S1346694AbiBDWPY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Feb 2022 14:48:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231869AbiBDTsq (ORCPT
+        Fri, 4 Feb 2022 17:15:24 -0500
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:46614 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346848AbiBDWPX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Feb 2022 14:48:46 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1D3CC061714;
-        Fri,  4 Feb 2022 11:48:45 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id z7so9948714ljj.4;
-        Fri, 04 Feb 2022 11:48:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=duHpmFxlBbFk1XIYiQ3pxMiqpbVYnao3doZJUxGlgw0=;
-        b=iW/MKdWog0NT3R/KNWxkTEvpMxLjViZJy4lj2FmGfRo4aUpWuJwFHxvTYUx77KylaI
-         VlNaZ3GGHUn8lcI0l+P1gS92Iz9PfqFB/XQfx1MO9T9diAo7y4dKt6sBeJnfP4yWBzlZ
-         6mC/CSLc0en48qVt5P+NQYJm5i0Pw3wVQJcGUsBjpqmfyE9b6Rn4sS7h42ci4xQNThwn
-         sSjXutk/Ot1/WltbS8umyy/utVAmVVbbWuV1eiLn89fsqfimKj5erfNDz8RY4554fKXD
-         vPyaSlr6qDglUw2hFh9dZLOFko28pzQr1VWo2SoLLogUq4lnT04vC9Ip/KSsyjXGWd8g
-         nFfQ==
+        Fri, 4 Feb 2022 17:15:23 -0500
+Received: by mail-ot1-f47.google.com with SMTP id l12-20020a0568302b0c00b005a4856ff4ceso6100810otv.13;
+        Fri, 04 Feb 2022 14:15:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=duHpmFxlBbFk1XIYiQ3pxMiqpbVYnao3doZJUxGlgw0=;
-        b=U9WSdUVIatvmZ5VzwuFjKztmFoeJpNnkj2WM0fHKQZ5e46PYZSz0c8UNcvyBkLPQ+0
-         IOnZoGAEe9GvzBJFvofH9HYdHegJVQVQN7c5jJkV1s2BegxclyyjdLKjHLJSXedz2U03
-         daMc/18Z2YmBUze+pKJoZZQiKB/X3RbyX/qqY/cUu4hh05naJz+ds9U09YE3whMD25+4
-         V1K7hFH/ctxYRB3S3XAZXcd7wctoYCpkMZeZ98lLV3FyF7MvR3U1n5Xyh+i2VjvT7+yv
-         IbLZbShEGv1H70E7dMSYQPOnL7aWTUWqjjoRKI7fbb0vF2mfriPS4Ay/l970vg9GT/6A
-         YhGg==
-X-Gm-Message-State: AOAM53363vaxp4iJygh2DdjATM5MCVmtd07Q/CCNVGUwaWhSjJIQqLud
-        E/2TuXfI+yHoB9WryOuXOeg=
-X-Google-Smtp-Source: ABdhPJwPWlZyp8vfQtVc5hmYtdbn1UjQfKbidce8/vheQguoDAKZYgg7P0sLNkT7rtJfzl1flMjFyQ==
-X-Received: by 2002:a2e:3218:: with SMTP id y24mr281398ljy.260.1644004124302;
-        Fri, 04 Feb 2022 11:48:44 -0800 (PST)
-Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
-        by smtp.googlemail.com with ESMTPSA id j23sm435661lfh.35.2022.02.04.11.48.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Feb 2022 11:48:43 -0800 (PST)
-Message-ID: <23d38615-6b75-8715-0f83-fc93755a708b@gmail.com>
-Date:   Fri, 4 Feb 2022 22:48:43 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 6/6] dt-bindings: memory: lpddr2-timings: convert to
- dtschema
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N8RFHngLhDeWO4wQPXHQGcIdh24A8gAlUMWTLplW+TI=;
+        b=iYoKOD7LQyRzvMDM8duQPme7Oa96o2IjRLv8UmAWlGBjYnnMruE/HxIANiOuFH+Fby
+         dKjkg6VlDFQLJeoNv1Otr44yB21PRs27NlTVMZASA4dFClRGf6QK77x/VXVdbbujwPdU
+         tsZ9vjYiiH6WyM8phvD+9sOnGorEX9JlYludRmrq91kb4UCr+Awzd/HtGKXNuNjtIyRK
+         Ac1XW9hS8AeZJ83MX7/vIlDsdO92f3gwRYSj9FF9t2rGDu1yryj0/sGQkrk22eC8BECN
+         iQb/RuGfLsk36kATp65HUA4a16jnmbmELkwQjvqv5YNg2q4d/irFuJYNmclLYM3ItfY1
+         z/8Q==
+X-Gm-Message-State: AOAM532Cy9+AXvbKqkI9db/cG7dCmR1jBPiuYEoYT7RyzVvRyaA7cgi7
+        YofKNH9YioVFdiWI7dLISpztimM+iw==
+X-Google-Smtp-Source: ABdhPJw1r36BfQdNmjT2kjJd0xyM5pbLBON8ItumuXjTSCU4U75vKCiZ0SQbcnm/cAX7aMItBNevWw==
+X-Received: by 2002:a9d:4e03:: with SMTP id p3mr403290otf.299.1644012922815;
+        Fri, 04 Feb 2022 14:15:22 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id 31sm1243392otr.13.2022.02.04.14.15.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Feb 2022 14:15:22 -0800 (PST)
+Received: (nullmailer pid 3277483 invoked by uid 1000);
+        Fri, 04 Feb 2022 22:15:20 -0000
+Date:   Fri, 4 Feb 2022 16:15:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Pratyush Yadav <p.yadav@ti.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        Andi Shyti <andi@etezian.org>, devicetree@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220201114749.88500-1-krzysztof.kozlowski@canonical.com>
- <20220201114749.88500-6-krzysztof.kozlowski@canonical.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20220201114749.88500-6-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 1/4] spi: dt-bindings: samsung: convert to dtschema
+Message-ID: <Yf2leGSnt4tvMnnn@robh.at.kernel.org>
+References: <20220124082347.32747-1-krzysztof.kozlowski@canonical.com>
+ <20220124082347.32747-2-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220124082347.32747-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-01.02.2022 14:47, Krzysztof Kozlowski пишет:
-> +  tZQCL:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SELF REFRESH exit to next valid command delay in pico seconds.
-> +
-> +  tZQCS:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SELF REFRESH exit to next valid command delay in pico seconds.
-> +
-> +  tZQinit:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      SELF REFRESH exit to next valid command delay in pico seconds.
+On Mon, 24 Jan 2022 09:23:44 +0100, Krzysztof Kozlowski wrote:
+> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
+> controller bindings to DT schema format.
+> 
+> The conversion also drops requirement from providing controller-data and
+> its data for each of SPI peripheral device nodes.  The dtschema cannot
+> express this and the requirement is being relaxed in the driver now.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Acked-by: Pratyush Yadav <p.yadav@ti.com>
+> ---
+>  .../bindings/soc/samsung/exynos-usi.yaml      |   2 +-
+>  .../spi/samsung,spi-peripheral-props.yaml     |  33 ++++
+>  .../devicetree/bindings/spi/samsung,spi.yaml  | 187 ++++++++++++++++++
+>  .../bindings/spi/spi-peripheral-props.yaml    |   1 +
+>  .../devicetree/bindings/spi/spi-samsung.txt   | 122 ------------
+>  MAINTAINERS                                   |   2 +-
+>  6 files changed, 223 insertions(+), 124 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
+>  create mode 100644 Documentation/devicetree/bindings/spi/samsung,spi.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
+> 
 
-Hm.. these look incorrect.
-
-tZQCL is Long Calibration Time
-
-tZQCS is Short Calibration Time
-
-tZQinit is Initialization Calibration Time
-
-No?
+Reviewed-by: Rob Herring <robh@kernel.org>
