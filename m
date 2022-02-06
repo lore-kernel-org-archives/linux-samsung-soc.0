@@ -2,122 +2,136 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D6EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Feb 2022 17:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD6DC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Feb 2022 22:18:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344632AbiBFRj5 (ORCPT
+        id S236457AbiBFWSg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Feb 2022 12:39:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35828 "EHLO
+        Sun, 6 Feb 2022 17:18:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344638AbiBFRjv (ORCPT
+        with ESMTP id S229484AbiBFWSg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Feb 2022 12:39:51 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28D5C043188
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 09:39:50 -0800 (PST)
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6972C4003B
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 17:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644169189;
-        bh=O2vA7wr1KPFYU+oEMCTxA6vrus8R+EX5FuB8VVDgV7c=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-         In-Reply-To:Content-Type;
-        b=rgLJiZtTaSq6udYxixdLReQO3PiQZRK04s5NeBBLCHCQZkoaqTSBxZpJBZtelv3ZJ
-         NfMVkT3dyW6TcFpkWagD0hZA/gH3A6Zc4aSUXo4r34reSvq3ZDko6eMkX6POCX/o9F
-         y/v1aHgiSeQe4WBvjvv9nDQIiZO0+yojLOfHgUygKJLeIyZcUCaNX9c+G6vYxt2F3Q
-         7UaViPdWRd5145rTOEWgMkXm7ujJLIRwCjh5OthrRvZpLjrFIN7h+Nc4I23JoCqh/b
-         8sZf6q+M4IEUFiz/h8GC5glflgD8cBzIbaWqEMMVSNKjtIgmnGo10LmGy++OTUk+yk
-         talUSW6bjf1Rg==
-Received: by mail-wm1-f72.google.com with SMTP id r8-20020a7bc088000000b0037bbf779d26so1089742wmh.7
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Feb 2022 09:39:49 -0800 (PST)
+        Sun, 6 Feb 2022 17:18:36 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41AC4C06173B;
+        Sun,  6 Feb 2022 14:18:35 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id ka4so36484104ejc.11;
+        Sun, 06 Feb 2022 14:18:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ndvVG8PppU1q6zgmhfWtx/U0/AcHLfiB5ez8eWAuiM0=;
+        b=dO2ABgghuCjrlXVuQZAbM0LfcNTau2p74DbNzabG4isw0dsDj6671p6whvKKCJ8q8n
+         CDrvktw9YHONjrJOgFO/rlbCIFfKObaZclgyUKD+7rLnYXXg23uKaRF3LpQ4Q566cXLs
+         3+0asMVHcfw/FqjKGuyhakJDn9X9B9E7MJWwnHJri7HWjoH4WFUG99eeSns/FCv4/Xs8
+         E97JwjoHRmv+LBUU2bZ04Wzhto9ya+zzvXcsx3PPfMe/v9sO//DU4HgddHbcWwgx9DVp
+         6gFbXVHQqBRXy63rl2fYTFsIi3v6IesOOLiwA8fWazCoCewTPtrek7xO5LQXBvwh+iys
+         vyOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:cc:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=O2vA7wr1KPFYU+oEMCTxA6vrus8R+EX5FuB8VVDgV7c=;
-        b=3Ze2pjIMz+qQhZixkrYu968AA519wN27gUAitSmSnUbBHDBBr9L7kVRedC86v3cpd5
-         4SnCUfEhraLpur0gyhaNej2GalALW12phQXVHkasdlzeuSDeP6c4yeKvvI0dvAbSzcQD
-         aDJfneVZIMxu6SLOZAzIVfTQz1vKGdHTXjRyuItiFvLZw5QG7v0Rfoe5iZjKndsINHyh
-         3irBwT+VtO2kGo7TMDw4peTNNnSV+8N6bCf7LgDf3y1FXofxhOqXfK9UquKL8ehbVjQD
-         CRDXZwp88YQq0c0ijEDisMbzDa309UNsuvF7GHglgIpaUn23lRE9XiocDtWeK+0FfAsM
-         S6FA==
-X-Gm-Message-State: AOAM530NQDjs8dVvzvgXgisLLOcMjgVIXeZNf7/w1fZtp7ST4eLGerEh
-        Us2vfY8CQH46yh2whH9Wi827CtIT7mbPcaZzx6C8daz3iPqNmEv4CPbo7n1s3caVYLq4RABVQSF
-        LktG+EY8kVLrymNibdJZfdfVHWSJy62+aLjWIBf3FcUtRsNAc
-X-Received: by 2002:a5d:6da3:: with SMTP id u3mr4180463wrs.3.1644169189007;
-        Sun, 06 Feb 2022 09:39:49 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyotauj4AZUDLVn7ZjdsCUkbRdn3TyGp68ino7AYP79PzHSXuQGwgWqBez9ydkl9pVGm9TudA==
-X-Received: by 2002:a5d:6da3:: with SMTP id u3mr4180460wrs.3.1644169188876;
-        Sun, 06 Feb 2022 09:39:48 -0800 (PST)
-Received: from [192.168.0.86] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id o10sm1492735wrq.63.2022.02.06.09.39.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Feb 2022 09:39:48 -0800 (PST)
-Message-ID: <1bebedb9-644f-783d-492c-84a5de91720d@canonical.com>
-Date:   Sun, 6 Feb 2022 18:39:47 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 0/5] mfd/extcon/regulators: max77843: add
- dtschema/bindings
-Content-Language: en-US
-To:     Lee Jones <lee.jones@linaro.org>
-References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        bh=ndvVG8PppU1q6zgmhfWtx/U0/AcHLfiB5ez8eWAuiM0=;
+        b=5zPhnMXmrVXYWyHLupkx1I6+VxxBEr+KypdsctVE0MpJ1uFZb+JmXUa2/29QDWEVjb
+         hCzYlO9HzgAKR1VlLSRg2zYb9fPjR1Br5wCYyNx1HGDz67H8DA7g6MHauKzaOgtgC9LL
+         e+0AM4rLmZVuqjJuP9SvaKMxqv5vYH0EovDTTMZMO25V9JKRQnOQFIKZZMELU52b9O9r
+         T6i8CViPtnsJluXnEvDtW6GYBMGrFY5bg7X33yWksKaD28jpmZvOZur/Hzp8iwFiNn99
+         Mx3AlawEKlqFOKi9lvhKhv30Pja4OBMnJRU2hI1hMVt7aNqAIr77Stev/m+e3QgvVcpH
+         WPsA==
+X-Gm-Message-State: AOAM5329MqDrV85SEHpEFJzrnC2t0MQMd4+ChaNZ738KZvyH3hepJpSz
+        brqUEQlCvPgMqlfbnYuXH+I=
+X-Google-Smtp-Source: ABdhPJzCy2rjqU0nVTZ/5hl+kH3DHSL6ZpDb7tuD4vOQUhlPgvNBxKhDldCMOANq//76iElEujTj2Q==
+X-Received: by 2002:a17:907:6e16:: with SMTP id sd22mr7720582ejc.172.1644185913749;
+        Sun, 06 Feb 2022 14:18:33 -0800 (PST)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
+        by smtp.googlemail.com with ESMTPSA id a17sm2347289edt.92.2022.02.06.14.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Feb 2022 14:18:33 -0800 (PST)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        phone-devel@vger.kernel.org,
+        David Virag <virag.david003@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/1] Initial Samsung Galaxy A8 (2018) support
+Date:   Mon,  7 Feb 2022 00:18:14 +0100
+Message-Id: <20220206231816.127650-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/01/2022 18:48, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> The max77843 shares some parts with max77693 but it lacked bindings.  All
-> its compatibles were undocumented.  Add basic bindings for max77843,
-> matching existing devicetree.  These are not complete bindings, but
-> rather reverse-engineered to match current state.
-> 
-> I do not have access to device with MAX77843, so if anyone else
-> volunteers to be the bindings maintainer, please join.
-> 
-> Changes since v1
-> ================
-> 1. MFD: Use absolute path to schemas.
-> 2. Regulator: mention all allowed properties,
->    additionalProperties=false, add min/max values for voltages and
->    current, don't use patternProperties when not needed.
-> 3. extcon: Use absolute path to schemas.
-> 
-> Dependencies
-> ============
-> 1. Patch 1/5 (dts): nothing depends on it, sending here so Rob's automatic
->    checker won't complain about DTS.
->    I will take it via Samsung SoC tree.
-> 
-> 2. The patch 4/5 (mfd bindings) depends on regulator and extcon, so they
->    should come together (2+3+4+5).
-> 
-Dear Lee,
+Add basic initial support for the Samsung Galaxy A8 (2018) smartphone.
+This phone is also known as "jackpotlte" and under the model name
+"SM-A530F". In its current state this should work on most if not all
+Exynos7885 phones/devices released.
 
-This patchset was reviewed and there are no outstanding issues. Could
-you pick up patches 2-5 (skipping DTS patch) via MFD tree?
+As of now, it supports I2C nodes (all disabled by default) and UART
+console with basic clock support in place.
 
-Best regards,
-Krzysztof
+To access the UART console on the A8, there are two methods:
+  -You can open up the device and solder directly to some debug pins
+   close to the display connector.
+  -Through I2C you can set the S2MU004 MFD chip to multiplex the SoC's
+   UART lines to the d+ and d- on the USB Type-C port of the device.
+
+Note that UART works on 1.8 volts, so plugging in a normal USB cable
+while multiplexed to UART may fry the SoC.
+
+Everything was tested through UART by using a minimal driver that sets
+the S2MU004 to multiplex UART.
+
+The preferred way to boot this device is by using my Minimal S-Boot
+Wrapper [1] to work around some issues caused by the stock, and
+non-replacable Samsung S-Boot bootloader.
+
+Changes in v2:
+- Added R-b tags by Krzysztof Kozlowski
+- Moved dt-bindings patches to the beginning of the series
+- Fixed double : in 7885 CMU bindings
+- Fixed multiple double line breaks
+- Made Exynos850 and 7885 clock drivers share some code in a new patch
+- Lots of dts/dtsi fixes
+
+Changes in v3:
+- Fix SPDX comment style in clk-exynos-arm64.h
+- Fix typo in dts comment
+
+Changes in v4:
+- Fixed leading 0x in clock-controller nodes
+- Fixed missing headers in clock driver patches
+- "__SAMSUNG_CLK_ARM64_H" -> "__CLK_EXYNOS_ARM64_H" in
+  clk-exynos-arm64.h everywhere (only the comment at the end had the
+  latter by accident)
+- Added R-b tag by Krzysztof Kozlowski to pll1417x patch
+- Actually suffixed pin configuration node names with "-pins"
+- Seperated Cortex-A53 and Cortex-A73 PMU
+
+Changes in v5:
+- Only kept DTS patch as the rest have been merged.
+- Several fixes in DTS patch
+
+[1] https://github.com/VDavid003/minimal_sboot_wrapper
+
+David Virag (1):
+  arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC
+
+ arch/arm64/boot/dts/exynos/Makefile           |   7 +-
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts |  93 ++
+ .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 855 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 440 +++++++++
+ 4 files changed, 1392 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
+
+-- 
+2.35.1
 
