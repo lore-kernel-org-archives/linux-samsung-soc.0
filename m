@@ -2,114 +2,118 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA0FC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  5 Feb 2022 11:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2213BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Feb 2022 13:59:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244545AbiBELe7 (ORCPT
+        id S241735AbiBFN7p (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 5 Feb 2022 06:34:59 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:51536
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230160AbiBELe6 (ORCPT
+        Sun, 6 Feb 2022 08:59:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242020AbiBFN7h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 5 Feb 2022 06:34:58 -0500
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        Sun, 6 Feb 2022 08:59:37 -0500
+X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Feb 2022 05:59:24 PST
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC254C0401E6
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 05:59:24 -0800 (PST)
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 713123F32B
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  5 Feb 2022 11:34:57 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DF761402D7
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 13:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644060897;
-        bh=8wZjc4AJmUICEN/J47+AHu6zl7TY1OVui5hLAqvkGdQ=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-         In-Reply-To:Content-Type;
-        b=vj4XFnlbcInIcHR5RxOkB/aijWrDe/l9eH/srv90HqrqG+PXpsPALNBmHT/WZ9XuL
-         imQbz+/kj6GUyLb7496MCBWe1CiEtjKQDG5NJAOX/gY9+P6T5ciXCRKzAkjqJNuOzc
-         nUw2i2LWvl0LJmrzlv2DKF1hp8Uy4r6xcbtvxNRz1DZtUP7APBEhhO8kvVXjbFY1Ke
-         vQaJxv6L6EskXEIEMANYIc8cUoFWyy+ss3QZiOkyA97xZEk6O5HXmRdeXx6tkM2JXf
-         HKu/LOKCoy71zqt8AURDp2arcKCoOQYw6xE6PhvoHI/dDlbY02RvvE80lSm2INum+k
-         OLK4jDP4JuX2A==
-Received: by mail-ed1-f70.google.com with SMTP id en7-20020a056402528700b00404aba0a6ffso4551111edb.5
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 05 Feb 2022 03:34:57 -0800 (PST)
+        s=20210705; t=1644155962;
+        bh=SJklMGC7T/EUcj3Xgr8zoxCnRlerqEqIREG1cOIIgnU=;
+        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version;
+        b=YW11ea5uXVN444CaJ2jZT7W4kgqT1ZRyL2/QzBK50Z2ItGNbp+ceYLP6v8vYtNBK6
+         U2JdUAWg1IE3U0PzRMjfB6AMOibK7+VGFN28FFIBwGG4XvqwgkrWDxZgkHIIXSf/X+
+         A5QHfOxl6UR1iRdWZqi/iKhGRmqC5s9IlN+8Z34aXqq0D7gOoMb3PrOSANnNJt5+NP
+         4AbAshSsf5doUktYI6SbPEdqb77D3X9xEdFCzZJJQZnbdf0BmWtrjzTIRjKWyliGsd
+         5tW9Y4mVSJytwFXjWjtjWHQ+Q9ECgjeH5W3sDx1vMmk4Uvz556riByr72IBzooj84w
+         gj5tCzNuTKidA==
+Received: by mail-wr1-f72.google.com with SMTP id t14-20020adfa2ce000000b001e1ad2deb3dso3792045wra.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Feb 2022 05:59:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=8wZjc4AJmUICEN/J47+AHu6zl7TY1OVui5hLAqvkGdQ=;
-        b=Kr/VDSLO6DrCdsTQGYwODyOiKZ91GC1c37GZIB+2T+XqSShhAHDIZrbFANhsYzBGwe
-         biN4eHShofUAfdCbN4M6KMP6qkRjbhwwUrIwqqiDCt8318RHw5cGdZ8M3y8rl1Fejg38
-         3V+Lg8foGSmPsY6dgvN8AIe5b5j0B9ZVJUSChouIi0T+FMidgd7izcuOCMBQ7eCj6sLr
-         pFajRp9AT7JwOJa7B27I1rHIrW/zkvUyK9p4DfKh0dG9YoKSdmgsJYrpQMO/EcRCgvc2
-         AcW5rthrXLYk5V0gUdWd24EQItYgceZFpyXCt1vnN6JoEyNoTvInzwOjoXmOpiUZb0ex
-         NlEg==
-X-Gm-Message-State: AOAM532/95XwOV4nyv1LUhsrGR8830pL0hJrGvt/znIMp5/YjRsHj0nt
-        ML8wrBXptnnyQOwUGm3UbLmTfVIC2kh2XhnMoVufhiSme6XPjG1GIZinDnBMAJkHMVJm0RreE02
-        ZaA1Vo+VfPuJ7/syhus+HjkXzLzwk567ezT3+s/InXo1hJRQ7
-X-Received: by 2002:a17:906:9514:: with SMTP id u20mr2771800ejx.227.1644060897130;
-        Sat, 05 Feb 2022 03:34:57 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyNClAORm0Is6CvvWa0A5wmi15Ut3l492E6QUKdnkYGlK2vqHYbGFsJvHLoIE4y9hBSj7zuGQ==
-X-Received: by 2002:a17:906:9514:: with SMTP id u20mr2771793ejx.227.1644060896994;
-        Sat, 05 Feb 2022 03:34:56 -0800 (PST)
-Received: from [192.168.0.83] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id ec52sm663468edb.24.2022.02.05.03.34.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Feb 2022 03:34:56 -0800 (PST)
-Message-ID: <3dd66b36-5b91-6cb7-cdea-851e780e3d54@canonical.com>
-Date:   Sat, 5 Feb 2022 12:34:55 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 6/6] dt-bindings: memory: lpddr2-timings: convert to
- dtschema
-Content-Language: en-US
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220201114749.88500-1-krzysztof.kozlowski@canonical.com>
- <20220201114749.88500-6-krzysztof.kozlowski@canonical.com>
- <23d38615-6b75-8715-0f83-fc93755a708b@gmail.com>
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SJklMGC7T/EUcj3Xgr8zoxCnRlerqEqIREG1cOIIgnU=;
+        b=0Ao3aW4Fl6rnuqEnj9BEbOL2EUeAzwz+swwXdgVdKQOzhc9du3zkchIowGSpltQvJr
+         q8UNNYN+elsHsAcpgGUFndLLuOvCicDBY1QBgSTrmkWJDd6iSRUMfVHiGqxXqpr5sJRz
+         hOr6TyhpgdOXDTLAvVMuvEc+sUaxdA1al1Sk/j88qWtT4zXu2SVcexSeeZ+reDYQgTy6
+         a8Q9HvKiJYpn5cRnVCVde6NyO53fOn0NGwb4ueDYGVFYbFuakEbwPVO1oSD4F8yeZYU5
+         BYXevtiKHPeOGjvkMn7ZAmGvYQnItZNwaG/KJ7EUPVITCZWZSx6METe///RjGgkfZdBI
+         abfg==
+X-Gm-Message-State: AOAM532AyFIAsdVrDjg7aw7xWjqAueSEgwXiKxd0KPphMyi/8ImVttRL
+        TAkfUlB+dPBwTS6SQAcBM2k/Oxb5g4HofDUQB+XZm889r8ujRyHLGeVuU4bFLTdL+ks+V6lStjO
+        KUt6EhkuV0p2CL24R7Er/D1ESRtvxG86cRL8ctLPxJBVn1WCM
+X-Received: by 2002:a05:600c:502b:: with SMTP id n43mr10478972wmr.67.1644155962526;
+        Sun, 06 Feb 2022 05:59:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzUW+CjZnoeRLOh3DLXJaGbc+rfq4URa9GWOKXq/P5jT8JUcEp9PlU4lZBC6zLP0TImsGzKjQ==
+X-Received: by 2002:a05:600c:502b:: with SMTP id n43mr10478958wmr.67.1644155962408;
+        Sun, 06 Feb 2022 05:59:22 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id m14sm9018167wrp.4.2022.02.06.05.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Feb 2022 05:59:21 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <23d38615-6b75-8715-0f83-fc93755a708b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 8/8] ARM: dts: exynos: remove deprecated unit address for LPDDR3 timings on Odroid
+Date:   Sun,  6 Feb 2022 14:59:18 +0100
+Message-Id: <20220206135918.211990-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
+References: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04/02/2022 20:48, Dmitry Osipenko wrote:
-> 01.02.2022 14:47, Krzysztof Kozlowski пишет:
->> +  tZQCL:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      SELF REFRESH exit to next valid command delay in pico seconds.
->> +
->> +  tZQCS:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      SELF REFRESH exit to next valid command delay in pico seconds.
->> +
->> +  tZQinit:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
->> +      SELF REFRESH exit to next valid command delay in pico seconds.
-> 
-> Hm.. these look incorrect.
-> 
-> tZQCL is Long Calibration Time
-> 
-> tZQCS is Short Calibration Time
-> 
-> tZQinit is Initialization Calibration Time
-> 
-> No?
+Passing maximum frequency of LPDDR3 memory timings as unit address was
+deprecated in favor of 'max-freq' property.
 
-Yes, thanks for spotting these. Copy-paste error.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 2f65dcf6ba73..35818c4cd852 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -333,8 +333,6 @@ samsung_K3QF2F20DB: lpddr3 {
+ 		compatible	= "samsung,K3QF2F20DB", "jedec,lpddr3";
+ 		density		= <16384>;
+ 		io-width	= <32>;
+-		#address-cells	= <1>;
+-		#size-cells	= <0>;
+ 
+ 		tRFC-min-tck		= <17>;
+ 		tRRD-min-tck		= <2>;
+@@ -358,10 +356,9 @@ samsung_K3QF2F20DB: lpddr3 {
+ 		tCKESR-min-tck		= <2>;
+ 		tMRD-min-tck		= <5>;
+ 
+-		timings_samsung_K3QF2F20DB_800mhz: timings@800000000 {
++		timings_samsung_K3QF2F20DB_800mhz: timings {
+ 			compatible	= "jedec,lpddr3-timings";
+-			/* workaround: 'reg' shows max-freq */
+-			reg		= <800000000>;
++			max-freq	= <800000000>;
+ 			min-freq	= <100000000>;
+ 			tRFC		= <65000>;
+ 			tRRD		= <6000>;
+-- 
+2.32.0
 
-Best regards,
-Krzysztof
