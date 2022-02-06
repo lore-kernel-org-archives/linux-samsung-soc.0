@@ -2,61 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E2DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Feb 2022 14:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC4AC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Feb 2022 14:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234043AbiBFOEN (ORCPT
+        id S234424AbiBFOEN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Sun, 6 Feb 2022 09:04:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbiBFOEL (ORCPT
+        with ESMTP id S234263AbiBFOEL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Sun, 6 Feb 2022 09:04:11 -0500
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B410AC043182
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6627C043183
         for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 06:04:10 -0800 (PST)
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4811D3F4B4
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 13:58:12 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C6F61405B3
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Feb 2022 13:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644155892;
-        bh=mhgmyPNP0m0BNQfRJEs+RA1d8S2sGALTwPK2/PdoeqQ=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=v5oXsn68VIdN1DEfQjdrnLMIbNtjhKQVdRTLIpyWFGu7KtADdIH2BnaBBaRqkNYs3
-         sJPwrs5EqumdYc0vg/ll5QJhqNFCMfobsjWcIh+LevVwnGKg6laZRBIarHg1moOzcB
-         W4ueC0DJGi4DkgbaMlT+ymkKVgIHNM2ZBocrdbTqdqnRYjEvEdWtljwury4QAvoSpF
-         hvUoZbZTztKYGPsCw9slT6LWPrgznnynRcqGrMWCBitsr9sJK5uSS9MlWbcmNWuF1t
-         q3JLFYknEammWovNUMefdyW4glbF9svB8fNiuKvY5S1mrsj7yBoGLiGrjQNF2cw2Zy
-         J+BHo2sbD79jQ==
-Received: by mail-wm1-f69.google.com with SMTP id i8-20020a1c3b08000000b0037bb9f6feeeso1552935wma.5
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Feb 2022 05:58:12 -0800 (PST)
+        s=20210705; t=1644155901;
+        bh=SAhW/a84WS23pzYvstDyhGEwqpxke2RgUd70WOPmdjA=;
+        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version;
+        b=anYClgjmCc8fCdLyIHIcrcZAS3QKJqxpqZI3Ws26kqGwNqJTY6IARq6Mh8QXNbGqN
+         JJFY3Fry/eb0qC0GNup9HtlWfSbJqHHNOzBKVp/VCIxuKgmSXe/4CV9fZP5ufqtTo+
+         leX661KymSiNf1UANNBU3mTZ40yEX/AOQE93J6A8JJnYfyPIQoRh0nGCTcCd+riBcq
+         wu06Av62vLMEvhBBchsty319gIJ4o7d+l7etehcf/cDHzIu5X/XLXyBq4TQcd+ken/
+         VrunzQ2cDpptMHP+DE4LFFP1aJbQ/YESrI6iF+nBIvNn++XnyZ6FBHozQsHwE4VtHQ
+         oxIszmmq3vhZw==
+Received: by mail-wm1-f70.google.com with SMTP id m3-20020a7bcb83000000b0034f75d92f27so4242965wmi.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Feb 2022 05:58:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mhgmyPNP0m0BNQfRJEs+RA1d8S2sGALTwPK2/PdoeqQ=;
-        b=oKtB1Gljl31q29Wq1xoWSqhEAPQGJQRxO4a581mSdidp2PmuajrxfHViOUX5puHlxy
-         t0S09OGFjhsydeNWfKTH4lv/n1AzREuMt9Gm0M48ZhXWrxdLUTrLS02oD/Tdob5l/6J7
-         gAwB1nJeyQZYW1kX1KmQXmSrYmA6UyVZ6nxQ2ZkvgBdSyXE1Ulf9/1m8cDJV+JE9wzaH
-         KRzgh3kB3y6HiwSW4gZ24wW3vL+kmAZenKMSXRU/t+ZUg2RA+lANJiliYJO27xbdXg4P
-         YVjrEsKN+0dD1H7IAZd6E429hcsvEIB8RQYBuYqhvyUVVhXQ2ZNXZdli6weylKI9fKy5
-         X/hg==
-X-Gm-Message-State: AOAM530q54PMVi0Ax+ZfG2Ld5RYQmb7Uivq91PA0AzPC7q9c6Uf2b8A+
-        l6gCbT8dAsOA+Yyj9kPekFq6D6U5flanVUu/WzjU3KqSNoXabDoCYWBGIwtGRNnZcPcDryK94HL
-        U63gxTX6R4MKSSERsDehf7QhMxBXsw4SFqBqHl9bg0UC4tesr
-X-Received: by 2002:a5d:6c67:: with SMTP id r7mr6590035wrz.518.1644155891717;
-        Sun, 06 Feb 2022 05:58:11 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwkiHDCFlLARyPWdpSZMkOvUKQbIp825ke8GbU3gUeldtdtLFyU8aMsXLtKzR3p0cg53OhdNg==
-X-Received: by 2002:a5d:6c67:: with SMTP id r7mr6590019wrz.518.1644155891514;
-        Sun, 06 Feb 2022 05:58:11 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SAhW/a84WS23pzYvstDyhGEwqpxke2RgUd70WOPmdjA=;
+        b=2TmjCNrZQ24hXa0bIoPhX1gr5Vxm/+4I3xnZ3jveWyt3zNW0eg99DasYrir2Kt5WIk
+         SebNaUWIsQ9mIhk6nUP7RKa4207aNg+IDeqFnu+2UGiPKTOeL1/OfS1cYPHgtuJqtEF4
+         Kj94hoUIWY62dqMm/TPCABITupvdO3efb8oKytvYT/pqqvF2banZWP4NsfmHzvhE2E//
+         3Sf0wNIjKNMlzn2TWETCumi4SxR0vukMIbFXGJl2ul5sre2nGxKkBxZilpAp9IVYXtJL
+         YofIATj+pN9EUR1fF7P89UgtQBGo4460KC9hf84PagEbzyT6yVI8SIiWuWWGX5bbhqKI
+         4d5g==
+X-Gm-Message-State: AOAM5308/KDfWlStrVRrN0mtflEJSywduE5gqSRJGOibbQr1oKXJ69DU
+        MUTP0ReLID8ghrdwwW0TPO7VG1PYNYaqJjG6pw9sfaPLQd8iJdbPmFm8o3nhSYbubVPfQPAiQAN
+        d7CIf6os5LoQLpQmN4xEG6uzAoK7hUPuSrsrfE/JdsWqUBUXR
+X-Received: by 2002:a5d:5981:: with SMTP id n1mr6623850wri.354.1644155900203;
+        Sun, 06 Feb 2022 05:58:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJytvwW46TDkRhn6fTvRn7j0B7m4/zg+NDrjv6/9KG89d6habuNMjHscp6X1w/nZLrHXawIU3w==
+X-Received: by 2002:a5d:5981:: with SMTP id n1mr6623839wri.354.1644155900042;
+        Sun, 06 Feb 2022 05:58:20 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id e9sm8296888wrg.60.2022.02.06.05.58.10
+        by smtp.gmail.com with ESMTPSA id e9sm8296888wrg.60.2022.02.06.05.58.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Feb 2022 05:58:11 -0800 (PST)
+        Sun, 06 Feb 2022 05:58:19 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -66,64 +67,44 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/8] dt-bindings: memory: convert to dtschema
-Date:   Sun,  6 Feb 2022 14:57:59 +0100
-Message-Id: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v3 7/8] memory: of: parse max-freq property
+Date:   Sun,  6 Feb 2022 14:58:06 +0100
+Message-Id: <20220206135807.211767-8-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
+References: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Passing the memory timings maximum frequency as an unit address was
+a workaround and instead 'max-freq' is preferred.  Look for 'max-freq'
+first and then fallback to 'reg'.
 
-Changes since v2:
-1. Re-order patches so timings get converted earlier. This fixes dt-checker
-robot report.
-2. Add Dmitry's review tag.
-3. Three new patches:
-   #6: dt-bindings: memory: lpddr3: deprecate passing timings frequency as unit address
-   #7: memory: of: parse max-freq property
-   #8: ARM: dts: exynos: remove deprecated unit address for LPDDR3 timings on Odroid
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ drivers/memory/of_memory.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Changes since v1:
-1. Drop patch 1 (ARM dts) - applied.
-2. Correct description in lpddr2-timings (Dmitry).
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (8):
-  dt-bindings: memory: lpddr2-timings: convert to dtschema
-  dt-bindings: memory: lpddr3-timings: convert to dtschema
-  dt-bindings: memory: lpddr3: convert to dtschema
-  dt-bindings: memory: lpddr3: adjust IO width to spec
-  dt-bindings: memory: lpddr3: deprecate manufacturer ID
-  dt-bindings: memory: lpddr3: deprecate passing timings frequency as
-    unit address
-  memory: of: parse max-freq property
-  ARM: dts: exynos: remove deprecated unit address for LPDDR3 timings on
-    Odroid
-
- .../ddr/jedec,lpddr2-timings.yaml             | 135 +++++++++
- .../memory-controllers/ddr/jedec,lpddr2.yaml  |   6 +-
- .../ddr/jedec,lpddr3-timings.yaml             | 157 +++++++++++
- .../memory-controllers/ddr/jedec,lpddr3.yaml  | 263 ++++++++++++++++++
- .../memory-controllers/ddr/lpddr2-timings.txt |  52 ----
- .../memory-controllers/ddr/lpddr3-timings.txt |  58 ----
- .../memory-controllers/ddr/lpddr3.txt         | 107 -------
- .../samsung,exynos5422-dmc.yaml               |   3 +-
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   7 +-
- drivers/memory/of_memory.c                    |   6 +-
- 10 files changed, 564 insertions(+), 230 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3.yaml
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/lpddr2-timings.txt
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3-timings.txt
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/ddr/lpddr3.txt
-
+diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+index b94408954d85..bac5c7f34936 100644
+--- a/drivers/memory/of_memory.c
++++ b/drivers/memory/of_memory.c
+@@ -212,8 +212,10 @@ static int of_lpddr3_do_get_timings(struct device_node *np,
+ {
+ 	int ret;
+ 
+-	/* The 'reg' param required since DT has changed, used as 'max-freq' */
+-	ret = of_property_read_u32(np, "reg", &tim->max_freq);
++	ret = of_property_read_u32(np, "max-freq", &tim->max_freq);
++	if (ret)
++		/* Deprecated way of passing max-freq as 'reg' */
++		ret = of_property_read_u32(np, "reg", &tim->max_freq);
+ 	ret |= of_property_read_u32(np, "min-freq", &tim->min_freq);
+ 	ret |= of_property_read_u32(np, "tRFC", &tim->tRFC);
+ 	ret |= of_property_read_u32(np, "tRRD", &tim->tRRD);
 -- 
 2.32.0
 
