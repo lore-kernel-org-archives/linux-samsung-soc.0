@@ -2,142 +2,112 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DCDC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 16:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E020FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 18:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354120AbiBGQzn (ORCPT
+        id S231815AbiBGSAl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 11:55:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45308 "EHLO
+        Mon, 7 Feb 2022 13:00:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382256AbiBGQlN (ORCPT
+        with ESMTP id S239191AbiBGRzy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 11:41:13 -0500
-X-Greylist: delayed 324 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 08:41:12 PST
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898FFC0401D5
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 08:41:12 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id EA81F2B00137;
-        Mon,  7 Feb 2022 11:35:46 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 07 Feb 2022 11:35:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=1SGLDDvT9aYX5Q4yTBAo0kI1LCc9lg
-        3fqbdaIZNH59U=; b=vUGRVq6w+kT7h3rMBtL57GtHJYL8E2SSUwaEzWcHpaddKi
-        Zb7nJ9ThGQ75na/JHudkcP+CHBYZEU3WVR9mvsUNrjOkuvmOVbu9jsyUefGTApe2
-        LXgyGs88Vvns0oIrZjPUqBk/7n+Q0j+ddzq6I3YgJO4qmc5Ju5NGlpHGQxRil+6w
-        OrDCcq5iWNEa0+YYQD8u3vm19WQkhE3ZMC3nK1dkZflEk0/5VwrFew+tKqWrUrke
-        rrbAWJunS6lkJW48htP87FBonSB9vRXgBd6ROZJZ7dStOCmVCHEM1v8pwWoldwwD
-        Uh5qPXESIKPl6gza+rmF/I1ObAjhA7z3Sn2XsBxw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=1SGLDD
-        vT9aYX5Q4yTBAo0kI1LCc9lg3fqbdaIZNH59U=; b=fkGFKOx+QchCRN9F2gQ/f9
-        249sVbTag7soZUqY1zgVOFaEDAXekuMaRAAG0XsYD2Kk/UIG2eE9FeUdl1+OxbvW
-        IPVbkyuXFbspWWh4fQ080PJaaFWYLyIPPvmQ7hdeNuWiiY0mp998A32kzL1s6QUG
-        PoEMwa7fNMvSXxDbXJ963NXara1pb3/EXTLa3Socnyr663AY2T9jkpmr/+kT2qK/
-        QqKbNAjeh4ejqrS9Dn6t1ngSAI2QknowVp4Fht2PHtiaKmFrr7VnD7/YAOscJjyp
-        oYFfYM88nI3GLaWhAq6YBCLSQ+kBrh3GapaOycvh/B3wJj3WLrAa+T70zrvYwHTg
-        ==
-X-ME-Sender: <xms:YkoBYoo0yK4FFIbWE5xhTRJF9CTJM-pF11nib-kax6N2ky6_rrvaWw>
-    <xme:YkoBYup2oK0Z2hZzVOk2iuUeOmbiEjHGHQ5wGtaefLMovH79ik7l3yLim3HVLQagW
-    4WEF2JOf3va23pSUgQ>
-X-ME-Received: <xmr:YkoBYtM1QZtwYIhfRDA2I1KsB77431xYJ0MTfuDKMd8UHEpROiSVnlkL7XDvAFjf3SpEMVSYc_JcQejchdsHOp1b7lUFdkoNJ4pPMgs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheehgdekjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:YkoBYv7oho4-fVuju5bdR0tyJwC1hJjQcXCvd42sO0gE4BkAxeYXgg>
-    <xmx:YkoBYn4sMS-NDCwdefPoxDJoCiedmjRr7EG8kKklVwd0mIbbyAT09g>
-    <xmx:YkoBYvjB9w4d0G2EZNWQ27hudL3rp1xRu-edV9FoVUXXUFh6YyLrmQ>
-    <xmx:YkoBYrqL8TdqQLEurbc5oZWNpxVm2Yd6HdPz81JsTuM7zAgvfdO7SIHjCmA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Feb 2022 11:35:45 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
+        Mon, 7 Feb 2022 12:55:54 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5730AC0401D9
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 09:55:54 -0800 (PST)
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 030CD4025B
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 17:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1644256553;
+        bh=/iBTMJ+6ky1LxQGNpybYW4PAzENXOdLtJcm5RBsECOE=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=V5d0m/4qdB7Nm6++fc67OeUMzx2V68AtjKom+YqGUa+23fABwUKuXR3H3sQeYoDDD
+         yYAGgvWQBBDG/YrFxwy8Ncooki5TEHCAVEpY5YQAG9lKQ4wOzyYve5zwvWnQyZIgGi
+         +BwNkfbCnj2+VEQVJnyL9QzEwW3va+rsTqXa7lnOspXtu5UfTLNUrMuPGSDrWn/5+z
+         OFP3cyfRv5MwXeco5Xb9Qk0UCmY1OdwnvLejuopdzzzqE/ecItrwu04tFErEb0sPZX
+         7Yu53M83oQH93END6tvXb92TgNDM1Pc6d+CyYbDiy/KvKalJl57G6iBEWNh8c/nfOy
+         /b2hQQR5HVMxg==
+Received: by mail-ed1-f70.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso8249876edt.20
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Feb 2022 09:55:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/iBTMJ+6ky1LxQGNpybYW4PAzENXOdLtJcm5RBsECOE=;
+        b=am7KaXSoFKpE6CGtyHQ8wwhZoNY0udOvAR0hIntEfC4Q8qsoiuzjHS8z2n0fbo7Q38
+         bMwPtwdZujIEoxAcdHVrGWGQOC6KrzeVTxbms5zDLcuVpQqHjmVAFRkXVttsRZDogk3z
+         1spS96IfiMBuHrfhxZMsiw05BxQNyFePpnGyOOyn9ypwuywReBaPVBhyb3HFpkxc2Bqc
+         2x5VGrP8BoJZFzOyMvLwFMFchQnwIEbnjAx6rwcICjAYLfBzrY3YGFqXOtD+7rdXYhyT
+         cPupY2iUrq8eSOYjTm89mxaVi4ljTKTT78MG0UU37c71yNUT8MG85B39CftI62oa/mtD
+         ZGmA==
+X-Gm-Message-State: AOAM532OSN7A+sLs3zKMpzIsIRUEKjMsv7nFAG7rs5Iv8Hz946MC2/ex
+        AQdWiXqYqPkb1FulM7vAAWeKcOz8HJlNT3EjGS8TYeeuajSlbzSQIS0u4EBcP13WoH2e1xoVbX9
+        S7/gMKIcmxi7d3DayvlULUlk17he+If/3n58sxcRlh1aUhtoH
+X-Received: by 2002:a05:6402:26c2:: with SMTP id x2mr645540edd.354.1644256552643;
+        Mon, 07 Feb 2022 09:55:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwfa4i/V4nQftL4p3cvH4Fqz5Bqxsqs8spXP4wBR5nEJrSoNdf/WpjgVi+7ZOVjQ3pIOe/m6w==
+X-Received: by 2002:a05:6402:26c2:: with SMTP id x2mr645526edd.354.1644256552505;
+        Mon, 07 Feb 2022 09:55:52 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id c20sm3765210edy.41.2022.02.07.09.55.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Feb 2022 09:55:51 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     arm@kernel.org, soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH 10/23] drm/exynos: plane: Remove redundant zpos initialisation
-Date:   Mon,  7 Feb 2022 17:35:02 +0100
-Message-Id: <20220207163515.1038648-11-maxime@cerno.tech>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220207163515.1038648-1-maxime@cerno.tech>
-References: <20220207163515.1038648-1-maxime@cerno.tech>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 1/2] MAINTAINERS: arm: samsung: add Git tree and IRC
+Date:   Mon,  7 Feb 2022 18:55:02 +0100
+Message-Id: <20220207175503.425200-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The exynos KMS driver will call drm_plane_create_zpos_property() with an
-init value depending on the plane purpose.
+Add already used Krzysztof Kozlowski's Git tree for Samsung
+S3C/S5P/Exynos ARM sub-architecture and IRC channel (#linux-exynos at
+Libera).  This documents purely existing state.
 
-Since the initial value wasn't carried over in the state, the driver had
-to set it again in exynos_drm_plane_reset(). However, the helpers have
-been adjusted to set it properly at reset, so this is not needed
-anymore.
-
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index df76bdee7dca..3615cf329e32 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -122,7 +122,6 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
- 
- static void exynos_drm_plane_reset(struct drm_plane *plane)
- {
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 	struct exynos_drm_plane_state *exynos_state;
- 
- 	if (plane->state) {
-@@ -133,10 +132,8 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
- 	}
- 
- 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
--	if (exynos_state) {
-+	if (exynos_state)
- 		__drm_atomic_helper_plane_reset(plane, &exynos_state->base);
--		plane->state->zpos = exynos_plane->config->zpos;
--	}
- }
- 
- static struct drm_plane_state *
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 49c897fa56af..e219ba2c5ac9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2577,7 +2577,9 @@ R:	Alim Akhtar <alim.akhtar@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
++C:	irc://irc.libera.chat/linux-exynos
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+ F:	Documentation/arm/samsung/
+ F:	Documentation/devicetree/bindings/arm/samsung/
+ F:	Documentation/devicetree/bindings/power/pd-samsung.yaml
+@@ -15346,6 +15348,7 @@ R:	Alim Akhtar <alim.akhtar@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
++C:	irc://irc.libera.chat/linux-exynos
+ Q:	https://patchwork.kernel.org/project/linux-samsung-soc/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+ F:	Documentation/devicetree/bindings/pinctrl/samsung,pinctrl*yaml
 -- 
-2.34.1
+2.32.0
 
