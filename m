@@ -2,84 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427A0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 19:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CB1C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 19:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238174AbiBGTYS (ORCPT
+        id S233348AbiBGTtB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 14:24:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47562 "EHLO
+        Mon, 7 Feb 2022 14:49:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238286AbiBGTSt (ORCPT
+        with ESMTP id S240724AbiBGTpn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 14:18:49 -0500
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDEBC0401DA;
-        Mon,  7 Feb 2022 11:18:49 -0800 (PST)
-Received: by mail-oo1-f50.google.com with SMTP id w5-20020a4a9785000000b0030956914befso14850496ooi.9;
-        Mon, 07 Feb 2022 11:18:49 -0800 (PST)
+        Mon, 7 Feb 2022 14:45:43 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C05C0401E1
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 11:45:43 -0800 (PST)
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 15C873F1B4
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 19:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1644263133;
+        bh=ZFe7GrDYXMM8CLQ5SMwXw4UQni/9UZT69dDdKHMLJTo=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=nVhcyPyqr151nRdZriw+7C/a4hdO/eiaROET0s9kpr0T56yNyO5yCLph6LZJvoSZh
+         TwqWccufzXPJSH01VjJHCPFhHhng/yJbmF1F8cUpFsUC31mlc8bh2tAE2f0pJxVhlU
+         HzhFVWDacXCJgSbJuteeU7ECtCofdn/eb9rpqBcXDddjFCVSC8b5F0jWqgHHnWe0xp
+         BQ0qZoww7OPQxg6dVkARdTj8KaHOqvS905o5UMgKUBQFzry51vzZ4X7LlLTKZC64xy
+         RpGGGSKXHx6B82lV2jhURXCcDDbpqBp9sZvApwsiMlq+DUpj03qPYaEf+umO60cvVA
+         xyGbJVANBV8Gw==
+Received: by mail-ed1-f70.google.com with SMTP id l19-20020a056402231300b0040f2d6b4ec4so4463452eda.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Feb 2022 11:45:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Oi2kawlC4oTchPx3SrKG6H/+C9rTjQ5ALT7bD0kBsbM=;
-        b=IOTn6/dSrBVkIMLAN09WuDkrWnvOYpwd+c+bOOqH4eh43iGsETPMnjN9ZHeoRMzOZi
-         rzgPkOr1LVAJJqN+d9vZi6WRqkHq3o+JpvgbDWCcixAk/hLJTMsed3uajQXoi61F40yx
-         pZvDE/IPf+wmjMSLJ8zJ120bNL0HJzlugJXImEHuY06QyE71vSHKtdk6CbC4hrxBUCGI
-         wSdxgoQhycGcp1GjWDZY+neV74iELNSJRpEwm+RbnFWrqq6QQv5+9IvW4ZaP194zjNcR
-         IYMoVxx6SFy6MhgFzTpFyUYUCUMt/tWiK4gsNEBOv9qo+8Cma7gcRg29KiF7gpo61JN+
-         pUxQ==
-X-Gm-Message-State: AOAM532/s4MsmU+C3erDAeOtjsiX+l+rqvOWgjg/R+qNFySwDnlStAOU
-        l3MMHGmGXpcXrGOf7dD61hunbbL2gA==
-X-Google-Smtp-Source: ABdhPJzBiNPIh1ptFdSeOpWdwMnIEqTUUUtar0nzIrVQLmfyaZJXVUoObXYgq94h6Np8yJjB7Lly4w==
-X-Received: by 2002:a05:6871:4192:: with SMTP id lc18mr138702oab.207.1644261528365;
-        Mon, 07 Feb 2022 11:18:48 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id m26sm4295846ooa.36.2022.02.07.11.18.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 11:18:47 -0800 (PST)
-Received: (nullmailer pid 738937 invoked by uid 1000);
-        Mon, 07 Feb 2022 19:18:46 -0000
-Date:   Mon, 7 Feb 2022 13:18:46 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, Wolfram Sang <wsa@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: i2c: samsung,s3c2410-i2c: convert to
- dtschema
-Message-ID: <YgFwlgXnHTIUVeOH@robh.at.kernel.org>
-References: <20220131172713.208976-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ZFe7GrDYXMM8CLQ5SMwXw4UQni/9UZT69dDdKHMLJTo=;
+        b=A64SYQ4VKfaleuU0H4+pTBm5i5envN6cDjve3fFBKR6OP3/Og5A+13prz3ZSYMaaWJ
+         NoUAs3g7MIEzc3TSMR6kDSM/0l88H//jnnaokwyuUWd6lOnQbxRDKL3t5Pl8uiYtBlkL
+         i/h8rx8ChOIM3Zvk+bLg6hx3W6FuIA0oWeJbNpS5/xMXz4jZVABazjQLYtMexapgdgHB
+         6Q+O5CpBNNPN2TbSwsvjynbyyg4u3QkpXIAm6ClgFfMGFvAqkjm23hOWsbgvffulttJm
+         uTETk74QFxXOK5++QwACbAgnE3J2mcYJd3Loki5Ex95ZTWfqDmZMIJLsEJvtqDxEdFOO
+         vvYw==
+X-Gm-Message-State: AOAM533WwBpERNmYO3bXA5LurPFj0jD1JbcA368LipXT8mUn6JbzoXjx
+        bdgMP3zWpSFMdSNWm59Ks0V+5x6umlijAQiR4h3cOMI7pNYZeKeHHNuFKyyfoxToJpbFHaZ0Gdf
+        WNUGPcK5iHJbVPeSUwrWaR5kucRSKY6c0ijPa93coG+YKIx2Y
+X-Received: by 2002:a17:907:98e8:: with SMTP id ke8mr968005ejc.524.1644263132763;
+        Mon, 07 Feb 2022 11:45:32 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzFbHJhhicQcTAJbCV7XtoidiI0ekXusMyI1v7J4cYe1pPDkuk3WrSncw/sfZC1Yn4c59YKVQ==
+X-Received: by 2002:a17:907:98e8:: with SMTP id ke8mr967987ejc.524.1644263132572;
+        Mon, 07 Feb 2022 11:45:32 -0800 (PST)
+Received: from [192.168.0.91] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id t22sm5595617edv.105.2022.02.07.11.45.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Feb 2022 11:45:32 -0800 (PST)
+Message-ID: <22952187-80c2-a456-f389-f70a2a30f467@canonical.com>
+Date:   Mon, 7 Feb 2022 20:45:31 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220131172713.208976-1-krzysztof.kozlowski@canonical.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v6 1/4] spi: dt-bindings: samsung: convert to dtschema
+Content-Language: en-US
+To:     Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andi Shyti <andi@etezian.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Pratyush Yadav <p.yadav@ti.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+References: <20220124082347.32747-1-krzysztof.kozlowski@canonical.com>
+ <20220124082347.32747-2-krzysztof.kozlowski@canonical.com>
+ <YgFgQsV2bJS6mjQs@sirena.org.uk>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <YgFgQsV2bJS6mjQs@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 31 Jan 2022 18:27:13 +0100, Krzysztof Kozlowski wrote:
-> Convert the Samsung S3C24xx/S3C64xx/S5PV210/Exynos SoC I2C Controller
-> bindings to DT schema format.
+On 07/02/2022 19:09, Mark Brown wrote:
+> On Mon, Jan 24, 2022 at 09:23:44AM +0100, Krzysztof Kozlowski wrote:
+>> Convert the Samsung SoC (S3C24xx, S3C64xx, S5Pv210, Exynos) SPI
+>> controller bindings to DT schema format.
 > 
-> The conversion includes also changes/fixes to the bindings, matching the
-> real hardware and existing Linux driver:
-> 1. Do not require interrupts on samsung,exynos5-sata-phy-i2c, because
->    there is no such.
-> 2. Do not allow gpios on samsung,exynos5-sata-phy-i2c, because they are
->    hard-wired just like for HDMI phy.
-> 3. Do not require samsung,i2c-sda-delay and use default of 0.
-> 4. Require clock, which was always required but missing in bindings.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../devicetree/bindings/i2c/i2c-s3c2410.txt   |  58 -------
->  .../bindings/i2c/samsung,s3c2410-i2c.yaml     | 164 ++++++++++++++++++
->  2 files changed, 164 insertions(+), 58 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
->  create mode 100644 Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-> 
+> Reviewed-by: Mark Brown <broonie@kernel.org>
 
-Applied, thanks!
+Hi Mark and Lee,
+
+Thanks for the review. The dt-bindings part have Rob's review. I think
+this means Lee can pick up the entire set (SPI+MFD)?
+
+Best regards,
+Krzysztof
