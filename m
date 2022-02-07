@@ -2,150 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F49C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 09:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCECC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 09:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235356AbiBGJG3 (ORCPT
+        id S233625AbiBGJlB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 04:06:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43310 "EHLO
+        Mon, 7 Feb 2022 04:41:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243647AbiBGI4o (ORCPT
+        with ESMTP id S245169AbiBGJdJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 03:56:44 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E967CC043186
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 00:56:42 -0800 (PST)
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8F0E53F22B
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 08:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644224201;
-        bh=btDpU5FmsTkCm5Mc+WyqRMkXXG3Fg8Z86T3tz0oN0CM=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-         In-Reply-To:Content-Type;
-        b=HepHLUJh7x3PakI0ZWJV0Iy7bSoGdHu68AE9wjL1bUgbOacsNEc5ZVSrOoXzIbjPP
-         a2Qxm9VLBNzFNIkPVJkF+Lbckf7nhUN9rbwd0uBTKK7qu+bpmYt8QblGX9f8lvBLWw
-         Py6vDiaJkyNirKJK72AyzQloEdSdt/7Wo4RlKQvIY8IGpuo+epS2wKfwtSKYPdNRM/
-         cpNYofpHIkOAGiD+v80C3L6PYsT4zNcXtyY5X8yVklFD7WrzybSLq5flIp+60DfxD2
-         qDrD18XitNL3p3LmdhA6LB2i/4ktTlRpe2OrY4zh7T2fj3owW7+e9MjQEzItDE+VMp
-         R+vxYns3BDtYQ==
-Received: by mail-wm1-f70.google.com with SMTP id 130-20020a1c0288000000b0037bc5cbd027so1733031wmc.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Feb 2022 00:56:41 -0800 (PST)
+        Mon, 7 Feb 2022 04:33:09 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60D9AC043188
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Feb 2022 01:33:08 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id s18so23548578wrv.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Feb 2022 01:33:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=rBjYYVDfPJSH1BVq77LHmUbf5zvWji8qdpdwUm64Pcg=;
+        b=NhD4MFPycqIBpOhwd8+jvRql2upsyK034+tQKBWW1HDFvOTTuQu0lom4xl1l/YGYdR
+         NS1mJLu0MwwG2vZFKOi4k1tQe0gWQyfu6+frcfpc8aZn02P2FBH/i7fTXAcTqybXMdyY
+         M9y0VZCQTuVie/Ex71UrKktMQgwYKAkbLftxT16PBRxcpAKqo1gu/MqVsEX+SpExYs4w
+         9nw25Jry6zgct9e81Q/BH4tpx3K5mk1/MNcc3hugjKLMTIXSXzAWlj2QOUs6GFzEXo0+
+         VkZZ6LFjm6JdVv3KcHaIxJJlugJq4i/iRM77D/PWhnDYVSn6ObiL7Xt4VoqS2tQl3/zQ
+         aL8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=btDpU5FmsTkCm5Mc+WyqRMkXXG3Fg8Z86T3tz0oN0CM=;
-        b=g3KzQClVPggt1yln+EY6WFDb3XAosQDADXldw6n0Vk2s9MYko7qdp25w/g8ZIvHdcl
-         2B2xPCDRqEofsKEo1pPNSjgffh90H+q4WEL23PVuA3bKeqGzDiWYY8IfOvicA77umQFl
-         5ARDvxMfje1/s5QJpAKh+h1wvNwYaQWNLaUabUpOHV9R39+jedjwwGz9YwctVQ3CTZM7
-         X6mSS36+p6E3vJoWsfLI0Cb8r1VPJ9n8PfYzOOkpKW8MLcUZA7qNAL/wpOIb6OYP8t1R
-         miioWwM5/aBtnALvu1mQi+AxPD6scY/zokIH9i0xRbQx89nUQ6RW5hb3DUSC6CVDoPhE
-         Fmow==
-X-Gm-Message-State: AOAM530HGzdlfwyGLGOBktfXzOru5PV/SuGUT240b/UR7e7T0n23cFeA
-        BlxdxeyWqVy/GvmsYHJhiZHETBzxhjRFImx0jdal/f89akjOscxS3nra7uDbxAFwj3gkXv4DJ/x
-        IObTnnR5IXzbP+FzDzZG2p8ADtpvCJjvZjxxl6NOw8r1bsvwX
-X-Received: by 2002:a05:6000:16c5:: with SMTP id h5mr9011096wrf.364.1644224201260;
-        Mon, 07 Feb 2022 00:56:41 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwUWIz/kuedsRBnrB7RSMh9Ojazqtas2KPEtQ5IG7MGExl8fZ8JQjN+4o3EFV9rqV86qk4Cxw==
-X-Received: by 2002:a05:6000:16c5:: with SMTP id h5mr9011087wrf.364.1644224201104;
-        Mon, 07 Feb 2022 00:56:41 -0800 (PST)
-Received: from [192.168.0.86] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id t14sm17259601wmq.43.2022.02.07.00.56.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 00:56:40 -0800 (PST)
-Message-ID: <4b18991e-1c93-077d-368f-a861e8c2b845@canonical.com>
-Date:   Mon, 7 Feb 2022 09:56:39 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=rBjYYVDfPJSH1BVq77LHmUbf5zvWji8qdpdwUm64Pcg=;
+        b=h+8WdHy5gTHhjBYBEk9iVO/pmNeJcqg4vXFeDIPx8ONkvRvtLHPLNvngIr2cipgKBL
+         XttM1odE+RcxmsKI58yfHD2C7Ngspm+ltnc4UOPsrVWdVw7tVGji9VykqeyLUEgUibfm
+         Aq9Y4Wpto0JHfGPY56zGNfUmfNWD+GAKTtn+9P7T8Sq4Le7uJg2PUI73OomIcA8bs/lS
+         o/+IhbioByOQXU4Qt0RD+fcGP9Zex6LEIF/dpbEfxPxEtUS4QjomKdnV6K/HjGLn6MTp
+         2p3+sSmvGRheLtbu0/SGIlNW0RJpAOzPQaHTz4CnmODgePxQfnUNNasTNXfx2yhfMPEp
+         uc8Q==
+X-Gm-Message-State: AOAM533mO8c73CweX57VKnlsoxx64ZVMiElTm+GPYEeoQ5rnEzht1M0o
+        oXatKerkG93pA8Yez8qA6B/7zg==
+X-Google-Smtp-Source: ABdhPJxh2mvqeGHI9VwpCnxoxf60eD/D/VwhohJSXRkLkwKmdyolRzDLR+7kmAJg4PiqtpZcypaOOQ==
+X-Received: by 2002:adf:e4c4:: with SMTP id v4mr9166828wrm.332.1644226386982;
+        Mon, 07 Feb 2022 01:33:06 -0800 (PST)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id 5sm10359004wrb.113.2022.02.07.01.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Feb 2022 01:33:06 -0800 (PST)
+Date:   Mon, 7 Feb 2022 09:33:04 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 0/5] mfd/extcon/regulators: max77843: add
+ dtschema/bindings
+Message-ID: <YgDnUNCNCO+JLyHU@google.com>
+References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
+ <1bebedb9-644f-783d-492c-84a5de91720d@canonical.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 5/8] dt-bindings: memory: lpddr3: deprecate
- manufacturer ID
-Content-Language: en-US
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Lukasz Luba' <lukasz.luba@arm.com>,
-        'Dmitry Osipenko' <digetx@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
- <CGME20220206135825epcas5p4c07136cf0a54eb4d6c8441cd6dbf14bc@epcas5p4.samsung.com>
- <20220206135807.211767-6-krzysztof.kozlowski@canonical.com>
- <0a7101d81bd9$33088840$991998c0$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <0a7101d81bd9$33088840$991998c0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1bebedb9-644f-783d-492c-84a5de91720d@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/02/2022 05:14, Alim Akhtar wrote:
-> Hi Krzysztof
+On Sun, 06 Feb 2022, Krzysztof Kozlowski wrote:
+
+> On 11/01/2022 18:48, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > The max77843 shares some parts with max77693 but it lacked bindings.  All
+> > its compatibles were undocumented.  Add basic bindings for max77843,
+> > matching existing devicetree.  These are not complete bindings, but
+> > rather reverse-engineered to match current state.
+> > 
+> > I do not have access to device with MAX77843, so if anyone else
+> > volunteers to be the bindings maintainer, please join.
+> > 
+> > Changes since v1
+> > ================
+> > 1. MFD: Use absolute path to schemas.
+> > 2. Regulator: mention all allowed properties,
+> >    additionalProperties=false, add min/max values for voltages and
+> >    current, don't use patternProperties when not needed.
+> > 3. extcon: Use absolute path to schemas.
+> > 
+> > Dependencies
+> > ============
+> > 1. Patch 1/5 (dts): nothing depends on it, sending here so Rob's automatic
+> >    checker won't complain about DTS.
+> >    I will take it via Samsung SoC tree.
+> > 
+> > 2. The patch 4/5 (mfd bindings) depends on regulator and extcon, so they
+> >    should come together (2+3+4+5).
+> > 
+> Dear Lee,
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
->> Sent: Sunday, February 6, 2022 7:28 PM
->> To: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>; Rob Herring
->> <robh+dt@kernel.org>; Lukasz Luba <lukasz.luba@arm.com>; Alim Akhtar
->> <alim.akhtar@samsung.com>; Dmitry Osipenko <digetx@gmail.com>; linux-
->> kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org
->> Subject: [PATCH v3 5/8] dt-bindings: memory: lpddr3: deprecate
->> manufacturer ID
->>
->> The memory manufacturer should be described in vendor part of compatible,
->> so there is no need to duplicate it in a separate property.
->> Similarly is done in LPDDR2 bindings.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
->> .../bindings/memory-controllers/ddr/jedec,lpddr3.yaml         | 4 +++-
->> 1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/memory-
->> controllers/ddr/jedec,lpddr3.yaml
->> b/Documentation/devicetree/bindings/memory-
->> controllers/ddr/jedec,lpddr3.yaml
->> index d6787b5190ee..3bcba15098ea 100644
->> --- a/Documentation/devicetree/bindings/memory-
->> controllers/ddr/jedec,lpddr3.yaml
->> +++ b/Documentation/devicetree/bindings/memory-
->> controllers/ddr/jedec,lpd
->> +++ dr3.yaml
->> @@ -40,7 +40,9 @@ properties:
->>   manufacturer-id:
->>     $ref: /schemas/types.yaml#/definitions/uint32
->>     description: |
->> -      Manufacturer ID value read from Mode Register 5.
->> +      Manufacturer ID value read from Mode Register 5.  The property is
->> +      deprecated, manufacturer should be derived from the compatible.
->> +    deprecated: true
->>
-> 
-> Shouldn't it be the other way? As DT describes hardware and MR5 does contain
-> the Manufacturer ID, 
-> so getting Manufacturer ID from MR5 makes aligned to hardware description.
+> This patchset was reviewed and there are no outstanding issues. Could
+> you pick up patches 2-5 (skipping DTS patch) via MFD tree?
 
-The code/driver can read MR5 and report it to user-space in case for
-example we have a device compatible with different vendor and same
-compatible is used. So compatible is re-used but we want real
-manufacturer ID from the hardware.
+Are the subsystem maintainers not going to review/ack?
 
-But storing a fixed MR5 value in DT does not fit here. If someone takes
-effort to encode manufacturer ID in the DTS, then he/she should take
-effort to actually document the compatible.
-
-Basically having MR5 in DT is equal to having a compatible in DTS. I
-prefer the latter - simpler, less properties, using existing property
-from DT spec instead of custom one.
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
