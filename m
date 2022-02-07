@@ -2,93 +2,77 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9BDC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 21:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51926C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Feb 2022 22:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243258AbiBGV5n (ORCPT
+        id S243439AbiBGWEN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 16:57:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37186 "EHLO
+        Mon, 7 Feb 2022 17:04:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239942AbiBGV5n (ORCPT
+        with ESMTP id S243436AbiBGWEM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 16:57:43 -0500
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83015C061355;
-        Mon,  7 Feb 2022 13:57:42 -0800 (PST)
-Received: by mail-oi1-f179.google.com with SMTP id v67so18550090oie.9;
-        Mon, 07 Feb 2022 13:57:42 -0800 (PST)
+        Mon, 7 Feb 2022 17:04:12 -0500
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47BD0C061355;
+        Mon,  7 Feb 2022 14:04:12 -0800 (PST)
+Received: by mail-oi1-f181.google.com with SMTP id r27so18606724oiw.4;
+        Mon, 07 Feb 2022 14:04:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=CIT/zYqj4KmVgAn5vqAR/pRlBWKndIBHim2BVa6q7Ls=;
-        b=KSGmF6KvTFIGClFbVC3UbOKuK6wZ2DbdRiAOtOkGAFEry/ORZRT99drWOO+cADiv0x
-         pnNM3IQCej43FDiEGISd3ceHfQ7ggyYlq3b/CsNOKSt+ypOst7nKxEqa880w9vxvHA21
-         GOqaKCsGWJtL+5c0hZmec7p/PYO5/ABP+r/p4lxsz5S9yxnynHZ9idReRU66POybc0vB
-         WN69yaRvxymPw+3Xs4xSNtDmXg+WANHVM3h6ro6UQAOaiFrHb6VWK13220WE+7FshSW3
-         qWH22e+439MpoHaSVvYLDq+dbnOYc+HDhTtx2LMgQQRChxAvSDVp99MgAaWfU0a2EWZR
-         mTEA==
-X-Gm-Message-State: AOAM530km0pAE625xOUzASKOIpKgsfG/azU2NV+KPPk1YT3AmGYSqJ1S
-        uxLmwM6o823c8yt3B6/UFw==
-X-Google-Smtp-Source: ABdhPJwTY5WUNnR2oOLu+PEJubSNdTF2LEaIPZoKmZNu5fb1bdtr6OBaXStUltyISA4pM2kJzMAO9w==
-X-Received: by 2002:a05:6808:ec4:: with SMTP id q4mr485990oiv.326.1644271061869;
-        Mon, 07 Feb 2022 13:57:41 -0800 (PST)
+        bh=Q/wggRenO/vzVBS70QLnVZiNuU5fxQ5DeAwQ15+x+oU=;
+        b=DJLs3M/Nv3lDB21M0EaNn+2iR1yXn7AlF+h9tiwxg2Vhsfow7Y8YmB50HfR7kI7Fl4
+         uxGszlxmjy34xxHNbClyqrOQE47aR4E6Eh8VVdKPjMTbPqDsYE3aLhqSxzVqOZzRawEX
+         C9xtea5DAFiM8nANuz+Zo+YqA64tbjBRI84elGyFom5Oba+/MYoEB8G41j3o/JSPZFEb
+         NLHi8UG4JURSmM0gKVVVYMKgDwjp9mbuWOCjF2VQU4jM5QEIve6WR0nAWWyh1hlJgZeB
+         H7g5OXoJ5YW3hoKRhZKaEyMpWK7d9HBU4qksvFxGunTNBwSLkY+FuGsZirNC1vMgcDzL
+         2hEg==
+X-Gm-Message-State: AOAM533Qk4lbgM0mK0OUpHltOhR7tAt9ulUqZLR7H4mpT9sJAdS3PL4r
+        vNgLpy61GTer9HdZsrvZsg==
+X-Google-Smtp-Source: ABdhPJx2GaomN8+6iVxLTWHVeOW8B30rYogggWW6K4pN5aer58lexokJMRHrT3DHesQ//EEEmHQ8UQ==
+X-Received: by 2002:a05:6808:252:: with SMTP id m18mr465112oie.285.1644271451568;
+        Mon, 07 Feb 2022 14:04:11 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id y19sm4589626oti.49.2022.02.07.13.57.39
+        by smtp.gmail.com with ESMTPSA id h17sm4516681otn.60.2022.02.07.14.04.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 13:57:40 -0800 (PST)
-Received: (nullmailer pid 996196 invoked by uid 1000);
-        Mon, 07 Feb 2022 21:57:38 -0000
-Date:   Mon, 7 Feb 2022 15:57:38 -0600
+        Mon, 07 Feb 2022 14:04:10 -0800 (PST)
+Received: (nullmailer pid 1006262 invoked by uid 1000);
+        Mon, 07 Feb 2022 22:04:09 -0000
+Date:   Mon, 7 Feb 2022 16:04:09 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lukasz Luba <lukasz.luba@arm.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/8] dt-bindings: memory: convert to dtschema
-Message-ID: <YgGV0jz9qlbQUk8/@robh.at.kernel.org>
-References: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     martin.juecker@gmail.com, cw00.choi@samsung.com,
+        virag.david003@gmail.com, robh+dt@kernel.org,
+        semen.protsenko@linaro.org, devicetree@vger.kernel.org,
+        krzysztof.kozlowski@canonical.com,
+        linux-samsung-soc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, alim.akhtar@samsung.com,
+        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: samsung: document chagallwifi
+ board binding
+Message-ID: <YgGXWcW2s/yMdPr3@robh.at.kernel.org>
+References: <20220115162703.699347-1-henrik@grimler.se>
+ <20220115162703.699347-2-henrik@grimler.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220115162703.699347-2-henrik@grimler.se>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Feb 06, 2022 at 02:57:59PM +0100, Krzysztof Kozlowski wrote:
-> Hi,
+On Sat, 15 Jan 2022 17:27:01 +0100, Henrik Grimler wrote:
+> Add binding for Samsung Galaxy Tab S 10.5", based on Exynos 5420 with
+> codename chagallwifi. It was released in 2014 and has several siblings
+> with similar hardware.
 > 
-> Changes since v2:
-> 1. Re-order patches so timings get converted earlier. This fixes dt-checker
-> robot report.
-> 2. Add Dmitry's review tag.
-> 3. Three new patches:
->    #6: dt-bindings: memory: lpddr3: deprecate passing timings frequency as unit address
->    #7: memory: of: parse max-freq property
->    #8: ARM: dts: exynos: remove deprecated unit address for LPDDR3 timings on Odroid
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Changes since v1:
-> 1. Drop patch 1 (ARM dts) - applied.
-> 2. Correct description in lpddr2-timings (Dmitry).
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (8):
->   dt-bindings: memory: lpddr2-timings: convert to dtschema
->   dt-bindings: memory: lpddr3-timings: convert to dtschema
->   dt-bindings: memory: lpddr3: convert to dtschema
->   dt-bindings: memory: lpddr3: adjust IO width to spec
->   dt-bindings: memory: lpddr3: deprecate manufacturer ID
->   dt-bindings: memory: lpddr3: deprecate passing timings frequency as
->     unit address
->   memory: of: parse max-freq property
->   ARM: dts: exynos: remove deprecated unit address for LPDDR3 timings on
->     Odroid
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
