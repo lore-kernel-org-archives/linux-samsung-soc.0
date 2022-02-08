@@ -2,101 +2,155 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06CEC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 14:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4889BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 17:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351167AbiBHOl3 (ORCPT
+        id S236821AbiBHRTN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 09:41:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41482 "EHLO
+        Tue, 8 Feb 2022 12:19:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230374AbiBHOl2 (ORCPT
+        with ESMTP id S235886AbiBHRTN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 09:41:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E67C03FED0;
-        Tue,  8 Feb 2022 06:41:27 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 8 Feb 2022 12:19:13 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 214ACC061578
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Feb 2022 09:19:12 -0800 (PST)
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ACFB5B81AF8;
-        Tue,  8 Feb 2022 14:41:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F45C004E1;
-        Tue,  8 Feb 2022 14:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644331285;
-        bh=S2Mhl+SP+krSYHv8YbK+y9MJgy+YlW+2kfYbIoDxG68=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HKCzlP4n8IGs7fL0TOcDJCjbRQNsbErtXPYz5+Fa3jOdvZ8xePIsFRZHfOX/CrCi+
-         oR09E+WrZeEaoXNz7F3K17cNPzCzGuTGR6bwztv8tBDYnSNObLfn7t1cP46SmVWlu5
-         ymTKB2BUW7dlrwBoZUlIE5O5WXb4HEte4tOzsq/mDep3SHpG8tb+qvIM8uRy5j9ZMk
-         EUneCfvv4owzLlepm9/oLbGtm0wGiXl8+oxX0457N5qXJeMwO1oJCfu7Pq0SGXL2gF
-         4Gm9WRrPMASGK7rVtffRpvm3gcusYO8oexcyEOdvk4PT7OJHISgSiSuUh1eUK/84+X
-         yGIMw8ldInbRw==
-Date:   Tue, 8 Feb 2022 14:41:20 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 03EA23FE09
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Feb 2022 17:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1644340751;
+        bh=FcBirewgG5GspHM+XiPFPnNhDyGu6MCNBPG4nrU1bUg=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=pifFX9AmJ3B4OewK8O2GazzFCutjvzKZaYYfrjXu/sMEWGB4EI+L6UpjDfII+7s/S
+         EIkWCGJPiY8C/hGzC05RJ8NrlYiBrPGQpDOXXf8fOzFj4KE02otIyggL9rhHwMJH4N
+         uTnADkTWzPqH7SfiUsLcWo7hvQ/ULV55QmGEXCaSDQE//sXFcfp9jMQO0Fs0ZiZa4m
+         lBKyuHX0JX9LqV8V9dgUDqklO/Q0/4l7aczUPh9jDqzgll2l2FkZY3qXgF8RNLxnAb
+         DCB8kDiZNYVVB0cCi67jj+zs0/RwE/tbiwIdkZTgYlj6iBcOrlFV7jQe/uYSCz/0RF
+         iTj++jJsYm6IQ==
+Received: by mail-ej1-f69.google.com with SMTP id z26-20020a1709067e5a00b006cbe0628826so2365931ejr.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Feb 2022 09:19:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FcBirewgG5GspHM+XiPFPnNhDyGu6MCNBPG4nrU1bUg=;
+        b=Yl/i7D6975658DN+E1WOqzIW51tnzsHJDgLSEY2W0A40P0YT9kU4bSGxmJ+xpRhLOo
+         6uRSBy+krShx64OTOiBbPlTxOmRAY8qkQTVmmBzOmF8XmeB8x4w5TjQ3HOdyUGRJcPqD
+         0CPn5icybg1zBwDcz2WhC6UpoWYva9PO03+/ktWsLtv4UZg8Tm80sjyYKwr/Kd6aq59N
+         o79F1WlbCBAaGQCCNyxu3q2IAFkyHe32an2T1hkr0/sp5GDiJn8ivnJ2VJSI7ldmYuN2
+         t+uSRF8ZyNhNWQIKxyJkwPyoS7rzKV4jZVBUyhAD3oROy8PB656wAI1U5Nk3d9g2Wvwl
+         3YtA==
+X-Gm-Message-State: AOAM532HQOa187/p4inqjgAp9CZH9d73uCROL+LiiidyI0l3dbN9SLQW
+        BzHNXujyU+CaJ5rqHlSY0k9KeNMnWDpwz5MtgV698M3Lmlj3BtKjjp35MaRLLtys8y3cReh2rjF
+        z1wXMeDqeh6oyyMH8HeWhA6z7WzglS3K9gIg4jX1PE7ywsQEd
+X-Received: by 2002:a17:907:2d94:: with SMTP id gt20mr4673984ejc.501.1644340750436;
+        Tue, 08 Feb 2022 09:19:10 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxr5UsCRspXa4NCGOuZM5Ba8debNWt45uxZ8oMQLV+xoDrSe58nTit31OQ9lQldNaQthBGDVw==
+X-Received: by 2002:a17:907:2d94:: with SMTP id gt20mr4673973ejc.501.1644340750270;
+        Tue, 08 Feb 2022 09:19:10 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id r10sm5125550ejy.148.2022.02.08.09.19.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Feb 2022 09:19:09 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v2] regmap-irq: Use regmap_irq_update_bits instead of
- regmap_write
-Message-ID: <YgKBEIapL8MAQAoI@sirena.org.uk>
-References: <20220119142953.1804-1-quic_pkumpatl@quicinc.com>
- <CGME20220208122955eucas1p2d4e32f51224242e9ebd0bce58b9c04ca@eucas1p2.samsung.com>
- <39f1b598-58ca-1e3d-3065-8dd692ee7c9f@samsung.com>
- <20220208133957.GC112838@ediswmail.ad.cirrus.com>
- <20220208135036.GD112838@ediswmail.ad.cirrus.com>
- <YgJ2hG2vwUclA/zF@sirena.org.uk>
- <20220208143316.GE112838@ediswmail.ad.cirrus.com>
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: [PATCH 00/10] drm: dt-bindings: exynos: convert to dtschema
+Date:   Tue,  8 Feb 2022 18:18:13 +0100
+Message-Id: <20220208171823.226211-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jv8MBE5QGK8kAXmU"
-Content-Disposition: inline
-In-Reply-To: <20220208143316.GE112838@ediswmail.ad.cirrus.com>
-X-Cookie: This is your fortune.
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
---jv8MBE5QGK8kAXmU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Convert most of the Exynos DRM/Display bindings to DT schema and put
+them under "samsung" directory instead of "exynos". The FIMD is used also
+on S3C and S5P, so exynos is too specific.  Also most of other Samsung
+SoC bindings and drivers are organized in directories by company name,
+not by SoC name.
 
-On Tue, Feb 08, 2022 at 02:33:16PM +0000, Charles Keepax wrote:
-> On Tue, Feb 08, 2022 at 01:56:20PM +0000, Mark Brown wrote:
+I used Exynos DRM maintainers and myself as bindings maintainers, but
+feel free to propose different approach.
 
-> > My understanding was that they'd mixed interrupt handling in as a
-> > bitfield in another register.
+Dependencies
+============
+None. I will take the DTS patches via Samsung SoC tree.
 
-> Eek.. what a courageous choice. I guess that might work as
-> long as there is only a single IRQ status bit in the register,
-> if there are multiple bits this really needs more complex
-> handling, like you basically need the old behaviour for the
-> IRQ part of the register, and the new behaviour for the not
-> IRQ part of the register. So perhaps a new mask to denote which
-> bit of the register is being used for IRQ stuff?
+Best regards,
+Krzysztof
 
-Yeah, I think that's what I misread the code as doing.
+Krzysztof Kozlowski (10):
+  ARM: dts: exynos: add missing HDMI supplies on SMDK5250
+  ARM: dts: exynos: add missing HDMI supplies on SMDK5420
+  dt-bindings: phy: samsung,exynos-hdmi-phy: convert to dtschema
+  dt-bindings: display: samsung,exynos5433-decon: convert to dtschema
+  dt-bindings: display: samsung,exynos7-decon: convert to dtschema
+  dt-bindings: display: samsung,exynos-hdmi-ddc: convert to dtschema
+  dt-bindings: display: samsung,exynos-mixer: convert to dtschema
+  dt-bindings: display: samsung,exynos-hdmi: convert to dtschema
+  dt-bindings: display: samsung,exynos5433-mic: convert to dtschema
+  dt-bindings: display: samsung,exynos-fimd: convert to dtschema
 
---jv8MBE5QGK8kAXmU
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/display/exynos/exynos-mic.txt    |  51 ----
+ .../display/exynos/exynos5433-decon.txt       |  60 -----
+ .../bindings/display/exynos/exynos7-decon.txt |  65 -----
+ .../bindings/display/exynos/exynos_hdmi.txt   |  64 -----
+ .../display/exynos/exynos_hdmiddc.txt         |  15 --
+ .../display/exynos/exynos_hdmiphy.txt         |  15 --
+ .../bindings/display/exynos/exynos_mixer.txt  |  26 --
+ .../bindings/display/exynos/samsung-fimd.txt  | 107 ---------
+ .../samsung/samsung,exynos-hdmi-ddc.yaml      |  42 ++++
+ .../display/samsung/samsung,exynos-hdmi.yaml  | 227 ++++++++++++++++++
+ .../display/samsung/samsung,exynos-mixer.yaml | 143 +++++++++++
+ .../samsung/samsung,exynos5433-decon.yaml     | 148 ++++++++++++
+ .../samsung/samsung,exynos5433-mic.yaml       |  95 ++++++++
+ .../samsung/samsung,exynos7-decon.yaml        | 120 +++++++++
+ .../display/samsung/samsung,fimd.yaml         | 198 +++++++++++++++
+ .../bindings/phy/samsung,exynos-hdmi-phy.yaml |  44 ++++
+ MAINTAINERS                                   |   1 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |   3 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |   3 +
+ 19 files changed, 1024 insertions(+), 403 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos-mic.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos5433-decon.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos7-decon.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos_hdmi.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos_hdmiddc.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos_hdmiphy.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/exynos_mixer.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/exynos/samsung-fimd.txt
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.32.0
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmICgQ8ACgkQJNaLcl1U
-h9CuOQf/f55QEPYWcJesb5ASdVandS6mWWUT3NZ4QOrbearecpyY1z2pPh3zx7Yu
-qUVYuvfLMfJvSPsjtGHi2THg5eX+ctxJdpsflYf1SDGEQnX1dREsJl+1giBVqogn
-ybLMXZmEvzKOYoR9q0MZMw8baesjtlpirunaXvvK7ctnTB/5hfR/Slmm9dqwt2Ph
-PoElLbFPTzlvKFYccAyr6dsCxgbL1cV7rw0dSMdreAD7b7Is1V9X0zmq6bPPS0g5
-qXG3XIjUDDMqB1gNvAEqz8vUx4sqrh1SHkpyIDjfb5cC4dn1ANqiKeVbkzhTSCky
-cciN+AtOT6e9JkzbRLN3gVG8rq08aw==
-=Y0qE
------END PGP SIGNATURE-----
-
---jv8MBE5QGK8kAXmU--
