@@ -2,125 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B033C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 19:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC86AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 22:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386185AbiBHTlb (ORCPT
+        id S1386314AbiBHWY3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 14:41:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42468 "EHLO
+        Tue, 8 Feb 2022 17:24:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353821AbiBHTlb (ORCPT
+        with ESMTP id S1386292AbiBHUCk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 14:41:31 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7619EC0612C3
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Feb 2022 11:41:30 -0800 (PST)
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 8 Feb 2022 15:02:40 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A52AC0613CB;
+        Tue,  8 Feb 2022 12:02:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8611A3F199
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Feb 2022 19:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644349282;
-        bh=IBoZSDY+vh3MSwNsW1pxD5jmNE6UjfMq9hfqIrcXwOQ=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=K8L1CWA6+gQrk0r2BPB6naeEEC/px6HGeoPbk7cT9kbJS0aSaj2URSSPphSner+Fb
-         3wvHQxxCehPuZrpt9wnDXYama7HvoKVkwQOQtgTDr7defUeSnkOQSwK+DmptjJMomS
-         4PomZ6ZSyK4K4B/I4JVo/m8jXu4We4jUpPhuEEXVGHQVmwg7O4b34caE57woLgOKhj
-         +aEEw2JPgEIHdAJBAWxycfPcmgUIYnmiK3AW+nHm6mwp8tPSkGors4ei/JTcmGiqVc
-         kgMjGXPnpLZLN4k2mjkTQZOQK/xlP/BhvnbyYCWaT/qvgpMlnc0/mxuPBhLtz/nYXb
-         7EBCmzv+fBLqQ==
-Received: by mail-ej1-f72.google.com with SMTP id ka12-20020a170907990c00b006c41c582397so110575ejc.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Feb 2022 11:41:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IBoZSDY+vh3MSwNsW1pxD5jmNE6UjfMq9hfqIrcXwOQ=;
-        b=hejVkIejYjOMOJ+uHwYsb7XwvAGRD8qsMajVZpJfqdH92KxRTjt9UhWXToImgsfUPJ
-         H0LSFakji+46hLBZazLZU/WEOguUulAziRfNdFRbiWzxjpV1j7kGvlDP8XpJcrAtVPL0
-         7q1N9ZHttGQuYrJXsqXU/bMIltvAnIt1obzcROFXFUqlCTJ1B6BmUg7sIsgn8zRgVMtH
-         UZeYzuZxekMmPTbrYZiTaGld4h/QRg5D8xVy0Xib05kO2vOtGXroYC9JFsUbhfx5Bosu
-         pm2vckLxVlJYaBwPX03gRhezHh/DkAAOtmdYnRc/vYQ3hQJL6R+weuY0N4SdiZCsoKn+
-         cKBw==
-X-Gm-Message-State: AOAM532GW36H4zEL3Fc8mXq/E3yWgTXeyNxAxL5Rq57jJo5LhzDz1mYr
-        5RcC4IzTogngbUlEDGEmUBEqLEZ6zlvmxX5tNKR3a4lnBnQzLYiTC9iEYjBUK4dEQcqxCi35/KN
-        lzP0EZoW6PSUGblBlZCnDXVDeobGFW4Cpl4vB/s0iY6UQtljg
-X-Received: by 2002:a17:907:16a6:: with SMTP id hc38mr5142708ejc.291.1644349282202;
-        Tue, 08 Feb 2022 11:41:22 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzn9tSy823egnQ7yz9s8CuvfmblkNP8GroHvwF86v5BwqvI6RsmXBhjnUpUe0Qp6ywDYxQrXQ==
-X-Received: by 2002:a17:907:16a6:: with SMTP id hc38mr5142696ejc.291.1644349282019;
-        Tue, 08 Feb 2022 11:41:22 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id k22sm3887085ejr.211.2022.02.08.11.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 11:41:21 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: soc: samsung: usi: refer to dtschema for children
-Date:   Tue,  8 Feb 2022 20:41:19 +0100
-Message-Id: <20220208194119.46022-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D415A615A7;
+        Tue,  8 Feb 2022 20:02:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B92FC004E1;
+        Tue,  8 Feb 2022 20:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644350558;
+        bh=76ABg2Dlvjl73zDQJvo3h1QYiJvQxOXAQJYzRa9Onu4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=idEZsdqPKRmGaSIUSROU3HsIP0i6pXlrujkYqVPHdNRGJcX25aTFMNKx8/BPhMcob
+         3d89OhmoK6r4wY/E2bu3bP2paFTMvXkU94MnkcH9POJH8b5tXPG9rkGJf5m0SgQOyE
+         dYEsfSeNVgsY8LXZQn5HHarLWTq3twB6SZ+zEHKBNrm6bnG96q40z/qakROB3gFApC
+         dp4LlOVL+u1Ng9ajbsg1ap4HpkiEZ3hNoiJYn+p3NZRsWt/dq57JC6Bf2vffsbRjDN
+         vnJh/n+g+WIvUqSsqkrPFit5CbhC+FhVGAfKO2CUHny9QjqhhpUeun+7vxG6JxvZnP
+         /KumfOOXbguaA==
+Received: by mail-ej1-f46.google.com with SMTP id s21so771541ejx.12;
+        Tue, 08 Feb 2022 12:02:38 -0800 (PST)
+X-Gm-Message-State: AOAM530aBdHSIKhDe6sRdtK5Zfe7miqEF9fd+OUD44GFFH0xq57dsgWv
+        NB+rcrEzUA0bisE7HUZXOfmc6mKsJxfkaeCpfA==
+X-Google-Smtp-Source: ABdhPJwYJJZa+vnjfBK/WR+7SL6UFvywYM6EfsfWcrdXGMBkFX9fiAap0UJtx2BRAmtyBeG/7Drode5OumzOI+e5wUY=
+X-Received: by 2002:a17:906:f0cb:: with SMTP id dk11mr4930847ejb.20.1644350556421;
+ Tue, 08 Feb 2022 12:02:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211207140334.10461-1-semen.protsenko@linaro.org> <CAPLW+4n-BjSHK4gdP=cGvAE+pZDfvYTO4yy09yNRJgSXt2VArg@mail.gmail.com>
+In-Reply-To: <CAPLW+4n-BjSHK4gdP=cGvAE+pZDfvYTO4yy09yNRJgSXt2VArg@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 8 Feb 2022 14:02:24 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ3CwT-iuf2NoM=sjPr-Qowzv61Gtv_zvSAoyj7qdZMNA@mail.gmail.com>
+Message-ID: <CAL_JsqJ3CwT-iuf2NoM=sjPr-Qowzv61Gtv_zvSAoyj7qdZMNA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Report enabled nodes with duplicated address
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        devicetree@vger.kernel.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Explicitly reference the dtschema for USI children implementing specific
-serial protocol (I2C, SPI, UART).  The SPI schema is not yet accepted,
-so it will be provided later.
+On Tue, Dec 14, 2021 at 10:11 AM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
+>
+> On Tue, 7 Dec 2021 at 16:03, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> >
+> > Duplicated unit address is a normal case, as long as no more than one
+> > node using that address is enabled. Having duplicated addresses is
+> > already allowed by '-Wno-unique_unit_address' in DTC_FLAGS. But two
+> > simultaneously enabled nodes sharing the same address is usually
+> > incorrect. Add '-Wunique_unit_address_if_enabled' flag to report
+> > warnings for such case when doing "make dtbs_check".
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Reported-by: Rob Herring <robh@kernel.org>
+> > Suggested-by: Rob Herring <robh@kernel.org>
+> > ---
+> > NOTE: After applying this patch, a lot of warnings appear on "make
+> > dtbs_check". I'm not completely sure if it's ok, so feel free to Nack.
+> >
+>
+> Hi Rob,
+>
+> Do you think this patch is feasible? You asked me to send it before,
+> though I now see it leads to a lot of errors being revealed when doing
+> "make dtbs" and "make dtbs_check". Please let me know if it's Ack or
+> Nack -- I'm fine with any resolution, just want to know if I should
+> continue to carry it in my local branch or drop it.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../bindings/soc/samsung/exynos-usi.yaml      | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Sorry, I'd missed this. Anyway, since there are lots of warnings, we
+can't apply this.
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index 58f2e9d8bb0e..f3aae7e0e2e6 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -18,11 +18,7 @@ description: |
-   selects which particular function will be used.
- 
-   Refer to next bindings documentation for information on protocol subnodes that
--  can exist under USI node:
--
--  [1] Documentation/devicetree/bindings/serial/samsung_uart.yaml
--  [2] Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
--  [3] Documentation/devicetree/bindings/spi/spi-samsung.txt
-+  can exist under USI node.
- 
- properties:
-   $nodename:
-@@ -75,10 +71,17 @@ properties:
-       This property is optional.
- 
- patternProperties:
--  # All other properties should be child nodes
--  "^(serial|spi|i2c)@[0-9a-f]+$":
-+  "^i2c@[0-9a-f]+$":
-+    $ref: /schemas/i2c/i2c-exynos5.yaml
-+    description: Child node describing underlying I2C
-+
-+  "^serial@[0-9a-f]+$":
-+    $ref: /schemas/serial/samsung_uart.yaml
-+    description: Child node describing underlying UART/serial
-+
-+  "^spi@[0-9a-f]+$":
-     type: object
--    description: Child node describing underlying USI serial protocol
-+    description: Child node describing underlying SPI
- 
- required:
-   - compatible
--- 
-2.32.0
-
+Rob
