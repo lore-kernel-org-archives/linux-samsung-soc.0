@@ -2,129 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701AFC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5A7C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:56:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376662AbiBHNur (ORCPT
+        id S232597AbiBHN42 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:50:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44502 "EHLO
+        Tue, 8 Feb 2022 08:56:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376702AbiBHNuq (ORCPT
+        with ESMTP id S229829AbiBHN42 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 08:50:46 -0500
-X-Greylist: delayed 639 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 05:50:45 PST
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50CD4C03FED7;
-        Tue,  8 Feb 2022 05:50:45 -0800 (PST)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2187tlkh007467;
-        Tue, 8 Feb 2022 07:50:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=/8VOHFZR1O1aA/Ads8wUp8bVwUNLX0h1y0p5epau7LY=;
- b=QmP/PjgcS5R1CDQ66O0C5BfXffWOurFqRcDBFVFpil1BOqpwpQQ44VgF8XC/CvhjR0if
- aQPEKFlhylWrcFpXfqXvidJVgQEdHqmKlrf25wwGl8qewUw4aZliV0HI4wXqkDBCstY7
- 2fTVxAsR4Iy/lJHoleEdunq+gquEwyl86CZx5KZB/djOm1IaDJqktGFTV+yjMyNI0q5h
- hBNn4iU1pDUVXal2piycqjsHDGCEFZRfIAv29aumx03EwnZ5pAmC5lDuq8camp67mNNq
- 8RxP0itBhsmFgsvDh1aVe8gnknZXSyzGfeCPwR6/5iRtpIKLK5640j79zifEVak8+2D2 PQ== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3e34y5scf5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 08 Feb 2022 07:50:38 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 8 Feb
- 2022 13:50:36 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.18 via Frontend
- Transport; Tue, 8 Feb 2022 13:50:36 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id ACA0511D7;
-        Tue,  8 Feb 2022 13:50:36 +0000 (UTC)
-Date:   Tue, 8 Feb 2022 13:50:36 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-        Mark Brown <broonie@kernel.org>,
+        Tue, 8 Feb 2022 08:56:28 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9005DC03FECE;
+        Tue,  8 Feb 2022 05:56:26 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1072860E01;
+        Tue,  8 Feb 2022 13:56:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B90FDC004E1;
+        Tue,  8 Feb 2022 13:56:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644328585;
+        bh=uYqm7NoE0eOtcFY0LElDUcco5XcuEwJ5BgQCnLygmso=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EBV0xUI5mN1yHV6C3Ugw9IgqEGN7K++6mXfU8BRyZYTLxycyahmK3QIGt0eWITo0c
+         i39ixqmUg8uP7pbsdYDaoOgedPjhs4o45RM5dPyNGSJgev+Gp3HZ5TZnyJEdFSrSc9
+         ZhacqrjwKo1MwYYhtAQnobTg4NILtuThtl1ZUxWDQg8vhe2ygGDXeMazAR2OppX5iP
+         42y0eCGk9yaOTETMnztHucm1kAmu96SQfR1TMQpp243tHluuUVYWnBPdjHfnezVPiB
+         NSBGPP1tvYkVtnAssrwJSgcHe0jE7Y7yW20Z5Xr4n5Stft4GkJ81/dWILx5fbcM/9q
+         2IdFjQjsx1IKg==
+Date:   Tue, 8 Feb 2022 13:56:20 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
 Subject: Re: [PATCH v2] regmap-irq: Use regmap_irq_update_bits instead of
  regmap_write
-Message-ID: <20220208135036.GD112838@ediswmail.ad.cirrus.com>
+Message-ID: <YgJ2hG2vwUclA/zF@sirena.org.uk>
 References: <20220119142953.1804-1-quic_pkumpatl@quicinc.com>
  <CGME20220208122955eucas1p2d4e32f51224242e9ebd0bce58b9c04ca@eucas1p2.samsung.com>
  <39f1b598-58ca-1e3d-3065-8dd692ee7c9f@samsung.com>
  <20220208133957.GC112838@ediswmail.ad.cirrus.com>
+ <20220208135036.GD112838@ediswmail.ad.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SM0t/lOK8BmL30Jc"
 Content-Disposition: inline
-In-Reply-To: <20220208133957.GC112838@ediswmail.ad.cirrus.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: IviAGyL3NSJelSl5gE0d9NZwqB_mNN7Z
-X-Proofpoint-ORIG-GUID: IviAGyL3NSJelSl5gE0d9NZwqB_mNN7Z
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <20220208135036.GD112838@ediswmail.ad.cirrus.com>
+X-Cookie: This is your fortune.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 08, 2022 at 01:39:57PM +0000, Charles Keepax wrote:
-> On Tue, Feb 08, 2022 at 01:29:55PM +0100, Marek Szyprowski wrote:
-> > Hi Prasad,
-> > 
-> > On 19.01.2022 15:29, Prasad Kumpatla wrote:
-> > > With the existing logic by using regmap_write() all the bits in
-> > > the register are being updated which is not expected. To update only the
-> > > interrupt raised bit and not tocuhing other bits, replace regmap_write()
-> > > with regmap_irq_update_bits().
-> > >
-> > > This patch is to fix the issue observed in MBHC button press/release events.
-> > >
-> > > Fixes: 3a6f0fb7b8eb ("regmap: irq: Add support to clear ack registers")
-> > > Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> > 
-> > There is something wrong with this patch. Since it landed in linux-next 
-> > (20220204) I get an interrupt storm on two of my test devices:
-> > 
-> > 1. ARM 32bit Exynos4412-based Trats2 ("wm8994-codec wm8994-codec: FIFO 
-> > error" message)
-> > 
-> > 2. ARM 64bit Exynos5433-based TM2e ("arizona spi1.0: Mixer dropped 
-> > sample" message)
-> > 
-> > Definitely the interrupts are not acknowledged properly. Once I find 
-> > some spare time, I will check it further which regmap configuration 
-> > triggers the issue, but it is definitely related to this patch. 
-> > Reverting it on top of current linux-next fixes the issue.
-> > 
-> 
-> Yeah I was just looking at this patch it looks a bit weird. Like
-> most IRQ acks are write 1 to clear, so doing an update_bits seems
-> unlikely to work, as it will ack every pending interrupt. As the
-> whole idea of doing a regmap_write was to only write 1 to the bits
-> that need ACKed.
-> 
-> I suspect what is needed here is the inverted case wants an
-> update bits but the normal case needs to stay as a regmap_write.
-> 
 
-Apologies for the multiple emails, yeah looking at this I think
-need some more information on how the hardware that patch was
-addressing works. I don't quite understand what was wrong with
-the old code even in the inverted case, the old code wrote a 1 to
-every bit except the interrupt being cleared which gets a 0. This
-feels like how I would have thought a write 0 to clear IRQ would
-work, you don't want to clear any other bits so you write 1 to
-them.
+--SM0t/lOK8BmL30Jc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The update_bits is really problematic as even in the write 0 to
-clear case, if a new interrupt asserts between the regmap_read
-and regmap_write that make up the update_bits, you will clear that
-new interrupt without ever noticing it.
+On Tue, Feb 08, 2022 at 01:50:36PM +0000, Charles Keepax wrote:
 
-Thanks,
-Charles
+> Apologies for the multiple emails, yeah looking at this I think
+> need some more information on how the hardware that patch was
+> addressing works. I don't quite understand what was wrong with
+> the old code even in the inverted case, the old code wrote a 1 to
+> every bit except the interrupt being cleared which gets a 0. This
+> feels like how I would have thought a write 0 to clear IRQ would
+> work, you don't want to clear any other bits so you write 1 to
+> them.
+
+> The update_bits is really problematic as even in the write 0 to
+> clear case, if a new interrupt asserts between the regmap_read
+> and regmap_write that make up the update_bits, you will clear that
+> new interrupt without ever noticing it.
+
+My understanding was that they'd mixed interrupt handling in as a
+bitfield in another register.
+
+--SM0t/lOK8BmL30Jc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmICdoMACgkQJNaLcl1U
+h9Biowf/We1cO8n8VT5ycGn7rnfrxsvBwTyjNR+FOsglkDblgPUrR/dQM0M4OKhV
+kig/tc66n0ZF9GVi9ccsU7gX7k3iDKPaV5LH4kZvzpfApFcg2Qn1EIKWR+CkODId
+XmEHkD3aIFcrEaG2v65R4gSOv9twxYSJdaUl9s7ZDmq6nB/RbKewxQsbhbzA9F4n
+OyzjhEhegiSyjsNP80Kxh9ZUajYwnyp4Hx4JgJxOuJB4kSICPcbkZOjvbynHd8p6
+WG2gNTsB9/W3uBIg3jOdbSI8CDxyA9YYkE+N4392Px0BGRe6xvwaGxR2OJweyuu3
+c0mNQqzJJ7T4tQUNIDx1Hf6r8OraRA==
+=23Gb
+-----END PGP SIGNATURE-----
+
+--SM0t/lOK8BmL30Jc--
