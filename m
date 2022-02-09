@@ -2,80 +2,75 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAB0C35278
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A035C47082
 	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Feb 2022 03:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354948AbiBIDIW (ORCPT
+        id S233655AbiBIDIX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 22:08:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59372 "EHLO
+        Tue, 8 Feb 2022 22:08:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235951AbiBIDFI (ORCPT
+        with ESMTP id S1347986AbiBIDGW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 22:05:08 -0500
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B83F4C03E942;
-        Tue,  8 Feb 2022 19:04:02 -0800 (PST)
-Received: by mail-oo1-f49.google.com with SMTP id u47-20020a4a9732000000b00316d0257de0so979692ooi.7;
-        Tue, 08 Feb 2022 19:04:02 -0800 (PST)
+        Tue, 8 Feb 2022 22:06:22 -0500
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8C1C0302E8;
+        Tue,  8 Feb 2022 19:05:04 -0800 (PST)
+Received: by mail-oi1-f178.google.com with SMTP id t199so1143627oie.10;
+        Tue, 08 Feb 2022 19:05:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=9WxSx+PhSoNOK7Va3SOOiKpYlGJipFHoYDAnRzf0rEU=;
-        b=yjPf7b7dMoATHvCrWRfCh26704ofnNBr0AtZM7MvdWX7LUFEeNk5rnn88EImE18SLq
-         7E3GiCBCujeaODwkF/tNMsh2KvEtGKvnKHUcR1Go+BHmA7r9YkJXwxsuUiUsnkG1jADI
-         oh6TOhokS9s/+i8zbu+qTt9wxDdDO8CU9X2IHVW1TarW1G3yPbsnqqZ78euLG5H2YgY/
-         N3Fk9UGTsniHnSxVL1nKWRhOWK9vQhkIhT05lxdZ9nWntA7UvhZhomK63zXdyt6TKxpZ
-         rMc+Fi5s8w/ADPqAJ3g0ZF/C7tMcifLU1LbxYP/vfWrIl8fTHB6EedCfnqjdu2dGsd7n
-         ZmWg==
-X-Gm-Message-State: AOAM533FmkjkyxUL11Xzk3FRe0lBBHhR3I2qCKPyZ6n3g0zirs2BySdS
-        yW23En5V3d8kPVWuvYjhTg==
-X-Google-Smtp-Source: ABdhPJxz2Kc/1R1MFOvpiJkeFhlo3yjJLGr1Vk/RpOOKjTnQ0snSdqTnlGoVchdxbZOKxx6quNK/dQ==
-X-Received: by 2002:a05:6870:1010:: with SMTP id 16mr103247oai.281.1644375842063;
-        Tue, 08 Feb 2022 19:04:02 -0800 (PST)
+        bh=9SICioeHep4TWtT/qww/zgThNzMf9twws3N+ad7OYVE=;
+        b=O27jQTfOLQZZjRbN6yqUEMsnpjAnVx7Qj8AqsF7uOSCypp2hYUFNTfyjjm4J9oMYvO
+         BOgN/1mxALzixxSmLuC4Opuk9rm6E1qQSP+tiIQ6MpFGzb75kXNn4d8CPPDxx1QE+k64
+         0/Fh/PTWSYDqFc2Gn/kynDip86Az1U4mllo2vf40qYglApJ9F2kNa2zrGhXpCeoaQBcy
+         3vjA0OS/XBWoYjGp/fUYrOtX58Q+Tm/shRej6bbP67jsDsi61vhxKvKpzaDc+m3T1pRQ
+         lDKfPG2fCUFfvg/jy5JgTpdFf9qedV0+/wnhn7QGotRh8OtOGJjgc9fdWrmssdgdMTUY
+         AeKg==
+X-Gm-Message-State: AOAM531vhEzBy4Urgdq8vecdScEp3eM2sQAnQV4uiOi7orlQ+7WzGeuq
+        r4+tkThdKw9eJfsZTObk/Q==
+X-Google-Smtp-Source: ABdhPJyi/x6jit4hCoZBlLoQ2fkA51bgTeDVYoLfGZn2ooJlh4b5KrSykYY6YiQA6lZZuMKzvu1c5A==
+X-Received: by 2002:aca:6509:: with SMTP id m9mr94672oim.76.1644375902857;
+        Tue, 08 Feb 2022 19:05:02 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a128sm6151603oob.17.2022.02.08.19.04.00
+        by smtp.gmail.com with ESMTPSA id m15sm5994060otr.37.2022.02.08.19.05.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 19:04:01 -0800 (PST)
-Received: (nullmailer pid 3542310 invoked by uid 1000);
-        Wed, 09 Feb 2022 03:04:00 -0000
-Date:   Tue, 8 Feb 2022 21:04:00 -0600
+        Tue, 08 Feb 2022 19:05:01 -0800 (PST)
+Received: (nullmailer pid 3543787 invoked by uid 1000);
+        Wed, 09 Feb 2022 03:05:01 -0000
+Date:   Tue, 8 Feb 2022 21:05:01 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
-        linux-pm@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: thermal: samsung: convert to dtschema
-Message-ID: <YgMvIIKqXygIHK4k@robh.at.kernel.org>
-References: <20220122132554.65192-1-krzysztof.kozlowski@canonical.com>
- <20220122132554.65192-2-krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/12] dt-bindings: usb: samsung,exynos-dwc3: convert to
+ dtschema
+Message-ID: <YgMvXTZvQ/7hgUSJ@robh.at.kernel.org>
+References: <20220123111644.25540-1-krzysztof.kozlowski@canonical.com>
+ <20220123111644.25540-12-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220122132554.65192-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220123111644.25540-12-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 22 Jan 2022 14:25:53 +0100, Krzysztof Kozlowski wrote:
-> Convert the Samsung Exynos SoC Thermal Management Unit bindings to DT
+On Sun, 23 Jan 2022 12:16:43 +0100, Krzysztof Kozlowski wrote:
+> Convert the Samsung Exynos SoC USB 3.0 DWC3 Controller bindings to DT
 > schema format.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > ---
->  .../bindings/thermal/exynos-thermal.txt       | 106 ----------
->  .../thermal/samsung,exynos-thermal.yaml       | 184 ++++++++++++++++++
->  2 files changed, 184 insertions(+), 106 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/thermal/exynos-thermal.txt
->  create mode 100644 Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+>  .../devicetree/bindings/usb/exynos-usb.txt    |  49 -------
+>  .../bindings/usb/samsung,exynos-dwc3.yaml     | 129 ++++++++++++++++++
+>  2 files changed, 129 insertions(+), 49 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
