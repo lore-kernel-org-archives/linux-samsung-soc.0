@@ -2,95 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC86AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Feb 2022 22:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BB4C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Feb 2022 03:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386314AbiBHWY3 (ORCPT
+        id S234831AbiBIDIX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 17:24:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
+        Tue, 8 Feb 2022 22:08:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386292AbiBHUCk (ORCPT
+        with ESMTP id S1349694AbiBIDGd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 15:02:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A52AC0613CB;
-        Tue,  8 Feb 2022 12:02:39 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D415A615A7;
-        Tue,  8 Feb 2022 20:02:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B92FC004E1;
-        Tue,  8 Feb 2022 20:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644350558;
-        bh=76ABg2Dlvjl73zDQJvo3h1QYiJvQxOXAQJYzRa9Onu4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=idEZsdqPKRmGaSIUSROU3HsIP0i6pXlrujkYqVPHdNRGJcX25aTFMNKx8/BPhMcob
-         3d89OhmoK6r4wY/E2bu3bP2paFTMvXkU94MnkcH9POJH8b5tXPG9rkGJf5m0SgQOyE
-         dYEsfSeNVgsY8LXZQn5HHarLWTq3twB6SZ+zEHKBNrm6bnG96q40z/qakROB3gFApC
-         dp4LlOVL+u1Ng9ajbsg1ap4HpkiEZ3hNoiJYn+p3NZRsWt/dq57JC6Bf2vffsbRjDN
-         vnJh/n+g+WIvUqSsqkrPFit5CbhC+FhVGAfKO2CUHny9QjqhhpUeun+7vxG6JxvZnP
-         /KumfOOXbguaA==
-Received: by mail-ej1-f46.google.com with SMTP id s21so771541ejx.12;
-        Tue, 08 Feb 2022 12:02:38 -0800 (PST)
-X-Gm-Message-State: AOAM530aBdHSIKhDe6sRdtK5Zfe7miqEF9fd+OUD44GFFH0xq57dsgWv
-        NB+rcrEzUA0bisE7HUZXOfmc6mKsJxfkaeCpfA==
-X-Google-Smtp-Source: ABdhPJwYJJZa+vnjfBK/WR+7SL6UFvywYM6EfsfWcrdXGMBkFX9fiAap0UJtx2BRAmtyBeG/7Drode5OumzOI+e5wUY=
-X-Received: by 2002:a17:906:f0cb:: with SMTP id dk11mr4930847ejb.20.1644350556421;
- Tue, 08 Feb 2022 12:02:36 -0800 (PST)
+        Tue, 8 Feb 2022 22:06:33 -0500
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06C53C0612BC;
+        Tue,  8 Feb 2022 19:06:25 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id q8so1174522oiw.7;
+        Tue, 08 Feb 2022 19:06:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5Q+2vnIsjejUqQ8ahgYrYH7fS2Q0Im+8Cgkb2EVwayM=;
+        b=SgT824Irm9Eit68XAT1fXRkijDHnFy3BwNa1MHo6mo1pomeuRvEKDiVZWbMDeqG16m
+         awbiUx3PZlIlPWWSEFTIwnX6L103oxS4l/ddDwN9etbNTZ+BepqioDGUvfwZ0EO6lwS/
+         EEMzB2Z1eWVbi5VtpGSDzqsZGdZXEJsRMbfONEPFVQUdIpCt0k4BSLBWJQ+E/F5ybRrD
+         sZ0V/Jy13V0FGge+zdII21w9J2MLVDWUzlpw4RaOo3kGYQD1zFqTSQHYe5HdYoIuLWmT
+         yQEYMkyib1Id0mjpdLiQaLiRX9zeRRAWVT+H/A1hhhYRMWoUFuxYERz6ZKF7soA4j50b
+         bhXQ==
+X-Gm-Message-State: AOAM53362Z1RqAkgUboate8ECn6LWpSUQjdE7rzIu+k1Mn0LC+MP/T6y
+        93Qx3tCtVaL9L+wfG5lHdw==
+X-Google-Smtp-Source: ABdhPJyJtXTIsMjg464SoJfL0WpKl14WPLTJ6Yp9FfnS0DqO0gQTxSRxNfM/OduHB/yVod63K2o/qg==
+X-Received: by 2002:a05:6808:1a11:: with SMTP id bk17mr89827oib.105.1644375984335;
+        Tue, 08 Feb 2022 19:06:24 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id s13sm6166559ooh.43.2022.02.08.19.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Feb 2022 19:06:23 -0800 (PST)
+Received: (nullmailer pid 3545969 invoked by uid 1000);
+        Wed, 09 Feb 2022 03:06:22 -0000
+Date:   Tue, 8 Feb 2022 21:06:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 12/12] dt-bindings: usb: samsung,exynos-usb2: convert to
+ dtschema
+Message-ID: <YgMvrveS7KPp/48M@robh.at.kernel.org>
+References: <20220123111644.25540-1-krzysztof.kozlowski@canonical.com>
+ <20220123111644.25540-13-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-References: <20211207140334.10461-1-semen.protsenko@linaro.org> <CAPLW+4n-BjSHK4gdP=cGvAE+pZDfvYTO4yy09yNRJgSXt2VArg@mail.gmail.com>
-In-Reply-To: <CAPLW+4n-BjSHK4gdP=cGvAE+pZDfvYTO4yy09yNRJgSXt2VArg@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 8 Feb 2022 14:02:24 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ3CwT-iuf2NoM=sjPr-Qowzv61Gtv_zvSAoyj7qdZMNA@mail.gmail.com>
-Message-ID: <CAL_JsqJ3CwT-iuf2NoM=sjPr-Qowzv61Gtv_zvSAoyj7qdZMNA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Report enabled nodes with duplicated address
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220123111644.25540-13-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 14, 2021 at 10:11 AM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
->
-> On Tue, 7 Dec 2021 at 16:03, Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >
-> > Duplicated unit address is a normal case, as long as no more than one
-> > node using that address is enabled. Having duplicated addresses is
-> > already allowed by '-Wno-unique_unit_address' in DTC_FLAGS. But two
-> > simultaneously enabled nodes sharing the same address is usually
-> > incorrect. Add '-Wunique_unit_address_if_enabled' flag to report
-> > warnings for such case when doing "make dtbs_check".
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Reported-by: Rob Herring <robh@kernel.org>
-> > Suggested-by: Rob Herring <robh@kernel.org>
-> > ---
-> > NOTE: After applying this patch, a lot of warnings appear on "make
-> > dtbs_check". I'm not completely sure if it's ok, so feel free to Nack.
-> >
->
-> Hi Rob,
->
-> Do you think this patch is feasible? You asked me to send it before,
-> though I now see it leads to a lot of errors being revealed when doing
-> "make dtbs" and "make dtbs_check". Please let me know if it's Ack or
-> Nack -- I'm fine with any resolution, just want to know if I should
-> continue to carry it in my local branch or drop it.
+On Sun, 23 Jan 2022 12:16:44 +0100, Krzysztof Kozlowski wrote:
+> Convert the Samsung Exynos SoC USB 2.0 EHCI and OHCI Controller bindings
+> to DT schema format.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  .../devicetree/bindings/usb/exynos-usb.txt    |  66 ----------
+>  .../bindings/usb/samsung,exynos-usb2.yaml     | 117 ++++++++++++++++++
+>  2 files changed, 117 insertions(+), 66 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
+> 
 
-Sorry, I'd missed this. Anyway, since there are lots of warnings, we
-can't apply this.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
