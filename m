@@ -2,112 +2,176 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30871C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Feb 2022 14:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7DAC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Feb 2022 14:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235090AbiBIOhU (ORCPT
+        id S235275AbiBIOxF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Feb 2022 09:37:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35114 "EHLO
+        Wed, 9 Feb 2022 09:53:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231747AbiBIOhU (ORCPT
+        with ESMTP id S235262AbiBIOxE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Feb 2022 09:37:20 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04695C06157B
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Feb 2022 06:37:23 -0800 (PST)
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        Wed, 9 Feb 2022 09:53:04 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890D5C06157B
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Feb 2022 06:53:07 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9DF6D3F203
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Feb 2022 14:37:21 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 651373F32B
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Feb 2022 14:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644417441;
-        bh=SlwgImOcNTsESNfIirUrDaCeHIHfLp+o6BSrCLR6Xb4=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=DtYdmrZsJlg28m9SfM5xXaf4KRC/de2bMjt5UBiWW+mwzKlnk9hypbd/HS3KQDyQR
-         AUtuS6dESWDx/s9uBEYoc/8Qund2myE4EPw3aA/dbFNQEtHCAMHMp2ylMrz+ppogHC
-         hRIuOveIq82TKCHGy/9Ppzza51ufbIswE0HqGWR69GLNUlFcVjfdAiHNsJ1r6Rk1TK
-         vAKKTiw39EOCOkXjxQSIp/rLfjqoIKhzDwik/JtoAqesSyGFZMp54aO5Ls7cxEIOc0
-         j6XVX2AsIxO+nB/p4r9Dm69Wyi29K090/KArypH8ZVUBLsKb6Wy5YEeIK75rqh0PsC
-         lD5GauuSc/qsg==
-Received: by mail-ej1-f69.google.com with SMTP id hr36-20020a1709073fa400b006cd2c703959so1264513ejc.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Feb 2022 06:37:21 -0800 (PST)
+        s=20210705; t=1644418385;
+        bh=onzsmpCQRgb85GIJjW98hJcEB7Fnm+j4zs7gFVVnUu8=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=JaFAH+Mn5pDX92vHW8fwNIhHUnZ9frHiekxLfZ7+BGwjpdNaN08PVcZGP6gpUh9th
+         Zh0N0D3k6Exz5CrVNsTiAoHMz8HZZawZRJs4aRqHKGE1Vuhoos6vEnDU5yhXPLYMQD
+         PJHqba3sxMsKI0AHMFPL45t40iXr3s+zg8NfEot1rX2CNS1gcSZvPo6bHJtULXJGAC
+         73bSv5HoxnxozR7cmvil2d7SStePgdxoKvzErBxZs9pdbkfDCsDse5irtXsBGWcBpO
+         cieY9tbmMhzCCFWmMc7GGATiwkU38gYuSYEnVPJag5zYW7YF+x7efdFCSFA8OuPnzK
+         NkD+cgYo7heig==
+Received: by mail-ej1-f70.google.com with SMTP id r18-20020a17090609d200b006a6e943d09eso1277556eje.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Feb 2022 06:53:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SlwgImOcNTsESNfIirUrDaCeHIHfLp+o6BSrCLR6Xb4=;
-        b=EpeGijvuH7lqjYQNjiQ7okug15Z+x4Cmq1BmE8sbqgYjd8L2gD5jAxTaZdyXWEEeEz
-         Xu9yM2Gcwjb9oI9zOYMjRG1OO1CthvRdwQmk1XTNK02kB2ISH1ptde9Y4aVrg0lZb/zu
-         t02hCVBSL0VzSOkhYCpRFm/n3WFC0kHs4nZS7JhAfLPxiMg9WLF0l2uopi8iDVxXqZWx
-         UHEi+zo7w6botTpuCvoyPEv2DapLFR3HlnV+4JRC232dL1UoVa4UVdTk//7FSpCLA2pA
-         KwgrgHBkaQBxGZmc4oUCvlY0j5b1N0rmWubmjCbnJHuUD5itC2Gg9jYI2/XHZ3ZJX0YG
-         gxGg==
-X-Gm-Message-State: AOAM533KlUr488vzlX3AXYsR9g1VC2MSOmQhhq1nboF1h3tHDygWW7Nf
-        Chbq0MlyJ/DcaBYPX7559iOAoA1mpDjInIwc2jRaDgHBncKdJu2+Z+boZs3i1C2ubmOix6KbqNM
-        e429dCiLIzy5GKjD47zrxJScrRHE2FEhLIg5MMVcm1Kne3skd
-X-Received: by 2002:a17:906:240d:: with SMTP id z13mr2248960eja.210.1644417440963;
-        Wed, 09 Feb 2022 06:37:20 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw36sjymzMaJhJa6q6wUBDPfAQePXwC/8alKtggTfvJQrQ42VevrxvY9v64oZZdAuv2SAoLgQ==
-X-Received: by 2002:a17:906:240d:: with SMTP id z13mr2248941eja.210.1644417440823;
-        Wed, 09 Feb 2022 06:37:20 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=onzsmpCQRgb85GIJjW98hJcEB7Fnm+j4zs7gFVVnUu8=;
+        b=QTaAkQg18O/tYJG8qhxec7eBhE1KdwE59vDxDBtXwftJ+di3x4X17U+agn0Gp6t+ua
+         q0FOCSrd6NpNsKFtILNItrdFtVeoY5ZtJm4FyHHPIQZ0pnawUqZmcPZIR8v1nxITJs44
+         ZcYfh2HXv8mb/iedgaZE2Lo0rct1ueMVEvtB/BLxb8jUo1NSY4XhvZOuc5bnBorlc+et
+         ZfrcJxESV8ckzr0yJUtlY+N5+fupdO5LapkQxZmLsstJvdaabAI6DPSOVrOMmskcYDaA
+         /hkNhbrHt2aOMz19K4Yw/fSlMGyqfAd9dHF3fj11fsqXUQFY0SxfW7WSuScIC+7aETYx
+         d3vg==
+X-Gm-Message-State: AOAM531uQnttmIihuo8fcxS81Ps0/pcV6rFGAa8InSiYMdN4F1VdG08/
+        WkF+Fz0mALKu48OjZUqNmABOe2rvKmmeu/p9PdfuMWgxQ2k2r3wR/TZF68/9JD/KgnqIw24goMP
+        eSu4GBxPi+8NZHklKXu5OT7ZCkE2+0J6PWzaVSBlTShK0wd6P
+X-Received: by 2002:a17:907:1b0f:: with SMTP id mp15mr2283083ejc.493.1644418385022;
+        Wed, 09 Feb 2022 06:53:05 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwA9pA2uua5qmpzfkk8gPsTc68MfUtN9mYGVJc0g6plaESL7cEnVm/8ZAMV0jkvQ/RQWXCVgg==
+X-Received: by 2002:a17:907:1b0f:: with SMTP id mp15mr2283068ejc.493.1644418384761;
+        Wed, 09 Feb 2022 06:53:04 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id ss14sm3871136ejb.199.2022.02.09.06.37.19
+        by smtp.gmail.com with ESMTPSA id f18sm2839309ejl.12.2022.02.09.06.53.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Feb 2022 06:37:20 -0800 (PST)
+        Wed, 09 Feb 2022 06:53:04 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Lukasz Luba <lukasz.luba@arm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-pm@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/8] dt-bindings: memory: convert to dtschema
-Date:   Wed,  9 Feb 2022 15:36:44 +0100
-Message-Id: <164441736490.181274.3751600144129167050.b4-ty@canonical.com>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/2] ARM: dts: samsung: dts for v5.18
+Date:   Wed,  9 Feb 2022 15:52:25 +0100
+Message-Id: <20220209145226.184375-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
-References: <20220206135807.211767-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 6 Feb 2022 14:57:59 +0100, Krzysztof Kozlowski wrote:
-> Changes since v2:
-> 1. Re-order patches so timings get converted earlier. This fixes dt-checker
-> robot report.
-> 2. Add Dmitry's review tag.
-> 3. Three new patches:
->    #6: dt-bindings: memory: lpddr3: deprecate passing timings frequency as unit address
->    #7: memory: of: parse max-freq property
->    #8: ARM: dts: exynos: remove deprecated unit address for LPDDR3 timings on Odroid
-> 
-> [...]
+Hi,
 
-Applied, thanks!
-
-[1/8] dt-bindings: memory: lpddr2-timings: convert to dtschema
-      commit: 425fd283e4a2b929a88483525fda3f90dde8a2d0
-[2/8] dt-bindings: memory: lpddr3-timings: convert to dtschema
-      commit: 180a276c99bb861742c5c423d679b0277d4b1c26
-[3/8] dt-bindings: memory: lpddr3: convert to dtschema
-      commit: 28f818580e49a97876de5c33231fc0e4c3cde2d9
-[4/8] dt-bindings: memory: lpddr3: adjust IO width to spec
-      commit: d98e72b6f9b078c57f9d46dc64a669d02ff2ffcc
-[5/8] dt-bindings: memory: lpddr3: deprecate manufacturer ID
-      commit: e531932c7185b86eccb3688002730950d49eba1a
-[6/8] dt-bindings: memory: lpddr3: deprecate passing timings frequency as unit address
-      commit: 42f94bb962cd1b15dc57c90aca7e48848ca6c6c3
-[7/8] memory: of: parse max-freq property
-      commit: 4e890b2228fd14fa6269175e9816bf27ff989e84
+New platforms and a lot of dtschema cleanups.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Krzysztof
+
+
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
+
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.18
+
+for you to fetch changes up to f5b721d2c91144b7c494a05003fc840f1607e876:
+
+  ARM: dts: exynos: use generic node name for LPDDR3 timings in Odroid (2022-02-05 13:04:43 +0100)
+
+----------------------------------------------------------------
+Samsung DTS ARM changes for v5.18
+
+1. Minor improvements and dtschema fixes (node names, properties).
+2. Fix issues pointed out by DT schema checks:
+ - Add necessary clock controller inputs on Exynos5260.
+ - Drop unsupported regulators on Odroid XU.
+ - Add USB DWC3 supplies.
+ - Drop old thermal properties from Exynos4210.
+3. Add support for Samsung Chagall WiFi (Exynos5420, Samsung Galaxy Tab
+   S 10.5", SM-T800 ) and a similar Samsung Klimt WiFi (Samsung Galaxy
+   Tab S 8.4").
+4. Add battery to Samsung P4Nnote (Exynos4412, Samsung Galaxy Note
+   10.1).
+
+----------------------------------------------------------------
+Alim Akhtar (1):
+      ARM: dts: exynos: update dma node name with dtschema
+
+Henrik Grimler (4):
+      dt-bindings: arm: samsung: document Chagall WiFi board binding
+      ARM: dts: exynos: Add support for Samsung Chagall WiFi
+      dt-bindings: arm: samsung: document Klimt WiFi board binding
+      ARM: dts: exynos: Add support for Samsung Klimt WiFi
+
+Krzysztof Kozlowski (16):
+      ARM: dts: exynos: split dmas into array of phandles in Exynos5250
+      ARM: dts: exynos: Align MAX77836 nodes with dtschema on Monk and Rinato
+      ARM: dts: exynos: add necessary clock controller inputs in Exynos5260
+      ARM: dts: exynos: drop unsupported MAX77802 regulators on Odroid XU
+      ARM: dts: exynos: add USB DWC3 supplies to Arndale
+      ARM: dts: exynos: add USB DWC3 supplies to SMDK5250
+      ARM: dts: exynos: add USB DWC3 supplies to Chromebook Snow
+      ARM: dts: exynos: add USB DWC3 supplies to Chromebook Spring
+      ARM: dts: exynos: add USB DWC3 supplies to ArndaleOcta
+      ARM: dts: exynos: add USB DWC3 supplies to Chromebook Peach Pit
+      ARM: dts: exynos: add USB DWC3 supplies to Chromebook Peach Pi
+      ARM: dts: exynos: add USB DWC3 supplies to SMDK5420
+      ARM: dts: exynos: add fake USB DWC3 supplies to SMDK5410
+      ARM: dts: exynos: drop old thermal properties from Exynos4210
+      ARM: dts: exynos: use define for TMU clock on Exynos4412
+      ARM: dts: exynos: use generic node name for LPDDR3 timings in Odroid
+
+Martin Jücker (1):
+      ARM: dts: exynos: add charger and battery to p4note
+
+ .../bindings/arm/samsung/samsung-boards.yaml       |   2 +
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/exynos3250-monk.dts              |   2 +-
+ arch/arm/boot/dts/exynos3250-rinato.dts            |   2 +-
+ arch/arm/boot/dts/exynos3250.dtsi                  |   4 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |   6 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |   2 +-
+ arch/arm/boot/dts/exynos4210.dtsi                  |   2 -
+ arch/arm/boot/dts/exynos4412-p4note.dtsi           |  34 +
+ arch/arm/boot/dts/exynos4412.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   5 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   5 +
+ arch/arm/boot/dts/exynos5250-snow-common.dtsi      |   5 +
+ arch/arm/boot/dts/exynos5250-spring.dts            |   5 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |  19 +-
+ arch/arm/boot/dts/exynos5260-xyref5260.dts         |  21 +
+ arch/arm/boot/dts/exynos5260.dtsi                  | 128 ++++
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          |  12 -
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |  23 +
+ arch/arm/boot/dts/exynos5410.dtsi                  |   4 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  10 +
+ arch/arm/boot/dts/exynos5420-chagall-wifi.dts      |  75 +++
+ .../arm/boot/dts/exynos5420-galaxy-tab-common.dtsi | 691 +++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-klimt-wifi.dts        |  75 +++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  10 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |  10 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |  10 +-
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |   2 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  10 +
+ 29 files changed, 1136 insertions(+), 42 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5420-chagall-wifi.dts
+ create mode 100644 arch/arm/boot/dts/exynos5420-galaxy-tab-common.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5420-klimt-wifi.dts
