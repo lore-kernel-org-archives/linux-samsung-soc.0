@@ -2,75 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A035C47082
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Feb 2022 03:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260B1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Feb 2022 08:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233655AbiBIDIX (ORCPT
+        id S233729AbiBIIra (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 22:08:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59160 "EHLO
+        Wed, 9 Feb 2022 03:47:30 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:52056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347986AbiBIDGW (ORCPT
+        with ESMTP id S233529AbiBIIra (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 22:06:22 -0500
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8C1C0302E8;
-        Tue,  8 Feb 2022 19:05:04 -0800 (PST)
-Received: by mail-oi1-f178.google.com with SMTP id t199so1143627oie.10;
-        Tue, 08 Feb 2022 19:05:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9SICioeHep4TWtT/qww/zgThNzMf9twws3N+ad7OYVE=;
-        b=O27jQTfOLQZZjRbN6yqUEMsnpjAnVx7Qj8AqsF7uOSCypp2hYUFNTfyjjm4J9oMYvO
-         BOgN/1mxALzixxSmLuC4Opuk9rm6E1qQSP+tiIQ6MpFGzb75kXNn4d8CPPDxx1QE+k64
-         0/Fh/PTWSYDqFc2Gn/kynDip86Az1U4mllo2vf40qYglApJ9F2kNa2zrGhXpCeoaQBcy
-         3vjA0OS/XBWoYjGp/fUYrOtX58Q+Tm/shRej6bbP67jsDsi61vhxKvKpzaDc+m3T1pRQ
-         lDKfPG2fCUFfvg/jy5JgTpdFf9qedV0+/wnhn7QGotRh8OtOGJjgc9fdWrmssdgdMTUY
-         AeKg==
-X-Gm-Message-State: AOAM531vhEzBy4Urgdq8vecdScEp3eM2sQAnQV4uiOi7orlQ+7WzGeuq
-        r4+tkThdKw9eJfsZTObk/Q==
-X-Google-Smtp-Source: ABdhPJyi/x6jit4hCoZBlLoQ2fkA51bgTeDVYoLfGZn2ooJlh4b5KrSykYY6YiQA6lZZuMKzvu1c5A==
-X-Received: by 2002:aca:6509:: with SMTP id m9mr94672oim.76.1644375902857;
-        Tue, 08 Feb 2022 19:05:02 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id m15sm5994060otr.37.2022.02.08.19.05.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 19:05:01 -0800 (PST)
-Received: (nullmailer pid 3543787 invoked by uid 1000);
-        Wed, 09 Feb 2022 03:05:01 -0000
-Date:   Tue, 8 Feb 2022 21:05:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] dt-bindings: usb: samsung,exynos-dwc3: convert to
- dtschema
-Message-ID: <YgMvXTZvQ/7hgUSJ@robh.at.kernel.org>
-References: <20220123111644.25540-1-krzysztof.kozlowski@canonical.com>
- <20220123111644.25540-12-krzysztof.kozlowski@canonical.com>
+        Wed, 9 Feb 2022 03:47:30 -0500
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D38CE00E585;
+        Wed,  9 Feb 2022 00:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1644396443; x=1675932443;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=3E/k9hHBNfXwsD5JScD3Hm1owmhXeuhCGouRaTwikqE=;
+  b=Zk3fcnUiysMH58XvdL1/h5RmYmpE45coU6tuBbcmzKBNkc7b+Tl/9Kyk
+   HJKnMnx1rtuTnbfWJWxvhG07cA1dfJNAbbSnLAX7L49SOkeSD6Ys5Ilsk
+   /NGAuLJld7SVaZu2Bn2J8ooG1L6Ur3HHf5OJyd7BeCa9tLPMg/ax9kOte
+   8=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 09 Feb 2022 00:41:20 -0800
+X-QCInternal: smtphost
+Received: from unknown (HELO nasanex01a.na.qualcomm.com) ([10.52.223.231])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2022 00:41:20 -0800
+Received: from [10.216.42.92] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Wed, 9 Feb 2022
+ 00:41:17 -0800
+Message-ID: <c055e4e8-fd11-49e9-c7a9-bf2f1ec9de36@quicinc.com>
+Date:   Wed, 9 Feb 2022 14:11:13 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220123111644.25540-12-krzysztof.kozlowski@canonical.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v2] regmap-irq: Use regmap_irq_update_bits instead of
+ regmap_write
+Content-Language: en-US
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+References: <20220119142953.1804-1-quic_pkumpatl@quicinc.com>
+ <CGME20220208122955eucas1p2d4e32f51224242e9ebd0bce58b9c04ca@eucas1p2.samsung.com>
+ <39f1b598-58ca-1e3d-3065-8dd692ee7c9f@samsung.com>
+From:   Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+In-Reply-To: <39f1b598-58ca-1e3d-3065-8dd692ee7c9f@samsung.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 23 Jan 2022 12:16:43 +0100, Krzysztof Kozlowski wrote:
-> Convert the Samsung Exynos SoC USB 3.0 DWC3 Controller bindings to DT
-> schema format.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> ---
->  .../devicetree/bindings/usb/exynos-usb.txt    |  49 -------
->  .../bindings/usb/samsung,exynos-dwc3.yaml     | 129 ++++++++++++++++++
->  2 files changed, 129 insertions(+), 49 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 2/8/2022 5:59 PM, Marek Szyprowski wrote:
+
+> There is something wrong with this patch. Since it landed in linux-next
+> (20220204) I get an interrupt storm on two of my test devices:
+>
+> 1. ARM 32bit Exynos4412-based Trats2 ("wm8994-codec wm8994-codec: FIFO
+> error" message)
+>
+> 2. ARM 64bit Exynos5433-based TM2e ("arizona spi1.0: Mixer dropped
+> sample" message)
+>
+> Definitely the interrupts are not acknowledged properly. Once I find
+> some spare time, I will check it further which regmap configuration
+> triggers the issue, but it is definitely related to this patch.
+> Reverting it on top of current linux-next fixes the issue.
+
+Change is needed to handle the interrupt ack properly to clear the ack.
+
+I observed that the regmap_irq_update_bits() writes the register only if 
+it finds a difference b/w existing reg value to update reg value.
+
+This may be causing the interrupt storm issue mentioned above.
+
+Setting the mask_writeonly flag to 1, to force write the register may 
+resolve the interrupt storm issue.
+
+--Prasad
+
