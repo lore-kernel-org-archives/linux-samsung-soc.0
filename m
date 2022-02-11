@@ -2,157 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEE1C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Feb 2022 11:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08F3C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Feb 2022 11:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240408AbiBJLFZ (ORCPT
+        id S232558AbiBKL7j (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Feb 2022 06:05:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40544 "EHLO
+        Fri, 11 Feb 2022 06:59:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240448AbiBJLFX (ORCPT
+        with ESMTP id S234592AbiBKL7i (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Feb 2022 06:05:23 -0500
-X-Greylist: delayed 586 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Feb 2022 03:05:24 PST
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791451013
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Feb 2022 03:05:24 -0800 (PST)
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220210105535epoutp0166c0a962df2b4bb68252976f031097ec~SZ23wopPL2950229502epoutp01t
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Feb 2022 10:55:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220210105535epoutp0166c0a962df2b4bb68252976f031097ec~SZ23wopPL2950229502epoutp01t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1644490535;
-        bh=R7L8MKVkBoaq0s3DJCdA68+g2suhf8EBgyskpwWxmaI=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=mPQGS1sAEHE65gCRItQaE7C4nI26ncCNdP91/foddI+bWK7i6z+50DsU5jQaBqds5
-         iHiT/h8FarYEq2Ah2dfHIiC6hXLrJwrWr9n/4oVNC3SqEXHuzDopZEX8TaGv8s+Cvs
-         7+lpcIPb+z0wSjHnp1NsYLIxd2a1vM2yanIQ2NZ4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220210105535epcas1p23d0882f7c125b3ad907b9993e2d14d12~SZ23liQlx1196311963epcas1p2q;
-        Thu, 10 Feb 2022 10:55:35 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.38.233]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4JvYYv6pdrz4x9Q7; Thu, 10 Feb
-        2022 10:55:31 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        01.55.08277.32FE4026; Thu, 10 Feb 2022 19:55:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220210105530epcas1p2a8812b767cecfc06c068bf8aba8b9cb5~SZ2yeBU6o0814508145epcas1p2x;
-        Thu, 10 Feb 2022 10:55:30 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220210105530epsmtrp1e0635384650c0663d14a6ff74fe41c4e~SZ2ydLgnd1068010680epsmtrp1Z;
-        Thu, 10 Feb 2022 10:55:30 +0000 (GMT)
-X-AuditID: b6c32a36-1edff70000002055-f9-6204ef232f86
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        11.5B.29871.22FE4026; Thu, 10 Feb 2022 19:55:30 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220210105529epsmtip1376af2c6489122ab6c8b09011b408bfb~SZ2yL8dLj1126711267epsmtip1R;
-        Thu, 10 Feb 2022 10:55:29 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel.vetter@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date:   Thu, 10 Feb 2022 20:07:22 +0900
-Message-Id: <20220210110722.63523-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 11 Feb 2022 06:59:38 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40D4F54;
+        Fri, 11 Feb 2022 03:59:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 83D8DB8294F;
+        Fri, 11 Feb 2022 11:59:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1541DC340EF;
+        Fri, 11 Feb 2022 11:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644580772;
+        bh=PiUJ14tYj47Er2g/nnFkWUDiTAM0HXvy8rHp6sWes4Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dVjjoDYjljaSNrrw28tEpXjxzCBjDiRorduusFsO+h0pDRy+ol6iJZjGRNysfKtmi
+         erIckeqPuzh4HCUGrp0eeYjW+7SU41PZy6krRpJNqfekJK1CFmrARXzrX+SGTjzDgI
+         0m5mrqmSCGh/MDUy4Ugxuks5ptufdHykeYSyVkBWY4NSILvIw5IcVFbpWjytq3lpkJ
+         Q09791mpgTDNE+nFaoIB9o7vsh8GrvhpXclHMw1x828OqYQ7lRgxjbqlcCl5NvqElu
+         5j3iWEh+UF6Ag1SCGDvrf6UgAUnyZs/DghbfnIXtX7+NH/IAX3Mj/xaMHUb2ueoIYg
+         p6AnKE/VLl3ig==
+Date:   Fri, 11 Feb 2022 11:59:26 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] regulator: dt-bindings: maxim,max77843: add
+ MAX77843 bindings
+Message-ID: <YgZPnjbYq21BWNOT@sirena.org.uk>
+References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
+ <20220111174805.223732-4-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNKsWRmVeSWpSXmKPExsWy7bCmnq7ye5Ykg/aTAha9504yWSx8eJfZ
-        4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCUq2yYjNTEltUghNS85PyUzL91W
-        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-        I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITujZ+NnxoKlAhU9fS8YGxj38XYx
-        cnJICJhIbGu/zwJiCwnsYJQ4ukSzi5ELyP7EKPHyxGMWCOcbo8SRT/tYYTrWHm5hh0jsZZSY
-        un8RM4TzhVGiZ+JqZpAqNgFViYkr7rN1MXJwiAjoSLw4UwASZhZwk/iz9CwLSFhYQEXiwEQ+
-        kDALUHXHgx9MIDavgKXE867/LBC75CVmXvrODhEXlDg58wkLxBh5ieats8HWSgisY5fo+r6W
-        HaLBRWLj8s3MELawxKvjW6DiUhIv+9vYIRomM0rcub6CBcKZwShx+Od1RogqY4n9SyczgVzH
-        LKApsX6XPkRYUWLn77mMEJv5JN597WEFKZEQ4JXoaBOCKFGSOHbxBtQUCYkLSyayQdgeEtf2
-        tDFBgjdW4vGnVrYJjPKzkPwzC8k/sxAWL2BkXsUollpQnJueWmxYYASP1OT83E2M4FSnZbaD
-        cdLbD3qHGJk4GA8xSnAwK4nwnqpnThLiTUmsrEotyo8vKs1JLT7EaAoM4YnMUqLJ+cBkm1cS
-        b2hiaWBiZmRsYmFoZqgkzrtq2ulEIYH0xJLU7NTUgtQimD4mDk6pBiZtgyDHfVxHX7uu8JcU
-        VAs9667kw5kUM1e61Cpw3nkOdwGf2WFT3AKT1bdd9DYJiX4jdCdoV5Pvy9OuBqcP+764EZC5
-        97zccaGJwkslJCUcjc/rBr+vUJFSqJJ+ocP5zv1giNKp2PT2NsUwex6dKTqWyx78vN5jr9Ja
-        pnRs84qLXy0v5LQ83B+wPGgO74e11SXd+Tzf4pdFy+1TWsD9TjH7pVsXw1sD/0mXTIrv3hc6
-        NkeWwXu63UmXBT1y6266fjl/xMA7tbFWZ+n/Q51CIkmratf+TGmcrHb8tv1N9ayFR0467pgf
-        ZK9VnFB4tFZPtCI59+qRRVrblicmu9xPM63TfBCauFbl59H5ak13lFiKMxINtZiLihMBrD3F
-        Av4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSnK7Se5Ykg9kT2C16z51kslj48C6z
-        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV0bPxs+M
-        BUsFKnr6XjA2MO7j7WLk5JAQMJFYe7iFvYuRi0NIYDejxKmd25m7GDmAEhISW7ZyQJjCEocP
-        F0OUfGKU2LRjKRtIL5uAqsTEFffBbBEBPYm2jlPsIDazgIfE+z2r2UF6hQVUJA5M5AMJswCV
-        dzz4wQRi8wpYSjzv+s8CcYK8xMxL39kh4oISJ2c+YYEYIy/RvHU28wRGvllIUrOQpBYwMq1i
-        lEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAgOPC3NHYzbV33QO8TIxMF4iFGCg1lJhPdU
-        PXOSEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxSDUwrb5Xc
-        d+44Z9FpdMQlaJ3uGekW6fo3As99XFdcvWwv3RCvdUr+lYxrkVGwptuOL3aJCwza+UMYDh8T
-        3H9J7aV6v3qj6t7ySY+653xSlyjS8u6+HCi0SkezdYa/ZnGQp8zcrfZuCbstj8hWMnuIis0v
-        Cbsy8bTb4+Utv3tCeP8XXl6o5v4iOv3a3EufcxVO/2/L+17v2Wf0oV1/3X/rr17bdnzkCnqU
-        slk5b0qpv7in5OObSZw7rSxXTvMMqT0fl7w5d6tB9aOdnyeEuBy8McvozqWwDZ2nrTvKlCMO
-        MLuETnzsMn/XSb28N/GPlA5uL4gu5PgZzCW1vTtTU1iNofjUlQ6rvY+2VmStyI1VVmIpzkg0
-        1GIuKk4EAJ7NQyurAgAA
-X-CMS-MailID: 20220210105530epcas1p2a8812b767cecfc06c068bf8aba8b9cb5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220210105530epcas1p2a8812b767cecfc06c068bf8aba8b9cb5
-References: <CGME20220210105530epcas1p2a8812b767cecfc06c068bf8aba8b9cb5@epcas1p2.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ova0lu0FGhibrYcp"
+Content-Disposition: inline
+In-Reply-To: <20220111174805.223732-4-krzysztof.kozlowski@canonical.com>
+X-Cookie: do {
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave and Daniel,
 
-   Just two fixup series - one is to fix irq chaining issue and other is
-   regressions to TE-gpio handling.
+--ova0lu0FGhibrYcp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please let me know if there is any problem.
+On Tue, Jan 11, 2022 at 06:48:03PM +0100, Krzysztof Kozlowski wrote:
+> Document the bindings for MAX77843 regulator driver.  The bindings are
+> almost identical to MAX77693 bindings, except the actual names of
+> regulators.
 
-Thanks,
-Inki Dae
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-The following changes since commit dfd42facf1e4ada021b939b4e19c935dcdd55566:
+--ova0lu0FGhibrYcp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  Linux 5.17-rc3 (2022-02-06 12:20:50 -0800)
+-----BEGIN PGP SIGNATURE-----
 
-are available in the Git repository at:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIGT54ACgkQJNaLcl1U
+h9A77Af/SZ/OT9yzOh5MHwXqhEaftBX041jmWBTNrBn8l/t3s7vs4wdjxvKUAOMY
+aUcWsiHgTcleTHRClpBjo5y89ViTuCjDIerQXLv9G5EjY51zcmSpbsOnmyCAzUVR
+qAK9vEUvDrROJpeZCAR6Av8tRcmoXYuSpqObjIxmbeYWb98x7Q7RXOK4x3iUnzul
+Zphttov/KJxuYO032xRWRcQ00VR0G4jBP/alQzz/6m2OGkqxDoS+uLHwF87Feebo
+NEZCzAHioggTCaB0kCWZTFV+qBnza6ih3ZdeImBS5DalTE0PAZSWUtnzjXXeld0r
+0Kub2EdrdVsiHFzby3w33WohjQ6viA==
+=hIKA
+-----END PGP SIGNATURE-----
 
-  gitolite.kernel.org:/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v5.17-rc4
-
-for you to fetch changes up to 38103fa72e0b70e3067fed489f8316dc5998f26c:
-
-  drm/exynos: Search for TE-gpio in DSI panel's node (2022-02-10 19:17:22 +0900)
-
-----------------------------------------------------------------
-Fixups
-- Make display controller drivers for Exynos series to use platform_get_irq
-  and platform_get_irq_byname functions to get the interrupt, which prevents
-  irq chaining from messed up when using hierarchical interrupt domains
-  which use "interrupts" property in the node.
-- Fix two regressions to TE-gpio handling.
-
-----------------------------------------------------------------
-Lad Prabhakar (5):
-      drm/exynos/exynos7_drm_decon: Use platform_get_irq_byname() to get the interrupt
-      drm/exynos: mixer: Use platform_get_irq() to get the interrupt
-      drm/exynos/exynos_drm_fimd: Use platform_get_irq_byname() to get the interrupt
-      drm/exynos/fimc: Use platform_get_irq() to get the interrupt
-      drm/exynos: gsc: Use platform_get_irq() to get the interrupt
-
-Marek Szyprowski (2):
-      drm/exynos: Don't fail if no TE-gpio is defined for DSI driver
-      drm/exynos: Search for TE-gpio in DSI panel's node
-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 12 +++---------
- drivers/gpu/drm/exynos/exynos_drm_dsi.c    |  6 ++++--
- drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 13 +++++--------
- drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 13 ++++---------
- drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 10 +++-------
- drivers/gpu/drm/exynos/exynos_mixer.c      | 14 ++++++--------
- 6 files changed, 25 insertions(+), 43 deletions(-)
+--ova0lu0FGhibrYcp--
