@@ -2,78 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5597EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 12 Feb 2022 16:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 262EAC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 12 Feb 2022 16:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237298AbiBLQbu (ORCPT
+        id S237370AbiBLQhP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 12 Feb 2022 11:31:50 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44344 "EHLO
+        Sat, 12 Feb 2022 11:37:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbiBLQbt (ORCPT
+        with ESMTP id S236823AbiBLQhO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 12 Feb 2022 11:31:49 -0500
+        Sat, 12 Feb 2022 11:37:14 -0500
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B202C20E
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Feb 2022 08:31:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D1A20F
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Feb 2022 08:37:11 -0800 (PST)
 Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EE5483F4B4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Feb 2022 16:31:43 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DE2B73F4B4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Feb 2022 16:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1644683503;
-        bh=8Lhf7r5GEcQMqlZAoHA91Tt/jKDSvbsuMxA0NCPyhiA=;
+        s=20210705; t=1644683829;
+        bh=tMqilUYIpgE4D+Oy8hol1pf8fg4uaneK2N51DubcZr4=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=sivynLE25EijRoVmirwHj6XKP9KQ+CGld4jJjMWMIjwc/tDQeiZ2Lcs2YfaGHl3Oj
-         8I4zSmhHo/K+IL/cnCFqCCXn9V5GQ7avQPsOilG9Eqd86MlibuIZIjKpb2mkK3LwaF
-         6ziPdIHBkkfdIh6m7Pn4ZTxkrDApsQ6EnqvsJ5Ce4MStJKTKV2MyQvOeIoMyoIXbX7
-         h/GqOGEICsCcdc+XSCJVe0MgsCziFlElFzZaYH1OrItkum4EnbcowDM9528op4a1rR
-         3WLShrcFLOeyG/94lRmm+uu0/q4JTSs8pJOxXAhytVQgnKOm7fYBM2TFNw50el/C1p
-         4Gh709kwUHWbg==
-Received: by mail-ed1-f71.google.com with SMTP id en7-20020a056402528700b00404aba0a6ffso7349789edb.5
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Feb 2022 08:31:43 -0800 (PST)
+        b=ZItwuzD09lFECDHyY7Jh94xxJnDEue0BlpC+AwW0hLGRumxMSw2Xen15f6RQM3FxI
+         tCg2rwwbsAR2aGOkptGCEmT+lj+TZgncQJItCuye52I1ni9qt+uE9TyIThRLHc2zmg
+         2uth7BfNPnzs4IY49plQHMv4YjU9NZQbeG8C8H5Ha0kXLfuYKUyTn3cf5npQYMuJZv
+         Lvxf9lODEtbqCUvNZMQgyvWGYd+Nv4mvgJ29Sj7WjAHWq0iOZsismnrr55G6TkLmMF
+         aNPfshGSa4pjdNwRaCXsO2goOYSelOG+crdqT9Pn9E2XP7/ZobfSiQ+YoNz2SWHOw9
+         18B7JKGoE7Wuw==
+Received: by mail-ed1-f71.google.com with SMTP id cr7-20020a056402222700b0040f59dae606so7324794edb.11
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Feb 2022 08:37:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8Lhf7r5GEcQMqlZAoHA91Tt/jKDSvbsuMxA0NCPyhiA=;
-        b=dEvy4hYo+40N16JzccQekt9zmAp39gzC3LblqnAYvPwPRfQK1K/L7rWPP2813oKqb+
-         okp+7NErBkFHa+HNyeMMsW5xtUnOpPqGoMyZfq0uTp8lzQgwoU7MgGR+indNU8u1q0Ue
-         JmBl9BnM5y92ZRydntFTep3uBjaFF1JyBr9nbmm1dHsBefsG5tIX2DiLtHJcx01Vv2qA
-         DUEqTxDKSfbzIIuCfzF7wU06uVZMMJKoDBWeozHNR5JlRhriO1b2IU4AB2d5Z5PhidVG
-         hIUU3zNl/oGaQbnCRHweFW5Nsdm8jqwCQF5D8acXeS0Vu9G/zyI+TggIjbIhhiFYbBx3
-         /Idw==
-X-Gm-Message-State: AOAM533bVnbCHVzM1ZxEcMJQEFnXk1o9Mf3itJtO6rTcAr6JdckufTSB
-        11NCb9FajHdeygZ77gzVnuUB/+2owJQ4iIl3wdrx0Xz6k+F/p8sT6yVEtKrM6Ytx/ObU/+vlUld
-        mGphjvFlaWrxrUL7RfMrHCnjb1z4oBf6E0VJxemipuYLF8rUE
-X-Received: by 2002:a05:6402:b9c:: with SMTP id cf28mr7316745edb.295.1644683503674;
-        Sat, 12 Feb 2022 08:31:43 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwPLJ7SWTPKzXbJuCVaehwlh0yiOX7PnxNdHbnZKzKFslpm8C19hbTGaOtSxRwZ5jyH8Kbndg==
-X-Received: by 2002:a05:6402:b9c:: with SMTP id cf28mr7316732edb.295.1644683503542;
-        Sat, 12 Feb 2022 08:31:43 -0800 (PST)
+        bh=tMqilUYIpgE4D+Oy8hol1pf8fg4uaneK2N51DubcZr4=;
+        b=lebuDTpzqvkStTa9jQUSjpKd0EHOxQ/13c+bT1BrwV5xRBAHOLkZZAtCbA8S547lSS
+         S7D2RPBxZ8witzFGtA3wg4BWiK3UbdS+L4AzQtVygIN3juTgF1ikKlJnWyoZ9v17EsRH
+         TvKFqE9WnkIryUpHFbGsTZPdRexJDMKLAIJGyQfdJHt1kKokB9GUvJURYem63/q2kbX/
+         +Fad9e1WEeNo0DFXQrl7okCKv7KOnbviqtSAoIdwTngwETy+aL1Z9Vz7iIsVJa4tG0pl
+         bt51yhc5/aDMZrTVTjh62EYK1n50gzvzQMORgKSF9inkwcqS2KxOpcc6kLklQ1dOs/Pk
+         cSKQ==
+X-Gm-Message-State: AOAM532RcL84EfD3SYl9VpbybpRuVJFllYor2m0i1qDEp1dpzVllJdBW
+        feUiaY54jksiGQpn0O0+1gdaOggqVUXHCoRqftOx6y6dIsKoHH0KTs+KzNY2sFblKmtD7YtGimz
+        GHn04pPn06g+ZzHucV1Ll2jb9Ipbwnqfwm1jiZmwXkDDHtEMN
+X-Received: by 2002:a17:907:c07:: with SMTP id ga7mr5546523ejc.536.1644683829509;
+        Sat, 12 Feb 2022 08:37:09 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxD2vBUSSwJtNtb2tnnNYmZ8ce5zaQGnbpfOOmEuusMoNeqmKg6uKEeUXp4CHd4UHdvHqCobg==
+X-Received: by 2002:a17:907:c07:: with SMTP id ga7mr5546511ejc.536.1644683829366;
+        Sat, 12 Feb 2022 08:37:09 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id h6sm4472412ede.50.2022.02.12.08.31.41
+        by smtp.gmail.com with ESMTPSA id x10sm2494443edd.20.2022.02.12.08.37.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Feb 2022 08:31:42 -0800 (PST)
+        Sat, 12 Feb 2022 08:37:08 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+To:     linux-phy@lists.infradead.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         linux-arm-kernel@lists.infradead.org,
-        Chanho Park <chanho61.park@samsung.com>
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: (subset) [RFT][PATCH 3/3] arm64: dts: exynos: drop incorrectly placed wakeup interrupts in Exynos850
-Date:   Sat, 12 Feb 2022 17:31:40 +0100
-Message-Id: <164468346864.47019.15604871002670498638.b4-ty@canonical.com>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        David Airlie <airlied@linux.ie>, devicetree@vger.kernel.org,
+        Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: (subset) [PATCH 01/10] ARM: dts: exynos: add missing HDMI supplies on SMDK5250
+Date:   Sat, 12 Feb 2022 17:37:03 +0100
+Message-Id: <164468382250.54495.17179167915023420156.b4-ty@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211230195325.328220-3-krzysztof.kozlowski@canonical.com>
-References: <20211230195325.328220-1-krzysztof.kozlowski@canonical.com> <20211230195325.328220-3-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220208171823.226211-2-krzysztof.kozlowski@canonical.com>
+References: <20220208171823.226211-1-krzysztof.kozlowski@canonical.com> <20220208171823.226211-2-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -81,21 +89,17 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 30 Dec 2021 20:53:25 +0100, Krzysztof Kozlowski wrote:
-> The pin controller device node is expected to have one (optional)
-> interrupt.  Its pin banks capable of external interrupts, should define
-> interrupts for each pin, unless a muxed interrupt is used.
+On Tue, 8 Feb 2022 18:18:14 +0100, Krzysztof Kozlowski wrote:
+> Add required VDD supplies to HDMI block on SMDK5250.  Without them, the
+> HDMI driver won't probe.  Because of lack of schematics, use same
+> supplies as on Arndale 5250 board (voltage matches).
 > 
-> Exynos850 defined the second part - interrupt for each pin in wake-up
-> pin controller - but also added these interrupts in main device node,
-> which is not correct.
 > 
-> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: exynos: drop incorrectly placed wakeup interrupts in Exynos850
-      commit: daeb1c2b50fb98118d6318b5fdbd9ef9bdfaeaf5
+[01/10] ARM: dts: exynos: add missing HDMI supplies on SMDK5250
+        commit: 60a9914cb2061ba612a3f14f6ad329912b486360
 
 Best regards,
 -- 
