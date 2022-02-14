@@ -2,118 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA52CC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Feb 2022 06:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C8BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Feb 2022 13:36:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240694AbiBNGL2 (ORCPT
+        id S233495AbiBNNg6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Feb 2022 01:11:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51024 "EHLO
+        Mon, 14 Feb 2022 08:36:58 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240689AbiBNGL0 (ORCPT
+        with ESMTP id S230478AbiBNNg5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Feb 2022 01:11:26 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DA156748;
-        Sun, 13 Feb 2022 22:11:15 -0800 (PST)
-X-UUID: 0323131a7b2d470faebff37bf1a9e682-20220214
-X-UUID: 0323131a7b2d470faebff37bf1a9e682-20220214
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 199369998; Mon, 14 Feb 2022 14:11:12 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 14 Feb 2022 14:11:11 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 14 Feb
- 2022 14:11:10 +0800
-Received: from localhost.localdomain (10.17.3.154) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 14 Feb 2022 14:11:09 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>
-CC:     James Wang <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        <iommu@lists.linux-foundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        <linux-kernel@vger.kernel.org>, "Joerg Roedel" <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        <srv_heupstream@mediatek.com>, Rob Clark <robdclark@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Yong Wu <yong.wu@mediatek.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        "Seung-Woo Kim" <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH 14/23] drm/exynos: Make use of the helper component_compare_dev
-Date:   Mon, 14 Feb 2022 14:08:10 +0800
-Message-ID: <20220214060819.7334-15-yong.wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220214060819.7334-1-yong.wu@mediatek.com>
-References: <20220214060819.7334-1-yong.wu@mediatek.com>
+        Mon, 14 Feb 2022 08:36:57 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 293DE193C7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Feb 2022 05:36:50 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id bg19-20020a05600c3c9300b0034565e837b6so5634435wmb.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Feb 2022 05:36:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=lKeI0xAX+MJ5UPtqGLEtftF5bHWftWRiLnV6Tt/MzTM=;
+        b=seaFR5mE6UeUlDwgEVe5uNxczBGDBzhMm1NdnL6dXGgHSzthduClQ04Mq4lW6gVo+z
+         qvGcaodQubzN0Nlyb5q593nlEeB+brCWOzYsldS8ioZCOFosCxZgAvbUAAfhhazS2Jl0
+         7tKiib6z7m48RxTFoEVYCYObrJO893RJdN4jsNiHlt84S759gQObLhcC93/4H8qwX5K/
+         6zLMwwgM0LHxlL9MUxk79ZAmO00dgE4f6Iw2xhcJfDBr1nJk2X4W8X/NeVZ/U6yXUqiU
+         1/G7UlGHAt50dTLm78CxTYgwuNwU0acO4DV5L1HyVGllheCnbf/a8iAxLaY6+g9vXj9O
+         VF8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=lKeI0xAX+MJ5UPtqGLEtftF5bHWftWRiLnV6Tt/MzTM=;
+        b=d6IDGwV+sf/2ugmpk1S/WPaWz17FxTH/nt76R4ciwgMv3SHUULlJE3y6Mph686sPyo
+         LE52GXMq7AS2IT88KrFaH6FXaRYDWBXkrxJT3OHMQkn6zo1lbzuw/WGSq7oHda5AkmJO
+         7sIy9P9RD504LvpH2jh3CXmt+s98+PqxBMTQezo8SAhAkSMT0ykEfU15dKMtJ3O8WYPa
+         /iP48uFcKXK43cOR01v+TYs3FCdcF17VzNkcYCIFqGu5uFqynY6rkSlF9AJkjwfrm1PI
+         jHw2epztu+WtpzsjwpYM3RzgUzuGuecNIjV2lQDeHNPiNIPF/8IlJNKxUzMA/Dy7dE88
+         fTDQ==
+X-Gm-Message-State: AOAM530C8fiDwJUQ1DWIeyBe298v5zqMv1q67IXkIrG+kgkMzV1SkrUH
+        WgK5QUbVESQy088LfJoOkvO3AA==
+X-Google-Smtp-Source: ABdhPJzPgfN6THQVQkirjhcrFcZYu8B9ytLmMvuFr7AtRhobgF+ZrZdh6SXK+ud2uXZgUQt/zNpRYw==
+X-Received: by 2002:a05:600c:1506:: with SMTP id b6mr11390115wmg.30.1644845808701;
+        Mon, 14 Feb 2022 05:36:48 -0800 (PST)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id z3sm14439479wmp.42.2022.02.14.05.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Feb 2022 05:36:48 -0800 (PST)
+Date:   Mon, 14 Feb 2022 13:36:46 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] mfd: exynos-lpass: Drop unneeded syscon.h include
+Message-ID: <Ygpa7kiDp9tHmKry@google.com>
+References: <20220202151310.285561-1-krzysztof.kozlowski@canonical.com>
+ <20220202151310.285561-3-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220202151310.285561-3-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the common compare helper from component.
+On Wed, 02 Feb 2022, Krzysztof Kozlowski wrote:
 
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+> syscon regmap is not used since commit addebf1588ab ("mfd: exynos-lpass:
+> Remove pad retention control").
+> 
+> Fixes: addebf1588ab ("mfd: exynos-lpass: Remove pad retention control")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/mfd/exynos-lpass.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 9743b6b17447..d8b49a3c9b0f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -212,11 +212,6 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
- 	}
- };
- 
--static int compare_dev(struct device *dev, void *data)
--{
--	return dev == (struct device *)data;
--}
--
- static struct component_match *exynos_drm_match_add(struct device *dev)
- {
- 	struct component_match *match = NULL;
-@@ -234,8 +229,7 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
- 
- 			if (!(info->flags & DRM_FIMC_DEVICE) ||
- 			    exynos_drm_check_fimc_device(d) == 0)
--				component_match_add(dev, &match,
--						    compare_dev, d);
-+				component_match_add(dev, &match, component_compare_dev, d);
- 			p = d;
- 		}
- 		put_device(p);
+Applied, thanks.
+
 -- 
-2.18.0
-
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
