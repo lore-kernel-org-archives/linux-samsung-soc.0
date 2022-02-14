@@ -2,109 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2269C352A7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Feb 2022 16:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87619C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Feb 2022 16:44:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356656AbiBNQhu (ORCPT
+        id S240712AbiBNQoN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Feb 2022 11:37:50 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43502 "EHLO
+        Mon, 14 Feb 2022 11:44:13 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356579AbiBNQh2 (ORCPT
+        with ESMTP id S231733AbiBNQoK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Feb 2022 11:37:28 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213B46515B;
-        Mon, 14 Feb 2022 08:37:13 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 419021F43601
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1644856632;
-        bh=xtCoDMldrBj2wzxfrRVgsB4LaKOaG5qDFCWlCS3lxaw=;
+        Mon, 14 Feb 2022 11:44:10 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19E04DF73;
+        Mon, 14 Feb 2022 08:44:02 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B51F61504;
+        Mon, 14 Feb 2022 16:44:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5AD7C340E9;
+        Mon, 14 Feb 2022 16:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644857041;
+        bh=SIYLoF8Mkd7JQXNm+IeUIOoBVgKJOvKJXz6i4dRzNUY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PHkGIZlzuLMY3au0OU09JwwwDc+7TtKA8yHhQ4RZwmqVZ1oVJXqWwVsfDy5n8K0jl
-         lhM0z+EW+Vpart5pM9pBdnT6Kl5o/mcS3KTjMxhwORH5YFXKsCNpNWTmPbiyPdrouu
-         ZG3Rs0vSNo8q4xtJyaBZjSLg7LrM7Gbbk21oeMSZPxlb4GvqTOqpeEEUzeFlPBr9D5
-         5qfh4l1895y2FdoeDFjEX9dtWRYt2mynMKNtfBIhKJFdjkcZgCneiIbvZo5aFobfuD
-         uZ2o4dzVwpPEVnzGHIEmQV7GcORMRP/wavoUgBFBkWRWqmvnTOnjyKySVMSjsvpJeL
-         2pj6E+trme9FQ==
-Received: by mercury (Postfix, from userid 1000)
-        id 6684510603FD; Mon, 14 Feb 2022 17:37:10 +0100 (CET)
-Date:   Mon, 14 Feb 2022 17:37:10 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        b=r0XA18a6Ya2F/64yUSZv6NElDDCr7yfafEwf6n8Yphj52MOIAU8fjb1TJO/br8l8m
+         OvGHo7Tyx5vUjNECMbiJmcJ9Bxr5uvYMUGmza3GXJgFRPd9SV2thD4mVLe6BZQpnvf
+         aYDohSDdes7CrjuNefdvMhWGNe2s3BupLDuu5ZfCJ00KBb3gT/72sl9TVc1RBUQEE/
+         jgiTw5iWlz2bvFIJ9HAjzgEWM7Be6r6e8NxD/7Wdv4my9ceOWQycK+zieiMW+whsiU
+         tDmh2Mn10v2X5VLVW/ziYcq4fAGaMFPGMN1D/JHRQb5nj0X0Cli/RbMm+WQQ2sx0qr
+         3pPGStAMcFkhA==
+Date:   Mon, 14 Feb 2022 16:43:55 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
+        Sebastian Reichel <sre@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: power: supply: maxim,max14577:
- convert to dtschema
-Message-ID: <20220214163710.g5brep7jkvwf44ih@mercury.elektranox.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] regulator: dt-bindings: maxim,max14577: convert
+ to dtschema
+Message-ID: <YgqGy7a/kq2+jZQm@sirena.org.uk>
 References: <20220111174337.223320-1-krzysztof.kozlowski@canonical.com>
- <20220111174337.223320-3-krzysztof.kozlowski@canonical.com>
- <20220112112905.n6zb36kwop2kfm2n@earth.universe>
- <YgpkgSmxAWCNHW9l@google.com>
+ <20220111174337.223320-4-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lbjfw46sz4tz7akt"
+        protocol="application/pgp-signature"; boundary="FoD6jvcpqI2y8x16"
 Content-Disposition: inline
-In-Reply-To: <YgpkgSmxAWCNHW9l@google.com>
+In-Reply-To: <20220111174337.223320-4-krzysztof.kozlowski@canonical.com>
+X-Cookie: Am I in GRADUATE SCHOOL yet?
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---lbjfw46sz4tz7akt
+--FoD6jvcpqI2y8x16
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Lee,
+On Tue, Jan 11, 2022 at 06:43:36PM +0100, Krzysztof Kozlowski wrote:
 
-On Mon, Feb 14, 2022 at 02:17:37PM +0000, Lee Jones wrote:
-> On Wed, 12 Jan 2022, Sebastian Reichel wrote:
-> > On Tue, Jan 11, 2022 at 06:43:35PM +0100, Krzysztof Kozlowski wrote:
-> > > Convert the Charger bindings of Maxim MAX14577/MAX77836 MUIC to DT
-> > > schema format.  The existing bindings were defined in
-> > > ../bindings/mfd/max14577.txt.
-> > >=20
-> > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > ---
-> >=20
-> > I expect this to be merged through MFD:
-> >=20
-> > Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->=20
-> Do you need a PR?
+> +    required:
+> +      - regulator-name
 
-No, Not needed.
+Why is regulator-name required?  While it's a good idea for users to
+document names for supplies on their boards it shouldn't be a
+requirement or something that a driver would care about.
 
--- Sebastian
-
---lbjfw46sz4tz7akt
+--FoD6jvcpqI2y8x16
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmIKhSIACgkQ2O7X88g7
-+pq9MA/+JkCCsNVnqwkgph6JTIH9cztGiu1Jhcm6dR1hCLceMuXV1S3jVlaM9z2I
-yvzMmrh7IuIxSqEOlGrtZIxkemcg2v27VdkzNOooQXKEphKsV632WuaoGQr8N+sO
-jvg0al6n6PDPsUwb1MkphrRzQeHYhRJ58hZv1JgWeHMSvCwOAy6PT1NwruoSjjg/
-iG7QUwk6RaWOlYWqmVcLx0oFpjtHHQOjmZSgyBViK2cDo6DlNv4tjaCWe1Nys3Zj
-qmzgRWdh2VjAzFDLANzhZxoLa6h2HfiI4lohgGP+F8p16MxY1OJzMQm4fh3CHM7t
-vO2cd3P8910VDCk+6GtQHxzHgUQxRBNqwUqPIA1uwW3r/BOz50DRpG+oBvyWW8u2
-usglqyE53tUJD/m58C33fERAUsqoin2TGaM+2TqyR0HYFxuNQ/q+xVU6c/Uh+tDP
-mkQkVdfbJFgUf/O3v6+aQhLJd+kNQ/kRNO3M9aMeK4VQABmrEbMe0J800/UqFuas
-iSjFRKJcZNLIhmxpRnAfJxV4FqY+dDvOsdBFxYrHRdDDasn7n5R0+5N+p4vrpv8B
-1xcyRumGHzrnzV7Aq+H2dUsgd2wRQXgY+khi1Bnw/Zl+Wa5xHzmBI7PLvD8Q3Y7A
-Ap5IosC/AcUwb7hSwuGJaObVmOgogotgeoZ46fJputXcOdowthU=
-=yjeI
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIKhssACgkQJNaLcl1U
+h9DetAf/U2VJufH0jzvuwJgDE1eCUzCCUABE7KCvyPwuwTvX9+4eMT+WvKFdIFTw
+qSoGZAzooVKMAIxoo03NhbqQSub1whXeU6oTp0fLYebYeybGAPApJ2f6bbK4Kyxp
+o6+IwcgUgREWZR1yoZLWI5Td6wj1bKSNN7mNOoeFaQO6+mGzVJszfIGJxUesrQ3L
+v/ksIyY4XpGJ3YidExzgkvgoCbERHKCy/1Aopca9vaMkk4s6A2NdFQlo/jschnGF
+FLU6NkLVxN8qPo+6zRmN1BmNwVzk5BUxzzlbc4f6Ev6PweEE42VjqBMYqfI7du5/
+z+1qU2zMDcbT+F0jTWReFI6QM4z9Ug==
+=sfd1
 -----END PGP SIGNATURE-----
 
---lbjfw46sz4tz7akt--
+--FoD6jvcpqI2y8x16--
