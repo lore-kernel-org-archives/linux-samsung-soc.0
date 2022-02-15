@@ -2,99 +2,148 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B19F7C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Feb 2022 17:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F95FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Feb 2022 08:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244613AbiBNRAL (ORCPT
+        id S235145AbiBOIKL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Feb 2022 12:00:11 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38158 "EHLO
+        Tue, 15 Feb 2022 03:10:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233182AbiBNRAL (ORCPT
+        with ESMTP id S235132AbiBOIKK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Feb 2022 12:00:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8EB65158;
-        Mon, 14 Feb 2022 09:00:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C7F36152F;
-        Mon, 14 Feb 2022 17:00:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73894C340E9;
-        Mon, 14 Feb 2022 16:59:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644858002;
-        bh=iw+OtuZ1cGatRJTbS1i0AXz0nK9HVNfG9k/cuXgPjNw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lhEdNC4vYAaQreLPqoMq1PZm1IjC6JGk1rwJiAvayc3tQYvb6mnFA3Pi2nDwZbW/A
-         bTzXWp8IiTXkO50nL7hEbojkvkeQUBG+vEyiH3MaUZz941vQwB4aFP/T0Qq32dSTqm
-         jBeaXD3K1PyHmd2JWrKcCyIkT86WKTdUr7ySr8TmCSVNrZi/cgqQwVHhBWXGqKgD/S
-         O2WCW0GfBgTgI8oa7uAfAiQtGg8/Zyw4pIdURozu1a2LVS2S6Q9EaVAGN9M6ANCOSm
-         3uYPdYFaB6hTdLvihEMfMjKr2R01yhW9aayiPmdtNhdcdmiVZba8kTWUaAUs9WzIiO
-         HDT7BJAUzNERw==
-Date:   Mon, 14 Feb 2022 16:59:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+        Tue, 15 Feb 2022 03:10:10 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9045D2DAAF
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 00:09:59 -0800 (PST)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1nJsu4-0002EE-5h; Tue, 15 Feb 2022 09:09:40 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ore@pengutronix.de>)
+        id 1nJsu2-009Ukl-3n; Tue, 15 Feb 2022 09:09:38 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] regulator: dt-bindings: maxim,max14577: convert
- to dtschema
-Message-ID: <YgqKix0h7T9ME/ub@sirena.org.uk>
-References: <20220111174337.223320-1-krzysztof.kozlowski@canonical.com>
- <20220111174337.223320-4-krzysztof.kozlowski@canonical.com>
- <YgqGy7a/kq2+jZQm@sirena.org.uk>
- <79ecad6e-d9c9-c798-0933-43da4dff9dd6@canonical.com>
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v3 1/8] dt-bindings: net: add schema for ASIX USB Ethernet controllers
+Date:   Tue, 15 Feb 2022 09:09:30 +0100
+Message-Id: <20220215080937.2263111-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="z6jSsSafiLC+c6OC"
-Content-Disposition: inline
-In-Reply-To: <79ecad6e-d9c9-c798-0933-43da4dff9dd6@canonical.com>
-X-Cookie: Am I in GRADUATE SCHOOL yet?
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Create schema for ASIX USB Ethernet controllers and import some of
+currently supported USB IDs form drivers/net/usb/asix_devices.c
 
---z6jSsSafiLC+c6OC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This devices are already used in some of DTs. So, this schema makes it official.
+NOTE: there was no previously documented txt based DT binding for this
+controllers.
 
-On Mon, Feb 14, 2022 at 05:54:01PM +0100, Krzysztof Kozlowski wrote:
-> On 14/02/2022 17:43, Mark Brown wrote:
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ .../devicetree/bindings/net/asix,ax88178.yaml | 68 +++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/asix,ax88178.yaml
 
-> >> +    required:
-> >> +      - regulator-name
+diff --git a/Documentation/devicetree/bindings/net/asix,ax88178.yaml b/Documentation/devicetree/bindings/net/asix,ax88178.yaml
+new file mode 100644
+index 000000000000..1af52358de4c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/asix,ax88178.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/asix,ax88178.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: The device tree bindings for the USB Ethernet controllers
++
++maintainers:
++  - Oleksij Rempel <o.rempel@pengutronix.de>
++
++description: |
++  Device tree properties for hard wired USB Ethernet devices.
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - usbb95,1720   # ASIX AX88172
++          - usbb95,172a   # ASIX AX88172A
++          - usbb95,1780   # ASIX AX88178
++          - usbb95,7720   # ASIX AX88772
++          - usbb95,772a   # ASIX AX88772A
++          - usbb95,772b   # ASIX AX88772B
++          - usbb95,7e2b   # ASIX AX88772B
++
++  reg: true
++  local-mac-address: true
++  mac-address: true
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet@1 {
++            compatible = "usbb95,7e2b";
++            reg = <1>;
++            local-mac-address = [00 00 00 00 00 00];
++        };
++    };
++  - |
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        usb1@1 {
++            compatible = "usb1234,5678";
++            reg = <1>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            ethernet@1 {
++               compatible = "usbb95,772b";
++               reg = <1>;
++            };
++        };
++    };
+-- 
+2.30.2
 
-> > Why is regulator-name required?  While it's a good idea for users to
-> > document names for supplies on their boards it shouldn't be a
-> > requirement or something that a driver would care about.
-
-> Indeed, there is no need for requiring the name. I guess I copied it
-> from other schemas.
-
-Those other schemas should be fixed as well, if this is required for
-anything then there's a problem - this is purely diagnostic information
-for users.
-
---z6jSsSafiLC+c6OC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIKiooACgkQJNaLcl1U
-h9C97wf/Xc1JiXCZsIYcE313qe2WSWazKL82R8dw274uuIkWfCXRI1yVpZeNiHt1
-mVR5T6qrMt+pJH0mvzl0n5oriUjlvhR08bzY2BPDqf0oNJb+RKeCLiPoVkodVv3v
-AMem3im9/7k/iGoQXjAIqlLvR3iEe9I+1FxkZYYo+Z7z/18x00eI8/2UEzsQRTDh
-iXK1bBAs5kGubx+4Gqgzz3JNkEv5A5xoIxwr9aPlxdesDXg1TUe6CGed863D6lpc
-oAP8HgGpmoOCMCjXDoWW6KT5o5TmBnkMQYWk/O8/wcFRfsXtZ4vBJn4AtpKHpXCj
-L8gPGPZLF/a9N3uWhBdXM7RPbTKoOA==
-=Wp9Y
------END PGP SIGNATURE-----
-
---z6jSsSafiLC+c6OC--
