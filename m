@@ -2,149 +2,150 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F3EC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Feb 2022 11:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6ACC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Feb 2022 17:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236941AbiBOLK2 (ORCPT
+        id S242484AbiBORmj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Feb 2022 06:10:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34262 "EHLO
+        Tue, 15 Feb 2022 12:42:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236940AbiBOLK2 (ORCPT
+        with ESMTP id S232915AbiBORmj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Feb 2022 06:10:28 -0500
-X-Greylist: delayed 962 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Feb 2022 03:10:15 PST
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F6E107ABF;
-        Tue, 15 Feb 2022 03:10:15 -0800 (PST)
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21F6vGcF025181;
-        Tue, 15 Feb 2022 04:54:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=PODMain02222019;
- bh=ZA1HdUqFb+HwEJ8FdZvVs2kz00f9tkNcxNpgQ96eXPE=;
- b=lGmOC8ZryEdtSW6TmatZkTJzoP+AWgpXfYNMPHZYDqOELAAOkswAJd3800duR5wd/1XY
- UazWcy3Mmlb0gUCWnOWeAtX8/huO7lrMjN45NONAb0JjHc1qDpfnLhOfkk/BfqxUCsQR
- iw1qk3Ql8x3Hf3/W7vB37+ttGka3X/UpEeDoIexx8JYFA5O+Zs2lHRSmW3n7gXjq3it3
- zJhqNHuhve05z6g7odf7uTFvLL/OFsj7ua5agi0lU6K/+3AXEF8ou6yVtxh3GFVTZkFz
- VYivd+vtinxoLtGWxQWra2ShNXIyshcV/Fkly0ZOAiB6JaoNWHV6ZkrW/8oEfPlabOx3 gA== 
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3e7qq197c4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 15 Feb 2022 04:54:07 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 15 Feb
- 2022 10:54:05 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.18 via Frontend
- Transport; Tue, 15 Feb 2022 10:54:05 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 060682A9;
-        Tue, 15 Feb 2022 10:54:05 +0000 (UTC)
-Date:   Tue, 15 Feb 2022 10:54:05 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2] regmap-irq: Use regmap_irq_update_bits instead of
- regmap_write
-Message-ID: <20220215105405.GD38351@ediswmail.ad.cirrus.com>
-References: <20220119142953.1804-1-quic_pkumpatl@quicinc.com>
- <CGME20220208122955eucas1p2d4e32f51224242e9ebd0bce58b9c04ca@eucas1p2.samsung.com>
- <39f1b598-58ca-1e3d-3065-8dd692ee7c9f@samsung.com>
- <20220208133957.GC112838@ediswmail.ad.cirrus.com>
- <20220208135036.GD112838@ediswmail.ad.cirrus.com>
- <YgJ2hG2vwUclA/zF@sirena.org.uk>
- <20220208143316.GE112838@ediswmail.ad.cirrus.com>
- <YgKBEIapL8MAQAoI@sirena.org.uk>
- <22d9bf04-e069-c6a3-4d59-974a9402b0f7@quicinc.com>
+        Tue, 15 Feb 2022 12:42:39 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B458A302
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 09:42:28 -0800 (PST)
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B0D453F1D0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 17:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1644946947;
+        bh=SiDXwW19FJN8pW9aFNLOMTMKt2M32hD/m+v/+010wfI=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=aYs796KZF7Ua0SK9A8NX41zcogbAsg1G5VefBgGWu4c6D6/V1FkYxInjaDQBP4IhM
+         EoNtpyMsbrSncOTa4ElC6583iZvYDSZ43w9bM+7VuWrfIB6ZTIAzX5wBFONHum/aL1
+         kUKgnYy2m3eoIUfUdERdYLOcGzSB+PN4dobQJwuXrJLuXKITzTRTWxltqav0lHStnD
+         +seUe0gTvbJBFEKQaAj2g7+6V/zSoHN3wseIW0xpn4jsNvtB5zbbzF2iJ6+lab4Pcm
+         TEjErpghZpt8HWySOpkI2XP/cFWzb4hF7ccdjg4rXReX0h2ihYOGRFhYsh+lILrmw2
+         ++np5aBCpku6g==
+Received: by mail-ed1-f70.google.com with SMTP id y10-20020a056402358a00b00410deddea4cso241409edc.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 09:42:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SiDXwW19FJN8pW9aFNLOMTMKt2M32hD/m+v/+010wfI=;
+        b=FGJHavD6WU3+ul8sYE2tzjFTmaakcTZyHz/WcgWF/jWsDP4CkGFvkvXxEiwhX8anUP
+         WDQXUia0eEBvix524FHgnlgwLyTKSx/aHCgi9LyYsn90LXyT2Khws2ptlY9jBbJYQUV9
+         VpKLJYoJFc8yNCLSNMcz7FRi0QmpgIXoZO+4Br+2rN6tT2ylLJcngLQO9X3RlsFMHLWE
+         JYH08mJQULxGh6u/LMznCOduZsRafYjb4EuuAYfIEqQmLPaMHxQCeGHvWguabpvW81R+
+         6zBRg7rxW2yBKydBpZ7gL47QtM5CkzcELV+3MT937k5m83d95sOzv8dB0KR9P0aROuY0
+         BBEw==
+X-Gm-Message-State: AOAM530aS64XpfglI+31aLWYSojBIP6yLVXGFdmLw8iKR1HU1VLgnll9
+        ClsWUitEtPhaNXwLNzbvaOYdRiTKJvr+km6wvQzwAJUHEGIkD0VR96KC4yQfa2LALinWJNNZ49Z
+        khwvOvKUjpKUYPBr4NCz5c2Qz8GpskLlF3CgpOi9QXCY+03Qe
+X-Received: by 2002:a17:906:9750:: with SMTP id o16mr153934ejy.766.1644946947399;
+        Tue, 15 Feb 2022 09:42:27 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzLI/tC+CkdcaVGl9luIU4vkop2V0YQT2cTA8hb6YgaHTY7Nk9gE95CNESjuz9heDNDC0+BVg==
+X-Received: by 2002:a17:906:9750:: with SMTP id o16mr153918ejy.766.1644946947238;
+        Tue, 15 Feb 2022 09:42:27 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id q8sm240797edd.10.2022.02.15.09.42.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Feb 2022 09:42:26 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [GIT PULL] pinctrl: samsung: pull for v5.18
+Date:   Tue, 15 Feb 2022 18:42:20 +0100
+Message-Id: <20220215174220.11054-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <22d9bf04-e069-c6a3-4d59-974a9402b0f7@quicinc.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-ORIG-GUID: O5SJEsYmLvIZhquG6L90YoFUWeq5Uh9q
-X-Proofpoint-GUID: O5SJEsYmLvIZhquG6L90YoFUWeq5Uh9q
-X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 15, 2022 at 03:06:24PM +0530, Prasad Kumpatla wrote:
-> On 2/8/2022 8:11 PM, Mark Brown wrote:
-> >On Tue, Feb 08, 2022 at 02:33:16PM +0000, Charles Keepax wrote:
-> >>On Tue, Feb 08, 2022 at 01:56:20PM +0000, Mark Brown wrote:
-> ISR = Interrupt status register
-> ICR = Interrupt clear register
-> 
-> When the Invert_ack is
->  *
->    *FALSE*: For ICR,writing 1 will clear , writing 0 has no effect.
->  *
->    *TRUE* : For ICR, writing 0 will clear , writing 1 has no effect
-> and clear_ack
-> 
->  *
->    *TRUE* :  Some hardware doesn’t support auto clear for ICR,  Need
->    explicitly clear the ICR
->  *
->    *FALSE *:  No need to clear ICR, as HW will reset.
-> 
-> Consider the following scenario,  where Invert_ack is false and
-> clear_ack is true.
-> 
-> Say Default ISR=0x00 & ICR=0x00 and ISR is triggered with 2
-> interrupts making ISR = 0x11.
-> 
-> *Step1:* Say ISR is set 0x11 (store status_buff = ISR). ISR needs to
-> be cleared with the help of ICR once the Interrupt is processed.
-> 
-> *Step 2:* Write ICR = 0x11 (status_buff), this will clear the ISR to 0x00.
-> 
-> *Step 3:* Issue - In the existing code, ICR is written with ICR =
-> ~(status_buff) i.e ICR = 0xEE à This will block all the interrupts
-> from raising except for interrupts 0 and 4.
-> 
+Hi Linus,
 
-Ok yes I the issue here now. I hadn't quite realised there was
-hardware where you actually had to manually clear the ACK bits.
+Parts of this pull was shared with ARM SoC guys (tags/samsung-dt-pinctrl-5.18):
+https://lore.kernel.org/lkml/20220129115352.13274-1-krzysztof.kozlowski@canonical.com/
 
-> Code snippet for step 3
-> *if*(chip->clear_ack) {
-> *if*(chip->ack_invert && !ret)
-> ret = regmap_write(map, reg,
-> data->status_buf[i]);
-> *else**if*(!ret)
-> ret = regmap_write(map, reg,
-> ~data->status_buf[i]);
-> 
-> Solution: Since ICR does not clear automatically, writing 0x00 into
-> ICR explicitly will clear the ICR (ICR = 0x00) allowing all the
-> interrupts to raise.
-> 
-> So I’m thinking to implement as below.
-> if (chip->clear_ack) {
-> if (chip->ack_invert && !ret)
-> - ret = regmap_write(map, reg,
-> - data->status_buf[i]);
-> + ret = regmap_write(map, reg, 0xff);
-> else if (!ret)
-> - ret = regmap_write(map, reg,
-> - ~data->status_buf[i]);
-> + ret = regmap_write(map, reg, 0x00);
-> }
+This pull request is on top of it, in a fast-forward way, no rebases.
 
-I think this looks much safer, the values you are writing should
-have no effect, other than clearing the ACKs you just set.
+You can pull this one alone, or tags/samsung-dt-pinctrl-5.18 +
+tags/samsung-pinctrl-5.18-2 together.
 
-Thanks,
-Charles
+Best regards,
+Krzysztof
+
+
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
+
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-5.18-2
+
+for you to fetch changes up to 3652dc070bad335d6feb31402bb4ab1ad58d5cb6:
+
+  pinctrl: samsung: improve wake irq info on console (2022-02-01 09:13:30 +0100)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers changes for v5.18
+
+1. Fix OF reference leak in pinctrl driver probe error path.
+2. Correct list of handlers for Exynos850 ALIVE and CMGP pin banks.
+3. Accept devicetrees with GPIO pin bank definitions named with a
+   "-gpio-bank" suffix.  This is necessary for later Samsung pinctrl
+   bindings dtschema.
+4. Convert Samsung pinctrl bindings to dtschema.
+5. Add support for Exynos850 and ExynosAutov9 wake-up interrupts.
+6. Add support for Tesla FSD SoC.
+
+----------------------------------------------------------------
+Alim Akhtar (2):
+      dt-bindings: pinctrl: samsung: Add compatible for Tesla FSD SoC
+      pinctrl: samsung: add FSD SoC specific data
+
+Krzysztof Kozlowski (5):
+      pinctrl: samsung: drop pin banks references on error paths
+      pinctrl: samsung: accept GPIO bank nodes with a suffix
+      dt-bindings: pinctrl: samsung: convert to dtschema
+      dt-bindings: pinctrl: samsung: describe Exynos850 and ExynosAutov9 wake-ups
+      pinctrl: samsung: add support for Exynos850 and ExynosAutov9 wake-ups
+
+Martin Jücker (1):
+      pinctrl: samsung: improve wake irq info on console
+
+Sam Protsenko (1):
+      pinctrl: samsung: Remove EINT handler for Exynos850 ALIVE and CMGP gpios
+
+ .../pinctrl/samsung,pinctrl-gpio-bank.yaml         |  52 +++
+ .../bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml |  81 +++++
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  | 106 ++++++
+ .../bindings/pinctrl/samsung,pinctrl.yaml          | 393 +++++++++++++++++++++
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 383 --------------------
+ MAINTAINERS                                        |   2 +-
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     |  73 +++-
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   7 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |  89 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ 10 files changed, 781 insertions(+), 406 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
