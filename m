@@ -2,105 +2,149 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9BAC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Feb 2022 10:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F3EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Feb 2022 11:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236756AbiBOKzg (ORCPT
+        id S236941AbiBOLK2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Feb 2022 05:55:36 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48366 "EHLO
+        Tue, 15 Feb 2022 06:10:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236828AbiBOKzf (ORCPT
+        with ESMTP id S236940AbiBOLK2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Feb 2022 05:55:35 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6955DD885E
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 02:55:18 -0800 (PST)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1nJvTx-0001Ed-JO; Tue, 15 Feb 2022 11:54:53 +0100
-Received: from pengutronix.de (unknown [195.138.59.174])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 0933833A8B;
-        Tue, 15 Feb 2022 10:54:51 +0000 (UTC)
-Date:   Tue, 15 Feb 2022 11:54:47 +0100
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, kernel@pengutronix.de,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/8] dt-bindings: net: add schema for ASIX USB
- Ethernet controllers
-Message-ID: <20220215105447.vimwbnyabyfxyl4v@pengutronix.de>
-References: <20220215100018.2306046-1-o.rempel@pengutronix.de>
- <20220215100018.2306046-2-o.rempel@pengutronix.de>
+        Tue, 15 Feb 2022 06:10:28 -0500
+X-Greylist: delayed 962 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Feb 2022 03:10:15 PST
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F6E107ABF;
+        Tue, 15 Feb 2022 03:10:15 -0800 (PST)
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21F6vGcF025181;
+        Tue, 15 Feb 2022 04:54:07 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=PODMain02222019;
+ bh=ZA1HdUqFb+HwEJ8FdZvVs2kz00f9tkNcxNpgQ96eXPE=;
+ b=lGmOC8ZryEdtSW6TmatZkTJzoP+AWgpXfYNMPHZYDqOELAAOkswAJd3800duR5wd/1XY
+ UazWcy3Mmlb0gUCWnOWeAtX8/huO7lrMjN45NONAb0JjHc1qDpfnLhOfkk/BfqxUCsQR
+ iw1qk3Ql8x3Hf3/W7vB37+ttGka3X/UpEeDoIexx8JYFA5O+Zs2lHRSmW3n7gXjq3it3
+ zJhqNHuhve05z6g7odf7uTFvLL/OFsj7ua5agi0lU6K/+3AXEF8ou6yVtxh3GFVTZkFz
+ VYivd+vtinxoLtGWxQWra2ShNXIyshcV/Fkly0ZOAiB6JaoNWHV6ZkrW/8oEfPlabOx3 gA== 
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3e7qq197c4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 15 Feb 2022 04:54:07 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 15 Feb
+ 2022 10:54:05 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.18 via Frontend
+ Transport; Tue, 15 Feb 2022 10:54:05 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 060682A9;
+        Tue, 15 Feb 2022 10:54:05 +0000 (UTC)
+Date:   Tue, 15 Feb 2022 10:54:05 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2] regmap-irq: Use regmap_irq_update_bits instead of
+ regmap_write
+Message-ID: <20220215105405.GD38351@ediswmail.ad.cirrus.com>
+References: <20220119142953.1804-1-quic_pkumpatl@quicinc.com>
+ <CGME20220208122955eucas1p2d4e32f51224242e9ebd0bce58b9c04ca@eucas1p2.samsung.com>
+ <39f1b598-58ca-1e3d-3065-8dd692ee7c9f@samsung.com>
+ <20220208133957.GC112838@ediswmail.ad.cirrus.com>
+ <20220208135036.GD112838@ediswmail.ad.cirrus.com>
+ <YgJ2hG2vwUclA/zF@sirena.org.uk>
+ <20220208143316.GE112838@ediswmail.ad.cirrus.com>
+ <YgKBEIapL8MAQAoI@sirena.org.uk>
+ <22d9bf04-e069-c6a3-4d59-974a9402b0f7@quicinc.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ifqdzi4p4d6arjx2"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20220215100018.2306046-2-o.rempel@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <22d9bf04-e069-c6a3-4d59-974a9402b0f7@quicinc.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-ORIG-GUID: O5SJEsYmLvIZhquG6L90YoFUWeq5Uh9q
+X-Proofpoint-GUID: O5SJEsYmLvIZhquG6L90YoFUWeq5Uh9q
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, Feb 15, 2022 at 03:06:24PM +0530, Prasad Kumpatla wrote:
+> On 2/8/2022 8:11 PM, Mark Brown wrote:
+> >On Tue, Feb 08, 2022 at 02:33:16PM +0000, Charles Keepax wrote:
+> >>On Tue, Feb 08, 2022 at 01:56:20PM +0000, Mark Brown wrote:
+> ISR = Interrupt status register
+> ICR = Interrupt clear register
+> 
+> When the Invert_ack is
+>  *
+>    *FALSE*: For ICR,writing 1 will clear , writing 0 has no effect.
+>  *
+>    *TRUE* : For ICR, writing 0 will clear , writing 1 has no effect
+> and clear_ack
+> 
+>  *
+>    *TRUE* :  Some hardware doesn’t support auto clear for ICR,  Need
+>    explicitly clear the ICR
+>  *
+>    *FALSE *:  No need to clear ICR, as HW will reset.
+> 
+> Consider the following scenario,  where Invert_ack is false and
+> clear_ack is true.
+> 
+> Say Default ISR=0x00 & ICR=0x00 and ISR is triggered with 2
+> interrupts making ISR = 0x11.
+> 
+> *Step1:* Say ISR is set 0x11 (store status_buff = ISR). ISR needs to
+> be cleared with the help of ICR once the Interrupt is processed.
+> 
+> *Step 2:* Write ICR = 0x11 (status_buff), this will clear the ISR to 0x00.
+> 
+> *Step 3:* Issue - In the existing code, ICR is written with ICR =
+> ~(status_buff) i.e ICR = 0xEE à This will block all the interrupts
+> from raising except for interrupts 0 and 4.
+> 
 
---ifqdzi4p4d6arjx2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok yes I the issue here now. I hadn't quite realised there was
+hardware where you actually had to manually clear the ACK bits.
 
-On 15.02.2022 11:00:11, Oleksij Rempel wrote:
-> Create schema for ASIX USB Ethernet controllers and import some of
-> currently supported USB IDs form drivers/net/usb/asix_devices.c
->=20
-> This devices are already used in some of DTs. So, this schema makes it of=
-ficial.
-These
+> Code snippet for step 3
+> *if*(chip->clear_ack) {
+> *if*(chip->ack_invert && !ret)
+> ret = regmap_write(map, reg,
+> data->status_buf[i]);
+> *else**if*(!ret)
+> ret = regmap_write(map, reg,
+> ~data->status_buf[i]);
+> 
+> Solution: Since ICR does not clear automatically, writing 0x00 into
+> ICR explicitly will clear the ICR (ICR = 0x00) allowing all the
+> interrupts to raise.
+> 
+> So I’m thinking to implement as below.
+> if (chip->clear_ack) {
+> if (chip->ack_invert && !ret)
+> - ret = regmap_write(map, reg,
+> - data->status_buf[i]);
+> + ret = regmap_write(map, reg, 0xff);
+> else if (!ret)
+> - ret = regmap_write(map, reg,
+> - ~data->status_buf[i]);
+> + ret = regmap_write(map, reg, 0x00);
+> }
 
-Marc
+I think this looks much safer, the values you are writing should
+have no effect, other than clearing the ACKs you just set.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---ifqdzi4p4d6arjx2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmILhnUACgkQrX5LkNig
-0127EAf8CJJABhnS+oUjbFpBGUxKQ7ySwvBPYhNMil097GqJDDjXWk8nLPgGs0PV
-kXT/pRPTBDeVWP9o48FVVyOLtWRgK/8mqia24ZAvb6MqXEUTVVOV5xQi7nQsChwp
-B6coQO7Py9d1yOw61MNEj/QR33O5qP3E4GqY4d0UE1p7DNVyeX9apoWDI5xRdZrL
-NV5wzDHIE45Cdgm0Gry8x9UVy8kMbPFV4wqiZo4OS9Ct7b+JkjM6dCFL3gvv7EuK
-kpaJSV2hefMCyrevDo4S6s0laNbec69cXTso9FXJVeWmZfz7L4xbiU3hRBXdyYNH
-kK3tvNuH8nP8Rw0vJyzQlK027HRKCw==
-=unWf
------END PGP SIGNATURE-----
-
---ifqdzi4p4d6arjx2--
+Thanks,
+Charles
