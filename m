@@ -2,28 +2,28 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E5EC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DA0C433FE
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Feb 2022 07:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbiBPHul (ORCPT
+        id S231216AbiBPHun (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Feb 2022 02:50:41 -0500
+        Wed, 16 Feb 2022 02:50:43 -0500
 Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:42178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbiBPHuY (ORCPT
+        with ESMTP id S231193AbiBPHuY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 16 Feb 2022 02:50:24 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32B251D6873
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 23:50:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08FA11D684C
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 23:49:58 -0800 (PST)
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1nKF46-000365-V1; Wed, 16 Feb 2022 08:49:30 +0100
+        id 1nKF46-000360-Ud; Wed, 16 Feb 2022 08:49:30 +0100
 Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1nKF45-00FBcA-C9; Wed, 16 Feb 2022 08:49:29 +0100
+        id 1nKF45-00FBbR-5J; Wed, 16 Feb 2022 08:49:29 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -43,9 +43,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v5 9/9] arm64: dts: imx8mm-kontron: fix ethernet node name
-Date:   Wed, 16 Feb 2022 08:49:27 +0100
-Message-Id: <20220216074927.3619425-10-o.rempel@pengutronix.de>
+Subject: [PATCH v5 4/9] ARM: dts: bcm283x: fix ethernet node name
+Date:   Wed, 16 Feb 2022 08:49:22 +0100
+Message-Id: <20220216074927.3619425-5-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220216074927.3619425-1-o.rempel@pengutronix.de>
 References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
@@ -59,8 +59,8 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The node name of Ethernet controller should be "ethernet" instead of
-"usbether" as required by Ethernet controller devicetree schema:
+It should be "ethernet@x" instead of "usbether@x" as required by Ethernet
+controller devicetree schema:
  Documentation/devicetree/bindings/net/ethernet-controller.yaml
 
 This patch can potentially affect boot loaders patching against full
@@ -68,22 +68,36 @@ node path instead of using device aliases.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi | 2 +-
+ arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts b/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts
-index d40caf14ac4a..23be1ec538ba 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-kontron-n801x-s.dts
-@@ -182,7 +182,7 @@ usb1@1 {
+diff --git a/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi b/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
+index 967e081cb9c2..882b13807075 100644
+--- a/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
++++ b/arch/arm/boot/dts/bcm283x-rpi-smsc9512.dtsi
+@@ -12,7 +12,7 @@ usb1@1 {
  		#address-cells = <1>;
  		#size-cells = <0>;
  
--		usbnet: usbether@1 {
-+		usbnet: ethernet@1 {
+-		ethernet: usbether@1 {
++		ethernet: ethernet@1 {
  			compatible = "usb424,ec00";
  			reg = <1>;
- 			local-mac-address = [ 00 00 00 00 00 00 ];
+ 		};
+diff --git a/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi b/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
+index dc7ae776db5f..4273b90b53cc 100644
+--- a/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
++++ b/arch/arm/boot/dts/bcm283x-rpi-smsc9514.dtsi
+@@ -11,7 +11,7 @@ usb1@1 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		ethernet: usbether@1 {
++		ethernet: ethernet@1 {
+ 			compatible = "usb424,ec00";
+ 			reg = <1>;
+ 		};
 -- 
 2.30.2
 
