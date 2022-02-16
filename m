@@ -2,28 +2,28 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B963C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Feb 2022 07:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D8BC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Feb 2022 07:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231311AbiBPHuh (ORCPT
+        id S231373AbiBPHuj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Feb 2022 02:50:37 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:42326 "EHLO
+        Wed, 16 Feb 2022 02:50:39 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:42752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231316AbiBPHu3 (ORCPT
+        with ESMTP id S231195AbiBPHu2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Feb 2022 02:50:29 -0500
+        Wed, 16 Feb 2022 02:50:28 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F63B1D686E
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 23:50:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E86D1B9386
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 23:50:03 -0800 (PST)
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ore@pengutronix.de>)
-        id 1nKF46-000361-Uc; Wed, 16 Feb 2022 08:49:30 +0100
+        id 1nKF46-00035y-Uc; Wed, 16 Feb 2022 08:49:30 +0100
 Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ore@pengutronix.de>)
-        id 1nKF45-00FBba-6X; Wed, 16 Feb 2022 08:49:29 +0100
+        id 1nKF45-00FBb9-2s; Wed, 16 Feb 2022 08:49:29 +0100
 From:   Oleksij Rempel <o.rempel@pengutronix.de>
 To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -43,9 +43,9 @@ Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v5 5/9] ARM: dts: exynos: fix ethernet node name for different odroid boards
-Date:   Wed, 16 Feb 2022 08:49:23 +0100
-Message-Id: <20220216074927.3619425-6-o.rempel@pengutronix.de>
+Subject: [PATCH v5 2/9] dt-bindings: net: add schema for Microchip/SMSC LAN95xx USB Ethernet controllers
+Date:   Wed, 16 Feb 2022 08:49:20 +0100
+Message-Id: <20220216074927.3619425-3-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220216074927.3619425-1-o.rempel@pengutronix.de>
 References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
@@ -59,87 +59,105 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The node name of Ethernet controller should be "ethernet" instead of
-"usbether" as required by Ethernet controller devicetree schema:
- Documentation/devicetree/bindings/net/ethernet-controller.yaml
+Create initial schema for Microchip/SMSC LAN95xx USB Ethernet controllers and
+import some of currently supported USB IDs form drivers/net/usb/smsc95xx.c
 
-This patch can potentially affect boot loaders patching against full
-node path instead of using device aliases.
+These devices are already used in some of DTs. So, this schema makes it official.
+NOTE: there was no previously documented txt based DT binding for this
+controllers.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/arm/boot/dts/exynos4412-odroidu3.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts        | 2 +-
- arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 2 +-
- arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ .../bindings/net/microchip,lan95xx.yaml       | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index efaf7533e84f..5ddbb6cbe1bf 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -119,7 +119,7 @@ &ehci {
- 	phys = <&exynos_usbphy 2>, <&exynos_usbphy 3>;
- 	phy-names = "hsic0", "hsic1";
- 
--	ethernet: usbether@2 {
-+	ethernet: ethernet@2 {
- 		compatible = "usb0424,9730";
- 		reg = <2>;
- 		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 440135d0ff2a..ea7bccec518d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -81,7 +81,7 @@ hub@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
--			ethernet: usbether@1 {
-+			ethernet: ethernet@1 {
- 				compatible = "usb0424,ec00";
- 				reg = <1>;
- 				/* Filled in by a bootloader */
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 884fef55836c..38e23b4ae730 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -675,7 +675,7 @@ &usbhost2 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 
--	ethernet: usbether@2 {
-+	ethernet: ethernet@2 {
- 		compatible = "usb0424,9730";
- 		reg = <2>;
- 		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 62c5928aa994..749f051ffe70 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -118,7 +118,7 @@ hub@1 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		ethernet: usbether@1 {
-+		ethernet: ethernet@1 {
- 			compatible = "usb0424,ec00";
- 			reg = <1>;
- 			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index cecaeb69e623..8cf3d644a4c1 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -85,7 +85,7 @@ hub@1 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		ethernet: usbether@1 {
-+		ethernet: ethernet@1 {
- 			compatible = "usb0424,ec00";
- 			reg = <1>;
- 			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
+diff --git a/Documentation/devicetree/bindings/net/microchip,lan95xx.yaml b/Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
+new file mode 100644
+index 000000000000..8521c65366b4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/microchip,lan95xx.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/microchip,lan95xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: The device tree bindings for the USB Ethernet controllers
++
++maintainers:
++  - Oleksij Rempel <o.rempel@pengutronix.de>
++
++description: |
++  Device tree properties for hard wired SMSC95xx compatible USB Ethernet
++  controller.
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - usb424,9500   # SMSC9500 USB Ethernet Device
++          - usb424,9505   # SMSC9505 USB Ethernet Device
++          - usb424,9530   # SMSC LAN9530 USB Ethernet Device
++          - usb424,9730   # SMSC LAN9730 USB Ethernet Device
++          - usb424,9900   # SMSC9500 USB Ethernet Device (SAL10)
++          - usb424,9901   # SMSC9505 USB Ethernet Device (SAL10)
++          - usb424,9902   # SMSC9500A USB Ethernet Device (SAL10)
++          - usb424,9903   # SMSC9505A USB Ethernet Device (SAL10)
++          - usb424,9904   # SMSC9512/9514 USB Hub & Ethernet Device (SAL10)
++          - usb424,9905   # SMSC9500A USB Ethernet Device (HAL)
++          - usb424,9906   # SMSC9505A USB Ethernet Device (HAL)
++          - usb424,9907   # SMSC9500 USB Ethernet Device (Alternate ID)
++          - usb424,9908   # SMSC9500A USB Ethernet Device (Alternate ID)
++          - usb424,9909   # SMSC9512/9514 USB Hub & Ethernet Devic.  ID)
++          - usb424,9e00   # SMSC9500A USB Ethernet Device
++          - usb424,9e01   # SMSC9505A USB Ethernet Device
++          - usb424,9e08   # SMSC LAN89530 USB Ethernet Device
++          - usb424,ec00   # SMSC9512/9514 USB Hub & Ethernet Device
++
++  reg: true
++  local-mac-address: true
++  mac-address: true
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet@1 {
++            compatible = "usb424,ec00";
++            reg = <1>;
++            local-mac-address = [00 00 00 00 00 00];
++        };
++    };
++  - |
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        usb1@1 {
++            compatible = "usb424,9514";
++            reg = <1>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            ethernet@1 {
++               compatible = "usb424,ec00";
++               reg = <1>;
++            };
++        };
++    };
 -- 
 2.30.2
 
