@@ -2,175 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7140BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Feb 2022 07:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E27CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Feb 2022 13:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbiBPHv5 (ORCPT
+        id S235742AbiBRNS2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Feb 2022 02:51:57 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:53946 "EHLO
+        Fri, 18 Feb 2022 08:18:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231417AbiBPHvy (ORCPT
+        with ESMTP id S235734AbiBRNSZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Feb 2022 02:51:54 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC25CA72C
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Feb 2022 23:51:33 -0800 (PST)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ore@pengutronix.de>)
-        id 1nKF46-000362-Vb; Wed, 16 Feb 2022 08:49:30 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ore@pengutronix.de>)
-        id 1nKF45-00FBbj-7m; Wed, 16 Feb 2022 08:49:29 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
+        Fri, 18 Feb 2022 08:18:25 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F4D4C7AE
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 05:18:08 -0800 (PST)
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4279D3F1C8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 13:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645190287;
+        bh=BpW5fQh3uUN/Pfl9NCOaES86qNesPQDykTGq/4H1dKc=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=FUwtRl33/B7hD6TEdCZly7bvg+EfubdbrGpZgd+JROVD9ClNjOQCA6OL/JYSDY11X
+         edlm6A3HT1NMJuhjUIDxUMaLFrYfyxjk8pB6IoXWwmX68Qef/+U6O01Vx5N1P5JMun
+         58noQTYu1+CA7RnYl7QVspGugPDZ2H8ACaft497ZTBnjfTXwL6zJ4y0eVlNwrRmAls
+         mAR3zD3llgJBtCiozcH82N46qovFbYQ0I7GkWqXYRw1T8jXsgU/6dj8D6s3Zf5l1d4
+         BqKTggyh731a1AdytY50R/P51IPPEmJiAFTlmMlu2FGSV1Kt3/gixCbdoA/bRO3MB0
+         BvfakG+F6bcLg==
+Received: by mail-ej1-f72.google.com with SMTP id mp5-20020a1709071b0500b0069f2ba47b20so3000340ejc.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 05:18:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BpW5fQh3uUN/Pfl9NCOaES86qNesPQDykTGq/4H1dKc=;
+        b=mXTWJDHNhDdUJ663PhirneQvhOZNoma5i3dr9FjI71hHaeSao/sAjacUIPoe3LjB9E
+         You6EnNJWbSyXEftK38w8boSEcc8PNUpjjndv2pTvlKV4n3/2zR/tawMqD1Pmun2B/s3
+         +as533zWlVIVDpG1oIjKNw/A2fkv889LCggi7+r9lGnsstxSTDLpw2O69vIj1Wk+w/RF
+         vzecU+1YAs/8ZsGpaGXftPry6F47srKAr+kAVTnhojddw7c0Knd7iTcIM2P3AQ23GFJd
+         rtebhTxDvxjKP1TKLtZD+J/RY85D/iBGK2yc4qmMlKeyxZKo9s1nxLIJRRm0WdzMZbnD
+         OV6A==
+X-Gm-Message-State: AOAM533OqtX2Hobm4zQKoacYxSRymxbIQo3z6b04ovPQSsPT0eoQYrXr
+        mYYmT2DqA/pMViABbW24r5UKI607BDWxCpkhWNBmiwsmDv0L+opaoOxLNAAFA4ddRL6wACHOLCs
+        ln7XbGw+BGBQiUtdh6LkMWk/gDiYZR02cV2EUt5X7JrV8oXGu
+X-Received: by 2002:a05:6402:4305:b0:410:d56e:efe3 with SMTP id m5-20020a056402430500b00410d56eefe3mr8202062edc.440.1645190286900;
+        Fri, 18 Feb 2022 05:18:06 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz8g7ylX5DfI5GDGYJJcRfIXiBC/rxttQWz/VkkQYf0o469gjXG/o2FNvU6gl8bykHatt6NgA==
+X-Received: by 2002:a05:6402:4305:b0:410:d56e:efe3 with SMTP id m5-20020a056402430500b00410d56eefe3mr8202031edc.440.1645190286702;
+        Fri, 18 Feb 2022 05:18:06 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id 12sm2281255ejh.30.2022.02.18.05.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Feb 2022 05:18:06 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     devicetree@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v5 6/9] ARM: dts: exynos: fix compatible strings for Ethernet USB devices
-Date:   Wed, 16 Feb 2022 08:49:24 +0100
-Message-Id: <20220216074927.3619425-7-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220216074927.3619425-1-o.rempel@pengutronix.de>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: (subset) [PATCH v2 3/3] ARM: dts: exynos: align PPMU event node names with dtschema
+Date:   Fri, 18 Feb 2022 14:18:04 +0100
+Message-Id: <164519028097.19535.13626825371267810296.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210920071753.38560-3-krzysztof.kozlowski@canonical.com>
+References: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com> <20210920071753.38560-3-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fix compatible string for Ethernet USB device as required by USB device schema:
- Documentation/devicetree/bindings/usb/usb-device.yaml
-  The textual representation of VID and PID shall be in lower case hexadecimal
-  with leading zeroes suppressed.
+On Mon, 20 Sep 2021 09:17:53 +0200, Krzysztof Kozlowski wrote:
+> Use hyphen instead of underscore and align the PPMU event node name with
+> dtschema.  The event-name property must match the node name, by the
+> design of devfreq events and PPMU driver.
+> 
+> 
 
-Since there are no kernel driver matching against this compatibles, I
-expect no regressions with this patch. At the same time, without this fix, we
-are not be able to validate this device nodes with newly provided DT
-schema.
+Applied, thanks!
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/boot/dts/exynos4412-odroidu3.dts       | 2 +-
- arch/arm/boot/dts/exynos4412-odroidx.dts        | 6 +++---
- arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
- arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts | 4 ++--
- arch/arm/boot/dts/exynos5422-odroidxu3.dts      | 4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+[3/3] ARM: dts: exynos: align PPMU event node names with dtschema
+      commit: 7cdfe3b3b60c89f0e12e8ee194a7cfbfd46515dd
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 5ddbb6cbe1bf..36c369c42b77 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -120,7 +120,7 @@ &ehci {
- 	phy-names = "hsic0", "hsic1";
- 
- 	ethernet: ethernet@2 {
--		compatible = "usb0424,9730";
-+		compatible = "usb424,9730";
- 		reg = <2>;
- 		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index ea7bccec518d..ba46baf9117f 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -70,19 +70,19 @@ &ehci {
- 	phy-names = "hsic0";
- 
- 	hub@2 {
--		compatible = "usb0424,3503";
-+		compatible = "usb424,3503";
- 		reg = <2>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		hub@1 {
--			compatible = "usb0424,9514";
-+			compatible = "usb424,9514";
- 			reg = <1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
- 			ethernet: ethernet@1 {
--				compatible = "usb0424,ec00";
-+				compatible = "usb424,ec00";
- 				reg = <1>;
- 				/* Filled in by a bootloader */
- 				local-mac-address = [00 00 00 00 00 00];
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index 38e23b4ae730..4c7039e771db 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -676,7 +676,7 @@ &usbhost2 {
- 	#size-cells = <0>;
- 
- 	ethernet: ethernet@2 {
--		compatible = "usb0424,9730";
-+		compatible = "usb424,9730";
- 		reg = <2>;
- 		local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 	};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-index 749f051ffe70..e3154a1cae23 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts
-@@ -113,13 +113,13 @@ &usbhost2 {
- 	#size-cells = <0>;
- 
- 	hub@1 {
--		compatible = "usb0424,9514";
-+		compatible = "usb424,9514";
- 		reg = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		ethernet: ethernet@1 {
--			compatible = "usb0424,ec00";
-+			compatible = "usb424,ec00";
- 			reg = <1>;
- 			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 		};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index 8cf3d644a4c1..a378d4937ff7 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -80,13 +80,13 @@ &usbhost2 {
- 	#size-cells = <0>;
- 
- 	hub@1 {
--		compatible = "usb0424,9514";
-+		compatible = "usb424,9514";
- 		reg = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
- 		ethernet: ethernet@1 {
--			compatible = "usb0424,ec00";
-+			compatible = "usb424,ec00";
- 			reg = <1>;
- 			local-mac-address = [00 00 00 00 00 00]; /* Filled in by a bootloader */
- 		};
+Best regards,
 -- 
-2.30.2
-
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
