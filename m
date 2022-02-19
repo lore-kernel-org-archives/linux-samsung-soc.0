@@ -2,100 +2,81 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E27CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Feb 2022 13:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFD8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Feb 2022 01:07:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235742AbiBRNS2 (ORCPT
+        id S240788AbiBSBHT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Feb 2022 08:18:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42798 "EHLO
+        Fri, 18 Feb 2022 20:07:19 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235734AbiBRNSZ (ORCPT
+        with ESMTP id S230445AbiBSBHS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Feb 2022 08:18:25 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F4D4C7AE
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 05:18:08 -0800 (PST)
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4279D3F1C8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 13:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645190287;
-        bh=BpW5fQh3uUN/Pfl9NCOaES86qNesPQDykTGq/4H1dKc=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=FUwtRl33/B7hD6TEdCZly7bvg+EfubdbrGpZgd+JROVD9ClNjOQCA6OL/JYSDY11X
-         edlm6A3HT1NMJuhjUIDxUMaLFrYfyxjk8pB6IoXWwmX68Qef/+U6O01Vx5N1P5JMun
-         58noQTYu1+CA7RnYl7QVspGugPDZ2H8ACaft497ZTBnjfTXwL6zJ4y0eVlNwrRmAls
-         mAR3zD3llgJBtCiozcH82N46qovFbYQ0I7GkWqXYRw1T8jXsgU/6dj8D6s3Zf5l1d4
-         BqKTggyh731a1AdytY50R/P51IPPEmJiAFTlmMlu2FGSV1Kt3/gixCbdoA/bRO3MB0
-         BvfakG+F6bcLg==
-Received: by mail-ej1-f72.google.com with SMTP id mp5-20020a1709071b0500b0069f2ba47b20so3000340ejc.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 05:18:07 -0800 (PST)
+        Fri, 18 Feb 2022 20:07:18 -0500
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D489E4C7A6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 17:07:00 -0800 (PST)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-2d07ae0b1c0so83659477b3.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Feb 2022 17:07:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=92HmhncqwIJbwlHAajhn+8XBIuPierpa7s2uzXAun+4=;
+        b=acZPgi1FruVkoeZSr0gyncEXALkeYWnMuQJajOwtagvoouxuV3yMtlseyInLvDvktI
+         zHUmr1z7BJ2KW1KKeArTzjMGfiZ5OdnoNGz293FSS3Og8eOZI3t9QecsdXqUVonK7sAl
+         y27j0dm+XiRie7DCn09pK5uPsUurt9mUXnFZTeyUE4NyP1K47I0KteLBUF9UmcLNlPNw
+         1asrO9NJ+zNydQICRxdWerJQMrAT9SUxEmEVidHWiQDvxwD08IbUcnY+JHQsitcjd+WQ
+         DHPVEmviYaqAZMgIEjpN6g8LkAgGe6/mE7fa+ZywllFXPeV/akHWWgtS2GddDPAFAvI4
+         P1pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BpW5fQh3uUN/Pfl9NCOaES86qNesPQDykTGq/4H1dKc=;
-        b=mXTWJDHNhDdUJ663PhirneQvhOZNoma5i3dr9FjI71hHaeSao/sAjacUIPoe3LjB9E
-         You6EnNJWbSyXEftK38w8boSEcc8PNUpjjndv2pTvlKV4n3/2zR/tawMqD1Pmun2B/s3
-         +as533zWlVIVDpG1oIjKNw/A2fkv889LCggi7+r9lGnsstxSTDLpw2O69vIj1Wk+w/RF
-         vzecU+1YAs/8ZsGpaGXftPry6F47srKAr+kAVTnhojddw7c0Knd7iTcIM2P3AQ23GFJd
-         rtebhTxDvxjKP1TKLtZD+J/RY85D/iBGK2yc4qmMlKeyxZKo9s1nxLIJRRm0WdzMZbnD
-         OV6A==
-X-Gm-Message-State: AOAM533OqtX2Hobm4zQKoacYxSRymxbIQo3z6b04ovPQSsPT0eoQYrXr
-        mYYmT2DqA/pMViABbW24r5UKI607BDWxCpkhWNBmiwsmDv0L+opaoOxLNAAFA4ddRL6wACHOLCs
-        ln7XbGw+BGBQiUtdh6LkMWk/gDiYZR02cV2EUt5X7JrV8oXGu
-X-Received: by 2002:a05:6402:4305:b0:410:d56e:efe3 with SMTP id m5-20020a056402430500b00410d56eefe3mr8202062edc.440.1645190286900;
-        Fri, 18 Feb 2022 05:18:06 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz8g7ylX5DfI5GDGYJJcRfIXiBC/rxttQWz/VkkQYf0o469gjXG/o2FNvU6gl8bykHatt6NgA==
-X-Received: by 2002:a05:6402:4305:b0:410:d56e:efe3 with SMTP id m5-20020a056402430500b00410d56eefe3mr8202031edc.440.1645190286702;
-        Fri, 18 Feb 2022 05:18:06 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id 12sm2281255ejh.30.2022.02.18.05.18.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Feb 2022 05:18:06 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     devicetree@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: (subset) [PATCH v2 3/3] ARM: dts: exynos: align PPMU event node names with dtschema
-Date:   Fri, 18 Feb 2022 14:18:04 +0100
-Message-Id: <164519028097.19535.13626825371267810296.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210920071753.38560-3-krzysztof.kozlowski@canonical.com>
-References: <20210920071540.38337-1-krzysztof.kozlowski@canonical.com> <20210920071753.38560-3-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=92HmhncqwIJbwlHAajhn+8XBIuPierpa7s2uzXAun+4=;
+        b=4nFcST1FHbSAmigOnwscngokNJSV8ixJK8C+O+boosMX/KjceNEuF+4no2y+WMNSkt
+         t3YjgThScfmXagkim0+qJaSTHdcNHuli8ed/hSowHMxEnn8fYdR3757updmSn4w17qOu
+         0Ex0Huzb5F39n+vJmBe3eKxPE2nJSbBN+KW77pgKln6LdDh2iHX2ugDTj/nD4ZGOJRB6
+         vBtLohrLsfuIezQIMZswjpu5YJaBElFTGaJxxoXua/9BFggMqa9ZHFFe0/4vFg7dEgPq
+         3LO0wnS8+k2q9STfZq/yJ9Lv/+0b0O1cA/LjjYetYN8h6EmecpB1nXHaVwhyDwAkmr0/
+         lkvA==
+X-Gm-Message-State: AOAM532CJ5U5DK5C3Qb+KMPqMX2j+jK81zBXzb22OsPVaXjtV1hWr8GW
+        uQ/iOP2bhXHjnfqgSgzeluxK6ZUxQAI1BVQ6VJoVwg==
+X-Google-Smtp-Source: ABdhPJzHwRbcVu2/LZrLyXxrBzXQraRUiAp+FMxeZxXTPfeXMmbkWKmTc6Lzsu483jeGdlR98tZUnSZ8gzN2Mq/gow0=
+X-Received: by 2002:a0d:e447:0:b0:2d0:d223:2d17 with SMTP id
+ n68-20020a0de447000000b002d0d2232d17mr10604370ywe.437.1645232820147; Fri, 18
+ Feb 2022 17:07:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220215174220.11054-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220215174220.11054-1-krzysztof.kozlowski@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 19 Feb 2022 02:06:49 +0100
+Message-ID: <CACRpkdZyjuL-vkAe=9UyFLGx95nSWWJHtB39MfjTGnQ8013F-A@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: pull for v5.18
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 20 Sep 2021 09:17:53 +0200, Krzysztof Kozlowski wrote:
-> Use hyphen instead of underscore and align the PPMU event node name with
-> dtschema.  The event-name property must match the node name, by the
-> design of devfreq events and PPMU driver.
-> 
-> 
+On Tue, Feb 15, 2022 at 6:42 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 
-Applied, thanks!
+> Parts of this pull was shared with ARM SoC guys (tags/samsung-dt-pinctrl-5.18):
+> https://lore.kernel.org/lkml/20220129115352.13274-1-krzysztof.kozlowski@canonical.com/
+>
+> This pull request is on top of it, in a fast-forward way, no rebases.
+>
+> You can pull this one alone, or tags/samsung-dt-pinctrl-5.18 +
+> tags/samsung-pinctrl-5.18-2 together.
 
-[3/3] ARM: dts: exynos: align PPMU event node names with dtschema
-      commit: 7cdfe3b3b60c89f0e12e8ee194a7cfbfd46515dd
+Pulled in, thanks! Excellent order and exciting code!
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Yours,
+Linus Walleij
