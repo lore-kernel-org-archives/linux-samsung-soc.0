@@ -2,115 +2,164 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60838C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 19 Feb 2022 18:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E327C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Feb 2022 10:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242984AbiBSSqV (ORCPT
+        id S243656AbiBTKC2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 19 Feb 2022 13:46:21 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58698 "EHLO
+        Sun, 20 Feb 2022 05:02:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242939AbiBSSqU (ORCPT
+        with ESMTP id S229607AbiBTKC1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 19 Feb 2022 13:46:20 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA0D4178BCC
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Feb 2022 10:46:00 -0800 (PST)
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        Sun, 20 Feb 2022 05:02:27 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DA436E2E
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 02:01:57 -0800 (PST)
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 146AD40326
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Feb 2022 18:45:59 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0B98C3F1F6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 10:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645296359;
-        bh=eJ6HQrRnH7eCjaR+k7F77ct8AqISDRTidseB01nTcCM=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=jW6DWiNMtuUSYkoNS8Z4CjBwgSwZWnHasheVPDyf/SEXPf0Kqd4gz4/uWX93BCqaf
-         DIDAorSTOqikEiiMyiE4zNULFYSjD6OkAVFycqPI4oN6W877AYAueEeY6F4feARK9L
-         T4HdgSqrXn2uQSCYhYgJnSXVAa5TY7aMdSXUil87qLmJ44PMOlwxMIlx8iPp/4mYUn
-         09Z7iFFgJ441Em/zQU7bAS3r2B34T+/WzhiYoWnx0V+sJUfIE7Mazoj1DkkDhnpZie
-         nWiMVywTwJwsiDe1d5kKGB2riGstPaeRPorch0bLSd9kflBBFowD8O+69VKpo1ee4Y
-         rwM1AfU1t1+Wg==
-Received: by mail-ej1-f70.google.com with SMTP id r18-20020a17090609d200b006a6e943d09eso3827683eje.20
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Feb 2022 10:45:59 -0800 (PST)
+        s=20210705; t=1645351316;
+        bh=h/yuAaqPGQGM7QsM1OKmPTsCKWn2XUQ3eAZ4j+I7pq4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=nxdqog6rDrpVm/v/cIlq4KnwJmzd6cModN+cBDGMRdtBqgOL50N4M0qk46a+CTsjf
+         awK9wAXNbLZjDEFVrbA3dZ0QGlafetpqUX/0Vl9OtpsTBoJIqh5g71rhM6JMOs9ZxX
+         E5c2aM32fSfAvMfOad0stRWrrm9/lEpML0U+yetc46kx/sgMhO/55H6V4lF3nKCCl3
+         9epUl2Xd7GMvFY9S05Q4qswX032l9X07owfud6ry+8iGJO2AcDl2o23XzABBwkqCuS
+         DklLv4dYjBTyoPoq3VPcAxZWtRHjvs7Yz8UjdMsR2KFZQDeZpjFw5wUhf2T0tuoMFZ
+         EnTudo3J1coqA==
+Received: by mail-wr1-f71.google.com with SMTP id q21-20020adfab15000000b001e57c9a342aso5710125wrc.6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 02:01:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eJ6HQrRnH7eCjaR+k7F77ct8AqISDRTidseB01nTcCM=;
-        b=dyZU2aLmkAKvwsWx8kGvxg2XFxQlFq+kCDHT9EwVQxMZ3O83k8zVLi3Tqsp1myBZqp
-         DACEt+A9G1jTe21f9HkyB4n162/UdeLVcdvMiHBNO55QBddziZFDs8h/nZjNXU0xifMx
-         OIC35KpmoBPAUhQXRMwQol+tUbxQSqDxg6RZHwX/oiQrNeZTBl60cbBUAgQS6lC33F1H
-         cNl2lKhiGX35SG0rMrweBdLtu+uq/zkRtokcBsnAeCaUYIVBfDmY7DiEpX0T2+v6qcXS
-         Q8GutxF9GjE+WNg4JlDo3m8XErx2u9TOmmo/Yaf21knYKIhmDSLjRbBXzYHmHqZdZBWt
-         4ugg==
-X-Gm-Message-State: AOAM530cCNIkS15cDZVCSI6J1bzxW8FPySZyPNHWVKO3YuJ3HWJCfgX3
-        TAJi4C3BrAHyZXRQpMtCg2HkylntYMIWPsDdmFANeABjSURwL7FxlFSOFQXp02nuPu66hom4lxX
-        F0ny0VnZ311rWv25KizIhtU3qe6bs5FSGyUqIn+rYfJ4K/Ejg
-X-Received: by 2002:aa7:c612:0:b0:40f:2a41:bddb with SMTP id h18-20020aa7c612000000b0040f2a41bddbmr13789836edq.291.1645296358467;
-        Sat, 19 Feb 2022 10:45:58 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwCUQahoUlw1/KaqiAKlfUzjGeKC0o8en5bVZWTPpKsIDqk+8vzgYr9LfT4H6VG0K4MxnLXbw==
-X-Received: by 2002:aa7:c612:0:b0:40f:2a41:bddb with SMTP id h18-20020aa7c612000000b0040f2a41bddbmr13789828edq.291.1645296358336;
-        Sat, 19 Feb 2022 10:45:58 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id j11sm4847509eda.106.2022.02.19.10.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Feb 2022 10:45:57 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jan Kotas <jank@cadence.com>, linux-scsi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [RFC PATCH 8/8] arm64: dts: ti: use 'freq-table' in UFS node
-Date:   Sat, 19 Feb 2022 19:45:54 +0100
-Message-Id: <20220219184554.44887-1-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220219184224.44339-1-krzysztof.kozlowski@canonical.com>
-References: <20220219184224.44339-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=h/yuAaqPGQGM7QsM1OKmPTsCKWn2XUQ3eAZ4j+I7pq4=;
+        b=YveCGMLgO6Z++EZROM5DtiHVyWII/JsoyGPNL5rCrJ1VSpjH+u8wRWnzSr53v3CcFj
+         gL/dO8zO3m9zM17T1kshl8mcFf8sYDrlOcYKl79Zz3sYPVOGNSQfDXCWWUoP/AEFfVzB
+         Z8w14PJTEEKsmEfjjuKfIe4xxLqaJq1vlspxdEC6p/8fRrs6JmSijPeKH3vR2+MJgtDE
+         0/BpZ6mSQy7ZpaD20XKDQ/jgUl2SrmgKq3VQ4IHUWOLRzZEspT+rMcPe2qBgvHw0+557
+         TO7ao/IWOZkYRLux2E+i4Rpq3B7H9dl1XOL0agLzPAZlmCz374ZF3Z7COIacxWYnD/6X
+         0qpQ==
+X-Gm-Message-State: AOAM530nUjCeRSXOFtBsmSgkZKDHwCtfkhBmL923lpk6p7f5JgYnV+iv
+        s/09OOCjsQ3nA1RodfmJ8dXsfA0oPUvN+c9j9bN2FG71riVsN+8wbgjbMpQyL6Bp3U+HhtdyDBY
+        5DDMbO7s9Sf/mc7lG0Zfk8B/goqTjhrczvQtkZm9z5JbUDfXT
+X-Received: by 2002:a05:6000:1a8f:b0:1e8:3301:1273 with SMTP id f15-20020a0560001a8f00b001e833011273mr11914048wry.707.1645351315040;
+        Sun, 20 Feb 2022 02:01:55 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyrFTR0DbwozDQn/7295tKObTgtOU/PyXe0N9s9UQMlz1DetvYZfo7VjgXm21EZ015Z8nTbUg==
+X-Received: by 2002:a05:6000:1a8f:b0:1e8:3301:1273 with SMTP id f15-20020a0560001a8f00b001e833011273mr11914034wry.707.1645351314863;
+        Sun, 20 Feb 2022 02:01:54 -0800 (PST)
+Received: from [192.168.0.117] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id f14sm4884389wmq.3.2022.02.20.02.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Feb 2022 02:01:54 -0800 (PST)
+Message-ID: <72848f6c-adc7-2d36-edcd-9a5fac655bbc@canonical.com>
+Date:   Sun, 20 Feb 2022 11:01:53 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Remove mct interrupt
+ index enum
+Content-Language: en-US
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, pankaj.dubey@samsung.com,
+        m.szyprowski@samsung.com
+References: <CGME20220219175832epcas5p399b652e6da610ada233376651694b42c@epcas5p3.samsung.com>
+ <20220219181003.12739-1-alim.akhtar@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220219181003.12739-1-alim.akhtar@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The 'freq-table-hz' property is deprecated by UFS bindings.
-The uint32-array requires also element to be passed within one <> block.
+On 19/02/2022 19:10, Alim Akhtar wrote:
+> MCT driver define an enum which list global and local timer's
+> irq index. Most of them are not used but MCT_G0_IRQ and
+> MCT_L0_IRQ and these two are at a fixed offset/index.
+> Get rid of this enum and use a #define for the used irq index.
+> 
+> While at it, bump-up maximum number of MCT IRQ to match the
+> binding documentation. And also change the name variable to be
+> more generic.
+> 
+> No functional changes expected.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+There is a functional change - you increase MCT_NR_IRQS from 12 to 20
+which affects size of mct_irqs. Can you increase it in separate commit?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-index 599861259a30..c3afef0321ae 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-@@ -1257,7 +1257,9 @@ ufs@4e84000 {
- 			compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
- 			reg = <0x0 0x4e84000 0x0 0x10000>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--			freq-table-hz = <250000000 250000000>, <19200000 19200000>, <19200000 19200000>;
-+			freq-table = <250000000 250000000
-+				      19200000 19200000
-+				      19200000 19200000>;
- 			clocks = <&k3_clks 277 0>, <&k3_clks 277 1>, <&k3_clks 277 1>;
- 			clock-names = "core_clk", "phy_clk", "ref_clk";
- 			dma-coherent;
--- 
-2.32.0
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  drivers/clocksource/exynos_mct.c | 25 ++++++++-----------------
+>  1 file changed, 8 insertions(+), 17 deletions(-)
+> 
+> - currently tested on exynos7 platform, appreciate testing on
+>  exynos-{3,4,5} platforms
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 6db3d5511b0f..4aea9cd3f7ba 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -60,27 +60,18 @@
+>  #define MCT_CLKEVENTS_RATING		350
+>  #endif
+>  
+> +/* There are four Global timers starting with 0 offset */
+> +#define MCT_G0_IRQ	0
+> +/* Local timers count starts after global timer count */
+> +#define MCT_L0_IRQ	4
+> +/* Max number of MCT IRQ as per binding document */
+> +#define MCT_NR_IRQS	20
+> +
+>  enum {
+>  	MCT_INT_SPI,
+>  	MCT_INT_PPI
+>  };
+>  
+> -enum {
+> -	MCT_G0_IRQ,
+> -	MCT_G1_IRQ,
+> -	MCT_G2_IRQ,
+> -	MCT_G3_IRQ,
+> -	MCT_L0_IRQ,
+> -	MCT_L1_IRQ,
+> -	MCT_L2_IRQ,
+> -	MCT_L3_IRQ,
+> -	MCT_L4_IRQ,
+> -	MCT_L5_IRQ,
+> -	MCT_L6_IRQ,
+> -	MCT_L7_IRQ,
+> -	MCT_NR_IRQS,
+> -};
+> -
+>  static void __iomem *reg_base;
+>  static unsigned long clk_rate;
+>  static unsigned int mct_int_type;
+> @@ -89,7 +80,7 @@ static int mct_irqs[MCT_NR_IRQS];
+>  struct mct_clock_event_device {
+>  	struct clock_event_device evt;
+>  	unsigned long base;
+> -	char name[10];
+> +	char name[MCT_NR_IRQS - 1];
 
+This does not look related MCT_NR_IRQS and using here MCT_NR_IRQS
+confuses. This is a "mct_tick%d" with number of local timers, so maybe
+make it just 11?
+
+>  };
+>  
+>  static void exynos4_mct_write(unsigned int value, unsigned long offset)
+
+
+Best regards,
+Krzysztof
