@@ -2,119 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6D7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Feb 2022 16:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC18C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Feb 2022 17:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241120AbiBTQYx (ORCPT
+        id S243179AbiBTRAZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 20 Feb 2022 11:24:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54188 "EHLO
+        Sun, 20 Feb 2022 12:00:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239649AbiBTQYx (ORCPT
+        with ESMTP id S229630AbiBTRAY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 20 Feb 2022 11:24:53 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312363466C
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 08:24:31 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220220162428epoutp047a2b3ba579e79bbbc403995f98ae1888~Viy3vtwNH1465714657epoutp04Y
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 16:24:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220220162428epoutp047a2b3ba579e79bbbc403995f98ae1888~Viy3vtwNH1465714657epoutp04Y
+        Sun, 20 Feb 2022 12:00:24 -0500
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A60527E6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 09:00:00 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220220165958epoutp028d50734c32baacf062d1109b9a11d19b~VjR37cN_82829228292epoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 16:59:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220220165958epoutp028d50734c32baacf062d1109b9a11d19b~VjR37cN_82829228292epoutp02X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1645374268;
-        bh=UdftajyJNW+EXTij2eYe1d1bvD9ABY+yr5v//ianeDM=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=c1ncgXEMTFT0pycp+w8T2Em6NaoJ8tgwjDoi+oAyxVrgU0FCfhHweLby3nVFhTsiY
-         jTY0x5c/rUQYrvO0uq5HbzfC79if/gV6UC1Cev94ItCPmKzVQfiXUKcxVqqBV3X68Y
-         yyjk2/QIfhu2CjaY4Q5JLhVUgOoh/elywM/6BxKw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220220162427epcas5p16a2bac324a1c92cbb260a2ec83021451~Viy22SbZd0090000900epcas5p10;
-        Sun, 20 Feb 2022 16:24:27 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4K1rNj59CZz4x9Pp; Sun, 20 Feb
-        2022 16:24:21 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EE.E5.06423.53B62126; Mon, 21 Feb 2022 01:24:21 +0900 (KST)
+        s=mail20170921; t=1645376398;
+        bh=TWEeKx50Ilk8tZsO3f9nj8GFWNvR0N3lNeFE1p6EQuE=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=DaJh52E65alsJHAEIO583WKHgBv/WX3M2rjFgUBQcxg9O+GEcKkIUY5svR8Mz2Fvw
+         WRgVEIQXAIgoVflwxgLVubbwL3fXYFuihVG2iPrrZchYir3APqwtmDAKkvjPDJGgpI
+         /FqOMzK/bVGFFmEPBo/ewcY2NDIWKSRWn+TNsWCQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220220165957epcas5p495583e322a5cd8dc0ae6b1a8016927d9~VjR2wy7oR1766217662epcas5p4Q;
+        Sun, 20 Feb 2022 16:59:57 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4K1s9h2CxBz4x9Pt; Sun, 20 Feb
+        2022 16:59:52 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8F.38.46822.36372126; Mon, 21 Feb 2022 01:59:15 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220220162421epcas5p1ca8ee53fa0fb60ae7721632f566a2e20~ViyxTOXhJ0090000900epcas5p1y;
-        Sun, 20 Feb 2022 16:24:21 +0000 (GMT)
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220220165951epcas5p4e13b6c63e38502bd0c6d7ad04a1544de~VjRwtwA5w3080730807epcas5p4M;
+        Sun, 20 Feb 2022 16:59:51 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220220162421epsmtrp1c519337e1a36d2f96cca01d33c0250e1~ViyxSYe4_0494104941epsmtrp19;
-        Sun, 20 Feb 2022 16:24:21 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-bf-62126b35aa9e
+        20220220165951epsmtrp15e2e35b99b5e5601ebfc927cf947316e~VjRwtFGO_3257832578epsmtrp1T;
+        Sun, 20 Feb 2022 16:59:51 +0000 (GMT)
+X-AuditID: b6c32a4a-dfbff7000000b6e6-66-621273632d9a
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E6.83.08738.53B62126; Mon, 21 Feb 2022 01:24:21 +0900 (KST)
+        C8.E3.08738.68372126; Mon, 21 Feb 2022 01:59:50 +0900 (KST)
 Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220220162419epsmtip268dab7841e72ab9b216e4c35567c0eab~Viyv_vAHg1118311183epsmtip2K;
-        Sun, 20 Feb 2022 16:24:19 +0000 (GMT)
+        20220220165949epsmtip2c2f8e802a028e3f18595faa84c26aef1~VjRvf4arl3227932279epsmtip2L;
+        Sun, 20 Feb 2022 16:59:49 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Thomas Abraham'" <thomas.abraham@linaro.org>,
-        "'Stephen Warren'" <swarren@nvidia.com>,
-        "'Kukjin Kim'" <kgene.kim@samsung.com>,
-        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20220220103815.135380-1-krzysztof.kozlowski@canonical.com>
-Subject: RE: [PATCH] clocksource/drivers/exynos_mct: Handle DTS with higher
- number of interrupts
-Date:   Sun, 20 Feb 2022 21:54:18 +0530
-Message-ID: <0a0701d82676$5100e840$f302b8c0$@samsung.com>
+        <linux-kernel@vger.kernel.org>
+Cc:     <linux-samsung-soc@vger.kernel.org>, <daniel.lezcano@linaro.org>,
+        <tglx@linutronix.de>, <pankaj.dubey@samsung.com>,
+        <m.szyprowski@samsung.com>
+In-Reply-To: <fc8f6c95-e37f-0dc8-c50d-48cadffcaa98@canonical.com>
+Subject: RE: [PATCH v2 3/3] clocksource/drivers/exynos_mct: bump up number
+ of local timer
+Date:   Sun, 20 Feb 2022 22:29:49 +0530
+Message-ID: <0a0801d8267b$467e8800$d37b9800$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ7zbZ9pC3GNQAhnJLYdx6+T3jvfAKoYAgcq0AOC3A=
+Thread-Index: AQGsC7VEdhGOZRhGMl9iauL5N6S4CQM1pureAr8wwB8CIzwayqy0FNbg
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xbVRzHc3rb28ugetd14YibNDfuj5IArevjAgOnknGZbtaYLBGX4AVu
-        2tr2tvaWPdBkCIaMt03kVZqFWiBKXOS5EagE6Abb2CBmgsRAnA6GnaGSMZcBA225TPnve37n
-        8/29zsEQ6XdoHGZinYyDpS0Eukd4JaBQJGrM0jxlvT+evLR6kKxumUbJruWnArL7/oyIvDvg
-        QcnGqSEBOdvwhYjs6a5DyLHGVnA0inIXV6PU3IwfpUKTk2Kqp/UCVV0aQqma3g5ArXa/ohfn
-        mI8YGbqAccgZNt9WYGIN6cTb7+e+lavRKlWJqhRSR8hZ2sqkE5nv6BOPmSzhxgj5GdpSGA7p
-        aY4jkjOOOGyFTkZutHHOdIKxF1jsansSR1u5QtaQxDLOVJVS+ZomDH5kNl7/04faA/vP3fY+
-        RYpBubQCRGEQV8PWBz5QAfZgUnwQwL5bnQL+8AjAvyurxBFKiq8CWDOY8dxR881lIQ8NAFhX
-        7Bbxh2DY3joijFAongj7fWVo5EKGuxDoq9tEIhdROAVrWy+LInofngfrljYFES3ED8Fvt1q2
-        tQRPgYud3SJe74U3mxa2kyJ4PLy67EH4NuRwbbE9zGDhAqnQu5HPI7EweP2aOFIX4m0YrBjy
-        A57PhOXjK0Je74MPx3vFvI6DwdoycSQPxM2wauAwH/4Mtl0a28Ffh8M/eYQRBMEV8PuBZL7U
-        C7B6Y0HAOyXwYtnORg/B0tD0jvNl6KqsFPGagsH2RZRfVTOAFc1TyJdA7t41pHvXkO5d07j/
-        r9wChB3gJcbOWQ0Mp7GrWObsf++db7N2g+1vm5DdD+bvrSSNAgEGRgHEEEImWRmR5EklBfT5
-        IsZhy3UUWhhuFGjCm3chcfvzbeF/zzpzVeoUpVqr1apTDmtVRKxkwtBJS3ED7WTMDGNnHM99
-        Aiwqrlig8nYpn1V5yL6SH4+v3yqf2BsTePfjC86TRU/0Slla/F3JP5kxyaahK4ZTluEEj+ti
-        9NcLnrHFpuyiWV2qd8tdcLAnNfDmzHTgYUVC2+kPVwZfrdsMzP8y4sXKh/uDoZrb81Zx8Mno
-        xOlj2Q2z6FzWGwFnTvHGD02rB7Ys7nZR8M4f59aje9NcGX6Zve/xwtXPY/3j59Vwfe2GTVOy
-        1hATP3Xid93ZZ7923vs09KKpo/1aPWc8+pvLckCRsdz4VVaWJ00xW5rcXtu7VDo3HtP8M1ui
-        J3TWx8al9z7Q6aKhzIdo7mB/ObrUN72fnHlUk6O/P0kN3sg6BYOk5oFJVp9JCDkjrUpAHBz9
-        L7XmDgM/BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42LZdlhJXtc0WyjJ4PspDot5n2UtehdcZbPY
-        +PYHk8Wmx9dYLS7vmsNmMeP8PiaLG9NbWC02b5rKbHFsxhJGB06PWQ29bB53ru1h83h37hy7
-        x+Yl9R69ze/YPPq2rGL0+LxJLoA9issmJTUnsyy1SN8ugSvj6OvFbAWHRSvOLPzB3MDYKdTF
-        yMkhIWAi0bdiLUsXIxeHkMAORonJLyYzQySkJa5vnMAOYQtLrPz3nB2i6DmjxJElX8ASbAK6
-        EjsWt7GB2CIC05klHr4XgyiaySjx8sIJsCJOAQ+J/iVrWUFsYYEEif1rFoBtYBFQBZq6gAnE
-        5hWwlHi6YRMrhC0ocXLmE6CTODiYBfQk2jYygoSZBeQltr+dA3WcgsTPp8tYQUpEBKwkFv5O
-        higRl3h59Aj7BEahWUgGzUIYNAvJoFlIOhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dL
-        zs/dxAiOKy2tHYx7Vn3QO8TIxMF4iFGCg1lJhPfDQd4kId6UxMqq1KL8+KLSnNTiQ4zSHCxK
-        4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpiWeLxiSpMzeZ7Xb/El83DkhWsZGqvPW1xOWPf2
-        p676o9KlRb/aJ4lMV9c8du8Kw6sKfTd5HXXJKXPOX7q47M338D3RkTe33ut9Hmjgy8txeqNN
-        7ollbY87lxqZ/jpT8X6FJ//LKoXGl9+7Dbtm9j5rWvnHJPuCoOmmvZNu+veL5fFqqC4p5p2f
-        Xin4eImPL/OimrVZMeI3rm3aqDZr5rNVWc8inr2SL7y04eL5wKi5YWIbLqr33mNzlP91wpiF
-        Y5Mb55JVcbvmXQyLuuYTFRVVeuLMfZb5jH2frl3776red66iqGfnVuEa7u+q965sMwr+6WZc
-        PFckNM482SarxXzevnPzesRySm4/zo95tk1XiaU4I9FQi7moOBEA8WuXrxoDAAA=
-X-CMS-MailID: 20220220162421epcas5p1ca8ee53fa0fb60ae7721632f566a2e20
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmum5ysVCSwc+FnBbzPstabHz7g8li
+        0+NrrBaXd81hs5hxfh+Txdojd9ktFm39wm6xedNUZgcOj1kNvWwed67tYfN4d+4cu8fmJfUe
+        fVtWMXp83iQXwBaVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+Ti
+        E6DrlpkDdI6SQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1
+        xMrQwMDIFKgwITvj5RmDgk1CFafWrGBvYFzK38XIySEhYCLxZOsuZhBbSGA3o8TXLocuRi4g
+        +xOjxNlpPawQzmdGiR0zFjLCdKxZcIARIrGLUWJ711Io5yWjxIxda1lAqtgEdCV2LG5jA0mI
+        CHQySqz+/pMJxGEWmAI0eMIzJpAqTgFHibYFB1hBbGGBaIlNF88CXcLBwSKgKrFgqzlImFfA
+        UmLd5WZWCFtQ4uTMJ2ALmAW0JZYtfM0McZKCxM+ny8BqRATcJF6v+MAMUSMu8fLoEXaQvRIC
+        CzkkeqZ+gPrBReLp3b+sELawxKvjW9ghbCmJl/1t7CA3SAhkS/TsMoYI10gsnXeMBcK2lzhw
+        ZQ4LSAmzgKbE+l36EKv4JHp/P2GC6OSV6GgTgqhWlWh+dxWqU1piYnc31FIPiaVrnjNOYFSc
+        heSxWUgem4XkgVkIyxYwsqxilEwtKM5NTy02LTDKSy2HR3dyfu4mRnBa1fLawfjwwQe9Q4xM
+        HIyHGCU4mJVEeD8c5E0S4k1JrKxKLcqPLyrNSS0+xGgKDOyJzFKiyfnAxJ5XEm9oYmlgYmZm
+        ZmJpbGaoJM57On1DopBAemJJanZqakFqEUwfEwenVAOTx7qU6dm5t/b7dlWz1WfoWb+/2XN1
+        umGgQflO3jr9F/ZzZdZPWZi6ZKXGhuW6WrO5mDj1lD5ofI7SSguykdJ8n5Txc0HA0ykL/3mc
+        tE7RCZDfVnt89ZNHkgd9N9uY9bfM99yj6d4Q8cpi9UcxPjeewKYri5bq+lxS3PjkpkjKFqca
+        F6Nl/yS3HUjZNc/wh+vXkxW/Sr931Ka5Fq0UeOO192foAvXV1osOfdfI+nIp+Le3+TIJhTuz
+        tSdfOF39fcnG+anZB3vfL54o8kbnSlj1yVt8b8XaqzRWt2lsbUi/qXA+THD628VfhGZlnNWr
+        Ddg+4+jO/mcm8966BW8WXn24XEJsQvzmSdl7zLYd2LJrqhJLcUaioRZzUXEiAN8KF3I0BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJXretWCjJ4P4pPYt5n2UtNr79wWSx
+        6fE1VovLu+awWcw4v4/JYu2Ru+wWi7Z+YbfYvGkqswOHx6yGXjaPO9f2sHm8O3eO3WPzknqP
+        vi2rGD0+b5ILYIvisklJzcksSy3St0vgyljVMY+x4IlgxZKve9gaGK/zdTFyckgImEisWXCA
+        sYuRi0NIYAejxOZrz9ggEtIS1zdOYIewhSVW/nvODlH0nFFi8u3nrCAJNgFdiR2L29hAEiIC
+        3YwSV3pmgo1iFpjFKLG4ZRMbRMsXRonvu66CtXAKOEq0LTgAZHNwCAtESuz6pg1isgioSizY
+        ag5SwStgKbHucjMrhC0ocXLmExYQm1lAW6L3YSsjjL1s4WtmiOsUJH4+XQZWLyLgJvF6xQdm
+        iBpxiZdHj7BPYBSehWTULCSjZiEZNQtJywJGllWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ
+        +bmbGMERpqW1g3HPqg96hxiZOBgPMUpwMCuJ8H44yJskxJuSWFmVWpQfX1Sak1p8iFGag0VJ
+        nPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA9OUrn8fim0+vN4stlHU6QBXTILY5S2Fk3c/XiIi
+        UxN5h9XQ4+DKd9Jby5pmplx/NMVX5U3CngJLi7li1zbm8z5ZIaX4RO7cg7orgpU3bYOLzZ4d
+        5Nuck/Fj7andUzLe+HOWRW35wulbLS5zsbj42LNfDIcN7BmPH+HgC9CSs8rR+ZhXb9NqG/j6
+        stlE+Rq2Q81OZcEu3St3X7qlH17KNKPrxu7yjYvELWd67AuIF2fz3DE1gd20+dKtRxm99ivO
+        9T/clrFkJntT94yNassP5C85UJPHtz6+jdGhf6f+zgPd+qXi/bszm264uq26kqs4UUqab51c
+        TcNtyxUz5nxtupSlmcZcvNvCdOGt7g3GEkosxRmJhlrMRcWJAEECa84fAwAA
+X-CMS-MailID: 20220220165951epcas5p4e13b6c63e38502bd0c6d7ad04a1544de
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220220103818epcas5p2ae2e390b30f82c42e26a5187af48ef4b
-References: <CGME20220220103818epcas5p2ae2e390b30f82c42e26a5187af48ef4b@epcas5p2.samsung.com>
-        <20220220103815.135380-1-krzysztof.kozlowski@canonical.com>
+X-CMS-RootMailID: 20220220132643epcas5p39d48a27bb3fcde2ea3a01a260b46e1a0
+References: <20220220133824.33837-1-alim.akhtar@samsung.com>
+        <CGME20220220132643epcas5p39d48a27bb3fcde2ea3a01a260b46e1a0@epcas5p3.samsung.com>
+        <20220220133824.33837-3-alim.akhtar@samsung.com>
+        <fc8f6c95-e37f-0dc8-c50d-48cadffcaa98@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -122,79 +120,66 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 >-----Original Message-----
->From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
->Sent: Sunday, February 20, 2022 4:08 PM
->To: Daniel Lezcano <daniel.lezcano@linaro.org>; Thomas Gleixner
-><tglx@linutronix.de>; Krzysztof Kozlowski
-><krzysztof.kozlowski@canonical.com>; Alim Akhtar
-><alim.akhtar@samsung.com>; Thomas Abraham
-><thomas.abraham@linaro.org>; Stephen Warren <swarren@nvidia.com>;
->Kukjin Kim <kgene.kim@samsung.com>; linux-kernel@vger.kernel.org; linux-
->arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
->Subject: [PATCH] clocksource/drivers/exynos_mct: Handle DTS with higher
->number of interrupts
+>From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=5D
+>Sent: Sunday, February 20, 2022 9:03 PM
+>To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
+>kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+>Cc: linux-samsung-soc=40vger.kernel.org; daniel.lezcano=40linaro.org;
+>tglx=40linutronix.de; pankaj.dubey=40samsung.com;
+>m.szyprowski=40samsung.com
+>Subject: Re: =5BPATCH v2 3/3=5D clocksource/drivers/exynos_mct: bump up
+>number of local timer
 >
->The driver statically defines maximum number of interrupts it can handle,
->however it does not respect that limit when configuring them.
->When provided with a DTS with more interrupts than assumed, the driver will
->overwrite static array mct_irqs leading to silent memory corruption.
+>On 20/02/2022 14:38, Alim Akhtar wrote:
+>> As per the dt binding, maximum number of local timer can be up to 16.
+>> Increase the array size of the _name_ variable which holds the number
+>> of local timer name per CPU to reflect the binding. While at it,
+>> change the magic number to a meaningful macro.
 >
->Validate the interrupts coming from DTS to avoid this.  This does not
-change
->the fact that such DTS might not boot at all, because it is simply
-incompatible,
->however at least some warning will be printed.
+>This still does not make sense. Let's say you have 16 local timers, so why=
+ the
+>name of clock event device should be maximum 16? How are these related?
 >
->Fixes: 36ba5d527e95 ("ARM: EXYNOS: add device tree support for MCT
->controller driver")
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->---
-Thanks, good to have this check.
+As you rightly commented on v1 and it is mainly for =22mct_tick%d=22 with n=
+umber of local timers and
+local timer is per cpu. With increase in cpu number, name=5B10=5D restrict =
+the scalability.
+So either we can change to 11, or use some reference (as local timer number=
+ in this patch).=20
+Let me know your thought on this.
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-
-
-> drivers/clocksource/exynos_mct.c | 10 +++++++++-
-> 1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+>> ---
+>>  drivers/clocksource/exynos_mct.c =7C 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clocksource/exynos_mct.c
+>> b/drivers/clocksource/exynos_mct.c
+>> index 0c7931f7f99a..8d63a9376701 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> =40=40 -66,6 +66,8 =40=40
+>>  =23define MCT_L0_IRQ	4
+>>  /* Max number of IRQ as per DT binding document */
+>>  =23define MCT_NR_IRQS	20
+>> +/* Max number of local timers */
+>> +=23define MCT_NR_LOCAL_TIMERS	16
+>>
+>>  enum =7B
+>>  	MCT_INT_SPI,
+>> =40=40 -80,7 +82,7 =40=40 static int mct_irqs=5BMCT_NR_IRQS=5D;  struct
+>> mct_clock_event_device =7B
+>>  	struct clock_event_device evt;
+>>  	unsigned long base;
+>> -	char name=5B10=5D;
+>> +	char name=5BMCT_NR_LOCAL_TIMERS=5D;
+>>  =7D;
+>>
+>>  static void exynos4_mct_write(unsigned int value, unsigned long
+>> offset)
 >
->diff --git a/drivers/clocksource/exynos_mct.c
->b/drivers/clocksource/exynos_mct.c
->index 6db3d5511b0f..03782b399ea1 100644
->--- a/drivers/clocksource/exynos_mct.c
->+++ b/drivers/clocksource/exynos_mct.c
->@@ -541,6 +541,11 @@ static int __init exynos4_timer_interrupts(struct
->device_node *np,
-> 	 * irqs are specified.
-> 	 */
-> 	nr_irqs = of_irq_count(np);
->+	if (nr_irqs > ARRAY_SIZE(mct_irqs)) {
->+		pr_err("exynos-mct: too many (%d) interrupts configured in
->DT\n",
->+			nr_irqs);
->+		nr_irqs = ARRAY_SIZE(mct_irqs);
->+	}
-> 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
-> 		mct_irqs[i] = irq_of_parse_and_map(np, i);
 >
->@@ -553,11 +558,14 @@ static int __init exynos4_timer_interrupts(struct
->device_node *np,
-> 		     mct_irqs[MCT_L0_IRQ], err);
-> 	} else {
-> 		for_each_possible_cpu(cpu) {
->-			int mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
->+			int mct_irq;
-> 			struct mct_clock_event_device *pcpu_mevt =
-> 				per_cpu_ptr(&percpu_mct_tick, cpu);
->
-> 			pcpu_mevt->evt.irq = -1;
->+			if (MCT_L0_IRQ + cpu >= ARRAY_SIZE(mct_irqs))
->+				break;
->+			mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
->
-> 			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
-> 			if (request_irq(mct_irq,
->--
->2.32.0
-
+>Best regards,
+>Krzysztof
 
