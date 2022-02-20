@@ -2,165 +2,146 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AA0C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Feb 2022 13:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BBDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Feb 2022 13:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237786AbiBTN1S (ORCPT
+        id S243840AbiBTN1T (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 20 Feb 2022 08:27:18 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57618 "EHLO
+        Sun, 20 Feb 2022 08:27:19 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236602AbiBTN1R (ORCPT
+        with ESMTP id S243836AbiBTN1S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 20 Feb 2022 08:27:17 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F0120F5D
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 05:26:52 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220220132642epoutp04ad91125906d2bfde1f64b557b4a4c854~VgXqaeFai1281112811epoutp04T
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 13:26:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220220132642epoutp04ad91125906d2bfde1f64b557b4a4c854~VgXqaeFai1281112811epoutp04T
+        Sun, 20 Feb 2022 08:27:18 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F7633A08
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 05:26:57 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220220132651epoutp0351703b45cb6cf6e8c56daf4c6a25158f~VgXyeWy-E1246112461epoutp03b
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Feb 2022 13:26:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220220132651epoutp0351703b45cb6cf6e8c56daf4c6a25158f~VgXyeWy-E1246112461epoutp03b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1645363602;
-        bh=+HD+D2BQMpJSVzjCz+rHhjvbcjam5OKuDzCH7joqwW8=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=l5PVy6J4AuFpVUoRNYoR0Htao6iFNGLNMnFzP0U4G9DygsPjQsy3vZFU1lHyS+MGm
-         dkclNdbFRBB2mi/UTrMDk28LwLOiW+uYiq+5V5cYN3TQfvo6x1Z7mhB/S0sBBeKWOT
-         3/Hr+xS9nTxSZxf57VuWjKJ8Fzy7dqMSdF2eoqGY=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220220132641epcas5p3a51612aef12f9f3f7bb784be42478ac4~VgXpv1YiG3031930319epcas5p3C;
-        Sun, 20 Feb 2022 13:26:41 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4K1mRd5JJlz4x9Pp; Sun, 20 Feb
-        2022 13:26:37 +0000 (GMT)
+        s=mail20170921; t=1645363611;
+        bh=tSo2reU1UKCOdjcpnCsVa18TmwpMfYdF3qeO3szLFLk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nWVmLz4XRP1TPN3uH4xNGhsLeolr/8XkHQGhtptLq4hG/LxkzYafdRzOIcfU3lqhS
+         o7A7ReKEapGpO4/uIdwcLchATpShTNe9erZDiMo3E8jaff//uOv889NUmh5kgEODdT
+         9MrH5lblikju/LWAzR4LRS2YbZNEawcJxdDmi8TA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220220132650epcas5p40eff534d30a733844e0838a3f6322d4c~VgXxuCVKU2772027720epcas5p4s;
+        Sun, 20 Feb 2022 13:26:50 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4K1mRn1kZbz4x9Pp; Sun, 20 Feb
+        2022 13:26:45 +0000 (GMT)
 Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
         epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        29.EB.06423.B8142126; Sun, 20 Feb 2022 22:26:35 +0900 (KST)
+        EB.EB.06423.39142126; Sun, 20 Feb 2022 22:26:43 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220220132636epcas5p4f320ac6dff9621b75481bd71b1f33183~VgXlCPyWX2553925539epcas5p4p;
-        Sun, 20 Feb 2022 13:26:36 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220220132643epcas5p39d48a27bb3fcde2ea3a01a260b46e1a0~VgXrsbyFZ0719107191epcas5p3l;
+        Sun, 20 Feb 2022 13:26:43 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220220132636epsmtrp1e71b6060479be13e4c8b6a4e351abb0f~VgXlIoP-w0610706107epsmtrp1Y;
-        Sun, 20 Feb 2022 13:26:36 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-e4-6212418bc4da
+        20220220132643epsmtrp1c95de1de4426b0fce5bf13fe49af6b7b~VgXrxaHRp0610706107epsmtrp1b;
+        Sun, 20 Feb 2022 13:26:43 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-ef-62124193a85e
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EE.AD.29871.A8142126; Sun, 20 Feb 2022 22:26:34 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.F0.08738.19142126; Sun, 20 Feb 2022 22:26:41 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220220132635epsmtip1402bbd39080b2d5b2f56d2cbed28a9b6~VgXjsfVTd2735827358epsmtip1O;
-        Sun, 20 Feb 2022 13:26:35 +0000 (GMT)
+        20220220132642epsmtip1032ae595d8aa0bbeedff726725dabe64~VgXqVOPN12018020180epsmtip1v;
+        Sun, 20 Feb 2022 13:26:42 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     krzysztof.kozlowski@canonical.com,
         linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
         tglx@linutronix.de, pankaj.dubey@samsung.com,
         m.szyprowski@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v2 1/3] clocksource/drivers/exynos_mct: Remove mct interrupt
- index enum
-Date:   Sun, 20 Feb 2022 19:08:22 +0530
-Message-Id: <20220220133824.33837-1-alim.akhtar@samsung.com>
+Subject: [PATCH v2 3/3] clocksource/drivers/exynos_mct: bump up number of
+ local timer
+Date:   Sun, 20 Feb 2022 19:08:24 +0530
+Message-Id: <20220220133824.33837-3-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7bCmum63o1CSwYPdehYP5m1js5j3WdZi
+In-Reply-To: <20220220133824.33837-1-alim.akhtar@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRmVeSWpSXmKPExsWy7bCmuu5kR6EkgykPhCwezNvGZjHvs6zF
+        xrc/mCw2Pb7GanF51xw2ixnn9zFZrD1yl91i0dYv7BabN01lduD0mNXQy+Zx59oeNo93586x
+        e2xeUu/Rt2UVo8fnTXIBbFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
+        uam2Si4+AbpumTlANykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL
+        89L18lJLrAwNDIxMgQoTsjNuTl/AVvCMo2LLs/dMDYxz2bsYOTkkBEwkpl9extzFyMUhJLCb
+        UWLx1ilQzidGiTXvNrBAOJ8ZJT6efs4K07J31QRWiMQuRomnL5uYQRJCAi1MEh8nCoDYbALa
+        Enenb2ECsUUE3CRuNHYwgTQwC1xjlPgz8RAjSEJYIFyi//8isKksAqoS52/cBhvEK2AjcfbT
+        B6gD5SVWbzgAFOfg4BSwlbjVaQwyR0LgHrtEa/dUJogaF4kdBx9B2cISr45vgeqVknjZ38YO
+        0ishkC3Rs8sYIlwjsXTeMRYI217iwJU5LCAlzAKaEut36YOEmQX4JHp/P2GC6OSV6GgTgqhW
+        lWh+dxWqU1piYnc3NEg8JJauec4ICZIJjBInWrawTGCUnYUwdQEj4ypGydSC4tz01GLTAsO8
+        1HJ4PCXn525iBKc0Lc8djHcffNA7xMjEwXiIUYKDWUmE98NB3iQh3pTEyqrUovz4otKc1OJD
+        jKbAEJvILCWanA9Mqnkl8YYmlgYmZmZmJpbGZoZK4ryn0zckCgmkJ5akZqemFqQWwfQxcXBK
+        NTBx205eJ/B/beTTSZ1xzMnp+evrxG7ILVFT33mZ5SZnv4GE+v6v/YlLmJ8tdeC71Lho7nUX
+        PbVljWYrPK6HOszfv/TQIUufxFmuXjciRHrcXxhcvrBA6U+jzs+wQylHGXwsDHyPcTyd8eL2
+        aTbJ1L1WLdo/GOYE/u1N6nt3RrnwXlRi54LdaUHtB1vrXl23Cv23QYj3ye9nFUt7ZtatuFls
+        2DbZX7GhZlEvb2W2MVv3jclMs9j8GHVt7u0OCV215kXf/CNVj+4pFa4KzvB1urBg+XJ7veMs
+        L2KOOz+uOxH+53T7PAY1Pd9fE/zCy1uy+TvKatl3NF3jmxz8+ETPzurXxqezp6Sk6LzpKb+W
+        E6HEUpyRaKjFXFScCABzetYD8gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrELMWRmVeSWpSXmKPExsWy7bCSnO5ER6Ekg+tNZhYP5m1js5j3WdZi
         49sfTBabHl9jtbi8aw6bxYzz+5gs1h65y26xaOsXdovNm6YyO3B6zGroZfO4c20Pm8e7c+fY
-        PTYvqffo27KK0ePzJrkAtqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE
-        3FRbJRefAF23zBygm5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BSYFesWJucWl
-        eel6eaklVoYGBkamQIUJ2Rkv5t1jL2jmrljzX7aB8TtHFyMnh4SAicTN409Yuhi5OIQEdjNK
-        vPlxjw3C+cQoMXXqGajMN0aJXU/WM8O09DxewgyR2MsocWnDdyinhUlie+cUVpAqNgFtibvT
-        tzCB2CICbhI3GjuYQIqYBa4xSvyZeIgRJCEsEClx9NBNMJtFQFXi4q0TYA28AjYSZ58tYYJY
-        Jy+xesMBsA0SAofYJT6cOMoIkXCRuP20gwXCFpZ4dXwLO4QtJfGyvw3I5gCysyV6dhlDhGsk
-        ls47BlVuL3HgyhwWkBJmAU2J9bv0QcLMAnwSvb+fMEF08kp0tAlBVKtKNL+7CtUpLTGxu5sV
-        wvaQ+PfsBVhcSCBW4u+dNuYJjDKzEIYuYGRcxSiZWlCcm55abFpgmJdaDo+b5PzcTYzg1KXl
-        uYPx7oMPeocYmTgYDzFKcDArifB+OMibJMSbklhZlVqUH19UmpNafIjRFBhKE5mlRJPzgckz
-        ryTe0MTSwMTMzMzE0tjMUEmc93T6hkQhgfTEktTs1NSC1CKYPiYOTqkGJpWTU7Q1gvP+cdr+
-        jvntxK0531L1vJLy1M6KzyalPVabtx1/GmTE6lgrL8txa4LOpHi/J8vynLX93m9ZE84dMmvR
-        x+LFe6R0Vs/+dH7vlmnWBtd81bTLEh9GPLf7XJBlPFUwJnW/0yrZnw8XM9vvUP5mZx157c+G
-        M3uDj6YISTqHsH3e9NDNUvy64rKdvcVXv3KzHb7WlhgV8vr2yhmaf5mntls0hE9fOX/rre6s
-        OLN7td8XM3ebLv52/bvHuvflzZEar9rvRK04NY9hy5Pzk98Kudz7JnreblvFrt3il7wapok8
-        tBGMO2SWw9l4wqMr9sNnjlU7zwa4Nr17fu7VYdVfCWWnus/KVil4XW0Nb1RiKc5INNRiLipO
-        BABdGD805gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42LZdlhJTrfLUSjJYMkaQ4sH87axWcz7LGux
-        8e0PJotNj6+xWlzeNYfNYsb5fUwWa4/cZbdYtPULu8XmTVOZHTg9ZjX0snncubaHzePduXPs
-        HpuX1Hv0bVnF6PF5k1wAWxSXTUpqTmZZapG+XQJXxot599gLmrkr1vyXbWD8ztHFyMkhIWAi
-        0fN4CXMXIxeHkMBuRomj2/6zQySkJa5vnABlC0us/PecHaKoiUni8+lZbCAJNgFtibvTtzCB
-        2CICHhJt/+6BTWIWuMco8btlGiNIQlggXGLZuR4WEJtFQFXi4q0TYA28AjYSZ58tYYLYIC+x
-        esMB5gmMPAsYGVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgQHmJbmDsbtqz7oHWJk
-        4mA8xCjBwawkwvvhIG+SEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KL
-        YLJMHJxSDUwO/v3bvHNs2FbHPrGP17mZskcwtXiK/JejbS9+1zT9S4uYp5yqeShBIibjSjv/
-        73My8+ufBmhud7hrc83jSt20ZWLeHNY3L13iYglamyV+2CsjeP3cns8rxLrP31suldbmezxp
-        w2l3o8KFrlafWxeX3c+6/qv+yhzD/SZSj/+ucgg0sOhQOMhUYmUcrLzo0YY5obOq302+yRpv
-        UBH3tH3fsr9GvMVXuQ8vWLrh38RLof7x8TtSlyruPJjeu+DH/rq9+/x5si4e3JO8Tr61p3b/
-        ypCOs//D919ft9NigvWMQj5vntrz0yW58wxUd8yfdMqi8lNfYlzpUXM9/SXsd2pWZr6Lubol
-        X+S4wIHqIy1KLMUZiYZazEXFiQAXywAdnwIAAA==
-X-CMS-MailID: 20220220132636epcas5p4f320ac6dff9621b75481bd71b1f33183
+        PTYvqffo27KK0ePzJrkAtigum5TUnMyy1CJ9uwSujJvTF7AVPOOo2PLsPVMD41z2LkZODgkB
+        E4m9qyawdjFycQgJ7GCU2PBhMytEQlri+sYJUEXCEiv/PQezhQSamCS2rRABsdkEtCXuTt/C
+        BGKLCHhItP27xwwyiFngHqPE75ZpjF2MHBzCAqESN/bwgtSwCKhKnL9xmxnE5hWwkTj76QPU
+        fHmJ1RsOMIOUcwrYStzqNIZYZSMx++5+5gmMfAsYGVYxSqYWFOem5xYbFhjlpZbrFSfmFpfm
+        pesl5+duYgQHo5bWDsY9qz7oHWJk4mA8xCjBwawkwvvhIG+SEG9KYmVValF+fFFpTmrxIUZp
+        DhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxSDUzHf5U5vOCau7de+oZ9u1Sl0YV/++Iidt26
+        +0D3AI/XN+lVIkb/Xx1ubNJY80P32i0Gu7gNW1Tvrt4QLSKsuWmaS0XO33VrprRuCjc6kzvL
+        h6erfUP7lV8T3/foZ/HVlD0+8nnupI+snEGnFCTt3zR0d1bGHXjh9YnldN40i80tqXYFsbqS
+        Yu+bvnR53ghSOVl5gvUU1843p3zla6a93Rt75HLJlfUvbMJEWJap7PE9F+HLduyQdvDU61NP
+        f5v/N5iXLXVH28YdCw3ucHq78CzWWPqdQYZnVcB9Z41ah0beQvt//T/7LuqysCzYNTP51sTL
+        L05ymeXsWaYTYHi2riVj/v/w6DaWSBPjgr4L3b1KLMUZiYZazEXFiQDkHmSWtQIAAA==
+X-CMS-MailID: 20220220132643epcas5p39d48a27bb3fcde2ea3a01a260b46e1a0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220220132636epcas5p4f320ac6dff9621b75481bd71b1f33183
-References: <CGME20220220132636epcas5p4f320ac6dff9621b75481bd71b1f33183@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20220220132643epcas5p39d48a27bb3fcde2ea3a01a260b46e1a0
+References: <20220220133824.33837-1-alim.akhtar@samsung.com>
+        <CGME20220220132643epcas5p39d48a27bb3fcde2ea3a01a260b46e1a0@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-MCT driver define an enum which list global and local timer's
-irq index. Most of them are not used but MCT_G0_IRQ and
-MCT_L0_IRQ and these two are at a fixed offset/index.
-Get rid of this enum and use a #define for the used irq index.
-
-No functional changes expected.
+As per the dt binding, maximum number of local timer can be
+up to 16. Increase the array size of the _name_ variable
+which holds the number of local timer name per CPU to
+reflect the binding. While at it, change the magic number to a
+meaningful macro.
 
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
-
-* Changes since v1:
-- Seperate out bumping up of max mct irq and local timer number
-  as commented by Krzysztof
+ drivers/clocksource/exynos_mct.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 6db3d5511b0f..b3f3d27a837b 100644
+index 0c7931f7f99a..8d63a9376701 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -60,27 +60,17 @@
- #define MCT_CLKEVENTS_RATING		350
- #endif
+@@ -66,6 +66,8 @@
+ #define MCT_L0_IRQ	4
+ /* Max number of IRQ as per DT binding document */
+ #define MCT_NR_IRQS	20
++/* Max number of local timers */
++#define MCT_NR_LOCAL_TIMERS	16
  
-+/* There are four Global timers starting with 0 offset */
-+#define MCT_G0_IRQ	0
-+/* Local timers count starts after global timer count */
-+#define MCT_L0_IRQ	4
-+#define MCT_NR_IRQS	12
-+
  enum {
  	MCT_INT_SPI,
- 	MCT_INT_PPI
+@@ -80,7 +82,7 @@ static int mct_irqs[MCT_NR_IRQS];
+ struct mct_clock_event_device {
+ 	struct clock_event_device evt;
+ 	unsigned long base;
+-	char name[10];
++	char name[MCT_NR_LOCAL_TIMERS];
  };
  
--enum {
--	MCT_G0_IRQ,
--	MCT_G1_IRQ,
--	MCT_G2_IRQ,
--	MCT_G3_IRQ,
--	MCT_L0_IRQ,
--	MCT_L1_IRQ,
--	MCT_L2_IRQ,
--	MCT_L3_IRQ,
--	MCT_L4_IRQ,
--	MCT_L5_IRQ,
--	MCT_L6_IRQ,
--	MCT_L7_IRQ,
--	MCT_NR_IRQS,
--};
--
- static void __iomem *reg_base;
- static unsigned long clk_rate;
- static unsigned int mct_int_type;
+ static void exynos4_mct_write(unsigned int value, unsigned long offset)
 -- 
 2.25.1
 
