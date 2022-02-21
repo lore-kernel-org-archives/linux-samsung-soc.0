@@ -2,141 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90408C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Feb 2022 10:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6032BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Feb 2022 13:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355195AbiBUKir (ORCPT
+        id S1358739AbiBUNO5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:38:47 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35290 "EHLO
+        Mon, 21 Feb 2022 08:14:57 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354936AbiBUKie (ORCPT
+        with ESMTP id S1358791AbiBUNOy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 05:38:34 -0500
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D54B46163
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Feb 2022 02:00:21 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 8F94658025F;
-        Mon, 21 Feb 2022 04:59:45 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 21 Feb 2022 04:59:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=SBKxndqRJqKTGvR4OSR8aSqZ+CMFFL
-        Md5Wo8SczSeY0=; b=U8DTRtD3oTrkbtNcH2d7Uus7uiq3VRFP+rZ1I/Cjo9/xDW
-        NNVc0iT5az6Us1qjD9S4tQLzz5248KEyehA70OwSTXyennyBjXwK0bn1AQHQ1U0w
-        m31a3Ii0iwAyuKgoQX6d2/WHsdLfj2OI5KsilA1abC8SUdjCJxu89Wu38o9H9YWV
-        FmWvg75598w09E5n9kSZkwzX/jqbA4gCuTB+TGBLv5FPt6JCF+3pYFC1YjWtqRfz
-        OMGLuzKRH+iFDK+xYS2cjAcDI2EBaA6yUMs1h0PwyPzDcVNDt2asJcf5qITG8SRe
-        5+RL1EU1Uhlymo/S+iVRwDiNkwKVhL+rA0l1+FNg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=SBKxnd
-        qRJqKTGvR4OSR8aSqZ+CMFFLMd5Wo8SczSeY0=; b=BjitJw1W4NWeRT6fQXc3aj
-        /YILW97eHipeUKO2Qz5qbxwI+ekmL69kv8AugrLf7BB8TM1fzNyqLU0iuxfW4bTx
-        0c3SuUXTnypNcYY3Pn4CjmjAqztO3xIhKXeLJfom8sYtQXCBVsbcyO1HQJrBwBCK
-        PgrmFE790755IAR7ummwU9Paqf4GNQuAlHE3fG6qJ9yAkSb98u7peF1JUeb1K0Hg
-        qB/1e4x2n0Hk7ik/KkW8jEAUIukeDKSbImMl1gwmrV7kPndBtpyN4yxU9pDhj0G3
-        eheVhZa/tLQyicAodHR4/A/jcZfL7XKywW0gryd6Obd4mQnG30h6YPA+QwHGm3pQ
-        ==
-X-ME-Sender: <xms:kGITYm_wlzsytVmGHAtA0R6UHxTeYVXhyHPCVRLlRboyVpgmgacTWA>
-    <xme:kGITYms1_xEH9_VrkSvrl7eurBeEhZhIxZavJuTMkP0sbI5LNtsIq2kgtYPBhs5IG
-    AzByfnPtIzhxNC4i-s>
-X-ME-Received: <xmr:kGITYsA4rPMsGUqXIHlR13RoZPqJYgGWReX35feizWZ1FS9ETiegOdG6UvBf-6O8nv-NfXO8BYiryH2l1gUKqH-iVty6qzePyIvtxZo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigddtlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:kGITYucVNJFjL_G5PW_fsEszhp0kKJa7129jNpXP8WWSHSSKIR1dHQ>
-    <xmx:kGITYrOhEl5o04cTmbSZuaXRO8zJvbFbkOkQZfcT2x8b_Xlfi8Nd7Q>
-    <xmx:kGITYolHIJeO5AbMZuVNQEfTHutEILejRdvZKdC_NTRl3hF7GsaLwg>
-    <xmx:kWITYoccPyLGgGGPlEC_NM9YMAzMyppgUQ-xMWtBq4xhu9w1Giw6xw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Feb 2022 04:59:43 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH v2 10/22] drm/exynos: plane: Remove redundant zpos initialisation
-Date:   Mon, 21 Feb 2022 10:59:06 +0100
-Message-Id: <20220221095918.18763-11-maxime@cerno.tech>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220221095918.18763-1-maxime@cerno.tech>
-References: <20220221095918.18763-1-maxime@cerno.tech>
+        Mon, 21 Feb 2022 08:14:54 -0500
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DF21EEE0;
+        Mon, 21 Feb 2022 05:14:28 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 21LDDfnW088797;
+        Mon, 21 Feb 2022 07:13:41 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1645449221;
+        bh=vXu1G0emev+TnkGG5qABAZXlSG+xfFg5QuWYDC2AHek=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=Dsv0NFIKFcID9DYTIhgmbO2DQxxSezhh1ln6oR81gCTGWrdNBtZdwVr6RXFw0Zu+D
+         b0h2t3fENlvfOJnnHPQW02XoYC9hDG1fbYEE0q8uOdf/GQ3eLloxdoTVIzGVOpsHrF
+         jPBp3q/6mkYDibbPuzFybwbnJyfSz9WIkaQN4Lg0=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 21LDDfnC096479
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Feb 2022 07:13:41 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 21
+ Feb 2022 07:13:40 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Mon, 21 Feb 2022 07:13:40 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 21LDDeog070333;
+        Mon, 21 Feb 2022 07:13:40 -0600
+Date:   Mon, 21 Feb 2022 07:13:40 -0600
+From:   Nishanth Menon <nm@ti.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+CC:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wei Xu <xuwei5@hisilicon.com>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jan Kotas <jank@cadence.com>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [RFC PATCH 8/8] arm64: dts: ti: use 'freq-table' in UFS node
+Message-ID: <20220221131340.q3hjpjevqrfvhggv@specimen>
+References: <20220219184224.44339-1-krzysztof.kozlowski@canonical.com>
+ <20220219184554.44887-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220219184554.44887-1-krzysztof.kozlowski@canonical.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The exynos KMS driver will call drm_plane_create_zpos_property() with an
-init value depending on the plane purpose.
+On 19:45-20220219, Krzysztof Kozlowski wrote:
+> The 'freq-table-hz' property is deprecated by UFS bindings.
+> The uint32-array requires also element to be passed within one <> block.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> index 599861259a30..c3afef0321ae 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> @@ -1257,7 +1257,9 @@ ufs@4e84000 {
+>  			compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
+>  			reg = <0x0 0x4e84000 0x0 0x10000>;
+>  			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> -			freq-table-hz = <250000000 250000000>, <19200000 19200000>, <19200000 19200000>;
+> +			freq-table = <250000000 250000000
 
-Since the initial value wasn't carried over in the state, the driver had
-to set it again in exynos_drm_plane_reset(). However, the helpers have
-been adjusted to set it properly at reset, so this is not needed
-anymore.
+<min max> is much more readable and less error prone in case of a large
+set.
 
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> +				      19200000 19200000
+> +				      19200000 19200000>;
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index df76bdee7dca..3615cf329e32 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -122,7 +122,6 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
- 
- static void exynos_drm_plane_reset(struct drm_plane *plane)
- {
--	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 	struct exynos_drm_plane_state *exynos_state;
- 
- 	if (plane->state) {
-@@ -133,10 +132,8 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
- 	}
- 
- 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
--	if (exynos_state) {
-+	if (exynos_state)
- 		__drm_atomic_helper_plane_reset(plane, &exynos_state->base);
--		plane->state->zpos = exynos_plane->config->zpos;
--	}
- }
- 
- static struct drm_plane_state *
+are you sure the removal of the tuple adds value?
+
+>  			clocks = <&k3_clks 277 0>, <&k3_clks 277 1>, <&k3_clks 277 1>;
+>  			clock-names = "core_clk", "phy_clk", "ref_clk";
+>  			dma-coherent;
+> -- 
+> 2.32.0
+> 
+
 -- 
-2.35.1
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D)/Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
