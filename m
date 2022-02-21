@@ -2,133 +2,162 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98049C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Feb 2022 13:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D7FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Feb 2022 17:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358963AbiBUNVJ (ORCPT
+        id S233175AbiBURel (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 08:21:09 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55018 "EHLO
+        Mon, 21 Feb 2022 12:34:41 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358878AbiBUNUj (ORCPT
+        with ESMTP id S232223AbiBURek (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 08:20:39 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C350C1EEDA
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Feb 2022 05:20:16 -0800 (PST)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9A4CA3F1DD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Feb 2022 13:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645449614;
-        bh=khb30gE+RkFEqmWXwauRdw21yNeM7x8VXwtb7dTjxrk=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=t7KNvlr5/wlubIja/R1BCH3ZwjcG8zSQdxBU/37EH48lJvMdmiVNiGyOgf823LFJr
-         b6SmvODIzTM0RoTRa9Ylb6zx8ZIYLqKohCHKg9gGr4uO3QGLLtjUis557bC7iAsmO3
-         N7qqjNA+LGT5i0WTfSCVYoJ1uMDFKbYaKenviqqd4h/T2+4YqwemEiW0shqoGCbqz+
-         8enAkM1yhLvId1ZHMLIGpRhLqKp3dGSyx28/NEmcuu1gwsAP6bgHY0GC6Mng5ODpQq
-         mcuQf+7c5G1/KSszmdshERWaTpcQFLvp0sCRlMy+1SVAwWU2v8Xzu+rsL8Kulc8dcB
-         lgWQY3/SqI03g==
-Received: by mail-ed1-f71.google.com with SMTP id l3-20020a50cbc3000000b0041083c11173so10151877edi.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Feb 2022 05:20:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=khb30gE+RkFEqmWXwauRdw21yNeM7x8VXwtb7dTjxrk=;
-        b=tmdi/uDZ0Cy35CiU8pOzHonLPE9UaAol4No8y1QEadIzfY+yQy2LzJCZSLe5/fH6rL
-         navONvq2Mg4sxwpZ3i/5AXtEltZvxYZfT4+ckdMh1MLkoafmGP5wwO4juM7mBuZjqYIK
-         3lbidfzkfjuVbG80QyNzHmq1LlX6SeS//E9yfw4HAmZGUlg2WdaDOv2UV+FEjvkobiKM
-         l042YbBX//0ErKmxBe9PQDW0IT26IGFhgPP7xlxBEUFS28gb3KLbhNPYCpYm076x/cN8
-         eDvsf8raBiHeqzGNV+Azng4zK2WlW9FEdrA1XlgPDMWexqnS8RhOCsCRCR6vT1hnfoDU
-         L5kw==
-X-Gm-Message-State: AOAM533SU454Y5TMaxfvHV6ABAv/JGW3UPoWLAF/1rtu55f/b4LItcTr
-        JAbVGCzYoBQYeD3akhX1Dffzf0j5D3mlqxxa9VCmjpXO3oHqZA9cDjWJQRrh5CSHbNLeXQgdz8q
-        wG6NeJuQFYRTKUpkii8ec0E1/iGPevLXO6ujiCobtWnVy/oPB
-X-Received: by 2002:a50:aa87:0:b0:40f:28a0:d0d6 with SMTP id q7-20020a50aa87000000b0040f28a0d0d6mr21735620edc.368.1645449614308;
-        Mon, 21 Feb 2022 05:20:14 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyn8wRl+WsEMmydGs9g9zLLhKIDtqHUJiepwJxzF0w7Uxxo57NBO0zLCpmBeBDH0NoWgBQ/Vw==
-X-Received: by 2002:a50:aa87:0:b0:40f:28a0:d0d6 with SMTP id q7-20020a50aa87000000b0040f28a0d0d6mr21735589edc.368.1645449614162;
-        Mon, 21 Feb 2022 05:20:14 -0800 (PST)
-Received: from [192.168.0.122] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id 18sm5084626ejj.1.2022.02.21.05.20.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 05:20:13 -0800 (PST)
-Message-ID: <19705501-2391-14a4-0eac-4b2b647a9735@canonical.com>
-Date:   Mon, 21 Feb 2022 14:20:12 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH 8/8] arm64: dts: ti: use 'freq-table' in UFS node
-Content-Language: en-US
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wei Xu <xuwei5@hisilicon.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jan Kotas <jank@cadence.com>, linux-scsi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20220219184224.44339-1-krzysztof.kozlowski@canonical.com>
- <20220219184554.44887-1-krzysztof.kozlowski@canonical.com>
- <20220221131340.q3hjpjevqrfvhggv@specimen>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220221131340.q3hjpjevqrfvhggv@specimen>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Mon, 21 Feb 2022 12:34:40 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A271B798
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Feb 2022 09:34:14 -0800 (PST)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220221173409epoutp04784899e830c0222859e7d4fa9b38e2ff~V3ZAErdEb0950509505epoutp04Z
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Feb 2022 17:34:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220221173409epoutp04784899e830c0222859e7d4fa9b38e2ff~V3ZAErdEb0950509505epoutp04Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1645464849;
+        bh=8QoAWANia+LWatCrvDo7c2KtZTARPPnVpiok40+vh4Y=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Pil936/uh1MGuQRTIDs31keIymPZaEoGCDjuOqwI2CWBs5WaCMCZkwfNQAqax7LFX
+         WPYrEmnF6kfWYhph6Z7biMQpHooonCY8AZZP+sV9SNfS52kpKMWTMqBOh6WJpLAwj2
+         T0Zi1uXowwM42kIih1k1cwjPsORjY8pArIaUWDss=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220221173408epcas5p10ae318bb1443a7bdadecd43456ae8f41~V3Y_25q0b0912709127epcas5p10;
+        Mon, 21 Feb 2022 17:34:08 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4K2Ttg1wzpz4x9Pr; Mon, 21 Feb
+        2022 17:34:03 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F3.A0.06423.A0DC3126; Tue, 22 Feb 2022 02:34:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220221173402epcas5p3f85b10debc38c7ec1e1bd607055672d8~V3Y5ZinoD0424704247epcas5p3V;
+        Mon, 21 Feb 2022 17:34:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220221173402epsmtrp1e821ef541eff55cdedae510a4853e1b3~V3Y5YuyW-2875828758epsmtrp16;
+        Mon, 21 Feb 2022 17:34:02 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-aa-6213cd0aad21
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        99.DA.29871.A0DC3126; Tue, 22 Feb 2022 02:34:02 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220221173400epsmtip262b43f76e966b435aacb3b28e52979b4~V3Y4HTTGA0830808308epsmtip2R;
+        Mon, 21 Feb 2022 17:34:00 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     krzysztof.kozlowski@canonical.com,
+        linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, pankaj.dubey@samsung.com,
+        m.szyprowski@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v3 1/3] clocksource/drivers/exynos_mct: Remove mct interrupt
+ index enum
+Date:   Mon, 21 Feb 2022 23:15:45 +0530
+Message-Id: <20220221174547.26176-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCKsWRmVeSWpSXmKPExsWy7bCmli7XWeEkg7m7zS0ezNvGZjHvs6zF
+        xrc/mCw2Pb7GanF51xw2ixnn9zFZrD1yl91i0dYv7BabN01lduD0mNXQy+Zx59oeNo93586x
+        e2xeUu/Rt2UVo8fnTXIBbFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
+        uam2Si4+AbpumTlANykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL
+        89L18lJLrAwNDIxMgQoTsjOWbO5iKbjCVdE04zF7A+N9ji5GTg4JAROJX8e+sHYxcnEICexm
+        lJiz+BsjhPOJUeLi6jNQmW+MEi9mzGWDaZk0eSdU1V5GiXuP+qCcFiaJSy9WMIFUsQloS9yd
+        vgXMFhFwk7jR2MEEUsQscI1R4s/EQ4wgCWGBSInO7jesIDaLgKrEza4vYCt4BWwkzrSsYoRY
+        Jy+xesMBZpBmCYFD7BLTJj1jgUi4SHxZu54JwhaWeHV8CzuELSXxsr8NyOYAsrMlenYZQ4Rr
+        JJbOOwbVai9x4MocFpASZgFNifW79EHCzAJ8Er2/nzBBdPJKdLQJQVSrSjS/uwrVKS0xsbub
+        FcL2kDi5dxqYLSQQK3F49TGmCYwysxCGLmBkXMUomVpQnJueWmxaYJiXWg6PnOT83E2M4OSl
+        5bmD8e6DD3qHGJk4GA8xSnAwK4nw3mEXThLiTUmsrEotyo8vKs1JLT7EaAoMpYnMUqLJ+cD0
+        mVcSb2hiaWBiZmZmYmlsZqgkzns6fUOikEB6YklqdmpqQWoRTB8TB6dUA5PMvfrXi9cl9U89
+        NJeRJf9+nMfCrSK3p6mbnZxxdMOtwx+nTflea/j8q2u0VSNjkvDRc/LxK28yNhbFXTR9/Oo0
+        58KqnXpnL35kL47sOCo2d4qDfOaTbzl83wKutU1/+cPX2kgt5BHDpevyT184ST3asuBKxFrW
+        vQeYZ820qVw0ZcHlmd8YflxaNO+FYqMyN+8aSa32h6c7pZdVHNvu+/EG07qW55vnR03KKF51
+        +arVhbOCbyTf115yYRRQ+f6ZdWPIg6CQ/87371zO7tScUnPiiOG8y4Udd2xlq9Zs2up6ys1m
+        VtBbZoGarRqGjbNCn35xS6naEpS2IuWza9yHP0F3GFZMeD1HZcq5RYeWL/G2u6nEUpyRaKjF
+        XFScCAB2614i5wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LZdlhJXpfrrHCSwcY+QYsH87axWcz7LGux
+        8e0PJotNj6+xWlzeNYfNYsb5fUwWa4/cZbdYtPULu8XmTVOZHTg9ZjX0snncubaHzePduXPs
+        HpuX1Hv0bVnF6PF5k1wAWxSXTUpqTmZZapG+XQJXxpLNXSwFV7gqmmY8Zm9gvM/RxcjJISFg
+        IjFp8k7GLkYuDiGB3YwSpy+cZYNISEtc3ziBHcIWllj57zk7RFETk8SmA1MZQRJsAtoSd6dv
+        YQKxRQQ8JNr+3WMGKWIWuMco8btlGliRsEC4xOqPn8EmsQioStzs+gK2gVfARuJMyypGiA3y
+        Eqs3HGCewMizgJFhFaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+7iZGcIhpae5g3L7qg94h
+        RiYOxkOMEhzMSiK8d9iFk4R4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQ
+        WgSTZeLglGpgMlVI+JonrXPUmnXVeQOZB5tbfs0tTpv/V3RCvgv/x9qK/MNO9e8ltbJf5WYu
+        vF0RGXU/4mLJ0YmJl46FvEx8ciRpftTv9L13czi6F2f81Hzbvs14s0hizJGT55qOZ+2WrTnR
+        a/T4VDc71+x2ox0N/8uN55zufypU9uYe47TVrzeWOXHMitqiaMzE9qj01z6VXW82Fp95kl34
+        qGCLwinNJ5eeGTTfV1ueV3jDV9cruFX1oZ3IK6eYiQkRh8R2+OqF/wrXXyl3eN7GIw+m/Az3
+        vbuXQWE640mLn0KnONbtNDz7o2GmuMWJuZrPSy3mdpqLcnLpNW1szehZ5fORQWTSD+Xv/gsf
+        HIlXZZ6Tr8D2W4mlOCPRUIu5qDgRAEiWLAagAgAA
+X-CMS-MailID: 20220221173402epcas5p3f85b10debc38c7ec1e1bd607055672d8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220221173402epcas5p3f85b10debc38c7ec1e1bd607055672d8
+References: <CGME20220221173402epcas5p3f85b10debc38c7ec1e1bd607055672d8@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/02/2022 14:13, Nishanth Menon wrote:
-> On 19:45-20220219, Krzysztof Kozlowski wrote:
->> The 'freq-table-hz' property is deprecated by UFS bindings.
->> The uint32-array requires also element to be passed within one <> block.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
->>  arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
->> index 599861259a30..c3afef0321ae 100644
->> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
->> @@ -1257,7 +1257,9 @@ ufs@4e84000 {
->>  			compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
->>  			reg = <0x0 0x4e84000 0x0 0x10000>;
->>  			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
->> -			freq-table-hz = <250000000 250000000>, <19200000 19200000>, <19200000 19200000>;
->> +			freq-table = <250000000 250000000
-> 
-> <min max> is much more readable and less error prone in case of a large
-> set.
+MCT driver define an enum which list global and local timer's
+irq index. Most of them are not used but MCT_G0_IRQ and
+MCT_L0_IRQ and these two are at a fixed offset/index.
+Get rid of this enum and use a #define for the used irq index.
 
-Pairs are easily visible if split per line, so readability is similar.
-Not much is lost.
+No functional changes expected.
 
-> 
->> +				      19200000 19200000
->> +				      19200000 19200000>;
-> 
-> are you sure the removal of the tuple adds value?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-DT schema requires it, or rather: I do not know how to express uint32
-tuples in DT schema. All my tries failed.
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 6db3d5511b0f..b3f3d27a837b 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -60,27 +60,17 @@
+ #define MCT_CLKEVENTS_RATING		350
+ #endif
+ 
++/* There are four Global timers starting with 0 offset */
++#define MCT_G0_IRQ	0
++/* Local timers count starts after global timer count */
++#define MCT_L0_IRQ	4
++#define MCT_NR_IRQS	12
++
+ enum {
+ 	MCT_INT_SPI,
+ 	MCT_INT_PPI
+ };
+ 
+-enum {
+-	MCT_G0_IRQ,
+-	MCT_G1_IRQ,
+-	MCT_G2_IRQ,
+-	MCT_G3_IRQ,
+-	MCT_L0_IRQ,
+-	MCT_L1_IRQ,
+-	MCT_L2_IRQ,
+-	MCT_L3_IRQ,
+-	MCT_L4_IRQ,
+-	MCT_L5_IRQ,
+-	MCT_L6_IRQ,
+-	MCT_L7_IRQ,
+-	MCT_NR_IRQS,
+-};
+-
+ static void __iomem *reg_base;
+ static unsigned long clk_rate;
+ static unsigned int mct_int_type;
+-- 
+2.25.1
 
-
-Best regards,
-Krzysztof
