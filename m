@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3214EC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C81C433FE
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Feb 2022 15:01:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbiBVPB0 (ORCPT
+        id S233024AbiBVPB1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Feb 2022 10:01:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47602 "EHLO
+        Tue, 22 Feb 2022 10:01:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233024AbiBVPAr (ORCPT
+        with ESMTP id S233008AbiBVPAq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Feb 2022 10:00:47 -0500
+        Tue, 22 Feb 2022 10:00:46 -0500
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB7110E579
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A3FD10E576
         for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 07:00:02 -0800 (PST)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9CE2940815
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 185C440814
         for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 14:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
         s=20210705; t=1645541997;
-        bh=Yp6ZDVV8RuEvdp6hHMI16oZzyQVBXO+fcxhml4rBHaw=;
+        bh=arKzCg0MYWfR0buWW2cokaDng0neBp5ISe/OJX5gEOA=;
         h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=IqyMWU8dEvL0XSI/W60DpA5Ua4xVnh5DvmW9HvFPl8XWQiPFUZK1K1fBYLnz2ViKk
-         sAFPd09TV3AVPfmTxbBKNGOaV/J/ErkKLYbj25FtP+9I7jKebIZ3epqF0T6A56Z/mu
-         1NYuA2J6uT2hvE9bUq37cJo42t9JtOrnjSHRCTEg6gK38WcnjAsqQetcTnIjlHlHYJ
-         L3nZR6vL9vKhe0HUEQy1ZtxofuJ/N3YxGlUeLzi6YaAMXj9erd1gUxYBD/96VhKveq
-         m5IgAqiA2gu9halXYBrMFQyTfL8c7BEKgQsRs1sCa9z2yWdgYlUfb/JCvWuGwynrhq
-         xtHlLJS7cEPcg==
-Received: by mail-ed1-f71.google.com with SMTP id e10-20020a056402190a00b00410f20467abso12088088edz.14
+        b=orqFDFh869WrXqTMnaFXFspGniLo6/x5MkO1ZqqlI63vafWKGgIGgnSqu39/tMKS8
+         M4HQm4KFFV6kJdg8d6ggkeQPKjz5d5MYaR1KQ78RkGEdFveX6nys7syhNm13Sk+H1S
+         htAn++HLhjNb9vAwtNwA0iuoBObIazCwbcQViHN0s3tmmewzgIlJvl8eXcxC9vj6t9
+         2bKA/SRcbmW0hQMnvBvBt2ZH5lqFpjUP7zYAlSCtcZdB9fWEYIHntjORxbsXaVfEOr
+         xKWU/1ttIjCblq5sy7Tf4FmxqO/lmNijelL3wAUHk3DyxpWUIvh7DQfCL6oRY3we6a
+         a/zhtykIHsDMA==
+Received: by mail-ej1-f70.google.com with SMTP id ky6-20020a170907778600b0068e4bd99fd1so5879543ejc.15
         for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 06:59:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Yp6ZDVV8RuEvdp6hHMI16oZzyQVBXO+fcxhml4rBHaw=;
-        b=bBoxDewNN3QmTx9pJHbuq/fXqhCPLN7a8soxxkr0DPz3q+wgIoNZUVXyGn+gw4wjKu
-         d1QLZ75j2aBw0RDe9c6MmDGUhKdesDxrYl9tBXF3STdIJFb4ze+/h8WTPF19m+yUpSPd
-         2mTgO8ZXhl5yMu6T6TOQd53HibzrmJFD2mDiEtxNLVb92tdxYy6V81Ljtg8YEg4sQWhl
-         l1Z2YzQJ9SAFTX0xAZ6PCnr+whnB16FH4bmaDwTNReehv88AjnOBX5R5hz7q5OcEurZd
-         B1XsBviRf+oIAa1FtrTuZ4d3AJRknLnxtIRILBL7JczExlKOe/43fhI2Iny89Xmf1YCc
-         IyRg==
-X-Gm-Message-State: AOAM530jHVYyxaTTK/DImJMyJhAvFV49w7Ms8AkWyti7XaW+ZA7O00xp
-        bnZArDwCWQLOenzvmDLNFIIGeW9QTNqmovD61nv+bCpc9NvxS1GcIrXoYe/IfAmVFTb8nuBFs3b
-        83TWcQWLTzQ6dfMGd/AR9uF/q2lsyU+GOOL27qAQ3KRcVdN/P
-X-Received: by 2002:a17:906:8299:b0:6cf:3847:284b with SMTP id h25-20020a170906829900b006cf3847284bmr19368278ejx.682.1645541994352;
-        Tue, 22 Feb 2022 06:59:54 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx+ToxX03cNeq8vGzKfuUoRQ0zvi1K010zfig8ivZ8cYm8EVedSW9bVloWqWHnEbvwuSlDU2A==
-X-Received: by 2002:a17:906:8299:b0:6cf:3847:284b with SMTP id h25-20020a170906829900b006cf3847284bmr19368246ejx.682.1645541994125;
-        Tue, 22 Feb 2022 06:59:54 -0800 (PST)
+        bh=arKzCg0MYWfR0buWW2cokaDng0neBp5ISe/OJX5gEOA=;
+        b=nBVq9EppMukkCp7B2gIgNtYUBb+h5rM8PGO9ObaGBbV7zZwEkjp2cL7rnb5rZEB8gV
+         j9CFeHey09E1SA2cNQrwFD3tvH6SxtDURZqEpcfshMxvEgapBTATtVNWHgOzmOXlQsY+
+         XbJZucT1YrQ1KU2u67/P9cwBzU9xtFY+NpWAD79GLv8Q4jyB3vNoqgioUU3XQJpgN/Tk
+         n86y96zGHOg18PXCFmOr8ZOhn81huaWk8uGT0TZ3aOSELr0B+6izuzmP6AdxL7Spos7J
+         PIE8gHRZTfq766NcyEaXCmLkCc1ydnbJj60Q1xpRcVjf41HEm0nqvlM0Azqeo0GCJBqg
+         ofRQ==
+X-Gm-Message-State: AOAM532WaKNdK7bQyt4rAJ7oyrVUdeN/QWX4iQqq0+KTu0BFdzSQNqS3
+        LT7tNAJy1LkkD4zEOqlLy4zOYvMlfMHMNg1d6of+Fx30RNwSGd8Unvd13y5x8LLg8Swl+uugBv+
+        BRtNCd6Y1i7Al1Z3AJooxFtxLqqI3Lyn/iyK2QyC2NXJIwXEj
+X-Received: by 2002:a05:6402:1941:b0:413:2b5f:9074 with SMTP id f1-20020a056402194100b004132b5f9074mr2026083edz.414.1645541992927;
+        Tue, 22 Feb 2022 06:59:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyuGCh02ChhaQcgWP8AI9k0NhxlMiAPxSs3pga+zesBZndYOMg1ZtIGJuD44dDaZzrGAARhjg==
+X-Received: by 2002:a05:6402:1941:b0:413:2b5f:9074 with SMTP id f1-20020a056402194100b004132b5f9074mr2026054edz.414.1645541992714;
+        Tue, 22 Feb 2022 06:59:52 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id m2sm2467960ejb.20.2022.02.22.06.59.52
+        by smtp.gmail.com with ESMTPSA id m2sm2467960ejb.20.2022.02.22.06.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Feb 2022 06:59:53 -0800 (PST)
+        Tue, 22 Feb 2022 06:59:52 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         Avri Altman <avri.altman@wdc.com>,
@@ -78,9 +78,9 @@ To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 09/15] scsi: ufs: deprecate 'freq-table-hz' property
-Date:   Tue, 22 Feb 2022 15:58:48 +0100
-Message-Id: <20220222145854.358646-10-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 08/15] dt-bindings: ufs: snps,tc-dwc-g210: convert to dtschema
+Date:   Tue, 22 Feb 2022 15:58:47 +0100
+Message-Id: <20220222145854.358646-9-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220222145854.358646-1-krzysztof.kozlowski@canonical.com>
 References: <20220222145854.358646-1-krzysztof.kozlowski@canonical.com>
@@ -90,70 +90,106 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The 'freq-table-hz' is not correct in DT schema, because '-hz' suffix
-defines uint32 type, not an array.  Therefore deprecate 'freq-table-hz'
-and use 'freq-table' instead.
+Convert the Synopsys Universal Flash Storage (UFS) Controller to DT
+schema format.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/scsi/ufs/ufshcd-pltfrm.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ .../bindings/ufs/snps,tc-dwc-g210.yaml        | 51 +++++++++++++++++++
+ .../bindings/ufs/tc-dwc-g210-pltfrm.txt       | 26 ----------
+ 2 files changed, 51 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ufs/snps,tc-dwc-g210.yaml
+ delete mode 100644 Documentation/devicetree/bindings/ufs/tc-dwc-g210-pltfrm.txt
 
-diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
-index 87975d1a21c8..2b192477d158 100644
---- a/drivers/scsi/ufs/ufshcd-pltfrm.c
-+++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
-@@ -47,8 +47,9 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 	if (cnt <= 0)
- 		goto out;
- 
--	if (!of_get_property(np, "freq-table-hz", &len)) {
--		dev_info(dev, "freq-table-hz property not specified\n");
-+	if (!of_get_property(np, "freq-table", &len) ||
-+	    !of_get_property(np, "freq-table-hz", &len)) {
-+		dev_info(dev, "freq-table property not specified\n");
- 		goto out;
- 	}
- 
-@@ -57,7 +58,7 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 
- 	sz = len / sizeof(*clkfreq);
- 	if (sz != 2 * cnt) {
--		dev_err(dev, "%s len mismatch\n", "freq-table-hz");
-+		dev_err(dev, "%s len mismatch\n", "freq-table");
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -69,12 +70,16 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
--	ret = of_property_read_u32_array(np, "freq-table-hz",
-+	ret = of_property_read_u32_array(np, "freq-table",
- 			clkfreq, sz);
- 	if (ret && (ret != -EINVAL)) {
--		dev_err(dev, "%s: error reading array %d\n",
--				"freq-table-hz", ret);
--		return ret;
-+		ret = of_property_read_u32_array(np, "freq-table-hz",
-+						 clkfreq, sz);
-+		if (ret && (ret != -EINVAL)) {
-+			dev_err(dev, "%s: error reading array %d\n",
-+				"freq-table", ret);
-+			return ret;
-+		}
- 	}
- 
- 	for (i = 0; i < sz; i += 2) {
-@@ -99,7 +104,7 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
- 
- 		if (!strcmp(name, "ref_clk"))
- 			clki->keep_link_active = true;
--		dev_dbg(dev, "%s: min %u max %u name %s\n", "freq-table-hz",
-+		dev_dbg(dev, "%s: min %u max %u name %s\n", "freq-table",
- 				clki->min_freq, clki->max_freq, clki->name);
- 		list_add_tail(&clki->list, &hba->clk_list_head);
- 	}
+diff --git a/Documentation/devicetree/bindings/ufs/snps,tc-dwc-g210.yaml b/Documentation/devicetree/bindings/ufs/snps,tc-dwc-g210.yaml
+new file mode 100644
+index 000000000000..671a70d95138
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ufs/snps,tc-dwc-g210.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ufs/snps,tc-dwc-g210.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Synopsys DesignWare Universal Flash Storage (UFS) Controller
++
++maintainers:
++  - Li Wei <liwei213@huawei.com>
++
++# Select only our matches, not all jedec,ufs
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - snps,dwc-ufshcd-1.40a
++  required:
++    - compatible
++
++allOf:
++  - $ref: ufs-common.yaml
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - snps,g210-tc-6.00-20bit
++          - snps,g210-tc-6.00-40bit
++      - const: snps,dwc-ufshcd-1.40a
++      - const: jedec,ufs-2.0
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    ufs@d0000000 {
++        compatible = "snps,g210-tc-6.00-40bit",
++                     "snps,dwc-ufshcd-1.40a",
++                     "jedec,ufs-2.0";
++        reg = <0xd0000000 0x10000>;
++        interrupts = <24>;
++    };
+diff --git a/Documentation/devicetree/bindings/ufs/tc-dwc-g210-pltfrm.txt b/Documentation/devicetree/bindings/ufs/tc-dwc-g210-pltfrm.txt
+deleted file mode 100644
+index 71c0777960e9..000000000000
+--- a/Documentation/devicetree/bindings/ufs/tc-dwc-g210-pltfrm.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-* Universal Flash Storage (UFS) DesignWare Host Controller
+-
+-DWC_UFS nodes are defined to describe on-chip UFS host controllers and MPHY.
+-Each UFS controller instance should have its own node.
+-
+-Required properties:
+-- compatible	: compatible list must contain the PHY type & version:
+-			"snps,g210-tc-6.00-20bit"
+-			"snps,g210-tc-6.00-40bit"
+-		  complemented with the Controller IP version:
+-			"snps,dwc-ufshcd-1.40a"
+-		  complemented with the JEDEC version:
+-			"jedec,ufs-1.1"
+-			"jedec,ufs-2.0"
+-
+-- reg		: <registers mapping>
+-- interrupts	: <interrupt mapping for UFS host controller IRQ>
+-
+-Example for a setup using a 1.40a DWC Controller with a 6.00 G210 40-bit TC:
+-	dwc-ufs@d0000000 {
+-		compatible = "snps,g210-tc-6.00-40bit",
+-			     "snps,dwc-ufshcd-1.40a",
+-			     "jedec,ufs-2.0";
+-		reg = < 0xd0000000 0x10000 >;
+-		interrupts = < 24 >;
+-	};
 -- 
 2.32.0
 
