@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4941C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Feb 2022 15:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B419C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Feb 2022 15:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233126AbiBVPBT (ORCPT
+        id S233149AbiBVPBV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Feb 2022 10:01:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48306 "EHLO
+        Tue, 22 Feb 2022 10:01:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233149AbiBVPAz (ORCPT
+        with ESMTP id S233150AbiBVPAz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 22 Feb 2022 10:00:55 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C99A10EC5F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 07:00:07 -0800 (PST)
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60FD610EC55
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 07:00:06 -0800 (PST)
 Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8EED440812
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 15:00:02 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4948A4003C
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 15:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645542002;
-        bh=AXkZYdVX5Zodn+3WZgtIGj/ZSa6Qs/Xzl3ZJQ9geNsQ=;
+        s=20210705; t=1645542005;
+        bh=LfKEooVWXSt0X9amI75MXA0ImuzcwyjqGr8txR6hCCo=;
         h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=iyDq1tbkJf+9Q5xXoAFCuJM23bV735qnBjiNaQruOElGZ1TsmBGwVWACq/uMXb649
-         fu4uOd0GB0exylnFoJP4t5DaS/s9Wq0kDQf4x/02ypQqPQWSxtSI8j9PsgXtYHlFrV
-         a13X20p+d8FPOlvU6r2VRQRE0PDhQOEpV7T94QoLQ9BnHv5ff3BRRPt2UTtTGAXzMJ
-         uh8340d6iP3wae+G54ovCBBWfehvhWQg3ZR+wU8Ww3Nz+vSMu3xV1TjcBMSghpXMfD
-         r9hAhyUof8x5fMba6JpEsv5SXAknVOZ3x97RE5uYMm5nArFxoUoCj3EikG//0m/To6
-         RLMm4dd+w9ayQ==
-Received: by mail-ed1-f69.google.com with SMTP id dy17-20020a05640231f100b00412897682b4so10326861edb.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 07:00:02 -0800 (PST)
+        b=vc3RucsustSnI9z6fj1AZ3faXkw/uB81BLhjsfHz9uRvUq0axAi6FjprYifCaTms2
+         G/jZ5OzN3Fsjqjp3rsoU3oDbFNiRJX2kApHmhH+rnhTqdDTx5nOGGuQIQ6z5ypInDT
+         XQZhR0GMrPt225HGhVjquKJrxdjFIkraKhNTHqmrvpXeZ8puofX0OhzAWd4CK4s/vq
+         9GzlJ8XZX/v1ep8CVwanxcr1kJpqdvVbDSGMOKMMO8rOrzUgh3NRPONnqXvUrres2E
+         cQUpSxkQE6or1M4U3Lv7nrjl8vQ/IdP5JnUWZeNc5MxtirhxkAKnBLLSweT95TmM/D
+         k/vJQLd/Zafog==
+Received: by mail-ed1-f69.google.com with SMTP id j10-20020a05640211ca00b004090fd8a936so12090987edw.23
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Feb 2022 07:00:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AXkZYdVX5Zodn+3WZgtIGj/ZSa6Qs/Xzl3ZJQ9geNsQ=;
-        b=aBDtQs0TCeb1MUp4LfsjWwOpQ48vt6TBzC3GUmkoVIDZamFY7FSIbDcfWCA4SAMNS8
-         7dUBwpzFlIdL70J52ohfb1XlPlu6ojJIXNQVlEzGNUYJ3iU+U5EBks9HmyxonaJxOJcc
-         ryV6HByn9Jwvbn1NjqMHInVw+GWGEZm/eBL4O4CadMlhb+vPsogGmD2513mv/tpOpxm6
-         5mlwgHgstq/NN35B6jEnq+BkcGspOwA5GtKapJISwUZyvccxwne/ZaBX8Gd5WB5kqErW
-         wNjKs8pGCCJqwQdkAOeSjO3FPIEdCMl4+t0gQa5vL7SlLkyDK9MFPUBM+CBG65E4eulF
-         GfoQ==
-X-Gm-Message-State: AOAM533qyuoMMXrxsmLaTOfYqjuDJIbVKYzTJGIqXHDgn1qiVmgnWeNI
-        etBpt4Ik4adTV8aI/SLvwMfE1tVPnB5mnaEB9WcYS8xTAxd/qe3M2U/5ZxObh2YVNNgaQVffgIl
-        YEVp9TpKGHBmEN0If5MAbk8GjptRPdmSNM/Q71KS8p6dL3su8
-X-Received: by 2002:aa7:c703:0:b0:410:b96a:6bf with SMTP id i3-20020aa7c703000000b00410b96a06bfmr26705732edq.439.1645541997724;
-        Tue, 22 Feb 2022 06:59:57 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwfSFtNX/a3KL4lHPEAhSPb3vHh30FiudcrzDoMBrPmGyj5vo81xOj/2DV7Q8M391vFSdj/vQ==
-X-Received: by 2002:aa7:c703:0:b0:410:b96a:6bf with SMTP id i3-20020aa7c703000000b00410b96a06bfmr26705712edq.439.1645541997526;
-        Tue, 22 Feb 2022 06:59:57 -0800 (PST)
+        bh=LfKEooVWXSt0X9amI75MXA0ImuzcwyjqGr8txR6hCCo=;
+        b=VVntYhlJqVfwLTjVQvJpUNiHKkpMZbRv2g+P4UJlqLYZDNEmNO497SfOZlpJIdsAgM
+         p9XM29D9W5bDFP/LsXxJ3oUgJ5xgRr0u4oU2mBi+8IpWlSwKul/+HIhoLbLsM0aVZJLh
+         P0E+ur33BiaaUSbmWQ0AkYtHKqrfisUXo5+LnHt+N4iMkBS7Qx/MM8Zvc8W5bOqCiMin
+         KDLr/lsPv2WxO5gOSNgHBdDj50nD9erLhDxZHELM2S3Zo2PONk1eWEw9LZvvkl8++0oj
+         sHzrLmwkEXAFOecHx2FnEYWTWz/fIp+Jk5uJDx1puINPJ9VixCT5SG1Yp4IWHqtNvrtG
+         nNXA==
+X-Gm-Message-State: AOAM533dGtPYn8POPEbosyYGNTB1YAsQtUjCi+mi8vk4Pdm/tV1XoQIu
+        8Z4uxaNx0/PhehaA+wBS7l0UKrEQtTMdTC+s6btecssNk62DlSGyc+zYfWZA2+wNXL80I0o2b2n
+        y1weFMkzGmcE2Ja7TIEKiFHg0k9KYVHlGQysGVF090YvelzDf
+X-Received: by 2002:a17:906:70c2:b0:6cf:e1cc:4d8c with SMTP id g2-20020a17090670c200b006cfe1cc4d8cmr20090142ejk.696.1645542004844;
+        Tue, 22 Feb 2022 07:00:04 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyR3qbd+Iftv6XGp15bvvgUICPOPWMYZg+AzIuOxdejdmzbh/iz1wm8C/0MI15ezn8MGt0S6w==
+X-Received: by 2002:a17:906:70c2:b0:6cf:e1cc:4d8c with SMTP id g2-20020a17090670c200b006cfe1cc4d8cmr20090120ejk.696.1645542004625;
+        Tue, 22 Feb 2022 07:00:04 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id m2sm2467960ejb.20.2022.02.22.06.59.55
+        by smtp.gmail.com with ESMTPSA id m2sm2467960ejb.20.2022.02.22.07.00.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Feb 2022 06:59:56 -0800 (PST)
+        Tue, 22 Feb 2022 07:00:04 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         Avri Altman <avri.altman@wdc.com>,
@@ -78,9 +78,9 @@ To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 11/15] arm64: dts: ti: use 'freq-table' in UFS node
-Date:   Tue, 22 Feb 2022 15:58:50 +0100
-Message-Id: <20220222145854.358646-12-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 15/15] arm64: dts: qcom: sm8350: drop duplicated ref_clk in UFS
+Date:   Tue, 22 Feb 2022 15:58:54 +0100
+Message-Id: <20220222145854.358646-16-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220222145854.358646-1-krzysztof.kozlowski@canonical.com>
 References: <20220222145854.358646-1-krzysztof.kozlowski@canonical.com>
@@ -90,29 +90,42 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The 'freq-table-hz' property is deprecated by UFS bindings.
-The uint32-array requires also element to be passed within one <> block.
+ref_clk clock in UFS node is already there with a <0 0> frequency, which
+matches other DTSI files.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721e-main.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sm8350.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-index 599861259a30..34aff40c6b8e 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
-@@ -1257,7 +1257,9 @@ ufs@4e84000 {
- 			compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
- 			reg = <0x0 0x4e84000 0x0 0x10000>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--			freq-table-hz = <250000000 250000000>, <19200000 19200000>, <19200000 19200000>;
-+			freq-table = <250000000 250000000>,
-+				     <19200000 19200000>,
-+				     <19200000 19200000>;
- 			clocks = <&k3_clks 277 0>, <&k3_clks 277 1>, <&k3_clks 277 1>;
- 			clock-names = "core_clk", "phy_clk", "ref_clk";
- 			dma-coherent;
+diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+index a26bd3f13d4a..cb6442c9e761 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+@@ -1916,7 +1916,6 @@ ufs_mem_hc: ufshc@1d84000 {
+ 			iommus = <&apps_smmu 0xe0 0x0>;
+ 
+ 			clock-names =
+-				"ref_clk",
+ 				"core_clk",
+ 				"bus_aggr_clk",
+ 				"iface_clk",
+@@ -1926,7 +1925,6 @@ ufs_mem_hc: ufshc@1d84000 {
+ 				"rx_lane0_sync_clk",
+ 				"rx_lane1_sync_clk";
+ 			clocks =
+-				<&rpmhcc RPMH_CXO_CLK>,
+ 				<&gcc GCC_UFS_PHY_AXI_CLK>,
+ 				<&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+ 				<&gcc GCC_UFS_PHY_AHB_CLK>,
+@@ -1936,7 +1934,6 @@ ufs_mem_hc: ufshc@1d84000 {
+ 				<&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
+ 				<&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
+ 			freq-table =
+-				<75000000 300000000>,
+ 				<75000000 300000000>,
+ 				<0 0>,
+ 				<0 0>,
 -- 
 2.32.0
 
