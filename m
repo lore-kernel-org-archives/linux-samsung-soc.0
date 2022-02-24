@@ -2,92 +2,145 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED238C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Feb 2022 11:32:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51152C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Feb 2022 16:51:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232731AbiBXLc6 (ORCPT
+        id S229455AbiBXQvn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Feb 2022 06:32:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
+        Thu, 24 Feb 2022 11:51:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232659AbiBXLcu (ORCPT
+        with ESMTP id S230409AbiBXQvk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Feb 2022 06:32:50 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B1B5108BD0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Feb 2022 03:32:18 -0800 (PST)
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5C4983F1B7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Feb 2022 11:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645702335;
-        bh=6QAB5G6wzlpUL0XVf4afDiAG1Yh+7YZL2RUHJwx8q4s=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=gW1DHr+KksU8Mh02pXAeZFrEOTpnGKu3OsBNKOfSVS0ZtcSgUta2aWmemfGEATo7c
-         ajo+iFey9DPB9UspDn7Dv3SdyPMnmw/Bg7zoIwLlX9tJZ7W0aVCXod3lIkwHakkeu6
-         41upqSab8etbUlOhnL9pw5FWdSJlX1gPvFNq+/jtZDogrd1AvQhfeWKOF0PyZPyhAG
-         CDyz/MDy7nX+GnwZw3FuMpDn9Noy297SIm+bsKLa8dltZDl8ORs/22Sqpwdn+ygxCE
-         9CSJ1hX0cdSM/sanygdEJoKgb2UQ3977OVwgAhqLHZdhsjLf1I3V86lLwrFpe0xaBR
-         ngokaEb3+WytA==
-Received: by mail-ej1-f70.google.com with SMTP id ga31-20020a1709070c1f00b006cec400422fso1064625ejc.22
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Feb 2022 03:32:15 -0800 (PST)
+        Thu, 24 Feb 2022 11:51:40 -0500
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91F0C113AD4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Feb 2022 08:51:10 -0800 (PST)
+Received: by mail-oi1-x236.google.com with SMTP id j2so3387426oie.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Feb 2022 08:51:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=N8RCTotc4cmUTmsRA5J7naJcJh1Q7sGDDwovYyQT86k=;
+        b=fg9hkYcI5u3dbEw84om3H3LjBjjbFYuyGuZzo+47DtuUpbVS1U4m45qC/FWjkCJ0Fq
+         Eve4HcWP9XH/q1aMs4G4ocbr+xm+z0OIssB4urMuHCRuI/h6X87iF+ZPNhLWVkMUAt0+
+         MTrapkTrtRJFqglGwZ0sh0i1pHqLXoEFoC9Fcl+8BV0ksyQ4oiITyBSys7yZZhX4vEnF
+         C27Xn8uPVBu11qhWxaVSvdAR46bqzbW+nttpUdMm5PDNRVqQKBQFEYPhyBtPGYCFsVZo
+         XmjrNqjO8pHZW7S7UelvdUQw+nGMK8Y3c7Q5UP6CqicM2vNVAoClaawvVilgXSWCOjPg
+         4YOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6QAB5G6wzlpUL0XVf4afDiAG1Yh+7YZL2RUHJwx8q4s=;
-        b=N2ZO1uExS0aHAiUj61/FMj0QrQYrTRA78m4G1TxWgNu0zkhreWmLXaouzTLgWboafh
-         0mz3ityzYjPk8gvAkdDLcuoAFgoQEq9mcwk+y9+hl83a9kd3o/tGD7EXYDAGELA9i33G
-         UYs1je1UW7N/ukQcJXQnFf9BgbLTkra+19YXlku9tbYlgUjLjvf0DG2hc2zuS8xJAOia
-         x+amK3p24c2ig0lOjiFoDeQzWtxTP/tlyR78xQZn9eDu3TBn35Y4viT2YA9v48/Pg7wE
-         Lxf1K5eZKsr5+ArYFe2eTu1wy410vC3lRYyrJi+mkwKKGIenBfRbHusX1WVmeLPR/Tat
-         G5PA==
-X-Gm-Message-State: AOAM531esYnLYzvVd0Cw6/qFPwutC/Z85NaDjLtbZZzl3I30Wg2BvH99
-        BWxVdNW2MzjGfna/vhBRYPjSdSXz+hFvuojN7p7dFDGFOIsIuHw++0PsEgKMzPgCwIjNBJz+3S2
-        derAUevbCn9l8k/IgVwrrD8hp47VsxeeF5g/nIs3TQEP4oFX3
-X-Received: by 2002:a17:907:12d5:b0:6cf:bb0d:9b2f with SMTP id vp21-20020a17090712d500b006cfbb0d9b2fmr1956418ejb.138.1645702335155;
-        Thu, 24 Feb 2022 03:32:15 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwzCHcLPyCC1s3Ik7qr4TIxyXVnkkXqNSDejNUcwQH9N3LVSxYrf8XbZW/XmE73MCY/Ws4QGA==
-X-Received: by 2002:a17:907:12d5:b0:6cf:bb0d:9b2f with SMTP id vp21-20020a17090712d500b006cfbb0d9b2fmr1956410ejb.138.1645702334964;
-        Thu, 24 Feb 2022 03:32:14 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id v30sm1216688ejv.76.2022.02.24.03.32.13
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N8RCTotc4cmUTmsRA5J7naJcJh1Q7sGDDwovYyQT86k=;
+        b=vw3oVN7vRFs3HUODMDPUsQKZORyvTF0XWvOsPrWMw4b06rO9Pa9O5fDt09BuEVN4R7
+         mbQ57IcZuFEKD5RsaJ1b6XoQjQvgQBcQZfcj1z7t08ZbNVZN5w1kZe4viFUxb+6Af98A
+         uAhjwDTs2DW5BntiXkKRigEab6ClDrDV6XWCzGkvEswGjh2t0n/QTt75qURkiCk/KDrj
+         VQyN1XHnm/PvpaegPEqWe3j+QcO3bS0nFGzKE+ly11TqFuUKuIfJg0rxRmtVMif7fzpF
+         v+/1t51LXjO1ZDKFJrNvBeUqypCtoKByXb3NBJMouAotDgFkg6f3tF4dWliI9nF2cfjd
+         lnZQ==
+X-Gm-Message-State: AOAM530mL3A41V/V+LPrg0GPWhPXKZvAb4EyAf1PpgFbBNUmTgHRFdf7
+        PqFi379cY52dwhNDuOax1VJDWQ==
+X-Google-Smtp-Source: ABdhPJyH21pu5ycMxU9OVqYiNC++pfYrdMu5u7iIlq5TKIHOHUPz7vUGqYR/Y3LCAml5DLdoA8oD4g==
+X-Received: by 2002:a05:6808:1801:b0:2d7:206e:36fd with SMTP id bh1-20020a056808180100b002d7206e36fdmr3705715oib.3.1645721469908;
+        Thu, 24 Feb 2022 08:51:09 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id lc4-20020a056871418400b000c8a240183csm33827oab.25.2022.02.24.08.51.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 03:32:14 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        devicetree@vger.kernel.org, pankaj.dubey@samsung.com,
-        linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH] arm64: dts: fsd: Add the MCT support
-Date:   Thu, 24 Feb 2022 12:31:38 +0100
-Message-Id: <164570223367.241583.16227180262128695261.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220223171858.11384-1-alim.akhtar@samsung.com>
-References: <CGME20220223170727epcas5p20066f8455fa0ca98323ac286dabc90ec@epcas5p2.samsung.com> <20220223171858.11384-1-alim.akhtar@samsung.com>
+        Thu, 24 Feb 2022 08:51:09 -0800 (PST)
+Date:   Thu, 24 Feb 2022 10:51:07 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
+        Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jan Kotas <jank@cadence.com>, Li Wei <liwei213@huawei.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Yaniv Gardi <ygardi@codeaurora.org>,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 09/15] scsi: ufs: deprecate 'freq-table-hz' property
+Message-ID: <Yhe3e1coeUIGu+NB@builder.lan>
+References: <20220222145854.358646-1-krzysztof.kozlowski@canonical.com>
+ <20220222145854.358646-10-krzysztof.kozlowski@canonical.com>
+ <YhUodbzxx4wbr+gy@ripper>
+ <455a8a87-63e7-7864-f765-142be18d1fa8@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <455a8a87-63e7-7864-f765-142be18d1fa8@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 23 Feb 2022 22:48:58 +0530, Alim Akhtar wrote:
-> Add node relevant to support MCT, which is used as
-> one of the system timer on this SoC.
+On Wed 23 Feb 03:15 CST 2022, Krzysztof Kozlowski wrote:
+
+> On 22/02/2022 19:16, Bjorn Andersson wrote:
+> > On Tue 22 Feb 06:58 PST 2022, Krzysztof Kozlowski wrote:
+> > 
+> >> The 'freq-table-hz' is not correct in DT schema, because '-hz' suffix
+> >> defines uint32 type, not an array.  Therefore deprecate 'freq-table-hz'
+> >> and use 'freq-table' instead.
+> >>
+> > 
+> > Patch looks good in itself, but why don't we use opp-table to describe
+> > the performance states?
+> > 
+> > In particular looking at the two columns of frequencies for various
+> > Qualcomm boards they require different performance-states.
+> > 
+> > A concrete example is sm8350.dtsi, which specifies 75MHz and 300MHz as
+> > the first frequency pair. The lower level requires the VDD_CX power rail
+> > to be at least &rpmhpd_opp_low_svs, the higher frequency has a
+> > required-opps of &rpmhpd_opp_nom.
+> > 
+> > 
+> > As this isn't possible to express in the current binding we've just been
+> > forced to always run at a higher voltage level and kept this in the todo
+> > list.
+> > 
+> > But rather than migrating freq-table-hz to freq-table and then having to
+> > introduce an opp table to express the power constraints, could we
+> > perhaps skip the intermediate step?
+> > 
+> > Or would you have any other suggestion about how we can represent the
+> > required-opps level together with the freq-table (if that's what we want
+> > to stick with).
 > 
+> Usage of OPP tables is interesting solution. It would solve your problem
+> of power rail levels. This would need several opp-tables - one for each
+> clock, which is not a big problem.
 > 
 
-Applied, thanks!
+Ahh, so we can only have a single clock, but multiple regulators and
+interconnect paths tied to the opp table.
 
-[1/1] arm64: dts: fsd: Add the MCT support
-      commit: 272a253338f91a192defc124930030369b2a7fd4
+We have a couple of cases where it would have been nice to be able to
+key the opp-table off some index (e.g. the UFS gear or PCI Gen) and
+control multiple clocks. So I think we need to look into this further...
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> The problem is that I do not have any UFS hardware (none of my Samsung
+> Exynos boards have UFS... I don't have even arm64 Exynos chips :( ), so
+> implementing it theoretically will be painful.
+> OTOH, I believe that having a working dtschema is very useful. Having
+> dtschema without errors/warnings is even worth some churn/intermediary work.
+> 
+> The intermediary work is also not that big. Once proper OPP is
+> implemented, we will have "just" two deprecated properties in the bindings.
+> 
+
+Fair enough, was just hoping to avoid the middle step. But that's fine,
+we'll continue to carry this on our todo list then.
+
+Thanks,
+Bjorn
