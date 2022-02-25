@@ -2,122 +2,220 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A35C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Feb 2022 15:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320A5C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Feb 2022 19:26:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242195AbiBYPiJ (ORCPT
+        id S234631AbiBYT0y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 25 Feb 2022 10:38:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54174 "EHLO
+        Fri, 25 Feb 2022 14:26:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242187AbiBYPiG (ORCPT
+        with ESMTP id S234593AbiBYT0y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Feb 2022 10:38:06 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFECE70072
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Feb 2022 07:37:33 -0800 (PST)
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 60A153FCAD
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Feb 2022 15:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645803452;
-        bh=UZI/W2JahxU89dnjOf2ONuJlruSbsJiXCZ4vcoyOmqk=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=dN5CT18DP/v9X/4ROhLeOSq3o9D0hm+Y0n+MCoQJKjnmkpoTv5PqZh1atKlm3l0SR
-         z+I06B7PUiXW4OT/inib0ywgCFPILQqoDXIJBhx9HSnUbd86CHdaz/ny1WBPX2MbVI
-         nC9MLyWiNqjiizA74Wtbt6izNBk8Cko9kpRSlaV24CL6RioG6sTIEhcrerFO0EcSoJ
-         yajLpkhBezGeuY1BzZQ/poxVn9KwmvlPDpc1jSi1bGFzJLN02r/ESJySAGufy1kSxn
-         LP9fyOsRavKX73k8q5PJAuPGUfTgibrm5WstSU78AojGxUYmAxMJzl5nqirbRkwH0P
-         qMiUWDerUy0Hg==
-Received: by mail-wr1-f71.google.com with SMTP id w2-20020adfbac2000000b001ea99ca4c50so1026063wrg.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Feb 2022 07:37:32 -0800 (PST)
+        Fri, 25 Feb 2022 14:26:54 -0500
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D61C1EF36A;
+        Fri, 25 Feb 2022 11:26:21 -0800 (PST)
+Received: by mail-oo1-f50.google.com with SMTP id w10-20020a4ae08a000000b0031bdf7a6d76so7545226oos.10;
+        Fri, 25 Feb 2022 11:26:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UZI/W2JahxU89dnjOf2ONuJlruSbsJiXCZ4vcoyOmqk=;
-        b=tqOHH1eEjzEdw4doo0Zh0kyO3FrX3xD0rM8vAq4D/5gRMYS//VtZFhgbaA7SChC6w/
-         rjsygJP0ESm1F2iJrW2X2AjVmsIBuRSEOSB5IVAxEbzxscpmTcXylmr0eLwbAq3uFk9S
-         LanOhXuaM7eQhfx/2uyp01qt3VmHobiM+Rri/OBu+/3cIAJMkSE+9MZYUjnUj2fcE0VH
-         Kpma71lgpxavnRZsF1B8etwM+VEuKfddt0S32i1WdSMGbpmka4XzFKVwW3CUtAiFJhwV
-         u6iySJv9AHfaVl6MYj1Yfl1Pyj5K7NDKE8z/ueWX26e9cgu2bzNKbGuursFLo/TIuVCl
-         uUHA==
-X-Gm-Message-State: AOAM530G2isFZU5UAMBsKsZOV6LiXNMdfR18EU9CwuwGxJ0bnWLnZ8+i
-        D0skJTbdP65Rdbji63Q0U49ToUr+oW6laMU2/5Td1gJtO3yAJS+mNt2cWnOKesIBVOqyfuT7aZz
-        /QpE2+5gj7q3r5e8DiDpy0XtROMlXgmuqCPZ6bETlwtXun+Mx
-X-Received: by 2002:a05:600c:4fd0:b0:37b:ddf7:aeb9 with SMTP id o16-20020a05600c4fd000b0037bddf7aeb9mr3296666wmq.190.1645803451237;
-        Fri, 25 Feb 2022 07:37:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzIFKEf+6La7szHsSP99MDMXNfHBPihThkLUvVYK9XyumQ4jUFIYy/zF/Tl0PvKABo2wryFaA==
-X-Received: by 2002:a05:600c:4fd0:b0:37b:ddf7:aeb9 with SMTP id o16-20020a05600c4fd000b0037bddf7aeb9mr3296649wmq.190.1645803451088;
-        Fri, 25 Feb 2022 07:37:31 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id p15-20020adfce0f000000b001edc0bcf875sm2647168wrn.102.2022.02.25.07.37.29
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8/RhmmvOE3ZBDv39xXLcWsX9wxG1z+5j6Nqh+tUlI0Q=;
+        b=ssD0SgsREbYVn5l3Iijp/6MHcAToGAlsbJ4Jy/yGogrufZuqTLRoqkuRJpxtur4oKl
+         Qgbi4Z7Y88sHNpJLTkepjUt3XGuvodHrF+MhqiXc7jy4p8pTt8hRUPyTXmH0PWk+RFhr
+         TFfPk4fuBAjDKoLtNXB08JgTAU2chmTGKeXs7+O220LoaVZ2LjODgjBFMFtJf6a+vkfj
+         29GBwtXOpgeO/2C+wx9567gMVc9sYmDX3AZwYDIyauHsoAJFnQfDV123OI3gT21sTC/z
+         eZ1iBAoZ212zCVfnEXnPFDgRXpRUeIumLy6kDS+U4tZFcWoub1CPmb5kdp3VuVTeG+QH
+         y3Xw==
+X-Gm-Message-State: AOAM531jwe2rUZRVGKu9Pdf9xbmrnyqjcRKgY0KKAeIwNrPciMSNYsDj
+        SHf/RpejmwD8SNEXmKkcFQ==
+X-Google-Smtp-Source: ABdhPJzWJ5ARcz3klRmenrwFTt1pjcga9WbD7rJl5U41JbD2tVK2JK2Wkw4Lcb5MV4ZtE1fRD8p44Q==
+X-Received: by 2002:a05:6870:d917:b0:ce:c0c9:650 with SMTP id gq23-20020a056870d91700b000cec0c90650mr2073603oab.162.1645817180555;
+        Fri, 25 Feb 2022 11:26:20 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id x7-20020a4a8687000000b003191a2edc67sm1586401ooh.7.2022.02.25.11.26.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 07:37:30 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Fri, 25 Feb 2022 11:26:19 -0800 (PST)
+Received: (nullmailer pid 1288039 invoked by uid 1000);
+        Fri, 25 Feb 2022 19:26:18 -0000
+Date:   Fri, 25 Feb 2022 13:26:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wei Xu <xuwei5@hisilicon.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jan Kotas <jank@cadence.com>, Li Wei <liwei213@huawei.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Yaniv Gardi <ygardi@codeaurora.org>,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: exynos: add a specific compatible to MCT
-Date:   Fri, 25 Feb 2022 16:36:50 +0100
-Message-Id: <20220225153650.289923-3-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220225153650.289923-1-krzysztof.kozlowski@canonical.com>
-References: <20220225153650.289923-1-krzysztof.kozlowski@canonical.com>
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 01/15] dt-bindings: ufs: add common platform bindings
+Message-ID: <YhktWpoJekR2Lj0D@robh.at.kernel.org>
+References: <20220222145854.358646-1-krzysztof.kozlowski@canonical.com>
+ <20220222145854.358646-2-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220222145854.358646-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-One compatible is used for the Multi-Core Timer on most of the Samsung
-Exynos SoCs, which is correct but not specific enough.  These MCT blocks
-have different number of interrupts, so add a second specific
-compatible to Exynos5433 and Exynos850.
+On Tue, Feb 22, 2022 at 03:58:40PM +0100, Krzysztof Kozlowski wrote:
+> Add bindings for common parts (platform) of Universal Flash Storage
+> (UFS) Host Controllers in dtschema format.
+> 
+> The 'freq-table-hz' is not correct in dtschema, because '-hz' suffix
+> defines uint32 type, not an array.  Therefore deprecate 'freq-table-hz'
+> and use 'freq-table' instead.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 3 ++-
- arch/arm64/boot/dts/exynos/exynos850.dtsi  | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+-hz is an array type. We can extend it to matrix if needed.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index 661567d2dd7a..017ccc2f4650 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -806,7 +806,8 @@ tmu_isp: tmu@1007c000 {
- 		};
- 
- 		timer@101c0000 {
--			compatible = "samsung,exynos4210-mct";
-+			compatible = "samsung,exynos5433-mct",
-+				     "samsung,exynos4210-mct";
- 			reg = <0x101c0000 0x800>;
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
- 				<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index d1700e96fee2..12f7ddc6fd0a 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -181,7 +181,8 @@ chipid@10000000 {
- 		};
- 
- 		timer@10040000 {
--			compatible = "samsung,exynos4210-mct";
-+			compatible = "samsung,exynos850-mct",
-+				     "samsung,exynos4210-mct";
- 			reg = <0x10040000 0x800>;
- 			interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
--- 
-2.32.0
+I do think this property is a bit questionable. Do we really need a 
+minimum in DT and if not, wouldn't assigned-clocks-rate work? Or an OPP 
+table.
 
+> Include also the bindings directory in UFS maintainers entry.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  .../devicetree/bindings/ufs/ti,j721e-ufs.yaml |  2 +-
+>  .../devicetree/bindings/ufs/ufs-common.yaml   | 88 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  3 files changed, 90 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-common.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+> index 4d13e6bc1c50..dc93fe2d3458 100644
+> --- a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+> +++ b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+> @@ -80,7 +80,7 @@ examples:
+>                  compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
+>                  reg = <0x0 0x4000 0x0 0x10000>;
+>                  interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> -                freq-table-hz = <19200000 19200000>;
+> +                freq-table = <19200000 19200000>;
+>                  power-domains = <&k3_pds 277>;
+>                  clocks = <&k3_clks 277 1>;
+>                  assigned-clocks = <&k3_clks 277 1>;
+> diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+> new file mode 100644
+> index 000000000000..85c73d2853e9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ufs/ufs-common.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common properties for Universal Flash Storage (UFS) Host Controllers
+> +
+> +maintainers:
+> +  - Alim Akhtar <alim.akhtar@samsung.com>
+> +  - Avri Altman <avri.altman@wdc.com>
+> +
+> +properties:
+> +  clocks: true
+> +
+> +  clock-names: true
+> +
+> +  freq-table-hz:
+> +    deprecated: true
+> +    description:
+> +      Use freq-table.
+> +
+> +  freq-table:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    items:
+> +      items:
+> +        - description: Minimum frequency for given clock
+> +        - description: Maximum frequency for given clock
+> +    description: |
+> +      Array of <min max> operating frequencies in Hz stored in the same order
+> +      as the clocks property. If this property is not defined or a value in the
+> +      array is "0" then it is assumed that the frequency is set by the parent
+> +      clock or a fixed rate clock source.
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  lanes-per-direction:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2]
+> +    default: 2
+> +    description:
+> +      Number of lanes available per direction.  Note that it is assume same
+> +      number of lanes is used both directions at once.
+> +
+> +  vdd-hba-supply:
+> +    description:
+> +      Phandle to UFS host controller supply regulator node.
+> +
+> +  vcc-supply:
+> +    description:
+> +      Phandle to VCC supply regulator node.
+> +
+> +  vccq-supply:
+> +    description:
+> +      Phandle to VCCQ supply regulator node.
+> +
+> +  vccq2-supply:
+> +    description:
+> +      Phandle to VCCQ2 supply regulator node.
+> +
+> +  vcc-supply-1p8:
+> +    type: boolean
+> +    description:
+> +      For embedded UFS devices, valid VCC range is 1.7-1.95V or 2.7-3.6V. This
+> +      boolean property when set, specifies to use low voltage range of
+> +      1.7-1.95V. Note for external UFS cards this property is invalid and valid
+> +      VCC range is always 2.7-3.6V.
+> +
+> +  vcc-max-microamp:
+> +    description:
+> +      Specifies max. load that can be drawn from VCC supply.
+> +
+> +  vccq-max-microamp:
+> +    description:
+> +      Specifies max. load that can be drawn from VCCQ supply.
+> +
+> +  vccq2-max-microamp:
+> +    description:
+> +      Specifies max. load that can be drawn from VCCQ2 supply.
+> +
+> +dependencies:
+> +  freq-table: [ 'clocks' ]
+> +
+> +required:
+> +  - interrupts
+> +
+> +additionalProperties: true
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aa0f6cbb634e..c2cff57d32f8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20015,6 +20015,7 @@ R:	Alim Akhtar <alim.akhtar@samsung.com>
+>  R:	Avri Altman <avri.altman@wdc.com>
+>  L:	linux-scsi@vger.kernel.org
+>  S:	Supported
+> +F:	Documentation/devicetree/bindings/ufs/
+>  F:	Documentation/scsi/ufs.rst
+>  F:	drivers/scsi/ufs/
+>  
+> -- 
+> 2.32.0
+> 
+> 
