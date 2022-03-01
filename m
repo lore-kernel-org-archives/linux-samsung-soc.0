@@ -2,65 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4561C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Mar 2022 07:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64952C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Mar 2022 20:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233059AbiCAHl2 (ORCPT
+        id S237516AbiCAUOV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Mar 2022 02:41:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60720 "EHLO
+        Tue, 1 Mar 2022 15:14:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233060AbiCAHl0 (ORCPT
+        with ESMTP id S232861AbiCAUOU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Mar 2022 02:41:26 -0500
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 544387C7A8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Feb 2022 23:40:41 -0800 (PST)
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220301074035epoutp03de86cb07653c43d8b82e920d70d59529~YMdCiBxRs0563505635epoutp03j
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Mar 2022 07:40:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220301074035epoutp03de86cb07653c43d8b82e920d70d59529~YMdCiBxRs0563505635epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1646120435;
-        bh=s6hP65nYa7TlVceThfCQxX+SbM7LXQfHiNW5LQqKHGk=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=kfCO/akMdMmBveI3irJ11vatbN2rCetfxxvVOQ7ZBNx16ROPbqApnWrEm5AMcVSNk
-         ko915LErmhGuqu9xNdLSmgz9kfQ5TnsYai+uPnMHHHZwVCU/5bEVklZqBeU67Mm7kr
-         O6QsO+MiBg4/6QHvUM5wZxScRIFyj2UnwZzrNtHQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20220301074034epcas1p4ba8b93d614bf7de02eb51338d6fb60e9~YMdBYpJHw2477924779epcas1p4F;
-        Tue,  1 Mar 2022 07:40:34 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.232]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4K78L61S9Fz4x9Pv; Tue,  1 Mar
-        2022 07:40:30 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C0.A9.09592.DEDCD126; Tue,  1 Mar 2022 16:40:30 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220301074029epcas1p2f38b9efd5825ae57b8e9ed802954ad04~YMc8JrWAb1403814038epcas1p2T;
-        Tue,  1 Mar 2022 07:40:29 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220301074029epsmtrp11fd6c8835375f5c5bdad551daeb638a2~YMc8IzbXp1486414864epsmtrp19;
-        Tue,  1 Mar 2022 07:40:29 +0000 (GMT)
-X-AuditID: b6c32a37-28fff70000002578-d9-621dcded0677
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7C.54.29871.CEDCD126; Tue,  1 Mar 2022 16:40:28 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220301074028epsmtip28189d62a8a58bd024bef8ce88ec29a0f~YMc7ripAr1545115451epsmtip2O;
-        Tue,  1 Mar 2022 07:40:28 +0000 (GMT)
-Message-ID: <45867b37-1fb0-2f09-5961-6f099a1ed611@samsung.com>
-Date:   Tue, 1 Mar 2022 16:52:20 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.5.0
-Subject: Re: [PATCH] drm/exynos: fimd: add BGR support for exynos4/5
-Content-Language: en-US
-To:     =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>
+        Tue, 1 Mar 2022 15:14:20 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EFF431349;
+        Tue,  1 Mar 2022 12:13:35 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id r187-20020a1c2bc4000000b003810e6b192aso2093561wmr.1;
+        Tue, 01 Mar 2022 12:13:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=cNkSABONt1iilJgkq2YMVmO0Set3/v2FPmsLCi8Uqs4=;
+        b=qiQAcVWEGHMTEbYpNdDeCnzKri1SumVGIwsTbmLRl+4F1NoaYSlLt1lMk8uLPMf8vf
+         EWXqbZxsLcJicelqJcif5ezMG54km1qCSm5Tw/NmpUtZyYLrdsyys39XfxZ530OEwnON
+         +VzVV2KdTRFlZBObGfvWyJk4w3m27Amx+dhX9SDrYwWr7PL9ENugZ1ew10hSxugB2YGH
+         B+PToZWHN8O5wdHei+18mPyDtJ1ahxKNW+WZxBlooj0NpeLTPOE3VmfgEOOtu5m4n/kQ
+         95POXWtjgAE13h0NpsiUEwp2Ge4R7XC9abbIxkTOHO30a+cmmHz6xkc3bgXX+YlMNDb4
+         sytg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=cNkSABONt1iilJgkq2YMVmO0Set3/v2FPmsLCi8Uqs4=;
+        b=508jJMa1Nke8XQTVpeC3po+gJuPyjLT1tWpJd+inpZX+LJ4vrnxZHVuPuUSa71L7T0
+         7xaqX0fF9dwZXCNfsDnNefeguMovQpbAu/7qqgH1PnayKeaWvmlJQCVwEcL2CGyiY3A1
+         LXEKHjcqFPqQrof/OAV7IhRw6dY9RdA6AbsZrkDXXsbSjLGyzyF3OaJV6GSkDS+iMoT9
+         Eea/5hKnL+SUeAkcWtv624CzB2DVLG/cUV0CJagQRWnSmMoEyAiOAhgxtKmAM4t5A4D2
+         EylkaUjKAOsUS8VqbVA2WKbMcdeyChdLzcLls2juFSvtEbWxnLDm5+N3RwREFaZ1YYVr
+         CCgQ==
+X-Gm-Message-State: AOAM5313MVkAj9/FivxxVXDyvEeG0J1eshA713Kx0L2jfWN569hYUnXo
+        Jnl4rb4RRbcD7FoCfXlUQnY=
+X-Google-Smtp-Source: ABdhPJzj4CEi9+klR+Zl+Z4BwpFJwMS67HUqMOKpBUhrAmFq7liQlA7Bpra6Dk99ZRQ8yq4l+tVq3w==
+X-Received: by 2002:a05:600c:1f14:b0:381:812d:7214 with SMTP id bd20-20020a05600c1f1400b00381812d7214mr5539531wmb.190.1646165613668;
+        Tue, 01 Mar 2022 12:13:33 -0800 (PST)
+Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
+        by smtp.gmail.com with ESMTPSA id l13-20020a05600002ad00b001ea78a5df11sm17133591wry.1.2022.03.01.12.13.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Mar 2022 12:13:33 -0800 (PST)
+Date:   Tue, 1 Mar 2022 21:13:30 +0100
+From:   Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+To:     Inki Dae <inki.dae@samsung.com>
 Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
@@ -69,309 +61,301 @@ Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Inki Dae <inki.dae@samsung.com>
-In-Reply-To: <20220225093313.GA87542@adroid>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmge67s7JJBi3LGC16z51ksvi/bSKz
-        xZWv79ksXty7yGKx8e0PJouzTW/YLTY9vsZqcXnXHDaLGef3MVmc+TeVxWLG5JdsDtwesxp6
-        2Tz2flvA4rFz1l12j+3fHrB63O8+zuSxeUm9R9+WVYwenzfJBXBEZdtkpCampBYppOYl56dk
-        5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAB2qpFCWmFMKFApILC5W0rezKcov
-        LUlVyMgvLrFVSi1IySkwLdArTswtLs1L18tLLbEyNDAwMgUqTMjO6F+zna3gg1fF3UvHmRsY
-        22y7GDk5JARMJJat7GLuYuTiEBLYwSjxYOUPdgjnE6PE+Sc72SCcb4wSX+/fZ4FpeXZoMTOI
-        LSSwl1Hi1jQtiKL3jBI3Hu4EK+IVsJPY/PE2WBGLgIpE34YP7BBxQYmTM5+A1YgKREi8PPKX
-        CcQWFnCRmLPoMFicWUBc4taT+WBxEQFbifMH+lhBFjAL9DBL7Nq1mg0kwSagKjFxxX0wm1NA
-        R+L37MOsEM3yEs1bZ4M9JCFwhEPi67JbTBBnu0h8mXqPDcIWlnh1fAs7hC0l8bK/jR2iYTKj
-        xJ3rK1ggnBmMEod/XmeEqDKW2L90MtAkDqAVmhLrd+lDhBUldv6eywixmU/i3dceVpASCQFe
-        iY42IYgSJYljF29ATZGQuLBkItQNHhI/jp1jncCoOAspYGYhBcAsJP/MQli8gJFlFaNYakFx
-        bnpqsWGBMTy+k/NzNzGCk7GW+Q7GaW8/6B1iZOJgPMQowcGsJMJ78adMkhBvSmJlVWpRfnxR
-        aU5q8SFGU2D0TGSWEk3OB+aDvJJ4QxNLAxMzI2MTC0MzQyVx3lXTTicKCaQnlqRmp6YWpBbB
-        9DFxcEo1MInsPrmhOd9WdQk/Y9vcy0oT0vvCRf1y90dWZxQe26sio3/qetj8f6+3pW31nHTG
-        5RGbtMis9N4L/htv5sucm2fTlDfdhmeBbMonlmxhVk0h36WlDGL/gnLX97V4vXsaOsf26ywG
-        ve3fgqTez1hi83FW/G7p4z5/+BpMQh7/P7viyfayjLwtO7Z15gdIsDF0tGdUOnb/0Z1ewmpj
-        yPuwkTfY/uTZLWxZapMb+5NEkp2f/To43zh1e9rWk4Hyd7fP7W/t/7v1wPLZDD2nfuc/b9b4
-        LBaUu3/C8r/VDKnG3idCqhv+f+1y5ttbOc83haOAc01stMrs+W/rNkXpPD6p9++jQ4TPOZGZ
-        JhJFO8RilFiKMxINtZiLihMBX6KBC08EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWy7bCSvO6bs7JJBhNWm1v0njvJZPF/20Rm
-        iytf37NZvLh3kcVi49sfTBZnm96wW2x6fI3V4vKuOWwWM87vY7I4828qi8WMyS/ZHLg9ZjX0
-        snns/baAxWPnrLvsHtu/PWD1uN99nMlj85J6j74tqxg9Pm+SC+CI4rJJSc3JLEst0rdL4Mro
-        X7OdreCDV8XdS8eZGxjbbLsYOTkkBEwknh1azNzFyMUhJLCbUeLgkZlsXYwcQAkJiS1bOSBM
-        YYnDh4shSt4ySuy++IUdpJdXwE5i88fbzCA2i4CKRN+GD1BxQYmTM5+wgNiiAhESbcumgNUI
-        C7hIzFl0GCzOLCAucevJfCYQW0TAVuL8gT5WkAXMAn3MEqfmLGGB2LaOSeLtiXlgHWwCqhIT
-        V9xnA7E5BXQkfs8+zApyHbOAusT6eUIQQ+UlmrfOZp7AKDQLyR2zkOybhdAxC0nHAkaWVYyS
-        qQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwXGnpbmDcfuqD3qHGJk4GA8xSnAwK4nwXvwp
-        kyTEm5JYWZValB9fVJqTWnyIUZqDRUmc90LXyXghgfTEktTs1NSC1CKYLBMHp1QDE+P2/nJJ
-        czH+uxVmbp6cxjXOphP5tte3eczT05a889XwksJnr10Ob/iLD3Tp/DGKtfsjP2FT7J8NCs5M
-        LeujimMKA5nz2lTO9hUtj7dds8vqidtGp/0hCq82yTknCgSf1Nn4fuPVffdeRnd91p596pr4
-        26REYeaPEh1Jy1zmdRv6rWIIzNarme9+6/iPBis/ha038m9cPyvcs9PDbsGaVy5vTMW0+KVW
-        CRaxzxFvPD4z7RyvTNHKKZZOPIfOixsZzrv9ij0jf/UP1Zx7/RuDAt68r9qWP+lng/LDf1X+
-        d6JOh1cfeBAia9Nytt3x849tLrzbLJmdEzOkynkyJkRuORHPdVf7yRL+7GfaBeeVWIozEg21
-        mIuKEwF30Z4HKgMAAA==
-X-CMS-MailID: 20220301074029epcas1p2f38b9efd5825ae57b8e9ed802954ad04
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220129220203epcas1p25b1704191dd7babfb8d5b8dc6704d566
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+Subject: Re: [PATCH] drm/exynos: fimd: add BGR support for exynos4/5
+Message-ID: <20220301201330.GA12615@adroid>
 References: <CGME20220129220203epcas1p25b1704191dd7babfb8d5b8dc6704d566@epcas1p2.samsung.com>
-        <20220129220153.GA33165@adroid>
-        <5e18705f-79c1-18a7-57f2-74866abe21e9@samsung.com>
-        <20220224232723.GA133007@adroid>
-        <b9650211-2e98-5e1f-1dc9-9c5c3571f359@samsung.com>
-        <20220225093313.GA87542@adroid>
+ <20220129220153.GA33165@adroid>
+ <5e18705f-79c1-18a7-57f2-74866abe21e9@samsung.com>
+ <20220224232723.GA133007@adroid>
+ <b9650211-2e98-5e1f-1dc9-9c5c3571f359@samsung.com>
+ <20220225093313.GA87542@adroid>
+ <45867b37-1fb0-2f09-5961-6f099a1ed611@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <45867b37-1fb0-2f09-5961-6f099a1ed611@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Martin,
+Hi Inki,
 
-22. 2. 25. 18:33에 Martin Jücker 이(가) 쓴 글:
-> Hello Inki,
+On Tue, Mar 01, 2022 at 04:52:20PM +0900, Inki Dae wrote:
+> Hi Martin,
 > 
-> On Fri, Feb 25, 2022 at 12:52:56PM +0900, Inki Dae wrote:
->> Hi Martin,
->>
->> 22. 2. 25. 08:27에 Martin Jücker 이(가) 쓴 글:
->>> Hello Inki,
->>>
->>> On Thu, Feb 24, 2022 at 10:41:04AM +0900, Inki Dae wrote:
->>>> Hi Martin.
->>>>
->>>> I found that exynos4 and 5 data sheet include documented same register.
->>>> RGB_ORDER_E field of VIDCONx registers will do same thing.
->>>
->>> If I read the manual correctly, this register combined with the
->>> RGB_ORDER_O makes it possible to map the whole RGB interface output to a
->>> different order. What my patch provides is a way to configure each
->>> hardware plane separately while maintaining a consistent output on the
->>> RGB interface.
->>>
->>
->> Understood. Your patch will allow BGR pixel order per a plane. Seems to be useful because a framebuffer with BGR pixel format can be displayed on screen without any color space conversion. :)
->>
->>> Implementing the RGB_ORDER_O and E would need some logic to make sure
->>> that all planes are always using the same RGB order.
->>>
->>>>
->>>> I'm not sure whether the use of undocumented register is safe or not - maybe some HW bug exists.
->>>
->>> I see, that makes sense. Would it be possible then to introduce a new
->>> compatible, e.g. samsung,exynos4210-fimd-ext which can be used on tested
->>
->> Seems providing a new compatible is not a good idea.
->>
->>> devices? I know that some other Galaxy Note and S devices with the
->>> exynos4 chip have the same problem (and solution).
->>
->> Could you give me more details about the same problem and its solution on the devices?
->> It would be useful for us to decide the upstream direction.
->>
->> If necessary then we may need to contact HW engineer for clarity.
+> 22. 2. 25. 18:33에 Martin Jücker 이(가) 쓴 글:
+> > Hello Inki,
+> > 
+> > On Fri, Feb 25, 2022 at 12:52:56PM +0900, Inki Dae wrote:
+> >> Hi Martin,
+> >>
+> >> 22. 2. 25. 08:27에 Martin Jücker 이(가) 쓴 글:
+> >>> Hello Inki,
+> >>>
+> >>> On Thu, Feb 24, 2022 at 10:41:04AM +0900, Inki Dae wrote:
+> >>>> Hi Martin.
+> >>>>
+> >>>> I found that exynos4 and 5 data sheet include documented same register.
+> >>>> RGB_ORDER_E field of VIDCONx registers will do same thing.
+> >>>
+> >>> If I read the manual correctly, this register combined with the
+> >>> RGB_ORDER_O makes it possible to map the whole RGB interface output to a
+> >>> different order. What my patch provides is a way to configure each
+> >>> hardware plane separately while maintaining a consistent output on the
+> >>> RGB interface.
+> >>>
+> >>
+> >> Understood. Your patch will allow BGR pixel order per a plane. Seems to be useful because a framebuffer with BGR pixel format can be displayed on screen without any color space conversion. :)
+> >>
+> >>> Implementing the RGB_ORDER_O and E would need some logic to make sure
+> >>> that all planes are always using the same RGB order.
+> >>>
+> >>>>
+> >>>> I'm not sure whether the use of undocumented register is safe or not - maybe some HW bug exists.
+> >>>
+> >>> I see, that makes sense. Would it be possible then to introduce a new
+> >>> compatible, e.g. samsung,exynos4210-fimd-ext which can be used on tested
+> >>
+> >> Seems providing a new compatible is not a good idea.
+
+Thinking about it afterwards, I fully agree :)
+
+> >>
+> >>> devices? I know that some other Galaxy Note and S devices with the
+> >>> exynos4 chip have the same problem (and solution).
+> >>
+> >> Could you give me more details about the same problem and its solution on the devices?
+> >> It would be useful for us to decide the upstream direction.
+> >>
+> >> If necessary then we may need to contact HW engineer for clarity.
+> > 
+> > Here is my current understanding of the situation:
+> > 
+> > The issue is related to Android and a recovery image having conflicting
+> > pixel formats on the same device. There is a solution in Replicant[1]
+> > for this using parameters for the fimd driver to force the pixel format
+> > to RGB or BGR. It's using the PNRMODE register on VIDCON0, but this
+> > solution needs two separate kernels to be built to add the parameter as
+> > the boot loader is not adjustable.
+> > 
+> > This was also discussed in dri-devel irc and it was proposed to expose
+> > both formats and fail the atomic commit if userspace tried to use both
+> > RGB and BGR formats at the same time. With this approach there should be
+> > something on the screen but it might happen that some users can't deal
+> > with the failing commits as it's rather difficult to find the cause and
+> > fix it on the go.
 > 
-> Here is my current understanding of the situation:
+> Thanks for sharing.
 > 
-> The issue is related to Android and a recovery image having conflicting
-> pixel formats on the same device. There is a solution in Replicant[1]
-> for this using parameters for the fimd driver to force the pixel format
-> to RGB or BGR. It's using the PNRMODE register on VIDCON0, but this
-> solution needs two separate kernels to be built to add the parameter as
-> the boot loader is not adjustable.
+> > 
+> > After that I accidentally discovered this undocumented register while
+> > reading the old vendor sources and it seems that it fixes all the
 > 
-> This was also discussed in dri-devel irc and it was proposed to expose
-> both formats and fail the atomic commit if userspace tried to use both
-> RGB and BGR formats at the same time. With this approach there should be
-> something on the screen but it might happen that some users can't deal
-> with the failing commits as it's rather difficult to find the cause and
-> fix it on the go.
+> Are the old vendor sources using this undocumented register? If so then the use of the register would be safe.
 
-Thanks for sharing.
+Here are some examples for vendor sources collected by Krzysztof that
+make use of this register on several Exynos4/5 devices.
+
+* Galaxy S4 (Exynos 5410) [1]
+* Samsung Galaxy Tab S10.5 (Exynos 5420) [2]
+* Galaxy Note 10.1 (Exynos 4412) [3]
+* Galaxy S2/S3 (Exynos 4210/4412) [4]
 
 > 
-> After that I accidentally discovered this undocumented register while
-> reading the old vendor sources and it seems that it fixes all the
-
-Are the old vendor sources using this undocumented register? If so then the use of the register would be safe.
-
-> issues. At least if there are no HW bugs as you mentioned.
-
-I will try to contact HW engineer and check if no problem.
-
-Thanks,
-Inki Dae
-
+> > issues. At least if there are no HW bugs as you mentioned.
 > 
+> I will try to contact HW engineer and check if no problem.
 
+If you could get definitive confirmation, that would be great of course.
 
+Thank you for your effort.
 
-> Kind Regards
-> Martin
+Kind Regards
+Martin
+
+[1] https://github.com/krzk/linux-vendor-backup/blob/mokee/android-3.4-samsung-galaxy-s4-i9500-exynos5410/drivers/video/s3c-fb.c#L1127
+[2] https://github.com/krzk/linux-vendor-backup/blob/mokee/android-3.4-samsung-galaxy-tab-s-10.5-sm-t805-exynos5420/drivers/video/s3c-fb.c#L1533
+[3] https://github.com/krzk/linux-vendor-backup/blob/samsung/galaxy-note-tab-10.1-2012-gt-n8010-p4note-exynos4412-dump/drivers/video/samsung/s3cfb_ops.c#L1594
+[4] https://github.com/krzk/linux-vendor-backup/blob/lineage/android-samsung-galaxy-i9100-i9300-exynos4210-exynos4412/drivers/video/samsung/s3cfb_ops.c#L1600
+
+>
+> Thanks,
+> Inki Dae
 > 
-> [1] https://protect2.fireeye.com/v1/url?k=d515db34-b4683348-d514507b-74fe485cc33c-0ee001ffdcafd932&q=1&e=851ccfed-b6fa-4794-8989-27ef28bc7ac6&u=https%3A%2F%2Fgit.replicant.us%2Freplicant-next%2Fkernel_replicant_linux%2Fcommit%2F%3Fh%3Dreplicant-11%26id%3Dcc5a0615b40cd5ede1eb87a60daa50333701a135
+> > 
 > 
->>
->> Thanks,
->> Inki Dae
->>
->>>
->>>>
->>>> Anyway, I'd like to recommend you to use documented register only.
->>>>
->>>> Sorry for late and thanks,
->>>> Inki Dae
->>>
->>> Kind Regards
->>> Martin
->>>
->>>>
->>>> 22. 1. 30. 07:01에 Martin Jücker 이(가) 쓴 글:
->>>>> In the downstream kernels for exynos4 and exynos5 devices, there is an
->>>>> undocumented register that controls the order of the RGB output. It can
->>>>> be set to either normal order or reversed, which enables BGR support for
->>>>> those SoCs.
->>>>>
->>>>> This patch enables the BGR support for all the SoCs that were found to
->>>>> have at least one device with this logic in the corresponding downstream
->>>>> kernels.
->>>>>
->>>>> Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
->>>>> ---
->>>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 42 ++++++++++++++++++++++--
->>>>>  include/video/samsung_fimd.h             |  4 +++
->>>>>  2 files changed, 44 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>>>> index c735e53939d8..cb632360c968 100644
->>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>>>> @@ -109,6 +109,7 @@ struct fimd_driver_data {
->>>>>  	unsigned int has_dp_clk:1;
->>>>>  	unsigned int has_hw_trigger:1;
->>>>>  	unsigned int has_trigger_per_te:1;
->>>>> +	unsigned int has_bgr_support:1;
->>>>>  };
->>>>>  
->>>>>  static struct fimd_driver_data s3c64xx_fimd_driver_data = {
->>>>> @@ -138,6 +139,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
->>>>>  	.lcdblk_bypass_shift = 1,
->>>>>  	.has_shadowcon = 1,
->>>>>  	.has_vtsel = 1,
->>>>> +	.has_bgr_support = 1,
->>>>>  };
->>>>>  
->>>>>  static struct fimd_driver_data exynos5_fimd_driver_data = {
->>>>> @@ -149,6 +151,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
->>>>>  	.has_vidoutcon = 1,
->>>>>  	.has_vtsel = 1,
->>>>>  	.has_dp_clk = 1,
->>>>> +	.has_bgr_support = 1,
->>>>>  };
->>>>>  
->>>>>  static struct fimd_driver_data exynos5420_fimd_driver_data = {
->>>>> @@ -162,6 +165,7 @@ static struct fimd_driver_data exynos5420_fimd_driver_data = {
->>>>>  	.has_vtsel = 1,
->>>>>  	.has_mic_bypass = 1,
->>>>>  	.has_dp_clk = 1,
->>>>> +	.has_bgr_support = 1,
->>>>>  };
->>>>>  
->>>>>  struct fimd_context {
->>>>> @@ -226,6 +230,18 @@ static const uint32_t fimd_formats[] = {
->>>>>  	DRM_FORMAT_ARGB8888,
->>>>>  };
->>>>>  
->>>>> +static const uint32_t fimd_extended_formats[] = {
->>>>> +	DRM_FORMAT_C8,
->>>>> +	DRM_FORMAT_XRGB1555,
->>>>> +	DRM_FORMAT_XBGR1555,
->>>>> +	DRM_FORMAT_RGB565,
->>>>> +	DRM_FORMAT_BGR565,
->>>>> +	DRM_FORMAT_XRGB8888,
->>>>> +	DRM_FORMAT_XBGR8888,
->>>>> +	DRM_FORMAT_ARGB8888,
->>>>> +	DRM_FORMAT_ABGR8888,
->>>>> +};
->>>>> +
->>>>>  static const unsigned int capabilities[WINDOWS_NR] = {
->>>>>  	0,
->>>>>  	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
->>>>> @@ -673,21 +689,25 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
->>>>>  		val |= WINCONx_BYTSWP;
->>>>>  		break;
->>>>>  	case DRM_FORMAT_XRGB1555:
->>>>> +	case DRM_FORMAT_XBGR1555:
->>>>>  		val |= WINCON0_BPPMODE_16BPP_1555;
->>>>>  		val |= WINCONx_HAWSWP;
->>>>>  		val |= WINCONx_BURSTLEN_16WORD;
->>>>>  		break;
->>>>>  	case DRM_FORMAT_RGB565:
->>>>> +	case DRM_FORMAT_BGR565:
->>>>>  		val |= WINCON0_BPPMODE_16BPP_565;
->>>>>  		val |= WINCONx_HAWSWP;
->>>>>  		val |= WINCONx_BURSTLEN_16WORD;
->>>>>  		break;
->>>>>  	case DRM_FORMAT_XRGB8888:
->>>>> +	case DRM_FORMAT_XBGR8888:
->>>>>  		val |= WINCON0_BPPMODE_24BPP_888;
->>>>>  		val |= WINCONx_WSWP;
->>>>>  		val |= WINCONx_BURSTLEN_16WORD;
->>>>>  		break;
->>>>>  	case DRM_FORMAT_ARGB8888:
->>>>> +	case DRM_FORMAT_ABGR8888:
->>>>>  	default:
->>>>>  		val |= WINCON1_BPPMODE_25BPP_A1888;
->>>>>  		val |= WINCONx_WSWP;
->>>>> @@ -695,6 +715,18 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
->>>>>  		break;
->>>>>  	}
->>>>>  
->>>>> +	switch (pixel_format) {
->>>>> +	case DRM_FORMAT_XBGR1555:
->>>>> +	case DRM_FORMAT_XBGR8888:
->>>>> +	case DRM_FORMAT_ABGR8888:
->>>>> +	case DRM_FORMAT_BGR565:
->>>>> +		writel(WIN_RGB_ORDER_REVERSE, ctx->regs + WIN_RGB_ORDER(win));
->>>>> +		break;
->>>>> +	default:
->>>>> +		writel(WIN_RGB_ORDER_FORWARD, ctx->regs + WIN_RGB_ORDER(win));
->>>>> +		break;
->>>>> +	}
->>>>> +
->>>>>  	/*
->>>>>  	 * Setting dma-burst to 16Word causes permanent tearing for very small
->>>>>  	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
->>>>> @@ -1074,8 +1106,14 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
->>>>>  	ctx->drm_dev = drm_dev;
->>>>>  
->>>>>  	for (i = 0; i < WINDOWS_NR; i++) {
->>>>> -		ctx->configs[i].pixel_formats = fimd_formats;
->>>>> -		ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
->>>>> +		if (ctx->driver_data->has_bgr_support) {
->>>>> +			ctx->configs[i].pixel_formats = fimd_extended_formats;
->>>>> +			ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_extended_formats);
->>>>> +		} else {
->>>>> +			ctx->configs[i].pixel_formats = fimd_formats;
->>>>> +			ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
->>>>> +		}
->>>>> +
->>>>>  		ctx->configs[i].zpos = i;
->>>>>  		ctx->configs[i].type = fimd_win_types[i];
->>>>>  		ctx->configs[i].capabilities = capabilities[i];
->>>>> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
->>>>> index c4a93ce1de48..e6966d187591 100644
->>>>> --- a/include/video/samsung_fimd.h
->>>>> +++ b/include/video/samsung_fimd.h
->>>>> @@ -476,6 +476,10 @@
->>>>>   * 1111		-none-	 -none-   -none-   -none-    -none-
->>>>>  */
->>>>>  
->>>>> +#define WIN_RGB_ORDER(_win)			(0x2020 + ((_win) * 4))
->>>>> +#define WIN_RGB_ORDER_FORWARD			(0 << 11)
->>>>> +#define WIN_RGB_ORDER_REVERSE			(1 << 11)
->>>>> +
->>>>>  /* FIMD Version 8 register offset definitions */
->>>>>  #define FIMD_V8_VIDTCON0	0x20010
->>>>>  #define FIMD_V8_VIDTCON1	0x20014
->>>
 > 
+> 
+> > Kind Regards
+> > Martin
+> > 
+> > [1] https://protect2.fireeye.com/v1/url?k=d515db34-b4683348-d514507b-74fe485cc33c-0ee001ffdcafd932&q=1&e=851ccfed-b6fa-4794-8989-27ef28bc7ac6&u=https%3A%2F%2Fgit.replicant.us%2Freplicant-next%2Fkernel_replicant_linux%2Fcommit%2F%3Fh%3Dreplicant-11%26id%3Dcc5a0615b40cd5ede1eb87a60daa50333701a135
+> > 
+> >>
+> >> Thanks,
+> >> Inki Dae
+> >>
+> >>>
+> >>>>
+> >>>> Anyway, I'd like to recommend you to use documented register only.
+> >>>>
+> >>>> Sorry for late and thanks,
+> >>>> Inki Dae
+> >>>
+> >>> Kind Regards
+> >>> Martin
+> >>>
+> >>>>
+> >>>> 22. 1. 30. 07:01에 Martin Jücker 이(가) 쓴 글:
+> >>>>> In the downstream kernels for exynos4 and exynos5 devices, there is an
+> >>>>> undocumented register that controls the order of the RGB output. It can
+> >>>>> be set to either normal order or reversed, which enables BGR support for
+> >>>>> those SoCs.
+> >>>>>
+> >>>>> This patch enables the BGR support for all the SoCs that were found to
+> >>>>> have at least one device with this logic in the corresponding downstream
+> >>>>> kernels.
+> >>>>>
+> >>>>> Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
+> >>>>> ---
+> >>>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 42 ++++++++++++++++++++++--
+> >>>>>  include/video/samsung_fimd.h             |  4 +++
+> >>>>>  2 files changed, 44 insertions(+), 2 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> >>>>> index c735e53939d8..cb632360c968 100644
+> >>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> >>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> >>>>> @@ -109,6 +109,7 @@ struct fimd_driver_data {
+> >>>>>  	unsigned int has_dp_clk:1;
+> >>>>>  	unsigned int has_hw_trigger:1;
+> >>>>>  	unsigned int has_trigger_per_te:1;
+> >>>>> +	unsigned int has_bgr_support:1;
+> >>>>>  };
+> >>>>>  
+> >>>>>  static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+> >>>>> @@ -138,6 +139,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+> >>>>>  	.lcdblk_bypass_shift = 1,
+> >>>>>  	.has_shadowcon = 1,
+> >>>>>  	.has_vtsel = 1,
+> >>>>> +	.has_bgr_support = 1,
+> >>>>>  };
+> >>>>>  
+> >>>>>  static struct fimd_driver_data exynos5_fimd_driver_data = {
+> >>>>> @@ -149,6 +151,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
+> >>>>>  	.has_vidoutcon = 1,
+> >>>>>  	.has_vtsel = 1,
+> >>>>>  	.has_dp_clk = 1,
+> >>>>> +	.has_bgr_support = 1,
+> >>>>>  };
+> >>>>>  
+> >>>>>  static struct fimd_driver_data exynos5420_fimd_driver_data = {
+> >>>>> @@ -162,6 +165,7 @@ static struct fimd_driver_data exynos5420_fimd_driver_data = {
+> >>>>>  	.has_vtsel = 1,
+> >>>>>  	.has_mic_bypass = 1,
+> >>>>>  	.has_dp_clk = 1,
+> >>>>> +	.has_bgr_support = 1,
+> >>>>>  };
+> >>>>>  
+> >>>>>  struct fimd_context {
+> >>>>> @@ -226,6 +230,18 @@ static const uint32_t fimd_formats[] = {
+> >>>>>  	DRM_FORMAT_ARGB8888,
+> >>>>>  };
+> >>>>>  
+> >>>>> +static const uint32_t fimd_extended_formats[] = {
+> >>>>> +	DRM_FORMAT_C8,
+> >>>>> +	DRM_FORMAT_XRGB1555,
+> >>>>> +	DRM_FORMAT_XBGR1555,
+> >>>>> +	DRM_FORMAT_RGB565,
+> >>>>> +	DRM_FORMAT_BGR565,
+> >>>>> +	DRM_FORMAT_XRGB8888,
+> >>>>> +	DRM_FORMAT_XBGR8888,
+> >>>>> +	DRM_FORMAT_ARGB8888,
+> >>>>> +	DRM_FORMAT_ABGR8888,
+> >>>>> +};
+> >>>>> +
+> >>>>>  static const unsigned int capabilities[WINDOWS_NR] = {
+> >>>>>  	0,
+> >>>>>  	EXYNOS_DRM_PLANE_CAP_WIN_BLEND | EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
+> >>>>> @@ -673,21 +689,25 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+> >>>>>  		val |= WINCONx_BYTSWP;
+> >>>>>  		break;
+> >>>>>  	case DRM_FORMAT_XRGB1555:
+> >>>>> +	case DRM_FORMAT_XBGR1555:
+> >>>>>  		val |= WINCON0_BPPMODE_16BPP_1555;
+> >>>>>  		val |= WINCONx_HAWSWP;
+> >>>>>  		val |= WINCONx_BURSTLEN_16WORD;
+> >>>>>  		break;
+> >>>>>  	case DRM_FORMAT_RGB565:
+> >>>>> +	case DRM_FORMAT_BGR565:
+> >>>>>  		val |= WINCON0_BPPMODE_16BPP_565;
+> >>>>>  		val |= WINCONx_HAWSWP;
+> >>>>>  		val |= WINCONx_BURSTLEN_16WORD;
+> >>>>>  		break;
+> >>>>>  	case DRM_FORMAT_XRGB8888:
+> >>>>> +	case DRM_FORMAT_XBGR8888:
+> >>>>>  		val |= WINCON0_BPPMODE_24BPP_888;
+> >>>>>  		val |= WINCONx_WSWP;
+> >>>>>  		val |= WINCONx_BURSTLEN_16WORD;
+> >>>>>  		break;
+> >>>>>  	case DRM_FORMAT_ARGB8888:
+> >>>>> +	case DRM_FORMAT_ABGR8888:
+> >>>>>  	default:
+> >>>>>  		val |= WINCON1_BPPMODE_25BPP_A1888;
+> >>>>>  		val |= WINCONx_WSWP;
+> >>>>> @@ -695,6 +715,18 @@ static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+> >>>>>  		break;
+> >>>>>  	}
+> >>>>>  
+> >>>>> +	switch (pixel_format) {
+> >>>>> +	case DRM_FORMAT_XBGR1555:
+> >>>>> +	case DRM_FORMAT_XBGR8888:
+> >>>>> +	case DRM_FORMAT_ABGR8888:
+> >>>>> +	case DRM_FORMAT_BGR565:
+> >>>>> +		writel(WIN_RGB_ORDER_REVERSE, ctx->regs + WIN_RGB_ORDER(win));
+> >>>>> +		break;
+> >>>>> +	default:
+> >>>>> +		writel(WIN_RGB_ORDER_FORWARD, ctx->regs + WIN_RGB_ORDER(win));
+> >>>>> +		break;
+> >>>>> +	}
+> >>>>> +
+> >>>>>  	/*
+> >>>>>  	 * Setting dma-burst to 16Word causes permanent tearing for very small
+> >>>>>  	 * buffers, e.g. cursor buffer. Burst Mode switching which based on
+> >>>>> @@ -1074,8 +1106,14 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+> >>>>>  	ctx->drm_dev = drm_dev;
+> >>>>>  
+> >>>>>  	for (i = 0; i < WINDOWS_NR; i++) {
+> >>>>> -		ctx->configs[i].pixel_formats = fimd_formats;
+> >>>>> -		ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
+> >>>>> +		if (ctx->driver_data->has_bgr_support) {
+> >>>>> +			ctx->configs[i].pixel_formats = fimd_extended_formats;
+> >>>>> +			ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_extended_formats);
+> >>>>> +		} else {
+> >>>>> +			ctx->configs[i].pixel_formats = fimd_formats;
+> >>>>> +			ctx->configs[i].num_pixel_formats = ARRAY_SIZE(fimd_formats);
+> >>>>> +		}
+> >>>>> +
+> >>>>>  		ctx->configs[i].zpos = i;
+> >>>>>  		ctx->configs[i].type = fimd_win_types[i];
+> >>>>>  		ctx->configs[i].capabilities = capabilities[i];
+> >>>>> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+> >>>>> index c4a93ce1de48..e6966d187591 100644
+> >>>>> --- a/include/video/samsung_fimd.h
+> >>>>> +++ b/include/video/samsung_fimd.h
+> >>>>> @@ -476,6 +476,10 @@
+> >>>>>   * 1111		-none-	 -none-   -none-   -none-    -none-
+> >>>>>  */
+> >>>>>  
+> >>>>> +#define WIN_RGB_ORDER(_win)			(0x2020 + ((_win) * 4))
+> >>>>> +#define WIN_RGB_ORDER_FORWARD			(0 << 11)
+> >>>>> +#define WIN_RGB_ORDER_REVERSE			(1 << 11)
+> >>>>> +
+> >>>>>  /* FIMD Version 8 register offset definitions */
+> >>>>>  #define FIMD_V8_VIDTCON0	0x20010
+> >>>>>  #define FIMD_V8_VIDTCON1	0x20014
+> >>>
+> > 
