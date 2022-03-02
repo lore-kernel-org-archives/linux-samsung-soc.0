@@ -2,146 +2,121 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF9DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Mar 2022 10:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2228CC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Mar 2022 11:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240952AbiCBKUl (ORCPT
+        id S241304AbiCBLPB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Mar 2022 05:20:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
+        Wed, 2 Mar 2022 06:15:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231748AbiCBKUl (ORCPT
+        with ESMTP id S241331AbiCBLOv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Mar 2022 05:20:41 -0500
-Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 668789134D
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Mar 2022 02:19:58 -0800 (PST)
-Received: by mail-pf1-x44a.google.com with SMTP id k130-20020a628488000000b004f362b45f28so1026749pfd.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Mar 2022 02:19:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Yq89WbWr/nKtI2RVDgbrgWiRqIUUvQxU4ZRP/u39Tc4=;
-        b=lm4zJUzyhqzs2nvdFpXSR0vlIVib2Ri38tWVjvsqeYEdwiEB/dxkr1OjSZBdKRIhWP
-         mOqCavmFBymWwOrD0rp4KYZUr0Ol+p86D4yAkeZDMOBUmioLtRyAM0Y1Re2kFojye2S9
-         /6G7U6K078XM38L9pSWDyY9HW4BfENWa5utIpmtqViWK+Ug7VhxoX0G30P6Y/VM7NA3s
-         8b6NdWbCkU5JymN+ENB5BeIRq7YDKcgcMbdIW4IuZbqJ1MlPQtNZSq9tFLPP/uvLtCWz
-         rPBhwC6kcAIriegH5SODZ3BROXUxIylYmljIiX+77sNZvgtnxxVDyiMyoxqUfQzcmhKN
-         yNhA==
+        Wed, 2 Mar 2022 06:14:51 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73544606CD
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Mar 2022 03:14:07 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 08D7F3F1CA
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Mar 2022 11:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646219646;
+        bh=c/HrBEq7VXD/vzB2plWQqXVKzKIhpuLhlwaapBvCoq4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=ZZvYRDF/TkkrYLNl3TiNcu+DN92urcmu0P7BgYyvNvSRA/KAQuj0+hbSgwOakKROo
+         O1F0AbDAy6rsHiBpJL2UPgxo2ILfehkBEzPZFZSlhSdKGbc72dV1+/gCl5frakWkpY
+         uyZDAt86+K4VaKSZHLty4FtVShq5tmihkIWPsr0s4vKYbYtj/XgSdf8fU0VBFn7f6l
+         4cP9lD4XKZPWakf1WJMr2ldMA1DtZ3QTaNbz5Ek3EtHBCkgacI1eYg8nK8i7RwORoB
+         v5QnDLow7gVyZNbZSSGOetk6GdIpxLCrVnCiQZ4lq7EQJy2QIDmLgTawkmzznz1p6a
+         RiCrgHLE4Rr/Q==
+Received: by mail-ej1-f70.google.com with SMTP id j6-20020a170906830600b006d6e2eb61f7so813354ejx.15
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Mar 2022 03:14:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Yq89WbWr/nKtI2RVDgbrgWiRqIUUvQxU4ZRP/u39Tc4=;
-        b=Fq02AztH2CX+/9EDwOi7e6Y98FgXLcFYk8jyEQNDSfQqDYCP6SnrZKrJXdfslo4Lj3
-         Rk+PcOnPzD0fCfwovrlADezgLb1nR2HIS1n+5kWIB7QeJ9+cPsls/UjOPBLfO+9/c7ME
-         V7uE1vxyV2Lt4mHEdFSljqQDVCQCfqCnKFW67MgJZxEYKwVa9QxiAl2XSUfXVTpExwxz
-         xpHsQucEdA4D8BzFfHy6w8elEILUx82MHS6bi8BuNSeOtbezaZVKRBQNW8yvi6WgJFmR
-         TKXZJ5rJlvV87pqp/YlUFP2lKN07p7n6edwRhmIhCuJK+zdqdTrqYCLceVQ6awMh6hfa
-         a8lQ==
-X-Gm-Message-State: AOAM532iNamZxiuJ+4rHoLaXo+FZkqlyQGng/PqSFZJwbBpP4bkY3JQc
-        p3SjuC/Rd/4gzbQNcXwc8FAvToEAmtkWxA==
-X-Google-Smtp-Source: ABdhPJzEXQNhD0xqT2s2x//pYYtesl+TerhASD0Ziddn/5GiSvMBYaO6FAMA2Ou6p+she/JPNCFbtFSgjrrJtQ==
-X-Received: from woodylin.ntc.corp.google.com ([2401:fa00:fc:202:3ddc:5127:fcb7:1fad])
- (user=woodylin job=sendgmr) by 2002:a17:903:2285:b0:151:4b38:298e with SMTP
- id b5-20020a170903228500b001514b38298emr20044336plh.36.1646216397851; Wed, 02
- Mar 2022 02:19:57 -0800 (PST)
-Date:   Wed,  2 Mar 2022 18:19:25 +0800
-Message-Id: <20220302101925.210810-1-woodylin@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.35.1.574.g5d30c73bfb-goog
-Subject: [PATCH] serial: samsung: Add samsung_early_read to support early kgdboc
-From:   Woody Lin <woodylin@google.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=c/HrBEq7VXD/vzB2plWQqXVKzKIhpuLhlwaapBvCoq4=;
+        b=THfSenqyyJBWJgmXUhEen++CdOwttofdjr+apMjY6iQuQ+lmhfIPF9LuL4REFIoYWp
+         r49Zr2tsPvBygJL5Gj56FJ1xQJb3JsbYDD/ZV1hJLC249UFDG64/wekDwfyZyKn8CB+a
+         pzkgQsnUgAEtdQ85jkk/JU5vc8mF8vqYzp0Xe9UEB29iahZFIq2O8Jn81umuhKiqpl+u
+         cpo95C3ZqpLZpGapAZ296TzDG0wYEoZHLpmdsHhtjvVzyrew8qMxRK1MGpyxcJgXbvF/
+         zXpdfFGUND8imILdge99EtSOOFEWF/uVHxWtOIwk5q6zYJWJwzH+WClyGNRxkJ9wLfRl
+         LcKg==
+X-Gm-Message-State: AOAM532dcNRew5DkjsCzCLh5nUtJ9V4yc7trUI8Le9JIepOWcQzClJfR
+        iMZUtEbJqVjBDFltAQPztgW6QY+HqWOvUaHNkGBcjAlZuy0Sfz02vHTHGcCADKa4IwTplDLH9EM
+        NvBfwVXBPRYl13/rC5GuEGNK8AtoitZ23SBWSAPU1WrsC6vd7
+X-Received: by 2002:a17:907:a41f:b0:6d6:f925:1696 with SMTP id sg31-20020a170907a41f00b006d6f9251696mr4947752ejc.62.1646219645738;
+        Wed, 02 Mar 2022 03:14:05 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw4eItwRYHbFhHJecp/z62mEUFQa+5CGvwbfF4FEcKbfj5pKDOx0k/F7sIT5mVv7fPze2379A==
+X-Received: by 2002:a17:907:a41f:b0:6d6:f925:1696 with SMTP id sg31-20020a170907a41f00b006d6f9251696mr4947744ejc.62.1646219645563;
+        Wed, 02 Mar 2022 03:14:05 -0800 (PST)
+Received: from [192.168.0.136] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id vl11-20020a17090730cb00b006d8121d0fc4sm857414ejb.138.2022.03.02.03.14.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Mar 2022 03:14:04 -0800 (PST)
+Message-ID: <c13930a5-85ab-5a2c-54e5-15fc5bc87b17@canonical.com>
+Date:   Wed, 2 Mar 2022 12:14:03 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] serial: samsung: Add samsung_early_read to support early
+ kgdboc
+Content-Language: en-US
+To:     Woody Lin <woodylin@google.com>,
         Alim Akhtar <alim.akhtar@samsung.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, woodylin@google.com,
-        markcheng@google.com
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, markcheng@google.com
+References: <20220302101925.210810-1-woodylin@google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220302101925.210810-1-woodylin@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The 'kgdboc_earlycon_init' looks for boot console that has both .read
-and .write callbacks. Adds 'samsung_early_read' to samsung_tty.c's early
-console to support kgdboc.
+On 02/03/2022 11:19, Woody Lin wrote:
+> The 'kgdboc_earlycon_init' looks for boot console that has both .read
+> and .write callbacks. Adds 'samsung_early_read' to samsung_tty.c's early
+> console to support kgdboc.
+> 
+> Signed-off-by: Woody Lin <woodylin@google.com>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index d002a4e48ed9..eeb30d016ff1 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -2949,6 +2949,7 @@ static void wr_reg_barrier(struct uart_port *port, u32 reg, u32 val)
+>  
+>  struct samsung_early_console_data {
+>  	u32 txfull_mask;
+> +	u32 rxfifo_mask;
+>  };
+>  
+>  static void samsung_early_busyuart(struct uart_port *port)
+> @@ -2983,6 +2984,26 @@ static void samsung_early_write(struct console *con, const char *s,
+>  	uart_console_write(&dev->port, s, n, samsung_early_putc);
+>  }
+>  
+> +static int samsung_early_read(struct console *con, char *s, unsigned int n)
+> +{
+> +	struct earlycon_device *dev = con->data;
+> +	struct samsung_early_console_data *data = dev->port.private_data;
 
-Signed-off-by: Woody Lin <woodylin@google.com>
----
- drivers/tty/serial/samsung_tty.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+This can be const.
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index d002a4e48ed9..eeb30d016ff1 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2949,6 +2949,7 @@ static void wr_reg_barrier(struct uart_port *port, u32 reg, u32 val)
- 
- struct samsung_early_console_data {
- 	u32 txfull_mask;
-+	u32 rxfifo_mask;
- };
- 
- static void samsung_early_busyuart(struct uart_port *port)
-@@ -2983,6 +2984,26 @@ static void samsung_early_write(struct console *con, const char *s,
- 	uart_console_write(&dev->port, s, n, samsung_early_putc);
- }
- 
-+static int samsung_early_read(struct console *con, char *s, unsigned int n)
-+{
-+	struct earlycon_device *dev = con->data;
-+	struct samsung_early_console_data *data = dev->port.private_data;
-+	int ch, ufstat, num_read = 0;
-+
-+	while (num_read < n) {
-+		ufstat = rd_regl(&dev->port, S3C2410_UFSTAT);
-+		if (!(ufstat & data->rxfifo_mask))
-+			break;
-+		ch = rd_reg(&dev->port, S3C2410_URXH);
-+		if (ch == NO_POLL_CHAR)
-+			break;
-+
-+		s[num_read++] = ch;
-+	}
-+
-+	return num_read;
-+}
-+
- static int __init samsung_early_console_setup(struct earlycon_device *device,
- 					      const char *opt)
- {
-@@ -2990,12 +3011,14 @@ static int __init samsung_early_console_setup(struct earlycon_device *device,
- 		return -ENODEV;
- 
- 	device->con->write = samsung_early_write;
-+	device->con->read = samsung_early_read;
- 	return 0;
- }
- 
- /* S3C2410 */
- static struct samsung_early_console_data s3c2410_early_console_data = {
- 	.txfull_mask = S3C2410_UFSTAT_TXFULL,
-+	.rxfifo_mask = S3C2410_UFSTAT_RXFULL | S3C2410_UFSTAT_RXMASK,
- };
- 
- static int __init s3c2410_early_console_setup(struct earlycon_device *device,
-@@ -3011,6 +3034,7 @@ OF_EARLYCON_DECLARE(s3c2410, "samsung,s3c2410-uart",
- /* S3C2412, S3C2440, S3C64xx */
- static struct samsung_early_console_data s3c2440_early_console_data = {
- 	.txfull_mask = S3C2440_UFSTAT_TXFULL,
-+	.rxfifo_mask = S3C2440_UFSTAT_RXFULL | S3C2440_UFSTAT_RXMASK,
- };
- 
- static int __init s3c2440_early_console_setup(struct earlycon_device *device,
-@@ -3030,6 +3054,7 @@ OF_EARLYCON_DECLARE(s3c6400, "samsung,s3c6400-uart",
- /* S5PV210, Exynos */
- static struct samsung_early_console_data s5pv210_early_console_data = {
- 	.txfull_mask = S5PV210_UFSTAT_TXFULL,
-+	.rxfifo_mask = S5PV210_UFSTAT_RXFULL | S5PV210_UFSTAT_RXMASK,
- };
- 
- static int __init s5pv210_early_console_setup(struct earlycon_device *device,
--- 
-2.35.1.574.g5d30c73bfb-goog
+Rest looks ok.
 
+
+Best regards,
+Krzysztof
