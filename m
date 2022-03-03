@@ -2,127 +2,162 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA7C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Mar 2022 16:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E37C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Mar 2022 16:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234699AbiCCQEF (ORCPT
+        id S234820AbiCCQL4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Mar 2022 11:04:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
+        Thu, 3 Mar 2022 11:11:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231127AbiCCQEE (ORCPT
+        with ESMTP id S231336AbiCCQLz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Mar 2022 11:04:04 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3236CF5B
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Mar 2022 08:03:19 -0800 (PST)
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D4F8D3F07E
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Mar 2022 16:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646323397;
-        bh=gmVjym9cd+uCsI0b9eeIUMjOCAOQQ2Nu9Za2weChuPo=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=EDs3Hz6eyZJc+CXFcQsG4Gd8s99pM3LTEJhm5TQqiBUN3/3GeWX+HSBBD9Ig1AnQL
-         JSU99pxwopWAUP6FE6T+OG471SbwFziQlyVftw0fu3IUdxVOQtJ/Y3rn4FuyoqnTDK
-         ucrpzynJAsN6VAxFNy3Ma2+cjTherOvq3w2B+IXS2s6RjdDmu3Yoy15gsoD6DC+b1W
-         HaAc0pdu8YnowwqiLC3OK1WzO8gY/suhX/s50atKuQc4WkwGkUONxc54lLIfyTj7hI
-         Aa8vC6CzyFNGTPdpJRXp2USjgLGwk8BPt86nIgaUANLKeZCnz1qUV9v904DqiTLGRU
-         xAFh3uPKVCuxQ==
-Received: by mail-wr1-f72.google.com with SMTP id g17-20020adfa591000000b001da86c91c22so2206543wrc.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Mar 2022 08:03:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=gmVjym9cd+uCsI0b9eeIUMjOCAOQQ2Nu9Za2weChuPo=;
-        b=e65dr9ul3ajsX2ByjSPcDghzv8Wu/SB/wxJtq6zjjaFoy12NEFZr0efnP1QQgw3O8e
-         5SHd6OsLiOXa/grHPLQcDnpVfZLutMjF50vzIDfUF3Pf+ZmKYwJdkAq/CbeBNRWqpQyV
-         20M4mauYMD8XQCoIeXWcfGQykIPVo09Jslg6GW76bsAjKA5Jonol4Vn05mfakUg2YR1U
-         tJDqUhTGrsdCOp9K0hZSXb2rJGMvbwYqPC4LEBPNrTvpNry7MnYzNftbDqEhEXqiXpPp
-         yUgmxn+TEXGDWd36kPStFcog7baiFpp1k2geM3w70O+fu7p3LlH8ARyKqXL1U3XLb/4R
-         vpQw==
-X-Gm-Message-State: AOAM531Z9vGW0hi1Qwb1AOSG6Ov9C9S1C5wivbB9ZHeoMXBymZYofmRb
-        tHBThUvgLhboS5bVGCmda5ceJmSZVtgLLjx9SzHgZ5RP3OVWqpWAeS5NIdm6qyGNSqrt2AnATnK
-        yHcHpCHkpnlByMkO7bJTcWj46B9mrmbApU+81UOzatVV/ep2X
-X-Received: by 2002:a5d:45cb:0:b0:1ed:f938:7e17 with SMTP id b11-20020a5d45cb000000b001edf9387e17mr27109110wrs.170.1646323397172;
-        Thu, 03 Mar 2022 08:03:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwD6l0dLxfnigO1O4ROoidzn9kyVra6G61WTQNQDFli8qZZO6vBD6gcGbzDEkzc7uGrF/hq4A==
-X-Received: by 2002:a5d:45cb:0:b0:1ed:f938:7e17 with SMTP id b11-20020a5d45cb000000b001edf9387e17mr27109091wrs.170.1646323396953;
-        Thu, 03 Mar 2022 08:03:16 -0800 (PST)
-Received: from [192.168.0.137] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id r5-20020a5d4945000000b001f06372fa9fsm1176056wrs.54.2022.03.03.08.03.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 08:03:14 -0800 (PST)
-Message-ID: <9c1dc8ee-c717-377b-879c-0706a1613cf3@canonical.com>
-Date:   Thu, 3 Mar 2022 17:03:13 +0100
+        Thu, 3 Mar 2022 11:11:55 -0500
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77A0198D29
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Mar 2022 08:11:05 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220303161103euoutp02edf3279b5e9d0e80d50d3f28db3aa6e2~Y6tTQ7OfD0480804808euoutp02J
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Mar 2022 16:11:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220303161103euoutp02edf3279b5e9d0e80d50d3f28db3aa6e2~Y6tTQ7OfD0480804808euoutp02J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1646323863;
+        bh=Z4qtBHD+IaW1qt8mrP82zLA3GASfxYr/MqtXGiS++Dg=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=G1sf3pCXUdXWOi6WDVUF2oLamXm6OtVfDzrIQO1nYgPDJGllBLLKnXndzB5joGIMb
+         D08QIdmOJ6AwjarSOl6CTfsbidDlF5oneKcZxI8JG/InDVBKO8Q7Bu5v2YbCguAczn
+         5Z8t9A6w1PfxMOLdc/wkVuZIfjMZ8I4ZdU5aOIoc=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220303161103eucas1p1db7d35ec764af9156e3485a1a93060f0~Y6tTFv1oV1092010920eucas1p1P;
+        Thu,  3 Mar 2022 16:11:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id CC.AB.10260.798E0226; Thu,  3
+        Mar 2022 16:11:03 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220303161102eucas1p2c7ca1ee3cd5925371e2f2876f7325b69~Y6tSnklBv0419604196eucas1p2C;
+        Thu,  3 Mar 2022 16:11:02 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220303161102eusmtrp10a75f749e399c49f56c9410f01945ee3~Y6tSm41g01072610726eusmtrp1n;
+        Thu,  3 Mar 2022 16:11:02 +0000 (GMT)
+X-AuditID: cbfec7f5-bf3ff70000002814-81-6220e8970c16
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.49.09404.698E0226; Thu,  3
+        Mar 2022 16:11:02 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220303161102eusmtip2f3da8ac62cb4ad071c0e7e5b02e9da89~Y6tSIRXOa3233932339eusmtip2N;
+        Thu,  3 Mar 2022 16:11:02 +0000 (GMT)
+Message-ID: <ac077b37-5861-594f-560f-654f9257959d@samsung.com>
+Date:   Thu, 3 Mar 2022 17:11:02 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.6.1
 Subject: Re: [PATCH v3 RESEND 21/24] drm/exynos/decon5433: add local path
  support
 Content-Language: en-US
-To:     Inki Dae <inki.dae@samsung.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Inki Dae <inki.dae@samsung.com>,
         Andrzej Hajda <andrzej.hajda@intel.com>
-Cc:     linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20190325071349.22600-1-a.hajda@samsung.com>
- <CGME20190325071401eucas1p10df709b256570f1aba9cbc4e875da1b3@eucas1p1.samsung.com>
- <20190325071349.22600-22-a.hajda@samsung.com>
- <b3c98aa3-751b-acc4-8e57-5566af27f922@canonical.com>
- <6270db2d-667d-8d6f-9289-be92da486c25@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <6270db2d-667d-8d6f-9289-be92da486c25@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Cc:     linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <9c1dc8ee-c717-377b-879c-0706a1613cf3@canonical.com>
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRmVeSWpSXmKPExsWy7djP87rTXygkGbx+ImRxf/FnFosrX9+z
+        WUy6P4HFYuPbH0wWM87vY3Jg9ZjV0MvmsXjPSyaP+93HmTz6tqxi9Pi8SS6ANYrLJiU1J7Ms
+        tUjfLoEr41PjK+aCTsGKn2+WsjUwPubtYuTkkBAwkTi3cA5LFyMXh5DACkaJXe9/MkM4Xxgl
+        Nh2aBJX5zCjRePUxG0zLlu0LmCASyxkljv/9zAiSEBL4yChxbB1YEa+AncSEZatZuxg5OFgE
+        VCQOP3eCCAtKnJz5hAXEFhVIknhwoI8dxBYWCJbo3tENZjMLiEvcejIfbL6IQDujxJunrWwQ
+        CTeJxrv3mEFsNgFDia63XWBxTgFHiRM35kPVyEs0b50N9oKEwAUOiR2/OxghrnaROH77FiuE
+        LSzx6vgWdghbRuL05B4WiIZmRomH59ayQzg9jBKXm2ZAdVtL3Dn3iw3kHWYBTYn1u/Qhwo4S
+        2599ZgcJSwjwSdx4KwhxBJ/EpG3TmSHCvBIdbUIQ1WoSs46vg1t78MIl5gmMSrOQwmUWkv9n
+        IXlnFsLeBYwsqxjFU0uLc9NTi43zUsv1ihNzi0vz0vWS83M3MQITzul/x7/uYFzx6qPeIUYm
+        DsZDjBIczEoivJaaCklCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZMzNyQKCaQnlqRmp6YWpBbB
+        ZJk4OKUamBhUb+fdnHUzIYtxx9EzPY6yq0sWF+2/OOVyicTClvrF/34//On84VruPJ0AwQSH
+        zmshB9kmSMelv3vbcciulGf5iotB0/7ZCR0Jks24ue5KgovtvwPXfRgKuQ8Vx2Q9e/wh7nrb
+        /RLH/RWBgW+WJt63u3ksa5XUgo7HXVGm4pMs4kMcPf3fd5qu0/Hf9VqxxmfNwxbZs/fsFvFn
+        KW/5rTd75/eiFdsXaMhcuSZ0r4HpsaFs8cP+SEH3pi0yWxdvrihJmO9iL3zjtF7Wki8VP+ct
+        b4s9+1t8WlBG0lnXtNqXic83W0Sv+yHE/pC/fK5IzWKmJ6Yx9qwF002WmqzUuLpRV9pgdiCv
+        8izB7a3M7kosxRmJhlrMRcWJAOYguBSnAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsVy+t/xe7rTXigkGbzZbmRxf/FnFosrX9+z
+        WUy6P4HFYuPbH0wWM87vY3Jg9ZjV0MvmsXjPSyaP+93HmTz6tqxi9Pi8SS6ANUrPpii/tCRV
+        ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv41PjK+aCTsGKn2+W
+        sjUwPubtYuTkkBAwkdiyfQFTFyMXh5DAUkaJvdu+sUMkZCROTmtghbCFJf5c62LrYuQAKnrP
+        KLG8GCTMK2AnMWHZalaQMIuAisTh504QYUGJkzOfsIDYogJJEi+3bQSbIiwQLNG9oxtsOrOA
+        uMStJ/PB1ooItDNK/Hx+kwUi4SbRePceM8Q995kkzu58yAySYBMwlOh6C3IDJwengKPEiRvz
+        2SAazCS6tnYxQtjyEs1bZzNPYBSaheSQWUgWzkLSMgtJywJGllWMIqmlxbnpucVGesWJucWl
+        eel6yfm5mxiB8bXt2M8tOxhXvvqod4iRiYPxEKMEB7OSCK+lpkKSEG9KYmVValF+fFFpTmrx
+        IUZTYGBMZJYSTc4HRnheSbyhmYGpoYmZpYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwen
+        VAOTUd6JPy8TrtrttrD0VQ/e/yph75WIpx1n0/vEXsTPm2fCwrkvY+qPirYqDyfZUh+fnZed
+        3R4ymwt+MPbSuTH541b5KU2zp5lkZVxkWe35rLFl9gXZw5tnnrY8Z6XyPjTBek/NQYuakn2L
+        Wcy+pQeYnN3a6eAjujXrT1bBzashu6am19Zkurm29a80OLPk7HpZltUtH7Q2Hszfnvs3M3dN
+        Z+/UzH8zL8+J3/B/a5WFQZLgpZKaI+/nPZxXtE695TGzLEeD+tTkxhzLSZbaOf6Tbn+WWvvE
+        OOpVaofPD65NKmbXc2Z0X2WJWfgwa8Vz2Zn3s6MCHZS1A0Pk+rwO1q55LCMkw+ag7f1ln1Lh
+        CUElluKMREMt5qLiRAACoYq2OAMAAA==
+X-CMS-MailID: 20220303161102eucas1p2c7ca1ee3cd5925371e2f2876f7325b69
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190325071401eucas1p10df709b256570f1aba9cbc4e875da1b3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190325071401eucas1p10df709b256570f1aba9cbc4e875da1b3
+References: <20190325071349.22600-1-a.hajda@samsung.com>
+        <CGME20190325071401eucas1p10df709b256570f1aba9cbc4e875da1b3@eucas1p1.samsung.com>
+        <20190325071349.22600-22-a.hajda@samsung.com>
+        <b3c98aa3-751b-acc4-8e57-5566af27f922@canonical.com>
+        <6270db2d-667d-8d6f-9289-be92da486c25@samsung.com>
+        <9c1dc8ee-c717-377b-879c-0706a1613cf3@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 02/03/2022 02:00, Inki Dae wrote:
-> Hi Krzysztof,
-> 
-> 22. 2. 7. 01:51에 Krzysztof Kozlowski 이(가) 쓴 글:
->> On 25/03/2019 08:13, Andrzej Hajda wrote:
->>> GSCALERs in Exynos5433 have local path to DECON and DECON_TV.
->>> They can be used as extra planes with support for non-RGB formats and scaling.
->>> To enable it on DECON update_plane and disable_plane callback should
->>> be modified. Moreover DSD mux should be set accordingly, and finally
->>> atomic_check callback should be used to limit the number of active planes.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 80 +++++++++++++++----
->>>  drivers/gpu/drm/exynos/regs-decon5433.h       |  6 ++
->>>  2 files changed, 72 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/ex
->> Hi guys!
->>
->> I am working on DRM bindings conversion to DT schema format and I found
->> this set only partially applied. I merged the DTS patches ("dsd" clock),
->> but I think the driver and bindings were not picked up.
->>
->> Nevertheless I am going to include the "dsd" clock in the new bindings,
->> so the DTS passes DT schema checks. Let me know if other approach
->> (revert of DTS change) should be taken.
->>
-> 
-> Sorry for late response.
-> 
-> As of now, "dsd" is a dead property not used anywhere.
-> This patch series makes real user not to work correctly due to ABI change.
-> How about reverting it until this patch series is merged after fixing the real user problem?
+Hi Krzysztof,
 
-The Exynos5433 DECON bindings were already merged by Rob, so someone
-would need to send a revert. However this does not answer the actual
-question - whether the "dsd" clock is necessary, whether it is there
-(routed to DECON). If it is, it should stay in the bindings.
+On 03.03.2022 17:03, Krzysztof Kozlowski wrote:
+> On 02/03/2022 02:00, Inki Dae wrote:
+>> 22. 2. 7. 01:51에 Krzysztof Kozlowski 이(가) 쓴 글:
+>>> On 25/03/2019 08:13, Andrzej Hajda wrote:
+>>>> GSCALERs in Exynos5433 have local path to DECON and DECON_TV.
+>>>> They can be used as extra planes with support for non-RGB formats and scaling.
+>>>> To enable it on DECON update_plane and disable_plane callback should
+>>>> be modified. Moreover DSD mux should be set accordingly, and finally
+>>>> atomic_check callback should be used to limit the number of active planes.
+>>>>
+>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>>>> ---
+>>>>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 80 +++++++++++++++----
+>>>>   drivers/gpu/drm/exynos/regs-decon5433.h       |  6 ++
+>>>>   2 files changed, 72 insertions(+), 14 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/ex
+>>> Hi guys!
+>>>
+>>> I am working on DRM bindings conversion to DT schema format and I found
+>>> this set only partially applied. I merged the DTS patches ("dsd" clock),
+>>> but I think the driver and bindings were not picked up.
+>>>
+>>> Nevertheless I am going to include the "dsd" clock in the new bindings,
+>>> so the DTS passes DT schema checks. Let me know if other approach
+>>> (revert of DTS change) should be taken.
+>>>
+>> Sorry for late response.
+>>
+>> As of now, "dsd" is a dead property not used anywhere.
+>> This patch series makes real user not to work correctly due to ABI change.
+>> How about reverting it until this patch series is merged after fixing the real user problem?
+> The Exynos5433 DECON bindings were already merged by Rob, so someone
+> would need to send a revert. However this does not answer the actual
+> question - whether the "dsd" clock is necessary, whether it is there
+> (routed to DECON). If it is, it should stay in the bindings.
 
-Best regards,
-Krzysztof
+It is routed to DECON hardware and enabling it is needed to make the so 
+called 'local path' (when DECON takes image data directly from the 
+GSCALER hardware block instead of the memory buffer) working.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
