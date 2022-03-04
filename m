@@ -2,135 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2D2C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  3 Mar 2022 16:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C04DC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Mar 2022 01:12:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234814AbiCCQNA (ORCPT
+        id S237077AbiCDBM6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 3 Mar 2022 11:13:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51230 "EHLO
+        Thu, 3 Mar 2022 20:12:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234893AbiCCQM5 (ORCPT
+        with ESMTP id S232425AbiCDBMv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 3 Mar 2022 11:12:57 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32095198D37
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Mar 2022 08:12:12 -0800 (PST)
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EAF7D3F07E
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Mar 2022 16:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646323930;
-        bh=1BGQjVNrvfbXoY5ZS3EibqKZUO0QZ3KFVt6NQJQD05k=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=NIPG67g6pM4WCHww7sn+e8s0AaE7IRQSF3xv/qcecqlFLCYRvD/b1hkrBfMoizcfT
-         yRv2wn9SdsMtZ4WygyhOMCyHpBkB+SDgJra4AnIx40JJyW/JRf2vFfXGbGZD/2FNRQ
-         rTZORRnX5RmFRMbEoQFyafk8NdE+UD4y0z21+FkhCYCiOWlYNvRMEMYZq9dwDukXX0
-         39/B2j9mvX+eZBtDzY0gsV1609xTIQlsY+ufLVF1bCcuIa4ODk9x/Sl/y2MR/XFO8x
-         wuU/u+m1IEoihqYozrXR9mivTJuFGdD8mpqsCP2FWjhIpNIjApyrT1lurCTMoVRqBe
-         jZcv7Wub7KxJQ==
-Received: by mail-wr1-f70.google.com with SMTP id c5-20020adffb05000000b001edbbefe96dso2203590wrr.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Mar 2022 08:12:10 -0800 (PST)
+        Thu, 3 Mar 2022 20:12:51 -0500
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4ACE179A38;
+        Thu,  3 Mar 2022 17:12:04 -0800 (PST)
+Received: by mail-qv1-xf30.google.com with SMTP id e22so5524479qvf.9;
+        Thu, 03 Mar 2022 17:12:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=RZ20cZByPmP2cAEILKOqMRtPG8kY2S8o8lNfMJWK8Zw=;
+        b=pkLEh4SiuXRflhcjHEsoGtQ6RTF2GvifZQKSInOqEL8gTrqjpEfqtQ2WQeVweRCOLF
+         aKTyKVredHbJTUWT8oXAGjzQWFRRougy+S7FtkYEZk75Q/bCX8fOUuLQ9x8RNcFkMrjl
+         mIsylHA41tXq0O0trJ6qQ5NleAQ9ax8Z5ZY/Vt8EXl5LpNAeisqmtfST4RGN3/roST/f
+         Y+Mimt63hwUHrlUbva91u5Wj4kcdWpWFqco0uebIKIG2VZ3JyRXhzmb/Gfph9BUmj+Iq
+         HZvz8LtO36sc5ZtFBz56ILkj9zcI+DOA/v0vlEW592QNWlCnEY+wVUmQT0MJZJoCzJex
+         +NmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=1BGQjVNrvfbXoY5ZS3EibqKZUO0QZ3KFVt6NQJQD05k=;
-        b=iOiTV4zJ4xxc0Pa6LPIzRPGZLGSlSDa+kSBekqcE5MgzJR6gRcWmmXmO5jrgP0vJLy
-         ApKnwJOgY/cOUp9ryLs+hwQN+bgnGyeYN8x2Ph0brfb/bMg2mxCe6wY6KL0EU8o2xThX
-         +nuVi/70o/pNOwD3fQNFBYnZEXdTMuCcCA/vhZ4XXdV6/YZmQg1RtqnsLkHYRuxIYFf6
-         VIlga464ODy6G5YX/8OL9rtUY24dCX59sJkSEyJnct+I6lMaohuqZ/ybBLFeBgX5zlcT
-         RXxlMjrlfDO6ihhY2Mz7nT5j1JVD2JmLKJ+ar9wIJqw7Kz6c/Yw8cRnSD6JXzFRmcO6r
-         5V2Q==
-X-Gm-Message-State: AOAM531IKOa7OsVIeulKXvi/AbS0Kqd6cSd8mczezRJQe/5rHIOvkYNX
-        9PHFrZTOPc0ZNc5k9Z5eoGbly78y+bExEWzYeVQyqoYxFa4ihLMHLBITJjrwFfsDAFk/IM4hKGY
-        1EM0wDv67TthsUeX+XG0Dr6/sDxfvYvpu1D1Lgsv/hdyP0V8y
-X-Received: by 2002:adf:9dcf:0:b0:1e3:200d:a363 with SMTP id q15-20020adf9dcf000000b001e3200da363mr28146360wre.105.1646323930558;
-        Thu, 03 Mar 2022 08:12:10 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy7RxXzehx6WHCRoPsdx4WU9Q0UoR4WjMDO68zYZ8/KBCOOAFgdSIOncP68hbntK0mVj4ZDXA==
-X-Received: by 2002:adf:9dcf:0:b0:1e3:200d:a363 with SMTP id q15-20020adf9dcf000000b001e3200da363mr28146340wre.105.1646323930366;
-        Thu, 03 Mar 2022 08:12:10 -0800 (PST)
-Received: from [192.168.0.137] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id s17-20020adfbc11000000b001f023d197b8sm2407077wrg.68.2022.03.03.08.12.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 08:12:09 -0800 (PST)
-Message-ID: <7288b8b4-0043-1d2a-10c3-964008ab2948@canonical.com>
-Date:   Thu, 3 Mar 2022 17:12:08 +0100
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RZ20cZByPmP2cAEILKOqMRtPG8kY2S8o8lNfMJWK8Zw=;
+        b=ob/7u7N4g7NzQUKqHp16KCtb+NbZHOqoWQUd47/A0i6xQHkbGVDz4eXU5DIg/WAZ/N
+         rnIq+ZZyPw1pzOisovFeoEDZuUY/jveqesf5bSwwtAS3g7CT46jghfap8Cpe/VvuxylQ
+         o/fCEYJdzCJQseJED+v03lfe7ye7JVt6hHX1wFbWJs+xzT2RyrkoN+ZBKw8j0MqnXtPf
+         ELsoZUieUNogyg8VbYLnYcbB0a/r8SSNJFP3LeDR8SgG7UQNUx25MXdAceRhtcj+dO1L
+         ruKIRe3TaD8n3X2wTlXe2VxjBlHtdQ4PbM5lKWO/hkTu7G3FwfehzaSok+ymT1RN+Ux0
+         emjQ==
+X-Gm-Message-State: AOAM533pZe00oLDDZf7YKrDoQwEPFABbNcx257y8Y8kP0t4w+SHdxjD1
+        gduyg/FGhYnY6xbX8V7KaOY=
+X-Google-Smtp-Source: ABdhPJx+rBIdFD9P/7Ietgk+dzJCFBVOKhE6pfzCjDjFYjqbGkwNLrmrpFfmIkkAIs/pexrXjEJ48A==
+X-Received: by 2002:ad4:5f08:0:b0:435:386d:1aa5 with SMTP id fo8-20020ad45f08000000b00435386d1aa5mr3663321qvb.47.1646356323804;
+        Thu, 03 Mar 2022 17:12:03 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id h14-20020ac8584e000000b002ddf8b971b2sm2687639qth.87.2022.03.03.17.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Mar 2022 17:12:03 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: chi.minghao@zte.com.cn
+To:     krzysztof.kozlowski@canonical.com
+Cc:     alim.akhtar@samsung.com, cgel.zte@gmail.com,
+        chi.minghao@zte.com.cn, cw00.choi@samsung.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        mturquette@baylibre.com, s.nawrocki@samsung.com, sboyd@kernel.org,
+        tomasz.figa@gmail.com, zealci@zte.com.cn
+Subject: [PATCH] clk/samsung: Use of_device_get_match_data()
+Date:   Fri,  4 Mar 2022 01:11:55 +0000
+Message-Id: <20220304011155.2061393-1-chi.minghao@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <77a147f9-794c-83ca-070b-fb17d665ed8f@canonical.com>
+References: <77a147f9-794c-83ca-070b-fb17d665ed8f@canonical.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 RESEND 21/24] drm/exynos/decon5433: add local path
- support
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>
-Cc:     linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20190325071349.22600-1-a.hajda@samsung.com>
- <CGME20190325071401eucas1p10df709b256570f1aba9cbc4e875da1b3@eucas1p1.samsung.com>
- <20190325071349.22600-22-a.hajda@samsung.com>
- <b3c98aa3-751b-acc4-8e57-5566af27f922@canonical.com>
- <6270db2d-667d-8d6f-9289-be92da486c25@samsung.com>
- <9c1dc8ee-c717-377b-879c-0706a1613cf3@canonical.com>
- <ac077b37-5861-594f-560f-654f9257959d@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <ac077b37-5861-594f-560f-654f9257959d@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 03/03/2022 17:11, Marek Szyprowski wrote:
-> Hi Krzysztof,
-> 
-> On 03.03.2022 17:03, Krzysztof Kozlowski wrote:
->> On 02/03/2022 02:00, Inki Dae wrote:
->>> 22. 2. 7. 01:51에 Krzysztof Kozlowski 이(가) 쓴 글:
->>>> On 25/03/2019 08:13, Andrzej Hajda wrote:
->>>>> GSCALERs in Exynos5433 have local path to DECON and DECON_TV.
->>>>> They can be used as extra planes with support for non-RGB formats and scaling.
->>>>> To enable it on DECON update_plane and disable_plane callback should
->>>>> be modified. Moreover DSD mux should be set accordingly, and finally
->>>>> atomic_check callback should be used to limit the number of active planes.
->>>>>
->>>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>>> ---
->>>>>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 80 +++++++++++++++----
->>>>>   drivers/gpu/drm/exynos/regs-decon5433.h       |  6 ++
->>>>>   2 files changed, 72 insertions(+), 14 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/ex
->>>> Hi guys!
->>>>
->>>> I am working on DRM bindings conversion to DT schema format and I found
->>>> this set only partially applied. I merged the DTS patches ("dsd" clock),
->>>> but I think the driver and bindings were not picked up.
->>>>
->>>> Nevertheless I am going to include the "dsd" clock in the new bindings,
->>>> so the DTS passes DT schema checks. Let me know if other approach
->>>> (revert of DTS change) should be taken.
->>>>
->>> Sorry for late response.
->>>
->>> As of now, "dsd" is a dead property not used anywhere.
->>> This patch series makes real user not to work correctly due to ABI change.
->>> How about reverting it until this patch series is merged after fixing the real user problem?
->> The Exynos5433 DECON bindings were already merged by Rob, so someone
->> would need to send a revert. However this does not answer the actual
->> question - whether the "dsd" clock is necessary, whether it is there
->> (routed to DECON). If it is, it should stay in the bindings.
-> 
-> It is routed to DECON hardware and enabling it is needed to make the so 
-> called 'local path' (when DECON takes image data directly from the 
-> GSCALER hardware block instead of the memory buffer) working.
+From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
 
-Awesome, thanks for confirmation! Bindings are good then.
+Use of_device_get_match_data() to simplify the code.
 
-Best regards,
-Krzysztof
+Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index e6d6cbf8c4e6..feed1a347c09 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -81,19 +81,13 @@ MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+ static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
+ {
+ 	const struct exynos_clkout_variant *variant;
+-	const struct of_device_id *match;
+ 
+ 	if (!dev->parent) {
+ 		dev_err(dev, "not instantiated from MFD\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	match = of_match_device(exynos_clkout_ids, dev->parent);
+-	if (!match) {
+-		dev_err(dev, "cannot match parent device\n");
+-		return -EINVAL;
+-	}
+-	variant = match->data;
++	variant = of_device_get_match_data(dev->parent);
+ 
+ 	*mux_mask = variant->mux_mask;
+ 
+-- 
+2.25.1
+
