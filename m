@@ -2,62 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7EEC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Mar 2022 11:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4D1C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Mar 2022 11:11:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233306AbiCFLMl (ORCPT
+        id S233316AbiCFLMo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Mar 2022 06:12:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49554 "EHLO
+        Sun, 6 Mar 2022 06:12:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233304AbiCFLMj (ORCPT
+        with ESMTP id S233326AbiCFLMk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Mar 2022 06:12:39 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D8A260A98
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 03:11:43 -0800 (PST)
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        Sun, 6 Mar 2022 06:12:40 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904B460CF0
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 03:11:47 -0800 (PST)
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6C7EC3F636
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 11:11:41 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 209253F1B7
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 11:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646565101;
-        bh=Vg8tRLsLvpBSAUpunNCltvlBq0IRIqfiwZSZWoN0aPY=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=lKlYoWlBTdBOeuMmT8TTaCQvLYCG4BbweCi25VmOfqJbbP6cZXIDwF1WbToyJdn4N
-         ygr3Jz4PxKhTDykn/V+fsc0jjcjLVLTdaaoFXziuBLxsYFn//Sv4p7tEU9lfmuX110
-         rGtp24Qzmkmz7VnnupnI5yfa4W9oNb7FgqTR9r2pVj6nOB08DVqhZipzemLRg8vrKY
-         9IM87oWYiBgHHdRDRTggeUREmt+49+5zRaJtda9u4W+QAXdKQpfMYXH6c9xw3QMNcC
-         MrfE67Ly68FdUWzFS+tSKeUQGHEpvlcmOqZYvASWuYHWir/8Igy+YU+cgu7ZfO8eeW
-         PEyUOYGEqWfRw==
-Received: by mail-ed1-f69.google.com with SMTP id u28-20020a50d51c000000b004159ffb8f24so6769810edi.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Mar 2022 03:11:41 -0800 (PST)
+        s=20210705; t=1646565094;
+        bh=wIiMX0XUCkTo8b0ATD0IcXb9TBhD0CdDLNQdfZCqwBY=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=WNIFPfJiAfFBZVOKKS/6APhHrMkxFBaHMKY6D8FE828BwO2unyn8xpNcRjsVpvVpO
+         GhTtQeBYerh1MTeOYvfcOBMLooViIZ5Zdq+QGV/LDkD+yWNAWN7IYzAP2IIz0EUm0q
+         IlA9PdWXepfarBk9d4fWD/R2QcBCPVoHF/SJa6+1sdrlTdtxZHpgXdLrQwTSlnNW1T
+         ht9KuWEFlei9xxpBJ/nc0FOQNeItCEa6Z14N6eQMK7Mh/WlEcEi9q4j5hjcMPOu8nF
+         bWR9iFcEbPj2FBJIWCM2BsCUteR2V2AK5Vmc9dzH7zXSfqhBbtCo+r8aLoJRIaE8ai
+         NWCFSJjGq0acw==
+Received: by mail-ej1-f71.google.com with SMTP id lf15-20020a170906ae4f00b006da86a43346so4992663ejb.14
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Mar 2022 03:11:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Vg8tRLsLvpBSAUpunNCltvlBq0IRIqfiwZSZWoN0aPY=;
-        b=LVWt/bLRVg5tGbflvNKczrViJ7uwklL4R3B0IChavr5tijgE5JTYhyrs4WoDE6nuwm
-         /9qaYmj3zl6wxmSq3zWkbNybIvFV8Ahs0t19Xq1f27Mp9E2ZgbdwmBRGPi7UAKjin/bv
-         cQrk6cefGioec+GAj4gvz0MwPum4x79DpDmHNUkgpsTRdAfLAkOvOyhLjUXC4xJ7CqiV
-         wE52D2jKvYVrJwpjZXQUfdUUnYYEYDlsFgeBvpcTYHJhBe09sjIyvn9gSqItnFE0mOXh
-         3o8zxxkLt9c/SfOnWqeKbWr7g43zpby0nxVHzM2Aufkj8ztlL9GXJdG/bY6AMXsKlQPr
-         mlDw==
-X-Gm-Message-State: AOAM5331tdMXw8uypfvYiJXj2+eR8TC4usJDLJhozu/67+TcfdQDAAAa
-        X+O6RLIrFx5Khhliruxtvt15K2Svmic4nBBnjUucjNiSo6CcZpGO8yQBQ2i6wIqCj7OhfeOMmbh
-        rdMpWUeli2PRDHpZ6EKHdahc0a2YXMhjvu+0ow9JNX2gLqz2J
-X-Received: by 2002:a17:906:974e:b0:6bb:4f90:a6ae with SMTP id o14-20020a170906974e00b006bb4f90a6aemr5639439ejy.452.1646565100147;
-        Sun, 06 Mar 2022 03:11:40 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwg9GrLl2vImMKicyylrKdSYL2GcjHe67LtxvgKYKieQMgGqw6UjbbuYj5qEBZ/bq+RTQ8lpA==
-X-Received: by 2002:a17:906:974e:b0:6bb:4f90:a6ae with SMTP id o14-20020a170906974e00b006bb4f90a6aemr5639419ejy.452.1646565099880;
-        Sun, 06 Mar 2022 03:11:39 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wIiMX0XUCkTo8b0ATD0IcXb9TBhD0CdDLNQdfZCqwBY=;
+        b=iG/5FCxdqebV2wLn6zU/pbcZ+2QpaDCcZdSlLEiXHvqt4KGfQWTc5sD7/XdKwN7l7c
+         HqNJ1uCR/JSeFafAxJAbOgzI7vdOe6rEuH0bZOwHU2zhtNidJoy2P1Y20/gK360x583c
+         LAewu2/MmRjRmowBMQSIRPUgWMfpo/nSelMz13THwz0/NG7uWddO8366hlLBRrT8Kk4Y
+         wllFTwfgrT82pKsnCNiRgZBtD9o5BTiRsLdgSeyYxed0k5Xkxy/jxUEIx0VFFG26uO4L
+         QboGNWgkA8rfBjojjuLDuloXagZAjbObga2O7a8Inad3HJdShmqJEpeT4monDSFcjFI9
+         62BQ==
+X-Gm-Message-State: AOAM532knR7LcX9rgby6E76+MMlpDzOC5Q+8l9s6l/dWJfSpBJu60oFw
+        kg/CGlgLB5yV/ODJVLer855svC5leYDbd0BaCP9UnpXki+tvUjt3WnWDWKb1Pw+1F9/mETLQAfg
+        uxZ+7670mJHjCpOo2nGN5/Gw264PEbEuqUxwAZSeQMpMYhLpp
+X-Received: by 2002:aa7:c80b:0:b0:416:463c:309c with SMTP id a11-20020aa7c80b000000b00416463c309cmr415354edt.413.1646565089794;
+        Sun, 06 Mar 2022 03:11:29 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzP9L+8xDUVkpWxiFjFj1GYgye5Xlluz6YMq3chqBtolnFZUO6sIbZcQekE9OTuQDMjNAfrdQ==
+X-Received: by 2002:aa7:c80b:0:b0:416:463c:309c with SMTP id a11-20020aa7c80b000000b00416463c309cmr415331edt.413.1646565089569;
+        Sun, 06 Mar 2022 03:11:29 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id a9-20020a1709066d4900b006da888c3ef0sm3720444ejt.108.2022.03.06.03.11.38
+        by smtp.gmail.com with ESMTPSA id a9-20020a1709066d4900b006da888c3ef0sm3720444ejt.108.2022.03.06.03.11.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Mar 2022 03:11:39 -0800 (PST)
+        Sun, 06 Mar 2022 03:11:28 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         Avri Altman <avri.altman@wdc.com>,
@@ -75,175 +74,93 @@ To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org
-Cc:     Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 06/12] dt-bindings: ufs: hisilicon,ufs: convert to dtschema
-Date:   Sun,  6 Mar 2022 12:11:19 +0100
-Message-Id: <20220306111125.116455-7-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v3 00/12] dt-bindings: ufs: add common platform bindings + fixes
+Date:   Sun,  6 Mar 2022 12:11:13 +0100
+Message-Id: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
-References: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the HiSilicon Universal Flash Storage (UFS) Controller to DT
-schema format.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/ufs/hisilicon,ufs.yaml           | 90 +++++++++++++++++++
- .../devicetree/bindings/ufs/ufs-hisi.txt      | 42 ---------
- 2 files changed, 90 insertions(+), 42 deletions(-)
+Not tested on hardware, so please kindly test.
+Bindings maintainers might need checking - taken from git log.
+
+Changes since v2
+================
+1. Do not deprecate freq-table-hz, but instead update dtschema to accept
+   uint32-matrix. See:
+   https://github.com/devicetree-org/dt-schema/pull/69
+2. Drop patches and changes related to freq-table-hz -> freq-table conversion.
+3. Add tags.
+4. Change maintainer of qcom,ufs.
+
+Changes since v1
+================
+1. Make freq-table as matrix of tuples (Nishanth).
+2. New patches: convert all bindings and fix up DTS files.
+3. Several minor fixes in UFS bindings.
+
+Dependencies
+============
+None dependencies. The DTS patches can go independently via respective
+maintainers. The dt-bindings patches could go via UFS tree.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (12):
+  dt-bindings: ufs: add common platform bindings
+  dt-bindings: ufs: samsung,exynos-ufs: use common bindings
+  dt-bindings: ufs: cdns,ufshc: convert to dtschema
+  dt-bindings: ufs: drop unused/old ufs-qcom PHY bindings
+  dt-bindings: ufs: qcom,ufs: convert to dtschema
+  dt-bindings: ufs: hisilicon,ufs: convert to dtschema
+  dt-bindings: ufs: mediatek,ufs: convert to dtschema
+  dt-bindings: ufs: snps,tc-dwc-g210: convert to dtschema
+  arm64: dts: hisilicon: align 'freq-table-hz' with dtschema in UFS
+  arm64: dts: qcom: msm8996: drop unsupported UFS
+    vddp-ref-clk-max-microamp
+  arm64: dts: qcom: msm8996: correct UFS compatible
+  arm64: dts: qcom: sm8350: drop duplicated ref_clk in UFS
+
+ .../devicetree/bindings/ufs/cdns,ufshc.txt    |  32 ---
+ .../devicetree/bindings/ufs/cdns,ufshc.yaml   |  68 +++++
+ .../bindings/ufs/hisilicon,ufs.yaml           |  90 +++++++
+ .../devicetree/bindings/ufs/mediatek,ufs.yaml |  67 +++++
+ .../devicetree/bindings/ufs/qcom,ufs.yaml     | 242 ++++++++++++++++++
+ .../bindings/ufs/samsung,exynos-ufs.yaml      |  13 +-
+ .../bindings/ufs/snps,tc-dwc-g210.yaml        |  51 ++++
+ .../bindings/ufs/tc-dwc-g210-pltfrm.txt       |  26 --
+ .../devicetree/bindings/ufs/ti,j721e-ufs.yaml |   7 +-
+ .../devicetree/bindings/ufs/ufs-common.yaml   |  82 ++++++
+ .../devicetree/bindings/ufs/ufs-hisi.txt      |  42 ---
+ .../devicetree/bindings/ufs/ufs-mediatek.txt  |  45 ----
+ .../devicetree/bindings/ufs/ufs-qcom.txt      |  63 -----
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt |  90 -------
+ MAINTAINERS                                   |   1 +
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi     |   4 +-
+ arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   4 +-
+ .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  |   1 -
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |   3 +-
+ arch/arm64/boot/dts/qcom/sm8350.dtsi          |   3 -
+ 20 files changed, 614 insertions(+), 320 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ufs/cdns,ufshc.txt
+ create mode 100644 Documentation/devicetree/bindings/ufs/cdns,ufshc.yaml
  create mode 100644 Documentation/devicetree/bindings/ufs/hisilicon,ufs.yaml
+ create mode 100644 Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+ create mode 100644 Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+ create mode 100644 Documentation/devicetree/bindings/ufs/snps,tc-dwc-g210.yaml
+ delete mode 100644 Documentation/devicetree/bindings/ufs/tc-dwc-g210-pltfrm.txt
+ create mode 100644 Documentation/devicetree/bindings/ufs/ufs-common.yaml
  delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
+ delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-mediatek.txt
+ delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-qcom.txt
+ delete mode 100644 Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
 
-diff --git a/Documentation/devicetree/bindings/ufs/hisilicon,ufs.yaml b/Documentation/devicetree/bindings/ufs/hisilicon,ufs.yaml
-new file mode 100644
-index 000000000000..4432bfa0cbc7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ufs/hisilicon,ufs.yaml
-@@ -0,0 +1,90 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ufs/hisilicon,ufs.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: HiSilicon Universal Flash Storage (UFS) Controller
-+
-+maintainers:
-+  - Li Wei <liwei213@huawei.com>
-+
-+# Select only our matches, not all jedec,ufs
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - hisilicon,hi3660-ufs
-+          - hisilicon,hi3670-ufs
-+  required:
-+    - compatible
-+
-+allOf:
-+  - $ref: ufs-common.yaml
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: hisilicon,hi3660-ufs
-+          - const: jedec,ufs-1.1
-+      - items:
-+          - enum:
-+              - hisilicon,hi3670-ufs
-+          - const: jedec,ufs-2.1
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: ref_clk
-+      - const: phy_clk
-+
-+  reg:
-+    items:
-+      - description: UFS register address space
-+      - description: UFS SYS CTRL register address space
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: rst
-+
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - reset-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/hi3670-clock.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        ufs@ff3c0000 {
-+            compatible = "hisilicon,hi3670-ufs", "jedec,ufs-2.1";
-+            reg = <0x0 0xff3c0000 0x0 0x1000>,
-+                  <0x0 0xff3e0000 0x0 0x1000>;
-+            interrupt-parent = <&gic>;
-+            interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&crg_ctrl HI3670_CLK_GATE_UFSIO_REF>,
-+                     <&crg_ctrl HI3670_CLK_GATE_UFS_SUBSYS>;
-+            clock-names = "ref_clk", "phy_clk";
-+            freq-table-hz = <0 0>,
-+                            <0 0>;
-+
-+            resets = <&crg_rst 0x84 12>;
-+            reset-names = "rst";
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-deleted file mode 100644
-index 0b83df1a5418..000000000000
---- a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-+++ /dev/null
-@@ -1,42 +0,0 @@
--* Hisilicon Universal Flash Storage (UFS) Host Controller
--
--UFS nodes are defined to describe on-chip UFS hardware macro.
--Each UFS Host Controller should have its own node.
--
--Required properties:
--- compatible        : compatible list, contains one of the following -
--					"hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
--					host controller present on Hi3660 chipset.
--					"hisilicon,hi3670-ufs", "jedec,ufs-2.1" for hisi ufs
--					host controller present on Hi3670 chipset.
--- reg               : should contain UFS register address space & UFS SYS CTRL register address,
--- interrupts        : interrupt number
--- clocks	        : List of phandle and clock specifier pairs
--- clock-names       : List of clock input name strings sorted in the same
--					order as the clocks property. "ref_clk", "phy_clk" is optional
--- freq-table-hz     : Array of <min max> operating frequencies stored in the same
--                      order as the clocks property. If this property is not
--                      defined or a value in the array is "0" then it is assumed
--                      that the frequency is set by the parent clock or a
--                      fixed rate clock source.
--- resets            : describe reset node register
--- reset-names       : reset node register, the "rst" corresponds to reset the whole UFS IP.
--
--Example:
--
--	ufs: ufs@ff3b0000 {
--		compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
--		/* 0: HCI standard */
--		/* 1: UFS SYS CTRL */
--		reg = <0x0 0xff3b0000 0x0 0x1000>,
--			<0x0 0xff3b1000 0x0 0x1000>;
--		interrupt-parent = <&gic>;
--		interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&crg_ctrl HI3660_CLK_GATE_UFSIO_REF>,
--			<&crg_ctrl HI3660_CLK_GATE_UFSPHY_CFG>;
--		clock-names = "ref_clk", "phy_clk";
--		freq-table-hz = <0 0>, <0 0>;
--		/* offset: 0x84; bit: 12  */
--		resets = <&crg_rst 0x84 12>;
--		reset-names = "rst";
--	};
 -- 
 2.32.0
 
