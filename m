@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73D2C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Mar 2022 11:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF19BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Mar 2022 11:12:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233318AbiCFLMy (ORCPT
+        id S233473AbiCFLNp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Mar 2022 06:12:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49790 "EHLO
+        Sun, 6 Mar 2022 06:13:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233324AbiCFLMp (ORCPT
+        with ESMTP id S233326AbiCFLNQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Mar 2022 06:12:45 -0500
+        Sun, 6 Mar 2022 06:13:16 -0500
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31941606E6
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 03:11:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8ECE60AB5
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 03:12:15 -0800 (PST)
 Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3E4883F60C
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 11:11:40 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DDBA33F602
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 11:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646565100;
-        bh=lf3L+0o9CMSrEd/gKJSlHCZX7vz5FnWuL1aM1XjlPVQ=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+        s=20210705; t=1646565112;
+        bh=K87fd/JruUZqYWOr8a/mojQKl9UWafqN7QNiHwMxzUY=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=J1THvrZYUvPmdS1vOqxHdr8hyySTKa679+xacMDyJdfDVhvXIlS+ezxsv51VFbw0j
-         NskXMbKer5FrFR4gjJanP6z2C1OkKCD5+l6GTsNLEBav3yDh61AFLzaT3DmFnN6hpg
-         l4iZs/AYwzulCKiT4Qqw5A6vcjrae9JDqBCxZ0SuA2RFO/dmlRlyc+R1bGTo9t2Dxf
-         BBavFPu+1d73Xgc/H/r5h8+WUkB6pacY5j+GSeU7d7o6LErtNj3QamKqQMYcAmhwbD
-         ZyYQAe2Hfrvi73kf5nJEiQjLH2F5jKzUEyVIKLUPBJ2B0aY2U76NVTznMAxouLYSa9
-         DUOo0OUlzoQDQ==
-Received: by mail-ed1-f70.google.com with SMTP id r9-20020a05640251c900b00412d54ea618so6717947edd.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Mar 2022 03:11:40 -0800 (PST)
+        b=wDtnyZ3qkS7OiosiUkY081IGWMQK7op38PQ3NOmBQffGRF9eicwDVCN4JlWPHueb9
+         zptvPjW/yLFYifejvwVJBYI0vBjLnxDFuH2IWVlr0NcSmnkIl1/9F3aV5ERVyNLuAS
+         GNcebTuB9FRCfIoCtxzfa6++HRADaOeGAUstohUiuvyNK7dPr3pPVmsmtZfuEHVWqq
+         WVTQ4JJU4V37CX3o5PHt/eH6q72U6Ni9TdaP3q6A60ZQlT/72rd94TFz6uS+O8G9c3
+         Z1Ey1+9yQ0GOTDpe4KM/nNC9yJW45P2r2cOtUJXtmP96eRzZYsOL7ncgxcwVntBjg9
+         mv0llsY1ED4DA==
+Received: by mail-ed1-f70.google.com with SMTP id n11-20020aa7c68b000000b0041641550e11so377038edq.8
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Mar 2022 03:11:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lf3L+0o9CMSrEd/gKJSlHCZX7vz5FnWuL1aM1XjlPVQ=;
-        b=OF9CaFJ5yNCPTKMJAw7p1hz5xMwsHaJxBtN+BMijquJhFt8qtin9oTa39T9eLWUzcm
-         Km3dHEs5aJxBWAM4X3gevlSt6l5Hxt5gD5Otk+uGhHtnX8pFNhEHiv7EJ4Jvc3612EeN
-         vwn+2b9LY08n+WKMjYbkVNkg9iPrCLsu1++k+U2k+rIY4TR2ylCajhj6foX4BJBirEMw
-         5O7QCzdLxG8HkeujMY6KWGZTLIRiWgtfwWDzkHsrx9Nkt2ypA2CydZfw9RTkLb+/wtgz
-         dMtjblAv0RgW2QnPuxpSQsB5hIPnMIPLFj1f/c5GCi+SFoDOlYeZqJ3QnK5sSU7/VaMJ
-         xxOg==
-X-Gm-Message-State: AOAM532Nb3saOzzv5Whw94ahY6rON0mTL8MKLI9LMSobgLuG8eOBhVmG
-        /EjME+50jL49JycYHy8YKGhfilRMLyYLdJeTztoj63l2RCVb1Eiy0o6CWAQm0Fw/7pvk9UaJfvb
-        UTWs7awR95J9wsyxtRpoXsVgiFk6knyERgY6x0IUIz5JaYzAC
-X-Received: by 2002:a05:6402:d0d:b0:416:1d69:f23b with SMTP id eb13-20020a0564020d0d00b004161d69f23bmr6273182edb.141.1646565091332;
-        Sun, 06 Mar 2022 03:11:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwZtXPDKuzvvxfR2qyr8z+IQLrONJ/y+63x3Fbz/V1C7LxKea28+CanHlFXHMdCVOY2o4Xmiw==
-X-Received: by 2002:a05:6402:d0d:b0:416:1d69:f23b with SMTP id eb13-20020a0564020d0d00b004161d69f23bmr6273165edb.141.1646565091125;
-        Sun, 06 Mar 2022 03:11:31 -0800 (PST)
+        bh=K87fd/JruUZqYWOr8a/mojQKl9UWafqN7QNiHwMxzUY=;
+        b=bHcwgCIZzaeh7x/O+wDL1/SEAAXeXyLpLIJ1LcklaYDBJu7c62Ft9beOLXcrFIrrrv
+         mYwkBLfDsVmMSfdkEd2VovlMRSGouzsoorSIjZnRk+kMJdYOtSpawlO1laSYc7QdoCX3
+         38kXNq7Z4M/lXeVlEMaEZ8Gj0vIc5X2dJATAzlUuKomHuuSFzy9ooZQf1dxj+RMl966G
+         rdwawlLXJe2R+4/T5RYi05i5X3tkQ8T/B6edj1vA/yfoHz3Mjen5X3rh6mewzQeb/HCG
+         rdkYC46FKb3WMwjJNPQprDdk9h7Yu88+eF4U8ozgl/OlQMzTuSJepC+dgeaSpgdmC5Ao
+         DD2g==
+X-Gm-Message-State: AOAM532GGNxcz6earfF6roAU2Iy4KiVKC1+1XNzIu6xw6xBdLQj05PX6
+        a3OLXLDq3L5iH/Qlg77nZsCycHfx7QSxBNgNXUpnB2WRXlBITkDnQuJtRII0zTmKFmmKk5xZAWG
+        7BBfCCK5kKizoyc5/4Sp+xdy1prJ/Z0DnomKt+5+u53e+SJC0
+X-Received: by 2002:a17:906:2bc1:b0:6cf:d009:7f6b with SMTP id n1-20020a1709062bc100b006cfd0097f6bmr5438933ejg.17.1646565096465;
+        Sun, 06 Mar 2022 03:11:36 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz1ptrmrXdfsckOQ6+dPK+8ZJ5rNb1lYSQOz++uc/dn/a6ktfiEQvucxBSUD3XC+Nlvx7yKfg==
+X-Received: by 2002:a17:906:2bc1:b0:6cf:d009:7f6b with SMTP id n1-20020a1709062bc100b006cfd0097f6bmr5438902ejg.17.1646565096238;
+        Sun, 06 Mar 2022 03:11:36 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id a9-20020a1709066d4900b006da888c3ef0sm3720444ejt.108.2022.03.06.03.11.29
+        by smtp.gmail.com with ESMTPSA id a9-20020a1709066d4900b006da888c3ef0sm3720444ejt.108.2022.03.06.03.11.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Mar 2022 03:11:30 -0800 (PST)
+        Sun, 06 Mar 2022 03:11:35 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         Avri Altman <avri.altman@wdc.com>,
@@ -75,9 +75,10 @@ To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 01/12] dt-bindings: ufs: add common platform bindings
-Date:   Sun,  6 Mar 2022 12:11:14 +0100
-Message-Id: <20220306111125.116455-2-krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 04/12] dt-bindings: ufs: drop unused/old ufs-qcom PHY bindings
+Date:   Sun,  6 Mar 2022 12:11:17 +0100
+Message-Id: <20220306111125.116455-5-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
 References: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
@@ -87,118 +88,87 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for common parts (platform) of Universal Flash Storage
-(UFS) Host Controllers in dtschema format.
-
-Include also the bindings directory in the UFS maintainers entry.
+The Qualcomm UFS PHY bindings are documented in
+bindings/phy/qcom,qmp-phy.yaml and the compatibles from separate file
+bindings/ufs/ufs-qcom.txt are not used at all.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/ufs/ufs-common.yaml   | 82 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 83 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ufs/ufs-common.yaml
+ .../devicetree/bindings/ufs/ufs-qcom.txt      | 63 -------------------
+ 1 file changed, 63 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-qcom.txt
 
-diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-new file mode 100644
-index 000000000000..47a4e9e1a775
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-@@ -0,0 +1,82 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ufs/ufs-common.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Common properties for Universal Flash Storage (UFS) Host Controllers
-+
-+maintainers:
-+  - Alim Akhtar <alim.akhtar@samsung.com>
-+  - Avri Altman <avri.altman@wdc.com>
-+
-+properties:
-+  clocks: true
-+
-+  clock-names: true
-+
-+  freq-table-hz:
-+    items:
-+      items:
-+        - description: Minimum frequency for given clock in Hz
-+        - description: Maximum frequency for given clock in Hz
-+    description: |
-+      Array of <min max> operating frequencies in Hz stored in the same order
-+      as the clocks property. If this property is not defined or a value in the
-+      array is "0" then it is assumed that the frequency is set by the parent
-+      clock or a fixed rate clock source.
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  lanes-per-direction:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2]
-+    default: 2
-+    description:
-+      Number of lanes available per direction.  Note that it is assume same
-+      number of lanes is used both directions at once.
-+
-+  vdd-hba-supply:
-+    description:
-+      Phandle to UFS host controller supply regulator node.
-+
-+  vcc-supply:
-+    description:
-+      Phandle to VCC supply regulator node.
-+
-+  vccq-supply:
-+    description:
-+      Phandle to VCCQ supply regulator node.
-+
-+  vccq2-supply:
-+    description:
-+      Phandle to VCCQ2 supply regulator node.
-+
-+  vcc-supply-1p8:
-+    type: boolean
-+    description:
-+      For embedded UFS devices, valid VCC range is 1.7-1.95V or 2.7-3.6V. This
-+      boolean property when set, specifies to use low voltage range of
-+      1.7-1.95V. Note for external UFS cards this property is invalid and valid
-+      VCC range is always 2.7-3.6V.
-+
-+  vcc-max-microamp:
-+    description:
-+      Specifies max. load that can be drawn from VCC supply.
-+
-+  vccq-max-microamp:
-+    description:
-+      Specifies max. load that can be drawn from VCCQ supply.
-+
-+  vccq2-max-microamp:
-+    description:
-+      Specifies max. load that can be drawn from VCCQ2 supply.
-+
-+dependencies:
-+  freq-table-hz: [ 'clocks' ]
-+
-+required:
-+  - interrupts
-+
-+additionalProperties: true
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d7ea92ce1b1d..ef16268b6ca6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20100,6 +20100,7 @@ R:	Alim Akhtar <alim.akhtar@samsung.com>
- R:	Avri Altman <avri.altman@wdc.com>
- L:	linux-scsi@vger.kernel.org
- S:	Supported
-+F:	Documentation/devicetree/bindings/ufs/
- F:	Documentation/scsi/ufs.rst
- F:	drivers/scsi/ufs/
- 
+diff --git a/Documentation/devicetree/bindings/ufs/ufs-qcom.txt b/Documentation/devicetree/bindings/ufs/ufs-qcom.txt
+deleted file mode 100644
+index fd59f93e9556..000000000000
+--- a/Documentation/devicetree/bindings/ufs/ufs-qcom.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+-* Qualcomm Technologies Inc Universal Flash Storage (UFS) PHY
+-
+-UFSPHY nodes are defined to describe on-chip UFS PHY hardware macro.
+-Each UFS PHY node should have its own node.
+-
+-To bind UFS PHY with UFS host controller, the controller node should
+-contain a phandle reference to UFS PHY node.
+-
+-Required properties:
+-- compatible        : compatible list, contains one of the following -
+-			"qcom,ufs-phy-qmp-20nm" for 20nm ufs phy,
+-			"qcom,ufs-phy-qmp-14nm" for legacy 14nm ufs phy,
+-			"qcom,msm8996-ufs-phy-qmp-14nm" for 14nm ufs phy
+-			 present on MSM8996 chipset.
+-- reg               : should contain PHY register address space (mandatory),
+-- reg-names         : indicates various resources passed to driver (via reg proptery) by name.
+-                      Required "reg-names" is "phy_mem".
+-- #phy-cells        : This property shall be set to 0
+-- vdda-phy-supply   : phandle to main PHY supply for analog domain
+-- vdda-pll-supply   : phandle to PHY PLL and Power-Gen block power supply
+-- clocks	    : List of phandle and clock specifier pairs
+-- clock-names       : List of clock input name strings sorted in the same
+-		      order as the clocks property. "ref_clk_src", "ref_clk",
+-		      "tx_iface_clk" & "rx_iface_clk" are mandatory but
+-		      "ref_clk_parent" is optional
+-
+-Optional properties:
+-- vdda-phy-max-microamp : specifies max. load that can be drawn from phy supply
+-- vdda-pll-max-microamp : specifies max. load that can be drawn from pll supply
+-- vddp-ref-clk-supply   : phandle to UFS device ref_clk pad power supply
+-- vddp-ref-clk-max-microamp : specifies max. load that can be drawn from this supply
+-- resets : specifies the PHY reset in the UFS controller
+-
+-Example:
+-
+-	ufsphy1: ufsphy@fc597000 {
+-		compatible = "qcom,ufs-phy-qmp-20nm";
+-		reg = <0xfc597000 0x800>;
+-		reg-names = "phy_mem";
+-		#phy-cells = <0>;
+-		vdda-phy-supply = <&pma8084_l4>;
+-		vdda-pll-supply = <&pma8084_l12>;
+-		vdda-phy-max-microamp = <50000>;
+-		vdda-pll-max-microamp = <1000>;
+-		clock-names = "ref_clk_src",
+-			"ref_clk_parent",
+-			"ref_clk",
+-			"tx_iface_clk",
+-			"rx_iface_clk";
+-		clocks = <&clock_rpm clk_ln_bb_clk>,
+-			<&clock_gcc clk_pcie_1_phy_ldo >,
+-			<&clock_gcc clk_ufs_phy_ldo>,
+-			<&clock_gcc clk_gcc_ufs_tx_cfg_clk>,
+-			<&clock_gcc clk_gcc_ufs_rx_cfg_clk>;
+-		resets = <&ufshc 0>;
+-	};
+-
+-	ufshc: ufshc@fc598000 {
+-		#reset-cells = <1>;
+-		...
+-		phys = <&ufsphy1>;
+-		phy-names = "ufsphy";
+-	};
 -- 
 2.32.0
 
