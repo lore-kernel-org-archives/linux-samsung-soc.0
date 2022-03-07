@@ -2,62 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35E7C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 08:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F6FC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 08:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236088AbiCGIJc (ORCPT
+        id S236070AbiCGIJx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 03:09:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41000 "EHLO
+        Mon, 7 Mar 2022 03:09:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236063AbiCGIJR (ORCPT
+        with ESMTP id S236054AbiCGIJw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 03:09:17 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 958DF1B78B
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 00:08:23 -0800 (PST)
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        Mon, 7 Mar 2022 03:09:52 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DF01B78B
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 00:08:58 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E9BA13F60D
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 08:08:21 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4517D3F4C2
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 08:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646640501;
+        s=20210705; t=1646640537;
         bh=eR7Mc9vi/w7iGpwa309YiCzl9zkdxojESdgSBLZGEv4=;
         h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=GQu7LJDK2krr29AH+bK//llfgxyqSmq6XMk4JYubDMCfDeFxwMRRxJt1H1wfyQQjO
-         XYFus14KNCwtiAruo3qUl0VoOJwtZ7Qw7Dd9fmtCSmSPBrXPGzUotGTbEU7yjuL6Tx
-         ONGnaaESCXN9huK/lL5hm44LYUDyD3lYdiSmNeythvj0OwIiDRquzFVyqZhHe5fcLf
-         xffQq/hYLke6HHU0iEERafEUwWngCJkqBZC3zhskQ5VFwL9BI6G5YNTCHkgUb0FjYt
-         SwoHDB+EpUOqMylQPCtPDVB3g4MPhzaDNDOz9HpXiHTysfonAAypynDYFJnKF2dLYX
-         QMOts8zQfKjMg==
-Received: by mail-ej1-f72.google.com with SMTP id og24-20020a1709071dd800b006dab87bec4fso3154442ejc.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 00:08:21 -0800 (PST)
+        b=LCYw9LR02HlXPdwP+3ZrOyrR6ROD6a+t+6G7Xfk21TSR7F+Cn1c2qhz2FI6Coxk3n
+         aPeeQLsYQih2aJaqWLkTEV/uqtOVykfnUj674bFOTtzoUWGr3TDawOe8pbXD/X+9cg
+         4H4H98Fwa6ysuatFo5To85a117moSKx4ruwOMZLsqWiQ7NoL/oBxtD5axYR338d/Dm
+         B5J2jHAwLhNPHuLBzYHS/b1HNC+fdflt/ttAqBPuVISL/r7o9H5sAxxalZ9Qgq28lX
+         fGzZsRxKAjitMc2oN1MgnLD5CZBvDyZehOpwOx93h0eXfafScILNzk7bvn29D0Aw+T
+         MJhp4GGM/BRJg==
+Received: by mail-ej1-f70.google.com with SMTP id lf15-20020a170906ae4f00b006da86a43346so5465245ejb.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 00:08:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
         bh=eR7Mc9vi/w7iGpwa309YiCzl9zkdxojESdgSBLZGEv4=;
-        b=vPqwJGIIpiP7/RirXAXYj3DDH97IF5uU2BVVjGAwCoQpY/WzLRSP5ytuToJwGzB0hU
-         dbqP2lpOJ8s03JW94mgWQKhGTd//rx7KeuVlZ+uulDbGlC8sOcgq5g5ha4F5Q3M4q0Kd
-         JJ/v6jcMHWF9tKpD6KP4deeDC/bTlcElrhSET+zdmYwnO7McMLA5+QaGLMxYoR6ZM5C/
-         e48DicvCFXO92Q+ke501Hs9rja21CE04DX5ygDir75bdh2hzDnYIvBN4Kot73Vyxzm9A
-         airPhUueB63uRc1xeZTz38j6jMc/0QlH2KQt9noYUXKrlQN+o3rdqfug7uD8dcDsW2g5
-         OJFg==
-X-Gm-Message-State: AOAM531kI/jZ27C2HKF0qKq/MI/Ggx+M4E8YdqiLadF8SzTTiJuIP39W
-        TE/jTQl8fvnK4H4s+STy+DRG8U8xkzTd1mTcIMoS+CRPaNFQptGnniOuRIc68KP4kTg2CW9eSmX
-        etkypZ4zIxyaSUPHfxc40SYx4Nch0ePCSfxRA0JUI84nk4Ryl
-X-Received: by 2002:a05:6402:239b:b0:415:a36e:99c0 with SMTP id j27-20020a056402239b00b00415a36e99c0mr9870066eda.283.1646640500562;
-        Mon, 07 Mar 2022 00:08:20 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxpUqnQcFhltzbiTgvk4iIo+PNlDFJdT98Fxk5y0pBKW8l18KW8SAiAS4UDqIaBE1SiIT6jnQ==
-X-Received: by 2002:a05:6402:239b:b0:415:a36e:99c0 with SMTP id j27-20020a056402239b00b00415a36e99c0mr9870056eda.283.1646640500396;
-        Mon, 07 Mar 2022 00:08:20 -0800 (PST)
+        b=L4GlttG9aLoEZQa/680XbEoIr+mn40ddO02WCXceuMjkNk0poRCiVV0pcDnt7zOb2e
+         940GFwui6ZrVxJrKi4hpHtS0OJNuoKDMRzFOjoYVA1sHrk/+4+zSeAt7pDbeB/88h2sq
+         +RmnhH7+FLRizTJZC6KnEv3GGNV4DT4ZDSd79nh7dAjaf2d4ItDo1alZCjCqrVHKgMIs
+         6oJvlW5T0keSFrAf6Wv8NhZDw2JcoNn+Q23n4EbSU+hmKluHJNVSRuU2z8+ox48nOUF6
+         bTS9SuktCoqsAFGg1csT/6P5ss6S1VWBZe/ZM0FTXE0NfiIPz5Uo2ywXhdHYvS6piFLL
+         +87g==
+X-Gm-Message-State: AOAM533AI8bIGOahq6nvPt1gw1Tycx1IsXMABSbSwHBDlFm5cDaa9N2a
+        bGisLWlsJGWC6qM/nV1ZtMSLdeasuEtHCsyzsJdFjd10mgDL78cdS2+P4WW2ZYwdDWyC/yoZZ6W
+        OArTlIvXmneldoCZoGkz2FiEpDcPy3cdQGGBei2VSu0th03p8
+X-Received: by 2002:a17:907:d06:b0:6da:2902:e9ad with SMTP id gn6-20020a1709070d0600b006da2902e9admr8377709ejc.566.1646640535809;
+        Mon, 07 Mar 2022 00:08:55 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxCbsSDsaeQ5A3m0lusAuFH7GkNNgJvj5FHMB6/pMQ6cGRuCsKahqtP+fbfKW0QoSgQklboFw==
+X-Received: by 2002:a17:907:d06:b0:6da:2902:e9ad with SMTP id gn6-20020a1709070d0600b006da2902e9admr8377700ejc.566.1646640535645;
+        Mon, 07 Mar 2022 00:08:55 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id fs6-20020a170907600600b006da8ec6e4a6sm4444584ejc.26.2022.03.07.00.08.19
+        by smtp.gmail.com with ESMTPSA id s21-20020a170906961500b006daac87ddb0sm3698300ejx.140.2022.03.07.00.08.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 00:08:19 -0800 (PST)
+        Mon, 07 Mar 2022 00:08:55 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -67,8 +67,8 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: [PATCH v2 1/7] tty: serial: samsung: embed s3c24xx_uart_info in parent structure
-Date:   Mon,  7 Mar 2022 09:08:04 +0100
-Message-Id: <20220307080810.53847-2-krzysztof.kozlowski@canonical.com>
+Date:   Mon,  7 Mar 2022 09:08:46 +0100
+Message-Id: <20220307080852.53992-1-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220307080810.53847-1-krzysztof.kozlowski@canonical.com>
 References: <20220307080810.53847-1-krzysztof.kozlowski@canonical.com>
