@@ -2,177 +2,284 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B77C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 18:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA93C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 18:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244783AbiCGSX6 (ORCPT
+        id S241819AbiCGShf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 13:23:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46728 "EHLO
+        Mon, 7 Mar 2022 13:37:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244776AbiCGSX5 (ORCPT
+        with ESMTP id S235084AbiCGShe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 13:23:57 -0500
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D933A5E6
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 10:23:02 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220307182259epoutp0104bec27abf9a3e765ce1d3b1b799cc60~aLFosEfX20767007670epoutp01s
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 18:22:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220307182259epoutp0104bec27abf9a3e765ce1d3b1b799cc60~aLFosEfX20767007670epoutp01s
+        Mon, 7 Mar 2022 13:37:34 -0500
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AD688787
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 10:36:37 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220307183635epoutp0248455fe75d02af0b34e920575aec75e9~aLRgqdz5I1277812778epoutp02C
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 18:36:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220307183635epoutp0248455fe75d02af0b34e920575aec75e9~aLRgqdz5I1277812778epoutp02C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1646677379;
-        bh=7PBwRtMzjSc2mnYwqGnHHFKQFk5YfJ2stthrXqPdDMo=;
+        s=mail20170921; t=1646678195;
+        bh=ExIE3wrKwqaUgqLiMKVI3cp5vvGy/x6hBKXpIM49F4w=;
         h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=isrDtDDyNfAfj+Bcf0/F6vhyzexlqw7X1+4dCDTBpIizoTHj1CW8UxnGd369ypvOa
-         /zdKnrU8TlT2ROwb4+cJAEhDlenVBtNN2pFqidn4ShQfHsFoHXld5FJQhBNxodWlTA
-         gOX+TE4NWi64H+L16oxDv1El5SYsP59COazOOmTY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        b=taJuHdKHcgKz0PL8993KfntkWOF2ghDnnzse5urDxYvG1wAe2mWDZw7p+Gm6q6wGQ
+         7NHHyHNeCX4zxyvsuE3C++bK4HIiUeSlOpF8X/0PzbmJaehxHTcuzATx0oPjfVsJWo
+         e8u2Yqw7AyqhPNS+LG7hh2RmOQ/G+y9zgK21L1jo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
         epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220307182258epcas5p235f1ba132068c8820d09cc8c3653570c~aLFn9Pnl90752707527epcas5p22;
-        Mon,  7 Mar 2022 18:22:58 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4KC6JZ0dvPz4x9Pp; Mon,  7 Mar
-        2022 18:22:54 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        20220307183634epcas5p233b80f6bea41db7d43a57139f13a32e3~aLRfzWVh_1079210792epcas5p2a;
+        Mon,  7 Mar 2022 18:36:34 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KC6cF4BWXz4x9Pr; Mon,  7 Mar
+        2022 18:36:29 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
         epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F0.60.05590.D7D46226; Tue,  8 Mar 2022 03:22:54 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        97.F0.05590.DA056226; Tue,  8 Mar 2022 03:36:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220307182252epcas5p4382147bb249de325f1c4701f639a39fa~aLFikmMyH3166031660epcas5p4s;
-        Mon,  7 Mar 2022 18:22:52 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220307182252epsmtrp17b7f8083c3556e2a47c5b1426fe232b4~aLFijzJoH0546305463epsmtrp1c;
-        Mon,  7 Mar 2022 18:22:52 +0000 (GMT)
-X-AuditID: b6c32a4b-739ff700000015d6-ad-62264d7dd4ec
+        20220307183628epcas5p427d45efb6584bc887ff0af0b8123e56b~aLRZ75e9O1486114861epcas5p4_;
+        Mon,  7 Mar 2022 18:36:28 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220307183628epsmtrp2a5e9246039e346d85bb08b3ed6df6063~aLRZ67Lrc1234212342epsmtrp2l;
+        Mon,  7 Mar 2022 18:36:28 +0000 (GMT)
+X-AuditID: b6c32a4b-739ff700000015d6-9b-622650ada1d3
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EC.B6.03370.C7D46226; Tue,  8 Mar 2022 03:22:52 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0A.32.29871.CA056226; Tue,  8 Mar 2022 03:36:28 +0900 (KST)
 Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220307182251epsmtip2c0e026a3bc0cac0bc8c4a5dda067d073~aLFhHkiGp3263732637epsmtip2U;
-        Mon,  7 Mar 2022 18:22:51 +0000 (GMT)
+        20220307183625epsmtip257cc95cc6f4a379d8a1668c8e8c86794~aLRXiEswm2556225562epsmtip2X;
+        Mon,  7 Mar 2022 18:36:25 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Miaoqian Lin'" <linmq006@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Mauro Carvalho Chehab'" <mchehab@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Younghwan Joo'" <yhwan.joo@samsung.com>,
-        <linux-media@vger.kernel.org>,
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        "'Avri Altman'" <avri.altman@wdc.com>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Andy Gross'" <agross@kernel.org>,
+        "'Bjorn Andersson'" <bjorn.andersson@linaro.org>,
+        "'Wei Xu'" <xuwei5@hisilicon.com>,
+        "'Matthias Brugger'" <matthias.bgg@gmail.com>,
+        "'Jan Kotas'" <jank@cadence.com>, "'Li Wei'" <liwei213@huawei.com>,
+        "'Stanley Chu'" <stanley.chu@mediatek.com>,
+        "'Vignesh Raghavendra'" <vigneshr@ti.com>,
+        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20220307075206.10737-1-linmq006@gmail.com>
-Subject: RE: [PATCH] media: exynos4-is:  Fix PM disable depth imbalance in
- fimc_is_probe
-Date:   Mon, 7 Mar 2022 23:52:50 +0530
-Message-ID: <000301d83250$5bdc0cf0$139426d0$@samsung.com>
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+In-Reply-To: <20220306111125.116455-2-krzysztof.kozlowski@canonical.com>
+Subject: RE: [PATCH v3 01/12] dt-bindings: ufs: add common platform bindings
+Date:   Tue, 8 Mar 2022 00:06:24 +0530
+Message-ID: <000401d83252$41d5fe40$c581fac0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ1H2Syq5jcFJJjlSWbk5XboGLLWAILRwAvq2oHeWA=
+Thread-Index: AQHMSLK+HcMgkjgstDaV74uAa2rDeQH5avYoAUFFeK2ssjx4YA==
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmpm6dr1qSwZy7jBYb3/5gsjjb9Ibd
-        4vnHRmaLTY+vsVpc3jWHzaJnw1ZWixnn9zFZLNv0h8ni8Jt2VovZJxazOnB5zGroZfPYOesu
-        u8emVZ1sHpuX1Hv0bVnF6PF5k1wAW1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGl
-        hbmSQl5ibqqtkotPgK5bZg7QZUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScApMC
-        veLE3OLSvHS9vNQSK0MDAyNToMKE7Iy3F++zFTziq9h8dyVLA+N7ni5GTg4JAROJx7t+sXQx
-        cnEICexmlPh34gEzhPOJUeJHz3eozGdGif0LlrDBtGw4vYYJIrGLUWLe/X1sEM5LRolTh3ey
-        glSxCehK7FjcBpYQEdjJLHFh4hOwdk4BC4mLc+cwgdjCAlESr/8fZQaxWQRUJGYveQrWzCtg
-        KXFn+0ImCFtQ4uTMJywgNrOAvMT2t3OYIc5QkPj5dBlYvYiAlcTVM7eZIGrEJV4ePcIOslhC
-        YCWHRMfPQywQDS4Sy37cYYSwhSVeHd/CDmFLSbzsbwOyOYDsbImeXcYQ4RqJpfOOQbXaSxy4
-        MocFpIRZQFNi/S59iFV8Er2/nzBBdPJKdLQJQVSrSjS/uwrVKS0xsbubFcL2kJj1/yQ0eLsZ
-        JVrbprNNYFSYheTLWUi+nIXkm1kImxcwsqxilEwtKM5NTy02LTDOSy2Hx3hyfu4mRnDK1fLe
-        wfjowQe9Q4xMHIyHGCU4mJVEeO+fV0kS4k1JrKxKLcqPLyrNSS0+xGgKDPqJzFKiyfnApJ9X
-        Em9oYmlgYmZmZmJpbGaoJM57Kn1DopBAemJJanZqakFqEUwfEwenVAOT4ztVx+qrU1/Iuby5
-        e23XNJEnTg1+jXx5ZZOaxE/7Mbp+1U974dC/yEKTRbx19q9lmvOX9WSsXrFbJXPPxAYO0Wbx
-        tO9B79XtHy45c7rrV9TppKwXLb9F/9alnOpdZpZ8nuVQxGr5mR1VeaavI9IrOiNMdfMyK2vZ
-        57oGHcuXYV1+Vt1jscuOS5eMy4y9nL0uT/pm2Xr4rolWxvrmGUoTDmd9U1wU2LtIderH54um
-        fPDh/yGzpvvshQQFP6bNDB8kj27QXrKw7JPy5aStaxX3pe5iqip+cYP/pvLW3i+znUsX+4oe
-        vrkiyO6F06EVVStkDjLXTLsQJraB7/L2XxN6tAqdI1jYNofeEFpsvk9SiaU4I9FQi7moOBEA
-        4Og6kkIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJXrfGVy3J4PM8M4uNb38wWZxtesNu
-        8fxjI7PFpsfXWC0u75rDZtGzYSurxYzz+5gslm36w2Rx+E07q8XsE4tZHbg8ZjX0snnsnHWX
-        3WPTqk42j81L6j36tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoEr4+3F+2wFj/gqNt9dydLA+J6n
-        i5GTQ0LARGLD6TVMILaQwA5GiT+vYyDi0hLXN05gh7CFJVb+ew5kcwHVPGeUaN82A6yBTUBX
-        YsfiNjaQhIjAfmaJm9N/MEJUdTJKLD+5HqyKU8BC4uLcOUA2B4ewQITEux0SIGEWARWJ2Uue
-        soLYvAKWEne2L2SCsAUlTs58wgJSziygJ9G2kREkzCwgL7H97RxmiIMUJH4+XQbWKiJgJXH1
-        zG0miBpxiZdHj7BPYBSahWTSLIRJs5BMmoWkYwEjyypGydSC4tz03GLDAqO81HK94sTc4tK8
-        dL3k/NxNjODI0tLawbhn1Qe9Q4xMHIyHGCU4mJVEeO+fV0kS4k1JrKxKLcqPLyrNSS0+xCjN
-        waIkznuh62S8kEB6YklqdmpqQWoRTJaJg1OqgalA5JTNpJW5d8V/f3/l9DjZ9fTu10Y/rB9P
-        EpuS9UDjvlOdTGN/SfaXdUuj7qt/0Fofeaxw3carry78PTnn8JRFJX4TQrsmb9zEc0pH4NXH
-        LyulgnmbK1UvXBCaZfe8POZVd7Kahkq5jYrgGfU782/NyQr+lbcvxIHrJaOt+jmllQeu6pU9
-        tzT69rwgUVJX9sjDYnvBI5+yL1a1NXUvij64LWHZqbkrj/08XnCoVsHvnt8X1pfHTcVcQ/0L
-        OJ8Hm196LjZrf426/mOWYv6gWbOmzArM4L4nyLzl+Ks/Gv6iHIJlmeKXnmWzpPQsmpVwQ3F/
-        uCbLtm9J36VWfJR4aZpd3bFU+NHiSW23w3IPuV5SYinOSDTUYi4qTgQA1XfYgRsDAAA=
-X-CMS-MailID: 20220307182252epcas5p4382147bb249de325f1c4701f639a39fa
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHJsWRmVeSWpSXmKPExsWy7bCmuu7aALUkgycPJC3OPf7NYvHy51U2
+        i9P737FYzD9yjtWi+3imxca3P5gsNj2+xmoxcf9ZdovLu+awWVxuvshoMeP8PiaL7us72Cz+
+        zjnCaNHUYmzRuvcIu8XSrTcZLf6f/cBu8eToFGYHIY81na+ZPGY19LJ57Jx1l93j8dyN7B4t
+        R96yemxa1cnmcefaHjaPzUvqPVpO7mfxOH5jO5PH501yHu0HupkCeKKybTJSE1NSixRS85Lz
+        UzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAvlNSKEvMKQUKBSQWFyvp29kU
+        5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGcsbNvFVPBPrWLbsQvs
+        DYw/5LsYOTgkBEwkjr5072Lk4hAS2M0oMfH/HGYI5xOjxLbdXewQzjdGid6ZS5i6GDnBOla2
+        XWKDSOxllJjwso0VwnnJKLFi4wF2kCo2AV2JHYvb2EBsEYGLrBL3TuqD2JwCHhJXF69jBdkt
+        LOAj8XtOOEiYRUBFYtv1U+wgYV4BS4mbr0JBwrwCghInZz5hAbGZBeQltr8FuQ7kBgWJn0+X
+        sUJMd5J43N7CDFEjLvHy6BGwoyUE+jklpvftZYNocJF4dWwxVLOwxKvjW9ghbCmJz+9AakBB
+        kS3Rs8sYIlwjsXTeMRYI217iwJU5LCAlzAKaEut36UOs4pPo/f2ECaKTV6KjTQiiWlWi+d1V
+        qE5piYnd3awQJR4S034EQsLpJqPEx5bJjBMYFWYheXIWkidnIXlmFsLiBYwsqxglUwuKc9NT
+        i00LjPNSy+GRnZyfu4kRnPC1vHcwPnrwQe8QIxMH4yFGCQ5mJRHe++dVkoR4UxIrq1KL8uOL
+        SnNSiw8xmgIDfiKzlGhyPjDn5JXEG5pYGpiYmZmZWBqbGSqJ855K35AoJJCeWJKanZpakFoE
+        08fEwSnVwHS5xdTOxIjBuozn+pa4nCOWjm8sX6ydIcl8g69Dn+/UtZ1KjW3qP8RWu1QvKNrd
+        LHfw7K+9kScaLVLZD5zONsl+8lJQ/UNXFuOfXNu5WxdO8MxdnB72oyR3XbWRxSE/sTX+By7f
+        9XK2dfKclGJlNIWxbuJHL5eGFSrc1pPfa0310lrX9Yk5zDCmXX7yzekqh2WqavvuJ4tYs+lN
+        tdZwT5jY8OnX4XjVDbvLF7Zvn5JwY4X8j3lsXtxePkprXOYdP/hZlOtpzTVGxYubD0713r4x
+        KWfmaW13pcffnReGLTghW+1t4jFZ/5Jmev3JTtYp85g5vqwLe+ZRu99y76aHMo8WlLkuKfd+
+        OFu55tLnZCWW4oxEQy3mouJEAIXYBmGBBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTYRjHe8/OzjmKi+Oy9qaUtUzJ0hQ1XmGUWsIhrAy0oj7ozJNJ7sKO
+        pt1FbelEUrCyaZRp0cyirZyXLiudmZVpiZpgZWiNZZuWiA7JYq7Ib39+/wsPPBRP+Br3ptLl
+        maxKLs0QE+64sU3sG1Qf758SUj8nQG9GZnFkdfQR6JXJjqOr5jd8VNyRjvS2GQwZRvr5qMzU
+        RaLelioC9ea/Baii+wmGigeaCPSrygxQXkEYOvvYTKIbDYMA/e6aINFoezkvSsjUF41hjDa3
+        hGCatR9IZuSKnmQKzDY+Y6grIpih/kcEc7/2DFPQacKZjveNGDNpWMmce1qMxXvsd5ekshnp
+        R1nVxs3J7oer1S2Ycs4/x/i8h8wFM74a4EZBOhzq1O8IDXCnhPRDAF//rOG5DB84oC8lXXoJ
+        1M1ZSFfIAqBueBx3GgQdBJtq1PNtL/ozH+r6tLgr1Qdg7ff2+ZQbzcC+mrt8DaCoJXQcnK3a
+        68Q47QeNAy9JJxbQkXDwW6ITC2hP2Hl5FHdiHh0M1XrgxDzaFzbaqv7etgo6vtzkO7UXHQNH
+        zhXwXBkRtLabyVIg1C5Y0v5f0i5Y0i5oXAN4HVjOKjlZmowLVYbK2exgTirjsuRpwQcVMgOY
+        f3jguibQWDcR3AowCrQCSPHEXoJP3X4pQkGq9NhxVqVIUmVlsFwr8KFwsUjQo+lMEtJp0kz2
+        CMsqWdU/F6PcvHOxi79KHFNplETLmo3Lw9s++t/OFI21CaqFiy95XLdv2LMm7OG4MS4u2RKQ
+        nL/hJGcfniyy7S4feCELfLvdsOmO5FmC6f6ENVleCDzfLyt8pIgYT4h2mCqnjPbTYq8X3he3
+        pvpOf6v0qziw+k7CUK9I3I9vsUWy8T550dEnehuuZzdMqxVl+84HjRsnz9yjO6JjclpzlnbX
+        JMX/YJWJjlvSHTM/rOW71j+oyOXvOxuSbg0Zw+SN3LbjU6c8LE8VPyMrbx19uTM0ovuZ7pA9
+        EF5g9ZaoiGsaSSJnT7j5tXlo96QEb3sFYrMBvSJgS+xGiaG2ZFHPamrtjpmULlIU0izGucPS
+        0ECeipP+AZkLVZpfAwAA
+X-CMS-MailID: 20220307183628epcas5p427d45efb6584bc887ff0af0b8123e56b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220307075251epcas5p333746646f6990bb305bbffdef6b173b3
-References: <CGME20220307075251epcas5p333746646f6990bb305bbffdef6b173b3@epcas5p3.samsung.com>
-        <20220307075206.10737-1-linmq006@gmail.com>
+X-CMS-RootMailID: 20220306111138epcas5p4adf7ac809dee20082ccb754767c8f61f
+References: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
+        <CGME20220306111138epcas5p4adf7ac809dee20082ccb754767c8f61f@epcas5p4.samsung.com>
+        <20220306111125.116455-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+Hi Krzysztof
 
 >-----Original Message-----
->From: Miaoqian Lin [mailto:linmq006@gmail.com]
->Sent: Monday, March 7, 2022 1:22 PM
->To: Sylwester Nawrocki <s.nawrocki@samsung.com>; Mauro Carvalho
->Chehab <mchehab@kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski@canonical.com>; Alim Akhtar
-><alim.akhtar@samsung.com>; Kyungmin Park
-><kyungmin.park@samsung.com>; Younghwan Joo
-><yhwan.joo@samsung.com>; linux-media@vger.kernel.org; linux-arm-
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>Sent: Sunday, March 6, 2022 4:41 PM
+>To: Alim Akhtar <alim.akhtar@samsung.com>; Avri Altman
+><avri.altman@wdc.com>; Rob Herring <robh+dt@kernel.org>; Krzysztof
+>Kozlowski <krzysztof.kozlowski@canonical.com>; Andy Gross
+><agross@kernel.org>; Bjorn Andersson <bjorn.andersson@linaro.org>; Wei
+>Xu <xuwei5@hisilicon.com>; Matthias Brugger <matthias.bgg@gmail.com>;
+>Jan Kotas <jank@cadence.com>; Li Wei <liwei213@huawei.com>; Stanley Chu
+><stanley.chu@mediatek.com>; Vignesh Raghavendra <vigneshr@ti.com>;
+>linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-arm-
 >kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Cc: linmq006@gmail.com
->Subject: [PATCH] media: exynos4-is: Fix PM disable depth imbalance in
->fimc_is_probe
+>mediatek@lists.infradead.org
+>Subject: [PATCH v3 01/12] dt-bindings: ufs: add common platform bindings
 >
->If probe fails then we need to call pm_runtime_disable() to balance out the
->previous pm_runtime_enable() call.
+>Add bindings for common parts (platform) of Universal Flash Storage
+>(UFS) Host Controllers in dtschema format.
 >
->Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
->Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+>Include also the bindings directory in the UFS maintainers entry.
+>
+>Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 >---
-Thanks for fixing this
 
 Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-> drivers/media/platform/exynos4-is/fimc-is.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
+
+> .../devicetree/bindings/ufs/ufs-common.yaml   | 82 +++++++++++++++++++
+> MAINTAINERS                                   |  1 +
+> 2 files changed, 83 insertions(+)
+> create mode 100644 Documentation/devicetree/bindings/ufs/ufs-
+>common.yaml
 >
->diff --git a/drivers/media/platform/exynos4-is/fimc-is.c
->b/drivers/media/platform/exynos4-is/fimc-is.c
->index e55e411038f4..81b290dace3a 100644
->--- a/drivers/media/platform/exynos4-is/fimc-is.c
->+++ b/drivers/media/platform/exynos4-is/fimc-is.c
->@@ -830,7 +830,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+>diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+>b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+>new file mode 100644
+>index 000000000000..47a4e9e1a775
+>--- /dev/null
+>+++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+>@@ -0,0 +1,82 @@
+>+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause %YAML 1.2
+>+---
+>+$id:
+>+https://protect2.fireeye.com/v1/url?k=1c5f8d40-43c4b442-1c5e060f-0cc47a
+>+31381a-044442c4c340dc87&q=1&e=f6b89910-3420-4a58-a18d-
+>4ca02e079c2b&u=ht
+>+tp%3A%2F%2Fdevicetree.org%2Fschemas%2Fufs%2Fufs-common.yaml%23
+>+$schema:
+>+https://protect2.fireeye.com/v1/url?k=bc24c591-e3bffc93-bc254ede-0cc47a
+>+31381a-e9aaf10c3795a198&q=1&e=f6b89910-3420-4a58-a18d-
+>4ca02e079c2b&u=ht
+>+tp%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+>+
+>+title: Common properties for Universal Flash Storage (UFS) Host
+>+Controllers
+>+
+>+maintainers:
+>+  - Alim Akhtar <alim.akhtar@samsung.com>
+>+  - Avri Altman <avri.altman@wdc.com>
+>+
+>+properties:
+>+  clocks: true
+>+
+>+  clock-names: true
+>+
+>+  freq-table-hz:
+>+    items:
+>+      items:
+>+        - description: Minimum frequency for given clock in Hz
+>+        - description: Maximum frequency for given clock in Hz
+>+    description: |
+>+      Array of <min max> operating frequencies in Hz stored in the same
+order
+>+      as the clocks property. If this property is not defined or a value
+in the
+>+      array is "0" then it is assumed that the frequency is set by the
+parent
+>+      clock or a fixed rate clock source.
+>+
+>+  interrupts:
+>+    maxItems: 1
+>+
+>+  lanes-per-direction:
+>+    $ref: /schemas/types.yaml#/definitions/uint32
+>+    enum: [1, 2]
+>+    default: 2
+>+    description:
+>+      Number of lanes available per direction.  Note that it is assume
+same
+>+      number of lanes is used both directions at once.
+>+
+>+  vdd-hba-supply:
+>+    description:
+>+      Phandle to UFS host controller supply regulator node.
+>+
+>+  vcc-supply:
+>+    description:
+>+      Phandle to VCC supply regulator node.
+>+
+>+  vccq-supply:
+>+    description:
+>+      Phandle to VCCQ supply regulator node.
+>+
+>+  vccq2-supply:
+>+    description:
+>+      Phandle to VCCQ2 supply regulator node.
+>+
+>+  vcc-supply-1p8:
+>+    type: boolean
+>+    description:
+>+      For embedded UFS devices, valid VCC range is 1.7-1.95V or 2.7-3.6V.
+This
+>+      boolean property when set, specifies to use low voltage range of
+>+      1.7-1.95V. Note for external UFS cards this property is invalid and
+valid
+>+      VCC range is always 2.7-3.6V.
+>+
+>+  vcc-max-microamp:
+>+    description:
+>+      Specifies max. load that can be drawn from VCC supply.
+>+
+>+  vccq-max-microamp:
+>+    description:
+>+      Specifies max. load that can be drawn from VCCQ supply.
+>+
+>+  vccq2-max-microamp:
+>+    description:
+>+      Specifies max. load that can be drawn from VCCQ2 supply.
+>+
+>+dependencies:
+>+  freq-table-hz: [ 'clocks' ]
+>+
+>+required:
+>+  - interrupts
+>+
+>+additionalProperties: true
+>diff --git a/MAINTAINERS b/MAINTAINERS
+>index d7ea92ce1b1d..ef16268b6ca6 100644
+>--- a/MAINTAINERS
+>+++ b/MAINTAINERS
+>@@ -20100,6 +20100,7 @@ R:	Alim Akhtar <alim.akhtar@samsung.com>
+> R:	Avri Altman <avri.altman@wdc.com>
+> L:	linux-scsi@vger.kernel.org
+> S:	Supported
+>+F:	Documentation/devicetree/bindings/ufs/
+> F:	Documentation/scsi/ufs.rst
+> F:	drivers/scsi/ufs/
 >
-> 	ret = pm_runtime_resume_and_get(dev);
-> 	if (ret < 0)
->-		goto err_irq;
->+		goto err_pm_disable;
->
-> 	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
->
->@@ -864,6 +864,8 @@ static int fimc_is_probe(struct platform_device *pdev)
-> 	pm_runtime_put_noidle(dev);
-> 	if (!pm_runtime_enabled(dev))
-> 		fimc_is_runtime_suspend(dev);
->+err_pm_disable:
->+	pm_runtime_disable(dev);
-> err_irq:
-> 	free_irq(is->irq, is);
-> err_clk:
 >--
->2.17.1
+>2.32.0
 
 
