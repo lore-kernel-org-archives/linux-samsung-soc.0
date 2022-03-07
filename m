@@ -2,270 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B44C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 08:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7A4C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 08:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236151AbiCGIKn (ORCPT
+        id S236135AbiCGILS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 03:10:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46494 "EHLO
+        Mon, 7 Mar 2022 03:11:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236111AbiCGIKb (ORCPT
+        with ESMTP id S236167AbiCGILI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 03:10:31 -0500
+        Mon, 7 Mar 2022 03:11:08 -0500
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE014CD55
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 00:09:37 -0800 (PST)
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 672F251307
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 00:10:10 -0800 (PST)
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8269A3F628
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 08:09:34 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3A41E3F1AF
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 08:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646640574;
-        bh=h6f9aBRuD6q6vAjPoDeH1HVvyeu4tZHUHi6lgSytsOc=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=GHUm6EZwNhvNRuXBVYSgyEUpitDEdD2q2eDjjVfnriF+er10b/ICWsg5sXe1z2/Lv
-         IpigH8XQZwR8DA5QfPWBziAt9LIAjZqIStyloUw5RyNUf7Udax3hM5vEZMeUCh0LaS
-         SkpNBfToB5jj+3nr9576yK7glQAufAtz89fDTzukahaciQSk/PH79h+LWV6VAELgiQ
-         XUlcEPvt1ZzKr9hpL5P5hVm1t43aO2OxSTRDjx6Zs7zr0D/sTk3NBqefAqs2AmOBPv
-         WPbGy/y4IkDvuKWKuFh81tQ3Fb14aQw8YcWpDkJES1k2so28zJRZML3fPxJ+1TsLUS
-         8TcPxn3XrVK7Q==
-Received: by mail-ej1-f72.google.com with SMTP id hx13-20020a170906846d00b006db02e1a307so1531602ejc.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 00:09:34 -0800 (PST)
+        s=20210705; t=1646640609;
+        bh=rZiSscehpFaw25MYSQrGhTmta6JFYZvBO72KN+MNtGk=;
+        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+         In-Reply-To:Content-Type;
+        b=seiWrj7pASYo59gEsGP6r3jWGc5ym8vZqIAqde2j1ONMIXs9tc3+9WUt5ARe0Psjn
+         +dXTUrSIVONY6f9a7o1UNhFdYssjUtbjOSeFq0BX9Ou/2HbDSxUoEMyq0PvSSVpgU/
+         VNfqtMGWTT2zNPoaiOZqjWuj9d5p+Ttn0inSTYg7WX2UiBV3FQP+SrpDmc8mvDRag/
+         kGpVQXQdRQ0YWMWnL4ywE23epaNHcKKZcIR1y8Z2hFRcDcr8SnoUvNSofbewJepnq+
+         bzsk7VeJLboiPS8HK2bfot9HkJQ1ezBiAFNNutDLlMwNXjni2Co1J6rsMZ2jWdgZAF
+         FcUf/+dHCcFQg==
+Received: by mail-ed1-f69.google.com with SMTP id o20-20020aa7dd54000000b00413bc19ad08so8176372edw.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 00:10:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h6f9aBRuD6q6vAjPoDeH1HVvyeu4tZHUHi6lgSytsOc=;
-        b=hhuP6mFz3upNSP+RifgrIT2vUCCVx2DU/q7Y3ICciMIQDh1C3x6Ml41GMWrpoJ+eTB
-         2k0L+GNrwIb4sXe9x39ONomDlVEARxRi1KOVNeHbvYXJPU9wrirHk3YMR5G7VU75fKI4
-         7yK9ZPubmKr70jOAF/w+Hjm8GIbyjVh3YjsrSjZNgHB+NofGk7PNCjnpf4MIjV0XtyWV
-         xIDdvtS9aZiqPPpYaKsUaLC/QXRIN2yt+AY4OSrfBPG4F0n2loPxB3NyINa8plmMXksT
-         aSjOeZg1YcmQBb0A2jMaX5nVbvWzecCV7TU0MqtdHyh+QkeaU1yXSDrZUs+aktEJR9BT
-         UW/g==
-X-Gm-Message-State: AOAM531ngd35AK22Z8fHgGG1royGI/nheyfxWE1my6I6R9mtvQxfqSYW
-        S0SZIaHwK2wFXkAw/Eue8EX55UxCGP9dqU7+wlJdMtjyWuO8rdtM1Sp2YdsCwcLpsUvonPvFLxD
-        WO1wmBXt9L2c85b2gNkQAoq/YmgfZFfviuSGZpjn2ap557Hn1
-X-Received: by 2002:a17:906:1158:b0:6d0:562b:d8ee with SMTP id i24-20020a170906115800b006d0562bd8eemr8318855eja.78.1646640573848;
-        Mon, 07 Mar 2022 00:09:33 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzJFERfDAzIzSbz/jjP+nZrQWV1hE6APZaomrEaakxaIYDNfhbNIVLeDnfdSIfagKkLTgaiSg==
-X-Received: by 2002:a17:906:1158:b0:6d0:562b:d8ee with SMTP id i24-20020a170906115800b006d0562bd8eemr8318840eja.78.1646640573600;
-        Mon, 07 Mar 2022 00:09:33 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id fq14-20020a1709069d8e00b006da650af5a9sm4472594ejc.3.2022.03.07.00.09.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 00:09:32 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=rZiSscehpFaw25MYSQrGhTmta6JFYZvBO72KN+MNtGk=;
+        b=tB6MgWI8zyaCatXXPjQHDUMHJRLVYdNdkKMCIljb+QCp4XOAZSKVpY+44zXHQxu9ne
+         sNwP2NwpHdJtxzmiz1+UVEVWsUNftoqFHuSk4o+Y8Ua2Gk9fsx6sVb8P63TvM3+mvPFh
+         OZ3lvascaeZ4oZ902UrMGU7pvJNvwHaFsnrbom+SGA+zII4a0q7QzxgMdwADWF+LrGtG
+         038U2OVuc1JTrTkv2lTwHvgq4KfQ/UQYSAZk4axKDGylA1kK3BZocPS++GyJmOFOuTu3
+         g3k/wUjtKpJGAOcYQS37k93oOoR2YTSABBNKLo1/kyUhsLntlrvv3Uv7/kIxsU/7n/Oc
+         at0A==
+X-Gm-Message-State: AOAM530Ao18gwMLAYHNQJpotEiRjutl+o2FgllH7Z1T+s5v9OzRtnXG3
+        KJwUDUMRI+Gy5jIyB4fOp/Bbu/RttZBit8E3ikUU5aoyR5Y297SrE3YXLCTFTybNev/Jezwf4fQ
+        ibyFSir7z6PN6L1Ht3N3SpVxpllAuUT7QjUfyjFY6Gi/NsQ18
+X-Received: by 2002:a17:906:b6c7:b0:6db:2e14:875 with SMTP id ec7-20020a170906b6c700b006db2e140875mr2778338ejb.737.1646640608117;
+        Mon, 07 Mar 2022 00:10:08 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyd6HS0bvQ2SwL7iCHkBfje+k5g6sDwg1lh8KmBe4nqnJ4FmOFFYvoqWBiy8wC//2osRBIahw==
+X-Received: by 2002:a17:906:b6c7:b0:6db:2e14:875 with SMTP id ec7-20020a170906b6c700b006db2e140875mr2778324ejb.737.1646640607971;
+        Mon, 07 Mar 2022 00:10:07 -0800 (PST)
+Received: from [192.168.0.140] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
+        by smtp.gmail.com with ESMTPSA id u4-20020a170906780400b006ce69ff6050sm4482993ejm.69.2022.03.07.00.10.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Mar 2022 00:10:07 -0800 (PST)
+Message-ID: <9e4bd211-89e2-f7ef-735e-1d6bc9b795cd@canonical.com>
+Date:   Mon, 7 Mar 2022 09:10:06 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 1/7] tty: serial: samsung: embed s3c24xx_uart_info in
+ parent structure
+Content-Language: en-US
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jirislaby@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/7] tty: serial: samsung: constify variables and pointers
-Date:   Mon,  7 Mar 2022 09:09:24 +0100
-Message-Id: <20220307080925.54131-5-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220307080810.53847-1-krzysztof.kozlowski@canonical.com>
 References: <20220307080810.53847-1-krzysztof.kozlowski@canonical.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220307080852.53992-1-krzysztof.kozlowski@canonical.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220307080852.53992-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Constify variables, data pointed by several pointers and
-"udivslot_table" static array.  This makes code a bit safer.
+On 07/03/2022 09:08, Krzysztof Kozlowski wrote:
+> Embed "struct s3c24xx_uart_info" directly as a member of "struct
+> s3c24xx_serial_drv_data" instead of keeping it as a pointer.  This makes
+> the code clearer (obvious ownership of "struct s3c24xx_serial_drv_data")
+> and saves one pointer.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+> ---
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
----
- drivers/tty/serial/samsung_tty.c | 46 ++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+I had SMTP troubles when sending so this one duplicated itself. Sorry
+for the noise.
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index b9783d8fb440..3ffae912217c 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -164,7 +164,7 @@ static void s3c24xx_serial_tx_chars(struct s3c24xx_uart_port *ourport);
- #define portaddrl(port, reg) \
- 	((unsigned long *)(unsigned long)((port)->membase + (reg)))
- 
--static u32 rd_reg(struct uart_port *port, u32 reg)
-+static u32 rd_reg(const struct uart_port *port, u32 reg)
- {
- 	switch (port->iotype) {
- 	case UPIO_MEM:
-@@ -179,7 +179,7 @@ static u32 rd_reg(struct uart_port *port, u32 reg)
- 
- #define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
- 
--static void wr_reg(struct uart_port *port, u32 reg, u32 val)
-+static void wr_reg(const struct uart_port *port, u32 reg, u32 val)
- {
- 	switch (port->iotype) {
- 	case UPIO_MEM:
-@@ -195,7 +195,7 @@ static void wr_reg(struct uart_port *port, u32 reg, u32 val)
- 
- /* Byte-order aware bit setting/clearing functions. */
- 
--static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
-+static inline void s3c24xx_set_bit(const struct uart_port *port, int idx,
- 				   unsigned int reg)
- {
- 	unsigned long flags;
-@@ -208,7 +208,7 @@ static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
- 	local_irq_restore(flags);
- }
- 
--static inline void s3c24xx_clear_bit(struct uart_port *port, int idx,
-+static inline void s3c24xx_clear_bit(const struct uart_port *port, int idx,
- 				     unsigned int reg)
- {
- 	unsigned long flags;
-@@ -221,19 +221,19 @@ static inline void s3c24xx_clear_bit(struct uart_port *port, int idx,
- 	local_irq_restore(flags);
- }
- 
--static inline struct s3c24xx_uart_port *to_ourport(const struct uart_port *port)
-+static inline struct s3c24xx_uart_port *to_ourport(struct uart_port *port)
- {
- 	return container_of(port, struct s3c24xx_uart_port, port);
- }
- 
- /* translate a port to the device name */
- 
--static inline const char *s3c24xx_serial_portname(struct uart_port *port)
-+static inline const char *s3c24xx_serial_portname(const struct uart_port *port)
- {
- 	return to_platform_device(port->dev)->name;
- }
- 
--static int s3c24xx_serial_txempty_nofifo(struct uart_port *port)
-+static int s3c24xx_serial_txempty_nofifo(const struct uart_port *port)
- {
- 	return rd_regl(port, S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXE;
- }
-@@ -358,7 +358,7 @@ static void s3c24xx_serial_tx_dma_complete(void *args)
- 
- static void enable_tx_dma(struct s3c24xx_uart_port *ourport)
- {
--	struct uart_port *port = &ourport->port;
-+	const struct uart_port *port = &ourport->port;
- 	u32 ucon;
- 
- 	/* Mask Tx interrupt */
-@@ -387,7 +387,7 @@ static void enable_tx_dma(struct s3c24xx_uart_port *ourport)
- 
- static void enable_tx_pio(struct s3c24xx_uart_port *ourport)
- {
--	struct uart_port *port = &ourport->port;
-+	const struct uart_port *port = &ourport->port;
- 	u32 ucon, ufcon;
- 
- 	/* Set ufcon txtrig */
-@@ -580,9 +580,9 @@ static inline const struct s3c24xx_uart_info
- }
- 
- static inline const struct s3c2410_uartcfg
--	*s3c24xx_port_to_cfg(struct uart_port *port)
-+	*s3c24xx_port_to_cfg(const struct uart_port *port)
- {
--	struct s3c24xx_uart_port *ourport;
-+	const struct s3c24xx_uart_port *ourport;
- 
- 	if (port->dev == NULL)
- 		return NULL;
-@@ -591,7 +591,7 @@ static inline const struct s3c2410_uartcfg
- 	return ourport->cfg;
- }
- 
--static int s3c24xx_serial_rx_fifocnt(struct s3c24xx_uart_port *ourport,
-+static int s3c24xx_serial_rx_fifocnt(const struct s3c24xx_uart_port *ourport,
- 				     unsigned long ufstat)
- {
- 	const struct s3c24xx_uart_info *info = ourport->info;
-@@ -947,8 +947,8 @@ static irqreturn_t s3c24xx_serial_tx_irq(int irq, void *id)
- /* interrupt handler for s3c64xx and later SoC's.*/
- static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- {
--	struct s3c24xx_uart_port *ourport = id;
--	struct uart_port *port = &ourport->port;
-+	const struct s3c24xx_uart_port *ourport = id;
-+	const struct uart_port *port = &ourport->port;
- 	unsigned int pend = rd_regl(port, S3C64XX_UINTP);
- 	irqreturn_t ret = IRQ_HANDLED;
- 
-@@ -966,8 +966,8 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- /* interrupt handler for Apple SoC's.*/
- static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- {
--	struct s3c24xx_uart_port *ourport = id;
--	struct uart_port *port = &ourport->port;
-+	const struct s3c24xx_uart_port *ourport = id;
-+	const struct uart_port *port = &ourport->port;
- 	unsigned int pend = rd_regl(port, S3C2410_UTRSTAT);
- 	irqreturn_t ret = IRQ_NONE;
- 
-@@ -1499,7 +1499,7 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
-  * This table takes the fractional value of the baud divisor and gives
-  * the recommended setting for the UDIVSLOT register.
-  */
--static u16 udivslot_table[16] = {
-+static const u16 udivslot_table[16] = {
- 	[0] = 0x0000,
- 	[1] = 0x0080,
- 	[2] = 0x0808,
-@@ -1675,7 +1675,7 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 
- static const char *s3c24xx_serial_type(struct uart_port *port)
- {
--	struct s3c24xx_uart_port *ourport = to_ourport(port);
-+	const struct s3c24xx_uart_port *ourport = to_ourport(port);
- 
- 	switch (ourport->info->type) {
- 	case TYPE_S3C24XX:
-@@ -2450,7 +2450,7 @@ s3c24xx_port_configured(unsigned int ucon)
- 
- static int s3c24xx_serial_get_poll_char(struct uart_port *port)
- {
--	struct s3c24xx_uart_port *ourport = to_ourport(port);
-+	const struct s3c24xx_uart_port *ourport = to_ourport(port);
- 	unsigned int ufstat;
- 
- 	ufstat = rd_regl(port, S3C2410_UFSTAT);
-@@ -2935,7 +2935,7 @@ module_exit(samsung_serial_exit);
-  * Early console.
-  */
- 
--static void wr_reg_barrier(struct uart_port *port, u32 reg, u32 val)
-+static void wr_reg_barrier(const struct uart_port *port, u32 reg, u32 val)
- {
- 	switch (port->iotype) {
- 	case UPIO_MEM:
-@@ -2951,15 +2951,15 @@ struct samsung_early_console_data {
- 	u32 txfull_mask;
- };
- 
--static void samsung_early_busyuart(struct uart_port *port)
-+static void samsung_early_busyuart(const struct uart_port *port)
- {
- 	while (!(readl(port->membase + S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXFE))
- 		;
- }
- 
--static void samsung_early_busyuart_fifo(struct uart_port *port)
-+static void samsung_early_busyuart_fifo(const struct uart_port *port)
- {
--	struct samsung_early_console_data *data = port->private_data;
-+	const struct samsung_early_console_data *data = port->private_data;
- 
- 	while (readl(port->membase + S3C2410_UFSTAT) & data->txfull_mask)
- 		;
--- 
-2.32.0
 
+Best regards,
+Krzysztof
