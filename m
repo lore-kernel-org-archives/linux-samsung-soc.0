@@ -2,75 +2,73 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A7E5C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 13:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D19C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 13:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242710AbiCGNE5 (ORCPT
+        id S242754AbiCGNFr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 08:04:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53608 "EHLO
+        Mon, 7 Mar 2022 08:05:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242708AbiCGNE4 (ORCPT
+        with ESMTP id S242750AbiCGNFp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 08:04:56 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AB368AE60
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 05:04:02 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id q7-20020a7bce87000000b00382255f4ca9so10780824wmj.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 05:04:01 -0800 (PST)
+        Mon, 7 Mar 2022 08:05:45 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B364A8B6FD
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 05:04:49 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id r187-20020a1c2bc4000000b003810e6b192aso9261289wmr.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 05:04:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
         bh=pSHEpDDbP3cBBq52zYK0sNbU+pR3WMacBq6FSVuCsuM=;
-        b=lEyjhp0FKvJ9cyn+Cm7Hv5psgSCRwSDD5d+n6tgI9FYAv/WsSTdc3xwTHRUAcxqtMG
-         zkInt4KD4lSlbfM75JZTqp5GalPnY6ZYw0JgOFUXP0WeuklE3uYh+NMYpAvxE7CK8mql
-         mHk7mTU0WQzoBV1eIMANMCjafPQ4uarYNyqf+IrCCNRX9p7SQdYZfFrC8D/a4E6pdz63
-         DfNmqoUauu71RdSxPSVL/7hsGlubdCXj0326JPu4XthjhZ9p3rf3QIZgJGEiyyd4wt+0
-         D3pe7c6I2li66/nlL97rigXO70zNrjhqLCQt4hGFXbd7uTxQoz6Zanwa2UeYTYxf4Ojr
-         eKHg==
+        b=XLyeiwVhjuSvm1H+7sPNOkIjnPIAoE356QmfluREdPanjLa9kWBaBs2JYW7nOTq1Vh
+         iSJtkImjNyl39RpfBnBzbW0rwZoy6dSsNoN7O2f8MBzcNfPylMRGd9oF5InNQ6abEpxm
+         aAykJ5f1VkvH/FzSfL0CFfEVInTEGsJjS2KFVSAgvkHGWE7RFkFEIK20e5yM3HwCwCHx
+         IBv783hbYl7adH824wYQFuDsFiDUKSRQUGD4/jXaxxQXKNBVHpy+ifUETAd2zTN0X4sY
+         vgiN6+NeTNAiC4XQizrU8ixcbl0gwBlUyK/12MQXoLMEXJdsqtYCiqbxnaCqV6c0m3Fl
+         11gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
         bh=pSHEpDDbP3cBBq52zYK0sNbU+pR3WMacBq6FSVuCsuM=;
-        b=QAm82Hg+0xwBFSdL+dkYE54prI8DFf42dXKvQk4Bcvd9YCftPSsHLIphch+XXadjcl
-         w0/Ufh6eR6JOW7jvHJ8a/m9HEL9oRUwLQnvYIJjIUeQrezC/l5o9vdckHKDNFuWelvTN
-         FRI0G1365xniPUt1j5VO573WGam44v/XIbzvyZaHaoiss/XC+euHMhEh8Vy2ZT7zDwpK
-         sU1MR4664Oc1WRT53pKgiwWYRkX7BxRiT6DDfzntR7UPY4TlaQTT1/pVYiMs2hsb2rUj
-         F5lqYsDKt6HGtk76q92qZb3/930CPtIxOvqM5iIsvUHo5pdP36sjqIFKN7sMp9yz5jW7
-         HRtA==
-X-Gm-Message-State: AOAM530azuZPJxEm+jahMvE1anODSGTzQCv24otFKNytUl3S4SIq7bvj
-        2W6O9hfGirMnhbagZlT/otwk0w==
-X-Google-Smtp-Source: ABdhPJzLVcA7qBP2Lke70Pkrbh5ieyS9z/kxVkQ/DbMFElu7PyUeAvGDLw6bvia/bpEjh5zPHNxrBw==
-X-Received: by 2002:a7b:c2aa:0:b0:389:891f:1fd1 with SMTP id c10-20020a7bc2aa000000b00389891f1fd1mr11411322wmk.138.1646658240568;
-        Mon, 07 Mar 2022 05:04:00 -0800 (PST)
+        b=R+3SceePxExdwJeZWSaFZDRU5v2VQk6JK4F3nkxJvmXA0E37KpCLYlDR1TFQ87j6mG
+         34LzFwIfBC5Th1/D+IwkwPzZJoiThjc2W5SfiULVkUwW+79LqarCQZB7syrhUCNH/DAX
+         Rq8EhleAYsen5jW++ql+knFC4zO4OJRctLIoFTgnvGzhTA5CxKg6sv2g0Cv2HZ+QLy8d
+         gKQyUw9N5XXJj71hOKpNZfL5PK5XcIenQCGIOQIa0xH5ROmaD01mghfxLgw3u0D8la0/
+         MTcZ72gf9umH9beFuswkOAkn+LM9QYUP63YZhAzCFd12PI71Ny6X01yqS/wiqYkixYTk
+         SKJg==
+X-Gm-Message-State: AOAM532CefYX5VnvN0aBkl1oPs6+KNRUuGs1QoZqw0HtKEGkc5p/dUvD
+        1WjSCEqiMN4zuKr+9r8DYaKSAg==
+X-Google-Smtp-Source: ABdhPJznWFey3I79lvfFbj3YIKguTh07jov3yA4uNxLJ2MAttWncbN2J1Y5NWXWQkl4klHMXxvXevw==
+X-Received: by 2002:a05:600c:4307:b0:389:4f8f:f189 with SMTP id p7-20020a05600c430700b003894f8ff189mr9115530wme.29.1646658287807;
+        Mon, 07 Mar 2022 05:04:47 -0800 (PST)
 Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id f7-20020a5d4dc7000000b001f1d99e9441sm6699454wru.106.2022.03.07.05.03.59
+        by smtp.gmail.com with ESMTPSA id n15-20020a05600c4f8f00b003842f011bc5sm16608794wmq.2.2022.03.07.05.04.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 05:04:00 -0800 (PST)
-Date:   Mon, 7 Mar 2022 13:03:58 +0000
+        Mon, 07 Mar 2022 05:04:47 -0800 (PST)
+Date:   Mon, 7 Mar 2022 13:04:45 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Pratyush Yadav <p.yadav@ti.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
 Subject: [GIT PULL] Immutable branch between MFD, SPI and DT  due for the
  v5.18 merge window
-Message-ID: <YiYCvsdgG5o2DpuN@google.com>
-References: <20220124082347.32747-1-krzysztof.kozlowski@canonical.com>
+Message-ID: <YiYC7eYx2SpPILyl@google.com>
+References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220124082347.32747-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
