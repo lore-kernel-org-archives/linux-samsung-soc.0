@@ -2,128 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035EBC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 07:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C6AC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 07:52:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233890AbiCGHub (ORCPT
+        id S233118AbiCGHxo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 02:50:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59028 "EHLO
+        Mon, 7 Mar 2022 02:53:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233118AbiCGHua (ORCPT
+        with ESMTP id S232814AbiCGHxo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 02:50:30 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA635F8F8
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  6 Mar 2022 23:49:36 -0800 (PST)
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8A2A53F613
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 07:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646639375;
-        bh=rd6EmrXOsv2ONR5N0p94ALT/TAYWHPAB/WPREXa/y6M=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-         In-Reply-To:Content-Type;
-        b=p1SYBMoOrpa6oAUh8SyJynWQnczgDt6lAuG7WN5Mcaj9EfebfKzu9GG8Q8qzWXZZO
-         JbeFWOeFoFx+DdTtEMNzGwyTkoLDKwXAlJaczXWYjWeMDi8jOE5SyJ1vI0paWrRp0P
-         a/Mm3XMFHcxdFn8mI5II/qQToQLm6NVhErIDnfcRuquOMeYTt0AXJa8qrKv4e3mjRL
-         W5u4ysDD/lDZ8SjejdEcgnWSZAHcoK4TyQtkujzUqqrye97HVjtI/xsSUk7HOQs4xx
-         h3Yf8RqTARcDg83R6cE1lenslJRdL/kinM50adWi3nrJoK+auVf53VupbELrK0MCDP
-         cDD+E2O4Ir7Ag==
-Received: by mail-ej1-f71.google.com with SMTP id x2-20020a1709065ac200b006d9b316257fso6607037ejs.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Mar 2022 23:49:35 -0800 (PST)
+        Mon, 7 Mar 2022 02:53:44 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 120013B566;
+        Sun,  6 Mar 2022 23:52:50 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id v4so12588619pjh.2;
+        Sun, 06 Mar 2022 23:52:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=fNVhu6NstuF9oQwubQhxrrg5qS1nBL78GxXqPU0UXj4=;
+        b=AoG99Mg6T+IVKUbJHAXoR+Sp8bcgGB0jHy32u7VbdEU8d+2Om7533Qb85hxIS9xvSd
+         8HArsoR9K1FP693STCoRuFab6hWwsDuy8t8ZSW+9TuqV/QV6Vvc2dchHX6Unbef+Z7iC
+         oJHHa+gzIAo4ERyLoSCysrR/5Z3hkZXgOql3M3qk76UintPRcg+U1XZf5AABzii1YVxN
+         n5KJMCnDz6+ZFJQVaoJpr2hc3gJTLT3dVS8LL6K3AFDJEaNdsbjtMQczFWGlnt35J+l5
+         v8xTdOuehkXK5ejjVNOckogM111ptMethooTfaQB2DLf5xeoTl1tAlC9gBUJlvHT3OIa
+         mrAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=rd6EmrXOsv2ONR5N0p94ALT/TAYWHPAB/WPREXa/y6M=;
-        b=Nrzwjzx2wWraM6MNBpfZuNbMa9OS+OMskytFs5G787a+lsKh0NRP9FyD3rnkwEgRUb
-         iqtmqb5csiHtf5AciGOdUmeTI3PMeWb6DFbifBR4lvPUlnG0yBiFJjcithMxjFv2V1xV
-         qa22DIKCtTfZUblzssKLi/6HwcBAHZazffMuJEwQZMqr7iSX9l5Dz1SdvfYshcLJqQpO
-         Jx59pQ4RXNua8zJ+6ZjRGSgQJdCWQuQJULZ5/PWhSCYCbGUuHOHVP2OltXtfn45exbHd
-         xJ1iW6yX1KMRRff1PRqwenb8jLtLkBUXDe/LDAA6ZKVGzsidFkc6k/JDkcZVJ2pMoATw
-         FZeQ==
-X-Gm-Message-State: AOAM532NetlsGIpZ38vHpB+j3TbaIq8ZeIXMJR/sfl+lsXLz+uNNtPlA
-        U4l7DCJaX6qGg+VJsOTVK8xxn7yBvAtZ4qyl982pxOBy8V+0QlLNg6ztrla6bjCqHWr10n8Qwe4
-        +B5q3H0IKalb6BgK8xfvv+3tZ0VJzQE8CiVQ/p8NbF68oKJn1
-X-Received: by 2002:a05:6402:2810:b0:415:ff8b:cd2a with SMTP id h16-20020a056402281000b00415ff8bcd2amr9750569ede.333.1646639375146;
-        Sun, 06 Mar 2022 23:49:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwZm160P/v8ozuwvy5s4y7drXuxfDWxzLK87Od19lQUI0so3eyuu8eX9FSTrIjnkS1XJzmJHw==
-X-Received: by 2002:a05:6402:2810:b0:415:ff8b:cd2a with SMTP id h16-20020a056402281000b00415ff8bcd2amr9750561ede.333.1646639375006;
-        Sun, 06 Mar 2022 23:49:35 -0800 (PST)
-Received: from [192.168.0.140] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id k23-20020a1709062a5700b006ccd8fdc300sm4393231eje.180.2022.03.06.23.49.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Mar 2022 23:49:34 -0800 (PST)
-Message-ID: <0a3c099d-049b-d4d0-5a73-f1d93144e827@canonical.com>
-Date:   Mon, 7 Mar 2022 08:49:33 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 5/7] tty: serial: samsung: constify
- s3c24xx_serial_drv_data members
-Content-Language: en-US
-To:     Jiri Slaby <jirislaby@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fNVhu6NstuF9oQwubQhxrrg5qS1nBL78GxXqPU0UXj4=;
+        b=Vtd956dZzbRbGmmYOYMwl6PfV3gv+g1vn5lHRuzZpEmkazDtnR9c7CJI2eAa8WaHcK
+         nN/q8whjg1H2lRj8ir8+eECmPuYzBaLBhk3mEfZ5nUzSdzrn3d0OxJtrQ8EkwPAKgh/B
+         DzKNUj7iUmdAKRRnYh9WSONI0oZVjlkkcqb8V4wtawLDA5QwAKLITRtGnRvM8dZNV/by
+         9/ZU4NAxpWRnQHk/G/AXrLkG4dljSuAU8TI5UvYAKWnl0ljfe1xmJR8ZxPQsIjlNqZet
+         58QQIAZr6UjMGGd0w+0SpPr1K7BRhb97A4XnO9aloPlADdu/5Y80Qra9U4UP7COgG53f
+         7ZOQ==
+X-Gm-Message-State: AOAM5312rCMmdIPopH4rv/ooKiN/Xxry8lnH3RthWG+ERmwL5EBKJlw6
+        RYt4MRBxY1xTBDPMSAmd/Fo=
+X-Google-Smtp-Source: ABdhPJwdZXTCxgo9TNoVYXkRa1iK3ipktgWmQFvyow6ygoh7afXRkDlVL1IVZIQJ65C6hA06x7FtVw==
+X-Received: by 2002:a17:90b:4b4a:b0:1bf:83d:6805 with SMTP id mi10-20020a17090b4b4a00b001bf083d6805mr24285924pjb.174.1646639569513;
+        Sun, 06 Mar 2022 23:52:49 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id a133-20020a621a8b000000b004f6a79008ddsm12310777pfa.45.2022.03.06.23.52.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Mar 2022 23:52:49 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220304080348.218581-1-krzysztof.kozlowski@canonical.com>
- <20220304080348.218581-5-krzysztof.kozlowski@canonical.com>
- <06f2b1a8-301e-6a54-50bb-58eca6b93850@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <06f2b1a8-301e-6a54-50bb-58eca6b93850@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Younghwan Joo <yhwan.joo@samsung.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] media: exynos4-is:  Fix PM disable depth imbalance in fimc_is_probe
+Date:   Mon,  7 Mar 2022 07:52:06 +0000
+Message-Id: <20220307075206.10737-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/03/2022 07:38, Jiri Slaby wrote:
-> On 04. 03. 22, 9:03, Krzysztof Kozlowski wrote:
->> The driver data (struct s3c24xx_serial_drv_data) is never modified, so
->> also its members can be make const.  Except code style this has no
-> 
-> s/make/made/ if you do a v2.
+If probe fails then we need to call pm_runtime_disable() to balance
+out the previous pm_runtime_enable() call.
 
-Sure, I'll send a v2.
+Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> 
->> impact because the structure itself is always a const.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> 
-> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-> 
->> ---
->>   drivers/tty/serial/samsung_tty.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
->> index 279c413f2300..eecefff5c4a4 100644
->> --- a/drivers/tty/serial/samsung_tty.c
->> +++ b/drivers/tty/serial/samsung_tty.c
->> @@ -85,9 +85,9 @@ struct s3c24xx_uart_info {
->>   };
->>   
->>   struct s3c24xx_serial_drv_data {
->> -	struct s3c24xx_uart_info	info;
->> -	struct s3c2410_uartcfg		def_cfg;
->> -	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
->> +	const struct s3c24xx_uart_info	info;
->> +	const struct s3c2410_uartcfg	def_cfg;
->> +	const unsigned int		fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
->>   };
->>   
->>   struct s3c24xx_uart_dma {
-> 
-> 
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index e55e411038f4..81b290dace3a 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -830,7 +830,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 
+ 	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret < 0)
+-		goto err_irq;
++		goto err_pm_disable;
+ 
+ 	vb2_dma_contig_set_max_seg_size(dev, DMA_BIT_MASK(32));
+ 
+@@ -864,6 +864,8 @@ static int fimc_is_probe(struct platform_device *pdev)
+ 	pm_runtime_put_noidle(dev);
+ 	if (!pm_runtime_enabled(dev))
+ 		fimc_is_runtime_suspend(dev);
++err_pm_disable:
++	pm_runtime_disable(dev);
+ err_irq:
+ 	free_irq(is->irq, is);
+ err_clk:
+-- 
+2.17.1
 
-
-Best regards,
-Krzysztof
