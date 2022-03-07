@@ -2,132 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4720BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 08:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DF9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 08:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233175AbiCGIlX (ORCPT
+        id S233067AbiCGIr7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 03:41:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42144 "EHLO
+        Mon, 7 Mar 2022 03:47:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230349AbiCGIlX (ORCPT
+        with ESMTP id S233266AbiCGIr5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 03:41:23 -0500
+        Mon, 7 Mar 2022 03:47:57 -0500
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6611925599
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 00:40:29 -0800 (PST)
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E9886352D
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 00:47:03 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 45E0F3F222
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 08:40:28 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4FC333F5F7
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Mar 2022 08:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646642428;
-        bh=rO2I99jv/62SugdeMBeIu0gQLuVDL/KgowlHEXSt9XY=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+        s=20210705; t=1646642821;
+        bh=cTVS5wZOGaAoIcz1M4Y4sLTFfhLOC06ze/gaw6hqXNw=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=RnZRDYSOk6rS4+1PtoMtgc6GXoXaCKThFJpXB1z+I7ScPeeZdPRZBKJEhlf+4Ta99
-         0kbCyBPH9sZxUQv066NHzmEW2vUrE82H/VEq6Z8wDe6snWdOu/p3h5kvmPC7q4eu4U
-         ZFzELyG2ve0EnT1Xp6KV3kirWS7ymG+nlSyrGaJHWp0pAO8h1YksHeQkOF3pX0fMCN
-         oT5VaN3Ersvg9286GWDhnOPBmFiFfRfT+ZZ0UQHBZbn5R7CYpumtJ7h3Pkn46ygBn3
-         AOUNoVVAzarKX+MDUaYcN/U7RnztmqMtrnFdkRBCjFQQAmdaq+d6/Y/SYqSSHtSZ0x
-         0XKbR8kDmE6lQ==
-Received: by mail-ed1-f70.google.com with SMTP id r8-20020aa7d588000000b00416438ed9a2so1742255edq.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 00:40:28 -0800 (PST)
+        b=SS+2a6ideT8YDbS371Foym8KXdJxQC/R/mxCiUblsH07rj2xiJIhg3O1KFwChQb+p
+         jsVgTssmW8zFH68V3ZKC468/xfdOqKDZgcTYh2zP6VtMIsrZm6ZjZGapTC4DxZmbm7
+         Xu5oEuU0s+os9w4hpu0h3heEs0R6+152SqmH17vqMnSgmDozsC/2YuRjZC8/9IGDx1
+         hsPU/pr7NyOHYMAI+3q9es3IWu8eI+lKsfzqVvDvRJhAv/Hs9nwpdNTrgNPsJ9p6wS
+         tqkxqr1POFZimngoT1MQ/bliQWuSVtb7QdQQjAKp2XhvbspJXjMjQfAhjKNs0lO/RJ
+         C/pOrpJk5rvmQ==
+Received: by mail-ed1-f71.google.com with SMTP id b24-20020a50e798000000b0041631767675so2313378edn.23
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Mar 2022 00:47:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=rO2I99jv/62SugdeMBeIu0gQLuVDL/KgowlHEXSt9XY=;
-        b=i24rrkaMvlZqS11ySpfUAUgKn2YNC2moHMHzF6/1AXtaGMLum+04xWAhBByvjbAayN
-         gMmWxr/4Q0GZi/TsL+ebB6LRa7YBAvjbzERhDEWi2oAmEwiRSQdjeuOenamybcAdvZwu
-         pMlZgY5tmWeAz/iD08d6GHICft7O5QgDBF/KNJwb1PkXfz933mzngSdORfLVDPQH8gFw
-         SUmG3FDgdmXi8rsHVLpVL7WOVi9HtZL1EMM7+vTLDfOGF5hitylg27rDQp5xMTOogjli
-         7IpJLnDD5SW42NdYUiQ4xTeux9/eP6PfVQPutK1vCdfiiraXIxU2nUV2wbZLHv/kUnft
-         DfEw==
-X-Gm-Message-State: AOAM531Bh8xpuJ+d4KfyeXG2DqCouFxif/Q4gc5u9HWH8OYQaL2FJudy
-        jwC4zn+vMQ6KADcRbw6d7mS+CKKjDVRq6uf9rTl6JL53Yx9rkwYJGc7IiylzPKaT6xz6Y3LmeCk
-        lm08AnWBgyqRdsGJ/Iv1/6XfSJ+eSZTWkY40X8abRLhEWM8iQ
-X-Received: by 2002:a50:9d47:0:b0:40f:9d3d:97b6 with SMTP id j7-20020a509d47000000b0040f9d3d97b6mr9926772edk.392.1646642427975;
-        Mon, 07 Mar 2022 00:40:27 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyL6fmdV5iKJnJB72/p5jFwG1rLkPoi95bQHxRu8Lb8Q0NaduvA8lt+bMJzhT3Gi1R4kBrBjw==
-X-Received: by 2002:a50:9d47:0:b0:40f:9d3d:97b6 with SMTP id j7-20020a509d47000000b0040f9d3d97b6mr9926760edk.392.1646642427802;
-        Mon, 07 Mar 2022 00:40:27 -0800 (PST)
+        bh=cTVS5wZOGaAoIcz1M4Y4sLTFfhLOC06ze/gaw6hqXNw=;
+        b=frJHXyCQEMBm3VRQ1kJIBQBCaMBORgX2uFfqNEBtD4YHAUpqlIWASIyIamKZa+fKBB
+         LPca2+WLiYNIViIqPES/D7tm5NIoEz6mshwnwf0xqK6CVz21HZfrsRPcfuaHp7Jmonz0
+         2cPUSUJkvQljVAamhA6ugdGzkd1i5/8D3BAd6lNL6I3NfGhMQfug+HitFCT0OCWeq6eF
+         +AdmD0pedo2IK1+Cz2NDc6FnRAVeoCRMN+8t/hcvhn7aKQHoPzjnkTpc3b8y1pN6h86/
+         O4GiTAd/eNpPK/INBo3OtU8b92IbX7DVOuw1xlFoYXCrUPBO/ZGj7fr1WfzonJZYIoSH
+         rXMA==
+X-Gm-Message-State: AOAM533R1JE/blYtTahblVLYZ1A9FHMKbyvry2W6EtN1wJrR0I6HML7o
+        h0tWeZhWWWpWt3mwW1SLste8aHwY56XJnu0+hqP9Cdg0kGhG9rEJeYxR4qcaT+/cfoNeiA/8Ki9
+        UfzKDEQzjEM4RZqF9AZLZQmf1PGMzl4gg3MsMYztv+zX0dF6d
+X-Received: by 2002:a05:6402:2754:b0:416:55c4:c883 with SMTP id z20-20020a056402275400b0041655c4c883mr1452288edd.285.1646642820898;
+        Mon, 07 Mar 2022 00:47:00 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwlcygC1225VRsCfRH7PGhqlqVVmwDsWlgFrgal65RixQmIDsY1lehMdFc//YJEm1fs3ijWuQ==
+X-Received: by 2002:a05:6402:2754:b0:416:55c4:c883 with SMTP id z20-20020a056402275400b0041655c4c883mr1452278edd.285.1646642820720;
+        Mon, 07 Mar 2022 00:47:00 -0800 (PST)
 Received: from [192.168.0.140] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id ka6-20020a170907990600b006ce54c95e3csm4515902ejc.161.2022.03.07.00.40.27
+        by smtp.gmail.com with ESMTPSA id h20-20020a1709060f5400b006d6d54b9203sm4474446ejj.38.2022.03.07.00.46.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 00:40:27 -0800 (PST)
-Message-ID: <cf34d431-22ba-ccaa-3622-a098b09a8bfe@canonical.com>
-Date:   Mon, 7 Mar 2022 09:40:26 +0100
+        Mon, 07 Mar 2022 00:46:59 -0800 (PST)
+Message-ID: <e021ee5d-1d4d-61ea-8eb4-51ca87820b2f@canonical.com>
+Date:   Mon, 7 Mar 2022 09:46:59 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v2 3/7] tty: serial: samsung: constify
- s3c24xx_serial_drv_data
+Subject: Re: [PATCH] clocksource/drivers/exynos_mct: Enable building on ARTPEC
 Content-Language: en-US
-To:     Jiri Slaby <jirislaby@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220307080810.53847-1-krzysztof.kozlowski@canonical.com>
- <20220307080925.54131-2-krzysztof.kozlowski@canonical.com>
- <3eecfcea-8eeb-3ea2-566b-704c314af718@kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     kernel@axis.com, alim.akhtar@samsung.com,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220307083744.1592533-1-vincent.whitchurch@axis.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <3eecfcea-8eeb-3ea2-566b-704c314af718@kernel.org>
+In-Reply-To: <20220307083744.1592533-1-vincent.whitchurch@axis.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/03/2022 09:33, Jiri Slaby wrote:
-> On 07. 03. 22, 9:09, Krzysztof Kozlowski wrote:
->> The driver data (struct s3c24xx_serial_drv_data) is only used to
->> initialize the driver properly and is not modified.  Make it const.
-> ...
->> @@ -2755,9 +2755,9 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
->>   	},
->>   	.fifosize = { 256, 64, 16, 16 },
->>   };
->> -#define S5PV210_SERIAL_DRV_DATA ((kernel_ulong_t)&s5pv210_serial_drv_data)
->> +#define S5PV210_SERIAL_DRV_DATA (&s5pv210_serial_drv_data)
->>   #else
->> -#define S5PV210_SERIAL_DRV_DATA	(kernel_ulong_t)NULL
->> +#define S5PV210_SERIAL_DRV_DATA	NULL
+On 07/03/2022 09:37, Vincent Whitchurch wrote:
+> This timer block is used on ARTPEC-8.
 > 
-> Yet, I still don't see why the switch from ulong->ptr happens in this 
-> "constify it" patch?
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> ---
+>  drivers/clocksource/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index ae95d06a4a8f..2ea981ef23af 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -419,7 +419,7 @@ config ATMEL_TCB_CLKSRC
+>  config CLKSRC_EXYNOS_MCT
+>  	bool "Exynos multi core timer driver" if COMPILE_TEST
+>  	depends on ARM || ARM64
+> -	depends on ARCH_EXYNOS || COMPILE_TEST
+> +	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
 
-All these defines S5PV210_SERIAL_DRV_DATA and so on are now const and
-are assigned to of_device_id.data (s3c24xx_uart_dt_match). Before, these
-were assigned with a cast:
-
-static const struct of_device_id s3c24xx_uart_dt_match[] = {
-	{ .compatible = "samsung,s5pv210-uart",
-
-	.data = (void *)S5PV210_SERIAL_DRV_DATA }
-
-but since the actual data structure is const, I want to drop the cast.
-Casting const via (void *) might hide some possible issues, e.g. if
-of_device_id.data becomes actually non-const. There is no particular
-issue here, because of_device_id.data and S5PV210_SERIAL_DRV_DATA are
-const. But also because they are both const now, I want to drop the cast
-via void *.
-
-When (void *) is dropped, the S5PV210_SERIAL_DRV_DATA cannot be
-kernel_ulong_t:
-
-../drivers/tty/serial/samsung_tty.c:2753:33: warning: initialization of
-‘const void *’ from ‘long unsigned int’ makes pointer from integer
-without a cast [-Wint-conversion]
-
- 2753 | #define S5PV210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
-
-
+This looks ok, but please also provide compatible in the bindings (if
+driver stays the same) on top of my patches specifying number of interrupts:
+https://github.com/krzk/linux/commits/n/dt-bindings-exynos-mct-v2
 
 Best regards,
 Krzysztof
