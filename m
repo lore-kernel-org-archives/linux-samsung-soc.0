@@ -2,110 +2,167 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26520C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 03:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FACC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 06:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235023AbiCGDgu (ORCPT
+        id S235547AbiCGGbT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 6 Mar 2022 22:36:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
+        Mon, 7 Mar 2022 01:31:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231285AbiCGDgt (ORCPT
+        with ESMTP id S235519AbiCGGbT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 6 Mar 2022 22:36:49 -0500
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 500305E15B;
-        Sun,  6 Mar 2022 19:35:56 -0800 (PST)
-Received: by mail-qv1-xf31.google.com with SMTP id d3so11131334qvb.5;
-        Sun, 06 Mar 2022 19:35:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R5XBkGbLpwKeBtWV3nxW7T3iRe3e2U7dNRaaKdhMqyg=;
-        b=aCj15Rfu3s9zAggB/tbruIRc88f/jJ82tAjsZGPQys8b+IPg06+lO1UlsqNnW74Vhs
-         g1Ix/vZVtZqqOtVxfBBcwDuzRIRCQ8nbr9N0P+8GduTzXi5uAYodSYccfFgAUVmEUzpn
-         XN3NqsJe9iaH/uJjf4eCqZigG1X/+hYGNxGsWsXBk9wIUy0XHgJ+CJkKwt7kW+wekakG
-         MBXaqGic42TIRee4pneOjeXYsV3kUwht9RXj2s0PQkfH00Wso7h6MRFRPZvPkWCwcWyQ
-         jqZp1N6C0vtTN6itM6Fa9ZPMirfuHRn5IUhGNbIuLesxCTwbhBU+FJCuhbq3/hto2pZ6
-         m9Nw==
+        Mon, 7 Mar 2022 01:31:19 -0500
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEAC113CC0;
+        Sun,  6 Mar 2022 22:30:24 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id qx21so29551570ejb.13;
+        Sun, 06 Mar 2022 22:30:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=R5XBkGbLpwKeBtWV3nxW7T3iRe3e2U7dNRaaKdhMqyg=;
-        b=GsxXbD56ERKTrNRjeL9AUT3UaE/xOktbt05IETsS6CdW1pz0qF1P3heUVINr/1XTXD
-         KJh3dXF7NzTb34LJiTQrXBlcTNmmnrB10qxEHQA+cYvaB/4GE29uTqHzG3pgf6+iRFYV
-         s8OnuE3oCB8sBBBbvwjH5dXw7XCjqm+CVFuZOLRLSjZnnoUB4MnnjDgZYdYoD97LtHQK
-         0AckC8rcnfUpy1jMcEcTp2INMDp/7IVWo/qr2vTcD/G+PNaA3QntW4lsnPF+NFUpc5GC
-         dzr/QnHp9tv3q27VR6/DI2wB/GDe5tTJkYaQdKU+/R4Nc71KcukCdzbuQLK2n6kQR1vd
-         BxWw==
-X-Gm-Message-State: AOAM5334pS9ZC/fr+UwTAU5JkC/hO36DrDK6hHWItf8b+DseZ4GO+0vQ
-        psE8CUfUDItpeo4G/00FBxw=
-X-Google-Smtp-Source: ABdhPJzu52klhBnRGqJo8805Vg4DIQqWlUEGypeXh4aucC3h7ef9+QM9aYDTXGGTP96FVPbl2pMHVQ==
-X-Received: by 2002:a05:6214:104b:b0:435:17bf:da07 with SMTP id l11-20020a056214104b00b0043517bfda07mr6749274qvr.91.1646624155436;
-        Sun, 06 Mar 2022 19:35:55 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id i192-20020a379fc9000000b0067b314c0ff3sm616867qke.43.2022.03.06.19.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Mar 2022 19:35:54 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     s.nawrocki@samsung.com
-Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski@canonical.com,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>
-Subject: [PATCH V2] clk/samsung: Use of_device_get_match_data()
-Date:   Mon,  7 Mar 2022 03:35:46 +0000
-Message-Id: <20220307033546.2075097-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        bh=MkSPdnyAeUKxX0kM80MyNU9CvUXu90j87BnnjXBHqBY=;
+        b=uxI5VuDv90Cd9DiAIlMZGx9gfvD2XA3p5stoZYpviGmhDFC5pJ+u+GGxY3o4FnSM/X
+         KWN4Wod13sLtTYxTx0IJdu62NDRb9k5I8m4mk67054sWsQO8q2JjsXzhsFWFMcwtlcKj
+         MwyuFo496loLoEZTIeoghEjxM+QPkLnVO9ZxeApka4RkFKwumD8uOR3sU0V+mQF8k8Ld
+         3sv7/8uQa++YsRCGNnuRzEjur0CTeqmDgY/LuU6uku7gYfGAO4NseUFd7/PJouyRQuRO
+         GZsY/5HsiFJEzso1DXI2CmHYgIReTkiJnnlRZH8Zn0l14QM85AMnmyNESf6I2DRKzK1p
+         Os7A==
+X-Gm-Message-State: AOAM532Jo8ttnJFzsktnKZMoi7ENY5b7xJMTCi4BWtotCSY5kY2Ct1Zb
+        fwARfQYlPtU3odBQo6T1IoUbJA6NvL4=
+X-Google-Smtp-Source: ABdhPJzMTapDjVgFKnKGA113nvha2MqMEB17b0UDX5xUGuJnsLN0bPnqR6zwiRgZe21xWIPg8GM9FA==
+X-Received: by 2002:a17:907:3da9:b0:6db:f3f:33c2 with SMTP id he41-20020a1709073da900b006db0f3f33c2mr4406449ejc.735.1646634623024;
+        Sun, 06 Mar 2022 22:30:23 -0800 (PST)
+Received: from ?IPV6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id z11-20020a50e68b000000b00412ec8b2180sm5739486edm.90.2022.03.06.22.30.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Mar 2022 22:30:22 -0800 (PST)
+Message-ID: <b10b87f9-2ccb-858c-dd88-5b8096acbb60@kernel.org>
+Date:   Mon, 7 Mar 2022 07:30:21 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 1/7] tty: serial: samsung: embed s3c24xx_uart_info in
+ parent structure
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220304080348.218581-1-krzysztof.kozlowski@canonical.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20220304080348.218581-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+On 04. 03. 22, 9:03, Krzysztof Kozlowski wrote:
+> Embed "struct s3c24xx_uart_info" directly as a member of "struct
+> s3c24xx_serial_drv_data" instead of keeping it as a pointer.  This makes
+> the code clearer (obvious ownership of "struct s3c24xx_serial_drv_data")
+> and saves one pointer.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Use of_device_get_match_data() to simplify the code.
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-v1->v2:
-  Add a judgment for returning variant to NULL
+> ---
+>   drivers/tty/serial/samsung_tty.c | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index d002a4e48ed9..aa5678d03704 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -85,7 +85,7 @@ struct s3c24xx_uart_info {
+>   };
+>   
+>   struct s3c24xx_serial_drv_data {
+> -	struct s3c24xx_uart_info	*info;
+> +	struct s3c24xx_uart_info	info;
+>   	struct s3c2410_uartcfg		*def_cfg;
+>   	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
+>   };
+> @@ -2197,7 +2197,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	ourport->baudclk = ERR_PTR(-EINVAL);
+> -	ourport->info = ourport->drv_data->info;
+> +	ourport->info = &ourport->drv_data->info;
+>   	ourport->cfg = (dev_get_platdata(&pdev->dev)) ?
+>   			dev_get_platdata(&pdev->dev) :
+>   			ourport->drv_data->def_cfg;
+> @@ -2616,7 +2616,7 @@ static struct console s3c24xx_serial_console = {
+>   
+>   #ifdef CONFIG_CPU_S3C2410
+>   static struct s3c24xx_serial_drv_data s3c2410_serial_drv_data = {
+> -	.info = &(struct s3c24xx_uart_info) {
+> +	.info = {
+>   		.name		= "Samsung S3C2410 UART",
+>   		.type		= TYPE_S3C24XX,
+>   		.port_type	= PORT_S3C2410,
+> @@ -2644,7 +2644,7 @@ static struct s3c24xx_serial_drv_data s3c2410_serial_drv_data = {
+>   
+>   #ifdef CONFIG_CPU_S3C2412
+>   static struct s3c24xx_serial_drv_data s3c2412_serial_drv_data = {
+> -	.info = &(struct s3c24xx_uart_info) {
+> +	.info = {
+>   		.name		= "Samsung S3C2412 UART",
+>   		.type		= TYPE_S3C24XX,
+>   		.port_type	= PORT_S3C2412,
+> @@ -2674,7 +2674,7 @@ static struct s3c24xx_serial_drv_data s3c2412_serial_drv_data = {
+>   #if defined(CONFIG_CPU_S3C2440) || defined(CONFIG_CPU_S3C2416) || \
+>   	defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2442)
+>   static struct s3c24xx_serial_drv_data s3c2440_serial_drv_data = {
+> -	.info = &(struct s3c24xx_uart_info) {
+> +	.info = {
+>   		.name		= "Samsung S3C2440 UART",
+>   		.type		= TYPE_S3C24XX,
+>   		.port_type	= PORT_S3C2440,
+> @@ -2704,7 +2704,7 @@ static struct s3c24xx_serial_drv_data s3c2440_serial_drv_data = {
+>   
+>   #if defined(CONFIG_CPU_S3C6400) || defined(CONFIG_CPU_S3C6410)
+>   static struct s3c24xx_serial_drv_data s3c6400_serial_drv_data = {
+> -	.info = &(struct s3c24xx_uart_info) {
+> +	.info = {
+>   		.name		= "Samsung S3C6400 UART",
+>   		.type		= TYPE_S3C6400,
+>   		.port_type	= PORT_S3C6400,
+> @@ -2733,7 +2733,7 @@ static struct s3c24xx_serial_drv_data s3c6400_serial_drv_data = {
+>   
+>   #ifdef CONFIG_CPU_S5PV210
+>   static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+> -	.info = &(struct s3c24xx_uart_info) {
+> +	.info = {
+>   		.name		= "Samsung S5PV210 UART",
+>   		.type		= TYPE_S3C6400,
+>   		.port_type	= PORT_S3C6400,
+> @@ -2762,7 +2762,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+>   
+>   #if defined(CONFIG_ARCH_EXYNOS)
+>   #define EXYNOS_COMMON_SERIAL_DRV_DATA()				\
+> -	.info = &(struct s3c24xx_uart_info) {			\
+> +	.info = {						\
+>   		.name		= "Samsung Exynos UART",	\
+>   		.type		= TYPE_S3C6400,			\
+>   		.port_type	= PORT_S3C6400,			\
+> @@ -2811,7 +2811,7 @@ static struct s3c24xx_serial_drv_data exynos850_serial_drv_data = {
+>   
+>   #ifdef CONFIG_ARCH_APPLE
+>   static struct s3c24xx_serial_drv_data s5l_serial_drv_data = {
+> -	.info = &(struct s3c24xx_uart_info) {
+> +	.info = {
+>   		.name		= "Apple S5L UART",
+>   		.type		= TYPE_APPLE_S5L,
+>   		.port_type	= PORT_8250,
 
-Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
----
- drivers/clk/samsung/clk-exynos-clkout.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index e6d6cbf8c4e6..273f77d54dab 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -81,19 +81,17 @@ MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
- static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
- {
- 	const struct exynos_clkout_variant *variant;
--	const struct of_device_id *match;
- 
- 	if (!dev->parent) {
- 		dev_err(dev, "not instantiated from MFD\n");
- 		return -EINVAL;
- 	}
- 
--	match = of_match_device(exynos_clkout_ids, dev->parent);
--	if (!match) {
-+	variant = of_device_get_match_data(dev->parent);
-+	if (!variant) {
- 		dev_err(dev, "cannot match parent device\n");
- 		return -EINVAL;
- 	}
--	variant = match->data;
- 
- 	*mux_mask = variant->mux_mask;
- 
 -- 
-2.25.1
-
+js
+suse labs
