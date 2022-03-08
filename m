@@ -2,40 +2,38 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355A8C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 08:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84339C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 08:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345065AbiCHIpN (ORCPT
+        id S1345140AbiCHIum (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 03:45:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54128 "EHLO
+        Tue, 8 Mar 2022 03:50:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345049AbiCHIpJ (ORCPT
+        with ESMTP id S236046AbiCHIul (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 03:45:09 -0500
-X-Greylist: delayed 583 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Mar 2022 00:44:13 PST
-Received: from mail.twelvesign.pl (mail.twelvesign.pl [89.221.214.137])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173B83F89E
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 00:44:13 -0800 (PST)
-Received: by mail.twelvesign.pl (Postfix, from userid 1002)
-        id 7ADC935814; Tue,  8 Mar 2022 09:34:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=twelvesign.pl;
-        s=mail; t=1646728469;
-        bh=rqcEvVJQSOmVvt10Vd77A7h4EQ3zL1XaGAodpexDxk8=;
+        Tue, 8 Mar 2022 03:50:41 -0500
+Received: from mail.olerise.pl (mail.olerise.pl [46.183.184.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33F23FDB9
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 00:49:45 -0800 (PST)
+Received: by mail.olerise.pl (Postfix, from userid 1001)
+        id 7B3C44402B; Tue,  8 Mar 2022 09:46:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=olerise.pl; s=mail;
+        t=1646729328; bh=ZNYiuZLXlxCdAPtstEG/gwJieB5RBwA/cHj1SZ3Mpl0=;
         h=Date:From:To:Subject:From;
-        b=loNTtiA8NGW0FTu0LSexqPWjuEhKbB+h2HawW2V90P2ns67xae6gEVVdDn10+bkcx
-         09i2Q9WqkS7lG2A4hFmtGNGCfkNMs/47sSNJNXnaVa945Ke7MjUYQhorziTIRqhCAR
-         KQvvLXs0H8hlIR1+LI+CO52IqX7cwRgIbpbNtqumcLGF9n71ALQ0MXMVlyTosziUBG
-         w/wTwUeQ3WLq2jC715Or+XZEKnuEMVfCj7Y6dubrQWsD4Xl6Hm+3z5tiClqi7R2AdU
-         vLndO5L/K67X324LGUqez1QvL3ad/w5N4NU14ETTRCGUsZK6wdcOIHlyLi2888pT2W
-         nO/acxBy14dWw==
-Received: by mail.twelvesign.pl for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 08:34:27 GMT
-Message-ID: <20220308083000-0.1.w.1v9d.0.0pl1lkxvdf@twelvesign.pl>
-Date:   Tue,  8 Mar 2022 08:34:27 GMT
-From:   "Damian Kraska" <damian.kraska@twelvesign.pl>
+        b=z7lZkJQTevIUvYk9qf9ZlOyTvikjMSYTYJSQQraIu3os5Y/Jelm8djbnTRQWWzAPX
+         sTgrVlFtC1NOcvra/iH3HZt95DkGnv8Hm1DnmWju6RQ/AS4mcBR2Gd55nOzX8c4zup
+         +fwvRp5zw1XTHqau/LPhKfxEWBq71RfZu4OXxPqqC3DD6iQi7kCAwbyehNQmSiPiev
+         G883pASKqN0zEJZqqOUF/5WNjqBHU0qJluJF9aYVgW9qYy7tWexylcWmTAp7dDCmaB
+         DEFP6K+88Fbgafsj+5WmXRsjannN2hQ47b5rmYAYypiwYnOctpI5/HgSe/23oqQ8Kh
+         p7+S6VHNMpqRg==
+Received: by mail.olerise.pl for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 08:45:41 GMT
+Message-ID: <20220308084500-0.1.26.msm1.0.dol4oqyqyr@olerise.pl>
+Date:   Tue,  8 Mar 2022 08:45:41 GMT
+From:   =?UTF-8?Q? "Miko=C5=82aj_Rudzik" ?= <mikolaj.rudzik@olerise.pl>
 To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.twelvesign.pl
+Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
+X-Mailer: mail.olerise.pl
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -45,15 +43,16 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Dzie=C5=84 dobry,
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
+skania nowych zlece=C5=84 ze strony www.
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
+, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
+=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
+jonowania strony w Google.
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
 
 
-Pozdrawiam,
-Damian Kraska
+Pozdrawiam
+Miko=C5=82aj Rudzik
