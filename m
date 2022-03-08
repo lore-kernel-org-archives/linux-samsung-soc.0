@@ -2,97 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E40CC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 14:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC55C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 15:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347695AbiCHO7Q (ORCPT
+        id S1347755AbiCHPDR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 09:59:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54290 "EHLO
+        Tue, 8 Mar 2022 10:03:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347709AbiCHO7P (ORCPT
+        with ESMTP id S1347778AbiCHPDD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 09:59:15 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA4E2FFE2
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 06:58:15 -0800 (PST)
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 8 Mar 2022 10:03:03 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F0D4D9C9;
+        Tue,  8 Mar 2022 07:02:06 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A3B993F60B
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 14:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646751493;
-        bh=QoI6gYCzEPHlnRf7hBS/jsKubxk4d8dg14EW9oX2Wl8=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=tll8mZ+Fuhkt2A6pzQKfF7oaQb7EpiOT0Feg9ehEmAYWqFW2UaSdpvB5IxbivxeKV
-         ownTYUFlWpuDs9yw0WWB0uQpKkTfequbK6wC+HJY7444XEwLWomPmc/v2iT6veKMlV
-         PCXAwFBuDXMy1bmfHTLVmBsPHxe8u0ZM/pnC0cuOubgU5KdGfCl/MOQ8rKCbmbTGf1
-         cEFenumUq8Yn0LDiQYEdVWeylYlgosIAGdkCu/FTcg4eKXWlFO+GsE0qElkFPKw8RC
-         /fi6Rlb2qeg81SIrjgi3aiEANB9ok1llSVAuASN/K20/PQM78IMHweZstu7UBhzm6J
-         MEb/pzrjpK35Q==
-Received: by mail-ed1-f70.google.com with SMTP id n11-20020a50cc4b000000b00415e939bf9eso8580851edi.22
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Mar 2022 06:58:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=QoI6gYCzEPHlnRf7hBS/jsKubxk4d8dg14EW9oX2Wl8=;
-        b=r8D1T7ZFQbYtvd2KRxG2jYpxQrWqjxWWF9l43LP3xbQhXdHh5g67HQE09FRqiaDoXm
-         nPXGTab03w9iKAZa9TcM1KqNGl5c/v610x5vSoB94odb6rCKwzMYy2ysBB6kcstxuCln
-         Ir2xZA8nuTbTUF+JnS56CRDtRUWz6eBPIn4xEFV487+Q8RnupjVwDeWVMWgtB78i848s
-         4tcPlnlB3XtesmtHdR/py/Hhducz15k/Jsu+RK+NMmj9k5akQ+lxdHqk5G23G5XNO2of
-         8mVJmLLxyyT1bJC8Dv+RJnbPSYQqGGzOjHpHPwTwGuWCFlr7mYiy+mfx5EsE0QmBkdSX
-         oz4w==
-X-Gm-Message-State: AOAM532NA2jrIrwujOxWDXtx5uBa59Qq/LcezKGST2ytHfkZGgjeEqzO
-        fwrwLdyUCFiCvCMquOEVOY94RM6fygiAOPCoIh3YfpoDTW+rk4w6lFr3xkoWMVFRisd90YYra1G
-        BxA39KhI+yXf09PAxKfrLQGMv4gCe0F4rv/sVNnp4xMxqhgyY
-X-Received: by 2002:a17:907:948b:b0:6d8:27f8:ab4a with SMTP id dm11-20020a170907948b00b006d827f8ab4amr13433139ejc.39.1646751492683;
-        Tue, 08 Mar 2022 06:58:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx7Fp2BFbe7EDlVkIH1yW95b4oxQsuzzjT0aFMP1UH/bjihagtZF0U3gD7nJpwi4v+0bIlKbA==
-X-Received: by 2002:a17:907:948b:b0:6d8:27f8:ab4a with SMTP id dm11-20020a170907948b00b006d827f8ab4amr13433122ejc.39.1646751492471;
-        Tue, 08 Mar 2022 06:58:12 -0800 (PST)
-Received: from [192.168.0.143] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id gz20-20020a170907a05400b006d91b214235sm5977187ejc.185.2022.03.08.06.58.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 06:58:11 -0800 (PST)
-Message-ID: <26658f45-ba1f-a633-ccd6-6f1d2f337341@canonical.com>
-Date:   Tue, 8 Mar 2022 15:58:11 +0100
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3ABC3B818F0;
+        Tue,  8 Mar 2022 15:02:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 053E7C340EF;
+        Tue,  8 Mar 2022 15:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646751723;
+        bh=lbiOCENiKzV0l6VKyrVyuJsQgczqHpyQAumIADRX13w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NdcQyOVs9Fby8nijGaLbuWWzj6UwhNyJLRkmo51z74unpAStHy6pXGZLp3zNbr5ec
+         sP4qx+y+f/V1HNQlrGcPR7zsZ9XItIsEGMcgC3HMSMec1FWWPhNTDIJrNzjSdyY0Mu
+         aUN2PGXmZVFPXPwqpM1Oax33cr9UrhBMraDqBLezWSAGqwxMwPkEZ7+TisPMhILuKC
+         9/YQbMay7EEwyWR8PMhI5uxb7zvv9hxK6adoicxlUD8gpypyuoEnb7wD+7CpAFNYWW
+         UqJXF9MPcdI/NsM8dWRVxeABQtV6D5esmBjLnE19FZJEbFbTBWtWKkVfnjqygi+USO
+         YIRiWzEbpqm4Q==
+Date:   Tue, 8 Mar 2022 15:01:57 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     'Lee Jones' <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
+        andi@etezian.org, linux-spi@vger.kernel.org, linux-fsd@tesla.com,
+        'Adithya K V' <adithya.kv@samsung.com>
+Subject: Re: [RESEND PATCH v3 1/2] spi: dt-bindings: samsung: Add fsd spi
+ compatible
+Message-ID: <Yidv5aGB3CljCEWg@sirena.org.uk>
+References: <CGME20220308120701epcas5p3d3d2f5c01055e8c1721ae0ec6c2aa681@epcas5p3.samsung.com>
+ <20220308121640.27344-1-alim.akhtar@samsung.com>
+ <YidY+ncMVhp7bBvh@sirena.org.uk>
+ <Yidg64QGGzIbduQ2@google.com>
+ <YidosChLIwIAKDmG@sirena.org.uk>
+ <010901d832fb$212124f0$63636ed0$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 4/4] clocksource/drivers/exynos_mct: Enable building on
- ARTPEC
-Content-Language: en-US
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        tglx@linutronix.de, daniel.lezcano@linaro.org
-Cc:     kernel@axis.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        alim.akhtar@samsung.com, robh+dt@kernel.org
-References: <20220308142410.3193729-1-vincent.whitchurch@axis.com>
- <20220308142410.3193729-5-vincent.whitchurch@axis.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220308142410.3193729-5-vincent.whitchurch@axis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jzZHKask1XwDH5wi"
+Content-Disposition: inline
+In-Reply-To: <010901d832fb$212124f0$63636ed0$@samsung.com>
+X-Cookie: Dental health is next to mental health.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/03/2022 15:24, Vincent Whitchurch wrote:
-> This timer block is used on ARTPEC-8.
-> 
-> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-> ---
-> 
 
+--jzZHKask1XwDH5wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+On Tue, Mar 08, 2022 at 08:15:15PM +0530, Alim Akhtar wrote:
 
+> >There were changes adding the FSD SoC as well as DT stuff IIRC.
 
-Best regards,
-Krzysztof
+> FSD SoC DT changes are already in -next.
+> I think this can go with MFD tree because of immutable
+> branch between MFD, SPI and DT due for the v5.18 merge windows.
+> I am not sure if there are better ways to handle this.
+
+I need the changes that are hard dependencies to actually be in my tree
+so my tree is not broken, -next isn't good enough here.  If there are
+dependencies for things you're posting you should explicitly say what
+they are when you post (not just vauge statements that there are
+dependencies), and when you post things that will be dependencies for
+other trees it's good to mention this so that people can think about
+putting them on a separate branch for easier cross merging.
+
+--jzZHKask1XwDH5wi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmInb+QACgkQJNaLcl1U
+h9CDLgf9GwB+d+ke1yyxR+lxSveYjvqXqsOiAoVeXlpr1AE2KMzU72/apoLlE8YJ
+F8gFctTU9Qk9atjp0TWQf6TiovyZVmPtGNcWJT80z2wZHADJvV1TPh63MJOoqdHK
+Yr8aTu5Dv/uMaIVKQvkn/Ds+JD9ssGzR4Okn6SaMJmAMa5Q1rvM/injJPLIWGeUk
+HOxJC4XdX2vgpgMbjcDlNhrhidwlnYsLSdxyUAoNo1ZW82modnuoX++7nBOgsnxf
+p0WjSr462KANi0dH2egxA0wbypxJ6r8/l+qmzcaZv9w2uFvtUPFAXOLc856ynGTZ
+GGyTEzC+9lHlmcTwV3x8vu/Luj4j7w==
+=PZ4j
+-----END PGP SIGNATURE-----
+
+--jzZHKask1XwDH5wi--
