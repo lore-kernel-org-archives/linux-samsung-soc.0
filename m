@@ -2,105 +2,98 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBF0C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 14:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA64CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 14:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343682AbiCHOZZ (ORCPT
+        id S1347480AbiCHOcR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 09:25:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51240 "EHLO
+        Tue, 8 Mar 2022 09:32:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347353AbiCHOZX (ORCPT
+        with ESMTP id S235428AbiCHOcR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 09:25:23 -0500
-Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A236347AF5;
-        Tue,  8 Mar 2022 06:24:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1646749467;
-  x=1678285467;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6KwAXn4jvSph/kkMgeY9egBCzjFV3kNndn+PTRpZ548=;
-  b=gKmdEYXwJY8KE9ZYdnBVVQtB70opXBFB+odyd2FHOGMCIoxFBwUyFEa1
-   XPgSZNVeLUtEGYmjhhBb625SYjZLOIx7otitfxn5691lBZzcoGl9+Z+0z
-   WpbM0YIphiocp0362ZP4M0yVQtjWzFFpWlqQuE6qDox+Fi32ylZMvfEtD
-   HvwH3vOuHoT9PfWHb5A7N68h7P7QlyRBeKtX7KerqdF3g/KoaBpGMiNk3
-   4/DMvuaBcbLJWGNA5OymjYGNy8iOG2+QUinBq3Qck+rPZ8Zj6BlPRvzaM
-   Vx+4vhyt3IqIqkOJBOFs3EVozN4Frnjgw7wQ/hV0Jto63X/YMpbTQQlEx
-   g==;
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     <krzysztof.kozlowski@canonical.com>, <tglx@linutronix.de>,
-        <daniel.lezcano@linaro.org>
-CC:     <kernel@axis.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <alim.akhtar@samsung.com>, <robh+dt@kernel.org>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>
-Subject: [PATCH v2 2/4] dt-bindings: timer: exynos4210-mct: Support using only local timer
-Date:   Tue, 8 Mar 2022 15:24:08 +0100
-Message-ID: <20220308142410.3193729-3-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220308142410.3193729-1-vincent.whitchurch@axis.com>
-References: <20220308142410.3193729-1-vincent.whitchurch@axis.com>
+        Tue, 8 Mar 2022 09:32:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09BF84BFF6;
+        Tue,  8 Mar 2022 06:31:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B0AC5B818F0;
+        Tue,  8 Mar 2022 14:31:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78347C340EC;
+        Tue,  8 Mar 2022 14:31:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646749878;
+        bh=MUULwWIn8CitNcmjbps4vjw/fQMuYQ5BVVsCxE3+FVE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nxc0J8WTHPk4nDHJ7Ys7SncaZglaenwMF/++ttQKOA5+l9A1ifEvYbWNp1c2fS/UU
+         dM8R5UGWXBHfLjtytZgckZiU/aVWypQmx8EIst8IOiBcgedqQVUIoGdEheG7UZQLPY
+         RhmGEAoRwwX8Mg6kLRyjyxZRRm0+MyjVZGFpkWp/iPkKZLztCiSNY7RkVdUcP3ajcK
+         l7aur4odRHoBiMLH5hEbg/Ho3p9TySw4/EXBTUh2a/qxcEVL3o0jRekazehHZpEuBU
+         YS7xLg4UWbIYBfriy9Zl5y8sD6ZabqQYYeaSQvi8pCEaM9jGG0/UTpix34ybl48jdy
+         osTANaCRoySJg==
+Date:   Tue, 8 Mar 2022 14:31:12 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
+        andi@etezian.org, linux-spi@vger.kernel.org, linux-fsd@tesla.com,
+        Adithya K V <adithya.kv@samsung.com>
+Subject: Re: [RESEND PATCH v3 1/2] spi: dt-bindings: samsung: Add fsd spi
+ compatible
+Message-ID: <YidosChLIwIAKDmG@sirena.org.uk>
+References: <CGME20220308120701epcas5p3d3d2f5c01055e8c1721ae0ec6c2aa681@epcas5p3.samsung.com>
+ <20220308121640.27344-1-alim.akhtar@samsung.com>
+ <YidY+ncMVhp7bBvh@sirena.org.uk>
+ <Yidg64QGGzIbduQ2@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jyxo28c6xJeJOF6f"
+Content-Disposition: inline
+In-Reply-To: <Yidg64QGGzIbduQ2@google.com>
+X-Cookie: Dental health is next to mental health.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ARTPEC-8 SoC has a quad-core Cortex-A53 and a single-core Cortex-A5
-which share one MCT with one global and eight local timers.  The
-Cortex-A53 and Cortex-A5 do not have cache-coherency between them, and
-therefore run two separate kernels.
 
-The Cortex-A53 boots first and starts the global FRC and also registers
-a clock events device using the global timer.  (This global timer clock
-events is usually replaced by arch timer clock events for each of the
-cores.)
+--jyxo28c6xJeJOF6f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When the A5 boots, we should not use the global timer interrupts or
-write to the global timer registers.  This is because even if there are
-four global comparators, the control bits for all four are in the same
-registers, and we would need to synchronize between the cpus.  Instead,
-the global timer FRC (already started by the A53) should be used as the
-clock source, and one of the local timers which are not used by the A53
-can be used for clock events on the A5.
+On Tue, Mar 08, 2022 at 01:58:03PM +0000, Lee Jones wrote:
+> On Tue, 08 Mar 2022, Mark Brown wrote:
 
-To support this usecase, add a property to the binding to specify the
-first local timer index to be used. If this parameter is non-zero, the
-global timer interrupts will also not be used.
+> > I either need a pull request for the MFD changes or to wait until those
+> > changes have come in via Linus' tree.
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
+> You mean this one:
 
-Notes:
-    v2: New.
+>   https://lore.kernel.org/all/YiYC7eYx2SpPILyl@google.com/
 
- .../bindings/timer/samsung,exynos4210-mct.yaml           | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>   spi: dt-bindings: samsung: Convert to dtschema
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index dce42f1f7574..46f466081836 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -47,6 +47,15 @@ properties:
-   reg:
-     maxItems: 1
- 
-+  local-timer-index:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 0
-+    maximum: 15     # Last local timer index
-+    description: |
-+      If present, sets the first local timer index to use.  If this value is
-+      set to a non-default value, the global timer will not be used for
-+      interrupts.
-+
-   interrupts:
-     description: |
-       Interrupts should be put in specific order. This is, the local timer
--- 
-2.34.1
+> Or something else?
 
+There were changes adding the FSD SoC as well as DT stuff IIRC.
+
+--jyxo28c6xJeJOF6f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmInaK8ACgkQJNaLcl1U
+h9DQxQf7BcPWuE4vF1XdXLMunwK6rdr5BBcGadp7gvfZ3/10wdnVycVGXUseB52i
+YEDqvwa9CpQN/JU1GHzMtZ+cO6q0em+6YQEJYgQUs2TNhimUMomUGK3LDnDnBxzm
+c2wRMsR9Gu7CrxKbcn7mKhne+PzqRzUEkDENLrStKUxA45+H7RqlRNriCRvNo5KR
+SRlV9LUoerNJNk2ikspS5uOmKFRJPAB7IU47PgcvSDcLWsn2Gdmm1NeSR+k0lbie
+LnMqc3nrjpKYV4i9IMlqiBii0+YmDm8Vw+sGvGIUJSqC22xmOg+N8i+MbRC6muP4
+lmz5D8KwbJvmUytwqbvzHRWGK+lLkw==
+=L8gW
+-----END PGP SIGNATURE-----
+
+--jyxo28c6xJeJOF6f--
