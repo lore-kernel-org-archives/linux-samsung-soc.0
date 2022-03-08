@@ -2,101 +2,80 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0708EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Mar 2022 20:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E27C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 00:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239282AbiCGU0e (ORCPT
+        id S1344169AbiCHBAk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Mar 2022 15:26:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39630 "EHLO
+        Mon, 7 Mar 2022 20:00:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232324AbiCGU0c (ORCPT
+        with ESMTP id S231624AbiCHBAh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Mar 2022 15:26:32 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812B474DDE;
-        Mon,  7 Mar 2022 12:25:37 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id qx21so34518871ejb.13;
-        Mon, 07 Mar 2022 12:25:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IjS5wu4o1WHiEQruyx1LGz56N/4vOLCWv30WPAE8q6Q=;
-        b=DsmUyVP4Wn1NwO0wfWEB0BBjKiGNX8spoxCT4yCCsRwW7owVLQDEoG6TPfS5VGz49m
-         ymiYDKhUQYxwHuZ/Hgljkt3iycJvIQ50/43Av6kwN7kLKwvnbS6Jyj7dFgbFqZBMNpjp
-         FBNu8otLiMUQNiTFLoQtnHkHJt1FOJ9JEvgmN5OOubvX59IVYFdJOyMMXvArdVpG+Q9A
-         J3jelBTwYJMk6qCYAloER1oYKZrPVBngzc9pnVeOUaSvnbrK+K0dhzwGFFFBQqz+fyca
-         L1Rm6juJADrYQmWRZKR7zhJ+rLiUOxvgnhjwQGMcUeTo0RDCJZo94BvDMVGmAbU50LJz
-         Pvjg==
+        Mon, 7 Mar 2022 20:00:37 -0500
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EEAC2AE36;
+        Mon,  7 Mar 2022 16:59:42 -0800 (PST)
+Received: by mail-oo1-f45.google.com with SMTP id 6-20020a4a0906000000b0031d7eb98d31so20159576ooa.10;
+        Mon, 07 Mar 2022 16:59:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IjS5wu4o1WHiEQruyx1LGz56N/4vOLCWv30WPAE8q6Q=;
-        b=1g5hKDxECvz/fMFlZP449TECQno+AcK6tJZXNBT4dI1OhgqZwvq/ViRcDJPeQzGti2
-         nm6s6WebnvYtrrQc/ZXNWblMrDR3sH+05I/2XkrlLf5T1AKa9hyysCFkFRYhZNykuNVw
-         k3tcGDX7tr2DuGPMTjBdpSDP8IDBNSJYOxvVFBu3UveXMbt3kvkM6QqaFRODJVnRJs9z
-         cRBTcPXXDsPk00ja1b7P8fcubru3eQt2ISiWIXU1euFAKDfrL7hpC/070+M4n/SZMO13
-         3si67PCcXvh6t2K77PWYuzStTkRaeUaDg9MERBXwRycF30PJQUS8avK3w4ypy01g9l73
-         iaZg==
-X-Gm-Message-State: AOAM5324TqckAYTvnTJ72sIzoU4GLHJpgg3cLI+6iuvospohStDu3B9Y
-        S9syyUm3xjdNnrWan9t0x8ZqaUblBiuA1UzpWpo=
-X-Google-Smtp-Source: ABdhPJyJElS7UBre+fq6DJ/l5/8SwGOj+xfz86v1y2Ql0mk0t5luB3Rft0HLui6lvCy4O+5Rx8vLUam/JDFCYj33fLs=
-X-Received: by 2002:a17:906:cc12:b0:6b5:ec8f:fdf2 with SMTP id
- ml18-20020a170906cc1200b006b5ec8ffdf2mr10153043ejb.579.1646684735868; Mon, 07
- Mar 2022 12:25:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20220307080810.53847-1-krzysztof.kozlowski@canonical.com> <20220307080925.54131-6-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220307080925.54131-6-krzysztof.kozlowski@canonical.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 7 Mar 2022 22:24:16 +0200
-Message-ID: <CAHp75VdN3MDDEjEoLAudtRW5pgHvfgP7Zt9Hv8OOhfZbHN9hpA@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] tty: serial: samsung: simplify getting OF match data
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QpxfH7e2TQR8IJnD//5HUxcZE39rTUeMoOOPilGn61U=;
+        b=YRquIIbs1vJKLvcX2N0fxD2arO02d0HXwNVGUsa0i1159/FuWxMA33XQKA0SN+dZhv
+         /rRbjXcTpSE60vu5zyX7/vLoqGvetjBbRJrAfd/qfXbmR8VQrzfpRSqYB07FiUl8h+DT
+         W/YskEfN6Kt+K0jJBYrqaznUXyy1cuLGTejW9snePU9TFR5WsR2QNWbFmgaOA0qUAOMB
+         s1Yy75+mVMdbt03+MK6dyLXvb9lnrRQ3sSYn/NrEJA5gGya1KKBCOpGgnfSXCeHAG6IY
+         o4WAbR3Yfeo7WVRpRwydZlAB2cI9P6eaZa6pkw3IIz3m0lYKqylLylmM47z71FPYixp0
+         MW6w==
+X-Gm-Message-State: AOAM533KjtN2EQGjipl07pI10cz6yc88tRGbk3wAxIv4RnACi52EIiTL
+        j5z7TKwkU2ZFHxgQwJyzaBf0jdb0qA==
+X-Google-Smtp-Source: ABdhPJxxLIyVApb2bbIkJlzE7/74k5UfQFnqrIV9ohK+cJpAbHO8Y/FgFwzR+5U/Uuj0ur5Ol3MZnA==
+X-Received: by 2002:a05:6870:b303:b0:d6:f4d1:990d with SMTP id a3-20020a056870b30300b000d6f4d1990dmr943623oao.53.1646701181615;
+        Mon, 07 Mar 2022 16:59:41 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id x1-20020a4ae781000000b00320d5d238efsm2799060oov.3.2022.03.07.16.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Mar 2022 16:59:40 -0800 (PST)
+Received: (nullmailer pid 3610656 invoked by uid 1000);
+        Tue, 08 Mar 2022 00:59:39 -0000
+Date:   Mon, 7 Mar 2022 18:59:39 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: timer: exynos4210-mct: describe
+ known hardware and its interrupts
+Message-ID: <Yiaqe5wjKW5NkiW9@robh.at.kernel.org>
+References: <20220304122424.307885-1-krzysztof.kozlowski@canonical.com>
+ <20220304122424.307885-2-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220304122424.307885-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 7, 2022 at 11:20 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> Simplify the code with of_device_get_match_data().
+On Fri, 04 Mar 2022 13:24:21 +0100, Krzysztof Kozlowski wrote:
+> Most of the Samsung Exynos SoCs use almost the same Multi-Core Timer
+> block, so only two compatibles were used so far (for Exynos4210 and
+> Exynos4412 flavors) with Exynos4210-one being used in most of the SoCs.
+> However the Exynos4210 flavor actually differs by number of interrupts.
+> 
+> Add new compatibles, maintaining backward compatibility with Exynos4210,
+> and constraints for number of interrupts.  This allows to exactly match
+> the Exynos MCT hardware.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  .../timer/samsung,exynos4210-mct.yaml         | 67 ++++++++++++++++++-
+>  1 file changed, 64 insertions(+), 3 deletions(-)
+> 
 
-You may get rid of ugly ifdeffery as well.
-
-...
-
->  static inline const struct s3c24xx_serial_drv_data *
->  s3c24xx_get_driver_data(struct platform_device *pdev)
->  {
->  #ifdef CONFIG_OF
-> -       if (pdev->dev.of_node) {
-> -               const struct of_device_id *match;
-> -
-> -               match = of_match_node(s3c24xx_uart_dt_match, pdev->dev.of_node);
-> -               return (struct s3c24xx_serial_drv_data *)match->data;
-> -       }
-
-> +       if (pdev->dev.of_node)
-
-I believe it's never true when CONFIG_OF=n,
-
-> +               return of_device_get_match_data(&pdev->dev);
->  #endif
-> +
->         return (struct s3c24xx_serial_drv_data *)
->                         platform_get_device_id(pdev)->driver_data;
->  }
-
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Rob Herring <robh@kernel.org>
