@@ -2,171 +2,164 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A806C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 14:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC53DC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 14:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237520AbiCHOpu (ORCPT
+        id S1343781AbiCHOq1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 09:45:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
+        Tue, 8 Mar 2022 09:46:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235220AbiCHOpt (ORCPT
+        with ESMTP id S233901AbiCHOq0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 09:45:49 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09633B3F5
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 06:44:52 -0800 (PST)
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B91643F1C6
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 14:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646750690;
-        bh=XPWngrH4yB2m8hPYi3WQlp0y7ozLbZ9SOUzkcBuiDSo=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=I38MiL+x2ERMr62JqwOe6ORV7lDV77K3uIDkboKB3Y4eePnEVgLiC1N+rviu0Ftaa
-         JzbSybDnf6PHT50KXtX8JK+Ucr7l3qTC2DL2Ef1yGxTjcaY2QvQmXtXGgGA2BCrJC9
-         M50toNxYfC58LZliWxQ3OgF9nxUSzaRl6uVTOMDP68KPus1mapXnxweSFRBuaohcxB
-         BjgK28mAXSsZSmP+pSywCu+0nWO7Ari9UdgdBgzWFZO0jk8mgOCSRcHYlG71PJhc72
-         2PRMOizy8qGXLSjz3/TwoaQXJ3yc6JO0QjodktIR8yuKIrXMcT+jeWt4V9r18ECho7
-         u3ZiupGbP1cSQ==
-Received: by mail-ed1-f69.google.com with SMTP id b9-20020aa7d489000000b0041669cd2cbfso1557363edr.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Mar 2022 06:44:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=XPWngrH4yB2m8hPYi3WQlp0y7ozLbZ9SOUzkcBuiDSo=;
-        b=ESxGzL/e/eYtESIW0oVrGIaUn0BvgJ4pBlWp+jhIttwaTMyQBHXj79jTnLCG791oja
-         syuM4/5URu7hySUf133/UObX48Otvr33mHbsdIlQXw/w8NkZEen64Am2gbG/H+PyR9eA
-         QF8oB7FR2AL0EnZ8iyIJwJzZ61qJWAFcQvRynow0pMYOAlH2WX0a434qpqg5vfUJvxW4
-         Lnf6OuOGjjWYtKlMEWNMxFcy0eD8b2hqKWfvcgMfEYg0wWxsN/Pcz39tOMD49HDaN7Hg
-         Gs5QaQxwCJ2d7FUQT9r0cqdtP/T2Te8R5oNGtPmh95IXBwqXsJG7dByl0N/kSWyWyG5y
-         7WqA==
-X-Gm-Message-State: AOAM532r2nhXmaBId9BgFeyfShPgZVySA6MOwN1+YH2BqIpYHAjpQfuV
-        /r+GpKRUNmoVCwoHISbOhswwJMQlaoNoiUjE4r+WCvALhc3VNSj4r6e4dtRWoHQSwnEDhL1kvET
-        c5MxaYT2oUp2UfdvIAngmnAtyNJ2DekrxYvp7xZvyw7z8uBst
-X-Received: by 2002:a17:907:d93:b0:6da:bb7a:4da with SMTP id go19-20020a1709070d9300b006dabb7a04damr13412641ejc.183.1646750690447;
-        Tue, 08 Mar 2022 06:44:50 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwTaOdqLNPXSX1Gu97Fy6UulewAGsgiEfqKcZeLZUk+nIltFuvBtpMRoLBaIjZbNZtX/RFdnw==
-X-Received: by 2002:a17:907:d93:b0:6da:bb7a:4da with SMTP id go19-20020a1709070d9300b006dabb7a04damr13412630ejc.183.1646750690213;
-        Tue, 08 Mar 2022 06:44:50 -0800 (PST)
-Received: from [192.168.0.143] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id q11-20020a170906144b00b006cf61dfb03esm6023364ejc.62.2022.03.08.06.44.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 06:44:49 -0800 (PST)
-Message-ID: <26f42531-8f55-9fda-9465-bd78a2224f2c@canonical.com>
-Date:   Tue, 8 Mar 2022 15:44:48 +0100
+        Tue, 8 Mar 2022 09:46:26 -0500
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BC94615F
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 06:45:29 -0800 (PST)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220308144524epoutp03062da802fcac7654f479f445a11ae49a~abw8hPOcg1576315763epoutp03N
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 14:45:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220308144524epoutp03062da802fcac7654f479f445a11ae49a~abw8hPOcg1576315763epoutp03N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1646750724;
+        bh=lmHLPqNItLMb8jz79J20gYYp3YnXa2xox3wIzroio30=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=MKJQhw8AAwL8xyfGrEbqzjsfUWIlEBDFBwKAn/tluAp0egwZu4fLzkHDYzrSTDLAv
+         90/Lyyr+JnirIt862YbODzzq9l+jyJ66M5f96hqOvIosCJlhUl5xk+P2Pds6uTEgl/
+         2/o6cmeoXnNer4g1AButnUO6LUxB25A8TGIC0As8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220308144523epcas5p4f815e30777cf24ba41fd196f94a08854~abw7rDnEy1721317213epcas5p4V;
+        Tue,  8 Mar 2022 14:45:23 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KCdR31pr0z4x9Pp; Tue,  8 Mar
+        2022 14:45:19 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1C.E2.06423.FFB67226; Tue,  8 Mar 2022 23:45:19 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220308144518epcas5p40e4bb33a1b47ea714475327333b20353~abw20XesJ0355303553epcas5p4T;
+        Tue,  8 Mar 2022 14:45:18 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220308144518epsmtrp25ba627e2f31b50bc39a3cb62497cb0f3~abw2zhFyf0183701837epsmtrp2K;
+        Tue,  8 Mar 2022 14:45:18 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-11-62276bff6b30
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F2.50.29871.EFB67226; Tue,  8 Mar 2022 23:45:18 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220308144516epsmtip1f01b2ecd0903e8ccd4731dd51080c8d6~abw01ul4v0840308403epsmtip1O;
+        Tue,  8 Mar 2022 14:45:16 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Mark Brown'" <broonie@kernel.org>,
+        "'Lee Jones'" <lee.jones@linaro.org>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski@canonical.com>,
+        <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
+        <andi@etezian.org>, <linux-spi@vger.kernel.org>,
+        <linux-fsd@tesla.com>, "'Adithya K V'" <adithya.kv@samsung.com>
+In-Reply-To: <YidosChLIwIAKDmG@sirena.org.uk>
+Subject: RE: [RESEND PATCH v3 1/2] spi: dt-bindings: samsung: Add fsd spi
+ compatible
+Date:   Tue, 8 Mar 2022 20:15:15 +0530
+Message-ID: <010901d832fb$212124f0$63636ed0$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 2/4] dt-bindings: timer: exynos4210-mct: Support using
- only local timer
-Content-Language: en-US
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        tglx@linutronix.de, daniel.lezcano@linaro.org
-Cc:     kernel@axis.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        alim.akhtar@samsung.com, robh+dt@kernel.org
-References: <20220308142410.3193729-1-vincent.whitchurch@axis.com>
- <20220308142410.3193729-3-vincent.whitchurch@axis.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220308142410.3193729-3-vincent.whitchurch@axis.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ0WBqQSnNME8An5DjgYUtJdqxg/AH0fdoJAkkbGC8BrsvLegHow/MEqz6biJA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJJsWRmVeSWpSXmKPExsWy7bCmuu7/bPUkg/aPHBYHJrxitVj84zmT
+        xdSHT9gs5h85x2qx8e0PJov7X48yWkz5s5zJYtPja6wWD1+FW1zeNYfNYsb5fUwWjR9vslss
+        2vqF3aJ17xF2Bz6PWQ29bB7Xl3xi9ti0qpPN4861PWwem5fUe/RtWcXo8a9pLrvH501yARxR
+        2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QGcrKZQl
+        5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz
+        Gq+eYC24wFVx8adEA+Nbji5GTg4JAROJjT/vM3UxcnEICexmlLgyZScjSEJI4BOjxJ2OcIjE
+        N0aJZVNvMMJ0PGu9zg6R2Mso0TThFVT7S0aJlRNOsIJUsQnoSuxY3MYGYosI+Esc3D2RBaSI
+        WeAPk8Tihi1gCU6gokMXl4CNFRYIk5h59iwziM0ioCIxpWUDWJxXwFLixbp9zBC2oMTJmU9Y
+        QGxmAXmJ7W/nMEOcpCDx8+kyVohlfhKHJvxlh6gRl3h59AjYqRICdzgkNredZ4VocJHo2vOK
+        BcIWlnh1fAs7hC0l8fndXqDjOIDsbImeXcYQ4RqJpfOOQZXbSxy4MocFpIRZQFNi/S59iFV8
+        Er2/nzBBdPJKdLQJQVSrSjS/uwrVKS0xsbsb6gAPiT17NzNOYFScheSxWUgem4XkgVkIyxYw
+        sqxilEwtKM5NTy02LTDMSy2HR3dyfu4mRnCa1vLcwXj3wQe9Q4xMHIyHGCU4mJVEeO+fV0kS
+        4k1JrKxKLcqPLyrNSS0+xGgKDO2JzFKiyfnATJFXEm9oYmlgYmZmZmJpbGaoJM57On1DopBA
+        emJJanZqakFqEUwfEwenVANT7SmRq1d2zXl0RFbcMkZB9tGcVY+9A/Zoi5kvZNJSOedk4//l
+        z94Sz9qmWz1zhc76bcuYkbH4DSf7DzsbY4cv4j52zDfE1uyQ+flc+lR4/tXV4s98PG/whTTv
+        nL+t58XUJqP1k2etCP+a9rv44CmFNU0bVv2V+27c+7hs2dqPy1awrG1OvK2RlchYXGZ1LnlR
+        xKMza5XX/zvML9vy1u+/6vEK5/9l7OFTl+4pDljo+EBj44zfiSVFvOt3ZSWzzvj2R8bGzdjZ
+        jfnCBB1m5pg0sZX62p9TnjoFZPxLWH3+hUqgq8ZtxVdqXyUPTfxs0LAmN4FpHrfYneMFLRp5
+        TkXNYQLdJ9j5T08NWXPNaaW4EktxRqKhFnNRcSIAHvOLaFwEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCSnO6/bPUkg2/n+S0OTHjFarH4x3Mm
+        i6kPn7BZzD9yjtVi49sfTBb3vx5ltJjyZzmTxabH11gtHr4Kt7i8aw6bxYzz+5gsGj/eZLdY
+        tPULu0Xr3iPsDnwesxp62TyuL/nE7LFpVSebx51re9g8Ni+p9+jbsorR41/TXHaPz5vkAjii
+        uGxSUnMyy1KL9O0SuDIar55gLbjAVXHxp0QD41uOLkZODgkBE4lnrdfZuxi5OIQEdjNKLH46
+        lQUiIS1xfeMEdghbWGLlv+dQRc8ZJX4/vQaWYBPQldixuI0NxBYR8Jf4+r+bFaSIWaCDWeLX
+        jBdMEB3vGCU2zn8MNpYTqOPQxSWMILawQIjEzU3LwOIsAioSU1o2gMV5BSwlXqzbxwxhC0qc
+        nPkEqIYDaKqeRNtGsBJmAXmJ7W/nMENcpyDx8+kyVogj/CQOTfjLDlEjLvHy6BH2CYzCs5BM
+        moUwaRaSSbOQdCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcrVqaOxi3r/qg
+        d4iRiYPxEKMEB7OSCO/98ypJQrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5N
+        LUgtgskycXBKNTBVLpm7rm7VC6UP70UXbZN66te2mLeUrWcNz+5/utXahsGFhsI7ogVXOBsJ
+        lG9NtTptUJudpsd4JEChsWnBcte9bUx3n8jnJs21EgkO65iQPGO/IIPBpgnva6Zo1mZNK1xR
+        UtcwlYvn5pfQ6ptMnL82PXtx0+/7108rZjwRMd7Q+PXD7+bMP7ZXnzImGLO8Y8qxn54x62Lr
+        f9bjd3nfn35gd2ai5M3CrbI5N+PK/r5JfChcsC2sY8Wuzh3lC1sn6SVcWlMuPFvbP+zLq8W7
+        P1hZ34j70du3z5Vx6vGpjhYuDyODmutnP+5kzL0ru4rba6kx/w/19MwpVw5c2cyZ9evU3gzm
+        O289TsnOvTvpZuBKJZbijERDLeai4kQAIZCyx0UDAAA=
+X-CMS-MailID: 20220308144518epcas5p40e4bb33a1b47ea714475327333b20353
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220308120701epcas5p3d3d2f5c01055e8c1721ae0ec6c2aa681
+References: <CGME20220308120701epcas5p3d3d2f5c01055e8c1721ae0ec6c2aa681@epcas5p3.samsung.com>
+        <20220308121640.27344-1-alim.akhtar@samsung.com>
+        <YidY+ncMVhp7bBvh@sirena.org.uk> <Yidg64QGGzIbduQ2@google.com>
+        <YidosChLIwIAKDmG@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/03/2022 15:24, Vincent Whitchurch wrote:
-> The ARTPEC-8 SoC has a quad-core Cortex-A53 and a single-core Cortex-A5
-> which share one MCT with one global and eight local timers.  The
-> Cortex-A53 and Cortex-A5 do not have cache-coherency between them, and
-> therefore run two separate kernels.
-> 
-> The Cortex-A53 boots first and starts the global FRC and also registers
-> a clock events device using the global timer.  (This global timer clock
-> events is usually replaced by arch timer clock events for each of the
-> cores.)
-> 
-> When the A5 boots, we should not use the global timer interrupts or
-> write to the global timer registers.  This is because even if there are
-> four global comparators, the control bits for all four are in the same
-> registers, and we would need to synchronize between the cpus.  Instead,
-> the global timer FRC (already started by the A53) should be used as the
-> clock source, and one of the local timers which are not used by the A53
-> can be used for clock events on the A5.
-> 
-> To support this usecase, add a property to the binding to specify the
-> first local timer index to be used. If this parameter is non-zero, the
-> global timer interrupts will also not be used.
-> 
-> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-> ---
-> 
-> Notes:
->     v2: New.
-> 
->  .../bindings/timer/samsung,exynos4210-mct.yaml           | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> index dce42f1f7574..46f466081836 100644
-> --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> @@ -47,6 +47,15 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  local-timer-index:
-
-You need vendor prefix. Also this should describe the actual hardware,
-not driver behavior, so rather:
-"samsung,local-timers"
-with a uint32-array type and list of timers to use.
-
-You also need separate property to skip FRC, so something like:
-"samsung,frc-shared"
-of type boolean.
-
-In the bindings please describe the hardware, not the result you want to
-achieve from driver model point of view.
-
-Also disallow this for all other compatibles:
-allOf:
- - if:
-     not:
-       properties:
-       ...
-   then:
-     properties:
-       samsung,local-timers: false
-       samsung,frc-shared: false
-
-The property simply should not be used outside of Artpec8. It's not
-valid in other configurations.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 0
-> +    maximum: 15     # Last local timer index
-> +    description: |
-> +      If present, sets the first local timer index to use.  If this value is
-> +      set to a non-default value, the global timer will not be used for
-> +      interrupts.
-
-Do not describe the driver, but the hardware. Instead explain which
-local timers are allowed to be used.
-
-> +
->    interrupts:
->      description: |
->        Interrupts should be put in specific order. This is, the local timer
 
 
-Best regards,
-Krzysztof
+>-----Original Message-----
+>From: Mark Brown [mailto:broonie@kernel.org]
+>Sent: Tuesday, March 8, 2022 8:01 PM
+>To: Lee Jones <lee.jones@linaro.org>
+>Cc: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
+>kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>devicetree@vger.kernel.org; linus.walleij@linaro.org; robh+dt@kernel.org;
+>krzysztof.kozlowski@canonical.com; linux-samsung-soc@vger.kernel.org;
+>pankaj.dubey@samsung.com; andi@etezian.org; linux-spi@vger.kernel.org;
+>linux-fsd@tesla.com; Adithya K V <adithya.kv@samsung.com>
+>Subject: Re: [RESEND PATCH v3 1/2] spi: dt-bindings: samsung: Add fsd spi
+>compatible
+>
+>On Tue, Mar 08, 2022 at 01:58:03PM +0000, Lee Jones wrote:
+>> On Tue, 08 Mar 2022, Mark Brown wrote:
+>
+>> > I either need a pull request for the MFD changes or to wait until
+>> > those changes have come in via Linus' tree.
+>
+>> You mean this one:
+>
+>>   https://lore.kernel.org/all/YiYC7eYx2SpPILyl@google.com/
+>
+>>   spi: dt-bindings: samsung: Convert to dtschema
+>
+>> Or something else?
+>
+>There were changes adding the FSD SoC as well as DT stuff IIRC.
+
+FSD SoC DT changes are already in -next.
+I think this can go with MFD tree because of immutable
+branch between MFD, SPI and DT due for the v5.18 merge windows.
+I am not sure if there are better ways to handle this.
+
+Regards,
+Alim
+
+
+
