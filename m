@@ -2,100 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C304C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 13:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDB8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Mar 2022 14:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234326AbiCHN7G (ORCPT
+        id S1347305AbiCHOHG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 08:59:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44172 "EHLO
+        Tue, 8 Mar 2022 09:07:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236560AbiCHN7F (ORCPT
+        with ESMTP id S1347295AbiCHOHG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 08:59:05 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E26917E2C
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 05:58:07 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id k24so19222737wrd.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Mar 2022 05:58:07 -0800 (PST)
+        Tue, 8 Mar 2022 09:07:06 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D242249F96
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Mar 2022 06:06:08 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id n31-20020a05600c3b9f00b003898fc06f1eso1473796wms.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Mar 2022 06:06:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=6YorkRdQ5ODwIMAwkUuKb6tGCEoxWYA4agUcSrocd/g=;
-        b=IpWevBUGGjyc07sxf4d2Wsp0YSQ5tGlrYfhlfBt1B391HgmVtpJnFHOhJ4/GhS8TRi
-         RxWNzTqTe0+DxCmPJoFVAds4PSDtOrPIQuJFcDxI/Vi9C+PZsurE7gafwm2eK0kdM9QL
-         Ok68ouAXklyteNGH0NEQ75QQ5M+wY/XUklT1e6AEGUC+W/xzD9hgyGLqG2Dxe2RKXQT+
-         6PY6NgjGZy5HRxpxslGTGiKh3gfNFKMiC64T1sxMp2OAWhc61GihicN0wx6KNwCH3btk
-         tkYRj4TK9K08koGVCo4O/kUz7xa/UPfgOqfPDw9zrDcSWk7yTdrpEKbyfPbR1D8V/R5Q
-         8qww==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=YIiKmaAv0jfkwMQ3/YJwiKUInE3iPjcQmLg3VXVO7ns=;
+        b=Twi5VphyBmw2kd6/DH9/5mzqFGHZ1pwNvDEj+Q/UmEh4goe5TbJBWNcDpoUG6fObxR
+         0N6ZUmT3CWurqwzxqqhQZLJUvq76AUKBV6GZktT34RD3+nVzN8TYfg7pcYs5F2zJVnMr
+         sp7ngWEPrXW9SLgk9i7g9jGm5kJ/otl7QQB3vGdnjYUU/gBip9zniZ4/HHFV6AFQXucQ
+         blMrzY6YWF0fxx8HyrkBjhkomRAKnM+M26lRFBEv2HBZBuusGldIrRD2eRio2ZhjLTXK
+         gwZf4tyBq9FqL7m2M2JsRNLBgSP4lxQsFgH3QiJ5wDW5nGxmZTGo2KLWFfKaSFedOr2d
+         Ai9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=6YorkRdQ5ODwIMAwkUuKb6tGCEoxWYA4agUcSrocd/g=;
-        b=4j8sjfLkADVrg0UmWmsG8lPM7I1CkvJOgUSC94MPfsc9wy3thcdwzH/iZrjAqO2btb
-         NS/FF+pQ7v7GNet8wCsqdHxeb4R5Ruut0KlLps0HGy7ej/U2OO5spGYHgQueTG52XSKz
-         ca+0raFGjAaP1maWKIOd5Hj9lbmu1kkZcON3ZxxLwUZmEDLO5jUZKK3O7R+5dC5RusU8
-         VMw37JrVTC+KvSfwH0ZN1I2kBHgLG07NtEPB0lVNFwNZP8LKff9MAVA06eUbDZw5Vj8g
-         c6C3CWSWSYuDjdw7tNY/3RSHgFFbtsRqINWhJecMA4dqdixnqHwAEWr6PI4qQ8iasQY1
-         1C2g==
-X-Gm-Message-State: AOAM533dF0PtB3K8KI4qrMySztPC/W/u6LYkN1B1JZYLc89vdLvseWma
-        nHA7n4zXV98n81ScRwnUCeevow==
-X-Google-Smtp-Source: ABdhPJy0ijONgUXV2hKiTA5G3/CPfstf6wOumLH9rFqg0Zj3RwwwYyDIDBPDqhbcFBxSq8y/I/Dh0Q==
-X-Received: by 2002:a5d:410c:0:b0:1ef:766b:ef5b with SMTP id l12-20020a5d410c000000b001ef766bef5bmr12193064wrp.183.1646747886241;
-        Tue, 08 Mar 2022 05:58:06 -0800 (PST)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id b1-20020a5d40c1000000b001f1dd6ea504sm8503309wrq.59.2022.03.08.05.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 05:58:05 -0800 (PST)
-Date:   Tue, 8 Mar 2022 13:58:03 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        andi@etezian.org, linux-spi@vger.kernel.org, linux-fsd@tesla.com,
-        Adithya K V <adithya.kv@samsung.com>
-Subject: Re: [RESEND PATCH v3 1/2] spi: dt-bindings: samsung: Add fsd spi
- compatible
-Message-ID: <Yidg64QGGzIbduQ2@google.com>
-References: <CGME20220308120701epcas5p3d3d2f5c01055e8c1721ae0ec6c2aa681@epcas5p3.samsung.com>
- <20220308121640.27344-1-alim.akhtar@samsung.com>
- <YidY+ncMVhp7bBvh@sirena.org.uk>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=YIiKmaAv0jfkwMQ3/YJwiKUInE3iPjcQmLg3VXVO7ns=;
+        b=itr/cwYHiQR8tUY73Z1t4cvGGBb3FV7JLg7YafS/Jch6sa3gDiZ0sXBPUJinFvaOAZ
+         MZGo/bVi4MW19eqeUtPDAPF1fQ/Dot/Pw5bFNqWQZFcrxzaOUY8iPVA7hICi3uc7t8MM
+         2hz7B5eWCg7eZozFsvSGjhIAIyBSfEbzIGgX2s63S483pT//3YHpU7c1F9FFPVIRc23i
+         m7KGbtHx5PIXnIbeGC8iojid2TF3DbwaSwS7bXhLtem+xlBAWjq9yBPgekniZRvAlHD+
+         AWuFr32vVqM1HAv3UPEmNGQ9+yYEHIgPZRGZY2xd7LkPHrWvQqj7W3jMQ0VTfWlDVFo5
+         yJBw==
+X-Gm-Message-State: AOAM533K8pOjHC412Oszo6gEaIc1VsH+Kohk36ZDBqtFAho/LGYCkwaP
+        5gjpSxLEo/in0ahHiZFRwHxagg==
+X-Google-Smtp-Source: ABdhPJyqc3uZctdMTU4CXLw5I0yjukAcwGJK6f9VsX4vNKTOQkzD3NVn9cnc+Rknx4ywALYX/tDL1w==
+X-Received: by 2002:a05:600c:3d0b:b0:389:a525:7b92 with SMTP id bh11-20020a05600c3d0b00b00389a5257b92mr3852383wmb.152.1646748367242;
+        Tue, 08 Mar 2022 06:06:07 -0800 (PST)
+Received: from ?IPV6:2a01:e34:ed2f:f020:6cbe:1901:15e:e188? ([2a01:e34:ed2f:f020:6cbe:1901:15e:e188])
+        by smtp.googlemail.com with ESMTPSA id c12-20020a05600c0a4c00b00381141f4967sm2917880wmq.35.2022.03.08.06.06.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Mar 2022 06:06:06 -0800 (PST)
+Message-ID: <2d120cbb-3919-9a14-4ea9-6e95423d10c6@linaro.org>
+Date:   Tue, 8 Mar 2022 15:06:05 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] MAINTAINERS: thermal: samsung: update Krzysztof
+ Kozlowski's email
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220308065648.6443-1-krzysztof.kozlowski@canonical.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20220308065648.6443-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YidY+ncMVhp7bBvh@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 08 Mar 2022, Mark Brown wrote:
-
-> On Tue, Mar 08, 2022 at 05:46:39PM +0530, Alim Akhtar wrote:
+On 08/03/2022 07:56, Krzysztof Kozlowski wrote:
+> Use Krzysztof Kozlowski's @kernel.org account in dt-bindings maintainer
+> entry.
 > 
-> > - Resend of FSD SPI support patches as the dependencies has landed in MFD
-> >   tree, hope this will go via MFD tree (as there are dependency between
-> > MFD, SPI and DT)
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 > 
-> I either need a pull request for the MFD changes or to wait until those
-> changes have come in via Linus' tree.
+> ---
+> 
+> Hi Daniel,
+> 
+> Could you take this one directly
 
-You mean this one:
+Applied, thanks
 
-  https://lore.kernel.org/all/YiYC7eYx2SpPILyl@google.com/
-
-  spi: dt-bindings: samsung: Convert to dtschema
-
-Or something else?
 
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
