@@ -2,157 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C687AC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Mar 2022 02:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 119CDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Mar 2022 08:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231318AbiCICB7 (ORCPT
+        id S230049AbiCII7B (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Mar 2022 21:01:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55308 "EHLO
+        Wed, 9 Mar 2022 03:59:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbiCICB5 (ORCPT
+        with ESMTP id S229894AbiCII7A (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Mar 2022 21:01:57 -0500
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A12747484D;
-        Tue,  8 Mar 2022 18:00:59 -0800 (PST)
-Received: by mail-oi1-f175.google.com with SMTP id q189so1222441oia.9;
-        Tue, 08 Mar 2022 18:00:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mWEHy9bniNne88jJU8uXaag3F19iRbd78liIzCE7PTs=;
-        b=ddi9ispAXoGWt9SPQpJVk8H3SOBi4t1euf2iB68q2gk6vED9c/ql+wSH1lwAt5cxwa
-         sd7bpfB/Cp1rYqHqS9kMaRRNjaA1c4klatCuPl5wtZvJMraYGzIDW+KkfPtyZ1Gnlq8v
-         Gfe7KW8hvPvafVecVxDTJASlT6YvJl7TJIpJEQyV4ZLFSJ5e5eYbW2dAvbi27IyxbUli
-         cekVQ7GmnlsSzBkGHLrXwgg1rzFah3KIRQBCjIbDzSmZAJztjexE3mD5XhzBYDtcRjch
-         6DCUbawECJNz8LJUBY1AFdOEjE/Pcw0gfr5SVr8tLejtR9iIH8hYsqKg5t56RmjQxpNK
-         EcYg==
-X-Gm-Message-State: AOAM533ONdah7Ii15az6JnAjw2zUBXqYU9QOheiFSQxOZJvdiLqQPlad
-        Pm1vTVKmRhkjh+Eir/jqHA==
-X-Google-Smtp-Source: ABdhPJyP4NIvcuJfaHjGGoZ6i+F9U7s3CMH3FV08j2d4EMWj+LpBXTOaiaseboj4DN2mhj42qVnlzQ==
-X-Received: by 2002:a05:6808:1201:b0:2d9:a01a:48b8 with SMTP id a1-20020a056808120100b002d9a01a48b8mr4473119oil.259.1646791258942;
-        Tue, 08 Mar 2022 18:00:58 -0800 (PST)
-Received: from rob (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id v37-20020a056830092500b005b1f7daf40asm241123ott.75.2022.03.08.18.00.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 18:00:58 -0800 (PST)
-Received: (nullmailer pid 1765443 invoked by uid 1000);
-        Wed, 09 Mar 2022 02:00:56 -0000
-Date:   Tue, 8 Mar 2022 19:00:56 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jan Kotas <jank@cadence.com>, Li Wei <liwei213@huawei.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 00/12] dt-bindings: ufs: add common platform bindings
- + fixes
-Message-ID: <20220309020056.GA1764427@robh.at.kernel.org>
-References: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
+        Wed, 9 Mar 2022 03:59:00 -0500
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD1DB3BBDF;
+        Wed,  9 Mar 2022 00:57:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1646816281;
+  x=1678352281;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aS8+yoDb2DbWhQsnTch4ovl6vT322ncAewYFCGHb4qs=;
+  b=aQTgtdZzNZen1nVSuL/3mA2bvsC2o7n1hB3BwrwuoMJ7eJroYiQJkfCr
+   LyagumiVK5nTlLIxRyOaUnXpmWzhsrFjr3UAtR546dF04SOQeh+SKZG98
+   CRkPJ6rvrKMJB8YOCj7+No6ph+OvOMiWswPHCoyj/3qzCxA/27O63Q5wA
+   M+ef149fCFhijyd1zLqgzYb4+I8zwuZ07+SJy+i/qhlboY0TWJ8lSVyTM
+   FNbBqVn9mdRJBTHSFFKHzY90znSFzmlra3VP9ZJtdDzBkZteG0xnSADfw
+   QcQWpSUR42jcwqKpFK0KZEFcvp/Dvs08AuMxMsEozB1wkfDt4vjUEZFng
+   g==;
+Date:   Wed, 9 Mar 2022 09:57:56 +0100
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        kernel <kernel@axis.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 1/2] dt-bindings: serial: samsung: Add ARTPEC-8 UART
+Message-ID: <20220309085756.GA18220@axis.com>
+References: <20220307085053.1636475-1-vincent.whitchurch@axis.com>
+ <20220307085053.1636475-2-vincent.whitchurch@axis.com>
+ <CAL_JsqKBDOu+63YrDCX51-zoTPu1utiPxXYmihL9kMvrpD3ctA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20220306111125.116455-1-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAL_JsqKBDOu+63YrDCX51-zoTPu1utiPxXYmihL9kMvrpD3ctA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Mar 06, 2022 at 12:11:13PM +0100, Krzysztof Kozlowski wrote:
-> Hi,
+On Tue, Mar 08, 2022 at 04:41:45PM +0100, Rob Herring wrote:
+> On Mon, Mar 7, 2022 at 2:51 AM Vincent Whitchurch
+> <vincent.whitchurch@axis.com> wrote:
+> >
+> > Add a compatible for the UART on the ARTPEC-8 SoC.
 > 
-> Not tested on hardware, so please kindly test.
-> Bindings maintainers might need checking - taken from git log.
-> 
-> Changes since v2
-> ================
-> 1. Do not deprecate freq-table-hz, but instead update dtschema to accept
->    uint32-matrix. See:
->    https://github.com/devicetree-org/dt-schema/pull/69
-> 2. Drop patches and changes related to freq-table-hz -> freq-table conversion.
-> 3. Add tags.
-> 4. Change maintainer of qcom,ufs.
-> 
-> Changes since v1
-> ================
-> 1. Make freq-table as matrix of tuples (Nishanth).
-> 2. New patches: convert all bindings and fix up DTS files.
-> 3. Several minor fixes in UFS bindings.
-> 
-> Dependencies
-> ============
-> None dependencies. The DTS patches can go independently via respective
-> maintainers. The dt-bindings patches could go via UFS tree.
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (12):
->   dt-bindings: ufs: add common platform bindings
->   dt-bindings: ufs: samsung,exynos-ufs: use common bindings
->   dt-bindings: ufs: cdns,ufshc: convert to dtschema
->   dt-bindings: ufs: drop unused/old ufs-qcom PHY bindings
->   dt-bindings: ufs: qcom,ufs: convert to dtschema
->   dt-bindings: ufs: hisilicon,ufs: convert to dtschema
->   dt-bindings: ufs: mediatek,ufs: convert to dtschema
->   dt-bindings: ufs: snps,tc-dwc-g210: convert to dtschema
+> Yes, the diff says that already. Perhaps some explanation why you are
+> adding another vendor SoC to Samsung UART and how the h/w is
+> different. I can only guess based on having just gone thru this with
+> Apple.
 
-Patches 1-8 applied.
+The IP has been customized for the ARTPEC-8 SoC but is closely related
+to the variants used on the Exynos chips.  I can add this information to
+the commit message.
 
-Rob
+The choice of the vendor prefix is similar to the solution chosen in
+this patch:
 
->   arm64: dts: hisilicon: align 'freq-table-hz' with dtschema in UFS
->   arm64: dts: qcom: msm8996: drop unsupported UFS
->     vddp-ref-clk-max-microamp
->   arm64: dts: qcom: msm8996: correct UFS compatible
->   arm64: dts: qcom: sm8350: drop duplicated ref_clk in UFS
-> 
->  .../devicetree/bindings/ufs/cdns,ufshc.txt    |  32 ---
->  .../devicetree/bindings/ufs/cdns,ufshc.yaml   |  68 +++++
->  .../bindings/ufs/hisilicon,ufs.yaml           |  90 +++++++
->  .../devicetree/bindings/ufs/mediatek,ufs.yaml |  67 +++++
->  .../devicetree/bindings/ufs/qcom,ufs.yaml     | 242 ++++++++++++++++++
->  .../bindings/ufs/samsung,exynos-ufs.yaml      |  13 +-
->  .../bindings/ufs/snps,tc-dwc-g210.yaml        |  51 ++++
->  .../bindings/ufs/tc-dwc-g210-pltfrm.txt       |  26 --
->  .../devicetree/bindings/ufs/ti,j721e-ufs.yaml |   7 +-
->  .../devicetree/bindings/ufs/ufs-common.yaml   |  82 ++++++
->  .../devicetree/bindings/ufs/ufs-hisi.txt      |  42 ---
->  .../devicetree/bindings/ufs/ufs-mediatek.txt  |  45 ----
->  .../devicetree/bindings/ufs/ufs-qcom.txt      |  63 -----
->  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt |  90 -------
->  MAINTAINERS                                   |   1 +
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi     |   4 +-
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   4 +-
->  .../boot/dts/qcom/msm8996-xiaomi-common.dtsi  |   1 -
->  arch/arm64/boot/dts/qcom/msm8996.dtsi         |   3 +-
->  arch/arm64/boot/dts/qcom/sm8350.dtsi          |   3 -
->  20 files changed, 614 insertions(+), 320 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/ufs/cdns,ufshc.txt
->  create mode 100644 Documentation/devicetree/bindings/ufs/cdns,ufshc.yaml
->  create mode 100644 Documentation/devicetree/bindings/ufs/hisilicon,ufs.yaml
->  create mode 100644 Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
->  create mode 100644 Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
->  create mode 100644 Documentation/devicetree/bindings/ufs/snps,tc-dwc-g210.yaml
->  delete mode 100644 Documentation/devicetree/bindings/ufs/tc-dwc-g210-pltfrm.txt
->  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-common.yaml
->  delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
->  delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-mediatek.txt
->  delete mode 100644 Documentation/devicetree/bindings/ufs/ufs-qcom.txt
->  delete mode 100644 Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> 
-> -- 
-> 2.32.0
-> 
-> 
+ https://lore.kernel.org/lkml/20220125031604.76009-2-alim.akhtar@samsung.com/
