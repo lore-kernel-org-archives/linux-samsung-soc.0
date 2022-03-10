@@ -2,138 +2,124 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ACFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  9 Mar 2022 21:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6F8C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Mar 2022 01:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235921AbiCIVFD (ORCPT
+        id S235652AbiCJB5i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 9 Mar 2022 16:05:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41446 "EHLO
+        Wed, 9 Mar 2022 20:57:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235812AbiCIVFC (ORCPT
+        with ESMTP id S232234AbiCJB5h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 9 Mar 2022 16:05:02 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B0F6663E;
-        Wed,  9 Mar 2022 13:04:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1228461995;
-        Wed,  9 Mar 2022 21:04:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72EA9C340F3;
-        Wed,  9 Mar 2022 21:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646859841;
-        bh=RfLA32mA/murgiHE8SOZv5jaYWx/3+9ErBr0WZ4lPTw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LAx2mQWmWs+5gq+eJaTb2mbiw/sENGorsRSUnloVVu+VWMe31UhBhgv5N42qtb7VK
-         Xf5ZcNMGQfkGGcQKpBjMdaWRq0+FGFlp9y3skfepF6k/DMp0Nbc5OfzrMJh5W/Wqbp
-         YquSBrRpg8FMnJBopqUxJ7xg83N55NUQxr1dmURRJNuuLVIRij98nlhzHjkjYEokWK
-         TF1UVXEi4AMj5v0PJ6nykz9rReRo7sWHCc73dXa1NfuIhVN+fzvNuShYThco0mefKu
-         W6rDBjZn8QkZdIqW8FUuX32+iNj+cDPzVKfYI1R9uWi4AoOpmrnZuRV8i8i/syJOye
-         B4HKWZ16oAVPQ==
-Received: by mail-ej1-f54.google.com with SMTP id hw13so7387342ejc.9;
-        Wed, 09 Mar 2022 13:04:01 -0800 (PST)
-X-Gm-Message-State: AOAM530xga6J5GlhPh1S9LzSlnb9GJcT7R4mgZMIK0cVUGExgbkxF6No
-        KGiwCu9oCJgPd/seX/07oRY0BMnx9VZrs2p4TA==
-X-Google-Smtp-Source: ABdhPJwa+3bXHhGQDGTsXk88j5+6SbD977Mz29I8j6MQNYuu9KBHFEZWTDPTS/5YS11/grej2n2ucE5NbLAYSxOI6PM=
-X-Received: by 2002:a17:907:298f:b0:6da:b3da:19e with SMTP id
- eu15-20020a170907298f00b006dab3da019emr1506838ejc.423.1646859839710; Wed, 09
- Mar 2022 13:03:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com> <20220111174805.223732-3-krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220111174805.223732-3-krzysztof.kozlowski@canonical.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 9 Mar 2022 15:03:47 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+cNrh=o7RL=2SH5888=YU9m1QhA5q+eCTFXVbbw57oJA@mail.gmail.com>
-Message-ID: <CAL_Jsq+cNrh=o7RL=2SH5888=YU9m1QhA5q+eCTFXVbbw57oJA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] dt-bindings: extcon: maxim,max77843: add MAX77843 bindings
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 9 Mar 2022 20:57:37 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D343212859E
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Mar 2022 17:56:37 -0800 (PST)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220310015636epoutp04a9895b8ed0e868a9b2da60f2740e3bdb~a4kQxA2yf0322103221epoutp04x
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Mar 2022 01:56:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220310015636epoutp04a9895b8ed0e868a9b2da60f2740e3bdb~a4kQxA2yf0322103221epoutp04x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1646877396;
+        bh=1l6g1NyDp1pP7XH1bkrUc4TGt99XEBsOc7UHlVjSO8I=;
+        h=Subject:Reply-To:From:To:CC:Date:References:From;
+        b=qGCMGVFVYtf5bIbIfvSUG/qPsRDvYCN1PESx3u0luYXzWwokEJSb6VBIoyXd1O4a8
+         hGiAl1egYuWcAQBOviUEN2ELh9L0YZPkfCWpDD12Wlsg34dtKdT/apZDFVkg720m5i
+         /jL1MkyGNXNsi9RPOAhzUFrykt4KMxdRv6TT1cC0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220310015635epcas2p164930aec7b732f83ba8eb33fccfffe3d~a4kQVex5j0377803778epcas2p1N;
+        Thu, 10 Mar 2022 01:56:35 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.97]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4KDXH42ntqz4x9Q5; Thu, 10 Mar
+        2022 01:56:32 +0000 (GMT)
+X-AuditID: b6c32a46-be9ff70000023ea8-34-62295acede70
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        32.4D.16040.ECA59226; Thu, 10 Mar 2022 10:56:30 +0900 (KST)
+Mime-Version: 1.0
+Subject: [PATCH 0/3] Add support for artpec8 to samsung tmu
+Reply-To: hypmean.kim@samsung.com
+Sender: Sang Min Kim <hypmean.kim@samsung.com>
+From:   Sang Min Kim <hypmean.kim@samsung.com>
+To:     "bzolnier@gmail.com" <bzolnier@gmail.com>,
+        "krzysztof.kozlowski@canonical.com" 
+        <krzysztof.kozlowski@canonical.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amitk@kernel.org" <amitk@kernel.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>
+CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20220310015629epcms2p8c0b7b218d49bacb453d8fde2c1584600@epcms2p8>
+Date:   Thu, 10 Mar 2022 10:56:29 +0900
+X-CMS-MailID: 20220310015629epcms2p8c0b7b218d49bacb453d8fde2c1584600
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmue65KM0kg2v7pS0Oz6+w+L7lOpPF
+        y0OaFvM+y1psfPuDyeLyrjlsFp97jzBazDi/j8li7pepzBZPHvaxOXB5zGroZfPYOesuu8fi
+        PS+ZPDat6mTzuHNtD5tH35ZVjB6fN8kFsEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY
+        6hpaWpgrKeQl5qbaKrn4BOi6ZeYAHaekUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJ
+        KTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM44+e43W8E//ooT5xezNjCe4O9i5OSQEDCR6P99
+        kbWLkYtDSGAHo8Tj5pPsXYwcHLwCghJ/dwiD1AgLWEvs397FDmILCShKvNyxnRkiridxc+Nn
+        sDibgI7E49b7TCBzRAS2MEn8mHaVFSTBLHCUUaJ5VirEMl6JGe1PWSBsaYnty7cyQtgaEj+W
+        9TJD2KISN1e/ZYex3x+bD1UjItF67yxUjaDEg5+7oeKSEpsOb4eqr5a4tXE52DMSAg2MEq3f
+        mphBnpEQ0JfYcd0Y4i9fiRfvCkDKWQRUJdrbnkC1ukhMal7JBHGytsSyha/BOpkFNCXW79KH
+        GKIsceQWC8wjDRt/s6OzmQX4JDoO/4WL75j3hAnCVpXYuambHWKMtMTXudUTGJVmIYJ5FpK1
+        sxDWLmBkXsUollpQnJueWmxUYASP2eT83E2M4ESq5baDccrbD3qHGJk4GA8xSnAwK4nwNoVq
+        JAnxpiRWVqUW5ccXleakFh9iNAV6eCKzlGhyPjCV55XEG5pYGpiYmRmaG5kamCuJ83qlbEgU
+        EkhPLEnNTk0tSC2C6WPi4JRqYIoT6p35IcixoPD+P46sb3n1TeLCdYqWDxPvFvstfrrqtHfh
+        jqrEF77d0ZZsO19qyyVm3Xp/q3CGveGUSZrNc8U5o/vsjxpU1YRYX4uxmuy+PPjlTS0T9sbm
+        ykVSYUXfOtjeHe5W/tNlf/F91bJ5D3tvzZs+8+g6CZbHRcdXJCTUGloYrou3jF5v43mucoHT
+        l93Vze9vruI5k9c3k+ftKucDrto2XXM1tLXKHAV2vBU9ab33Uf8HJouDhhHa+r2b1H/MX7Cl
+        JE5KN/D074Xmcyq31ca0+nT1H2lfc/1Hyp7Ea7npDRs4mvoFpaZuMalsuByhc/PqSp9ps/ks
+        pZjqnP9vPNmZ+KpL17WuuzlHiaU4I9FQi7moOBEATvLoqS0EAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220310013127epcas3p3f1b7ab9549b1d6d9da65c73adda5c514
+References: <CGME20220310013127epcas3p3f1b7ab9549b1d6d9da65c73adda5c514@epcms2p8>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 11:48 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> Document the bindings for MAX77843 MUIC/extcon driver, based on
-> Exynos5433 TM2 devicetree.  These are neither accurate nor finished
-> bindings but at least allow parsing existing DTS files.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/extcon/maxim,max77843.yaml       | 40 +++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
->
-> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
-> new file mode 100644
-> index 000000000000..f9ffe3d6f957
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
-> @@ -0,0 +1,40 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/extcon/maxim,max77843.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX77843 MicroUSB and Companion Power Management IC Extcon
-> +
-> +maintainers:
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> +
-> +description: |
-> +  This is a part of device tree bindings for Maxim MAX77843 MicroUSB
-> +  Integrated Circuit (MUIC).
-> +
-> +  See also Documentation/devicetree/bindings/mfd/maxim,max77843.yaml for
-> +  additional information and example.
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77843-muic
-> +
-> +  connector:
-> +    $ref: /schemas/connector/usb-connector.yaml#
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/port
-
-Now failing in -next:
-
-Documentation/devicetree/bindings/mfd/maxim,max77843.example.dt.yaml:
-pmic@66: extcon:ports: Unevaluated properties are not allowed ('port'
-was unexpected)
-  From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
-
-s/port/ports/
-
-> +    description:
-> +      Any connector to the data bus of this controller should be modelled using
-> +      the OF graph bindings specified
-> +    properties:
-> +      port:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +required:
-> +  - compatible
-> +  - connector
-> +
-> +additionalProperties: false
-> --
-> 2.32.0
->
+These=C2=A0patches=C2=A0are=C2=A0to=C2=A0add=C2=A0thermal=C2=A0management=
+=C2=A0uint=C2=A0to=C2=A0artpec8=C2=A0SoC.=0D=0AThe=C2=A0tmu=C2=A0of=C2=A0ar=
+tpec8=C2=A0is=C2=A0derived=C2=A0from=C2=A0the=C2=A0tmu=C2=A0of=C2=A0exynos,=
+=C2=A0but=C2=A0it=C2=A0includes=C2=A0settings=0D=0Aspecialized=C2=A0for=C2=
+=A0artpec8=C2=A0SoC,=C2=A0such=C2=A0as=C2=A0supporting=C2=A0multiple=C2=A0r=
+emote=C2=A0sensors.=0D=0A=C2=A0=0D=0AThe=C2=A0contents=C2=A0of=C2=A0each=C2=
+=A0patch=C2=A0are=C2=A0as=C2=A0follows.=0D=0A0001:=C2=A0Compatible=C2=A0for=
+=C2=A0artpec8=C2=A0has=C2=A0been=C2=A0added.=0D=0A0002:=C2=A0It=C2=A0contai=
+ns=C2=A0tmu=C2=A0driver=C2=A0code=C2=A0for=C2=A0artpec8.=0D=0A0003:=C2=A0Th=
+is=C2=A0is=C2=A0a=C2=A0modified=C2=A0version=C2=A0of=C2=A0Makefile=C2=A0to=
+=C2=A0build=C2=A0artpec8=C2=A0tmu.=0D=0A=C2=A0=0D=0AThe=C2=A0driver=C2=A0wa=
+s=C2=A0tested=C2=A0on=C2=A0a=C2=A0board=C2=A0that=C2=A0supports=C2=A0artpec=
+8=C2=A0SoC.=0D=0A=C2=A0=0D=0Asangmin=C2=A0kim=C2=A0(3):=0D=0A=C2=A0=C2=A0dt=
+-bindings:=C2=A0thermal:=C2=A0Add=C2=A0artpec8=C2=A0compatible=C2=A0string=
+=C2=A0for=C2=A0exynos-thermal=0D=0A=C2=A0=C2=A0thermal:=C2=A0artpec8-tmu:=
+=C2=A0Add=C2=A0tmu=C2=A0driver=C2=A0for=C2=A0artpec8=0D=0A=C2=A0=C2=A0therm=
+al:=C2=A0samsung:=C2=A0Update=C2=A0makefile=C2=A0for=C2=A0artpec8=0D=0A=C2=
+=A0=0D=0A=C2=A0.../bindings/thermal/samsung,exynos-thermal.yaml=C2=A0=C2=A0=
+=C2=A0=7C=C2=A0=C2=A0=C2=A02=C2=A0+=0D=0A=C2=A0drivers/thermal/samsung/Make=
+file=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=7C=C2=A0=C2=A0=C2=A02=C2=A0+-=
+=0D=0A=C2=A0drivers/thermal/samsung/artpec8_tmu.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=7C=C2=A0754=C2=
+=A0+++++++++++++++++++++=0D=0A=C2=A03=C2=A0files=C2=A0changed,=C2=A0757=C2=
+=A0insertions(+),=C2=A01=C2=A0deletion(-)=0D=0A=C2=A0create=C2=A0mode=C2=A0=
+100644=C2=A0drivers/thermal/samsung/artpec8_tmu.c=0D=0A=C2=A0=0D=0A--=0D=0A=
+2.9.5=0D=0A=C2=A0=0D=0A=C2=A0
