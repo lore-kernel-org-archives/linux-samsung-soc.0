@@ -2,152 +2,208 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1009C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Mar 2022 07:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B34C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Mar 2022 01:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236561AbiCJH2S (ORCPT
+        id S1345478AbiCKB4N (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Mar 2022 02:28:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36358 "EHLO
+        Thu, 10 Mar 2022 20:56:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239658AbiCJH2S (ORCPT
+        with ESMTP id S1345486AbiCKB4L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Mar 2022 02:28:18 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB6F3131F5F
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Mar 2022 23:27:17 -0800 (PST)
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 846C93F60D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Mar 2022 07:27:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646897235;
-        bh=+acyt1BEYt28lv14s1mevIXPMuYm70g76NXbcp8FI4Q=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=nlf4TD4QXdV9WX9zC6a3syofvh6UKsZ8oCTq0Y0FnbC5ymRIoSzYQrvyGuoXIZ36B
-         /yB06Q2tvWk6xNCX0GlMhqAFqUp9s5kuzqXeyyI595ZFnGx4aFn8ajOg1bCRp7fBII
-         Ot+6MSa2+4ruP3oD5p95RoEEmVazxWTBZspKe2UMA8YG2N0vYjVoFQdGaI9bghBIIV
-         1GakoGQd5GfyDYuncTPELr1xtUhS5D2TDTEcsIG+OkduKdOOZnIDgdRZ89TKrKsseo
-         ygiDtDTJz6HgcapWG1x4rP97Hq63BwoIP2OqJPVOSud1bQDWjsmWo19q45BUkmYDVC
-         rN5UvlTxHc/1g==
-Received: by mail-ed1-f72.google.com with SMTP id r9-20020a05640251c900b00412d54ea618so2606678edd.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Mar 2022 23:27:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+acyt1BEYt28lv14s1mevIXPMuYm70g76NXbcp8FI4Q=;
-        b=2e1xztoMFu8S5TMOkwgJSj1ZsWkbpSw0iRSFBLHdChNmbfNutI/DHygcyCccGRiQrS
-         40G1osTh+uwnPmlupfT9DijughsYHQKNGLU5Ypcb6uRWa/FIJ8fdyRTf47M7JVBtX3zr
-         CiO7puYLFnymr6AcW/P6mkB0kCpY+chKTrqpKj3xL0siZ7fg4mRjXyMLuaZia9KkXb0U
-         09MMY5Z87Z5U062DSo2wU/RtStbfZHQgjcX6SwQcRi4Xecxm/MV27BHSMBX4zMTC9lYf
-         Li8F+vlIV0BfppGFDnLZVRfqpDBUMa2BD0vi+DHenTQ6CXbKk7l/b1ts/wdb8PboDf3W
-         9WpQ==
-X-Gm-Message-State: AOAM531TITSSam0i8fMBD91e2LFGjlLW/ZFPAqc6bv0+LF2Q6TutgXOK
-        5RBZ/L28h26yJQRHgDYZaGasTu8Drkl1PPbb5InqLe5QlYrRmje2HdEgKsjn1QX24uDKQvYhiuK
-        7QbibYwWFL18n7x2sUX00eKfmCcUpyjuINJymK995do4Vm1lm
-X-Received: by 2002:a05:6402:138c:b0:413:3d99:f2d6 with SMTP id b12-20020a056402138c00b004133d99f2d6mr2952789edv.189.1646897234319;
-        Wed, 09 Mar 2022 23:27:14 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzzQuVV4dB21GEZgLzk4Y0WlFO6imhKw5gqs41AlbOenE756SkJgsXrLljtdN3cWc0hbCtd/Q==
-X-Received: by 2002:a05:6402:138c:b0:413:3d99:f2d6 with SMTP id b12-20020a056402138c00b004133d99f2d6mr2952776edv.189.1646897234145;
-        Wed, 09 Mar 2022 23:27:14 -0800 (PST)
-Received: from [192.168.0.144] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id kq26-20020a170906abda00b006da87077172sm1528795ejb.29.2022.03.09.23.27.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 23:27:13 -0800 (PST)
-Message-ID: <947f3f39-7f49-d411-8aa6-094ada825c34@canonical.com>
-Date:   Thu, 10 Mar 2022 08:27:12 +0100
+        Thu, 10 Mar 2022 20:56:11 -0500
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE84919D757
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Mar 2022 17:55:06 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220311015502epoutp041f027584f17d8e1d784b94b3bced8f3e~bMMMKhiVp1960619606epoutp04p
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Mar 2022 01:55:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220311015502epoutp041f027584f17d8e1d784b94b3bced8f3e~bMMMKhiVp1960619606epoutp04p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1646963703;
+        bh=6GflsjQ7Mm9rWX70uL0WTVJxcMEIPkbVymAImoVej2k=;
+        h=From:To:In-Reply-To:Subject:Date:References:From;
+        b=XjUMfnv+nqDUGiSrwtrcOGuNbK3/YyLoSZGGQgo7B+ADHvVR9uv/kQVdTpLP2iIO1
+         pgfA9gVlDXgHjKmCWtgcvL42c+0881sK2f1k/FnL9tpeYU5+euEp1tcnDobjT6Ho8L
+         tlr0kNCipbiM8fySK5anWrjiUQehQoNasxWHRd98=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220311015502epcas5p231e246c27d8107bff45663d5f7832314~bMMLcQaKv2663926639epcas5p2O;
+        Fri, 11 Mar 2022 01:55:02 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4KF8Bn1s61z4x9Q9; Fri, 11 Mar
+        2022 01:54:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        86.AA.06423.1FBAA226; Fri, 11 Mar 2022 10:54:57 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220311015456epcas5p4d04741216c82091cbe6fca83cbfa832f~bMMGD7J011309313093epcas5p4u;
+        Fri, 11 Mar 2022 01:54:56 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220311015456epsmtrp2c3ca1a96a2d94019102fd9fbcfdf74bc~bMMGDM7wS0776207762epsmtrp2A;
+        Fri, 11 Mar 2022 01:54:56 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-94-622aabf10b0d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        63.E8.29871.0FBAA226; Fri, 11 Mar 2022 10:54:56 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220311015455epsmtip2ed8a4286ea5368676ab69081f5dda2c7~bMMEyZdMU0664006640epsmtip2h;
+        Fri, 11 Mar 2022 01:54:54 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        "'Kishon Vijay Abraham I'" <kishon@ti.com>,
+        "'Vinod Koul'" <vkoul@kernel.org>,
+        "'Miaoqian Lin'" <linmq006@gmail.com>,
+        <linux-phy@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20220309170028.51913-1-krzysztof.kozlowski@canonical.com>
+Subject: RE: [PATCH] phy: samsung: exynos5250-sata: fix missing device put
+ in probe error paths
+Date:   Fri, 11 Mar 2022 07:24:53 +0530
+Message-ID: <018501d834eb$01e62ad0$05b28070$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 2/5] dt-bindings: extcon: maxim,max77843: add MAX77843
- bindings
-Content-Language: en-US
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-References: <20220111174805.223732-1-krzysztof.kozlowski@canonical.com>
- <20220111174805.223732-3-krzysztof.kozlowski@canonical.com>
- <CAL_Jsq+cNrh=o7RL=2SH5888=YU9m1QhA5q+eCTFXVbbw57oJA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAL_Jsq+cNrh=o7RL=2SH5888=YU9m1QhA5q+eCTFXVbbw57oJA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFk9GdFcluxqBuuM3cfs7kS0OZnrAJRu4lfrY1fA0A=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmlu7H1VpJBg9fs1tceNrDZrHx7Q8m
+        i+cfG5ktNj2+xmpxedccNosJq76xWMw4v4/JYuedE8wOHB6zGnrZPHbOusvusWlVJ5vH5iX1
+        HsdvbGfy+LxJLoAtKtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJ
+        xSdA1y0zB+geJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5e
+        aomVoYGBkSlQYUJ2xuf7jgWzxCt+/elgaWB8I9zFyMkhIWAicfbLbbYuRi4OIYHdjBLzpy9h
+        hnA+MUr8fzmDFcL5xigxd+ptdpiW8wuuQlXtZZT48fc/E4TzklGir/UnK0gVm4CuxI7FbWCD
+        RQROM0ksn3+TCSTBKeAucercCrAiYYFEia57x8HGsgioSvy7foaxi5GDg1fAUqLruSFImFdA
+        UOLkzCcsIDazgLzE9rdzmCGuUJD4+XQZ2BgRASuJ2befs0HUiEu8PHqEHWSvhMBCDolH/16w
+        QjS4SBzveAVlC0u8Or4F6h0pic/v9rKB7JUQyJbo2WUMEa6RWDrvGAuEbS9x4MocFpASZgFN
+        ifW79CFW8Un0/n7CBNHJK9HRJgRRrSrR/O4qVKe0xMTubqilHhIX+2+wQ4JqFqPE2YNTGScw
+        KsxC8uUsJF/OQvLNLITNCxhZVjFKphYU56anFpsWGOallsPjOzk/dxMjOLVqee5gvPvgg94h
+        RiYOxkOMEhzMSiK8TaEaSUK8KYmVValF+fFFpTmpxYcYTYEhP5FZSjQ5H5jc80riDU0sDUzM
+        zMxMLI3NDJXEeU+nb0gUEkhPLEnNTk0tSC2C6WPi4JRqYNKQl7GZazS1dOGt0vNZJ5bxpQm8
+        OHyn3fnXnmlGM+5VGy2dFfx+tet2j/fu7OtaIs5tkLXqW28v9mX72c+cZ0/NPDjj9J+Hr53W
+        HXTQCE896csqulO9/eXS4LXWalUfzO/94vllL5Yu3Fm9aNaHne1BM/e+r24pzf36KamSoayv
+        XSHj+1YWDTfnno2f51/1r0tWjroWH1e2cuOlMLnbv2e4asg3Zvb5pixJ7Jn4nUlyMbfpgtl3
+        +NZxHF33fpfyn2qGdxqTfdv4GN8fWJEly2NvlbZr3tUzn7x0VRPXOxsW2WWeaT4poK5+80gd
+        +3T+qR763Wv00kpTWefvWMi4IlPb19GjvGC5Z8s7Rbm9E5VYijMSDbWYi4oTAdrtTLA2BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSvO6H1VpJBpvPCFhceNrDZrHx7Q8m
+        i+cfG5ktNj2+xmpxedccNosJq76xWMw4v4/JYuedE8wOHB6zGnrZPHbOusvusWlVJ5vH5iX1
+        HsdvbGfy+LxJLoAtissmJTUnsyy1SN8ugSvj833HglniFb/+dLA0ML4R7mLk5JAQMJE4v+Aq
+        cxcjF4eQwG5GifULb7BAJKQlrm+cwA5hC0us/PcczBYSeM4ocfB8FIjNJqArsWNxGxtIs4jA
+        RSaJ+49nskJMmsEosW7rBSaQKk4Bd4lT51awgtjCAvES2w40MILYLAKqEv+unwGyOTh4BSwl
+        up4bgoR5BQQlTs58wgISZhbQk2jbCFbNLCAvsf3tHGaIexQkfj5dBjZRRMBKYvbt52wQNeIS
+        L48eYZ/AKDQLyaRZCJNmIZk0C0nHAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsY
+        wTGkpbmDcfuqD3qHGJk4GA8xSnAwK4nwNoVqJAnxpiRWVqUW5ccXleakFh9ilOZgURLnvdB1
+        Ml5IID2xJDU7NbUgtQgmy8TBKdXAZDo9byf/bfnVvidnuvQe+7Pg27s/+iV9s7qeh9wu/Dx7
+        QsOP40uuyh7489FDyibcfMEcf44dfaWmJvKGYdrGZ3canJnuXdsXcFZE7GfQNvuX7pcW/HS6
+        /qY7XPPiikMzzi57PnOX+Nslux027Pz85diGnYv+Tpxo377sCgOb8N4HRjVKX12717wXibv5
+        U3zPe0u+uZWGaVVu4YpPxXIDJ+42+5XRbVP/pFNsxRy1yMPM2hv1NVt6v+gyid5cXOZUppDX
+        +bpoyZ7oa3PTRKuXTwyw9NRhSo/6dXSJ2Uw7//Z500Wd/9m9O1QyVf/5q2smugdWislXhy0q
+        2jXbY5fApNCdua2dn0vmfNtkpfYwL1OJpTgj0VCLuag4EQB7HhT0EAMAAA==
+X-CMS-MailID: 20220311015456epcas5p4d04741216c82091cbe6fca83cbfa832f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220309170036epcas5p2e6ee56f4c38761868ad9408616c03203
+References: <CGME20220309170036epcas5p2e6ee56f4c38761868ad9408616c03203@epcas5p2.samsung.com>
+        <20220309170028.51913-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/03/2022 22:03, Rob Herring wrote:
-> On Tue, Jan 11, 2022 at 11:48 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@canonical.com> wrote:
->>
->> Document the bindings for MAX77843 MUIC/extcon driver, based on
->> Exynos5433 TM2 devicetree.  These are neither accurate nor finished
->> bindings but at least allow parsing existing DTS files.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
->>  .../bindings/extcon/maxim,max77843.yaml       | 40 +++++++++++++++++++
->>  1 file changed, 40 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
->> new file mode 100644
->> index 000000000000..f9ffe3d6f957
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
->> @@ -0,0 +1,40 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/extcon/maxim,max77843.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Maxim MAX77843 MicroUSB and Companion Power Management IC Extcon
->> +
->> +maintainers:
->> +  - Chanwoo Choi <cw00.choi@samsung.com>
->> +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> +
->> +description: |
->> +  This is a part of device tree bindings for Maxim MAX77843 MicroUSB
->> +  Integrated Circuit (MUIC).
->> +
->> +  See also Documentation/devicetree/bindings/mfd/maxim,max77843.yaml for
->> +  additional information and example.
->> +
->> +properties:
->> +  compatible:
->> +    const: maxim,max77843-muic
->> +
->> +  connector:
->> +    $ref: /schemas/connector/usb-connector.yaml#
->> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/port
-> 
-> Now failing in -next:
-> 
-> Documentation/devicetree/bindings/mfd/maxim,max77843.example.dt.yaml:
-> pmic@66: extcon:ports: Unevaluated properties are not allowed ('port'
-> was unexpected)
->   From schema: /builds/robherring/linux-dt/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
-> 
-> s/port/ports/
+Hi Krzysztof
 
-I'll fix it up. I wonder why I did not see warning before...
+>-----Original Message-----
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
+>Sent: Wednesday, March 9, 2022 10:30 PM
+>To: Kishon Vijay Abraham I <kishon@ti.com>; Vinod Koul
+><vkoul@kernel.org>; Krzysztof Kozlowski
+><krzysztof.kozlowski@canonical.com>; Alim Akhtar
+><alim.akhtar@samsung.com>; Miaoqian Lin <linmq006@gmail.com>; linux-
+>phy@lists.infradead.org; linux-arm-kernel@lists.infradead.org; linux-
+>samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+>Subject: [PATCH] phy: samsung: exynos5250-sata: fix missing device put in
+>probe error paths
+>
+>The actions of of_find_i2c_device_by_node() in probe function should be
+>reversed in error paths by putting the reference to obtained device.
+>
+>Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
+>Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>
+Thanks for fixing this.
 
-Best regards,
-Krzysztof
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+>---
+>
+>Rebased on top of (although it is independent, no conflicts):
+>https://lore.kernel.org/linux-samsung-soc/20220309124856.32632-1-
+>linmq006@gmail.com/T/#u
+>---
+> drivers/phy/samsung/phy-exynos5250-sata.c | 20 ++++++++++++++------
+> 1 file changed, 14 insertions(+), 6 deletions(-)
+>
+>diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c
+>b/drivers/phy/samsung/phy-exynos5250-sata.c
+>index 6c305a3fe187..595adba5fb8f 100644
+>--- a/drivers/phy/samsung/phy-exynos5250-sata.c
+>+++ b/drivers/phy/samsung/phy-exynos5250-sata.c
+>@@ -196,20 +196,21 @@ static int exynos_sata_phy_probe(struct
+>platform_device *pdev)
+> 	sata_phy->phyclk = devm_clk_get(dev, "sata_phyctrl");
+> 	if (IS_ERR(sata_phy->phyclk)) {
+> 		dev_err(dev, "failed to get clk for PHY\n");
+>-		return PTR_ERR(sata_phy->phyclk);
+>+		ret = PTR_ERR(sata_phy->phyclk);
+>+		goto put_dev;
+> 	}
+>
+> 	ret = clk_prepare_enable(sata_phy->phyclk);
+> 	if (ret < 0) {
+> 		dev_err(dev, "failed to enable source clk\n");
+>-		return ret;
+>+		goto put_dev;
+> 	}
+>
+> 	sata_phy->phy = devm_phy_create(dev, NULL,
+>&exynos_sata_phy_ops);
+> 	if (IS_ERR(sata_phy->phy)) {
+>-		clk_disable_unprepare(sata_phy->phyclk);
+> 		dev_err(dev, "failed to create PHY\n");
+>-		return PTR_ERR(sata_phy->phy);
+>+		ret = PTR_ERR(sata_phy->phy);
+>+		goto clk_disable;
+> 	}
+>
+> 	phy_set_drvdata(sata_phy->phy, sata_phy); @@ -217,11 +218,18
+>@@ static int exynos_sata_phy_probe(struct platform_device *pdev)
+> 	phy_provider = devm_of_phy_provider_register(dev,
+> 					of_phy_simple_xlate);
+> 	if (IS_ERR(phy_provider)) {
+>-		clk_disable_unprepare(sata_phy->phyclk);
+>-		return PTR_ERR(phy_provider);
+>+		ret = PTR_ERR(phy_provider);
+>+		goto clk_disable;
+> 	}
+>
+> 	return 0;
+>+
+>+clk_disable:
+>+	clk_disable_unprepare(sata_phy->phyclk);
+>+put_dev:
+>+	put_device(&sata_phy->client->dev);
+>+
+>+	return ret;
+> }
+>
+> static const struct of_device_id exynos_sata_phy_of_match[] = {
+>--
+>2.32.0
+
+
