@@ -2,134 +2,81 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ED1C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Mar 2022 14:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F1CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 11 Mar 2022 14:52:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234740AbiCKOLI (ORCPT
+        id S1349393AbiCKOxx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 09:11:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55650 "EHLO
+        Fri, 11 Mar 2022 09:53:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349212AbiCKOLE (ORCPT
+        with ESMTP id S1349439AbiCKOxw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 11 Mar 2022 09:11:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494141B1DE2;
-        Fri, 11 Mar 2022 06:09:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4136F61EF6;
-        Fri, 11 Mar 2022 14:09:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B71C3410B;
-        Fri, 11 Mar 2022 14:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647007777;
-        bh=REm5O1zXHga0orubWuW1aw6Gn3vXk7hV226JWIwlseA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nu+qg21VzhhS1boSVHPzHG7m9ixYKjkVLJwDEn3THGqTlotE//mW4GyBvAaSzcp7p
-         Fl11KrYCEGkgTCY4idN/foAchz3oetusoeku7wpOM7qA0TY/HAnrH9IQq/vz+23W6Q
-         h8Lo4aGLLOl7lcDa+FrQDZYp46YJBHngszHn33MRMHOF6vmamwWzKpI77K21/h2uHZ
-         noJU7n0utR6D4RtFYyalxDX9sJJu4uR3WYkREvigmeBceXDKG4N1z4mN4vgX/JP909
-         /gQJ4F2G8NdHimt6GJnPzpvFA4kon6i1RiHx9Vm2+m8Abh0yLLK4bRfuJiDxSyya3h
-         7QqIAVnE5Mk7A==
-Received: from mchehab by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1nSfxX-000lHt-MI; Fri, 11 Mar 2022 15:09:35 +0100
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ming Qian <ming.qian@nxp.com>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 24/38] media: platform: s3c-camif: move config to its own file
-Date:   Fri, 11 Mar 2022 15:07:37 +0100
-Message-Id: <cc0e8e8efa95426ac56fbe6c1c909f74be9a17db.1647006877.git.mchehab@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1647006877.git.mchehab@kernel.org>
-References: <cover.1647006877.git.mchehab@kernel.org>
+        Fri, 11 Mar 2022 09:53:52 -0500
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5EA619CCC5;
+        Fri, 11 Mar 2022 06:52:48 -0800 (PST)
+Received: by mail-oo1-f49.google.com with SMTP id x26-20020a4a621a000000b00320d7d4af22so10752922ooc.4;
+        Fri, 11 Mar 2022 06:52:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XouDAonvXlO6XU2IHSFCooSQTQ5SzgR1sMybojkfzAI=;
+        b=EgY27qioBEkTd8PkRaG91a6dO58+0mM0YqJZbufrDf+r2acEGmywtBFL+mwM/YN9iP
+         GnuHRhJ6jRxZXkq8P0pfbFeUZd4Zn+PHz4jpwn57vjY7iA+aeR59C7UzUlHgurDw0UYQ
+         0aIarLUAhdvbTHUIiTR4jfZNc9iDG1Jj36m/CPb0XK/lSmO9aaJwTGySM+TRN6glpRRA
+         XHzfeLmHAhiuroYzESqa9OOpES38e61np89jTkHby/N0xDPtccBMpdOCtu/1L1TV2185
+         mVOZzm7wnkwGkLXDOV3UCi1iS+KZojIThTMy4KvJ3YEhCmw3pLQQtt6Qv1F20HS/pvUT
+         H1Ng==
+X-Gm-Message-State: AOAM532z8ewZSADPxQDfzg2jL7PY2WIO9u8LdIZA3n4+iwhNivW/zsbK
+        x1gVWwjGAySV2m9td8oiag==
+X-Google-Smtp-Source: ABdhPJwVM00FBPusKKPXsuJpjuUgFPFT6v1xv+HzGc+G1sqBrbm5F+Ukz/YBeNSj5BBqeajDFr8FEg==
+X-Received: by 2002:a05:6870:3927:b0:da:34c1:560c with SMTP id b39-20020a056870392700b000da34c1560cmr10991064oap.176.1647010367441;
+        Fri, 11 Mar 2022 06:52:47 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id b63-20020acab242000000b002d9ddf4596fsm3929216oif.49.2022.03.11.06.52.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Mar 2022 06:52:46 -0800 (PST)
+Received: (nullmailer pid 3772694 invoked by uid 1000);
+        Fri, 11 Mar 2022 14:52:45 -0000
+Date:   Fri, 11 Mar 2022 08:52:45 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     krzysztof.kozlowski@canonical.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, jirislaby@kernel.org,
+        kernel@axis.com, linux-kernel@vger.kernel.org,
+        alim.akhtar@samsung.com, linux-serial@vger.kernel.org,
+        robh+dt@kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: serial: samsung: Add ARTPEC-8 UART
+Message-ID: <YitiPSZp4thtal8D@robh.at.kernel.org>
+References: <20220311094515.3223023-1-vincent.whitchurch@axis.com>
+ <20220311094515.3223023-2-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220311094515.3223023-2-vincent.whitchurch@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In order to better organize the platform/Kconfig, place
-s3c-camif-specific config stuff on a separate Kconfig file.
+On Fri, 11 Mar 2022 10:45:14 +0100, Vincent Whitchurch wrote:
+> Add a compatible for the UART on the ARTPEC-8 SoC.  This hardware block
+> is closely related to the variants used on the Exynos chips.  The
+> register layout is identical to Exynos850 et al but the fifo size is
+> different (64 bytes in each direction for all instances).
+> 
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> ---
+> 
+> Notes:
+>     v2:
+>     - Expand commit message.
+>     - Define required clocks.
+> 
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
----
-
-To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH v2 00/38] at: https://lore.kernel.org/all/cover.1647006877.git.mchehab@kernel.org/
-
- drivers/media/platform/Kconfig           | 16 +---------------
- drivers/media/platform/s3c-camif/Kconfig | 15 +++++++++++++++
- 2 files changed, 16 insertions(+), 15 deletions(-)
- create mode 100644 drivers/media/platform/s3c-camif/Kconfig
-
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 2d2942e5187c..633fbc408b8c 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -66,6 +66,7 @@ source "drivers/media/platform/qcom/venus/Kconfig"
- 
- source "drivers/media/platform/aspeed/Kconfig"
- source "drivers/media/platform/rockchip/rga/Kconfig"
-+source "drivers/media/platform/s3c-camif/Kconfig"
- 
- config VIDEO_MUX
- 	tristate "Video Multiplexer"
-@@ -81,21 +82,6 @@ config VIDEO_MUX
- 
- source "drivers/media/platform/intel/Kconfig"
- 
--config VIDEO_S3C_CAMIF
--	tristate "Samsung S3C24XX/S3C64XX SoC Camera Interface driver"
--	depends on V4L_PLATFORM_DRIVERS
--	depends on VIDEO_V4L2 && I2C && PM
--	depends on ARCH_S3C64XX || PLAT_S3C24XX || COMPILE_TEST
--	select MEDIA_CONTROLLER
--	select VIDEO_V4L2_SUBDEV_API
--	select VIDEOBUF2_DMA_CONTIG
--	help
--	  This is a v4l2 driver for s3c24xx and s3c64xx SoC series camera
--	  host interface (CAMIF).
--
--	  To compile this driver as a module, choose M here: the module
--	  will be called s3c-camif.
--
- config VIDEO_STM32_DCMI
- 	tristate "STM32 Digital Camera Memory Interface (DCMI) support"
- 	depends on V4L_PLATFORM_DRIVERS
-diff --git a/drivers/media/platform/s3c-camif/Kconfig b/drivers/media/platform/s3c-camif/Kconfig
-new file mode 100644
-index 000000000000..e8ef9e06dc1b
---- /dev/null
-+++ b/drivers/media/platform/s3c-camif/Kconfig
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config VIDEO_S3C_CAMIF
-+	tristate "Samsung S3C24XX/S3C64XX SoC Camera Interface driver"
-+	depends on V4L_PLATFORM_DRIVERS
-+	depends on VIDEO_V4L2 && I2C && PM
-+	depends on ARCH_S3C64XX || PLAT_S3C24XX || COMPILE_TEST
-+	select MEDIA_CONTROLLER
-+	select VIDEO_V4L2_SUBDEV_API
-+	select VIDEOBUF2_DMA_CONTIG
-+	help
-+	  This is a v4l2 driver for s3c24xx and s3c64xx SoC series camera
-+	  host interface (CAMIF).
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called s3c-camif.
--- 
-2.35.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
