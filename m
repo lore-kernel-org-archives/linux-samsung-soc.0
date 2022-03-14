@@ -2,324 +2,525 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936E5C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Mar 2022 08:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE28C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Mar 2022 15:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236797AbiCNIz5 (ORCPT
+        id S242444AbiCNPL6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Mar 2022 04:55:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        Mon, 14 Mar 2022 11:11:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231972AbiCNIz4 (ORCPT
+        with ESMTP id S242377AbiCNPL5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Mar 2022 04:55:56 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8AC2180A;
-        Mon, 14 Mar 2022 01:54:45 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id s29so4417542lfb.13;
-        Mon, 14 Mar 2022 01:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=NG8o060Tka0L3sIFkp3uolm5d8/wc9yzHfKOZpMlr6U=;
-        b=MtVa3tYQXYf6RuRhg1nJdlMpiyhdH6usMXSTG9Ck2EZN6WaGb0CYgjQVb+UrqSEVpG
-         Layl0e8k6AtU4DUtaTBTNUUpdvcVBahgxkXPRurjeoW00OmY5boGQ58RQ8drB8XDalR6
-         VwgaWR94taGLDSqIM80jMfdSJ2VY9Mz8XPyMPQEjuNV6Psf2x6d4MWICM+W6rfSZlpxn
-         +ire/8QFIn1zt5Xwxba81c6IenogkY4D03U4BLLhwZQRKbVCKma2eGUwxN4y0atVbb09
-         KWQLtWJciH5jdZ6k8OxLBBzaP9DFfz6+VaQem/lMhSkLotRCDasZJF1HBRHGvrDNIsO2
-         oyrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=NG8o060Tka0L3sIFkp3uolm5d8/wc9yzHfKOZpMlr6U=;
-        b=HA+M0wxd8ocby5CbnpxqlKS0EHiMiA5Bz+yeWAhpT1uQEQiMG6M2xsb6eXDnj6W0pV
-         VjVeZAxUOMFjFrmL85bzZvixTrIySdkKTpfj7WTJL2s7qiskRYhL4ZOMXYHj3qeb//0A
-         YY1wgGl456XMi5Cus7Ktz141KeK1hYREaf/rVUjnbwe+J8QKvVbdZzBZx5XTcYZK47/p
-         BsHtqoxUmil7dyrO59C1oujNUokaYJ5ApC6fivMHsE7Nc6DZznnAV02qXuLoQheaNyWt
-         /qj2oB9WOMytl9Bog/tKPD/HTaaO6t735cx0QVQpCgLoLFUsD2pzZj+4GtybKewzGwYh
-         MVEA==
-X-Gm-Message-State: AOAM530HmEKiiRPk1PGPoZkLd21ECoflYNI2mf6litpte34FSjLwHXrz
-        ih3yUKw3BsB+LWsDAjH+5pA=
-X-Google-Smtp-Source: ABdhPJwL5+FzxL3+pOy50Oa5xyzBYMKk+RLCzYWZVTIm2eYjorck162HwIriR5jBgx1gP2Y0zGf5eg==
-X-Received: by 2002:a05:6512:2304:b0:448:46a9:7263 with SMTP id o4-20020a056512230400b0044846a97263mr12854556lfu.309.1647248083097;
-        Mon, 14 Mar 2022 01:54:43 -0700 (PDT)
-Received: from [192.168.0.192] ([194.146.248.76])
-        by smtp.gmail.com with ESMTPSA id bq5-20020a056512150500b004433c791651sm3155349lfb.69.2022.03.14.01.54.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Mar 2022 01:54:42 -0700 (PDT)
-Message-ID: <174d7d1f-2483-04de-81be-8f63c569851a@gmail.com>
-Date:   Mon, 14 Mar 2022 09:54:40 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 15/24] media: platform: rename s5p-jpeg/ to
- samsung/s5p-jpeg/
-Content-Language: en-US
+        Mon, 14 Mar 2022 11:11:57 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A183DA54;
+        Mon, 14 Mar 2022 08:10:45 -0700 (PDT)
+Received: from relay5-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::225])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 91389D0CC7;
+        Mon, 14 Mar 2022 15:08:26 +0000 (UTC)
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id 54FA41C0013;
+        Mon, 14 Mar 2022 15:07:47 +0000 (UTC)
+Date:   Mon, 14 Mar 2022 16:07:45 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Cai Huoqing <caihuoqing@baidu.com>,
+Cc:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Andrey Utkin <andrey.utkin@corp.bluecherry.net>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Andy Walls <awalls@md.metrocast.net>,
+        Antoine Jacquet <royale@zerezo.com>,
+        Anton Sviridenko <anton@corp.bluecherry.net>,
+        Antti Palosaari <crope@iki.fi>, Arec Kao <arec.kao@intel.com>,
+        Benoit Parrot <bparrot@ti.com>, Bin Liu <bin.liu@mediatek.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Hemp <c.hemp@phytec.de>,
         Colin Ian King <colin.king@intel.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        Dafna Hirschfeld <dafna@fastmail.com>,
+        Dan Scally <djrscally@gmail.com>,
         Dmitry Osipenko <digetx@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Eddie James <eajames@linux.ibm.com>,
+        Erik Andren <erik.andren@gmail.com>,
         Eugen Hristev <eugen.hristev@microchip.com>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
         Fabio Estevam <festevam@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Felipe Balbi <balbi@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+        Jeff LaBundy <jeff@labundy.com>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Joe Hung <joe_hung@ilitek.com>, Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-        Ming Qian <ming.qian@nxp.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Marek Vasut <marex@denx.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Martina Krasteva <martinax.krasteva@intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mike Isely <isely@pobox.com>, Ming Qian <ming.qian@nxp.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
         Mirela Rabulea <mirela.rabulea@nxp.com>,
         NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Olivier Lorin <o.lorin@laposte.net>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Rick Chang <rick.chang@mediatek.com>,
+        Robert Foss <robert.foss@linaro.org>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
+        Scott Branden <sbranden@broadcom.com>,
+        Sean Young <sean@mess.org>, Shawn Guo <shawnguo@kernel.org>,
+        Shawn Tu <shawnx.tu@intel.com>,
+        Shijie Qin <shijie.qin@nxp.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <cover.1647167750.git.mchehab@kernel.org>
- <4be1962723cfc2ad1c1031c3885ea53023fae642.1647167750.git.mchehab@kernel.org>
-From:   Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-In-Reply-To: <4be1962723cfc2ad1c1031c3885ea53023fae642.1647167750.git.mchehab@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Todor Tomov <todor.too@gmail.com>,
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Yong Zhi <yong.zhi@intel.com>, Zhou Peng <eagle.zhou@nxp.com>,
+        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
+        openbmc@lists.ozlabs.org
+Subject: Re: [PATCH] media: Kconfig: cleanup VIDEO_DEV dependencies
+Message-ID: <20220314150745.ph2jpjpvdft3645v@uno.localdomain>
+References: <42ae3d28d4d822f3e14db76b99f2f4c41688ae3e.1647155467.git.mchehab@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <42ae3d28d4d822f3e14db76b99f2f4c41688ae3e.1647155467.git.mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro,
+Hi Mauro
 
-Thanks,
-
-W dniu 13.03.2022 o 11:51, Mauro Carvalho Chehab pisze:
-> As the end goal is to have platform drivers split by vendor,
-> rename s5p-jpeg/ to samsung/s5p-jpeg/.
-> 
+On Sun, Mar 13, 2022 at 08:12:05AM +0100, Mauro Carvalho Chehab wrote:
+> media Kconfig has two entries associated to V4L API:
+> VIDEO_DEV and VIDEO_V4L2.
+>
+> On Kernel 2.6.x, there were two V4L APIs, each one with its own flag.
+> VIDEO_DEV were meant to:
+> 	1) enable Video4Linux and make its Kconfig options to appear;
+> 	2) it makes the Kernel build the V4L core.
+>
+> while VIDEO_V4L2 where used to distinguish between drivers that
+> implement the newer API and drivers that implemented the former one.
+>
+> With time, such meaning changed, specially after the removal of
+> all V4L version 1 drivers.
+>
+> At the current implementation, VIDEO_DEV only does (1): it enables
+> the media options related to V4L, that now has:
+>
+> 	menu "Video4Linux options"
+> 		visible if VIDEO_DEV
+>
+> 	source "drivers/media/v4l2-core/Kconfig"
+> 	endmenu
+>
+> but it doesn't affect anymore the V4L core drivers.
+>
+> The rationale is that the V4L2 core has a "soft" dependency
+> at the I2C bus, and now requires to select a number of other
+> Kconfig options:
+>
+> 	config VIDEO_V4L2
+> 		tristate
+> 		depends on (I2C || I2C=n) && VIDEO_DEV
+> 		select RATIONAL
+> 		select VIDEOBUF2_V4L2 if VIDEOBUF2_CORE
+> 		default (I2C || I2C=n) && VIDEO_DEV
+>
+> In the past, merging them would be tricky, but it seems that it is now
+> possible to merge those symbols, in order to simplify V4L dependencies.
+>
+> Let's keep VIDEO_DEV, as this one is used on some make *defconfig
+> configurations.
+>
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-
-Acked-by: Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-
 > ---
-> 
-> To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
-> See [PATCH 00/24] at: https://lore.kernel.org/all/cover.1647167750.git.mchehab@kernel.org/
-> 
->   MAINTAINERS                                                     | 2 +-
->   drivers/media/platform/Kconfig                                  | 2 +-
->   drivers/media/platform/Makefile                                 | 2 +-
->   drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                  | 2 +-
->   drivers/media/platform/renesas/rcar_jpu.c                       | 2 +-
->   drivers/media/platform/{ => samsung}/s5p-jpeg/Kconfig           | 0
->   drivers/media/platform/{ => samsung}/s5p-jpeg/Makefile          | 0
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-core.c       | 2 +-
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-core.h       | 2 +-
->   .../media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos3250.c  | 0
->   .../media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos3250.h  | 2 +-
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos4.c | 0
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos4.h | 0
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-s5p.c     | 2 +-
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-s5p.h     | 2 +-
->   drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-regs.h       | 2 +-
->   16 files changed, 11 insertions(+), 11 deletions(-)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/Kconfig (100%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/Makefile (100%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-core.c (99%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-core.h (99%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos3250.c (100%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos3250.h (97%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos4.c (100%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-exynos4.h (100%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-s5p.c (99%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-hw-s5p.h (97%)
->   rename drivers/media/platform/{ => samsung}/s5p-jpeg/jpeg-regs.h (99%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4c4be0d7ec14..dfd490369d48 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2633,7 +2633,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->   L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->   L:	linux-media@vger.kernel.org
->   S:	Maintained
-> -F:	drivers/media/platform/s5p-jpeg/
-> +F:	drivers/media/platform/samsung/s5p-jpeg/
->   
->   ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
->   M:	Marek Szyprowski <m.szyprowski@samsung.com>
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index f70fc95e4195..0af01626c008 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -88,12 +88,12 @@ source "drivers/media/platform/omap3isp/Kconfig"
->   source "drivers/media/platform/qcom/Kconfig"
->   source "drivers/media/platform/renesas/Kconfig"
->   source "drivers/media/platform/rockchip/Kconfig"
-> -source "drivers/media/platform/s5p-jpeg/Kconfig"
->   source "drivers/media/platform/s5p-mfc/Kconfig"
->   source "drivers/media/platform/samsung/exynos-gsc/Kconfig"
->   source "drivers/media/platform/samsung/exynos4-is/Kconfig"
->   source "drivers/media/platform/samsung/s3c-camif/Kconfig"
->   source "drivers/media/platform/samsung/s5p-g2d/Kconfig"
-> +source "drivers/media/platform/samsung/s5p-jpeg/Kconfig"
->   source "drivers/media/platform/sti/Kconfig"
->   source "drivers/media/platform/stm32/Kconfig"
->   source "drivers/media/platform/ti-vpe/Kconfig"
-> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-> index a5a068e18492..94bdd5d94bb2 100644
-> --- a/drivers/media/platform/Makefile
-> +++ b/drivers/media/platform/Makefile
-> @@ -30,12 +30,12 @@ obj-y += qcom/venus/
->   obj-y += renesas/
->   obj-y += rockchip/rga/
->   obj-y += rockchip/rkisp1/
-> -obj-y += s5p-jpeg/
->   obj-y += s5p-mfc/
->   obj-y += samsung/exynos-gsc/
->   obj-y += samsung/exynos4-is/
->   obj-y += samsung/s3c-camif/
->   obj-y += samsung/s5p-g2d/
-> +obj-y += samsung/s5p-jpeg/
->   obj-y += sti/bdisp/
->   obj-y += sti/c8sectpfe/
->   obj-y += sti/delta/
-> diff --git a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-> index 3b892c5792b4..d1ec1f4b506b 100644
-> --- a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-> +++ b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-> @@ -35,7 +35,7 @@
->    * it, enable dynamic debug for this module and:
->    * echo 1 > /sys/module/mxc_jpeg_encdec/parameters/jpeg_tracing
->    *
-> - * This is inspired by the drivers/media/platform/s5p-jpeg driver
-> + * This is inspired by the drivers/media/platform/samsung/s5p-jpeg driver
->    *
->    * Copyright 2018-2019 NXP
->    */
-> diff --git a/drivers/media/platform/renesas/rcar_jpu.c b/drivers/media/platform/renesas/rcar_jpu.c
-> index 56bb464629ed..293beba131e2 100644
-> --- a/drivers/media/platform/renesas/rcar_jpu.c
-> +++ b/drivers/media/platform/renesas/rcar_jpu.c
-> @@ -4,7 +4,7 @@
->    * Copyright (C) 2014-2015 Cogent Embedded, Inc.  <source@cogentembedded.com>
->    * Copyright (C) 2014-2015 Renesas Electronics Corporation
->    *
-> - * This is based on the drivers/media/platform/s5p-jpeg driver by
-> + * This is based on the drivers/media/platform/samsung/s5p-jpeg driver by
->    * Andrzej Pietrasiewicz and Jacek Anaszewski.
->    * Some portions of code inspired by VSP1 driver by Laurent Pinchart.
->    *
-> diff --git a/drivers/media/platform/s5p-jpeg/Kconfig b/drivers/media/platform/samsung/s5p-jpeg/Kconfig
-> similarity index 100%
-> rename from drivers/media/platform/s5p-jpeg/Kconfig
-> rename to drivers/media/platform/samsung/s5p-jpeg/Kconfig
-> diff --git a/drivers/media/platform/s5p-jpeg/Makefile b/drivers/media/platform/samsung/s5p-jpeg/Makefile
-> similarity index 100%
-> rename from drivers/media/platform/s5p-jpeg/Makefile
-> rename to drivers/media/platform/samsung/s5p-jpeg/Makefile
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
-> similarity index 99%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-core.c
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
-> index a8d9159d5ed8..5479bc8d474d 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
-> @@ -1,5 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0-only
-> -/* linux/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +/* linux/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c
->    *
->    * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd.
->    *		http://www.samsung.com
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.h
-> similarity index 99%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-core.h
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-core.h
-> index 4a5fb1b15455..5570c79f122f 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.h
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.h
-> @@ -1,5 +1,5 @@
->   /* SPDX-License-Identifier: GPL-2.0-only */
-> -/* linux/drivers/media/platform/s5p-jpeg/jpeg-core.h
-> +/* linux/drivers/media/platform/samsung/s5p-jpeg/jpeg-core.h
->    *
->    * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->    *		http://www.samsung.com
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-> similarity index 100%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.c
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-> similarity index 97%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.h
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-> index 68160befce39..15af928fad76 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.h
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-> @@ -1,5 +1,5 @@
->   /* SPDX-License-Identifier: GPL-2.0-only */
-> -/* linux/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos3250.h
-> +/* linux/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
->    *
->    * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->    *		http://www.samsung.com
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-> similarity index 100%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-> similarity index 100%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-s5p.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c
-> similarity index 99%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-hw-s5p.c
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c
-> index 491e9248286c..01b47b3df1e7 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-s5p.c
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c
-> @@ -1,5 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0-only
-> -/* linux/drivers/media/platform/s5p-jpeg/jpeg-hw.h
-> +/* linux/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw.h
->    *
->    * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->    *		http://www.samsung.com
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-s5p.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.h
-> similarity index 97%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-hw-s5p.h
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.h
-> index 98ddf7097562..f068d52c66b7 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-s5p.h
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.h
-> @@ -1,5 +1,5 @@
->   /* SPDX-License-Identifier: GPL-2.0-only */
-> -/* linux/drivers/media/platform/s5p-jpeg/jpeg-hw.h
-> +/* linux/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw.h
->    *
->    * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->    *		http://www.samsung.com
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-regs.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-regs.h
-> similarity index 99%
-> rename from drivers/media/platform/s5p-jpeg/jpeg-regs.h
-> rename to drivers/media/platform/samsung/s5p-jpeg/jpeg-regs.h
-> index 86f376b50581..c2298b680022 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-regs.h
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-regs.h
-> @@ -1,5 +1,5 @@
->   /* SPDX-License-Identifier: GPL-2.0-only */
-> -/* linux/drivers/media/platform/s5p-jpeg/jpeg-regs.h
-> +/* linux/drivers/media/platform/samsung/s5p-jpeg/jpeg-regs.h
->    *
->    * Register definition file for Samsung JPEG codec driver
->    *
+>  drivers/input/rmi4/Kconfig                    |   2 +-
+>  drivers/input/touchscreen/Kconfig             |   4 +-
+>  drivers/media/Kconfig                         |   3 +
+>  drivers/media/common/saa7146/Kconfig          |   2 +-
+>  drivers/media/dvb-core/Kconfig                |   2 +-
+>  drivers/media/dvb-frontends/Kconfig           |   4 +-
+>  drivers/media/i2c/Kconfig                     | 250 +++++++++---------
+>  drivers/media/i2c/ccs/Kconfig                 |   2 +-
+>  drivers/media/i2c/cx25840/Kconfig             |   2 +-
+>  drivers/media/i2c/et8ek8/Kconfig              |   2 +-
+>  drivers/media/i2c/m5mols/Kconfig              |   2 +-
+>  drivers/media/pci/Kconfig                     |   2 +-
+>  drivers/media/pci/bt8xx/Kconfig               |   2 +-
+>  drivers/media/pci/cobalt/Kconfig              |   2 +-
+>  drivers/media/pci/cx18/Kconfig                |   2 +-
+>  drivers/media/pci/dt3155/Kconfig              |   2 +-
+>  drivers/media/pci/intel/ipu3/Kconfig          |   2 +-
+>  drivers/media/pci/ivtv/Kconfig                |   2 +-
+>  drivers/media/pci/meye/Kconfig                |   2 +-
+>  drivers/media/pci/saa7146/Kconfig             |   6 +-
+>  drivers/media/pci/sta2x11/Kconfig             |   2 +-
+>  drivers/media/pci/tw5864/Kconfig              |   2 +-
+>  drivers/media/pci/tw68/Kconfig                |   2 +-
+>  drivers/media/pci/tw686x/Kconfig              |   2 +-
+>  drivers/media/platform/Kconfig                |   6 +-
+>  drivers/media/platform/allegro-dvt/Kconfig    |   2 +-
+>  drivers/media/platform/am437x/Kconfig         |   2 +-
+>  drivers/media/platform/amphion/Kconfig        |   2 +-
+>  drivers/media/platform/aspeed/Kconfig         |   2 +-
+>  drivers/media/platform/atmel/Kconfig          |   8 +-
+>  drivers/media/platform/cadence/Kconfig        |   4 +-
+>  drivers/media/platform/coda/Kconfig           |   2 +-
+>  drivers/media/platform/davinci/Kconfig        |  12 +-
+>  drivers/media/platform/exynos-gsc/Kconfig     |   2 +-
+>  drivers/media/platform/exynos4-is/Kconfig     |   2 +-
+>  drivers/media/platform/intel/Kconfig          |   2 +-
+>  drivers/media/platform/marvell-ccic/Kconfig   |   4 +-
+>  drivers/media/platform/meson/ge2d/Kconfig     |   2 +-
+>  drivers/media/platform/mtk-jpeg/Kconfig       |   2 +-
+>  drivers/media/platform/mtk-mdp/Kconfig        |   2 +-
+>  drivers/media/platform/mtk-vcodec/Kconfig     |   2 +-
+>  drivers/media/platform/mtk-vpu/Kconfig        |   2 +-
+>  drivers/media/platform/nxp/Kconfig            |   8 +-
+>  drivers/media/platform/nxp/imx-jpeg/Kconfig   |   2 +-
+>  drivers/media/platform/omap/Kconfig           |   2 +-
+>  drivers/media/platform/omap3isp/Kconfig       |   2 +-
+>  drivers/media/platform/qcom/camss/Kconfig     |   2 +-
+>  drivers/media/platform/qcom/venus/Kconfig     |   2 +-
+>  drivers/media/platform/renesas/Kconfig        |  12 +-
+>  .../media/platform/renesas/rcar-vin/Kconfig   |   4 +-
+>  drivers/media/platform/rockchip/rga/Kconfig   |   2 +-
+>  .../media/platform/rockchip/rkisp1/Kconfig    |   2 +-
+>  drivers/media/platform/s3c-camif/Kconfig      |   2 +-
+>  drivers/media/platform/s5p-g2d/Kconfig        |   2 +-
+>  drivers/media/platform/s5p-jpeg/Kconfig       |   2 +-
+>  drivers/media/platform/s5p-mfc/Kconfig        |   2 +-
+>  drivers/media/platform/sti/bdisp/Kconfig      |   2 +-
+>  drivers/media/platform/sti/delta/Kconfig      |   2 +-
+>  drivers/media/platform/sti/hva/Kconfig        |   2 +-
+>  drivers/media/platform/stm32/Kconfig          |   4 +-
+>  .../media/platform/sunxi/sun4i-csi/Kconfig    |   2 +-
+>  .../media/platform/sunxi/sun6i-csi/Kconfig    |   2 +-
+>  drivers/media/platform/sunxi/sun8i-di/Kconfig |   2 +-
+>  .../media/platform/sunxi/sun8i-rotate/Kconfig |   2 +-
+>  drivers/media/platform/tegra/vde/Kconfig      |   2 +-
+>  drivers/media/platform/ti-vpe/Kconfig         |   4 +-
+>  drivers/media/platform/via/Kconfig            |   2 +-
+>  drivers/media/platform/xilinx/Kconfig         |   2 +-
+>  drivers/media/radio/Kconfig                   |  54 ++--
+>  drivers/media/radio/si470x/Kconfig            |   2 +-
+>  drivers/media/radio/wl128x/Kconfig            |   2 +-
+>  drivers/media/spi/Kconfig                     |   4 +-
+>  drivers/media/test-drivers/Kconfig            |   2 +-
+>  drivers/media/test-drivers/vicodec/Kconfig    |   2 +-
+>  drivers/media/test-drivers/vimc/Kconfig       |   2 +-
+>  drivers/media/test-drivers/vivid/Kconfig      |   2 +-
+>  drivers/media/tuners/Kconfig                  |   6 +-
+>  drivers/media/tuners/e4000.c                  |   6 +-
+>  drivers/media/tuners/fc2580.c                 |   6 +-
+>  drivers/media/usb/airspy/Kconfig              |   2 +-
+>  drivers/media/usb/au0828/Kconfig              |   6 +-
+>  drivers/media/usb/cpia2/Kconfig               |   2 +-
+>  drivers/media/usb/dvb-usb-v2/Kconfig          |   8 +-
+>  drivers/media/usb/dvb-usb/Kconfig             |   4 +-
+>  drivers/media/usb/gspca/Kconfig               |  96 +++----
+>  drivers/media/usb/gspca/gl860/Kconfig         |   2 +-
+>  drivers/media/usb/gspca/m5602/Kconfig         |   2 +-
+>  drivers/media/usb/hackrf/Kconfig              |   2 +-
+>  drivers/media/usb/hdpvr/Kconfig               |   2 +-
+>  drivers/media/usb/msi2500/Kconfig             |   2 +-
+>  drivers/media/usb/pvrusb2/Kconfig             |   2 +-
+>  drivers/media/usb/pwc/Kconfig                 |   2 +-
+>  drivers/media/usb/s2255/Kconfig               |   2 +-
+>  drivers/media/usb/stkwebcam/Kconfig           |   2 +-
+>  drivers/media/usb/usbtv/Kconfig               |   2 +-
+>  drivers/media/usb/uvc/Kconfig                 |   2 +-
+>  drivers/media/usb/zr364xx/Kconfig             |   2 +-
+>  drivers/media/v4l2-core/Kconfig               |  12 +-
+>  drivers/media/v4l2-core/Makefile              |   2 +-
+>  drivers/staging/media/atomisp/Kconfig         |   2 +-
+>  drivers/staging/media/atomisp/i2c/Kconfig     |  14 +-
+>  drivers/staging/media/hantro/Kconfig          |   2 +-
+>  drivers/staging/media/imx/Kconfig             |   2 +-
+>  drivers/staging/media/ipu3/Kconfig            |   2 +-
+>  drivers/staging/media/max96712/Kconfig        |   2 +-
+>  drivers/staging/media/meson/vdec/Kconfig      |   2 +-
+>  drivers/staging/media/omap4iss/Kconfig        |   2 +-
+>  drivers/staging/media/rkvdec/Kconfig          |   2 +-
+>  drivers/staging/media/sunxi/cedrus/Kconfig    |   2 +-
+>  drivers/staging/media/tegra-video/Kconfig     |   2 +-
+>  drivers/staging/media/zoran/Kconfig           |   2 +-
+>  drivers/staging/most/video/Kconfig            |   2 +-
+>  .../vc04_services/bcm2835-camera/Kconfig      |   2 +-
+>  drivers/usb/gadget/Kconfig                    |   2 +-
+>  drivers/usb/gadget/legacy/Kconfig             |   2 +-
+>  sound/pci/Kconfig                             |   4 +-
+>  116 files changed, 363 insertions(+), 368 deletions(-)
+>
+> diff --git a/drivers/input/rmi4/Kconfig b/drivers/input/rmi4/Kconfig
+> index 16119f760d11..c0163b983ce6 100644
+> --- a/drivers/input/rmi4/Kconfig
+> +++ b/drivers/input/rmi4/Kconfig
+> @@ -110,7 +110,7 @@ config RMI4_F3A
+>
+>  config RMI4_F54
+>  	bool "RMI4 Function 54 (Analog diagnostics)"
+> -	depends on VIDEO_V4L2=y || (RMI4_CORE=m && VIDEO_V4L2=m)
+> +	depends on VIDEO_DEV=y || (RMI4_CORE=m && VIDEO_DEV=m)
+>  	select VIDEOBUF2_VMALLOC
+>  	select RMI4_F55
+>  	help
+> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+> index 2f6adfb7b938..ff7794cecf69 100644
+> --- a/drivers/input/touchscreen/Kconfig
+> +++ b/drivers/input/touchscreen/Kconfig
+> @@ -131,7 +131,7 @@ config TOUCHSCREEN_ATMEL_MXT
+>  config TOUCHSCREEN_ATMEL_MXT_T37
+>  	bool "Support T37 Diagnostic Data"
+>  	depends on TOUCHSCREEN_ATMEL_MXT
+> -	depends on VIDEO_V4L2=y || (TOUCHSCREEN_ATMEL_MXT=m && VIDEO_V4L2=m)
+> +	depends on VIDEO_DEV=y || (TOUCHSCREEN_ATMEL_MXT=m && VIDEO_DEV=m)
+>  	select VIDEOBUF2_VMALLOC
+>  	help
+>  	  Say Y here if you want support to output data from the T37
+> @@ -1252,7 +1252,7 @@ config TOUCHSCREEN_SUN4I
+>  config TOUCHSCREEN_SUR40
+>  	tristate "Samsung SUR40 (Surface 2.0/PixelSense) touchscreen"
+>  	depends on USB && MEDIA_USB_SUPPORT && HAS_DMA
+> -	depends on VIDEO_V4L2
+> +	depends on VIDEO_DEV
+>  	select VIDEOBUF2_DMA_SG
+>  	help
+>  	  Say Y here if you want support for the Samsung SUR40 touchscreen
+> diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+> index 01b536863657..2d02d9a44b94 100644
+> --- a/drivers/media/Kconfig
+> +++ b/drivers/media/Kconfig
+> @@ -160,6 +160,9 @@ menu "Media core support"
+>  config VIDEO_DEV
+>  	tristate "Video4Linux core"
+>  	default MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_RADIO_SUPPORT || MEDIA_SDR_SUPPORT || MEDIA_PLATFORM_SUPPORT || MEDIA_TEST_SUPPORT
+> +	depends on (I2C || I2C=n)
+
+Is this I2C || I2C=n intentional ?
+
+> +	select RATIONAL
+> +	select VIDEOBUF2_V4L2 if VIDEOBUF2_CORE
+>  	help
+>  	  Enables the V4L2 API, used by cameras, analog TV, video grabbers,
+>  	  radio devices and by some input devices.
+> diff --git a/drivers/media/common/saa7146/Kconfig b/drivers/media/common/saa7146/Kconfig
+> index 3e85c0c3fd9a..a0aa155e5d85 100644
+> --- a/drivers/media/common/saa7146/Kconfig
+> +++ b/drivers/media/common/saa7146/Kconfig
+> @@ -5,6 +5,6 @@ config VIDEO_SAA7146
+>
+>  config VIDEO_SAA7146_VV
+>  	tristate
+> -	depends on VIDEO_V4L2
+> +	depends on VIDEO_DEV
+>  	select VIDEOBUF_DMA_SG
+>  	select VIDEO_SAA7146
+> diff --git a/drivers/media/dvb-core/Kconfig b/drivers/media/dvb-core/Kconfig
+> index 6ffac618417b..8b3f2d53cd62 100644
+> --- a/drivers/media/dvb-core/Kconfig
+> +++ b/drivers/media/dvb-core/Kconfig
+> @@ -6,7 +6,7 @@
+>  config DVB_MMAP
+>  	bool "Enable DVB memory-mapped API (EXPERIMENTAL)"
+>  	depends on DVB_CORE
+> -	depends on VIDEO_V4L2=y || VIDEO_V4L2=DVB_CORE
+> +	depends on VIDEO_DEV=y || VIDEO_DEV=DVB_CORE
+>  	select VIDEOBUF2_VMALLOC
+>  	help
+>  	  This option enables DVB experimental memory-mapped API, which
+> diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
+> index 2c1ed98d43c5..4101f9b1e731 100644
+> --- a/drivers/media/dvb-frontends/Kconfig
+> +++ b/drivers/media/dvb-frontends/Kconfig
+> @@ -510,7 +510,7 @@ config DVB_RTL2832
+>
+>  config DVB_RTL2832_SDR
+>  	tristate "Realtek RTL2832 SDR"
+> -	depends on DVB_CORE && I2C && I2C_MUX && VIDEO_V4L2 && MEDIA_SDR_SUPPORT && USB
+> +	depends on DVB_CORE && I2C && I2C_MUX && VIDEO_DEV && MEDIA_SDR_SUPPORT && USB
+>  	select DVB_RTL2832
+>  	select VIDEOBUF2_VMALLOC
+>  	default m if !MEDIA_SUBDRV_AUTOSELECT
+> @@ -681,7 +681,7 @@ config DVB_AU8522_DTV
+>
+>  config DVB_AU8522_V4L
+>  	tristate "Auvitek AU8522 based ATV demod"
+> -	depends on VIDEO_V4L2 && DVB_CORE && I2C
+> +	depends on VIDEO_DEV && DVB_CORE && I2C
+>  	select DVB_AU8522
+>  	default m if !MEDIA_SUBDRV_AUTOSELECT
+>  	help
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index e7194c1be4d2..5abc169f0a5c 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -3,7 +3,7 @@
+>  # Multimedia Video device configuration
+>  #
+>
+> -if VIDEO_V4L2
+> +if VIDEO_DEV
+>
+>  comment "IR I2C driver auto-selected by 'Autoselect ancillary drivers'"
+>  	depends on MEDIA_SUBDRV_AUTOSELECT && I2C && RC_CORE
+> @@ -36,7 +36,7 @@ menu "Audio decoders, processors and mixers"
+>
+>  config VIDEO_TVAUDIO
+>  	tristate "Simple audio decoder chips"
+> -	depends on VIDEO_V4L2 && I2C
+> +	depends on VIDEO_DEV && I2C
+
+Are there symbols in drivers/media/i2c that do not depend on I2C ?
+Could we make the menu conditional on I2C presence ?
+
+>  	help
+>  	  Support for several audio decoder chips found on some bt8xx boards:
+>  	  Philips: tda9840, tda9873h, tda9874h/a, tda9850, tda985x, tea6300,
+> @@ -48,7 +48,7 @@ config VIDEO_TVAUDIO
+
+[snip]
+
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config VIDEO_TW5864
+>  	tristate "Techwell TW5864 video/audio grabber and encoder"
+> -	depends on VIDEO_DEV && PCI && VIDEO_V4L2
+> +	depends on VIDEO_DEV && PCI && VIDEO_DEV
+
+Double VIDEO_DEV
+
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	help
+>  	  Support for boards based on Techwell TW5864 chip which provides
+> diff --git a/drivers/media/pci/tw68/Kconfig b/drivers/media/pci/tw68/Kconfig
+> index af0cb60337bb..ef29be7db493 100644
+> --- a/drivers/media/pci/tw68/Kconfig
+> +++ b/drivers/media/pci/tw68/Kconfig
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config VIDEO_TW68
+>  	tristate "Techwell tw68x Video For Linux"
+> -	depends on VIDEO_DEV && PCI && VIDEO_V4L2
+> +	depends on VIDEO_DEV && PCI && VIDEO_DEV
+
+Same here
+
+>  	select VIDEOBUF2_DMA_SG
+>  	help
+>  	  Support for Techwell tw68xx based frame grabber boards.
+
+[snip]
+
+> diff --git a/drivers/media/platform/amphion/Kconfig b/drivers/media/platform/amphion/Kconfig
+> index 13899649f766..e9ddca7a9e4a 100644
+> --- a/drivers/media/platform/amphion/Kconfig
+> +++ b/drivers/media/platform/amphion/Kconfig
+> @@ -5,7 +5,7 @@ config VIDEO_AMPHION_VPU
+>  	depends on ARCH_MXC || COMPILE_TEST
+>  	depends on MEDIA_SUPPORT
+>  	depends on VIDEO_DEV
+> -	depends on VIDEO_V4L2
+> +	depends on VIDEO_DEV
+
+VIDEO_DEV already listed
+
+>  	select MEDIA_CONTROLLER
+>  	select V4L2_MEM2MEM_DEV
+>  	select VIDEOBUF2_DMA_CONTIG
+
+[snip]
+
+>
+> -if RADIO_ADAPTERS && VIDEO_V4L2
+> +if RADIO_ADAPTERS && VIDEO_DEV
+>
+>  config RADIO_TEA575X
+>  	tristate
+> @@ -20,13 +20,13 @@ source "drivers/media/radio/si470x/Kconfig"
+>
+>  config RADIO_SI4713
+>  	tristate "Silicon Labs Si4713 FM Radio with RDS Transmitter support"
+> -	depends on VIDEO_V4L2
+> +	depends on VIDEO_DEV
+
+Isn't this menu section already conditional to VIDEO_DEV
+
+[snip]
+
+With the above minors fixed
+
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+   j
