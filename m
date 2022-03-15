@@ -2,188 +2,169 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417BBC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Mar 2022 02:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B49CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Mar 2022 17:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344462AbiCOCbs (ORCPT
+        id S1350134AbiCORDL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Mar 2022 22:31:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43760 "EHLO
+        Tue, 15 Mar 2022 13:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344460AbiCOCbq (ORCPT
+        with ESMTP id S1350467AbiCORDJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Mar 2022 22:31:46 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B67104739D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Mar 2022 19:30:29 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220315023023epoutp02ed789dffe2ea068084abfc08f8f9a638~cbQMNjkGh2922829228epoutp02m
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Mar 2022 02:30:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220315023023epoutp02ed789dffe2ea068084abfc08f8f9a638~cbQMNjkGh2922829228epoutp02m
+        Tue, 15 Mar 2022 13:03:09 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B456857B26
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Mar 2022 10:01:54 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220315170149epoutp041884f76f82d7b09520adb1e8627ed698~cnJDcpEkE0799307993epoutp04D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Mar 2022 17:01:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220315170149epoutp041884f76f82d7b09520adb1e8627ed698~cnJDcpEkE0799307993epoutp04D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1647311423;
-        bh=yyfDUVLYE4ZIcb9/V6mlxmuF8mgCuNom8jgKs5yo6Sg=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=NJynkPhL7fW0gW2MmJhiChHSDOrO682gw9x1l/yx/4DEt0rSyuWPITSyEblJ90UBV
-         IySZA7OxXKNhFVZLV46S2+t+O/q5rIIky5cvdbK8SblMo0l13hRpI6hOH8uSzz5WDN
-         lKXrtxWheTa4EattvRuBjaQyCv5ICzUa5DbQGxTs=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220315023023epcas5p422bfcd5dce2ad03f7d1dd49d8bc906cd~cbQLr_Rk72011420114epcas5p4C;
-        Tue, 15 Mar 2022 02:30:23 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4KHcnf683kz4x9QG; Tue, 15 Mar
-        2022 02:30:14 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        s=mail20170921; t=1647363709;
+        bh=APM5XsSU1XQd07vu+tjYn7WYhHEeAhdWMLL1ugsN9XM=;
+        h=From:To:In-Reply-To:Subject:Date:References:From;
+        b=Aw5dAa6R66yRQOdsFj8+XjgfUrkWUrHQPLYHG4lFRvsj5C8hkG5pqEWLzZk9lJOLF
+         1l/d3oQMrKE0CdzPpZElDBrjOGAxQ9GQiDzT6PHO82xuSyI/NyrNQaezCT83nWVWj2
+         yMSKDh0w7ehURj72m0LvlEAIOuot5tBZ6TB/HnN0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220315170148epcas5p3197505665d1d45755cd7dff5229a8f16~cnJCOvyQQ0601406014epcas5p3G;
+        Tue, 15 Mar 2022 17:01:48 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KJ07C6r60z4x9Pp; Tue, 15 Mar
+        2022 17:01:43 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
         epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8B.20.06423.23AFF226; Tue, 15 Mar 2022 11:30:10 +0900 (KST)
+        28.74.06423.776C0326; Wed, 16 Mar 2022 02:01:43 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220315023010epcas5p4a3bfcfef8714019f03283da047275b89~cbQADCX3O2229122291epcas5p4e;
-        Tue, 15 Mar 2022 02:30:10 +0000 (GMT)
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220315170143epcas5p2d633d14d347a2c2b2c2743450c08abce~cnI9g0xey1706417064epcas5p2H;
+        Tue, 15 Mar 2022 17:01:43 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220315023010epsmtrp1a7dd37f8cf989c6a4a64ded48118b935~cbQACW1YR2342423424epsmtrp1k;
-        Tue, 15 Mar 2022 02:30:10 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-4c-622ffa32921d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20220315170143epsmtrp1e7ed44caa429ca8723d2755ed3faf782~cnI9f_7Ak1691216912epsmtrp1B;
+        Tue, 15 Mar 2022 17:01:43 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-61-6230c6774e31
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D4.88.03370.23AFF226; Tue, 15 Mar 2022 11:30:10 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        5A.CE.03370.776C0326; Wed, 16 Mar 2022 02:01:43 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220315023009epsmtip1b885ff1858d1d1222e04692d764f5f96~cbP_v6hoL0325103251epsmtip1B;
-        Tue, 15 Mar 2022 02:30:08 +0000 (GMT)
+        20220315170141epsmtip2eb5d7f4857fca19018b8d7ca1b718367~cnI8LxV9s2201222012epsmtip2T;
+        Tue, 15 Mar 2022 17:01:41 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
         "'Rob Herring'" <robh+dt@kernel.org>,
         "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
-        <devicetree@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
-        "'Sylwester Nawrocki'" <snawrocki@kernel.org>
-In-Reply-To: <20220314184113.251013-1-krzysztof.kozlowski@canonical.com>
-Subject: RE: [PATCH] ARM: dts: exynos: drop deprecated SFR region from MIPI
- phy
-Date:   Tue, 15 Mar 2022 08:00:07 +0530
-Message-ID: <045f01d83814$97bf07d0$c73d1770$@samsung.com>
+In-Reply-To: <20220314181948.246434-2-krzysztof.kozlowski@canonical.com>
+Subject: RE: [PATCH 2/5] ARM: dts: s5pv210: align EHCI/OHCI nodes with
+ dtschema
+Date:   Tue, 15 Mar 2022 22:31:40 +0530
+Message-ID: <063501d8388e$58a74ba0$09f5e2e0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE1z8DeFgUpeTWUYelE+VGwjWiPDQIRWkk3rfP+BrA=
+Thread-Index: AQB7dPZKCRCsS+x0KxttMJEPHi23NwGCWbcmAZz2MFCvYTfs4A==
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmlq7RL/0kg/+XzS3mHznHavFy1j02
-        i41vfzBZbHp8jdXi8q45bBYzzu9jslh75C67ReveI+wW7U9fMjtwesxq6GXz2LSqk81j85J6
-        j74tqxg9Pm+SC2CNyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmpm75MYMkgyvrjCzmHznHatG8eD2b
+        xctZ99gsNr79wWSx6fE1VovLu+awWcw4v4/JYtGyVmaL1r1H2B04PWY19LJ5bFrVyeaxf+4a
+        do/NS+o9Pm+SC2CNyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
         8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeX
-        WmJlaGBgZApUmJCdce3sQvaCtSIVM3fJNzBOFOxi5OSQEDCR+Lx/JnMXIxeHkMBuRom1bT9Z
-        IZxPjBKrr91mgXA+M0p07HjL2MXIAdby6pYbRHwXo8S0CzeYIJyXjBJP7x1jBJnLJqArsWNx
-        GxuILSKwjEnixe5CkGZmgRSJQ+tDQMKcAh4Sz/sfMoHYwgKBEmeWvmICKWERUJVYuVoTJMwr
-        YClx6f0+FghbUOLkzCdgNrOAvMT2t3OYIT5QkPj5dBkrxCYriXmv2pkhasQlXh49wg5ymoTA
-        Ug6J2yf+skI0uEhc33ybDcIWlnh1fAs7hC0l8bK/jR3ix2yJnl3GEOEaiaXzjrFA2PYSB67M
-        YYH4RFNi/S59iFV8Er2/nzBBdPJKdLQJQVSrSjS/uwrVKS0xsbsb6gAPiQf3rjBPYFScheSx
-        WUgem4XkgVkIyxYwsqxilEwtKM5NTy02LTDMSy2Hx3Vyfu4mRnBK1fLcwXj3wQe9Q4xMHIyH
-        GCU4mJVEeM+80E8S4k1JrKxKLcqPLyrNSS0+xGgKDOyJzFKiyfnApJ5XEm9oYmlgYmZmZmJp
-        bGaoJM57On1DopBAemJJanZqakFqEUwfEwenVAOT/ZGjgfLV2RvFtklV9sxXc3ly/wtn1cID
-        qqoSC/v3mAeIXRLqu7XMdZGZKuN+qZKcyOpkddva0I9ON/4WJTKZSHe7GWi9Ob9UT+9L9pWj
-        Ky9ufp8YtOfllM+pLmnnf5yIkFc9vn2G7HtmU4PLMgWGE2JNF3q9VumsP7Rw+xXBnLNGXhzn
-        JqdnzZS3rDnw27ScI8ov8tkj046q29e7u1qkzL4qtqsIsSU8qchPmpBxaFJEwtqteV9Ovyqq
-        /BFq8vno6YkPeHUkD/tk7K6tvKnx8VTj6/DUnnn/105RNNjV+M1r16GkfLcINuf3RVPuNlTa
-        T9HN+f5j3/H00y57G38LRxxzqPzbOeGa/Z3fL8yUWIozEg21mIuKEwHSoVv4MgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTtfol36SwYOXMhbzj5xjtXg56x6b
-        xca3P5gsNj2+xmpxedccNosZ5/cxWaw9cpfdonXvEXaL9qcvmR04PWY19LJ5bFrVyeaxeUm9
-        R9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGVcO7uQvWCtSMXMXfINjBMFuxg5OCQETCRe3XLr
-        YuTiEBLYwSjRfXw/YxcjJ1BcWuL6xgnsELawxMp/z9khip4zSsyce40FJMEmoCuxY3EbG4gt
-        IrCKSeJhlxGIzSyQItF8dCUbRMNMRol7l/aCTeIU8JB43v+QCcQWFvCXOPTxHyPIFSwCqhIr
-        V2uChHkFLCUuvd/HAmELSpyc+YQFpIRZQE+ibSMjxHh5ie1v5zBD3KYg8fPpMlaIE6wk5r1q
-        Z4aoEZd4efQI+wRG4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvX
-        S87P3cQIjiwtrR2Me1Z90DvEyMTBeIhRgoNZSYT3zAv9JCHelMTKqtSi/Pii0pzU4kOM0hws
-        SuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqYLhloMsh9sll5ouVxok78tN7zB8pfndo4g6su
-        +NiluRUWrFfnbrO3mXvr6EV3K42LzzfqiovMDDs3xXmjh+Hnvkgl86CjhbYTint5NjwtY+gQ
-        nPvH/ILsE+mjf9dbCwZdiz5Wmr1OVEHDTsu2VWe17PIta7ztt7YGZfOt3nPviuP2w1cuu06z
-        fmh1eXnsPD9tltWrfNYb2+/cpRCpMDFHg1nidPEK/3vTGf89cgzX2MXZaR6apvJ4/apCm8DZ
-        F11Drm/N4Yp3b1qkeixKwLdZZc3uqsnhBXLH7q9etIatbpn/nBf5EzzKrPTvN67dXlay7FQ1
-        Z/uySU9WeCSstCg9c6NvVVzOZ96zIVNXalU3KbEUZyQaajEXFScCACRrA+YbAwAA
-X-CMS-MailID: 20220315023010epcas5p4a3bfcfef8714019f03283da047275b89
+        WmJlaGBgZApUmJCdsXvrYraCdzwVDesLGxhfcXUxcnJICJhIvFi+nAXEFhLYzSix6Fk5hP2J
+        UeLMBesuRi4g+zOjRM/mG0BFHGANex/VQ8R3MUpMbbvKCuG8ZJS4u+0sE0g3m4CuxI7FbWwg
+        CRGBX0wSaxtusIIkOAU8JHpuLgBbJywQKNE74SpYnEVAVeLf/INsIDavgKXE9VlT2CFsQYmT
+        M5+A1TMLyEtsfzuHGeJsBYmfT5eB9YoIOEnsnPkXqkZc4uXRI+wgiyUEZnJIPL9+EKrBRWJn
+        1xtWCFtY4tXxLewQtpTEy/42dojXsiV6dhlDhGskls47xgJh20scuDIH7HtmAU2J9bv0IVbx
+        SfT+fsIE0ckr0dEmBFGtKtH87ipUp7TExO5uqKUeEhNugVwPCqubjBJXO2cyTWBUmIXky1lI
+        vpyF5JtZCJsXMLKsYpRMLSjOTU8tNi0wzEsth8d2cn7uJkZwWtXy3MF498EHvUOMTByMhxgl
+        OJiVRHjPvNBPEuJNSaysSi3Kjy8qzUktPsRoCgz6icxSosn5wMSeVxJvaGJpYGJmZmZiaWxm
+        qCTOezp9Q6KQQHpiSWp2ampBahFMHxMHp1QDk4z+y+nO66KFkpwP3NnJHlqhwBrBzOIv81HD
+        sTZD7Y9Bl2BrtdT1tIMSXVprXwvreJ/M91TbMqWxrvv+6oOL9JSXKzywXPqxVG+b95LcLEtv
+        yboX7h8LLXbrMNxmPtpqfeW7c1mhq7jY8ntKnjbPt+7K998xr9upXGGVbtymO6dni2/eKbWr
+        3We3x9mzlxOvK66d572FXVTm8evn4arS3/+dufRz20aJlPe2Bz+lbwk0Of2JmV9EuVrL1qil
+        V2rlg3DdlZsenzg6j/PMtIXye+wqTYyXqrw83j05onzG8yWv3qvsanLfejsiws5RT342U7Dl
+        ucSgwLDV6rF//je4fGxZ7azFq+v7Rid1x1kNJZbijERDLeai4kQAa3UgCTQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSvG75MYMkgznL+SzmHznHatG8eD2b
+        xctZ99gsNr79wWSx6fE1VovLu+awWcw4v4/JYtGyVmaL1r1H2B04PWY19LJ5bFrVyeaxf+4a
+        do/NS+o9Pm+SC2CN4rJJSc3JLEst0rdL4MrYvXUxW8E7noqG9YUNjK+4uhg5OCQETCT2Pqrv
+        YuTiEBLYwShxuO86WxcjJ1BcWuL6xgnsELawxMp/z9khip4zSuy92cAKkmAT0JXYsbgNrEFE
+        oIFZ4spjAYiiq4wSN8/9ZgZJcAp4SPTcXMACsk1YwF/ixzwmkDCLgKrEv/kHwXp5BSwlrs+a
+        wg5hC0qcnPkErJxZQE+ibSMjSJhZQF5i+9s5zBD3KEj8fLqMFWKtk8TOmX9ZIGrEJV4ePcI+
+        gVFoFpJJsxAmzUIyaRaSjgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYIjSEtr
+        B+OeVR/0DjEycTAeYpTgYFYS4T3zQj9JiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLp
+        iSWp2ampBalFMFkmDk6pBqaaq6nHksQ46hmsS8Pf7C869drm79lES/fti1t6NybPreq8EVUy
+        MbxEZHdQ/gHVNQuuX655+nvOlDLfJFHrnCPnxBsmvj4qnDRb7VK3YC/7rVn3pP/v+RueEy6a
+        81hKWOnAafFVf+WfP+1ad/vOwf1eYmtE3XJbSgRUt7c8aDpYVbtrwWO912oCny36+YPMeufd
+        fxe3WE/FZX5+1VvZlr9Lgt5GHpRr19j43dOsqs1c+Jzhw0ZvnTf/sqsC15/Qy0ti+GNWK2d+
+        5s9hlbTqWwWx/PO8djyI+sg958rnufc1H4aF9c9g2qXwdWO0vfnvVe0Ot6q0e+W+1p7d8/tD
+        r62NXRyT/LWD5pfeFmov26PEUpyRaKjFXFScCADtBNZmDwMAAA==
+X-CMS-MailID: 20220315170143epcas5p2d633d14d347a2c2b2c2743450c08abce
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220314184122epcas5p43627f2cf266da868679cd59cbbbea14a
-References: <CGME20220314184122epcas5p43627f2cf266da868679cd59cbbbea14a@epcas5p4.samsung.com>
-        <20220314184113.251013-1-krzysztof.kozlowski@canonical.com>
+X-CMS-RootMailID: 20220314182015epcas5p37973443e3daafcab8b5d45a042f6a56c
+References: <20220314181948.246434-1-krzysztof.kozlowski@canonical.com>
+        <CGME20220314182015epcas5p37973443e3daafcab8b5d45a042f6a56c@epcas5p3.samsung.com>
+        <20220314181948.246434-2-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+
 
 >-----Original Message-----
 >From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
->Sent: Tuesday, March 15, 2022 12:11 AM
->To: Rob Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
-><krzk+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>;
+>Sent: Monday, March 14, 2022 11:50 PM
+>To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Rob Herring
+><robh+dt@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Alim
+>Akhtar <alim.akhtar@samsung.com>; linux-usb@vger.kernel.org;
 >devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
 >samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
->Cc: Marek Szyprowski <m.szyprowski@samsung.com>; Sylwester Nawrocki
-><snawrocki@kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski@canonical.com>
->Subject: [PATCH] ARM: dts: exynos: drop deprecated SFR region from MIPI
->phy
+>Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>Subject: [PATCH 2/5] ARM: dts: s5pv210: align EHCI/OHCI nodes with
+>dtschema
 >
->Commit e4b3d38088df ("phy: exynos-video-mipi: Fix regression by adding
->support for PMU regmap") deprecated the usage of unit address in MIPI phy
->node, in favor of a syscon phandle.  Deprecating was a correct approach
->because that unit address was actually coming from Power Management Unit
->SFR range so its usage here caused overlapped memory mapping.
->
->In 2016 commit 26dbadba495f ("phy: exynos-mipi-video: Drop support for
->direct access to PMU") fully removed support for parsing that MIPI phy unit
->address (SFR range) but the address stayed in Exynos5250 DTSI for
->compatibility reasons.
->
->Remove that deprecated unit address from Exynos5250 MIPI phy, because it
->has been almost 6 years since it was deprecated and it causes now DT schema
->validation warnings:
->
->  video-phy@10040710: 'reg' does not match any of the regexes: 'pinctrl-[0-
->9]+'
->
->Any out-of-tree users of Exynos5250 DTSI, should update their code to use
->newer syscon property.
+>The node names should be generic and USB DT schema expects "usb" names.
 >
 >Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 >---
+Probably you can squash this with the 1/5 patch
 
-Reviewed-by: Alim Akhtar<alim.akhtar@samsung.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-> arch/arm/boot/dts/exynos5250.dtsi | 5 ++---
-> 1 file changed, 2 insertions(+), 3 deletions(-)
+> arch/arm/boot/dts/s5pv210.dtsi | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 >
->diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->b/arch/arm/boot/dts/exynos5250.dtsi
->index 5baaa7eb71a4..d8d401b5ca48 100644
->--- a/arch/arm/boot/dts/exynos5250.dtsi
->+++ b/arch/arm/boot/dts/exynos5250.dtsi
->@@ -817,15 +817,14 @@ mixer: mixer@14450000 {
+>diff --git a/arch/arm/boot/dts/s5pv210.dtsi
+b/arch/arm/boot/dts/s5pv210.dtsi
+>index 353ba7b09a0c..a7aca54832d9 100644
+>--- a/arch/arm/boot/dts/s5pv210.dtsi
+>+++ b/arch/arm/boot/dts/s5pv210.dtsi
+>@@ -427,7 +427,7 @@ usbphy: usbphy@ec100000 {
 > 			status = "disabled";
 > 		};
 >
->-		dp_phy: video-phy {
->+		dp_phy: video-phy-0 {
-> 			compatible = "samsung,exynos5250-dp-video-phy";
-> 			samsung,pmu-syscon = <&pmu_system_controller>;
-> 			#phy-cells = <0>;
+>-		ehci: ehci@ec200000 {
+>+		ehci: usb@ec200000 {
+> 			compatible = "samsung,exynos4210-ehci";
+> 			reg = <0xec200000 0x100>;
+> 			interrupts = <23>;
+>@@ -444,7 +444,7 @@ port@0 {
+> 			};
 > 		};
 >
->-		mipi_phy: video-phy@10040710 {
->+		mipi_phy: video-phy-1 {
-> 			compatible = "samsung,s5pv210-mipi-video-phy";
->-			reg = <0x10040710 0x100>;
-> 			#phy-cells = <1>;
-> 			syscon = <&pmu_system_controller>;
-> 		};
+>-		ohci: ohci@ec300000 {
+>+		ohci: usb@ec300000 {
+> 			compatible = "samsung,exynos4210-ohci";
+> 			reg = <0xec300000 0x100>;
+> 			interrupts = <23>;
 >--
 >2.32.0
 
