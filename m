@@ -2,170 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63594C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Mar 2022 17:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10169C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Mar 2022 01:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350431AbiCORGr (ORCPT
+        id S1353038AbiCPBzD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 13:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36280 "EHLO
+        Tue, 15 Mar 2022 21:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350432AbiCORGh (ORCPT
+        with ESMTP id S1353034AbiCPBzD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Mar 2022 13:06:37 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB82F201BF
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Mar 2022 10:05:24 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220315170523epoutp03ad29b1c05eaade643e6c2beb2f24d129~cnMKOGmMX2040720407epoutp03c
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Mar 2022 17:05:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220315170523epoutp03ad29b1c05eaade643e6c2beb2f24d129~cnMKOGmMX2040720407epoutp03c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1647363923;
-        bh=yAd7+p8TVkfM7cei9FnECH3TEaPIde/ZlDqBS4Ms/Rs=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=mo+5sBM1NpNErZvCrvhGv18kTdQu7yrj90BYE48vtvGuPlgl4M8AIthABufxP1t0/
-         K/RnGwESxzngt8fV8sNrP/aky7iQads4A04aw8oT8YCtZSTng5o7fY2TJ8RV/wX8zJ
-         S38DsipDSJkuOUtmg6n87uay7L3pQd4CAP/KcQ4w=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220315170522epcas5p1bc6d11fde161a0b62fb32d36583c12b5~cnMJeuDDB0543305433epcas5p1h;
-        Tue, 15 Mar 2022 17:05:22 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4KJ0CK6N7Nz4x9Pw; Tue, 15 Mar
-        2022 17:05:17 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        78.F5.05590.D47C0326; Wed, 16 Mar 2022 02:05:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220315170517epcas5p27937265cf204d8335a9e3b0cac52ee74~cnME4kfur1098610986epcas5p2O;
-        Tue, 15 Mar 2022 17:05:17 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220315170517epsmtrp2f40d19b58ef0efaf666534dad1b6dae5~cnME303MD0550705507epsmtrp2Y;
-        Tue, 15 Mar 2022 17:05:17 +0000 (GMT)
-X-AuditID: b6c32a4b-723ff700000015d6-2d-6230c74d04a0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B7.C5.29871.D47C0326; Wed, 16 Mar 2022 02:05:17 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220315170515epsmtip2d4d9011370f6e1926e3f2ffbf2356548~cnMDhozpf2016520165epsmtip22;
-        Tue, 15 Mar 2022 17:05:15 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20220314181948.246434-4-krzysztof.kozlowski@canonical.com>
-Subject: RE: [PATCH 4/5] dt-bindings: usb: samsung,exynos-usb2: add missing
- required reg
-Date:   Tue, 15 Mar 2022 22:35:14 +0530
-Message-ID: <063701d8388e$d83f53d0$88bdfb70$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQB7dPZKCRCsS+x0KxttMJEPHi23NwKr4VcRAehR/+qvVZH/AA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmhq7vcYMkgy/79C3mHznHatG8eD2b
-        xctZ99gsNr79wWSx6fE1VovLu+awWcw4v4/JYtGyVmaL1r1H2B04PWY19LJ5bFrVyeaxf+4a
-        do/NS+o9Pm+SC2CNyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
-        8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeX
-        WmJlaGBgZApUmJCd8bHlA2vBVZ6KzYtXMjcwNnN3MXJySAiYSOy5v5+ti5GLQ0hgN6PEhZNN
-        rBDOJ0aJ1ceuMkM43xglpq1bAuRwgLX0vReAiO9llFhycQkjhPOSUWLKthZWkLlsAroSOxa3
-        gc0VEfjFJLG24QYrSDengIfEpk8VIDXCAlESZx80MILYLAKqEsvevgbr5RWwlPh9+QcThC0o
-        cXLmExYQm1lAXmL72znMEHcrSPx8ugysXkTASeLzwf9MEDXiEi+PHmEH2SshMJND4tOlLjaI
-        q10k+u5HQPQKS7w6voUdwpaS+PxuL1RJtkTPLmOIcI3E0nnHWCBse4kDV+awgJQwC2hKrN+l
-        D7GJT6L39xMmiE5eiY42IYhqVYnmd1ehOqUlJnZ3s0LYQH+3L4KG1E1GiTXf97JNYFSYheTJ
-        WUienIXkmVkImxcwsqxilEwtKM5NTy02LTDOSy2HR3dyfu4mRnBi1fLewfjowQe9Q4xMHIyH
-        GCU4mJVEeM+80E8S4k1JrKxKLcqPLyrNSS0+xGgKDPmJzFKiyfnA1J5XEm9oYmlgYmZmZmJp
-        bGaoJM57Kn1DopBAemJJanZqakFqEUwfEwenVAPTnPXZBnlrcm7dvKTL1C3HNf+w0faNFs+f
-        /g5hfGd5x6GhuUdd8NCWhmPbxK7rxb8MWsRtvYjh8Or2l8ad3Cu8bF+JGO/47KVhKtVp3nwj
-        iEOkfPv+P29vKR3p8rwvv/XqvgfFdt4mam6f/J99YVPdJvh/7hbZZZFHVPQTvUp0fq849Y35
-        aNWCOWZ13YkSr3RFj22+KeDAfspW9yzfrG5+UQbH9M+WYX7c17qvpP5O15gQZ/BSTLj6jxhX
-        kZhUdkaSZZDZkyX+CzxNzqjcfqJx1rhw5Z54iSSeLl2Gf2dynuu9S7lzYH6z0u4vd7mYlSe/
-        nhZ2UVzy+qvtt6Q/WUcEWWx67y91ZW7pe/auV8+UWIozEg21mIuKEwE5yigVNQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSvK7vcYMkg47zQhbzj5xjtWhevJ7N
-        4uWse2wWG9/+YLLY9Pgaq8XlXXPYLGac38dksWhZK7NF694j7A6cHrMaetk8Nq3qZPPYP3cN
-        u8fmJfUenzfJBbBGcdmkpOZklqUW6dslcGV8bPnAWnCVp2Lz4pXMDYzN3F2MHBwSAiYSfe8F
-        uhg5OYQEdjNKvOiOBbElBKQlrm+cwA5hC0us/PccyOYCqnnOKPH9wVZmkASbgK7EjsVtbCC2
-        iEADs8SVxwIQRVcZJV5NbmQFWcAp4CGx6VMFSI2wQITEvKZZTCA2i4CqxLK3r1lBbF4BS4nf
-        l38wQdiCEidnPmEBaWUW0JNo28gIEmYWkJfY/nYOM8Q9ChI/ny5jhVjrJPH54H8miBpxiZdH
-        j7BPYBSahWTSLIRJs5BMmoWkYwEjyypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOAI
-        0tLcwbh91Qe9Q4xMHIyHGCU4mJVEeM+80E8S4k1JrKxKLcqPLyrNSS0+xCjNwaIkznuh62S8
-        kEB6YklqdmpqQWoRTJaJg1OqgenEnofHDDp4HU7M2pd2/a1gcXCATIw/021/zjnyT7hqeZdX
-        uj1RW/P5lrlKk1ceB1/0LlW1RmX1+f0Sn1KCG9wuvXzjxDn91Vkti/UKT8/M22Eo8/pujfSK
-        v3mynDOM9gge+8rwZXtxen34Ks0PhQuEwldn9LqUlQRZr+Crndd3++Nl1oepGVKV9pvbrsdr
-        VFT06pQmLf886ZhtJn/D3vlb3vF4aYmKZ0yexSpy5/eSvzFPpuVe/2j3YYXwFzeFp/Xra78X
-        vXty88ODIPnWC761CeuMzs96wKKrJck6v/RE69ytvxynPOP6Hxkd5jnX9ANX518NoWpLnc6C
-        BY9Yk5qsDj5axfuRJW1C4YWGTUosxRmJhlrMRcWJAN3+iMcPAwAA
-X-CMS-MailID: 20220315170517epcas5p27937265cf204d8335a9e3b0cac52ee74
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220314182018epcas5p47d847a6c2d2e054961f52460df00c2fd
-References: <20220314181948.246434-1-krzysztof.kozlowski@canonical.com>
-        <CGME20220314182018epcas5p47d847a6c2d2e054961f52460df00c2fd@epcas5p4.samsung.com>
-        <20220314181948.246434-4-krzysztof.kozlowski@canonical.com>
+        Tue, 15 Mar 2022 21:55:03 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB2933EAE;
+        Tue, 15 Mar 2022 18:53:50 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id mv2-20020a17090b198200b001c65bae5744so85356pjb.5;
+        Tue, 15 Mar 2022 18:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=Xg15yRMMviMUzCglDMY0HU4537JOOxmewNboEJ+Yvmc=;
+        b=GN96DWJnWxNOD0u11hog6ZGPYYlLhk60WwKms/taP8LsrGfAGw3YhwVt3nV7ogpKoM
+         wP34cx/jyovqeszzWM/cE/AeDAya+iwKyWi3cQwfq2Dli3nJyuJXQDhHFh2ugfDBnstQ
+         oEkYWhO9R4wXixYXLWajaMfzG9WllB/0lkk5Wzf7speXHBkynv6H0zzqjR1OZwyrKtZS
+         gWWMyFj1y/LxutvVtIylzZFIFSAh8xrSdyZafU/prn6JSaD81k5Dho4ABiRx3oiI7Z90
+         x/xHaMBGGYp2Gf0SOouDNta2vDF2ZlP+imS3RZvMR13naGbkngsCoc72jJcMLQe2LYwR
+         Rr0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Xg15yRMMviMUzCglDMY0HU4537JOOxmewNboEJ+Yvmc=;
+        b=IvvNhXVhu32iAQzb1Os5LAi4qqfiDQQC7nX0d2/foG5KaetvQXQ1h6YQ4ASHw/9amg
+         hJ4igbDtNhetokTr2KKqWLD3gqH6dYqRAL8Zkw4yPxFuSJ3DcA9+zD3fPHvkN/dbjFNd
+         ymmMByPWQ/DErJ8qgR1jucR7YGnEykf5T2mitkwoigaVrN/KKrqjVJZznrwFC5dbeqou
+         exNUSj2j3EEjl6/ew2648W+Q8RmmGQVvo9u612z4l1O+nb5tSF/L7Xj9JdPcPMWnD7Fl
+         VFgeSEJtEehYijRARVir0fnUoTO9CWMuWwb5ADcQehJNZ3WePmP2eFQoyDFvmMxe/y9p
+         mP0A==
+X-Gm-Message-State: AOAM530a4RT7G/rugBWZCt92nIZOg73lqvVr6gYjhJoGX/Oqhx2N4nul
+        1SsakFjh0pn7eaSgQVf4TNO0HCEkmbQ1Neuecjo=
+X-Google-Smtp-Source: ABdhPJyCqm/iPBayX1NkaXkG7E6Q84g5TtKGOSYe9QvfuFM8fB8UglAAnVh10BeyH4UIhj9wU+vcjQ==
+X-Received: by 2002:a17:90b:17ca:b0:1bf:6188:cc00 with SMTP id me10-20020a17090b17ca00b001bf6188cc00mr7920821pjb.2.1647395629762;
+        Tue, 15 Mar 2022 18:53:49 -0700 (PDT)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id i15-20020a63b30f000000b003803aee35a2sm533256pgf.31.2022.03.15.18.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Mar 2022 18:53:49 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kyunmin Park <kyungmin.park@samsung.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] media: exynos4-is: Change clk_disable to clk_disable_unprepare
+Date:   Wed, 16 Mar 2022 01:53:44 +0000
+Message-Id: <20220316015344.5120-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The corresponding API for clk_prepare_enable is clk_disable_unprepare,
+other than clk_disable_unprepare.
 
+Fix this by changing clk_disable to clk_disable_unprepare.
 
->-----Original Message-----
->From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
->Sent: Monday, March 14, 2022 11:50 PM
->To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Rob Herring
-><robh+dt@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Alim
->Akhtar <alim.akhtar@samsung.com>; linux-usb@vger.kernel.org;
->devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
->Cc: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->Subject: [PATCH 4/5] dt-bindings: usb: samsung,exynos-usb2: add missing
->required reg
->
->"reg" property is required on Samsung S5PV210/Exynos EHCI/OHCI
->controllers.
->
->Fixes: 4bf2283cb208 ("dt-bindings: usb: samsung,exynos-usb2: convert to
->dtschema")
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->
+Fixes: b4155d7d5b2c ("[media] exynos4-is: Ensure fimc-is clocks are not enabled until properly configured")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-
->---
->
->Fixed commit in current next. If this should go as fix, I can split it from
-the
->second commit.
->---
-> Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml | 1 +
-> 1 file changed, 1 insertion(+)
->
->diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-
->usb2.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-
->usb2.yaml
->index fbf07d6e707a..ef42c6fce73c 100644
->--- a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
->+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
->@@ -62,6 +62,7 @@ required:
->   - interrupts
->   - phys
->   - phy-names
->+  - reg
->
-> allOf:
->   - if:
->--
->2.32.0
-
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index e55e411038f4..8e88b0f6662d 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -140,7 +140,7 @@ static int fimc_is_enable_clocks(struct fimc_is *is)
+ 			dev_err(&is->pdev->dev, "clock %s enable failed\n",
+ 				fimc_is_clocks[i]);
+ 			for (--i; i >= 0; i--)
+-				clk_disable(is->clocks[i]);
++				clk_disable_unprepare(is->clocks[i]);
+ 			return ret;
+ 		}
+ 		pr_debug("enabled clock: %s\n", fimc_is_clocks[i]);
+-- 
+2.17.1
 
