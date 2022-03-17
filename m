@@ -2,92 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369C4C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Mar 2022 07:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8605FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Mar 2022 08:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbiCQHd4 (ORCPT
+        id S230029AbiCQIpk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Mar 2022 03:33:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38898 "EHLO
+        Thu, 17 Mar 2022 04:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230304AbiCQHdy (ORCPT
+        with ESMTP id S230476AbiCQIpj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Mar 2022 03:33:54 -0400
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FFE1C16F5;
-        Thu, 17 Mar 2022 00:32:38 -0700 (PDT)
-Received: by mail-wr1-f49.google.com with SMTP id d7so6075903wrb.7;
-        Thu, 17 Mar 2022 00:32:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:content-language:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=14b+YRMPF+XicziyqyS1A1J9PGyx9cOE69X038CMxDg=;
-        b=mAO/q6q86OKTMLAPYODQrkUsQgH73Wml7YOQ7rBbTyDlHP2CsSh+FGB32jqvhsJuM3
-         NT9C4wIzhYJa5TqRCdduv6rsZp7pVjl0id0Q420nW1ZXJzcyNrHDua1LeHTLElY8k00U
-         1PThTkU3uPgV2JPRH0V86FHOwEzEYdRfS06TMciDR9vjy3Yh3Rqo4052Az6+498ijuqA
-         Qz4eXUgmXgVEIg0A1Gq1H91yCPIXs6OOVkRTuIeDLvELjQ0irGJr940FAObugopyLy6d
-         bpjznyax6QXgdxX/8Xyewkr8gjXLLpMhFxzwJljq8hLtX2HyCQBT7xtb6NDRNDGFk73d
-         HJtg==
-X-Gm-Message-State: AOAM531O5sH2z141rZsh5+F6xfSEPOGd+rRef/c0cqkLr62iKliMhfCg
-        8FzMf3CkuDFQhkkFgxP8VlY=
-X-Google-Smtp-Source: ABdhPJwozSkjDXV+DHyksKvHyKhiL5fDQ63iPacCt1TMgZ6CfrYaft+8e49jYXsMOYkMY2oilEVhmA==
-X-Received: by 2002:a5d:498b:0:b0:203:e5d5:622c with SMTP id r11-20020a5d498b000000b00203e5d5622cmr2724473wrq.153.1647502356995;
-        Thu, 17 Mar 2022 00:32:36 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id k17-20020a05600c1c9100b00386bb6e9c50sm10984171wms.45.2022.03.17.00.32.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Mar 2022 00:32:36 -0700 (PDT)
-Message-ID: <cdba580f-097e-da4d-bfb4-63a7cb64ec95@kernel.org>
-Date:   Thu, 17 Mar 2022 08:32:34 +0100
+        Thu, 17 Mar 2022 04:45:39 -0400
+Received: from mail.olerise.pl (mail.olerise.pl [46.183.184.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8440A19FF47
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Mar 2022 01:44:23 -0700 (PDT)
+Received: by mail.olerise.pl (Postfix, from userid 1001)
+        id 4C623458A2; Thu, 17 Mar 2022 09:41:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=olerise.pl; s=mail;
+        t=1647506593; bh=ZNYiuZLXlxCdAPtstEG/gwJieB5RBwA/cHj1SZ3Mpl0=;
+        h=Date:From:To:Subject:From;
+        b=Yg0ioto6yBnpSmMAnlgCHU+8ihZOSEKvbL9ClVJOaVfXhgeXbur2Q8YXFfnFEtrnn
+         dYsnygJHKiPBpo8F3WR9O5/73P9OG2+LiFp6+LK6f2N9cPruCXu03/FOXxl6My1gvB
+         tOW44GbYXxJdDQdoP4VyZV/JkhZ2wPupzj56VKvCGuJlHrTTNxbaBs6ldlW2VGjg5p
+         AJ7X5EHX2bUGe49I0V0aNVAl7tFoqxzHVmd8h/mtLKS/rzM6cRpUVlTDYewmUIjmsf
+         iQvmYSFi4+ipJ9a45HjfS5GnWIkCyxpCyagGEsz5ojkB2z+O5jpAqnTe+by+BORO01
+         oYA5UqXUwY/Vw==
+Received: by mail.olerise.pl for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Mar 2022 08:40:21 GMT
+Message-ID: <20220317084500-0.1.2d.rviv.0.7l9hkklazl@olerise.pl>
+Date:   Thu, 17 Mar 2022 08:40:21 GMT
+From:   =?UTF-8?Q? "Miko=C5=82aj_Rudzik" ?= <mikolaj.rudzik@olerise.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
+X-Mailer: mail.olerise.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: JIVE: fix return value of __setup handler
-Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc:     patches@lists.linux.dev, Ben Dooks <ben-linux@fluff.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk
-References: <20220312063609.19362-1-rdunlap@infradead.org>
-In-Reply-To: <20220312063609.19362-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/03/2022 07:36, Randy Dunlap wrote:
-> __setup() handlers should return 1 to obsolete_checksetup() in
-> init/main.c to indicate that the boot option has been handled.
-> A return of 0 causes the boot option/value to be listed as an Unknown
-> kernel parameter and added to init's (limited) argument or environment
-> strings. Also, error return codes don't mean anything to
-> obsolete_checksetup() -- only non-zero (usually 1) or zero.
-> So return 1 from jive_mtdset().
-> 
-> Fixes: 9db829f485c5 ("[ARM] JIVE: Initial machine support for Logitech Jive")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: patches@armlinux.org.uk
-> ---
-> KernelVersion: v5.17-rc7
-> 
->  arch/arm/mach-s3c/mach-jive.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
+Dzie=C5=84 dobry,
 
-It's too late for upcoming cycle, so I will pick it up after merge window.
+chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
+skania nowych zlece=C5=84 ze strony www.
+
+Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
+, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
+=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
+jonowania strony w Google.
+
+Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
 
 
-Best regards,
-Krzysztof
+Pozdrawiam
+Miko=C5=82aj Rudzik
