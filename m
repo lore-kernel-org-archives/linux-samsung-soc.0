@@ -2,92 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10169C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Mar 2022 01:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369C4C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Mar 2022 07:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353038AbiCPBzD (ORCPT
+        id S230294AbiCQHd4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 21:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48850 "EHLO
+        Thu, 17 Mar 2022 03:33:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353034AbiCPBzD (ORCPT
+        with ESMTP id S230304AbiCQHdy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Mar 2022 21:55:03 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB2933EAE;
-        Tue, 15 Mar 2022 18:53:50 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id mv2-20020a17090b198200b001c65bae5744so85356pjb.5;
-        Tue, 15 Mar 2022 18:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=Xg15yRMMviMUzCglDMY0HU4537JOOxmewNboEJ+Yvmc=;
-        b=GN96DWJnWxNOD0u11hog6ZGPYYlLhk60WwKms/taP8LsrGfAGw3YhwVt3nV7ogpKoM
-         wP34cx/jyovqeszzWM/cE/AeDAya+iwKyWi3cQwfq2Dli3nJyuJXQDhHFh2ugfDBnstQ
-         oEkYWhO9R4wXixYXLWajaMfzG9WllB/0lkk5Wzf7speXHBkynv6H0zzqjR1OZwyrKtZS
-         gWWMyFj1y/LxutvVtIylzZFIFSAh8xrSdyZafU/prn6JSaD81k5Dho4ABiRx3oiI7Z90
-         x/xHaMBGGYp2Gf0SOouDNta2vDF2ZlP+imS3RZvMR13naGbkngsCoc72jJcMLQe2LYwR
-         Rr0w==
+        Thu, 17 Mar 2022 03:33:54 -0400
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FFE1C16F5;
+        Thu, 17 Mar 2022 00:32:38 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id d7so6075903wrb.7;
+        Thu, 17 Mar 2022 00:32:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Xg15yRMMviMUzCglDMY0HU4537JOOxmewNboEJ+Yvmc=;
-        b=IvvNhXVhu32iAQzb1Os5LAi4qqfiDQQC7nX0d2/foG5KaetvQXQ1h6YQ4ASHw/9amg
-         hJ4igbDtNhetokTr2KKqWLD3gqH6dYqRAL8Zkw4yPxFuSJ3DcA9+zD3fPHvkN/dbjFNd
-         ymmMByPWQ/DErJ8qgR1jucR7YGnEykf5T2mitkwoigaVrN/KKrqjVJZznrwFC5dbeqou
-         exNUSj2j3EEjl6/ew2648W+Q8RmmGQVvo9u612z4l1O+nb5tSF/L7Xj9JdPcPMWnD7Fl
-         VFgeSEJtEehYijRARVir0fnUoTO9CWMuWwb5ADcQehJNZ3WePmP2eFQoyDFvmMxe/y9p
-         mP0A==
-X-Gm-Message-State: AOAM530a4RT7G/rugBWZCt92nIZOg73lqvVr6gYjhJoGX/Oqhx2N4nul
-        1SsakFjh0pn7eaSgQVf4TNO0HCEkmbQ1Neuecjo=
-X-Google-Smtp-Source: ABdhPJyCqm/iPBayX1NkaXkG7E6Q84g5TtKGOSYe9QvfuFM8fB8UglAAnVh10BeyH4UIhj9wU+vcjQ==
-X-Received: by 2002:a17:90b:17ca:b0:1bf:6188:cc00 with SMTP id me10-20020a17090b17ca00b001bf6188cc00mr7920821pjb.2.1647395629762;
-        Tue, 15 Mar 2022 18:53:49 -0700 (PDT)
-Received: from localhost.localdomain ([159.226.95.43])
-        by smtp.googlemail.com with ESMTPSA id i15-20020a63b30f000000b003803aee35a2sm533256pgf.31.2022.03.15.18.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 18:53:49 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=14b+YRMPF+XicziyqyS1A1J9PGyx9cOE69X038CMxDg=;
+        b=mAO/q6q86OKTMLAPYODQrkUsQgH73Wml7YOQ7rBbTyDlHP2CsSh+FGB32jqvhsJuM3
+         NT9C4wIzhYJa5TqRCdduv6rsZp7pVjl0id0Q420nW1ZXJzcyNrHDua1LeHTLElY8k00U
+         1PThTkU3uPgV2JPRH0V86FHOwEzEYdRfS06TMciDR9vjy3Yh3Rqo4052Az6+498ijuqA
+         Qz4eXUgmXgVEIg0A1Gq1H91yCPIXs6OOVkRTuIeDLvELjQ0irGJr940FAObugopyLy6d
+         bpjznyax6QXgdxX/8Xyewkr8gjXLLpMhFxzwJljq8hLtX2HyCQBT7xtb6NDRNDGFk73d
+         HJtg==
+X-Gm-Message-State: AOAM531O5sH2z141rZsh5+F6xfSEPOGd+rRef/c0cqkLr62iKliMhfCg
+        8FzMf3CkuDFQhkkFgxP8VlY=
+X-Google-Smtp-Source: ABdhPJwozSkjDXV+DHyksKvHyKhiL5fDQ63iPacCt1TMgZ6CfrYaft+8e49jYXsMOYkMY2oilEVhmA==
+X-Received: by 2002:a5d:498b:0:b0:203:e5d5:622c with SMTP id r11-20020a5d498b000000b00203e5d5622cmr2724473wrq.153.1647502356995;
+        Thu, 17 Mar 2022 00:32:36 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id k17-20020a05600c1c9100b00386bb6e9c50sm10984171wms.45.2022.03.17.00.32.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Mar 2022 00:32:36 -0700 (PDT)
+Message-ID: <cdba580f-097e-da4d-bfb4-63a7cb64ec95@kernel.org>
+Date:   Thu, 17 Mar 2022 08:32:34 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] ARM: JIVE: fix return value of __setup handler
+Content-Language: en-US
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     patches@lists.linux.dev, Ben Dooks <ben-linux@fluff.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Kyunmin Park <kyungmin.park@samsung.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH] media: exynos4-is: Change clk_disable to clk_disable_unprepare
-Date:   Wed, 16 Mar 2022 01:53:44 +0000
-Message-Id: <20220316015344.5120-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk
+References: <20220312063609.19362-1-rdunlap@infradead.org>
+In-Reply-To: <20220312063609.19362-1-rdunlap@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The corresponding API for clk_prepare_enable is clk_disable_unprepare,
-other than clk_disable_unprepare.
+On 12/03/2022 07:36, Randy Dunlap wrote:
+> __setup() handlers should return 1 to obsolete_checksetup() in
+> init/main.c to indicate that the boot option has been handled.
+> A return of 0 causes the boot option/value to be listed as an Unknown
+> kernel parameter and added to init's (limited) argument or environment
+> strings. Also, error return codes don't mean anything to
+> obsolete_checksetup() -- only non-zero (usually 1) or zero.
+> So return 1 from jive_mtdset().
+> 
+> Fixes: 9db829f485c5 ("[ARM] JIVE: Initial machine support for Logitech Jive")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: patches@armlinux.org.uk
+> ---
+> KernelVersion: v5.17-rc7
+> 
+>  arch/arm/mach-s3c/mach-jive.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
 
-Fix this by changing clk_disable to clk_disable_unprepare.
+It's too late for upcoming cycle, so I will pick it up after merge window.
 
-Fixes: b4155d7d5b2c ("[media] exynos4-is: Ensure fimc-is clocks are not enabled until properly configured")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index e55e411038f4..8e88b0f6662d 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -140,7 +140,7 @@ static int fimc_is_enable_clocks(struct fimc_is *is)
- 			dev_err(&is->pdev->dev, "clock %s enable failed\n",
- 				fimc_is_clocks[i]);
- 			for (--i; i >= 0; i--)
--				clk_disable(is->clocks[i]);
-+				clk_disable_unprepare(is->clocks[i]);
- 			return ret;
- 		}
- 		pr_debug("enabled clock: %s\n", fimc_is_clocks[i]);
--- 
-2.17.1
-
+Best regards,
+Krzysztof
