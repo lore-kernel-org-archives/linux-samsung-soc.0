@@ -2,98 +2,214 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7DFC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Mar 2022 11:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11823C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Mar 2022 20:59:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235609AbiCRLCg (ORCPT
+        id S240981AbiCRVAc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Mar 2022 07:02:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
+        Fri, 18 Mar 2022 17:00:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235617AbiCRLCe (ORCPT
+        with ESMTP id S240971AbiCRVAb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Mar 2022 07:02:34 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F522D7ABC;
-        Fri, 18 Mar 2022 04:01:08 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id p5so3013363pfo.5;
-        Fri, 18 Mar 2022 04:01:08 -0700 (PDT)
+        Fri, 18 Mar 2022 17:00:31 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C781B3F78
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id q11so10657364iod.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+DfTezyTZEEgXa3A9GdADPNqeC5t3FMBzFeEqDv248I=;
-        b=flDJYeJw11Atosup9EVcV2btSWN1r1qbFUvRc2kOuCoL0/LO4gaVVakhSgRWpoD//U
-         +3BPSN29KgOWAa/CGHb3OmDPZPEMcHy5AQ+Ltv6X/d3VLimhfkhjdxJDGDHDz1/UCxr3
-         pUv6sRK2PMX9KUUWMUWoT0zMAoXiacU0Q9jHxPZ9QTtsyyCpEhoiqzucQEa7XnknVVwk
-         qxqwvCszpYntEcIlRrTN9sFzrs8pefU0DzYyESEvm6XflD0hJXDiLTveuCaIHOG9x5AA
-         zj7Gd+/sZA2bZZBIANqHSmq5m6ou7ktXnOhxGvNwEClXJ3cLFoWjmaSE4gfMPsUxB9Hp
-         rXbQ==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oNAPpR+5qx5bHO8wJ1SIgWig3LUKuwuqLo641jvFAak=;
+        b=R3B03hXdzmRL4FMHavxss76+tb9Q0Hy78NbdGoHIgmWRsuIfciGr2JWywHMf/Kpkhf
+         QniqntLtfhiE8E3Wo0oxTFcS1KWerJtG5tNgnrk3j2xUiX43wMMg+/mjp1wKd5A4aRIu
+         ErIGjgvdava6sQlmLmDCO8Qr2P9RfzXvczFjE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+DfTezyTZEEgXa3A9GdADPNqeC5t3FMBzFeEqDv248I=;
-        b=JtESDvzsO3zU8JwuOAnexfLKpFcPZujY/osiuemtYHkXu/ZDg3UqCdyZaAO2Ftbjw3
-         99o6rp1J4dbMJltIPeAEG1CD0zXUPMclQRRdH3EjDgCoPtdVetiapG+zsO/PCD4A1gYV
-         EeZ9TaOa5abjAySqVzJYWnEixF5+cFhVJEPxrSXmdqJf3CBKX2LSjUPjpCVWXaFXEE7S
-         PCiMdfXIZZvyxY9ZsX0DdBuokbuHIZs+HVuZtqY53KTBJHTlKphbYxg+tGdgh/qtOHY4
-         IArJEzOf0RSrO2zlhvAdRennYyGoPbNFM8Qaea0WNNF9cX6+4RwNUPQH4ddfrGsYJP6b
-         brZQ==
-X-Gm-Message-State: AOAM533bDu5wf582PIrJ24mSFeutCE5Bnuy+Qy1VQWaJW7lSnMaWFDW5
-        YM8D5Xtxf/kq7rvIbEmpMDY=
-X-Google-Smtp-Source: ABdhPJwdkiq3tFwjozVCjtQH0QfyWdY4uO8RrtKPh0PJaTcZeItVID4T4ekwLFEDdgtI6CNR277/2g==
-X-Received: by 2002:a05:6a00:198c:b0:4f7:7e0f:bfc2 with SMTP id d12-20020a056a00198c00b004f77e0fbfc2mr9225986pfl.44.1647601267807;
-        Fri, 18 Mar 2022 04:01:07 -0700 (PDT)
-Received: from localhost.localdomain ([159.226.95.43])
-        by smtp.googlemail.com with ESMTPSA id y3-20020a056a00190300b004fa2411bb92sm9276071pfi.93.2022.03.18.04.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Mar 2022 04:01:07 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oNAPpR+5qx5bHO8wJ1SIgWig3LUKuwuqLo641jvFAak=;
+        b=7Ooe87YkiXAbdNnwaybNGImXnjnphPRFE4tk+zu3uYk3GlrBKFjWvqDJ+qBxIzlhDE
+         PoEwTzR5gOHplYWuXu34WA/ol6ZcDdX4vaWZ8tmWrs5YOs5y2pSyl7dXJR79RxlxrwYr
+         2BvWOpoKLYc6k57i3/joAMvsXtxwZ2/xqXLGlrdBpWiM4ph/ZIlL5x51+1jbiqT6GQrX
+         JU9pP8oHs3ZQrsW/9KedAlHuflav2Z0nV5eRK4n7f30Ht3LVvsmSHogAPQnh/Pan11gF
+         OGacCa8tnppSavkBeoHHTjoGQGFhw0u67808ABecl21Pjg5k4RCacWqlhx7xkmgt8HXl
+         CbJQ==
+X-Gm-Message-State: AOAM532Y74LWcDcFwU8vTApVYEaMIGsllssaBGhEpZNLGC+V9Y+H37gN
+        MCIBFtYDOYcFT0DoHYFZ+LcHiw==
+X-Google-Smtp-Source: ABdhPJw+g6qtXnLujFKVRv55AGvVhZcbGPndogV4eznqetPdpLwXYueCN6beIFsP8OoV/l235xaSaw==
+X-Received: by 2002:a5d:9542:0:b0:648:f92b:7bc6 with SMTP id a2-20020a5d9542000000b00648f92b7bc6mr5223132ios.73.1647637149068;
+        Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
+Received: from [192.168.1.128] ([71.205.29.0])
+        by smtp.gmail.com with ESMTPSA id d14-20020a056602328e00b006494aa126c2sm3528385ioz.11.2022.03.18.13.59.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Mar 2022 13:59:08 -0700 (PDT)
+Subject: Re: [PATCH 64/64] media: Kconfig: cleanup VIDEO_DEV dependencies
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+        Jeff LaBundy <jeff@labundy.com>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Joe Hung <joe_hung@ilitek.com>, Joel Stanley <joel@jms.id.au>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kyunmin Park <kyungmin.park@samsung.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH v2] media: exynos4-is: Change clk_disable to clk_disable_unprepare
-Date:   Fri, 18 Mar 2022 11:01:01 +0000
-Message-Id: <20220318110102.29506-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220316015344.5120-1-linmq006@gmail.com>
-References: <20220316015344.5120-1-linmq006@gmail.com>
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Marek Vasut <marex@denx.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Martina Krasteva <martinax.krasteva@intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Mike Isely <isely@pobox.com>, Ming Qian <ming.qian@nxp.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Olivier Lorin <o.lorin@laposte.net>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Rick Chang <rick.chang@mediatek.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Sean Young <sean@mess.org>, Shawn Guo <shawnguo@kernel.org>,
+        Shawn Tu <shawnx.tu@intel.com>,
+        Shijie Qin <shijie.qin@nxp.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Todor Tomov <todor.too@gmail.com>,
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        Yong Deng <yong.deng@magewell.com>,
+        Yong Zhi <yong.zhi@intel.com>, Zhou Peng <eagle.zhou@nxp.com>,
+        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
+        openbmc@lists.ozlabs.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1647242578.git.mchehab@kernel.org>
+ <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <9e02d88a-3344-8d91-c652-72cb989506de@linuxfoundation.org>
+Date:   Fri, 18 Mar 2022 14:59:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The corresponding API for clk_prepare_enable is clk_disable_unprepare,
-other than clk_disable.
+On 3/14/22 1:55 AM, Mauro Carvalho Chehab wrote:
+> media Kconfig has two entries associated to V4L API:
+> VIDEO_DEV and VIDEO_V4L2.
+> 
+> On Kernel 2.6.x, there were two V4L APIs, each one with its own flag.
+> VIDEO_DEV were meant to:
+> 	1) enable Video4Linux and make its Kconfig options to appear;
+> 	2) it makes the Kernel build the V4L core.
+> 
+> while VIDEO_V4L2 where used to distinguish between drivers that
+> implement the newer API and drivers that implemented the former one.
+> 
+> With time, such meaning changed, specially after the removal of
+> all V4L version 1 drivers.
+> 
+> At the current implementation, VIDEO_DEV only does (1): it enables
+> the media options related to V4L, that now has:
+> 
+> 	menu "Video4Linux options"
+> 		visible if VIDEO_DEV
+> 
+> 	source "drivers/media/v4l2-core/Kconfig"
+> 	endmenu
+> 
+> but it doesn't affect anymore the V4L core drivers.
+> 
+> The rationale is that the V4L2 core has a "soft" dependency
+> at the I2C bus, and now requires to select a number of other
+> Kconfig options:
+> 
+> 	config VIDEO_V4L2
+> 		tristate
+> 		depends on (I2C || I2C=n) && VIDEO_DEV
+> 		select RATIONAL
+> 		select VIDEOBUF2_V4L2 if VIDEOBUF2_CORE
+> 		default (I2C || I2C=n) && VIDEO_DEV
+> 
+> In the past, merging them would be tricky, but it seems that it is now
+> possible to merge those symbols, in order to simplify V4L dependencies.
+> 
+> Let's keep VIDEO_DEV, as this one is used on some make *defconfig
+> configurations.
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+> ---
+> 
 
-Fix this by changing clk_disable to clk_disable_unprepare.
+>   drivers/media/test-drivers/vicodec/Kconfig    |   2 +-
+>   drivers/media/test-drivers/vimc/Kconfig       |   2 +-
+>   drivers/media/test-drivers/vivid/Kconfig      |   2 +-
+>
 
-Fixes: b4155d7d5b2c ("[media] exynos4-is: Ensure fimc-is clocks are not enabled until properly configured")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
-changes in v2:
-- fix typo in commit message.
----
- drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For vimc change: (trimmed the recipient list to send response)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index e55e411038f4..8e88b0f6662d 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -140,7 +140,7 @@ static int fimc_is_enable_clocks(struct fimc_is *is)
- 			dev_err(&is->pdev->dev, "clock %s enable failed\n",
- 				fimc_is_clocks[i]);
- 			for (--i; i >= 0; i--)
--				clk_disable(is->clocks[i]);
-+				clk_disable_unprepare(is->clocks[i]);
- 			return ret;
- 		}
- 		pr_debug("enabled clock: %s\n", fimc_is_clocks[i]);
--- 
-2.17.1
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
+
+
 
