@@ -2,85 +2,98 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FB0C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Mar 2022 10:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7DFC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Mar 2022 11:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235060AbiCRKjO (ORCPT
+        id S235609AbiCRLCg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Mar 2022 06:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37284 "EHLO
+        Fri, 18 Mar 2022 07:02:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235154AbiCRKjL (ORCPT
+        with ESMTP id S235617AbiCRLCe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Mar 2022 06:39:11 -0400
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5E189082;
-        Fri, 18 Mar 2022 03:37:48 -0700 (PDT)
+        Fri, 18 Mar 2022 07:02:34 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F522D7ABC;
+        Fri, 18 Mar 2022 04:01:08 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id p5so3013363pfo.5;
+        Fri, 18 Mar 2022 04:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=p2DsKRIfJAKnyrOWZC9Lcb+EyviQhiSJwwjBHtoeu/c=;
-  b=ZFXn0x0bj/eZ1cFTbnn8EFZHCMnQRK2z83HGpTM4KUIWFzUfi5OCQ4M5
-   PX6a7dGf18WOigs+up4SzMiA8mHL11Glgg+NhAZaGJ69uCOzuCjv3E9kQ
-   B8hNpWqOU9b+Jon1n/Ll/q4aogNvqwBOym1rjGMSjRLMU05i3nIdMyj3m
-   8=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.90,192,1643670000"; 
-   d="scan'208";a="8935671"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2022 11:37:40 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     kernel-janitors@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+DfTezyTZEEgXa3A9GdADPNqeC5t3FMBzFeEqDv248I=;
+        b=flDJYeJw11Atosup9EVcV2btSWN1r1qbFUvRc2kOuCoL0/LO4gaVVakhSgRWpoD//U
+         +3BPSN29KgOWAa/CGHb3OmDPZPEMcHy5AQ+Ltv6X/d3VLimhfkhjdxJDGDHDz1/UCxr3
+         pUv6sRK2PMX9KUUWMUWoT0zMAoXiacU0Q9jHxPZ9QTtsyyCpEhoiqzucQEa7XnknVVwk
+         qxqwvCszpYntEcIlRrTN9sFzrs8pefU0DzYyESEvm6XflD0hJXDiLTveuCaIHOG9x5AA
+         zj7Gd+/sZA2bZZBIANqHSmq5m6ou7ktXnOhxGvNwEClXJ3cLFoWjmaSE4gfMPsUxB9Hp
+         rXbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+DfTezyTZEEgXa3A9GdADPNqeC5t3FMBzFeEqDv248I=;
+        b=JtESDvzsO3zU8JwuOAnexfLKpFcPZujY/osiuemtYHkXu/ZDg3UqCdyZaAO2Ftbjw3
+         99o6rp1J4dbMJltIPeAEG1CD0zXUPMclQRRdH3EjDgCoPtdVetiapG+zsO/PCD4A1gYV
+         EeZ9TaOa5abjAySqVzJYWnEixF5+cFhVJEPxrSXmdqJf3CBKX2LSjUPjpCVWXaFXEE7S
+         PCiMdfXIZZvyxY9ZsX0DdBuokbuHIZs+HVuZtqY53KTBJHTlKphbYxg+tGdgh/qtOHY4
+         IArJEzOf0RSrO2zlhvAdRennYyGoPbNFM8Qaea0WNNF9cX6+4RwNUPQH4ddfrGsYJP6b
+         brZQ==
+X-Gm-Message-State: AOAM533bDu5wf582PIrJ24mSFeutCE5Bnuy+Qy1VQWaJW7lSnMaWFDW5
+        YM8D5Xtxf/kq7rvIbEmpMDY=
+X-Google-Smtp-Source: ABdhPJwdkiq3tFwjozVCjtQH0QfyWdY4uO8RrtKPh0PJaTcZeItVID4T4ekwLFEDdgtI6CNR277/2g==
+X-Received: by 2002:a05:6a00:198c:b0:4f7:7e0f:bfc2 with SMTP id d12-20020a056a00198c00b004f77e0fbfc2mr9225986pfl.44.1647601267807;
+        Fri, 18 Mar 2022 04:01:07 -0700 (PDT)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id y3-20020a056a00190300b004fa2411bb92sm9276071pfi.93.2022.03.18.04.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Mar 2022 04:01:07 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
+        Kyunmin Park <kyungmin.park@samsung.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: s3c: fix typos in comments
-Date:   Fri, 18 Mar 2022 11:37:26 +0100
-Message-Id: <20220318103729.157574-31-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     linmq006@gmail.com
+Subject: [PATCH v2] media: exynos4-is: Change clk_disable to clk_disable_unprepare
+Date:   Fri, 18 Mar 2022 11:01:01 +0000
+Message-Id: <20220318110102.29506-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220316015344.5120-1-linmq006@gmail.com>
+References: <20220316015344.5120-1-linmq006@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Various spelling mistakes in comments.
-Detected with the help of Coccinelle.
+The corresponding API for clk_prepare_enable is clk_disable_unprepare,
+other than clk_disable.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Fix this by changing clk_disable to clk_disable_unprepare.
 
+Fixes: b4155d7d5b2c ("[media] exynos4-is: Ensure fimc-is clocks are not enabled until properly configured")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- arch/arm/mach-s3c/iotiming-s3c2410.c |    2 +-
- arch/arm/mach-s3c/pm-s3c64xx.c       |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+changes in v2:
+- fix typo in commit message.
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-s3c/iotiming-s3c2410.c b/arch/arm/mach-s3c/iotiming-s3c2410.c
-index 28d9f473e24a..09f388d8f824 100644
---- a/arch/arm/mach-s3c/iotiming-s3c2410.c
-+++ b/arch/arm/mach-s3c/iotiming-s3c2410.c
-@@ -259,7 +259,7 @@ static const unsigned int tacc_tab[] = {
- /**
-  * get_tacc - turn tACC value into cycle time
-  * @hclk_tns: The cycle time for HCLK, in 10ths of nanoseconds.
-- * @val: The bank timing register value, shifed down.
-+ * @val: The bank timing register value, shifted down.
-  */
- static unsigned int get_tacc(unsigned long hclk_tns,
- 			     unsigned long val)
-diff --git a/arch/arm/mach-s3c/pm-s3c64xx.c b/arch/arm/mach-s3c/pm-s3c64xx.c
-index 4f1778123dee..2529f21736ff 100644
---- a/arch/arm/mach-s3c/pm-s3c64xx.c
-+++ b/arch/arm/mach-s3c/pm-s3c64xx.c
-@@ -323,7 +323,7 @@ void s3c_pm_arch_update_uart(void __iomem *regs, struct pm_uart_save *save)
- 
- 	/* S3C64XX UART blocks only support level interrupts, so ensure that
- 	 * when we restore unused UART blocks we force the level interrupt
--	 * settigs. */
-+	 * settings. */
- 	save->ucon |= S3C2410_UCON_TXILEVEL | S3C2410_UCON_RXILEVEL;
- 
- 	/* We have a constraint on changing the clock type of the UART
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index e55e411038f4..8e88b0f6662d 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -140,7 +140,7 @@ static int fimc_is_enable_clocks(struct fimc_is *is)
+ 			dev_err(&is->pdev->dev, "clock %s enable failed\n",
+ 				fimc_is_clocks[i]);
+ 			for (--i; i >= 0; i--)
+-				clk_disable(is->clocks[i]);
++				clk_disable_unprepare(is->clocks[i]);
+ 			return ret;
+ 		}
+ 		pr_debug("enabled clock: %s\n", fimc_is_clocks[i]);
+-- 
+2.17.1
 
