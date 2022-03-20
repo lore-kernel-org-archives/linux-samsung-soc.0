@@ -2,214 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11823C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Mar 2022 20:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9030AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 20 Mar 2022 07:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240981AbiCRVAc (ORCPT
+        id S244921AbiCTHL7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Mar 2022 17:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34040 "EHLO
+        Sun, 20 Mar 2022 03:11:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240971AbiCRVAb (ORCPT
+        with ESMTP id S244908AbiCTHL7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Mar 2022 17:00:31 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C781B3F78
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id q11so10657364iod.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oNAPpR+5qx5bHO8wJ1SIgWig3LUKuwuqLo641jvFAak=;
-        b=R3B03hXdzmRL4FMHavxss76+tb9Q0Hy78NbdGoHIgmWRsuIfciGr2JWywHMf/Kpkhf
-         QniqntLtfhiE8E3Wo0oxTFcS1KWerJtG5tNgnrk3j2xUiX43wMMg+/mjp1wKd5A4aRIu
-         ErIGjgvdava6sQlmLmDCO8Qr2P9RfzXvczFjE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oNAPpR+5qx5bHO8wJ1SIgWig3LUKuwuqLo641jvFAak=;
-        b=7Ooe87YkiXAbdNnwaybNGImXnjnphPRFE4tk+zu3uYk3GlrBKFjWvqDJ+qBxIzlhDE
-         PoEwTzR5gOHplYWuXu34WA/ol6ZcDdX4vaWZ8tmWrs5YOs5y2pSyl7dXJR79RxlxrwYr
-         2BvWOpoKLYc6k57i3/joAMvsXtxwZ2/xqXLGlrdBpWiM4ph/ZIlL5x51+1jbiqT6GQrX
-         JU9pP8oHs3ZQrsW/9KedAlHuflav2Z0nV5eRK4n7f30Ht3LVvsmSHogAPQnh/Pan11gF
-         OGacCa8tnppSavkBeoHHTjoGQGFhw0u67808ABecl21Pjg5k4RCacWqlhx7xkmgt8HXl
-         CbJQ==
-X-Gm-Message-State: AOAM532Y74LWcDcFwU8vTApVYEaMIGsllssaBGhEpZNLGC+V9Y+H37gN
-        MCIBFtYDOYcFT0DoHYFZ+LcHiw==
-X-Google-Smtp-Source: ABdhPJw+g6qtXnLujFKVRv55AGvVhZcbGPndogV4eznqetPdpLwXYueCN6beIFsP8OoV/l235xaSaw==
-X-Received: by 2002:a5d:9542:0:b0:648:f92b:7bc6 with SMTP id a2-20020a5d9542000000b00648f92b7bc6mr5223132ios.73.1647637149068;
-        Fri, 18 Mar 2022 13:59:09 -0700 (PDT)
-Received: from [192.168.1.128] ([71.205.29.0])
-        by smtp.gmail.com with ESMTPSA id d14-20020a056602328e00b006494aa126c2sm3528385ioz.11.2022.03.18.13.59.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Mar 2022 13:59:08 -0700 (PDT)
-Subject: Re: [PATCH 64/64] media: Kconfig: cleanup VIDEO_DEV dependencies
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Heungjun Kim <riverful.kim@samsung.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-        Jeff LaBundy <jeff@labundy.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Joe Hung <joe_hung@ilitek.com>, Joel Stanley <joel@jms.id.au>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marek Vasut <marex@denx.de>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Martina Krasteva <martinax.krasteva@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        Michael Tretter <m.tretter@pengutronix.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Mike Isely <isely@pobox.com>, Ming Qian <ming.qian@nxp.com>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Olivier Lorin <o.lorin@laposte.net>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Rick Chang <rick.chang@mediatek.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Sean Young <sean@mess.org>, Shawn Guo <shawnguo@kernel.org>,
-        Shawn Tu <shawnx.tu@intel.com>,
-        Shijie Qin <shijie.qin@nxp.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Todor Tomov <todor.too@gmail.com>,
-        Vincent Knecht <vincent.knecht@mailoo.org>,
-        Yong Deng <yong.deng@magewell.com>,
-        Yong Zhi <yong.zhi@intel.com>, Zhou Peng <eagle.zhou@nxp.com>,
-        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-usb@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
-        openbmc@lists.ozlabs.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1647242578.git.mchehab@kernel.org>
- <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <9e02d88a-3344-8d91-c652-72cb989506de@linuxfoundation.org>
-Date:   Fri, 18 Mar 2022 14:59:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Sun, 20 Mar 2022 03:11:59 -0400
+Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C1F4EA38
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Mar 2022 00:10:36 -0700 (PDT)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id VphwnDu6qAWDQVphwnHug1; Sun, 20 Mar 2022 08:10:34 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 20 Mar 2022 08:10:34 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Lukasz Luba <lukasz.luba@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] memory: samsung: exynos5422-dmc: Avoid some over memory allocation
+Date:   Sun, 20 Mar 2022 08:10:30 +0100
+Message-Id: <69d7e69346986e2fdb994d4382954c932f9f0993.1647760213.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <decd26e90adc5c16470e4f738810f22fe6478b27.1647242579.git.mchehab@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 3/14/22 1:55 AM, Mauro Carvalho Chehab wrote:
-> media Kconfig has two entries associated to V4L API:
-> VIDEO_DEV and VIDEO_V4L2.
-> 
-> On Kernel 2.6.x, there were two V4L APIs, each one with its own flag.
-> VIDEO_DEV were meant to:
-> 	1) enable Video4Linux and make its Kconfig options to appear;
-> 	2) it makes the Kernel build the V4L core.
-> 
-> while VIDEO_V4L2 where used to distinguish between drivers that
-> implement the newer API and drivers that implemented the former one.
-> 
-> With time, such meaning changed, specially after the removal of
-> all V4L version 1 drivers.
-> 
-> At the current implementation, VIDEO_DEV only does (1): it enables
-> the media options related to V4L, that now has:
-> 
-> 	menu "Video4Linux options"
-> 		visible if VIDEO_DEV
-> 
-> 	source "drivers/media/v4l2-core/Kconfig"
-> 	endmenu
-> 
-> but it doesn't affect anymore the V4L core drivers.
-> 
-> The rationale is that the V4L2 core has a "soft" dependency
-> at the I2C bus, and now requires to select a number of other
-> Kconfig options:
-> 
-> 	config VIDEO_V4L2
-> 		tristate
-> 		depends on (I2C || I2C=n) && VIDEO_DEV
-> 		select RATIONAL
-> 		select VIDEOBUF2_V4L2 if VIDEOBUF2_CORE
-> 		default (I2C || I2C=n) && VIDEO_DEV
-> 
-> In the past, merging them would be tricky, but it seems that it is now
-> possible to merge those symbols, in order to simplify V4L dependencies.
-> 
-> Let's keep VIDEO_DEV, as this one is used on some make *defconfig
-> configurations.
-> 
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-> ---
-> 
+'dmc->counter' is a 'struct devfreq_event_dev **', so there is some
+over memory allocation. 'counters_size' should be computed with
+'sizeof(struct devfreq_event_dev *)'.
 
->   drivers/media/test-drivers/vicodec/Kconfig    |   2 +-
->   drivers/media/test-drivers/vimc/Kconfig       |   2 +-
->   drivers/media/test-drivers/vivid/Kconfig      |   2 +-
->
+Use 'sizeof(*dmc->counter)' instead to fix it.
 
-For vimc change: (trimmed the recipient list to send response)
+While at it, use devm_kcalloc() instead of devm_kzalloc()+open coded
+multiplication.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Fixes: 6e7674c3c6df ("memory: Add DMC driver for Exynos5422")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+devm_kmalloc_array() could also be used to save a few cycles because the
+array is fully initialized a few lines below.
+---
+ drivers/memory/samsung/exynos5422-dmc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-thanks,
--- Shuah
-
-
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 9c8318923ed0..4733e7898ffe 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1322,7 +1322,6 @@ static int exynos5_dmc_init_clks(struct exynos5_dmc *dmc)
+  */
+ static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
+ {
+-	int counters_size;
+ 	int ret, i;
+ 
+ 	dmc->num_counters = devfreq_event_get_edev_count(dmc->dev,
+@@ -1332,8 +1331,8 @@ static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
+ 		return dmc->num_counters;
+ 	}
+ 
+-	counters_size = sizeof(struct devfreq_event_dev) * dmc->num_counters;
+-	dmc->counter = devm_kzalloc(dmc->dev, counters_size, GFP_KERNEL);
++	dmc->counter = devm_kcalloc(dmc->dev, dmc->num_counters,
++				    sizeof(*dmc->counter), GFP_KERNEL);
+ 	if (!dmc->counter)
+ 		return -ENOMEM;
+ 
+-- 
+2.32.0
 
