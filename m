@@ -2,100 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED984C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA03C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235096AbiCWPRa (ORCPT
+        id S237842AbiCWPXg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 11:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57040 "EHLO
+        Wed, 23 Mar 2022 11:23:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232749AbiCWPR3 (ORCPT
+        with ESMTP id S229765AbiCWPXf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:17:29 -0400
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE0419297;
-        Wed, 23 Mar 2022 08:15:59 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id z92so2194916ede.13;
-        Wed, 23 Mar 2022 08:15:59 -0700 (PDT)
+        Wed, 23 Mar 2022 11:23:35 -0400
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75229710CA;
+        Wed, 23 Mar 2022 08:22:05 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a8so3510910ejc.8;
+        Wed, 23 Mar 2022 08:22:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=+5MDsgaAS/vAQj+VVJW1W9egaGRomv8qKOjhUnZ2xXE=;
-        b=0t63jl0lpUKG54uTV1YPZm63FdVhkAYwVE6p3RYMhEfzIpFETH5JGb5kAbughHULsu
-         Wy4rDzfqef5LMXv41lzf7GbHXIAWI0rKjpcgj48GNtCGJrSEatLdPJ9+Ch9H48isC6yN
-         yw3IUeAIGYKaq1VJY/oWtU/mGlYFEv5GVLCHcXBN6MSw5enj4xyw4Wx4eeyxYYEK9ItK
-         N8nlfyaleFLWrFVk5zAX2ul70yYW87X/QY5ki59WBpxb4yznXQm4UF69EdqOSEEfSsPP
-         PCv55Lo+apsCPf836gU2yh/qEodSEdFSFX5CPxLlf+A4EQ1xVB0ZJsyKJuGy4XPvGbC/
-         7isA==
-X-Gm-Message-State: AOAM530+age+reyBCua1nTPhkfXu0OUBWB0hsGAJgQ8qPokPFPg0PjZY
-        06JwE2zZxvw09YcEXXilf/w=
-X-Google-Smtp-Source: ABdhPJyNts/hRdd+ry5GZYpRRawYywnSMndvLddMIsO40489tAqxrIs0PMAh5LE+ihwFMqj0SGhHVA==
-X-Received: by 2002:a05:6402:298c:b0:418:f55e:fdda with SMTP id eq12-20020a056402298c00b00418f55efddamr687608edb.230.1648048558284;
-        Wed, 23 Mar 2022 08:15:58 -0700 (PDT)
+        bh=4yRaJTJTJWC7egeZTEjtbpjIpIsJvGgOeze8pkExlkw=;
+        b=weMJwevWL74GqexQcFHixi72twtwkmCzqzbOLTcYntIsQmGamXcgLHtY7F6U/y3F7u
+         2xtxdT/wMuNiWdPtsmY/gpcoeIWxUKapaSm3Fh4SWuVZp63hsM73bu8t2GATr/nahIGY
+         TgF5sDbqvuPXONe9a3VpZuHcs5aW6Zynumj1AC8DlCCg9h7GxSu+ZEehl6AGZHR6HhOh
+         7s3Qv5wz3oAjCSYSc/yVLZZ5H4/6baKVklTO+6ShZ+8sCLUjvs49p+EQigNeqQ48Pcqn
+         vG7muT9I3rUyb+s92c+VJ8p0vWajwXbPz6rhsKfSQsz2jHxQR/0Y1iRenFweQQJasBJd
+         zEWg==
+X-Gm-Message-State: AOAM5327ZNh3yWuP9aKHec/VHsD7ESp0Km8Y37i0G0ZbM1jp4rMyijEQ
+        fBrVmSMoVVbXBiAChlVJOBE=
+X-Google-Smtp-Source: ABdhPJxb9C5g3fqWHmMP2bawf1nNODS7AALIQ8bbXnF1MmkvBiQVxKxI3ZydkGxtuBE/i2RVGqEZNw==
+X-Received: by 2002:a17:907:97c9:b0:6db:ab53:1fdf with SMTP id js9-20020a17090797c900b006dbab531fdfmr544178ejc.406.1648048923977;
+        Wed, 23 Mar 2022 08:22:03 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id l20-20020a1709062a9400b006ce71a88bf5sm50729eje.183.2022.03.23.08.15.57
+        by smtp.googlemail.com with ESMTPSA id u10-20020a50d94a000000b004131aa2525esm105423edj.49.2022.03.23.08.22.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 08:15:57 -0700 (PDT)
-Message-ID: <f44c9881-6f7b-f4f5-8225-e0c74c83fab1@kernel.org>
-Date:   Wed, 23 Mar 2022 16:15:56 +0100
+        Wed, 23 Mar 2022 08:22:03 -0700 (PDT)
+Message-ID: <3d3048d2-7233-5534-f9f6-285fabe2a10c@kernel.org>
+Date:   Wed, 23 Mar 2022 16:22:02 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH 2/7] ARM: dts: s5pv210: Adjust I2S entries to match spec
-Content-Language: en-US
 From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 4/7] ARM: dts: s5pv210: Remove spi-cs-high on panel in
+ Aries
+Content-Language: en-US
 To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
- <CY4PR04MB056784D54ADDBB4F57F82D4ACB189@CY4PR04MB0567.namprd04.prod.outlook.com>
- <4ebe2bb9-4f92-2dff-6737-d057e5950b24@kernel.org>
-In-Reply-To: <4ebe2bb9-4f92-2dff-6737-d057e5950b24@kernel.org>
+ <20220323150311.26699-1-xc-racer2@live.ca>
+ <CY4PR04MB0567F7814A3B72824E324702CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB0567F7814A3B72824E324702CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/03/2022 16:14, Krzysztof Kozlowski wrote:
-> On 23/03/2022 16:03, Jonathan Bakker wrote:
->> Based on the device tree spec, clocks should be ordered tx/rx.
->> Re-order from rx/tx to avoid warnings when running make dtbs_check
->>
->> Additionally, the number of #sound-dai-cells should be 1, not 0
->>
->> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->> ---
->>  arch/arm/boot/dts/s5pv210-aries.dtsi |  2 +-
->>  arch/arm/boot/dts/s5pv210.dtsi       | 18 +++++++++---------
->>  2 files changed, 10 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
->> index 70ff56daf4cb..503b5a50ef1a 100644
->> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
->> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
->> @@ -644,7 +644,7 @@
->>  };
->>  
->>  &i2s0 {
->> -	dmas = <&pdma0 9>, <&pdma0 10>, <&pdma0 11>;
->> +	dmas = <&pdma0 10>, <&pdma0 9>, <&pdma0 11>;
->>  	status = "okay";
+On 23/03/2022 16:03, Jonathan Bakker wrote:
+> Since commit 766c6b63aa04 ("spi: fix client driver breakages when using
+> GPIO descriptors"), the panel has been blank due to an inverted CS GPIO.
+> In order to correct this, drop the spi-cs-high from the panel SPI device.
 > 
-> Except that fix that's the same commit as here:
-> https://lore.kernel.org/all/20200907161141.31034-26-krzk@kernel.org/
-> so just extend it.
+> Fixes: 766c6b63aa04 ("spi: fix client driver breakages when using GPIO descriptors")
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> ---
+>  arch/arm/boot/dts/s5pv210-aries.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> sound-dai-cells should go to a separate commit. But are you sure they
-> are correct? The Fascinate 4G seems to be using them as cells=0.
 
-See my previous patch and discussion:
-https://lore.kernel.org/all/20200907161141.31034-10-krzk@kernel.org/
++CC stable please.
 
+Such fixes should be either a separate patchset or put them first in the
+series.
 
 Best regards,
 Krzysztof
