@@ -2,200 +2,200 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719C0C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805E9C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 17:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237994AbiCWPdW (ORCPT
+        id S240896AbiCWRGi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 11:33:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37634 "EHLO
+        Wed, 23 Mar 2022 13:06:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237516AbiCWPdW (ORCPT
+        with ESMTP id S230309AbiCWRGh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:33:22 -0400
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC6B70F70;
-        Wed, 23 Mar 2022 08:31:51 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id r13so3593616ejd.5;
-        Wed, 23 Mar 2022 08:31:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:content-language:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=HlmRUE9bFHFNjrv1b4k2u8pDKleK8lJOe2XyU8TJzEU=;
-        b=vARMwS0XPGLB2sMqVdPfnR8f4XKlV55dwDrqG9idOmv+2vYTLr3de0kiQUYx2Re989
-         Msr8Q0AtwTlSBD+Iq+D6ZcIj6cZJwC3jfBBEfjCNy2STd9+E9AJbQdqeBb6Ev57i1pU+
-         ajxsPv9QwISpZQg0ncBQ9sp46Xwy7lorYjEvJ2kw9yHT4ixPAUcj52AjJgrE4WI+Fkeb
-         5Z65Y1Bznfxju23WHEf4/FmodWTiNMy+3WEYjmumVMqBmJtEe5Gk9LnpFCzn4sKjD0O0
-         zTqQiF/5nWudxGFmuEMP5HNwCSqLh4/VxhwIGwLG1ujJC2p5SkaNA9p3RsdUa0DTfl96
-         05MA==
-X-Gm-Message-State: AOAM5312uJoqRsx9XWA8p7CX9IVBCIcMnq2M0xwcp0q6BWwJmvILQV9b
-        6Ka7JiGqYKJn9yDruIxp8xE=
-X-Google-Smtp-Source: ABdhPJw48yfeqAIJM+CSgIJQlCaWPpOMlnPlp79H55niR+TGvFjpmIyU8BUbhK1Bro6gG2xepkwLdQ==
-X-Received: by 2002:a17:907:7d9e:b0:6df:9fe8:856a with SMTP id oz30-20020a1709077d9e00b006df9fe8856amr552897ejc.373.1648049510204;
-        Wed, 23 Mar 2022 08:31:50 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id c14-20020a170906340e00b006ce98f2581asm63669ejb.205.2022.03.23.08.31.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 08:31:49 -0700 (PDT)
-Message-ID: <2eee2611-d618-3fe2-4315-c57a26de6b21@kernel.org>
-Date:   Wed, 23 Mar 2022 16:31:48 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-From:   krzk@kernel.org
-Subject: Re: [PATCH 7/7] ARM: dts: s5pv210: Add charger support in Aries
-Content-Language: en-US
-To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
+        Wed, 23 Mar 2022 13:06:37 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2049.outbound.protection.outlook.com [40.92.23.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0BE5131D;
+        Wed, 23 Mar 2022 10:05:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ebSPD1JVii/YKMt062iQNXOdGsIxMevRYaY7PS66AWlYOALSrw225y35s+xh9XPoW+f73qyCl1pKnPAPJfAuG6X8sYzKehhpPdk/ZQHkjA1r2GMNEMte8WK2iJA1qccHwC3pu/w8OtcSy9iclTJjvWnZYo9XJVfWpB440c2mHRa16CysMUAUlNvIwZpZBbMWhoJgA5L1AnYv0sKQKsL939zAx345GTMcc3j6rxfphrBPJZeiopt0CKAf2pHWCXPnwfMVUawSMZEN20gnXprUvAJAawmFU7uwdTnmnJ32sFYMwvZKPNi6p8AjjtI9WyDlSHmxc112kH4Xsht2lMscjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9twsVmMcRqmtCp/yvgVVQiDvWE6gmHPy2ZRCT3H5Py4=;
+ b=J84i+LsldBi7mGTv2Q+afSlRdgP+9Yk0OUgUwr5/nIBPNpD1HVgAd+D8eFdSY8FQGEtqgkLLNqKqi+UJRDvTovcY/MaSftorUcKwqMMtCBUKRT5UJOOAuIQ84d8YWCLoc8JCIWb/7eXX2GJC+rxINjKqA+2serSJlV/0P4zUb8MIo65DkVJD9kbCLHGWXku7IOTeov1Iqgd0Wl50Pec7Rm/ImzmEQEAXzfod4BVTRq3czb+3xzP8Ni4tFZRpQnpRUnuShjqsXVNIPy/RwJXRbdTEIlJWlvdM+fOtqhoxSf+eK+dgjEsn888KUWChiE9eiKHd2aeTKUymfmInWHRFrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from CY4PR04MB0567.namprd04.prod.outlook.com (2603:10b6:903:b1::20)
+ by SN6PR04MB4669.namprd04.prod.outlook.com (2603:10b6:805:aa::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.17; Wed, 23 Mar
+ 2022 17:05:03 +0000
+Received: from CY4PR04MB0567.namprd04.prod.outlook.com
+ ([fe80::451b:e5ed:c1a3:4070]) by CY4PR04MB0567.namprd04.prod.outlook.com
+ ([fe80::451b:e5ed:c1a3:4070%5]) with mapi id 15.20.5102.016; Wed, 23 Mar 2022
+ 17:05:03 +0000
+Subject: Re: [PATCH 1/7] ARM: dts: s5pv210: Split memory nodes to match spec
+To:     Krzysztof Kozlowski <krzk@kernel.org>, alim.akhtar@samsung.com
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
- <20220323150311.26699-1-xc-racer2@live.ca>
- <CY4PR04MB05671BD0A7FF349E8B04EE84CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
-In-Reply-To: <CY4PR04MB05671BD0A7FF349E8B04EE84CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20220322201144.20320-1-xc-racer2@live.ca>
+ <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <51007577-52a2-60a5-0720-7b2c7f78ae3e@kernel.org>
+ <CY4PR04MB0567A424CBEFF7F3338EF320CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <f716c6fd-66c6-4dd9-cedb-6024f415ddc7@kernel.org>
+From:   Jonathan Bakker <xc-racer2@live.ca>
+Message-ID: <CY4PR04MB05671F31023376B0B7050C68CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+Date:   Wed, 23 Mar 2022 10:05:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+In-Reply-To: <f716c6fd-66c6-4dd9-cedb-6024f415ddc7@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TMN:  [BKUENg7DK4p6X8xcWAvpaFyxUSAp2D/ZC+xt6MAYmmUXYCfE5gE5AzOQORT6qyR9]
+X-ClientProxiedBy: MW2PR2101CA0019.namprd21.prod.outlook.com
+ (2603:10b6:302:1::32) To CY4PR04MB0567.namprd04.prod.outlook.com
+ (2603:10b6:903:b1::20)
+X-Microsoft-Original-Message-ID: <61867a13-e216-709b-e3d5-0137756ac874@live.ca>
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 10812755-a393-4131-f918-08da0cef45be
+X-MS-TrafficTypeDiagnostic: SN6PR04MB4669:EE_
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5QOVveUWYKOWdiEHe1LTpuWeAWqm5H27iRaQTlgaNVLQj3/3hp8dlhNTIM6A0VsSd9bs9ffiCiKXL14LKuouRt5ECQq+WRGCNTXESdLEXRqhZUtT8Aaa6bXYlqt713LYh29GJEoY/IcWwzbBm1xwgnwMMYyA07oMdXG1qHO63pFEln9qfzV8n1ywPlXxKhEwpzV1OWeM4B3lF/LYkIwxKhKG/997bqagEaEpFxzry3lbncQTcrSN7a2KJPPfgNA9d+k8TWeFKfediqYmd5IFfY6pFot9LLYIHOAQ5eW7csO/UqpxsdaPF195PHNF1r92GSWhTqrIlZH5TRwaNaogIjh5Y8388p/pQwyO+rNPrMP4vgU74OgbJrOwrh/xX0a7ktsWiKNNN2ApUtuYw5P76Kt6yBNGEIILyvkh8mxMg7nmCouvAlvTam0d+eae5oDK8PbsMdV40QqLPr1Bq3jFQF5B62vPHiJsUCm4lPyVJ7aiL0ympyNuYl1+J9qEkCVRT0Fl6/6NTb99izDlBu5aSKcXYqAcA7rdN4CvyUlyIq5RTMdBqVhruQe0XY6uDXOANQVUw6tLT+F4USnbTxJDbg==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dHdsRFprMTU3YkhDQWM2R3M0eHEvTktxYnNRYS9UdkxQamlRSlAxQTJ2YUZR?=
+ =?utf-8?B?bXNxM1o3STZ5eEdERHArK1UzeUNBTDJHek5iUWlNZ3M3OTZ2SmowZUs3MmVn?=
+ =?utf-8?B?MDk4ZzVrcXZVaTJsTDkxNElwTEJnRTBSMlpoYTliWm1qMFlyY01RMGJLWjlU?=
+ =?utf-8?B?MTJEWU5aWnpodE1iNldnNmovQXBiazk4UFlUSzRHbkw1UU5udzJLdGNWOEVR?=
+ =?utf-8?B?WnQxSmQ2SEV4MkhzcW5wcDRma3UydmZQc0VIVWt4YUZodEZFR1pXQTBla1ZZ?=
+ =?utf-8?B?QjBzc0tjcGxDMm9JT0FKUnY3MHpiZGxGajNIQkdDd1hSWWlxRXN4VGxoZlF2?=
+ =?utf-8?B?MThyQ1kwbGZxeVY0NGRoS0RpQUN1T2FldkJlOVFvZy9WNzR2MWIrV3ZzemM4?=
+ =?utf-8?B?NEx6ZWRmaFdLQzNKSXJOZ2hMdVJtanhkQjdRdG12WjRtSlZqdkpnbmJzWGs3?=
+ =?utf-8?B?ZUc1TUJPdm1uUUhOa3FWZklDVEVYeGVtRDRNU1VCckMwbnNKY1VEMUsyeTNG?=
+ =?utf-8?B?aEg4TXpuY2VZYlBFWVF1ZjdiRHdjWnV3U01hQ1FRTHBNWFlkUldURTBBTVdk?=
+ =?utf-8?B?RzVMRC9lY2hULzlzQUphM2M4aHgzNkdhaHRhdHBEYjVqVkVncmxwZ21CRzh0?=
+ =?utf-8?B?UXRpVmNKcDgyRHBvSFlUQlI5ZU1JMEMzSnNYWnk1ZW1ISjJNZ1FiME5lN3A0?=
+ =?utf-8?B?bVNncTJkdEhhNHVKcmZvUmVLVTUwU1VQYU9BZER2NGRmUXJOUll3akovZDFW?=
+ =?utf-8?B?V2R0cDhYNTdCdUxNQmhUNnF1ZS9RbithNXdVZGo3bUw5VUkxaXFScVNCd0ZL?=
+ =?utf-8?B?ZzR2aVdQVktGZzJqS0JvaUFiQjhmS3lWN2IvK0pRcXZmRm13d0wyQ1c2bE5p?=
+ =?utf-8?B?ZE1NRUc3dExHYlF0YnFTbWZxN1NNZHIwSEh2dnNHK0dPd0FZOFZsT3lLdCt1?=
+ =?utf-8?B?OVJqMWpaeUh0NGFEYms1Wjg2TUtlUWtKbnVpQzJPTitmTzJMYStjamtzdkZl?=
+ =?utf-8?B?V25FRTIwa3ZObU0rcEhlTk1YVzcyQlovUHlQQkhpMTkvUHhTL1poWjJwNGlG?=
+ =?utf-8?B?Q2F0SlF5VGQrQy9ITTN1SE9rVEFGaFFkRjlIY05LOTZQekhlWlY2MkJvcVRC?=
+ =?utf-8?B?eHRvaEVER1VTbENCUW5FQnZSaVNsMnEybTBWUFVBekhzTFBtMW9rSmFHQWdy?=
+ =?utf-8?B?RlVpWFBUT2lzOXZRcHpFbjNtc2N5Y3dYSy94aFo3anJ5Z0lrSk8zWWhMRzlq?=
+ =?utf-8?B?U2VOYmdiVENKVi9udEdNRytsb3NERncrUkJscnB4M2pBNDZrQzBYYUIxVXdm?=
+ =?utf-8?B?eFNWMDZVaTloU2xDd3FyOFZneW1FT1Z3VExwWTRONnFzM25wUjBSRmg0azk3?=
+ =?utf-8?B?b0J1WTA5WEdsOUM5dnBFN01CbVh4Njh1VkxCU3djZ00wZnJCRmxVN2xET3J6?=
+ =?utf-8?B?citlYzI3NmwyTXNYOVVodElyakhDbVZPRXRBTDA5dkU0YmdqS0Z0UjFOeTZS?=
+ =?utf-8?B?VzNpWGlXR2REYWoxWGlxcjNhYVF4QVE4aC93Y0pCQXhPSXFqK2h2SjlESWJz?=
+ =?utf-8?B?bWVyeTkxdXAzNWtnMmVLd2Q0aFJ4ZEJnUGJCTDhsMnpveTl6ZWxuZ3dIRnhX?=
+ =?utf-8?B?S0RLMXBqRTVZaE02cDNPdzdvWXBkdnc9PQ==?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-edb50.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10812755-a393-4131-f918-08da0cef45be
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR04MB0567.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2022 17:05:03.6800
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4669
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/03/2022 16:03, Jonathan Bakker wrote:
-> Add charger-manager support to Aries boards to allow safe
-> charging of the battery without the need for userspace control.
+
+
+On 2022-03-23 8:06 a.m., Krzysztof Kozlowski wrote:
+> On 23/03/2022 15:59, Jonathan Bakker wrote:
+>> Hi Krzysztof,
+>>
+>> On 2022-03-23 3:54 a.m., Krzysztof Kozlowski wrote:
+>>> On 22/03/2022 21:11, Jonathan Bakker wrote:
+>>>> Memory nodes should only have a singular reg property in them, so
+>>>> split the memory nodes such that there is only per node.
+>>>>
+>>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+>>>> ---
+>>>>  arch/arm/boot/dts/s5pv210-aquila.dts |  8 ++++++--
+>>>>  arch/arm/boot/dts/s5pv210-aries.dtsi | 14 +++++++++++---
+>>>>  arch/arm/boot/dts/s5pv210-goni.dts   | 14 +++++++++++---
+>>>>  3 files changed, 28 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
+>>>> index 6423348034b6..6984479ddba3 100644
+>>>> --- a/arch/arm/boot/dts/s5pv210-aquila.dts
+>>>> +++ b/arch/arm/boot/dts/s5pv210-aquila.dts
+>>>> @@ -29,8 +29,12 @@
+>>>>  
+>>>>  	memory@30000000 {
+>>>>  		device_type = "memory";
+>>>> -		reg = <0x30000000 0x05000000
+>>>> -			0x40000000 0x18000000>;
+>>>> +		reg = <0x30000000 0x05000000>;
+>>>> +	};
+>>>> +
+>>>> +	memory@40000000 {
+>>>> +		device_type = "memory";
+>>>> +		reg = <0x40000000 0x18000000>;
+>>>>  	};
+>>>>  
+>>>>  	pmic_ap_clk: clock-0 {
+>>>> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+>>>> index 160f8cd9a68d..70ff56daf4cb 100644
+>>>> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
+>>>> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+>>>> @@ -24,9 +24,17 @@
+>>>>  
+>>>>  	memory@30000000 {
+>>>>  		device_type = "memory";
+>>>> -		reg = <0x30000000 0x05000000
+>>>> -			0x40000000 0x10000000
+>>>> -			0x50000000 0x08000000>;
+>>>
+>>> 0x40000000 to 0x58000000 is continues, so I wonder why it is split? Look
+>>> at Aquila DTS.
+>>>
+>>>
+>>
+>> Yes, it was split in the vendor kernel as well [1], and that's been continued along
+>> here.  I personally don't see a reason to keep it split, but there might be something
+>> I'm not aware of.
+>>
 > 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> ---
->  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 162 ++++++++++++++++++++++
->  arch/arm/boot/dts/s5pv210-galaxys.dts     | 144 +++++++++++++++++++
->  2 files changed, 306 insertions(+)
+> I guess they wanted maybe to express the physical banks. Fine with me.
+> Just your explanation is not entirely correct:
+>> Memory nodes should only have a singular reg property in them,
+> one reg but it can have multiple items. Why do think multiple reg items
+> is not allowed?
 > 
-> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> index 7427c84f1126..9530231b7a70 100644
-> --- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> @@ -57,6 +57,168 @@
->  		pinctrl-0 = <&main_micbias_ena>;
->  	};
->  
-> +	thermal-zones {
-> +		batt_thermal: batt-thermal {
-> +			polling-delay-passive = <60000>; /* 60 seconds */
 
-There is no passive cooling device, so why do you need it?
+I was basing it off of this warning when running make dtbs_check
 
-> +			polling-delay = <600000>; /* 600 seconds */
-> +
-> +			thermal-sensors = <&batt_thermistor>;
-> +		};
-> +	};
-> +
-> +	batt_thermistor: thermal-sensor-0 {
-> +		compatible = "generic-adc-thermal";
-> +		#thermal-sensor-cells = <0>;
-> +		io-channels = <&adc 6>;
-> +		io-channel-names = "sensor-channel";
-> +
-> +		temperature-lookup-table = <
-> +			(-20000) 1859
-> +			(-19000) 1846
-> +			(-18000) 1832
-> +			(-17000) 1818
-> +			(-16000) 1804
-> +			(-15000) 1790
-> +			(-14000) 1773
-> +			(-13000) 1756
-> +			(-12000) 1739
-> +			(-11000) 1722
-> +			(-10000) 1705
-> +			(-9000) 1691
-> +			(-8000) 1677
-> +			(-7000) 1663
-> +			(-6000) 1649
-> +			(-5000) 1635
-> +			(-4000) 1550
-> +			(-3000) 1510
-> +			(-2000) 1500
-> +			(-1000) 1490
-> +			0 1480
-> +			1000 1470
-> +			2000 1460
-> +			3000 1450
-> +			4000 1430
-> +			5000 1420
-> +			6000 1406
-> +			7000 1386
-> +			8000 1366
-> +			9000 1346
-> +			10000 1326
-> +			11000 1302
-> +			12000 1278
-> +			13000 1254
-> +			14000 1230
-> +			15000 1206
-> +			16000 1182
-> +			17000 1158
-> +			18000 1134
-> +			19000 1110
-> +			20000 1086
-> +			21000 1059
-> +			22000 1035
-> +			23000 1011
-> +			24000 987
-> +			25000 963
-> +			26000 937
-> +			27000 913
-> +			28000 889
-> +			29000 865
-> +			30000 841
-> +			31000 816
-> +			32000 794
-> +			33000 772
-> +			34000 750
-> +			35000 728
-> +			36000 708
-> +			37000 690
-> +			38000 672
-> +			39000 654
-> +			40000 636
-> +			41000 616
-> +			42000 599
-> +			43000 580
-> +			44000 565
-> +			45000 548
-> +			46000 529
-> +			47000 512
-> +			48000 495
-> +			49000 478
-> +			50000 461
-> +			51000 440
-> +			52000 431
-> +			53000 416
-> +			54000 405
-> +			55000 396
-> +			56000 375
-> +			57000 360
-> +			58000 347
-> +			59000 334
-> +			60000 325
-> +			61000 311
-> +			62000 303
-> +			63000 296
-> +			64000 290
-> +			65000 279
-> +			66000 265
-> +			67000 254
-> +			68000 240
-> +			69000 220
-> +			70000 206>;
-> +	};
-> +
-> +	charger_manager: charger-manager-0 {
-> +		compatible = "charger-manager";
+rch/arm/boot/dts/s5pv210-aquila.dt.yaml: /: memory@30000000:reg:0: [805306368, 83886080, 1073741824, 402653184] is too long
+	From schema: /home/jon/.local/lib/python3.7/site-packages/dtschema/schemas/reg.yaml
 
-Sorry, this is not a hardware. It's a hack to configure kernel charging
-driver via DT which was made deprecated.
+and this solved the warning, booted, and I still had the correct
+amount of memory.
 
-Best regards,
-Krzysztof
+Would
+
+	memory@30000000 {
+		device_type = "memory";
+		reg = <0x30000000 0x05000000>,
+			<0x40000000 0x18000000>;
+	};
+
+be equally correct?  (untested).
+
+Thanks,
+Jonathan
+
+> 
+> Best regards,
+> Krzysztof
+> 
