@@ -2,127 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9550C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B4C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:14:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237668AbiCWPHk (ORCPT
+        id S234945AbiCWPQK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 11:07:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
+        Wed, 23 Mar 2022 11:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237698AbiCWPHi (ORCPT
+        with ESMTP id S234324AbiCWPQJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:07:38 -0400
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13CF13F6C;
-        Wed, 23 Mar 2022 08:06:07 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id bi12so3455727ejb.3;
-        Wed, 23 Mar 2022 08:06:07 -0700 (PDT)
+        Wed, 23 Mar 2022 11:16:09 -0400
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C6D19297;
+        Wed, 23 Mar 2022 08:14:40 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id x34so2213122ede.8;
+        Wed, 23 Mar 2022 08:14:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:from
          :subject:content-language:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=cNxSQx97vgtvb107U/L1ql0G+sBh/iewmtdw4bJS2bw=;
-        b=iaIMmy59Tutmd3P8Ji7Zmyw/LVBL71gQAkdI+U8FNN6tJbPLWS6q2cBlmSFrWcWSj8
-         15kK8HEgWMNmzUaqqDkIdacm8Fqr5R8EToYP6l+3NP9+R7X6IM7mFVkN8/SejSDONvfm
-         ZUIoymQHMjJ54m1Jlj0TF8ab43x/yDFrcJq/XZB3+PQDt65EjtXCXKwtSJUUr5s9E3wr
-         tJEHrdpg+H3vfI7enIYbDdjFacCXKGkwkTpAKkvxaJQYOb/se450qIWCmvgWemyaYYr3
-         od0vyrVl0FW5F0lRUdxVDJ6cVh+MEpyz1WR2lhFLAwCCGCOJpRQUYRFnJiEJrVUzsaVC
-         cQIg==
-X-Gm-Message-State: AOAM533YusMqlabcOdKqvhCsDsIGsQBF/zfDmr8JufLo+bK3ve98bHB7
-        Nq+vRcOrNJg4r4yHmr6JmpA8YQiIJticpw==
-X-Google-Smtp-Source: ABdhPJxB195zpfiu3gCQWy7ZE1/RrY52u6+CtkeCsd4ZpF2kkg4TPNd/m84pPRlB+Kt55l2EHvzFCg==
-X-Received: by 2002:a17:906:7751:b0:6ce:e3c:81a6 with SMTP id o17-20020a170906775100b006ce0e3c81a6mr435071ejn.278.1648047966103;
-        Wed, 23 Mar 2022 08:06:06 -0700 (PDT)
+        bh=ZSMkVY3ypFF5CUFzotg9EkiWatCvXqueR6ZkIkw+X6c=;
+        b=Xnkg564l0dyix48+DbGa3gUE/Npv3nKCb5nmzx05JDW8Dv/V/KOknAEyqwwp3F5UrW
+         efmO1QzK/MbadBhmUSFkK4dSWOBgqHQqUJNtuoxiElvkni7MfcjLwR0fDmvPULALOwWD
+         oAmiT0i6Jc0uElIJIX2ut8EO86zCFx8qPmwN103ES2iRKJ7ajS2026M3g4WO9/xPh4hk
+         6c79jdZcZdZg27lhEJl9gXuxiKid1To1fI/VCKMomGOURv7p3IsbDTddZ/KaxQmJa9z7
+         8+sguFQaxXkAzCbtcrwtiaydpvdaZDelgmP54x+yNmREyjIkfOCkpoK2zcg5fd6vx+pH
+         vWVQ==
+X-Gm-Message-State: AOAM531PEo1KC3QI/z3XAA500K8vqtPGsxx3z8U/Aq3MoAJVZnsTSin8
+        RClG6mTLRCKAutotD2Ayt30Y2tcb9taThQ==
+X-Google-Smtp-Source: ABdhPJwSCzjn/zmol5l+DlwUkqngqhKuSGBlzfoEpsLaFQqrxSqpHvxHkAHYs21prB7jw2tZ3/SxRg==
+X-Received: by 2002:a05:6402:40c9:b0:419:4b81:162e with SMTP id z9-20020a05640240c900b004194b81162emr674996edb.380.1648048478725;
+        Wed, 23 Mar 2022 08:14:38 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id v4-20020a170906338400b006d5aca9fc80sm50074eja.106.2022.03.23.08.06.05
+        by smtp.googlemail.com with ESMTPSA id p23-20020a170906605700b006ccebe7f75dsm51859ejj.123.2022.03.23.08.14.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 08:06:05 -0700 (PDT)
-Message-ID: <f716c6fd-66c6-4dd9-cedb-6024f415ddc7@kernel.org>
-Date:   Wed, 23 Mar 2022 16:06:04 +0100
+        Wed, 23 Mar 2022 08:14:37 -0700 (PDT)
+Message-ID: <4ebe2bb9-4f92-2dff-6737-d057e5950b24@kernel.org>
+Date:   Wed, 23 Mar 2022 16:14:36 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/7] ARM: dts: s5pv210: Split memory nodes to match spec
+Subject: Re: [PATCH 2/7] ARM: dts: s5pv210: Adjust I2S entries to match spec
 Content-Language: en-US
 To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220322201144.20320-1-xc-racer2@live.ca>
- <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
- <51007577-52a2-60a5-0720-7b2c7f78ae3e@kernel.org>
- <CY4PR04MB0567A424CBEFF7F3338EF320CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
-In-Reply-To: <CY4PR04MB0567A424CBEFF7F3338EF320CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+References: <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <CY4PR04MB056784D54ADDBB4F57F82D4ACB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB056784D54ADDBB4F57F82D4ACB189@CY4PR04MB0567.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/03/2022 15:59, Jonathan Bakker wrote:
-> Hi Krzysztof,
+On 23/03/2022 16:03, Jonathan Bakker wrote:
+> Based on the device tree spec, clocks should be ordered tx/rx.
+> Re-order from rx/tx to avoid warnings when running make dtbs_check
 > 
-> On 2022-03-23 3:54 a.m., Krzysztof Kozlowski wrote:
->> On 22/03/2022 21:11, Jonathan Bakker wrote:
->>> Memory nodes should only have a singular reg property in them, so
->>> split the memory nodes such that there is only per node.
->>>
->>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->>> ---
->>>  arch/arm/boot/dts/s5pv210-aquila.dts |  8 ++++++--
->>>  arch/arm/boot/dts/s5pv210-aries.dtsi | 14 +++++++++++---
->>>  arch/arm/boot/dts/s5pv210-goni.dts   | 14 +++++++++++---
->>>  3 files changed, 28 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
->>> index 6423348034b6..6984479ddba3 100644
->>> --- a/arch/arm/boot/dts/s5pv210-aquila.dts
->>> +++ b/arch/arm/boot/dts/s5pv210-aquila.dts
->>> @@ -29,8 +29,12 @@
->>>  
->>>  	memory@30000000 {
->>>  		device_type = "memory";
->>> -		reg = <0x30000000 0x05000000
->>> -			0x40000000 0x18000000>;
->>> +		reg = <0x30000000 0x05000000>;
->>> +	};
->>> +
->>> +	memory@40000000 {
->>> +		device_type = "memory";
->>> +		reg = <0x40000000 0x18000000>;
->>>  	};
->>>  
->>>  	pmic_ap_clk: clock-0 {
->>> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
->>> index 160f8cd9a68d..70ff56daf4cb 100644
->>> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
->>> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
->>> @@ -24,9 +24,17 @@
->>>  
->>>  	memory@30000000 {
->>>  		device_type = "memory";
->>> -		reg = <0x30000000 0x05000000
->>> -			0x40000000 0x10000000
->>> -			0x50000000 0x08000000>;
->>
->> 0x40000000 to 0x58000000 is continues, so I wonder why it is split? Look
->> at Aquila DTS.
->>
->>
+> Additionally, the number of #sound-dai-cells should be 1, not 0
 > 
-> Yes, it was split in the vendor kernel as well [1], and that's been continued along
-> here.  I personally don't see a reason to keep it split, but there might be something
-> I'm not aware of.
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> ---
+>  arch/arm/boot/dts/s5pv210-aries.dtsi |  2 +-
+>  arch/arm/boot/dts/s5pv210.dtsi       | 18 +++++++++---------
+>  2 files changed, 10 insertions(+), 10 deletions(-)
 > 
+> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+> index 70ff56daf4cb..503b5a50ef1a 100644
+> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
+> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+> @@ -644,7 +644,7 @@
+>  };
+>  
+>  &i2s0 {
+> -	dmas = <&pdma0 9>, <&pdma0 10>, <&pdma0 11>;
+> +	dmas = <&pdma0 10>, <&pdma0 9>, <&pdma0 11>;
+>  	status = "okay";
 
-I guess they wanted maybe to express the physical banks. Fine with me.
-Just your explanation is not entirely correct:
-> Memory nodes should only have a singular reg property in them,
-one reg but it can have multiple items. Why do think multiple reg items
-is not allowed?
+Except that fix that's the same commit as here:
+https://lore.kernel.org/all/20200907161141.31034-26-krzk@kernel.org/
+so just extend it.
+
+sound-dai-cells should go to a separate commit. But are you sure they
+are correct? The Fascinate 4G seems to be using them as cells=0.
 
 
 Best regards,
