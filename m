@@ -2,51 +2,51 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA03C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB280C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 15:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237842AbiCWPXg (ORCPT
+        id S245121AbiCWPZe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 11:23:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41284 "EHLO
+        Wed, 23 Mar 2022 11:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbiCWPXf (ORCPT
+        with ESMTP id S245145AbiCWPZd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:23:35 -0400
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75229710CA;
-        Wed, 23 Mar 2022 08:22:05 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a8so3510910ejc.8;
-        Wed, 23 Mar 2022 08:22:05 -0700 (PDT)
+        Wed, 23 Mar 2022 11:25:33 -0400
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 471E374DEE;
+        Wed, 23 Mar 2022 08:24:01 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id p15so3530764ejc.7;
+        Wed, 23 Mar 2022 08:24:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:from
          :subject:content-language:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=4yRaJTJTJWC7egeZTEjtbpjIpIsJvGgOeze8pkExlkw=;
-        b=weMJwevWL74GqexQcFHixi72twtwkmCzqzbOLTcYntIsQmGamXcgLHtY7F6U/y3F7u
-         2xtxdT/wMuNiWdPtsmY/gpcoeIWxUKapaSm3Fh4SWuVZp63hsM73bu8t2GATr/nahIGY
-         TgF5sDbqvuPXONe9a3VpZuHcs5aW6Zynumj1AC8DlCCg9h7GxSu+ZEehl6AGZHR6HhOh
-         7s3Qv5wz3oAjCSYSc/yVLZZ5H4/6baKVklTO+6ShZ+8sCLUjvs49p+EQigNeqQ48Pcqn
-         vG7muT9I3rUyb+s92c+VJ8p0vWajwXbPz6rhsKfSQsz2jHxQR/0Y1iRenFweQQJasBJd
-         zEWg==
-X-Gm-Message-State: AOAM5327ZNh3yWuP9aKHec/VHsD7ESp0Km8Y37i0G0ZbM1jp4rMyijEQ
-        fBrVmSMoVVbXBiAChlVJOBE=
-X-Google-Smtp-Source: ABdhPJxb9C5g3fqWHmMP2bawf1nNODS7AALIQ8bbXnF1MmkvBiQVxKxI3ZydkGxtuBE/i2RVGqEZNw==
-X-Received: by 2002:a17:907:97c9:b0:6db:ab53:1fdf with SMTP id js9-20020a17090797c900b006dbab531fdfmr544178ejc.406.1648048923977;
-        Wed, 23 Mar 2022 08:22:03 -0700 (PDT)
+        bh=jn6YrIbl1vuu7GwVLmJ9KNX8jl/4kcRTdmUaWrepIhw=;
+        b=FLeYHlYAy7ucZS0wltSUZM1pA+rXHg4QcTgDqhKGkUqzo220i9YN93ve+2BwIDa8xW
+         qrj94qs0DTJQsp3p4MV3LYR643Yo+ay1ZiiI5t3Imi0VQsHl7wEYiV3uQ7KruNj0M2js
+         ljWj0G0VQMFkv0UNxqFAB5HfnwKY4IdX33DJSH8Kw4I7xomExGojYHqoNfyG2rUCNMu6
+         ubz6OfJS+UyIsnSKnixdd+MWUVBqIbLGW0rJdM7SUTE/1HILG2sYCTiRyMkTXdQ3U8oE
+         c93feziebaXCiOnGHCXepGWtEeVB2urFuO4QRGQEeIJrjvaezrvwQ7VEL51PRs/czrs7
+         lHrw==
+X-Gm-Message-State: AOAM532wBZHu9lPe9AOHb1PjUJO66LuaHmeFQNWeAsi4wrQYWGR0HVus
+        ES3ZlwlpRi0Xcusuj6kS2uQ=
+X-Google-Smtp-Source: ABdhPJzAn7TRIOQhY/R9zjRp1Re/trZp7xCDwmqKgSmCA60mujwP2DsLmZjaAEwBk7guM3fulhRthg==
+X-Received: by 2002:a17:907:9703:b0:6da:6412:508a with SMTP id jg3-20020a170907970300b006da6412508amr528406ejc.77.1648049039728;
+        Wed, 23 Mar 2022 08:23:59 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id u10-20020a50d94a000000b004131aa2525esm105423edj.49.2022.03.23.08.22.02
+        by smtp.googlemail.com with ESMTPSA id f2-20020a170906738200b006df69629a3dsm74833ejl.28.2022.03.23.08.23.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 08:22:03 -0700 (PDT)
-Message-ID: <3d3048d2-7233-5534-f9f6-285fabe2a10c@kernel.org>
-Date:   Wed, 23 Mar 2022 16:22:02 +0100
+        Wed, 23 Mar 2022 08:23:59 -0700 (PDT)
+Message-ID: <3dba9313-cc29-320a-cc37-a25245f14350@kernel.org>
+Date:   Wed, 23 Mar 2022 16:23:57 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 4/7] ARM: dts: s5pv210: Remove spi-cs-high on panel in
- Aries
+From:   krzk@kernel.org
+Subject: Re: [PATCH 5/7] ARM: dts: s5pv210: Correct interrupt name for
+ bluetooth in Aries
 Content-Language: en-US
 To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
@@ -54,8 +54,8 @@ Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
  <20220323150311.26699-1-xc-racer2@live.ca>
- <CY4PR04MB0567F7814A3B72824E324702CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
-In-Reply-To: <CY4PR04MB0567F7814A3B72824E324702CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <CY4PR04MB0567DC7336ECABC67A1EC78ECB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB0567DC7336ECABC67A1EC78ECB189@CY4PR04MB0567.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -63,21 +63,12 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 23/03/2022 16:03, Jonathan Bakker wrote:
-> Since commit 766c6b63aa04 ("spi: fix client driver breakages when using
-> GPIO descriptors"), the panel has been blank due to an inverted CS GPIO.
-> In order to correct this, drop the spi-cs-high from the panel SPI device.
+> Correct the name of the bluetooth interrupt from host-wake to
+> host-wakeup.
 > 
-> Fixes: 766c6b63aa04 ("spi: fix client driver breakages when using GPIO descriptors")
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> ---
->  arch/arm/boot/dts/s5pv210-aries.dtsi | 1 -
->  1 file changed, 1 deletion(-)
-> 
+> Fixes: 1c65b6184441b
 
-+CC stable please.
-
-Such fixes should be either a separate patchset or put them first in the
-series.
+Incorrect tag.
 
 Best regards,
 Krzysztof
