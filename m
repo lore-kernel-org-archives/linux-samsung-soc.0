@@ -2,45 +2,73 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80057C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Mar 2022 23:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96280C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Mar 2022 10:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230119AbiCVXtD (ORCPT
+        id S235384AbiCWKxe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Mar 2022 19:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38274 "EHLO
+        Wed, 23 Mar 2022 06:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbiCVXtC (ORCPT
+        with ESMTP id S235336AbiCWKxe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Mar 2022 19:49:02 -0400
-X-Greylist: delayed 1507 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Mar 2022 16:47:32 PDT
-Received: from dedi3702.your-server.de (dedi3702.your-server.de [88.198.220.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 565FF56213
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Mar 2022 16:47:31 -0700 (PDT)
-Received: from localhost ([127.0.0.1] helo=dedi3702.your-server.de)
-        by dedi3702.your-server.de with esmtps (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <neuenu@dedi3702.your-server.de>)
-        id 1nWnpV-0005ta-V0
-        for linux-samsung-soc@vger.kernel.org; Wed, 23 Mar 2022 00:22:21 +0100
-To:     linux-samsung-soc@vger.kernel.org
-Subject: Antwort auf Ihre Vorbestellung
-Date:   Tue, 22 Mar 2022 23:22:21 +0000
-From:   Neue-Stadtapotheke <wordpress@neue-stadtapotheke.com>
-Reply-To: bestellung@neuestadtapotheke.de
-Message-ID: <5wAp2cdrKw3t6VLhlmStqxiQD9AbuRWYTG0Omd9IQ@neue-stadtapotheke.com>
-X-Mailer: PHPMailer 6.5.0 (https://github.com/PHPMailer/PHPMailer)
+        Wed, 23 Mar 2022 06:53:34 -0400
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBEC76E2E;
+        Wed, 23 Mar 2022 03:52:04 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id w25so1322754edi.11;
+        Wed, 23 Mar 2022 03:52:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=rN9pveEJ29B8GyStVJYVmzF67QmvDcdu3gRq0V/RTnw=;
+        b=P7FuyBTO7HWXeDjAS6mNfJiSEhmSbBUcQZHVVBwi8pVEllamU/GAQPnZvinH35hTmJ
+         hNVoe6uShj80WhwHLpx0Y6EO+0tpx/rTLfvPkWB0GRqUjtV7QSWbMS+dNbGazTcVScjE
+         8Zr8jYtfekfQcxzSJ0/pb4cjG5mRhhyJJoYTmsMw88lkJBWhsWSEDE5kF5IIuI050OcL
+         xYKXwpDyS3WIJalJtUkK94BBZQ/KDQ1t6NpvHR8Drca8mtiFsXHEn24dKl7YbQCfoLLh
+         Y56ySD6/Gn5VpBmNZtGL88cY6scASHSdOECyxRUht2UeG40M3H9WZPvOvpBmz6/o/eqi
+         +kKw==
+X-Gm-Message-State: AOAM533D3g841UuDzMiNBtEUzv/BqsiorL8PmiL5/xbG597dpbY8NvzS
+        VSeFhdIHQBeVlZja2/jeMAE=
+X-Google-Smtp-Source: ABdhPJzB6AoxcGP4trJZVuO/kcv6Lsp1C4jKdPniKJuuwATRMLZRDeX9D8QFuOjnBqPc+JoTnCWwQg==
+X-Received: by 2002:aa7:c415:0:b0:418:f844:23d9 with SMTP id j21-20020aa7c415000000b00418f84423d9mr33443387edq.337.1648032722761;
+        Wed, 23 Mar 2022 03:52:02 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id y27-20020a170906519b00b006dfaf4466ebsm7271424ejk.116.2022.03.23.03.52.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Mar 2022 03:52:02 -0700 (PDT)
+Message-ID: <2608d7bc-2c23-8c66-efcc-77d2e23dee61@kernel.org>
+Date:   Wed, 23 Mar 2022 11:52:00 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 0/7] ARM: dts: s5pv210: Bugfixes, features, and
+ improvements
+Content-Language: en-US
+To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CY4PR04MB05677B4C4E26A8A179F6ABC0CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <CY4PR04MB05673676DA7E6E4BF275305ECB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB05673676DA7E6E4BF275305ECB179@CY4PR04MB0567.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hallo Frau ❤️‍🔥 Michele is interested in your profile! More info: https://clck.ru/eJyMi?53bib ❤️‍🔥 a3hp7a,
+On 22/03/2022 21:21, Jonathan Bakker wrote:
+> Sorry, it appears that I ran into connectivity issues part way through sending
+> the patchset.  Should I resend the entire series or is there a way to get
+> git send-email to retry/continue?
 
-danke für Ihre Bestellung, wir werden uns umgehend darum kümmern!
+With git send-email you can always send remaining patches with
+--no-thread and --in-reply-to=XXX, providing valid message ID.
 
--- 
-Diese E-Mail wurde von dem Rezept-Vorbestellungsformular der Apotheke (http://neue-stadtapotheke.com) gesendet.
 
+Best regards,
+Krzysztof
