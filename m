@@ -2,155 +2,241 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09773C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Mar 2022 11:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3457BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Mar 2022 11:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244958AbiCXLYs (ORCPT
+        id S241322AbiCXLtU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 24 Mar 2022 07:24:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
+        Thu, 24 Mar 2022 07:49:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242783AbiCXLYq (ORCPT
+        with ESMTP id S235457AbiCXLtT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 24 Mar 2022 07:24:46 -0400
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66AB646B;
-        Thu, 24 Mar 2022 04:23:14 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id pv16so8561140ejb.0;
-        Thu, 24 Mar 2022 04:23:14 -0700 (PDT)
+        Thu, 24 Mar 2022 07:49:19 -0400
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F86EA1461;
+        Thu, 24 Mar 2022 04:47:47 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id b24so5282620edu.10;
+        Thu, 24 Mar 2022 04:47:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=dlOlXPMPAGBLtab/eN9h0+VSJ5BfGK0qXZEyv3ue3cI=;
-        b=DT9P+bvrSekj0ia3VIUkDEhkSd9lm1ATnuYTLEeuuA5Q2hpRKsLKYQMFn/9c4yAA8s
-         G//WnzU0YGZ1Z7pmftCvFUfxzYFk+I5AHHYWJKF8ZmtRoCSfXwkS/AD4WapH7NQ5moCF
-         3IMpfrlzzBY8sbklVDm7qNJ1TetYz+MqpjuXhKiW2TcRAYcGA3DSvb20hlq4ZMw2T+Hm
-         lw/ldF48TqB5xZZO/aKPkcZKBtw8hzR7Hfyi51smUuDT9+0P3h+QpDizU2wPNb2w6teF
-         dSMsZHT99D/vJLHKSf4OfSHhmrc0oyqeIybJDJ4520r4Dl6fJfhUyC2vIghHqhNqnJSf
-         TZ6w==
-X-Gm-Message-State: AOAM530TSMMX4Y10ydB6ulh8sCYupgWqBYGI/WqjCpNEDMZKfzQpFW9N
-        Hcyntwihhn80EQOs4cnIcfE=
-X-Google-Smtp-Source: ABdhPJzf906OKCiFQZCKLtfoiz1tqDlEhYuYUaG0vtkJRHvVym5g1zhC+z6+nftcldpHaKSlGdYirQ==
-X-Received: by 2002:a17:906:99c2:b0:6df:8834:4f4c with SMTP id s2-20020a17090699c200b006df88344f4cmr5194204ejn.496.1648120993119;
-        Thu, 24 Mar 2022 04:23:13 -0700 (PDT)
+        bh=dFOPtoWPcTnsyVvvROBn8Be2+egyjb08ekt/mEU0j1k=;
+        b=yBGTo3sSTgM4+UOOwcC6sPgGrb+GIP4XioqqEFeZG+gfjvVdykUHj/rBrbucmo09DJ
+         cihpinNMLTbB2Jxs6ImVaJU/AWsllN1Ju/uFCjkaPipp6fiW5TKMTlzty0zcVQhwqyc7
+         keRglxHEoUbE3iUxHnkoqxzLdo4xqjdw/H1E2x4D9N73pOVXZGV7Jvc8VW9E1A6sIBRY
+         UQGROssQauENPTai0qqltimtzA7MDKTR4uZgfOfI3RJdXOTqHtuOlPWPZPIOvgUJEqpe
+         05JjSppW9QE9sl32h9Q8q8KboD2qv+jVqHEQc241XG99aMJqwkpw7l8TqKObPWejdQuW
+         vrKg==
+X-Gm-Message-State: AOAM532qwuxNVtUHXO8zOQH2X3MRuuEId/sWTK6pgAbMo9mtfxB99z29
+        45GPS7PhhNO485q+UYYRkG4=
+X-Google-Smtp-Source: ABdhPJypl5ghtQpKOlZZNUXQUQvR9b2GpZ9XFdEpskJFtEHsYMH2vGZZV+HFKZbc/sfsgk0GAEBomA==
+X-Received: by 2002:aa7:c348:0:b0:418:e515:69e with SMTP id j8-20020aa7c348000000b00418e515069emr6143338edr.393.1648122466050;
+        Thu, 24 Mar 2022 04:47:46 -0700 (PDT)
 Received: from [192.168.0.156] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id c5-20020a170906d18500b006ce371f09d4sm996565ejz.57.2022.03.24.04.23.12
+        by smtp.googlemail.com with ESMTPSA id dm11-20020a170907948b00b006cf488e72e3sm1031073ejc.25.2022.03.24.04.47.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 04:23:12 -0700 (PDT)
-Message-ID: <377e97c2-03e4-bc74-595d-2f4dba7e142f@kernel.org>
-Date:   Thu, 24 Mar 2022 12:23:11 +0100
+        Thu, 24 Mar 2022 04:47:45 -0700 (PDT)
+Message-ID: <c96f889e-cbd0-4221-fcff-ef0cf93236d2@kernel.org>
+Date:   Thu, 24 Mar 2022 12:47:43 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH 1/7] ARM: dts: s5pv210: Split memory nodes to match spec
+Subject: Re: [PATCH 7/7] ARM: dts: s5pv210: Add charger support in Aries
 Content-Language: en-US
 To:     Jonathan Bakker <xc-racer2@live.ca>, alim.akhtar@samsung.com
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220322201144.20320-1-xc-racer2@live.ca>
- <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
- <51007577-52a2-60a5-0720-7b2c7f78ae3e@kernel.org>
- <CY4PR04MB0567A424CBEFF7F3338EF320CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
- <f716c6fd-66c6-4dd9-cedb-6024f415ddc7@kernel.org>
- <CY4PR04MB05671F31023376B0B7050C68CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+References: <CY4PR04MB0567E33A07D8761C2D485327CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <20220323150311.26699-1-xc-racer2@live.ca>
+ <CY4PR04MB05671BD0A7FF349E8B04EE84CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <2eee2611-d618-3fe2-4315-c57a26de6b21@kernel.org>
+ <CY4PR04MB0567BD17C2EED0CAFA044020CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <CY4PR04MB05671F31023376B0B7050C68CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB0567BD17C2EED0CAFA044020CB189@CY4PR04MB0567.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/03/2022 18:05, Jonathan Bakker wrote:
+On 23/03/2022 18:20, Jonathan Bakker wrote:
 > 
 > 
-> On 2022-03-23 8:06 a.m., Krzysztof Kozlowski wrote:
->> On 23/03/2022 15:59, Jonathan Bakker wrote:
->>> Hi Krzysztof,
+> On 2022-03-23 8:31 a.m., krzk@kernel.org wrote:
+>> On 23/03/2022 16:03, Jonathan Bakker wrote:
+>>> Add charger-manager support to Aries boards to allow safe
+>>> charging of the battery without the need for userspace control.
 >>>
->>> On 2022-03-23 3:54 a.m., Krzysztof Kozlowski wrote:
->>>> On 22/03/2022 21:11, Jonathan Bakker wrote:
->>>>> Memory nodes should only have a singular reg property in them, so
->>>>> split the memory nodes such that there is only per node.
->>>>>
->>>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->>>>> ---
->>>>>  arch/arm/boot/dts/s5pv210-aquila.dts |  8 ++++++--
->>>>>  arch/arm/boot/dts/s5pv210-aries.dtsi | 14 +++++++++++---
->>>>>  arch/arm/boot/dts/s5pv210-goni.dts   | 14 +++++++++++---
->>>>>  3 files changed, 28 insertions(+), 8 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/s5pv210-aquila.dts b/arch/arm/boot/dts/s5pv210-aquila.dts
->>>>> index 6423348034b6..6984479ddba3 100644
->>>>> --- a/arch/arm/boot/dts/s5pv210-aquila.dts
->>>>> +++ b/arch/arm/boot/dts/s5pv210-aquila.dts
->>>>> @@ -29,8 +29,12 @@
->>>>>  
->>>>>  	memory@30000000 {
->>>>>  		device_type = "memory";
->>>>> -		reg = <0x30000000 0x05000000
->>>>> -			0x40000000 0x18000000>;
->>>>> +		reg = <0x30000000 0x05000000>;
->>>>> +	};
->>>>> +
->>>>> +	memory@40000000 {
->>>>> +		device_type = "memory";
->>>>> +		reg = <0x40000000 0x18000000>;
->>>>>  	};
->>>>>  
->>>>>  	pmic_ap_clk: clock-0 {
->>>>> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
->>>>> index 160f8cd9a68d..70ff56daf4cb 100644
->>>>> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
->>>>> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
->>>>> @@ -24,9 +24,17 @@
->>>>>  
->>>>>  	memory@30000000 {
->>>>>  		device_type = "memory";
->>>>> -		reg = <0x30000000 0x05000000
->>>>> -			0x40000000 0x10000000
->>>>> -			0x50000000 0x08000000>;
->>>>
->>>> 0x40000000 to 0x58000000 is continues, so I wonder why it is split? Look
->>>> at Aquila DTS.
->>>>
->>>>
+>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+>>> ---
+>>>  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 162 ++++++++++++++++++++++
+>>>  arch/arm/boot/dts/s5pv210-galaxys.dts     | 144 +++++++++++++++++++
+>>>  2 files changed, 306 insertions(+)
 >>>
->>> Yes, it was split in the vendor kernel as well [1], and that's been continued along
->>> here.  I personally don't see a reason to keep it split, but there might be something
->>> I'm not aware of.
->>>
+>>> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+>>> index 7427c84f1126..9530231b7a70 100644
+>>> --- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+>>> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+>>> @@ -57,6 +57,168 @@
+>>>  		pinctrl-0 = <&main_micbias_ena>;
+>>>  	};
+>>>  
+>>> +	thermal-zones {
+>>> +		batt_thermal: batt-thermal {
+>>> +			polling-delay-passive = <60000>; /* 60 seconds */
 >>
->> I guess they wanted maybe to express the physical banks. Fine with me.
->> Just your explanation is not entirely correct:
->>> Memory nodes should only have a singular reg property in them,
->> one reg but it can have multiple items. Why do think multiple reg items
->> is not allowed?
+>> There is no passive cooling device, so why do you need it?
 >>
 > 
-> I was basing it off of this warning when running make dtbs_check
+> The charger manager code needs a passive cooling device, so that's
+> why this is present here.
 > 
-> rch/arm/boot/dts/s5pv210-aquila.dt.yaml: /: memory@30000000:reg:0: [805306368, 83886080, 1073741824, 402653184] is too long
-> 	From schema: /home/jon/.local/lib/python3.7/site-packages/dtschema/schemas/reg.yaml
+>>> +			polling-delay = <600000>; /* 600 seconds */
+>>> +
+>>> +			thermal-sensors = <&batt_thermistor>;
+>>> +		};
+>>> +	};
+>>> +
+>>> +	batt_thermistor: thermal-sensor-0 {
+>>> +		compatible = "generic-adc-thermal";
+>>> +		#thermal-sensor-cells = <0>;
+>>> +		io-channels = <&adc 6>;
+>>> +		io-channel-names = "sensor-channel";
+>>> +
+>>> +		temperature-lookup-table = <
+>>> +			(-20000) 1859
+>>> +			(-19000) 1846
+>>> +			(-18000) 1832
+>>> +			(-17000) 1818
+>>> +			(-16000) 1804
+>>> +			(-15000) 1790
+>>> +			(-14000) 1773
+>>> +			(-13000) 1756
+>>> +			(-12000) 1739
+>>> +			(-11000) 1722
+>>> +			(-10000) 1705
+>>> +			(-9000) 1691
+>>> +			(-8000) 1677
+>>> +			(-7000) 1663
+>>> +			(-6000) 1649
+>>> +			(-5000) 1635
+>>> +			(-4000) 1550
+>>> +			(-3000) 1510
+>>> +			(-2000) 1500
+>>> +			(-1000) 1490
+>>> +			0 1480
+>>> +			1000 1470
+>>> +			2000 1460
+>>> +			3000 1450
+>>> +			4000 1430
+>>> +			5000 1420
+>>> +			6000 1406
+>>> +			7000 1386
+>>> +			8000 1366
+>>> +			9000 1346
+>>> +			10000 1326
+>>> +			11000 1302
+>>> +			12000 1278
+>>> +			13000 1254
+>>> +			14000 1230
+>>> +			15000 1206
+>>> +			16000 1182
+>>> +			17000 1158
+>>> +			18000 1134
+>>> +			19000 1110
+>>> +			20000 1086
+>>> +			21000 1059
+>>> +			22000 1035
+>>> +			23000 1011
+>>> +			24000 987
+>>> +			25000 963
+>>> +			26000 937
+>>> +			27000 913
+>>> +			28000 889
+>>> +			29000 865
+>>> +			30000 841
+>>> +			31000 816
+>>> +			32000 794
+>>> +			33000 772
+>>> +			34000 750
+>>> +			35000 728
+>>> +			36000 708
+>>> +			37000 690
+>>> +			38000 672
+>>> +			39000 654
+>>> +			40000 636
+>>> +			41000 616
+>>> +			42000 599
+>>> +			43000 580
+>>> +			44000 565
+>>> +			45000 548
+>>> +			46000 529
+>>> +			47000 512
+>>> +			48000 495
+>>> +			49000 478
+>>> +			50000 461
+>>> +			51000 440
+>>> +			52000 431
+>>> +			53000 416
+>>> +			54000 405
+>>> +			55000 396
+>>> +			56000 375
+>>> +			57000 360
+>>> +			58000 347
+>>> +			59000 334
+>>> +			60000 325
+>>> +			61000 311
+>>> +			62000 303
+>>> +			63000 296
+>>> +			64000 290
+>>> +			65000 279
+>>> +			66000 265
+>>> +			67000 254
+>>> +			68000 240
+>>> +			69000 220
+>>> +			70000 206>;
+>>> +	};
+>>> +
+>>> +	charger_manager: charger-manager-0 {
+>>> +		compatible = "charger-manager";
+>>
+>> Sorry, this is not a hardware. It's a hack to configure kernel charging
+>> driver via DT which was made deprecated.
 > 
-> and this solved the warning, booted, and I still had the correct
-> amount of memory.
+> Thanks, I missed the deprecation notice in the binding file.
 > 
-> Would
-> 
-> 	memory@30000000 {
-> 		device_type = "memory";
-> 		reg = <0x30000000 0x05000000>,
-> 			<0x40000000 0x18000000>;
-> 	};
-> 
-> be equally correct?  (untested).
+> What would be the better way of creating a functional charging system?
+> A new device-specific driver?
 
-Yes, this one should be correct.
+I am not sure, but maybe you could use charger-manager, just configure
+it from user-space (or add such features). Better ask power supply
+maintainer. But anyway charger-manager is mostly abandoned. I don't
+think anyone develops it.
 
+>  Userspace monitoring of temperature/connected
+> device and extensions to the max8998 driver for enabling/disabling/configuring
+> charging via the power supply subsystem instead of the regulator subsystem?
+> Something else?
+
+Enabling charging via regulators was done only for some drivers, I think
+for charger-manager. I don't think it is the recommended way now.
+
+Everything should be controlled rather via power supply from user-space.
+
+How postmarketos or lineageos are doing it?
+
+> 
+> The way I understand the charging system, there is
+> 
+> - The fuelgauge (max17042)
+> - The max8998 charger portion, including the ability to vary the current
+> - The thermistor for checking battery temperature
+> - The FSA9480 to determine what sort of cable is connected
+> 
 
 Best regards,
 Krzysztof
