@@ -2,114 +2,130 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CECC4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Mar 2022 12:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F284C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Mar 2022 18:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235679AbiC0Mrw (ORCPT
+        id S236247AbiC0SK5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 27 Mar 2022 08:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45378 "EHLO
+        Sun, 27 Mar 2022 14:10:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232193AbiC0Mrv (ORCPT
+        with ESMTP id S232040AbiC0SK4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 27 Mar 2022 08:47:51 -0400
-Received: from stuerz.xyz (unknown [45.77.206.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65554433B5;
-        Sun, 27 Mar 2022 05:46:12 -0700 (PDT)
-Received: by stuerz.xyz (Postfix, from userid 114)
-        id 3C409FBBC6; Sun, 27 Mar 2022 12:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stuerz.xyz; s=mail;
-        t=1648385171; bh=G70xCP6D8WSn+bAqlXu192tXuBsjh/gv9sAawqfU9NY=;
-        h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-        b=XW7jQ0JjvkbBwWYcDnJe2nlVcVuRIXoXRSxf3PNWwPKilsznYeHIMaHkGHbpF6CPi
-         nqty3MnXTqG+wOEmI6ELfBW3t6Ot8AvrXhUDwqW1UwZJf6kiQJniSr9SnP78twlnv0
-         ZUgcLapZcbEI4qbn8OxvPWktNikL6Kc+Etx6Bphh9afk/Hjw9xpphYQkktP6pYTs4U
-         LH6YzQsfUm6Srdnzw7PCZmDV1KvBPkO+9qnzYPwcN+LOHDfP1TScrzVJPWp75MbJFA
-         PLeKhwC+Gp8yjNM/5t52esOjGU9lpx0aWVyem4iFCEGjhJnePoGwI4TGCoWVDXFMVG
-         IaZqNMJ7zdbtQ==
-Received: from [IPV6:2a02:8109:a100:1a48:ff0:ef2f:d4da:17d8] (unknown [IPv6:2a02:8109:a100:1a48:ff0:ef2f:d4da:17d8])
-        by stuerz.xyz (Postfix) with ESMTPSA id 2060CFBBBC;
-        Sun, 27 Mar 2022 12:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stuerz.xyz; s=mail;
-        t=1648385168; bh=G70xCP6D8WSn+bAqlXu192tXuBsjh/gv9sAawqfU9NY=;
-        h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-        b=vBbH8cJYXUrIhSgvFCWqsIlouOaWa0Ob/IwOKcnk6W9EsrhxCv3d9ruHzL3uCcOyT
-         isUVW1tcpcwMZ4y6KY5ZxcD9C88CnxszLWDsiAskZjdJ53DER27M6zK0oaEhWWieSL
-         Juy7xWTEZPuLwOj9cO6+/7dR2PqcKQxjkt2MABFO0zPwNEsjU2mafYbXnQPlZ2I0cL
-         2ZDQJwWjnuzEx4AHGvLxNgfwyXB0lIDpMXfYtHANjMklviMBw30yLOvmuMA/WBhhwQ
-         lTIOL/KwWHU60GJWJ06zwdDByMnoxCjLnfIwK3SRtaOMOkXk/Hr5rtRBTGuebT4pdB
-         MUwu53koBYhbA==
-Message-ID: <8f9271b6-0381-70a9-f0c2-595b2235866a@stuerz.xyz>
-Date:   Sun, 27 Mar 2022 14:46:00 +0200
+        Sun, 27 Mar 2022 14:10:56 -0400
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07olkn2024.outbound.protection.outlook.com [40.92.15.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3308934656;
+        Sun, 27 Mar 2022 11:09:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=b5wf/+W+9wFIEm4fr5QhC4ywC8Hw4FPJ+VpZxHAZdBwIpDD6KzETt193/OnIHIBk/dzWkrMU4BkhZm4A5byNPToVf53O8mU+fCWkuTQijkS0JT9wjcSNsp4SbPxohATMha3H3F5KZlcCSFjU5zr879XLKbf8kh1mRNq7et5HIlhu3mDihyMeDtzvCiiissziuOZnKSXf+Na93ScUPqjYpwr26x4Innpk9DAru01oaA+Jub/SlUgZtdyUB+nOnxSYeuXuUID7fzKMxLW57rlNQk0cLERTFPp0biJoYdxoVyFUnOKMiHfNPl3JnXSSOBvMFIsL566MiJeH39GTel6IwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GDWbkechiUts43t6wdEreqPDHHI83SXUQOY4PCkZFIY=;
+ b=DBWQB86kZHqAvZdvsTn7Htc9llA7HRI4gsMZzMOEe6iYlay4Vr3Pw9VKwk3EJuFlvYdGA8H8Nr0m/++WQCBYxpvNUWVAcZUrxKe1NruOBYV51DaFityXzNUaBHTCQuk5dOh6Nm3wb+iApF938ZHgiAxTnMcrNp9YcDjWH2fgcKlXiemElZ2Mr/slAVq4k2qJ9AqWz4psKITo0kjSPaNmk3u+gUmicqohKObTCe4j2K8oKdQo6gt51wK3bf5blmEUBOLAKA203vNnbEMuctWHmgaeMevgDp3rU1788cE9EUq7X/A3KmK4xV6yQnPq5Kipnbteoo7h3VwIuvRKcb4gmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from CY4PR04MB0567.namprd04.prod.outlook.com (2603:10b6:903:b1::20)
+ by BN8PR04MB5778.namprd04.prod.outlook.com (2603:10b6:408:a3::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.16; Sun, 27 Mar
+ 2022 18:09:15 +0000
+Received: from CY4PR04MB0567.namprd04.prod.outlook.com
+ ([fe80::451b:e5ed:c1a3:4070]) by CY4PR04MB0567.namprd04.prod.outlook.com
+ ([fe80::451b:e5ed:c1a3:4070%5]) with mapi id 15.20.5102.022; Sun, 27 Mar 2022
+ 18:09:15 +0000
+From:   Jonathan Bakker <xc-racer2@live.ca>
+To:     krzk@kernel.org, alim.akhtar@samsung.com
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Bakker <xc-racer2@live.ca>
+Subject: [PATCH v2 0/5] ARM: dts: s5pv210: Bugfixes, features, and improvements
+Date:   Sun, 27 Mar 2022 11:08:49 -0700
+Message-ID: <CY4PR04MB056763D8667AD2BC418B7026CB1C9@CY4PR04MB0567.namprd04.prod.outlook.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <CY4PR04MB05677B4C4E26A8A179F6ABC0CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+References: <CY4PR04MB05677B4C4E26A8A179F6ABC0CB179@CY4PR04MB0567.namprd04.prod.outlook.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-TMN:  [Eo975Aw8e/dQAFcwK+fgKEDSUZWwNn7oTePv3IqWxr/i3AO7Fzr78yTJgF6up4UZ]
+X-ClientProxiedBy: BYAPR07CA0031.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::44) To CY4PR04MB0567.namprd04.prod.outlook.com
+ (2603:10b6:903:b1::20)
+X-Microsoft-Original-Message-ID: <20220327180854.4857-1-xc-racer2@live.ca>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: [PATCH 00/22] Replace comments with C99 initializers
-Content-Language: en-US
-To:     =?UTF-8?Q?Benjamin_St=c3=bcrz?= <benni@stuerz.xyz>
-References: <20220326165909.506926-1-benni@stuerz.xyz>
-Cc:     sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
-        linux@armlinux.org.uk, linux@simtec.co.uk, krzk@kernel.org,
-        alim.akhtar@samsung.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        robert.moore@intel.com, rafael.j.wysocki@intel.com,
-        lenb@kernel.org, 3chas3@gmail.com, laforge@gnumonks.org,
-        arnd@arndb.de, gregkh@linuxfoundation.org, mchehab@kernel.org,
-        tony.luck@intel.com, james.morse@arm.com, rric@kernel.org,
-        linus.walleij@linaro.org, brgl@bgdev.pl,
-        mike.marciniszyn@cornelisnetworks.com,
-        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-        pali@kernel.org, dmitry.torokhov@gmail.com, isdn@linux-pingi.de,
-        benh@kernel.crashing.org, fbarrat@linux.ibm.com, ajd@linux.ibm.com,
-        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-        nico@fluxnic.net, loic.poulain@linaro.org, kvalo@kernel.org,
-        pkshih@realtek.com, bhelgaas@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@acpica.org,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-input@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-pci@vger.kernel.org
-From:   =?UTF-8?Q?Benjamin_St=c3=bcrz?= <benni@stuerz.xyz>
-In-Reply-To: <20220326165909.506926-1-benni@stuerz.xyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d1385b75-abfb-4b1a-aba0-08da101ce712
+X-MS-TrafficTypeDiagnostic: BN8PR04MB5778:EE_
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: u70eNHGRgbDLZ3MvjntQipQaRK9c/qr7HJjVmLROhPtImzVwJK6FHddO6shdqTCN+oKHTMvF2HT0VmoZ9O/X0DKJQvSAOb+kqDE3rQ/Y6wnJZ6Ti6Olr5MqKM1W0LugXLhnYVIRiI58Sb2y0yKNGJX9u+IxWqnF+Txqx+Q3Ak1q1z24jcCyjfkOSZNArO9b/cRIGv9BD8cXU+/iBQ5Sd4T4qRsNBm9UZGGWfvCyBZ3CxlMwQThb0MLK3JmdzyVGljeKQWR2Z1/hGuAxAvFxwmR/TJNuako3QWpHmb+IMXhuESsBDeJ3n/cgV7rBCv7ieHdJNbvfn1ft1OePXXXa/00Rf29ktlJ65OvYgBg26wK4HMN23Yg6vHJAbGjYrTUA7qoxOGexoDq7/qnl0uIlqF8ZErJE8IonbVM158aAugaJ73/uMKcnWm9ABmU8u9lMFtvHlu8h+AKwtnzUHUT5h7p0KWmYYcQrk6XUGRnrvtH3DdD1N/Gwbks26wErNoWnD//vNmdiVDdcq1HyZFiMt3U+VlYCSQbz4893PVAWc4Ekd/MccXUSYCLjlbZPCwcEy8yh4fYjyzpV6gDgomKr/Pw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?vauFwV9fLxVIc08+8K9ttrmsBQgSxzv64xDjebCx2vl6FoMZuv7YZu3EolbT?=
+ =?us-ascii?Q?fatyVHW3My5TzL9qvzz0jyCh1+d7wanZwmZBam8uAEVaH8wvFB/vuZFQDKro?=
+ =?us-ascii?Q?VlRSW3poqFvrDk3jKrlouaiZ1dHWINY7IP1p8e03dEf+/OhdzXRjn49faiYn?=
+ =?us-ascii?Q?x3zId3jFXB350t+roSwUaDGZbL68YRVTD1OB4B6gDv+jZbv9c1epbx11vGdD?=
+ =?us-ascii?Q?C9ITzbM9Icd29nrOR1Nf5UP/dULSGmfAJXDKpMRu2Kj9QcuL98XmV+l5MAiF?=
+ =?us-ascii?Q?6oJ7hoVW8HJni14NBnAS9DjTKw0DgzMAIHcOY+IPaPhINOve6NeDtJGhKx/w?=
+ =?us-ascii?Q?9bAKaIJfyakQnEtR/nQmCGrk1S68ppYL50yUn3WQ3MbOO3tdx4rTqNDGImD6?=
+ =?us-ascii?Q?yopZEqSZlZHan0bhhVW9hA+Fq9yqLe8rD1ANx6TKOlLD7CzdMy81BZMZpaHm?=
+ =?us-ascii?Q?rTHyJnO1NGDiTm9MupheOaWhoV1BFvlefPNZzGx9K2KDZ88rOyzwaDAgEUeU?=
+ =?us-ascii?Q?DehdzJpuB7PWOK8mDy2+4T9bm+laEQaCWFGoqq85F0hF13ZrAk0ViNlfPNaE?=
+ =?us-ascii?Q?n5D8EUK0QmVtwDHAU4m2w3KGikVkxCN7tqat7z2N2k5Zt0VhWq2oPSux6rgP?=
+ =?us-ascii?Q?5ecoz62B+3RrebpY/yyD0lfqIjBOOOdPR3nenlpwGfUg8uHdA+jCVlQ3tbe+?=
+ =?us-ascii?Q?TV7dSplw8mwGkrqtPv/njOuY2T67qO3nabNHDVIpt5vci3BOFfQPkDsFEe1B?=
+ =?us-ascii?Q?nUNahh9/xYjEhJUqtQPAD0GDUD8r06CVeGvpncxnV0h0+O2/JnsWo5zMINgu?=
+ =?us-ascii?Q?IGzKQI3Piy2ubD84kuBpVl/cFoTdPapGIj2AKzBMZCDhjSFestWF7X2DvPlq?=
+ =?us-ascii?Q?6YHbvMo+S9BpP8BAn7wgupHACGgiDyYEjs0QIYSf3eGDFUDSjatnjdRU9eBX?=
+ =?us-ascii?Q?KyeJuaOzsSyPPYs3aSza+aNgLx6gQ2Y9/N4rcObRoijocqTpK+gkiBBwVgRC?=
+ =?us-ascii?Q?iZlfsP+vE8I7K3FJh0+/LUqchbGhU01f6jd14apKm9SLupbm5g4A5gtdbSH2?=
+ =?us-ascii?Q?svfLy+56ESKA37HBckXxQQqS3vqfjLJTyowZ2fYuQ+PjoxXZf1v3Xv4qT2TN?=
+ =?us-ascii?Q?ettmmUKrIkx+wPmsMU2AjP6CYvQ6GmY3vUm5XEuGT0+qfixPBiNCcjETxHW1?=
+ =?us-ascii?Q?Vo2Cs/pSeo7r91o7jM9xjmGOcVymXViKLLeUorSId+74MXR7gILeCVqBKMUz?=
+ =?us-ascii?Q?wfOBUzxvspKETah11SegmCTzf1bBkQqbO5/AoLiu9aXJPrA3vQqJG3eldnLs?=
+ =?us-ascii?Q?kM+ZZmD++LRCGQWc+Ix467S04ZMOQCoFNLHF58BROKkCaPT/1poQE3gwj3mF?=
+ =?us-ascii?Q?GYOHvbNTAGrpHhQzFbQhJPUVUEmIoVxPj7rhNU5478fG+NDRI6Lu6DIQ0qZv?=
+ =?us-ascii?Q?VadNbMkjbDAFCXgvQj+m2aAprmXBwOOMbWxAkwHLcVEFS0F41k+WyBIwgb8l?=
+ =?us-ascii?Q?RJozV/t0W9r+nUU=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-edb50.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1385b75-abfb-4b1a-aba0-08da101ce712
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR04MB0567.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2022 18:09:15.3547
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR04MB5778
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch series replaces comments with C99's designated initializers
-in a few places. It also adds some enum initializers. This is my first
-time contributing to the Linux kernel, therefore I'm probably doing a
-lot of things the wrong way. I'm sorry for that.
+Various cleanups to fix warnings when running make dtbs_check are included,
+as are bugfixes for the panel CS pin and bluetooth interrupt name on Aries.
 
-I've gotten a few emails so far stating that this patch series is
-unnecessary. Yes, in fact this patch series is not necessary by itself,
-but it could help me understand how the whole process works and maybe I
-could help somewhere, where help is actually needed.
+Changes in v2:
+- Re-ordered patches to include bugfixes at start
+- CC Stable where appropriate
+- Drop sound-dai-cells changes
+- Drop charger-manager and related changes
+- Adjust memory reg entries commit to retain one node per device
 
-This patch itself is a no-op.
+Jonathan Bakker (4):
+  ARM: dts: s5pv210: Remove spi-cs-high on panel in Aries
+  ARM: dts: s5pv210: Correct interrupt name for bluetooth in Aries
+  ARM: dts: s5pv210: Adjust memory reg entries to match spec
+  ARM: dts: s5pv210: Adjust DMA node names to match spec
 
-Signed-off-by: Benjamin Stürz <benni@stuerz.xyz>
----
- .gitignore | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Krzysztof Kozlowski (1):
+  ARM: dts: s5pv210: align DMA channels with dtschema
 
-diff --git a/.gitignore b/.gitignore
-index 7afd412dadd2..706f667261eb 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -20,7 +20,7 @@
- *.dtb
- *.dtbo
- *.dtb.S
--*.dwo
-+*.dwo
- *.elf
- *.gcno
- *.gz
+ arch/arm/boot/dts/s5pv210-aquila.dts |  3 +--
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 11 +++++------
+ arch/arm/boot/dts/s5pv210-goni.dts   |  6 +++---
+ arch/arm/boot/dts/s5pv210.dtsi       | 18 +++++++++---------
+ 4 files changed, 18 insertions(+), 20 deletions(-)
+
 -- 
-2.35.1
+2.20.1
+
