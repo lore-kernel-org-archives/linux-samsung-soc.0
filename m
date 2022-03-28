@@ -2,268 +2,170 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E2EC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 12:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CF5C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 12:22:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242372AbiC1MOJ (ORCPT
+        id S235686AbiC1MXt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Mar 2022 08:14:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
+        Mon, 28 Mar 2022 08:23:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242348AbiC1MOI (ORCPT
+        with ESMTP id S242415AbiC1MWz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Mar 2022 08:14:08 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2718C4666D;
-        Mon, 28 Mar 2022 05:12:26 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22S8DQtg025374;
-        Mon, 28 Mar 2022 14:11:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=Wu7DaILavZ5VFKiDCgIDKD8NRLEzZk4xbMb8t6pZ9V0=;
- b=s+GcPWsAcec/2joFcw9VZTpZlvV7VtKf/ICQWpbbx57TMcRnG9EIRSACq5A5Xcacr2gx
- JtbuTFxpSemWbLIWbM8uT9GqB5oubmlS4WFJqhQs+EuKhYeAJ5m0tWWRVufYTzMftjDo
- AO5vLSEt93w2ZQsBevz0srujPxVjYMrllOdOccNrUWoLmRkynrrwzaa9VCQW152RWnqP
- oP8IWI/Hv36XP18OFxzG6vxrbx5vZwa5viqGScWnJLF0XPwENSJyYPZV4sEJ3TAlnKQc
- gPAyCGpNAXl4lGTmuf3bukVmBPKvZ7oIUMDZRpZYRYFG4osaN7oPKpC7m2Sb+596Updt Bg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f1tkm2h2j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 28 Mar 2022 14:11:27 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DDF4610002A;
-        Mon, 28 Mar 2022 14:11:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id F0179229A6F;
-        Mon, 28 Mar 2022 14:11:24 +0200 (CEST)
-Received: from [10.201.21.201] (10.75.127.44) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Mon, 28 Mar
- 2022 14:11:23 +0200
-Message-ID: <c11344d0-f56e-a34f-1f46-26d0e7de280e@foss.st.com>
-Date:   Mon, 28 Mar 2022 14:11:22 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [Linux-stm32] [RFC PATCH 1/1] ARM/arm64: categorize dts in arm
- dir and fix dependency in arm64
-Content-Language: en-US
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Mon, 28 Mar 2022 08:22:55 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1C6964CD5A
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 05:21:12 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-8-vkuU1pGbNXCyrAVN_KskHQ-1; Mon, 28 Mar 2022 13:21:10 +0100
+X-MC-Unique: vkuU1pGbNXCyrAVN_KskHQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.32; Mon, 28 Mar 2022 13:21:04 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.033; Mon, 28 Mar 2022 13:21:04 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kalle Valo' <kvalo@kernel.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+CC:     =?utf-8?B?QmVuamFtaW4gU3TDvHJ6?= <benni@stuerz.xyz>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux@simtec.co.uk" <linux@simtec.co.uk>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "3chas3@gmail.com" <3chas3@gmail.com>,
+        "laforge@gnumonks.org" <laforge@gnumonks.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "rric@kernel.org" <rric@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "brgl@bgdev.pl" <brgl@bgdev.pl>,
+        "mike.marciniszyn@cornelisnetworks.com" 
+        <mike.marciniszyn@cornelisnetworks.com>,
+        "dennis.dalessandro@cornelisnetworks.com" 
+        <dennis.dalessandro@cornelisnetworks.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>, "pali@kernel.org" <pali@kernel.org>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "isdn@linux-pingi.de" <isdn@linux-pingi.de>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "fbarrat@linux.ibm.com" <fbarrat@linux.ibm.com>,
+        "ajd@linux.ibm.com" <ajd@linux.ibm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "nico@fluxnic.net" <nico@fluxnic.net>,
+        "loic.poulain@linaro.org" <loic.poulain@linaro.org>,
+        "pkshih@realtek.com" <pkshih@realtek.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-actions@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-        <linux-omap@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@axis.com>, <linux-aspeed@lists.ozlabs.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <chrome-platform@lists.linux.dev>,
-        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <kernel@dh-electronics.com>, <linux-mediatek@lists.infradead.org>,
-        <openbmc@lists.ozlabs.org>, <linux-tegra@vger.kernel.org>,
-        <linux-oxnas@groups.io>, <linux-arm-msm@vger.kernel.org>,
-        <linux-unisoc@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-realtek-soc@lists.infradead.org>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <20220328000915.15041-2-ansuelsmth@gmail.com>
- <fef4e5dd-d843-ea37-7701-bcfac9d1c9b5@foss.st.com>
- <238c6d7b-a61c-d09e-9377-8f49dad40eeb@foss.st.com>
- <YkGjLPN7tjVeckEO@Ansuel-xps.localdomain>
-From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <YkGjLPN7tjVeckEO@Ansuel-xps.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-28_04,2022-03-28_01,2022-02-23_01
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "linux-atm-general@lists.sourceforge.net" 
+        <linux-atm-general@lists.sourceforge.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "wcn36xx@lists.infradead.org" <wcn36xx@lists.infradead.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: RE: [PATCH 21/22] rtw89: Replace comments with C99 initializers
+Thread-Topic: [PATCH 21/22] rtw89: Replace comments with C99 initializers
+Thread-Index: AQHYQoY88SRtyCmm7EOK7E4AJyEA9qzUtsLg
+Date:   Mon, 28 Mar 2022 12:21:04 +0000
+Message-ID: <6082d343f18a40229df83e3102e7dc38@AcuMS.aculab.com>
+References: <20220326165909.506926-1-benni@stuerz.xyz>
+        <20220326165909.506926-21-benni@stuerz.xyz>
+        <f7bb9164-2f66-8985-5771-5f31ee5740b7@lwfinger.net>
+ <87k0cezarl.fsf@kernel.org>
+In-Reply-To: <87k0cezarl.fsf@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Ansuel
+RnJvbTogS2FsbGUgVmFsbw0KPiBTZW50OiAyOCBNYXJjaCAyMDIyIDEwOjI5DQo+IA0KPiBMYXJy
+eSBGaW5nZXIgPExhcnJ5LkZpbmdlckBsd2Zpbmdlci5uZXQ+IHdyaXRlczoNCj4gDQo+ID4gT24g
+My8yNi8yMiAxMTo1OSwgQmVuamFtaW4gU3TDvHJ6IHdyb3RlOg0KPiA+PiBUaGlzIHJlcGxhY2Vz
+IGNvbW1lbnRzIHdpdGggQzk5J3MgZGVzaWduYXRlZA0KPiA+PiBpbml0aWFsaXplcnMgYmVjYXVz
+ZSB0aGUga2VybmVsIHN1cHBvcnRzIHRoZW0gbm93Lg0KPiA+Pg0KPiA+PiBTaWduZWQtb2ZmLWJ5
+OiBCZW5qYW1pbiBTdMO8cnogPGJlbm5pQHN0dWVyei54eXo+DQo+ID4+IC0tLQ0KPiA+PiAgIGRy
+aXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODkvY29leC5jIHwgNDAgKysrKysrKysrKyst
+LS0tLS0tLS0tLS0NCj4gPj4gICAxIGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMjAg
+ZGVsZXRpb25zKC0pDQo+ID4+DQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVz
+cy9yZWFsdGVrL3J0dzg5L2NvZXguYyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3
+ODkvY29leC5jDQo+ID4+IGluZGV4IDY4NDU4Mzk1NTUxMS4uM2M4M2EwYmZiMTIwIDEwMDY0NA0K
+PiA+PiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L2NvZXguYw0KPiA+
+PiArKysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L2NvZXguYw0KPiA+PiBA
+QCAtOTcsMjYgKzk3LDI2IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcnR3ODlfYnRjX2ZidGNfc2xv
+dCBzX2RlZltdID0gew0KPiA+PiAgIH07DQo+ID4+ICAgICBzdGF0aWMgY29uc3QgdTMyIGN4dGJs
+W10gPSB7DQo+ID4+IC0JMHhmZmZmZmZmZiwgLyogMCAqLw0KPiA+PiAtCTB4YWFhYWFhYWEsIC8q
+IDEgKi8NCj4gPj4gLQkweDU1NTU1NTU1LCAvKiAyICovDQo+ID4+IC0JMHg2NjU1NTU1NSwgLyog
+MyAqLw0KPiA+PiAtCTB4NjY1NTY2NTUsIC8qIDQgKi8NCj4gPj4gLQkweDVhNWE1YTVhLCAvKiA1
+ICovDQo+ID4+IC0JMHg1YTVhNWFhYSwgLyogNiAqLw0KPiA+PiAtCTB4YWE1YTVhNWEsIC8qIDcg
+Ki8NCj4gPj4gLQkweDZhNWE1YTVhLCAvKiA4ICovDQo+ID4+IC0JMHg2YTVhNWFhYSwgLyogOSAq
+Lw0KPiA+PiAtCTB4NmE1YTZhNWEsIC8qIDEwICovDQo+ID4+IC0JMHg2YTVhNmFhYSwgLyogMTEg
+Ki8NCj4gPj4gLQkweDZhZmE1YWZhLCAvKiAxMiAqLw0KPiA+PiAtCTB4YWFhYTVhYWEsIC8qIDEz
+ICovDQo+ID4+IC0JMHhhYWZmZmZhYSwgLyogMTQgKi8NCj4gPj4gLQkweGFhNTU1NWFhLCAvKiAx
+NSAqLw0KPiA+PiAtCTB4ZmFmYWZhZmEsIC8qIDE2ICovDQo+ID4+IC0JMHhmZmZmZGRmZiwgLyog
+MTcgKi8NCj4gPj4gLQkweGRhZmZkYWZmLCAvKiAxOCAqLw0KPiA+PiAtCTB4ZmFmYWRhZmEgIC8q
+IDE5ICovDQo+ID4+ICsJWzBdICA9IDB4ZmZmZmZmZmYsDQo+ID4+ICsJWzFdICA9IDB4YWFhYWFh
+YWEsDQo+ID4+ICsJWzJdICA9IDB4NTU1NTU1NTUsDQo+ID4+ICsJWzNdICA9IDB4NjY1NTU1NTUs
+DQo+ID4+ICsJWzRdICA9IDB4NjY1NTY2NTUsDQo+ID4+ICsJWzVdICA9IDB4NWE1YTVhNWEsDQo+
+ID4+ICsJWzZdICA9IDB4NWE1YTVhYWEsDQo+ID4+ICsJWzddICA9IDB4YWE1YTVhNWEsDQo+ID4+
+ICsJWzhdICA9IDB4NmE1YTVhNWEsDQo+ID4+ICsJWzldICA9IDB4NmE1YTVhYWEsDQo+ID4+ICsJ
+WzEwXSA9IDB4NmE1YTZhNWEsDQo+ID4+ICsJWzExXSA9IDB4NmE1YTZhYWEsDQo+ID4+ICsJWzEy
+XSA9IDB4NmFmYTVhZmEsDQo+ID4+ICsJWzEzXSA9IDB4YWFhYTVhYWEsDQo+ID4+ICsJWzE0XSA9
+IDB4YWFmZmZmYWEsDQo+ID4+ICsJWzE1XSA9IDB4YWE1NTU1YWEsDQo+ID4+ICsJWzE2XSA9IDB4
+ZmFmYWZhZmEsDQo+ID4+ICsJWzE3XSA9IDB4ZmZmZmRkZmYsDQo+ID4+ICsJWzE4XSA9IDB4ZGFm
+ZmRhZmYsDQo+ID4+ICsJWzE5XSA9IDB4ZmFmYWRhZmENCj4gPj4gICB9Ow0KPiA+PiAgICAgc3Ry
+dWN0IHJ0dzg5X2J0Y19idGZfdGx2IHsNCj4gPg0KPiA+DQo+ID4gSXMgdGhpcyBjaGFuZ2UgcmVh
+bGx5IG5lY2Vzc2FyeT8gWWVzLCB0aGUgZW50cmllcyBtdXN0IGJlIG9yZGVyZWQ7DQo+ID4gaG93
+ZXZlciwgdGhlIGNvbW1lbnQgY2FycmllcyB0aGF0IGluZm9ybWF0aW9uIGF0IHZlcnkgZmV3IGV4
+dHJhDQo+ID4gY2hhcmFjdGVycy4gVG8gbWUsIHRoaXMgcGF0Y2ggbG9va3MgbGlrZSB1bm5lZWRl
+ZCBzb3VyY2UgY2h1cm4uDQo+IA0KPiBPbmUgc21hbGwgYmVuZWZpdCBJIHNlZSBpcyB0byBhdm9p
+ZCB0aGUgY29tbWVudCBpbmRleCBiZWluZyB3cm9uZyBhbmQNCj4gdGhlcmUgd291bGQgYmUgbm8g
+d2F5IHRvIGNhdGNoIHRoYXQuIEJ1dCBvdGhlcndpc2UgSSBkb24ndCBoYXZlIGFueQ0KPiBvcGlu
+aW9uIGFib3V0IHRoaXMuDQoNCklmIHRoZSBbbm5dIGFyZSB3cm9uZyB0aGUgZWZmZWN0IGlzIHBy
+b2JhYmx5IHdvcnNlLg0KWW91IHJlYWxseSBkb24ndCB3YW50IGEgZ2FwIQ0KDQpEb2Vzbid0IHNl
+ZW0gd29ydGggdXNpbmcgQzk5IGluaXRpYWxpc2VycyB1bmxlc3MgdGhleSBhcmUNCiNkZWZpbmVz
+IG9yIGVudW0gdmFsdWVzLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
+aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
+DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-On 3/28/22 13:59, Ansuel Smith wrote:
-> On Mon, Mar 28, 2022 at 11:20:00AM +0200, Patrice CHOTARD wrote:
->>
->>
->> On 3/28/22 11:09, Patrice CHOTARD wrote:
->>> Hi Ansuel
->>>
->>> On 3/28/22 02:09, Ansuel Smith wrote:
->>>> - Categorize every dts in arm directory in subdirectory
->>>> - Fix Makefile to address for the arm subdirectory
->>>> - Fix any arm64 dependency
->>>>
->>>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
->>>
->>>>  create mode 100644 arch/arm/boot/dts/st/Makefile
->>>>  rename arch/arm/boot/dts/{ => st}/spear1310-evb.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear1310.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear1340-evb.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear1340.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear13xx.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear300-evb.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear300.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear310-evb.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear310.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear320-evb.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear320-hmi.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear320.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear320s.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear3xx.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear600-evb.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st}/spear600.dtsi (100%)
->>>
->>>
->>> All SPEAr device tree should go into stm sub-directory, as this platform is a STMicroelectronics one
->>> as STi or STM32.
->>
->> Just got an internal discussion, all STMicroelectronics platform should go into "st" sub-directory, and not in "stm" as indicated in my previous e-mail. ;-)
->>
->> Patrice
->>
-> 
-> Noted will do the change. If you notice other wrong categorization, feel
-> free to write a big list so I can fix them. In short merge stm in the st
-> directory. (arch_sti and arch_stm32)
-> Aside from that they are all correct right?
-
-Yes arch_spear, arch_sti and arch_stm32 in "st" directory.
-Thanks
-Patrice
-
-> 
->>>
->>> Thanks
->>>
->>> Patrice
->>>
->>>>  create mode 100644 arch/arm/boot/dts/st_ericsson/Makefile
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ab8500.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ab8505.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-db8500.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-db8520.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-db9500.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-dbx5x0-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-dbx5x0.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href-ab8500.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href-family-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href-stuib.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href-tvk1281618-r2.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href-tvk1281618-r3.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-href520-tvk.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-hrefprev60-stuib.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-hrefprev60-tvk.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-hrefprev60.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-hrefv60plus-stuib.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-hrefv60plus-tvk.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-hrefv60plus.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-nomadik-nhk15.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-nomadik-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-nomadik-s8815.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-nomadik-stn8815.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-snowball.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ux500-samsung-codina.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ux500-samsung-gavini.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ux500-samsung-golden.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ux500-samsung-janice.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ux500-samsung-kyle.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => st_ericsson}/ste-ux500-samsung-skomer.dts (100%)
->>>>  create mode 100644 arch/arm/boot/dts/stm/Makefile
->>>>  create mode 120000 arch/arm/boot/dts/stm/armv7-m.dtsi
->>>>  rename arch/arm/boot/dts/{ => stm}/st-pincfg.h (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih407-b2120.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih407-clock.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih407-family.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih407-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih407.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih410-b2120.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih410-b2260.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih410-clock.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih410-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih410.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih418-b2199.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih418-b2264.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih418-clock.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stih418.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stihxxx-b2120.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32429i-eval.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32746g-eval.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f4-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f429-disco.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f429-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f429.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f469-disco.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f469-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f469.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f7-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f746-disco.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f746-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f746.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f769-disco.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32f769-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32h7-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32h743.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32h743i-disco.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32h743i-eval.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32h750.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32h750i-art-pi.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp13-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp131.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp133.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp135.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp135f-dk.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp13xc.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp13xf.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp151.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp153.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp153c-dhcom-drc02.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-avenger96.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-dhcor-avenger96.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-dk1.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-icore-stm32mp1-ctouch2-of10.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-icore-stm32mp1-ctouch2.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-icore-stm32mp1-edimm2.2.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-icore-stm32mp1.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-iot-box.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-microgea-stm32mp1-microdev2.0-of7.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-microgea-stm32mp1-microdev2.0.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-microgea-stm32mp1.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-stinger96.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157a-stinger96.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-dhcom-pdk2.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-dhcom-picoitx.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-dk2.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-ed1.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-emsbc-argon.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-emstamp-argon.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-ev1.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-lxa-mc1.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-odyssey-som.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp157c-odyssey.dts (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xc.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcom-drc02.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcom-pdk2.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcom-picoitx.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcom-som.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcor-avenger96.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcor-io1v8.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dhcor-som.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-dkx.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xx-osd32.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xxaa-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xxab-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xxac-pinctrl.dtsi (100%)
->>>>  rename arch/arm/boot/dts/{ => stm}/stm32mp15xxad-pinctrl.dtsi (100%)
-> 
