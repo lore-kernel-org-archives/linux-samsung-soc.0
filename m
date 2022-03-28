@@ -2,146 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA46C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 07:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A229C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 07:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238827AbiC1Hg3 (ORCPT
+        id S238968AbiC1Hzd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Mar 2022 03:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
+        Mon, 28 Mar 2022 03:55:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238836AbiC1Hg3 (ORCPT
+        with ESMTP id S235343AbiC1Hzd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Mar 2022 03:36:29 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5D3A52E08
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 00:34:47 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nYjtl-0007DX-56; Mon, 28 Mar 2022 09:34:45 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nYjth-003Xl3-6n; Mon, 28 Mar 2022 09:34:43 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nYjtj-00CJRY-2R; Mon, 28 Mar 2022 09:34:43 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH] pwm: samsung: Implement .apply() callback
-Date:   Mon, 28 Mar 2022 09:34:34 +0200
-Message-Id: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.35.1
+        Mon, 28 Mar 2022 03:55:33 -0400
+X-Greylist: delayed 392 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Mar 2022 00:53:52 PDT
+Received: from mail.ourpartnership.pl (mail.ourpartnership.pl [80.211.82.238])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC9ACFB
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 00:53:52 -0700 (PDT)
+Received: by mail.ourpartnership.pl (Postfix, from userid 1001)
+        id EBD0661EFE; Mon, 28 Mar 2022 08:46:26 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ourpartnership.pl;
+        s=mail; t=1648453637;
+        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
+        h=Date:From:To:Subject:From;
+        b=g28lphs+uoRuabwGUJt4M3QfL1GgoYtCybUda6pVJ1AVNdUxzkXXD2OIa6PbYZtP+
+         9X2gCQXBo331rcRYWEzNIanzkCGn4DfKgTLgLnHzmqjrh3oFYi1H0GUgcAP9p8D8ZJ
+         iu+8mUDVUo/ucoItYinZ56IX6EH1nYJ3EkmLKLQ+XKbqP5oYHnsyhbCKaN2jQce3fh
+         nJdPrhEFWsGV6DnWB0u+CDT31u58fMS/C6T6rR2BUT6PBoVZt6XUlYKK3mr70mGUt9
+         VhD2elLuH90ygnQjMJuY+JFm7iBUbXxvkj2XppnllJeQbYHaWtaw8B0h3xGWnU12V5
+         3NvaCwbRUQ53w==
+Received: by mail.ourpartnership.pl for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 07:46:04 GMT
+Message-ID: <20220328074501-0.1.9.2a9y.0.npkfh4p5rc@ourpartnership.pl>
+Date:   Mon, 28 Mar 2022 07:46:04 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@ourpartnership.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.ourpartnership.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2669; h=from:subject; bh=Wma7z56MXzPlyi5tga+1Vs5Q9xdWnEc8Jt+b6Asx6K0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiQWUHyhz4Bzlmg9fLv9oeKShDA/jMDEOEWXnGgg1J jSKNTKuJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYkFlBwAKCRDB/BR4rcrsCUJIB/ 9k7LJmLyyr4QRLxSYJvX/KNo+0aY7oWczwIBweEtgId4sWkWm2i9aDjGH9iHFGRB0+5nnd2+O1yski WGR8ypgNIBsj4z4Dl7j09wDWZV/dbf+YaAWEF3LS2MfpjLx35wfJjvWoOzAq4+PWlVCiY9wlg+vCzJ 3KUcvjviqrxVfn55ooUNMDHmGd89YzSf7a5efsn2hHOR26AI1+jD91dzX8014J5OmTpYS5FIxhutNl X9K9jzB8fbpPbL7dDyi69uMxEZ0s8AiDrB+I9g8wiuYPI7NYKfWDAbQ+zMOPTqiVSWlVMSfqKedMKa fizFxaBl3EnB1hHHRdN230/2TnPYEn
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-To eventually get rid of all legacy drivers convert this driver to the
-modern world implementing .apply().
+Dzie=C5=84 dobry,
 
-The size check for state->period is moved to .apply() to make sure that
-the values of state->duty_cycle and state->period are passed to
-pwm_samsung_config without change while they are discarded to int.
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/pwm/pwm-samsung.c | 54 ++++++++++++++++++++++++++++++---------
- 1 file changed, 42 insertions(+), 12 deletions(-)
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index 0a4ff55fad04..9c5b4f515641 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -321,14 +321,6 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
- 	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
- 
--	/*
--	 * We currently avoid using 64bit arithmetic by using the
--	 * fact that anything faster than 1Hz is easily representable
--	 * by 32bits.
--	 */
--	if (period_ns > NSEC_PER_SEC)
--		return -ERANGE;
--
- 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
- 	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
- 
-@@ -438,13 +430,51 @@ static int pwm_samsung_set_polarity(struct pwm_chip *chip,
- 	return 0;
- }
- 
-+static int pwm_samsung_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+			     const struct pwm_state *state)
-+{
-+	int err, enabled = pwm->state.enabled;
-+
-+	if (state->polarity != pwm->state.polarity) {
-+		if (enabled) {
-+			pwm_samsung_disable(chip, pwm);
-+			enabled = false;
-+		}
-+
-+		err = pwm_samsung_set_polarity(chip, pwm, state->polarity);
-+		if (err)
-+			return err;
-+	}
-+
-+	if (!state->enabled) {
-+		if (enabled)
-+			pwm_samsung_disable(chip, pwm);
-+
-+		return 0;
-+	}
-+
-+	/*
-+	 * We currently avoid using 64bit arithmetic by using the
-+	 * fact that anything faster than 1Hz is easily representable
-+	 * by 32bits.
-+	 */
-+	if (state->period > NSEC_PER_SEC)
-+		return -ERANGE;
-+
-+	err = pwm_samsung_config(chip, pwm, state->duty_cycle, state->period);
-+	if (err)
-+		return err;
-+
-+	if (!pwm->state.enabled)
-+		err = pwm_samsung_enable(chip, pwm);
-+
-+	return err;
-+}
-+
- static const struct pwm_ops pwm_samsung_ops = {
- 	.request	= pwm_samsung_request,
- 	.free		= pwm_samsung_free,
--	.enable		= pwm_samsung_enable,
--	.disable	= pwm_samsung_disable,
--	.config		= pwm_samsung_config,
--	.set_polarity	= pwm_samsung_set_polarity,
-+	.apply		= pwm_samsung_apply,
- 	.owner		= THIS_MODULE,
- };
- 
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
 
-base-commit: ed14d36498c8d15be098df4af9ca324f96e9de74
--- 
-2.35.1
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
 
+
+Pozdrawiam
+Arkadiusz Soko=C5=82owski
