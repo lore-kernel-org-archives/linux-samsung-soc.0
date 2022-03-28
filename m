@@ -2,149 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28710C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 13:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FDCC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 13:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243440AbiC1Nsx (ORCPT
+        id S233834AbiC1Nwx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Mar 2022 09:48:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52478 "EHLO
+        Mon, 28 Mar 2022 09:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243431AbiC1Nsw (ORCPT
+        with ESMTP id S243493AbiC1Nwr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Mar 2022 09:48:52 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312CD5EBD8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 06:47:10 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id r204-20020a1c44d5000000b0038ccb70e239so3616309wma.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 06:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=lqWUovhT3deFfz1zrmG2BdScTmfXFTXlEBWbC7kOkUc=;
-        b=Casp3ieHRH0PsmFMjKH7TFdpT/TNQBYWEewfJb+0xu+uR1ofg9WJFp8XZHfsoJ6hWp
-         C3nRcv1dmEeOPPKeVzOxrD+erWCy3JA6tU8mIHsAGm/8BjsYzwvx7P5mI7L1KmNHeogG
-         38uNEFuvu5fJtLpThq9lRBZu4UJTQpGAB9zPox6v7iYfXD/Z14PGXT9t5owO2tQYWh0P
-         3dUo+G/1/czVs79WbHUKkU/6h2niPOopvKPMU5QpP07x/qfD1LrC5Cesac25l5SMzvon
-         esMFddga3HKSH7nNwn2IpXtOjAEGaytpRSosc2jrznnt1TPvUIg3fMjEdTz9d4Vfr7yu
-         igag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lqWUovhT3deFfz1zrmG2BdScTmfXFTXlEBWbC7kOkUc=;
-        b=FWYu4G/i1mL7G2gvQm4Erk5h1nbOHpeM3Ut1HdtnJ3xuBYWz8yeYgO0pRIC+LfIhRj
-         ulgE/JEn3VyqApG8gyBljhMCk+W9TOGvM2qme70lfvpELGMq3WH+bRYoRaDjZZtisFEe
-         jL4Qsm+UJKTkUdmHHfLaWXa714AUNF1cxHViwa/UrdCj153aiHSj58mpDFJS4gGtp9Nh
-         ld53Yz+PdqccA0cU4nhvpxxIVMXS6e9G9yQ1gBc+2EfEIuOZ8NIijRdl+EwSP2H+NVSS
-         BRkESfQ98BReOb5OdKdslGezExofEzMeMNKoHZ9JHtvUY/uWFOfZHV0CaI0/Leg1V6hZ
-         fssA==
-X-Gm-Message-State: AOAM531+y2SKqCx9ZYiwtClK5bnc/FIlKnTH8QhrH+sjskLTKS2C/ZK/
-        2NAX5R/dflS0Wr73PUpC7l/GWQ==
-X-Google-Smtp-Source: ABdhPJwB0pYnLloiCs6wa/2INWNx44L+qT5u6Nb9H+6gXgQ9TsmBu3vjwmvbBF2kaoxeBO0KJ0MWbQ==
-X-Received: by 2002:a05:600c:4401:b0:38c:8df8:9797 with SMTP id u1-20020a05600c440100b0038c8df89797mr35783652wmn.13.1648475228582;
-        Mon, 28 Mar 2022 06:47:08 -0700 (PDT)
-Received: from maple.lan (cpc141216-aztw34-2-0-cust174.18-1.cable.virginm.net. [80.7.220.175])
-        by smtp.gmail.com with ESMTPSA id t4-20020a05600001c400b00203fb5dcf29sm12145898wrx.40.2022.03.28.06.47.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Mar 2022 06:47:08 -0700 (PDT)
-Date:   Mon, 28 Mar 2022 14:47:05 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Benjamin =?utf-8?B?U3TDvHJ6?= <benni@stuerz.xyz>
-Cc:     sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
-        linux@armlinux.org.uk, linux@simtec.co.uk, krzk@kernel.org,
-        alim.akhtar@samsung.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        robert.moore@intel.com, rafael.j.wysocki@intel.com,
-        lenb@kernel.org, 3chas3@gmail.com, laforge@gnumonks.org,
-        arnd@arndb.de, gregkh@linuxfoundation.org, mchehab@kernel.org,
-        tony.luck@intel.com, james.morse@arm.com, rric@kernel.org,
-        linus.walleij@linaro.org, brgl@bgdev.pl,
-        mike.marciniszyn@cornelisnetworks.com,
-        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-        pali@kernel.org, dmitry.torokhov@gmail.com, isdn@linux-pingi.de,
-        benh@kernel.crashing.org, fbarrat@linux.ibm.com, ajd@linux.ibm.com,
-        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-        nico@fluxnic.net, loic.poulain@linaro.org, kvalo@kernel.org,
-        pkshih@realtek.com, bhelgaas@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@acpica.org,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-input@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 00/22] Replace comments with C99 initializers
-Message-ID: <20220328134705.lnxwwznhw622r2pr@maple.lan>
-References: <20220326165909.506926-1-benni@stuerz.xyz>
- <8f9271b6-0381-70a9-f0c2-595b2235866a@stuerz.xyz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8f9271b6-0381-70a9-f0c2-595b2235866a@stuerz.xyz>
+        Mon, 28 Mar 2022 09:52:47 -0400
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAC975BD1A;
+        Mon, 28 Mar 2022 06:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1648475436;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=4ezCWy705CocHbi8RdHxAqN8vv3gv5SFt/Dzp2Yq4pw=;
+    b=h67cVVRQQY22Ho6Oj4lqPV6bbZckg/sqlHJTvISuhhitSpD81WickIMTAt5h0AFRCu
+    Qg+4KMYijDSN2sgiXaUl4mkWwL9szWD4xXIJNJkYGv3z88l0PTuJb0dZ/VHDeEbmgBID
+    CBrquT4GkxLKaOV2BIp8osnHX+l3cX0/OHzhwCQzswvxR4LPQN6v+l5jOK8elenecZim
+    yxdVkybdH/gWZLIWfRewxjT6C6qAdZGJSpqqZf7tPJGeXqzB/cGuyUHgPrRZx7Uc2aQt
+    y0IhuWC0oSbH7Z+AuXQhtPgu/MgbvE1jvg6fxo79GX5ZqOVxt5WvtyeuH2CF7eSsjLBB
+    +nnw==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHWElw43u32M="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+    by smtp.strato.de (RZmta 47.42.1 DYNA|AUTH)
+    with ESMTPSA id u3e945y2SDoZ3IR
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+    Mon, 28 Mar 2022 15:50:35 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.21\))
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <YkG2RPrtPaBNXb7a@latitude>
+Date:   Mon, 28 Mar 2022 15:50:34 +0200
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
+        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
+        linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-realtek-soc@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D9AFAC3C-46CA-4C40-8559-FD6934411CAB@goldelico.com>
+References: <20220328000915.15041-1-ansuelsmth@gmail.com>
+ <YkG2RPrtPaBNXb7a@latitude>
+To:     =?utf-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Ansuel Smith <ansuelsmth@gmail.com>
+X-Mailer: Apple Mail (2.3445.104.21)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Mar 27, 2022 at 02:46:00PM +0200, Benjamin Stürz wrote:
-> This patch series replaces comments with C99's designated initializers
-> in a few places. It also adds some enum initializers. This is my first
-> time contributing to the Linux kernel, therefore I'm probably doing a
-> lot of things the wrong way. I'm sorry for that.
-
-Welcome!
 
 
-> I've gotten a few emails so far stating that this patch series is
-> unnecessary. Yes, in fact this patch series is not necessary by itself,
-> but it could help me understand how the whole process works and maybe I
-> could help somewhere, where help is actually needed.
+> Am 28.03.2022 um 15:21 schrieb Jonathan Neusch=C3=A4fer =
+<j.neuschaefer@gmx.net>:
+>=20
+> Or maybe bcm instead of broadcom. Not sure which is preferred by
+> Broadcom people.
 
-Have you been told the series is unnecessary or too big?
+Maybe it should always follow the list of vendor prefixes as we are =
+talking about DTS?
 
-Although all patches represent a variant of the same mechanical
-transformation but they are mostly unrelated to each other and, if
-accepted, they will be applied by many different people.
+just my 2cts,
+Nikolaus
 
-Taken as a whole presenting this to maintainers as a 22 patch set is too
-big. I'd recommend starting with a smaller patch or patch series where
-all the patches get picked up by the same maintainer.
-
-
-> This patch itself is a no-op.
-
-PATCH 0/XX is for the covering letter. You should generate a template for
-it using the --cover-letter option of git format-patch. That way patch 0
-will contain the diffstat for the whole series (which is often useful
-to help understand what the series is for) and there is no need to
-make no-op changes.
-
-
-Daniel.
-
-> 
-> Signed-off-by: Benjamin Stürz <benni@stuerz.xyz>
-> ---
->  .gitignore | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/.gitignore b/.gitignore
-> index 7afd412dadd2..706f667261eb 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -20,7 +20,7 @@
->  *.dtb
->  *.dtbo
->  *.dtb.S
-> -*.dwo
-> +*.dwo
->  *.elf
->  *.gcno
->  *.gz
-> -- 
-> 2.35.1
