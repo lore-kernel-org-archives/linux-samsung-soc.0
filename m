@@ -2,162 +2,165 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8CCC43217
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 13:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37479C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 13:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243253AbiC1Nhc (ORCPT
+        id S243274AbiC1Njf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Mar 2022 09:37:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50984 "EHLO
+        Mon, 28 Mar 2022 09:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232753AbiC1Nhc (ORCPT
+        with ESMTP id S243279AbiC1Nja (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Mar 2022 09:37:32 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9946DFF1;
-        Mon, 28 Mar 2022 06:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1648474523;
-        bh=NfSRIzvzOPgU4rZ4xpgMRIXSS+N3V0+Ii+jGxlTZq5E=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=D0kzSTq/FCQpdZRfcQx5HrPzqfiREQsAmtCed0R91VFj0oN/ymhy6uc+HsEFYd/WK
-         vyjagMABiO1BKdOkyhuJ7iuYcYOSSa9vf3deQBwKyH1VdStR2xVP023B1NVoR5fj88
-         DZ4bu+pwzQyDdbemXO2DW6kyPCxkoh3Z2lB0ek2Y=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([37.201.215.112]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MQvCv-1nN3y00Tep-00O1oc; Mon, 28
- Mar 2022 15:35:23 +0200
-Date:   Mon, 28 Mar 2022 15:35:18 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org,
-        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
-        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
-        linux-unisoc@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Message-ID: <YkG5lsXhNk+9ulnl@latitude>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <YkG2RPrtPaBNXb7a@latitude>
- <YkG3sQ3MDhVoW8l4@Ansuel-xps.localdomain>
+        Mon, 28 Mar 2022 09:39:30 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95A445DE50
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 06:37:48 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id p189so8410638wmp.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 06:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=X9xolOBuBIa4R0vTxvv45W6wXO+HEw6pqnTDDTRpzds=;
+        b=oLet0tANev/NadSGG5WygX6a9PHbV48R0OGVzTFAK66vgaFAFv+6FEqLK0G3/3ySP4
+         b/d5orpZAPqedkx1AD7rtFEyiwXnPvIQaUt3cb5bANbLFAp1PP9b3VM5x83B+LE5bpZX
+         Mqfb0YdcPylnkm3GgwX0FkcVIyeIpzrHW1Ztm1YCPJWhtEm6b0R7UxTKqyLkp9X86tDh
+         RTML6mUvAc9b6cJ7rPhuh5vgMUf407AdVPTSrPRQBy/Qnb76rcY+JlipO/P3K/LBqKBX
+         q692XNYucimXULVF/VqoaavfK2r3MAlFNO2DaqNE8kM6/YoLSPlUhjDCWMHA+GVsdYK9
+         BlPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=X9xolOBuBIa4R0vTxvv45W6wXO+HEw6pqnTDDTRpzds=;
+        b=sw+H8P7cjqkO3GyJ53Zb14N3DsBMoHj+zFmVpraM3VgejkbhfdU2Om9LOotKWDJ6P0
+         Mqe0wfcrdEzgPyx+WWkL87XF6+iANDf+o+wNzqqBA6cJrelgWoTKAYwloRBFk65MsdzO
+         4oxwt9HfGFbVeWonqlkbYcmyA0QgUJ1ghUfx5K3Hpr2JipB00pwlLwCIaHUAGHwG837N
+         Gad9PDEJcw0Lr6UUCHDS0Ho1E6BZ4IJbhDYzxhzzV5L9EVUk9X7iONPjhUiHnhw7mGL7
+         hBGuhNeet/+ZoQ+LY5T6EU8M1biueEEVMhDrNvyyUOlmGtmK9j+fUJlA+vBK83xaNgbc
+         +hSA==
+X-Gm-Message-State: AOAM532NSTwysL/fu+4S2wXfIYishWVu/BcKijj67AG3pjJtRMGwzbYt
+        czvuWskOM2vXqlCCKHpUOPYz9w==
+X-Google-Smtp-Source: ABdhPJzgqImTJvpGFyUqZPtbBODfMsZThR+EI0nK3Vy5a8rcSuNNZ7ZoSJ0lC0b5BDudwRR5EvwIkg==
+X-Received: by 2002:a05:600c:a08:b0:38c:93c8:36e9 with SMTP id z8-20020a05600c0a0800b0038c93c836e9mr36701865wmp.97.1648474666793;
+        Mon, 28 Mar 2022 06:37:46 -0700 (PDT)
+Received: from maple.lan (cpc141216-aztw34-2-0-cust174.18-1.cable.virginm.net. [80.7.220.175])
+        by smtp.gmail.com with ESMTPSA id p14-20020a5d59ae000000b00203dcc87d39sm19694611wrr.54.2022.03.28.06.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Mar 2022 06:37:46 -0700 (PDT)
+Date:   Mon, 28 Mar 2022 14:37:43 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Benjamin =?utf-8?B?U3TDvHJ6?= <benni@stuerz.xyz>
+Cc:     andrew@lunn.ch, sebastian.hesselbarth@gmail.com,
+        gregory.clement@bootlin.com, linux@armlinux.org.uk,
+        linux@simtec.co.uk, krzk@kernel.org, alim.akhtar@samsung.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, robert.moore@intel.com,
+        rafael.j.wysocki@intel.com, lenb@kernel.org, 3chas3@gmail.com,
+        laforge@gnumonks.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        mchehab@kernel.org, tony.luck@intel.com, james.morse@arm.com,
+        rric@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
+        mike.marciniszyn@cornelisnetworks.com,
+        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
+        pali@kernel.org, dmitry.torokhov@gmail.com, isdn@linux-pingi.de,
+        benh@kernel.crashing.org, fbarrat@linux.ibm.com, ajd@linux.ibm.com,
+        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+        nico@fluxnic.net, loic.poulain@linaro.org, kvalo@kernel.org,
+        pkshih@realtek.com, bhelgaas@google.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-acpi@vger.kernel.org, devel@acpica.org,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-input@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
+        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 02/22] s3c: Replace comments with C99 initializers
+Message-ID: <20220328133743.xhdzmprlc7a6jxxy@maple.lan>
+References: <20220326165909.506926-1-benni@stuerz.xyz>
+ <20220326165909.506926-2-benni@stuerz.xyz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fF1LzePeKn57rJis"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YkG3sQ3MDhVoW8l4@Ansuel-xps.localdomain>
-X-Provags-ID: V03:K1:qrlsZgi0Jlf5u32fwM6O7HB37vWISNYC2WTXBzEgnEUsaV8YaNw
- c3UuZWLJ+6kLvFkIEoGMdp/pY0xTM+H2S6Fg6FRdbibr+FtHBJSNmaMWRBPDJ6JWpI8ALlv
- xfvEbk/BLLn/YarzsR+ub+9viR80VK3a+J2yS7G8ktIyRuzmg9ViY8j72BhfFQFHHhZLLB+
- SgbBh2uDTnWNV+hXMQqHw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:MP+QskqFt+A=:uJofwvdWLtPOUsKxTtMRfW
- gxZRiIxqEgwxjrMywxPkJFoGhDNufjdlk39PoTohNeXdVyRnq90HET69O3eg2idoyCMY3SViO
- 8h8rI8iQ8AIAX3kbhwdDHKi0L1qpo9AkOU6QGA0ylsV+3YB2X+RkPLmXC0cKcI4GsOD9GS0ar
- /uQ7PtRRHZc3Fg4GkUeK32qKIa+Kgf72YQHSGqbcz3zP4LRAnIgeKYl+4PeLZhQW0LVcv9TSY
- wRVeWcImeQqhu3NR9HzIw1MY2zCPyd/uhapAxn6FkkKg99pghPEhjoA6Zh7mHukMN4BAzt4ss
- 0C4pXpCtLGl5UsbtASkZq+LhKbqO6QKTooICMBieIQcCNB39/HawAX4s7QtrPq7mNRZFSP8BN
- qHmjvMdVL0w6NXnIJ1O0a3Q4+Su3K/myV7F0tL3ypBC8y4ri27OiIQJqKg0TncNUUKXHD1YuO
- aHOMrwT8+tXErPEkRcjlV/p2f6AOt4HukuGlxII0nECqvi3jn5+k5vnBT9XJzysiyEnEU4gEL
- 37kreFpUWVFwxXKBvuKH7kYMEJ5Y8Vbk3oFPWaEk7BFjeKX+ynQWKz82wROInu4NAn1msyRDH
- ahbTG9ZMrBeaignIG+D+xD5yIyAdjSv3ubh26T/w21aa+UNEx7aESH+H8OUK8Mf+u/xvSrzbO
- m7J8KLOCvfp5hw78x8EmXqE1P6z6MigI/vko7xIa4ax2wZwxqNn2E0b25iXFlHprK2RllbPY3
- ksUgfDw+fBOYIksvmkgFNntDVa/GEsL0AJRop45lRdj2449MwCWyX/yFjEdqYfRKeZuVC81BM
- i53118dVAebWLW0kE621qMPziCiX9AZe3KPeQmp9issm52vwKRB5sdBmgo1qgEmUPZETQuALl
- wsla0jmnMSYsbCKDf6kp5IxP/PS6bCFr7xmyKniy2wt4M2KWWffr6iJlpyJ4NnKOxaAGDwYox
- cQxxKRYBCzEekCRZR8KICGi+/6L0rH5i0SciI/fLkyX3nUuKuEB+uFMSYHfEVwGll3VLHadN8
- vN+qrpfwR+EHWZQk7XZ2dfoYQZfIYIiIwV+GoN6Tm3nLeDq4wRSUEXuQU6QpGLyEWoDi0ig9M
- aTSqjPozVHNams=
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220326165909.506926-2-benni@stuerz.xyz>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sat, Mar 26, 2022 at 05:58:49PM +0100, Benjamin Stürz wrote:
+> This replaces comments with C99's designated
+> initializers because the kernel supports them now.
 
---fF1LzePeKn57rJis
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm a bit puzzled by "because the kernel supports them now". Designated
+initializers are not purely a C99 feature... it is also a GNU C extension
+to C89. This language feature has been used by the kernel for a very long time
+(well over a decade).
 
-On Mon, Mar 28, 2022 at 03:27:13PM +0200, Ansuel Smith wrote:
-> On Mon, Mar 28, 2022 at 03:21:08PM +0200, Jonathan Neusch=C3=A4fer wrote:
-> > On Mon, Mar 28, 2022 at 02:09:14AM +0200, Ansuel Smith wrote:
-> > > Hi,
-> > > as the title say, the intention of this ""series"" is to finally cate=
-gorize
-> > > the ARM dts directory in subdirectory for each oem.
-> > [...]
-> > > [1] https://gist.github.com/Ansuel/47c49925ee7ef4b1dd035afc74679ab5
-> > > [2] https://gist.github.com/Ansuel/19f61f1e583c49407ce35c10e770fbe0
-> >=20
-> > Nice idea, thank you!
-> >=20
-> > A few notes on categorization below.
-> >=20
-> >=20
-> > >  create mode 100644 arch/arm/boot/dts/broadcom/Makefile
-> > >  rename arch/arm/boot/dts/{ =3D> broadcom}/bcm-cygnus-clock.dtsi (100=
-%)
-> >=20
-> > Or maybe bcm instead of broadcom. Not sure which is preferred by
-> > Broadcom people.
-> >=20
->=20
-> In arm64 they used broadcom so i assume the full name looks correct.
-
-Alright.
+On other words it would be much more effective to advocate for the
+change by saying "because the code is clearer and easier to read" rather
+than "because we can".
 
 
-[...]
-> > >  create mode 120000 arch/arm/boot/dts/nxp/armv7-m.dtsi
-> >=20
-> > armv7-m.dtsi is a bit confusing, because it contains a few devices at
-> > fixed addresses, so it looks vendor-specific at a first glance into the
-> > file. However, if it is actually as vendor-neutral as the name implies,
-> > I think it should live dts/ directly, rather than in vendor
-> > subdirectories.
-> >
->=20
-> Considering it's really just 3 binding IMHO it should be just dropped
-> and merged in other dtsi... But lets not extend this too much.
-> This is really just a simplic link and armv7-m.dtsi is placed in dts/
-> I create links in each oem that includes it to skip any changes to the
-> dts.
+> Signed-off-by: Benjamin Stürz <benni@stuerz.xyz>
+> ---
+>  arch/arm/mach-s3c/bast-irq.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s3c/bast-irq.c b/arch/arm/mach-s3c/bast-irq.c
+> index d299f124e6dc..bd5471f9973b 100644
+> --- a/arch/arm/mach-s3c/bast-irq.c
+> +++ b/arch/arm/mach-s3c/bast-irq.c
+> @@ -29,22 +29,22 @@
+>   * the irq is not implemented
+>  */
+>  static const unsigned char bast_pc104_irqmasks[] = {
+> -	0,   /* 0 */
+> -	0,   /* 1 */
+> -	0,   /* 2 */
+> -	1,   /* 3 */
+> -	0,   /* 4 */
+> -	2,   /* 5 */
+> -	0,   /* 6 */
+> -	4,   /* 7 */
+> -	0,   /* 8 */
+> -	0,   /* 9 */
+> -	8,   /* 10 */
+> -	0,   /* 11 */
+> -	0,   /* 12 */
+> -	0,   /* 13 */
+> -	0,   /* 14 */
+> -	0,   /* 15 */
+> +	[0]  = 0,
+> +	[1]  = 0,
+> +	[2]  = 0,
+> +	[3]  = 1,
+> +	[4]  = 0,
+> +	[5]  = 2,
+> +	[6]  = 0,
+> +	[7]  = 4,
+> +	[8]  = 0,
+> +	[9]  = 0,
+> +	[10] = 8,
+> +	[11] = 0,
+> +	[12] = 0,
+> +	[13] = 0,
+> +	[14] = 0,
+> +	[15] = 0,
 
-Ah, I missed the link bit (hidden in the file permissions) :)
-I agree, this is something that can be cleaned up later.
+Shouldn't this just be as follows (in order to match bast_pc104_irqs)?
+
++static const unsigned char bast_pc104_irqmasks[16] = {
++	[3]  = 1,
++	[5]  = 2,
++	[7]  = 4,
++	[10] = 8,
+ };
+ 
+ static const unsigned char bast_pc104_irqs[] = { 3, 5, 7, 10 };
 
 
-Jonathan
-
---fF1LzePeKn57rJis
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmJBuUMACgkQCDBEmo7z
-X9ur/BAAxp7NDDTo4RBniT+eRykNPIJqV8+GHgUE3wvhGZOkoojmuiOEbi9oqjeS
-b2FyMFrZ8yEgl87fra/tP0pq11rAHFlgTJFIS8WxfNyA8OH70j0pZN6C30ZpUst4
-W4SXDyfvQfyzM6W2xfcpb+TJn4v0CX6t0HL0/Oy3kO8KzP9fuEi9Kn7Zi9kIM5U8
-BZ2K0MueiWCobUaQYTApyJs3oFAD2QoHyT+u9wQasbUKyLZcuMaNrSjIV84rs+9y
-UlsIw5CVbqbrUAwLJqZFjW06DO86JwmvLtn3AT1tpC3enzoPuQUqhGfKh9lYRfRe
-DWaQr7+81KMWwO4MvMPjzOYpE30ejDnoKQUN1hQpVnQn6n/to0xZBTEgm5t4453c
-YBBUPG4z1Na8V671xU7Z1vhOtDHhcBhlPdvo5Jjyb3BLdAeKaQxXz0PEtW+/8HYE
-ds1ajff627fAyrlTf89qzY0Hr9dfh9Ig8jLOiiMsXhoOpEp4/G5dGZhl2rj4XlkM
-arHIOOSO+2Inoa1WnCvxI0qFSCP7oFvB6mZc6mbrKssh3nB/InQig4rPZvvf8bwY
-PGxmj+VaapfZwxRXSI6cEpAlmFk3sWeWD/Qm2Wgm6iJV30OVPSaaYQN5A2ZxNiVg
-oDJI2Sthg7qN10DGIscE4FqOVhKJ4KrhCosnkONoYhjYsC1ZxoE=
-=sVOd
------END PGP SIGNATURE-----
-
---fF1LzePeKn57rJis--
+Daniel.
