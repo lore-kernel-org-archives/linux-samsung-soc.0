@@ -2,79 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E33C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 20:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C841BC4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 20:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344445AbiC1UWH (ORCPT
+        id S245649AbiC1Ut5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Mar 2022 16:22:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34570 "EHLO
+        Mon, 28 Mar 2022 16:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344410AbiC1UWA (ORCPT
+        with ESMTP id S1346399AbiC1Usg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Mar 2022 16:22:00 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B4740E4D;
-        Mon, 28 Mar 2022 13:20:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AAD83B81204;
-        Mon, 28 Mar 2022 20:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF991C340F0;
-        Mon, 28 Mar 2022 20:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648498816;
-        bh=DYKSgCLyLSG5eVAyXEXBJzv5wUb4KbwLHueX4TuM2es=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nccR77DmMt5fnc/o6gzPVyT3/n47SLxU5yK+UpwKdHx+DMcaLuX/6OketRHPbmZK4
-         q8cXPhOeS5U/lTt4ZBRJMWdOApW5jbpoUqhxVh/BedGBZMTMV5wkH3BtP7s6iGDW7Q
-         y0QdQapyEyF3Bt/RYtFN3DcVWfO6ymXfIwUMVbM0YopTHxL2aIt7JhbD6dj4ejWOxW
-         pc+m/7ZMIf0Ie62Bdb6sgKnlk4iE+Z9kmM5yyWzogfPqXEglCECce8tPm4qxiKW+nA
-         n66IatdJU8T97URqDPNt56LnxyLR99fOCTtEa0OoWadqYlrX2oFEX/OYDMGmH5+pqh
-         E51HpRAN1M85Q==
-Date:   Mon, 28 Mar 2022 13:20:14 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Benjamin =?UTF-8?B?U3TDvHJ6?= <benni@stuerz.xyz>
-Cc:     Kalle Valo <kvalo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@acpica.org,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-input@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 00/22] Replace comments with C99 initializers
-Message-ID: <20220328132014.6b8c0a21@kernel.org>
-In-Reply-To: <cc104272-d79a-41e1-f4de-cb78fb073991@stuerz.xyz>
-References: <20220326165909.506926-1-benni@stuerz.xyz>
-        <8f9271b6-0381-70a9-f0c2-595b2235866a@stuerz.xyz>
-        <87fsn2zaix.fsf@kernel.org>
-        <cc104272-d79a-41e1-f4de-cb78fb073991@stuerz.xyz>
+        Mon, 28 Mar 2022 16:48:36 -0400
+Received: from stuerz.xyz (unknown [45.77.206.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80A1CDEBD;
+        Mon, 28 Mar 2022 13:46:49 -0700 (PDT)
+Received: by stuerz.xyz (Postfix, from userid 114)
+        id B7348FB5E4; Mon, 28 Mar 2022 20:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stuerz.xyz; s=mail;
+        t=1648500408; bh=5t9XKqDfb1pVMMfFmkQUBKRx7TGbB+L68FzAskNSgbw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aaNkupoizOKf82Kgx7o2zWfINV0bXNmZpP4vp5oog25xHEj7aTg/LOOm/GZGcOOnv
+         mXauQplxQvI4GGuM0Kow5URxqRzNhKxqhBD1DR6zrzjJw2/0rvzQG0fky9lFX9Nsse
+         PQHtpLrDQKlQeRS0JM6MVbbqXo0ZroCWqDNjuBN+m0+ZqpXKKzmykRwY5jif/Gxrr6
+         GuXeQjN6+Bg+JBjeYVGDFSg0jUkg41y80qtPTdahPrc7+xmVV+a4ja2ZwI29nT4qt1
+         TEWT+QHJhwQqTb757+8V9zmdfVz69xxTY9AbAEvKUOH8F+uU1rV9m/RizC+W6iF74+
+         GVF/Yb0G+8dlg==
+Received: from benni-fedora.. (unknown [IPv6:2a02:8109:a100:1a48:ff0:ef2f:d4da:17d8])
+        by stuerz.xyz (Postfix) with ESMTPSA id 6082DFB404;
+        Mon, 28 Mar 2022 20:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=stuerz.xyz; s=mail;
+        t=1648500406; bh=5t9XKqDfb1pVMMfFmkQUBKRx7TGbB+L68FzAskNSgbw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GkG5TgSFSGAQh7MfaSjiP7EiXN1Tl7OzcnYkBoU3sMnkLvQ70mSl5DahbFhYoo4T0
+         VPAKLjEbapZ69QpIQb4tnCCcWTqKRda2bCq8L5hp211uYXIqeHcoM2MvNCp/DpQpNg
+         WXnU8qhv10gstCGoE5y6qWDHPUc8OEzGzl9Qxxc16DZaHo6+fFDOo7lu9gHPkM+Pwv
+         bEzyc9xgZw6rpLUwxvdhTRpjYrD5MVB9gtwVyPdijBEWWm0NMpKBMrPMGkBXA+rvdJ
+         8jQzPAFxB6/6OWtg7KHl6ihzZa7o5DUQB9TUUYZFO/NdsSbKoSokwegd3NrarkgrhA
+         vh3BUIT28kP3g==
+From:   =?UTF-8?q?Benjamin=20St=C3=BCrz?= <benni@stuerz.xyz>
+To:     linux@simtec.co.uk
+Cc:     krzk@kernel.org, alim.akhtar@samsung.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Benjamin=20St=C3=BCrz?= <benni@stuerz.xyz>
+Subject: [PATCH v2] s3c: Improve readability of bast_pc104_irqmask[]
+Date:   Mon, 28 Mar 2022 22:46:38 +0200
+Message-Id: <20220328204638.273157-1-benni@stuerz.xyz>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 28 Mar 2022 13:51:42 +0200 Benjamin St=C3=BCrz wrote:
-> > Just a small tip: If you are new, start with something small and learn
-> > from that. Don't do a controversial big patchset spanning multiple
-> > subsystems, that's the hard way to learn things. First submit one patch
-> > at a time to one subsystem and gain understanding of the process that
-> > way.
->=20
-> I actually thought this would be such simple thing. Do you know of any
-> good thing where to start? I already looked into drivers/staging/*/TODO
-> and didn't found something for me personally.
+Replace comments in bast_pc104_irqmask[] with C99's designated
+initializers because it makes the code cleaner and easier to read.
 
-FWIW on the netdev side there's work coming to convert a set of features
-from unsigned long to a BITMAP which will require converting a lot of
-drivers to an explicit helpers from direct access.
+Signed-off-by: Benjamin Stürz <benni@stuerz.xyz>
+---
+ arch/arm/mach-s3c/bast-irq.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
-https://lore.kernel.org/all/20220324154932.17557-14-shenjian15@huawei.com/
+diff --git a/arch/arm/mach-s3c/bast-irq.c b/arch/arm/mach-s3c/bast-irq.c
+index d299f124e6dc..618b51db3eef 100644
+--- a/arch/arm/mach-s3c/bast-irq.c
++++ b/arch/arm/mach-s3c/bast-irq.c
+@@ -28,23 +28,11 @@
+ /* table of ISA irq nos to the relevant mask... zero means
+  * the irq is not implemented
+ */
+-static const unsigned char bast_pc104_irqmasks[] = {
+-	0,   /* 0 */
+-	0,   /* 1 */
+-	0,   /* 2 */
+-	1,   /* 3 */
+-	0,   /* 4 */
+-	2,   /* 5 */
+-	0,   /* 6 */
+-	4,   /* 7 */
+-	0,   /* 8 */
+-	0,   /* 9 */
+-	8,   /* 10 */
+-	0,   /* 11 */
+-	0,   /* 12 */
+-	0,   /* 13 */
+-	0,   /* 14 */
+-	0,   /* 15 */
++static const unsigned char bast_pc104_irqmasks[16] = {
++	[3]  = 1,
++	[5]  = 2,
++	[7]  = 4,
++	[10] = 8,
+ };
+ 
+ static const unsigned char bast_pc104_irqs[] = { 3, 5, 7, 10 };
+-- 
+2.35.1
 
-If it seems interesting enough you can try reaching out to Jian Shen.
