@@ -2,126 +2,146 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7442C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 27 Mar 2022 20:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA46C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Mar 2022 07:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236574AbiC0UCN (ORCPT
+        id S238827AbiC1Hg3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 27 Mar 2022 16:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45840 "EHLO
+        Mon, 28 Mar 2022 03:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiC0UCM (ORCPT
+        with ESMTP id S238836AbiC1Hg3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 27 Mar 2022 16:02:12 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB9F12087;
-        Sun, 27 Mar 2022 13:00:32 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id r13so24704489ejd.5;
-        Sun, 27 Mar 2022 13:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=78iW5XK4+ASAwJVsAvI1krxN1Cn3kULaSzDMrQW3lbE=;
-        b=W7sg25bHaszzvWVJN0gyX6n6UFKurK5uWS8e6vL3YRtpn8QA30BzDbsf0Fo0KnzuVo
-         f5lgeCM1g7VjeI4+YsTMtUtXLU8OULMmeB5PSBFxtOhNQxOmFPwV58KHSise/8GMyt0R
-         UkRxgQ3CLiyEWm9B5wmzgYC64NBf7VmqUh+uCDsTRhKm1dBL3PhDD7kvx2KxY5v+Ou9s
-         LtCbA+PaAxJA8Aqhhp0q2Rfl3QnpipqfZJ/WNelj96BMMf018qhLZN8AMLxNqJh1Ixg8
-         Af8ZbFHjT7fOZzcs+O1sgyvPQnq9W6Aze+RWRCdQHnD8mS6FSfbjKHib+pU03gWIfqf1
-         ov8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=78iW5XK4+ASAwJVsAvI1krxN1Cn3kULaSzDMrQW3lbE=;
-        b=ZmonW1tyc16bGmt4eGqB/bGDMcjSVrcxHhhvxkq1J2QuvGtadUCuauS2i64BFdbHdh
-         fald6rcruUT0imX2uwJiXvXlKTP8dYRdWeRpHrHRwoOaLy/vXw0XnQRgl+UuKN4iGhUQ
-         wMoMCVYNZokjU2MmEzQ3EFpHSOu5iLZhuXo1XYVH1W/YWB3EsczCMyrT1G9s4luM2sr3
-         dIWUWOl0PGl/bwp825Gil0EH+SXT6FClgZbCeK9NuChTwFaD1jhHmq8SSwa2UOIUvJs4
-         P6C+9+sp47+LpcVKv6x7AAhKT5PgWIIm0c5PXW199mhsksvS50i6feCxjKDtEbueZlzY
-         /qPw==
-X-Gm-Message-State: AOAM5321I1VjcLNmqJUahq/dlTke0c8clt5HM/mKGd9J3P0KvOqalsQC
-        uvWTE6XKEfErJkyt5UtA372kjwV/uL0gsFfvKVo=
-X-Google-Smtp-Source: ABdhPJwdyxkAQAdfH1wRFs+W0MNyk4bgRb4Rgv1M9DLQvwm3YbnfTG06hhOU+eKDq7Hs4uOIofL7RgDFq+x0npk+U+Y=
-X-Received: by 2002:a17:907:628e:b0:6d9:c6fa:6168 with SMTP id
- nd14-20020a170907628e00b006d9c6fa6168mr23537601ejc.132.1648411230602; Sun, 27
- Mar 2022 13:00:30 -0700 (PDT)
+        Mon, 28 Mar 2022 03:36:29 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5D3A52E08
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2022 00:34:47 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nYjtl-0007DX-56; Mon, 28 Mar 2022 09:34:45 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nYjth-003Xl3-6n; Mon, 28 Mar 2022 09:34:43 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nYjtj-00CJRY-2R; Mon, 28 Mar 2022 09:34:43 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH] pwm: samsung: Implement .apply() callback
+Date:   Mon, 28 Mar 2022 09:34:34 +0200
+Message-Id: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <20220326165909.506926-1-benni@stuerz.xyz> <20220326165909.506926-5-benni@stuerz.xyz>
-In-Reply-To: <20220326165909.506926-5-benni@stuerz.xyz>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 27 Mar 2022 22:59:54 +0300
-Message-ID: <CAHp75VeTXMAueQc_c0Ryj5+a8PrJ7gk-arugiNnxtAm03x7XTg@mail.gmail.com>
-Subject: Re: [PATCH 05/22] acpica: Replace comments with C99 initializers
-To:     =?UTF-8?Q?Benjamin_St=C3=BCrz?= <benni@stuerz.xyz>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux@simtec.co.uk, Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Robert Moore <robert.moore@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, 3chas3@gmail.com,
-        Harald Welte <laforge@gnumonks.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        mike.marciniszyn@cornelisnetworks.com,
-        dennis.dalessandro@cornelisnetworks.com,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
-        linux-atm-general@lists.sourceforge.net,
-        netdev <netdev@vger.kernel.org>, linux-edac@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>, linux-media@vger.kernel.org,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2669; h=from:subject; bh=Wma7z56MXzPlyi5tga+1Vs5Q9xdWnEc8Jt+b6Asx6K0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiQWUHyhz4Bzlmg9fLv9oeKShDA/jMDEOEWXnGgg1J jSKNTKuJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYkFlBwAKCRDB/BR4rcrsCUJIB/ 9k7LJmLyyr4QRLxSYJvX/KNo+0aY7oWczwIBweEtgId4sWkWm2i9aDjGH9iHFGRB0+5nnd2+O1yski WGR8ypgNIBsj4z4Dl7j09wDWZV/dbf+YaAWEF3LS2MfpjLx35wfJjvWoOzAq4+PWlVCiY9wlg+vCzJ 3KUcvjviqrxVfn55ooUNMDHmGd89YzSf7a5efsn2hHOR26AI1+jD91dzX8014J5OmTpYS5FIxhutNl X9K9jzB8fbpPbL7dDyi69uMxEZ0s8AiDrB+I9g8wiuYPI7NYKfWDAbQ+zMOPTqiVSWlVMSfqKedMKa fizFxaBl3EnB1hHHRdN230/2TnPYEn
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 26, 2022 at 7:39 PM Benjamin St=C3=BCrz <benni@stuerz.xyz> wrot=
-e:
->
-> This replaces comments with C99's designated
-> initializers because the kernel supports them now.
+To eventually get rid of all legacy drivers convert this driver to the
+modern world implementing .apply().
 
-Does it follow the conventions which are accepted in the ACPI CA project?
+The size check for state->period is moved to .apply() to make sure that
+the values of state->duty_cycle and state->period are passed to
+pwm_samsung_config without change while they are discarded to int.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-samsung.c | 54 ++++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 0a4ff55fad04..9c5b4f515641 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -321,14 +321,6 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
+ 	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
+ 
+-	/*
+-	 * We currently avoid using 64bit arithmetic by using the
+-	 * fact that anything faster than 1Hz is easily representable
+-	 * by 32bits.
+-	 */
+-	if (period_ns > NSEC_PER_SEC)
+-		return -ERANGE;
+-
+ 	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
+ 	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
+ 
+@@ -438,13 +430,51 @@ static int pwm_samsung_set_polarity(struct pwm_chip *chip,
+ 	return 0;
+ }
+ 
++static int pwm_samsung_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			     const struct pwm_state *state)
++{
++	int err, enabled = pwm->state.enabled;
++
++	if (state->polarity != pwm->state.polarity) {
++		if (enabled) {
++			pwm_samsung_disable(chip, pwm);
++			enabled = false;
++		}
++
++		err = pwm_samsung_set_polarity(chip, pwm, state->polarity);
++		if (err)
++			return err;
++	}
++
++	if (!state->enabled) {
++		if (enabled)
++			pwm_samsung_disable(chip, pwm);
++
++		return 0;
++	}
++
++	/*
++	 * We currently avoid using 64bit arithmetic by using the
++	 * fact that anything faster than 1Hz is easily representable
++	 * by 32bits.
++	 */
++	if (state->period > NSEC_PER_SEC)
++		return -ERANGE;
++
++	err = pwm_samsung_config(chip, pwm, state->duty_cycle, state->period);
++	if (err)
++		return err;
++
++	if (!pwm->state.enabled)
++		err = pwm_samsung_enable(chip, pwm);
++
++	return err;
++}
++
+ static const struct pwm_ops pwm_samsung_ops = {
+ 	.request	= pwm_samsung_request,
+ 	.free		= pwm_samsung_free,
+-	.enable		= pwm_samsung_enable,
+-	.disable	= pwm_samsung_disable,
+-	.config		= pwm_samsung_config,
+-	.set_polarity	= pwm_samsung_set_polarity,
++	.apply		= pwm_samsung_apply,
+ 	.owner		= THIS_MODULE,
+ };
+ 
+
+base-commit: ed14d36498c8d15be098df4af9ca324f96e9de74
+-- 
+2.35.1
+
