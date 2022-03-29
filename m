@@ -2,119 +2,182 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268DEC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 10:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83727C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 12:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234974AbiC2KI0 (ORCPT
+        id S236313AbiC2Mci (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 06:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47824 "EHLO
+        Tue, 29 Mar 2022 08:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbiC2KIY (ORCPT
+        with ESMTP id S235891AbiC2Mch (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Mar 2022 06:08:24 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0C2127589;
-        Tue, 29 Mar 2022 03:06:42 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id bi13-20020a05600c3d8d00b0038c2c33d8f3so949563wmb.4;
-        Tue, 29 Mar 2022 03:06:42 -0700 (PDT)
+        Tue, 29 Mar 2022 08:32:37 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F153C5DA3C
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Mar 2022 05:30:52 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id j15so34770795eje.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Mar 2022 05:30:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=gJYdJOur1iY6XbbeGXFj0ECGEHoJkzCeSnRWw+1akAE=;
-        b=g1SGsbd/jLtCfDq6yzASjQLg1D1Di4TRzjMb5UiIfrE9WiDmnp4ps8sIblZUNtYLhl
-         BEYp/E3cwcQ3Zx0+p3QoptHL3A/ppqsLefEG80tXSSwr+mpdP4i1AcDwb/671KD/V7Or
-         SrBc47ULMLUb19cniOzsSHJIDLc2hutPluz+X07qok/90+UjDzhv6DSHFkWqgCReRafg
-         8hQGGxrcX5P2AlRlhAUeG7o275fLN5UY/luSiQ/PippZc5scePfD88DWfB5YY4mbajP2
-         /wEv07hBPdodolgvcwPf/ryO4mcjf2pm6CqHleQKRp4LwbU9hZS+Lg1pg+jJITwfzWUK
-         5rMA==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nRQGNy0JNeG8yPE1QXXWKqsK/KgT2iVgd9NOSAmnpao=;
+        b=rghn0NZ7veo+c7F9TgovwmfTphDZN1nzJMzcXj5lds+VNPPlWVx4s9Km9UFuESnj9C
+         0j6zPwG/Xf6D92JpGQDO2SsY514Cc3dispUkIKCGzRnO4C9HS7T9TWQ6L1NWItI9HoVR
+         Wk/smMInsq69ioZO8yNZDu546rixqBUH1Q7RKjgyI+USlKpBx73H+Jxrz2inmb2EkToU
+         H2vf7Sa/pckmLcWFoAxiMBDzr7UgHBsB2Q8hra4/Kl5ny0G8cLhgWaE+yEkyTutDGHt1
+         d/7ehdh+gvbKH2tMg6SF+fI/PRBhqZLpgBB/Oz9YxV+MxEClGvdSUz2pl20OT0F+Mpvd
+         d2oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=gJYdJOur1iY6XbbeGXFj0ECGEHoJkzCeSnRWw+1akAE=;
-        b=tJUfPXpB3D2Xr+ifPFHavkeZNEPQfTtJn/OUXgNNdDNK7IJJvF28uxxd3HaUo5EoVl
-         DU3BecZu54cfnnrUnz4gbwCDeYy475OG/I5eEv1ayFd8Mx/EX4N966VkSRN6OYQ3qMZL
-         huOOgIHooNwpXcdJO3lzCWKt6VjlC675C9CDeICyDrvWVZfFonlA16xSs7Gd40B6sVTo
-         OL7W0l+nS77jrGDwSJ6U7XlgmaeVhBHZssjRicRpVvjCMTCnrYv6JkjBdU+ld5L4QBYN
-         WF4KkMsSnfX0T3+GHWOxQabWecMGtPSvmCXWLaMfGf/wNx5cgnsBkMgl9g+8Q2TfX6tp
-         CI3A==
-X-Gm-Message-State: AOAM533VsGwlnV6P5hUppzwI4BcK6mAItODsRNu2yon+FtI4iBdCf5Kb
-        /TM+8NycYzU1/kB4h6W7Tgk=
-X-Google-Smtp-Source: ABdhPJw/yl37bo84CH0/pwnTrqSkLHICdBHbZfyNAKleJ5pkLbBWcMtajlzC2TVgbnU7tHyn6wt30Q==
-X-Received: by 2002:a05:600c:a47:b0:37c:965:2b6f with SMTP id c7-20020a05600c0a4700b0037c09652b6fmr5636166wmq.31.1648548400811;
-        Tue, 29 Mar 2022 03:06:40 -0700 (PDT)
-Received: from [192.168.1.145] ([207.188.167.132])
-        by smtp.gmail.com with ESMTPSA id a11-20020a5d456b000000b0020406ce0e06sm14201716wrc.94.2022.03.29.03.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Mar 2022 03:06:39 -0700 (PDT)
-Message-ID: <6dafde7d-17c6-bd25-dbe8-7f7acf80fd91@gmail.com>
-Date:   Tue, 29 Mar 2022 12:06:38 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nRQGNy0JNeG8yPE1QXXWKqsK/KgT2iVgd9NOSAmnpao=;
+        b=EKd3+J0/di9kpNNyqvSjpC441jzvjn9l8SkZDKUPZB12wleiC9PSRNLmVbO9Hli0n9
+         pAhRdiy5lo9bIHfzRzaw/SzlLGRftixUH9o6zyMR+7IJuroPoDpVtaKmj/25qtdb2geg
+         jJ1rjr5QCYpEdmesKaiZwV7pqxqzpARhcJlSw3aIrft8l42s9wNMg/kJVkwK186JRwwC
+         ASzdUdcxpUzvt/KxKvLDUrEA/LAmEfbSO3ms+uuSEiUed34E53JsQmuncsjVfAcxZT+E
+         3XT62jA+M07NXEaGPlCfBYsB+ueSQA0t2dlqAjQ8lreyI9z7PCvvqWp7hn9GD5J6Hs9s
+         7vwg==
+X-Gm-Message-State: AOAM5333QkqP8vp00a9tcYcsmeruUxx79BHpiPRnt3tFo0YONIerxhMM
+        r8k/+0ae0LFJyaGct2cNhRYCE+yXAmjjET+djyfslg==
+X-Google-Smtp-Source: ABdhPJyPZNX8y3gOGfSZgg3AGAll74j9kjPNXJs0DTpnrEh1/wBVEgROdTkgglF1+DGDwH7nabIubcnQbpp8LiNpfow=
+X-Received: by 2002:a17:907:d2a:b0:6e0:963c:97d9 with SMTP id
+ gn42-20020a1709070d2a00b006e0963c97d9mr28430774ejc.736.1648557051475; Tue, 29
+ Mar 2022 05:30:51 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Content-Language: en-US
-To:     Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Daniel Palmer <daniel@0x0f.com>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
+References: <20220326165909.506926-1-benni@stuerz.xyz> <20220326165909.506926-9-benni@stuerz.xyz>
+In-Reply-To: <20220326165909.506926-9-benni@stuerz.xyz>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 29 Mar 2022 14:30:40 +0200
+Message-ID: <CAMRc=Md5qTnP1ZYak4f3hyqmaOR6jT_KL=rNr5cwAOcZ22yXfg@mail.gmail.com>
+Subject: Re: [PATCH 09/22] gpio-winbond: Use C99 initializers
+To:     =?UTF-8?Q?Benjamin_St=C3=BCrz?= <benni@stuerz.xyz>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>, linux@simtec.co.uk,
+        Krzysztof Kozlowski <krzk@kernel.org>, alim.akhtar@samsung.com,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
+        hpa@zytor.com, robert.moore@intel.com,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, lenb@kernel.org,
+        3chas3@gmail.com, laforge@gnumonks.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        mike.marciniszyn@cornelisnetworks.com,
+        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
+        pali@kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        isdn@linux-pingi.de,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        fbarrat@linux.ibm.com, ajd@linux.ibm.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, nico@fluxnic.net,
+        loic.poulain@linaro.org, kvalo@kernel.org, pkshih@realtek.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel@axis.com, linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        chrome-platform@lists.linux.dev,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
-        openbmc@lists.ozlabs.org,
-        linux-tegra <linux-tegra@vger.kernel.org>, linux-oxnas@groups.io,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-unisoc@lists.infradead.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-realtek-soc@lists.infradead.org
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <CAFr9PXkgrRe-=E=GhNnZ4w1x_FMb97-_RmX6ND1vEd74_TbZSw@mail.gmail.com>
- <YkK691VG6ON/6Ysn@atomide.com>
- <CAMuHMdXDDNTgBdJTa8+H1H5v1gAarp07xxWu_E1JL8mXS8HPMg@mail.gmail.com>
- <YkLXTWdZ3zASxr4H@atomide.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <YkLXTWdZ3zASxr4H@atomide.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        devel@acpica.org, linux-atm-general@lists.sourceforge.net,
+        netdev <netdev@vger.kernel.org>, linux-edac@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        Linux Input <linux-input@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sat, Mar 26, 2022 at 6:00 PM Benjamin St=C3=BCrz <benni@stuerz.xyz> wrot=
+e:
+>
+> This replaces comments with C99's designated
+> initializers because the kernel supports them now.
+>
+> Signed-off-by: Benjamin St=C3=BCrz <benni@stuerz.xyz>
+> ---
+>  drivers/gpio/gpio-winbond.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
+> index 7f8f5b02e31d..0b637fdb407c 100644
+> --- a/drivers/gpio/gpio-winbond.c
+> +++ b/drivers/gpio/gpio-winbond.c
+> @@ -249,7 +249,7 @@ struct winbond_gpio_info {
+>  };
+>
+>  static const struct winbond_gpio_info winbond_gpio_infos[6] =3D {
+> -       { /* 0 */
+> +       [0] =3D {
+>                 .dev =3D WB_SIO_DEV_GPIO12,
+>                 .enablereg =3D WB_SIO_GPIO12_REG_ENABLE,
+>                 .enablebit =3D WB_SIO_GPIO12_ENABLE_1,
+> @@ -266,7 +266,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
+fos[6] =3D {
+>                         .warnonly =3D true
+>                 }
+>         },
+> -       { /* 1 */
+> +       [1] =3D {
+>                 .dev =3D WB_SIO_DEV_GPIO12,
+>                 .enablereg =3D WB_SIO_GPIO12_REG_ENABLE,
+>                 .enablebit =3D WB_SIO_GPIO12_ENABLE_2,
+> @@ -277,7 +277,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
+fos[6] =3D {
+>                 .datareg =3D WB_SIO_GPIO12_REG_DATA2
+>                 /* special conflict handling so doesn't use conflict data=
+ */
+>         },
+> -       { /* 2 */
+> +       [2] =3D {
+>                 .dev =3D WB_SIO_DEV_GPIO34,
+>                 .enablereg =3D WB_SIO_GPIO34_REG_ENABLE,
+>                 .enablebit =3D WB_SIO_GPIO34_ENABLE_3,
+> @@ -294,7 +294,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
+fos[6] =3D {
+>                         .warnonly =3D true
+>                 }
+>         },
+> -       { /* 3 */
+> +       [3] =3D {
+>                 .dev =3D WB_SIO_DEV_GPIO34,
+>                 .enablereg =3D WB_SIO_GPIO34_REG_ENABLE,
+>                 .enablebit =3D WB_SIO_GPIO34_ENABLE_4,
+> @@ -311,7 +311,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
+fos[6] =3D {
+>                         .warnonly =3D true
+>                 }
+>         },
+> -       { /* 4 */
+> +       [4] =3D {
+>                 .dev =3D WB_SIO_DEV_WDGPIO56,
+>                 .enablereg =3D WB_SIO_WDGPIO56_REG_ENABLE,
+>                 .enablebit =3D WB_SIO_WDGPIO56_ENABLE_5,
+> @@ -328,7 +328,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
+fos[6] =3D {
+>                         .warnonly =3D true
+>                 }
+>         },
+> -       { /* 5 */
+> +       [5] =3D {
+>                 .dev =3D WB_SIO_DEV_WDGPIO56,
+>                 .enablereg =3D WB_SIO_WDGPIO56_REG_ENABLE,
+>                 .enablebit =3D WB_SIO_WDGPIO56_ENABLE_6,
+> --
+> 2.35.1
+>
 
-
-On 29/03/2022 11:54, Tony Lindgren wrote:
-> * Geert Uytterhoeven <geert@linux-m68k.org> [220329 09:02]:
->> On Tue, Mar 29, 2022 at 10:03 AM Tony Lindgren <tony@atomide.com> wrote:
->>> For example, I have a pile of pending omap clock clean-up dts patches
->>> posted and tested waiting for v5.19-rc1 to apply. I'd rather not start
->>> redoing or fixing up the patches with sed :)
->>
->> Git merge/rebase/cherry-pick should handle renames fine?
-> 
-> Possibly.. Not sure I'd count on that based on my earlier experiences
-> though :)
-> 
-
-Yes. If this could be split up in per silicon-vendor patches, the maintainer 
-could take them. Although it might be a pain to soc maintainers to resolve small 
-conflicts when merging that branches.
-
-Just my 5 cents.
-
-Matthias
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
