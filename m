@@ -2,182 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83727C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 12:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD813C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 13:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236313AbiC2Mci (ORCPT
+        id S237207AbiC2NWN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 08:32:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46884 "EHLO
+        Tue, 29 Mar 2022 09:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235891AbiC2Mch (ORCPT
+        with ESMTP id S234222AbiC2NWN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Mar 2022 08:32:37 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F153C5DA3C
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Mar 2022 05:30:52 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id j15so34770795eje.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Mar 2022 05:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=nRQGNy0JNeG8yPE1QXXWKqsK/KgT2iVgd9NOSAmnpao=;
-        b=rghn0NZ7veo+c7F9TgovwmfTphDZN1nzJMzcXj5lds+VNPPlWVx4s9Km9UFuESnj9C
-         0j6zPwG/Xf6D92JpGQDO2SsY514Cc3dispUkIKCGzRnO4C9HS7T9TWQ6L1NWItI9HoVR
-         Wk/smMInsq69ioZO8yNZDu546rixqBUH1Q7RKjgyI+USlKpBx73H+Jxrz2inmb2EkToU
-         H2vf7Sa/pckmLcWFoAxiMBDzr7UgHBsB2Q8hra4/Kl5ny0G8cLhgWaE+yEkyTutDGHt1
-         d/7ehdh+gvbKH2tMg6SF+fI/PRBhqZLpgBB/Oz9YxV+MxEClGvdSUz2pl20OT0F+Mpvd
-         d2oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nRQGNy0JNeG8yPE1QXXWKqsK/KgT2iVgd9NOSAmnpao=;
-        b=EKd3+J0/di9kpNNyqvSjpC441jzvjn9l8SkZDKUPZB12wleiC9PSRNLmVbO9Hli0n9
-         pAhRdiy5lo9bIHfzRzaw/SzlLGRftixUH9o6zyMR+7IJuroPoDpVtaKmj/25qtdb2geg
-         jJ1rjr5QCYpEdmesKaiZwV7pqxqzpARhcJlSw3aIrft8l42s9wNMg/kJVkwK186JRwwC
-         ASzdUdcxpUzvt/KxKvLDUrEA/LAmEfbSO3ms+uuSEiUed34E53JsQmuncsjVfAcxZT+E
-         3XT62jA+M07NXEaGPlCfBYsB+ueSQA0t2dlqAjQ8lreyI9z7PCvvqWp7hn9GD5J6Hs9s
-         7vwg==
-X-Gm-Message-State: AOAM5333QkqP8vp00a9tcYcsmeruUxx79BHpiPRnt3tFo0YONIerxhMM
-        r8k/+0ae0LFJyaGct2cNhRYCE+yXAmjjET+djyfslg==
-X-Google-Smtp-Source: ABdhPJyPZNX8y3gOGfSZgg3AGAll74j9kjPNXJs0DTpnrEh1/wBVEgROdTkgglF1+DGDwH7nabIubcnQbpp8LiNpfow=
-X-Received: by 2002:a17:907:d2a:b0:6e0:963c:97d9 with SMTP id
- gn42-20020a1709070d2a00b006e0963c97d9mr28430774ejc.736.1648557051475; Tue, 29
- Mar 2022 05:30:51 -0700 (PDT)
+        Tue, 29 Mar 2022 09:22:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594E913FAF;
+        Tue, 29 Mar 2022 06:20:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E7CFE61556;
+        Tue, 29 Mar 2022 13:20:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 079B3C2BBE4;
+        Tue, 29 Mar 2022 13:20:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648560029;
+        bh=vcBGlG+sqaPt0UpTdoZ2lc9iEFALH1pzWeKYoBtVGc0=;
+        h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+        b=Lf6UdkMwpGMKF/bCzH0duecbGSrWXhu70CtFUq2mNv7IsC6370BCiPtfWXaI+yKF/
+         UQxjxo/5ELIHPpruCIzbUN34wBvgy5Fc7eS22PnhD5aL+YcFYfFaN/O+tr+ZmUM+S5
+         A/HxyRRfNmBU9vHwyfdDK7puvv8H+mPmsnx7QORDs2EqLL+mvW+oCz1joHCa6v9S30
+         zZSq7JcFWt8iEt24hFmi80tnq5vNy7tr3oSE2yE/htc0EfUX3gZEr+PbO1Xh/RhzQv
+         IsUb015h84Gz6Om/nGHx49iikUSPAbDyLFfT+LjbZl0E6DwqI3AOYIbHwd8W8xbJcf
+         NtJzDPqA8j7Dw==
+Message-ID: <85eb14ec-f465-7447-ad77-a3dabc666f47@kernel.org>
+Date:   Tue, 29 Mar 2022 15:20:18 +0200
 MIME-Version: 1.0
-References: <20220326165909.506926-1-benni@stuerz.xyz> <20220326165909.506926-9-benni@stuerz.xyz>
-In-Reply-To: <20220326165909.506926-9-benni@stuerz.xyz>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 29 Mar 2022 14:30:40 +0200
-Message-ID: <CAMRc=Md5qTnP1ZYak4f3hyqmaOR6jT_KL=rNr5cwAOcZ22yXfg@mail.gmail.com>
-Subject: Re: [PATCH 09/22] gpio-winbond: Use C99 initializers
-To:     =?UTF-8?Q?Benjamin_St=C3=BCrz?= <benni@stuerz.xyz>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>, linux@simtec.co.uk,
-        Krzysztof Kozlowski <krzk@kernel.org>, alim.akhtar@samsung.com,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        Borislav Petkov <bp@alien8.de>, dave.hansen@linux.intel.com,
-        hpa@zytor.com, robert.moore@intel.com,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, lenb@kernel.org,
-        3chas3@gmail.com, laforge@gnumonks.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        mike.marciniszyn@cornelisnetworks.com,
-        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-        pali@kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        isdn@linux-pingi.de,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        fbarrat@linux.ibm.com, ajd@linux.ibm.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, nico@fluxnic.net,
-        loic.poulain@linaro.org, kvalo@kernel.org, pkshih@realtek.com,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-ia64@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        devel@acpica.org, linux-atm-general@lists.sourceforge.net,
-        netdev <netdev@vger.kernel.org>, linux-edac@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rdma@vger.kernel.org,
-        Linux Input <linux-input@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-actions@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-omap@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org,
+        chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel@dh-electronics.com, linux-mediatek@lists.infradead.org,
+        openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+        linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org,
+        linux-unisoc@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-realtek-soc@lists.infradead.org
+References: <20220328000915.15041-1-ansuelsmth@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220328000915.15041-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 26, 2022 at 6:00 PM Benjamin St=C3=BCrz <benni@stuerz.xyz> wrot=
-e:
->
-> This replaces comments with C99's designated
-> initializers because the kernel supports them now.
->
-> Signed-off-by: Benjamin St=C3=BCrz <benni@stuerz.xyz>
-> ---
->  drivers/gpio/gpio-winbond.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
-> index 7f8f5b02e31d..0b637fdb407c 100644
-> --- a/drivers/gpio/gpio-winbond.c
-> +++ b/drivers/gpio/gpio-winbond.c
-> @@ -249,7 +249,7 @@ struct winbond_gpio_info {
->  };
->
->  static const struct winbond_gpio_info winbond_gpio_infos[6] =3D {
-> -       { /* 0 */
-> +       [0] =3D {
->                 .dev =3D WB_SIO_DEV_GPIO12,
->                 .enablereg =3D WB_SIO_GPIO12_REG_ENABLE,
->                 .enablebit =3D WB_SIO_GPIO12_ENABLE_1,
-> @@ -266,7 +266,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
-fos[6] =3D {
->                         .warnonly =3D true
->                 }
->         },
-> -       { /* 1 */
-> +       [1] =3D {
->                 .dev =3D WB_SIO_DEV_GPIO12,
->                 .enablereg =3D WB_SIO_GPIO12_REG_ENABLE,
->                 .enablebit =3D WB_SIO_GPIO12_ENABLE_2,
-> @@ -277,7 +277,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
-fos[6] =3D {
->                 .datareg =3D WB_SIO_GPIO12_REG_DATA2
->                 /* special conflict handling so doesn't use conflict data=
- */
->         },
-> -       { /* 2 */
-> +       [2] =3D {
->                 .dev =3D WB_SIO_DEV_GPIO34,
->                 .enablereg =3D WB_SIO_GPIO34_REG_ENABLE,
->                 .enablebit =3D WB_SIO_GPIO34_ENABLE_3,
-> @@ -294,7 +294,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
-fos[6] =3D {
->                         .warnonly =3D true
->                 }
->         },
-> -       { /* 3 */
-> +       [3] =3D {
->                 .dev =3D WB_SIO_DEV_GPIO34,
->                 .enablereg =3D WB_SIO_GPIO34_REG_ENABLE,
->                 .enablebit =3D WB_SIO_GPIO34_ENABLE_4,
-> @@ -311,7 +311,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
-fos[6] =3D {
->                         .warnonly =3D true
->                 }
->         },
-> -       { /* 4 */
-> +       [4] =3D {
->                 .dev =3D WB_SIO_DEV_WDGPIO56,
->                 .enablereg =3D WB_SIO_WDGPIO56_REG_ENABLE,
->                 .enablebit =3D WB_SIO_WDGPIO56_ENABLE_5,
-> @@ -328,7 +328,7 @@ static const struct winbond_gpio_info winbond_gpio_in=
-fos[6] =3D {
->                         .warnonly =3D true
->                 }
->         },
-> -       { /* 5 */
-> +       [5] =3D {
->                 .dev =3D WB_SIO_DEV_WDGPIO56,
->                 .enablereg =3D WB_SIO_WDGPIO56_REG_ENABLE,
->                 .enablebit =3D WB_SIO_WDGPIO56_ENABLE_6,
-> --
-> 2.35.1
->
+On 28/03/2022 02:09, Ansuel Smith wrote:
+> Hi,
+> as the title say, the intention of this ""series"" is to finally categorize
+> the ARM dts directory in subdirectory for each oem.
+> 
+> The main reason for this is that it became unpractical to handle 2600
+> dts files and try to even understand/edit/check the situation for a
+> specific target.
+> 
+> In arm64 we already have this kind of separation and I honestly think
+> that this was never proposed for ARM due to the fact that there are
+> 2600+ files to sort and the fact that it will be a mess to merge this
+> entirely but IMHO with a little bit of effort we can finally solve this
+> problem and have a well organized directory just like arm64.
+> 
+> Some prerequisite on how this work was done:
+> - This comes entirely from a python script created by me for the task.
+>   linked here [1]
+> - I had to manually categorize all the different arch in the makefile
+>   based on the oem. I searched every arch on the internet trying to
+>   understand the correct oem. I hope they are correct but I would love
+>   some comments about them.
+> - This current ""series"" is all squashed in one big commit to better
+>   receive comments for this. The final version ideally would have all
+>   changes in separate commits. The script can already do this, it's just
+>   commented.
+> 
+> Here is a list of some discoveries while doing all the sorting.
+> These are totally additional reason why we need this.
+> 
+> While creating the script I discovered some funny things:
+> - We have orphan dts! There are dts that are never compiled and are
+>   there just for reference. We would never have noticed this without this
+>   change and probably nobody noticed it. They are currently all listed
+>   in the python script.
+> - We have dtsi shared across different oem. My current solution for them
+>   is: NOT SORT THEM and leave them in the generic directory and create a
+>   link in each oem dts that points to these dtsi. This is to try in
+>   every way possible to skip any additional changes to the dts.
+>   Current dtsi that suffers from this are only 3. (listed in the script)
+> - arm64 dts and dtsi reference ARM dts. Obviously this change would cause
+>   broken include for these special dtsi. The script creates a dependency
+>   table of the entire arm64 directory and fix every broken dependency
+>   (hoping they all use a sane include logic... regex is used to parse
+>   all the different dependency)
+> 
+> So in short the script does the following steps:
+> 1. Enumerate all the action to do... (dts to move, scan dependency for
+>    the dts...)
+> 2. Generate the arm64 dependency
+> 3. Creates the Makefile
+> 4. Generate the Makefiles for the current oem
+> 5. Move all the related dts and dtsi for the current oem
+> 6. Check broken dependency and fix them by editing the dts and writing
+>    the correct include (or fix any symbolic link)
+> 
+> This is an output that describes all the things done by the script [2]
+> 
+> I really hope I didn't commit any logic mistake in the script but most
+> of the work should be done.
+> 
 
-Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
++Cc Arnd and Olof,
+
+Ansuel,
+Thanks for you patch. Please cc the SoC maintainers in such submissions.
+It seems that you got some quite nice discussion, but still the core
+folks are not Cced, so no one would be able to take your patch...
+
+I am pretty sure we were discussing such split idea in the past and it
+did not get traction, but I cannot recall the exact discussion.
+
+To me the idea is good but will cause huge `git am` conflicts.
+Cherry-picks, backports and merges should nicely detect path renames,
+but git am (and b4 am) I think cannot.
+
+Best regards,
+Krzysztof
