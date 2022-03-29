@@ -2,45 +2,45 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA8FC4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDFAC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238665AbiC2Pbc (ORCPT
+        id S238742AbiC2Pbd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 11:31:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60342 "EHLO
+        Tue, 29 Mar 2022 11:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238642AbiC2PbN (ORCPT
+        with ESMTP id S238653AbiC2PbU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Mar 2022 11:31:13 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47DFF10818D;
-        Tue, 29 Mar 2022 08:29:24 -0700 (PDT)
+        Tue, 29 Mar 2022 11:31:20 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4802B10818E;
+        Tue, 29 Mar 2022 08:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1648567768; x=1680103768;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=zth2NPzVb/e4coajK8vBX+xb9WOqFJZLqpzxI+yuerA=;
-  b=MQrr3m02V2alebT56UkSPEtLVVkrC1fsaYdiptTMT+zuTkUpIe6WS5J5
-   DX/gnIghD0D6vrWRm9job8wNxQuoLktyOxq7vroWdIO/+rIACOojk8y2t
-   R5beNcMWolyrnwKJSPDFSoel0LFSfKqAwo847sgl19N1JIqrhBtdVB/KC
-   cXtxX+2MJB7Nls8Jl/xyutuzS+pwhxKTQEaBuNKR57HN4DUmkbtlkd0Qv
-   mk7VsuPfgIhv4Vu3QyIEk/67zj0+V8+we42pvXaHmkEP6n7holNGtFOTb
-   1Ey38DKz/ZV17ihh64wAYS8jdbBYLlFvx9o6tQwv+IButGxPnxzGC/Z54
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="322460285"
+  bh=Pdfled0GCqwc7iDQ57lJV4J/3sRBeMXhKiS4YDZIDhI=;
+  b=mkLvvVG7nlnCcG/zCrb0c9qGxYlYl3k1h7yz9xnCLQi+oWv7fTzTIU4j
+   psfkixKGfxQzcjSjCi+55t9Bm9GA8M2/Bmezrnd7cGQEPkj3yI77AvjAg
+   3gTVepp5irrecMJ5t+50ISiBsIVhdGK2+nussYm0dhGcGuiMh/GwHPF2A
+   Y1+MYwBofLPkAODBiGtemX5uCV5JolBpbJFL6QTV1QZZnMSatnNAPg7sF
+   gXeils1NF9hvd4xFkSWSOhqDpdYMq9jffdLaG3eFVILV1SOqOIbmksDQe
+   ifFcLSwOx55bkPx5Y1b5nIvwIam++f1CL0ABTSGL2zpso/JU86zyqnDk/
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="239873117"
 X-IronPort-AV: E=Sophos;i="5.90,220,1643702400"; 
-   d="scan'208";a="322460285"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 08:29:24 -0700
+   d="scan'208";a="239873117"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 08:29:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,220,1643702400"; 
-   d="scan'208";a="554297180"
+   d="scan'208";a="719566993"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 29 Mar 2022 08:29:16 -0700
+  by orsmga005.jf.intel.com with ESMTP; 29 Mar 2022 08:29:16 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 512A72FB; Tue, 29 Mar 2022 18:29:29 +0300 (EEST)
+        id A52104E5; Tue, 29 Mar 2022 18:29:29 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Qianggui Song <qianggui.song@amlogic.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v2 06/13] pinctrl: renesas: rza1: Replace custom code by gpiochip_node_count() call
-Date:   Tue, 29 Mar 2022 18:29:19 +0300
-Message-Id: <20220329152926.50958-7-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 12/13] pinctrl: armada-37xx: Switch to use fwnode instead of of_node
+Date:   Tue, 29 Mar 2022 18:29:25 +0300
+Message-Id: <20220329152926.50958-13-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
 References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
@@ -85,50 +85,59 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since we have generic function to count GPIO controller nodes
-under a given device, there is no need to open code it. Replace
-custom code by gpiochip_node_count() call.
+GPIO library now accepts fwnode as a firmware node,
+so switch the driver to use it.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rza1.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rza1.c b/drivers/pinctrl/renesas/pinctrl-rza1.c
-index 8bad121d2a4e..5075d5cebe8c 100644
---- a/drivers/pinctrl/renesas/pinctrl-rza1.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
-@@ -1154,21 +1154,6 @@ static const struct pinmux_ops rza1_pinmux_ops = {
-  * RZ/A1 pin controller driver operations
-  */
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 3e10a44e2669..4a2fa10f94f8 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -21,6 +21,7 @@
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ #include <linux/string_helpers.h>
+@@ -787,18 +788,13 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+ 					struct armada_37xx_pinctrl *info)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *np;
++	struct fwnode_handle *fwnode;
+ 	struct gpio_chip *gc;
+-	int ret = -ENODEV;
++	int ret;
  
--static unsigned int rza1_count_gpio_chips(struct device_node *np)
--{
--	struct device_node *child;
--	unsigned int count = 0;
--
--	for_each_child_of_node(np, child) {
--		if (!of_property_read_bool(child, "gpio-controller"))
--			continue;
--
--		count++;
+-	for_each_child_of_node(dev->of_node, np) {
+-		if (of_find_property(np, "gpio-controller", NULL)) {
+-			ret = 0;
+-			break;
+-		}
 -	}
--
--	return count;
--}
--
- /**
-  * rza1_parse_gpiochip() - parse and register a gpio chip and pin range
-  *
-@@ -1255,7 +1240,7 @@ static int rza1_gpio_register(struct rza1_pinctrl *rza1_pctl)
- 	unsigned int i;
- 	int ret;
+-	if (ret)
+-		return ret;
++	fwnode = device_get_named_child_node(dev, "gpio-controller");
++	if (!fwnode)
++		return -ENODEV;
  
--	ngpiochips = rza1_count_gpio_chips(np);
-+	ngpiochips = gpiochip_node_count(rza1_pctl->dev);
- 	if (ngpiochips == 0) {
- 		dev_dbg(rza1_pctl->dev, "No gpiochip registered\n");
- 		return 0;
+ 	info->gpio_chip = armada_37xx_gpiolib_chip;
+ 
+@@ -806,7 +802,7 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+ 	gc->ngpio = info->data->nr_pins;
+ 	gc->parent = dev;
+ 	gc->base = -1;
+-	gc->of_node = np;
++	gc->fwnode = fwnode;
+ 	gc->label = info->data->name;
+ 
+ 	ret = armada_37xx_irqchip_register(pdev, info);
 -- 
 2.35.1
 
