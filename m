@@ -2,45 +2,45 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3100BC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EF9C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 15:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238682AbiC2PbV (ORCPT
+        id S238684AbiC2PbX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 11:31:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60144 "EHLO
+        Tue, 29 Mar 2022 11:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238636AbiC2PbM (ORCPT
+        with ESMTP id S238674AbiC2PbV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Mar 2022 11:31:12 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA0E108183;
+        Tue, 29 Mar 2022 11:31:21 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48110108190;
         Tue, 29 Mar 2022 08:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1648567768; x=1680103768;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=UCAuTqBZ9mYCDZIPOGv2WkU53JOPeTds3YQkaU6nhzA=;
-  b=BcZdUyacx6ZRupcFYRtz0s+U5HSAF/lM4s7nox6Dhp730tb6pPbBkmkA
-   jYgEjd305NLfPu12c/OWUf+x8FBtECt/WUwqXCErnwEIumEe3YBKdkgSr
-   jkztANpKE1EtLV9cBSm/cj4W8MbN6hc1K/tVzbG7PV2L9zrOYyOMzdVdS
-   noBHvlP/mgH+2Nm2AKuprYMDnDsEqkHB1SViAsMYfIZe433Dd14x98ZDt
-   aJ5kcywBKntjG4IUQ0oBJCJZxUebjP2sHWHWmXzQrAFMCoJHWPXMx6d8/
-   xbHlA4vU55jfxD5WSuEDxUderZ/vvYLUAV6D4nABU4M7297O8TBgt2zz4
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="259248449"
+  bh=Hkl8/8feuNYMImY/ozo/322V2NGiY6bRDjU8vGAhPTw=;
+  b=R8CxdZKwkLvSSfg/BxT1XYiaujnrex42FBEmdFYys+8jXqyiM3yGk6jl
+   M/9xKVTc3y9gimhsKLhTcgzT687230O17IUYcIbcG5jHL4gebAghraBaX
+   SBxHwaNWDNmYiuacA7JlgjDZD6WUWFfZspyydTU+avkQtwL2MjOoQvtwh
+   vIy5j8SqZJ/YZNPF/fDtLYVEQeUf18iosupZjslJozaqMHhlFT4PrwhL2
+   MqGwMhvfgDyBmzlLk6f4FOzeuaLzpMrDVt8nYHUPcTV912tqLYAziV9ig
+   sPyAOjZWkeVgnGsduXeEcRjVgE9PbG2/mBXLNZJR+NbFhcEivfkZOmlyq
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="246767250"
 X-IronPort-AV: E=Sophos;i="5.90,220,1643702400"; 
-   d="scan'208";a="259248449"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 08:29:25 -0700
+   d="scan'208";a="246767250"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 08:29:24 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,220,1643702400"; 
-   d="scan'208";a="518990850"
+   d="scan'208";a="653044903"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 29 Mar 2022 08:29:16 -0700
+  by orsmga004.jf.intel.com with ESMTP; 29 Mar 2022 08:29:16 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B4175809; Tue, 29 Mar 2022 18:29:29 +0300 (EEST)
+        id 89A4940B; Tue, 29 Mar 2022 18:29:29 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Qianggui Song <qianggui.song@amlogic.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v2 13/13] pinctrl: armada-37xx: Reuse GPIO fwnode in armada_37xx_irqchip_register()
-Date:   Tue, 29 Mar 2022 18:29:26 +0300
-Message-Id: <20220329152926.50958-14-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 10/13] pinctrl: meson: Enable COMPILE_TEST
+Date:   Tue, 29 Mar 2022 18:29:23 +0300
+Message-Id: <20220329152926.50958-11-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
 References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
@@ -85,45 +85,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Since we have fwnode of the first found GPIO controller assigned to the
-struct gpio_chip, we may reuse it in the armada_37xx_irqchip_register().
+Enable COMPILE_TEST for a better test coverage.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/pinctrl/meson/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 4a2fa10f94f8..54f473f4afed 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -727,23 +727,13 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 	struct gpio_chip *gc = &info->gpio_chip;
- 	struct irq_chip *irqchip = &info->irq_chip;
- 	struct gpio_irq_chip *girq = &gc->irq;
-+	struct device_node *np = to_of_node(gc->fwnode);
- 	struct device *dev = &pdev->dev;
--	struct device_node *np;
--	int ret = -ENODEV, i, nr_irq_parent;
--
--	/* Check if we have at least one gpio-controller child node */
--	for_each_child_of_node(dev->of_node, np) {
--		if (of_property_read_bool(np, "gpio-controller")) {
--			ret = 0;
--			break;
--		}
--	}
--	if (ret)
--		return dev_err_probe(dev, ret, "no gpio-controller child node\n");
-+	unsigned int i, nr_irq_parent;
- 
--	nr_irq_parent = of_irq_count(np);
- 	spin_lock_init(&info->irq_lock);
- 
-+	nr_irq_parent = of_irq_count(np);
- 	if (!nr_irq_parent) {
- 		dev_err(dev, "invalid or no IRQ\n");
- 		return 0;
+diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
+index d1955c65b4b6..64fb9e074ac6 100644
+--- a/drivers/pinctrl/meson/Kconfig
++++ b/drivers/pinctrl/meson/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menuconfig PINCTRL_MESON
+ 	tristate "Amlogic SoC pinctrl drivers"
+-	depends on ARCH_MESON
++	depends on ARCH_MESON || COMPILE_TEST
+ 	depends on OF
+ 	default y
+ 	select PINMUX
 -- 
 2.35.1
 
