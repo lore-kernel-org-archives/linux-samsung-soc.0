@@ -2,87 +2,36 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF6EC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 00:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F2AC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Mar 2022 08:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231382AbiC2AZr (ORCPT
+        id S231421AbiC2IDw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Mar 2022 20:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37322 "EHLO
+        Tue, 29 Mar 2022 04:03:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231346AbiC2AZq (ORCPT
+        with ESMTP id S233733AbiC2IB4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Mar 2022 20:25:46 -0400
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CBB2EC;
-        Mon, 28 Mar 2022 17:24:04 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id AA157580367;
-        Mon, 28 Mar 2022 20:24:01 -0400 (EDT)
-Received: from imap49 ([10.202.2.99])
-  by compute5.internal (MEProxy); Mon, 28 Mar 2022 20:24:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; bh=YVcOcYXKVU4PEK
-        ENIKD3lZlfbqMF8OkXUPWQPtT0ZzA=; b=GV8iKIgkifB/LyajStlhIzzaA2PqSU
-        rEPGZBnWRziuDMlxEaU3fjhl0DHmyiueo1E3rsDwPrq1dyaythjr8LeJ4NZ3kmFH
-        v7J0UO7b64vG5VRtrXZ/OicN/3vDmtLy+M6As/zf5/EYH2TO2OF+YIkppderpdcN
-        ocuY8KYW/dUFglcgTgXnC/6f5bvCH2TNkniwuNDGczxXDBDNnP2nHRX3u9u0y3Go
-        2HHhDpJUS8OMLXTkUmRtrROlDXASYpEdp57tTxY7G7Ci6RHcafVgGiKZGpjbHNDZ
-        //P9ySL7tvarTkKke+QN7H1PCcvhD3CsMcxHphO+TJq7W+71Q2wgIxYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=YVcOcYXKVU4PEKENIKD3lZlfbqMF8OkXUPWQPtT0Z
-        zA=; b=MfUF/QO1w2kk8LobJGDnDjGmGT9HUgvaIsBRcZJH4NP16C60y/NJslTt7
-        orhhkgHh49rbOiH30mg+9nD++QY3WWgzSB2sDT9Qr4nBx6DPKrUBtQOsEMz/dHsj
-        tnZTX8+5b3lvOKKTTCyQClpi0fsj22EquswXftZXPkMfoj2QCv1jAapgIQLAxfMF
-        S0z3hjnx7eO2S93c8UZottn5LmdiG0YcFFuK5zB8/ar7yCvc0Jy0dFV5KjDfSzzb
-        3LrydgytiTwdKd8S3tKaPDcolfNGWpjEyPMA80KKZ8LEsNOU94avhhnY8yVPYBI+
-        z15/ibq45vK+JxVduu76w45M0nzjQ==
-X-ME-Sender: <xms:oFFCYs9K0yagZswp7rFBq_h4vFfHgzOKyc_TzBu90N89g92vvi8M3A>
-    <xme:oFFCYkvw9h1jnh95ii6UH3c9xPcsfcQHqQiMHfK2AbFZHDfMquci3iY3KqTCG7jHE
-    woyrhqOfmB1RNSngg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehkedgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgfgsehtqhertderreejnecuhfhrohhmpedftehn
-    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucggtf
-    frrghtthgvrhhnpedvgeekheegfedvhfethefhudetteegueeggfeiieegueehkedugedt
-    kefglefgheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegrnhgurhgvfiesrghjrdhiugdrrghu
-X-ME-Proxy: <xmx:oVFCYiAKjCQA5Zb05U61crJ5MlOJCJLgZQqyWNA7a6PSqL49ds9rcQ>
-    <xmx:oVFCYsd7HLs87jVXkH1pk4ddv_005tSApo64HS9hBsjced9RxeZQlg>
-    <xmx:oVFCYhNCDSxTTbHGsk6l4iYUYPZLYU9gbpl7DI-t2s9QTshCOjdDqA>
-    <xmx:oVFCYjVxoE5j7ipqETgwLEOiheaMjFzqbcptYMrhCgrHpWjYJYVlwQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id E057EF6043F; Mon, 28 Mar 2022 20:24:00 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-4911-g925b585eab-fm-20220323.003-g925b585e
-Mime-Version: 1.0
-Message-Id: <d5e6c96b-5882-4602-93cb-b08a65bfa37e@www.fastmail.com>
-In-Reply-To: <D9AFAC3C-46CA-4C40-8559-FD6934411CAB@goldelico.com>
-References: <20220328000915.15041-1-ansuelsmth@gmail.com>
- <YkG2RPrtPaBNXb7a@latitude>
- <D9AFAC3C-46CA-4C40-8559-FD6934411CAB@goldelico.com>
-Date:   Tue, 29 Mar 2022 10:53:40 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        "Ansuel Smith" <ansuelsmth@gmail.com>
-Cc:     "Rob Herring" <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Tue, 29 Mar 2022 04:01:56 -0400
+X-Greylist: delayed 401 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 29 Mar 2022 01:00:11 PDT
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DD6D81FCCE;
+        Tue, 29 Mar 2022 01:00:11 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 727F580F9;
+        Tue, 29 Mar 2022 07:51:24 +0000 (UTC)
+Date:   Tue, 29 Mar 2022 10:53:27 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Daniel Palmer <daniel@0x0f.com>
+Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-aspeed@lists.ozlabs.org,
+        linux-omap@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-aspeed@lists.ozlabs.org,
         linux-rpi-kernel@lists.infradead.org,
         chrome-platform@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
@@ -94,26 +43,49 @@ Cc:     "Rob Herring" <robh+dt@kernel.org>,
         linux-rockchip@lists.infradead.org,
         linux-realtek-soc@lists.infradead.org
 Subject: Re: [RFC PATCH 0/1] Categorize ARM dts directory
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <YkK691VG6ON/6Ysn@atomide.com>
+References: <20220328000915.15041-1-ansuelsmth@gmail.com>
+ <CAFr9PXkgrRe-=E=GhNnZ4w1x_FMb97-_RmX6ND1vEd74_TbZSw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFr9PXkgrRe-=E=GhNnZ4w1x_FMb97-_RmX6ND1vEd74_TbZSw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
+* Daniel Palmer <daniel@0x0f.com> [220328 08:53]:
+> Hi Ansuel
+> 
+> On Mon, 28 Mar 2022 at 09:09, Ansuel Smith <ansuelsmth@gmail.com> wrote:
+> >
+> > Hi,
+> > as the title say, the intention of this ""series"" is to finally categorize
+> > the ARM dts directory in subdirectory for each oem.
+> 
+> While I agree with this change and think it's for the good (browsing
+> the ARM dts directory at the moment is frustrating..) I think
+> buildroot and others need to be told about this as it'll potentially
+> break their kernel build scripting for ARM and probably messes up the
+> configs they have for existing boards.
 
-On Tue, 29 Mar 2022, at 00:20, H. Nikolaus Schaller wrote:
->> Am 28.03.2022 um 15:21 schrieb Jonathan Neusch=C3=A4fer <j.neuschaefe=
-r@gmx.net>:
->>=20
->> Or maybe bcm instead of broadcom. Not sure which is preferred by
->> Broadcom people.
->
-> Maybe it should always follow the list of vendor prefixes as we are=20
-> talking about DTS?
+Yeah.. And ideally this would be done in smaller steps as these will
+conflict with all the other pending patches.
 
-+1 (if we're actually going to do this). That would neuter most the=20
-mistakes and discussion and can be extracted from the dts files=20
-themselves.
+For example, I have a pile of pending omap clock clean-up dts patches
+posted and tested waiting for v5.19-rc1 to apply. I'd rather not start
+redoing or fixing up the patches with sed :)
 
-Andrew
+What I'd like to have see is that at some point when suitable we move
+one machine at a time with a script if possible.. Maybe the dtb files
+generated would need to remain in the current directory until all of
+the machine dts files are moved? That should help with the build
+scripting too probably :)
+
+In general I like the idea though and I think we should do it.
+
+Regards,
+
+Tony
