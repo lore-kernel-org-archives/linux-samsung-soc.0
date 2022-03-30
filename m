@@ -2,110 +2,190 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CAFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 17:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965C4C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 17:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348354AbiC3RHb (ORCPT
+        id S242520AbiC3R1e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 13:07:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
+        Wed, 30 Mar 2022 13:27:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243512AbiC3RHb (ORCPT
+        with ESMTP id S1349268AbiC3R1c (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 13:07:31 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19FE12AD4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 10:05:45 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id bq8so28862595ejb.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 10:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Tj0NXhVhm7PGyEw1T3IIPx7yGFLG3tjmHr4oUiu0aBM=;
-        b=A+SD9/FO0TL/gKjMkQJKNe7U2AmbJ+03I9pf5OplDO3o62aL9aZB0bfmXop0Cwyu9Q
-         uB9gqqAdy/pD1ii7JGHUBIvJuFx+gqsctjIVWkFEfuCG64xYlijvuKUkYx41BTLSzLS/
-         WH4IeaKte2epTvfA26x5YO5mQp06UhGRO3jWlgKWCdgg+gHcKMNR+lV+C9pRXcYMeyHx
-         MNrr2Y2DSvIJmhRyh9JwrO/29C7nyQfnGno6cclU8yFoyH7/OnISb6YY88EEuh3i0YA3
-         7WjUh4c0QIx3Gn7uIKF4QlCL8WNfrJd2ZpkaiZEtfbhsXyfqaOhds0BQUddYwosZb+wQ
-         2b8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Tj0NXhVhm7PGyEw1T3IIPx7yGFLG3tjmHr4oUiu0aBM=;
-        b=szGljh/nxUUOCImotjeFKHioi5cXq+x5cDeR4FU1eSiF/sqYk/bS5beZthYhohnj0F
-         5YiX23UD73XhwynSBcaHysggI6xBKbnCn9rBNfx8aQDEFQQCdgf/GNwb/sk4GZIuQgJ+
-         p0wa/KU2+i92nkOV73UghGGSE15Jjg2lhAFhLOlRYtmSJQTClahouGTIAoJYZ601hdwZ
-         sGUdkk5hKbpGLNh+yGB04NOjuL+98bQIJ72rRLrQfGhhBLEinDLxsPDWPZiqh+OVMFjF
-         AVtGnVIyoP/SmFbXXyrfszIFNqWz8BI4yYHVhfJy9Has4f5VUZO33ctcT9m7AXjXSK28
-         gxlQ==
-X-Gm-Message-State: AOAM5327A2PIfzwypjBkHCOMPPpmhZMqwwN/USwC6ym0yO2EhQN1rXno
-        /RUntmXFyvxt2Rnhk8VtlkAjqJHenY2Bbyhw
-X-Google-Smtp-Source: ABdhPJxDV3+M/9S6hZfXffPzQU3d3SBZw2wRZGcJOtZhc39pkVomwUVA9HxLnJdaS0KeGuJt/LS/6w==
-X-Received: by 2002:a17:907:6d96:b0:6df:f199:6a7c with SMTP id sb22-20020a1709076d9600b006dff1996a7cmr552529ejc.137.1648659944508;
-        Wed, 30 Mar 2022 10:05:44 -0700 (PDT)
-Received: from [192.168.0.164] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id t19-20020a056402525300b0041952a1a764sm10233880edd.33.2022.03.30.10.05.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Mar 2022 10:05:43 -0700 (PDT)
-Message-ID: <da21cafc-4e5e-cb5f-e7e5-ac9f223616a6@linaro.org>
-Date:   Wed, 30 Mar 2022 19:05:42 +0200
+        Wed, 30 Mar 2022 13:27:32 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64AE0E9C81;
+        Wed, 30 Mar 2022 10:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648661146; x=1680197146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2wbT9qjviMFXOJP9BA2NPmRzRlvFL8bjYWi5aL+brNc=;
+  b=RGEA791UnlqAkNs3XqxFFoWLX7yJMqxTbqugDsBFvbzs0hXtNzJmgk3w
+   s4P1WUFnv9eg5Tj0f2zDn16uwIzBkhvLz0tVv/Jtwjg+Ig6dqL3igMyw4
+   3Xhi0tHige82a0G2mQgDzkGCW+GN1tSQlZmfxpM6NZAB2xzCFt3o2mLA2
+   UuuOUVHQchQgUMmZCKgwWyV7oaGVDlPaGZHpO8qeP0l5a4XOXQxNd7wcn
+   l5iLrgKRm6URt+KnYvowp2Nn2rjBbz9HILF5LmI/bV52IXV5xGgskY5Mm
+   Vyy8sZUcwrVmNtOLBQELgbGOqMVjxD6kQufhf/PWXUb0VU5XzU8YR/qn1
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10302"; a="322783551"
+X-IronPort-AV: E=Sophos;i="5.90,223,1643702400"; 
+   d="scan'208";a="322783551"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 10:25:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,223,1643702400"; 
+   d="scan'208";a="618607535"
+Received: from lkp-server02.sh.intel.com (HELO 56431612eabd) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Mar 2022 10:25:23 -0700
+Received: from kbuild by 56431612eabd with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nZc4Q-0000EO-UL;
+        Wed, 30 Mar 2022 17:25:22 +0000
+Date:   Thu, 31 Mar 2022 01:25:07 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     kbuild-all@lists.01.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v3 05/13] pinctrl: samsung: Switch to use
+ for_each_gpiochip_node() helper
+Message-ID: <202203310151.Iu2JvLIF-lkp@intel.com>
+References: <20220330145030.1562-6-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] thermal: exynos: fix masking value for artpec7 temp_error
-Content-Language: en-US
-To:     hypmean.kim@samsung.com, "bzolnier@gmail.com" <bzolnier@gmail.com>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "amitk@kernel.org" <amitk@kernel.org>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20220330093905.191315-1-hypmean.kim@samsung.com>
- <CGME20220330093842epcas2p11a4e220245298c5729e4a37d1484d4d5@epcms2p3>
- <20220330094328epcms2p35a3346066ae7b3e8a489e2c81d44f8c9@epcms2p3>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220330094328epcms2p35a3346066ae7b3e8a489e2c81d44f8c9@epcms2p3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220330145030.1562-6-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/03/2022 11:43, Sang Min Kim wrote:
-> This patch is a modification related to masking of the temp_error value
-> in the sanitize_temp_error() function.
+Hi Andy,
 
-Don't use "This patch" please.
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+I love your patch! Yet something to improve:
 
->  
-> For SOC_ARCH_EXYNOS7, the temp_error1, 2 value should be masked as
-> EXYNOS7_TMU_TEMP_MASK(0x1ff).
-> The current code masks temp_error2 with EXYNOS_TMU_TEMP_MASK(0xff)
-> value even in the case of EXYNOS7.
-> In addition, when entering the if statement, both temp_error1 and 2
-> are masked with EXYNOS_TMU_TEMP_MASK(0xff).
->  
-> By modifying to use the previously declared local variable tmu_temp_mask,
-> the mask value suitable for the SOC can be applied.
->  
-> Signed-off-by: sangmin kim <hypmean.kim@samsung.com>
+[auto build test ERROR on a67ba3cf9551f8c92d5ec9d7eae1aadbb9127b57]
 
-Fixes tag?
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/gpiolib-Two-new-helpers-and-way-toward-fwnode/20220330-225341
+base:   a67ba3cf9551f8c92d5ec9d7eae1aadbb9127b57
+config: riscv-buildonly-randconfig-r006-20220330 (https://download.01.org/0day-ci/archive/20220331/202203310151.Iu2JvLIF-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/3539d23dd289ca77a85d66fe8721e4febfc50ea4
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Andy-Shevchenko/gpiolib-Two-new-helpers-and-way-toward-fwnode/20220330-225341
+        git checkout 3539d23dd289ca77a85d66fe8721e4febfc50ea4
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=riscv SHELL=/bin/bash
 
-Code looks itself good, so with changes above:
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+All errors (new ones prefixed by >>):
 
-Best regards,
-Krzysztof
+   drivers/pinctrl/samsung/pinctrl-s3c64xx.c: In function 's3c64xx_eint_gpio_init':
+>> drivers/pinctrl/samsung/pinctrl-s3c64xx.c:474:64: error: 'struct samsung_pin_bank' has no member named 'of_node'; did you mean 'fwnode'?
+     474 |                 bank->irq_domain = irq_domain_add_linear(bank->of_node,
+         |                                                                ^~~~~~~
+         |                                                                fwnode
+   drivers/pinctrl/samsung/pinctrl-s3c64xx.c: In function 's3c64xx_eint_eint0_init':
+   drivers/pinctrl/samsung/pinctrl-s3c64xx.c:746:64: error: 'struct samsung_pin_bank' has no member named 'of_node'; did you mean 'fwnode'?
+     746 |                 bank->irq_domain = irq_domain_add_linear(bank->of_node,
+         |                                                                ^~~~~~~
+         |                                                                fwnode
+
+
+vim +474 drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  444  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  445  /**
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  446   * s3c64xx_eint_gpio_init() - setup handling of external gpio interrupts.
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  447   * @d: driver data of samsung pinctrl driver.
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  448   */
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  449  static int s3c64xx_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  450  {
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  451  	struct s3c64xx_eint_gpio_data *data;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  452  	struct samsung_pin_bank *bank;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  453  	struct device *dev = d->dev;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  454  	unsigned int nr_domains;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  455  	unsigned int i;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  456  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  457  	if (!d->irq) {
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  458  		dev_err(dev, "irq number not available\n");
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  459  		return -EINVAL;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  460  	}
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  461  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  462  	nr_domains = 0;
+1bf00d7a6dbff0 drivers/pinctrl/samsung/pinctrl-s3c64xx.c Tomasz Figa      2014-09-23  463  	bank = d->pin_banks;
+1bf00d7a6dbff0 drivers/pinctrl/samsung/pinctrl-s3c64xx.c Tomasz Figa      2014-09-23  464  	for (i = 0; i < d->nr_banks; ++i, ++bank) {
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  465  		unsigned int nr_eints;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  466  		unsigned int mask;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  467  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  468  		if (bank->eint_type != EINT_TYPE_GPIO)
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  469  			continue;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  470  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  471  		mask = bank->eint_mask;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  472  		nr_eints = fls(mask);
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  473  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18 @474  		bank->irq_domain = irq_domain_add_linear(bank->of_node,
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  475  					nr_eints, &s3c64xx_gpio_irqd_ops, bank);
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  476  		if (!bank->irq_domain) {
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  477  			dev_err(dev, "gpio irq domain add failed\n");
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  478  			return -ENXIO;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  479  		}
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  480  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  481  		++nr_domains;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  482  	}
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  483  
+0ed2dd03b94b7b drivers/pinctrl/samsung/pinctrl-s3c64xx.c Kees Cook        2018-05-08  484  	data = devm_kzalloc(dev, struct_size(data, domains, nr_domains),
+0ed2dd03b94b7b drivers/pinctrl/samsung/pinctrl-s3c64xx.c Kees Cook        2018-05-08  485  			    GFP_KERNEL);
+fa5c0f46e2b9a1 drivers/pinctrl/samsung/pinctrl-s3c64xx.c Marek Szyprowski 2017-01-19  486  	if (!data)
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  487  		return -ENOMEM;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  488  	data->drvdata = d;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  489  
+1bf00d7a6dbff0 drivers/pinctrl/samsung/pinctrl-s3c64xx.c Tomasz Figa      2014-09-23  490  	bank = d->pin_banks;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  491  	nr_domains = 0;
+1bf00d7a6dbff0 drivers/pinctrl/samsung/pinctrl-s3c64xx.c Tomasz Figa      2014-09-23  492  	for (i = 0; i < d->nr_banks; ++i, ++bank) {
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  493  		if (bank->eint_type != EINT_TYPE_GPIO)
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  494  			continue;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  495  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  496  		data->domains[nr_domains++] = bank->irq_domain;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  497  	}
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  498  
+623a650ebc886f drivers/pinctrl/samsung/pinctrl-s3c64xx.c Thomas Gleixner  2015-06-21  499  	irq_set_chained_handler_and_data(d->irq, s3c64xx_eint_gpio_irq, data);
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  500  
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  501  	return 0;
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  502  }
+61dd7261317770 drivers/pinctrl/pinctrl-s3c64xx.c         Tomasz Figa      2013-03-18  503  
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
