@@ -2,76 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8F3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 12:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DD5C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 13:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345463AbiC3Mqj (ORCPT
+        id S1343767AbiC3NE1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 08:46:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
+        Wed, 30 Mar 2022 09:04:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345442AbiC3Mqa (ORCPT
+        with ESMTP id S244903AbiC3NE1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 08:46:30 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B05A12639;
-        Wed, 30 Mar 2022 05:42:06 -0700 (PDT)
-Received: from mail-wm1-f52.google.com ([209.85.128.52]) by
- mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1Mnq4Q-1oOrgK3Xoo-00pNsz; Wed, 30 Mar 2022 14:37:02 +0200
-Received: by mail-wm1-f52.google.com with SMTP id 123-20020a1c1981000000b0038b3616a71aso3374610wmz.4;
-        Wed, 30 Mar 2022 05:37:02 -0700 (PDT)
-X-Gm-Message-State: AOAM5329VsudarNVsU/isj96R066MCE5oM/3x1bNfWfP0EEFUDlMLBvz
-        wa45/BoAHiY/lTW1NEMfZjbVJ01WXugIsqBo09U=
-X-Google-Smtp-Source: ABdhPJwfbm/9CoKlDpNtm76gvIcQEp3gSMKylwBeJKNMGSZTpVIguvrW0qmNj3vv9gaQXiq1j2JGikp0Afv3xKtctks=
-X-Received: by 2002:a1c:f219:0:b0:38c:782c:3bb with SMTP id
- s25-20020a1cf219000000b0038c782c03bbmr4174789wmc.94.1648643822447; Wed, 30
- Mar 2022 05:37:02 -0700 (PDT)
+        Wed, 30 Mar 2022 09:04:27 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E46B16D8DF;
+        Wed, 30 Mar 2022 06:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648645362; x=1680181362;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sJ4bTg/Jje7M8hJIE2LrKZWgq7g/VxTTlmJq4PtT+5k=;
+  b=eGC9eqbn/O1lwPZ8WOBCZu9swZTwbD/G1MrHFC5ZORqmACymd2MM+x2A
+   JSW9OrMnCvg7m+xZJXNIa9AWoKBL75i01nDdo+GnJOGiSvzR6jyabSQ6+
+   JRaa1PySzWhzyWBU2uWNemSkuU4N7ysu6+mJeX62fSjdWYbUsUd0NOMNA
+   UoaH3do8Z130BzZ7Izrv1CHUSxXcSr2v/Op51gzFxRTffVCHjhSRexRSH
+   ++pFBWqxGoeA/U7/wO7NRTv/YpqShVhFzjmIBfSS+MQ1gtqZ816bKVRn7
+   bRjZJgg2SxYyhcDfSRO+/DuD0CZzCs/zbIxbA9/GYz8uh/1/j2NajxPuN
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="240131002"
+X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
+   d="scan'208";a="240131002"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 06:02:42 -0700
+X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
+   d="scan'208";a="519668600"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 06:02:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nZXxJ-009PSJ-LE;
+        Wed, 30 Mar 2022 16:01:45 +0300
+Date:   Wed, 30 Mar 2022 16:01:45 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Fabien DESSENNE <fabien.dessenne@foss.st.com>
+Cc:     Qianggui Song <qianggui.song@amlogic.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 04/13] pinctrl: stm32: Switch to use
+ for_each_gpiochip_node() helper
+Message-ID: <YkRUuS5YKXstq9T7@smile.fi.intel.com>
+References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
+ <20220329152926.50958-5-andriy.shevchenko@linux.intel.com>
+ <ec5a56e6-9402-f80f-3c86-1820e39fec27@foss.st.com>
 MIME-Version: 1.0
-References: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org> <20220330074016.12896-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220330074016.12896-2-krzysztof.kozlowski@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 30 Mar 2022 14:36:46 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2rjs-_5kcqAz6C3qE=SGUt0JYSyNfyZd2-B6dvaEZNuQ@mail.gmail.com>
-Message-ID: <CAK8P3a2rjs-_5kcqAz6C3qE=SGUt0JYSyNfyZd2-B6dvaEZNuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: update Krzysztof Kozlowski's email
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nfc@lists.01.org, Networking <netdev@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:NX9yY4uMHG0E9LFC5gh1ZFGm6GY/SJk+3/osNw8K/JV4GnUK4nY
- x1ANy0sl+GqOXKmcrk5eY9Vp6PPT7SDMZNCxm5zVZ4BgUFYYCUzGLvipXE7uvKlWSvzetJ+
- pWS4HIuHCavNs7b5q1qF9nb0puNlrRjigvsxs+LegvegO7UWUmMi1U8JSUB7oFjIOpQ2jpI
- HviknqcBRm7+hskX4xaSg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Auhe9cAV9A0=:Jmz/c2N6UlGWcjtthXjc6Y
- A4KRmjeq/7Dxse2SWXB/GO3SHnbjmWXhZgC7AeXmKCWOxS7Gi9ECms+p9KGZZSm361chfud0i
- MOLs6MFleCrUBErHMnxpmaiw9qUxH2W1f9//tgYlIlAh4kt5VOonVYlsqUDhVaYx8AEVMqqu5
- 8AwlsP2ftyhYf29znfths8dQDyEWsxSMpsr5a2IQfH1/zdJXdUB4ULZ9ybnyT8gGsgLfr9g/1
- 6JwrIfEegz1w5SgVQgrQqXAe5OOGpPyO54lOyj4XXRdzt47TDzt3jb8VgD2nejDXNWdsU8xrO
- lagk5OqpWCTbGRnoSYQH8uywlrJwyUAvJzU8g8QzEXzdraunxwMCbx6qYe+HgV1cPvdHNY9xN
- 4XQ6KuEdB5h+piCRQ+dk3dYEENl53c4e4hPMoXV19GVBfeaRisXJtiBs/D0at6wATm1fRoSfh
- tx9BHrvxDjSmE217ASoMG2Ev+aVIGc2evCGBHMa2JUCWN1Jv4F58ZwuBnZdPtotmuqaCyWofg
- BTmtyai+8SDAFQG+8cxYoPrFAq3TRyxHNVSvNmr7zblBVDTxmlAVB23HSimgiy9Roy4uFqn9r
- aOICQnXDpsRQa3muaXmbJtkQ4Y979FifO1Cf6Qt7aCIvkdxfQ3tXMc3S+tz0pCTTsBdL5oyh6
- DH2VEqscKNj9rTpFg3geDzOfvfqJnGpE0H9+269VpMiacqKiLsCkBj78p0cptAUntxBc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec5a56e6-9402-f80f-3c86-1820e39fec27@foss.st.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 9:40 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> From: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Krzysztof Kozlowski's @canonical.com email stopped working, so switch to
-> generic @kernel.org account for all Devicetree bindings.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Wed, Mar 30, 2022 at 02:32:36PM +0200, Fabien DESSENNE wrote:
+> Hi Andy
+> 
+> 
+> Thank you for the patch.
+> 
+> Fabien
+> 
+> On 29/03/2022 17:29, Andy Shevchenko wrote:
+> > Switch the code to use for_each_gpiochip_node() helper.
+> > 
+> > While at it, in order to avoid additional churn in the future,
+> > switch to fwnode APIs where it makes sense.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Thank you for the prompt review!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
