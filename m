@@ -2,58 +2,58 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DD5C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 13:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31235C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 14:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343767AbiC3NE1 (ORCPT
+        id S1347324AbiC3OwK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 09:04:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51526 "EHLO
+        Wed, 30 Mar 2022 10:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244903AbiC3NE1 (ORCPT
+        with ESMTP id S1347326AbiC3OwG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 09:04:27 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E46B16D8DF;
-        Wed, 30 Mar 2022 06:02:42 -0700 (PDT)
+        Wed, 30 Mar 2022 10:52:06 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6741F4925E;
+        Wed, 30 Mar 2022 07:50:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648645362; x=1680181362;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sJ4bTg/Jje7M8hJIE2LrKZWgq7g/VxTTlmJq4PtT+5k=;
-  b=eGC9eqbn/O1lwPZ8WOBCZu9swZTwbD/G1MrHFC5ZORqmACymd2MM+x2A
-   JSW9OrMnCvg7m+xZJXNIa9AWoKBL75i01nDdo+GnJOGiSvzR6jyabSQ6+
-   JRaa1PySzWhzyWBU2uWNemSkuU4N7ysu6+mJeX62fSjdWYbUsUd0NOMNA
-   UoaH3do8Z130BzZ7Izrv1CHUSxXcSr2v/Op51gzFxRTffVCHjhSRexRSH
-   ++pFBWqxGoeA/U7/wO7NRTv/YpqShVhFzjmIBfSS+MQ1gtqZ816bKVRn7
-   bRjZJgg2SxYyhcDfSRO+/DuD0CZzCs/zbIxbA9/GYz8uh/1/j2NajxPuN
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="240131002"
+  t=1648651820; x=1680187820;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=DFJ8vSWxdkQP5rCMWcqpqf0iMOqCrH1H7hLKYmjSIpU=;
+  b=KT9uA43Quj97EQsS/34LBJUiti+KKxG2KtmHKYDBQQTFBKMuoufIYN5v
+   HtX6K5xbKXegXJRtw4sooRh+8smFbfi1OYejjkcjgYbnK2smTVObdzCfS
+   eKBYlhmNR6hRTg9OPs+HZWNyPWon3zuvKWr+Tv1z8laLZxQwjTTz1jKig
+   /D+8uzVX5hwSNmehuWdaW3mwpunjWkQr2xaExA5XJDc9IV9Mh9CBNGKXe
+   C2VqlsoA2cUN2nVWOgtFY4++TsKQUOBbi+q1Sd793ATzdgDS2QCqiK0/V
+   kZ3cGJRoAFSzSNH67yIOE3LTU/jr0gjCPXqsj2b3PvtZPMGj3/5k8wEZf
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="257139573"
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="240131002"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 06:02:42 -0700
+   d="scan'208";a="257139573"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 07:50:19 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="519668600"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 06:02:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nZXxJ-009PSJ-LE;
-        Wed, 30 Mar 2022 16:01:45 +0300
-Date:   Wed, 30 Mar 2022 16:01:45 +0300
+   d="scan'208";a="618556021"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Mar 2022 07:50:11 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 3232C1C3; Wed, 30 Mar 2022 17:50:33 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Fabien DESSENNE <fabien.dessenne@foss.st.com>
-Cc:     Qianggui Song <qianggui.song@amlogic.com>,
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Krzysztof Kozlowski <krzk@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -66,7 +66,6 @@ Cc:     Qianggui Song <qianggui.song@amlogic.com>,
         Patrick Venture <venture@google.com>,
         Nancy Yuen <yuenn@google.com>,
         Benjamin Fair <benjaminfair@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -74,42 +73,49 @@ Cc:     Qianggui Song <qianggui.song@amlogic.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 04/13] pinctrl: stm32: Switch to use
- for_each_gpiochip_node() helper
-Message-ID: <YkRUuS5YKXstq9T7@smile.fi.intel.com>
-References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
- <20220329152926.50958-5-andriy.shevchenko@linux.intel.com>
- <ec5a56e6-9402-f80f-3c86-1820e39fec27@foss.st.com>
+Subject: [PATCH v3 02/13] gpiolib: Introduce gpiochip_node_count() helper
+Date:   Wed, 30 Mar 2022 17:50:19 +0300
+Message-Id: <20220330145030.1562-3-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
+References: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec5a56e6-9402-f80f-3c86-1820e39fec27@foss.st.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 02:32:36PM +0200, Fabien DESSENNE wrote:
-> Hi Andy
-> 
-> 
-> Thank you for the patch.
-> 
-> Fabien
-> 
-> On 29/03/2022 17:29, Andy Shevchenko wrote:
-> > Switch the code to use for_each_gpiochip_node() helper.
-> > 
-> > While at it, in order to avoid additional churn in the future,
-> > switch to fwnode APIs where it makes sense.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+The gpiochip_node_count() helper iterates over the device child nodes that
+have the "gpio-controller" property set. It returns the number of such nodes
+under a given device.
 
-Thank you for the prompt review!
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/gpio/driver.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 2142ffc7338c..e38565a5056c 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -752,4 +752,15 @@ static inline void gpiochip_unlock_as_irq(struct gpio_chip *gc,
+ 	device_for_each_child_node(dev, child)					\
+ 		if (!fwnode_property_present(child, "gpio-controller")) {} else
+ 
++static inline unsigned int gpiochip_node_count(struct device *dev)
++{
++	struct fwnode_handle *child;
++	unsigned int count = 0;
++
++	for_each_gpiochip_node(dev, child)
++		count++;
++
++	return count;
++}
++
+ #endif /* __LINUX_GPIO_DRIVER_H */
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.35.1
 
