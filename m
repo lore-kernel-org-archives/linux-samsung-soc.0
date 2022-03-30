@@ -2,1469 +2,380 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D142BC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 07:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EDAC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 08:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243925AbiC3HmX (ORCPT
+        id S244095AbiC3IIF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 03:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39204 "EHLO
+        Wed, 30 Mar 2022 04:08:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243924AbiC3HmW (ORCPT
+        with ESMTP id S241258AbiC3IIF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 03:42:22 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0B952B1D
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 00:40:30 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id z92so23336916ede.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 00:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=l/0o1ZxqOqIW47MqqEWo6kHCLtFB+QuyDI88UdB4mI0=;
-        b=eblhmJ8aLnZwH90f7vQcsSz11Jl+Kn/QJ/YEKdeFgU3R1uteoqQPgUHERvRZDu7G+A
-         +C/Lq8ELLupZ+FM0VET3Xp/psK5hj+FDeEojA/lKpIgK0T0ksrPKcGNOr0E3prslBI2F
-         Q6i3s2Yy8xh2J+rFeaPEr2lMOc9i81/K7/JutyYJHPwJQ13z4GjZjLY/TdxNIGcCEk4l
-         h/jXf9MLKalX1wYLiEK9higrJYiJgveUf8Od3zDKFohINpuAbOnO4h7X7dPKZwUKTY6c
-         dKaJs53hpMvp1xKAmaxu8xligvrpLEwAbZwC1PU6cmH/8dos/9ACrkac+H38wEzNk6od
-         Kb0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=l/0o1ZxqOqIW47MqqEWo6kHCLtFB+QuyDI88UdB4mI0=;
-        b=qLNfnZTYQa9K9McgTc1CUUpxoNKFkWekCDLXILF2TM/uH4wyNz8cJK/B93/A5msOZN
-         9T8++vSemlrJ6qCF8t4BYH0Y400EgH4fqkWg7FVn+le/0Z+GZQzyiON8jd8A4aS0u/tZ
-         Nwy15hZ+AUoLcj+RHRePXAE/nPBddvB1tRkWMbWPWdbRzpm50jAD1oOgYf15rzGV/MkR
-         AEN2jgQBCu7tBXaORtGjOF72OxcOJxMP05/PZVTKukbhblwX0KpGmKd6Cl1l87uOk/dv
-         kLaZLoIS+SwhWmIuTZ6S5TE1azRuZMxFXzYt0Wpl61b9jar3IcJb75pz+Yest5dhqN7D
-         jGmw==
-X-Gm-Message-State: AOAM53387CCF9hRCB9Db7Xs0Zf1gNM51h7A/ILBLBf4np1dhpwgz+IV4
-        CeGSYNpR4P25VBaq4MSlvuTQJdcniU5LeBzH
-X-Google-Smtp-Source: ABdhPJw0r0tRwbTGCZq8rOd+TxTogb/a0/79ctQGQYNWBKhTbvs2rMRh7CvbanId8gABFeNUhgD0ZA==
-X-Received: by 2002:aa7:d74d:0:b0:419:1d7:adcc with SMTP id a13-20020aa7d74d000000b0041901d7adccmr9147807eds.407.1648626027730;
-        Wed, 30 Mar 2022 00:40:27 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id s20-20020a056402015400b00418f9574a36sm9536640edu.73.2022.03.30.00.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 00:40:27 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfc@lists.01.org,
-        netdev@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 1/2] dt-bindings: update Krzysztof Kozlowski's email
-Date:   Wed, 30 Mar 2022 09:40:15 +0200
-Message-Id: <20220330074016.12896-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org>
-References: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org>
+        Wed, 30 Mar 2022 04:08:05 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 296912E6AA
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 01:06:17 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220330080613euoutp02ddc0489077a088ccc6f2bc8378881825~hGgr9X5Sh2781027810euoutp02_
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 08:06:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220330080613euoutp02ddc0489077a088ccc6f2bc8378881825~hGgr9X5Sh2781027810euoutp02_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1648627573;
+        bh=AOarGKGJKsPmRUR/CFihsJ9YMm/6LvpSFrTFm8x1wFg=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=gphk4rZfR6RwB0xcLI/5tppJyKebHmdgA3ny/HMMiXKkOJ3w+nxRVZ+bY42LdeC5T
+         XhSILLwD+6GAvnoUlO0ZSehq8TE/f+aHiX8dsj+4hVL/Wrn6BGOpHyUmEx3PQmTVrK
+         f7X9M0PgdGlRqrrch1Li4sIyGzavV4Y5U75n1ISs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220330080612eucas1p15d24e2e8da1d5a89e93633b8b6ea7f21~hGgr1kXWR3073130731eucas1p1P;
+        Wed, 30 Mar 2022 08:06:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 05.00.10009.47F04426; Wed, 30
+        Mar 2022 09:06:12 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e~hGgrelrKV3009130091eucas1p1N;
+        Wed, 30 Mar 2022 08:06:12 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220330080612eusmtrp1218599d344fe371862828c9c9bf912b6~hGgrdPgOB2897828978eusmtrp1R;
+        Wed, 30 Mar 2022 08:06:12 +0000 (GMT)
+X-AuditID: cbfec7f2-e95ff70000002719-9a-62440f741bc6
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9F.B7.09404.47F04426; Wed, 30
+        Mar 2022 09:06:12 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220330080612eusmtip2d1c65aeaef0e4075da4d5d8ebf0ffaf7~hGgq-w9JB2169821698eusmtip2X;
+        Wed, 30 Mar 2022 08:06:12 +0000 (GMT)
+Message-ID: <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
+Date:   Wed, 30 Mar 2022 10:06:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.7.0
+Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220325161144.1901695-4-maxime@cerno.tech>
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djPc7ol/C5JBhMnmFicfHKd3WLBbG6L
+        jz33WC1mnN/HZDHjxz9Gi4unXC3+XdvI4sDu8f5GK7vHnXPn2Tx23F3C6LFpVSebx+Yl9R6f
+        N8kFsEVx2aSk5mSWpRbp2yVwZXxcuJKlYLJzxZ5nRQ2Mh027GDk5JARMJFpf9zKB2EICKxgl
+        uu+7dDFyAdlfGCW2LHrGBOF8ZpSY+fwjK0zH5J+vWSESyxklvn44xgLhfGSUeDB5OjtIFa+A
+        ncTiY1NYQGwWAVWJS4fnMULEBSVOznwCFhcVSJJYvX01G4gtLGAvcWVnM1gNs4C4xK0n88FW
+        iwj0M0o8e3qDFSIxkVFi4UU5EJtNwFCi620XWDOngKXEyiXNTBA18hLNW2czgzRLCNzhkNh2
+        o4sR4m4XicnLzrND2MISr45vgbJlJE5P7gG6iAPIzpf4O8MYIlwhce31GmYI21rizrlfbCAl
+        zAKaEut36UOEHSVmzd3CBtHJJ3HjrSDEBXwSk7ZNZ4YI80p0tAlBVKtJzDq+Dm7nwQuXmCcw
+        Ks1CCpRZSJ6fheSXWQh7FzCyrGIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMQaf/Hf+0
+        g3Huq496hxiZOBgPMUpwMCuJ8H486JwkxJuSWFmVWpQfX1Sak1p8iFGag0VJnDc5c0OikEB6
+        YklqdmpqQWoRTJaJg1OqgSlmw2V2lc6Yc7xdk09YhWUq/HV6zFPz+lzxJp0sr1Oxtw7OXHd/
+        1stVxxLYEqqbJm/xTrcPmtiqUjHbSe1Gc9WHV5kzv5odfJh/Osji+/54x67NluZPP+vZ7GUQ
+        vvzjYd/yzpQNq9cJvlWoW6W0YfNup4wq6aR9/TaPwx1amKRNmd2X+b5/0SLysd4j7UVyfl/Y
+        ldR0rVORPw2ecE7JqJVt4BYwX2A1t8Fq/7pNCzR3SUuznZkoeKsj0PX6mYMXzzyqrZ/wMFut
+        eOnuLFbV15zTBZYwz/bstDz96CfblrzVVvGlkS+TTa9YX7hdOs27MvHHszkJK697qVnKsnDm
+        fixtPcEs78/wxXb3lhPn0pRYijMSDbWYi4oTAYMQeO2wAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsVy+t/xe7ol/C5JBv//ylicfHKd3WLBbG6L
+        jz33WC1mnN/HZDHjxz9Gi4unXC3+XdvI4sDu8f5GK7vHnXPn2Tx23F3C6LFpVSebx+Yl9R6f
+        N8kFsEXp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
+        ZXxcuJKlYLJzxZ5nRQ2Mh027GDk5JARMJCb/fM3axcjFISSwlFHi84uFbBAJGYmT0xpYIWxh
+        iT/XusDiQgLvGSXmfEkHsXkF7CQWH5vCAmKzCKhKXDo8jxEiLihxcuYTsLioQJLEpa52sLiw
+        gL3ElZ3NYDazgLjErSfzmUAWiwj0M0pcOjgJ7ApmgcmMEu9ubWWF2JYucXjXHbAONgFDia63
+        EFdwClhKrFzSzAQxyUyia2sX1FR5ieats5knMArNQnLILCQLZyFpmYWkZQEjyypGkdTS4tz0
+        3GIjveLE3OLSvHS95PzcTYzAyNt27OeWHYwrX33UO8TIxMF4iFGCg1lJhPfjQeckId6UxMqq
+        1KL8+KLSnNTiQ4ymwNCYyCwlmpwPjP28knhDMwNTQxMzSwNTSzNjJXFez4KORKDPEktSs1NT
+        C1KLYPqYODilGpgad6wUYjDJrlzKnzY/t+G5hpfT5ochSxf9dqiumhM8Y+uHZ045lRaRb80N
+        VDNPr5+n9uHpav2KTyGxIq65uc8L60RtnG22/OiQ9f/ss6L/kvIC4ZfNV2w/qLL1Xq/o9Ah1
+        yONZYpqd++COcuGOze0bfjwNWl1erN/7/7DI+1/n73syas3e6RpusPF/3C4zjVBnte/9U484
+        fFCUT2T5p1XyUpHrba7YEqMF0z/ICe/6vqPZxMw109Xx5V2lHD6d+saolpczHp8NWZJ6M26f
+        vPfD9PVy7DVm1s4Vfz98Yvb59G9F2GelM1fEE2eWiJw48iHuL/f1I2cvV3LVndA9fOpmZMuM
+        fVdbvrIaTQ2dJK7EUpyRaKjFXFScCACH5MwkRQMAAA==
+X-CMS-MailID: 20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e
+References: <20220325161144.1901695-1-maxime@cerno.tech>
+        <20220325161144.1901695-4-maxime@cerno.tech>
+        <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Hi,
 
-Krzysztof Kozlowski's @canonical.com email stopped working, so switch to
-generic @kernel.org account for all Devicetree bindings.
+On 25.03.2022 17:11, Maxime Ripard wrote:
+> While the current code will trigger a new clk_set_rate call whenever the
+> rate boundaries are changed through clk_set_rate_range, this doesn't
+> occur when clk_put() is called.
+>
+> However, this is essentially equivalent since, after clk_put()
+> completes, those boundaries won't be enforced anymore.
+>
+> Let's add a call to clk_set_rate_range in clk_put to make sure those
+> rate boundaries are dropped and the clock drivers can react.
+>
+> Let's also add a few tests to make sure this case is covered.
+>
+> Fixes: c80ac50cbb37 ("clk: Always set the rate on clk_set_range_rate")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../devicetree/bindings/clock/samsung,exynos-audss-clock.yaml   | 2 +-
- .../devicetree/bindings/clock/samsung,exynos-clock.yaml         | 2 +-
- .../devicetree/bindings/clock/samsung,exynos-ext-clock.yaml     | 2 +-
- .../devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml | 2 +-
- .../devicetree/bindings/clock/samsung,exynos5260-clock.yaml     | 2 +-
- .../devicetree/bindings/clock/samsung,exynos5410-clock.yaml     | 2 +-
- .../devicetree/bindings/clock/samsung,exynos5433-clock.yaml     | 2 +-
- .../devicetree/bindings/clock/samsung,exynos7-clock.yaml        | 2 +-
- .../devicetree/bindings/clock/samsung,exynos7885-clock.yaml     | 2 +-
- .../devicetree/bindings/clock/samsung,exynos850-clock.yaml      | 2 +-
- Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml    | 2 +-
- .../devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml  | 2 +-
- .../devicetree/bindings/clock/samsung,s5pv210-clock.yaml        | 2 +-
- .../devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml  | 2 +-
- .../devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml  | 2 +-
- .../bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml       | 2 +-
- .../bindings/display/samsung/samsung,exynos-hdmi.yaml           | 2 +-
- .../bindings/display/samsung/samsung,exynos-mixer.yaml          | 2 +-
- .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 +-
- .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 2 +-
- .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 2 +-
- .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 2 +-
- Documentation/devicetree/bindings/extcon/maxim,max77843.yaml    | 2 +-
- Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
- Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
- Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
- Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
- Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
- Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml          | 2 +-
- Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml  | 2 +-
- .../interrupt-controller/samsung,exynos4210-combiner.yaml       | 2 +-
- Documentation/devicetree/bindings/leds/maxim,max77693.yaml      | 2 +-
- .../devicetree/bindings/memory-controllers/brcm,dpfe-cpu.yaml   | 2 +-
- .../bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml   | 2 +-
- .../bindings/memory-controllers/ddr/jedec,lpddr2.yaml           | 2 +-
- .../bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml   | 2 +-
- .../bindings/memory-controllers/ddr/jedec,lpddr3.yaml           | 2 +-
- .../memory-controllers/marvell,mvebu-sdram-controller.yaml      | 2 +-
- .../bindings/memory-controllers/qca,ath79-ddr-controller.yaml   | 2 +-
- .../bindings/memory-controllers/renesas,h8300-bsc.yaml          | 2 +-
- .../bindings/memory-controllers/samsung,exynos5422-dmc.yaml     | 2 +-
- .../bindings/memory-controllers/synopsys,ddrc-ecc.yaml          | 2 +-
- .../devicetree/bindings/memory-controllers/ti,da8xx-ddrctl.yaml | 2 +-
- Documentation/devicetree/bindings/mfd/maxim,max14577.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/maxim,max77686.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/maxim,max77693.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/maxim,max77802.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/maxim,max77843.yaml       | 2 +-
- .../devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml      | 2 +-
- Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml      | 2 +-
- Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml      | 2 +-
- Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml      | 2 +-
- Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml          | 2 +-
- Documentation/devicetree/bindings/net/nfc/nxp,pn532.yaml        | 2 +-
- Documentation/devicetree/bindings/net/nfc/nxp,pn544.yaml        | 2 +-
- Documentation/devicetree/bindings/net/nfc/st,st-nci.yaml        | 2 +-
- Documentation/devicetree/bindings/net/nfc/st,st21nfca.yaml      | 2 +-
- Documentation/devicetree/bindings/net/nfc/st,st95hf.yaml        | 2 +-
- Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml      | 2 +-
- Documentation/devicetree/bindings/phy/samsung,dp-video-phy.yaml | 2 +-
- .../devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml        | 2 +-
- .../devicetree/bindings/phy/samsung,exynos5250-sata-phy.yaml    | 2 +-
- .../devicetree/bindings/phy/samsung,mipi-video-phy.yaml         | 2 +-
- Documentation/devicetree/bindings/phy/samsung,usb2-phy.yaml     | 2 +-
- Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 2 +-
- .../devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml  | 2 +-
- .../devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml   | 2 +-
- .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml      | 2 +-
- Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml  | 2 +-
- .../devicetree/bindings/power/supply/maxim,max14577.yaml        | 2 +-
- .../devicetree/bindings/power/supply/maxim,max77693.yaml        | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max14577.yaml | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max77686.yaml | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max77693.yaml | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max77802.yaml | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max77843.yaml | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max8952.yaml  | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max8973.yaml  | 2 +-
- Documentation/devicetree/bindings/regulator/maxim,max8997.yaml  | 2 +-
- .../devicetree/bindings/regulator/samsung,s2mpa01.yaml          | 2 +-
- .../devicetree/bindings/regulator/samsung,s2mps11.yaml          | 2 +-
- .../devicetree/bindings/regulator/samsung,s2mps13.yaml          | 2 +-
- .../devicetree/bindings/regulator/samsung,s2mps14.yaml          | 2 +-
- .../devicetree/bindings/regulator/samsung,s2mps15.yaml          | 2 +-
- .../devicetree/bindings/regulator/samsung,s2mpu02.yaml          | 2 +-
- .../devicetree/bindings/regulator/samsung,s5m8767.yaml          | 2 +-
- .../devicetree/bindings/rng/samsung,exynos5250-trng.yaml        | 2 +-
- Documentation/devicetree/bindings/rng/timeriomem_rng.yaml       | 2 +-
- Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml   | 2 +-
- Documentation/devicetree/bindings/sound/samsung,arndale.yaml    | 2 +-
- Documentation/devicetree/bindings/sound/samsung,smdk5250.yaml   | 2 +-
- Documentation/devicetree/bindings/sound/samsung,snow.yaml       | 2 +-
- Documentation/devicetree/bindings/sound/samsung,tm2.yaml        | 2 +-
- .../devicetree/bindings/spi/samsung,spi-peripheral-props.yaml   | 2 +-
- Documentation/devicetree/bindings/spi/samsung,spi.yaml          | 2 +-
- .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml     | 2 +-
- Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml  | 2 +-
- Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml  | 2 +-
- 99 files changed, 99 insertions(+), 99 deletions(-)
+This patch landed recently in linux-next 20220328 as commit 7dabfa2bc480 
+("clk: Drop the rate range on clk_put()"). Sadly it breaks booting of 
+the few of my test systems: Samsung ARM 32bit Exynos3250 based Rinato 
+board and all Amlogic Meson G12B/SM1 based boards (Odroid C4, N2, Khadas 
+VIM3/VIM3l). Rinato hangs always with the following oops:
 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-index f14f1d39da36..d819dfaafff9 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos-audss-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos SoC Audio SubSystem clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
-index 4e8062860986..0589a63e273a 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos SoC clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos-ext-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos-ext-clock.yaml
-index 64d027dbe3b2..c98eff64f2b5 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos-ext-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos-ext-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung SoC external/osc/XXTI/XusbXTI clock
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml
-index 1ed64add4355..b644bbd0df38 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos4412 SoC ISP clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml
-index a3fac5c6809d..b05f83533e3d 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos5260 SoC clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml
-index 032862e9f55b..b737c9d35a1c 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos5410 SoC clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos5433-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos5433-clock.yaml
-index edd1b4ac4334..3f9326e09f79 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos5433-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos5433-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos5433 SoC clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
-index 599baf0b7231..c137c6744ef9 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos7 SoC clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
-index 7e5a9cac2fd2..5073e569a47f 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
-@@ -9,7 +9,7 @@ title: Samsung Exynos7885 SoC clock controller
- maintainers:
-   - Dávid Virág <virag.david003@gmail.com>
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-index 80ba60838f2b..aa11815ad3a3 100644
---- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-@@ -9,7 +9,7 @@ title: Samsung Exynos850 SoC clock controller
- maintainers:
-   - Sam Protsenko <semen.protsenko@linaro.org>
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
-index 1410c51e0e7d..9248bfc16d48 100644
---- a/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2M and S5M family clock generator block
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
-index ae8f8fc93233..2659854ea1c0 100644
---- a/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung S5Pv210 SoC Audio SubSystem clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.yaml
-index dcb29a2d1159..67a33665cf00 100644
---- a/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.yaml
-@@ -8,7 +8,7 @@ title: Samsung S5P6442/S5PC110/S5PV210 SoC clock controller
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml b/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml
-index d318fccf78f1..2bdd05af6079 100644
---- a/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml
-+++ b/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos NoC (Network on Chip) Probe
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   The Samsung Exynos542x SoC has a NoC (Network on Chip) Probe for NoC bus.
-diff --git a/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml b/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml
-index c9a8cb5fd555..e300df4b47f3 100644
---- a/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml
-+++ b/Documentation/devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml
-@@ -8,7 +8,7 @@ title: Samsung Exynos SoC PPMU (Platform Performance Monitoring Unit)
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   The Samsung Exynos SoC has PPMU (Platform Performance Monitoring Unit) for
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml
-index f998a3a5b71f..919734c05c0b 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi.yaml
-index cb8e735ce3bd..63379fae3636 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-hdmi.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
-index ba40284ac66f..00e325a19cb1 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description:
-   Samsung Exynos SoC Mixer is responsible for mixing and blending multiple data
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
-index 6f796835ea03..7c37470bd329 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   DECON (Display and Enhancement Controller) is the Display Controller for the
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
-index 01fccb138ebd..c5c6239c28d0 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   MIC (Mobile Image Compressor) resides between DECON and MIPI DSI. MIPI DSI is
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
-index afa137d47922..320eedc61a5b 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   DECON (Display and Enhancement Controller) is the Display Controller for the
-diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
-index 9cf5f120d516..c62ea9d22843 100644
---- a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
-+++ b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
-index f9ffe3d6f957..03d6b8dbbdd3 100644
---- a/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
-+++ b/Documentation/devicetree/bindings/extcon/maxim,max77843.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77843 MicroUSB and Companion Power Management IC Extcon
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77843 MicroUSB
-diff --git a/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml b/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml
-index 4b5851c326f7..b1a4c235376e 100644
---- a/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: LTC4151 High Voltage I2C Current and Voltage Monitor
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml b/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml
-index c42051f8a191..028d6e570131 100644
---- a/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Microchip MCP3021 A/D converter
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml b/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml
-index 4669217d01e1..80df7182ea28 100644
---- a/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Sensirion SHT15 humidity and temperature sensor
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-index d3eff4fac107..c5a889e3e27b 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: TMP102 temperature sensor
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
-index eda55bbc172d..dcbc6fbc3b48 100644
---- a/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: TMP108 temperature sensor
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-index 19874e8b73b9..3e52a0db6c41 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung's High Speed I2C controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   The Samsung's High Speed I2C controller is used to interface with I2C devices
-diff --git a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-index 84051b0129c2..c26230518957 100644
---- a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S3C/S5P/Exynos SoC I2C Controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/samsung,exynos4210-combiner.yaml b/Documentation/devicetree/bindings/interrupt-controller/samsung,exynos4210-combiner.yaml
-index d631b7589d50..72456a07dac9 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/samsung,exynos4210-combiner.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/samsung,exynos4210-combiner.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC Interrupt Combiner Controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   Samsung's Exynos4 architecture includes a interrupt combiner controller which
-diff --git a/Documentation/devicetree/bindings/leds/maxim,max77693.yaml b/Documentation/devicetree/bindings/leds/maxim,max77693.yaml
-index 86a0005cf156..e27f57bb52ae 100644
---- a/Documentation/devicetree/bindings/leds/maxim,max77693.yaml
-+++ b/Documentation/devicetree/bindings/leds/maxim,max77693.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX77693 MicroUSB and Companion Power Management IC LEDs
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77693 MicroUSB Integrated
-diff --git a/Documentation/devicetree/bindings/memory-controllers/brcm,dpfe-cpu.yaml b/Documentation/devicetree/bindings/memory-controllers/brcm,dpfe-cpu.yaml
-index 769f13250047..08cbdcddfead 100644
---- a/Documentation/devicetree/bindings/memory-controllers/brcm,dpfe-cpu.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/brcm,dpfe-cpu.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: DDR PHY Front End (DPFE) for Broadcom STB
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Markus Mayer <mmayer@broadcom.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml
-index f3e62ee07126..1daa66592477 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: LPDDR2 SDRAM AC timing parameters for a given speed-bin
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
-index dd2141cad866..9d78f140609b 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr2.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: LPDDR2 SDRAM compliant to JEDEC JESD209-2
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml
-index 97c3e988af5f..5c6512c1e1e3 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: LPDDR3 SDRAM AC timing parameters for a given speed-bin
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3.yaml
-index c542f32c39fa..48908a19473c 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,lpddr3.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: LPDDR3 SDRAM compliant to JEDEC JESD209-3
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/marvell,mvebu-sdram-controller.yaml b/Documentation/devicetree/bindings/memory-controllers/marvell,mvebu-sdram-controller.yaml
-index 14a6bc8f421f..9249624c4fa0 100644
---- a/Documentation/devicetree/bindings/memory-controllers/marvell,mvebu-sdram-controller.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/marvell,mvebu-sdram-controller.yaml
-@@ -8,7 +8,7 @@ title: Marvell MVEBU SDRAM controller
- 
- maintainers:
-   - Jan Luebbe <jlu@pengutronix.de>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/qca,ath79-ddr-controller.yaml b/Documentation/devicetree/bindings/memory-controllers/qca,ath79-ddr-controller.yaml
-index 9566b3421f03..0c511ab906bf 100644
---- a/Documentation/devicetree/bindings/memory-controllers/qca,ath79-ddr-controller.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/qca,ath79-ddr-controller.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Qualcomm Atheros AR7xxx/AR9xxx DDR controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   The DDR controller of the AR7xxx and AR9xxx families provides an interface to
-diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,h8300-bsc.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,h8300-bsc.yaml
-index 2b18cef99511..514b2c5f8858 100644
---- a/Documentation/devicetree/bindings/memory-controllers/renesas,h8300-bsc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/renesas,h8300-bsc.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: H8/300 bus controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Yoshinori Sato <ysato@users.sourceforge.jp>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-index f152243f6b18..098348b2b815 100644
---- a/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/samsung,exynos5422-dmc.yaml
-@@ -9,7 +9,7 @@ title: |
-   Controller device
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Lukasz Luba <lukasz.luba@arm.com>
- 
- description: |
-diff --git a/Documentation/devicetree/bindings/memory-controllers/synopsys,ddrc-ecc.yaml b/Documentation/devicetree/bindings/memory-controllers/synopsys,ddrc-ecc.yaml
-index fb7ae38a9c86..06812512e9b2 100644
---- a/Documentation/devicetree/bindings/memory-controllers/synopsys,ddrc-ecc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/synopsys,ddrc-ecc.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Synopsys IntelliDDR Multi Protocol memory controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Manish Narani <manish.narani@xilinx.com>
-   - Michal Simek <michal.simek@xilinx.com>
- 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/ti,da8xx-ddrctl.yaml b/Documentation/devicetree/bindings/memory-controllers/ti,da8xx-ddrctl.yaml
-index 9ed51185ff99..382ddab60fbd 100644
---- a/Documentation/devicetree/bindings/memory-controllers/ti,da8xx-ddrctl.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/ti,da8xx-ddrctl.yaml
-@@ -8,7 +8,7 @@ title: Texas Instruments da8xx DDR2/mDDR memory controller
- 
- maintainers:
-   - Bartosz Golaszewski <bgolaszewski@baylibre.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   Documentation:
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml b/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml
-index 27870b8760a6..52edd1bf549f 100644
---- a/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max14577.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX14577/MAX77836 MicroUSB and Companion Power Management IC
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX14577/MAX77836 MicroUSB
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77686.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77686.yaml
-index 859655a789c3..d027aabe453b 100644
---- a/Documentation/devicetree/bindings/mfd/maxim,max77686.yaml
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77686.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77686 Power Management IC
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77686 Power Management
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77693.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77693.yaml
-index 906101197e11..1b06a77ec798 100644
---- a/Documentation/devicetree/bindings/mfd/maxim,max77693.yaml
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77693.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77693 MicroUSB and Companion Power Management IC
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77693 MicroUSB
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
-index baa1346ac5d5..ad2013900b03 100644
---- a/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77802.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77802 Power Management IC
- 
- maintainers:
-   - Javier Martinez Canillas <javier@dowhile0.org>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77802 Power Management
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
-index 61a0f9dcb983..f30f96bbff43 100644
---- a/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77843.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX77843 MicroUSB and Companion Power Management IC
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77843 MicroUSB
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-index bae55c98961c..f7bb67d10eff 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC Low Power Audio Subsystem (LPASS)
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
-index 017befdf8adb..055dfc337c2f 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPA01 Power Management IC
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-index 771b3f16da96..5ff6546c72b7 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPS11/13/14/15 and S2MPU02 Power Management IC
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-index 5531718abdf0..10c7b408f33a 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S5M8767 Power Management IC
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml b/Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml
-index 15a45db3899a..1bcaf6ba822c 100644
---- a/Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Marvell International Ltd. NCI NFC controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml b/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
-index 7465aea2e1c0..e381a3c14836 100644
---- a/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
-@@ -8,7 +8,7 @@ title: NXP Semiconductors NCI NFC controller
- 
- maintainers:
-   - Charles Gorand <charles.gorand@effinnov.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/nxp,pn532.yaml b/Documentation/devicetree/bindings/net/nfc/nxp,pn532.yaml
-index d8ba5a18db98..0509e0166345 100644
---- a/Documentation/devicetree/bindings/net/nfc/nxp,pn532.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/nxp,pn532.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: NXP Semiconductors PN532 NFC controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/nxp,pn544.yaml b/Documentation/devicetree/bindings/net/nfc/nxp,pn544.yaml
-index d520414de463..18b3a7d819df 100644
---- a/Documentation/devicetree/bindings/net/nfc/nxp,pn544.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/nxp,pn544.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: NXP Semiconductors PN544 NFC Controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/st,st-nci.yaml b/Documentation/devicetree/bindings/net/nfc/st,st-nci.yaml
-index a6a1bc788d29..ef1155038a2f 100644
---- a/Documentation/devicetree/bindings/net/nfc/st,st-nci.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/st,st-nci.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: STMicroelectronics ST NCI NFC controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/st,st21nfca.yaml b/Documentation/devicetree/bindings/net/nfc/st,st21nfca.yaml
-index 4356eacde8aa..8a7274357b46 100644
---- a/Documentation/devicetree/bindings/net/nfc/st,st21nfca.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/st,st21nfca.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: STMicroelectronics SAS ST21NFCA NFC controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/st,st95hf.yaml b/Documentation/devicetree/bindings/net/nfc/st,st95hf.yaml
-index d3bca376039e..963d9531a856 100644
---- a/Documentation/devicetree/bindings/net/nfc/st,st95hf.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/st,st95hf.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: STMicroelectronics ST95HF NFC controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml b/Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml
-index 40da2ac98978..404c8df99364 100644
---- a/Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml
-+++ b/Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Texas Instruments TRF7970A RFID/NFC/15693 Transceiver
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Mark Greer <mgreer@animalcreek.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/phy/samsung,dp-video-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,dp-video-phy.yaml
-index 838c6d480ce6..b03b2f00cc5b 100644
---- a/Documentation/devicetree/bindings/phy/samsung,dp-video-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,dp-video-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC DisplayPort PHY
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Marek Szyprowski <m.szyprowski@samsung.com>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml
-index c61574e10b2a..3e5f035de2e9 100644
---- a/Documentation/devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml
-@@ -11,7 +11,7 @@ maintainers:
-   - Joonyoung Shim <jy0922.shim@samsung.com>
-   - Seung-Woo Kim <sw0312.kim@samsung.com>
-   - Kyungmin Park <kyungmin.park@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos5250-sata-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos5250-sata-phy.yaml
-index 62b39bb46585..8751e559484f 100644
---- a/Documentation/devicetree/bindings/phy/samsung,exynos5250-sata-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,exynos5250-sata-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos5250 SoC SATA PHY
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Marek Szyprowski <m.szyprowski@samsung.com>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,mipi-video-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,mipi-video-phy.yaml
-index 54aa056b224d..415440aaad89 100644
---- a/Documentation/devicetree/bindings/phy/samsung,mipi-video-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,mipi-video-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S5P/Exynos SoC MIPI CSIS/DSIM DPHY
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Marek Szyprowski <m.szyprowski@samsung.com>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb2-phy.yaml
-index 056e270a4e88..d9f22a801cbf 100644
---- a/Documentation/devicetree/bindings/phy/samsung,usb2-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,usb2-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S5P/Exynos SoC USB 2.0 PHY
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Marek Szyprowski <m.szyprowski@samsung.com>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-index f83f0f8135b9..5ba55f9f20cc 100644
---- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC USB 3.0 DRD PHY USB 2.0 PHY
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Marek Szyprowski <m.szyprowski@samsung.com>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
-index f73348c54748..8cf3c47ab86b 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S3C/S5P/Exynos SoC pin controller - gpio bank
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
-index c71939ac8b63..9869d4dceddb 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S3C/S5P/Exynos SoC pin controller - pins configuration
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
-index a822f70f5702..1de91a51234d 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S3C/S5P/Exynos SoC pin controller - wake-up interrupt controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-index 989e48c051cf..3a65c66ca71d 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S3C/S5P/Exynos SoC pin controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
-   - Tomasz Figa <tomasz.figa@gmail.com>
- 
-diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
-index 3978b48299de..4d3a1d09036f 100644
---- a/Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX14577/MAX77836 MicroUSB and Companion Power Management IC Charger
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX14577/MAX77836 MicroUSB
-diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml
-index a21dc1a8890f..f5fd53debbc8 100644
---- a/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/maxim,max77693.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX77693 MicroUSB and Companion Power Management IC Charger
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77693 MicroUSB Integrated
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max14577.yaml b/Documentation/devicetree/bindings/regulator/maxim,max14577.yaml
-index 16f01886a601..285dc7122977 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max14577.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max14577.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX14577/MAX77836 MicroUSB and Companion Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX14577/MAX77836 MicroUSB
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77686.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77686.yaml
-index bb64b679f765..0e7cd4b3ace0 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max77686.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77686.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77686 Power Management IC regulators
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77686 Power Management
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml
-index 20d8559bdc2b..945a539749e8 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77693.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77693 MicroUSB and Companion Power Management IC regulators
- 
- maintainers:
-   - Chanwoo Choi <cw00.choi@samsung.com>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77693 MicroUSB Integrated
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77802.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77802.yaml
-index f2b4dd15a0f3..236348c4710c 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max77802.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77802.yaml
-@@ -8,7 +8,7 @@ title: Maxim MAX77802 Power Management IC regulators
- 
- maintainers:
-   - Javier Martinez Canillas <javier@dowhile0.org>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77802 Power Management
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml b/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
-index a963025e96c1..9695e7242882 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max77843.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX77843 MicroUSB and Companion Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for Maxim MAX77843 MicroUSB Integrated
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max8952.yaml b/Documentation/devicetree/bindings/regulator/maxim,max8952.yaml
-index e4e8c58f6046..3ff0d7d980e9 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max8952.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max8952.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX8952 voltage regulator
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- allOf:
-   - $ref: regulator.yaml#
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max8973.yaml b/Documentation/devicetree/bindings/regulator/maxim,max8973.yaml
-index 5898dcf10f06..b92eef68c19f 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max8973.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max8973.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX8973/MAX77621 voltage regulator
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- allOf:
-   - $ref: regulator.yaml#
-diff --git a/Documentation/devicetree/bindings/regulator/maxim,max8997.yaml b/Documentation/devicetree/bindings/regulator/maxim,max8997.yaml
-index d5a44ca3df04..4321f061a7f6 100644
---- a/Documentation/devicetree/bindings/regulator/maxim,max8997.yaml
-+++ b/Documentation/devicetree/bindings/regulator/maxim,max8997.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Maxim MAX8997 Power Management IC
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   The Maxim MAX8997 is a Power Management IC which includes voltage and current
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
-index 0627dec513da..0f9eb317ba9a 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPA01 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mps11.yaml
-index e3b780715f44..f1c50dcd0b04 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mps11.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps11.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPS11 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps13.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mps13.yaml
-index 579d77aefc3f..53b105a4ead1 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mps13.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps13.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPS13 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
-index fdea290b3e94..01f9d4e236e9 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps14.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPS14 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mps15.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mps15.yaml
-index b3a883c94628..9576c2df45a6 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mps15.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mps15.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPS15 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpu02.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpu02.yaml
-index 0ded6953e3b6..39b652c3c3c4 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s2mpu02.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpu02.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S2MPU02 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-index 3c1617b66861..172631ca3c25 100644
---- a/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-+++ b/Documentation/devicetree/bindings/regulator/samsung,s5m8767.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S5M8767 Power Management IC regulators
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   This is a part of device tree bindings for S2M and S5M family of Power
-diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
-index a50c34d5d199..765d9f9edd6e 100644
---- a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
-+++ b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC True Random Number Generator
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Łukasz Stelmach <l.stelmach@samsung.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/rng/timeriomem_rng.yaml b/Documentation/devicetree/bindings/rng/timeriomem_rng.yaml
-index 84bf518a5549..4754174e9849 100644
---- a/Documentation/devicetree/bindings/rng/timeriomem_rng.yaml
-+++ b/Documentation/devicetree/bindings/rng/timeriomem_rng.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: TimerIO Random Number Generator
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index a98ed66d092e..0cabb773c397 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -8,7 +8,7 @@ title: Samsung's Exynos USI (Universal Serial Interface) binding
- 
- maintainers:
-   - Sam Protsenko <semen.protsenko@linaro.org>
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   USI IP-core provides selectable serial protocol (UART, SPI or High-Speed I2C).
-diff --git a/Documentation/devicetree/bindings/sound/samsung,arndale.yaml b/Documentation/devicetree/bindings/sound/samsung,arndale.yaml
-index cea2bf3544f0..9bc4585bb6e5 100644
---- a/Documentation/devicetree/bindings/sound/samsung,arndale.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,arndale.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Insignal Arndale boards audio complex
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/sound/samsung,smdk5250.yaml b/Documentation/devicetree/bindings/sound/samsung,smdk5250.yaml
-index cb51af90435e..ac151d3c1d77 100644
---- a/Documentation/devicetree/bindings/sound/samsung,smdk5250.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,smdk5250.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung SMDK5250 audio complex with WM8994 codec
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/sound/samsung,snow.yaml b/Documentation/devicetree/bindings/sound/samsung,snow.yaml
-index 0c3b3302b842..51a83d3c7274 100644
---- a/Documentation/devicetree/bindings/sound/samsung,snow.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,snow.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Google Snow audio complex with MAX9809x codec
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
-index 74712d6f3ef4..491e08019c04 100644
---- a/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
- 
- properties:
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
-index f0db3fb3d688..25b1b6c12d4d 100644
---- a/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi-peripheral-props.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Peripheral-specific properties for Samsung S3C/S5P/Exynos SoC SPI controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description:
-   See spi-peripheral-props.yaml for more info.
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-index bf9a76d931d2..a50f24f9359d 100644
---- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung S3C/S5P/Exynos SoC SPI controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description:
-   All the SPI controller nodes should be represented in the aliases node using
-diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-index 17129f75d962..1344df708e2d 100644
---- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC Thermal Management Unit (TMU)
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- description: |
-   For multi-instance tmu each instance should have an alias correctly numbered
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-index 22b91a27d776..6b9a3bcb3926 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC USB 3.0 DWC3 Controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
-index fbf07d6e707a..340dff8d19c3 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Samsung Exynos SoC USB 2.0 EHCI/OHCI Controller
- 
- maintainers:
--  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
- 
- properties:
-   compatible:
+--->8---
+
+Kernel panic - not syncing: MCT hangs after writing 4 (offset:0x420)
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.17.0-rc1-00014-g7dabfa2bc480 
+#11551
+Hardware name: Samsung Exynos (Flattened Device Tree)
+  unwind_backtrace from show_stack+0x10/0x14
+  show_stack from dump_stack_lvl+0x58/0x70
+  dump_stack_lvl from panic+0x10c/0x328
+  panic from exynos4_mct_tick_stop+0x0/0x2c
+---[ end Kernel panic - not syncing: MCT hangs after writing 4 
+(offset:0x420) ]---
+
+--->8---
+
+Amlogic boards hang randomly during early userspace init, usually just 
+after loading the driver modules.
+
+Reverting $subject on top of linux-next fixes all those problems.
+
+I will try to analyze it a bit more and if possible provide some more 
+useful/meaning full logs later.
+
+> ---
+>   drivers/clk/clk.c      |  42 ++++++++++------
+>   drivers/clk/clk_test.c | 108 +++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 136 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 915a2fa363b1..91f863b7a824 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2332,19 +2332,15 @@ int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
+>   }
+>   EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
+>   
+> -/**
+> - * clk_set_rate_range - set a rate range for a clock source
+> - * @clk: clock source
+> - * @min: desired minimum clock rate in Hz, inclusive
+> - * @max: desired maximum clock rate in Hz, inclusive
+> - *
+> - * Returns success (0) or negative errno.
+> - */
+> -int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+> +static int clk_set_rate_range_nolock(struct clk *clk,
+> +				     unsigned long min,
+> +				     unsigned long max)
+>   {
+>   	int ret = 0;
+>   	unsigned long old_min, old_max, rate;
+>   
+> +	lockdep_assert_held(&prepare_lock);
+> +
+>   	if (!clk)
+>   		return 0;
+>   
+> @@ -2357,8 +2353,6 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+>   		return -EINVAL;
+>   	}
+>   
+> -	clk_prepare_lock();
+> -
+>   	if (clk->exclusive_count)
+>   		clk_core_rate_unprotect(clk->core);
+>   
+> @@ -2402,6 +2396,28 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+>   	if (clk->exclusive_count)
+>   		clk_core_rate_protect(clk->core);
+>   
+> +	return ret;
+> +}
+> +
+> +/**
+> + * clk_set_rate_range - set a rate range for a clock source
+> + * @clk: clock source
+> + * @min: desired minimum clock rate in Hz, inclusive
+> + * @max: desired maximum clock rate in Hz, inclusive
+> + *
+> + * Returns success (0) or negative errno.
+> + */
+> +int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+> +{
+> +	int ret;
+> +
+> +	if (!clk)
+> +		return 0;
+> +
+> +	clk_prepare_lock();
+> +
+> +	ret = clk_set_rate_range_nolock(clk, min, max);
+> +
+>   	clk_prepare_unlock();
+>   
+>   	return ret;
+> @@ -4403,9 +4419,7 @@ void __clk_put(struct clk *clk)
+>   	}
+>   
+>   	hlist_del(&clk->clks_node);
+> -	if (clk->min_rate > clk->core->req_rate ||
+> -	    clk->max_rate < clk->core->req_rate)
+> -		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
+> +	clk_set_rate_range_nolock(clk, 0, ULONG_MAX);
+>   
+>   	owner = clk->core->owner;
+>   	kref_put(&clk->core->ref, __clk_release);
+> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> index 146b1759798e..b205c329cf32 100644
+> --- a/drivers/clk/clk_test.c
+> +++ b/drivers/clk/clk_test.c
+> @@ -760,9 +760,65 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
+>   	clk_put(user1);
+>   }
+>   
+> +/*
+> + * Test that if we have several subsequent calls to
+> + * clk_set_rate_range(), across multiple users, the core will reevaluate
+> + * whether a new rate is needed, including when a user drop its clock.
+> + *
+> + * With clk_dummy_maximize_rate_ops, this means that the the rate will
+> + * trail along the maximum as it evolves.
+> + */
+> +static void clk_range_test_multiple_set_range_rate_put_maximized(struct kunit *test)
+> +{
+> +	struct clk_dummy_context *ctx = test->priv;
+> +	struct clk_hw *hw = &ctx->hw;
+> +	struct clk *clk = hw->clk;
+> +	struct clk *user1, *user2;
+> +	unsigned long rate;
+> +
+> +	user1 = clk_hw_get_clk(hw, NULL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
+> +
+> +	user2 = clk_hw_get_clk(hw, NULL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
+> +
+> +	KUNIT_ASSERT_EQ(test,
+> +			clk_set_rate(clk, DUMMY_CLOCK_RATE_2 + 1000),
+> +			0);
+> +
+> +	KUNIT_ASSERT_EQ(test,
+> +			clk_set_rate_range(user1,
+> +					   0,
+> +					   DUMMY_CLOCK_RATE_2),
+> +			0);
+> +
+> +	rate = clk_get_rate(clk);
+> +	KUNIT_ASSERT_GT(test, rate, 0);
+> +	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
+> +
+> +	KUNIT_ASSERT_EQ(test,
+> +			clk_set_rate_range(user2,
+> +					   0,
+> +					   DUMMY_CLOCK_RATE_1),
+> +			0);
+> +
+> +	rate = clk_get_rate(clk);
+> +	KUNIT_ASSERT_GT(test, rate, 0);
+> +	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+> +
+> +	clk_put(user2);
+> +
+> +	rate = clk_get_rate(clk);
+> +	KUNIT_ASSERT_GT(test, rate, 0);
+> +	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
+> +
+> +	clk_put(user1);
+> +}
+> +
+>   static struct kunit_case clk_range_maximize_test_cases[] = {
+>   	KUNIT_CASE(clk_range_test_set_range_rate_maximized),
+>   	KUNIT_CASE(clk_range_test_multiple_set_range_rate_maximized),
+> +	KUNIT_CASE(clk_range_test_multiple_set_range_rate_put_maximized),
+>   	{}
+>   };
+>   
+> @@ -877,9 +933,61 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
+>   	clk_put(user1);
+>   }
+>   
+> +/*
+> + * Test that if we have several subsequent calls to
+> + * clk_set_rate_range(), across multiple users, the core will reevaluate
+> + * whether a new rate is needed, including when a user drop its clock.
+> + *
+> + * With clk_dummy_minimize_rate_ops, this means that the the rate will
+> + * trail along the minimum as it evolves.
+> + */
+> +static void clk_range_test_multiple_set_range_rate_put_minimized(struct kunit *test)
+> +{
+> +	struct clk_dummy_context *ctx = test->priv;
+> +	struct clk_hw *hw = &ctx->hw;
+> +	struct clk *clk = hw->clk;
+> +	struct clk *user1, *user2;
+> +	unsigned long rate;
+> +
+> +	user1 = clk_hw_get_clk(hw, NULL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
+> +
+> +	user2 = clk_hw_get_clk(hw, NULL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
+> +
+> +	KUNIT_ASSERT_EQ(test,
+> +			clk_set_rate_range(user1,
+> +					   DUMMY_CLOCK_RATE_1,
+> +					   ULONG_MAX),
+> +			0);
+> +
+> +	rate = clk_get_rate(clk);
+> +	KUNIT_ASSERT_GT(test, rate, 0);
+> +	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+> +
+> +	KUNIT_ASSERT_EQ(test,
+> +			clk_set_rate_range(user2,
+> +					   DUMMY_CLOCK_RATE_2,
+> +					   ULONG_MAX),
+> +			0);
+> +
+> +	rate = clk_get_rate(clk);
+> +	KUNIT_ASSERT_GT(test, rate, 0);
+> +	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
+> +
+> +	clk_put(user2);
+> +
+> +	rate = clk_get_rate(clk);
+> +	KUNIT_ASSERT_GT(test, rate, 0);
+> +	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+> +
+> +	clk_put(user1);
+> +}
+> +
+>   static struct kunit_case clk_range_minimize_test_cases[] = {
+>   	KUNIT_CASE(clk_range_test_set_range_rate_minimized),
+>   	KUNIT_CASE(clk_range_test_multiple_set_range_rate_minimized),
+> +	KUNIT_CASE(clk_range_test_multiple_set_range_rate_put_minimized),
+>   	{}
+>   };
+>   
+
+Best regards
 -- 
-2.32.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
