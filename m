@@ -2,175 +2,261 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9065CC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 15:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B2EC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 15:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347787AbiC3PGB (ORCPT
+        id S1346481AbiC3PYM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:06:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47372 "EHLO
+        Wed, 30 Mar 2022 11:24:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347772AbiC3PGA (ORCPT
+        with ESMTP id S245310AbiC3PYL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 11:06:00 -0400
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C859C75219;
-        Wed, 30 Mar 2022 08:04:14 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id i23-20020a9d6117000000b005cb58c354e6so15083754otj.10;
-        Wed, 30 Mar 2022 08:04:14 -0700 (PDT)
+        Wed, 30 Mar 2022 11:24:11 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85786192596
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 08:22:24 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id n63-20020a1c2742000000b0038d0c31db6eso186288wmn.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 08:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=VsktZd1lrpgrX+V/L1u1pkl3lthFyT18R1StRVOqeME=;
+        b=BDBQTdTSUt24gLYrTuCs4gNhSDd1O1k0+jDSX4hWVEL3W35F5nbZjZ6EqJkh/9u0En
+         erGGuiv2FmAgVkcHi3VHqY60MlgY9g8+jqhXktkdqhLkJlVMaGZhOJyBjUe3L/1I82Ir
+         Ob5u3nAXtykeHInVc7gS8LV7ZCpdCIwQtC5JvG+lHvtkLf+hSTiJMi4N9X9O/5hl+NnC
+         megWRTGELbcngkgNBzf9ZN0TE5dxEAtG8ySyHl9SWDbvG3MwcHB/dIloYWBD+IqWSWLT
+         W8Gu5aWG9ktI2GAUpgQY8fZsYV7fj+mxmarBzBgzTQ8ToduTMTrGAhhDySSzxO536S9N
+         x58w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=a0Qx16jN1XmN4Y2BBIC8WZKR/lqJ3CCvy460j4hfpJU=;
-        b=3pZvNGKpXmGd8MmuIG0vUmJ/PY0eUewq4tpTqMN57oPl+XLuu9EREsOx00MblhFyur
-         MYwHUU7oXc4CvIE4iFOMTBW2HfkiiSBaSmX97Z3IGpzii9xZgHONscasPij5H5FeaeCF
-         CR3/XF+5P7OEXHeT+Bx/h2Z89flcEngbEth8aQFyrgy/SOmhn1F8gLPFHebGW0PvKvl9
-         YtTD1ttarUrqf3NjeCigziwmqQIqZWLsdY+OcADx08jxzTBzklAmidK1pZ22O2x4Rqfc
-         bKtl7BeDwADSdqwZEyYQP3BbkY9Jx0TNk3gdDOv9Wh4qK0edfAbvLez5umuCrL3w4zN3
-         jUgQ==
-X-Gm-Message-State: AOAM531l2A5rjo7mN5FjZDloEfI6OEINf2QrzJyzyacjuuJYw2IVr8FP
-        6GdrgaezKKbmMQYWAFLPuQ==
-X-Google-Smtp-Source: ABdhPJw4BtyiHMI8Rkn8KkRu0zRrS/KBtlV7cGVu+PN3sHJ9/fQoVaJv4gJd0mwesxt2MLGtea2lyA==
-X-Received: by 2002:a05:6830:2055:b0:5b2:5659:542f with SMTP id f21-20020a056830205500b005b25659542fmr3433041otp.189.1648652653992;
-        Wed, 30 Mar 2022 08:04:13 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id u2-20020a056870304200b000ddb1828e3csm9878600oau.19.2022.03.30.08.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 08:04:12 -0700 (PDT)
-Received: (nullmailer pid 3056199 invoked by uid 1000);
-        Wed, 30 Mar 2022 15:04:11 -0000
-Date:   Wed, 30 Mar 2022 10:04:11 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfc@lists.01.org,
-        netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: update Krzysztof Kozlowski's email
-Message-ID: <YkRxa1yweG7ace6r@robh.at.kernel.org>
-References: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org>
- <20220330074016.12896-2-krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=VsktZd1lrpgrX+V/L1u1pkl3lthFyT18R1StRVOqeME=;
+        b=ITrtEf2IX/ZotxZNCkV4VswyQIMMF0NBGdEHjuuezX6xg7TwnW7oV619wTWvuY5J8g
+         C8x2ZExcay8b+2fNmjtvxPUzX+vO3JoliqouS1EuBzFogkX/FznQpwdneZnBko2/76J+
+         lHvOgrSStMO7glSuYmGtYhECCyPBHxA6ZtAwDcbl+XzSM5uptbcJGlxrCaoH5iJLSC66
+         +6uk0Z+srzh8IBb0CFDrKLUp3trw3rhK6ww8uTC7bCpRghVTB5HE0D0aGFGToV25k9gQ
+         V0dpcFGK8Q9Edj9NPpqBu/oehtigGqBlEaA5kUDXLigdyeuw501FlwkxvdLZ84PI7Q6D
+         AXWg==
+X-Gm-Message-State: AOAM532EwiRNBhJAT4f5mRWqNZ7llQsVKj2za3Xak9lvvm4/SAN1wEfE
+        F6JGhYSzD9MKMKRbkEQ8gCpB2A==
+X-Google-Smtp-Source: ABdhPJzQnHg7FADFhfDN5WNwL6d7L/J0cN4GJJs3uwA9AeUV9+yD7d8e2R/SvmrTa8scE2MOsp2T/A==
+X-Received: by 2002:a1c:f607:0:b0:381:1db:d767 with SMTP id w7-20020a1cf607000000b0038101dbd767mr4793481wmc.165.1648653742795;
+        Wed, 30 Mar 2022 08:22:22 -0700 (PDT)
+Received: from ?IPV6:2001:861:44c0:66c0:e47f:3cdb:5811:cee8? ([2001:861:44c0:66c0:e47f:3cdb:5811:cee8])
+        by smtp.gmail.com with ESMTPSA id c5-20020a5d63c5000000b002040822b680sm25478862wrw.81.2022.03.30.08.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Mar 2022 08:22:22 -0700 (PDT)
+Message-ID: <357c0ae6-7910-dfe5-eefa-1a7820e7e46b@baylibre.com>
+Date:   Wed, 30 Mar 2022 17:22:20 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220330074016.12896-2-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v3 09/13] pinctrl: meson: Rename REG_* to MESON_REG_*
+Content-Language: en-US
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+References: <20220330145030.1562-1-andriy.shevchenko@linux.intel.com>
+ <20220330145030.1562-10-andriy.shevchenko@linux.intel.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+In-Reply-To: <20220330145030.1562-10-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 09:40:15AM +0200, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
+On 30/03/2022 16:50, Andy Shevchenko wrote:
+> Rename REG_* to MESON_REG_* as a prerequisite for enabling COMPILE_TEST.
 > 
-> Krzysztof Kozlowski's @canonical.com email stopped working, so switch to
-> generic @kernel.org account for all Devicetree bindings.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
->  .../devicetree/bindings/clock/samsung,exynos-audss-clock.yaml   | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos-clock.yaml         | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos-ext-clock.yaml     | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos4412-isp-clock.yaml | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos5260-clock.yaml     | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos5410-clock.yaml     | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos5433-clock.yaml     | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos7-clock.yaml        | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos7885-clock.yaml     | 2 +-
->  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml      | 2 +-
->  Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml    | 2 +-
->  .../devicetree/bindings/clock/samsung,s5pv210-audss-clock.yaml  | 2 +-
->  .../devicetree/bindings/clock/samsung,s5pv210-clock.yaml        | 2 +-
->  .../devicetree/bindings/devfreq/event/samsung,exynos-nocp.yaml  | 2 +-
->  .../devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml  | 2 +-
->  .../bindings/display/samsung/samsung,exynos-hdmi-ddc.yaml       | 2 +-
->  .../bindings/display/samsung/samsung,exynos-hdmi.yaml           | 2 +-
->  .../bindings/display/samsung/samsung,exynos-mixer.yaml          | 2 +-
->  .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 +-
->  .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 2 +-
->  .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 2 +-
->  .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 2 +-
->  Documentation/devicetree/bindings/extcon/maxim,max77843.yaml    | 2 +-
->  Documentation/devicetree/bindings/hwmon/lltc,ltc4151.yaml       | 2 +-
->  Documentation/devicetree/bindings/hwmon/microchip,mcp3021.yaml  | 2 +-
->  Documentation/devicetree/bindings/hwmon/sensirion,sht15.yaml    | 2 +-
->  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml          | 2 +-
->  Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml          | 2 +-
->  Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml          | 2 +-
->  Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml  | 2 +-
->  .../interrupt-controller/samsung,exynos4210-combiner.yaml       | 2 +-
->  Documentation/devicetree/bindings/leds/maxim,max77693.yaml      | 2 +-
->  .../devicetree/bindings/memory-controllers/brcm,dpfe-cpu.yaml   | 2 +-
->  .../bindings/memory-controllers/ddr/jedec,lpddr2-timings.yaml   | 2 +-
->  .../bindings/memory-controllers/ddr/jedec,lpddr2.yaml           | 2 +-
->  .../bindings/memory-controllers/ddr/jedec,lpddr3-timings.yaml   | 2 +-
->  .../bindings/memory-controllers/ddr/jedec,lpddr3.yaml           | 2 +-
->  .../memory-controllers/marvell,mvebu-sdram-controller.yaml      | 2 +-
->  .../bindings/memory-controllers/qca,ath79-ddr-controller.yaml   | 2 +-
->  .../bindings/memory-controllers/renesas,h8300-bsc.yaml          | 2 +-
->  .../bindings/memory-controllers/samsung,exynos5422-dmc.yaml     | 2 +-
->  .../bindings/memory-controllers/synopsys,ddrc-ecc.yaml          | 2 +-
->  .../devicetree/bindings/memory-controllers/ti,da8xx-ddrctl.yaml | 2 +-
->  Documentation/devicetree/bindings/mfd/maxim,max14577.yaml       | 2 +-
->  Documentation/devicetree/bindings/mfd/maxim,max77686.yaml       | 2 +-
->  Documentation/devicetree/bindings/mfd/maxim,max77693.yaml       | 2 +-
->  Documentation/devicetree/bindings/mfd/maxim,max77802.yaml       | 2 +-
->  Documentation/devicetree/bindings/mfd/maxim,max77843.yaml       | 2 +-
->  .../devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml       | 2 +-
->  Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml      | 2 +-
->  Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml      | 2 +-
->  Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml      | 2 +-
->  Documentation/devicetree/bindings/net/nfc/marvell,nci.yaml      | 2 +-
->  Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml          | 2 +-
->  Documentation/devicetree/bindings/net/nfc/nxp,pn532.yaml        | 2 +-
->  Documentation/devicetree/bindings/net/nfc/nxp,pn544.yaml        | 2 +-
->  Documentation/devicetree/bindings/net/nfc/st,st-nci.yaml        | 2 +-
->  Documentation/devicetree/bindings/net/nfc/st,st21nfca.yaml      | 2 +-
->  Documentation/devicetree/bindings/net/nfc/st,st95hf.yaml        | 2 +-
->  Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml      | 2 +-
->  Documentation/devicetree/bindings/phy/samsung,dp-video-phy.yaml | 2 +-
->  .../devicetree/bindings/phy/samsung,exynos-hdmi-phy.yaml        | 2 +-
->  .../devicetree/bindings/phy/samsung,exynos5250-sata-phy.yaml    | 2 +-
->  .../devicetree/bindings/phy/samsung,mipi-video-phy.yaml         | 2 +-
->  Documentation/devicetree/bindings/phy/samsung,usb2-phy.yaml     | 2 +-
->  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 2 +-
->  .../devicetree/bindings/pinctrl/samsung,pinctrl-gpio-bank.yaml  | 2 +-
->  .../devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml   | 2 +-
->  .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml      | 2 +-
->  Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml  | 2 +-
->  .../devicetree/bindings/power/supply/maxim,max14577.yaml        | 2 +-
->  .../devicetree/bindings/power/supply/maxim,max77693.yaml        | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max14577.yaml | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max77686.yaml | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max77693.yaml | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max77802.yaml | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max77843.yaml | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max8952.yaml  | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max8973.yaml  | 2 +-
->  Documentation/devicetree/bindings/regulator/maxim,max8997.yaml  | 2 +-
->  .../devicetree/bindings/regulator/samsung,s2mpa01.yaml          | 2 +-
->  .../devicetree/bindings/regulator/samsung,s2mps11.yaml          | 2 +-
->  .../devicetree/bindings/regulator/samsung,s2mps13.yaml          | 2 +-
->  .../devicetree/bindings/regulator/samsung,s2mps14.yaml          | 2 +-
->  .../devicetree/bindings/regulator/samsung,s2mps15.yaml          | 2 +-
->  .../devicetree/bindings/regulator/samsung,s2mpu02.yaml          | 2 +-
->  .../devicetree/bindings/regulator/samsung,s5m8767.yaml          | 2 +-
->  .../devicetree/bindings/rng/samsung,exynos5250-trng.yaml        | 2 +-
->  Documentation/devicetree/bindings/rng/timeriomem_rng.yaml       | 2 +-
->  Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml   | 2 +-
->  Documentation/devicetree/bindings/sound/samsung,arndale.yaml    | 2 +-
->  Documentation/devicetree/bindings/sound/samsung,smdk5250.yaml   | 2 +-
->  Documentation/devicetree/bindings/sound/samsung,snow.yaml       | 2 +-
->  Documentation/devicetree/bindings/sound/samsung,tm2.yaml        | 2 +-
->  .../devicetree/bindings/spi/samsung,spi-peripheral-props.yaml   | 2 +-
->  Documentation/devicetree/bindings/spi/samsung,spi.yaml          | 2 +-
->  .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml     | 2 +-
->  Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml  | 2 +-
->  Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml  | 2 +-
->  99 files changed, 99 insertions(+), 99 deletions(-)
+>   drivers/pinctrl/meson/pinctrl-meson.c | 24 ++++++++++++------------
+>   drivers/pinctrl/meson/pinctrl-meson.h | 24 ++++++++++++------------
+>   2 files changed, 24 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+> index 49851444a6e3..5b46a0979db7 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+> @@ -218,13 +218,13 @@ static int meson_pinconf_set_output(struct meson_pinctrl *pc,
+>   				    unsigned int pin,
+>   				    bool out)
+>   {
+> -	return meson_pinconf_set_gpio_bit(pc, pin, REG_DIR, !out);
+> +	return meson_pinconf_set_gpio_bit(pc, pin, MESON_REG_DIR, !out);
+>   }
+>   
+>   static int meson_pinconf_get_output(struct meson_pinctrl *pc,
+>   				    unsigned int pin)
+>   {
+> -	int ret = meson_pinconf_get_gpio_bit(pc, pin, REG_DIR);
+> +	int ret = meson_pinconf_get_gpio_bit(pc, pin, MESON_REG_DIR);
+>   
+>   	if (ret < 0)
+>   		return ret;
+> @@ -236,13 +236,13 @@ static int meson_pinconf_set_drive(struct meson_pinctrl *pc,
+>   				   unsigned int pin,
+>   				   bool high)
+>   {
+> -	return meson_pinconf_set_gpio_bit(pc, pin, REG_OUT, high);
+> +	return meson_pinconf_set_gpio_bit(pc, pin, MESON_REG_OUT, high);
+>   }
+>   
+>   static int meson_pinconf_get_drive(struct meson_pinctrl *pc,
+>   				   unsigned int pin)
+>   {
+> -	return meson_pinconf_get_gpio_bit(pc, pin, REG_OUT);
+> +	return meson_pinconf_get_gpio_bit(pc, pin, MESON_REG_OUT);
+>   }
+>   
+>   static int meson_pinconf_set_output_drive(struct meson_pinctrl *pc,
+> @@ -269,7 +269,7 @@ static int meson_pinconf_disable_bias(struct meson_pinctrl *pc,
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, pin, MESON_REG_PULLEN, &reg, &bit);
+>   	ret = regmap_update_bits(pc->reg_pullen, reg, BIT(bit), 0);
+>   	if (ret)
+>   		return ret;
+> @@ -288,7 +288,7 @@ static int meson_pinconf_enable_bias(struct meson_pinctrl *pc, unsigned int pin,
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, pin, MESON_REG_PULL, &reg, &bit);
+>   	if (pull_up)
+>   		val = BIT(bit);
+>   
+> @@ -296,7 +296,7 @@ static int meson_pinconf_enable_bias(struct meson_pinctrl *pc, unsigned int pin,
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, pin, MESON_REG_PULLEN, &reg, &bit);
+>   	ret = regmap_update_bits(pc->reg_pullen, reg, BIT(bit),	BIT(bit));
+>   	if (ret)
+>   		return ret;
+> @@ -321,7 +321,7 @@ static int meson_pinconf_set_drive_strength(struct meson_pinctrl *pc,
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, pin, MESON_REG_DS, &reg, &bit);
+>   
+>   	if (drive_strength_ua <= 500) {
+>   		ds_val = MESON_PINCONF_DRV_500UA;
+> @@ -407,7 +407,7 @@ static int meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, pin, MESON_REG_PULLEN, &reg, &bit);
+>   
+>   	ret = regmap_read(pc->reg_pullen, reg, &val);
+>   	if (ret)
+> @@ -416,7 +416,7 @@ static int meson_pinconf_get_pull(struct meson_pinctrl *pc, unsigned int pin)
+>   	if (!(val & BIT(bit))) {
+>   		conf = PIN_CONFIG_BIAS_DISABLE;
+>   	} else {
+> -		meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
+> +		meson_calc_reg_and_bit(bank, pin, MESON_REG_PULL, &reg, &bit);
+>   
+>   		ret = regmap_read(pc->reg_pull, reg, &val);
+>   		if (ret)
+> @@ -447,7 +447,7 @@ static int meson_pinconf_get_drive_strength(struct meson_pinctrl *pc,
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, pin, REG_DS, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, pin, MESON_REG_DS, &reg, &bit);
+>   
+>   	ret = regmap_read(pc->reg_ds, reg, &val);
+>   	if (ret)
+> @@ -595,7 +595,7 @@ static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
+>   	if (ret)
+>   		return ret;
+>   
+> -	meson_calc_reg_and_bit(bank, gpio, REG_IN, &reg, &bit);
+> +	meson_calc_reg_and_bit(bank, gpio, MESON_REG_IN, &reg, &bit);
+>   	regmap_read(pc->reg_gpio, reg, &val);
+>   
+>   	return !!(val & BIT(bit));
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+> index ff5372e0a475..fa042cd6a7ff 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+> @@ -63,12 +63,12 @@ struct meson_reg_desc {
+>    * enum meson_reg_type - type of registers encoded in @meson_reg_desc
+>    */
+>   enum meson_reg_type {
+> -	REG_PULLEN,
+> -	REG_PULL,
+> -	REG_DIR,
+> -	REG_OUT,
+> -	REG_IN,
+> -	REG_DS,
+> +	MESON_REG_PULLEN,
+> +	MESON_REG_PULL,
+> +	MESON_REG_DIR,
+> +	MESON_REG_OUT,
+> +	MESON_REG_IN,
+> +	MESON_REG_DS,
+>   	NUM_REG,
+>   };
+>   
+> @@ -150,12 +150,12 @@ struct meson_pinctrl {
+>   		.irq_first	= fi,					\
+>   		.irq_last	= li,					\
+>   		.regs = {						\
+> -			[REG_PULLEN]	= { per, peb },			\
+> -			[REG_PULL]	= { pr, pb },			\
+> -			[REG_DIR]	= { dr, db },			\
+> -			[REG_OUT]	= { or, ob },			\
+> -			[REG_IN]	= { ir, ib },			\
+> -			[REG_DS]	= { dsr, dsb },			\
+> +			[MESON_REG_PULLEN]	= { per, peb },		\
+> +			[MESON_REG_PULL]	= { pr, pb },		\
+> +			[MESON_REG_DIR]		= { dr, db },		\
+> +			[MESON_REG_OUT]		= { or, ob },		\
+> +			[MESON_REG_IN]		= { ir, ib },		\
+> +			[MESON_REG_DS]		= { dsr, dsb },		\
+>   		},							\
+>   	 }
+>   
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-Arnd suggested 5.19, but this one needs to be 5.18.
-
-Rob
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
