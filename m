@@ -2,149 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED874C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 15:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CAFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 17:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344935AbiC3Pxu (ORCPT
+        id S1348354AbiC3RHb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:53:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34444 "EHLO
+        Wed, 30 Mar 2022 13:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348415AbiC3Pxs (ORCPT
+        with ESMTP id S243512AbiC3RHb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 11:53:48 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD85E15A3C;
-        Wed, 30 Mar 2022 08:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648655522; x=1680191522;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aHOCvdmEcRy5ZvBUbTf9zFkDOMo9CAy71FTo/IenFRo=;
-  b=L1+XjfbPxJ0kzgV7LL2sAqCWSdraTfNgzM6bnfGb40Jq8TBJqwvitsCC
-   uo3pOiHpuItE7fsiALkf8yZEmQm3g0yF2G6dK3OUGxxpMWQU8166fszug
-   kJu16kOpLkFzts1EXqlnFZWSpiad8XQiVuBjZ0N10KjZv5iLeZeSPAG6E
-   rkM2h4w39gNynO2whfHEcO2Az6bJp9D7/S801+mztsCzKtG2PXD8h1/AK
-   dtEgpEXRmvlTaMnfPyd78Np8KoivIWgu3MBORSybpcIwo4G1q80LpTK7t
-   c/rPyArFw3RvOYa9l/czQ4nVwqfLvN8GxGjfdR3mrBPcNBYU8bDJBZwA5
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10302"; a="257154356"
-X-IronPort-AV: E=Sophos;i="5.90,223,1643702400"; 
-   d="scan'208";a="257154356"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 08:52:02 -0700
-X-IronPort-AV: E=Sophos;i="5.90,223,1643702400"; 
-   d="scan'208";a="788049544"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 08:51:54 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nZabQ-009UCS-Cy;
-        Wed, 30 Mar 2022 18:51:20 +0300
-Date:   Wed, 30 Mar 2022 18:51:20 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 09/13] pinctrl: meson: Rename REG_* to MREG_*
-Message-ID: <YkR8eDT6fS8uRpOT@smile.fi.intel.com>
-References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
- <20220329152926.50958-10-andriy.shevchenko@linux.intel.com>
- <94e888fe-d8fc-5379-302f-66d64f2ae10b@baylibre.com>
- <YkM22GwhxV+YKl8l@smile.fi.intel.com>
- <CAMuHMdWVA834tkeag=WOnHFGuhwZ93PkrgO24OV69Fye1hruLw@mail.gmail.com>
- <1b0bc704-a740-ea15-1e90-166905be27d0@baylibre.com>
- <YkQgfwUs8KbhF/b/@smile.fi.intel.com>
- <6812bb31-5d2b-4737-c2ad-8727d105847d@baylibre.com>
+        Wed, 30 Mar 2022 13:07:31 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19FE12AD4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 10:05:45 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id bq8so28862595ejb.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 10:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Tj0NXhVhm7PGyEw1T3IIPx7yGFLG3tjmHr4oUiu0aBM=;
+        b=A+SD9/FO0TL/gKjMkQJKNe7U2AmbJ+03I9pf5OplDO3o62aL9aZB0bfmXop0Cwyu9Q
+         uB9gqqAdy/pD1ii7JGHUBIvJuFx+gqsctjIVWkFEfuCG64xYlijvuKUkYx41BTLSzLS/
+         WH4IeaKte2epTvfA26x5YO5mQp06UhGRO3jWlgKWCdgg+gHcKMNR+lV+C9pRXcYMeyHx
+         MNrr2Y2DSvIJmhRyh9JwrO/29C7nyQfnGno6cclU8yFoyH7/OnISb6YY88EEuh3i0YA3
+         7WjUh4c0QIx3Gn7uIKF4QlCL8WNfrJd2ZpkaiZEtfbhsXyfqaOhds0BQUddYwosZb+wQ
+         2b8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Tj0NXhVhm7PGyEw1T3IIPx7yGFLG3tjmHr4oUiu0aBM=;
+        b=szGljh/nxUUOCImotjeFKHioi5cXq+x5cDeR4FU1eSiF/sqYk/bS5beZthYhohnj0F
+         5YiX23UD73XhwynSBcaHysggI6xBKbnCn9rBNfx8aQDEFQQCdgf/GNwb/sk4GZIuQgJ+
+         p0wa/KU2+i92nkOV73UghGGSE15Jjg2lhAFhLOlRYtmSJQTClahouGTIAoJYZ601hdwZ
+         sGUdkk5hKbpGLNh+yGB04NOjuL+98bQIJ72rRLrQfGhhBLEinDLxsPDWPZiqh+OVMFjF
+         AVtGnVIyoP/SmFbXXyrfszIFNqWz8BI4yYHVhfJy9Has4f5VUZO33ctcT9m7AXjXSK28
+         gxlQ==
+X-Gm-Message-State: AOAM5327A2PIfzwypjBkHCOMPPpmhZMqwwN/USwC6ym0yO2EhQN1rXno
+        /RUntmXFyvxt2Rnhk8VtlkAjqJHenY2Bbyhw
+X-Google-Smtp-Source: ABdhPJxDV3+M/9S6hZfXffPzQU3d3SBZw2wRZGcJOtZhc39pkVomwUVA9HxLnJdaS0KeGuJt/LS/6w==
+X-Received: by 2002:a17:907:6d96:b0:6df:f199:6a7c with SMTP id sb22-20020a1709076d9600b006dff1996a7cmr552529ejc.137.1648659944508;
+        Wed, 30 Mar 2022 10:05:44 -0700 (PDT)
+Received: from [192.168.0.164] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id t19-20020a056402525300b0041952a1a764sm10233880edd.33.2022.03.30.10.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Mar 2022 10:05:43 -0700 (PDT)
+Message-ID: <da21cafc-4e5e-cb5f-e7e5-ac9f223616a6@linaro.org>
+Date:   Wed, 30 Mar 2022 19:05:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6812bb31-5d2b-4737-c2ad-8727d105847d@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] thermal: exynos: fix masking value for artpec7 temp_error
+Content-Language: en-US
+To:     hypmean.kim@samsung.com, "bzolnier@gmail.com" <bzolnier@gmail.com>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amitk@kernel.org" <amitk@kernel.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>
+Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20220330093905.191315-1-hypmean.kim@samsung.com>
+ <CGME20220330093842epcas2p11a4e220245298c5729e4a37d1484d4d5@epcms2p3>
+ <20220330094328epcms2p35a3346066ae7b3e8a489e2c81d44f8c9@epcms2p3>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220330094328epcms2p35a3346066ae7b3e8a489e2c81d44f8c9@epcms2p3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 05:22:56PM +0200, Neil Armstrong wrote:
-> On 30/03/2022 11:18, Andy Shevchenko wrote:
+On 30/03/2022 11:43, Sang Min Kim wrote:
+> This patch is a modification related to masking of the temp_error value
+> in the sanitize_temp_error() function.
 
-...
+Don't use "This patch" please.
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-> > > > > > What error do you hit ?
-> > > > > 
-> > > > > arch/x86/include/asm/arch_hweight.h:9:17: error: expected identifier before string constant
-> > > > > 9 | #define REG_OUT "a"
-> > > > >     |                 ^~~
-> > > > 
-> > > > Perhaps REG_{OUT,IN} in arch/x86/include/asm/arch_hweight.h should be
-> > > > renamed instead, as this is a generic header file that can be included
-> > > > anywhere, while the REG_{OUT,IN} definitions are only used locally,
-> > > > in the header file?
-> > > 
-> > > Even better, those REG_OUT/REG_IN should be undefined at the end of the header since only
-> > > used in the headers inline functions:
-> > > ==============><==================================
-> > > diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-> > > index ba88edd0d58b..139a4b0a2a14 100644
-> > > --- a/arch/x86/include/asm/arch_hweight.h
-> > > +++ b/arch/x86/include/asm/arch_hweight.h
-> > > @@ -52,4 +52,7 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
-> > >   }
-> > >   #endif /* CONFIG_X86_32 */
-> > > 
-> > > +#undef REG_IN
-> > > +#undef REG_OUT
-> > > +
-> > >   #endif
-> > > ==============><==================================
-> > 
-> > Can you submit a formal patch, please?
-> 
-> I'll submit it separately
+>  
+> For SOC_ARCH_EXYNOS7, the temp_error1, 2 value should be masked as
+> EXYNOS7_TMU_TEMP_MASK(0x1ff).
+> The current code masks temp_error2 with EXYNOS_TMU_TEMP_MASK(0xff)
+> value even in the case of EXYNOS7.
+> In addition, when entering the if statement, both temp_error1 and 2
+> are masked with EXYNOS_TMU_TEMP_MASK(0xff).
+>  
+> By modifying to use the previously declared local variable tmu_temp_mask,
+> the mask value suitable for the SOC can be applied.
+>  
+> Signed-off-by: sangmin kim <hypmean.kim@samsung.com>
 
-Sure!
+Fixes tag?
 
-> > And I think it would be good to have my patch as well, so we do not depend on
-> > the fate of the other one.
-> 
-> Yes sure
+Code looks itself good, so with changes above:
 
-Thanks for acknowledging and review!
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Krzysztof
