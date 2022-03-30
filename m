@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968E7C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 07:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE140C43219
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 07:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243883AbiC3HmS (ORCPT
+        id S243903AbiC3HmW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 03:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39138 "EHLO
+        Wed, 30 Mar 2022 03:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243894AbiC3HmR (ORCPT
+        with ESMTP id S243918AbiC3HmU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 03:42:17 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E15652E15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 00:40:30 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id x34so23340885ede.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 00:40:30 -0700 (PDT)
+        Wed, 30 Mar 2022 03:42:20 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D20952B20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 00:40:28 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id dr20so39691284ejc.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 00:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=K0TapJUDp+25n96S2Rvm1oOBLQpsFgFgNuoC0qnYJ0k=;
-        b=JOXwr8XrMosjbmTi4wZCsHgLWaDheNwC3HmHs+E80tQrcyaRJmRgJCaJOe+242laQd
-         itruntcOH4kFLNAY1CbTgyQo2lnhnW4LccmPucGgzkoWOc6DteS2ffVqgyqHb+9GHV5Z
-         WW1uSiEnQYKO39V4lwHmwr0XIiWngz2YM3L/2mha2vMoy4Q+MiZli3w733aPOOYuPmje
-         8/bAbPqii5DihVOrQa/SDDTWwu3C0Dq2sKVjBOoKNS5NVFG97R5tJwhLfnV8LecwjTD7
-         jIxvwCCQuW+42SPB8/Geq8ap0xfLzhr4btnjLm99EDOUuGE0xLEXUuqVFPNkcXZgnqQt
-         plPQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+fs03Qe5m2CAu5KA7NU3Z7yweF+5+DwbdVq/GJFIlNE=;
+        b=ex8tbjLk+0Wdtww3/CDPCbeeyLzltz0XLQc/kTGGTDckS/aAdfHU1y7YDh2lCuBufg
+         Ek3B1nIyDJdNsPVUy2NwJrgskAa32uAMMhpUF+ioSNpcoeiIAHavfW2099ojPSgGgGE7
+         3wwUH7K1JfxGG5Oh2XaYKHO6HRUlrl/X+HalWZxsta48unjq55f29E/F+qMNNuJ7eoYl
+         2Oh4jvG+kTw2UxKDpcbRT31SQQrknt0Vr6BpK8XQ5ksZ20VzYu2SILthbcfonJ5y9j7y
+         zdneLGKv9fMRV6s8puMlExF9mMzmdNqwdQKM0fJr9OyZjPVuBcrKUEmVwqQ3UzS2KKhQ
+         gqpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=K0TapJUDp+25n96S2Rvm1oOBLQpsFgFgNuoC0qnYJ0k=;
-        b=coyJrTOfyVBIG2LmNBaaGwATK/xgMeLDGjWlFnwTn/Obhgaay4yHTFWNb3vUmvSzhk
-         yoLm5xudGNbTzeXDIyyNU28dAMseiOL+iW0HyD24zs6QnbSmzpOFeZKqu8Z52n9NEQej
-         DBbgTF38jaQXal0LJ6TbN2uAxlp++86Yl63Z5zLbqXNmZInMSLL117HGBzNh/ZpVX+fE
-         SauOAR3MKhzvlFnXg+CQvPjqM5zFUkFdFHgZUNYyNs828l/IsIVp0k/mkVME5TrZbqz3
-         yDlP7OaFasd/TAY4t5MtfFyGIJHgeOn5xZs0HD15LAsdbM+FlQYnFIg5L5jFCAL0k8hR
-         03BQ==
-X-Gm-Message-State: AOAM531c5rZgdwafg+sXIZbyeOCOMxy21u/2dPp1Q8WuhqYS3fsw1Of8
-        yGrZQszcMwtaaCHYOmAEd/AjlnlepnUB7rBR
-X-Google-Smtp-Source: ABdhPJxX2a77lTbmJsmGT6vz+aiaUF7cvGkI4zGY0wGiSBBFUAqLdCq7yx8ylYgRn3CuDhwO8jrWUA==
-X-Received: by 2002:a05:6402:4491:b0:419:4aeb:a648 with SMTP id er17-20020a056402449100b004194aeba648mr9149037edb.411.1648626028831;
-        Wed, 30 Mar 2022 00:40:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+fs03Qe5m2CAu5KA7NU3Z7yweF+5+DwbdVq/GJFIlNE=;
+        b=hcvQA+9hB3iSkgcrxbCvK8dkMs9DohVGXuf3XWwBSe6NkeBWKiQeykxCQU+2y3ZEwg
+         DDTyXRwnzrsACZUZ2Kerzt3/H9SpGtDhU3xUkwBOuoP2J3uhBkOAGS1012Ud9+TYMYik
+         GRZjnvZJiU39MQ/xaCaeJ9avLM3ipPkM6Z/Yhj0bKVeLsRztQitR3fiGiGBcXsC93gm9
+         bpToSKabOks0xNyFAgWDIK8rhdagWfsnQndxIdgJ1pi8uJVSk55IJNYfJDKF8IIxS6YY
+         gSaZzUKDXfTqwzUeYSRGsEuYpTZxgV4J4u0qP5SxebKWEgGIKe14CXQaDVZp2AX4GDVb
+         qV+Q==
+X-Gm-Message-State: AOAM532jdr6X7BIDf1VyJqUqph8BIw5sMqS/paf/svtECmv76Ai/enAy
+        liBDVwtZzouxZ/FIOciEWPoIX/xohP+gyG75
+X-Google-Smtp-Source: ABdhPJyiytUzrzTtKzum6T4/uPQMwS6KDq/FK9+HsYlM+syWEDDFNiRdcVYelGPuda/Y0L8MSc4LVQ==
+X-Received: by 2002:a17:907:971c:b0:6e0:dd95:9fc6 with SMTP id jg28-20020a170907971c00b006e0dd959fc6mr2088118ejc.256.1648626026637;
+        Wed, 30 Mar 2022 00:40:26 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id s20-20020a056402015400b00418f9574a36sm9536640edu.73.2022.03.30.00.40.27
+        by smtp.gmail.com with ESMTPSA id s20-20020a056402015400b00418f9574a36sm9536640edu.73.2022.03.30.00.40.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 00:40:28 -0700 (PDT)
+        Wed, 30 Mar 2022 00:40:26 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-nfc@lists.01.org,
@@ -57,12 +57,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Olof Johansson <olof@lixom.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] MAINTAINERS: update Krzysztof Kozlowski's email to Linaro
-Date:   Wed, 30 Mar 2022 09:40:16 +0200
-Message-Id: <20220330074016.12896-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/2] MAINTAINERS/dt-bindings: changes to my emails
+Date:   Wed, 30 Mar 2022 09:40:14 +0200
+Message-Id: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org>
-References: <20220330074016.12896-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -71,179 +69,119 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Krzysztof Kozlowski <krzk@kernel.org>
 
-Use Krzysztof Kozlowski's @linaro.org account in maintainer entries.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- MAINTAINERS | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+I can take both patches via my Samsung SoC tree, if that's ok.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 39930351885a..1508ee5887a4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2634,7 +2634,7 @@ F:	sound/soc/rockchip/
- N:	rockchip
- 
- ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org
-@@ -11888,7 +11888,7 @@ F:	drivers/iio/proximity/mb1232.c
- 
- MAXIM MAX17040 FAMILY FUEL GAUGE DRIVERS
- R:	Iskren Chernev <iskren.chernev@gmail.com>
--R:	Krzysztof Kozlowski <krzk@kernel.org>
-+R:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- R:	Marek Szyprowski <m.szyprowski@samsung.com>
- R:	Matheus Castello <matheus@castello.eng.br>
- L:	linux-pm@vger.kernel.org
-@@ -11898,7 +11898,7 @@ F:	drivers/power/supply/max17040_battery.c
- 
- MAXIM MAX17042 FAMILY FUEL GAUGE DRIVERS
- R:	Hans de Goede <hdegoede@redhat.com>
--R:	Krzysztof Kozlowski <krzk@kernel.org>
-+R:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- R:	Marek Szyprowski <m.szyprowski@samsung.com>
- R:	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>
- R:	Purism Kernel Team <kernel@puri.sm>
-@@ -11950,7 +11950,7 @@ F:	Documentation/devicetree/bindings/power/supply/maxim,max77976.yaml
- F:	drivers/power/supply/max77976_charger.c
- 
- MAXIM MUIC CHARGER DRIVERS FOR EXYNOS BASED BOARDS
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
- L:	linux-pm@vger.kernel.org
- S:	Supported
-@@ -11961,7 +11961,7 @@ F:	drivers/power/supply/max77693_charger.c
- 
- MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
- M:	Chanwoo Choi <cw00.choi@samsung.com>
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
-@@ -12655,7 +12655,7 @@ F:	mm/memblock.c
- F:	tools/testing/memblock/
- 
- MEMORY CONTROLLER DRIVERS
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git
-@@ -13798,7 +13798,7 @@ F:	include/uapi/linux/nexthop.h
- F:	net/ipv4/nexthop.c
- 
- NFC SUBSYSTEM
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-nfc@lists.01.org (subscribers-only)
- L:	netdev@vger.kernel.org
- S:	Maintained
-@@ -14112,7 +14112,7 @@ F:	Documentation/devicetree/bindings/regulator/nxp,pf8x00-regulator.yaml
- F:	drivers/regulator/pf8x00-regulator.c
- 
- NXP PTN5150A CC LOGIC AND EXTCON DRIVER
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-@@ -14660,7 +14660,7 @@ F:	scripts/dtc/
- 
- OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
- M:	Rob Herring <robh+dt@kernel.org>
--M:	Krzysztof Kozlowski <krzk+dt@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
- L:	devicetree@vger.kernel.org
- S:	Maintained
- C:	irc://irc.libera.chat/devicetree
-@@ -15572,7 +15572,7 @@ F:	drivers/pinctrl/renesas/
- 
- PIN CONTROLLER - SAMSUNG
- M:	Tomasz Figa <tomasz.figa@gmail.com>
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-@@ -17251,7 +17251,7 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
- F:	drivers/s390/scsi/zfcp_*
- 
- S3C ADC BATTERY DRIVER
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-samsung-soc@vger.kernel.org
- S:	Odd Fixes
- F:	drivers/power/supply/s3c_adc_battery.c
-@@ -17296,7 +17296,7 @@ F:	Documentation/admin-guide/LSM/SafeSetID.rst
- F:	security/safesetid/
- 
- SAMSUNG AUDIO (ASoC) DRIVERS
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
- S:	Supported
-@@ -17304,7 +17304,7 @@ F:	Documentation/devicetree/bindings/sound/samsung*
- F:	sound/soc/samsung/
- 
- SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-@@ -17339,7 +17339,7 @@ S:	Maintained
- F:	drivers/platform/x86/samsung-laptop.c
- 
- SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
- L:	linux-kernel@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
-@@ -17365,7 +17365,7 @@ F:	drivers/media/platform/samsung/s3c-camif/
- F:	include/media/drv-intf/s3c_camif.h
- 
- SAMSUNG S3FWRN5 NFC DRIVER
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Krzysztof Opasiak <k.opasiak@samsung.com>
- L:	linux-nfc@lists.01.org (subscribers-only)
- S:	Maintained
-@@ -17387,7 +17387,7 @@ S:	Supported
- F:	drivers/media/i2c/s5k5baf.c
- 
- SAMSUNG S5P Security SubSystem (SSS) DRIVER
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Vladimir Zapolskiy <vz@mleia.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
-@@ -17422,7 +17422,7 @@ F:	include/linux/clk/samsung.h
- F:	include/linux/platform_data/clk-s3c2410.h
- 
- SAMSUNG SPI DRIVERS
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Andi Shyti <andi@etezian.org>
- L:	linux-spi@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
-@@ -17440,7 +17440,7 @@ F:	drivers/net/ethernet/samsung/sxgbe/
- 
- SAMSUNG THERMAL DRIVER
- M:	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
--M:	Krzysztof Kozlowski <krzk@kernel.org>
-+M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-pm@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (2):
+  dt-bindings: update Krzysztof Kozlowski's email
+  MAINTAINERS: update Krzysztof Kozlowski's email to Linaro
+
+ .../clock/samsung,exynos-audss-clock.yaml     |  2 +-
+ .../bindings/clock/samsung,exynos-clock.yaml  |  2 +-
+ .../clock/samsung,exynos-ext-clock.yaml       |  2 +-
+ .../clock/samsung,exynos4412-isp-clock.yaml   |  2 +-
+ .../clock/samsung,exynos5260-clock.yaml       |  2 +-
+ .../clock/samsung,exynos5410-clock.yaml       |  2 +-
+ .../clock/samsung,exynos5433-clock.yaml       |  2 +-
+ .../bindings/clock/samsung,exynos7-clock.yaml |  2 +-
+ .../clock/samsung,exynos7885-clock.yaml       |  2 +-
+ .../clock/samsung,exynos850-clock.yaml        |  2 +-
+ .../bindings/clock/samsung,s2mps11.yaml       |  2 +-
+ .../clock/samsung,s5pv210-audss-clock.yaml    |  2 +-
+ .../bindings/clock/samsung,s5pv210-clock.yaml |  2 +-
+ .../devfreq/event/samsung,exynos-nocp.yaml    |  2 +-
+ .../devfreq/event/samsung,exynos-ppmu.yaml    |  2 +-
+ .../samsung/samsung,exynos-hdmi-ddc.yaml      |  2 +-
+ .../display/samsung/samsung,exynos-hdmi.yaml  |  2 +-
+ .../display/samsung/samsung,exynos-mixer.yaml |  2 +-
+ .../samsung/samsung,exynos5433-decon.yaml     |  2 +-
+ .../samsung/samsung,exynos5433-mic.yaml       |  2 +-
+ .../samsung/samsung,exynos7-decon.yaml        |  2 +-
+ .../display/samsung/samsung,fimd.yaml         |  2 +-
+ .../bindings/extcon/maxim,max77843.yaml       |  2 +-
+ .../bindings/hwmon/lltc,ltc4151.yaml          |  2 +-
+ .../bindings/hwmon/microchip,mcp3021.yaml     |  2 +-
+ .../bindings/hwmon/sensirion,sht15.yaml       |  2 +-
+ .../devicetree/bindings/hwmon/ti,tmp102.yaml  |  2 +-
+ .../devicetree/bindings/hwmon/ti,tmp108.yaml  |  2 +-
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml  |  2 +-
+ .../bindings/i2c/samsung,s3c2410-i2c.yaml     |  2 +-
+ .../samsung,exynos4210-combiner.yaml          |  2 +-
+ .../bindings/leds/maxim,max77693.yaml         |  2 +-
+ .../memory-controllers/brcm,dpfe-cpu.yaml     |  2 +-
+ .../ddr/jedec,lpddr2-timings.yaml             |  2 +-
+ .../memory-controllers/ddr/jedec,lpddr2.yaml  |  2 +-
+ .../ddr/jedec,lpddr3-timings.yaml             |  2 +-
+ .../memory-controllers/ddr/jedec,lpddr3.yaml  |  2 +-
+ .../marvell,mvebu-sdram-controller.yaml       |  2 +-
+ .../qca,ath79-ddr-controller.yaml             |  2 +-
+ .../memory-controllers/renesas,h8300-bsc.yaml |  2 +-
+ .../samsung,exynos5422-dmc.yaml               |  2 +-
+ .../memory-controllers/synopsys,ddrc-ecc.yaml |  2 +-
+ .../memory-controllers/ti,da8xx-ddrctl.yaml   |  2 +-
+ .../bindings/mfd/maxim,max14577.yaml          |  2 +-
+ .../bindings/mfd/maxim,max77686.yaml          |  2 +-
+ .../bindings/mfd/maxim,max77693.yaml          |  2 +-
+ .../bindings/mfd/maxim,max77802.yaml          |  2 +-
+ .../bindings/mfd/maxim,max77843.yaml          |  2 +-
+ .../mfd/samsung,exynos5433-lpass.yaml         |  2 +-
+ .../bindings/mfd/samsung,s2mpa01.yaml         |  2 +-
+ .../bindings/mfd/samsung,s2mps11.yaml         |  2 +-
+ .../bindings/mfd/samsung,s5m8767.yaml         |  2 +-
+ .../bindings/net/nfc/marvell,nci.yaml         |  2 +-
+ .../devicetree/bindings/net/nfc/nxp,nci.yaml  |  2 +-
+ .../bindings/net/nfc/nxp,pn532.yaml           |  2 +-
+ .../bindings/net/nfc/nxp,pn544.yaml           |  2 +-
+ .../bindings/net/nfc/st,st-nci.yaml           |  2 +-
+ .../bindings/net/nfc/st,st21nfca.yaml         |  2 +-
+ .../bindings/net/nfc/st,st95hf.yaml           |  2 +-
+ .../bindings/net/nfc/ti,trf7970a.yaml         |  2 +-
+ .../bindings/phy/samsung,dp-video-phy.yaml    |  2 +-
+ .../bindings/phy/samsung,exynos-hdmi-phy.yaml |  2 +-
+ .../phy/samsung,exynos5250-sata-phy.yaml      |  2 +-
+ .../bindings/phy/samsung,mipi-video-phy.yaml  |  2 +-
+ .../bindings/phy/samsung,usb2-phy.yaml        |  2 +-
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    |  2 +-
+ .../pinctrl/samsung,pinctrl-gpio-bank.yaml    |  2 +-
+ .../pinctrl/samsung,pinctrl-pins-cfg.yaml     |  2 +-
+ .../samsung,pinctrl-wakeup-interrupt.yaml     |  2 +-
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |  2 +-
+ .../bindings/power/supply/maxim,max14577.yaml |  2 +-
+ .../bindings/power/supply/maxim,max77693.yaml |  2 +-
+ .../bindings/regulator/maxim,max14577.yaml    |  2 +-
+ .../bindings/regulator/maxim,max77686.yaml    |  2 +-
+ .../bindings/regulator/maxim,max77693.yaml    |  2 +-
+ .../bindings/regulator/maxim,max77802.yaml    |  2 +-
+ .../bindings/regulator/maxim,max77843.yaml    |  2 +-
+ .../bindings/regulator/maxim,max8952.yaml     |  2 +-
+ .../bindings/regulator/maxim,max8973.yaml     |  2 +-
+ .../bindings/regulator/maxim,max8997.yaml     |  2 +-
+ .../bindings/regulator/samsung,s2mpa01.yaml   |  2 +-
+ .../bindings/regulator/samsung,s2mps11.yaml   |  2 +-
+ .../bindings/regulator/samsung,s2mps13.yaml   |  2 +-
+ .../bindings/regulator/samsung,s2mps14.yaml   |  2 +-
+ .../bindings/regulator/samsung,s2mps15.yaml   |  2 +-
+ .../bindings/regulator/samsung,s2mpu02.yaml   |  2 +-
+ .../bindings/regulator/samsung,s5m8767.yaml   |  2 +-
+ .../bindings/rng/samsung,exynos5250-trng.yaml |  2 +-
+ .../bindings/rng/timeriomem_rng.yaml          |  2 +-
+ .../bindings/soc/samsung/exynos-usi.yaml      |  2 +-
+ .../bindings/sound/samsung,arndale.yaml       |  2 +-
+ .../bindings/sound/samsung,smdk5250.yaml      |  2 +-
+ .../bindings/sound/samsung,snow.yaml          |  2 +-
+ .../bindings/sound/samsung,tm2.yaml           |  2 +-
+ .../spi/samsung,spi-peripheral-props.yaml     |  2 +-
+ .../devicetree/bindings/spi/samsung,spi.yaml  |  2 +-
+ .../thermal/samsung,exynos-thermal.yaml       |  2 +-
+ .../bindings/usb/samsung,exynos-dwc3.yaml     |  2 +-
+ .../bindings/usb/samsung,exynos-usb2.yaml     |  2 +-
+ MAINTAINERS                                   | 36 +++++++++----------
+ 100 files changed, 117 insertions(+), 117 deletions(-)
+
 -- 
 2.32.0
 
