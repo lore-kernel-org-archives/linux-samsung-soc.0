@@ -2,144 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556A5C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 09:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840B1C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 09:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241756AbiC3JVc (ORCPT
+        id S243129AbiC3JpZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 05:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34598 "EHLO
+        Wed, 30 Mar 2022 05:45:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239060AbiC3JVb (ORCPT
+        with ESMTP id S235850AbiC3JpY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 05:21:31 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D0B2AE0B;
-        Wed, 30 Mar 2022 02:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648631987; x=1680167987;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CexHFbKj9fB0vNoQokL/+22Rm+MDw+vDfIRSUuljC98=;
-  b=Mn7JTZsOTOBNeAEGt4CfoFN5gE/VDJUPR4O7bnAIlleXtpVHHkKCgT3I
-   hwufW2QW9K92F7x+PCOiGxQNKX4neerdrIZOzptKpR/FrM/k6ToxmbCRe
-   LdAmjS7v1Sq5vWx8UC+8eoJ24bZ2y7qJxSIHvOqJw5RGy3xc7512yqTZq
-   6f3ckRD+zbRS3oxnjrZCizMlKL6zAlhSZ2g/F1FEzr67R4PNSLAe/8WM8
-   EKVvoeQI1UpUtw1mXh9y0Kpwa9qtmZ/kIn0U3MTohmOAVj3+zUAwzGIcr
-   vZXSKmIlA+j23qBVq7dk8xaP3AgoChmRONl05SqULhnRjLZOQhZfPT6T5
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10301"; a="259211013"
-X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="259211013"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 02:19:37 -0700
-X-IronPort-AV: E=Sophos;i="5.90,222,1643702400"; 
-   d="scan'208";a="503246100"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 02:19:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nZUTf-009J1d-AZ;
-        Wed, 30 Mar 2022 12:18:55 +0300
-Date:   Wed, 30 Mar 2022 12:18:55 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2 09/13] pinctrl: meson: Rename REG_* to MREG_*
-Message-ID: <YkQgfwUs8KbhF/b/@smile.fi.intel.com>
-References: <20220329152926.50958-1-andriy.shevchenko@linux.intel.com>
- <20220329152926.50958-10-andriy.shevchenko@linux.intel.com>
- <94e888fe-d8fc-5379-302f-66d64f2ae10b@baylibre.com>
- <YkM22GwhxV+YKl8l@smile.fi.intel.com>
- <CAMuHMdWVA834tkeag=WOnHFGuhwZ93PkrgO24OV69Fye1hruLw@mail.gmail.com>
- <1b0bc704-a740-ea15-1e90-166905be27d0@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b0bc704-a740-ea15-1e90-166905be27d0@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Wed, 30 Mar 2022 05:45:24 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CCD068F80
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 02:43:37 -0700 (PDT)
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220330094335epoutp04ecf89666cf04447acdd56e1803515910~hH1s-jqzs1895318953epoutp04h
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Mar 2022 09:43:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220330094335epoutp04ecf89666cf04447acdd56e1803515910~hH1s-jqzs1895318953epoutp04h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1648633415;
+        bh=iFIPEFQ0MLQon8gnTy1omTAKrg3mcd9SEAOGrTgjzSU=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=MYzyjJccCaZb52lnbcZQ/YGBbtgRjiIk1+2oG6HHw0KaTn3ZBLsSwEPItzfaPUQiV
+         b4mDUh51Pdhu2+sRhzBZLAKB5FR3/rT+azhSnoSx+g6yAoIDLyVtiuVgXE9YC/8TYc
+         7YAD47EylGB252ecPLSsgkUuRb6oTw7ergfVOCTo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220330094334epcas2p116fdc57a4b7eb64ee0c47329bb2624ba~hH1sZvtnF1947619476epcas2p1t;
+        Wed, 30 Mar 2022 09:43:34 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.70]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KT1hf4pSQz4x9QL; Wed, 30 Mar
+        2022 09:43:30 +0000 (GMT)
+X-AuditID: b6c32a48-511ff7000000810c-23-6244264185c7
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        73.24.33036.14624426; Wed, 30 Mar 2022 18:43:29 +0900 (KST)
+Mime-Version: 1.0
+Subject: [PATCH] thermal: exynos: fix masking value for artpec7 temp_error
+Reply-To: hypmean.kim@samsung.com
+Sender: Sang Min Kim <hypmean.kim@samsung.com>
+From:   Sang Min Kim <hypmean.kim@samsung.com>
+To:     "bzolnier@gmail.com" <bzolnier@gmail.com>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amitk@kernel.org" <amitk@kernel.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>
+CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20220330093905.191315-1-hypmean.kim@samsung.com>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20220330094328epcms2p35a3346066ae7b3e8a489e2c81d44f8c9@epcms2p3>
+Date:   Wed, 30 Mar 2022 18:43:28 +0900
+X-CMS-MailID: 20220330094328epcms2p35a3346066ae7b3e8a489e2c81d44f8c9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmua6jmkuSwddvXBYP5m1jszg8v8Li
+        +5brTBYvD2lazPssa3H+/AZ2i02Pr7FaXN41h83ic+8RRosZ5/cxWcz9MpXZ4snDPjYHHo+d
+        s+6yeyze85LJY9OqTjaPO9f2sHlsXlLv0bdlFaPH501yAexR2TYZqYkpqUUKqXnJ+SmZeem2
+        St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QFcqKZQl5pQChQISi4uV9O1sivJLS1IV
+        MvKLS2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEKE7IzTnyeyVSwULGi75xbA+NmhS5G
+        Tg4JAROJ+d+eM4HYQgI7GCU2/PXtYuTg4BUQlPi7QxgkLCzgJdG25jkbRImixMsd25kh4noS
+        Nzd+Zgex2QR0JB633gcaw8UhIrCdSWLTm+0sIA6zwAwmibNdJ1ghlvFKzGh/ygJhS0tsX76V
+        EcTmFLCT+D5/HlSNhsSPZb3MELaoxM3Vb9lh7PfH5jNC2CISrffOQtUISjz4uRsqLimx6fB2
+        qPpqiVsbl7OCHCEh0MAo0fqtiRnkMwkBfYkd141BangFfCVeHu8Dm8MioCrR+u4C1G0uEpfn
+        /webwyygLbFs4WuwVmYBTYn1u/QhpihLHLnFAvNVw8bf7OhsZgE+iY7Df+HiO+Y9YYKwVSV2
+        bupmn8CoPAsR0rOQ7JqFsGsBI/MqRrHUguLc9NRiowITeNQm5+duYgQnVy2PHYyz337QO8TI
+        xMF4iFGCg1lJhPfjQeckId6UxMqq1KL8+KLSnNTiQ4ymQF9OZJYSTc4Hpve8knhDE0sDEzMz
+        Q3MjUwNzJXFer5QNiUIC6YklqdmpqQWpRTB9TBycUg1MpuK/TZKv6OT7ih1RSckqvDrvkZxU
+        t86r/RrMzQdZQ0yKvwgYCLUdZGFObMmuvz//TmG4zd1c9s8NV+984kv02VXNkHri04eXipL+
+        /cZiny63+l/4MHnG2jOGb9emxSyY1P+23kf9z5f6STf1VK8dfsee9DLX6duiORz8Yvvutyx6
+        srrstugSnaSsA4dzn8WtdZD8VCFY5HXarHSNSubKTXbcud4PHTpmGF/wS35tdLuHKYSTw+ml
+        76zmO1LSU7fdlb9oLntwYi+DdkXXVtkJl69qfCwKbL1x+tGaKSuF1+xdflD9Sti18pyTSu90
+        z5lcUfBuapdek6B37XqbgPny95rXtjk/d52+xlNlQpKPEktxRqKhFnNRcSIAiuLr+TcEAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220330093842epcas2p11a4e220245298c5729e4a37d1484d4d5
+References: <20220330093905.191315-1-hypmean.kim@samsung.com>
+        <CGME20220330093842epcas2p11a4e220245298c5729e4a37d1484d4d5@epcms2p3>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 11:09:11AM +0200, Neil Armstrong wrote:
-> On 30/03/2022 10:54, Geert Uytterhoeven wrote:
-> > On Tue, Mar 29, 2022 at 6:47 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Tue, Mar 29, 2022 at 06:13:19PM +0200, Neil Armstrong wrote:
-> > > > On 29/03/2022 17:29, Andy Shevchenko wrote:
-
-...
-
-> > > > What error do you hit ?
-> > > 
-> > > arch/x86/include/asm/arch_hweight.h:9:17: error: expected identifier before string constant
-> > > 9 | #define REG_OUT "a"
-> > >    |                 ^~~
-> > 
-> > Perhaps REG_{OUT,IN} in arch/x86/include/asm/arch_hweight.h should be
-> > renamed instead, as this is a generic header file that can be included
-> > anywhere, while the REG_{OUT,IN} definitions are only used locally,
-> > in the header file?
-> 
-> Even better, those REG_OUT/REG_IN should be undefined at the end of the header since only
-> used in the headers inline functions:
-> ==============><==================================
-> diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-> index ba88edd0d58b..139a4b0a2a14 100644
-> --- a/arch/x86/include/asm/arch_hweight.h
-> +++ b/arch/x86/include/asm/arch_hweight.h
-> @@ -52,4 +52,7 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
->  }
->  #endif /* CONFIG_X86_32 */
-> 
-> +#undef REG_IN
-> +#undef REG_OUT
-> +
->  #endif
-> ==============><==================================
-
-Can you submit a formal patch, please?
-
-
-And I think it would be good to have my patch as well, so we do not depend on
-the fate of the other one.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+This=C2=A0patch=C2=A0is=C2=A0a=C2=A0modification=C2=A0related=C2=A0to=C2=A0=
+masking=C2=A0of=C2=A0the=C2=A0temp_error=C2=A0value=0D=0Ain=C2=A0the=C2=A0s=
+anitize_temp_error()=C2=A0function.=0D=0A=C2=A0=0D=0AFor=C2=A0SOC_ARCH_EXYN=
+OS7,=C2=A0the=C2=A0temp_error1,=C2=A02=C2=A0value=C2=A0should=C2=A0be=C2=A0=
+masked=C2=A0as=0D=0AEXYNOS7_TMU_TEMP_MASK(0x1ff).=0D=0AThe=C2=A0current=C2=
+=A0code=C2=A0masks=C2=A0temp_error2=C2=A0with=C2=A0EXYNOS_TMU_TEMP_MASK(0xf=
+f)=0D=0Avalue=C2=A0even=C2=A0in=C2=A0the=C2=A0case=C2=A0of=C2=A0EXYNOS7.=0D=
+=0AIn=C2=A0addition,=C2=A0when=C2=A0entering=C2=A0the=C2=A0if=C2=A0statemen=
+t,=C2=A0both=C2=A0temp_error1=C2=A0and=C2=A02=0D=0Aare=C2=A0masked=C2=A0wit=
+h=C2=A0EXYNOS_TMU_TEMP_MASK(0xff).=0D=0A=C2=A0=0D=0ABy=C2=A0modifying=C2=A0=
+to=C2=A0use=C2=A0the=C2=A0previously=C2=A0declared=C2=A0local=C2=A0variable=
+=C2=A0tmu_temp_mask,=0D=0Athe=C2=A0mask=C2=A0value=C2=A0suitable=C2=A0for=
+=C2=A0the=C2=A0SOC=C2=A0can=C2=A0be=C2=A0applied.=0D=0A=C2=A0=0D=0ASigned-o=
+ff-by:=C2=A0sangmin=C2=A0kim=C2=A0<hypmean.kim=40samsung.com>=0D=0A---=0D=
+=0A=C2=A0drivers/thermal/samsung/exynos_tmu.c=C2=A0=7C=C2=A06=C2=A0+++---=
+=0D=0A=C2=A01=C2=A0file=C2=A0changed,=C2=A03=C2=A0insertions(+),=C2=A03=C2=
+=A0deletions(-)=0D=0A=C2=A0=0D=0Adiff=C2=A0--git=C2=A0a/drivers/thermal/sam=
+sung/exynos_tmu.c=C2=A0b/drivers/thermal/samsung/exynos_tmu.c=0D=0Aindex=C2=
+=A0f4ab4c5..08c63fe=C2=A0100644=0D=0A---=C2=A0a/drivers/thermal/samsung/exy=
+nos_tmu.c=0D=0A+++=C2=A0b/drivers/thermal/samsung/exynos_tmu.c=0D=0A=40=40=
+=C2=A0-243,17=C2=A0+243,17=C2=A0=40=40=C2=A0static=C2=A0void=C2=A0sanitize_=
+temp_error(struct=C2=A0exynos_tmu_data=C2=A0*data,=C2=A0u32=C2=A0trim_info)=
+=0D=0A=C2=A0=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dat=
+a->temp_error1=C2=A0=3D=C2=A0trim_info=C2=A0&=C2=A0tmu_temp_mask;=0D=0A=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_error2=C2=A0=
+=3D=C2=A0((trim_info=C2=A0>>=C2=A0EXYNOS_TRIMINFO_85_SHIFT)=C2=A0&=0D=0A-=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0EXYNOS_TMU_TEMP_MASK);=0D=0A+=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tmu_temp_mask);=0D=0A=C2=A0=0D=0A=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if=C2=A0(=21data->temp_e=
+rror1=C2=A0=7C=7C=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0(data->min_efuse_value=C2=A0>=C2=A0data->temp_er=
+ror1)=C2=A0=7C=7C=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0(data->temp_error1=C2=A0>=C2=A0data->max_efuse_v=
+alue))=0D=0A-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_error1=C2=A0=3D=C2=A0data->e=
+fuse_value=C2=A0&=C2=A0EXYNOS_TMU_TEMP_MASK;=0D=0A+=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dat=
+a->temp_error1=C2=A0=3D=C2=A0data->efuse_value=C2=A0&=C2=A0tmu_temp_mask;=
+=0D=0A=C2=A0=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if=
+=C2=A0(=21data->temp_error2)=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_e=
+rror2=C2=A0=3D=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0(data->efuse_value=C2=A0>>=C2=A0EXYNOS_TRIMINFO_85_SHI=
+FT)=C2=A0&=0D=0A-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0EXYNOS_TMU_TEMP_MASK;=0D=0A+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tmu_temp_mask;=0D=0A=C2=A0=7D=0D=0A=C2=
+=A0=0D=0A=C2=A0static=C2=A0int=C2=A0exynos_tmu_initialize(struct=C2=A0platf=
+orm_device=C2=A0*pdev)=0D=0A--=C2=A0=0D=0A2.9.5=0D=0A=C2=A0=0D=0A=C2=A0
