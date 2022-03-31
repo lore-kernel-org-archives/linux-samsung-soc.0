@@ -2,169 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AB1C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 21:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9229BC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 21:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241715AbiCaVS5 (ORCPT
+        id S239388AbiCaWAN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 31 Mar 2022 17:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52320 "EHLO
+        Thu, 31 Mar 2022 18:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240069AbiCaVS4 (ORCPT
+        with ESMTP id S242185AbiCaWAM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Mar 2022 17:18:56 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E241823B3C0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Mar 2022 14:17:07 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id pv16so2033225ejb.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Mar 2022 14:17:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OhUgoUjmHfkmZB66Ljg+9BeuLZIJH4fmuI4EW/8GfzI=;
-        b=YPb7yEyvES+dt9sHShI1By6hbIuwJMoBkGCPyvywEl10wdUYLHpyRz6ttW3nS19EoB
-         0Scw63WuhrpxDyPhFmQF5POGjAENRqmJs2F7bKJDWekzzCX/F8GH7395WjBcys/rLSKq
-         933w0xbpcUSlkNg4SHoitM2JuItD5yxMhU1HkjaFADRxDzJGurZM+ENUlIUcL/T+I3F3
-         UYQ8GnnPV0CN9j2tHB5mSQgIyvQJDn+/dSCU4Hd4IK6vA8OctoeENwKjg0arRlsRqvJV
-         3uV3qXPwQZ+bQBqSp+antnUeCmrCbJA9z+Fbvd2oETMUXTbFfBH8NQdAi13eugRD96zt
-         HkVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OhUgoUjmHfkmZB66Ljg+9BeuLZIJH4fmuI4EW/8GfzI=;
-        b=mw1ipbbC/xOUg5mkfx+3z5b+Ozt+zQLUgQrz5ZjCGyH0P9ESERVUqCDpV8QUTZ8P3q
-         ILmsJg4AP8fAc9GMkRSiKbFefH82ajMgtJ0e2d61Rn0SgCf9+t0rXlDQbm00SSjWAV5N
-         0zshuI0Y3YSTl87Tk21QGzYQiZw78b+DsKrgd9JOmUCibDL9Rsr5oQzdsEcSnVCUCIWo
-         grMfqV7FVpu+qHWJs7aRPsLoYwb9IAkaH0knxICQ1Wa25PY2Av3LQoG+HQTol0Z0/0Aa
-         dSWgcaCALrUabt0C4OGLmOTT7Qe3B1MuuX2o4cWtHXyJDnZJTQCHpmrqnVSiWNK0bHev
-         MSOQ==
-X-Gm-Message-State: AOAM532Ao1kwOmpFVeO6Wcvor1fZJIu4zCka+l9nsJ3x7mQDJ4WibYtf
-        q6Yz0xZyWtHfPmrJd69/FZFMhg==
-X-Google-Smtp-Source: ABdhPJznpX+KjZxb6pXEL6EoqM5vXbcnxtx2K142UoNbZtdPIFgL+oOQNPa0G2T6B6EaAQgFtY8ugg==
-X-Received: by 2002:a17:906:c1d6:b0:6d6:e0a3:bbc7 with SMTP id bw22-20020a170906c1d600b006d6e0a3bbc7mr6741191ejb.484.1648761426516;
-        Thu, 31 Mar 2022 14:17:06 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id nc13-20020a1709071c0d00b006dfa376ee55sm202518ejc.131.2022.03.31.14.17.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Mar 2022 14:17:06 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 2/2] ARM: dts: exynos: correct array of voltages in i9100 and Trats
-Date:   Thu, 31 Mar 2022 23:16:53 +0200
-Message-Id: <20220331211653.175200-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220331211653.175200-1-krzysztof.kozlowski@linaro.org>
-References: <20220331211653.175200-1-krzysztof.kozlowski@linaro.org>
+        Thu, 31 Mar 2022 18:00:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61664C30;
+        Thu, 31 Mar 2022 14:58:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 59C2CB82256;
+        Thu, 31 Mar 2022 21:58:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F11BEC340F0;
+        Thu, 31 Mar 2022 21:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648763899;
+        bh=EdyYRv/RjH6voZpfK9AsnGWVtEgWXeOuukdtRC5UEKg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=lnycOEjlNdrSNQz4HWAciAAwYkiads1HaoBhzmckHhiGEx2FVc8VApvNG/U9fZnlr
+         7/clOK8vr/mk4bbIw/imRUg8mKlFLGoy3cP6lF6pfy8pQFAN9CSbTGH1aF7rXWFAwC
+         5eUCCuB8MPWi+ft9NaYXhMPh7WIgoijxWXzG3EvDuKREPSLVRmVUmawgEWVWzGnPN6
+         jdqsO4KjIYszy0jIQDN2bn/8Iq5wsP06a7Dx2wzyA5cDIyvc9MJaYk0dnifJpTE+yM
+         7DMl4xqMVdY5x0jyrH5A50uRGYv52Ykkt6t2QK5+3Hwm5mVrzYernar930y/vMNyzw
+         Uhg6D24iOoTWQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YkXeGS5zaovOaEzp@atomide.com>
+References: <20220325161144.1901695-1-maxime@cerno.tech> <20220325161144.1901695-4-maxime@cerno.tech> <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com> <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com> <20220330084710.3r6b5pjspz5hdmy6@houat> <YkV3ch7R7YxlATW+@atomide.com> <20220331095456.dyyxsiu2b3yw2vvs@houat> <YkXCGlrok0niwlyg@atomide.com> <20220331153134.h3alp24hzquajkly@houat> <YkXeGS5zaovOaEzp@atomide.com>
+Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+To:     Maxime Ripard <maxime@cerno.tech>, Tony Lindgren <tony@atomide.com>
+Date:   Thu, 31 Mar 2022 14:58:17 -0700
+User-Agent: alot/0.10
+Message-Id: <20220331215818.F11BEC340F0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Array of uint32 numbers (voltages) should be within one bracket pair <>,
-according to Devicetree types and DT schema.
+Quoting Tony Lindgren (2022-03-31 10:00:09)
+> * Maxime Ripard <maxime@cerno.tech> [220331 15:29]:
+> > On Thu, Mar 31, 2022 at 06:00:42PM +0300, Tony Lindgren wrote:
+> > > * Maxime Ripard <maxime@cerno.tech> [220331 09:52]:
+> > > > On Thu, Mar 31, 2022 at 12:42:10PM +0300, Tony Lindgren wrote:
+> > > > > It seems the dts assigned-clock-parents no longer works now?
+> > > >=20
+> > > > That would make some kind of sense, __set_clk_parents calls clk_put=
+ on
+> > > > both the assigned clock and its parent.
+> > > >=20
+> > > > Could you see what parent (and why?) it tries to enforce then?
+> > >=20
+> > > It picks the other option available for the mux clock that only has
+> > > two options. No idea why, but if you have some debug patch in mind I
+> > > can give it a try.
+> > >=20
+> > > > It looks like the gpt1_fck driver might favor another parent for th=
+at
+> > > > rate, which, if it's an invalid configuration, shouldn't really hap=
+pen?
+> > >=20
+> > > Hmm there's a gate clock and a mux clock, there's not really a rate
+> > > selection available here for the sources.
+> >=20
+> > If I followed the OMAP driver properly, clk_mux_determine_rate_flags is
+> > doing the heavy lifting, could you run your test with
+>=20
+> Thanks that produces some interesting output. In the working case with
+> the $subject patch reverted we have:
 
-This fixes DT schema warnings like:
-
-  exynos4210-trats.dtb: pmic@66: max8997,pmic-buck1-dvs-voltage: [[1350000, 1300000, 1250000, 1200000, 1150000, 1100000, 1000000, 950000]] is too short
-    From schema: Documentation/devicetree/bindings/regulator/maxim,max8997.yaml
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/exynos4210-i9100.dts | 28 +++++++++++++-------------
- arch/arm/boot/dts/exynos4210-trats.dts | 28 +++++++++++++-------------
- 2 files changed, 28 insertions(+), 28 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts b/arch/arm/boot/dts/exynos4210-i9100.dts
-index 3c0a18b30837..4058e780e288 100644
---- a/arch/arm/boot/dts/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/exynos4210-i9100.dts
-@@ -421,20 +421,20 @@ pmic@66 {
- 						 <&gpx0 6 GPIO_ACTIVE_HIGH>,
- 						 <&gpl0 0 GPIO_ACTIVE_HIGH>;
- 
--		max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
--						 <1250000>, <1200000>,
--						 <1150000>, <1100000>,
--						 <1000000>, <950000>;
--
--		max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
--						 <950000>,  <900000>,
--						 <1100000>, <1000000>,
--						 <950000>,  <900000>;
--
--		max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
--						 <1200000>, <1200000>,
--						 <1200000>, <1200000>,
--						 <1200000>, <1200000>;
-+		max8997,pmic-buck1-dvs-voltage = <1350000 1300000
-+						  1250000 1200000
-+						  1150000 1100000
-+						  1000000  950000>;
-+
-+		max8997,pmic-buck2-dvs-voltage = <1100000 1000000
-+						   950000  900000
-+						  1100000 1000000
-+						   950000  900000>;
-+
-+		max8997,pmic-buck5-dvs-voltage = <1200000 1200000
-+						  1200000 1200000
-+						  1200000 1200000
-+						  1200000 1200000>;
- 
- 		pinctrl-0 = <&max8997_irq>, <&otg_gp>, <&usb_sel>;
- 		pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 01f44d95f671..23041db78f2e 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -302,20 +302,20 @@ pmic@66 {
- 						 <&gpx0 6 GPIO_ACTIVE_HIGH>,
- 						 <&gpl0 0 GPIO_ACTIVE_HIGH>;
- 
--		max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
--						 <1250000>, <1200000>,
--						 <1150000>, <1100000>,
--						 <1000000>, <950000>;
--
--		max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
--						 <950000>,  <900000>,
--						 <1100000>, <1000000>,
--						 <950000>,  <900000>;
--
--		max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
--						 <1200000>, <1200000>,
--						 <1200000>, <1200000>,
--						 <1200000>, <1200000>;
-+		max8997,pmic-buck1-dvs-voltage = <1350000 1300000
-+						  1250000 1200000
-+						  1150000 1100000
-+						  1000000  950000>;
-+
-+		max8997,pmic-buck2-dvs-voltage = <1100000 1000000
-+						   950000  900000
-+						  1100000 1000000
-+						   950000  900000>;
-+
-+		max8997,pmic-buck5-dvs-voltage = <1200000 1200000
-+						  1200000 1200000
-+						  1200000 1200000
-+						  1200000 1200000>;
- 
- 		regulators {
- 			valive_reg: LDO2 {
--- 
-2.32.0
-
+I don't think clk_put() dropping a range request is very important right
+now. If this isn't fixed tomorrow then we should revert out this patch
+so systems can boot -rc1 and try to fix it in parallel.
