@@ -2,119 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEEDC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 08:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBB1C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 09:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232418AbiCaIZQ (ORCPT
+        id S234231AbiCaJoF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 31 Mar 2022 04:25:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50524 "EHLO
+        Thu, 31 Mar 2022 05:44:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232661AbiCaIZN (ORCPT
+        with ESMTP id S234232AbiCaJoA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Mar 2022 04:25:13 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A7066FF56
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Mar 2022 01:23:26 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id bg10so46476096ejb.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Mar 2022 01:23:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Dq8MH9owPalNoE790NJ78mjvgtH3i7GUOFDcmGYkiNI=;
-        b=zC8J+jsCP8GBgIV1dg4280d051BMUkw14jvIAPX6FX74XfgmGOMhC/3EvKZ4n/D2Ev
-         ifoEWb6tBG0tjvI6DVcScsUdHXd+vPk//ix25xmT9zRiE6RPIdeWGDZxRD8KdKx8w7y8
-         Okuav+yBIaSWElVnAFlvdB2jE1ik2unSGchHkh3fKOn03GEul2H/42YENDooCXCX881E
-         Et+tIpD8Bwzpkubd2mON0a+dfgIgKYz4okqH+J1bLpYztup6hDh9EutizHteTXeY2gmz
-         H66kJZptha0LGozRz9qClrRQTCCMd7GO9/JmG+rfnzzWmJOmalus3xD/zjF9wVbBhN5j
-         rPJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Dq8MH9owPalNoE790NJ78mjvgtH3i7GUOFDcmGYkiNI=;
-        b=AeiOUHyuztw/vLDezVhH+iTjzZnM/VTeSLJWSazp+m3n1weJc76Lj7bRYTR51NzguJ
-         ZM6t1v4qNrO6eMHTXKLUxtBvIaWIvL/ykhRh/Ak4AXSCgkps9R1nTa/CX86LaTLxJb/2
-         qq30kSIGZmUHicFeCaWy+3Ca9GwCOwA5M2sFA0lAgmSB4NySuyoFQ7zRqhYaltr8zihd
-         4W2x7Cj7nvj13ZC6MdHD0wA9sgsaB/myG19tbBUqbnmPNuKjEfVriEQQsH1AcXa9sdrN
-         riKG9pNX5aDacpP67BueiwsMtd4d+HejKwOzuAZdnRbZE8GNJxpo+15xOt0s5ziXSSpR
-         MhnA==
-X-Gm-Message-State: AOAM532PtIAIsbyyQxypDVun1Hf2c1EBnM1UlkP/j0DDl/qBMu0TnZ2H
-        Z2KPyXeKqxWVhciMwdYmQ7m3Uw==
-X-Google-Smtp-Source: ABdhPJxa9OvJVcjcn0Ko1P15Ke3xBtXhTgUulbtKmsRbDdYifKKquk9+NHcrPDRyT7IoQqmrxLFOMQ==
-X-Received: by 2002:a17:907:3f07:b0:6e0:2fa0:2482 with SMTP id hq7-20020a1709073f0700b006e02fa02482mr3857385ejc.766.1648715004854;
-        Thu, 31 Mar 2022 01:23:24 -0700 (PDT)
-Received: from [192.168.0.165] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id bx5-20020a0564020b4500b00418fca53406sm10709564edb.27.2022.03.31.01.23.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Mar 2022 01:23:24 -0700 (PDT)
-Message-ID: <15b3d34f-2a91-6dd3-8335-9ccd0d5ec70e@linaro.org>
-Date:   Thu, 31 Mar 2022 10:23:23 +0200
+        Thu, 31 Mar 2022 05:44:00 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 469C41D9163;
+        Thu, 31 Mar 2022 02:42:13 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id A7D9580DB;
+        Thu, 31 Mar 2022 09:40:03 +0000 (UTC)
+Date:   Thu, 31 Mar 2022 12:42:10 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+Message-ID: <YkV3ch7R7YxlATW+@atomide.com>
+References: <20220325161144.1901695-1-maxime@cerno.tech>
+ <20220325161144.1901695-4-maxime@cerno.tech>
+ <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
+ <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
+ <20220330084710.3r6b5pjspz5hdmy6@houat>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] thermal: exynos: fix masking value for exynos7
- temp_error
-Content-Language: en-US
-To:     hypmean.kim@samsung.com, "bzolnier@gmail.com" <bzolnier@gmail.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "amitk@kernel.org" <amitk@kernel.org>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>,
-        "edubezval@gmail.com" <edubezval@gmail.com>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20220331071833.115732-1-hypmean.kim@samsung.com>
- <CGME20220331071809epcas2p472298073d4aed0a8026d4b08967c5de5@epcms2p5>
- <20220331072843epcms2p5c9e7ee4756d1aa267cf4af56b0ca22fc@epcms2p5>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220331072843epcms2p5c9e7ee4756d1aa267cf4af56b0ca22fc@epcms2p5>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220330084710.3r6b5pjspz5hdmy6@houat>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 31/03/2022 09:28, Sang Min Kim wrote:
->  
+Hi,
 
-Unneeded empty line at beginning of msg.
+* Maxime Ripard <maxime@cerno.tech> [700101 02:00]:
+> Hi Marek,
+> 
+> On Wed, Mar 30, 2022 at 10:06:13AM +0200, Marek Szyprowski wrote:
+> > On 25.03.2022 17:11, Maxime Ripard wrote:
+> > > While the current code will trigger a new clk_set_rate call whenever the
+> > > rate boundaries are changed through clk_set_rate_range, this doesn't
+> > > occur when clk_put() is called.
+> > >
+> > > However, this is essentially equivalent since, after clk_put()
+> > > completes, those boundaries won't be enforced anymore.
+> > >
+> > > Let's add a call to clk_set_rate_range in clk_put to make sure those
+> > > rate boundaries are dropped and the clock drivers can react.
+> > >
+> > > Let's also add a few tests to make sure this case is covered.
+> > >
+> > > Fixes: c80ac50cbb37 ("clk: Always set the rate on clk_set_range_rate")
+> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > 
+> > This patch landed recently in linux-next 20220328 as commit 7dabfa2bc480 
+> > ("clk: Drop the rate range on clk_put()"). Sadly it breaks booting of 
+> > the few of my test systems: Samsung ARM 32bit Exynos3250 based Rinato 
+> > board and all Amlogic Meson G12B/SM1 based boards (Odroid C4, N2, Khadas 
+> > VIM3/VIM3l). Rinato hangs always with the following oops:
+> > 
+> > --->8---
+> > 
+> > Kernel panic - not syncing: MCT hangs after writing 4 (offset:0x420)
+> > CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.17.0-rc1-00014-g7dabfa2bc480 
+> > #11551
+> > Hardware name: Samsung Exynos (Flattened Device Tree)
+> >   unwind_backtrace from show_stack+0x10/0x14
+> >   show_stack from dump_stack_lvl+0x58/0x70
+> >   dump_stack_lvl from panic+0x10c/0x328
+> >   panic from exynos4_mct_tick_stop+0x0/0x2c
+> > ---[ end Kernel panic - not syncing: MCT hangs after writing 4 
+> > (offset:0x420) ]---
+> > 
+> > --->8---
+> > 
+> > Amlogic boards hang randomly during early userspace init, usually just 
+> > after loading the driver modules.
+> > 
+> > Reverting $subject on top of linux-next fixes all those problems.
+> > 
+> > I will try to analyze it a bit more and if possible provide some more 
+> > useful/meaning full logs later.
+> 
+> I'm not sure what could go wrong there, but if you can figure out the
+> clock, if it tries to set a new rate and what rate it is, it would be
+> awesome :)
 
-> Modify mask value for the temp_error in the sanitize_temp_error() function.
->  
-> Fixes: aef27b658b43 ("thermal: exynos: use sanitize_temp_error() in exynos7_tmu_initialize()")
-> masked temp_error2 with EXYNOS_TMU_TEMP_MASK(0xff) value even in the case
-> of EXYNOS7.
-> In addition, when entering the if statement, both temp_error1 and 2 are
-> masked with EXYNOS_TMU_TEMP_MASK(0xff).
->  
-> By modifying to use the previously declared local variable tmu_temp_mask,
-> the mask value suitable for the SOC can be applied.
->  
+I'm also seeing clockevent break on omaps as a wrong source clock gets
+picked.
 
-Fixes tag goes next to other tags, so usually before Signed-off-by.
-Check some existing commits for examples.
+It seems the dts assigned-clock-parents no longer works now?
 
-> Signed-off-by: sangmin kim <hypmean.kim@samsung.com>
+So the following no longer sets omap_32k_fck as the clockevent source:
 
-You received by Reviewed-by tag, so you should include it in v2. Don't
-skip them.
+timer@0 {
+	assigned-clocks = <&gpt1_fck>;
+	assigned-clock-parents = <&omap_32k_fck>;
+};
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Regards,
 
-> ---
->  V1 -> V2: Add fixes tag
->  
->  drivers/thermal/samsung/exynos_tmu.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->  
+Tony
 
-Best regards,
-Krzysztof
