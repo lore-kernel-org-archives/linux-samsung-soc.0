@@ -2,67 +2,26 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ECEC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 15:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC2CC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 17:00:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238497AbiCaPd4 (ORCPT
+        id S240443AbiCaRCA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 31 Mar 2022 11:33:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50578 "EHLO
+        Thu, 31 Mar 2022 13:02:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238351AbiCaPdp (ORCPT
+        with ESMTP id S239462AbiCaRCA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 31 Mar 2022 11:33:45 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F1921C72B;
-        Thu, 31 Mar 2022 08:31:41 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0AD7D5C01D1;
-        Thu, 31 Mar 2022 11:31:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 31 Mar 2022 11:31:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=H69zcspglzceS1cVwdKFLct5oM6OAoqVhyVU52
-        9lGKw=; b=isvk9oun3xx8tu3eJQVXeOINnwtOlaciGO5dO/VyxXo3DPN9jyM2B2
-        GjLUcbHE1eqnPMjf4LJqk/bidYJibzTXu7J6cw6w2zSRiO66iRP6l3Rp2cTqjCrH
-        Y8nlkM20zeFzyZDHjN72hesMZL5JoCCEvum6nhb0PdPowFOYSP6PsFbZJTIWf328
-        NDCD5pJAQt9XyQUTL+QZEUOqwOuxZb8tishbIFdU+YDD6k8cZgRYUECmU7imsqrW
-        p39hmjNsBTsIZXvsf7oNeBNyixNUsGOPAug3Qsk4lEVyV+n1yObQ8SJz3UaRZSHT
-        2xeKYsfWNgeoCBHhooAB7YfLLWLQjjbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=H69zcspglzceS1cVw
-        dKFLct5oM6OAoqVhyVU529lGKw=; b=M6RkpN8s58vhj2n1K1oprt5IaABjAWfLn
-        Lu/UFxucBtOBzoxyYTX0sDjZ3NcDDNV6MAvyATUDGSegM7HzF2e9S3avjJK4Wk12
-        9YPYaRdwOtgKGG0f8Caa1yQQjgldPtHr2zrVMFrFjBTu5m6StzHwtKvmWOWTCZn5
-        /ANDPUohXDU7Zp8LcsUaif/lxKBYTgcJ6WI8GXfQ+a03TVuPAZZAwX/DPDCptv8a
-        3JijgNY94eZsV1cd1tUg0dKz18wX1pcyHdH9FpLSaTgB+5Mkrcm7ZGOQFT8dlFAI
-        qYQrwA0GFV4BBiMwRSBXUFp3quOFikV/MmrajV/1mVAsUxi3lGtxQ==
-X-ME-Sender: <xms:WclFYoWlFcEjb8w7Z0JpiHFsI8uZwOERozhLeI1f30PwovkHWYDZDA>
-    <xme:WclFYskTf91eCCwH8XOZ5khh_bs7T8Rez7eiX89cqaq0qnSyPlU8DDkJd8k8d_FV6
-    bEAqyNnDlIGZ-dalJs>
-X-ME-Received: <xmr:WclFYsZajv11ExEXP7zhWHCMiN9BCMgqxOpczLTMBeKaxfCGnvIGCIxpASyWjKtvQAqlapphS3BEmhBtESqNfz0TcNu7WCIgorsv2Fw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudeigedgkeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:WclFYnX2lYIHqYKBdvJpNMpsTajvvZK7LpbUkKb5481D3faRPMAaHQ>
-    <xmx:WclFYinSZjvusPjQA_J2-fMcugwd1dgk5MDRoKhU0tAZ8uDpmOFcFg>
-    <xmx:WclFYsftSnjeeK1CYMtPRUE3DbaPNjAdxFo7eS9X9PqIMtqp7fQOAA>
-    <xmx:W8lFYs6AQRc8lRlWYLoGk56LPY5LPd42KWtLhyLHUntf1ZVnt_mExg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 31 Mar 2022 11:31:36 -0400 (EDT)
-Date:   Thu, 31 Mar 2022 17:31:34 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Tony Lindgren <tony@atomide.com>
+        Thu, 31 Mar 2022 13:02:00 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 88DC958812;
+        Thu, 31 Mar 2022 10:00:11 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id D58EA80DB;
+        Thu, 31 Mar 2022 16:58:01 +0000 (UTC)
+Date:   Thu, 31 Mar 2022 20:00:09 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
@@ -71,7 +30,7 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
-Message-ID: <20220331153134.h3alp24hzquajkly@houat>
+Message-ID: <YkXeGS5zaovOaEzp@atomide.com>
 References: <20220325161144.1901695-1-maxime@cerno.tech>
  <20220325161144.1901695-4-maxime@cerno.tech>
  <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
@@ -80,138 +39,339 @@ References: <20220325161144.1901695-1-maxime@cerno.tech>
  <YkV3ch7R7YxlATW+@atomide.com>
  <20220331095456.dyyxsiu2b3yw2vvs@houat>
  <YkXCGlrok0niwlyg@atomide.com>
+ <20220331153134.h3alp24hzquajkly@houat>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="z4mxn2vo45xyajfv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YkXCGlrok0niwlyg@atomide.com>
+In-Reply-To: <20220331153134.h3alp24hzquajkly@houat>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+* Maxime Ripard <maxime@cerno.tech> [220331 15:29]:
+> On Thu, Mar 31, 2022 at 06:00:42PM +0300, Tony Lindgren wrote:
+> > * Maxime Ripard <maxime@cerno.tech> [220331 09:52]:
+> > > On Thu, Mar 31, 2022 at 12:42:10PM +0300, Tony Lindgren wrote:
+> > > > It seems the dts assigned-clock-parents no longer works now?
+> > > 
+> > > That would make some kind of sense, __set_clk_parents calls clk_put on
+> > > both the assigned clock and its parent.
+> > > 
+> > > Could you see what parent (and why?) it tries to enforce then?
+> > 
+> > It picks the other option available for the mux clock that only has
+> > two options. No idea why, but if you have some debug patch in mind I
+> > can give it a try.
+> > 
+> > > It looks like the gpt1_fck driver might favor another parent for that
+> > > rate, which, if it's an invalid configuration, shouldn't really happen?
+> > 
+> > Hmm there's a gate clock and a mux clock, there's not really a rate
+> > selection available here for the sources.
+> 
+> If I followed the OMAP driver properly, clk_mux_determine_rate_flags is
+> doing the heavy lifting, could you run your test with
 
---z4mxn2vo45xyajfv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks that produces some interesting output. In the working case with
+the $subject patch reverted we have:
 
-Hi Tony,
+[    0.000000] Clocking rate (Crystal/Core/MPU): 26.0/400/600 MHz
+[    0.000000] clk_core_set_rate_nolock: rate 960000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 960000000
+[    0.000000] clk_core_set_rate_nolock: rate 120000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 120000000
+[    0.000000] OMAP clocksource: 32k_counter at 32768 Hz
+[    0.000000] clocksource: 32k_counter: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 58327039986419 ns
+[    0.000000] sched_clock: 32 bits at 32kHz, resolution 30517ns, wraps every 65535999984741ns
+[    0.011779] TI gptimer clockevent: always-on 32768 Hz at /ocp@68000000/target-module@48318000
 
-On Thu, Mar 31, 2022 at 06:00:42PM +0300, Tony Lindgren wrote:
-> * Maxime Ripard <maxime@cerno.tech> [220331 09:52]:
-> > On Thu, Mar 31, 2022 at 12:42:10PM +0300, Tony Lindgren wrote:
-> > > It seems the dts assigned-clock-parents no longer works now?
-> >=20
-> > That would make some kind of sense, __set_clk_parents calls clk_put on
-> > both the assigned clock and its parent.
-> >=20
-> > Could you see what parent (and why?) it tries to enforce then?
->=20
-> It picks the other option available for the mux clock that only has
-> two options. No idea why, but if you have some debug patch in mind I
-> can give it a try.
->=20
-> > It looks like the gpt1_fck driver might favor another parent for that
-> > rate, which, if it's an invalid configuration, shouldn't really happen?
->=20
-> Hmm there's a gate clock and a mux clock, there's not really a rate
-> selection available here for the sources.
+In the failing case With the $subject patch not reverted, the debug
+output goes a bit crazy, see below :)
 
-If I followed the OMAP driver properly, clk_mux_determine_rate_flags is
-doing the heavy lifting, could you run your test with
+Regards,
 
--- >8 --
+Tony
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 91f863b7a824..c2ab1be62f96 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -552,6 +552,12 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 	unsigned long best =3D 0;
- 	struct clk_rate_request parent_req =3D *req;
-
-+	pr_crit("%s: requested rate %lu\n", __func__, req->rate);
-+
-+	parent =3D core->parent;
-+	pr_crit("%s: current parent %s\n", __func__, parent->name);
-+	pr_crit("%s: current parent rate %lu\n", __func__, clk_core_get_rate_nolo=
-ck(parent));
-+
- 	/* if NO_REPARENT flag set, pass through to current parent */
- 	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
- 		parent =3D core->parent;
-@@ -578,6 +584,11 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 		if (!parent)
- 			continue;
-
-+		pr_crit("%s: Trying parent %s (%lu)\n",
-+			__func__,
-+			parent->name,
-+			clk_core_get_rate_nolock(parent));
-+
- 		if (core->flags & CLK_SET_RATE_PARENT) {
- 			parent_req =3D *req;
- 			ret =3D __clk_determine_rate(parent->hw, &parent_req);
-@@ -603,6 +614,11 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 	req->best_parent_rate =3D best;
- 	req->rate =3D best;
-
-+	pr_crit("%s: Best parent %s (%lu)\n",
-+		__func__,
-+		best_parent->name,
-+		best);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(clk_mux_determine_rate_flags);
-@@ -2201,8 +2217,12 @@ static int clk_core_set_rate_nolock(struct clk_core =
-*core,
- 	if (!core)
- 		return 0;
-
-+	pr_crit("%s: rate %lu\n", __func__, req_rate);
-+
- 	rate =3D clk_core_req_round_rate_nolock(core, req_rate);
-
-+	pr_crit("%s: rounded rate %lu\n", __func__, req_rate);
-+
- 	/* bail early if nothing to do */
- 	if (rate =3D=3D clk_core_get_rate_nolock(core))
- 		return 0;
-@@ -2367,6 +2387,8 @@ static int clk_set_rate_range_nolock(struct clk *clk,
- 		goto out;
- 	}
-
-+	pr_crit("%s: core req rate %lu\n", __func__, clk->core->req_rate);
-+
- 	/*
- 	 * Since the boundaries have been changed, let's give the
- 	 * opportunity to the provider to adjust the clock rate based on
-@@ -2385,6 +2407,9 @@ static int clk_set_rate_range_nolock(struct clk *clk,
- 	 *   this corner case when determining the rate
- 	 */
- 	rate =3D clamp(clk->core->req_rate, min, max);
-+
-+	pr_crit("%s: clamped rate %lu\n", __func__, rate);
-+
- 	ret =3D clk_core_set_rate_nolock(clk->core, rate);
- 	if (ret) {
- 		/* rollback the changes */
-
--- >8 --
-
-Thanks!
-Maxime
-
---z4mxn2vo45xyajfv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkXJVgAKCRDj7w1vZxhR
-xdqnAQDirrptanVmylHQEVFZFVzQKa8JhZUcWB4BlXxx+N73dQD/SnfWqCS+ZkXX
-HssIdrqzcr5LP0dnoNgDCIjJjktuvw4=
-=jZiI
------END PGP SIGNATURE-----
-
---z4mxn2vo45xyajfv--
+8< ----------------
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 0
+[    0.000000] clk_set_rate_range_nolock: clamped rate 0
+[    0.000000] clk_core_set_rate_nolock: rate 0
+[    0.000000] clk_core_set_rate_nolock: rounded rate 0
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 32768
+[    0.000000] clk_set_rate_range_nolock: clamped rate 32768
+[    0.000000] clk_core_set_rate_nolock: rate 32768
+[    0.000000] clk_core_set_rate_nolock: rounded rate 32768
+[    0.000000] clk_set_rate_range_nolock: core req rate 12000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 12000000
+[    0.000000] clk_core_set_rate_nolock: rate 12000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 12000000
+[    0.000000] clk_set_rate_range_nolock: core req rate 13000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 13000000
+[    0.000000] clk_core_set_rate_nolock: rate 13000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 13000000
+[    0.000000] clk_set_rate_range_nolock: core req rate 19200000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 19200000
+[    0.000000] clk_core_set_rate_nolock: rate 19200000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 19200000
+[    0.000000] clk_set_rate_range_nolock: core req rate 26000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 26000000
+[    0.000000] clk_core_set_rate_nolock: rate 26000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 26000000
+[    0.000000] clk_set_rate_range_nolock: core req rate 38400000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 38400000
+[    0.000000] clk_core_set_rate_nolock: rate 38400000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 38400000
+[    0.000000] clk_set_rate_range_nolock: core req rate 16800000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 16800000
+[    0.000000] clk_core_set_rate_nolock: rate 16800000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 16800000
+[    0.000000] clk_set_rate_range_nolock: core req rate 12000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 12000000
+[    0.000000] clk_core_set_rate_nolock: rate 12000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 12000000
+[    0.000000] clk_set_rate_range_nolock: core req rate 13000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 13000000
+[    0.000000] clk_core_set_rate_nolock: rate 13000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 13000000
+[    0.000000] clk_set_rate_range_nolock: core req rate 19200000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 19200000
+[    0.000000] clk_core_set_rate_nolock: rate 19200000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 19200000
+[    0.000000] clk_set_rate_range_nolock: core req rate 26000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 26000000
+[    0.000000] clk_core_set_rate_nolock: rate 26000000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 26000000
+[    0.000000] clk_set_rate_range_nolock: core req rate 38400000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 38400000
+[    0.000000] clk_core_set_rate_nolock: rate 38400000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 38400000
+[    0.000000] clk_set_rate_range_nolock: core req rate 16800000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 16800000
+[    0.000000] clk_core_set_rate_nolock: rate 16800000
+[    0.000000] clk_core_set_rate_nolock: rounded rate 16800000
+[    0.000000] clk_set_rate_range_nolock: core req rate 26000000
+[    0.000000] clk_set_rate_range_nolock: clamped rate 26000000
+[    0.000000] clk_core_set_rate_nolock: rate 26000000
+[    0.000000] clk_mux_determine_rate_flags: requested rate 26000000
+[    0.000000] clk_mux_determine_rate_flags: current parent virt_26000000_ck
+[    0.000000] clk_mux_determine_rate_flags: current parent rate 26000000
+[    0.000000] 8<--- cut here ---
+[    0.000000] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+[    0.000000] [00000000] *pgd=00000000
+[    0.000000] Internal error: Oops: 5 [#1] SMP ARM
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.17.0-13433-g14667a708872 #193
+[    0.000000] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[    0.000000] PC is at clk_mux_determine_rate_flags+0x284/0x2dc
+[    0.000000] LR is at clk_mux_determine_rate_flags+0x9c/0x2dc
+[    0.000000] pc : [<c0a3e28c>]    lr : [<c0a3e0a4>]    psr: 600000d3
+[    0.000000] sp : c0f01e68  ip : 3ffff7ff  fp : c0b49f04
+[    0.000000] r10: c0b49ef8  r9 : c18843c0  r8 : c18843c0
+[    0.000000] r7 : c0f01eb0  r6 : 018cba80  r5 : 00000000  r4 : 018cba80
+[    0.000000] r3 : 00000000  r2 : 00000000  r1 : c0f01d38  r0 : c0c923e8
+[    0.000000] Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+[    0.000000] Control: 10c5387d  Table: 80004019  DAC: 00000051
+[    0.000000] Register r0 information: non-slab/vmalloc memory
+[    0.000000] Register r1 information: non-slab/vmalloc memory
+[    0.000000] Register r2 information: NULL pointer
+[    0.000000] Register r3 information: NULL pointer
+[    0.000000] Register r4 information: non-paged memory
+[    0.000000] Register r5 information: NULL pointer
+[    0.000000] Register r6 information: non-paged memory
+[    0.000000] Register r7 information: non-slab/vmalloc memory
+[    0.000000] Register r8 information: slab kmalloc-192 start c18843c0 pointer offset 0 size 192
+[    0.000000] Register r9 information: slab kmalloc-192 start c18843c0 pointer offset 0 size 192
+[    0.000000] Register r10 information: non-slab/vmalloc memory
+[    0.000000] Register r11 information: non-slab/vmalloc memory
+[    0.000000] Register r12 information: non-paged memory
+[    0.000000] Process swapper/0 (pid: 0, stack limit = 0x(ptrval))
+[    0.000000] Stack: (0xc0f01e68 to 0xc0f02000)
+[    0.000000] 1e60:                   00000000 ffffffff 018cba80 00000000 ffffffff 018cba80
+[    0.000000] 1e80: c180adc0 c0f051c8 c18843c0 c18843c0 00000000 018cba80 00000000 ffffffff
+[    0.000000] 1ea0: c18843c0 c7c9fae8 c7c9fb54 c0a3e378 018cba80 00000000 ffffffff 018cba80
+[    0.000000] 1ec0: c180adc0 c0f051c8 c1028c80 c180aa40 018cba80 018cba80 00000000 c065349c
+[    0.000000] 1ee0: 00000000 00000000 c7c9fb54 00000000 c180aa40 c180aa40 c180aa80 c0f01f24
+[    0.000000] 1f00: c180aac0 00000000 00000001 c0653720 00000000 c180aa80 c0f01f24 c0e2c1a0
+[    0.000000] 1f20: 00000000 c180a788 c1880b48 c7c9f940 00000000 00000000 00000000 c7cd0d98
+[    0.000000] 1f40: c0e69b50 c0f01f70 a00000d3 c082c740 c7ca0c00 c0e69b50 c0f051c0 c7dffa40
+[    0.000000] 1f60: ffffffff 00000000 10c5387d c0e0f6dc 00000000 c0f051c8 ffffffff c100843c
+[    0.000000] 1f80: c0e5ba60 c0f051c0 c7dffa40 ffffffff 00000000 10c5387d 00000000 c0e0ba4c
+[    0.000000] 1fa0: c1008000 c0e10e7c c1008000 c0e00f80 ffffffff ffffffff 00000000 c0e00728
+[    0.000000] 1fc0: 00000000 c0e5ba60 a5aa33e0 c0f051c8 00000000 c0e004bc 00000051 10c0387d
+[    0.000000] 1fe0: ffffffff 86feb000 413fc082 10c5387d 00000000 00000000 00000000 00000000
+[    0.000000]  clk_mux_determine_rate_flags from clk_core_set_rate_nolock.part.0+0x84/0x1a8
+[    0.000000]  clk_core_set_rate_nolock.part.0 from clk_set_rate_range_nolock.part.0+0x278/0x2a0
+[    0.000000]  clk_set_rate_range_nolock.part.0 from __clk_put+0x58/0x160
+[    0.000000]  __clk_put from of_clk_init+0x1b4/0x268
+[    0.000000]  of_clk_init from omap_clk_init+0x38/0x58
+[    0.000000]  omap_clk_init from omap_init_time_of+0x8/0x10
+[    0.000000]  omap_init_time_of from start_kernel+0x480/0x6b0
+[    0.000000]  start_kernel from 0x0
+[    0.000000] Code: 0a000008 e587400c e5874000 e59f0050 (e5952000) 
+[    0.000000] ---[ end trace 0000000000000000 ]---
+[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+[    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
