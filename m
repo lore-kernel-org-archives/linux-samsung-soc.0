@@ -2,218 +2,159 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C3AC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Mar 2022 19:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6024EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Mar 2022 07:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbiC3UBR (ORCPT
+        id S232139AbiCaHan (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Mar 2022 16:01:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60406 "EHLO
+        Thu, 31 Mar 2022 03:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231614AbiC3UBP (ORCPT
+        with ESMTP id S232051AbiCaHak (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Mar 2022 16:01:15 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF43921272;
-        Wed, 30 Mar 2022 12:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648670369; x=1680206369;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7tDoFQmVXXYn7rMUwMmyJcJFUqWlgwtXoTN80z/SlAk=;
-  b=ndPoeMFo0sq77a3QNfaj+agRGQ3smF+xF/TP3i1mKey8jbZ6MfBO/he/
-   gRrQGAwmT8qqaLVfoel7kDtQSVXDL72Q1/99Rr2AIESFQiXhTD0/PSs47
-   BPAWHkoy6ueakXUDKVoyKFyl0BWxeK3KP8Qrdkgb4QFD8Tr8p2q+ixuhN
-   60nQLwqrHYdmT96yIQFp21kpo5ZeTOHfSwPpa5fhGkamZqMyb4MDUY60B
-   52tVrmo/mBwXysJd9r4eZjVA6jXS5lFGN0DOubHl0WTrgilQy9spnBOif
-   zdyB8s1QTBm2Kdg8w4O12e+Eu2lSVNOh+PrNd3hpzDS8A3WCc/UrYYv4c
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10302"; a="322816271"
-X-IronPort-AV: E=Sophos;i="5.90,223,1643702400"; 
-   d="scan'208";a="322816271"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2022 12:59:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,223,1643702400"; 
-   d="scan'208";a="639849777"
-Received: from lkp-server02.sh.intel.com (HELO 56431612eabd) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Mar 2022 12:59:21 -0700
-Received: from kbuild by 56431612eabd with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nZeTQ-0000RU-Jy;
-        Wed, 30 Mar 2022 19:59:20 +0000
-Date:   Thu, 31 Mar 2022 03:58:20 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Cc:     kbuild-all@lists.01.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v3 05/13] pinctrl: samsung: Switch to use
- for_each_gpiochip_node() helper
-Message-ID: <202203310305.QZp98VzT-lkp@intel.com>
-References: <20220330145030.1562-6-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220330145030.1562-6-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 31 Mar 2022 03:30:40 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB383819A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Mar 2022 00:28:50 -0700 (PDT)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220331072848epoutp0312dedd934e3dd7bc8d6e6e7dbc2401e1~hZpTo_LQy1810818108epoutp03R
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Mar 2022 07:28:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220331072848epoutp0312dedd934e3dd7bc8d6e6e7dbc2401e1~hZpTo_LQy1810818108epoutp03R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1648711728;
+        bh=JklK4+/QcfhoWqf+/Kmo7YPclTT9xspCDtBds+uRFXM=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=JHpYXtVOPJx5qRxQd1PvEDsZJRgc2r0mUTH3vgR8A03MhA4i4AhPJ2Ym9L3ChxxgM
+         AG/GKHlyrXCNJGWuT9QxNp+tOvre3kv5ddatXqyqwxiNBXPxAXu/IHgngka090vVcw
+         WCRIAFdA/m9Ol9UIVkVv8wIgY7E0cCXwu2AE1ZIs=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220331072847epcas2p103c7961fef3d8f6447169f5b0a101abb~hZpSymB3G1115511155epcas2p17;
+        Thu, 31 Mar 2022 07:28:47 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.88]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4KTZfh4Mddz4x9Q1; Thu, 31 Mar
+        2022 07:28:44 +0000 (GMT)
+X-AuditID: b6c32a48-511ff7000000810c-48-6245582b5316
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        39.F4.33036.B2855426; Thu, 31 Mar 2022 16:28:43 +0900 (KST)
+Mime-Version: 1.0
+Subject: [PATCH v2] thermal: exynos: fix masking value for exynos7
+ temp_error
+Reply-To: hypmean.kim@samsung.com
+Sender: Sang Min Kim <hypmean.kim@samsung.com>
+From:   Sang Min Kim <hypmean.kim@samsung.com>
+To:     "bzolnier@gmail.com" <bzolnier@gmail.com>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "amitk@kernel.org" <amitk@kernel.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>
+CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20220331071833.115732-1-hypmean.kim@samsung.com>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20220331072843epcms2p5c9e7ee4756d1aa267cf4af56b0ca22fc@epcms2p5>
+Date:   Thu, 31 Mar 2022 16:28:43 +0900
+X-CMS-MailID: 20220331072843epcms2p5c9e7ee4756d1aa267cf4af56b0ca22fc
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmua52hGuSwaM1ShYP5m1jszg8v8Li
+        +5brTBYvD2lazPssazH/yjVWi/PnN7BbbHoMZF3eNYfN4nPvEUaLGef3MVnM/TKV2eLJwz42
+        B16PnbPusnss3vOSyWPTqk42jzvX9rB5bF5S79G3ZRWjx+dNcgHsUdk2GamJKalFCql5yfkp
+        mXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUCnKimUJeaUAoUCEouLlfTtbIry
+        S0tSFTLyi0tslVILUnIKzAv0ihNzi0vz0vXyUkusDA0MjEyBChOyM34uWctc8Euh4tuKzewN
+        jD0KXYycHBICJhINh1+wdDFycQgJ7GCU6Lv3kL2LkYODV0BQ4u8OYZAaYQF/iYPPdrOC2EIC
+        ihIvd2xnhojrSdzc+JkdxGYT0JF43HqfCWSOiMATJonz388ygjjMAjOYJM52nWCF2MYrMaP9
+        KQuELS2xfflWRhCbU8BO4sz5xVBxDYkfy3qZIWxRiZur37LD2O+PzWeEsEUkWu+dhaoRlHjw
+        czdUXFJi0+HtUPXVErc2LmcFOUJCoIFRovVbEzPIZxIC+hI7rhuD1PAK+EpM6pgN1ssioCqx
+        vO0Z1J0uEvt2HwOLMwtoSyxb+BqslVlAU2L9Ln2IKcoSR26xwHzVsPE3OzqbWYBPouPwX7j4
+        jnlPmCBsVYmdm7rZJzAqz0KE9Cwku2Yh7FrAyLyKUSy1oDg3PbXYqMAEHrnJ+bmbGMGpVstj
+        B+Pstx/0DjEycTAeYpTgYFYS4f140DlJiDclsbIqtSg/vqg0J7X4EKMp0JcTmaVEk/OByT6v
+        JN7QxNLAxMzM0NzI1MBcSZzXK2VDopBAemJJanZqakFqEUwfEwenVANTQ0C9js29zX7bVm9M
+        Vnx/at3Kuq/T9/aZZBQmvy3PfZp6qJ+la41Y291PbHVCR+yXZ+UuZV4mu0ZivcpiP++lP1wy
+        lHYahyr1deu3+2kGXbRuktE7nrLpf/bBfbN433EqlFduKG14vngh/1wLo+vRNYkc1173FkQo
+        yqSf6rr6qvmD2pyem1Y/ZXq+FcrOOqzWdDojrtJfvDf96WNXM8cahrupio02C2cZdNxbv3KL
+        xuVpp7eXBa8x2b7LKY6H959JcE28p9e/eZmPWZnvOJ14c7G/wbfXrUop0KTrg1rNV5G+a0pf
+        Hc9u/X1b+Yg273+hYOEgfTbpqNU7J0c7rdrUvPp2jfDh7RM/tZs8l1diKc5INNRiLipOBABv
+        sw3XPgQAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220331071809epcas2p472298073d4aed0a8026d4b08967c5de5
+References: <20220331071833.115732-1-hypmean.kim@samsung.com>
+        <CGME20220331071809epcas2p472298073d4aed0a8026d4b08967c5de5@epcms2p5>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andy,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on a67ba3cf9551f8c92d5ec9d7eae1aadbb9127b57]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/gpiolib-Two-new-helpers-and-way-toward-fwnode/20220330-225341
-base:   a67ba3cf9551f8c92d5ec9d7eae1aadbb9127b57
-config: alpha-randconfig-r013-20220330 (https://download.01.org/0day-ci/archive/20220331/202203310305.QZp98VzT-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/3539d23dd289ca77a85d66fe8721e4febfc50ea4
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Andy-Shevchenko/gpiolib-Two-new-helpers-and-way-toward-fwnode/20220330-225341
-        git checkout 3539d23dd289ca77a85d66fe8721e4febfc50ea4
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=alpha SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/pinctrl/samsung/pinctrl-s3c24xx.c: In function 's3c24xx_eint_init':
->> drivers/pinctrl/samsung/pinctrl-s3c24xx.c:528:64: error: 'struct samsung_pin_bank' has no member named 'of_node'; did you mean 'fwnode'?
-     528 |                 bank->irq_domain = irq_domain_add_linear(bank->of_node,
-         |                                                                ^~~~~~~
-         |                                                                fwnode
-
-
-vim +528 drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  457  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  458  static int s3c24xx_eint_init(struct samsung_pinctrl_drv_data *d)
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  459  {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  460  	struct device *dev = d->dev;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  461  	const struct of_device_id *match;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  462  	struct device_node *eint_np = NULL;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  463  	struct device_node *np;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  464  	struct samsung_pin_bank *bank;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  465  	struct s3c24xx_eint_data *eint_data;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  466  	const struct irq_domain_ops *ops;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  467  	unsigned int i;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  468  	bool eint0_3_parent_only;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  469  	irq_flow_handler_t *handlers;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  470  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  471  	for_each_child_of_node(dev->of_node, np) {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  472  		match = of_match_node(s3c24xx_eint_irq_ids, np);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  473  		if (match) {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  474  			eint_np = np;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  475  			eint0_3_parent_only = (bool)match->data;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  476  			break;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  477  		}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  478  	}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  479  	if (!eint_np)
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  480  		return -ENODEV;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  481  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  482  	eint_data = devm_kzalloc(dev, sizeof(*eint_data), GFP_KERNEL);
-6fbbcb050802d6 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Krzysztof Kozlowski 2019-08-05  483  	if (!eint_data) {
-6fbbcb050802d6 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Krzysztof Kozlowski 2019-08-05  484  		of_node_put(eint_np);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  485  		return -ENOMEM;
-6fbbcb050802d6 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Krzysztof Kozlowski 2019-08-05  486  	}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  487  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  488  	eint_data->drvdata = d;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  489  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  490  	handlers = eint0_3_parent_only ? s3c2410_eint_handlers
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  491  				       : s3c2412_eint_handlers;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  492  	for (i = 0; i < NUM_EINT_IRQ; ++i) {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  493  		unsigned int irq;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  494  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  495  		irq = irq_of_parse_and_map(eint_np, i);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  496  		if (!irq) {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  497  			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
-6fbbcb050802d6 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Krzysztof Kozlowski 2019-08-05  498  			of_node_put(eint_np);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  499  			return -ENXIO;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  500  		}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  501  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  502  		eint_data->parents[i] = irq;
-0cfc45cfdf5065 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Thomas Gleixner     2015-06-21  503  		irq_set_chained_handler_and_data(irq, handlers[i], eint_data);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  504  	}
-6fbbcb050802d6 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Krzysztof Kozlowski 2019-08-05  505  	of_node_put(eint_np);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  506  
-1bf00d7a6dbff0 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Tomasz Figa         2014-09-23  507  	bank = d->pin_banks;
-1bf00d7a6dbff0 drivers/pinctrl/samsung/pinctrl-s3c24xx.c Tomasz Figa         2014-09-23  508  	for (i = 0; i < d->nr_banks; ++i, ++bank) {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  509  		struct s3c24xx_eint_domain_data *ddata;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  510  		unsigned int mask;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  511  		unsigned int irq;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  512  		unsigned int pin;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  513  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  514  		if (bank->eint_type != EINT_TYPE_WKUP)
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  515  			continue;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  516  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  517  		ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  518  		if (!ddata)
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  519  			return -ENOMEM;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  520  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  521  		ddata->bank = bank;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  522  		ddata->eint_data = eint_data;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  523  		ddata->eint0_3_parent_only = eint0_3_parent_only;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  524  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  525  		ops = (bank->eint_offset == 0) ? &s3c24xx_gpf_irq_ops
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  526  					       : &s3c24xx_gpg_irq_ops;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  527  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21 @528  		bank->irq_domain = irq_domain_add_linear(bank->of_node,
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  529  				bank->nr_pins, ops, ddata);
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  530  		if (!bank->irq_domain) {
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  531  			dev_err(dev, "wkup irq domain add failed\n");
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  532  			return -ENXIO;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  533  		}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  534  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  535  		irq = bank->eint_offset;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  536  		mask = bank->eint_mask;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  537  		for (pin = 0; mask; ++pin, mask >>= 1) {
-774e2d981f517e drivers/pinctrl/pinctrl-s3c24xx.c         Dan Carpenter       2013-08-27  538  			if (irq >= NUM_EINT)
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  539  				break;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  540  			if (!(mask & 1))
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  541  				continue;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  542  			eint_data->domains[irq] = bank->irq_domain;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  543  			++irq;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  544  		}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  545  	}
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  546  
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  547  	return 0;
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  548  }
-af99a7507469d4 drivers/pinctrl/pinctrl-s3c24xx.c         Heiko Stuebner      2013-05-21  549  
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+=C2=A0=0D=0AModify=C2=A0mask=C2=A0value=C2=A0for=C2=A0the=C2=A0temp_error=
+=C2=A0in=C2=A0the=C2=A0sanitize_temp_error()=C2=A0function.=0D=0A=C2=A0=0D=
+=0AFixes:=C2=A0aef27b658b43=C2=A0(=22thermal:=C2=A0exynos:=C2=A0use=C2=A0sa=
+nitize_temp_error()=C2=A0in=C2=A0exynos7_tmu_initialize()=22)=0D=0Amasked=
+=C2=A0temp_error2=C2=A0with=C2=A0EXYNOS_TMU_TEMP_MASK(0xff)=C2=A0value=C2=
+=A0even=C2=A0in=C2=A0the=C2=A0case=0D=0Aof=C2=A0EXYNOS7.=0D=0AIn=C2=A0addit=
+ion,=C2=A0when=C2=A0entering=C2=A0the=C2=A0if=C2=A0statement,=C2=A0both=C2=
+=A0temp_error1=C2=A0and=C2=A02=C2=A0are=0D=0Amasked=C2=A0with=C2=A0EXYNOS_T=
+MU_TEMP_MASK(0xff).=0D=0A=C2=A0=0D=0ABy=C2=A0modifying=C2=A0to=C2=A0use=C2=
+=A0the=C2=A0previously=C2=A0declared=C2=A0local=C2=A0variable=C2=A0tmu_temp=
+_mask,=0D=0Athe=C2=A0mask=C2=A0value=C2=A0suitable=C2=A0for=C2=A0the=C2=A0S=
+OC=C2=A0can=C2=A0be=C2=A0applied.=0D=0A=C2=A0=0D=0ASigned-off-by:=C2=A0sang=
+min=C2=A0kim=C2=A0<hypmean.kim=40samsung.com>=0D=0A---=0D=0A=C2=A0V1=C2=A0-=
+>=C2=A0V2:=C2=A0Add=C2=A0fixes=C2=A0tag=0D=0A=C2=A0=0D=0A=C2=A0drivers/ther=
+mal/samsung/exynos_tmu.c=C2=A0=7C=C2=A06=C2=A0+++---=0D=0A=C2=A01=C2=A0file=
+=C2=A0changed,=C2=A03=C2=A0insertions(+),=C2=A03=C2=A0deletions(-)=0D=0A=C2=
+=A0=0D=0Adiff=C2=A0--git=C2=A0a/drivers/thermal/samsung/exynos_tmu.c=C2=A0b=
+/drivers/thermal/samsung/exynos_tmu.c=0D=0Aindex=C2=A0f4ab4c5b4b62..08c63fe=
+5566e=C2=A0100644=0D=0A---=C2=A0a/drivers/thermal/samsung/exynos_tmu.c=0D=
+=0A+++=C2=A0b/drivers/thermal/samsung/exynos_tmu.c=0D=0A=40=40=C2=A0-243,17=
+=C2=A0+243,17=C2=A0=40=40=C2=A0static=C2=A0void=C2=A0sanitize_temp_error(st=
+ruct=C2=A0exynos_tmu_data=C2=A0*data,=C2=A0u32=C2=A0trim_info)=0D=0A=C2=A0=
+=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_erro=
+r1=C2=A0=3D=C2=A0trim_info=C2=A0&=C2=A0tmu_temp_mask;=0D=0A=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_error2=C2=A0=3D=C2=A0((tr=
+im_info=C2=A0>>=C2=A0EXYNOS_TRIMINFO_85_SHIFT)=C2=A0&=0D=0A-=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0EXYNOS_TMU_TEMP_MASK);=0D=0A+=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0tmu_temp_mask);=0D=0A=C2=A0=0D=0A=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if=C2=A0(=21data->temp_error1=C2=A0=7C=
+=7C=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0(data->min_efuse_value=C2=A0>=C2=A0data->temp_error1)=C2=A0=7C=
+=7C=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0(data->temp_error1=C2=A0>=C2=A0data->max_efuse_value))=0D=0A-=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0data->temp_error1=C2=A0=3D=C2=A0data->efuse_value=C2=
+=A0&=C2=A0EXYNOS_TMU_TEMP_MASK;=0D=0A+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_erro=
+r1=C2=A0=3D=C2=A0data->efuse_value=C2=A0&=C2=A0tmu_temp_mask;=0D=0A=C2=A0=
+=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if=C2=A0(=21dat=
+a->temp_error2)=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->temp_error2=C2=A0=3D=
+=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0(data->efuse_value=C2=A0>>=C2=A0EXYNOS_TRIMINFO_85_SHIFT)=C2=A0&=0D=
+=0A-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+EXYNOS_TMU_TEMP_MASK;=0D=0A+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0tmu_temp_mask;=0D=0A=C2=A0=7D=0D=0A=C2=A0=0D=0A=C2=
+=A0static=C2=A0int=C2=A0exynos_tmu_initialize(struct=C2=A0platform_device=
+=C2=A0*pdev)=0D=0A--=0D=0A2.9.5=0D=0A
