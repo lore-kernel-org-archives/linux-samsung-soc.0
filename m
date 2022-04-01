@@ -2,98 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B056C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Apr 2022 07:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAFDC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Apr 2022 10:35:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244833AbiDAHtC (ORCPT
+        id S1344001AbiDAKhl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Apr 2022 03:49:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
+        Fri, 1 Apr 2022 06:37:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243493AbiDAHtC (ORCPT
+        with ESMTP id S1343982AbiDAKhl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Apr 2022 03:49:02 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64AB218C0F8;
-        Fri,  1 Apr 2022 00:47:13 -0700 (PDT)
-Received: by mail-qt1-f179.google.com with SMTP id t2so1521844qtw.9;
-        Fri, 01 Apr 2022 00:47:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hsgG5k1IRB7JkkSvYRKFqt0X90anL2wVYww9yxyb0VA=;
-        b=lnOnBBtJyi+ptYHryHFTbrSIM8RtWYeGSVrzVT8ziC8F/Nvt53QglIDMITc2ZX7AhZ
-         lrvLKKpXG1PL5hdaAM8vmXsVVGAU/Vd2+aC8GketleM3dPW9YNP0ai6RePkDhl5LVzT0
-         FObZUBHwcESGALGiPZLUAugR1xpF5buIXSAhIe4UiaFHlj5D4UyufWZTWiAr2DoDJIfu
-         eQ2fID1iWNGcmc5ctX+QJgdx9dPAF5llfXwhwMa/75goEfEsOtIvFwx/nQ6sHtAz8MSD
-         Jn0hfb2U4f41ebz2Qndq/UuapX/YJ5UBpzplb0f//nqX69RyWMR3tkk5kQG+00TfP5O8
-         Z3yw==
-X-Gm-Message-State: AOAM5337dPgbNs8vtYMzN2DFDS9dvLaeg979Rh6dNmtx6Af/MNsw5pmj
-        M9Svs/HHxLvSBtctklh2Hg6p3+hxKUWgVw==
-X-Google-Smtp-Source: ABdhPJwZE4sp1jfUL16KYUDF2Yg41lwFL597VHQxrQFo3hwFvOCVshdhzRqByH59tiWLWbTzIE+Mzg==
-X-Received: by 2002:a05:622a:2d5:b0:2e1:ea60:231 with SMTP id a21-20020a05622a02d500b002e1ea600231mr7530800qtx.460.1648799232308;
-        Fri, 01 Apr 2022 00:47:12 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id y17-20020a05622a121100b002e0702457b2sm1303952qtx.20.2022.04.01.00.47.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Apr 2022 00:47:12 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-2e592e700acso23523827b3.5;
-        Fri, 01 Apr 2022 00:47:11 -0700 (PDT)
-X-Received: by 2002:a81:5c2:0:b0:2e5:e4eb:c3e7 with SMTP id
- 185-20020a8105c2000000b002e5e4ebc3e7mr8846053ywf.62.1648799231230; Fri, 01
- Apr 2022 00:47:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220331211653.175200-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220331211653.175200-1-krzysztof.kozlowski@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Apr 2022 09:46:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVX-6A5KH1+WodNviq1LKqZ4qo7aq92S-j+zf79xQD0gQ@mail.gmail.com>
-Message-ID: <CAMuHMdVX-6A5KH1+WodNviq1LKqZ4qo7aq92S-j+zf79xQD0gQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] regulator: dt-bindings: maxim,max8997: correct array
- of voltages
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Fri, 1 Apr 2022 06:37:41 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3121266B63;
+        Fri,  1 Apr 2022 03:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1648809352; x=1680345352;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nXk4zlyXR8B57i9BaB9FWZP2fV36YlgrhivlcqXLjKY=;
+  b=TfvAAiG7O/se6YSiXM3eW+5AdHgnI5Mn6OcpKNwAmkwCEf8OiTi4bbT/
+   aP5JDGDjeVKdZCB8sDSOLXzTb4N/V9B2VJ4j77IWe4ybWoSPTyhTztBTp
+   sInFXdl+4otVlvjr0y/AlbeC/Dz7Tv1biXBVYtIENdOszvDsUQB+43AKt
+   AIqPHRnNWfIhEniKlAodmE0BnwltR2A30wtDsxrA9UViqK432Qwh5sRf7
+   uDZDOgqeoparW/ht59dunLv8Iy5bJN8nrM9m6kkR4Ff4if6XpeHoBtFFC
+   No36xx3l0E2dFNSYjvsdJLncPNxY/Sb212GHiDcDJ72yVlMFXr9rXQoVE
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10303"; a="257680697"
+X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
+   d="scan'208";a="257680697"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 03:35:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
+   d="scan'208";a="843133139"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 01 Apr 2022 03:35:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 92A23179; Fri,  1 Apr 2022 13:36:05 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Qianggui Song <qianggui.song@amlogic.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v4 00/13] gpiolib: Two new helpers and way toward fwnode
+Date:   Fri,  1 Apr 2022 13:35:51 +0300
+Message-Id: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 31, 2022 at 11:17 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> uint32-array with voltages should be within one bracket pair <>, not
-> each number in its own <>.  Also the number of elements in the array
-> should be defined within "items:".
->
-> This fixes DT schema warnings like:
->
->   maxim,max8997.example.dtb: pmic@66: max8997,pmic-buck1-dvs-voltage:
->     [[1350000, 1300000, 1250000, 1200000, 1150000, 1100000, 1000000, 950000]] is too short
->
-> Fixes: 1d2104f21618 ("regulator: dt-bindings: maxim,max8997: convert to dtschema")
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is a spin-off of the previous work of switching GPIO library
+to use fwnode instead of of_node. Here we introduce a couple of
+a new macro helpers, which allows to switch some of the drivers
+to use fwnode and partially fwnode APIs. As a result of this cleanup
+a few drivers switched to use GPIO fwnode instead of of_node.
 
-Thanks!
-Warning going, and if I add one entry too much, it still complains, so:
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Bart, Linus, I can take it thru my tree with an immutable branch if
+it's the way you prefer, otherwise please suggest on how to proceed.
 
-Gr{oetje,eeting}s,
+Changelog v4:
+- fixed compilation of the Samsung pin control drivers (LKP)
+- explained in the commit message why namespacing is good for meson defs
+- added tag to one of meson patches (Neil)
 
-                        Geert
+Changelog v3:
+- moved count initialization to the definition in patch 2 (Geert)
+- replaced of_args by args, used %pfwP in patch 7 (Geert)
+- fixed kernel doc warning in patch 7
+- added tags to patches 1, 2, 6, and 7 (Geert)
+- added tag to patch 4 (Fabien)
+- renamed MREG to MESON_REG in patch 9 (Neil)
+- added tag to patch 10 (Neil)
+- used --base for cover-letter
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Changelog v2:
+- properly based, so kbuild bot may test it (LKP)
+- fixed typo in the macro (Geert)
+- split to two macro helpers and rename the gpiochip_count()
+- tagged one of stm32 and one of meson patches (Fabien, Neil)
+- unified previously standalone armada patch
+- due to above rewrote the armada patch from v1 completely (Sergey)
+- added a lot of a new patches
+- compile tested all of them on x86
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Andy Shevchenko (13):
+  gpiolib: Introduce for_each_gpiochip_node() loop helper
+  gpiolib: Introduce gpiochip_node_count() helper
+  pinctrl: stm32: Replace custom code by gpiochip_node_count() call
+  pinctrl: stm32: Switch to use for_each_gpiochip_node() helper
+  pinctrl: samsung: Switch to use for_each_gpiochip_node() helper
+  pinctrl: renesas: rza1: Replace custom code by gpiochip_node_count()
+    call
+  pinctrl: renesas: rza1: Switch to use for_each_gpiochip_node() helper
+  pinctrl: npcm7xx: Switch to use for_each_gpiochip_node() helper
+  pinctrl: meson: Rename REG_* to MESON_REG_*
+  pinctrl: meson: Enable COMPILE_TEST
+  pinctrl: meson: Replace custom code by gpiochip_node_count() call
+  pinctrl: armada-37xx: Switch to use fwnode instead of of_node
+  pinctrl: armada-37xx: Reuse GPIO fwnode in
+    armada_37xx_irqchip_register()
+
+ drivers/pinctrl/meson/Kconfig               |   2 +-
+ drivers/pinctrl/meson/pinctrl-meson.c       |  52 ++++---
+ drivers/pinctrl/meson/pinctrl-meson.h       |  24 ++--
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |  34 ++---
+ drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c   | 142 +++++++++-----------
+ drivers/pinctrl/renesas/pinctrl-rza1.c      |  47 ++-----
+ drivers/pinctrl/samsung/pinctrl-exynos.c    |   8 +-
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c   |   2 +-
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c   |   4 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c   |  30 ++---
+ drivers/pinctrl/samsung/pinctrl-samsung.h   |   2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c       |  80 +++++------
+ include/linux/gpio/driver.h                 |  18 ++-
+ 13 files changed, 198 insertions(+), 247 deletions(-)
+
+
+base-commit: e5071887cd2296a7704dbcd10c1cedf0f11cdbd5
+-- 
+2.35.1
+
