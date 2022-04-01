@@ -2,45 +2,45 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAFDC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Apr 2022 10:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB61EC43217
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Apr 2022 10:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344001AbiDAKhl (ORCPT
+        id S1344131AbiDAKhl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Fri, 1 Apr 2022 06:37:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41686 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343982AbiDAKhl (ORCPT
+        with ESMTP id S1343860AbiDAKhl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Fri, 1 Apr 2022 06:37:41 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3121266B63;
-        Fri,  1 Apr 2022 03:35:51 -0700 (PDT)
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A0A266B65;
+        Fri,  1 Apr 2022 03:35:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1648809352; x=1680345352;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nXk4zlyXR8B57i9BaB9FWZP2fV36YlgrhivlcqXLjKY=;
-  b=TfvAAiG7O/se6YSiXM3eW+5AdHgnI5Mn6OcpKNwAmkwCEf8OiTi4bbT/
-   aP5JDGDjeVKdZCB8sDSOLXzTb4N/V9B2VJ4j77IWe4ybWoSPTyhTztBTp
-   sInFXdl+4otVlvjr0y/AlbeC/Dz7Tv1biXBVYtIENdOszvDsUQB+43AKt
-   AIqPHRnNWfIhEniKlAodmE0BnwltR2A30wtDsxrA9UViqK432Qwh5sRf7
-   uDZDOgqeoparW/ht59dunLv8Iy5bJN8nrM9m6kkR4Ff4if6XpeHoBtFFC
-   No36xx3l0E2dFNSYjvsdJLncPNxY/Sb212GHiDcDJ72yVlMFXr9rXQoVE
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10303"; a="257680697"
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=i+XLNp2iVCE62baGP2Gp0lU65sQmnL0penjqJcUdxuU=;
+  b=anDGpF0vGE2DDhr35PRETPt7MzUcA88a/qmb4MQq8U0Uj6w/+NfOug3+
+   KsV++fdQLIq1mgPme3G3xaNil8fqrDKKBqiAPKB67wBGLCxAPrHMNpDj8
+   rnbspdjsTODrlKLkNkW9ghgldJnU8FH0XPWDktdZelhDWMg0AMvEcmpYT
+   Nf919w0jnN2V/CRYStLGc+xAOlLCldceoR3oGjG2ThEua0yNHU18ewtts
+   eGbx6unJ5wgHjZG9TP6USA8MXzq7JcKw+qKGHOBQZjSDC1UX4vLeU1gqe
+   NgKdLACa/yAccmmC7Io9BYcpNjR6miZmOhv2lyhMWTn8uv1zlJW0Z+Omq
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10303"; a="240692251"
 X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
-   d="scan'208";a="257680697"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 03:35:51 -0700
+   d="scan'208";a="240692251"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2022 03:35:51 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,227,1643702400"; 
-   d="scan'208";a="843133139"
+   d="scan'208";a="695847010"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 01 Apr 2022 03:35:44 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 01 Apr 2022 03:35:44 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 92A23179; Fri,  1 Apr 2022 13:36:05 +0300 (EEST)
+        id B7C6A1F5; Fri,  1 Apr 2022 13:36:05 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Qianggui Song <qianggui.song@amlogic.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -74,84 +74,54 @@ Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v4 00/13] gpiolib: Two new helpers and way toward fwnode
-Date:   Fri,  1 Apr 2022 13:35:51 +0300
-Message-Id: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 03/13] pinctrl: stm32: Replace custom code by gpiochip_node_count() call
+Date:   Fri,  1 Apr 2022 13:35:54 +0300
+Message-Id: <20220401103604.8705-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
+References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is a spin-off of the previous work of switching GPIO library
-to use fwnode instead of of_node. Here we introduce a couple of
-a new macro helpers, which allows to switch some of the drivers
-to use fwnode and partially fwnode APIs. As a result of this cleanup
-a few drivers switched to use GPIO fwnode instead of of_node.
+Since we have generic function to count GPIO controller nodes
+under a given device, there is no need to open code it. Replace
+custom code by gpiochip_node_count() call.
 
-Bart, Linus, I can take it thru my tree with an immutable branch if
-it's the way you prefer, otherwise please suggest on how to proceed.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Changelog v4:
-- fixed compilation of the Samsung pin control drivers (LKP)
-- explained in the commit message why namespacing is good for meson defs
-- added tag to one of meson patches (Neil)
-
-Changelog v3:
-- moved count initialization to the definition in patch 2 (Geert)
-- replaced of_args by args, used %pfwP in patch 7 (Geert)
-- fixed kernel doc warning in patch 7
-- added tags to patches 1, 2, 6, and 7 (Geert)
-- added tag to patch 4 (Fabien)
-- renamed MREG to MESON_REG in patch 9 (Neil)
-- added tag to patch 10 (Neil)
-- used --base for cover-letter
-
-Changelog v2:
-- properly based, so kbuild bot may test it (LKP)
-- fixed typo in the macro (Geert)
-- split to two macro helpers and rename the gpiochip_count()
-- tagged one of stm32 and one of meson patches (Fabien, Neil)
-- unified previously standalone armada patch
-- due to above rewrote the armada patch from v1 completely (Sergey)
-- added a lot of a new patches
-- compile tested all of them on x86
-
-Andy Shevchenko (13):
-  gpiolib: Introduce for_each_gpiochip_node() loop helper
-  gpiolib: Introduce gpiochip_node_count() helper
-  pinctrl: stm32: Replace custom code by gpiochip_node_count() call
-  pinctrl: stm32: Switch to use for_each_gpiochip_node() helper
-  pinctrl: samsung: Switch to use for_each_gpiochip_node() helper
-  pinctrl: renesas: rza1: Replace custom code by gpiochip_node_count()
-    call
-  pinctrl: renesas: rza1: Switch to use for_each_gpiochip_node() helper
-  pinctrl: npcm7xx: Switch to use for_each_gpiochip_node() helper
-  pinctrl: meson: Rename REG_* to MESON_REG_*
-  pinctrl: meson: Enable COMPILE_TEST
-  pinctrl: meson: Replace custom code by gpiochip_node_count() call
-  pinctrl: armada-37xx: Switch to use fwnode instead of of_node
-  pinctrl: armada-37xx: Reuse GPIO fwnode in
-    armada_37xx_irqchip_register()
-
- drivers/pinctrl/meson/Kconfig               |   2 +-
- drivers/pinctrl/meson/pinctrl-meson.c       |  52 ++++---
- drivers/pinctrl/meson/pinctrl-meson.h       |  24 ++--
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |  34 ++---
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c   | 142 +++++++++-----------
- drivers/pinctrl/renesas/pinctrl-rza1.c      |  47 ++-----
- drivers/pinctrl/samsung/pinctrl-exynos.c    |   8 +-
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c   |   2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c   |   4 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c   |  30 ++---
- drivers/pinctrl/samsung/pinctrl-samsung.h   |   2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c       |  80 +++++------
- include/linux/gpio/driver.h                 |  18 ++-
- 13 files changed, 198 insertions(+), 247 deletions(-)
-
-
-base-commit: e5071887cd2296a7704dbcd10c1cedf0f11cdbd5
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 9ed764731570..91b9a64b649e 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1423,7 +1423,8 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_pinctrl *pctl;
+ 	struct pinctrl_pin_desc *pins;
+-	int i, ret, hwlock_id, banks = 0;
++	int i, ret, hwlock_id;
++	unsigned int banks;
+ 
+ 	if (!np)
+ 		return -EINVAL;
+@@ -1513,10 +1514,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pctl->pctl_dev);
+ 	}
+ 
+-	for_each_available_child_of_node(np, child)
+-		if (of_property_read_bool(child, "gpio-controller"))
+-			banks++;
+-
++	banks = gpiochip_node_count(dev);
+ 	if (!banks) {
+ 		dev_err(dev, "at least one GPIO bank is required\n");
+ 		return -EINVAL;
 -- 
 2.35.1
 
