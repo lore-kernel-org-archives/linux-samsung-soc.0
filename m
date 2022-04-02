@@ -2,572 +2,452 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE753C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Apr 2022 15:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E59C1C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Apr 2022 17:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243425AbiDAP4C (ORCPT
+        id S1358634AbiDBRDv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Apr 2022 11:56:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38780 "EHLO
+        Sat, 2 Apr 2022 13:03:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354512AbiDAPMC (ORCPT
+        with ESMTP id S1358631AbiDBRDv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Apr 2022 11:12:02 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDEC025C5A6;
-        Fri,  1 Apr 2022 07:55:08 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 44FA63200495;
-        Fri,  1 Apr 2022 10:55:07 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 01 Apr 2022 10:55:08 -0400
+        Sat, 2 Apr 2022 13:03:51 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA6EDBD11;
+        Sat,  2 Apr 2022 10:01:56 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4CC2C5C00E0;
+        Sat,  2 Apr 2022 13:01:54 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 02 Apr 2022 13:01:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=b3sW/zxrTNI5mGYD6OwwiVLtKzO/UqouF6I/36
-        WEYvc=; b=h94YP8PWKKknj5pHzt7x/7ooZA3eHrNU0oDZIlJ3JESMbpDJzpclA9
-        SljWX7QQzPqgKFNAnhAikrpjxcanyW8k453or1kFPL8hrso6dC0O4E1vWZJ/2ay7
-        Q1IekNmjHbDPanSsTJ/W0/8ZyiNlEcdppWe+OEiWyOkRmCy4os9Y1B3Nb4uO1OVY
-        lHVcBZuDAu6dmZVERdQsM7ufoj9GNn1+ZuwT5pspOb8JDos4sMGIHa5jEdB5OliY
-        lqDXL5C9BzrmEaZbn7XosYlxrGLKKYbmoM4+raXEkhZNyTSIpOBG1MyYh+Y9x6wI
-        /hZ2810CYUR4AQeqzsznzLMgM68QRvdA==
+        :subject:to:to; s=fm3; bh=fV4gZWrFCZ8CEUAP+0tFXVF/uVqz6g2gMtS65I
+        oGUSw=; b=EYllbT7SNOXjc78snkc9G6zfjyRj8cT8v1GhRvMTDxqUPlzidz8+Rs
+        gPdmbATntVLhEH+Fm/pY1swczdi+xy08QgKNVQvpFjj7qlaWLLsTqaTYNScIqqk6
+        QzvlIoEF0SezLhVJRNSLAGeUZ/mAKNfgJzOfAu67Ub3HwZbuSkoOt0xBX6st98Ho
+        edAlrUQ9qdY+AyFAwvYy1lxLEbMc/7VPBmesg01L2Ihiq0Hjc22u9RUOHrETI/kI
+        lOih1GsL7ueAtQViOrXgXg9f8avekP/qUtIX9Votx+tJ971H0khmjvUexyj8HY+8
+        djZs02zxzPzIFCvfi/YLfTSxlKG9kfMw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        messagingengine.com; h=cc:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=b3sW/zxrTNI5mGYD6
-        OwwiVLtKzO/UqouF6I/36WEYvc=; b=MMuybD7ZmyZty6vKIQXFW38dqSdy8887X
-        D+ytbXh1GrTrOMYrdnIR9SBQEId2LmWt78zoaYaSwkgAlfXtrPst1tnRKn3Lnoyz
-        3KWO6kkf8bvu49dPxdt2QYPyxQ8jsWuZn/28xuLigmE/OScF5sG77V93CyszaAxV
-        HEClhwzvYOieZCMjNVKUUY+Xg2hQTu1A3KJoaWrseLjY4UbEJYvtT9Hf6jbmcBfd
-        FaObY/3eNR0nOdnqWRmWpM5EoDqzFlKOA88Gb46g4wOm84c40ZEQiyK2WZnfhSCB
-        IeuMilsDNRAaYNQFhfcOP8pS2lnXLsM8Ij+UIJ7EDvsa22Ix1IR4Q==
-X-ME-Sender: <xms:SRJHYo3Vz3jpowVFvSt-TvBSumqqZZL-zCDH57-DmKs7PN8FofofFQ>
-    <xme:SRJHYjG3TJa7XachHfo0MPFarXd6-r2aPezN9RkillEtsGlcwumxII3fsLxLJPgSL
-    YE7UWVUI_D175i43wc>
-X-ME-Received: <xmr:SRJHYg5ezEEeD0dKdQQ4sH259waC_he0zKoiQWD2kfVG92905ehGRXDhpp7GHATjMSpgNHu5JWtaHTWNPSYbzjdhhssZl4QzdtNPyx8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudeiiedgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:SRJHYh0MUL5gylxf5sXsVSiqO_vepwx7GsAB4oygRhq8zJezleug5A>
-    <xmx:SRJHYrH69n8a3rXwN-UeUGQUnLjhZJXG235CR1YgVJa83vwxF130ig>
-    <xmx:SRJHYq9fdnuaJaBd9ZYoCX03yemx1L3VU0Qif4aYIV1tZCd_CnJZew>
-    <xmx:ShJHYiBupGxUKQwN9f7aHJunJaDBWNmA-8q1hZfaEilZj8N256UNUA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 1 Apr 2022 10:55:05 -0400 (EDT)
-Date:   Fri, 1 Apr 2022 16:55:02 +0200
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fV4gZWrFCZ8CEUAP+
+        0tFXVF/uVqz6g2gMtS65IoGUSw=; b=SgOPfSouaVkB0YKdoxosCANLPzXK2WTkZ
+        x0nyxADFI1L0cdsZEiV4yQTkvV97yRpFVJ7bMZWfNCUIeJ9gkcS4CED2r1r8E6qk
+        mdOI9+9x+mgB1HzEzppVSTWl2faxOGcfHa2vwhuGB4tfrlCbgsjSERVk8rlw60uH
+        eROLepr07gIsVIKBhP426C0I9LuLWmtjO/F55QQxUG5N4cPoWvKokjh+ash5UWbd
+        39Rt4eKj5yCAr34El+aTlQlkTiE7k8MNKO2+JbelB+7RUjLQtcSHylB7IMiDG1VJ
+        loGXJGdGWFwuTw81NhEG07kde4FrPVAiD7GpPEZG3Pg4p2zyOZWuA==
+X-ME-Sender: <xms:f4FIYjIu8NSPBGDZylDV5hgKwt1ZSx-hHMWAsq8hT496BqHphHmy9A>
+    <xme:f4FIYnKz0q1eYHuMEd0RFgaY3jiyeDDLj7CKXnIUotmP4Uz60jug3M8Fim1kXEkAz
+    Ybap-dQFg5dJFIAV5c>
+X-ME-Received: <xmr:f4FIYrsrZ5Bbveighk83DYxxnB4TwOkJVnfDfDt-7KZywqlmqEacTnIewBCwyfHKmlX2i6dMHOY2Aufv2FP9B5osOE3xYAOQmonY_Mk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudeikedguddtkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetgfejtdelgeffffeitdfhtddvfeeijeffteelkefhledvvefggfdujeeg
+    ieeghfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:gIFIYsYMf-xv9VwYEKOwlegb6o4IEag4Jz7Oz1BcghPHaY5CjvVRuA>
+    <xmx:gIFIYqYYXo7ByZdcRIP1xRkyZwbKMW6RXB9ioND3TCwXV4GwagovuQ>
+    <xmx:gIFIYgA_JFbnUQ1AIK9QBVSAWB_zU95gy69r-WRzSymVVXBZnAC3kg>
+    <xmx:goFIYnQgtN2NZ79rwpi6rDiBf6A0ZChhGPPykj-O3ZxzgYihmS4XHg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 2 Apr 2022 13:01:51 -0400 (EDT)
+Date:   Sat, 2 Apr 2022 19:01:49 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Tony Lindgren <tony@atomide.com>,
         linux-arm-kernel@lists.infradead.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
         linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: [PATCH v2 3/3] clk: Drop
- the rate range on clk_put
-Message-ID: <20220401145502.5hnilpku3qh77bvs@houat>
+Subject: Re: (EXT) Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+Message-ID: <20220402170149.dpnvoch7vchguif7@houat>
 References: <20220325161144.1901695-1-maxime@cerno.tech>
- <2823402.e9J7NaK4W3@steina-w>
- <20220401133409.wtilnpgp4fqlrrew@houat>
- <14273141.O9o76ZdvQC@steina-w>
+ <YkXCGlrok0niwlyg@atomide.com>
+ <20220331153134.h3alp24hzquajkly@houat>
+ <2236051.ElGaqSPkdT@steina-w>
+ <20220401122736.5yvanksa4pla7uql@houat>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3zpagsxfrtqefzpw"
+        protocol="application/pgp-signature"; boundary="arqhgnja7j45qopv"
 Content-Disposition: inline
-In-Reply-To: <14273141.O9o76ZdvQC@steina-w>
+In-Reply-To: <20220401122736.5yvanksa4pla7uql@houat>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---3zpagsxfrtqefzpw
-Content-Type: text/plain; charset=us-ascii
+--arqhgnja7j45qopv
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 01, 2022 at 03:49:04PM +0200, Alexander Stein wrote:
-> Am Freitag, 1. April 2022, 15:34:09 CEST schrieb Maxime Ripard:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Fri, Apr 01, 2022 at 03:07:10PM +0200, Alexander Stein wrote:
-> > > > Does it also happen if you only apply the patch I had above, and no=
-t all
-> > > > the debugging?
+Hi Alexandre, Tony, Mareek, Naresh,
+
+On Fri, Apr 01, 2022 at 02:27:36PM +0200, Maxime Ripard wrote:
+> On Fri, Apr 01, 2022 at 01:55:20PM +0200, Alexander Stein wrote:
+> > Am Donnerstag, 31. M=E4rz 2022, 17:31:34 CEST schrieb Maxime Ripard:
+> > > * PGP Signed by an unknown key
 > > >=20
-> > > Yes, these are the last lines I see:
-> > > ---
-> > > [    1.236306] mmcblk0rpmb: mmc0:0001 DA6016 4.00 MiB, chardev (235:0)
-> > > [    1.241031] i2c i2c-1: IMX I2C adapter registered
-> > > [    1.251771] i2c i2c-3: IMX I2C adapter registered
-> > > [    1.256957] i2c i2c-5: IMX I2C adapter registered
+> > > Hi Tony,
+> > >=20
+> > > On Thu, Mar 31, 2022 at 06:00:42PM +0300, Tony Lindgren wrote:
+> > > > * Maxime Ripard <maxime@cerno.tech> [220331 09:52]:
+> > > > > On Thu, Mar 31, 2022 at 12:42:10PM +0300, Tony Lindgren wrote:
+> > > > > > It seems the dts assigned-clock-parents no longer works now?
+> > > > >=20
+> > > > > That would make some kind of sense, __set_clk_parents calls clk_p=
+ut on
+> > > > > both the assigned clock and its parent.
+> > > > >=20
+> > > > > Could you see what parent (and why?) it tries to enforce then?
+> > > >=20
+> > > > It picks the other option available for the mux clock that only has
+> > > > two options. No idea why, but if you have some debug patch in mind I
+> > > > can give it a try.
+> > > >=20
+> > > > > It looks like the gpt1_fck driver might favor another parent for =
+that
+> > > > > rate, which, if it's an invalid configuration, shouldn't really h=
+appen?
+> > > >=20
+> > > > Hmm there's a gate clock and a mux clock, there's not really a rate
+> > > > selection available here for the sources.
+> > >=20
+> > > If I followed the OMAP driver properly, clk_mux_determine_rate_flags =
+is
+> > > doing the heavy lifting, could you run your test with
 > >=20
-> > Could you add on top of next (so dropping everything we did so far)
+> > I'm affected by this patch as well on an imx8mp platform (see [1] for s=
+ome=20
+> > details)
 > >=20
-> > ---- >8 -----
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 91f863b7a824..552b1e16a82d 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -540,6 +540,8 @@ static bool mux_is_better_rate(unsigned long rate,
-> > unsigned long now, if (flags & CLK_MUX_ROUND_CLOSEST)
-> >  		return abs(now - rate) < abs(best - rate);
+> > In the failing case with with your patch applied I get the following er=
+ror=20
+> > ---
+> > [    0.661064] clk_set_rate_range_nolock: core req rate 500000000      =
+                                                             =20
+> > [    0.664084] clk_set_rate_range_nolock: clamped rate 500000000       =
+                                                             =20
+> > [    0.669851] clk_core_set_rate_nolock: rate 500000000                =
+                                                             =20
+> > [    0.674843] clk_core_set_rate_nolock: rounded rate 500000000        =
+                                                             =20
+> > [    0.680536] clk_set_rate_range_nolock: core req rate 800000000      =
+                                                             =20
+> > [    0.686389] clk_set_rate_range_nolock: clamped rate 800000000       =
+                                                             =20
+> > [    0.692164] clk_core_set_rate_nolock: rate 800000000                =
+                                                             =20
+> > [    0.697153] clk_mux_determine_rate_flags: requested rate 800000000  =
+                                                             =20
+> > [    0.703363] clk_mux_determine_rate_flags: current parent sys_pll1   =
+                                                             =20
+> > [    0.709487] clk_mux_determine_rate_flags: current parent rate 800000=
+000                                                          =20
+> > [    0.716147] Unable to handle kernel NULL pointer dereference at virt=
+ual=20
+> > address 0000000000000000
+> > [    0.724977] Mem abort info:                                         =
+                                                             =20
+> > [    0.727775]   ESR =3D 0x96000004                                    =
+                                                               =20
+> > [    0.730835]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits        =
+                                                                 =20
+> > [    0.736177]   SET =3D 0, FnV =3D 0                                  =
+                                                                 =20
+> > [    0.739239]   EA =3D 0, S1PTW =3D 0                                 =
+                                                                 =20
+> > [    0.742382]   FSC =3D 0x04: level 0 translation fault               =
+                                                               =20
+> > [    0.747287] Data abort info:                                        =
+                                                             =20
+> > [    0.750172]   ISV =3D 0, ISS =3D 0x00000004                         =
+                                                                 =20
+> > [    0.754027]   CM =3D 0, WnR =3D 0                                   =
+                                                                 =20
+> > [    0.757002] [0000000000000000] user address but active_mm is swapper=
+                                                             =20
+> > [    0.763394] Internal error: Oops: 96000004 [#1] PREEMPT SMP         =
+                                                             =20
+> > [    0.768985] Modules linked in:                                      =
+                                                             =20
+> > [    0.772049] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 5.17.0-next-20=
+220331+=20
+> > #48 8e9d24095c7f6b15f85bc2ad57a5609e219130b9         =20
+> > [    0.782984] Hardware name: TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MP=
+xL (DT)                                                      =20
+> > [    0.789985] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BT=
+YPE=3D--)                                                      =20
+> > [    0.796985] pc : clk_mux_determine_rate_flags+0x280/0x2cc           =
+                                                             =20
+> > [    0.802407] lr : clk_mux_determine_rate_flags+0xf4/0x2cc            =
+                                                             =20
+> > [    0.807747] sp : ffff800009ceb590                                   =
+                                                             =20
+> > [    0.811072] x29: ffff800009ceb590 x28: ffff800009ceb6a0 x27:=20
+> > ffff800008eaa038                                                    =20
+> > [    0.818245] x26: ffff8000092fe0b0 x25: ffff000000090000 x24:=20
+> > ffff000000090000                                                    =20
+> > [    0.825420] x23: 0000000000000000 x22: ffff800008ea95d8 x21:=20
+> > ffff0000028f4700                                                    =20
+> > [    0.832595] x20: 000000002faf0800 x19: 0000000000000000 x18:=20
+> > 0000000000004590                                                    =20
+> > [    0.839770] x17: 0000000000004570 x16: 0000000000004560 x15:=20
+> > ffff8000092ff250                                                    =20
+> > [    0.846945] x14: 0000000000000000 x13: 3030303030303030 x12:=20
+> > 3820657461722074                                                    =20
+> > [    0.854120] x11: 6e6572617020746e x10: 6572727563203a73 x9 :=20
+> > 7563203a7367616c                                                    =20
+> > [    0.861295] x8 : 665f657461725f65 x7 : 205d373834393037 x6 :=20
+> > ffff800009a947c8                                                    =20
+> > [    0.868472] x5 : ffff800008eafe68 x4 : 0000000000000009 x3 :=20
+> > 000000002faf0800                                                    =20
+> > [    0.875645] x2 : ffff800008eafef4 x1 : ffff800008eaa038 x0 :=20
+> > ffff8000092fd5b8                                                    =20
+> > [    0.882822] Call trace:                                             =
+                                                             =20
+> > [    0.885273]  clk_mux_determine_rate_flags+0x280/0x2cc               =
+                                                             =20
+> > [    0.890347]  clk_mux_determine_rate+0x10/0x20                       =
+                                                             =20
+> > [    0.894720]  clk_core_determine_round_nolock+0x4c/0xb4              =
+                                                             =20
+> > [    0.899882]  clk_core_round_rate_nolock+0x30/0x80                   =
+                                                             =20
+> > [    0.904607]  clk_core_round_rate_nolock+0x70/0x80                   =
+                                                             =20
+> > [    0.909334]  clk_hw_round_rate+0x44/0x74                            =
+                                                             =20
+> > [    0.913270]  clk_factor_round_rate+0x60/0x80                        =
+                                                             =20
+> > [    0.917557]  clk_core_determine_round_nolock+0x88/0xb4              =
+                                                             =20
+> > [    0.922720]  clk_core_round_rate_nolock+0x30/0x80                   =
+                                                             =20
+> > [    0.927445]  clk_core_set_rate_nolock.part.0+0xa4/0x1d0             =
+                                                             =20
+> > [    0.932695]  clk_set_rate_range_nolock+0x234/0x244                  =
+                                                             =20
+> > [    0.937507]  __clk_put+0x60/0x12c                                   =
+                                                             =20
+> > [    0.940834]  clk_put+0xc/0x1c                                       =
+                                                             =20
+> > [    0.943809]  __set_clk_parents+0x12c/0x244                          =
+                                                             =20
+> > [    0.947920]  of_clk_set_defaults+0x20/0x50                          =
+                                                             =20
+> > [    0.952032]  of_clk_add_hw_provider.part.0+0x94/0x120               =
+                                                             =20
+> > [    0.957107]  of_clk_add_hw_provider+0x10/0x20                       =
+                                                             =20
+> > [    0.961482]  imx8mp_clocks_probe+0x3458/0x34d0                      =
+                                                             =20
+> > [    0.965945]  platform_probe+0x64/0x100                              =
+                                                             =20
+> > [    0.969707]  call_driver_probe+0x28/0x130                           =
+                                                             =20
+> > [    0.973732]  really_probe+0x178/0x310                               =
+                                                             =20
+> > [    0.977409]  __driver_probe_device+0xfc/0x144                       =
+                                                             =20
+> > [    0.981782]  driver_probe_device+0x38/0x12c                         =
+                                                             =20
+> > [    0.985982]  __driver_attach+0xcc/0x220                             =
+                                                             =20
+> > [    0.989834]  bus_for_each_dev+0x6c/0xc0                             =
+                                                             =20
+> > [    0.993682]  driver_attach+0x20/0x2c                                =
+                                                             =20
+> > [    0.997270]  bus_add_driver+0x140/0x230                             =
+                                                             =20
+> > [    1.001120]  driver_register+0x74/0x120                             =
+                                                             =20
+> > [    1.004970]  __platform_driver_register+0x24/0x30                   =
+                                                             =20
+> > [    1.009697]  imx8mp_clk_driver_init+0x18/0x20                       =
+                                                             =20
+> > [    1.014070]  do_one_initcall+0x58/0x200                             =
+                                                             =20
+> > [    1.017920]  do_initcalls+0x164/0x19c                               =
+                                                             =20
+> > [    1.021597]  kernel_init_freeable+0x134/0x17c                       =
+                                                             =20
+> > [    1.025970]  kernel_init+0x2c/0x150                                 =
+                                                             =20
+> > [    1.029470]  ret_from_fork+0x10/0x20                                =
+                                                             =20
+> > [    1.033065] Code: f9000f94 912982c1 b0002900 9116e000 (f9400262)    =
+                                                             =20
+> > [    1.039188] ---[ end trace 0000000000000000 ]---                    =
+                                                             =20
+> > [    1.043869] Kernel panic - not syncing: Attempted to kill init!=20
+> > exitcode=3D0x0000000b                                              =20
+> > [    1.051523] SMP: stopping secondary CPUs                            =
+                                                             =20
+> > [    1.055467] Kernel Offset: disabled                                 =
+                                                             =20
+> > [    1.058960] CPU features: 0x000,00020009,00001082                   =
+                                                             =20
+> > [    1.063684] Memory Limit: none                                      =
+                                                             =20
+> > [    1.066748] ---[ end Kernel panic - not syncing: Attempted to kill i=
+nit!=20
+> > exitcode=3D0x0000000b ]---
+> > ---
 > >=20
-> > +	pr_crit("%s +%d rate %lu now %lu best %lu\n", __func__, __LINE__,=20
-> rate,
-> > now, best); +
-> >  	return now <=3D rate && now > best;
-> >  }
-> >=20
-> > @@ -552,6 +554,12 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
-> >  	unsigned long best =3D 0;
-> >  	struct clk_rate_request parent_req =3D *req;
-> >=20
-> > +	pr_crit("%s: %s: requested rate %lu\n", __func__, core->name, req-
-> >rate);
-> > +
-> > +	parent =3D core->parent;
-> > +	pr_crit("%s: %s: current parent %s\n", __func__, core->name, parent=
+> > With the $subject patch reverted and bootable system:
+> > ---
+> > [    0.659922] clk_core_set_rate_nolock: rate 1000000000               =
+                                                             =20
+> > [    0.662154] clk_core_set_rate_nolock: rounded rate 1000000000       =
+                                                             =20
+> > [    0.667932] clk_core_set_rate_nolock: rate 800000000                =
+                                                             =20
+> > [    0.672918] clk_core_set_rate_nolock: rounded rate 800000000        =
+                                                             =20
+> > [    0.678601] clk_core_set_rate_nolock: rate 500000000                =
+                                                             =20
+> > [    0.683592] clk_core_set_rate_nolock: rounded rate 500000000        =
+                                                             =20
+> > [    0.689276] clk_core_set_rate_nolock: rate 400000000                =
+                                                             =20
+> > [    0.694267] clk_core_set_rate_nolock: rounded rate 400000000        =
+                                                             =20
+> > [    0.699980] clk_core_set_rate_nolock: rate 800000000                =
+                                                             =20
+> > [    0.704942] clk_core_set_rate_nolock: rounded rate 800000000        =
+                                                             =20
+> > [    0.710627] clk_core_set_rate_nolock: rate 393216000                =
+                                                             =20
+> > [    0.715611] clk_core_set_rate_nolock: rounded rate 393216000        =
+                                                             =20
+> > [    0.721815] clk_core_set_rate_nolock: rate 361267200                =
+                                                             =20
+> > [    0.726284] clk_core_set_rate_nolock: rounded rate 361267200        =
+                                                             =20
+> > [    0.734097] clk_core_set_rate_nolock: rate 800000000                =
+                                                             =20
+> > [    0.736977] clk_core_set_rate_nolock: rounded rate 800000000        =
+                                                             =20
+> > [    0.742652] clk_core_set_rate_nolock: rate 400000000                =
+                                                             =20
+> > [    0.747645] clk_core_set_rate_nolock: rounded rate 400000000        =
+                                                             =20
+> > [    0.754565] clk_core_set_rate_nolock: rate 500000000                =
+                                                             =20
+> > [    0.758331] clk_core_set_rate_nolock: rounded rate 500000000        =
+                                                             =20
+> > [    0.764688] SoC: i.MX8MP revision 1.1                               =
+                                                             =20
+> > [    0.767931] clk_core_set_rate_nolock: rate 500000000                =
+                                                             =20
+> > [    0.772675] clk_core_set_rate_nolock: rounded rate 500000000        =
+                                                             =20
+> > [    0.778354] clk_core_set_rate_nolock: rate 200000000                =
+                                                             =20
+> > [    0.783351] clk_core_set_rate_nolock: rounded rate 200000000        =
+                                                             =20
+> > [    0.793748] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled =
+                                                             =20
+> > [    0.798952] 30860000.serial: ttymxc0 at MMIO 0x30860000 (irq =3D 34,=
 =20
-> ?
-> > parent->name : "(null)"); +	pr_crit("%s: %s: current parent rate %lu\n",
-> > __func__, core->name, clk_core_get_rate_nolock(parent)); +
-> >  	/* if NO_REPARENT flag set, pass through to current parent */
-> >  	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
-> >  		parent =3D core->parent;
-> > @@ -578,24 +586,37 @@ int clk_mux_determine_rate_flags(struct clk_hw *h=
-w,
-> >  		if (!parent)
-> >  			continue;
+> > base_baud =3D 5000000) is a IMX                                 =20
+> > [    0.806527] 30880000.serial: ttymxc2 at MMIO 0x30880000 (irq =3D 35,=
+=20
+> > base_baud =3D 5000000) is a IMX                                 =20
+> > [    0.815329] 30890000.serial: ttymxc1 at MMIO 0x30890000 (irq =3D 36,=
+=20
+> > base_baud =3D 5000000) is a IMX                                 =20
+> > [    0.824176] 30a60000.serial: ttymxc3 at MMIO 0x30a60000 (irq =3D 43,=
+=20
+> > base_baud =3D 1500000) is a IMX                                 =20
+> > [    0.832588] printk: console [ttymxc3] enabled                       =
+                                                             =20
+> > [    0.832588] printk: console [ttymxc3] enabled                       =
+                                                             =20
+> > [    0.841244] printk: bootconsole [ec_imx6q0] disabled                =
+                                                             =20
+> > [    0.841244] printk: bootconsole [ec_imx6q0] disabled                =
+                                                             =20
+> > [    0.857871] clk_core_set_rate_nolock: rate 80000000                 =
+                                                             =20
+> > [    0.862796] clk_core_set_rate_nolock: rounded rate 80000000         =
+                                                             =20
+> > [    0.868469] clk_core_set_rate_nolock: rate 20000000                 =
+                                                             =20
+> > [    0.873364] clk_core_set_rate_nolock: rounded rate 20000000         =
+                                                             =20
+> > [    0.879258] clk_core_set_rate_nolock: rate 80000000                 =
+                                                             =20
+> > [    0.884154] clk_core_set_rate_nolock: rounded rate 80000000
+> > [...]
+> > ---
 > >=20
-> > +		pr_crit("%s: Trying parent %s (%lu)\n",
-> > +			__func__,
-> > +			parent->name,
-> > +			clk_core_get_rate_nolock(parent));
-> > +
-> >  		if (core->flags & CLK_SET_RATE_PARENT) {
-> > +			pr_crit("%s +%d\n", __func__, __LINE__);
-> >  			parent_req =3D *req;
-> >  			ret =3D __clk_determine_rate(parent->hw,=20
-> &parent_req);
-> > +			pr_crit("%s +%d %d\n", __func__, __LINE__,=20
-> ret);
-> >  			if (ret)
-> >  				continue;
-> >  		} else {
-> > +			pr_crit("%s +%d\n", __func__, __LINE__);
-> >  			parent_req.rate =3D=20
-> clk_core_get_rate_nolock(parent);
-> >  		}
+> > The 500000000 and 800000000 look a bit like the assigned-clock-rates fo=
+r=20
+> > clock-controller@30380000 in arch/arm64/boot/dts/freescale/imx8mp.dtsi
 > >=20
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  		if (mux_is_better_rate(req->rate, parent_req.rate,
-> >  				       best, flags)) {
-> > +			pr_crit("%s +%d\n", __func__, __LINE__);
-> >  			best_parent =3D parent;
-> >  			best =3D parent_req.rate;
-> >  		}
-> >  	}
-> >=20
-> > -	if (!best_parent)
-> > +	if (!best_parent) {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		return -EINVAL;
-> > +	}
-> >=20
-> >  out:
-> >  	if (best_parent)
-> > @@ -603,6 +624,11 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
-> >  	req->best_parent_rate =3D best;
-> >  	req->rate =3D best;
-> >=20
-> > +	pr_crit("%s: Best parent %s (%lu)\n",
-> > +		__func__,
-> > +		best_parent->name,
-> > +		best);
-> > +
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_mux_determine_rate_flags);
-> > @@ -1345,11 +1371,15 @@ static int clk_core_determine_round_nolock(stru=
-ct
-> > clk_core *core,
-> >=20
-> >  	lockdep_assert_held(&prepare_lock);
-> >=20
-> > +	pr_crit("%s +%d %s\n", __func__, __LINE__, core->name);
-> >  	if (!core)
-> >  		return 0;
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> >  	req->rate =3D clamp(req->rate, req->min_rate, req->max_rate);
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  	/*
-> >  	 * At this point, core protection will be disabled
-> >  	 * - if the provider is not protected at all
-> > @@ -1357,10 +1387,13 @@ static int clk_core_determine_round_nolock(stru=
-ct
-> > clk_core *core, *   over the provider
-> >  	 */
-> >  	if (clk_core_rate_is_protected(core)) {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		req->rate =3D core->rate;
-> >  	} else if (core->ops->determine_rate) {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		return core->ops->determine_rate(core->hw, req);
-> >  	} else if (core->ops->round_rate) {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		rate =3D core->ops->round_rate(core->hw, req->rate,
-> >  					     &req-
-> >best_parent_rate);
-> >  		if (rate < 0)
-> > @@ -1368,6 +1401,7 @@ static int clk_core_determine_round_nolock(struct
-> > clk_core *core,
-> >=20
-> >  		req->rate =3D rate;
-> >  	} else {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		return -EINVAL;
-> >  	}
-> >=20
-> > @@ -1402,17 +1436,26 @@ static int clk_core_round_rate_nolock(struct
-> > clk_core *core, {
-> >  	lockdep_assert_held(&prepare_lock);
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  	if (!core) {
-> >  		req->rate =3D 0;
-> >  		return 0;
-> >  	}
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  	clk_core_init_rate_req(core, req);
-> >=20
-> > -	if (clk_core_can_round(core))
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> > +	if (clk_core_can_round(core)) {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		return clk_core_determine_round_nolock(core, req);
-> > -	else if (core->flags & CLK_SET_RATE_PARENT)
-> > +	} else if (core->flags & CLK_SET_RATE_PARENT) {
-> > +		pr_crit("%s +%d\n", __func__, __LINE__);
-> >  		return clk_core_round_rate_nolock(core->parent, req);
-> > +	}
-> >=20
-> >  	req->rate =3D core->rate;
-> >  	return 0;
-> > @@ -2201,21 +2244,31 @@ static int clk_core_set_rate_nolock(struct clk_=
-core
-> > *core, if (!core)
-> >  		return 0;
-> >=20
-> > +	pr_crit("%s: %s: rate %lu\n", __func__, core->name, req_rate);
-> > +
-> >  	rate =3D clk_core_req_round_rate_nolock(core, req_rate);
-> >=20
-> > +	pr_crit("%s: %s: rounded rate %lu\n", __func__, core->name,=20
-> req_rate);
-> > +
-> >  	/* bail early if nothing to do */
-> >  	if (rate =3D=3D clk_core_get_rate_nolock(core))
-> >  		return 0;
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  	/* fail on a direct rate set of a protected provider */
-> >  	if (clk_core_rate_is_protected(core))
-> >  		return -EBUSY;
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  	/* calculate new rates and get the topmost changed clock */
-> >  	top =3D clk_calc_new_rates(core, req_rate);
-> >  	if (!top)
-> >  		return -EINVAL;
-> >=20
-> > +	pr_crit("%s +%d\n", __func__, __LINE__);
-> > +
-> >  	ret =3D clk_pm_runtime_get(core);
-> >  	if (ret)
-> >  		return ret;
-> > @@ -2367,6 +2420,16 @@ static int clk_set_rate_range_nolock(struct clk =
-*clk,
-> > goto out;
-> >  	}
-> >=20
-> > +	pr_crit("%s: %s: orphan ? %c\n",
-> > +		__func__,
-> > +		clk->core->name,
-> > +		clk->core->orphan ? 'y' : 'n');
-> > +
-> > +	pr_crit("%s: %s: core req rate %lu\n",
-> > +		__func__,
-> > +		clk->core->name,
-> > +		clk->core->req_rate);
-> > +
-> >  	/*
-> >  	 * Since the boundaries have been changed, let's give the
-> >  	 * opportunity to the provider to adjust the clock rate based on
-> > @@ -2384,7 +2447,11 @@ static int clk_set_rate_range_nolock(struct clk =
-*clk,
-> > * - the determine_rate() callback does not really check for
-> >  	 *   this corner case when determining the rate
-> >  	 */
-> > +
-> >  	rate =3D clamp(clk->core->req_rate, min, max);
-> > +
-> > +	pr_crit("%s: %s: clamped rate %lu\n", __func__, clk->core->name,=20
-> rate);
-> > +
-> >  	ret =3D clk_core_set_rate_nolock(clk->core, rate);
-> >  	if (ret) {
-> >  		/* rollback the changes */
-> > @@ -2599,6 +2666,8 @@ static int clk_core_set_parent_nolock(struct clk_=
-core
-> > *core, } else {
-> >  		__clk_recalc_rates(core, POST_RATE_CHANGE);
-> >  		__clk_recalc_accuracies(core);
-> > +
-> > +		core->req_rate =3D core->rate;
-> >  	}
-> >=20
-> >  runtime_put:
-> > ---- >8 -----
+> > If you need some more information, do not hesitate to ask
+>=20
+> Thanks a lot to you three for all your testing. I think I know what
+> might be going on:
+>=20
+> We use the last requested rate on clk_set_rate_range
+> (clk_core.req_rate), and that requested rate if the clock is orphan will
+> be set to 0, so if we were to call clk_set_rate_range before the parent
+> clock is registered, we would effectively call a clk_set_rate to 0
+>=20
+> And the assigned-clocks stuff is handled by __set_clk_parents and
+> __set_clk_rates, called by of_clk_set_defaults(), in turn called by
+> of_clk_init and of_clk_add_provider. Both __set_clk_parents and
+> __set_clk_rates will call clk_put once done with the clock, and we will
+> with this patch trigger the clk_set_rate to 0 I mentioned before.
+>=20
+> So we just became very good at triggering the underlying issue :)
+>=20
+> And I think it's that while we update the requested rate when the
+> missing parent is registered, we never do when we mux away from it using
+> clk_set_parent.
 
-So, let's try to follow this through:
+I've worked on a similar setup than Alexander today using qemu and
+figured out a fairly significant bug in the rate setting logic in the
+clock framework, that could explain why OMAP is going crazy as well.
 
-> Sure, here we go
-> ---
-> [    0.630873] Asymmetric key parser 'x509' registered
-> [    0.635802] Block layer SCSI generic (bsg) driver version 0.4 loaded (=
-major 243)
-> [    0.643210] io scheduler mq-deadline registered
-> [    0.647758] io scheduler kyber registered
-> [    0.658708] clk_set_rate_range_nolock: arm_a53_div: orphan ? n
-> [    0.661717] clk_set_rate_range_nolock: arm_a53_div: core req rate 8000=
-00000
-> [    0.668724] clk_set_rate_range_nolock: arm_a53_div: clamped rate 80000=
-0000
+I've pushed a branch here with multiple fixes:
+https://github.com/mripard/linux/tree/rpi/clk-improvements-more-fixes
 
-I'm assuming we hit the assigned-clock-parents in the clocks node, and
-we try to reparent arm_a53_div / IMX8MP_CLK_A53_SRC to sys_pll1_800m
+Let me know if it fixes your issues.
 
-I'm not entirely sure, but it looks like the arm_a53_div is a gate +
-divider, so that it has the same rate than its parent makes sens, and
-800MHz for a CPU clock also makes sense.
+If it doesn't, could you point me to a setup (using qemu?) that could
+reproduce this issue, or alternatively to a cheap, available, board I
+could buy to debug this further?
 
-It's also not an orphan, so it's likely to be a separate issue from Tony
-(and thus the fix doesn't help, sorry).
-
-> [    0.675633] clk_core_set_rate_nolock: arm_a53_div: rate 800000000
-
-Now, we set the rate to the same rate, this still makes sense.
-
-> [    0.681761] clk_core_round_rate_nolock +1439
-> [    0.686048] clk_core_round_rate_nolock +1446
-> [    0.690333] clk_core_round_rate_nolock +1450
-> [    0.694619] clk_core_round_rate_nolock +1453
-> [    0.698908] clk_core_determine_round_nolock +1374 arm_a53_div
-
-The clock has a round_rate / determine_rate implementation
-(clk_divider_round_rate, most likely), thus we call
-clk_core_determine_round_nolock()
-
-> [    0.704681] clk_core_determine_round_nolock +1378
-> [    0.709408] clk_core_determine_round_nolock +1381
-> [    0.714133] clk_core_determine_round_nolock +1393
-
-Still on the right path, we use clk_divider_determine_rate (too bad :)),
-it updates the rate
-
-> [    0.718860] clk_core_set_rate_nolock: arm_a53_div: rounded rate 800000=
-000
-
-But it didn't change, good. The rounded clock hasn't changed,
-clk_core_set_rate_nolock returns, everything's great.
-
-> [    0.725684] clk_set_rate_range_nolock: sys_pll1_800m: orphan ? n
-> [    0.731719] clk_set_rate_range_nolock: sys_pll1_800m: core req rate 80=
-0000000
-> [    0.738894] clk_set_rate_range_nolock: sys_pll1_800m: clamped rate 800=
-000000
-> [    0.745983] clk_core_set_rate_nolock: sys_pll1_800m: rate 800000000
-
-Then, __set_clk_parents calls clk_put() on the new parent,
-sys_pll1_800m, still not an orphan, still with a rate that makes sense.
-
-> [    0.752281] clk_core_round_rate_nolock +1439
-> [    0.756569] clk_core_round_rate_nolock +1446
-> [    0.760862] clk_core_round_rate_nolock +1450
-> [    0.765152] clk_core_round_rate_nolock +1453
-> [    0.769435] clk_core_determine_round_nolock +1374 sys_pll1_800m
-
-We still can round the rate, so we go to
-clk_core_determine_round_nolock()
-
-> [    0.775385] clk_core_determine_round_nolock +1378
-> [    0.780114] clk_core_determine_round_nolock +1381
-> [    0.784833] clk_core_determine_round_nolock +1396
-
-But this time using a round_rate implementation: clk_factor_round_rate
-(since sys_pll1_800m is a "pure" fixed factor clock). It has the flag
-CLK_SET_RATE_PARENT (set in imx_clk_hw_fixed_factor), so
-clk_factor_round_rate calls clk_hw_round_rate on its parent
-(sys_pll1_out) for the same rate since it has a factor of 1.
-
-> [    0.789559] clk_core_round_rate_nolock +1439
-> [    0.793844] clk_core_round_rate_nolock +1446
-> [    0.798133] clk_core_round_rate_nolock +1450
-> [    0.802423] clk_core_round_rate_nolock +1456
-
-We go through another round_rate cycle here, for sys_pll1_out. It can't
-modify the rate (since it's a gate) but it has CLK_SET_RATE_PARENT, so
-the rate rounding is forwarded to its parent: sys_pll1_bypass.
-
-> [    0.806708] clk_core_round_rate_nolock +1439
-> [    0.810994] clk_core_round_rate_nolock +1446
-> [    0.815284] clk_core_round_rate_nolock +1450
-> [    0.819570] clk_core_round_rate_nolock +1453
-
-We go through it, and call clk_core_determine_round_nolock again for
-sys_pll1_bypass.
-
-> [    0.823856] clk_core_determine_round_nolock +1374 sys_pll1_bypass
-
-Makes total sense so far.
-
-> [    0.829981] clk_core_determine_round_nolock +1378
-> [    0.834706] clk_core_determine_round_nolock +1381
-> [    0.839431] clk_core_determine_round_nolock +1393
-> [    0.844159] clk_mux_determine_rate_flags: sys_pll1_bypass: requested r=
-ate 800000000
-
-The requested rate does too. We still have our 800MHz.
-
-> [    0.851856] clk_mux_determine_rate_flags: sys_pll1_bypass: current par=
-ent sys_pll1
-> [    0.859471] clk_mux_determine_rate_flags: sys_pll1_bypass: current par=
-ent rate 800000000
-
-sys_pll1_bypass has CLK_SET_RATE_NO_REPARENT (set by __imx_clk_hw_mux)
-and CLK_SET_RATE_PARENT (set by the driver when registering the clock),
-so clk_mux_determine_rate_flags will call __clk_determine_rate on its
-parent: sys_pll1. __clk_determine_rate then calls
-clk_core_round_rate_nolock.
-
-> [    0.867608] clk_core_round_rate_nolock +1439
-> [    0.871894] clk_core_round_rate_nolock +1446
-> [    0.876182] clk_core_round_rate_nolock +1450
-> [    0.880477] clk_core_round_rate_nolock +1453
-
-We call clk_core_determine_round_nolock on sys_pll1
-
-> [    0.884758] clk_core_determine_round_nolock +1374 sys_pll1
-> [    0.890273] clk_core_determine_round_nolock +1378
-> [    0.894996] clk_core_determine_round_nolock +1381
-> [    0.899721] clk_core_determine_round_nolock +1396
-
-sys_pll1 is a clk_pll14xx driver, it has a PLL_1416X type and a rate
-table, so it will use clk_pll1416x_ops. It has a round_rate
-implementation, clk_pll14xx_round_rate, that doesn't seem to be doing
-anything out of the ordinary. My assumption would be that it succeeds
-and returns a proper rate.
-
-> [    0.904457] Unable to handle kernel NULL pointer dereference at virtua=
-l=20
-> address 0000000000000000
-> [    0.913285] Mem abort info:
-> [    0.916083]   ESR =3D 0x96000004
-> [    0.919147]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> [    0.924484]   SET =3D 0, FnV =3D 0
-> [    0.927547]   EA =3D 0, S1PTW =3D 0
-> [    0.930697]   FSC =3D 0x04: level 0 translation fault
-> [    0.935595] Data abort info:
-> [    0.938487]   ISV =3D 0, ISS =3D 0x00000004
-> [    0.942334]   CM =3D 0, WnR =3D 0
-> [    0.945304] [0000000000000000] user address but active_mm is swapper
-> [    0.951696] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [    0.957292] Modules linked in:
-> [    0.960355] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.17.0-next-2022=
-0331+
-> #53 da834fe2485dc10e4c2f50265323ce628a30bc5e
-> [    0.971291] Hardware name: TQ-Systems i.MX8MPlus TQMa8MPxL on MBa8MPxL=
- (DT)
-> [    0.978292] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYP=
-E=3D--)
-> [    0.985291] pc : clk_mux_determine_rate_flags+0x33c/0x380
-> [    0.990714] lr : clk_mux_determine_rate_flags+0x10c/0x380
-> [    0.996141] sp : ffff800009ceb4a0
-> [    0.999464] x29: ffff800009ceb4a0 x28: ffff000002cf4700 x27:
-> 0000000000000001
-> [    1.006639] x26: ffff8000092fe728 x25: ffff800008eaa028 x24:
-> ffff800008ea95d8
-> [    1.013816] x23: ffff800008ea95d8 x22: ffff000002aab700 x21:
-> 000000002faf0800
-> [    1.020989] x20: ffff800009ceb640 x19: 0000000000000000 x18:
-> 0000000000004590
-> [    1.028164] x17: 617220746e657261 x16: 7020746e65727275 x15:
-> 63203a7373617079
-> [    1.035339] x14: 0000000000000000 x13: 363933312b206b63 x12:
-> 6f6c6f6e5f646e75
-> [    1.042514] x11: 6f725f656e696d72 x10: 657465645f65726f x9 :
-> 206b636f6c6f6e5f
-> [    1.049689] x8 : 646e756f725f656e x7 : 205d313237393938 x6 :
-> ffff800009a947c8
-> [    1.056864] x5 : ffff800008eb0310 x4 : 0000000000000009 x3 :
-> 000000002faf0800
-> [    1.064039] x2 : ffff800008eb039c x1 : ffff800008eaa028 x0 :
-> ffff8000092fd8b8
-> [    1.071217] Call trace:
-> [    1.073667]  clk_mux_determine_rate_flags+0x33c/0x380
-> [    1.078741]  clk_mux_determine_rate+0x10/0x20
-> [    1.083115]  clk_core_determine_round_nolock+0xd4/0x140
-> [    1.088364]  clk_core_round_rate_nolock+0xac/0xf8
-> [    1.093090]  clk_core_round_rate_nolock+0xd4/0xf8
-> [    1.097814]  clk_hw_round_rate+0x44/0x7c
-> [    1.101751]  clk_factor_round_rate+0x60/0x80
-> [    1.106041]  clk_core_determine_round_nolock+0x104/0x140
-> [    1.111376]  clk_core_round_rate_nolock+0xac/0xf8
-> [    1.116101]  clk_core_set_rate_nolock.part.0+0xac/0x21c
-> [    1.121351]  clk_set_rate_range_nolock+0x294/0x2b0
-
-But then, where does this come from?
-
-I'm not entirely sure, but the walk up the clock tree is sane to me.
-Could you run
-
-=2E/scripts/faddr2line vmlinux 'clk_mux_determine_rate_flags+0x33c/0x380'
-
-in your kernel compilation directory? (with ARCH and CROSS_COMPILE set
-if you're doing cross-compilation)?
-
-My guess would be that we uncovered some other bug there, but I'm not
-sure what exactly.
-
+Thanks!
 Maxime
 
---3zpagsxfrtqefzpw
+--arqhgnja7j45qopv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkcSRgAKCRDj7w1vZxhR
-xS2WAP9k5aAJjAPiyCz2thzcUfZWy1mfqyW1Mj0Pn/C7S2LqRAD/cBvEvLOifj/e
-4rpcwZPW3q0ENWJKsV4X4sXn3EkqDgY=
-=Nfb5
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkiBfQAKCRDj7w1vZxhR
+xc51AP91P4it5lwuiOCDf4V9snh7rP5aSv3++3wj+7Fyk3SpowEApmEXNoWkW7dm
+Kzxxk7SU+N8cSBEXTpeapqfgtE3wXwk=
+=J7hj
 -----END PGP SIGNATURE-----
 
---3zpagsxfrtqefzpw--
+--arqhgnja7j45qopv--
