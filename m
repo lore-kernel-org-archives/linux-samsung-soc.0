@@ -2,79 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCA5C49ED8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAFFC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379255AbiDDV12 (ORCPT
+        id S1350040AbiDDV1m (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58152 "EHLO
+        Mon, 4 Apr 2022 17:27:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379187AbiDDQmv (ORCPT
+        with ESMTP id S1379374AbiDDRDz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 12:42:51 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F16035851
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 09:40:55 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id p23so4263533edi.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 09:40:54 -0700 (PDT)
+        Mon, 4 Apr 2022 13:03:55 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBC840A23
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 10:01:59 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id x20so4021995edi.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 10:01:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Qq86fHdQFBYDGBq4SciqKEleN++5Ao+l5cvatAfZpnA=;
-        b=MXcyu0hReAsgYMSnOPJYIwUQWZ+3yaoTlqnh+LuV6Fi1mAfTSP42uaWZF28tQVEAlU
-         GSa6/hkTgO3rM1JWDk6g+ZlIdIkGZpg7Kpho90bDt11+csYhNfKCR+vo39ykmdiA6PoQ
-         HV8TcpEEkS86UgNzgEXZ+dbwt5FIshl2ChSa94xcqmUv9jtMEc0qMLDpWhUXV19zUdq5
-         gD2gf6XTGYn5kuItDPRm13k498YiGMwk7g0459TO4MXsT6qsDBiVakN6H0n/dj23jOfY
-         C9rr2hOkGPARNCvviaH9FVLETToBl6hrsCTj7Q3hkzr9It/69X4hUnC2IpB69sR6N/hk
-         P1+w==
+        bh=3H9g58AlHBPTQrDhIy8bA3VbPYT/p5tUvM0gVBca9kM=;
+        b=CXS8DhcR4gnY7ZaqZuAj1sRKqwIDzdlFemejqYrMwifHuO/DJTGr9skQ0OhQKwolVi
+         IYrbjUrpVFcVTsO/+gwVZbxc3wACQKWMoCliP41cFoxCpTyuRPQ9V2JfrzKUD9xeEBnZ
+         9ASHxQXWKVlokRBzUmroiyaGsZag5M8n4ib220T1KlbMVz2BX+KKvoGboHlN3/zWm7xS
+         RRrCl5YASsx3E8x2+RqCUyUrEcs/Wp8j0Us5ffs+jvy8yJtPKJouPI8qUYP1OLb1Ir2M
+         2GKIAK/R9pTvioW4AJlqijBJj3rb2PUpoli4SgdyI//tldS270UpzzTd33mO50O+7MwV
+         gnKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Qq86fHdQFBYDGBq4SciqKEleN++5Ao+l5cvatAfZpnA=;
-        b=EUxWBkIx4+qMiaakAed7T5MpL5TfgQi5SeQDEYEgGfsNG1NWaWuUeg+vksHuKFBNl2
-         Dk8fm1X0htQo9i7ncxBZeSGhiVBgtiP14fWB5eCdFNGFhPUc2/MlpwZ7cgo62jFQwLup
-         8OuvyN5wqFdKuzUrQV1gYSngYGMn9tgzTu7nvDcjmcTYkTRjju1cIDJGUTkvOtjl3kDU
-         AzfqxLTwrGv+haYf00gJ7moHhRN/QY7AORAWp+25cKbSTLrOINB93Iucc3bqMAy/6WT+
-         qvlLI0mceI0OpXKrWWuwJw0fmgYS5uA7ASpHBDw9oMjDD2bX+ryrmH4phu7vTXfuHtv5
-         UMfg==
-X-Gm-Message-State: AOAM533ewlmf7V5nMZ4IfljkQZFzP7ThS5eCxUhvamgukSKS7Eot/gi1
-        M/ytLzGElJJZWl1+L+vr6gl2ig==
-X-Google-Smtp-Source: ABdhPJxHomFt3udU8S52vNGunIJyDLh/iYqz7kTEBI2R9HydWYKbYF9COBXDA3ZXdy99PRqnekRhYQ==
-X-Received: by 2002:a05:6402:438b:b0:41b:5212:1de1 with SMTP id o11-20020a056402438b00b0041b52121de1mr1080487edc.384.1649090453480;
-        Mon, 04 Apr 2022 09:40:53 -0700 (PDT)
+        bh=3H9g58AlHBPTQrDhIy8bA3VbPYT/p5tUvM0gVBca9kM=;
+        b=aHBjb+JdqiQCxvoijZMUCRshCANTYQLUmdz/6AroauLA9G5G8vQAHe1+z27e5o0nlr
+         vf3o8lysJxDHkAnq2Gd9rk0r4UORI4MYTSpruR7EaHkpoW4GyJF6g5v0IcXxh3LItt2r
+         pjS1Ie70qtw96pDQrkHpm6dBCaF644RgD780gwTKjyJX0V8NBR79gZg7tHSpHsMWQJfP
+         v0iAe+RJhC2F0/u6hf2CBNbyhsoaGC9WfzU9UVUrFC7aiCIjXGJqsCYguf4Fnq3tAiXN
+         YEzkBO6kEMWp7kzUWcUXKVBgd0E7QuVB/ba95hcjfSFvZcOIVpI93wX4pago3eHJ5IE4
+         7aXA==
+X-Gm-Message-State: AOAM531ZBI9tZygTKTl+losUBKEr5L4PLsOKAoNEunLw38ymN1Ygj9Rw
+        +fDkX/U0Ngtz21scbLJiBKAhgg==
+X-Google-Smtp-Source: ABdhPJwVtuji7QDmg3IAIKiltBHSnjyfm8HAaRf/K80CqRcwNqpO4nk2Qz2pabYVosG1AvuUJmDFCw==
+X-Received: by 2002:a50:d0d5:0:b0:41c:be47:b959 with SMTP id g21-20020a50d0d5000000b0041cbe47b959mr1079093edf.337.1649091714542;
+        Mon, 04 Apr 2022 10:01:54 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id pk9-20020a170906d7a900b006e05b7ce40csm4548231ejb.221.2022.04.04.09.40.52
+        by smtp.gmail.com with ESMTPSA id c5-20020a170906d18500b006ce371f09d4sm4557770ejz.57.2022.04.04.10.01.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 09:40:52 -0700 (PDT)
+        Mon, 04 Apr 2022 10:01:53 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+To:     Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v5 6/9] ARM: dts: exynos: fix compatible strings for Ethernet USB devices
-Date:   Mon,  4 Apr 2022 18:40:48 +0200
-Message-Id: <164909044624.1097466.6376427362225722252.b4-ty@linaro.org>
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH 2/3] ARM: dts: exynos: add a specific compatible to MCT
+Date:   Mon,  4 Apr 2022 19:01:44 +0200
+Message-Id: <164909169270.1688455.18335841373677729835.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220216074927.3619425-7-o.rempel@pengutronix.de>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de> <20220216074927.3619425-7-o.rempel@pengutronix.de>
+In-Reply-To: <20220225153650.289923-2-krzysztof.kozlowski@canonical.com>
+References: <20220225153650.289923-1-krzysztof.kozlowski@canonical.com> <20220225153650.289923-2-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -82,23 +72,18 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 16 Feb 2022 08:49:24 +0100, Oleksij Rempel wrote:
-> Fix compatible string for Ethernet USB device as required by USB device schema:
->  Documentation/devicetree/bindings/usb/usb-device.yaml
->   The textual representation of VID and PID shall be in lower case hexadecimal
->   with leading zeroes suppressed.
+On Fri, 25 Feb 2022 16:36:49 +0100, Krzysztof Kozlowski wrote:
+> One compatible is used for the Multi-Core Timer on most of the Samsung
+> Exynos SoCs, which is correct but not specific enough.  These MCT blocks
+> have different number of interrupts, so add a second specific
+> compatible to Exynos3250 and all Exynos5 SoCs.
 > 
-> Since there are no kernel driver matching against this compatibles, I
-> expect no regressions with this patch. At the same time, without this fix, we
-> are not be able to validate this device nodes with newly provided DT
-> schema.
 > 
-> [...]
 
 Applied, thanks!
 
-[6/9] ARM: dts: exynos: fix compatible strings for Ethernet USB devices
-      commit: 2e33a7b5fdb3930a9b1051bc792dbdc6a7490aae
+[2/3] ARM: dts: exynos: add a specific compatible to MCT
+      commit: cca50a59f60a6b2b5aa2c90d8c173da89f567ee3
 
 Best regards,
 -- 
