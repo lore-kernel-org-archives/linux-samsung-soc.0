@@ -2,137 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91657C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 07:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F76C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 08:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348197AbiDDH3P (ORCPT
+        id S1349511AbiDDIXS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 03:29:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58830 "EHLO
+        Mon, 4 Apr 2022 04:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236470AbiDDH3O (ORCPT
+        with ESMTP id S1353036AbiDDIXE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 03:29:14 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46F18393E4;
-        Mon,  4 Apr 2022 00:27:18 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id BD08B3201F82;
-        Mon,  4 Apr 2022 03:27:16 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 04 Apr 2022 03:27:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; bh=TDH98TyHYWyK2t
-        EdUf0NoO/6nH3Q1TMk2EezkWhx3sQ=; b=dVMnZC6J7tmVc2SUnBa4VQJJqZ20bo
-        6f54IrlyZ8tr75WoIHSLwBO6KSnEfdiuxUimbqbtpmF3Gr9RhlL2ZKSusEe+w1aO
-        CI4McmjlBK5t1NSFFVUIp8y95sFNox+JBwrDbsHVRTydyk5+wcAtylD4lI9e+X7E
-        n7gkgadc8ZMK7rn7cOl+79hP3fhNAogO9KrvuMpgHuPJ8NEhhPHkDOoZX6giePuM
-        nIbHv3t7XmRYCkRcX9Saly/cUk+iDS3PsUuRkdpZ7fJa0kgj3hd0cocDgsSbpAkl
-        AG0ObjjhPcY/qRGLBYQWgri0NbrsGC35+bgHQvGxEJaq9ZRrtnfB1+Ew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=TDH98TyHYWyK2tEdUf0NoO/6nH3Q1TMk2EezkWhx3
-        sQ=; b=f4+WBWo2dbAGquUDEXVBczIWI4+fiiWvJ5XQvUSV8sgOzp+23gO8eYlqK
-        h14y6fc/Fn27YhO7OFqxM501oQUvwLQL0Acr1bB70UtB2lE8ATX4NBToTbjPQASr
-        yjlxXrj4uRaV+IL8n39XTTUZsNlNXl3PzAl+edblexvqSN3ZnF2hjHiA/MqoNfBx
-        NAD8uzbrrGz28Ev05vRofgf9HKDyRZMqfFX7z3CPAsJksL3vmoepKzfZ6TyYmYWe
-        M/2AWLsbw3/ulG6MGvSfVfsa9ZHPWgcDjDAiCo0tGyM8rZ2c0HrtbgVxtXu/eIqW
-        yaVnWuXx4kFjIXGoRF2DOeOL3p+ng==
-X-ME-Sender: <xms:0Z1KYo3s9JcjtgrOYW-NphGGx9CqgZvH0obO0_U2k9CHvQYZJpKNTg>
-    <xme:0Z1KYjGCwV-gsqijF_O-cDhrACsXElxfsYNW-ukeDPJED2O4E2Dzh9W0MVzaQjvoC
-    PGN4YE9_NDEFDZQCZ0>
-X-ME-Received: <xmr:0Z1KYg7N6BpEzKu5kDvFlPvaLSGzFQUu06NkchrUJxXT1BJz9pbi-bFEeZU2Lp-6h8eqNM8aIc4HXekC6LK7SFt5Cj4JPVT0kjBKyrQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejuddguddvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepkeeludfhledtieegfeelveetveegueeghfeitedttddvjefhgfevgfdt
-    leegheehnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgv
-    tghh
-X-ME-Proxy: <xmx:0Z1KYh1PJQ9XoY6VXz8dX9SuNKKvTanIn9udheYOihk3n7IG2yrwtQ>
-    <xmx:0Z1KYrGB9khYukboV_p4SRsPgIFXQzjoLpIiZ_vouVtsRdREPycQOA>
-    <xmx:0Z1KYq_ajBfX_xzZ-dBSbSkg75I0RQKoykkNJ9K1I6_CB5nzTuMRUw>
-    <xmx:1J1KYiBxUPmYfSNx2X6cPTlTzJJuCgwMrGunaWS9pyhZSH64ESjKCA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Apr 2022 03:27:13 -0400 (EDT)
-Date:   Mon, 4 Apr 2022 09:27:12 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: [PATCH v2 3/3]
- clk: Drop the rate range on clk_put
-Message-ID: <20220404072712.bbsbkq3cpyx4xuzy@houat>
-References: <20220325161144.1901695-1-maxime@cerno.tech>
- <14273141.O9o76ZdvQC@steina-w>
- <20220401145502.5hnilpku3qh77bvs@houat>
- <4391300.LvFx2qVVIh@steina-w>
+        Mon, 4 Apr 2022 04:23:04 -0400
+X-Greylist: delayed 457 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Apr 2022 01:21:08 PDT
+Received: from mail.coredeal.pl (mail.coredeal.pl [51.75.73.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A073B3EF
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 01:21:08 -0700 (PDT)
+Received: by mail.coredeal.pl (Postfix, from userid 1002)
+        id 74985A34CE; Mon,  4 Apr 2022 08:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=coredeal.pl; s=mail;
+        t=1649059875; bh=9KGuIG62LgzC9aYmjKxzocuYLRCVghXg6v9Q1q2LHec=;
+        h=Date:From:To:Subject:From;
+        b=FjhaKa8AeXwvWyrI30NbhPfWmTQf2T3a1FzyRd6czSvoN5s14mvz6fj628OlGtDf8
+         /WgfAHXt/HcwonJUkEphVKTE/ThnAeorXZo4l0T6q1EtlM93KtzPhvMmvJrwJvhj/X
+         jaOXR5DgHkVCDcs8OYCDUSm68ml0jU7Lr1djtOlJZ/E+Juxj+vBnY+PHYFJq9QTmmA
+         fjkUfepoKNFI6RtgDm4OnFOysS53jNP9/gcz+x0DifOw1tE1wt0aMTLpX6yTiV4vyL
+         JMb5UfAQiWJ3sNIYlSoMi5DKzOiSZsPCwFQ8OWxVK3lBGqbeyYFr/7f8dKFYLb9+fV
+         PUKslFoHJWPcw==
+Received: by mail.coredeal.pl for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 08:10:30 GMT
+Message-ID: <20220404064500-0.1.2c.c95g.0.h4j1ix6ldh@coredeal.pl>
+Date:   Mon,  4 Apr 2022 08:10:30 GMT
+From:   "Krzysztof Maj" <krzysztof.maj@coredeal.pl>
+To:     <linux-samsung-soc@vger.kernel.org>
+Subject: Biznesowy angielski
+X-Mailer: mail.coredeal.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4391300.LvFx2qVVIh@steina-w>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Apr 04, 2022 at 09:06:42AM +0200, Alexander Stein wrote:
-> Here is the requested output:
-> ---
-> $ ./scripts/faddr2line build_arm64/vmlinux=20
-> 'clk_mux_determine_rate_flags+0x33c/0x380'
-> clk_mux_determine_rate_flags+0x33c/0x380:
-> clk_mux_determine_rate_flags at drivers/clk/clk.c:627
-> ---
-> From a first look it seems that 'best_parent' is just a NULL-pointer here.
-> With this small fix
-> --->8---
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 071857ef381a..45e081330fac 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -626,7 +626,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
-> =20
->         pr_crit("%s: Best parent %s (%lu)\n",
->                 __func__,
-> -               best_parent->name,
-> +               best_parent? best_parent->name : "unknown",
->                 best);
-> =20
->         return 0;
-> --->8---
->=20
-> The boot eventually get stuck, but at a later point.Which is probably why=
- your=20
-> analysis found nothing strange. Due to the size of the output I put it on=
- a=20
-> gist on github [1]. Please note that this is still based on a next-202203=
-31=20
-> based tree without the revert.
+Dzie=C5=84 dobry,=20
 
-I've looked into it over the weekend, and ran qemu on an imx6 to try to
-see if it was any similar
+czy rozwa=C5=BCali Pa=C5=84stwo rozw=C3=B3j kwalifikacji j=C4=99zykowych =
+swoich pracownik=C3=B3w?
 
-I believe the issue comes from the fact that the core will forward rate
-requests structure to the parent clock as is, and if the parent clock
-changes the parent it wants, we end up trying to use that parent in the
-initial clock which doesn't work really well.
+Opracowali=C5=9Bmy kursy j=C4=99zykowe dla r=C3=B3=C5=BCnych bran=C5=BC, =
+w kt=C3=B3rych koncentrujemy si=C4=99 na podniesieniu poziomu s=C5=82owni=
+ctwa i jako=C5=9Bci komunikacji wykorzystuj=C4=85c autorsk=C4=85 metod=C4=
+=99, stworzon=C4=85 specjalnie dla wymagaj=C4=85cego biznesu.=20
 
-I've fixed it in my branch here:
-https://github.com/mripard/linux/commits/rpi/clk-improvements-more-fixes
+Niestandardowy kurs on-line, dopasowany do profilu firmy i obszar=C3=B3w =
+=C5=9Bwiadczonych us=C5=82ug, w szybkim czasie przyniesie efekty, kt=C3=B3=
+re zwi=C4=99ksz=C4=85 komfort i jako=C5=9B=C4=87 pracy, rozwijaj=C4=85c m=
+o=C5=BCliwo=C5=9Bci biznesowe.=20
 
-Could you give it a try?
-Maxime
+Zdalne szkolenie j=C4=99zykowe to m.in. zaj=C4=99cia z native speakerami,=
+ kt=C3=B3re w szybkim czasie naucz=C4=85 pracownik=C3=B3w rozmawia=C4=87 =
+za pomoc=C4=85 jasnego i zwi=C4=99z=C5=82ego j=C4=99zyka Business English=
+=2E
+
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 wi=C4=99cej szczeg=C3=B3=C5=82=C3=B3=
+w i opowiedzie=C4=87 jak dzia=C5=82amy?=20
+
+
+Pozdrawiam
+Krzysztof Maj
