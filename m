@@ -2,69 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C56A0C43217
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E828FC4167D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379364AbiDDV1d (ORCPT
+        id S1382379AbiDDV2L (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
+        Mon, 4 Apr 2022 17:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379194AbiDDQmw (ORCPT
+        with ESMTP id S1379371AbiDDRDy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 12:42:52 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C750F35856
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 09:40:55 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id b15so11819378edn.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 09:40:55 -0700 (PDT)
+        Mon, 4 Apr 2022 13:03:54 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C99D40A24
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 10:01:57 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id g20so11880517edw.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 10:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tVwuLd+neUM3VJZqwOr9z7OtY6A0RB3h0nUP6lYowGE=;
-        b=V2K4q6ibqGhSE7TxUzONdqpSYVxHZIS8L6fhDOv6ddPgwl+iH/orvorDfWmX50HfgN
-         qzjyYuGjnffRkaFXlvpTFsrsWeCmimskBN/96Urd2y+/T5OSZBKIfW0vO3eeqIqIhmD1
-         sW7apuqI74Am2bflyhlKBvuTHKOTvNXQeOS1fllgPyyS6H3z4LaaWPGIgfQBhtnmMQes
-         EUOsOdpHRYHBRF1yLpc4Zxbl/nx1+dDhDyOwCfeuh1/N56QKeYTwvpR+TE23rHxniM1P
-         jFfKxfLZiOueCmQEJg5j/qudZoqpCa/s0IkS7vYtoqdnU5EHDMvb6LAxYudO+dzFIe+Q
-         +o1A==
+        bh=v5Fmb4acPC59cWZXdkuaYjyiaNIFHAYaKvTirVUtyb4=;
+        b=R8hcC66HpgMWLqprAc3n6eEdxFsgMtSPa37JJtF4M0LOQQxhDV5/c47atRSa8zHosK
+         Kj07u92mYfjSCKDxQZFzeMjmsmm7NhVNpY5mDun8DDsQF4JXKdDOelLXIdq98qZ7/IL9
+         g6bE11BZY9RBWmwwWMvikscr8Amc9ceyc7EEEEpaUrDTePh7BARB0NmuQqIQqVV60bO3
+         GiPI6qxMRN40VVREzeXloXjPRaeTBLUNufaBhPEFyffYoIJIeH+L1HvOF/Xht0HgJ/ap
+         61sRx4y6JRk8DqFdDNReLUgtRu17YVLKHYcC9EzLe+eUFkzUW2EckiHPNdxFgYDlWW5D
+         xLWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tVwuLd+neUM3VJZqwOr9z7OtY6A0RB3h0nUP6lYowGE=;
-        b=xXszV03iTMmSb4YsNmndsrf5hCJ2ew0YzOaVmshdHyHVczH6nIPE4OqnTZXjmdl0FO
-         i2djTBfL38BUgMHSvlerEHVf2NctBsf7jNh8HHVSKd1YggNyb/QTQQrlAaJsax79O234
-         Iyo7KoeZDROjWR9ngOqBRi0YN731mgIZe8SiFTKrxSto4V/i8emkbTvcKhaY09huNY6h
-         d284FKoy3bkYeqo1awvIbcDeHcaCYY/VsqCe5pZIknhb8ijky//ZabB3WjUhqpfsWN0m
-         FW7aObqaPVysY/aNf+OhQu36sc78Nsm8tM1tkK5Fc8O8aBGo4QePb+IE2REQ5ffVBIzA
-         6pyA==
-X-Gm-Message-State: AOAM531ajy87IAexSxvM+AIrbogHzsicM0cymjxJDMnzheA4+1jsmFkI
-        rdt/RWhG2xKngsTiUOaaFiVKlzQQVStq/ig2
-X-Google-Smtp-Source: ABdhPJwVMvrOArv10Im+H85x8XD9d6eXEzkCXvq88uTli0UsvfwF9EQ1kELuKKOgaIgJb1GrdMBrSw==
-X-Received: by 2002:a50:cd97:0:b0:41c:d36d:b8ca with SMTP id p23-20020a50cd97000000b0041cd36db8camr1072873edi.256.1649090454316;
-        Mon, 04 Apr 2022 09:40:54 -0700 (PDT)
+        bh=v5Fmb4acPC59cWZXdkuaYjyiaNIFHAYaKvTirVUtyb4=;
+        b=iwB9eDmnOFcgewkx2NtvkEQaMdSbbyPwogDAcaHMR7o+sQM9ytOFW5Rf/M639IKlgi
+         DddvbSryKrpat1AcCz6D/yhTD+rAXMUCgrnWg0KKIhBLma5mx8C/DyRd8hLg4REv7UBY
+         P6d3Ec1xy7IeVkaQhkq7zTqD2/ovL+dkUVfM+OoktGx8hyt7hOr7rHk+2fFeyeqQCpBh
+         +dCC5LpD9IuVUIu6aRg3xY4Iv32eZHdWvc7tqg9npAgT5TTcOReoeqcHGXBRFEyIPON0
+         CrESPTABw9EW2V4OADuOVeXjFpd3wsENLkcFGcu01spbEuBievS/KVI435Sr1i9uvcXQ
+         rkYw==
+X-Gm-Message-State: AOAM531O6pUyYFo9pqlBzWRNiz9hIioQ7qJ1MVXb4lZtT2UJiYXFT6I5
+        c18uKgPfulFYMvpYYEhCbtlKBg==
+X-Google-Smtp-Source: ABdhPJxw9oxoZGvi5JcalnhggHj8GMN53jspFBnnKS9BPbdilK/xZWUSjz+E8N965+hn6nwIGmMlgA==
+X-Received: by 2002:a05:6402:2318:b0:413:7645:fa51 with SMTP id l24-20020a056402231800b004137645fa51mr1136945eda.201.1649091716073;
+        Mon, 04 Apr 2022 10:01:56 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id pk9-20020a170906d7a900b006e05b7ce40csm4548231ejb.221.2022.04.04.09.40.53
+        by smtp.gmail.com with ESMTPSA id c5-20020a170906d18500b006ce371f09d4sm4557770ejz.57.2022.04.04.10.01.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 09:40:53 -0700 (PDT)
+        Mon, 04 Apr 2022 10:01:55 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     linux-usb@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
         linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>, kernel@pengutronix.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH] ARM: s3c: Drop config symbol S3C24XX_PWM
-Date:   Mon,  4 Apr 2022 18:40:49 +0200
-Message-Id: <164909044624.1097466.13477744007661317538.b4-ty@linaro.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH 2/5] ARM: dts: s5pv210: align EHCI/OHCI nodes with dtschema
+Date:   Mon,  4 Apr 2022 19:01:45 +0200
+Message-Id: <164909169269.1688455.16830992649596254488.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220328082638.112185-1-u.kleine-koenig@pengutronix.de>
-References: <20220328082638.112185-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20220314181948.246434-2-krzysztof.kozlowski@canonical.com>
+References: <20220314181948.246434-1-krzysztof.kozlowski@canonical.com> <20220314181948.246434-2-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -72,20 +72,15 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 28 Mar 2022 10:26:38 +0200, Uwe Kleine-König wrote:
-> The only effect of this symbol is to select PWM_SAMSUNG. Drop it and fix
-> the affected defconfigs to still keep PWM_SAMSUNG=y. Developers using
-> MACH_NEO1973_GTA02 and/or MACH_RX1950 now have to manually select PWM and
-> PWM_SAMSUNG (and get the freedom to select is as a module or not at all).
-> A side effect of this change is that allmodconfig now contains
-> PWM_SAMSUNG=m (which was =y before).
+On Mon, 14 Mar 2022 19:19:45 +0100, Krzysztof Kozlowski wrote:
+> The node names should be generic and USB DT schema expects "usb" names.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] ARM: s3c: Drop config symbol S3C24XX_PWM
-      commit: a0861079a218aeca314eba38245a47f33d51f476
+[2/5] ARM: dts: s5pv210: align EHCI/OHCI nodes with dtschema
+      commit: ab92681ca16194c966844ed4dd2c336705e0c727
 
 Best regards,
 -- 
