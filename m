@@ -2,82 +2,91 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9420EC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 15:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE88CC48BCD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:25:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378606AbiDDPfq (ORCPT
+        id S237667AbiDDV1I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 11:35:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36946 "EHLO
+        Mon, 4 Apr 2022 17:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377810AbiDDPfp (ORCPT
+        with ESMTP id S1379379AbiDDRD5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 11:35:45 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC41A193EA
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 08:33:48 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id h11so13430160ljb.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 08:33:48 -0700 (PDT)
+        Mon, 4 Apr 2022 13:03:57 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2C540A28
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 10:02:01 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id i27so14188062ejd.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 10:02:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0BaM8mE0ADfMYlXtw7vleG40fbepoqGgL/4MX4webNM=;
-        b=ksDgHMx2Bwif416kkxyTK83wbuEWqRC/SQPlHJuG9GB8hDgBz44MZMx/1HGX678eDC
-         2wnh9ws+cUzeMzUdTaIyPQtYnoElHOckaTUs5tcDi/avbQ1x6JIoh4RvUzQOcbefBFYP
-         POlWTz3c4d6YS1O0FNwvfPTZvfop8awZKXrfXMrZX16BNQ0qSZfcr86eDyI6BKWogCZ3
-         DmyA08M1g8ZGRvb+ZjxFdcrjs7y9CNRW1GUgHQ5pk94DWguaGetZDh3W5V1yB6beKXIi
-         u8vgw/L+145ltC71pdu+f2k4braelrsCFxwLBBG0l4ADlpwbtqqXFl4MDxcnX79WDnYY
-         0xxA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=XDRai04CA05RswVKu5alUWJtGVzhDwT89lcIpEMtwKM=;
+        b=YGjEVbKrxaCj2fiISbwvOvVSLZ42rj3jHDAPpX+ykNsk90fFh/VsuaFoFMNYtyxuzF
+         nVi1FnYccUZfV3/L6BEPiJ0lmNO/JN8Kl/CXMB+yUcnqfXIsneiUpStjBd+YralAyO8R
+         JLRIj8Rz1nEW9LenHRh9+U+poKxEmfIx3v0EhYx8lPOK7IVh+YyBW2M/utkM2TUi6YtW
+         ecN1C1KwqD/KkxPnoqCS1NdxfskdpaEB08QOhOK7NFRh4ccuynpl9jFvSDFIFCiqBGEg
+         hD9fv5XB7Jz+vbUMOAPD6yJO7KoPbmdn4G0J5eypih98p+tNOvZfhExy67YIyPuCt1Y7
+         P6SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0BaM8mE0ADfMYlXtw7vleG40fbepoqGgL/4MX4webNM=;
-        b=hJnYgVdEyjTvlyuWy0NOF5Atg10E2doDRZkyqghtgyi0fFpOtzJZxAxXPyuNliWGz9
-         fDmUdgvMZgJAFDauqO7InGglfBbB2C2LXU+fb6QfZks/TuWtkUlSaeUkOunFWgSdBADG
-         v97S5Er7O0XRzaA6ejFxYVHIUQpR9sHlTmb/fgGvwsQ9iY/EkuQETSKEft+k2HOiaR/a
-         0TqIpdohX2ojDFBrw90luBL2ZLmGwA6uXUY9MbmUAzqOn+6erk//0X8WNrzscpxqKPEC
-         2LsUtw9/U0sof9mb6bzcRWU0eOoLk/pkorJYvV28rIj4BFjFE2hehj6rfXuteCMW8MeV
-         mPdw==
-X-Gm-Message-State: AOAM530x69ygE0e3TGhmXwY1LsOI+Sgpm4xqdKKM9MxW34flveL7gU1X
-        X8ASS+q/2yIurjWTWzbJOf3hNnzBeHtdfe0wIlKfZA==
-X-Google-Smtp-Source: ABdhPJyJFY5IsdzIsRzag1xsA1I+Oi7D6rt+gN+XZTY4yAeNA4Wv9+v4zOmYqngowRK8wWY2VLqvd6/DtzNfEQUcpQo=
-X-Received: by 2002:a2e:a268:0:b0:24b:1296:a1ab with SMTP id
- k8-20020a2ea268000000b0024b1296a1abmr89360ljm.169.1649086427030; Mon, 04 Apr
- 2022 08:33:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220324134106.103588-1-krzk@kernel.org> <YkZFgGNRPUqJIY6x@robh.at.kernel.org>
-In-Reply-To: <YkZFgGNRPUqJIY6x@robh.at.kernel.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 4 Apr 2022 18:33:35 +0300
-Message-ID: <CAPLW+4k4RwOcUiKZU05nb7tcpM2MTxdJ_m=8byyGvHdJbHRbRw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: soc: samsung: usi: refer to dtschema for SPI
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=XDRai04CA05RswVKu5alUWJtGVzhDwT89lcIpEMtwKM=;
+        b=7ezNN21cyPeXv4c8UucMbFQEGlWCuCVDmC18CysslvmiGIzYYrae8Wgd5u+w1L8rat
+         3aXk0mdlr+V/KcjgVe28hJifoDJbUAJIHlmXNSXjRa06k8eekwIuv6RcCqrUXtUbBI0U
+         0FN+PQ0vMUtU/qFbYhjxQcBB+q33D6wOjPZGroOALyNE7e0nySPT5z5SjBb+zoBRmxq5
+         Yuq1+rdhRK4l+UIdUL21DaISWrWWbUKaFISC4jY/QR8NVyHPFNOiozeDPoqNMQUYX9yy
+         rtbUBP69vk3myiuukdYT6/aM1nkKMLba9r5ssPJmS8k5jX7X8GPPHMyKpEdrbtLMdWOf
+         qWUg==
+X-Gm-Message-State: AOAM532z99wo2MvPx1TcR4xe3NtTrB1TTI9v5F2Lin3x8mgDv+U6I7Ey
+        GOh1Z8EGmIUGfiInbT16HyR9bg==
+X-Google-Smtp-Source: ABdhPJxjxE1555uF2gVoe5qYPFLZ+9GXlrvyiQUh8yEYi1nxgJCJ+oxDdo2NSpOk6a60bL6TomwbSQ==
+X-Received: by 2002:a17:907:96a8:b0:6e7:c54e:66e4 with SMTP id hd40-20020a17090796a800b006e7c54e66e4mr1100334ejc.322.1649091717687;
+        Mon, 04 Apr 2022 10:01:57 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id c5-20020a170906d18500b006ce371f09d4sm4557770ejz.57.2022.04.04.10.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Apr 2022 10:01:56 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: drop deprecated SFR region from MIPI phy
+Date:   Mon,  4 Apr 2022 19:01:46 +0200
+Message-Id: <164909169269.1688455.14606590160258224493.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220314184113.251013-1-krzysztof.kozlowski@canonical.com>
+References: <20220314184113.251013-1-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 1 Apr 2022 at 03:21, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, 24 Mar 2022 14:41:06 +0100, Krzysztof Kozlowski wrote:
-> > After adding DT schema for Samsung SPI controller, the Samsung USI
-> > bindings can reference it directly for proper schema validation.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
+On Mon, 14 Mar 2022 19:41:13 +0100, Krzysztof Kozlowski wrote:
+> Commit e4b3d38088df ("phy: exynos-video-mipi: Fix regression by adding
+> support for PMU regmap") deprecated the usage of unit address in MIPI
+> phy node, in favor of a syscon phandle.  Deprecating was a correct
+> approach because that unit address was actually coming from Power
+> Management Unit SFR range so its usage here caused overlapped memory
+> mapping.
+> 
+> [...]
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Applied, thanks!
 
-> >  Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
->
-> Acked-by: Rob Herring <robh@kernel.org>
+[1/1] ARM: dts: exynos: drop deprecated SFR region from MIPI phy
+      commit: 04398e04173f1be0b21d7cd50c54e8affcebe106
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
