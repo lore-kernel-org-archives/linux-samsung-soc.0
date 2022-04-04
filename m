@@ -2,67 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284CFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 304DCC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379690AbiDDV1d (ORCPT
+        id S1382372AbiDDV2H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
+        Mon, 4 Apr 2022 17:28:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379364AbiDDRDu (ORCPT
+        with ESMTP id S1379417AbiDDRKT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 13:03:50 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE3B140A28
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 10:01:53 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id u9so6774970edd.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 10:01:53 -0700 (PDT)
+        Mon, 4 Apr 2022 13:10:19 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F5F40A22
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 10:08:22 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a6so10417525ejk.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Apr 2022 10:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eaDWQWz1kiQwWpxivLYYrV+X0cEZrsrmIAZxsaFLj0s=;
-        b=gAScoclBpW6c8jHDTbBeFYVOa8Vb+lZKB19UpeLijcAa46WH1Ox68XOcWSaAUa6OBV
-         regey1nP+Y3uKapqeAPAX4mWaPulwjzHqwqatwf8SxMB4kos9WXVww5xOBhuXmjC13Jg
-         9LDRvPL3S9pXoljZ8d3MmIY96mHXRSlQc0i/huBbI0IptKdGmuAe8HbMgFq0jCVbJQL9
-         k92n27ryfAkqptSU5w4CditBkdG1Qciyzig70GNy9Bafz2/+PS6+2XTB19NdgaENJ6f1
-         OS1hhUufxYUb3RelMQPm/CTPokqCVWknj9w5a+Rl5K2SdT1rIIasATZT5878meuX85RI
-         OTcw==
+        bh=LXXr7F0cW3RTrkA8M6uuznqZSvmvR1TGt0LOYkCfNSQ=;
+        b=wBUWd1KOHSXpqah/8BaOgmo8qLPdZf1sdgt0au6YhBPtGFBBh2rBCHyFSGtQaXNZe7
+         khGltgNxaO32X6qwHt4slyv3JWF+NX5P+dHNeemg4Dp4Rj2oEKD1T3M7L+jBkvG0cEaj
+         XWzBID2cjpeX8s/+1fc7UvWjmeXe7cRskPgFVjXw5x5VHbcBDjc3bg59jDMUgbQMp0QD
+         LFBiJ6j2JSV6MBnkz8TAYalVInVz6tEnJZIX0E2/DYb+fBpSM+arJRv+VD6RXlRi6b5Y
+         Ek8TgLsFU9b5Qf6uMfaf/Q6xTn5QkVOkUzkmJD5P8m3DccA+TDLPfosr3ptDA05BQWii
+         dHCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eaDWQWz1kiQwWpxivLYYrV+X0cEZrsrmIAZxsaFLj0s=;
-        b=MKLZ0+soU47nFpK+dRlzjxfKOPGc5E8fBYBa1ekvejZIBKwoVUYbMnwA7eE5eb65fr
-         p5mH0mLfta+yhWjv3ZvsOV6HvM+U8N205xbQ3jT1cHqG/r3Qjukn0ERlq4TYrYexxAnN
-         0ayjQKYdFA7/qUuBJNxIE1+otkW35MZ2qRjKnhJq6TrsBEs5fTn1+Ib6beQtd67fzpe6
-         OpLEJlGNVm2Mj1l0iw85MmVJ9mgm4E1xfrmUqtk/8+2Nw4AZMbh3dS3qFZDFoLHTA2vd
-         lGYFj+ah06qo5KI6PVKi+8Fwc3Gm1jW+m+qYzeHdvlMYdyXGcN5uMZyjtRDAioiVtcjc
-         XLKQ==
-X-Gm-Message-State: AOAM533TBoYDmJsNlYke0q5+zsatnC8mYjwQGXHvB7oTdOyuCumpKdYd
-        ZvTQHwkIJeDi6VLMB0ZKwN645Q==
-X-Google-Smtp-Source: ABdhPJztm/eMGvOu12ArL6gqzftWaXUdqGzWTTBrItmoOSsRyFaBAtJtYP+WVN7AQinWoayC6HgN7A==
-X-Received: by 2002:a05:6402:2043:b0:41c:da2c:2d5a with SMTP id bc3-20020a056402204300b0041cda2c2d5amr1132137edb.373.1649091712122;
-        Mon, 04 Apr 2022 10:01:52 -0700 (PDT)
+        bh=LXXr7F0cW3RTrkA8M6uuznqZSvmvR1TGt0LOYkCfNSQ=;
+        b=4vtaQlRZlRLs3Ip2bkbX4KX6knWrWql9LBZNltUnEf3mtGddqsx/OK50Rj+kQooJZl
+         jtH2Kq8hmQOD+HqBKZgW0AvQgyZdQ84rlb8Z7obY7Fa/ZP4OOixizROiJIFRxIki7h27
+         s/cTbaK6LySSsGwfX6YzKyb46kfM82fVVATZc7qXb+aivOXBukWr1OKcXtCvP2kdxLNn
+         Gzv638rpZauePGOXaR8Onz+vGY52sqIVQAaZUqqu6Gr6olHyhyqYTpA77XPkqqJY+Pd1
+         NdW4pg2ezkuj2VeSPCotxhK3tHiGXGDN78/dMtGBNVB+uVwqqRGmFySUP9BUJj92cMSL
+         88zw==
+X-Gm-Message-State: AOAM531sE3zkjItevwOvAq0ZDojgUeyUvygTmDdaJ4d7R+BKFfYsCPwS
+        Yh4HdUOkAAF3c6g1SwTVXxPyaw==
+X-Google-Smtp-Source: ABdhPJx2qo4HGcrJqr114ZtIIY4ckwTEFuRMwUlvOaFJCAC2pEj4AzRRvX7sa3sEZVcPo8HyRUAHlA==
+X-Received: by 2002:a17:907:a41e:b0:6e7:9ea9:8350 with SMTP id sg30-20020a170907a41e00b006e79ea98350mr1021136ejc.377.1649092101002;
+        Mon, 04 Apr 2022 10:08:21 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id c5-20020a170906d18500b006ce371f09d4sm4557770ejz.57.2022.04.04.10.01.51
+        by smtp.gmail.com with ESMTPSA id u25-20020a170906b11900b006e08588afedsm4565827ejy.132.2022.04.04.10.08.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 10:01:51 -0700 (PDT)
+        Mon, 04 Apr 2022 10:08:20 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        kernel-janitors@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] ARM: s3c: s3c24xx: fix typos in comments
-Date:   Mon,  4 Apr 2022 19:01:42 +0200
-Message-Id: <164909169269.1688455.6988886329557682550.b4-ty@linaro.org>
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] memory: samsung: exynos5422-dmc: Avoid some over memory allocation
+Date:   Mon,  4 Apr 2022 19:08:14 +0200
+Message-Id: <164909209237.1690243.6125620782539753539.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220318103729.157574-5-Julia.Lawall@inria.fr>
-References: <20220318103729.157574-5-Julia.Lawall@inria.fr>
+In-Reply-To: <69d7e69346986e2fdb994d4382954c932f9f0993.1647760213.git.christophe.jaillet@wanadoo.fr>
+References: <69d7e69346986e2fdb994d4382954c932f9f0993.1647760213.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -70,16 +71,22 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 18 Mar 2022 11:37:00 +0100, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
+On Sun, 20 Mar 2022 08:10:30 +0100, Christophe JAILLET wrote:
+> 'dmc->counter' is a 'struct devfreq_event_dev **', so there is some
+> over memory allocation. 'counters_size' should be computed with
+> 'sizeof(struct devfreq_event_dev *)'.
 > 
+> Use 'sizeof(*dmc->counter)' instead to fix it.
 > 
+> While at it, use devm_kcalloc() instead of devm_kzalloc()+open coded
+> multiplication.
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] ARM: s3c: s3c24xx: fix typos in comments
-      (squashed)
+[1/1] memory: samsung: exynos5422-dmc: Avoid some over memory allocation
+      commit: 56653827f0d7bc7c2d8bac0e119fd1521fa9990a
 
 Best regards,
 -- 
