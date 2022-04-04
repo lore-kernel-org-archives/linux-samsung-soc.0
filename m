@@ -2,69 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F76C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 08:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3265C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Apr 2022 10:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349511AbiDDIXS (ORCPT
+        id S1358678AbiDDK4R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 04:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53558 "EHLO
+        Mon, 4 Apr 2022 06:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353036AbiDDIXE (ORCPT
+        with ESMTP id S1358621AbiDDK4Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Apr 2022 04:23:04 -0400
-X-Greylist: delayed 457 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Apr 2022 01:21:08 PDT
-Received: from mail.coredeal.pl (mail.coredeal.pl [51.75.73.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A073B3EF
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 01:21:08 -0700 (PDT)
-Received: by mail.coredeal.pl (Postfix, from userid 1002)
-        id 74985A34CE; Mon,  4 Apr 2022 08:10:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=coredeal.pl; s=mail;
-        t=1649059875; bh=9KGuIG62LgzC9aYmjKxzocuYLRCVghXg6v9Q1q2LHec=;
-        h=Date:From:To:Subject:From;
-        b=FjhaKa8AeXwvWyrI30NbhPfWmTQf2T3a1FzyRd6czSvoN5s14mvz6fj628OlGtDf8
-         /WgfAHXt/HcwonJUkEphVKTE/ThnAeorXZo4l0T6q1EtlM93KtzPhvMmvJrwJvhj/X
-         jaOXR5DgHkVCDcs8OYCDUSm68ml0jU7Lr1djtOlJZ/E+Juxj+vBnY+PHYFJq9QTmmA
-         fjkUfepoKNFI6RtgDm4OnFOysS53jNP9/gcz+x0DifOw1tE1wt0aMTLpX6yTiV4vyL
-         JMb5UfAQiWJ3sNIYlSoMi5DKzOiSZsPCwFQ8OWxVK3lBGqbeyYFr/7f8dKFYLb9+fV
-         PUKslFoHJWPcw==
-Received: by mail.coredeal.pl for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Apr 2022 08:10:30 GMT
-Message-ID: <20220404064500-0.1.2c.c95g.0.h4j1ix6ldh@coredeal.pl>
-Date:   Mon,  4 Apr 2022 08:10:30 GMT
-From:   "Krzysztof Maj" <krzysztof.maj@coredeal.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Biznesowy angielski
-X-Mailer: mail.coredeal.pl
+        Mon, 4 Apr 2022 06:56:16 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA302C117;
+        Mon,  4 Apr 2022 03:54:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1649069659; x=1680605659;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rQ+A9jrxP/AoNdJehS0U+xaw6T3SSUsxJMay+kwDw0g=;
+  b=hecybtFghTKqmVL3UrbmYo35an9RIhqtw6KzdG4l4Yvxgh2Lpyz+qtu6
+   ugMZNgIhXXMDCWleWJtCAHKWqrbCHa2cwzl+QQjTx1xU/x2cI8vxKFmbe
+   /YJRcaL7usXbtAOUSyqm87FR7B21BfTA5IgfEqv5f/XQwwSiJrPEmyuZw
+   VuKswhNk4UNISuRsvGmBa/f/rawacvn+fs3P7P+JuqkNjeB0f2GSwHcIm
+   ioEvK/SwCSQQLXXMrPAyuhkBIQU0+8KZ5u0qO4mdHdv3HveKGpMsEeXQe
+   FC2GAkjmg/VC3h3KxfGXcNAoC6Gl68O+f6pL7mPNx0BZFfzspGA6F/Nwi
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.90,234,1643670000"; 
+   d="scan'208";a="23073726"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 04 Apr 2022 12:54:16 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Mon, 04 Apr 2022 12:54:16 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Mon, 04 Apr 2022 12:54:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1649069656; x=1680605656;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rQ+A9jrxP/AoNdJehS0U+xaw6T3SSUsxJMay+kwDw0g=;
+  b=UeSxzdcc2p1icXFPdkoh46DqaU+0QaKapY01QotqNbfAheCiBj/lrg4N
+   btU/syVGc/Cdz4Jxmpxqq+fMkkTIaaaYAaEf6oY4bsSGT8eAcxQjifXXu
+   CQLGwV0SDXpuKQL5lIhbxw/sCrlsdoPIl+uVJg6GVxMD4T3PokhPevJJ7
+   qPqlpTK94h0XAIEqypTveTV4t2Uv1uqglX/vB2/V73uvSY166R+FykoMJ
+   dIzsl3sEA9Seqf/tSQnKYk8XHo4pkR0nxgXKA6P5H4UexXXkVWTj8ccJM
+   BfBKs+5Oer8bZebfSC4gqBdxMTMe3b2wFieloaVwiH2UiBbC2YdKBgW/7
+   g==;
+X-IronPort-AV: E=Sophos;i="5.90,234,1643670000"; 
+   d="scan'208";a="23073724"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 04 Apr 2022 12:54:09 +0200
+Received: from steina-w.localnet (unknown [10.123.49.12])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id CB22F280065;
+        Mon,  4 Apr 2022 12:54:04 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+Date:   Mon, 04 Apr 2022 12:54:02 +0200
+Message-ID: <12990313.uLZWGnKmhe@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20220404072712.bbsbkq3cpyx4xuzy@houat>
+References: <20220325161144.1901695-1-maxime@cerno.tech> <4391300.LvFx2qVVIh@steina-w> <20220404072712.bbsbkq3cpyx4xuzy@houat>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+Hello Maxime,
 
-czy rozwa=C5=BCali Pa=C5=84stwo rozw=C3=B3j kwalifikacji j=C4=99zykowych =
-swoich pracownik=C3=B3w?
+Am Montag, 4. April 2022, 09:27:12 CEST schrieb Maxime Ripard:
+> On Mon, Apr 04, 2022 at 09:06:42AM +0200, Alexander Stein wrote:
+> > Here is the requested output:
+> > ---
+> > $ ./scripts/faddr2line build_arm64/vmlinux
+> > 'clk_mux_determine_rate_flags+0x33c/0x380'
+> > clk_mux_determine_rate_flags+0x33c/0x380:
+> > clk_mux_determine_rate_flags at drivers/clk/clk.c:627
+> > ---
+> > From a first look it seems that 'best_parent' is just a NULL-pointer here.
+> > With this small fix
+> > --->8---
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 071857ef381a..45e081330fac 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -626,7 +626,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+> > 
+> >         pr_crit("%s: Best parent %s (%lu)\n",
+> >         
+> >                 __func__,
+> > 
+> > -               best_parent->name,
+> > +               best_parent? best_parent->name : "unknown",
+> > 
+> >                 best);
+> >         
+> >         return 0;
+> > 
+> > --->8---
+> > 
+> > The boot eventually get stuck, but at a later point.Which is probably why
+> > your analysis found nothing strange. Due to the size of the output I put
+> > it on a gist on github [1]. Please note that this is still based on a
+> > next-20220331 based tree without the revert.
+> 
+> I've looked into it over the weekend, and ran qemu on an imx6 to try to
+> see if it was any similar
+> 
+> I believe the issue comes from the fact that the core will forward rate
+> requests structure to the parent clock as is, and if the parent clock
+> changes the parent it wants, we end up trying to use that parent in the
+> initial clock which doesn't work really well.
+> 
+> I've fixed it in my branch here:
+> https://github.com/mripard/linux/commits/rpi/clk-improvements-more-fixes
 
-Opracowali=C5=9Bmy kursy j=C4=99zykowe dla r=C3=B3=C5=BCnych bran=C5=BC, =
-w kt=C3=B3rych koncentrujemy si=C4=99 na podniesieniu poziomu s=C5=82owni=
-ctwa i jako=C5=9Bci komunikacji wykorzystuj=C4=85c autorsk=C4=85 metod=C4=
-=99, stworzon=C4=85 specjalnie dla wymagaj=C4=85cego biznesu.=20
+Thanks for providing another patchset. Unfortunately, my board hangs still at 
+the same location. For reference I put a branch based on next-20220401 on [1].
+Reverting still does the jobs, a branch is shown on [2]
 
-Niestandardowy kurs on-line, dopasowany do profilu firmy i obszar=C3=B3w =
-=C5=9Bwiadczonych us=C5=82ug, w szybkim czasie przyniesie efekty, kt=C3=B3=
-re zwi=C4=99ksz=C4=85 komfort i jako=C5=9B=C4=87 pracy, rozwijaj=C4=85c m=
-o=C5=BCliwo=C5=9Bci biznesowe.=20
+next-20220404 has the offending patch already reverted, so this should work 
+again, I did not test it on that base on purpose.
 
-Zdalne szkolenie j=C4=99zykowe to m.in. zaj=C4=99cia z native speakerami,=
- kt=C3=B3re w szybkim czasie naucz=C4=85 pracownik=C3=B3w rozmawia=C4=87 =
-za pomoc=C4=85 jasnego i zwi=C4=99z=C5=82ego j=C4=99zyka Business English=
-=2E
+Best regards,
+Alexander
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 wi=C4=99cej szczeg=C3=B3=C5=82=C3=B3=
-w i opowiedzie=C4=87 jak dzia=C5=82amy?=20
+[1] https://github.com/tq-steina/linux/tree/clk-fix
+[2] https://github.com/tq-steina/linux/tree/clk-revert
 
 
-Pozdrawiam
-Krzysztof Maj
