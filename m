@@ -2,34 +2,34 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BBDC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Apr 2022 08:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F60BC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Apr 2022 09:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235905AbiDEIkp (ORCPT
+        id S1345144AbiDEJzP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:40:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58990 "EHLO
+        Tue, 5 Apr 2022 05:55:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241145AbiDEIcw (ORCPT
+        with ESMTP id S1347788AbiDEJ2S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 04:32:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E98F19;
-        Tue,  5 Apr 2022 01:28:41 -0700 (PDT)
+        Tue, 5 Apr 2022 05:28:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74D1DFDF7;
+        Tue,  5 Apr 2022 02:15:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C1C70B81B18;
-        Tue,  5 Apr 2022 08:28:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F11EEC385A4;
-        Tue,  5 Apr 2022 08:28:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5A78D6164E;
+        Tue,  5 Apr 2022 09:15:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30681C385A0;
+        Tue,  5 Apr 2022 09:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649147318;
-        bh=pXlaA9OMGP8WJ/kSu8kwlLxWk28p/wkhn0VdUYvIH2M=;
+        s=korg; t=1649150147;
+        bh=oHWJVGZerJimRvn7YMHPGhT+6D1L6vxaa4SWJ8iflK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l2nYcSEz7aPrpWgUfyGzIYdWsVGBZ69HoKUG26M2Zh48PfFh0HwJbF84VM4kmtXbS
-         5iaYvFfJbizoFztZkJjY8uCe55clYyqmEPbb4MxI0HdcTRhxT/BoKHYX1uC/9boR6P
-         C2X8ZGRTXLLF2acYUBXcxFMAvSl6ZAiJ3MZPCAGw=
+        b=zLzqoQk2OnyTEyTAje164qzVVuPoq6/fUftuSZwWwHSctSUUyFqjAmo2NRzhvvHyP
+         VuT4JN9V/XgSaPBZ3XMjDobej3r/QMbgWe9qVIQ2hZ2C6w9wbnDl1c3zR/ke3rewHr
+         tigkStYTWDfBIcO6uwgbarFTSAiUtN5fUtkWXhEM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk,
         "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 5.17 1080/1126] ARM: 9187/1: JIVE: fix return value of __setup handler
-Date:   Tue,  5 Apr 2022 09:30:27 +0200
-Message-Id: <20220405070439.154726853@linuxfoundation.org>
+Subject: [PATCH 5.16 0972/1017] ARM: 9187/1: JIVE: fix return value of __setup handler
+Date:   Tue,  5 Apr 2022 09:31:25 +0200
+Message-Id: <20220405070423.057803889@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220405070407.513532867@linuxfoundation.org>
-References: <20220405070407.513532867@linuxfoundation.org>
+In-Reply-To: <20220405070354.155796697@linuxfoundation.org>
+References: <20220405070354.155796697@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -96,7 +96,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	}
  
  	switch (set) {
-@@ -256,7 +256,7 @@ static int __init jive_mtdset(char *opti
+@@ -255,7 +255,7 @@ static int __init jive_mtdset(char *opti
  		       "using default.", set);
  	}
  
