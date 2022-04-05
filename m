@@ -2,34 +2,34 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE21C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Apr 2022 11:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39161C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Apr 2022 11:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234442AbiDELZj (ORCPT
+        id S235192AbiDELZl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 07:25:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52164 "EHLO
+        Tue, 5 Apr 2022 07:25:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354197AbiDEKMP (ORCPT
+        with ESMTP id S1348559AbiDEKr0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Apr 2022 06:12:15 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36FDE532E3;
-        Tue,  5 Apr 2022 02:58:28 -0700 (PDT)
+        Tue, 5 Apr 2022 06:47:26 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 454C752E44;
+        Tue,  5 Apr 2022 03:27:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 9B8FCCE1BF8;
-        Tue,  5 Apr 2022 09:58:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A770C385A2;
-        Tue,  5 Apr 2022 09:58:24 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A8ED8CE0B18;
+        Tue,  5 Apr 2022 10:27:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A68FC385A0;
+        Tue,  5 Apr 2022 10:27:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649152705;
+        s=korg; t=1649154432;
         bh=oHWJVGZerJimRvn7YMHPGhT+6D1L6vxaa4SWJ8iflK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jXdjmqphU7NP0Vd58QMa1k0EVO/tAUqRWizL2yc+P7YuoyK2Q1QfoYoHlZRXUfYrv
-         IEAyrQZc0JXwfOxXKJB9EDFfdPoZbH/ez188lAydipbFBTTlkbaVrttijzP9cJe2NS
-         CSVY5SS1h+vJ6/GMtfk3k8VFZWIbuy0eTMC2dtWk=
+        b=TfOk944POWLq+1CAZO8AjyBQ9TQDw/Ppi+FpQg2nYj5qQgyQEreXnJY2KvLJQJhkU
+         xnuZY+sym+6U4nzW1jnMFXjv/ckQ1yzNiRQmRQ0kfaIZ89OGeEF9kDVVQK9eZ7aMHK
+         Yr0KNhEQqkomkT1siiGPKWfeVR5KfqGseH2bw0AA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk,
         "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 5.15 874/913] ARM: 9187/1: JIVE: fix return value of __setup handler
-Date:   Tue,  5 Apr 2022 09:32:16 +0200
-Message-Id: <20220405070406.021493747@linuxfoundation.org>
+Subject: [PATCH 5.10 577/599] ARM: 9187/1: JIVE: fix return value of __setup handler
+Date:   Tue,  5 Apr 2022 09:34:31 +0200
+Message-Id: <20220405070316.013498415@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220405070339.801210740@linuxfoundation.org>
-References: <20220405070339.801210740@linuxfoundation.org>
+In-Reply-To: <20220405070258.802373272@linuxfoundation.org>
+References: <20220405070258.802373272@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
