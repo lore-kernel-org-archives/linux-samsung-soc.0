@@ -2,79 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E89C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Apr 2022 13:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A027AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Apr 2022 15:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233856AbiDFNuw (ORCPT
+        id S236091AbiDFPay (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 09:50:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36482 "EHLO
+        Wed, 6 Apr 2022 11:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233880AbiDFNue (ORCPT
+        with ESMTP id S236125AbiDFPao (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 09:50:34 -0400
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D7C3A0B0B;
-        Wed,  6 Apr 2022 04:21:13 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id n6so3489253ejc.13;
-        Wed, 06 Apr 2022 04:21:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/E0Zaul7G+qNTtOYXrVNpVo8Eq1Tbjxqas5afyEvmXI=;
-        b=yhuO5+SRgpDRwX5XpK+wz6mYJAs3ktm171XsBX2IdjaJ/Qhx9JRVMMeXfh2WLxGy2V
-         uMYlS9L8Y49qv8NzErQKnzYZiKEweLHEaVLc8jc8HjhyS+pggIaM48fS/sqsJrc/yNcV
-         3a7rRI+yuUysS3eifAJADvPO7xfe6gjYCWTMx/41y1zidM9tihLrWh7kCZbuaZZE3Qdu
-         5zw5MqH9AluuMQg31k+6OXu06Yz5pPu4+VcPyWnqg3/75zvzq2CzbJrfFKBnGFRowugm
-         iZc8E/QiDV3cGtfdxQjGaE4Tioj21v3qsBrbTsGrBQfHNIFt6ymoU4v1IvtkR6wVdPQ3
-         idNw==
-X-Gm-Message-State: AOAM533VyLwOPLN4bbwIyrytpcAS1mgTJ/jXt31+kVFrUN/DqH82gcfB
-        2hxtxWTQJOIImJf6rWdXonETwhgiT9A=
-X-Google-Smtp-Source: ABdhPJy+w5JmZ7zlbPP+sjHY4UMYaCYUyg3o2G7jpLBB1TEr0Ibp/apvXaDINUgn8UNLSXKd06L8vA==
-X-Received: by 2002:a17:907:3fa6:b0:6e0:dac6:79d8 with SMTP id hr38-20020a1709073fa600b006e0dac679d8mr7654128ejc.86.1649244071612;
-        Wed, 06 Apr 2022 04:21:11 -0700 (PDT)
-Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id k12-20020a170906a38c00b006e7ddaa89absm3963325ejz.52.2022.04.06.04.21.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Apr 2022 04:21:11 -0700 (PDT)
-Message-ID: <42d9cf5d-2e08-51e4-a3f1-9bd856223a6a@kernel.org>
-Date:   Wed, 6 Apr 2022 13:21:10 +0200
+        Wed, 6 Apr 2022 11:30:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972D43C2104;
+        Wed,  6 Apr 2022 05:51:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1A4BEB8234E;
+        Wed,  6 Apr 2022 12:51:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C49C385A3;
+        Wed,  6 Apr 2022 12:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649249476;
+        bh=25aJM9pLZ2d0/V/4u0XywtbZPqCs8hoXhrvtX2i3dQs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CeTkoaYuAL73AQTXQ3+r4ihDSdu+hBx6bLs9ysOnKTnLHbe2HALx8nLhubbGgM2mU
+         /RR4/MbBfichbeZFBu0v0TWmQuLpcxf52RMjqWhF0ikU4sTqyfie9YzkDPclWhIq5r
+         Uh8MKVYo1Oa2ugZ+aHTP12aKQwzQbe1Zs/79cYkI1I3qLtLRJJpo3H1NnmlBVt203Y
+         DAv08kRL6ixC5i+Ee7lVSoRvNHF9Uh11Wwo+DGfG5tmjVneN0BiZN6MtxxeAdHlsnX
+         iDzLW75Sq7EZ5Ajq0eShiLscY/+/8yE3e7+10cMlP3ln7vvpvgEdkPg+tWF+755UGR
+         mBWdrLN7rUvFw==
+Date:   Wed, 6 Apr 2022 20:51:07 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Scott Branden <sbranden@broadcom.com>,
+        Tony Lindgren <tony@atomide.com>, kernel@pengutronix.de,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 9/9] arm64: dts: imx8mm-kontron: fix ethernet node name
+Message-ID: <20220406125107.GO129381@dragon>
+References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
+ <20220216074927.3619425-10-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/1] tty: serial: samsung: add spin_lock for interrupt and
- console_write
-Content-Language: en-US
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
-Cc:     'Krzysztof Kozlowski' <krzk@kernel.org>,
-        'Alim Akhtar' <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        'Chanho Park' <chanho61.park@samsung.com>
-References: <20220406082216.11206-1-jaewon02.kim@samsung.com>
- <CGME20220406081823epcas2p2f7afa27e2402c4fc02c9bee5972bed4f@epcas2p2.samsung.com>
- <20220406082216.11206-2-jaewon02.kim@samsung.com>
- <Yk1NmTdUgMcSIq1O@kroah.com> <042701d84991$ca50d410$5ef27c30$@samsung.com>
- <98c359ba-9563-3da0-d968-ae40cee9d45f@kernel.org>
- <004401d849a8$30b87d00$92297700$@samsung.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <004401d849a8$30b87d00$92297700$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220216074927.3619425-10-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06. 04. 22, 13:19, Jaewon Kim wrote:
-> Okay, Thanks to review.
-> I will fix 1 to bool in next v3 patch.
+On Wed, Feb 16, 2022 at 08:49:27AM +0100, Oleksij Rempel wrote:
+> The node name of Ethernet controller should be "ethernet" instead of
+> "usbether" as required by Ethernet controller devicetree schema:
+>  Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> 
+> This patch can potentially affect boot loaders patching against full
+> node path instead of using device aliases.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-(And 0 to false.)
-
--- 
-js
-suse labs
+Applied, thanks!
