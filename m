@@ -2,156 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5009DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Apr 2022 12:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E50C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Apr 2022 13:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232004AbiDFMiZ (ORCPT
+        id S231441AbiDFNOh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54442 "EHLO
+        Wed, 6 Apr 2022 09:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbiDFMhm (ORCPT
+        with ESMTP id S233719AbiDFNMy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:37:42 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 907AC574208
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Apr 2022 01:39:20 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220406083917epoutp038a2dc3b69c0a2785f28fe9b551c45a77~jQekGmA-i1035710357epoutp03D
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Apr 2022 08:39:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220406083917epoutp038a2dc3b69c0a2785f28fe9b551c45a77~jQekGmA-i1035710357epoutp03D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649234357;
-        bh=c54J3bp3plJLsFTEsC6S4PiShdQ+U2ETlWezGJ5k9AU=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=GgTfNlu/DqsW/v+kbvyZhMvnMFBp5HWny63eXhyVnqMLhKd3js+qYF4bNEfrZ/8iS
-         bEp+IuGhQD6P7HdWvt9cni8OkC7PMITCDWx3HPvQurjl7rFTAYp2vDxTP97PFBjN2O
-         ldpuBFkdyWLlso/B45mIxtzs7n1gzItl8zjVeBzY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20220406083916epcas2p30ee3bd4de04a7094344cb5b8d505cf97~jQejeaHxI1105711057epcas2p3L;
-        Wed,  6 Apr 2022 08:39:16 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.88]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4KYHxG5LbKz4x9QP; Wed,  6 Apr
-        2022 08:39:14 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7D.73.25540.1B15D426; Wed,  6 Apr 2022 17:39:13 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220406083912epcas2p4aa5946cfaf84e6bac9c56dd25e1dedba~jQefHh_or1577715777epcas2p4a;
-        Wed,  6 Apr 2022 08:39:12 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220406083912epsmtrp26b4cbfbb2728036861c67c2a23586fa8~jQefDrx8S0804408044epsmtrp2T;
-        Wed,  6 Apr 2022 08:39:12 +0000 (GMT)
-X-AuditID: b6c32a47-831ff700000063c4-3b-624d51b12991
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AE.2E.03370.0B15D426; Wed,  6 Apr 2022 17:39:12 +0900 (KST)
-Received: from KORCO006858 (unknown [10.229.18.72]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220406083912epsmtip27e9c3fce16ef8727cfd6495a3dde8d86~jQee38F521809018090epsmtip2r;
-        Wed,  6 Apr 2022 08:39:12 +0000 (GMT)
-From:   "Jaewon Kim" <jaewon02.kim@samsung.com>
-To:     "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>
-Cc:     "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'Jiri Slaby'" <jirislaby@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "'Chanho Park'" <chanho61.park@samsung.com>
-In-Reply-To: <Yk1NmTdUgMcSIq1O@kroah.com>
-Subject: RE: [PATCH 1/1] tty: serial: samsung: add spin_lock for interrupt
- and console_write
-Date:   Wed, 6 Apr 2022 17:39:11 +0900
-Message-ID: <042701d84991$ca50d410$5ef27c30$@samsung.com>
+        Wed, 6 Apr 2022 09:12:54 -0400
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1685F90BE;
+        Wed,  6 Apr 2022 02:50:19 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id g20so1932702edw.6;
+        Wed, 06 Apr 2022 02:50:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=PO8bgVYc+6yq/GV1chIgW+khCSDiG15QhmYnAA0FTmY=;
+        b=jJY4a1XyPEMAt4EXBRXTFwKg733D9QCnjp+tvaRH5ix3czCPMdBiaFhGrl6pXlKB/9
+         pIgnjxa8JfFVfQAwgIa+yBy47KMzwTPmkxQnuQvzyrn+oEZQxnluyC4h/IPHa7c4z2NR
+         rCTvZe15XxY1xU7J16/Cyfwek8+3rskF/9+/Y7ujEb9T748yip38DNllJ7bxo5hEoyaS
+         vDkrYzSsQy274lfuHEItbgQ1lc4RQtexBjLz75X6JcBPnvEMSKR+KAUAHnR7/qEwx0ny
+         e8YLXLYjEoATiKiQJu1bMgT4Jl5h3FA2TZ/bv7Ga4xThOfLL+0tskUwvOT+0sY0JCjeW
+         OhaA==
+X-Gm-Message-State: AOAM532vz4Dw9LxDqYjIgDKvXTV7NrhizPwW7qr1CpZnTk1DayB8jxj+
+        XlFzVyBFD+jgT/b/jPUVL70=
+X-Google-Smtp-Source: ABdhPJwDepzSDc+UC30gZbKsINVUj0Z32NzckEH9QLPfmT3vbdsNLWRBxxyj70khlKjB9SmuoiVNsA==
+X-Received: by 2002:a50:ed0b:0:b0:41c:cf60:a882 with SMTP id j11-20020a50ed0b000000b0041ccf60a882mr7956124eds.12.1649238539608;
+        Wed, 06 Apr 2022 02:48:59 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id sb15-20020a1709076d8f00b006dfe4cda58fsm6356961ejc.95.2022.04.06.02.48.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Apr 2022 02:48:59 -0700 (PDT)
+Message-ID: <98c359ba-9563-3da0-d968-ae40cee9d45f@kernel.org>
+Date:   Wed, 6 Apr 2022 11:48:56 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQKAReulhVQQuLhL7TJZSLDDSdoOSgMPy/dDAfNn9KQCezrJxqtWoyVQ
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmme7GQN8kg7l93BYP5m1js7i8X9ui
-        efF6Not3c2Uszp/fwG6x6fE1VovLu+awWcw4v4/J4sziXnYHTo9NqzrZPPbPXcPusXlJvUff
-        llWMHp83yQWwRmXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE
-        6Lpl5gBdo6RQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMC/QK07MLS7NS9fLSy2x
-        MjQwMDIFKkzIzug895Gl4DFHxeTetywNjL/Yuhg5OSQETCQ2TvrH3sXIxSEksINRYsXXrUwQ
-        zidGiXXfzkM5nxklpu/uZIVpOdY7ESqxi1Hi4aTDYLOEBF4wSuzbzA1iswnoSuzc+IodxBYR
-        MJeY+/A4mM0scJBJ4lQvD4jNKaAp8XTeebBeYYE4iRm7toPZLAIqEtPebgar5xWwlNg+eRIr
-        hC0ocXLmExaIOfIS29/OYYY4SEHi59NlrBBxEYnZnW3MEHvdJF49uMoIcqiEwFIOiU3bF0E9
-        7SJxbu1xRghbWOLV8S3sELaUxOd3e6FqiiWO93xngmhuYJQ4e+cA1PvGErOetQM1cwBt05RY
-        v0sfxJQQUJY4cgvqNj6JjsN/2SHCvBIdbUIQjWoS96eeg5ouIzHpyEqmCYxKs5B8NgvJZ7OQ
-        fDMLYdcCRpZVjGKpBcW56anFRgXG8MhOzs/dxAhOqFruOxhnvP2gd4iRiYPxEKMEB7OSCG9V
-        rk+SEG9KYmVValF+fFFpTmrxIUZTYFhPZJYSTc4HpvS8knhDE0sDEzMzQ3MjUwNzJXFer5QN
-        iUIC6YklqdmpqQWpRTB9TBycUg1MG6/3WbELlrQV85xfxOKWnv94vU+bR8LiUx650ZL+pjvj
-        hIIvCHT+ZNG+r2dsXZx2cGdZr3bh+atS6h1nVTdNkQsPizqlnKnCs+Lan/OM+7b8MLyxq84g
-        0p3Fy42JU4TDdU3i9KIF6Zm8B/pe5xQ9+7PQi3fbg445l8w3/X3+V3Dq4n063HuMivrPXZd+
-        uTQjTv3cCoN7Ob4TLGKMqzbcVP26Sch46gJviwtzVPY/fMYnnyTd4STLNenzQ5sZJ0UrEyc3
-        6d49en7RpJ9L0nOPRFbsXhaY+/v28nnxtlVLhBX2JmZqPNLtEi/7FvzgKVs321QnwUPPdVW2
-        zlr5wESh4Mo8Vruy9vyd63oaVvcqsRRnJBpqMRcVJwIAGb05bDEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXndDoG+SwcILHBYP5m1js7i8X9ui
-        efF6Not3c2Uszp/fwG6x6fE1VovLu+awWcw4v4/J4sziXnYHTo9NqzrZPPbPXcPusXlJvUff
-        llWMHp83yQWwRnHZpKTmZJalFunbJXBldJ77yFLwmKNicu9blgbGX2xdjJwcEgImEsd6JzJ1
-        MXJxCAnsYJS4Nm0NO0RCRmL5sz6oImGJ+y1HWCGKnjFK3P6yiAUkwSagK7Fz4yuwBhEBc4m5
-        D4+zgxQxCxxnklj2pgUsISRwj1FiRbc2iM0poCnxdN55sKnCAjEStyeeBhvEIqAiMe3tZrB6
-        XgFLie2TJ7FC2IISJ2c+AarhABqqJ9G2kREkzCwgL7H97RxmiOMUJH4+XcYKEReRmN3Zxgxx
-        j5vEqwdXGScwCs9CMmkWwqRZSCbNQtK9gJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+
-        7iZGcGxpae1g3LPqg94hRiYOxkOMEhzMSiK8Vbk+SUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-        L3SdjBcSSE8sSc1OTS1ILYLJMnFwSjUwMfiFy7peerY+xVShfG8K70KZ2xNEl+9OuRxYq+fL
-        MkUrLPfLTJMpRfP2/rG2uCFxXzfw5AQuxcZrrhuYtq3dlhIoxXw4qCRx6y3HvN6ZgiaNTZss
-        bp9bIX7o8RyZ9x5nj3luaj7/qOjcUl3f2mMaNtoJ4Vsn3Dt9+1nF4ll/yp/pBkl959qy/fw6
-        oUdFjOL7+udMFNrW6dQTt+FS06ffa8rqE7s+PAmLWTB7adSEYoaTAQFnF1n9Mvu9d9vWzVz7
-        Dzv5ZX+aM+sIV+6cDVLi3FovhWdo7lrT/U55xr7mtwwyYfPV+VksM87KSYV/eZ81VdBu4eEK
-        ya+Hvgjq3bln0b9MZjeX6au6eVsTvaVOJymxFGckGmoxFxUnAgCFkTMMHAMAAA==
-X-CMS-MailID: 20220406083912epcas2p4aa5946cfaf84e6bac9c56dd25e1dedba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220406081823epcas2p2f7afa27e2402c4fc02c9bee5972bed4f
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 1/1] tty: serial: samsung: add spin_lock for interrupt and
+ console_write
+Content-Language: en-US
+To:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
+Cc:     'Krzysztof Kozlowski' <krzk@kernel.org>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        'Chanho Park' <chanho61.park@samsung.com>
 References: <20220406082216.11206-1-jaewon02.kim@samsung.com>
-        <CGME20220406081823epcas2p2f7afa27e2402c4fc02c9bee5972bed4f@epcas2p2.samsung.com>
-        <20220406082216.11206-2-jaewon02.kim@samsung.com>
-        <Yk1NmTdUgMcSIq1O@kroah.com>
+ <CGME20220406081823epcas2p2f7afa27e2402c4fc02c9bee5972bed4f@epcas2p2.samsung.com>
+ <20220406082216.11206-2-jaewon02.kim@samsung.com>
+ <Yk1NmTdUgMcSIq1O@kroah.com> <042701d84991$ca50d410$5ef27c30$@samsung.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <042701d84991$ca50d410$5ef27c30$@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello 
-
-On 22. 4. 6. 17:21, Greg Kroah-Hartman wrote: 
-> On Wed, Apr 06, 2022 at 05:22:16PM +0900, Jaewon Kim wrote:
-> > The console_write and IRQ handler can run concurrently.
-> > Problems may occurs console_write is continuously executed while the
-> > IRQ handler is running.
-> >
-> > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> > ---
-> >  drivers/tty/serial/samsung_tty.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> >
-> > diff --git a/drivers/tty/serial/samsung_tty.c
-> > b/drivers/tty/serial/samsung_tty.c
-> > index e1585fbae909..9db479d728b5 100644
-> > --- a/drivers/tty/serial/samsung_tty.c
-> > +++ b/drivers/tty/serial/samsung_tty.c
-> > @@ -2480,12 +2480,24 @@ s3c24xx_serial_console_write(struct console *co, const char *s,
-> >  			     unsigned int count)
-> >  {
-> >  	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
-> > +	unsigned long flags;
-> > +	bool locked = 1;
+On 06. 04. 22, 10:39, Jaewon Kim wrote:
+> On 22. 4. 6. 17:21, Greg Kroah-Hartman wrote:
+>> On Wed, Apr 06, 2022 at 05:22:16PM +0900, Jaewon Kim wrote:
+>>> The console_write and IRQ handler can run concurrently.
+>>> Problems may occurs console_write is continuously executed while the
+>>> IRQ handler is running.
+>>>
+>>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>>> ---
+>>>   drivers/tty/serial/samsung_tty.c | 12 ++++++++++++
+>>>   1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/drivers/tty/serial/samsung_tty.c
+>>> b/drivers/tty/serial/samsung_tty.c
+>>> index e1585fbae909..9db479d728b5 100644
+>>> --- a/drivers/tty/serial/samsung_tty.c
+>>> +++ b/drivers/tty/serial/samsung_tty.c
+>>> @@ -2480,12 +2480,24 @@ s3c24xx_serial_console_write(struct console *co, const char *s,
+>>>   			     unsigned int count)
+>>>   {
+>>>   	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
+>>> +	unsigned long flags;
+>>> +	bool locked = 1;
+>>
+>> "1" is not a boolean :)
 > 
-> "1" is not a boolean :)
+> return value of spin_trylock() is 1 or 0.
+> It seems better to keep it as an int than to change it to bool.
+> I will return it to int.
 
-return value of spin_trylock() is 1 or 0.
-It seems better to keep it as an int than to change it to bool.
-I will return it to int.
+Hi, no, do not that. Simply use bool/true/false.
 
-
-Thanks
-Jaewon Kim
-
+thanks,
+-- 
+js
+suse labs
