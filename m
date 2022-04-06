@@ -2,76 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A027AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Apr 2022 15:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED00C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Apr 2022 17:33:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236091AbiDFPay (ORCPT
+        id S239195AbiDFRfD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:30:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
+        Wed, 6 Apr 2022 13:35:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236125AbiDFPao (ORCPT
+        with ESMTP id S239156AbiDFRev (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Apr 2022 11:30:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 972D43C2104;
-        Wed,  6 Apr 2022 05:51:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1A4BEB8234E;
-        Wed,  6 Apr 2022 12:51:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C49C385A3;
-        Wed,  6 Apr 2022 12:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649249476;
-        bh=25aJM9pLZ2d0/V/4u0XywtbZPqCs8hoXhrvtX2i3dQs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CeTkoaYuAL73AQTXQ3+r4ihDSdu+hBx6bLs9ysOnKTnLHbe2HALx8nLhubbGgM2mU
-         /RR4/MbBfichbeZFBu0v0TWmQuLpcxf52RMjqWhF0ikU4sTqyfie9YzkDPclWhIq5r
-         Uh8MKVYo1Oa2ugZ+aHTP12aKQwzQbe1Zs/79cYkI1I3qLtLRJJpo3H1NnmlBVt203Y
-         DAv08kRL6ixC5i+Ee7lVSoRvNHF9Uh11Wwo+DGfG5tmjVneN0BiZN6MtxxeAdHlsnX
-         iDzLW75Sq7EZ5Ajq0eShiLscY/+/8yE3e7+10cMlP3ln7vvpvgEdkPg+tWF+755UGR
-         mBWdrLN7rUvFw==
-Date:   Wed, 6 Apr 2022 20:51:07 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        Tony Lindgren <tony@atomide.com>, kernel@pengutronix.de,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        Wed, 6 Apr 2022 13:34:51 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF1E28EA2E
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Apr 2022 08:41:43 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id dr20so5077382ejc.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Apr 2022 08:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=IVumMDZqt2rwjHo8Qk+yTSY8rtnOM1vqzCoA3ao9aAM=;
+        b=zVB8o3Zgd/cpfJfL0Am7OUu8eY30qJZHoXMN4YADODANvu03uA3vq/LsPdIMNa/cvj
+         79Xn5J/zT/yzIdDCay7AJdtG6EbZutctsan0TUjqCkHikSW7F52S0iKdx4w/02av41kC
+         C4gcQ/Fgh1bkBZQ6qh33ERwqW6zDcHhVFdso9gKd5oKVrjWiywDbxGSSSEGzGREdn0rP
+         XjNwcv6B8qd5UnsvcNNgD04AYyeUw90W0QPIgXJaY5JSJ/cyE2bJGtdKSwOvW9tGtEqA
+         h0HUtmo83SzZLEgBjOqw7TT0xqlli4KUKMepZjsNRzH3PPc83PeU5gq+YBrU/bUXF3SZ
+         vV7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IVumMDZqt2rwjHo8Qk+yTSY8rtnOM1vqzCoA3ao9aAM=;
+        b=wk3sH6y31ZCEBqcA6skvVBLgSPUUuJCNsujFuyeN/Dinf+GgFlBTBtgn+iblUJukMa
+         tFbdwyqSIC+WWtHH1ZDWk3/FIZuNb/agX7Jgdc8RxlTocpmCzKMdLLSWtQ3IH1dfkt+W
+         j094oRHLr4vP7gUTjIoEWpMXiC33rH/ClMjbCRghjm2Z6Wv9lRJ5MGvBelazf+G5Eb0e
+         pq900N4PLveyqDN5g6tdgJwl1F8GoGrS+1z6wUN/4MRGq2wpItNkN4QVLKgu+45FJJRm
+         ZJlfmr91g8RrBFvRtoWsLR82LY94zgl9yCzkGDPNrewxBl38lfddYjRKi2PgKxb5aCqB
+         kwaA==
+X-Gm-Message-State: AOAM530C0HrFy2sm0CcVOjLdV8PfWi2xC0v6WLcLBhxpIDazQDmSLawO
+        /MyaCtjePR89KdtUXUHXr+xfKA==
+X-Google-Smtp-Source: ABdhPJxrUbKHbP58C1B/fd6ArkIlovyAlC3CUwhuPi3IERJe3tFXIzQsIIQmlOGhmyi2L62wj78X5w==
+X-Received: by 2002:a17:906:5d0e:b0:6e0:2cd5:a87c with SMTP id g14-20020a1709065d0e00b006e02cd5a87cmr8930160ejt.708.1649259701557;
+        Wed, 06 Apr 2022 08:41:41 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id q16-20020a170906145000b006bdaf981589sm6666260ejc.81.2022.04.06.08.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Apr 2022 08:41:40 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v5 9/9] arm64: dts: imx8mm-kontron: fix ethernet node name
-Message-ID: <20220406125107.GO129381@dragon>
-References: <20220216074927.3619425-1-o.rempel@pengutronix.de>
- <20220216074927.3619425-10-o.rempel@pengutronix.de>
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: soc: samsung: usi: refer to dtschema for SPI
+Date:   Wed,  6 Apr 2022 17:41:38 +0200
+Message-Id: <164925969518.491593.2533491999537917360.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220324134106.103588-1-krzk@kernel.org>
+References: <20220324134106.103588-1-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220216074927.3619425-10-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 16, 2022 at 08:49:27AM +0100, Oleksij Rempel wrote:
-> The node name of Ethernet controller should be "ethernet" instead of
-> "usbether" as required by Ethernet controller devicetree schema:
->  Documentation/devicetree/bindings/net/ethernet-controller.yaml
+On Thu, 24 Mar 2022 14:41:06 +0100, Krzysztof Kozlowski wrote:
+> After adding DT schema for Samsung SPI controller, the Samsung USI
+> bindings can reference it directly for proper schema validation.
 > 
-> This patch can potentially affect boot loaders patching against full
-> node path instead of using device aliases.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
 Applied, thanks!
+
+[1/1] dt-bindings: soc: samsung: usi: refer to dtschema for SPI
+      commit: db85474594609fc6f6a37fe5d5001fa9341971ed
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
