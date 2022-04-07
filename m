@@ -2,32 +2,32 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E353C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5DBC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:44:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242072AbiDGHqp (ORCPT
+        id S242079AbiDGHqr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:46:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59724 "EHLO
+        Thu, 7 Apr 2022 03:46:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242066AbiDGHqn (ORCPT
+        with ESMTP id S242080AbiDGHqp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:46:43 -0400
+        Thu, 7 Apr 2022 03:46:45 -0400
 Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9804C8CCD7;
-        Thu,  7 Apr 2022 00:44:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E309B201B3;
+        Thu,  7 Apr 2022 00:44:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1649317484;
-  x=1680853484;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1649317485;
+  x=1680853485;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=mz29Z7g6XhZMBEyDRcC5tTyavLUBWPycQxmbBGsMjXg=;
-  b=NyXR4hg5UcFB3Jv7w04WGn+Zyh4a3uzeRqCPECArNPc3PcUJ5Qwz0kbv
-   xod9/rT7jlegJxPvIGgr1E5o1c7j6nkKSjRIVWZFLBx8Q/Ff67Cd21ne9
-   L5W/BAQmeSu9bMPI/T2wgp9E6pt1tHv0kmgdY2XeAv6GS/KmlFwTCN9c1
-   qljE/cYWvQCZ/xzlJdqw6VSvRzyEFg87GVAqPA51bxHISMOHX/4HxGRSm
-   RcFkE4W8s68BnDiLeoIDgMBsFVHzSjLQpNQHNSdyrje76DGo+Ocl0dRcu
-   HMMRXO+Pa6G85n3nL1FLexbn8FdnsNIKQR0XWsYijcTsxvOJoWEWJ/Bpd
+  bh=vA3kixnFjao/9/fHNVBKrG7js6zXxb2/Djlg20H3FvE=;
+  b=cXt2dZZiZX2S9nCWfCk5JC/4ZWuNU2Hohwnvt6+nNwMHZgpy1/jutTYC
+   s/I4VPntNzz2ZhjhDEwz8VdT7E3TIzscwwgLFaf00xVnPmQN2YmiOn27l
+   lm6opZufaG6KU4FPGDJG0Q2GGaDtw8IVFPZnkEvXQTWKSipPnuzje0Mqr
+   7oYGtF1wh3W6CtzoSsfm0HyYCDuerg4bwIj+1Fi5Py/ceOi/1Ww8aNhmq
+   HmoWtCAv+b4iaBU1ZWBzq1YMrsmbnV+qeL0/QpeBhCXEqa0StVlgzN2HP
+   1+2VwsC4SkD/BOlCSLoIYXV2VKx83fNKgxi1xgxXomDUWfu2TyqhGK+ao
    A==;
 From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
 To:     <krzk@kernel.org>, <tglx@linutronix.de>,
@@ -38,9 +38,9 @@ CC:     <kernel@axis.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>, <alim.akhtar@samsung.com>,
         <devicetree@vger.kernel.org>, <robh+dt@kernel.org>
-Subject: [PATCH v3 3/4] clocksource/drivers/exynos_mct: Support local-timers property
-Date:   Thu, 7 Apr 2022 09:44:31 +0200
-Message-ID: <20220407074432.424578-4-vincent.whitchurch@axis.com>
+Subject: [PATCH v3 1/4] dt-bindings: timer: exynos4210-mct: Add ARTPEC-8 MCT support
+Date:   Thu, 7 Apr 2022 09:44:29 +0200
+Message-ID: <20220407074432.424578-2-vincent.whitchurch@axis.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220407074432.424578-1-vincent.whitchurch@axis.com>
 References: <20220407074432.424578-1-vincent.whitchurch@axis.com>
@@ -51,136 +51,105 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-If the device tree indicates that the hardware requires that the
-processor only use certain local timers, respect that.
+The ARTPEC-8 has an MCT with 4 global and 8 local timer interrupts.
+
+The SoC has a quad-core Cortex-A53 and a single-core Cortex-A5 which
+share one MCT with one global and eight local timers.  The Cortex-A53
+and Cortex-A5 do not have cache-coherency between them, and therefore
+run two separate kernels.
+
+The Cortex-A53 boots first and starts the global free-running counter
+and also registers a clock events device using the global timer.  (This
+global timer clock events is usually replaced by arch timer clock events
+for each of the cores.)
+
+When the A5 boots (via the A53), it should not use the global timer
+interrupts or write to the global timer registers.  This is because even
+if there are four global comparators, the control bits for all four are
+in the same registers, and we would need to synchronize between the
+cpus.  Instead, the global timer FRC (already started by the A53) should
+be used as the clock source, and one of the local timers which are not
+used by the A53 can be used for clock events on the A5.
+
+To support this hardware, add a compatible for the MCT as well as two
+new properties to describe the hardware-mandated sharing of the FRC and
+dedicating local timers to specific processors.
 
 Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
 
 Notes:
     v3:
-    - Use array in devicetree
-    - Remove addition of global variable
-    - Split out FRC sharing changes
+    - Add all required bindings for ARTPEC-8 in one patch
+    - Rename and split local-timer-only to samsung,local-timers and
+      samsung,frc-shared
+    - Restrict above properties to the ARTPEC-8 compatible.
+    - Rewrite descriptions of properties to hopefully describe hardware.
+    
+    v2:
+    - Use devicetree property instead of module parameter.
 
- drivers/clocksource/exynos_mct.c | 51 ++++++++++++++++++++++++++++----
- 1 file changed, 45 insertions(+), 6 deletions(-)
+ .../timer/samsung,exynos4210-mct.yaml         | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 12023831dedf..4093a71ff618 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -33,7 +33,7 @@
- #define EXYNOS4_MCT_G_INT_ENB		EXYNOS4_MCTREG(0x248)
- #define EXYNOS4_MCT_G_WSTAT		EXYNOS4_MCTREG(0x24C)
- #define _EXYNOS4_MCT_L_BASE		EXYNOS4_MCTREG(0x300)
--#define EXYNOS4_MCT_L_BASE(x)		(_EXYNOS4_MCT_L_BASE + (0x100 * x))
-+#define EXYNOS4_MCT_L_BASE(x)		(_EXYNOS4_MCT_L_BASE + (0x100 * (x)))
- #define EXYNOS4_MCT_L_MASK		(0xffffff00)
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+index 1584944c7ac4..bcfc849ca087 100644
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+@@ -25,6 +25,7 @@ properties:
+           - samsung,exynos4412-mct
+       - items:
+           - enum:
++              - axis,artpec8-mct
+               - samsung,exynos3250-mct
+               - samsung,exynos5250-mct
+               - samsung,exynos5260-mct
+@@ -46,6 +47,19 @@ properties:
+   reg:
+     maxItems: 1
  
- #define MCT_L_TCNTB_OFFSET		(0x00)
-@@ -66,6 +66,8 @@
- #define MCT_L0_IRQ	4
- /* Max number of IRQ as per DT binding document */
- #define MCT_NR_IRQS	20
-+/* Max number of local timers */
-+#define MCT_NR_LOCAL	(MCT_NR_IRQS - MCT_L0_IRQ)
- 
- enum {
- 	MCT_INT_SPI,
-@@ -456,7 +458,6 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 		per_cpu_ptr(&percpu_mct_tick, cpu);
- 	struct clock_event_device *evt = &mevt->evt;
- 
--	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
- 	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
- 
- 	evt->name = mevt->name;
-@@ -528,7 +529,9 @@ static int __init exynos4_timer_resources(struct device_node *np)
- }
- 
- static int __init exynos4_timer_interrupts(struct device_node *np,
--					   unsigned int int_type)
-+					   unsigned int int_type,
-+					   u32 *local_idx,
-+					   size_t nr_local)
- {
- 	int nr_irqs, i, err, cpu;
- 
-@@ -561,13 +564,19 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
- 	} else {
- 		for_each_possible_cpu(cpu) {
- 			int mct_irq;
-+			unsigned int irqidx;
- 			struct mct_clock_event_device *pcpu_mevt =
- 				per_cpu_ptr(&percpu_mct_tick, cpu);
- 
-+			if (cpu >= nr_local)
-+				break;
++  samsung,frc-shared:
++    type: boolean
++    description: |
++      Indicates that the hardware requires that this processor share the
++      free-running counter with a different (main) processor.
 +
-+			irqidx = MCT_L0_IRQ + local_idx[cpu];
++  samsung,local-timers:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    minItems: 1
++    maxItems: 16
++    description: |
++      List of indices of local timers usable from this processor.
 +
- 			pcpu_mevt->evt.irq = -1;
--			if (MCT_L0_IRQ + cpu >= ARRAY_SIZE(mct_irqs))
-+			if (irqidx >= ARRAY_SIZE(mct_irqs))
- 				break;
--			mct_irq = mct_irqs[MCT_L0_IRQ + cpu];
-+			mct_irq = mct_irqs[irqidx];
+   interrupts:
+     description: |
+       Interrupts should be put in specific order. This is, the local timer
+@@ -75,6 +89,17 @@ required:
+   - reg
  
- 			irq_set_status_flags(mct_irq, IRQ_NOAUTOEN);
- 			if (request_irq(mct_irq,
-@@ -583,6 +592,15 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
- 		}
- 	}
- 
-+	for_each_possible_cpu(cpu) {
-+		struct mct_clock_event_device *mevt = per_cpu_ptr(&percpu_mct_tick, cpu);
-+
-+		if (cpu >= nr_local)
-+			break;
-+
-+		mevt->base = EXYNOS4_MCT_L_BASE(local_idx[cpu]);
-+	}
-+
- 	/* Install hotplug callbacks which configure the timer on this CPU */
- 	err = cpuhp_setup_state(CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 				"clockevents/exynos4/mct_timer:starting",
-@@ -613,13 +631,34 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
- static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
- {
- 	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
-+	u32 local_idx[MCT_NR_LOCAL] = {0};
-+	int nr_local;
- 	int ret;
- 
-+	nr_local = of_property_count_u32_elems(np, "samsung,local-timers");
-+	if (nr_local == 0)
-+		return -EINVAL;
-+	if (nr_local > 0) {
-+		if (nr_local > ARRAY_SIZE(local_idx))
-+			return -EINVAL;
-+
-+		ret = of_property_read_u32_array(np, "samsung,local-timers",
-+						 local_idx, nr_local);
-+		if (ret)
-+			return ret;
-+	} else {
-+		int i;
-+
-+		nr_local = ARRAY_SIZE(local_idx);
-+		for (i = 0; i < nr_local; i++)
-+			local_idx[i] = i;
-+	}
-+
- 	ret = exynos4_timer_resources(np);
- 	if (ret)
- 		return ret;
- 
--	ret = exynos4_timer_interrupts(np, int_type);
-+	ret = exynos4_timer_interrupts(np, int_type, local_idx, nr_local);
- 	if (ret)
- 		return ret;
- 
+ allOf:
++  - if:
++      not:
++        properties:
++          compatible:
++            contains:
++              enum:
++                - axis,artpec8-mct
++    then:
++      properties:
++        samsung,local-timers: false
++        samsung,frc-shared: false
+   - if:
+       properties:
+         compatible:
+@@ -102,6 +127,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - axis,artpec8-mct
+               - samsung,exynos5260-mct
+               - samsung,exynos5420-mct
+               - samsung,exynos5433-mct
 -- 
 2.34.1
 
