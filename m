@@ -2,159 +2,218 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC98FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CD0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241509AbiDGHOk (ORCPT
+        id S241718AbiDGHZY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:14:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40078 "EHLO
+        Thu, 7 Apr 2022 03:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241460AbiDGHOb (ORCPT
+        with ESMTP id S230030AbiDGHZX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:14:31 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29D43206A
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:12:32 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220407071227epoutp01a16808294a24f5e02b06c83da568122b~ji8B6SHIk1064910649epoutp013
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 07:12:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220407071227epoutp01a16808294a24f5e02b06c83da568122b~ji8B6SHIk1064910649epoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649315547;
-        bh=ZnyEmVL3ZHhbWaj7peONv8ze7ksH6X5qLj9vqgtd1I4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IFeYf5/fT+NrqhaTYo2kdz7x2Lp7iQ1oYjgypqSaXj08d5h+GuK2Smh9GgCq3Urbx
-         rS91fcb4OgCYcespsCUyPo7oy3W5L09zJNaQybt0LjHOb1CZnAPQj+Lb6/M2oC+IS3
-         qPgCRzYb69D10p4lkPx0hIc0Nhxy5pt6QG8TfQOs=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20220407071226epcas2p4355bdef78da7e26911fc40dbae6e5960~ji8BR9VNb0437904379epcas2p4O;
-        Thu,  7 Apr 2022 07:12:26 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.90]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4KYsyd0PKwz4x9QH; Thu,  7 Apr
-        2022 07:12:25 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.18.40405.7DE8E426; Thu,  7 Apr 2022 16:12:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844~ji7_GH5xo3124531245epcas2p1s;
-        Thu,  7 Apr 2022 07:12:23 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220407071223epsmtrp1d9a9050dab0233aab6fe80d18e4bbab5~ji7_FeKLK0308203082epsmtrp1f;
-        Thu,  7 Apr 2022 07:12:23 +0000 (GMT)
-X-AuditID: b6c32a46-ba1ff70000009dd5-16-624e8ed7a238
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        67.AE.03370.7DE8E426; Thu,  7 Apr 2022 16:12:23 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220407071222epsmtip19b83dd3634c87ce13bb390bd4b6d0c8c~ji791aH2v2354723547epsmtip1X;
-        Thu,  7 Apr 2022 07:12:22 +0000 (GMT)
-From:   Jaewon Kim <jaewon02.kim@samsung.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thu, 7 Apr 2022 03:25:23 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B322E7A
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:23:23 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id i27so8925324ejd.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 00:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JQl94m0PqCXD+LGa2eBxh9FZsiEePYOtGmPb20IDP/E=;
+        b=TppdCLWcbLDy2dzem71sJHOjGFmnTO1FY3CaMlApQ4NWmxBrt8yvZ+KAtA8vOI15QJ
+         WYCmnd7KOTfVQ46APpH3zWrTGtlErEsbMPQFWfUTF61iSPDEufFKuLzjHQmAk+dNXfS9
+         kz+xTitG0ok0Kux/HDva6OhHqGtgTeupwofSTyjwg/yKWJkE9JWhf71mnOFTtQKA533y
+         ABVwMRvcMikHPjHJM8Bz4o93byNwSK6o5QJnb35XX47ndAJPaBwQyJqm18s2xzn9/fIy
+         GxGPrgTWjK87S65gy/nFnacgEBuAigEHvjpZTQZ487ysl/UK8lYWoFMTYM5z9wbD/klI
+         ktaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JQl94m0PqCXD+LGa2eBxh9FZsiEePYOtGmPb20IDP/E=;
+        b=4hERlvHxBO99V1xIZMQdH/NGux+7o6epsxJGbsltRe5uUR6J+ESavszP/wS86rxNTA
+         cl9Yu1oX2Ou1ZUtpB/rl+tp1oAW5PeZF2kkyMD8xXA7XZWy6BMo4JaNRnAtCYCROeo0I
+         mVfCi/5pdEgo3mhKKO4L1KdWr3p1/L7gz4QwHtWobTRyMfFokIT/lu+2MPm67k0+Fv7J
+         9/4TMzchU/M/p1furfCDc3ACMpExEnLr9pZ4L4tAZpf/Mh5a36GxAbPAG+0M3FSQzjVB
+         WLjW7A1f2tyRXh+fpAkvlFpjyZ3MsIPMMqMftMeOsL8PYD50lyMyv9GnOq/7euGtL0YQ
+         XHsw==
+X-Gm-Message-State: AOAM530Z1G9i2/W9aCQJM68PFGyHFvnbE7ntxOqUr+nZ0JCXq8jBWsIM
+        bwl4pgQzOwZFWCRojkmvsOTbqA==
+X-Google-Smtp-Source: ABdhPJxl/FiKAekAR1Fup1MzAtANE/f1/F4P25++0drHeIV6KPzAlPY9tNWEMSijk85EnkvdEamntg==
+X-Received: by 2002:a17:907:3d94:b0:6df:8791:135f with SMTP id he20-20020a1709073d9400b006df8791135fmr11739008ejc.205.1649316202038;
+        Thu, 07 Apr 2022 00:23:22 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id et21-20020a170907295500b006e7f1abe2ccsm4187329ejc.75.2022.04.07.00.23.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Apr 2022 00:23:21 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v3 1/1] tty: serial: samsung: add spin_lock for interrupt
- and console_write
-Date:   Thu,  7 Apr 2022 16:16:19 +0900
-Message-Id: <20220407071619.102249-2-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220407071619.102249-1-jaewon02.kim@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v2] ARM: s3c: mark as deprecated and schedule removal
+Date:   Thu,  7 Apr 2022 09:23:19 +0200
+Message-Id: <20220407072319.75614-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsWy7bCmhe71Pr8kg/U/DCwezNvGZnF5v7ZF
-        8+L1bBY7Go6wWrybK2Nx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3sjtweWxa1cnmsX/uGnaP
-        zUvqPfq2rGL0+LxJLoA1KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE3
-        1VbJxSdA1y0zB+gkJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BeYFecWJucWle
-        ul5eaomVoYGBkSlQYUJ2RsO1h8wFfzkrFn76ydLAuJSji5GDQ0LARGLWfPsuRi4OIYEdjBKz
-        mr8xdjFyAjmfGCUW7o6FSHxmlNhwYAITSAKk4XjDDzaIol2MEhPWcEIUfWSUuN0+nQUkwSag
-        LfF9/WJWkISIwGlGicPbj4I5zCA7drV/BxslLBArMenlbFYQm0VAVeLPxodgu3kF7CR+3JvN
-        BrFOXqL73x+wqZwC9hInly2DqhGUODnzCVicGaimeetsZpAFEgI/2SWO7VrODtHsIjHv9jeo
-        u4UlXh3fAhWXknjZ3wZlF0sc7wE5CKS5gVHi7J0DrBAJY4lZz9oZQaHELKApsX6XPiTAlCWO
-        3ILayyfRcfgvO0SYV6KjTQiiUU3i/tRzUOfLSEw6spIJosRDYuWjXEhgTWKUeHrhL/sERoVZ
-        SL6ZheSbWQh7FzAyr2IUSy0ozk1PLTYqMIJHcHJ+7iZGcArVctvBOOXtB71DjEwcjIcYJTiY
-        lUR4q3J9koR4UxIrq1KL8uOLSnNSiw8xmgLDeiKzlGhyPjCJ55XEG5pYGpiYmRmaG5kamCuJ
-        83qlbEgUEkhPLEnNTk0tSC2C6WPi4JRqYJrquFrBKjrqpLzYwUy1W5+Xfw5gal7cWJVe/FOb
-        k/2nwwrB0yHs2zI/v30/+ckNjktSJ9/xT58yL8Gp6q+R+mVXP33mw/yi+xUC1DcsePPaMmpJ
-        +Kniv+znNm7aYLTv607lMz9NGwIviL8RbL6oeo9tokm/x1xOvjb5mYlRWeyVvzUaviy4Zen0
-        ueDuDRPNtzo22myqLSw1Nt/es7qsWvPacteSQ++3ejUwnba0sy/wWKvPcJnt3UL1WafZBHzi
-        2vawu62wLLFNMc4yra9UYlliXbD8ym/uL8JHF3yPEjxyNcfBnD3T/qbhq63FKSz5L/ktdovu
-        3D7v+/STeaFxbc+lLt2xL/Hb+IvL7d3n60osxRmJhlrMRcWJAFpWr00qBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsWy7bCSnO71Pr8kgyWr2S0ezNvGZnF5v7ZF
-        8+L1bBY7Go6wWrybK2Nx/vwGdotNj6+xWlzeNYfNYsb5fUwWZxb3sjtweWxa1cnmsX/uGnaP
-        zUvqPfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugSuj4dpD5oK/nBULP/1kaWBcytHFyMkhIWAi
-        cbzhB1sXIxeHkMAORom2ifdZIRIyEsuf9bFB2MIS91uOsEIUvWeU2DJ3A1gRm4C2xPf1i8ES
-        IgLnGSUmP34DNopZYA+jxJrZ35lBqoQFoiW+3GwGs1kEVCX+bHzICGLzCthJ/Lg3G2qFvET3
-        vz8sIDangL3EyWXLwGqEgGr2TLwJVS8ocXLmE7AaZqD65q2zmScwCsxCkpqFJLWAkWkVo2Rq
-        QXFuem6xYYFRXmq5XnFibnFpXrpecn7uJkZwyGtp7WDcs+qD3iFGJg7GQ4wSHMxKIrxVuT5J
-        QrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTAJzxaYtPrc
-        u91+Gy+++NeSc9ase8dX5ath8eanbPh4i4puvyr6uGG1zqtV+gbMXiH9S9c3vJvulFDgIWCn
-        53MwXtbqYfi2Uxt2f+/6av6ErYBZ+7O44ZVH1Vp7t3ewvu+Q7tez0D5sXNi+7W/tiiVJX2dV
-        vvFyf/f90JWURgezp3OsJvs32jjp2ac8bzne5DeTZ7/3wU2r1wVuuq4g90A8PcxCqj9yy1th
-        0aWZ/+y5P9k3eFhNkzI5+r9AUm6h1unWfc9SH64NcWpOfRWz49zl24etr8Wkz9334sSfhouJ
-        tm/nzclwkar4+nNNjyvnd9N9x+a8OHG3aT/PvZysY/Gix0UnP36hc7Zot1cAt4uXEktxRqKh
-        FnNRcSIAtWh3uegCAAA=
-X-CMS-MailID: 20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844
-References: <20220407071619.102249-1-jaewon02.kim@samsung.com>
-        <CGME20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844@epcas2p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The console_write and IRQ handler can run concurrently.
-Problems may occurs console_write is continuously executed while
-the IRQ handler is running.
+The Samsung S3C24xx and S3C64xx platforms are very old designs. S3C2416
+was introduced in 2008 and S3C6410 in 2009/2010.  They are not widely
+available anymore - out-of-stock on FriendlyArm (one of manufacturers of
+boards) and only few specialist stores still offer them for quite a high
+price.
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+The community around these platforms was not very active, so I suspect
+no one really uses them anymore. Maintenance takes precious time so
+there is little sense in keeping them alive if there are no real users.
+
+Let's mark all S3C24xx and S3C64xx platforms as deprecated and mention
+possible removal in after 2022 for the first and 2024 for the lattere.
+The deprecation message will be as text in Kconfig, build message (not a
+warning though) and runtime print error.
+
+If there are any users, they might respond and postpone the removal.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
 ---
- drivers/tty/serial/samsung_tty.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index e1585fbae909..8af5aceb9f4e 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2480,12 +2480,24 @@ s3c24xx_serial_console_write(struct console *co, const char *s,
- 			     unsigned int count)
- {
- 	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
-+	unsigned long flags;
-+	bool locked = true;
+Changes since v1:
+1. Language: in->for removal.
+2. Don't show pragma with COMPILE_TEST.
+3. Add Acks.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/Kconfig                  | 7 ++++++-
+ arch/arm/mach-s3c/Kconfig.s3c64xx | 7 ++++++-
+ arch/arm/mach-s3c/cpu.c           | 1 +
+ arch/arm/mach-s3c/init.c          | 2 ++
+ arch/arm/mach-s3c/s3c24xx.c       | 7 +++++++
+ arch/arm/mach-s3c/s3c64xx.c       | 7 +++++++
+ 6 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 4814e098f320..22baf93d8be9 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -468,7 +468,7 @@ config ARCH_SA1100
+ 	  Support for StrongARM 11x0 based boards.
  
- 	/* not possible to xmit on unconfigured port */
- 	if (!s3c24xx_port_configured(ucon))
- 		return;
+ config ARCH_S3C24XX
+-	bool "Samsung S3C24XX SoCs"
++	bool "Samsung S3C24XX SoCs (deprecated, see help)"
+ 	select ATAGS
+ 	select CLKSRC_SAMSUNG_PWM
+ 	select GPIO_SAMSUNG
+@@ -485,6 +485,11 @@ config ARCH_S3C24XX
+ 	  (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 or the
+ 	  Samsung SMDK2410 development board (and derivatives).
  
-+	if (cons_uart->sysrq)
-+		locked = false;
-+	else if (oops_in_progress)
-+		locked = spin_trylock_irqsave(&cons_uart->lock, flags);
-+	else
-+		spin_lock_irqsave(&cons_uart->lock, flags);
++	  The platform is deprecated and scheduled for removal. Please reach to
++	  the maintainers of the platform and linux-samsung-soc@vger.kernel.org if
++	  you still use it.
++	  Without such feedback, the platform will be removed after 2022.
 +
- 	uart_console_write(cons_uart, s, count, s3c24xx_serial_console_putchar);
+ config ARCH_OMAP1
+ 	bool "TI OMAP1"
+ 	select ARCH_OMAP
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index af01675d8769..2b27bff4d928 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -4,7 +4,7 @@
+ #	Simtec Electronics, Ben Dooks <ben@simtec.co.uk>
+ 
+ menuconfig ARCH_S3C64XX
+-	bool "Samsung S3C64XX"
++	bool "Samsung S3C64XX (deprecated, see help)"
+ 	depends on ARCH_MULTI_V6
+ 	select ARM_AMBA
+ 	select ARM_VIC
+@@ -24,6 +24,11 @@ menuconfig ARCH_S3C64XX
+ 	help
+ 	  Samsung S3C64XX series based systems
+ 
++	  The platform is deprecated and scheduled for removal. Please reach to
++	  the maintainers of the platform and linux-samsung-soc@vger.kernel.org if
++	  you still use it.
++	  Without such feedback, the platform will be removed after 2024.
 +
-+	if (locked)
-+		spin_unlock_irqrestore(&cons_uart->lock, flags);
+ if ARCH_S3C64XX
+ 
+ # Configuration options for the S3C6410 CPU
+diff --git a/arch/arm/mach-s3c/cpu.c b/arch/arm/mach-s3c/cpu.c
+index 6e9772555f0d..0df428f01855 100644
+--- a/arch/arm/mach-s3c/cpu.c
++++ b/arch/arm/mach-s3c/cpu.c
+@@ -28,4 +28,5 @@ void __init s3c64xx_init_cpu(void)
+ 	}
+ 
+ 	pr_info("Samsung CPU ID: 0x%08lx\n", samsung_cpu_id);
++	pr_err("The platform is deprecated and scheduled for removal. Please reach to the maintainers of the platform and linux-samsung-soc@vger.kernel.org if you still use it.  Without such feedback, the platform will be removed after 2022.\n");
+ }
+diff --git a/arch/arm/mach-s3c/init.c b/arch/arm/mach-s3c/init.c
+index 9d92f03e9bc1..bf513616f55d 100644
+--- a/arch/arm/mach-s3c/init.c
++++ b/arch/arm/mach-s3c/init.c
+@@ -59,6 +59,8 @@ void __init s3c_init_cpu(unsigned long idcode,
+ 
+ 	if (cpu->map_io)
+ 		cpu->map_io();
++
++	pr_err("The platform is deprecated and scheduled for removal. Please reach to the maintainers of the platform and linux-samsung-soc@vger.kernel.org if you still use it.  Without such feedback, the platform will be removed after 2022.\n");
  }
  
- /* Shouldn't be __init, as it can be instantiated from other module */
+ /* s3c24xx_init_clocks
+diff --git a/arch/arm/mach-s3c/s3c24xx.c b/arch/arm/mach-s3c/s3c24xx.c
+index 37eaf9480da7..819a95364af9 100644
+--- a/arch/arm/mach-s3c/s3c24xx.c
++++ b/arch/arm/mach-s3c/s3c24xx.c
+@@ -678,3 +678,10 @@ struct platform_device s3c2410_device_dclk = {
+ 	},
+ };
+ #endif
++
++#ifndef CONFIG_COMPILE_TEST
++#pragma message "The platform is deprecated and scheduled for removal. " \
++		"Please reach to the maintainers of the platform " \
++		"and linux-samsung-soc@vger.kernel.org if you still use it." \
++		"Without such feedback, the platform will be removed after 2022."
++#endif
+diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
+index 4dfb648142f2..178085df6d9d 100644
+--- a/arch/arm/mach-s3c/s3c64xx.c
++++ b/arch/arm/mach-s3c/s3c64xx.c
+@@ -425,3 +425,10 @@ static int __init s3c64xx_init_irq_eint(void)
+ 	return 0;
+ }
+ arch_initcall(s3c64xx_init_irq_eint);
++
++#ifndef CONFIG_COMPILE_TEST
++#pragma message "The platform is deprecated and scheduled for removal. " \
++		"Please reach to the maintainers of the platform " \
++		"and linux-samsung-soc@vger.kernel.org if you still use it." \
++		"Without such feedback, the platform will be removed after 2024."
++#endif
 -- 
-2.35.1
+2.32.0
 
