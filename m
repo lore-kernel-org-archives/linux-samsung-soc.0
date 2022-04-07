@@ -2,88 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532F2C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A97EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243649AbiDGJRT (ORCPT
+        id S235287AbiDGJVH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55324 "EHLO
+        Thu, 7 Apr 2022 05:21:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243703AbiDGJRQ (ORCPT
+        with ESMTP id S241232AbiDGJVG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 05:17:16 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C54B714A
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 02:15:16 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id l26so9545543ejx.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 02:15:16 -0700 (PDT)
+        Thu, 7 Apr 2022 05:21:06 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D331CA38C
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 02:19:06 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id l7so4108781ejn.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 02:19:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=unQfTgqeQZWyCG4CKIwW81rtnRzgcWAQJNa676fN02I=;
-        b=LUII6HZ52R2BXGsCinwoXA7ZKD8j3+HdDEHYyZpvvKf/cBjymjr0XA+PSMIiSXwDB6
-         +3STtlNbNTEM7dhW/DwEVx9m30IM5tDu0Qm0uKkIVO3EdnHmyWxxI25Gwz5LtYMYXrne
-         Wr2v5W+DwP+Cs3qjDREIp+lNi1BLAOCYHfQ0gWD8qq1e40/YT9T0yhN+GEsAPsS6pvov
-         7ep8L30sxWe1ySj3kyaihN9UdfM3JBtgFYJ1u4fQxXtV52f6+knvuy9pAgUMNimt5qMd
-         fvhYjVYErWg/O6qn6X6eh+VhP9K4cRiVY9ZHPg4RaP6zEhv9ow4aGxm/C74s0bF9glON
-         IIkg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LnBaoxjesRLMXYfiTlUnMPHbRX/jaeNrS7ud9yunYL8=;
+        b=JCkCix2OZhzzzmIsUDtE4MsZEZ7sHVMFlEEY0eQ2IiiIZX43KOoAdUzdfUJL8x5ruc
+         Sm3xnbbj+0CzltfkFFixHoqCq1v7LB6Y6ndItKvw5DA1x1eVcQNCJwj3HnNyAVeanXFx
+         aHtgvRwOukySZEyYXkTEvxZzAVzIZ65r3D57Qpi/NI4Qzl8BmB6zVkHuIjGO8KoOyjs6
+         aTT2qRYKQBKNs+JedW3VoPZa5GtmJGeHUmBhui7++0Xd0PEg2qb4FYOWZ7b/C/YLgoDf
+         /vtvkLebSwu7JQcNOUeM9gPdWPWKUB3f3ZX7VJ1PMF5G1/IomarSADR6aPtoE6rX9oYo
+         EI9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=unQfTgqeQZWyCG4CKIwW81rtnRzgcWAQJNa676fN02I=;
-        b=K0lqlTRvi7daAk68nbQaba559O0zFbRn8ipd5rt/8C2yajJL25gG/VOUlFzzfhaA/n
-         zmt4gYlhxKbpVK/M2Ga0alQiXI8Vag+2E/MSEJreC566mWhC7kZ1R38mYcQR88ibsXxG
-         aDv1teQLq3zJzIfmy09AI5P81wTIflFBntXelt85Et5d9ptRWEyWG1A4b3H6wQQ29iR2
-         SBiK3CnwMtaHtp5lddqrGJepFFO8/4/o+fjPw6cY6mksofWq8eiR3rI90MpFjUFdTBic
-         xSOSIkiiv53d7Y3cqqruwuYhA0LBHfuQjc8yNlrM0gXmIX5rQM2bkWXd3jb2C9baV3GJ
-         NG0A==
-X-Gm-Message-State: AOAM533ExAN8Xvlu3st2gj7Uja6fwFU/PrnVJp0tZOnut5iIXmqkPmxB
-        rEicbZgnNTJf5u8i/+WG/i/6YA==
-X-Google-Smtp-Source: ABdhPJzX7Qq8MseVUYhFiZ5y/Q8CYtiMgJnoYcI3cdxQ15X5vk2KJaRQOYRMPmRopxQLQi34LCtLPA==
-X-Received: by 2002:a17:907:1b07:b0:6e4:b202:db8f with SMTP id mp7-20020a1709071b0700b006e4b202db8fmr12350681ejc.76.1649322914960;
-        Thu, 07 Apr 2022 02:15:14 -0700 (PDT)
-Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id j8-20020aa7c0c8000000b0041934547989sm9085028edp.55.2022.04.07.02.15.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 02:15:14 -0700 (PDT)
-Message-ID: <84fbf3d8-7066-6c4d-0980-5ca803605a0d@linaro.org>
-Date:   Thu, 7 Apr 2022 11:15:13 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] phy: samsung: fix missing of_node_put()
-Content-Language: en-US
-To:     cgel.zte@gmail.com, kishon@ti.com, vkoul@kernel.org
-Cc:     alim.akhtar@samsung.com, lv.ruyi@zte.com.cn,
+        bh=LnBaoxjesRLMXYfiTlUnMPHbRX/jaeNrS7ud9yunYL8=;
+        b=Np5RBpPi+qhgYs7UsnesbfwOixthhNTN2Z7cdSuY36RD8RlG1DbBkFzzjATYI9604j
+         Rp+IpuNuspxhoEm+eaaNLJKRI3AUmy+J1QKPigTcBayd1gSJV2uraJFdHY4VP5eYSwDz
+         REoBZqsS9WFgN92sZgIyKxqg3pT0AXg3qIV6NXI5FOE63u75bRc+S7EgQWX2meIZZOEL
+         9NzJy2OXJJc1epldqTN2jM2eo31/pWlpIMNfhq84fwWmMzpKGJwu/a1aZNfbp9tWOSVg
+         JOL02KdEKYkdqr1xh7uoEZdYjptyWRwY8T7TyCbyj8WKGGJPfVKMcMDhhPg4RxV67eDI
+         RIig==
+X-Gm-Message-State: AOAM532we2aqywb6cVibk2G6PEcG8S0K+Az/xXnd7bhyFnjQDgAvxbwl
+        l/5DJP+J3Ivci0w8yuQdNH/AZQ==
+X-Google-Smtp-Source: ABdhPJwaDEOV/LwjRxHVpjg7xoZn+nxfMxkDpEWEHjQLfxMEE0rGyggRQCA1ZMmBB77kyk/4Dj9zIQ==
+X-Received: by 2002:a17:907:3d87:b0:6e6:f1f3:ba7c with SMTP id he7-20020a1709073d8700b006e6f1f3ba7cmr12511730ejc.128.1649323145398;
+        Thu, 07 Apr 2022 02:19:05 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id m1-20020a170906848100b006e8053c7cdcsm2927752ejx.39.2022.04.07.02.19.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Apr 2022 02:19:04 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Girish K S <ks.giri@samsung.com>,
+        Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>,
+        Vasanth Ananthan <vasanth.a@samsung.com>,
         linux-phy@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zeal Robot <zealci@zte.com.cn>
-References: <20220407085958.2491783-1-lv.ruyi@zte.com.cn>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220407085958.2491783-1-lv.ruyi@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Miaoqian Lin <linmq006@gmail.com>
+Subject: [RESEND PATCH 1/2] phy: samsung: Fix missing of_node_put() in exynos_sata_phy_probe
+Date:   Thu,  7 Apr 2022 11:18:56 +0200
+Message-Id: <20220407091857.230386-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/04/2022 10:59, cgel.zte@gmail.com wrote:
-> From: Lv Ruyi <lv.ruyi@zte.com.cn>
-> 
-> of_parse_phandle returns node pointer with refcount incremented,
-> use of_node_put() on it when done.
-> 
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
+From: Miaoqian Lin <linmq006@gmail.com>
 
-Ah, now I found, that this was already fixed:
-https://lore.kernel.org/all/3eed8d0c-e009-2daa-ba66-899fe8f48a90@canonical.com/
+The device_node pointer is returned by of_parse_phandle() with refcount
+incremented. We should use of_node_put() on it when done.
 
+Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/phy/samsung/phy-exynos5250-sata.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
+index 9ec234243f7c..6c305a3fe187 100644
+--- a/drivers/phy/samsung/phy-exynos5250-sata.c
++++ b/drivers/phy/samsung/phy-exynos5250-sata.c
+@@ -187,6 +187,7 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 
+ 	sata_phy->client = of_find_i2c_device_by_node(node);
++	of_node_put(node);
+ 	if (!sata_phy->client)
+ 		return -EPROBE_DEFER;
+ 
+-- 
+2.32.0
+
