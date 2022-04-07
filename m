@@ -2,61 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD99C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CDFC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbiDGH3c (ORCPT
+        id S241749AbiDGHbI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:29:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46706 "EHLO
+        Thu, 7 Apr 2022 03:31:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233266AbiDGH3b (ORCPT
+        with ESMTP id S241745AbiDGHbH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:29:31 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 155E441FA1
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:27:31 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id l7so3556315ejn.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 00:27:31 -0700 (PDT)
+        Thu, 7 Apr 2022 03:31:07 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F097521B
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:29:07 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id f18so5360129edc.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 00:29:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=sVKCjcyFursuGnNRsqDGWq1s5jhG02VXWdHL2aOfkHM=;
-        b=xuliny82Z7i6PiVcYIJRHu6t+++DO8XGMUK9vsBg7UyErLpHv8jIzSQuZ+5NDKIzkW
-         1whTtc6iCgTqJMa66wm+DnQy0jm+Wnx1JVxRBhKifJChaHH4JzEc0EEDXFrPvAggicpp
-         G2QMxefL0zv3Qxsb4asmTXClYA127fYxy3yjTje/TCHs9dQQLQnqTZjPl60AOyCChAHO
-         7jd35XlgaKfKJ8Xj/RY7llxhYXD4fAOet1XttuqAKpHaJkzzI8EboNBUFPFlW1w2wB0G
-         ETHLeIIyBocAtZkDCGbnkYXv7FbPmaSzjYkOojFFG4+TFhT4Cd1AfYPSOAi1WWnjGWUO
-         nnAw==
+        bh=VCPl4YRRl+vZCau7x55s379oALPyA3xublrB92hsA8Y=;
+        b=JmLDOUVhDqi064o/CA5UO2nQTeicGg/x4NBcEk9Zi1uwhZgbkLHFqvrAJum9UQL8me
+         zfgUuJ0+gRfbfOnxy/F16k/JpFZJeIvuSH6qiBjVznlCyEYCyNgrolloMAyBfiHXqx4K
+         xV5rKlnw1BlVroEpNDTejRpIf1YJEJAZhjHRQyL5MDOkeg3m6DAQuVINHXMJblcx0rqs
+         zcB8pUs2RbZWuFFaavfagtO7frzRumRdUrEP62+kTCsvbk7dtshU+KlSfWmMcwDzf8/b
+         xUhTRAS0N+JmUHJi/IEamYAdgTtYbKB68akTdg6nTJXb3jWTPOtASQWxjbJdWezWnwF6
+         p5EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=sVKCjcyFursuGnNRsqDGWq1s5jhG02VXWdHL2aOfkHM=;
-        b=stfSoKby5FFrcr33ncKnsbJsxuACeiH4emXci0txBIvw6w16ifbYEiiNWzUIe0PZp6
-         pHE5Id9NNeO71RxfpGXi3iz6OG/FQVr2T8EXj1REjqrDNWMiQb4aHtQ1xfD8FfeiJsfs
-         0c6OvHYYujRa1AQfukgLUVcGJJV7NDnLgeRqMWYMsnLOGeeTT1QxTeU0J3ihk4Oq7ZiB
-         E66OvVZyQvKtf1+vTgz3ulGUxULanXYFIKjOyIzDDmzypkqFXfBGUaLJtldyYFu0SYFj
-         XRVKBcTIkoayRbh2mFpSlwTQmQNrZr6wSBzI/qW2JAlEzOAzRIfiMRwc3bhZcBKSKCjO
-         3xFQ==
-X-Gm-Message-State: AOAM530XfQZ4u0Zz7sMifWp0s7R9wn3AFUhqW4O/Z7p4SSA+uI/iVGj+
-        0MCErFx3UvboZQ6GHgCYTwzcsklKOZzDKzo1
-X-Google-Smtp-Source: ABdhPJxxkE3ET/sQ03551rEJpszWGXXoBdMpR35R5o6Dcc4iCbDQcrdlhEPf8pQpvtBqR84fxUR6AA==
-X-Received: by 2002:a17:907:6d8f:b0:6e0:1512:913b with SMTP id sb15-20020a1709076d8f00b006e01512913bmr12318510ejc.491.1649316449674;
-        Thu, 07 Apr 2022 00:27:29 -0700 (PDT)
+        bh=VCPl4YRRl+vZCau7x55s379oALPyA3xublrB92hsA8Y=;
+        b=S22QN+FGi0gqZMWA+v6XpdLTvswZMottPMWD5z5mRO5MBw9HMRcwiRGggOjAnj5eYN
+         +1uoKARkFabmFn/kugsMyeDUcyS5ujnIr6pq0rkj59WpKsJgmZoRajTahc+eWoGB2FxO
+         Tk3kmGMTPbBKE+KCmfv4TPKhcKgHd2djm+sHz5MSiL4vEbc9E1HWKtIrs2AejIc7m8au
+         a/0W23DuZFS/tnX17NhtyHgDfVIw0pS85milK7MII2Gy+P1uN4u0g2FANZXvY2kQZS0m
+         w9jAQZY7yRLmnEGOW+cPVLD0OlRLxPDdsc+B/l6offnpmnrtdWxTZC/kVoG5UUlj5Xkg
+         etww==
+X-Gm-Message-State: AOAM532yVAVM6uaT5aajzrMuSFCprnVgmTwPYb2fICvVbtnPYUuejK3M
+        z+GQqNS/Mz13pfniPih4FjQKWg==
+X-Google-Smtp-Source: ABdhPJwQ2Ds1Umydr/5o+enpSVqH5N8+7ikHzTWeNHBOApVPo/Cn9n18pDrbmh7lgRtutGE1Ma+bYw==
+X-Received: by 2002:aa7:de96:0:b0:418:f9ca:67f6 with SMTP id j22-20020aa7de96000000b00418f9ca67f6mr12855139edv.25.1649316546462;
+        Thu, 07 Apr 2022 00:29:06 -0700 (PDT)
 Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id q17-20020a170906b29100b006e7f3615efcsm4071855ejz.56.2022.04.07.00.27.28
+        by smtp.gmail.com with ESMTPSA id m20-20020a170906235400b006e718d8b849sm5472673eja.45.2022.04.07.00.29.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 00:27:29 -0700 (PDT)
-Message-ID: <f8f7ec98-8e67-268b-5f08-06c9bee4b98e@linaro.org>
-Date:   Thu, 7 Apr 2022 09:27:28 +0200
+        Thu, 07 Apr 2022 00:29:05 -0700 (PDT)
+Message-ID: <28dd4973-06a3-ddf5-4b98-3f7ffbc3cf1b@linaro.org>
+Date:   Thu, 7 Apr 2022 09:29:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 07/12] ARM: s3c24xx: remove support for ISA drivers on
- BAST PC/104
+Subject: Re: [PATCH 08/12] ARM: s3c24xx: convert to sparse-irq
 Content-Language: en-US
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -82,9 +81,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
 References: <20220405091750.3076973-1-arnd@kernel.org>
- <20220405091750.3076973-8-arnd@kernel.org>
+ <20220405091750.3076973-9-arnd@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220405091750.3076973-8-arnd@kernel.org>
+In-Reply-To: <20220405091750.3076973-9-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -94,34 +93,15 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 On 05/04/2022 11:17, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> BAST is the one machine that theoretically supports unmodified ISA
-> drivers for hardware on its PC/104 connector, using a custom version of
-> the inb()/outb() and inw()/outw() macros.
+> As a final bit of preparation for converting to ARCH_MULTIPLATFORM,
+> change the interrupt handling for s3c24xx to use sparse IRQs.
 > 
-> This is incompatible with the generic version used in asm/io.h, and
-> can't easily be used in a multiplatform kernel.
-> 
-> Removing the special case for 16-bit I/O port access on BAST gets us
-> closer to multiplatform, at the expense of any PC/104 users with 16-bit
-> cards having to either use an older kernel or modify their ISA drivers
-> to manually ioremap() the area and use readw()/write() in place of
-> inw()/outw(). Either way is probably ok, given that all of s3c24xx is
-> already on the way out next year, and many traditional ISA drivers are
-> already gone.
-> 
-> Machines other than BAST already have no support for ISA drivers, though a
-> couple of them do map one of the external chip-selects into the ISA port
-> range, using the same address for 8-bit and 16-bit I/O. It is unlikely
-> that anything actually uses this mapping, but it's also easy to keep
-> this working by mapping it to the normal platform-independent PCI I/O
-> base that is otherwise unused on s3c24xx.
-> 
-> The mach/map-base.h file is no longer referenced in global headers and
-> can be moved into the platform directory.
+> Since the number of possible interrupts is already fixed and relatively
+> small per chip, just make it use all legacy interrupts preallocated
+> using the .nr_irqs field in the machine descriptor, rather than actually
+> allocating domains on the fly.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
