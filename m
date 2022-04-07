@@ -2,118 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB99C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B5BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:48:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242174AbiDGHsw (ORCPT
+        id S242164AbiDGHuc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
+        Thu, 7 Apr 2022 03:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241974AbiDGHsv (ORCPT
+        with ESMTP id S232646AbiDGHua (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:48:51 -0400
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F903E5E20;
-        Thu,  7 Apr 2022 00:46:50 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a6so9168997ejk.0;
-        Thu, 07 Apr 2022 00:46:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=n9ByRjCgN7UyNGlvzfT7jWJ7BAn1HisGnqSo99JqgB8=;
-        b=XJs4dPrHM6T6XT+3sAWKgHKTdRlIHtB1qbtbBQbeCeYm2lgKMG1ROFoYXmGcw/WejB
-         Ysl+qdc70+4y+QbaesP5knS1DOhJrJOlt+V6wlPCPaWZ6UruMvUZX/ybUkGu7MbAH9gO
-         RUJHkCyULKRhhC02oe4s+yqFZY6OosBNEKVyNcm4q3DAxdPde5wCrPz9X6MU8LeHqMaM
-         UVzLa5pFwnQEggEFLBwmWUBPDncgKGIi3hUF/o/yXc7b5ezYPBjmN379uUZYjTLwmf8i
-         SBSisOQvvZYjrmu2ozpGHYwwN/8WhvvyxknnQyozQ7kNrZw97z4XPUtApT6eVofj3QMt
-         eq8g==
-X-Gm-Message-State: AOAM533eL05j4KpO3Fc80HI6yQjxaJv0Nl2s/iqwfRO0Kf4OWxR26Zdt
-        rdiuOG7EKNSgl82UN6eUrXk=
-X-Google-Smtp-Source: ABdhPJzv09r1vMw4Ze8r90GmCwPXjqCMtbVGmOmg1d166H3EkJmoklQuCS2wRak5XhZI0Cgz8VQy4g==
-X-Received: by 2002:a17:906:37cd:b0:6e0:bdb6:f309 with SMTP id o13-20020a17090637cd00b006e0bdb6f309mr12180762ejc.394.1649317608706;
-        Thu, 07 Apr 2022 00:46:48 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id lj20-20020a170906f9d400b006e7f1e1f4a0sm4232922ejb.60.2022.04.07.00.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 00:46:47 -0700 (PDT)
-Message-ID: <b53be23f-7935-dae3-9dc8-f850493a5fa9@kernel.org>
-Date:   Thu, 7 Apr 2022 09:46:46 +0200
+        Thu, 7 Apr 2022 03:50:30 -0400
+Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 023B346141;
+        Thu,  7 Apr 2022 00:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1649317712;
+  x=1680853712;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=65cq+04D2t91MgXQs2FV1LSZ91INmcsG6pr3WgD2E7M=;
+  b=bQzducTedCmQckTwZX1IlWeB9H+3fnDxErNGSv0UqoYECY1mAV0iLDGj
+   ccIXbqu4qZpJamltH5XlBMFaBgOjaIjISpDPtXghLFWvWE1wJ/2RdTKvG
+   kVnFMjDt8I0SAP5JyX+ZRRm0c+JhqbehKve6bUmbooP1ClbKrYhT/52B1
+   F8vQVcI0SShLOuvc38+4KwKI1r0Yy216y0N915mP7He93wyjx8V8yojdA
+   mJTrcykmve5LG4kvX/BIvvNIRF3dRjdjTpw8sVjJxbcgDSHYuf1MM8Hss
+   JxEilDw+OCQ7uYCBwLiJj1kN7AB9JOkE7aFZtNBAuoisfJCGRq1tqvwEL
+   Q==;
+Date:   Thu, 7 Apr 2022 09:48:29 +0200
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        kernel <kernel@axis.com>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/4] clocksource/drivers/exynos_mct: Support
+ local-timer-index property
+Message-ID: <20220407074829.GA31389@axis.com>
+References: <20220308142410.3193729-1-vincent.whitchurch@axis.com>
+ <20220308142410.3193729-4-vincent.whitchurch@axis.com>
+ <226dcb1b-d141-f0d3-68c4-11d2466ca571@canonical.com>
+ <20220311113543.GA17877@axis.com>
+ <CGME20220311125154eucas1p180cf38fcfe33e52757c2442bbd9c2ab3@eucas1p1.samsung.com>
+ <69be9f88-b69b-c149-4387-c5002219bf0a@canonical.com>
+ <e8b58fc4-fdc2-7fca-f8f5-c45f0891b53b@samsung.com>
+ <20220330082137.GA21079@axis.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 1/1] tty: serial: samsung: add spin_lock for interrupt
- and console_write
-Content-Language: en-US
-To:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-References: <20220407071619.102249-1-jaewon02.kim@samsung.com>
- <CGME20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844@epcas2p1.samsung.com>
- <20220407071619.102249-2-jaewon02.kim@samsung.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20220407071619.102249-2-jaewon02.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220330082137.GA21079@axis.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07. 04. 22, 9:16, Jaewon Kim wrote:
-> The console_write and IRQ handler can run concurrently.
-> Problems may occurs console_write is continuously executed while
-> the IRQ handler is running.
-
- From the patch POV:
-
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-
-But given this is a v3 with no version changelog below "---", you've 
-just kicked the Greg's bot to wake up :P.
-
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
->   drivers/tty/serial/samsung_tty.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
+On Wed, Mar 30, 2022 at 10:21:37AM +0200, Vincent Whitchurch wrote:
+> On Mon, Mar 21, 2022 at 09:00:08AM +0100, Marek Szyprowski wrote:
+> > Right, I've played a bit with MCT on some older Exynos SoCs (ARM 32bit 
+> > based and even Exynos5433) and it looked that none of it enabled MCT FRC 
+> > timer in their proprietary firmware. I've even proposed a patch for this 
+> > once ([1]), but such approach has been rejected. I think that calling 
+> > exynos4_mct_frc_start() unconditionally won't hurt.
 > 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index e1585fbae909..8af5aceb9f4e 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -2480,12 +2480,24 @@ s3c24xx_serial_console_write(struct console *co, const char *s,
->   			     unsigned int count)
->   {
->   	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
-> +	unsigned long flags;
-> +	bool locked = true;
->   
->   	/* not possible to xmit on unconfigured port */
->   	if (!s3c24xx_port_configured(ucon))
->   		return;
->   
-> +	if (cons_uart->sysrq)
-> +		locked = false;
-> +	else if (oops_in_progress)
-> +		locked = spin_trylock_irqsave(&cons_uart->lock, flags);
-> +	else
-> +		spin_lock_irqsave(&cons_uart->lock, flags);
-> +
->   	uart_console_write(cons_uart, s, count, s3c24xx_serial_console_putchar);
-> +
-> +	if (locked)
-> +		spin_unlock_irqrestore(&cons_uart->lock, flags);
->   }
->   
->   /* Shouldn't be __init, as it can be instantiated from other module */
+> Thank you for looking into this.  The proposal was however not to avoid
+> changing when exynos4_mct_frc_start() is called, but to instead skip the
+> write to the Timer Enable bit of the G_TCON register if it is already
+> set, like in the below patch.  (This is needed to avoid races when the
+> FRC is shared between CPUs in an AMP configuration, since TCON can be
+> modified for other reasons from the CPU which is using the global
+> comparator.)
+> 
+> If I understand your comment correctly, such a change should not cause
+> any difference at least on the platforms you looked at since there
+> MCT_G_TCON_START will not have been set at startup.
 
-
--- 
-js
-suse labs
+I needed the frc-shared property anyway to prevent registration of the
+clock events so I followed Krzysztof's suggestion of doing this
+conditionally and also clearing the resume callback.
