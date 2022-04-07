@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCFEC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7C3C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243025AbiDGIcZ (ORCPT
+        id S243093AbiDGIdi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32836 "EHLO
+        Thu, 7 Apr 2022 04:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243032AbiDGIcQ (ORCPT
+        with ESMTP id S243094AbiDGIdh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:32:16 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1E2148652;
-        Thu,  7 Apr 2022 01:30:16 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id k2so5495090edj.9;
-        Thu, 07 Apr 2022 01:30:16 -0700 (PDT)
+        Thu, 7 Apr 2022 04:33:37 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DEE71D08E8;
+        Thu,  7 Apr 2022 01:31:37 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id k23so9295922ejd.3;
+        Thu, 07 Apr 2022 01:31:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=RyClp8J+UOKKd69LMTLM+mjlqOxwep1G4/PnD2rDX08=;
-        b=Mt/4xtHYCRSz9HxImH1r/cSaOGq627NjsJ6BjUXBtW4qhHf9AmlnRZtseRSnsS35Tf
-         yKeOvzfVHwmjmOzl2sJ22RDKjomqwsQiFlRjm0MzY9/jAH7DdRQnvlbbqVKBdYdEQGnX
-         ITgCeJ14wVD+LzYtM0UUxuO6OegjQIsfada+VKoipegYk4crapKQirukLOv26UNDhPpJ
-         yOF4tgukP1D3vX0YTtCDsvAQeSDlpxmO/A14GIyNbOLjYS+f5r5tIbopwyT2HOKbGjr9
-         g84Ck1YjB3pnfKynCniuLn85ND8bYiWniHXRNWGmRyNY+3GEncmBYUBXnKtMXMncViYe
-         ac6g==
+        bh=YjO65yCUJueZcsX5BrYnH/m97GWK+kzYfUVQzJPSKgo=;
+        b=eqbZmKla+dMEy9RQxxGz8eoOGg0sMQZAoFKINltZOLnFd5l+1ni1BvW/dUgJ3CWqvN
+         g9gvVG1BIeC/+LFoAwLiclai1XWUzHGbNKSJUvd8djMDg4A2kLOJpE0Fkf3hnvphS3Lp
+         QNK9x+p96F6XsUUfrm86+/Kkr4FfozVqvjCttcQmbNE20toEd7oQBkUKNyYT6fAqx/bX
+         WCLRmzPXkbkfGZ/zsNbyDbpikdziRWl4VPEkKUIWWHOtBeXAHVXf9ZC3oWGKXMA1wKLv
+         FbZgLFevDR3gwsFs79qIs0IZL0kEJbP0P3USR+81LaWuaNdXKbvcEabyEqR8IG2cORyD
+         UbKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=RyClp8J+UOKKd69LMTLM+mjlqOxwep1G4/PnD2rDX08=;
-        b=fUNtpX6y3E9lpOWHt0hbZo+KccJshIH5+UOCJEBAldZ6H/OuNGNO2relgQ2jAbqhaO
-         oi81jXMymq+/WiQ5qbrUIRaR8pkKKOsKLCqWwTM8hHzvElpL1P0+zkAbyOID/E1M2q+q
-         uzLnZQVvX8tU0wdsSimCK3C8tUlEe7VJiqkGnQp4f6Q9Y8313Vji2q7Hzu6dGUBuiWis
-         dFG8ZiSGj63wLGtcPZtXR4Wi2kLZkFW62gFqNbc6FbT/9swIIePLR/hf84VrdoxmAG66
-         w8VcsAM5QyKEFJGiDrF9k18LDP8xD3RhOvDAckgSg0GlnAReZa168vTb+zWSrRT5CVBQ
-         MJ/Q==
-X-Gm-Message-State: AOAM532yxPuX6QHcl9LQ/wNwXgCBfptCp3bvUFkU5zfH8tXAB4K0QAnt
-        r7e8RXQWUyn4DL0gBHMHfeg=
-X-Google-Smtp-Source: ABdhPJzlMtj4hzavyjsLVA1gXQU9mMuFyiRtIr2lqVzGRfol4/NLgz5bE5/0RBfla00DnYG3za6u7A==
-X-Received: by 2002:a05:6402:548:b0:41c:bf00:307 with SMTP id i8-20020a056402054800b0041cbf000307mr12848490edx.6.1649320215006;
-        Thu, 07 Apr 2022 01:30:15 -0700 (PDT)
+        bh=YjO65yCUJueZcsX5BrYnH/m97GWK+kzYfUVQzJPSKgo=;
+        b=dgzTvJ7Ny6/BjA4WsBPYEml/fZU1cQKpUm4aa0Oh27tzcmlTdXFOCO4Y+qu4VS2jVX
+         OppDNgWMk7HOWw+aVlLdA1QnSfJq4EMcwH5UtstcekoH41xxJi6E26AfMRput0Vkpx0O
+         dAoLi1mcrhEUXPZA+ksgG+FUX0rPfC6tNiYWhgPmQJNfZEjLa73YMe1P2dSTOFVnLn0Q
+         ACHZ6L1iDclhXGmvfZMQQT9VaPdrF7iQ9vQdJ0gmNlqZNCXyDidzk58EM+OpVeAvmSSN
+         JGnjbvRlz/Lu2PsQYniQXua61tsICOAXYfqU5er9iQdscJ8SJx2PKQi7XVpyvN8GiSAs
+         x8wg==
+X-Gm-Message-State: AOAM533Xdqo1ei7ymEFps0443Bz89KPbeslr4GB0XzrJjd8qSIaD9Rtl
+        XMphdtSeFUEu7KFiVRYgU5M=
+X-Google-Smtp-Source: ABdhPJzrkNK1rxguF+DMNfRgciLJTOVyUNzWLOqu4MmnIEWr10fJ0cLSk6ulGsblDUYqRxBkrnK0Rg==
+X-Received: by 2002:a17:907:3e99:b0:6db:6c1c:d9d9 with SMTP id hs25-20020a1709073e9900b006db6c1cd9d9mr12171094ejc.688.1649320295929;
+        Thu, 07 Apr 2022 01:31:35 -0700 (PDT)
 Received: from giga-mm.localdomain ([195.245.23.54])
-        by smtp.gmail.com with ESMTPSA id v10-20020a170906380a00b006a68610908asm7406320ejc.24.2022.04.07.01.30.13
+        by smtp.gmail.com with ESMTPSA id f23-20020a170906139700b006e758e94972sm5390523ejc.171.2022.04.07.01.31.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 01:30:14 -0700 (PDT)
-Message-ID: <74f4f647b22bc469fdcb535b47d5a808d8372e56.camel@gmail.com>
-Subject: Re: [PATCH 03/12] ARM: ep93xx: enable SPARSE_IRQ
+        Thu, 07 Apr 2022 01:31:34 -0700 (PDT)
+Message-ID: <5fc3c2b7f299d1b5f784ae5fe4b9cbe9ddf0328d.camel@gmail.com>
+Subject: Re: [PATCH 04/12] ARM: ep93xx: make mach/ep93xx-regs.h local
 From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -75,10 +75,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Date:   Thu, 07 Apr 2022 10:30:12 +0200
-In-Reply-To: <20220405091750.3076973-4-arnd@kernel.org>
+Date:   Thu, 07 Apr 2022 10:31:33 +0200
+In-Reply-To: <20220405091750.3076973-5-arnd@kernel.org>
 References: <20220405091750.3076973-1-arnd@kernel.org>
-         <20220405091750.3076973-4-arnd@kernel.org>
+         <20220405091750.3076973-5-arnd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
@@ -90,41 +90,22 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Hello Arnd,
 
 On Tue, 2022-04-05 at 11:17 +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Without CONFIG_SPARSE_IRQ, we rely on mach/irqs.h to define NR_IRQS
-> globally. Do the minimal conversion by setting .nr_irqs in each
-> machine descriptor.
-> 
-> Only the vision_ep9307 machine has extra IRQs for GPIOs, so make
-> .nr_irqs the original value there, while using the plain NR_EP93XX_IRQS
-> everywhere else.
+> Nothing relies on it outside of arch/arm/mach-ep93xx/, so just move
+> it there.
 > 
 > Cc: Hartley Sweeten <hsweeten@visionengravers.com>
-> Cc: Hubert Feurstein <hubert.feurstein@contec.at>
-> Cc: Lukasz Majewski <lukma@denx.de>
 > Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I've successfully tested the whole series on EDB9302, therefore:
-Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
 > ---
->  arch/arm/Kconfig                               | 2 ++
->  arch/arm/mach-ep93xx/adssphere.c               | 1 +
->  arch/arm/mach-ep93xx/core.c                    | 1 +
->  arch/arm/mach-ep93xx/edb93xx.c                 | 8 ++++++++
->  arch/arm/mach-ep93xx/gesbc9312.c               | 1 +
->  arch/arm/mach-ep93xx/{include/mach => }/irqs.h | 7 -------
->  arch/arm/mach-ep93xx/micro9.c                  | 4 ++++
->  arch/arm/mach-ep93xx/simone.c                  | 1 +
->  arch/arm/mach-ep93xx/snappercl15.c             | 1 +
->  arch/arm/mach-ep93xx/soc.h                     | 1 +
->  arch/arm/mach-ep93xx/ts72xx.c                  | 3 ++-
->  arch/arm/mach-ep93xx/vision_ep9307.c           | 1 +
->  12 files changed, 23 insertions(+), 8 deletions(-)
->  rename arch/arm/mach-ep93xx/{include/mach => }/irqs.h (96%)
+>  arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h | 4 ----
+>  arch/arm/mach-ep93xx/gpio-ep93xx.h                    | 2 +-
+>  arch/arm/mach-ep93xx/include/mach/uncompress.h        | 1 -
+>  arch/arm/mach-ep93xx/soc.h                            | 2 +-
+>  4 files changed, 2 insertions(+), 7 deletions(-)
+>  rename arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h (94%)
 
 -- 
 Alexander Sverdlin.
