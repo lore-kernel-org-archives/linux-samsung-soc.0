@@ -2,94 +2,101 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72567C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8554DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:14:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243523AbiDGJCI (ORCPT
+        id S239510AbiDGJQZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49752 "EHLO
+        Thu, 7 Apr 2022 05:16:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243527AbiDGJCG (ORCPT
+        with ESMTP id S243756AbiDGJQR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 05:02:06 -0400
-Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056091C16DC;
-        Thu,  7 Apr 2022 02:00:06 -0700 (PDT)
-Received: by mail-qk1-x72f.google.com with SMTP id b33so1639597qkp.13;
-        Thu, 07 Apr 2022 02:00:05 -0700 (PDT)
+        Thu, 7 Apr 2022 05:16:17 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E7714FB96
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 02:14:16 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id k23so9513270ejd.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 02:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aN5mT5XseTWatVt6bcoD7NMS4LCdVfX/RptWXKAKrc0=;
-        b=mjoxyh9PZQCMkXRODxS+PxWgXjsdqxNe2k2AN5KmOdIO23yaKL9DVwQMPWJAU3RjAq
-         uHxtahIMFBRZVDsQ9uST4zpdlMD7fToCXeeYyHx2Swg8w2ODthjwsQs7fxM9KCLLM7DG
-         a7a8A/GWuUrjqNfXHWTZbI6PPOrQlXsfi4fKOE/XtY2DEVfG31t77tED+xEpKlolAECs
-         VRpL5j1Dcctai9NhIG8H8PeEgP0alA0FCxq71csFsYp7CU+AlZyY0CDnqvDwk/0easu1
-         AnU0SvkgLANK+kwW+NIavdi1xzfannMx9MMNDMDSMB29O7BJfggSdvoe4nWRCNoJ3pOH
-         5rBg==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=T9hbqxWr3I36mglxxaMPa10oONO0MCgwf6BD0FLzWtw=;
+        b=eO4MUCyyGxX9SOB5z9Lont0uzM3DcZSWLOusZOuj8rzTIb6Fp2yFzTdSQDIpCWauqS
+         vtK2nv1Um/l7zzyAQFdfYN8jhZM2BxO2cM3X4HvKKNAEBZZ8kEaqGR9buc2NadHdFLtV
+         1rw7v0SPt1GAerhe6wVNUOxjln43HXUZXXes5AG/QwahrnirdDcE7w5Xn0CMJ4X9ZEk0
+         SQsypivARX3TBNAp7cqf5R1dbbCCMX5sACcACcf8tXCYfWbPIVmlcNJzo6u4iOMgP+kz
+         Sg18cqif/zI9ejI2zGIHfJMmB1Zb8zW7JVigRNnLWzFX1Mc/0H0SlCHzZgd4F7hFB3jL
+         lY0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=aN5mT5XseTWatVt6bcoD7NMS4LCdVfX/RptWXKAKrc0=;
-        b=epRUl1grlvtnq0ZtijSnsSWcNZhUghK/Pu4iPiNskS2CF0FdV9cpu5FxTsD9LRQj3k
-         AVRj40LIwxEq8TSPuh95hg1LxFaHK5FFIvyPOASvGKEMyva6bh3vGVW5hHv18+Ctls0I
-         kLReysKeG7yHvNzvxEYBW3043VLyDWWgqTSgF44iHJbQj1ErevqaoJRjQ6VjzZbm+nXG
-         mnati1kiOiW5zMmXq7CKyUsKxt8olOFHf01RFJNthGKE5nSjznc/NXhJhe5ZspbJyXzS
-         uBBaGlVZ+jL+SC05hc8pRTqOpeUIUO6Dw4ZW+AqTqBqeYVfKb+TeXoFhMZPR3P8woIPd
-         01YQ==
-X-Gm-Message-State: AOAM531uYjvDFpRthw7oOPp/xA1kFUcvfqEC5uObVV39M5zyc33qs7mm
-        UyT3loS8kjCPQBEG4onhLu0=
-X-Google-Smtp-Source: ABdhPJxqgFtzM+fnzFFy+amc+0Yve7WLUJ2aiCFsq7jk9FKpT9bpqOFs2IvxrX2BataVLBGpo+jkUg==
-X-Received: by 2002:a37:98c4:0:b0:69a:e14:16a2 with SMTP id a187-20020a3798c4000000b0069a0e1416a2mr255460qke.610.1649322005048;
-        Thu, 07 Apr 2022 02:00:05 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id a23-20020a05620a103700b00699d49c511dsm4689750qkk.104.2022.04.07.02.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 02:00:04 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: lv.ruyi@zte.com.cn
-To:     kishon@ti.com, vkoul@kernel.org
-Cc:     krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-        lv.ruyi@zte.com.cn, linux-phy@lists.infradead.org,
+        bh=T9hbqxWr3I36mglxxaMPa10oONO0MCgwf6BD0FLzWtw=;
+        b=AfwAcNdTlu5Gx/CU50rq8ZLibbcAtPxwnE/k+/Txxq1ZGzIJitIklN484G7qHzvRLv
+         o9tSx6q+e4RMkbQvokWhyDQkiSLttTH2O3CIB6FkkAAJfhq6hOMTdyATCdNEn19HCotX
+         rnPFvEdPqqwgehYA2mtxKwGcOvGbZ8bVrJhn2S2yeCoC5glC/wtf1g0vZPvbIeqpKpZQ
+         +p4P43kX2UMJiWpZNG8UgQnMKwNlAyBhYoDfeZHJ3Sik/bOdSRcF2cA8dZUKlh/Fk2kG
+         9uix2S/MDuQbrcnQ3RzeR+I4CGHOm4ihtkxxeKdHC7c0+pO1bg2zTf1b8rBM/yRzrU9p
+         2t+A==
+X-Gm-Message-State: AOAM532FUAtw87YG2jlkpxQOFPqJIlnHCw4U15g7GH1Ug4MAkhNzVGvS
+        lbusujv7XrWPtKbLW+w1aDCLNSVdzqN9MLgX
+X-Google-Smtp-Source: ABdhPJwWNaQ5itZKFjdK/emZRoqIvnB/M7RMtAvxJPctGsYKAbriUxk7937cvCqFjNX/RfsRsgbTaw==
+X-Received: by 2002:a17:907:97c5:b0:6da:c285:44f5 with SMTP id js5-20020a17090797c500b006dac28544f5mr12375007ejc.208.1649322854974;
+        Thu, 07 Apr 2022 02:14:14 -0700 (PDT)
+Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id k14-20020a170906128e00b006e4b67514a1sm7515638ejb.179.2022.04.07.02.14.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Apr 2022 02:14:14 -0700 (PDT)
+Message-ID: <ee0439ca-cf95-909c-3a9b-38dceac2daab@linaro.org>
+Date:   Thu, 7 Apr 2022 11:14:13 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] phy: samsung: fix missing of_node_put()
+Content-Language: en-US
+To:     cgel.zte@gmail.com, kishon@ti.com, vkoul@kernel.org
+Cc:     alim.akhtar@samsung.com, lv.ruyi@zte.com.cn,
+        linux-phy@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] phy: samsung: fix missing of_node_put()
-Date:   Thu,  7 Apr 2022 08:59:58 +0000
-Message-Id: <20220407085958.2491783-1-lv.ruyi@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
+References: <20220407085958.2491783-1-lv.ruyi@zte.com.cn>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220407085958.2491783-1-lv.ruyi@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Lv Ruyi <lv.ruyi@zte.com.cn>
+On 07/04/2022 10:59, cgel.zte@gmail.com wrote:
+> From: Lv Ruyi <lv.ruyi@zte.com.cn>
+> 
+> of_parse_phandle returns node pointer with refcount incremented,
+> use of_node_put() on it when done.
+> 
 
-of_parse_phandle returns node pointer with refcount incremented,
-use of_node_put() on it when done.
+Please add fixes tag and rebase on this:
+https://lore.kernel.org/all/20220309170028.51913-1-krzysztof.kozlowski@canonical.com/
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
----
- drivers/phy/samsung/phy-exynos5250-sata.c | 1 +
- 1 file changed, 1 insertion(+)
+I'll resend it because it might be forgotten.
 
-diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
-index 9ec234243f7c..6c305a3fe187 100644
---- a/drivers/phy/samsung/phy-exynos5250-sata.c
-+++ b/drivers/phy/samsung/phy-exynos5250-sata.c
-@@ -187,6 +187,7 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 
- 	sata_phy->client = of_find_i2c_device_by_node(node);
-+	of_node_put(node);
- 	if (!sata_phy->client)
- 		return -EPROBE_DEFER;
- 
--- 
-2.25.1
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
 
+I cannot find this report. This is an open source work and public
+collaboration. The “Reported-by” usually means that the issue was
+reported. Usually in public. Can we see the report?
+
+> Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
+> ---
+>  drivers/phy/samsung/phy-exynos5250-sata.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+
+
+
+Best regards,
+Krzysztof
