@@ -2,97 +2,177 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805FBC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35304C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232249AbiDGIJy (ORCPT
+        id S232801AbiDGIOd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:09:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36008 "EHLO
+        Thu, 7 Apr 2022 04:14:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242698AbiDGIHP (ORCPT
+        with ESMTP id S243135AbiDGIMw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:07:15 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BB015AAD0;
-        Thu,  7 Apr 2022 01:05:15 -0700 (PDT)
-Received: by mail-wr1-f51.google.com with SMTP id h4so6561903wrc.13;
-        Thu, 07 Apr 2022 01:05:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=k5Z8OUhRelN5FFoWfx6yeRuNCnOOHjN18Zd6brbR9SU=;
-        b=PtI2+yLW3StPs6vlHQ3CCez8aCoDkMC41BmeACTvGOhmClXu+ETzfrmHXe2LfGtw+Y
-         mzlWfjPr6LgPIq4byAeKUp9bVFGvkoiqXSGwtQS1ZqTG2YX1feuink69kDI/cczyqV0W
-         WOEyn2Jyw/TZeTB1wfqtWbctFp3vzhOLq9grGEoU/wIGDNMkclxJIaSwDHrQLq2Qfomk
-         Iss/5vAlvx02Dr0dSVDMl/UihsG98nmqN2juf8nJuwCCBz+wpnRyU78qqplLBCgB04XD
-         GZqej45rrTqXS8cookvrGgKjdXeVO+rXRat5mz53yUUiCZI5SL/FzGJrJ/L/q8GBg440
-         KGSA==
-X-Gm-Message-State: AOAM532c91gsipTWKVybtzWaZrOGLeaU/rJ/bp4otkn3cKZOMvO9mxDM
-        DeiJ3JwUtrxwasEpdV3xyH0=
-X-Google-Smtp-Source: ABdhPJw8gESXWjC2gFPHl9EZ0YUgdmxtQHzQMJ3vbvugJZriyw/pHYEHwSHrUZLKqJMXehIo+aPzVg==
-X-Received: by 2002:a5d:6d0a:0:b0:204:109f:7833 with SMTP id e10-20020a5d6d0a000000b00204109f7833mr9927973wrq.76.1649318714105;
-        Thu, 07 Apr 2022 01:05:14 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id e13-20020a05600c4e4d00b0038e44e316c1sm6682893wmq.6.2022.04.07.01.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 01:05:13 -0700 (PDT)
-Message-ID: <5be92b82-da56-2591-dbf1-fbf63f91c37b@kernel.org>
-Date:   Thu, 7 Apr 2022 10:05:12 +0200
+        Thu, 7 Apr 2022 04:12:52 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B2BD1C6EEC;
+        Thu,  7 Apr 2022 01:09:56 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id BF6823200F76;
+        Thu,  7 Apr 2022 04:09:45 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 07 Apr 2022 04:09:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=33I+fZ1kqaoH1BTmydgzC4TuSwCoEES+/40hDO
+        mxd6c=; b=wlfLL322Q/m+7Dc+oUh60UhRP6CG4CRlOafKIjARDz0Lf/ka7XZe1A
+        BVDS1s65yFa9gs4u+xkRUCiF4ipttrg5RDUvBHY0NbbhDmDR4rqz82Z2YyhKKv38
+        D6YQbaQOftGUelmweA1Dveiwwy9lvL6QJMJ1GNyRvAr72eJ9UvD3vak3ipavON2d
+        CoramREFIbZEA9l3IGD/3iL+iflPq1eictxTIlFZS+/sgNffzotLvmm6z+1QzGOd
+        BVtOMWZdFKYDPRsu3Nkn5JMjwjuuukie3x/tSd/TJ17tlYQJsrZfU7eEk4HSVtTW
+        nVjnhKf+MtrXi/HF65+/pa7n9NU+jtNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=33I+fZ1kqaoH1BTmy
+        dgzC4TuSwCoEES+/40hDOmxd6c=; b=WNED18hVmvs8VodQ1dA8Wrx7zpjjsURG7
+        Y8FG8T4TFlhgWLrggXLD0JzMRjU/CfHzY4obC0ZDG9Xtz+tiakrxgwyGz7rYN/zY
+        f8AtLW/9rHh9+7M0wMHgsi3zAfqt0/espve3Zoa3mIU4g3rSepx3iDvXv7itGHZ/
+        u/mp41FyTSwgQivWY3FGH6+/PC/KxuW/4j3+Wpvx9rp08sdZN/dVQkKbabrJsXpk
+        xLcR88gK7eqCaXRt+BXoPqLlRAIeg3ShBGn2jovDhapVjH3Tr60JwLC5PLG5XFlR
+        Hou5v+KthDwZLzloh/AlILdCg8FnV9hx7bChXwlRMxJ7pdlmoUQ6w==
+X-ME-Sender: <xms:SJxOYkBij5BzsNS1iZikoUvRuTKudwJ0oqE0C0npwvZ8ckOinOFiwQ>
+    <xme:SJxOYmhxSLqd9qCRCKLpggC4VG459vLMOlPm-8kqfvtLygeNuFz2nnfYoEy1EItKz
+    3IbLPFPx8Reaa9G-WY>
+X-ME-Received: <xmr:SJxOYnkR_BloLAIY7F6naLoS9ZuAte3__vp8zCfXV44TEV4DFbt2DJ3P8sQkgsfHQkG2cDGkuu2wgy_Kh67sWrTcZG4f2AYy1wU2Mz0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkecutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgvucft
+    ihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtthgvrh
+    hnpeevgeduteektefhtefggfdtkeekgfehhffffeegudelheegheeiueevfeegvdeigeen
+    ucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:SJxOYqySddZreOL1tT-r60OiXxYUSAIjfd-lqtiIBnbtcqlmES6doA>
+    <xmx:SJxOYpS_qYyYHXILNRfzIEo_QHaSYW5q11p2VJeTcGsxZFSglCJYCQ>
+    <xmx:SJxOYlYmvNu0uYvVdIOeCY5lXg8IGtu-pe6gyX8odZqTJj7-YJ0RdA>
+    <xmx:SZxOYm-2BHK9D1fls2FCo9uXxwZ4kt3D3113KHle9CpJCK4bEuY2jQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 7 Apr 2022 04:09:44 -0400 (EDT)
+Date:   Thu, 7 Apr 2022 10:09:43 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re:
+ [PATCH v2 3/3] clk: Drop the rate range on clk_put
+Message-ID: <20220407080943.o5qpnw5trtqwqkmq@houat>
+References: <20220325161144.1901695-1-maxime@cerno.tech>
+ <4391300.LvFx2qVVIh@steina-w>
+ <20220404072712.bbsbkq3cpyx4xuzy@houat>
+ <12990313.uLZWGnKmhe@steina-w>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 1/1] tty: serial: samsung: add spin_lock for interrupt
- and console_write
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-References: <20220407071619.102249-1-jaewon02.kim@samsung.com>
- <CGME20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844@epcas2p1.samsung.com>
- <20220407071619.102249-2-jaewon02.kim@samsung.com>
- <b53be23f-7935-dae3-9dc8-f850493a5fa9@kernel.org>
- <6dcddc8a-7ca2-b424-fc8f-7000be3f9116@linaro.org>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <6dcddc8a-7ca2-b424-fc8f-7000be3f9116@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zy42mrjvu2jsbpn4"
+Content-Disposition: inline
+In-Reply-To: <12990313.uLZWGnKmhe@steina-w>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07. 04. 22, 9:58, Krzysztof Kozlowski wrote:
-> On 07/04/2022 09:46, Jiri Slaby wrote:
->> On 07. 04. 22, 9:16, Jaewon Kim wrote:
->>> The console_write and IRQ handler can run concurrently.
->>> Problems may occurs console_write is continuously executed while
->>> the IRQ handler is running.
->>
->>   From the patch POV:
->>
->> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
->>
->> But given this is a v3 with no version changelog below "---", you've
->> just kicked the Greg's bot to wake up :P.
->>
-> 
-> There was a cover letter with such changelog:
-> https://lore.kernel.org/all/20220407071619.102249-1-jaewon02.kim@samsung.com/
-> 
-> It's indeed easy to miss...
 
-Ah, OK, my bad -- I skipped it as usual -- I don't consider cover 
-letters that useful. And in this case, even more provided it is for a 
-single patch.
+--zy42mrjvu2jsbpn4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
--- 
-js
-suse labs
+Hi Alexander,
+
+On Mon, Apr 04, 2022 at 12:54:02PM +0200, Alexander Stein wrote:
+> Am Montag, 4. April 2022, 09:27:12 CEST schrieb Maxime Ripard:
+> > On Mon, Apr 04, 2022 at 09:06:42AM +0200, Alexander Stein wrote:
+> > > Here is the requested output:
+> > > ---
+> > > $ ./scripts/faddr2line build_arm64/vmlinux
+> > > 'clk_mux_determine_rate_flags+0x33c/0x380'
+> > > clk_mux_determine_rate_flags+0x33c/0x380:
+> > > clk_mux_determine_rate_flags at drivers/clk/clk.c:627
+> > > ---
+> > > From a first look it seems that 'best_parent' is just a NULL-pointer =
+here.
+> > > With this small fix
+> > > --->8---
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 071857ef381a..45e081330fac 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -626,7 +626,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *h=
+w,
+> > >=20
+> > >         pr_crit("%s: Best parent %s (%lu)\n",
+> > >        =20
+> > >                 __func__,
+> > >=20
+> > > -               best_parent->name,
+> > > +               best_parent? best_parent->name : "unknown",
+> > >=20
+> > >                 best);
+> > >        =20
+> > >         return 0;
+> > >=20
+> > > --->8---
+> > >=20
+> > > The boot eventually get stuck, but at a later point.Which is probably=
+ why
+> > > your analysis found nothing strange. Due to the size of the output I =
+put
+> > > it on a gist on github [1]. Please note that this is still based on a
+> > > next-20220331 based tree without the revert.
+> >=20
+> > I've looked into it over the weekend, and ran qemu on an imx6 to try to
+> > see if it was any similar
+> >=20
+> > I believe the issue comes from the fact that the core will forward rate
+> > requests structure to the parent clock as is, and if the parent clock
+> > changes the parent it wants, we end up trying to use that parent in the
+> > initial clock which doesn't work really well.
+> >=20
+> > I've fixed it in my branch here:
+> > https://github.com/mripard/linux/commits/rpi/clk-improvements-more-fixes
+>=20
+> Thanks for providing another patchset. Unfortunately, my board hangs stil=
+l at=20
+> the same location. For reference I put a branch based on next-20220401 on=
+ [1].
+> Reverting still does the jobs, a branch is shown on [2]
+>=20
+> next-20220404 has the offending patch already reverted, so this should wo=
+rk=20
+> again, I did not test it on that base on purpose.
+
+Could you give it another try with the branch I pushed today?
+
+I've fixed some issues for exynos4 that could explain why it doesn't
+boot on imx8 as well.
+
+Maxime
+
+--zy42mrjvu2jsbpn4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYk6cRwAKCRDj7w1vZxhR
+xfeHAQDF+E9uE9KQ6zBENb2dwCqwLzqtt7ovlhch8oNXP4M3TwD/flUsKr4kQA1o
+sOntot2+Gb41KdEDVW4XNQmC2OJUHgo=
+=MxCM
+-----END PGP SIGNATURE-----
+
+--zy42mrjvu2jsbpn4--
