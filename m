@@ -2,57 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCB8C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F03C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 10:08:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbiDGJZo (ORCPT
+        id S244113AbiDGKKr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:25:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60468 "EHLO
+        Thu, 7 Apr 2022 06:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231379AbiDGJZn (ORCPT
+        with ESMTP id S238176AbiDGKKr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 05:25:43 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EEA5160C27;
-        Thu,  7 Apr 2022 02:23:40 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id u3so6930622wrg.3;
-        Thu, 07 Apr 2022 02:23:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=xMgd46EJ5wVn6CMXY5aj4EBYAJUgSDExNiBRxjSsup0=;
-        b=YLZM8TqAf5s/xZGGwK2qBp8Mzy6aF/171CjMHcR+izwqk7nAAArqVQSbBtJ0+NLo/V
-         8qMH2CcMm2ZdTE00QJvgZuUQYjgRUo9pK3IwVnjPlHCKyjWUZHXlN+0BM2+6Hda/AVNp
-         5NGhG97wRsX7jTnROFQp1ptJjyVu/IVdturcismecQ0QpH0/MXGBgHnFKoWMsgGrM9tW
-         tNkb8jrlSuplbU7j4bpGbRw6ATi+lwF8Dakno4v8h0vXBpzJ22rxb5D1LZIAkA4X3jZz
-         a0O0+W/e7pG1qJwyQmb7vL7/SBGYxctuA7OpSlYP2kmPMa16F5LcDQiRvZ66RDgnvHte
-         Uv1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=xMgd46EJ5wVn6CMXY5aj4EBYAJUgSDExNiBRxjSsup0=;
-        b=1uiD3bON7plK7bQPYGUEyo/zbdomSO9BBxYHDQ7hTYnBoUkq14t2SvadDHLGggEMH/
-         zpMqKAUCifJ0eBZ0Sp2/cZZvzGG1LBzd1WOZTyyme+AVMGBLEZN6Os3iueY2o8Qu2TmR
-         lm8WDnKF4pRhBAp/6EGjOU8dvdZBdAIZF2U/xZacSBIMj6kRxHOPTeEg3yJU3HKdq4C0
-         ARfvEe1cy7oW/aoBsmTogElVtiXEg4idDNZ+MFPTJnX5xQvLuPhEcVTyW2yyF7yb0izW
-         oUuPQO8lRrrAgajOWcxMzGVzE3wyCDtWtyyJ/U8ZqAa+Kykv9jzhXxCPn8U6nusyb244
-         40GA==
-X-Gm-Message-State: AOAM533zYTiNDkJVpeBuvuz1e6tCQBF1DRWOtH4FtrfNL9FfMGyx7o0D
-        UaWpmJgl0dCbp9PTppdk4r8=
-X-Google-Smtp-Source: ABdhPJxlwXiGsX4SdX2RIZetw4/+BtOmLs6hXQXzAnwv9pX0XNdCG9MenFDNjce1/UNO81Wsoa28wA==
-X-Received: by 2002:adf:f7c9:0:b0:206:bac:2d54 with SMTP id a9-20020adff7c9000000b002060bac2d54mr10025636wrq.64.1649323419140;
-        Thu, 07 Apr 2022 02:23:39 -0700 (PDT)
-Received: from giga-mm.localdomain ([195.245.23.54])
-        by smtp.gmail.com with ESMTPSA id v1-20020adf9e41000000b00205c3d212easm17199814wre.51.2022.04.07.02.23.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 02:23:38 -0700 (PDT)
-Message-ID: <39e8b64cefd8e2b4e4d91a5e6cfc98db88be7449.camel@gmail.com>
+        Thu, 7 Apr 2022 06:10:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 882F372E19;
+        Thu,  7 Apr 2022 03:08:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 29B0561CCE;
+        Thu,  7 Apr 2022 10:08:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7E3C385AB;
+        Thu,  7 Apr 2022 10:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649326126;
+        bh=QtPSjuN1gj7rdOkimjbPZkc/Aldl/EZom3gZ7Sd17MM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pShqcGFc+XX+casrLsS9Pc5fcSX4XMOIkk4P4pLkhyM8jTRxeJZfiasrMXWAwImnf
+         Bqbz/asxHXItGos7jFADu2czBEM8tUYmL2cAcNpMk/jXqy397YC1B5qkX92K0++lyN
+         rLra2pZokwakZsU50KbRvVxSjpG0wQFnRX5n/Oa1K73HbQyUz99P46rhVzIuR5wmyI
+         JHehnb3eiVO/3VclE+WBwm1wjn6xErleg6+xYLJOMLDAgTiYwn7RBF+9vt7NmqIdo8
+         wXgIb91p3YzOoRYaZfMTbsYlE2sNeDbGHKT/CvM/dIvDgtj0cDO5vtzGLryQJb9WyW
+         7L6PR4O++JYuQ==
+Received: by mail-wr1-f54.google.com with SMTP id b19so7058516wrh.11;
+        Thu, 07 Apr 2022 03:08:46 -0700 (PDT)
+X-Gm-Message-State: AOAM530SVnbW3tLLMt/uarSlB0kzoQ/PYzrY+dS4KmBALUhgFBJpW7IJ
+        YBAO2ldxSSLoMrKnxdc62DCItM5wXznY90B0nzs=
+X-Google-Smtp-Source: ABdhPJzSiM0ws1XTQm0G+eX4lsdVE4jGZb8+YbyMPsKOEjJCLJ6qychiaP8KpFPTHWHrqGypGZ4tXi8XkZuFYEjHU4I=
+X-Received: by 2002:a5d:6505:0:b0:205:9a98:e184 with SMTP id
+ x5-20020a5d6505000000b002059a98e184mr9491841wru.317.1649326124617; Thu, 07
+ Apr 2022 03:08:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220405091750.3076973-1-arnd@kernel.org> <39e8b64cefd8e2b4e4d91a5e6cfc98db88be7449.camel@gmail.com>
+In-Reply-To: <39e8b64cefd8e2b4e4d91a5e6cfc98db88be7449.camel@gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Thu, 7 Apr 2022 12:08:28 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a22dR276SRVh5WRZWDEGQaf9KUUz61tQaCySHZrrgnh9g@mail.gmail.com>
+Message-ID: <CAK8P3a22dR276SRVh5WRZWDEGQaf9KUUz61tQaCySHZrrgnh9g@mail.gmail.com>
 Subject: Re: [PATCH 00/12] ARM: ARMv5 multiplatform conversions
-From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To:     Arnd Bergmann <arnd@kernel.org>
+To:     Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Russell King <linux@armlinux.org.uk>,
         Hartley Sweeten <hsweeten@visionengravers.com>,
@@ -73,43 +70,47 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Ard Biesheuvel <ardb@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Date:   Thu, 07 Apr 2022 11:23:35 +0200
-In-Reply-To: <20220405091750.3076973-1-arnd@kernel.org>
-References: <20220405091750.3076973-1-arnd@kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>, patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Arnd,
+On Thu, Apr 7, 2022 at 11:23 AM Alexander Sverdlin
+<alexander.sverdlin@gmail.com> wrote:
+>
+> Hello Arnd,
+>
+> On Tue, 2022-04-05 at 11:17 +0200, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > I revisited some patches from a few years back, to see what
+> > is needed forsome of the remaining platforms to become part of
+> > CONFIG_ARCH_MULTIPLATFORM.
+> >
+> > A few things happened since I last looked at this, which helps to make
+> > this easier:
+> >
+> >  - The ixp4xx platform saw a large scale cleanup
+> >
+> >  - The ep93xx platform lost support for MaverickCrunch FPUs and
+> >    gained support for the common clock subsystem
+>
+> would you like to consider a couple of fixups from the common clock
+> rework of ep93xx?
+>
+> https://lore.kernel.org/linux-arm-kernel/20220120133739.4170298-2-alexander.sverdlin@gmail.com/
+> https://lore.kernel.org/lkml/20220130152502.236531-1-alexander.sverdlin@gmail.com/t/
 
-On Tue, 2022-04-05 at 11:17 +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> I revisited some patches from a few years back, to see what
-> is needed forsome of the remaining platforms to become part of
-> CONFIG_ARCH_MULTIPLATFORM.
-> 
-> A few things happened since I last looked at this, which helps to make
-> this easier:
-> 
->  - The ixp4xx platform saw a large scale cleanup
-> 
->  - The ep93xx platform lost support for MaverickCrunch FPUs and
->    gained support for the common clock subsystem
+Sure, both look like obvious bugfixes. Shall I apply them to the
+fixes branch for 5.18, or as part of the multiplatform series?
 
-would you like to consider a couple of fixups from the common clock
-rework of ep93xx?
+Either way, if you have any obvious bugfixes for code you maintain,
+and you'd like
+to get merged through the soc tree, please send them to soc@kernel.org, which
+puts them into the patchwork tracker.
 
-https://lore.kernel.org/linux-arm-kernel/20220120133739.4170298-2-alexander.sverdlin@gmail.com/
-https://lore.kernel.org/lkml/20220130152502.236531-1-alexander.sverdlin@gmail.com/t/
-
-Thanks!
--- 
-Alexander Sverdlin.
-
+       Arnd
