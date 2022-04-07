@@ -2,57 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB5DC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7B1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 09:19:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243737AbiDGJVH (ORCPT
+        id S233071AbiDGJVt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42510 "EHLO
+        Thu, 7 Apr 2022 05:21:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243731AbiDGJVH (ORCPT
+        with ESMTP id S237596AbiDGJVs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 05:21:07 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC021CABCB
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 02:19:07 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id p23so5635127edi.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 02:19:07 -0700 (PDT)
+        Thu, 7 Apr 2022 05:21:48 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140B11DE6FE
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 02:19:49 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id p15so9506463ejc.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 02:19:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=VNbnKRlfaQArckBwqtyPd//4SBBVpRdJ3XTbCofIYRs=;
-        b=iKMF7HKH1ujVrO+HWsVSZBima3JdMAbH4p58+DPB86kQEpFAapqdqaaGmPgM+CCT5c
-         4ijl8uuyUSC5K0ptya67Bi4z1z1WrZKDC/36CqWVCJOVDF2l6HbaACSlJwQET6tyc9ON
-         E83TgMGDZMbug8Upqcm5z8MPN3P+7sKYJy/vK1t1/UC7ImP5BSBT7lrXg1fA31fWjMV9
-         6FPdUiH3UDQCyKi+cGH9xeeljybBQU9++yW9sMK/wsMVTUWqs6A+5gqWBSKUxZRPHSwW
-         zvwYy1SOGxeKXBfcPn5FoSdzkg/cveW3tZVciql/oQhQnmMYs0P0sIhdaLg96L8yZEfm
-         oGWg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=OhZn55oqpDXIvKLvKoNusLeA/Le7lGuQ4Qseb8DPsUQ=;
+        b=o4mWa8llyJhR0hXytKXYg8Jm7+j7FbG2XIo9m1ek+brBno+uQo2HZZWkbmW5W/9QcG
+         c9Py20S5rz3TcDCjRoQnwxvRO8Pkrhkzh4ftv0afwjRkBsyuHD5Vw70dKpJ84c8wdxnO
+         WXI4ShYaC9NoYd9QFGcYQRCek9oQ5gLfsybO/i8ECbYTP1uaaZ6ak7bZ4nXz2PPHNC5S
+         j+glrsqr34TjNHReLgx1ujxSXbR82hJgdwJbkae2lxWzi+cz8tIm+kVPdBoGMyS+mCk6
+         dUp0UjvY9vxal/bAIH62k2ihxs6F5Ge99WJ7y2gJUnump2hDZi2/9Gv6/qM72qx9usWL
+         08rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VNbnKRlfaQArckBwqtyPd//4SBBVpRdJ3XTbCofIYRs=;
-        b=PhrRboQVzj+wdR+Pudx+l1KwZnSHls7crY2l63jCrw0MJU8uWeLYqeETGic31dD8xJ
-         VqlixzuPiD4Gusiz0XFlNRjNWOmHREeZPHKMeKv9811jiKlVsFw3LY1+C1hTvv3BbsHN
-         kuiNO/dxlIkmOp56urlSiStQH9xKVgt+ga0KM7jydR7PQcaEwBMmKRWzAfNHRRIg0kaC
-         XOi1keZLkwixT+SgbxXkuZ+PqV2O/HOBfTzAHCMu/F3xt9Nbg4gO01Bj8EouGdsWwneC
-         3G+6FhEk4STd+L/Hsai+9iG3Q05RhZGYLaX8wtYPPBmBhtPHG3bD+bFEiUoIQy3kgQUo
-         Hb4w==
-X-Gm-Message-State: AOAM530xHzUHwGuCAtl0Aw8UfqJA2l91mi/5Vaqq2h74DoiSLS8sMG3D
-        m5AVUU9GVJnAM1x/UdRDkm7W1Q==
-X-Google-Smtp-Source: ABdhPJzFsBM5gI6o2DREc7Xi8f5GVAMfoqKmYdFDqhcq0iN5kCkieW3N33D+6qQ3NnRe9X9N43TCtQ==
-X-Received: by 2002:a05:6402:5107:b0:419:935d:bb6e with SMTP id m7-20020a056402510700b00419935dbb6emr13218359edd.242.1649323146442;
-        Thu, 07 Apr 2022 02:19:06 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id m1-20020a170906848100b006e8053c7cdcsm2927752ejx.39.2022.04.07.02.19.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 02:19:06 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=OhZn55oqpDXIvKLvKoNusLeA/Le7lGuQ4Qseb8DPsUQ=;
+        b=TXeBxykQ59T0ZMDz9JLbbqdIoiKA30Wqa1PMGDEaNxtThSfPBCIc7kwyH6YA97ZbOo
+         ewvwuC9XiNgUpiDzI9Ac2jg2yImpHaQtBJuHV0Zf8hK8oOx1+ACI7JjSKkqVCePnvzj4
+         dTPyV1qaZZmwI+2UaUYdhYiKnqlt9uTb6ezd+87Hk4nG5lI9zZQDGMehEN7f5P7U9/Xo
+         PjTzE4UogLXzt7naRr+kcJFobp4s1DHxmye6S2jRQG5yQKed1FuyTq5A59PptZ1fSZu/
+         +QOFp9aC6oTk8PCDYfSRtqwxKUpb8YbFpt1u+S9qeP879zYoUtNDh2kIfGhdEXvpdAvv
+         pYfA==
+X-Gm-Message-State: AOAM531yDPtw/qEBTfmJfYZ4PXCi3PZlp0zmRyqna458v6Ku5jP2jxXq
+        sJkvVBYrQ/xEeIt4j9Znuxd0Mw==
+X-Google-Smtp-Source: ABdhPJwrfOj4aHp2YqJnDOzcr0lhU3Ho+3z/I+Snr1r/9J1rjLJks+IfGB/rZ/rf9fpkMv+YT4ttzA==
+X-Received: by 2002:a17:907:608c:b0:6e7:fc15:2db9 with SMTP id ht12-20020a170907608c00b006e7fc152db9mr12144063ejc.344.1649323187671;
+        Thu, 07 Apr 2022 02:19:47 -0700 (PDT)
+Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id f15-20020a50e08f000000b004134a121ed2sm9146929edl.82.2022.04.07.02.19.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Apr 2022 02:19:47 -0700 (PDT)
+Message-ID: <7da30fdc-cef7-879a-69ef-6993e05beda5@linaro.org>
+Date:   Thu, 7 Apr 2022 11:19:46 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RESEND PATCH 2/2] phy: samsung: exynos5250-sata: fix missing
+ device put in probe error paths
+Content-Language: en-US
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Vinod Koul <vkoul@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Girish K S <ks.giri@samsung.com>,
         Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>,
@@ -60,78 +67,31 @@ To:     Kishon Vijay Abraham I <kishon@ti.com>,
         linux-phy@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 2/2] phy: samsung: exynos5250-sata: fix missing device put in probe error paths
-Date:   Thu,  7 Apr 2022 11:18:57 +0200
-Message-Id: <20220407091857.230386-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220407091857.230386-1-krzysztof.kozlowski@linaro.org>
 References: <20220407091857.230386-1-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220407091857.230386-2-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220407091857.230386-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The actions of of_find_i2c_device_by_node() in probe function should be
-reversed in error paths by putting the reference to obtained device.
+On 07/04/2022 11:18, Krzysztof Kozlowski wrote:
+> The actions of of_find_i2c_device_by_node() in probe function should be
+> reversed in error paths by putting the reference to obtained device.
+> 
+> Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/phy/samsung/phy-exynos5250-sata.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 
-Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/phy/samsung/phy-exynos5250-sata.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+I forgot:
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
-index 6c305a3fe187..595adba5fb8f 100644
---- a/drivers/phy/samsung/phy-exynos5250-sata.c
-+++ b/drivers/phy/samsung/phy-exynos5250-sata.c
-@@ -196,20 +196,21 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
- 	sata_phy->phyclk = devm_clk_get(dev, "sata_phyctrl");
- 	if (IS_ERR(sata_phy->phyclk)) {
- 		dev_err(dev, "failed to get clk for PHY\n");
--		return PTR_ERR(sata_phy->phyclk);
-+		ret = PTR_ERR(sata_phy->phyclk);
-+		goto put_dev;
- 	}
- 
- 	ret = clk_prepare_enable(sata_phy->phyclk);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to enable source clk\n");
--		return ret;
-+		goto put_dev;
- 	}
- 
- 	sata_phy->phy = devm_phy_create(dev, NULL, &exynos_sata_phy_ops);
- 	if (IS_ERR(sata_phy->phy)) {
--		clk_disable_unprepare(sata_phy->phyclk);
- 		dev_err(dev, "failed to create PHY\n");
--		return PTR_ERR(sata_phy->phy);
-+		ret = PTR_ERR(sata_phy->phy);
-+		goto clk_disable;
- 	}
- 
- 	phy_set_drvdata(sata_phy->phy, sata_phy);
-@@ -217,11 +218,18 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
- 	phy_provider = devm_of_phy_provider_register(dev,
- 					of_phy_simple_xlate);
- 	if (IS_ERR(phy_provider)) {
--		clk_disable_unprepare(sata_phy->phyclk);
--		return PTR_ERR(phy_provider);
-+		ret = PTR_ERR(phy_provider);
-+		goto clk_disable;
- 	}
- 
- 	return 0;
-+
-+clk_disable:
-+	clk_disable_unprepare(sata_phy->phyclk);
-+put_dev:
-+	put_device(&sata_phy->client->dev);
-+
-+	return ret;
- }
- 
- static const struct of_device_id exynos_sata_phy_of_match[] = {
--- 
-2.32.0
+https://lore.kernel.org/all/018501d834eb$01e62ad0$05b28070$@samsung.com/
 
+
+Best regards,
+Krzysztof
