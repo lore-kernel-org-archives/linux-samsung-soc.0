@@ -2,184 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DD6C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 13:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE06C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 15:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240175AbiDGNrY (ORCPT
+        id S1344423AbiDGPGP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 09:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42964 "EHLO
+        Thu, 7 Apr 2022 11:06:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbiDGNrX (ORCPT
+        with ESMTP id S1344418AbiDGPGM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 09:47:23 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C183DA4A;
-        Thu,  7 Apr 2022 06:45:21 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id B76FB3201F18;
-        Thu,  7 Apr 2022 09:45:18 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 07 Apr 2022 09:45:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=XkgppvWgDnu/dZMOPFJ84XRY5MZLfXMWnu3CdV
-        AKWzo=; b=ErC8jTThrapv3meVeiCaIp4oQMk1742n5RkSAhpxngeFRxZdCaX5Rv
-        tbN/SaLmQ6MEjyWmlFoY4jptA+/CdJjtapBcbadaGE5GuZ1SsoPAnY1ZiNOemg5J
-        YAoUN0B+KZPgrqp4q3RjHp+GomLVUQ+xkA6ODZs9XE02yScCzQ8Qrosq9CZsh2aC
-        J/G0hxDhqiKUaz3Mbjo98OAcrQ0vjYu53dgR3kT33/kz5GRQfl7yh3D2i6tpWf4t
-        EDtiZy45C5/Mkexh3gsa2v3N1zlCuxeVHfUA18k/YPSIFEOp22qWGKusSb5pcuNS
-        TsCnsiDdmQBfp+kvnWycs96kc9pKPE4g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=XkgppvWgDnu/dZMOP
-        FJ84XRY5MZLfXMWnu3CdVAKWzo=; b=Xl2w+l77DtuRQfLFe5XimIwd63k8tYMFK
-        2yQ3Op+jnrgMHdXT/q+s9Siljg+WhBeWA5FDS14tvNiziqB34y0pvXgzE2UGuoVM
-        pDW3K5hEajfSmMiOhPwLPOsj+QnpjIFddMI9PgGjoxnAAwZgXskzLmX7H/Q8Y3af
-        n1+ZbpyZw5vDCEzDthACJ6wf79ksjpkFB/+VrqJFUHhQ0QWT+xFxBNbzA/wO/Ubo
-        6R4UofifRQkoAVgRu16is3k3nr9u8etrw2ESPpwaXwzlalZFMIBTdsnbRR4Jxh34
-        HMyXbOJCPYQsS6pNQe1yJVckgWKh9JtkpSBhE3QvxIiaiA9dkZ/Kg==
-X-ME-Sender: <xms:7OpOYlM1bekRlxSaKAsr27tB-r0yvn1IDR1Dahx-Ejk9VJIgC3Amkw>
-    <xme:7OpOYn9i4uu5ALEe5GK9sexLHZgUVDz7VQ-1N_2MQIWt3UJ6cYnFJhlNTnrhGvdfd
-    SuGUxMgRgsDR5jWXQY>
-X-ME-Received: <xmr:7OpOYkRiVrocdVIVXayPSzll4MazcZZ-da0Lugf4amDdUQXQHlteYheFN8k9pyjF_fK6b2GmE1KMA05Hd2T73DqPYFxGxK2CKN4y0nc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgieekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepveegudetkeethfetgffgtdekkefghefhffefgeduleehgeehieeuveefgedv
-    ieegnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:7OpOYhtbpMYLolv3eqNP-UzpuFOix2F0UlT0Mug28Jn_Eun5dDhtGQ>
-    <xmx:7OpOYtfQ_OBwLW0z8TSOviHu8bTA0bpF1PCfu-8SNgGZzVNwKd0xug>
-    <xmx:7OpOYt2xYGgQI7waoL6OGOMkctYS3EfAGrze-Z_mr_-MPzlIQvftsw>
-    <xmx:7upOYsxjMjuEkj8Fmk-gMr_daYo48UE3vPj21r0UevDMV0DJufF7_A>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 7 Apr 2022 09:45:16 -0400 (EDT)
-Date:   Thu, 7 Apr 2022 15:45:14 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
-Message-ID: <20220407134514.sct7g23yto47ylgr@houat>
-References: <20220325161144.1901695-1-maxime@cerno.tech>
- <20220325161144.1901695-4-maxime@cerno.tech>
- <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
- <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
- <20220330084710.3r6b5pjspz5hdmy6@houat>
- <YkV3ch7R7YxlATW+@atomide.com>
- <20220407075356.lmqnax35cewiwh4k@houat>
- <Yk6a7meIO+fV5J1D@atomide.com>
- <Yk7GFWdJd2EN7L1V@atomide.com>
+        Thu, 7 Apr 2022 11:06:12 -0400
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396E11EF9C0;
+        Thu,  7 Apr 2022 08:04:11 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-de48295467so6646097fac.2;
+        Thu, 07 Apr 2022 08:04:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rIFirC+hrkJJZLD+rhTVtR0S3qBIL5Kp1loYfP1qXKs=;
+        b=YsG4dnwrd95oUeeUcGkuSji7n8zU4Rcb5paVLjrmpxslmtIrXCf36RwGob57OXEH37
+         qq6DvlB4JgP5H2yaQi+LFYKMyL526O5j0QSo6ctk2rtVnMW52QvJh+I52CuKXNMAAfZ3
+         MhQay3yDRmkCekqnTOOghtIYlCTPG6UnvVfzPO5yp5uC3NcKGRO64TIx9qDbIFpYEMS8
+         ZitZev/+imywMELjZ1n5zHFTxT8ltvpcuU4Jnl5ifwgxnFbfmsF9laBTXkuvzKUufI3q
+         6EUgWKIpn/ah+jLbABAnXHab0DrURt2+LiSpMYMTfwKoj9ZLcMjOryv6xbYDinJXKeXu
+         IMKg==
+X-Gm-Message-State: AOAM531oTBh58Eby/IdC7+ZuvcywXS0gKezQiXmVGwsQWdCRvtqFDMDh
+        61zUClqMqIiAYkuJKhbOOg==
+X-Google-Smtp-Source: ABdhPJxwquMJUiYkV4ltSOgoQUwGo+ob/LNkodx/eg5e/D6v7vXATUJuGCiGgcXyfb4oNPEV/gL0qQ==
+X-Received: by 2002:a05:6870:80cc:b0:e2:6a85:1ed3 with SMTP id r12-20020a05687080cc00b000e26a851ed3mr1484019oab.146.1649343850502;
+        Thu, 07 Apr 2022 08:04:10 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id h186-20020acab7c3000000b002ef5106248asm7664344oif.45.2022.04.07.08.04.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Apr 2022 08:04:10 -0700 (PDT)
+Received: (nullmailer pid 1086295 invoked by uid 1000);
+        Thu, 07 Apr 2022 15:04:09 -0000
+Date:   Thu, 7 Apr 2022 10:04:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     krzk@kernel.org, tglx@linutronix.de, daniel.lezcano@linaro.org,
+        kernel@axis.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: timer: exynos4210-mct: Add ARTPEC-8
+ MCT support
+Message-ID: <Yk79acnuZE1Wj/3s@robh.at.kernel.org>
+References: <20220407074432.424578-1-vincent.whitchurch@axis.com>
+ <20220407074432.424578-2-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="s43o3564yso7cyde"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yk7GFWdJd2EN7L1V@atomide.com>
+In-Reply-To: <20220407074432.424578-2-vincent.whitchurch@axis.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Apr 07, 2022 at 09:44:29AM +0200, Vincent Whitchurch wrote:
+> The ARTPEC-8 has an MCT with 4 global and 8 local timer interrupts.
+> 
+> The SoC has a quad-core Cortex-A53 and a single-core Cortex-A5 which
+> share one MCT with one global and eight local timers.  The Cortex-A53
+> and Cortex-A5 do not have cache-coherency between them, and therefore
+> run two separate kernels.
+> 
+> The Cortex-A53 boots first and starts the global free-running counter
+> and also registers a clock events device using the global timer.  (This
+> global timer clock events is usually replaced by arch timer clock events
+> for each of the cores.)
+> 
+> When the A5 boots (via the A53), it should not use the global timer
+> interrupts or write to the global timer registers.  This is because even
+> if there are four global comparators, the control bits for all four are
+> in the same registers, and we would need to synchronize between the
+> cpus.  Instead, the global timer FRC (already started by the A53) should
+> be used as the clock source, and one of the local timers which are not
+> used by the A53 can be used for clock events on the A5.
+> 
+> To support this hardware, add a compatible for the MCT as well as two
+> new properties to describe the hardware-mandated sharing of the FRC and
+> dedicating local timers to specific processors.
+> 
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> ---
+> 
+> Notes:
+>     v3:
+>     - Add all required bindings for ARTPEC-8 in one patch
+>     - Rename and split local-timer-only to samsung,local-timers and
+>       samsung,frc-shared
+>     - Restrict above properties to the ARTPEC-8 compatible.
+>     - Rewrite descriptions of properties to hopefully describe hardware.
+>     
+>     v2:
+>     - Use devicetree property instead of module parameter.
+> 
+>  .../timer/samsung,exynos4210-mct.yaml         | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 
---s43o3564yso7cyde
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What's this based on? Doesn't apply on v5.18-rc1.
 
-Hi Tony,
-
-On Thu, Apr 07, 2022 at 02:08:05PM +0300, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [220407 08:23]:
-> > Hi,
-> >=20
-> > * Maxime Ripard <maxime@cerno.tech> [220407 07:51]:
-> > > I haven't been able to find an omap3 board or a qemu target that could
-> > > help me debug this, but I fixed a few issues already that could fix o=
-map
-> > > as well.
-> > >=20
-> > > Could you test today's
-> > > https://github.com/mripard/linux/tree/rpi/clk-improvements-more-fixes
-> > >=20
-> > > And let me know if it works?
-> >=20
-> > Yes sorry I've been meaning to try your fixes but had some file system
-> > issues on my build box after a power cut while updating the system. All
-> > good now though, I should be able to give it a try this afternoon.
->=20
-> It now boots, but does a lot of checks on the clocks before the timers
-> get initialized compared to v5.18-rc1.
-
-I was about to say that this is fairly normal with the new behaviour,
-but I've reworked the initial patch in that discussion to only call into
-clk_set_rate_range if there was a range on that clock to begin with.
-
-It should remove the huge majority of the checks you mentioned (and
-hopefully get rid of most of the side effects as well).
-
-It's now pushed to my branch, so it would be awesome if you could test
-again.
-
-> And then there's this:
->=20
-> [    2.532501] clk_core_set_rate_nolock +2293: ssi_ssr_fck_3430es2 affect=
-ed!
-> ...
-> [    2.554443]  unwind_backtrace from show_stack+0x10/0x14
-> [    2.559875]  show_stack from dump_stack_lvl+0x40/0x4c
-> [    2.565093]  dump_stack_lvl from clk_core_set_rate_nolock+0x278/0x2c4
-> [    2.571777]  clk_core_set_rate_nolock from clk_set_rate_range_nolock.p=
-art.0+0x154/0x384
-> [    2.580047]  clk_set_rate_range_nolock.part.0 from __clk_put+0x64/0x174
-> [    2.586853]  __clk_put from clk_add_alias+0x48/0x5c
-> [    2.591918]  clk_add_alias from _add_clkdev.part.0+0x94/0x154
-> [    2.597869]  _add_clkdev.part.0 from omap_device_alloc+0x88/0x114
-> [    2.604156]  omap_device_alloc from _omap_device_notifier_call+0x25c/0=
-x3b4
-> [    2.611236]  _omap_device_notifier_call from blocking_notifier_call_ch=
-ain+0x6c/0x90
-> [    2.619140]  blocking_notifier_call_chain from device_add+0x360/0x894
-> [    2.625823]  device_add from of_platform_device_create_pdata+0x8c/0xb8
-> [    2.632568]  of_platform_device_create_pdata from of_platform_bus_crea=
-te+0x194/0x22c
-> [    2.640563]  of_platform_bus_create from of_platform_bus_create+0x1e0/=
-0x22c
-> [    2.647735]  of_platform_bus_create from of_platform_populate+0x60/0xb8
-> [    2.654571]  of_platform_populate from pdata_quirks_init+0xb4/0xe0
-> [    2.660980]  pdata_quirks_init from omap_generic_init+0xc/0x18
-> [    2.666992]  omap_generic_init from customize_machine+0x1c/0x30
-> [    2.673126]  customize_machine from do_one_initcall+0x44/0x24c
-> [    2.679138]  do_one_initcall from kernel_init_freeable+0x1e8/0x298
-> [    2.685546]  kernel_init_freeable from kernel_init+0x14/0x140
-> [    2.691467]  kernel_init from ret_from_fork+0x14/0x24
-
-It shouldn't be there anymore after that rework, but I couldn't find
-wher the ssi_ssr_fck clock was defined? The only relevant driver seems
-to be omap_ssi_core.c but I don't see any clock driver registered there
-either.
-
-Thanks!
-Maxime
-
---s43o3564yso7cyde
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYk7q6gAKCRDj7w1vZxhR
-xT8RAPsF2jISFo6CxJQha6ZZVnCgejb1BfTDE4in0xEHwBrGJgEA+KOr64odsCO6
-iACqEk1ESIdBRsaRsLaRK2yxLg0+7A0=
-=e3xE
------END PGP SIGNATURE-----
-
---s43o3564yso7cyde--
+Rob
