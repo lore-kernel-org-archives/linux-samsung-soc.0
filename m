@@ -2,120 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F50C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9443EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:43:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243102AbiDGIeX (ORCPT
+        id S243228AbiDGIpw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:34:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41536 "EHLO
+        Thu, 7 Apr 2022 04:45:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243121AbiDGIeW (ORCPT
+        with ESMTP id S243232AbiDGIpv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:34:22 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF1D229CA7;
-        Thu,  7 Apr 2022 01:32:23 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id bh17so9256416ejb.8;
-        Thu, 07 Apr 2022 01:32:23 -0700 (PDT)
+        Thu, 7 Apr 2022 04:45:51 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 602A7D95C1
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 01:43:52 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id n6so9265348ejc.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 01:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=0tw+m4R57U/18KDq8GHiXafNKaWFuGwCGvDB2p+CXdM=;
-        b=ZgpJZpew8vmFcf2B/L57Jw7+3WvktQLD4FmKiZa48+lPK06yQ8Hd8sRWMuVXykUx5k
-         6lgaBwmtRFPXpz+uvmJArBAA4ZpHAsL/WritHY3Bg3tyk/qU8S6ZRP0EQD8+UjS8Z/Pf
-         jm2ae4p56hhRiWao6kFhfYAWtpYtTqMXyMmpvOUXZb6G9uTxiuiA2n8ht+ddD2nADtxf
-         uLgTzujRjV0Tea9guSmWIigU8S+UZbPgK4HH9IzrpBIGH0CMhTftm9DrnBLWjokZ0CvU
-         8antZvuk+Hn7ju9QILcIZZ+JlsoEBZEO1TKyUhygLpSKjH2Lri6GupaWXid1kIQi4lfe
-         HiMw==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=AzvrnUgBhvYNXPbA1hicIptk9K8vlP/oQGWNXIHZ2/E=;
+        b=DzKHTBQFvU0DQ7nQ5GMZNNg86m//8Ob7ATXrFW3bnVNADYLyiBNImx5JbU9YMO9jNS
+         8gsvODTMjJLaHX4Wg15mTVXldih2wJTi4C/PyB5YQ68tBVXxahRdvWveRqHrYsV5l0HU
+         fUj+JUaXU9nJ4nFvB5guGJIsG8Ftb435ZMIiZ7DEdApl/FemeiOL7BgSkL2eUPhNdAtW
+         FiuC3FGnjZ/sKUeWuWbFWNRHbkJ8KrcpG9A3zW1c1R/n1KA/oWLQ0Tunu8g10EXExWd8
+         kSBJD/V555YJtHKEb50r/lFInzMn10kDtNTjmejOK9yPWhCVaeO2LWeh/B9iC3w5wmO3
+         LpKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=0tw+m4R57U/18KDq8GHiXafNKaWFuGwCGvDB2p+CXdM=;
-        b=PQyTBo4xBW1wGM6lkIeZA2SR/6nYfNdqdp7pW70JubRZEco8Qgnohcc1YElqtDbtMm
-         qvWhWrjVmvnWbJp8i/N3VRanpvGHBe5GsWYfrmcYuJjbAybU78CDhZsGnp/ccwZB4Qf+
-         8O6e/Hq5x1s5PGlWQC9CnQ9tUqOYsla3DXr41dxyzSivU6a3Wb4d+qKlTD2n8jTQOgFp
-         FtgPMHrizwH2K47U6B4sI4lAyHQtHChMR4+BXLrTYUrnsYVAgt2ft1Uk/Db/7Fb3X/ek
-         ZIWqia2+thATYIMhY1/sdCENsKamJMEGu6eefrSUWcM0ysat8txIeDoSp3TpW5ex+A1a
-         VhoQ==
-X-Gm-Message-State: AOAM531bwIO4BDhQyPO/KZHSLEKiPrQnps+VDSMZCyI6PRTzO6WHB+2A
-        uLvxlthcyb75WCiwiOtuKDU=
-X-Google-Smtp-Source: ABdhPJzngHlEDPVVoNFWkMVU3CN0HM0bYPGxeLREedvJN8v4si+9GL4sWpNGTTGbXkMUwe3i26sUKA==
-X-Received: by 2002:a17:906:18b2:b0:6d0:ee54:1add with SMTP id c18-20020a17090618b200b006d0ee541addmr12042792ejf.499.1649320342454;
-        Thu, 07 Apr 2022 01:32:22 -0700 (PDT)
-Received: from giga-mm.localdomain ([195.245.23.54])
-        by smtp.gmail.com with ESMTPSA id k22-20020a170906971600b006e840b36f5asm31039ejx.91.2022.04.07.01.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 01:32:21 -0700 (PDT)
-Message-ID: <e3596f79c41af25df6a8c08ecefaba40c751f45e.camel@gmail.com>
-Subject: Re: [PATCH 05/12] ARM: ep93xx: multiplatform support
-From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Hubert Feurstein <hubert.feurstein@contec.at>,
-        Lukasz Majewski <lukma@denx.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=AzvrnUgBhvYNXPbA1hicIptk9K8vlP/oQGWNXIHZ2/E=;
+        b=wkJcf30HpFfLgcBStzkYY5pR4KSYIuIxrhxgmZPgriVvV4MhrB9HbbjaITYp5TbZTJ
+         Q50hT3bOfSD4hFiJ3babgUSq6YAMIvEuI1/D3eU/3NbHld9/OpLI4e8cMx8W7oYfbBMi
+         KDcAXJ8U4fOvk94ZoUkhzntRF2TdA791seZmDUzH5wUCfF+jiylLysDFBCqSTj8aYg7r
+         l+ruIKG1X9qjEXa9OdUZ9LpqeomUIi3/r4vk9XZuiLbAQByG5Jcd8k/+APhMR4xz/XAh
+         A+3ECr3iEvOx8pzBMH2ZIcB/qQer0AZlYnVwzsz2Tg9BFs+dGDYdUT9z+4zZ1/viShQi
+         5yiQ==
+X-Gm-Message-State: AOAM533keRB4Kj6tWb0+p2hOfaAwu7Zuj0ppnhKsFy6yyKY8Xr0+egy8
+        1Od24Y4UbT2HfGeAVRGju1/tDg==
+X-Google-Smtp-Source: ABdhPJy92V03/Z7dPcOPlQNI0l13ephK1a9zSR8fU5WUx1PP3AAPuZL2c+Hk5gc8z8t0YbIagEvzww==
+X-Received: by 2002:a17:907:6e04:b0:6e0:95c0:47b8 with SMTP id sd4-20020a1709076e0400b006e095c047b8mr12215661ejc.483.1649321030880;
+        Thu, 07 Apr 2022 01:43:50 -0700 (PDT)
+Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id h7-20020a1709066d8700b006d4b4d137fbsm7482790ejt.50.2022.04.07.01.43.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Apr 2022 01:43:50 -0700 (PDT)
+Message-ID: <d1e40224-9537-1fbc-cf5e-2432fd001a8d@linaro.org>
+Date:   Thu, 7 Apr 2022 10:43:49 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2] ARM: s3c: mark as deprecated and schedule removal
+Content-Language: en-US
+To:     Russell King <linux@armlinux.org.uk>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Ard Biesheuvel <ardb@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Date:   Thu, 07 Apr 2022 10:32:20 +0200
-In-Reply-To: <20220405091750.3076973-6-arnd@kernel.org>
-References: <20220405091750.3076973-1-arnd@kernel.org>
-         <20220405091750.3076973-6-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+References: <20220407072319.75614-1-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220407072319.75614-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Arnd,
-
-On Tue, 2022-04-05 at 11:17 +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 07/04/2022 09:23, Krzysztof Kozlowski wrote:
+> The Samsung S3C24xx and S3C64xx platforms are very old designs. S3C2416
+> was introduced in 2008 and S3C6410 in 2009/2010.  They are not widely
+> available anymore - out-of-stock on FriendlyArm (one of manufacturers of
+> boards) and only few specialist stores still offer them for quite a high
+> price.
 > 
-> With the clock support and the interrupts out of the way, ep93xx can be
-> compiled into the same kernel image as the other ARMv4/v5 platforms. The
-> last obstacle are the two workarounds for broken boot loaders that
-> require us to re-initialize the ethernet controller and/or the watchdog
-> on certain machines.
+> The community around these platforms was not very active, so I suspect
+> no one really uses them anymore. Maintenance takes precious time so
+> there is little sense in keeping them alive if there are no real users.
 > 
-> Move this code into the decompressor sources directly, checking for
-> each possibly affected machine individually.
+> Let's mark all S3C24xx and S3C64xx platforms as deprecated and mention
+> possible removal in after 2022 for the first and 2024 for the lattere.
+> The deprecation message will be as text in Kconfig, build message (not a
+> warning though) and runtime print error.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-I've successfully tested the whole series on EDB9302, therefore:
-Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-
+> If there are any users, they might respond and postpone the removal.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> 
 > ---
->  arch/arm/Kconfig                              | 16 -----
->  .../compressed/misc-ep93xx.h}                 | 69 +++++++++----------
->  arch/arm/boot/compressed/misc.c               |  4 ++
->  arch/arm/configs/ep93xx_defconfig             |  2 +
->  arch/arm/mach-ep93xx/Kconfig                  | 12 ++++
->  5 files changed, 51 insertions(+), 52 deletions(-)
->  rename arch/arm/{mach-ep93xx/include/mach/uncompress.h => boot/compressed/misc-ep93xx.h} (51%)
+> 
+> Changes since v1:
+> 1. Language: in->for removal.
+> 2. Don't show pragma with COMPILE_TEST.
+> 3. Add Acks.
+> 
 
--- 
-Alexander Sverdlin.
+I forgot to add important part in changelog - I moved the s3c64xx
+removal to 2024. There was an interest from Mark to keep the platform
+running and it is a newer SoC than s3c64xx.
 
+
+Best regards,
+Krzysztof
