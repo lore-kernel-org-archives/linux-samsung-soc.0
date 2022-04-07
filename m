@@ -2,154 +2,118 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5DBC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB99C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242079AbiDGHqr (ORCPT
+        id S242174AbiDGHsw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:46:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
+        Thu, 7 Apr 2022 03:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242080AbiDGHqp (ORCPT
+        with ESMTP id S241974AbiDGHsv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:46:45 -0400
-Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E309B201B3;
-        Thu,  7 Apr 2022 00:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1649317485;
-  x=1680853485;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vA3kixnFjao/9/fHNVBKrG7js6zXxb2/Djlg20H3FvE=;
-  b=cXt2dZZiZX2S9nCWfCk5JC/4ZWuNU2Hohwnvt6+nNwMHZgpy1/jutTYC
-   s/I4VPntNzz2ZhjhDEwz8VdT7E3TIzscwwgLFaf00xVnPmQN2YmiOn27l
-   lm6opZufaG6KU4FPGDJG0Q2GGaDtw8IVFPZnkEvXQTWKSipPnuzje0Mqr
-   7oYGtF1wh3W6CtzoSsfm0HyYCDuerg4bwIj+1Fi5Py/ceOi/1Ww8aNhmq
-   HmoWtCAv+b4iaBU1ZWBzq1YMrsmbnV+qeL0/QpeBhCXEqa0StVlgzN2HP
-   1+2VwsC4SkD/BOlCSLoIYXV2VKx83fNKgxi1xgxXomDUWfu2TyqhGK+ao
-   A==;
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     <krzk@kernel.org>, <tglx@linutronix.de>,
-        <daniel.lezcano@linaro.org>
-CC:     <kernel@axis.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <alim.akhtar@samsung.com>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>
-Subject: [PATCH v3 1/4] dt-bindings: timer: exynos4210-mct: Add ARTPEC-8 MCT support
-Date:   Thu, 7 Apr 2022 09:44:29 +0200
-Message-ID: <20220407074432.424578-2-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220407074432.424578-1-vincent.whitchurch@axis.com>
-References: <20220407074432.424578-1-vincent.whitchurch@axis.com>
+        Thu, 7 Apr 2022 03:48:51 -0400
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F903E5E20;
+        Thu,  7 Apr 2022 00:46:50 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a6so9168997ejk.0;
+        Thu, 07 Apr 2022 00:46:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=n9ByRjCgN7UyNGlvzfT7jWJ7BAn1HisGnqSo99JqgB8=;
+        b=XJs4dPrHM6T6XT+3sAWKgHKTdRlIHtB1qbtbBQbeCeYm2lgKMG1ROFoYXmGcw/WejB
+         Ysl+qdc70+4y+QbaesP5knS1DOhJrJOlt+V6wlPCPaWZ6UruMvUZX/ybUkGu7MbAH9gO
+         RUJHkCyULKRhhC02oe4s+yqFZY6OosBNEKVyNcm4q3DAxdPde5wCrPz9X6MU8LeHqMaM
+         UVzLa5pFwnQEggEFLBwmWUBPDncgKGIi3hUF/o/yXc7b5ezYPBjmN379uUZYjTLwmf8i
+         SBSisOQvvZYjrmu2ozpGHYwwN/8WhvvyxknnQyozQ7kNrZw97z4XPUtApT6eVofj3QMt
+         eq8g==
+X-Gm-Message-State: AOAM533eL05j4KpO3Fc80HI6yQjxaJv0Nl2s/iqwfRO0Kf4OWxR26Zdt
+        rdiuOG7EKNSgl82UN6eUrXk=
+X-Google-Smtp-Source: ABdhPJzv09r1vMw4Ze8r90GmCwPXjqCMtbVGmOmg1d166H3EkJmoklQuCS2wRak5XhZI0Cgz8VQy4g==
+X-Received: by 2002:a17:906:37cd:b0:6e0:bdb6:f309 with SMTP id o13-20020a17090637cd00b006e0bdb6f309mr12180762ejc.394.1649317608706;
+        Thu, 07 Apr 2022 00:46:48 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id lj20-20020a170906f9d400b006e7f1e1f4a0sm4232922ejb.60.2022.04.07.00.46.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Apr 2022 00:46:47 -0700 (PDT)
+Message-ID: <b53be23f-7935-dae3-9dc8-f850493a5fa9@kernel.org>
+Date:   Thu, 7 Apr 2022 09:46:46 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v3 1/1] tty: serial: samsung: add spin_lock for interrupt
+ and console_write
+Content-Language: en-US
+To:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>
+References: <20220407071619.102249-1-jaewon02.kim@samsung.com>
+ <CGME20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844@epcas2p1.samsung.com>
+ <20220407071619.102249-2-jaewon02.kim@samsung.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20220407071619.102249-2-jaewon02.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ARTPEC-8 has an MCT with 4 global and 8 local timer interrupts.
+On 07. 04. 22, 9:16, Jaewon Kim wrote:
+> The console_write and IRQ handler can run concurrently.
+> Problems may occurs console_write is continuously executed while
+> the IRQ handler is running.
 
-The SoC has a quad-core Cortex-A53 and a single-core Cortex-A5 which
-share one MCT with one global and eight local timers.  The Cortex-A53
-and Cortex-A5 do not have cache-coherency between them, and therefore
-run two separate kernels.
+ From the patch POV:
 
-The Cortex-A53 boots first and starts the global free-running counter
-and also registers a clock events device using the global timer.  (This
-global timer clock events is usually replaced by arch timer clock events
-for each of the cores.)
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-When the A5 boots (via the A53), it should not use the global timer
-interrupts or write to the global timer registers.  This is because even
-if there are four global comparators, the control bits for all four are
-in the same registers, and we would need to synchronize between the
-cpus.  Instead, the global timer FRC (already started by the A53) should
-be used as the clock source, and one of the local timers which are not
-used by the A53 can be used for clock events on the A5.
+But given this is a v3 with no version changelog below "---", you've 
+just kicked the Greg's bot to wake up :P.
 
-To support this hardware, add a compatible for the MCT as well as two
-new properties to describe the hardware-mandated sharing of the FRC and
-dedicating local timers to specific processors.
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> ---
+>   drivers/tty/serial/samsung_tty.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index e1585fbae909..8af5aceb9f4e 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -2480,12 +2480,24 @@ s3c24xx_serial_console_write(struct console *co, const char *s,
+>   			     unsigned int count)
+>   {
+>   	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
+> +	unsigned long flags;
+> +	bool locked = true;
+>   
+>   	/* not possible to xmit on unconfigured port */
+>   	if (!s3c24xx_port_configured(ucon))
+>   		return;
+>   
+> +	if (cons_uart->sysrq)
+> +		locked = false;
+> +	else if (oops_in_progress)
+> +		locked = spin_trylock_irqsave(&cons_uart->lock, flags);
+> +	else
+> +		spin_lock_irqsave(&cons_uart->lock, flags);
+> +
+>   	uart_console_write(cons_uart, s, count, s3c24xx_serial_console_putchar);
+> +
+> +	if (locked)
+> +		spin_unlock_irqrestore(&cons_uart->lock, flags);
+>   }
+>   
+>   /* Shouldn't be __init, as it can be instantiated from other module */
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
 
-Notes:
-    v3:
-    - Add all required bindings for ARTPEC-8 in one patch
-    - Rename and split local-timer-only to samsung,local-timers and
-      samsung,frc-shared
-    - Restrict above properties to the ARTPEC-8 compatible.
-    - Rewrite descriptions of properties to hopefully describe hardware.
-    
-    v2:
-    - Use devicetree property instead of module parameter.
-
- .../timer/samsung,exynos4210-mct.yaml         | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index 1584944c7ac4..bcfc849ca087 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -25,6 +25,7 @@ properties:
-           - samsung,exynos4412-mct
-       - items:
-           - enum:
-+              - axis,artpec8-mct
-               - samsung,exynos3250-mct
-               - samsung,exynos5250-mct
-               - samsung,exynos5260-mct
-@@ -46,6 +47,19 @@ properties:
-   reg:
-     maxItems: 1
- 
-+  samsung,frc-shared:
-+    type: boolean
-+    description: |
-+      Indicates that the hardware requires that this processor share the
-+      free-running counter with a different (main) processor.
-+
-+  samsung,local-timers:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 1
-+    maxItems: 16
-+    description: |
-+      List of indices of local timers usable from this processor.
-+
-   interrupts:
-     description: |
-       Interrupts should be put in specific order. This is, the local timer
-@@ -75,6 +89,17 @@ required:
-   - reg
- 
- allOf:
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              enum:
-+                - axis,artpec8-mct
-+    then:
-+      properties:
-+        samsung,local-timers: false
-+        samsung,frc-shared: false
-   - if:
-       properties:
-         compatible:
-@@ -102,6 +127,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - axis,artpec8-mct
-               - samsung,exynos5260-mct
-               - samsung,exynos5420-mct
-               - samsung,exynos5433-mct
 -- 
-2.34.1
-
+js
+suse labs
