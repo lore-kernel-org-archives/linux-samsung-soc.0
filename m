@@ -2,124 +2,106 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29484C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19835C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbiDGHdZ (ORCPT
+        id S241994AbiDGHmW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:33:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34020 "EHLO
+        Thu, 7 Apr 2022 03:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234761AbiDGHdY (ORCPT
+        with ESMTP id S241992AbiDGHmU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:33:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A356745AE8;
-        Thu,  7 Apr 2022 00:31:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AC3361E09;
-        Thu,  7 Apr 2022 07:31:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C62C385AD;
-        Thu,  7 Apr 2022 07:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649316684;
-        bh=ivR8k8w9kZFOITTBTeYpwlLHjNVj0hGTLW0NW/yZSVU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iYpJqdwj20zoDmfLo9h28pBJ++sP0GCoavfG6fhyWeqsGbQf4nfwF4r7hkHA+4YN9
-         g4Ix4oiSQzkJKRqUV8gWDLWLc1LMjnb2oODf7RQMMMPmGVtJrTlwFJbwiSnNgRk3o6
-         fZ+MuFynNBX6w+z5DHixR9TmCG7ONXCaarj6iJ3NCjpMmi5pIz4ENSosVXO1xTDBv9
-         RMn9TGHcfExjQ7/mMk3MnUnTF9sD6BvyZC5TewP/KWUf67QQcqMs7q21W2qxncArWX
-         7G8UJDW3ujeaHzgVMyi4h4Rd9eYFXQfGbKBTHZpqxUMsARGYWCCa7YnecHl/CeZIO0
-         SeetcY+ic4s2w==
-Received: by mail-wm1-f49.google.com with SMTP id k124-20020a1ca182000000b0038c9cf6e2a6so3105700wme.0;
-        Thu, 07 Apr 2022 00:31:24 -0700 (PDT)
-X-Gm-Message-State: AOAM533PFN3L8JKchO4peF7eqianFBmygT/reNPwoiNhVlBlj5dA99Yk
-        SGKcUqdd8dGeIm/vPuPtu4P5cEJpfi6g+0Vdq1o=
-X-Google-Smtp-Source: ABdhPJwjAHv/Ka95Vf9n+iGHaRSlH25AJIPsPhtwH0Gh++m1tNbjpZbBagwdF9/ezrXtsZ8x/PvfIi5tLJBz7CdJ0tU=
-X-Received: by 2002:a05:600c:4ecc:b0:38e:354d:909 with SMTP id
- g12-20020a05600c4ecc00b0038e354d0909mr11230435wmq.33.1649316682523; Thu, 07
- Apr 2022 00:31:22 -0700 (PDT)
+        Thu, 7 Apr 2022 03:42:20 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BA93C734;
+        Thu,  7 Apr 2022 00:40:20 -0700 (PDT)
+Received: from mail-wr1-f45.google.com ([209.85.221.45]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1Mr8SG-1oMzVE30Jq-00oFUf; Thu, 07 Apr 2022 09:40:18 +0200
+Received: by mail-wr1-f45.google.com with SMTP id m30so6563832wrb.1;
+        Thu, 07 Apr 2022 00:40:18 -0700 (PDT)
+X-Gm-Message-State: AOAM530BES5OuM3KjCLrK3fVK7jiE8C3m5Ieq6mc1S3IKrfevhxuFLDC
+        P9RzLTop26a8DxRsmSjqUen0UpxscFaczXcj3N8=
+X-Google-Smtp-Source: ABdhPJwQaMXR4hEgDadKcEPnGvv0CtA9y/3CdA6x65M2N0RVjV5eAMECbKu5Ycw7OXAjX0lZWRQeJETM26C6EL4Wlc8=
+X-Received: by 2002:adf:cd02:0:b0:206:ff2:236 with SMTP id w2-20020adfcd02000000b002060ff20236mr9785565wrm.192.1649317218318;
+ Thu, 07 Apr 2022 00:40:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220405091750.3076973-1-arnd@kernel.org> <e39d4d71-6ef3-b2b4-3697-1babbadab2ab@linaro.org>
-In-Reply-To: <e39d4d71-6ef3-b2b4-3697-1babbadab2ab@linaro.org>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Thu, 7 Apr 2022 09:31:06 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0ZYbNKyN7gjoQE4pu_ePE+0Y=tSwvdOHo6GraVokEJmw@mail.gmail.com>
-Message-ID: <CAK8P3a0ZYbNKyN7gjoQE4pu_ePE+0Y=tSwvdOHo6GraVokEJmw@mail.gmail.com>
-Subject: Re: [PATCH 00/12] ARM: ARMv5 multiplatform conversions
+References: <20220407072319.75614-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220407072319.75614-1-krzysztof.kozlowski@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 7 Apr 2022 09:40:02 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a07vWeYcVdzNjv4HgP_qhU9rQBkcKKmxoy8Uc9gg_0VUQ@mail.gmail.com>
+Message-ID: <CAK8P3a07vWeYcVdzNjv4HgP_qhU9rQBkcKKmxoy8Uc9gg_0VUQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: s3c: mark as deprecated and schedule removal
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Hubert Feurstein <hubert.feurstein@contec.at>,
-        Lukasz Majewski <lukma@denx.de>,
+Cc:     Russell King <linux@armlinux.org.uk>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Ard Biesheuvel <ardb@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>, patches@opensource.cirrus.com
+        <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Tomasz Figa <tomasz.figa@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:eRgpEhRrZSfs4zeyJyyPv+2a1fVuIoAw2xn8GeYkzsFjSiZs7+x
+ IXxmeLG55NNJR+kEmFJSTmO3MsQt8xRov5DG2QesDgnWXLbGczRER66eLAzySuO1Vlm4GNV
+ nwYC7qUtbrdHc6cl7TyIG8Ji9/6Axtwcm1egKPpOWiOqQAlZEDu4TxULSNL/PqEMVi0v8Bx
+ ajl7tpUQwa/0RZS0DkkwA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bb4tTj7z6XU=:ZNJrEo51Kr4AR2YqxTv+d4
+ 6wPQ32L+M8GPAPvkgku4zEZofeuGPLro5F2Y0QmAlRm/BNiDj/aalL1gywUVTGYqK6vz+4MoB
+ JtMjSv62JiDnFOZWjU+HpJCplAvhwaBTLQw+Cu29LfbWf4tGAFPMxuR9BMUDUNCeJOtJHyop2
+ kdGBAa8DTHRxKZb04Q6G9CpdEesHzRbngU/NvDbpZ4UB+m/paD+UwzymdV6woYmkL88R9WlTL
+ gWGxlHGuFoTJQNjhCDcM4V3dYu1Tyjrp0Ps4lXVpQ8JrKfNdv61J6Bn1efOGe/OGwOz1HzRhl
+ kTJ4mhlzbRFrmwLZvub9g17yh8A6/wrqJJadl2LZjgkv6BaEDUqiyGPOrkI0gOecGh1k/gv90
+ iJoR7CPI5TSvqLyzQszHcvmcmOqGiOBwaYbEkSScK9kx3Rm1Zky8WUOKXDPQNzw1waVhuLhwy
+ zASmbNyELGNzEP+6JiMz5cl1Qb0cdpKI5Xt4ACXLYPVvbl4taF7L2TynyQmG4GYcksFzyqyKc
+ iFYXVeLhF1Chnhij7V9tipCsDb50rVcoepv+oZbKlNyn2reumZztpqHARtTEG+8JKDf+uuDMA
+ JgUBBxcTLZA36TSureVIq1HJ3mamyavTWepqlN4w4aC8KRl0dYj+/YIaMM0D6isfYUdTgItpJ
+ jejPSyEOWGTUhz82VSl67ImI6s0hgZhKfxpU14Ugfg65c8Cd8eB0xk13cYbEQAEbptRqgjsc6
+ Qr5ow4UA0rDRdZw5hSwinv3VcuITkS5JAVwqHszQTmZBiE33qW9yil2FR/I3Ws+0b6zTiUbyM
+ pfIIJHPQrP9VSMy2uD1M4l4wAhnZbhYKB72pMElwmKfT4danmQ=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 7, 2022 at 9:07 AM Krzysztof Kozlowski
+On Thu, Apr 7, 2022 at 9:23 AM Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
 >
-> On 05/04/2022 11:17, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > I revisited some patches from a few years back, to see what
-> > is needed forsome of the remaining platforms to become part of
-> > CONFIG_ARCH_MULTIPLATFORM.
-> >
-> > A few things happened since I last looked at this, which helps to make
-> > this easier:
-> >
-> >  - The ixp4xx platform saw a large scale cleanup
-> >
-> >  - The ep93xx platform lost support for MaverickCrunch FPUs and
-> >    gained support for the common clock subsystem
-> >
-> >  - The OMAP1 platform has a proposed patch for the common
-> >    clock subsystem.
-> >
-> >  - The generic IRQ entry code is now used everywhere, including
-> >    on IOP32x.
-> >
-> >  - The s3c24xx platform is scheduled for removal next year
+> The Samsung S3C24xx and S3C64xx platforms are very old designs. S3C2416
+> was introduced in 2008 and S3C6410 in 2009/2010.  They are not widely
+> available anymore - out-of-stock on FriendlyArm (one of manufacturers of
+> boards) and only few specialist stores still offer them for quite a high
+> price.
 >
-> Discussion [1] actually did not end with conclusion, but through all the
-> time there were no other votes for the platform to stay.
+> The community around these platforms was not very active, so I suspect
+> no one really uses them anymore. Maintenance takes precious time so
+> there is little sense in keeping them alive if there are no real users.
+>
+> Let's mark all S3C24xx and S3C64xx platforms as deprecated and mention
+> possible removal in after 2022 for the first and 2024 for the lattere.
+> The deprecation message will be as text in Kconfig, build message (not a
+> warning though) and runtime print error.
+>
+> If there are any users, they might respond and postpone the removal.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Ok, thanks for the clarification, I misremembered the outcome
-of the discussion. I've updated the reference in the mach/io.h
-to no longer refer to that, but I still think it's safe to break
-readw/writew on BAST ISA devices.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-If we finish the multiplatform conversion for all ARMv5, I care
-less about dropping s3c24xx entirely as an intermediate step,
-but I definitely still like to see any board files and SoCs dropped
-that have no users and are just a maintenance burden.
+Should I pick it up through the fixes branch for 5.18 if there are no
+immediate objections, or do you prefer to just do it as part of your
+normal samsung patches for 5.19?
 
-> I will resend my above [1] patch to mention the coming removal.
+If you have nothing else planned for mach-s3c, I can also add it
+to the multiplatform branch that already touches the platform.
 
-Ok, thanks!
-
-          Arnd
+        Arnd
