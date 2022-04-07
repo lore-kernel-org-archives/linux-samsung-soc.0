@@ -2,33 +2,33 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D81C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B083BC433EF
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:44:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232490AbiDGHqm (ORCPT
+        id S242061AbiDGHqm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Thu, 7 Apr 2022 03:46:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59564 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242070AbiDGHql (ORCPT
+        with ESMTP id S242071AbiDGHql (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Thu, 7 Apr 2022 03:46:41 -0400
 Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A8127CD0;
-        Thu,  7 Apr 2022 00:44:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D998A56C0;
+        Thu,  7 Apr 2022 00:44:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=axis.com; q=dns/txt; s=axis-central1; t=1649317481;
   x=1680853481;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9o4101lhSUaQUglAFx0wOW4oYv+E/yNVxgL5P9cf4Zo=;
-  b=VJrOk/7EUbpRczszWKSuBwyZfGY9EcYvbqFGFFRedxfiEhuviuhmBBJh
-   XkIqP39evglXV/VG2X5UqeTwoC2iXS2gT+h4/mNPyQPWP2XvgFA9Q4sY+
-   eh3UUy6If3DB/dpupc0m/LQ6gOEZXIYPoLC+MH68cUBqqstcJ50ut6Fem
-   qptQw6Qbu1o7gqqHHRylaCpsxqCv5eOeK6rNOxNbU14m85+kU25ajr52K
-   DtE8t92CoxjuswbiHJOm6CFVfBNlHV8qYSGPX5IfdGEaP4kyV8PEfNKn3
-   O9pUJGbKribV729GdNV9kVhH5z/Yl/zFwKnwrrX0HCsCgN47GZ6OwpGEg
-   A==;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aubwDq9tMnlBoW39EfmW7FC5ktvDw7fUudEWZrJpI4Y=;
+  b=MjpeZo21laPFd/Gt+dpIBp6NNSmRQm6vGG58NBhzagj/tP11s6XVnzOu
+   akzI+GTUk061zoobOJD3TtqnvbXnCxluG7BMvDiXoRf9cWtHGADPeUFQe
+   kTHWO92VYdghadWR005LyRM5ndKtGlHqKdAD8uIRglc+tbJLsYBTLWHGE
+   bhZB7oXhElMHF8QBMw9teWmjjp1H/KYQUtJV1PkmFuG2FeHwKSzjA7yAR
+   c4Ew+4kjlMRGFI2M38hiSVP/ZBfA7hnCVFdGUSelOmwZmOUKhIwzQY/tX
+   qGXB9zd9b2NjTKkgK1/YnC/QSjD6LW6aNmIxEQ20s7DaZ2wThYqi7VeKS
+   Q==;
 From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
 To:     <krzk@kernel.org>, <tglx@linutronix.de>,
         <daniel.lezcano@linaro.org>
@@ -37,14 +37,11 @@ CC:     <kernel@axis.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>, <alim.akhtar@samsung.com>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v3 4/4] clocksource/drivers/exynos_mct: Enable building on ARTPEC
-Date:   Thu, 7 Apr 2022 09:44:32 +0200
-Message-ID: <20220407074432.424578-5-vincent.whitchurch@axis.com>
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>
+Subject: [PATCH v3 0/4] clocksource: Add MCT support for ARTPEC-8
+Date:   Thu, 7 Apr 2022 09:44:28 +0200
+Message-ID: <20220407074432.424578-1-vincent.whitchurch@axis.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220407074432.424578-1-vincent.whitchurch@axis.com>
-References: <20220407074432.424578-1-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -52,32 +49,44 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This timer block is used on ARTPEC-8.
+This series add supports for the timer block on ARTPEC-8.  The block itself is
+fully compatible with the existing exynos4210-mct driver.  The ARTPEC-8 SoC
+uses this block from two separate processors running Linux (AMP) so it needs
+some extra code to allow this sharing.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
+v3:
+- Split and rename devicetree properties
+- Add vendor prefix to devicetree properties
+- Change descriptions of properties to hopefully describe hardware
+- Remove addition of more global variables to the driver
 
-Notes:
-    v3:
-    - Add Krzysztof's Reviewed-by.
+v2:
+- The series is now rebased on top of Krzysztof's patch "dt-bindings: timer:
+  exynos4210-mct: describe known hardware and its interrupts".
+- Combine the Kconfig change and the local timer change into one series
+- Use devicetree property rather than module parameter for the local timer handling
+- Add specific compatible with the correct number of interrupts.
 
- drivers/clocksource/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index ae95d06a4a8f..2ea981ef23af 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -419,7 +419,7 @@ config ATMEL_TCB_CLKSRC
- config CLKSRC_EXYNOS_MCT
- 	bool "Exynos multi core timer driver" if COMPILE_TEST
- 	depends on ARM || ARM64
--	depends on ARCH_EXYNOS || COMPILE_TEST
-+	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
- 
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: alim.akhtar@samsung.com
+
+Cc: devicetree@vger.kernel.org
+Cc: robh+dt@kernel.org
+
+Vincent Whitchurch (4):
+  dt-bindings: timer: exynos4210-mct: Add ARTPEC-8 MCT support
+  clocksource/drivers/exynos_mct: Support frc-shared property
+  clocksource/drivers/exynos_mct: Support local-timers property
+  clocksource/drivers/exynos_mct: Enable building on ARTPEC
+
+ .../timer/samsung,exynos4210-mct.yaml         | 26 +++++++
+ drivers/clocksource/Kconfig                   |  2 +-
+ drivers/clocksource/exynos_mct.c              | 72 ++++++++++++++++---
+ 3 files changed, 90 insertions(+), 10 deletions(-)
+
 -- 
 2.34.1
 
