@@ -2,62 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C72C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29484C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbiDGHcs (ORCPT
+        id S229615AbiDGHdZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:32:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59744 "EHLO
+        Thu, 7 Apr 2022 03:33:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241802AbiDGHcr (ORCPT
+        with ESMTP id S234761AbiDGHdY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:32:47 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4624F4ECF2
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:30:47 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id l7so3571875ejn.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 00:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=vzjb8OyiiJYotEV8kvXDCXjnvHrz6uwgs9bvhbzeeU8=;
-        b=yIFq6xd4Us4NfmlSY+xqeSRHONBiPyZLWbCarpHyPpReRoGd6kSu06rKWHp1jpqdoa
-         zoGYlLLNT7zerPP9VWMVmqpxagQULEn7bTQs2EKcn5Wi0IExnueM52SIxDVTqTktUZAv
-         AZQeKuRYrd/6m53+D2CQw3aOLWbMMMxfIh/Dd4+pbvcF8BSEk4h9pQZTAtpG1/5EubLf
-         u/5dDUQOsdlqiFKhxH9o3qGMLCUIZkUgmsOkYlzLCbNQOI2BaV30HrWV2lMPE/8t69ZG
-         wQPsn31BXGDT9t3DN/F3u0F9/5o1TPP1giyGa04SlfHT+Cre5agB3rkctxDP3ieizILF
-         9CRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=vzjb8OyiiJYotEV8kvXDCXjnvHrz6uwgs9bvhbzeeU8=;
-        b=dpmMqnEKWccPcDIJDxqzg+U1AaIS8U/ES6gGk9bYEXuNexBIcX7iDBCy7tToMcTXLt
-         n7AWwMh+BSmSIje9sZrtZo9mganEseOBrBMh0GyHCV63iRshrYNba3dTVu0G8d3Zs7je
-         PSmGr7fZuYJIlpq4WKeuW+0EhGJw+qmPeVotmvfK8eufyK6sgNS+sowugsI2C2JQ1C16
-         OZxmNeAK2BHocM0MszhEoPx+IGcs8x9UGSmM9Q/BUucq/Pwx3aiI+/sQIIsydzIBHvuf
-         so3vBp+kX/VJNn+kIc5GAfYZaD33/Rdg3HJUfnTMaOygWHfCng5X9GQ4rdx6SuBvzNV/
-         WyKg==
-X-Gm-Message-State: AOAM531nfE9b8NpSXiWBo8fVFqdhm3njb2tmShRqyotZCn+WPVcuPq+P
-        12zEjxD/q+aQNWIJAQSXMbbHpQ==
-X-Google-Smtp-Source: ABdhPJwIqsvcbUoRf0jzTstI6QI8oC/35Ywl3gLGRtqyMNt7EWPp/vRrxhy1pCRr0jaF/uXfo7s0qQ==
-X-Received: by 2002:a17:907:2d89:b0:6df:b7d1:a365 with SMTP id gt9-20020a1709072d8900b006dfb7d1a365mr12892115ejc.386.1649316645845;
-        Thu, 07 Apr 2022 00:30:45 -0700 (PDT)
-Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id t1-20020a170906178100b006e7edb2c0bdsm4704390eje.15.2022.04.07.00.30.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 00:30:45 -0700 (PDT)
-Message-ID: <ad6605e5-a8e4-1906-43cf-eb2d4420dab8@linaro.org>
-Date:   Thu, 7 Apr 2022 09:30:44 +0200
+        Thu, 7 Apr 2022 03:33:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A356745AE8;
+        Thu,  7 Apr 2022 00:31:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AC3361E09;
+        Thu,  7 Apr 2022 07:31:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C62C385AD;
+        Thu,  7 Apr 2022 07:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649316684;
+        bh=ivR8k8w9kZFOITTBTeYpwlLHjNVj0hGTLW0NW/yZSVU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iYpJqdwj20zoDmfLo9h28pBJ++sP0GCoavfG6fhyWeqsGbQf4nfwF4r7hkHA+4YN9
+         g4Ix4oiSQzkJKRqUV8gWDLWLc1LMjnb2oODf7RQMMMPmGVtJrTlwFJbwiSnNgRk3o6
+         fZ+MuFynNBX6w+z5DHixR9TmCG7ONXCaarj6iJ3NCjpMmi5pIz4ENSosVXO1xTDBv9
+         RMn9TGHcfExjQ7/mMk3MnUnTF9sD6BvyZC5TewP/KWUf67QQcqMs7q21W2qxncArWX
+         7G8UJDW3ujeaHzgVMyi4h4Rd9eYFXQfGbKBTHZpqxUMsARGYWCCa7YnecHl/CeZIO0
+         SeetcY+ic4s2w==
+Received: by mail-wm1-f49.google.com with SMTP id k124-20020a1ca182000000b0038c9cf6e2a6so3105700wme.0;
+        Thu, 07 Apr 2022 00:31:24 -0700 (PDT)
+X-Gm-Message-State: AOAM533PFN3L8JKchO4peF7eqianFBmygT/reNPwoiNhVlBlj5dA99Yk
+        SGKcUqdd8dGeIm/vPuPtu4P5cEJpfi6g+0Vdq1o=
+X-Google-Smtp-Source: ABdhPJwjAHv/Ka95Vf9n+iGHaRSlH25AJIPsPhtwH0Gh++m1tNbjpZbBagwdF9/ezrXtsZ8x/PvfIi5tLJBz7CdJ0tU=
+X-Received: by 2002:a05:600c:4ecc:b0:38e:354d:909 with SMTP id
+ g12-20020a05600c4ecc00b0038e354d0909mr11230435wmq.33.1649316682523; Thu, 07
+ Apr 2022 00:31:22 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 09/12] ARM: s3c: enable s3c24xx multiplatform support
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>
+References: <20220405091750.3076973-1-arnd@kernel.org> <e39d4d71-6ef3-b2b4-3697-1babbadab2ab@linaro.org>
+In-Reply-To: <e39d4d71-6ef3-b2b4-3697-1babbadab2ab@linaro.org>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Thu, 7 Apr 2022 09:31:06 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0ZYbNKyN7gjoQE4pu_ePE+0Y=tSwvdOHo6GraVokEJmw@mail.gmail.com>
+Message-ID: <CAK8P3a0ZYbNKyN7gjoQE4pu_ePE+0Y=tSwvdOHo6GraVokEJmw@mail.gmail.com>
+Subject: Re: [PATCH 00/12] ARM: ARMv5 multiplatform conversions
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Russell King <linux@armlinux.org.uk>,
         Hartley Sweeten <hsweeten@visionengravers.com>,
@@ -78,33 +70,56 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Ard Biesheuvel <ardb@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-References: <20220405091750.3076973-1-arnd@kernel.org>
- <20220405091750.3076973-10-arnd@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220405091750.3076973-10-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>, patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/04/2022 11:17, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> With the custom ISA I/O and the missing sparse-irq support
-> out of the way, s3c24xx can now be built into the same
-> kernel as all other ARM9 based platforms.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/Kconfig                  | 18 ------------------
->  arch/arm/mach-s3c/Kconfig.s3c24xx | 23 ++++++++++++++++++++++-
->  2 files changed, 22 insertions(+), 19 deletions(-)
-> 
+On Thu, Apr 7, 2022 at 9:07 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 05/04/2022 11:17, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > I revisited some patches from a few years back, to see what
+> > is needed forsome of the remaining platforms to become part of
+> > CONFIG_ARCH_MULTIPLATFORM.
+> >
+> > A few things happened since I last looked at this, which helps to make
+> > this easier:
+> >
+> >  - The ixp4xx platform saw a large scale cleanup
+> >
+> >  - The ep93xx platform lost support for MaverickCrunch FPUs and
+> >    gained support for the common clock subsystem
+> >
+> >  - The OMAP1 platform has a proposed patch for the common
+> >    clock subsystem.
+> >
+> >  - The generic IRQ entry code is now used everywhere, including
+> >    on IOP32x.
+> >
+> >  - The s3c24xx platform is scheduled for removal next year
+>
+> Discussion [1] actually did not end with conclusion, but through all the
+> time there were no other votes for the platform to stay.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Ok, thanks for the clarification, I misremembered the outcome
+of the discussion. I've updated the reference in the mach/io.h
+to no longer refer to that, but I still think it's safe to break
+readw/writew on BAST ISA devices.
 
-Best regards,
-Krzysztof
+If we finish the multiplatform conversion for all ARMv5, I care
+less about dropping s3c24xx entirely as an intermediate step,
+but I definitely still like to see any board files and SoCs dropped
+that have no users and are just a maintenance burden.
+
+> I will resend my above [1] patch to mention the coming removal.
+
+Ok, thanks!
+
+          Arnd
