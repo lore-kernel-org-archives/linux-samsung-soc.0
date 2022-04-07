@@ -2,60 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CDFC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C72C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 07:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241749AbiDGHbI (ORCPT
+        id S231512AbiDGHcs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52850 "EHLO
+        Thu, 7 Apr 2022 03:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241745AbiDGHbH (ORCPT
+        with ESMTP id S241802AbiDGHcr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:31:07 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F097521B
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:29:07 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id f18so5360129edc.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 00:29:07 -0700 (PDT)
+        Thu, 7 Apr 2022 03:32:47 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4624F4ECF2
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 00:30:47 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id l7so3571875ejn.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 00:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=VCPl4YRRl+vZCau7x55s379oALPyA3xublrB92hsA8Y=;
-        b=JmLDOUVhDqi064o/CA5UO2nQTeicGg/x4NBcEk9Zi1uwhZgbkLHFqvrAJum9UQL8me
-         zfgUuJ0+gRfbfOnxy/F16k/JpFZJeIvuSH6qiBjVznlCyEYCyNgrolloMAyBfiHXqx4K
-         xV5rKlnw1BlVroEpNDTejRpIf1YJEJAZhjHRQyL5MDOkeg3m6DAQuVINHXMJblcx0rqs
-         zcB8pUs2RbZWuFFaavfagtO7frzRumRdUrEP62+kTCsvbk7dtshU+KlSfWmMcwDzf8/b
-         xUhTRAS0N+JmUHJi/IEamYAdgTtYbKB68akTdg6nTJXb3jWTPOtASQWxjbJdWezWnwF6
-         p5EA==
+        bh=vzjb8OyiiJYotEV8kvXDCXjnvHrz6uwgs9bvhbzeeU8=;
+        b=yIFq6xd4Us4NfmlSY+xqeSRHONBiPyZLWbCarpHyPpReRoGd6kSu06rKWHp1jpqdoa
+         zoGYlLLNT7zerPP9VWMVmqpxagQULEn7bTQs2EKcn5Wi0IExnueM52SIxDVTqTktUZAv
+         AZQeKuRYrd/6m53+D2CQw3aOLWbMMMxfIh/Dd4+pbvcF8BSEk4h9pQZTAtpG1/5EubLf
+         u/5dDUQOsdlqiFKhxH9o3qGMLCUIZkUgmsOkYlzLCbNQOI2BaV30HrWV2lMPE/8t69ZG
+         wQPsn31BXGDT9t3DN/F3u0F9/5o1TPP1giyGa04SlfHT+Cre5agB3rkctxDP3ieizILF
+         9CRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=VCPl4YRRl+vZCau7x55s379oALPyA3xublrB92hsA8Y=;
-        b=S22QN+FGi0gqZMWA+v6XpdLTvswZMottPMWD5z5mRO5MBw9HMRcwiRGggOjAnj5eYN
-         +1uoKARkFabmFn/kugsMyeDUcyS5ujnIr6pq0rkj59WpKsJgmZoRajTahc+eWoGB2FxO
-         Tk3kmGMTPbBKE+KCmfv4TPKhcKgHd2djm+sHz5MSiL4vEbc9E1HWKtIrs2AejIc7m8au
-         a/0W23DuZFS/tnX17NhtyHgDfVIw0pS85milK7MII2Gy+P1uN4u0g2FANZXvY2kQZS0m
-         w9jAQZY7yRLmnEGOW+cPVLD0OlRLxPDdsc+B/l6offnpmnrtdWxTZC/kVoG5UUlj5Xkg
-         etww==
-X-Gm-Message-State: AOAM532yVAVM6uaT5aajzrMuSFCprnVgmTwPYb2fICvVbtnPYUuejK3M
-        z+GQqNS/Mz13pfniPih4FjQKWg==
-X-Google-Smtp-Source: ABdhPJwQ2Ds1Umydr/5o+enpSVqH5N8+7ikHzTWeNHBOApVPo/Cn9n18pDrbmh7lgRtutGE1Ma+bYw==
-X-Received: by 2002:aa7:de96:0:b0:418:f9ca:67f6 with SMTP id j22-20020aa7de96000000b00418f9ca67f6mr12855139edv.25.1649316546462;
-        Thu, 07 Apr 2022 00:29:06 -0700 (PDT)
+        bh=vzjb8OyiiJYotEV8kvXDCXjnvHrz6uwgs9bvhbzeeU8=;
+        b=dpmMqnEKWccPcDIJDxqzg+U1AaIS8U/ES6gGk9bYEXuNexBIcX7iDBCy7tToMcTXLt
+         n7AWwMh+BSmSIje9sZrtZo9mganEseOBrBMh0GyHCV63iRshrYNba3dTVu0G8d3Zs7je
+         PSmGr7fZuYJIlpq4WKeuW+0EhGJw+qmPeVotmvfK8eufyK6sgNS+sowugsI2C2JQ1C16
+         OZxmNeAK2BHocM0MszhEoPx+IGcs8x9UGSmM9Q/BUucq/Pwx3aiI+/sQIIsydzIBHvuf
+         so3vBp+kX/VJNn+kIc5GAfYZaD33/Rdg3HJUfnTMaOygWHfCng5X9GQ4rdx6SuBvzNV/
+         WyKg==
+X-Gm-Message-State: AOAM531nfE9b8NpSXiWBo8fVFqdhm3njb2tmShRqyotZCn+WPVcuPq+P
+        12zEjxD/q+aQNWIJAQSXMbbHpQ==
+X-Google-Smtp-Source: ABdhPJwIqsvcbUoRf0jzTstI6QI8oC/35Ywl3gLGRtqyMNt7EWPp/vRrxhy1pCRr0jaF/uXfo7s0qQ==
+X-Received: by 2002:a17:907:2d89:b0:6df:b7d1:a365 with SMTP id gt9-20020a1709072d8900b006dfb7d1a365mr12892115ejc.386.1649316645845;
+        Thu, 07 Apr 2022 00:30:45 -0700 (PDT)
 Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id m20-20020a170906235400b006e718d8b849sm5472673eja.45.2022.04.07.00.29.05
+        by smtp.gmail.com with ESMTPSA id t1-20020a170906178100b006e7edb2c0bdsm4704390eje.15.2022.04.07.00.30.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 00:29:05 -0700 (PDT)
-Message-ID: <28dd4973-06a3-ddf5-4b98-3f7ffbc3cf1b@linaro.org>
-Date:   Thu, 7 Apr 2022 09:29:04 +0200
+        Thu, 07 Apr 2022 00:30:45 -0700 (PDT)
+Message-ID: <ad6605e5-a8e4-1906-43cf-eb2d4420dab8@linaro.org>
+Date:   Thu, 7 Apr 2022 09:30:44 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 08/12] ARM: s3c24xx: convert to sparse-irq
+Subject: Re: [PATCH 09/12] ARM: s3c: enable s3c24xx multiplatform support
 Content-Language: en-US
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -81,9 +81,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
 References: <20220405091750.3076973-1-arnd@kernel.org>
- <20220405091750.3076973-9-arnd@kernel.org>
+ <20220405091750.3076973-10-arnd@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220405091750.3076973-9-arnd@kernel.org>
+In-Reply-To: <20220405091750.3076973-10-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -93,18 +93,18 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 On 05/04/2022 11:17, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> As a final bit of preparation for converting to ARCH_MULTIPLATFORM,
-> change the interrupt handling for s3c24xx to use sparse IRQs.
-> 
-> Since the number of possible interrupts is already fixed and relatively
-> small per chip, just make it use all legacy interrupts preallocated
-> using the .nr_irqs field in the machine descriptor, rather than actually
-> allocating domains on the fly.
+> With the custom ISA I/O and the missing sparse-irq support
+> out of the way, s3c24xx can now be built into the same
+> kernel as all other ARM9 based platforms.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/Kconfig                  | 18 ------------------
+>  arch/arm/mach-s3c/Kconfig.s3c24xx | 23 ++++++++++++++++++++++-
+>  2 files changed, 22 insertions(+), 19 deletions(-)
+> 
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 
 Best regards,
 Krzysztof
