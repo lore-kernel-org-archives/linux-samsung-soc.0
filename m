@@ -2,55 +2,55 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7C3C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F50C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:32:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243093AbiDGIdi (ORCPT
+        id S243102AbiDGIeX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
+        Thu, 7 Apr 2022 04:34:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243094AbiDGIdh (ORCPT
+        with ESMTP id S243121AbiDGIeW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:33:37 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DEE71D08E8;
-        Thu,  7 Apr 2022 01:31:37 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id k23so9295922ejd.3;
-        Thu, 07 Apr 2022 01:31:37 -0700 (PDT)
+        Thu, 7 Apr 2022 04:34:22 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF1D229CA7;
+        Thu,  7 Apr 2022 01:32:23 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id bh17so9256416ejb.8;
+        Thu, 07 Apr 2022 01:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=YjO65yCUJueZcsX5BrYnH/m97GWK+kzYfUVQzJPSKgo=;
-        b=eqbZmKla+dMEy9RQxxGz8eoOGg0sMQZAoFKINltZOLnFd5l+1ni1BvW/dUgJ3CWqvN
-         g9gvVG1BIeC/+LFoAwLiclai1XWUzHGbNKSJUvd8djMDg4A2kLOJpE0Fkf3hnvphS3Lp
-         QNK9x+p96F6XsUUfrm86+/Kkr4FfozVqvjCttcQmbNE20toEd7oQBkUKNyYT6fAqx/bX
-         WCLRmzPXkbkfGZ/zsNbyDbpikdziRWl4VPEkKUIWWHOtBeXAHVXf9ZC3oWGKXMA1wKLv
-         FbZgLFevDR3gwsFs79qIs0IZL0kEJbP0P3USR+81LaWuaNdXKbvcEabyEqR8IG2cORyD
-         UbKg==
+        bh=0tw+m4R57U/18KDq8GHiXafNKaWFuGwCGvDB2p+CXdM=;
+        b=ZgpJZpew8vmFcf2B/L57Jw7+3WvktQLD4FmKiZa48+lPK06yQ8Hd8sRWMuVXykUx5k
+         6lgaBwmtRFPXpz+uvmJArBAA4ZpHAsL/WritHY3Bg3tyk/qU8S6ZRP0EQD8+UjS8Z/Pf
+         jm2ae4p56hhRiWao6kFhfYAWtpYtTqMXyMmpvOUXZb6G9uTxiuiA2n8ht+ddD2nADtxf
+         uLgTzujRjV0Tea9guSmWIigU8S+UZbPgK4HH9IzrpBIGH0CMhTftm9DrnBLWjokZ0CvU
+         8antZvuk+Hn7ju9QILcIZZ+JlsoEBZEO1TKyUhygLpSKjH2Lri6GupaWXid1kIQi4lfe
+         HiMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=YjO65yCUJueZcsX5BrYnH/m97GWK+kzYfUVQzJPSKgo=;
-        b=dgzTvJ7Ny6/BjA4WsBPYEml/fZU1cQKpUm4aa0Oh27tzcmlTdXFOCO4Y+qu4VS2jVX
-         OppDNgWMk7HOWw+aVlLdA1QnSfJq4EMcwH5UtstcekoH41xxJi6E26AfMRput0Vkpx0O
-         dAoLi1mcrhEUXPZA+ksgG+FUX0rPfC6tNiYWhgPmQJNfZEjLa73YMe1P2dSTOFVnLn0Q
-         ACHZ6L1iDclhXGmvfZMQQT9VaPdrF7iQ9vQdJ0gmNlqZNCXyDidzk58EM+OpVeAvmSSN
-         JGnjbvRlz/Lu2PsQYniQXua61tsICOAXYfqU5er9iQdscJ8SJx2PKQi7XVpyvN8GiSAs
-         x8wg==
-X-Gm-Message-State: AOAM533Xdqo1ei7ymEFps0443Bz89KPbeslr4GB0XzrJjd8qSIaD9Rtl
-        XMphdtSeFUEu7KFiVRYgU5M=
-X-Google-Smtp-Source: ABdhPJzrkNK1rxguF+DMNfRgciLJTOVyUNzWLOqu4MmnIEWr10fJ0cLSk6ulGsblDUYqRxBkrnK0Rg==
-X-Received: by 2002:a17:907:3e99:b0:6db:6c1c:d9d9 with SMTP id hs25-20020a1709073e9900b006db6c1cd9d9mr12171094ejc.688.1649320295929;
-        Thu, 07 Apr 2022 01:31:35 -0700 (PDT)
+        bh=0tw+m4R57U/18KDq8GHiXafNKaWFuGwCGvDB2p+CXdM=;
+        b=PQyTBo4xBW1wGM6lkIeZA2SR/6nYfNdqdp7pW70JubRZEco8Qgnohcc1YElqtDbtMm
+         qvWhWrjVmvnWbJp8i/N3VRanpvGHBe5GsWYfrmcYuJjbAybU78CDhZsGnp/ccwZB4Qf+
+         8O6e/Hq5x1s5PGlWQC9CnQ9tUqOYsla3DXr41dxyzSivU6a3Wb4d+qKlTD2n8jTQOgFp
+         FtgPMHrizwH2K47U6B4sI4lAyHQtHChMR4+BXLrTYUrnsYVAgt2ft1Uk/Db/7Fb3X/ek
+         ZIWqia2+thATYIMhY1/sdCENsKamJMEGu6eefrSUWcM0ysat8txIeDoSp3TpW5ex+A1a
+         VhoQ==
+X-Gm-Message-State: AOAM531bwIO4BDhQyPO/KZHSLEKiPrQnps+VDSMZCyI6PRTzO6WHB+2A
+        uLvxlthcyb75WCiwiOtuKDU=
+X-Google-Smtp-Source: ABdhPJzngHlEDPVVoNFWkMVU3CN0HM0bYPGxeLREedvJN8v4si+9GL4sWpNGTTGbXkMUwe3i26sUKA==
+X-Received: by 2002:a17:906:18b2:b0:6d0:ee54:1add with SMTP id c18-20020a17090618b200b006d0ee541addmr12042792ejf.499.1649320342454;
+        Thu, 07 Apr 2022 01:32:22 -0700 (PDT)
 Received: from giga-mm.localdomain ([195.245.23.54])
-        by smtp.gmail.com with ESMTPSA id f23-20020a170906139700b006e758e94972sm5390523ejc.171.2022.04.07.01.31.34
+        by smtp.gmail.com with ESMTPSA id k22-20020a170906971600b006e840b36f5asm31039ejx.91.2022.04.07.01.32.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 01:31:34 -0700 (PDT)
-Message-ID: <5fc3c2b7f299d1b5f784ae5fe4b9cbe9ddf0328d.camel@gmail.com>
-Subject: Re: [PATCH 04/12] ARM: ep93xx: make mach/ep93xx-regs.h local
+        Thu, 07 Apr 2022 01:32:21 -0700 (PDT)
+Message-ID: <e3596f79c41af25df6a8c08ecefaba40c751f45e.camel@gmail.com>
+Subject: Re: [PATCH 05/12] ARM: ep93xx: multiplatform support
 From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -75,10 +75,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Date:   Thu, 07 Apr 2022 10:31:33 +0200
-In-Reply-To: <20220405091750.3076973-5-arnd@kernel.org>
+Date:   Thu, 07 Apr 2022 10:32:20 +0200
+In-Reply-To: <20220405091750.3076973-6-arnd@kernel.org>
 References: <20220405091750.3076973-1-arnd@kernel.org>
-         <20220405091750.3076973-5-arnd@kernel.org>
+         <20220405091750.3076973-6-arnd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
@@ -90,22 +90,31 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Hello Arnd,
 
 On Tue, 2022-04-05 at 11:17 +0200, Arnd Bergmann wrote:
-> Nothing relies on it outside of arch/arm/mach-ep93xx/, so just move
-> it there.
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Cc: Hartley Sweeten <hsweeten@visionengravers.com>
-> Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> With the clock support and the interrupts out of the way, ep93xx can be
+> compiled into the same kernel image as the other ARMv4/v5 platforms. The
+> last obstacle are the two workarounds for broken boot loaders that
+> require us to re-initialize the ethernet controller and/or the watchdog
+> on certain machines.
+> 
+> Move this code into the decompressor sources directly, checking for
+> each possibly affected machine individually.
+> 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+I've successfully tested the whole series on EDB9302, therefore:
+Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
 > ---
->  arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h | 4 ----
->  arch/arm/mach-ep93xx/gpio-ep93xx.h                    | 2 +-
->  arch/arm/mach-ep93xx/include/mach/uncompress.h        | 1 -
->  arch/arm/mach-ep93xx/soc.h                            | 2 +-
->  4 files changed, 2 insertions(+), 7 deletions(-)
->  rename arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h (94%)
+>  arch/arm/Kconfig                              | 16 -----
+>  .../compressed/misc-ep93xx.h}                 | 69 +++++++++----------
+>  arch/arm/boot/compressed/misc.c               |  4 ++
+>  arch/arm/configs/ep93xx_defconfig             |  2 +
+>  arch/arm/mach-ep93xx/Kconfig                  | 12 ++++
+>  5 files changed, 51 insertions(+), 52 deletions(-)
+>  rename arch/arm/{mach-ep93xx/include/mach/uncompress.h => boot/compressed/misc-ep93xx.h} (51%)
 
 -- 
 Alexander Sverdlin.
