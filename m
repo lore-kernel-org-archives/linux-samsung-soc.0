@@ -2,86 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B11C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C825C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:29:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236951AbiDGIST (ORCPT
+        id S243015AbiDGIbc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54208 "EHLO
+        Thu, 7 Apr 2022 04:31:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239163AbiDGISQ (ORCPT
+        with ESMTP id S243014AbiDGIbb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:18:16 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298151FF23F
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 01:16:17 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id q26so5462108edc.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 01:16:17 -0700 (PDT)
+        Thu, 7 Apr 2022 04:31:31 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D87D2DBD3C;
+        Thu,  7 Apr 2022 01:29:31 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a6so9381580ejk.0;
+        Thu, 07 Apr 2022 01:29:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=xUYWxyJEg6leDM0Xoa+hYl6e09Zj0klrd/06rKmbpmY=;
-        b=VDt+MTz290lEtYWH2rYjozi9VS/wDkTwYnmZ1LHSDAEKP9qIm5ptabMoOVy2BND0Jd
-         0L/LUQaem3vZwxfUuvDjdbtMswNl1eX0QWzsSivBnM1zpfkIFZ4hXbyDzByJBJkrf2yo
-         llVHCnqcLTsm62tnuOi5v/6b71TBZCDJNbHwM/PM0+G57hSSWjRQi+4dEon9BUSW8EIA
-         hozevSwzAYq/hABD6Yre/N7t1Spx9rVku5XMnFRlg8vFRtQ5gD5N0lyqR4Vr1D/G7s7d
-         WDjA5Dm7s8ar9mDYFoj7tTOBGU+uGdcq4XJBDLpdni7lwiaorQQeU5BNNHm43b2JjE+I
-         qywQ==
+        d=gmail.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=0F6DhDok16S/mQnw6vQwIVuASfGD3h0OWMoxK33LWCA=;
+        b=cYDvbwtjz/ppOtT0tIl41bS8Cauu7EyNoWz+ZNBV0wslHKs8RORt9tSzMwQCNs6/xO
+         IRaVZKRvv5KEOWw/wpCsyZWTq1bNuql/umI0neXnPCu4kZxhgLIQNggYbaikkqkfBSTR
+         8oBvL+xDwB2ToLPRtJdq5M11V2+e9NS6Apsl3ixQwKnX1cANv1yLliF3vjcm/wjFF7oP
+         9Cy+8tXENsn9Mbq1ZF6vductnyEkwAUOjC4InAliZG75oM0AwKbMe7Gyu/rCwfmWvPsR
+         JZmrZRecVIOHxOh9Pmq5TeULOwPB7BopR0haek/Aa7KPS7LJg/RXg7Ovtuu6+TxNvpxl
+         DeTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=xUYWxyJEg6leDM0Xoa+hYl6e09Zj0klrd/06rKmbpmY=;
-        b=2YDbhnD2PahAVBMHGIXhjRFbhblUp9h3Rbt1ZCWtU2EBoXEsFMKXZZC79SfYkpCQLN
-         su6pAHAwJFmJAKV8zWVBy9iotjNlDNtIHqXvXvITV10q7ViPCi57b1MEog6Lh/44rgUL
-         HPhhBZgVet1dC+JS50jW74/TgCZf6cL0iZINZeZ8tOiiZUXh80YwKLMvkxdYAA00PA/2
-         GJ3Ma5SM6sCOxH1AcPUm4LjZsxEi+5GyA83eFiyZ5bbEWyUKCvh2Jbx85GoFCYASr2V5
-         arDeTCw2Wi2rvf7SMb5CqtSHgQjYKarAlRO0qXU1rPafpggwqSVYPZUSxVMbtha+g0MR
-         ZzLQ==
-X-Gm-Message-State: AOAM533uh2kdTMW3exu9Zl6OwNlRo8EZd3C61kJnvowucvpQpBgZeLM+
-        fV/8xh1QQf8snem74J6M+fTxYQ==
-X-Google-Smtp-Source: ABdhPJy/ERLqCYKh9BpiL5bF6j78reR9LcaBuPraPoj6GLaivpbUlPeSk3kUE3ntnN95zAfa0g/A9w==
-X-Received: by 2002:aa7:cc96:0:b0:410:b9ac:241 with SMTP id p22-20020aa7cc96000000b00410b9ac0241mr13117970edt.246.1649319375803;
-        Thu, 07 Apr 2022 01:16:15 -0700 (PDT)
-Received: from [192.168.0.185] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id g10-20020a056402090a00b004196250baeasm8923523edz.95.2022.04.07.01.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 01:16:15 -0700 (PDT)
-Message-ID: <c46aa011-1292-0dfb-2f10-a4d9f9a4fdaa@linaro.org>
-Date:   Thu, 7 Apr 2022 10:16:14 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [GIT PULL] ARM: samsung: Fixes for v5.18 (current cycle)
-Content-Language: en-US
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=0F6DhDok16S/mQnw6vQwIVuASfGD3h0OWMoxK33LWCA=;
+        b=BuY2U9amPN8M6gO48xZTN1m9Da0QlRxwdYqGudnmfseLO/BiQgLgHPWbLRRLVqdvrx
+         c0h6FbIx0x8dnBfCl3yvYHEjvevdYq+z/drvMPtr4qm1A9csTFJmqPHkMp78Z9r10/Xd
+         SF/l/bY6NSAneYZctPDgox8ZQQf/ZTqegwOnLJEmNuUn05TYZv6qSB9R1Ppx7tswKpDf
+         aM9BdQ98b6Of+kCVjVx99e8DNmS9GVP0rfJziEAfYTvl/rU110uieVZ+InrZATUM19C1
+         X1E1S38q60JtOcrGhl6Ezw0vF0du1Wa6U1tjfBjYXLOyb5v+Zl/lsllRcsqLx0sTq6Kq
+         nR7A==
+X-Gm-Message-State: AOAM530kREVK7D3BqKEpFdoaVfWkuaNdGzrTLQxGqJChdZD2qohqHKfm
+        6IoPiLBnXgEzNpyLil12oo4=
+X-Google-Smtp-Source: ABdhPJxgqem8xJnZtgt0VCnwgO9PwyfQTZWkcJsDdqRgUdc44rTZFKng5pPG/Ih0HWtEx+Jj7Oy1+w==
+X-Received: by 2002:a17:906:4fc4:b0:6da:b4c6:fadb with SMTP id i4-20020a1709064fc400b006dab4c6fadbmr12411431ejw.282.1649320170304;
+        Thu, 07 Apr 2022 01:29:30 -0700 (PDT)
+Received: from giga-mm.localdomain ([195.245.23.54])
+        by smtp.gmail.com with ESMTPSA id i14-20020a50cfce000000b0041cbaba8743sm7022814edk.56.2022.04.07.01.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Apr 2022 01:29:29 -0700 (PDT)
+Message-ID: <68685953d3ffd8912afdaf8202ed87d113f281ad.camel@gmail.com>
+Subject: Re: [PATCH 02/12] ARM: ep93xx: renumber interrupts
+From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Hubert Feurstein <hubert.feurstein@contec.at>,
+        Lukasz Majewski <lukma@denx.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <20220407080545.112290-1-krzysztof.kozlowski@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220407080545.112290-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Linus Walleij <linus.walleij@linaro.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Date:   Thu, 07 Apr 2022 10:29:27 +0200
+In-Reply-To: <20220405091750.3076973-3-arnd@kernel.org>
+References: <20220405091750.3076973-1-arnd@kernel.org>
+         <20220405091750.3076973-3-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 07/04/2022 10:05, Krzysztof Kozlowski wrote:
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Hello Arnd,
+
+On Tue, 2022-04-05 at 11:17 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Hi,
+> With the move to irq domains, no irqchip must start at number 0,
+> so shift all the hardwired IRQ numbers by one.
 > 
-> For the v5.18, please.
+> Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Argh, I need to update my email in my scripts as well. The tag is done
-with correct identity.
+I've successfully tested the whole series on EDB9302, therefore:
+Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
+> ---
+>  arch/arm/mach-ep93xx/core.c              |   4 +-
+>  arch/arm/mach-ep93xx/include/mach/irqs.h | 122 ++++++++++++-----------
+>  2 files changed, 65 insertions(+), 61 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+Alexander Sverdlin.
+
