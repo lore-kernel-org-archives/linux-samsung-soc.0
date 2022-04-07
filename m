@@ -2,202 +2,97 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2C6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805FBC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 08:07:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231636AbiDGIJx (ORCPT
+        id S232249AbiDGIJy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:09:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49132 "EHLO
+        Thu, 7 Apr 2022 04:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242996AbiDGIIE (ORCPT
+        with ESMTP id S242698AbiDGIHP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:08:04 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05CC21AEC86
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 01:05:50 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id p15so9135392ejc.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 01:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4mBqmv7n4vaPJNzqJP9XRBObc2z1tM4karynGs0Phtk=;
-        b=Qq1qfnd9npA9nHTudyH/BT6S+kcCLVHNf9FrbefprUkxea94X8hHKsnDNg+5ccEGxg
-         r87XTfa5dzAOXyeJTgAkuMot3slOlmPogMwQ8ucdoxREihf/skk2LM/xagYN39q3PdRf
-         xBbsjsQsh5y4SbVMM59UZ4mUCez68EVSWLHdq50/ZCHxPZb32E21a4WnjkPJG2VwSd/s
-         HVI6IEgv2O7gO+NAkdITQg9KnvdviEUjAMCF9rnluidnZIwPSBSTPlbvMllHW9oBbxfD
-         fQHxbmFsSaxJ3f64QMIHsEpnJsN+s/IN5/MUdLDcT3Dn3QzfAgwadsnppVAHALW1JUnY
-         Vtew==
+        Thu, 7 Apr 2022 04:07:15 -0400
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BB015AAD0;
+        Thu,  7 Apr 2022 01:05:15 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id h4so6561903wrc.13;
+        Thu, 07 Apr 2022 01:05:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=4mBqmv7n4vaPJNzqJP9XRBObc2z1tM4karynGs0Phtk=;
-        b=wSyiP72TAFuGnoM04Ujzh+KzQRx//mzLZKZGJ8pPPR+FLfZ/gp3zyjUKq4G5R7JAz5
-         LJGfsh0hY3OXzVU9cSNFVtWlpsVzZFJkgJTkLAUNwuDJshgIkqUtpLrttlKMZ/g0zwxm
-         vbyRHH6qvlBBVY8tJyM+0VDyZxf3KsBxYj8nMjl73xtMUqxyqricSFHKENRsbomwRrtA
-         vDEj4/f2/d5ZtmIiYeyylp+Nj3BG44xhCVv01M85fhA5GCSKd7wEPVYKdgng90NwcMFu
-         l9fMCeCaZJY1RZuQB1gCKiVa+dut2QNJRxqBtQt5R1T/R7h9T7Q3Og8C6B/vHgOR5TJA
-         8kwg==
-X-Gm-Message-State: AOAM532xQS6gAg//NqXdNuw92zu56Wf+JB+dpi4O03sn1H2DcCuD+jri
-        eDvDI8MR8wQr5J56vkJPpsARsA==
-X-Google-Smtp-Source: ABdhPJyHdAGSEzniLyxDIIzfiDZCPSJ8ph+g9N9poqt0EGINfDqa0e4lfi/998p+LVKaG22T2l1KCA==
-X-Received: by 2002:a17:907:7255:b0:6e7:e853:73b8 with SMTP id ds21-20020a170907725500b006e7e85373b8mr12655082ejc.172.1649318748546;
-        Thu, 07 Apr 2022 01:05:48 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id m14-20020a056402510e00b0041d0c0942adsm217575edd.52.2022.04.07.01.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 01:05:48 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM: samsung: Fixes for v5.18 (current cycle)
-Date:   Thu,  7 Apr 2022 10:05:45 +0200
-Message-Id: <20220407080545.112290-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
+        bh=k5Z8OUhRelN5FFoWfx6yeRuNCnOOHjN18Zd6brbR9SU=;
+        b=PtI2+yLW3StPs6vlHQ3CCez8aCoDkMC41BmeACTvGOhmClXu+ETzfrmHXe2LfGtw+Y
+         mzlWfjPr6LgPIq4byAeKUp9bVFGvkoiqXSGwtQS1ZqTG2YX1feuink69kDI/cczyqV0W
+         WOEyn2Jyw/TZeTB1wfqtWbctFp3vzhOLq9grGEoU/wIGDNMkclxJIaSwDHrQLq2Qfomk
+         Iss/5vAlvx02Dr0dSVDMl/UihsG98nmqN2juf8nJuwCCBz+wpnRyU78qqplLBCgB04XD
+         GZqej45rrTqXS8cookvrGgKjdXeVO+rXRat5mz53yUUiCZI5SL/FzGJrJ/L/q8GBg440
+         KGSA==
+X-Gm-Message-State: AOAM532c91gsipTWKVybtzWaZrOGLeaU/rJ/bp4otkn3cKZOMvO9mxDM
+        DeiJ3JwUtrxwasEpdV3xyH0=
+X-Google-Smtp-Source: ABdhPJw8gESXWjC2gFPHl9EZ0YUgdmxtQHzQMJ3vbvugJZriyw/pHYEHwSHrUZLKqJMXehIo+aPzVg==
+X-Received: by 2002:a5d:6d0a:0:b0:204:109f:7833 with SMTP id e10-20020a5d6d0a000000b00204109f7833mr9927973wrq.76.1649318714105;
+        Thu, 07 Apr 2022 01:05:14 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id e13-20020a05600c4e4d00b0038e44e316c1sm6682893wmq.6.2022.04.07.01.05.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Apr 2022 01:05:13 -0700 (PDT)
+Message-ID: <5be92b82-da56-2591-dbf1-fbf63f91c37b@kernel.org>
+Date:   Thu, 7 Apr 2022 10:05:12 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v3 1/1] tty: serial: samsung: add spin_lock for interrupt
+ and console_write
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chanho Park <chanho61.park@samsung.com>
+References: <20220407071619.102249-1-jaewon02.kim@samsung.com>
+ <CGME20220407071223epcas2p16bb11821a0894a3375e84d17c4ff0844@epcas2p1.samsung.com>
+ <20220407071619.102249-2-jaewon02.kim@samsung.com>
+ <b53be23f-7935-dae3-9dc8-f850493a5fa9@kernel.org>
+ <6dcddc8a-7ca2-b424-fc8f-7000be3f9116@linaro.org>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <6dcddc8a-7ca2-b424-fc8f-7000be3f9116@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+On 07. 04. 22, 9:58, Krzysztof Kozlowski wrote:
+> On 07/04/2022 09:46, Jiri Slaby wrote:
+>> On 07. 04. 22, 9:16, Jaewon Kim wrote:
+>>> The console_write and IRQ handler can run concurrently.
+>>> Problems may occurs console_write is continuously executed while
+>>> the IRQ handler is running.
+>>
+>>   From the patch POV:
+>>
+>> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+>>
+>> But given this is a v3 with no version changelog below "---", you've
+>> just kicked the Greg's bot to wake up :P.
+>>
+> 
+> There was a cover letter with such changelog:
+> https://lore.kernel.org/all/20220407071619.102249-1-jaewon02.kim@samsung.com/
+> 
+> It's indeed easy to miss...
 
-Hi,
+Ah, OK, my bad -- I skipped it as usual -- I don't consider cover 
+letters that useful. And in this case, even more provided it is for a 
+single patch.
 
-For the v5.18, please.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
-
-  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-5.18
-
-for you to fetch changes up to 1a9f338f9cf96f8338d5592dee5fce222929e4f7:
-
-  MAINTAINERS: update Krzysztof Kozlowski's email to Linaro (2022-04-04 15:43:20 +0200)
-
-----------------------------------------------------------------
-Samsung fixes for v5.18
-
-Update Krzysztof Kozlowski's email address in multiple maintainer
-entries.  The old one @canonical.com bounces already.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      dt-bindings: update Krzysztof Kozlowski's email
-      MAINTAINERS: update Krzysztof Kozlowski's email to Linaro
-
- .../bindings/clock/samsung,exynos-audss-clock.yaml |  2 +-
- .../bindings/clock/samsung,exynos-clock.yaml       |  2 +-
- .../bindings/clock/samsung,exynos-ext-clock.yaml   |  2 +-
- .../clock/samsung,exynos4412-isp-clock.yaml        |  2 +-
- .../bindings/clock/samsung,exynos5260-clock.yaml   |  2 +-
- .../bindings/clock/samsung,exynos5410-clock.yaml   |  2 +-
- .../bindings/clock/samsung,exynos5433-clock.yaml   |  2 +-
- .../bindings/clock/samsung,exynos7-clock.yaml      |  2 +-
- .../bindings/clock/samsung,exynos7885-clock.yaml   |  2 +-
- .../bindings/clock/samsung,exynos850-clock.yaml    |  2 +-
- .../devicetree/bindings/clock/samsung,s2mps11.yaml |  2 +-
- .../clock/samsung,s5pv210-audss-clock.yaml         |  2 +-
- .../bindings/clock/samsung,s5pv210-clock.yaml      |  2 +-
- .../devfreq/event/samsung,exynos-nocp.yaml         |  2 +-
- .../devfreq/event/samsung,exynos-ppmu.yaml         |  2 +-
- .../display/samsung/samsung,exynos-hdmi-ddc.yaml   |  2 +-
- .../display/samsung/samsung,exynos-hdmi.yaml       |  2 +-
- .../display/samsung/samsung,exynos-mixer.yaml      |  2 +-
- .../display/samsung/samsung,exynos5433-decon.yaml  |  2 +-
- .../display/samsung/samsung,exynos5433-mic.yaml    |  2 +-
- .../display/samsung/samsung,exynos7-decon.yaml     |  2 +-
- .../bindings/display/samsung/samsung,fimd.yaml     |  2 +-
- .../devicetree/bindings/extcon/maxim,max77843.yaml |  2 +-
- .../devicetree/bindings/hwmon/lltc,ltc4151.yaml    |  2 +-
- .../bindings/hwmon/microchip,mcp3021.yaml          |  2 +-
- .../devicetree/bindings/hwmon/sensirion,sht15.yaml |  2 +-
- .../devicetree/bindings/hwmon/ti,tmp102.yaml       |  2 +-
- .../devicetree/bindings/hwmon/ti,tmp108.yaml       |  2 +-
- .../devicetree/bindings/i2c/i2c-exynos5.yaml       |  2 +-
- .../bindings/i2c/samsung,s3c2410-i2c.yaml          |  2 +-
- .../samsung,exynos4210-combiner.yaml               |  2 +-
- .../devicetree/bindings/leds/maxim,max77693.yaml   |  2 +-
- .../bindings/memory-controllers/brcm,dpfe-cpu.yaml |  2 +-
- .../ddr/jedec,lpddr2-timings.yaml                  |  2 +-
- .../memory-controllers/ddr/jedec,lpddr2.yaml       |  2 +-
- .../ddr/jedec,lpddr3-timings.yaml                  |  2 +-
- .../memory-controllers/ddr/jedec,lpddr3.yaml       |  2 +-
- .../marvell,mvebu-sdram-controller.yaml            |  2 +-
- .../qca,ath79-ddr-controller.yaml                  |  2 +-
- .../memory-controllers/renesas,h8300-bsc.yaml      |  2 +-
- .../memory-controllers/samsung,exynos5422-dmc.yaml |  2 +-
- .../memory-controllers/synopsys,ddrc-ecc.yaml      |  2 +-
- .../memory-controllers/ti,da8xx-ddrctl.yaml        |  2 +-
- .../devicetree/bindings/mfd/maxim,max14577.yaml    |  2 +-
- .../devicetree/bindings/mfd/maxim,max77686.yaml    |  2 +-
- .../devicetree/bindings/mfd/maxim,max77693.yaml    |  2 +-
- .../devicetree/bindings/mfd/maxim,max77802.yaml    |  2 +-
- .../devicetree/bindings/mfd/maxim,max77843.yaml    |  2 +-
- .../bindings/mfd/samsung,exynos5433-lpass.yaml     |  2 +-
- .../devicetree/bindings/mfd/samsung,s2mpa01.yaml   |  2 +-
- .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  2 +-
- .../devicetree/bindings/mfd/samsung,s5m8767.yaml   |  2 +-
- .../devicetree/bindings/net/nfc/marvell,nci.yaml   |  2 +-
- .../devicetree/bindings/net/nfc/nxp,nci.yaml       |  2 +-
- .../devicetree/bindings/net/nfc/nxp,pn532.yaml     |  2 +-
- .../devicetree/bindings/net/nfc/nxp,pn544.yaml     |  2 +-
- .../devicetree/bindings/net/nfc/st,st-nci.yaml     |  2 +-
- .../devicetree/bindings/net/nfc/st,st21nfca.yaml   |  2 +-
- .../devicetree/bindings/net/nfc/st,st95hf.yaml     |  2 +-
- .../devicetree/bindings/net/nfc/ti,trf7970a.yaml   |  2 +-
- .../bindings/phy/samsung,dp-video-phy.yaml         |  2 +-
- .../bindings/phy/samsung,exynos-hdmi-phy.yaml      |  2 +-
- .../bindings/phy/samsung,exynos5250-sata-phy.yaml  |  2 +-
- .../bindings/phy/samsung,mipi-video-phy.yaml       |  2 +-
- .../devicetree/bindings/phy/samsung,usb2-phy.yaml  |  2 +-
- .../bindings/phy/samsung,usb3-drd-phy.yaml         |  2 +-
- .../pinctrl/samsung,pinctrl-gpio-bank.yaml         |  2 +-
- .../bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml |  2 +-
- .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |  2 +-
- .../bindings/pinctrl/samsung,pinctrl.yaml          |  2 +-
- .../bindings/power/supply/maxim,max14577.yaml      |  2 +-
- .../bindings/power/supply/maxim,max77693.yaml      |  2 +-
- .../bindings/regulator/maxim,max14577.yaml         |  2 +-
- .../bindings/regulator/maxim,max77686.yaml         |  2 +-
- .../bindings/regulator/maxim,max77693.yaml         |  2 +-
- .../bindings/regulator/maxim,max77802.yaml         |  2 +-
- .../bindings/regulator/maxim,max77843.yaml         |  2 +-
- .../bindings/regulator/maxim,max8952.yaml          |  2 +-
- .../bindings/regulator/maxim,max8973.yaml          |  2 +-
- .../bindings/regulator/maxim,max8997.yaml          |  2 +-
- .../bindings/regulator/samsung,s2mpa01.yaml        |  2 +-
- .../bindings/regulator/samsung,s2mps11.yaml        |  2 +-
- .../bindings/regulator/samsung,s2mps13.yaml        |  2 +-
- .../bindings/regulator/samsung,s2mps14.yaml        |  2 +-
- .../bindings/regulator/samsung,s2mps15.yaml        |  2 +-
- .../bindings/regulator/samsung,s2mpu02.yaml        |  2 +-
- .../bindings/regulator/samsung,s5m8767.yaml        |  2 +-
- .../bindings/rng/samsung,exynos5250-trng.yaml      |  2 +-
- .../devicetree/bindings/rng/timeriomem_rng.yaml    |  2 +-
- .../bindings/soc/samsung/exynos-usi.yaml           |  2 +-
- .../devicetree/bindings/sound/samsung,arndale.yaml |  2 +-
- .../bindings/sound/samsung,smdk5250.yaml           |  2 +-
- .../devicetree/bindings/sound/samsung,snow.yaml    |  2 +-
- .../devicetree/bindings/sound/samsung,tm2.yaml     |  2 +-
- .../bindings/spi/samsung,spi-peripheral-props.yaml |  2 +-
- .../devicetree/bindings/spi/samsung,spi.yaml       |  2 +-
- .../bindings/thermal/samsung,exynos-thermal.yaml   |  2 +-
- .../bindings/usb/samsung,exynos-dwc3.yaml          |  2 +-
- .../bindings/usb/samsung,exynos-usb2.yaml          |  2 +-
- MAINTAINERS                                        | 36 +++++++++++-----------
- 100 files changed, 117 insertions(+), 117 deletions(-)
+thanks,
+-- 
+js
+suse labs
