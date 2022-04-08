@@ -2,50 +2,50 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC36DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 16:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BEEC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 16:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbiDHQYj (ORCPT
+        id S230193AbiDHQYr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Apr 2022 12:24:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42260 "EHLO
+        Fri, 8 Apr 2022 12:24:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbiDHQYi (ORCPT
+        with ESMTP id S230188AbiDHQYp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Apr 2022 12:24:38 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90172EE4EE
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Apr 2022 09:22:33 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id z128so8207181pgz.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Apr 2022 09:22:33 -0700 (PDT)
+        Fri, 8 Apr 2022 12:24:45 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A97EEEA5D
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Apr 2022 09:22:41 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id 32so6068467pgl.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Apr 2022 09:22:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gGzzNcZY8RobibNWD65GpD1P4b/cN9VaV+JKjs3w2tM=;
-        b=cEAopD5V2S3S9ex0G6yHvQna15BEzdeRDqQPGNwvzhtdW32VdJuPEHuaXwCxfnl93B
-         vc3qC9H4s7hVxWGb7MCY0xBskCl0wOyh0MqHzrWShGJmF0wTQ3DCBxX3hI2x75BfLhtQ
-         fy3SOSKYH3fg9aP9OvoFMxcLVee2Lh3Zlye7o=
+        bh=cgQ5H26dXpBSM4rzqEEf72CNZpQ5iTR6sOekInJL9nA=;
+        b=qGFgE8d/FspNS34svbsGDyPnuRy9Upu/mTr9Ef8Tu5CYyNTpw+nZ6ggmcKV9shfu8n
+         s3q0yl1yl7qKniYUx5mx1k1WfO9anF/XSdxeQFVA9YAUf4vn5cpxhjeEufXsuvyRD+MA
+         JZWNKWs0OXIjG/HYBwYGi875S7zRkHwDKx8Qs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gGzzNcZY8RobibNWD65GpD1P4b/cN9VaV+JKjs3w2tM=;
-        b=5dYiq7STSb9aPRIr1jTB3XiSqnch6P98VVeBh8gKXuRyE43xLyJxHIYGbtCSkLSCvd
-         5q3Zqu23T+w6rQ11/vitt/yRiKj3+j44QEvRah+/Ck7fDG3c6juG8NO7nJCbUYLzD8NT
-         BkHuYkddsHlD7Obg0VC0ifVlR427UgnhrgHXYaflAjLVrUVk6BEnGxtKBY1vaeRHHhA3
-         N/D/KwwjFGDGS7QefA9XhAIxQQ2AGafb8HOsVYXoUF+ukhWM695nVn/6GrbEGQeyDEmu
-         RHFp49a+UKYFPrKCItqRyBztdlvKeXhi4jfQSZ+rAE1XlvHQ/FJqQqFSa86q9yauUX7P
-         osEA==
-X-Gm-Message-State: AOAM530PNJBTkmCWfxZIUY7A/UsWU35+RSw3D5J1Pw3T5lgaQ64QbmEN
-        3ExZDNqIT+pr4AdBLeCVcGcEQg==
-X-Google-Smtp-Source: ABdhPJyMQiWVcRguZ6ZZ6h+HCm/rUJKRxdLX++3Psb+xCLNDLaij1ylis+3u/mmBF732gkrXUsyQHA==
-X-Received: by 2002:a05:6a00:238f:b0:4f7:78b1:2f6b with SMTP id f15-20020a056a00238f00b004f778b12f6bmr20311000pfc.17.1649434953099;
-        Fri, 08 Apr 2022 09:22:33 -0700 (PDT)
+        bh=cgQ5H26dXpBSM4rzqEEf72CNZpQ5iTR6sOekInJL9nA=;
+        b=F+ZGuyHYKPoAHajufdJsHAPqcUhGJSAhJ3LLUcdl/H1hAbaJvLJDBjXTDBFtAR06Gh
+         50X0igvXUvLabgFUVRLCK+QDKyls8c7wJUBSIqGHoh+1GcpnLfY9Cb7EgyCq4LDOXiQ2
+         V5ZVN6vgp3pLMwFO5FsYp/cy1tnyZDdWARaOK3+mruH4FU+0IWfjc5CVGomzhFbjQHAC
+         vyF1kVnjtmBwNJHpWXLk7LkXu2osc8E5KerI3G0qkQ3BJNT+mpl566s63vcnWV2pntVa
+         3Pq7vqaxd5JSnOFdk05QumB3VW9S3hVkyf070BN8MvcdteR1+6caRgRrJJeDKzB6Ntgm
+         b3Kw==
+X-Gm-Message-State: AOAM533aqqjcNIUnESvBT2u5inq4D/Kdb3tEh0raUgQR2WtFg/bCBeHf
+        CHbQHQ7QL0EX2K3X3XevV+6a2g==
+X-Google-Smtp-Source: ABdhPJz7BYgkTc1Jr7yE94AtJvsLtYwfoFOJxo6erKU4BeLpwnKWJwOinWC2GIqbOH2+0zjtoftLRw==
+X-Received: by 2002:a63:c00e:0:b0:398:a2b7:be6 with SMTP id h14-20020a63c00e000000b00398a2b70be6mr1775772pgg.214.1649434961113;
+        Fri, 08 Apr 2022 09:22:41 -0700 (PDT)
 Received: from j-ThinkPad-E14-Gen-2.domain.name ([45.249.78.214])
-        by smtp.gmail.com with ESMTPSA id n18-20020a056a0007d200b004fdac35672fsm24929863pfu.68.2022.04.08.09.22.25
+        by smtp.gmail.com with ESMTPSA id n18-20020a056a0007d200b004fdac35672fsm24929863pfu.68.2022.04.08.09.22.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Apr 2022 09:22:32 -0700 (PDT)
+        Fri, 08 Apr 2022 09:22:40 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -68,46 +68,55 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 03/11] drm: bridge: samsung-dsim: Mark PHY as optional
-Date:   Fri,  8 Apr 2022 21:51:00 +0530
-Message-Id: <20220408162108.184583-4-jagan@amarulasolutions.com>
+Subject: [PATCH 04/11] drm: bridge: samsung-dsim: Add DSI init in bridge pre_enable()
+Date:   Fri,  8 Apr 2022 21:51:01 +0530
+Message-Id: <20220408162108.184583-5-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220408162108.184583-1-jagan@amarulasolutions.com>
 References: <20220408162108.184583-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In i.MX8M Mini/Nano SoC the DSI Phy requires a MIPI DPHY bit
-to reset in order to activate the PHY and that can be done via
-upstream i.MX8M blk-ctrl driver.
+Host transfer() in DSI master will invoke only when the DSI commands
+are sent from DSI devices like DSI Panel or DSI bridges and this
+host transfer wouldn't invoke for I2C-based-DSI bridge drivers.
 
-So, mark the phy get as optional.
+Handling DSI host initialization in transfer calls misses the
+controller setup for I2C configured DSI bridges.
+
+This patch adds the DSI initialization from transfer to bridge
+pre_enable as the bridge pre_enable API is invoked by core as
+it is common across all classes of DSI device drivers.
 
 v1:
-* new patch
+* keep DSI init in host transfer
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/samsung-dsim.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 0e6a5d1c7e4e..ff05c8e01cff 100644
+index ff05c8e01cff..3e12b469dfa8 100644
 --- a/drivers/gpu/drm/bridge/samsung-dsim.c
 +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1539,7 +1539,7 @@ static int samsung_dsim_probe(struct platform_device *pdev)
- 	if (IS_ERR(dsi->reg_base))
- 		return PTR_ERR(dsi->reg_base);
+@@ -1290,6 +1290,13 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+ 	}
  
--	dsi->phy = devm_phy_get(dev, "dsim");
-+	dsi->phy = devm_phy_optional_get(dev, "dsim");
- 	if (IS_ERR(dsi->phy)) {
- 		dev_info(dev, "failed to get dsim phy\n");
- 		return PTR_ERR(dsi->phy);
+ 	dsi->state |= DSIM_STATE_ENABLED;
++
++	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
++		ret = samsung_dsim_init(dsi);
++		if (ret)
++			return;
++		dsi->state |= DSIM_STATE_INITIALIZED;
++	}
+ }
+ 
+ static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
 -- 
 2.25.1
 
