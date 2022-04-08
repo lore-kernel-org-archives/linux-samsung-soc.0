@@ -2,201 +2,86 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15181C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 03:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C332FC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 05:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233833AbiDHDFr (ORCPT
+        id S234557AbiDHFFv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 23:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
+        Fri, 8 Apr 2022 01:05:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbiDHDFq (ORCPT
+        with ESMTP id S234523AbiDHFFu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 23:05:46 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA7411BCEF
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 20:03:41 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220408030338epoutp02ab585af7b0b23341db3f753b5c9c4ebd~jzMFAzp9Y1650416504epoutp02d
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Apr 2022 03:03:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220408030338epoutp02ab585af7b0b23341db3f753b5c9c4ebd~jzMFAzp9Y1650416504epoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649387018;
-        bh=NqnIwYUo6niXNmWjuw14e36GtazGL6Nf5Zv0Vep+wGQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=iJasyV43RmJQC/Ajgqu43vfcBKIIgTZcGDu2RsoHFgMvftOj4euURnO2TQgrWv9iM
-         eEeHyhA51MxDJCtkhdK2Fjxbclho5ScCmmfkOVoq6EeXCVm31sUYj1r9BpyiV63cvS
-         6ChvPdN4gcPaD+iWsyQBOnZv6ftleRWhdvs5nEJE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220408030338epcas5p3ea48e7ae232b11e4415ee868d3ed3087~jzMEKWfBC0231302313epcas5p36;
-        Fri,  8 Apr 2022 03:03:38 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4KZNNy36LBz4x9Q1; Fri,  8 Apr
-        2022 03:03:30 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        28.32.06423.FF5AF426; Fri,  8 Apr 2022 12:03:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220408030327epcas5p44b95cb7b423f1a21b52d250bcf4de4a6~jzL6XASwC3226932269epcas5p4r;
-        Fri,  8 Apr 2022 03:03:27 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220408030327epsmtrp2baaa5716cd2e0f04104662370e67d348~jzL6WR6cq0577705777epsmtrp2e;
-        Fri,  8 Apr 2022 03:03:27 +0000 (GMT)
-X-AuditID: b6c32a49-b13ff70000001917-10-624fa5ff320e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FD.C4.24342.FF5AF426; Fri,  8 Apr 2022 12:03:27 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220408030325epsmtip16e87273227a4af2a00c8ff49367ec743~jzL4Sh8N70208202082epsmtip1Q;
-        Fri,  8 Apr 2022 03:03:25 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     "'Rob Herring'" <robh@kernel.org>
-In-Reply-To: <20220407192611.15353-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [RESEND PATCH] dt-bindings: usb: samsung,exynos-usb2: include
- usb-hcd schema
-Date:   Fri, 8 Apr 2022 08:33:23 +0530
-Message-ID: <000001d84af5$37e001e0$a7a005a0$@samsung.com>
+        Fri, 8 Apr 2022 01:05:50 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36CEBB36A3;
+        Thu,  7 Apr 2022 22:03:47 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 295158125;
+        Fri,  8 Apr 2022 05:01:22 +0000 (UTC)
+Date:   Fri, 8 Apr 2022 08:03:45 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+Message-ID: <Yk/CMUZ6zRSzYruS@atomide.com>
+References: <20220325161144.1901695-1-maxime@cerno.tech>
+ <20220325161144.1901695-4-maxime@cerno.tech>
+ <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
+ <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
+ <20220330084710.3r6b5pjspz5hdmy6@houat>
+ <YkV3ch7R7YxlATW+@atomide.com>
+ <20220407075356.lmqnax35cewiwh4k@houat>
+ <Yk6a7meIO+fV5J1D@atomide.com>
+ <Yk7GFWdJd2EN7L1V@atomide.com>
+ <20220407134514.sct7g23yto47ylgr@houat>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFuzieljrADWxPIJnfTI8Y9r+zgewKpefSQraMCHrA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmuu7/pf5JBl+umVrMP3KO1aJ58Xo2
-        i74XD5kt9r7eym6x6fE1VovLu+awWcw4v4/JYtGyVmaL1r1H2C3+79nB7sDlsWlVJ5vHnWt7
-        2Dz2z13D7rF5Sb3H501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
-        ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
-        S/PS9fJSS6wMDQyMTIEKE7Izrty5wlawXKji04nHjA2M7fxdjJwcEgImEismnGXvYuTiEBLY
-        zSix6OgqVgjnE6PE0UUtLBDON0aJOaua2WFabq7tY4JI7GWUmN1zlBnCecko0b2ghRWkik1A
-        V2LH4jY2kISIQBuzxPlJxxhBEswCqhJz/vxiBrE5BVwkfny8A9YgLBAt8fjUJzCbRUBF4t6H
-        Z2A2r4ClxKzTCxkhbEGJkzOfsEDMkZfY/nYOM8RJChI/ny4DqxcRsJKY/Gcr1C5xiZdHj4B9
-        JyGwkkPiy9urQEUcQI6LxN/jpRC9whKvjm+Bek1K4vO7vWwQJR4Si/5IQYQzJN4uX88IYdtL
-        HLgyhwWkhFlAU2L9Ln2ITXwSvb+fMEF08kp0tAlBVKtKNL+7ygJhS0tM7O5mhbA9JO4+2M8y
-        gVFxFpK/ZiH5axaS+2chLFvAyLKKUTK1oDg3PbXYtMAwL7UcHt/J+bmbGMFJVstzB+PdBx/0
-        DjEycTAeYpTgYFYS4a3K9UkS4k1JrKxKLcqPLyrNSS0+xGgKDOyJzFKiyfnANJ9XEm9oYmlg
-        YmZmZmJpbGaoJM57On1DopBAemJJanZqakFqEUwfEwenVANT2BuLP1y1Z64ynyzo/zrt7bqE
-        xC/3bu80mtc9y+TnvNl65Uo/9lzuUop+LLun4Phi3inqi+de3/6r4NQEdQdbw7M2t5betH5f
-        ff/b5kfV9gcOst84xNC8NpLbXs2d5YrtFNMThUrluet3GfNx9YYm3bxxpDbJ2Um6J3p26MRN
-        23Oq5iRnl3C1PiiN+3VGnWGxUyLb/0nWkhe+3RdcxdZ8l8s1xt1x5aangRvtQ6PES5Y+eePY
-        7/Q8JzCtu5737JE03lzZW84HJSeFXGX78ZXz+TqWzUvVudxvT98z+4zIL70UiZlC32RjEkM2
-        l5tdrTTevGq5mkfIxIX2y6fv2ZPiFbvr2BPBWYE/f6sdfJjYo8RSnJFoqMVcVJwIALQW1pM7
-        BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTvf/Uv8kg54dUhbzj5xjtWhevJ7N
-        ou/FQ2aLva+3sltsenyN1eLyrjlsFjPO72OyWLSsldmide8Rdov/e3awO3B5bFrVyeZx59oe
-        No/9c9ewe2xeUu/xeZNcAGsUl01Kak5mWWqRvl0CV8aVO1fYCpYLVXw68ZixgbGdv4uRk0NC
-        wETi5to+JhBbSGA3o8S6n4IQcWmJ6xsnsEPYwhIr/z0HsrmAap4zSmzb95cRJMEmoCuxY3Eb
-        G0hCRKCHWeLf+yNgHcwCqhJz/vxihpg6lVFibZcOiM0p4CLx4+MdVhBbWCBSonl6K9ggFgEV
-        iXsfnoHFeQUsJWadXsgIYQtKnJz5hKWLkQNopp5E20ZGiPHyEtvfzmGGOE5B4ufTZWCtIgJW
-        EpP/bIWqEZd4efQI+wRG4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0u
-        zUvXS87P3cQIjjMtzR2M21d90DvEyMTBeIhRgoNZSYS3KtcnSYg3JbGyKrUoP76oNCe1+BCj
-        NAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQYmCcXJuWxHu2fUzJFRn5GwTv+FwbLvM23y
-        Pmw8scM95bn9x8wKkX2Tl6yS4lm+95rcv1faz/XTLTwKAlPCzzB4H5zAeSx3ncqppy+MwoOX
-        /2vd1/tv/bNcrodHeHw279t8QOD5x+SjIv+bf3huKRTpdjH+sN5073vW9dJzeSN/Wf5/aXfn
-        rm+nnESYNEuMSdqXySbS/htXtPqrnuO5pHRi4VLJQpuo5xHXg2sO/7XSlE5bYbY7q1W49sM0
-        h/wmmRMBa0sKtRcaZxmzhLRN23361dMItQ2TVq1U3npl8mSNV6dNnd5IaZZ7X+svFDh85NVu
-        W63jv6WnaK7505S14N7CGuPLSQGLW3nr7y3+f0nHQomlOCPRUIu5qDgRACZlYqgiAwAA
-X-CMS-MailID: 20220408030327epcas5p44b95cb7b423f1a21b52d250bcf4de4a6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220407192621epcas5p12f91bf50c90695f6e4547c7d5fe7037a
-References: <CGME20220407192621epcas5p12f91bf50c90695f6e4547c7d5fe7037a@epcas5p1.samsung.com>
-        <20220407192611.15353-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220407134514.sct7g23yto47ylgr@houat>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof
+* Maxime Ripard <maxime@cerno.tech> [220407 13:43]:
+> On Thu, Apr 07, 2022 at 02:08:05PM +0300, Tony Lindgren wrote:
+> > It now boots, but does a lot of checks on the clocks before the timers
+> > get initialized compared to v5.18-rc1.
+> 
+> I was about to say that this is fairly normal with the new behaviour,
+> but I've reworked the initial patch in that discussion to only call into
+> clk_set_rate_range if there was a range on that clock to begin with.
+> 
+> It should remove the huge majority of the checks you mentioned (and
+> hopefully get rid of most of the side effects as well).
 
->-----Original Message-----
->From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
->Sent: Friday, April 8, 2022 12:56 AM
->To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Rob Herring
-><robh+dt@kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar
-><alim.akhtar@samsung.com>; linux-usb@vger.kernel.org;
->devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
->Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Rob Herring
-><robh@kernel.org>
->Subject: [RESEND PATCH] dt-bindings: usb: samsung,exynos-usb2: include
->usb-hcd schema
->
->Remove parts duplicated with usb-hcd.yaml DT schema and include it
-directly.
->
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->Reviewed-by: Rob Herring <robh@kernel.org>
->---
+OK yeah thanks, looks good to me now. Boot time looks normal, timer clocks
+are right, and runtime PM still works too.
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> It shouldn't be there anymore after that rework, but I couldn't find
+> wher the ssi_ssr_fck clock was defined? The only relevant driver seems
+> to be omap_ssi_core.c but I don't see any clock driver registered there
+> either.
 
-> .../bindings/usb/samsung,exynos-usb2.yaml         | 15 ++-------------
-> 1 file changed, 2 insertions(+), 13 deletions(-)
->
->diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-
->usb2.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-
->usb2.yaml
->index 340dff8d19c3..d51f91d1139f 100644
->--- a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
->+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
->@@ -15,9 +15,6 @@ properties:
->       - samsung,exynos4210-ehci
->       - samsung,exynos4210-ohci
->
->-  '#address-cells':
->-    const: 1
->-
->   clocks:
->     maxItems: 1
->
->@@ -46,15 +43,6 @@ properties:
->       Only for controller in EHCI mode, if present, specifies the GPIO
-that
->       needs to be pulled up for the bus to be powered.
->
->-  '#size-cells':
->-    const: 0
->-
->-patternProperties:
->-  "^.*@[0-9a-f]{1,2}$":
->-    description: The hard wired USB devices
->-    type: object
->-    $ref: /usb/usb-device.yaml
->-
-> required:
->   - compatible
->   - clocks
->@@ -64,6 +52,7 @@ required:
->   - phy-names
->
-> allOf:
->+  - $ref: usb-hcd.yaml#
->   - if:
->       properties:
->         compatible:
->@@ -73,7 +62,7 @@ allOf:
->       properties:
->         samsung,vbus-gpio: false
->
->-additionalProperties: false
->+unevaluatedProperties: false
->
-> examples:
->   - |
->--
->2.32.0
+I'm not seeing this warning any longer :)
 
+FYI, this clock is defined here:
+
+$ git grep ssi_ssr_fck_3430es2
+arch/arm/boot/dts/omap36xx-omap3430es2plus-clocks.dtsi: ssi_ssr_fck: ssi_ssr_fck_3430es2 {
+drivers/clk/ti/clk-3xxx.c:      DT_CLK(NULL, "ssi_ssr_fck", "ssi_ssr_fck_3430es2"),
+
+Yeah it's confusing, the clock is still created based on the node name.
+I have some clean-up patches coming to fix most of the related make dtbs
+checks warnings now that the clock driver changes got merged.
+
+Regards,
+
+Tony
 
