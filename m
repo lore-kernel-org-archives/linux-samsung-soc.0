@@ -2,156 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9C2C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 15:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91369C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 16:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237763AbiDHPqK (ORCPT
+        id S230084AbiDHQYR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Apr 2022 11:46:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
+        Fri, 8 Apr 2022 12:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237751AbiDHPqI (ORCPT
+        with ESMTP id S230048AbiDHQYN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Apr 2022 11:46:08 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6CCF939DF;
-        Fri,  8 Apr 2022 08:44:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649432643; x=1680968643;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gcJtOPIX2/0B3YxiUGz/EyzDxp0SAsqb/v7kxf3M3BU=;
-  b=YIlwpyceiHV/M2vrggkScgP/UKLnGgX4BOlZCRHXsY94hevyknTt0V+F
-   W4tGLSACYa5ddnCJtgehG86r8Fw4X6+M4ordmitHeV1GeoQPzSt+fFvP2
-   EL6IQKBWeVhjawwd1UGPcQkfPKw02Ev2XQXkywbKSQl6AZ2g164mfsAwf
-   74PE0+6bFJquoP0IneXW6qdWQY/eec5Diaaz8q9L4xRyWsUndLUE0BeC3
-   +ejLVXqSJHwQ95Fnl4jb33fZ2Kv21BoMFyKxpGULirjSWcrVz6dzUKIJ7
-   F1kcuvgyvQomHEVjVf1wrp0fOdn8sbEmxXDktcFCpKc+ZSnznDDjjwJRl
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10310"; a="259218709"
-X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="259218709"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 08:43:44 -0700
-X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="589257568"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 08:43:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ncqiH-000Lsk-PD;
-        Fri, 08 Apr 2022 18:39:53 +0300
-Date:   Fri, 8 Apr 2022 18:39:53 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Qianggui Song <qianggui.song@amlogic.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Zyngier <maz@kernel.org>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
+        Fri, 8 Apr 2022 12:24:13 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05FAA9970
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Apr 2022 09:22:08 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id o5-20020a17090ad20500b001ca8a1dc47aso12356756pju.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Apr 2022 09:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A965mAsyYJEY60oPUzTySf4MNDp2Kxb99wjFgK5nVMU=;
+        b=lkXFsTLZpjIkiC4DU4rgzbhRwmNDuhEzrI/qcL10CY3yqxP0IGQrPUuEv5T/43G+gV
+         /bvxMP+xW7IkML01oJBSZhu4GWFSF/pqFasV/pMNCipPXLP2LAWFqTLBcu5Mt1wODsVF
+         SkUo3BirkLt5oTUVN3syjidvzlZOzNFrruc8Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A965mAsyYJEY60oPUzTySf4MNDp2Kxb99wjFgK5nVMU=;
+        b=0GPCcNrisHBFbl/hEZtZsvUVSgEGI6VCCmsUsjW1WTJQabOf6fKd0YzApAo0s0jdTQ
+         gN7+tyrcDxuHFgVdvKK6PUxy9mJjsjMcUoJn97V8OHpgfCat8ickDWQSip2ndM+TUpbo
+         yrdHIXrb88ZomVehL1fDV33RAcTbatOC1S+PIPMB/kSSuUqmtiKXLDhpfV79sOvvOAgx
+         VHPfYSv6LX+WsitdkaARX3T1IJUjlOgzMLGZoPUaDQf7qrpGzfWYJR6hUboXt4b/A2uO
+         lIJPtiwCKqaAHa8L2TTtY827jAH8Rkl/Pqg2hbxL1kJqld746dlNu1+gwv2TmLVZ0Gta
+         jZGw==
+X-Gm-Message-State: AOAM53131LWA4uQQBboSNw/Nw2MFaaIUBxcJP7sIFCCE6KJCEiwHcKfR
+        vxE2oFJm1XnQFmxvu/Dly55oLg==
+X-Google-Smtp-Source: ABdhPJwGAupaKEyOuAPcI9xDTYp03iVdeJoRTwO6oUQTrBK1ewBYOqJTMtyrdNdY/Cb+utNdh1yoAw==
+X-Received: by 2002:a17:90a:cf91:b0:1ca:a055:b639 with SMTP id i17-20020a17090acf9100b001caa055b639mr22667437pju.204.1649434928269;
+        Fri, 08 Apr 2022 09:22:08 -0700 (PDT)
+Received: from j-ThinkPad-E14-Gen-2.domain.name ([45.249.78.214])
+        by smtp.gmail.com with ESMTPSA id n18-20020a056a0007d200b004fdac35672fsm24929863pfu.68.2022.04.08.09.22.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Apr 2022 09:22:07 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v4 05/13] pinctrl: samsung: Switch to use
- for_each_gpiochip_node() helper
-Message-ID: <YlBXSVyj88CqjGj4@smile.fi.intel.com>
-References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
- <20220401103604.8705-6-andriy.shevchenko@linux.intel.com>
- <d1f873c6-150f-5f4d-7aa8-7bb15823d991@linaro.org>
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 00/11] drm: bridge: Add Samsung MIPI DSIM bridge
+Date:   Fri,  8 Apr 2022 21:50:57 +0530
+Message-Id: <20220408162108.184583-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1f873c6-150f-5f4d-7aa8-7bb15823d991@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Apr 08, 2022 at 05:22:21PM +0200, Krzysztof Kozlowski wrote:
-> On 01/04/2022 12:35, Andy Shevchenko wrote:
-> > Switch the code to use for_each_gpiochip_node() helper.
+This series supports common bridge support for Samsung MIPI DSIM
+which is used in Exynos and i.MX8MM SoC's.
 
-(...)
+Previous RFC can be available here [1].
 
-> >  /*
-> >   * Iterate over all driver pin banks to find one matching the name of node,
-> >   * skipping optional "-gpio" node suffix. When found, assign node to the bank.
-> >   */
-> > -static void samsung_banks_of_node_get(struct device *dev,
-> > -				      struct samsung_pinctrl_drv_data *d,
-> > -				      struct device_node *node)
-> > +static void samsung_banks_node_get(struct device *dev, struct samsung_pinctrl_drv_data *d)
-> 
-> This is worth simplification anyway, so please split it to separate patch.
+The final bridge supports both the Exynos and i.MX8MM DSI devices.
 
-Not sure what to do and why it worth an additional churn.
+On, summary this patch-set break the entire DSIM driver into
+- platform specific glue code for platform ops, component_ops.
+- common bridge driver which handle platform glue init and invoke.
 
-> >  {
-> >  	const char *suffix = "-gpio-bank";
-> >  	struct samsung_pin_bank *bank;
-> > -	struct device_node *child;
-> > +	struct fwnode_handle *child;
-> >  	/* Pin bank names are up to 4 characters */
-> >  	char node_name[20];
-> >  	unsigned int i;
-> > @@ -1038,17 +1037,17 @@ static void samsung_banks_of_node_get(struct device *dev,
-> >  			continue;
-> >  		}
-> >  
-> > -		for_each_child_of_node(node, child) {
-> > -			if (!of_find_property(child, "gpio-controller", NULL))
-> > -				continue;
-> 
-> This does not look equivalent. There are nodes without this property.
+Patch 0000: 	Samsung DSIM bridge
 
-Not sure I understand why not. The macro checks for the property and
-iterates over nodes that have this property.
+Patch 0001: 	platform init flag via driver_data
 
-Can you elaborate, please?
+Patch 0002/9:   bridge fixes, atomic API's
 
-> > -			if (of_node_name_eq(child, node_name))
-> > +		for_each_gpiochip_node(dev, child) {
-> > +			struct device_node *np = to_of_node(child);
-> > +
-> > +			if (of_node_name_eq(np, node_name))
-> >  				break;
-> > -			else if (of_node_name_eq(child, bank->name))
-> > +			if (of_node_name_eq(np, bank->name))
-> >  				break;
-> >  		}
-> 
-> This patch has to wait till someone provides you a tested-by. I might do
-> it around next week.
+Patch 0010:	document fsl,imx8mm-mipi-dsim
 
-Fine with me, I will drop it from my repo for now.
+Patch 0011:	add i.MX8MM DSIM support
 
-Thanks for review!
+Tested in Engicam i.Core MX8M Mini SoM.
+
+Anyone interested, please have a look on this repo [2]
+
+[2] https://github.com/openedev/kernel/tree/imx8mm-dsi-v1 
+[1] https://lore.kernel.org/linux-arm-kernel/YP2j9k5SrZ2%2Fo2%2F5@ravnborg.org/T/
+
+Any inputs?
+Jagan.
+
+Jagan Teki (11):
+  drm: bridge: Add Samsung DSIM bridge driver
+  drm: bridge: samsung-dsim: Handle platform init via driver_data
+  drm: bridge: samsung-dsim: Mark PHY as optional
+  drm: bridge: samsung-dsim: Add DSI init in bridge pre_enable()
+  drm: bridge: samsung-dsim: Fix PLL_P (PMS_P) offset
+  drm: bridge: samsung-dsim: Add module init, exit
+  drm: bridge: samsung-dsim: Add atomic_check
+  drm: bridge: samsung-dsim: Add atomic_get_input_bus_fmts
+  drm: bridge: samsung-dsim: Add input_bus_flags
+  dt-bindings: display: exynos: dsim: Add NXP i.MX8MM support
+  drm: bridge: samsung-dsim: Add i.MX8MM support
+
+ .../bindings/display/exynos/exynos_dsim.txt   |    1 +
+ MAINTAINERS                                   |   12 +
+ drivers/gpu/drm/bridge/Kconfig                |   12 +
+ drivers/gpu/drm/bridge/Makefile               |    1 +
+ drivers/gpu/drm/bridge/samsung-dsim.c         | 1803 +++++++++++++++++
+ drivers/gpu/drm/exynos/Kconfig                |    1 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c       | 1704 +---------------
+ include/drm/bridge/samsung-dsim.h             |   97 +
+ 8 files changed, 1982 insertions(+), 1649 deletions(-)
+ create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
+ create mode 100644 include/drm/bridge/samsung-dsim.h
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
