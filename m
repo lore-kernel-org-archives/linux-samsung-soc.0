@@ -2,74 +2,112 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53284C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 06:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CBDC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 07:16:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbiDHHAN (ORCPT
+        id S229566AbiDHHSs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Apr 2022 03:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
+        Fri, 8 Apr 2022 03:18:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbiDHHAL (ORCPT
+        with ESMTP id S229507AbiDHHSr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Apr 2022 03:00:11 -0400
-Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB7B1D4C35;
-        Thu,  7 Apr 2022 23:58:05 -0700 (PDT)
+        Fri, 8 Apr 2022 03:18:47 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE4D1E7443
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Apr 2022 00:16:44 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id bq8so15456197ejb.10
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Apr 2022 00:16:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1649401086;
-  x=1680937086;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XDveWXVaLR/QYk55Nt6b8wyjKKxTT08U/ZfdajNs92I=;
-  b=m+GsHMMDFbt6rdZYMVYyo+r8WvfifKqt1In/oS6q0VT54PN6nFdQCSuU
-   5I/uSfO91FJnDsPjvgimZaZFnWnEtzqWgszkKm2uwY1UF9U1JsBWqMrm1
-   O05WVnxtmPSdhdASZN6ud9zO4E110rvsbK7mgS+Nyfg5U/LPsPgKdsxOa
-   T1geEhnpLTZZ4QFrPOoizODmskrD9xGRcFw7mJoiga4sDf27ssHUZUjAs
-   IreA6cyLJl9gX1NvxQMvF4pba3P9bE1CNLvcbMwT+Wm0bqwDGgzSDgMTD
-   s1S+kL/+SSkll6KfVIKP1SsM/s3jgzWB2NzCao23zwKFhoJ6LbATt1H7h
-   A==;
-Date:   Fri, 8 Apr 2022 08:58:03 +0200
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "krzk@kernel.org" <krzk@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        kernel <kernel@axis.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ieIB5YqKCN+PKXGT2YPOFVPgHW/BR3G7k5u78AwWmig=;
+        b=GcgJvyKPOGEwA1acdO+/0TE7/6G823io8jdY0AOuSRmGqbqrioIZUnDMq8g4JIoaER
+         KwVlPY86OcLfbvqvHXq2jqy71sShCcBthzAmNCZOXq8PT7804u5TSAach/lu3Q9GxXT+
+         Y16TKLuKtjy+WksAlSEbML5TJzj6WrRXV5YUAvaRJadV6K+F7t9iZra3KYbodEBQae2B
+         nfT4RKsFeRDp6OIVkSGRFsku5AMdL9AuS0VmDqaZLsNxbXpVfwn9OtLH5NJsPaTsn6IF
+         Z21YdpKH1H2+eKO0fFXhn2efRdGZGSitICMgvTHRYNYYqxj2/IzBvBvzMFaW+J2w4yP2
+         56kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ieIB5YqKCN+PKXGT2YPOFVPgHW/BR3G7k5u78AwWmig=;
+        b=r/XT7b8Mc6j6SDgCkkM/A0M7qq2+h9boM07cmqsl9HeRTAm/ddO5/0QsLj35ng7JTU
+         rtSWfovA3phE7WS4Tx8Lek/kNKt2iIfRjxPL8vZOUtCtEaCFzDwh3UxWL+iUP6JbJFqy
+         TZFGv/RJWRFbGp6uw150rF9nemzW0eNrKl431td9uk1wVQe2jJE6TfAW4OmJQtZsGZZa
+         NRyltO3etYUPCotd/hqOvOi2UQYJh4iR8+3rSnxw6nG7mAIl1PQEfDueRumXvbefpqI9
+         zYSmW40fb0wsulfUvvA2ROOYRyps+aYzRBdQs1fL+EigM4ZWBCZe1hB9aHSWsyxyLri3
+         iw+w==
+X-Gm-Message-State: AOAM5333LUxRb3TM88ST1WKJeuXlwH2qLA7eZUTmMHGFJFBGD8mrFC++
+        vhvMdxmY+7KwelFnQKwYu5Lf0g==
+X-Google-Smtp-Source: ABdhPJwzgDoQ0K2hEotiMSP4godR914nen/RCVo6vbJ+AvYQCq2Vhtw0UBtd9Jl/fMpd3FmrhXEVaQ==
+X-Received: by 2002:a17:907:8a02:b0:6e7:18b9:5f43 with SMTP id sc2-20020a1709078a0200b006e718b95f43mr17251110ejc.148.1649402198311;
+        Fri, 08 Apr 2022 00:16:38 -0700 (PDT)
+Received: from [192.168.0.187] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id c3-20020a17090654c300b006e4e1a3e9d5sm7963714ejp.144.2022.04.08.00.16.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Apr 2022 00:16:37 -0700 (PDT)
+Message-ID: <f56df7f8-9ec5-efe4-df36-c3e2151b1cf0@linaro.org>
+Date:   Fri, 8 Apr 2022 09:16:37 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
 Subject: Re: [PATCH v3 1/4] dt-bindings: timer: exynos4210-mct: Add ARTPEC-8
  MCT support
-Message-ID: <20220408065803.GA31189@axis.com>
+Content-Language: en-US
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        tglx@linutronix.de, daniel.lezcano@linaro.org
+Cc:     kernel@axis.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org
 References: <20220407074432.424578-1-vincent.whitchurch@axis.com>
  <20220407074432.424578-2-vincent.whitchurch@axis.com>
- <Yk79acnuZE1Wj/3s@robh.at.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Yk79acnuZE1Wj/3s@robh.at.kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220407074432.424578-2-vincent.whitchurch@axis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 07, 2022 at 05:04:09PM +0200, Rob Herring wrote:
-> On Thu, Apr 07, 2022 at 09:44:29AM +0200, Vincent Whitchurch wrote:
-> >  .../timer/samsung,exynos4210-mct.yaml         | 26 +++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
+On 07/04/2022 09:44, Vincent Whitchurch wrote:
+> The ARTPEC-8 has an MCT with 4 global and 8 local timer interrupts.
 > 
-> What's this based on? Doesn't apply on v5.18-rc1.
+> The SoC has a quad-core Cortex-A53 and a single-core Cortex-A5 which
+> share one MCT with one global and eight local timers.  The Cortex-A53
+> and Cortex-A5 do not have cache-coherency between them, and therefore
+> run two separate kernels.
+> 
+> The Cortex-A53 boots first and starts the global free-running counter
+> and also registers a clock events device using the global timer.  (This
+> global timer clock events is usually replaced by arch timer clock events
+> for each of the cores.)
+> 
+> When the A5 boots (via the A53), it should not use the global timer
+> interrupts or write to the global timer registers.  This is because even
+> if there are four global comparators, the control bits for all four are
+> in the same registers, and we would need to synchronize between the
+> cpus.  Instead, the global timer FRC (already started by the A53) should
+> be used as the clock source, and one of the local timers which are not
+> used by the A53 can be used for clock events on the A5.
+> 
+> To support this hardware, add a compatible for the MCT as well as two
+> new properties to describe the hardware-mandated sharing of the FRC and
+> dedicating local timers to specific processors.
+> 
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> ---
+> 
 
-This series is still based on Krzysztof's "dt-bindings: timer:
-exynos4210-mct: describe known hardware and its interrupts".  The cover
-letter mentions this but not very prominently, sorry.
+This is rebased on my patch:
+https://lore.kernel.org/lkml/20220407194127.19004-1-krzysztof.kozlowski@linaro.org/
 
-That patch was reviewed a while ago but doesn't seem to have made it to
-v5.18-rc1, but I see that Krzysztof reposted it yesterday: 
 
- https://lore.kernel.org/lkml/20220407194127.19004-1-krzysztof.kozlowski@linaro.org/
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
