@@ -2,104 +2,201 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144ECC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Apr 2022 20:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15181C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 03:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230490AbiDGUuV (ORCPT
+        id S233833AbiDHDFr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 16:50:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40862 "EHLO
+        Thu, 7 Apr 2022 23:05:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230238AbiDGUuM (ORCPT
+        with ESMTP id S229798AbiDHDFq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Apr 2022 16:50:12 -0400
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C01A339BD94
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 13:42:33 -0700 (PDT)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-2eb57fd3f56so75088517b3.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Apr 2022 13:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cRs+Utv0bTIZPi+vQmKGar4cBWgLOZK71/Ro9IeVqw4=;
-        b=Buk9C9oiM+HkYw7Mv+cJeR/Hls1sxoiGDZ5rZRp+oI3t1Fs/KF09Qh5WGhgevX6+nf
-         4hELHaMgJ2GwlPL4ZSE5gHaEDk4yyUWkwbZs5smhYHXlNLd6V/65OehYjua8pGqmQR02
-         Bi77bvRucjKjSzA64gTgUhTGuElaLed7eBm4/5WKj6XAe00dl8JWFZeP1xJypdfCb9lq
-         9kayZsMTDZNeC+JqVXDxk2wYDF2v46EPRAOETexUjYNGcCCtln+fn6XL+ZKIkOmKzBa+
-         7vOfXkhUHLfykdVsGF56kMD6eydE7gsDhkcvaizmoATDZccES6wHbOIhmRq1rxGHsqD2
-         mxwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cRs+Utv0bTIZPi+vQmKGar4cBWgLOZK71/Ro9IeVqw4=;
-        b=XuES7ER5DIrKLjlxudlwdYaLdEWWAqhmMeAMmN4Du7T37SrJnzERWQRbOllE6Yp69S
-         wmbQ1OX+5V24ooMsS29yBRftgnfwXvHMYyNRsv75TK0lLpxJzdoiYDKuuzQqhlWZ5jc/
-         ny6OitHe4ImGGezkhNmG8SFw2Otkd5uUen8SS9GPH8LMMTYq8GebgZA9ZssEkJFCmARx
-         nglJqeJCoi1fNAIqIScjvM3f2M9h1UsIh9aFYKV4rEH/9PwcYjokwpzd2PiqmzzlWaV4
-         7LWlRryTxJ7Jnm9StH87eIZlCgAgar95/LtUAd48KTtALoS38usUtA0T/HOPki/3MM5X
-         Fa1w==
-X-Gm-Message-State: AOAM531Xao03BPgXw9pQXW6Vc1BvtBzykS1+av6MjfD+fAH7MhhYHtz9
-        MapSqf+/8zXE+HVnqLXSA1SMmXSkmEfRhucTRmjBOQ==
-X-Google-Smtp-Source: ABdhPJzXoseSIM+fkHPEcykLSfHutPaBoAw5VhzO9y9DZzxiy/OVlWbQjDJ94QLmeRRPVFCO6hnJEVIPsk6RpYLaqYU=
-X-Received: by 2002:a81:5dc5:0:b0:2eb:3feb:686c with SMTP id
- r188-20020a815dc5000000b002eb3feb686cmr13733449ywb.268.1649364152378; Thu, 07
- Apr 2022 13:42:32 -0700 (PDT)
+        Thu, 7 Apr 2022 23:05:46 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA7411BCEF
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Apr 2022 20:03:41 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220408030338epoutp02ab585af7b0b23341db3f753b5c9c4ebd~jzMFAzp9Y1650416504epoutp02d
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Apr 2022 03:03:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220408030338epoutp02ab585af7b0b23341db3f753b5c9c4ebd~jzMFAzp9Y1650416504epoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1649387018;
+        bh=NqnIwYUo6niXNmWjuw14e36GtazGL6Nf5Zv0Vep+wGQ=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=iJasyV43RmJQC/Ajgqu43vfcBKIIgTZcGDu2RsoHFgMvftOj4euURnO2TQgrWv9iM
+         eEeHyhA51MxDJCtkhdK2Fjxbclho5ScCmmfkOVoq6EeXCVm31sUYj1r9BpyiV63cvS
+         6ChvPdN4gcPaD+iWsyQBOnZv6ftleRWhdvs5nEJE=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220408030338epcas5p3ea48e7ae232b11e4415ee868d3ed3087~jzMEKWfBC0231302313epcas5p36;
+        Fri,  8 Apr 2022 03:03:38 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KZNNy36LBz4x9Q1; Fri,  8 Apr
+        2022 03:03:30 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        28.32.06423.FF5AF426; Fri,  8 Apr 2022 12:03:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220408030327epcas5p44b95cb7b423f1a21b52d250bcf4de4a6~jzL6XASwC3226932269epcas5p4r;
+        Fri,  8 Apr 2022 03:03:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220408030327epsmtrp2baaa5716cd2e0f04104662370e67d348~jzL6WR6cq0577705777epsmtrp2e;
+        Fri,  8 Apr 2022 03:03:27 +0000 (GMT)
+X-AuditID: b6c32a49-b13ff70000001917-10-624fa5ff320e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FD.C4.24342.FF5AF426; Fri,  8 Apr 2022 12:03:27 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220408030325epsmtip16e87273227a4af2a00c8ff49367ec743~jzL4Sh8N70208202082epsmtip1Q;
+        Fri,  8 Apr 2022 03:03:25 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc:     "'Rob Herring'" <robh@kernel.org>
+In-Reply-To: <20220407192611.15353-1-krzysztof.kozlowski@linaro.org>
+Subject: RE: [RESEND PATCH] dt-bindings: usb: samsung,exynos-usb2: include
+ usb-hcd schema
+Date:   Fri, 8 Apr 2022 08:33:23 +0530
+Message-ID: <000001d84af5$37e001e0$a7a005a0$@samsung.com>
 MIME-Version: 1.0
-References: <20220405091750.3076973-1-arnd@kernel.org>
-In-Reply-To: <20220405091750.3076973-1-arnd@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 7 Apr 2022 22:42:20 +0200
-Message-ID: <CACRpkdbVHOyq_dt7dtr8htzQqJ0BbL2K4_p1HX97miJJ4qnUnQ@mail.gmail.com>
-Subject: Re: [PATCH 00/12] ARM: ARMv5 multiplatform conversions
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Hubert Feurstein <hubert.feurstein@contec.at>,
-        Lukasz Majewski <lukma@denx.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Sudeep Holla <Sudeep.Holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFuzieljrADWxPIJnfTI8Y9r+zgewKpefSQraMCHrA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmuu7/pf5JBl+umVrMP3KO1aJ58Xo2
+        i74XD5kt9r7eym6x6fE1VovLu+awWcw4v4/JYtGyVmaL1r1H2C3+79nB7sDlsWlVJ5vHnWt7
+        2Dz2z13D7rF5Sb3H501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
+        ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
+        S/PS9fJSS6wMDQyMTIEKE7Izrty5wlawXKji04nHjA2M7fxdjJwcEgImEismnGXvYuTiEBLY
+        zSix6OgqVgjnE6PE0UUtLBDON0aJOaua2WFabq7tY4JI7GWUmN1zlBnCecko0b2ghRWkik1A
+        V2LH4jY2kISIQBuzxPlJxxhBEswCqhJz/vxiBrE5BVwkfny8A9YgLBAt8fjUJzCbRUBF4t6H
+        Z2A2r4ClxKzTCxkhbEGJkzOfsEDMkZfY/nYOM8RJChI/ny4DqxcRsJKY/Gcr1C5xiZdHj4B9
+        JyGwkkPiy9urQEUcQI6LxN/jpRC9whKvjm+Bek1K4vO7vWwQJR4Si/5IQYQzJN4uX88IYdtL
+        HLgyhwWkhFlAU2L9Ln2ITXwSvb+fMEF08kp0tAlBVKtKNL+7ygJhS0tM7O5mhbA9JO4+2M8y
+        gVFxFpK/ZiH5axaS+2chLFvAyLKKUTK1oDg3PbXYtMAwL7UcHt/J+bmbGMFJVstzB+PdBx/0
+        DjEycTAeYpTgYFYS4a3K9UkS4k1JrKxKLcqPLyrNSS0+xGgKDOyJzFKiyfnANJ9XEm9oYmlg
+        YmZmZmJpbGaoJM57On1DopBAemJJanZqakFqEUwfEwenVANT2BuLP1y1Z64ynyzo/zrt7bqE
+        xC/3bu80mtc9y+TnvNl65Uo/9lzuUop+LLun4Phi3inqi+de3/6r4NQEdQdbw7M2t5betH5f
+        ff/b5kfV9gcOst84xNC8NpLbXs2d5YrtFNMThUrluet3GfNx9YYm3bxxpDbJ2Um6J3p26MRN
+        23Oq5iRnl3C1PiiN+3VGnWGxUyLb/0nWkhe+3RdcxdZ8l8s1xt1x5aangRvtQ6PES5Y+eePY
+        7/Q8JzCtu5737JE03lzZW84HJSeFXGX78ZXz+TqWzUvVudxvT98z+4zIL70UiZlC32RjEkM2
+        l5tdrTTevGq5mkfIxIX2y6fv2ZPiFbvr2BPBWYE/f6sdfJjYo8RSnJFoqMVcVJwIALQW1pM7
+        BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTvf/Uv8kg54dUhbzj5xjtWhevJ7N
+        ou/FQ2aLva+3sltsenyN1eLyrjlsFjPO72OyWLSsldmide8Rdov/e3awO3B5bFrVyeZx59oe
+        No/9c9ewe2xeUu/xeZNcAGsUl01Kak5mWWqRvl0CV8aVO1fYCpYLVXw68ZixgbGdv4uRk0NC
+        wETi5to+JhBbSGA3o8S6n4IQcWmJ6xsnsEPYwhIr/z0HsrmAap4zSmzb95cRJMEmoCuxY3Eb
+        G0hCRKCHWeLf+yNgHcwCqhJz/vxihpg6lVFibZcOiM0p4CLx4+MdVhBbWCBSonl6K9ggFgEV
+        iXsfnoHFeQUsJWadXsgIYQtKnJz5hKWLkQNopp5E20ZGiPHyEtvfzmGGOE5B4ufTZWCtIgJW
+        EpP/bIWqEZd4efQI+wRG4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0u
+        zUvXS87P3cQIjjMtzR2M21d90DvEyMTBeIhRgoNZSYS3KtcnSYg3JbGyKrUoP76oNCe1+BCj
+        NAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQYmCcXJuWxHu2fUzJFRn5GwTv+FwbLvM23y
+        Pmw8scM95bn9x8wKkX2Tl6yS4lm+95rcv1faz/XTLTwKAlPCzzB4H5zAeSx3ncqppy+MwoOX
+        /2vd1/tv/bNcrodHeHw279t8QOD5x+SjIv+bf3huKRTpdjH+sN5073vW9dJzeSN/Wf5/aXfn
+        rm+nnESYNEuMSdqXySbS/htXtPqrnuO5pHRi4VLJQpuo5xHXg2sO/7XSlE5bYbY7q1W49sM0
+        h/wmmRMBa0sKtRcaZxmzhLRN23361dMItQ2TVq1U3npl8mSNV6dNnd5IaZZ7X+svFDh85NVu
+        W63jv6WnaK7505S14N7CGuPLSQGLW3nr7y3+f0nHQomlOCPRUIu5qDgRACZlYqgiAwAA
+X-CMS-MailID: 20220408030327epcas5p44b95cb7b423f1a21b52d250bcf4de4a6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220407192621epcas5p12f91bf50c90695f6e4547c7d5fe7037a
+References: <CGME20220407192621epcas5p12f91bf50c90695f6e4547c7d5fe7037a@epcas5p1.samsung.com>
+        <20220407192611.15353-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 11:18 AM Arnd Bergmann <arnd@kernel.org> wrote:
+Hi Krzysztof
 
-These two:
+>-----Original Message-----
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
+>Sent: Friday, April 8, 2022 12:56 AM
+>To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Rob Herring
+><robh+dt@kernel.org>; Krzysztof Kozlowski
+><krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar
+><alim.akhtar@samsung.com>; linux-usb@vger.kernel.org;
+>devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+>Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Rob Herring
+><robh@kernel.org>
+>Subject: [RESEND PATCH] dt-bindings: usb: samsung,exynos-usb2: include
+>usb-hcd schema
+>
+>Remove parts duplicated with usb-hcd.yaml DT schema and include it
+directly.
+>
+>Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>Reviewed-by: Rob Herring <robh@kernel.org>
+>---
 
-> Arnd Bergmann (12):
->   ARM: rework endianess selection
->   ARM: ixp4xx: enable multiplatform support
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
+> .../bindings/usb/samsung,exynos-usb2.yaml         | 15 ++-------------
+> 1 file changed, 2 insertions(+), 13 deletions(-)
+>
+>diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-
+>usb2.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-
+>usb2.yaml
+>index 340dff8d19c3..d51f91d1139f 100644
+>--- a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
+>+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
+>@@ -15,9 +15,6 @@ properties:
+>       - samsung,exynos4210-ehci
+>       - samsung,exynos4210-ohci
+>
+>-  '#address-cells':
+>-    const: 1
+>-
+>   clocks:
+>     maxItems: 1
+>
+>@@ -46,15 +43,6 @@ properties:
+>       Only for controller in EHCI mode, if present, specifies the GPIO
+that
+>       needs to be pulled up for the bus to be powered.
+>
+>-  '#size-cells':
+>-    const: 0
+>-
+>-patternProperties:
+>-  "^.*@[0-9a-f]{1,2}$":
+>-    description: The hard wired USB devices
+>-    type: object
+>-    $ref: /usb/usb-device.yaml
+>-
+> required:
+>   - compatible
+>   - clocks
+>@@ -64,6 +52,7 @@ required:
+>   - phy-names
+>
+> allOf:
+>+  - $ref: usb-hcd.yaml#
+>   - if:
+>       properties:
+>         compatible:
+>@@ -73,7 +62,7 @@ allOf:
+>       properties:
+>         samsung,vbus-gpio: false
+>
+>-additionalProperties: false
+>+unevaluatedProperties: false
+>
+> examples:
+>   - |
+>--
+>2.32.0
 
-I booted on the Gateway GW-2348 which has some ethernet,
-PCI and compact flash, LED and a button, so I could test a
-whole lot of stuff.
 
-However when switching over to multiplatform I needed to severely
-overhaul the ixp4xx_defconfig for it to bring the same drivers in as
-before, I will send my patch for that which I think need to go in in
-tandem with this rework for a smooth transition.
-
-Yours,
-Linus Walleij
