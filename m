@@ -2,86 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C332FC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 05:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53284C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Apr 2022 06:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234557AbiDHFFv (ORCPT
+        id S229480AbiDHHAN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Apr 2022 01:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60762 "EHLO
+        Fri, 8 Apr 2022 03:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234523AbiDHFFu (ORCPT
+        with ESMTP id S229453AbiDHHAL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Apr 2022 01:05:50 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36CEBB36A3;
-        Thu,  7 Apr 2022 22:03:47 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 295158125;
-        Fri,  8 Apr 2022 05:01:22 +0000 (UTC)
-Date:   Fri, 8 Apr 2022 08:03:45 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
-Message-ID: <Yk/CMUZ6zRSzYruS@atomide.com>
-References: <20220325161144.1901695-1-maxime@cerno.tech>
- <20220325161144.1901695-4-maxime@cerno.tech>
- <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
- <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
- <20220330084710.3r6b5pjspz5hdmy6@houat>
- <YkV3ch7R7YxlATW+@atomide.com>
- <20220407075356.lmqnax35cewiwh4k@houat>
- <Yk6a7meIO+fV5J1D@atomide.com>
- <Yk7GFWdJd2EN7L1V@atomide.com>
- <20220407134514.sct7g23yto47ylgr@houat>
+        Fri, 8 Apr 2022 03:00:11 -0400
+Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB7B1D4C35;
+        Thu,  7 Apr 2022 23:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1649401086;
+  x=1680937086;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XDveWXVaLR/QYk55Nt6b8wyjKKxTT08U/ZfdajNs92I=;
+  b=m+GsHMMDFbt6rdZYMVYyo+r8WvfifKqt1In/oS6q0VT54PN6nFdQCSuU
+   5I/uSfO91FJnDsPjvgimZaZFnWnEtzqWgszkKm2uwY1UF9U1JsBWqMrm1
+   O05WVnxtmPSdhdASZN6ud9zO4E110rvsbK7mgS+Nyfg5U/LPsPgKdsxOa
+   T1geEhnpLTZZ4QFrPOoizODmskrD9xGRcFw7mJoiga4sDf27ssHUZUjAs
+   IreA6cyLJl9gX1NvxQMvF4pba3P9bE1CNLvcbMwT+Wm0bqwDGgzSDgMTD
+   s1S+kL/+SSkll6KfVIKP1SsM/s3jgzWB2NzCao23zwKFhoJ6LbATt1H7h
+   A==;
+Date:   Fri, 8 Apr 2022 08:58:03 +0200
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "krzk@kernel.org" <krzk@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        kernel <kernel@axis.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: timer: exynos4210-mct: Add ARTPEC-8
+ MCT support
+Message-ID: <20220408065803.GA31189@axis.com>
+References: <20220407074432.424578-1-vincent.whitchurch@axis.com>
+ <20220407074432.424578-2-vincent.whitchurch@axis.com>
+ <Yk79acnuZE1Wj/3s@robh.at.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20220407134514.sct7g23yto47ylgr@houat>
+In-Reply-To: <Yk79acnuZE1Wj/3s@robh.at.kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-* Maxime Ripard <maxime@cerno.tech> [220407 13:43]:
-> On Thu, Apr 07, 2022 at 02:08:05PM +0300, Tony Lindgren wrote:
-> > It now boots, but does a lot of checks on the clocks before the timers
-> > get initialized compared to v5.18-rc1.
+On Thu, Apr 07, 2022 at 05:04:09PM +0200, Rob Herring wrote:
+> On Thu, Apr 07, 2022 at 09:44:29AM +0200, Vincent Whitchurch wrote:
+> >  .../timer/samsung,exynos4210-mct.yaml         | 26 +++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
 > 
-> I was about to say that this is fairly normal with the new behaviour,
-> but I've reworked the initial patch in that discussion to only call into
-> clk_set_rate_range if there was a range on that clock to begin with.
-> 
-> It should remove the huge majority of the checks you mentioned (and
-> hopefully get rid of most of the side effects as well).
+> What's this based on? Doesn't apply on v5.18-rc1.
 
-OK yeah thanks, looks good to me now. Boot time looks normal, timer clocks
-are right, and runtime PM still works too.
+This series is still based on Krzysztof's "dt-bindings: timer:
+exynos4210-mct: describe known hardware and its interrupts".  The cover
+letter mentions this but not very prominently, sorry.
 
-> It shouldn't be there anymore after that rework, but I couldn't find
-> wher the ssi_ssr_fck clock was defined? The only relevant driver seems
-> to be omap_ssi_core.c but I don't see any clock driver registered there
-> either.
+That patch was reviewed a while ago but doesn't seem to have made it to
+v5.18-rc1, but I see that Krzysztof reposted it yesterday: 
 
-I'm not seeing this warning any longer :)
-
-FYI, this clock is defined here:
-
-$ git grep ssi_ssr_fck_3430es2
-arch/arm/boot/dts/omap36xx-omap3430es2plus-clocks.dtsi: ssi_ssr_fck: ssi_ssr_fck_3430es2 {
-drivers/clk/ti/clk-3xxx.c:      DT_CLK(NULL, "ssi_ssr_fck", "ssi_ssr_fck_3430es2"),
-
-Yeah it's confusing, the clock is still created based on the node name.
-I have some clean-up patches coming to fix most of the related make dtbs
-checks warnings now that the clock driver changes got merged.
-
-Regards,
-
-Tony
-
+ https://lore.kernel.org/lkml/20220407194127.19004-1-krzysztof.kozlowski@linaro.org/
