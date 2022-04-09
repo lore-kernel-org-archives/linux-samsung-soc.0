@@ -2,139 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E7FC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Apr 2022 15:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A36C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Apr 2022 16:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242513AbiDIPjt (ORCPT
+        id S242734AbiDIQyc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Apr 2022 11:39:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60626 "EHLO
+        Sat, 9 Apr 2022 12:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237834AbiDIPjs (ORCPT
+        with ESMTP id S242774AbiDIQyb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Apr 2022 11:39:48 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7823E5A092
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Apr 2022 08:37:40 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id s18so251232ejr.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Apr 2022 08:37:40 -0700 (PDT)
+        Sat, 9 Apr 2022 12:54:31 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE73DFDF3
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Apr 2022 09:52:22 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id u15so4315553ejf.11
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Apr 2022 09:52:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Gzglw2XqSCHwkCRUmugqAY3H/7JuWh/cx5iFBk0ayFQ=;
-        b=ETF6Ldmf7dVZ0i+ZXbQnqUvEBNUeXXxbamzxGWAAbpf+EOdA0ioE6C7mLchuuI//SY
-         0RsWtzKRCut5wq11F2mD1XxLME6xE9k8KKmx/5a8FwjGgkeJdnbEJmpw3BJlW00wumQp
-         XGMC1dflAg1zjDv4dE2XnDb+qNUTUYpK0Zyzpn8flcycAgI7cnhs3e6EOG+jtEy7f6v8
-         bx7KCTbX+zLu1cooWxgIW4edFGy/eK2Kc4ow12stXhsWqNjh/KPrABB6G1IK0PFGaB/j
-         u40WxIu9bc/A1GmcFSMPBxFMv4Et0TrePJqlc0y+qwlHTkRz3KmL9So44ruc7PTbtiZn
-         Q7gQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WPCpRLMafl4W/IlVxBjo7dtIzbIUznmlplI2v7Gu31g=;
+        b=OPT5JzOx2fwcy9VSQ0l1ROxLox8eg3/G+5NcV5eE5z4LfNHu+vZDVmxVSPfCnjTVWD
+         cxRRqV0TCr0jF8xtO2LweuRdkpk2naUd4uM/KB/u7yCtYnqo8jN5HFJdilBC4fbhEDxr
+         S/g7nlazX2+Uxg/xxqgeAfwiErumzra3TVOVDb1gLOfTYndflx/MsWVv8rUhqCtuGwfB
+         wL/lGmEpFxW/AmDlaKXK+cbEKcW3wgxgBp+aQxCFrA+/2eei8WTOdMOkt84iA4m43NxT
+         odsRFWurBB0kDqs2mjWhzbbyMvMwCidCuCyCculFfCxRrJjxWft/flppe18YQuucfEIY
+         UL4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Gzglw2XqSCHwkCRUmugqAY3H/7JuWh/cx5iFBk0ayFQ=;
-        b=mKbPbeCqWm0svVEORGizaKBYBnPhIGK2/J91QCfMZVCIhlIpzWAJnIIWGX11x4bfp5
-         tkYf+rIcFZGW/PrpUEIYyJwGbYM+sDbI1O8HFsYv4C1Iytaen8xOhhTGldHpSVznkCWx
-         G/mFbHdzhTs83Ph6FZjAeM4i491DwsDYMhdfYAdTLToVxsNt8YvHykCmwH4XDSE2zEI5
-         xfGwdgYdExj8V4hO+K8r+6M/r193PXvFmdPxjkpUPDAdEscU13fPcPIcmbzxM980FfBQ
-         wbgjbPh3WbpYnecNVtBgRUBNi4blf9fN/BqdzZaC5oqzhrw/Xm8mJp8WNuWbVZqfucIW
-         93Zg==
-X-Gm-Message-State: AOAM53358IVr0qZeN61tSyAwaPSIY/m9sK50W/5o/uxx12vR9bacuPCL
-        wCBNYzXXiofrIkY4QekqxWg=
-X-Google-Smtp-Source: ABdhPJwIQ5dmdmuYq2MDXMasuHumH1MGVEFjRU+W0sV68uP/qH6kHZb18CgvchJ3dzl0kwg8Dwkvqg==
-X-Received: by 2002:a17:907:628e:b0:6d9:c6fa:6168 with SMTP id nd14-20020a170907628e00b006d9c6fa6168mr23099012ejc.132.1649518658896;
-        Sat, 09 Apr 2022 08:37:38 -0700 (PDT)
-Received: from adroid (027-177-184-091.ip-addr.vsenet.de. [91.184.177.27])
-        by smtp.gmail.com with ESMTPSA id gq5-20020a170906e24500b006e87644f2f7sm571338ejb.38.2022.04.09.08.37.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WPCpRLMafl4W/IlVxBjo7dtIzbIUznmlplI2v7Gu31g=;
+        b=He7fLT57UAx/7dixRgw5U9tjNYFrHTQf+5SZAH6mHGTTtzleSsKlZCCZOMhuLrZq0m
+         Z9Z3LahmqjjChkm35/IpOtQdBuR/vf66hoHdNFU8CbvG+UvH6scqA1A7Fm+86rO/489t
+         VeMo3q2Hd0AG8dgKcaDOsuurG74RH4WRlRDb32qqC7Y8beBXy3eZz2c1tLsy93Mt3mgr
+         qk59fEi5LFUbPlHF2a+zDy82kosRgzCzf0uAVSLHwMfzCwJgEcLSSxW+o0zxm5+vl7Mt
+         EqRTVeeWsnfIOoFVuE6zt8Yyi6jv5Q5cIl0YtNYeRn04g0i3TJcbRyh04N5ahuOJOruA
+         MRQw==
+X-Gm-Message-State: AOAM533Wsxcp1Rb+XdhcBisBoy3/c5eIrGE1YwMl7eJHv1YOp+fy7vAZ
+        syubKfuFOlS+/GnEssRZaJHGNQ==
+X-Google-Smtp-Source: ABdhPJznsOg3HL6c+Ur+PZxcu3Z6Q3fCmW7cw5Oy8nvw5G70mq8IPVQthLWtmjnISl7uKlnPIJpMFA==
+X-Received: by 2002:a17:906:4789:b0:6e8:7ab7:e843 with SMTP id cw9-20020a170906478900b006e87ab7e843mr1315788ejc.374.1649523141431;
+        Sat, 09 Apr 2022 09:52:21 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id g2-20020a50bf42000000b0041cc5233252sm8947630edk.57.2022.04.09.09.52.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Apr 2022 08:37:38 -0700 (PDT)
-Date:   Sat, 9 Apr 2022 17:37:36 +0200
-From:   Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>
-Cc:     linux-samsung-soc@vger.kernel.org
-Subject: Re: [RFC PATCH] pwm: pwm-samsung: trigger manual update on 100% duty
-Message-ID: <20220409153736.GA38137@adroid>
-References: <20220409134005.GA12218@adroid>
- <364b4ce1-5160-0f48-9d4c-ab8f7f6cc1b6@linaro.org>
+        Sat, 09 Apr 2022 09:52:20 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     krzk@kernel.org, alim.akhtar@samsung.com,
+        Jonathan Bakker <xc-racer2@live.ca>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] ARM: dts: s5pv210: Bugfixes, features, and improvements
+Date:   Sat,  9 Apr 2022 18:52:19 +0200
+Message-Id: <164952313432.108518.3346102412412022215.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <CY4PR04MB056763D8667AD2BC418B7026CB1C9@CY4PR04MB0567.namprd04.prod.outlook.com>
+References: <CY4PR04MB05677B4C4E26A8A179F6ABC0CB179@CY4PR04MB0567.namprd04.prod.outlook.com> <CY4PR04MB056763D8667AD2BC418B7026CB1C9@CY4PR04MB0567.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <364b4ce1-5160-0f48-9d4c-ab8f7f6cc1b6@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Sat, Apr 09, 2022 at 05:01:42PM +0200, Krzysztof Kozlowski wrote:
-> On 09/04/2022 15:40, Martin Jücker wrote:
-> > Hello,
-> > 
-> > I have some trouble with a pwm backlight in the p4note and I'm not sure
-> > what the cause is. The problem is with setting the backlight brightness
-> > to its maximum value, which will actually turn off the display. All the
-> > other values seem to be working just fine.
+On Sun, 27 Mar 2022 11:08:49 -0700, Jonathan Bakker wrote:
+> Various cleanups to fix warnings when running make dtbs_check are included,
+> as are bugfixes for the panel CS pin and bluetooth interrupt name on Aries.
 > 
-> A bit similar issues was fixed by Mårten (5d82e661398e ("pwm:
-> pwm-samsung: Trigger manual update when disabling PWM")
-> ). I assume you test on a tree having that commit.
-
-I applied this to next, so yes I do have this one :-)
-
+> Changes in v2:
+> - Re-ordered patches to include bugfixes at start
+> - CC Stable where appropriate
+> - Drop sound-dai-cells changes
+> - Drop charger-manager and related changes
+> - Adjust memory reg entries commit to retain one node per device
 > 
-> > 
-> > Looking at the documentation for the pwm driver in the exynos4412
-> > manual, I found that for pwm, the higher the tcmp value, the lower the
-> > pwm value is. Enabling debug logging, this seems to be exactly what's
-> > happening for values below 100% duty, but when the duty reaches 100%,
-> > the tcmp is zero and then gets decreased which causes it to wrap around.
-> > Looking at the rest of the code, this seems to be expected behaviour and
-> > I would assume that it should cause the pwm to never switch the value
-> > from high to low which would also fit.
-> 
-> I miss here some details.
-> 
-> The tcmp=-1 is written to registers for the next duty cycle. When
-> current duty cycle finishes, this new tcmp=-1 should be loaded into the PWM.
-> 
-> It seems that this loading does not happen in your case. Correct?
+> [...]
 
-When I change to maximum brightness, the pwm does trigger an update. It
-writes the value to the register, but for some reason this causes the
-display to turn off on the next cycle instead of going to full
-brightness.
+Applied, thanks!
 
-> 
-> I tried this on Odroid HC1 and works correctly:
-> duty_ns=2000000, period_ns=2000000
-> tin_ns=240
-> tcmp=4294967295
-> tcnt=8332
-> 
-> What values do you have? How can I reproduce your case?
+[1/5] ARM: dts: s5pv210: Remove spi-cs-high on panel in Aries
+      commit: 096f58507374e1293a9e9cff8a1ccd5f37780a20
+[2/5] ARM: dts: s5pv210: Correct interrupt name for bluetooth in Aries
+      commit: 3f5e3d3a8b895c8a11da8b0063ba2022dd9e2045
+[3/5] ARM: dts: s5pv210: Adjust memory reg entries to match spec
+      commit: 9576ec12261c4b639cd802fd9c13e3c9605165da
+[4/5] ARM: dts: s5pv210: Adjust DMA node names to match spec
+      commit: 21e4b7d151af9a3191fb251e2b4044e361a56102
+[5/5] ARM: dts: s5pv210: align DMA channels with dtschema
+      commit: 9e916fb9bc3d16066286f19fc9c51d26a6aec6bd
 
-For me it's the following values:
-
-duty_ns=78770, period_ns=78770
-tin_ns=10
-tcmp=4294967295
-tcnt=7876
-
-For the patch, this morning it's not fixing the issue anymore. I might
-have messed up while trying around with the tcmp value yesterday night
-by still having the wrap around guard in. I thought I double checked
-that, apparently I didn't.
-
-> 
-> Best regards,
-> Krzysztof
-
-Kind Regards
-Martin
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
