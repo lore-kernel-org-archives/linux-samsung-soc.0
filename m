@@ -2,31 +2,31 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1348C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Apr 2022 18:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18A4C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Apr 2022 18:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234507AbiDJSJJ (ORCPT
+        id S235474AbiDJSOu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 Apr 2022 14:09:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57798 "EHLO
+        Sun, 10 Apr 2022 14:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233036AbiDJSJJ (ORCPT
+        with ESMTP id S233036AbiDJSOt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 Apr 2022 14:09:09 -0400
+        Sun, 10 Apr 2022 14:14:49 -0400
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5E993D1C2;
-        Sun, 10 Apr 2022 11:06:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F95D60D98;
+        Sun, 10 Apr 2022 11:12:38 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5219482;
-        Sun, 10 Apr 2022 20:06:54 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9BDBE482;
+        Sun, 10 Apr 2022 20:12:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1649614014;
-        bh=hkAl9FJL0m0CC6Dn+TSgiJdKgnk3FN4CM8GEUFG/SNk=;
+        s=mail; t=1649614356;
+        bh=jX5Le6TCB9q6490TZDhc0xzt6OcdxmfvhJ4v0itjJg0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RfKLl31cZXoa/3qnyLYeIirbPUb6OaWSRMaUoBEtjgonBupqzpNM/PSuodsFc2hrO
-         Zkuf1JLuG9afoiKb6XSvsDp564G0HT58CAy1u8RYj7eqCxNokhgZIN9P0Q8GIhUV6d
-         ki1JhMWuBJnwNY1PbC6k0ZD3JtU/ftJRvZlU5rLQ=
-Date:   Sun, 10 Apr 2022 21:06:51 +0300
+        b=VldgW/moPWOythTuBPC5xGILucTXvchs1S+SzHc+XewE9FS4bpMGqz4LMJBWCT8rD
+         bsdB8fodo/WycYgazUmkG7xeUub+SpFgkcyQxnXDQSEpOXo/U9E7QniIgd3prhTSPb
+         sdKF3FdU9F7D1eshmFt6myXZdPI5eODsxnQfD4S4=
+Date:   Sun, 10 Apr 2022 21:12:34 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -48,14 +48,15 @@ Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
         linux-arm-kernel@lists.infradead.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
-Subject: Re: [PATCH 11/11] drm: bridge: samsung-dsim: Add i.MX8MM support
-Message-ID: <YlMcu2e2FdLRk5iP@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 10/11] dt-bindings: display: exynos: dsim: Add NXP
+ i.MX8MM support
+Message-ID: <YlMeEqhkQ6HuCKFE@pendragon.ideasonboard.com>
 References: <20220408162108.184583-1-jagan@amarulasolutions.com>
- <20220408162108.184583-12-jagan@amarulasolutions.com>
+ <20220408162108.184583-11-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220408162108.184583-12-jagan@amarulasolutions.com>
+In-Reply-To: <20220408162108.184583-11-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -64,88 +65,39 @@ Hi Jagan,
 
 Thank you for the patch.
 
-On Fri, Apr 08, 2022 at 09:51:08PM +0530, Jagan Teki wrote:
-> Samsung MIPI DSIM master can also be found in i.MX8MM SoC.
+On Fri, Apr 08, 2022 at 09:51:07PM +0530, Jagan Teki wrote:
+> Samsung MIPI DSIM bridge can also be found in i.MX8MM/i.MX8MN SoC.
 > 
-> Add compatible and associated driver_data for it.
+> Add dt-bingings for it.
 > 
 > v1:
-> * none
+> * new patch
 > 
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  drivers/gpu/drm/bridge/samsung-dsim.c | 34 +++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+>  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-> index 71bbaf19f530..d91510a51981 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -360,6 +360,24 @@ static const unsigned int exynos5433_reg_values[] = {
->  	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0c),
->  };
->  
-> +static const unsigned int imx8mm_dsim_reg_values[] = {
-> +	[RESET_TYPE] = DSIM_SWRST,
-> +	[PLL_TIMER] = 500,
-> +	[STOP_STATE_CNT] = 0xf,
-> +	[PHYCTRL_ULPS_EXIT] = 0,
-> +	[PHYCTRL_VREG_LP] = 0,
-> +	[PHYCTRL_SLEW_UP] = 0,
-> +	[PHYTIMING_LPX] = DSIM_PHYTIMING_LPX(0x06),
-> +	[PHYTIMING_HS_EXIT] = DSIM_PHYTIMING_HS_EXIT(0x0b),
-> +	[PHYTIMING_CLK_PREPARE] = DSIM_PHYTIMING1_CLK_PREPARE(0x07),
-> +	[PHYTIMING_CLK_ZERO] = DSIM_PHYTIMING1_CLK_ZERO(0x26),
-> +	[PHYTIMING_CLK_POST] = DSIM_PHYTIMING1_CLK_POST(0x0d),
-> +	[PHYTIMING_CLK_TRAIL] = DSIM_PHYTIMING1_CLK_TRAIL(0x08),
-> +	[PHYTIMING_HS_PREPARE] = DSIM_PHYTIMING2_HS_PREPARE(0x08),
-> +	[PHYTIMING_HS_ZERO] = DSIM_PHYTIMING2_HS_ZERO(0x0d),
-> +	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0b),
-> +};
+> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+> index be377786e8cd..5133d4d39190 100644
+> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
+> @@ -7,6 +7,7 @@ Required properties:
 
-Most of these values don't seem to be specific to a particular SoC
-integration, but should be tuned for the board and the connected DSI
-sink. That's out of scope for this patch of course.
+May I try and ask you to convert the DT bindings to YAML as part of this
+series ? :-)
 
-> +
->  static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
->  	.reg_ofs = exynos_reg_ofs,
->  	.plltmr_reg = 0x50,
-> @@ -426,6 +444,18 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
->  	.platform_init = true,
->  };
->  
-> +static const struct samsung_dsim_driver_data imx8mm_dsi_driver_data = {
-> +	.reg_ofs = exynos5433_reg_ofs,
-> +	.plltmr_reg = 0xa0,
-> +	.has_clklane_stop = 1,
-> +	.num_clks = 2,
-> +	.max_freq = 2100,
-> +	.wait_for_reset = 0,
-> +	.num_bits_resol = 12,
-> +	.pll_p_offset = 14,
-> +	.reg_values = imx8mm_dsim_reg_values,
-> +};
+>  		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
+>  		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
+>  		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
+> +		"fsl,imx8mm-mipi-dsim" /* for i.MX8M Mini/Nano SoCs */
 
-I haven't verified the values, the rest looks good to me.
+Should we have two different compatible strings for i.MX8MM and i.MX8MN
+?
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +
->  static const struct of_device_id samsung_dsim_of_match[] = {
->  	{
->  		.compatible = "samsung,exynos3250-mipi-dsi",
-> @@ -447,6 +477,10 @@ static const struct of_device_id samsung_dsim_of_match[] = {
->  		.compatible = "samsung,exynos5433-mipi-dsi",
->  		.data = &exynos5433_dsi_driver_data
->  	},
-> +	{
-> +		.compatible = "fsl,imx8mm-mipi-dsim",
-> +		.data = &imx8mm_dsi_driver_data
-> +	},
->  	{ /* sentinel. */ }
->  };
->  
+>    - reg: physical base address and length of the registers set for the device
+>    - interrupts: should contain DSI interrupt
+>    - clocks: list of clock specifiers, must contain an entry for each required
 
 -- 
 Regards,
