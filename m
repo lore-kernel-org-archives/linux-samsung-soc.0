@@ -2,99 +2,152 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A36C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Apr 2022 16:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1348C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Apr 2022 18:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242734AbiDIQyc (ORCPT
+        id S234507AbiDJSJJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Apr 2022 12:54:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50942 "EHLO
+        Sun, 10 Apr 2022 14:09:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242774AbiDIQyb (ORCPT
+        with ESMTP id S233036AbiDJSJJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Apr 2022 12:54:31 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE73DFDF3
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Apr 2022 09:52:22 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id u15so4315553ejf.11
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Apr 2022 09:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WPCpRLMafl4W/IlVxBjo7dtIzbIUznmlplI2v7Gu31g=;
-        b=OPT5JzOx2fwcy9VSQ0l1ROxLox8eg3/G+5NcV5eE5z4LfNHu+vZDVmxVSPfCnjTVWD
-         cxRRqV0TCr0jF8xtO2LweuRdkpk2naUd4uM/KB/u7yCtYnqo8jN5HFJdilBC4fbhEDxr
-         S/g7nlazX2+Uxg/xxqgeAfwiErumzra3TVOVDb1gLOfTYndflx/MsWVv8rUhqCtuGwfB
-         wL/lGmEpFxW/AmDlaKXK+cbEKcW3wgxgBp+aQxCFrA+/2eei8WTOdMOkt84iA4m43NxT
-         odsRFWurBB0kDqs2mjWhzbbyMvMwCidCuCyCculFfCxRrJjxWft/flppe18YQuucfEIY
-         UL4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WPCpRLMafl4W/IlVxBjo7dtIzbIUznmlplI2v7Gu31g=;
-        b=He7fLT57UAx/7dixRgw5U9tjNYFrHTQf+5SZAH6mHGTTtzleSsKlZCCZOMhuLrZq0m
-         Z9Z3LahmqjjChkm35/IpOtQdBuR/vf66hoHdNFU8CbvG+UvH6scqA1A7Fm+86rO/489t
-         VeMo3q2Hd0AG8dgKcaDOsuurG74RH4WRlRDb32qqC7Y8beBXy3eZz2c1tLsy93Mt3mgr
-         qk59fEi5LFUbPlHF2a+zDy82kosRgzCzf0uAVSLHwMfzCwJgEcLSSxW+o0zxm5+vl7Mt
-         EqRTVeeWsnfIOoFVuE6zt8Yyi6jv5Q5cIl0YtNYeRn04g0i3TJcbRyh04N5ahuOJOruA
-         MRQw==
-X-Gm-Message-State: AOAM533Wsxcp1Rb+XdhcBisBoy3/c5eIrGE1YwMl7eJHv1YOp+fy7vAZ
-        syubKfuFOlS+/GnEssRZaJHGNQ==
-X-Google-Smtp-Source: ABdhPJznsOg3HL6c+Ur+PZxcu3Z6Q3fCmW7cw5Oy8nvw5G70mq8IPVQthLWtmjnISl7uKlnPIJpMFA==
-X-Received: by 2002:a17:906:4789:b0:6e8:7ab7:e843 with SMTP id cw9-20020a170906478900b006e87ab7e843mr1315788ejc.374.1649523141431;
-        Sat, 09 Apr 2022 09:52:21 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id g2-20020a50bf42000000b0041cc5233252sm8947630edk.57.2022.04.09.09.52.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Apr 2022 09:52:20 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     krzk@kernel.org, alim.akhtar@samsung.com,
-        Jonathan Bakker <xc-racer2@live.ca>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sun, 10 Apr 2022 14:09:09 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5E993D1C2;
+        Sun, 10 Apr 2022 11:06:57 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5219482;
+        Sun, 10 Apr 2022 20:06:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1649614014;
+        bh=hkAl9FJL0m0CC6Dn+TSgiJdKgnk3FN4CM8GEUFG/SNk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RfKLl31cZXoa/3qnyLYeIirbPUb6OaWSRMaUoBEtjgonBupqzpNM/PSuodsFc2hrO
+         Zkuf1JLuG9afoiKb6XSvsDp564G0HT58CAy1u8RYj7eqCxNokhgZIN9P0Q8GIhUV6d
+         ki1JhMWuBJnwNY1PbC6k0ZD3JtU/ftJRvZlU5rLQ=
+Date:   Sun, 10 Apr 2022 21:06:51 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] ARM: dts: s5pv210: Bugfixes, features, and improvements
-Date:   Sat,  9 Apr 2022 18:52:19 +0200
-Message-Id: <164952313432.108518.3346102412412022215.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <CY4PR04MB056763D8667AD2BC418B7026CB1C9@CY4PR04MB0567.namprd04.prod.outlook.com>
-References: <CY4PR04MB05677B4C4E26A8A179F6ABC0CB179@CY4PR04MB0567.namprd04.prod.outlook.com> <CY4PR04MB056763D8667AD2BC418B7026CB1C9@CY4PR04MB0567.namprd04.prod.outlook.com>
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Subject: Re: [PATCH 11/11] drm: bridge: samsung-dsim: Add i.MX8MM support
+Message-ID: <YlMcu2e2FdLRk5iP@pendragon.ideasonboard.com>
+References: <20220408162108.184583-1-jagan@amarulasolutions.com>
+ <20220408162108.184583-12-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220408162108.184583-12-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 27 Mar 2022 11:08:49 -0700, Jonathan Bakker wrote:
-> Various cleanups to fix warnings when running make dtbs_check are included,
-> as are bugfixes for the panel CS pin and bluetooth interrupt name on Aries.
+Hi Jagan,
+
+Thank you for the patch.
+
+On Fri, Apr 08, 2022 at 09:51:08PM +0530, Jagan Teki wrote:
+> Samsung MIPI DSIM master can also be found in i.MX8MM SoC.
 > 
-> Changes in v2:
-> - Re-ordered patches to include bugfixes at start
-> - CC Stable where appropriate
-> - Drop sound-dai-cells changes
-> - Drop charger-manager and related changes
-> - Adjust memory reg entries commit to retain one node per device
+> Add compatible and associated driver_data for it.
 > 
-> [...]
+> v1:
+> * none
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/bridge/samsung-dsim.c | 34 +++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index 71bbaf19f530..d91510a51981 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -360,6 +360,24 @@ static const unsigned int exynos5433_reg_values[] = {
+>  	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0c),
+>  };
+>  
+> +static const unsigned int imx8mm_dsim_reg_values[] = {
+> +	[RESET_TYPE] = DSIM_SWRST,
+> +	[PLL_TIMER] = 500,
+> +	[STOP_STATE_CNT] = 0xf,
+> +	[PHYCTRL_ULPS_EXIT] = 0,
+> +	[PHYCTRL_VREG_LP] = 0,
+> +	[PHYCTRL_SLEW_UP] = 0,
+> +	[PHYTIMING_LPX] = DSIM_PHYTIMING_LPX(0x06),
+> +	[PHYTIMING_HS_EXIT] = DSIM_PHYTIMING_HS_EXIT(0x0b),
+> +	[PHYTIMING_CLK_PREPARE] = DSIM_PHYTIMING1_CLK_PREPARE(0x07),
+> +	[PHYTIMING_CLK_ZERO] = DSIM_PHYTIMING1_CLK_ZERO(0x26),
+> +	[PHYTIMING_CLK_POST] = DSIM_PHYTIMING1_CLK_POST(0x0d),
+> +	[PHYTIMING_CLK_TRAIL] = DSIM_PHYTIMING1_CLK_TRAIL(0x08),
+> +	[PHYTIMING_HS_PREPARE] = DSIM_PHYTIMING2_HS_PREPARE(0x08),
+> +	[PHYTIMING_HS_ZERO] = DSIM_PHYTIMING2_HS_ZERO(0x0d),
+> +	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0b),
+> +};
 
-Applied, thanks!
+Most of these values don't seem to be specific to a particular SoC
+integration, but should be tuned for the board and the connected DSI
+sink. That's out of scope for this patch of course.
 
-[1/5] ARM: dts: s5pv210: Remove spi-cs-high on panel in Aries
-      commit: 096f58507374e1293a9e9cff8a1ccd5f37780a20
-[2/5] ARM: dts: s5pv210: Correct interrupt name for bluetooth in Aries
-      commit: 3f5e3d3a8b895c8a11da8b0063ba2022dd9e2045
-[3/5] ARM: dts: s5pv210: Adjust memory reg entries to match spec
-      commit: 9576ec12261c4b639cd802fd9c13e3c9605165da
-[4/5] ARM: dts: s5pv210: Adjust DMA node names to match spec
-      commit: 21e4b7d151af9a3191fb251e2b4044e361a56102
-[5/5] ARM: dts: s5pv210: align DMA channels with dtschema
-      commit: 9e916fb9bc3d16066286f19fc9c51d26a6aec6bd
+> +
+>  static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
+>  	.reg_ofs = exynos_reg_ofs,
+>  	.plltmr_reg = 0x50,
+> @@ -426,6 +444,18 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+>  	.platform_init = true,
+>  };
+>  
+> +static const struct samsung_dsim_driver_data imx8mm_dsi_driver_data = {
+> +	.reg_ofs = exynos5433_reg_ofs,
+> +	.plltmr_reg = 0xa0,
+> +	.has_clklane_stop = 1,
+> +	.num_clks = 2,
+> +	.max_freq = 2100,
+> +	.wait_for_reset = 0,
+> +	.num_bits_resol = 12,
+> +	.pll_p_offset = 14,
+> +	.reg_values = imx8mm_dsim_reg_values,
+> +};
 
-Best regards,
+I haven't verified the values, the rest looks good to me.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+>  static const struct of_device_id samsung_dsim_of_match[] = {
+>  	{
+>  		.compatible = "samsung,exynos3250-mipi-dsi",
+> @@ -447,6 +477,10 @@ static const struct of_device_id samsung_dsim_of_match[] = {
+>  		.compatible = "samsung,exynos5433-mipi-dsi",
+>  		.data = &exynos5433_dsi_driver_data
+>  	},
+> +	{
+> +		.compatible = "fsl,imx8mm-mipi-dsim",
+> +		.data = &imx8mm_dsi_driver_data
+> +	},
+>  	{ /* sentinel. */ }
+>  };
+>  
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Regards,
+
+Laurent Pinchart
