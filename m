@@ -2,104 +2,136 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18A4C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Apr 2022 18:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49380C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Apr 2022 09:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235474AbiDJSOu (ORCPT
+        id S235033AbiDKJGf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 Apr 2022 14:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        Mon, 11 Apr 2022 05:06:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233036AbiDJSOt (ORCPT
+        with ESMTP id S1344070AbiDKJG0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 Apr 2022 14:14:49 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F95D60D98;
-        Sun, 10 Apr 2022 11:12:38 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9BDBE482;
-        Sun, 10 Apr 2022 20:12:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1649614356;
-        bh=jX5Le6TCB9q6490TZDhc0xzt6OcdxmfvhJ4v0itjJg0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VldgW/moPWOythTuBPC5xGILucTXvchs1S+SzHc+XewE9FS4bpMGqz4LMJBWCT8rD
-         bsdB8fodo/WycYgazUmkG7xeUub+SpFgkcyQxnXDQSEpOXo/U9E7QniIgd3prhTSPb
-         sdKF3FdU9F7D1eshmFt6myXZdPI5eODsxnQfD4S4=
-Date:   Sun, 10 Apr 2022 21:12:34 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Subject: Re: [PATCH 10/11] dt-bindings: display: exynos: dsim: Add NXP
- i.MX8MM support
-Message-ID: <YlMeEqhkQ6HuCKFE@pendragon.ideasonboard.com>
-References: <20220408162108.184583-1-jagan@amarulasolutions.com>
- <20220408162108.184583-11-jagan@amarulasolutions.com>
+        Mon, 11 Apr 2022 05:06:26 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF2013D46;
+        Mon, 11 Apr 2022 02:04:13 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id t207so8685296qke.2;
+        Mon, 11 Apr 2022 02:04:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9TRi0bNPoJj9i+0TdWcYotMzzdlJV8VxAkudB/T4n5g=;
+        b=RecfqrvAO5i82vM6HhQECzvgKmhIMr/jiKkGFRhT9lnN+u742mAL7D96PXK5qS840n
+         gOOPws5XJeUcituCVCdnaa1sYxmDgQLRWNxeSXHcObl/FrMlTCtRyjhcKP5eCu3pm3Xn
+         ONBzIpw9cfeRSupT8LP/eta76PfEP8FQu7tYTxhi76AwqA9VkW10esbHhyI7gT7Gtpsi
+         KouBIAtFshLJQi+o03VZU/skEoo88+iUvfadSHiYuDG0KNOApBOG1IbvmfVRW9Hwhiks
+         tkOmCFZ35EJcgTNf+0UsoakCcA2SexVOY2JgN4i+CVCvonyl51PIlkjDT9h63j9Xkp7O
+         YhoA==
+X-Gm-Message-State: AOAM5306NEtkVWrREkdrUre3SuaY5HNsW0EfaJwEM/+M7G/DqzEMh16O
+        KWg8wsud6Yw8Aca/lVRZ9ABv6+dasLSevA==
+X-Google-Smtp-Source: ABdhPJw92TnKqmEK7ZGcPKpGIraYJ0Hs1eXfW4oHleGd3bCX1+k4rLnRv8QiUkRuNSclWNkBN3faZQ==
+X-Received: by 2002:a05:620a:2408:b0:699:d310:dbfb with SMTP id d8-20020a05620a240800b00699d310dbfbmr20973812qkn.326.1649667852207;
+        Mon, 11 Apr 2022 02:04:12 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id u11-20020a05622a14cb00b002e1fd9dce3dsm24476060qtx.60.2022.04.11.02.04.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Apr 2022 02:04:11 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-2ec04a2ebadso37504147b3.12;
+        Mon, 11 Apr 2022 02:04:11 -0700 (PDT)
+X-Received: by 2002:a0d:e743:0:b0:2eb:3106:9b32 with SMTP id
+ q64-20020a0de743000000b002eb31069b32mr25689449ywe.512.1649667851285; Mon, 11
+ Apr 2022 02:04:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220408162108.184583-11-jagan@amarulasolutions.com>
+References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com> <20220401103604.8705-10-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20220401103604.8705-10-andriy.shevchenko@linux.intel.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Apr 2022 11:04:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX8zWA-3_=Je7sB_72G8Ky7-syqCH-RXGxNMazUipW-2g@mail.gmail.com>
+Message-ID: <CAMuHMdX8zWA-3_=Je7sB_72G8Ky7-syqCH-RXGxNMazUipW-2g@mail.gmail.com>
+Subject: Re: [PATCH v4 09/13] pinctrl: meson: Rename REG_* to MESON_REG_*
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Qianggui Song <qianggui.song@amlogic.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        openbmc@lists.ozlabs.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan,
+Hi Andy,
 
-Thank you for the patch.
+On Fri, Apr 1, 2022 at 12:36 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> Currently compilation test fails on x86 due to name collision. The usual
+> way to fix that is to move both conflicting parts to their own namespaces.
+>
+> Rename REG_* to MESON_REG_* as a prerequisite for enabling COMPILE_TEST.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Fri, Apr 08, 2022 at 09:51:07PM +0530, Jagan Teki wrote:
-> Samsung MIPI DSIM bridge can also be found in i.MX8MM/i.MX8MN SoC.
-> 
-> Add dt-bingings for it.
-> 
-> v1:
-> * new patch
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> index be377786e8cd..5133d4d39190 100644
-> --- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> @@ -7,6 +7,7 @@ Required properties:
+Thanks for your patch!
 
-May I try and ask you to convert the DT bindings to YAML as part of this
-series ? :-)
+> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+> @@ -63,12 +63,12 @@ struct meson_reg_desc {
+>   * enum meson_reg_type - type of registers encoded in @meson_reg_desc
+>   */
+>  enum meson_reg_type {
+> -       REG_PULLEN,
+> -       REG_PULL,
+> -       REG_DIR,
+> -       REG_OUT,
+> -       REG_IN,
+> -       REG_DS,
+> +       MESON_REG_PULLEN,
+> +       MESON_REG_PULL,
+> +       MESON_REG_DIR,
+> +       MESON_REG_OUT,
+> +       MESON_REG_IN,
+> +       MESON_REG_DS,
+>         NUM_REG,
 
->  		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
->  		"samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
->  		"samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
-> +		"fsl,imx8mm-mipi-dsim" /* for i.MX8M Mini/Nano SoCs */
+MESON_NUM_REG?
 
-Should we have two different compatible strings for i.MX8MM and i.MX8MN
-?
+Gr{oetje,eeting}s,
 
->    - reg: physical base address and length of the registers set for the device
->    - interrupts: should contain DSI interrupt
->    - clocks: list of clock specifiers, must contain an entry for each required
+                        Geert
 
--- 
-Regards,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
