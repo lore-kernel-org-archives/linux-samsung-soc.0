@@ -2,51 +2,51 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921E9C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Apr 2022 12:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858F4C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Apr 2022 12:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344144AbiDKMC1 (ORCPT
+        id S231948AbiDKMFP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Apr 2022 08:02:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36646 "EHLO
+        Mon, 11 Apr 2022 08:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231547AbiDKMC0 (ORCPT
+        with ESMTP id S1343710AbiDKMFO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Apr 2022 08:02:26 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B730E2A732;
-        Mon, 11 Apr 2022 05:00:12 -0700 (PDT)
+        Mon, 11 Apr 2022 08:05:14 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 404B33878C;
+        Mon, 11 Apr 2022 05:03:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649678412; x=1681214412;
+  t=1649678581; x=1681214581;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=sC8CyttMimPSNhIr3hh4HcfuM59Ph6N7lGNcafQdvcs=;
-  b=jqXvzjSStgCyRqvoJe3HZnI+q2y3XJh8E6mUbYsEQEEljEfhy4N71v2t
-   Ns+ZpiWLX9hm5jCu6qwfqnBROgzcQ3JRJGTDDX6nw4lGHB9DjZ6MMBGEl
-   oOONbDcSSiNWXvQW+4QiqtLtEM5DjIHO4bNzE6AEEs/axwzY+anicEVds
-   KpttVF73a/+vW9D3NZiiWT8jxdtVMKBrij3QxOh1dmUsaxBIlDjl9frR2
-   uWcvmeacufpMCpXRhrj6wmrem5IC0MvPc75mzIit3AUYI/PHBExqwm/zX
-   l0ehMil4gbzh1ksUkyqamWiqcWouuLNL9as6GiLh8YCOPPirLpMQOx+Fu
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10313"; a="242684842"
+  bh=9kbQrXBy9DVbHOYLkpvDDmu+4Dwl0husw8ro+88KO44=;
+  b=Udb9ZPMuvaTVss/zPcH2La4doztWcJTF6UWdhE6cR1Miv8fRiUB5TjOn
+   CrQQDXBuBWnepQIiFxs8ReGeim2MKmzcZ1zVeRaRZ2q6ZtwJVDpUp/L+S
+   53cZ6GwtWsKqc8yrsdTdX6XRRbIfVsPbWeLbvlhwKnmcWWxj7o34t2F9A
+   /aLAltZmUqziI9LJJixnmd/ufVljBN2IzbYpbeSXDGWwKGrvWmRZPMq+j
+   rriVJHuET3CgElppTrADxU3JVNpCT/5q0gGdQwctfOgFnw/rUaQlActMX
+   oz0nkXgJo4qILRZ2e7AU3paQ8L4c9JO4LVZ9Kbi6HRBzOo8hHfViVPWWY
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10313"; a="261842043"
 X-IronPort-AV: E=Sophos;i="5.90,251,1643702400"; 
-   d="scan'208";a="242684842"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2022 05:00:12 -0700
+   d="scan'208";a="261842043"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2022 05:02:59 -0700
 X-IronPort-AV: E=Sophos;i="5.90,251,1643702400"; 
-   d="scan'208";a="699346695"
+   d="scan'208";a="654594670"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2022 05:00:05 -0700
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2022 05:02:51 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.95)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ndsed-001CQ3-RA;
-        Mon, 11 Apr 2022 14:56:23 +0300
-Date:   Mon, 11 Apr 2022 14:56:23 +0300
+        id 1ndshK-001CUl-He;
+        Mon, 11 Apr 2022 14:59:10 +0300
+Date:   Mon, 11 Apr 2022 14:59:10 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Qianggui Song <qianggui.song@amlogic.com>,
+To:     Qianggui Song <qianggui.song@amlogic.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Marc Zyngier <maz@kernel.org>,
         Fabien Dessenne <fabien.dessenne@foss.st.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -54,8 +54,8 @@ Cc:     Qianggui Song <qianggui.song@amlogic.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         openbmc@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-stm32@st-md-mailman.stormreply.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -75,49 +75,35 @@ Cc:     Qianggui Song <qianggui.song@amlogic.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
         Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v4 05/13] pinctrl: samsung: Switch to use
- for_each_gpiochip_node() helper
-Message-ID: <YlQXZ3Ye13rObMy8@smile.fi.intel.com>
+Subject: Re: [PATCH v4 00/13] gpiolib: Two new helpers and way toward fwnode
+Message-ID: <YlQYDnCNuTibuVi1@smile.fi.intel.com>
 References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
- <20220401103604.8705-6-andriy.shevchenko@linux.intel.com>
- <d1f873c6-150f-5f4d-7aa8-7bb15823d991@linaro.org>
- <YlBXSVyj88CqjGj4@smile.fi.intel.com>
- <3b527700-444e-1f6e-fee1-5cd6ed2ef7f9@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3b527700-444e-1f6e-fee1-5cd6ed2ef7f9@linaro.org>
+In-Reply-To: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Apr 09, 2022 at 03:33:49PM +0200, Krzysztof Kozlowski wrote:
-> On 08/04/2022 17:39, Andy Shevchenko wrote:
-> > On Fri, Apr 08, 2022 at 05:22:21PM +0200, Krzysztof Kozlowski wrote:
-> >> On 01/04/2022 12:35, Andy Shevchenko wrote:
-> >>> Switch the code to use for_each_gpiochip_node() helper.
-> > 
-> > (...)
-> > 
-> >>>  /*
-> >>>   * Iterate over all driver pin banks to find one matching the name of node,
-> >>>   * skipping optional "-gpio" node suffix. When found, assign node to the bank.
-> >>>   */
-> >>> -static void samsung_banks_of_node_get(struct device *dev,
-> >>> -				      struct samsung_pinctrl_drv_data *d,
-> >>> -				      struct device_node *node)
-> >>> +static void samsung_banks_node_get(struct device *dev, struct samsung_pinctrl_drv_data *d)
-> >>
-> >> This is worth simplification anyway, so please split it to separate patch.
-> > 
-> > Not sure what to do and why it worth an additional churn.
+On Fri, Apr 01, 2022 at 01:35:51PM +0300, Andy Shevchenko wrote:
+> This is a spin-off of the previous work of switching GPIO library
+> to use fwnode instead of of_node. Here we introduce a couple of
+> a new macro helpers, which allows to switch some of the drivers
+> to use fwnode and partially fwnode APIs. As a result of this cleanup
+> a few drivers switched to use GPIO fwnode instead of of_node.
 > 
-> Makes this change smaller so it's easier to review.
+> Bart, Linus, I can take it thru my tree with an immutable branch if
+> it's the way you prefer, otherwise please suggest on how to proceed.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel.git/log/?h=review-andy
+I'm going to push this, without samsung patch(es), but addresing latest
+Geert's comment, to my for-next branch pending for PR to GPIO subsystem.
 
-That's how it looks like. Tell me if it is what you have had in mind.
+Please inform me within a few hours, if something should be postponed /
+dropped / etc.
+
+Thanks!
 
 -- 
 With Best Regards,
