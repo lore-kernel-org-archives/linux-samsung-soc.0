@@ -2,60 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4654C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Apr 2022 10:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBC6C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Apr 2022 11:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359628AbiDLKtS (ORCPT
+        id S1345048AbiDLLKm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:49:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50188 "EHLO
+        Tue, 12 Apr 2022 07:10:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357327AbiDLKp4 (ORCPT
+        with ESMTP id S1353958AbiDLLFB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Apr 2022 06:45:56 -0400
+        Tue, 12 Apr 2022 07:05:01 -0400
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B2962BC0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2022 02:46:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B72765783
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2022 02:55:46 -0700 (PDT)
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220412094556euoutp02e2142c575d5711a152ed5e159e6dcb3c~lHQeHfaQ73186531865euoutp02E
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2022 09:45:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220412094556euoutp02e2142c575d5711a152ed5e159e6dcb3c~lHQeHfaQ73186531865euoutp02E
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220412095541euoutp02a70dd2bcf7c83d0692426435b6ae7f40~lHY_5JERX1014510145euoutp025
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2022 09:55:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220412095541euoutp02a70dd2bcf7c83d0692426435b6ae7f40~lHY_5JERX1014510145euoutp025
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649756756;
-        bh=jnFrSejFs3YMvvH9ioE0ovWXGxMCacxv79d5R9nBf3M=;
+        s=mail20170921; t=1649757341;
+        bh=njL2qvMFEhc0HzKA4tmgsS/RDhcCQzFsP7scg60RFzY=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=YiS7c7fUCrOZql7TlAup0qLPsDRC1IBRw4l0fZYN2OMFyKJLlGBHGzdHINXSz9fg+
-         dGHTcBpkhqNbOnN5c48z0PuXNlarE+dY3Juf/jIqt3KQdctrsG9ZqPsot838XboZqU
-         J/HM7mkJ2B9Yi270ioI6lUhwBmJoxJhOu8FEpxjE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        b=Z5VzAJSqs/bx2PopCOi/JpZraBnG2ADmjCSmvdHQ4umD10wpdGBarhHxr+5i4zh+s
+         Gu8PhtTbngjnv2A5aJY4Yk1/KgZY3+PS/PPN5Q3VC7FEoYGGu9ODL3goaej8oAE5Rk
+         3CvfZyrql1Bo49BoJ/uLeOeKDh2MEF/sCatBpfps=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220412094556eucas1p2034e9a58e648b7917a0a3554abec5506~lHQdkNaqt0984809848eucas1p2c;
-        Tue, 12 Apr 2022 09:45:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id EA.15.10009.35A45526; Tue, 12
-        Apr 2022 10:45:55 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220412094555eucas1p1843edd72d420037735ccd8c7f481904d~lHQcvggdq1408314083eucas1p1L;
-        Tue, 12 Apr 2022 09:45:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220412094555eusmtrp1fd13cc4a431144d661c6d0ba728a6ef1~lHQctn1760906409064eusmtrp1I;
-        Tue, 12 Apr 2022 09:45:55 +0000 (GMT)
-X-AuditID: cbfec7f2-e7fff70000002719-d8-62554a53fc8b
+        20220412095541eucas1p222886ea3c33e6a2bf05cb3c20057aee7~lHY_eBiZo2834828348eucas1p2q;
+        Tue, 12 Apr 2022 09:55:41 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 99.C2.09887.D9C45526; Tue, 12
+        Apr 2022 10:55:41 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220412095540eucas1p26338894d71d3ab9190ac24639a89feff~lHY97jrgM3241332413eucas1p2s;
+        Tue, 12 Apr 2022 09:55:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220412095540eusmtrp27ca8c15d1c0ea9fd2cddeca7af9946d1~lHY91mUGV2041920419eusmtrp2B;
+        Tue, 12 Apr 2022 09:55:40 +0000 (GMT)
+X-AuditID: cbfec7f4-45bff7000000269f-26-62554c9de641
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4B.56.09522.25A45526; Tue, 12
-        Apr 2022 10:45:55 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A6.4B.09404.C9C45526; Tue, 12
+        Apr 2022 10:55:40 +0100 (BST)
 Received: from [106.210.134.192] (unknown [106.210.134.192]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220412094553eusmtip10a6aa4e78f9d57d3224595fc4bc8a5e8~lHQbEwVT60994309943eusmtip1i;
-        Tue, 12 Apr 2022 09:45:53 +0000 (GMT)
-Message-ID: <0146abe6-c588-820c-09f4-b12de2e734ac@samsung.com>
-Date:   Tue, 12 Apr 2022 11:45:53 +0200
+        20220412095537eusmtip1588c11a8d081c52b541062d64f10378a~lHY7KZ8rA1294412944eusmtip1F;
+        Tue, 12 Apr 2022 09:55:37 +0000 (GMT)
+Message-ID: <5823f59a-9c57-5f9a-0ebd-1ea2f39e73cb@samsung.com>
+Date:   Tue, 12 Apr 2022 11:55:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
         Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 01/11] drm: bridge: Add Samsung DSIM bridge driver
+Subject: Re: [PATCH 02/11] drm: bridge: samsung-dsim: Handle platform init
+ via driver_data
 Content-Language: en-US
 To:     Jagan Teki <jagan@amarulasolutions.com>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
@@ -78,289 +79,177 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220408162108.184583-2-jagan@amarulasolutions.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbVRjGd+69vb2tK7kUCCdz09mIZiOUoSw5Zh8Zi+J1M8bpMEaNs4wr
-        EKBsLcisRvkQ3NpRYM1G6dJ1ykg3BmyUr4JARocrUldhQZyMUZfVhYEFaaGR8qGUi8p/v/M8
-        z3ve9z05FC5Wk5uodHkOq5DLMiWkkGi9Ne+MeftAUvIO7Xe70eg9B45c1T4CTd67TCJTr5OH
-        huamSVRas0JnXOUEmrWUk2h8bJBAtwv/4KNTFZf4yFzeTSLLw2EeUgeu4Ej/UzeG+guKCWTT
-        vo+8hgc4Ku7q5SO97jGJBvu8+L4Ipn7GxWOm7xbzGefp+yTTbrjPZ86frOIx1Z2PMcZSe4pk
-        en+u5jGjw50k49LYMabp0pdM45QVY7TNtYDxWZ56M+Q94e4UNjP9E1YRu/cjYVr1o/hjtcyJ
-        Nu04yAdX9qgBRUE6Hn4beEYNBJSYvgzgb+ZojmcB7Gl9RQ2EK+wDcLamgx80gvmbmhGSM8wA
-        Wv3zGHeYAdA3UIcFUyJ6L9R/tbBaQdBR8JtfO9b0UPhDlZsIcgSdDK+2XSWDHEYnwmV1Jwgy
-        TkfCEbdp9dJwepGAC4ExkjMeAfijazVE0nFQ7VGv6gI6ARpuTvG4zNOwqOU8HiyGdEAAZ5Z+
-        Ibm5X4bL1qo1DoMT9ua1fTZDh+40wb1FNlzSv8jJJ+DwZB3O8S446gyQwQhOb4PXOmI5OQFO
-        1zzgcZUh8K4nlJsgBJ5prcQ5WQRPloi59HPQYG/4r2fPwB28HEgM6x7FsG55w7pdDP/3vQiI
-        WhDJ5iqzUlllnJzNkyplWcpcear0aHaWBax8V8ey3WsFxokZqQ1gFLABSOGScFHZ80nJYlGK
-        7FMVq8g+osjNZJU28CRFSCJFR9Ovy8R0qiyHzWDZY6ziXxejBJvysS3srm22PbdIz6ttvkaz
-        dvD7ycayObClT2fL+TO63fTxxqjE16bdY7+Pv2BMlNo/qEjP8GsKk4bObTWyFx32nZIA65uH
-        KlelMS20PlmwYC5N2Be546UUPOpdz+2vIza4Nxd9OHwk4nhDTElV98bSfoF8yH34ICyZizlY
-        EEJH71+KDXvLFD0gmMj7+5qwX1fELJ5VSexhOk0XVd/vaO/Oz81qWLAY8abjrhueC+p6zYEb
-        i69Dnr9Cde6QVV54+Fm/Ph5rLvGHP2y5I3aWmfb3NBUX8JMyK73b5VPX/9qpMo181pVXx6gM
-        PZ9LQwc3eFVM31ZTS/sTQ9ov8t55Q5ghIZRpsrjtuEIp+wfXP0y9HQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsVy+t/xu7rBXqFJBh9/MlvcuX2a2eL+4s8s
-        Fq9vr2CzmH/kHKvFla/v2Sx6lwJZk+5PYLH4smkCm8WLexdZLM42vWG36Jy4hN1i+YR9bBab
-        Hl9jtej6tZLZYsb5fUwWpxpbWSwO9UVbfJr1kNmide8RdosZk1+yWVw88YnZQdRj7cf7rB7v
-        b7Sye5zrucvmsXPWXXaP2R0zWT0W73nJ5LFpVSebx5Gri1k97lzbw+Zxv/s4k8fmJfUeG9/t
-        YPLo27KK0ePzJrkAvig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TU
-        nMyy1CJ9uwS9jMXPTApWeVRs73vB2MC40raLkZNDQsBE4nD3LbYuRi4OIYGljBL9Wy4zQiRk
-        JE5Oa2CFsIUl/lzrgip6zyjx8mI/E0iCV8BOYkbLb3YQm0VAVWLhzV1QcUGJkzOfsIDYogJJ
-        Epe62sGGCgu4Sfzr2gNmMwuIS9x6Mh+sXkSggVXi0EUuiPgzRom7v9Iglp1mlLjX/oIZJMEm
-        YCjR9RbkCk4OTgFHiVmH37FCNJhJdG3tghoqL9G8dTbzBEahWUjumIVk3ywkLbOQtCxgZFnF
-        KJJaWpybnltsqFecmFtcmpeul5yfu4kRmFa2Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuHtVw9N
-        EuJNSaysSi3Kjy8qzUktPsRoCgyMicxSosn5wMSWVxJvaGZgamhiZmlgamlmrCTO61nQkSgk
-        kJ5YkpqdmlqQWgTTx8TBKdXAtEfnsbVH1Xx9HaNNvRPrWA6zvHm70dpv17306toqAxeWIK1Z
-        PBvnLt9ULPxpxtaWtA+7+O9X3jtR+kIt6V9qxiam3N2VV3pi2i/11XvWv9e9v/dBg7XHTZaK
-        rfpWku4fea+8nT834cGb9bMNblfE77XVmHtIZ+vST4tFp5QL/eh6My/FeJJrjt9rHSZDtpol
-        shMWHBWc9lqsqLp+i+g2wc0r9AvYI3cmpBhNOuRrz+p9ssPmfsmd8EPtKpYhew2LS1VSzpwK
-        3TlHmu2IlXF0u6zgLy6nhW3f9eZ+tr/0LzLSe9O9UyFh3ULb3CTitFb6zMzaNe0E409Rngnc
-        MQITmepOPfmSKM74Xu2kR993JZbijERDLeai4kQAr0ltt7QDAAA=
-X-CMS-MailID: 20220412094555eucas1p1843edd72d420037735ccd8c7f481904d
+In-Reply-To: <20220408162108.184583-3-jagan@amarulasolutions.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxTVxzlvvf6+trY7lkl3Og2tyZug0Q+hn/cAZKxOPNiTJhGTAAdFHgB
+        JhTXB36MbMMPBOrAtotQi6ROuhSwA61gQV0XGqATB4gCMwitRHQqIIHipsi6tX268d/5nd/H
+        OefmUrisklxD5SoLWZVSkScnxcTlnhcDG+q2JWVEajw4Grt7A0fueg+Bpu42kMjY1S9AQ89m
+        SVT5ow/p3BoCLVg1JHrkGiRQ35FpIarQmoTIrLGTyHp/RIDUi4040g/YMdR7uJRAjqpUNG+Y
+        wFHpz11CpP/+MYkGf53HPw5mfppzC5jZO6VCpv+7cZLpMIwLmdry0wKm/tpjjLE2VZBM13C9
+        gBkbuUYy7hNOjLlk+pa5+LQdY6pamwDjsb79mTRFHJfF5uXuZ1UR8eninG67HdvXKT9oNLdi
+        JWBxrRqIKEhvhOrpUVwNxJSMbgCwrdOC8cUCgN6qF4AvPADeqvlL+HrldssQyTfMvpXbNiFf
+        zAFo/L1Z4J+S0PGwvswE/Jig10O78TDO8yvh9dOThB8H0xnwvO287xJFraJ3Q50zzk/jdAgc
+        nTQGbKymlwj4ctFF8o2HAP7mDtwk6SionlEHeBGdADt0o69m1kHbzJlAIEh7RfDqn70C3vZm
+        qG+4B3i8Cj5xtr6K8yb8p8OvRvlwAfxbH83TB+HIlAXncSwc618M+MTpUNhyJYKnE+D0kWrA
+        b0rhnZmVvAMp1F2uwXlaAsuPy/jp96DB2fyfZufNW7gGyA3L3sSwLLxhWRbD/7pnAdEEQtgi
+        Lj+b5T5UsgfCOUU+V6TMDs8syLcC34+94XUutAPzk7lwB8Ao4ACQwuWrJSffT8qQSbIUh75i
+        VQVpqqI8lnOAtRQhD5Fk5l5QyOhsRSG7l2X3sarXXYwSrSnB2n4I+mipd3eYzRKT803i7MDO
+        Ff1LoQmbgnacDHqgldobL41sqmHLpO80FOvmMlwlm4styQ/Cnh+L7Z3vPjpWe7y15dQvz6TN
+        cNjb8wbZFXk09v5baVzb/sRjyee21o7GOOdBX+jDl+2pKZEx284oDhVXOptFddV/7Emu+MIs
+        m/g0bcOMN0W75dG9yvWO8cRSwYJWn/llLZgss6wbzNvztckVb6xulPfZpMHq7RXhU3QoHbUr
+        6cLOKTr93ayNHYU3M7vPfj6cU7dUfuBpKrcdaxyaiNoxFK08lQ3MEpje4mWl1NYrJaaeFSbV
+        Rf0nPUUG6Ra3uDPug4jnLi154qpHFy0nuBxFVBiu4hT/ArP6jSAgBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsVy+t/xu7pzfEKTDBZ9FrO4c/s0s8X9xZ9Z
+        LF7fXsFmMf/IOVaLK1/fs1n0LgWyJt2fwGLxZdMENosX9y6yWJxtesNu0TlxCbvF8gn72Cw2
+        Pb7GatH1ayWzxYzz+5gsTjW2slgc6ou2+DTrIbNF694j7BYzJr9ks7h44hOzg6jH2o/3WT3e
+        32hl9zjXc5fNY+esu+wesztmsnos3vOSyWPTqk42jyNXF7N63Lm2h83jfvdxJo/NS+o9Nr7b
+        weTRt2UVo8fnTXIBfFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2Nimp
+        OZllqUX6dgl6GUf37WMqOKhUMX/5FqYGxl/SXYycHBICJhKX119hA7GFBJYySmw+ZwYRl5E4
+        Oa2BFcIWlvhzrQuohguo5j2jxMzPp9lBErwCdhKL25cwgtgsAqoS++Y3MkPEBSVOznzCAmKL
+        CiRJXOpqB6sRFoiR2HBmJ1icWUBc4taT+UwgtohAA6vEoYtcEPFnjBJ3f6VBLDvNKHH1xQqw
+        ZWwChhJdb7vALuUUcJTYOekWG0SDmUTX1i5GCFteYvvbOcwTGIVmIbljFpJ9s5C0zELSsoCR
+        ZRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgWtl27OeWHYwrX33UO8TIxMF4iFGCg1lJhLdf
+        PTRJiDclsbIqtSg/vqg0J7X4EKMpMDAmMkuJJucDE1teSbyhmYGpoYmZpYGppZmxkjivZ0FH
+        opBAemJJanZqakFqEUwfEwenVANTdA/7vdWLF03Tq34yY8eWXT0idllTgy6H365VSpp86X+z
+        D/ssfe7Lt0tr/zdMiVXZJFlV+ZXFMOIyx+GMGO9FSxwLY4L+v48zeumtybM+s/jik+0H7ddY
+        BXCetLvQsLtFLfvP7uj1EpsPlfOr3Sr6OZV77bIN8ZNU8p9cWnhqmvLCzzdVZkdLCcjX597q
+        f/akqFYiyV1M9UGgrhT32gyb3u6Nc1Q7hc395707eHKPdkTv/MevrU0+el/k/dvA1RviqTn3
+        v8NNzyWz1gq+2bl+Sh37r82Cx9V5/04T3yDv8b+1zlrOvaAmqi+Tm1+OJ/LySbfV1xJ/Hf/3
+        MftaRc+6duPvb27s5UxL+M6+1ktPiaU4I9FQi7moOBEAyqNtI7QDAAA=
+X-CMS-MailID: 20220412095540eucas1p26338894d71d3ab9190ac24639a89feff
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220408162224eucas1p2a445493e9354f6ee72b348cb1c4ebc16
+X-RootMTR: 20220408162227eucas1p1f07cc5435b048a33013a72b52b135081
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220408162224eucas1p2a445493e9354f6ee72b348cb1c4ebc16
+X-CMS-RootMailID: 20220408162227eucas1p1f07cc5435b048a33013a72b52b135081
 References: <20220408162108.184583-1-jagan@amarulasolutions.com>
-        <CGME20220408162224eucas1p2a445493e9354f6ee72b348cb1c4ebc16@eucas1p2.samsung.com>
-        <20220408162108.184583-2-jagan@amarulasolutions.com>
+        <CGME20220408162227eucas1p1f07cc5435b048a33013a72b52b135081@eucas1p1.samsung.com>
+        <20220408162108.184583-3-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jagan,
 
 On 08.04.2022 18:20, Jagan Teki wrote:
-> Samsung MIPI DSIM controller is common DSI IP that can be used in various
-> SoCs like Exynos, i.MX8M Mini/Nano.
+> In order to make a common Samsung DSIM bridge driver some platform specific
+> glue code needs to maintain separately as it is hard to maintain platform
+> specific glue and conventional component_ops on the drm bridge drivers side.
 >
-> In order to access this DSI controller between various platform SoCs, the
-> ideal way to incorporate this in the drm stack is via the drm bridge driver.
+> This patch is trying to support that glue code initialization and invocation
+> in the form of platform_init flag in driver_data.
 >
-> This patch is trying to differentiate platform-specific and bridge driver
-> code and keep maintaining the exynos_drm_dsi.c code as platform-specific
-> glue code and samsung-dsim.c as a common bridge driver code.
+> So, the platforms which enable platform_init flags will handle all platform
+> specific initialization via samsung_dsim_plat_probe.
 >
-> - Exynos specific glue code is exynos specific te_irq, host_attach, and
->    detach code along with conventional component_ops.
->
-> - Samsung DSIM is a bridge driver which is common across all platforms and
->    the respective platform-specific glue will initialize at the end of the
->    probe. The platform-specific operations and other glue calls will invoke
->    on associate code areas.
->
-> Updated MAINTAINERS file for this bridge with exynos drm maintainers along
-> with Andrzej as he is the original author.
->
-> Tomasz Figa has been not included in MAINTAINERS as he is not available via
-> samsung.com.
+> The Platform probe is responsible to
+> - initialize samsung_dsim_plat_data and install hooks
+> - initialize component_ops
+> - preserve samsung_dsim structure pointer
 >
 > v1:
-> * Don't maintain component_ops in bridge driver
-> * Don't maintain platform glue code in bridge driver
-> * Add platform-specific glue code and make a common bridge
+> * use platform_init instead of exynos_specific
+> * handle component_ops in glue code
 >
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-
-Well, it took me a while to make this working on Exynos. I'm not really 
-happy of the design, although I didn't spent much time thinking how to 
-improve it and clarify some ambiguities. It doesn't even look that one 
-has compiled the Exynos code after this conversion.
-
-The following changes are needed to get it to the same working state as 
-before this patch (the next patches however break it even further):
-
-commit e358ee6239305744062713c5aa2e8d44f740b81a (HEAD)
-Author: Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Tue Apr 12 11:30:26 2022 +0200
-
-     drm: exynos: dsi: fixup driver after conversion
-
-     Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c 
-b/drivers/gpu/drm/bridge/samsung-dsim.c
-index ee5d7e5518a6..8e0064282ce6 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -17,7 +17,6 @@
-
-  #include <linux/clk.h>
-  #include <linux/delay.h>
--#include <linux/gpio/consumer.h>
-  #include <linux/irq.h>
-  #include <linux/of_device.h>
-  #include <linux/phy/phy.h>
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c 
-b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 97167c5ffc78..bbfacb22d99d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -8,6 +8,7 @@
-   */
-
-  #include <linux/component.h>
-+#include <linux/gpio/consumer.h>
-
-  #include <drm/bridge/samsung-dsim.h>
-  #include <drm/drm_probe_helper.h>
-@@ -25,17 +26,19 @@ struct exynos_dsi {
-         struct samsung_dsim_plat_data pdata;
-  };
-
--static void exynos_dsi_enable_irq(void *priv)
-+static void exynos_dsi_enable_irq(struct samsung_dsim *priv)
-  {
--       struct exynos_dsi *dsi = priv;
-+       const struct samsung_dsim_plat_data *pdata = priv->plat_data;
-+       struct exynos_dsi *dsi = container_of(pdata, struct exynos_dsi, 
-pdata);
-
-         if (dsi->te_gpio)
-                 enable_irq(gpiod_to_irq(dsi->te_gpio));
-  }
-
--static void exynos_dsi_disable_irq(void *priv)
-+static void exynos_dsi_disable_irq(struct samsung_dsim *priv)
-  {
--       struct exynos_dsi *dsi = priv;
-+       const struct samsung_dsim_plat_data *pdata = priv->plat_data;
-+       struct exynos_dsi *dsi = container_of(pdata, struct exynos_dsi, 
-pdata);
-
-         if (dsi->te_gpio)
-                 disable_irq(gpiod_to_irq(dsi->te_gpio));
-@@ -92,15 +95,15 @@ static void exynos_dsi_unregister_te_irq(struct 
-exynos_dsi *dsi)
-         }
-  }
-
--static int exynos_dsi_host_attach(void *priv, struct mipi_dsi_device 
-*device)
-+static int exynos_dsi_host_attach(struct samsung_dsim *priv, struct 
-mipi_dsi_device *device)
-  {
--       struct exynos_dsi *dsi = priv;
--       struct samsung_dsim *_priv = dsi->priv;
-+       const struct samsung_dsim_plat_data *pdata = priv->plat_data;
-+       struct exynos_dsi *dsi = container_of(pdata, struct exynos_dsi, 
-pdata);
-         struct drm_encoder *encoder = &dsi->encoder;
-         struct drm_device *drm = encoder->dev;
-         int ret;
-
--       drm_bridge_attach(encoder, &_priv->bridge, NULL, 0);
-+       drm_bridge_attach(encoder, &priv->bridge, NULL, 0);
-
-         /*
-          * This is a temporary solution and should be made by more 
-generic way.
-@@ -116,11 +119,11 @@ static int exynos_dsi_host_attach(void *priv, 
-struct mipi_dsi_device *device)
-
-         mutex_lock(&drm->mode_config.mutex);
-
--       _priv->lanes = device->lanes;
--       _priv->format = device->format;
--       _priv->mode_flags = device->mode_flags;
-+       priv->lanes = device->lanes;
-+       priv->format = device->format;
-+       priv->mode_flags = device->mode_flags;
-         exynos_drm_crtc_get_by_type(drm, 
-EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
--                       !(_priv->mode_flags & MIPI_DSI_MODE_VIDEO);
-+                       !(priv->mode_flags & MIPI_DSI_MODE_VIDEO);
-
-         mutex_unlock(&drm->mode_config.mutex);
-
-@@ -130,9 +133,10 @@ static int exynos_dsi_host_attach(void *priv, 
-struct mipi_dsi_device *device)
-         return 0;
-  }
-
--static int exynos_dsi_host_detach(void *priv, struct mipi_dsi_device 
-*device)
-+static int exynos_dsi_host_detach(struct samsung_dsim *priv, struct 
-mipi_dsi_device *device)
-  {
--       struct exynos_dsi *dsi = priv;
-+       const struct samsung_dsim_plat_data *pdata = priv->plat_data;
-+       struct exynos_dsi *dsi = container_of(pdata, struct exynos_dsi, 
-pdata);
-         struct drm_device *drm = dsi->encoder.dev;
-
-         if (drm->mode_config.poll_enabled)
-@@ -150,8 +154,9 @@ static const struct samsung_dsim_host_ops 
-samsung_dsim_exynos_host_ops = {
-
-  static int exynos_dsi_bind(struct device *dev, struct device *master, 
-void *data)
-  {
--       struct exynos_dsi *dsi = dev_get_drvdata(dev);
--       struct samsung_dsim *priv = dsi->priv;
-+       struct samsung_dsim *priv = dev_get_drvdata(dev);
-+       const struct samsung_dsim_plat_data *pdata = priv->plat_data;
-+       struct exynos_dsi *dsi = container_of(pdata, struct exynos_dsi, 
-pdata);
-         struct drm_encoder *encoder = &dsi->encoder;
-         struct drm_device *drm_dev = data;
-         int ret;
-@@ -167,8 +172,7 @@ static int exynos_dsi_bind(struct device *dev, 
-struct device *master, void *data
-
-  static void exynos_dsi_unbind(struct device *dev, struct device 
-*master, void *data)
-  {
--       struct exynos_dsi *dsi = dev_get_drvdata(dev);
--       struct samsung_dsim *priv = dsi->priv;
-+       struct samsung_dsim *priv = dev_get_drvdata(dev);
-
-priv->bridge.funcs->atomic_disable(&priv->bridge, NULL);
-
-diff --git a/include/drm/bridge/samsung-dsim.h 
-b/include/drm/bridge/samsung-dsim.h
-index 59a43f9c4477..9f579a798635 100644
---- a/include/drm/bridge/samsung-dsim.h
-+++ b/include/drm/bridge/samsung-dsim.h
-@@ -41,14 +41,18 @@ struct samsung_dsim_driver_data {
-         const unsigned int *reg_values;
-  };
-
-+struct samsung_dsim;
-+
-  struct samsung_dsim_host_ops {
--       int (*attach)(void *priv, struct mipi_dsi_device *device);
--       int (*detach)(void *priv, struct mipi_dsi_device *device);
-+       int (*attach)(struct samsung_dsim *priv,
-+                     struct mipi_dsi_device *device);
-+       int (*detach)(struct samsung_dsim *priv,
-+                     struct mipi_dsi_device *device);
-  };
-
-  struct samsung_dsim_irq_ops {
--       void (*enable)(void *priv);
--       void (*disable)(void *priv);
-+       void (*enable)(struct samsung_dsim *priv);
-+       void (*disable)(struct samsung_dsim *priv);
-  };
-
-  struct samsung_dsim_plat_data {
-
-
 > ---
->   MAINTAINERS                             |   12 +
->   drivers/gpu/drm/bridge/Kconfig          |   12 +
->   drivers/gpu/drm/bridge/Makefile         |    1 +
->   drivers/gpu/drm/bridge/samsung-dsim.c   | 1676 ++++++++++++++++++++++
->   drivers/gpu/drm/exynos/Kconfig          |    1 +
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1704 +----------------------
->   include/drm/bridge/samsung-dsim.h       |   95 ++
->   7 files changed, 1852 insertions(+), 1649 deletions(-)
->   create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
->   create mode 100644 include/drm/bridge/samsung-dsim.h
+>   drivers/gpu/drm/bridge/samsung-dsim.c | 20 ++++++++++++++++----
+>   include/drm/bridge/samsung-dsim.h     |  1 +
+>   2 files changed, 17 insertions(+), 4 deletions(-)
 >
-> ...
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index ee5d7e5518a6..0e6a5d1c7e4e 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -370,6 +370,7 @@ static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
+>   	.wait_for_reset = 1,
+>   	.num_bits_resol = 11,
+>   	.reg_values = reg_values,
+> +	.platform_init = true,
+>   };
+>   
+>   static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
+> @@ -382,6 +383,7 @@ static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
+>   	.wait_for_reset = 1,
+>   	.num_bits_resol = 11,
+>   	.reg_values = reg_values,
+> +	.platform_init = true,
+>   };
+>   
+>   static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
+> @@ -392,6 +394,7 @@ static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
+>   	.wait_for_reset = 1,
+>   	.num_bits_resol = 11,
+>   	.reg_values = reg_values,
+> +	.platform_init = true,
+>   };
+>   
+>   static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
+> @@ -403,6 +406,7 @@ static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
+>   	.wait_for_reset = 0,
+>   	.num_bits_resol = 12,
+>   	.reg_values = exynos5433_reg_values,
+> +	.platform_init = true,
+>   };
+>   
+>   static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+> @@ -414,6 +418,7 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+>   	.wait_for_reset = 1,
+>   	.num_bits_resol = 12,
+>   	.reg_values = exynos5422_reg_values,
+> +	.platform_init = true,
+>   };
+>   
+>   static const struct of_device_id samsung_dsim_of_match[] = {
+> @@ -1565,12 +1570,16 @@ static int samsung_dsim_probe(struct platform_device *pdev)
+>   	dsi->bridge.of_node = dev->of_node;
+>   	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
+>   
+> -	dsi->plat_data = samsung_dsim_plat_probe(dsi);
+> -	if (IS_ERR(dsi->plat_data)) {
+> +	if (dsi->driver_data->platform_init) {
+> +		dsi->plat_data = samsung_dsim_plat_probe(dsi);
+>   		ret = PTR_ERR(dsi->plat_data);
+
+ret = IS_ERR(dsi->plat_data) ? PTR_ERR(dsi->plat_data) : 0;
+
+otherwise it always fails.
+
+> -		goto err_disable_runtime;
+> +	} else {
+> +		ret = mipi_dsi_host_register(&dsi->dsi_host);
+>   	}
+>   
+> +	if (ret)
+> +		goto err_disable_runtime;
+> +
+>   	return 0;
+>   
+>   err_disable_runtime:
+> @@ -1585,7 +1594,10 @@ static int samsung_dsim_remove(struct platform_device *pdev)
+>   
+>   	pm_runtime_disable(&pdev->dev);
+>   
+> -	samsung_dsim_plat_remove(dsi);
+> +	if (dsi->driver_data->platform_init)
+> +		samsung_dsim_plat_remove(dsi);
+> +	else
+> +		mipi_dsi_host_unregister(&dsi->dsi_host);
+>   
+>   	return 0;
+>   }
+> diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
+> index 59a43f9c4477..eca7eacb5910 100644
+> --- a/include/drm/bridge/samsung-dsim.h
+> +++ b/include/drm/bridge/samsung-dsim.h
+> @@ -39,6 +39,7 @@ struct samsung_dsim_driver_data {
+>   	unsigned int wait_for_reset;
+>   	unsigned int num_bits_resol;
+>   	const unsigned int *reg_values;
+> +	bool platform_init;
+>   };
+>   
+>   struct samsung_dsim_host_ops {
 
 Best regards
 -- 
