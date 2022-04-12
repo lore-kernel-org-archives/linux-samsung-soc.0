@@ -2,67 +2,72 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AF2C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Apr 2022 00:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754DDC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Apr 2022 04:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243619AbiDLAzy (ORCPT
+        id S1345598AbiDLEWS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 Apr 2022 20:55:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34940 "EHLO
+        Tue, 12 Apr 2022 00:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343505AbiDLAyh (ORCPT
+        with ESMTP id S1345266AbiDLEWP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 Apr 2022 20:54:37 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2792321254
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Apr 2022 17:49:04 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220412004900epoutp03508f236655b7c30c9fd937b97a8fd4c1~k-7qHzRT71629316293epoutp03G
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2022 00:49:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220412004900epoutp03508f236655b7c30c9fd937b97a8fd4c1~k-7qHzRT71629316293epoutp03G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649724540;
-        bh=bM4sT/dgihgAzz88a52hmeLcMkFadU2IK7Fg+HHouf4=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=snAocxfmpBJk6AAnwd97sXKQQEkS+b+e8iIavrHNbuXmpr8/9smoRaINGNOJXX0/s
-         BFLZ703PHf1oCTE5LCSpD0LxRvrMPBLp1h6xsuoOTvbPtVqTCICgEZnoQe2BomJ6Q4
-         YM93gRjoh8Vue0WTlddots3fi75IyK594dXsBZyQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220412004859epcas1p2b08431c5bfb6bf8408bc99d361f5e549~k-7pdA3Xk0880608806epcas1p2I;
-        Tue, 12 Apr 2022 00:48:59 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.132]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4KcnCt2bs2z4x9QM; Tue, 12 Apr
-        2022 00:48:58 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        06.6D.28648.A7CC4526; Tue, 12 Apr 2022 09:48:58 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220412004857epcas1p4f8308bd4193fba5c5bbca9ca0871aa2c~k-7n_cJxX1381013810epcas1p4E;
-        Tue, 12 Apr 2022 00:48:57 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220412004857epsmtrp2d28372a02549585bf90ed0ffed134509~k-7n9jlJH0240402404epsmtrp2J;
-        Tue, 12 Apr 2022 00:48:57 +0000 (GMT)
-X-AuditID: b6c32a39-003ff70000006fe8-3a-6254cc7a4a81
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        10.FD.03370.97CC4526; Tue, 12 Apr 2022 09:48:57 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220412004857epsmtip2f72ae4de545bc88eb275a287cf6aa42b~k-7ngG_RV0321303213epsmtip2L;
-        Tue, 12 Apr 2022 00:48:57 +0000 (GMT)
-Message-ID: <c7606920-b5c9-f8e3-3026-631a796c195a@samsung.com>
-Date:   Tue, 12 Apr 2022 10:01:20 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.7.0
-Subject: Re: [PATCH] drm/exynos: fix IS_ERR() vs NULL check in probe
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
+        Tue, 12 Apr 2022 00:22:15 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD9A26AFA;
+        Mon, 11 Apr 2022 21:19:58 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23C1kKe9012649;
+        Tue, 12 Apr 2022 04:19:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=TpllYDvCuxc+f8Ux6GuY1sR+6vtNh1R7sdw0/FKSRQI=;
+ b=JEsgaf3ysriMp+hZyxciiWcEiLARJkRfpn0Ym2U8cvLgJeiGq4MCCAbxiATCIu0h4/CU
+ SioZPpMIWBig/Y5GSpAdLXK+D4OJ83lB1Z4qg0rwzP8w8W4X9/aax4exajSd7fBLBmP4
+ wlZAsdWVVTS29wXdtD9+27kXx/2JNgyQRDURMY/gWCyBFJZi5UPI8KuUqqP9Yi4+c11E
+ JJziBw5NNE1Mxgfuc5465mLPVoBcaJ8ro8fjUR6p8mU0kL1mq1IPN8t2lOI+cTQaa4BW
+ fuOcZ7OzMEUi8sYOSlJJGRtKoIL76QwMenpe3FyQG76x8zN5mrM8CM1gZjmm+9E9PTw2 6A== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3fb2ptwkbf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Apr 2022 04:19:52 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23C4HLix036827;
+        Tue, 12 Apr 2022 04:19:52 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2172.outbound.protection.outlook.com [104.47.56.172])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3fb0k2rm8j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Apr 2022 04:19:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E+zzk3mn7RBJI3NBWQF96UFIPNv6Ol3n6BaXHnRGTo5ZhgcYSJs/gllle0v71tNMpk8M5UOKXPNOGB1o8F0Aa74uenr32QF+EQPt0HcTC1SVVTOoLg3CcuXRrzTVZma3tReRzuW2PZVZjATCnXtfmimBq7dzp4K26kJzHWGhYADIjI1s9UKBHi9MLeShb3j2y7RP/ZTyAZrSTvgugTQpa9qCxryHOQITm614a501JTFbbZKTFg54Yq32zI0dP2L3nPHZ5y0Hr6p9v9XM3xOChdHq0f2p3gf+Dv3UsA6Bwib3KkqTRAc2r92nquu+I+MYS1GJg3ZxCakM/zkCAR00+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TpllYDvCuxc+f8Ux6GuY1sR+6vtNh1R7sdw0/FKSRQI=;
+ b=Q4Pwnp4cQbkeQ08fgLE65MQio6uEYakjYokbiP0pKf+tcp5hHJysduIOBYEYSGe0C5MfDXMz6GIVYW5+W5oKJiA66YEGBeKJoFllJsf+Rsdry3pRdhOsha3HPtJq2mieKHAP887tRyEAUMkvzl0AfYYcVFjGRytJxVn/pz+VYTpUwhANmvoC7a2pivuPBL1EKr/5wH1ywv0+QSewTPEhcIx6LMrZZ183LmPzhBOJhbjxHHijf7FfHbb/dM279QgikHxNerAyw7tlIDIzob9OYBNalHT4+iGF7Y8CemjQuIKN4s5BCtj39x+wEgXxd6dTl0PEM7c0TZerhpma7CswxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TpllYDvCuxc+f8Ux6GuY1sR+6vtNh1R7sdw0/FKSRQI=;
+ b=g1TO2id60fl/xjubY8DtXx7t+wfz5UqTM7aDwKxeGbpRJqdLCrBeYek6x0euYrwrfGzgdRDWdcsjUpUCvG5jgJK2YICC57HrGMxj3K/lU6eLhg52r24mP0OVoy6PmrYbLQGEL6Mxzgur1GDDB4i7NGJBttNAKE1XYWOP4cz928I=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by DM8PR10MB5495.namprd10.prod.outlook.com
+ (2603:10b6:8:22::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Tue, 12 Apr
+ 2022 04:19:50 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b5d5:7b39:ca2d:1b87]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b5d5:7b39:ca2d:1b87%5]) with mapi id 15.20.5144.022; Tue, 12 Apr 2022
+ 04:19:50 +0000
+Date:   Tue, 12 Apr 2022 07:19:36 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Inki Dae <inki.dae@samsung.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         David Airlie <airlied@linux.ie>,
@@ -73,91 +78,95 @@ Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-From:   Inki Dae <inki.dae@samsung.com>
-In-Reply-To: <20220408102134.GA14120@kili>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmnm7VmZAkg513BS16z51ksngwbxub
-        xet/01ks/m+byGxx5et7NosvmyawWWy9JW2x9/VWdouzTW/YLWac38dksfbIXXaLT7MeMlvM
-        mPySzYHXY+3H+6wee78tYPG4c20Pm8f2bw9YPe53H2fy+Pj0FotH35ZVjB6fN8kFcERl22Sk
-        JqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAnaykUJaYUwoU
-        CkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAt0CtOzC0uzUvXy0stsTI0MDAyBSpMyM6Y9XYh
-        e8EHzopTf+cyNjBO5+hi5OSQEDCReLlkKVsXIxeHkMAORomOxYsYIZxPjBL75nxkh3A+M0q8
-        O3GGCabl+M0jrBCJXYwSO6fMZIFw3jNKPHxwgxGkilfATuJK/x+gwRwcLAKqEk/nJ0OEBSVO
-        znzCAmKLCkRI/Lr1iB3EFhZwkdi2tJMZxGYWEJe49WQ+2DIRgXCJBdubwe5jFnjELLF+9new
-        +WxAMyeuuM8GYnMKaEmcanvDCNEsL9G8dTYzxKU3OCRefyiFsF0kTt5+BRUXlnh1fAs7hC0l
-        8fndXrAFEgKTGSXuXF/BAuHMYJQ4/PM6I0SVscT+pZOZQL5hFtCUWL9LHyKsKLHz91yoxXwS
-        7772sIKUSAjwSnS0CUGUKEkcu3gDaoqExIUlE9kgbA+JmXd/s01gVJyFFC6zkPw/C8k7sxAW
-        L2BkWcUollpQnJueWmxYYAqP7uT83E2M4PSsZbmDcfrbD3qHGJk4GA8xSnAwK4nwPgsLSRLi
-        TUmsrEotyo8vKs1JLT7EaAqMnInMUqLJ+cAMkVcSb2hiaWBiZmRsYmFoZqgkzrtq2ulEIYH0
-        xJLU7NTUgtQimD4mDk6pBqZYhbm8QefLvmzwXPl1/13Zjw2vPu7QTee783aZwNGbUnenVrTx
-        njhzgyF9u0Ff7P+rq0QDnulNuGb98erXnrYvSzfKiBetnCu2O+Pn8wOCf7Jnq11tlzTNZvWp
-        41oUnbTT+m5Y8drItOaEC1edZ54POtwo2biK/2O2Jc/bNaXu0q0um5c5hQjInQi5l8a47viZ
-        lY6b/mQa72SfwLRB5RN7drC58/a/Ehq3l1vf/zhF727F4+ScNMvfnxc/LfuTWzgxcZsid1p4
-        9AGVpM4iZS3en7m33ukuyV4RVftr3ef0lcUzi13Z1296HBai4K78NLnUZ6Ug75Z8o5Msk997
-        OqzoNQ/2cLm29X2zT0iPWJASS3FGoqEWc1FxIgCn2tW7WAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsWy7bCSvG7lmZAkg/2zdCx6z51ksngwbxub
-        xet/01ks/m+byGxx5et7NosvmyawWby4d5HFYustaYu9r7eyW5xtesNuMeP8PiaLtUfuslt8
-        mvWQ2WLG5JdsDnweaz/eZ/XY+20Bi8eda3vYPLZ/e8Dqcb/7OJPHx6e3WDz6tqxi9Pi8SS6A
-        I4rLJiU1J7MstUjfLoErY9bbhewFHzgrTv2dy9jAOJ2ji5GTQ0LAROL4zSOsXYxcHEICOxgl
-        jrTeZ+pi5ABKSEhs2coBYQpLHD5cDFIuJPCWUWL68lAQm1fATuJK/x82kBIWAVWJp/OTIcKC
-        EidnPmEBsUUFIiSW7ZoKZgsLuEhsW9rJDGIzC4hL3HoynwnEFhEIl5jydBI7yAXMAs+YJVqu
-        T2GD2FUr0d+6A6yIDWj+xBX3weKcAloSp9reMILsZRZQl1g/TwhiprxE89bZzBMYhWYhOWMW
-        knWzEDpmIelYwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOB61tHYw7ln1Qe8Q
-        IxMH4yFGCQ5mJRHeZ2EhSUK8KYmVValF+fFFpTmpxYcYpTlYlMR5L3SdjBcSSE8sSc1OTS1I
-        LYLJMnFwSjUwqa3wuNYawymQkFRo2mvjEi7Fe+9NdaTWwn8uuwOf3rXJ75T3FF4evPt/gv/0
-        cw6VM0IOT+I4XND9cGX0yskJJ/R2JOxiz9LJ0vrgeVZ49rL2HVnrFO8eaeJd5b9t18/H25du
-        ZnoZ7+34v+aW0F2mWXZij14lnX314smbz2VT9/9TujE995yFSVLBB/4F7/xnfV7TIJB+sIql
-        IN9HZLZIk8+mwrk5varrpCZ9X3DJ1SUjzKVL/XOEzeruzEX+05sTlBL/H37VlHr5/1WBz8cK
-        THI/6lneTm8/67P75/PLxlm8S2bOn7o/USRr+9HozaavsyOzl7ze9idAcLG+fdTMrm3+LSL5
-        ngvLS1wCGX+5K7EUZyQaajEXFScCANdao2o2AwAA
-X-CMS-MailID: 20220412004857epcas1p4f8308bd4193fba5c5bbca9ca0871aa2c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220408102327epcas1p409b13bf2da7e19b0a24571ce50e3ea92
+Subject: Re: [PATCH] drm/exynos: fix IS_ERR() vs NULL check in probe
+Message-ID: <20220412041936.GK12805@kadam>
 References: <CGME20220408102327epcas1p409b13bf2da7e19b0a24571ce50e3ea92@epcas1p4.samsung.com>
-        <20220408102134.GA14120@kili>
+ <20220408102134.GA14120@kili>
+ <c7606920-b5c9-f8e3-3026-631a796c195a@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7606920-b5c9-f8e3-3026-631a796c195a@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MR2P264CA0101.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:500:33::17) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 245ff2e5-b527-4021-cc1e-08da1c3baf9d
+X-MS-TrafficTypeDiagnostic: DM8PR10MB5495:EE_
+X-Microsoft-Antispam-PRVS: <DM8PR10MB54952018119AE1CD5D47B8728EED9@DM8PR10MB5495.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ebYLWi0U0SYeoFA2EhdfNs7npTWv6h+ExjPxRCB63Zd5W9rJFzXkT4YmvCb9WvGtP1tmAgMzMN62wmbncl64bD/+GkgxYtv/IUw//zEdHIOpI+LLHKsM622BYrhB3gA15eS/eWVu9EsNnkt0qhPY6GaMPkQe/Vw7wTr61ZNSyVGS57uDUKAynIxscZLazd4iih+4+6EbUYsIOxmdR7yo1MGwOJ4yyiUleCh9UJ3p436ECGMhcx2GTtP5RYVudaupa/zOvugC/ytEaqlWyzTF4pW0XSGTYIqy3m/j7styLRnV9FjEblF9vF0NMk/x63l2Ia6LBb0hTz/1YhrEcmLOjQwXcCqOmxXPkxEUHQjtGXENCgTNJLQyE+PodLCtaMtV3/S89B+fag7enaNPDSyjLAECjrPKzz0biEtToMeBv1+C0IhIU71akrpmA5wyhp7xKKwZQZOdJpsZllp0/bBFEOfkt6kevh6GU3aU+ihvUQsqlDP/JcQrJ7aHWeb33XByHjLQLWVRkmlgys9aaaXHxSRnQalKV+gYmVwAbfmcckJMJBeHA0hXTzOaTXpVQSQt7NF+z9NCu3sL6uILor/RVKp+c/ZUgs+VclYI+vPHuD24/T0yKKKIABqGmcI52jq+GIaSN7DHeND8uZe6Uc3q14biue3SnPAxlxpha3WseL4V89BIbDTSKN9d3QSJqfSR+Xpehv2IcWgTyLm1OZnGaPGrzr1c27dcPoSMx8Q4mQ+TrUjdl35xd9rsWz3BBXMjVtxFa1djGbSEA3FObk3z4ti9/dyLn58vKBQO8mUOXrI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(8936002)(38100700002)(6486002)(966005)(86362001)(52116002)(33716001)(6506007)(38350700002)(6916009)(4744005)(7416002)(5660300002)(316002)(66946007)(4326008)(8676002)(66476007)(1076003)(186003)(26005)(508600001)(54906003)(44832011)(66556008)(6666004)(6512007)(9686003)(33656002)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+QZgL5PoMbGGqVk+rSR2s6n/OF93qIE5eDz98Cf16xXf0e2xnbPqrNyYi+11?=
+ =?us-ascii?Q?5zeQQCOcwnz/Q/UhaDMM2mLJOwp1OGOAq73WzM03eAvEGhYvgkkscxCb4HqC?=
+ =?us-ascii?Q?34oBU/ynNAXriMTbQAbozXNMTFrwOX3QPE4gl3WmvMGMvI8t7dbZ8eWrTH2k?=
+ =?us-ascii?Q?lKewqmHAD1mcNlwDdcBWBLCf4mnAuiFe2nSXhPUCTN4LeNIuz3E14x+/mXv1?=
+ =?us-ascii?Q?5lNeIbUkkZBISlSblTWicGkWZvUROKZWNAnBJyKPxxUeKoaw5cVsQYYvl215?=
+ =?us-ascii?Q?IjYDjY072c873ff3J/XZnCpC8FHc0W5Az1Q15HYMdfINpbY/rbPHVsdjDRQe?=
+ =?us-ascii?Q?19G3v+whphuNIjtrJd+hvi4IxcHILHVxdebwXpoiyU43HBVcmZ+QnqUv1oHF?=
+ =?us-ascii?Q?zP+lFnwJfjI6jYXCIQePKISdd5hnupWI67UhBB0MhiR9kwGT8OTS6+X7omIc?=
+ =?us-ascii?Q?ohmHHoBLL1LVa8svQKfRslDgQQE0KlQmHNzLhxeZU+61wGqq7Xtxu7ODZBWL?=
+ =?us-ascii?Q?wIBlAkt7vXBXHIenYcT8g1+NsA10MOJyCCcdF4S+Exmlz74Lm3wZS3sDDoT9?=
+ =?us-ascii?Q?aXHQCW76Fbt9xDITl4O+dkOJVhyHM2Rxtr6TpPOCrAIGJZ319Nav+lj1GEfD?=
+ =?us-ascii?Q?xw5xA7u6dOIzDkBkXGPIFcPiHTgpKoL6C69SRclkA/GyBhQ7m0ynTqEHR7ud?=
+ =?us-ascii?Q?YvuWngBqxl9YdAIpIlJmAnd9tBTGj5ACynB8AJq1+byuI3MNtk1UiVt31jdl?=
+ =?us-ascii?Q?z8ulFwSTHYFQwP/hdAUd23IEdnUvtOokBIqvb6R8pacomzzzF/ypwD7pmHcR?=
+ =?us-ascii?Q?J54FAHGUZAHQy6rVhxzR8PEUYSbkGUKtW+Dy7xljm6dSy7nY2bwAUpLxSiDE?=
+ =?us-ascii?Q?U+B+8HBadFYuRcKKKDocPkcbJV2Wd6SOojm/yCjeR+oCvSIEY7zsMHt2dmNI?=
+ =?us-ascii?Q?kl4jPXNrhjEZReFAofhRDSuRmVoiSditsKLAoLqvDtRhTLzts54DVnRdvu4D?=
+ =?us-ascii?Q?fq9mgnBSqfpbneIj1nNxwfcfAHj0gWA+lNwgdefO34vIbb5H66S+xZX5KeYn?=
+ =?us-ascii?Q?1oMCiQwfr2j5cFYarYkLrcScp7JPB3ez7JZB2bXOMH4ZHln64yLRWJjT64w9?=
+ =?us-ascii?Q?KjZrjrlnhWcg4wx5G2Pk1+eS81jIEEv1/x1XhQUOpkhtEpSOlTVzU90SnMjR?=
+ =?us-ascii?Q?LyfpGX+0QzY1a8yrPpsJVsD7OxPCAdEichsHGfeB3At5KVtE82QJXMTGaNmR?=
+ =?us-ascii?Q?gZA1TA5QU1Z9SklP7IXLhd47uW5G+Gm+LzYfVUy/VrtT7hpHAwbIyVWNyYEi?=
+ =?us-ascii?Q?ed7w1urWPFo46KN0b9TJRl/aUgGiW072sAOnWHJ12GQvsxckVgUM6Fb7XVhe?=
+ =?us-ascii?Q?f2Hi8gT85Fmrfp1HdUSl3NEAa51EmrCDJjakf6yRD3JehNs1oDP78LJUTQOp?=
+ =?us-ascii?Q?HaNj1RD6V6cEVFasQxsmhZ5BhO4zB5dCAqrXUoQSMk2a9QiKDTRNks1+TvCd?=
+ =?us-ascii?Q?X/w1XCZDllE97Xue15FONu2nPBePiYe03O7NwVyH5Bsg9mIuTZQzlMdrBomG?=
+ =?us-ascii?Q?3p5JbqbRhhdGSJDE1JGn1oSYHtI9RIm+jG4YNT2kYfi+yqyLNzgZrN4DLb3m?=
+ =?us-ascii?Q?ZmGSYeohl8w92KHLmUR2Q/Rf0VI6EC2t181x8s353pmW5ty3doU1eoOxW1CO?=
+ =?us-ascii?Q?tKwn98dQwKRizp8d/W7fhj1wNF5PlxRxOVYHfnwf9R6IYREePbelcHxPG5+q?=
+ =?us-ascii?Q?WeRhi3OdjtKQS8vdN8+Z3HLIpcMHmt4=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 245ff2e5-b527-4021-cc1e-08da1c3baf9d
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2022 04:19:50.3380
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K+MyJmPJPIikGJpXxxziev63ZFR0eeNB0g0xMWj1hcerFQ752KmnJSuYXhdOnhDSW0yoKfni+DVew/36GB5Xb6IOl6sEkRPAoEs/Q21r2cM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR10MB5495
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.425,18.0.858
+ definitions=2022-04-11_09:2022-04-11,2022-04-11 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 mlxlogscore=844 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204120018
+X-Proofpoint-ORIG-GUID: 1SMOzQYsc_UpuF6yrSg-YZzWmzI-6Uuk
+X-Proofpoint-GUID: 1SMOzQYsc_UpuF6yrSg-YZzWmzI-6Uuk
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dan Carpenter.
-
-Same patch[1] was posted so I will pick it up. 
-
-[1] https://www.spinics.net/lists/arm-kernel/msg967488.html
-
-Thanks,
-Inki Dae
-
-22. 4. 8. 19:21에 Dan Carpenter 이(가) 쓴 글:
-> The of_drm_find_bridge() does not return error pointers, it returns
-> NULL on error.
+On Tue, Apr 12, 2022 at 10:01:20AM +0900, Inki Dae wrote:
+> Hi Dan Carpenter.
 > 
-> Fixes: dd8b6803bc49 ("exynos: drm: dsi: Attach in_bridge in MIC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> -EPROBE_DEFER is the correct return, right?
+> Same patch[1] was posted so I will pick it up. 
 > 
->  drivers/gpu/drm/exynos/exynos_drm_mic.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> [1] https://www.spinics.net/lists/arm-kernel/msg967488.html 
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> index 9e06f8e2a863..07e04ceb2476 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-> @@ -434,9 +434,9 @@ static int exynos_mic_probe(struct platform_device *pdev)
->  
->  	remote = of_graph_get_remote_node(dev->of_node, 1, 0);
->  	mic->next_bridge = of_drm_find_bridge(remote);
-> -	if (IS_ERR(mic->next_bridge)) {
-> +	if (!mic->next_bridge) {
->  		DRM_DEV_ERROR(dev, "mic: Failed to find next bridge\n");
-> -		ret = PTR_ERR(mic->next_bridge);
-> +		ret = -EPROBE_DEFER;
->  		goto err;
->  	}
->  
+
+It's not the same.  That one returns -EINVAL and mine returns
+-EPROBE_DEFER.  I obvoiously thought that -EPROBE_DEFER was the correct
+return but I wasn't positive.  -EPROBE_DEFER is kind of a special
+return so I think it matters to get this correct.
+
+regards,
+dan carpenter
+
