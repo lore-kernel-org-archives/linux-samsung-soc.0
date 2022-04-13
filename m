@@ -2,129 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA58C433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Apr 2022 09:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF466C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Apr 2022 09:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbiDMJyH (ORCPT
+        id S230229AbiDMJ7j (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 05:54:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37534 "EHLO
+        Wed, 13 Apr 2022 05:59:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231984AbiDMJyG (ORCPT
+        with ESMTP id S234786AbiDMJ7g (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Apr 2022 05:54:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1C54ECD8;
-        Wed, 13 Apr 2022 02:51:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 49A6BB82161;
-        Wed, 13 Apr 2022 09:51:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85992C385A4;
-        Wed, 13 Apr 2022 09:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649843503;
-        bh=8ts+Kz9ndNJjRtSXvOEj5iAcy0dAiFBVQaR1hMCq0jE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gPeZ7wdVTWbFywyfLoz0s2gLEIzH1+pavbNZXUPU4nCfLSGvudPAQDuZMWb1Dzsgp
-         qDBQDMZFI36H1EJYqOAfwf/hyQ0MZo+Y6Lq3P+Vv+6icNP7IqDEt1TyLzotHPNT0jU
-         0b5+B8XDzkjgI9MbU4SVpz3YarihjneIehRoBCPJhKNriaIDfP7T3+qrvEsR9LmNE0
-         BdruynS0hC5bnAPYHogYdbRZ33FH40N6ct65EPRqz/oTkUVfY2JMjriJ0R5JkKjhF9
-         kkbXFMp9NQ6cqAaK8Q4++ZqB8JeMlcFVbuAH2ge8yf0iCR7jeRRD5ko1UZCybT1Ai4
-         eiFTkqiBTxqJw==
-Date:   Wed, 13 Apr 2022 15:21:39 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Wed, 13 Apr 2022 05:59:36 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEBCE55BE9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Apr 2022 02:57:15 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id t11so2773529eju.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Apr 2022 02:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=BoRyXJyiezioU86Sm/aljGreuf33ZfT6BJLzBNsYxXg=;
+        b=omhuFPP17o7WmTkQEZ/ey1v3Go+8BL8tjJxT4U351QG/ra9Bryv3m3VIz9SPeHTJ17
+         jCw/SE//G3phX7o7tXLoRgKcoX4BSJ9PABjI9xQCFfe6W3G4swybnV3G/h9LsnOdLbwT
+         5fagV3p66C2I+jC4xwGmJolqwcFge+Ye4XnAndQ37sv6VLhVJSNCl9h8uNrA5FsAHPPa
+         FHzmSsT6IsXqjyoO/7HBo4+CLfRCzPbqWXRse5r+JNQlmAGCgbB2E35s3laF1+fuCL82
+         tkCC1kZSg/JtVprV+SxonH1pDFjrmnVdxcygBf88gFWybmaonjF9JtnH6Rq8hQS9fQ6F
+         v/UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=BoRyXJyiezioU86Sm/aljGreuf33ZfT6BJLzBNsYxXg=;
+        b=VfIoDqjCr4RCf7GR62HP7D16WTpy0tnDRJInHfirT0XjJ39tJQ8r71M+uEjzsdfzIm
+         rOpP0MfUS6ckM7TuDfRv7xLqNQl8uPVsAtnV4HoLTv11eJiwG2YTepqMPHZcrm1AJ658
+         AhICpWJQVvqbrn1p8InKMuE8rv7zc6KWkwK/4xbtM2/D+rKZme+EbD0Rt0L0gfG8ptTr
+         g7g8J0FOLrvuxgOTN7RmpEeZc/qQPjRdIWHXMRY8WYuh6NzqolNWzzOsekyINcZXKJ4o
+         7DwaqdD8vJGj+Q98OPsb0pN9mMOo13oW6vaXZVA6/qWMTDec2Wj/FnOYOVoxAN+EJgXH
+         T/jQ==
+X-Gm-Message-State: AOAM531hfY5dYaBnYy18KWTTOSuC2RfRt/SNbZ8pci06MaYXn8gdBL0w
+        DV7GTICEowl6XC+C8L3oga5JVg==
+X-Google-Smtp-Source: ABdhPJy2fHjgfklx0Z5VlYqV/vz9vbavseCTQTpvw3q5LckX8zitbG3juuiHqZrfjR9BZ7vSaecpgw==
+X-Received: by 2002:a17:906:19c6:b0:6ce:98a4:5ee6 with SMTP id h6-20020a17090619c600b006ce98a45ee6mr37493225ejd.567.1649843834448;
+        Wed, 13 Apr 2022 02:57:14 -0700 (PDT)
+Received: from [192.168.0.203] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id w6-20020a170906d20600b006ca00cb99e0sm13883293ejz.34.2022.04.13.02.57.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Apr 2022 02:57:14 -0700 (PDT)
+Message-ID: <1a12abfa-3459-18d8-5214-221f5184a9cd@linaro.org>
+Date:   Wed, 13 Apr 2022 11:57:13 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] phy: samsung: exynos5250-sata: fix missing device put in
+ probe error paths
+Content-Language: en-US
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Miaoqian Lin <linmq006@gmail.com>,
         linux-phy@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: samsung: exynos5250-sata: fix missing device put in
- probe error paths
-Message-ID: <YladK4z//z1hmTRX@matsya>
 References: <20220309170028.51913-1-krzysztof.kozlowski@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220309170028.51913-1-krzysztof.kozlowski@canonical.com>
+ <YladK4z//z1hmTRX@matsya>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <YladK4z//z1hmTRX@matsya>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09-03-22, 18:00, Krzysztof Kozlowski wrote:
-> The actions of of_find_i2c_device_by_node() in probe function should be
-> reversed in error paths by putting the reference to obtained device.
+On 13/04/2022 11:51, Vinod Koul wrote:
+> On 09-03-22, 18:00, Krzysztof Kozlowski wrote:
+>> The actions of of_find_i2c_device_by_node() in probe function should be
+>> reversed in error paths by putting the reference to obtained device.
+> 
+> This fails to apply on phy-fixes, pls rebase
 
-This fails to apply on phy-fixes, pls rebase
+You applied resent version, so you can ignore this one.
 
-> 
-> Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> 
-> ---
-> 
-> Rebased on top of (although it is independent, no conflicts):
-> https://lore.kernel.org/linux-samsung-soc/20220309124856.32632-1-linmq006@gmail.com/T/#u
-> ---
->  drivers/phy/samsung/phy-exynos5250-sata.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
-> index 6c305a3fe187..595adba5fb8f 100644
-> --- a/drivers/phy/samsung/phy-exynos5250-sata.c
-> +++ b/drivers/phy/samsung/phy-exynos5250-sata.c
-> @@ -196,20 +196,21 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
->  	sata_phy->phyclk = devm_clk_get(dev, "sata_phyctrl");
->  	if (IS_ERR(sata_phy->phyclk)) {
->  		dev_err(dev, "failed to get clk for PHY\n");
-> -		return PTR_ERR(sata_phy->phyclk);
-> +		ret = PTR_ERR(sata_phy->phyclk);
-> +		goto put_dev;
->  	}
->  
->  	ret = clk_prepare_enable(sata_phy->phyclk);
->  	if (ret < 0) {
->  		dev_err(dev, "failed to enable source clk\n");
-> -		return ret;
-> +		goto put_dev;
->  	}
->  
->  	sata_phy->phy = devm_phy_create(dev, NULL, &exynos_sata_phy_ops);
->  	if (IS_ERR(sata_phy->phy)) {
-> -		clk_disable_unprepare(sata_phy->phyclk);
->  		dev_err(dev, "failed to create PHY\n");
-> -		return PTR_ERR(sata_phy->phy);
-> +		ret = PTR_ERR(sata_phy->phy);
-> +		goto clk_disable;
->  	}
->  
->  	phy_set_drvdata(sata_phy->phy, sata_phy);
-> @@ -217,11 +218,18 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
->  	phy_provider = devm_of_phy_provider_register(dev,
->  					of_phy_simple_xlate);
->  	if (IS_ERR(phy_provider)) {
-> -		clk_disable_unprepare(sata_phy->phyclk);
-> -		return PTR_ERR(phy_provider);
-> +		ret = PTR_ERR(phy_provider);
-> +		goto clk_disable;
->  	}
->  
->  	return 0;
-> +
-> +clk_disable:
-> +	clk_disable_unprepare(sata_phy->phyclk);
-> +put_dev:
-> +	put_device(&sata_phy->client->dev);
-> +
-> +	return ret;
->  }
->  
->  static const struct of_device_id exynos_sata_phy_of_match[] = {
-> -- 
-> 2.32.0
+https://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git/commit/?h=fixes&id=5c8402c4db45dd55c2c93c8d730f5dfa7c78a702
 
--- 
-~Vinod
+
+Best regards,
+Krzysztof
