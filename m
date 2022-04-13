@@ -2,58 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D0DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Apr 2022 09:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA58C433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Apr 2022 09:51:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232242AbiDMJoq (ORCPT
+        id S230018AbiDMJyH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 05:44:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40702 "EHLO
+        Wed, 13 Apr 2022 05:54:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234663AbiDMJop (ORCPT
+        with ESMTP id S231984AbiDMJyG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Apr 2022 05:44:45 -0400
-Received: from mail.growthmindset24.pl (mail.growthmindset24.pl [212.237.36.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0655E3701C
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Apr 2022 02:42:20 -0700 (PDT)
-Received: by mail.growthmindset24.pl (Postfix, from userid 1001)
-        id CC4358801D; Tue, 12 Apr 2022 08:56:28 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=growthmindset24.pl;
-        s=mail; t=1649750204;
-        bh=FDuFY3XQoq0gMX1b2gxgT7Py2p4Sxl0PJZYZ4NVaPho=;
-        h=Date:From:To:Subject:From;
-        b=RhwV9o19s27aevoL5ozQt4tcayJeWl7y8U2gR3EBAy/9Xl6UIh83iTYT60u5FHd//
-         PLmz6hL+OYq/hS3fH2IjjG2r6CW2LD0l+AXvrcBwDVtUEYCjPR5Un7yuanm+1q5Bhq
-         wApbxkEbVTd4VuEnPjqXw4BdF4X/nuQNBVaMEcb1iqdu/FTx2khdrd6Tn6YCrV+Fbo
-         bntadmav7ZPTyu8e/z366axfZiDa0EVRHEfIy0wudQ/t3HE4iZJG5WbwmkbTY8hib1
-         OaDjA7Xb+UJdUlKo4nR5khEDkgEruxISib6EqTWQV9zKV/dMinuuUeejoGF7yvDX/L
-         MeBfCSGFHtB1A==
-Received: by mail.growthmindset24.pl for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2022 07:56:00 GMT
-Message-ID: <20220412073001-0.1.2w.d8cd.0.mhclhzniee@growthmindset24.pl>
-Date:   Tue, 12 Apr 2022 07:56:00 GMT
-From:   =?UTF-8?Q? "Przemys=C5=82aw_Wr=C3=B3blewski" ?= 
-        <przemyslaw.wroblewski@growthmindset24.pl>
-To:     <linux-samsung-soc@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.growthmindset24.pl
+        Wed, 13 Apr 2022 05:54:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1C54ECD8;
+        Wed, 13 Apr 2022 02:51:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 49A6BB82161;
+        Wed, 13 Apr 2022 09:51:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85992C385A4;
+        Wed, 13 Apr 2022 09:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649843503;
+        bh=8ts+Kz9ndNJjRtSXvOEj5iAcy0dAiFBVQaR1hMCq0jE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gPeZ7wdVTWbFywyfLoz0s2gLEIzH1+pavbNZXUPU4nCfLSGvudPAQDuZMWb1Dzsgp
+         qDBQDMZFI36H1EJYqOAfwf/hyQ0MZo+Y6Lq3P+Vv+6icNP7IqDEt1TyLzotHPNT0jU
+         0b5+B8XDzkjgI9MbU4SVpz3YarihjneIehRoBCPJhKNriaIDfP7T3+qrvEsR9LmNE0
+         BdruynS0hC5bnAPYHogYdbRZ33FH40N6ct65EPRqz/oTkUVfY2JMjriJ0R5JkKjhF9
+         kkbXFMp9NQ6cqAaK8Q4++ZqB8JeMlcFVbuAH2ge8yf0iCR7jeRRD5ko1UZCybT1Ai4
+         eiFTkqiBTxqJw==
+Date:   Wed, 13 Apr 2022 15:21:39 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        linux-phy@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: samsung: exynos5250-sata: fix missing device put in
+ probe error paths
+Message-ID: <YladK4z//z1hmTRX@matsya>
+References: <20220309170028.51913-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220309170028.51913-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 09-03-22, 18:00, Krzysztof Kozlowski wrote:
+> The actions of of_find_i2c_device_by_node() in probe function should be
+> reversed in error paths by putting the reference to obtained device.
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+This fails to apply on phy-fixes, pls rebase
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+> 
+> Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> 
+> ---
+> 
+> Rebased on top of (although it is independent, no conflicts):
+> https://lore.kernel.org/linux-samsung-soc/20220309124856.32632-1-linmq006@gmail.com/T/#u
+> ---
+>  drivers/phy/samsung/phy-exynos5250-sata.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
+> index 6c305a3fe187..595adba5fb8f 100644
+> --- a/drivers/phy/samsung/phy-exynos5250-sata.c
+> +++ b/drivers/phy/samsung/phy-exynos5250-sata.c
+> @@ -196,20 +196,21 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
+>  	sata_phy->phyclk = devm_clk_get(dev, "sata_phyctrl");
+>  	if (IS_ERR(sata_phy->phyclk)) {
+>  		dev_err(dev, "failed to get clk for PHY\n");
+> -		return PTR_ERR(sata_phy->phyclk);
+> +		ret = PTR_ERR(sata_phy->phyclk);
+> +		goto put_dev;
+>  	}
+>  
+>  	ret = clk_prepare_enable(sata_phy->phyclk);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to enable source clk\n");
+> -		return ret;
+> +		goto put_dev;
+>  	}
+>  
+>  	sata_phy->phy = devm_phy_create(dev, NULL, &exynos_sata_phy_ops);
+>  	if (IS_ERR(sata_phy->phy)) {
+> -		clk_disable_unprepare(sata_phy->phyclk);
+>  		dev_err(dev, "failed to create PHY\n");
+> -		return PTR_ERR(sata_phy->phy);
+> +		ret = PTR_ERR(sata_phy->phy);
+> +		goto clk_disable;
+>  	}
+>  
+>  	phy_set_drvdata(sata_phy->phy, sata_phy);
+> @@ -217,11 +218,18 @@ static int exynos_sata_phy_probe(struct platform_device *pdev)
+>  	phy_provider = devm_of_phy_provider_register(dev,
+>  					of_phy_simple_xlate);
+>  	if (IS_ERR(phy_provider)) {
+> -		clk_disable_unprepare(sata_phy->phyclk);
+> -		return PTR_ERR(phy_provider);
+> +		ret = PTR_ERR(phy_provider);
+> +		goto clk_disable;
+>  	}
+>  
+>  	return 0;
+> +
+> +clk_disable:
+> +	clk_disable_unprepare(sata_phy->phyclk);
+> +put_dev:
+> +	put_device(&sata_phy->client->dev);
+> +
+> +	return ret;
+>  }
+>  
+>  static const struct of_device_id exynos_sata_phy_of_match[] = {
+> -- 
+> 2.32.0
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
-
-
-Pozdrawiam,
-Przemys=C5=82aw Wr=C3=B3blewski
+-- 
+~Vinod
