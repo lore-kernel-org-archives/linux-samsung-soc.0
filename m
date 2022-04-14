@@ -2,174 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 687ECC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Apr 2022 11:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A00C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Apr 2022 13:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241606AbiDNLLa (ORCPT
+        id S244942AbiDNNgt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 07:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39902 "EHLO
+        Thu, 14 Apr 2022 09:36:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239161AbiDNLL2 (ORCPT
+        with ESMTP id S1344020AbiDNNaP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 07:11:28 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE8947E582
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Apr 2022 04:09:01 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220414110855euoutp02fb7a1da0a024586d51dd32608b668c47~lvrfM2m4T3071930719euoutp02H
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Apr 2022 11:08:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220414110855euoutp02fb7a1da0a024586d51dd32608b668c47~lvrfM2m4T3071930719euoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649934535;
-        bh=l8T412n44Yp8hAPgEFINj7TZEYgRQmaaW9IgQHPhOAg=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=RYMYV1izqrtEXKoUVB3GtlD83LSfg4jVU7wvdy5U1bY15gEibntszAjAjqTgbeCrC
-         9s0GhNda9h2Q2l74xxjidMbyXrhNGxIVihBCzpiJBGuuIJlzdeoBbU3XSfbbbYo/xL
-         iCArvU5RHDmdoIcdZzln0C1xwxWwVJs4Ew6VZu8E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220414110854eucas1p25898fff27fdc75b3bf54e9ac29134c32~lvre57xW12774927749eucas1p2X;
-        Thu, 14 Apr 2022 11:08:54 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 3F.4B.10009.6C008526; Thu, 14
-        Apr 2022 12:08:54 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220414110854eucas1p2a037d45634218755b6a3c9bbfdb802ad~lvref1gT01069910699eucas1p2k;
-        Thu, 14 Apr 2022 11:08:54 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220414110854eusmtrp1c883916e5468b2e625e1e91a5cf6cc74~lvrefFM2k2806528065eusmtrp1l;
-        Thu, 14 Apr 2022 11:08:54 +0000 (GMT)
-X-AuditID: cbfec7f2-e7fff70000002719-e6-625800c68830
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FD.0A.09522.6C008526; Thu, 14
-        Apr 2022 12:08:54 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220414110853eusmtip277fdf49fb3793be6fb8c58261ef21493~lvrd-WfX-1076510765eusmtip2O;
-        Thu, 14 Apr 2022 11:08:53 +0000 (GMT)
-Message-ID: <39f69dfe-32e5-4cb3-118b-5c02b28cbcff@samsung.com>
-Date:   Thu, 14 Apr 2022 13:08:53 +0200
+        Thu, 14 Apr 2022 09:30:15 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A915B92D0B;
+        Thu, 14 Apr 2022 06:26:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6BB87B8296A;
+        Thu, 14 Apr 2022 13:26:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D2AC385A5;
+        Thu, 14 Apr 2022 13:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1649942782;
+        bh=ITigphVQFmh5JxYzbL8+UnueKu6Qw9t5JBKsneFXQbc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IEUZWcYdRv2X+dk3Ln/DVktNtYUesTcfCuQ9OVQGWdp+P09fuLa2VnpKmfafqOBwh
+         PFIzjUs1aib2GZhbc+2rFved81QgTXonlxMydV3ykubRrGF2deiAOfvgAAqHGyioGv
+         Sby0L3EdLHR+Q2nfcnJ4nOGz7ikBHSfxLIaIF+WM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Ben Dooks <ben-linux@fluff.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk,
+        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 259/338] ARM: 9187/1: JIVE: fix return value of __setup handler
+Date:   Thu, 14 Apr 2022 15:12:42 +0200
+Message-Id: <20220414110846.261453214@linuxfoundation.org>
+X-Mailer: git-send-email 2.35.2
+In-Reply-To: <20220414110838.883074566@linuxfoundation.org>
+References: <20220414110838.883074566@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.8.0
-Subject: Re: [PATCH v3 2/3] genirq: Always limit the affinity to online CPUs
-Content-Language: en-US
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Garry <john.garry@huawei.com>,
-        Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        David Decotigny <ddecotig@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <877d7sar5k.wl-maz@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsWy7djPc7rHGCKSDGYd0rO41LqJ3WLT/iZW
-        i/PnN7BbXN41h81ixvl9TBY755xktdi8aSqzxdTXWxgdODwWbCr1aDnyltVj06pONo93586x
-        e3zeJBfAGsVlk5Kak1mWWqRvl8CVsXbVPKaCe0IVcw92sTcwLufvYuTkkBAwkVjRtJu5i5GL
-        Q0hgBaPEzmdNTBDOF0aJK+23WSGcz4wSixs/s8C0dO+8wgpiCwksZ5Q4+SEOougjo8SLdX/Z
-        QRK8AnYSKx+8BitiEVCV+PplGyNEXFDi5MwnYINEBZIk5u67xwxiCwv4SEy5eAKshllAXOLW
-        k/lMILaIgKLEpwsnoeJbmCQ2b8gCsdkEDCW63naxgdicAtoShz9/YIGokZfY/nYO2D8SAk84
-        JF58PQV1tYvEg0lX2SBsYYlXx7ewQ9gyEqcn9wDVcADZ+RJ/ZxhDhCskrr1ewwxhW0vcOfeL
-        DaSEWUBTYv0ufYiwo0T70efMEJ18EjfeCkJcwCcxadt0qDCvREebEES1msSs4+vgdh68cIl5
-        AqPSLKQwmYXk91lIfpmFsHcBI8sqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwDR0+t/x
-        TzsY5776qHeIkYmD8RCjBAezkgjvzf7wJCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8yZkbEoUE
-        0hNLUrNTUwtSi2CyTBycUg1MDF6fzO9P++Ay/cTRDyb28xbJhjG6bT33rpz9SshH1g/rLe23
-        a91bvipf0KmpuaP6z4EX8x29pJYbaQgZSyRKveJdL/H61dq2sAsPDBPnLmfI93QRuF3kt9mg
-        4PN1zo1HrB51uT8778b6tl66L1PybcGHnF1zHL5OFD4+deOWhaz3Zz/UlXS55Oy1vjy+9d/l
-        b0/+82RZvD9rylCoqaR1wVv5UofeniUCG3nXi5/d0XhsizXT33U/TI0n81q46hpHHCzsnvZC
-        0sNduOZbz3lDnmbPjo0sC4WuHrG/EiSrf9KurmTqWcs9WR5XeoOrU/sNl4pobWafr3FrvUEB
-        3/U5fP4rjnrqhyr25qQuYvZRYinOSDTUYi4qTgQAMN/dg7IDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsVy+t/xe7rHGCKSDC6+E7C41LqJ3WLT/iZW
-        i/PnN7BbXN41h81ixvl9TBY755xktdi8aSqzxdTXWxgdODwWbCr1aDnyltVj06pONo93586x
-        e3zeJBfAGqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRv
-        l6CXsXbVPKaCe0IVcw92sTcwLufvYuTkkBAwkejeeYW1i5GLQ0hgKaPExz1djBAJGYmT0xpY
-        IWxhiT/Xutggit4zSnybc5ANJMErYCex8sFrsCIWAVWJr1+2MULEBSVOznzCAmKLCiRJvNj2
-        HCwuLOAjMeXiCTCbWUBc4taT+UwgtoiAosSnCycZQRYwC2xhkji4axcjxLb7TBLndz4Dq2IT
-        MJToetsFtplTQFvi8OcPLBCTzCS6tnZBTZWX2P52DvMERqFZSA6ZhWThLCQts5C0LGBkWcUo
-        klpanJueW2yoV5yYW1yal66XnJ+7iREYgduO/dy8g3Heq496hxiZOBgPMUpwMCuJ8N7sD08S
-        4k1JrKxKLcqPLyrNSS0+xGgKDI2JzFKiyfnAFJBXEm9oZmBqaGJmaWBqaWasJM7rWdCRKCSQ
-        nliSmp2aWpBaBNPHxMEp1cCkGVYXedmWJayt9M03/x2/JFZcFrdfXbRENsl3l2aiO0tlzuG2
-        m0Hrf/6a0S6qtpGPJeyy+IfZR+6u7drjstT41OWlcdlLw4wVV8+RzLm9k6vmd9+3w76Hv1kJ
-        cM5wPnLr9sKZzkb82UXu4W7O2/0d2U+7G4tM/rDy8RJzZnnpPVN/MHRWSKzQrfDN4Jn5Ycui
-        6sfqCaLWT68niTxw2XHkaPb2vy6WR2c5HZxdodF840+l8GM2fVZ9wSUTOBOu2ax8WOJqa7zv
-        6NMFDxTDRM15VvNop1ZKySeIuoZPtErSC+71Cm6YkX4n6IzqPPYVE/vT/wgV1f/OubTg2ZTy
-        hbUnDrI+uLhrSpvCa5mrneJKLMUZiYZazEXFiQBm0/mGSQMAAA==
-X-CMS-MailID: 20220414110854eucas1p2a037d45634218755b6a3c9bbfdb802ad
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220413145922eucas1p2dc46908354f4d2b48db79978d086a838
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220413145922eucas1p2dc46908354f4d2b48db79978d086a838
-References: <20220405185040.206297-1-maz@kernel.org>
-        <20220405185040.206297-3-maz@kernel.org>
-        <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
-        <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
-        <878rs8c2t2.wl-maz@kernel.org>
-        <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
-        <877d7sar5k.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marc,
+From: Randy Dunlap <rdunlap@infradead.org>
 
-On 14.04.2022 12:35, Marc Zyngier wrote:
-> On Thu, 14 Apr 2022 10:09:31 +0100,
-> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> On 13.04.2022 19:26, Marc Zyngier wrote:
->>> On Wed, 13 Apr 2022 15:59:21 +0100,
->>> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>>> On 05.04.2022 20:50, Marc Zyngier wrote:
->>>>> When booting with maxcpus=<small number> (or even loading a driver
->>>>> while most CPUs are offline), it is pretty easy to observe managed
->>>>> affinities containing a mix of online and offline CPUs being passed
->>>>> to the irqchip driver.
->>>>>
->>>>> This means that the irqchip cannot trust the affinity passed down
->>>>> from the core code, which is a bit annoying and requires (at least
->>>>> in theory) all drivers to implement some sort of affinity narrowing.
->>>>>
->>>>> In order to address this, always limit the cpumask to the set of
->>>>> online CPUs.
->>>>>
->>>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>>> This patch landed in linux next-20220413 as commit 33de0aa4bae9
->>>> ("genirq: Always limit the affinity to online CPUs"). Unfortunately it
->>>> breaks booting of most ARM 32bit Samsung Exynos based boards.
->>>>
->>>> I don't see anything specific in the log, though. Booting just hangs at
->>>> some point. The only Samsung Exynos boards that boot properly are those
->>>> Exynos4412 based.
->>>>
->>>> I assume that this is related to the Multi Core Timer IRQ configuration
->>>> specific for that SoCs. Exynos4412 uses PPI interrupts, while all other
->>>> Exynos SoCs have separate IRQ lines for each CPU.
->>>>
->>>> Let me know how I can help debugging this issue.
->>> Thanks for the heads up. Can you pick the last working kernel, enable
->>> CONFIG_GENERIC_IRQ_DEBUGFS, and dump the /sys/kernel/debug/irq/irqs/
->>> entries for the timer IRQs?
->> Exynos4210, Trats board, next-20220411:
-> Thanks for all of the debug, super helpful. The issue is that we don't
-> handle the 'force' case, which a handful of drivers are using when
-> bringing up CPUs (and doing so before the CPUs are marked online).
->
-> Can you please give the below hack a go?
+[ Upstream commit 8b2360c7157b462c4870d447d1e65d30ef31f9aa ]
 
-This patch fixed the issue. Thanks! Feel free to add my:
+__setup() handlers should return 1 to obsolete_checksetup() in
+init/main.c to indicate that the boot option has been handled.
+A return of 0 causes the boot option/value to be listed as an Unknown
+kernel parameter and added to init's (limited) argument or environment
+strings. Also, error return codes don't mean anything to
+obsolete_checksetup() -- only non-zero (usually 1) or zero.
+So return 1 from jive_mtdset().
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 9db829f485c5 ("[ARM] JIVE: Initial machine support for Logitech Jive")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: patches@armlinux.org.uk
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/mach-s3c24xx/mach-jive.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Best regards
+diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
+index 885e8f12e4b9..eedc9f8ed210 100644
+--- a/arch/arm/mach-s3c24xx/mach-jive.c
++++ b/arch/arm/mach-s3c24xx/mach-jive.c
+@@ -237,11 +237,11 @@ static int __init jive_mtdset(char *options)
+ 	unsigned long set;
+ 
+ 	if (options == NULL || options[0] == '\0')
+-		return 0;
++		return 1;
+ 
+ 	if (kstrtoul(options, 10, &set)) {
+ 		printk(KERN_ERR "failed to parse mtdset=%s\n", options);
+-		return 0;
++		return 1;
+ 	}
+ 
+ 	switch (set) {
+@@ -256,7 +256,7 @@ static int __init jive_mtdset(char *options)
+ 		       "using default.", set);
+ 	}
+ 
+-	return 0;
++	return 1;
+ }
+ 
+ /* parse the mtdset= option given to the kernel command line */
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.35.1
+
+
 
