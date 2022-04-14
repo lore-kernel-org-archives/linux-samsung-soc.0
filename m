@@ -2,154 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC84C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Apr 2022 10:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC9EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Apr 2022 10:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240758AbiDNKiW (ORCPT
+        id S234619AbiDNKwH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 06:38:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44574 "EHLO
+        Thu, 14 Apr 2022 06:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242360AbiDNKiV (ORCPT
+        with ESMTP id S240117AbiDNKwE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 06:38:21 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A8BB76296;
-        Thu, 14 Apr 2022 03:35:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id CA29DCE2948;
-        Thu, 14 Apr 2022 10:35:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41B6EC385A5;
-        Thu, 14 Apr 2022 10:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649932554;
-        bh=5W4ekAUr89UTHNOB4HovZ00A3uTOMwCJgWbJl7Yls7k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XNXPm7DZH7smAccG+P0ruwVfhSikYxeGq3269qBVx91ogUqErfQf/AEOEt+WujIEH
-         1TcPojbQBXBpa4CY80D/qMJ3wubwwWokUUIYKUrK766ZNZNL89DTC6WZBufguesg6X
-         GKdeFJbZBevPnwwtbgT4mpsANMoYPgBMQJeSB4LPONRT3EU+08NVlqkBCaO7rQltBv
-         aXI9llNtHCridM8Viw5jIbfrtYAItgUcBZEbGgB7xM9zAOJPTO2z5HZcRPZ/eXXvRS
-         OdvQ3btZAOo4KEVlZYtbfGd+GuY4OOz6EmxdEQlHTmHg5+A7jObz3nKKHMUsL7Nye3
-         nInqJhlqqwCsw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1newpL-004G2w-Pf; Thu, 14 Apr 2022 11:35:51 +0100
-Date:   Thu, 14 Apr 2022 11:35:51 +0100
-Message-ID: <877d7sar5k.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
+        Thu, 14 Apr 2022 06:52:04 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8644313DD8;
+        Thu, 14 Apr 2022 03:49:40 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1649933379;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1o/zjx+057+hoiih2AMIdIhF88TWdmeDt5GifKxymQs=;
+        b=cTeAjqdLnWwHNTyfr4/d83MqQ6W57ons8iU9Bp7UrHcaQPp/ohZb5RZC2hFWDvc5fNg5Of
+        /2CN0VNDD1R3MphxDI06GACtascykTAIprRi36zzE4w01DZbZYyIFQhv69lDRpxmFnRbWX
+        OSVFsxaiJ3rtJhzY0c7+4W6q7rl2aUHxmMiJfkTYSk2KEk7Sh4IB++ljdZUEljVENVSena
+        W4uMEahLBIDECVOM2AvZCYGWhP2MLDz9mICWRXIbKRBHrPNWHrIqetPW3BR9hOtjF0CNzJ
+        ZU9+HIVAK9FySzbl8Uq0AokLFpW4PLcR3OGMaXmJWmgOBkGXmBLHnAnRSgs+/g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1649933379;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1o/zjx+057+hoiih2AMIdIhF88TWdmeDt5GifKxymQs=;
+        b=1OXLP/Z8sfaB5Vjrvv0WdsD9V+wV2tiJ+dDWmUmr+ZI893KaTK6uIXu+3tjJhz+JG9vtbK
+        Kp5OL13cmTbcBeCA==
+To:     Marc Zyngier <maz@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
         John Garry <john.garry@huawei.com>,
         Xiongfeng Wang <wangxiongfeng2@huawei.com>,
         David Decotigny <ddecotig@google.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH v3 2/3] genirq: Always limit the affinity to online CPUs
-In-Reply-To: <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
+In-Reply-To: <878rs8c2t2.wl-maz@kernel.org>
 References: <20220405185040.206297-1-maz@kernel.org>
-        <20220405185040.206297-3-maz@kernel.org>
-        <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
-        <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
-        <878rs8c2t2.wl-maz@kernel.org>
-        <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, john.garry@huawei.com, wangxiongfeng2@huawei.com, ddecotig@google.com, krzk@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+ <20220405185040.206297-3-maz@kernel.org>
+ <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
+ <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
+ <878rs8c2t2.wl-maz@kernel.org>
+Date:   Thu, 14 Apr 2022 12:49:38 +0200
+Message-ID: <87mtgodjnh.ffs@tglx>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On Wed, Apr 13 2022 at 18:26, Marc Zyngier wrote:
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> This patch landed in linux next-20220413 as commit 33de0aa4bae9 
+>> ("genirq: Always limit the affinity to online CPUs"). Unfortunately it 
+>> breaks booting of most ARM 32bit Samsung Exynos based boards.
+>> 
+>> I don't see anything specific in the log, though. Booting just hangs at 
+>> some point. The only Samsung Exynos boards that boot properly are those 
+>> Exynos4412 based.
+>> 
+>> I assume that this is related to the Multi Core Timer IRQ configuration 
+>> specific for that SoCs. Exynos4412 uses PPI interrupts, while all other 
+>> Exynos SoCs have separate IRQ lines for each CPU.
+>
+> Can you also check that with the patch applied, it is this path that
+> is taken and that it is the timer interrupts that get rejected? If
+> that's the case, can you put a dump_stack() here and give me that
+> stack trace? The use of irq_force_affinity() in the driver looks
+> suspicious...
 
-On Thu, 14 Apr 2022 10:09:31 +0100,
-Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> 
-> Hi Marc,
-> 
-> On 13.04.2022 19:26, Marc Zyngier wrote:
-> > Hi Marek,
-> >
-> > On Wed, 13 Apr 2022 15:59:21 +0100,
-> > Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >> Hi Marc,
-> >>
-> >> On 05.04.2022 20:50, Marc Zyngier wrote:
-> >>> When booting with maxcpus=<small number> (or even loading a driver
-> >>> while most CPUs are offline), it is pretty easy to observe managed
-> >>> affinities containing a mix of online and offline CPUs being passed
-> >>> to the irqchip driver.
-> >>>
-> >>> This means that the irqchip cannot trust the affinity passed down
-> >>> from the core code, which is a bit annoying and requires (at least
-> >>> in theory) all drivers to implement some sort of affinity narrowing.
-> >>>
-> >>> In order to address this, always limit the cpumask to the set of
-> >>> online CPUs.
-> >>>
-> >>> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> >> This patch landed in linux next-20220413 as commit 33de0aa4bae9
-> >> ("genirq: Always limit the affinity to online CPUs"). Unfortunately it
-> >> breaks booting of most ARM 32bit Samsung Exynos based boards.
-> >>
-> >> I don't see anything specific in the log, though. Booting just hangs at
-> >> some point. The only Samsung Exynos boards that boot properly are those
-> >> Exynos4412 based.
-> >>
-> >> I assume that this is related to the Multi Core Timer IRQ configuration
-> >> specific for that SoCs. Exynos4412 uses PPI interrupts, while all other
-> >> Exynos SoCs have separate IRQ lines for each CPU.
-> >>
-> >> Let me know how I can help debugging this issue.
-> > Thanks for the heads up. Can you pick the last working kernel, enable
-> > CONFIG_GENERIC_IRQ_DEBUGFS, and dump the /sys/kernel/debug/irq/irqs/
-> > entries for the timer IRQs?
-> 
-> Exynos4210, Trats board, next-20220411:
+It's pretty clear what happens.
 
-Thanks for all of the debug, super helpful. The issue is that we don't
-handle the 'force' case, which a handful of drivers are using when
-bringing up CPUs (and doing so before the CPUs are marked online).
+secondary_start_kernel()
+  notify_cpu_starting(cpu);
+    exynos4_mct_starting_cpu()
+     irq_force_affinity() -> fail
 
-Can you please give the below hack a go?
+  set_cpu_online(cpu, true);
 
 Thanks,
 
-	M.
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index f71ecc100545..f1d5a94c6c9f 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -266,10 +266,16 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 		prog_mask = mask;
- 	}
- 
--	/* Make sure we only provide online CPUs to the irqchip */
-+	/*
-+	 * Make sure we only provide online CPUs to the irqchip,
-+	 * unless we are being asked to force the affinity (in which
-+	 * case we do as we are told).
-+	 */
- 	cpumask_and(&tmp_mask, prog_mask, cpu_online_mask);
--	if (!cpumask_empty(&tmp_mask))
-+	if (!force && !cpumask_empty(&tmp_mask))
- 		ret = chip->irq_set_affinity(data, &tmp_mask, force);
-+	else if (force)
-+		ret = chip->irq_set_affinity(data, mask, force);
- 	else
- 		ret = -EINVAL;
- 
-
--- 
-Without deviation from the norm, progress is not possible.
+        tglx
