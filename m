@@ -2,114 +2,119 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A00C4321E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Apr 2022 13:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE824C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Apr 2022 14:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244942AbiDNNgt (ORCPT
+        id S239448AbiDNOn0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 09:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57316 "EHLO
+        Thu, 14 Apr 2022 10:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344020AbiDNNaP (ORCPT
+        with ESMTP id S1347709AbiDNN7a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Apr 2022 09:30:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A915B92D0B;
-        Thu, 14 Apr 2022 06:26:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6BB87B8296A;
-        Thu, 14 Apr 2022 13:26:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D2AC385A5;
-        Thu, 14 Apr 2022 13:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649942782;
-        bh=ITigphVQFmh5JxYzbL8+UnueKu6Qw9t5JBKsneFXQbc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IEUZWcYdRv2X+dk3Ln/DVktNtYUesTcfCuQ9OVQGWdp+P09fuLa2VnpKmfafqOBwh
-         PFIzjUs1aib2GZhbc+2rFved81QgTXonlxMydV3ykubRrGF2deiAOfvgAAqHGyioGv
-         Sby0L3EdLHR+Q2nfcnJ4nOGz7ikBHSfxLIaIF+WM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Ben Dooks <ben-linux@fluff.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk,
-        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 259/338] ARM: 9187/1: JIVE: fix return value of __setup handler
-Date:   Thu, 14 Apr 2022 15:12:42 +0200
-Message-Id: <20220414110846.261453214@linuxfoundation.org>
-X-Mailer: git-send-email 2.35.2
-In-Reply-To: <20220414110838.883074566@linuxfoundation.org>
-References: <20220414110838.883074566@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Thu, 14 Apr 2022 09:59:30 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4259BB0A8;
+        Thu, 14 Apr 2022 06:51:56 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id l7so10218372ejn.2;
+        Thu, 14 Apr 2022 06:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VkVkOAS9A0MIQPbsfpNua8Mc2ZR7CENLAnkVniIdPoc=;
+        b=CXFcqAASxG+Z7VaPl8afDddAJZU3KVfQsH4a1JGZ1EjQwUWtZOh58dCXqu1CRt0nRH
+         GbroBEhSONj1yEyS1nlMjO2dTZs5iIHj3amuNDroTKV8vuWjGlUxmp6N8l0rJzVuL9iS
+         SK1pfqweFFp8qNmsy1ouvojo1qwb0OkgYbmw5cI1wWa07tZDoFoyAqHiu63K1oCpvGXv
+         JCFOxbvoB1FH365GTO/MeElQ0rQQ182PE1dbIz0Nw0J7NGFvquCeeFsdv6sqLOE6QIn0
+         C7C+hEmjvWZeIfvuZm9FyH27VeOaKjraYed4fP9gI2wtI0kf1Yw8FEPqUkn+IykqKHnl
+         lMFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VkVkOAS9A0MIQPbsfpNua8Mc2ZR7CENLAnkVniIdPoc=;
+        b=mvf5AbjI6CIGozSsows67t6PVUnH9LUF6Nvvzx4ISOXuYWk01KyRSSLcNt0grvSB9h
+         PYDjR314Oor82yrhW2EJGLVGn3hUZVcLOPDJA/q4L3LE+q5xcv99NrUT9oj6KJfLZSZA
+         0tnkqcrUKPOBvIpwdvYb57vBtxowwtV7G82I+hJSzF9JsxC+D3PSXy6W13eKw7S8Oups
+         EhGuOkrAUpKwbc4On0+xJL9NUKgSuFoINI0ifp0bucTpFANArCZn6xJsZmzw7FMMjXcI
+         LQHDqCpzGUPXZcTRpCllo1rZ0np/lUbQd8D0aQP/Mjc6eF3NV2uRGlm/AZuWvM/t5lY8
+         2KCA==
+X-Gm-Message-State: AOAM530WlAdB4kBkghUgnW2cZ2eaReGhhVfc6HLYf3E06ENVULtSbzhi
+        rZRr7nMdAeq1nx6mkJcG9VKqDWLr/ApmEZ+HFdc=
+X-Google-Smtp-Source: ABdhPJxL5jFoyaZVlB5dK/sqGFzMiTnpEAX7i3HpaSvcMs3Sr81F+WGQbyWSGSsYbk2dWKrwQ76KhtaYazmSqwcH7pQ=
+X-Received: by 2002:a17:907:628e:b0:6d9:c6fa:6168 with SMTP id
+ nd14-20020a170907628e00b006d9c6fa6168mr2412944ejc.132.1649944315429; Thu, 14
+ Apr 2022 06:51:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220401103604.8705-1-andriy.shevchenko@linux.intel.com>
+ <CGME20220414063849eucas1p126e41b53ff0d342f5c48408994b704e9@eucas1p1.samsung.com>
+ <20220401103604.8705-12-andriy.shevchenko@linux.intel.com> <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com>
+In-Reply-To: <3a24ef01-3231-1bee-7429-dce5680c5682@samsung.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 14 Apr 2022 16:51:19 +0300
+Message-ID: <CAHp75VfMPpfeMpawRyLo_GtLR8+gVGgm8zW-fatp6=9a9wK18A@mail.gmail.com>
+Subject: Re: [PATCH v4 11/13] pinctrl: meson: Replace custom code by
+ gpiochip_node_count() call
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Qianggui Song <qianggui.song@amlogic.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, Apr 14, 2022 at 12:44 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> On 01.04.2022 12:36, Andy Shevchenko wrote:
+> > Since we have generic function to count GPIO controller nodes
+> > under a given device, there is no need to open code it. Replace
+> > custom code by gpiochip_node_count() call.
 
-[ Upstream commit 8b2360c7157b462c4870d447d1e65d30ef31f9aa ]
+...
 
-__setup() handlers should return 1 to obsolete_checksetup() in
-init/main.c to indicate that the boot option has been handled.
-A return of 0 causes the boot option/value to be listed as an Unknown
-kernel parameter and added to init's (limited) argument or environment
-strings. Also, error return codes don't mean anything to
-obsolete_checksetup() -- only non-zero (usually 1) or zero.
-So return 1 from jive_mtdset().
+> This patch landed in linux next-20220413 as commit 88834c75cae5
+> ("pinctrl: meson: Replace custom code by gpiochip_node_count() call").
+> Unfortunately it breaks booting of all my Amlogic-based test boards
+> (Odroid C4, N2, Khadas VIM3, VIM3l). MMC driver is no longer probed and
+> boards are unable to mount rootfs. Reverting this patch on top of
+> linux-next fixes the issue.
 
-Fixes: 9db829f485c5 ("[ARM] JIVE: Initial machine support for Logitech Jive")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: patches@armlinux.org.uk
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/mach-s3c24xx/mach-jive.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thank you for letting me know, I'll withdraw it and investigate.
 
-diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
-index 885e8f12e4b9..eedc9f8ed210 100644
---- a/arch/arm/mach-s3c24xx/mach-jive.c
-+++ b/arch/arm/mach-s3c24xx/mach-jive.c
-@@ -237,11 +237,11 @@ static int __init jive_mtdset(char *options)
- 	unsigned long set;
- 
- 	if (options == NULL || options[0] == '\0')
--		return 0;
-+		return 1;
- 
- 	if (kstrtoul(options, 10, &set)) {
- 		printk(KERN_ERR "failed to parse mtdset=%s\n", options);
--		return 0;
-+		return 1;
- 	}
- 
- 	switch (set) {
-@@ -256,7 +256,7 @@ static int __init jive_mtdset(char *options)
- 		       "using default.", set);
- 	}
- 
--	return 0;
-+	return 1;
- }
- 
- /* parse the mtdset= option given to the kernel command line */
 -- 
-2.35.1
-
-
-
+With Best Regards,
+Andy Shevchenko
