@@ -2,34 +2,34 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E865AC3A59F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Apr 2022 13:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38993C4321E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 Apr 2022 14:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239374AbiDRNen (ORCPT
+        id S245705AbiDROMW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 Apr 2022 09:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
+        Mon, 18 Apr 2022 10:12:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242112AbiDRNca (ORCPT
+        with ESMTP id S1344620AbiDROKk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 Apr 2022 09:32:30 -0400
+        Mon, 18 Apr 2022 10:10:40 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D963220194;
-        Mon, 18 Apr 2022 05:57:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8CDF3702B;
+        Mon, 18 Apr 2022 06:10:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 50912B80EC0;
-        Mon, 18 Apr 2022 12:57:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78889C385A7;
-        Mon, 18 Apr 2022 12:57:44 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 61897B80EE2;
+        Mon, 18 Apr 2022 13:10:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CABEC385A1;
+        Mon, 18 Apr 2022 13:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1650286665;
-        bh=ic7hdMjA7r9NBmROUJ0WQzteNOVUSZNfdmssxupQJ10=;
+        s=korg; t=1650287453;
+        bh=y0nY1AxcVH6qREXVvFRbjPUxs41iCOgXpjvkKiZmOZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=czbS4B748FaVfRCePAc7dDPc0TBPHZ/gCgB9wDxNMFZti9VJBZLReEfuLWw3TIEXb
-         ZVulTQ49ZzdDxKWHFAkMXcoPrm6HnyKZXSbOouFXV4gw3WgUTUqH8UcerC6PD1ZzKD
-         7V4q//3qZJkf/BNXUtDaZjg3EYtV3+G1/wmo6fco=
+        b=NQr2jS5AX7bgf3+vQ3eSN9t1kgcFBs9RN1Bsjuqf5wmcDnqEe5dIj2cuU5uPtRKez
+         st5TGp+4mgshW2ILo2Y3EzS4dQDnpXYrlTloM5zIoUQ3innVKXTgVI+8oybLkC56rU
+         Ur/oma8rshOgs1pPgFguouJZlzz02fi7GKvXQJjQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -41,12 +41,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-samsung-soc@vger.kernel.org, patches@armlinux.org.uk,
         "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 205/284] ARM: 9187/1: JIVE: fix return value of __setup handler
-Date:   Mon, 18 Apr 2022 14:13:06 +0200
-Message-Id: <20220418121217.552143742@linuxfoundation.org>
+Subject: [PATCH 4.9 164/218] ARM: 9187/1: JIVE: fix return value of __setup handler
+Date:   Mon, 18 Apr 2022 14:13:50 +0200
+Message-Id: <20220418121204.963691045@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220418121210.689577360@linuxfoundation.org>
-References: <20220418121210.689577360@linuxfoundation.org>
+In-Reply-To: <20220418121158.636999985@linuxfoundation.org>
+References: <20220418121158.636999985@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
-index 17821976f769..5de514940a9c 100644
+index 7d99fe8f6157..5d43733ee7d6 100644
 --- a/arch/arm/mach-s3c24xx/mach-jive.c
 +++ b/arch/arm/mach-s3c24xx/mach-jive.c
-@@ -241,11 +241,11 @@ static int __init jive_mtdset(char *options)
+@@ -240,11 +240,11 @@ static int __init jive_mtdset(char *options)
  	unsigned long set;
  
  	if (options == NULL || options[0] == '\0')
@@ -99,7 +99,7 @@ index 17821976f769..5de514940a9c 100644
  	}
  
  	switch (set) {
-@@ -260,7 +260,7 @@ static int __init jive_mtdset(char *options)
+@@ -259,7 +259,7 @@ static int __init jive_mtdset(char *options)
  		       "using default.", set);
  	}
  
