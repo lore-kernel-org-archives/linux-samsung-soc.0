@@ -2,109 +2,140 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF0DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 09:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4A6C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 09:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237435AbiDTJQn (ORCPT
+        id S1377275AbiDTJnh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Apr 2022 05:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46282 "EHLO
+        Wed, 20 Apr 2022 05:43:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236017AbiDTJQm (ORCPT
+        with ESMTP id S1353200AbiDTJng (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 05:16:42 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091471CFF4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 02:13:55 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 11so1489153edw.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 02:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Uy1g3jy53y3AvCDyaRKjx2hZU3M0SE1McFQysYDpJ6g=;
-        b=sVkWs6/gEi/kZpvBcOC24xw0AINbon9WeAsEYcuyuHaNIyXz581JzcHqJRG24cekbH
-         n+F4/pQInqVwPFVm5eIYZZWpVxUtYksPlTy0mspPAt/A0z5Cz6ahivgTHwae+iD6L3Fo
-         +WFLO2XVatgUVO/VWMVAhyR8Z6rjL4/l4gD2iWFkh8QBvAT494ZQFKH93WsPGfYXcaQL
-         RMjthriOviw7kDpLcnJ3etJaz36q8REMPGCnv2rD8M5I/Mq7ZmlRhfTeGmSLYmCA/UUi
-         NrwJbFGr7tKubU+CcOYAVVur1ZshFunTi+5i4jGabi1zl0GRwec8nqWKhGNHCulg8J4D
-         zsoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Uy1g3jy53y3AvCDyaRKjx2hZU3M0SE1McFQysYDpJ6g=;
-        b=7G8hnKEw+mOJbbYEyH8OuLR27Salwy3G4BY6d2Ug+7vYWD2TeoBCRa4RGgtLVplA1N
-         L4vGSeMYDzoZVZ/sfG0slaGIXKTsj6T3gcIxAZKCqWJMm1kMDxahQpfNcN3COdM/pvMs
-         p0k38OPS5F9IIVvY7I849BgLhNC2Rhl0bEHRCB2T/LJc0vpLPZ5cblRummgCSTCBBb/o
-         li0RGnt1rKc/39/G0j5pB9QC6EH2VUYMCinGAu9Q4OWWdwmk6/2ON6CpQvKrqFqdyjWc
-         V8MPn7nVQtrQT13IgPVyQzfJaU0+d7Wquao0SE1dgK+Y+TDZeXONsjm4H3Tu13gG53Nw
-         SQ0g==
-X-Gm-Message-State: AOAM532sKrJEQ2mPwyzmxco5LUOht3V7dxxaEB5Mk/DTdly9c84mSF0O
-        TSjNBztvl+8ofSzun1kSF9OmEw==
-X-Google-Smtp-Source: ABdhPJzhCXR47Lz6Jg8EQhQwkQMaGjny0D4OGOKqkfdnhoaDItcp9YDAdYgcnLws0h/27iquyLaUiw==
-X-Received: by 2002:a05:6402:358e:b0:423:fd1c:3453 with SMTP id y14-20020a056402358e00b00423fd1c3453mr8528134edc.403.1650446033624;
-        Wed, 20 Apr 2022 02:13:53 -0700 (PDT)
-Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id y1-20020a1709063a8100b006efaf54d9c1sm3189197ejd.81.2022.04.20.02.13.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 02:13:52 -0700 (PDT)
-Message-ID: <70123e98-046f-f10e-1032-8d112edd3ecf@linaro.org>
-Date:   Wed, 20 Apr 2022 11:13:52 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 2/3] genirq: Always limit the affinity to online CPUs
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Wed, 20 Apr 2022 05:43:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFFCA245AC;
+        Wed, 20 Apr 2022 02:40:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A9E4BB81DD2;
+        Wed, 20 Apr 2022 09:40:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2FCC385A1;
+        Wed, 20 Apr 2022 09:40:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650447646;
+        bh=kmxHX9KGhOeDI7emOTTeHqve4kE7RuPhBjtWA51Q9zY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mScdn0jyuErAkKsDTiXFtqxAItLAeX9i6EAsWvCPSbwR0H7jldR7nCoyDwumX+S5/
+         WYfci5oSZwW9az0KsCesin2f0H2Sd2xf6XXqu4qLEc1R0jCALxSuoDFAsZuTJqKDKP
+         /PEegfQL24T4Q7vKsAkIpNXnFAZsY5egidKMPSNgFcJpGVNgRvncs9ctIiyB/FTOyf
+         hnrrAC9vysricw9DYUtCD3QQacmWeCqkchrVqE5z9SCN/mSl8/l1vAEc5bJkdY0pKT
+         DojoOXS6aayngrxvc6apwXyOy96+/2ojPhCvx7K2xsWpz/jC6XGu4pgJnNE9offiXX
+         NicLnVpCuCdkw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nh6pH-005Zj8-UY; Wed, 20 Apr 2022 10:40:44 +0100
+Date:   Wed, 20 Apr 2022 10:40:43 +0100
+Message-ID: <87mtgg9jok.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         John Garry <john.garry@huawei.com>,
         Xiongfeng Wang <wangxiongfeng2@huawei.com>,
         David Decotigny <ddecotig@google.com>
+Subject: Re: [PATCH v3 2/3] genirq: Always limit the affinity to online CPUs
+In-Reply-To: <70123e98-046f-f10e-1032-8d112edd3ecf@linaro.org>
 References: <20220405185040.206297-1-maz@kernel.org>
- <20220405185040.206297-3-maz@kernel.org>
- <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
- <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
- <878rs8c2t2.wl-maz@kernel.org>
- <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
- <877d7sar5k.wl-maz@kernel.org>
- <39f69dfe-32e5-4cb3-118b-5c02b28cbcff@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <39f69dfe-32e5-4cb3-118b-5c02b28cbcff@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        <20220405185040.206297-3-maz@kernel.org>
+        <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
+        <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
+        <878rs8c2t2.wl-maz@kernel.org>
+        <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
+        <877d7sar5k.wl-maz@kernel.org>
+        <39f69dfe-32e5-4cb3-118b-5c02b28cbcff@samsung.com>
+        <70123e98-046f-f10e-1032-8d112edd3ecf@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: krzysztof.kozlowski@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, john.garry@huawei.com, wangxiongfeng2@huawei.com, ddecotig@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 14/04/2022 13:08, Marek Szyprowski wrote:
->> Thanks for all of the debug, super helpful. The issue is that we don't
->> handle the 'force' case, which a handful of drivers are using when
->> bringing up CPUs (and doing so before the CPUs are marked online).
->>
->> Can you please give the below hack a go?
+Hi Krzysztof,
+
+On Wed, 20 Apr 2022 10:13:52 +0100,
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 > 
-> This patch fixed the issue. Thanks! Feel free to add my:
+> On 14/04/2022 13:08, Marek Szyprowski wrote:
+> >> Thanks for all of the debug, super helpful. The issue is that we don't
+> >> handle the 'force' case, which a handful of drivers are using when
+> >> bringing up CPUs (and doing so before the CPUs are marked online).
+> >>
+> >> Can you please give the below hack a go?
+> > 
+> > This patch fixed the issue. Thanks! Feel free to add my:
+> > 
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > 
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Hi Marc,
 > 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Linux-next still fails to boot on Exynos5422 boards, so I wonder if you
+> applied the fix?
 
-Hi Marc,
+It was picked up by Thomas and pushed out into tip, which is pulled by
+-next:
 
-Linux-next still fails to boot on Exynos5422 boards, so I wonder if you
-applied the fix?
+maz@hot-poop:~/arm-platforms$ git describe --contains c48c8b829d2b966a6649827426bcdba082ccf922
+next-20220420~51^2~3^2
 
-Instead of silent fail there is now "Unable to handle kernel paging
-request at virtual address f0836644", so it is slightly different.
+So it definitely is in today's -next.
 
-See the dmesg:
-https://krzk.eu/#/builders/21/builds/3542/steps/15/logs/serial0
+> Instead of silent fail there is now "Unable to handle kernel paging
+> request at virtual address f0836644", so it is slightly different.
+> 
+> See the dmesg:
+> https://krzk.eu/#/builders/21/builds/3542/steps/15/logs/serial0
 
+This looks completely unrelated:
 
-Best regards,
-Krzysztof
+[   10.382010] Unable to handle kernel paging request at virtual address f0836644
+[   10.388597] [f0836644] *pgd=41c83811, *pte=00000000, *ppte=00000000
+[   10.394482] Internal error: Oops: 807 [#1] PREEMPT SMP ARM
+[   10.399567] Modules linked in:
+[   10.402583] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.18.0-rc3-next-20220420 #2
+[   10.410060] Hardware name: Samsung Exynos (Flattened Device Tree)
+[   10.416106] PC is at cpu_ca15_set_pte_ext+0x4c/0x58
+[   10.420952] LR is at handle_pte_fault+0x218/0x260
+[   10.425631] pc : [<c011d588>]    lr : [<c02ab188>]    psr: 40000113
+[   10.431874] sp : f0835df0  ip : f0835e5c  fp : 00000081
+[   10.437069] r10: c0f2eafc  r9 : c1d31000  r8 : 00000000
+[   10.442268] r7 : c1d58000  r6 : 00000081  r5 : befffff6  r4 : f0835e24
+[   10.448773] r3 : 00000000  r2 : 00000000  r1 : 00000040  r0 : f0835e44
+[   10.455273] Flags: nZcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[   10.462381] Control: 10c5387d  Table: 4000406a  DAC: 00000051
+
+This is a crash in cpu_ca15_set_pte_ext() when populating the
+userspace page tables, which seems unrelated to interrupt affinity.
+
+I suggest you bisect this to find the actual problem.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
