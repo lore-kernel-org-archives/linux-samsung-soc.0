@@ -2,135 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D680C43219
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Apr 2022 12:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4264EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 05:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235239AbiDSMO2 (ORCPT
+        id S1359379AbiDTFJ5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Apr 2022 08:14:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56382 "EHLO
+        Wed, 20 Apr 2022 01:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352480AbiDSMNP (ORCPT
+        with ESMTP id S1359377AbiDTFJ4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Apr 2022 08:13:15 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AC71117D
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Apr 2022 05:10:16 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id g20so20961612edw.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Apr 2022 05:10:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OaKvm/W3cKidhNGVbz7NvOQrnP1XfFv4Gbw7iAfrpxw=;
-        b=eN3JkimOu45Rmub3ypPp1BNOx4qdGugKn99CdMW8MppBShq4X02yTvyUJnfmHr5YqQ
-         owFaPoT9YeLxuBI4+4vPZGULAZS++COZEsOMsiUddzqjPv7frjxhsGhrWhq1s6Fs0jCk
-         0SrGV9eOsmerW3Oo3OMUV2+n3JJ4BDiyusn1S26WqbtWnN6bFM2pYO1aTRYUtnq3ysas
-         JVxSDCWTGbmyvTMISNZ2ZgGXUPte09z/ZmkJzCinAsvMZFcq/9eoaMxrdjy+LCBwMJvZ
-         Z3iMQwq31beglT406+DWCSZK+RYrxgaU5tTr1tqykP850GxSMoAja01sRk0B66ojBEys
-         Ebfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OaKvm/W3cKidhNGVbz7NvOQrnP1XfFv4Gbw7iAfrpxw=;
-        b=h7/nPSsSFTNyZONG7+EQ+pSUpMcWumG5/LExZxeSOZuLxFcMAsSwMC6fFJ+yyXupjh
-         YHcOFpmxTjo9154EFwHKsghasIv2maY7Gj2Jt17hW1ZP/3UAe5eflD0JCM/O3jy9gQdT
-         lJkMV6rFR/7x6OTqfi8fsbmMNacwXKqMxWsBR20aUT4H6gz51YdOTg1pChhV1JtBPy2I
-         mHO9tvtB1CxqnoYgYh3JjK4qhVGvchQNeRu1m9Kk/SHn8m52jif+jyna0A/NdjaJBdw3
-         3QBfXHzU5jIc12rSYJLVMjnHErlQwFFmUmAr8/vfvWir/5PdaSZgNFxTat7owj2zBJ3l
-         WWVw==
-X-Gm-Message-State: AOAM531hYwgY5+KL1kLOkmKiD8ptPEt+e17LfTI7e9UbYpgx14IUyw+b
-        SdAcr0bzcjfGbGvofLQGDToRDg==
-X-Google-Smtp-Source: ABdhPJwJZ/XSXzOYW0xlv/zRQtleA4Prm2xP4nZUTHR3tY+lmJWKVt+UBSW6Zzqrw69Rjh0M9+wPmw==
-X-Received: by 2002:a05:6402:d4:b0:418:7193:da1 with SMTP id i20-20020a05640200d400b0041871930da1mr17290663edu.57.1650370215390;
-        Tue, 19 Apr 2022 05:10:15 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id da11-20020a056402176b00b00422f5d9762fsm5954466edb.67.2022.04.19.05.10.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 05:10:14 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH RESEND] dt-bindings: usb: samsung,exynos-usb2: include usb-hcd schema
-Date:   Tue, 19 Apr 2022 14:10:13 +0200
-Message-Id: <20220419121013.250023-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 20 Apr 2022 01:09:56 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C6128E20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Apr 2022 22:07:10 -0700 (PDT)
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220420050708epoutp039089ddb1128c6c67ae294a255ece4549~ngnUqNniR2303523035epoutp03U
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 05:07:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220420050708epoutp039089ddb1128c6c67ae294a255ece4549~ngnUqNniR2303523035epoutp03U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1650431228;
+        bh=Y4SM9aJVXKRHd9dzvU2d8pbeC9IGkqW2YmNbHgTzgeE=;
+        h=Subject:Reply-To:From:To:CC:Date:References:From;
+        b=EpYjohelBPoxrg/9tU32t4QQybV9IPLNNVPSXt9U057zRf8f8Nm7iQU5dsgUqbmKh
+         IpHl5/t/QcYISFwKYL9flSEmiSV52t5i6cw7OPDfBtJTbZ4c/ONkvEVhTGgY1/pm37
+         hbEqRKbjab/AWOCSr02z4FRFzLQKDe+YWAK+Cfeg=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20220420050707epcas1p3afae3a47ce4029475c5047b759ae5946~ngnURXrGn2921629216epcas1p3H;
+        Wed, 20 Apr 2022 05:07:07 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.36.135]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4KjpZ2445Xz4x9QV; Wed, 20 Apr
+        2022 05:07:06 +0000 (GMT)
+X-AuditID: b6c32a39-003ff70000006fe8-c1-625f94fa058c
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        76.56.28648.AF49F526; Wed, 20 Apr 2022 14:07:06 +0900 (KST)
+Mime-Version: 1.0
+Subject: [PATCH] media: exynos4-is: Fix compile warning
+Reply-To: k.son@samsung.com
+Sender: Kwanghoon Son <k.son@samsung.com>
+From:   Kwanghoon Son <k.son@samsung.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+        ALIM AKHTAR <alim.akhtar@samsung.com>
+CC:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20220420050706epcms1p2c627fe5d8f434a204e554048626a6e63@epcms1p2>
+Date:   Wed, 20 Apr 2022 14:07:06 +0900
+X-CMS-MailID: 20220420050706epcms1p2c627fe5d8f434a204e554048626a6e63
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLKsWRmVeSWpSXmKPExsWy7bCmru6vKfFJBkt2y1k8mLeNzWLv663s
+        Fj0btrJazDi/j8li2aY/TBaH37SzOrB5bFrVyeZx59oeNo++LasYPT5vkgtgicq2yUhNTEkt
+        UkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAFarqRQlphTChQKSCwu
+        VtK3synKLy1JVcjILy6xVUotSMkpMC3QK07MLS7NS9fLSy2xMjQwMDIFKkzIzpjR/52tYANv
+        RVfrQ5YGxibeLkYODgkBE4mdvxK7GLk4hAR2MEo8/vKYDSTOKyAo8XeHcBcjJ4ewgLnExEtH
+        2EHCQgLSEh8u6oKYwgKaEs87HEEq2ATUJZa0rWUHmSIicIJR4s66ySwgDrNAF6PE/RnLWUGq
+        JAR4JWa0P2WBsKUlti/fyghhi0rcXP2WHcZ+f2w+VFxEovXeWWYIW1Diwc/dUHEpidYz25kg
+        7GyJmTNWQsVLJPbvmcgM8Za+xLFt0iBhXgFfiW97joCVsAioSrRN2Qx1govE4o3zwGxmAW2J
+        ZQtfg7UyA/21fpc+RImixM7fcxkhSvgk3n3tgftkx7wnTBCb5CVudZbDHH/m6Uc2CNtD4tHs
+        1WBPCQkESvzsuMw6gVF+FiJoZyHZOwth7wJG5lWMYqkFxbnpqcWGBabwyEzOz93ECE53WpY7
+        GKe//aB3iJGJg/EQowQHs5IIb8+S6CQh3pTEyqrUovz4otKc1OJDjKZAH09klhJNzgcm3LyS
+        eEMTSwMTMyNjEwtDM0Mlcd5V004nCgmkJ5akZqemFqQWwfQxcXBKNTBFfPUoSitcq7/Jgtdk
+        37d0j3f2mxWazlmo+Tz/oDHBpMraX6j/YsKpbcEri6936G04qvtfhIEzJHKLIKtYgLF6pFZ4
+        V9Xp7OoFcUfmp+tIRKpnLf/YVlR27/QLP7Fcm/UV0Qd8wzpXq2a/23Lw4u5N6fc+v3njO194
+        m9A/NmsNgSvcSX7lIkcuP95846TYshytk648VplsYROD+z4F/vzy9L7RtKcXXz/+OdO5aZ30
+        3JMn3FTWOW5qfWq8sX3po1i2GVfuBU2Ydixiyf+XqrxPvl6a/MN70xTunrInnQfWPT3M2WJr
+        +a5+4oW4BbxX126cITJp6rY8P/9DBcKmH6U95yo/kmqa/d6t31T2soWdEktxRqKhFnNRcSIA
+        5S5VHQAEAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220420045732epcms1p7bdaf82873a4328153b456ee4e3a5660a
+References: <CGME20220420045732epcms1p7bdaf82873a4328153b456ee4e3a5660a@epcms1p2>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Remove parts duplicated with usb-hcd.yaml DT schema and include it
-directly.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
----
-
-Hi Greg,
-
-Could you pick this one up for usb-next?
----
- .../bindings/usb/samsung,exynos-usb2.yaml         | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
-index 340dff8d19c3..d51f91d1139f 100644
---- a/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
-+++ b/Documentation/devicetree/bindings/usb/samsung,exynos-usb2.yaml
-@@ -15,9 +15,6 @@ properties:
-       - samsung,exynos4210-ehci
-       - samsung,exynos4210-ohci
- 
--  '#address-cells':
--    const: 1
--
-   clocks:
-     maxItems: 1
- 
-@@ -46,15 +43,6 @@ properties:
-       Only for controller in EHCI mode, if present, specifies the GPIO that
-       needs to be pulled up for the bus to be powered.
- 
--  '#size-cells':
--    const: 0
--
--patternProperties:
--  "^.*@[0-9a-f]{1,2}$":
--    description: The hard wired USB devices
--    type: object
--    $ref: /usb/usb-device.yaml
--
- required:
-   - compatible
-   - clocks
-@@ -64,6 +52,7 @@ required:
-   - phy-names
- 
- allOf:
-+  - $ref: usb-hcd.yaml#
-   - if:
-       properties:
-         compatible:
-@@ -73,7 +62,7 @@ allOf:
-       properties:
-         samsung,vbus-gpio: false
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
--- 
-2.32.0
-
+declare=C2=A0'static'=C2=A0to=C2=A0fix=C2=A0warning=C2=A0message=C2=A0from=
+=0D=0Ahttps://lore.kernel.org/linux-media/202204192315.ZHbOex51-lkp=40intel=
+.com/T/=23u=0D=0A=C2=A0=0D=0AReported-by:=C2=A0kernel=C2=A0test=C2=A0robot=
+=C2=A0<lkp=40intel.com>=0D=0ASigned-off-by:=C2=A0Kwanghoon=20Son=C2=A0<k.so=
+n=40samsung.com>=0D=0A---=0D=0A=C2=A0drivers/media/platform/samsung/exynos4=
+-is/fimc-isp-video.h=C2=A0=7C=C2=A02=C2=A0+-=0D=0A=C2=A01=C2=A0file=C2=A0ch=
+anged,=C2=A01=C2=A0insertion(+),=C2=A01=C2=A0deletion(-)=0D=0A=C2=A0=0D=0Ad=
+iff=C2=A0--git=C2=A0a/drivers/media/platform/samsung/exynos4-is/fimc-isp-vi=
+deo.h=C2=A0b/drivers/media/platform/samsung/exynos4-is/fimc-isp-video.h=0D=
+=0Aindex=C2=A0edcb3a5e3cb9..2dd4ddbc748a=C2=A0100644=0D=0A---=C2=A0a/driver=
+s/media/platform/samsung/exynos4-is/fimc-isp-video.h=0D=0A+++=C2=A0b/driver=
+s/media/platform/samsung/exynos4-is/fimc-isp-video.h=0D=0A=40=40=C2=A0-32,7=
+=C2=A0+32,7=C2=A0=40=40=C2=A0static=C2=A0inline=C2=A0int=C2=A0fimc_isp_vide=
+o_device_register(struct=C2=A0fimc_isp=C2=A0*isp,=0D=0A=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return=C2=A00;=0D=0A=C2=A0=7D=0D=0A=C2=
+=A0=0D=0A-void=C2=A0fimc_isp_video_device_unregister(struct=C2=A0fimc_isp=
+=C2=A0*isp,=0D=0A+static=C2=A0inline=C2=A0void=C2=A0fimc_isp_video_device_u=
+nregister(struct=C2=A0fimc_isp=C2=A0*isp,=0D=0A=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0enum=C2=A0v4l2_buf_type=C2=A0type)=0D=0A=C2=A0=7B=0D=
+=0A=C2=A0=7D=0D=0A--=C2=A0=0D=0A2.20.1=0D=0A=C2=A0=0D=0A=C2=A0=0D=0A=C2=A0=
+=0D=0A
