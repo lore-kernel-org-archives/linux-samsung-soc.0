@@ -2,96 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9579C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 06:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C671C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 07:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348065AbiDTGes (ORCPT
+        id S1359677AbiDTHYs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Apr 2022 02:34:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
+        Wed, 20 Apr 2022 03:24:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346486AbiDTGer (ORCPT
+        with ESMTP id S1359683AbiDTHYr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 02:34:47 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC7F11C0A
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Apr 2022 23:32:02 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id g18so1379428ejc.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Apr 2022 23:32:02 -0700 (PDT)
+        Wed, 20 Apr 2022 03:24:47 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D4A43B006
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 00:21:57 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id z12so1113246edl.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 00:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=LUo/eeAJ/KUosDrWNZbH2eTvpC6cpi+HWWKICkjYZ+Y=;
-        b=kzmAdT6AgQ1XVTIxdir03Gf7eNwiBGfM1dIRA8vMQ++0YJUWg3XoIGWbXZMNVKrlhE
-         NMlafvk8lBd8nJgfhdnYaJCwdAyp1p5rVy8rsN9zhx73+0R5F6Tuca4v3MOcj8SpDzBu
-         23ED1bnswghirk9YvAYL5hb7Gq+cTpIUf8qFfRRwEBJM1CqOKQqmLnHAnyx8KvDdkkwJ
-         IAirPcjRswQN9zGXniO9xDSZ0yyo9BzdKOFkzMmCf00+qZUMGfaSpLgx7ahUbclRmAln
-         wtnHPmIhMxx5DNvKeReufQTaO4jpbUktOIMXPENwMy3zCH/wB//Tmbgz5EOrmRrMWNX8
-         TtfQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uxmYy8O3B9S8Z/t2A4fXr3iVXi2rAgR9IiSdOI1pb5c=;
+        b=j4MlJffbNOKszAngWM2pnsI5+AUS4yrhe1hYMLBt7tQNu1TXEqTLJI/+cMGaadm4qX
+         DVWvgylWFQBi4/TWkOkHefBsKemVN1H9R2p5KXp+kCngYSyrKAVCoy0KT2F+18bZGFcU
+         GTnlZVE0qm7dg1YC+xszO66TvXEZjT+xNUpl8cCuaU5Wg1mph7ZSsBL04PpaYPCcfDUg
+         R9yFKx3CfS2Qt3P7uR+IJdudn1ZO3Duq6Ttl4a2Ll4AQrwGxvoPfHyhTuPVijSvGrs8d
+         K6paQYxg0JNv7f9ZEWlrJx4iG+m0DTBe7W3e368zPAgyYRxzcWkk3o5k/gFrVMhJZjqT
+         BOzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=LUo/eeAJ/KUosDrWNZbH2eTvpC6cpi+HWWKICkjYZ+Y=;
-        b=Ju0VRvoX+Mw7hibFsLwXPBG8ZPnayWrgjHfo9m/ONU+0xvo/P+SHWgtXq6s1ksiTw7
-         1APvhXbOkrRMKw6jMAAmLSScOKzupMsD2X/Nft3RSu0FPq3hVP1TUppJjfA3uAoJjBVT
-         wpWJZluPh2HWyR0tibyNBpc4CcfckhvbrkZn9p9OAV7Sgg333qngxn+Dx0JzMkIyp8oI
-         yUyhEYnmZI01j6dAWip+kTnPKRqvt7RK77SDE4qkll5raYYPsOxxJIuwRW3vr4C8OWON
-         Lq8pg+hvoXALPD5S6ua/0iW4yCTVait6XiGJbbQC//LK6QqFPtPQNMXJWeKifxAKzJV8
-         Vgzg==
-X-Gm-Message-State: AOAM532t8C5VoSgjRcfXblzv+vfRX9wRnrWa9mZMCkzZgzfWyIZipRTq
-        TDLSa94E8buXTt5W1aZz9zBE0g==
-X-Google-Smtp-Source: ABdhPJx5uQ9psKnjm3spxetT2uiUOfrJ63bQJwRinosS64hxC+75MHzSEglvneI5vtSnyzTLI4Njng==
-X-Received: by 2002:a17:906:34d5:b0:6ef:af55:702 with SMTP id h21-20020a17090634d500b006efaf550702mr11929181ejb.430.1650436320981;
-        Tue, 19 Apr 2022 23:32:00 -0700 (PDT)
-Received: from [192.168.0.222] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id o14-20020a170906774e00b006d5b915f27dsm6381067ejn.169.2022.04.19.23.31.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Apr 2022 23:32:00 -0700 (PDT)
-Message-ID: <a1fe968f-a8dd-e149-1149-85380e60e8f4@linaro.org>
-Date:   Wed, 20 Apr 2022 08:31:59 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] media: exynos4-is: Fix compile warning
-Content-Language: en-US
-To:     k.son@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        ALIM AKHTAR <alim.akhtar@samsung.com>
-Cc:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-References: <CGME20220420045732epcms1p7bdaf82873a4328153b456ee4e3a5660a@epcms1p4>
- <20220420051149epcms1p469ac91524037074586d368fe901e0964@epcms1p4>
+        bh=uxmYy8O3B9S8Z/t2A4fXr3iVXi2rAgR9IiSdOI1pb5c=;
+        b=oVKfaY0VRPwVECKy0ZdAW2T+RS2pDK/iEpso5oPbV5FTNyymEs3kZ0W7EENdkJGy8x
+         LTvW5PBOonaQpqayESmfvyW15cAypbklVQLVQLpb1xXUyZemf2++qlt7noAks4KaTWoT
+         /2QMyw94r88BbivOV8tM6eQglbSArTv3vCtLWNc7g5Q4WKsPHm7p6fejO4gWS/93HDnf
+         VWVGU+ZrbYY6CUNb4BzaPn8YT2VwH2W4QErhWOLieHb+p72KCIc7dxpZrOWRcoLAg25g
+         dLOzW5bk7gzEJ17G8WpZJtniKpa0TJXvLMPERanJTST2T6374rfsBoft7VImaSdKpXBY
+         oE3A==
+X-Gm-Message-State: AOAM530B/I6qDAcWbmMwW3v/C6LeGuF+1o1oZrYwxDMXCmoqvi2IM9BU
+        YYLdLKTdiWxh/l/7UdCDKCOlbQ==
+X-Google-Smtp-Source: ABdhPJwSy+FJb4H1cp6AcRQOgklNGnvLsJgBDZ3kdwqQ0JHRbbxJeuyMHY/Sv45mSH+JW9f+TfpEpA==
+X-Received: by 2002:a05:6402:1e89:b0:423:e004:bf61 with SMTP id f9-20020a0564021e8900b00423e004bf61mr16075680edf.14.1650439316140;
+        Wed, 20 Apr 2022 00:21:56 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id a1-20020a1709063e8100b006ce06ed8aa7sm6492106ejj.142.2022.04.20.00.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Apr 2022 00:21:55 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220420051149epcms1p469ac91524037074586d368fe901e0964@epcms1p4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/3] ARM: dts: various: cleanup for v5.19
+Date:   Wed, 20 Apr 2022 09:21:50 +0200
+Message-Id: <20220420072152.11696-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-You sent three almost the same patches, so how can we know which one to
-choose? Please use versioning of the patches (git help format-patch).
-
-On 20/04/2022 07:11, Kwanghoon Son wrote:
-> declare 'static' to fix warning message from
-> https://lore.kernel.org/linux-media/202204192315.ZHbOex51-lkp@intel.com/T/#u
-
-No external references, instead quote trimmed warning message (only the
-relevant part).
-
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Kwang Son <k.son@samsung.com>
-
-Name used here does not match name used for commit, so please fix your
-setup.
-
+These were waiting on the LKML for some time, got few acks but no one picked
+them up.  Please take them through SoC.
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
+
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/dt-cleanup-5.19
+
+for you to fetch changes up to c9bdd50d2019f78bf4c1f6a79254c27771901023:
+
+  ARM: dts: socfpga: align interrupt controller node name with dtschema (2022-04-07 21:30:22 +0200)
+
+----------------------------------------------------------------
+Minor cleanup of ARM DTS for v5.19
+
+Align node names and unit addresses to DT schema and DT coding style in
+nspire, ox820 and socfpga.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (3):
+      ARM: dts: nspire: use lower case hex addresses in node unit addresses
+      ARM: dts: ox820: align interrupt controller node name with dtschema
+      ARM: dts: socfpga: align interrupt controller node name with dtschema
+
+ arch/arm/boot/dts/nspire-classic.dtsi  | 10 +++---
+ arch/arm/boot/dts/nspire-cx.dts        |  4 +--
+ arch/arm/boot/dts/nspire.dtsi          | 60 +++++++++++++++++-----------------
+ arch/arm/boot/dts/ox820.dtsi           |  2 +-
+ arch/arm/boot/dts/socfpga.dtsi         |  2 +-
+ arch/arm/boot/dts/socfpga_arria10.dtsi |  2 +-
+ 6 files changed, 40 insertions(+), 40 deletions(-)
