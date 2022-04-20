@@ -2,127 +2,152 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F77FC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 09:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A849C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 09:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377297AbiDTJp0 (ORCPT
+        id S237711AbiDTJuS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Apr 2022 05:45:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
+        Wed, 20 Apr 2022 05:50:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353200AbiDTJpZ (ORCPT
+        with ESMTP id S1377332AbiDTJuQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 05:45:25 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77B4344E8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 02:42:38 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b24so1501131edu.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 02:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=rn9+aR7ucf5Qs0Vd1a84QfPbfL7HErKfiyJaK63fdzI=;
-        b=HQMPJdFZ3OUwVe1C8+R8Cckio65mWY8zyespQRGKLt4Ijdmkr9Q9iw11Dj9T5WvO44
-         bk11pWw1bC1xY0Q+vWVviNwp7oudqs3tBPXenAzz+bME6Hpp2Y+HmS0q7Q/n5FzLmI2n
-         otIdN74LIBW2/29yO9B+QmQ5O8lmsWn93jyQEcP5QKwBMVgacCFYrQQTA+6BX9/t+kf6
-         UhSr1g354B2s7xLot41ROfHo0jcZBbeGQh3gOYRkvhf72okwgregKJdyrIL3SCd10op6
-         rPBtOJuJvjv0BRCm2BGuxckfyZpObp4ppmefkOwIYuso9bMiIwI24slexsYBdCnCwYWb
-         ntUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=rn9+aR7ucf5Qs0Vd1a84QfPbfL7HErKfiyJaK63fdzI=;
-        b=JEdb5XwqfoYdR/gMv6pJgbpClZDEMJmz4nWHe0etz7gF0fq/g6pMVfoNqn9UexBWKl
-         Nmkq1u78+CzbeFcQVhmE9VfbWePdGNEpTzqojzP/Mv2xPJUroWv3zHtdWsW79DopVfuB
-         eYkshS+rIb2ktEIymoZz7x74ntj3vYLBb3F8sw6UpQZJ9J2EXB7ESeIyMlWJIe/WNlCS
-         LthQQgWf6ePggHXPGcrjjOhevSqgtnKtlt9E6OkIU8jNlUV2Ta3hoFlHj5cENz2S9WjW
-         x1jewuUPWl8LdpNhaSLm0zHyzgn4nmhG5Dhzv4SiFEl+r8bydR1HQDsePwbbrab6BA44
-         7Wpw==
-X-Gm-Message-State: AOAM530wBHbI24gRo6ftAVQNyiRilRNgXsNZgAZmP+JAiWD56pmZbUgG
-        21MfDb5yWhk0K6mHbQUZc8LaKw==
-X-Google-Smtp-Source: ABdhPJyodpwb0BYmTXR0M9qTaRjek4VTZFUEQzLMObA2ycevQY/4bi69l4QL3XHp9hm3koBbFtbHZA==
-X-Received: by 2002:a05:6402:2753:b0:423:3895:7031 with SMTP id z19-20020a056402275300b0042338957031mr22097598edd.170.1650447757469;
-        Wed, 20 Apr 2022 02:42:37 -0700 (PDT)
-Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id la10-20020a170907780a00b006e889ee7741sm6530550ejc.75.2022.04.20.02.42.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 02:42:37 -0700 (PDT)
-Message-ID: <1c3cb265-2497-537d-3c7b-ca4766775b46@linaro.org>
-Date:   Wed, 20 Apr 2022 11:42:36 +0200
+        Wed, 20 Apr 2022 05:50:16 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA5823BF8D
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 02:47:29 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220420094723euoutp0274e59d3e4d74d1e46386cecd50f7abfc~nkcBkXWgv3026530265euoutp028
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 09:47:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220420094723euoutp0274e59d3e4d74d1e46386cecd50f7abfc~nkcBkXWgv3026530265euoutp028
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1650448043;
+        bh=bgMkVNAEwThKqXPNrfzYaLJr9OBkz6KnPs1ebCuM7hs=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=bxXEv/+rlX2xdpUTFb/4K17iNwIdq2mx3oZh1dO6VDq8hrQA7nf9mVIBJof4Ls2U3
+         ihxcxST4jV+dDDdikq+PscXVIRRLGaPXxx0QGBwxSEF0D3IUSbN5JFCTZUeiR62np1
+         A3Uq3s9KVN+N7NryJv2kWynVTh5gGxPR8U7B/Fio=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220420094723eucas1p12e71a38d430461486f70e554c4bdb902~nkcBPeERN1137711377eucas1p1f;
+        Wed, 20 Apr 2022 09:47:23 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 65.D1.09887.BA6DF526; Wed, 20
+        Apr 2022 10:47:23 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220420094723eucas1p261eda3b5db7d5f0a4da0d3f01968b683~nkcA6ilkN1158311583eucas1p2Q;
+        Wed, 20 Apr 2022 09:47:23 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220420094723eusmtrp190308a2b1c5480b53ff6c63f9cd73e4e~nkcA50yGs2560825608eusmtrp1x;
+        Wed, 20 Apr 2022 09:47:23 +0000 (GMT)
+X-AuditID: cbfec7f4-45bff7000000269f-d7-625fd6ab776b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EF.33.09404.BA6DF526; Wed, 20
+        Apr 2022 10:47:23 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220420094722eusmtip255a384d5d587d48e927e7afa0cc2c974~nkcAYhyxs1598715987eusmtip2f;
+        Wed, 20 Apr 2022 09:47:22 +0000 (GMT)
+Message-ID: <9e2306a9-8181-ba43-e331-b3b70c1a72eb@samsung.com>
+Date:   Wed, 20 Apr 2022 11:47:22 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.8.0
 Subject: Re: [PATCH v3 2/3] genirq: Always limit the affinity to online CPUs
 Content-Language: en-US
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         John Garry <john.garry@huawei.com>,
         Xiongfeng Wang <wangxiongfeng2@huawei.com>,
         David Decotigny <ddecotig@google.com>
-References: <20220405185040.206297-1-maz@kernel.org>
- <20220405185040.206297-3-maz@kernel.org>
- <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
- <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
- <878rs8c2t2.wl-maz@kernel.org>
- <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
- <877d7sar5k.wl-maz@kernel.org>
- <39f69dfe-32e5-4cb3-118b-5c02b28cbcff@samsung.com>
- <70123e98-046f-f10e-1032-8d112edd3ecf@linaro.org>
- <87mtgg9jok.wl-maz@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <87mtgg9jok.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <70123e98-046f-f10e-1032-8d112edd3ecf@linaro.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djPc7qrr8UnGZx9p2hxqXUTu8Wm/U2s
+        Fntfb2W3uLxrDpvFjPP7mCx2zjnJarF501Rmi6mvtzA6cHgs2FTq0XLkLavHplWdbB53ru1h
+        83h37hy7x+dNcgFsUVw2Kak5mWWpRfp2CVwZjfc6WAoecFQ8OW3UwDiVvYuRk0NCwETi4PHl
+        LF2MXBxCAisYJbbO7GGHcL4wSpw4PQHK+cwosbblEVzLzZ17oBLLGSXWL7nKCOF8ZJQ41XSe
+        BaSKV8BOYuq+d4wgNouAqsSBCc+ZIOKCEidnPgGrERVIkpi77x4ziC0s4CMx5eIJsHpmAXGJ
+        W0/mg9WLCERKvGo5wgIR72aS6GsCq2cTMJToetvFBmJzAu06dXwJE0SNvMT2t3OYQQ6SEHjA
+        IbF27WJWiLNdJDY8b2GBsIUlXh3fAvWOjMTpyT1AcQ4gO1/i7wxjiHCFxLXXa5ghbGuJO+d+
+        sYGUMAtoSqzfpQ8RdpRoP/qcGaKTT+LGW0GIC/gkJm2bDhXmlehoE4KoVpOYdXwd3M6DFy4x
+        T2BUmoUUJrOQ/D4LyS+zEPYuYGRZxSieWlqcm55abJSXWq5XnJhbXJqXrpecn7uJEZiQTv87
+        /mUH4/JXH/UOMTJxMB5ilOBgVhLhDZ0ZnyTEm5JYWZValB9fVJqTWnyIUZqDRUmcNzlzQ6KQ
+        QHpiSWp2ampBahFMlomDU6qByTLBd5+887WnOwKf89sU6URNOv0uo2+DtzJro+EvU4G1STHb
+        fge+7pPRepTLHvM2g9lErkphWh77v4WzjZ5ZRbIrxN9XLU5wOPCqq2WpbCqPSUmaEI9JgzjT
+        YvVn6a80VF0d9qs0FwYy+q9bOy0yb8IZK/8lmpmPrWclz2xWuKktJ2EyV/5mQMDF2rj7Tieq
+        K57tvFQs06SuNIf1z3POmx8K/3JP1WU5WlTmuuHwDd8jTg7/IxYZ/5d9aDfNR8Kl5NVelgdR
+        5yZ05DzZotp3sFROZUXu++t3r63ZmLPjtKoNx1xn5hl8fe4XxOdeXMbqpjG1MehF/qTVdesa
+        rjXu257av4ExMm8Wp6JdX7oSS3FGoqEWc1FxIgBFtnUjtwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7qrr8UnGVzp4LC41LqJ3WLT/iZW
+        i72vt7JbXN41h81ixvl9TBY755xktdi8aSqzxdTXWxgdODwWbCr1aDnyltVj06pONo871/aw
+        ebw7d47d4/MmuQC2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
+        zLLUIn27BL2MxnsdLAUPOCqenDZqYJzK3sXIySEhYCJxc+ceIJuLQ0hgKaPE78OfGSESMhIn
+        pzWwQtjCEn+udbGB2EIC7xklmicKgdi8AnYSU/e9A6tnEVCVODDhORNEXFDi5MwnLCC2qECS
+        xIttz8FqhAV8JKZcPAFmMwuIS9x6Mh+sXkQgUuL262lsIEcwC/QySZw48BHqohPMEofP/gPr
+        YBMwlOh6C3EFJ9DmU8eXMEFMMpPo2toFNVVeYvvbOcwTGIVmITlkFpKFs5C0zELSsoCRZRWj
+        SGppcW56brGRXnFibnFpXrpecn7uJkZgHG479nPLDsaVrz7qHWJk4mA8xCjBwawkwhs6Mz5J
+        iDclsbIqtSg/vqg0J7X4EKMpMDQmMkuJJucDE0FeSbyhmYGpoYmZpYGppZmxkjivZ0FHopBA
+        emJJanZqakFqEUwfEwenVAPTfnUHPYmO1QnrF9jJG33ripuuZfTVxlf0Nc/RHZ06GU4RNR6L
+        1TcWFbQ+DbhW8OBvV1Xk/og9tT8DPp/1OCcUKO149dFC9q6E6e3TPP8y2Zvde7xXRi4qpGPT
+        nJMbcmdc9lgXqaoxgTu7P1j3jnOMYv2zdaWJTLtTnYP9nBZ4KlUVSkySkQvM33f+7a7pAcEx
+        3oZ+/9VfhJbe8g6ZdShY0fP6x1vC1vuZ20/fkvbRFXDbXz8jjI/JxTaeJ+2EzWQWDcaD534z
+        v/C6eJnjp/ZRw163HYbs4v2CS6/2P1/HsDnfN3qPSFvrReWUO91rm3fYRC21zXFynrmV0zhe
+        RmpnZdGCc+vbJHLZP6z+rMRSnJFoqMVcVJwIANK4fmhMAwAA
+X-CMS-MailID: 20220420094723eucas1p261eda3b5db7d5f0a4da0d3f01968b683
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220413145922eucas1p2dc46908354f4d2b48db79978d086a838
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220413145922eucas1p2dc46908354f4d2b48db79978d086a838
+References: <20220405185040.206297-1-maz@kernel.org>
+        <20220405185040.206297-3-maz@kernel.org>
+        <CGME20220413145922eucas1p2dc46908354f4d2b48db79978d086a838@eucas1p2.samsung.com>
+        <4b7fc13c-887b-a664-26e8-45aed13f048a@samsung.com>
+        <878rs8c2t2.wl-maz@kernel.org>
+        <5dcf8d22-e9b3-f306-4c5f-256707e08fbf@samsung.com>
+        <877d7sar5k.wl-maz@kernel.org>
+        <39f69dfe-32e5-4cb3-118b-5c02b28cbcff@samsung.com>
+        <70123e98-046f-f10e-1032-8d112edd3ecf@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/04/2022 11:40, Marc Zyngier wrote:
-> It was picked up by Thomas and pushed out into tip, which is pulled by
-> -next:
-> 
-> maz@hot-poop:~/arm-platforms$ git describe --contains c48c8b829d2b966a6649827426bcdba082ccf922
-> next-20220420~51^2~3^2
-> 
-> So it definitely is in today's -next.
-> 
->> Instead of silent fail there is now "Unable to handle kernel paging
->> request at virtual address f0836644", so it is slightly different.
+Hi Krzysztof,
+
+On 20.04.2022 11:13, Krzysztof Kozlowski wrote:
+> On 14/04/2022 13:08, Marek Szyprowski wrote:
+>>> Thanks for all of the debug, super helpful. The issue is that we don't
+>>> handle the 'force' case, which a handful of drivers are using when
+>>> bringing up CPUs (and doing so before the CPUs are marked online).
+>>>
+>>> Can you please give the below hack a go?
+>> This patch fixed the issue. Thanks! Feel free to add my:
 >>
->> See the dmesg:
->> https://krzk.eu/#/builders/21/builds/3542/steps/15/logs/serial0
-> 
-> This looks completely unrelated:
-> 
-> [   10.382010] Unable to handle kernel paging request at virtual address f0836644
-> [   10.388597] [f0836644] *pgd=41c83811, *pte=00000000, *ppte=00000000
-> [   10.394482] Internal error: Oops: 807 [#1] PREEMPT SMP ARM
-> [   10.399567] Modules linked in:
-> [   10.402583] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.18.0-rc3-next-20220420 #2
-> [   10.410060] Hardware name: Samsung Exynos (Flattened Device Tree)
-> [   10.416106] PC is at cpu_ca15_set_pte_ext+0x4c/0x58
-> [   10.420952] LR is at handle_pte_fault+0x218/0x260
-> [   10.425631] pc : [<c011d588>]    lr : [<c02ab188>]    psr: 40000113
-> [   10.431874] sp : f0835df0  ip : f0835e5c  fp : 00000081
-> [   10.437069] r10: c0f2eafc  r9 : c1d31000  r8 : 00000000
-> [   10.442268] r7 : c1d58000  r6 : 00000081  r5 : befffff6  r4 : f0835e24
-> [   10.448773] r3 : 00000000  r2 : 00000000  r1 : 00000040  r0 : f0835e44
-> [   10.455273] Flags: nZcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> [   10.462381] Control: 10c5387d  Table: 4000406a  DAC: 00000051
-> 
-> This is a crash in cpu_ca15_set_pte_ext() when populating the
-> userspace page tables, which seems unrelated to interrupt affinity.
-> 
-> I suggest you bisect this to find the actual problem.
+>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Hi Marc,
+>
+> Linux-next still fails to boot on Exynos5422 boards, so I wonder if you
+> applied the fix?
+>
+> Instead of silent fail there is now "Unable to handle kernel paging
+> request at virtual address f0836644", so it is slightly different.
 
-Thanks for checking.
+This is yet another issue (related to all ARM 32bit boards) introduced 
+in next-20220413, see:
 
+https://lore.kernel.org/all/20220405014836.14077-1-peterx@redhat.com/T/#m6137721ae1323fdf424cee0f8ea1a6af5a3af396
 
-Best regards,
-Krzysztof
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
