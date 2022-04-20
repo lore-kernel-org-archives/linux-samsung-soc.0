@@ -2,64 +2,43 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D490DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 12:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE5AC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Apr 2022 13:25:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352925AbiDTMQ0 (ORCPT
+        id S1379041AbiDTN2m (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Apr 2022 08:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55872 "EHLO
+        Wed, 20 Apr 2022 09:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345710AbiDTMQZ (ORCPT
+        with ESMTP id S1379021AbiDTN2h (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Apr 2022 08:16:25 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3ECE3D4A9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 05:13:38 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id b24so1993545edu.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Apr 2022 05:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=t4fnkhjiK7o7zoKvIVj8krdFqshM+NAvjEpfPjIpMNE=;
-        b=oesE1IY+fZaZQAK7RVRyEFGXJv0OHXbxWD8BJTs9H6XZ5ov9VhWpB+X+ynfaWlF6KP
-         NU/z+zj6ysinrY/GiZnPNG+F6MeIlG44haXQ7l4CURDsWrl6OQgLyZwXYIebaxyBR9JT
-         kXTgf0BI7TdjuOCkzvkwNv823Wr2wKlmGkCSJOlaOStPvX8ibW20jPHwAM6nD3k2Mblc
-         Uj/bPf69I98fnN5lgO7OQDAhACAwqkxlc7quoTASh5537AAuC0fxZrv8lawDskal3qRV
-         3LXx6WuvAZ8xu7pDmOEDEU2NjPAxY02ZjMxq/sNlx1svNodffFkrhmIvBTvYhhTWfY/C
-         DxVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=t4fnkhjiK7o7zoKvIVj8krdFqshM+NAvjEpfPjIpMNE=;
-        b=VERwb9o5f8GBaV6nmvXMZWSuGya3C2AuJa0IvsopZ36bChHiSID5hhxp53y1LuqixB
-         Pzilz7A6gRrtA5CLh56+iHONGoFpB6+yyioVLaFrYlo6rip7oEBOrnShyv2jiBXeU9xM
-         q5ytFxZ5EyRDqXgXCdH1XlvShvJ1Ox+U922Z828/DpNHdnTQTFDPIzqfVe/7ADba4Ewe
-         9Vc8nbcg/BpB4GsmSxmkcS3Vu2mYQSGNi15IGaxicw2UezkeWhGGxmSkZsOYq0QlZigv
-         Z4bA0IQn3YhaKiPE1JPt4faZi1ZTmYCJpqPWCHuVlUEZ5ni9X3xYi8x75qEMBUlgQfth
-         C7Bg==
-X-Gm-Message-State: AOAM533R7neTgaZ6xDL0Y9kAzC0UtsfnbqD6qA5e227qnJoY4GMBOJ+c
-        k2IGJeL5TPSemiQHJyXaODmXlw==
-X-Google-Smtp-Source: ABdhPJze27l1aXD+D4yIQEK0h88zbma4f2jYuOAuBnfilQml1/mAiidAIhshNW98oRXBiF5le2r20w==
-X-Received: by 2002:a05:6402:321b:b0:41d:888a:3ff0 with SMTP id g27-20020a056402321b00b0041d888a3ff0mr23117956eda.167.1650456817280;
-        Wed, 20 Apr 2022 05:13:37 -0700 (PDT)
-Received: from [192.168.0.225] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id fy11-20020a1709069f0b00b006e8b68c92d8sm6559748ejc.162.2022.04.20.05.13.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 05:13:36 -0700 (PDT)
-Message-ID: <0c0b53c3-294a-b1ac-487a-ca96266c4bb7@linaro.org>
-Date:   Wed, 20 Apr 2022 14:13:35 +0200
+        Wed, 20 Apr 2022 09:28:37 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412DC3A5D8;
+        Wed, 20 Apr 2022 06:25:51 -0700 (PDT)
+Received: from mail-wm1-f46.google.com ([209.85.128.46]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MMFdY-1nRI9D2Fs6-00JKba; Wed, 20 Apr 2022 15:25:49 +0200
+Received: by mail-wm1-f46.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso3707201wma.0;
+        Wed, 20 Apr 2022 06:25:49 -0700 (PDT)
+X-Gm-Message-State: AOAM533Ruzzhq3AJnT/ApE5/MdAhSW3ZXbnGtnby3NKLfiyYe6w5d3f+
+        57jVaS0GWfE6nujzi1m53KI5P/uSFE7Jda3XKrI=
+X-Google-Smtp-Source: ABdhPJwiG3EyuSNpaHqra2dahTK/JnvqbUz+C9/o2SqI7KlR071QCZmOW+DAbeiKB7yYo6yDeDE/gbVIPvIMFUY5Nvg=
+X-Received: by 2002:a1c:f219:0:b0:38c:782c:3bb with SMTP id
+ s25-20020a1cf219000000b0038c782c03bbmr3668880wmc.94.1650461149002; Wed, 20
+ Apr 2022 06:25:49 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] pinctrl: samsung: fix missing GPIOLIB on ARM64 Exynos
- config
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+References: <20220420115512.175917-1-krzysztof.kozlowski@linaro.org>
+ <CAK8P3a0uH5KjaobrqUmJQnvMmjkUaR1iC-7jEPjZFjZF1Z-GfQ@mail.gmail.com> <0c0b53c3-294a-b1ac-487a-ca96266c4bb7@linaro.org>
+In-Reply-To: <0c0b53c3-294a-b1ac-487a-ca96266c4bb7@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Apr 2022 15:25:32 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2uuFMVcsR9c+J28ZsA1cC9+FJCnFy5Lnq6uUY=nPoTEQ@mail.gmail.com>
+Message-ID: <CAK8P3a2uuFMVcsR9c+J28ZsA1cC9+FJCnFy5Lnq6uUY=nPoTEQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: fix missing GPIOLIB on ARM64 Exynos config
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -70,85 +49,75 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Necip Fazil Yildiran <fazilyildiran@gmail.com>,
         "# 3.4.x" <stable@vger.kernel.org>
-References: <20220420115512.175917-1-krzysztof.kozlowski@linaro.org>
- <CAK8P3a0uH5KjaobrqUmJQnvMmjkUaR1iC-7jEPjZFjZF1Z-GfQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAK8P3a0uH5KjaobrqUmJQnvMmjkUaR1iC-7jEPjZFjZF1Z-GfQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:kbYlLd+2VeG+VWzjp2K6Ui5Pwogjevu9don8FxO2FstBnYgOmnb
+ LOavINgChxrc7d/yNCNs3yYy+Z4YBCrOM4OU+St7NMVCZ22FTO65Rp5CSFdfeeJuZDZgTA+
+ wR8Yv/7zq9QQ+dYn4fdSgUu0r9J0U3Uga2wpngv3mw62rFq4AnWMrqofibanPF7LmBKuMDP
+ tyyddHoxnf2MhEeiTex6A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oOEJXlPpHLE=:0/LNQHR2Jtklkx+Q/alL+R
+ bTjXpgO+yhO5xs0fEl5t1X2v1CysRELdtgaQwna8vDG51FulKc/cMuZ6ME3zTF2hc2XCuC/gL
+ iPEMotvBDdQmQX8EV+II6I7qvmg7BjJgrX1rApPooRigWQaAWHCG+QQIjfpOU0044gCXD87WH
+ 2kkwyHVpSUfdJu5kg0oZANkeS31KLhQsxLDq3cowdxPnY1S0vgTR9P1MjNBcv+J0gktnD8w9T
+ ElkDgyey6/5pCPudRFsqoBAQQ60miirEliEmSI48ZGcxDuRQo24cibQwo4EW6LBcGxzRT05Ka
+ da/jM6oiXrIWOHjX/97w+XGs4pkiMKEs/19M9yuKlEi2YdNZY4PKShzblUNCkXvTNUqDWeOPl
+ RUSs9YiYx1KID8bx0NiDOn4vS90gQbnf0eU6SS3ppPP3YbF36rSECuatiYv2gZxc5/a8KxITf
+ shENMZuBk/242pATS8zcTXa01DmnBLL2mDucwl2OZfWwLsMwMeuTJoRYT2iJj9iq56gPbb/QH
+ K4pzegIECuI/dLXfcY95iwGNNBEuQz5PKkVYrQz1Ct5wh0SNmzMcOfKnI1Fp2HKB7v3iJopVR
+ v29NKvylAR3araV1BNou5bHtgixNg/dPJFRWsBF4pLTV5emsNck+y37wPPmI0npP1Hbr+pgy6
+ DRVHu69fYU+MhdIJplOmC+06L1RFktrLc1iwk6kDTqTUWfhBHbPft2FoK9MSfkzWW754=
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/04/2022 14:10, Arnd Bergmann wrote:
-> On Wed, Apr 20, 2022 at 1:55 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> The Samsung pinctrl drivers depend on OF_GPIO, which is part of GPIOLIB.
->> ARMv7 Exynos platform selects GPIOLIB and Samsung pinctrl drivers. ARMv8
->> Exynos selects only the latter leading to possible wrong configuration
->> on ARMv8 build:
->>
->>   WARNING: unmet direct dependencies detected for PINCTRL_EXYNOS
->>     Depends on [n]: PINCTRL [=y] && OF_GPIO [=n] && (ARCH_EXYNOS [=y] || ARCH_S5PV210 || COMPILE_TEST [=y])
->>     Selected by [y]:
->>     - ARCH_EXYNOS [=y]
->>
->> Reported-by: Necip Fazil Yildiran <fazilyildiran@gmail.com>
->> Fixes: eed6b3eb20b9 ("arm64: Split out platform options to separate Kconfig")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
-> 
-> This does not look like a correct fix:
-> 
->> diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
->> index dfd805e76862..c852fd1dd284 100644
->> --- a/drivers/pinctrl/samsung/Kconfig
->> +++ b/drivers/pinctrl/samsung/Kconfig
->> @@ -4,13 +4,13 @@
->>  #
->>  config PINCTRL_SAMSUNG
->>         bool
->> -       depends on OF_GPIO
->> +       select GPIOLIB
->> +       select OF_GPIO
->>         select PINMUX
->>         select PINCONF
-> 
-> OF_GPIO is an automatic symbol that is always enabled when both
-> GPIOLIB and OF are enabled. Selecting it from somewhere else cannot
-> really work at all. I see we have a few other instances and should probably
-> fix those as well.
+On Wed, Apr 20, 2022 at 2:13 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 20/04/2022 14:10, Arnd Bergmann wrote:
+> > On Wed, Apr 20, 2022 at 1:55 PM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> The Samsung pinctrl drivers depend on OF_GPIO, which is part of GPIOLIB.
+> >> ARMv7 Exynos platform selects GPIOLIB and Samsung pinctrl drivers. ARMv8
+> >> Exynos selects only the latter leading to possible wrong configuration
+> >> on ARMv8 build:
+> >>
+> >>   WARNING: unmet direct dependencies detected for PINCTRL_EXYNOS
+> >>     Depends on [n]: PINCTRL [=y] && OF_GPIO [=n] && (ARCH_EXYNOS [=y] || ARCH_S5PV210 || COMPILE_TEST [=y])
+> >>     Selected by [y]:
+> >>     - ARCH_EXYNOS [=y]
+> >>
+> >>  config PINCTRL_EXYNOS
+> >>         bool "Pinctrl common driver part for Samsung Exynos SoCs"
+> >> -       depends on OF_GPIO
+> >>         depends on ARCH_EXYNOS || ARCH_S5PV210 || COMPILE_TEST
+> >>         select PINCTRL_SAMSUNG
+> >>         select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
+> >
+> >
+> > The problem here is that PINCTRL_EXYNOS and the others can be built for
+> > compile-testing without CONFIG_OF on non-arm machines.
+> >
+> > I think the correct dependency line would be
+> >
+> >       depends on ARCH_EXYNOS || ARCH_S5PV210 || (COMPILE_TEST && OF)
+> >
+> > which guarantees that OF_GPIO is also enabled.
+>
+> I don't think OF is the problem here, because the error is in missing
+> GPIOLIB.
 
-True, OF_GPIO I could skip here.
+You are correct that the added dependency is not the solution for the
+original problem. What I meant is that by dropping the dependency on
+OF_GPIO, you create a new problem for compile-testing without
+CONFIG_OF. Adding back the OF dependency avoids the regression.
 
-> 
->>  config PINCTRL_EXYNOS
->>         bool "Pinctrl common driver part for Samsung Exynos SoCs"
->> -       depends on OF_GPIO
->>         depends on ARCH_EXYNOS || ARCH_S5PV210 || COMPILE_TEST
->>         select PINCTRL_SAMSUNG
->>         select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
-> 
-> 
-> The problem here is that PINCTRL_EXYNOS and the others can be built for
-> compile-testing without CONFIG_OF on non-arm machines.
-> 
-> I think the correct dependency line would be
-> 
->       depends on ARCH_EXYNOS || ARCH_S5PV210 || (COMPILE_TEST && OF)
-> 
-> which guarantees that OF_GPIO is also enabled.
+> The platform selects Samsung pinctrl but it does not select
+> GPIOLIB. Possible fixes are:
+> 1. Do not select Samsung pinctrl from the platform (but have some
+> default), so on compile test build it might not work.
+> 2. Select GPIOLIB from the platform (ARMv7 Exynos does it).
+> 3. Select GPIOLIB from here - this is current proposal.
 
-I don't think OF is the problem here, because the error is in missing
-GPIOLIB. The platform selects Samsung pinctrl but it does not select
-GPIOLIB. Possible fixes are:
-1. Do not select Samsung pinctrl from the platform (but have some
-default), so on compile test build it might not work.
-2. Select GPIOLIB from the platform (ARMv7 Exynos does it).
-3. Select GPIOLIB from here - this is current proposal.
+Agreed, either 2. or 3. is fine, as long as you keep the CONFIG_OF
+dependency.
 
-
-Best regards,
-Krzysztof
+       Arnd
