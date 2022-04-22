@@ -2,107 +2,154 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDF0C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Apr 2022 10:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF848C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Apr 2022 15:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446700AbiDVKiw (ORCPT
+        id S1449285AbiDVPOP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 06:38:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
+        Fri, 22 Apr 2022 11:14:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446635AbiDVKiv (ORCPT
+        with ESMTP id S1449283AbiDVPOK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 06:38:51 -0400
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6892403ED;
-        Fri, 22 Apr 2022 03:35:47 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 34867580055;
-        Fri, 22 Apr 2022 06:35:44 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 22 Apr 2022 06:35:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1650623744; x=
-        1650630944; bh=sialgZLQyO92Jzz731mhx4P39e8kWtOeqoXhw0cCtXY=; b=W
-        xTSy59TGhUVrDTR5ZZ9AihUZQI4ztc0COij2niyKHFseYaXY1k1iijFElgMlbzjj
-        IgW79/RwLv6Fp4X6u1RNldYGUTYXAc3mckrXYDpkxLD8Z0+bSam6DaOQn6RH8JJV
-        Qurrb/7pXjRhV6hrBlyosxRCFXsVsKBzWSBUFBCKC76wZdJrkGNy/PnPSeGc6ESL
-        uS9PQ4Df7oGGULaYujEqbEX0gkpBXi38nCiC253MjtXIcEU+DlXgHhcSk5SLyWR8
-        DMCfpqY0+5d3saPZJOXn8wIeAiyRKjBJE3kBwqEP2fTi0gJ5AUl4LXi/x+9R7+KU
-        HwyrBchREXwkM8JuhkQ5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1650623744; x=1650630944; bh=sialgZLQyO92J
-        zz731mhx4P39e8kWtOeqoXhw0cCtXY=; b=xCGQhbzjwFiulmF6LlwEI2cPB3bBF
-        0ZqiYsKEqcIu5ZJxYH0mF7KEYuIof1NLNHoW4TtCBHWDqwK+z2RZi+HgbfH1FOpb
-        5nEg/us+9DLek/Br6MvB1IWNoskzsjdYAysFTHU1OckKOZaOQbqHZyDf//HLon6T
-        d7mcQhAcY1FFLvkEiygt802ZKh7zDfaBMBxNldjoO4kRqUQb6whLZwd8ZmEBlIhp
-        ctpWULiSYUe0CMhkaloAbV6hB/Gu4jw3+6LjXHWnZntyvDNrP/WiB1ZJOf9x6Xwc
-        3WHrccx3rtfbAlPOI3TziqtZIPUOpSkUOAhqS5u+rspah0ghgnBo8a+Ew==
-X-ME-Sender: <xms:_oRiYlIPkSce9J_iB2dx7YVzLXKxS60W4-Vyw3zmLO4U1aLiaFmmbg>
-    <xme:_oRiYhJOFbCsPLyYHVGGL4uD5HM-gey6IrG0BNy0SHfJOB4Q2dzZGy0EfuD4xixYV
-    3YhQ9CUuNJWy7-W19Q>
-X-ME-Received: <xmr:_oRiYtvBLqnHwVb37WFesVwZ0PMShNb6BvWXvV8Vm7Y4HetLslo-SvwCRTZi3P3Uu5oZYU4g5GlpHVUV0fb323r_rgqp4WPTvpHVZpo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrtdeggddvkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeuieeggffhffffieefheduieeuvdetgeeufeffvefgtedvffehheekffev
-    udefieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:_oRiYma42u8bFsyuaEoHigJkGAD8rHqS6b6IrkpHQB1N2nS1P6TckQ>
-    <xmx:_oRiYsbrF1C3QRv8Y5kK58OXIM5reFvVFe9fVe3wBCRWdmYHf-Yu9g>
-    <xmx:_oRiYqDjcSeHlAIkkqXF6PNc-gW-JT9Geogu1FY8mL5VO4njDgDJWQ>
-    <xmx:AIViYlRpbFTOma7kkn3FGWD0v6WQLAHvvXHX_xxmOtMZ2RMdHubTSg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 22 Apr 2022 06:35:42 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
-        inki.dae@samsung.com
-Cc:     Maxime Ripard <maxime@cerno.tech>, daniel@ffwll.ch,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org, alain.volmat@foss.st.com,
-        lgirdwood@gmail.com, broonie@kernel.org, samuel@sholland.org,
-        linux-samsung-soc@vger.kernel.org, p.zabel@pengutronix.de,
-        airlied@linux.ie, kyungmin.park@samsung.com, mripard@kernel.org,
-        jernej.skrabec@gmail.com, jy0922.shim@samsung.com,
-        alim.akhtar@samsung.com, krzk@kernel.org, heiko@sntech.de,
-        linux-sunxi@lists.linux.dev, hjc@rock-chips.com, wens@csie.org,
-        dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com
-Subject: Re: (subset) [PATCH 5/5] drm/sun4i: hdmi: Replace drm_detect_hdmi_monitor() with is_hdmi
-Date:   Fri, 22 Apr 2022 12:35:38 +0200
-Message-Id: <165062373584.1462930.6032469942386231983.b4-ty@cerno.tech>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220421170725.903361-6-jose.exposito89@gmail.com>
-References: <20220421170725.903361-1-jose.exposito89@gmail.com> <20220421170725.903361-6-jose.exposito89@gmail.com>
+        Fri, 22 Apr 2022 11:14:10 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C38D5C659
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Apr 2022 08:11:05 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id ks6so17032184ejb.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Apr 2022 08:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=SeO0vNa1HE4HcltpbkqIZSKEWB47bbqKOHu5Xk37zAA=;
+        b=xxUN49VNwEnek9favYympNNETThqPVPrMnobuHO2Yqg/GRztc9VaKGKUhE71kEQ2Mk
+         BaHClyKQ+uejt9e2ChZZKHXMxQTsfX/OHveBeITpfgtJgNqXkICJXDN+X99J0qxhsZrV
+         BJiUlopGwPArZNk2EII1zKeyYBuRnNpHsm/DKXWLIJvih1EplTNsmbLT6Sa3unRLAbeK
+         13IOkC2QDmBg43PHTS6vZMUE8RJGJqqOphq8sCDx5B5tMM9773U+/bAd1fIlF+9EX7yO
+         V4v/KhOf/ZvQJvprYBnWorzKFtZbNI8cF2JY/zvmcgt+faq5r+57zWNFDpTns2EOSTR/
+         sB6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=SeO0vNa1HE4HcltpbkqIZSKEWB47bbqKOHu5Xk37zAA=;
+        b=znqFDNYOg/FFF9aCuyTtyDuM7jFO6z4yiSZGBimq77jySy1Ue8OZ1WzJsVn4XS6oQp
+         0U4zkYAk/FUi0MBFD/UpNE1d9HXdjVrkPEKznm200WHWXugQhX9nkSYORcKN+uoVrtGl
+         HbkkE4SaP+h0aTgAFTjAcycQ2+6pFUCq8do1NXC06SSofS21ggxPz3Z69lQAOM+3CYkr
+         yGsQW3sFD0SQT5wv7m2PdWqh3zPRkBjFOK6tO30CfrDmnQrBAleAVOzwBQ+mZ+F7a0Ot
+         GZ5gpBF1ui7Tr61YqO3TTQjIo5loUZQMmNwoQIeqp1mGCDeV1WYopbqF859LcJhZK6So
+         eeNA==
+X-Gm-Message-State: AOAM530jwL8mR8ql+A/jJ0QrzOOHaCF9yjM6xPmQ0VwZk8tTpVbaiUax
+        mmUN/7aLI0cC8W7se5T1/qKCiw==
+X-Google-Smtp-Source: ABdhPJwVbSVzyNaErXBXSs9R0PZZIBlze+R+lG7jet6UNScP2xYcw1IBd3+dZu5c16FNTJYIBIhxUw==
+X-Received: by 2002:a17:907:d8c:b0:6f0:1091:de34 with SMTP id go12-20020a1709070d8c00b006f01091de34mr4579605ejc.376.1650640264000;
+        Fri, 22 Apr 2022 08:11:04 -0700 (PDT)
+Received: from [192.168.0.232] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id l19-20020a1709067d5300b006e8488d9a80sm844351ejp.59.2022.04.22.08.11.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Apr 2022 08:11:03 -0700 (PDT)
+Message-ID: <d7030fc5-3165-0255-0055-b2bc2e387d53@linaro.org>
+Date:   Fri, 22 Apr 2022 17:11:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] pwm: samsung: Implement .apply() callback
+Content-Language: en-US
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        kernel@pengutronix.de
+References: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 21 Apr 2022 19:07:25 +0200, José Expósito wrote:
-> Once EDID is parsed, the monitor HDMI support information is available
-> through drm_display_info.is_hdmi.
+On 28/03/2022 09:34, Uwe Kleine-König wrote:
+> To eventually get rid of all legacy drivers convert this driver to the
+> modern world implementing .apply().
 > 
-> This driver calls drm_detect_hdmi_monitor() to receive the same
-> information and stores its own cached value, which is less efficient.
+> The size check for state->period is moved to .apply() to make sure that
+> the values of state->duty_cycle and state->period are passed to
+> pwm_samsung_config without change while they are discarded to int.
 > 
-> Avoid calling drm_detect_hdmi_monitor() and use drm_display_info.is_hdmi
-> instead and also remove sun4i_hdmi.hdmi_monitor as it is no longer
-> necessary.
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
+>  drivers/pwm/pwm-samsung.c | 54 ++++++++++++++++++++++++++++++---------
+>  1 file changed, 42 insertions(+), 12 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index 0a4ff55fad04..9c5b4f515641 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -321,14 +321,6 @@ static int __pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	struct samsung_pwm_channel *chan = pwm_get_chip_data(pwm);
+>  	u32 tin_ns = chan->tin_ns, tcnt, tcmp, oldtcmp;
+>  
+> -	/*
+> -	 * We currently avoid using 64bit arithmetic by using the
+> -	 * fact that anything faster than 1Hz is easily representable
+> -	 * by 32bits.
+> -	 */
+> -	if (period_ns > NSEC_PER_SEC)
+> -		return -ERANGE;
+> -
+>  	tcnt = readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
+>  	oldtcmp = readl(our_chip->base + REG_TCMPB(pwm->hwpwm));
+>  
+> @@ -438,13 +430,51 @@ static int pwm_samsung_set_polarity(struct pwm_chip *chip,
+>  	return 0;
+>  }
+>  
+> +static int pwm_samsung_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			     const struct pwm_state *state)
+> +{
+> +	int err, enabled = pwm->state.enabled;
+> +
+> +	if (state->polarity != pwm->state.polarity) {
+> +		if (enabled) {
+> +			pwm_samsung_disable(chip, pwm);
+> +			enabled = false;
+> +		}
+> +
+> +		err = pwm_samsung_set_polarity(chip, pwm, state->polarity);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	if (!state->enabled) {
+> +		if (enabled)
+> +			pwm_samsung_disable(chip, pwm);
+> +
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * We currently avoid using 64bit arithmetic by using the
+> +	 * fact that anything faster than 1Hz is easily representable
+> +	 * by 32bits.
+> +	 */
+> +	if (state->period > NSEC_PER_SEC)
 
-Applied to drm/drm-misc (drm-misc-next).
+Isn't this changing a bit logic in case of setting wrong period and
+inverted signal?
 
-Thanks!
-Maxime
+Before, the config would return early and do nothing. Now, you disable
+the PWM, check the condition here and exit with PWM disabled. I think
+this should reverse the tasks done, or the check should be done early.
+
+> +		return -ERANGE;
+> +
+> +	err = pwm_samsung_config(chip, pwm, state->duty_cycle, state->period);
+> +	if (err)
+> +		return err;
+
+Best regards,
+Krzysztof
