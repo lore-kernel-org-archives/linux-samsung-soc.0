@@ -2,140 +2,105 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E73DC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Apr 2022 17:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D05C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Apr 2022 10:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390579AbiDURKn (ORCPT
+        id S233939AbiDVK2m (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Apr 2022 13:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48784 "EHLO
+        Fri, 22 Apr 2022 06:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390571AbiDURKk (ORCPT
+        with ESMTP id S233879AbiDVK2l (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Apr 2022 13:10:40 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32B2349274;
-        Thu, 21 Apr 2022 10:07:50 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id w4so7555337wrg.12;
-        Thu, 21 Apr 2022 10:07:50 -0700 (PDT)
+        Fri, 22 Apr 2022 06:28:41 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC950546BE
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Apr 2022 03:25:48 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id r13so15496719ejd.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Apr 2022 03:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1DHr0UfeFKvgTc9CqETxWAhcnj8bwvB27mi7L/RJMLI=;
-        b=P3YAtF35V53kyVqjeoLe6NLR6GC/doMtIALc3tdmXTpE4LrW2S2r1iOO54iREtCJxH
-         dOTTK9hlGJ+9eEh532NzO318GRvv72+BePjdQztXTWKNZ5KBRVg3kEehRTC2u6l9OuDA
-         WyN/gR2kdohSojmSfR71eW5heZTUm1swjm1FhpBiAt5P1j8iGudP1VksYTrWIyc/TPJZ
-         zO6eIlGiJrE5j/OszmcVXjcgemR/u2dxwYFQlRq1UkFGUtPu5oKguyC0r+8QcnOAuC87
-         BsRWuNatkxU/1mf9mOfrzEK7X+Wmg1Auq3cC4wSMaYC6wrC8x5aajWQ4/9ElGwsP/Rat
-         1Puw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SN4drg2JTpqJsP0CH9F58BTXLr90dl8MWfA2yC+Ydps=;
+        b=kgLJJCQCxmhs8OK0PP2StISQ2j+AUvWuCOxalEUF2BWpNNsp3Onq1OEZ09UaNwJ4TF
+         x5/cnscx9KdiDW2rndrrcuZ1AlqT/gJRpfeY00llTvFF3f9AG24QDshxR2wM8qa5Es6Y
+         yf5xnKucmyQws2060UmG3ElrTy+yDc0nAKVpFMrG46waAVyzZv3NyiSIlJfPB5WohVY8
+         arT8+jC/MnUK976rXrqJtu/zES5LNkf22zViak0c6E1qWqo1gVA1hE++9rUYbIz4PpfT
+         YxFa1Qkd15dP9axMKlDoFpQ40SEUvjcQg29wigNea8OI6x7JfW+EGTcFV/Clu37ytb8s
+         Zcbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1DHr0UfeFKvgTc9CqETxWAhcnj8bwvB27mi7L/RJMLI=;
-        b=nMtPkxI0CR0F72UylNvaY6lxQcWz7yVn1Cg3NDCATlUvm9qNiolBjssuQbMj8ND00u
-         QGmLt/QxjCVo/nai4wEOYPOgyMORRkpeQBKlD9bo4wnOHl5vaiGoG1m57GqE7JRkTmZw
-         yQ+X3a7aUwWCpa01UM7HgKNJiZe4AdDbUqCd9ELGis3QUr41MDAAlXWl6v5VVlEXrzgY
-         7tzzS1ZKj8oWGBvozvq5HwBBsKVMIdVf4JP1Rb8DsGcbGdysZCeqL0ku/bExMkjQ469e
-         gCq+Q20G+cR6fUuCQtq9FSBTFQYR3c4qrVECHFcoYdKtuSmQ1+xBy9oJ/oscIu2BOkdW
-         kHOQ==
-X-Gm-Message-State: AOAM531BSz8BmoycTT+pWv83IlPwUISVfFYXeFJoiFtowkybWT0FsqOF
-        l3DN3AO5yfFBvsXIQRcJTAQ=
-X-Google-Smtp-Source: ABdhPJyF9I+tOdug2GInrB3O1KIZXBnyfjirt1kYYZ6Dne73ApfJWTQEjsu+D+I0t5Nf5JVuBfCwqA==
-X-Received: by 2002:adf:e908:0:b0:207:a28e:b904 with SMTP id f8-20020adfe908000000b00207a28eb904mr562456wrm.542.1650560868785;
-        Thu, 21 Apr 2022 10:07:48 -0700 (PDT)
-Received: from localhost.localdomain ([94.73.37.128])
-        by smtp.gmail.com with ESMTPSA id i11-20020a5d584b000000b0020a8d859e5fsm2963849wrf.10.2022.04.21.10.07.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SN4drg2JTpqJsP0CH9F58BTXLr90dl8MWfA2yC+Ydps=;
+        b=i4AMFD/LvBWZUf9RY37UGMC8XCEBXyxb8cTCn422Hf+5lbsfklCMD340ChoY0ZXmaz
+         H4s5hSCyXxq46pJ3JobyS7Y7CvX/EcUuuCN6GCJYbUVC0HWJEiD3B16/ImKMBz4Zo47V
+         4qaY0e4MwR85Ywvr/HNDxsG8aR8RDay0XEsBVzl+pBCn6IK/qgnJpt7SD3mEGZvXYpV9
+         qK0ghdkPBNMg7skBbrfUDoPKjahv+je6vf7kCGDFF0b0r2Uo97SYcsPVGMQ9eJS4CD7Z
+         jxCARYLjmR3JAeFtUeEbMrrIQYXVPYk4xxptttdFh1wprwYGWJdm4UjEbmxx9GzpjoEK
+         kFnw==
+X-Gm-Message-State: AOAM530BtMw+LiVJWXtTomK/N1ylt4P1ApwNisSS99c/mNi4KPY94l67
+        TsToIW3Ix/6al3+GlMYbRwo9WQ==
+X-Google-Smtp-Source: ABdhPJwl+qZNM8ipTsT25L3081dhFGNSIua496QmlPCsVtwo3iseCpZh1OCXY5DAVnclK7C784PSXw==
+X-Received: by 2002:a17:906:9746:b0:6e0:5c9a:1a20 with SMTP id o6-20020a170906974600b006e05c9a1a20mr3582778ejy.714.1650623147318;
+        Fri, 22 Apr 2022 03:25:47 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id z8-20020a170906714800b006eff5936d60sm609754ejj.158.2022.04.22.03.25.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 10:07:48 -0700 (PDT)
-From:   =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To:     inki.dae@samsung.com
-Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
-        krzk@kernel.org, alim.akhtar@samsung.com, lgirdwood@gmail.com,
-        broonie@kernel.org, dri-devel@lists.freedesktop.org,
+        Fri, 22 Apr 2022 03:25:46 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hjc@rock-chips.com, heiko@sntech.de,
-        linux-rockchip@lists.infradead.org, alain.volmat@foss.st.com,
-        p.zabel@pengutronix.de, mripard@kernel.org, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        linux-sunxi@lists.linux.dev, laurent.pinchart@ideasonboard.com,
-        =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH 5/5] drm/sun4i: hdmi: Replace drm_detect_hdmi_monitor() with is_hdmi
-Date:   Thu, 21 Apr 2022 19:07:25 +0200
-Message-Id: <20220421170725.903361-6-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220421170725.903361-1-jose.exposito89@gmail.com>
-References: <20220421170725.903361-1-jose.exposito89@gmail.com>
+        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL fixes] pinctrl: samsung: Fixes for v5.18 (current cycle)
+Date:   Fri, 22 Apr 2022 12:25:41 +0200
+Message-Id: <20220422102541.33372-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Once EDID is parsed, the monitor HDMI support information is available
-through drm_display_info.is_hdmi.
+Hi Linus,
 
-This driver calls drm_detect_hdmi_monitor() to receive the same
-information and stores its own cached value, which is less efficient.
+Two fixes for the current cycle.
 
-Avoid calling drm_detect_hdmi_monitor() and use drm_display_info.is_hdmi
-instead and also remove sun4i_hdmi.hdmi_monitor as it is no longer
-necessary.
+Best regards,
+Krzysztof
 
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi.h     | 1 -
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 6 +++---
- 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi.h b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-index 00ca35f07ba5..65c801cd6f35 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi.h
-@@ -285,7 +285,6 @@ struct sun4i_hdmi {
- 
- 	struct sun4i_drv	*drv;
- 
--	bool			hdmi_monitor;
- 	struct cec_adapter	*cec_adap;
- 
- 	const struct sun4i_hdmi_variant	*variant;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 3799a745b7dd..d8b71710e8f6 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -99,6 +99,7 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
- {
- 	struct drm_display_mode *mode = &encoder->crtc->state->adjusted_mode;
- 	struct sun4i_hdmi *hdmi = drm_encoder_to_sun4i_hdmi(encoder);
-+	struct drm_display_info *display = &hdmi->connector.display_info;
- 	u32 val = 0;
- 
- 	DRM_DEBUG_DRIVER("Enabling the HDMI Output\n");
-@@ -111,7 +112,7 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
- 	writel(val, hdmi->base + SUN4I_HDMI_PKT_CTRL_REG(0));
- 
- 	val = SUN4I_HDMI_VID_CTRL_ENABLE;
--	if (hdmi->hdmi_monitor)
-+	if (display->is_hdmi)
- 		val |= SUN4I_HDMI_VID_CTRL_HDMI_MODE;
- 
- 	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
-@@ -215,9 +216,8 @@ static int sun4i_hdmi_get_modes(struct drm_connector *connector)
- 	if (!edid)
- 		return 0;
- 
--	hdmi->hdmi_monitor = drm_detect_hdmi_monitor(edid);
- 	DRM_DEBUG_DRIVER("Monitor is %s monitor\n",
--			 hdmi->hdmi_monitor ? "an HDMI" : "a DVI");
-+			 connector->display_info.is_hdmi ? "an HDMI" : "a DVI");
- 
- 	drm_connector_update_edid_property(connector, edid);
- 	cec_s_phys_addr_from_edid(hdmi->cec_adap, edid);
--- 
-2.25.1
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-fixes-5.18
+
+for you to fetch changes up to ac875df4d854ab13d9c4af682a1837a1214fecec:
+
+  pinctrl: samsung: fix missing GPIOLIB on ARM64 Exynos config (2022-04-21 08:58:54 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers fixes for v5.18
+
+1. Fix sparse warning introduced in v5.18-rc1.
+2. Fix possible unmet Kconfig dependency with COMPILE_TEST, present
+   since v4.3 or earlier.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      pinctrl: samsung: staticize fsd_pin_ctrl
+      pinctrl: samsung: fix missing GPIOLIB on ARM64 Exynos config
+
+ arch/arm/mach-exynos/Kconfig                   |  1 -
+ drivers/pinctrl/samsung/Kconfig                | 11 ++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  2 +-
+ 3 files changed, 5 insertions(+), 9 deletions(-)
