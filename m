@@ -2,98 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6458CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 Apr 2022 03:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A75C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 Apr 2022 03:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232359AbiDWDsm (ORCPT
+        id S232508AbiDWDtm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 23:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47248 "EHLO
+        Fri, 22 Apr 2022 23:49:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiDWDsl (ORCPT
+        with ESMTP id S232526AbiDWDtk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 Apr 2022 23:48:41 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08olkn2033.outbound.protection.outlook.com [40.92.45.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01C717E18;
-        Fri, 22 Apr 2022 20:45:44 -0700 (PDT)
+        Fri, 22 Apr 2022 23:49:40 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam08olkn2104.outbound.protection.outlook.com [40.92.47.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B270313976D;
+        Fri, 22 Apr 2022 20:46:44 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LAB8nLSLDj5Gl97dp3zj+vPbWRkfOGDqFS9m1l0E0kH70Yf+Th5/BGOx0WtmivxqQQIAwNVIYwrYPKMtxRqQtbnpp3JSWrs2f4hVpf6hFMKaBN9KeyCFTS6g2UGbYX/HxOiRK9vCuJJ9xIvsyBg6yXH2fsHp79D9TLt4gIS4LchelKljzbtzJTAbz4fRYlOWEoBWDY0jDr/Km3htcrUCOVf7YLEYesnHYYnnH81jXvHdWAZXgmz460rIdXiUCobhK+KPRK1AmA1B2/84Cr7SdJb3GVX0P5uuWIR2RQHsWz0kF3UEj61DcxwOmFWQ3vl/L/9AzZBsWtDwzPRpS3yVKg==
+ b=Zgt1yu64UtGJWUVVCxflQrWyG+jBbc5r72p1x/Qrk2Atib9ivFOXwP4DLErH5NAaK95uPY1jbzLhlUNiMygfkPHPcy4w1RX4qjS4aHtyXCnpW4HQAfe/XceOQhmNACrhEYV1pxRp6oQUG8oqJDN14I0SnEtRFqW1HeyViaeUY2Xi76ybguwuUlqefM2/dZltdbODjYNkt5M+2y1XGdHVzABAMw5j1iLwRFRSUdFf+kcTkvaN1v+mI7QnAy4okvPSTemiBdHI6lFTNxR1//08zvGsV/TibB8WY6IZsXhse3G0ewtJHodSOpKGLSiS1N1K4XDE2EBQ+HPmQ1yLA/hK8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uecGUSqWJODMZllirGh+Anzc6QtH0q4hkKrsUA9O1dQ=;
- b=KuAKFdAdETyigoOKGHeu23r1WyyCQ06dK7ARY6sLzvRcJkRbmyGXAVXDuGfaVI9JUfwPOfueZvRnlhOZOxeeI3JpoHnmDkUsI6saiw+X5INCNy4EdrAgD8AGtwXuNHLcDZeXRpKr4k+gPMKY2gp7WyKuy342CwEh+0q8jzGmWqb8NBU2DAT22vox7+Ht24m/cOZfM9ifl3UWH7cVtZQD8I8OjPonzMiWUWWZ5XCw54EbfqPrE5wh7xhWUIwikUUA5tZX7wFMzaQia6Z+ZjDOdeXrQopyxSmz7v8kiTirNZPLIsuuza5U9b16qPeE3NZMWi/2Xg+mpWI8jrgS5lw79A==
+ bh=2TEFyQpoFygt63asuQVsE0XVF+UYmrJJETWTjkVoqdo=;
+ b=kpnBrei7/Rkj3BNuyHsyJmmoCyUd+az7NGLm+saUx99MKjf1a1Znj+KzcrJFtttcUQbYWt6cUKr7HxfXnWIiE0b8wnCMw7H1oSrMxTL4QEbxpsG2+Gfn4x75FPoN4OX4lMNv43D9kistpQBAm1hAdiJ76C3Gf71yrMudZyKAmYAf0ndvH7yX1BlwEwHx9jO3zFRttfU8DFQwJygUcY94mDBQsWkE0pkZnsO+Ctg72skfRS2hu8nUb7AjxtGjzz2w8x0rRVTqztG0Ffwed71khPAqafF5JU1RPFfIWW5Iom00VoOSUp6ThSEjM1Gt2RTRyPSAEwVp1JDZcSx5SbyXXA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 Received: from CY4PR04MB0567.namprd04.prod.outlook.com (2603:10b6:903:b1::20)
  by SN6PR04MB4205.namprd04.prod.outlook.com (2603:10b6:805:30::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Sat, 23 Apr
- 2022 03:45:42 +0000
+ 2022 03:46:43 +0000
 Received: from CY4PR04MB0567.namprd04.prod.outlook.com
  ([fe80::8e:6e22:f98c:29d5]) by CY4PR04MB0567.namprd04.prod.outlook.com
  ([fe80::8e:6e22:f98c:29d5%5]) with mapi id 15.20.5186.015; Sat, 23 Apr 2022
- 03:45:42 +0000
+ 03:46:42 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH 1/5] dt-bindings: mtd: samsung-onenand: Add new binding
-Date:   Fri, 22 Apr 2022 20:45:24 -0700
-Message-ID: <CY4PR04MB05678FDFC8BF8B15174ED639CBF69@CY4PR04MB0567.namprd04.prod.outlook.com>
+Subject: [PATCH 2/5] mtd: onenand: samsung: Set name field of mtd_info struct
+Date:   Fri, 22 Apr 2022 20:46:19 -0700
+Message-ID: <CY4PR04MB0567121FF1C304D782B07E58CBF69@CY4PR04MB0567.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220423034316.366488-2-xc-racer2@live.ca>
-References: <20220423034316.366488-2-xc-racer2@live.ca>
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-TMN:  [bU/ZgHwhhA+sBXY6ZdurX4/f9ypBDq+Lk44A/j6V6oW64yvmdmaBl2L4iTipkUX7]
-X-ClientProxiedBy: MW4PR03CA0277.namprd03.prod.outlook.com
- (2603:10b6:303:b5::12) To CY4PR04MB0567.namprd04.prod.outlook.com
+In-Reply-To: <20220423034524.366612-1-xc-racer2@live.ca>
+References: <20220423034524.366612-1-xc-racer2@live.ca>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TMN:  [31aCKBWYxvekUmHCZrlZnJNvfi/1AJUPOl6OL4jNZaWYvHMCzP04AHwLqwS9nyHz]
+X-ClientProxiedBy: MW4PR04CA0210.namprd04.prod.outlook.com
+ (2603:10b6:303:86::35) To CY4PR04MB0567.namprd04.prod.outlook.com
  (2603:10b6:903:b1::20)
-X-Microsoft-Original-Message-ID: <20220423034524.366612-1-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20220423034622.366696-1-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d6b98c29-3cc5-4893-61a1-08da24dbbd73
+X-MS-Office365-Filtering-Correlation-Id: 9508204a-d12f-42aa-6e7a-08da24dbe16a
 X-MS-TrafficTypeDiagnostic: SN6PR04MB4205:EE_
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fXWmi+OYgPM8LHE8gawYJHpN74lEiBjR9BXzKPhv9UidSglWba7BxlgsiRLdaQCr4BxXndVC2xWiCOql0qST0mR/S8Oqve4z7MpGkZnuuwL9h+aLCbFdvW3AucUk0mG7bg2mRYSniVrtw7zkkQz3TP57FVzPlNHKh3vx/hXCSx7QvTRWxVN2i7SoW0m+EU1x7kH6JtILddKOfG/fPg+R9fyP31ZgDbBOJhjOw29YOIxmgkNNG86JoSpO9+oB+0PniTiNf0hOFJDPy7+G0HWwSWBvYnN3eDPnNHxZNQMPAaAM0Zwre6FbHHOEsNx5AMj2VGTqiqql81nfrUf3hPiQnj5AjS9VFRUT+kQU1KKwa6rZn3XJTA8iE26uAGNKfWFns3/khK8vGHsov4+pcVSWB0QfMhLvjAZnBir8VU5PcAkCbw3kP5a5WijuWAQj32o23WqzYMJmnNTdvz5h1pC1kWxRTHV+IlzQa9Zs6qpo5qT1C2AgIyTAvSHJ+nc8x2GJ+XbS2jLdj0mmQAsaDmd1Rbfj3z2T3yKcwEOndKHG8iEezpPlovTKrxKzQGR/MhAJRVIwBvCqwRfz7SDku+GHYmHvLB/LT9x3HQX32yjU3MzoZGRAXo4Z3pRh2xoXBqHU
+X-Microsoft-Antispam-Message-Info: /8IaNIf5He4Ia/OtVPUH4CG+StIaos5VoAgfgQrPdUjmZwZA0bMQF93YnmwFOBdhJV231g4TDjyitW51/9LdEnmhkaQTa+InDEmwmxBG9KiBUZVarsqIHW9pQGvcTxhAoerALrpZ/OriiJI4i7LINIg1xDBnv5n2SgNYjuCrWKlthtJ40HBa31Yn1tb9uIk10fWc68XN6CVLkUcmJEDaVWLATfjvT86e6t0pczdP/W70pGdEPATpFMBeq4tI56UH2WFe3biZiu2a+u6QIzQeorQ291gAkeviP+c3QMY2je8u//LrP/e55r5FS5A19SGi8fYCEafZn5aX8MYZ+1FlxAaalAYMehFe5eMhF15UAfqHOxWh6Q22Ifo2QCh3hzx545MO4zkmBKbfLnJMNSJyllwso4Cv3oslqOSKwgiwf/SzuJGuKIhsX6dN45dAu0LAb2lh58oG3WUsJFw9wM3al6xIM2RHrKT9IY6VYfOKdZbPEdas407a4maJQ7MLJZMcQzX4X20aODmKFvwTquVXrCU/5HVOXhE4skBbbHv5cBL6QmhjewRiFdVb5pw86IVfgDXs7IRHuSuChc2Qx84OHg==
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QpXkwTUw9XADYFLw37CpvR1XQLnYsw2Tu7cGz98DGb/i5vaFJjW+TLjqXkCR?=
- =?us-ascii?Q?HZBfWAuecKDjYKRopFtlGqZ1u8VKaycw/UDBXJnhUMjE0lNsoJ5v8E4fnYd3?=
- =?us-ascii?Q?7nXv6V4mvcK5+pfwHBbmJtBFatOpT/Bako+8e9bpnOY2oYD4zGtYnkZg2IOM?=
- =?us-ascii?Q?Yk7MHDNhPZVlddhvDcpWbAXDH6pXh4mEEEQWNteZJRZqJVIlrmLd0hcfpMiq?=
- =?us-ascii?Q?XAXB1J0ITGWGY1u5+r6zKrhFGGC5exuJHxu7U96tRCIZFdr9Ea2Gu41kVRPJ?=
- =?us-ascii?Q?u/bdTuFKLPL1g3Qz9BeP01Wya60UZlX/Ep3/UeSr6MvQBI35f5eyFmPOQWvG?=
- =?us-ascii?Q?djhf8yt7WboS2XSvR6VQijQuA9j4Ab2gQRiEEDRwiiZM4tIWMdj46RIOc8Io?=
- =?us-ascii?Q?vqrM2E+Qkg27yfHKuyI0Fl87440mBG64Vhyen0SUiT1twSeEgsUQEjf52dyV?=
- =?us-ascii?Q?Mm5A/UyTlO0uvBxdW/Oyk7eiOuvzSIKJnoI6zc4mkO3HE9jpYfyeWwT9f/Ja?=
- =?us-ascii?Q?UWXuOm2U96sd5p6e7Rj+6lsTejmpc7JKhVt0UxxOq3DfNMqrdiPzQpDSA/dN?=
- =?us-ascii?Q?lgvnPaR4h3/h+wvE1G3jlbPmcZX44Izu/PMDpGKSHUm3QMZCW242sashvp4q?=
- =?us-ascii?Q?kjnBRQLwDj7WDZTWZdd/unkJn1VkgxqH+8EJs/gocbalG5Viy5JhFqiqLGBJ?=
- =?us-ascii?Q?DhV0wdGVnxpP6zzrUUlAjKKz39dJs/X+jR7gaWFbFT2idAxqW3WIq6hnBMsa?=
- =?us-ascii?Q?Z0mdkHWXJe9sBGJAUuYY+apubnEjydh5Dq5K5Xe/f7iwtkXoogQWfvvPgeLY?=
- =?us-ascii?Q?tWCPWT59dU9Vj23mJ8u8k8JVNaLFt6+DzU+RRTwwklM89NjOrO5TZj16K5Au?=
- =?us-ascii?Q?iodXY7uMb9Dzmtn+kBVtlY0JrGEDi/mPKOh58jtoif5yRjcrOHJQRk6T1rRc?=
- =?us-ascii?Q?uEpIp5MjpCKidS4Ti6Hvy4Qd6PHNa6a0bLDrP/CUhlAcEQByxUTa3mbpskYd?=
- =?us-ascii?Q?sEyXpomWmno6XQDIOG5PwcCFbczCppTkt4ZvZG0SkH9/3jMA/uSmKaG68173?=
- =?us-ascii?Q?v9yiTCWHjtkk7PRSMchOinwd13nxqnTo/iPTUAD/b5ON1DnEspxgjRPLAy2f?=
- =?us-ascii?Q?sU9U8wsK7qo+Xx8+hFY0m+9DvOuDd4yageX2sTo52x8NucRA8/1g57Qit2iV?=
- =?us-ascii?Q?wiUgRrddcABRzGXlptLgzK8PqszzsPP5wD/+bANCezm0tV8yTUY4uh++Jal2?=
- =?us-ascii?Q?UuVHHehI/Nq4t3+ZQwvD7PAHKzEbI2nmYnMAp2EsfGyHBIhnz4sOchHuCWM4?=
- =?us-ascii?Q?HV1Df7XpyCcue8eaBV/kzmFAtZZcevKTOlhpyUbnMHdcvoOVKnBttSjE0aGz?=
- =?us-ascii?Q?Z5QQM05OJgA4T0YA5R55yCO23ONbX/HXBANPYPh6AV8Sm/rpG794NjJ/RvDK?=
- =?us-ascii?Q?rQEA6OtaTHQJH7n5TCAQbs4G/KYZzedxH2kvbr006pC7XTL0Gzu92g=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QWNoNVZvTzQ4Mkc3a1ZxZlhIaTVuMVRGaTQ1VHFVbU9KTWUyN29tSXFxODlo?=
+ =?utf-8?B?VDlOZlBFem1iL083eGJveWlUU0toRGJ2aURVYUNPRGFici9BS2dZZEQ0QUhy?=
+ =?utf-8?B?OTVPZThTNXEvcU50VmVuc1FBZWt6UzhlUjc5NXIwSURZRlNCRzl5VWxnSHps?=
+ =?utf-8?B?RkN3TEhIM09BalhiSjdtd3JFOEtlbTNJV3JlcWFiVGlCN3AxN1JpdEZyTVRN?=
+ =?utf-8?B?Y3ZCSzZhbFZ5ZjVPWS96dkR3U3d3TEg4dU5ZeUVZMXNobERSY0JVc3piS1kz?=
+ =?utf-8?B?dElLQWFzNC84ZXczZEtQczk5NXcrbEF1ODVvQkliajNlc0d4VzlpWThMb0hZ?=
+ =?utf-8?B?SWt0ZVBSTjVQN3FabTNOelc2QlZENGJrRE5tK3Bubm4rNWVKeVM5YnVpa0F0?=
+ =?utf-8?B?UWxTVjVxWS9EOVZCL1pIeDluakhqbS9JZmNxS2cxV0tnbWJXU1M5bEtCYjEr?=
+ =?utf-8?B?SzE1cFZER1VRMnhra1ppVzNJeExQbXlHZkZBQS9ZWGpKUVBCVk5JZWhUMTNk?=
+ =?utf-8?B?d3RRM0VGNVpLY25QeUNRbHBvSC8yZXJwamVQQ3hUeWVwUDE0YkpYTEtOd0hU?=
+ =?utf-8?B?QWhxYVlEUmp2YVpudDRLRnJUaTUrNW5kTG9UOXFObUlWNHhqMFA2TFpaWUlY?=
+ =?utf-8?B?d1lBVVU1dEpIV0NtQSt6dUZoQ1l1RnplQThNb3ZtTnhTSzlHVEhmUFoxMTNn?=
+ =?utf-8?B?SS9HM1hhMlo0djV6TUJMMnF1N0M3U0k3eTRmenZaRWwzcUc0ZHJ6bWEwNzgw?=
+ =?utf-8?B?VEttU3Zlck5EY1JBVTJRd25QaXhKK2QwUjRLU3hMQm9BU0x3VXdpRW1qdFdM?=
+ =?utf-8?B?MjQrb0wxR3Z1N2YvTXdZdExKRXoxR3IzWkZJRlpsSjJsdW9ZT0Jid2xqZ3Qw?=
+ =?utf-8?B?SUdKZlJaM1hNRnJXYmJvU1BJYXVhZ0o5TTcwL1pReG43ZUZzWVR6NWZGRXRw?=
+ =?utf-8?B?WHlPZ0hGV0I3aEVqSXVWS25YZ25UaHdITVRmT3JtZXpud085NkU5NVQ4SHhL?=
+ =?utf-8?B?OEUzazd1anRPaDVXMkhsWUx0RlkxS0VYc1VNUG9zTExxMjcwak1RZzZXVWdM?=
+ =?utf-8?B?QVd1UndVblRKZDI5eFUzdFpvOFZHdGRLUFhTVnhycldkMzdRU2FKSEF4WFd5?=
+ =?utf-8?B?ZCtKckZIWFp5bytHZ3JjbUtZQUh4SHJNL0RnK0NxYmJEdTdtdnQ0UCswVWxB?=
+ =?utf-8?B?by9SUEhYNWtvc3RmZW1aSnY2aTdOMzR0aG5FRithN3pLS1hDdUdnM0NqQmIz?=
+ =?utf-8?B?MklEWExKVFdLZGxZKzNKQlA2dVpGckhjdWFOM2JuYVB6VWFzNXBXK00yMGlM?=
+ =?utf-8?B?S1ZPQXc5TVNyTlNQN1R6Tk1tOVpselYxaWx3NU1wSVZIZXhoSlViNWMxcm5p?=
+ =?utf-8?B?ZXBOeWRZeXpOaFF4dFd6b09udWljaXVrWnBtSVdLMnhRaHdkSFRXd1FONVlr?=
+ =?utf-8?B?R0VHbWNWUTZOVGQ1dGptc3pqU1JPcU9wVVRnQlZGMWhFLzIvL01qbU9zcXFV?=
+ =?utf-8?B?SEY0d0hVNkE5Zit0TDFWeDNqeEhtQzZUbW1US1hEV1ZUelo3S240WXNDSVN2?=
+ =?utf-8?B?TkEzZ0tZbURqTXBnelg5ZFdMWWczaTA4MmxYRmF1R2RzaHM0N3ozOTdYOS9V?=
+ =?utf-8?B?WFNFM3dOT1lCenBCRmdnV1JtWE45TFY5VlE0c0RvVUVGMGNkM3EwUXZERGpI?=
+ =?utf-8?B?bUdBOWtJeGRodndTV1lGTW5laU5rcGFESVJmRS9MNk14MXA1WVVXOTBBSkdM?=
+ =?utf-8?B?Z0lXUnk1aVpnNVh3bDRzd2xxb3dEaGVSUlFMaXAwRm1VbWdGWUczcUFMZTBE?=
+ =?utf-8?B?OFRpT0g3SFZnVFM5OFgyTHh1QjBxVmFsanZETkNlWjU4SkY4L0VLVjJEQUtt?=
+ =?utf-8?B?UVUrQUNqcDFQaTBHR0d4dklDVml6U0JmZWpYN0dISUYwdTc5azZQV2dCUk5m?=
+ =?utf-8?B?NnRKNERiQSsyUFBTS3RqNStRTUxMUFYvYVVoNGlGOUpUWHNsck43b09PRnNG?=
+ =?utf-8?Q?SjSwQUejowjCIo3KN4+P89BtCcl+4o=3D?=
 X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-edb50.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6b98c29-3cc5-4893-61a1-08da24dbbd73
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9508204a-d12f-42aa-6e7a-08da24dbe16a
 X-MS-Exchange-CrossTenant-AuthSource: CY4PR04MB0567.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2022 03:45:42.5614
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2022 03:46:42.8851
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -103,110 +113,34 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add a yaml binding document for the Samsung OneNAND controller.
-It is found in several older Samsung SoC, notably the S5PV210.
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
+This patch adds initialization of .name field of mtd_info struct to
+avoid printing "(null)" in kernel log messages, such as:
+
+[    1.942519] 1 ofpart partitions found on MTD device (null)
+[    1.949708] Creating 1 MTD partitions on "(null)":
+
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
- .../bindings/mtd/samsung,onenand.yaml         | 89 +++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/samsung,onenand.yaml
+ drivers/mtd/nand/onenand/onenand_samsung.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mtd/samsung,onenand.yaml b/Documentation/devicetree/bindings/mtd/samsung,onenand.yaml
-new file mode 100644
-index 000000000000..25012248add6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/samsung,onenand.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mtd/samsung,onenand.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung OneNAND controller
-+
-+maintainers:
-+  - Jonathan Bakker <xc-racer2@live.ca>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,s3c6400-onenand
-+      - samsung,s3c6410-onenand
-+      - samsung,s5pv210-onenand
-+
-+  reg:
-+    maxItems: 3
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: bus
-+      - const: onenand
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 2
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+allOf:
-+  - $ref: nand-controller.yaml
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,s5pv210-onenand
-+    then:
-+      required:
-+        - interrupts
-+        - clock-names
-+        - clocks
-+
-+patternProperties:
-+  "^nand@[a-f0-9]+$":
-+    type: object
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 1
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/s5pv210.h>
-+    onenand: nand-controller@b0600000 {
-+        compatible = "samsung,s5pv210-onenand";
-+        reg = <0xb0600000 0x2000>,
-+          <0xb0000000 0x20000>,
-+          <0xb0040000 0x20000>;
-+        interrupt-parent = <&vic1>;
-+        interrupts = <31>;
-+        clocks = <&clocks CLK_NANDXL>, <&clocks DOUT_FLASH>;
-+        clock-names = "bus", "onenand";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        nand@0 {
-+          reg = <0>;
-+        };
-+    };
+diff --git a/drivers/mtd/nand/onenand/onenand_samsung.c b/drivers/mtd/nand/onenand/onenand_samsung.c
+index b64895573515..924f5ddc9505 100644
+--- a/drivers/mtd/nand/onenand/onenand_samsung.c
++++ b/drivers/mtd/nand/onenand/onenand_samsung.c
+@@ -853,6 +853,7 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	this = (struct onenand_chip *) &mtd[1];
++	mtd->name = dev_name(&pdev->dev);
+ 	mtd->priv = this;
+ 	mtd->dev.parent = &pdev->dev;
+ 	onenand->pdev = pdev;
 -- 
 2.30.2
 
