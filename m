@@ -2,61 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887F0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 Apr 2022 11:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990E2C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 Apr 2022 11:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235720AbiDXLKA (ORCPT
+        id S239244AbiDXLPF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 24 Apr 2022 07:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
+        Sun, 24 Apr 2022 07:15:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239245AbiDXLJ7 (ORCPT
+        with ESMTP id S236650AbiDXLPE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 24 Apr 2022 07:09:59 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB1AD13CFE
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Apr 2022 04:06:57 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id be20so7016928edb.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Apr 2022 04:06:57 -0700 (PDT)
+        Sun, 24 Apr 2022 07:15:04 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E0FFDE0B6
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Apr 2022 04:12:04 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id kq17so1342804ejb.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Apr 2022 04:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=BQJA6nUIX5U8cWUg1zwc+QJKGausv/CFbILnPF0Ez2M=;
-        b=TiCFeXCR158jGe6MgSNvATJdfqEPW4ddk3h387Z22CrWXLZTZMawq+LxF3P1K1ldzU
-         FGqnsxoO/YsH3LHfMOovysGhCjJeV8L8yH/a0BJFFkHgbGqJuPwW4mg6nvkDPoqU1poO
-         u1JBQjwUTuNk18BM3qCnUAFZr2zi9Grv3cjopkwd2j4Yojdkmbq+UsmoOZ6B+vastz+P
-         XMrKwMPEA7YJiIrufMAauMs1TngHtNDAyPwe3ElxmUyH88A6lI5k0WbCX09m54jr1jJy
-         sHixjchVXt2RvgZOHDcL0eCQsHmD+/K38l6EfHDub4NqTX7a2+xz6xYAeSNhefZNIIty
-         E27Q==
+        bh=/poCgpgeQHKZ0kafLJZ7iBP9Nl8gQzlXb2tE2PvG41A=;
+        b=ohDHGzn+AQzNfa+Ufe3IbVJ+Hy0aS+wzo+K72EPX0hPMX0m9z5QMYeUSuOK0IIKhX7
+         U3IJv07tWsVfRk40LZCU2qLoWMIHB/aFWcFauz5wJYLplsMBTWblKTc/oV97hDxPBeuE
+         CySybWxNjbuZThXUlHsTo1iUIhRtudEt6PYHhKvgyaXe1SWOXOHFjNhEMr4GxCu6pory
+         ex+1H8edUAjPi/GlipFEzUypJeJC3/KPYtQVrxhQFIlXg2EYplZUDOeXahEqZfVuDy5F
+         ziMM3ijI1qMK66wVmYbphrNaEFkOKsjLC+XaI0bjNXHX7bSnQzqQ+uhVbj14cT4WStPn
+         PflQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=BQJA6nUIX5U8cWUg1zwc+QJKGausv/CFbILnPF0Ez2M=;
-        b=MDZko3SOh8qL96AEE3eRbLQidBJPX3grnFtVWHJLyEPyL9E9VNprBk9Mh+Ov7Pyf/v
-         BFkBKBGVlD+6xXLXgzKE4rmmCbTgayAHXD/OYax63lUuIiYuZcVdD4peszLIcOCug2fO
-         o/+Whys7QGxjuX88ekBsgwnRAWNFgSv/uo35uRLV0dxFOAq2BrU+AVcy7Mm6YOVPbktP
-         ocLR/DCBkP/unQFePCkBdsAbyFzKnNgb03UL3aOLmmVq9gM9oP0l/f2mpV6ZxTeRH3w3
-         4IsywQBT6U2v1h5SPSUa4f1S6rvluFxXiNii8Lwz0h+bowWSeacch3FF3GDNHp+B5Tbn
-         v9+Q==
-X-Gm-Message-State: AOAM530Tt+EYU10rrkbhXEE80OHxfqZqakI7upM4oRhG3UJDIw6piGqw
-        zQSDfss6UPRoLA/Xxbk2A2HBhw==
-X-Google-Smtp-Source: ABdhPJx2FujwjBjsDsEU5lcXcSAtwi6HcCA5hKnVSEAerKFX/UGVfUzJowK5cbQEk40H6/uJKn4qiw==
-X-Received: by 2002:a50:d707:0:b0:425:e37d:4ef3 with SMTP id t7-20020a50d707000000b00425e37d4ef3mr1346882edi.167.1650798416453;
-        Sun, 24 Apr 2022 04:06:56 -0700 (PDT)
+        bh=/poCgpgeQHKZ0kafLJZ7iBP9Nl8gQzlXb2tE2PvG41A=;
+        b=4cxBovb64IPJnV3cq2/ayhz9QbwQx0I1YTy8QXmDw66clwZixbQWJCrWW+ltPDV+u0
+         badlHJgR7LbRLGge8qA0slOzIaSTqbt1IA0AwTaG2fdWKfBo5dCWzWWQdLqkPeWuHehg
+         2PZBGIMjuQWaUVx7fIwqryAdYHTmE9Eq3P2H4cabxoh658YBKNNCVNtwBaCzjVGdy/3a
+         tdC5DZdyL1Jv9nMgEF+/TdAa+A8wpGd55FnUomkVUbSBJcRBDTamHHVqbs7FCDWsMnb7
+         xoeOnA1e3/CshsMjTUUTluFjIWoP9G0NGuamyT8IuD2mOymWxT0pKiJpjJ6UTDMn5s3E
+         fo7Q==
+X-Gm-Message-State: AOAM533oqN/mHjdkGIw2IOuOJWl1vjfb/MqoMuEAOF+PnmoBOlQNVBfw
+        qSLur942N0HzfSQ++pBHgHu6GA==
+X-Google-Smtp-Source: ABdhPJxE5+FK9rjnAAc7wNu/qc3cAWyO2XXDHed8BuvmWqdT4x6H/PlMmGAE3d+a4v3dMK7+Nco84A==
+X-Received: by 2002:a17:907:3e03:b0:6da:8c5a:6d4a with SMTP id hp3-20020a1709073e0300b006da8c5a6d4amr12132043ejc.585.1650798722793;
+        Sun, 24 Apr 2022 04:12:02 -0700 (PDT)
 Received: from [192.168.0.235] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id z61-20020a509e43000000b00425e4d583e4sm63517ede.87.2022.04.24.04.06.55
+        by smtp.gmail.com with ESMTPSA id kb9-20020a1709070f8900b006e889aad94esm2525078ejc.128.2022.04.24.04.12.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Apr 2022 04:06:56 -0700 (PDT)
-Message-ID: <32507f1d-b650-e2c9-2f04-1ac63c6774ec@linaro.org>
-Date:   Sun, 24 Apr 2022 13:06:55 +0200
+        Sun, 24 Apr 2022 04:12:02 -0700 (PDT)
+Message-ID: <70db8ad7-ba2e-ac08-492c-b2117c3235e5@linaro.org>
+Date:   Sun, 24 Apr 2022 13:12:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 4/5] mtd: onenand: samsung: Make sure that bus clock is
- enabled
+Subject: Re: [PATCH 5/5] mtd: onenand: samsung: Add device tree support
 Content-Language: en-US
 To:     Jonathan Bakker <xc-racer2@live.ca>,
         Miquel Raynal <miquel.raynal@bootlin.com>
@@ -69,9 +68,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 References: <20220423034524.366612-1-xc-racer2@live.ca>
  <20220423034622.366696-1-xc-racer2@live.ca>
- <CY4PR04MB056777077970A6935BC6349BCBF69@CY4PR04MB0567.namprd04.prod.outlook.com>
+ <CY4PR04MB056716B2AE01D243F6AE3C13CBF69@CY4PR04MB0567.namprd04.prod.outlook.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CY4PR04MB056777077970A6935BC6349BCBF69@CY4PR04MB0567.namprd04.prod.outlook.com>
+In-Reply-To: <CY4PR04MB056716B2AE01D243F6AE3C13CBF69@CY4PR04MB0567.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -81,70 +80,76 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 On 23/04/2022 05:46, Jonathan Bakker wrote:
 > From: Tomasz Figa <tomasz.figa@gmail.com>
 > 
-> This patch adds basic handling of controller bus clock to make sure that
-> in device probe it is enabled and device can operate correctly. The
-> clock is optional and driver behavior is identical as before this patch
-> if not provided.
+> This patch adds support for instantation using Device Tree.
 > 
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 > Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> 
 > ---
->  drivers/mtd/nand/onenand/onenand_samsung.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Changes from previous patchset
+> - Adjust to having a nand child node as per binding feedback
+> ---
+>  drivers/mtd/nand/onenand/onenand_samsung.c | 67 +++++++++++++++++++++-
+>  1 file changed, 65 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/mtd/nand/onenand/onenand_samsung.c b/drivers/mtd/nand/onenand/onenand_samsung.c
-> index a3ef4add865a..62014f8d27b6 100644
+> index 62014f8d27b6..0108c8c75d5b 100644
 > --- a/drivers/mtd/nand/onenand/onenand_samsung.c
 > +++ b/drivers/mtd/nand/onenand/onenand_samsung.c
-> @@ -11,6 +11,7 @@
->   *	S5PC110: use DMA
->   */
+> @@ -22,6 +22,7 @@
+>  #include <linux/dma-mapping.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
 >  
-> +#include <linux/clk.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/sched.h>
-> @@ -122,6 +123,7 @@ enum soc_type {
->  struct s3c_onenand {
->  	struct mtd_info	*mtd;
->  	struct platform_device	*pdev;
-> +	struct clk	*clk_bus;
->  	enum soc_type	type;
->  	void __iomem	*ctrl_base;
->  	void __iomem	*chip_base;
-> @@ -914,6 +916,10 @@ static int s3c_onenand_probe(struct platform_device *pdev)
->  		}
->  	}
+>  #include "samsung.h"
 >  
-> +	onenand->clk_bus = devm_clk_get(&pdev->dev, "bus");
-
-If it is optional, use optional clk API.
-
-> +	if (!IS_ERR(onenand->clk_bus))
-> +		clk_prepare_enable(onenand->clk_bus);
-> +
->  	err = onenand_scan(mtd, 1);
->  	if (err)
->  		return err;
-
-Error paths not updated.
-
-Also what about other clocks?
-
-I propose you should take over the authorship of the patch because it
-will be more changes.
-
-> @@ -945,6 +951,8 @@ static int s3c_onenand_remove(struct platform_device *pdev)
->  	struct mtd_info *mtd = platform_get_drvdata(pdev);
->  
->  	onenand_release(mtd);
-> +	if (!IS_ERR(onenand->clk_bus))
-> +		clk_disable_unprepare(onenand->clk_bus);
->  
->  	return 0;
+> @@ -832,8 +833,36 @@ static void s3c_onenand_setup(struct mtd_info *mtd)
+>  	this->write_bufferram = onenand_write_bufferram;
 >  }
+>  
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id s3c_onenand_of_match[] = {
+> +	{ .compatible = "samsung,s3c6400-onenand",
+> +		.data = (void *)TYPE_S3C6400 },
+> +	{ .compatible = "samsung,s3c6410-onenand",
+> +		.data = (void *)TYPE_S3C6410 },
+> +	{ .compatible = "samsung,s5pv210-onenand",
+> +		.data = (void *)TYPE_S5PC110 },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, onenand_s3c_dt_match);
+> +#endif
+> +
+> +static enum soc_type s3c_onenand_get_device_id(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +
+> +	if (IS_ENABLED(CONFIG_OF) && np) {
+> +		const struct of_device_id *match;
+> +
+> +		match = of_match_node(s3c_onenand_of_match, np);
+> +		return (enum soc_type)match->data;
+> +	}
+
+This can be simpler:
+
+if (dev_of_node(&pdev->dev))
+	return of_device_get_match_data(&pdev->dev);
+
+This allows you to put the of_device_id table in usual place, so just
+before the platform_driver structure.
+
+> +
+> +	return platform_get_device_id(pdev)->driver_data;
+> +}
+> +
+>  static int s3c_onenand_probe(struct platform_device *pdev)
+>  {
+> +	struct device_node *np = pdev->dev.of_node;
+
+dev_of_node()
 
 
 Best regards,
