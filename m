@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B71C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Apr 2022 23:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7C2C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Apr 2022 23:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238621AbiDYX5H (ORCPT
+        id S237115AbiDZACW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Apr 2022 19:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
+        Mon, 25 Apr 2022 20:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238581AbiDYX5B (ORCPT
+        with ESMTP id S231433AbiDZACV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Apr 2022 19:57:01 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D952646666
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 16:53:50 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220425235345epoutp036c99b90ee1567cab4c65009c07964b13~pSNat33cu1538015380epoutp03L
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 23:53:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220425235345epoutp036c99b90ee1567cab4c65009c07964b13~pSNat33cu1538015380epoutp03L
+        Mon, 25 Apr 2022 20:02:21 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84D8113C89
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 16:59:14 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220425235912epoutp04e68bd7595658dd2c76731fb86cdc127a~pSSLt1bls2062620626epoutp04N
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 23:59:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220425235912epoutp04e68bd7595658dd2c76731fb86cdc127a~pSSLt1bls2062620626epoutp04N
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1650930825;
-        bh=8DmheWAHiJOOBMIZdXyd/ayLZdS5Y+v68RlmlHShfDM=;
+        s=mail20170921; t=1650931152;
+        bh=oYSz8Lwu+LwfHc+DQsdm0zMUlP7mJ7HJRFXHoC2iHFE=;
         h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=fyhL6p7Y+q43DRvLhWztzMWGG5N6Ho4L0sTJJyvFjzenMocv1q3iKoPNOWm0xqqE0
-         +p24h1YA0b9wc37sRCEDWiMFa72gARYlME8dIJVj9n4gD2a5eFZOH2jV/3vshTDWW4
-         nu6VLLtHV31d18KjWPGQyaMT4QBKNG01QRrRW4ts=
+        b=LtgvJ3htXn6hdTXquLideVVav0uz4fvc/+BXe2dA0Ljrr+N0Hr5Yqe/0bmwt8po9a
+         kiAy3xFxcntsz9F9WFNdzOLzTWcrJW6dx+xIe/H6Ain0Gn63pSqr+SZKRVVezrH+Kn
+         LS4zR+GdAMcLfPRtp3nUBLpzpDrVYWB0jyUgN7oU=
 Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220425235344epcas5p4ba010c818708d47c2bc97d73dc6e2e93~pSNaT6DRX1935019350epcas5p4J;
-        Mon, 25 Apr 2022 23:53:44 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4KnMKd22wgz4x9Ps; Mon, 25 Apr
-        2022 23:53:41 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6C.04.09827.58437626; Tue, 26 Apr 2022 08:53:41 +0900 (KST)
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220425235912epcas5p39413c591a04476bdb55a5f22a8bcceb3~pSSLSdNgt0107601076epcas5p3B;
+        Mon, 25 Apr 2022 23:59:12 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KnMRw0TTfz4x9QG; Mon, 25 Apr
+        2022 23:59:08 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5B.86.09762.BC537626; Tue, 26 Apr 2022 08:59:07 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220425235340epcas5p4d42c97211ed8adb2306e6e080f5aed7b~pSNWr55mN1934619346epcas5p4N;
-        Mon, 25 Apr 2022 23:53:40 +0000 (GMT)
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220425235907epcas5p1ae2e373f7132bb9738b43893be8acf9d~pSSGz8GR-0831908319epcas5p1H;
+        Mon, 25 Apr 2022 23:59:07 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220425235340epsmtrp16f5aebcfaa717dce55a02fb9504889c4~pSNWrGsZ70882508825epsmtrp1R;
-        Mon, 25 Apr 2022 23:53:40 +0000 (GMT)
-X-AuditID: b6c32a4a-b3bff70000002663-ed-626734850e37
+        20220425235907epsmtrp154d709be8c9ad1f0e4a4ec1a6b1493bf~pSSGzInFY1134411344epsmtrp1A;
+        Mon, 25 Apr 2022 23:59:07 +0000 (GMT)
+X-AuditID: b6c32a4b-213ff70000002622-0d-626735cb408e
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E8.33.08924.48437626; Tue, 26 Apr 2022 08:53:40 +0900 (KST)
+        53.C3.08924.BC537626; Tue, 26 Apr 2022 08:59:07 +0900 (KST)
 Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220425235339epsmtip1149328d15e7609af0df63573ef10e74d~pSNVKPnHm2202522025epsmtip1q;
-        Mon, 25 Apr 2022 23:53:39 +0000 (GMT)
+        20220425235905epsmtip12864982ac8e321c18d1ef73221f6f8b0~pSSFSdAJ32486724867epsmtip1O;
+        Mon, 25 Apr 2022 23:59:05 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
@@ -63,64 +63,64 @@ To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20220424150333.75172-2-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 2/3] dt-bindings: timer: samsung,exynos4210-mct: drop
- unneeded minItems
-Date:   Tue, 26 Apr 2022 05:23:37 +0530
-Message-ID: <000001d858ff$b06a4950$113edbf0$@samsung.com>
+In-Reply-To: <20220424150333.75172-3-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 3/3] dt-bindings: timer: samsung,exynos4210-mct: define
+ strict clock order
+Date:   Tue, 26 Apr 2022 05:29:04 +0530
+Message-ID: <000101d85900$730c07f0$592417d0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHaU87sAxE9nZdTqWTdS25GH65v5wE8VlalAnNF3y2s39qqgA==
+Thread-Index: AQHaU87sAxE9nZdTqWTdS25GH65v5wJ4IAy0AmJKuuSs1oWioA==
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmum6rSXqSweNZPBbzPstazD9yjtWi
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmhu5p0/Qkg0m3rSzmfZa1mH/kHKtF
+        34uHzBZ7X29lt9j0+BqrxeVdc9gsZpzfx2Tx7mWEReveI+wWmzdNZXbg8ti0qpPN4861PWwe
+        786dY/fYvKTe4/MmOY+9n3+zBLBFZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqY
+        KynkJeam2iq5+AToumXmAN2lpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdAr
+        TswtLs1L18tLLbEyNDAwMgUqTMjOWP7pNGvBbd6KlnvzmRsYH3J3MXJySAiYSKxa8YGli5GL
+        Q0hgN6PEp/X32CGcT4wSrxbPZIVwPjNKPGhfwg7TsmzrKiaIxC5GiV/bvzGDJIQEXjJKNJ7X
+        ArHZBHQldixuYwMpEhHYwyzxfR1IBwcHp4CLREdLJEiNsECCxMOtB9lAwiwCqhIHnpWChHkF
+        LCVeLnnDAmELSpyc+QTMZhaQl9j+dg4zxA0KEj+fLmMFsUUEnCQ+f17LClEjLvHy6BGwDyQE
+        VnJILGk+zALR4CIx+8dOKFtY4tXxLVDPSEm87G9jB7lBQsBDYtEfKYhwhsTb5esZIWx7iQNX
+        5rCAlDALaEqs36UPsYpPovf3EyaITl6JjjYhiGpVieZ3V6EWSUtM7O5mhbA9JJYvmAwN24uM
+        Es8e7GOfwKgwC8mXs5B8OQvJN7MQNi9gZFnFKJlaUJybnlpsWmCcl1oOj+7k/NxNjOBEq+W9
+        g/HRgw96hxiZOBgPMUpwMCuJ8E5VTUsS4k1JrKxKLcqPLyrNSS0+xGgKDPmJzFKiyfnAVJ9X
+        Em9oYmlgYmZmZmJpbGaoJM57Kn1DopBAemJJanZqakFqEUwfEwenVAPTdQ8uu9vL1j4o99kR
+        s+xZamm3vMaO1H11jR5Hv1W8Nbv0uKVf7WBlaFqrdJKHr8I1+345vc1zpu5pVFp1IpC/a1ef
+        pE72+oN7e/W+Pdvg25lmc/bxhvj/fD5igo9/PnLk5glLyNi0ta+GKyn6+ry/m2dZS/1e13T1
+        y5zCus1irlc/hwrPa8kNj2WdsEuu4VMk1/cDJUWF8051rimX68t6Zh3Pval4s+pv82mRQp9k
+        9/i21p1pcPS+z8LFG8G5IrNYOmx6dOHzbWeCDu71sf18IkL33qRn+vY+r736NzHZCQqtOck3
+        2fzHvKMcEY+X3Z31a3Mh063PVoE9JYtP9Ojwh8cazwtbmDHr3C4u224lluKMREMt5qLiRACc
+        sT/oPQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJTve0aXqSwfa7YhbzPstazD9yjtWi
         78VDZou9r7eyW2x6fI3V4vKuOWwWM87vY7J49zLConXvEXaLzZumMjtweWxa1cnmcefaHjaP
-        d+fOsXtsXlLv8XmTnMfez79ZAtiism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3M
-        lRTyEnNTbZVcfAJ03TJzgO5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgV
-        J+YWl+al6+WlllgZGhgYmQIVJmRnzJj/iamgh6diy63tTA2M+7m6GDk4JARMJH70VXcxcnEI
-        CexmlGhZ8YsFwvnEKHHs2T92COczo8Tlb0eYuxg5wTrWt32DSuxilDi77BcbSEJI4CWjRNvE
-        YhCbTUBXYsfiNjaQIhGBPcwS39etYgJJcAq4SNz9fZAdxBYWiJXYs60BrJlFQFXi6uZpYDW8
-        ApYSfeemskLYghInZz5hAbGZBeQltr+dA3WFgsTPp8vAakQEnCTezfrBBlEjLvHy6BGw6yQE
-        VnJIXJq1A6rBRWJW7ydGCFtY4tXxLewQtpTEy/42dkhgeEgs+iMFEc6QeLt8PVS5vcSBK3NY
-        QEqYBTQl1u/Sh1jFJ9H7+wkTRCevREebEES1qkTzu6ssELa0xMTublYI20Ni4+VdzJBwu8go
-        8bptHfMERoVZSL6cheTLWUi+mYWweQEjyypGydSC4tz01GLTAqO81HJ4fCfn525iBKdaLa8d
-        jA8ffNA7xMjEwXiIUYKDWUmEd6pqWpIQb0piZVVqUX58UWlOavEhRlNg0E9klhJNzgcm+7yS
-        eEMTSwMTMzMzE0tjM0Mlcd7T6RsShQTSE0tSs1NTC1KLYPqYODilGph2c7JsOWz149zL8/f+
-        h2gdmaGfvUST51fF5l3CDBfjpxe+CHzxXXJOHd/5SLVZ2zz97cWsHj50mzTN+un/ANZswWs7
-        y70Mz/Xw1bzlvRm0uG77i+YvP6p62Z3/JXNOOvL+oczbZ+uE76tf3qDylGnBSv8dQu9rL65i
-        j57tVvNUj5HBNf+Ed62p9pey/NeL9T2PvCgSmRe81Htl4aeF+ufaJCtNpOULb5vO2Ht6d8fj
-        TMNjb15afp/ZGXJbpV4t/b7hxBq1yvTEql91UlcfCl/Zp3DeIu/VUaOts6SLr+epLjJNeFcw
-        +4VhkUyBVVt3VodH0Im12gz7V2zdmjz3gJDatSca59VC9X6Fhctf+HVaiaU4I9FQi7moOBEA
-        rnouzD4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42LZdlhJTrfFJD3JYNVjI4t5n2Ut5h85x2rR
-        9+Ihs8Xe11vZLTY9vsZqcXnXHDaLGef3MVm8exlh0br3CLvF5k1TmR24PDat6mTzuHNtD5vH
-        u3Pn2D02L6n3+LxJzmPv598sAWxRXDYpqTmZZalF+nYJXBkz5n9iKujhqdhyaztTA+N+ri5G
-        Tg4JAROJ9W3f2LsYuTiEBHYwSrzYfpMJIiEtcX3jBHYIW1hi5b/nUEXPGSW2LDvJCpJgE9CV
-        2LG4jQ0kISJwiFmi8cckZpCEkMBZRomex3YgNqeAi8Td3wfBJgkLREv0zF/EBmKzCKhKXN08
-        DWwbr4ClRN+5qawQtqDEyZlPWLoYOTiYBfQk2jYygoSZBeQltr+dwwxxkILEz6fLwMpFBJwk
-        3s36wQZRIy7x8ugR9gmMQrOQTJqFMGkWkkmzkHQsYGRZxSiZWlCcm55bbFhglJdarlecmFtc
-        mpeul5yfu4kRHFdaWjsY96z6oHeIkYmD8RCjBAezkgjvVNW0JCHelMTKqtSi/Pii0pzU4kOM
-        0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqY6sIcNn1JMr+cv0S93nRRePkeRcuUVu9p
-        ffoc189drCt/+ffHHPNl3gv+LNa0SJttNGvf4/l5KZdkLzJ+3MQWn1TFx3Zuc7zX6dXfK2fM
-        c1l1RTSpq1Xz4YMLtXKhf2cdb7wmxsf6Mnyy+oyvR9Nvcf3NnnT24KqZMRUXn799kPfDLWFP
-        +1Wd+4F1xTpfl3Op7Nlu23L0Xei04zvOm2d8sIzulLeIMl7k/FvAXtRr/9Jk732X+q0ZFKKs
-        447lx/BddPXpXmYguDl/ff8UXiHhDVOW7rF+sCP2bkLmzkjmz8EXS3z1Dy6/+bBU/stiCak3
-        rZ7X8ixnmi7/9aCf/0760bM2bnFeO64snrEuhyWxX4mlOCPRUIu5qDgRAPtJUOYaAwAA
-X-CMS-MailID: 20220425235340epcas5p4d42c97211ed8adb2306e6e080f5aed7b
+        d+fOsXtsXlLv8XmTnMfez79ZAtiiuGxSUnMyy1KL9O0SuDKWfzrNWnCbt6Ll3nzmBsaH3F2M
+        nBwSAiYSy7auYupi5OIQEtjBKPFp23ZGiIS0xPWNE9ghbGGJlf+es0MUPWeUmPRkIlgRm4Cu
+        xI7FbWwgCRGBQ8wSjT8mMYMkhATOMkrc/RrVxcjBwSngItHREgkSFhaIk2havYIdJMwioCpx
+        4FkpSJhXwFLi5ZI3LBC2oMTJmU9YQEqYBfQk2jaCbWIWkJfY/nYOM8Q5ChI/ny5jBbFFBJwk
+        Pn9eywpRIy7x8ugR9gmMQrOQTJqFMGkWkkmzkHQsYGRZxSiZWlCcm55bbFhglJdarlecmFtc
+        mpeul5yfu4kRHFNaWjsY96z6oHeIkYmD8RCjBAezkgjvVNW0JCHelMTKqtSi/Pii0pzU4kOM
+        0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqYkt8+9OVIejbZsv28UNydhrf1/T231nBN
+        ucG9ny33Te4umddhrKvTg6/FJ7zN957ikSz0J6b6NOuUiame27Zn/g3a/283q9qrk3b66vLm
+        Sxcvk7Z9apC+PPD7xRsszffbTm/nX9H5ZcamP9eznTMXixy35NzPE1ywYevcBxNDjE/MvntE
+        7X6hyepz3UZSjT9qf1vt2ZRpcPSKb8+zza3CfJW665cvWO52TG31nqLnTAICtx6/iAk/O7OW
+        yTybee3xwkT5t28aX19ZMKtY4lJ7W7fk3Y+h++xbrFM+iuien2382CFle0M3D2/i5HeH9/3W
+        Ohv1/+nzy2WxQlP91NRW3H/K1vDG4h2H5OeMQk2VTCWW4oxEQy3mouJEAG4agJsYAwAA
+X-CMS-MailID: 20220425235907epcas5p1ae2e373f7132bb9738b43893be8acf9d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220424150342epcas5p15d091f5063db79464c9e1e8ca3b55ef9
+X-CMS-RootMailID: 20220424150343epcas5p1eb76108d6a10cf39306d4783d70f2488
 References: <20220424150333.75172-1-krzysztof.kozlowski@linaro.org>
-        <CGME20220424150342epcas5p15d091f5063db79464c9e1e8ca3b55ef9@epcas5p1.samsung.com>
-        <20220424150333.75172-2-krzysztof.kozlowski@linaro.org>
+        <CGME20220424150343epcas5p1eb76108d6a10cf39306d4783d70f2488@epcas5p1.samsung.com>
+        <20220424150333.75172-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof
+Hello Krzysztof,
 
 >-----Original Message-----
 >From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
@@ -132,36 +132,41 @@ Hello Krzysztof
 >linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
 >kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
 >Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->Subject: [PATCH 2/3] dt-bindings: timer: samsung,exynos4210-mct: drop
->unneeded minItems
+>Subject: [PATCH 3/3] dt-bindings: timer: samsung,exynos4210-mct: define
+>strict clock order
 >
->There is no need to add minItems when it is equal to maxItems.
+>The DTS should always have fixed clock order, even if it comes with clock-
+>names property.  Drop the pattern to make the order strict.
+>Existing DTS already match this.
 >
 >Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >---
 
 Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-
-> .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml        | 1 -
-> 1 file changed, 1 deletion(-)
+> .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml     | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 >
 >diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-
 >mct.yaml
 >b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
->index 1584944c7ac4..0e28d9bdb8cb 100644
+>index 0e28d9bdb8cb..9c81d00b12e0 100644
 >--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-
 >mct.yaml
 >+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-
->mct.yaml
->@@ -35,7 +35,6 @@ properties:
->           - const: samsung,exynos4210-mct
->
->   clocks:
->-    minItems: 2
->     maxItems: 2
+>mct.yam
+>+++ l
+>@@ -39,8 +39,8 @@ properties:
 >
 >   clock-names:
+>     items:
+>-      - pattern: "^(fin_pll|mct)$"
+>-      - pattern: "^(fin_pll|mct)$"
+>+      - const: fin_pll
+>+      - const: mct
+>
+>   reg:
+>     maxItems: 1
 >--
 >2.32.0
 
