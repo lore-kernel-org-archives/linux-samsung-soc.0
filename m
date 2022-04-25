@@ -2,113 +2,167 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FA7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Apr 2022 17:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B71C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Apr 2022 23:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240184AbiDYRyF (ORCPT
+        id S238621AbiDYX5H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Apr 2022 13:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60682 "EHLO
+        Mon, 25 Apr 2022 19:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234230AbiDYRyE (ORCPT
+        with ESMTP id S238581AbiDYX5B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Apr 2022 13:54:04 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825E8EA1DF
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 10:50:59 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id k23so31135866ejd.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 10:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=33PZKz4c+MjchNXq+oupWUlcQ4ccJgjWlCH/KLUfNjw=;
-        b=y9CZhhKmvRcpV4R7r1DC00TCWV89NKUm8FxpwjuQPRJgr79ucWaPjTp/SsBBArNLHR
-         tBWNB9QdvpQepLtpyajjdncBUiD5yEwUxrZx14XahuJ5gmfIIa5MWl45BCyVdtFZXwkt
-         MKUcs57RAKbe/73o8Ed7k1TRUvZk+UyDnQsgGsgMFilSMnoYT8qoR6tE5tXtyaP90qVC
-         CySKitg2BTdsq3eXJBsvVBC5nbFuGWwuKUexsJhPglGiE3Ghl6i9f+7mZ2AN4rMQ1kVn
-         MmfHz7noGnovXfRufWHOMMUCeyvhMAqw/+Pd+LY2Hn0gY2D9rfd8VVaQZ78idbQmTDPR
-         UHkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=33PZKz4c+MjchNXq+oupWUlcQ4ccJgjWlCH/KLUfNjw=;
-        b=KQLsAJEAZwgCMR0vYttaNGCVWCvjBofRJuOOaojWYRTmfObVrpRB6pF4oUnXs2ApJP
-         Il6ghs7vR0vmtB6/s407F+2lhpS926o0aZVvqwSOZpfEg8sehAtiP1p+ZLl4bfivRVP2
-         PZ41eNdnHK6RxnIec3Ls/4moo6whFqpxrXDmDPPvRUVTly2biEm9XVNN/s0r/MyIQwhH
-         J75EsopbpFYCuYDiDzg7iuFL6G7o30DVNYuygu6O1EZOE5pTW4KGTiQCq+Zr2MlsknqT
-         isqt4i8JCYokI7jo6ZcJBCFNn1u4AKiLUzhh2me0vVyzWapEEmLtZgSpLgD3LkqZ+re/
-         ZEmg==
-X-Gm-Message-State: AOAM531R4bGyMq6+EOlYsHwgij5bESPUNGM8CMM9ZU6EzjxpKpuSSKx8
-        AQKE+tf+dujzgNqMhAaAAtq3zw==
-X-Google-Smtp-Source: ABdhPJya3ygUFCPyPXTeZNKILNjEo525uOqfmR5suEiZjqllJs7BO9vjxtQKfNwUIe5Nyv/XexIv+Q==
-X-Received: by 2002:a17:906:c1d6:b0:6d6:e0a3:bbc7 with SMTP id bw22-20020a170906c1d600b006d6e0a3bbc7mr17585758ejb.484.1650909058056;
-        Mon, 25 Apr 2022 10:50:58 -0700 (PDT)
-Received: from [192.168.0.244] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id i12-20020a05640200cc00b00421058b175esm4934181edu.53.2022.04.25.10.50.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Apr 2022 10:50:57 -0700 (PDT)
-Message-ID: <ec763086-174f-ab96-5f92-5a2ec54e4cce@linaro.org>
-Date:   Mon, 25 Apr 2022 19:50:56 +0200
+        Mon, 25 Apr 2022 19:57:01 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D952646666
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 16:53:50 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220425235345epoutp036c99b90ee1567cab4c65009c07964b13~pSNat33cu1538015380epoutp03L
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Apr 2022 23:53:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220425235345epoutp036c99b90ee1567cab4c65009c07964b13~pSNat33cu1538015380epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1650930825;
+        bh=8DmheWAHiJOOBMIZdXyd/ayLZdS5Y+v68RlmlHShfDM=;
+        h=From:To:In-Reply-To:Subject:Date:References:From;
+        b=fyhL6p7Y+q43DRvLhWztzMWGG5N6Ho4L0sTJJyvFjzenMocv1q3iKoPNOWm0xqqE0
+         +p24h1YA0b9wc37sRCEDWiMFa72gARYlME8dIJVj9n4gD2a5eFZOH2jV/3vshTDWW4
+         nu6VLLtHV31d18KjWPGQyaMT4QBKNG01QRrRW4ts=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220425235344epcas5p4ba010c818708d47c2bc97d73dc6e2e93~pSNaT6DRX1935019350epcas5p4J;
+        Mon, 25 Apr 2022 23:53:44 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KnMKd22wgz4x9Ps; Mon, 25 Apr
+        2022 23:53:41 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6C.04.09827.58437626; Tue, 26 Apr 2022 08:53:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220425235340epcas5p4d42c97211ed8adb2306e6e080f5aed7b~pSNWr55mN1934619346epcas5p4N;
+        Mon, 25 Apr 2022 23:53:40 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220425235340epsmtrp16f5aebcfaa717dce55a02fb9504889c4~pSNWrGsZ70882508825epsmtrp1R;
+        Mon, 25 Apr 2022 23:53:40 +0000 (GMT)
+X-AuditID: b6c32a4a-b3bff70000002663-ed-626734850e37
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E8.33.08924.48437626; Tue, 26 Apr 2022 08:53:40 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220425235339epsmtip1149328d15e7609af0df63573ef10e74d~pSNVKPnHm2202522025epsmtip1q;
+        Mon, 25 Apr 2022 23:53:39 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
+        "'Michal Simek'" <michal.simek@xilinx.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20220424150333.75172-2-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 2/3] dt-bindings: timer: samsung,exynos4210-mct: drop
+ unneeded minItems
+Date:   Tue, 26 Apr 2022 05:23:37 +0530
+Message-ID: <000001d858ff$b06a4950$113edbf0$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] pwm: samsung: Implement .apply() callback
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org
-References: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
- <d7030fc5-3165-0255-0055-b2bc2e387d53@linaro.org>
- <20220425171641.tf2cgkzbwrx36pn6@pengutronix.de>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220425171641.tf2cgkzbwrx36pn6@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHaU87sAxE9nZdTqWTdS25GH65v5wE8VlalAnNF3y2s39qqgA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmum6rSXqSweNZPBbzPstazD9yjtWi
+        78VDZou9r7eyW2x6fI3V4vKuOWwWM87vY7J49zLConXvEXaLzZumMjtweWxa1cnmcefaHjaP
+        d+fOsXtsXlLv8XmTnMfez79ZAtiism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3M
+        lRTyEnNTbZVcfAJ03TJzgO5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgV
+        J+YWl+al6+WlllgZGhgYmQIVJmRnzJj/iamgh6diy63tTA2M+7m6GDk4JARMJH70VXcxcnEI
+        CexmlGhZ8YsFwvnEKHHs2T92COczo8Tlb0eYuxg5wTrWt32DSuxilDi77BcbSEJI4CWjRNvE
+        YhCbTUBXYsfiNjaQIhGBPcwS39etYgJJcAq4SNz9fZAdxBYWiJXYs60BrJlFQFXi6uZpYDW8
+        ApYSfeemskLYghInZz5hAbGZBeQltr+dA3WFgsTPp8vAakQEnCTezfrBBlEjLvHy6BGw6yQE
+        VnJIXJq1A6rBRWJW7ydGCFtY4tXxLewQtpTEy/42dkhgeEgs+iMFEc6QeLt8PVS5vcSBK3NY
+        QEqYBTQl1u/Sh1jFJ9H7+wkTRCevREebEES1qkTzu6ssELa0xMTublYI20Ni4+VdzJBwu8go
+        8bptHfMERoVZSL6cheTLWUi+mYWweQEjyypGydSC4tz01GLTAqO81HJ4fCfn525iBKdaLa8d
+        jA8ffNA7xMjEwXiIUYKDWUmEd6pqWpIQb0piZVVqUX58UWlOavEhRlNg0E9klhJNzgcm+7yS
+        eEMTSwMTMzMzE0tjM0Mlcd7T6RsShQTSE0tSs1NTC1KLYPqYODilGph2c7JsOWz149zL8/f+
+        h2gdmaGfvUST51fF5l3CDBfjpxe+CHzxXXJOHd/5SLVZ2zz97cWsHj50mzTN+un/ANZswWs7
+        y70Mz/Xw1bzlvRm0uG77i+YvP6p62Z3/JXNOOvL+oczbZ+uE76tf3qDylGnBSv8dQu9rL65i
+        j57tVvNUj5HBNf+Ed62p9pey/NeL9T2PvCgSmRe81Htl4aeF+ufaJCtNpOULb5vO2Ht6d8fj
+        TMNjb15afp/ZGXJbpV4t/b7hxBq1yvTEql91UlcfCl/Zp3DeIu/VUaOts6SLr+epLjJNeFcw
+        +4VhkUyBVVt3VodH0Im12gz7V2zdmjz3gJDatSca59VC9X6Fhctf+HVaiaU4I9FQi7moOBEA
+        rnouzD4EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42LZdlhJTrfFJD3JYNVjI4t5n2Ut5h85x2rR
+        9+Ihs8Xe11vZLTY9vsZqcXnXHDaLGef3MVm8exlh0br3CLvF5k1TmR24PDat6mTzuHNtD5vH
+        u3Pn2D02L6n3+LxJzmPv598sAWxRXDYpqTmZZalF+nYJXBkz5n9iKujhqdhyaztTA+N+ri5G
+        Tg4JAROJ9W3f2LsYuTiEBHYwSrzYfpMJIiEtcX3jBHYIW1hi5b/nUEXPGSW2LDvJCpJgE9CV
+        2LG4jQ0kISJwiFmi8cckZpCEkMBZRomex3YgNqeAi8Td3wfBJgkLREv0zF/EBmKzCKhKXN08
+        DWwbr4ClRN+5qawQtqDEyZlPWLoYOTiYBfQk2jYygoSZBeQltr+dwwxxkILEz6fLwMpFBJwk
+        3s36wQZRIy7x8ugR9gmMQrOQTJqFMGkWkkmzkHQsYGRZxSiZWlCcm55bbFhglJdarlecmFtc
+        mpeul5yfu4kRHFdaWjsY96z6oHeIkYmD8RCjBAezkgjvVNW0JCHelMTKqtSi/Pii0pzU4kOM
+        0hwsSuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqY6sIcNn1JMr+cv0S93nRRePkeRcuUVu9p
+        ffoc189drCt/+ffHHPNl3gv+LNa0SJttNGvf4/l5KZdkLzJ+3MQWn1TFx3Zuc7zX6dXfK2fM
+        c1l1RTSpq1Xz4YMLtXKhf2cdb7wmxsf6Mnyy+oyvR9Nvcf3NnnT24KqZMRUXn799kPfDLWFP
+        +1Wd+4F1xTpfl3Op7Nlu23L0Xei04zvOm2d8sIzulLeIMl7k/FvAXtRr/9Jk732X+q0ZFKKs
+        447lx/BddPXpXmYguDl/ff8UXiHhDVOW7rF+sCP2bkLmzkjmz8EXS3z1Dy6/+bBU/stiCak3
+        rZ7X8ixnmi7/9aCf/0760bM2bnFeO64snrEuhyWxX4mlOCPRUIu5qDgRAPtJUOYaAwAA
+X-CMS-MailID: 20220425235340epcas5p4d42c97211ed8adb2306e6e080f5aed7b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220424150342epcas5p15d091f5063db79464c9e1e8ca3b55ef9
+References: <20220424150333.75172-1-krzysztof.kozlowski@linaro.org>
+        <CGME20220424150342epcas5p15d091f5063db79464c9e1e8ca3b55ef9@epcas5p1.samsung.com>
+        <20220424150333.75172-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25/04/2022 19:16, Uwe Kleine-König wrote:
+Hello Krzysztof
 
->>> +	/*
->>> +	 * We currently avoid using 64bit arithmetic by using the
->>> +	 * fact that anything faster than 1Hz is easily representable
->>> +	 * by 32bits.
->>> +	 */
->>> +	if (state->period > NSEC_PER_SEC)
->>
->> Isn't this changing a bit logic in case of setting wrong period and
->> inverted signal?
->>
->> Before, the config would return early and do nothing. Now, you disable
->> the PWM, check the condition here and exit with PWM disabled. I think
->> this should reverse the tasks done, or the check should be done early.
-> 
-> The intension here is to just push the legacy implementation of .apply()
-> (i.e.  pwm_apply_legacy()) into the driver, to be able to get rid of the
-> legacy handing in the core. I think the problem you point out is real,
-> but it is not introduced by my change which doesn't change behaviour.
-> 
-> The problem is just that it's not possible to "see" that period is
-> invalid at the time the polarity is changed and so it exists since at
-> least 5ec803edcb703fe379836f13560b79dfac79b01d, my patch just made it
-> more obvious.
-> 
-> So yes, there is potential to further improve the driver, but that's out
-> of scope for this 1:1 conversion patch.
+>-----Original Message-----
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
+>Sent: Sunday, April 24, 2022 8:34 PM
+>To: Daniel Lezcano <daniel.lezcano@linaro.org>; Thomas Gleixner
+><tglx@linutronix.de>; Rob Herring <robh+dt@kernel.org>; Krzysztof
+>Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar
+><alim.akhtar@samsung.com>; Michal Simek <michal.simek@xilinx.com>;
+>linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+>kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org
+>Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>Subject: [PATCH 2/3] dt-bindings: timer: samsung,exynos4210-mct: drop
+>unneeded minItems
+>
+>There is no need to add minItems when it is equal to maxItems.
+>
+>Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>---
 
-Sounds reasonable, thanks for explanation. Everything else was looking
-good, so:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
 
+> .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml        | 1 -
+> 1 file changed, 1 deletion(-)
+>
+>diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-
+>mct.yaml
+>b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+>index 1584944c7ac4..0e28d9bdb8cb 100644
+>--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-
+>mct.yaml
+>+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-
+>mct.yaml
+>@@ -35,7 +35,6 @@ properties:
+>           - const: samsung,exynos4210-mct
+>
+>   clocks:
+>-    minItems: 2
+>     maxItems: 2
+>
+>   clock-names:
+>--
+>2.32.0
 
 
-Best regards,
-Krzysztof
