@@ -2,103 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15780C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Apr 2022 18:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F95DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Apr 2022 18:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349692AbiDZSD1 (ORCPT
+        id S1350445AbiDZSRZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Apr 2022 14:03:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
+        Tue, 26 Apr 2022 14:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350596AbiDZSDZ (ORCPT
+        with ESMTP id S1346619AbiDZSRX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Apr 2022 14:03:25 -0400
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59EE13F6F;
-        Tue, 26 Apr 2022 11:00:16 -0700 (PDT)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-e9027efe6aso12882450fac.10;
-        Tue, 26 Apr 2022 11:00:16 -0700 (PDT)
+        Tue, 26 Apr 2022 14:17:23 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F26D793B2;
+        Tue, 26 Apr 2022 11:14:15 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id e4so21613873oif.2;
+        Tue, 26 Apr 2022 11:14:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SkneqWq9FDny4rMtUcZ44P/OejiG2SCIexlA/0LO6kM=;
-        b=ZYhVtHQVq5lkLxxAp29Das27NkddJ9VXolcmurcMsHPr9eEtLpcq/CDUe0pyChBlbK
-         5FfpGYJ1Rmy4NGOlBmHR5VURqn4VJrYdEX+4tLWEFjA2N6sA8JIG21D0LLRX+iWu0Zek
-         T8TLi0UuCAABjR7VWC6fNKNjPIt0/aAFP4f976+ispmEJo073HfTO7ke33QnxEr01xbq
-         zAIfToYRoC26QV7XMU7/IgHJlCqgFc6PLqWInB3bw6fuWUUa5sM5TFaCF5GJAN09xA2T
-         Pceyncgf+RBZWQ0lIVX8PXDRZdLUReT0gnP1GnjSxLR9TWFg50xsfZQslTfZJhtJCdFl
-         mNIA==
-X-Gm-Message-State: AOAM531kiLg7nBv8cVHra31ebbRDOby5stWyOD8nXkOPKRA4slnP5YNI
-        JjkJmS/Hyj4qiF9NP1O9ig==
-X-Google-Smtp-Source: ABdhPJzlFNfKsmBnTcOItHrKkQhyv1JiJiGqQa16jK+6PcJrp7RHk9StcPftCzLIwKnUKvS04f7WaA==
-X-Received: by 2002:a05:6870:b39c:b0:d1:4a9f:35f9 with SMTP id w28-20020a056870b39c00b000d14a9f35f9mr9164098oap.119.1650996016098;
-        Tue, 26 Apr 2022 11:00:16 -0700 (PDT)
-Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.googlemail.com with ESMTPSA id y23-20020a056808061700b00322e73cd18bsm5028505oih.16.2022.04.26.11.00.15
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=D7k+hlmPvjASuRIFSXQ3Jybc3z99DtV6iqQdcbp6ruA=;
+        b=FJoSP4PZ0KCNjdaQ7tY2zUrzdhNUrEoEhhRMGOznkF0UikgNxjOK5kqm3X4MtjaN7k
+         3hKuypcrLPBno/QfLCXFdjSxwm9qGSPqZtu2mFt1iAXQxA4CszsDaE1LY9PmQlWO+e4M
+         SmszPTCETRGtVyPdWqmPJlmiv5GCFmPl6qOEsistxjEpxNIy/O3WQXmChs8PT3Lk3py8
+         SuRZWO428MsCoYWcWZup9NfAX7YMYk1nlpMRY9sigdMp0XYhJUSx+zWHiUBBJR/LGsRB
+         CkR/HU6bBjkuBY3IAADywosgJtbZUJo7hJthlT61p0+xkue+GD1F0x1VFvGCHYK5bAGB
+         NyNw==
+X-Gm-Message-State: AOAM533qqFVV1rzUDDX7rnvd1PiWUTKKHEufGdrszA3zKDCCFqb8Atz0
+        NC5KyfodbAR8TpsskZMyTg==
+X-Google-Smtp-Source: ABdhPJwtcbfWHBKzPNxhv77mx5hkoU8uEbBtDzOdlIc8tpHYuh/NiAqfXqngo8RyuUdTes1mtk05sg==
+X-Received: by 2002:aca:1908:0:b0:325:22f5:5858 with SMTP id l8-20020aca1908000000b0032522f55858mr6053944oii.283.1650996854817;
+        Tue, 26 Apr 2022 11:14:14 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id c2-20020a9d6c82000000b00605988f38c9sm4250547otr.21.2022.04.26.11.14.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 11:00:15 -0700 (PDT)
+        Tue, 26 Apr 2022 11:14:14 -0700 (PDT)
+Received: (nullmailer pid 2287423 invoked by uid 1000);
+        Tue, 26 Apr 2022 18:14:13 -0000
+Date:   Tue, 26 Apr 2022 13:14:13 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: eeprom/at24: Add samsung,s524ad0xd1 compatible
-Date:   Tue, 26 Apr 2022 12:59:39 -0500
-Message-Id: <20220426175938.2262966-1-robh@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: timer: cdns,ttc: drop unneeded minItems
+Message-ID: <Ymg2dfy/C79/JhIp@robh.at.kernel.org>
+References: <20220424150333.75172-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220424150333.75172-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The samsung,s524ad0xd1 compatible is in use, but not documented. According
-to arch/arm/mach-s3c/mach-smdk6410.c, the samsung,s524ad0xd1 is compatible
-with the 24c128. As the schema requires a fallback compatible to the
-corresponding Atmel compatible, 'atmel,24c128' is added as a fallback.
+On Sun, 24 Apr 2022 17:03:31 +0200, Krzysztof Kozlowski wrote:
+> There is no need to add minItems when it is equal to maxItems.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/timer/cdns,ttc.yaml | 1 -
+>  1 file changed, 1 deletion(-)
+> 
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
-v2:
- - Fix the example in samsung,s3c2410-i2c.yaml
-
- Documentation/devicetree/bindings/eeprom/at24.yaml            | 4 +++-
- .../devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml          | 2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
-index 6b61a8cf6137..d14e0accbda8 100644
---- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-+++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-@@ -120,7 +120,9 @@ properties:
-           - const: giantec,gt24c32a
-           - const: atmel,24c32
-       - items:
--          - const: renesas,r1ex24128
-+          - enum:
-+              - renesas,r1ex24128
-+              - samsung,s524ad0xd1
-           - const: atmel,24c128
- 
-   label:
-diff --git a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-index c26230518957..3d5782deb97d 100644
---- a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-@@ -123,7 +123,7 @@ examples:
-         samsung,i2c-slave-addr = <0x66>;
- 
-         eeprom@50 {
--            compatible = "samsung,s524ad0xd1";
-+            compatible = "samsung,s524ad0xd1", "atmel,24c128";
-             reg = <0x50>;
-         };
-     };
--- 
-2.34.1
-
+Acked-by: Rob Herring <robh@kernel.org>
