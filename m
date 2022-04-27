@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5331CC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Apr 2022 16:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CB3C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Apr 2022 16:49:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243398AbiD0Qt7 (ORCPT
+        id S243603AbiD0Qw0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Apr 2022 12:49:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55880 "EHLO
+        Wed, 27 Apr 2022 12:52:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243381AbiD0Qt6 (ORCPT
+        with ESMTP id S243570AbiD0QwZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Apr 2022 12:49:58 -0400
+        Wed, 27 Apr 2022 12:52:25 -0400
 Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A5502B05B0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 09:46:46 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220427164644epoutp04e3f9b14b7e5c94b53865b713ce302a22~pzrKJSdRH3034730347epoutp04P
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 16:46:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220427164644epoutp04e3f9b14b7e5c94b53865b713ce302a22~pzrKJSdRH3034730347epoutp04P
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C5E4152C9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 09:49:12 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220427164910epoutp04b1c987171631dc8175d22346d864ba5a~pztSApASY3271732717epoutp04H
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 16:49:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220427164910epoutp04b1c987171631dc8175d22346d864ba5a~pztSApASY3271732717epoutp04H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651078004;
-        bh=xu+OZIThmWFqC+k7qAoNSoUGjST226mSqfWHlz0OtwA=;
+        s=mail20170921; t=1651078150;
+        bh=hfmxlpSd4s66M6K+y/P55B2vsCALexeN0z+2FCrLRVY=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=AceK7U/E3DI7Wswf2DlMWELcB2Tsf2dK15KQQO7n156DPDpb7ao5hJAxMUn+O1Jp1
-         /MbmVFwNC7p22mVRlrDbAj0c7oQB6bgkZ2cMq7NIZB7p+nOw/yBxYsTiwS84RYfywi
-         k9KKS5UboaLWxT8gzHMhtqg731S6X6XwBMvQjqNI=
+        b=cht35jZskVpfWgMxVKGxxAped7eKtmbBTdMVpCXAoBJwVwiBleNkRQL3xjvxRKjdY
+         32XjJCoosr2RL2ZYy/gFAwkh3zm2tzu14auXn0dFcEHLvph786p/9WV+SM6WcRlghu
+         apJsJjLJ6ZEANQoD9AdqdBNZDJbg8OhuHGJQIv5k=
 Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220427164643epcas5p4a0ded6a720f46d87fa7c4faf1d2b3f31~pzrJErrzj2168221682epcas5p47;
-        Wed, 27 Apr 2022 16:46:43 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4KpPlz6qvVz4x9Pp; Wed, 27 Apr
-        2022 16:46:39 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220427164908epcas5p2007b5f6e30352956b962890836a21be7~pztQj1u_V0970809708epcas5p2E;
+        Wed, 27 Apr 2022 16:49:08 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KpPpn0wy4z4x9Ps; Wed, 27 Apr
+        2022 16:49:05 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
         epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.B7.10063.F6379626; Thu, 28 Apr 2022 01:46:39 +0900 (KST)
+        31.E7.10063.00479626; Thu, 28 Apr 2022 01:49:05 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220427164638epcas5p3557a63299f176bf5e399a545198c8a3e~pzrE19n8R1041610416epcas5p3I;
-        Wed, 27 Apr 2022 16:46:38 +0000 (GMT)
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220427164904epcas5p173aa5dc3b68e38cd7ce8466d29d38393~pztMoc3QH1651516515epcas5p1X;
+        Wed, 27 Apr 2022 16:49:04 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220427164638epsmtrp1d37e48ccdb0bfe2d90d6ce38f486c53f~pzrE06B1R2854728547epsmtrp1O;
-        Wed, 27 Apr 2022 16:46:38 +0000 (GMT)
-X-AuditID: b6c32a49-4b5ff7000000274f-a5-6269736fcc2f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        20220427164904epsmtrp119ae13a1aed879a53d55f57eb61552d0~pztMnk5HI3058730587epsmtrp1i;
+        Wed, 27 Apr 2022 16:49:04 +0000 (GMT)
+X-AuditID: b6c32a49-4b5ff7000000274f-99-626974006c90
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        07.EB.08924.E6379626; Thu, 28 Apr 2022 01:46:38 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        6F.EB.08924.00479626; Thu, 28 Apr 2022 01:49:04 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220427164636epsmtip2f81f4200c8cd6d6f6fe448c0966398f3~pzrCSidcy0395103951epsmtip2i;
-        Wed, 27 Apr 2022 16:46:36 +0000 (GMT)
+        20220427164902epsmtip1f47598e5fa2a204d0c05377443300017~pztKGiL5F1379913799epsmtip1e;
+        Wed, 27 Apr 2022 16:49:01 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         "'Lee Jones'" <lee.jones@linaro.org>,
@@ -71,61 +71,61 @@ To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 Cc:     "'Rob Herring'" <robh@kernel.org>
-In-Reply-To: <20220427155840.596535-10-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 09/10] arm64: dts: exynos: use proper
+In-Reply-To: <20220427155840.596535-11-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 10/10] arm64: dts: fsd: use proper
  'dma-channels/requests' properties
-Date:   Wed, 27 Apr 2022 22:16:35 +0530
-Message-ID: <000301d85a56$5d4b68a0$17e239e0$@samsung.com>
+Date:   Wed, 27 Apr 2022 22:19:00 +0530
+Message-ID: <000401d85a56$b43a8150$1caf83f0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGQnzfwuAxkOYqHux9KbyQb5tlOAgHDwDYXAkaxgAqtcxqj8A==
+Thread-Index: AQGQnzfwuAxkOYqHux9KbyQb5tlOAgHmAJxPAngHFiutcH5BUA==
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLJsWRmVeSWpSXmKPExsWy7bCmhm5+cWaSQf86Y4u1vUdZLOYfOcdq
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLJsWRmVeSWpSXmKPExsWy7bCmpi5jSWaSQc9CRou1vUdZLOYfOcdq
         cfT8biaLvhcPmS32vt7KbnH/61FGi02Pr7FaXN41h81ixvl9TBYHlrazWLz5/YLd4t3LCIun
         MzezWbTuPcJu8X/PDnaLw2/aWS3erX7CaLH81A4WByGPNfPWMHrMun+WzWPTqk42jzvX9rB5
         bF5S79G3ZRWjx+dNch57P/9mCeCIyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQw
         V1LIS8xNtVVy8QnQdcvMAXpFSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBX
-        nJhbXJqXrpeXWmJlaGBgZApUmJCdMfXhLLaCHpmKW2teMTUwbhXvYuTkkBAwkfjVfIgNxBYS
-        2M0ocfRmaRcjF5D9iVFixqqDjBDOZ0aJcy9OMcN0PN4whxGiYxejRO8ZMYiil4wSx/u+gyXY
-        BHQldixuYwNJiAj8ZJXY1byABSTBLKAqMefPL7BJnAJuEjOXLQWzhQXiJI6dWA1mswDVHPp3
-        gRXE5hWwlJjT8wHKFpQ4OfMJ1Bx5ie1v50BdpCDx8+kysBoRASeJK5OnskPUiEu8PHqEHeQI
-        CYH/HBINs7+zQjS4SGyeNoEdwhaWeHV8C5QtJfGyvw3I5gCyPSQW/ZGCCGdIvF2+nhHCtpc4
-        cGUOC0gJs4CmxPpd+hCr+CR6fz9hgujklehoE4KoVpVofneVBcKWlpjY3Q11gIdEa+Mn9gmM
-        irOQPDYLyWOzkDwwC2HZAkaWVYySqQXFuempxaYFhnmp5fDoTs7P3cQITudanjsY7z74oHeI
-        kYmD8RCjBAezkgjvl90ZSUK8KYmVValF+fFFpTmpxYcYTYGhPZFZSjQ5H5hR8kriDU0sDUzM
-        zMxMLI3NDJXEeU+nb0gUEkhPLEnNTk0tSC2C6WPi4JRqYCqdslRiqwpXOcfFzQqz9G5dSnvQ
-        +FlrEc9tlfBg0eT337o+3/9mb3zq0+Kpk/p8f5WtNKh/4ttZleit6sjM2nXeZtbnGHfhS92N
-        a30vFLKsb9sqva3hidwRFR3Gzoa3E7pSjb/1bEiq3i/vsttOpsxotmmqtZDzA8HQD1pMfR6m
-        e58IWasYujgmNS6u4XZzWii24UiDx7oXP7VVNJ5/382Q9uS6iEy1qtbaw0E+QjZfNfIfVoks
-        quw9yynweGHjQbUvL+Q+3DD9FHZmNo9Iewmj2NnUnWqqKgfZOkLXz69nvlJ6+/+ma8qGco/K
-        C77M6FH5NVn47GMnr/rs1H+n8ubPaTy+XHf360/VNp8NlViKMxINtZiLihMB6TSCg3AEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsWy7bCSvG5ecWaSwYEnuhZre4+yWMw/co7V
+        nJhbXJqXrpeXWmJlaGBgZApUmJCdcWjHXeaCPqmKs8/uszQwPhDtYuTkkBAwkdjUvIe1i5GL
+        Q0hgN6PErUPboZxPjBJNz1ezQTifGSV2fz3LBNNy9uNGZhBbSGAXo8Tdd/oQ9ktGia9H7UBs
+        NgFdiR2L28CaRQR+skrsal7AApJgFlCVmPPnF1gzp4CbxL5vr8FsYYFoibsnF4AtYAGqmXj2
+        FDuIzStgKfFv3Uc2CFtQ4uTMJ1Bz5CW2v53DDHGQgsTPp8tYQWwRASeJ+y8fMULUiEu8PHqE
+        HeQICYEfHBL7ns1lgWhwkVjVvwnKFpZ4dXwLO4QtJfGyvw3I5gCyPSQW/ZGCCGdIvF2+nhHC
+        tpc4cGUOC0gJs4CmxPpd+hCr+CR6fz9hgujklehoE4KoVpVofncVapG0xMTublYI20Piwfcf
+        zBMYFWcheWwWksdmIXlgFsKyBYwsqxglUwuKc9NTi00LDPNSy+HRnZyfu4kRnM61PHcw3n3w
+        Qe8QIxMH4yFGCQ5mJRHeL7szkoR4UxIrq1KL8uOLSnNSiw8xmgJDeyKzlGhyPjCj5JXEG5pY
+        GpiYmZmZWBqbGSqJ855O35AoJJCeWJKanZpakFoE08fEwSnVwJR6RFy6zSlRe9thVtdYrnsB
+        6ZvqUyx9r//Iv5F8I/0PD3uMRWqZYKNajcPGnDW8FeuZjPYrK7Uqv3kjt1+qQO0GU8H70NVf
+        pBd0C29aa7KvLT3h8IalF+US35ovXM68d97OSQsfXtYruLpJ9fNrvpf7OrIX7PN9W3/Dp82r
+        g6XO6Nn1dL0XTOUuszU3bf7++t1lHpbVXKaNt/Ny5Y9Nn5xokibyocyjizn6+XTBuONZ3uwF
+        ea8UDDUyn3mmb/W7cXSH/SXH0u76My6X4qXTbByWlrFNDEjxm8t85qvzfOXQLMkvTy/vVS6/
+        L3O8+f9y5V3hYl2MK40XW3y5URheWfI4UP3cIb3ceJ53IdPNlFiKMxINtZiLihMB247xanAE
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsWy7bCSnC5DSWaSwYK5qhZre4+yWMw/co7V
         4uj53UwWfS8eMlvsfb2V3eL+16OMFpseX2O1uLxrDpvFjPP7mCwOLG1nsXjz+wW7xbuXERZP
         Z25ms2jde4Td4v+eHewWh9+0s1q8W/2E0WL5qR0sDkIea+atYfSYdf8sm8emVZ1sHneu7WHz
-        2Lyk3qNvyypGj8+b5Dz2fv7NEsARxWWTkpqTWZZapG+XwJUx9eEstoIemYpba14xNTBuFe9i
-        5OSQEDCReLxhDmMXIxeHkMAORokvj14zQiSkJa5vnMAOYQtLrPz3nB2i6DmjxJS5O1hBEmwC
-        uhI7FrexgSREBFrZJFZ+6GUBSTALqErM+fOLGaLjAqPE3Flz2EASnAJuEjOXLWUGsYUFYiSe
-        fd0G1sAC1HDo3wWwqbwClhJzej5A2YISJ2c+AarhABqqJ9G2kRFivrzE9rdzmCGuU5D4+XQZ
-        WLmIgJPElclT2SFqxCVeHj3CPoFReBaSSbMQJs1CMmkWko4FjCyrGCVTC4pz03OLDQuM8lLL
-        9YoTc4tL89L1kvNzNzGC41pLawfjnlUf9A4xMnEwHmKU4GBWEuH9sjsjSYg3JbGyKrUoP76o
-        NCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQYmJf0Pf/uTmfYtPx5bxPVU5dmb
-        c8Innt839XJctvnsiqu/Un3aDG3/XZkiZTLVSL57G9v/75ucXWT8N88/uHjzhebsOVM5r1y8
-        spstd/ZUwY4KV6vZd+rDucqD2ZwW9wdULXbj7FYsbPv88L99tNX6hpynoZJC+ZLFCswJWptN
-        XNbvvXEspb3ioZ+jXOaZJ15ruSyuT86a+0h3m8eyjiDfJc/UON4ybkx0VteMMDf/Mr/2d43W
-        15T9B3incv3WufD9s1ySge7TVo9GiRmT2SfN7Q1Lrqz6ffmA927/LZV+K2wfp5pvy/I5/mWV
-        587uA/X7HzfLqrpvPmf4w/DT3F0fn0/7zVZxZmIX9/kXT5nXK7EUZyQaajEXFScCAMy08h9a
-        AwAA
-X-CMS-MailID: 20220427164638epcas5p3557a63299f176bf5e399a545198c8a3e
+        2Lyk3qNvyypGj8+b5Dz2fv7NEsARxWWTkpqTWZZapG+XwJVxaMdd5oI+qYqzz+6zNDA+EO1i
+        5OSQEDCROPtxI3MXIxeHkMAORolzn04wQiSkJa5vnMAOYQtLrPz3nB2i6DmjxNMZ05lBEmwC
+        uhI7FrexgSREBFrZJFZ+6GUBSTALqErM+fMLauwFRokTb66zgiQ4Bdwk9n17DdYtLBAp8fTd
+        XrAVLEANE8+eArN5BSwl/q37yAZhC0qcnPkEaCgH0FA9ibaNjBDz5SW2v53DDHGdgsTPp8vA
+        xosIOEncf/kIqkZc4uXRI+wTGIVnIZk0C2HSLCSTZiHpWMDIsopRMrWgODc9t9iwwCgvtVyv
+        ODG3uDQvXS85P3cTIziutbR2MO5Z9UHvECMTB+MhRgkOZiUR3i+7M5KEeFMSK6tSi/Lji0pz
+        UosPMUpzsCiJ817oOhkvJJCeWJKanZpakFoEk2Xi4JRqYLog/HVnxrbr0xc8KUxOmmO8+nPb
+        K77zzw2OTJyxhMHhU8Y/z8JftX8Ud0Z6OCx8xb83iiskQeCkzN45wfJm93jfaO+071rf4z/X
+        Yc6lMof47J2bLn1hb/iZoBjo55hiUtz+VX5x/UM71UOi91k8ndY9tylRVfIJlDjipTr11KOd
+        HyPD3rxyKImPUeEqn6af/fOgR372ExvPBS+atTmn679s92gs8I69reTEIfl49aS3imoq/iEH
+        tz6dJ+wns83FVKzNaLf26o7XsicU8n4m7FUN9GU7/Uvf/mbAl9sM05Mus+9/sdOv88sNCadv
+        NTxK76Z8T55m8kbPM6g/V+dxQ1FNz+yjgdODclSW3PG3VmIpzkg01GIuKk4EADFgLWtaAwAA
+X-CMS-MailID: 20220427164904epcas5p173aa5dc3b68e38cd7ce8466d29d38393
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220427155904epcas5p288496858c47e2d5e3726da8b2242e28d
+X-CMS-RootMailID: 20220427155905epcas5p2a902af86ad3f08f96de4da0d5affec43
 References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
-        <CGME20220427155904epcas5p288496858c47e2d5e3726da8b2242e28d@epcas5p2.samsung.com>
-        <20220427155840.596535-10-krzysztof.kozlowski@linaro.org>
+        <CGME20220427155905epcas5p2a902af86ad3f08f96de4da0d5affec43@epcas5p2.samsung.com>
+        <20220427155840.596535-11-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -147,8 +147,8 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 >samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
 >Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Rob Herring
 ><robh@kernel.org>
->Subject: [PATCH 09/10] arm64: dts: exynos: use proper 'dma-
->channels/requests' properties
+>Subject: [PATCH 10/10] arm64: dts: fsd: use proper 'dma-channels/requests'
+>properties
 >
 >pl330 DMA controller bindings documented 'dma-channels' and 'dma-
 >requests' properties (without leading hash sign), so fix the DTS to match
@@ -159,78 +159,64 @@ the
 >Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >---
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-
-> arch/arm64/boot/dts/exynos/exynos5433.dtsi | 12 ++++++------
-> arch/arm64/boot/dts/exynos/exynos7.dtsi    |  8 ++++----
-> 2 files changed, 10 insertions(+), 10 deletions(-)
+> arch/arm64/boot/dts/tesla/fsd.dtsi | 16 ++++++++--------
+> 1 file changed, 8 insertions(+), 8 deletions(-)
 >
->diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->index 017ccc2f4650..91e82e4283b2 100644
->--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->@@ -1866,8 +1866,8 @@ pdma0: dma-controller@15610000 {
-> 			clocks = <&cmu_fsys CLK_PDMA0>;
-> 			clock-names = "apb_pclk";
+>diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi
+>b/arch/arm64/boot/dts/tesla/fsd.dtsi
+>index 10c217a57a7d..7fba37d860b2 100644
+>--- a/arch/arm64/boot/dts/tesla/fsd.dtsi
+>+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+>@@ -432,8 +432,8 @@ mdma0: dma-controller@10100000 {
+> 			reg = <0x0 0x10100000 0x0 0x1000>;
+> 			interrupts = <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
 > 			#dma-cells = <1>;
 >-			#dma-channels = <8>;
 >-			#dma-requests = <32>;
 >+			dma-channels = <8>;
 >+			dma-requests = <32>;
-> 		};
->
-> 		pdma1: dma-controller@15600000 {
->@@ -1877,8 +1877,8 @@ pdma1: dma-controller@15600000 {
-> 			clocks = <&cmu_fsys CLK_PDMA1>;
+> 			clocks = <&clock_imem
+>IMEM_DMA0_IPCLKPORT_ACLK>;
 > 			clock-names = "apb_pclk";
+> 			iommus = <&smmu_imem 0x800 0x0>;
+>@@ -444,8 +444,8 @@ mdma1: dma-controller@10110000 {
+> 			reg = <0x0 0x10110000 0x0 0x1000>;
+> 			interrupts = <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
 > 			#dma-cells = <1>;
 >-			#dma-channels = <8>;
 >-			#dma-requests = <32>;
 >+			dma-channels = <8>;
 >+			dma-requests = <32>;
-> 		};
->
-> 		audio-subsystem@11400000 {
->@@ -1898,8 +1898,8 @@ adma: dma-controller@11420000 {
-> 				clocks = <&cmu_aud CLK_ACLK_DMAC>;
-> 				clock-names = "apb_pclk";
-> 				#dma-cells = <1>;
->-				#dma-channels = <8>;
->-				#dma-requests = <32>;
->+				dma-channels = <8>;
->+				dma-requests = <32>;
-> 				power-domains = <&pd_aud>;
-> 			};
->
->diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->index e38bb02a2152..c31534771620 100644
->--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
->+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->@@ -149,8 +149,8 @@ pdma0: dma-controller@10e10000 {
-> 			clocks = <&clock_fsys0 ACLK_PDMA0>;
+> 			clocks = <&clock_imem
+>IMEM_DMA1_IPCLKPORT_ACLK>;
 > 			clock-names = "apb_pclk";
+> 			iommus = <&smmu_imem 0x801 0x0>;
+>@@ -456,8 +456,8 @@ pdma0: dma-controller@14280000 {
+> 			reg = <0x0 0x14280000 0x0 0x1000>;
+> 			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
 > 			#dma-cells = <1>;
 >-			#dma-channels = <8>;
 >-			#dma-requests = <32>;
 >+			dma-channels = <8>;
 >+			dma-requests = <32>;
-> 		};
->
-> 		pdma1: dma-controller@10eb0000 {
->@@ -160,8 +160,8 @@ pdma1: dma-controller@10eb0000 {
-> 			clocks = <&clock_fsys0 ACLK_PDMA1>;
+> 			clocks = <&clock_peric
+>PERIC_DMA0_IPCLKPORT_ACLK>;
 > 			clock-names = "apb_pclk";
+> 			iommus = <&smmu_peric 0x2 0x0>;
+>@@ -468,8 +468,8 @@ pdma1: dma-controller@14290000 {
+> 			reg = <0x0 0x14290000 0x0 0x1000>;
+> 			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
 > 			#dma-cells = <1>;
 >-			#dma-channels = <8>;
 >-			#dma-requests = <32>;
 >+			dma-channels = <8>;
 >+			dma-requests = <32>;
-> 		};
->
-> 		clock_topc: clock-controller@10570000 {
+> 			clocks = <&clock_peric
+>PERIC_DMA1_IPCLKPORT_ACLK>;
+> 			clock-names = "apb_pclk";
+> 			iommus = <&smmu_peric 0x1 0x0>;
 >--
 >2.32.0
 
