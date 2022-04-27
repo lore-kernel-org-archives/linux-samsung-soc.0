@@ -2,129 +2,194 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84936C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Apr 2022 15:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29906C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Apr 2022 16:42:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241301AbiD0QCq (ORCPT
+        id S243416AbiD0QpL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Apr 2022 12:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54796 "EHLO
+        Wed, 27 Apr 2022 12:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241304AbiD0QC2 (ORCPT
+        with ESMTP id S243383AbiD0QpK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Apr 2022 12:02:28 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BB416A5C4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 08:59:01 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id m20so4278844ejj.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 08:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eKvDuuB9QgS27uH7omTMpe+GPkov4ZRdj/Xw46TVghk=;
-        b=Xj4JuGcggLnu/0KkPElctnR4Our3/z/gp+RPHn3BZYUOLqE4ghTux4rLELcw722Rxq
-         Z3J4uXVYrZHPx3n6yNtdGJsn2QgJ4sF3j5ltEMKJCoKumElPOl1yGzHujd4fXNrolRIo
-         f3pnaY+xyxM6XMfo26fNrK6k8J7DBYllNHEEf7YXbKzPTat0ealbgKQxyj9BRJ20EKA7
-         P5RcEJJE3B+3Ej10xzgHR2jJg+C6UPQ9LWd2hzDKdJOzdhK48w8IJIaJqJYZMYenBJxQ
-         sZkrmkRERanjdlFvTGQ+qmtvEE0V3LnjT0liVNOVsfQnclVRMF2OMnt1lQ13PpCfhZzT
-         EYWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eKvDuuB9QgS27uH7omTMpe+GPkov4ZRdj/Xw46TVghk=;
-        b=3IBvZpTXGwvq+Bs2LZNKmcNzynAKCmDC4+30+IRrNpzvAaXYmRZNIj6ia5fMtS/0yX
-         /if5amXgR3WvT/aSpBtl1XOwuUokuV2kTCp+UkK6SnZB9GVfrAw6YY4XQjvUfy5RDKOV
-         sXde7/kHiHF2bjpg4swa+SVZecH3Et5Vj+/TFZYdc7ds8JErpSUw9uy3aB+lb1zAaVxr
-         1EbsjRLTgk/phNKGvhVKhhN2Sde/fzWK4mwIe6X4Z0CXVPRUmo/iRBu39rlU+1sZssbj
-         0Bgn/a4h+6aXPcoPGOnKYJAxNVRkNGX7AbJWe2vOqFvaWJc8NdZK+oMWHqfytCisQZLt
-         OX9Q==
-X-Gm-Message-State: AOAM533xsX2wQ7PE00O48VweIHqpiOseUstxRF55NiZxlOX9hZgcgheB
-        c3pTPkTHRPlxTi8czXKAWQC1ug==
-X-Google-Smtp-Source: ABdhPJzUU6FhLxV2t/BOpMHiXfLyUyiy2Pp2RkecMzFq2opxeB5FMpvjvc+/h+NzLAfoXNvF4CQQNQ==
-X-Received: by 2002:a17:907:7eaa:b0:6f3:bb9a:7f39 with SMTP id qb42-20020a1709077eaa00b006f3bb9a7f39mr6900446ejc.233.1651075136200;
-        Wed, 27 Apr 2022 08:58:56 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id l20-20020a1709062a9400b006ce71a88bf5sm6931993eje.183.2022.04.27.08.58.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Apr 2022 08:58:55 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 07/10] ARM: dts: s5pv210: use proper 'dma-channels/requests' properties
-Date:   Wed, 27 Apr 2022 17:58:37 +0200
-Message-Id: <20220427155840.596535-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
-References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
+        Wed, 27 Apr 2022 12:45:10 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D5A68324
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 09:41:56 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220427164151epoutp0498b4678f68275d011888cdd6cc87c9c7~pzm5X9T2i1680016800epoutp04V
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 16:41:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220427164151epoutp0498b4678f68275d011888cdd6cc87c9c7~pzm5X9T2i1680016800epoutp04V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651077711;
+        bh=oEJc213fWBSOqAC9X/iPQyapal9ZqILFmzDrPoypwKk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=L2eJ+32CmMLXP7fsEaDuAp8UFXzghIbpmlqiFYvVCOZZRoLvuvu+ZnlS8NvPQjbDi
+         ommHDi8Te158IMrS8rPPCiIzYX4uCOi/+AzSg2U//KMyOah2ZvUMxloBjuM+hVTA1+
+         J4FuGHJuJsJu6T/EpVHq/xw3B1N6ZGWCPCQ6PLmM=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220427164150epcas5p273d23f3bbe5dea78d3569fc30a18e6b3~pzm4qwtsU0338003380epcas5p2n;
+        Wed, 27 Apr 2022 16:41:50 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KpPfM1QRPz4x9Pp; Wed, 27 Apr
+        2022 16:41:47 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        48.32.09762.A4279626; Thu, 28 Apr 2022 01:41:47 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220427164145epcas5p4439e423d437a847f09734e2f857dd638~pzmz1OLdb0275202752epcas5p4w;
+        Wed, 27 Apr 2022 16:41:45 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220427164145epsmtrp24e1e77cd66e4cdbe92fd5e5605801ddb~pzmz0OTYT1831418314epsmtrp2q;
+        Wed, 27 Apr 2022 16:41:45 +0000 (GMT)
+X-AuditID: b6c32a4b-1fdff70000002622-a9-6269724ae2cb
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CE.CB.08924.94279626; Thu, 28 Apr 2022 01:41:45 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220427164143epsmtip13387e79e48c6c8dd9f08c54b0f5f9811~pzmxUr33h2854928549epsmtip1C;
+        Wed, 27 Apr 2022 16:41:42 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Lee Jones'" <lee.jones@linaro.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
+        "'Dinh Nguyen'" <dinguyen@kernel.org>,
+        "'Michal Simek'" <michal.simek@xilinx.com>,
+        "'Liviu Dudau'" <liviu.dudau@arm.com>,
+        "'Sudeep Holla'" <sudeep.holla@arm.com>,
+        "'Lorenzo Pieralisi'" <lorenzo.pieralisi@arm.com>,
+        "'Ray Jui'" <rjui@broadcom.com>,
+        "'Scott Branden'" <sbranden@broadcom.com>,
+        "'Broadcom Kernel Team'" <bcm-kernel-feedback-list@broadcom.com>,
+        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc:     "'Rob Herring'" <robh@kernel.org>
+In-Reply-To: <20220427155840.596535-7-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 06/10] dt-bindings: mfd: samsung,exynos5433-lpass: fix
+ 'dma-channels/requests' properties
+Date:   Wed, 27 Apr 2022 22:11:41 +0530
+Message-ID: <000001d85a55$ae9b6850$0bd238f0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGQnzfwuAxkOYqHux9KbyQb5tlOAgH0g7qSAm5vulutcFRuMA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTH92tvby9mHdfK1p+VsO5OMiUBW2nrxVBG0C1ljEmyhM3FDK7l
+        rq30td52G2XLdAQZOHDGPSyrUxlDVyFgddqUh47HFETZnLhkMzwElWdFimEV0JVe3Pjve875
+        nNfvgXGFfagY05tstNVEGQh0BXK2bf1L8RlW/U7p/VNcsq68AyGPtF/lkR09jRyyYmSQSzaP
+        /8wn+x90ANIzdINH/uFzoeShnhYOeeHHEoScmBvhk/7Rt8nbztMoWdzczicfN3n5ZNtECY/0
+        nxwG5PEuL5IqVNd+XwvUlf1XULXHXYqqb95oQtWnqz9VV5xxA3XAE6NuDswhWdg7+ck6msqj
+        rRLapDHn6U1aFZHxZs6WHIVSKouXJZGbCImJMtIqYuvrWfGv6g2hVQjJB5TBHnJlUQxDbEhJ
+        tprtNlqiMzM2FUFb8gwWuSWBoYyM3aRNMNG2zTKpdKMiBObm6x4OefiWf4QfzTR7eLvBHrwM
+        RGAQl8OSmx5QBlZgQrwRQNe9Fh5rTAM4/MsthDUCAFbMXuQ8Salu7F5K8QF4x9mNssYogN99
+        VcddpFA8Hnp/2BsOROFBHvQVHUUWA1w8FrrmH4ahCPwV2DT7dbjsKtwMg72+MIOEmLnq4rBf
+        gCfBOucDwOqVsNM5vFTneXhu0sVlR5LA4O0a3qKOwtOg69jgEiOCox3t/MUhID6DQf9Ibago
+        FjK2wlMNMWzuKjh28Qyf1WIY8DejLKKGVfNi1q2Dk8frAatfhheuu5BFhIuvh/W+DWynZ2D5
+        3PBScQH8fK+QpWNhkb8XYfUaeGDfPh6r1XCh5TP+l+CFymV7VS7bq3LZ/JX/NzsKEDdYTVsY
+        o5ZmFJZEE/3hf/etMRs9IPzQ4zK84NbAVEIr4GCgFUCMS0QJZhp1O4WCPKrAQVvNOVa7gWZa
+        gSJ02Ae44mc15tBPMdlyZPIkqVypVMqTEpUyQiTo0jZQQlxL2eh8mrbQ1id5HCxCvJvj6JVM
+        t3A22yOFadnvPmfH0mfGxDENRzrfl9+r86Zytkd3np+5m6pPOenckpFd0FrlX8msLS4TnG3P
+        La9xzKoGOJmXXPdFxkHLFw7Z9TWmmh3IT+nzvt8W6N61BydWX74zkJY+fkIzGR336LXEw4U9
+        kdOXPNqSWOeURNOSvJ3YdSwFjfY+2rMu8q70vH3bNZ0rWLXxz8aR0oUTE+2ZB0VT7vr3dq3z
+        /J47bv/4qcdv4Spnh/yTgGYkokjUcK0tyWeMSOyeLvzWLnoRu6o3d/fhmYWX9xe9sf9pbet4
+        gUQ7VPpX06GuX7VX+sbGKmoKRX+r+s9t87ol2cEdhzc5ZCVA8Q2BMDpKFse1MtS/NAPfFHEE
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsWy7bCSnK5nUWaSQUOTpsXa3qMsFvOPnGO1
+        OHp+N5NF34uHzBZ7X29lt7j/9SijxabH11gtLu+aw2Yx4/w+JosDS9tZLN78fsFu8e5lhMXT
+        mZvZLFr3HmG3+L9nB7vF4TftrBbvVj9htFh+ageLg5DHmnlrGD1m3T/L5rFpVSebx51re9g8
+        Ni+p9+jbsorR4/MmOY+9n3+zBHBEcdmkpOZklqUW6dslcGX8eryJveCHUMWXvZtYGxgbBboY
+        OTkkBEwkluw+w9jFyMUhJLCDUWLC5G8sEAlpiesbJ7BD2MISK/89Z4coes4osebpDrAEm4Cu
+        xI7FbWwgCRGBVjaJlR96wbqZBVQl5vz5xQzRcZ5RYt61ViaQBKeAq8Se71PBbGGBXInfO+cy
+        gtgsQA2/l0DU8ApYSqyd+ZURwhaUODnzCdBQDqChehJtGxkh5stLbH87hxniOgWJn0+XsYLY
+        IgJOEnMWPoS6QVzi5dEj7BMYhWchmTQLYdIsJJNmIelYwMiyilEytaA4Nz232LDAKC+1XK84
+        Mbe4NC9dLzk/dxMjOK61tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeL7szkoR4UxIrq1KL8uOLSnNS
+        iw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLglGpgqg6KC4k6Ffq4PcU2KSQzV2OuDdNx
+        LZGaeZ+38S8/2i43xVb4zzWpusWL36l1LWIJFfn+vM7kOo93scCnT1sUps9Wj+ywyc73KXG+
+        ZdfXmLjlY4vHfG/2CUEckRV2242W3w6zaAv/Ob1f89veSqaV9jMZliy7I33r++fbl9szN4UH
+        b7nfHWtVw/F47b/e/D/qjvcucFScWya5XmW+UWikV1aYWfsG7bfPftzr45zCZ2UXXSM3zX/2
+        pZTzfiGrZwR2C0dlbtsRG8ceke95qqbY2mej5/pb56L847a5vaq+dW0Rf5J59FzxIk7V4KAt
+        bAfzpdWq1LacZwuZE89TrePoV2YWy7foLlfDoyJ5DyWW4oxEQy3mouJEAGVc/vdaAwAA
+X-CMS-MailID: 20220427164145epcas5p4439e423d437a847f09734e2f857dd638
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220427155859epcas5p239f497d1f81514bddaeac03b1b22b30b
+References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
+        <CGME20220427155859epcas5p239f497d1f81514bddaeac03b1b22b30b@epcas5p2.samsung.com>
+        <20220427155840.596535-7-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-pl330 DMA controller bindings documented 'dma-channels' and
-'dma-requests' properties (without leading hash sign), so fix the DTS to
-match the bindings.
 
-Reported-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/s5pv210.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index ac281f42e8f5..f6988ba3393d 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -125,8 +125,8 @@ pdma0: dma-controller@e0900000 {
- 			clocks = <&clocks CLK_PDMA0>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <32>;
-+			dma-channels = <8>;
-+			dma-requests = <32>;
- 		};
- 
- 		pdma1: dma-controller@e0a00000 {
-@@ -137,8 +137,8 @@ pdma1: dma-controller@e0a00000 {
- 			clocks = <&clocks CLK_PDMA1>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <32>;
-+			dma-channels = <8>;
-+			dma-requests = <32>;
- 		};
- 
- 		adc: adc@e1700000 {
-@@ -526,8 +526,8 @@ mdma1: dma-controller@fa200000 {
- 			clocks = <&clocks CLK_MDMA>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <1>;
-+			dma-channels = <8>;
-+			dma-requests = <1>;
- 		};
- 
- 		rotator: rotator@fa300000 {
--- 
-2.32.0
+>-----Original Message-----
+>From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
+>Sent: Wednesday, April 27, 2022 9:29 PM
+>To: Lee Jones <lee.jones@linaro.org>; Rob Herring <robh+dt@kernel.org>;
+>Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar
+><alim.akhtar@samsung.com>; Dinh Nguyen <dinguyen@kernel.org>; Michal
+>Simek <michal.simek@xilinx.com>; Liviu Dudau <liviu.dudau@arm.com>;
+>Sudeep Holla <sudeep.holla@arm.com>; Lorenzo Pieralisi
+><lorenzo.pieralisi@arm.com>; Ray Jui <rjui@broadcom.com>; Scott Branden
+><sbranden@broadcom.com>; Broadcom Kernel Team <bcm-kernel-feedback-
+>list@broadcom.com>; Sylwester Nawrocki <s.nawrocki@samsung.com>;
+>devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+>Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Rob Herring
+><robh@kernel.org>
+>Subject: [PATCH 06/10] dt-bindings: mfd: samsung,exynos5433-lpass: fix
+>'dma-channels/requests' properties
+>
+>pl330 DMA controller bindings documented 'dma-channels' and 'dma-
+>requests' properties (without leading hash sign), so fix the DTS to match
+the
+>bindings.
+>
+>Reported-by: Rob Herring <robh@kernel.org>
+>Fixes: e18183cefc8b ("mfd: Add DT bindings documentation for Samsung
+>Exynos LPASS")
+>Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>---
+Looking at Documentation/devicetree/bindings/dma/dma-common.yaml
+This change looks good.
+
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+
+> .../devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml     | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+>diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-
+>lpass.yaml b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-
+>lpass.yaml
+>index f7bb67d10eff..b97b06848729 100644
+>--- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-
+>lpass.yaml
+>+++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-
+>lpass.yam
+>+++ l
+>@@ -79,8 +79,8 @@ examples:
+>             clocks = <&cmu_aud CLK_ACLK_DMAC>;
+>             clock-names = "apb_pclk";
+>             #dma-cells = <1>;
+>-            #dma-channels = <8>;
+>-            #dma-requests = <32>;
+>+            dma-channels = <8>;
+>+            dma-requests = <32>;
+>             power-domains = <&pd_aud>;
+>         };
+>
+>--
+>2.32.0
+
 
