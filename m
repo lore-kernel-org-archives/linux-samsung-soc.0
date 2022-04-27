@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4389EC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2424C43219
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Apr 2022 15:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241014AbiD0QCL (ORCPT
+        id S241073AbiD0QCM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 27 Apr 2022 12:02:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53212 "EHLO
+        Wed, 27 Apr 2022 12:02:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241081AbiD0QCJ (ORCPT
+        with ESMTP id S240483AbiD0QCK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 27 Apr 2022 12:02:09 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7ED81586E8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 08:58:51 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id kq17so4328467ejb.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 08:58:51 -0700 (PDT)
+        Wed, 27 Apr 2022 12:02:10 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A63EE0AE7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 08:58:53 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id m20so4278154ejj.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Apr 2022 08:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FfoH2+93jiElrAWTEZ/Q7dNpBENcDt+C1xVnkM3EKH0=;
-        b=aDxm4D43Uhl3iOHQUzXpfXWzGb/UigzhcXaNFnpII0mJc39so3qCwm2fE5v0WlaCD1
-         iiIj7mXuxl4vLl08tsVAqb/yQ99Klv17DSS7v7YSY4w2lb1yBRsC2I/fP6jw8WqGAfZ2
-         9J8C7/bMPTWUvJQ3sZMvRdZB+a0hYWKNNqhZr1/SBBMSuCfk1CeJmmSw2ig3d93qNqA4
-         3I2FntpgkthKFxff1hXUqb6Dk6gPxhaB/FDmqprkDCYz8qeQ3gaJdJ2FmYwFbS3XRpm8
-         QIn+rk0OPEFC2T214H3rCJtJgot3GfT1DL/ZKf9SnboOT3JXtXcounnPp1EufD15JqJc
-         Nnkw==
+        bh=8EPlAzEqa5Z3HCLU5YLuPs1f540Pvw+JJscmv0oZSH4=;
+        b=aJhxlILEsonwRFgA2RLIi48f+biDMsh9RQfe1Iocr5kMtHZgKMemehJKtEuPCVrEdU
+         yBCBIHaxAOGal6l+5/Pmh456mflwkpp2S6IDhX/rGrzyl1JOHFiSh3EX2AxbXapUW4D6
+         +c7cKmc5itQfZ6OTO6ngEKuB2/TYwIEJnLpRiOCorMw50HpgFzaSr9ZhVAhSpgvHYyGN
+         bIgLeCu5a4CfvmS6yPMdb/oEf6yr9rELYqQVBj/2zRRqIwwKCdmMQBtO5uF2e9l2a6Bz
+         Iv3wY0hPy3bR5QwKgxG6dRU9JmHjzkwe8+tKLU3HPAkK9k5i9jNyCNpvOA3vs2LUZ7Uo
+         rwsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FfoH2+93jiElrAWTEZ/Q7dNpBENcDt+C1xVnkM3EKH0=;
-        b=kZ3v9FzQc0rjZOsfvhqDiu7wF0MSKfLxZZuhW+Qwb2HiVjewA9uffBFoixs8uKHF7R
-         IQhIjl5xTy/iIvlaWDjH8xC+f341VJB6nMflD60doh1ML/obzYlHK9Grd2ptG4V25m7K
-         VMsUdSY+230a1GCbMXJxj5hwOUIcwUSTzzFx+VF7mzFfxq8BrXTgKPAzh9FX0ieenQJa
-         y9uCqBYc9Z8ZSFg+7OOlLHJ1BZaabMc47z7MsIoIjT5/3rJhKtnNDGBV/FAExNQlWLOj
-         aaLTFOYcdv26XwRKpmU+hFrTo4HuDbLySa0+BmVqAIEdIzv2mAAz+CONj23LAaMzuZKn
-         yOCg==
-X-Gm-Message-State: AOAM531K9CF5VbG1PrBRDPCZA97xlGqOwwDPsrr2Ae85uvGz2CM+2Pd+
-        GQf0Jo3ZOowYI89HlEaivFw89w==
-X-Google-Smtp-Source: ABdhPJxkTC6bstznqDirh3yOz28YdsL99Ic+MVOKQR7saWm8FlFuBZI4c+b5iie8jou2S74gwAsutg==
-X-Received: by 2002:a17:906:730b:b0:6f3:a3bc:b69e with SMTP id di11-20020a170906730b00b006f3a3bcb69emr11977792ejc.377.1651075127531;
-        Wed, 27 Apr 2022 08:58:47 -0700 (PDT)
+        bh=8EPlAzEqa5Z3HCLU5YLuPs1f540Pvw+JJscmv0oZSH4=;
+        b=nFn2r9LMq/fiFTEOLQyQWQFxPBjosbFDexMYVaE0uPhXI56LJ74Vg6aU3KlUsvHXbm
+         4Fly3iHnBiIzc2N2+FMEWF3z/WUpNhiG52ymWUhrh1yEd4Jx+IgZ2l7Y7EvUdcyKFCjo
+         nN+3ddFvpmo5TFdjdl4S+wJPAAZfBfnB5ru1E55fSrIcqOv/kJODn7Q3WD0MMo+cbLM/
+         W3eDZQ502g/2lCvnxB9s059P4tTP92NQtnx7x/23v9SXEIr99agbtLJ149hV/MDlw2PA
+         SM0gmoRL9y0lBwABoxZoYH1vbyn3FtxxIdYLpNNQ41UpA+jdg2HjRYAILnBWouTZQcZ+
+         XApA==
+X-Gm-Message-State: AOAM531uja1XffyJIbKzASGpcvjN3XLTm4b37FJ60P+fDTV3xUR1OhYZ
+        xkaD8cyqXS3AuHrQOm5cDnYZlw==
+X-Google-Smtp-Source: ABdhPJzZr0qr1DcvYgu9lp2jTcYgjhXRbLetOK7LGuN3wit4mBhJdLykY/pKaqfIOap5mv+HFUy2ag==
+X-Received: by 2002:a17:907:961c:b0:6f3:a3f9:bcef with SMTP id gb28-20020a170907961c00b006f3a3f9bcefmr12152459ejc.425.1651075128772;
+        Wed, 27 Apr 2022 08:58:48 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id l20-20020a1709062a9400b006ce71a88bf5sm6931993eje.183.2022.04.27.08.58.46
+        by smtp.gmail.com with ESMTPSA id l20-20020a1709062a9400b006ce71a88bf5sm6931993eje.183.2022.04.27.08.58.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Apr 2022 08:58:46 -0700 (PDT)
+        Wed, 27 Apr 2022 08:58:48 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH 01/10] ARM: dts: zynq-7000: use proper 'dma-channels/requests' properties
-Date:   Wed, 27 Apr 2022 17:58:31 +0200
-Message-Id: <20220427155840.596535-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 02/10] ARM: dts: socfpga: use proper 'dma-channels/requests' properties
+Date:   Wed, 27 Apr 2022 17:58:32 +0200
+Message-Id: <20220427155840.596535-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
 References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
@@ -85,24 +85,40 @@ match the bindings.
 Reported-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/zynq-7000.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/socfpga.dtsi         | 4 ++--
+ arch/arm/boot/dts/socfpga_arria10.dtsi | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/zynq-7000.dtsi b/arch/arm/boot/dts/zynq-7000.dtsi
-index 47c2a4b14c06..40c60a2b6d2c 100644
---- a/arch/arm/boot/dts/zynq-7000.dtsi
-+++ b/arch/arm/boot/dts/zynq-7000.dtsi
-@@ -343,8 +343,8 @@ dmac_s: dmac@f8003000 {
- 			             <0 40 4>, <0 41 4>,
- 			             <0 42 4>, <0 43 4>;
- 			#dma-cells = <1>;
--			#dma-channels = <8>;
--			#dma-requests = <4>;
-+			dma-channels = <8>;
-+			dma-requests = <4>;
- 			clocks = <&clkc 27>;
- 			clock-names = "apb_pclk";
- 		};
+diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+index b8c5dd7860cb..a459d3978cfa 100644
+--- a/arch/arm/boot/dts/socfpga.dtsi
++++ b/arch/arm/boot/dts/socfpga.dtsi
+@@ -80,8 +80,8 @@ pdma: pdma@ffe01000 {
+ 					     <0 110 4>,
+ 					     <0 111 4>;
+ 				#dma-cells = <1>;
+-				#dma-channels = <8>;
+-				#dma-requests = <32>;
++				dma-channels = <8>;
++				dma-requests = <32>;
+ 				clocks = <&l4_main_clk>;
+ 				clock-names = "apb_pclk";
+ 				resets = <&rst DMA_RESET>;
+diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
+index f1e50d2e623a..d7641c9f2875 100644
+--- a/arch/arm/boot/dts/socfpga_arria10.dtsi
++++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
+@@ -73,8 +73,8 @@ pdma: pdma@ffda1000 {
+ 					     <0 90 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <0 91 IRQ_TYPE_LEVEL_HIGH>;
+ 				#dma-cells = <1>;
+-				#dma-channels = <8>;
+-				#dma-requests = <32>;
++				dma-channels = <8>;
++				dma-requests = <32>;
+ 				clocks = <&l4_main_clk>;
+ 				clock-names = "apb_pclk";
+ 				resets = <&rst DMA_RESET>, <&rst DMA_OCP_RESET>;
 -- 
 2.32.0
 
