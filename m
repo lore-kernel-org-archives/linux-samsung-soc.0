@@ -2,119 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBF9C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 10:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2914C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 10:43:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234392AbiD1KSa (ORCPT
+        id S245140AbiD1Kqo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 06:18:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35238 "EHLO
+        Thu, 28 Apr 2022 06:46:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234540AbiD1KSH (ORCPT
+        with ESMTP id S1343885AbiD1Kqb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 06:18:07 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10338B53D2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:09:05 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id g6so8569447ejw.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=/dDr0fTGGl5BBgPYwPAZZ1pd+XtgWaczMpJtn23ntK0=;
-        b=ymmMVBWBQ8MpJSP4dXpx+Rq6OcKDzx8o92K2jOhgIxhtPTueaKNlqNV5b1+7OJodPs
-         nJ9xGKyW1KGLybKI+fvqgTX+VxkPz8uG3BEhkW5I1jxsR2cywsmsC4fS3CEEi+behj7t
-         hiQFekQ7PD5qsPm7FLhI0otlwLPjeekCPbmZ+HFju5Qr/hOapIWoIhtGlZk+Ab9fn8+r
-         3bUAldogPJq5VDqJJOXZIt3B8uU2Cr/jFJzMrKiPlGluhKMIafYJdaDkvN51MYsaMnsp
-         0Q89ZkoiQoZ8KLRlo4SBsyigrbJ9nhJmd8SmNu5SZaFHc/eG6XR07tI6tLuQUKZuXMJp
-         de5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/dDr0fTGGl5BBgPYwPAZZ1pd+XtgWaczMpJtn23ntK0=;
-        b=IxoDeCamWUSMqHtwZhZjnfScFxMEhv2WeGdAxJvwNn7Z7BuB9L6Y2YCyMOW/ui3qgY
-         y9zF2LNRpJu9R3/9nbK4tN8uZ1Yt2vvpAp4RlpLGMxmq0uDeochym5ZSPlK6VC6q/hlk
-         iKNMoouHJuwokGn9LJ3SMdS3uJaAbOIRDUU8IElAfQKA2+/Ac/7jqWvBgV42OehwXhcv
-         oZ34K+MqBm98xhi15QIKZYdCo8uTmrBKXfFyoUwqM42aIsPEDUpWjIVhMDJ3mfRpjxHo
-         d1DXEF3XtiKpn4oA8MRZNBJEFDok7U8d8N8venmI/ashq1B/JV3QbwajqpQWmNVXjpgA
-         Aecg==
-X-Gm-Message-State: AOAM532md1FmQnwcsgyvMQseOvCLmjQyy37jbOkfhR22rdbTS6ciucWU
-        OQp5w80MGIUtKXmp9TuUiBxkhw==
-X-Google-Smtp-Source: ABdhPJyNl5aIeZaRe9OFQCAELtXNB7EAqHtq9JW4dgze3nveM4HBPQAYbmdni/LNySj3t3hVuS4AwQ==
-X-Received: by 2002:a17:907:3d91:b0:6df:a01c:f7cd with SMTP id he17-20020a1709073d9100b006dfa01cf7cdmr30990612ejc.255.1651140543621;
-        Thu, 28 Apr 2022 03:09:03 -0700 (PDT)
-Received: from [192.168.0.161] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id k14-20020a170906128e00b006e4b67514a1sm8220151ejb.179.2022.04.28.03.09.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Apr 2022 03:09:03 -0700 (PDT)
-Message-ID: <813bd5f2-38b6-9642-6993-94ad78f5c08a@linaro.org>
-Date:   Thu, 28 Apr 2022 12:09:02 +0200
+        Thu, 28 Apr 2022 06:46:31 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B1ED86AEC;
+        Thu, 28 Apr 2022 03:43:10 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 963DB1474;
+        Thu, 28 Apr 2022 03:43:10 -0700 (PDT)
+Received: from [10.57.80.98] (unknown [10.57.80.98])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EEF53F774;
+        Thu, 28 Apr 2022 03:43:07 -0700 (PDT)
+Message-ID: <1d1aae6e-50db-d6db-9727-62f9c2d1ca6b@arm.com>
+Date:   Thu, 28 Apr 2022 11:43:01 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 08/10] ARM: dts: exynos: use proper
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 04/10] arm64: dts: juno: use proper
  'dma-channels/requests' properties
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>,
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Liviu Dudau <liviu.dudau@arm.com>, Ray Jui <rjui@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>
 References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
- <CGME20220427160347eucas1p23ce51e0fb49160d437961d98fd682c28@eucas1p2.samsung.com>
- <20220427155840.596535-9-krzysztof.kozlowski@linaro.org>
- <5eeac2a0-4293-675e-9dc2-25ed8ab3fb8f@samsung.com>
- <6981f93a-ef01-6ba0-4451-26526372d666@linaro.org>
- <05c908ce-217f-6938-6745-7405ac39d8ea@samsung.com>
- <1399774c-f188-81f1-4d15-367b9d0e4a59@linaro.org>
- <99c80fb6-c6cc-9370-b93d-ed736c7f2192@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <99c80fb6-c6cc-9370-b93d-ed736c7f2192@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+ <20220427155840.596535-5-krzysztof.kozlowski@linaro.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220427155840.596535-5-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/04/2022 12:05, Marek Szyprowski wrote:
->>>>> I also don't see any code that would read those properties. IMHO they
->>>>> should be simply removed at all, at least for the PL330 related nodes.
->>>> In current Linux implementation they indeed are not used. Nothing parses
->>>> them. However:
->>>> 1. They describe (hopefully correct) the hardware.
->>>> 2. They might be used by other implementations of pl330 driver.
->>>>
->>>> I would not remove them from existing sources, but indeed maybe there is
->>>> no need to add for new files.
->>> What's the point in having dt properties duplicating data that might be
->>> read from the driver registers?
->> Hm, indeed, there is no point in this. Since they are read from
->> registers, what was the idea behind in commit 42cf20980cde?
+On 2022-04-27 16:58, Krzysztof Kozlowski wrote:
+> pl330 DMA controller bindings documented 'dma-channels' and
+> 'dma-requests' properties (without leading hash sign), so fix the DTS to
+> match the bindings.
 > 
-> #dma-cells is indeed required, but the rest seems to be the cargo-cult 
-> of some kind.
+> Reported-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   arch/arm64/boot/dts/arm/juno-base.dtsi | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> index 4f40a5c8f565..96ef0ddc0b2d 100644
+> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
+> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+> @@ -829,8 +829,8 @@ dma-controller@7ff00000 {
+>   		compatible = "arm,pl330", "arm,primecell";
+>   		reg = <0x0 0x7ff00000 0 0x1000>;
+>   		#dma-cells = <1>;
+> -		#dma-channels = <8>;
+> -		#dma-requests = <32>;
+> +		dma-channels = <8>;
+> +		dma-requests = <32>;
 
-Rob,
+BTW, this has always been wrong - Juno is configured with only 8 request 
+interfaces. But then it's moot anyway since PL330 has an ID register for 
+this stuff[1], so the DT properties aren't used by Linux, and shouldn't 
+be needed in general.
 
-Any guidance from your side? Is there any benefit in describing the
-hadrware (dma-channels/dma-requests) if the same value can be read from
-registers?
+Thanks,
+Robin.
 
+[1] 
+https://developer.arm.com/documentation/ddi0424/d/programmers-model/register-descriptions/configuration-register-0?lang=en
 
-Best regards,
-Krzysztof
+>   		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
+>   			     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
+>   			     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
