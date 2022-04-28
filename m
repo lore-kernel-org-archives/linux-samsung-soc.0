@@ -2,172 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F990C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 06:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4F2C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 09:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243588AbiD1G12 (ORCPT
+        id S232404AbiD1KCW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 02:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39190 "EHLO
+        Thu, 28 Apr 2022 06:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239899AbiD1G10 (ORCPT
+        with ESMTP id S232496AbiD1KBn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 02:27:26 -0400
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2075.outbound.protection.outlook.com [40.107.236.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706887486C;
-        Wed, 27 Apr 2022 23:24:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HTd5aqNDDLFK2DEt2YifAEQV7U5kuUaV2G+jBgNO8dFtFTDrBWk+sljVwrZ7RgiovKWhJ36a8Ghtz/sNtP/KiFxyToLuygZsBXrdo+6+SIlouIWlN5TtPNFx5LkG2cubGPKlG7wXJPVp+lrzaaS0sl6FEwvO8p2P4H9H4jv0OZwMEsFLttR6uwhqrRbnYTv3j0MEfJKQUJ31X7MvYKr/+QcdBUrvkrI2yvUvtM540kAmeYCoB0HK2lYSciPL7zGlUJTHADS2Ad6iUQwIIGp1WOpgWEQxvdUMsg7Clj5s2OWiuIp36jiXDuxva/kf8XIZGd7MLk++0Y9FO3HZh02nMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LoEGhvqA/i+0LdD/ysJU00w3j6d8iv0AhWTl8HSAiSs=;
- b=c58eDNEnqEs2DEH8I4i/3TAhxCesJQxe3/FeDmze+iWVR9gvj7PqKGRTj5goZdSfn+twR7FLyaHgRwdsQM5eIVNGrMaNN82EcV9urWzAthfNInqk2//zi6gbQxTNiuAQdzsQ0QJ3guvBGlr4X2cL/q3MP5COvGqzulynOOVMMuhRFodoIaN/oWt3Q0udZdOhS8JLBQibUHlI8axYRla8+43g/uLPddyFdfbGor/O0px3NuofQ2D0dcRMSPwl5NgCNW1cLcVpYSBUEfQ4y5IW/L4i+7695LFrKgUSaSqGdncuEn1xt96An6LfEN/V4b2MwGpq8AcBHMPjYT3VhM64Zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        Thu, 28 Apr 2022 06:01:43 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5286C115F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 02:48:51 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id fv2so3827690pjb.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 02:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LoEGhvqA/i+0LdD/ysJU00w3j6d8iv0AhWTl8HSAiSs=;
- b=qPlySODjpJGjWWwJHCpCMQzppkc8hh2wzzcEnG6DVaOd5CW9J+8i1TXu4N5F3FE7G7byEAAO74i1TH83A5WbelX3QwNQN71Gu84oY8PPOnQngpVMK1RJawNjfSk4QT/NBR+PF9uQJeeX7dqqLhkHiFwqhamfaIoFyO3RyosrakM=
-Received: from SA0PR11CA0186.namprd11.prod.outlook.com (2603:10b6:806:1bc::11)
- by SN6PR02MB4350.namprd02.prod.outlook.com (2603:10b6:805:a5::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Thu, 28 Apr
- 2022 06:24:07 +0000
-Received: from SN1NAM02FT0003.eop-nam02.prod.protection.outlook.com
- (2603:10b6:806:1bc:cafe::bf) by SA0PR11CA0186.outlook.office365.com
- (2603:10b6:806:1bc::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.13 via Frontend
- Transport; Thu, 28 Apr 2022 06:24:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- SN1NAM02FT0003.mail.protection.outlook.com (10.97.4.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5206.12 via Frontend Transport; Thu, 28 Apr 2022 06:24:07 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Wed, 27 Apr 2022 23:24:06 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Wed, 27 Apr 2022 23:24:06 -0700
-Envelope-to: krzysztof.kozlowski@linaro.org,
- lee.jones@linaro.org,
- robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org,
- alim.akhtar@samsung.com,
- dinguyen@kernel.org,
- liviu.dudau@arm.com,
- sudeep.holla@arm.com,
- lorenzo.pieralisi@arm.com,
- rjui@broadcom.com,
- sbranden@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com,
- s.nawrocki@samsung.com,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- robh@kernel.org
-Received: from [10.254.241.50] (port=50846)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1njxZO-0005e1-6K; Wed, 27 Apr 2022 23:24:06 -0700
-Message-ID: <4c06af4b-e29d-48c7-c1aa-1347c359027c@xilinx.com>
-Date:   Thu, 28 Apr 2022 08:24:01 +0200
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fSO9EXYOSC33q6TMX5paIc/n59vloq374c1uB49deWM=;
+        b=lnQNze7+jFujdkFXJPJfBt6/k5oksgU2Pkrrcc939SLbfLUjBvRUuV/xdmQ3R7vikQ
+         FgVbhUadFGwy8Dh1iZbz5ZZcDqx4vMad47H7O94j+lbq4+WCGZhE7MgCReYBtxJ5AORe
+         B6UNhu155N/bJ39ktDXmGtWV6vNBlx/nHhQy4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fSO9EXYOSC33q6TMX5paIc/n59vloq374c1uB49deWM=;
+        b=eHSFiMEoKTDkVyWacgHiUQKoaq9TvwonF9Cih5ro4E44+OdboyZGYUNfbW19USoj9b
+         9E+giuCpeR/Y2qDECNXbRHiHAaND6zMcc8B/sNeXWZd4AXPV63Utgnx3vRGY7QPIO0Bw
+         VnrxpT1ap9ilh0hcf3wbB1EqSOAGLb5u9nlpOAr5U19nGc++Byvxk51bqeesKoQw6qAg
+         IJUyqqvreYjHWqzuafUYrXjx53gXN6DW2iWrau6esfay+bcrRi6ghLR3QyWvPo/269KX
+         1aqiS25Lwx3LjNkS34pkkQkK8Fx/vxnnDOAspNFcjLKoaFrNZR+sYZHeuFK2PwHVmfmA
+         62sw==
+X-Gm-Message-State: AOAM533iiU9y5DD5fxhyum4/D9adoeYnWjeKkkmQkK5uZgCqF2EJ0W4h
+        X3ueOD8s8u1KpnMIGH/K56mkxg==
+X-Google-Smtp-Source: ABdhPJyUCD1z4gkX7WSEW0e3FmG+iKkdGrfJgz2PYXdFAgQZ9R0yCSp9G2tj9QZIswGWvgOQdNs7Qg==
+X-Received: by 2002:a17:902:ce01:b0:15c:eedb:f00c with SMTP id k1-20020a170902ce0100b0015ceedbf00cmr24832151plg.122.1651139330761;
+        Thu, 28 Apr 2022 02:48:50 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c00a:a0a9:a3c7:357:7b61:223a])
+        by smtp.gmail.com with ESMTPSA id y9-20020a17090a1f4900b001cd498dc153sm9842845pjy.3.2022.04.28.02.48.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 02:48:50 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH] drm: exynos: dsi: Use child panel or bridge find helpers
+Date:   Thu, 28 Apr 2022 15:18:08 +0530
+Message-Id: <20220428094808.782938-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 01/10] ARM: dts: zynq-7000: use proper
- 'dma-channels/requests' properties
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Rob Herring <robh@kernel.org>
-References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
- <20220427155840.596535-2-krzysztof.kozlowski@linaro.org>
-From:   Michal Simek <michal.simek@xilinx.com>
-In-Reply-To: <20220427155840.596535-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0843fd82-8c07-4d5f-ac6f-08da28dfb30b
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4350:EE_
-X-Microsoft-Antispam-PRVS: <SN6PR02MB4350B93CF22DBBD6DDB35CD3C6FD9@SN6PR02MB4350.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1UcjJ8eo0uUAEK/J9eCgfQiRPo2gIb1GMadP3ac2u3cqv5DTnooRXV3CRrQzp/14e9INg+V9EH6N1h2RqWgQZdoWgS+AIu4dHukOI8NimAVYyXv9TSt/3GQDCTHV1S3hJck/YWGU2PWwWRhWGOVscKkiQ929NNMjhkuMdqvtwTlEt+QoDeB/EtzLvXqc96j+3VE9elqSHah/ZbWxBpqb57C6hgTo1KRBmpS8U5rj2FA4cfd9X2TXtbvRcvL5ovRKJJMgfDjqtK3Pln6CB4vZZQrjSSN9hfNTobUVRCzx/rmAJ+a3LVzzhTXmtdih/gW3BCBaD9/4vHNWlwNr876s4IFQWyMFw0FZRxsxQMh3QfGbwWTzZXs6sc2/w38Tueh6zk8W79Vm1pE85tv2CzA2BXD0VG4TuyFi8EQQq3AQIt9jGMr88guNpn0vKUQXyFVbBUnd0KcxHxrm/7QxP7I8+1pQaOMzuyZcku7cc1C50i3rhH1MC11rnltGcrQ7kRXkOXa1MkrDkx460TJuI+AZVFzkqkDT/Uq+l4uPURCZSzzGNw102yU7oyi5+wIHyEUFwjZ9QzN5HuxTJzzF6VcfTxNT3kEWTxo89vmWh0VdYKk9vjhW45x+ojVQN1gBKkH34zmf4hRWGFJcoDpCvpkygAiOVz/limG8rEXhGZuxX9I2nNPzyAHRgmKvYipqXyaH7nENEEMbEdMJQg0pbXVBgr5ziAi91qYDWAKFPa8/e2HPYxTh8NjocaB1Vzi248VL0WWgZmaEuRk3ha4NkyFPNNiAi45fmXRo8YzrlIHGrCo=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(336012)(426003)(316002)(186003)(82310400005)(83380400001)(47076005)(26005)(40460700003)(2616005)(110136005)(31696002)(9786002)(4744005)(44832011)(5660300002)(36756003)(508600001)(7416002)(8936002)(36860700001)(53546011)(921005)(356005)(2906002)(8676002)(31686004)(6666004)(4326008)(7636003)(70206006)(70586007)(50156003)(2101003)(83996005)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2022 06:24:07.2270
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0843fd82-8c07-4d5f-ac6f-08da28dfb30b
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0003.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4350
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+commit <711c7adc4687> ("drm: exynos: dsi: Use drm panel_bridge API")
+added devm_drm_of_get_bridge for looking up if child node has panel
+or bridge.
 
+However commit <b089c0a9b14c> ("Revert "drm: of: Lookup if child node
+has panel or bridge") has reverted panel or bridge child node lookup
+from devm_drm_of_get_bridge which eventually failed to find the DSI
+devices in exynos drm dsi driver.
 
-On 4/27/22 17:58, Krzysztof Kozlowski wrote:
-> pl330 DMA controller bindings documented 'dma-channels' and
-> 'dma-requests' properties (without leading hash sign), so fix the DTS to
-> match the bindings.
-> 
-> Reported-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   arch/arm/boot/dts/zynq-7000.dtsi | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/zynq-7000.dtsi b/arch/arm/boot/dts/zynq-7000.dtsi
-> index 47c2a4b14c06..40c60a2b6d2c 100644
-> --- a/arch/arm/boot/dts/zynq-7000.dtsi
-> +++ b/arch/arm/boot/dts/zynq-7000.dtsi
-> @@ -343,8 +343,8 @@ dmac_s: dmac@f8003000 {
->   			             <0 40 4>, <0 41 4>,
->   			             <0 42 4>, <0 43 4>;
->   			#dma-cells = <1>;
-> -			#dma-channels = <8>;
-> -			#dma-requests = <4>;
-> +			dma-channels = <8>;
-> +			dma-requests = <4>;
->   			clocks = <&clkc 27>;
->   			clock-names = "apb_pclk";
->   		};
+So, use the conventional child panel bridge lookup helpers like it
+does before.
 
-Acked-by: Michal Simek <michal.simek@amd.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Thanks,
-Michal
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index f067c86b0b12..ec673223d6b7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -25,6 +25,7 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_mipi_dsi.h>
++#include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+@@ -1451,9 +1452,18 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 	struct device *dev = dsi->dev;
+ 	struct drm_encoder *encoder = &dsi->encoder;
+ 	struct drm_device *drm = encoder->dev;
++	struct drm_panel *panel;
+ 	int ret;
+ 
+-	dsi->out_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
++	panel = of_drm_find_panel(device->dev.of_node);
++	if (!IS_ERR(panel)) {
++		dsi->out_bridge = devm_drm_panel_bridge_add(dev, panel);
++	} else {
++		dsi->out_bridge = of_drm_find_bridge(device->dev.of_node);
++		if (!dsi->out_bridge)
++			dsi->out_bridge = ERR_PTR(-EINVAL);
++	}
++
+ 	if (IS_ERR(dsi->out_bridge)) {
+ 		ret = PTR_ERR(dsi->out_bridge);
+ 		DRM_DEV_ERROR(dev, "failed to find the bridge: %d\n", ret);
+-- 
+2.25.1
+
