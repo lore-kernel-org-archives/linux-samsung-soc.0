@@ -2,156 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C405C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 12:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D0BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 13:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346064AbiD1MRm (ORCPT
+        id S1347253AbiD1Ngb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 08:17:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33580 "EHLO
+        Thu, 28 Apr 2022 09:36:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346059AbiD1MRi (ORCPT
+        with ESMTP id S1347245AbiD1Nga (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 08:17:38 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610B6ADD59
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 05:14:23 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id D77FF5C012B;
-        Thu, 28 Apr 2022 08:14:20 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 28 Apr 2022 08:14:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1651148060; x=1651234460; bh=BuvGzV88SC
-        mh1JFEdrv7+gxKbeg4HVTmRcYTbtYYKR0=; b=OvUiA324eN4kWPK0Pel/N6L4Gw
-        VGeFuxFV65atQJ0bCJPJIwr4Pa7joTXptvJhz6lNdkRjORgFZKeaS+kl1Mxm+TlO
-        lAUYfYt0orEgwSPRiKGO6Xkr6e5JyH+Pcii4NlFHJg5P/DuLKdOJ4FoS/4Fi7dzR
-        zTR5veXo++UOqSWKjEeFgIOBN1rfA21Am+0EwIyEyRfipzOp6svGj5uZpS84tD+3
-        YXZI1Sg/WeDDHDyC57vDUNy2h7Sgi06e0KZbbo4gesqlJd4dBaop1zRIkr9sBIQw
-        BUNQcQH10JG1l29mHKhpRyp2eGrFDJXiZE1yj4MglaNiF6JjbVtbpzyYUwBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1651148060; x=
-        1651234460; bh=BuvGzV88SCmh1JFEdrv7+gxKbeg4HVTmRcYTbtYYKR0=; b=Z
-        3Coe7BOTXgdcwRHxVQZcd796M5GEGKx0pMDHQPEc31MnGDLbu1oleTYzEEwZhw5V
-        jpREeQE3+QSOEoyM1ZHnlFLTy7BUBPItvjfHl/q0Uz+MMNtndSYnp7YkDqf10PjN
-        rb00FWJyjIopLH/RlJ5BSGCXf9vZvfjGgMXMGPqw+jssfJPQjaTbmJhoM/rFTZp6
-        mMiiCKjQfRX7jLFwXbBdVvIH1beBJvR7+yu8jwp644vr93TudlN8CiaPPZ5gVksT
-        XLG8sn8YjD+51zdhDcS0sHoHO7S2cV+10z8oxgM/VU6e4OKFXfp4sK+X977Ip5x2
-        gSJ307j+Uce0RBtc24ixQ==
-X-ME-Sender: <xms:HIVqYuLVmxPJLTS3qrjP_qX9JDZuQWQP2jpEXfV8Pkx4ZHmXqwyWdQ>
-    <xme:HIVqYmI50csnmxTeztRV-EeEr_ry7aswwqa8PF2PCIEp_ywJhnRUM88VyPrebK2Oe
-    h37yAz2R_IUdWq_P4A>
-X-ME-Received: <xmr:HIVqYuvSW5uZNDzXuCR_XP6wYIzuQT_CAnGOueJQZfs-TRsTUcD9b0D8JsL_E1GA0qSY-KNJgHYty01l8Z1xKKxw3VlvAOZlqHz0qQI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejgdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepteefffefgfektdefgfeludfgtdejfeejvddttdekteeiffejvdfgheehfffh
-    vedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:HIVqYjZcHyWi1Qc5_AB_yivaD51rmRl6dzUEhdHqPlINT4csAK5wEA>
-    <xmx:HIVqYlaLPg0TEwT4sbpzst4m2qNGeP772qFc7DO9x5rrLqYjUL-B_w>
-    <xmx:HIVqYvAz_1xQChC4qfnqaES_-hmF8fh7oXS3dMwrdVxzUIo2PFGx_Q>
-    <xmx:HIVqYkW-XLuQ4utsGUmv6N1fIHWMi7P-xWYHpoNT7s8ZILSKYqv8Lg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Apr 2022 08:14:19 -0400 (EDT)
-Date:   Thu, 28 Apr 2022 14:14:17 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Jagan Teki <jagan@amarulasolutions.com>
+        Thu, 28 Apr 2022 09:36:30 -0400
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B914C36322;
+        Thu, 28 Apr 2022 06:33:15 -0700 (PDT)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-deb9295679so5152508fac.6;
+        Thu, 28 Apr 2022 06:33:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MkPYC4wT6c/VEzdCj0wFf0XUJgHVgHaxvf4ri5zul6g=;
+        b=RcZtELW2TcWDRKSRKXL4rsuZjl//w0sXHcz4x8N1xAf/r5Sgvl6vDlIWOYEUAA/A7e
+         EflF8wvwYREF9zLrFJDrsMWH4P105CviJsV6VhoRhneejW+z/f05PCZpWxfLlibiTz+k
+         vf26WpkgR4/Ij6XNZ69nZbxmy7Fhrq0O4q8DMcLdkieesv6t/wGSrsnq3D46pnHMENqg
+         c840KqJorlw7QHJaH5I4Q4E842DDgZFWI6kRBz1gn5U9CLP8tE4SbRlPZmToFDgKzdx6
+         e1D9bcRQMb7i+Eg9t0MB4Y2G/9yHBOS8aggQ7TDi7W/xKZltQ5L38KOGwX+lkFRRGaMA
+         Szsg==
+X-Gm-Message-State: AOAM533YFPEyRItYvcta+DxKasXsgWamtl46/IRjcbFzBhoZCxi8ew1E
+        iWdatBeSqBByqHffkLxzmQ==
+X-Google-Smtp-Source: ABdhPJyyg4xxehRJ6S6u/e8qGxKkazJCdf8F+SPH8Hd67CeOr+MmYpGdtq1tiHMic/2BoR0ZYp2jMQ==
+X-Received: by 2002:a05:6870:2187:b0:e9:7872:c7f6 with SMTP id l7-20020a056870218700b000e97872c7f6mr4563491oae.257.1651152795039;
+        Thu, 28 Apr 2022 06:33:15 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q22-20020a056870e89600b000e686d13895sm1819310oan.47.2022.04.28.06.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 06:33:14 -0700 (PDT)
+Received: (nullmailer pid 2104457 invoked by uid 1000);
+        Thu, 28 Apr 2022 13:33:13 -0000
+Date:   Thu, 28 Apr 2022 08:33:13 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH] drm: exynos: dsi: Use child panel or bridge find helpers
-Message-ID: <20220428121417.74guaowmzrh7pc2f@houat>
-References: <20220428094808.782938-1-jagan@amarulasolutions.com>
+        devicetree@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Liviu Dudau <liviu.dudau@arm.com>, Ray Jui <rjui@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 08/10] ARM: dts: exynos: use proper
+ 'dma-channels/requests' properties
+Message-ID: <YmqXmTau/YbZjrrn@robh.at.kernel.org>
+References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
+ <CGME20220427160347eucas1p23ce51e0fb49160d437961d98fd682c28@eucas1p2.samsung.com>
+ <20220427155840.596535-9-krzysztof.kozlowski@linaro.org>
+ <5eeac2a0-4293-675e-9dc2-25ed8ab3fb8f@samsung.com>
+ <6981f93a-ef01-6ba0-4451-26526372d666@linaro.org>
+ <05c908ce-217f-6938-6745-7405ac39d8ea@samsung.com>
+ <1399774c-f188-81f1-4d15-367b9d0e4a59@linaro.org>
+ <99c80fb6-c6cc-9370-b93d-ed736c7f2192@samsung.com>
+ <813bd5f2-38b6-9642-6993-94ad78f5c08a@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bxqf4eu4sf3wkxie"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220428094808.782938-1-jagan@amarulasolutions.com>
+In-Reply-To: <813bd5f2-38b6-9642-6993-94ad78f5c08a@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Apr 28, 2022 at 12:09:02PM +0200, Krzysztof Kozlowski wrote:
+> On 28/04/2022 12:05, Marek Szyprowski wrote:
+> >>>>> I also don't see any code that would read those properties. IMHO they
+> >>>>> should be simply removed at all, at least for the PL330 related nodes.
+> >>>> In current Linux implementation they indeed are not used. Nothing parses
+> >>>> them. However:
+> >>>> 1. They describe (hopefully correct) the hardware.
+> >>>> 2. They might be used by other implementations of pl330 driver.
+> >>>>
+> >>>> I would not remove them from existing sources, but indeed maybe there is
+> >>>> no need to add for new files.
+> >>> What's the point in having dt properties duplicating data that might be
+> >>> read from the driver registers?
+> >> Hm, indeed, there is no point in this. Since they are read from
+> >> registers, what was the idea behind in commit 42cf20980cde?
+> > 
+> > #dma-cells is indeed required, but the rest seems to be the cargo-cult 
+> > of some kind.
+> 
+> Rob,
+> 
+> Any guidance from your side? Is there any benefit in describing the
+> hadrware (dma-channels/dma-requests) if the same value can be read from
+> registers?
 
---bxqf4eu4sf3wkxie
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Drop the properties. They should only be an override if ever needed.
 
-On Thu, Apr 28, 2022 at 03:18:08PM +0530, Jagan Teki wrote:
-> commit <711c7adc4687> ("drm: exynos: dsi: Use drm panel_bridge API")
-> added devm_drm_of_get_bridge for looking up if child node has panel
-> or bridge.
->=20
-> However commit <b089c0a9b14c> ("Revert "drm: of: Lookup if child node
-> has panel or bridge") has reverted panel or bridge child node lookup
-> from devm_drm_of_get_bridge which eventually failed to find the DSI
-> devices in exynos drm dsi driver.
->=20
-> So, use the conventional child panel bridge lookup helpers like it
-> does before.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_dsi.c
-> index f067c86b0b12..ec673223d6b7 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -25,6 +25,7 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_panel.h>
->  #include <drm/drm_print.h>
->  #include <drm/drm_probe_helper.h>
->  #include <drm/drm_simple_kms_helper.h>
-> @@ -1451,9 +1452,18 @@ static int exynos_dsi_host_attach(struct mipi_dsi_=
-host *host,
->  	struct device *dev =3D dsi->dev;
->  	struct drm_encoder *encoder =3D &dsi->encoder;
->  	struct drm_device *drm =3D encoder->dev;
-> +	struct drm_panel *panel;
->  	int ret;
-> =20
-> -	dsi->out_bridge =3D devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
-> +	panel =3D of_drm_find_panel(device->dev.of_node);
-> +	if (!IS_ERR(panel)) {
-> +		dsi->out_bridge =3D devm_drm_panel_bridge_add(dev, panel);
-> +	} else {
-> +		dsi->out_bridge =3D of_drm_find_bridge(device->dev.of_node);
-> +		if (!dsi->out_bridge)
-> +			dsi->out_bridge =3D ERR_PTR(-EINVAL);
-> +	}
-> +
-
-We should just revert 711c7adc4687 entirely (and make it very explicit
-in the commit log). The out_bridge lifetime is completely screwed-up in
-that patch now. If there's a panel it will be managed, but it's not if
-there's a bridge.
-
-Maxime
-
---bxqf4eu4sf3wkxie
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYmqFGQAKCRDj7w1vZxhR
-xeOZAQC4mSLIsmmR1XPywwTzczr2htIO3YhcmsM6Lp5uA2Bg/AEA40Joh0qR3g7y
-2fwdr9kzbD0rXuZ67316kBlqIGNDOQU=
-=QLoJ
------END PGP SIGNATURE-----
-
---bxqf4eu4sf3wkxie--
+Rob
