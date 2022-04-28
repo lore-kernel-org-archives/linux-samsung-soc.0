@@ -2,173 +2,128 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CE1C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 10:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1359AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 10:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244724AbiD1KrO (ORCPT
+        id S232140AbiD1Ksh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 06:47:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59142 "EHLO
+        Thu, 28 Apr 2022 06:48:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233870AbiD1KrC (ORCPT
+        with ESMTP id S230122AbiD1Ksf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 06:47:02 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141C186E14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:43:45 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220428104343euoutp024628d0f63ca12d7beef43126e2a40f73~qCXfVzuem0562905629euoutp02e
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 10:43:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220428104343euoutp024628d0f63ca12d7beef43126e2a40f73~qCXfVzuem0562905629euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651142623;
-        bh=tll8Rq1cOZaova2yjcZmkl23SUCnnMy91esfSOJ+DO4=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=tK9FG0aSr2V20zA2il7iEJHw6sgL61k8VrCWqhuu6/Oz9Ndh+fk3ambACoMINFydx
-         fX4FSHggiPV/6S+LaMTQ04rItwADATrDNtswvvzBaKhDGOGUu8pYuDJKRWdclh9T6L
-         QEIa5BWonFrNr+ZVpSRW7Rl6x+ygO5iIxSluUo3U=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220428104343eucas1p1adcf0acd6963dc4f809edf4e48857a8d~qCXfMpBWi1566815668eucas1p1F;
-        Thu, 28 Apr 2022 10:43:43 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 67.E0.09887.FDF6A626; Thu, 28
-        Apr 2022 11:43:43 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220428104343eucas1p1338eded8d1319afbb154aa6f094df817~qCXexa12H0911509115eucas1p19;
-        Thu, 28 Apr 2022 10:43:43 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220428104343eusmtrp2b22d9fa7283790c70ab58fda32babfd4~qCXewc1Nm0452304523eusmtrp2E;
-        Thu, 28 Apr 2022 10:43:43 +0000 (GMT)
-X-AuditID: cbfec7f4-471ff7000000269f-29-626a6fdf86dc
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 34.17.09404.EDF6A626; Thu, 28
-        Apr 2022 11:43:42 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220428104342eusmtip10c90c10c97459b459ce50e33b1e3c115~qCXeRX5mr0253002530eusmtip1R;
-        Thu, 28 Apr 2022 10:43:42 +0000 (GMT)
-Message-ID: <9db6de88-dfe0-79af-cb1c-eb996e297f3d@samsung.com>
-Date:   Thu, 28 Apr 2022 12:43:42 +0200
+        Thu, 28 Apr 2022 06:48:35 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB9F890BD
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:45:21 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id l18so8702567ejc.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=cYKCRoREjH87n5LGj1ImFAnKPWrOHAXKmxpNcNNNnIw=;
+        b=l17YCFMxKiwjEr5HZ0HPvJ9Lp/No3mKPtEwmSTNmRmgT2RGTJcYSTwyW3ZAGFxNhhG
+         hemeitu4DciYBdWDTVfpRkaS4x14zdyI4L6NtXH1TBAWKHDN9AyxE/u3/GlKo2LuRr8S
+         R5kWe+WsFQl6l1GEXZamWspcggud4YW1AHazmNflTGkpcSZN2UwIGJ457pndK0rlZbk5
+         bDtLeUKFu+7YurGBdZ2t+SrjRzkoneO4541QY4RHWSC+7E2Bm+EVDy+YyF8Y40k0FiJZ
+         UT+6IDNuGkq8AQRkGQh4GZGA6YYifsOo8ZX1qcpZWS09L30vH/rRXx09o4OVFllVV0xL
+         t3GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=cYKCRoREjH87n5LGj1ImFAnKPWrOHAXKmxpNcNNNnIw=;
+        b=xaWuWORQDA1SXJ8hxGpo8ErBR5yV6d0XsW1hBu01ivD6TRCOJfDN0827fuANOcUU4H
+         5fDkUIHKAg4aPVYBgzsrvoTOemHJJi4mwT8nfl+nhtQhYybhqt9jteUrJb6dt4cbqr49
+         HzvfTEsiSVO8aqCvoXI8NsvtIeZzaz1ZjzAFyLkR7D2LmLei5xQonRp6dYjGRvkeLAHI
+         kj6EARBncTC0TLnlI8NPO+ifDY8URUG+HjqN1lFAH/QBMm1dpceQxzCChO653oYCENVG
+         taq3xBxB0tBcXEdINEsEtrUVOcjS5vRlHoOaXzyeN4brzQhpv9MnXRUKWVS0FmdxvEFA
+         s8hg==
+X-Gm-Message-State: AOAM530fK6dYU9nSpkMLwdDyW9MOBl+AcpCvMUg0CYJ66mdCumwyFaMa
+        jRlEk+97RmLhFwYY8hPCzOPJPA==
+X-Google-Smtp-Source: ABdhPJyp6f5iGveZCxbZ+tLf8F4Iv7cCwecumgh+r4Mv003t4J9QnoHQJbOmBYZwweCyrVxme8/N/g==
+X-Received: by 2002:a17:907:7ba3:b0:6ef:f9ca:f2da with SMTP id ne35-20020a1709077ba300b006eff9caf2damr20181561ejc.634.1651142719668;
+        Thu, 28 Apr 2022 03:45:19 -0700 (PDT)
+Received: from [192.168.0.161] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id h7-20020a1709060f4700b006e8d0746969sm8053221ejj.222.2022.04.28.03.45.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Apr 2022 03:45:19 -0700 (PDT)
+Message-ID: <d8448fa4-3cec-db1c-c132-d875cab61572@linaro.org>
+Date:   Thu, 28 Apr 2022 12:45:17 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.8.0
-Subject: Re: [PATCH] drm: exynos: dsi: Use child panel or bridge find
- helpers
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 04/10] arm64: dts: juno: use proper
+ 'dma-channels/requests' properties
 Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Inki Dae <inki.dae@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc:     linux-amarula@amarulasolutions.com
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220428094808.782938-1-jagan@amarulasolutions.com>
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>
+References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
+ <20220427155840.596535-5-krzysztof.kozlowski@linaro.org>
+ <1d1aae6e-50db-d6db-9727-62f9c2d1ca6b@arm.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1d1aae6e-50db-d6db-9727-62f9c2d1ca6b@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsWy7djP87r387OSDOY8lLG48vU9m8Wk+xNY
-        LL5smsBmsXzCPjaLGef3MVnM+PGP0YHNY+3H+6wed86dZ/O4332cyaNvyypGj8+b5AJYo7hs
-        UlJzMstSi/TtErgy7p58xlTwSbDi2KRfbA2Mj/m6GDk5JARMJFZ838rUxcjFISSwglFiys7r
-        7BDOF0aJNVdOM0M4nxkltszbwALTMuHrFKiq5YwSBzd2sEA4HxklGmetA2rh4OAVsJPYej4T
-        pIFFQFVi0sHfTCA2r4CgxMmZT8AGiQokSczddw+sXFjAX+LXcS+QMLOAuMStJ/PBThIR2A50
-        UusvJoiEmsSSjo9gNpuAoUTX2y42EJtTwFHibVc3C0SNvMT2t3PArpYQuMMhMflkP9TVLhIb
-        z89ihLCFJV4d38IOYctI/N8Jso0DyM6X+DvDGCJcIXHt9RpmCNta4s65X2wgJcwCmhLrd+lD
-        hB0lmo7MYIHo5JO48VYQ4gI+iUnbpjNDhHklOtqEIKrVJGYdXwe38+CFS8wTGJVmIYXJLCTP
-        z0LyyyyEvQsYWVYxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEJp3T/45/2cG4/NVHvUOM
-        TByMhxglOJiVRHi/7M5IEuJNSaysSi3Kjy8qzUktPsQozcGiJM6bnLkhUUggPbEkNTs1tSC1
-        CCbLxMEp1cAkn29+cYVbSoBmws207XIC3Ktl4l3+6q6OuXvR2Oe19wbHt8fWB6wu4Qs7FRp7
-        61PzHreOWQfXFh3O0FoevVa4rOaO7jzhqmjhK3t97NX7GOTqn1x9tHfa47dPJ11MVtKqmz9n
-        7qXpm49/Pj9Fc/I0DzeHGjmftXc5q+tW/TLi7y2Rk5m8dbvkhRPPZulPt9+r6HCRKeMzh0hm
-        4LL9q8UPx/yZkrj219rM2r9HEj8d3nuqddknT/Evi8ysLvv7TndLK5jMtfifjL2Uq4P1zrPm
-        /1M0A/YsWq3NdIbb8Z56W//FdYcidZoO8D824vh0eVOdtLnCyR09tRd3lJySKlujybbBTZeJ
-        sfFdZ367yw9RJZbijERDLeai4kQA9Vk+p6kDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsVy+t/xu7r38rOSDBZ8s7S48vU9m8Wk+xNY
-        LL5smsBmsXzCPjaLGef3MVnM+PGP0YHNY+3H+6wed86dZ/O4332cyaNvyypGj8+b5AJYo/Rs
-        ivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQy7p58xlTw
-        SbDi2KRfbA2Mj/m6GDk5JARMJCZ8ncLexcjFISSwlFHi7c3FrBAJGYmT0xqgbGGJP9e62CCK
-        3jNKXJm2hamLkYODV8BOYuv5TJAaFgFViUkHfzOB2LwCghInZz5hAbFFBZIkXmx7zghiCwv4
-        SlzYPJ8NxGYWEJe49WQ+E8hMEYHtjBInli9hgkioSSzp+MgEsWwKo8S8aa/BOtgEDCW63naB
-        2ZwCjhJvu7pZIBrMJLq2djFC2PIS29/OYZ7AKDQLySGzkCychaRlFpKWBYwsqxhFUkuLc9Nz
-        i430ihNzi0vz0vWS83M3MQKjbduxn1t2MK589VHvECMTB+MhRgkOZiUR3i+7M5KEeFMSK6tS
-        i/Lji0pzUosPMZoCQ2Mis5Rocj4w3vNK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NT
-        C1KLYPqYODilGpj4VCasflp3aGVps557idqajrNtnZ94tHbJy69YV/1yQeOyE/e4qkOWv0n4
-        L+ubbHHDLk7CPfykrm8GM99x60u/ZDYcLPA20Yt+Vu2lnaFwprbH5Pf15fvfxfUePL8icDJn
-        yrdjBno2u8w2yizZffBLqTivz6Edsrs91tfpBmgUr/tpp3H1w932V692r2RVOt8T1VFXaTwv
-        kY/rK1eFyqalU4Rehp99+3tW+Enf52fvfKw483Ly6RVH5D6rdKV2X4pf1HKC60hk44vNj+et
-        Vtj9wvDqlO6O7jYPVaFztkFVKo9P3fPatFtR59S9Ey17TnEJqjxnvF/H/vnvluZz64sK59e4
-        /vo/6fCNo6enGvXdU2Ipzkg01GIuKk4EACO61s4/AwAA
-X-CMS-MailID: 20220428104343eucas1p1338eded8d1319afbb154aa6f094df817
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220428094854eucas1p2c7252b3e6aba5c55a25aef398e8517d4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220428094854eucas1p2c7252b3e6aba5c55a25aef398e8517d4
-References: <CGME20220428094854eucas1p2c7252b3e6aba5c55a25aef398e8517d4@eucas1p2.samsung.com>
-        <20220428094808.782938-1-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28.04.2022 11:48, Jagan Teki wrote:
-> commit <711c7adc4687> ("drm: exynos: dsi: Use drm panel_bridge API")
-> added devm_drm_of_get_bridge for looking up if child node has panel
-> or bridge.
->
-> However commit <b089c0a9b14c> ("Revert "drm: of: Lookup if child node
-> has panel or bridge") has reverted panel or bridge child node lookup
-> from devm_drm_of_get_bridge which eventually failed to find the DSI
-> devices in exynos drm dsi driver.
->
-> So, use the conventional child panel bridge lookup helpers like it
-> does before.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+On 28/04/2022 12:43, Robin Murphy wrote:
+> On 2022-04-27 16:58, Krzysztof Kozlowski wrote:
+>> pl330 DMA controller bindings documented 'dma-channels' and
+>> 'dma-requests' properties (without leading hash sign), so fix the DTS to
+>> match the bindings.
+>>
+>> Reported-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/arm/juno-base.dtsi | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
+>> index 4f40a5c8f565..96ef0ddc0b2d 100644
+>> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
+>> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
+>> @@ -829,8 +829,8 @@ dma-controller@7ff00000 {
+>>   		compatible = "arm,pl330", "arm,primecell";
+>>   		reg = <0x0 0x7ff00000 0 0x1000>;
+>>   		#dma-cells = <1>;
+>> -		#dma-channels = <8>;
+>> -		#dma-requests = <32>;
+>> +		dma-channels = <8>;
+>> +		dma-requests = <32>;
+> 
+> BTW, this has always been wrong - Juno is configured with only 8 request 
+> interfaces. But then it's moot anyway since PL330 has an ID register for 
+> this stuff[1], so the DT properties aren't used by Linux, and shouldn't 
+> be needed in general.
 
-This restores Exynos DSI driver operation in linux-next after the 
-mentioned commits went via drm-misc-fixes tree.
+Marek also raised the point [1] that these properties are useless for
+PL330 because the actual data is read from the device registers.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+I understand you are also supporting the idea of removing them from
+pl330 device nodes?
 
-> ---
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index f067c86b0b12..ec673223d6b7 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -25,6 +25,7 @@
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_bridge.h>
->   #include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_panel.h>
->   #include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
->   #include <drm/drm_simple_kms_helper.h>
-> @@ -1451,9 +1452,18 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
->   	struct device *dev = dsi->dev;
->   	struct drm_encoder *encoder = &dsi->encoder;
->   	struct drm_device *drm = encoder->dev;
-> +	struct drm_panel *panel;
->   	int ret;
->   
-> -	dsi->out_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
-> +	panel = of_drm_find_panel(device->dev.of_node);
-> +	if (!IS_ERR(panel)) {
-> +		dsi->out_bridge = devm_drm_panel_bridge_add(dev, panel);
-> +	} else {
-> +		dsi->out_bridge = of_drm_find_bridge(device->dev.of_node);
-> +		if (!dsi->out_bridge)
-> +			dsi->out_bridge = ERR_PTR(-EINVAL);
-> +	}
-> +
->   	if (IS_ERR(dsi->out_bridge)) {
->   		ret = PTR_ERR(dsi->out_bridge);
->   		DRM_DEV_ERROR(dev, "failed to find the bridge: %d\n", ret);
+[1]
+https://lore.kernel.org/linux-devicetree/20220427155840.596535-1-krzysztof.kozlowski@linaro.org/T/#mf108b8c9f0d513ebc6e381775e3c6887b5c2fe31
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best regards,
+Krzysztof
