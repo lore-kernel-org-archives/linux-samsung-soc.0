@@ -2,128 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1359AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 10:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C405C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 Apr 2022 12:14:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232140AbiD1Ksh (ORCPT
+        id S1346064AbiD1MRm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 06:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
+        Thu, 28 Apr 2022 08:17:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbiD1Ksf (ORCPT
+        with ESMTP id S1346059AbiD1MRi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 Apr 2022 06:48:35 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB9F890BD
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:45:21 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id l18so8702567ejc.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 03:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cYKCRoREjH87n5LGj1ImFAnKPWrOHAXKmxpNcNNNnIw=;
-        b=l17YCFMxKiwjEr5HZ0HPvJ9Lp/No3mKPtEwmSTNmRmgT2RGTJcYSTwyW3ZAGFxNhhG
-         hemeitu4DciYBdWDTVfpRkaS4x14zdyI4L6NtXH1TBAWKHDN9AyxE/u3/GlKo2LuRr8S
-         R5kWe+WsFQl6l1GEXZamWspcggud4YW1AHazmNflTGkpcSZN2UwIGJ457pndK0rlZbk5
-         bDtLeUKFu+7YurGBdZ2t+SrjRzkoneO4541QY4RHWSC+7E2Bm+EVDy+YyF8Y40k0FiJZ
-         UT+6IDNuGkq8AQRkGQh4GZGA6YYifsOo8ZX1qcpZWS09L30vH/rRXx09o4OVFllVV0xL
-         t3GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=cYKCRoREjH87n5LGj1ImFAnKPWrOHAXKmxpNcNNNnIw=;
-        b=xaWuWORQDA1SXJ8hxGpo8ErBR5yV6d0XsW1hBu01ivD6TRCOJfDN0827fuANOcUU4H
-         5fDkUIHKAg4aPVYBgzsrvoTOemHJJi4mwT8nfl+nhtQhYybhqt9jteUrJb6dt4cbqr49
-         HzvfTEsiSVO8aqCvoXI8NsvtIeZzaz1ZjzAFyLkR7D2LmLei5xQonRp6dYjGRvkeLAHI
-         kj6EARBncTC0TLnlI8NPO+ifDY8URUG+HjqN1lFAH/QBMm1dpceQxzCChO653oYCENVG
-         taq3xBxB0tBcXEdINEsEtrUVOcjS5vRlHoOaXzyeN4brzQhpv9MnXRUKWVS0FmdxvEFA
-         s8hg==
-X-Gm-Message-State: AOAM530fK6dYU9nSpkMLwdDyW9MOBl+AcpCvMUg0CYJ66mdCumwyFaMa
-        jRlEk+97RmLhFwYY8hPCzOPJPA==
-X-Google-Smtp-Source: ABdhPJyp6f5iGveZCxbZ+tLf8F4Iv7cCwecumgh+r4Mv003t4J9QnoHQJbOmBYZwweCyrVxme8/N/g==
-X-Received: by 2002:a17:907:7ba3:b0:6ef:f9ca:f2da with SMTP id ne35-20020a1709077ba300b006eff9caf2damr20181561ejc.634.1651142719668;
-        Thu, 28 Apr 2022 03:45:19 -0700 (PDT)
-Received: from [192.168.0.161] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id h7-20020a1709060f4700b006e8d0746969sm8053221ejj.222.2022.04.28.03.45.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Apr 2022 03:45:19 -0700 (PDT)
-Message-ID: <d8448fa4-3cec-db1c-c132-d875cab61572@linaro.org>
-Date:   Thu, 28 Apr 2022 12:45:17 +0200
+        Thu, 28 Apr 2022 08:17:38 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610B6ADD59
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Apr 2022 05:14:23 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id D77FF5C012B;
+        Thu, 28 Apr 2022 08:14:20 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 28 Apr 2022 08:14:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1651148060; x=1651234460; bh=BuvGzV88SC
+        mh1JFEdrv7+gxKbeg4HVTmRcYTbtYYKR0=; b=OvUiA324eN4kWPK0Pel/N6L4Gw
+        VGeFuxFV65atQJ0bCJPJIwr4Pa7joTXptvJhz6lNdkRjORgFZKeaS+kl1Mxm+TlO
+        lAUYfYt0orEgwSPRiKGO6Xkr6e5JyH+Pcii4NlFHJg5P/DuLKdOJ4FoS/4Fi7dzR
+        zTR5veXo++UOqSWKjEeFgIOBN1rfA21Am+0EwIyEyRfipzOp6svGj5uZpS84tD+3
+        YXZI1Sg/WeDDHDyC57vDUNy2h7Sgi06e0KZbbo4gesqlJd4dBaop1zRIkr9sBIQw
+        BUNQcQH10JG1l29mHKhpRyp2eGrFDJXiZE1yj4MglaNiF6JjbVtbpzyYUwBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1651148060; x=
+        1651234460; bh=BuvGzV88SCmh1JFEdrv7+gxKbeg4HVTmRcYTbtYYKR0=; b=Z
+        3Coe7BOTXgdcwRHxVQZcd796M5GEGKx0pMDHQPEc31MnGDLbu1oleTYzEEwZhw5V
+        jpREeQE3+QSOEoyM1ZHnlFLTy7BUBPItvjfHl/q0Uz+MMNtndSYnp7YkDqf10PjN
+        rb00FWJyjIopLH/RlJ5BSGCXf9vZvfjGgMXMGPqw+jssfJPQjaTbmJhoM/rFTZp6
+        mMiiCKjQfRX7jLFwXbBdVvIH1beBJvR7+yu8jwp644vr93TudlN8CiaPPZ5gVksT
+        XLG8sn8YjD+51zdhDcS0sHoHO7S2cV+10z8oxgM/VU6e4OKFXfp4sK+X977Ip5x2
+        gSJ307j+Uce0RBtc24ixQ==
+X-ME-Sender: <xms:HIVqYuLVmxPJLTS3qrjP_qX9JDZuQWQP2jpEXfV8Pkx4ZHmXqwyWdQ>
+    <xme:HIVqYmI50csnmxTeztRV-EeEr_ry7aswwqa8PF2PCIEp_ywJhnRUM88VyPrebK2Oe
+    h37yAz2R_IUdWq_P4A>
+X-ME-Received: <xmr:HIVqYuvSW5uZNDzXuCR_XP6wYIzuQT_CAnGOueJQZfs-TRsTUcD9b0D8JsL_E1GA0qSY-KNJgHYty01l8Z1xKKxw3VlvAOZlqHz0qQI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejgdehtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepteefffefgfektdefgfeludfgtdejfeejvddttdekteeiffejvdfgheehfffh
+    vedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:HIVqYjZcHyWi1Qc5_AB_yivaD51rmRl6dzUEhdHqPlINT4csAK5wEA>
+    <xmx:HIVqYlaLPg0TEwT4sbpzst4m2qNGeP772qFc7DO9x5rrLqYjUL-B_w>
+    <xmx:HIVqYvAz_1xQChC4qfnqaES_-hmF8fh7oXS3dMwrdVxzUIo2PFGx_Q>
+    <xmx:HIVqYkW-XLuQ4utsGUmv6N1fIHWMi7P-xWYHpoNT7s8ZILSKYqv8Lg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Apr 2022 08:14:19 -0400 (EDT)
+Date:   Thu, 28 Apr 2022 14:14:17 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH] drm: exynos: dsi: Use child panel or bridge find helpers
+Message-ID: <20220428121417.74guaowmzrh7pc2f@houat>
+References: <20220428094808.782938-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 04/10] arm64: dts: juno: use proper
- 'dma-channels/requests' properties
-Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>
-References: <20220427155840.596535-1-krzysztof.kozlowski@linaro.org>
- <20220427155840.596535-5-krzysztof.kozlowski@linaro.org>
- <1d1aae6e-50db-d6db-9727-62f9c2d1ca6b@arm.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1d1aae6e-50db-d6db-9727-62f9c2d1ca6b@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bxqf4eu4sf3wkxie"
+Content-Disposition: inline
+In-Reply-To: <20220428094808.782938-1-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/04/2022 12:43, Robin Murphy wrote:
-> On 2022-04-27 16:58, Krzysztof Kozlowski wrote:
->> pl330 DMA controller bindings documented 'dma-channels' and
->> 'dma-requests' properties (without leading hash sign), so fix the DTS to
->> match the bindings.
->>
->> Reported-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>   arch/arm64/boot/dts/arm/juno-base.dtsi | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/arm/juno-base.dtsi b/arch/arm64/boot/dts/arm/juno-base.dtsi
->> index 4f40a5c8f565..96ef0ddc0b2d 100644
->> --- a/arch/arm64/boot/dts/arm/juno-base.dtsi
->> +++ b/arch/arm64/boot/dts/arm/juno-base.dtsi
->> @@ -829,8 +829,8 @@ dma-controller@7ff00000 {
->>   		compatible = "arm,pl330", "arm,primecell";
->>   		reg = <0x0 0x7ff00000 0 0x1000>;
->>   		#dma-cells = <1>;
->> -		#dma-channels = <8>;
->> -		#dma-requests = <32>;
->> +		dma-channels = <8>;
->> +		dma-requests = <32>;
-> 
-> BTW, this has always been wrong - Juno is configured with only 8 request 
-> interfaces. But then it's moot anyway since PL330 has an ID register for 
-> this stuff[1], so the DT properties aren't used by Linux, and shouldn't 
-> be needed in general.
 
-Marek also raised the point [1] that these properties are useless for
-PL330 because the actual data is read from the device registers.
+--bxqf4eu4sf3wkxie
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I understand you are also supporting the idea of removing them from
-pl330 device nodes?
+On Thu, Apr 28, 2022 at 03:18:08PM +0530, Jagan Teki wrote:
+> commit <711c7adc4687> ("drm: exynos: dsi: Use drm panel_bridge API")
+> added devm_drm_of_get_bridge for looking up if child node has panel
+> or bridge.
+>=20
+> However commit <b089c0a9b14c> ("Revert "drm: of: Lookup if child node
+> has panel or bridge") has reverted panel or bridge child node lookup
+> from devm_drm_of_get_bridge which eventually failed to find the DSI
+> devices in exynos drm dsi driver.
+>=20
+> So, use the conventional child panel bridge lookup helpers like it
+> does before.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_dsi.c
+> index f067c86b0b12..ec673223d6b7 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -25,6 +25,7 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_bridge.h>
+>  #include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_panel.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/drm_simple_kms_helper.h>
+> @@ -1451,9 +1452,18 @@ static int exynos_dsi_host_attach(struct mipi_dsi_=
+host *host,
+>  	struct device *dev =3D dsi->dev;
+>  	struct drm_encoder *encoder =3D &dsi->encoder;
+>  	struct drm_device *drm =3D encoder->dev;
+> +	struct drm_panel *panel;
+>  	int ret;
+> =20
+> -	dsi->out_bridge =3D devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
+> +	panel =3D of_drm_find_panel(device->dev.of_node);
+> +	if (!IS_ERR(panel)) {
+> +		dsi->out_bridge =3D devm_drm_panel_bridge_add(dev, panel);
+> +	} else {
+> +		dsi->out_bridge =3D of_drm_find_bridge(device->dev.of_node);
+> +		if (!dsi->out_bridge)
+> +			dsi->out_bridge =3D ERR_PTR(-EINVAL);
+> +	}
+> +
 
-[1]
-https://lore.kernel.org/linux-devicetree/20220427155840.596535-1-krzysztof.kozlowski@linaro.org/T/#mf108b8c9f0d513ebc6e381775e3c6887b5c2fe31
+We should just revert 711c7adc4687 entirely (and make it very explicit
+in the commit log). The out_bridge lifetime is completely screwed-up in
+that patch now. If there's a panel it will be managed, but it's not if
+there's a bridge.
 
-Best regards,
-Krzysztof
+Maxime
+
+--bxqf4eu4sf3wkxie
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYmqFGQAKCRDj7w1vZxhR
+xeOZAQC4mSLIsmmR1XPywwTzczr2htIO3YhcmsM6Lp5uA2Bg/AEA40Joh0qR3g7y
+2fwdr9kzbD0rXuZ67316kBlqIGNDOQU=
+=QLoJ
+-----END PGP SIGNATURE-----
+
+--bxqf4eu4sf3wkxie--
