@@ -2,131 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9579DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Apr 2022 09:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FE0C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 Apr 2022 12:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236114AbiD2Jnc (ORCPT
+        id S1346521AbiD3MWd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 05:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48736 "EHLO
+        Sat, 30 Apr 2022 08:22:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236487AbiD2Jna (ORCPT
+        with ESMTP id S230208AbiD3MWc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Apr 2022 05:43:30 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDF56175
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Apr 2022 02:40:13 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id be20so8391866edb.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Apr 2022 02:40:13 -0700 (PDT)
+        Sat, 30 Apr 2022 08:22:32 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720C3192A8
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Apr 2022 05:19:10 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id l18so19933110ejc.7
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Apr 2022 05:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wQ2UALvuYRSPgu0V8AOck6B5HmYCenVgKB78DwZPTwM=;
-        b=P7M2zfxVjN+5Wd8MumYafWJIMBGQ0Jc6nQZZS4Ge63LJncxEXgHQ36SOaRkLum/PnK
-         wrmfJI0E8VHoj6N1xEV7OwDo7oqIJkie9FcMbcneokGzkOxgiAXn6VvkoWAz7NVE5JjO
-         S+NtNVIsxxLkv4KkJntQteu+zi8lQ2CZLJkLs=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XJsO6zp5HIqeawhz+G48N6kCNBm5it1pr/8l1aJFgqo=;
+        b=rEsvm+OUkBzf7n+dcAoz7wZYN90YKp2szr8f5scR5xrjL19QVzOv5UPpohF5J9+qsc
+         gleUSf4Oi6ZpbSXAMmogWLatFTg9wDVWfD2YGrgcg8fAoCnY7v0cfWVvXBPDvdm8ON//
+         5jCVRUoVvTjjzb45cXzXT7C+O1H1GKV4R45ki822+gk4HaZ63mUl1MVGMoWFDbIW1oFP
+         +jhWcPt3S1d4NfPxF3jbaxECvMsL53vgOqZeezMM4LRe+dUVgnlNkZTvH9B05x0pp+PC
+         UT5/g75Y4g07IsZdc+0ZWX35XJ4HGkrt9T61HlxCuj4SqWleL1chJVJdFugoIT0S5YOr
+         mfJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wQ2UALvuYRSPgu0V8AOck6B5HmYCenVgKB78DwZPTwM=;
-        b=Bz6X1IDgeMP5B1zJwLbl3z3qufCkNF0CjqI6Nf7AKp2DqV8YCVShlXnXX215Cfs/7N
-         ZwD8aq5SWspRUHXpXhnB6LcZJF17HzZf2a3Bb5aslRV/82dG9C3nc8hZ27Lq/wOjeA5p
-         aTAyGsfXjsiXw02LciSTPCbTALb4pqGsbokUW3V5nnYWxtEFgJP8Cm6cwaAGFDTDCjDO
-         NEOoebDJyKmw8qynkiHVnYAHiaAmPI3l4xi0vrSWSccW3wG5v8YcDjss9DJ+RXNCcPE8
-         zuEtXeI+O7+DSvBZ6dF3yALPCFwEnAvQKJC68PQjMhEVj8i8S3ENRTXHQGdKnzB7J8LQ
-         X+hQ==
-X-Gm-Message-State: AOAM5309pNHV4oI13OKhL4NSxuMC+NDbEIa63rH7DZI9y7cOranvddWO
-        YUjOf6367TiDupxiSRj0gnq5JPb1piXUaIUdAndAmQ==
-X-Google-Smtp-Source: ABdhPJwFHiC8+9gGoQCOlqBd9O/JCWXoLXnjI9sNzpOY4Sn0Ab0tEfaKdoFaOZoZ0O20swi8/cgfutmRm3BLt3bIscU=
-X-Received: by 2002:a05:6402:2920:b0:425:d7c7:41f with SMTP id
- ee32-20020a056402292000b00425d7c7041fmr31226896edb.370.1651225211659; Fri, 29
- Apr 2022 02:40:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XJsO6zp5HIqeawhz+G48N6kCNBm5it1pr/8l1aJFgqo=;
+        b=4Fl9g6QzWg+8aUQgosKO3/StpAS83PcmkCL3PQMW4fXFB4V8Q19XughvG9MsLvXVIm
+         hZNptX5DUCu6U33x4oEI9FsMaZLgp537Y91Tu4pTPSwYzAqWIvuT3O+5aK/sl2sO45Yw
+         L7hwgHfC1D/8GTtJ779ifXv8SkvTCiODeOiLSjqD7eUoAVW+85Xhl2ZSpKLbYP3KZC17
+         xj/gGqTMeTTnAqlpjCkEviKonOe7Wfie01wKg3SClmvQ/a1R1ixODRqWzwpgm21kwWbR
+         FW6RZYGOVlC3VC46VjE/ikRwWBXd6VGNIvOsyyYW/dkGwh0wNJr+451BryX6FRz8GsNm
+         oy/A==
+X-Gm-Message-State: AOAM53381LeKrY7ojRkvmiLRn9JEw+l6abMfRe0a5hmR5b24AtfrEfYr
+        tfl1W0TQa0KVglR9MbH3CWXfHA==
+X-Google-Smtp-Source: ABdhPJyWPGFBnJrCEsH9QO9aQGlOnq7Q3CWlo0lHVjbvaNqUPfIs4wSMnVyk9G8eNfGDWui8KxSHTw==
+X-Received: by 2002:a17:906:3513:b0:6f3:a080:9f46 with SMTP id r19-20020a170906351300b006f3a0809f46mr3546347eja.466.1651321149041;
+        Sat, 30 Apr 2022 05:19:09 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id c26-20020a056402159a00b0042617ba63d1sm4059091edv.91.2022.04.30.05.19.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Apr 2022 05:19:08 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom Kernel Team <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 0/9] ARM/arm64: dts: drop useless 'dma-channels/requests' properties
+Date:   Sat, 30 Apr 2022 14:18:53 +0200
+Message-Id: <20220430121902.59895-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20220408162108.184583-1-jagan@amarulasolutions.com>
- <20220408162108.184583-11-jagan@amarulasolutions.com> <YlMeEqhkQ6HuCKFE@pendragon.ideasonboard.com>
-In-Reply-To: <YlMeEqhkQ6HuCKFE@pendragon.ideasonboard.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 29 Apr 2022 15:10:00 +0530
-Message-ID: <CAMty3ZDg9chHXv1ZBw86TePxFFFoobMGffFG1gN9btnfkUb5AQ@mail.gmail.com>
-Subject: Re: [PATCH 10/11] dt-bindings: display: exynos: dsim: Add NXP i.MX8MM support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Laurent,
+Hi,
 
-On Sun, Apr 10, 2022 at 11:42 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Jagan,
->
-> Thank you for the patch.
->
-> On Fri, Apr 08, 2022 at 09:51:07PM +0530, Jagan Teki wrote:
-> > Samsung MIPI DSIM bridge can also be found in i.MX8MM/i.MX8MN SoC.
-> >
-> > Add dt-bingings for it.
-> >
-> > v1:
-> > * new patch
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> > index be377786e8cd..5133d4d39190 100644
-> > --- a/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> > +++ b/Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt
-> > @@ -7,6 +7,7 @@ Required properties:
->
-> May I try and ask you to convert the DT bindings to YAML as part of this
-> series ? :-)
+Changes since v1
+================
+1. After discussion with Marek and Rob, drop the properties entirely instead of
+   fixing the names.
+2. Not adding acquired review tags because of that change.
+3. Drop mfd patch (applied).
 
-I thought the same and I did it for RFC
-https://patchwork.kernel.org/project/dri-devel/patch/20210704090230.26489-9-jagan@amarulasolutions.com/
+Description
+===========
+Rob reported [1] that many (all?) PL330 device nodes use wrong dma-channels and
+dma-requests properties.  The proper ones are without leading '#'.
 
-But, I'm thinking of sending a separate patch series for updating yaml
-as the existing binding is old that it has some properties need to
-fix.
+I guess everything started with 42cf20980cde ("ARM: dts: pl330: Add #dma-cells for
+generic dma binding support").
 
-Let me know if you are okay or not for it?
+Patches are independent and can be picked-up as is. Otherwise please ack and
+I'll push it to SoC.
 
->
-> >               "samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
-> >               "samsung,exynos5422-mipi-dsi" /* for Exynos5422/5800 SoCs */
-> >               "samsung,exynos5433-mipi-dsi" /* for Exynos5433 SoCs */
-> > +             "fsl,imx8mm-mipi-dsim" /* for i.MX8M Mini/Nano SoCs */
->
-> Should we have two different compatible strings for i.MX8MM and i.MX8MN
-> ?
+[1] https://lore.kernel.org/linux-devicetree/fedb56be-f275-aabb-cdf5-dbd394b8a7bd@linaro.org/T/#m6235f451045c337d70a62dc65eab9a716618550b
 
-Yes, MN is fallback to MM. I will update in next series or add it as
-part of yaml conversion series.
+Best regards,
+Krzysztof
 
-Thanks,
-Jagan.
+Krzysztof Kozlowski (9):
+  ARM: dts: zynq-7000: drop useless 'dma-channels/requests' properties
+  ARM: dts: socfpga: drop useless 'dma-channels/requests' properties
+  arm64: dts: stratix10/agilex: drop useless 'dma-channels/requests'
+    properties
+  arm64: dts: juno: drop useless 'dma-channels/requests' properties
+  arm64: dts: broadcom: drop useless 'dma-channels/requests' properties
+  ARM: dts: s5pv210: drop useless 'dma-channels/requests' properties
+  ARM: dts: exynos: drop useless 'dma-channels/requests' properties
+  arm64: dts: exynos: drop useless 'dma-channels/requests' properties
+  arm64: dts: fsd: drop useless 'dma-channels/requests' properties
+
+ arch/arm/boot/dts/exynos3250.dtsi                   |  4 ----
+ arch/arm/boot/dts/exynos4.dtsi                      |  6 ------
+ arch/arm/boot/dts/exynos4210-universal_c210.dts     |  2 --
+ arch/arm/boot/dts/exynos5250.dtsi                   |  8 --------
+ arch/arm/boot/dts/exynos5410.dtsi                   |  4 ----
+ arch/arm/boot/dts/exynos5420.dtsi                   | 10 ----------
+ arch/arm/boot/dts/s5pv210.dtsi                      |  6 ------
+ arch/arm/boot/dts/socfpga.dtsi                      |  2 --
+ arch/arm/boot/dts/socfpga_arria10.dtsi              |  2 --
+ arch/arm/boot/dts/zynq-7000.dtsi                    |  2 --
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi   |  2 --
+ arch/arm64/boot/dts/arm/juno-base.dtsi              |  2 --
+ arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi    |  2 --
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi |  2 --
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi          |  6 ------
+ arch/arm64/boot/dts/exynos/exynos7.dtsi             |  4 ----
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi       |  2 --
+ arch/arm64/boot/dts/tesla/fsd.dtsi                  |  8 --------
+ 18 files changed, 74 deletions(-)
+
+-- 
+2.32.0
+
