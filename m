@@ -2,121 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DB2C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 May 2022 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A539FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 May 2022 12:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233285AbiEBMFq (ORCPT
+        id S234127AbiEBMnS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 May 2022 08:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
+        Mon, 2 May 2022 08:43:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384837AbiEBMFq (ORCPT
+        with ESMTP id S233954AbiEBMnS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 May 2022 08:05:46 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4280213E3D
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 May 2022 05:02:16 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id i19so27273779eja.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 May 2022 05:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N75s0zlZ/grfCnjSSDgj4JMBZsdJ4ACb/MkzbjrMPK0=;
-        b=2C8SNpetrT95gaXxl4PKvpcPFXCNt7hD8Rkw5YSjWw75sN7WvDyWUE20xLW3aAc9JO
-         +Rpd1A4w/6YR6qfkgsBfZMH0F6RQdHGgbiN23YkPJE/o5615Hk1kScxhk67aaEydZvQx
-         gUr3gQznUpZQ8WULmMVrW9fmeTdhAmf3QZcN3dS3QMCCegj8D/mHFiyimgwqKQTXly2R
-         y9MfZ6hTC+1JrGkjf6Sm2dpq2JKqkbm1fjpGeLhulBvJZ+PnCzOMN926eNiC6p12WCZf
-         ppEczvZ3ho5OKyefWPj3empmDu2x4QGZClpsgJq5zBH85WlWvFaKr7hDQ4OpyfNpFc93
-         tt7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N75s0zlZ/grfCnjSSDgj4JMBZsdJ4ACb/MkzbjrMPK0=;
-        b=dTLM1AZG3YnFZjNQiD/0yV6h3e5ueHi6kcafrWMCtt4yQqW5hNck8yUfSZYAdNAfmZ
-         Cr7SpwzKHEPXzz9UFTaUqh5Shys3unzVIb+PQ3Ou5roiif6O2mVSU5Te7oI/he+Do0wy
-         lTkuYuee5eT8gphT4YmnrRsJ6IsHZrue3IJI/reUkkqDNVRz41EqPKBONKX0TWJfHSkS
-         baOEwBQOUp8tgh98oQcjryVmD9gsWjeubrbJ4L3IfbY4lhEf6bs71GFXLybqGmUUw3vq
-         nJ1LZs2pBxDiAm3Wil/sYtbkDsCry2KNEC+ZRdp0bCy+eSPimIyGMj1+qd/WxFC8JXaQ
-         +ejQ==
-X-Gm-Message-State: AOAM531v7NvrBPY0ETBYwXs5ToDcm+ev3FBdlPNVeum/stjt9n9n6Lyr
-        QL0XyKocC4s53mRyqHMs9z0MCJJqABA2IHX4fhuarg==
-X-Google-Smtp-Source: ABdhPJy3H4B9Xv6DMwPGyJFAVkCyL7HSoolYUgy9O4RpHeAO8P+IrocSLqSxIuMS7CSVBa8yNk/VwwJ8+38L2DDuuOo=
-X-Received: by 2002:a17:907:9490:b0:6f4:5606:d98b with SMTP id
- dm16-20020a170907949000b006f45606d98bmr3892736ejc.734.1651492934588; Mon, 02
- May 2022 05:02:14 -0700 (PDT)
+        Mon, 2 May 2022 08:43:18 -0400
+Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3102213D13;
+        Mon,  2 May 2022 05:39:49 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id F3B7F41982;
+        Mon,  2 May 2022 12:39:44 +0000 (UTC)
+Message-ID: <c5413c42-b728-b88b-4229-9d4e3943413e@marcan.st>
+Date:   Mon, 2 May 2022 21:39:42 +0900
 MIME-Version: 1.0
-References: <20220426175938.2262966-1-robh@kernel.org>
-In-Reply-To: <20220426175938.2262966-1-robh@kernel.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 2 May 2022 14:02:03 +0200
-Message-ID: <CAMRc=MfrvUn8w_aPL0_kej83-tf06GTUcJJ3bC0p8O8rd2Ae0Q@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: eeprom/at24: Add samsung,s524ad0xd1 compatible
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Content-Language: es-ES
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220502092505.30934-1-marcan@marcan.st>
+ <Ym/EAGq3IzW5rYwr@kroah.com>
+From:   Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH] tty: serial: samsung_tty: Fix suspend/resume on S5L
+In-Reply-To: <Ym/EAGq3IzW5rYwr@kroah.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 8:00 PM Rob Herring <robh@kernel.org> wrote:
->
-> The samsung,s524ad0xd1 compatible is in use, but not documented. According
-> to arch/arm/mach-s3c/mach-smdk6410.c, the samsung,s524ad0xd1 is compatible
-> with the 24c128. As the schema requires a fallback compatible to the
-> corresponding Atmel compatible, 'atmel,24c128' is added as a fallback.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> v2:
->  - Fix the example in samsung,s3c2410-i2c.yaml
->
->  Documentation/devicetree/bindings/eeprom/at24.yaml            | 4 +++-
+On 02/05/2022 20.44, Greg Kroah-Hartman wrote:
+> On Mon, May 02, 2022 at 06:25:05PM +0900, Hector Martin wrote:
+>> We were restoring the IRQ masks then clearing them again, because
+>> ucon_mask wasn't set properly. Adding that makes suspend/resume
+>> work as intended.
+>>
+>> Signed-off-by: Hector Martin <marcan@marcan.st>
+>> ---
+>>  drivers/tty/serial/samsung_tty.c | 1 +
+>>  include/linux/serial_s3c.h       | 3 +++
+>>  2 files changed, 4 insertions(+)
+> 
+> Does this fix a specific older commit?
+> 
+> And should it be backported to older stable kernels?
 
-For at24 part:
+It does fix the commit that introduced this device support in general; I
+can add a Fixes line for that. I don't think anyone cares about
+backporting though, since there are other fairly critical devices that
+don't have support outright and there's still work to do before
+suspend/resume is generally usable on these machines.
 
-Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
-
->  .../devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml          | 2 +-
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> index 6b61a8cf6137..d14e0accbda8 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> @@ -120,7 +120,9 @@ properties:
->            - const: giantec,gt24c32a
->            - const: atmel,24c32
->        - items:
-> -          - const: renesas,r1ex24128
-> +          - enum:
-> +              - renesas,r1ex24128
-> +              - samsung,s524ad0xd1
->            - const: atmel,24c128
->
->    label:
-> diff --git a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-> index c26230518957..3d5782deb97d 100644
-> --- a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-> @@ -123,7 +123,7 @@ examples:
->          samsung,i2c-slave-addr = <0x66>;
->
->          eeprom@50 {
-> -            compatible = "samsung,s524ad0xd1";
-> +            compatible = "samsung,s524ad0xd1", "atmel,24c128";
->              reg = <0x50>;
->          };
->      };
-> --
-> 2.34.1
->
+-- 
+Hector Martin (marcan@marcan.st)
+Public Key: https://mrcn.st/pub
