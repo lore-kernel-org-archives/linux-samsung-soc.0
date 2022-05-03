@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9457DC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 May 2022 10:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E23EFC43219
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 May 2022 10:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234586AbiECLB1 (ORCPT
+        id S232027AbiECLB2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 May 2022 07:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39656 "EHLO
+        Tue, 3 May 2022 07:01:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234617AbiECLBT (ORCPT
+        with ESMTP id S233510AbiECLBX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 May 2022 07:01:19 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA0312CE1E
+        Tue, 3 May 2022 07:01:23 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9EC62C12C
         for <linux-samsung-soc@vger.kernel.org>; Tue,  3 May 2022 03:57:37 -0700 (PDT)
 Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220503105733epoutp0413e2e8f7206a04171b6ecef5daec72bd~rkx-JmyZD1405314053epoutp04V
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220503105733epoutp03d18d1b52aec5eba5dda1fdc9d4a44a1a~rkx-QmEGq0799307993epoutp03I
         for <linux-samsung-soc@vger.kernel.org>; Tue,  3 May 2022 10:57:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220503105733epoutp0413e2e8f7206a04171b6ecef5daec72bd~rkx-JmyZD1405314053epoutp04V
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220503105733epoutp03d18d1b52aec5eba5dda1fdc9d4a44a1a~rkx-QmEGq0799307993epoutp03I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1651575453;
-        bh=Vk0KefwtdtzzIiK4MnIQhvHmNSpT1Kw8VsjyJmDbLqA=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=ny5PnG+VoNxWW+CutG8LuNo0di3IJeS2oslUmUUi3/tgg8fhVnOv8/ypqAWK+26r+
-         rSCvFcDpbv3jKFmnJ6kCVzzvl2F/OEEvVJ5WCGhFZXV4ppDYON/rqeaSWcsDrQ/tMv
-         uzRfQrrGIwYz6/FOm70KRta+ZzQduBoHe7oseIms=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20220503105732epcas2p2357d79da2a03653895cd385f868e5edc~rkx_cl7ZW1964119641epcas2p2A;
+        bh=rxFrevYTxz4KSwunX+xHEs5yzs+B195gVazytQbuK2Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SwLrHvT5kxxLzaoXniZbJn3iMFwXe7A89g4vHgKiRO+eJsD66OHSfWMww2xuHbeiB
+         bUji3lwwvVc7USTKRFIUhW1P5pCOcQRy3Or0O24obFK+pn6iDh0C4yj5CpA0qNjXBN
+         Gkc7qy3XOat4SCzgjK3W/v/YTGNytdWtjWz+d5c0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20220503105732epcas2p48fab9a4ec40728a19bdc6fbe7e1cb906~rkx_o4Ip11759317593epcas2p4X;
         Tue,  3 May 2022 10:57:32 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.97]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4KsxkK4Tkvz4x9Q2; Tue,  3 May
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.68]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KsxkK6qX1z4x9Ps; Tue,  3 May
         2022 10:57:29 +0000 (GMT)
 Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B0.DA.09694.99A01726; Tue,  3 May 2022 19:57:29 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220503105729epcas2p4aef9a721ca48657edd4b61deb163bb04~rkx7jXPcL1759317593epcas2p4P;
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        01.E8.10028.99A01726; Tue,  3 May 2022 19:57:29 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220503105729epcas2p357a7bfae9731010d7fda00ba78cf8b97~rkx7t3xAh3115231152epcas2p3I;
         Tue,  3 May 2022 10:57:29 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220503105729epsmtrp2d86d0f6d343500d1b589d4a0621f1851~rkx7iSPB41021210212epsmtrp2P;
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220503105729epsmtrp1e898883b1c0e749fa708f479f00603fc~rkx7soHi40279502795epsmtrp1d;
         Tue,  3 May 2022 10:57:29 +0000 (GMT)
-X-AuditID: b6c32a48-495ff700000025de-93-62710a998613
+X-AuditID: b6c32a47-589ff7000000272c-5d-62710a996f87
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A0.42.08853.99A01726; Tue,  3 May 2022 19:57:29 +0900 (KST)
+        91.42.08853.99A01726; Tue,  3 May 2022 19:57:29 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.229.9.51]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220503105728epsmtip2beb3a15ff08acb3d287c8344c385de53~rkx7SvtBw0549505495epsmtip26;
-        Tue,  3 May 2022 10:57:28 +0000 (GMT)
+        20220503105729epsmtip203376f23e0d2322ea7b10d2939778583~rkx7b4gpT0548105481epsmtip2J;
+        Tue,  3 May 2022 10:57:29 +0000 (GMT)
 From:   Chanho Park <chanho61.park@samsung.com>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
@@ -67,107 +67,294 @@ Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v2 00/12] initial clock support for exynosauto v9 SoC
-Date:   Tue,  3 May 2022 19:59:02 +0900
-Message-Id: <20220503105914.117625-1-chanho61.park@samsung.com>
+Subject: [PATCH v2 02/12] dt-bindings: clock: add Exynos Auto v9 SoC CMU
+ bindings
+Date:   Tue,  3 May 2022 19:59:04 +0900
+Message-Id: <20220503105914.117625-3-chanho61.park@samsung.com>
 X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20220503105914.117625-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmue5MrsIkg5+/FC0ezNvGZnF5v7bF
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmue5MrsIkg2fPjC0ezNvGZnF5v7bF
         9S/PWS3mHznHatH34iGzxd7XW9ktPvbcY7WYcX4fk8XFU64WrXuPsFscftPOavHv2kYWi+d9
         QPFVu/4wOvB5vL/Ryu6xc9Zddo9NqzrZPO5c28Pm0bdlFaPH501yAWxR2TYZqYkpqUUKqXnJ
         +SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QMcqKZQl5pQChQISi4uV9O1s
-        ivJLS1IVMvKLS2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz+me/YCs4IFBxpWsO
-        YwPjTt4uRk4OCQETiQvXdrF1MXJxCAnsYJSY8uU0I0hCSOATo8SNSUkQiW+MEnvXNrPCdJxf
-        dQWqYy+jxK6Dt5ghOj4ySizaGQ1iswnoSmx5/ooRpEhEoItZ4mLfPRYQh1lgK6PE8RuzmLoY
-        OTiEBVwl3jTlgzSwCKhKnHvzAmw1r4C9xOdN59hASiQE5CX+LQ6FCAtKnJz5hAXEZgYKN2+d
-        zQwyUkKgl0Ni1o/LjBDXuUi87L3JBmELS7w6voUdwpaS+PxuL1S8WGLprE9MEM0NjBKXt/2C
-        ShhLzHrWzgiymFlAU2L9Ln2IG5QljtyC2ssn0XH4LztEmFeio00IolFd4sD26SwQtqxE95zP
-        0LDykDi7aTs0eGIlrtx/yzSBUX4Wkm9mIflmFsLeBYzMqxjFUguKc9NTi40KTOBxmpyfu4kR
-        nFy1PHYwzn77Qe8QIxMH4yFGCQ5mJRFe56UFSUK8KYmVValF+fFFpTmpxYcYTYHBO5FZSjQ5
-        H5je80riDU0sDUzMzAzNjUwNzJXEeb1SNiQKCaQnlqRmp6YWpBbB9DFxcEo1MFnqFPs1hn8+
-        7nXjSd3EaSmOFc0+bZeWlfLYzj6z41tgjcqVz1s7Gl53yR2+0H35WOLbMluLbe3NEbeyvpy7
-        KXwu4Osqj0PcJSvSEyRZvfsymflSRAqMJz/+0cm++eTXWT06vkmOxruvf37JvH/3dSELS+Z+
-        1oDeC1K/b/yosZG5GVySd6tr0drU1JU7Dh+TfP2abWmL3LujlxXtS3pKvBTvemxrbXA7luX8
-        4FWsV4UE36yA1Sy7b2WdO7llzrNrJod1z+y4M8N5p3WN/JfmlX/Xyaqxvt1o2Pm4159vu5/C
-        2jXVzzvFLFbcPJNl3Fed873QdV2A9bvuyYnL5x+wvvbNXqf6OkvW+TdPxLa48SixFGckGmox
-        FxUnAgBzFdBLNwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsWy7bCSvO5MrsIkg03PWSwezNvGZnF5v7bF
+        ivJLS1IVMvKLS2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEKE7IzbtxcxFxw2LTi4d5H
+        jA2ML1S6GDk5JARMJCZs3MHUxcjFISSwg1Fizr4LrBDOJ0aJDdfeMINUCQl8Y5S4s6sGpuPs
+        yk9QRXsZJW7tbWGCKPrIKLFtKR+IzSagK7Hl+StGkCIRgS5miYt991hAHGaBrYwSx2/MAusQ
+        FgiW+LXyEzuIzSKgKrF8518wm1fAXuLKgmagGg6gdfIS/xaHgoQ5BRwkru86xwRRIihxcuYT
+        FhCbGaikeetsZpD5EgJLOSS29n9igzjVRaJ95wJWCFtY4tXxLewQtpTEy/42KLtYYumsT0wQ
+        zQ2MEpe3/YJqNpaY9aydEeQIZgFNifW79CHuUZY4cgtqL59Ex2GQk0HCvBIdbUIQjeoSB7ZP
+        Z4GwZSW653yGusBD4sGFr9CAm8wosX7TPtYJjAqzkLwzC8k7sxAWL2BkXsUollpQnJueWmxU
+        YAyP4eT83E2M4MSr5b6DccbbD3qHGJk4GA8xSnAwK4nwOi8tSBLiTUmsrEotyo8vKs1JLT7E
+        aAoM64nMUqLJ+cDUn1cSb2hiaWBiZmZobmRqYK4kzuuVsiFRSCA9sSQ1OzW1ILUIpo+Jg1Oq
+        gclsvtl0pV0bl8QynJYoumnx20rmbMqc7BUenl/bw1uj7q+uiw1L+7r4g7xbRcnOQs0U31eu
+        vvd4Rc/dezHP3ZKpoU9NIDjvPofPyoDU69sPV0+7uqRHm/l4ZfetnZdeCPe8ta2Z1Tmd5YbN
+        3g9Bz2QmOpjGT9jQMTlxafTGJ4azZYxSk15khxyee8Jjp15n3KwPm1Jent3TG94qo//haVVL
+        862rK876LXg+I1DiIssVxi+fJhT9nxX6e80ppctzDplt32ds+1L1oOxtUZU8R6+7sVPuW81L
+        EcxW5GFrYuu5xaq6f7bxpJfrz570t+hX+j5pilKK0pK4s5sWTi5+9/5eY8TO5+/+L/ia+WPX
+        8ln3lFiKMxINtZiLihMBBOw1HEUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsWy7bCSvO5MrsIkg6O3BCwezNvGZnF5v7bF
         9S/PWS3mHznHatH34iGzxd7XW9ktPvbcY7WYcX4fk8XFU64WrXuPsFscftPOavHv2kYWi+d9
         QPFVu/4wOvB5vL/Ryu6xc9Zddo9NqzrZPO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJ
-        XBn9s1+wFRwQqLjSNYexgXEnbxcjJ4eEgInE+VVX2LoYuTiEBHYzSixZ0MUKkZCVePZuBzuE
-        LSxxv+UIK0TRe0aJZS+fMIMk2AR0JbY8f8UIkhARmMAs8ebKB3YQh1lgJ6PEnVengOZycAgL
-        uEq8acoHaWARUJU49+YFI4jNK2Av8XnTObASCQF5iX+LQyHCghInZz5hAbGZgcLNW2czT2Dk
-        m4UkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOCQ19Lcwbh91Qe9Q4xM
-        HIyHGCU4mJVEeJ2XFiQJ8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1ILUI
-        JsvEwSnVwNQu8ixWs6R0nvTJC5sX3zAImcpgzb6uP6bnpcyqWv4jG9utu+d2Wzzsm7lRfqNO
-        wtEwB6EvNn+OrPh79cumg6uCT29vNpAVuyRdsfB97rvny1tEnOX63VZm7O/9sPuL/48JaUrX
-        vNn6F1u5JfzZaiq4e5aczrwwc+EctgtZKlzfEvi/n964j0OrQog7+/kh+1dfXn9yqzm+0ub7
-        5/yyqzrLZvnvSF0RunO/6YVIthMxtWoz06Zte1M3c4dh4sMNk6Vvx1SuXFW9ysart+y7kd+i
-        ybM4y98x1b/0vGDgmLJW6OEWgXkXpt1Tf62QHr5fdu92t6pdfx+rVITs3mZz5+BDz1NCgel8
-        Chbr7Ny+v1utxFKckWioxVxUnAgAYXi5CegCAAA=
-X-CMS-MailID: 20220503105729epcas2p4aef9a721ca48657edd4b61deb163bb04
+        XBk3bi5iLjhsWvFw7yPGBsYXKl2MnBwSAiYSZ1d+Yu1i5OIQEtjNKNHft5cFIiEr8ezdDnYI
+        W1jifssRVhBbSOA9o8TzJzogNpuArsSW568YQZpFBCYwS7y58oEdxGEW2MkocefVKbYuRg4O
+        YYFAiasPMkEaWARUJZbv/As2lFfAXuLKgmYmkBIJAXmJf4tDQcKcAg4S13edY4LYZS+x8+92
+        ZohyQYmTM5+A3cYMVN68dTbzBEaBWUhSs5CkFjAyrWKUTC0ozk3PLTYsMMxLLdcrTswtLs1L
+        10vOz93ECI4QLc0djNtXfdA7xMjEwXiIUYKDWUmE13lpQZIQb0piZVVqUX58UWlOavEhRmkO
+        FiVx3gtdJ+OFBNITS1KzU1MLUotgskwcnFINTJJMuyOWSvrU90Xrf+YK87x88v+GetajsyPV
+        I+yu/9CSLrSVunJnhUDMtpkzf+S+jLnWGzzF7TXXrilMe97+ypdicHu4k7Hv4fewv/smS0zb
+        dLMu+ySLSJqkXrPPEs2bEhGhL+5lFi93Fbgp8Evsff9l19LXh1cfqHSVOZEiUjZ184tT9ydp
+        bXxevySf8aGe109VV/tPa3ni1+ZcXCXmNcWiuyPpzMrIS/KmRV0bf1ya9+DX2o0KHMcyZU2O
+        bK1/vf5+c3v6kyjT7XvtC5xTKvnqNPxqP/9m2G6+M0WscGvSVkH/3lfZU0VPHEn/fMrVVO/S
+        pcu1CQE/xP7f77uUejrya7+zu+dXz5dKikHJvUosxRmJhlrMRcWJAGMt9Dz/AgAA
+X-CMS-MailID: 20220503105729epcas2p357a7bfae9731010d7fda00ba78cf8b97
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220503105729epcas2p4aef9a721ca48657edd4b61deb163bb04
-References: <CGME20220503105729epcas2p4aef9a721ca48657edd4b61deb163bb04@epcas2p4.samsung.com>
+X-CMS-RootMailID: 20220503105729epcas2p357a7bfae9731010d7fda00ba78cf8b97
+References: <20220503105914.117625-1-chanho61.park@samsung.com>
+        <CGME20220503105729epcas2p357a7bfae9731010d7fda00ba78cf8b97@epcas2p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patchset adds initial clock driver support for Exynos Auto v9 SoC.
-This driver is highly inspired from exynos850 clock driver. Like
-exynos850, this does not use Q-channel control & Hardware automatic
-clock gating. So, all the gate clocks will be controlled by CCF & CMU
-driver.
+Add dt-schema for Exynos Auto v9 SoC clock controller.
 
-Below CMU blocks are supported in this patchset and remains will be
-implemented later.
-
-- CMU_TOP
-- CMU_BUSMC
-- CMU_CORE
-- CMU_FSYS2
-- CMU_PERIC0
-- CMU_PERIC1
-- CMU_PERIS
-
-Changes from v1:
-- Adjust patch order to avoid dt-binding check bot's build warning
-- Rename exynosautov9.h to samsung,exynosautov9.h (Suggested by
-  Krzystof)
-- clock nodes of exynosautov9.dtsi are aligned by unit address order.
-- Each clock items are listed to every own line.
-- Added Krzystof RB tags.
-
-Chanho Park (12):
-  dt-bindings: clock: add clock binding definitions for Exynos Auto v9
-  dt-bindings: clock: add Exynos Auto v9 SoC CMU bindings
-  clk: samsung: add top clock support for Exynos Auto v9 SoC
-  clk: samsung: exynosautov9: add cmu_core clock support
-  clk: samsung: exynosautov9: add cmu_peris clock support
-  clk: samsung: exynosautov9: add cmu_busmc clock support
-  clk: samsung: exynosautov9: add cmu_fsys2 clock support
-  clk: samsung: exynosautov9: add cmu_peric0 clock support
-  clk: samsung: exynosautov9: add cmu_peric1 clock support
-  arm64: dts: exynosautov9: add initial cmu clock nodes
-  arm64: dts: exynosautov9: switch usi clocks
-  arm64: dts: exynosautov9: switch ufs clock node
-
- .../clock/samsung,exynosautov9-clock.yaml     |  219 +++
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi  |  115 +-
- drivers/clk/samsung/Makefile                  |    1 +
- drivers/clk/samsung/clk-exynosautov9.c        | 1733 +++++++++++++++++
- .../dt-bindings/clock/samsung,exynosautov9.h  |  299 +++
- 5 files changed, 2342 insertions(+), 25 deletions(-)
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+---
+ .../clock/samsung,exynosautov9-clock.yaml     | 219 ++++++++++++++++++
+ 1 file changed, 219 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-exynosautov9.c
- create mode 100644 include/dt-bindings/clock/samsung,exynosautov9.h
 
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+new file mode 100644
+index 000000000000..9f9cd8606728
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+@@ -0,0 +1,219 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/samsung,exynosautov9-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos Auto v9 SoC clock controller
++
++maintainers:
++  - Chanho Park <chanho61.park@samsung.com>
++  - Chanwoo Choi <cw00.choi@samsung.com>
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++  - Tomasz Figa <tomasz.figa@gmail.com>
++
++description: |
++  Exynos Auto v9 clock controller is comprised of several CMU units, generating
++  clocks for different domains. Those CMU units are modeled as separate device
++  tree nodes, and might depend on each other. Root clocks in that clock tree are
++  two external clocks:: OSCCLK/XTCXO (26 MHz) and RTCCLK/XrtcXTI (32768 Hz).
++  Those external clocks must be defined as fixed-rate clocks in dts.
++
++  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
++  dividers; all other clocks of function blocks (other CMUs) are usually
++  derived from CMU_TOP.
++
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All clocks available for usage
++  in clock consumer nodes are defined as preprocessor macros in
++  'dt-bindings/clock/exynosautov9.h' header.
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynosautov9-cmu-top
++      - samsung,exynosautov9-cmu-busmc
++      - samsung,exynosautov9-cmu-core
++      - samsung,exynosautov9-cmu-fsys2
++      - samsung,exynosautov9-cmu-peric0
++      - samsung,exynosautov9-cmu-peric1
++      - samsung,exynosautov9-cmu-peris
++
++  clocks:
++    minItems: 1
++    maxItems: 5
++
++  clock-names:
++    minItems: 1
++    maxItems: 5
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-top
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++
++        clock-names:
++          items:
++            - const: oscclk
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-busmc
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_BUSMC bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_busmc_bus
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-core
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_CORE bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_core_bus
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-fsys2
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_FSYS2 bus clock (from CMU_TOP)
++            - description: UFS clock (from CMU_TOP)
++            - description: Ethernet clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_fsys2_bus
++            - const: dout_fsys2_clkcmu_ufs_embd
++            - const: dout_fsys2_clkcmu_ethernet
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-peric0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_PERIC0 bus clock (from CMU_TOP)
++            - description: PERIC0 IP clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_peric0_bus
++            - const: dout_clkcmu_peric0_ip
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-peric1
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_PERIC1 bus clock (from CMU_TOP)
++            - description: PERIC1 IP clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_peric1_bus
++            - const: dout_clkcmu_peric1_ip
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov9-cmu-peris
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_PERIS bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_peris_bus
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - clock-names
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Clock controller node for CMU_FSYS2
++  - |
++    #include <dt-bindings/clock/samsung,exynosautov9.h>
++
++    cmu_fsys2: clock-controller@17c00000 {
++        compatible = "samsung,exynosautov9-cmu-fsys2";
++        reg = <0x17c00000 0x8000>;
++        #clock-cells = <1>;
++
++        clocks = <&xtcxo>,
++                 <&cmu_top DOUT_CLKCMU_FSYS2_BUS>,
++                 <&cmu_top DOUT_CLKCMU_FSYS2_UFS_EMBD>,
++                 <&cmu_top DOUT_CLKCMU_FSYS2_ETHERNET>;
++        clock-names = "oscclk",
++                      "dout_clkcmu_fsys2_bus",
++                      "dout_fsys2_clkcmu_ufs_embd",
++                      "dout_fsys2_clkcmu_ethernet";
++    };
++
++...
 -- 
 2.36.0
 
