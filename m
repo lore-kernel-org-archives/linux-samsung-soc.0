@@ -2,160 +2,112 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB520C4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 11:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB0CC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 13:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348917AbiEDLpq (ORCPT
+        id S1350214AbiEDNJt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 May 2022 07:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52900 "EHLO
+        Wed, 4 May 2022 09:09:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348933AbiEDLpp (ORCPT
+        with ESMTP id S1350202AbiEDNJb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 May 2022 07:45:45 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F201B2B1A7
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 May 2022 04:42:09 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id gj17-20020a17090b109100b001d8b390f77bso4961209pjb.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 May 2022 04:42:09 -0700 (PDT)
+        Wed, 4 May 2022 09:09:31 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEFB72ED71;
+        Wed,  4 May 2022 06:05:55 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id p8so1080442pfh.8;
+        Wed, 04 May 2022 06:05:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cVMCRacZCx0pOFgSAXyCugFOs6e7iXb5CCX+AZorTUs=;
-        b=klRpm+bnZHvWeZwrFYyfY4LbwN4k4OUygMUb5wlcCe4oCYM914hV5mjujI6rJGHiE0
-         VEU5jCES1LsPVweaDUF7Y56h023FST9Kcy9tfMerGABwnCdUWaKRgrwWUqUJySg/T3zJ
-         qSgY2864wrGGKDENx3hxyDDY7pqaNeTAJ/nB0=
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=UC5/T62VBrPR2OvWMU7yh7SKj/WV1x6G5gEe33Tp7mk=;
+        b=jfvmZOqT1RCdG840AmSvi9BLfhWe0UsS6xUzfZZ21xHsl3Fg6lazuSiY2nD1/ALjfy
+         LrUQjOvzD7MpFz3WGNuKOHFuO9m01r9vay7aMeR/ZLwHLPM7kEPOwzebfjfF3IJC9cpj
+         ydQWn2kUWsegmxYjxBSAzLN2t0AlvAVyWPQ01GOjRq3Pxs2tVJFgwO2YbL4O9jG8dhXb
+         7h776yMANyYVzwVHbrkqJhUvEHHYTGkJjtV6JXPHBNWUmz265r5DwzQgQX2GMACST339
+         M9X1xaLS8u1ZqXexVat1fb0rrtLBRL+HFWjU1LUxZKW28ZoPXOVU2Yhc/kBHuHB6pza8
+         vWNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cVMCRacZCx0pOFgSAXyCugFOs6e7iXb5CCX+AZorTUs=;
-        b=VHOlZE40T5lkm4KRhQsYkbU5uHAPUagvE2pKiRFWOvnBYFlz0Fqi39LofZiy4GS4ug
-         gBBXxHlBKBBEkN+XPiwcPS8M3uFKzHwli62LhZkKp6eKKbfj4dNBs5HWQGNjIwoM5zSi
-         /QbwM1vt+wuVPbRti18s6ikjeihmiPzWf/NNSR06arBEZmp/IEpEELpo6qoiCwotUvxf
-         XRLK9S8hcJy/4aEQY57KVlN3kpwn5QQ2o5/DEsI8ORltS1oF8ltPMBYsVQC+uUOZI1a3
-         s5zu3Uss7g6atK/yXBL4KvK0Mu0+wdfBA8GoSLf7E8LcBO0xGsBqs3z6hb0J9VEV9K+7
-         TOpg==
-X-Gm-Message-State: AOAM532VUkZn4DzB7qF1H/bAORC0Q3ZmWuqIj8Uhdhwa9yv/pp0l8r3x
-        7+MXDa9omZf6kqBs82Cc2n2mDw==
-X-Google-Smtp-Source: ABdhPJygOQUvQ2PEcTsHzZAi9PASaMzc7CNkHNnA7gxnMtopmXvM7jmtXKfRcp5aGgFytBAVY1prxw==
-X-Received: by 2002:a17:90a:d593:b0:1d9:2bc9:f1a6 with SMTP id v19-20020a17090ad59300b001d92bc9f1a6mr9770441pju.207.1651664529532;
-        Wed, 04 May 2022 04:42:09 -0700 (PDT)
-Received: from localhost.localdomain ([183.83.137.38])
-        by smtp.gmail.com with ESMTPSA id k15-20020aa790cf000000b0050dc7628174sm8027498pfk.78.2022.05.04.04.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 04:42:09 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 12/12] drm: bridge: samsung-dsim: Add i.MX8MM support
-Date:   Wed,  4 May 2022 17:10:21 +0530
-Message-Id: <20220504114021.33265-13-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220504114021.33265-1-jagan@amarulasolutions.com>
-References: <20220504114021.33265-1-jagan@amarulasolutions.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=UC5/T62VBrPR2OvWMU7yh7SKj/WV1x6G5gEe33Tp7mk=;
+        b=A301ElbueYK0JoXavguTVa8gAA01wLfvYn51UrrJa3G8328ebcTtTs41Irs9/6gcTt
+         qd6wJzOohU9fk//rD5C9/aSAnsxFZhUeRKx5DairC77sT4g/6Sv1obvAgxwCvQPuDJYH
+         N1Q6LnmaGy7AB0L4AywVoyYiyWD7+7qJQHsqptem6Npb1IdHGyGoqYaZc85mddy1H5+R
+         wdp/FDRpricoM60lt3Zd1ywl7hxxVQHeOJZ56KcAWv/LKV4dAIzxhOEWkmlCDOpR7oh4
+         onIPQmai1hqag9HCa/XqZnkiWQuWvF5gQcrZOOBoy0nVnblc4U18emQzDE68wvf0Kibz
+         bi3g==
+X-Gm-Message-State: AOAM532mUQR3JW5WHub0457Q8yTNv++akGqgNrvDz6T8T1fNlaceK1sM
+        EHvFRSqkCif6WnnSJ1ilPCWEdvLjQDM=
+X-Google-Smtp-Source: ABdhPJyvSN6lqx6iGE7zAkwNM/r5YaenoNFhG0ehHtfOvx/cwMQGX3Eytq2mAfYIF0TbYO02EzDDYQ==
+X-Received: by 2002:a63:6808:0:b0:3c5:7405:1cd4 with SMTP id d8-20020a636808000000b003c574051cd4mr3436179pgc.444.1651669554978;
+        Wed, 04 May 2022 06:05:54 -0700 (PDT)
+Received: from [172.30.1.41] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id y6-20020aa78046000000b0050dc76281c9sm8153208pfm.163.2022.05.04.06.05.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 06:05:54 -0700 (PDT)
+Message-ID: <c5532ab5-eaa5-e199-2c59-6ec58c9a8f55@gmail.com>
+Date:   Wed, 4 May 2022 22:05:49 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 01/12] dt-bindings: clock: add clock binding
+ definitions for Exynos Auto v9
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220504075154.58819-1-chanho61.park@samsung.com>
+ <CGME20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d@epcas2p3.samsung.com>
+ <20220504075154.58819-2-chanho61.park@samsung.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <20220504075154.58819-2-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Samsung MIPI DSIM master can also be found in i.MX8MM SoC.
+Hi Chanho,
 
-Add compatible and associated driver_data for it.
+On 22. 5. 4. 16:51, Chanho Park wrote:
+> Add device tree clock binding definitions for below CMU blocks.
+> 
+> - CMU_TOP
+> - CMU_BUSMC
+> - CMU_CORE
+> - CMU_FYS2
+> - CMU_PERIC0 / C1
+> - CMU_PERIS
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>   .../dt-bindings/clock/samsung,exynosautov9.h  | 299 ++++++++++++++++++
+>   1 file changed, 299 insertions(+)
+>   create mode 100644 include/dt-bindings/clock/samsung,exynosautov9.h
+> 
 
-v2:
-* collect Laurent r-b
+(snip)
 
-v1:
-* none
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/gpu/drm/bridge/samsung-dsim.c | 34 +++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 28ed6b096fd0..138323dec0eb 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -360,6 +360,24 @@ static const unsigned int exynos5433_reg_values[] = {
- 	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0c),
- };
- 
-+static const unsigned int imx8mm_dsim_reg_values[] = {
-+	[RESET_TYPE] = DSIM_SWRST,
-+	[PLL_TIMER] = 500,
-+	[STOP_STATE_CNT] = 0xf,
-+	[PHYCTRL_ULPS_EXIT] = 0,
-+	[PHYCTRL_VREG_LP] = 0,
-+	[PHYCTRL_SLEW_UP] = 0,
-+	[PHYTIMING_LPX] = DSIM_PHYTIMING_LPX(0x06),
-+	[PHYTIMING_HS_EXIT] = DSIM_PHYTIMING_HS_EXIT(0x0b),
-+	[PHYTIMING_CLK_PREPARE] = DSIM_PHYTIMING1_CLK_PREPARE(0x07),
-+	[PHYTIMING_CLK_ZERO] = DSIM_PHYTIMING1_CLK_ZERO(0x26),
-+	[PHYTIMING_CLK_POST] = DSIM_PHYTIMING1_CLK_POST(0x0d),
-+	[PHYTIMING_CLK_TRAIL] = DSIM_PHYTIMING1_CLK_TRAIL(0x08),
-+	[PHYTIMING_HS_PREPARE] = DSIM_PHYTIMING2_HS_PREPARE(0x08),
-+	[PHYTIMING_HS_ZERO] = DSIM_PHYTIMING2_HS_ZERO(0x0d),
-+	[PHYTIMING_HS_TRAIL] = DSIM_PHYTIMING2_HS_TRAIL(0x0b),
-+};
-+
- static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
- 	.reg_ofs = exynos_reg_ofs,
- 	.plltmr_reg = 0x50,
-@@ -426,6 +444,18 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
- 	.platform_init = true,
- };
- 
-+static const struct samsung_dsim_driver_data imx8mm_dsi_driver_data = {
-+	.reg_ofs = exynos5433_reg_ofs,
-+	.plltmr_reg = 0xa0,
-+	.has_clklane_stop = 1,
-+	.num_clks = 2,
-+	.max_freq = 2100,
-+	.wait_for_reset = 0,
-+	.num_bits_resol = 12,
-+	.pll_p_offset = 14,
-+	.reg_values = imx8mm_dsim_reg_values,
-+};
-+
- static const struct of_device_id samsung_dsim_of_match[] = {
- 	{
- 		.compatible = "samsung,exynos3250-mipi-dsi",
-@@ -447,6 +477,10 @@ static const struct of_device_id samsung_dsim_of_match[] = {
- 		.compatible = "samsung,exynos5433-mipi-dsi",
- 		.data = &exynos5433_dsi_driver_data
- 	},
-+	{
-+		.compatible = "fsl,imx8mm-mipi-dsim",
-+		.data = &imx8mm_dsi_driver_data
-+	},
- 	{ /* sentinel. */ }
- };
- 
 -- 
-2.25.1
-
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
