@@ -2,137 +2,114 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0F7C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 09:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 09:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347071AbiEDJVw (ORCPT
+        id S1347666AbiEDJqx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 May 2022 05:21:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56600 "EHLO
+        Wed, 4 May 2022 05:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347082AbiEDJUu (ORCPT
+        with ESMTP id S238227AbiEDJqw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 May 2022 05:20:50 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AA425E89
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 May 2022 02:16:32 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id g23so971145edy.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 May 2022 02:16:31 -0700 (PDT)
+        Wed, 4 May 2022 05:46:52 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083E127B0A;
+        Wed,  4 May 2022 02:43:18 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id v11so718937pff.6;
+        Wed, 04 May 2022 02:43:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=da581RkMgZGvhZwLWVEWYBqPGlo/ZQ+aiTnsSHDQZvg=;
-        b=VUu1PeIZgsLWQZcfyMt3xaF/2RYXrlQGuhDH4eIiWDqVVEoCEJv7VFKQmEjhGWnr0j
-         VwVv8xFU6m+oPpjMrEE1y//U9kJjmLj3lJ2ueVmrDm9Rfibh+aLxLljdfCS3GXnEmU0B
-         08c6HRmDCXtvWoohmXgdEKKJ2jkxHi/f4Qf5M=
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=t0Vge1DrY6BF9/8b8O1Z41uF1+unK2gO+1o6Ghfw/bQ=;
+        b=KNRaZQU2OV0CbVT5EBeXGwZ2xoH6HF6hD0XqfMHFiI6CaIWpt0T7SePd8vESZ94Q24
+         3aRIB+bd48pYD+as2gtsIEXLhn0pafaJYDPz5lyipy74WmTI7Zml3QpbH5dQjzLSb7cB
+         Wbs50yzWqtv1ASRXX0vCTGSWYzjh08N5nDMUaLqE+4ktAzhzlVTmvFRNEDTGCs7Zti0g
+         SeG1kGKhq4vqalij+JCtYEXa/Mpvghf55M1ohhEA8pXYe5y576JcDAduY5fleoURK8yP
+         zWs2iRQo/I+IfN/2YIh0K/fv3FcOBRL263jTz/iS74MK4WS0FYH80QNG9QenUT/Wxqp9
+         3rJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=da581RkMgZGvhZwLWVEWYBqPGlo/ZQ+aiTnsSHDQZvg=;
-        b=IsikyK0fJ0j6iJqlH/5T2Yx/AOqvum7REjuOszb1U9TEOwPE5D+F+cCdM0rUVsLQZi
-         /lckwLIHn/Uoo+3uKFouhE4aSNzyLn8yuX4ft0/aICTW5FSMUeOKOz8SXblG8n3vsKkR
-         HZ8wbVc3MCKFrEnBl9ad+caB6q11+esmkaxX6FPBx1pG7t4OWwAmPLo2Z2gurdfyHF2R
-         6dUgX2h16odprZMbf8jLl0fQfP5HWiu9bv7SJ6iE6j6+T+MrSGQaHyEqxZ+WUF5Ucijd
-         ASMk/Na0TGJn8dX+47bXBnEgu63SWMDoOoCnEA4Zbxl01h4ntybnULYFD4nIcSu1VHJ9
-         I6Rw==
-X-Gm-Message-State: AOAM531Rj4OZxmXBYdBf8JikENo8mvM0cCA4aSoNgHe0VOqqDeAnTLR7
-        6mCWbtfpOsb0YuhYuAn1B+rcF+UuKO2amIx3GCkclA==
-X-Google-Smtp-Source: ABdhPJxPmefC2PO6Pp4JkUx8X+XPLZJi7VWWpgAVjdNtNFSLnP08fQm8AMIc2msy6Dv26Ew10hHVsT3InC1MV+jFK4g=
-X-Received: by 2002:a05:6402:254a:b0:427:c112:6df9 with SMTP id
- l10-20020a056402254a00b00427c1126df9mr14754378edb.367.1651655790467; Wed, 04
- May 2022 02:16:30 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=t0Vge1DrY6BF9/8b8O1Z41uF1+unK2gO+1o6Ghfw/bQ=;
+        b=zvEvro0LrvD9kH8QxbySTXswmcR/ZFRd6DIpx165dT6cmu75OcbIBls1SOTErH4X65
+         fC/xpD6W3aj5qZw0BOOm6YU4k+SsytUuJ7MnKglOsXbJDvxn0F6Xmh6gErqPsLb3FoSL
+         lr4z8PfxLJWer2ERLLFKbPlFE7mj+Pm9rpDCGszhMCUmd2x0BT6cEh1DohaafD6+jkoe
+         QIccCXFJo2RY/TeZe7NCAzw1wg4d4klXLG4gGLdcNKJ34xBHqTVp1d0vMBtSYbo6OZ2x
+         1WNHfsQIoT8LELngT5KPY66bLHeKL9raofSO+lzdlNrkYWlTsscQ4WYklOYBzP27vtDj
+         XyaQ==
+X-Gm-Message-State: AOAM531CsfRBCUYg8MTs9XCjtmAWls2b+cvH5K8D4r+rESJRsMLkxjdR
+        XSysBSRqZiaZeB7RFEpD3MM=
+X-Google-Smtp-Source: ABdhPJzOJkUqXet1D2SSx84hKWV9giEUkv3YpXuvdddpMNmqN7srzVYCzUFtggEeEZ34yt65brcOQA==
+X-Received: by 2002:a63:90c3:0:b0:3ab:24df:fa19 with SMTP id a186-20020a6390c3000000b003ab24dffa19mr16999279pge.608.1651657397488;
+        Wed, 04 May 2022 02:43:17 -0700 (PDT)
+Received: from [172.30.1.41] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id j2-20020a17090a734200b001d0ec9c93fesm2860994pjs.12.2022.05.04.02.43.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 02:43:17 -0700 (PDT)
+Message-ID: <9a84f78e-f54f-dd8e-a3b8-5a43001dd1df@gmail.com>
+Date:   Wed, 4 May 2022 18:43:12 +0900
 MIME-Version: 1.0
-References: <20220408162108.184583-1-jagan@amarulasolutions.com>
- <CGME20220408162224eucas1p2a445493e9354f6ee72b348cb1c4ebc16@eucas1p2.samsung.com>
- <20220408162108.184583-2-jagan@amarulasolutions.com> <0146abe6-c588-820c-09f4-b12de2e734ac@samsung.com>
-In-Reply-To: <0146abe6-c588-820c-09f4-b12de2e734ac@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 4 May 2022 14:46:19 +0530
-Message-ID: <CAMty3ZBN=SPZze6n8=0hHPRc0jw6U+UJ7Ejv+8Bg3bkvwdY46w@mail.gmail.com>
-Subject: Re: [PATCH 01/11] drm: bridge: Add Samsung DSIM bridge driver
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 05/12] clk: samsung: exynosautov9: add cmu_peris clock
+ support
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220504075154.58819-1-chanho61.park@samsung.com>
+ <CGME20220504075004epcas2p218759eec1e29313c879eda085e37f0b7@epcas2p2.samsung.com>
+ <20220504075154.58819-6-chanho61.park@samsung.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <20220504075154.58819-6-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Chanho Park,
 
-On Tue, Apr 12, 2022 at 3:15 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Jagan,
->
-> On 08.04.2022 18:20, Jagan Teki wrote:
-> > Samsung MIPI DSIM controller is common DSI IP that can be used in various
-> > SoCs like Exynos, i.MX8M Mini/Nano.
-> >
-> > In order to access this DSI controller between various platform SoCs, the
-> > ideal way to incorporate this in the drm stack is via the drm bridge driver.
-> >
-> > This patch is trying to differentiate platform-specific and bridge driver
-> > code and keep maintaining the exynos_drm_dsi.c code as platform-specific
-> > glue code and samsung-dsim.c as a common bridge driver code.
-> >
-> > - Exynos specific glue code is exynos specific te_irq, host_attach, and
-> >    detach code along with conventional component_ops.
-> >
-> > - Samsung DSIM is a bridge driver which is common across all platforms and
-> >    the respective platform-specific glue will initialize at the end of the
-> >    probe. The platform-specific operations and other glue calls will invoke
-> >    on associate code areas.
-> >
-> > Updated MAINTAINERS file for this bridge with exynos drm maintainers along
-> > with Andrzej as he is the original author.
-> >
-> > Tomasz Figa has been not included in MAINTAINERS as he is not available via
-> > samsung.com.
-> >
-> > v1:
-> > * Don't maintain component_ops in bridge driver
-> > * Don't maintain platform glue code in bridge driver
-> > * Add platform-specific glue code and make a common bridge
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->
-> Well, it took me a while to make this working on Exynos. I'm not really
-> happy of the design, although I didn't spent much time thinking how to
-> improve it and clarify some ambiguities. It doesn't even look that one
-> has compiled the Exynos code after this conversion.
+On 22. 5. 4. 16:51, Chanho Park wrote:
+> CMU_PERIS is responsible to control clocks of BLK_PERIS which has
+> OPT/MCT/WDT and TMU. This patch only supports WDT gate clocks and all
+> other clocks except WDT will be supported later.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>   drivers/clk/samsung/clk-exynosautov9.c | 51 ++++++++++++++++++++++++++
+>   1 file changed, 51 insertions(+)
+> 
 
-Well, I was successfully built the each commit on exynos and non-exynos
+(snip)
 
->
-> The following changes are needed to get it to the same working state as
-> before this patch (the next patches however break it even further):
->
-> commit e358ee6239305744062713c5aa2e8d44f740b81a (HEAD)
-> Author: Marek Szyprowski <m.szyprowski@samsung.com>
-> Date:   Tue Apr 12 11:30:26 2022 +0200
->
->      drm: exynos: dsi: fixup driver after conversion
+Look good to me for all patches. But, some v3 patches has
+not yet arrived into my mail box. So that I checked
+the patches on lore.kernel.org[1].
 
-What exactly it is fixing the existing conversion, could you point that out?
+[1] 
+https://lore.kernel.org/linux-clk/20220504075154.58819-1-chanho61.park@samsung.com/
 
-Jagan.
+Thanks for your work for latest Exynos SoC.
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
