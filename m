@@ -2,150 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD516C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 15:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3064EC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 15:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351971AbiEDPPk (ORCPT
+        id S1351853AbiEDPRr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 May 2022 11:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37244 "EHLO
+        Wed, 4 May 2022 11:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351829AbiEDPPj (ORCPT
+        with ESMTP id S1352062AbiEDPRh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 May 2022 11:15:39 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E0B3EBAD
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 May 2022 08:12:02 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220504151159euoutp01daee6edb639c5ce2449165c4afb6ec71~r75bJZswi0958709587euoutp013
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 May 2022 15:11:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220504151159euoutp01daee6edb639c5ce2449165c4afb6ec71~r75bJZswi0958709587euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651677119;
-        bh=WZmdiOz6cyOlp8fR9Cd7zaPBMN021SRIXeNQW5M5fxg=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=efQWmMNy5eACb4UddIjXLJYCNPDBYGWfXHObw48VfJZKTYdVO75g+31Vo8bedrha3
-         +r2msXZ7OsVttUwK1RyZSQEU8/V7mtvwwy1hloEX1tOCpe08FgvafvjWKCHGtETg2u
-         /M3eJ+0qQzAyeuEkrkJCBFDRKO06dID6vEE7FSlg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220504151158eucas1p1a9a0efcac45743ff0286366d5eaadca9~r75avAliW0467604676eucas1p1A;
-        Wed,  4 May 2022 15:11:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 2B.76.10260.EB792726; Wed,  4
-        May 2022 16:11:58 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220504151158eucas1p196f4dfb465303df21957418819173512~r75aNOfyz1915819158eucas1p1s;
-        Wed,  4 May 2022 15:11:58 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220504151158eusmtrp105e6fe5961d8c3f4e4551d23bf2f3ad8~r75aMKmo62594725947eusmtrp1e;
-        Wed,  4 May 2022 15:11:58 +0000 (GMT)
-X-AuditID: cbfec7f5-bf3ff70000002814-29-627297be5c9b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 21.98.09522.EB792726; Wed,  4
-        May 2022 16:11:58 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220504151157eusmtip1b8537a5ae700fe9e7ee941d792e0f190~r75ZgnjtN1845318453eusmtip1Q;
-        Wed,  4 May 2022 15:11:57 +0000 (GMT)
-Message-ID: <9d3c838c-4cc1-dfc0-4d3d-2387a3f33828@samsung.com>
-Date:   Wed, 4 May 2022 17:11:57 +0200
+        Wed, 4 May 2022 11:17:37 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D17D43EE3
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 May 2022 08:13:44 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 1EBB0320092B;
+        Wed,  4 May 2022 11:13:41 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 04 May 2022 11:13:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1651677220; x=
+        1651763620; bh=fIoAAcc2aZTyQjXEcHCSf7xWXQ5rD9/5/FnFBK6DL4o=; b=o
+        nD5SEycK2tkErMp+L9a54Rh30KOI0VqokQtIUlnoA5eou0mK2jxinf8Vn4jvjLI4
+        YAONusj0WONunGR1XpdEv5LSFdfa5M0WMmvYIB7Pc6N8S4fo3MUNVKZxgFFT8PJo
+        dibpy8yBfa7j4fKV8KnODNeYxG1S7ka0Wkc+6GM+xqdeiDTH7x6VEQiAB6QgZhL9
+        FKEeS6GP5qfNU2wXAnTYJQts9SdlCdGyrebPKJUpWVYGbw2PAVdtTtgwqyXyiBGZ
+        3MlNVmEczRflaX8nvPKSRSO+kmFJdynpiabTEqpa8UwAvmSE2msGTKS8m35YlDB0
+        4nVbr1pfiHK5MDu6/CgVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1651677220; x=1651763620; bh=fIoAAcc2aZTyQ
+        jXEcHCSf7xWXQ5rD9/5/FnFBK6DL4o=; b=vjfnHo5qTPRBwsZ8EYQKggu14A6ir
+        KMtTdJ89pBGmq79CJOLsJf0TS3B1u8iNrWwIXCNwuxkYCXkA+36AoIPFBFcI1HqJ
+        dEqL1ZjclfeKR3N2YWmGgTXqrMcyno3ndZYBP11cdu7VC6bfN4RVIgXIT3cjJ4vJ
+        mdV+HEoj3WWRywD5z62h9KmKhaAvvnzvKqyeCjS9dYhqvf7T+8sOoE20O19qeNqw
+        CGDEkXj4VOR1k9a8rumsfigQxNMRVaKiLW61VhDTzFSGptu34XKitmoYp1fdArjg
+        YhH1cA0xzeBWyKViMn3ZEvzYw4/1fJueSy1oJ88+PUnJ54cheAsSqzdfw==
+X-ME-Sender: <xms:JJhyYuf7C_rlyzUQ0sc-WoOznILTmQLjwrygpzIi2CoPMDfRIhQsEw>
+    <xme:JJhyYoPnVQ4JQDgom8R58fE7Q33sZp2UZ_VMsWGeYj2znY_oZ5-KzMnuiZwwSDlIk
+    VWPI8MAwGpqcQs_SpM>
+X-ME-Received: <xmr:JJhyYvict0amtznFk1ocKvsdPAuP6ZjQkcmWp4f7d8paqq94H7AiHlg741CG8nrnlZf4ZRJVQx46K3AsUz1bO0Qvf8YHDtpbIS9WfJY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdelgdekhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeeuieeggffhffffieefheduieeuvdetgeeufeffvefgtedvffehheekffev
+    udefieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:JJhyYr8RuBz6QWkw22wioS4WqPhiEoCZkCUS-j4d1Rwq7QFHy9DZKA>
+    <xmx:JJhyYqvsqNTpn26cL5q-070K5yF_19dRnk6WZX_GuLRkqAxDF_z3Mw>
+    <xmx:JJhyYiEDGUlMhliHYTTtuHhNLgUia-Hw_Ya5Lf_izR2CURYxVXbVkQ>
+    <xmx:JJhyYsUGBrFjt_bUzPyHKZEsS1MCXfbqsYrCFjiA83ZgfcQoNIY1Og>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 May 2022 11:13:39 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: (subset) [PATCH] drm: exynos: dsi: Use child panel or bridge find helpers
+Date:   Wed,  4 May 2022 17:13:34 +0200
+Message-Id: <165167721217.1768345.1175055884818234568.b4-ty@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220428094808.782938-1-jagan@amarulasolutions.com>
+References: <20220428094808.782938-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: add clock binding
- definitions for Exynos Auto v9
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <4f6bfca2-4591-af7c-4a65-f8b0b59d8076@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djPc7r7phclGVx/oGXxYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgyrnYn
-        FzxkrZh1eiNbA+Npli5GTg4JAROJ+UdmAdlcHEICKxglXq/cwQjhfGGU+N02nR3C+cwoMX3i
-        WyaYliNLuqFaljNKHPnYCVX1kVFi9/RrYIN5Bewkls/+D2azCKhILF03nQkiLihxcuYTsLio
-        QJLEr6tzGEFsYYEUiaN7noDVMAuIS9x6Mh/MFhEolujeeJgJZAGzwFxmiafb/oEl2AQMJXqP
-        9oE1cwIt65jXB9UsL7H97RxmkAYJgXZOiXsvvjFC3O0iserQf2YIW1ji1fEt7BC2jMTpyT3Q
-        4KiXmDzlChuE3cEo8XWvGYRtLTFh0wmgOAfQAk2J9bv0IcKOElcnz2UHCUsI8EnceCsIcQKf
-        xKRt05khwrwSHW1CENUqEr9XTYcGopRE95P/LBMYlWYhhcosJN/PQvLMLIS9CxhZVjGKp5YW
-        56anFhvnpZbrFSfmFpfmpesl5+duYgQmsdP/jn/dwbji1Ue9Q4xMHIyHGCU4mJVEeJ2XFiQJ
-        8aYkVlalFuXHF5XmpBYfYpTmYFES503O3JAoJJCeWJKanZpakFoEk2Xi4JRqYEoxWKS2dMrX
-        bbxhV71lCkL5Fk3d7b9bVHyqXt7FsJ3P1yz5ljihpPfhskWGT7boGP9NdPu99qxC8AJL60fr
-        lFykGr8tDrxeN2fWqfvLotZcsFObZzj5d2JL7N4FvC5/XmlOP3dI+SBLCFfJwcY3RRL7a6ym
-        RxW+FJmld1ZNxu/vj/fMmU89puxibo7xmZI5ZRVX+L/rlZU69z8lvJlRcnh/4aq/QkYXrLf3
-        Tu5wMFM+v/uS9tpd86QS77FvK9jxfa6czJlP5xf1Bv5aLXVwl41neeayTykCD1iDrhUcn6do
-        dGLu6l0zxeJ3P5p8dOKrc+012+z1Exd5Fxtn8UW0SfHGmovkd5Sc3rTn1VqWqQV9SizFGYmG
-        WsxFxYkA/rLpw9EDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xu7r7phclGfy7wW7xYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYovRsivJLS1IVMvKLS2yVog0t
-        jPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyrnYnFzxkrZh1eiNbA+Npli5GTg4J
-        AROJI0u6wWwhgaWMElOblboYOYDiUhLzW5QgSoQl/lzrYoMoec8o8XMWWDmvgJ3E8tn/wWwW
-        ARWJpeumM0HEBSVOznwCFhcVSJLYc78RLC4skCJxdM8TMJtZQFzi1pP5YLaIQLHEoW0NzF2M
-        XEDx+cwSp5u6mSCW/WaUuPSgBMRmEzCU6D3axwhicwIt7pjXxwRyJ7OAusT6eUIQM+Ultr+d
-        wzyBUWgWkjNmIVk3C6FjFpKOBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQKjdduxn5t3
-        MM579VHvECMTB+MhRgkOZiURXuelBUlCvCmJlVWpRfnxRaU5qcWHGE2BQTGRWUo0OR+YLvJK
-        4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpiW7E9///QYx7o3tY7N
-        fpbB3c/fN+lJ7Fvw6VPc0Z07mE+0sbF8PMIsr7jCvWTKm+MBK9e/K9uUk6jMZO4cP2O/xHyd
-        p+pHnmTPj7/0frnVxh96Eme9yzUu3dmyZIPspRduO1/bXuFTZ9l5/rxT5M5a46veanJG6tt/
-        2QnvvnFVeafbx8k8VawNAcfCFrmfO9cTfuPOPZtd3ytfbtnkF33iUcaOzp92GqWf2zyTGpde
-        MZq0PmVV1blznRKdp7lu/RUOcr28QDXEnotPyGx/jKyvqHCQxmNOuztPpJ+u5XtnXHY/YM3+
-        Oo3ls3v+TrysIscy0ef4s6XGIS6Zv/lnvq5QTW1bFyTLc3B+7lTlPHkPJZbijERDLeai4kQA
-        r5wvrl8DAAA=
-X-CMS-MailID: 20220504151158eucas1p196f4dfb465303df21957418819173512
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d
-References: <20220504075154.58819-1-chanho61.park@samsung.com>
-        <CGME20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d@epcas2p3.samsung.com>
-        <20220504075154.58819-2-chanho61.park@samsung.com>
-        <4f6bfca2-4591-af7c-4a65-f8b0b59d8076@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 04.05.2022 16:36, Krzysztof Kozlowski wrote:
-> On 04/05/2022 09:51, Chanho Park wrote:
->> Add device tree clock binding definitions for below CMU blocks.
->>
->> - CMU_TOP
->> - CMU_BUSMC
->> - CMU_CORE
->> - CMU_FYS2
->> - CMU_PERIC0 / C1
->> - CMU_PERIS
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->> ---
->>  .../dt-bindings/clock/samsung,exynosautov9.h  | 299 ++++++++++++++++++
+On Thu, 28 Apr 2022 15:18:08 +0530, Jagan Teki wrote:
+> commit <711c7adc4687> ("drm: exynos: dsi: Use drm panel_bridge API")
+> added devm_drm_of_get_bridge for looking up if child node has panel
+> or bridge.
 > 
-> Hi Sylwester,
+> However commit <b089c0a9b14c> ("Revert "drm: of: Lookup if child node
+> has panel or bridge") has reverted panel or bridge child node lookup
+> from devm_drm_of_get_bridge which eventually failed to find the DSI
+> devices in exynos drm dsi driver.
 > 
-> If I am to apply the DTS, which uses this header, I would need to take
-> it via my tree and send you a pull request with it.
+> [...]
 
-Let's do it that way, please provide a pull request with the header.
+Applied to drm/drm-misc (drm-misc-next).
 
-
-Regards,
-Sylwester
+Thanks!
+Maxime
