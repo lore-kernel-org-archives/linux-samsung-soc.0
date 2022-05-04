@@ -2,60 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A6FC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 13:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D424DC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 May 2022 14:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350336AbiEDNMC (ORCPT
+        id S1351348AbiEDOhf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 May 2022 09:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
+        Wed, 4 May 2022 10:37:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350409AbiEDNLq (ORCPT
+        with ESMTP id S1348928AbiEDOha (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 May 2022 09:11:46 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014183E5FC;
-        Wed,  4 May 2022 06:07:54 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id e24so1190247pjt.2;
-        Wed, 04 May 2022 06:07:54 -0700 (PDT)
+        Wed, 4 May 2022 10:37:30 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72E21FA73
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  4 May 2022 07:33:53 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id gh6so3315215ejb.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 May 2022 07:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=vYg4rvjBskdDeZGugnxLh2ljnxAFSL38ZWkvr+e48Dg=;
-        b=eFown16QulVwOuM1vFesLkaJ+0k7QJqbaQaCE7QkNHz7aOgy53bbiDG+CMTxPq4IAc
-         fPfyl8wFwFE+alsDNng/8nRFv2ZZTn2HcuCRs4JZ1+yGacLAPzNm8gZYKKczBfARjG4n
-         lMYVrFvJ44zw0pRBovVd1+twvzWnNwViVfL4gzuVhGvBsQBPd876w7UgmddgveY0UPQB
-         NjCa7Zgz0kS9I6VvNyozpPqHssNUdJpH8zGRgsrD1z1jPKt18hBtDLgaO4L6csFr5Nza
-         yKMPIol0QgI+NVHqg1WFu0kuFBdqmlquaE+ncnn+zJtJIUKF5/lE2BnEbxVY7VVSvL+2
-         dilQ==
+        bh=4Xap5M7upS3RpBa/kTOo82PyjIvu/DHybTlg1OzmT8M=;
+        b=pXPtPQgENRLs8rA9+rej4MRGpiu2tOu+PSw2+ouMVv+uLs7aTC/Ra5V3T+uQZwScNN
+         hv3pBPx848SZ/iXTtfvpuedQ3M9gA/dV8e9k5qAcYp+NXCdQ6V4Nz4ilKimq+iuPytIM
+         hdnVBakxJ9GD9JzCj4Av9CIQS0x7wXg4q9OslBq4D9gzeWGDvbh84utvarbMS4BXIGYL
+         RlXBqn87U0q5vgh3ejzPjDsZbwztGDCfx4MC6BI/oQIA+Rxp32zGVy3hNOzQgRBRgP/j
+         sQLfGXa4FYbSi2e+lI2jA7YZr4qh3MeFpzXIToeOXvJaEIRplvdq9Kp0OUOigYaX/ZU4
+         YXaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=vYg4rvjBskdDeZGugnxLh2ljnxAFSL38ZWkvr+e48Dg=;
-        b=BpCjmDg9mWC6wEmxQI1Pwwt7ncM+WAfeIwIos7BbZN9eWQdPz63eT/IS0tRTMN2GBD
-         vU7iUbpnhYInPyR6wlSv0T29nwCVscWOgvwMcGrWJfy6rKM1q4T+9Oc4BX1mA18t3SKZ
-         6Kz2QyY7XeyGk9xsllQu0Ynb5GCtCTSHfurZLDqfxQvuGqB5Mz9JnEKbcJPYEGDEVV+e
-         dWZ2t6Y+4eREU6M3WxupUZL8omQvifLCQAHpYA6hBc3J5sbaWfivdKs4oHpXFGIPt8hF
-         wKbPop9JCJjCFnd5VEP/VFYcu6DhSMEhQ5RXN/4lbIdhGoP2iCGj8g+pSSJtb0znyi8P
-         +/Rg==
-X-Gm-Message-State: AOAM5300rRuNx+EsC8VhjMfPIrYMVDXepKlhB9r3qsywEQCyd5SDDOY+
-        YsjwfSS8/uvRYv2P4k1QskOTl+0QwIc=
-X-Google-Smtp-Source: ABdhPJxf2wyA1oDuq1ZZaMBKM7SXBSm0pKWWDI/n0pFoB77t63aO5YgHvPZLkts1FviRmCC6pyAg7w==
-X-Received: by 2002:a17:90b:4cc7:b0:1dc:18c5:adb2 with SMTP id nd7-20020a17090b4cc700b001dc18c5adb2mr10030585pjb.121.1651669674148;
-        Wed, 04 May 2022 06:07:54 -0700 (PDT)
-Received: from [172.30.1.41] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id h19-20020a63df53000000b003c14af50634sm15155679pgj.76.2022.05.04.06.07.49
+        bh=4Xap5M7upS3RpBa/kTOo82PyjIvu/DHybTlg1OzmT8M=;
+        b=AFYNvbVEXFbGeSv4z76VHedpE79S2h2GBeI+aW2W+j5D2p8SEF+XF1ZZenX3p5vLLk
+         II3COtELSp0Vm9E8t48m7xc6Zd4qDKynEuCaKbqt6jTXtK9wmejMCzlu0CoY/d8e+Ez0
+         dJnADMWEbDy9y0rVBdOltZI/2XnDVJ1Hy4DRXwz5qYrT1vbsn66A/pBM/1mZyrgqhw1D
+         gKtGnM/kSMGo2I6nWJK0xCvlxz0ZewJZk3LsHsck3U2qr/C4vfjG+3/KJh9xDC3baOZ8
+         flbInHbfBJV6QJjtT1Q7AF+ICQ7fjufOCNpU6q2PsLsE7n9GWzc16+G8bL5HFZ5igmUD
+         Lx7Q==
+X-Gm-Message-State: AOAM533yuo+2SmQ9+t/9UivEnWiNhjv4qAoeSrRU/SJ+wrLfFc2tHfg6
+        hyuYQMjMEL46bexpmSXf0mf/+A==
+X-Google-Smtp-Source: ABdhPJzDEEeLJV7nHKNzGAwv3BhGGM9lvlERA0IP50CY/x3+ppChmuFspf/Wh+0iuioON9EIRl3baQ==
+X-Received: by 2002:a17:907:ea1:b0:6f4:a356:eb54 with SMTP id ho33-20020a1709070ea100b006f4a356eb54mr6427016ejc.294.1651674832360;
+        Wed, 04 May 2022 07:33:52 -0700 (PDT)
+Received: from [192.168.0.215] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id hw7-20020a170907a0c700b006f3ef214e16sm5809259ejc.124.2022.05.04.07.33.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 May 2022 06:07:53 -0700 (PDT)
-Message-ID: <f732c488-e50c-848d-c852-4b1c263a5d97@gmail.com>
-Date:   Wed, 4 May 2022 22:07:48 +0900
+        Wed, 04 May 2022 07:33:51 -0700 (PDT)
+Message-ID: <169c338d-2986-24e2-ed1c-b41a96019304@linaro.org>
+Date:   Wed, 4 May 2022 16:33:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH v3 12/12] arm64: dts: exynosautov9: switch ufs clock node
+Subject: Re: [PATCH v3 02/12] dt-bindings: clock: add Exynos Auto v9 SoC CMU
+ bindings
 Content-Language: en-US
 To:     Chanho Park <chanho61.park@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -64,67 +65,29 @@ To:     Chanho Park <chanho61.park@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 References: <20220504075154.58819-1-chanho61.park@samsung.com>
- <CGME20220504075004epcas2p4d082e1aa4b35ec4720ea8ed2308878f5@epcas2p4.samsung.com>
- <20220504075154.58819-13-chanho61.park@samsung.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <20220504075154.58819-13-chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <CGME20220504075003epcas2p17f37265b522bb0c26dbdd4ebeec92ab9@epcas2p1.samsung.com>
+ <20220504075154.58819-3-chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220504075154.58819-3-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 22. 5. 4. 16:51, Chanho Park wrote:
-> Use cmu_fsys's clock node instead of dummy ufs clock node.
+On 04/05/2022 09:51, Chanho Park wrote:
+> Add dt-schema for Exynos Auto v9 SoC clock controller.
 > 
 > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->   arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 14 ++------------
->   1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> index 68335fefa5f3..a8818b92e217 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> @@ -157,16 +157,6 @@ xtcxo: clock {
->   			clock-frequency = <26000000>;
->   			clock-output-names = "oscclk";
->   		};
-> -
-> -		/*
-> -		 * Keep the stub clock for ufs driver, until proper clock
-> -		 * driver is implemented.
-> -		 */
-> -		ufs_core_clock: ufs-core-clock {
-> -			compatible = "fixed-clock";
-> -			#clock-cells = <0>;
-> -			clock-frequency = <166562500>;
-> -		};
->   	};
->   
->   	soc: soc@0 {
-> @@ -383,8 +373,8 @@ ufs_0: ufs0@17e00000 {
->   				<0x17dc0000 0x2200>;  /* 3: UFS protector */
->   			reg-names = "hci", "vs_hci", "unipro", "ufsp";
->   			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&ufs_core_clock>,
-> -				<&ufs_core_clock>;
-> +			clocks = <&cmu_fsys2 CLK_GOUT_FSYS2_UFS_EMBD0_ACLK>,
-> +				 <&cmu_fsys2 CLK_GOUT_FSYS2_UFS_EMBD0_UNIPRO>;
->   			clock-names = "core_clk", "sclk_unipro_main";
->   			freq-table-hz = <0 0>, <0 0>;
->   			pinctrl-names = "default";
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+
+Best regards,
+Krzysztof
