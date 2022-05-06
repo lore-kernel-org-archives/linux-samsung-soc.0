@@ -2,191 +2,186 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6F1C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 May 2022 11:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167E2C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 06:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232930AbiEEL7P (ORCPT
+        id S1347314AbiEFGhJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 May 2022 07:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36694 "EHLO
+        Fri, 6 May 2022 02:37:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232409AbiEEL7N (ORCPT
+        with ESMTP id S240229AbiEFGhI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 May 2022 07:59:13 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8994F9FFA
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 May 2022 04:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1651751732; x=1683287732;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ll69+c2JFgiuAsv/a/yUH9KQKD/0Hm7Y+hTHpdDWlN0=;
-  b=NaiEHzCLFNBKrZg57p6NnTQCgf9P5k0MWpxNNIXPBRhT2mWKFc+96P2Z
-   cUTck3mHLq+q2f51Rt5iuf4JrEK1KMzp2XCSqy8QWF9RQYmgPmZdTVT9N
-   WzrE9aXUg+W0ucQTPSm0ORPZA8vIi2w6iBZNVgn9HJ8qaC+S3SW4NSIas
-   wZL3KbblbvsUu8osq1NoSEutDlBTL5iUYeCkaUWE+lUucZ8IJfgN6HNQ+
-   uwgQq7dfw8pSIEKy7AK6v8Mwf2sKfTQXDT281VPJ/ZcW1FVvAPc5hk8ET
-   l0qV/oQCft7ZY6TuyfeBZ7rdaUogy/NjIwBjIPhS7HIUn3kT4/dPYUtzS
-   A==;
-X-IronPort-AV: E=Sophos;i="5.91,201,1647298800"; 
-   d="scan'208";a="23694909"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 05 May 2022 13:55:29 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Thu, 05 May 2022 13:55:29 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Thu, 05 May 2022 13:55:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1651751729; x=1683287729;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ll69+c2JFgiuAsv/a/yUH9KQKD/0Hm7Y+hTHpdDWlN0=;
-  b=eNi0iykwygKrpzWmQOxrtsSWCesXcs1nxPPhCqFo9CYMSFKi/nWGFLhw
-   k4vrm3jdX/KUFD0Aq56F4OhAD77vHdxsuRtayKWVxqgN1/qMebnL+9DU+
-   uAzL+mMIBpucD8yyRxYygdlVt0pIZm4q+r5bh0r4ZVFqXwFoY4C1hkqSl
-   ige2ZkJSdODHTavP3zQOnfWDzg9Djs3Mr6uLpNh/9ULZDhsSTtG8AY7oS
-   cV7OSa40S7+jK5JFBEebwSUUjR26zKG1rHdh84zrwgPFruEbp6Ag7XaPe
-   bt6VmVGGHtoWZuQNE2SNktFeHNVfaTI2alGW69bNt9K9m/Y+mLI3GcWU3
-   g==;
-X-IronPort-AV: E=Sophos;i="5.91,201,1647298800"; 
-   d="scan'208";a="23694908"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 05 May 2022 13:55:29 +0200
-Received: from steina-w.localnet (unknown [10.123.49.12])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id DDECA280070;
-        Thu,  5 May 2022 13:55:28 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Subject: Re: (EXT) Re: (EXT) [PATCH v2 00/12] drm: bridge: Add Samsung MIPI DSIM bridge
-Date:   Thu, 05 May 2022 13:55:26 +0200
-Message-ID: <3104069.5fSG56mABF@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <CAMty3ZAuTzdzj9v4weqJfxQKhM57XuwSzSAX86NHTcCp14uBBw@mail.gmail.com>
-References: <20220504114021.33265-1-jagan@amarulasolutions.com> <2184168.iZASKD2KPV@steina-w> <CAMty3ZAuTzdzj9v4weqJfxQKhM57XuwSzSAX86NHTcCp14uBBw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 6 May 2022 02:37:08 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C95265D33
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 May 2022 23:33:24 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220506063320epoutp029eb8427d49b7229819ab31d0f770d94b~scHKESJB91037710377epoutp02d
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 May 2022 06:33:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220506063320epoutp029eb8427d49b7229819ab31d0f770d94b~scHKESJB91037710377epoutp02d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651818800;
+        bh=UoxbgRPuhct4Fhd+B8dwdlXh1yYrD6h+9jGksHt8h7Q=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=aS97B2EpHqW7kEoKwTU2+BsasVflCNHrpQs2jefSuhdHcjZgWnISVtsi3+CSopauv
+         mk2rj/M/sOb7T28w0NDFVN+L+ArwXNPRsD5WoVqXHREbV8JL3NBadPiiK1dpS1h7Nl
+         RtHjQznVO3LP3kwxRazdR62PL/V2C4F8MXGXSZ30=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20220506063319epcas2p4305144f9691321ff51ed8191f9608f0f~scHJUZcNL0959509595epcas2p4D;
+        Fri,  6 May 2022 06:33:19 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.92]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4Kvgk44LnXz4x9Q2; Fri,  6 May
+        2022 06:33:16 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F2.03.09694.C21C4726; Fri,  6 May 2022 15:33:16 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220506063316epcas2p197ed75070ed4f4ba29439f5c0def90b4~scHGEUzQX1116211162epcas2p1X;
+        Fri,  6 May 2022 06:33:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220506063316epsmtrp156daa5c81d0585df92d070d0918eeb4d~scHGDXeDn3084030840epsmtrp1g;
+        Fri,  6 May 2022 06:33:16 +0000 (GMT)
+X-AuditID: b6c32a48-47fff700000025de-5f-6274c12c394a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4B.45.11276.B21C4726; Fri,  6 May 2022 15:33:15 +0900 (KST)
+Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220506063315epsmtip2764ef37fc2119eecc5bae8928032a0c7~scHFyLbbR0424804248epsmtip2b;
+        Fri,  6 May 2022 06:33:15 +0000 (GMT)
+From:   Daehwan Jung <dh10.jung@samsung.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Juergen Gross <jgross@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-kernel@vger.kernel.org (open list),
+        linux-usb@vger.kernel.org (open list:DESIGNWARE USB3 DRD IP DRIVER),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
+        S5P AND EXYNOS ARM ARCHITECTURES),
+        linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND
+        EXYNOS ARM ARCHITECTURES), sc.suh@samsung.com,
+        taehyun.cho@samsung.com, jh0801.jung@samsung.com,
+        eomji.oh@samsung.com, Daehwan Jung <dh10.jung@samsung.com>
+Subject: [PATCH v5 0/6] Add xhci-exynos for Exynos SOC
+Date:   Fri,  6 May 2022 15:31:13 +0900
+Message-Id: <1651818679-10594-1-git-send-email-dh10.jung@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRmVeSWpSXmKPExsWy7bCmua7OwZIkg8fbFS0ezNvGZvF30jF2
+        i2NtT9gt7iyYxmRxavlCJovmxevZLObcNLK4+/AHi8Xe11vZLTY9vsZqcXnXHDaLGef3MVks
+        WtbKbNFytJ3FonnTFFaLzxseM1p03b3BaDHpoKjF/iteDsIev39NYvT49nUSi8fshossHjtn
+        3WX3WLznJZPHplWdbB53ru1h89g/dw27x+Yl9R59W1YxeqzfcpXF4/MmuQCeqGybjNTElNQi
+        hdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKAPlRTKEnNKgUIBicXF
+        Svp2NkX5pSWpChn5xSW2SqkFKTkF5gV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGa/frGIsOCZS
+        se35T5YGxq0CXYycHBICJhJn+maydDFycQgJ7GCUOLv2CxOE84lR4vXt91DON0aJ2efvM8G0
+        LN+wnRUisZdR4vmKDijnB6PEnf6v7F2MHBxsAloS3xcygsRFBKYzS5xc08sG4jALnGSWuLxn
+        ETvIKGEBM4kZiw4ygtgsAqoSUzY3s4DYvAKuEhd+zGGHWCcncfNcJzNIs4TAFg6JtosXoe5w
+        kWhZvBeqSFji1fEtULaUxMv+Nii7WGLXp1YmiOYGRonGByeYIRLGErOetTOCnMosoCmxfpc+
+        iCkhoCxx5BbYDcwCfBIdh/+yQ4R5JTrahCAalSWmX57ACmFLShx8fQ5qoIfEh+P32UBsIYFY
+        idsnFjBPYJSdhTB/ASPjKkax1ILi3PTUYqMCE3g0JefnbmIEJ1stjx2Ms99+0DvEyMTBeIhR
+        goNZSYRXeFZJkhBvSmJlVWpRfnxRaU5q8SFGU2B4TWSWEk3OB6b7vJJ4QxNLAxMzM0NzI1MD
+        cyVxXq+UDYlCAumJJanZqakFqUUwfUwcnFINTNwOG04Er70iZOJ9M2K9974dzt7r5F/uzTM+
+        k5epU/fjYMxr2615n9cl35/NlzPpN8s69qOHmUw6NthvPLZ/20o3fxnbT1m2O/bxab2d6ZFn
+        2BS1rL/c7miyTc/x9pag7I/S7f9NTxyd1fvy7AGNtd39ji7vF17P7wu6fP13Ndv2SW5BDWd5
+        bzJPDfr6yqozw/VshPPCqdHvt31/cXCOJ+uxZfHvZq5h6qstTAnI5frDFiiovMqTRXJyz6qT
+        3Nf1QisWzXh3bm7dygliKetPPhR/WH+25MKf3M9VyTr/rqVUZC39M7/qqNa0EAGNK97TxNNn
+        crgsyZBeb3h9xRzpry1cKzNEPsitUI+csbLCgFmJpTgj0VCLuag4EQCBdfP4PwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsWy7bCSvK7OwZIkg8W2Fg/mbWOz+DvpGLvF
+        sbYn7BZ3Fkxjsji1fCGTRfPi9WwWc24aWdx9+IPFYu/rrewWmx5fY7W4vGsOm8WM8/uYLBYt
+        a2W2aDnazmLRvGkKq8XnDY8ZLbru3mC0mHRQ1GL/FS8HYY/fvyYxenz7OonFY3bDRRaPnbPu
+        snss3vOSyWPTqk42jzvX9rB57J+7ht1j85J6j74tqxg91m+5yuLxeZNcAE8Ul01Kak5mWWqR
+        vl0CV8brN6sYC46JVGx7/pOlgXGrQBcjJ4eEgInE8g3bWUFsIYHdjBKd+2wg4pISS+feYIew
+        hSXutxyBqvnGKPFlRmwXIwcHm4CWxPeFjCBhEYG5zBJbtxZ1MXJxMAucZZb483Q1G0hCWMBM
+        Ysaig2BFLAKqElM2N7OA2LwCrhIXfsyBmi8ncfNcJ/MERp4FjAyrGCVTC4pz03OLDQsM81LL
+        9YoTc4tL89L1kvNzNzGCw15Lcwfj9lUf9A4xMnEwHmKU4GBWEuEVnlWSJMSbklhZlVqUH19U
+        mpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVAPTYUuu5P7aeLM1K9UZqo/rWqbd
+        M5Ld3e3+8hWD9PrDX0QmBa996JEoE50y2UBm5sGp8a9WBQZsLl73a9GBruzIrhTW5UKt5TLF
+        Wj8DBI5bqKov+p6X+E/N6AbfbyOfzi3/+tff9PbWf6O024np8+/4WvHlEy7t/dusHjXDnfvx
+        cWNxrri2NQ3v7UIDnn8oPRRg2HxUkmH5Dc6LNn7qy7blb9n7cv6nm7nn9vVExDvubXt5TjPm
+        g969cy92PfXj8FzTNEH4MPMPtmvfOa/uXbJn6/SnU2U+Rll6cs8W0tnCybck5ny14aO+ipka
+        3ZYC4Y+3b7Rezta2dtPc6x9X1mXN6VXZOn2rTcbqpd+WPjt+VImlOCPRUIu5qDgRACOopwjq
+        AgAA
+X-CMS-MailID: 20220506063316epcas2p197ed75070ed4f4ba29439f5c0def90b4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220506063316epcas2p197ed75070ed4f4ba29439f5c0def90b4
+References: <CGME20220506063316epcas2p197ed75070ed4f4ba29439f5c0def90b4@epcas2p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Am Donnerstag, 5. Mai 2022, 09:38:48 CEST schrieb Jagan Teki:
-> On Thu, May 5, 2022 at 12:57 PM Alexander Stein
-> 
-> <alexander.stein@ew.tq-group.com> wrote:
-> > Hello Jagan,
-> > 
-> > thanks for the second version of this patchset.
-> > 
-> > Am Mittwoch, 4. Mai 2022, 13:40:09 CEST schrieb Jagan Teki:
-> > > This series supports common bridge support for Samsung MIPI DSIM
-> > > which is used in Exynos and i.MX8MM SoC's.
-> > > 
-> > > Previous v1 can be available here [1].
-> > > 
-> > > The final bridge supports both the Exynos and i.MX8MM DSI devices.
-> > > 
-> > > On, summary this patch-set break the entire DSIM driver into
-> > > - platform specific glue code for platform ops, component_ops.
-> > > - common bridge driver which handle platform glue init and invoke.
-> > > 
-> > > Patch 0000:   Samsung DSIM bridge
-> > > 
-> > > Patch 0001:   Common lookup code for OF-graph or child
-> > > 
-> > > Patch 0002:   platform init flag via driver_data
-> > > 
-> > > Patch 0003/10:  bridge fixes, atomic API's
-> > > 
-> > > Patch 0011:   document fsl,imx8mm-mipi-dsim
-> > > 
-> > > Patch 0012:   add i.MX8MM DSIM support
-> > > 
-> > > Tested in Engicam i.Core MX8M Mini SoM.
-> > > 
-> > > Anyone interested, please have a look on this repo [2]
-> > > 
-> > > [2] https://github.com/openedev/kernel/tree/imx8mm-dsi-v2
-> > > [1]
-> > > https://patchwork.kernel.org/project/dri-devel/cover/20220408162108.1845
-> > > 83-> 1-jagan@amarulasolutions.com/
-> > > 
-> > > Any inputs?
-> > 
-> > I was able to get my LVDS display running using this driver and an LVDS
-> > bridge. Actually my setup is similar to yours. My chain is like this:
-> > MIPI-DSI -> sn65dsi83 -> LVDS panel
-> > I noticed some things though:
-> > My setup only works if I use less than 4 lanes. See [1]. When using 4
-> > lanes
-> > the image is flickering, but the content is "visible". Your DT has only 2
-> > lanes configured, do you have the possibility to use 4 lanes? I have no
-> > idea how to tackle this. It might be the DSIM side or the bridge side.
-> > Apparently the downstream kernel from NXP supports 4 lanes, if I can trust
-> > the config. I have no way to verify this though.
-> 
-> What is dsi_lvds_bridge node? have you added your dts changes on top
-> of imx8mm-dsi-v2 branch I'm pointing it.
-> 
-> I will check 4 lanes and let you know.
-> 
-> > Another thing is I get the following warning
-> > 
-> > > sn65dsi83 2-002d: Unsupported LVDS bus format 0x100a, please check
-> > > output
-> > 
-> > bridge driver. Falling back to SPWG24.
-> 
-> This couldn't be much affected but will fix it.
+This patchset is for Samsung Exynos xHCI host conroller. It uses xhci
+platform driver and extends some functions by xhci hooks and overrides.
 
-I found the cause. You need the following diff:
-----8<-----
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/
-samsung-dsim.c
-index 138323dec0eb..7fb96dc7bb2e 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1427,7 +1427,7 @@ static int samsung_dsim_attach(struct drm_bridge 
-*bridge,
- {
-        struct samsung_dsim *dsi = bridge_to_dsi(bridge);
- 
--       return drm_bridge_attach(bridge->encoder, dsi->out_bridge, NULL, 
-flags);
-+       return drm_bridge_attach(bridge->encoder, dsi->out_bridge, bridge, 
-flags);
- }
- 
- static const struct drm_bridge_funcs samsung_dsim_bridge_funcs = {
-----8<-----
+This driver supports USB offload which makes Co-processor to use
+some memories of xhci. Especially it's useful for USB Audio scenario.
+Audio stream would get shortcut because Co-processor directly write/read
+data in xhci memories. It could get speed-up using faster memory like SRAM.
+That's why this gives vendors flexibilty of memory management. This feature
+is done with xhci hooks and overrides.
 
-Best regards,
-Alexander
+It supports USB offload only for first connected device. It follows normal
+sequence from 2nd device.
 
+Changes in v2 :
+- Fix commit message by adding Signed-off-by in each patch.
+- Fix conflict on latest.
 
+Changes in v3 :
+- Remove export symbols and xhci hooks which xhci-exynos don't need.
+- Modify commit message to clarify why it needs to export symbols.
+- Check compiling of xhci-exynos.
+
+Changes in v4 :
+- Modify commit message to clarify why it needs to export symbols.
+- Add a function for override of hc driver in xhci-plat.
+- Make xhci-exynos extending xhci-plat by xhci hooks and overrides.
+  (vendor_init / vendor_cleanup hooks are useful from here v4)
+- Change the term (USB offload -> xhci-exynos) on subject of patches.
+
+Changes in v5 :
+- Rename subject of cover-letter.
+- Add code in xhci_alloc_segments_for_uram.
+- Add code for supporting several devices.
+- Move adding xhci_address_device to other commit.
+  (usb: host: add some to xhci overrides for xhci-exynos
+    -> usb: host: export symbols for xhci-exynos to use xhci hooks)
+- Add new commit (usb: dwc3: dwc3-exynos: add host init)
+
+Daehwan Jung (6):
+  usb: host: export symbols for xhci-exynos to use xhci hooks
+  usb: host: add xhci hooks for xhci-exynos
+  usb: host: xhci-plat: support override of hc driver
+  usb: host: add some to xhci overrides for xhci-exynos
+  usb: host: add xhci-exynos driver
+  usb: dwc3: dwc3-exynos: add host init
+
+ drivers/usb/dwc3/dwc3-exynos.c | 100 ++++-
+ drivers/usb/host/Kconfig       |   8 +
+ drivers/usb/host/Makefile      |   1 +
+ drivers/usb/host/xhci-exynos.c | 775 +++++++++++++++++++++++++++++++++
+ drivers/usb/host/xhci-hub.c    |   7 +
+ drivers/usb/host/xhci-mem.c    | 150 ++++++-
+ drivers/usb/host/xhci-plat.c   |  50 ++-
+ drivers/usb/host/xhci-plat.h   |   9 +
+ drivers/usb/host/xhci-ring.c   |   1 +
+ drivers/usb/host/xhci.c        |  90 +++-
+ drivers/usb/host/xhci.h        |  57 +++
+ 11 files changed, 1222 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/usb/host/xhci-exynos.c
+
+-- 
+2.31.1
 
