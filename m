@@ -2,103 +2,91 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FDFC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 08:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1756C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 08:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1389955AbiEFISe (ORCPT
+        id S1390142AbiEFIci (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 May 2022 04:18:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34468 "EHLO
+        Fri, 6 May 2022 04:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1389940AbiEFISc (ORCPT
+        with ESMTP id S1390139AbiEFIch (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 May 2022 04:18:32 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 756DE67D29
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 May 2022 01:14:50 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id t6so8990349wra.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 May 2022 01:14:50 -0700 (PDT)
+        Fri, 6 May 2022 04:32:37 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A3C257980
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 May 2022 01:28:55 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id l18so13052059ejc.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 May 2022 01:28:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IlnEP2sEnpgHaHWLHUGilGQAFmisSdzAhYbMeYmMi38=;
-        b=HqSMS5/QlpxxyQty/G7buZbiKC5JZBv493X9X2wC0oEUBsDKonsGh5N+pJWAqUlriL
-         4jbbBCHGNWI4fTFip4nCrlLzTFclcrwmUKq426LSzcP9HdAOo4MO6fkoV71h7VM4Y5GJ
-         hGGfoINQ/AsPkTBqg/RSyIX4rTNSGNWHkTN2m/sIbeaqJzaFq0fL0s2Ub9lKrMNJObqT
-         mINHjAY5qaruojjVCNnYRQsgfwtt129XbEifzC5LiYdNSZdPTv9G3+kIFl/aFpRXx3hf
-         y5z7LMANXEbOGvWsayJ+GdBPonvtH+/xgfP6oNBaJhlMKZ0FG0lkAsrWmUXHY44l1Okm
-         agvw==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:cc:from:in-reply-to:content-transfer-encoding;
+        bh=k8gw4JD+CVD/evHIacbhoTM1UmIlcjVCNQ+9z7oYUtI=;
+        b=dDZs4xRsI+XJt34onMwmAZtEAGas5P7kna23XXUg06Y/gztAxn8a54iuBWXYNHBmCX
+         bc9omCyYTSnmd4wyPVEQaM3fJ9qeBaAWNqvOqOrhHgltpmko5+rjky0VeGWALW6WwdqR
+         X8j95OnDoOceNHT0SEmSr/ABL3waSGRPacAK4vCWkbGL4jqK94qZCzk20EvvtfS9e2ek
+         bClBIbWgydbg+7AxUw2bTZhxtAsJwRDiWDDECmrJ1Npw9K8xbMKzewaoC76r4daDMsSa
+         QM5Xf6k4repo+cmcKUjz0K2GGYKSydY1YVPjwyMhtNJK56a6oPnmwgeSIZbwL0ODJwEI
+         f4jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IlnEP2sEnpgHaHWLHUGilGQAFmisSdzAhYbMeYmMi38=;
-        b=ibtHXqpAozNL2KWPeYKAEnHbFxOojUuHk191YhwjkNN681EppYEJ5jmrstsH4RHggU
-         NjdgvkzfXY2bfkT2vHEBfhO9JL4i1FIyNHNeAzIqyWZEtJZef3H6PC4U6OIv6F9Y0wtN
-         aI2zTf7umG9weia6hxuJ9fWDKeKcI1sWEgcfwT21XigNHJ5BRXTayqU+bznhiAwxRkrO
-         U1L/vG71aZms5x9rb9st6i4hzMuCo3vhT+Ro9UYxO6cJ7YaDczufLzVc/1BbmUfNWbTE
-         WxcgFFftNEgm0WEwNIq5uwp1MQpZK+7hYYrofq9Y6gAp7S3wEfPDC6tEt7Zb6JbfW6qW
-         mEhQ==
-X-Gm-Message-State: AOAM530r05LkJYC1veXnUTare86CqrJTwYaAupUJXojGN8hSNuVu3MU1
-        j0CDJ5TTNsY0fI4Sz1Ig8C1wpA==
-X-Google-Smtp-Source: ABdhPJxXi6eJey+rbbTnYO7gBOA1PeS4alROquDDvhJbrStjJoPV9oexn9EDcYsYdGvcpMk/Lvd0lw==
-X-Received: by 2002:a5d:6949:0:b0:20a:e021:f8e0 with SMTP id r9-20020a5d6949000000b0020ae021f8e0mr1720729wrw.231.1651824889058;
-        Fri, 06 May 2022 01:14:49 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id c14-20020adffb0e000000b0020c6fa5a797sm3059657wrr.91.2022.05.06.01.14.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 01:14:48 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 6/6] ARM: soc: samsung: for v5.19
-Date:   Fri,  6 May 2022 10:14:38 +0200
-Message-Id: <20220506081438.149192-6-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220506081438.149192-1-krzysztof.kozlowski@linaro.org>
-References: <20220506081438.149192-1-krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:cc:from:in-reply-to
+         :content-transfer-encoding;
+        bh=k8gw4JD+CVD/evHIacbhoTM1UmIlcjVCNQ+9z7oYUtI=;
+        b=pIuHp0Gf7f9yN6sj8GlypES05nygJe3GJ4rQwuaUI4VpWEoKHQFy58+Ykw626rruSd
+         Rs9lyb4syPpErseIFq0Oma5EOU1yE4Wjs/0alNlluXvMWnjWJXT94PKAnj8AOn+IiYtT
+         32Prmj5djlZMK6nigRAg6ZSfGzNX0u3XnMwFGrPKgF5fKE6oI4EQJWlaRxD1C+I80jiN
+         t1DeJW7gRCAGledbu4HXXhns1pDS7Mz1qwKeXJY2Ona4Ik1srafGs3AaRNJTlPW5UZoB
+         ozqUjAtldB7qC3tuZJzypi/6SCkno+ftNNNITRgYMbZ6q9W/AIqDt77XQ3kxmTMI5IDc
+         pcNg==
+X-Gm-Message-State: AOAM533FSheWgD0K2AkhRwQrVy6zQqMqYOLHdctwZChnx9BY/LFjXZWy
+        +LcdyK3yTXhmff5sfvCiEs2zuQ==
+X-Google-Smtp-Source: ABdhPJz8nMRZdChtZYB1x22twKxHKUjq6qOsvsEKiRI3qcGnDs0ehoq2wpfQpANDDl8kg3ZNcHVoEw==
+X-Received: by 2002:a17:906:54c3:b0:6ef:d07b:c8ec with SMTP id c3-20020a17090654c300b006efd07bc8ecmr1859082ejp.687.1651825733978;
+        Fri, 06 May 2022 01:28:53 -0700 (PDT)
+Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id r2-20020aa7d582000000b0042617ba6396sm1997301edq.32.2022.05.06.01.28.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 May 2022 01:28:53 -0700 (PDT)
+Message-ID: <d6ead111-e2f8-c098-42ff-cda30a1d72bc@linaro.org>
+Date:   Fri, 6 May 2022 10:28:52 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 1/3] dt-bindings: timer: cdns,ttc: drop unneeded minItems
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20220424150333.75172-1-krzysztof.kozlowski@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220424150333.75172-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
+On 24/04/2022 17:03, Krzysztof Kozlowski wrote:
+> There is no need to add minItems when it is equal to maxItems.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/timer/cdns,ttc.yaml | 1 -
+>  1 file changed, 1 deletion(-)
+Hi Daniel, Thomas,
 
-  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+The patchset was acked by Rob, so he expects you will pick it up. Could
+you let me know if there is anything stopping or you expect the other
+way (via DT-tree)?
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.19
-
-for you to fetch changes up to 170a0c56c5ec597fa15447e63272827a80a19be1:
-
-  ARM: s3c: fix typos in comments (2022-04-04 18:57:34 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.19
-
-Cleanup: drop unneeded CONFIG_S3C24XX_PWM and fix some typos.
-
-----------------------------------------------------------------
-Julia Lawall (1):
-      ARM: s3c: fix typos in comments
-
-Uwe Kleine-König (1):
-      ARM: s3c: Drop config symbol S3C24XX_PWM
-
- arch/arm/configs/mini2440_defconfig  | 3 ++-
- arch/arm/configs/s3c2410_defconfig   | 2 ++
- arch/arm/mach-s3c/Kconfig            | 8 --------
- arch/arm/mach-s3c/Kconfig.s3c24xx    | 2 --
- arch/arm/mach-s3c/iotiming-s3c2410.c | 2 +-
- arch/arm/mach-s3c/pm-s3c64xx.c       | 2 +-
- arch/arm/mach-s3c/s3c24xx.c          | 2 +-
- 7 files changed, 7 insertions(+), 14 deletions(-)
+Best regards,
+Krzysztof
