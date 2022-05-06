@@ -2,235 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C531AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 06:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C960DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 07:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346625AbiEFHCB (ORCPT
+        id S1389559AbiEFHfo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 May 2022 03:02:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
+        Fri, 6 May 2022 03:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243243AbiEFHB7 (ORCPT
+        with ESMTP id S239921AbiEFHfk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 May 2022 03:01:59 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AB820191
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 May 2022 23:58:16 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id r1-20020a1c2b01000000b00394398c5d51so3814926wmr.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 May 2022 23:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7NQDxom4Md+SF3JBtM9QM8HwZJZp3wgsQ5x/9kk1ouI=;
-        b=ILMjHHtNQzWa0xh6HeDP/oqVu8poke5Qmvml6hgYLwBv9S6AStdzgPSlHRycqiVJzx
-         MiL4dH66H0RPPg1YXuiNVRiO0loo/IJjOmwKpqa+CgLN8PfyloRIak1uFaesy1HpsHXX
-         Q2+JXk7xnaj/+mZn1yMIR8jHivMBl4fRYJMnsS1JEr8i88TYGzPJchcqnSyuirlOarRD
-         Nn3C8GN2aklDdd1ZTsEFzfkocbCgQ9QcZzCZFFwjl+20W9Qzp9pbAHWZlPuTA0b7olED
-         M1nuzZxsiswK3fTwH+PksmxBvZdlVnyGT1dcUvTjkCpnbMQj56J7Uiju9vaLqVRkhXcJ
-         BUbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=7NQDxom4Md+SF3JBtM9QM8HwZJZp3wgsQ5x/9kk1ouI=;
-        b=mCZKi5BhtGVmhxaVyYtETPgniGI2NGxWTo/TZ4qEp/LLcVlIfht9AlZDDnZEtvZZPC
-         dHIG4ND60WMQnlYXhvSOQD/+S1T0rGQ2zEaYJhAj8JxKbzMhEaRtZ5gZu1eReCHdDs4B
-         qFsH2xi2mNcVg2hies92Hi+sUsbBaM587Gnik//iqJpoLtT03MHfSGDZI2JiALYE3+Oh
-         lvnVouyJw1a2ONjh6i161AKjF+BLmh8WR12QEx9W4ezUbCbhkNatyT1jPrDNCmc2nLyK
-         8TYa6leoiijU/KvKPhOPecxOrJp4Gpj+dNTeahnfVfEQAQOV2TDZEnWR7nT+8fNMHdtN
-         mdBA==
-X-Gm-Message-State: AOAM531h+KGrVPmI0sMUykOL6XDAuCzSA80pQlPekWnEHzFpjuYBmlKf
-        UKC2iaWohCYCNw5VSi5J0PRJHg==
-X-Google-Smtp-Source: ABdhPJwfhheblu+SZxAuxaecE30axXh+1ZOJYealHB6pGee+YSp7i0i+25+At+988imSp2kBp2CFew==
-X-Received: by 2002:a05:600c:4e93:b0:394:e58:c446 with SMTP id f19-20020a05600c4e9300b003940e58c446mr1834067wmq.21.1651820294700;
-        Thu, 05 May 2022 23:58:14 -0700 (PDT)
-Received: from [192.168.0.222] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id 67-20020a1c1946000000b003942a244f2csm9408328wmz.5.2022.05.05.23.58.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 23:58:14 -0700 (PDT)
-Message-ID: <921b8df5-bd01-1ca5-cbe9-4a4e48acdab8@linaro.org>
-Date:   Fri, 6 May 2022 08:58:12 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH RFC v5 5/6] usb: host: add xhci-exynos driver
-Content-Language: en-US
-To:     Daehwan Jung <dh10.jung@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 6 May 2022 03:35:40 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2103.outbound.protection.outlook.com [40.107.255.103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB6C05C869;
+        Fri,  6 May 2022 00:31:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k+gW2JDwkTQpSPAgB+W4X2b/2RAYdk6UCAxmvFcCbLCYGNAae3QoCwjzTchltCqrhoi0xea+C7zKBA+zUkbY7jw2N3ewY6Si9EwpK1y1BP3M4VGv3IiRqTRPEV/M14EhFfGT+jPbJMqca6VMUKdPx9XIgFxgq2b0i5dfeWZ+pfxnClyuFdH9e0YqP9MH6o59SRcFtyxd8zSj7NxMM0CktUCwM/VR6/GyATGuxAtxT0WcwMZc9huGJ1oRGp/KQtNBlIyh71tWIRPjvt0Cd2pxKSO/swj+1Te31rMXEHL0zs/vFXT6fhNkRgIWPehXe5gRhoMQml9TxtY2BL62ZDyn2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fD0qmgtwIdpW+csUypRu/f/rgLDbsjkypALBiaPqcfg=;
+ b=AyBvjhr9aPAlmxQXiACLqV63MYekuxVqmkuLWJlogdeZFx7oNh9Y07HZODKjU5rJeXALNXijglLidsUta9Q0veC9Dx4EIXzOeHzLFVLs3OgqLkWGboBe+NEIXOR+lYGNPkJ9vUmwnpXp4EdCEh36m4MXWsPC3pMMo+n+ZDEQIvvUy5vr4HCqs1d+WLohUVKuQajywJAR4+/GuLik5kdHuACn9XaMKZq+hdwpL7vzUYLgd5ZHFFVnAvlZtbb+BxnjXqw78GKGP5T/y0meeEzOzqFTd7Y1RAbVuVAaKSor7cJ1ztU8hHmAsNH1B5X9h+mywVGZX4V+DHOBPqx1CB+sBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fD0qmgtwIdpW+csUypRu/f/rgLDbsjkypALBiaPqcfg=;
+ b=Btrn9zd5aatJYi0YKkgryRF0Az17+SNH0/0wx/VYVqzgGnD4m2wPkjrGOIg1PAuCcwGkzvVZS5DgA8YIkFue0+sHuHLVgE+tP4A1+Nh319Wxez2JtCRtRUJS4FsKbugjRhYr93pp6CWIwOfcOk8A4HBOGdNKnSj9rMCfCl/qjuE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4173.apcprd06.prod.outlook.com (2603:1096:400:26::14)
+ by KL1PR0601MB4812.apcprd06.prod.outlook.com (2603:1096:820:a4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.18; Fri, 6 May
+ 2022 07:31:54 +0000
+Received: from TYZPR06MB4173.apcprd06.prod.outlook.com
+ ([fe80::d4bd:64f4:e1c0:25cb]) by TYZPR06MB4173.apcprd06.prod.outlook.com
+ ([fe80::d4bd:64f4:e1c0:25cb%4]) with mapi id 15.20.5206.027; Fri, 6 May 2022
+ 07:31:54 +0000
+From:   Yihao Han <hanyihao@vivo.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Juergen Gross <jgross@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Matthias Kaehlcke <mka@chromium.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>, sc.suh@samsung.com,
-        taehyun.cho@samsung.com, jh0801.jung@samsung.com,
-        eomji.oh@samsung.com
-References: <1651818679-10594-1-git-send-email-dh10.jung@samsung.com>
- <CGME20220506063339epcas2p41de479fb6b2d11012a45ac50ccc19a26@epcas2p4.samsung.com>
- <1651818679-10594-6-git-send-email-dh10.jung@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1651818679-10594-6-git-send-email-dh10.jung@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel@vivo.com, Yihao Han <hanyihao@vivo.com>
+Subject: [PATCH] i2c: s3c2410: fix returnvar.cocci warning
+Date:   Fri,  6 May 2022 00:31:32 -0700
+Message-Id: <20220506073134.6544-1-hanyihao@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: HKAPR04CA0005.apcprd04.prod.outlook.com
+ (2603:1096:203:d0::15) To TYZPR06MB4173.apcprd06.prod.outlook.com
+ (2603:1096:400:26::14)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4cc7cb18-394d-4dd8-2525-08da2f327e56
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB4812:EE_
+X-Microsoft-Antispam-PRVS: <KL1PR0601MB48122025901B9D16B7F53EEBA2C59@KL1PR0601MB4812.apcprd06.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vgj3BhtZ+xBhqAVhq7k3Wkcrq302cS89PhoMpAhVFW3VzKWB2ubDzMb5BW4OSTcHFGVDaAX/ACN98pB2JZsQI85BGILyByDmv6LsZVFnTVPCXoiOkRdbq3ncW+s7Qf9cAy+3FaiiM9zl8n0lyzD5u8L4GMLfV//Y0Vqx1pQz+S8MmY6blxac//cpUagWPQtmVS5zsUvAgatZyQhfpu80tfyrf8FFIVvnEeO4o8XDjp05bjHvqW1DJcPrQ29jIWW3+dlMX0T0XdngGelvM1W/l84ZOGfOlpwv9Mr3Ac/Nw8xnwBZatRtGmxN024a0WJBvwHMwaW9I8xZpBD7AEdq2kIaact9sH2Si4ML4Q34LjI2CRjv2DJwh8ef9LEsV7Gh7e3mBSGVNd5cbA277virKQOFdVAfMdtPwbA5TvqqIeAdQOYBvcvcWkY5h+Aj+qQzB8GAexPg12kbhJSa4X94YNtqhiC79dTli0tT5cAWxWHnJ+96w3Bz5rj465I8B6/iD3OCpN//3BJ8hR5hTudwOXfpdzO3twSd2mj0oVJ3YEfLaGVR2chFTxDyVwrPtNDNRhdNLL/zZTlTKUX0/UKVjlMpz2oqTHkeUU033HtzNH/ifLyxCQdcgUgoDrQ5dLzTCSV9GWz1lQbo/V6qvBO04ss0Q8YaGmaEjBFcKW4KAVIqVt3Haije1t/GDvwBFh5kNMiEkNoYC+tb82vkGWj19AQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4173.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(508600001)(38350700002)(6506007)(8936002)(1076003)(6666004)(2906002)(316002)(6486002)(186003)(4744005)(36756003)(38100700002)(83380400001)(2616005)(107886003)(6512007)(86362001)(52116002)(5660300002)(26005)(66476007)(8676002)(66946007)(66556008)(4326008)(110136005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gkaWdVQIdGXTIV7cUSmakRKeuLq2TVEpM5LchxwoY0Lywpk5YYap56o+sgkJ?=
+ =?us-ascii?Q?lGnrNdNTXjl4TNF3rl2SN5t+PphMn7MN8MdQoiXOFdF20EgiHi1W1N5Ct2xq?=
+ =?us-ascii?Q?xC97ibecvTBmBU4O4gxfo6rT+2ZZ3mNfa30kQ3HZwn/mmE0AOD+8SRTZEe/a?=
+ =?us-ascii?Q?5i8UAwLWlyT9IaUuIKziTHhh5YPrYf1N2ft7VVd9Z78llazj61owDxH5n/WZ?=
+ =?us-ascii?Q?el2CGpPAufVq6PbaUfQQ8A1bwQ/bty51hGoaN5dLZbXjYpUsbiZIItAa/imT?=
+ =?us-ascii?Q?2BULFPvcmTkU4oLz1mmwsMCaY1yKUMBjMxJIP2gsguyIsuRVvGFpkg/z5rqT?=
+ =?us-ascii?Q?3JhY0h2mN2Lq17CD0p7aOdFBkDVTcKyn7RE3MAEVcssAI5AwGTn+P2G6S53n?=
+ =?us-ascii?Q?XL0ADGSuadzF8xBLL5E2OCzApeLJxNCrkg3J5QiavBG//EikqCt6/0OifGYg?=
+ =?us-ascii?Q?SG0JrqEKGgeJOD3ZXaFTyhg5v8gvBNE4V3LEePdP6eE97EOm2d5D0F8Sw3TV?=
+ =?us-ascii?Q?zD6xMkJAfUBYxGL8REZUySaMAhQ8kEjfz6HabZnpcfigbXTu/x+XtgY5jFFx?=
+ =?us-ascii?Q?g4IsjjLEmZGdRYn2ZaCwWWhkncHnhThFsnekdDVXG/bPqkJjFhSv4/rwac54?=
+ =?us-ascii?Q?Kxpz48KTDslj+wgvDLulu9tWW+sVL8HPTDovWv/+HnCGwaIOkHpvjnpaz+bS?=
+ =?us-ascii?Q?9r5zEcYV7CUt5DAucpTusjdTXI30cW3bTS44XnUXELwrlk8v6JgLTgK/JuZx?=
+ =?us-ascii?Q?VV3sUat9JbTEiuNk/XQebdytfGEKgO9IBGKGgA/OpoH+PQuVRWdPO/XPe7pv?=
+ =?us-ascii?Q?D7jHgazyBe8ZzAt/sDmLY4guD1S5eJW1KC9OjHlN3V5YE47FYEBRR1Z73Nvd?=
+ =?us-ascii?Q?0PkoXkEia9T7K79pfGWSnV1ifHHjNQRdsC9ImpVIOB/l1UbgZWywNXm6+vJS?=
+ =?us-ascii?Q?UnMQDxOsYEJOqPBS9U3G8c+0NJx5+U8RIGcztHfsfmYhVQcuASchrEvtgTBo?=
+ =?us-ascii?Q?dO+PpbpGaobHfbTteGEMcXqlUuVxqZZrQZT1u8eX9KMP3tPPX2azoV/FjTqM?=
+ =?us-ascii?Q?SLW10cd71WoMtItDcwN3lt5puhWwyCx5vMxG7zkmH66r6GrbS7r+N47RIuiF?=
+ =?us-ascii?Q?Plzld+sEuq0PavxQlANnuSQOq85JTaurkUp0uE+mFHU6/ORj3sgIKW8ElAkD?=
+ =?us-ascii?Q?QPvWhkEzeHV9dL/Zx7O5/GpqtBiW/T2V2E0B1QPsFQiU7/IC+j2caKRTyWP9?=
+ =?us-ascii?Q?WTw+GtTCb3hx7AW4KYU+qsjnXlzwD3iPAhptXnCbdiW0zLakoGktH5/RMeMm?=
+ =?us-ascii?Q?ittafe1tl97gzH4un8hqrNNILL7vEkgcAnQr/DUU3lTA/bDKhE0thMRKNlrr?=
+ =?us-ascii?Q?v7+52G2+f0nSX1AueMOhCq18oyuGPpT2Dts2ap93/i/xTrPx3I8n1f/Ed0nU?=
+ =?us-ascii?Q?88zf65uVlYqOBNfWrO939us6BKebqfCAUtpgjSYFBVP8Oi/IooItOcJD2pwz?=
+ =?us-ascii?Q?ZsoRvLKnIDbCaQGKxGy8n6YL2kdBRK9MIIqEoio3BJWEhBTVqzMN7NLLnptA?=
+ =?us-ascii?Q?dccd+F3o0kK+cH4+x/zIe+75NPj7sasgNrKC0Q7xVrAcBEII4Nx4sXItUIkl?=
+ =?us-ascii?Q?GnYOY4MY3J+xVM4KC9FXd0a3c6IM8nNWRDj8HroLbUT+RCzLFIEq+Eg9oEwb?=
+ =?us-ascii?Q?zJBTOAg2ltaVmjSWAXwBF9RjpWeWtEpAjg2UdJWxEwGxIWWAXx+Xy2K/irZl?=
+ =?us-ascii?Q?6YM0mRYNGQ=3D=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cc7cb18-394d-4dd8-2525-08da2f327e56
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4173.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2022 07:31:54.2198
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6ciTfI0zXebadGRf4NqNL1yjamHCsEKWinWigb1UkOrfZjEtSLr7spxnOGI7jxJjtd28lkoPB5+4PdmlMbOTfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB4812
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/05/2022 08:31, Daehwan Jung wrote:
-> This driver is for Samsung Exynos xHCI host conroller. It works based on
+Fix the following coccicheck warning:
 
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+drivers/i2c/busses/i2c-s3c2410.c:388:5-8: Unneeded variable: "ret".
+Return "0" on line 551
 
-> xhci platform driver and extends functions by xhci hooks and overrides.
-> Vendor ops(xhci hooks) should be mapped before probing driver.
-> It overrides functions of hc driver on vendor init.
-> 
-> It supports USB Audio offload with Co-processor. It only cares DCBAA,
-> Device Context, Transfer Ring, Event Ring, and ERST. They are allocated
-> on specific address with xhci hooks. Co-processor could use them directly
-> without xhci driver after then.
-> 
-> Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
-> ---
->  drivers/usb/host/Kconfig       |   8 +
->  drivers/usb/host/Makefile      |   1 +
->  drivers/usb/host/xhci-exynos.c | 775 +++++++++++++++++++++++++++++++++
+Signed-off-by: Yihao Han <hanyihao@vivo.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-This is your fifth version and *it still does not compile*. Can you
-compile your changes before sending them? It saves reviewer's time.
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index b49a1b170bb2..6df85b23156c 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -385,7 +385,6 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ {
+ 	unsigned long tmp;
+ 	unsigned char byte;
+-	int ret = 0;
+ 
+ 	switch (i2c->state) {
+ 
+@@ -548,7 +547,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ 	tmp &= ~S3C2410_IICCON_IRQPEND;
+ 	writel(tmp, i2c->regs + S3C2410_IICCON);
+  out:
+-	return ret;
++	return 0;
+ }
+ 
+ /*
+-- 
+2.17.1
 
-/usr/bin/aarch64-linux-gnu-ld: drivers/usb/dwc3/dwc3-exynos.o: in
-function `dwc3_exynos_probe':
-
-dwc3-exynos.c:(.text+0x470): undefined reference to
-`xhci_exynos_register_vendor_ops'
-
-
-
->  3 files changed, 784 insertions(+)
->  create mode 100644 drivers/usb/host/xhci-exynos.c
-> 
-> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index 682b3d2da623..ccafcd9b4212 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -104,6 +104,14 @@ config USB_XHCI_TEGRA
->  	  Say 'Y' to enable the support for the xHCI host controller
->  	  found in NVIDIA Tegra124 and later SoCs.
->  
-> +config USB_XHCI_EXYNOS
-> +	tristate "xHCI support for Samsung Exynos SoC Series"
-
-XHCI was supported before, wasn't it? If yes, this title does not make
-really sense.
-
-You need to provide proper title explaining this option.
-
-> +	depends on USB_XHCI_PLATFORM
-> +	depends on ARCH_EXYNOS || COMPILE_TEST
-> +	help
-> +	  Say 'Y' to enable the support for the xHCI host controller
-> +	  found in Samsung Exynos SoCs.
-
-The same.
-
-> +
->  endif # USB_XHCI_HCD
->  
->  config USB_EHCI_BRCMSTB
-> diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-> index 2948983618fb..300f22b6eb1b 100644
-> --- a/drivers/usb/host/Makefile
-> +++ b/drivers/usb/host/Makefile
-> @@ -86,3 +86,4 @@ obj-$(CONFIG_USB_HCD_SSB)	+= ssb-hcd.o
->  obj-$(CONFIG_USB_FOTG210_HCD)	+= fotg210-hcd.o
->  obj-$(CONFIG_USB_MAX3421_HCD)	+= max3421-hcd.o
->  obj-$(CONFIG_USB_XEN_HCD)	+= xen-hcd.o
-> +obj-$(CONFIG_USB_XHCI_EXYNOS)	+= xhci-exynos.o
-> diff --git a/drivers/usb/host/xhci-exynos.c b/drivers/usb/host/xhci-exynos.c
-> new file mode 100644
-> index 000000000000..5318a51ac5ee
-> --- /dev/null
-> +++ b/drivers/usb/host/xhci-exynos.c
-> @@ -0,0 +1,775 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * xhci-exynos.c - xHCI host controller driver platform Bus Glue for Exynos.
-> + *
-> + * Copyright (C) 2022 Samsung Electronics Incorporated - http://www.samsung.com
-> + * Author: Daehwan Jung <dh10.jung@samsung.com>
-> + *
-> + * A lot of code borrowed from the Linux xHCI driver.
-
-Then please keep original copyrights, as a derivative work.
-
-> + */
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "xhci.h"
-> +#include "xhci-plat.h"
-> +
-> +/* EXYNOS uram memory map */
-> +#define EXYNOS_URAM_ABOX_EVT_RING_ADDR	0x02a00000
-
-Are these SoC memory map addresses? If yes, they should not be
-hard-coded in the driver.
-
-> +#define EXYNOS_URAM_ISOC_OUT_RING_ADDR	0x02a01000
-> +#define EXYNOS_URAM_ISOC_IN_RING_ADDR	0x02a02000
-> +#define EXYNOS_URAM_DEVICE_CTX_ADDR	0x02a03000
-> +#define EXYNOS_URAM_DCBAA_ADDR		0x02a03880
-> +#define EXYNOS_URAM_ABOX_ERST_SEG_ADDR	0x02a03C80
-> +#define EXYNOS_URAM_CTX_SIZE		2112
-> +
-> +int xhci_exynos_register_vendor_ops(void);
-> +
-> +struct xhci_hcd_exynos {
-> +	struct	xhci_intr_reg __iomem *ir_set_audio;
-> +
-> +	struct xhci_ring	*event_ring_audio;
-> +	struct xhci_erst	erst_audio;
-
-Why "xHCI support for Samsung Exynos SoC Series" comes specific to
-audio? Isn't XHCI related to USB, so a Universal use? Cannot XHCI driver
-support mass storage?
-
-> +
-> +	struct device		*dev;
-> +	struct usb_hcd		*hcd;
-> +	struct usb_hcd		*shared_hcd;
-> +
-> +	struct wakeup_source *main_wakelock; /* Wakelock for HS HCD */
-> +	struct wakeup_source *shared_wakelock; /* Wakelock for SS HCD */
-
-None of other USB drivers use wakeloks so why is this one special?
-
-> +
-> +	u32 in_ep;
-> +	u32 out_ep;
-> +	u32 in_deq;
-> +	u32 out_deq;
-> +
-> +	/* This flag is used to check first allocation for URAM */
-> +	bool			exynos_uram_ctx_alloc;
-> +	bool			exynos_uram_isoc_out_alloc;
-> +	bool			exynos_uram_isoc_in_alloc;
-
-This indentation is really troubling me - just few lines above, you
-don't indent variables. Here you indent. You need to clean up your
-driver before submitting. Run checkpatch --strict and fix all the
-issues. Add const to all static variables and most of pointed memory.
-Remove any inconsistencies. Remove double blank lines. Fix indentation.
-
-Best regards,
-Krzysztof
