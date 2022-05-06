@@ -2,60 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E9DC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 06:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C531AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 06:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236936AbiEFGtd (ORCPT
+        id S1346625AbiEFHCB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 May 2022 02:49:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
+        Fri, 6 May 2022 03:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382633AbiEFGtZ (ORCPT
+        with ESMTP id S243243AbiEFHB7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 May 2022 02:49:25 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AFDC13DC6
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 May 2022 23:45:42 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id a21so7625289edb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 May 2022 23:45:42 -0700 (PDT)
+        Fri, 6 May 2022 03:01:59 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AB820191
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 May 2022 23:58:16 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id r1-20020a1c2b01000000b00394398c5d51so3814926wmr.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 May 2022 23:58:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=QsLmijEooSiXfbLfva7oeI6L4KtnWX5pjKwE7m2Q6CM=;
-        b=HLY18bGtl3gXLNmbQUg99B1iBQLAwTI73xDls7bmlM7Atl1v7DmFE2PcTvy7fRqWv3
-         cVhBk4+6E7fhI09kT9VcDaHgJEs7KhTzCOS/sSCWmLq4aaxu0dUWkcWIEIDKsruo1S8z
-         xhK+foqGRyepaKwC0aGsRiehU6B0IVGHpEnIeA5aN90KrxEd+Ia/da5kznhDU/kMrSPd
-         jhUdlfcEUJOtuSA7modVtdyfgruNGmXYgarew9GNKSSuv4JnBenYLBYvd+mgwbKgWhhB
-         PuMJcztI0/op/SKdzU/gFZKbXROKSUWhKeGavhMaGOpomqJHv63pRFmhEuDjF9icILzv
-         N2sw==
+        bh=7NQDxom4Md+SF3JBtM9QM8HwZJZp3wgsQ5x/9kk1ouI=;
+        b=ILMjHHtNQzWa0xh6HeDP/oqVu8poke5Qmvml6hgYLwBv9S6AStdzgPSlHRycqiVJzx
+         MiL4dH66H0RPPg1YXuiNVRiO0loo/IJjOmwKpqa+CgLN8PfyloRIak1uFaesy1HpsHXX
+         Q2+JXk7xnaj/+mZn1yMIR8jHivMBl4fRYJMnsS1JEr8i88TYGzPJchcqnSyuirlOarRD
+         Nn3C8GN2aklDdd1ZTsEFzfkocbCgQ9QcZzCZFFwjl+20W9Qzp9pbAHWZlPuTA0b7olED
+         M1nuzZxsiswK3fTwH+PksmxBvZdlVnyGT1dcUvTjkCpnbMQj56J7Uiju9vaLqVRkhXcJ
+         BUbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=QsLmijEooSiXfbLfva7oeI6L4KtnWX5pjKwE7m2Q6CM=;
-        b=PPt50vnEYg/+jXNUJaUWB2TOy2CokEWGDgpJQKibK59OarKa62g4GYLueU/tbU/NtL
-         djBJYixAsVWQTr9iQGCRFdiQr80qjDafXd7wugceSQiN7yR2GqposMWa7OLddJ/YVJtA
-         qYjy5n5HZZNiDUQRR81i9kjP6fqVToM2t78dpMH7PnhAqCMb/4ej/z72HKoVrzrX97Cj
-         RHOvxFhpmcIJbPRLAxKU07P6Z6EkzsrfXh39nR1HhuJl7HiwOOqEZTHBt8SimrYjuYYg
-         G4KDLtghKf3wNcHA80tY/rUErzUdy2VvY4tMs4Kkx+ipUWBn4MqLyPhvJNexDJtbP2U2
-         9Lyg==
-X-Gm-Message-State: AOAM5305TfkhNyaA+jYFI5DShhAFQYLfc4/luOPH5sPMcZDjIDG9oGMO
-        2CyFqqdfGvH8Sbvmzj+bbSS0Mw==
-X-Google-Smtp-Source: ABdhPJxZSxVy7lcii5HWt3fudazIdSvFNLjs69lmR7PSXhsciOPsOqCmWLg28bfmdgjVADr51/ochQ==
-X-Received: by 2002:a05:6402:1115:b0:427:e77b:a70e with SMTP id u21-20020a056402111500b00427e77ba70emr1983121edv.320.1651819541183;
-        Thu, 05 May 2022 23:45:41 -0700 (PDT)
+        bh=7NQDxom4Md+SF3JBtM9QM8HwZJZp3wgsQ5x/9kk1ouI=;
+        b=mCZKi5BhtGVmhxaVyYtETPgniGI2NGxWTo/TZ4qEp/LLcVlIfht9AlZDDnZEtvZZPC
+         dHIG4ND60WMQnlYXhvSOQD/+S1T0rGQ2zEaYJhAj8JxKbzMhEaRtZ5gZu1eReCHdDs4B
+         qFsH2xi2mNcVg2hies92Hi+sUsbBaM587Gnik//iqJpoLtT03MHfSGDZI2JiALYE3+Oh
+         lvnVouyJw1a2ONjh6i161AKjF+BLmh8WR12QEx9W4ezUbCbhkNatyT1jPrDNCmc2nLyK
+         8TYa6leoiijU/KvKPhOPecxOrJp4Gpj+dNTeahnfVfEQAQOV2TDZEnWR7nT+8fNMHdtN
+         mdBA==
+X-Gm-Message-State: AOAM531h+KGrVPmI0sMUykOL6XDAuCzSA80pQlPekWnEHzFpjuYBmlKf
+        UKC2iaWohCYCNw5VSi5J0PRJHg==
+X-Google-Smtp-Source: ABdhPJwfhheblu+SZxAuxaecE30axXh+1ZOJYealHB6pGee+YSp7i0i+25+At+988imSp2kBp2CFew==
+X-Received: by 2002:a05:600c:4e93:b0:394:e58:c446 with SMTP id f19-20020a05600c4e9300b003940e58c446mr1834067wmq.21.1651820294700;
+        Thu, 05 May 2022 23:58:14 -0700 (PDT)
 Received: from [192.168.0.222] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id y5-20020a50f1c5000000b0042617ba63afsm1850341edl.57.2022.05.05.23.45.40
+        by smtp.gmail.com with ESMTPSA id 67-20020a1c1946000000b003942a244f2csm9408328wmz.5.2022.05.05.23.58.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 23:45:40 -0700 (PDT)
-Message-ID: <584df17c-3ffc-4290-a2dd-c803987dccfe@linaro.org>
-Date:   Fri, 6 May 2022 08:45:39 +0200
+        Thu, 05 May 2022 23:58:14 -0700 (PDT)
+Message-ID: <921b8df5-bd01-1ca5-cbe9-4a4e48acdab8@linaro.org>
+Date:   Fri, 6 May 2022 08:58:12 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH RFC v5 6/6] usb: dwc3: dwc3-exynos: add host init
+Subject: Re: [PATCH RFC v5 5/6] usb: host: add xhci-exynos driver
 Content-Language: en-US
 To:     Daehwan Jung <dh10.jung@samsung.com>,
         Felipe Balbi <balbi@kernel.org>,
@@ -75,10 +75,10 @@ Cc:     open list <linux-kernel@vger.kernel.org>,
         taehyun.cho@samsung.com, jh0801.jung@samsung.com,
         eomji.oh@samsung.com
 References: <1651818679-10594-1-git-send-email-dh10.jung@samsung.com>
- <CGME20220506063340epcas2p4c9d88670f9be952f3637e3a545a7d1da@epcas2p4.samsung.com>
- <1651818679-10594-7-git-send-email-dh10.jung@samsung.com>
+ <CGME20220506063339epcas2p41de479fb6b2d11012a45ac50ccc19a26@epcas2p4.samsung.com>
+ <1651818679-10594-6-git-send-email-dh10.jung@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1651818679-10594-7-git-send-email-dh10.jung@samsung.com>
+In-Reply-To: <1651818679-10594-6-git-send-email-dh10.jung@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -86,193 +86,151 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 06/05/2022 08:31, Daehwan Jung wrote:
-> This is for xHCI Host Controller driver on Exynos SOC.
+> This driver is for Samsung Exynos xHCI host conroller. It works based on
 
 https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-> It registers vendor ops before loading xhci platform driver.
-
-It does not explain why do you need it, why do you do it, what is this
-going to achieve or give us.
-
+> xhci platform driver and extends functions by xhci hooks and overrides.
+> Vendor ops(xhci hooks) should be mapped before probing driver.
+> It overrides functions of hc driver on vendor init.
+> 
+> It supports USB Audio offload with Co-processor. It only cares DCBAA,
+> Device Context, Transfer Ring, Event Ring, and ERST. They are allocated
+> on specific address with xhci hooks. Co-processor could use them directly
+> without xhci driver after then.
 > 
 > Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
 > ---
->  drivers/usb/dwc3/dwc3-exynos.c | 100 ++++++++++++++++++++++++++++++++-
->  1 file changed, 99 insertions(+), 1 deletion(-)
+>  drivers/usb/host/Kconfig       |   8 +
+>  drivers/usb/host/Makefile      |   1 +
+>  drivers/usb/host/xhci-exynos.c | 775 +++++++++++++++++++++++++++++++++
+
+This is your fifth version and *it still does not compile*. Can you
+compile your changes before sending them? It saves reviewer's time.
+
+/usr/bin/aarch64-linux-gnu-ld: drivers/usb/dwc3/dwc3-exynos.o: in
+function `dwc3_exynos_probe':
+
+dwc3-exynos.c:(.text+0x470): undefined reference to
+`xhci_exynos_register_vendor_ops'
+
+
+
+>  3 files changed, 784 insertions(+)
+>  create mode 100644 drivers/usb/host/xhci-exynos.c
 > 
-> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> index 0ecf20eeceee..c22ea5cd6ab0 100644
-> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> @@ -17,6 +17,12 @@
->  #include <linux/of_platform.h>
->  #include <linux/regulator/consumer.h>
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index 682b3d2da623..ccafcd9b4212 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -104,6 +104,14 @@ config USB_XHCI_TEGRA
+>  	  Say 'Y' to enable the support for the xHCI host controller
+>  	  found in NVIDIA Tegra124 and later SoCs.
 >  
-> +#include "core.h"
+> +config USB_XHCI_EXYNOS
+> +	tristate "xHCI support for Samsung Exynos SoC Series"
+
+XHCI was supported before, wasn't it? If yes, this title does not make
+really sense.
+
+You need to provide proper title explaining this option.
+
+> +	depends on USB_XHCI_PLATFORM
+> +	depends on ARCH_EXYNOS || COMPILE_TEST
+> +	help
+> +	  Say 'Y' to enable the support for the xHCI host controller
+> +	  found in Samsung Exynos SoCs.
+
+The same.
+
 > +
-> +#if IS_ENABLED(CONFIG_USB_XHCI_EXYNOS)
+>  endif # USB_XHCI_HCD
+>  
+>  config USB_EHCI_BRCMSTB
+> diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
+> index 2948983618fb..300f22b6eb1b 100644
+> --- a/drivers/usb/host/Makefile
+> +++ b/drivers/usb/host/Makefile
+> @@ -86,3 +86,4 @@ obj-$(CONFIG_USB_HCD_SSB)	+= ssb-hcd.o
+>  obj-$(CONFIG_USB_FOTG210_HCD)	+= fotg210-hcd.o
+>  obj-$(CONFIG_USB_MAX3421_HCD)	+= max3421-hcd.o
+>  obj-$(CONFIG_USB_XEN_HCD)	+= xen-hcd.o
+> +obj-$(CONFIG_USB_XHCI_EXYNOS)	+= xhci-exynos.o
+> diff --git a/drivers/usb/host/xhci-exynos.c b/drivers/usb/host/xhci-exynos.c
+> new file mode 100644
+> index 000000000000..5318a51ac5ee
+> --- /dev/null
+> +++ b/drivers/usb/host/xhci-exynos.c
+> @@ -0,0 +1,775 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * xhci-exynos.c - xHCI host controller driver platform Bus Glue for Exynos.
+> + *
+> + * Copyright (C) 2022 Samsung Electronics Incorporated - http://www.samsung.com
+> + * Author: Daehwan Jung <dh10.jung@samsung.com>
+> + *
+> + * A lot of code borrowed from the Linux xHCI driver.
 
-This symbol does not exist at this point, so your patch does not look
-like correctly ordered.
+Then please keep original copyrights, as a derivative work.
 
+> + */
+> +#include <linux/pci.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "xhci.h"
+> +#include "xhci-plat.h"
+> +
+> +/* EXYNOS uram memory map */
+> +#define EXYNOS_URAM_ABOX_EVT_RING_ADDR	0x02a00000
+
+Are these SoC memory map addresses? If yes, they should not be
+hard-coded in the driver.
+
+> +#define EXYNOS_URAM_ISOC_OUT_RING_ADDR	0x02a01000
+> +#define EXYNOS_URAM_ISOC_IN_RING_ADDR	0x02a02000
+> +#define EXYNOS_URAM_DEVICE_CTX_ADDR	0x02a03000
+> +#define EXYNOS_URAM_DCBAA_ADDR		0x02a03880
+> +#define EXYNOS_URAM_ABOX_ERST_SEG_ADDR	0x02a03C80
+> +#define EXYNOS_URAM_CTX_SIZE		2112
+> +
 > +int xhci_exynos_register_vendor_ops(void);
-> +#endif
 > +
->  #define DWC3_EXYNOS_MAX_CLOCKS	4
->  
->  struct dwc3_exynos_driverdata {
-> @@ -27,6 +33,7 @@ struct dwc3_exynos_driverdata {
->  
->  struct dwc3_exynos {
->  	struct device		*dev;
-> +	struct dwc3		*dwc;
->  
->  	const char		**clk_names;
->  	struct clk		*clks[DWC3_EXYNOS_MAX_CLOCKS];
-> @@ -46,12 +53,81 @@ static int dwc3_exynos_remove_child(struct device *dev, void *unused)
->  	return 0;
->  }
->  
-> +#if IS_ENABLED(CONFIG_USB_XHCI_EXYNOS)
-> +static int dwc3_exynos_host_init(struct dwc3_exynos *exynos)
-> +{
-> +	struct dwc3		*dwc = exynos->dwc;
-> +	struct device		*dev = exynos->dev;
-> +	struct platform_device	*xhci;
-> +	struct resource		*res;
-> +	struct platform_device	*dwc3_pdev = to_platform_device(dwc->dev);
-> +	int			ret = 0;
+> +struct xhci_hcd_exynos {
+> +	struct	xhci_intr_reg __iomem *ir_set_audio;
 > +
-> +	/* Configuration xhci resources */
-> +	xhci_exynos_register_vendor_ops();
+> +	struct xhci_ring	*event_ring_audio;
+> +	struct xhci_erst	erst_audio;
 
-Why this is always being called? Runtime features should not be added
-like that.
+Why "xHCI support for Samsung Exynos SoC Series" comes specific to
+audio? Isn't XHCI related to USB, so a Universal use? Cannot XHCI driver
+support mass storage?
 
 > +
-> +	res = platform_get_resource(dwc3_pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(dev, "missing memory resource\n");
-> +		return -ENODEV;
-> +	}
-> +	dwc->xhci_resources[0].start = res->start;
-> +	dwc->xhci_resources[0].end = dwc->xhci_resources[0].start +
-> +					DWC3_XHCI_REGS_END;
-> +	dwc->xhci_resources[0].flags = res->flags;
-> +	dwc->xhci_resources[0].name = res->name;
+> +	struct device		*dev;
+> +	struct usb_hcd		*hcd;
+> +	struct usb_hcd		*shared_hcd;
 > +
-> +	res = platform_get_resource(dwc3_pdev, IORESOURCE_IRQ, 0);
-> +	if (!res) {
-> +		dev_err(dev, "missing irq resource\n");
-> +		return -ENODEV;
-> +	}
+> +	struct wakeup_source *main_wakelock; /* Wakelock for HS HCD */
+> +	struct wakeup_source *shared_wakelock; /* Wakelock for SS HCD */
+
+None of other USB drivers use wakeloks so why is this one special?
+
 > +
-> +	dwc->xhci_resources[1].start = dwc->irq_gadget;
-> +	dwc->xhci_resources[1].end = dwc->irq_gadget;
-> +	dwc->xhci_resources[1].flags = res->flags;
-> +	dwc->xhci_resources[1].name = res->name;
+> +	u32 in_ep;
+> +	u32 out_ep;
+> +	u32 in_deq;
+> +	u32 out_deq;
 > +
-> +	xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
-> +	if (!xhci) {
-> +		dev_err(dwc->dev, "couldn't allocate xHCI device\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	xhci->dev.parent	= dwc->dev;
+> +	/* This flag is used to check first allocation for URAM */
+> +	bool			exynos_uram_ctx_alloc;
+> +	bool			exynos_uram_isoc_out_alloc;
+> +	bool			exynos_uram_isoc_in_alloc;
 
-Remove any duplicates spaces/tabs which should not be in the code (no
-need for indenting '=').
-
-> +	ret = dma_set_mask_and_coherent(&xhci->dev, DMA_BIT_MASK(36));
-> +	if (ret) {
-> +		pr_err("xhci dma set mask ret = %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = platform_device_add_resources(xhci, dwc->xhci_resources,
-> +						DWC3_XHCI_RESOURCES_NUM);
-
-But this should be properly indented, how checkpatch asks.
-
-> +	if (ret) {
-> +		dev_err(dwc->dev, "couldn't add resources to xHCI device\n");
-> +		goto err;
-> +	}
-> +
-> +	ret = platform_device_add(xhci);
-> +	if (ret) {
-> +		dev_err(dwc->dev, "couldn't add xHCI device\n");
-> +		goto err;
-> +	}
-> +
-> +	return 0;
-> +err:
-> +	platform_device_put(xhci);
-> +	return ret;
-> +}
-> +#endif
-> +
->  static int dwc3_exynos_probe(struct platform_device *pdev)
->  {
->  	struct dwc3_exynos	*exynos;
->  	struct device		*dev = &pdev->dev;
-> -	struct device_node	*node = dev->of_node;
-> +	struct device_node	*node = dev->of_node, *dwc3_np;
->  	const struct dwc3_exynos_driverdata *driver_data;
-> +	struct platform_device *dwc3_pdev;
->  	int			i, ret;
->  
->  	exynos = devm_kzalloc(dev, sizeof(*exynos), GFP_KERNEL);
-> @@ -109,6 +185,12 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  		goto vdd10_err;
->  	}
->  
-> +	dwc3_np = of_get_compatible_child(node, "snps,dwc3");
-> +	if (!dwc3_np) {
-> +		dev_err(dev, "failed to find dwc3 core child!\n");
-
-Please keep messages consistent with other, so start with capital letter
-and do not shout.
-
-> +		goto vdd33_err;
-> +	}
-> +
->  	if (node) {
->  		ret = of_platform_populate(node, NULL, NULL, dev);
->  		if (ret) {
-> @@ -121,6 +203,22 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->  		goto populate_err;
->  	}
->  
-> +	dwc3_pdev = of_find_device_by_node(dwc3_np);
-> +	exynos->dwc = platform_get_drvdata(dwc3_pdev);
-
-Driver should not poke into its child. You violate device layering here.
-No, no. This is a glue driver, not a "let's do something inside DWC3"
-driver.
-
-> +	if (!exynos->dwc) {
-> +		ret = -EPROBE_DEFER;
-> +		dev_err(dev, "failed to get dwc3 core node!\n");
-
-Again no reason for shouting.
-
-> +		goto populate_err;
-> +	}
-> +
-> +#if IS_ENABLED(CONFIG_USB_XHCI_EXYNOS)
-> +	/* USB host initialization. */
-> +	ret = dwc3_exynos_host_init(exynos);
-> +	if (ret) {
-> +		dev_err(dev, "USB host pre-initialization fail!\n");
-> +		goto populate_err;
-> +	}
-> +#endif
->  	return 0;
->  
->  populate_err:
-
+This indentation is really troubling me - just few lines above, you
+don't indent variables. Here you indent. You need to clean up your
+driver before submitting. Run checkpatch --strict and fix all the
+issues. Add const to all static variables and most of pointed memory.
+Remove any inconsistencies. Remove double blank lines. Fix indentation.
 
 Best regards,
 Krzysztof
