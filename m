@@ -2,102 +2,283 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AECC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 May 2022 13:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB32BC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 May 2022 03:32:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1392580AbiEFNfr (ORCPT
+        id S234497AbiEGDge (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 May 2022 09:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36100 "EHLO
+        Fri, 6 May 2022 23:36:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392575AbiEFNfp (ORCPT
+        with ESMTP id S229912AbiEGDgd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 May 2022 09:35:45 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 009ED5C64F
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 May 2022 06:32:02 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id dk23so14509746ejb.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 May 2022 06:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=R4CyzEN8tLV5ATPkFyhAbooF+416jc4wAhU9LceDppk=;
-        b=RWpp4fSQmVX9lauE5W+eJIrDkmzEAhlSAXFaR9lYNG5LRla9bgV7ttNm3SdujqSzJ0
-         wejeoWTstFYS6G2gd0dzzeIXl6gZXAKNbRshCorFXoA5JxwmrJKgrUGbukTtQhStsKVQ
-         rlSojUx+iU2wAefEq2rgBJ8lZ4Us0Pju4OTLG6SoXwF4j2f5PX1F1Py/cdCyOJRYcpyM
-         IOVh9z5PCaXGpqNd0B/0Ff3tuK0JyO5ZiLRlBtNAacsYkVuDu7dY0HGXS2VrNZSkk6DI
-         ZcYflo+UPhciXMQX4BWbVdVx9vyKYEydu8LWrbEn6/alV20VOXu+b0gohq9nhYQWuZ6g
-         Np4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=R4CyzEN8tLV5ATPkFyhAbooF+416jc4wAhU9LceDppk=;
-        b=CqQm+5m2//q6IlcsEZ4t3xpzXQwYqMz8OeKC34q6d80sSQbNR/nYFS8Y0xJIJXXozv
-         SKsaZgdA+JuR+GFQCVJZ31UZT3dCpzF17FwxSxNFLhv1iTU5iFx0uXkBvONprNkHJAaE
-         1qPKIRIdiaJDAbBC82T1uBfeV+CZy68k9BUowGAuFwLfiFTDn2tJqD/etRqJ4D1TSXJy
-         wUxiseBv3TrOhVlBOknwGadPlJYZE74PxiLsux6o7MQ7q41c3xrP9DmdMydZBNMsY3Jz
-         qwU1EqikMuIfBgge2d5pA7FestmruoHZL8EnfV4mhuOfYS9f9SOSC6otPmhxgj3MfXZx
-         eDJg==
-X-Gm-Message-State: AOAM530ddA0O7RO+HSBnhH6q+M7NNh5eUOwvH+TksHD4nd521pD5l3Gl
-        0kF01POtY/ocQPgq39fekQEqlw==
-X-Google-Smtp-Source: ABdhPJwfvnvKzo7nRTAaRzuWfBHprTMGdHBk/gr0Gv/Nn2OrD/wsxB5bYGldt46iZGyAiUxtBaVcWg==
-X-Received: by 2002:a17:906:29c2:b0:6f3:da29:8304 with SMTP id y2-20020a17090629c200b006f3da298304mr3062189eje.569.1651843921399;
-        Fri, 06 May 2022 06:32:01 -0700 (PDT)
-Received: from [192.168.0.227] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id lr9-20020a170906fb8900b006f3ef214dd9sm1926617ejb.63.2022.05.06.06.32.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 06:32:01 -0700 (PDT)
-Message-ID: <4cfe150a-e5c0-8864-552e-afa454bfff43@linaro.org>
-Date:   Fri, 6 May 2022 15:31:59 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v2] i2c: s3c2410: change return type of
- 'i2c_s3c_irq_nextbyte' from 'int' to 'void'
-Content-Language: en-US
+        Fri, 6 May 2022 23:36:33 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE4F69494;
+        Fri,  6 May 2022 20:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651894368; x=1683430368;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yUWM/E07ObxFrPxqWHC8qXKS7ssjAX/Ep6WMvbDeYAI=;
+  b=djWGXNILOp6XhbbgsBzf+ubxwCn+SuDJdOvkBTzHUd01pgLL4rL2R2u7
+   2fjS9jeMzgLUT9gKWed1WDwSLckNI+BYUfXBWL2MeFHKgnQSHIOjELJCD
+   zy50fPCzVuDr/4iQYo3TSH8p+xb7g8W67Y1x5HIFkKvQYV2UHwTG7LulK
+   xbr/8yQmxXgO19iyc1z+sQynpzdpBsVDBUE1/D+lQmUeVaGwdy6SmzInk
+   ypn0I4P1kQuLXWiKre42/bSClx5GxlDKbqBDz6iXKKJ/NY1/dFXgg/+ea
+   Pl9B4JWRPH3Jm4jFeOcWKk2Lc89IPvDLfoFPUleSu4OyOWqVPn4n+lDsB
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10339"; a="266234304"
+X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
+   d="scan'208";a="266234304"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 20:32:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
+   d="scan'208";a="633226287"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 06 May 2022 20:32:45 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nnBBU-000EBY-MQ;
+        Sat, 07 May 2022 03:32:44 +0000
+Date:   Sat, 7 May 2022 11:31:54 +0800
+From:   kernel test robot <lkp@intel.com>
 To:     Yihao Han <hanyihao@vivo.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, kernel@vivo.com,
+        Yihao Han <hanyihao@vivo.com>
+Subject: Re: [PATCH v2] i2c: s3c2410: change return type of
+ 'i2c_s3c_irq_nextbyte' from 'int' to 'void'
+Message-ID: <202205071109.36SjNuHG-lkp@intel.com>
 References: <20220506122639.2544-1-hanyihao@vivo.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20220506122639.2544-1-hanyihao@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/05/2022 14:26, Yihao Han wrote:
-> Since ret is a redundant variable, and none of the callers check
-> for return, so remove ret variable and change return type of
-> 'i2c_s3c_irq_nextbyte' from 'int' to 'void'
-> 
-> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Yihao Han <hanyihao@vivo.com>
-> ---
-> v2: add return in STATE_IDLE case
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index b49a1b170bb2..d2a1fd2aa7a0 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -381,17 +381,16 @@ static inline int is_msgend(struct s3c24xx_i2c *i2c)
->  /*
->   * process an interrupt and work out what to do
->   */
-> -static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
-> +static void i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+Hi Yihao,
 
-This still should not compile... are you sure you run all the checks on it?
+Thank you for the patch! Yet something to improve:
 
-Please do not cc non-working addresses (kernel@vivo).
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on v5.18-rc5 next-20220506]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Best regards,
-Krzysztof
+url:    https://github.com/intel-lab-lkp/linux/commits/Yihao-Han/i2c-s3c2410-change-return-type-of-i2c_s3c_irq_nextbyte-from-int-to-void/20220506-202923
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+config: arm-randconfig-c002-20220506 (https://download.01.org/0day-ci/archive/20220507/202205071109.36SjNuHG-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 5e004fb787698440a387750db7f8028e7cb14cfc)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
+        # https://github.com/intel-lab-lkp/linux/commit/fdefdf435e27cd445a10a77f475e6d316245ed2b
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Yihao-Han/i2c-s3c2410-change-return-type-of-i2c_s3c_irq_nextbyte-from-int-to-void/20220506-202923
+        git checkout fdefdf435e27cd445a10a77f475e6d316245ed2b
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/i2c/busses/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-s3c2410.c:384:13: error: conflicting types for 'i2c_s3c_irq_nextbyte'
+   static void i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+               ^
+   drivers/i2c/busses/i2c-s3c2410.c:140:12: note: previous declaration is here
+   static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat);
+              ^
+   1 error generated.
+
+
+vim +/i2c_s3c_irq_nextbyte +384 drivers/i2c/busses/i2c-s3c2410.c
+
+   380	
+   381	/*
+   382	 * process an interrupt and work out what to do
+   383	 */
+ > 384	static void i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+   385	{
+   386		unsigned long tmp;
+   387		unsigned char byte;
+   388	
+   389		switch (i2c->state) {
+   390	
+   391		case STATE_IDLE:
+   392			dev_err(i2c->dev, "%s: called in STATE_IDLE\n", __func__);
+   393			return;
+   394	
+   395		case STATE_STOP:
+   396			dev_err(i2c->dev, "%s: called in STATE_STOP\n", __func__);
+   397			s3c24xx_i2c_disable_irq(i2c);
+   398			goto out_ack;
+   399	
+   400		case STATE_START:
+   401			/*
+   402			 * last thing we did was send a start condition on the
+   403			 * bus, or started a new i2c message
+   404			 */
+   405			if (iicstat & S3C2410_IICSTAT_LASTBIT &&
+   406			    !(i2c->msg->flags & I2C_M_IGNORE_NAK)) {
+   407				/* ack was not received... */
+   408				dev_dbg(i2c->dev, "ack was not received\n");
+   409				s3c24xx_i2c_stop(i2c, -ENXIO);
+   410				goto out_ack;
+   411			}
+   412	
+   413			if (i2c->msg->flags & I2C_M_RD)
+   414				i2c->state = STATE_READ;
+   415			else
+   416				i2c->state = STATE_WRITE;
+   417	
+   418			/*
+   419			 * Terminate the transfer if there is nothing to do
+   420			 * as this is used by the i2c probe to find devices.
+   421			 */
+   422			if (is_lastmsg(i2c) && i2c->msg->len == 0) {
+   423				s3c24xx_i2c_stop(i2c, 0);
+   424				goto out_ack;
+   425			}
+   426	
+   427			if (i2c->state == STATE_READ)
+   428				goto prepare_read;
+   429	
+   430			/*
+   431			 * fall through to the write state, as we will need to
+   432			 * send a byte as well
+   433			 */
+   434			fallthrough;
+   435		case STATE_WRITE:
+   436			/*
+   437			 * we are writing data to the device... check for the
+   438			 * end of the message, and if so, work out what to do
+   439			 */
+   440			if (!(i2c->msg->flags & I2C_M_IGNORE_NAK)) {
+   441				if (iicstat & S3C2410_IICSTAT_LASTBIT) {
+   442					dev_dbg(i2c->dev, "WRITE: No Ack\n");
+   443	
+   444					s3c24xx_i2c_stop(i2c, -ECONNREFUSED);
+   445					goto out_ack;
+   446				}
+   447			}
+   448	
+   449	 retry_write:
+   450	
+   451			if (!is_msgend(i2c)) {
+   452				byte = i2c->msg->buf[i2c->msg_ptr++];
+   453				writeb(byte, i2c->regs + S3C2410_IICDS);
+   454	
+   455				/*
+   456				 * delay after writing the byte to allow the
+   457				 * data setup time on the bus, as writing the
+   458				 * data to the register causes the first bit
+   459				 * to appear on SDA, and SCL will change as
+   460				 * soon as the interrupt is acknowledged
+   461				 */
+   462				ndelay(i2c->tx_setup);
+   463	
+   464			} else if (!is_lastmsg(i2c)) {
+   465				/* we need to go to the next i2c message */
+   466	
+   467				dev_dbg(i2c->dev, "WRITE: Next Message\n");
+   468	
+   469				i2c->msg_ptr = 0;
+   470				i2c->msg_idx++;
+   471				i2c->msg++;
+   472	
+   473				/* check to see if we need to do another message */
+   474				if (i2c->msg->flags & I2C_M_NOSTART) {
+   475	
+   476					if (i2c->msg->flags & I2C_M_RD) {
+   477						/*
+   478						 * cannot do this, the controller
+   479						 * forces us to send a new START
+   480						 * when we change direction
+   481						 */
+   482						dev_dbg(i2c->dev,
+   483							"missing START before write->read\n");
+   484						s3c24xx_i2c_stop(i2c, -EINVAL);
+   485						break;
+   486					}
+   487	
+   488					goto retry_write;
+   489				} else {
+   490					/* send the new start */
+   491					s3c24xx_i2c_message_start(i2c, i2c->msg);
+   492					i2c->state = STATE_START;
+   493				}
+   494	
+   495			} else {
+   496				/* send stop */
+   497				s3c24xx_i2c_stop(i2c, 0);
+   498			}
+   499			break;
+   500	
+   501		case STATE_READ:
+   502			/*
+   503			 * we have a byte of data in the data register, do
+   504			 * something with it, and then work out whether we are
+   505			 * going to do any more read/write
+   506			 */
+   507			byte = readb(i2c->regs + S3C2410_IICDS);
+   508			i2c->msg->buf[i2c->msg_ptr++] = byte;
+   509	
+   510			/* Add actual length to read for smbus block read */
+   511			if (i2c->msg->flags & I2C_M_RECV_LEN && i2c->msg->len == 1)
+   512				i2c->msg->len += byte;
+   513	 prepare_read:
+   514			if (is_msglast(i2c)) {
+   515				/* last byte of buffer */
+   516	
+   517				if (is_lastmsg(i2c))
+   518					s3c24xx_i2c_disable_ack(i2c);
+   519	
+   520			} else if (is_msgend(i2c)) {
+   521				/*
+   522				 * ok, we've read the entire buffer, see if there
+   523				 * is anything else we need to do
+   524				 */
+   525				if (is_lastmsg(i2c)) {
+   526					/* last message, send stop and complete */
+   527					dev_dbg(i2c->dev, "READ: Send Stop\n");
+   528	
+   529					s3c24xx_i2c_stop(i2c, 0);
+   530				} else {
+   531					/* go to the next transfer */
+   532					dev_dbg(i2c->dev, "READ: Next Transfer\n");
+   533	
+   534					i2c->msg_ptr = 0;
+   535					i2c->msg_idx++;
+   536					i2c->msg++;
+   537				}
+   538			}
+   539	
+   540			break;
+   541		}
+   542	
+   543		/* acknowlegde the IRQ and get back on with the work */
+   544	
+   545	 out_ack:
+   546		tmp = readl(i2c->regs + S3C2410_IICCON);
+   547		tmp &= ~S3C2410_IICCON_IRQPEND;
+   548		writel(tmp, i2c->regs + S3C2410_IICCON);
+   549	}
+   550	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
