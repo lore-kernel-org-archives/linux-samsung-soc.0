@@ -2,126 +2,194 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6623CC4332F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 May 2022 18:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C20C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 May 2022 21:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348510AbiEJSMI (ORCPT
+        id S229508AbiEJVln (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 May 2022 14:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52744 "EHLO
+        Tue, 10 May 2022 17:41:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348521AbiEJSMG (ORCPT
+        with ESMTP id S229471AbiEJVlm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 May 2022 14:12:06 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691491EE
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 May 2022 11:08:00 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220510180754euoutp01f7c6542fb1024af5088aba86d9a1147b~t0KvHouFZ3258132581euoutp016
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 May 2022 18:07:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220510180754euoutp01f7c6542fb1024af5088aba86d9a1147b~t0KvHouFZ3258132581euoutp016
+        Tue, 10 May 2022 17:41:42 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4294448E40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 May 2022 14:41:39 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220510214135euoutp0216f322c6fa2554783bae15422f1e417a~t3FUDOhQn3241932419euoutp02T
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 May 2022 21:41:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220510214135euoutp0216f322c6fa2554783bae15422f1e417a~t3FUDOhQn3241932419euoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1652206074;
-        bh=EIxhLP+tIlQHP4st26qWqlxBxjq78NkAByLwLQ8nxTo=;
+        s=mail20170921; t=1652218896;
+        bh=7SlMlZfYr3nbsxyWqJP3nACXO9mD9BUI4I/fN+ZyCIc=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=TpPxOu+wV/Odg3Vg/pUb2MQoq1GRlmorBZ9I9t/eVnQXdGejcaJyJsAmvhswfJgmR
-         I/kpXqTmjlq3In6YEDpdBtbXmcvm/4oX6QHY6hsFEnrzcxrSYyKJ/Q3P/FD/QYFhAJ
-         DlVTbL+XMLYf5ZAW//LXfAJE1zdCvMEAiHL9Nkds=
+        b=jvpxyR/0cBDP9k62pYyHrv5UclcQuaLlQcOWUnzJZNtY32u8/hzaBKtqX4yTmJUTq
+         /j5qG1iUUG4WmrJQJbphUyOjWBumrnqhOXShwa+tONlP1dqv/MZEObFGoR8zoXraXd
+         Q7hVlL5nmexlPyTFUcRGFYLp5UG12JLlhHEUKiXo=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220510180753eucas1p157579d265b6fcc9ef89ce3f830906a88~t0KuG-GpE3030430304eucas1p1v;
-        Tue, 10 May 2022 18:07:53 +0000 (GMT)
+        20220510214134eucas1p19cbac408364a5f342672e1c78053aeab~t3FTBCy3G0228602286eucas1p1E;
+        Tue, 10 May 2022 21:41:34 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 27.19.10009.9F9AA726; Tue, 10
-        May 2022 19:07:53 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id FE.8F.10009.E0CDA726; Tue, 10
+        May 2022 22:41:34 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220510180752eucas1p26e120d9c4026d6a2d7a24744460bea25~t0KtdRC3h2520125201eucas1p2K;
-        Tue, 10 May 2022 18:07:52 +0000 (GMT)
+        20220510214134eucas1p22f0695c02402de0b8b6c21c09188b0de~t3FSNpGGg1983719837eucas1p28;
+        Tue, 10 May 2022 21:41:34 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220510180752eusmtrp279ccfe98192aa84ca9815c709573d277~t0KtcgMlS1333413334eusmtrp2g;
-        Tue, 10 May 2022 18:07:52 +0000 (GMT)
-X-AuditID: cbfec7f2-e7fff70000002719-e6-627aa9f9be4f
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220510214133eusmtrp1967db239c2d5b61bf88cf0bc7b7adab0~t3FSK0HGU1028110281eusmtrp16;
+        Tue, 10 May 2022 21:41:33 +0000 (GMT)
+X-AuditID: cbfec7f2-e95ff70000002719-da-627adc0e6cbd
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id B9.60.09522.8F9AA726; Tue, 10
-        May 2022 19:07:52 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2D.C2.09522.D0CDA726; Tue, 10
+        May 2022 22:41:33 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220510180751eusmtip2a03a4b379a0f677a5c7b35171686f09a~t0KswbWxT1510215102eusmtip2k;
-        Tue, 10 May 2022 18:07:51 +0000 (GMT)
-Message-ID: <1f2b528d-4b2e-1ba7-5f90-7a0bf78a1869@samsung.com>
-Date:   Tue, 10 May 2022 20:07:51 +0200
+        20220510214132eusmtip231609e61b83d690dd3317433b450a819~t3FRGan7I1357113571eusmtip2f;
+        Tue, 10 May 2022 21:41:32 +0000 (GMT)
+Message-ID: <68bb83a7-764c-dd1b-0ed4-d2b6f2cfbb7c@samsung.com>
+Date:   Tue, 10 May 2022 23:41:32 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
         Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH v3 00/12] initial clock support for exynosauto v9 SoC
+Subject: Re: [PATCH v2 08/12] drm: bridge: samsung-dsim: Add atomic_check
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20220504075154.58819-1-chanho61.park@samsung.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220504114021.33265-9-jagan@amarulasolutions.com>
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djP87o/V1YlGew+K2TxYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgyGr93
-        MhbsZKyY3dLK3MA4lbGLkZNDQsBE4vONNcxdjFwcQgIrGCU23XrMCOF8YZRobljIBuF8ZpSY
-        9GUxM0zLsQdHoFqWM0rc+PCeHcL5yCgxd9YbsCpeATuJW/Na2UFsFgFViQOn9rFAxAUlTs58
-        AmaLCiRJvHlzFaxeWMBT4v2HTrB6ZgFxiVtP5jOB2CICbcwS29/xQcS7GCUaPhuA2GwChhK9
-        R/uAbuXg4BSwl3i8wQKiRF5i+9s5YMdJCEzmlJg+bzvUoy4SLze0s0DYwhKvjm9hh7BlJP7v
-        hNglIVAvMXnKFTYIu4NR4uteMwjbWmLCphNsILuYBTQl1u/Shwg7Sry/sgssLCHAJ3HjrSDE
-        CXwSk7ZNZ4YI80p0tAlBVKtI/F41HWqRlET3k/8sExiVZiGFySwkv89C8swshL0LGFlWMYqn
-        lhbnpqcWG+allusVJ+YWl+al6yXn525iBKaw0/+Of9rBOPfVR71DjEwcjIcYJTiYlUR49/dV
-        JAnxpiRWVqUW5ccXleakFh9ilOZgURLnTc7ckCgkkJ5YkpqdmlqQWgSTZeLglGpgsjxyLcur
-        YuNFLVb3RWyqdzJ1meuilWQW/Tgw39bpcnIPd2uNotn95KuMmrrt/1+eeBN0fJk+n7TbX4+4
-        i1f+m0hwlS68Yc/DrBJzd5ax4sqWCZOPvI+cFx62+eJOsZba2iiTeXrmEXdma6hXXl6wm3Nl
-        Mzv72kjFU05rP+4X1fo4Y8JhT9a4oPSr39Wcnjodtou6b3eAv/CPkvAFjaakliLNXfnrttQa
-        WPPG/gs213r5zfb6x9/TuPzt/n3jXZw71/xlxNssK71ZvXrZv9QuPjv67VL/Jl+N5g4LB5G9
-        rD3pr2Mcl384bSRd5HYvPiBgdXvjl7MibQ9EzTrnlS/7u7BltlZNxT+LI0G1TV5KLMUZiYZa
-        zEXFiQBs+ExP0AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsVy+t/xe7o/VlYlGfw7pmLxYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYovRsivJLS1IVMvKLS2yVog0t
-        jPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyGr93MhbsZKyY3dLK3MA4lbGLkZND
-        QsBE4tiDI8xdjFwcQgJLGSWmPr3B0sXIAZSQkpjfogRRIyzx51oXG0TNe0aJa9t7WEASvAJ2
-        ErfmtbKD2CwCqhIHTu2DigtKnJz5BGyOqECSxJHD/CBhYQFPifcfOsHKmQXEJW49mc8EMlNE
-        oINZ4uPMZ2ALmAW6GCU2/n7CBlIlJDCJUeLfM7ChbAKGEr1H+xhBhnIK2Es83mABYjILqEus
-        nycEMVNeYvvbOcwTGIVmIbliFpJ1sxA6ZiHpWMDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93
-        EyMwYrcd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4d3fV5EkxJuSWFmVWpQfX1Sak1p8iNEUGBIT
-        maVEk/OBKSOvJN7QzMDU0MTM0sDU0sxYSZzXs6AjUUggPbEkNTs1tSC1CKaPiYNTqoGJ/aSD
-        8tQdd5MOiM/TMrlQZvWriLFTtfnB+5+7C/XfVAnvm3tyajCfU4OBeVPyOpu9G15d9/R6adfw
-        MO+WwJsr36w5TyuzvHnItGDWDf2ImiyhxOAZV+5d1/CvNm0M9BMot3hrGPKtTLri3yv3R4vL
-        NKycT8pL/9VscOSYbM1qYvmyfhHj4lOT5s5ycY0T9D+zbOnZvZ+D/ip35iysXxArx7Pq82Im
-        YfvzZzR5eloK3ub3f/XMWpS8LvFi0ZIE+R63V99ZxL2uTOn3kIw6sJllWiHrTJn/8i4/ONPL
-        YiJNxRcWf47IfHb4/tzqft2ju26GP64LW9uY5m7c3FniUij4IOuw0Wy3N+JfHbq2bVZiKc5I
-        NNRiLipOBADC94CwYQMAAA==
-X-CMS-MailID: 20220510180752eucas1p26e120d9c4026d6a2d7a24744460bea25
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxTVxzN63t9fTQreRSxN84A65REkxXrR3ZdkThLlueyr4DLFs0yij4+
+        IhTWwkQyoSNhKaXUCovAm5surQGJgFahSljRzgFbIx1zNKy0VKgxlvIxoLqOWTbb5zb+O/f8
+        fuece24ugQrr8U1EkbKcVikVxWKcj/UN/el8Jd5TlbfjUkQCPZMOFPpMKxgMTnbg8NfHizhs
+        vDjKhU0+IwZDFiMOH02NYfBu7RwP1p8x82C70YZDi9/FhbrVSyhsddo40DHTg8KfPq/DoN1w
+        BC4z08/45gAOx0aWUfjHX3fR/UlU15KPSy1O1PGoL0fucKlRvRenbjJeHvWVto1LmQYCHOrO
+        uIlLeVwDOOVrGOZQ18w11NWFGxzKcL0ToVYsye/FH+ZnHKOLiz6lVemZufzCtkE/r8yeWBn2
+        2RANoiF1CEEAcjdobufpED4hJDsQUB/s57KHEAIsY104e1hBQKB7CtUhcTGFI6DF2EE7Avoj
+        f/OiAyG5hIAnXalRLCAzwWK4Fo9GYORW8H1dJksngB/bHmBRnETmgbm58ZhnInkQLAzditmg
+        pAi4H5znRPEGsokLakOiaBYatdeHp2MCnJQC3bwOj+I4cj8wDwUxVpwCrPPnnl9UxwePewm2
+        ZhbQ+uUsnQhmh6/zWLwZOJr1GLtSCiKtu1i6EriCl5+7yIBndDXWBCW3gZ7+dJZ+HdyPPOSw
+        yngwMZ/A5seDpr4WlKUFQPuFkN1OA8xw93+Zt3/+BTUiYmbdkzDrqjPrmjD/515AsE5ERFeo
+        SwpotVRJn5CoFSXqCmWB5GhpiQV59lsda8PLN5CvZ5ckdoRDIHYEEKh4g2DQUJknFBxTnKyi
+        VaUfqyqKabUdeZHAxCLB0aIrCiFZoCinj9N0Ga36d8oh4jZpOI1bNuZoyaaN35yyZjuZe7bG
+        g+f3TQ+Y3eJPPKdDyW+lyzOSP5jCPxzc/fC7XXys5TTPLSWeKnKte7fP/Z5SFmrPOfWmseFV
+        4/yBt8eO75lZO7JWlXrYu0fr7fH3vOsvuZJ/Qlje6FIeyk+qXg2GzVlK9VD9C7KUQzdFOy/U
+        fFahfyNDbqhCe1H9++4Jq1PTNpL/8rYn0+G03I6zZz4al1YDG52aVfjaAedMtWZh66Mf7u+8
+        3d0lC5i4dYyr9WxD76j/5A5eQuflbDlzryDNdfFW3jmZVyKocTy9qmZMm60t6VuyZ9+59pIe
+        k/flAkhzZIbFyX1ubmTvbzkeaehbvhhTFyqk21GVWvEPu6X01BwEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsVy+t/xe7q8d6qSDP5ONra4c/s0s8X9xZ9Z
+        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
+        0fVrJbPFjPP7mCxOP1rPbHGqsZXF4lBftMWnWQ+B4pNfsllcPPGJ2eL777PMDqIeaz/eZ/V4
+        f6OV3WPKiSOsHud67rJ57Jx1l91jdsdMVo/Fe14yeRy5upjV4861PWwe97uPM3lsXlLvsfHd
+        DiaPvi2rGD0+b5IL4IvSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJ
+        zcksSy3St0vQy5i5/zF7wSHhih/39zE2MDYIdDFyckgImEicftnB0sXIxSEksJRR4tjXi4wQ
+        CRmJk9MaWCFsYYk/17rYIIreM0o0N39kAknwCthJvP/RBJTg4GARUJU43GoHERaUODnzCQtI
+        WFQgSeLIYX6QsLCAp8S7YwfYQWxmAXGJW0/mM4GMFBGYxipx7+1XsPnMAh8ZJS5N3sIOsewk
+        o8TMO7+YQVrYBAwlut6CXMHJwSngILHk2GsWiFFmEl1buxghbHmJ7W/nME9gFJqF5JBZSDbO
+        QtIyC0nLAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIGJZduxn5t3MM579VHvECMTB+Mh
+        RgkOZiUR3v19FUlCvCmJlVWpRfnxRaU5qcWHGE2BgTGRWUo0OR+Y2vJK4g3NDEwNTcwsDUwt
+        zYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpjW3neRV3Ca6O/4MXq9T++Uc+feqFecLZlz
+        L1mWa3aCrmD8S/fre8N7XLxvP/nnduFO4vdp8+deDThc3vVz+cdn8as9i6qW1h/t/u6wZGXL
+        sS1aL00mxyUXT69/tkj5moZ05uV9u3ijPtk+jbx3tQqYEFa8/5W/482OnxlPv/nPlCyV173p
+        ZX8tdZbZiTM6kocsHi/4Hzj/97bbirvv//4sfeA7r2ZEQN+jWhtm89MNjj2WMQWTaiXv2b+2
+        bHt6r0rym9UjR6+cmRySRZ+6TNkENwSWBF06N6E3Ocrh6/cv6vHzpj+a893prJTxnGUzNjrP
+        Ewr1FdmwNqv9RvQPbUYFQ8570l8sf7//zPaw5rCSEktxRqKhFnNRcSIAfP658LUDAAA=
+X-CMS-MailID: 20220510214134eucas1p22f0695c02402de0b8b6c21c09188b0de
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220504075003epcas2p3f6f002e444cab4e39c025b169cba1b80
+X-RootMTR: 20220504114145eucas1p16d51cd7ba0bcb68b5e746b6554d121f1
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220504075003epcas2p3f6f002e444cab4e39c025b169cba1b80
-References: <CGME20220504075003epcas2p3f6f002e444cab4e39c025b169cba1b80@epcas2p3.samsung.com>
-        <20220504075154.58819-1-chanho61.park@samsung.com>
+X-CMS-RootMailID: 20220504114145eucas1p16d51cd7ba0bcb68b5e746b6554d121f1
+References: <20220504114021.33265-1-jagan@amarulasolutions.com>
+        <CGME20220504114145eucas1p16d51cd7ba0bcb68b5e746b6554d121f1@eucas1p1.samsung.com>
+        <20220504114021.33265-9-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04.05.2022 09:51, Chanho Park wrote:
-> This patchset adds initial clock driver support for Exynos Auto v9 SoC.
+On 04.05.2022 13:40, Jagan Teki wrote:
+> Fixing up the mode flags is required in order to correlate the
+> correct sync flags of the surrounding components in the chain
+> to make sure the whole pipeline can work properly.
+>
+> So, handle the mode flags via bridge, atomic_check.
+>
+> v2:
+> * none
+>
+> v1:
+> * fix mode flags in atomic_check instead of mode_fixup
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>   drivers/gpu/drm/bridge/samsung-dsim.c | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index b618e52d0ee3..bd78cef890e4 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1340,6 +1340,19 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
+>   	pm_runtime_put_sync(dsi->dev);
+>   }
+>   
+> +static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
+> +				     struct drm_bridge_state *bridge_state,
+> +				     struct drm_crtc_state *crtc_state,
+> +				     struct drm_connector_state *conn_state)
+> +{
+> +	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
+> +
+> +	adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
 
-Thanks, I have applied patches 04...09/12.
+Could you point why this change is needed? It breaks display on Samsung 
+s6e8aa0 dsi panel (Trats and Trats2 boards) and tc358764 bridge (Arndale 
+board). I have no detailed knowledge of the DSI protocol nor those 
+panels/bridges. If there is something missing in the drivers for those 
+panels/bridges, let me know.
 
-Regards,
-Sylwester
+
+> +	adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
+> +
+> +	return 0;
+> +}
+> +
+>   static void samsung_dsim_mode_set(struct drm_bridge *bridge,
+>   				  const struct drm_display_mode *mode,
+>   				  const struct drm_display_mode *adjusted_mode)
+> @@ -1361,6 +1374,7 @@ static const struct drm_bridge_funcs samsung_dsim_bridge_funcs = {
+>   	.atomic_duplicate_state		= drm_atomic_helper_bridge_duplicate_state,
+>   	.atomic_destroy_state		= drm_atomic_helper_bridge_destroy_state,
+>   	.atomic_reset			= drm_atomic_helper_bridge_reset,
+> +	.atomic_check			= samsung_dsim_atomic_check,
+>   	.atomic_pre_enable		= samsung_dsim_atomic_pre_enable,
+>   	.atomic_enable			= samsung_dsim_atomic_enable,
+>   	.atomic_disable			= samsung_dsim_atomic_disable,
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
