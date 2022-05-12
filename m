@@ -2,214 +2,256 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DF7C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 May 2022 15:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001ABC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 May 2022 22:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245504AbiEKPCr (ORCPT
+        id S1359210AbiELWe7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 May 2022 11:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53112 "EHLO
+        Thu, 12 May 2022 18:34:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245499AbiEKPC2 (ORCPT
+        with ESMTP id S1359208AbiELWe6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 May 2022 11:02:28 -0400
+        Thu, 12 May 2022 18:34:58 -0400
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26D037BD8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 May 2022 08:02:04 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220511150203euoutp0114475688393ad4f5831ec0fb084e584a~uFRwFWX2B0475404754euoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 May 2022 15:02:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220511150203euoutp0114475688393ad4f5831ec0fb084e584a~uFRwFWX2B0475404754euoutp01B
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1930D1F9A1A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 May 2022 15:34:55 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220512223452euoutp01fce5fca0ab600db63be8eaeda0e18aed~ufGZ8JYrj1599215992euoutp01E
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 May 2022 22:34:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220512223452euoutp01fce5fca0ab600db63be8eaeda0e18aed~ufGZ8JYrj1599215992euoutp01E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1652281323;
-        bh=01KONJ5CQ9mRixgKLlzLiuq2X4gzrTFQGjvCaQweokM=;
+        s=mail20170921; t=1652394892;
+        bh=sLkxMDQPs6EXbWVxl48t3PGxlsdq8uNENFIAMvFlFds=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=IHXRz2wfoYh0G2zceyZT4txCNQw5cwzbyUweQiEDoauE0wgRdK5NTMhr7vIY1OJoO
-         sA1wZGww9ZlT9GaCfI6xCm2IdswyRGNm5lPkB9ONsqisow+ciQsdjimpcry1ZAJn4r
-         W3ROE63FDwXLLcL+5QsuBUyYUHa7pb59YPpH6ZCg=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        b=HEa4zHS/yubaJCnXBb3SjdatRadSjyjOXM1CNNAHT2cCOTsEWlX+HLZN97UvpffRV
+         bAh/c6NadLR3i7YuBlkDNEAjZswA5eTHX30q12UtdCjMLlKcVzucsPDqvEIO0CV4+q
+         jsf2Roic/ifbryTqcVfF8eY0XAplvj45hIG2JeyY=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220511150202eucas1p19c814440725b2c755eedc6716b02c176~uFRvgYeHq0262602626eucas1p1R;
-        Wed, 11 May 2022 15:02:02 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B6.7C.09887.AEFCB726; Wed, 11
-        May 2022 16:02:02 +0100 (BST)
+        20220512223451eucas1p1e9e507edeec33876661bbaa5ad121a3d~ufGY-g8ZT0250502505eucas1p1n;
+        Thu, 12 May 2022 22:34:51 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id A2.8F.10260.B8B8D726; Thu, 12
+        May 2022 23:34:51 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220511150202eucas1p2f62bc28fc02a5f7024b8177279adcd4b~uFRu_MKEk1323113231eucas1p2L;
-        Wed, 11 May 2022 15:02:02 +0000 (GMT)
+        20220512223450eucas1p203b702e114dd2cd1bafcfd7d4c80b638~ufGXzyyeW0867708677eucas1p2c;
+        Thu, 12 May 2022 22:34:50 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220511150202eusmtrp1c96aa149689c4728a488bf13069946ef~uFRu7Oizz2779827798eusmtrp1w;
-        Wed, 11 May 2022 15:02:02 +0000 (GMT)
-X-AuditID: cbfec7f4-471ff7000000269f-66-627bcfea5564
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3E.62.09522.9EFCB726; Wed, 11
-        May 2022 16:02:02 +0100 (BST)
+        20220512223450eusmtrp137486ba4a93c43cefe60168460639899~ufGXy8tQ52256022560eusmtrp1-;
+        Thu, 12 May 2022 22:34:50 +0000 (GMT)
+X-AuditID: cbfec7f5-bf3ff70000002814-fa-627d8b8b7b23
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D6.2D.09522.A8B8D726; Thu, 12
+        May 2022 23:34:50 +0100 (BST)
 Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220511150201eusmtip2b6ec3553aaf22de57306aa6102da33e7~uFRt4Bqk71588415884eusmtip2i;
-        Wed, 11 May 2022 15:02:00 +0000 (GMT)
-Message-ID: <e8e56e98-59aa-62b1-2b96-3a0436e91dac@samsung.com>
-Date:   Wed, 11 May 2022 17:02:00 +0200
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220512223449eusmtip1c11fb40e8cbadaaf7d77b931027024c9~ufGW70fET2891028910eusmtip1V;
+        Thu, 12 May 2022 22:34:49 +0000 (GMT)
+Message-ID: <7ecd0d6a-cbf2-448c-92ef-2adb5184342c@samsung.com>
+Date:   Fri, 13 May 2022 00:34:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
         Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH v2 05/12] drm: bridge: samsung-dsim: Add DSI init in
- bridge pre_enable()
+Subject: Re: [PATCH v4 2/4] PM / devfreq: Add cpu based scaling support to
+ passive governor
 Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+To:     Chanwoo Choi <cwchoi00@gmail.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     johnson.wang@mediatek.com, mka@chromium.org, wenst@chromium.org,
+        jia-wei.chang@mediatek.com, andrew-sh.cheng@mediatek.com,
+        hsinyi@chromium.org, saravanak@google.com, cw00.choi@samsung.com,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220504114021.33265-6-jagan@amarulasolutions.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphk+LIzCtJLcpLzFFi42LZduznOd1X56uTDM7d1LK4c/s0s8X9xZ9Z
-        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
-        0fVrJbPFjPP7mCxOP1rPbHGqsZXF4lBftMWnWQ+B4pNfsllcPPGJ2eL777PMDqIeaz/eZ/V4
-        f6OV3WPKiSOsHud67rJ57Jx1l91jdsdMVo/Fe14yeRy5upjV4861PWwe97uPM3lsXlLvsfHd
-        DiaPvi2rGD0+b5IL4IvisklJzcksSy3St0vgyri0/iJbwRTRisuTm9gaGH8LdDFyckgImEjM
-        vHqHqYuRi0NIYAWjROPiDmYI5wujxM1zh6Ccz4wS79o2ssO07Ls5hw0isZxRovvVHkYI5yOj
-        xPPttxhBqngF7CS+7t8KZrMIqEpsO3WWDSIuKHFy5hMWEFtUIEnizZurzCC2sECcxI7WFjCb
-        WUBc4taT+UwgtojAJFaJpi/iIAuYQRb0/HgIVsQmYCjR9bYLbCingIPE7f0/GSGa5SW2v53D
-        DHFqE5dE57qsLkYOINtFYurPJIiwsMSr41ugvpGROD25hwWiJF/i7wxjiHCFxLXXa6CmWEvc
-        OfeLDaSEWUBTYv0ufYiwo8T3Xz8YITr5JG68FYTYzycxadt0Zogwr0RHmxBEtZrErOPr4HYe
-        vHCJeQKj0iykIJmF5PVZSD6ZhbB3ASPLKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMAE
-        e/rf8S87GJe/+qh3iJGJg/EQowQHs5II7/6+iiQh3pTEyqrUovz4otKc1OJDjNIcLErivMmZ
-        GxKFBNITS1KzU1MLUotgskwcnFINTFzZaSEvejaaK97Ttq9fuavy7YQfyx5LT8sr79LdXnTS
-        +uRHs83Lz96y3W9w3kkhSnfqJ/GtwqXf15UoqBmIHNdi7nA+qpofqFaxx0yQKaA1Z+Lh/zav
-        Jrfnm289uPh3bNZPbpkztmkNyr/Pvv/wx+X2RoP4H71hlW/+GdTWpvMozeVpPRv1/cV1EV+u
-        H01l3K977pgvWrbdV7fhsP8s/mCLX+a6FW4uwdP3vOHskF/7Y7qn6T+9ssfTZ24Sv3r1YGhK
-        N3dT2bnP1wO0XzQcTsoxcP+i9civY/aFY49Drk7Wkt4wpz4te/v68L9XWl/WefXFVSxpXfxA
-        wO7J86T8jqmf+HZnqD8xkL79P/7eYyWW4oxEQy3mouJEAM6zkpQfBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsVy+t/xe7qvzlcnGZyaz2Rx5/ZpZov7iz+z
-        WLy+vYLN4srX92wWvUvPsVpMuj+BxeLLpglsFi/uXWSxONv0ht2ic+ISdovlE/axWWx6fI3V
-        ouvXSmaLGef3MVmcfrSe2eJUYyuLxaG+aItPsx4CxSe/ZLO4eOITs8X332eZHUQ91n68z+rx
-        /kYru8eUE0dYPc713GXz2DnrLrvH7I6ZrB6L97xk8jhydTGrx51re9g87ncfZ/LYvKTeY+O7
-        HUwefVtWMXp83iQXwBelZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OS
-        mpNZllqkb5egl3Fp/UW2gimiFZcnN7E1MP4W6GLk5JAQMJHYd3MOWxcjF4eQwFJGib55R5kh
-        EjISJ6c1sELYwhJ/rnVBFb1nlJj87zxYglfATuLr/q2MIDaLgKrEtlNn2SDighInZz5h6WLk
-        4BAVSJI4cpgfJCwsECexo7UFbD6zgLjErSfzmUBmighMY5W49/Yr2AJmgY+MEpcmb2GH2HaS
-        UeJg23SwqWwChhJdb7vAbE4BB4nb+38yQowyk+ja2gVly0tsfzuHeQKj0Cwkh8xCsnEWkpZZ
-        SFoWMLKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECEwt24793LyDcd6rj3qHGJk4GA8xSnAw
-        K4nw7u+rSBLiTUmsrEotyo8vKs1JLT7EaAoMjYnMUqLJ+cDkllcSb2hmYGpoYmZpYGppZqwk
-        zutZ0JEoJJCeWJKanZpakFoE08fEwSnVwMTjxNr5oL69b66vgJOPheBFIYXw3My8/3fzVTkl
-        ne897dSM5d/8Sv26StqEZR845FU1f+zS5dW10fVYJL1gk14En1ie6/Yan61TpGKX2u//H9Qq
-        elf6TELoT9vSo5mSdySMq485nmOXPOU9ZZfJapnPUi9cJtbmKh5hWWHDlu4zw5bPfYKjBtdf
-        ZVGB8PT3aeebsqqblWYmxDxbtdVf+ezRuQWqB0StL0c9tZgfe/Jgf/b5myFhTk3sjE2eNwMV
-        3iWfi+5qmV1xqak4cYGIa5tUuv8fVUXVBPnjz263aayeEbL1fhf7ERmfzu2mCc95C/ZZPdeV
-        mdAWdTDnj0tQkjhj+6YVMffWL5l46ooSS3FGoqEWc1FxIgCcyoqctgMAAA==
-X-CMS-MailID: 20220511150202eucas1p2f62bc28fc02a5f7024b8177279adcd4b
+In-Reply-To: <20220511093554.17535-3-cw00.choi@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGKsWRmVeSWpSXmKPExsWy7djP87rd3bVJBscbDS22r3/BanH9y3NW
+        i2dHtS0mtG5ntji+fwm7xbFfwRbnz29gtzjb9Ibd4vKuOWwWn3uPMFrMOL+PyeLzhseMFrcb
+        V7BZdB36y2ZxbeF7VosDFyeyWcxou8zqIOgxu+Eii8flvl4mj52z7rJ7LNhU6rFpVSebR8vJ
+        /SwefVtWMXp83iQXwBHFZZOSmpNZllqkb5fAlTHxVmrBT72KnoaMBsZJ6l2MnBwSAiYSlyY3
+        sncxcnEICaxglJh79TIzhPOFUaKr/T4jSJWQwGdGiea3aV2MHGAdVybrQISXM0pcaOWBqP/I
+        KHH18DWwel4BO4n+Db/BbBYBVYnd1xYzQ8QFJU7OfMICYosKJEm8eXMVLC4sECvxpuE/K4jN
+        LCAucevJfCYQW0QgXuLr6dmsIAuYBdYxS/Teeg3WwCZgKNH1tosNxOYUsJboOLyQCaJZXqJ5
+        62ywDyQEdnNK3JmymAniTxeJX10LWSFsYYlXx7ewQ9gyEqcn97BAfJYv8XeGMUS4QuLa6zXM
+        ELa1xJ1zv9hASpgFNCXW79KHCDtKNDZ8Y4Xo5JO48VYQ4gI+iUnbpjNDhHklOtqEIKrVJGYd
+        Xwe38+CFS8wTGJVmIQXKLCTPz0LyyyyEvQsYWVYxiqeWFuempxYb56WW6xUn5haX5qXrJefn
+        bmIEJr3T/45/3cG44tVHvUOMTByMhxglOJiVRHhrmmuShHhTEiurUovy44tKc1KLDzFKc7Ao
+        ifMmZ25IFBJITyxJzU5NLUgtgskycXBKNTAld29a73wkpaXS0pSpfVKEoOyNLVZ+QlysJqaf
+        pnz5udVShGPK4R9yZ5jSv6p/v3hgSazny69rvmyKD7yged/laJS87aJ7c8MP9OetvnKbZ2K+
+        gtbu/YslHkzRZnUNKjosL73987XE/tcn57yxO+DtaKThdiApvvO/X2thdHJH1HamcAn16D0J
+        O34cznt3LdpGwoytXPfx/2/vzcTW1HE2+j/o/MFQI5LPwDjNYmr5kqj7jN0NZxi8Ln6t+/rO
+        6dPc5XHc6bYmTcu3LE+5+6NWzKKCzXb7jCjuGcINCZPvv0jInyouwP6z9l1k14wFsvfLYvcc
+        Nlu5+FL3yt+9zslMSa8PffGakPi7yfOEeqQSS3FGoqEWc1FxIgBOEJlG6QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsVy+t/xu7pd3bVJBhvaZS22r3/BanH9y3NW
+        i2dHtS0mtG5ntji+fwm7xbFfwRbnz29gtzjb9Ibd4vKuOWwWn3uPMFrMOL+PyeLzhseMFrcb
+        V7BZdB36y2ZxbeF7VosDFyeyWcxou8zqIOgxu+Eii8flvl4mj52z7rJ7LNhU6rFpVSebR8vJ
+        /SwefVtWMXp83iQXwBGlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OS
+        mpNZllqkb5eglzHxVmrBT72KnoaMBsZJ6l2MHBwSAiYSVybrdDFycQgJLGWU2LLzFVsXIydQ
+        XEbi5LQGVghbWOLPtS42iKL3jBLLJ8xgAUnwCthJ9G/4zQhiswioSuy+tpgZIi4ocXLmExaQ
+        BaICSRJHDvODhIUFYiXeNPwHm8ksIC5x68l8JhBbRCBe4ueUPmaQ+cwC65glli46zw6SEBLI
+        ltgzvRGsiE3AUKLrbRfYcZwC1hIdhxcyQQwyk+ja2sUIYctLNG+dzTyBUWgWkjNmIdk3C0nL
+        LCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgTG+rZjPzfvYJz36qPeIUYmDsZDjBIc
+        zEoivDXNNUlCvCmJlVWpRfnxRaU5qcWHGE2BYTGRWUo0OR+YbPJK4g3NDEwNTcwsDUwtzYyV
+        xHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpg8dNcLli6XWO2jcPlKu6eviMqexOZ9z9c4cd1/
+        clixNMhB8NRZnYVB3sc3ViyL237SNFoz+V74d9WlW+8+UA+acyJt/dJTElk8TyMnKqotUXHd
+        U75l3zr9BWlvlnCZHVtXnc+jdVPD7a92Zq+U3K1E4WlbzjIcebOxdM2TJTIC7hum1TRonN3t
+        Hcg98aFKoMEPw2Blnuxqe0arlltveDx1El0Wvpp29WHBxoANuoGFj2Ma02K+7g3Ti9td4PW4
+        PW3dxLevn8U1qQaHP5INPSPxpWb50S+MLxfqqv9ZfN/qpkh16hc3wcVtnYZactmf1m2LKZ4Z
+        M+2x3rWoprtRxW08HSL+q+ZqOEzkmib087YSS3FGoqEWc1FxIgD+wgK1fgMAAA==
+X-CMS-MailID: 20220512223450eucas1p203b702e114dd2cd1bafcfd7d4c80b638
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220504114121eucas1p1aff92a52f2c4e1905b4c9672331b7db6
+X-RootMTR: 20220512223450eucas1p203b702e114dd2cd1bafcfd7d4c80b638
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220504114121eucas1p1aff92a52f2c4e1905b4c9672331b7db6
-References: <20220504114021.33265-1-jagan@amarulasolutions.com>
-        <CGME20220504114121eucas1p1aff92a52f2c4e1905b4c9672331b7db6@eucas1p1.samsung.com>
-        <20220504114021.33265-6-jagan@amarulasolutions.com>
+X-CMS-RootMailID: 20220512223450eucas1p203b702e114dd2cd1bafcfd7d4c80b638
+References: <20220511093554.17535-1-cw00.choi@samsung.com>
+        <20220511093554.17535-3-cw00.choi@samsung.com>
+        <CGME20220512223450eucas1p203b702e114dd2cd1bafcfd7d4c80b638@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04.05.2022 13:40, Jagan Teki wrote:
-> Host transfer() in DSI master will invoke only when the DSI commands
-> are sent from DSI devices like DSI Panel or DSI bridges and this
-> host transfer wouldn't invoke for I2C-based-DSI bridge drivers.
->
-> Handling DSI host initialization in transfer calls misses the
-> controller setup for I2C configured DSI bridges.
->
-> This patch adds the DSI initialization from transfer to bridge
-> pre_enable as the bridge pre_enable API is invoked by core as
-> it is common across all classes of DSI device drivers.
->
-> v2:
-> * check initialized state in samsung_dsim_init
->
-> v1:
-> * keep DSI init in host transfer
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Hi Chanwoo,
 
-This doesn't work with Exynos DSI and DSI panels. Here is a bit more 
-detailed explanation and my solution for this:
+On 11.05.2022 11:35, Chanwoo Choi wrote:
+> From: Saravana Kannan <skannan@codeaurora.org>
+>
+> Many CPU architectures have caches that can scale independent of the
+> CPUs. Frequency scaling of the caches is necessary to make sure that the
+> cache is not a performance bottleneck that leads to poor performance and
+> power. The same idea applies for RAM/DDR.
+>
+> To achieve this, this patch adds support for cpu based scaling to the
+> passive governor. This is accomplished by taking the current frequency
+> of each CPU frequency domain and then adjust the frequency of the cache
+> (or any devfreq device) based on the frequency of the CPUs. It listens
+> to CPU frequency transition notifiers to keep itself up to date on the
+> current CPU frequency.
+>
+> To decide the frequency of the device, the governor does one of the
+> following:
+> * Derives the optimal devfreq device opp from required-opps property of
+>    the parent cpu opp_table.
+>
+> * Scales the device frequency in proportion to the CPU frequency. So, if
+>    the CPUs are running at their max frequency, the device runs at its
+>    max frequency. If the CPUs are running at their min frequency, the
+>    device runs at its min frequency. It is interpolated for frequencies
+>    in between.
+>
+> Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+> Tested-by: Johnson Wang <johnson.wang@mediatek.com>
+> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+> [Sibi: Integrated cpu-freqmap governor into passive_governor]
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> [Chanwoo: Fix conflict with latest code and cleanup code]
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-https://lore.kernel.org/all/e96197f9-948a-997e-5453-9f9d179b5f5a@samsung.com/
+This patch landed in today's linux next-20220512 as commit 2ab415d4e4e6 
+("PM / devfreq: Add cpu based scaling support to passive governor").
+
+It triggers the following NULL pointer dereference on Exynos based boards:
+
+exynos-bus: new bus device registered: soc:bus-leftbus (100000 KHz ~ 
+200000 KHz)
+exynos-bus: new bus device registered: soc:bus-rightbus (100000 KHz ~ 
+200000 KHz)
+exynos-bus: new bus device registered: soc:bus-display (160000 KHz ~ 
+200000 KHz)
+exynos-bus: new bus device registered: soc:bus-fsys (100000 KHz ~ 134000 
+KHz)
+exynos-bus: new bus device registered: soc:bus-peri ( 50000 KHz ~ 100000 
+KHz)
+exynos-bus: new bus device registered: soc:bus-mfc (100000 KHz ~ 200000 KHz)
+8<--- cut here ---
+Unable to handle kernel NULL pointer dereference at virtual address 0000003c
+[0000003c] *pgd=00000000
+Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 3 PID: 8 Comm: kworker/u8:0 Not tainted 5.18.0-rc6-next-20220512 #5014
+Hardware name: Samsung Exynos (Flattened Device Tree)
+Workqueue: devfreq_wq devfreq_monitor
+PC is at __mutex_lock+0x48/0x948
+LR is at lock_is_held_type+0x104/0x1a4
+pc : [<c0b93098>]    lr : [<c0b8f2ec>]    psr: 60000053
+sp : f0889dc0  ip : 600000d3  fp : c1dca624
+r10: c1dca44c  r9 : 00000000  r8 : c1984104
+r7 : c1d7f000  r6 : 00000000  r5 : 00000001  r4 : 00000008
+r3 : 00000000  r2 : 00000000  r1 : 2de44000  r0 : 00000000
+Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 4000404a  DAC: 00000051
+Register r0 information: NULL pointer
+Register r1 information: non-paged memory
+Register r2 information: NULL pointer
+Register r3 information: NULL pointer
+Register r4 information: non-paged memory
+Register r5 information: non-paged memory
+Register r6 information: NULL pointer
+Register r7 information: slab task_struct start c1d7f000 pointer offset 0
+Register r8 information: non-slab/vmalloc memory
+Register r9 information: NULL pointer
+Register r10 information: slab kmalloc-2k start c1dca000 pointer offset 
+1100 size 2048
+Register r11 information: slab kmalloc-2k start c1dca000 pointer offset 
+1572 size 2048
+Register r12 information: non-paged memory
+Process kworker/u8:0 (pid: 8, stack limit = 0x(ptrval))
+Stack: (0xf0889dc0 to 0xf088a000)
+...
+  __mutex_lock from mutex_lock_nested+0x1c/0x24
+  mutex_lock_nested from devfreq_passive_notifier_call+0x24/0x90
+  devfreq_passive_notifier_call from srcu_notifier_call_chain+0x98/0x114
+  srcu_notifier_call_chain from devfreq_set_target+0x6c/0x304
+  devfreq_set_target from devfreq_update_target+0x98/0xe8
+  devfreq_update_target from devfreq_monitor+0x28/0x1c0
+  devfreq_monitor from process_one_work+0x288/0x774
+  process_one_work from worker_thread+0x44/0x504
+  worker_thread from kthread+0xf4/0x128
+  kthread from ret_from_fork+0x14/0x2c
+Exception stack(0xf0889fb0 to 0xf0889ff8)
+...
+---[ end trace 0000000000000000 ]---
+
+The issue is caused by the lack of setting devfreq_passive_data->this 
+pointer in devfreq_passive_register_notifier. However, after adding:
+
+@@ -395,6 +395,9 @@ static int devfreq_passive_register_notifier(struct 
+devfreq *devfreq)
+         if (!parent)
+                 return -EPROBE_DEFER;
+
++       if (!p_data->this)
++               p_data->this = devfreq;
++
+         nb->notifier_call = devfreq_passive_notifier_call;
+         return devfreq_register_notifier(parent, nb, 
+DEVFREQ_TRANSITION_NOTIFIER);
+  }
+
+the NULL pointer dereference is gone, but I see the following warnings 
+on Odroid U3 board, which were not present before this patch:
+
+devfreq soc:bus-acp: failed to update devfreq using passive governor
+devfreq soc:bus-c2c: failed to update devfreq using passive governor
+devfreq soc:bus-acp: failed to update devfreq using passive governor
+devfreq soc:bus-c2c: failed to update devfreq using passive governor
 
 
 > ---
->   drivers/gpu/drm/bridge/samsung-dsim.c | 18 ++++++++++++------
->   1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-> index 60dc863113a0..b9361af5ef2d 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -1259,6 +1259,9 @@ static int samsung_dsim_init(struct samsung_dsim *dsi)
->   {
->   	const struct samsung_dsim_driver_data *driver_data = dsi->driver_data;
->   
-> +	if (dsi->state & DSIM_STATE_INITIALIZED)
-> +		return 0;
-> +
->   	samsung_dsim_reset(dsi);
->   	samsung_dsim_enable_irq(dsi);
->   
-> @@ -1271,6 +1274,8 @@ static int samsung_dsim_init(struct samsung_dsim *dsi)
->   	samsung_dsim_set_phy_ctrl(dsi);
->   	samsung_dsim_init_link(dsi);
->   
-> +	dsi->state |= DSIM_STATE_INITIALIZED;
-> +
->   	return 0;
->   }
->   
-> @@ -1290,6 +1295,10 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
->   	}
->   
->   	dsi->state |= DSIM_STATE_ENABLED;
-> +
-> +	ret = samsung_dsim_init(dsi);
-> +	if (ret)
-> +		return;
->   }
->   
->   static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
-> @@ -1464,12 +1473,9 @@ static ssize_t samsung_dsim_host_transfer(struct mipi_dsi_host *host,
->   	if (!(dsi->state & DSIM_STATE_ENABLED))
->   		return -EINVAL;
->   
-> -	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
-> -		ret = samsung_dsim_init(dsi);
-> -		if (ret)
-> -			return ret;
-> -		dsi->state |= DSIM_STATE_INITIALIZED;
-> -	}
-> +	ret = samsung_dsim_init(dsi);
-> +	if (ret)
-> +		return ret;
->   
->   	ret = mipi_dsi_create_packet(&xfer.packet, msg);
->   	if (ret < 0)
+>   drivers/devfreq/governor.h         |  22 +++
+>   drivers/devfreq/governor_passive.c | 297 +++++++++++++++++++++++++++--
+>   include/linux/devfreq.h            |  17 +-
+>   3 files changed, 322 insertions(+), 14 deletions(-)
+
+ > ...
+
 
 Best regards
 -- 
