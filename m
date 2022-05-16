@@ -2,225 +2,102 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A3CC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 19:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A62C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 22:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345700AbiEPTkS (ORCPT
+        id S1349854AbiEPW4o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 May 2022 15:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43896 "EHLO
+        Mon, 16 May 2022 18:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345714AbiEPTjn (ORCPT
+        with ESMTP id S1349855AbiEPW4n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 May 2022 15:39:43 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F6F3FD9B;
-        Mon, 16 May 2022 12:39:11 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id i27so30583089ejd.9;
-        Mon, 16 May 2022 12:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zJNYDk4SvD1YtpXR0oj8NsF6HENGwzWTt8Lj8cCkpNo=;
-        b=GfpaCn3LMRvcWxUW26o8K7i1OgF9OOlb+NMttVfSDfnGCO1x92FO4XgTiW/aE8cK/a
-         6EPLXmEh5UIZPGY4T7AjjkJSyPvSKwZzGg/WsQlcpdF+aQT1oaX15KSys6jajMRl4daE
-         Dkb/qDAMY2pyPHhL0AS/NHTNs9O4/rHbQSL9QWD2/uXlhfBPY67M6Fvrt62I4p3t1z6t
-         3MrdJV2MYZJtHqV7xx+vuMYj9PN+WgalQiRsAqj4e6Ge0FxL2FgyQ+gqB7U1FYmflxs8
-         wEL79+0JU40DzFh9awCDRLt/FOmSQs2etsHFSNeG/jjYqyz448nzVYV/ZhAsL9/nmz7/
-         UluQ==
+        Mon, 16 May 2022 18:56:43 -0400
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3EAD29C93;
+        Mon, 16 May 2022 15:56:38 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-edf9ddb312so22152473fac.8;
+        Mon, 16 May 2022 15:56:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zJNYDk4SvD1YtpXR0oj8NsF6HENGwzWTt8Lj8cCkpNo=;
-        b=jFRuY6sNOGRrg/d8eDCTF+tXeu0taDfaIpAYvS/9Y8QsWHnPXSat2/MUOK72N+EUoA
-         ed3wb8/yum3A68vrE6IIo/LmlUeMoT5P14YpNZ+n0ShKI1gnr4yWD3xJiTLC/dwVZQD5
-         sXVJtkS1gDU/MNmzKbD8r1VRoOg7LQ+ZNoI+Z+Nl3F1/gvripsXJMYBfmw7zHHhTd2tB
-         UgfcR5up1hzZ9gwpcKaU8agb8TEM+MnAylUoHqj+LWf+tX1XhJJu8g1VQI9qLG/53o12
-         GEkrnRpVp5HsrjalTUy1wOYqct3/slxFfTQ3AHB6YVTCibotWXObIuyiUfTVUOrlqYf2
-         msFA==
-X-Gm-Message-State: AOAM533y0p6FWxLjt73o19SuIY3kuVhjmshF2eSHwl/TBYdOXyyl551w
-        3mc/xJNEih4VKyvJ0A3R0Y0=
-X-Google-Smtp-Source: ABdhPJxoPobHPfYM65bQ9gkqOcRe7+3noo9i4Ud/hXXldy2+MIeYBuZ0nPEvonOeOo7whoyTzmPsMg==
-X-Received: by 2002:a17:907:6d25:b0:6f4:d753:f250 with SMTP id sa37-20020a1709076d2500b006f4d753f250mr16485319ejc.580.1652729950114;
-        Mon, 16 May 2022 12:39:10 -0700 (PDT)
-Received: from adroid (102-167-184-091.ip-addr.vsenet.de. [91.184.167.102])
-        by smtp.gmail.com with ESMTPSA id d3-20020a170907272300b006f3ef214e6fsm85180ejl.213.2022.05.16.12.39.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9JpR0VbPHC9Ot9LMXLbulS3SOKAjNY3sH8Ig5/561d0=;
+        b=nG4FYGjZ+YlrsT11SiFZ7M6nz8J3Mo3yDUVt39dyaby9sJMlVzT3WYLPg0CkguPQWD
+         LhGGGh6S8BH+lmWdnmXnaYM1k/G2pejJ2WHiAHfJKpL/9GceEJVs1BZiHP1/wBdatcqM
+         hOok4+FCSr30CUz4skDxE8AnbU5cl955lmDI9TDLHOQbPzKvyByJjO3tM0BqB9gL7YF6
+         wcRirWrlE6TD9z/DXyHytMf6cEkdSHsbo0i7CejYPai0C9kDaShB175I4p+2FoWqZ1Jk
+         pHZr032jyAX4Jsy+ht99KTSq/p+BGPIumxjxmPpo+4SrAM5+EwrtHfHuzeJkxn1Sm1Hs
+         TeGQ==
+X-Gm-Message-State: AOAM533zFi3bbzj6jew5Q6YtIEPZzQb3HSxcAZDxj9bjWpwvKKW3Va5Y
+        z77861hh1PhCfEdGv4zGeg==
+X-Google-Smtp-Source: ABdhPJwxKQk9+/mRedofsllv+p9O0Iv9HVxFpCS4EiHKJmsKR/DTsoiZSjr53bOAe0CGl8MZjRB6uA==
+X-Received: by 2002:a05:6870:469e:b0:f1:6a40:e7dd with SMTP id a30-20020a056870469e00b000f16a40e7ddmr8836756oap.260.1652741798040;
+        Mon, 16 May 2022 15:56:38 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y22-20020a4a6256000000b0035eb4e5a6cfsm4578810oog.37.2022.05.16.15.56.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 12:39:09 -0700 (PDT)
-From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
-Subject: [PATCH 3/3] ARM: dts: exynos: add panel and backlight to p4note
-Date:   Mon, 16 May 2022 21:37:09 +0200
-Message-Id: <20220516193709.10037-3-martin.juecker@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220516193709.10037-1-martin.juecker@gmail.com>
-References: <20220516193709.10037-1-martin.juecker@gmail.com>
+        Mon, 16 May 2022 15:56:37 -0700 (PDT)
+Received: (nullmailer pid 3474248 invoked by uid 1000);
+        Mon, 16 May 2022 22:56:36 -0000
+Date:   Mon, 16 May 2022 17:56:36 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Adam Ford <aford173@gmail.com>, Fancy Fang <chen.fang@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>
+Subject: Re: [PATCH v2 11/12] dt-bindings: display: exynos: dsim: Add NXP
+ i.MX8MM support
+Message-ID: <20220516225636.GA3474191-robh@kernel.org>
+References: <20220504114021.33265-1-jagan@amarulasolutions.com>
+ <20220504114021.33265-12-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220504114021.33265-12-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add configuration for the LTL101AL01 panel and a pwm backlight to drive
-the display in the p4note devices.
+On Wed, 04 May 2022 17:10:20 +0530, Jagan Teki wrote:
+> Samsung MIPI DSIM bridge can also be found in i.MX8MM SoC.
+> 
+> Add dt-bingings for it.
+> 
+> v2:
+> * updated comments
+> 
+> v1:
+> * new patch
+> 
+> Cc: devicetree@vger.kernel.org,
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Note:
+> I will send separate series for updating to yaml as the existing binding
+> is old that it has some properties need to fix.
+> 
+>  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
----
- arch/arm/boot/dts/exynos4412-p4note.dtsi | 84 ++++++++++++++++++++----
- 1 file changed, 71 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 97f131b1014b..1fd051b52387 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -106,6 +106,16 @@ voltage-regulator-3 {
- 		regulator-always-on;
- 	};
- 
-+	panel_vdd: voltage-regulator-4 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "LCD_ENABLE";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&lcd_enable>;
-+		gpios = <&gpc0 1 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-boot-on;
-+	};
-+
- 	wlan_pwrseq: sdhci3-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&gpm3 5 GPIO_ACTIVE_LOW>;
-@@ -216,6 +226,32 @@ power_supply: charger@6 {
- 			monitored-battery = <&battery_cell>;
- 		};
- 	};
-+
-+	panel {
-+		compatible = "samsung,ltl101al01";
-+		pinctrl-0 = <&lvds_nshdn>;
-+		pinctrl-names = "default";
-+		power-supply = <&panel_vdd>;
-+		enable-gpios = <&gpm0 5 GPIO_ACTIVE_HIGH>;
-+		backlight = <&backlight>;
-+
-+		port {
-+			lcd_ep: endpoint {
-+				remote-endpoint = <&fimd_ep>;
-+			};
-+		};
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pinctrl-0 = <&led_bl_reset>;
-+		pinctrl-names = "default";
-+		enable-gpios = <&gpm0 1 GPIO_ACTIVE_HIGH>;
-+		pwms = <&pwm 1 78770 0>;
-+		brightness-levels = <0 48 128 255>;
-+		num-interpolated-steps = <8>;
-+		default-brightness-level = <12>;
-+	};
- };
- 
- &adc {
-@@ -295,22 +331,19 @@ &exynos_usbphy {
- };
- 
- &fimd {
--	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
-+	pinctrl-0 = <&lcd_clk &lcd_data24>;
- 	pinctrl-names = "default";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
- 	status = "okay";
- 
--	display-timings {
--		timing0 {
--			clock-frequency = <66666666>;
--			hactive = <1280>;
--			vactive = <800>;
--			hfront-porch = <18>;
--			hback-porch = <36>;
--			hsync-len = <16>;
--			vback-porch = <16>;
--			vfront-porch = <4>;
--			vsync-len = <3>;
--			hsync-active = <1>;
-+	samsung,invert-vclk;
-+
-+	port@3 {
-+		reg = <3>;
-+
-+		fimd_ep: endpoint {
-+			remote-endpoint = <&lcd_ep>;
- 		};
- 	};
- };
-@@ -687,6 +720,12 @@ tsp_reg_gpio_3: tsp-reg-gpio-3-pins {
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 	};
- 
-+	lcd_enable: lcd-enable-pins {
-+		samsung,pins = "gpc0-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+
- 	sleep0: sleep-state {
- 		PIN_SLP(gpa0-0, INPUT, NONE);
- 		PIN_SLP(gpa0-1, OUT0, NONE);
-@@ -809,12 +848,24 @@ uart_sel: uart-sel-pins {
- 		/* 0 = CP, 1 = AP (serial output) */
- 	};
- 
-+	led_bl_reset: led-bl-reset-pins {
-+		samsung,pins = "gpm0-1";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+
- 	tsp_rst: tsp-rst-pins {
- 		samsung,pins = "gpm0-4";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 	};
- 
-+	lvds_nshdn: lvds-nshdn-pins {
-+		samsung,pins = "gpm0-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+
- 	tsp_irq: tsp-irq-pins {
- 		samsung,pins = "gpm2-3";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
-@@ -1100,6 +1151,13 @@ &pmu_system_controller {
- 	assigned-clock-parents = <&clock CLK_XUSBXTI>;
- };
- 
-+&pwm {
-+	pinctrl-0 = <&pwm1_out>;
-+	pinctrl-names = "default";
-+	samsung,pwm-outputs = <1>;
-+	status = "okay";
-+};
-+
- &rtc {
- 	clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
- 	clock-names = "rtc", "rtc_src";
--- 
-2.25.1
-
+Acked-by: Rob Herring <robh@kernel.org>
