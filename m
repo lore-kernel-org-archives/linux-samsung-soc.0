@@ -2,102 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D5AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 10:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C88C4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 14:11:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238153AbiEPKpL (ORCPT
+        id S244401AbiEPOLw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 May 2022 06:45:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
+        Mon, 16 May 2022 10:11:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242891AbiEPKpB (ORCPT
+        with ESMTP id S244489AbiEPOLv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 May 2022 06:45:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3327725280;
-        Mon, 16 May 2022 03:44:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AB8D960F27;
-        Mon, 16 May 2022 10:44:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA7DC34119;
-        Mon, 16 May 2022 10:44:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652697898;
-        bh=8e86Bl8VYKJuozeVnXgHNviEIwU1zooEoIg8B9aysS8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=XNsx9Lp0Uyr3ubMiRW1dnbg/fR0pDdvuXh+0oYQBEMrDDUk7iAiW7GbC58D/yK3RE
-         8umVVFbUErwYkcH5VZhcqI6Ao/CAv4o3Tw1+81cBW+guGBXn/TjW6grLmokZ5X4cs0
-         EBfhCSbEvwKRrtNDDv41BtzLuySfmEZ+CXplj4sSzALvc9548rBa0Yqo/IodbscYA0
-         WzFDgN7rAgWx/IsNO6OYBSy1wbc/oCJYoYlECO2QN1MM55/s6IsdY8vW1QBkM2QXmC
-         enrtrJs8SXiTewhml8IOKlqFjFT11gu7bYe5S9TVetdtpO0oq/vxS/pWK4gZCJe8jc
-         UKY0TS8MNdvtw==
-Message-ID: <874f08d9-e67e-f7f3-4d98-89bdb8333ce5@kernel.org>
-Date:   Mon, 16 May 2022 12:44:52 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCHv2 4/6] thermal: exynos: fixed the efuse min/max value for
- exynos5422
-Content-Language: en-US
-To:     kernel test robot <lkp@intel.com>,
-        Anand Moon <linux.amoon@gmail.com>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        Mon, 16 May 2022 10:11:51 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D7120F4F
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 May 2022 07:11:47 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id c24so16544698lfv.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 May 2022 07:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V/pFhyZ7PlSKfX2hWY5gCxthekoCEZH2niVLMkmY+d0=;
+        b=qD8VsVBt4UMCA5G5JENPpcOuQCAaOzdAneycAjMg6LOQpyS4sAHT54G6k2mvmnIbv2
+         98ZRbpvEtB3simyFamItgL4TNTf2gC66bDXzAOVk3KfZx4B5KylFpRhyQOVdaccaASb6
+         ukhlSb9fZ8j+Wgz/yNsIUyFXGuMUcdlvYCr0lFYE2dlugp0M7wSdfF7IgzpGbAzh6OvN
+         schXFtDwJ4M122WVipx30WqBa4jFjkUshjkwu7ZfzRgyeZMBJmUNwKOVNzjTz9Qn4Jkv
+         w8chTblgTAdDv4rljzbioSWAPaJn1tma3WPLrONkCe87raEFv7lQZpEnPEA2l+6RiJYp
+         o5TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V/pFhyZ7PlSKfX2hWY5gCxthekoCEZH2niVLMkmY+d0=;
+        b=x2b+3reeGSxL8mlWZQb44mxxwHsdSeB5MIh1K2K2PGll67GRaK0LTUAFaii4/m9N3L
+         utj+/yuelXIEtCMu31TU0ebcCvSbOJwnHg0TgYu9008gVwkRQOvyoDr/7mBdQfes1eMO
+         HeSWpANtdeAoodFoUgS3my4vVcThZFJ+Xk5o1aclLOV1RCaLI1YaWLJ9qzQApxEABI6k
+         oHvCmPb/vrbaNhfsU8SVnQtE0oR7W4gG9GaMlQ55jdHXwu5k5CmXMX29Dc9DDny4c2fl
+         g1KYYsSIKH0C0SAy+pNt18gLkrS5l4fARJkR4oWLY276603P0WMW2KQovwIA2rxDEvDY
+         L8IA==
+X-Gm-Message-State: AOAM530UP7hLR0KRFPtb9eZDRmaNN0aUF1Bc+w28bSBIONWzWQbGFnZv
+        B5ZNYaXPkd1QmbePuLhpYSwdjA==
+X-Google-Smtp-Source: ABdhPJyMPsqvy8XDKgku0gZQwXhmnnZ5EpgXXspxlZSWVKx1viBGeZmSndZZ79xeXmlvrRfbouhPyQ==
+X-Received: by 2002:a05:6512:33c8:b0:473:9d8f:a01b with SMTP id d8-20020a05651233c800b004739d8fa01bmr13369570lfg.619.1652710304272;
+        Mon, 16 May 2022 07:11:44 -0700 (PDT)
+Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id b5-20020ac247e5000000b0047255d2116bsm1315538lfp.154.2022.05.16.07.11.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 May 2022 07:11:43 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org
-References: <20220515064126.1424-5-linux.amoon@gmail.com>
- <202205161820.8rHIcsvI-lkp@intel.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <202205161820.8rHIcsvI-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v2] dt-bindings: mfd: samsung,exynos5433-lpass: drop useless 'dma-channels/requests' properties
+Date:   Mon, 16 May 2022 16:11:23 +0200
+Message-Id: <20220516141123.4579-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/05/2022 12:42, kernel test robot wrote:
-> Hi Anand,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on ec7f49619d8ee13e108740c82f942cd401b989e9]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/Exynos-Thermal-code-inprovement/20220515-144336
-> base:   ec7f49619d8ee13e108740c82f942cd401b989e9
-> config: hexagon-randconfig-r033-20220516 (https://download.01.org/0day-ci/archive/20220516/202205161820.8rHIcsvI-lkp@intel.com/config)
-> compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 853fa8ee225edf2d0de94b0dcbd31bea916e825e)
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://github.com/intel-lab-lkp/linux/commit/eb50b0c2100fabd6d09b87abd11f52c5295512e8
->         git remote add linux-review https://github.com/intel-lab-lkp/linux
->         git fetch --no-tags linux-review Anand-Moon/Exynos-Thermal-code-inprovement/20220515-144336
->         git checkout eb50b0c2100fabd6d09b87abd11f52c5295512e8
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/thermal/samsung/
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> All warnings (new ones prefixed by >>):
-> 
->>> drivers/thermal/samsung/exynos_tmu.c:929:40: warning: overlapping comparisons always evaluate to false [-Wtautological-overlap-compare]
->                    if (data->soc == SOC_ARCH_EXYNOS5420 &&
->                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
->    1 warning generated.
+The pl330 DMA controller provides number of DMA channels and requests
+through its registers, so duplicating this information (with a chance of
+mistakes) in DTS is pointless.  Additionally the DTS used always wrong
+property names which causes DT schema check failures - the bindings
+documented 'dma-channels' and 'dma-requests' properties without leading
+hash sign.
 
-Ah, I did not notice it and it seems code was not compile-tested with W=1.
+Reported-by: Rob Herring <robh@kernel.org>
+Fixes: e18183cefc8b ("mfd: Add DT bindings documentation for Samsung Exynos LPASS")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Anand, please be sure you compile your code with W=1...
+---
 
+Changes since v1:
+1. v1 was ment to be applied but I cannot find it in MFD tree.
+2. Drop the properties entirely as turned out during discussions.
 
-Best regards,
-Krzysztof
+v1: https://lore.kernel.org/all/YmpkE0FgEhPNneg+@google.com/
+---
+ .../devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml       | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
+index f7bb67d10eff..69c15744c864 100644
+--- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
++++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.yaml
+@@ -79,8 +79,6 @@ examples:
+             clocks = <&cmu_aud CLK_ACLK_DMAC>;
+             clock-names = "apb_pclk";
+             #dma-cells = <1>;
+-            #dma-channels = <8>;
+-            #dma-requests = <32>;
+             power-domains = <&pd_aud>;
+         };
+ 
+-- 
+2.32.0
+
