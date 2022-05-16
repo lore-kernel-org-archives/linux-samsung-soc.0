@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25044C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 19:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A3CC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 19:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345657AbiEPTjt (ORCPT
+        id S1345700AbiEPTkS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 May 2022 15:39:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44078 "EHLO
+        Mon, 16 May 2022 15:40:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345600AbiEPTi5 (ORCPT
+        with ESMTP id S1345714AbiEPTjn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 May 2022 15:38:57 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71423F88C;
-        Mon, 16 May 2022 12:38:45 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id i40so4692715eda.7;
-        Mon, 16 May 2022 12:38:44 -0700 (PDT)
+        Mon, 16 May 2022 15:39:43 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F6F3FD9B;
+        Mon, 16 May 2022 12:39:11 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id i27so30583089ejd.9;
+        Mon, 16 May 2022 12:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LebDF3RuPxmX1Cw/8NAKFfKs/e37d3Ws73/ZUWsOSYY=;
-        b=bseiz9mTWBFks9ltjnA8R2a+/W7/FVLzfkmSDHkJfeKfQX1rYGRuIyUViZL8yKA9mF
-         MLEAdCbqCH+RPshFcSqj8Y/AkfxtyUTdOtL2F5UnpHv0UXW0mf1LKw3QS/uRg9BEqWq7
-         QMATuJ+nvY4vq7d4KZnFOq4VS8QyGepI2Sam7Qz6f6IallvZ+rxo7sHaARhKMtw359gl
-         9H/CUYF9h8DrFCKvAY6T1zMs8VFaRAwHSyzzb1/zafJQy5vhl5bQ42vFNfVAh7T7ClI8
-         oRRmlyG0j5tAoD3DEzyuDLbHY6upzDkmAnY6zHLJ8BGTThl1mtVURC7BBqr7hvTVZUbw
-         kcCA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zJNYDk4SvD1YtpXR0oj8NsF6HENGwzWTt8Lj8cCkpNo=;
+        b=GfpaCn3LMRvcWxUW26o8K7i1OgF9OOlb+NMttVfSDfnGCO1x92FO4XgTiW/aE8cK/a
+         6EPLXmEh5UIZPGY4T7AjjkJSyPvSKwZzGg/WsQlcpdF+aQT1oaX15KSys6jajMRl4daE
+         Dkb/qDAMY2pyPHhL0AS/NHTNs9O4/rHbQSL9QWD2/uXlhfBPY67M6Fvrt62I4p3t1z6t
+         3MrdJV2MYZJtHqV7xx+vuMYj9PN+WgalQiRsAqj4e6Ge0FxL2FgyQ+gqB7U1FYmflxs8
+         wEL79+0JU40DzFh9awCDRLt/FOmSQs2etsHFSNeG/jjYqyz448nzVYV/ZhAsL9/nmz7/
+         UluQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LebDF3RuPxmX1Cw/8NAKFfKs/e37d3Ws73/ZUWsOSYY=;
-        b=bQAU7dH3n3ni1KT0j80EoabV5Q3NzXee7YMiF/RDOkdDdI0mfh4nwvKeA60967TDMB
-         hQds208CVNIYz+Y84XbzXe5m/H2sRwnXQPScqcAaFnbDTPaBr1KpygD4tBpk4hlDRJjs
-         R1tQNWwlOtZJi3IWSW7N2/IkkbmKWB8hkN8wDV1SXOquv1TtAa3g3o5K4bASsFUEz/4G
-         +2DFL21cAa1MPMisgszKLqyHfRWBPjzfzAtT2EhKEN7PHY5TQWbCR28qiPUO1OBt4Zi5
-         7WQG4oFlIk5R1znnYzzwhbgmFpZMtLFZLu/KR9Y0a6e7t1wEd/WEzCt6TGjhJEFCeizC
-         +kkA==
-X-Gm-Message-State: AOAM533Q6CzTq50rh+UzXdJrxu437jdpEQhqll4+4ePpZkitStn73OPm
-        Hf/lxjgW7CvqJv3HXkA2ik0=
-X-Google-Smtp-Source: ABdhPJyTP9Rwj4orjplkbScv8cYbfHA3DBy1Z17s4DcQWsXitJXORWnR2TTE2sCfqqK/ke8zXrzj6Q==
-X-Received: by 2002:a05:6402:f13:b0:428:a849:d0c1 with SMTP id i19-20020a0564020f1300b00428a849d0c1mr15059561eda.346.1652729923428;
-        Mon, 16 May 2022 12:38:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zJNYDk4SvD1YtpXR0oj8NsF6HENGwzWTt8Lj8cCkpNo=;
+        b=jFRuY6sNOGRrg/d8eDCTF+tXeu0taDfaIpAYvS/9Y8QsWHnPXSat2/MUOK72N+EUoA
+         ed3wb8/yum3A68vrE6IIo/LmlUeMoT5P14YpNZ+n0ShKI1gnr4yWD3xJiTLC/dwVZQD5
+         sXVJtkS1gDU/MNmzKbD8r1VRoOg7LQ+ZNoI+Z+Nl3F1/gvripsXJMYBfmw7zHHhTd2tB
+         UgfcR5up1hzZ9gwpcKaU8agb8TEM+MnAylUoHqj+LWf+tX1XhJJu8g1VQI9qLG/53o12
+         GEkrnRpVp5HsrjalTUy1wOYqct3/slxFfTQ3AHB6YVTCibotWXObIuyiUfTVUOrlqYf2
+         msFA==
+X-Gm-Message-State: AOAM533y0p6FWxLjt73o19SuIY3kuVhjmshF2eSHwl/TBYdOXyyl551w
+        3mc/xJNEih4VKyvJ0A3R0Y0=
+X-Google-Smtp-Source: ABdhPJxoPobHPfYM65bQ9gkqOcRe7+3noo9i4Ud/hXXldy2+MIeYBuZ0nPEvonOeOo7whoyTzmPsMg==
+X-Received: by 2002:a17:907:6d25:b0:6f4:d753:f250 with SMTP id sa37-20020a1709076d2500b006f4d753f250mr16485319ejc.580.1652729950114;
+        Mon, 16 May 2022 12:39:10 -0700 (PDT)
 Received: from adroid (102-167-184-091.ip-addr.vsenet.de. [91.184.167.102])
-        by smtp.gmail.com with ESMTPSA id s7-20020a170906220700b006f3ef214e45sm94042ejs.171.2022.05.16.12.38.42
+        by smtp.gmail.com with ESMTPSA id d3-20020a170907272300b006f3ef214e6fsm85180ejl.213.2022.05.16.12.39.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 12:38:43 -0700 (PDT)
+        Mon, 16 May 2022 12:39:09 -0700 (PDT)
 From:   =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
 To:     linux-samsung-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -61,10 +61,12 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Sam Ravnborg <sam@ravnborg.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Martin=20J=C3=BCcker?= <martin.juecker@gmail.com>
-Subject: [PATCH 1/3] dt-bindings: display: simple: add support for Samsung LTL101AL01
-Date:   Mon, 16 May 2022 21:37:07 +0200
-Message-Id: <20220516193709.10037-1-martin.juecker@gmail.com>
+Subject: [PATCH 3/3] ARM: dts: exynos: add panel and backlight to p4note
+Date:   Mon, 16 May 2022 21:37:09 +0200
+Message-Id: <20220516193709.10037-3-martin.juecker@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220516193709.10037-1-martin.juecker@gmail.com>
+References: <20220516193709.10037-1-martin.juecker@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -72,26 +74,153 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add the Samsung LTL101AL01 WXGA LCD panel to the list.
+Add configuration for the LTL101AL01 panel and a pwm backlight to drive
+the display in the p4note devices.
 
 Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
 ---
- .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/exynos4412-p4note.dtsi | 84 ++++++++++++++++++++----
+ 1 file changed, 71 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-index 1eb9dd4f8f58..9501b5a3c011 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-@@ -270,6 +270,8 @@ properties:
-       - samsung,atna33xc20
-         # Samsung 12.2" (2560x1600 pixels) TFT LCD panel
-       - samsung,lsn122dl01-c01
-+        # Samsung Electronics 10.1" WXGA (1280x800) TFT LCD panel
-+      - samsung,ltl101al01
-         # Samsung Electronics 10.1" WSVGA TFT LCD panel
-       - samsung,ltn101nt05
-         # Samsung Electronics 14" WXGA (1366x768) TFT LCD panel
+diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
+index 97f131b1014b..1fd051b52387 100644
+--- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
++++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
+@@ -106,6 +106,16 @@ voltage-regulator-3 {
+ 		regulator-always-on;
+ 	};
+ 
++	panel_vdd: voltage-regulator-4 {
++		compatible = "regulator-fixed";
++		regulator-name = "LCD_ENABLE";
++		pinctrl-names = "default";
++		pinctrl-0 = <&lcd_enable>;
++		gpios = <&gpc0 1 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-boot-on;
++	};
++
+ 	wlan_pwrseq: sdhci3-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&gpm3 5 GPIO_ACTIVE_LOW>;
+@@ -216,6 +226,32 @@ power_supply: charger@6 {
+ 			monitored-battery = <&battery_cell>;
+ 		};
+ 	};
++
++	panel {
++		compatible = "samsung,ltl101al01";
++		pinctrl-0 = <&lvds_nshdn>;
++		pinctrl-names = "default";
++		power-supply = <&panel_vdd>;
++		enable-gpios = <&gpm0 5 GPIO_ACTIVE_HIGH>;
++		backlight = <&backlight>;
++
++		port {
++			lcd_ep: endpoint {
++				remote-endpoint = <&fimd_ep>;
++			};
++		};
++	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pinctrl-0 = <&led_bl_reset>;
++		pinctrl-names = "default";
++		enable-gpios = <&gpm0 1 GPIO_ACTIVE_HIGH>;
++		pwms = <&pwm 1 78770 0>;
++		brightness-levels = <0 48 128 255>;
++		num-interpolated-steps = <8>;
++		default-brightness-level = <12>;
++	};
+ };
+ 
+ &adc {
+@@ -295,22 +331,19 @@ &exynos_usbphy {
+ };
+ 
+ &fimd {
+-	pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
++	pinctrl-0 = <&lcd_clk &lcd_data24>;
+ 	pinctrl-names = "default";
++	#address-cells = <1>;
++	#size-cells = <0>;
+ 	status = "okay";
+ 
+-	display-timings {
+-		timing0 {
+-			clock-frequency = <66666666>;
+-			hactive = <1280>;
+-			vactive = <800>;
+-			hfront-porch = <18>;
+-			hback-porch = <36>;
+-			hsync-len = <16>;
+-			vback-porch = <16>;
+-			vfront-porch = <4>;
+-			vsync-len = <3>;
+-			hsync-active = <1>;
++	samsung,invert-vclk;
++
++	port@3 {
++		reg = <3>;
++
++		fimd_ep: endpoint {
++			remote-endpoint = <&lcd_ep>;
+ 		};
+ 	};
+ };
+@@ -687,6 +720,12 @@ tsp_reg_gpio_3: tsp-reg-gpio-3-pins {
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 	};
+ 
++	lcd_enable: lcd-enable-pins {
++		samsung,pins = "gpc0-1";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++
+ 	sleep0: sleep-state {
+ 		PIN_SLP(gpa0-0, INPUT, NONE);
+ 		PIN_SLP(gpa0-1, OUT0, NONE);
+@@ -809,12 +848,24 @@ uart_sel: uart-sel-pins {
+ 		/* 0 = CP, 1 = AP (serial output) */
+ 	};
+ 
++	led_bl_reset: led-bl-reset-pins {
++		samsung,pins = "gpm0-1";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++
+ 	tsp_rst: tsp-rst-pins {
+ 		samsung,pins = "gpm0-4";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+ 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+ 	};
+ 
++	lvds_nshdn: lvds-nshdn-pins {
++		samsung,pins = "gpm0-5";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++
+ 	tsp_irq: tsp-irq-pins {
+ 		samsung,pins = "gpm2-3";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
+@@ -1100,6 +1151,13 @@ &pmu_system_controller {
+ 	assigned-clock-parents = <&clock CLK_XUSBXTI>;
+ };
+ 
++&pwm {
++	pinctrl-0 = <&pwm1_out>;
++	pinctrl-names = "default";
++	samsung,pwm-outputs = <1>;
++	status = "okay";
++};
++
+ &rtc {
+ 	clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
+ 	clock-names = "rtc", "rtc_src";
 -- 
 2.25.1
 
