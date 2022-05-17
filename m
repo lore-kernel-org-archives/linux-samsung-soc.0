@@ -2,102 +2,92 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A62C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 May 2022 22:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 013EBC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 May 2022 07:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349854AbiEPW4o (ORCPT
+        id S241054AbiEQHcs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 16 May 2022 18:56:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47736 "EHLO
+        Tue, 17 May 2022 03:32:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349855AbiEPW4n (ORCPT
+        with ESMTP id S236176AbiEQHcq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 16 May 2022 18:56:43 -0400
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3EAD29C93;
-        Mon, 16 May 2022 15:56:38 -0700 (PDT)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-edf9ddb312so22152473fac.8;
-        Mon, 16 May 2022 15:56:38 -0700 (PDT)
+        Tue, 17 May 2022 03:32:46 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35798255BE
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 May 2022 00:32:45 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id g12so5903305edq.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 May 2022 00:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=6+PM+IzbMhfXslyjFiVRohLtTwAYLD/wNY5LYHLjz2E=;
+        b=kcPFtNO6HjpPS2YFgXfW1xd43vq158WrRQFhegs5i8ItjE6arwKhjtBg2Q+OQf8rJ5
+         dfhJOyns7c3cx/mvCmMOdKWWmDz4ShVB+UGbOVHkRKOUQ1TtmcSHquKqkYt7E0iZ1HMQ
+         6CLzqPnnGMWOkj3gkhcTfiyWw6RBGpDNlpdnLpkIpBZ7wOpqbCA5hSU5I6UBMg+Erv9P
+         C15CIzqCLjyWwmAXjLhTSmAf79X/g+BjXSq7wuYXfo569wSPkEi5VIH5BX1KWUngjD5r
+         GE2ysgs5aBZp6g61OHqYuy9Ztl9e4I3aRhPZacsJhx38hKB8elWX5ptnhxIGMquaLSma
+         ogaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9JpR0VbPHC9Ot9LMXLbulS3SOKAjNY3sH8Ig5/561d0=;
-        b=nG4FYGjZ+YlrsT11SiFZ7M6nz8J3Mo3yDUVt39dyaby9sJMlVzT3WYLPg0CkguPQWD
-         LhGGGh6S8BH+lmWdnmXnaYM1k/G2pejJ2WHiAHfJKpL/9GceEJVs1BZiHP1/wBdatcqM
-         hOok4+FCSr30CUz4skDxE8AnbU5cl955lmDI9TDLHOQbPzKvyByJjO3tM0BqB9gL7YF6
-         wcRirWrlE6TD9z/DXyHytMf6cEkdSHsbo0i7CejYPai0C9kDaShB175I4p+2FoWqZ1Jk
-         pHZr032jyAX4Jsy+ht99KTSq/p+BGPIumxjxmPpo+4SrAM5+EwrtHfHuzeJkxn1Sm1Hs
-         TeGQ==
-X-Gm-Message-State: AOAM533zFi3bbzj6jew5Q6YtIEPZzQb3HSxcAZDxj9bjWpwvKKW3Va5Y
-        z77861hh1PhCfEdGv4zGeg==
-X-Google-Smtp-Source: ABdhPJwxKQk9+/mRedofsllv+p9O0Iv9HVxFpCS4EiHKJmsKR/DTsoiZSjr53bOAe0CGl8MZjRB6uA==
-X-Received: by 2002:a05:6870:469e:b0:f1:6a40:e7dd with SMTP id a30-20020a056870469e00b000f16a40e7ddmr8836756oap.260.1652741798040;
-        Mon, 16 May 2022 15:56:38 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id y22-20020a4a6256000000b0035eb4e5a6cfsm4578810oog.37.2022.05.16.15.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 15:56:37 -0700 (PDT)
-Received: (nullmailer pid 3474248 invoked by uid 1000);
-        Mon, 16 May 2022 22:56:36 -0000
-Date:   Mon, 16 May 2022 17:56:36 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Tim Harvey <tharvey@gateworks.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Adam Ford <aford173@gmail.com>, Fancy Fang <chen.fang@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>
-Subject: Re: [PATCH v2 11/12] dt-bindings: display: exynos: dsim: Add NXP
- i.MX8MM support
-Message-ID: <20220516225636.GA3474191-robh@kernel.org>
-References: <20220504114021.33265-1-jagan@amarulasolutions.com>
- <20220504114021.33265-12-jagan@amarulasolutions.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6+PM+IzbMhfXslyjFiVRohLtTwAYLD/wNY5LYHLjz2E=;
+        b=e5OJ4V4mDUjmXyfTTbZRhtvzG3DeIP1tzoKVfJKQtZqhqoB0r8UK2LINls/oT0RDPe
+         BLw1VRoH28MM3q/JWY9Qibm4ccv3vKLQjSzoa76gJpo/4phH7GOOni0eA84ItB8Q9eH1
+         MD/Xfnrvy8ODmbtHVP+LcsLQmeJOaIGE46C2O79IZdwnRHKMp4USoyHFZbdrde060tZ5
+         8V/eBnJxIkQCIHMEkqAhTGhl9uDhF1D2NWMtlepWb22TuVo+9+DGrWN10JqXeEueeQTE
+         aHDksSgGhNTJmC65Lf3lMKOx26E4y/WDE6kZ5wfj6N66HJm0DmncFkqap40aCkesjTY1
+         ZFRw==
+X-Gm-Message-State: AOAM530/JN0DiHGVFXfu8HGe3jK+IbEHEwl2lsmQPqyPx75tAy4uuNZP
+        +NZucK2pxbeZfz9TUOHMYXgb7g==
+X-Google-Smtp-Source: ABdhPJxYChotr5WqwFSmgPy49KOJnMiwVkU4JDEcWzo3NznHVFYDP8xEpw0QRHtt/Q1eDLjDqqYaAQ==
+X-Received: by 2002:a05:6402:2948:b0:42a:ae0c:2f26 with SMTP id ed8-20020a056402294800b0042aae0c2f26mr10624192edb.425.1652772763727;
+        Tue, 17 May 2022 00:32:43 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id ci18-20020a170907267200b006f3ef214e6dsm672543ejc.211.2022.05.17.00.32.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 May 2022 00:32:43 -0700 (PDT)
+Message-ID: <94cceaf9-57ab-e7e7-9cc3-627013467768@linaro.org>
+Date:   Tue, 17 May 2022 09:32:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220504114021.33265-12-jagan@amarulasolutions.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 1/3] dt-bindings: display: simple: add support for Samsung
+ LTL101AL01
+Content-Language: en-US
+To:     =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+References: <20220516193709.10037-1-martin.juecker@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220516193709.10037-1-martin.juecker@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 04 May 2022 17:10:20 +0530, Jagan Teki wrote:
-> Samsung MIPI DSIM bridge can also be found in i.MX8MM SoC.
+On 16/05/2022 21:37, Martin Jücker wrote:
+> Add the Samsung LTL101AL01 WXGA LCD panel to the list.
 > 
-> Add dt-bingings for it.
-> 
-> v2:
-> * updated comments
-> 
-> v1:
-> * new patch
-> 
-> Cc: devicetree@vger.kernel.org,
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
 > ---
-> Note:
-> I will send separate series for updating to yaml as the existing binding
-> is old that it has some properties need to fix.
-> 
->  Documentation/devicetree/bindings/display/exynos/exynos_dsim.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+>  .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
