@@ -2,149 +2,95 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F57C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 May 2022 07:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FCEC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 May 2022 08:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232142AbiERH2X (ORCPT
+        id S233214AbiERIcY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 May 2022 03:28:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34588 "EHLO
+        Wed, 18 May 2022 04:32:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232127AbiERH2W (ORCPT
+        with ESMTP id S233120AbiERIcX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 May 2022 03:28:22 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8692A6A033
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 May 2022 00:28:20 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id u7so759602ljd.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 May 2022 00:28:20 -0700 (PDT)
+        Wed, 18 May 2022 04:32:23 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 856ED4EA10;
+        Wed, 18 May 2022 01:32:22 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id n6so707586wms.0;
+        Wed, 18 May 2022 01:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=G8aT1X87JNBdCI8skihL4Aci/WonpChvYF5exTqGUGQ=;
-        b=jkmeGMT7U6r3ipXxlaZNQziLbo1jfUcG+l8wzWGpMtwVkbEsSh+Nv0S8o3o3Xx6uex
-         1u+X36202XBACe4QDg4YsC2xPZB/cSlRPOwnTfKonKkfZuHuRrHIGWA+CE0qvVp9n+BG
-         xNwOlrA3kMuPW/BCw62OZeoye0svLMaWUsOZFJIK2HTRxf1sJ4qjH+Yfz7WjkzxbroI+
-         YJ4z+XelEGgBlQ8o1F3RGuxFsjfXgiAndFVM383dBD0EsheUvSAku6sbueRRrDeyZMTb
-         STdFI3EHz0Wnd8K+jVqUChm0AGaS5X5YPxJi+QFnjBQJ8+wBQaWgSAmJDdOcHUqP+Xla
-         h78Q==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+z+PQb5MQz4Hi46TApUGBFaL5pik2KHkz+IdCi2pk9E=;
+        b=nY5N7FCiiLTLIDrAVVBNIomteMVrETYaVXuYS6S6dWlVkrDwFrzMMCy5pZRw1FpyLb
+         lXvOLdTFOPDufB1lDxHXiNeCc4voonWSxAyhbdIogQCX8LWGNHkdJa+GBnORF97VIDHq
+         Pkn65y9YJkCKnNZ469oZZAJtaVT9HFFPSgCkdUtjiPa0zET/KOPV8NUPlWH44wEUt6L2
+         AkgRMSgAn+PYPsBFIhoKlMTP46fKDPzI5UUlxI1MqNYM8ScXfPUxbpwqdAzHh/EaS59h
+         NDHaUcsiYR8A6HI/7Wfd6Cgzl135bPI7I70l7n0Dz1AfAmCjOW+SrY9XxkTWV5Jl1taG
+         shcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=G8aT1X87JNBdCI8skihL4Aci/WonpChvYF5exTqGUGQ=;
-        b=PZcOgEDrh+JCVq+ZLcd0ICIRYflQqjtfli/ImpBXGwX4DmggiYMsuvIytAh8UdxrcZ
-         oqydVdIfOKfSfVp8OEFUS1Lyki5w02owiM9LoNkqok1xyBDlvEjHZOiH1sWDrctugHcP
-         Ulrkbih42OlHK9raAOldyEEB8rxCVj+xAn8onoU655KfiNSVffN2nRjnsR+cCy2Zg80V
-         JEpZEWFv/+M8vbDhkti4PeFZx/4AloP9OCsyjEm+M7fPKhKfP72TaaPZ3Zvx5X/fSFT/
-         m8pzHSe7K/fQnKa7IRO3Mowo8ee4oPYMoCOnGRheGHopdr+c8gFhYSQ1e/qBjDO8SSa/
-         TyuA==
-X-Gm-Message-State: AOAM5324FF/MgcwOYT+vVLK3LoxNfSK2zTyG4PKWpH2gr/NjzOJhyJ/3
-        U0lK2ZOnvyNBVp6eV32mZJfUtA==
-X-Google-Smtp-Source: ABdhPJzQpIHYBfZIO+VNiBxbykGultqVVrcygi6gkVr7zCu6FvKyQHoW1r4bEz9pT8ZZfsJ63NoVow==
-X-Received: by 2002:a2e:b8cc:0:b0:24f:501b:af80 with SMTP id s12-20020a2eb8cc000000b0024f501baf80mr16351009ljp.328.1652858898881;
-        Wed, 18 May 2022 00:28:18 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id z15-20020ac2418f000000b0047255d211c0sm119884lfh.239.2022.05.18.00.28.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 May 2022 00:28:18 -0700 (PDT)
-Message-ID: <a197ed7f-6115-4407-6931-f37b719587be@linaro.org>
-Date:   Wed, 18 May 2022 09:28:17 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCHv2 2/6] thermal: exynos: Reorder the gpu clock
- initialization for exynos5420 SoC
-Content-Language: en-US
-To:     Anand Moon <linux.amoon@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        bh=+z+PQb5MQz4Hi46TApUGBFaL5pik2KHkz+IdCi2pk9E=;
+        b=IVdsHasFRr48lerTqkabr8wT+WDhxTEs7eqojPUSwqHrLjMFfRsLdnxFGEFh1shp0v
+         av+TIIK/FEphwQS4pQDg4DaMcJ8qEC3lc1N6Q5oPlDqQW7VGBz/BLoGnX1vD8v5tqFUi
+         RFho4LTpwUPLNC6fuU08hIxfcYGlgNpew6nXiope/kfzkx8kjqsTNljsZOwSwentP+Gz
+         A+DTPnUBeLcgO1SEtdqIEIw7yeyS6j9Zyc2uH9nn9z1dqE16x9l2dCiuUX2u06PXXoQ2
+         r8yhLPXUlSKX40gfOQ6PYEdKrCizt3DYHCn2FtRniPtFARU8s37wkgNy69tJ3Z/kKKZZ
+         iNKg==
+X-Gm-Message-State: AOAM5316bnsoGlhmXd3mi6GgI+nsrCTBjzQTErkSEGciUqGKKabvYpT8
+        zQnIXc9BL7lCAbNdSaqlDvgxqxw+jtOpgZ8t
+X-Google-Smtp-Source: ABdhPJzXrAx8whtDX8CJHaQ830Cxos71neUjKQZK3vabF5JDnUvkzjkhqIlJ4DYqBPqGl4C/Op+VsQ==
+X-Received: by 2002:a05:600c:4fd4:b0:394:8e96:6d3b with SMTP id o20-20020a05600c4fd400b003948e966d3bmr24819426wmq.180.1652862740991;
+        Wed, 18 May 2022 01:32:20 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id j35-20020a05600c1c2300b00397220a9354sm611048wms.30.2022.05.18.01.32.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 May 2022 01:32:20 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-References: <20220515064126.1424-1-linux.amoon@gmail.com>
- <20220515064126.1424-3-linux.amoon@gmail.com>
- <68969550-e18b-3c27-d449-1478b314e129@linaro.org>
- <CANAwSgRBpm9gybfUWZbu3-eXLTYkpTZ=s3fmhpNyQcuj7+xdOA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CANAwSgRBpm9gybfUWZbu3-eXLTYkpTZ=s3fmhpNyQcuj7+xdOA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: platform: exynos-gsc: remove redundant initializations of f_chk_len and f_chk_addr
+Date:   Wed, 18 May 2022 09:32:19 +0100
+Message-Id: <20220518083219.507716-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 17/05/2022 20:43, Anand Moon wrote:
-> Hi Krzysztof,
-> 
-> On Sun, 15 May 2022 at 15:11, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 15/05/2022 08:41, Anand Moon wrote:
->>> Reorder the tmu_gpu clock initialization for exynos5422 SoC.
->>
->> Why?
-> It just code reorder
+The variables f_chk_len and f_chk_addr are being initialized to zero and
+then being re-assigned in the next statement. The initializations are
+redundant and can be removed. Also initialize s_chk_addr and s_chk_len
+at the declaration statement.
 
-I know what it is. I asked why. The answer in English to question "Why"
-is starting with "Because".
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/platform/samsung/exynos-gsc/gsc-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-You repeated again the argument what are you doing to my question "Why
-are you doing it".
+diff --git a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
+index e3559b047092..b147c645ae0b 100644
+--- a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
+@@ -339,8 +339,7 @@ static int get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index, u32 *ret_
+ 
+ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+ {
+-	u32 f_chk_addr, f_chk_len, s_chk_addr, s_chk_len;
+-	f_chk_addr = f_chk_len = s_chk_addr = s_chk_len = 0;
++	u32 f_chk_addr, f_chk_len, s_chk_addr = 0, s_chk_len = 0;
+ 
+ 	f_chk_addr = frm->addr.y;
+ 	f_chk_len = frm->payload[0];
+-- 
+2.35.1
 
-It was the same before, many, many times. It's a waste of reviewers
-time, because you receive a review and you do not implement the feedback.
-
->>
->>>
->>> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>> ---
->>> v1: split the changes and improve the commit messages
->>> ---
->>>  drivers/thermal/samsung/exynos_tmu.c | 43 ++++++++++++++--------------
->>>  1 file changed, 21 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>> index 75b3afadb5be..1ef90dc52c08 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>> @@ -1044,42 +1044,41 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>>               dev_err(&pdev->dev, "Failed to get clock\n");
->>>               ret = PTR_ERR(data->clk);
->>>               goto err_sensor;
->>> -     }
->>> -
->>> -     data->clk_sec = devm_clk_get(&pdev->dev, "tmu_triminfo_apbif");
->>> -     if (IS_ERR(data->clk_sec)) {
->>> -             if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
->>> -                     dev_err(&pdev->dev, "Failed to get triminfo clock\n");
->>> -                     ret = PTR_ERR(data->clk_sec);
->>> -                     goto err_sensor;
->>> -             }
->>>       } else {
->>> -             ret = clk_prepare_enable(data->clk_sec);
->>> +             ret = clk_prepare_enable(data->clk);
->>
->> This looks a bit odd. The clock was before taken unconditionally, not
->> within "else" branch...
-> 
-> The whole *clk_sec*  ie tmu_triminfo_apbif clock enable is being moved
-> down to the switch case.
-> tmu_triminfo_apbif  clock is not used by Exynos4412 and Exynos5433 and
-> Exynos7 SoC.
-
-This is not the answer. Why are you preparing data->clk within else{}
-branch?
-
-
-Best regards,
-Krzysztof
