@@ -2,170 +2,155 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BBBC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 May 2022 19:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1561FC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 May 2022 20:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241127AbiESTIw (ORCPT
+        id S236921AbiESU3g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 May 2022 15:08:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40736 "EHLO
+        Thu, 19 May 2022 16:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229541AbiESTIv (ORCPT
+        with ESMTP id S233015AbiESU3f (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 May 2022 15:08:51 -0400
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0077AAE26B;
-        Thu, 19 May 2022 12:08:49 -0700 (PDT)
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id BB09B280F2F66;
-        Thu, 19 May 2022 21:08:41 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id A2A862E66F4; Thu, 19 May 2022 21:08:41 +0200 (CEST)
-Date:   Thu, 19 May 2022 21:08:41 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Ferry Toth <fntoth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 5/7] usbnet: smsc95xx: Forward PHY interrupts
- to PHY driver to avoid polling
-Message-ID: <20220519190841.GA30869@wunner.de>
-References: <cover.1652343655.git.lukas@wunner.de>
- <748ac44eeb97b209f66182f3788d2a49d7bc28fe.1652343655.git.lukas@wunner.de>
- <CGME20220517101846eucas1p2c132f7e7032ed00996e222e9cc6cdf99@eucas1p2.samsung.com>
- <a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com>
+        Thu, 19 May 2022 16:29:35 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F33494185
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 May 2022 13:29:32 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220519202926euoutp02c0b1ecff030ea1b28755056e539cc3e2~wm54qxg1e2727527275euoutp02W
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 May 2022 20:29:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220519202926euoutp02c0b1ecff030ea1b28755056e539cc3e2~wm54qxg1e2727527275euoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1652992166;
+        bh=XLdPVraJZN/C3FIXuCBnjKrg2IGMs+dSxgZUxNcMEmM=;
+        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+        b=k13ks/9jSl9hQM7toMEFd7xg522wXsBe/NxFpA9DueX24cHvjsWeQ9ep2buyhE/jV
+         Evkqd2DuoWK62mPB7umyIL/rEWjSmWX/5bDQJKsvAL4fXO/Mf5+nZUv6W9fxzKpXCC
+         8sB8nXORUduxqdB/CLKcGBHCL66xMyCk5EHr/zDk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220519202926eucas1p16d088301a5c5e48371192a7a896153bd~wm54Zp1JF2464924649eucas1p1k;
+        Thu, 19 May 2022 20:29:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F0.12.09887.6A8A6826; Thu, 19
+        May 2022 21:29:26 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220519202926eucas1p1ab3648bd21ece18d694850ae19266a23~wm54G33U11313513135eucas1p1W;
+        Thu, 19 May 2022 20:29:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220519202926eusmtrp2a59a04bca4150004e748bd50dd559d96~wm54GOXmk2746327463eusmtrp2b;
+        Thu, 19 May 2022 20:29:26 +0000 (GMT)
+X-AuditID: cbfec7f4-471ff7000000269f-d5-6286a8a66d32
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4A.E8.09522.6A8A6826; Thu, 19
+        May 2022 21:29:26 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220519202925eusmtip28e10a02d3e5894d85cb28dd533001f1b~wm53qu7nW0459104591eusmtip2F;
+        Thu, 19 May 2022 20:29:25 +0000 (GMT)
+Message-ID: <e8548156-e9cb-c0b7-8c23-fc3e08a31dfc@samsung.com>
+Date:   Thu, 19 May 2022 22:29:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.9.0
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk: samsung: Updates for v5.19
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Language: en-US
+In-Reply-To: <CGME20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8@eucas1p2.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djP87rLVrQlGWx5I2dx/ctzVovz5zew
+        W3zsucdqMeP8PiaLi6dcLf5d28jiwObx/kYru8emVZ1sHn1bVjF6fN4kF8ASxWWTkpqTWZZa
+        pG+XwJXxvecdS8F8voonf3uYGhiPcHcxcnJICJhIvO1sYOli5OIQEljBKLGlZwKU84VR4sTN
+        N0wQzmdGiVNvu4EcDrCWpk5GiPhyRolX7Yuhij4ySkx70MoGMpdXwE7i1J/3bCANLAKqEkdW
+        uUOEBSVOznzCAmKLCiRJvHlzlRnEZhMwlOg92scIYgsLGEtMbVjPBGKLCPhLLDu1ng1kPrPA
+        YUaJDRsfsYMkmAXEJW49mQ9WxCkQJzFnywSouLzE9rdzmEEaJATOcEjsn7eHFeJRF4k/n05C
+        2cISr45vYYewZST+74QYJCFQLzF5yhU2CLuDUeLrXjMI21piwqYTYM8wC2hKrN+lDxF2lLh6
+        eT80UPgkbrwVhDiBT2LStunMEGFeiY42IYhqFYnfq6ZDLZKS6H7yn2UCo9IspFCZheSxWUie
+        mYWwdwEjyypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAVHP63/EvOxiXv/qod4iRiYPx
+        EKMEB7OSCC9jbkuSEG9KYmVValF+fFFpTmrxIUZpDhYlcd7kzA2JQgLpiSWp2ampBalFMFkm
+        Dk6pBiZ+VS5Zx65nDx6wJAtv7Hac8ErtwVKtv69+6xRXLznKvqRczf5o5FYeC7W2xWd5req/
+        i32/ZntLbrVk+GumTw9kbCwFUnSTLWP0Z83i3WIW4PZY/FEaz/rdsYtOfumyffjf7/EF4dtv
+        T2Ssq2uOffxlyr8ks8lKrJsnXZJ7c3duxn8n89dfz1UZ/v7EH6/6f//cax+5lrGVuZws3Ly0
+        cvLp556nYq/GhrclrTlcd0n8AFvM0ZTXgckqJa05+RYGRTtXfXq+6l3Y7dpDBvdn+P9enTaj
+        2uWc/IIJdw/krVa7eN60uKHA9oPP0mVXU/+t/ynS3huQ1HBnjteJEu6MXa+7fRKu8Ktyuz66
+        N/cGW5epEktxRqKhFnNRcSIABMtcR6QDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsVy+t/xe7rLVrQlGbTf5ra4/uU5q8X58xvY
+        LT723GO1mHF+H5PFxVOuFv+ubWRxYPN4f6OV3WPTqk42j74tqxg9Pm+SC2CJ0rMpyi8tSVXI
+        yC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mv43vOOpWA+X8WTvz1M
+        DYxHuLsYOTgkBEwkmjoZuxi5OIQEljJKHH/+kQ0iLiUxv0Wpi5ETyBSW+HOtiw2i5j2jxN4J
+        FxhBErwCdhKn/rwHq2cRUJU4ssodIiwocXLmExaQsKhAksSRw/wgYTYBQ4neo31gncICxhJT
+        G9YzgdgiAr4SXQdfgo1nFjjKKHFzykGwhJBArMTat49ZQGxmAXGJW0/mg8U5BeIk5myZwA4y
+        n1lAXWL9PCGIEnmJ7W/nME9gFJqF5IpZSLpnIXTMQtKxgJFlFaNIamlxbnpusaFecWJucWle
+        ul5yfu4mRmBUbTv2c/MOxnmvPuodYmTiYDzEKMHBrCTCy5jbkiTEm5JYWZValB9fVJqTWnyI
+        0RQYEBOZpUST84FxnVcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnV
+        wJQffz1lyqGZsxxDSmusuXQ/OfIq13BMdkriXOldG1cd3DyFdeMa4bIUIaUJqmHV+35qOvc9
+        mbngUewX1vSAsicfuJYfnFXi8WvNPMY9ka+v/1D0fqf+OnfvteL82W88X2gwTw6zuXE/6ark
+        /3jFVc6qNx6kid+SyeIWE9yu+6SLPdZ/64Gy13vWyR1eFvrM+vD0Xu3oFfksu/MimZWSS46b
+        KdkuMgmoEbiRbSA89WC3weFHvxy63Y2Luw3VeGUOO8loumtUrk3Z+jfz0+NHE+Yt59ad4Gg0
+        42Hnp6DuVY19Pya/bphxaubxPZz//fxtX0yfOuEDZ3FI75I4fxav5lbFpDWm8+45PLu+1iv2
+        lBJLcUaioRZzUXEiAOq+spozAwAA
+X-CMS-MailID: 20220519202926eucas1p1ab3648bd21ece18d694850ae19266a23
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8
+References: <CGME20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 17, 2022 at 12:18:45PM +0200, Marek Szyprowski wrote:
-> This patch landed in the recent linux next-20220516 as commit 
-> 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to 
-> avoid polling"). Unfortunately it breaks smsc95xx usb ethernet operation 
-> after system suspend-resume cycle. On the Odroid XU3 board I got the 
-> following warning in the kernel log:
-> 
-> # time rtcwake -s10 -mmem
-> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue May 17 09:16:07 2022
-> PM: suspend entry (deep)
-> Filesystems sync: 0.001 seconds
-> Freezing user space processes ... (elapsed 0.002 seconds) done.
-> OOM killer disabled.
-> Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> printk: Suspending console(s) (use no_console_suspend to debug)
-> smsc95xx 4-1.1:1.0 eth0: entering SUSPEND2 mode
-> smsc95xx 4-1.1:1.0 eth0: Failed to read reg index 0x00000114: -113
-> smsc95xx 4-1.1:1.0 eth0: Error reading MII_ACCESS
-> smsc95xx 4-1.1:1.0 eth0: __smsc95xx_mdio_read: MII is busy
-> ------------[ cut here ]------------
-> WARNING: CPU: 2 PID: 73 at drivers/net/phy/phy.c:946
-> phy_state_machine+0x98/0x28c
-[...]
-> It looks that the driver's suspend/resume operations might need some 
-> adjustments. After the system suspend/resume cycle the driver is not 
-> operational anymore. Reverting the $subject patch on top of linux 
-> next-20220516 restores ethernet operation after system suspend/resume.
 
-Thanks a lot for the report.  It seems the PHY is signaling a link change
-shortly before system sleep and by the time the phy_state_machine() worker
-gets around to handle it, the device has already been suspended and thus
-refuses any further USB requests with -EHOSTUNREACH (-113):
+Hi Stephen, Mike,
 
-usb_suspend_both()
-  usb_suspend_interface()
-    smsc95xx_suspend()
-      usbnet_suspend()
-        __usbnet_status_stop_force() # stops interrupt polling,
-                                     # link change is signaled before this
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
-  udev->can_submit = 0               # refuse further URBs
+   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
 
-Assuming the above theory is correct, calling phy_stop_machine()
-after usbnet_suspend() would be sufficient to fix the issue.
-It cancels the phy_state_machine() worker.
+are available in the Git repository at:
 
-The small patch below does that.  Could you give it a spin?
+   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v5.19-samsung
 
-Taking a step back though, I'm wondering if there's a bigger problem here:
-This is a USB device, so we stop receiving interrupts once the Interrupt
-Endpoint is no longer polled.  But what if a PHY's interrupt is attached
-to a GPIO of the SoC and that interrupt is raised while the system is
-suspending?  The interrupt handler may likewise try to reach an
-inaccessible (suspended) device.
+for you to fetch changes up to b35f27fe73d8c86fe40125e063b28007e961b862:
 
-The right thing to do would probably be to signal wakeup.  But the
-PHY drivers' irq handlers instead schedule the phy_state_machine().
-Perhaps we need something like the following at the top of
-phy_state_machine():
+   clk: samsung: exynosautov9: add cmu_peric1 clock support (2022-05-10 19:19:34 +0200)
 
-	if (phydev->suspended) {
-		pm_wakeup_dev_event(&phydev->mdio.dev, 0, true);
-		return;
-	}
+----------------------------------------------------------------
+clk/samsung updates for v5.19
 
-However, phydev->suspended is set at the *bottom* of phy_suspend(),
-it would have to be set at the *top* of mdio_bus_phy_suspend()
-for the above to be correct.  Hmmm...
+  - clock driver for exynosautov9 SoC
 
-Thanks,
+----------------------------------------------------------------
+Chanho Park (9):
+       dt-bindings: clock: add clock binding definitions for Exynos Auto v9
+       dt-bindings: clock: add Exynos Auto v9 SoC CMU bindings
+       clk: samsung: add top clock support for Exynos Auto v9 SoC
+       clk: samsung: exynosautov9: add cmu_core clock support
+       clk: samsung: exynosautov9: add cmu_peris clock support
+       clk: samsung: exynosautov9: add cmu_busmc clock support
+       clk: samsung: exynosautov9: add cmu_fsys2 clock support
+       clk: samsung: exynosautov9: add cmu_peric0 clock support
+       clk: samsung: exynosautov9: add cmu_peric1 clock support
 
-Lukas
+  .../clock/samsung,exynosautov9-clock.yaml      |  219 +++
+  drivers/clk/samsung/Makefile                   |    1 +
+  drivers/clk/samsung/clk-exynosautov9.c         | 1733 +++++++++++++++++
+  .../dt-bindings/clock/samsung,exynosautov9.h   |  299 +++
+  4 files changed, 2252 insertions(+)
+  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+  create mode 100644 drivers/clk/samsung/clk-exynosautov9.c
+  create mode 100644 include/dt-bindings/clock/samsung,exynosautov9.h
 
--- >8 --
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index bd03e16..d351a6c 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1201,6 +1201,7 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
- 	}
- 
- 	pdata->phydev->irq = phy_irq;
-+	pdata->phydev->mac_managed_pm = true;
- 	pdata->phydev->is_internal = is_internal_phy;
- 
- 	/* detect device revision as different features may be available */
-@@ -1496,6 +1497,9 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
- 		return ret;
- 	}
- 
-+	if (netif_running(dev->net))
-+		phy_stop(pdata->phydev);
-+
- 	if (pdata->suspend_flags) {
- 		netdev_warn(dev->net, "error during last resume\n");
- 		pdata->suspend_flags = 0;
-@@ -1778,6 +1782,8 @@ static int smsc95xx_resume(struct usb_interface *intf)
- 	}
- 
- 	phy_init_hw(pdata->phydev);
-+	if (netif_running(dev->net))
-+		phy_start(pdata->phydev);
- 
- 	ret = usbnet_resume(intf);
- 	if (ret < 0)
+-- 
+Regards,
+Sylwester
