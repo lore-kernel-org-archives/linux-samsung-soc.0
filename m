@@ -2,154 +2,127 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D29AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 May 2022 04:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE659C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 May 2022 10:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237024AbiETEvi (ORCPT
+        id S1348256AbiETKqc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 May 2022 00:51:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42976 "EHLO
+        Fri, 20 May 2022 06:46:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230318AbiETEvh (ORCPT
+        with ESMTP id S1348255AbiETKqb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 May 2022 00:51:37 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B721EEE6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 May 2022 21:51:35 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220520045132epoutp014f5b59b5da60a61b0fbb9634d45f5134~wtwQ9_Q7C0435404354epoutp01i
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 May 2022 04:51:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220520045132epoutp014f5b59b5da60a61b0fbb9634d45f5134~wtwQ9_Q7C0435404354epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653022292;
-        bh=0s/WE1fRITBuNFHC2Z39v8u36PMK9xRG27XBcVT667w=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=uVxDyj75i+Mvgzogj+gs2kquKeeD6Qyt9ERcvRy3Qiqd4C2PB5JYqQcbH+4scV4gL
-         NND8rF3BqT2x6L17DEMza92raGAohd813IgY/xX9opXvIjHGJ35AZlE/EXdvp2DXql
-         7CRy4l8yW/WVWTod1bs7KVyQ2O44Oby/HqbjnRxg=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20220520045131epcas2p4a892b08378e752803693d1170ec3ecf6~wtwQV-sZx0684006840epcas2p4H;
-        Fri, 20 May 2022 04:51:31 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.88]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4L4Dp83cfRz4x9Pv; Fri, 20 May
-        2022 04:51:28 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        15.03.10028.C4E17826; Fri, 20 May 2022 13:51:24 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220520045124epcas2p12235472b7e9f7588003a7c8c238e8866~wtwJfJhTV0743507435epcas2p1W;
-        Fri, 20 May 2022 04:51:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220520045124epsmtrp24bdc8a9f36b68e7bd9e0f65929326d56~wtwJeb0yh0544805448epsmtrp2R;
-        Fri, 20 May 2022 04:51:24 +0000 (GMT)
-X-AuditID: b6c32a47-573ff7000000272c-9d-62871e4c2624
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6D.75.11276.B4E17826; Fri, 20 May 2022 13:51:23 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220520045123epsmtip2f2cb8aee8d578ca5265e7bc482cb0130~wtwJR3Swi2365623656epsmtip23;
-        Fri, 20 May 2022 04:51:23 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Fri, 20 May 2022 06:46:31 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A4313DEB
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 May 2022 03:46:29 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id q130so9217785ljb.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 May 2022 03:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=NpVWvREIh58/LHu13eUchb+fJEVBqK/3PdnkHXlwMgE=;
+        b=SZwKyWRAArJ9d5hGnCd+KJRQ4gwh9P0wHi5G6rlL/9KC5j7YCGSYbrcRAxjJth0yAA
+         oPXwWx1dfUB8EXqJsIKK0kZfn6CZSMcHiKf7RDBzNZbKi0zc18nAoADeTpob/TVSIM9V
+         UIC/8hQu9zLuAY3BALIFAC7Ay6JFoX9dNvKKPdsXxL2yn+r+ybOLocSPfl9OR/d1zZAq
+         SiobhJ/nV3TAk3yPaLCqS6sNycjgIeP42Vr9WYpCPQyJEVzGLw6bVbcjdJPMCpMVmtuQ
+         FnEI26iVD3jOeyVkpZlhuqOzJherI6A3SfXO7wc8a4ccx8KTOmdjoc0fl9JYi6mk+Ak5
+         qHTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=NpVWvREIh58/LHu13eUchb+fJEVBqK/3PdnkHXlwMgE=;
+        b=6Af4aYN/V34+rQvKx+f/4l2haJCJ/rDmsdifIm+K1GB3uTTPJob0lS3WhHRaZJ3aF8
+         eFMPoQT4AppeDWVl5EYv4Ql6hek7l6j/oA8ezqWRVaW3GpD7OkYLa8EVz74ncuprViuQ
+         3W4s1BAkFrlpXnhfsQzzDlz5KWV4UvmUY5YW8hxCx7ZMOdMdNKtqajAQjjOS5EQzvf0h
+         SEUCWGwxrDNOREZHA27StQ1gzf3K6rqO6qaebyTZMafD7gKMTR7Vjyp0MT9yGL8XP7Iz
+         XXUUYxtN9KurpYRLWkK1ZwkF8kIw089tPVzEob++R0qPmNm5gutYWHZm/wOR7YvvVyBy
+         Z7lg==
+X-Gm-Message-State: AOAM532CuXidUiWUSfWJnnoKrA3KGSaV88bEnfMh40IpZu8dnheiFprU
+        LZExEJUx1ku/5dQiKMFD9/DL4g==
+X-Google-Smtp-Source: ABdhPJzEYbhH3kFvrJ4gGx6P3qn8f2dClOO6VYa+DUtkKv4APbXFg/fHqfFNqceqseNkigxPmf2rtw==
+X-Received: by 2002:a2e:804e:0:b0:253:cb15:38ba with SMTP id p14-20020a2e804e000000b00253cb1538bamr5297526ljg.204.1653043588322;
+        Fri, 20 May 2022 03:46:28 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id x9-20020a056512078900b0047255d211f9sm611468lfr.296.2022.05.20.03.46.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 May 2022 03:46:27 -0700 (PDT)
+Message-ID: <13662a9c-19c6-cb3d-6073-c87835a3c95d@linaro.org>
+Date:   Fri, 20 May 2022 12:46:26 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH] arm64: dts: exynoautov9: add syscon reboot/reboot_mode
+ support
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH] arm64: dts: exynoautov9: add syscon reboot/reboot_mode
- support
-Date:   Fri, 20 May 2022 13:52:10 +0900
-Message-Id: <20220520045210.55132-1-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.36.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmqa6PXHuSweot1hYP5m1js7i8X9vi
-        +pfnrBbzj5xjteh78ZDZYsb5fUwWrXuPsFs879vH5MDhsWlVJ5vHnWt72Dz6tqxi9Pi8SS6A
-        JSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoCiWF
-        ssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFC
-        dsbuK/1MBSu5K3ZvDW1gXMzZxcjJISFgIrH8wErWLkYuDiGBHYwS9//9ZYFwPjFKbL7VzQzh
-        fGOUePF9FhNMy6yDbYwQib2MEp2H9zNBOB8ZJVqPr2cDqWIT0JXY8vwVI4gtIhAvcf5NI9hc
-        ZoGXjBInLj1gAUkICwRKHFv6CKyBRUBV4s7sm6wgNq+AnUR3+wEWiHXyEhvm9zJDxAUlTs58
-        AhZnBoo3b50Ndp+EwDl2idXvD7NDNLhILL7xHepWYYlXx7dAxaUkPr/bywZhF0ssnfWJCaK5
-        gVHi8rZfUAljiVnP2oHO5gDaoCmxfpc+iCkhoCxx5BbUXj6JjsN/2SHCvBIdbUIQjeoSB7ZP
-        hzpZVqJ7zmdWCNtDYvL332DDhQRiJb5N3sw6gVF+FpJvZiH5ZhbC3gWMzKsYxVILinPTU4uN
-        CozhsZqcn7uJEZwStdx3MM54+0HvECMTB+MhRgkOZiURXsbcliQh3pTEyqrUovz4otKc1OJD
-        jKbA8J3ILCWanA9Mynkl8YYmlgYmZmaG5kamBuZK4rxeKRsShQTSE0tSs1NTC1KLYPqYODil
-        Gpjab5jm18oJRlxYV6bjGjHZXeqvw8xv29wf6kVG+XxtnGJ43HJfy5KQ+16yktpndDrnbt3y
-        XNn32JRIxsh7Pamae4qEGyvt+aTTlgTPUX2qpWGw51nlWys+q2XLNVovPzyeY162cOtlruN9
-        OrLl4XMzhVnji5cXmnPo5LxkObtg8/LEN0dWa88oOuH6PZNJ7ZuYhVPzdOcLscYGBw8Wu55e
-        FT19KqfLi7v36rOWN31RiHi2MeK9ZtajqXJLyg47spdZVCl271/KfrlG/nZHg7E37/R7wVGH
-        FFuTFoQu5Entv+u3afEc62W5D/Z/6l4cNkmOS6Jx32W7yvBzKzs0RZ+k2X+V0Xr9cMrJC+vU
-        0pVYijMSDbWYi4oTAX9yt7QSBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDLMWRmVeSWpSXmKPExsWy7bCSvK63XHuSwZedlhYP5m1js7i8X9vi
-        +pfnrBbzj5xjteh78ZDZYsb5fUwWrXuPsFs879vH5MDhsWlVJ5vHnWt72Dz6tqxi9Pi8SS6A
-        JYrLJiU1J7MstUjfLoErY/eVfqaCldwVu7eGNjAu5uxi5OSQEDCRmHWwjbGLkYtDSGA3o8Td
-        jadYIBKyEs/e7WCHsIUl7rccYQWxhQTeM0rc/ANWwyagK7Hl+StGEFtEIF5i6bkfLCCDmAXe
-        Mkr8ezATKMHBISzgLzFltx5IDYuAqsSd2TfB5vAK2El0tx+A2iUvsWF+LzNEXFDi5MwnYHFm
-        oHjz1tnMExj5ZiFJzUKSWsDItIpRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIzhAtTR3
-        MG5f9UHvECMTB+MhRgkOZiURXsbcliQh3pTEyqrUovz4otKc1OJDjNIcLErivBe6TsYLCaQn
-        lqRmp6YWpBbBZJk4OKUamGZ6xkf7dDY0xm1/e7l95nG1zTfN9P6fdpKbv0Jw1aYAH8ZnJsYp
-        lSuXVt84+GBpy8Hlst99278p3S69k5z73jFma4GfYWbhm9wzl2O3vnr4IPbXsi0ljTraJe4v
-        Zh+8bJqfNCH2q3CJSLqFO8vbooagRNep34xS/8quj12y7nadJb/kHJHe99esVyXmmln6nIkp
-        1H15TIjjUuODbvE188M32ISEqeedCtGzmmX/f3KP+9TK5BUHUze9n5mlkXmfgyPfWvOU0Iyj
-        hz612UsmPVyTIbx6x6JlDItKggJmfhKWeDWx0Nn+yJd1XqWRp6sa9626E+U65eMSttMSU/SX
-        7/tsOv2YS93VtR8mfWwsPaLEUpyRaKjFXFScCABS6PrBvwIAAA==
-X-CMS-MailID: 20220520045124epcas2p12235472b7e9f7588003a7c8c238e8866
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220520045124epcas2p12235472b7e9f7588003a7c8c238e8866
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 References: <CGME20220520045124epcas2p12235472b7e9f7588003a7c8c238e8866@epcas2p1.samsung.com>
+ <20220520045210.55132-1-chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220520045210.55132-1-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Reboot of exynosautov9 SoC can be handled by setting the bit(
-SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
-syscon-reboot-mode can be used to indicate the reboot mode for
-bootloader. SYSIP_DAT0 register(PMU + 0x810) will not be cleared after
-reboot so bootloader can enter the boot mode according to the value.
+On 20/05/2022 06:52, Chanho Park wrote:
+> Reboot of exynosautov9 SoC can be handled by setting the bit(
+> SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
+> syscon-reboot-mode can be used to indicate the reboot mode for
+> bootloader. SYSIP_DAT0 register(PMU + 0x810) will not be cleared after
+> reboot so bootloader can enter the boot mode according to the value.
+> 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> index 0ce46ec5cdc3..d99e53406ee0 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> @@ -312,6 +312,22 @@ pinctrl_peric1: pinctrl@10830000 {
+>  		pmu_system_controller: system-controller@10460000 {
+>  			compatible = "samsung,exynos7-pmu", "syscon";
+>  			reg = <0x10460000 0x10000>;
+> +
+> +			reboot: syscon-reboot {
+> +				compatible = "syscon-reboot";
+> +				regmap = <&pmu_system_controller>;
+> +				offset = <0x3a00>; /* SYSTEM_CONFIGURATION */
+> +				value = <0x2>;
+> +				mask = <0x2>;
+> +			};
+> +
+> +			reboot_mode: syscon-reboot-mode {
 
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Node name: just "reboot-mode"
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-index 0ce46ec5cdc3..d99e53406ee0 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-@@ -312,6 +312,22 @@ pinctrl_peric1: pinctrl@10830000 {
- 		pmu_system_controller: system-controller@10460000 {
- 			compatible = "samsung,exynos7-pmu", "syscon";
- 			reg = <0x10460000 0x10000>;
-+
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x3a00>; /* SYSTEM_CONFIGURATION */
-+				value = <0x2>;
-+				mask = <0x2>;
-+			};
-+
-+			reboot_mode: syscon-reboot-mode {
-+				compatible = "syscon-reboot-mode";
-+				offset = <0x810>; /* SYSIP_DAT0 */
-+				mode-bootloader = <0xfc>;
-+				mode-fastboot = <0xfa>;
-+				mode-recovery = <0xff>;
-+			};
- 		};
- 
- 		syscon_fsys2: syscon@17c20000 {
--- 
-2.36.1
+> +				compatible = "syscon-reboot-mode";
+> +				offset = <0x810>; /* SYSIP_DAT0 */
+> +				mode-bootloader = <0xfc>;
+> +				mode-fastboot = <0xfa>;
+> +				mode-recovery = <0xff>;
 
+These are magic values understood by firmware, so please add a header
+for them (something like include/dt-bindings/soc/rockchip,boot-mode.h
+but with some prefixes like EXYNOSAUTOV9_BOOT_FASTBOOT))
+
+> +			};
+>  		};
+>  
+>  		syscon_fsys2: syscon@17c20000 {
+
+
+Best regards,
+Krzysztof
