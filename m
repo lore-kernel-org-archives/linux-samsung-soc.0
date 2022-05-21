@@ -2,181 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B5AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 14:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E77C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 14:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244241AbiEUOUa (ORCPT
+        id S233697AbiEUOoJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 May 2022 10:20:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57894 "EHLO
+        Sat, 21 May 2022 10:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiEUOU1 (ORCPT
+        with ESMTP id S1355094AbiEUOoI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 May 2022 10:20:27 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA9F62CFB
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:20:26 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id a23so12387004ljd.9
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:20:26 -0700 (PDT)
+        Sat, 21 May 2022 10:44:08 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC066A009
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:44:06 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id g16so12466872lja.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:44:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=xrVvgGpFwC0qfTU8CkXMR2gz4gvqWYcjZfKq5E02l7I=;
-        b=eIz2Zhyd7jFETbpfLY2ODuuP0mBnfCi4/JRwZmkwhGV8pAooU3w7uazeCICpmUBuCq
-         Sk337CsQwzwG/8tPIY2OWFXjCh53+TBmWNdblYb7sMppqOStOhU99LVr7P6Gu8Bx855N
-         wNBp/A9wiXOexdfSLN2KY84Jy0zm5SAOjSSrbMEvXgfKjdE+PhCrPLLcGD+ulbDUZQGK
-         hg4jlt4BmrREyepjX7y5DcKT2kZKUkhQSHhiHVhA/hBPIDkpyKR14jFdiJBK8elV7nOL
-         0uPeY+PJQpIc8s8F8fKDhVvfYEnoMrR1igEwThKq2kkbRsaaoZK3G3lVDSFmLWKKm1uP
-         NM+Q==
+        bh=/cbTtBq59WXX2nYbXhKg+bCe+ywZbzVEJW+eIz8/F80=;
+        b=QAZgPLmzBIyLU+16M8XZQRVYtmRhWu+CjNFiDeV3+mFGN5fPMSwVjoeWS+0qsl4PrE
+         VcoTqUd9WD99J7jM7nCYgRLwj7Wj4HggL91Gq4JNoBlLbls/qzU73Ipf6R2nkRDX9IU3
+         /3e8wI3YSCnDLHdr9ySCPAjGzth+ET+iNOhDFGTKZLXlsD/p+dfjQu4LGVN6/Y2qSnRR
+         +9uSUIB5ELflGPbOqQpuAIm2fBLIMrDQkOYkK54QPSVw1mB5phMawMB2RaLaG3vVGpEr
+         iHJ4sYZLt9yql1tMqszxGRRVCECe1/p7ebBDnKiLAH4pW+ne7J+He0S9t1mdl5FuUWs3
+         uVtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=xrVvgGpFwC0qfTU8CkXMR2gz4gvqWYcjZfKq5E02l7I=;
-        b=PDBFm9InBFM20XOqFKRN7fZtVBOeSoi4c7iW0GsDQEZEpYpQGz4pB2RIrVGdM3OFAu
-         2YtUQXBi/iVa5nF59DXVBnwHQx7ayWdn2E8jDCm8X5ACDT3Q5LMs+Qs7FNIt52UY7f5U
-         +E6YU+Lx3iBtHRNJJTF1mI7y3s2VMMdWpZX8SPmmIWDqmyeVTy2LNzCebiy+2D6jLIQG
-         Q6jU3ANudWMlIYhP3+VUb8ZJtB+x4GheXfNZY/dhc7Ui4S3iuYwJKMjBxPQv8KQDwdZC
-         zOg/zPCIa+M/cObBHqfYf604EnEYJx4CBOxwgnSCMvwlpQJMJthoybnDZv3jLUOAJk77
-         pgOw==
-X-Gm-Message-State: AOAM531m0XxtehxYhAakA5bs+0Eitnodf1mcsZ+A+FCr+SlBaK4mpAkS
-        zbRIFB21McN0LOHUkI98DRF5bw==
-X-Google-Smtp-Source: ABdhPJwwnngd/0Mx/PI34JuKwmKYxubLU9MWgXgvRgl9EQbWdC5uXxSWXIe1139D4SRIrwVAX0KfsQ==
-X-Received: by 2002:a2e:b1c7:0:b0:253:dfbf:56cf with SMTP id e7-20020a2eb1c7000000b00253dfbf56cfmr3680430lja.513.1653142824967;
-        Sat, 21 May 2022 07:20:24 -0700 (PDT)
+        bh=/cbTtBq59WXX2nYbXhKg+bCe+ywZbzVEJW+eIz8/F80=;
+        b=wK7hokWfHKLlhJ/k79IiFiWIuvn6MDQbwKAVRSjS501gaMyFDUplTxkeHbibtJfKHS
+         /QyheQN0LCqRddgJeoASo1u+ZxCmsdIbG+ibyy9V6d5bcGNkfiUiEzxjsmFnNJ1jujbx
+         3mK5qt9w5PpmXV3CNyQQwq5XkpzytMARWkJidvj0AkYF1l2QUR/lPRmbNt+pEHhWCm1w
+         wNtEguOEHtw3PSeCXmYvkbZZS5WDYDuH4l0fM84/1ox3Vi6txOKsKjEkmozbprspFE3n
+         NWkAorxLXdz7Pryvv+sVP8mZXRrgdteBEPow7yvlM6WpFBdmCv34sFiWqqSa6ilbs7Cl
+         RpPA==
+X-Gm-Message-State: AOAM530lWBPWEVhsqxqopYDLcqFw76rvX/3a8hysCZDfdNHdnVupnSoq
+        FdlOcJcTQBkIbbgs8PcpQYzwOw==
+X-Google-Smtp-Source: ABdhPJzEd+pCyalQMTT1oPB9QGqDCUMDyYeZg56h0jH74pn/hH6+cCG2iNDJsYa8hkjoxqddALRSVg==
+X-Received: by 2002:a05:651c:1542:b0:249:5d86:3164 with SMTP id y2-20020a05651c154200b002495d863164mr8498632ljp.500.1653144245237;
+        Sat, 21 May 2022 07:44:05 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id n6-20020a2e8786000000b0024f3d1daee3sm115913lji.107.2022.05.21.07.20.23
+        by smtp.gmail.com with ESMTPSA id h15-20020a2ea48f000000b00253bd1d1a84sm733337lji.16.2022.05.21.07.44.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 07:20:24 -0700 (PDT)
-Message-ID: <023e6b0c-26a8-1563-1861-9a5cfe715c1f@linaro.org>
-Date:   Sat, 21 May 2022 16:20:23 +0200
+        Sat, 21 May 2022 07:44:04 -0700 (PDT)
+Message-ID: <0a924446-7ced-79cf-2183-10df81c0e450@linaro.org>
+Date:   Sat, 21 May 2022 16:44:03 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCHv2 2/6] thermal: exynos: Reorder the gpu clock
- initialization for exynos5420 SoC
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: add samsung,boot-mode
+ definitions
 Content-Language: en-US
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-References: <20220515064126.1424-1-linux.amoon@gmail.com>
- <20220515064126.1424-3-linux.amoon@gmail.com>
- <68969550-e18b-3c27-d449-1478b314e129@linaro.org>
- <CANAwSgRBpm9gybfUWZbu3-eXLTYkpTZ=s3fmhpNyQcuj7+xdOA@mail.gmail.com>
- <a197ed7f-6115-4407-6931-f37b719587be@linaro.org>
- <CANAwSgRLFr=3GGQ6AZWnzoL9knJrWCY3ONdozd_pbqhFwgpHvg@mail.gmail.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <20220520115250.57785-1-chanho61.park@samsung.com>
+ <CGME20220520115216epcas2p20de68c07071435ae33b50c7b664a20eb@epcas2p2.samsung.com>
+ <20220520115250.57785-2-chanho61.park@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CANAwSgRLFr=3GGQ6AZWnzoL9knJrWCY3ONdozd_pbqhFwgpHvg@mail.gmail.com>
+In-Reply-To: <20220520115250.57785-2-chanho61.park@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/05/2022 11:51, Anand Moon wrote:
-> Hi Krzysztof,
+On 20/05/2022 13:52, Chanho Park wrote:
+> Adds samsung,boot-mode.h header file which contains boot mode
+> definitions for bootloader. As for now, there are only boot mode
+> definitions for Exynos Auto v9 SoC.
 > 
-> On Wed, 18 May 2022 at 12:58, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 17/05/2022 20:43, Anand Moon wrote:
->>> Hi Krzysztof,
->>>
->>> On Sun, 15 May 2022 at 15:11, Krzysztof Kozlowski
->>> <krzysztof.kozlowski@linaro.org> wrote:
->>>>
->>>> On 15/05/2022 08:41, Anand Moon wrote:
->>>>> Reorder the tmu_gpu clock initialization for exynos5422 SoC.
->>>>
->>>> Why?
->>> It just code reorder
->>
->> I know what it is. I asked why. The answer in English to question "Why"
->> is starting with "Because".
->>
->> You repeated again the argument what are you doing to my question "Why
->> are you doing it".
->>
-> tmu_triminfo_apbif is not a core driver to all the Exynos SOC board
-> it is only used by the Exynos542x SOC family
-> 
-> If we look into the original code its place in between
-> the devm_clk_get(data->clk) and clk_prepare(data->clk)
-> after this change, the code is in the correct order of initialization
-> of the clock.
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 
-What was wrong with original order? You still did not explain it.
+Thank you for your patch. There is something to discuss/improve.
 
+> ---
+>  include/dt-bindings/soc/samsung,boot-mode.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>  create mode 100644 include/dt-bindings/soc/samsung,boot-mode.h
 > 
->> It was the same before, many, many times. It's a waste of reviewers
->> time, because you receive a review and you do not implement the feedback.
->>
->>>>
->>>>>
->>>>> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
->>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>> ---
->>>>> v1: split the changes and improve the commit messages
->>>>> ---
->>>>>  drivers/thermal/samsung/exynos_tmu.c | 43 ++++++++++++++--------------
->>>>>  1 file changed, 21 insertions(+), 22 deletions(-)
->>>>>
->>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>>>> index 75b3afadb5be..1ef90dc52c08 100644
->>>>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>>>> @@ -1044,42 +1044,41 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>>>>               dev_err(&pdev->dev, "Failed to get clock\n");
->>>>>               ret = PTR_ERR(data->clk);
->>>>>               goto err_sensor;
->>>>> -     }
->>>>> -
->>>>> -     data->clk_sec = devm_clk_get(&pdev->dev, "tmu_triminfo_apbif");
->>>>> -     if (IS_ERR(data->clk_sec)) {
->>>>> -             if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
->>>>> -                     dev_err(&pdev->dev, "Failed to get triminfo clock\n");
->>>>> -                     ret = PTR_ERR(data->clk_sec);
->>>>> -                     goto err_sensor;
->>>>> -             }
->>>>>       } else {
->>>>> -             ret = clk_prepare_enable(data->clk_sec);
->>>>> +             ret = clk_prepare_enable(data->clk);
->>>>
->>>> This looks a bit odd. The clock was before taken unconditionally, not
->>>> within "else" branch...
->>>
->>> The whole *clk_sec*  ie tmu_triminfo_apbif clock enable is being moved
->>> down to the switch case.
->>> tmu_triminfo_apbif  clock is not used by Exynos4412 and Exynos5433 and
->>> Exynos7 SoC.
->>
->> This is not the answer. Why are you preparing data->clk within else{}
->> branch?
->>
-> After cleanly applying the patches I see the below changes.
-> if you want me to remove the else part below and keep
-> the original code I am ok.
-> 
->         data->clk = devm_clk_get(&pdev->dev, "tmu_apbif");
->         if (IS_ERR(data->clk)) {
->                 dev_err(&pdev->dev, "Failed to get clock\n");
->                 ret = PTR_ERR(data->clk);
->                 goto err_sensor;
->         } else {
->                 ret = clk_prepare_enable(data->clk);
+> diff --git a/include/dt-bindings/soc/samsung,boot-mode.h b/include/dt-bindings/soc/samsung,boot-mode.h
+> new file mode 100644
+> index 000000000000..f1d03d96f45c
+> --- /dev/null
+> +++ b/include/dt-bindings/soc/samsung,boot-mode.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-Which is wrong and does not make any sense. This is third question - why
-the main clock is prepared within 'else' branch?
+Dual license:
+GPL-2.0-only OR BSD-2-Clause
+
+> +
+> +#ifndef __SAMSUNG_BOOT_MODE_H
+
+__DT_BINDINGS_SAMSUNG_BOOT_MODE_H
+
+> +#define __SAMSUNG_BOOT_MODE_H
+> +
+> +/* Boot mode definitions for Exynos Auto v9 SoC */
+> +
+> +#define EXYNOSAUTOV9_BOOT_FASTBOOT	(0xfa)
+> +#define EXYNOSAUTOV9_BOOT_BOOTLOADER	(0xfc)
+> +#define EXYNOSAUTOV9_BOOT_RECOVERY	(0xff)
+
+No need for ().
+
+> +
+> +#endif
+
 
 Best regards,
 Krzysztof
