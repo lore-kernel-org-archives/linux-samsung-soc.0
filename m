@@ -2,115 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD6AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 May 2022 14:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9987C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 03:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350064AbiETOAL (ORCPT
+        id S239622AbiEUD3x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 May 2022 10:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
+        Fri, 20 May 2022 23:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236471AbiETOAE (ORCPT
+        with ESMTP id S230497AbiEUD3w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 May 2022 10:00:04 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3FB66C97;
-        Fri, 20 May 2022 06:59:59 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id u27so10816306wru.8;
-        Fri, 20 May 2022 06:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nQZNQkjqA6U0liYRRuGZsqemlIj46ksgprcW+qYyHIM=;
-        b=klnw3V+I3SRyAOU9/6zrH9P3IqkMRzwQ/HSX3VF5x8mGvEkly9ffJYBtWOetqY9WfN
-         yeonJ7imH+cs/q7eWSbNOQEFaTrmErgTpbya2oCCGRuqMN9hFV0bP+tbkyBmD2X7zrT5
-         aethOGokYnkOPIS7pOdMxME6fKLZZW2myC0KGhEx8CvUAIEi1Bui4IraRkUVDbLmkmnw
-         m/l99xEzKRDSSDOAlKMbJ26UL+To6GfrazQI/+K+uY3f27VnO7utGU/YXUGLLhLQzPZo
-         cMVItLBlLJtel0eFy87+e9OjnEtulGTnbEdktO7538OQCZN4TNAnSzgxq/D4BvW5cmn1
-         oJ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nQZNQkjqA6U0liYRRuGZsqemlIj46ksgprcW+qYyHIM=;
-        b=6gH9tOckAf9uUtmvnvcKOea6vEPn9ZaL7xf0s1JSSPfQUMdxycdeRf6JykDjmOdsK8
-         NIFgPePe0o+XT/eoyM2drpZPGJhio125CdckSzNc3ThJX9LqR7xBzzINqGxXuymDxY0k
-         p9VQ7P1ZvRGxZhIwKZhXz0CJWYIEcS6N8KOAKYvlFZzu/XSp3rkeBlDJn/9CRS2uH87+
-         L4nSE18XphiLESdQbLb77qV5j8Z44Njbk0hhLKEVJDkvBF5q+YALlQ0dBFlPgkH1erR8
-         K2zmGHXjMlSJvt2g1mhqtmduLbCcAyl/eVH9eY5OMkaC1KYSsw01Dj5dhvsH6070UMlG
-         9+8g==
-X-Gm-Message-State: AOAM530kg4LhVB4M6QwfQETWLvrI9eRaf68yqQV0TrZQjBPX70pVcv18
-        5+w8VzJTXPRdd/h745Dnae0=
-X-Google-Smtp-Source: ABdhPJyHZwq2lHyY0rFxdpRaCmpuH4jyYs0CfKmB+rj/wh9eIbRvVFf2jmLxDK7GE7bPZsolS2ZLSA==
-X-Received: by 2002:adf:eacd:0:b0:20d:6ea:13e8 with SMTP id o13-20020adfeacd000000b0020d06ea13e8mr8664177wrn.312.1653055197893;
-        Fri, 20 May 2022 06:59:57 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id o4-20020a05600c338400b00394708a3d7dsm2086038wmp.15.2022.05.20.06.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 06:59:57 -0700 (PDT)
-Date:   Fri, 20 May 2022 15:59:55 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH] pwm: samsung: Implement .apply() callback
-Message-ID: <Yoee25lpQ6DRcZoG@orome>
-References: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
+        Fri, 20 May 2022 23:29:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10370185C9F;
+        Fri, 20 May 2022 20:29:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F49461EF8;
+        Sat, 21 May 2022 03:29:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC305C385A9;
+        Sat, 21 May 2022 03:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653103791;
+        bh=ktEWLw7fX0VJQgaR8sZo/sm5OJ8hGBxTsDsZpHgOnyA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=q2eBIHoX2s/YvWBv8HDaGrffHl6F7iXLUG1iE++YIOpKUqP4Rs84CtL3Uj6ptrXjd
+         xLOrdP5+hIF1cZwRcVzm57kHrYt4+4/sZ+oMe1snQ6NJ93yBqUqFvEeDLRZ3uiuLCV
+         9czgUD2nZq/u4D+Jo2NBDFQD1WIwOzaUAPMmB5a/b4ptunCCUs4j0tXfY3nZI89OES
+         OAnRkAqRfvanq7fQ5jDSEbZEY9TmrDdSEG/BLqNKC/zXItwLFIpw2Yf8GOCB8I4wfB
+         Rw/RH6cS2YcZ2T+qtSrjvNDAVjXfSfVGK6iwVuAmTccvgpjxixa+pIoCLfCxOk//rR
+         W3P6fmrTIx9zg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qt/HAp5dN3afZuBr"
-Content-Disposition: inline
-In-Reply-To: <20220328073434.44848-1-u.kleine-koenig@pengutronix.de>
-User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220520030625.145324-1-chanho61.park@samsung.com>
+References: <CGME20220520030551epcas2p1a67b9f026ce2ec56b0a167026ef96baf@epcas2p1.samsung.com> <20220520030625.145324-1-chanho61.park@samsung.com>
+Subject: Re: [PATCH] dt-bindings: clock: exynosautov9: correct count of NR_CLK
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Fri, 20 May 2022 20:29:48 -0700
+User-Agent: alot/0.10
+Message-Id: <20220521032950.EC305C385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---qt/HAp5dN3afZuBr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 28, 2022 at 09:34:34AM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> To eventually get rid of all legacy drivers convert this driver to the
-> modern world implementing .apply().
+Quoting Chanho Park (2022-05-19 20:06:25)
+> _NR_CLKS which can be used to register clocks via nr_clk_ids. The clock
+> IDs are started from 1. So, _NR_CLKS should be defined to "the last
+> clock id + 1"
 >=20
-> The size check for state->period is moved to .apply() to make sure that
-> the values of state->duty_cycle and state->period are passed to
-> pwm_samsung_config without change while they are discarded to int.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Fixes: 680e1c8370a2 ("dt-bindings: clock: add clock binding definitions f=
+or Exynos Auto v9")
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > ---
->  drivers/pwm/pwm-samsung.c | 54 ++++++++++++++++++++++++++++++---------
->  1 file changed, 42 insertions(+), 12 deletions(-)
 
-Applied, thanks.
-
-Thierry
-
---qt/HAp5dN3afZuBr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKHntsACgkQ3SOs138+
-s6F7OQ/9E5HE/beLWPhDwx7KSju1F8QLGbcPpAWFUH+jcD349WTlotdTT7/ZDY0f
-TggGFxGlg/RBIr3bDnR4CqwQ1Qa0TcepHVE7U40LRGYM8r5vpOjosrLlbHNgEGkx
-05pEzZ3TZbPQrXscvjlDH3zP2g69uOaeHrbTu6MKzg6S/nJSebf0n2MWdSKH/zN2
-ewi5nSpx5QDlfvvSE2wobZ4XcNKN0onvV24gjtwT/I1svvNjcmrYhmZR+GYB3mto
-zIM2Aes7Rl95uJ7oInVaRrCp2jRRkHKTGLItuXtmHYZDSWN6u8Ra6I7aE27CRmrU
-KLhwtuO+Df/hRkkbo9122k+csinO9itIhMydmhgdZJLUUbabrlM4gymTG6ent2uV
-SdvxavTi49/rZulQTiWyowxfkKYax0Esjk0BH4dYANE7gNqzsHiCfGdO6I71FHRj
-MfW6tCS1W/LmdugJ1FERHfUCmOztmtRbZ0zvqfxrAlcGi2YXlndrdNZDcxomUzVy
-EidNQ+UO5CqJx2wmRlux2Aubrjp7IClACz3Yt2J4k/6zrbP50540jqeLIFtxsnki
-tXunhSbYfuXGhjeYT92/EHMKjZgaT5SSIbrvSNuqL4aCpmgSsQvF9xIvPjQdnHnb
-ix2OSOAgrlCESrvfhh4qpw21HAN4VS4kk9TU42xxV9djA9fBlSc=
-=bs+z
------END PGP SIGNATURE-----
-
---qt/HAp5dN3afZuBr--
+Applied to clk-next
