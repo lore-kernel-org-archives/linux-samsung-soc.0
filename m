@@ -2,45 +2,45 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8041FC433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 11:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3FDC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 11:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353439AbiEULMl (ORCPT
+        id S1349435AbiEULNU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 May 2022 07:12:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48660 "EHLO
+        Sat, 21 May 2022 07:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353621AbiEULMU (ORCPT
+        with ESMTP id S1354719AbiEULMj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 May 2022 07:12:20 -0400
+        Sat, 21 May 2022 07:12:39 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB3633A3E;
-        Sat, 21 May 2022 04:12:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71A273054B;
+        Sat, 21 May 2022 04:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=aU5tlRSC14cMrGEbcpMrzzo5gZ5+HICJ96yqY3jYY20=;
-  b=CC9+gz2aPYtWxNYlwEYMGhZ7J9Pn2n160KUdhvh6D7nH2NrGqreGCxUl
-   COSxil176o9VY1+cByJAVt0QEYtGBjiT+qxM7OY8CUL/v6xabEYR7V941
-   ZUXer4h1098ERyMxvyteK0h02/3wjO/hmjrBlnjG8cLvVF+oNmL5Y2KvR
-   M=;
+  bh=xWadsLJC4l7Q7/MBaFIQaJdl6vNOYxEGLL1gzjFKb6E=;
+  b=rbkfxHx2gIoHDam6N2zZnDd0wX+1jXkG/Bqc20W3hORHj5mHYIaDec/c
+   r0xPPcBClinK+FeWx0846x21DbClqoPHCvng9V5W5maX/WcDSsCjDqhm3
+   xRi5l3QqKk/+MuRbUhz+w897k7hRjga0X0eAKYtt4pIcIHU/lA37apNrq
+   4=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727938"
+   d="scan'208";a="14727943"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:11:59 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:00 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     kernel-janitors@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: platform: exynos4-is: fix typos in comments
-Date:   Sat, 21 May 2022 13:10:51 +0200
-Message-Id: <20220521111145.81697-41-Julia.Lawall@inria.fr>
+        Vinod Koul <vkoul@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: s3c24xx: fix typo in comment
+Date:   Sat, 21 May 2022 13:10:56 +0200
+Message-Id: <20220521111145.81697-46-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -48,40 +48,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Spelling mistakes (triple letters) in comments.
+Spelling mistake (triple letters) in comment.
 Detected with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h |    2 +-
- drivers/media/platform/samsung/exynos4-is/mipi-csis.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/s3c24xx-dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
-index da36b48b8f9f..9dcbb9853ac0 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
-@@ -116,7 +116,7 @@ enum fimc_is_error {
- 	ERROR_COMMON_PARAMETER		= 2,	/* Invalid parameter */
- 	/* setfile is not loaded before adjusting */
- 	ERROR_COMMON_SETFILE_LOAD	= 3,
--	/* setfile is not Adjusted before runnng. */
-+	/* setfile is not Adjusted before running. */
- 	ERROR_COMMON_SETFILE_ADJUST	= 4,
- 	/* Index of setfile is not valid (0~MAX_SETFILE_NUM-1) */
- 	ERROR_COMMON_SETFILE_INDEX	= 5,
-diff --git a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-index 27a214936cb0..6a0d35f33e8c 100644
---- a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-@@ -124,7 +124,7 @@ static char *csi_clock_name[] = {
- #define DEFAULT_SCLK_CSIS_FREQ	166000000UL
- 
- static const char * const csis_supply_name[] = {
--	"vddcore",  /* CSIS Core (1.0V, 1.1V or 1.2V) suppply */
-+	"vddcore",  /* CSIS Core (1.0V, 1.1V or 1.2V) supply */
- 	"vddio",    /* CSIS I/O and PLL (1.8V) supply */
- };
- #define CSIS_NUM_SUPPLIES ARRAY_SIZE(csis_supply_name)
+diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
+index 8e14c72d03f0..f6ed7e889781 100644
+--- a/drivers/dma/s3c24xx-dma.c
++++ b/drivers/dma/s3c24xx-dma.c
+@@ -202,7 +202,7 @@ struct s3c24xx_dma_phy {
+  * struct s3c24xx_dma_chan - this structure wraps a DMA ENGINE channel
+  * @id: the id of the channel
+  * @name: name of the channel
+- * @vc: wrappped virtual channel
++ * @vc: wrapped virtual channel
+  * @phy: the physical channel utilized by this channel, if there is one
+  * @runtime_addr: address for RX/TX according to the runtime config
+  * @at: active transaction on this channel
 
