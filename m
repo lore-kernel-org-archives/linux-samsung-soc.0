@@ -2,86 +2,148 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C09CC433FE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 14:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E964C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 May 2022 14:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353520AbiEUOGz (ORCPT
+        id S244158AbiEUOLq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 May 2022 10:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40404 "EHLO
+        Sat, 21 May 2022 10:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346239AbiEUOGy (ORCPT
+        with ESMTP id S244355AbiEUOLm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 May 2022 10:06:54 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7980459956
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:06:53 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id l13so11946751lfp.11
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:06:53 -0700 (PDT)
+        Sat, 21 May 2022 10:11:42 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3E95B890
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:11:41 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 27so7446664ljw.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 May 2022 07:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=G/JiRdkydlLW6miQGBKIde5cpkPs5X1Fjry1L1VttZ8=;
-        b=kyB5ACp5DuAfVmlH0VGXRH77XLo8B/mgLfzsfy8jooXJhmFYVW81Oja6/l3xtcOTa8
-         MM0A/6I5qcbB+I3JU/nsraWIB5cYHPZa3iw13NBrxS67gV3dFCghgpj9i2xuahlWbrIC
-         gBKWxBLL6aoVwoIFDpahsY+rTT5ek7sLMfMZ3wZ7zuz+EXgcXVV56rzw3sGAHiUjJCk6
-         gEy+UDsYF77Gig16w/+57VmWd+zpmiPQCXU9OlH7mqPLRGBoswRYE92/sB3+4oExf2kF
-         TfvkcF37exSKXoC0e6xeaBrloQmxW8z2u42+XhGtadIPZH1hnteqxxZWAOPgWiwrc5al
-         VzcQ==
+        bh=RYQl+aSSz5PsYbdsuyy+v7rTecA/vZhumWdjuVfDKJU=;
+        b=F3KMUI0Hix+/TfIYMbxg1Ypge2zPmys0v3YycP7qikAxm1HoOVXiozuLobosqJ+uvL
+         flKkM208eQQrUACVO5UKBlg+R73EVUsLqepPpb5oMayWIvfEbw9isE7r+k222jAxiixf
+         XPipudb1nlRrxxtMGMg0nurlX/mmgE0w7BKfPbvRPnOZ2XFJqrXJ2Ab8DdEhKS5EfuzT
+         8qBnjdhHnRUNAaj0Dnbk/5NcdkJIImeHEMuPRdziQf1kikN0Y6w5tdN1jjYmlHl8UP87
+         vv9Smewt3cX9xWNTheSPcjqhHdB9F1OzniM7BBMs0HsB1MxghuAu6ua7iYY9NUM1E7Eh
+         yiYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=G/JiRdkydlLW6miQGBKIde5cpkPs5X1Fjry1L1VttZ8=;
-        b=6daSJ0Jx0tNsXH8E/KRv5xgSsFk1+CqL2/GBiRnCLHVcf47PF1GXODVb/WjelTEpCa
-         SMyO4N6EbuAfEU3kh8TGo3m8U8fl2xami8t8KTuUK3uCQzAiNJ0CMsYsuROvTWqqCyMx
-         TNhXfHsPkXa+rK7H7ZmgXJ+UYdLTJjtArHYMPreu5eu9bMhUHwRyfrz0uld7x7GlTENW
-         kgBzLzjrh5frL02194u1k2u5QKgiI8SqwRr7aEpIt8VcJYw2Y+GCUKhcrO+NdeesOJZx
-         KkZwVkq2VnHAI6xFRX8L+e1I4ywANklmICPO/HBD6sO1MT2cK2zuh+6b1//NV68IwLXh
-         nqqw==
-X-Gm-Message-State: AOAM531uNwTVxmmY+4yU3oX7l2pL60VCb7PaO0x5TroII8O0N2TvQtEq
-        d2KeSL0aYUPUp1aFflSRhtL8Ig==
-X-Google-Smtp-Source: ABdhPJwXkIO/E6VJ/I8iMFuOXFk5pyRswYiniF2BoI2fFc5koe9Rg/H/T076e7mIyPPEs68Svxv3eg==
-X-Received: by 2002:a05:6512:b83:b0:44a:9fb7:784b with SMTP id b3-20020a0565120b8300b0044a9fb7784bmr10379431lfv.547.1653142011456;
-        Sat, 21 May 2022 07:06:51 -0700 (PDT)
+        bh=RYQl+aSSz5PsYbdsuyy+v7rTecA/vZhumWdjuVfDKJU=;
+        b=XV6RXd9fEpa+9h9aT83CnQxJ4YnoDYZtn2+kgK/LeWgrMAtBb7ibEFQDOh30CRuuQT
+         o4cRu0oO8SlzrZxUAtHzQA+/8hE//YEyuB+bDtHN4GjxnvnIKGifn9NuBoDQaIPuKZkZ
+         gdssw048jqLqnB0sgB/eaJue64aRH1EK5eDzqzYTWA5kY5pslW84U/UoOZdfzv0w2mS2
+         /zROq4T1odttREmH8Vs+UCHIQ3yZzBHSr951GiHS9lovpj3cZrNumux8gSvAf377ZoRT
+         mBSRCxKJFvSkx0LxqcYT3JdrXf+G+nm5rtmQL+l5nY9pHTbmJK8Owpo7c0hy8r4eLCI1
+         KKJw==
+X-Gm-Message-State: AOAM532BT061G2q5Le7XBKNfIfDQFyvWaQIS47B7Hf+/ImjsMxORKScC
+        6/49uD7gGZVQdR2TJS2QcJko1w==
+X-Google-Smtp-Source: ABdhPJzPIY5bRKl/lSFeIJShNcSK8ZwQEDiGbi1evoB0c4BWO3BIv09buuA6GVolzs36yKpWhvoiJQ==
+X-Received: by 2002:a2e:84c8:0:b0:24b:50bb:de7d with SMTP id q8-20020a2e84c8000000b0024b50bbde7dmr7876086ljh.40.1653142299331;
+        Sat, 21 May 2022 07:11:39 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id o28-20020ac2495c000000b0047255d211c4sm1065940lfi.243.2022.05.21.07.06.50
+        by smtp.gmail.com with ESMTPSA id e7-20020a2e9847000000b0024f3d1daeacsm722958ljj.52.2022.05.21.07.11.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 07:06:50 -0700 (PDT)
-Message-ID: <4db8d4df-9cab-a53e-ddd4-84479af46ba8@linaro.org>
-Date:   Sat, 21 May 2022 16:06:49 +0200
+        Sat, 21 May 2022 07:11:38 -0700 (PDT)
+Message-ID: <54c7cc5e-8bf5-b0b6-017b-32063c3a9652@linaro.org>
+Date:   Sat, 21 May 2022 16:11:37 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH] dmaengine: s3c24xx: fix typo in comment
+Subject: Re: [PATCHv2 6/6] thermal: exynos: Add runtime power management for
+ tmu
 Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220521111145.81697-46-Julia.Lawall@inria.fr>
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+References: <20220515064126.1424-1-linux.amoon@gmail.com>
+ <20220515064126.1424-7-linux.amoon@gmail.com>
+ <79b727f8-0631-5a96-fbc6-6e5d637bab7d@linaro.org>
+ <CANAwSgSY=4zOLjw22GN+a7cc5j=myWWkD7gEQ4_3sgEaTS74Rw@mail.gmail.com>
+ <018b97c2-efab-699d-653d-c220a98f5ec3@linaro.org>
+ <CANAwSgQe9uveBMgrt3VNUTmFodW3P0Pxhc28KfB8MyEogOtOjQ@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220521111145.81697-46-Julia.Lawall@inria.fr>
+In-Reply-To: <CANAwSgQe9uveBMgrt3VNUTmFodW3P0Pxhc28KfB8MyEogOtOjQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/05/2022 13:10, Julia Lawall wrote:
-> Spelling mistake (triple letters) in comment.
-> Detected with the help of Coccinelle.
+On 21/05/2022 11:52, Anand Moon wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> On Wed, 18 May 2022 at 12:49, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 17/05/2022 20:45, Anand Moon wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On Sun, 15 May 2022 at 15:18, Krzysztof Kozlowski
+>>> <krzysztof.kozlowski@linaro.org> wrote:
+>>>>
+>>>> On 15/05/2022 08:41, Anand Moon wrote:
+>>>>> Add runtime power management for exynos thermal driver.
+>>>>
+>>>> First of all - why? Second, I do not see it being added. Where are the
+>>>> runtime callbacks?
+>>>>
+>>>
+>>> To control runtime control PMU, did I miss something?
+>>
+>> Controlling runtime PM by itself is not a goal. What does it change if
+>> it is enabled?
+>>
+> It means we could have efficient power management for this driver.
+> as per my understanding, it controls runtime sleep and improves power efficiency
 
+How? I asked - what is being changed after enabling PM - and you
+answered without any specifics. Where exactly is the power saving?
+Please be specific, very specific.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+>>> I looked into imx thermal driver # drivers/thermal/imx_thermal.c
+>>> to enable run-time power management for exynos driver.
+>>
+>> So you have runtime PM enabled and then what happens? Where is the power
+>> saving? Since you did not implement the callbacks, all this should be
+>> explained in commit msg.
+>>
+> Ok, As per the original code, it just registers the SIMPLE_DEV_PM_OPS
+> with .pm = &exynos_tmu_pm
 
+And does nothing else, right? No benefits?
+
+> So I have made sure that suspend resume feature works correctly
+>  with these changes on SBC Odroid U3 and XU4.
+
+How is suspend/resume related to runtime PM? Are you talking about
+system suspend? What do you mean now?
+
+> 
+> I will try to look into setting RUNTIME_PM_OPS
+> or use UNIVERSAL_DEV_PM_OPS instead of SIMPLE_DEV_PM_OPS
+> any thought on this?
+
+Why looking at them? You avoid giving any specific answer, so we are
+repeating the same and the same. Just to be sure - maybe I don't see the
+obvious stuff, so please explain also this obvious things.
+
+Please come with specifics, because otherwise I see it as a waste of our
+time.
 
 Best regards,
 Krzysztof
