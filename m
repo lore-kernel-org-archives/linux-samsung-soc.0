@@ -2,167 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58262C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 May 2022 11:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC309C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 May 2022 11:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234842AbiEWL2Q (ORCPT
+        id S234749AbiEWLad (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 May 2022 07:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58698 "EHLO
+        Mon, 23 May 2022 07:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234851AbiEWL2O (ORCPT
+        with ESMTP id S234826AbiEWLa1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 May 2022 07:28:14 -0400
+        Mon, 23 May 2022 07:30:27 -0400
 Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B964D270
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 May 2022 04:28:11 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220523112805epoutp04c4094a17bdd60992d5bf6cbffd9c376d~xuGXa_9uV2956229562epoutp04P
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 May 2022 11:28:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220523112805epoutp04c4094a17bdd60992d5bf6cbffd9c376d~xuGXa_9uV2956229562epoutp04P
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C49C4F9CD
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 May 2022 04:30:24 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220523113022epoutp042b243a16af4ba12e5941c7b2ab46cb14~xuIWsS7GH0228302283epoutp04V
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 May 2022 11:30:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220523113022epoutp042b243a16af4ba12e5941c7b2ab46cb14~xuIWsS7GH0228302283epoutp04V
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653305285;
-        bh=y6ZMVCa01CPM6lfjRWZ2yKQL7rl8kIG3p2hCQTmMo20=;
+        s=mail20170921; t=1653305422;
+        bh=4IFayU2lfdgNu9EW5xKS0zmUvY4WPz8PL5PJzayhj5E=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=kAmxsaGDZ2B9OatkztIimlvSNJdyW51IXjSTKfEEvE6Knul4yfLL9U9JbmkjcCTKT
-         P1JTgAMOww+DX4295H6Qj1dtMfaIUfeAB18BgXNCgQ1Bbm+hH5MsKNQeZAYKwAUdNA
-         2N5WzG1E5pOYYQBKlcSaEnq4fThzCcDbCdWO3Chc=
+        b=pRkEXneOXeLZl+CVYdMU+/jafXUIobkCRAYWX9ZUMvMv7D5/g89Mn55UpMU+RjthL
+         HKWL0VYeEI6KIqvJCiUhQd/c/qvazWQ70JHg/vpJBWWWXbM28wdWgckBi56lvbYW/J
+         5JH1ZZ0BPAbgi1zkGqUz/emnTv5WhIiux6eE809Q=
 Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20220523112804epcas2p2ee7765de8b81e27076ca51be3421d3e4~xuGWerx5O1014210142epcas2p2b;
-        Mon, 23 May 2022 11:28:04 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4L6FSL2BGnz4x9Pr; Mon, 23 May
-        2022 11:28:02 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CE.AA.09694.2CF6B826; Mon, 23 May 2022 20:28:02 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220523113022epcas2p1706d6327843dc6faab846ee2920441ba~xuIWR6uWA3019930199epcas2p1C;
+        Mon, 23 May 2022 11:30:22 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.89]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4L6FVx70Sbz4x9Pp; Mon, 23 May
+        2022 11:30:17 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BF.7E.10028.8407B826; Mon, 23 May 2022 20:30:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220523112801epcas2p3e1fa41baee05ad60afc8e602886d653e~xuGTW3ZZB2296622966epcas2p3g;
-        Mon, 23 May 2022 11:28:01 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220523112801epsmtrp13d85ff3dafafc968a496760f1562c4a4~xuGTWGRRy2214222142epsmtrp1l;
-        Mon, 23 May 2022 11:28:01 +0000 (GMT)
-X-AuditID: b6c32a48-47fff700000025de-f3-628b6fc2700c
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        16.58.08924.1CF6B826; Mon, 23 May 2022 20:28:01 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
+        20220523113016epcas2p360bf51a6b39a6e17f258fcae4ee158a5~xuIQzBrAO2186921869epcas2p3u;
+        Mon, 23 May 2022 11:30:16 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220523113016epsmtrp2bba6fa6640e4263ba5561724c0ebb7ad~xuIQyUVk20080900809epsmtrp2p;
+        Mon, 23 May 2022 11:30:16 +0000 (GMT)
+X-AuditID: b6c32a47-589ff7000000272c-f4-628b70487e36
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A1.8D.11276.8407B826; Mon, 23 May 2022 20:30:16 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220523112801epsmtip23c971abca10dee6af67846366350d9e3~xuGTL9z2k2057520575epsmtip23;
-        Mon, 23 May 2022 11:28:01 +0000 (GMT)
+        20220523113015epsmtip1988448b1e301280d7630bdf1485edb3b~xuIQpgv1T1284612846epsmtip1z;
+        Mon, 23 May 2022 11:30:15 +0000 (GMT)
 From:   "Chanho Park" <chanho61.park@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
-Cc:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
-        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
+        "'Wim Van Sebroeck'" <wim@linux-watchdog.org>,
+        "'Guenter Roeck'" <linux@roeck-us.net>,
+        "'Rob Herring'" <robh+dt@kernel.org>
+Cc:     "'Sam Protsenko'" <semen.protsenko@linaro.org>,
+        <linux-watchdog@vger.kernel.org>,
         <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>
-In-Reply-To: <0a924446-7ced-79cf-2183-10df81c0e450@linaro.org>
-Subject: RE: [PATCH v2 1/2] dt-bindings: soc: add samsung,boot-mode
- definitions
-Date:   Mon, 23 May 2022 20:28:01 +0900
-Message-ID: <003e01d86e98$29456e10$7bd04a30$@samsung.com>
+In-Reply-To: <02fb065d-5ad9-07df-0e1d-1b47beb883dc@linaro.org>
+Subject: RE: [PATCH 3/4] arm64: dts: exynosautov9: add watchdog DT nodes
+Date:   Mon, 23 May 2022 20:30:16 +0900
+Message-ID: <003f01d86e98$798eddc0$6cac9940$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGssqSxaaXm4cUlMOTTa+hx2Iw/oAJ0q7a8AdKRbCwBQlsbWq1XfOAg
+Thread-Index: AQFlWeMGeRnkp6RKcHlQJHAIxTVWcwKk/mfLAdT13k8BkyXh8a3iE/tQ
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsWy7bCmme6h/O4kg/+f2S0ezNvGZnH9y3NW
-        i/lHzrFa9L14yGyx9/VWdosZ5/cxWbTuPcJu8bxvH5MDh8emVZ1sHneu7WHz6NuyitHj8ya5
-        AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoDOU
-        FMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQXmBXrFibnFpXnpenmpJVaGBgZGpkCF
-        CdkZC77vYi04ylXx/VJhA+NRji5GTg4JAROJt4+2MXUxcnEICexglPh8tocNwvnEKHF8zn1G
-        COczo0Tbsf3sMC1vjk+DatnFKPFk7wOoqheMErsmb2EDqWIT0Jd42bGNFSQhIrAYaFbXNrDB
-        zALnGCUmfFvPBFLFKWAnsfP8TkYQW1ggUOLcwVagHRwcLAKqEn2/zEFMXgFLiXeL5UAqeAUE
-        JU7OfMICYjMLyEtsfzuHGeIiBYmfT5exgtgiAm4Sby/dZoaoEZGY3dnGDLJWQmAqh8T0xTtZ
-        IBpcJK6ffAtlC0u8Or4F6jUpiZf9bVB2scTSWZ+YIJobGCUub/vFBpEwlpj1rJ0R5DhmAU2J
-        9bv0QUwJAWWJI7egbuOT6Dj8lx0izCvR0SYE0agucWD7dKitshLdcz6zTmBUmoXks1lIPpuF
-        5INZCLsWMLKsYhRLLSjOTU8tNiowgUd2cn7uJkZwCtXy2ME4++0HvUOMTByMhxglOJiVRHi3
-        J3YkCfGmJFZWpRblxxeV5qQWH2I0BYb0RGYp0eR8YBLPK4k3NLE0MDEzMzQ3MjUwVxLn9UrZ
-        kCgkkJ5YkpqdmlqQWgTTx8TBKdXA5FvMusuG5eyHSV0dv17mv+zaE3UhqFSkI7C017PVlGWz
-        o/a0O8rNHaKdIil9+4+9/xN16prYtVhjUYfFctsfrNRawJgfz3Ll3k/RO2+WTlv1akN15aE/
-        HiebTr/i9PKK3PW7hsv1xaqCk++Wq33galznxljZJb1V755krJu4/p+jT19/+BQxmWGOtCGv
-        j97JVq2MHL+s5ZFe7TMUJZ8fLr1VtOvFOd8DsptfOu8tPxNqwfkq6rP1tTS/BwIHPrUX/Yv4
-        /0ap/SlPF/vJnWZR4ZzXGBKcmAI98mNidyat/655Oj1Z4oaV0KGZTvoTLerqH+cUT4osYXXZ
-        zbgnMOJrnlL5dPaEY81PmydUNB5XYinOSDTUYi4qTgQAGD137ioEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJXvdgfneSwZ8VEhYP5m1js7j+5Tmr
-        xfwj51gt+l48ZLbY+3oru8WM8/uYLFr3HmG3eN63j8mBw2PTqk42jzvX9rB59G1ZxejxeZNc
-        AEsUl01Kak5mWWqRvl0CV8aC77tYC45yVXy/VNjAeJSji5GTQ0LAROLN8WlMXYxcHEICOxgl
-        +l49YYVIyEo8e7eDHcIWlrjfcoQVougZo8SL/T1gCTYBfYmXHdvAEiICixkl9k+6BNbNLHCJ
-        UeLkNU+Ijq+MElv272QDSXAK2EnsPL+TEcQWFvCXaFmzGGgSBweLgKpE3y9zEJNXwFLi3WI5
-        kApeAUGJkzOfsECM1JbofdjKCGHLS2x/O4cZ4jgFiZ9Pl4GtFRFwk3h76TYzRI2IxOzONuYJ
-        jMKzkIyahWTULCSjZiFpWcDIsopRMrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIziatLR2
-        MO5Z9UHvECMTB+MhRgkOZiUR3u2JHUlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhP
-        LEnNTk0tSC2CyTJxcEo1MJ37cGb3R6Gb5vzey+a2ifDO3Z5Y+YJ3b7THHY42nkb2Ii7v+ZOS
-        /scFLGtXP/+m49sBm8kBeuxXdlevfnz/Xb3O30m+JkuqDjgLaWRdnHPCQ8RsVkmt3faGOYyX
-        F5ieXLJMMsIi4OKFEwlmEVv0G/q2LzzWyeLcL6E79XCfZeOMdP51c34WXjXsl1c+4cX0Omvv
-        0WW/Bfkle1QlVkQf2mSx6LNzpSrH0YZnMev7DMqvPfI80nRfM56XLd+q3YVHdXNuUOLct1eY
-        hA24Dszo+ezw9PSNqpmT3tV/faRV3dO39O4XrqOWallLX/9YsN+g6XHc6ZM97S05TEk5fZcZ
-        suQveR06ZzxBgzu44t51FyWW4oxEQy3mouJEAMVwJVYVAwAA
-X-CMS-MailID: 20220523112801epcas2p3e1fa41baee05ad60afc8e602886d653e
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmqa5HQXeSwbIWBYv5R86xWux9vZXd
+        Ysb5fUwWN9btY7d4svAMk0Xr3iPsFs/7gGKPX/5jduDw2LSqk83jzrU9bB4r16xh9dj5vYHd
+        4/MmuQDWqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfM
+        HKBblBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF5gV6xYm5xaV56Xp5qSVWhgYG
+        RqZAhQnZGWsOdTIW/OWoeP7kIVsD42r2LkZODgkBE4lTe24zdTFycQgJ7GCUOD2tlRUkISTw
+        iVHiw+NQiMQ3Ron9Z66wwXRsevsdqmMvo8TD20tYIJwXjBJT/n4Em8smoC/xsmMbK0hCBKRq
+        0oaDYHOZBWYzSkw8aAhicwrYSVzqnMECYgsLeEjcbZsI1swioCrR37wXKM7BwStgKdHQ7Q0S
+        5hUQlDg58wkLxBhtiWULXzNDXKQg8fPpMrDxIgJuEr8PTmGGqBGRmN3Zxgxyg4TAXA6JLfuO
+        QTW4SJzb08kEYQtLvDq+BRoYUhKf3+2FerNYYumsT0wQzQ2MEpe3/YJKGEvMetbOCHIcs4Cm
+        xPpd+iCmhICyxJFbULfxSXQc/ssOEeaV6GgTgmhUlziwfToLhC0r0T3nM+sERqVZSD6bheSz
+        WUg+mIWwawEjyypGsdSC4tz01GKjAmN4ZCfn525iBCdTLfcdjDPeftA7xMjEwXiIUYKDWUmE
+        d3tiR5IQb0piZVVqUX58UWlOavEhRlNgUE9klhJNzgem87ySeEMTSwMTMzNDcyNTA3MlcV6v
+        lA2JQgLpiSWp2ampBalFMH1MHJxSDUxbjvxI6HuqUlk4c+Z17mlfN2lcqF4z8xBvnjsrf1Kb
+        i+7fN7/Sls+ezTTt+6dXu/epLL/R5tlip/Hp2wad9rRNc0pf3D3mPG37RW5v7X1FikGVP9MX
+        vwo8IVHoKsn+/Jwyk+L+J7csHPmeXtno/r303/V7aoFxX0R9zDj+Hrig+9xX6dpVrv7Nn7JX
+        bOOK4Jw+1561ODavJKzmzStLF2nOLhlv/s2rnXvD21KsEw/PZV0WfeMim52x5rEczvQo+QCF
+        owfsUm4JSPIp/DC8WdltZqb40zZp5nRWKb1deckinHzftLZdjI1aZupempe3VrzZ58hryfN7
+        +l7sfpWs8fEas2Cv3e8rFydohNs/e6fEUpyRaKjFXFScCADIHeypLwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTtejoDvJYMlKVov5R86xWux9vZXd
+        Ysb5fUwWN9btY7d4svAMk0Xr3iPsFs/7gGKPX/5jduDw2LSqk83jzrU9bB4r16xh9dj5vYHd
+        4/MmuQDWKC6blNSczLLUIn27BK6MszvOMBdc5qg489GsgbGRvYuRk0NCwERi09vvTF2MXBxC
+        ArsZJbbN/8kGkZCVePZuB1SRsMT9liOsILaQwDNGiTmNSiA2m4C+xMuObawgzSIC+xkl/qyZ
+        AjaJWWAuo0Rv4x92iLFfGSXaj04CG8spYCdxqXMGC4gtLOAhcbdtItgKFgFVif7mvUBxDg5e
+        AUuJhm5vkDCvgKDEyZlPwMqZBbQleh+2MsLYyxa+Zoa4TkHi59NlYNeJCLhJ/D44hRmiRkRi
+        dmcb8wRG4VlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kR
+        HFlamjsYt6/6oHeIkYmD8RCjBAezkgjv9sSOJCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pO
+        xgsJpCeWpGanphakFsFkmTg4pRqYIh4HXW/qv1Af8e5n76zDV8+FBZ+fdKM+uMPuyudI3x++
+        GnOlxD/Ny09zcHjh83VlxbGXvK5PmO9JLP2vHfPl2oa9D2cLXfFLTnk7x1OtITO3UEWSd6XH
+        zrlfhDO3vmF9yFN69paHfqZ1TVLAfL+NwRfnq+vb6czre3Lt5s/KeQ5za20mrf/zrjpTJ3T+
+        jIxOqet3ovll9P1fhFb/ynv9LGrFipdrTQLmnvE9mCjAZnJ0hWpNobXT2nMetSK2d2Z27a9y
+        bIjccH5N3jE+C8v66TbxNzsMD20JClzw/RR7H+f0jcsMHJ3DspkO8Gs8TvU9du75u7CJST9e
+        T1U/w+9YKpR4eqNZSLPyqlXRPlnZSizFGYmGWsxFxYkA8/q4NBsDAAA=
+X-CMS-MailID: 20220523113016epcas2p360bf51a6b39a6e17f258fcae4ee158a5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220520115216epcas2p20de68c07071435ae33b50c7b664a20eb
-References: <20220520115250.57785-1-chanho61.park@samsung.com>
-        <CGME20220520115216epcas2p20de68c07071435ae33b50c7b664a20eb@epcas2p2.samsung.com>
-        <20220520115250.57785-2-chanho61.park@samsung.com>
-        <0a924446-7ced-79cf-2183-10df81c0e450@linaro.org>
+X-CMS-RootMailID: 20220520121722epcas2p169b2669f367e7461fa41663f3e90d303
+References: <20220520121750.71473-1-chanho61.park@samsung.com>
+        <CGME20220520121722epcas2p169b2669f367e7461fa41663f3e90d303@epcas2p1.samsung.com>
+        <20220520121750.71473-4-chanho61.park@samsung.com>
+        <02fb065d-5ad9-07df-0e1d-1b47beb883dc@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> > Adds samsung,boot-mode.h header file which contains boot mode
-> > definitions for bootloader. As for now, there are only boot mode
-> > definitions for Exynos Auto v9 SoC.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> 
-> Thank you for your patch. There is something to discuss/improve.
-> 
-> > ---
-> >  include/dt-bindings/soc/samsung,boot-mode.h | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> >  create mode 100644 include/dt-bindings/soc/samsung,boot-mode.h
-> >
-> > diff --git a/include/dt-bindings/soc/samsung,boot-mode.h
-> > b/include/dt-bindings/soc/samsung,boot-mode.h
-> > new file mode 100644
-> > index 000000000000..f1d03d96f45c
-> > --- /dev/null
-> > +++ b/include/dt-bindings/soc/samsung,boot-mode.h
-> > @@ -0,0 +1,12 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> 
-> Dual license:
-> GPL-2.0-only OR BSD-2-Clause
-
-Okay. I'll update this on v3.
-
-> 
+> > diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > index 3e23db8f09d9..34be955dc2d5 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > =40=40 -400,6 +400,28 =40=40 ufs_0: ufs0=4017e00000 =7B
+> >  			samsung,sysreg =3D <&syscon_fsys2 0x710>;
+> >  			status =3D =22disabled=22;
+> >  		=7D;
 > > +
-> > +#ifndef __SAMSUNG_BOOT_MODE_H
-> 
-> __DT_BINDINGS_SAMSUNG_BOOT_MODE_H
-> 
-> > +#define __SAMSUNG_BOOT_MODE_H
-> > +
-> > +/* Boot mode definitions for Exynos Auto v9 SoC */
-> > +
-> > +#define EXYNOSAUTOV9_BOOT_FASTBOOT	(0xfa)
-> > +#define EXYNOSAUTOV9_BOOT_BOOTLOADER	(0xfc)
-> > +#define EXYNOSAUTOV9_BOOT_RECOVERY	(0xff)
-> 
-> No need for ().
+> > +		watchdog_cl0: watchdog=4010050000 =7B
+> > +			compatible =3D =22samsung,exynosautov9-wdt=22;
+> > +			reg =3D <0x10050000 0x100>;
+> > +			interrupts =3D <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks =3D <&cmu_peris CLK_GOUT_WDT_CLUSTER0>, <&xtcxo>;
+> > +			clock-names =3D =22watchdog=22, =22watchdog_src=22;
+> > +			samsung,syscon-phandle =3D <&pmu_system_controller>;
+> > +			samsung,cluster-index =3D <0>;
+> > +			status =3D =22disabled=22;
+>=20
+> Blocks which do not need board-level resources should be enabled by
+> default, so drop status and drop patch =234.
 
-Thanks. Will be removed on v3.
+Okay. They can be enabled as default. I'll drop the status and =234 patch a=
+s well.
 
 Best Regards,
 Chanho Park
