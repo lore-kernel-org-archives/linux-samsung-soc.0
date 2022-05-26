@@ -2,101 +2,110 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006A3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 May 2022 07:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB6BC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 May 2022 08:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241525AbiEZHVc (ORCPT
+        id S1345845AbiEZI3I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 May 2022 03:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36716 "EHLO
+        Thu, 26 May 2022 04:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236623AbiEZHVc (ORCPT
+        with ESMTP id S229590AbiEZI3H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 May 2022 03:21:32 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B3A4BBB2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 00:21:30 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id gi33so1401891ejc.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 00:21:30 -0700 (PDT)
+        Thu, 26 May 2022 04:29:07 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618B387A18;
+        Thu, 26 May 2022 01:29:06 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id o9-20020a17090a0a0900b001df3fc52ea7so3810857pjo.3;
+        Thu, 26 May 2022 01:29:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=hc5WJxpCJDyVBDEvY69Dh9h8QnuVZ+60jKtLKAF2hwA=;
-        b=NY5j1qQZ3zuQBRuvXBwy3T9uIZGJL4d8Rkl/5QM6aWBuym9SQBTCtvDlmbVhzkohv4
-         i3tm4naS6sehS+t4500dvC7cVuqK7UroqrRb/nELHpJDgttNXVWjFIoAvmPUZ/kYkqh5
-         hqVh5AaM1CM82qmtM4mnF5w3iK88pPIhSPCn3DiSPR8bcnUbYMr1KgO2sEYQaB4TVdgq
-         yfnmb58z8XZblOHEMP7rPTBEQDXKUFl5Hoqa9b9Oo0g3FvVZI8n7UYID6jRhs2k+8IOw
-         RNOOapYsDOqm2Bz3eoG4dKMcZXTfvkTfYt8iSdbpXiiTlfahVFSdRnCclye7prVpIljX
-         GOTQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8ta2fnNORGUsjuMjKE85VSi51HYB7+7nVCChsv1cbuY=;
+        b=cKvLolcB0qKL6HE4x2ld1APfOOtnBG+zZ7xjFnuF9ASGev8did1cbzdkQMPu0wFlXt
+         JsMwX1SR8ry7yEpZPkXsgp97azZxkwbA1N6vRFc5+BX732RPa25GQdT0VFH1GLgcFN47
+         ORQQncZBfR4wXvwI2LpS1orjIY83/HY15ge8dktV//YIt7mu5Bog3ATngb9wkGSaGRfq
+         EPUn24bG8g0d/JMDiTmttgl2ywASsE0FsoKkVhKdrtlmhrSdkHQ+lOfamnujqvffXVxH
+         WOjCF86KGG/JD0WxHhdQWTOBBC83lDGB9353kEDXz5IGlVsxeDLpBi2S4OMc7mdlAc00
+         GsxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hc5WJxpCJDyVBDEvY69Dh9h8QnuVZ+60jKtLKAF2hwA=;
-        b=DCdUPXhixPWcW5HFOBPfXx+icSXNPqo/WPquoyGsMPgUuDANCDKUcpIP+K+oIogK9w
-         Ou9PXqcg2Drs1V8rSi6lpiGIegogzQUnIQTba67fFutSVfnMhPe3B1t0gYIQC6SVSl72
-         EnKn5eafa7IB14isVMPABAZWeXPGXypLbkCKqTPEZhnj7AYPjtyYNhILkRQtY5yCTYya
-         rFsennIbkyD+BHE2TBhr5Kz8Eb1JmZ80eBam/a9kK1t35Xfi8pPU4PjIX7QZ8fkBz4kv
-         qeWx0jVpJX/DZViniRkK9xi2gYHM6p+1sP+4vH0EVSBjl/3lX2J6LfxmK0OPX0XD3Ilz
-         mWhA==
-X-Gm-Message-State: AOAM530EoRb/ZXkmCUDXftxhHC38mENs9Het07LjrcXr0mebl9yJr9Hx
-        TeRmZaEqrYiT9k/ssYFS2npxpw==
-X-Google-Smtp-Source: ABdhPJxzN00DjmF4ZI4mQycshnN5aJuXx97ZwlJCev/twfdd8ygK3/+eZU2fZQbnzmVyrh0uAy5D0A==
-X-Received: by 2002:a17:907:6d99:b0:6fe:c1c3:feea with SMTP id sb25-20020a1709076d9900b006fec1c3feeamr21831935ejc.89.1653549688973;
-        Thu, 26 May 2022 00:21:28 -0700 (PDT)
-Received: from [192.168.0.177] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id o19-20020a170906775300b006f3ef214e24sm243866ejn.138.2022.05.26.00.21.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 May 2022 00:21:28 -0700 (PDT)
-Message-ID: <2eda61c1-a076-3467-91bc-8c2e14f4f516@linaro.org>
-Date:   Thu, 26 May 2022 09:21:27 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 1/2] clk: samsung: exynos7885: Correct "div4" clock
- parents
-Content-Language: en-US
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        bh=8ta2fnNORGUsjuMjKE85VSi51HYB7+7nVCChsv1cbuY=;
+        b=EwrD752GlQ3fOI9W0GAi+vapU+6pSwYxcC1ik2AIyNedXw1aP6wmH1l0zD/XraTikl
+         29BHndjHbQF158sMr4fUTRutR5xknNbff/jVT0N3XVrkhPxauKRqNIw+/EPbKWnfejEE
+         y+Z11lF4SLNwh6qXqBD9CKNQVt+NlL3QSP4D9WVymZ2lgG8ESkB7vQqltN8y3vnRtO6Q
+         cx8qnopofcWVF2J3miO8nYKpcJigeL73u1+l28CIo0JbS1HreKWrPDPxgBBSm47/8WF1
+         JdNXNzJPs4msggyQ2fGV0bASsReKcFaZDoaY0sr1I/4m4HuV4p0q+J8a28bIv8IuyQyc
+         igTQ==
+X-Gm-Message-State: AOAM533z4Laek/cYwXbGOupuj5oq3WJKJhc85YYT1VrWdkDSueGLW/mX
+        tBpBxFUyvmojYY8VWMZq340=
+X-Google-Smtp-Source: ABdhPJxcDtzIa1cpNLT0Egvkyg2gtm0014D7uRbUsAgnDGvLvuH2YfJNpFLGDUJ0jEUFxz/6zQdYeg==
+X-Received: by 2002:a17:902:c402:b0:163:5b99:8efb with SMTP id k2-20020a170902c40200b001635b998efbmr6962403plk.4.1653553745828;
+        Thu, 26 May 2022 01:29:05 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id 71-20020a17090a09cd00b001e25e3ba05csm251685pjo.2.2022.05.26.01.29.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 May 2022 01:29:05 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220526055840.45209-1-virag.david003@gmail.com>
- <20220526055840.45209-2-virag.david003@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220526055840.45209-2-virag.david003@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] devfreq: exynos-ppmu: Fix refcount leak in of_get_devfreq_events
+Date:   Thu, 26 May 2022 12:28:56 +0400
+Message-Id: <20220526082856.37594-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26/05/2022 07:58, David Virag wrote:
-> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
-> 2 to achieve a by 4 division, thus their parents are the respective
-> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
-> This leads to the kernel thinking "div4"s and everything under them run
-> at 2x the clock speed. Fix this.
-> 
-> Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos7885.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+of_get_child_by_name() returns a node pointer with refcount
+incremented, we should use of_node_put() on it when done.
+This function only calls of_node_put() in normal path,
+missing it in error paths.
+Add missing of_node_put() to avoid refcount leak.
 
+Fixes: f262f28c1470 ("PM / devfreq: event: Add devfreq_event class")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/devfreq/event/exynos-ppmu.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index 9b849d781116..a443e7c42daf 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
+@@ -519,15 +519,19 @@ static int of_get_devfreq_events(struct device_node *np,
+ 
+ 	count = of_get_child_count(events_np);
+ 	desc = devm_kcalloc(dev, count, sizeof(*desc), GFP_KERNEL);
+-	if (!desc)
++	if (!desc) {
++		of_node_put(events_np);
+ 		return -ENOMEM;
++	}
+ 	info->num_events = count;
+ 
+ 	of_id = of_match_device(exynos_ppmu_id_match, dev);
+ 	if (of_id)
+ 		info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
+-	else
++	else {
++		of_node_put(events_np);
+ 		return -EINVAL;
++	}
+ 
+ 	j = 0;
+ 	for_each_child_of_node(events_np, node) {
+-- 
+2.25.1
 
-
-Best regards,
-Krzysztof
