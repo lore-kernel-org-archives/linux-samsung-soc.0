@@ -2,110 +2,204 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB6BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 May 2022 08:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2ACC433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 May 2022 09:38:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345845AbiEZI3I (ORCPT
+        id S236723AbiEZJiD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 May 2022 04:29:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43622 "EHLO
+        Thu, 26 May 2022 05:38:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbiEZI3H (ORCPT
+        with ESMTP id S239971AbiEZJh4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 May 2022 04:29:07 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618B387A18;
-        Thu, 26 May 2022 01:29:06 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id o9-20020a17090a0a0900b001df3fc52ea7so3810857pjo.3;
-        Thu, 26 May 2022 01:29:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8ta2fnNORGUsjuMjKE85VSi51HYB7+7nVCChsv1cbuY=;
-        b=cKvLolcB0qKL6HE4x2ld1APfOOtnBG+zZ7xjFnuF9ASGev8did1cbzdkQMPu0wFlXt
-         JsMwX1SR8ry7yEpZPkXsgp97azZxkwbA1N6vRFc5+BX732RPa25GQdT0VFH1GLgcFN47
-         ORQQncZBfR4wXvwI2LpS1orjIY83/HY15ge8dktV//YIt7mu5Bog3ATngb9wkGSaGRfq
-         EPUn24bG8g0d/JMDiTmttgl2ywASsE0FsoKkVhKdrtlmhrSdkHQ+lOfamnujqvffXVxH
-         WOjCF86KGG/JD0WxHhdQWTOBBC83lDGB9353kEDXz5IGlVsxeDLpBi2S4OMc7mdlAc00
-         GsxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8ta2fnNORGUsjuMjKE85VSi51HYB7+7nVCChsv1cbuY=;
-        b=EwrD752GlQ3fOI9W0GAi+vapU+6pSwYxcC1ik2AIyNedXw1aP6wmH1l0zD/XraTikl
-         29BHndjHbQF158sMr4fUTRutR5xknNbff/jVT0N3XVrkhPxauKRqNIw+/EPbKWnfejEE
-         y+Z11lF4SLNwh6qXqBD9CKNQVt+NlL3QSP4D9WVymZ2lgG8ESkB7vQqltN8y3vnRtO6Q
-         cx8qnopofcWVF2J3miO8nYKpcJigeL73u1+l28CIo0JbS1HreKWrPDPxgBBSm47/8WF1
-         JdNXNzJPs4msggyQ2fGV0bASsReKcFaZDoaY0sr1I/4m4HuV4p0q+J8a28bIv8IuyQyc
-         igTQ==
-X-Gm-Message-State: AOAM533z4Laek/cYwXbGOupuj5oq3WJKJhc85YYT1VrWdkDSueGLW/mX
-        tBpBxFUyvmojYY8VWMZq340=
-X-Google-Smtp-Source: ABdhPJxcDtzIa1cpNLT0Egvkyg2gtm0014D7uRbUsAgnDGvLvuH2YfJNpFLGDUJ0jEUFxz/6zQdYeg==
-X-Received: by 2002:a17:902:c402:b0:163:5b99:8efb with SMTP id k2-20020a170902c40200b001635b998efbmr6962403plk.4.1653553745828;
-        Thu, 26 May 2022 01:29:05 -0700 (PDT)
-Received: from localhost.localdomain ([202.120.234.246])
-        by smtp.googlemail.com with ESMTPSA id 71-20020a17090a09cd00b001e25e3ba05csm251685pjo.2.2022.05.26.01.29.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 May 2022 01:29:05 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH] devfreq: exynos-ppmu: Fix refcount leak in of_get_devfreq_events
-Date:   Thu, 26 May 2022 12:28:56 +0400
-Message-Id: <20220526082856.37594-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 26 May 2022 05:37:56 -0400
+X-Greylist: delayed 578 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 26 May 2022 02:37:54 PDT
+Received: from mailout1.hostsharing.net (mailout1.hostsharing.net [83.223.95.204])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266C2C8BF6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 02:37:53 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by mailout1.hostsharing.net (Postfix) with ESMTPS id C7222103A8FDE;
+        Thu, 26 May 2022 11:28:09 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 9EAD560D2D3A;
+        Thu, 26 May 2022 11:28:09 +0200 (CEST)
+X-Mailbox-Line: From 688f559346ea747d3b47a4d16ef8277e093f9ebe Mon Sep 17 00:00:00 2001
+Message-Id: <688f559346ea747d3b47a4d16ef8277e093f9ebe.1653556322.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Thu, 26 May 2022 11:28:08 +0200
+Subject: [PATCH net] net: phy: Don't trigger state machine while in suspend
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     netdev@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Ferry Toth <fntoth@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-of_get_child_by_name() returns a node pointer with refcount
-incremented, we should use of_node_put() on it when done.
-This function only calls of_node_put() in normal path,
-missing it in error paths.
-Add missing of_node_put() to avoid refcount leak.
+Upon system sleep, mdio_bus_phy_suspend() stops the phy_state_machine(),
+but subsequent interrupts may retrigger it:
 
-Fixes: f262f28c1470 ("PM / devfreq: event: Add devfreq_event class")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+They may have been left enabled to facilitate wakeup and are not
+quiesced until the ->suspend_noirq() phase.  Unwanted interrupts may
+hence occur between mdio_bus_phy_suspend() and dpm_suspend_noirq(),
+as well as between dpm_resume_noirq() and mdio_bus_phy_resume().
+
+Amend phy_interrupt() to avoid triggering the state machine if the PHY
+is suspended.  Signal wakeup instead if the attached net_device or its
+parent has been configured as a wakeup source.  (Those conditions are
+identical to mdio_bus_phy_may_suspend().)  Postpone handling of the
+interrupt until the PHY has resumed.
+
+Before stopping the phy_state_machine() in mdio_bus_phy_suspend(),
+wait for a concurrent phy_interrupt() to run to completion.  That is
+necessary because phy_interrupt() may have checked the PHY's suspend
+status before the system sleep transition commenced and it may thus
+retrigger the state machine after it was stopped.
+
+Likewise, after re-enabling interrupt handling in mdio_bus_phy_resume(),
+wait for a concurrent phy_interrupt() to complete to ensure that
+interrupts which it postponed are properly rerun.
+
+Fixes: 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to avoid polling")
+Link: https://lore.kernel.org/netdev/a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com/
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
 ---
- drivers/devfreq/event/exynos-ppmu.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/phy/phy.c        | 23 +++++++++++++++++++++++
+ drivers/net/phy/phy_device.c | 23 +++++++++++++++++++++++
+ include/linux/phy.h          |  6 ++++++
+ 3 files changed, 52 insertions(+)
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 9b849d781116..a443e7c42daf 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -519,15 +519,19 @@ static int of_get_devfreq_events(struct device_node *np,
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index ef62f357b76d..8d3ee3a6495b 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -31,6 +31,7 @@
+ #include <linux/io.h>
+ #include <linux/uaccess.h>
+ #include <linux/atomic.h>
++#include <linux/suspend.h>
+ #include <net/netlink.h>
+ #include <net/genetlink.h>
+ #include <net/sock.h>
+@@ -976,6 +977,28 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
+ 	struct phy_driver *drv = phydev->drv;
+ 	irqreturn_t ret;
  
- 	count = of_get_child_count(events_np);
- 	desc = devm_kcalloc(dev, count, sizeof(*desc), GFP_KERNEL);
--	if (!desc)
-+	if (!desc) {
-+		of_node_put(events_np);
- 		return -ENOMEM;
++	/* Wakeup interrupts may occur during a system sleep transition.
++	 * Postpone handling until the PHY has resumed.
++	 */
++	if (IS_ENABLED(CONFIG_PM_SLEEP) && phydev->irq_suspended) {
++		struct net_device *netdev = phydev->attached_dev;
++
++		if (netdev) {
++			struct device *parent = netdev->dev.parent;
++
++			if (netdev->wol_enabled)
++				pm_system_wakeup();
++			else if (device_may_wakeup(&netdev->dev))
++				pm_wakeup_dev_event(&netdev->dev, 0, true);
++			else if (parent && device_may_wakeup(parent))
++				pm_wakeup_dev_event(parent, 0, true);
++		}
++
++		phydev->irq_rerun = 1;
++		disable_irq_nosync(irq);
++		return IRQ_HANDLED;
 +	}
- 	info->num_events = count;
++
+ 	mutex_lock(&phydev->lock);
+ 	ret = drv->handle_interrupt(phydev);
+ 	mutex_unlock(&phydev->lock);
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 431a8719c635..46acddd865a7 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -278,6 +278,15 @@ static __maybe_unused int mdio_bus_phy_suspend(struct device *dev)
+ 	if (phydev->mac_managed_pm)
+ 		return 0;
  
- 	of_id = of_match_device(exynos_ppmu_id_match, dev);
- 	if (of_id)
- 		info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
--	else
-+	else {
-+		of_node_put(events_np);
- 		return -EINVAL;
++	/* Wakeup interrupts may occur during the system sleep transition when
++	 * the PHY is inaccessible. Set flag to postpone handling until the PHY
++	 * has resumed. Wait for concurrent interrupt handler to complete.
++	 */
++	if (phy_interrupt_is_valid(phydev)) {
++		phydev->irq_suspended = 1;
++		synchronize_irq(phydev->irq);
 +	}
++
+ 	/* We must stop the state machine manually, otherwise it stops out of
+ 	 * control, possibly with the phydev->lock held. Upon resume, netdev
+ 	 * may call phy routines that try to grab the same lock, and that may
+@@ -315,6 +324,20 @@ static __maybe_unused int mdio_bus_phy_resume(struct device *dev)
+ 	if (ret < 0)
+ 		return ret;
+ no_resume:
++	if (phy_interrupt_is_valid(phydev)) {
++		phydev->irq_suspended = 0;
++		synchronize_irq(phydev->irq);
++
++		/* Rerun interrupts which were postponed by phy_interrupt()
++		 * because they occurred during the system sleep transition.
++		 */
++		if (phydev->irq_rerun) {
++			phydev->irq_rerun = 0;
++			enable_irq(phydev->irq);
++			irq_wake_thread(phydev->irq, phydev);
++		}
++	}
++
+ 	if (phydev->attached_dev && phydev->adjust_link)
+ 		phy_start_machine(phydev);
  
- 	j = 0;
- 	for_each_child_of_node(events_np, node) {
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 508f1149665b..b09f7d36cff2 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -572,6 +572,10 @@ struct macsec_ops;
+  * @mdix_ctrl: User setting of crossover
+  * @pma_extable: Cached value of PMA/PMD Extended Abilities Register
+  * @interrupts: Flag interrupts have been enabled
++ * @irq_suspended: Flag indicating PHY is suspended and therefore interrupt
++ *                 handling shall be postponed until PHY has resumed
++ * @irq_rerun: Flag indicating interrupts occurred while PHY was suspended,
++ *             requiring a rerun of the interrupt handler after resume
+  * @interface: enum phy_interface_t value
+  * @skb: Netlink message for cable diagnostics
+  * @nest: Netlink nest used for cable diagnostics
+@@ -626,6 +630,8 @@ struct phy_device {
+ 
+ 	/* Interrupts are enabled */
+ 	unsigned interrupts:1;
++	unsigned irq_suspended:1;
++	unsigned irq_rerun:1;
+ 
+ 	enum phy_state state;
+ 
 -- 
-2.25.1
+2.35.2
 
