@@ -2,289 +2,208 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00914C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 May 2022 10:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C772FC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 May 2022 11:43:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343734AbiEZKet (ORCPT
+        id S242289AbiEZLn3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 May 2022 06:34:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53956 "EHLO
+        Thu, 26 May 2022 07:43:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230203AbiEZKer (ORCPT
+        with ESMTP id S242598AbiEZLn1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 May 2022 06:34:47 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8284AE0B
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 03:34:46 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220526103442euoutp02eb4f9d89526529a25dd628c5c4c82722~yoTnKx9V23066830668euoutp02v
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 10:34:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220526103442euoutp02eb4f9d89526529a25dd628c5c4c82722~yoTnKx9V23066830668euoutp02v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653561282;
-        bh=oOj0KQk1xU/k17SS2yM6mKwI+S1ERvO9x6+c0kti3UI=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=G/AyPSRGev/fG2gkBPykEV9Tyso2qqZCVPJ7ZgWzBDeiGUcGKXSnAJsmL/mtDE5OT
-         ZZsssWMXVxVpxG9mSfP8Z/jqe0NtjS43HMYQUwkWd7Ljw4/XlsmDyzwkp7UIENjOFn
-         dU1OnWOeu2casiUMXKgjMNj3jsd5o5cHNiDba7Nw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220526103442eucas1p1392a6aa42b3924a2a66843784f3c3274~yoTmq92fX2658826588eucas1p1J;
-        Thu, 26 May 2022 10:34:42 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 28.A0.09887.2C75F826; Thu, 26
-        May 2022 11:34:42 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220526103441eucas1p14f347b72295c50297061706cac9d54b9~yoTl_do-X0512705127eucas1p1a;
-        Thu, 26 May 2022 10:34:41 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220526103441eusmtrp141c0c30578b34d66bb9922e7dfe6b578~yoTl9cy5d1620816208eusmtrp1L;
-        Thu, 26 May 2022 10:34:41 +0000 (GMT)
-X-AuditID: cbfec7f4-45bff7000000269f-f0-628f57c22dff
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 11.6E.09404.1C75F826; Thu, 26
-        May 2022 11:34:41 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220526103440eusmtip198df46b735ffbadad23d4dd5fd5b1c66~yoTk3KvK30401304013eusmtip1F;
-        Thu, 26 May 2022 10:34:40 +0000 (GMT)
-Message-ID: <8d26c979-62ba-3263-2a13-3e872c535707@samsung.com>
-Date:   Thu, 26 May 2022 12:34:40 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH net] net: phy: Don't trigger state machine while in
- suspend
-Content-Language: en-US
-To:     Lukas Wunner <lukas@wunner.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     netdev@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Ferry Toth <fntoth@gmail.com>,
+        Thu, 26 May 2022 07:43:27 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA78D393E6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 04:43:24 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id m1so1236034plx.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 May 2022 04:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kq02GySVi94nZ9Mc+L7RCzpSrSe7oKjAYDJQaI+i1/M=;
+        b=jozl4ktxfx3kr41Xwo8mDlqT0z+gvOtnOWlJyYgee9yUgxgyfuOYUr1lx4RnOCQ6/1
+         EBChnizEhkGg98Qpb9CpWmqjZ9uwiJaLdKFSO74efjp/2WlLeF/PdqTf24D+LPN1P8LG
+         ut0mRRmlv8336aUyZvx8kApwOfcK8sDhtM7WuIfl2MBmS6ZuL17nr1XnMweom7zSFLQr
+         SU1LW9cXuv0oj342u5+FBEYK8zvWP3Ncp6alE6PlZBLutNfav0Wkn2mPAAiG73k05zRM
+         KXagAGOXvyhZJWcXTLNF9MpM0OMfwxpf1lgKnc+SiFLpACDo558o3HfUfDT5kBkmCL4j
+         kpBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kq02GySVi94nZ9Mc+L7RCzpSrSe7oKjAYDJQaI+i1/M=;
+        b=tS2cowbQoi3ltNZPouYKLpoE8yIGw6vyDrgmCC1ZNEG62/3v/Ks7xyNTNAdeRxaZss
+         nQ+Ae6sBb/TKYJeu4EhQIP0EWhjGeIXhi+i4dMVBLn05sdMM6tAqweNY9mzAsemiTsai
+         OPxih5IhGUYjpi0S1+MifIvVWsObXqcm53nfQT7dwCR9zTCKw6tw6I06607uPIXNuG0t
+         rop5s8eQwesU2Uis2EVM2Q0TzV1E8LJX8kbAInjrA16e+f9Wig49fhihFUSBC6eavT4C
+         qqJY3Bu4WIoNbmOc2ICoetFVBvQr3/JqfcUbE/J1CTgVFqQl/FuQxHHAMDmB+Rc/s3f5
+         wD6w==
+X-Gm-Message-State: AOAM532BB1v+7pSZNMx5xwh9QrNZfpK0EKQ97mXzNjaVJdvE3JE7vzP1
+        Q8JZWDUh7IDS0i6atkse2lpo/Q==
+X-Google-Smtp-Source: ABdhPJxfALbrt1KmDbthK4aKVj2I9eMN8ID458hdF4feL14JAdfjm2AEeZoz0NS/AVyWmIjpPI7ETg==
+X-Received: by 2002:a17:902:7781:b0:161:c85a:8fff with SMTP id o1-20020a170902778100b00161c85a8fffmr37569596pll.97.1653565404194;
+        Thu, 26 May 2022 04:43:24 -0700 (PDT)
+Received: from localhost ([122.162.234.2])
+        by smtp.gmail.com with ESMTPSA id a16-20020aa78650000000b0050dc7628137sm1320375pfo.17.2022.05.26.04.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 May 2022 04:43:23 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <688f559346ea747d3b47a4d16ef8277e093f9ebe.1653556322.git.lukas@wunner.de>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xbVRzHd+693D6ykkuBcQKExZqxzShsPpKzYVDMxJtlZrgsWyRELXDH
-        YIWS3pWhJoZ0A+EKDNiw2PAoMl51vDqejUxWsURrViqy0a74ADoYghXoYDicWu6m/Pf5/c73
-        e36/78kR4lIdGSpMzzrLqLLkChkpJnot67bnzCcvJu+7USpA1QUOAbJNmnF01+EkUbXtAoHc
-        likBelD7NYlsWg2OPvdU+SGbrVOARntL/dDMF00YqrJdx5C5chCgYa+BQHOzYegXO0cgi34H
-        4qZbSaTPdxNo1boA0PnleQw9LLeTr+6gx27Zcbp/8gqgu1sdGD2gmxTQfyy9Q+uNatpddklA
-        Gw1FJD3s+BXQA/0rGO160Ahoz/Vxknb8Po/Tf58fI+iO7nGCXjFGJEgTxS+nMor0HEYVHfue
-        +PSXbV4yeyE6t8e0AfLAtUgOiISQehE2D/bgHBALpVQLgCUeA8EXXgDLZi3Ap5JSKwDeqXjp
-        iaPINCvgRc0AOuvbSb5YAnC13IJxQCiUULFwuCHDZyCoXbBz4D7mYwkVAL/9bIbwcTCVDOt6
-        8/18HEi9BWsaajcZp0Kgc6YO890ZRF3B4EVuHPgKnGoh4JhRv6kiqf2QW+RIH4uoE7BmrULA
-        u3fCvsXqzUCQqhfD1ct2nN/7ECxZbwE8B8L5kW4Bz+HQeqmY8G0NKSX8q+oFvp0Lb/129bE1
-        Brpu/kn6JDi1F3aYovl2HHRMVOC80x9OLAbwG/jDil7t47YEFhZIeXUk1I20/zfzxugPeBmQ
-        6ba8im5Let2WLLr/5+oBYQAhjJrNTGPY57OYc1GsPJNVZ6VFpSgzjeDf72t9NOLtB83zS1Fm
-        gAmBGUAhLguSjLpLkqWSVPn7HzAq5bsqtYJhzSBMSMhCJCnpnXIplSY/y5xhmGxG9eQUE4pC
-        87BGDVlfPmSYDCemni1Otte9Vl1emBgTe3Th55VA9dGcvIxRZ9rlOGkB8dGFgPXi9AG59JTB
-        xSkb2wun4hVPdyVkN7wRvPemf/zQwzrRyOqPXYpU4Orb3n48MubRkbaeyuWQe9/sTImwdrVq
-        az/ZN37HLQqTc+FJmrui198Mu509rdlzWP5dR9O1/KimT50fa9tC5yLqo7dzrGat6CfvsC73
-        w42knIP3KNOJ26XTG7Kr6o6EpOUJz/d+2w6FBrL3h2xtu1TWrqmJweaDNSy+rEx8+9hX4qAD
-        C+LD2leO716rCF6Pq8T7BjPOnZrbE29W53kOnDlpCi4BT7lU3dvQEQ3EZQR7Wr7/GVzFyv8B
-        U+MB2S0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUwbZRzOe3e9azcbzwLjDRohjS6OxevHoHtB7BgxcozInDEu2ZTZbhdg
-        Ky32Y9mIf+DYdKuCfDgGTVfqWowUCNgVBsSR2JUqw1jqUrRIDTo6WN2GsE2ZLiClMeG/J/k9
-        X/nl4eOiXl4av0Jr5PRalUZMbiLGV76NvPjN/k/V0pXpJGT9MEyhQMSLo1vhKRJZA6cJFPX/
-        TqFl2zUSBS6cwtGlhVYeCgT6KDQxUM9Ds11fYKg1MIIh7/mrAPkeuAg0P/c0mgmaCeS3b0Hm
-        m50ksp+JEuiv8TsA1S7FMPRvY5DM38LemAzi7GDECVhPZxhjhywRiv1zsZS1u01stKGZYt2u
-        cyTrC/8G2KHB+xg7vdwB2IWREMmG78VwdrX2BsH2ekIEe9/97OuiA0yeXmcychnlOoPxZfFB
-        GZIzshzEyLNyGNmOne/kyrPFEmXeEU5TcZzTS5TvMuVf9zwgq+5ITvQPPwY14PJWMxDwIZ0F
-        zw3PUWawiS+iOwBsvRYkEodn4FhLDS+Bk+DjSTOZIC0A6HCH1hR8vpBWQp/jaJxD0M/DvqGH
-        WBwL6afgWNvsuk8KrYa2q10gjpPoffCiw7buidOpcGq2fZ2fTDsx6OzJj/vjdDcB+85fJxJh
-        nQB+9sFtKs4iaRk03423EPAF9Fvw4t9NVMJJAc39ZpDA6fDKXSveAESWDUUsGwItGySWDRI7
-        IFwgmTMZKssqDXLGoKo0mLRlzGFdpRusLWfA/8gzCDpji4wXYHzgBZCPi5OFE9E6tUh4RHWy
-        mtPrDulNGs7gBdlr32jE01IO69ampzUekimk2bIsRY40O0exQ5wqLKo6qxLRZSojd4zjqjj9
-        /zqML0irwRS9Htf8dR/mouTKyE2LZQDrqOg25u0ZByU/tvjekNIvjc3t9bV9359rXzzZ/UJG
-        MblruiLGKzCmNf+QgjmerF94pXh/aEYwzHz5q0KtTPpDXV1TsnLrq7OuYz7J3PTMgfckjqkT
-        z5VuHw/qzjTVCydNeMYnU5aPYyOouc4yubr7UUFhbbv/zX9Gi63aoqXv/K++5lRe8Oz5WdY+
-        XzD69ufbDxYWHrVHid3M3verj6dWt8maNPs++il6b3Mg1zbYCksat6rrnOkTS/7Qldu7rKfL
-        dmoMRHqRrbgrc1TqzzwFnhggt1nzNut7KHPe5UvRXzIfTiz7V0u7Gvqi21rye8WEoVwly8T1
-        BtV/RJ1m6sIDAAA=
-X-CMS-MailID: 20220526103441eucas1p14f347b72295c50297061706cac9d54b9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220526092819eucas1p2f05c11c571f47b0330e42d00b5d32b50
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220526092819eucas1p2f05c11c571f47b0330e42d00b5d32b50
-References: <CGME20220526092819eucas1p2f05c11c571f47b0330e42d00b5d32b50@eucas1p2.samsung.com>
-        <688f559346ea747d3b47a4d16ef8277e093f9ebe.1653556322.git.lukas@wunner.de>
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, NXP Linux Team <linux-imx@nxp.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Qiang Yu <yuq825@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sean Paul <sean@poorly.run>, Shawn Guo <shawnguo@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        lima@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 00/31] OPP: Add new configuration interface: dev_pm_opp_set_config()
+Date:   Thu, 26 May 2022 17:11:59 +0530
+Message-Id: <cover.1653564321.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Lukas,
+Hello,
 
-On 26.05.2022 11:28, Lukas Wunner wrote:
-> Upon system sleep, mdio_bus_phy_suspend() stops the phy_state_machine(),
-> but subsequent interrupts may retrigger it:
->
-> They may have been left enabled to facilitate wakeup and are not
-> quiesced until the ->suspend_noirq() phase.  Unwanted interrupts may
-> hence occur between mdio_bus_phy_suspend() and dpm_suspend_noirq(),
-> as well as between dpm_resume_noirq() and mdio_bus_phy_resume().
->
-> Amend phy_interrupt() to avoid triggering the state machine if the PHY
-> is suspended.  Signal wakeup instead if the attached net_device or its
-> parent has been configured as a wakeup source.  (Those conditions are
-> identical to mdio_bus_phy_may_suspend().)  Postpone handling of the
-> interrupt until the PHY has resumed.
->
-> Before stopping the phy_state_machine() in mdio_bus_phy_suspend(),
-> wait for a concurrent phy_interrupt() to run to completion.  That is
-> necessary because phy_interrupt() may have checked the PHY's suspend
-> status before the system sleep transition commenced and it may thus
-> retrigger the state machine after it was stopped.
->
-> Likewise, after re-enabling interrupt handling in mdio_bus_phy_resume(),
-> wait for a concurrent phy_interrupt() to complete to ensure that
-> interrupts which it postponed are properly rerun.
->
-> Fixes: 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to avoid polling")
+We have too many configuration specific APIs currently, six of them already,
+like dev_pm_opp_set_regulators(). This makes it complex/messy for both the OPP
+core and its users to manage. There is also code redundancy in these API, in the
+way they add/manage the OPP table specific stuff.
 
-I'm not sure if this is a right commit here. It revealed the issue, but 
-it is not directly related to the net/phy code.
+This patch series is an attempt to simplify these interfaces by adding a single
+interface, dev_pm_opp_set_config(), which replaces all the existing ones. This
+also migrates the users to the new API.
 
-> Link: https://lore.kernel.org/netdev/a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com/
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+The first two patches help get the API in place, followed by patches to migrate
+the end users. Once all the users are migrated, the last few patches remove the
+now unused interfaces.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+I have lightly tested this on Hikey960 for now and also getting help from
+various build/boot bots, gitlab and lkp, to get these tested. It would be
+helpful if someone with access to the affected platforms can give it a try.
 
-> ---
->   drivers/net/phy/phy.c        | 23 +++++++++++++++++++++++
->   drivers/net/phy/phy_device.c | 23 +++++++++++++++++++++++
->   include/linux/phy.h          |  6 ++++++
->   3 files changed, 52 insertions(+)
->
-> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-> index ef62f357b76d..8d3ee3a6495b 100644
-> --- a/drivers/net/phy/phy.c
-> +++ b/drivers/net/phy/phy.c
-> @@ -31,6 +31,7 @@
->   #include <linux/io.h>
->   #include <linux/uaccess.h>
->   #include <linux/atomic.h>
-> +#include <linux/suspend.h>
->   #include <net/netlink.h>
->   #include <net/genetlink.h>
->   #include <net/sock.h>
-> @@ -976,6 +977,28 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
->   	struct phy_driver *drv = phydev->drv;
->   	irqreturn_t ret;
->   
-> +	/* Wakeup interrupts may occur during a system sleep transition.
-> +	 * Postpone handling until the PHY has resumed.
-> +	 */
-> +	if (IS_ENABLED(CONFIG_PM_SLEEP) && phydev->irq_suspended) {
-> +		struct net_device *netdev = phydev->attached_dev;
-> +
-> +		if (netdev) {
-> +			struct device *parent = netdev->dev.parent;
-> +
-> +			if (netdev->wol_enabled)
-> +				pm_system_wakeup();
-> +			else if (device_may_wakeup(&netdev->dev))
-> +				pm_wakeup_dev_event(&netdev->dev, 0, true);
-> +			else if (parent && device_may_wakeup(parent))
-> +				pm_wakeup_dev_event(parent, 0, true);
-> +		}
-> +
-> +		phydev->irq_rerun = 1;
-> +		disable_irq_nosync(irq);
-> +		return IRQ_HANDLED;
-> +	}
-> +
->   	mutex_lock(&phydev->lock);
->   	ret = drv->handle_interrupt(phydev);
->   	mutex_unlock(&phydev->lock);
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index 431a8719c635..46acddd865a7 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -278,6 +278,15 @@ static __maybe_unused int mdio_bus_phy_suspend(struct device *dev)
->   	if (phydev->mac_managed_pm)
->   		return 0;
->   
-> +	/* Wakeup interrupts may occur during the system sleep transition when
-> +	 * the PHY is inaccessible. Set flag to postpone handling until the PHY
-> +	 * has resumed. Wait for concurrent interrupt handler to complete.
-> +	 */
-> +	if (phy_interrupt_is_valid(phydev)) {
-> +		phydev->irq_suspended = 1;
-> +		synchronize_irq(phydev->irq);
-> +	}
-> +
->   	/* We must stop the state machine manually, otherwise it stops out of
->   	 * control, possibly with the phydev->lock held. Upon resume, netdev
->   	 * may call phy routines that try to grab the same lock, and that may
-> @@ -315,6 +324,20 @@ static __maybe_unused int mdio_bus_phy_resume(struct device *dev)
->   	if (ret < 0)
->   		return ret;
->   no_resume:
-> +	if (phy_interrupt_is_valid(phydev)) {
-> +		phydev->irq_suspended = 0;
-> +		synchronize_irq(phydev->irq);
-> +
-> +		/* Rerun interrupts which were postponed by phy_interrupt()
-> +		 * because they occurred during the system sleep transition.
-> +		 */
-> +		if (phydev->irq_rerun) {
-> +			phydev->irq_rerun = 0;
-> +			enable_irq(phydev->irq);
-> +			irq_wake_thread(phydev->irq, phydev);
-> +		}
-> +	}
-> +
->   	if (phydev->attached_dev && phydev->adjust_link)
->   		phy_start_machine(phydev);
->   
-> diff --git a/include/linux/phy.h b/include/linux/phy.h
-> index 508f1149665b..b09f7d36cff2 100644
-> --- a/include/linux/phy.h
-> +++ b/include/linux/phy.h
-> @@ -572,6 +572,10 @@ struct macsec_ops;
->    * @mdix_ctrl: User setting of crossover
->    * @pma_extable: Cached value of PMA/PMD Extended Abilities Register
->    * @interrupts: Flag interrupts have been enabled
-> + * @irq_suspended: Flag indicating PHY is suspended and therefore interrupt
-> + *                 handling shall be postponed until PHY has resumed
-> + * @irq_rerun: Flag indicating interrupts occurred while PHY was suspended,
-> + *             requiring a rerun of the interrupt handler after resume
->    * @interface: enum phy_interface_t value
->    * @skb: Netlink message for cable diagnostics
->    * @nest: Netlink nest used for cable diagnostics
-> @@ -626,6 +630,8 @@ struct phy_device {
->   
->   	/* Interrupts are enabled */
->   	unsigned interrupts:1;
-> +	unsigned irq_suspended:1;
-> +	unsigned irq_rerun:1;
->   
->   	enum phy_state state;
->   
+This is pushed here:
 
-Best regards
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git opp/config
+
+The entire patchset shall get merged via the OPP tree in 5.20-rc1, please do not
+merge individual patches.
+
+Thanks.
+
+--
+Viresh
+
+Viresh Kumar (31):
+  OPP: Track if clock name is configured by platform
+  OPP: Add dev_pm_opp_set_config() and friends
+  cpufreq: dt: Migrate to dev_pm_opp_set_config()
+  cpufreq: imx: Migrate to dev_pm_opp_set_config()
+  cpufreq: qcom-nvmem: Migrate to dev_pm_opp_set_config()
+  cpufreq: sti: Migrate to dev_pm_opp_set_config()
+  cpufreq: sun50i: Migrate to dev_pm_opp_set_config()
+  cpufreq: tegra20: Migrate to dev_pm_opp_set_config()
+  cpufreq: ti: Migrate to dev_pm_opp_set_config()
+  devfreq: exynos: Migrate to dev_pm_opp_set_config()
+  devfreq: sun8i: Migrate to dev_pm_opp_set_config()
+  devfreq: tegra30: Migrate to dev_pm_opp_set_config()
+  drm/lima: Migrate to dev_pm_opp_set_config()
+  drm/msm: Migrate to dev_pm_opp_set_config()
+  drm/panfrost: Migrate to dev_pm_opp_set_config()
+  drm/tegra: Migrate to dev_pm_opp_set_config()
+  media: venus: Migrate to dev_pm_opp_set_config()
+  media: tegra: Migrate to dev_pm_opp_set_config()
+  mmc: sdhci-msm: Migrate to dev_pm_opp_set_config()
+  OPP: ti: Migrate to dev_pm_opp_set_config()
+  soc/tegra: Remove the call to devm_pm_opp_set_clkname()
+  soc/tegra: Migrate to dev_pm_opp_set_config()
+  spi: qcom: Migrate to dev_pm_opp_set_config()
+  serial: qcom: Migrate to dev_pm_opp_set_config()
+  OPP: Remove dev_pm_opp_set_regulators() and friends
+  OPP: Remove dev_pm_opp_set_supported_hw() and friends
+  OPP: Remove dev_pm_opp_set_clkname() and friends
+  OPP: Remove dev_pm_opp_register_set_opp_helper() and friends
+  OPP: Remove dev_pm_opp_attach_genpd() and friends
+  OPP: Remove dev_pm_opp_set_prop_name() and friends
+  OPP: Rearrange dev_pm_opp_set_config() and friends
+
+ drivers/cpufreq/cpufreq-dt.c                  |  14 +-
+ drivers/cpufreq/imx-cpufreq-dt.c              |  12 +-
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          | 107 +---
+ drivers/cpufreq/sti-cpufreq.c                 |  22 +-
+ drivers/cpufreq/sun50i-cpufreq-nvmem.c        |  11 +-
+ drivers/cpufreq/tegra20-cpufreq.c             |  12 +-
+ drivers/cpufreq/ti-cpufreq.c                  |  38 +-
+ drivers/devfreq/exynos-bus.c                  |  14 +-
+ drivers/devfreq/sun8i-a33-mbus.c              |   7 +-
+ drivers/devfreq/tegra30-devfreq.c             |   8 +-
+ drivers/gpu/drm/lima/lima_devfreq.c           |  11 +-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   8 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |  10 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   5 +-
+ drivers/gpu/drm/msm/dp/dp_ctrl.c              |   5 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c            |   5 +-
+ drivers/gpu/drm/panfrost/panfrost_devfreq.c   |   9 +-
+ drivers/gpu/drm/tegra/gr3d.c                  |   6 +-
+ .../media/platform/qcom/venus/pm_helpers.c    |  16 +-
+ drivers/memory/tegra/tegra124-emc.c           |  14 +-
+ drivers/mmc/host/sdhci-msm.c                  |   5 +-
+ drivers/opp/core.c                            | 540 +++++++-----------
+ drivers/opp/opp.h                             |   2 +
+ drivers/opp/ti-opp-supply.c                   |   6 +-
+ drivers/soc/tegra/common.c                    |  14 +-
+ drivers/soc/tegra/pmc.c                       |   8 +-
+ drivers/spi/spi-geni-qcom.c                   |   5 +-
+ drivers/spi/spi-qcom-qspi.c                   |   5 +-
+ drivers/tty/serial/qcom_geni_serial.c         |   5 +-
+ include/linux/pm_opp.h                        | 118 ++--
+ 30 files changed, 444 insertions(+), 598 deletions(-)
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.31.1.272.g89b43f80a514
 
