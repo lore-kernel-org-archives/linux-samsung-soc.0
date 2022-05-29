@@ -2,165 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2091C433F5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 May 2022 09:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FBDC433FE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 May 2022 08:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238649AbiE0JMw (ORCPT
+        id S229707AbiE2IIB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 May 2022 05:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58720 "EHLO
+        Sun, 29 May 2022 04:08:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350532AbiE0JMR (ORCPT
+        with ESMTP id S229686AbiE2IIA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 May 2022 05:12:17 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B83B71356AA
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 May 2022 02:09:26 -0700 (PDT)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220527090924epoutp018450852a0c90812d1a3bbf073b162bbb~y6yaWrh_l0083500835epoutp01U
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 May 2022 09:09:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220527090924epoutp018450852a0c90812d1a3bbf073b162bbb~y6yaWrh_l0083500835epoutp01U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653642564;
-        bh=l/TZsav0OszkbX764K4zWsorfxudmDeJ7M6HuzVL3oQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ZWvV7lxx5ycMxkg6WTBuXyGTYpHV6caaAlYYvgfzyQSV4KMOuglEi4nNIpgdgpK5F
-         o9zuA7dSuMc5CHbRvTVy9z6b7If6migeusOno2lYmn3Vv17owzIVCuo8/OFXaxPTsK
-         aSIuhn1R6PbO4HSnFPi4HrO5dh4m5JusTAf81hmQ=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20220527090923epcas1p3865e3f2c73ee29423a1146695c297c18~y6yZdWwVu2103421034epcas1p3J;
-        Fri, 27 May 2022 09:09:23 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.233]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4L8fBV0dSSz4x9Pw; Fri, 27 May
-        2022 09:09:22 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3D.A5.10354.14590926; Fri, 27 May 2022 18:09:22 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220527090921epcas1p483e785670e3458f9abc9d40bb2e33d84~y6yX5zC8E1883118831epcas1p4V;
-        Fri, 27 May 2022 09:09:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220527090921epsmtrp1f0b324853bffd2b2bfd5e00e3d1835fb~y6yX4-KmN0585905859epsmtrp11;
-        Fri, 27 May 2022 09:09:21 +0000 (GMT)
-X-AuditID: b6c32a38-49fff70000002872-a9-62909541c29f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.BC.11276.14590926; Fri, 27 May 2022 18:09:21 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220527090921epsmtip13ef99f09c9d58a1972b5028c4c5f3121~y6yXqTvqS0727307273epsmtip19;
-        Fri, 27 May 2022 09:09:21 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: Add check for platform_driver_register
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, alim.akhtar@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski@linaro.org
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <377a917b-96b1-14ff-ee57-f841e12c3b41@samsung.com>
-Date:   Fri, 27 May 2022 18:09:23 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Sun, 29 May 2022 04:08:00 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DB6059942
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 May 2022 01:07:59 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id y13so15746390eje.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 May 2022 01:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=/9oKQoiIHCtLJ1GiPNcOALfaJrc/XLY9k2oODVX8Eww=;
+        b=pv4gsODv8js7J2ZgEckaxk4Syo6mbxwoGURgIzB+/fBFy+2coOTX+1ZawHUZbKHqWF
+         jYr4bXyX9PE1K0ObIz2S4tMh3pBNME174vnZcut/24uDizDJsbkQaraekMapUH3iVT5i
+         M6CVhqeAkNr7lakjLEy1+VZjClM7ZqfeMNb8VcqMcKoKUmDfWYf9UW1+78E8kxDCIO75
+         4hNhp0J8epVs2xbnPm4SK4J49MUskVtz8qJY7USgjszj2kdrT7Cb5VMSZ7r8JsbsU/zp
+         VSzjOY6zCUlZgDWJYbu2/Poe5ohrBPNSiVtymmmOwdQcZ+yIYGHx6En9A4wVEeLj5Sji
+         YFrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=/9oKQoiIHCtLJ1GiPNcOALfaJrc/XLY9k2oODVX8Eww=;
+        b=XkveI5mBIRUWIO7gvr38YrlDLIH1iIHJrKsfa6B4XdcAE5TkveV5VytgkPFWpsh/eP
+         siqSc/Ah+GoNHJhs1FNDMdCdBwnl6l8bsxYqcMtryQLPyXRPks9ZQuuoShoRN9pIhCAG
+         TNT0NOKLu3/m5lf8fHXYzX+sv55dBMvq+yxM4y62QtsN3FK/IcY9GUo7hqhKi5kydADA
+         5RuOYW7bjzDvtSm7BhArUibA4cGtzAGGINa78s8bqDgMar23h9Vj8Z8dq1Jb0YxEqHzG
+         kms/N7tXan8yz4V8vV5MhcrnLNl3GVaczTNs43My7HXgTSWyO3UtFaCIuoIqyYuTgv7B
+         Bvng==
+X-Gm-Message-State: AOAM532Roxxney8wlYZcpwju6n0rirMRZieWWWWuMB38x+pUgosA4buf
+        BxYMYttSFgu9b2uA7GmOoSX4BQ==
+X-Google-Smtp-Source: ABdhPJy2rTrwJjkzwEbnjBlix/SQVyAjaLRROArqJUFGXbwwsBqpTnCdUXq1Bry4EYrEXx/2LauiKA==
+X-Received: by 2002:a17:906:3958:b0:6fe:90ef:c4b with SMTP id g24-20020a170906395800b006fe90ef0c4bmr44916053eje.36.1653811677641;
+        Sun, 29 May 2022 01:07:57 -0700 (PDT)
+Received: from [192.168.0.177] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id v2-20020a509542000000b0042dcd6f9994sm595545eda.9.2022.05.29.01.07.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 May 2022 01:07:57 -0700 (PDT)
+Message-ID: <89cc9ef4-7a6c-4dd0-3aac-8ad22d8ada2e@linaro.org>
+Date:   Sun, 29 May 2022 10:07:56 +0200
 MIME-Version: 1.0
-In-Reply-To: <20220526101215.1519155-1-jiasheng@iscas.ac.cn>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 1/7] ARM: dts: s3c2410: use local header for pinctrl
+ register values
 Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Rob Herring' <robh+dt@kernel.org>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        'Tomasz Figa' <tomasz.figa@gmail.com>,
+        'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+        'Linus Walleij' <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20220526143707.767490-1-krzysztof.kozlowski@linaro.org>
+ <CGME20220526143736epcas2p27f8a54ddcb91aa4a66adc287af0491c3@epcas2p2.samsung.com>
+ <20220526143707.767490-2-krzysztof.kozlowski@linaro.org>
+ <012d01d87181$5b9e23c0$12da6b40$@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <012d01d87181$5b9e23c0$12da6b40$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmrq7T1AlJBv82MVo8mLeNzWLJ0aOM
-        Fntfb2W32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhaH37SzWvy7tpHFYtWuP4wO3B7vb7Sy
-        e+ycdZfdY9+OzYwem1Z1snncubaHzWPzknqPvi2rGD0+b5IL4IjKtslITUxJLVJIzUvOT8nM
-        S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBulNJoSwxpxQoFJBYXKykb2dTlF9a
-        kqqQkV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ3xa9ct1oIG7oqO054NjNM5
-        uxg5OSQETCRu7TzI3MXIxSEksINR4sKGS0wQzidGiSNn5rBBON8YJY4tmssM03K16ShUy15G
-        iQOdi6Ba3jNKvF15mLGLkYNDWMBTorM7CiQuInCAUeJB4zGwUcwCbYwST3euYAEZxSagJbH/
-        xQ02EJtfQFHi6o/HjCA2r4CdxMbrV9hBbBYBVYld5w6DxUUFwiRObmuBqhGUODnzCdgcTgEb
-        iX/7foCdxywgLnHryXwmCFteYvvbOWCnSghc4JD4cvAUE8QPLhIbD7xjhbCFJV4d38IOYUtJ
-        vOxvY4doaGaUaHhxmxHC6WGUOPqsjwWiylhi/9LJTCB/MgtoSqzfpQ8RVpTY+XsuI8RmPol3
-        X3tYQUokBHglOtqEIEqUJS4/uAt1g6TE4vZOtgmMSrOQ/DMLyQ+zkPwwC2HZAkaWVYxiqQXF
-        uempxYYFJvD4Ts7P3cQITsVaFjsY5779oHeIkYmD8RCjBAezkgjvhae9SUK8KYmVValF+fFF
-        pTmpxYcYTYEhPJFZSjQ5H5gN8kriDU0sDUzMjIxNLAzNDJXEeXunnk4UEkhPLEnNTk0tSC2C
-        6WPi4JRqYHJ4qVU9+duPctuFYsoPS6UYpcOnNdtdmnha0ulpxallk5h/+3EeCXRecbJ+os3m
-        2xuDVgj4TNL/0rVnRvD2+LpLm143p/789f5xsO2vjvX/hG11U3p/qDx5s/MD0xzrNGaNtHoT
-        w9OJFgsCpevldeLucpSc12c8tEs+O9DWXzRteozG7pxJZVu5uucpiRyU0C26Y/3UhCda2lRO
-        nPd/g1Gs4QnziI+T0xni9tl18pwzjGp6zPvRYq7P9qfdrUGLe3xUdS7tO206eUEO17F3rYui
-        DYKezIr9tdW02/Ss7QFT/RvZdRN1g2LV24u1tpzw1PqYwXTx0WmloLiONBEP4wPbFztPn2yf
-        dvDbydmHlViKMxINtZiLihMBxQYIjk4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsWy7bCSnK7j1AlJBhdnyFg8mLeNzWLJ0aOM
-        Fntfb2W32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhaH37SzWvy7tpHFYtWuP4wO3B7vb7Sy
-        e+ycdZfdY9+OzYwem1Z1snncubaHzWPzknqPvi2rGD0+b5IL4IjisklJzcksSy3St0vgyvi1
-        6xZrQQN3RcdpzwbG6ZxdjJwcEgImElebjjJ3MXJxCAnsZpQ409bGCpGQlJh2ESTBAWQLSxw+
-        XAwSFhJ4yyjxbqIgSFhYwFOiszsKpFVE4ACjxLOv2xhBHGaBNkaJ251PoIb2M0r8e9vDAtLN
-        JqAlsf/FDTYQm19AUeLqj8eMIDavgJ3ExutX2EFsFgFViV3nDoPFRQXCJHYuecwEUSMocXLm
-        E7A5nAI2Ev/2/WAGsZkF1CX+zLsEZYtL3HoynwnClpfY/nYO8wRG4VlI2mchaZmFpGUWkpYF
-        jCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGC41FLcwfj9lUf9A4xMnEwHmKU4GBW
-        EuG98LQ3SYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQam
-        gGsv5hr61cS3bf3/48OM6fvPTXgZuffrJbE6FXmHR3NN1VZpfvjbfyboV41p/Dyx8kXlizfv
-        UX9ks+BiimH92oavHWsNponObHU9cN59TvB9hbNl637IT9nBF3As+jKrO/va9cn7DvH/Pc1S
-        JFV0/3B53KXsy9rxcUWWXCG7apRn/H5osZHjp35tWn7W/0/Tr7l6zpgbwXupdv6/8lWez+ed
-        y3L46H19a6rRlqfzzgqkTtgwJfjVl02ni4RPvfm0cO3MR2/4op/M73AJLvy+86FidOveKyUy
-        uzh2v5325GzIR8Hwu7Ebs9J83udWpIhoPPRx2H5ONdulqpUx6/2DH5PvZjIEvgoPZ70llGWx
-        KEyJpTgj0VCLuag4EQDtxTu+NgMAAA==
-X-CMS-MailID: 20220527090921epcas1p483e785670e3458f9abc9d40bb2e33d84
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220526101239epcas1p33aec5e8e0386d6b986ffb16bc3f68bab
-References: <CGME20220526101239epcas1p33aec5e8e0386d6b986ffb16bc3f68bab@epcas1p3.samsung.com>
-        <20220526101215.1519155-1-jiasheng@iscas.ac.cn>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 5/26/22 7:12 PM, Jiasheng Jiang wrote:
-> As platform_driver_register() could fail, it should be better
-> to deal with the return value in order to maintain the code
-> consisitency.
+On 27/05/2022 06:22, Chanho Park wrote:
+>> Subject: [PATCH 1/7] ARM: dts: s3c2410: use local header for pinctrl
+>> register values
+>>
+>> The DTS uses hardware register values directly in pin controller pin
+>> configuration.  These are not some IDs or other abstraction layer but raw
+>> numbers used in the registers.
+>>
+>> These numbers were previously put in the bindings header to avoid code
+>> duplication and to provide some context meaning (name), but they do not
+>> fit the purpose of bindings.  It is also quite confusing to use constants
+>> prefixed with Exynos for other SoC, because there is actually nothing here
+>> in common, except the actual value.
+>>
+>> Store the constants in a header next to DTS and use them instead of
+>> bindings.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/s3c2410-pinctrl.h    | 19 +++++++++++++
+>>  arch/arm/boot/dts/s3c2416-pinctrl.dtsi | 38 +++++++++++++-------------
+>>  2 files changed, 38 insertions(+), 19 deletions(-)  create mode 100644
+>> arch/arm/boot/dts/s3c2410-pinctrl.h
+>>
+>> diff --git a/arch/arm/boot/dts/s3c2410-pinctrl.h
+>> b/arch/arm/boot/dts/s3c2410-pinctrl.h
+>> new file mode 100644
+>> index 000000000000..71cb0ac815b3
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/s3c2410-pinctrl.h
+>> @@ -0,0 +1,19 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Samsung's Exynos pinctrl bindings
 > 
-> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
-> ---
->  drivers/clk/samsung/clk-exynos5-subcmu.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-> index 65c82d922b05..8b090481a9dc 100644
-> --- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-> @@ -188,8 +188,18 @@ static struct platform_driver exynos5_clk_driver __refdata = {
->  
->  static int __init exynos5_clk_drv_init(void)
->  {
-> -	platform_driver_register(&exynos5_clk_driver);
-> -	platform_driver_register(&exynos5_subcmu_driver);
-> +	int ret;
-> +
-> +	ret = platform_driver_register(&exynos5_clk_driver);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = platform_driver_register(&exynos5_subcmu_driver);
-> +	if (ret) {
-> +		platform_driver_unregister(&exynos5_clk_driver);
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  core_initcall(exynos5_clk_drv_init);
+> "Exynos" -> "s3c2410"
 > 
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Thanks, I need to fix it also in other files.
 
-Thanks.
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Best regards,
+Krzysztof
