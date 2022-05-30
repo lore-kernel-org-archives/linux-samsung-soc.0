@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9486DC43219
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 May 2022 13:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A99DDC4332F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 May 2022 13:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237699AbiE3Nif (ORCPT
+        id S234815AbiE3NyS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 May 2022 09:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56320 "EHLO
+        Mon, 30 May 2022 09:54:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237598AbiE3Ngz (ORCPT
+        with ESMTP id S238516AbiE3NwU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 May 2022 09:36:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 798B86D396;
-        Mon, 30 May 2022 06:30:39 -0700 (PDT)
+        Mon, 30 May 2022 09:52:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0293B12AC8;
+        Mon, 30 May 2022 06:37:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 26B60B80DAD;
-        Mon, 30 May 2022 13:30:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8099C3411C;
-        Mon, 30 May 2022 13:30:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 94F6660F9C;
+        Mon, 30 May 2022 13:37:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D53C385B8;
+        Mon, 30 May 2022 13:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653917436;
-        bh=p85B30dk9OhAgqXpoKQRxZZSIMPJk0LPPpMeE1vocXM=;
+        s=k20201202; t=1653917845;
+        bh=CTn9HCUjXYHSwA99rQmy+i5tCftAg7PvxJaOxRnYJjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YYixhiyn7uUOfBnaD3GRTlG6rt2pFXg4bRsH7NwVNKU1nzYZsFWuXOvZuca2aJWeT
-         SF22lyEIbf5UbVbfMijNXUiixEA7Etlzki9GFAE0zqBuuUmliaKw+ue7OZzPezWAWS
-         ea7uiteyJ+VH2ZmVEIZZONdzB2y/MT3PLR23wmnyIXOOfOx4tNUUEaVzPFs4HkAtwa
-         gI9fuhdud/he47zDCz48Lx08VCBoFMvCpYzbo7iPKtOL24EkOyXcyMf0werX947Y2P
-         Q3NtDU3pL2gw0HcpBjGER0/lxMeyepmqmuCbaLTHeYmHyJIz6gxAjHwkXDUCWDSi9V
-         wRy7QQjG/qjUA==
+        b=TLRK+UyMWXkZmpqp9dczvv/pK6aQemozcUuCWF8mQjXRoZ6p1Sc57ZYf8/lSB0uQZ
+         Bet3Xrke/LHY7q1jM8EJ4yEGtamgiKF/1i1EbkF0453cvRvcf1ZBkpFLbzvgUedWc4
+         jeQj5Ut1dWUp9ktd6IwUEzRWuyOR4+wSBUUnkW+uideIl7OTDdfQiJtCoPGElsquPU
+         tvc7iCTFCP14dAzgPxpKO2fLKLU3PlLLnLRKIPpV9GV4yJNBM3RZfMZ2pYY0xTE7jK
+         n+/P+efi61eMRElFn96EGyykkrYv/GbraOmY6SAmBQQ9p9i35hN5PzRLt2rwNBhRGx
+         Bl/otTGdcgGJg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kwanghoon Son <k.son@samsung.com>,
         kernel test robot <lkp@intel.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, s.nawrocki@samsung.com,
+        Sasha Levin <sashal@kernel.org>,
         krzysztof.kozlowski@linaro.org, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.18 135/159] media: exynos4-is: Fix compile warning
-Date:   Mon, 30 May 2022 09:24:00 -0400
-Message-Id: <20220530132425.1929512-135-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.17 113/135] media: exynos4-is: Fix compile warning
+Date:   Mon, 30 May 2022 09:31:11 -0400
+Message-Id: <20220530133133.1931716-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220530132425.1929512-1-sashal@kernel.org>
-References: <20220530132425.1929512-1-sashal@kernel.org>
+In-Reply-To: <20220530133133.1931716-1-sashal@kernel.org>
+References: <20220530133133.1931716-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -72,13 +72,13 @@ Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/samsung/exynos4-is/fimc-isp-video.h | 2 +-
+ drivers/media/platform/exynos4-is/fimc-isp-video.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-isp-video.h b/drivers/media/platform/samsung/exynos4-is/fimc-isp-video.h
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.h b/drivers/media/platform/exynos4-is/fimc-isp-video.h
 index edcb3a5e3cb9..2dd4ddbc748a 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-isp-video.h
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-isp-video.h
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.h
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.h
 @@ -32,7 +32,7 @@ static inline int fimc_isp_video_device_register(struct fimc_isp *isp,
  	return 0;
  }
