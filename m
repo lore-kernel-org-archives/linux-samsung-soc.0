@@ -2,56 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4DDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 May 2022 04:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690E8C433F5
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 May 2022 05:04:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243854AbiEaEiP (ORCPT
+        id S241494AbiEaFEB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 31 May 2022 00:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47610 "EHLO
+        Tue, 31 May 2022 01:04:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243864AbiEaEiN (ORCPT
+        with ESMTP id S229468AbiEaFEA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 May 2022 00:38:13 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA11E91584
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 May 2022 21:38:11 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id n13-20020a17090a394d00b001e30a60f82dso1303049pjf.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 May 2022 21:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VkpYRAJ/gqW49paTS4w2txVNaxPjLbcfc90XJicK11w=;
-        b=EsSXqSMWaavhIrx8cnuacQZNzt0hSQNULiVPQaZaP5IPJt9Er+LBshF8bi6yO1bXIx
-         v3CwPgxDT1WS3hlwPIqabxQ20jR/Usp7IQpM0c7KTUS7TxmU6pJeZRn06ygEOzeexAI5
-         J/1plNiX4RFkyoPVbVMHScDP0DNyf91L4x65fgBOlODLG96W9alHBtZwDsDz2WzbMUH8
-         fxTT6o435FmDvd9L3OvcDl/sibkXkEl91jEOllXI++BCBDcHUIqhipXjybj7jKKlDAzL
-         P7/snh60BgOqoEhO29/xLmNmotHq29gwqkUZPPk2e2rEKqZqWeSOSDkF+dZZjD4+qj6s
-         Wwlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VkpYRAJ/gqW49paTS4w2txVNaxPjLbcfc90XJicK11w=;
-        b=di5/N4rqco463G3oS7ikRttM4oO9xeswDCBp6WTAVNMCjDVhkEkyP3Yh/GZwNrNnDO
-         cs8wDlFnIIgiH23SozBR6F44lKL98H+YXOD+PFSMhUVDN50nJRX+ft+x34FdRuSBqKv+
-         OGXXunWO7VzUfn7IH0UlTKBu8O2XSDn8rwdG/UvBr/E8roSpWTCHt+u+GER/lWQ71Rvq
-         Ltae6oPGqPUPOcXxReGs4NDufRt4tIv4k7Xj4OPg1s6HdxsMlDwliJf4da0FaaUyw0IE
-         yhym8+jMi1ol8FS/Wn7mG/JQw7g6a7WWSAIaxD6KUHgP6P4J0OljRgsO86CeGMgvWpTi
-         +6SQ==
-X-Gm-Message-State: AOAM530akJYNTmxsxGe3V2ERFK2/R9XKu/bNe53nqKXgRw7blLEbi6m6
-        9IkBOq/4XyZesDzQRndzlViGnw==
-X-Google-Smtp-Source: ABdhPJxw5iqeIxTuGzPM8M4vMYs13mh+v3AxbVH104yM/SKez7nK+g3nhbj8GPjiGXZArl1uPpa3uA==
-X-Received: by 2002:a17:90a:ae14:b0:1e0:51fa:5182 with SMTP id t20-20020a17090aae1400b001e051fa5182mr26502725pjq.60.1653971891294;
-        Mon, 30 May 2022 21:38:11 -0700 (PDT)
-Received: from localhost ([122.162.234.2])
-        by smtp.gmail.com with ESMTPSA id e20-20020a635014000000b003f70a4445bfsm9321014pgb.28.2022.05.30.21.38.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 May 2022 21:38:10 -0700 (PDT)
-Date:   Tue, 31 May 2022 10:08:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
+        Tue, 31 May 2022 01:04:00 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5DC76D967
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 May 2022 22:03:56 -0700 (PDT)
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220531050350epoutp04560612f9122f6836dde49e2a62a62cc2~0GBJ8hlNK1294812948epoutp046
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 May 2022 05:03:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220531050350epoutp04560612f9122f6836dde49e2a62a62cc2~0GBJ8hlNK1294812948epoutp046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1653973430;
+        bh=K2k1Ywgc0/YF1YoLECrBkBiSz753RyZ3uT7PR6vqfMA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=TWPykm5T+Ayj0oMpHoV9wBkut0tqMU0v3c6r8i79EkmdWScvbJWAQ2ZMcBCN9Cn+i
+         JgU3fBNU8EehSUFjgOXlErT/sAMUmHLwhln4Cnp9EWe+XydrdXXPsv0C2C69ovmRzf
+         GzM36kNRMe67rVaCx6mI+3JdGv2B95baDAUbvc1U=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20220531050350epcas1p327810a1642338af39fbf513326dec4c9~0GBJSqzYE2707027070epcas1p3E;
+        Tue, 31 May 2022 05:03:50 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.36.134]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4LC0YK0c5Tz4x9QJ; Tue, 31 May
+        2022 05:03:49 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E7.1B.09785.3B1A5926; Tue, 31 May 2022 14:03:47 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220531050346epcas1p218554f6c560c9cc321aa477b349c0701~0GBGJsc2R1200512005epcas1p2n;
+        Tue, 31 May 2022 05:03:46 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220531050346epsmtrp2bda96ea5f86806e318d8121134c8fb17~0GBGIf0Pa2516025160epsmtrp2c;
+        Tue, 31 May 2022 05:03:46 +0000 (GMT)
+X-AuditID: b6c32a36-c9dff70000002639-3c-6295a1b34e31
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        50.70.08924.2B1A5926; Tue, 31 May 2022 14:03:46 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220531050346epsmtip155f38ff89be7c800b1566f31a8e6591e~0GBFzPZDR2027420274epsmtip1r;
+        Tue, 31 May 2022 05:03:46 +0000 (GMT)
+Subject: Re: [PATCH 10/31] devfreq: exynos: Migrate to
+ dev_pm_opp_set_config()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -63,42 +67,88 @@ Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/31] devfreq: exynos: Migrate to dev_pm_opp_set_config()
-Message-ID: <20220531043809.xfpzz6c7x6utyjb3@vireshk-i7>
-References: <cover.1653564321.git.viresh.kumar@linaro.org>
- <CGME20220526114410epcas1p27ad1ed594737423fb967f92529a1abd5@epcas1p2.samsung.com>
- <052c4937ce408a01de5cd7d7e359d333f9b11e57.1653564321.git.viresh.kumar@linaro.org>
- <9d492494-4a0a-f690-6a80-2bba5d8633b9@samsung.com>
- <d9a96812-fd4e-cf46-cbe5-63f0e1d373a1@samsung.com>
- <20220531041505.egfe2kpi3bgb6l55@vireshk-i7>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <21da6fa9-4b10-bbfc-8577-0901118388a5@samsung.com>
+Date:   Tue, 31 May 2022 14:03:46 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20220531041505.egfe2kpi3bgb6l55@vireshk-i7>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmvu7mhVOTDN7+4LZ4MG8bm8X58xvY
+        Lfa+3spucbbpDbvFpsfXWC0u75rDZvG59wijxYzz+5gsbjeuYLN48+Msk8WZ05dYLf5d28hi
+        0XHkG7PFxq8eDnwem1Z1snncubaHzWPzknqPLVfbWTz6tqxi9Dh+YzuTx+dNcgHsUdk2GamJ
+        KalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUAXKymUJeaUAoUC
+        EouLlfTtbIryS0tSFTLyi0tslVILUnIKTAv0ihNzi0vz0vXyUkusDA0MjEyBChOyM7r/TGQp
+        WM5dsXn1RZYGxrccXYycHBICJhKPe++zdDFycQgJ7GCUuL5gPzOE84lR4uqk6YwQzmdGiUO3
+        NrDDtLTtmAOV2MUo8ff5RzYI5z2jxMJH78CqhAUCJCb8fQ80i4NDREBL4uXNVJAaZoFvzBIt
+        yxYwgdSwAcX3v7jBBmLzCyhKXP3xmBHE5hWwk/j1Yw1YnEVAVeLW85tgcVGBMImT21qgagQl
+        Ts58wgJicwpYSpyYvhesnllAXOLWk/lMELa8xPa3c8D+kRC4wSExa9tsqBdcJPa8esMMYQtL
+        vDq+BSouJfH53V42iIZmRomGF7cZIZweRomjz/pYIKqMJfYvncwE8hqzgKbE+l36EGFFiZ2/
+        5zJCbOaTePe1hxWkREKAV6KjTQiiRFni8oO7TBC2pMTi9k62CYxKs5D8MwvJD7OQ/DALYdkC
+        RpZVjGKpBcW56anFhgVG8PhOzs/dxAhOz1pmOxgnvf2gd4iRiYPxEKMEB7OSCK9VxNQkId6U
+        xMqq1KL8+KLSnNTiQ4ymwBCeyCwlmpwPzBB5JfGGJpYGJmZGxiYWhmaGSuK8q6adThQSSE8s
+        Sc1OTS1ILYLpY+LglGpgShQ9l/jl57qnepHrb2bcOm+y9MHXa12pO4SuFm0Iyf22L9eiqvyE
+        xbXzZ62f7A73/Lj11LfzxXkH/tk+33NDPPP8pdwFBT9/e+zbx3pizy/rxc43hLKb+TOfbdnw
+        5KhgE8sR6/AcxUKnz6XXFOTLtGukrZrzvLdsfyMuJnH2fZsNB6/O+1OCfgcD9zWr2Xuq3Qk7
+        fyC4NbEr+q+kkdC+Jfejyjxuf3Zo1g0on+oaMGuyn5mBpFDe/E2x3WemO8wMrq4Or/maaC18
+        peql+TLXW+8msfHviI+PnlakJxe2fr9sW212d+SSiNbMVbGl57YEmy+1DNr0/44KQ2nByf/5
+        dnILKlUNIutU4rdtyl+txFKckWioxVxUnAgAksZOYVgEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsWy7bCSnO6mhVOTDFomq1o8mLeNzeL8+Q3s
+        Fntfb2W3ONv0ht1i0+NrrBaXd81hs/jce4TRYsb5fUwWtxtXsFm8+XGWyeLM6UusFv+ubWSx
+        6Djyjdli41cPBz6PTas62TzuXNvD5rF5Sb3HlqvtLB59W1Yxehy/sZ3J4/MmuQD2KC6blNSc
+        zLLUIn27BK6M7j8TWQqWc1dsXn2RpYHxLUcXIyeHhICJRNuOOYxdjFwcQgI7GCXefrzKBJGQ
+        lJh28ShzFyMHkC0scfhwMUTNW0aJR9/7wGqEBfwkHn67wghSIyKgJfHyZipIDbPAH2aJ1tU9
+        rBANv5kknv1czwrSwAZUtP/FDTYQm19AUeLqj8eMIDavgJ3Erx9rwOIsAqoSt57fBIuLCoRJ
+        7FzymAmiRlDi5MwnLCA2p4ClxInpe8HqmQXUJf7Mu8QMYYtL3HoynwnClpfY/nYO8wRG4VlI
+        2mchaZmFpGUWkpYFjCyrGCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCo1RLawfjnlUf
+        9A4xMnEwHmKU4GBWEuG1ipiaJMSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU
+        1ILUIpgsEwenVAPTjHZ3h9V+93ku1jHuWTmV9Y5TkMKT6HZmC73ae0b/JjSnbFOfO8nvv/IW
+        n9vzmnf5s3AKM97iLUhL5tbOT05oz4+MnHa9y/LE/r1dq58JMkk+ejjNc3teTMiuLykpqdNK
+        lvi0nPRoutJskbhXp2la3sfrcS/V+GSTz+dXMP7aaSpla1FQ6mvNu7bEX+1q0KGK791btEKC
+        b28ISrpwIVZs25fnksmpupHVKXtF3iWIcewJdDOJ4rymckT32ddAq4a+BP6tG5Z32m6rPZ3P
+        fuN15YdH8y0UujnDgoo1Cp/KsGRczEv8lZWRLPR518HEC6VWM6w/LzrtYrvu6kS/Caf2tz8V
+        PMC+Ut6dI/27lBJLcUaioRZzUXEiAIrtDARBAwAA
+X-CMS-MailID: 20220531050346epcas1p218554f6c560c9cc321aa477b349c0701
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220526114410epcas1p27ad1ed594737423fb967f92529a1abd5
+References: <cover.1653564321.git.viresh.kumar@linaro.org>
+        <CGME20220526114410epcas1p27ad1ed594737423fb967f92529a1abd5@epcas1p2.samsung.com>
+        <052c4937ce408a01de5cd7d7e359d333f9b11e57.1653564321.git.viresh.kumar@linaro.org>
+        <9d492494-4a0a-f690-6a80-2bba5d8633b9@samsung.com>
+        <d9a96812-fd4e-cf46-cbe5-63f0e1d373a1@samsung.com>
+        <20220531041505.egfe2kpi3bgb6l55@vireshk-i7>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 31-05-22, 09:45, Viresh Kumar wrote:
+On 5/31/22 1:15 PM, Viresh Kumar wrote:
 > On 31-05-22, 13:12, Chanwoo Choi wrote:
-> > I try to find the cause of this warning.
-> > I think that dev_pm_opp_clear_config needs to check
-> > whether 'opp_table' is NULL or not as following:
-> > 
-> > 
-> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > index fba6e2b20b8f..cbf8f10b9ff0 100644
-> > --- a/drivers/opp/core.c
-> > +++ b/drivers/opp/core.c
-> > @@ -2598,6 +2598,9 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_set_config);
-> >   */
-> >  void dev_pm_opp_clear_config(struct opp_table *opp_table)
-> >  {
-> > +       if (unlikely(!opp_table))
-> > +               return;
-> > +
-> >         if (opp_table->genpd_virt_devs)
-> >                 dev_pm_opp_detach_genpd(opp_table);
+>> I try to find the cause of this warning.
+>> I think that dev_pm_opp_clear_config needs to check
+>> whether 'opp_table' is NULL or not as following:
+>>
+>>
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index fba6e2b20b8f..cbf8f10b9ff0 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -2598,6 +2598,9 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_set_config);
+>>   */
+>>  void dev_pm_opp_clear_config(struct opp_table *opp_table)
+>>  {
+>> +       if (unlikely(!opp_table))
+>> +               return;
+>> +
+>>         if (opp_table->genpd_virt_devs)
+>>                 dev_pm_opp_detach_genpd(opp_table);
 > 
 > Does this fixes it for you ?
 > 
@@ -107,51 +157,23 @@ On 31-05-22, 09:45, Viresh Kumar wrote:
 > 
 > Can you check why exynos is passing NULL here as I don't see an
 > obvious reason currently.
+> 
 
-Looking at the exynos devfreq driver again, it feels like the design
-of the driver itself is causing all these issues.
+exynos-bus.c contains the two type of devfreq device as following:
+1. devfreq device controls the regulator
+2. devfreq device doesn't control the regulator
 
-Ideally, whatever resources are acquired by probe() must be freed only
-and only by remove()/shutdown(). But you are trying to do it from
-exynos_bus_exit() as well. Calling dev_pm_opp_of_remove_table() as
-well from this function is wrong as you may very well end up
-corrupting the OPP refcount and OPP may never get freed or something
-else may come up.
+Above two devfreq devices share the same error path
+because two devices are similar.
 
-For now I am adding following to the patch, please see if it fixes it
-or not (I have pushed the changes to my branch as well).
+As you said, if you use WARN(),
+I can change it on exynos-bus.c as following:
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 780e525eb92a..8fca24565e7d 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -161,8 +161,11 @@ static void exynos_bus_exit(struct device *dev)
+if (bus->opp_table)
+    dev_pm_opp_clear_config(bus->opp_table)
 
-        dev_pm_opp_of_remove_table(dev);
-        clk_disable_unprepare(bus->clk);
--       dev_pm_opp_clear_config(bus->opp_table);
--       bus->opp_table = NULL;
-+
-+       if (bus->opp_table) {
-+               dev_pm_opp_clear_config(bus->opp_table);
-+               bus->opp_table = NULL;
-+       }
- }
-
- static void exynos_bus_passive_exit(struct device *dev)
-@@ -463,8 +466,10 @@ static int exynos_bus_probe(struct platform_device *pdev)
-        dev_pm_opp_of_remove_table(dev);
-        clk_disable_unprepare(bus->clk);
- err_reg:
--       dev_pm_opp_clear_config(bus->opp_table);
--       bus->opp_table = NULL;
-+       if (bus->opp_table) {
-+               dev_pm_opp_clear_config(bus->opp_table);
-+               bus->opp_table = NULL;
-+       }
-
-        return ret;
- }
 
 -- 
-viresh
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
