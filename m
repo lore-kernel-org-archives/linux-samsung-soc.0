@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF85C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jun 2022 14:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F49CCA468
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jun 2022 14:11:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354613AbiFAOH3 (ORCPT
+        id S1355113AbiFAOLg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 10:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
+        Wed, 1 Jun 2022 10:11:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355811AbiFAOG1 (ORCPT
+        with ESMTP id S1354716AbiFAOJd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jun 2022 10:06:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0FCA26E9;
-        Wed,  1 Jun 2022 07:00:08 -0700 (PDT)
+        Wed, 1 Jun 2022 10:09:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B2B38B8;
+        Wed,  1 Jun 2022 07:00:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 15B2CB81A79;
-        Wed,  1 Jun 2022 14:00:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64281C385B8;
-        Wed,  1 Jun 2022 14:00:05 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D50A1B81A79;
+        Wed,  1 Jun 2022 14:00:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7301DC34119;
+        Wed,  1 Jun 2022 14:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654092006;
-        bh=LR5y9E9nWt1sGibrePDb2EOTfwoHwkB3Ff7y1/9/aH8=;
+        s=k20201202; t=1654092040;
+        bh=3ayjXfh8crDvx/tS+PqRBF69eq4DxJ+TQm7C1u1kBJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lzr89k8XEQrGfg+EX8XRLGaxqRr8yOQGB7RwxSSY+FZ5fsPkMT2CJ4gZhOfse5ioq
-         5+HRG83LWb/KtS6RTvRf/+or3OU6ufa34TVo4fjHzfkmFVlEFJU0S7pdLA1PMgIEEE
-         9XBcHNlDOzH1dDGM9eVwvq3F3Do6hyHLLYDd0Kxly4kru4RRTWXDcapbf53KvQXuuh
-         uwX+hg+82THLBC1BPpb5fVDT1oYdkHyTEC/tTyaCyXXzp0ASJqOd1tLQ67KvBAuH6g
-         2Gu7z/DuW2GA+swz9vZqEwCwBYuA2QZvSVfuuHf5uDFa78IRE0UBHVm7zpQ9KnUCyp
-         VbPagbQgL83wg==
+        b=XGJWcDW5D6rAsk9WNkCW+XZMAAmK4vpIKbWWhYpC6UDSDWQq2xylySrWzwcv7uvvT
+         syRllqpa9IkxbnRDErxaET4qS1pSMUjzZTPUWUpOQAWSysMcbWqRDP4Gvo0B26uSCu
+         iTyROfhzNO7hZUzuFMSn8jBivWBJzdEgDsD2JEvnFrmWA/zML2UiMfE4GuG4vWn5AT
+         IP5CjSJ1KULHYyeDAy0hcwJkf/hm7EBmHe+fnnb3adhzL0LOFlPsh4W/S52ES/k9RO
+         fWA9OVvznBSukvX1lFU6d2tzdwbrhh/Kyf8CsJNqKiIHdYESAAv/aHJWVPe9Nrc8jr
+         4Xoff6gtwxjqg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -40,12 +40,12 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 08/15] ARM: dts: exynos: add atmel,24c128 fallback to Samsung EEPROM
-Date:   Wed,  1 Jun 2022 09:59:43 -0400
-Message-Id: <20220601135951.2005085-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 07/14] ARM: dts: exynos: add atmel,24c128 fallback to Samsung EEPROM
+Date:   Wed,  1 Jun 2022 10:00:20 -0400
+Message-Id: <20220601140027.2005280-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220601135951.2005085-1-sashal@kernel.org>
-References: <20220601135951.2005085-1-sashal@kernel.org>
+In-Reply-To: <20220601140027.2005280-1-sashal@kernel.org>
+References: <20220601140027.2005280-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -70,10 +70,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 80479ed69070..95a93ef80d97 100644
+index a3c4b9e03fbf..dc539a4eb27a 100644
 --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
 +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -127,7 +127,7 @@ &i2c_0 {
+@@ -128,7 +128,7 @@ &i2c_0 {
  	samsung,i2c-max-bus-freq = <20000>;
  
  	eeprom@50 {
@@ -82,7 +82,7 @@ index 80479ed69070..95a93ef80d97 100644
  		reg = <0x50>;
  	};
  
-@@ -286,7 +286,7 @@ &i2c_1 {
+@@ -287,7 +287,7 @@ &i2c_1 {
  	samsung,i2c-max-bus-freq = <20000>;
  
  	eeprom@51 {
