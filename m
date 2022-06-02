@@ -2,172 +2,130 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12A3CCA47E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Jun 2022 21:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC61CC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jun 2022 02:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231769AbiFAVjp (ORCPT
+        id S233268AbiFBCH3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 17:39:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60828 "EHLO
+        Wed, 1 Jun 2022 22:07:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231733AbiFAVjf (ORCPT
+        with ESMTP id S233266AbiFBCH2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jun 2022 17:39:35 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0DD680211;
-        Wed,  1 Jun 2022 14:39:34 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id h19so3953304edj.0;
-        Wed, 01 Jun 2022 14:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HXG8iLTreEU+J/lVUamzhi0tH1NJB4Nk+ekloWw8ey0=;
-        b=q4sLaUb6C9WHlwr+BGtYiNab+Z/9DFTw/uTcExKbl2Bd5TMyKEB6byulmZruXYeFpm
-         NO9nA8ViBmJToeHcrKcupIiudItTFnvrD0V/o8eqdLkD6zec5d4wOZnERcm5HwbRurkx
-         B+6Ys3bd/cKLqEm4Nl02GPOixnGr5Qhow8FsrxPirFfdjV1YJIKAPO4Jdhiu9W+YJgrH
-         n31bu4o639UaItJX6wM+Omwp+7Yzri2z2b/Oksbzr0x2a+1a3JFHvaj0k35gKa4ChHBU
-         hFtBaS6IHbRybJ6mC/2y65pSUaHsY2a3gZ837gc8yVQFeQeDOCHyDFWD7BxWChTdOqRX
-         xSVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HXG8iLTreEU+J/lVUamzhi0tH1NJB4Nk+ekloWw8ey0=;
-        b=O41fltqj1n0KfCmvqqbsVuac6M82ulvrY8MpDVbQnXfX9M3NkhCxFtA+AL4GpXIK7C
-         E7+QWkYTRUpK+sRbOTr6G8MdkEahnpngjskHeuNvSGwqlhXCabS4k+QZ6tbtD3jzM9dU
-         ZKSYzjsUU/IKRMEltkPYF1PWAb8x0IVUJ2UTd6yKwKIKrdRNASk/c24O8ajvbCM06hk4
-         wScaGjPDsvRg1oal1O5sN7StduIai0ZlLjUEA9AlfRti7LBBCROerrJTchFDDV4PxCBC
-         7RryNvgEAa4+Pc6XdFkb4fxtrIL7miQitM+IktfMHl/NJ5n1KXECR+aswn2SnjIcfvqi
-         23tg==
-X-Gm-Message-State: AOAM533P19BbeM1RSTApTbCZBRhHJpEUNQJIv4SPvcJS03HuZUVCREXu
-        CrqaWrEkurL4ggTR1cwP4OC19fFOB/6SBiOu
-X-Google-Smtp-Source: ABdhPJx7ZQtrU+VcWljrrDnZU8bM4jUcwzK304gsvVGDEH11myXnse8gaqCiSBfikc3zZNHZ/lfpLA==
-X-Received: by 2002:aa7:c306:0:b0:42d:d4cc:c606 with SMTP id l6-20020aa7c306000000b0042dd4ccc606mr1947344edq.341.1654119573200;
-        Wed, 01 Jun 2022 14:39:33 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
-        by smtp.googlemail.com with ESMTPSA id a14-20020a170906368e00b006fec5cef701sm1099080ejc.197.2022.06.01.14.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 14:39:32 -0700 (PDT)
-From:   David Virag <virag.david003@gmail.com>
-Cc:     phone-devel@vger.kernel.org,
-        David Virag <virag.david003@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] arm64: dts: exynos: Add internal eMMC support to jackpotlte
-Date:   Thu,  2 Jun 2022 01:37:43 +0200
-Message-Id: <20220601233743.56317-6-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220601233743.56317-1-virag.david003@gmail.com>
-References: <20220601233743.56317-1-virag.david003@gmail.com>
+        Wed, 1 Jun 2022 22:07:28 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 013F31D92DB
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Jun 2022 19:07:26 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220602020723epoutp01f0e90ed8200ca7e1c3f8bcfdfa876475~0q5qISbFe1111911119epoutp01B
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jun 2022 02:07:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220602020723epoutp01f0e90ed8200ca7e1c3f8bcfdfa876475~0q5qISbFe1111911119epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1654135643;
+        bh=t8U7FyS8vihQ8FtwpxDAeaFoHAyKx1rhnPcMrL9DDwI=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=lwcwWNM77KHe72A2mkcKKDcmvN+kFHjURFMS+NPSlvd3srzrHxWuZabYB9Kj10JeJ
+         hWlOExfRpvODL6MEgc3VJpoU+SE8tXnXlGnT/6YB9Afzinu+S0qOw7/PnY1+TAk+YZ
+         UnmerjeCS0jcw4rCiPJaqWXEKdXAJ/85UhJwDI+c=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20220602020722epcas2p4fa2afb35727457095c1e273973f2d1b9~0q5pso3vD2593325933epcas2p4L;
+        Thu,  2 Jun 2022 02:07:22 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4LD8Xp0Tv9z4x9Q7; Thu,  2 Jun
+        2022 02:07:22 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        96.0D.10028.95B18926; Thu,  2 Jun 2022 11:07:22 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220602020721epcas2p492069c84655d964c7dcc19c9876b8778~0q5ofL3VC2079320793epcas2p4X;
+        Thu,  2 Jun 2022 02:07:21 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220602020721epsmtrp2a3cef8c4cdc0e91ff0af167ee9076d4d~0q5od75Pg3270532705epsmtrp2h;
+        Thu,  2 Jun 2022 02:07:21 +0000 (GMT)
+X-AuditID: b6c32a47-d98a8a800000272c-9d-62981b593b99
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DF.79.11276.95B18926; Thu,  2 Jun 2022 11:07:21 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220602020721epsmtip2f0111f531941768d7589d6a1f2da0322~0q5oQ7-gr1288312883epsmtip2g;
+        Thu,  2 Jun 2022 02:07:21 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
+Cc:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
+        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
+        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>
+In-Reply-To: <b14c0d3a-8fe3-62b5-777d-883d95bc6fcc@linaro.org>
+Subject: RE: [PATCH v3 0/2] syscon reboot/reboot_mode support for
+ exynosautov9
+Date:   Thu, 2 Jun 2022 11:07:21 +0900
+Message-ID: <000001d87625$7e664a10$7b32de30$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJI/1XL/Ftv3dSoSrqqSUbcnMeiJQLcHzXTAdQC+4kBRCF0xqwqqbwQ
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsWy7bCmmW6U9Iwkg9NVFg/mbWOzuP7lOavF
+        /CPnWC36Xjxkttj7eiu7xYzz+5gsWvceYbd43rePyYHDY9OqTjaPO9f2sHn0bVnF6PF5k1wA
+        S1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QFUoK
+        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLSvHS9vNQSK0MDAyNToMKE
+        7Ixpk8wKPjJWnLx4hqmBcSNjFyMnh4SAicSM9Q/BbCGBHYwS1+5wdTFyAdmfGCXWz7zFBuF8
+        Y5RoXrKACabj2e2X7BCJvYwSRz9fZoRwXjBKHNm7nAWkik1AX+JlxzZWkISIwGJGieNd28Bm
+        MQucY5SY8G092CxOATuJS6+/MoPYwgIBEhOmzGEHsVkEVCQ+rTsFdhWvgKXEgcPrWCFsQYmT
+        M5+AbWAWkJfY/nYOM8RNChI/ny4DqxERcJM49m8TVI2IxOzONmaQxRICEzkkfj95BtXgIvHj
+        6Syoh4QlXh3fwg5hS0l8freXDcIullg66xMTRHMDo8Tlbb+gEsYSs561A13HAbRBU2L9Ln0Q
+        U0JAWeLILai9fBIdh/+yQ4R5JTrahCAa1SUObJ/OAmHLSnTP+cw6gVFpFpLPZiH5bBaSD2Yh
+        7FrAyLKKUSy1oDg3PbXYqMAYHtvJ+bmbGMEpVMt9B+OMtx/0DjEycTAeYpTgYFYS4S3ZNTVJ
+        iDclsbIqtSg/vqg0J7X4EKMpMKwnMkuJJucDk3heSbyhiaWBiZmZobmRqYG5kjivV8qGRCGB
+        9MSS1OzU1ILUIpg+Jg5OqQamjJTILRP4avYuVlooku1ZLSkz1ZND4P8VtdsZUTevWe8ot9FU
+        ZrF+UGQnu+nF4UN6hT83fnmlt/uKSYt1qaHI5nh3E+v8FobMoo9lS8+1yqecf1x+tZklpzt1
+        7oL9rKwZqrtnGhz0Uu/XiIqLMfu/YAIjy7ETp5t6g6ZteXp2TYyjU4uRMQ/rvkyeSi7mybee
+        dLS9fLTr9xKxZbqGGZXbj5S8LjjuwJ2gWugV9XLKhu3Ht+tkv7xqfPmubsF/c/0dqzTWru0w
+        55dQPlp/hCH+9fflXS9dnU9l+B3zeeD+p+WCUbWbEnNkzbm78U5vN0UG7ZOYtNpw1uWl9pMn
+        P7M939IUylvzYXldrv+hMFUlluKMREMt5qLiRAC4CPWhKgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJXjdSekaSwYeN0hYP5m1js7j+5Tmr
+        xfwj51gt+l48ZLbY+3oru8WM8/uYLFr3HmG3eN63j8mBw2PTqk42jzvX9rB59G1ZxejxeZNc
+        AEsUl01Kak5mWWqRvl0CV8a0SWYFHxkrTl48w9TAuJGxi5GTQ0LAROLZ7ZfsXYxcHEICuxkl
+        DnSdY4ZIyEo8e7eDHcIWlrjfcoQVougZo0Tn9DlgRWwC+hIvO7aBJUQEFjNK7J90iRUkwSxw
+        iVHi5DVPiI4PjBILzk4GS3AK2Elcev0VqJuDQ1jAT6J/WilImEVAReLTulNgJ/EKWEocOLyO
+        FcIWlDg58wkLxExtiac3n0LZ8hLb386BulRB4ufTZWD1IgJuEsf+bYKqEZGY3dnGPIFReBaS
+        UbOQjJqFZNQsJC0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEx5OW5g7G7as+
+        6B1iZOJgPMQowcGsJMJbsmtqkhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNT
+        UwtSi2CyTBycUg1MiTslSyJOzpDWnJ96wSHulHTl7NUfDTVzU2Sf7lgrHvXFJsRTQjai/2HA
+        EbfIfT/yKrb7bYzi+rA675dW2onKrKILGknuaRKfozZvq6o+1PEnx/p0Cjdzz95PhscFfnDw
+        n2N3+cq1/N7encv8Q4uvez48dMw2KEG46rjB1jcTjXq/5bAUzf94t+TqniSRdG6v3lU9kyc3
+        ex1rN+ePLt0y/df73El9sxVWryyXP/VKYMm633KHuw6v/HLLVzN1/rLzNVu8cpzVmN+nmO1c
+        H1UZqxOye5+EV0BFypRDCdzdN5VcDNz+ZXDuDrws/15gk/LkRtNX7Dvvhcw+ZbVw98P3rWcD
+        8qZcWcVonbUh8c8EJZbijERDLeai4kQAZ1yWfhYDAAA=
+X-CMS-MailID: 20220602020721epcas2p492069c84655d964c7dcc19c9876b8778
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220523121210epcas2p11d0b4f27edd5a403b2fd7d3833d577ff
+References: <CGME20220523121210epcas2p11d0b4f27edd5a403b2fd7d3833d577ff@epcas2p1.samsung.com>
+        <20220523121244.67341-1-chanho61.park@samsung.com>
+        <013401d874eb$05f55390$11dffab0$@samsung.com>
+        <b14c0d3a-8fe3-62b5-777d-883d95bc6fcc@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add the nodes relevant to provide clocks for Exynos7885 eMMC and to
-support eMMC. eMMC is the internal storage used in the Samsung Galaxy A8
-(2018) (jackpotlte), and all other known devices using the Exynos7885
-SoC.
+> > Could you review below v3 patchset in your free time? :)
+> 
+> I looked at it before and it is fine. It's a merge window so I am not
+> taking any new patches before rc1.
 
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
- .../boot/dts/exynos/exynos7885-jackpotlte.dts | 20 ++++++++++++
- arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 32 +++++++++++++++++++
- 2 files changed, 52 insertions(+)
+Got it. Sorry to rush you :)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-index 4cf9aa25f618..5db9a81ac7bb 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-@@ -60,6 +60,26 @@ power-key {
- 	};
- };
- 
-+&mmc_0 {
-+	status = "okay";
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	cap-mmc-highspeed;
-+	non-removable;
-+	mmc-hs400-enhanced-strobe;
-+	card-detect-delay = <200>;
-+	clock-frequency = <800000000>;
-+	bus-width = <8>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk_fast_slew_rate_3x &sd0_cmd &sd0_rdqs
-+		     &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+};
-+
- &oscclk {
- 	clock-frequency = <26000000>;
- };
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885.dtsi b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-index 9c233c56558c..23c2e0bb0a2c 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-@@ -240,6 +240,25 @@ cmu_top: clock-controller@12060000 {
- 			clock-names = "oscclk";
- 		};
- 
-+		cmu_fsys: clock-controller@13400000 {
-+			compatible = "samsung,exynos7885-cmu-fsys";
-+			reg = <0x13400000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>,
-+				 <&cmu_top CLK_DOUT_FSYS_BUS>,
-+				 <&cmu_top CLK_DOUT_FSYS_MMC_CARD>,
-+				 <&cmu_top CLK_DOUT_FSYS_MMC_EMBD>,
-+				 <&cmu_top CLK_DOUT_FSYS_MMC_SDIO>,
-+				 <&cmu_top CLK_DOUT_FSYS_USB30DRD>;
-+			clock-names = "oscclk",
-+				      "dout_fsys_bus",
-+				      "dout_fsys_mmc_card",
-+				      "dout_fsys_mmc_embd",
-+				      "dout_fsys_mmc_sdio",
-+				      "dout_fsys_usb30drd";
-+		};
-+
- 		pinctrl_alive: pinctrl@11cb0000 {
- 			compatible = "samsung,exynos7885-pinctrl";
- 			reg = <0x11cb0000 0x1000>;
-@@ -274,6 +293,19 @@ pmu_system_controller: system-controller@11c80000 {
- 			reg = <0x11c80000 0x10000>;
- 		};
- 
-+		mmc_0: mmc@13500000 {
-+			compatible = "samsung,exynos7-dw-mshc-smu";
-+			reg = <0x13500000 0x2000>;
-+			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cmu_fsys CLK_GOUT_MMC_EMBD_ACLK>,
-+				 <&cmu_fsys CLK_GOUT_MMC_EMBD_SDCLKIN>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x40>;
-+			status = "disabled";
-+		};
-+
- 		serial_0: serial@13800000 {
- 			compatible = "samsung,exynos5433-uart";
- 			reg = <0x13800000 0x100>;
--- 
-2.36.1
+Best Regards,
+Chanho Park
 
