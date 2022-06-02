@@ -2,130 +2,151 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC61CC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jun 2022 02:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D03C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jun 2022 04:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233268AbiFBCH3 (ORCPT
+        id S229732AbiFBERf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 22:07:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44676 "EHLO
+        Thu, 2 Jun 2022 00:17:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233266AbiFBCH2 (ORCPT
+        with ESMTP id S229724AbiFBERd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Jun 2022 22:07:28 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 013F31D92DB
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Jun 2022 19:07:26 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220602020723epoutp01f0e90ed8200ca7e1c3f8bcfdfa876475~0q5qISbFe1111911119epoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jun 2022 02:07:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220602020723epoutp01f0e90ed8200ca7e1c3f8bcfdfa876475~0q5qISbFe1111911119epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1654135643;
-        bh=t8U7FyS8vihQ8FtwpxDAeaFoHAyKx1rhnPcMrL9DDwI=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=lwcwWNM77KHe72A2mkcKKDcmvN+kFHjURFMS+NPSlvd3srzrHxWuZabYB9Kj10JeJ
-         hWlOExfRpvODL6MEgc3VJpoU+SE8tXnXlGnT/6YB9Afzinu+S0qOw7/PnY1+TAk+YZ
-         UnmerjeCS0jcw4rCiPJaqWXEKdXAJ/85UhJwDI+c=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20220602020722epcas2p4fa2afb35727457095c1e273973f2d1b9~0q5pso3vD2593325933epcas2p4L;
-        Thu,  2 Jun 2022 02:07:22 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4LD8Xp0Tv9z4x9Q7; Thu,  2 Jun
-        2022 02:07:22 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        96.0D.10028.95B18926; Thu,  2 Jun 2022 11:07:22 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220602020721epcas2p492069c84655d964c7dcc19c9876b8778~0q5ofL3VC2079320793epcas2p4X;
-        Thu,  2 Jun 2022 02:07:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220602020721epsmtrp2a3cef8c4cdc0e91ff0af167ee9076d4d~0q5od75Pg3270532705epsmtrp2h;
-        Thu,  2 Jun 2022 02:07:21 +0000 (GMT)
-X-AuditID: b6c32a47-d98a8a800000272c-9d-62981b593b99
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DF.79.11276.95B18926; Thu,  2 Jun 2022 11:07:21 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220602020721epsmtip2f0111f531941768d7589d6a1f2da0322~0q5oQ7-gr1288312883epsmtip2g;
-        Thu,  2 Jun 2022 02:07:21 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
-Cc:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
-        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>
-In-Reply-To: <b14c0d3a-8fe3-62b5-777d-883d95bc6fcc@linaro.org>
-Subject: RE: [PATCH v3 0/2] syscon reboot/reboot_mode support for
- exynosautov9
-Date:   Thu, 2 Jun 2022 11:07:21 +0900
-Message-ID: <000001d87625$7e664a10$7b32de30$@samsung.com>
+        Thu, 2 Jun 2022 00:17:33 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9086ADDC;
+        Wed,  1 Jun 2022 21:17:30 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id q18so3493421pln.12;
+        Wed, 01 Jun 2022 21:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w5ebmhLj4oI6jokTJKCp02gLjiFucaCQB6mhTvl9VZk=;
+        b=lc+QMzwx/hSroE/5ewbNS+MrrC4UlGexZ3gZVVEA5Rw2uEwRUd07rtwSSXExqvSRrp
+         pDvxlgj+vZcGSPyw0CUmSNtY0LsaVJE14GYMqUFy+TZYo8x1e+i9n74A7VhkOmAyflfl
+         SicOSt9go7MZr54zScf7EJdos+GpRjQk6fj9TTaLLvTdnEMPdmihoYArXVHsFgr4eaRY
+         Hfl/hENlMF0qqvWzeF4f/JQT3zQ/aSTNV9X3emHRs0UtyvmALoPBa93gNFS9YKQSg/c4
+         vqrg6uVrxrVMPkrTTGTB2738/uaM6awS8qj8yEn6ePcix82C41AnRRFbikZFpaWYms3x
+         5iAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w5ebmhLj4oI6jokTJKCp02gLjiFucaCQB6mhTvl9VZk=;
+        b=d9oMabqeYpx0f/YD8nvt7sOeYTOxdnH8nfqufWyntbhjbRid2Tkr3iCVEVaHPjn4f3
+         oESbas1JP3eIuWZeJoLW7LVm9utQTeBLaeGKgw0kk+JAfTgTrDhzo8OxweJYJTBl1eFO
+         807KoTzcTTXRlNYtXND0pE4Sr0W7oaDLSOo+e8eRoScO4pSuuK5QTSB2CUZWU5EGfPIE
+         udwuvi5hL/aobo7mW7YRzBFegwklWkGapmrNdCv7+9n3zxYci65v/X8RBdLtRVAOeqQl
+         u0XcKYx5dWB2eAwWJb8zuk588h49Qw6NkHYzFi0m61ddfWYqtAGn33/gAwhbjmjyE+1N
+         4ULA==
+X-Gm-Message-State: AOAM531iaApyDhDJIxZZ7O6decl2xZJUyKysjkh1mhYL9jOVZlAQbWfQ
+        TONjbczcybY7iQzJO73fW+I=
+X-Google-Smtp-Source: ABdhPJxgQcXunt99zIQQSrLS+7t55ND7PHrtpNaDCte4XXwrMQT84qOF1CiOW3GgkpS7w7P3OTEtOA==
+X-Received: by 2002:a17:90b:17d0:b0:1e3:5324:c465 with SMTP id me16-20020a17090b17d000b001e35324c465mr3089557pjb.34.1654143450093;
+        Wed, 01 Jun 2022 21:17:30 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id z6-20020a170903018600b001621a66b318sm2440131plg.130.2022.06.01.21.17.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 21:17:29 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Lukasz Luba <lukasz.luba@arm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] memory: samsung: exynos5422-dmc: Fix refcount leak in of_get_dram_timings
+Date:   Thu,  2 Jun 2022 08:17:21 +0400
+Message-Id: <20220602041721.64348-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJI/1XL/Ftv3dSoSrqqSUbcnMeiJQLcHzXTAdQC+4kBRCF0xqwqqbwQ
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRmVeSWpSXmKPExsWy7bCmmW6U9Iwkg9NVFg/mbWOzuP7lOavF
-        /CPnWC36Xjxkttj7eiu7xYzz+5gsWvceYbd43rePyYHDY9OqTjaPO9f2sHn0bVnF6PF5k1wA
-        S1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QFUoK
-        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLSvHS9vNQSK0MDAyNToMKE
-        7Ixpk8wKPjJWnLx4hqmBcSNjFyMnh4SAicSM9Q/BbCGBHYwS1+5wdTFyAdmfGCXWz7zFBuF8
-        Y5RoXrKACabj2e2X7BCJvYwSRz9fZoRwXjBKHNm7nAWkik1AX+JlxzZWkISIwGJGieNd28Bm
-        MQucY5SY8G092CxOATuJS6+/MoPYwgIBEhOmzGEHsVkEVCQ+rTsFdhWvgKXEgcPrWCFsQYmT
-        M5+AbWAWkJfY/nYOM8RNChI/ny4DqxERcJM49m8TVI2IxOzONmaQxRICEzkkfj95BtXgIvHj
-        6Syoh4QlXh3fwg5hS0l8freXDcIullg66xMTRHMDo8Tlbb+gEsYSs561A13HAbRBU2L9Ln0Q
-        U0JAWeLILai9fBIdh/+yQ4R5JTrahCAa1SUObJ/OAmHLSnTP+cw6gVFpFpLPZiH5bBaSD2Yh
-        7FrAyLKKUSy1oDg3PbXYqMAYHtvJ+bmbGMEpVMt9B+OMtx/0DjEycTAeYpTgYFYS4S3ZNTVJ
-        iDclsbIqtSg/vqg0J7X4EKMpMKwnMkuJJucDk3heSbyhiaWBiZmZobmRqYG5kjivV8qGRCGB
-        9MSS1OzU1ILUIpg+Jg5OqQamjJTILRP4avYuVlooku1ZLSkz1ZND4P8VtdsZUTevWe8ot9FU
-        ZrF+UGQnu+nF4UN6hT83fnmlt/uKSYt1qaHI5nh3E+v8FobMoo9lS8+1yqecf1x+tZklpzt1
-        7oL9rKwZqrtnGhz0Uu/XiIqLMfu/YAIjy7ETp5t6g6ZteXp2TYyjU4uRMQ/rvkyeSi7mybee
-        dLS9fLTr9xKxZbqGGZXbj5S8LjjuwJ2gWugV9XLKhu3Ht+tkv7xqfPmubsF/c/0dqzTWru0w
-        55dQPlp/hCH+9fflXS9dnU9l+B3zeeD+p+WCUbWbEnNkzbm78U5vN0UG7ZOYtNpw1uWl9pMn
-        P7M939IUylvzYXldrv+hMFUlluKMREMt5qLiRAC4CPWhKgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJXjdSekaSwYeN0hYP5m1js7j+5Tmr
-        xfwj51gt+l48ZLbY+3oru8WM8/uYLFr3HmG3eN63j8mBw2PTqk42jzvX9rB59G1ZxejxeZNc
-        AEsUl01Kak5mWWqRvl0CV8a0SWYFHxkrTl48w9TAuJGxi5GTQ0LAROLZ7ZfsXYxcHEICuxkl
-        DnSdY4ZIyEo8e7eDHcIWlrjfcoQVougZo0Tn9DlgRWwC+hIvO7aBJUQEFjNK7J90iRUkwSxw
-        iVHi5DVPiI4PjBILzk4GS3AK2Elcev0VqJuDQ1jAT6J/WilImEVAReLTulNgJ/EKWEocOLyO
-        FcIWlDg58wkLxExtiac3n0LZ8hLb386BulRB4ufTZWD1IgJuEsf+bYKqEZGY3dnGPIFReBaS
-        UbOQjJqFZNQsJC0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIEx5OW5g7G7as+
-        6B1iZOJgPMQowcGsJMJbsmtqkhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNT
-        UwtSi2CyTBycUg1MiTslSyJOzpDWnJ96wSHulHTl7NUfDTVzU2Sf7lgrHvXFJsRTQjai/2HA
-        EbfIfT/yKrb7bYzi+rA675dW2onKrKILGknuaRKfozZvq6o+1PEnx/p0Cjdzz95PhscFfnDw
-        n2N3+cq1/N7encv8Q4uvez48dMw2KEG46rjB1jcTjXq/5bAUzf94t+TqniSRdG6v3lU9kyc3
-        ex1rN+ePLt0y/df73El9sxVWryyXP/VKYMm633KHuw6v/HLLVzN1/rLzNVu8cpzVmN+nmO1c
-        H1UZqxOye5+EV0BFypRDCdzdN5VcDNz+ZXDuDrws/15gk/LkRtNX7Dvvhcw+ZbVw98P3rWcD
-        8qZcWcVonbUh8c8EJZbijERDLeai4kQAZ1yWfhYDAAA=
-X-CMS-MailID: 20220602020721epcas2p492069c84655d964c7dcc19c9876b8778
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220523121210epcas2p11d0b4f27edd5a403b2fd7d3833d577ff
-References: <CGME20220523121210epcas2p11d0b4f27edd5a403b2fd7d3833d577ff@epcas2p1.samsung.com>
-        <20220523121244.67341-1-chanho61.park@samsung.com>
-        <013401d874eb$05f55390$11dffab0$@samsung.com>
-        <b14c0d3a-8fe3-62b5-777d-883d95bc6fcc@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> > Could you review below v3 patchset in your free time? :)
-> 
-> I looked at it before and it is fine. It's a merge window so I am not
-> taking any new patches before rc1.
+of_parse_phandle() returns a node pointer with refcount
+incremented, we should use of_node_put() on it when not need anymore.
+This function doesn't call of_node_put() in some error paths.
+To unify the structure, Add put_node label and goto it on errors.
 
-Got it. Sorry to rush you :)
+Fixes: 6e7674c3c6df ("memory: Add DMC driver for Exynos5422")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/memory/samsung/exynos5422-dmc.c | 29 +++++++++++++++----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-Best Regards,
-Chanho Park
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 4733e7898ffe..c491cd549644 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1187,33 +1187,39 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+ 
+ 	dmc->timing_row = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
+ 					     sizeof(u32), GFP_KERNEL);
+-	if (!dmc->timing_row)
+-		return -ENOMEM;
++	if (!dmc->timing_row) {
++		ret = -ENOMEM;
++		goto put_node;
++	}
+ 
+ 	dmc->timing_data = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
+ 					      sizeof(u32), GFP_KERNEL);
+-	if (!dmc->timing_data)
+-		return -ENOMEM;
++	if (!dmc->timing_data) {
++		ret = -ENOMEM;
++		goto put_node;
++	}
+ 
+ 	dmc->timing_power = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
+ 					       sizeof(u32), GFP_KERNEL);
+-	if (!dmc->timing_power)
+-		return -ENOMEM;
++	if (!dmc->timing_power) {
++		ret = -ENOMEM;
++		goto put_node;
++	}
+ 
+ 	dmc->timings = of_lpddr3_get_ddr_timings(np_ddr, dmc->dev,
+ 						 DDR_TYPE_LPDDR3,
+ 						 &dmc->timings_arr_size);
+ 	if (!dmc->timings) {
+-		of_node_put(np_ddr);
+ 		dev_warn(dmc->dev, "could not get timings from DT\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto put_node;
+ 	}
+ 
+ 	dmc->min_tck = of_lpddr3_get_min_tck(np_ddr, dmc->dev);
+ 	if (!dmc->min_tck) {
+-		of_node_put(np_ddr);
+ 		dev_warn(dmc->dev, "could not get tck from DT\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto put_node;
+ 	}
+ 
+ 	/* Sorted array of OPPs with frequency ascending */
+@@ -1227,13 +1233,14 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+ 					     clk_period_ps);
+ 	}
+ 
+-	of_node_put(np_ddr);
+ 
+ 	/* Take the highest frequency's timings as 'bypass' */
+ 	dmc->bypass_timing_row = dmc->timing_row[idx - 1];
+ 	dmc->bypass_timing_data = dmc->timing_data[idx - 1];
+ 	dmc->bypass_timing_power = dmc->timing_power[idx - 1];
+ 
++put_node:
++	of_node_put(np_ddr);
+ 	return ret;
+ }
+ 
+-- 
+2.25.1
 
