@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD36C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jun 2022 09:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F19C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jun 2022 09:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243182AbiFCJtz (ORCPT
+        id S243234AbiFCJuG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jun 2022 05:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51962 "EHLO
+        Fri, 3 Jun 2022 05:50:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236813AbiFCJty (ORCPT
+        with ESMTP id S243223AbiFCJt5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jun 2022 05:49:54 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF571EADB
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jun 2022 02:49:52 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 25so9180330edw.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jun 2022 02:49:52 -0700 (PDT)
+        Fri, 3 Jun 2022 05:49:57 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FACA24967
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jun 2022 02:49:55 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id z7so9432086edm.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jun 2022 02:49:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hcskUL/YxKVHi0SJFnrMIlY4WGD3EyAiKigPR2KkRlY=;
-        b=KmcNPkMHLYTQ2u4xOEzuAGzAw2BxerOp2EFO6RYMwuwAmhs9YMA9jiTMXFjdrn8B0T
-         g2xc+bEd3wnfdop23wye+enxPlHLsaOhEcT1CqK5u1aOj7Cz93J2d/af8r++8M5vBBT+
-         hHb6OsaFUEn/2XlkOA3e34pI0VN8UZwE99OBT2EkiQaULud/eHPWMH5umlI00c22ovGW
-         MEqJ/zQXCVu5OmAJiO7udpON2xZmTfItLSe/khzE7N2ne4e4kF9B1lGPoynXMrxVsZwb
-         Xik/WNi5QCCD3WfyV63eW3BewDT7q4lGVUY7+nVzVeFizOY4ircRhWHdrjTiRt5zn14H
-         qPbw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ums06lpbM+PTGvsWcIDhEEbhw0J/2ZTCTZEOaQpH01c=;
+        b=atYIgWK/6FRawaETkeUwdXYIh+5RCPmZ6VyzX0t1MxzCN7gsZGXo89BKMBDxxpxCbw
+         ESnWPHa3fkokCeYzHS7HI/ToXVIi+ZqW9WQ5Fhvbkhnx1eANmO222pfUml31+LYrH2y7
+         EkW/Ww2cZdpMyFu8XuHwezN3rEDD/utnsi2LIR7+vzN0vaRMlSLbd5MbeeTUoQGcHGY3
+         Z0bRgDr7z7LoDz60cBWExz+ScIQXHVfa8lXxnOT1iNM9rg2dljw1Giy0PdKw4F+sdgeu
+         BvVn0XDB3Ww6dfdY5j8wOqGk/5DHoFQ/PdN9AJ9AGjYtEFACIM0l173LQDYeZNPB9Vyt
+         VxTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hcskUL/YxKVHi0SJFnrMIlY4WGD3EyAiKigPR2KkRlY=;
-        b=VA+JJarYsTA5jWlkQRKoSLBObouRjyMG5mE93rQOZtKO6c6Zr6U2KLNidLtU/mPgLm
-         CtqbNtzl+RlKqlLd2+PPqyZ4hXUX9MJh3pSlTbm7c/7G2cvWB2m+oPE9Vklt7ASRocfQ
-         NoJXYUwlotLdQsogqqauGvkxx438hE2TGXWIo/WJz1iGccZRTY8TAHh0e/4dfIao07Ma
-         Gk5/WyievViFKzc58Eyl/e2LJRpNKNNS7Oqv+EMGZwCLA0WC0+KPoNw2twL8HZ2a6T1I
-         xSpTQ2ev8dLYwEaBiyW/HqqULJdfvyPXhQcjD2HiQ9V9zWxukn0aE3lHj5SqA+kO24/Y
-         xCdw==
-X-Gm-Message-State: AOAM532g16oDkFf6qIU5BLVFbeShIBvujWZ1LvoQf24q4fE6ydYv90B8
-        ee7neTxSvSDh1U2XWMvaHeCsOA==
-X-Google-Smtp-Source: ABdhPJw1mLgVG5DL3JieRuG/BBYBbsC2SOMvJFC0jlKl5g39mhNigbnuF55FhOi7YLa8lAqCj3fVKA==
-X-Received: by 2002:aa7:d758:0:b0:42d:b3ca:d647 with SMTP id a24-20020aa7d758000000b0042db3cad647mr9837164eds.63.1654249791585;
-        Fri, 03 Jun 2022 02:49:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ums06lpbM+PTGvsWcIDhEEbhw0J/2ZTCTZEOaQpH01c=;
+        b=pETi/h8ro99/ngSn3J55uoq62XYeR+M8qXPQfHpsmBmAdXMHVjfRMuS5qjFbrVMmQ9
+         0DRtpvXl2mF23+hOmKmxDFrLXuEboMpdTXpYC8A+ERZUpclLpVTw5RNjireIy2imw1HU
+         TtfxgZaZqWxx5MSo4PUxgMRv7exijomS7xWxTTqjoHDjssURsWogAzf4JqF3potrQjjl
+         11RA0ip9mBg0ocs6QDX7cZGp4jC3mLrCche43sWCSyakpwJWDEnlYWqylcdOlZENeiYS
+         qnexAtW1lImRejf6G3DL5JJEJl228z68GTdvbJDkE3Qfh3C5zMDFz2MDYNbZFO0U2yJp
+         U3sA==
+X-Gm-Message-State: AOAM533yNaBEVru9BqJDIIgQ8NdL74O+K1xjiy4OoF3ThHgaj/oQf4B9
+        YJ2z1eEbu5OZ67QrTh2gUTGmow==
+X-Google-Smtp-Source: ABdhPJzrd3PUALKrqr7kQ7Hn+0AluZ6uwepz5o7BbwOoD/e3jxFINqcWp42bWORfoFn+OT2gGlztHg==
+X-Received: by 2002:a05:6402:e99:b0:41d:11f2:85e0 with SMTP id h25-20020a0564020e9900b0041d11f285e0mr9670216eda.339.1654249793985;
+        Fri, 03 Jun 2022 02:49:53 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id y22-20020aa7ca16000000b0042dcbc3f302sm3669561eds.36.2022.06.03.02.49.50
+        by smtp.gmail.com with ESMTPSA id y22-20020aa7ca16000000b0042dcbc3f302sm3669561eds.36.2022.06.03.02.49.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 02:49:51 -0700 (PDT)
+        Fri, 03 Jun 2022 02:49:53 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -59,37 +59,57 @@ To:     Ulf Hansson <ulf.hansson@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/3] mmc: samsung,exynos-dw-mshc: convert to dtschema
-Date:   Fri,  3 Jun 2022 11:49:43 +0200
-Message-Id: <20220603094946.509919-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/3] arm64: dts: exynos: align MMC node name with dtschema
+Date:   Fri,  3 Jun 2022 11:49:45 +0200
+Message-Id: <20220603094946.509919-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220603094946.509919-1-krzysztof.kozlowski@linaro.org>
+References: <20220603094946.509919-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The node names should be generic and MMC controller dtschema expects
+"mmc".
 
-I will take the DTS patches via Samsung SoC.  The MMC dt-bindings patch
-probably via MMC or Rob's tree.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (3):
-  ARM: dts: exynos: align MMC node name with dtschema
-  arm64: dts: exynos: align MMC node name with dtschema
-  dt-bindings: mmc: samsung,exynos-dw-mshc: convert to dtschema
-
- .../bindings/mmc/exynos-dw-mshc.txt           |  94 ----------
- .../bindings/mmc/samsung,exynos-dw-mshc.yaml  | 162 ++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi             |   6 +-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi    |   6 +-
- 4 files changed, 168 insertions(+), 100 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
- create mode 100644 Documentation/devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 75b548e495a0..bd6a354b9cb5 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1820,7 +1820,7 @@ usbhost_dwc3: usb@15a00000 {
+ 			};
+ 		};
+ 
+-		mshc_0: mshc@15540000 {
++		mshc_0: mmc@15540000 {
+ 			compatible = "samsung,exynos7-dw-mshc-smu";
+ 			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -1833,7 +1833,7 @@ mshc_0: mshc@15540000 {
+ 			status = "disabled";
+ 		};
+ 
+-		mshc_1: mshc@15550000 {
++		mshc_1: mmc@15550000 {
+ 			compatible = "samsung,exynos7-dw-mshc-smu";
+ 			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+@@ -1846,7 +1846,7 @@ mshc_1: mshc@15550000 {
+ 			status = "disabled";
+ 		};
+ 
+-		mshc_2: mshc@15560000 {
++		mshc_2: mmc@15560000 {
+ 			compatible = "samsung,exynos7-dw-mshc-smu";
+ 			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
 -- 
 2.34.1
 
