@@ -2,143 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A54DCCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jun 2022 04:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FC6CCA47E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jun 2022 05:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238698AbiFCEeI (ORCPT
+        id S240578AbiFCFbV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jun 2022 00:34:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44998 "EHLO
+        Fri, 3 Jun 2022 01:31:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234392AbiFCEeH (ORCPT
+        with ESMTP id S240559AbiFCFbU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jun 2022 00:34:07 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B513617D
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jun 2022 21:34:01 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220603043356epoutp0269406dfa4c2eaac15b46bbaf4e261c9e~1Ai5XvrS30484604846epoutp02d
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jun 2022 04:33:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220603043356epoutp0269406dfa4c2eaac15b46bbaf4e261c9e~1Ai5XvrS30484604846epoutp02d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1654230836;
-        bh=Bjg9nXj462IMIr5qb5SJpdPuDBVXCpWmWsSmQSOdq70=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=ZlCwI8QR8LIsWncCtfqYu2hRK49pkxuMt5mjfEBNtDgATaRdn+qrEd2m8PDOZdv+b
-         kk8pJDhN/VVYMXcH3rl2HUvvvdfF/ceEXj5IMsLxBGLsNPhxmB60/XxygAhG+TTZ9i
-         G6iModzcfL+E8mhEnKMcSPWEl1cp9s793R8kbh2Y=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20220603043355epcas2p43b7ddaf46104a6f70d3c5491e5165971~1Ai4qq_en0894908949epcas2p4T;
-        Fri,  3 Jun 2022 04:33:55 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.90]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4LDqlQ3myNz4x9Pt; Fri,  3 Jun
-        2022 04:33:54 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FE.CE.10028.23F89926; Fri,  3 Jun 2022 13:33:54 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220603043353epcas2p383b491b9e919f77376b029410a6413c8~1Ai2wa_9D2320823208epcas2p3l;
-        Fri,  3 Jun 2022 04:33:53 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220603043353epsmtrp1e940120083defcd3461af79e2a692608~1Ai2vhMYV0429804298epsmtrp1B;
-        Fri,  3 Jun 2022 04:33:53 +0000 (GMT)
-X-AuditID: b6c32a47-589ff7000000272c-c9-62998f321968
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D6.F1.11276.13F89926; Fri,  3 Jun 2022 13:33:53 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220603043353epsmtip2a7f902cfd44ff37a1147ccc4c107d60c~1Ai2fAyxR2191321913epsmtip2V;
-        Fri,  3 Jun 2022 04:33:53 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-In-Reply-To: <20220601152720.232383-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH v2 0/7] pinctrl/arm: dt-bindings: deprecate header with
- register constants
-Date:   Fri, 3 Jun 2022 13:33:53 +0900
-Message-ID: <000501d87703$211ff7a0$635fe6e0$@samsung.com>
+        Fri, 3 Jun 2022 01:31:20 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DA038DB5
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jun 2022 22:31:18 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id v19so8772654edd.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jun 2022 22:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=yFbf+rXeDHG885MgXcNO51F92YtprLRprfusKhUHuBo=;
+        b=HvAPt7FU+EKdVfe4M56mrmA88Z2Sb3LN+iFmf/An2t2gpkgvQ3W83g/WnnJYQ84SdT
+         G7vi61e8GzCWZspwwxCSSBF3viBVC/3S5Ooy5miiKnW+QvHV+rzvgrcYQ4BmpHIk0XFN
+         3KVL8DoTsQJNNy8KwExUyusxwt/t+80CJvD7NsoFEpDOw0erh8mxFBxIkQMSQ3iWpLNf
+         CnVyUovmE1Q1SfpjyDcnjnGXMQxNUivUPDTFGJ/OsmymUY4YPMnOOukeHzR50frZZ9rf
+         ozXjhkMPf9lKrPRJAshFOCcSMEUyevHZ93/5fYXSuExQKpEiuVJD78+8x7UUSwSkc6XN
+         iCPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=yFbf+rXeDHG885MgXcNO51F92YtprLRprfusKhUHuBo=;
+        b=AXQx2z7i3W1q6AMxBKi4NaMKfzgfZE6n+mFnmsovi1nGdjbG5UC0dMe2vut/o6yQS0
+         I7E/hw2WkbZQCCpAf+RFL9KC6x17RuoTZBmPmKgFm2H/3iOrht4qJl7H11VYgMKnroZp
+         3YSZODVSWe1A9VFEELnpfa9XLJ2VNS80aPMSRZERc/qF+9VxqufCtM41DPTf7DecocfM
+         bjLYSnF1Yn8pizkaM73bztbSHj6PFiomHDNeLv1rwXy2nJZg2i72AjJ3gTZ/rMar03qY
+         KSJN3/t4KGI3lEtIK7wto0mFpMQg2bqT6tem9JyKEnU7j/SeL5+rk+sOBFKIqPDEOgSV
+         R7Zg==
+X-Gm-Message-State: AOAM531VSLE3jKSEFMz+QdRFlR4esOn/WQRjmMSdyhACpJy4SfF23u7Y
+        PtlvtW0IEmoEuxP2k/ZxCOq/8w==
+X-Google-Smtp-Source: ABdhPJytg9hlGbrqAJkmbUkOLFwR2Mp42qHfQVrb4vP92ORErxOSUQl/RMSZVGmH5dPo0cpyKWBMFw==
+X-Received: by 2002:a05:6402:1d4a:b0:42e:93de:17f4 with SMTP id dz10-20020a0564021d4a00b0042e93de17f4mr693550edb.8.1654234276765;
+        Thu, 02 Jun 2022 22:31:16 -0700 (PDT)
+Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id bk2-20020a170906b0c200b006fef557bb7asm2422104ejb.80.2022.06.02.22.31.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Jun 2022 22:31:15 -0700 (PDT)
+Message-ID: <65daf4b7-212d-b726-cc7e-bcdf5d4664b8@linaro.org>
+Date:   Fri, 3 Jun 2022 07:31:14 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIWHmU798Y7haEPVJB1jko1Mvp8lAHBvrEtrLO6ubA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmua5R/8wkgz3vZCwezNvGZjH/yDlW
-        i74XD5kt9r7eym4x5c9yJotNj6+xWmye/4fR4vKuOWwWM87vY7Jo3XuE3eLwm3ZWi1W7/jA6
-        8HjsnHWX3WPTqk42jzvX9rB5bF5S79G3ZRWjx+dNcgFsUdk2GamJKalFCql5yfkpmXnptkre
-        wfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUA3KimUJeaUAoUCEouLlfTtbIryS0tSFTLy
-        i0tslVILUnIKzAv0ihNzi0vz0vXyUkusDA0MjEyBChOyM/pmrGAvOM1a8XjqJ+YGxr0sXYyc
-        HBICJhLXdq5i62Lk4hAS2MEocejOBUYI5xOjxOS136Ay3xglep/dYoVpubBgJTNEYi9Q1bEX
-        LBDOC0aJn2uXMYFUsQnoS7zs2AbWISLQySLxq98FxOYUcJW4e3g3O4gtLJAgsfHiSrB6FgEV
-        iQNXNzOC2LwClhKTzxxhh7AFJU7OfAJ2LLOAvMT2t3OYIa5QkPj5dBnUfCuJ7gtbmSFqRCRm
-        d7aBXSchsIND4vL0s0BFHECOi8SWHbUQvcISr45vYYewpSRe9rdB2cUSS2d9YoLobWCUuLzt
-        FxtEwlhi1rN2RpA5zAKaEut36UOMVJY4cgvqND6JjsN/2SHCvBIdbUIQjeoSB7ZPhwa1rET3
-        nM/QMPSQeHHvPPMERsVZSJ6cheTJWUiemYWwdwEjyypGsdSC4tz01GKjAmN4ZCfn525iBCdf
-        LfcdjDPeftA7xMjEwXiIUYKDWUmEt2TX1CQh3pTEyqrUovz4otKc1OJDjKbAYJ/ILCWanA9M
-        /3kl8YYmlgYmZmaG5kamBuZK4rxeKRsShQTSE0tSs1NTC1KLYPqYODilGpjK/rK4n7xnf0e4
-        5fZz9XM6Hcc4G+7fFJNKTeExXXJjtez/Facbq8NPpTyZ8u3LiRMfPZuOa+qceXZVSpGNJ8zU
-        WLJzqv9Z+asTeW82zuY2cBS3nuZa3tJ4sOz9C+spTP8t55w+w+Aj2h4VFln8R/Hc17d/zOfF
-        XPqtVhc5L5xvqmHCCYnuVX+K9DYmXeBgXWB7cE3NLKfyqrwfvza1WNdEq6y6G9bLl2H//XFE
-        /EVphxsOj87I7xac+fJCnuumJTOzSvZPPRDFl/Buntwam5ylBhbZ80JqM7fdtT33v+ax4+N7
-        vv12VS3rHwjXJ1bejd78sEP0z4uaxfzMr08EVtfLL7gqUNhxsi1R9EWx3zwlluKMREMt5qLi
-        RAB4195pRwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSvK5h/8wkg+kNfBYP5m1js5h/5Byr
-        Rd+Lh8wWe19vZbeY8mc5k8Wmx9dYLTbP/8NocXnXHDaLGef3MVm07j3CbnH4TTurxapdfxgd
-        eDx2zrrL7rFpVSebx51re9g8Ni+p9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6Mvhkr2AtO
-        s1Y8nvqJuYFxL0sXIyeHhICJxIUFK5lBbCGB3YwSLzZFQsRlJZ6928EOYQtL3G85wtrFyAVU
-        84xR4uTRmUwgCTYBfYmXHdtYQWwRgYksEldXJEIUTWOUWPDpFVgRp4CrxN3Du8EmCQvESZyY
-        dpQNxGYRUJE4cHUzI4jNK2ApMfnMEXYIW1Di5MwnQNdxcDAL6Em0bQQrYRaQl9j+dg4zxEEK
-        Ej+fLoPaayXRfWErM0SNiMTszjbmCYxCs5BMmoUwaRaSSbOQdCxgZFnFKJlaUJybnltsWGCY
-        l1quV5yYW1yal66XnJ+7iREcbVqaOxi3r/qgd4iRiYPxEKMEB7OSCG/JrqlJQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTDNsy7ctSyU5ei60/Wm2scn
-        21bVWO79rnYtTmrTWh97LRkr5xhmMf7J3pc7/89ra3gn4XPU9uaOV2EBLNpTte0/8rLeEVXz
-        vHKQXcRYL/jUlPK7Gz4lX02b8k7629rwcybMHnwbjn2Mv3PhcuAUv1fp/GIsbs3pstmyXpvr
-        le5uXh8rPl3O8stpOSfDAmG1A1a6x2QDMiWeJlZyHdhzqvSu9b+X70/sUU7XFN4lWfS958gS
-        nVlhaTt2/Xi5STEtNvTq6+hPe9ZOzrv3/k2V5Vzp3Sq7FZTvzs9o01wsd89upcRLH5uTm/o3
-        rj0UU3Cr4ZZim3HGXqXVO1X++rNWMPa4tnUn7o5dzjWBwWDW5TolluKMREMt5qLiRAAA2Qa6
-        JQMAAA==
-X-CMS-MailID: 20220603043353epcas2p383b491b9e919f77376b029410a6413c8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220601152757epcas2p30927b9924e9371cdfa79986c6efb6eaf
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2 0/7] pinctrl/arm: dt-bindings: deprecate header with
+ register constants
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Rob Herring' <robh+dt@kernel.org>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        'Tomasz Figa' <tomasz.figa@gmail.com>,
+        'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+        'Linus Walleij' <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
 References: <CGME20220601152757epcas2p30927b9924e9371cdfa79986c6efb6eaf@epcas2p3.samsung.com>
-        <20220601152720.232383-1-krzysztof.kozlowski@linaro.org>
+ <20220601152720.232383-1-krzysztof.kozlowski@linaro.org>
+ <000501d87703$211ff7a0$635fe6e0$@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <000501d87703$211ff7a0$635fe6e0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> Krzysztof Kozlowski (7):
->   ARM: dts: s3c2410: use local header for pinctrl register values
->   ARM: dts: s3c64xx: use local header for pinctrl register values
->   ARM: dts: s5pv210: use local header for pinctrl register values
->   ARM: dts: exynos: use local header for pinctrl register values
->   arm64: dts: exynos: use local header for pinctrl register values
->   arm64: dts: fsd: use local header for pinctrl register values
->   dt-bindings: pinctrl: deprecate header with register constants
+On 03/06/2022 06:33, Chanho Park wrote:
+>> Krzysztof Kozlowski (7):
+>>   ARM: dts: s3c2410: use local header for pinctrl register values
+>>   ARM: dts: s3c64xx: use local header for pinctrl register values
+>>   ARM: dts: s5pv210: use local header for pinctrl register values
+>>   ARM: dts: exynos: use local header for pinctrl register values
+>>   arm64: dts: exynos: use local header for pinctrl register values
+>>   arm64: dts: fsd: use local header for pinctrl register values
+>>   dt-bindings: pinctrl: deprecate header with register constants
+> 
+> nit: Put the comment closure to the next line.
+> 
+> + * Author: Krzysztof Kozlowski <krzk@kernel.org>  */
 
-nit: Put the comment closure to the next line.
+Which file has the comment in wrong place? I checked now and everywhere
+it is:
 
-+ * Author: Krzysztof Kozlowski <krzk@kernel.org>  */
++ * Author: Krzysztof Kozlowski <krzk@kernel.org>
++ */
++
 
-Otherwise,
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
 
-Best Regards,
-Chanho Park
-
+Best regards,
+Krzysztof
