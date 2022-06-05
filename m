@@ -2,54 +2,62 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D394BCCA486
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jun 2022 16:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA43C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  5 Jun 2022 16:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351119AbiFEQFn (ORCPT
+        id S1351137AbiFEQHK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Jun 2022 12:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
+        Sun, 5 Jun 2022 12:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345891AbiFEQFh (ORCPT
+        with ESMTP id S1350632AbiFEQHJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Jun 2022 12:05:37 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1FF54D9F7
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jun 2022 09:05:31 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id er5so15849817edb.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jun 2022 09:05:31 -0700 (PDT)
+        Sun, 5 Jun 2022 12:07:09 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0512F5
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jun 2022 09:07:07 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id gl15so10851462ejb.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jun 2022 09:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=llYvMeTiSnHaspyN7FyMnXaqc4ZLL5IUHUIVVh2JeYs=;
-        b=bHRTHUsgObGx0ZwFj9HmZ+XS19mo6LZ+MqeppXA/2o1Z6LKKcGI7C4NILIPv3F07uB
-         dmhNa/JluAaMvK0HCy8YPzEDqyC3ARGPrqKY74LAwfTC5dWnCvZJyQRbqP30mIj+UeN3
-         b99hziNwE+OZ8iZcAtaJEXvDwA5gZJWBnxJiS/usXUm1AqYrr9t1CwxTuHgF6JUKBP2K
-         6IQGRdBnje08Le1WSNz2CctnYEEAgSgt6P98g/138RRa4dQJ6Aefw3HpjiOwtT2wchTV
-         QS8SJnbWmLfykm+SzxINF9SsLRzYqwTCCpKRHr+sgy8p9P1SPGc34n6RP2aRV03qi0w7
-         Et1A==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=xCX7O8NhzvosQ50yk3GTkKJIoOozPRyC9OGxboOSoUY=;
+        b=XRB/B2HvcnHjpSY8mhPrsMez/FqrID+PhNvQkXoB5lRndHTYAU1PBfj7pM/igUW7tc
+         L1z9Z8yFXxAYjUeWmDalrSqltwk+GC+RfdUPdqnQ/e/XxW6A2t/oap45lGOJ/R/pc29U
+         OUXNgoiA5adWZxC69J5vl0X4j+1jgrDrXfxuKWL4TAPiObXDElGXbZy4eWoltwIYxKby
+         LtB2vcKbt4On/6Rko4XecEdJPKfmqOAVUdJcjtOjskWUhKkzCbnzlaG8is/yXk40xSr4
+         ndlPxW0t6ksAdvFda9e8NIV/IoT1tTPq5tHOiQL+OaLUdYyt6p0+w2obfSHXx8q0+UnM
+         NNIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=llYvMeTiSnHaspyN7FyMnXaqc4ZLL5IUHUIVVh2JeYs=;
-        b=YTnr5XiQbUNjYY9SDpcxKXwB2JGDiww4LXu3ghBGdek36gWupNG2h4eFEw3ijuum2L
-         xCEVXer1Sc6Ee3iTMIFXaxXlq529qhXxycsmm2pUaZQO/0ldctAxs7qPzrG0pIWKGSto
-         1z8NgyhilKw+zDHmIbww/MShxvOw+IeYT5che2TqdydHcI7i7PjgWcWEzZ79odKTcz46
-         6+TmS3UW8QsMHV/pWY+2oRHJK7Da+vxphDdpEQhcNNsDcz46MVhmOU5/KqAohBS8/VRK
-         opd6khTBLl32X5SQWftsoigMbKk1UQ06MwjBHXAVPDMpeHeK+Ddt1nieI9IjuNoE8VZi
-         yrYw==
-X-Gm-Message-State: AOAM533KAFxBi8Ikk+tGY35MTqggESBsOuRhOV8e1ZWnMn85+8y1xP/L
-        3lQ5QLAQSHY+Fmqf92osFpREYQ==
-X-Google-Smtp-Source: ABdhPJyJayIqTGaxZK0kA6W49QApOBgn5zjD/nQczezKdCTJxyOf//F0e7POvxOYvm4kO3sYbmwfRg==
-X-Received: by 2002:a05:6402:34d3:b0:431:55c0:fb7 with SMTP id w19-20020a05640234d300b0043155c00fb7mr2154729edc.274.1654445130288;
-        Sun, 05 Jun 2022 09:05:30 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id x18-20020a170906805200b0070b7875aa6asm3969963ejw.166.2022.06.05.09.05.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jun 2022 09:05:29 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=xCX7O8NhzvosQ50yk3GTkKJIoOozPRyC9OGxboOSoUY=;
+        b=NO/TbgxZ2xGvzqg9d8YMqtFUjBMVhH6/XA2V/55wYfIeloXk03qIt1AqcJMlI1DwHN
+         9CKDkSFX9l7IxhAAUeqiRfKCHhO5ed9+/EOm3JW2SzE6VKqRFWFcrO7n6wIgtkfw/PtS
+         dPOgMP8BYESaIZ52lsVfsAuugoQWdTBP3a0ZNsTng0OOYu3cZ02enqZv7uZHrDJskQAQ
+         REaKLLwcLxDCUuawM0Glr5tK0KezmLnic77fVG8oPKvJ4guKrzn1c/05J4WXeNaKHHio
+         FruwSBDOl8dxeEL49ZJtIO8TLlDR/kORGqbKosU6wKC9U/tuORxTRhZ3WSPMKAglVgI2
+         HhUg==
+X-Gm-Message-State: AOAM530hyY4OGzvoRWkUGHeTNCZrrDxsZXZ/+SgjHfS3Es/7uwhK5Ldj
+        P/4qNqMpjnsNsn6sxOdnLQ+xyg==
+X-Google-Smtp-Source: ABdhPJzyB4vzVySmjCZzv2QY4cQpaKl2NPICl1GkzNdQ+5tqZ247Q0nUN0lnrmIliVTKFleNxN6Kpg==
+X-Received: by 2002:a17:907:7f0b:b0:6ff:4502:9c2f with SMTP id qf11-20020a1709077f0b00b006ff45029c2fmr18228155ejc.532.1654445225579;
+        Sun, 05 Jun 2022 09:07:05 -0700 (PDT)
+Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id lk24-20020a170906cb1800b006fa84a0af2asm5394921ejb.16.2022.06.05.09.07.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Jun 2022 09:07:05 -0700 (PDT)
+Message-ID: <6ac8c5c7-8d53-7bdb-2a1f-b49f95231c73@linaro.org>
+Date:   Sun, 5 Jun 2022 18:07:03 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 8/8] dt-bindings: pinctrl: samsung: deprecate header
+ with register constants
+Content-Language: en-US
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
@@ -59,231 +67,39 @@ To:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v3 4/8] ARM: dts: exynos: use local header for pinctrl register values
-Date:   Sun,  5 Jun 2022 18:05:04 +0200
-Message-Id: <20220605160508.134075-5-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220605160508.134075-1-krzysztof.kozlowski@linaro.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        Linus Walleij <linus.wallej@linaro.org>
 References: <20220605160508.134075-1-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220605160508.134075-9-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220605160508.134075-9-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The DTS uses hardware register values directly in pin controller pin
-configuration.  These are not some IDs or other abstraction layer but
-raw numbers used in the registers.
+On 05/06/2022 18:05, Krzysztof Kozlowski wrote:
+> For convenience (less code duplication, some meaning added to raw
+> number), the pin controller pin configuration register values
+> were defined in the bindings header.  These are not some IDs or other
+> abstraction layer but raw numbers used in the registers
+> 
+> These constants do not fit the purpose of bindings.  They do not provide
+> any abstraction, any hardware and driver independent ID.  With minor
+> exceptions, the Linux drivers actually do not use the bindings header at
+> all.
+> 
+> All of the constants were moved already to headers local to DTS
+> (residing in DTS directory) and to Samsung pinctrl driver (where
+> applicable), so remove any references to the bindings header and add a
+> warning tha tit is deprecated.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+> Reviewed-by: Linus Walleij <linus.wallej@linaro.org>
 
-These numbers were previously put in the bindings header to avoid code
-duplication and to provide some context meaning (name), but they do not
-fit the purpose of bindings.
+This needs fixup in address             ^^^^.
 
-Store the constants in a header next to DTS and use them instead of
-bindings.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
----
- arch/arm/boot/dts/exynos-pinctrl.h        | 55 +++++++++++++++++++++++
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos4412-midas.dtsi   |  3 +-
- arch/arm/boot/dts/exynos4412-p4note.dtsi  |  2 +-
- arch/arm/boot/dts/exynos4412-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos5410-pinctrl.dtsi |  2 +-
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi |  2 +-
- 10 files changed, 65 insertions(+), 9 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos-pinctrl.h
-
-diff --git a/arch/arm/boot/dts/exynos-pinctrl.h b/arch/arm/boot/dts/exynos-pinctrl.h
-new file mode 100644
-index 000000000000..e3a6df95281c
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos-pinctrl.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Samsung Exynos DTS pinctrl constants
-+ *
-+ * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2022 Linaro Ltd
-+ * Author: Krzysztof Kozlowski <krzk@kernel.org>
-+ */
-+
-+#ifndef __DTS_ARM_SAMSUNG_EXYNOS_PINCTRL_H__
-+#define __DTS_ARM_SAMSUNG_EXYNOS_PINCTRL_H__
-+
-+#define EXYNOS_PIN_PULL_NONE		0
-+#define EXYNOS_PIN_PULL_DOWN		1
-+#define EXYNOS_PIN_PULL_UP		3
-+
-+/* Pin function in power down mode */
-+#define EXYNOS_PIN_PDN_OUT0		0
-+#define EXYNOS_PIN_PDN_OUT1		1
-+#define EXYNOS_PIN_PDN_INPUT		2
-+#define EXYNOS_PIN_PDN_PREV		3
-+
-+/* Drive strengths for Exynos3250, Exynos4 (all) and Exynos5250 */
-+#define EXYNOS4_PIN_DRV_LV1		0
-+#define EXYNOS4_PIN_DRV_LV2		2
-+#define EXYNOS4_PIN_DRV_LV3		1
-+#define EXYNOS4_PIN_DRV_LV4		3
-+
-+/* Drive strengths for Exynos5260 */
-+#define EXYNOS5260_PIN_DRV_LV1		0
-+#define EXYNOS5260_PIN_DRV_LV2		1
-+#define EXYNOS5260_PIN_DRV_LV4		2
-+#define EXYNOS5260_PIN_DRV_LV6		3
-+
-+/*
-+ * Drive strengths for Exynos5410, Exynos542x, Exynos5800 and Exynos850 (except
-+ * GPIO_HSI block)
-+ */
-+#define EXYNOS5420_PIN_DRV_LV1		0
-+#define EXYNOS5420_PIN_DRV_LV2		1
-+#define EXYNOS5420_PIN_DRV_LV3		2
-+#define EXYNOS5420_PIN_DRV_LV4		3
-+
-+#define EXYNOS_PIN_FUNC_INPUT		0
-+#define EXYNOS_PIN_FUNC_OUTPUT		1
-+#define EXYNOS_PIN_FUNC_2		2
-+#define EXYNOS_PIN_FUNC_3		3
-+#define EXYNOS_PIN_FUNC_4		4
-+#define EXYNOS_PIN_FUNC_5		5
-+#define EXYNOS_PIN_FUNC_6		6
-+#define EXYNOS_PIN_FUNC_EINT		0xf
-+#define EXYNOS_PIN_FUNC_F		EXYNOS_PIN_FUNC_EINT
-+
-+#endif /* __DTS_ARM_SAMSUNG_EXYNOS_PINCTRL_H__ */
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index cc30d154ec94..011ba2eff29e 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -9,7 +9,7 @@
-  * tree nodes are listed in this file.
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- #define PIN_IN(_pin, _pull, _drv)					\
- 	pin- ## _pin {							\
-diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-index 6373009bb727..76f44ae0de46 100644
---- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-@@ -11,7 +11,7 @@
-  * tree nodes are listed in this file.
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- &pinctrl_0 {
- 	gpa0: gpa0-gpio-bank {
-diff --git a/arch/arm/boot/dts/exynos4412-midas.dtsi b/arch/arm/boot/dts/exynos4412-midas.dtsi
-index 23f50c9be527..b967397a46c5 100644
---- a/arch/arm/boot/dts/exynos4412-midas.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-midas.dtsi
-@@ -12,11 +12,12 @@
- /dts-v1/;
- #include "exynos4412.dtsi"
- #include "exynos4412-ppmu-common.dtsi"
-+
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/maxim,max77686.h>
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- / {
- 	compatible = "samsung,midas", "samsung,exynos4412", "samsung,exynos4";
-diff --git a/arch/arm/boot/dts/exynos4412-p4note.dtsi b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-index 97f131b1014b..286a547b110e 100644
---- a/arch/arm/boot/dts/exynos4412-p4note.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-p4note.dtsi
-@@ -15,8 +15,8 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/linux-event-codes.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--#include <dt-bindings/pinctrl/samsung.h>
- #include <dt-bindings/power/summit,smb347-charger.h>
-+#include "exynos-pinctrl.h"
- 
- / {
- 	compatible = "samsung,p4note", "samsung,exynos4412", "samsung,exynos4";
-diff --git a/arch/arm/boot/dts/exynos4412-pinctrl.dtsi b/arch/arm/boot/dts/exynos4412-pinctrl.dtsi
-index 88b8afd55664..58847d4fa846 100644
---- a/arch/arm/boot/dts/exynos4412-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-pinctrl.dtsi
-@@ -9,7 +9,7 @@
-  * tree nodes are listed in this file.
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- #define PIN_SLP(_pin, _mode, _pull)					\
- 	_pin {								\
-diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-index 918947a3897e..48732edadff1 100644
---- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-@@ -9,7 +9,7 @@
-  * tree nodes are listed in this file.
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- &pinctrl_0 {
- 	gpa0: gpa0-gpio-bank {
-diff --git a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-index 150607f8103d..43e4a541f479 100644
---- a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-@@ -9,7 +9,7 @@
-  * tree nodes are listed in this file.
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- &pinctrl_0 {
- 	gpa0: gpa0-gpio-bank {
-diff --git a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-index 6c7814b4372e..f7b923382892 100644
---- a/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5410-pinctrl.dtsi
-@@ -6,7 +6,7 @@
-  *              https://www.hardkernel.com
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- &pinctrl_0 {
- 	gpa0: gpa0-gpio-bank {
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index 546ba274f4e5..14cf9c4ca0ed 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -9,7 +9,7 @@
-  * tree nodes are listed in this file.
-  */
- 
--#include <dt-bindings/pinctrl/samsung.h>
-+#include "exynos-pinctrl.h"
- 
- &pinctrl_0 {
- 	gpy7: gpy7-gpio-bank {
--- 
-2.34.1
-
+Best regards,
+Krzysztof
