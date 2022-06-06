@@ -2,95 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E44D2C3F2D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 09:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C55C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 09:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232788AbiFFJW6 (ORCPT
+        id S232725AbiFFJXB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 05:22:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
+        Mon, 6 Jun 2022 05:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232725AbiFFJWy (ORCPT
+        with ESMTP id S232715AbiFFJWw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jun 2022 05:22:54 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 063DE7652
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jun 2022 02:22:51 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id v25so17952962eda.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jun 2022 02:22:51 -0700 (PDT)
+        Mon, 6 Jun 2022 05:22:52 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C13E9FF9
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jun 2022 02:22:43 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id q21so27742232ejm.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jun 2022 02:22:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Ybrv+bzctpeug341ukOx3SGsCHJGmZEVgY9V7q++jyo=;
-        b=uUBoVtfVYuTWIISUPiOMxroxWDHAWiTymHUdRzYt1nMox5h5ganPiB2UwX2/kBNSWh
-         iBXErrEisUqYzITF5/TgL72YPU14HAPQ8hOZSK7dt+/74jcRo3viVvg79RvwwzsT2q1a
-         02oT0TEi0M+ex93ejIlh7NNbJxbnR07Ve8mMbE/GutoGR8ZbthUEP58M9wRbIhlcXYKY
-         emsDeAxooTz/WiuAQbrqoxz7CU57gQO+It0ld84bnkDmZaBPbN6cODSnhVpzqV+s5EKw
-         NP2G1ynYy2uJEZcGZ8m/UxhCm8T+Gs3v5NQzbPy8HIuntcjPWdv4KiZLzHWqjugztUjp
-         zrZw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fGRLkNVBEPkUsV8SPQw3ABXYbXe6EdbELeiUgQBePYA=;
+        b=WqseQOMPYK8MtmeQ3Kkoko/rUiFzh3SL9nHcPLpjSaMGKNzUY/bM2kO9mccec2nndj
+         Es30XiLV69voPXzf50v/7GMp9rUWP3Pmn2fTRfhsEUtifITso3/OqiGX26cC0IXP5aHs
+         KMu01xOf5C8NqxPp2MX0t40HcFz7q2KGhudIgn55T4L7G6x3zgytSrPsGIHzs3Z60zvR
+         l6oHPfEtUSmAkrvoNzPFz5stg4ygu7bta/LXDgO3rgOhVgRGktGoHfcynofGdrc+WQoM
+         DDMS6/WctRgBCEUL4PYLpHEsHp94isQuIcHf3Wx2i5QlYQBZ+H4uVjiYyNtmcAcsmooo
+         RTcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Ybrv+bzctpeug341ukOx3SGsCHJGmZEVgY9V7q++jyo=;
-        b=Thqih0pnnpCKQkvHYc/XWBtBnOW9/2iy+gXXs1M0QMzJx6FY3zoqFai1zw6ykaFTkY
-         p2pOojS2zjif4X5C/tqmHPrF33AxKOwC7I1xu4RhgP891zJfDxl/iytcfE2C09GuWpB/
-         ZNt70vfNwXZeF4s03YMSub7O/7Ci2eOXV//g8fKaqGVMOxZLyRBlI6bFs/AaQuuerhJ5
-         /I03T8IDGJIde9FIQuemZFh+DmQnTXc+YQUdcnbSHac5m2s09cYIxV21fx308HOAqaAM
-         B+PJuyS+EvsxtCOitLdfdKvVvHU3CtFsAVIZVKc8f9lq8XQ78WsbyNcIrUutxuZOa22i
-         rECQ==
-X-Gm-Message-State: AOAM531gi/K9lwP1uPiwYOUTgPlkTDMqvWdO8pEq+IZRSuflzW78sHkT
-        ks8zifESL8fUEEYUUz6GUK/7+Q==
-X-Google-Smtp-Source: ABdhPJzk8nEw9/Otbmr/3ovJRhvdphjxQi21wayueg0Ak4Msn0yiNavxRHM3CquimXqnlv0paUMJPg==
-X-Received: by 2002:a05:6402:274a:b0:42d:dcd1:c847 with SMTP id z10-20020a056402274a00b0042ddcd1c847mr25680307edd.169.1654507369945;
-        Mon, 06 Jun 2022 02:22:49 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id u15-20020a05640207cf00b0042dd60352d1sm8271687edy.35.2022.06.06.02.22.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jun 2022 02:22:49 -0700 (PDT)
-Message-ID: <f3bf2e35-a613-0f2b-daa7-3cbd6fd5b68b@linaro.org>
-Date:   Mon, 6 Jun 2022 11:22:48 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 2/3 v2] ARM: s3c: Kconfig.s3c24xx: Fix indentation and
- replace some tabs
-Content-Language: en-US
-To:     Juerg Haefliger <juerg.haefliger@canonical.com>,
-        alim.akhtar@samsung.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Juerg Haefliger <juergh@canonical.com>
-References: <000c01d86e721c025105406f30samsung.com>
- <20220523080409.14949-1-juergh@canonical.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fGRLkNVBEPkUsV8SPQw3ABXYbXe6EdbELeiUgQBePYA=;
+        b=xjtKUv1/mZUVPmcuLecOeTQRgIb5Op6onngJG1NSr1kD1RS3qqjHC/gYrLHyjkNS2n
+         Ici9gcJ3bZFla20aGGw0hwEDafiVtvhtAXJCXBS116aQHTR1aRkcQ1+X09wz15OZ9WTv
+         3bcKDkOEoNA6i+3JBWPDvPuOp62T9CI+Hrf50bpzr9D+htkvoWcsRwhoxPJ2JzJSAok8
+         sB4YT0D/WyA5hI7cE4xXoxr4g1YJXbwZJBlqsowT7yu34f2+FSq1KZM9nrc/ZCF0xCxA
+         o8ViMd1ZRRSGReG4eoTgf+lF1HpYlG1MORweWpO70aTh5BzoVie4xmq6u7JUksF5Xwcr
+         1hYQ==
+X-Gm-Message-State: AOAM533bRzc/BCJsJFYEVuXfPWG0cxuXY9Sr61Z30Px5tSJtvzhculKr
+        IOxozkMJ0/BF+wdsPo4vmR97Lw==
+X-Google-Smtp-Source: ABdhPJwB8O++kySo/b2d5bDo6PpURaIlpqQGd9zSK+XnslDqZS9WA2tu9uD1t37154fYUKza3+BAng==
+X-Received: by 2002:a17:907:7f03:b0:6ff:4721:3c75 with SMTP id qf3-20020a1709077f0300b006ff47213c75mr20350547ejc.508.1654507362219;
+        Mon, 06 Jun 2022 02:22:42 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id u21-20020a1709064ad500b006f3ef214e14sm5956397ejt.122.2022.06.06.02.22.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 02:22:41 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220523080409.14949-1-juergh@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 0/2] syscon reboot/reboot_mode support for exynosautov9
+Date:   Mon,  6 Jun 2022 11:22:33 +0200
+Message-Id: <165450734050.62970.8421607592750868580.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220523121244.67341-1-chanho61.park@samsung.com>
+References: <CGME20220523121210epcas2p11d0b4f27edd5a403b2fd7d3833d577ff@epcas2p1.samsung.com> <20220523121244.67341-1-chanho61.park@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/05/2022 10:04, Juerg Haefliger wrote:
-> The convention for indentation seems to be a single tab. Help text is
-> further indented by an additional two whitespaces. Fix the lines that
-> violate these rules.
+On Mon, 23 May 2022 21:12:42 +0900, Chanho Park wrote:
+> This adds to support syscon reboot and reboot_mode for Exynos Auto v9 SoC.
 > 
-> While add it, replace tabs before comments with whitespaces (which seems to
-> be more common), add a missing trailing endif comment and squeeze multiple
-> empty lines.
+> Changes from v2:
+> - Change license of samsung,boot-mode.h to (GPL-2.0-only OR BSD-2-Clause)
+> - Add copyright of samsung,boot-mode.h
+> - Change ifdef guard __DT_BINDINGS_SAMSUNG_BOOT_MODE_H
+> - Remove brackets of the definitions
 > 
-> Signed-off-by: Juerg Haefliger <juergh@canonical.com>
-> ---
-> v2:
->   Mention additional changes in the commit message.
+> [...]
 
-This one does not apply. Please rebase on my current tree or tomorrow's
-linux-next (easier) and resend.
+Applied, thanks!
 
+[1/2] dt-bindings: soc: add samsung,boot-mode definitions
+      https://git.kernel.org/krzk/linux/c/95099951557c9eb2f180d6bcb9885eecaca97d24
+[2/2] arm64: dts: exynoautov9: add syscon reboot/reboot_mode support
+      https://git.kernel.org/krzk/linux/c/694d04a1d5449d948e438af1fd1d610d356bacc3
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
