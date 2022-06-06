@@ -2,66 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DED4CCA484
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E785ECCA483
 	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 06:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229909AbiFFGUT (ORCPT
+        id S229863AbiFFGUV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 02:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58116 "EHLO
+        Mon, 6 Jun 2022 02:20:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbiFFGUH (ORCPT
+        with ESMTP id S229890AbiFFGUD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jun 2022 02:20:07 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2066.outbound.protection.outlook.com [40.107.101.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BF721E0B;
-        Sun,  5 Jun 2022 23:20:06 -0700 (PDT)
+        Mon, 6 Jun 2022 02:20:03 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDE121E0B;
+        Sun,  5 Jun 2022 23:19:57 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MmFuRlq4B4zmQhM4Y9wGdVA1y94RhEqErEs1UibVsoG+O7WxlQkABLa0+q5k31/4SBFRl0be9BUazhuveu9ZW8nlRXTZfNk9xOMY1NqmkP9jxbmxZnUw3TDhG+OcrZU1OfKJp2CVtT5fxXK4FUQzwT6jwTG7BOk15tUY6Y1ix2jRsyJTyO1mfXEo3S3FlAKrUIYD2fOcXuTFX9f/VN0XcoAJma0Bt6W+/3hYWfYFSNItO2KLfNojreKr2y5Dqy6qetQL/srLp4k8NISB6v2VszpBnO4SLo2kClAOfkBXWsvHfEFdA4cglrHB2KXLnRWqCJb3VvSuwVoD9Q26c71lcQ==
+ b=cndKJOiJd90tXzm/yOg6GgkNavKUiAMwfv6bOIysihopzc6Xshv8wMsgzqF6osS5xme/1+MVhBtlikayvzg59nZTWZsRp1s5vA8sC26PBKE2y/V68Sb58noh+YIO5DyS+qXeXk7BXOg/0qGxddOGR0i2FoJRa12+MbBCXYdlVyKZEyO22ITepK6UkpILoW0Ngau1fhLIdGM2dbCtwgxNn3uhZ5p76I/9DveLemrCyLjBLexgrKcs4kI89TNhjfR8A1AjU/SfX+Bwflor3TqyMsL6XXAWIsjV3QroTzhHxAlw//GVtz/S3NUJI3ProPlTUYIgWN+5+YcGoguDwM0tsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5vJi8j8ipUwYoCOTfV3pczsa/F9LbUb944CBW72LYXQ=;
- b=jMXGB+b3mxbfgb6jruDlFAOcHDinm211tGnDCeiGv4CcKZqwEaxijRgVBGNGmuuL6gYzVdKSChD4PmeW6V4ZxkjNpEnVT+VT1af3u5lR1BvwCk6ArbT3nxQyobNEFw/ePx2x5SltRxGXOCrdbkX5a7yTtBDx6P+qKkCy4gwkgcntNAdEpGRmbNoxLfqFjGaJbV00NGOABgNEYROxdcamTz60/ET151ziUm9EEriKHhim+eA39nNySgm3MGKb07or31aCWgS4zqrRGJKwg1SrtqLLfvQsWqmpJjHIO5x8HVZzLNZ3dwrx9E6amP3Gg5X0rnCPVmIiO4s27kNnpTnuxA==
+ bh=qt61BEzWAJnf/jjYQPs/mf5a7J0wxbd8tUu1/z9I+ro=;
+ b=Fhmg/hcS/GKTVHdJa67QBMwxlUs8EK1td39cjXNGOo5FTqwtB2SaSPYlZ1vehE9JaCe4eFRfEcmL7PrOizvqkbL25NCOHOh3i2Dc5qGOcaFSjYVzrOGQ6gvHXY25hygY/JGcZNjiQ0sPSDXirt5SP0iDkWZ8YxHiG9gAZmAHXKade9yfXPJyztfT0NTBFXhE5465t4VbBzP8B2kdpbttM2gaaCLQN0h0goqzDjntt9bOfSm9a68AzoEa8RORI7LMySH3X6hPG8/GE17wwNqOzslBX3qncp6LaTiTIXxDNvfMYWJf86NFE+LRHwfBUWttNy2Smz5n7MWaHBnui/TwhA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=samsung.com smtp.mailfrom=nvidia.com;
+ 12.22.5.236) smtp.rcpttodomain=samsung.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5vJi8j8ipUwYoCOTfV3pczsa/F9LbUb944CBW72LYXQ=;
- b=Y9mxZ2H14k4Swu3gnZ+EN4wHTmyF8OH8NOJ0m0SoMC1g3YMKG/AhS30MQcRdJvl2pOK/D2G4LB5hp6Rn1yYzxQE5O+c1KabLg31D79SJHajoSuLTOKvcX6MDs/Mx7sBZJ8OOdH0nJNtfnJzbX6CfoYEA0XEjOQ+MTAonuIBWFQWVk5BbqfyE0bNjbv3cD3vIqKSLjPte0EFfy4vSTGqtQoiWneXPmlc2NYQWIxvpzZyJrvp5Z9KOxZaIgZ2dqZWggRTKk6fsfD4s7r2DCFI43Z6V/QHR20VqRwD7C74rg1KHW+dHBPCWotMzDPaLBT+Wz/cjiZLUy7DYi+RminIoUw==
-Received: from DM6PR07CA0116.namprd07.prod.outlook.com (2603:10b6:5:330::13)
- by LV2PR12MB5848.namprd12.prod.outlook.com (2603:10b6:408:173::18) with
+ bh=qt61BEzWAJnf/jjYQPs/mf5a7J0wxbd8tUu1/z9I+ro=;
+ b=pZhCEki/WrrDNL6nzAhWkMes+eXnm7eBIhNmnUDuvd8VQ/Lwy7bvo21V8SnWQyH4Zu7dIGoeA2CGzq9jNc3OWhn824TDsFVDGWFUK76ylUq4aMYWZN5DAmWOBrh2335ZCzV3Iv+brkY0+2lolWQPCcAMgQgN5I+66IypBIHg2DYu1plzvA05XuYxI9dz7QLIVlKuiBipWVpb7CDyBjC4w9jstfdhwR/YZVyDR8tK1BWMK2mDhWhjYkTOcSRikSqNObdYZg5B131hHqVsf4SHVpH3yAXSo+ZV55wb9GXUxUFbRSyLs8hunfEBtXUjOnV3T13lJI2sk8pFwZv+Ds13Gg==
+Received: from MW4PR03CA0182.namprd03.prod.outlook.com (2603:10b6:303:b8::7)
+ by DM6PR12MB2890.namprd12.prod.outlook.com (2603:10b6:5:15e::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.19; Mon, 6 Jun
- 2022 06:20:04 +0000
-Received: from DM6NAM11FT015.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:330:cafe::3) by DM6PR07CA0116.outlook.office365.com
- (2603:10b6:5:330::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13 via Frontend
- Transport; Mon, 6 Jun 2022 06:20:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.18; Mon, 6 Jun
+ 2022 06:19:53 +0000
+Received: from CO1NAM11FT018.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b8:cafe::5a) by MW4PR03CA0182.outlook.office365.com
+ (2603:10b6:303:b8::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.12 via Frontend
+ Transport; Mon, 6 Jun 2022 06:19:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.234) by
- DM6NAM11FT015.mail.protection.outlook.com (10.13.172.133) with Microsoft SMTP
+ 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
+ client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (12.22.5.236) by
+ CO1NAM11FT018.mail.protection.outlook.com (10.13.175.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5314.12 via Frontend Transport; Mon, 6 Jun 2022 06:20:03 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 6 Jun
- 2022 06:20:01 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.5314.12 via Frontend Transport; Mon, 6 Jun 2022 06:19:52 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by DRHQMAIL109.nvidia.com
+ (10.27.9.19) with Microsoft SMTP Server (TLS) id 15.0.1497.32; Mon, 6 Jun
+ 2022 06:19:52 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Sun, 5 Jun 2022
- 23:20:01 -0700
+ 23:19:51 -0700
 Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server id 15.2.986.22 via Frontend
- Transport; Sun, 5 Jun 2022 23:19:59 -0700
+ Transport; Sun, 5 Jun 2022 23:19:49 -0700
 From:   Nicolin Chen <nicolinc@nvidia.com>
 To:     <jgg@nvidia.com>, <joro@8bytes.org>, <will@kernel.org>,
         <marcan@marcan.st>, <sven@svenpeter.dev>, <robin.murphy@arm.com>,
@@ -85,125 +85,85 @@ CC:     <suravee.suthikulpanit@amd.com>, <alyssa@rosenzweig.io>,
         <linux-rockchip@lists.infradead.org>, <linux-s390@vger.kernel.org>,
         <linux-sunxi@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
         <virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>
-Subject: [PATCH 4/5] vfio/iommu_type1: Clean up update_dirty_scope in detach_group()
-Date:   Sun, 5 Jun 2022 23:19:26 -0700
-Message-ID: <20220606061927.26049-5-nicolinc@nvidia.com>
+Subject: [PATCH 0/5] Simplify vfio_iommu_type1 attach/detach routine
+Date:   Sun, 5 Jun 2022 23:19:22 -0700
+Message-ID: <20220606061927.26049-1-nicolinc@nvidia.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220606061927.26049-1-nicolinc@nvidia.com>
-References: <20220606061927.26049-1-nicolinc@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dec089d7-760e-4a1c-a1ee-08da478497fd
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5848:EE_
-X-Microsoft-Antispam-PRVS: <LV2PR12MB5848FC09B20B51B5588AF464ABA29@LV2PR12MB5848.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 398b826b-ed06-426d-5c5f-08da47849165
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2890:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR12MB2890C7DE246EECA45C210CC1ABA29@DM6PR12MB2890.namprd12.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hJTkLbx5IPx/ufeIfWPJtNWb2YjIH1e0tlNwLL3W7ptuwVGCNN/EQOR5eUkaVNHjTudD/133+wd0AO8oq/10vfkHliTEeDiey1/fWClQAAnsbQNyAGQSVuD5cMdFkU4tKWa/f+OPtwFC7mn9NQUcsP4QOPmkY1rsgJ9G/mek4AZRmKy9q81B4vEuilPo+oTg33pObpU7l3y3g8SXnyA7WW/HI5mUsrplSidaQopeVMyhuG2ftIjVV+azHYq9i0BBbU+cnXWTCFiHDAlugK5ijQpmBtTqlT6CBRDLl4APD3mDiHIzUGSodS4ar7WxUVnm5t0MsEcmyy1zh/NqtfwDRDW6+gD6i61egyYq8yCmz9PvBllAsoEg6OpdDG99HfXXufRE9FscFKd1mklK3pl0jL+FlAMM+MNQX6eKHRjnHlxzMDHnU8JOHGZlMKW1N/hIv9Nxv4MfgDGPGVvyefilUOJ4YsiCUvss0EnJGmReCglgYRo+wQ7oRbf6wU5i/xlXspF5vCbU5u6OM4huulnTmmyfTCMxqqLwkAGsLJGFdT1e+ktwoVNd9Lhz+nxBsdCQYKhRCA+xXpeXKnPUVThLpEuzQcK/ZIeJpgVOssgm/w9B3vznsoU9vb4nIVXymKj05swFG/ydpSN5o5gtCJltd3pHrEJOaZ6K3uBSZdEDkZEVNhc8AzjCgLe6jOZxJz5ZKlIZCvhzv9MtdV5/tfbFrca09/7zdHC5MxICsXaknJfQiN0ZsutPXhlw9hD3Q1TQzhoQUOJ2Q9z0sMrH62CFNw10fSVG3pt73iNdOTA+KKA=
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(186003)(336012)(426003)(2616005)(47076005)(316002)(1076003)(70206006)(54906003)(83380400001)(110136005)(70586007)(6666004)(2906002)(7696005)(15650500001)(36756003)(508600001)(8936002)(7406005)(7416002)(40460700003)(4326008)(26005)(5660300002)(82310400005)(8676002)(36860700001)(86362001)(81166007)(356005)(921005)(14143004)(36900700001)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: lxIvg2z2sn5/yqJNLZP0SOo/ZwR6vmGSXF4b/VrgDZUYpPYs7nwcT45mp7+AU2P52kLC3Ym/oYCD2pyGR7engcAwHD1PRhXFMg+NJ3yhaYTnKiREMZY2qUgp95goY4I/7ZoLrrwh5Gsl/A7VGm4FQJ7993ZrZHdQKOj9+wdTkqsdzMqKajX8CZv/OqVTvwMKN6zqQn9AbaXx5EY+ECXkn7c8/JyO3neqyoyUlkW41kB8E2bBeelwtvl9qk16UN7Csk784yZuf1lCYjUBaJwJR6jzOVknIVvO26orltaUeIBtm3SjcjZ/IkExoAMifcacxDGq1R/Rtu9+4UkOWL5ySBQcHtxSeZ4BvTNEfyDHC8EulLJFymDOxiM+aKTgrhRH5PBjiY5ZYBeAY47OQCcdWMYxfgWJfhpg+QrLJ15JTZ30oqBsbc2rra8FEvifAwOx6xMIS4aoppRmLpkqJzilbvg+KgQFBq7nvoif0pCtK2QzRFEqn/agh/7yMa1/dCVopyDWknn3jEXDnwAEELnfSUIAjZ1RI3CMG6b0FraBhoNPjir+/he0ADqQS1CiNFZSuVzpg6WVq9/Pl/lNxQkXBjDfFRlv9uFdDU74Y3rDRF52zuHXNL+dG0Fhers8QAsNUG18YWzLkcikOjFAsl/wj73n4jHGdTTINxM+8idC9b6UJi0M5fvfYcMVGft9olZ9Pxzw54B8o8OFpBErcCkHhTvlXmrW7DS4t/KYNo24tAaZNmuSw8JD6flulB4Gyyb9g7l8yYBBZ9YTpvoUkD2+RtxEYhYCs2de5SMu26+4UGmKnnXs/keUPIRVp6HXpycbXO0HqmEhG67GW1u+18lEFp2bnqV1S1SH/O0FX77UZMA=
+X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(336012)(47076005)(1076003)(2616005)(426003)(36756003)(7416002)(6666004)(83380400001)(966005)(186003)(7696005)(36860700001)(26005)(81166007)(110136005)(40460700003)(8936002)(921005)(356005)(316002)(82310400005)(4326008)(508600001)(86362001)(8676002)(5660300002)(54906003)(70206006)(70586007)(2906002)(7406005)(83996005)(2101003)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2022 06:20:03.6489
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2022 06:19:52.5847
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dec089d7-760e-4a1c-a1ee-08da478497fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 398b826b-ed06-426d-5c5f-08da47849165
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT015.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT018.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5848
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2890
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-All devices in emulated_iommu_groups have pinned_page_dirty_scope
-set, so the update_dirty_scope in the first list_for_each_entry
-is always false. Clean it up, and move the "if update_dirty_scope"
-part from the detach_group_done routine to the domain_list part.
+This is a preparatory series for IOMMUFD v2 patches. It enforces error
+code -EMEDIUMTYPE in iommu_attach_device() and iommu_attach_group() when
+an IOMMU domain and a device/group are incompatible. It also moves the
+domain->ops check into __iommu_attach_device(). These allow VFIO iommu
+code to simplify its group attachment routine, by avoiding the extra
+IOMMU domain allocations and attach/detach sequences of the old code.
 
-Rename the "detach_group_done" goto label accordingly.
+Worths mentioning the exact match for enforce_cache_coherency is removed
+with this series, since there's very less value in doing that since KVM
+won't be able to take advantage of it -- this just wastes domain memory.
+Instead, we rely on Intel IOMMU driver taking care of that internally.
 
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/vfio/vfio_iommu_type1.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+This is on github: https://github.com/nicolinc/iommufd/commits/vfio_iommu_attach
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index f4e3b423a453..b45b1cc118ef 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -2463,14 +2463,12 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 	struct vfio_iommu *iommu = iommu_data;
- 	struct vfio_domain *domain;
- 	struct vfio_iommu_group *group;
--	bool update_dirty_scope = false;
- 	LIST_HEAD(iova_copy);
- 
- 	mutex_lock(&iommu->lock);
- 	list_for_each_entry(group, &iommu->emulated_iommu_groups, next) {
- 		if (group->iommu_group != iommu_group)
- 			continue;
--		update_dirty_scope = !group->pinned_page_dirty_scope;
- 		list_del(&group->next);
- 		kfree(group);
- 
-@@ -2479,7 +2477,7 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 			WARN_ON(iommu->notifier.head);
- 			vfio_iommu_unmap_unpin_all(iommu);
- 		}
--		goto detach_group_done;
-+		goto out_unlock;
- 	}
- 
- 	/*
-@@ -2495,9 +2493,7 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 			continue;
- 
- 		iommu_detach_group(domain->domain, group->iommu_group);
--		update_dirty_scope = !group->pinned_page_dirty_scope;
- 		list_del(&group->next);
--		kfree(group);
- 		/*
- 		 * Group ownership provides privilege, if the group list is
- 		 * empty, the domain goes away. If it's the last domain with
-@@ -2519,7 +2515,17 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 			kfree(domain);
- 			vfio_iommu_aper_expand(iommu, &iova_copy);
- 			vfio_update_pgsize_bitmap(iommu);
-+			/*
-+			 * Removal of a group without dirty tracking may allow
-+			 * the iommu scope to be promoted.
-+			 */
-+			if (!group->pinned_page_dirty_scope) {
-+				iommu->num_non_pinned_groups--;
-+				if (iommu->dirty_page_tracking)
-+					vfio_iommu_populate_bitmap_full(iommu);
-+			}
- 		}
-+		kfree(group);
- 		break;
- 	}
- 
-@@ -2528,16 +2534,7 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 	else
- 		vfio_iommu_iova_free(&iova_copy);
- 
--detach_group_done:
--	/*
--	 * Removal of a group without dirty tracking may allow the iommu scope
--	 * to be promoted.
--	 */
--	if (update_dirty_scope) {
--		iommu->num_non_pinned_groups--;
--		if (iommu->dirty_page_tracking)
--			vfio_iommu_populate_bitmap_full(iommu);
--	}
-+out_unlock:
- 	mutex_unlock(&iommu->lock);
- }
- 
+Jason Gunthorpe (1):
+  vfio/iommu_type1: Prefer to reuse domains vs match enforced cache
+    coherency
+
+Nicolin Chen (4):
+  iommu: Return -EMEDIUMTYPE for incompatible domain and device/group
+  iommu: Ensure device has the same iommu_ops as the domain
+  vfio/iommu_type1: Clean up update_dirty_scope in detach_group()
+  vfio/iommu_type1: Simplify group attachment
+
+ drivers/iommu/amd/iommu.c                   |   3 +-
+ drivers/iommu/apple-dart.c                  |   5 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |   7 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.c       |   1 +
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c     |   3 +-
+ drivers/iommu/exynos-iommu.c                |   1 +
+ drivers/iommu/fsl_pamu_domain.c             |   1 +
+ drivers/iommu/intel/iommu.c                 |   5 +-
+ drivers/iommu/iommu.c                       |  26 ++
+ drivers/iommu/ipmmu-vmsa.c                  |   3 +-
+ drivers/iommu/msm_iommu.c                   |   1 +
+ drivers/iommu/mtk_iommu.c                   |   1 +
+ drivers/iommu/mtk_iommu_v1.c                |   1 +
+ drivers/iommu/omap-iommu.c                  |   3 +-
+ drivers/iommu/rockchip-iommu.c              |   1 +
+ drivers/iommu/s390-iommu.c                  |   1 +
+ drivers/iommu/sprd-iommu.c                  |   1 +
+ drivers/iommu/sun50i-iommu.c                |   1 +
+ drivers/iommu/tegra-gart.c                  |   1 +
+ drivers/iommu/tegra-smmu.c                  |   1 +
+ drivers/iommu/virtio-iommu.c                |   3 +-
+ drivers/vfio/vfio_iommu_type1.c             | 315 ++++++++++----------
+ include/linux/iommu.h                       |   2 +
+ 23 files changed, 223 insertions(+), 164 deletions(-)
+
 -- 
 2.17.1
 
