@@ -2,108 +2,97 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0C3C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 14:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0CFCCA481
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 15:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239786AbiFFOd6 (ORCPT
+        id S240596AbiFFPZw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 10:33:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
+        Mon, 6 Jun 2022 11:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239732AbiFFOd5 (ORCPT
+        with ESMTP id S240570AbiFFPZv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jun 2022 10:33:57 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D5D0D2C13F;
-        Mon,  6 Jun 2022 07:33:55 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CACF15DB;
-        Mon,  6 Jun 2022 07:33:55 -0700 (PDT)
-Received: from [10.57.81.38] (unknown [10.57.81.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 555903F73B;
-        Mon,  6 Jun 2022 07:33:48 -0700 (PDT)
-Message-ID: <1e0e5403-1e65-db9a-c8e7-34e316bfda8e@arm.com>
-Date:   Mon, 6 Jun 2022 15:33:42 +0100
+        Mon, 6 Jun 2022 11:25:51 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D684F1CD343;
+        Mon,  6 Jun 2022 08:25:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 42B7A61522;
+        Mon,  6 Jun 2022 15:25:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F90C341CB;
+        Mon,  6 Jun 2022 15:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654529149;
+        bh=mkHtdDuPA882sz437T9Aas24sScBzzwqd23tLOmUZUM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iD0RdBcPQOmeIKn8T1RxIq3nexv2+8rPfXggaB/DzObHMdtqVQwB14KGbS8Bgjwym
+         LI4FIOOcuyOqQHhMYT2RHsi3Yx2/tgnDORn+Rw5hdy+Lx8R1rOJAXCbsZcGKCjBNGE
+         KP+b5g9dYCEF3wR9GQbm3kbSLNqiuxyVD0vIdL1Q3y+f9sLP4zu2KHVBRXaM4FEiE7
+         MgoorE998lOfjV2hvHJcRvdgyJRqIubcnSHQep416fm0sd00MZnJceWEkr4CcMiuDk
+         cg/wbyZygNSpwA2XoixSz8yOYVsEWwoZpuqb7JgwKGxw+1xG+KLO0s+iNMwCIY5kpz
+         3Cxvwh0f6JIGQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.95)
+        (envelope-from <mchehab@kernel.org>)
+        id 1nyEby-0012P5-4x;
+        Mon, 06 Jun 2022 16:25:46 +0100
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 06/23] dt-bindings: mmc: exynos-dw-mshc: update samsung,pinctrl.yaml reference
+Date:   Mon,  6 Jun 2022 16:25:28 +0100
+Message-Id: <5c937793dd7aec30da4964b39561072ae184f89b.1654529011.git.mchehab@kernel.org>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <cover.1654529011.git.mchehab@kernel.org>
+References: <cover.1654529011.git.mchehab@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 2/5] iommu: Ensure device has the same iommu_ops as the
- domain
-Content-Language: en-GB
-To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
-        sven@svenpeter.dev, robdclark@gmail.com, m.szyprowski@samsung.com,
-        krzysztof.kozlowski@linaro.org, baolu.lu@linux.intel.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
-        jernej.skrabec@gmail.com, samuel@sholland.org,
-        jean-philippe@linaro.org, alex.williamson@redhat.com
-Cc:     suravee.suthikulpanit@amd.com, alyssa@rosenzweig.io,
-        alim.akhtar@samsung.com, dwmw2@infradead.org, yong.wu@mediatek.com,
-        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-        cohuck@redhat.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-References: <20220606061927.26049-1-nicolinc@nvidia.com>
- <20220606061927.26049-3-nicolinc@nvidia.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20220606061927.26049-3-nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2022-06-06 07:19, Nicolin Chen wrote:
-> The core code should not call an iommu driver op with a struct device
-> parameter unless it knows that the dev_iommu_priv_get() for that struct
-> device was setup by the same driver. Otherwise in a mixed driver system
-> the iommu_priv could be casted to the wrong type.
+Changeset af030d83da1d ("dt-bindings: pinctrl: samsung: convert to dtschema")
+renamed: bindings/pinctrl/samsung-pinctrl.txt
+to: bindings/pinctrl/samsung-pinctrl.yaml, splitting it into multiple
+files.
 
-We don't have mixed-driver systems, and there are plenty more 
-significant problems than this one to solve before we can (but thanks 
-for pointing it out - I hadn't got as far as auditing the public 
-interfaces yet). Once domains are allocated via a particular device's 
-IOMMU instance in the first place, there will be ample opportunity for 
-the core to stash suitable identifying information in the domain for 
-itself. TBH even the current code could do it without needing the 
-weirdly invasive changes here.
+Update exynos-dw-mshc.txt accordingly.
 
-> Store the iommu_ops pointer in the iommu_domain and use it as a check to
-> validate that the struct device is correct before invoking any domain op
-> that accepts a struct device.
+Fixes: af030d83da1d ("dt-bindings: pinctrl: samsung: convert to dtschema")
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+---
 
-In fact this even describes exactly that - "Store the iommu_ops pointer 
-in the iommu_domain", vs. the "Store the iommu_ops pointer in the 
-iommu_domain_ops" which the patch is actually doing :/
+To avoid mailbombing on a large number of people, only mailing lists were C/C on the cover.
+See [PATCH 00/23] at: https://lore.kernel.org/all/cover.1654529011.git.mchehab@kernel.org/
 
-[...]
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 19cf28d40ebe..8a1f437a51f2 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1963,6 +1963,10 @@ static int __iommu_attach_device(struct iommu_domain *domain,
->   {
->   	int ret;
->   
-> +	/* Ensure the device was probe'd onto the same driver as the domain */
-> +	if (dev->bus->iommu_ops != domain->ops->iommu_ops)
+ Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nope, dev_iommu_ops(dev) please. Furthermore I think the logical place 
-to put this is in iommu_group_do_attach_device(), since that's the 
-gateway for the public interfaces - we shouldn't need to second-guess 
-ourselves for internal default-domain-related calls.
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 753e9d7d8956..985b781f0a48 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -64,7 +64,7 @@ Required properties for a slot (Deprecated - Recommend to use one slot per host)
+   rest of the gpios (depending on the bus-width property) are the data lines in
+   no particular order. The format of the gpio specifier depends on the gpio
+   controller.
+-(Deprecated - Refer to Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt)
++(Deprecated - Refer to Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml)
+ 
+ Example:
+ 
+-- 
+2.36.1
 
-Thanks,
-Robin.
-
-> +		return -EMEDIUMTYPE;
-> +
->   	if (unlikely(domain->ops->attach_dev == NULL))
->   		return -ENODEV;
