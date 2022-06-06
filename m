@@ -2,122 +2,108 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E401BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 12:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0C3C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 14:33:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236693AbiFFMUR (ORCPT
+        id S239786AbiFFOd6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 08:20:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53724 "EHLO
+        Mon, 6 Jun 2022 10:33:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236687AbiFFMUQ (ORCPT
+        with ESMTP id S239732AbiFFOd5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jun 2022 08:20:16 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D49E293813;
-        Mon,  6 Jun 2022 05:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=k91bT1N8yxequJ8D47/cEksqjIzn/6bC6J3tuBiRZt8=; b=trSotSK3l0aZiKM6M9WdJFBrOy
-        6T5iYqiTx8oGUmpvyT0c8hGx8N5XR8AUyuwQ823vJ/SUaov4vTDl4Q1D2Aaps2hmxYg+9xil7BzIl
-        h3ISYhMt3X/Vs8poUujblRTaqaXA4y9axo4fm0fhYA2HEm9FDms51Wlj3jFdlZnkL17g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1nyBhr-005mNC-PM; Mon, 06 Jun 2022 14:19:39 +0200
-Date:   Mon, 6 Jun 2022 14:19:39 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        netdev@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Ferry Toth <fntoth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH net] net: phy: Don't trigger state machine while in
- suspend
-Message-ID: <Yp3w23hnUsBFFafu@lunn.ch>
-References: <688f559346ea747d3b47a4d16ef8277e093f9ebe.1653556322.git.lukas@wunner.de>
- <Yp1bIdwLjiLftWgW@lunn.ch>
- <20220606055320.GA31220@wunner.de>
+        Mon, 6 Jun 2022 10:33:57 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D5D0D2C13F;
+        Mon,  6 Jun 2022 07:33:55 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CACF15DB;
+        Mon,  6 Jun 2022 07:33:55 -0700 (PDT)
+Received: from [10.57.81.38] (unknown [10.57.81.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 555903F73B;
+        Mon,  6 Jun 2022 07:33:48 -0700 (PDT)
+Message-ID: <1e0e5403-1e65-db9a-c8e7-34e316bfda8e@arm.com>
+Date:   Mon, 6 Jun 2022 15:33:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220606055320.GA31220@wunner.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/5] iommu: Ensure device has the same iommu_ops as the
+ domain
+Content-Language: en-GB
+To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robdclark@gmail.com, m.szyprowski@samsung.com,
+        krzysztof.kozlowski@linaro.org, baolu.lu@linux.intel.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        jean-philippe@linaro.org, alex.williamson@redhat.com
+Cc:     suravee.suthikulpanit@amd.com, alyssa@rosenzweig.io,
+        alim.akhtar@samsung.com, dwmw2@infradead.org, yong.wu@mediatek.com,
+        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+        cohuck@redhat.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ <20220606061927.26049-3-nicolinc@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220606061927.26049-3-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 06, 2022 at 07:53:20AM +0200, Lukas Wunner wrote:
-> On Mon, Jun 06, 2022 at 03:40:49AM +0200, Andrew Lunn wrote:
-> > > +	if (phy_interrupt_is_valid(phydev)) {
-> > > +		phydev->irq_suspended = 0;
-> > > +		synchronize_irq(phydev->irq);
-> > > +
-> > > +		/* Rerun interrupts which were postponed by phy_interrupt()
-> > > +		 * because they occurred during the system sleep transition.
-> > > +		 */
-> > > +		if (phydev->irq_rerun) {
-> > > +			phydev->irq_rerun = 0;
-> > > +			enable_irq(phydev->irq);
-> > > +			irq_wake_thread(phydev->irq, phydev);
-> > > +		}
-> > > +	}
-> > 
-> > As i said in a previous thread, PHY interrupts are generally level,
-> > not edge. So when you call enable_irq(phydev->irq), doesn't it
-> > immediately fire?
-> 
-> Yes, if the interrupt is indeed level and the PHY is capable of
-> remembering that an interrupt occurred while the system was suspended
-> or was about to be suspended.
+On 2022-06-06 07:19, Nicolin Chen wrote:
+> The core code should not call an iommu driver op with a struct device
+> parameter unless it knows that the dev_iommu_priv_get() for that struct
+> device was setup by the same driver. Otherwise in a mixed driver system
+> the iommu_priv could be casted to the wrong type.
 
-It should remember, in the WoL case. It keeps it power etc.
+We don't have mixed-driver systems, and there are plenty more 
+significant problems than this one to solve before we can (but thanks 
+for pointing it out - I hadn't got as far as auditing the public 
+interfaces yet). Once domains are allocated via a particular device's 
+IOMMU instance in the first place, there will be ample opportunity for 
+the core to stash suitable identifying information in the domain for 
+itself. TBH even the current code could do it without needing the 
+weirdly invasive changes here.
 
-> The irq_wake_thread() ensures that the IRQ handler is called,
-> should one of those conditions *not* be met.
-> 
-> Recall that phylib uses irq_default_primary_handler() as hardirq
-> handler.  That handler does nothing else but wake the IRQ thread,
-> which runs phy->handle_interrupt() in task context.
-> 
-> The irq_wake_thread() above likewise wakes the IRQ thread,
-> i.e. it tells the scheduler to put it on the run queue.
-> 
-> If, as you say, the interrupt is level and fires upon enable_irq(),
-> the result is that the scheduler is told twice to put the IRQ thread
-> on the run queue.  Usually this will happen faster than the IRQ thread
-> actually gets scheduled, so it will only run once.
-> 
-> In the unlikely event that the IRQ thread gets scheduled before the
-> call to irq_wake_thread(), the IRQ thread will run twice.
-> However, that's harmless.  IRQ handlers can cope with that.
+> Store the iommu_ops pointer in the iommu_domain and use it as a check to
+> validate that the struct device is correct before invoking any domain op
+> that accepts a struct device.
 
-I'm just slightly worried about the IRQ handler returning there was
-nothing to do. The IRQ core counts such interrupts, and will disable
-the interrupt if nobody says it is actually handling the
-interrupts. But it needs to be a few interrupts before this kicks in,
-so it should be safe.
+In fact this even describes exactly that - "Store the iommu_ops pointer 
+in the iommu_domain", vs. the "Store the iommu_ops pointer in the 
+iommu_domain_ops" which the patch is actually doing :/
 
-One other thought is we should probably get the IRQ Maintainers to
-look this patch over. Please could you repost and Cc: them.
+[...]
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 19cf28d40ebe..8a1f437a51f2 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1963,6 +1963,10 @@ static int __iommu_attach_device(struct iommu_domain *domain,
+>   {
+>   	int ret;
+>   
+> +	/* Ensure the device was probe'd onto the same driver as the domain */
+> +	if (dev->bus->iommu_ops != domain->ops->iommu_ops)
 
-Thanks
+Nope, dev_iommu_ops(dev) please. Furthermore I think the logical place 
+to put this is in iommu_group_do_attach_device(), since that's the 
+gateway for the public interfaces - we shouldn't need to second-guess 
+ourselves for internal default-domain-related calls.
 
-   Andrew
+Thanks,
+Robin.
+
+> +		return -EMEDIUMTYPE;
+> +
+>   	if (unlikely(domain->ops->attach_dev == NULL))
+>   		return -ENODEV;
