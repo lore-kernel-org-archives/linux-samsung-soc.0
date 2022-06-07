@@ -2,82 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A38C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 12:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4242C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 12:42:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244063AbiFGMme (ORCPT
+        id S244066AbiFGMmu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 08:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48078 "EHLO
+        Tue, 7 Jun 2022 08:42:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244069AbiFGMm1 (ORCPT
+        with ESMTP id S244075AbiFGMms (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jun 2022 08:42:27 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 546901FCFF
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jun 2022 05:42:24 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id h23so23865028ejj.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jun 2022 05:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hx+YU8X87nw4MVOTQmNYp6p2FiJ4sffRycyNV0L9c0s=;
-        b=jQR0bnWxBW5VGj7k/Kg79jMnq9OfCjUdaRvqwc/nPI71bU/TSgx2F2QGJKgS4x/jiQ
-         mACj/xtOBHUTA9MPIzKgVAFLDovPBvhQPtphfSA/8sZcCCOiHgjf1j2M8rLA3y5lKNjH
-         tgsHwk/2cAS0b7ylpUqZZbLSxUziM44hoSYZXZfoq5q9M0OvYSUbK/ogje19KisnJZDH
-         JQpvmLZLEBFxzDTrjN3MGzWIAT7xRasWzxvvqC99A4n7+l2SGijjUvTeY5Wvmho02BCi
-         s65uegPwrY/uokQArL3imLjvZsYStnfd0iYt24EdXhMokgCjM8VE+M/0VVD1we6ckkcV
-         9xbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hx+YU8X87nw4MVOTQmNYp6p2FiJ4sffRycyNV0L9c0s=;
-        b=gckNZ++j6np2FWtX4IdP9FeAw5yOBmpBABzkanXlejfPiEEzT2yW6sZUuqze6OpCya
-         fv6Y2UPaKA296F9RGMRMB48FXMtuaTJ6CFJXaFcDyN24C+eJBIv81qPskT1pJ9v7QKbe
-         C9cd97LH8/F6qMFrzkrB2KKTM9kowMCZV/Ua4OSfQb85yBmSxPbTvSb0zOyFsrqDeJkF
-         VmkAbssDm5yDT5tHSXyEBauAtkUeVbymQWhRbVgS7DwszhYFXoRfX5lUujF/NnT2Qz0p
-         KXR7w6wiY3Am62giVQN6YM0/6J73SDns1G0SjdzjrzDwEeTHTRboXURS8G/WxmcZlFs7
-         niPg==
-X-Gm-Message-State: AOAM531giLcPECnHQd8WaaEyKqg/QwAzKiQ8R6pfp7RA0njuVXPiaxOz
-        e8A+vhOwvdxLZNaHRw2HUBfM/w==
-X-Google-Smtp-Source: ABdhPJzrDcw7COBB5CK6AHvvI8A2n2rdj9k5IJJSD9GbjYt8SZMwjcb3HrEZsuS+PPeUx8mOrZFOkw==
-X-Received: by 2002:a17:907:9605:b0:6f5:c66:7c13 with SMTP id gb5-20020a170907960500b006f50c667c13mr26010612ejc.66.1654605743796;
-        Tue, 07 Jun 2022 05:42:23 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id o19-20020a1709061b1300b006fed85c1a8fsm7685692ejg.202.2022.06.07.05.42.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jun 2022 05:42:23 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     XueBing Chen <chenxuebing@jari.cn>, krzk@kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: s3c: Use strscpy to replace strlcpy
-Date:   Tue,  7 Jun 2022 14:42:21 +0200
-Message-Id: <165460572961.134654.6070440562526650212.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <3e0217ca.a1d.180f90f39c7.Coremail.chenxuebing@jari.cn>
-References: <3e0217ca.a1d.180f90f39c7.Coremail.chenxuebing@jari.cn>
+        Tue, 7 Jun 2022 08:42:48 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41229248EB;
+        Tue,  7 Jun 2022 05:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654605766; x=1686141766;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7CnaOaKftZFuU6zS5ejOPSw/a0TRQ7MfLEcH+ST55pI=;
+  b=npA/EwVLm80RPrCVVatUyQvh9x9gm5H6ghJ6dgiol7bnt46yPC4MAeIP
+   hodIq74n82eCvLkbY6D4n1U5g+cmclFLiS1lWHbglspj33Yx0VXhpW1xu
+   XXW9UHZ96K+9IXY9b2Fj6DgEmQ3WeVzrXk0/t33U8iB4Eu56WDtZMlNUm
+   pxMK+4gZexYxZYaxfCiELvhZ9RnU5kjk71ZGLbc98m1622I3PzO/VRn3x
+   XFvHXiaR2OZx8kR0okSiNW3ZGnzZm376te9757QJrrGqkayUVpgzKPh+f
+   935LMOkD4M2Ww6r8zdK9pommUkbicGZ9Jd72qeSG0NnIawB8Rb10j8+x0
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="259493235"
+X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
+   d="scan'208";a="259493235"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 05:42:44 -0700
+X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
+   d="scan'208";a="584184405"
+Received: from zwang64-mobl1.ccr.corp.intel.com (HELO [10.249.174.202]) ([10.249.174.202])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 05:42:34 -0700
+Message-ID: <3d0b2863-bb4f-31e1-d54e-09ddf4762d43@linux.intel.com>
+Date:   Tue, 7 Jun 2022 20:42:32 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Cc:     baolu.lu@linux.intel.com, Nicolin Chen <nicolinc@nvidia.com>,
+        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
+        m.szyprowski@samsung.com, krzysztof.kozlowski@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        jean-philippe@linaro.org, alex.williamson@redhat.com,
+        suravee.suthikulpanit@amd.com, alyssa@rosenzweig.io,
+        alim.akhtar@samsung.com, dwmw2@infradead.org, yong.wu@mediatek.com,
+        mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+        cohuck@redhat.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 0/5] Simplify vfio_iommu_type1 attach/detach routine
+Content-Language: en-US
+To:     Jason Gunthorpe <jgg@nvidia.com>
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ <d357966b-7abd-f8f3-3ca7-3c99f5e075b9@linux.intel.com>
+ <20220607115820.GH1343366@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20220607115820.GH1343366@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 25 May 2022 10:32:46 +0800 (GMT+08:00), XueBing Chen wrote:
-> The strlcpy should not be used because it doesn't limit the source
-> length.  Preferred is strscpy.
+On 2022/6/7 19:58, Jason Gunthorpe wrote:
+> On Tue, Jun 07, 2022 at 03:44:43PM +0800, Baolu Lu wrote:
+>> On 2022/6/6 14:19, Nicolin Chen wrote:
+>>> Worths mentioning the exact match for enforce_cache_coherency is removed
+>>> with this series, since there's very less value in doing that since KVM
+>>> won't be able to take advantage of it -- this just wastes domain memory.
+>>> Instead, we rely on Intel IOMMU driver taking care of that internally.
+>>
+>> After reading this series, I don't see that Intel IOMMU driver needs any
+>> further change to support the new scheme. Did I miss anything?
 > 
-> 
+> You already did it :)
 
-Applied, thanks!
-
-[1/1] ARM: s3c: Use strscpy to replace strlcpy
-      https://git.kernel.org/krzk/linux/c/c241d049122b49698d9094c7ee7a0215fbc04cfe
+Just as I thought. Thank you!
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+baolu
+
