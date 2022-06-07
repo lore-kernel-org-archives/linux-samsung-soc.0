@@ -2,76 +2,99 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A63C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jun 2022 19:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5672AC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 03:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbiFFTFC (ORCPT
+        id S236241AbiFGDXq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 15:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39402 "EHLO
+        Mon, 6 Jun 2022 23:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232031AbiFFTFB (ORCPT
+        with ESMTP id S233389AbiFGDXl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jun 2022 15:05:01 -0400
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457C7A476;
-        Mon,  6 Jun 2022 12:05:00 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id 134so6924919iou.12;
-        Mon, 06 Jun 2022 12:05:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wFI0oirldONXh9sCQOu3BipVplhmcMS1DY1jebePK3s=;
-        b=0B3YdoGK4+CsvcI6uBS2YZIUC6ttxnSkcpKVF+kJPArHLfZDrhfAnDrcxbjSZHrYln
-         JiJrvFWjX96qWXOY541yP9cNh9e8huHnmFa2lp9lqfT6sQdf6H7uNXkmYHTLtMD7Ca8z
-         h2b08LP/GunIxG+/zN4NA2mD4V3gmUrGBE5a0weU8/yJ7w8k/XhTSJ4HIGwwLJRoQ3So
-         KurGQ2VFvhCAo0hnwfROxllqCGDgnjZLJEuhgEEmi05tEk2dk8XMWpo2vTXEfBhjxBph
-         gWOhXulY4jS67CCp7geyTgTC4dlpU+fgOpOMj0Ophy0fk/oqqAUV1t8P06qn8UIa6aHl
-         Cl8Q==
-X-Gm-Message-State: AOAM533SJTGfVTJHB6M9Qp5dpkMSCXlwcYOKyaWFpI9VRaHdCXGimoSC
-        8/boW/F6tLDridlxoQDACw==
-X-Google-Smtp-Source: ABdhPJxRWFIPW7RIod5NihetwQ+IN8G94Y2cNKYU2fnYdDfIrkQl366NcSIQ/u1nUxBSw9gOoqK6jA==
-X-Received: by 2002:a05:6602:2b8e:b0:5e9:74e7:6b01 with SMTP id r14-20020a0566022b8e00b005e974e76b01mr12354222iov.127.1654542299526;
-        Mon, 06 Jun 2022 12:04:59 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id f12-20020a02a04c000000b0032e5205f4e7sm5854760jah.4.2022.06.06.12.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 12:04:59 -0700 (PDT)
-Received: (nullmailer pid 1088702 invoked by uid 1000);
-        Mon, 06 Jun 2022 19:04:57 -0000
-Date:   Mon, 6 Jun 2022 14:04:57 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 4/4] dt-bindings: mmc: samsung,exynos-dw-mshc:
- document Exynos5420 SMU
-Message-ID: <20220606190457.GA1088577-robh@kernel.org>
-References: <20220605163710.144210-1-krzysztof.kozlowski@linaro.org>
- <20220605163710.144210-5-krzysztof.kozlowski@linaro.org>
+        Mon, 6 Jun 2022 23:23:41 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F485F8EA;
+        Mon,  6 Jun 2022 20:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654572220; x=1686108220;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vzgEhhW4kNaICa/n+qlgLmF5Vog9iKUmfkdT1yy8unU=;
+  b=AvvUfJNC59mEf0LR+dJI9kYlHRwUaTlynJ2FGx7omMpxLaf2wpbWGFnz
+   i2uv2N8Iy/MnNUFAtGKOK+FwsaWHlfVg4yKhGZ7pldj1I/kP1CSc5waEr
+   VDYg46XvRnSksS8mh3xEDiYSeI2UsUbElc1Z8pDNzD/Q25hs+LaftEQbg
+   EWekYbI4vzLfTByRnjhC7w14E4/JMQzkOSLwU8gTF+gsI1L003gpdkdZC
+   ZWP3UBG5HSd5hSIRUSamaybxVUqI+I6hlV+KTGr8JL1L5wRNCePCFDPHU
+   iiY/SaPU6rx7nTCd6jVt+YzRS5XTxwBWzpqewtkNw1rGZgPJV77014HRa
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="337906376"
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; 
+   d="scan'208";a="337906376"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 20:23:39 -0700
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; 
+   d="scan'208";a="583980445"
+Received: from zwang64-mobl1.ccr.corp.intel.com (HELO [10.249.174.202]) ([10.249.174.202])
+  by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 20:23:29 -0700
+Message-ID: <f81b8b8f-b811-3be2-5dda-139dc1bd7bdd@linux.intel.com>
+Date:   Tue, 7 Jun 2022 11:23:27 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220605163710.144210-5-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Cc:     baolu.lu@linux.intel.com, suravee.suthikulpanit@amd.com,
+        alyssa@rosenzweig.io, alim.akhtar@samsung.com, dwmw2@infradead.org,
+        yong.wu@mediatek.com, mjrosato@linux.ibm.com,
+        gerald.schaefer@linux.ibm.com, thierry.reding@gmail.com,
+        vdumpa@nvidia.com, jonathanh@nvidia.com, cohuck@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 1/5] iommu: Return -EMEDIUMTYPE for incompatible domain
+ and device/group
+Content-Language: en-US
+To:     Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
+        joro@8bytes.org, will@kernel.org, marcan@marcan.st,
+        sven@svenpeter.dev, robin.murphy@arm.com, robdclark@gmail.com,
+        m.szyprowski@samsung.com, krzysztof.kozlowski@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        matthias.bgg@gmail.com, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, wens@csie.org,
+        jernej.skrabec@gmail.com, samuel@sholland.org,
+        jean-philippe@linaro.org, alex.williamson@redhat.com
+References: <20220606061927.26049-1-nicolinc@nvidia.com>
+ <20220606061927.26049-2-nicolinc@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20220606061927.26049-2-nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 05 Jun 2022 18:37:10 +0200, Krzysztof Kozlowski wrote:
-> Document the compatible for Samsung Exynos5420 SoC Synopsys Designware
-> MSHC with SMU, already used in DTS and driver.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/mmc/samsung,exynos-dw-mshc.yaml          | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On 2022/6/6 14:19, Nicolin Chen wrote:
+> +/**
+> + * iommu_attach_group - Attach an IOMMU group to an IOMMU domain
+> + * @domain: IOMMU domain to attach
+> + * @dev: IOMMU group that will be attached
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Nit: @group: ...
+
+> + *
+> + * Returns 0 on success and error code on failure
+> + *
+> + * Specifically, -EMEDIUMTYPE is returned if the domain and the group are
+> + * incompatible in some way. This indicates that a caller should try another
+> + * existing IOMMU domain or allocate a new one.
+> + */
+>   int iommu_attach_group(struct iommu_domain *domain, struct iommu_group *group)
+>   {
+>   	int ret;
+
+Best regards,
+baolu
