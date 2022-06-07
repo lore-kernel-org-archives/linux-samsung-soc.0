@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7621ECCA484
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 08:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1A6C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 08:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238755AbiFGIyH (ORCPT
+        id S236520AbiFGIyG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 04:54:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58408 "EHLO
+        Tue, 7 Jun 2022 04:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238857AbiFGIxu (ORCPT
+        with ESMTP id S238853AbiFGIxt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jun 2022 04:53:50 -0400
+        Tue, 7 Jun 2022 04:53:49 -0400
 Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0EC5E2773
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jun 2022 01:53:48 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id v1so23090978ejg.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jun 2022 01:53:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FE1E15FF
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jun 2022 01:53:47 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id n10so33802275ejk.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jun 2022 01:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fzBuAR9UDJdEVpcbgdt0O2mvjmHEINRyMFw6wNgyr3E=;
-        b=rwvnvsSYurnHmYUfbllx7fkQ00GNGlNvOQ5Ot6n9wAr0hp0KWuv0/ulSBNHM7hUo/N
-         /4kl50ORD3GQG9CGeDtpo0JgO5zv2NEgAdtrmlxLqfxt9zcAos4eS0wlpoUJmQhbNHDn
-         Fd61UYRs9+fLPZpm8gU7HoJ180e/RLHoy9OPHDi9jT9pb2wyzBc5B49rtTuEaUh5EvnB
-         ezM7lvECesihDFsy4SVly1k5+ivlTCI4k5c+7daA6tFpkcbjGZ6otperos5b5AYYF2xG
-         PG1NvlUw8vZonktp2j421NNWY1TgUgCvnmzAJJ5iKX+zM36pw0qdREDaE24QA+Z97fnE
-         tL0g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9z6WrFwb2fPXlQl3Uyym8/TioSfH3qqjKkRFpZGE28g=;
+        b=qhsiWn7NWGHI1rEEL3xWQ3iES5hVECosmvK1IierJBoeDO0Dx/wYKX5UFNRVXZEb8z
+         svuBwCCwRUpMel616GqqyT5+KzgcswKzIe1dXuwlZTtafjBV7K3DLfKx2CFuyRzKv2h7
+         KJKuHjHez4pafG48WzeJ2XmOY8FIolXTh+n27xqPeeCY7Q+vjH0Mv5xS8T4O/KmanaNo
+         7np3TLDZuBek270r5UHGV7CDjlY8jUn2QyTNJA9MR7HAqVwEYB81vjSgTqW1qikASxce
+         yEKjNSBZeIQMorBWeKGjGK6hjojAuHI6xSxBpJLfTfaHLTW001kGUo3GfIrvLkoOyNgp
+         5CNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fzBuAR9UDJdEVpcbgdt0O2mvjmHEINRyMFw6wNgyr3E=;
-        b=Vzvqsfcw4NT1JcFEOCLPY3wfTnOBM6PmnuGQN1qksd+ceinWazyKG6MJNMFWptSIRf
-         Iyiy3ZzOiPq4Z2TjV5iU984IfGjM29+BO797ONSWWqBe7hd4Ykng1AzVIbAZf64GbXcT
-         flppRchia0nJ/VkTlY7zmwnkP7BuxzBUnKOLoBdE7eIzCmbF+MxqJVZcymY4Jx6c4b5f
-         2saJz5r3aAMbV+rUmfXj/40XkK0mqC5UW/BI5ni/ts2rZTfTSIZDxqFvvdAXwX1qO2sf
-         phlv799stRmpmu5VLdbNVMnSy8ZRxAlWyddEJOCHQ2O9nSaKipkit1TIS6cRO6WLgdkq
-         pCIg==
-X-Gm-Message-State: AOAM532GZar92ymjqOasE1vlc0U3H1eAFKqsHMIDz0Ca3Eq/2zF+yuEb
-        i90bi6D+aR8E91K6Yp5J2Ag/yA==
-X-Google-Smtp-Source: ABdhPJyaP6QfGmtpXahcRU81dJSgLxzGwwrgMIskLfJYmHQQAB9erOZcoyj8ao4pruJEblf+n3qXew==
-X-Received: by 2002:a17:907:1b24:b0:6ff:235c:2ffd with SMTP id mp36-20020a1709071b2400b006ff235c2ffdmr26737673ejc.116.1654592026906;
-        Tue, 07 Jun 2022 01:53:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9z6WrFwb2fPXlQl3Uyym8/TioSfH3qqjKkRFpZGE28g=;
+        b=A359SsSS/ozYgmtlrx/hkBrSu09/PtBfcLhjZJddjVo2NqBoPPuti4mixT0berBFYr
+         55r3olAhiJR05i7NUXP2R1RUP5DiClaWDqb6PybYEytbS+AuODe6MGkY3QmYYF1leB67
+         gu6aCoVBqdkGra72oQfy09/fzCYoE2OX59M7mMIeH5SJ9MzJ+SPDYKqzdeJ21rMhbdfn
+         ZEpTU+ce7vhGDiOYIP2uNrOtCCE2v2dhsDSc3NqgqLQTP0raVsxpA1q5pSgYP5x7R7Ix
+         z0uzlvoV9x+0hNkB6DRamxUigaQnrEvRkNI/Sk6udKRjyAaZx4wXaBZ2l6bgT5mu77QT
+         VtHw==
+X-Gm-Message-State: AOAM532xnB8ToaZDp03myxtSYI+ZICNQF+iuH0BZtmUN3j+ty+iEZ8H/
+        LTZcTGFvyKohEaV/vT0bs/Laow==
+X-Google-Smtp-Source: ABdhPJwIZgnqzzbhzjlmEhZvB2RsAnSMQYSXIpeaomKW9o+4SvNwnoMf+SXfJ+psJEfcfXByw7jtdg==
+X-Received: by 2002:a17:906:d195:b0:711:357a:d33d with SMTP id c21-20020a170906d19500b00711357ad33dmr13454683ejz.517.1654592025898;
+        Tue, 07 Jun 2022 01:53:45 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id k16-20020a1709061c1000b00705cdfec71esm7176703ejg.7.2022.06.07.01.53.46
+        by smtp.gmail.com with ESMTPSA id k16-20020a1709061c1000b00705cdfec71esm7176703ejg.7.2022.06.07.01.53.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jun 2022 01:53:46 -0700 (PDT)
+        Tue, 07 Jun 2022 01:53:45 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -58,38 +58,212 @@ To:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/3] ARM: dts: exynos: align aat1290 flash LED node with bindings in Galaxy S3
-Date:   Tue,  7 Jun 2022 10:53:42 +0200
-Message-Id: <20220607085343.72414-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] dt-bindings: leds: skyworks,aat1290: convert to dtschema
+Date:   Tue,  7 Jun 2022 10:53:41 +0200
+Message-Id: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
-References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The bindings expect aat1290 flash LED child node to be named "led".
+Convert the Skyworks Solutions, Inc. AAT1290 Current Regulator bindings
+to DT Schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/leds/leds-aat1290.txt | 77 ---------------
+ .../bindings/leds/skyworks,aat1290.yaml       | 96 +++++++++++++++++++
+ 2 files changed, 96 insertions(+), 77 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-aat1290.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
 
-diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-index 03dffc690b79..72901772fcad 100644
---- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-@@ -25,7 +25,7 @@ led-controller {
- 		pinctrl-1 = <&camera_flash_host>;
- 		pinctrl-2 = <&camera_flash_isp>;
- 
--		flash-led {
-+		led {
- 			label = "flash";
- 			led-max-microamp = <520833>;
- 			flash-max-microamp = <1012500>;
+diff --git a/Documentation/devicetree/bindings/leds/leds-aat1290.txt b/Documentation/devicetree/bindings/leds/leds-aat1290.txt
+deleted file mode 100644
+index 62ed17ec075b..000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-aat1290.txt
++++ /dev/null
+@@ -1,77 +0,0 @@
+-* Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
+-
+-The device is controlled through two pins: FL_EN and EN_SET. The pins when,
+-asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
+-respectively. In order to add a capability of selecting the strobe signal source
+-(e.g. CPU or camera sensor) there is an additional switch required, independent
+-of the flash chip. The switch is controlled with pin control.
+-
+-Required properties:
+-
+-- compatible : Must be "skyworks,aat1290".
+-- flen-gpios : Must be device tree identifier of the flash device FL_EN pin.
+-- enset-gpios : Must be device tree identifier of the flash device EN_SET pin.
+-
+-Optional properties:
+-- pinctrl-names : Must contain entries: "default", "host", "isp". Entries
+-		"default" and "host" must refer to the same pin configuration
+-		node, which sets the host as a strobe signal provider. Entry
+-		"isp" must refer to the pin configuration node, which sets the
+-		ISP as a strobe signal provider.
+-
+-A discrete LED element connected to the device must be represented by a child
+-node - see Documentation/devicetree/bindings/leds/common.txt.
+-
+-Required properties of the LED child node:
+-- led-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
+-- flash-max-microamp : see Documentation/devicetree/bindings/leds/common.txt
+-                       Maximum flash LED supply current can be calculated using
+-                       following formula: I = 1A * 162kohm / Rset.
+-- flash-max-timeout-us : see Documentation/devicetree/bindings/leds/common.txt
+-                         Maximum flash timeout can be calculated using following
+-                         formula: T = 8.82 * 10^9 * Ct.
+-
+-Optional properties of the LED child node:
+-- function : see Documentation/devicetree/bindings/leds/common.txt
+-- color : see Documentation/devicetree/bindings/leds/common.txt
+-- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
+-
+-Example (by Ct = 220nF, Rset = 160kohm and exynos4412-trats2 board with
+-a switch that allows for routing strobe signal either from the host or from
+-the camera sensor):
+-
+-#include "exynos4412.dtsi"
+-#include <dt-bindings/leds/common.h>
+-
+-led-controller {
+-	compatible = "skyworks,aat1290";
+-	flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+-	enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
+-
+-	pinctrl-names = "default", "host", "isp";
+-	pinctrl-0 = <&camera_flash_host>;
+-	pinctrl-1 = <&camera_flash_host>;
+-	pinctrl-2 = <&camera_flash_isp>;
+-
+-	camera_flash: led {
+-		function = LED_FUNCTION_FLASH;
+-		color = <LED_COLOR_ID_WHITE>;
+-		led-max-microamp = <520833>;
+-		flash-max-microamp = <1012500>;
+-		flash-max-timeout-us = <1940000>;
+-	};
+-};
+-
+-&pinctrl_0 {
+-	camera_flash_host: camera-flash-host {
+-		samsung,pins = "gpj1-0";
+-		samsung,pin-function = <1>;
+-		samsung,pin-val = <0>;
+-	};
+-
+-	camera_flash_isp: camera-flash-isp {
+-		samsung,pins = "gpj1-0";
+-		samsung,pin-function = <1>;
+-		samsung,pin-val = <1>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml b/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
+new file mode 100644
+index 000000000000..919ee0e30b10
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/skyworks,aat1290.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Skyworks Solutions, Inc. AAT1290 Current Regulator for Flash LEDs
++
++maintainers:
++  - Jacek Anaszewski <jacek.anaszewski@gmail.com>
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++description: |
++  The device is controlled through two pins:: FL_EN and EN_SET. The pins when,
++  asserted high, enable flash strobe and movie mode (max 1/2 of flash current)
++  respectively. In order to add a capability of selecting the strobe signal
++  source (e.g. CPU or camera sensor) there is an additional switch required,
++  independent of the flash chip. The switch is controlled with pin control.
++
++properties:
++  compatible:
++    const: skyworks,aat1290
++
++  enset-gpios:
++    maxItems: 1
++    description: EN_SET pin
++
++  flen-gpios:
++    maxItems: 1
++    description: FL_EN pin
++
++  led:
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      led-max-microamp: true
++
++      flash-max-microamp:
++        description: |
++          Maximum flash LED supply current can be calculated using following
++          formula:: I = 1A * 162 kOhm / Rset.
++
++      flash-max-timeout-us:
++        description: |
++          Maximum flash timeout can be calculated using following formula::
++            T = 8.82 * 10^9 * Ct.
++
++    required:
++      - flash-max-microamp
++      - flash-max-timeout-us
++      - led-max-microamp
++
++  pinctrl-names:
++    items:
++      - const: default
++      - const: host
++      - const: isp
++
++  pinctrl-0: true
++  pinctrl-1: true
++  pinctrl-2: true
++
++required:
++  - compatible
++  - enset-gpios
++  - flen-gpios
++  - led
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    // Ct = 220 nF, Rset = 160 kOhm
++    led-controller {
++        compatible = "skyworks,aat1290";
++        flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
++        enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
++
++        pinctrl-names = "default", "host", "isp";
++        pinctrl-0 = <&camera_flash_host>;
++        pinctrl-1 = <&camera_flash_host>;
++        pinctrl-2 = <&camera_flash_isp>;
++
++        led {
++            label = "flash";
++            function = LED_FUNCTION_FLASH;
++            color = <LED_COLOR_ID_WHITE>;
++            led-max-microamp = <520833>;
++            flash-max-microamp = <1012500>;
++            flash-max-timeout-us = <1940000>;
++        };
++    };
 -- 
 2.34.1
 
