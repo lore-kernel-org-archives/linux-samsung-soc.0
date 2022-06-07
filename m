@@ -2,70 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D66C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 06:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5234ACCA47E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 06:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237007AbiFGGcu (ORCPT
+        id S237023AbiFGGcx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 02:32:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45822 "EHLO
+        Tue, 7 Jun 2022 02:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbiFGGcs (ORCPT
+        with ESMTP id S237017AbiFGGcv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jun 2022 02:32:48 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29C5248EB
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jun 2022 23:32:45 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b8so4930283edj.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jun 2022 23:32:45 -0700 (PDT)
+        Tue, 7 Jun 2022 02:32:51 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67542248EB
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jun 2022 23:32:49 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id o10so21598097edi.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jun 2022 23:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=r44uCLGTf2LvxMbhUjT0r8kVMt7PzM2/3o50HhQ87Dc=;
-        b=DYgIDzEySTNnHycxV5mkc5AiVuIxlldng1NWt7C6YzROec9/9R9+LJZpzoWO1M/WXW
-         tgtUma0xRb5/u5pBofDPr7R8mroRCfSiyy4FfEgiq/pFu7Io34PkDw0yRBMlSo/ZUB4X
-         1CWOUdSqjGOjKrFvwaBURkBzn1t24uTwLGA0X+h4y6+qBS/OLCvADK6RcRDlhxPkxHNg
-         KR9TD0220JHIP8EKuIFQhrcZMSuhI0XfLHlR3+uvzQSTQJOMw7VzMF8IsrUkcmuKPl+F
-         iXwZ7Y4lu7H9hdBy8cv26w/mpD7x3tIAGvdNrDkuZGoyy8O923Ooa4VMYWHvkrO53Xrf
-         +gNw==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=kUL0/+TW0ZmFocb8yDY5jqKbncdLIBblavQc/eaSQJI=;
+        b=sftAmM2OlEfC6VJ8zIEA0Xfsy6v2HTaNTjUKMfYdtxoSdcD3vxrEO/PCEGePaDtozC
+         xyHlmLmsdRgR2yk1elTff9tbXqil/B41tk+0WtgEj08Gm/1Kmpx2r/HeUOPzdA0SMfGc
+         wFE+ZMwPJFu6CpQ03yhMFxJ04tcjr5hJhfqrLepuc7NPW50CeYYD/ZycxufDQK3A+vuv
+         T2ZpVYajmKu/RZ+gY+7+/lh8OekW/q2hi1jds/Xh06lKnW8KXQa4oJEoM09itLbjopST
+         PwShn5HcVR8etj+2V8Zl0LAGZJFoRFdvIEiublN0VZCnbQrafYQwBrkLSxB59YhB/GsV
+         tuKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=r44uCLGTf2LvxMbhUjT0r8kVMt7PzM2/3o50HhQ87Dc=;
-        b=gmM7jJiISb4KYoFCj0t7bQK3x1k5EwEdY9ehcmhR6+oCj8nAPRfpL74jKjeFj09QQm
-         E787WnWjLbaAyYL58coWZ0YWRVscxiUnkiU2RZIsAJME/L6TG4+5daSbRpP5xRHmAMN6
-         QXkH5RqFBjdntBncWbAOunnlA0dUuY7zVjhr8j8vXZvj77FYUoyywEWvwAom2/YOtvI4
-         rgCcO3eMWf21xP4xIrCbZtA4ojxgd1AoaD25AbIKZi1pGWHWIzWegUx3cEt9acqm2CnP
-         UK87X+SXYcNEYBWzG+E2g02QX6+E7gWJP0kxTw+t0bAxxEnhI6Llyihyed3UEoTLFQzo
-         M+Sw==
-X-Gm-Message-State: AOAM532Exc/lalTnW70EiD+hImNdZsNLC6gVyuMmxDVYUK3OdBXMPvnC
-        X79Sgi3YG8B8Rzht5aPV1ZZbDg==
-X-Google-Smtp-Source: ABdhPJzNhIE+5I4UaEiNC2q5wJvd0rpfdEvI+zG7vUgbHITfC+hVp3AB8y+be9aU1+TaJE4vA091qw==
-X-Received: by 2002:a05:6402:4388:b0:431:52b2:9337 with SMTP id o8-20020a056402438800b0043152b29337mr12213583edc.45.1654583564449;
-        Mon, 06 Jun 2022 23:32:44 -0700 (PDT)
+        bh=kUL0/+TW0ZmFocb8yDY5jqKbncdLIBblavQc/eaSQJI=;
+        b=RuQM8557Bo1geDbgHeU32evkQ0vuJt0/PzAEKiJAO3Ag4Bxi6b9JjZoDukGrkIiICs
+         cmkfJsVxHHZIwATIdQ7hRuxL9IRHbBXBTf8R7ifTZ6yLjl8VRNiJHbDwErxPSaVoVEBa
+         mWl486VUKbrGve/Oq0U8bOY26tu5LjI0xEl2HyN/za2O/oUx5dyCNwo++iorkhkOG6h+
+         003WcHWKl0Tnhp6UsK4n4lZ8CjREEbTHzFIv8ewWIaGbHVhlPOm89JtJhaiKA//1DEuW
+         34U5xcpSnCb7MDp/12zCGnZctq9tMZ6HkA72Eg2LtVYSf5b6DnbCJyo56+R7DwesxcnQ
+         oNaw==
+X-Gm-Message-State: AOAM532f49SwogNyzU0N24Wl6/rj/MqMDz7GPbyJWVpTgNSmYfACTeX2
+        vRd07XN2VhGnh4ViRyAjsm94qznR83MZkA==
+X-Google-Smtp-Source: ABdhPJzMq/JTC9wN4RGWyrxYyQtSlviJZtlJ2Wjip2i6n2thkVBo2E+uQfiitHipF1MrM27CgRNrQQ==
+X-Received: by 2002:a05:6402:139a:b0:431:6b50:11a2 with SMTP id b26-20020a056402139a00b004316b5011a2mr8272850edv.72.1654583567642;
+        Mon, 06 Jun 2022 23:32:47 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id eg13-20020a056402288d00b0042dce73168csm9796349edb.13.2022.06.06.23.32.43
+        by smtp.gmail.com with ESMTPSA id eg13-20020a056402288d00b0042dce73168csm9796349edb.13.2022.06.06.23.32.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 23:32:43 -0700 (PDT)
+        Mon, 06 Jun 2022 23:32:47 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
+To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-phy@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 4/6] arm64: dts: exynosautov9: adjust DT style of ufs nodes
-Date:   Tue,  7 Jun 2022 08:32:38 +0200
-Message-Id: <165458355453.6489.16621129077408311325.b4-ty@linaro.org>
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-mmc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: Re: (subset) [PATCH v2 2/4] arm64: dts: exynos: align MMC node name with dtschema
+Date:   Tue,  7 Jun 2022 08:32:41 +0200
+Message-Id: <165458355453.6489.3351290853657960731.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220602053250.62593-5-chanho61.park@samsung.com>
-References: <20220602053250.62593-1-chanho61.park@samsung.com> <CGME20220602053329epcas2p407039a6087b6c460d6687b1cc1f3872a@epcas2p4.samsung.com> <20220602053250.62593-5-chanho61.park@samsung.com>
+In-Reply-To: <20220605163710.144210-3-krzysztof.kozlowski@linaro.org>
+References: <20220605163710.144210-1-krzysztof.kozlowski@linaro.org> <20220605163710.144210-3-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -73,17 +71,16 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 2 Jun 2022 14:32:48 +0900, Chanho Park wrote:
-> Drop "ufs0-" label name usage of ufs phy and hci nodes.
-> Regarding the comments of reg properties, we don't need to illustrate here
-> because we can find the description from the dt-binding doc.
+On Sun, 5 Jun 2022 18:37:08 +0200, Krzysztof Kozlowski wrote:
+> The node names should be generic and MMC controller dtschema expects
+> "mmc".
 > 
 > 
 
 Applied, thanks!
 
-[4/6] arm64: dts: exynosautov9: adjust DT style of ufs nodes
-      https://git.kernel.org/krzk/linux/c/283d046406c22409d45b3ab31a4c93fe94b66349
+[2/4] arm64: dts: exynos: align MMC node name with dtschema
+      https://git.kernel.org/krzk/linux/c/2164784a4b2700d1929854b5ec6b2169ff449814
 
 Best regards,
 -- 
