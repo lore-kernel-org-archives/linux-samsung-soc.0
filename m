@@ -2,103 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B290CCA47C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 12:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A38C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  7 Jun 2022 12:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243570AbiFGMPW (ORCPT
+        id S244063AbiFGMme (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 08:15:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48134 "EHLO
+        Tue, 7 Jun 2022 08:42:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243617AbiFGMPG (ORCPT
+        with ESMTP id S244069AbiFGMm1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 7 Jun 2022 08:15:06 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5950AC5D9D
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jun 2022 05:15:04 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id h19so22767643edj.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jun 2022 05:15:04 -0700 (PDT)
+        Tue, 7 Jun 2022 08:42:27 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 546901FCFF
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jun 2022 05:42:24 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id h23so23865028ejj.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jun 2022 05:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=5fH4FavPEfvLlMdMUWk9QQO46jHXVYLmKxePrfhtVTY=;
-        b=xPL8KUcGOJQUW6FJ7vqGgkD7DnRuM9BbLBv1xfktYaCGemXr11kTt9hlgeR/rWy44D
-         RsbYk+vgElonYHAOitiDzU81OjYUZLQqszvIIvJ8BpRX2kpcjCt9TbgRahx6J+Io1klS
-         zCNPJEXCjy6asJRwIsfFUAm7JkpXdMqLGz0e8rUBCSiQdEibs2iO0eG4bY1idePyGUFM
-         W6tscg+T2Y3QVHGUICuDo4KuG+UNCredWNAO604DOki/ZTHUia4AKV414vtxYnMvRlti
-         82Suy2cGUjUiiTJNd3MpvBGtZfaEM5v6+fqBr2lMtfX2H4A8fsNkJdBn3UBWe+R31trJ
-         Cu6g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hx+YU8X87nw4MVOTQmNYp6p2FiJ4sffRycyNV0L9c0s=;
+        b=jQR0bnWxBW5VGj7k/Kg79jMnq9OfCjUdaRvqwc/nPI71bU/TSgx2F2QGJKgS4x/jiQ
+         mACj/xtOBHUTA9MPIzKgVAFLDovPBvhQPtphfSA/8sZcCCOiHgjf1j2M8rLA3y5lKNjH
+         tgsHwk/2cAS0b7ylpUqZZbLSxUziM44hoSYZXZfoq5q9M0OvYSUbK/ogje19KisnJZDH
+         JQpvmLZLEBFxzDTrjN3MGzWIAT7xRasWzxvvqC99A4n7+l2SGijjUvTeY5Wvmho02BCi
+         s65uegPwrY/uokQArL3imLjvZsYStnfd0iYt24EdXhMokgCjM8VE+M/0VVD1we6ckkcV
+         9xbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=5fH4FavPEfvLlMdMUWk9QQO46jHXVYLmKxePrfhtVTY=;
-        b=qo1Elv7GesUPQRyGKmXQTfoqX0BGXj2gmvMNXnJ10lM3tko1UzycWE6WRHELIza6L9
-         nu2Fo49uUyJGnn7jKdQhaJ9btGzrMLQkWzf11IujLF5TPAXoZvA6dMoRQKouEkPkwha7
-         bfPgaIinH2zB0cK43OKjJ9OvfcF/KOB0/OSYa5E7yBQ/fhJLmYL/RdEw7BkXHJ1M4IVZ
-         1OFwGMBQrdZkp6ni75BdeI2slEpYah83lKSqMD+dtSF9H555NyWRl8tz++YA4Hju0cwP
-         rH7tSDzhswVeJDa5qfcymVjzckNLb/bLqgVli3+4xeZtajq4eU/lUdmE8NsHr9YIyDnx
-         22/g==
-X-Gm-Message-State: AOAM530x1e5fwJ/fxvV6HT54VwBeLa5bWP6ilcL8VQvuh+9P+i7fzTLh
-        jgt2UlnvpayRbESyskCZjgKPsw==
-X-Google-Smtp-Source: ABdhPJx0DSqjBZ+b9BV4kl1YSSXSZRVKSEOfofAh7Iqy1JDvVeOQvA2sW119u0gPadHqCpd/wWJZ+A==
-X-Received: by 2002:a05:6402:254e:b0:431:35df:5e38 with SMTP id l14-20020a056402254e00b0043135df5e38mr18206654edb.385.1654604102905;
-        Tue, 07 Jun 2022 05:15:02 -0700 (PDT)
-Received: from [192.168.0.183] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id v2-20020a170906b00200b006ff05d4726esm7576280ejy.50.2022.06.07.05.15.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jun 2022 05:15:02 -0700 (PDT)
-Message-ID: <92db548d-aaa7-aac5-a56b-e787769ab0fb@linaro.org>
-Date:   Tue, 7 Jun 2022 14:15:01 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 06/23] dt-bindings: mmc: exynos-dw-mshc: update
- samsung,pinctrl.yaml reference
-Content-Language: en-US
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hx+YU8X87nw4MVOTQmNYp6p2FiJ4sffRycyNV0L9c0s=;
+        b=gckNZ++j6np2FWtX4IdP9FeAw5yOBmpBABzkanXlejfPiEEzT2yW6sZUuqze6OpCya
+         fv6Y2UPaKA296F9RGMRMB48FXMtuaTJ6CFJXaFcDyN24C+eJBIv81qPskT1pJ9v7QKbe
+         C9cd97LH8/F6qMFrzkrB2KKTM9kowMCZV/Ua4OSfQb85yBmSxPbTvSb0zOyFsrqDeJkF
+         VmkAbssDm5yDT5tHSXyEBauAtkUeVbymQWhRbVgS7DwszhYFXoRfX5lUujF/NnT2Qz0p
+         KXR7w6wiY3Am62giVQN6YM0/6J73SDns1G0SjdzjrzDwEeTHTRboXURS8G/WxmcZlFs7
+         niPg==
+X-Gm-Message-State: AOAM531giLcPECnHQd8WaaEyKqg/QwAzKiQ8R6pfp7RA0njuVXPiaxOz
+        e8A+vhOwvdxLZNaHRw2HUBfM/w==
+X-Google-Smtp-Source: ABdhPJzrDcw7COBB5CK6AHvvI8A2n2rdj9k5IJJSD9GbjYt8SZMwjcb3HrEZsuS+PPeUx8mOrZFOkw==
+X-Received: by 2002:a17:907:9605:b0:6f5:c66:7c13 with SMTP id gb5-20020a170907960500b006f50c667c13mr26010612ejc.66.1654605743796;
+        Tue, 07 Jun 2022 05:42:23 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id o19-20020a1709061b1300b006fed85c1a8fsm7685692ejg.202.2022.06.07.05.42.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 05:42:23 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <cover.1654529011.git.mchehab@kernel.org>
- <5c937793dd7aec30da4964b39561072ae184f89b.1654529011.git.mchehab@kernel.org>
- <5fe2246f-97db-e7b0-a72e-c8c5ff6b2abe@linaro.org>
-In-Reply-To: <5fe2246f-97db-e7b0-a72e-c8c5ff6b2abe@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     XueBing Chen <chenxuebing@jari.cn>, krzk@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: s3c: Use strscpy to replace strlcpy
+Date:   Tue,  7 Jun 2022 14:42:21 +0200
+Message-Id: <165460572961.134654.6070440562526650212.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <3e0217ca.a1d.180f90f39c7.Coremail.chenxuebing@jari.cn>
+References: <3e0217ca.a1d.180f90f39c7.Coremail.chenxuebing@jari.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/06/2022 17:41, Krzysztof Kozlowski wrote:
-> On 06/06/2022 17:25, Mauro Carvalho Chehab wrote:
->> Changeset af030d83da1d ("dt-bindings: pinctrl: samsung: convert to dtschema")
->> renamed: bindings/pinctrl/samsung-pinctrl.txt
->> to: bindings/pinctrl/samsung-pinctrl.yaml, splitting it into multiple
->> files.
->>
->> Update exynos-dw-mshc.txt accordingly.
->>
->> Fixes: af030d83da1d ("dt-bindings: pinctrl: samsung: convert to dtschema")
->> Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+On Wed, 25 May 2022 10:32:46 +0800 (GMT+08:00), XueBing Chen wrote:
+> The strlcpy should not be used because it doesn't limit the source
+> length.  Preferred is strscpy.
 > 
-> Commit is okay, but you can also drop it entirely because entire part
-> will be removed with:
-> https://lore.kernel.org/all/20220605163710.144210-4-krzysztof.kozlowski@linaro.org/
+> 
 
-Which was now applied by Ulf.
+Applied, thanks!
+
+[1/1] ARM: s3c: Use strscpy to replace strlcpy
+      https://git.kernel.org/krzk/linux/c/c241d049122b49698d9094c7ee7a0215fbc04cfe
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
