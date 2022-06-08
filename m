@@ -2,160 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71328C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jun 2022 10:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FA5C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jun 2022 10:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237460AbiFHKr0 (ORCPT
+        id S237375AbiFHKrm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 06:47:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
+        Wed, 8 Jun 2022 06:47:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237294AbiFHKrY (ORCPT
+        with ESMTP id S237318AbiFHKrl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jun 2022 06:47:24 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC9661B319D
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jun 2022 03:47:12 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220608104705epoutp010f9f666dc3b89fc4667949e7d35cbea4~2n3Ir77l32530625306epoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jun 2022 10:47:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220608104705epoutp010f9f666dc3b89fc4667949e7d35cbea4~2n3Ir77l32530625306epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1654685225;
-        bh=2dU2sAdbeia4z93Pb2uYez3kPuHX+7BlUxRqxtHkiAs=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=qgYRb+ZrRqFuQSInwWyUk62zNGe1Yf87tnux7uBicxQoZZgm6o4sFRaGhv2l5v6lx
-         7Hg84f9kKlzQeabPJ7JqmSQ5gHqw99Lo9GMybtrYd8d4mfpGDi7HdhjHvXiGlP1Evn
-         CibUp4GiVT1VJohlZw53PyixEv61g+33cxqEKTHs=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220608104705epcas5p1d694985714f56d9701f4aee5fe1ad881~2n3ISYSxZ2064620646epcas5p1-;
-        Wed,  8 Jun 2022 10:47:05 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4LJ3nf3cXjz4x9Q5; Wed,  8 Jun
-        2022 10:47:02 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.6E.10063.62E70A26; Wed,  8 Jun 2022 19:47:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220608104702epcas5p2525c59a62b884ba03a6671aceedd68a0~2n3FJIfKF1979619796epcas5p2F;
-        Wed,  8 Jun 2022 10:47:02 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220608104701epsmtrp20c59c4ee5bc6ad00878ece679a57263f~2n3FHjN-z1680016800epsmtrp2M;
-        Wed,  8 Jun 2022 10:47:01 +0000 (GMT)
-X-AuditID: b6c32a49-4cbff7000000274f-6d-62a07e2673d1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8D.3D.08924.52E70A26; Wed,  8 Jun 2022 19:47:01 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220608104700epsmtip27683496ebe4e7dc62ecbe5ac68ce4329~2n3DnBg_e0534805348epsmtip2R;
-        Wed,  8 Jun 2022 10:47:00 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Colin Ian King'" <colin.i.king@gmail.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Andi Shyti'" <andi@etezian.org>,
-        "'Mark Brown'" <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20220608081912.2083086-1-colin.i.king@gmail.com>
-Subject: RE: [PATCH][next] spi: s3c64xx: Fix spelling mistake "hannel" ->
- "channel"
-Date:   Wed, 8 Jun 2022 16:16:59 +0530
-Message-ID: <015701d87b25$15c75120$4155f360$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKhUm8gmV47Tzdc05Wc3hzH2R1CbQJXQw5aq6Dq7IA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmuq5a3YIkg5mfxSwW/3jOZDH14RM2
-        i0ntX1gttt6Sttj7eiu7xabH11gtLu+aw2Yx4/w+JovGjzfZHTg9ri/5xOyxc9Zddo9NqzrZ
-        PO5c28PmsXlJvcfnTXIBbFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
-        uam2Si4+AbpumTlANykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL
-        89L18lJLrAwNDIxMgQoTsjPeTnjMWvCAu+JQwzmmBsZ5XF2MnBwSAiYSr8+uZAWxhQR2M0rs
-        umTdxcgFZH9ilHi7fwULhPOZUeL3u2ssMB19X+4xQXTsYpR4v1ITwn7JKPFvuxeIzSagK7Fj
-        cRsbSLOIwEImif5L99hBEswCrhJ3ztwDW8cpYCfxpOErmC0sECoxe+N+sBoWARWJaa8nMILY
-        vAKWEi8/QCzmFRCUODnzCQvEHG2JZQtfM0McpCDx8+kysDkiAlYSH/+0MUPUiEu8PHqEHeQI
-        CYGlHBJnvn1lh2hwkTj6ejUjhC0s8er4Fqi4lMTnd3uBruYAsj0kFv2RgghnSLxdvh6q3F7i
-        wJU5LCAlzAKaEut36UOs4pPo/f2ECaKTV6KjTQiiWlWi+d1VaLBJS0zs7maFsD0kpi+8wj6B
-        UXEWksdmIXlsFpIHZiEsW8DIsopRMrWgODc9tdi0wDAvtRwe28n5uZsYwelVy3MH490HH/QO
-        MTJxMB5ilOBgVhLhlQyfnyTEm5JYWZValB9fVJqTWnyI0RQY2hOZpUST84EJPq8k3tDE0sDE
-        zMzMxNLYzFBJnFfgf2OSkEB6YklqdmpqQWoRTB8TB6dUA1MOr7bGdHXnki8Pei+6LL94X76r
-        y9lt4Vexwlvqu5mibxhs2tN4/3iL279V8Ryfr+zdpMH1aJvEDQO/zAcNOTvOqmsUWNhX9DSd
-        tLhoMSNzdllOvGla5SLBVO2rS1neGPx9LibUyLnp0fpol6/xnOceP1nCFpOfEioYVWDPlbLX
-        MPby8kDWR09lQw11Dvyf/7NX8/G2l/87yjg7DZfkMRt9tvN2jTK3k1nAzvdWed5T7zMsz/J2
-        ztL0fTXzNeurUyxbdux40b62fPbUlfNmn3x4UdHqb9x02epF8UYnp3FZv/4g29NywS58p5me
-        dSYvV0gW57w9D+Xs4qbwqPxU3bVJKvpzSP6k2mcPX87XiFNiKc5INNRiLipOBADnpYV8OAQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSvK5q3YIkgwsvTC0W/3jOZDH14RM2
-        i0ntX1gttt6Sttj7eiu7xabH11gtLu+aw2Yx4/w+JovGjzfZHTg9ri/5xOyxc9Zddo9NqzrZ
-        PO5c28PmsXlJvcfnTXIBbFFcNimpOZllqUX6dglcGUs/dDIVzOau2H3zIlsD43XOLkZODgkB
-        E4m+L/eYQGwhgR2MEjd380PEpSWub5zADmELS6z89xzI5gKqec4o0f98ClgDm4CuxI7FbWwg
-        CRGB5UwSW/+uZwZJMAu4S0xr2skI0dHPKPH+5lZWkASngJ3Ek4avYLawQLDEjKfXwWwWARWJ
-        aa8nMILYvAKWEi8/XGOBsAUlTs58wgIxVFui92ErI4y9bOFrZojzFCR+Pl0GNkdEwEri4582
-        qCPEJV4ePcI+gVF4FpJRs5CMmoVk1CwkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl
-        5+duYgTHmpbWDsY9qz7oHWJk4mA8xCjBwawkwisZPj9JiDclsbIqtSg/vqg0J7X4EKM0B4uS
-        OO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqZ5l7c+Kev4WfY9VancOnXJ+anLkxo2ZKUKu/2z
-        XNbqHbd9idcEts9pHxO9m4JPuXZ8LZd549l76xo709pZtzcee/rDPnmz8d/C2iflv4/uvySR
-        dO7VrCX774eei595WfRgNc/Th62XKuLl1XqmdV+Ys7Kift/knGqu/8xMT41X/rwd9Vy2xU7v
-        9ZutkxxNMk+HvVu/ZKvig6dv3svkWt+OC935aWqAWdwvV1/2C0vyHHPfJMvZz7vx4u/KjhtZ
-        Wz7LX5j2yOlDyk1lzZLWY9GJ/4wPnv+kszTmyouiTZ7ZYjckzrFc3ramR//z3Zjp85n2+y1d
-        +iRQ+MSm1Es79VcLLXP0scm4vu3qRoepLBeZWpRYijMSDbWYi4oTAXaoUDwkAwAA
-X-CMS-MailID: 20220608104702epcas5p2525c59a62b884ba03a6671aceedd68a0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220608081916epcas5p2c35a76a868edcb8ec14d3a83edb00ee6
-References: <CGME20220608081916epcas5p2c35a76a868edcb8ec14d3a83edb00ee6@epcas5p2.samsung.com>
-        <20220608081912.2083086-1-colin.i.king@gmail.com>
+        Wed, 8 Jun 2022 06:47:41 -0400
+X-Greylist: delayed 1799 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Jun 2022 03:47:36 PDT
+Received: from mailout3.hostsharing.net (mailout3.hostsharing.net [IPv6:2a01:4f8:150:2161:1:b009:f236:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C8419B6AD;
+        Wed,  8 Jun 2022 03:47:35 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by mailout3.hostsharing.net (Postfix) with ESMTPS id D7E4A101E6C50;
+        Wed,  8 Jun 2022 11:52:35 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 94BC5621B6E1;
+        Wed,  8 Jun 2022 11:52:35 +0200 (CEST)
+X-Mailbox-Line: From 78ad73b93adb59edfa2d68e44a9fcfea65e98131 Mon Sep 17 00:00:00 2001
+Message-Id: <cover.1654680790.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Wed, 8 Jun 2022 11:52:10 +0200
+Subject: [PATCH net v2 0/1] PHY interruptus horribilis
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     netdev@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Ferry Toth <fntoth@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Andrew Lunn (PHY maintainer) asked me to resend this patch and cc the
+IRQ maintainer.  I'm also cc'ing PM maintainers for good measure.
 
+The patch addresses an issue with PHY interrupts occurring during a
+system sleep transition after the PHY has already been suspended.
 
->-----Original Message-----
->From: Colin Ian King =5Bmailto:colin.i.king=40gmail.com=5D
->Sent: Wednesday, June 8, 2022 1:49 PM
->To: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>; Andi Shyti
-><andi=40etezian.org>; Mark Brown <broonie=40kernel.org>; Alim Akhtar
-><alim.akhtar=40samsung.com>; linux-spi=40vger.kernel.org; linux-samsung-
->soc=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org
->Cc: kernel-janitors=40vger.kernel.org; linux-kernel=40vger.kernel.org
->Subject: =5BPATCH=5D=5Bnext=5D spi: s3c64xx: Fix spelling mistake =22hanne=
-l=22 -> =22channel=22
->
->There is a spelling mistake in a dev_err message. Fix it.
->
->Signed-off-by: Colin Ian King <colin.i.king=40gmail.com>
->---
+The IRQ subsystem uses an internal flag IRQD_WAKEUP_ARMED to avoid
+handling such interrupts, but it's not set until suspend_device_irqs()
+is called during the ->suspend_noirq() phase.  That's too late in this
+case as PHYs are suspended in the ->suspend() phase.  And there's
+no external interface to set the flag earlier.
 
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+As I'm lacking access to the flag, I'm open coding its functionality
+in this patch.  Is this the correct approach or should I instead look
+into providing an external interface to the flag?
 
-> drivers/spi/spi-s3c64xx.c =7C 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c index
->82558e37c735..f56d9c819a76 100644
->--- a/drivers/spi/spi-s3c64xx.c
->+++ b/drivers/spi/spi-s3c64xx.c
->=40=40 -360,7 +360,7 =40=40 static int s3c64xx_spi_prepare_transfer(struct
->spi_master *spi)
->
-> 	sdd->tx_dma.ch =3D dma_request_chan(&sdd->pdev->dev, =22tx=22);
-> 	if (IS_ERR(sdd->tx_dma.ch)) =7B
->-		dev_err(&sdd->pdev->dev, =22Failed to get TX DMA hannel=5Cn=22);
->+		dev_err(&sdd->pdev->dev, =22Failed to get TX DMA
->channel=5Cn=22);
-> 		dma_release_channel(sdd->rx_dma.ch);
-> 		sdd->tx_dma.ch =3D 0;
-> 		sdd->rx_dma.ch =3D 0;
->--
->2.35.3
+Side note: suspend_device_irqs() and resume_device_irqs() have been
+exported since forever even though there's no module user...
 
+Thanks!
+
+Changes since v1:
+* Extend rationale in the commit message.
+* Drop Fixes tag, add Tested-by tag (Marek).
+
+Link to v1:
+https://lore.kernel.org/netdev/688f559346ea747d3b47a4d16ef8277e093f9ebe.1653556322.git.lukas@wunner.de/
+
+Lukas Wunner (1):
+  net: phy: Don't trigger state machine while in suspend
+
+ drivers/net/phy/phy.c        | 23 +++++++++++++++++++++++
+ drivers/net/phy/phy_device.c | 23 +++++++++++++++++++++++
+ include/linux/phy.h          |  6 ++++++
+ 3 files changed, 52 insertions(+)
+
+-- 
+2.35.2
 
