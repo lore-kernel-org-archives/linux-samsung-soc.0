@@ -2,33 +2,33 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4918CCA47B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jun 2022 11:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD07C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jun 2022 11:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243667AbiFIL1q (ORCPT
+        id S243716AbiFIL1s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jun 2022 07:27:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40064 "EHLO
+        Thu, 9 Jun 2022 07:27:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236455AbiFIL1p (ORCPT
+        with ESMTP id S243694AbiFIL1r (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jun 2022 07:27:45 -0400
+        Thu, 9 Jun 2022 07:27:47 -0400
 Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FF616A53E;
-        Thu,  9 Jun 2022 04:27:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B98016A53E;
+        Thu,  9 Jun 2022 04:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1654774063;
-  x=1686310063;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1654774066;
+  x=1686310066;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pMBBlRkHHit1/qLmds0baWambd4XCf5DopNfauB0VUI=;
-  b=MPZNXrSglV1qfNvPlx3TxPwxRxwcOiSu8cb2oaydJhGY5WyaXfInhxPB
-   1m/S66QKNIs1l7TEu56ObgCoIHmAJnOAN6/k/7HlpJCIWLv3NTWV5JJOy
-   PbBJHSM6+YwIKWSj8XFIncs34n0kdGhuWjCm+UT/jCMdmJJJEH/7Wui/M
-   b7zgVdPBxi/jpvpprdNIpjV39hMoPWG2iAEQNU6FP+v8xkvYCluz8w0up
-   E4f9bLeu7NEqgYIomu0YBxcc38BaXBiOlOLORs+wAlWJghqysCVFI0/Um
-   pj7Pyw+IAuCnRNqpGVKMt7vkgG7HPC/91g11jzUSTo528+x6rvt4h2sKB
-   g==;
+  bh=H+8MIR1OuQsaVNfsbihNB9tS+9/wynO4WohspQZNd1M=;
+  b=TQv2zrl7+pSMh/Rq0arQ6pQbgTCWIgYIXG/RO8NVuPCq9WuCIIXYEuns
+   sv9275G2um0dMO4febVH3LBbgF8RF04sZofN2dgWdfUi0uFAopgVm7MJC
+   sLxLHEUYy7oU8FELxnFdO0lrd4oxQKk05vSGh8AFrtYeMYwN1lAKBKtpR
+   HyaSERHvGBtQwyajTfKhD0GSJnIobOzPeZhywa3atfRrIVSa+eLfyxKnd
+   9zar1OKhHjiKiKW4UDCa2cNOYQFKK5nXMxF8tQFXM26YWd2uXmnnoafXY
+   Pk+hB82hLiGQ3evmRKDhxJXeksx9bDyZlC2wcy/mGkRVuz4cDPlHv2AO/
+   Q==;
 From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
 To:     <krzysztof.kozlowski@linaro.org>, <tglx@linutronix.de>,
         <daniel.lezcano@linaro.org>
@@ -38,9 +38,9 @@ CC:     <kernel@axis.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>, <alim.akhtar@samsung.com>,
         <devicetree@vger.kernel.org>, <robh+dt@kernel.org>
-Subject: [PATCH v4 4/4] clocksource/drivers/exynos_mct: Enable building on ARTPEC
-Date:   Thu, 9 Jun 2022 13:27:38 +0200
-Message-ID: <20220609112738.359385-5-vincent.whitchurch@axis.com>
+Subject: [PATCH v4 2/4] clocksource/drivers/exynos_mct: Support frc-shared property
+Date:   Thu, 9 Jun 2022 13:27:36 +0200
+Message-ID: <20220609112738.359385-3-vincent.whitchurch@axis.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220609112738.359385-1-vincent.whitchurch@axis.com>
 References: <20220609112738.359385-1-vincent.whitchurch@axis.com>
@@ -51,31 +51,74 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This timer block is used on ARTPEC-8.
+When the FRC is shared with another main processor, the other processor
+is assumed to have started it and this processor should not write to the
+global registers.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
 
 Notes:
-    v3:
+    v4:
     - Add Krzysztof's Reviewed-by.
+    
+    v3:
+    - Split FRC sharing handling from local timer indices handling
+    - Remove addition of global variable.
 
- drivers/clocksource/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 3c0ee102fe73..b275583f946c 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -419,7 +419,7 @@ config ATMEL_TCB_CLKSRC
- config CLKSRC_EXYNOS_MCT
- 	bool "Exynos multi core timer driver" if COMPILE_TEST
- 	depends on ARM || ARM64
--	depends on ARCH_EXYNOS || COMPILE_TEST
-+	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index f29c812b70c9..12023831dedf 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -233,9 +233,16 @@ static cycles_t exynos4_read_current_timer(void)
+ }
+ #endif
+ 
+-static int __init exynos4_clocksource_init(void)
++static int __init exynos4_clocksource_init(bool frc_shared)
+ {
+-	exynos4_mct_frc_start();
++	/*
++	 * When the frc is shared, the main processer should have already
++	 * turned it on and we shouldn't be writing to TCON.
++	 */
++	if (frc_shared)
++		mct_frc.resume = NULL;
++	else
++		exynos4_mct_frc_start();
+ 
+ #if defined(CONFIG_ARM)
+ 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+@@ -605,6 +612,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
+ 
+ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ {
++	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
+ 	int ret;
+ 
+ 	ret = exynos4_timer_resources(np);
+@@ -615,10 +623,17 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = exynos4_clocksource_init();
++	ret = exynos4_clocksource_init(frc_shared);
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * When the FRC is shared with a main processor, this secondary
++	 * processor cannot use the global comparator.
++	 */
++	if (frc_shared)
++		return ret;
++
+ 	return exynos4_clockevent_init();
+ }
  
 -- 
 2.34.1
