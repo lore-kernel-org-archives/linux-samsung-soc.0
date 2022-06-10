@@ -2,168 +2,320 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED92ACCA47B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jun 2022 06:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BF1CCA481
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jun 2022 09:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346457AbiFJGh2 (ORCPT
+        id S1348361AbiFJJFC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jun 2022 02:37:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        Fri, 10 Jun 2022 05:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244630AbiFJGh0 (ORCPT
+        with ESMTP id S245306AbiFJJE4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jun 2022 02:37:26 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05FE022BE8
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jun 2022 23:37:22 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id q15so10280122wmj.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2022 23:37:22 -0700 (PDT)
+        Fri, 10 Jun 2022 05:04:56 -0400
+Received: from mail.baikalelectronics.com (mail.baikalelectronics.com [87.245.175.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9683A1116FE;
+        Fri, 10 Jun 2022 02:04:49 -0700 (PDT)
+Received: from mail (mail.baikal.int [192.168.51.25])
+        by mail.baikalelectronics.com (Postfix) with ESMTP id EB6C516C7;
+        Fri, 10 Jun 2022 11:58:08 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.com EB6C516C7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Qxlw/2GeYPhBz4i8FzCqobc8aHph2WQJ2uzH+wlAQPM=;
-        b=YvKD/lnZFHPf9Bklm5hR2t0kTgFB1/rXSkgOKvxFTago0OfV/XXVBnr65QfdQ0sIbE
-         X56d5w92lO93EaOJsDJ8oCNGyjZkcJXPRSg9xTkOKhWDw62K7tpcO84Az2vOBRZU/r3+
-         YIHnLV0yk1ox4ibJDxo/xtHUE91KPK5nhGt24yQglgyRLlAN46Y1Z1t0+GvzN7M+MEou
-         tOdQLaDCWTLurM3ng8g7elKpPBlMcfWMNnTz6GEuMIGKZgA7WgUpL2gOP6VsKo5/EHPb
-         626ZTuTKw9tktPSgibPC7QlWbKT0XcsOV4TdzYgmUmuC1ODYErjWurNuno/msyBC5MwG
-         9u4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Qxlw/2GeYPhBz4i8FzCqobc8aHph2WQJ2uzH+wlAQPM=;
-        b=q2sBT+VsHQVXE6Q/ZzplRaxzniX+nIFGh2ub7GszAisWaHYzwC28NmtL5KoJHyuDi8
-         3Hsdu82kgqKx+QO1swfdnrNbp/8ZD/5YE1Idb6VWzeieAK/84929HtnOXHbvHhoTl5ep
-         qdUbOQ/711KZ13zihY8ImaVNdNKZmQM3eB1d9HB6yA3uuRRrZ71DLXD+SVIDn99nt7JL
-         xltnZypWkAWzzN6aeP+vgBQ+u+hfWQ7Suj/jBmC4srjIU8UFRczWPcUl4tzk1RQJDZhR
-         NOqYW8hTaVJZsf+95sJODPpVr3sK+UXS3fVYEzi9fZMq0vfpxIa9OeM0vfuuzoDt20F6
-         xmjQ==
-X-Gm-Message-State: AOAM531e8YYsDzCeSSHwmDoBUPT6XQaWmd8gdOyOVtHntc0paRb23O1h
-        6xOrZHqT4x8eZzL8FZVexNyuxA==
-X-Google-Smtp-Source: ABdhPJw4Hge4NDaRn0TL71ijVSQhRo1MhCaO3HbTb1tYRGHCORKkku8fnKoEAx9FGxDoG3CaWVnJNw==
-X-Received: by 2002:a1c:4e03:0:b0:39c:5bbc:e0d2 with SMTP id g3-20020a1c4e03000000b0039c5bbce0d2mr7034980wmh.184.1654843041123;
-        Thu, 09 Jun 2022 23:37:21 -0700 (PDT)
-Received: from localhost.localdomain ([2001:861:44c0:66c0:27b0:82d9:d0c6:702a])
-        by smtp.gmail.com with ESMTPSA id 2-20020a05600c228200b0039482d95ab7sm1729030wmf.24.2022.06.09.23.37.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jun 2022 23:37:20 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, arm@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-omap@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Nishanth Menon <nm@ti.com>,
-        devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-msm@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org,
-        Andrew Jeffery <andrew@aj.id.au>, linux-input@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        d=baikalelectronics.ru; s=mail; t=1654851489;
+        bh=KQRGL/XPxlRYl4cYVwRo4mgR2jl0BfcuH+fJxdVq07g=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=M30PS9MQvN9kCwN/1+Mc3uH+xi3qKWwjvrzNRyhvvBVWaSkrRZJRcWcB2KyE+0/Rq
+         kyR3I6AJ94MBXfyC0p5onO6zuQSFXnUJ6qulsdexyRRkol6yrQtksjFuVUuneK4sfU
+         AFzK6gN4Z4LePCbmZqNuYnQNBjR7Nb8HHnpsPnfo=
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 10 Jun 2022 11:57:16 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Peter Rosin <peda@axentia.se>,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Andy Gross <agross@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        linux-sunxi@lists.linux.dev,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Li Yang <leoyang.li@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        linux-rockchip@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 00/48] dt-bindings: input: gpio-keys: rework matching children
-Date:   Fri, 10 Jun 2022 08:37:18 +0200
-Message-Id: <165484301356.1384204.15957178175784526690.b4-ty@baylibre.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
-References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH v3 09/17] dt-bindings: PCI: dwc: Add clocks/resets common properties
+Date:   Fri, 10 Jun 2022 11:56:57 +0300
+Message-ID: <20220610085706.15741-10-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20220610085706.15741-1-Sergey.Semin@baikalelectronics.ru>
+References: <20220610085706.15741-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+DW PCIe RP/EP reference manuals explicit define all the clocks and reset
+requirements in [1] and [2]. Seeing the DW PCIe vendor-specific
+DT-bindings have already started assigning random names to the same set of
+the clocks and resets lines, let's define a generic names sets and add
+them to the DW PCIe definitions in the common DT-schema. These definitions
+will be used in the generic DW PCIe DT-schema and can be referenced in the
+particular DW PCIe DT-bindings if they are compatible with them, otherwise
+the platforms can be left with already defined clocks/resets properties.
 
-On Thu, 9 Jun 2022 13:37:21 +0200, Krzysztof Kozlowski wrote:
-> Merging
-> =======
-> 1. dt-bindings: rebased on top of Rob's:
->    https://lore.kernel.org/all/20220608211207.2058487-1-robh@kernel.org/
-> 
-> 2. DTS patches are independent. They can be picked up directly by sub-arch
->    maintainers, by Arnd or Olof, or eventually by me (if you wish).
-> 
-> [...]
+[1] Synopsys DesignWare Cores PCI Express Controller Databook - DWC PCIe
+Root Port, Version 5.40a, March 2019, p.55 - 78.
+[2] Synopsys DesignWare Cores PCI Express Controller Databook - DWC PCIe
+Endpoint, Version 5.40a, March 2019, p.58 - 81.
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v5.20/arm64-dt)
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 
-[07/48] arm64: dts: amlogic: correct gpio-keys properties
-        https://git.kernel.org/amlogic/c/4956be9944d1fb23107f27bad8a2cca0fa167443
-[08/48] arm64: dts: amlogic: align gpio-key node names with dtschema
-        https://git.kernel.org/amlogic/c/4fd9afd894ebe5831dbd737e6ca7b6de14da7fda
+---
 
-These changes has been applied on the intermediate git tree [1].
+Changelog v3:
+- This is a new patch unpinned from the next one:
+  https://lore.kernel.org/linux-pci/20220503214638.1895-2-Sergey.Semin@baikalelectronics.ru/
+  by the Rob' request. (@Rob)
+- Drop synonymous from the names list since the device schemas create
+  their own enumerations anyway.
+---
+ .../bindings/pci/samsung,exynos-pcie.yaml     |   3 +-
+ .../bindings/pci/snps,dw-pcie-common.yaml     | 100 ++++++++++++++++++
+ .../bindings/pci/snps,dw-pcie-ep.yaml         |  26 +++++
+ .../devicetree/bindings/pci/snps,dw-pcie.yaml |  20 +++-
+ .../pci/socionext,uniphier-pcie-ep.yaml       |   3 +-
+ 5 files changed, 149 insertions(+), 3 deletions(-)
 
-The v5.20/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
-
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
+diff --git a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+index 445eed94b53f..fedb774938f4 100644
+--- a/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+@@ -16,7 +16,8 @@ description: |+
+   snps,dw-pcie.yaml.
+ 
+ allOf:
+-  - $ref: /schemas/pci/snps,dw-pcie.yaml#
++  - $ref: /schemas/pci/pci-bus.yaml#
++  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+index c6a55f90ddd5..f22fb01c9bd0 100644
+--- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
++++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+@@ -58,6 +58,36 @@ properties:
+     minItems: 1
+     maxItems: 26
+ 
++  clocks:
++    description:
++      DWC PCIe reference manual explicitly defines a set of the clocks required
++      to get the controller working correctly. In general all of them can
++      be divided into two groups':' application and core clocks. Note the
++      platforms may have some of the clock sources unspecified in case if the
++      corresponding domains are fed up from a common clock source.
++    minItems: 1
++    maxItems: 7
++
++  clock-names:
++    minItems: 1
++    maxItems: 7
++
++  resets:
++    description:
++      DWC PCIe reference manual explicitly defines a set of the reset
++      signals required to be de-asserted to properly activate the controller
++      sub-parts. All of these signals can be divided into two sub-groups':'
++      application and core resets with respect to the main sub-domains they
++      are supposed to reset. Note the platforms may have some of these signals
++      unspecified in case if they are automatically handled or aggregated into
++      a comprehensive control module.
++    minItems: 1
++    maxItems: 10
++
++  reset-names:
++    minItems: 1
++    maxItems: 10
++
+   phys:
+     description:
+       There can be up to the number of possible lanes PHYs specified.
+@@ -218,4 +248,74 @@ definitions:
+           uncorrectable error.
+         const: sft_ue
+ 
++  clock-names:
++    description:
++      Reference clock names common for the DWC PCIe Root Port and Endpoint
++      controllers.
++    anyOf:
++      - description:
++          Data Bus Interface (DBI) clock. Clock signal for the AXI-bus
++          interface of the Configuration-Dependent Module, which is
++          basically the set of the controller CSRs.
++        const: dbi
++      - description:
++          Application AXI-bus Master interface clock. Basically this is
++          a clock for the controller DMA interface (PCI-to-CPU).
++        const: mstr
++      - description:
++          Application AXI-bus Slave interface clock. This is a clock for
++          the CPU-to-PCI memory IO interface.
++        const: slv
++      - description:
++          Controller Core-PCS PIPE interface clock. It's normally
++          supplied by an external PCS-PHY.
++        const: pipe
++      - description:
++          Controller Primary clock. It's assumed that all controller input
++          signals (except resets) are synchronous to this clock.
++        const: core
++      - description:
++          Auxiliary clock for the controller PMC domain. The controller
++          partitioning implies having some parts to operate with this
++          clock in some power management states.
++        const: aux
++      - description:
++          Generic reference clock. In case if there are several
++          interfaces fed up with a common clock source it's advisable to
++          define it with this name (for instance pipe, core and aux can
++          be connected to a single source of the periodic signal).
++        const: ref
++      - description:
++          Clock for the PHY registers interface. Originally this is
++          a PHY-viewport-based interface, but some platform may have
++          specifically designed one.
++        const: phy_reg
++
++  reset-names:
++    description:
++      Reset signal names common for the DWC PCIe Root Port and Endpoint
++      controllers.
++    anyOf:
++      - description: Data Bus Interface (DBI) domain reset
++        const: dbi
++      - description: AXI-bus Master interface reset
++        const: mstr
++      - description: AXI-bus Slave interface reset
++        const: slv
++      - description: Controller Non-sticky CSR flags reset
++        const: non-sticky
++      - description: Controller sticky CSR flags reset
++        const: sticky
++      - description: PIPE-interface (Core-PCS) logic reset
++        const: pipe
++      - description:
++          Controller primary reset (resets everything except PMC module)
++        const: core
++      - description: PCS/PHY block reset
++        const: phy
++      - description: PMC hot reset signal
++        const: hot
++      - description: Cold reset signal
++        const: pwr
++
+ ...
+diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+index bfff723b529d..bb7e4381d392 100644
+--- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-ep.yaml
+@@ -74,6 +74,26 @@ properties:
+     items:
+       $ref: /schemas/pci/snps,dw-pcie-common.yaml#/definitions/interrupt-names
+ 
++  clocks:
++    minItems: 1
++    maxItems: 7
++
++  clock-names:
++    minItems: 1
++    maxItems: 7
++    items:
++      $ref: /schemas/pci/snps,dw-pcie-common.yaml#/definitions/clock-names
++
++  resets:
++    minItems: 1
++    maxItems: 10
++
++  reset-names:
++    minItems: 1
++    maxItems: 10
++    items:
++      $ref: /schemas/pci/snps,dw-pcie-common.yaml#/definitions/reset-names
++
+   max-functions:
+     maximum: 32
+ 
+@@ -109,6 +129,12 @@ examples:
+       interrupts = <23>, <24>;
+       interrupt-names = "dma0", "dma1";
+ 
++      clocks = <&sys_clk 12>, <&sys_clk 24>;
++      clock-names = "dbi", "ref";
++
++      resets = <&sys_rst 12>, <&sys_rst 24>;
++      reset-names = "dbi", "phy";
++
+       phys = <&pcie_phy0>, <&pcie_phy1>, <&pcie_phy2>, <&pcie_phy3>;
+       phy-names = "pcie0", "pcie1", "pcie2", "pcie3";
+ 
+diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+index 9e96c6d0ef48..518fa5626c11 100644
+--- a/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml
+@@ -78,7 +78,25 @@ properties:
+       - contains:
+           const: msi
+ 
+-  clocks: true
++  clocks:
++    minItems: 1
++    maxItems: 7
++
++  clock-names:
++    minItems: 1
++    maxItems: 7
++    items:
++      $ref: /schemas/pci/snps,dw-pcie-common.yaml#/definitions/clock-names
++
++  resets:
++    minItems: 1
++    maxItems: 10
++
++  reset-names:
++    minItems: 1
++    maxItems: 10
++    items:
++      $ref: /schemas/pci/snps,dw-pcie-common.yaml#/definitions/reset-names
+ 
+ additionalProperties: true
+ 
+diff --git a/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
+index 1719a36952c0..8c2a8e8f96f9 100644
+--- a/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/socionext,uniphier-pcie-ep.yaml
+@@ -16,7 +16,8 @@ maintainers:
+   - Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+ 
+ allOf:
+-  - $ref: /schemas/pci/snps,dw-pcie-ep.yaml#
++  - $ref: /schemas/pci/pci-ep.yaml#
++  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
+ 
+ properties:
+   compatible:
 -- 
-Neil
+2.35.1
+
