@@ -2,118 +2,168 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4C1C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jun 2022 20:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED92ACCA47B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jun 2022 06:37:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343754AbiFIUbr (ORCPT
+        id S1346457AbiFJGh2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jun 2022 16:31:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32930 "EHLO
+        Fri, 10 Jun 2022 02:37:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234626AbiFIUbq (ORCPT
+        with ESMTP id S244630AbiFJGh0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jun 2022 16:31:46 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70A921808;
-        Thu,  9 Jun 2022 13:31:44 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id w20so18092350lfa.11;
-        Thu, 09 Jun 2022 13:31:44 -0700 (PDT)
+        Fri, 10 Jun 2022 02:37:26 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05FE022BE8
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jun 2022 23:37:22 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id q15so10280122wmj.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2022 23:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=CA2137blCv89eq2ZgR16JFTYhMBK9m/DAMtjtrUnzv4=;
-        b=FNyhUSkOM7ITAVGM42a2lcYI7sMqsdl0l5PUJFKaAoyxqtp/3p7EMeU5IC1E/DLGTN
-         lFmGYHU8olzBe1VrTMlwtGoLufWejlLWT3IoxvVDLA7fA96M9N3DyArbCRhj9J5BTi0y
-         66tc0iPJyUKSeQNfOl5YWQAyoeFRDpT95Lw2i1DzMQ0sSdXFwyUarMLWXWBBhhcS4jz6
-         svQcbwKYUzyq4m8WcM6yhHR50Lg3Uw1M4kx7kwKszV2XrqZO8g8J4rWI4N5IvNTPgTGV
-         xCBD6S5Xq9y/UXULLjfiwt4AoyAhnRzEnd7ZZAmYgtIW4fLG6J+vbT/8IRmLlf9MG3kb
-         SDBQ==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Qxlw/2GeYPhBz4i8FzCqobc8aHph2WQJ2uzH+wlAQPM=;
+        b=YvKD/lnZFHPf9Bklm5hR2t0kTgFB1/rXSkgOKvxFTago0OfV/XXVBnr65QfdQ0sIbE
+         X56d5w92lO93EaOJsDJ8oCNGyjZkcJXPRSg9xTkOKhWDw62K7tpcO84Az2vOBRZU/r3+
+         YIHnLV0yk1ox4ibJDxo/xtHUE91KPK5nhGt24yQglgyRLlAN46Y1Z1t0+GvzN7M+MEou
+         tOdQLaDCWTLurM3ng8g7elKpPBlMcfWMNnTz6GEuMIGKZgA7WgUpL2gOP6VsKo5/EHPb
+         626ZTuTKw9tktPSgibPC7QlWbKT0XcsOV4TdzYgmUmuC1ODYErjWurNuno/msyBC5MwG
+         9u4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CA2137blCv89eq2ZgR16JFTYhMBK9m/DAMtjtrUnzv4=;
-        b=Q6buC3mnk+spodJoYpS0iByHA8QJQuabEEBLPMSIyaDXzt133aQjnhnIQBhXgtQs4e
-         W51zULw5WiVvuPe+wOhURoP6YiyinTC1/7gJloc8IXRUYkXfZciqT41o2f6QQT6zAqo0
-         m2OdTg/qsGUEpE5K7GsRwnN64V9unNJdi9p2CzHxoZSvOLIhwpduH5EjgLnPUBtWbWwY
-         cCT4ylmrDowmEDjm7Jk9T84h4np+GG1lqL27QCVbrAAZqrGQewTl63T4/v8g6/guoRJi
-         kiwBe0r3ahoVEvww4mUYKfysH8ynM8CQdH5tBHzPDZnsj50DKr5a/ffTnDEpQ0xH2QZz
-         mpbA==
-X-Gm-Message-State: AOAM532j3nKIK6XWXuu7zLHP1pc40mfTOw69TlmXujAOVU+hq93DiyZF
-        kOYmnTjYVzgJeIfV5xUMN9w=
-X-Google-Smtp-Source: ABdhPJzhToDwB+G1T0rZoz9FzKJtAL3yXpSGu2fYpJJiJS5R8uUYEpkNX6PVk+RkVORC1F5SWSz7Bw==
-X-Received: by 2002:ac2:4c50:0:b0:479:55a9:2e08 with SMTP id o16-20020ac24c50000000b0047955a92e08mr11574855lfk.642.1654806703162;
-        Thu, 09 Jun 2022 13:31:43 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id q22-20020a194316000000b0047255d210e0sm4389159lfa.15.2022.06.09.13.31.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jun 2022 13:31:42 -0700 (PDT)
-Message-ID: <4a7f8ab6-c061-3861-5790-b6c0fbd7cad1@gmail.com>
-Date:   Thu, 9 Jun 2022 22:31:41 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: add function and color to aat1290
- flash LED node in Galaxy S3
-Content-Language: en-US
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Qxlw/2GeYPhBz4i8FzCqobc8aHph2WQJ2uzH+wlAQPM=;
+        b=q2sBT+VsHQVXE6Q/ZzplRaxzniX+nIFGh2ub7GszAisWaHYzwC28NmtL5KoJHyuDi8
+         3Hsdu82kgqKx+QO1swfdnrNbp/8ZD/5YE1Idb6VWzeieAK/84929HtnOXHbvHhoTl5ep
+         qdUbOQ/711KZ13zihY8ImaVNdNKZmQM3eB1d9HB6yA3uuRRrZ71DLXD+SVIDn99nt7JL
+         xltnZypWkAWzzN6aeP+vgBQ+u+hfWQ7Suj/jBmC4srjIU8UFRczWPcUl4tzk1RQJDZhR
+         NOqYW8hTaVJZsf+95sJODPpVr3sK+UXS3fVYEzi9fZMq0vfpxIa9OeM0vfuuzoDt20F6
+         xmjQ==
+X-Gm-Message-State: AOAM531e8YYsDzCeSSHwmDoBUPT6XQaWmd8gdOyOVtHntc0paRb23O1h
+        6xOrZHqT4x8eZzL8FZVexNyuxA==
+X-Google-Smtp-Source: ABdhPJw4Hge4NDaRn0TL71ijVSQhRo1MhCaO3HbTb1tYRGHCORKkku8fnKoEAx9FGxDoG3CaWVnJNw==
+X-Received: by 2002:a1c:4e03:0:b0:39c:5bbc:e0d2 with SMTP id g3-20020a1c4e03000000b0039c5bbce0d2mr7034980wmh.184.1654843041123;
+        Thu, 09 Jun 2022 23:37:21 -0700 (PDT)
+Received: from localhost.localdomain ([2001:861:44c0:66c0:27b0:82d9:d0c6:702a])
+        by smtp.gmail.com with ESMTPSA id 2-20020a05600c228200b0039482d95ab7sm1729030wmf.24.2022.06.09.23.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jun 2022 23:37:20 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, arm@kernel.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-mediatek@lists.infradead.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
- <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Tero Kristo <kristo@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-omap@vger.kernel.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, Nishanth Menon <nm@ti.com>,
+        devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org,
+        Andrew Jeffery <andrew@aj.id.au>, linux-input@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Peter Rosin <peda@axentia.se>,
+        Khuong Dinh <khuong@os.amperecomputing.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Andy Gross <agross@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        linux-sunxi@lists.linux.dev,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Li Yang <leoyang.li@nxp.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        linux-rockchip@lists.infradead.org
+Subject: Re: (subset) [PATCH v2 00/48] dt-bindings: input: gpio-keys: rework matching children
+Date:   Fri, 10 Jun 2022 08:37:18 +0200
+Message-Id: <165484301356.1384204.15957178175784526690.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
+References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi,
 
-On 6/7/22 10:53, Krzysztof Kozlowski wrote:
-> Add common LED properties - the function and color - to aat1290 flash
-> LED node in Galaxy S3.
+On Thu, 9 Jun 2022 13:37:21 +0200, Krzysztof Kozlowski wrote:
+> Merging
+> =======
+> 1. dt-bindings: rebased on top of Rob's:
+>    https://lore.kernel.org/all/20220608211207.2058487-1-robh@kernel.org/
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 3 +++
->   1 file changed, 3 insertions(+)
+> 2. DTS patches are independent. They can be picked up directly by sub-arch
+>    maintainers, by Arnd or Olof, or eventually by me (if you wish).
 > 
-> diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> index 72901772fcad..d76f3678dcab 100644
-> --- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> @@ -7,6 +7,7 @@
->    */
->   
->   /dts-v1/;
-> +#include <dt-bindings/leds/common.h>
->   #include "exynos4412-midas.dtsi"
->   
->   / {
-> @@ -27,6 +28,8 @@ led-controller {
->   
->   		led {
->   			label = "flash";
-> +			function = LED_FUNCTION_FLASH;
-> +			color = <LED_COLOR_ID_WHITE>;
+> [...]
 
-Addition of these two properties will not change anything because
-the label has precedence. It is deprecated, but if you introduce
-function and color to the binding instead of the label, the resulting
-LED class device name will change.
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v5.20/arm64-dt)
 
->   			led-max-microamp = <520833>;
->   			flash-max-microamp = <1012500>;
->   			flash-max-timeout-us = <1940000>;
+[07/48] arm64: dts: amlogic: correct gpio-keys properties
+        https://git.kernel.org/amlogic/c/4956be9944d1fb23107f27bad8a2cca0fa167443
+[08/48] arm64: dts: amlogic: align gpio-key node names with dtschema
+        https://git.kernel.org/amlogic/c/4fd9afd894ebe5831dbd737e6ca7b6de14da7fda
+
+These changes has been applied on the intermediate git tree [1].
+
+The v5.20/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
 -- 
-Best regards,
-Jacek Anaszewski
+Neil
