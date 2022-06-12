@@ -2,139 +2,113 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457D9CCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Jun 2022 17:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C62EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Jun 2022 20:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231791AbiFLRGP (ORCPT
+        id S234863AbiFLUed (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Jun 2022 13:06:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38170 "EHLO
+        Sun, 12 Jun 2022 16:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbiFLRGO (ORCPT
+        with ESMTP id S231891AbiFLUec (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Jun 2022 13:06:14 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B1F4093D
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jun 2022 10:06:12 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id gl15so6980103ejb.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jun 2022 10:06:12 -0700 (PDT)
+        Sun, 12 Jun 2022 16:34:32 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7445331213;
+        Sun, 12 Jun 2022 13:34:31 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id h19so1630226wrc.12;
+        Sun, 12 Jun 2022 13:34:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=e1j5oNyWe6LjPGibCsOkD4pe/7KGmuvi3WqbEeyX52A=;
-        b=axtd06CitJ9XTEQlj/DgAkzQO7gwwugoWwZY1AE+3Zgrmx9g1bJNWCNMLWlwF3iEl4
-         GhYCjZ1F7rhF6iZMCV3zMH+89SbmhW1HYE2LWqQReDf2b8zTolL4VWga094dShEhTncU
-         rXBUN7y3Juwybt8Udriw5j+nE2KAu+rQwc9it6aEmgN54efusB7QLYAaiLredlUnFdpx
-         o8Zp+1zZeXtNqmAXKQQzRBNOqMx9wixdGTeA+zOfuR7gU+lFX57Rn3kpULfWzeHw4sfP
-         riHzAZNZ4FYDkUtThXbRlJuV1Huhu/47lyl7C8BI7SiPecrv8yOniALBcDn26/A9LB+s
-         c3PA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pLO4+liZettN7NhTXRO4r2yJBN1H2FVkqYbOicYerBo=;
+        b=X5OBdH28x9HgFoBcWsY3ulpULpoUF3jFjFVlEFMpFgUx3IREZW/hJYT/c1iQaKfxeq
+         ndL1X8IFDh05l0q3leMTlePr/vGN8J4dEo8G+CyygvfkLz2o7s4amu4W2jQtVS+l/+u3
+         NyvQqX6LDPRcdgV4mvF2uUchiySoVVwzxWGSLQqHaI7zPvUHqoQKt3DJdxyhBRI8hlmL
+         doKoD3lVtTzZiJMkNHOQWQMo5R3/7bdvwG7hKlSw2IIZ9jq77ku8z9/xjLrxbvX4ElfV
+         QWFetwJJlZQjHNiar2TR1PWGQ9VjKsKQZ5t+95CF2b9gbmDJ/HFSFo8KxDtJ+xSEmNmL
+         E6QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=e1j5oNyWe6LjPGibCsOkD4pe/7KGmuvi3WqbEeyX52A=;
-        b=UQ/ydxDlnUHLpU9EXDBqfcFBXE37ubFZQ6klFXuJXgYowASbR7GifGHKEgtwbSgSyA
-         +IogRMNw2PVuhNXKsGPTzkgEH7ovsW8MwI4jgSrtFsLwasG/nmdBokGth80rz71l6AwT
-         a1+A2gsamut/4qdyj1dN2gkpLXna9FJ5jiG57vk+EsOs/cn9MLKHCtHihUQICRQbSKXK
-         EZYaPiiDP+0J5OSiCyuzEXYRkq6InXz9RrDNoYT9vffjver19kuy7vwb1uxDaSshmdHb
-         YJZ9NerToQlxECtmeBrzUwzLQALK6QpXzFWg/RN+Xwkvbpzuuk1L7omP9ACJVa6eLmYC
-         OpaQ==
-X-Gm-Message-State: AOAM532ONp9jJNkOi915N51ZpT8HglGPSlcgJOzzGhzWr5hwnFjXr6pI
-        b5RmA1Tx1ueP++08pUhiBQvXnQ==
-X-Google-Smtp-Source: ABdhPJywtatBoFfH74/PESsNXnL7SJhTfWWSGNB3lg0vls4R1pXgQ7dz3i5/bNXUiIxLtCTPyo5tTQ==
-X-Received: by 2002:a17:906:804a:b0:70c:1dac:9bb8 with SMTP id x10-20020a170906804a00b0070c1dac9bb8mr46957960ejw.92.1655053571275;
-        Sun, 12 Jun 2022 10:06:11 -0700 (PDT)
-Received: from [192.168.0.203] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id pv17-20020a170907209100b00704757b1debsm2675740ejb.9.2022.06.12.10.06.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Jun 2022 10:06:10 -0700 (PDT)
-Message-ID: <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
-Date:   Sun, 12 Jun 2022 19:06:09 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: add function and color to aat1290
- flash LED node in Galaxy S3
-Content-Language: en-US
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        bh=pLO4+liZettN7NhTXRO4r2yJBN1H2FVkqYbOicYerBo=;
+        b=yy50jzTzyzKPN3uPFqRTW/zjIJavrERh40GeVMGaY9UayUuv0kFUPctCNQHGW4sBIU
+         0ynWzrlXXM4Qh5CnbZ63DSE5rmid+p8lUqRreR/FB0b3+xGPF8c9VC3shQERFlEuEVng
+         UUi0s8psLfnjTJIKYwnT9gjQBXtajXDuyjJxAkNkLZl7r+f3SJEWjjd0LSPY3swZPTm7
+         MguiV3yFpo/xCIY7HLwitWgoT/LdHzgLVAp7yK3b2pJpEcVnOaUj/ehiUz128VHzLwMG
+         tRdiFF3eVLsRqsN85Ag+jmm2MyMlOCyEe8U6jeS6FnYoZ1O0nQOpFHIGMv80CwPbTqwg
+         TzRw==
+X-Gm-Message-State: AOAM531ELvHnr9ASbADmKwPGyXsMZ4YunDG5cVyGZtXTxScLcUxvJVFA
+        hcbVXXJwrDbztONvoyVnHjn0YgLZbn6vUg==
+X-Google-Smtp-Source: ABdhPJzUlKOUvC8cBsTg326yD2TNlhEPA2C1hFzYli75wU1R8FclFOC5cNtWRhXNszJsuzDOQrKDfQ==
+X-Received: by 2002:adf:fb05:0:b0:20a:e113:8f3f with SMTP id c5-20020adffb05000000b0020ae1138f3fmr53765523wrr.534.1655066069955;
+        Sun, 12 Jun 2022 13:34:29 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id e10-20020a5d4e8a000000b00210320d9fbfsm7706817wru.18.2022.06.12.13.34.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Jun 2022 13:34:29 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Simon Shields <simon@lineageos.org>,
-        =?UTF-8?Q?Martin_J=c3=bccker?= <martin.juecker@gmail.com>
-References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
- <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
- <4a7f8ab6-c061-3861-5790-b6c0fbd7cad1@gmail.com>
- <ef62a7bb-2217-2947-17dd-fc4a51acdea5@linaro.org>
- <f1402a1d-a74d-f7b9-b9e2-fc3991781e64@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <f1402a1d-a74d-f7b9-b9e2-fc3991781e64@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] spi: s3c64xx: set pointers to null using NULL rather than 0
+Date:   Sun, 12 Jun 2022 21:34:28 +0100
+Message-Id: <20220612203428.2754823-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/06/2022 17:09, Jacek Anaszewski wrote:
-> On 6/10/22 12:14, Krzysztof Kozlowski wrote:
->> On 09/06/2022 22:31, Jacek Anaszewski wrote:
->>> Hi Krzysztof,
->>>
->>> On 6/7/22 10:53, Krzysztof Kozlowski wrote:
->>>> Add common LED properties - the function and color - to aat1290 flash
->>>> LED node in Galaxy S3.
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> ---
->>>>    arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->>>> index 72901772fcad..d76f3678dcab 100644
->>>> --- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
->>>> @@ -7,6 +7,7 @@
->>>>     */
->>>>    
->>>>    /dts-v1/;
->>>> +#include <dt-bindings/leds/common.h>
->>>>    #include "exynos4412-midas.dtsi"
->>>>    
->>>>    / {
->>>> @@ -27,6 +28,8 @@ led-controller {
->>>>    
->>>>    		led {
->>>>    			label = "flash";
->>>> +			function = LED_FUNCTION_FLASH;
->>>> +			color = <LED_COLOR_ID_WHITE>;
->>>
->>> Addition of these two properties will not change anything because
->>> the label has precedence. It is deprecated, but if you introduce
->>> function and color to the binding instead of the label, the resulting
->>> LED class device name will change.
->>
->> Which is not necessarily what we want, right? Adding these properties is
->> a proper description of hardware, regardless whether current Linux
->> implementation uses them or not.
-> 
-> Actually I'd just drop label in addition to your change.
-> I don't think it would break anybody seriously - not expecting it has
-> any larger group of users and having uniformly constructed DTS files
-> in the mainline has greater value.
-> 
+There are pointers being set to null using use. Use NULL instead.
 
-What about some PostmarketOSos, LineageOS and other OSes?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/spi/spi-s3c64xx.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Let me Cc here some folks - Simon, Martin, is the label in flash LED
-node anyhow important for you? Can it be dropped and replaced with
-function+color?
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 0ce58105dbac..819b660dae82 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -354,7 +354,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ 	sdd->rx_dma.ch = dma_request_chan(&sdd->pdev->dev, "rx");
+ 	if (IS_ERR(sdd->rx_dma.ch)) {
+ 		dev_err(&sdd->pdev->dev, "Failed to get RX DMA channel\n");
+-		sdd->rx_dma.ch = 0;
++		sdd->rx_dma.ch = NULL;
+ 		return 0;
+ 	}
+ 
+@@ -362,8 +362,8 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ 	if (IS_ERR(sdd->tx_dma.ch)) {
+ 		dev_err(&sdd->pdev->dev, "Failed to get TX DMA channel\n");
+ 		dma_release_channel(sdd->rx_dma.ch);
+-		sdd->tx_dma.ch = 0;
+-		sdd->rx_dma.ch = 0;
++		sdd->tx_dma.ch = NULL;
++		sdd->rx_dma.ch = NULL;
+ 		return 0;
+ 	}
+ 
+@@ -808,8 +808,8 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+ 	if (sdd->rx_dma.ch && sdd->tx_dma.ch) {
+ 		dma_release_channel(sdd->rx_dma.ch);
+ 		dma_release_channel(sdd->tx_dma.ch);
+-		sdd->rx_dma.ch = 0;
+-		sdd->tx_dma.ch = 0;
++		sdd->rx_dma.ch = NULL;
++		sdd->tx_dma.ch = NULL;
+ 	}
+ 
+ 	return status;
+-- 
+2.35.3
 
-https://lore.kernel.org/all/20220607085343.72414-3-krzysztof.kozlowski@linaro.org/
-
-Best regards,
-Krzysztof
