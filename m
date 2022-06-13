@@ -2,84 +2,155 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FC5C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jun 2022 19:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C36CCA47B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jun 2022 21:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245588AbiFMTUp (ORCPT
+        id S1351938AbiFMVKh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 15:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41344 "EHLO
+        Mon, 13 Jun 2022 17:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351403AbiFMTTj (ORCPT
+        with ESMTP id S238619AbiFMVKR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 15:19:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF0453B69;
-        Mon, 13 Jun 2022 10:24:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E383B60C7C;
-        Mon, 13 Jun 2022 17:24:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B252C385A9;
-        Mon, 13 Jun 2022 17:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655141077;
-        bh=6G5KLJNw2S9txJZg1qcDhOoMAsqsWM/W9qB/nY+Juqw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=MhVdrVipfMKpXttaDbveFOybPe41Kse2OTIwJ9+M2e2qv8gLNIJo+/wOdGGyU1qGo
-         m+5MAjhVOYQ1QjLT+h/Sq57rl+8Wh4+lHkbFpiNpi2jBCunrjWZPNX8QCh1Lo4dYgX
-         atzgkLR5so6LJDRerU8Rs9e+4rZElA+lo1cK50/uP5rbtuICyeL0M1NGSIObq9tSfh
-         hxzuFA47nGCGRnrnEIRs5dbCLR+bETf7QnmFK6XnMssoaMVldmuR5YRSUDdnxJVobl
-         +qKVoJzt0pcdhTGtFt2W1IlxCCTg1ql8aRMK0bhWZSXHBNmKdfIlNgxCGes3xP1cW3
-         iy1kGhhBQJRvQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        krzysztof.kozlowski@linaro.org, linux-samsung-soc@vger.kernel.org,
-        alim.akhtar@samsung.com, Colin Ian King <colin.king@intel.com>,
-        andi@etezian.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20220612203428.2754823-1-colin.i.king@gmail.com>
-References: <20220612203428.2754823-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] spi: s3c64xx: set pointers to null using NULL rather than 0
-Message-Id: <165514107536.671611.6251857721264911131.b4-ty@kernel.org>
-Date:   Mon, 13 Jun 2022 18:24:35 +0100
+        Mon, 13 Jun 2022 17:10:17 -0400
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7BC2F3A4;
+        Mon, 13 Jun 2022 13:48:09 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id y16so5137583ili.13;
+        Mon, 13 Jun 2022 13:48:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/dzRBMIn98y05EN99Sgq5WDsEwo7wpH66xTE6XCo/M4=;
+        b=DK0uhSJYtjiyjLQvTvTq2iUHAujLGBGBiyoTPN+vCrum3bibAC+WLkJ9pTP1QCph3N
+         0MbMWb3j0SpOpgQKxnMDEs/p9N4WJ7tH4moYqsCTez94Qk67ATaGGLekMJnzDBgYVWsE
+         q9i4sJtScHtQJc6fsEP8fzedyvntjY/xTCMYm9Os8uE/1lGfJDAHoC2GkMHt2UPmf1GL
+         Px4osl3EhxDeLmoY+qTnRtrSD/6zLqH8OoVDAaLfJ8zoYSR5kIwV/hwFrwv7LpNqMTkq
+         3a0B6WnFYkP2TXGiU3lijF3kogM8nabC/En/c6MqfDLHQTEH64SwE0qMFMG39OIBuS/D
+         AkpA==
+X-Gm-Message-State: AJIora+1KepHiNcoL+CpPjUXWWIPuT+VEg/BCqu+zMT+QjxiDzXctdpq
+        6IU1aFCUuWzbfUbZMF6DIA==
+X-Google-Smtp-Source: AGRyM1uVO/KYjaDwGOXreGf4KGdEqy/t353ouqbFZgp5s/y6kuWD2fxXl3ut4zPLn500QHJwX/rd6w==
+X-Received: by 2002:a92:ca45:0:b0:2d1:b7cf:26a9 with SMTP id q5-20020a92ca45000000b002d1b7cf26a9mr962751ilo.52.1655153288816;
+        Mon, 13 Jun 2022 13:48:08 -0700 (PDT)
+Received: from robh.at.kernel.org ([69.39.28.171])
+        by smtp.gmail.com with ESMTPSA id c2-20020a92c8c2000000b002d11397f4f9sm4380280ilq.74.2022.06.13.13.48.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 13:48:08 -0700 (PDT)
+Received: (nullmailer pid 56167 invoked by uid 1000);
+        Mon, 13 Jun 2022 20:48:06 -0000
+Date:   Mon, 13 Jun 2022 14:48:06 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Minghuan Lian <minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jonathan Chocron <jonnyc@amazon.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Rahul Tanwar <rtanwar@maxlinear.com>,
+        Srikanth Thokala <srikanth.thokala@intel.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Frank Li <Frank.Li@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
+        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 15/18] PCI: dwc: Add dw_ prefix to the pcie_port
+ structure name
+Message-ID: <20220613204806.GA55629-robh@kernel.org>
+References: <20220610082535.12802-1-Sergey.Semin@baikalelectronics.ru>
+ <20220610082535.12802-16-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220610082535.12802-16-Sergey.Semin@baikalelectronics.ru>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 12 Jun 2022 21:34:28 +0100, Colin Ian King wrote:
-> There are pointers being set to null using use. Use NULL instead.
+On Fri, Jun 10, 2022 at 11:25:31AM +0300, Serge Semin wrote:
+> All of the DW PCIe core driver entities have names with the dw_ prefix in
+> order to easily distinguish local and common PCIe name spaces. All except
+> the pcie_port structure which contains the DW PCIe Root Port descriptor.
+> For historical reason the structure has retained the original name since
+> commit 340cba6092c2 ("pci: Add PCIe driver for Samsung Exynos") when
+> the DW PCIe IP-core support was added to the kernel. Let's finally fix
+> that by adding the dw_ prefix to the structure name and by adding the _rp
+> suffix to be similar to the EP counterpart. Thus the name will be coherent
+> with the common driver naming policy. It shall make the driver code more
+> readable eliminating visual confusion between the local and generic PCI
+> name spaces.
 > 
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 > 
+> ---
+> 
+> Changelog v4:
+> - This is a new patch created on the v4 lap of the series.
+> ---
+>  drivers/pci/controller/dwc/pci-dra7xx.c       | 12 +++----
+>  drivers/pci/controller/dwc/pci-exynos.c       |  6 ++--
+>  drivers/pci/controller/dwc/pci-imx6.c         |  6 ++--
+>  drivers/pci/controller/dwc/pci-keystone.c     | 20 +++++------
+>  drivers/pci/controller/dwc/pci-layerscape.c   |  2 +-
+>  drivers/pci/controller/dwc/pci-meson.c        |  2 +-
+>  drivers/pci/controller/dwc/pcie-al.c          |  6 ++--
+>  drivers/pci/controller/dwc/pcie-armada8k.c    |  4 +--
+>  drivers/pci/controller/dwc/pcie-artpec6.c     |  4 +--
+>  .../pci/controller/dwc/pcie-designware-host.c | 36 +++++++++----------
+>  .../pci/controller/dwc/pcie-designware-plat.c |  2 +-
+>  drivers/pci/controller/dwc/pcie-designware.h  | 30 ++++++++--------
+>  drivers/pci/controller/dwc/pcie-dw-rockchip.c |  4 +--
+>  drivers/pci/controller/dwc/pcie-fu740.c       |  2 +-
+>  drivers/pci/controller/dwc/pcie-histb.c       | 10 +++---
+>  drivers/pci/controller/dwc/pcie-intel-gw.c    |  6 ++--
+>  drivers/pci/controller/dwc/pcie-keembay.c     |  4 +--
+>  drivers/pci/controller/dwc/pcie-kirin.c       |  2 +-
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  4 +--
+>  drivers/pci/controller/dwc/pcie-spear13xx.c   |  6 ++--
+>  drivers/pci/controller/dwc/pcie-tegra194.c    | 22 ++++++------
+>  drivers/pci/controller/dwc/pcie-uniphier.c    | 10 +++---
+>  drivers/pci/controller/dwc/pcie-visconti.c    |  6 ++--
+>  23 files changed, 103 insertions(+), 103 deletions(-)
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: s3c64xx: set pointers to null using NULL rather than 0
-      commit: 845d3fd8a0aadf5dd97e6d345d3df4bf80099e69
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Reviewed-by: Rob Herring <robh@kernel.org>
