@@ -2,129 +2,128 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2E9CCA47B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jun 2022 11:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE16DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jun 2022 13:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357028AbiFMLwk (ORCPT
+        id S240881AbiFMNA3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 07:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57054 "EHLO
+        Mon, 13 Jun 2022 09:00:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356512AbiFMLuh (ORCPT
+        with ESMTP id S1357078AbiFMM62 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 07:50:37 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3383248E2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jun 2022 03:54:16 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220613105410epoutp02c6169dc6cd0f534c270e1fab7af6e885~4KLvxx-6W3077230772epoutp02W
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jun 2022 10:54:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220613105410epoutp02c6169dc6cd0f534c270e1fab7af6e885~4KLvxx-6W3077230772epoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1655117650;
-        bh=+nj5AOzfaDd4gy6kMk2RwizYSlfgTYYWEbpWjFZL4W0=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=bqilPCBvl3BDHlNWdBMvit/mBxawDO6UV12bchT21D8kIKAKtfw2dxZGpXlluaeRk
-         RJOJVf2vEkEz5eGvKutkX6MIBeWvzu7jMHVc6g+7A7N6fKu/lK3ZHSxXE4fVPtVeWW
-         rTR6hOJ2yrjMRBNkDA/My080ZIDL+r0bq8k/qdE4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20220613105410epcas2p1108ba36ef4ae24f4cc588ad62010b71e~4KLvOEt3b0041000410epcas2p1C;
-        Mon, 13 Jun 2022 10:54:10 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.88]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4LM7jY3gyLz4x9Pv; Mon, 13 Jun
-        2022 10:54:09 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.8B.10069.15717A26; Mon, 13 Jun 2022 19:54:09 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220613105409epcas2p3a0a215c6f61e9e74beb2914008f83d9e~4KLuYcEdN1007910079epcas2p3I;
-        Mon, 13 Jun 2022 10:54:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220613105409epsmtrp1cc70d118a4aeb1c7ecde88e20e73a52e~4KLuXxBq50101501015epsmtrp1V;
-        Mon, 13 Jun 2022 10:54:09 +0000 (GMT)
-X-AuditID: b6c32a45-a79ff70000002755-79-62a7175113ba
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        48.8C.11276.15717A26; Mon, 13 Jun 2022 19:54:09 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220613105409epsmtip241a8f2e96587de027afe33d09c86e90d~4KLuNSBDy0082900829epsmtip2Q;
-        Mon, 13 Jun 2022 10:54:09 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'James E.J. Bottomley'" <jejb@linux.ibm.com>,
-        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        <linux-scsi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20220613101429.114449-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH] scsi: ufs: exynos: constify driver data
-Date:   Mon, 13 Jun 2022 19:54:09 +0900
-Message-ID: <01a201d87f13$e8a1e5a0$b9e5b0e0$@samsung.com>
+        Mon, 13 Jun 2022 08:58:28 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEFCC10A9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jun 2022 04:17:32 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id h23so10454517ejj.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jun 2022 04:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FO5eQRnnKHa3c3u3uxHcn5ZlaPTIIVuUOMy3m36ikoQ=;
+        b=K5E4/xzxiOPflSJ7TE4smffiIvjbrel6Kugrqo92KYRAU4jspIY3Q2jHQadjy+4un2
+         8znSkTk//qJ/p3nmNcW1bVytKIxyBy8fpBgRbbNGhz/f45KXQ7TsWwgNnBvEhzEsGnGK
+         NmiI2K01ywDlI+qtp6+Z2ocLTuCFhsTkeywP4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FO5eQRnnKHa3c3u3uxHcn5ZlaPTIIVuUOMy3m36ikoQ=;
+        b=mnP/V/77CRqeOnGfpCm0wnWwc1QttSjXz1QqlI+G7/dJ0jqPYEwJ/txr/gXkUTTG2G
+         nGB5GvU0M+6EKfpl0Owv6VeuQPL9yPxNUIfNuIn0sl2Ys1gXQF8SgwAj7MQp6hMGGiAR
+         9mcXMrJK8jP+1Ogyc8DMUuJGOZHGU6Ju85Jk6rKtT9dXkmch7Bh7ySRRMWI3WXFCA9kn
+         ETo3ZbFOyaAShAoHtVeBQBHB52Z+gwHKdd7Bqym2T8dVOP5C9+zHoMCDGdxaes7LoHO8
+         lidfWkn9B1ltUjh0RvQCntzEi1vsmcPK11R+pTeAp9l76MX44XAoeACp5/8XHkbIVNna
+         SLsg==
+X-Gm-Message-State: AOAM533OXBDdEe8iK/979WZtksVl+QiyZwiL10Yn/wx2L4rvUySJY+YI
+        /59CnYur28avaOG7Ihki24jPw4COgGogHcr2FeSyiA==
+X-Google-Smtp-Source: ABdhPJy1YGZXyB3xGCSbNeenonti+4M6z/MEDflCOhq9mOF1UZMvm9qqASBBngbBmqx6Ppcp1MWW8C49KWXoGSrDIkg=
+X-Received: by 2002:a17:906:494b:b0:710:7954:f6ce with SMTP id
+ f11-20020a170906494b00b007107954f6cemr43312372ejt.123.1655119050611; Mon, 13
+ Jun 2022 04:17:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHfouchLXpE80q66AS+13OTtn+wNgNPyHnQrSRi/KA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmhW6g+PIkgwm7ZSwezNvGZrHoxjYm
-        i72vt7JbbHp8jdXi8q45bBYzzu9jsui+voPNYvnxf0wOHB53ru1h85iw6ACjx+Yl9R4fn95i
-        8ejbsorR4/MmuQC2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFsl
-        F58AXbfMHKB7lBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF5gV6xYm5xaV56Xp5
-        qSVWhgYGRqZAhQnZGVf+/2cq2MtUcef2RsYGxhamLkZODgkBE4kTkx+xdTFycQgJ7GCUuPG+
-        ix3C+cQo0df+hBHC+cYocWzyW7iWy/8OsUIk9jJKvJx6mwXCecEoMf9wNzNIFZuAvsTLjm1g
-        VSIC95gk+q/tBktwCrhKvGy+zwJiCwvYSFxvfcEIYrMIqEp8nn+aFcTmFbCUuPm1iwXCFpQ4
-        OfMJmM0sIC+x/e0cZogzFCR+Pl0GVi8iYCXxtesNE0SNiMTszjZmkMUSAjM5JF6dOAHV4CKx
-        7thEFghbWOLV8S3sELaUxMv+Nii7WGLprE9MEM0NjBKXt/1ig0gYS8x61g50KQfQBk2J9bv0
-        QUwJAWWJI7egbuOT6Dj8lx0izCvR0SYE0agucWD7dKitshLdcz6zQtgeEo/WXmGdwKg4C8mX
-        s5B8OQvJN7MQ9i5gZFnFKJZaUJybnlpsVGAIj+7k/NxNjODEquW6g3Hy2w96hxiZOBgPMUpw
-        MCuJ8E6+uCxJiDclsbIqtSg/vqg0J7X4EKMpMNwnMkuJJucDU3teSbyhiaWBiZmZobmRqYG5
-        kjivV8qGRCGB9MSS1OzU1ILUIpg+Jg5OqQam9rRrulnhqw5wFKpwXLBxuMZfLb2GpSREPebD
-        H367pmNsRxi9fvUL/1scbnIyaq3g71D2WpP2vqdMSX/l7M+WqF+av6Hh+pYK1y2vY1iFjq67
-        xxQmsea4ycv08yWJz5wMvCzr3P5Pvuap43q+wNRB47eV8eZtj5nyPMRPFi9bz3dy9+Lm0894
-        9q+2eMqQoa6v/TW8XK0jIlvjjFRqrhCvwe08lkX7XiUECte/XhmhclHo7Vz/fhEh9rZ/eU+4
-        vq/586xt829nj3/nHszO3MmxP+9bxXdza+2Pz6Yne94smqvaO8/zkLj369aKmsMfcjQXfenk
-        WnLnIWezlcM5h/MpKZm56Yvv89cXCnvcfK3EUpyRaKjFXFScCABeqLmCNQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJXjdQfHmSwYbtXBYP5m1js1h0YxuT
-        xd7XW9ktNj2+xmpxedccNosZ5/cxWXRf38Fmsfz4PyYHDo871/aweUxYdIDRY/OSeo+PT2+x
-        ePRtWcXo8XmTXABbFJdNSmpOZllqkb5dAlfGlf//mQr2MlXcub2RsYGxhamLkZNDQsBE4vK/
-        Q6xdjFwcQgK7GSX+LWpkg0jISjx7t4MdwhaWuN9yBKroGaPE7xPvwYrYBPQlXnZsA0uICDxh
-        krh/7yQbRNU0RolPbYvAdnAKuEq8bL7PAmILC9hIXG99wQhiswioSnyef5oVxOYVsJS4+bWL
-        BcIWlDg58wmQzcHBLKAn0bYRrJxZQF5i+9s5zBAXKUj8fLoMrFVEwEria9cbJogaEYnZnW3M
-        ExiFZiGZNAth0iwkk2Yh6VjAyLKKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4krQ0
-        dzBuX/VB7xAjEwfjIUYJDmYlEd7JF5clCfGmJFZWpRblxxeV5qQWH2KU5mBREue90HUyXkgg
-        PbEkNTs1tSC1CCbLxMEp1cA07dr3Kd2NXqa/dBVUlDh8Bd7GpBX8Y3dYz80zVf6C0TKjqLnT
-        FnRuO8W8c8byZWJ/VPtlFkQrMhXEOZ3wmGj3XVcrVinzgpKN2/L9l8Qiru7ft193Q63Yi8Oe
-        69xeGixodnD6reHVsUQoIG270xdN4WtKvxO3miYFq5d/UwwO3/G2QH2Z1r1IVtGfF8SzdB6t
-        2Ojv7pv+z+/Rh3hDNu0DRqxXVkf5nl5oyipy+2p/P6fPH7Wnz+YoXu+vyPp6X6ljC9eFBNaf
-        Lqa3z1skmSy1Ktjx2+r2sWbenbPs3CMdrjzc/8/vrQLD/VkfXH+/kCs7zz01ZvLObQuXXXvK
-        FrVE2ljrzRS+Q+GlvyYa7r+nxFKckWioxVxUnAgA6POuahMDAAA=
-X-CMS-MailID: 20220613105409epcas2p3a0a215c6f61e9e74beb2914008f83d9e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220613101459epcas2p3ebbea864e0fe67f083127696028b1d75
-References: <CGME20220613101459epcas2p3ebbea864e0fe67f083127696028b1d75@epcas2p3.samsung.com>
-        <20220613101429.114449-1-krzysztof.kozlowski@linaro.org>
+References: <20220504114021.33265-1-jagan@amarulasolutions.com>
+ <20220504114021.33265-9-jagan@amarulasolutions.com> <17782795-10f1-067d-c6af-f82d64c6273e@intel.com>
+In-Reply-To: <17782795-10f1-067d-c6af-f82d64c6273e@intel.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 13 Jun 2022 16:47:19 +0530
+Message-ID: <CAMty3ZBYkQ8GJL+9r+zXhjrFjb+XCLgBh8pY=f+FVM_DHm-SPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/12] drm: bridge: samsung-dsim: Add atomic_check
+To:     Andrzej Hajda <andrzej.hajda@intel.com>
+Cc:     Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> Subject: [PATCH] scsi: ufs: exynos: constify driver data
-> 
-> Constify the drv data because it should not be modified (used by multiple
-> devices).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Wed, May 11, 2022 at 4:01 PM Andrzej Hajda <andrzej.hajda@intel.com> wrote:
+>
+> On 04.05.2022 13:40, Jagan Teki wrote:
+> > Fixing up the mode flags is required in order to correlate the
+> > correct sync flags of the surrounding components in the chain
+> > to make sure the whole pipeline can work properly.
+> >
+> > So, handle the mode flags via bridge, atomic_check.
+> >
+> > v2:
+> > * none
+> >
+> > v1:
+> > * fix mode flags in atomic_check instead of mode_fixup
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >   drivers/gpu/drm/bridge/samsung-dsim.c | 14 ++++++++++++++
+> >   1 file changed, 14 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> > index b618e52d0ee3..bd78cef890e4 100644
+> > --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> > +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> > @@ -1340,6 +1340,19 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
+> >       pm_runtime_put_sync(dsi->dev);
+> >   }
+> >
+> > +static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
+> > +                                  struct drm_bridge_state *bridge_state,
+> > +                                  struct drm_crtc_state *crtc_state,
+> > +                                  struct drm_connector_state *conn_state)
+> > +{
+> > +     struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
+> > +
+> > +     adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
+> > +     adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
+>
+>
+> 1. Shouldn't this be in mode_fixup callback?
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+Possible to do it on mode_fixup, yes. if we want to do the same stuff
+on atomic API then atomic_check is the proper helper.
 
-Best Regards,
-Chanho Park
+> 2. Where this requirement comes from? As Marek says it breaks Samsung
+> platforms and is against DSIM specification[1]:
 
+At least the bridge chain starting from LCDIF+DSIM requires active high sync.
+
+Jagan.
