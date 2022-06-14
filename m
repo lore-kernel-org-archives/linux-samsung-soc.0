@@ -2,155 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C36CCA47B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jun 2022 21:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C2ACCA480
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jun 2022 02:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351938AbiFMVKh (ORCPT
+        id S1354279AbiFNCW1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 17:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
+        Mon, 13 Jun 2022 22:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238619AbiFMVKR (ORCPT
+        with ESMTP id S1353837AbiFNCU7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jun 2022 17:10:17 -0400
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B7BC2F3A4;
-        Mon, 13 Jun 2022 13:48:09 -0700 (PDT)
-Received: by mail-il1-f172.google.com with SMTP id y16so5137583ili.13;
-        Mon, 13 Jun 2022 13:48:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/dzRBMIn98y05EN99Sgq5WDsEwo7wpH66xTE6XCo/M4=;
-        b=DK0uhSJYtjiyjLQvTvTq2iUHAujLGBGBiyoTPN+vCrum3bibAC+WLkJ9pTP1QCph3N
-         0MbMWb3j0SpOpgQKxnMDEs/p9N4WJ7tH4moYqsCTez94Qk67ATaGGLekMJnzDBgYVWsE
-         q9i4sJtScHtQJc6fsEP8fzedyvntjY/xTCMYm9Os8uE/1lGfJDAHoC2GkMHt2UPmf1GL
-         Px4osl3EhxDeLmoY+qTnRtrSD/6zLqH8OoVDAaLfJ8zoYSR5kIwV/hwFrwv7LpNqMTkq
-         3a0B6WnFYkP2TXGiU3lijF3kogM8nabC/En/c6MqfDLHQTEH64SwE0qMFMG39OIBuS/D
-         AkpA==
-X-Gm-Message-State: AJIora+1KepHiNcoL+CpPjUXWWIPuT+VEg/BCqu+zMT+QjxiDzXctdpq
-        6IU1aFCUuWzbfUbZMF6DIA==
-X-Google-Smtp-Source: AGRyM1uVO/KYjaDwGOXreGf4KGdEqy/t353ouqbFZgp5s/y6kuWD2fxXl3ut4zPLn500QHJwX/rd6w==
-X-Received: by 2002:a92:ca45:0:b0:2d1:b7cf:26a9 with SMTP id q5-20020a92ca45000000b002d1b7cf26a9mr962751ilo.52.1655153288816;
-        Mon, 13 Jun 2022 13:48:08 -0700 (PDT)
-Received: from robh.at.kernel.org ([69.39.28.171])
-        by smtp.gmail.com with ESMTPSA id c2-20020a92c8c2000000b002d11397f4f9sm4380280ilq.74.2022.06.13.13.48.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 13:48:08 -0700 (PDT)
-Received: (nullmailer pid 56167 invoked by uid 1000);
-        Mon, 13 Jun 2022 20:48:06 -0000
-Date:   Mon, 13 Jun 2022 14:48:06 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 13 Jun 2022 22:20:59 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74EF53FBEC;
+        Mon, 13 Jun 2022 19:10:14 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25E1N0rN025679;
+        Tue, 14 Jun 2022 02:09:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=jzE2Xk76CHcxD+PGiXGxA0FT6EOzdI7tu2tgy5uPGUQ=;
+ b=hOvT+0ZQiOBLha7OwsKAWWF3yRf4sWYkdFR08VYPUZ3iMr+tK6IhIWEFrzfhAhIzHQuJ
+ 94rMCXlsVQxaP/t7fjIrkOueE//z64/zU2kzXgw99TDz39gVEs8fomMH3W6rCV+qE0tK
+ UZAsDvgFrQXFuXdGj7DwTnUlFpvuNQL36/7KJ3DQYdj4OVh3hb95wRHtdy3DE34F1hEA
+ XbzR0A2UeSvfMNRVHesJuxRDTj2ZA5xqy9eKxc7HRmzjLaV+jvug6Js362wLlev63abR
+ SEcse3akMKYx7h/20Fsgq57Jsjcbi+JzbkVuqPnlIV/nFNdWKn2ZuXWCNE/GaSuwdkwL wQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gmjx9cg9t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jun 2022 02:09:55 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25E20hq2034749;
+        Tue, 14 Jun 2022 02:09:54 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gph5xr4kn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jun 2022 02:09:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iZ60hUBqrT04zzPnh8QN9DVyuqY5lj/wFVpYeeTmn7xbOREnIjQuvC3UtSw0LHWvQ6LTkNIchhKxBx/qgi+j+H9EGXzw16iKRFFMnQIEQzB5g1myLRasrwzX5z4aUOsdduviFSwupUeMBTo+pH2tP0zipU/8GLkNctkRq43j/yey/HOUm2nUn4nGKuaMxevk7FLmZc9BBZ7WoXdNtcX+2FxVxTE5pT6Xj7mEPO1+1TTcWojIuL5/fP4Gihvl+Ym71iWoz375eGSja/r2FucFwT+fpXC8jNgYlqh7MCkd9rAop3qWu2s+gDoyaK/sKLMwo1rayesYtGcDBiQYwBdw+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jzE2Xk76CHcxD+PGiXGxA0FT6EOzdI7tu2tgy5uPGUQ=;
+ b=KHHDOJbR4GJuhKaC7GKUQ/jQANkVWK2nOJpWEcuXaEp4/AJEtimfBq6YGmzmP8QhAM1ex2pXolXhxBALbpFsqVKB1HKcH1/5MBU1RIqYCbGM5HoLvjTLOCf4jt0MHCFEDMLTGj3Ggj2wlwlKS2ynIuiHP9JinUgZcvzhOy6VjVXvcRdMXfGSqhV4XBiPph7vwJXl42rvtGYl+7bBwUEjqP4NWJyDErcyLrMyP/5b0eajXs7I+7edxR1xZJAXXNczQCn6x70syMmrWwE9PDuhXttv1gHnHjK1LxhjTf6jdfSOaBip6YRH9Mcz9lEgTn9P8GxrSEmLFBFAdiPd5s/leA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jzE2Xk76CHcxD+PGiXGxA0FT6EOzdI7tu2tgy5uPGUQ=;
+ b=BfcN0Xkg07Nk1zKlqkW5OFzoah/JXiquYomqhbIbA7gaQIyHpIhIs6RwEOLR1mX82oY4cQDFI3PbLaHRjqcap43JHnz8yC7PkF/vatZ9KXBkWvuWvSa1st5KG0lqcT7TZxn+qNjrHe6dn7VfKtTchLSOBQMDSO4hScu12lyra7g=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by DM5PR1001MB2251.namprd10.prod.outlook.com (2603:10b6:4:2e::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.17; Tue, 14 Jun
+ 2022 02:09:52 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::6516:e908:d2bd:ca45]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::6516:e908:d2bd:ca45%5]) with mapi id 15.20.5332.020; Tue, 14 Jun 2022
+ 02:09:52 +0000
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Rahul Tanwar <rtanwar@maxlinear.com>,
-        Srikanth Thokala <srikanth.thokala@intel.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Frank Li <Frank.Li@nxp.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-amlogic@lists.infradead.org, linux-arm-kernel@axis.com,
-        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 15/18] PCI: dwc: Add dw_ prefix to the pcie_port
- structure name
-Message-ID: <20220613204806.GA55629-robh@kernel.org>
-References: <20220610082535.12802-1-Sergey.Semin@baikalelectronics.ru>
- <20220610082535.12802-16-Sergey.Semin@baikalelectronics.ru>
+        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: ufs: exynos: constify driver data
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1tu8oro5z.fsf@ca-mkp.ca.oracle.com>
+References: <20220613101429.114449-1-krzysztof.kozlowski@linaro.org>
+Date:   Mon, 13 Jun 2022 22:09:50 -0400
+In-Reply-To: <20220613101429.114449-1-krzysztof.kozlowski@linaro.org>
+        (Krzysztof Kozlowski's message of "Mon, 13 Jun 2022 12:14:29 +0200")
+Content-Type: text/plain
+X-ClientProxiedBy: SA0PR11CA0084.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::29) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220610082535.12802-16-Sergey.Semin@baikalelectronics.ru>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 13c53eb0-993e-4316-5a38-08da4daaf7a9
+X-MS-TrafficTypeDiagnostic: DM5PR1001MB2251:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR1001MB22519F764E5D1C9CAD6F82368EAA9@DM5PR1001MB2251.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: BjtGpLlqeGieftMmtgp11Eokkf5nVkRl0GhwYd+CCTL1cAa9UNCs3ptx001fWu91YYak3gmTaxPn5fnw7TaJyLR5NcgVDJxp3IZeln+YwKkx4KEDFJehWWHSrMMB2a/SHDmXB6pwuqZmh1zZ/0FhXnG/wnKREY3XVGT5/hLfnmdzYs0M1HwCfZP0GIuW/+kI/BeEVFDpnVJKUAByLXlcU9w8N5+MyiYhN6X8SGZtyupO7SmHfAHMy50mmLlxifsVe7pseZ/oj1WOEizSe+KwESwkm/kdQCR6SAAXcCRzy5edfLefFqLDaWNn4G6q9TybWikZ//K7vtlpUQ/RXWUxnIUEsPWEEeOcVw4TLhFHm4VheydD7NExt+Gz2mAloI226X7tCb9fc+AHo33mKE0+97lirrGpDLnPHeDYWCCx5gy/dKqir1jCL3gXgf2SJE3Py4JTzm4+evTnVWK+C+LExYYgUPxpQ/O/poB3LpXQAEPbGR9EjIzGVpvLSDA46SqLl2mKT1G6JUTBD2BSEOItk9krLvULAXY1bsFtxqcbDie+VWs0DK7UJrgK4BWN2wsGYLBs5EpvYVYRcBjWf2dPKY5WxWpz3iiaY7gQrZ6CzoM01D3sZZSSfr3cxtYzQ1Wv3rmS9GyCuIjlaSU+HPureGi37tGFCoxboV5cH+aoB+M9/c21J0PlNO76A3UNiWQSL4hDkBvCuavNq5OhS41afQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(366004)(508600001)(5660300002)(4326008)(316002)(8936002)(6486002)(52116002)(66476007)(2906002)(6512007)(8676002)(86362001)(26005)(6506007)(186003)(36916002)(558084003)(38100700002)(54906003)(38350700002)(66556008)(66946007)(6916009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9bI6gKyW6LWZRRLse8Y17z0xhNYPuCQzQkmM/i3sJA3n5ESbHBdQHQsDt4BJ?=
+ =?us-ascii?Q?1Rq3ZpRXNHGM7RMoEJ5BvXOy2AAfc98Hcl8M9czUzcnSEtS/wiLPAWKrXGRn?=
+ =?us-ascii?Q?TbPxD6YHY2IKZv3f5L/j8BdbRRClD7LI/+3Z/gtQHsV/w3NXa4iVBj0eZKkq?=
+ =?us-ascii?Q?PAYE8KtwyKeGQJAZLmKeawfQSoffDoygoa0ILqsnAUEsT/y44b+GiRM30NHe?=
+ =?us-ascii?Q?9ZOst8f6iqo1bc0xSRN68vhjLaKqCVvo6ZzaO6vdhKSeCjsrkqthDy+BqXhx?=
+ =?us-ascii?Q?pURpnmKj9MNAdmNOEb9zkYNPburDDYRs3TWz/PM0JmyLIRRXvGEn0NOck7kI?=
+ =?us-ascii?Q?AyaaM4M/23MuXdYebrfDrqaKx83Wa7aue0508ufQNCtVra7yWBiAXPq62OTC?=
+ =?us-ascii?Q?DLjl7eaaH1hsPFQ5TW03M7BasL/u9l4za3PGlmTWMXWF5lSeOWlY5y4pGxAM?=
+ =?us-ascii?Q?jAq3qk6O/uMJ78u6MuWqK8tyUA8coU7fHOGqUXfXqB6KRIl7aD8y3Q2VjxbI?=
+ =?us-ascii?Q?Ov4ae6N1TlcqYf5KJWgGQdjvN2noQIP6FxRGK1B5TwCrCFoS0Cj8uLzPU2rs?=
+ =?us-ascii?Q?nd4llhybSeip6WNVyUb1RAjzY6aPWYXfv/yrMkjrwn0x30rnt8+hm6rUmtVS?=
+ =?us-ascii?Q?ZUUegubHh8kEUpIv7EJGWfM6ssVh6sjXS1Jm18TrMFOJ7HiyNIDAZWqbFcYh?=
+ =?us-ascii?Q?/SEL2WBTeayfuOkcJdCcFRBwEUvMrXaX2rqHllPDJwsUXjJthzfoBUp6NJgs?=
+ =?us-ascii?Q?d13pXBlnR7K3pouZ6juQCl1L75zPjAx9t0IDo5G/qKqs5IU9lxALA7sGKXK1?=
+ =?us-ascii?Q?bWINhdvdLkB15EaK9kUifiZvzL43bigpGY0kNDnxLJ6POew1A7MCi4abt0kU?=
+ =?us-ascii?Q?AIKZixe4ZGxVlqhOExXrfyGTWv4Te04E6/tHfHAbmId4X2QmjP6eXshiKXQF?=
+ =?us-ascii?Q?m2RmsAhf87ADPggj7whVRp+RipGo5StHyRQefNzzkE+ciLyJlmjEz3RIjiFa?=
+ =?us-ascii?Q?GTLcJ3fnRVrz5pb6OsxeqxtniIusjj9kR8Rzxepn52ekgl0EZoOTgBbPdh/M?=
+ =?us-ascii?Q?TqQkU3jpe4rvAuDl+JySW4R1mda4aJcvKi3YOzbTHCiTT5++mFrJa/ZTIZi/?=
+ =?us-ascii?Q?yZmYuw4MS+VD/UehDgFudyOf2OqK+Jdo9RpKh+qQT853/X3M3XGiXcJXKxoi?=
+ =?us-ascii?Q?A6vnaa1wPO6NSv1lxjX5/VEH2vtu5yR3hssTvA+wotrBlvrCMKHIs4Fy7GJt?=
+ =?us-ascii?Q?l/TODy7HsZPaKTWoxtCiiWMV1em1fJhf+OB81gOIXuiWZxLY4//K5UPhvyGf?=
+ =?us-ascii?Q?LqCdugQZLyrsxKNuTC2e/9YC4hYxaGwYAyNHF7M6eHW3JasFkva9X7HrqzOL?=
+ =?us-ascii?Q?a0tOUvb28vPwLkV2vSf4ZIio9fyEj6Vx5tKO9vUiCyou/8adVA7W4Cg3OYTN?=
+ =?us-ascii?Q?PLt7oQCc2m0H5mnI2QljuAkJax6n64TTbbJN9y4Kg+96Pnt1zJUsKFy52+fn?=
+ =?us-ascii?Q?faDHLLqmcBro1Z3wghpkunMLypxIzmmh3AttcAoWDpQp34lbO/KBUbPgRO1d?=
+ =?us-ascii?Q?VikeeYfxPTyYDcskL570GZbNv13dHAWdZ7l8bq18hb980hkHjZ4zMVH4r8ML?=
+ =?us-ascii?Q?1gqWhsSyjuC+HKIuUb+e8eHFx7EqmcyOG6931BIgpCjh4wIT6M7v/XgBUunB?=
+ =?us-ascii?Q?z+4J9RomAFlXVzTC/pae7Z5NLeGClzrcCiOlIYgpKTFzs05LutMDlBi2UmWg?=
+ =?us-ascii?Q?u2iEfd5iNf4DwadClEdPpk5tVrTEJso=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13c53eb0-993e-4316-5a38-08da4daaf7a9
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2022 02:09:52.2446
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dOfP3sedFbEgqGNWfXYwK0SWXwm8bgeGwgXexdrBZH00JmVdHQi8LWc0P+VqxWQm7FkfhmZPicB3UXVWFJIOttnMWkOq9cK84fq55/Ldkkg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1001MB2251
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.874
+ definitions=2022-06-14_01:2022-06-13,2022-06-13 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ adultscore=0 spamscore=0 malwarescore=0 mlxscore=0 mlxlogscore=690
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206140007
+X-Proofpoint-ORIG-GUID: 9GsAaghv_bCZhX7qHxmlJTB_DfpXIMWP
+X-Proofpoint-GUID: 9GsAaghv_bCZhX7qHxmlJTB_DfpXIMWP
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 11:25:31AM +0300, Serge Semin wrote:
-> All of the DW PCIe core driver entities have names with the dw_ prefix in
-> order to easily distinguish local and common PCIe name spaces. All except
-> the pcie_port structure which contains the DW PCIe Root Port descriptor.
-> For historical reason the structure has retained the original name since
-> commit 340cba6092c2 ("pci: Add PCIe driver for Samsung Exynos") when
-> the DW PCIe IP-core support was added to the kernel. Let's finally fix
-> that by adding the dw_ prefix to the structure name and by adding the _rp
-> suffix to be similar to the EP counterpart. Thus the name will be coherent
-> with the common driver naming policy. It shall make the driver code more
-> readable eliminating visual confusion between the local and generic PCI
-> name spaces.
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> 
-> ---
-> 
-> Changelog v4:
-> - This is a new patch created on the v4 lap of the series.
-> ---
->  drivers/pci/controller/dwc/pci-dra7xx.c       | 12 +++----
->  drivers/pci/controller/dwc/pci-exynos.c       |  6 ++--
->  drivers/pci/controller/dwc/pci-imx6.c         |  6 ++--
->  drivers/pci/controller/dwc/pci-keystone.c     | 20 +++++------
->  drivers/pci/controller/dwc/pci-layerscape.c   |  2 +-
->  drivers/pci/controller/dwc/pci-meson.c        |  2 +-
->  drivers/pci/controller/dwc/pcie-al.c          |  6 ++--
->  drivers/pci/controller/dwc/pcie-armada8k.c    |  4 +--
->  drivers/pci/controller/dwc/pcie-artpec6.c     |  4 +--
->  .../pci/controller/dwc/pcie-designware-host.c | 36 +++++++++----------
->  .../pci/controller/dwc/pcie-designware-plat.c |  2 +-
->  drivers/pci/controller/dwc/pcie-designware.h  | 30 ++++++++--------
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c |  4 +--
->  drivers/pci/controller/dwc/pcie-fu740.c       |  2 +-
->  drivers/pci/controller/dwc/pcie-histb.c       | 10 +++---
->  drivers/pci/controller/dwc/pcie-intel-gw.c    |  6 ++--
->  drivers/pci/controller/dwc/pcie-keembay.c     |  4 +--
->  drivers/pci/controller/dwc/pcie-kirin.c       |  2 +-
->  drivers/pci/controller/dwc/pcie-qcom.c        |  4 +--
->  drivers/pci/controller/dwc/pcie-spear13xx.c   |  6 ++--
->  drivers/pci/controller/dwc/pcie-tegra194.c    | 22 ++++++------
->  drivers/pci/controller/dwc/pcie-uniphier.c    | 10 +++---
->  drivers/pci/controller/dwc/pcie-visconti.c    |  6 ++--
->  23 files changed, 103 insertions(+), 103 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Krzysztof,
+
+> Constify the drv data because it should not be modified (used by
+> multiple devices).
+
+Applied to 5.20/scsi-staging, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
