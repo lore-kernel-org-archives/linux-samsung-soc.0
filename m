@@ -2,208 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0F6CCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jun 2022 23:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8ADC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Jun 2022 23:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349544AbiFOXMM (ORCPT
+        id S1349930AbiFOXaS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Jun 2022 19:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55024 "EHLO
+        Wed, 15 Jun 2022 19:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244334AbiFOXML (ORCPT
+        with ESMTP id S1350013AbiFOXaQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Jun 2022 19:12:11 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4374E2BB37;
-        Wed, 15 Jun 2022 16:12:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H7w8UqLNcDPkaQ2Su50IekXjTBAGLMsb9foC+vtTDKLLWzY9RE3403Caqhhryzyn+BNQrBOhLbNw3rtJvghf4MIZ5S48PR13jaLnK3pJgNS7YwspJyGcI3SZnbcu55dUImC5QDzEF6m1P8LMSR+155xvOJeJkot6Is7BcyW9hqnxhVxJKe9c/rVim2yP6o9AK5AAiV7BEJLn71UJdpt5mLlganCvc9VMJoBqoHoeW0VfQttwyqS7dwxzFVoct8iaNmBSvbJuj90RJWVvZ+6DhRrSC6Y292t/qZ9EeP30v/89raZxniaPvA+klkMFn6um0vtuz0En+R4Clj0g9iQ0dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dv+4zVQ8yma2CGjUc5/QHeUPsUtTcuF3IrwnT53JeW0=;
- b=UG3uCrVWj+/yLmZYpK8PIlVS/OvB9s3vPt0r2UAEA46xOuXIlybKxU5PWzVVs/II7a6dWaedcbRweDw9D4GIT3fn6TkSD+Z59AHmX4uTEMrdp7Hi1PbM8eM1BpyC4SJakTgW2aGTW5xR/hxU6WD5OxWhWVGPlrdFDn2MFOxd0VrfODa7mICMYKY0OsmH2vkljjMQELDg/cnQzkDrDJElA4/tUa9yg3UJ+P+8TMt/JUwwQfNzFOhPDGFeR/2RXkAOevXg6INRqj9ug5wyLBWxIt6i89oibSAS0AzxSymvKFWHkEc/SovyMjRg6g2YPAj9PPujWbD9oVvcrLGwCAEiWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.236) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=nvidia.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dv+4zVQ8yma2CGjUc5/QHeUPsUtTcuF3IrwnT53JeW0=;
- b=nsT7NCzMa2c/i7L8h5EXK5ADt8e0fb+vTzgcrGfd3EMZ2kR3vQNb3WhtFVz8uuCyNDHSAAf1F6REUDrG7P6SFfXy6LmLbJQ4qNQcBQTQedQIo8xrvvdtBHWKC0cfgBY+tseEaACzijh6rHX31PV8EFoVQJHZB6b5dvwLEEoRNAPBZsVGulGmUsbhrty8eECliO8SG38Xv/JaK5Mk2l0OU8hppn+HySYTUFIdc0lpV12Cw/FupdzK7fSwEzGaeMNGgXsJWyBpRk190nwW9nYsol/rc+aayjnu5zer56Th21d9FfeVjMaUTOBqC38rJ2GbnsLWNoCK9rRfaHRICyWEtg==
-Received: from BN9P222CA0024.NAMP222.PROD.OUTLOOK.COM (2603:10b6:408:10c::29)
- by DM6PR12MB4105.namprd12.prod.outlook.com (2603:10b6:5:217::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.13; Wed, 15 Jun
- 2022 23:12:08 +0000
-Received: from BN8NAM11FT061.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10c:cafe::45) by BN9P222CA0024.outlook.office365.com
- (2603:10b6:408:10c::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14 via Frontend
- Transport; Wed, 15 Jun 2022 23:12:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.236)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.236 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.236; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (12.22.5.236) by
- BN8NAM11FT061.mail.protection.outlook.com (10.13.177.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5332.12 via Frontend Transport; Wed, 15 Jun 2022 23:12:07 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- DRHQMAIL109.nvidia.com (10.27.9.19) with Microsoft SMTP Server (TLS) id
- 15.0.1497.32; Wed, 15 Jun 2022 23:12:06 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 15 Jun 2022 16:12:06 -0700
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22 via Frontend
- Transport; Wed, 15 Jun 2022 16:12:04 -0700
-Date:   Wed, 15 Jun 2022 16:12:03 -0700
-From:   Nicolin Chen <nicolinc@nvidia.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-CC:     Jason Gunthorpe <jgg@nvidia.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "will@kernel.org" <will@kernel.org>,
-        "marcan@marcan.st" <marcan@marcan.st>,
-        "sven@svenpeter.dev" <sven@svenpeter.dev>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
-        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-        "agross@kernel.org" <agross@kernel.org>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>,
-        "wens@csie.org" <wens@csie.org>,
-        "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
-        "samuel@sholland.org" <samuel@sholland.org>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "alyssa@rosenzweig.io" <alyssa@rosenzweig.io>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "gerald.schaefer@linux.ibm.com" <gerald.schaefer@linux.ibm.com>,
-        "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Wed, 15 Jun 2022 19:30:16 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7461913F0A
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 16:30:13 -0700 (PDT)
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220615233007epoutp026e864ac1460964069f08df48dfa3be36~47yVs1WdQ0739707397epoutp02l
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 23:30:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220615233007epoutp026e864ac1460964069f08df48dfa3be36~47yVs1WdQ0739707397epoutp02l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1655335807;
+        bh=VfdnilvGwyw2Gtx+bvH89i6cp4sH16STcDvEivtCMVc=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=gv6eFKYZZv0tI65dJo6QkuRgD90WYV68qaNOnkHVy4hYbDArx5szucRDjeRx2ejVN
+         0+4aIcj9d3Cy+9ehaGggr0ayZAsVes4rMh6b+yvWZwrC97r3NS1wzsEALqS/PMyt+e
+         8ZML9us/LbWt9VdkxtOu245keTOWetVdmD2RafNI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20220615233006epcas2p4cb9c4fedf20ad07307af300d10435105~47yVDiesa2820628206epcas2p4z;
+        Wed, 15 Jun 2022 23:30:06 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4LNhNs6grYz4x9Py; Wed, 15 Jun
+        2022 23:30:05 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E1.EA.10028.D7B6AA26; Thu, 16 Jun 2022 08:30:05 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220615233005epcas2p4d5ea0e441c1b2e8ddeea093f425b233d~47yUSpYqz2820628206epcas2p4q;
+        Wed, 15 Jun 2022 23:30:05 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220615233005epsmtrp1d709cdca229d9aaffc2686fc98054809~47yURjsFJ0872308723epsmtrp1X;
+        Wed, 15 Jun 2022 23:30:05 +0000 (GMT)
+X-AuditID: b6c32a47-589ff7000000272c-d9-62aa6b7d364c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.86.08924.D7B6AA26; Thu, 16 Jun 2022 08:30:05 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220615233005epsmtip21dd13d0c8bd664fdec537d25e1ab39b1~47yUA9mgp2583125831epsmtip2G;
+        Wed, 15 Jun 2022 23:30:05 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: Re: [PATCH 3/5] vfio/iommu_type1: Prefer to reuse domains vs match
- enforced cache coherency
-Message-ID: <YqpnQ63gx/3HUWOA@Asurada-Nvidia>
-References: <20220606061927.26049-1-nicolinc@nvidia.com>
- <20220606061927.26049-4-nicolinc@nvidia.com>
- <BN9PR11MB5276DC98E75B1906A76F7ADC8CA49@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20220608111724.GL1343366@nvidia.com>
- <DM4PR11MB52781590FB8FB197579DEE848CA49@DM4PR11MB5278.namprd11.prod.outlook.com>
- <YqjzXpzuBa4ATf9o@Asurada-Nvidia>
- <BN9PR11MB527694346588A803F0EDD95E8CAD9@BN9PR11MB5276.namprd11.prod.outlook.com>
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>
+Cc:     <beanhuo@micron.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <martin.petersen@oracle.com>, <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20220615121204.16642-1-alim.akhtar@samsung.com>
+Subject: RE: [PATCH 1/3] ufs: host: ufs-exynos: remove unused defines
+Date:   Thu, 16 Jun 2022 08:30:05 +0900
+Message-ID: <000001d8810f$d7d913d0$878b3b70$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB527694346588A803F0EDD95E8CAD9@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 589330ed-c0b8-46ee-7f51-08da4f247844
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4105:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR12MB4105AB8011A048D7553121ADABAD9@DM6PR12MB4105.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: UiXDI9NvcScFVEI7OCm3l0nGJn6kYhAX4y5QwDkwSstAzqwE0gV32FjlfOCVs0htCBHLnUbvHDlFqWVjeaAATuhRY134npZAfNAyhRKU+6FiXt18woerTIMQGBO4zbUHZH8TPTBrg2qWcOEEnNKoPKh0ULiqKvjRzfrYUrKtAqFFOq6YGtvYHqCAwJa5vE+XMPpv7NB00Hng4nmOv35wSyrZF4MKhlrZNXjWKfbreL09WO6L5nz6Mz1pC+69qYDyu5T/SqcUWFnh5pHLTf24BSrVIZYdj4VMMZyRitKFl+iJu1Zd0BE9Z+KVX+ktBHr0LobO3vA+P9pazy/ToQ7jHKmUS0Cp+KF5D7fseLJf7dEDyhCsZnig/UUryIgUYuf0EC1J94yU64OJ0jZMOc30R1cTeA765mC+H8GknODLWRUuGjvZY3Gtj1NvlIqn6ztR5n1KSMKWumYLBKSM6j4cHJ1a9iH7S015nR1DAmwFmfPIor88XxltP4Bi1xkORpzLaacxMDVohHLwSOWfwWuuF1L/drc3TcpM9GBpMrXhBiKYl6NCXu1kYvG/SwDCuw5hZ48Wvmqf2jWg0mnsKkB05m969uotJ6bmYvVUI2nKnhv7plnDL27l2MN3S8Ibu7ko4yCzsrVb6DPz0LMcgoO9iyCGpLf5PN9v4WboSidDnQrkyNON/LgVEm2ghCQNjiMU/TV1POURv6Bg11NHUvUL3w==
-X-Forefront-Antispam-Report: CIP:12.22.5.236;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230016)(4636009)(36840700001)(46966006)(40470700004)(33716001)(426003)(47076005)(336012)(83380400001)(86362001)(316002)(4326008)(2906002)(186003)(8676002)(70206006)(55016003)(36860700001)(54906003)(356005)(8936002)(26005)(6916009)(5660300002)(70586007)(40460700003)(7406005)(81166007)(9686003)(82310400005)(508600001)(7416002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2022 23:12:07.9799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 589330ed-c0b8-46ee-7f51-08da4f247844
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.236];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT061.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4105
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHFEeTTG4xV+/czXfbyAHavs5YYnAHvmU5DrWh+5UA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmmW5t9qokg97vphYP5m1js3j58yqb
+        xcGHnSwW0z78ZLboe/GQ2WLT42usFpd3zWGzmLDqG4vFjPP7mCy6r+9gs1h+/B+TA7fH5Sve
+        Hneu7WHz2Lyk3uP7+g42j49Pb7F49G1ZxejxeZOcR/uBbqYAjqhsm4zUxJTUIoXUvOT8lMy8
+        dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygO5UUyhJzSoFCAYnFxUr6djZF+aUl
+        qQoZ+cUltkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ2RnNr46wFbxirLgzfzdrA+Mu
+        xi5GTg4JAROJ/a/3AdlcHEICOxglTnU1sUM4nxglHv5pYoZwPjNK/Lu3iw2mZdaliawQiV2M
+        Ep9uXwRLCAm8YJQ4s4wHxGYT0Jd42bENrEgEZO7nFZ9YQBxmgY2MEr2NW4EcDg5OAVuJMw8t
+        QBqEBVwl1s9/yA5iswioSlzuXAg2lFfAUuLCg1vMELagxMmZT1hAbGYBeYntb+cwQ1ykIPHz
+        6TJWEFtEwErixqSn7BA1IhKzO9vAXpAQOMMhceX/K6gGF4mFMw9AvSMs8er4FnYIW0riZX8b
+        lF0ssXTWJyaI5gZGicvbfkE1GEvMetbOCPIAs4CmxPpd+iCmhICyxJFbULfxSXQc/ssOEeaV
+        6GgTgmhUlziwfToLhC0r0T3nM+sERqVZSD6bheSzWUg+mIWwawEjyypGsdSC4tz01GKjAmN4
+        bCfn525iBKdhLfcdjDPeftA7xMjEwXiIUYKDWUmE1yx4ZZIQb0piZVVqUX58UWlOavEhRlNg
+        WE9klhJNzgdmgrySeEMTSwMTMzNDcyNTA3MlcV6vlA2JQgLpiSWp2ampBalFMH1MHJxSDUzl
+        15o5zvKEHWHY0+vYGbmVyTtUXas2a5G/ttaZGv2N3w5yCBhnpfAu/JHg3LWx9MJTvr08r+7N
+        E/x0yGzewj317s6C4o7d/Wk2S/I2BiVNPj/RPGhWdfdUX/d0g6prlsZsjb61udltK1luFv/c
+        1FSXIXpUw5tRNHRWTPPvG1aS853txT9Lh675HbLvU4Ov9nk2K9flL5dezpAuFZQpfWz3a1eD
+        osGZgrxzpTw3JiodDLk3W23zRN7dDsvaX33d5Gk9QffDIcWqCbl9R3aUZb4+ql3yP+HyZhGT
+        +Zp7BZaU77wkt5Ur4+rLvTvZK4qmSbi+14i+6Dh7PSPj2s1uTPLFWSfeOs17sWmBhgRTiBJL
+        cUaioRZzUXEiAOYICoVMBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvG5t9qokg552KYsH87axWbz8eZXN
+        4uDDThaLaR9+Mlv0vXjIbLHp8TVWi8u75rBZTFj1jcVixvl9TBbd13ewWSw//o/Jgdvj8hVv
+        jzvX9rB5bF5S7/F9fQebx8ent1g8+rasYvT4vEnOo/1AN1MARxSXTUpqTmZZapG+XQJXRvOr
+        I2wFrxgr7szfzdrAuIuxi5GTQ0LARGLWpYmsXYxcHEICOxglpj37ywSRkJV49m4HO4QtLHG/
+        5QhU0TNGiZ73z1lBEmwC+hIvO7aBJUQE9jBKtM07xQ7iMAtsZ5TYuPgCC0RLH6PE9lNbmbsY
+        OTg4BWwlzjy0AOkWFnCVWD//IdgKFgFVicudC9lAbF4BS4kLD24xQ9iCEidnPmEBsZkFtCWe
+        3nwKZctLbH87hxniPAWJn0+XgV0kImAlcWPSU3aIGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKy
+        gJFlFaNkakFxbnpusWGBUV5quV5xYm5xaV66XnJ+7iZGcFRqae1g3LPqg94hRiYOxkOMEhzM
+        SiK8ZsErk4R4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLglGpg
+        kj48T3j+4nyOYt6044zTnyX2XD3v4fhm64EvuTvD0uuP5bM/2qO+5+58IdP3NrwOlZJuDIrr
+        TR/wCDR3bJ//2cngxvGQRPfJqbKxyTdP6+bf3Wgi8Ovw5jMvvIV+sN24+8i24u3pt1ukf1So
+        zf7PE8fFx7maI7h+S4zKux1PL36LVc55UuJ39b8dh6+nrJ32lNl67W+XfXh0bNnenifXSl7p
+        +a/7LlH6vr/j1VZRnltOS4VXFXJ0upcuvqJ0gWWKezV3+xupVU6eL7OOP5QuZK8zn9CjtSaT
+        yT8wd0IM+/RJJasY5TxlN8pmXzlmvXJe+PH/2xPOtM+PujvjzwwJZy7W1mYOteKMkKzP8uvO
+        K7EUZyQaajEXFScCAJebwtM5AwAA
+X-CMS-MailID: 20220615233005epcas2p4d5ea0e441c1b2e8ddeea093f425b233d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220615121508epcas5p3a42f8503bb6c6120cb4c0606109fe9c4
+References: <CGME20220615121508epcas5p3a42f8503bb6c6120cb4c0606109fe9c4@epcas5p3.samsung.com>
+        <20220615121204.16642-1-alim.akhtar@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 07:35:00AM +0000, Tian, Kevin wrote:
-> External email: Use caution opening links or attachments
+> Subject: [PATCH 1/3] ufs: host: ufs-exynos: remove unused defines
 > 
+> Remove #defines as those are not used anywhere in the driver file
 > 
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Wednesday, June 15, 2022 4:45 AM
-> >
-> > Hi Kevin,
-> >
-> > On Wed, Jun 08, 2022 at 11:48:27PM +0000, Tian, Kevin wrote:
-> > > > > > The KVM mechanism for controlling wbinvd is only triggered during
-> > > > > > kvm_vfio_group_add(), meaning it is a one-shot test done once the
-> > > > devices
-> > > > > > are setup.
-> > > > >
-> > > > > It's not one-shot. kvm_vfio_update_coherency() is called in both
-> > > > > group_add() and group_del(). Then the coherency property is
-> > > > > checked dynamically in wbinvd emulation:
-> > > >
-> > > > From the perspective of managing the domains that is still
-> > > > one-shot. It doesn't get updated when individual devices are
-> > > > added/removed to domains.
-> > >
-> > > It's unchanged per-domain but dynamic per-vm when multiple
-> > > domains are added/removed (i.e. kvm->arch.noncoherent_dma_count).
-> > > It's the latter being checked in the kvm.
-> >
-> > I am going to send a v2, yet not quite getting the point here.
-> > Meanwhile, Jason is on leave.
-> >
-> > What, in your opinion, would be an accurate description here?
-> >
-> 
-> Something like below:
-> --
-> The KVM mechanism for controlling wbinvd is based on OR of
-> the coherency property of all devices attached to a guest, no matter
-> those devices  are attached to a single domain or multiple domains.
-> 
-> So, there is no value in trying to push a device that could do enforced
-> cache coherency to a dedicated domain vs re-using an existing domain
-> which is non-coherent since KVM won't be able to take advantage of it.
-> This just wastes domain memory.
-> 
-> Simplify this code and eliminate the test. This removes the only logic
-> that needed to have a dummy domain attached prior to searching for a
-> matching domain and simplifies the next patches.
-> 
-> It's unclear whether we want to further optimize the Intel driver to
-> update the domain coherency after a device is detached from it, at
-> least not before KVM can be verified to handle such dynamics in related
-> emulation paths (wbinvd, vcpu load, write_cr0, ept, etc.). In reality
-> we don't see an usage requiring such optimization as the only device
-> which imposes such non-coherency is Intel GPU which even doesn't
-> support hotplug/hot remove.
 
-Thanks! I just updated that and will send v2.
+Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+
+Best Regards,
+Chanho Park
+
