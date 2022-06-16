@@ -2,158 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 430B3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jun 2022 00:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EBEC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jun 2022 00:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242323AbiFPALR (ORCPT
+        id S1348280AbiFPAs2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Jun 2022 20:11:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
+        Wed, 15 Jun 2022 20:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235816AbiFPALR (ORCPT
+        with ESMTP id S1348036AbiFPAs0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Jun 2022 20:11:17 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05241FCF4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 17:11:15 -0700 (PDT)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220616001114epoutp01be235f3701cd096d959024106a5da3b4~48WPNVh8y0122901229epoutp01k
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jun 2022 00:11:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220616001114epoutp01be235f3701cd096d959024106a5da3b4~48WPNVh8y0122901229epoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1655338274;
-        bh=FRpW+vUCXTheKk/ZNlNQ7QYp5Q/L9ZImcCwz6+mgf9c=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=tEwSW63zgCISeV/FnK1CkNCA1qiqdcKZXcnfUEpO4A5ipTa8GzJUiuhrtnHDiKiJ8
-         BOT/4WMskxEL0/23KNX39ULZtE6w10ynHo6XkmSB0hMw058/2jVDYGAkmV2Dn+Qho4
-         mgkuAaPV9kuI50fc2IcKeYJLEgsfzefAgr7JtI/I=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20220616001113epcas2p23ec0d1dc8fc90f23da07fc020f134cef~48WOkY-8c1810018100epcas2p2r;
-        Thu, 16 Jun 2022 00:11:13 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.88]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4LNjJJ5KwSz4x9QJ; Thu, 16 Jun
-        2022 00:11:12 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        62.4A.09764.0257AA26; Thu, 16 Jun 2022 09:11:12 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220616001111epcas2p1a85f1a05e2c66ddaad263e3d942902ad~48WNRiV9g0276502765epcas2p1C;
-        Thu, 16 Jun 2022 00:11:11 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220616001111epsmtrp21ac240f7fe2fb78b6d86ac13ddabf437~48WNQyMbq0348103481epsmtrp2f;
-        Thu, 16 Jun 2022 00:11:11 +0000 (GMT)
-X-AuditID: b6c32a46-f8bff70000002624-9c-62aa7520ec20
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5D.D9.08924.F157AA26; Thu, 16 Jun 2022 09:11:11 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220616001111epsmtip23e12bb8842a5416842e3ff7cb3c4bb99~48WND8Q6A1512315123epsmtip2a;
-        Thu, 16 Jun 2022 00:11:11 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>
-Cc:     <beanhuo@micron.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <martin.petersen@oracle.com>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20220615121204.16642-3-alim.akhtar@samsung.com>
-Subject: RE: [PATCH 3/3] include: ufs: re-arrange addresses in increasing
- order
-Date:   Thu, 16 Jun 2022 09:11:11 +0900
-Message-ID: <000a01d88115$95f509f0$c1df1dd0$@samsung.com>
+        Wed, 15 Jun 2022 20:48:26 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 034D25677F
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 17:48:25 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id c196so110460pfb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 17:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=T8QZHlvVWLrvIQOydu6CCD5mHZxumuDa9jo1Phsr+pg=;
+        b=J6oH+8YYpna2UuHlngoqbHlwOsqW317xprlm/D07O66XsGayhzATd619ZfLT40ZHgc
+         gpSo++zbhpPiBXAbcrTF5C260ftStA8HzYy+qi29my7l6eG/6XdHtYcphMJwr6+0xPZT
+         SGhi6wNMPOwB317byRy7gfNQ/0TMtcf8Km3cTcXxT0rV3w9dqNJFycBMXM9Ix/j17HXY
+         tiuhgEnK4PkvOjQ0DlCUQJVGnva3IlAhhOCPXzVf/m3n1uoFlL7Gonn4md8YLFbP9481
+         ceTa+98gpt1VkSK1Li6+y5lXC8gKkjkFZ63Ioj8dkJaYpIMjjbjyngCVrzr6MyUh4vqx
+         epAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=T8QZHlvVWLrvIQOydu6CCD5mHZxumuDa9jo1Phsr+pg=;
+        b=jwlIQjs9OT37IM5OyyM7tpNxyX90cuox3mN/QfUBcL4ZSoJeVJd7Nqh9Gn97b5Oo4l
+         nVCtAYGDrgn5l0CR3uWnpKakAFkOetIcv5ocUXQHHF636q7I8fnCdMJZ0WtZXFpvcs8y
+         3IDwvpYuoPACG1Skdad4ro4haru29DTebWXm7PTx1eZG/4W1coHRbRDJPBuG7A4YGRht
+         SYHVN23UICTsdmGRbIDXZCLF3QFqlVv2ZlQu1EH54a1h/MudhrAF2ZEkQyk6g8mYbmu0
+         WZzSIwi+Sm0dD7lX/ZQoSfbUvlA3Zg2eiYTWP9iQT4OtF5isAGdkEGbQDVA2rJOLbEe6
+         9lnQ==
+X-Gm-Message-State: AJIora+lTgFhKDRGyiuoZGgDKPjSwT2kLRyQjQOKqeoavI/vfGFagAkr
+        8Tf07aoOxx9rnigivXCS4CNgwQ==
+X-Google-Smtp-Source: AGRyM1szfmFZxpBJgOkiIjn8nao0a7mgAaoEx/fSfpRRabavFTJbCHNmOH+rE/C6+TNI05JocHHG3A==
+X-Received: by 2002:a63:3502:0:b0:40b:916a:9b19 with SMTP id c2-20020a633502000000b0040b916a9b19mr4859pga.33.1655340504518;
+        Wed, 15 Jun 2022 17:48:24 -0700 (PDT)
+Received: from krzk-bin.. ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id f11-20020a170902684b00b001635c9e7f77sm253518pln.57.2022.06.15.17.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jun 2022 17:48:24 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        arm@kernel.org, Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-samsung-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        soc@kernel.org
+Subject: Re: (subset) [PATCH v2 47/48] ARM: dts: exynos: align gpio-key node names with dtschema
+Date:   Wed, 15 Jun 2022 17:48:21 -0700
+Message-Id: <165534049852.17040.1588652474876774936.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220609114047.380793-8-krzysztof.kozlowski@linaro.org>
+References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org> <20220609114047.380793-8-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHvmU5DcyiwlSK20wvy0jCKBqg0HwKsErLwAt1YyOWs9qp4EA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmma5C6aokg57JUhYP5m1js3j58yqb
-        xcGHnSwW0z78ZLboe/GQ2WLT42usFpd3zWGzmLDqG4vFjPP7mCy6r+9gs1h+/B+TA7fH5Sve
-        Hneu7WHz2Lyk3uP7+g42j49Pb7F49G1ZxejxeZOcR/uBbqYAjqhsm4zUxJTUIoXUvOT8lMy8
-        dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygO5UUyhJzSoFCAYnFxUr6djZF+aUl
-        qQoZ+cUltkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ2Rk91zcwF6zkrJj++jRTA+NT
-        9i5GTg4JAROJzTNfMncxcnEICexglJjT3swCkhAS+MQocXmzPUTiM6PEgmfXWWA6ruw5xAqR
-        2MUo8Wj1N3YI5wWjRNvd6WBVbAL6Ei87toFViYDM/bziEwuIwyywkVGit3ErkMPBwSlgK/F3
-        NjuIKSwQKLFxVhJIL4uAqsSj29/YQGxeAUuJf9eWMkPYghInZz4Bm88sIC+x/e0cZoiLFCR+
-        Pl3GCmKLCDhJ7N/7kA2iRkRidmcb2G8SAmc4JNZs2Az1gotE95upUM3CEq+Ob4EGhpTE53d7
-        2SDsYomlsz4xQTQ3AMNi2y+ohLHErGftjCBHMwtoSqzfpQ9iSggoSxy5BXUbn0TH4b/sEGFe
-        iY42IYhGdYkD26dDXSAr0T3nM+sERqVZSD6bheSzWUg+mIWwawEjyypGsdSC4tz01GKjAiN4
-        ZCfn525iBCdhLbcdjFPeftA7xMjEwXiIUYKDWUmE1yx4ZZIQb0piZVVqUX58UWlOavEhRlNg
-        WE9klhJNzgfmgbySeEMTSwMTMzNDcyNTA3MlcV6vlA2JQgLpiSWp2ampBalFMH1MHJxSDUxX
-        nFZO4D1ZEs+d9WqryqQPnlnsO3I9exbbytzRvqqppX5AsGQCy/df+iU31LVmyXHUuWXzrLUI
-        EdRy16/9rStt7X2bY3t+bQrHTM2a8HcPlO/Ed9/Ztm73eg8Vcctm9a1q08S9jPjyHSezMVZO
-        av5ceG1urJ6Eggt3wLzvc7lNTifYbK+Ne7Y38dpXsd3Lq5Z/W8v5Kfaa/Hb3RwKf3c7/Peuk
-        Y7Zl3+yVDFdq3MI/lHxp6Jp/9rKUmuzM/1cZrbY+/H1CT4zXTG3yFKMb6XflL05v3Sv2dM3a
-        gNdp2/z3FmU/U0hWab5sOuPCnrwXnL9iAguSpn9Z6en2p9rdlU17+53EvM97pjcLKdhPO6fE
-        UpyRaKjFXFScCACv1YBrSwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWy7bCSvK586aokg3ezjSwezNvGZvHy51U2
-        i4MPO1kspn34yWzR9+Ihs8Wmx9dYLS7vmsNmMWHVNxaLGef3MVl0X9/BZrH8+D8mB26Py1e8
-        Pe5c28PmsXlJvcf39R1sHh+f3mLx6NuyitHj8yY5j/YD3UwBHFFcNimpOZllqUX6dglcGT3X
-        NzAXrOSsmP76NFMD41P2LkZODgkBE4krew6xdjFycQgJ7GCUWP50ORtEQlbi2bsdUEXCEvdb
-        jkAVPWOU2D3rHSNIgk1AX+JlxzawhIjAHkaJtnmn2EEcZoHtjBIbF19ggWjZzyjxbPZ2IIeD
-        g1PAVuLvbHYQU1jAX2LtWh2QQSwCqhKPbn8D28wrYCnx79pSZghbUOLkzCcsIDazgLbE05tP
-        oWx5ie1v5zBDXKcg8fPpMlYQW0TASWL/3odsEDUiErM725gnMArPQjJqFpJRs5CMmoWkZQEj
-        yypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOCY1NLawbhn1Qe9Q4xMHIyHGCU4mJVE
-        eM2CVyYJ8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1ILUIJsvEwSnVwBQz
-        f262tMz7B8/nBc94V8Sgu9Do3ivbSO/XW/W+HBNlj+hg37DTzOPzNZbiktCSh8Lhkov47W44
-        bdWZ7+daMc86Ktn+uDzHIblDzhuW8Eg1rTvtua634VmpschUzQNfXx9/li3UrPJ3leED8X9/
-        EgR3/mWo3LnxaojWce/Pr95mR+3Lv2P/+ulWm32RCu4Ce60u7r3nGlgneVE/7rBmZcs1tXaZ
-        r1Grlsz6HXtU+bhWtepxw2Lj/4KvOxXm6QjzJiz/L3HwrXN0okdxxrXkT0dV/0o6ha3ab7V/
-        9S3uhVlaKpOrdt5rEfnFMm+ueUR1SduhnYVZKh9Wfj40b+FlO4mXcitedE65zMN47N457TdK
-        LMUZiYZazEXFiQAVrgbjOAMAAA==
-X-CMS-MailID: 20220616001111epcas2p1a85f1a05e2c66ddaad263e3d942902ad
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220615121515epcas5p29fd5c0b2e215047926cb92507a9919c9
-References: <20220615121204.16642-1-alim.akhtar@samsung.com>
-        <CGME20220615121515epcas5p29fd5c0b2e215047926cb92507a9919c9@epcas5p2.samsung.com>
-        <20220615121204.16642-3-alim.akhtar@samsung.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> Subject: [PATCH 3/3] include: ufs: re-arrange addresses in increasing
-> order
+On Thu, 9 Jun 2022 13:40:46 +0200, Krzysztof Kozlowski wrote:
+> The node names should be generic and DT schema expects certain pattern
+> (e.g. with key/button/switch).
 > 
-> Rearrange all the unipro and mphy addresses in their increasing order.
 > 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  include/ufs/unipro.h | 102 +++++++++++++++++++++----------------------
->  1 file changed, 51 insertions(+), 51 deletions(-)
-> 
-> diff --git a/include/ufs/unipro.h b/include/ufs/unipro.h index
-> ade92e8d3676..4cbfe9272787 100644
-> --- a/include/ufs/unipro.h
-> +++ b/include/ufs/unipro.h
-> @@ -38,6 +38,18 @@
->  /*
->   * M-RX Configuration Attributes
->   */
-> +#define RX_HS_G1_SYNC_LENGTH_CAP		0x008B
-> +#define RX_HS_G1_PREP_LENGTH_CAP		0x008C
-> +#define RX_MIN_ACTIVATETIME_CAPABILITY		0x008F
-> +#define RX_HIBERN8TIME_CAPABILITY		0x0092
-> +#define RX_HS_G2_SYNC_LENGTH_CAP		0x0094
-> +#define RX_HS_G3_SYNC_LENGTH_CAP		0x0095
-> +#define RX_HS_G2_PREP_LENGTH_CAP		0x0096
-> +#define RX_HS_G3_PREP_LENGTH_CAP		0x0097
-> +#define RX_ADV_GRANULARITY_CAP			0x0098
-> +#define RX_HIBERN8TIME_CAP			0x0092
-This should be removed.
 
-Otherwise, looks good to me.
+Applied, thanks!
 
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
+[47/48] ARM: dts: exynos: align gpio-key node names with dtschema
+        https://git.kernel.org/krzk/linux/c/97a9495efbdc5184930a75d36ca845d578e3ee1b
 
-Best Regards,
-Chanho Park
-
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
