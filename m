@@ -2,88 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7681DCCA47E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jun 2022 00:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7227AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jun 2022 07:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347926AbiFPAs2 (ORCPT
+        id S230159AbiFPHXy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Jun 2022 20:48:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50666 "EHLO
+        Thu, 16 Jun 2022 03:23:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348113AbiFPAs0 (ORCPT
+        with ESMTP id S229462AbiFPHXx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Jun 2022 20:48:26 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B6056B29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 17:48:26 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id u2so108430pfc.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jun 2022 17:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=qp3edhQcRtMcVJoA9hlhbeV2zjC7yml5vSoU96PZRCs=;
-        b=L+UOgh6JQRaNTE/JReN21PZAoB/6nnToA8fEWd5A+dV/kER0XwItK85xWljunHAbTj
-         gOaYlkoLs9AiT21Vx1wjmuduTErEd1/98fh87mBOcBvIwRDs7OMQg+T9OkjjR38w5sga
-         LmpXul/uvGcZVf+0MZIjD0IOMj5eNX1KXKh9uEOiRQP1MphFTgqUEf/wocXBm9tkhGOs
-         3oVI5BeEmbGRlqhvnxG5msKYLs4O6Y39pClLn2jaUo+RbTZoTSNpakdN7Wus8OCgGfgP
-         /RTmsCBnKxT9chsIAsIQHwGGdaZs/ySBEqpyKS8SMvKvTZZUxNMPQI63L5K188AIDF2J
-         i1GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qp3edhQcRtMcVJoA9hlhbeV2zjC7yml5vSoU96PZRCs=;
-        b=nnUtqDz5dLgneMAkpzqVMaBfw6CECZBFNPY0fj2Nj6r1MmXJNlAztlN+tJ18pP+CBw
-         XdMtS95mjrZXsTt30g4jQJnk0idupfgtrU77GmAa4gpilOHNGwdL7eCtOc8zDFr95qSa
-         zsxYxIKVoHerV76VDmAsSzp6zlfDYlL88+/rwHHZRkNeC9pfjMCoBfS9sZkl2GlJQjE8
-         dAw1ty49mdU0WYWoPXPQxwUj5JHWkBbmbvl7PeKhMVjHwJY1LfYSlg9F058k077MPLWr
-         ja6MeXXRCUSnTC1rAUDA9QcHOpfi6TaF70DPjt5F3KG5V/HXev3i6HL4dRyf+WyTAlWD
-         GNPQ==
-X-Gm-Message-State: AJIora9JqbEcmbNCxy2z6RGzAHvBdvc10W22jfxiPajNwXtaYYoWA+aO
-        n2Y4fGSfHGt+7b4GmA48ih3nSw==
-X-Google-Smtp-Source: AGRyM1ueSK+tw3uFtmBZQL6kWbqp7RpDDRh7PzZWAcZOgdQZukfyMUyAAaRPhzF5ukPOnTqzdqLexw==
-X-Received: by 2002:a63:6f0b:0:b0:408:b8d9:f491 with SMTP id k11-20020a636f0b000000b00408b8d9f491mr2152776pgc.496.1655340505789;
-        Wed, 15 Jun 2022 17:48:25 -0700 (PDT)
-Received: from krzk-bin.. ([192.77.111.2])
-        by smtp.gmail.com with ESMTPSA id f11-20020a170902684b00b001635c9e7f77sm253518pln.57.2022.06.15.17.48.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 17:48:25 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        arm@kernel.org, Olof Johansson <olof@lixom.net>,
+        Thu, 16 Jun 2022 03:23:53 -0400
+Received: from smtpbg153.qq.com (smtpbg153.qq.com [13.245.218.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 251883630F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jun 2022 00:23:50 -0700 (PDT)
+X-QQ-mid: bizesmtp82t1655364220tyuagdlm
+Received: from localhost.localdomain ( [113.57.152.160])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Thu, 16 Jun 2022 15:23:33 +0800 (CST)
+X-QQ-SSF: 01400000002000D0M000B00A0000000
+X-QQ-FEAT: hR9GyqeohSiJBYTk+od0+lv++0Drp2ggk1O87ehDvPVH2JX41fZIZnXCoewT9
+        TvOgRgq9lVfPm0SlkOBg/+/dgKmP5Dzt0drUXwhgN8R93L+T0Zp4KSovkT1dPALxMg/IQfL
+        RBcW5ySW1hUXBXv/mduoWlWrFI5HvhFqXSH77EulhOr4Ica2nZwXQlFQhuMQlf8stKZLM8P
+        TP7X4WgIl5QbsfoimPYgTJ9fRL1JsGn0gwq/w3fpgLasqQ8P1KlYVhziuulIozvFw7Xb07h
+        bkPzEW0TqvRHqZmEFVskxWZrIU8nI7SCXjwsnBU/paad1lTQNLDn1JfMkFnMpV858Xicslp
+        pikr4+oLT6sVb4zG5jbg51o21kVPA==
+X-QQ-GoodBg: 2
+From:   hongao <hongao@uniontech.com>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, daniel@ffwll.ch, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com
+Cc:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        soc@kernel.org
-Subject: Re: (subset) [PATCH v2 48/48] ARM: dts: s5pv210: align gpio-key node names with dtschema
-Date:   Wed, 15 Jun 2022 17:48:22 -0700
-Message-Id: <165534049853.17040.18012306290229997818.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220609114047.380793-9-krzysztof.kozlowski@linaro.org>
-References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org> <20220609114047.380793-9-krzysztof.kozlowski@linaro.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hongao <hongao@uniontech.com>
+Subject: [PATCH] drm/exynos: replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi
+Date:   Thu, 16 Jun 2022 15:22:33 +0800
+Message-Id: <20220616072233.8302-1-hongao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign8
+X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 9 Jun 2022 13:40:47 +0200, Krzysztof Kozlowski wrote:
-> The node names should be generic and DT schema expects certain pattern
-> (e.g. with key/button/switch).
-> 
-> 
+Once EDID is parsed, the monitor HDMI support information is available
+through drm_display_info.is_hdmi.
 
-Applied, thanks!
+This driver calls drm_detect_hdmi_monitor() to receive the same
+information, which is less efficient.
 
-[48/48] ARM: dts: s5pv210: align gpio-key node names with dtschema
-        https://git.kernel.org/krzk/linux/c/8b86f733c0e512f92e43a9db1559498ef64d244e
+Avoid calling drm_detect_hdmi_monitor() and use drm_display_info.is_hdmi
+instead.
 
-Best regards,
+Signed-off-by: hongao <hongao@uniontech.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 7655142a4651..17e9f5efbcfc 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -893,7 +893,7 @@ static int hdmi_get_modes(struct drm_connector *connector)
+ 	if (!edid)
+ 		return -ENODEV;
+ 
+-	hdata->dvi_mode = !drm_detect_hdmi_monitor(edid);
++	hdata->dvi_mode = !connector->display_info.is_hdmi;
+ 	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+ 			  (hdata->dvi_mode ? "dvi monitor" : "hdmi monitor"),
+ 			  edid->width_cm, edid->height_cm);
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.20.1
+
+
+
