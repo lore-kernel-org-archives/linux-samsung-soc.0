@@ -2,126 +2,144 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9346C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Jun 2022 14:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF53C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Jun 2022 21:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229449AbiFROTn (ORCPT
+        id S229680AbiFRVPB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 18 Jun 2022 10:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33262 "EHLO
+        Sat, 18 Jun 2022 17:15:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233376AbiFROSL (ORCPT
+        with ESMTP id S229581AbiFRVPA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 18 Jun 2022 10:18:11 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A62DF19;
-        Sat, 18 Jun 2022 07:18:08 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id f65so6396013pgc.7;
-        Sat, 18 Jun 2022 07:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=QiBFbh7JSAwKD6sJ1nf5U4eu547oJ+ADx+EKgoymxCI=;
-        b=ViprWoK4uqnklWzTQk+fvnLaUqne0Zd90H9MixB7tRue3RXJ8Lq9n5syAfKrS3dKEA
-         HT9z787Xt3UAxhy1S57GgN8644M/bc8r4HbbCn0alGy0UzCj3DFJA1T/Ib9R/pOANPpD
-         JEsZ9EU88xvA6ikZqDoFXIXdh9FSFoCuW2IvlKMA3sH/8/OtpizRHSwwmGCZD40FJel+
-         yPC0/gi37K8AK2vvZ9a4XDCnlRfqukBCue2IC14lDDNquYrNeKvjLkY6IeQ6lZRcNUCn
-         kBjUOoESkgxJ2s2k7cHQTPgYxvOaK1XAtlHrK415aY/0iBlK8oX853OJJXj/Judkpbfd
-         yk3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=QiBFbh7JSAwKD6sJ1nf5U4eu547oJ+ADx+EKgoymxCI=;
-        b=VRHAsyu8zMJ0vr1+F+smH2ZCaiiSFd6siwTQrapNIA9cXkqAAORULsYyveg1FHvcew
-         RTkW/kYftnheI/u1OU4wH7RLJBvyVWUdOZ9ykCjRZzr5m8fH9NEfscvA8BvxbpFNhmzY
-         oCkIkpiwZgRpwySWM/uW29X5Y6HFnAvpuM1EhIqOToWiE1CuJ9t/MCFrDmU0XQ+mDHgt
-         hjqLHmqlqCD89ppCMRTDVjOz0AoaP8BUED5bGzjXJ8avffsMdQfp7Mfe/COtla/cKHSj
-         J+R0Xf1NWaNGoaEZCERgOOvYXKlu/6kjWfYN3JvlTo6u2d7k1VwPVZCqiOviXlaz60sY
-         wQCQ==
-X-Gm-Message-State: AJIora+2v3Mn2xnnHCedznRn9kqC4neNwKLrdZrqOF0CRwxndssRacOi
-        AeDQ984hWP0m6Yv4Wq5riZE=
-X-Google-Smtp-Source: AGRyM1u2mGmi1JJfkT6ExmYQ2dFty+U+or8nDWjHbWZLfPVYWKM8Lx0xSixycdUe6IskWv1L1zV22Q==
-X-Received: by 2002:a05:6a00:7d3:b0:51e:740f:8d10 with SMTP id n19-20020a056a0007d300b0051e740f8d10mr15348069pfu.4.1655561887511;
-        Sat, 18 Jun 2022 07:18:07 -0700 (PDT)
-Received: from [172.30.1.37] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id b9-20020a170902650900b00168ba5ac8adsm5425678plk.163.2022.06.18.07.18.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Jun 2022 07:18:07 -0700 (PDT)
-Message-ID: <7bffaa3c-dda8-44f5-8190-9fb5142925bc@gmail.com>
-Date:   Sat, 18 Jun 2022 23:18:02 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] devfreq: exynos-ppmu: Fix refcount leak in
- of_get_devfreq_events
-Content-Language: en-US
-To:     Miaoqian Lin <linmq006@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sat, 18 Jun 2022 17:15:00 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD8D2672;
+        Sat, 18 Jun 2022 14:14:58 -0700 (PDT)
+Message-ID: <ac1f956bece0151a165afc18ec21898d00dacf31.camel@grimler.se>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+        t=1655586896;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z2AOfaSlPHrMVPcO5Ts97JY6OWsmj+2hfSsC8UnVib4=;
+        b=Ve8XRXMAZq+qmbXnRkxh8sCqoflFuaV5TaGKrd9hOZq2ZGm4Dzma/LA4LLURkSHk4Bi6/0
+        XW3ElXe5XCtvaSU1N+DSFaymv+J8uF41tov/YsYXAsFnEHqOwEO1XUyS4tIS+Y3V9qeiyc
+        Na7EGUvDklSL6rXiXMHoAEPDw2Czlwc=
+Subject: Re: [PATCH 3/3] ARM: dts: exynos: add function and color to aat1290
+ flash LED node in Galaxy S3
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Henrik Grimler <henrik@grimler.se>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     replicant@osuosl.org, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220526082856.37594-1-linmq006@gmail.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <20220526082856.37594-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Simon Shields <simon@lineageos.org>,
+        Martin =?ISO-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+Date:   Sat, 18 Jun 2022 23:14:53 +0200
+In-Reply-To: <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
+References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
+         <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
+         <4a7f8ab6-c061-3861-5790-b6c0fbd7cad1@gmail.com>
+         <ef62a7bb-2217-2947-17dd-fc4a51acdea5@linaro.org>
+         <f1402a1d-a74d-f7b9-b9e2-fc3991781e64@gmail.com>
+         <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: grimler.se
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 22. 5. 26. 17:28, Miaoqian Lin wrote:
-> of_get_child_by_name() returns a node pointer with refcount
-> incremented, we should use of_node_put() on it when done.
-> This function only calls of_node_put() in normal path,
-> missing it in error paths.
-> Add missing of_node_put() to avoid refcount leak.
-> 
-> Fixes: f262f28c1470 ("PM / devfreq: event: Add devfreq_event class")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->  drivers/devfreq/event/exynos-ppmu.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index 9b849d781116..a443e7c42daf 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -519,15 +519,19 @@ static int of_get_devfreq_events(struct device_node *np,
->  
->  	count = of_get_child_count(events_np);
->  	desc = devm_kcalloc(dev, count, sizeof(*desc), GFP_KERNEL);
-> -	if (!desc)
-> +	if (!desc) {
-> +		of_node_put(events_np);
->  		return -ENOMEM;
-> +	}
->  	info->num_events = count;
->  
->  	of_id = of_match_device(exynos_ppmu_id_match, dev);
->  	if (of_id)
->  		info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
-> -	else
-> +	else {
-> +		of_node_put(events_np);
->  		return -EINVAL;
-> +	}
->  
->  	j = 0;
->  	for_each_child_of_node(events_np, node) {
+Hi Krzysztof and Jacek,
 
-I edited the patch title with 'PM / ' prefix 
-in order to keep the consistent style of title as following:
+On Sun, 2022-06-12 at 19:06 +0200, Krzysztof Kozlowski wrote:
+> On 12/06/2022 17:09, Jacek Anaszewski wrote:
+> > On 6/10/22 12:14, Krzysztof Kozlowski wrote:
+> > > On 09/06/2022 22:31, Jacek Anaszewski wrote:
+> > > > Hi Krzysztof,
+> > > >=20
+> > > > On 6/7/22 10:53, Krzysztof Kozlowski wrote:
+> > > > > Add common LED properties - the function and color - to
+> > > > > aat1290 flash
+> > > > > LED node in Galaxy S3.
+> > > > >=20
+> > > > > Signed-off-by: Krzysztof Kozlowski
+> > > > > <krzysztof.kozlowski@linaro.org>
+> > > > > ---
+> > > > > =C2=A0=C2=A0 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 3 +++
+> > > > > =C2=A0=C2=A0 1 file changed, 3 insertions(+)
+> > > > >=20
+> > > > > diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> > > > > b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> > > > > index 72901772fcad..d76f3678dcab 100644
+> > > > > --- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> > > > > +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> > > > > @@ -7,6 +7,7 @@
+> > > > > =C2=A0=C2=A0=C2=A0 */
+> > > > > =C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0 /dts-v1/;
+> > > > > +#include <dt-bindings/leds/common.h>
+> > > > > =C2=A0=C2=A0 #include "exynos4412-midas.dtsi"
+> > > > > =C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0 / {
+> > > > > @@ -27,6 +28,8 @@ led-controller {
+> > > > > =C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0led {
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0label =3D "flash";
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+function =3D LED_FUNCTION_FLASH;
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+color =3D <LED_COLOR_ID_WHITE>;
+> > > >=20
+> > > > Addition of these two properties will not change anything
+> > > > because
+> > > > the label has precedence. It is deprecated, but if you
+> > > > introduce
+> > > > function and color to the binding instead of the label, the
+> > > > resulting
+> > > > LED class device name will change.
+> > >=20
+> > > Which is not necessarily what we want, right? Adding these
+> > > properties is
+> > > a proper description of hardware, regardless whether current
+> > > Linux
+> > > implementation uses them or not.
+> >=20
+> > Actually I'd just drop label in addition to your change.
+> > I don't think it would break anybody seriously - not expecting it
+> > has
+> > any larger group of users and having uniformly constructed DTS
+> > files
+> > in the mainline has greater value.
+> >=20
+>=20
+> What about some PostmarketOSos, LineageOS and other OSes?
+>=20
+> Let me Cc here some folks - Simon, Martin, is the label in flash LED
+> node anyhow important for you? Can it be dropped and replaced with
+> function+color?
+>=20
 
-PM / devfreq: exynos-ppmu: Fix refcount leak in of_get_devfreq_events
+As far as I know LineageOS does not use a mainline-based kernel for the
+S3. PostmarketOS and Replicant does though. For PostmarketOS it should
+be fine to drop the label, and it sounded like it should be fine for
+Replicant also in an IRC discussion, but adding their mailing list to
+CC just in case.
 
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Best regards,
+Henrik Grimler
