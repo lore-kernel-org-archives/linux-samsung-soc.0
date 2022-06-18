@@ -2,83 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D225C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jun 2022 02:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F62C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Jun 2022 14:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379730AbiFQCVx (ORCPT
+        id S229492AbiFROKv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jun 2022 22:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38270 "EHLO
+        Sat, 18 Jun 2022 10:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379338AbiFQCVv (ORCPT
+        with ESMTP id S235386AbiFROKp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jun 2022 22:21:51 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E64264D09;
-        Thu, 16 Jun 2022 19:21:51 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25H0a6rS032735;
-        Fri, 17 Jun 2022 02:21:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2021-07-09;
- bh=XzuU00wEn/oMcU0IoMH4V8VEADCDpYRgPmSpYj2eHtI=;
- b=XrAuw/vBYkygOjD1WdltaYPhmoZerGOUZlKHN6O0QV+ldk1brobXjnUfcD+v2QdpgMt8
- I7hSKJ4epYtV3L27kSUOAyazPf6dGBwYkuOrkJt4eoOCAz4dpCfqsH99EDpKmpWM5/Qn
- kDg1ljMFcA/peVYaYM7QDna8KUst7njNxvvhfHAZ1vlYMFkSNkjNI7uDgFZXMxMeujJY
- 0qEiYAkqs8hCH2vyLO9VJ2UNrE4yPalvJQ78wBCDI3XhaudzKVb2UrsiidcEs+WmP47t
- 1cuZQQBJws5FMvnMZ7kJZv/5ZfX2IUnjlw/rmb6fdTliZjw2MIrtiYpIkXeP4XFaXXia lg== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gmhu2vv27-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jun 2022 02:21:43 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25H2G77W029132;
-        Fri, 17 Jun 2022 02:21:42 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gpr27jd87-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 17 Jun 2022 02:21:42 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 25H2LejH040352;
-        Fri, 17 Jun 2022 02:21:41 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gpr27jd7c-2;
-        Fri, 17 Jun 2022 02:21:41 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     linux-kernel@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH] scsi: ufs: exynos: constify driver data
-Date:   Thu, 16 Jun 2022 22:21:35 -0400
-Message-Id: <165543243410.26207.14002828862319128042.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.35.2
-In-Reply-To: <20220613101429.114449-1-krzysztof.kozlowski@linaro.org>
-References: <20220613101429.114449-1-krzysztof.kozlowski@linaro.org>
+        Sat, 18 Jun 2022 10:10:45 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 124246371;
+        Sat, 18 Jun 2022 07:10:44 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id z14so6419540pgh.0;
+        Sat, 18 Jun 2022 07:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=ow8g3o4z79Y5Cr2CRU5IK8a4Nx81Y5TgND6Vb+EHq2A=;
+        b=I2mm4Rlo4JbRzZncPQX5K+A6VfD1WPz4umBSLloPa2vNlBf5n7u5e5Q8ck/n8xAcgT
+         SBsy6yUmq4Nv/ftAlSnchjoAmeca+Hii490/4yQu/Q5CplEQnBwBbj1zpv4KDgJ/Xp0N
+         qm0029PtaHAO1cp6pQf2xUdNQPQYXnSXdC/ivYthGppz2aHagL+qstK4OTw7siJoPBLI
+         6BTuTLNHMRMV/+e69E6JqGJov0BVUOHahFc31t6rDcW7tnFdboAtvd1pF+ySSVvyNXlI
+         i0MkFeVBXo6cMdKv3b0tjXXRJKHMGNXdLBNNYjqUuiNQ/UVfzNsBQqCV1kaJSgYF+j9R
+         sPCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ow8g3o4z79Y5Cr2CRU5IK8a4Nx81Y5TgND6Vb+EHq2A=;
+        b=4d+3IRIjr1aoDcuj2Ctg9ESv+tV0Y2GUZtZREv2l8COeahBTri8iXXSct4u6LC9l1z
+         HPeREMYarbP3WzppjyBYuBpmHp+fg2JfJFfpJnNMATfvmBMAOhLNm2IjOlgvxQSp40K7
+         NivVkWm7DFjqEs/idkAnq8ENNfQBeThO/u3vLX/8VzdTS5qXCZiAXL0MV0i+xtuuaAhK
+         0OZlXPx3B1mo4/VCD4n152vorxC7vWFZUENZ7kmZwAxLnGbkcabL4eNhXkBVhSi4C58T
+         5E5/zfX3vZGbVzAoHOaj0+/TQ7qY1jZyt8dJcB2IL/GC+NHl1Ha2NSpQL9TujLiA+LLn
+         Gmjg==
+X-Gm-Message-State: AJIora8OLND9aARDZcWJtiVafE/gXW5mYZ7novV0vZPTztnmYepZkzFa
+        D3lBpCCRboy+VNzlZKSXxFA=
+X-Google-Smtp-Source: AGRyM1uBDBheUIBa3LF5ThEugEca5LdgbPgylYXdAbfL/ChjXdHKb3W7RxpttWO98MxnzMb+JkAjJQ==
+X-Received: by 2002:a05:6a00:21c2:b0:4fa:914c:2c2b with SMTP id t2-20020a056a0021c200b004fa914c2c2bmr12088578pfj.56.1655561443391;
+        Sat, 18 Jun 2022 07:10:43 -0700 (PDT)
+Received: from [172.30.1.37] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id j4-20020a62c504000000b00518a473265csm997780pfg.217.2022.06.18.07.10.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jun 2022 07:10:42 -0700 (PDT)
+Message-ID: <1c9e0697-ff02-d678-f231-8a3bc2e6be6e@gmail.com>
+Date:   Sat, 18 Jun 2022 23:10:37 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: Yz-RNPi0yq4Pa-Huz1TWZeZ56gDSs2-8
-X-Proofpoint-ORIG-GUID: Yz-RNPi0yq4Pa-Huz1TWZeZ56gDSs2-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] devfreq: exynos-ppmu: Fix refcount leak in
+ of_get_devfreq_events
+Content-Language: en-US
+To:     Miaoqian Lin <linmq006@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220526082856.37594-1-linmq006@gmail.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <20220526082856.37594-1-linmq006@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 13 Jun 2022 12:14:29 +0200, Krzysztof Kozlowski wrote:
-
-> Constify the drv data because it should not be modified (used by
-> multiple devices).
+On 22. 5. 26. 17:28, Miaoqian Lin wrote:
+> of_get_child_by_name() returns a node pointer with refcount
+> incremented, we should use of_node_put() on it when done.
+> This function only calls of_node_put() in normal path,
+> missing it in error paths.
+> Add missing of_node_put() to avoid refcount leak.
 > 
+> Fixes: f262f28c1470 ("PM / devfreq: event: Add devfreq_event class")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index 9b849d781116..a443e7c42daf 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -519,15 +519,19 @@ static int of_get_devfreq_events(struct device_node *np,
+>  
+>  	count = of_get_child_count(events_np);
+>  	desc = devm_kcalloc(dev, count, sizeof(*desc), GFP_KERNEL);
+> -	if (!desc)
+> +	if (!desc) {
+> +		of_node_put(events_np);
+>  		return -ENOMEM;
+> +	}
+>  	info->num_events = count;
+>  
+>  	of_id = of_match_device(exynos_ppmu_id_match, dev);
+>  	if (of_id)
+>  		info->ppmu_type = (enum exynos_ppmu_type)of_id->data;
+> -	else
+> +	else {
+> +		of_node_put(events_np);
+>  		return -EINVAL;
+> +	}
+>  
+>  	j = 0;
+>  	for_each_child_of_node(events_np, node) {
 
-Applied to 5.20/scsi-queue, thanks!
 
-[1/1] scsi: ufs: exynos: constify driver data
-      https://git.kernel.org/mkp/scsi/c/dcad25cb2500
+Applied it. Thanks.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
