@@ -2,84 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6B6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 12:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E56CCA479
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 12:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242360AbiFTMVI (ORCPT
+        id S242310AbiFTM1Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 08:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
+        Mon, 20 Jun 2022 08:27:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242517AbiFTMVI (ORCPT
+        with ESMTP id S242376AbiFTM1P (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 08:21:08 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6D915A12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 05:21:06 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id fu3so20742986ejc.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 05:21:06 -0700 (PDT)
+        Mon, 20 Jun 2022 08:27:15 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B0617A9D
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 05:27:13 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id eo8so14955646edb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 05:27:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=E3uLSUhwprnezWhgNjelyDpi9Pkas63/v00xHF+/vU8=;
-        b=flreMh2NroyVGNd8enChslIN1cvKVgxJxxhnUBXjFc9GVkI3Na7171+B+8hmxsSCTc
-         C+Ma1occ9HY+e4IsC8v/zHw3TpPYl4Bf0TLhYA59l6+j0yhZkKlL/xsC+6NFHesXH7pC
-         Kckm2x6ElBlHssfWWt8q/9jHJclIQeii4Z7rGfBXUEFkOVCkxQtAkqxXVmtYmbB0N7MK
-         ZxFjcocE1ZgZ2vu5v6lXz/B4wS8JCi/jpJCkIYU5QVzMs+VpPclxLTdVrWEtrvJF8Y92
-         4WJCKynOvfZUu66df703sEw9PmtPZJJ0GKqrET1M62IN4wy9vnfsnE/Kxx8Y1k04cIRe
-         Rx9g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7+7zSFmCgAYJTfLDYvta4u1btP/xlyhqRxIkaAavVr4=;
+        b=vP24YWI/E50s3detS4JAuqTFxXsK7NvUJEF6p9PS7fQGYTTiDyF+J80GJMKoQsxn68
+         4OIQNsVMvT+25pRV53ZNTrA5m8gxXmIdwSbiBne3dw/mStu/btTEcanz9iwaQ+TntYup
+         dyGZVVNg+L2DugO1zdVnqRmR2fb8uTbRuYyH+AElMir/mzC0vrpcaA4GQENJBho5aGqv
+         w9t2u0LAAbmCSLIShCLkGMvMnBewBG9g6nxrMdWx3H5TXhzVg28MnhfZohC0FfSNo6F4
+         lqSX5iXCDJoucwc3KfiPbqMIDM+CsztJqRhFCVGYH4YpP9cQVrOdmVi3vqW3mE3R8GBg
+         stpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=E3uLSUhwprnezWhgNjelyDpi9Pkas63/v00xHF+/vU8=;
-        b=Oow/bwUnPlDAayWahyjMXBFNZJ06MH8ReZjJxz6aGhWlYiCZd218NvsO6k3ZJoozVb
-         D0/MIApZmJRj318E6ha4tq3ctaai7mQ2mMSTCKWBKxsgt8NRdKCwGHZTXUPMcbR5pjlh
-         efKdVPzAmA8WjqbNg8chCOgzu4qq7lN5WRSYlbwDWJf1PsPydZiCewirBPovB6RekrYE
-         2k8iChHXiOjq7VyppHxcmKE8FjVtyKVrr9r3ourGr7huBcCidewOu2L8g+j0qm8Gd6Pe
-         wPH1+kgCvcmAQjc74icoV3Fuqn/orWFPpNn619OLo75N+wGHD/1MhGIgL8yxjhUnTPB4
-         X4iA==
-X-Gm-Message-State: AJIora++f7eMsUKRbCPorGGa06MMS6g24EbkzioF2C7W7ozyfwvUHMxX
-        XU+cg4LiQMF+YKsadd8OEI8vvA==
-X-Google-Smtp-Source: AGRyM1vsj2E2sC4eUk0ilvBOHumMn3Rq/1xT8iNhBngVpGkOy7XHu2JJYt87D1bB1ZyJpVmJz4ls8Q==
-X-Received: by 2002:a17:907:629a:b0:6d7:b33e:43f4 with SMTP id nd26-20020a170907629a00b006d7b33e43f4mr21018798ejc.149.1655727665312;
-        Mon, 20 Jun 2022 05:21:05 -0700 (PDT)
-Received: from [192.168.0.209] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id y4-20020aa7ccc4000000b004316f94ec4esm10152674edt.66.2022.06.20.05.21.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jun 2022 05:21:04 -0700 (PDT)
-Message-ID: <170ebce3-4f29-c571-650b-abdcf05f3702@linaro.org>
-Date:   Mon, 20 Jun 2022 14:21:03 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] soc: samsung: Add missing of_node_put in exynos-pmu.c
-Content-Language: en-US
-To:     Liang He <windhl@126.com>, alim.akhtar@samsung.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220615135659.3967956-1-windhl@126.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7+7zSFmCgAYJTfLDYvta4u1btP/xlyhqRxIkaAavVr4=;
+        b=w2XJ2oDYkggbbH7XV8lam5T5rs28ZY70aLjw4IBTYhcwVD+UUGQmf7RGQpsJ4HJtP8
+         CvN8R29z366kwELeL5V/nqSk1iEV4wMo5edxQDjp+DWenikzKmFEwnclT0k+2u0NTBrH
+         z/d6ozNRXFmEPdAzIGLX65SLP9TAY8YhmJn2zpbn3ZfC4/Wdn9o91S+fYk6jeSyXzWww
+         x8DoTrgIXYWV/R5fJH4KIbod0sk+WOI/Mjy/N44eMsxSRuNehxQXwMtCJ8/xUP/tCY6A
+         L/kxrCevn0S+FvfK8073yYQC2hcWj8giFIhfkh5tzzeufZTMk//HI0e+L9Rge+jcicLM
+         Y8GA==
+X-Gm-Message-State: AJIora9Q4JIweaks6l7Ge55Mwahm6yJz+2cB9rBotDBSpiE5JwBg0lZU
+        3MoLD04JhqnPKe15NImfNY+3Ag==
+X-Google-Smtp-Source: AGRyM1uhq/cePecmg+PBSpFN37PalbSei6PpK42hPQXx1xuFwBVIL0me4eTVOpNH9Mk0gWnlgM1K4w==
+X-Received: by 2002:a05:6402:42c8:b0:42d:f0b0:c004 with SMTP id i8-20020a05640242c800b0042df0b0c004mr28878526edc.356.1655728031953;
+        Mon, 20 Jun 2022 05:27:11 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id 4-20020a170906300400b00722dcb4629bsm15987ejz.14.2022.06.20.05.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jun 2022 05:27:11 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220615135659.3967956-1-windhl@126.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        phone-devel@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 1/5] dt-bindings: clock: Add bindings for Exynos7885 CMU_FSYS
+Date:   Mon, 20 Jun 2022 14:27:07 +0200
+Message-Id: <165572802724.43913.12874553470306396610.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220601233743.56317-2-virag.david003@gmail.com>
+References: <20220601233743.56317-1-virag.david003@gmail.com> <20220601233743.56317-2-virag.david003@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 15/06/2022 15:56, Liang He wrote:
-> In exynos_get_pmu_regmap(), of_find_matching_node() will return a
-> node pointer with refcount incremented. We should use of_node_put()
-> for that node pointer. We need a similar code logic in the function
-> syscon_regmap_lookup_by_compatible().
+On Thu, 2 Jun 2022 01:37:39 +0200, David Virag wrote:
+> CMU_FSYS clock domain provides clocks for MMC (MMC_CARD, MMC_EMBD,
+> MMC_SDIO), and USB30DRD.
 > 
-> Signed-off-by: Liang He <windhl@126.com>
+> Add clock indices and bindings documentation for CMU_FSYS domain.
+> 
+> 
 
+Applied, thanks!
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+[1/5] dt-bindings: clock: Add bindings for Exynos7885 CMU_FSYS
+      https://git.kernel.org/krzk/linux/c/cd268e309c29e9a8b15a47f684d848c1d57fe150
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
