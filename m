@@ -2,102 +2,142 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C1CC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 19:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED89ACCA47E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jun 2022 00:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234318AbiFTTd0 (ORCPT
+        id S245737AbiFUAOk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 15:33:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
+        Mon, 20 Jun 2022 20:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233184AbiFTTdW (ORCPT
+        with ESMTP id S236390AbiFUAOj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 15:33:22 -0400
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [IPv6:2a01:4f8:150:2161:1:b009:f23e:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07BA1C128;
-        Mon, 20 Jun 2022 12:33:20 -0700 (PDT)
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id DAFE3100D9414;
-        Mon, 20 Jun 2022 21:33:18 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id B0E9D8943BB; Mon, 20 Jun 2022 21:33:18 +0200 (CEST)
-Date:   Mon, 20 Jun 2022 21:33:18 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Simon Han <z.han@kunbus.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Ferry Toth <fntoth@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH net] net: phy: smsc: Disable Energy Detect Power-Down in
- interrupt mode
-Message-ID: <20220620193318.GA15322@wunner.de>
-References: <439a3f3168c2f9d44b5fd9bb8d2b551711316be6.1655714438.git.lukas@wunner.de>
- <c40cc5fb-a84d-23f2-a400-c01b5b419bc9@gmail.com>
+        Mon, 20 Jun 2022 20:14:39 -0400
+X-Greylist: delayed 1201 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Jun 2022 17:14:37 PDT
+Received: from gnutoo.cyberdimension.org (cyberdimension.org [IPv6:2001:910:1314:ffff::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D2B1836D;
+        Mon, 20 Jun 2022 17:14:36 -0700 (PDT)
+Received: from gnutoo.cyberdimension.org (localhost [127.0.0.1])
+        by cyberdimension.org (OpenSMTPD) with ESMTP id 0950e3d8;
+        Mon, 20 Jun 2022 23:39:55 +0000 (UTC)
+Received: from primarylaptop.localdomain (localhost [::1])
+        by gnutoo.cyberdimension.org (OpenSMTPD) with ESMTP id 8547062c;
+        Mon, 20 Jun 2022 23:39:55 +0000 (UTC)
+Date:   Tue, 21 Jun 2022 01:47:48 +0200
+From:   Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+To:     Krzysztof Kozlowski via Replicant <replicant@osuosl.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Simon Shields <simon@lineageos.org>,
+        Martin =?UTF-8?B?SsO8Y2tlcg==?= <martin.juecker@gmail.com>
+Subject: Re: [Replicant] [PATCH 3/3] ARM: dts: exynos: add function and
+ color to aat1290 flash LED node in Galaxy S3
+Message-ID: <20220621014748.1c0b2b05@primarylaptop.localdomain>
+In-Reply-To: <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
+References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
+        <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
+        <4a7f8ab6-c061-3861-5790-b6c0fbd7cad1@gmail.com>
+        <ef62a7bb-2217-2947-17dd-fc4a51acdea5@linaro.org>
+        <f1402a1d-a74d-f7b9-b9e2-fc3991781e64@gmail.com>
+        <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c40cc5fb-a84d-23f2-a400-c01b5b419bc9@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/RXcLkuiECAhv+Y3/6Gw0ixN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 20, 2022 at 10:03:26AM -0700, Florian Fainelli wrote:
-> On 6/20/22 04:04, Lukas Wunner wrote:
-> > --- a/drivers/net/phy/smsc.c
-> > +++ b/drivers/net/phy/smsc.c
-> > @@ -110,7 +110,7 @@ static int smsc_phy_config_init(struct phy_device *phydev)
-> >   	struct smsc_phy_priv *priv = phydev->priv;
-> >   	int rc;
-> > -	if (!priv->energy_enable)
-> > +	if (!priv->energy_enable || phydev->irq != PHY_POLL)
-> 
-> phy_interrupt_is_valid() may be more appropriate, since you are assuming
-> that you either have PHY_POLL or valid "external" PHY interrupt but there is
-> also the special case of PHY_MAC_INTERRUPT that is not dealt with.
+--Sig_/RXcLkuiECAhv+Y3/6Gw0ixN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I deliberately disable EDPD for PHY_MAC_INTERRUPT as well.
+On Sun, 12 Jun 2022 19:06:09 +0200
+Krzysztof Kozlowski via Replicant <replicant@osuosl.org> wrote:
 
-That's a proper interrupt, i.e. the PHY signals interrupts
-to the MAC (e.g. through an interrupt pin on the MAC),
-which forwards the interrupts to phylib.  EDPD cannot
-be used in that situation either.
+> On 12/06/2022 17:09, Jacek Anaszewski wrote:
+> > On 6/10/22 12:14, Krzysztof Kozlowski wrote:
+> >> On 09/06/2022 22:31, Jacek Anaszewski wrote:
+> >>> Hi Krzysztof,
+> >>>
+> >>> On 6/7/22 10:53, Krzysztof Kozlowski wrote:
+> >>>> Add common LED properties - the function and color - to aat1290
+> >>>> flash LED node in Galaxy S3.
+> >>>>
+> >>>> Signed-off-by: Krzysztof Kozlowski
+> >>>> <krzysztof.kozlowski@linaro.org> ---
+> >>>>    arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 3 +++
+> >>>>    1 file changed, 3 insertions(+)
+> >>>>
+> >>>> diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+> >>>> b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi index
+> >>>> 72901772fcad..d76f3678dcab 100644 ---
+> >>>> a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi +++
+> >>>> b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi @@ -7,6 +7,7 @@
+> >>>>     */
+> >>>>   =20
+> >>>>    /dts-v1/;
+> >>>> +#include <dt-bindings/leds/common.h>
+> >>>>    #include "exynos4412-midas.dtsi"
+> >>>>   =20
+> >>>>    / {
+> >>>> @@ -27,6 +28,8 @@ led-controller {
+> >>>>   =20
+> >>>>    		led {
+> >>>>    			label =3D "flash";
+> >>>> +			function =3D LED_FUNCTION_FLASH;
+> >>>> +			color =3D <LED_COLOR_ID_WHITE>;
+> >>>
+> >>> Addition of these two properties will not change anything because
+> >>> the label has precedence. It is deprecated, but if you introduce
+> >>> function and color to the binding instead of the label, the
+> >>> resulting LED class device name will change.
+> >>
+> >> Which is not necessarily what we want, right? Adding these
+> >> properties is a proper description of hardware, regardless whether
+> >> current Linux implementation uses them or not.
+> >=20
+> > Actually I'd just drop label in addition to your change.
+> > I don't think it would break anybody seriously - not expecting it
+> > has any larger group of users and having uniformly constructed DTS
+> > files in the mainline has greater value.
+> >=20
+>=20
+> What about some PostmarketOSos, LineageOS and other OSes?
+>=20
+> Let me Cc here some folks - Simon, Martin, is the label in flash LED
+> node anyhow important for you? Can it be dropped and replaced with
+> function+color?
+We don't have flash or camera support yet with Replicant version(s) that
+use kernel(s) based on upstream Linux, so it won't break anything.
 
+Denis.
 
-> > @@ -217,7 +219,7 @@ static int lan87xx_read_status(struct phy_device *phydev)
-> >   	int err = genphy_read_status(phydev);
-> > -	if (!phydev->link && priv->energy_enable) {
-> > +	if (!phydev->link && priv->energy_enable && phydev->irq == PHY_POLL) {
-> 
-> phy_polling_mode()?
+--Sig_/RXcLkuiECAhv+Y3/6Gw0ixN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Personally I think checking for PHY_POLL is succinct,
-but if you or anyone else feels strongly about it
-I'll be happy to add such a static inline to
-include/linux/phy.h.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iQIzBAEBCAAdFiEEeC+d2+Nrp/PU3kkGX138wUF34mMFAmKxByUACgkQX138wUF3
+4mMYKBAAizG0drTNSDYUxHg7Da7PcIFOxip+GcGDJLI27Fi0cFg/kEyaJboALnxx
+Q3CvVhpuJqOGKDe0HfF6FZO/+BxzShNC/NxDXUlfkyI2SXvY3EAqe4kBkU7ynyKc
+aejrFq9CTXXvnPiVbyRlOzz15tkj8byNqNvN7cgd6kGzLtU13B7w+tPBzL3lg5Zh
+sT/kPqF8Wq++sN1INqMT9g1WVUUWl47dia1DJ9xz11qYznYCKea7Khej/vOsRh9b
+Aue1drPuUX+19MEGaCmkvXJAwhP3gMJVSrxuPg0iKJwwNMS93o2bRQmST0MIqp+F
+UAvDTEHqxpWhCG1O3wwKFLAVZCSlPr0bf8o8iRyMrJF+y1Cu/h9VA+ejvRSsyvIr
+Ggk7X0uBWphQIzESAW8z3Ggl8ZDev17m6kn99kHa522fhbT7zpxMzmbKMfmtI4CZ
+kHdmyNiJXVblYc9nIdF1OdjoeNxuJaYRSPFX+rzIluT2Hd17Ds6AkgoyNAvjRmOT
+Omh3UORRJgSxE2L0yECrpfXbSenPuaKQqv1OUcNjaHj6k3VonRi4DbFeGMRCOCr5
+aDs+T1CgdPDOzxytoxrevY5g1aY6iIIIjkqQOVn8gFF6KmyarAmr6XVARHURYenI
+7fPUQnHtSdHqBS5NlDvYwhMDL992U1ibbhNDsSE0NUpElEIU4ZU=
+=YOd1
+-----END PGP SIGNATURE-----
 
-Lukas
+--Sig_/RXcLkuiECAhv+Y3/6Gw0ixN--
