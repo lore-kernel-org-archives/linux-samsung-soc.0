@@ -2,144 +2,129 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF53C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Jun 2022 21:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06639CCA480
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 10:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbiFRVPB (ORCPT
+        id S235079AbiFTK3S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 18 Jun 2022 17:15:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60864 "EHLO
+        Mon, 20 Jun 2022 06:29:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbiFRVPA (ORCPT
+        with ESMTP id S240850AbiFTK23 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 18 Jun 2022 17:15:00 -0400
-Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD8D2672;
-        Sat, 18 Jun 2022 14:14:58 -0700 (PDT)
-Message-ID: <ac1f956bece0151a165afc18ec21898d00dacf31.camel@grimler.se>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1655586896;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z2AOfaSlPHrMVPcO5Ts97JY6OWsmj+2hfSsC8UnVib4=;
-        b=Ve8XRXMAZq+qmbXnRkxh8sCqoflFuaV5TaGKrd9hOZq2ZGm4Dzma/LA4LLURkSHk4Bi6/0
-        XW3ElXe5XCtvaSU1N+DSFaymv+J8uF41tov/YsYXAsFnEHqOwEO1XUyS4tIS+Y3V9qeiyc
-        Na7EGUvDklSL6rXiXMHoAEPDw2Czlwc=
-Subject: Re: [PATCH 3/3] ARM: dts: exynos: add function and color to aat1290
- flash LED node in Galaxy S3
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     replicant@osuosl.org, Pavel Machek <pavel@ucw.cz>,
+        Mon, 20 Jun 2022 06:28:29 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139D713D08
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 03:28:26 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220620102820euoutp0198b3694eab657fdd50b17fa5ee6b571a~6TWMD7k_r3122031220euoutp016
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 10:28:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220620102820euoutp0198b3694eab657fdd50b17fa5ee6b571a~6TWMD7k_r3122031220euoutp016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1655720900;
+        bh=qp9YVJlu4olz3oYnsD1sNkejmf6dHxDAHbWKn3wrbXs=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=m8sKfqYXwOKq5iRyo4466JVOkrWa0z1iy1XM4gumHu6yoXKRriiPGLto+i78nYnwQ
+         SMt+eUYIto0HPecP7TCEueI31x+r31LMo6dKIH6z3yu1p9NQy9V3xoylrOnSepAIEC
+         ww91rexUyZHR2VmLQVm2kWpcNd7Gam4v+JWPW47A=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220620102820eucas1p257ab2bd019e065e26fc7f61d487100e9~6TWLl3p8S0766307663eucas1p2w;
+        Mon, 20 Jun 2022 10:28:20 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 11.E8.09664.4CB40B26; Mon, 20
+        Jun 2022 11:28:20 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a~6TWLB5yxx1180011800eucas1p2P;
+        Mon, 20 Jun 2022 10:28:19 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220620102819eusmtrp1d406de29bcbd43e98e82e8fcfe0fbfea~6TWLAuDit3265932659eusmtrp1X;
+        Mon, 20 Jun 2022 10:28:19 +0000 (GMT)
+X-AuditID: cbfec7f2-d97ff700000025c0-d7-62b04bc46c2e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id FB.B5.09038.3CB40B26; Mon, 20
+        Jun 2022 11:28:19 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220620102818eusmtip249ef53827dc9ea948a39b0409a3c2ca2~6TWKQ8suX3096730967eusmtip2G;
+        Mon, 20 Jun 2022 10:28:18 +0000 (GMT)
+Message-ID: <4b132eb8-d823-248f-0fc0-c825ba3754fa@samsung.com>
+Date:   Mon, 20 Jun 2022 12:28:18 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add bindings for Exynos7885
+ CMU_FSYS
+Content-Language: en-US
+To:     David Virag <virag.david003@gmail.com>
+Cc:     phone-devel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Simon Shields <simon@lineageos.org>,
-        Martin =?ISO-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
-Date:   Sat, 18 Jun 2022 23:14:53 +0200
-In-Reply-To: <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
-References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
-         <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
-         <4a7f8ab6-c061-3861-5790-b6c0fbd7cad1@gmail.com>
-         <ef62a7bb-2217-2947-17dd-fc4a51acdea5@linaro.org>
-         <f1402a1d-a74d-f7b9-b9e2-fc3991781e64@gmail.com>
-         <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: grimler.se
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+In-Reply-To: <20220601233743.56317-2-virag.david003@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7djPc7pHvDckGUxYyW7xYN42NovrX56z
+        Wsw/co7Vou/FQ2aLTY+vsVp87LnHanF51xw2ixnn9zFZXDzlarHgj51F694j7Bb/rm1ksVi1
+        6w+jxfH3jxkd+Dze32hl99g56y67x6ZVnWwed67tYfPYvKTeo2/LKkaPz5vkAtijuGxSUnMy
+        y1KL9O0SuDIm3NvOXnCWqaL91EPGBsYZTF2MHBwSAiYSkz/ZdjFycQgJrGCUOLnnABuE84VR
+        4vPsaSxdjJxAzmdGiVNXKkFskIaGXfOhipYzSvxofscE4XxklGg7+IwZpIpXwE5iXfcyRhCb
+        RUBVon/3Pai4oMTJmU/ApooKJEucO3uVDcQWFgiW+N46jRXEZhYQl7j1ZD4TiC0ioCXx4cxD
+        VpAFzAJPmCVutExlB0mwCRhK9B7tA1vACbTs6tFlLBDN8hLb385hBmmQEJjNKXG3bwMjxKMu
+        Ej333SBeEJZ4dXwLO4QtI3F6cg8LhF0vMXnKFTYIu4NR4uteMwjbWmLCphNsIGOYBTQl1u/S
+        hwg7SjyatwEajHwSN94KQlzAJzFp23RmiDCvREebEES1isTvVdOZIGwpie4n/1kmMCrNQgqU
+        WUien4Xkl1kIexcwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITGmn/x3/tINx7quP
+        eocYmTgYDzFKcDArifDacG9IEuJNSaysSi3Kjy8qzUktPsQozcGiJM6bnLkhUUggPbEkNTs1
+        tSC1CCbLxMEp1cDEcKWKte2ttejHzsKcjarcU97rc+7RXp2ztODB1PznfHPPhm/ieXJs+iyh
+        vPsr5hRGqa7P1+yRT+TkNBBMLKuafGXHziJjtmXfbsgElNfufxJYcqR5toblNlkezs81vVu0
+        WHdO1969c5H2wiP8Ehe7mQRT+nbtvdT69GX13vS4S5K2BV9/fbaQVI3/ZiT441yf78nrImlh
+        kzgu1hpW8T7w0NOevmyttvXRpG/VZ0TEP62sFq1QWZcRHfrIpn2yrp9Rt91MppVTJt5Y9n/z
+        oWgmbud1S5V0Fh+3rJ2f8265hqqMvG6Fr+1/hglnA9dc9vc4I2O5JEt5bc5u36Lggrk3Thf7
+        uRgYt8zL+JKquEeJpTgj0VCLuag4EQBjWi322AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7qHvTckGZxfL2XxYN42NovrX56z
+        Wsw/co7Vou/FQ2aLTY+vsVp87LnHanF51xw2ixnn9zFZXDzlarHgj51F694j7Bb/rm1ksVi1
+        6w+jxfH3jxkd+Dze32hl99g56y67x6ZVnWwed67tYfPYvKTeo2/LKkaPz5vkAtij9GyK8ktL
+        UhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIm3NvOXnCWqaL9
+        1EPGBsYZTF2MnBwSAiYSDbvms3UxcnEICSxllDjx7htjFyMHUEJKYn6LEkSNsMSfa11QNe8Z
+        Jc7d+8cMkuAVsJNY172MEcRmEVCV6N99DyouKHFy5hMWEFtUIFmiecshsGXCAsES31unsYLY
+        zALiEreezAeLiwhoSXw48xAq/oxZouOlJIgtJFAosWlJN1gNm4ChRO/RPrBdnEB7rx5dxgJy
+        J7OAusT6eUIQrfIS29/OYZ7AKDQLyRWzkGybhdAxC0nHAkaWVYwiqaXFuem5xUZ6xYm5xaV5
+        6XrJ+bmbGIExvO3Yzy07GFe++qh3iJGJg/EQowQHs5IIrw33hiQh3pTEyqrUovz4otKc1OJD
+        jKbAkJjILCWanA9MInkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxS
+        DUx7Iz4eaJ6cm+mje+rmYfMzsv96lx1LlOTb01HkUztFS1n8w97z66bbRqs4WkhPNNht6bBO
+        5KJIPIuUbVPh8mrrmOkTX8t/a2m5N2m78fl8o9CXrO9LDt/4sejVodeTNne3iMetS7miGtWS
+        x/zjbL2wuNK90z5eO/9F+u6tvbgiJiWman1Pdormx5UZp/c9eM7/iT02KWLBr8Xnl/xc9Js3
+        jKlZUb35cGVbULDrCVX1rsNSb7keiATXrSqPfSWu7XQ/YPcbrxCzqcel5n6fyjhrmvyN+Lbb
+        OzJ6uwpWxZYs2ZPCWfaTTUZxY8zR6zNKLwdze9x4NOFm8I+U9w6+Rr+Xavx+uGzKZYXEbb6P
+        d/5VYinOSDTUYi4qTgQAZI0iF2oDAAA=
+X-CMS-MailID: 20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a
+References: <20220601233743.56317-1-virag.david003@gmail.com>
+        <20220601233743.56317-2-virag.david003@gmail.com>
+        <CGME20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof and Jacek,
+On 02.06.2022 01:37, David Virag wrote:
+> CMU_FSYS clock domain provides clocks for MMC (MMC_CARD, MMC_EMBD,
+> MMC_SDIO), and USB30DRD.
+> 
+> Add clock indices and bindings documentation for CMU_FSYS domain.
+> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
 
-On Sun, 2022-06-12 at 19:06 +0200, Krzysztof Kozlowski wrote:
-> On 12/06/2022 17:09, Jacek Anaszewski wrote:
-> > On 6/10/22 12:14, Krzysztof Kozlowski wrote:
-> > > On 09/06/2022 22:31, Jacek Anaszewski wrote:
-> > > > Hi Krzysztof,
-> > > >=20
-> > > > On 6/7/22 10:53, Krzysztof Kozlowski wrote:
-> > > > > Add common LED properties - the function and color - to
-> > > > > aat1290 flash
-> > > > > LED node in Galaxy S3.
-> > > > >=20
-> > > > > Signed-off-by: Krzysztof Kozlowski
-> > > > > <krzysztof.kozlowski@linaro.org>
-> > > > > ---
-> > > > > =C2=A0=C2=A0 arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 3 +++
-> > > > > =C2=A0=C2=A0 1 file changed, 3 insertions(+)
-> > > > >=20
-> > > > > diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> > > > > b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> > > > > index 72901772fcad..d76f3678dcab 100644
-> > > > > --- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> > > > > +++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> > > > > @@ -7,6 +7,7 @@
-> > > > > =C2=A0=C2=A0=C2=A0 */
-> > > > > =C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0 /dts-v1/;
-> > > > > +#include <dt-bindings/leds/common.h>
-> > > > > =C2=A0=C2=A0 #include "exynos4412-midas.dtsi"
-> > > > > =C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0 / {
-> > > > > @@ -27,6 +28,8 @@ led-controller {
-> > > > > =C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0led {
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0label =3D "flash";
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-function =3D LED_FUNCTION_FLASH;
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-color =3D <LED_COLOR_ID_WHITE>;
-> > > >=20
-> > > > Addition of these two properties will not change anything
-> > > > because
-> > > > the label has precedence. It is deprecated, but if you
-> > > > introduce
-> > > > function and color to the binding instead of the label, the
-> > > > resulting
-> > > > LED class device name will change.
-> > >=20
-> > > Which is not necessarily what we want, right? Adding these
-> > > properties is
-> > > a proper description of hardware, regardless whether current
-> > > Linux
-> > > implementation uses them or not.
-> >=20
-> > Actually I'd just drop label in addition to your change.
-> > I don't think it would break anybody seriously - not expecting it
-> > has
-> > any larger group of users and having uniformly constructed DTS
-> > files
-> > in the mainline has greater value.
-> >=20
->=20
-> What about some PostmarketOSos, LineageOS and other OSes?
->=20
-> Let me Cc here some folks - Simon, Martin, is the label in flash LED
-> node anyhow important for you? Can it be dropped and replaced with
-> function+color?
->=20
-
-As far as I know LineageOS does not use a mainline-based kernel for the
-S3. PostmarketOS and Replicant does though. For PostmarketOS it should
-be fine to drop the label, and it sounded like it should be fine for
-Replicant also in an IRC discussion, but adding their mailing list to
-CC just in case.
-
-
-Best regards,
-Henrik Grimler
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
