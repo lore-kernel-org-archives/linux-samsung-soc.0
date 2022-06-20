@@ -2,93 +2,158 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7E6C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 12:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC4F8C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 17:03:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241457AbiFTM1W (ORCPT
+        id S233570AbiFTRDj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 08:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43688 "EHLO
+        Mon, 20 Jun 2022 13:03:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242640AbiFTM1R (ORCPT
+        with ESMTP id S231484AbiFTRDf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 08:27:17 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0CC17E29
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 05:27:16 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id eq6so7559479edb.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 05:27:16 -0700 (PDT)
+        Mon, 20 Jun 2022 13:03:35 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548E81AD88;
+        Mon, 20 Jun 2022 10:03:35 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id m14so10275768plg.5;
+        Mon, 20 Jun 2022 10:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4vB4Q89ficeECRN8+UPrIdmEHUS7f2caO3K21kMQabs=;
-        b=ydtsStDn284MzKmsq0MtNzu0S+TJnJsI3r17pEGtXoiUzkcbpPXsCNluThCnu7PSUl
-         AokfhGThZRANaroZaKbYjDh4B8Jrq3cJ9XBZNwM8aaeQa39YFuehjHzmtxGm1SMSc67n
-         dSX7az3laG0qrWn4H2agszHD8W6QilpaALdEqV00uOl4c2ZL/I2kVjdfUlvoTAsKYeZp
-         33yl2Tqw0tss5MG5f71gWHaH18jZk+SST1JWNF1JtqiFZ8HI4Rn8rA1RHX94cSPjcRwr
-         JoCX2BpOfQ1m1dzcrV8U3E0D4XMA4W+VhHQ25fiY6PPY2pTHfJHODpOBctJy9mbetK20
-         ytRw==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=5nWic3wt4rEd7IHyJHcsCaXRi2cbtwKrH1SqRuKrhdc=;
+        b=kwvYpUPndXW4O2AupEGe7zLxqGkuAhPQAcN5LrTQL52C8mHk19AosIUETxNhFV8JDZ
+         bf2rs/paLYW+4Yx5CPFN0rDtUQdR7M5+OSkc8OofYTNe2O74AyjnN9ivl+sqOT/ToVmL
+         PUbcHLPNbPT9qcm11va4EvnANGXa8sOUfNLRrLG6AZRbZPafQFjs/wguvowxbskOTmBk
+         beJZ53mIwy4v8W1zox+c56VOdOVSV7pCzbUQOyiqbti6ajEk7QAKGDyXQky3npiD9GHJ
+         vUX/8V87XzvIjE7ZtOkJDkoNfl7LYcsz+xzZzDgWD5540XxL5fACClh4s2fXZIjGzBbC
+         chBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4vB4Q89ficeECRN8+UPrIdmEHUS7f2caO3K21kMQabs=;
-        b=qCprcL6krVcRswVULseFS6ADLCmy+kxhunlnDMxzr6XP0tqTDdqGqzlwLRUiQhughl
-         FY/He/5GkdmUhC/Ym5gn8tDbqKqEqOFezMYuDFF0W59sBZOR91uzSX7IK9wFwZ5W8WQV
-         WlffOd765mTV64Nu/eZ/ZE0RN3z/zsrqtMXwUXJp1eKVoET1pdQJNJOz3Zoq/lI3yz4l
-         GlDgHfen5v3UU9J1yC12VBkkoiINGYmzElWNsy0u4cZk39ncuJptr7XzW7e+FsEfUZcq
-         2PDSbSJ9G6HKnAGpnVCeDj1iYtZdxMwPO0McKNm1XdvQ0j0LN+ryX+OtJ53xBLAQXbIF
-         SlDg==
-X-Gm-Message-State: AJIora+KKcEYJ9r8T4/azpYThfXX2WiUiD5LxdnMUHxMJWH2k+0FBv48
-        EnHwzMOED/NLVj9u1H4EdUzApSqAE4doQw==
-X-Google-Smtp-Source: AGRyM1uMp3iw93ubXPa99A12M8kv6df8xBOlVMniOSKM29Q1ujY0faKLtebfWYFbuG+EwepyqbUXkQ==
-X-Received: by 2002:a05:6402:2804:b0:431:7dde:6fb5 with SMTP id h4-20020a056402280400b004317dde6fb5mr29550142ede.379.1655728034292;
-        Mon, 20 Jun 2022 05:27:14 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id 4-20020a170906300400b00722dcb4629bsm15987ejz.14.2022.06.20.05.27.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 05:27:13 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        phone-devel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 5/5] arm64: dts: exynos: Add internal eMMC support to jackpotlte
-Date:   Mon, 20 Jun 2022 14:27:09 +0200
-Message-Id: <165572802724.43913.16422699466513017279.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220601233743.56317-6-virag.david003@gmail.com>
-References: <20220601233743.56317-1-virag.david003@gmail.com> <20220601233743.56317-6-virag.david003@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=5nWic3wt4rEd7IHyJHcsCaXRi2cbtwKrH1SqRuKrhdc=;
+        b=MqjDc+vBlS6p61aJ1rdduQAs6ZruGeeyNbSPAgRAgUMwQb1y9LJQGgtAoel3SlPrSF
+         Hwjy4AZZ/97+vUHsDl8lEqO7JGpYGqoUiEgshEyw66AddCzg0MaCR2PCwvdWqcW4osmB
+         JUC9csrhtwMYKMu+7FiFtzvUPyp7d8IIrOe/jvLEnEx0z/4PvOnub09Tvv4ECEUGez8U
+         /lsTMzoClZ6iZ7xWs2xEIIYeWf54Ihka/Uwa4LbGXyeaiGLIewn1KnxdQTMB0yN+L18p
+         PygGsg2VKLR9N7FRybrlV7jEj2wStOWujnZWQ21bm/joUuo3uQtI8hUeJmSWQieo54E7
+         43uA==
+X-Gm-Message-State: AJIora/gSKe6/MefdENlWkI1tnS8Z7Byrh7o7uPUJQfLiTM2w+uNgZle
+        R387CzucdGTiiW6sGj9Uv30=
+X-Google-Smtp-Source: AGRyM1vLl2wdnVhASKld6HUA6ykav5F5PCXSbDWe1/3AsP2eo47E0cYGdZ98n9DVg5idOW66oGo9Cw==
+X-Received: by 2002:a17:902:f688:b0:16a:1dfe:9712 with SMTP id l8-20020a170902f68800b0016a1dfe9712mr8187189plg.112.1655744614735;
+        Mon, 20 Jun 2022 10:03:34 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id ja18-20020a170902efd200b001677d4a9654sm2800481plb.265.2022.06.20.10.03.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 10:03:33 -0700 (PDT)
+Message-ID: <c40cc5fb-a84d-23f2-a400-c01b5b419bc9@gmail.com>
+Date:   Mon, 20 Jun 2022 10:03:26 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH net] net: phy: smsc: Disable Energy Detect Power-Down in
+ interrupt mode
+Content-Language: en-US
+To:     Lukas Wunner <lukas@wunner.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Simon Han <z.han@kunbus.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Ferry Toth <fntoth@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+References: <439a3f3168c2f9d44b5fd9bb8d2b551711316be6.1655714438.git.lukas@wunner.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <439a3f3168c2f9d44b5fd9bb8d2b551711316be6.1655714438.git.lukas@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 2 Jun 2022 01:37:43 +0200, David Virag wrote:
-> Add the nodes relevant to provide clocks for Exynos7885 eMMC and to
-> support eMMC. eMMC is the internal storage used in the Samsung Galaxy A8
-> (2018) (jackpotlte), and all other known devices using the Exynos7885
-> SoC.
+On 6/20/22 04:04, Lukas Wunner wrote:
+> Simon reports that if two LAN9514 USB adapters are directly connected
+> without an intermediate switch, the link fails to come up and link LEDs
+> remain dark.  The issue was introduced by commit 1ce8b37241ed ("usbnet:
+> smsc95xx: Forward PHY interrupts to PHY driver to avoid polling").
 > 
+> The PHY suffers from a known erratum wherein link detection becomes
+> unreliable if Energy Detect Power-Down is used.  In poll mode, the
+> driver works around the erratum by briefly disabling EDPD for 640 msec
+> to detect a neighbor, then re-enabling it to save power.
 > 
+> In interrupt mode, no interrupt is signaled if EDPD is used by both link
+> partners, so it must not be enabled at all.
+> 
+> We'll recoup the power savings by enabling SUSPEND1 mode on affected
+> LAN95xx chips in a forthcoming commit.
+> 
+> Fixes: 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to avoid polling")
+> Reported-by: Simon Han <z.han@kunbus.com>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>   drivers/net/phy/smsc.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
+> index 1b54684b68a0..96d3c40932d8 100644
+> --- a/drivers/net/phy/smsc.c
+> +++ b/drivers/net/phy/smsc.c
+> @@ -110,7 +110,7 @@ static int smsc_phy_config_init(struct phy_device *phydev)
+>   	struct smsc_phy_priv *priv = phydev->priv;
+>   	int rc;
+>   
+> -	if (!priv->energy_enable)
+> +	if (!priv->energy_enable || phydev->irq != PHY_POLL)
 
-Applied, thanks!
+phy_interrupt_is_valid() may be more appropriate, since you are assuming 
+that you either have PHY_POLL or valid "external" PHY interrupt but 
+there is also the special case of PHY_MAC_INTERRUPT that is not dealt with.
 
-[5/5] arm64: dts: exynos: Add internal eMMC support to jackpotlte
-      https://git.kernel.org/krzk/linux/c/ced37411d7f597129fecc0c3ca2324f44e33f4c8
+>   		return 0;
+>   
+>   	rc = phy_read(phydev, MII_LAN83C185_CTRL_STATUS);
+> @@ -210,6 +210,8 @@ static int lan95xx_config_aneg_ext(struct phy_device *phydev)
+>    * response on link pulses to detect presence of plugged Ethernet cable.
+>    * The Energy Detect Power-Down mode is enabled again in the end of procedure to
+>    * save approximately 220 mW of power if cable is unplugged.
+> + * The workaround is only applicable to poll mode. Energy Detect Power-Down may
+> + * not be used in interrupt mode lest link change detection becomes unreliable.
+>    */
+>   static int lan87xx_read_status(struct phy_device *phydev)
+>   {
+> @@ -217,7 +219,7 @@ static int lan87xx_read_status(struct phy_device *phydev)
+>   
+>   	int err = genphy_read_status(phydev);
+>   
+> -	if (!phydev->link && priv->energy_enable) {
+> +	if (!phydev->link && priv->energy_enable && phydev->irq == PHY_POLL) {
 
-Best regards,
+phy_polling_mode()?
+
+>   		/* Disable EDPD to wake up PHY */
+>   		int rc = phy_read(phydev, MII_LAN83C185_CTRL_STATUS);
+>   		if (rc < 0)
+
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Florian
