@@ -2,143 +2,119 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B8FC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 10:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B103C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jun 2022 11:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238934AbiFTKbL (ORCPT
+        id S241152AbiFTLFI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 06:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57266 "EHLO
+        Mon, 20 Jun 2022 07:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233998AbiFTKbK (ORCPT
+        with ESMTP id S240930AbiFTLFH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 06:31:10 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A991513FBD
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 03:31:09 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220620103108euoutp014d4d2871075f5f6eee65c8d0a21ee171~6TYoZ8y4F0508805088euoutp01N
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2022 10:31:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220620103108euoutp014d4d2871075f5f6eee65c8d0a21ee171~6TYoZ8y4F0508805088euoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1655721068;
-        bh=BurjW1WW2KeTxxxdhC7NErnPk+2pomzAB87ahjLvfu0=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=UyUT6iuF82GKqM+BpK1XsJM5OuE4H6WAdbMjgyNSSEk8AWT1gzckzBoQApgkPUGfA
-         QkN0iloctEEPDU0Csxp4rv4AIeSa+1OD5JjddmKs2wnSJFB4VZUUD6ew7qLmKV2/gl
-         wM7emUlcrl1eyqcmq4gbolbt4lAs4U389Ww5YmFA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220620103108eucas1p2b65435f45ffac70cf014a1075f20357a~6TYoC_foz3271232712eucas1p20;
-        Mon, 20 Jun 2022 10:31:08 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9D.F8.10067.C6C40B26; Mon, 20
-        Jun 2022 11:31:08 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220620103107eucas1p217192cc1d2c87ed8b7e4c799b4773f1d~6TYnoZDIt1972319723eucas1p27;
-        Mon, 20 Jun 2022 10:31:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220620103107eusmtrp124878fdcd4369a8a21ccd5e737afed5d~6TYnnQm8c0342803428eusmtrp1q;
-        Mon, 20 Jun 2022 10:31:07 +0000 (GMT)
-X-AuditID: cbfec7f4-dc1ff70000002753-3a-62b04c6cb174
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 50.36.09038.B6C40B26; Mon, 20
-        Jun 2022 11:31:07 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220620103106eusmtip28c55cb16ee518ef155877f61cc050a4a~6TYm4xmFI3070130701eusmtip2w;
-        Mon, 20 Jun 2022 10:31:06 +0000 (GMT)
-Message-ID: <85be3992-39fb-e95f-6e25-29e73ab6f97f@samsung.com>
-Date:   Mon, 20 Jun 2022 12:31:06 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.10.0
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add bindings for Exynos7885
- CMU_FSYS
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     phone-devel@vger.kernel.org,
-        David Virag <virag.david003@gmail.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <6178d685-5a87-6057-1200-e41baa3ece7d@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7djP87o5PhuSDKbNYrV4MG8bm8X1L89Z
-        LeYfOcdq0ffiIbPF3tdb2S02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxYI/dhate4+wW/y7
-        tpHFYtWuP4wWx98/ZnTg93h/o5XdY+esu+wem1Z1snncubaHzWPzknqPvi2rGD0+b5ILYI/i
-        sklJzcksSy3St0vgyvi8I6hgK2tF94cF7A2M61m6GDk5JARMJDa8fMXUxcjFISSwglHi/qEt
-        zBDOF0aJ9/Mms0E4nxkljkyaCtey5dpKdojEckaJOz+6oKo+Mko8fLyNHaSKV8BO4se0lUwg
-        NouAqsSLTV+YIeKCEidnPgGbJCqQLHHu7FU2EFtYIFjie+s0VhCbWUBc4taT+WC9IgIWEos3
-        LGQFWcAs0McisfHSSrBBbAKGEr1H+xhBbE6gZee3zGGEaJaX2P52DtgTEgLLOSXuzZvCDHG3
-        i8SSj79YIWxhiVfHt7BD2DISpyf3QP1WLzF5yhU2CLuDUeLrXjMI21piwqYTQHEOoAWaEut3
-        6UOEHSUWdGxnBwlLCPBJ3HgrCHECn8SkbdOZIcK8Eh1tQhDVKhK/V01ngrClJLqf/GeZwKg0
-        CylUZiH5fhaSZ2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMMGd/nf8yw7G
-        5a8+6h1iZOJgPMQowcGsJMJrw70hSYg3JbGyKrUoP76oNCe1+BCjNAeLkjhvcuaGRCGB9MSS
-        1OzU1ILUIpgsEwenVAPT0t1rN0QaP9ztkOUSa56l1qi1c+qeWzz/X3o5u1+SXHPpSo3RnJYM
-        8yuWxm959e5UTZu1Z2kVz6HD7pfsrht0nzr6Kef0ad7OCW+jXmfPZDywbvZBgSwxpmdH31Su
-        EeqyzFl2amPxrbp1fu7yU/Q2f4zb9FvXeebmbj4xwy83DxcwZ0SfD9tz+IDcudvv4pY8r29i
-        3JvOoBOkZOHWtfh0+QKHM18217EmiKxJ3rtS+sNX73XiydeeCK8u2luT4PXkfu9NgUWrPfpe
-        mXzNkOO3arHj/K18LOya7bFPAbe1DX/Kh5yzqdyffeqwoe/nR90nddZa7fr77/uk/OwNc6MS
-        Xs6/MU/D0iEv8dynzVu5TimxFGckGmoxFxUnAgDCZKob3wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7rZPhuSDJ5sULd4MG8bm8X1L89Z
-        LeYfOcdq0ffiIbPF3tdb2S02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxYI/dhate4+wW/y7
-        tpHFYtWuP4wWx98/ZnTg93h/o5XdY+esu+wem1Z1snncubaHzWPzknqPvi2rGD0+b5ILYI/S
-        synKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy/i8I6hg
-        K2tF94cF7A2M61m6GDk5JARMJLZcW8kOYgsJLGWUWPPctIuRAyguJTG/RQmiRFjiz7Uuti5G
-        LqCS90Al79eB9fIK2En8mLaSCcRmEVCVeLHpCzNEXFDi5MwnYDWiAskSzVsOgdUICwRLfG+d
-        xgpiMwuIS9x6Mh8sLiJgIbF4w0JWkAXMAhNYJHaef8YKse0no8T+1o1gHWwChhK9R/sYQWxO
-        oM3nt8xhBLmUWUBdYv08IYih8hLb385hnsAoNAvJHbOQ7JuF0DELSccCRpZVjCKppcW56bnF
-        RnrFibnFpXnpesn5uZsYgdG87djPLTsYV776qHeIkYmD8RCjBAezkgivDfeGJCHelMTKqtSi
-        /Pii0pzU4kOMpsCwmMgsJZqcD0wneSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJJanZqakF
-        qUUwfUwcnFINTK1Oq3rsE9PZogTFD92tlNntuP7/qslOPkeezk7ucCzkr5z575vx4UXq2yWC
-        BbZO55x47fl/HtVFF9wi978p0Ot1DdOexz9Puk8pq+fXITHLpRKh1g77pjK8YzBc3Txhx7EF
-        IlP+3ml6J8szt+D/es5OoSdaWrssRTPK366OEjfie33c4RQ3z3XlO8XPpmzpPnLBbIZqTJHp
-        hCX+lpdCQ+P8hZ9V5ZkaNa16cS92zu8G3tiwbZ8qSzSFdnD+nLMss+7gMlc+xQt1C7+tWvdH
-        Umj6G8FPDfxXMg/ONBF4vbfaevVj+9euFi9DTc957Jqw87HV5PQPaVNXflJoEOz05Dv89cXG
-        JQf2190Kikv1PKPEUpyRaKjFXFScCAA5NIm7bwMAAA==
-X-CMS-MailID: 20220620103107eucas1p217192cc1d2c87ed8b7e4c799b4773f1d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220608151219eucas1p20af4138a6cc6c471791240b00ecffade
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220608151219eucas1p20af4138a6cc6c471791240b00ecffade
-References: <20220601233743.56317-1-virag.david003@gmail.com>
-        <20220601233743.56317-2-virag.david003@gmail.com>
-        <CGME20220608151219eucas1p20af4138a6cc6c471791240b00ecffade@eucas1p2.samsung.com>
-        <6178d685-5a87-6057-1200-e41baa3ece7d@linaro.org>
+        Mon, 20 Jun 2022 07:05:07 -0400
+Received: from mailout3.hostsharing.net (mailout3.hostsharing.net [IPv6:2a01:4f8:150:2161:1:b009:f236:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F86C12AA2;
+        Mon, 20 Jun 2022 04:05:06 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by mailout3.hostsharing.net (Postfix) with ESMTPS id 6E4AD10029E11;
+        Mon, 20 Jun 2022 13:05:01 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 2CD1861975D7;
+        Mon, 20 Jun 2022 13:05:01 +0200 (CEST)
+X-Mailbox-Line: From 439a3f3168c2f9d44b5fd9bb8d2b551711316be6 Mon Sep 17 00:00:00 2001
+Message-Id: <439a3f3168c2f9d44b5fd9bb8d2b551711316be6.1655714438.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Mon, 20 Jun 2022 13:04:50 +0200
+Subject: [PATCH net] net: phy: smsc: Disable Energy Detect Power-Down in
+ interrupt mode
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Simon Han <z.han@kunbus.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Ferry Toth <fntoth@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08.06.2022 17:12, Krzysztof Kozlowski wrote:
-> On 02/06/2022 01:37, David Virag wrote:
->> CMU_FSYS clock domain provides clocks for MMC (MMC_CARD, MMC_EMBD,
->> MMC_SDIO), and USB30DRD.
->>
->> Add clock indices and bindings documentation for CMU_FSYS domain.
->>
->> Signed-off-by: David Virag <virag.david003@gmail.com>
->> ---
->>  .../clock/samsung,exynos7885-clock.yaml       | 27 ++++++++++++++++
->>  include/dt-bindings/clock/exynos7885.h        | 31 ++++++++++++++++++-
+Simon reports that if two LAN9514 USB adapters are directly connected
+without an intermediate switch, the link fails to come up and link LEDs
+remain dark.  The issue was introduced by commit 1ce8b37241ed ("usbnet:
+smsc95xx: Forward PHY interrupts to PHY driver to avoid polling").
 
-> It seems the clock IDs from bindings are used by both driver and DTS.
-> Sylwester, can I take them to Samsung Soc and send you a pull request?
+The PHY suffers from a known erratum wherein link detection becomes
+unreliable if Energy Detect Power-Down is used.  In poll mode, the
+driver works around the erratum by briefly disabling EDPD for 640 msec
+to detect a neighbor, then re-enabling it to save power.
 
-Sure, let's do it that way.
+In interrupt mode, no interrupt is signaled if EDPD is used by both link
+partners, so it must not be enabled at all.
 
+We'll recoup the power savings by enabling SUSPEND1 mode on affected
+LAN95xx chips in a forthcoming commit.
+
+Fixes: 1ce8b37241ed ("usbnet: smsc95xx: Forward PHY interrupts to PHY driver to avoid polling")
+Reported-by: Simon Han <z.han@kunbus.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+---
+ drivers/net/phy/smsc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/phy/smsc.c b/drivers/net/phy/smsc.c
+index 1b54684b68a0..96d3c40932d8 100644
+--- a/drivers/net/phy/smsc.c
++++ b/drivers/net/phy/smsc.c
+@@ -110,7 +110,7 @@ static int smsc_phy_config_init(struct phy_device *phydev)
+ 	struct smsc_phy_priv *priv = phydev->priv;
+ 	int rc;
+ 
+-	if (!priv->energy_enable)
++	if (!priv->energy_enable || phydev->irq != PHY_POLL)
+ 		return 0;
+ 
+ 	rc = phy_read(phydev, MII_LAN83C185_CTRL_STATUS);
+@@ -210,6 +210,8 @@ static int lan95xx_config_aneg_ext(struct phy_device *phydev)
+  * response on link pulses to detect presence of plugged Ethernet cable.
+  * The Energy Detect Power-Down mode is enabled again in the end of procedure to
+  * save approximately 220 mW of power if cable is unplugged.
++ * The workaround is only applicable to poll mode. Energy Detect Power-Down may
++ * not be used in interrupt mode lest link change detection becomes unreliable.
+  */
+ static int lan87xx_read_status(struct phy_device *phydev)
+ {
+@@ -217,7 +219,7 @@ static int lan87xx_read_status(struct phy_device *phydev)
+ 
+ 	int err = genphy_read_status(phydev);
+ 
+-	if (!phydev->link && priv->energy_enable) {
++	if (!phydev->link && priv->energy_enable && phydev->irq == PHY_POLL) {
+ 		/* Disable EDPD to wake up PHY */
+ 		int rc = phy_read(phydev, MII_LAN83C185_CTRL_STATUS);
+ 		if (rc < 0)
 -- 
-Regards,
-Sylwester
+2.35.2
+
