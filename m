@@ -2,142 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED89ACCA47E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jun 2022 00:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969DEC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jun 2022 13:11:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245737AbiFUAOk (ORCPT
+        id S1348873AbiFUNLW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jun 2022 20:14:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42748 "EHLO
+        Tue, 21 Jun 2022 09:11:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236390AbiFUAOj (ORCPT
+        with ESMTP id S231492AbiFUNLU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jun 2022 20:14:39 -0400
-X-Greylist: delayed 1201 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Jun 2022 17:14:37 PDT
-Received: from gnutoo.cyberdimension.org (cyberdimension.org [IPv6:2001:910:1314:ffff::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D2B1836D;
-        Mon, 20 Jun 2022 17:14:36 -0700 (PDT)
-Received: from gnutoo.cyberdimension.org (localhost [127.0.0.1])
-        by cyberdimension.org (OpenSMTPD) with ESMTP id 0950e3d8;
-        Mon, 20 Jun 2022 23:39:55 +0000 (UTC)
-Received: from primarylaptop.localdomain (localhost [::1])
-        by gnutoo.cyberdimension.org (OpenSMTPD) with ESMTP id 8547062c;
-        Mon, 20 Jun 2022 23:39:55 +0000 (UTC)
-Date:   Tue, 21 Jun 2022 01:47:48 +0200
-From:   Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-To:     Krzysztof Kozlowski via Replicant <replicant@osuosl.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Simon Shields <simon@lineageos.org>,
-        Martin =?UTF-8?B?SsO8Y2tlcg==?= <martin.juecker@gmail.com>
-Subject: Re: [Replicant] [PATCH 3/3] ARM: dts: exynos: add function and
- color to aat1290 flash LED node in Galaxy S3
-Message-ID: <20220621014748.1c0b2b05@primarylaptop.localdomain>
-In-Reply-To: <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
-References: <20220607085343.72414-1-krzysztof.kozlowski@linaro.org>
-        <20220607085343.72414-3-krzysztof.kozlowski@linaro.org>
-        <4a7f8ab6-c061-3861-5790-b6c0fbd7cad1@gmail.com>
-        <ef62a7bb-2217-2947-17dd-fc4a51acdea5@linaro.org>
-        <f1402a1d-a74d-f7b9-b9e2-fc3991781e64@gmail.com>
-        <f1cc0f5a-12fb-28bc-7345-13ac2bf5b74d@linaro.org>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; i686-pc-linux-gnu)
+        Tue, 21 Jun 2022 09:11:20 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 121111EEF3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jun 2022 06:11:19 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id o10so19313856edi.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jun 2022 06:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=iKG7ipis6svDRJZdPtz2/v7PW+5iNIJmzZjHALS7NSA=;
+        b=okX+XmWFVy8JkpopHuzLRfgSke7JTv9kr3wB8aAZYW7uPFgGtBNefvBCzCyVSiD2HY
+         TnUi0Ww2tDe/iD32IcnsZcbSSPly/JQvMmMcTC95dxbVfXqlV0Oj+1EtG5LQkRBhj6AT
+         4Lr8qoiBBS9N3HvMdWPHUGFj8a5z2FnZCngklGjalL/tVkMuaHywyOyaJ2+S45XkCky2
+         X/cFcjcDmKY6TZw5/yaaHZ8YQRFHBZ6DSEPFcQGQ5jyjgr/uIuyX82plxGm9LxkOVi6f
+         78GBh57ZNFjKjSoKxxdssEvscwQqRR95ejACIeFNNFrY7WMO63gX3D8zse3OsiXEA0h7
+         2eEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=iKG7ipis6svDRJZdPtz2/v7PW+5iNIJmzZjHALS7NSA=;
+        b=hOQYKOxSAG/+5vV5HOQZzrUogP6U4zQAYVXy0QClrw296Wzbjf05DHriOVnSpD7Rql
+         jCdv3oD8CDnFn2pV9BteVB+X4/L4xA0uxGTVCOjkYwz/ZfrokvvKRhiph2POSqKcqhCm
+         hmioUgcIJ/WmmkObmGyQ5tLAU5babYBqnN/x7loDOS1bvbayQY75fCnFeh84ooD96N4B
+         /Xm9QN2kBzqlBJWHToAtXkpaX5YQXyyB04HyXZ/fnpx/dh2zZwazRBdnPut8LRkED5G6
+         LSDH/vESKc5QKwUDZ+O7WyhoOtivIwI8MPofM4npejNmmmKjS6/8E26ljmB9axJvSAP9
+         PmVA==
+X-Gm-Message-State: AJIora+4gCiliLPlRomBLeoPKkbsTFAKj0IUu0CHlZdAiWpmGd3SgVUq
+        2Up7ulhcgFu8db/cH1bw7h5stuAh1EIJGg==
+X-Google-Smtp-Source: AGRyM1vKW37lesBOhQl1w2hkQXH+6mMPK7WPBmLgxo70ZkWNzmO3m43rOEkPpANuofDWkYzsHia7IQ==
+X-Received: by 2002:a05:6402:2419:b0:435:1e2a:19ce with SMTP id t25-20020a056402241900b004351e2a19cemr35898425eda.370.1655817077646;
+        Tue, 21 Jun 2022 06:11:17 -0700 (PDT)
+Received: from [192.168.0.220] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id u17-20020a1709060b1100b006ff52dfccf3sm7522455ejg.211.2022.06.21.06.11.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jun 2022 06:11:17 -0700 (PDT)
+Message-ID: <d0f3bab8-fadb-709c-7118-20e23fba1dc4@linaro.org>
+Date:   Tue, 21 Jun 2022 15:11:15 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RXcLkuiECAhv+Y3/6Gw0ixN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 3/4] clocksource/drivers/exynos_mct: Support
+ local-timers property
+Content-Language: en-US
+To:     tglx@linutronix.de, daniel.lezcano@linaro.org
+Cc:     kernel@axis.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        krzysztof.kozlowski@linaro.org
+References: <20220609112738.359385-1-vincent.whitchurch@axis.com>
+ <20220609112738.359385-4-vincent.whitchurch@axis.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220609112738.359385-4-vincent.whitchurch@axis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---Sig_/RXcLkuiECAhv+Y3/6Gw0ixN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 09/06/2022 13:27, Vincent Whitchurch wrote:
+> If the device tree indicates that the hardware requires that the
+> processor only use certain local timers, respect that.
+> 
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-On Sun, 12 Jun 2022 19:06:09 +0200
-Krzysztof Kozlowski via Replicant <replicant@osuosl.org> wrote:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> On 12/06/2022 17:09, Jacek Anaszewski wrote:
-> > On 6/10/22 12:14, Krzysztof Kozlowski wrote:
-> >> On 09/06/2022 22:31, Jacek Anaszewski wrote:
-> >>> Hi Krzysztof,
-> >>>
-> >>> On 6/7/22 10:53, Krzysztof Kozlowski wrote:
-> >>>> Add common LED properties - the function and color - to aat1290
-> >>>> flash LED node in Galaxy S3.
-> >>>>
-> >>>> Signed-off-by: Krzysztof Kozlowski
-> >>>> <krzysztof.kozlowski@linaro.org> ---
-> >>>>    arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 3 +++
-> >>>>    1 file changed, 3 insertions(+)
-> >>>>
-> >>>> diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-> >>>> b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi index
-> >>>> 72901772fcad..d76f3678dcab 100644 ---
-> >>>> a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi +++
-> >>>> b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi @@ -7,6 +7,7 @@
-> >>>>     */
-> >>>>   =20
-> >>>>    /dts-v1/;
-> >>>> +#include <dt-bindings/leds/common.h>
-> >>>>    #include "exynos4412-midas.dtsi"
-> >>>>   =20
-> >>>>    / {
-> >>>> @@ -27,6 +28,8 @@ led-controller {
-> >>>>   =20
-> >>>>    		led {
-> >>>>    			label =3D "flash";
-> >>>> +			function =3D LED_FUNCTION_FLASH;
-> >>>> +			color =3D <LED_COLOR_ID_WHITE>;
-> >>>
-> >>> Addition of these two properties will not change anything because
-> >>> the label has precedence. It is deprecated, but if you introduce
-> >>> function and color to the binding instead of the label, the
-> >>> resulting LED class device name will change.
-> >>
-> >> Which is not necessarily what we want, right? Adding these
-> >> properties is a proper description of hardware, regardless whether
-> >> current Linux implementation uses them or not.
-> >=20
-> > Actually I'd just drop label in addition to your change.
-> > I don't think it would break anybody seriously - not expecting it
-> > has any larger group of users and having uniformly constructed DTS
-> > files in the mainline has greater value.
-> >=20
->=20
-> What about some PostmarketOSos, LineageOS and other OSes?
->=20
-> Let me Cc here some folks - Simon, Martin, is the label in flash LED
-> node anyhow important for you? Can it be dropped and replaced with
-> function+color?
-We don't have flash or camera support yet with Replicant version(s) that
-use kernel(s) based on upstream Linux, so it won't break anything.
+Daniel,
+All patches got my review. Do you need here anything more? It seems it's
+only me who reviews such code, so I don't expect more Rb-tags. :)
 
-Denis.
-
---Sig_/RXcLkuiECAhv+Y3/6Gw0ixN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEeC+d2+Nrp/PU3kkGX138wUF34mMFAmKxByUACgkQX138wUF3
-4mMYKBAAizG0drTNSDYUxHg7Da7PcIFOxip+GcGDJLI27Fi0cFg/kEyaJboALnxx
-Q3CvVhpuJqOGKDe0HfF6FZO/+BxzShNC/NxDXUlfkyI2SXvY3EAqe4kBkU7ynyKc
-aejrFq9CTXXvnPiVbyRlOzz15tkj8byNqNvN7cgd6kGzLtU13B7w+tPBzL3lg5Zh
-sT/kPqF8Wq++sN1INqMT9g1WVUUWl47dia1DJ9xz11qYznYCKea7Khej/vOsRh9b
-Aue1drPuUX+19MEGaCmkvXJAwhP3gMJVSrxuPg0iKJwwNMS93o2bRQmST0MIqp+F
-UAvDTEHqxpWhCG1O3wwKFLAVZCSlPr0bf8o8iRyMrJF+y1Cu/h9VA+ejvRSsyvIr
-Ggk7X0uBWphQIzESAW8z3Ggl8ZDev17m6kn99kHa522fhbT7zpxMzmbKMfmtI4CZ
-kHdmyNiJXVblYc9nIdF1OdjoeNxuJaYRSPFX+rzIluT2Hd17Ds6AkgoyNAvjRmOT
-Omh3UORRJgSxE2L0yECrpfXbSenPuaKQqv1OUcNjaHj6k3VonRi4DbFeGMRCOCr5
-aDs+T1CgdPDOzxytoxrevY5g1aY6iIIIjkqQOVn8gFF6KmyarAmr6XVARHURYenI
-7fPUQnHtSdHqBS5NlDvYwhMDL992U1ibbhNDsSE0NUpElEIU4ZU=
-=YOd1
------END PGP SIGNATURE-----
-
---Sig_/RXcLkuiECAhv+Y3/6Gw0ixN--
+Best regards,
+Krzysztof
