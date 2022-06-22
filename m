@@ -2,87 +2,91 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEBBCCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Jun 2022 02:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9081C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Jun 2022 05:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356150AbiFVCKc (ORCPT
+        id S1356789AbiFVFuQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Jun 2022 22:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37276 "EHLO
+        Wed, 22 Jun 2022 01:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232483AbiFVCKb (ORCPT
+        with ESMTP id S1356811AbiFVFuP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Jun 2022 22:10:31 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11B9338AD;
-        Tue, 21 Jun 2022 19:10:30 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25M0J8wm011432;
-        Wed, 22 Jun 2022 02:10:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2021-07-09;
- bh=pd/lIFKzWE4I7Kn7X/ukG84VnGOkmKLwAry+/UOI+8M=;
- b=r3F77uQb0ilQCCDUO4J7w4dNJ6iPxZ7EVMKlpFgMCyolLQqHLunkzXl6qEhZr+ghDqnT
- hIVDezfXHVNouRBiaYxst19ZYiybJVQiE1wkcKT8bP3I0VQ9EuUZg3tQlnV3miw7Vozn
- tCWmGLXDZVlDymgTzDSN3oMV5azQc+RBpLUlL9Y9yhhnhhsmEIoJzJYHzuWibRlI+72K
- eln4Dds8//hHuMG6W0WHrYFgo1538WA/WUxZj/2q+CTQF/nF3uA3nmkcXo/ZLEq1N0ln
- bhoy690ex9NUUNeZcMGKrLO/Vylwb7RmYmPPNahBMXJV1uQYtafE6ZXRuoC6yAOh5jqQ yA== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gs6kf72tv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Jun 2022 02:10:19 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25M26YLW038095;
-        Wed, 22 Jun 2022 02:10:18 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gtd9usx3e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Jun 2022 02:10:18 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 25M29Bim002724;
-        Wed, 22 Jun 2022 02:10:17 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gtd9usx36-1;
-        Wed, 22 Jun 2022 02:10:17 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-phy@lists.infradead.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        bvanassche@acm.org, chanho61.park@samsung.com, beanhuo@micron.com,
-        avri.altman@wdc.com, krzysztof.kozlowski+dt@linaro.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/3] ufs: host: ufs-exynos: remove unused defines
-Date:   Tue, 21 Jun 2022 22:10:11 -0400
-Message-Id: <165586371837.21830.10958074240808961453.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.35.2
-In-Reply-To: <20220615121204.16642-1-alim.akhtar@samsung.com>
-References: <CGME20220615121508epcas5p3a42f8503bb6c6120cb4c0606109fe9c4@epcas5p3.samsung.com> <20220615121204.16642-1-alim.akhtar@samsung.com>
-MIME-Version: 1.0
+        Wed, 22 Jun 2022 01:50:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B7C836687;
+        Tue, 21 Jun 2022 22:50:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D83E61984;
+        Wed, 22 Jun 2022 05:50:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DE474C341C5;
+        Wed, 22 Jun 2022 05:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655877014;
+        bh=NYMvEwJ+Kg6KM2WUIA6aIdBjJvD5lTTcCxon/DwW/70=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=H8UGj6ZPOGQq5h7zyOv0y5h0Do8DlwJq26Em137Xed0vDBBDqyQ5LTB0ZnvdANfLw
+         4zU1Z4ilBCA96zIt3qW7QBXyEzzunfgN9s2jSophUW+2Ab/hLw5BdJunXwAr9cRTFU
+         PfS5eBTwiI24V7Tv74/13HAAyh093ZJ55PmSmPaNnOqYrSMJN2Q2tDOcmItEH6nnbn
+         VwpqiP0fncCud3tdIrVyBs6VfwjVbwH4VOTaypRhSivoNVEZNu8F+KGbk43AHV37tC
+         PbI9CZ0CBqr35lHonYA6U+Xd+sD9t+w40poUww3Wdn55DCWng54mvmnbEJmkdMI4o+
+         mPsVgMhiyeW5g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BB308E574DA;
+        Wed, 22 Jun 2022 05:50:13 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: CUCMVEMO4qv7lXOpeiMuW5vVaQr5o8nv
-X-Proofpoint-GUID: CUCMVEMO4qv7lXOpeiMuW5vVaQr5o8nv
+Subject: Re: [PATCH net] net: phy: smsc: Disable Energy Detect Power-Down in
+ interrupt mode
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165587701375.11274.5335349577146413179.git-patchwork-notify@kernel.org>
+Date:   Wed, 22 Jun 2022 05:50:13 +0000
+References: <439a3f3168c2f9d44b5fd9bb8d2b551711316be6.1655714438.git.lukas@wunner.de>
+In-Reply-To: <439a3f3168c2f9d44b5fd9bb8d2b551711316be6.1655714438.git.lukas@wunner.de>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+        edumazet@google.com, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org, steve.glendinning@shawell.net,
+        UNGLinuxDriver@microchip.com, oneukum@suse.com,
+        andre.edich@microchip.com, linux@rempel-privat.de,
+        martyn.welch@collabora.com, ghojda@yo2urs.ro,
+        chf.fritz@googlemail.com, LinoSanfilippo@gmx.de,
+        p.rosenberger@kunbus.com, z.han@kunbus.com, hkallweit1@gmail.com,
+        andrew@lunn.ch, linux@armlinux.org.uk, fntoth@gmail.com,
+        m.szyprowski@samsung.com, krzk@kernel.org,
+        linux-samsung-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 15 Jun 2022 17:42:02 +0530, Alim Akhtar wrote:
+Hello:
 
-> Remove #defines as those are not used anywhere in the driver file
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 20 Jun 2022 13:04:50 +0200 you wrote:
+> Simon reports that if two LAN9514 USB adapters are directly connected
+> without an intermediate switch, the link fails to come up and link LEDs
+> remain dark.  The issue was introduced by commit 1ce8b37241ed ("usbnet:
+> smsc95xx: Forward PHY interrupts to PHY driver to avoid polling").
 > 
+> The PHY suffers from a known erratum wherein link detection becomes
+> unreliable if Energy Detect Power-Down is used.  In poll mode, the
+> driver works around the erratum by briefly disabling EDPD for 640 msec
+> to detect a neighbor, then re-enabling it to save power.
 > 
+> [...]
 
-Applied to 5.20/scsi-queue, thanks!
+Here is the summary with links:
+  - [net] net: phy: smsc: Disable Energy Detect Power-Down in interrupt mode
+    https://git.kernel.org/netdev/net/c/2642cc6c3bbe
 
-[1/3] ufs: host: ufs-exynos: remove unused defines
-      https://git.kernel.org/mkp/scsi/c/6c6806abd5bb
-[2/3] ufs: host: ufs-exynos: use already existing define
-      https://git.kernel.org/mkp/scsi/c/cb2bf7c6e544
-[3/3] include: ufs: re-arrange addresses in increasing order
-      https://git.kernel.org/mkp/scsi/c/c0d93b12f31c
-
+You are awesome, thank you!
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
