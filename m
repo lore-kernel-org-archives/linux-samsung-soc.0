@@ -2,116 +2,103 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12072C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jun 2022 12:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6652C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jun 2022 07:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbiFWMZZ (ORCPT
+        id S229936AbiFXH7s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Jun 2022 08:25:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40900 "EHLO
+        Fri, 24 Jun 2022 03:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231157AbiFWMZY (ORCPT
+        with ESMTP id S229478AbiFXH7q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Jun 2022 08:25:24 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E7B34BB7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2022 05:25:23 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id fd6so25504436edb.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2022 05:25:23 -0700 (PDT)
+        Fri, 24 Jun 2022 03:59:46 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C2B6B8C1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 00:59:45 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id cf14so2284439edb.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 00:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MZX8fvspGt+LtHf7gEGCk2W/SOrNo7rRR2lPEfFjYT4=;
-        b=HRnHuDpUPpi75BV/4x+QAr71ZWTc6YBUanqHvk/hlPqG2B9hZ9GUCCllUSuTSSBWLP
-         N1FbAzmsqFiL5HBeegRUHvT9uqty7wQvH5L1sZo8+Z6sbfIQ4dq7LEmTjtfq4RaRlwJi
-         gtAlzb1rJoO4aqn4U7fqzo2L2hJFuXSi7NCSJEShYM5KDV3UmTr63pDwO/61AerH2eUx
-         Yxm05O8xxZI3hixgEIS0QKQfqQ/Lw5i9zTXrMR3tG+MzYDZxCaikrLVkG/xCV17X/4Mt
-         5E/k7V4zoAzWTKSdflKbL8whe4vnygRDptVx1LemRmonwavjA1MIDssjVZuNwf5PdZya
-         ezdw==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=df4hTcrZotnifvBHPZxAZdqUw93jw7Dt3467JJNB40g=;
+        b=oLSnu9e94vKdRXjQHDnvIcjxIN/kvSvWyBfbx/YeRiWoNNvvqp3IZYU/2xklU+PlD/
+         EMjM10q6UU2bK/VxLvvOrrzekSpXNyFq1B7TD2SX5twDhg/X86z8OJ9Ype+idW0/EhUM
+         fQrq6Xkp1zMs1EmCTaJeUpsPTavWW9wSQb8u9HzrPfKlRgAs7JsUbKvFuOotXtcOSumz
+         a7wD9l4UI1Bq6vlWf1hqUIH+BuS9twZqomrRIHmT8+WlV+dDeXC/0ast1KS6KVTdcTLQ
+         cE32tb2ZpWpDf8lrpeMmamyrPrbPwGZ7zHtpoDCDhoVSdlEVhOFV0opBfkyw027GkqXy
+         CPMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MZX8fvspGt+LtHf7gEGCk2W/SOrNo7rRR2lPEfFjYT4=;
-        b=GPhH1mHbPrRGiBuAMMaeUe/2rAz64rP21gu9u+KsBBKoBK59K5VyPWmMjesoNH4wcX
-         z8qYXJvmRY9lO+QCvc2QZL05xGDizF6JDrW/esuc0yX3vhBO+4dkP+jwFXFgbDHi2nZe
-         hEd1qDiqedzLW//YbZYIgcJGaxPY+xhjWO6+49/doWpsYw4KALL1vShK1JveZJtFvzFQ
-         8J7kviyFxHl7N6DYqdQRrWdNfAzq4lk2N/z3htopQ0jqAjH2WVeUwUxCKNo86bwYGCDs
-         A2Up46VQ01iFDXi3PUnD19MeD4IH1uVJxs8h9LqsxXaX+OxErI70jf5tirvhjvl94W86
-         SOvg==
-X-Gm-Message-State: AJIora82Rs+yyt/SEDkLpyrEs7FVP+G4heApkY24oqGSKoOwcl1HL+cv
-        jfho+i0VnWuhAFP3cge4HrY/rbluTpD3557FNlRZcwkzsxHEIQ==
-X-Google-Smtp-Source: AGRyM1ueoNAn/6UpZzXtWy0ZUh7onypqkpiS+P5CnmQom0So4UY6jwS0/RR6+03SjNQnbCnUydc3U6IYa25HrO1rd9I=
-X-Received: by 2002:a05:6402:5192:b0:435:b3c3:af89 with SMTP id
- q18-20020a056402519200b00435b3c3af89mr8878880edd.390.1655987122261; Thu, 23
- Jun 2022 05:25:22 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=df4hTcrZotnifvBHPZxAZdqUw93jw7Dt3467JJNB40g=;
+        b=FVuOeGjgxejeSQyZNhoa8adOctOBRoF3ZCcNfCjqmjrIDefBzlnQgXzIMdAbIXxlt/
+         D/Zik33UBWFkq0dLca2N/A3PIBXiwpeiS64EIaabB+kxXiv0DjiC+LCJ4OdGtvAdT4PX
+         ya8QaY4L8gFwe7Ug5ZAYNug82GhNrqSQssTtkNaVwPDYe2SOOvyDx+7EfoLUmbdyGXMc
+         jec2cNVLU5D/JFOw46FdqwsUrwLvYMQEGU6Ak+k9GF5dOmPi7Y7hHSpcftLxA+qjfXxz
+         RYYQQCBoLhgspAd0wUwm/MIADaZ8xd9H5uhRLNNHVbjXGmSifZsMkH1iZhWFIpRuCRZF
+         Qpbw==
+X-Gm-Message-State: AJIora/J6K6W1/6gQiRoquwLOzagmIAp+Mc2LOcCUoClxsTn5Ocu9pxw
+        y5abr3fHdN7ZLTxg7ew9So6XNw==
+X-Google-Smtp-Source: AGRyM1svgmJ/GTyyqp4Dc5HIRGri5HppdA20rfEgzWNE9Vzoxh6xPtdys+apubLBTZCgcTVIifqS6g==
+X-Received: by 2002:a05:6402:280b:b0:434:efd8:d9ae with SMTP id h11-20020a056402280b00b00434efd8d9aemr15633804ede.120.1656057584335;
+        Fri, 24 Jun 2022 00:59:44 -0700 (PDT)
+Received: from [192.168.0.233] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id b21-20020a1709063f9500b006f3ef214dd9sm671371ejj.63.2022.06.24.00.59.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jun 2022 00:59:43 -0700 (PDT)
+Message-ID: <033af024-8acd-e536-0c24-ff30b12a581b@linaro.org>
+Date:   Fri, 24 Jun 2022 09:59:42 +0200
 MIME-Version: 1.0
-References: <CGME20220623093641eucas1p11732bf2c875960f7a2bb1d6fe053bc81@eucas1p1.samsung.com>
- <20220623093629.32178-1-m.szyprowski@samsung.com>
-In-Reply-To: <20220623093629.32178-1-m.szyprowski@samsung.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 23 Jun 2022 15:25:11 +0300
-Message-ID: <CAPLW+4=RRsgizoV4yS2qGvUbiU011W-9J=OTQP6Xm4hMjYgVvQ@mail.gmail.com>
-Subject: Re: [PATCH] iommu/exynos: Make driver independent of the system page size
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     iommu@lists.linux-foundation.org,
-        linux-samsung-soc@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 1/2] clk: samsung: exynos7885: Correct "div4" clock
+ parents
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     David Virag <virag.david003@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220526055840.45209-1-virag.david003@gmail.com>
+ <20220526055840.45209-2-virag.david003@gmail.com>
+ <2eda61c1-a076-3467-91bc-8c2e14f4f516@linaro.org>
+In-Reply-To: <2eda61c1-a076-3467-91bc-8c2e14f4f516@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On 26/05/2022 09:21, Krzysztof Kozlowski wrote:
+> On 26/05/2022 07:58, David Virag wrote:
+>> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
+>> 2 to achieve a by 4 division, thus their parents are the respective
+>> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
+>> This leads to the kernel thinking "div4"s and everything under them run
+>> at 2x the clock speed. Fix this.
+>>
+>> Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
+>> Signed-off-by: David Virag <virag.david003@gmail.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos7885.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Thu, 23 Jun 2022 at 12:36, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> PAGE_{SIZE,SHIFT} macros depend on the configured kernel's page size, but
-> the driver expects values calculated as for 4KB pages. Fix this.
->
-> Reported-by: Robin Murphy <robin.murphy@arm.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+Sylwester,
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+This goes to v5.20?
 
-with one note: SPAGE_SIZE and SPAGE_ORDER could be used instead of
-SZ_4K. But that's just a matter of taste, I'm ok with that as is,
-hence R-b tag.
-
-Thanks!
-
-> Untested, because Exynos based boards I have doesn't boot with non-4KB
-> page size for other reasons.
-> ---
->  drivers/iommu/exynos-iommu.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 71f2018e23fe..9c060505a46e 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -340,8 +340,7 @@ static void __sysmmu_set_ptbase(struct sysmmu_drvdata *data, phys_addr_t pgd)
->         if (MMU_MAJ_VER(data->version) < 5)
->                 writel(pgd, data->sfrbase + REG_PT_BASE_ADDR);
->         else
-> -               writel(pgd >> PAGE_SHIFT,
-> -                            data->sfrbase + REG_V5_PT_BASE_PFN);
-> +               writel(pgd / SZ_4K, data->sfrbase + REG_V5_PT_BASE_PFN);
->
->         __sysmmu_tlb_invalidate(data);
->  }
-> @@ -551,7 +550,7 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
->                  * 64KB page can be one of 16 consecutive sets.
->                  */
->                 if (MMU_MAJ_VER(data->version) == 2)
-> -                       num_inv = min_t(unsigned int, size / PAGE_SIZE, 64);
-> +                       num_inv = min_t(unsigned int, size / SZ_4K, 64);
->
->                 if (sysmmu_block(data)) {
->                         __sysmmu_tlb_invalidate_entry(data, iova, num_inv);
-> --
-> 2.17.1
->
+Best regards,
+Krzysztof
