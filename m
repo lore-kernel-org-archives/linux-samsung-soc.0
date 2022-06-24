@@ -2,103 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6652C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jun 2022 07:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73A5C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jun 2022 08:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbiFXH7s (ORCPT
+        id S229737AbiFXIEf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 03:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
+        Fri, 24 Jun 2022 04:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbiFXH7q (ORCPT
+        with ESMTP id S230300AbiFXIE2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jun 2022 03:59:46 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C2B6B8C1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 00:59:45 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id cf14so2284439edb.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 00:59:45 -0700 (PDT)
+        Fri, 24 Jun 2022 04:04:28 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8854C6DB0D
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 01:04:27 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id eo8so2390796edb.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 01:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=df4hTcrZotnifvBHPZxAZdqUw93jw7Dt3467JJNB40g=;
-        b=oLSnu9e94vKdRXjQHDnvIcjxIN/kvSvWyBfbx/YeRiWoNNvvqp3IZYU/2xklU+PlD/
-         EMjM10q6UU2bK/VxLvvOrrzekSpXNyFq1B7TD2SX5twDhg/X86z8OJ9Ype+idW0/EhUM
-         fQrq6Xkp1zMs1EmCTaJeUpsPTavWW9wSQb8u9HzrPfKlRgAs7JsUbKvFuOotXtcOSumz
-         a7wD9l4UI1Bq6vlWf1hqUIH+BuS9twZqomrRIHmT8+WlV+dDeXC/0ast1KS6KVTdcTLQ
-         cE32tb2ZpWpDf8lrpeMmamyrPrbPwGZ7zHtpoDCDhoVSdlEVhOFV0opBfkyw027GkqXy
-         CPMQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4OtMpzHKzt91qkm5V15gkjdA78bNtdhhU+jDtTaRt8Y=;
+        b=fYHxbPX9kMi6QwUH5r9LNDwsFslHQChYVUSoxHKqS/Sbczv6WsqcHg5LMjF1kCYhhr
+         vRGm0im6lsDWbXAJKv4sKfTccMFIr45np2W1U/CyUfs/1NFNwRrPMHmTUV8+SBqptfwI
+         NX8szonEbOKl/DNlTLpBRZ4aX4fWv0FNUsFEY9zvg/pct5z6R1DHQkFjrWLPq5bSwx9j
+         UyESn/oJRH4JabPxCnH7VWt/iz7En1csAUD/cV/6CtWKwuZRYZM+P4MfpkU6ONKwV7ff
+         tZU4bhM0RukM0tUnE0G+xx2tUba3uwJY3QjWMJ+gkin/6rg5N7DMYAd2Q1kBYrEFh4s2
+         k7vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=df4hTcrZotnifvBHPZxAZdqUw93jw7Dt3467JJNB40g=;
-        b=FVuOeGjgxejeSQyZNhoa8adOctOBRoF3ZCcNfCjqmjrIDefBzlnQgXzIMdAbIXxlt/
-         D/Zik33UBWFkq0dLca2N/A3PIBXiwpeiS64EIaabB+kxXiv0DjiC+LCJ4OdGtvAdT4PX
-         ya8QaY4L8gFwe7Ug5ZAYNug82GhNrqSQssTtkNaVwPDYe2SOOvyDx+7EfoLUmbdyGXMc
-         jec2cNVLU5D/JFOw46FdqwsUrwLvYMQEGU6Ak+k9GF5dOmPi7Y7hHSpcftLxA+qjfXxz
-         RYYQQCBoLhgspAd0wUwm/MIADaZ8xd9H5uhRLNNHVbjXGmSifZsMkH1iZhWFIpRuCRZF
-         Qpbw==
-X-Gm-Message-State: AJIora/J6K6W1/6gQiRoquwLOzagmIAp+Mc2LOcCUoClxsTn5Ocu9pxw
-        y5abr3fHdN7ZLTxg7ew9So6XNw==
-X-Google-Smtp-Source: AGRyM1svgmJ/GTyyqp4Dc5HIRGri5HppdA20rfEgzWNE9Vzoxh6xPtdys+apubLBTZCgcTVIifqS6g==
-X-Received: by 2002:a05:6402:280b:b0:434:efd8:d9ae with SMTP id h11-20020a056402280b00b00434efd8d9aemr15633804ede.120.1656057584335;
-        Fri, 24 Jun 2022 00:59:44 -0700 (PDT)
-Received: from [192.168.0.233] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id b21-20020a1709063f9500b006f3ef214dd9sm671371ejj.63.2022.06.24.00.59.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jun 2022 00:59:43 -0700 (PDT)
-Message-ID: <033af024-8acd-e536-0c24-ff30b12a581b@linaro.org>
-Date:   Fri, 24 Jun 2022 09:59:42 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 1/2] clk: samsung: exynos7885: Correct "div4" clock
- parents
-Content-Language: en-US
+        bh=4OtMpzHKzt91qkm5V15gkjdA78bNtdhhU+jDtTaRt8Y=;
+        b=cfcEHA7gaNlHnqmB8n+aEMMwPUKo5uVJHF8QMpLO5v0EI/Hi0/fDzwnHGwQx6ynJZw
+         ztKqYoGhqmI+EOwlj4KRwdUinqVAnA/AEKGhrYfZaDJlrDLN04IUywE85zFkVydUw2sF
+         2bxmymF9fyOq8P2ndVCmWlCifOMz/9I9y9Xpn6xXAONR0ovNB05fCZP+7sbxM7tHS3ID
+         tQQfQGM2VXFlZGjvYr2Vw4BRN1TL6/JKxxvSKJZ+C9tzSTHyl7WQ074xACMah1V90g9b
+         0hU+h95OApW55sk1vFy2wwXxrPXLTPw02gusfqzegaFgw63tLMUnU8b6to8FvMX/mo3q
+         NhUQ==
+X-Gm-Message-State: AJIora+VGnasxALR1Zc2f1RDGbPVLvr7w1NR6HhMGATq7ma/+oWTfv2r
+        yvN/k5bnnqtUbGgMmdXZ5BzrPA==
+X-Google-Smtp-Source: AGRyM1vO8srbTPpU08tP7uU1GPYZF7L70IU0e2vDNGf8P3wJz+25K67GBLB56/dBsIiBV+Kf80UloQ==
+X-Received: by 2002:a05:6402:254c:b0:435:c541:fc8d with SMTP id l12-20020a056402254c00b00435c541fc8dmr10378580edb.385.1656057866189;
+        Fri, 24 Jun 2022 01:04:26 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id d6-20020a170906174600b00715705dd23asm684580eje.89.2022.06.24.01.04.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jun 2022 01:04:25 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     David Virag <virag.david003@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220526055840.45209-1-virag.david003@gmail.com>
- <20220526055840.45209-2-virag.david003@gmail.com>
- <2eda61c1-a076-3467-91bc-8c2e14f4f516@linaro.org>
-In-Reply-To: <2eda61c1-a076-3467-91bc-8c2e14f4f516@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL fixes] ARM: samsung: fixes for v5.19
+Date:   Fri, 24 Jun 2022 10:04:23 +0200
+Message-Id: <20220624080423.31427-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 26/05/2022 09:21, Krzysztof Kozlowski wrote:
-> On 26/05/2022 07:58, David Virag wrote:
->> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
->> 2 to achieve a by 4 division, thus their parents are the respective
->> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
->> This leads to the kernel thinking "div4"s and everything under them run
->> at 2x the clock speed. Fix this.
->>
->> Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
->> Signed-off-by: David Virag <virag.david003@gmail.com>
->> ---
->>  drivers/clk/samsung/clk-exynos7885.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
 
-Sylwester,
-
-This goes to v5.20?
+Two fixes for v5.19.
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a56:
+
+  Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-fixes-5.19
+
+for you to fetch changes up to c4c79525042a4a7df96b73477feaf232fe44ae81:
+
+  ARM: exynos: Fix refcount leak in exynos_map_pmu (2022-06-06 10:40:57 +0200)
+
+----------------------------------------------------------------
+Samsung fixes for v5.19
+
+Both fixes are for issues present before v5.19 merge window:
+1. Correct UART clocks on Exynos7885.  Although the initial, fixed
+   DTS commit is from v5.18, the issue will be exposed with a upcoming fix
+   to Exynos7885 clock driver, so we need to correct the DTS earlier.
+2. Fix theoretical OF node leak in Exynos machine code.
+
+----------------------------------------------------------------
+David Virag (1):
+      arm64: dts: exynos: Correct UART clocks on Exynos7885
+
+Miaoqian Lin (1):
+      ARM: exynos: Fix refcount leak in exynos_map_pmu
+
+ arch/arm/mach-exynos/exynos.c              |  1 +
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi | 12 ++++++------
+ 2 files changed, 7 insertions(+), 6 deletions(-)
