@@ -2,186 +2,156 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3ABC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jun 2022 08:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DBFC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 24 Jun 2022 08:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbiFXIKe (ORCPT
+        id S229808AbiFXIQW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 04:10:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33068 "EHLO
+        Fri, 24 Jun 2022 04:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbiFXIKc (ORCPT
+        with ESMTP id S229755AbiFXIQV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 24 Jun 2022 04:10:32 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B02D4D63B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 01:10:31 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id lw20so3134012ejb.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 01:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ppOb8unbJrDxFJbdCnHsLpI+FWVgE5qyktBxG9bYt5I=;
-        b=pX3T/iNSMFIpiW6v3ZCV7BMrZgoqn2YBNw05bESjYlb9wXWCAGY4b5maOYnwRMKeJE
-         RJDOE7s16k156GOhEACOHkOjaEc9jb28BlHN5+lKnePc0GH+PXBgee8IjqJv9v8V4fzp
-         KSICDFuOJ5ie1i7Yt33pYlJ5F3Z0Qgs7RYzg/50fVVkmrRhVzC2illK2JWypyqE6EPTY
-         aEPUJCGgZhqBYSTC7zf6juKchn9lplSoe8O/e4Z4XaGoVPo/PXRnrkWArs7FjECsdejr
-         +EJc/SzkjGUd7jz4rqOy/v8MEHDQ8pqsIIYA6PpwDEcxLizlU/UE4v/ZQ7thQkDR9D0J
-         Z4GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ppOb8unbJrDxFJbdCnHsLpI+FWVgE5qyktBxG9bYt5I=;
-        b=GcCGXQmBq1B/6gnqGrg/l78KcxM/YDc6Q/LxyF/WqGysdNMRJukwBAe1lj6ziR2rGm
-         0MMXivVaw2xRhmCefiBbm9dhxH01EUls4n2SS4pgZ5NU4PLZhn9SVcoEAXTVyXRW8fSg
-         xrTa7HAAaxP+wEpzX5FHKFjPyXBs7VoJMuTUHUf4vRHurfSDW5gCxvzXnTWM8H9BKGp2
-         9YaFxp5uTi9PnVF+DO0UrulIw1OFwnvpyChH5o2ToSyPoDDeNLFyi0cHvTfeN4wrpqxN
-         GHD5zp3g1zV4/cehZZj75iEoSwgzH5j3XbYtd3iUU9OIaGKz1UcKJOMYFCGgL18SfOT/
-         huTg==
-X-Gm-Message-State: AJIora9mm7h9B1HsdmscPppVOaiLTO6PQzRtSypjDR5Zxg1+MiG2wkpE
-        pXhm0iA/IEpPgRJHv8HKpHQVSw==
-X-Google-Smtp-Source: AGRyM1vJuMKUo4MW2++Vvkwywwei/ikXA4qoE3wE7t12dNEqmfPn8ssrtIZjbW8wCJgoor2K2/tBAQ==
-X-Received: by 2002:a17:906:7742:b0:708:ad9f:8e88 with SMTP id o2-20020a170906774200b00708ad9f8e88mr11710293ejn.735.1656058229952;
-        Fri, 24 Jun 2022 01:10:29 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id q21-20020aa7cc15000000b0042617ba638esm1395924edt.24.2022.06.24.01.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 01:10:29 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL][PATCH] pinctrl: samsung: do not use bindings header with constants
-Date:   Fri, 24 Jun 2022 10:10:22 +0200
-Message-Id: <20220624081022.32384-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Fri, 24 Jun 2022 04:16:21 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7456E7A1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 01:16:19 -0700 (PDT)
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220624081614epoutp036949c9f23bec25abdeafe816c5dcd7d7~7gH-ddHN72727327273epoutp03W
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jun 2022 08:16:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220624081614epoutp036949c9f23bec25abdeafe816c5dcd7d7~7gH-ddHN72727327273epoutp03W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1656058574;
+        bh=FZKEJyZFjw0T/Qua7bnSNem9kLldLXaTWqvJ2h9mH5s=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=Qr10487sa5kzizpKklhGgEji/BhIC+ItoRGWhcNeuSg/mZhTaC0kWxdyzb1p/JwPs
+         j5Rm95LGFNe2VWcQ5tOcPBTHXUePUUdDm90VW3iaDYJbanUsuJDd/PSksFFxZKLhm0
+         fdjR0p6b8xXnTBVsb6xc2wL+Ef/6ykVwxGrioQAE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220624081614epcas1p27724b31b4a7d6303b411428cf9e4ba16~7gH_8-Yp-2849228492epcas1p21;
+        Fri, 24 Jun 2022 08:16:14 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.36.132]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4LTqhF1YPrz4x9QD; Fri, 24 Jun
+        2022 08:16:13 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        98.1C.09633.DC275B26; Fri, 24 Jun 2022 17:16:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220624081612epcas1p2522bebb1b25582774af413a0ce4739e6~7gH9n_BIF2849828498epcas1p2o;
+        Fri, 24 Jun 2022 08:16:12 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220624081612epsmtrp27137b20230de1e30e1f8c2f32e9a78f0~7gH9mtxM32357323573epsmtrp2v;
+        Fri, 24 Jun 2022 08:16:12 +0000 (GMT)
+X-AuditID: b6c32a36-05fff700000025a1-67-62b572cd374b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        87.94.08905.CC275B26; Fri, 24 Jun 2022 17:16:12 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220624081612epsmtip260e0775d4ceefb6fafe207b5bd3cec4c~7gH9GzKhI1269612696epsmtip2S;
+        Fri, 24 Jun 2022 08:16:12 +0000 (GMT)
+Message-ID: <4e8d94c9-7dc0-039f-7d67-36f6c099ab75@samsung.com>
+Date:   Fri, 24 Jun 2022 17:16:11 +0900
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+        Thunderbird/91.9.1
+Subject: Re: [PATCH] drm/exynos: replace drm_detect_hdmi_monitor() with
+ drm_display_info.is_hdmi
+Content-Language: en-US
+To:     hongao <hongao@uniontech.com>, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, daniel@ffwll.ch, krzysztof.kozlowski@linaro.org,
+        alim.akhtar@samsung.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Inki Dae <inki.dae@samsung.com>
+In-Reply-To: <20220616072233.8302-1-hongao@uniontech.com>
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmnu7Zoq1JBmdOsln0njvJZPFg3jY2
+        i//bJjJbXPn6ns1i0apbbBZ7X29ltzjb9IbdYtPja6wWl3fNYbOYcX4fk8WMyS/ZHLg99n5b
+        wOJx59oeNo/t3x6wetzvPs7ksXlJvUffllWMHieXzmDy+LxJLoAjKtsmIzUxJbVIITUvOT8l
+        My/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hQJYWyxJxSoFBAYnGxkr6dTVF+
+        aUmqQkZ+cYmtUmpBSk6BaYFecWJucWleul5eaomVoYGBkSlQYUJ2xtGO56wFKzkr9l1ZzdzA
+        +Ji9i5GTQ0LARKLj2TGmLkYuDiGBHYwS/4/+ZoNwPjFK9B4+CeV8Y5Q40XiKEaalueUqVMte
+        RonHb7axQzjvGSWefr7O0sXIwcErYCfxeZYbSAOLgKrE5N4nYM28AoISJ2c+YQGxRQUiJFa2
+        vgGzhQWSJA5dewxWwywgLnHryXywBSICZxklZu57BnYGs0APo8T5D0vALmcDmjpxxX02EJtT
+        wFJiVeMvJohueYnmrbOZQRokBC5wSPz/e4oJ4m4XiVmLm5ghbGGJV8e3QINASuLzu71sEA2T
+        GSXuXF/BAuHMYJQ4/PM61NfGEvuXTmYC+Y1ZQFNi/S59iLCixM7fc6Hu5pN497WHFaREQoBX
+        oqNNCKJESeLYxRtQUyQkLiyZyAZR4iHR+iZ3AqPiLKSAmYUUALOQvDMLYe8CRpZVjGKpBcW5
+        6anFhgVG8PhOzs/dxAhOxlpmOxgnvf2gd4iRiYPxEKMEB7OSCO+L/5uThHhTEiurUovy44tK
+        c1KLDzGaAqNnIrOUaHI+MB/klcQbmlgamJgZGZtYGJoZKonzrpp2OlFIID2xJDU7NbUgtQim
+        j4mDU6qBiXvxTEueaT2vPN4lK6w/YKD29LWY133hLaVlB07ITiy5eVH7OuvNuvAdVyrzYwSV
+        Wmfwhd5bfYZzHvvPTdNjlmjLbe16YczXwiS4uaJi6cf1Zx62Tn99gd9QxlTQ1M9kyUbXuRuE
+        /T4IVW9oOuT/Mf7qNumXdxTvhhkukVt0R+rlVo+EBZZ+7no1bSs5/nC+PGcV2/7lmIPJDakP
+        Yi1HOS0KBaWOFST9blxdv6BezcDEuFd4mYiOzNcNK9kZb/Mfn7I9UEhGe1ne6rTna4/Hau/d
+        PnmOwZ53Ey3PV/lKvFJYFGlQVCxauPhHzrX5y9Xf7fxwP3xio/aaTQXuS07tlHm7Kfx3TKDI
+        TPszIk/kYpRYijMSDbWYi4oTASf1aSlPBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCSvO6Zoq1JBk/eKFn0njvJZPFg3jY2
+        i//bJjJbXPn6ns1i0apbbBYv7l1ksdj7eiu7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLGZMfsnm
+        wOOx99sCFo871/aweWz/9oDV4373cSaPzUvqPfq2rGL0OLl0BpPH501yARxRXDYpqTmZZalF
+        +nYJXBlHO56zFqzkrNh3ZTVzA+Nj9i5GTg4JAROJ5parTF2MXBxCArsZJWY0fGXrYuQASkhI
+        bNnKAWEKSxw+XAxR8pZRon3PaVaQOK+AncTnWW4gY1gEVCUm9z5hBLF5BQQlTs58wgJiiwpE
+        SHxaNoEVxBYWSJI4dO0xWA2zgLjErSfzwdaKCJxllHh6tJ8FxGEW6GGU2HF2JjvENiBnX0sn
+        M0gLG9CKiSvus4HYnAKWEqsafzGBXMEsoC6xfp4QxFR5ieats5knMArNQnLILCQLZyF0zELS
+        sYCRZRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnAEamnuYNy+6oPeIUYmDsZDjBIc
+        zEoivC/+b04S4k1JrKxKLcqPLyrNSS0+xCjNwaIkznuh62S8kEB6YklqdmpqQWoRTJaJg1Oq
+        gcmquSB7ywqpFf9maLVPYP20Smout7GEQwCLpsnMZcFrHTfl2b/qsnhxR/FpwBvB0/Ptr92r
+        murzX8Foxn2de9eaZPdqTmiyX7QrmCMs+P683QV6Thf41qxrnzLX2G7BaR6matk3LGVzs/f/
+        eMC94/vZFxfmZ+9v/KjyrJe3dWWqPhfzA9bm9W31UhZSa6/oMNyyC+L6Nj/36qcA2d25H0MM
+        MhMXL1H7MmGtrMQKJu4XMZqXDDry/6sWt57c9qdYrc1zD7dGXznDhKYHG13nauxnV1pau/Xd
+        tfT4tVIcVQqJzc/Udlk9ai4+a/PtVeT8lbp1my+ZnWVbzxDPLj9tz/9k3mWf8u4nK/TtU0l+
+        m63EUpyRaKjFXFScCAB2OGqYLwMAAA==
+X-CMS-MailID: 20220624081612epcas1p2522bebb1b25582774af413a0ce4739e6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220616072357epcas1p4921f90a2fe077e360688e0df00a5dde8
+References: <CGME20220616072357epcas1p4921f90a2fe077e360688e0df00a5dde8@epcas1p4.samsung.com>
+        <20220616072233.8302-1-hongao@uniontech.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Samsung SoC pin controller driver uses only three defines from the
-bindings header with pin configuration register values, which proves
-the point that this header is not a proper bindings-type abstraction
-layer with IDs.
-
-Define the needed register values directly in the driver and stop using
-the bindings header.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Link: https://lore.kernel.org/r/20220605160508.134075-8-krzysztof.kozlowski@linaro.org
----
-
-Hi Linus,
-
-I have only one patch this cycle, so sending it directly.
-
-Best regards,
-Krzysztof
 
 
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 6 ++----
- drivers/pinctrl/samsung/pinctrl-exynos.h  | 3 +++
- drivers/pinctrl/samsung/pinctrl-samsung.c | 4 +---
- drivers/pinctrl/samsung/pinctrl-samsung.h | 8 ++++++++
- 4 files changed, 14 insertions(+), 7 deletions(-)
+22. 6. 16. 16:22에 hongao 이(가) 쓴 글:
+> Once EDID is parsed, the monitor HDMI support information is available
+> through drm_display_info.is_hdmi.
+> 
+> This driver calls drm_detect_hdmi_monitor() to receive the same
+> information, which is less efficient.
+> 
+> Avoid calling drm_detect_hdmi_monitor() and use drm_display_info.is_hdmi
+> instead.
+> 
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 6d7ca1758292..a8212fc126bf 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -27,8 +27,6 @@
- #include <linux/soc/samsung/exynos-pmu.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
- 
--#include <dt-bindings/pinctrl/samsung.h>
--
- #include "pinctrl-samsung.h"
- #include "pinctrl-exynos.h"
- 
-@@ -173,7 +171,7 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 
- 	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
--	con |= EXYNOS_PIN_FUNC_EINT << shift;
-+	con |= EXYNOS_PIN_CON_FUNC_EINT << shift;
- 	writel(con, bank->pctl_base + reg_con);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
-@@ -196,7 +194,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 
- 	con = readl(bank->pctl_base + reg_con);
- 	con &= ~(mask << shift);
--	con |= EXYNOS_PIN_FUNC_INPUT << shift;
-+	con |= PIN_CON_FUNC_INPUT << shift;
- 	writel(con, bank->pctl_base + reg_con);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index bfad1ced8017..7bd6d82c9f36 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -16,6 +16,9 @@
- #ifndef __PINCTRL_SAMSUNG_EXYNOS_H
- #define __PINCTRL_SAMSUNG_EXYNOS_H
- 
-+/* Values for the pin CON register */
-+#define EXYNOS_PIN_CON_FUNC_EINT	0xf
-+
- /* External GPIO and wakeup interrupt related definitions */
- #define EXYNOS_GPIO_ECON_OFFSET		0x700
- #define EXYNOS_GPIO_EFLTCON_OFFSET	0x800
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 26d309d2516d..4837bceb767b 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -26,8 +26,6 @@
- #include <linux/of_device.h>
- #include <linux/spinlock.h>
- 
--#include <dt-bindings/pinctrl/samsung.h>
--
- #include "../core.h"
- #include "pinctrl-samsung.h"
- 
-@@ -614,7 +612,7 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- 	data = readl(reg);
- 	data &= ~(mask << shift);
- 	if (!input)
--		data |= EXYNOS_PIN_FUNC_OUTPUT << shift;
-+		data |= PIN_CON_FUNC_OUTPUT << shift;
- 	writel(data, reg);
- 
- 	return 0;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index fc6f5199c548..9af93e3d8d9f 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -53,6 +53,14 @@ enum pincfg_type {
- #define PINCFG_UNPACK_TYPE(cfg)		((cfg) & PINCFG_TYPE_MASK)
- #define PINCFG_UNPACK_VALUE(cfg)	(((cfg) & PINCFG_VALUE_MASK) >> \
- 						PINCFG_VALUE_SHIFT)
-+/*
-+ * Values for the pin CON register, choosing pin function.
-+ * The basic set (input and output) are same between: S3C24xx, S3C64xx, S5PV210,
-+ * Exynos ARMv7, Exynos ARMv8, Tesla FSD.
-+ */
-+#define PIN_CON_FUNC_INPUT		0x0
-+#define PIN_CON_FUNC_OUTPUT		0x1
-+
- /**
-  * enum eint_type - possible external interrupt types.
-  * @EINT_TYPE_NONE: bank does not support external interrupts
--- 
-2.34.1
+Applied.
 
+Thanks,
+Inki Dae
+
+> Signed-off-by: hongao <hongao@uniontech.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 7655142a4651..17e9f5efbcfc 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -893,7 +893,7 @@ static int hdmi_get_modes(struct drm_connector *connector)
+>  	if (!edid)
+>  		return -ENODEV;
+>  
+> -	hdata->dvi_mode = !drm_detect_hdmi_monitor(edid);
+> +	hdata->dvi_mode = !connector->display_info.is_hdmi;
+>  	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+>  			  (hdata->dvi_mode ? "dvi monitor" : "hdmi monitor"),
+>  			  edid->width_cm, edid->height_cm);
