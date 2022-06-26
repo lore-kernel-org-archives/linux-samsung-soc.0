@@ -2,219 +2,892 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE2BCCA47C
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Jun 2022 12:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D20CCA47C
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Jun 2022 12:52:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234401AbiFZMEA (ORCPT
+        id S232611AbiFZMwu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Jun 2022 08:04:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43946 "EHLO
+        Sun, 26 Jun 2022 08:52:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234375AbiFZMDx (ORCPT
+        with ESMTP id S229847AbiFZMwt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Jun 2022 08:03:53 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E200BFD07
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 05:03:51 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id o9so9396737edt.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 05:03:51 -0700 (PDT)
+        Sun, 26 Jun 2022 08:52:49 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B922111146
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 05:52:45 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id g26so13701517ejb.5
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 05:52:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+zmPJgqjOhKNxFG0WLIBtjuHyrzK8bUH/JzPK1c1kpc=;
-        b=WDacz+9KjhgEyr47IP9SwrI9knAGT37osRX03n2ARJEhWu2jCngSpFB/Ad0DmtKluA
-         MqeCkie5cUPZ2B+VzIbl+ABTq/IhjCfX0OJ8rb7JwNNnG/ZFANAR5xAFCmQQw6QaJWU7
-         6c8enZnQaa3fkYTw2VfrZy3JGDW3jwte1YJhx7tj+lsqXM9o8Jhpi5+4FWsg+PRDm1s8
-         oQIN9sVTikAgfkf5+CQ9ZH0jYVu1TxRuZTjGCexI3YItIfZ05KDwIQG1TPPbgKlbiu3G
-         fCMDe5H1AK4soeoz7PPIQa5lnCMphMuAxWSc286w1yrAGvJHv61dSQeCSOUiC8vxOWAq
-         SB8g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zJ6TZvYuGt7OIE19JQZWpsFPwOLX+jfeQl4k3h2uxjA=;
+        b=D2YIYiSBnp/7WLWAgTyxUVHd4NSVRuzfNguC43XgaCmaoZnIhKpK7RiiDipZrpmFoA
+         9lx9OktpTwPLxnFj+sLtiE1TRQRZ9+obItK/HAgP9YA3vaWP/iWKaEatPKE5/uTO20W8
+         eXpufUprDXwNru2SxgGEzcv4w7nsbhdzNCj39MLVURRTIRSVM9egwzRhHBJRFBRdg7uI
+         eS6TMMgmbjt4WxY/F+x+8CFEXTutwYBIWsUtIMbtnnFGxNW/Ltklcxr5443/qGuAdw4T
+         Q5Fp6seAXBzRjFWr9C+m+eis1WKghNINP+MZNfh4oKPbrqsJY5mdu5YL63VthwVGVoHe
+         FmEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+zmPJgqjOhKNxFG0WLIBtjuHyrzK8bUH/JzPK1c1kpc=;
-        b=Ns71NcQKDjLVAAzi95LxQCdMUaLvZkoEmLaFcycFl4QAtPqbaeD72USyFCNCqAau04
-         0ZX/xGbfPhvUvHIpgvZtfSKiVZe6CWRCYvg+qkZ5LzdRkjAVPZ1vNMr2mE68r3dGw/U/
-         QYpgSkLBt5c1w1+OBMsleXflgP9qV3bbBWC+ou0xwTkARKS4DMztb5v40cjzqNfCiNe0
-         XRsqnuH9eilORvbucmZ93KNPYHozkp65asOqx1fRff9H/CZeFYtjWiOLj3LwySJ1EHsu
-         rQzQK1NyFhgRv9pas14T92asg6KF4KNxFzqRxFL/rgdd6u5w0xNQrIWzFHzpl4jizfnW
-         +Ttg==
-X-Gm-Message-State: AJIora+yYquuC2lEarjYY4yNRyhQhW56vgFBMS17ucfWcvMbh0B7F5El
-        QDY/VGf2F9Ij/uL9/Tqb+kJwbA==
-X-Google-Smtp-Source: AGRyM1t4tdIH5gDOHb7Z/tDF1bjiE1v9aeT3gyFwsF5yUDnE/VscnS05VH0cdHCya9w56xeLJJWUvQ==
-X-Received: by 2002:a50:ff0e:0:b0:433:5d15:eada with SMTP id a14-20020a50ff0e000000b004335d15eadamr10461999edu.102.1656245030325;
-        Sun, 26 Jun 2022 05:03:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zJ6TZvYuGt7OIE19JQZWpsFPwOLX+jfeQl4k3h2uxjA=;
+        b=z5/XEyASlGS/evo0Q+Im68KzDlWVArpxXE+sxbcBY5zk/FxoNMODeg+3Vv3Z4Eeoh9
+         qsSLyRwcKxKxgu4o7dOkZLVHxeY43loyQmpYcy+vC+myCvgFoDFtxbF7sXwbJEy3eALg
+         yne50WfrVKiWqcQ2KokFgX1H07pCwbNRmLrRyJnThH5yzLfiFAA2a3Ot5DQLW8tA9UBj
+         o3m9a+4c8njd6Z+8vnaCVCVZaHz3/V90ajXbKdAL6QMq4waq4NbL5WWJxC18nyaP0W7u
+         y7NfxCFcPDMmpi2wIcIX4LmqGobsoKMVrpua8CjGdoVZa/wq5UuFuaAEgbo+QM0geswq
+         dMvQ==
+X-Gm-Message-State: AJIora8lefpmYsfRg3rdEgZBsa1m3KV37S2vDcubt8RTqOpmr1++u7eg
+        pTIL+ih8SAl/ztyUhjWaH70Jmw==
+X-Google-Smtp-Source: AGRyM1szNp+X/wFXE6HPmQJn4Efd4VL9ZXYXcTmrFbqxJ68nNYvyyN8svq7Ch1OGsrEDrdA/6BKtOg==
+X-Received: by 2002:a17:906:147:b0:712:1288:348f with SMTP id 7-20020a170906014700b007121288348fmr8089030ejh.324.1656247963997;
+        Sun, 26 Jun 2022 05:52:43 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id q24-20020a170906b29800b0072629374590sm3751585ejz.120.2022.06.26.05.03.49
+        by smtp.gmail.com with ESMTPSA id u9-20020aa7d989000000b004355cb1e77esm5756757eds.91.2022.06.26.05.52.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jun 2022 05:03:49 -0700 (PDT)
+        Sun, 26 Jun 2022 05:52:43 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
+        Georgi Djakov <djakov@kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 5/5] dt-bindings: mmc: samsung,s3c6410-sdhci: convert to dtschema
-Date:   Sun, 26 Jun 2022 14:03:42 +0200
-Message-Id: <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: interconnect: samsung,exynos-bus: convert to dtschema
+Date:   Sun, 26 Jun 2022 14:52:38 +0200
+Message-Id: <20220626125238.57479-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org>
-References: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung SoC SDHCI Controller bindings to DT schema.
+Convert the Samsung Exynos SoC Bus and Interconnect bindings to DT
+schema.
 
-The original bindings were quite old and incomplete, so add during
-conversion typical (already used) properties like reg, clocks,
-interrupts.
-
-The bindings were not precising the clocks, although the upstream DTS
-and Linux driver were expecting bus clocks in certain patterns in any
-order.  Document the status quo even though it is not a proper approach
-for bindings.
+Vast parts of descritpion and example were copied, so keep license as
+GPL-2.0-only.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/mmc/samsung,s3c6410-sdhci.yaml   | 81 +++++++++++++++++++
- .../devicetree/bindings/mmc/samsung-sdhci.txt | 32 --------
- 2 files changed, 81 insertions(+), 32 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
- delete mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+ .../bindings/devfreq/exynos-bus.txt           | 488 ------------------
+ .../interconnect/samsung,exynos-bus.yaml      | 290 +++++++++++
+ MAINTAINERS                                   |   2 +-
+ 3 files changed, 291 insertions(+), 489 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+ create mode 100644 Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
 
-diff --git a/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml b/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
+diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
+deleted file mode 100644
+index bcaa2c08ac11..000000000000
+--- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
++++ /dev/null
+@@ -1,488 +0,0 @@
+-* Generic Exynos Bus frequency device
+-
+-The Samsung Exynos SoC has many buses for data transfer between DRAM
+-and sub-blocks in SoC. Most Exynos SoCs share the common architecture
+-for buses. Generally, each bus of Exynos SoC includes a source clock
+-and a power line, which are able to change the clock frequency
+-of the bus in runtime. To monitor the usage of each bus in runtime,
+-the driver uses the PPMU (Platform Performance Monitoring Unit), which
+-is able to measure the current load of sub-blocks.
+-
+-The Exynos SoC includes the various sub-blocks which have the each AXI bus.
+-The each AXI bus has the owned source clock but, has not the only owned
+-power line. The power line might be shared among one more sub-blocks.
+-So, we can divide into two type of device as the role of each sub-block.
+-There are two type of bus devices as following:
+-- parent bus device
+-- passive bus device
+-
+-Basically, parent and passive bus device share the same power line.
+-The parent bus device can only change the voltage of shared power line
+-and the rest bus devices (passive bus device) depend on the decision of
+-the parent bus device. If there are three blocks which share the VDD_xxx
+-power line, Only one block should be parent device and then the rest blocks
+-should depend on the parent device as passive device.
+-
+-	VDD_xxx |--- A block (parent)
+-		|--- B block (passive)
+-		|--- C block (passive)
+-
+-There are a little different composition among Exynos SoC because each Exynos
+-SoC has different sub-blocks. Therefore, such difference should be specified
+-in devicetree file instead of each device driver. In result, this driver
+-is able to support the bus frequency for all Exynos SoCs.
+-
+-Required properties for all bus devices:
+-- compatible: Should be "samsung,exynos-bus".
+-- clock-names : the name of clock used by the bus, "bus".
+-- clocks : phandles for clock specified in "clock-names" property.
+-- operating-points-v2: the OPP table including frequency/voltage information
+-  to support DVFS (Dynamic Voltage/Frequency Scaling) feature.
+-
+-Required properties only for parent bus device:
+-- vdd-supply: the regulator to provide the buses with the voltage.
+-- devfreq-events: the devfreq-event device to monitor the current utilization
+-  of buses.
+-
+-Required properties only for passive bus device:
+-- devfreq: the parent bus device.
+-
+-Optional properties only for parent bus device:
+-- exynos,saturation-ratio: the percentage value which is used to calibrate
+-			the performance count against total cycle count.
+-
+-Optional properties for the interconnect functionality (QoS frequency
+-constraints):
+-- #interconnect-cells: should be 0.
+-- interconnects: as documented in ../interconnect.txt, describes a path at the
+-  higher level interconnects used by this interconnect provider.
+-  If this interconnect provider is directly linked to a top level interconnect
+-  provider the property contains only one phandle. The provider extends
+-  the interconnect graph by linking its node to a node registered by provider
+-  pointed to by first phandle in the 'interconnects' property.
+-
+-- samsung,data-clock-ratio: ratio of the data throughput in B/s to minimum data
+-   clock frequency in Hz, default value is 8 when this property is missing.
+-
+-Detailed correlation between sub-blocks and power line according to Exynos SoC:
+-- In case of Exynos3250, there are two power line as following:
+-	VDD_MIF |--- DMC
+-
+-	VDD_INT |--- LEFTBUS (parent device)
+-		|--- PERIL
+-		|--- MFC
+-		|--- G3D
+-		|--- RIGHTBUS
+-		|--- PERIR
+-		|--- FSYS
+-		|--- LCD0
+-		|--- PERIR
+-		|--- ISP
+-		|--- CAM
+-
+-- In case of Exynos4210, there is one power line as following:
+-	VDD_INT |--- DMC (parent device)
+-		|--- LEFTBUS
+-		|--- PERIL
+-		|--- MFC(L)
+-		|--- G3D
+-		|--- TV
+-		|--- LCD0
+-		|--- RIGHTBUS
+-		|--- PERIR
+-		|--- MFC(R)
+-		|--- CAM
+-		|--- FSYS
+-		|--- GPS
+-		|--- LCD0
+-		|--- LCD1
+-
+-- In case of Exynos4x12, there are two power line as following:
+-	VDD_MIF |--- DMC
+-
+-	VDD_INT |--- LEFTBUS (parent device)
+-		|--- PERIL
+-		|--- MFC(L)
+-		|--- G3D
+-		|--- TV
+-		|--- IMAGE
+-		|--- RIGHTBUS
+-		|--- PERIR
+-		|--- MFC(R)
+-		|--- CAM
+-		|--- FSYS
+-		|--- GPS
+-		|--- LCD0
+-		|--- ISP
+-
+-- In case of Exynos5422, there are two power line as following:
+-	VDD_MIF |--- DREX 0 (parent device, DRAM EXpress controller)
+-	        |--- DREX 1
+-
+-	VDD_INT |--- NoC_Core (parent device)
+-		|--- G2D
+-		|--- G3D
+-		|--- DISP1
+-		|--- NoC_WCORE
+-		|--- GSCL
+-		|--- MSCL
+-		|--- ISP
+-		|--- MFC
+-		|--- GEN
+-		|--- PERIS
+-		|--- PERIC
+-		|--- FSYS
+-		|--- FSYS2
+-
+-- In case of Exynos5433, there is VDD_INT power line as following:
+-	VDD_INT |--- G2D (parent device)
+-		|--- MSCL
+-		|--- GSCL
+-		|--- JPEG
+-		|--- MFC
+-		|--- HEVC
+-		|--- BUS0
+-		|--- BUS1
+-		|--- BUS2
+-		|--- PERIS (Fixed clock rate)
+-		|--- PERIC (Fixed clock rate)
+-		|--- FSYS  (Fixed clock rate)
+-
+-Example 1:
+-	Show the AXI buses of Exynos3250 SoC. Exynos3250 divides the buses to
+-	power line (regulator). The MIF (Memory Interface) AXI bus is used to
+-	transfer data between DRAM and CPU and uses the VDD_MIF regulator.
+-
+-	- MIF (Memory Interface) block
+-	: VDD_MIF |--- DMC (Dynamic Memory Controller)
+-
+-	- INT (Internal) block
+-	: VDD_INT |--- LEFTBUS (parent device)
+-		  |--- PERIL
+-		  |--- MFC
+-		  |--- G3D
+-		  |--- RIGHTBUS
+-		  |--- FSYS
+-		  |--- LCD0
+-		  |--- PERIR
+-		  |--- ISP
+-		  |--- CAM
+-
+-	- MIF bus's frequency/voltage table
+-	-----------------------
+-	|Lv| Freq   | Voltage |
+-	-----------------------
+-	|L1| 50000  |800000   |
+-	|L2| 100000 |800000   |
+-	|L3| 134000 |800000   |
+-	|L4| 200000 |825000   |
+-	|L5| 400000 |875000   |
+-	-----------------------
+-
+-	- INT bus's frequency/voltage table
+-	----------------------------------------------------------
+-	|Block|LEFTBUS|RIGHTBUS|MCUISP |ISP    |PERIL  ||VDD_INT |
+-	| name|       |LCD0    |       |       |       ||        |
+-	|     |       |FSYS    |       |       |       ||        |
+-	|     |       |MFC     |       |       |       ||        |
+-	----------------------------------------------------------
+-	|Mode |*parent|passive |passive|passive|passive||        |
+-	----------------------------------------------------------
+-	|Lv   |Frequency                               ||Voltage |
+-	----------------------------------------------------------
+-	|L1   |50000  |50000   |50000  |50000  |50000  ||900000  |
+-	|L2   |80000  |80000   |80000  |80000  |80000  ||900000  |
+-	|L3   |100000 |100000  |100000 |100000 |100000 ||1000000 |
+-	|L4   |134000 |134000  |200000 |200000 |       ||1000000 |
+-	|L5   |200000 |200000  |400000 |300000 |       ||1000000 |
+-	----------------------------------------------------------
+-
+-Example 2:
+-	The bus of DMC (Dynamic Memory Controller) block in exynos3250.dtsi
+-	is listed below:
+-
+-	bus_dmc: bus_dmc {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu_dmc CLK_DIV_DMC>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_dmc_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_dmc_opp_table: opp_table1 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-50000000 {
+-			opp-hz = /bits/ 64 <50000000>;
+-			opp-microvolt = <800000>;
+-		};
+-		opp-100000000 {
+-			opp-hz = /bits/ 64 <100000000>;
+-			opp-microvolt = <800000>;
+-		};
+-		opp-134000000 {
+-			opp-hz = /bits/ 64 <134000000>;
+-			opp-microvolt = <800000>;
+-		};
+-		opp-200000000 {
+-			opp-hz = /bits/ 64 <200000000>;
+-			opp-microvolt = <825000>;
+-		};
+-		opp-400000000 {
+-			opp-hz = /bits/ 64 <400000000>;
+-			opp-microvolt = <875000>;
+-		};
+-	};
+-
+-	bus_leftbus: bus_leftbus {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_GDL>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_leftbus_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_rightbus: bus_rightbus {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_GDR>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_leftbus_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_lcd0: bus_lcd0 {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_ACLK_160>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_leftbus_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_fsys: bus_fsys {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_ACLK_200>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_leftbus_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_mcuisp: bus_mcuisp {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_ACLK_400_MCUISP>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_mcuisp_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_isp: bus_isp {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_ACLK_266>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_isp_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_peril: bus_peril {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_DIV_ACLK_100>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_peril_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_mfc: bus_mfc {
+-		compatible = "samsung,exynos-bus";
+-		clocks = <&cmu CLK_SCLK_MFC>;
+-		clock-names = "bus";
+-		operating-points-v2 = <&bus_leftbus_opp_table>;
+-		status = "disabled";
+-	};
+-
+-	bus_leftbus_opp_table: opp_table1 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-50000000 {
+-			opp-hz = /bits/ 64 <50000000>;
+-			opp-microvolt = <900000>;
+-		};
+-		opp-80000000 {
+-			opp-hz = /bits/ 64 <80000000>;
+-			opp-microvolt = <900000>;
+-		};
+-		opp-100000000 {
+-			opp-hz = /bits/ 64 <100000000>;
+-			opp-microvolt = <1000000>;
+-		};
+-		opp-134000000 {
+-			opp-hz = /bits/ 64 <134000000>;
+-			opp-microvolt = <1000000>;
+-		};
+-		opp-200000000 {
+-			opp-hz = /bits/ 64 <200000000>;
+-			opp-microvolt = <1000000>;
+-		};
+-	};
+-
+-	bus_mcuisp_opp_table: opp_table2 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-50000000 {
+-			opp-hz = /bits/ 64 <50000000>;
+-		};
+-		opp-80000000 {
+-			opp-hz = /bits/ 64 <80000000>;
+-		};
+-		opp-100000000 {
+-			opp-hz = /bits/ 64 <100000000>;
+-		};
+-		opp-200000000 {
+-			opp-hz = /bits/ 64 <200000000>;
+-		};
+-		opp-400000000 {
+-			opp-hz = /bits/ 64 <400000000>;
+-		};
+-	};
+-
+-	bus_isp_opp_table: opp_table3 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-50000000 {
+-			opp-hz = /bits/ 64 <50000000>;
+-		};
+-		opp-80000000 {
+-			opp-hz = /bits/ 64 <80000000>;
+-		};
+-		opp-100000000 {
+-			opp-hz = /bits/ 64 <100000000>;
+-		};
+-		opp-200000000 {
+-			opp-hz = /bits/ 64 <200000000>;
+-		};
+-		opp-300000000 {
+-			opp-hz = /bits/ 64 <300000000>;
+-		};
+-	};
+-
+-	bus_peril_opp_table: opp_table4 {
+-		compatible = "operating-points-v2";
+-		opp-shared;
+-
+-		opp-50000000 {
+-			opp-hz = /bits/ 64 <50000000>;
+-		};
+-		opp-80000000 {
+-			opp-hz = /bits/ 64 <80000000>;
+-		};
+-		opp-100000000 {
+-			opp-hz = /bits/ 64 <100000000>;
+-		};
+-	};
+-
+-
+-	Usage case to handle the frequency and voltage of bus on runtime
+-	in exynos3250-rinato.dts is listed below:
+-
+-	&bus_dmc {
+-		devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+-		vdd-supply = <&buck1_reg>;	/* VDD_MIF */
+-		status = "okay";
+-	};
+-
+-	&bus_leftbus {
+-		devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+-		vdd-supply = <&buck3_reg>;
+-		status = "okay";
+-	};
+-
+-	&bus_rightbus {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-	&bus_lcd0 {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-	&bus_fsys {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-	&bus_mcuisp {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-	&bus_isp {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-	&bus_peril {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-	&bus_mfc {
+-		devfreq = <&bus_leftbus>;
+-		status = "okay";
+-	};
+-
+-Example 3:
+-	An interconnect path "bus_display -- bus_leftbus -- bus_dmc" on
+-	Exynos4412 SoC with video mixer as an interconnect consumer device.
+-
+-	soc {
+-		bus_dmc: bus_dmc {
+-			compatible = "samsung,exynos-bus";
+-			clocks = <&clock CLK_DIV_DMC>;
+-			clock-names = "bus";
+-			operating-points-v2 = <&bus_dmc_opp_table>;
+-			samsung,data-clock-ratio = <4>;
+-			#interconnect-cells = <0>;
+-		};
+-
+-		bus_leftbus: bus_leftbus {
+-			compatible = "samsung,exynos-bus";
+-			clocks = <&clock CLK_DIV_GDL>;
+-			clock-names = "bus";
+-			operating-points-v2 = <&bus_leftbus_opp_table>;
+-			#interconnect-cells = <0>;
+-			interconnects = <&bus_dmc>;
+-		};
+-
+-		bus_display: bus_display {
+-			compatible = "samsung,exynos-bus";
+-			clocks = <&clock CLK_ACLK160>;
+-			clock-names = "bus";
+-			operating-points-v2 = <&bus_display_opp_table>;
+-			#interconnect-cells = <0>;
+-			interconnects = <&bus_leftbus &bus_dmc>;
+-		};
+-
+-		bus_dmc_opp_table: opp_table1 {
+-			compatible = "operating-points-v2";
+-			/* ... */
+-		}
+-
+-		bus_leftbus_opp_table: opp_table3 {
+-			compatible = "operating-points-v2";
+-			/* ... */
+-		};
+-
+-		bus_display_opp_table: opp_table4 {
+-			compatible = "operating-points-v2";
+-			/* .. */
+-		};
+-
+-		&mixer {
+-			compatible = "samsung,exynos4212-mixer";
+-			interconnects = <&bus_display &bus_dmc>;
+-			/* ... */
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml b/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
 new file mode 100644
-index 000000000000..5d873a60f650
+index 000000000000..ad9ed596dfef
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
-@@ -0,0 +1,81 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++++ b/Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
+@@ -0,0 +1,290 @@
++# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mmc/samsung,s3c6410-sdhci.yaml#
++$id: http://devicetree.org/schemas/interconnect/samsung,exynos-bus.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung SoC SDHCI Controller
++title: Samsung Exynos SoC Bus and Interconnect
 +
 +maintainers:
-+  - Jaehoon Chung <jh80.chung@samsung.com>
++  - Chanwoo Choi <cw00.choi@samsung.com>
 +  - Krzysztof Kozlowski <krzk@kernel.org>
++
++description: |
++  The Samsung Exynos SoC has many buses for data transfer between DRAM and
++  sub-blocks in SoC. Most Exynos SoCs share the common architecture for buses.
++  Generally, each bus of Exynos SoC includes a source clock and a power line,
++  which are able to change the clock frequency of the bus in runtime. To
++  monitor the usage of each bus in runtime, the driver uses the PPMU (Platform
++  Performance Monitoring Unit), which is able to measure the current load of
++  sub-blocks.
++
++  The Exynos SoC includes the various sub-blocks which have the each AXI bus.
++  The each AXI bus has the owned source clock but, has not the only owned power
++  line. The power line might be shared among one more sub-blocks.  So, we can
++  divide into two type of device as the role of each sub-block.  There are two
++  type of bus devices as following::
++   - parent bus device
++   - passive bus device
++
++  Basically, parent and passive bus device share the same power line.  The
++  parent bus device can only change the voltage of shared power line and the
++  rest bus devices (passive bus device) depend on the decision of the parent
++  bus device. If there are three blocks which share the VDD_xxx power line,
++  Only one block should be parent device and then the rest blocks should depend
++  on the parent device as passive device.
++
++    VDD_xxx |--- A block (parent)
++      |--- B block (passive)
++      |--- C block (passive)
++
++  There are a little different composition among Exynos SoC because each Exynos
++  SoC has different sub-blocks. Therefore, such difference should be specified
++  in devicetree file instead of each device driver. In result, this driver is
++  able to support the bus frequency for all Exynos SoCs.
++
++  Detailed correlation between sub-blocks and power line according
++  to Exynos SoC::
++   - In case of Exynos3250, there are two power line as following::
++     VDD_MIF |--- DMC (Dynamic Memory Controller)
++
++     VDD_INT |--- LEFTBUS (parent device)
++       |--- PERIL
++       |--- MFC
++       |--- G3D
++       |--- RIGHTBUS
++       |--- PERIR
++       |--- FSYS
++       |--- LCD0
++       |--- PERIR
++       |--- ISP
++       |--- CAM
++
++     - MIF bus's frequency/voltage table
++       -----------------------
++       |Lv| Freq   | Voltage |
++       -----------------------
++       |L1| 50000  |800000   |
++       |L2| 100000 |800000   |
++       |L3| 134000 |800000   |
++       |L4| 200000 |825000   |
++       |L5| 400000 |875000   |
++       -----------------------
++
++     - INT bus's frequency/voltage table
++       ----------------------------------------------------------
++       |Block|LEFTBUS|RIGHTBUS|MCUISP |ISP    |PERIL  ||VDD_INT |
++       | name|       |LCD0    |       |       |       ||        |
++       |     |       |FSYS    |       |       |       ||        |
++       |     |       |MFC     |       |       |       ||        |
++       ----------------------------------------------------------
++       |Mode |*parent|passive |passive|passive|passive||        |
++       ----------------------------------------------------------
++       |Lv   |Frequency                               ||Voltage |
++       ----------------------------------------------------------
++       |L1   |50000  |50000   |50000  |50000  |50000  ||900000  |
++       |L2   |80000  |80000   |80000  |80000  |80000  ||900000  |
++       |L3   |100000 |100000  |100000 |100000 |100000 ||1000000 |
++       |L4   |134000 |134000  |200000 |200000 |       ||1000000 |
++       |L5   |200000 |200000  |400000 |300000 |       ||1000000 |
++       ----------------------------------------------------------
++
++   - In case of Exynos4210, there is one power line as following::
++     VDD_INT |--- DMC (parent device, Dynamic Memory Controller)
++       |--- LEFTBUS
++       |--- PERIL
++       |--- MFC(L)
++       |--- G3D
++       |--- TV
++       |--- LCD0
++       |--- RIGHTBUS
++       |--- PERIR
++       |--- MFC(R)
++       |--- CAM
++       |--- FSYS
++       |--- GPS
++       |--- LCD0
++       |--- LCD1
++
++   - In case of Exynos4x12, there are two power line as following::
++     VDD_MIF |--- DMC (Dynamic Memory Controller)
++
++     VDD_INT |--- LEFTBUS (parent device)
++       |--- PERIL
++       |--- MFC(L)
++       |--- G3D
++       |--- TV
++       |--- IMAGE
++       |--- RIGHTBUS
++       |--- PERIR
++       |--- MFC(R)
++       |--- CAM
++       |--- FSYS
++       |--- GPS
++       |--- LCD0
++       |--- ISP
++
++   - In case of Exynos5422, there are two power line as following::
++     VDD_MIF |--- DREX 0 (parent device, DRAM EXpress controller)
++             |--- DREX 1
++
++     VDD_INT |--- NoC_Core (parent device)
++       |--- G2D
++       |--- G3D
++       |--- DISP1
++       |--- NoC_WCORE
++       |--- GSCL
++       |--- MSCL
++       |--- ISP
++       |--- MFC
++       |--- GEN
++       |--- PERIS
++       |--- PERIC
++       |--- FSYS
++       |--- FSYS2
++
++   - In case of Exynos5433, there is VDD_INT power line as following::
++     VDD_INT |--- G2D (parent device)
++       |--- MSCL
++       |--- GSCL
++       |--- JPEG
++       |--- MFC
++       |--- HEVC
++       |--- BUS0
++       |--- BUS1
++       |--- BUS2
++       |--- PERIS (Fixed clock rate)
++       |--- PERIC (Fixed clock rate)
++       |--- FSYS  (Fixed clock rate)
 +
 +properties:
 +  compatible:
 +    enum:
-+      - samsung,s3c6410-sdhci
-+      - samsung,exynos4210-sdhci
-+
-+  reg:
-+    maxItems: 1
++      - samsung,exynos-bus
 +
 +  clocks:
-+    minItems: 2
-+    maxItems: 5
++    maxItems: 1
 +
 +  clock-names:
-+    minItems: 2
 +    items:
-+      - const: hsmmc
-+      - pattern: "^mmc_busclk.[0-3]$"
-+      - pattern: "^mmc_busclk.[0-3]$"
-+      - pattern: "^mmc_busclk.[0-3]$"
-+      - pattern: "^mmc_busclk.[0-3]$"
++      - const: bus
 +
-+  interrupts:
-+    maxItems: 1
++  devfreq:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Parent bus device. Valid and required only for the passive bus devices.
++
++  devfreq-events:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    minItems: 1
++    maxItems: 4
++    description:
++      Devfreq-event device to monitor the current utilization of buses. Valid
++      and required only for the parent bus devices.
++
++  exynos,saturation-ratio:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Percentage value which is used to calibrate the performance count against
++      total cycle count.  Valid only for the parent bus devices.
++
++  '#interconnect-cells':
++    const: 0
++
++  interconnects:
++    minItems: 1
++    maxItems: 2
++
++  operating-points-v2: true
++
++  samsung,data-clock-ratio:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    default: 8
++    description:
++      Ratio of the data throughput in B/s to minimum data clock frequency in
++      Hz.
++
++  vdd-supply:
++    description:
++      Main bus power rail. Valid and required only for the parent bus devices.
 +
 +required:
 +  - compatible
-+  - reg
-+  - interrupts
 +  - clocks
 +  - clock-names
++  - operating-points-v2
 +
-+allOf:
-+  - $ref: mmc-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos4210-sdhci
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: hsmmc
-+            - const: mmc_busclk.2
-+
-+unevaluatedProperties: false
++additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/exynos4.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/exynos3250.h>
 +
-+    mmc@12510000 {
-+        compatible = "samsung,exynos4210-sdhci";
-+        reg = <0x12510000 0x100>;
-+        interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock CLK_SDMMC0>, <&clock CLK_SCLK_MMC0>;
-+        clock-names = "hsmmc", "mmc_busclk.2";
-+        bus-width = <4>;
-+        cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
-+        pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
-+        pinctrl-names = "default";
-+        vmmc-supply = <&ldo21_reg>;
++    bus-dmc {
++        compatible = "samsung,exynos-bus";
++        clocks = <&cmu_dmc CLK_DIV_DMC>;
++        clock-names = "bus";
++        operating-points-v2 = <&bus_dmc_opp_table>;
++        devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
++        vdd-supply = <&buck1_reg>;
 +    };
-diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-deleted file mode 100644
-index 42e0a9afa100..000000000000
---- a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-+++ /dev/null
-@@ -1,32 +0,0 @@
--* Samsung's SDHCI Controller device tree bindings
--
--Samsung's SDHCI controller is used as a connectivity interface with external
--MMC, SD and eMMC storage mediums. This file documents differences between the
--core mmc properties described by mmc.txt and the properties used by the
--Samsung implementation of the SDHCI controller.
--
--Required SoC Specific Properties:
--- compatible: should be one of the following
--  - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
--    controller.
--  - "samsung,exynos4210-sdhci": For controllers compatible with Exynos4 sdhci
--    controller.
--
--Required Board Specific Properties:
--- pinctrl-0: Should specify pin control groups used for this controller.
--- pinctrl-names: Should contain only one value - "default".
--
--Example:
--	sdhci@12530000 {
--		compatible = "samsung,exynos4210-sdhci";
--		reg = <0x12530000 0x100>;
--		interrupts = <0 75 0>;
--		bus-width = <4>;
--		cd-gpios = <&gpk2 2 0>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
--	};
--
--	Note: This example shows both SoC specific and board specific properties
--	in a single device node. The properties can be actually be separated
--	into SoC specific node and board specific node.
++
++    ppmu_dmc0: ppmu@106a0000 {
++        compatible = "samsung,exynos-ppmu";
++        reg = <0x106a0000 0x2000>;
++        events {
++            ppmu_dmc0_3: ppmu-event3-dmc0 {
++                event-name = "ppmu-event3-dmc0";
++            };
++        };
++    };
++
++    bus_leftbus: bus-leftbus {
++        compatible = "samsung,exynos-bus";
++        clocks = <&cmu CLK_DIV_GDL>;
++        clock-names = "bus";
++        operating-points-v2 = <&bus_leftbus_opp_table>;
++        devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
++        vdd-supply = <&buck3_reg>;
++    };
++
++    bus-rightbus {
++        compatible = "samsung,exynos-bus";
++        clocks = <&cmu CLK_DIV_GDR>;
++        clock-names = "bus";
++        operating-points-v2 = <&bus_leftbus_opp_table>;
++        devfreq = <&bus_leftbus>;
++    };
++
++  - |
++    dmc: bus-dmc {
++        compatible = "samsung,exynos-bus";
++        clocks = <&clock CLK_DIV_DMC>;
++        clock-names = "bus";
++        operating-points-v2 = <&bus_dmc_opp_table>;
++        samsung,data-clock-ratio = <4>;
++        #interconnect-cells = <0>;
++        devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
++        vdd-supply = <&buck1_reg>;
++    };
++
++    leftbus: bus-leftbus {
++        compatible = "samsung,exynos-bus";
++        clocks = <&clock CLK_DIV_GDL>;
++        clock-names = "bus";
++        operating-points-v2 = <&bus_leftbus_opp_table>;
++        interconnects = <&dmc>;
++        #interconnect-cells = <0>;
++        devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
++        vdd-supply = <&buck3_reg>;
++    };
++
++    display: bus-display {
++        compatible = "samsung,exynos-bus";
++        clocks = <&clock CLK_DIV_ACLK_266>;
++        clock-names = "bus";
++        operating-points-v2 = <&bus_display_opp_table>;
++        interconnects = <&leftbus &dmc>;
++        #interconnect-cells = <0>;
++        devfreq = <&leftbus>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7c9187635801..19875f60ebb1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4328,7 +4328,7 @@ L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+-F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
++F:	Documentation/devicetree/bindings/interconnect/samsung,exynos-bus.yaml
+ F:	drivers/devfreq/exynos-bus.c
+ 
+ BUSLOGIC SCSI DRIVER
 -- 
 2.34.1
 
