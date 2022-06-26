@@ -2,68 +2,67 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362BCCCA47C
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Jun 2022 13:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6BDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Jun 2022 16:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234596AbiFZNZa (ORCPT
+        id S229468AbiFZQdI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Jun 2022 09:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56528 "EHLO
+        Sun, 26 Jun 2022 12:33:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234580AbiFZNZ3 (ORCPT
+        with ESMTP id S229626AbiFZQdH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Jun 2022 09:25:29 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB9BDCE
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 06:25:27 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id mf9so13926391ejb.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 06:25:27 -0700 (PDT)
+        Sun, 26 Jun 2022 12:33:07 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCFD25FF4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 09:33:04 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id u12so14323053eja.8
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 09:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OiKv1lNjdaFLZKF/eedD2M8JeMTr8x3pdCy5XsNoJso=;
-        b=sE81NNX62DnaLHq0w5kjxuCsUeyc6GdfrT/xOXSu/chg7E4A65AzDGvddl10TAhh3I
-         wJp/WMKlWYprCvJDGB4hKolFV1uX8CwcYEZewLwOUWEDvAI2Zb30zizSSmJbWjtZn3ij
-         AWgEfyJdAP3s+1gEyVk2cZbHTlM08mEBdn3bEgFdehTbc49GA0HznSkDuws0BxnJ664M
-         uMm1yvwcj26jM5anLtSILwY3GTZ0Rh2qdRc7t9lNVv2534XQXl+iLxvO5SQK6LU4HjxA
-         xlLAtvefISbBbS5Du/4icfWR5KTXyKF22AemWlSChj/jT9uNz2OEla0z+1rsiF6/X+70
-         syeg==
+        bh=hB1/nxGV8qsZiY8aZhrRp6a1Tsyj5sJFWV1lzltoTWk=;
+        b=OacIlK6GSGCwnH8lqTDMoLwxuj0g69SiZ+/ofQzy7s8mF0vGtBWxV1bVhwZF6Xt60A
+         rfjMf4BjBXKrujw+O8QWesWK0batSE4JfAGdBS/Dd3vGwOtIPSLYH0SIFkuj5IbkkHVh
+         eWwv1qi96RBKPfn9bx+lWNbwofn9yaVGpAqnh4+lVud7dd8aBb6R6w1lhK3IHrWGCyMk
+         FjU2twV10er2KtPl0gSfS/D/fOcTuhp1Uw6aJZCn3ZRdSXaIH/bsBcGGba4UvMjf7Che
+         IKxPG0IDynyvheD8pp44x3LAD5jXOFqvUQGM5svGEf6kPpe8EYpnNxOTl/jM59wE0Upo
+         +9+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OiKv1lNjdaFLZKF/eedD2M8JeMTr8x3pdCy5XsNoJso=;
-        b=BPwTlVEGmpeW/PGTRIsxZoJHULNxZH8MFe9fP/TSeA/CrHUxweaLlrF/ugYPOyEGgk
-         m9WdabHJZLRpMiGeTVEg/UsFPtUDpZCiJEVuYDtihu1Ixn9SziNSJbzqr+7IW2U6y64g
-         9XWQ/rOn40Hm/G5u/8u1POSC3nUICY2za4r7hZP5rpnPPjaAvwgyyljntXt7L/Z7xOSp
-         DOH4an6JcLWUB/R8n421AqzzXdqOEDsxdq7opHuqOaX0pIO4kZXVQWPmX0Ida+2Lw7kt
-         u2Jkb3ReX/f5ufRzevwOOQhECX/Q6247s124cLeoQzQqneiQGs5H5VwEBHg9iuEgagk1
-         OAVw==
-X-Gm-Message-State: AJIora9mP9zat6/SknGdtI3eziV2vMUc2QZBUPFEdR78otlfnbeXehBW
-        f8QJEHx2/LRKmAjBFKkeddnnSg==
-X-Google-Smtp-Source: AGRyM1upixfxPfZKkPJqH/LO/z2QB9qeLPoWbsHiFCIaKTXf9/kbO7Il4k5nivWL/uxDsENz36Iw0w==
-X-Received: by 2002:a17:907:6e28:b0:722:e601:a0c0 with SMTP id sd40-20020a1709076e2800b00722e601a0c0mr8256634ejc.347.1656249926188;
-        Sun, 26 Jun 2022 06:25:26 -0700 (PDT)
+        bh=hB1/nxGV8qsZiY8aZhrRp6a1Tsyj5sJFWV1lzltoTWk=;
+        b=qnmDEzPlrL63Y2WSzP7MwVzSNA/gOQCT+INaZaj0wqyAIP1rPD2Psy2Dvh+71BwVAu
+         bDRH2Ls4q/blag4j6MHXNl/ZLTZtmCEg0aqck5cfXodXk67rQd7j2DIoPGjL6oEK6XRl
+         z9ZxaEVedeg0fMhifh3z4+s1Jy3LAGu26CanGWOTzFNAFnHiEqFaCamZcuXmk7H6QYhv
+         KpT9HYkt/AKcpz503bhAK+XE8b544cAizM59Iwaff4yoNwbtXCNC7B2l22p5QgEi6rID
+         U7rI8pjuxbAgpDHw4danJkwXu4t4CQrT77ML/Q1rJ/sWETATnmw67bvSC262BDAdbqbV
+         3FoA==
+X-Gm-Message-State: AJIora+By0agjkeC4Na/OiV4Ka6RqyohrHOhxaUKvY91XLrU1oukcjOV
+        rXuWUT4Zn0DlKM+V6B7fzw/URw==
+X-Google-Smtp-Source: AGRyM1uzDIyih5ar9W3rE94lRN0L8WXSa5mqvZd9HRog//U5hNVHbIyQECpwBSHMCeGshA6Ir+wovA==
+X-Received: by 2002:a17:907:8a01:b0:726:2c8e:4cad with SMTP id sc1-20020a1709078a0100b007262c8e4cadmr8513580ejc.611.1656261183403;
+        Sun, 26 Jun 2022 09:33:03 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id h10-20020a50ed8a000000b00435728cd12fsm5924635edr.18.2022.06.26.06.25.24
+        by smtp.gmail.com with ESMTPSA id h7-20020a1709070b0700b00711d8696de9sm3913361ejl.70.2022.06.26.09.33.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jun 2022 06:25:25 -0700 (PDT)
+        Sun, 26 Jun 2022 09:33:02 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: media: samsung,exynos5250-gsc: convert to dtschema
-Date:   Sun, 26 Jun 2022 15:25:22 +0200
-Message-Id: <20220626132522.86716-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2] dt-bindings: media: samsung,exynos5250-gsc: convert to dtschema
+Date:   Sun, 26 Jun 2022 18:33:00 +0200
+Message-Id: <20220626163300.6271-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -85,10 +84,15 @@ Changes done during conversion:
 
 [1] https://lore.kernel.org/all/6270db2d-667d-8d6f-9289-be92da486c25@samsung.com/
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+---
+
+Changes since v1:
+1. Remove Joonyoung Shim from maintainers (emails bounce).
 ---
  .../devicetree/bindings/media/exynos5-gsc.txt |  38 ------
- .../media/samsung,exynos5250-gsc.yaml         | 110 ++++++++++++++++++
- 2 files changed, 110 insertions(+), 38 deletions(-)
+ .../media/samsung,exynos5250-gsc.yaml         | 109 ++++++++++++++++++
+ 2 files changed, 109 insertions(+), 38 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/media/exynos5-gsc.txt
  create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
 
@@ -138,10 +142,10 @@ index 1872688fa408..000000000000
 -};
 diff --git a/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml b/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
 new file mode 100644
-index 000000000000..d12796c2e8a9
+index 000000000000..878397830a4d
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,109 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
@@ -152,7 +156,6 @@ index 000000000000..d12796c2e8a9
 +
 +maintainers:
 +  - Inki Dae <inki.dae@samsung.com>
-+  - Joonyoung Shim <jy0922.shim@samsung.com>
 +  - Krzysztof Kozlowski <krzk@kernel.org>
 +  - Seung-Woo Kim <sw0312.kim@samsung.com
 +
