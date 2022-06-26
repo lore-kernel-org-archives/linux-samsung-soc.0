@@ -2,62 +2,66 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC72CCA47C
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Jun 2022 11:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF48EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Jun 2022 12:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233678AbiFZL2q (ORCPT
+        id S234318AbiFZMDt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Jun 2022 07:28:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
+        Sun, 26 Jun 2022 08:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231593AbiFZL2p (ORCPT
+        with ESMTP id S230153AbiFZMDs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Jun 2022 07:28:45 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5181260B
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 04:28:43 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id sb34so13411246ejc.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 04:28:43 -0700 (PDT)
+        Sun, 26 Jun 2022 08:03:48 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88BE3DEA2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 05:03:46 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id c65so9428574edf.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jun 2022 05:03:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=V8+VYdQEsK9oOtVXodXHKHdWUFgAqKfNzP3Ab6GKk74=;
-        b=NL5FIXKco+X7S1NGDtKwspPT3yDIPYsP5uuLTpejMFqQ30eFm/xXjJkNGCmjtzRDzi
-         iUdAPFAlxDVL2ncVC29gXlc3m8lLtzy3tMlEH4fJ0B8JpB4jh0Tqh0/U6Cq1N+Yf+Caj
-         BuaEZOzJhCY1uZqnt07yIRbyv0GuFL7zRgSwxbAirdTfrnASg5Al43VvyKTuz4RkvmE1
-         J1+ZIz+zNT2teonAu2biFylKu0X/5APlNVsSgPsiuxA5OoHs3X1vaU5yVD8RVDU3aGHJ
-         szCG6sltUQbz3F57hA/SnaTBOs5iXyq4b+k2lir55ZYgKJV2g42HguPoO5y+XAgGOFcO
-         8qYQ==
+        bh=YsABAicRvcChQL+dBsFsAqIQBSwYBfRLyHvxx/EjEAc=;
+        b=RaoY3Z4G3hIju/NgnA1mb3Gn43W23OKW7Ox9ZCdiGyGO4nKI0D9FdPOicxxPgHYwXh
+         EVM+7ckP5U9x/Ip4nLMrEKgpuiHqYApQJF9XmsB/PV8Qfk8oJ9nysoIBYdzyLE6FIzcv
+         g1o8OJ61Xf/wzz4ZxOWEQGdKYvRNoA+sdYaq/yKL1rGdlCx0ck7sUq38nV678OPHR49X
+         8Ku6I0Kd6oYfeEFQIo+wxWHY/HPxQmu53eyKRwQ/N8K3JURKmO/Iu6nz+EiKTRnoQXwO
+         QAAHLLMQVLH+3YNQIMoH0uS8fhuiDmbmgHLxWLxKJuFfXUZJG6oR9NKCv8F/T+dEPNNq
+         VOsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=V8+VYdQEsK9oOtVXodXHKHdWUFgAqKfNzP3Ab6GKk74=;
-        b=YfjSJjLGINFVulETMQrhcMJGzhfEP2VvFj2yK4qdQclhqTa0Sfq7wKhOcWhFeegzzl
-         AtMjxHoaas/O/RB9CRazAQPuT5bQhEI4I4gP0u6pc6ZklWktXkYgDQ1wNsSddmrhFmKs
-         +eobg5xvkDxSOPQjkfAc0vhcvr+QF9Opsimsis5wtfo5akUNH391mU7BObgjfb+UxrnZ
-         MgA5Er6p+UGfaLLC/C93nWNpXzdxJMipoTIwlzFo/cIrBzRqncSS7+1UNeew7YYAZAM9
-         nnj7NmAJ4UH2H82SwpU0ZFbf6Jk16FNCllRV2mFWPndMAGumC2gHDSN7dNlIiY5y4ohl
-         6QvA==
-X-Gm-Message-State: AJIora9x+1GM+ONpFdVdliYkdqQMqwodDDhVk2P2fpOpRAetQ1qETPbV
-        7ywQfuO/jLk2Oo1cO5HmHtQWacBqaNZqJg==
-X-Google-Smtp-Source: AGRyM1swA7uRM6xN6H4QKad+1J4WMM1j0vRKwu+IwjMqIEGGBtItsY5zv+jk9FY/ZywX2fDZOIbSIw==
-X-Received: by 2002:a17:907:1c8d:b0:6f2:eb2:1cd6 with SMTP id nb13-20020a1709071c8d00b006f20eb21cd6mr7498326ejc.568.1656242921917;
-        Sun, 26 Jun 2022 04:28:41 -0700 (PDT)
+        bh=YsABAicRvcChQL+dBsFsAqIQBSwYBfRLyHvxx/EjEAc=;
+        b=p7+SiP/t1Ijk82Vub28SbzF9Jxi3rpHbG60E9GidllksQZuJPwu+tnlRFr8TkttI5N
+         uun8F+9lycR8GCz+gqhmEEoz5/kkSDDwqq8TWX3PXmSU2scMLQx1wMY4YoQO2bfymv4A
+         mhV7Evk3wR3GiU1vgm68kHLbGfYzmSmdvxll0eYoYSAuj8AJZjt+q69Ja1IWfJT5b1tW
+         NXJd0LvqsL+AxvhkuXQwVoTmfxoRDZkTm0LLWVAOwYp1gU2NB1cG3P/xOd+b8HdPHCUZ
+         MB8LxX6lMqdW89Kxm15FnoRxCmKIFY+hhutMAcqb/TFkC8OGl8Pb4d2ds73DHnHVudHZ
+         ygew==
+X-Gm-Message-State: AJIora+NHS71+VdJfrgROnbZ+Sf7/gDYMegJ/GYZp+1W3paKIMR8y6Be
+        wfBbkVF9CQTGeqcEYb9aK3BOKA==
+X-Google-Smtp-Source: AGRyM1vSiUGeDGrWoAfLuZEiBmbedMflmPiR4Vn8nuoypYTKzW3zgy4s6H+x5QfZVYILjBT9kOkBAg==
+X-Received: by 2002:a05:6402:84a:b0:426:262d:967e with SMTP id b10-20020a056402084a00b00426262d967emr10327651edz.286.1656245025126;
+        Sun, 26 Jun 2022 05:03:45 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id w2-20020a170906384200b00722f8d02928sm3721082ejc.174.2022.06.26.04.28.40
+        by smtp.gmail.com with ESMTPSA id q24-20020a170906b29800b0072629374590sm3751585ejz.120.2022.06.26.05.03.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jun 2022 04:28:41 -0700 (PDT)
+        Sun, 26 Jun 2022 05:03:44 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: dt-bindings: samsung: Add Exynos4210 SPI
-Date:   Sun, 26 Jun 2022 13:28:38 +0200
-Message-Id: <20220626112838.19281-1-krzysztof.kozlowski@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/5] mmc: dt-bindings: samsung,s3c6410-sdhci: convert to dtschema
+Date:   Sun, 26 Jun 2022 14:03:37 +0200
+Message-Id: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,26 +69,30 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Document samsung,exynos4210-spi compatible which is already used on
-several Exynos SoCs.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/spi/samsung,spi.yaml | 1 +
- 1 file changed, 1 insertion(+)
+I'll take DTS patches via Samsung SoC. The MMC bindings could go via MMC tree.
 
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-index a50f24f9359d..ef59ff62e88d 100644
---- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-@@ -20,6 +20,7 @@ properties:
-           - samsung,s3c2443-spi # for S3C2443, S3C2416 and S3C2450
-           - samsung,s3c6410-spi
-           - samsung,s5pv210-spi # for S5PV210 and S5PC110
-+          - samsung,exynos4210-spi
-           - samsung,exynos5433-spi
-           - tesla,fsd-spi
-       - const: samsung,exynos7-spi
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (5):
+  ARM: dts: exynos: align SDHCI node name with dtschema
+  ARM: dts: s3c24xx: align SDHCI node name with dtschema
+  ARM: dts: s3c64xx: align SDHCI node name with dtschema
+  ARM: dts: s5pv210: align SDHCI node name with dtschema
+  dt-bindings: mmc: samsung,s3c6410-sdhci: convert to dtschema
+
+ .../bindings/mmc/samsung,s3c6410-sdhci.yaml   | 81 +++++++++++++++++++
+ .../devicetree/bindings/mmc/samsung-sdhci.txt | 32 --------
+ arch/arm/boot/dts/exynos4.dtsi                |  8 +-
+ arch/arm/boot/dts/s3c2416.dtsi                |  4 +-
+ arch/arm/boot/dts/s3c64xx.dtsi                |  6 +-
+ arch/arm/boot/dts/s5pv210.dtsi                |  8 +-
+ 6 files changed, 94 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+
 -- 
 2.34.1
 
