@@ -2,123 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B32CCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 10:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3A8CCA481
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 11:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234183AbiF0KrX (ORCPT
+        id S234612AbiF0L3I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 06:47:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47024 "EHLO
+        Mon, 27 Jun 2022 07:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234266AbiF0KrV (ORCPT
+        with ESMTP id S235342AbiF0L2S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 06:47:21 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB88A6444
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 03:47:20 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id eq6so12351631edb.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 03:47:20 -0700 (PDT)
+        Mon, 27 Jun 2022 07:28:18 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8817065F1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 04:27:21 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id mf9so18590782ejb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 04:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=gpVEijcIfO7nptFiwPf05a4gNnmGv2qY0uWTrFNUgTE=;
-        b=gLbnmqyz8jOdYp6w8FuZjTafZkwT8pkYGKfPXfhmzCzsLWWdOlxokWJ9VO/YONUOrr
-         rWZvHjmFf52+M6nlsZhekiBhrM8UTLWKiTh5YUoUw5Y1w+tpzQQ0tHdkcTIcNa9TWXkU
-         McdZlCK82F4+VxUg8ehwjvnqEX7Dz/1ZgX91gQLtYDRlv+RbWz56JSGZdcBDGnutIi0H
-         dzUUq9hW7gFYnd6nUlw7wunrPCC6tml8u6scRo6Of1W9Tfmj+S8YXksrGOjD2kl5EViE
-         pVJ4pHMATa5fzBLDzLos4GAn+GRrDbTlb/ny3uPSM5QUn3a5OdJvgoLZayOnhtyWozZq
-         wTow==
+        bh=k9MqrgbTTsXE60HbuKbGjuo6KUb+HHzI3Nv+d6/bKwA=;
+        b=QUir81qMaYP+mC5/auH1wh0jOh3yq9CN496pJ8QGCqWFm2OHK4EnzayglPYC9ITq92
+         3A03iphTi0z7RARpGijh7Ir7vgQYX30BgGpcRo7c59vqztzxCRMjvS5dn79iD5qLa/de
+         OuTw2/k6yXDxnE4C985WZauv8ltVQr3g6HXKKSU7HPmyg737PUQml7wkBwgChUZXyTrM
+         RDXFpMDPhpl+MkCUheIxg78NuCN/JPv6JBXz/IXrCXx9R2wMUdH4YFuqiLMLVC5IqwCC
+         S6SKoSWKt4VH8ezJ4Q0CgmBP2qOlazjqh9zWX51K/rsgrSLXiAuN7VMVlRxShmi7Nk3k
+         LCiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=gpVEijcIfO7nptFiwPf05a4gNnmGv2qY0uWTrFNUgTE=;
-        b=BKA+qbpWsNhNaediAkVOjCU3vJdsv1d7MikIS3bgEHw/fyWUB21F9iwvyHtJe3owrd
-         VxVgTrB0WIpfnDGLPJXf62MdrlN3dJJauxagNQM1Gsft51fTCHVM7V96sIeHqaWqsyWm
-         VZ99KNLrbBw9xPu5PZjWDxegXVQoXys6aGwnw+dOSVTinpIOtnc24aSVKERjb4gaWC0h
-         ru+jHs3y8ugyucPUO2Jl0VxZ3m2X63tcl/WN+xgUnLZKe7ElI626Tmn77wBq2nrivGrJ
-         27k7Gc+8m6ee5rYSf8aLAjeoR7xFiloTdhvFNYBXz2KPeAJlmlxXNdn4vwXZi2xkYJnK
-         qybg==
-X-Gm-Message-State: AJIora+sgygvgi4TsQHDwORjFY/5PrI/QUgNTWchD/YiH2+LZ1bOUqoY
-        wdy7T9THvoBgOzzgH7xnFgQtpw==
-X-Google-Smtp-Source: AGRyM1vgfrHZrHQCINMERcN9cugijGYyf1GSAlI2ko56v+wgzERvq3ty4zeYUPxhi45eY2G7lU4oBg==
-X-Received: by 2002:aa7:c14f:0:b0:435:7b75:fd06 with SMTP id r15-20020aa7c14f000000b004357b75fd06mr15916778edp.352.1656326839504;
-        Mon, 27 Jun 2022 03:47:19 -0700 (PDT)
-Received: from [192.168.0.248] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id v10-20020a1709063bca00b006ffa19b7782sm4831735ejf.74.2022.06.27.03.47.18
+        bh=k9MqrgbTTsXE60HbuKbGjuo6KUb+HHzI3Nv+d6/bKwA=;
+        b=E3YzFf23MLqn2/bNWPnmDZsWFmZBDi8qIBzYIGBze4W0vmdawHf555yVq5BXmF5Ngu
+         heaIvlePnKwVdgrzdTCtKBFeadMSpc/IFUfhpPKCRbO3jLBEnNUccwr6fQMwlCdTBdpJ
+         P2YKs6pgwO4WzF9yDOs5HNE62CUReayU4QU2dVrUbXKnBmgNx+C5Yz8qKpYZQay/EB/H
+         Hq6Fp6fX3C04RT2VItaihISjSpQtauFoSVh/p4MPC+lzpCCbdDxGIF0Bj6KH57Wmed0g
+         FR3MPg4dlYj7mm0FAEOqPFIE9c+U48iAxnYgpRW+01OFquDPmcJKAHK2p2R7LNDTNc8a
+         4/jg==
+X-Gm-Message-State: AJIora/dPgKoPQSBMM4UzTBaVF0eJXnneDB7Ww15IWBgimGrPu0uKzxM
+        eO1XJWTWvuqmMHJQal9RbUmsSA==
+X-Google-Smtp-Source: AGRyM1sDeQlNdncRDGUq02uGdhU8155q4AIyhTwBjOFr411GSJDA30FUo0IQZdOFbJRU7iR2YnvaDQ==
+X-Received: by 2002:a17:907:930:b0:711:da36:62f7 with SMTP id au16-20020a170907093000b00711da3662f7mr12292917ejc.468.1656329240170;
+        Mon, 27 Jun 2022 04:27:20 -0700 (PDT)
+Received: from [192.168.0.249] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id s17-20020a1709060c1100b00722e52d043dsm4964746ejf.114.2022.06.27.04.27.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 03:47:18 -0700 (PDT)
-Message-ID: <ae8cee69-2ca5-0b27-f6d5-0f9f74871fd8@linaro.org>
-Date:   Mon, 27 Jun 2022 12:47:17 +0200
+        Mon, 27 Jun 2022 04:27:19 -0700 (PDT)
+Message-ID: <312a5c20-e67b-b965-c4fe-a14027d6398c@linaro.org>
+Date:   Mon, 27 Jun 2022 13:27:18 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: pci-exynos.c phy_init() usage
+Subject: Re: [PATCH] tty: serial: samsung_tty: set dma burst_size to 1
 Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>
-Cc:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jirislaby@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220624173541.GA1543581@bhelgaas>
- <CGME20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d@eucas1p1.samsung.com>
- <c0c802c0-82e1-e7bb-48be-974ac23b5a15@linaro.org>
- <591f696f-b55c-d267-7fcb-74f7fd4a6900@samsung.com>
+        Hector Martin <marcan@marcan.st>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <CGME20220627065344epcas2p47a12d290f985e39178b560a6f1e53807@epcas2p4.samsung.com>
+ <20220627065113.139520-1-chanho61.park@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <591f696f-b55c-d267-7fcb-74f7fd4a6900@samsung.com>
+In-Reply-To: <20220627065113.139520-1-chanho61.park@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27/06/2022 12:30, Marek Szyprowski wrote:
-> Hi,
+On 27/06/2022 08:51, Chanho Park wrote:
+> The src_maxburst and dst_maxburst have been changed to 1 but the settings
+> of the UCON register aren't changed yet. They should be changed as well
+> according to the dmaengine slave config.
 > 
-> On 24.06.2022 20:07, Krzysztof Kozlowski wrote:
->> On 24/06/2022 19:35, Bjorn Helgaas wrote:
->>> In exynos_pcie_host_init() [1], we call:
->>>
->>>    phy_reset(ep->phy);
->>>    phy_power_on(ep->phy);
->>>    phy_init(ep->phy);
->>>
->>> The phy_init() function comment [2] says it must be called before
->>> phy_power_on().  Is exynos doing this backwards?
->> Looks like. I don't have Exynos hardware with a PCI, so cannot
->> test/fix/verify.
->>
->> Luckily for Exynos ;-) it's not alone in this pattern:
->> drivers/net/ethernet/marvell/sky2.c
->> drivers/usb/dwc2/platform.c
-> 
-> I've checked that on the real hardware. Swapping the order of 
-> phy_power_on and phy_init breaks driver operation.
-> 
-> However pci-exynos is the only driver that uses the phy-exynos-pcie, so 
-> we can simply swap the content of the init and power_on in the phy 
-> driver to adjust the code to the right order. power_on/init and 
-> exit/power_off are also called one after the other in pci-exynos, 
-> without any activity between them, so we can also simply move all 
-> operation to one pair of the callback, like power_on/off.
-> 
-> Krzysztof, which solution would you prefer?
+> Fixes: aa2f80e752c7 ("serial: samsung: fix maxburst parameter for DMA transactions")
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-I think the real problem is that the Exynos PCIe phy init
-(exynos5433_pcie_phy_init) performs parts of power on procedure, so the
-code is mixed. Probably also the phy init could not happen earlier due
-to gated clocks (ungated in exynos5433_pcie_phy_power_on).
 
-I would prefer to clean it up while ordering init+power_on, so figure
-out more or less correct procedure.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-You can also look at Artpec-8 PHY - it seems using correct order
-(init+reset):
-https://lore.kernel.org/all/20220614011616epcms2p7dcaa67c53b7df5802dd7a697e2d472d7@epcms2p7/
+
 Best regards,
 Krzysztof
