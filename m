@@ -2,234 +2,152 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E79CC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 09:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A438CC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 10:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233628AbiF0JtP (ORCPT
+        id S232641AbiF0Ka1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 05:49:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38418 "EHLO
+        Mon, 27 Jun 2022 06:30:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbiF0JtO (ORCPT
+        with ESMTP id S232441AbiF0Ka0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 05:49:14 -0400
-Received: from mailout3.hostsharing.net (mailout3.hostsharing.net [IPv6:2a01:4f8:150:2161:1:b009:f236:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17A42735;
-        Mon, 27 Jun 2022 02:49:11 -0700 (PDT)
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
-        by mailout3.hostsharing.net (Postfix) with ESMTPS id BB4E3101E1D9F;
-        Mon, 27 Jun 2022 11:49:09 +0200 (CEST)
-Received: from localhost (unknown [89.246.108.87])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by h08.hostsharing.net (Postfix) with ESMTPSA id 7985461B8672;
-        Mon, 27 Jun 2022 11:49:09 +0200 (CEST)
-X-Mailbox-Line: From c5595bdb20625382538816c2e6d917d95c62e09b Mon Sep 17 00:00:00 2001
-Message-Id: <c5595bdb20625382538816c2e6d917d95c62e09b.1656322883.git.lukas@wunner.de>
-From:   Lukas Wunner <lukas@wunner.de>
-Date:   Mon, 27 Jun 2022 11:49:08 +0200
-Subject: [PATCH net v3] net: phy: Don't trigger state machine while in suspend
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     netdev@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Ferry Toth <fntoth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+        Mon, 27 Jun 2022 06:30:26 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED426144
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 03:30:24 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220627103020euoutp014dd8347b283203e7d634287226f4afe4~8c47kbE_e0135201352euoutp01c
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 10:30:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220627103020euoutp014dd8347b283203e7d634287226f4afe4~8c47kbE_e0135201352euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1656325820;
+        bh=BS6P86w0wqnnnvMHN8gPRzZ4VXUHyI/WUBYzCf/0nYg=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=nWEvoffB2iJpaEO7E+WSXL+C0NAsXAix0zLtg6b3MJiv8Hgf1jMsCPJuwKJAwMmvr
+         N1x7wilSmeNTIoWknraGi4uJzRhpuWHGTtuuXzYv49IE1cMP8AJzxuKRfFHqlzSnhj
+         xoALnElNo0aKwIFI7XzhPqT2xlf7P3oU1oyBFYfA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220627103020eucas1p1f1af80654881a71f0006b3332a38e959~8c47Q7YlS3040130401eucas1p1y;
+        Mon, 27 Jun 2022 10:30:20 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B8.80.09580.CB689B26; Mon, 27
+        Jun 2022 11:30:20 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220627103019eucas1p231b106b2ac894ad3818dd5fdc9e611f6~8c461fOL62315023150eucas1p2k;
+        Mon, 27 Jun 2022 10:30:19 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220627103019eusmtrp261df4cf3f79978890ee10cd2d8402a62~8c460r7ua1616316163eusmtrp2V;
+        Mon, 27 Jun 2022 10:30:19 +0000 (GMT)
+X-AuditID: cbfec7f5-9adff7000000256c-77-62b986bc1e94
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id CB.2F.09095.BB689B26; Mon, 27
+        Jun 2022 11:30:19 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220627103019eusmtip129ecc2c4a43753d04817c30db901d57d~8c46U02qg1080710807eusmtip1j;
+        Mon, 27 Jun 2022 10:30:19 +0000 (GMT)
+Message-ID: <591f696f-b55c-d267-7fcb-74f7fd4a6900@samsung.com>
+Date:   Mon, 27 Jun 2022 12:30:18 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: pci-exynos.c phy_init() usage
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>
+Cc:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <c0c802c0-82e1-e7bb-48be-974ac23b5a15@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djPc7p72nYmGexaymHxYN42NotXZ9ay
+        Wdz41cZqseLLTHaLva+3sls09Pxmtdj0+Bqrxdl5x9ksZpzfx+TA6bFz1l12j02rOtk87lzb
+        w+bx5Mp0Jo/NS+o9+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK2PRpHPsBSc4K3a8W8HewHib
+        vYuRk0NCwETizL4FzCC2kMAKRonJp6O7GLmA7C+MEtdmn2WFcD4zSrxfc5cNpuPnzA8sEInl
+        jBJPdrxghnA+MkocfrwWbBavgJ3E3ccLWUFsFgFVicb179kg4oISJ2c+YQGxRQWSJc6dvQoW
+        FxbQkrh3bQNYL7OAuMStJ/OZQIaKCKxmlLg/YwI7iMMscJxRYsLO92CXswkYSnS97QLr5gTa
+        9mXBVahueYntb+eAnSQh8J9D4nnba6AzOIAcF4mrk7ggfhCWeHV8CzQEZCT+7wTZBlKSL/F3
+        hjFEuELi2us1zBC2tcSdc7/YQEqYBTQl1u/Shwg7ShzeO5ERopNP4sZbQYgD+CQmbZvODBHm
+        lehoE4KoVpOYdXwd3M6DFy4xT2BUmoUUKLOQPD8LySuzEPYuYGRZxSieWlqcm55abJyXWq5X
+        nJhbXJqXrpecn7uJEZimTv87/nUH44pXH/UOMTJxMB5ilOBgVhLhfX19a5IQb0piZVVqUX58
+        UWlOavEhRmkOFiVx3uTMDYlCAumJJanZqakFqUUwWSYOTqkGJq7NrUqpd+02b5azXOLpXZn+
+        dIrSjCwxx8PrX9zmP6W/I8ZopcifKy1vuT+Gbt87d96Sk6Z/zFbylfjNDi10vnPdMvyHxv8P
+        y3NmfXD0tj8U5XEgeaKC4eIoI+uTN93+PZ3xvTT7oiOTtcaNpR1np2fe6TvwOmjeze+iXiJX
+        uM/l/evpX866JfPKzCwDwVeFPD5h+4VypvM7de1cVMdT4naSLeD15OXNrN17fEXX/fiq/fuZ
+        8qFbT1ZKtl1ZLz0hw21Sq/0JpUcrPhYbONl6iF6yX6O7PeuJq5JYNcNE05sKvxvXSE7qMVSr
+        1Jl1fdvNuZ+qduz9+nDelqAn37YnL/fedcDBVKJT+FjWt7ZlfTeUWIozEg21mIuKEwE2M9ee
+        wgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsVy+t/xu7q723YmGazpVLd4MG8bm8WrM2vZ
+        LG78amO1WPFlJrvF3tdb2S0aen6zWmx6fI3V4uy842wWM87vY3Lg9Ng56y67x6ZVnWwed67t
+        YfN4cmU6k8fmJfUefVtWMXp83iQXwB6lZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwe
+        a2VkqqRvZ5OSmpNZllqkb5egl7Fo0jn2ghOcFTverWBvYLzN3sXIySEhYCLxc+YHli5GDg4h
+        gaWMEh+yIcIyEienNbBC2MISf651sXUxcgGVvGeUWPB1NwtIglfATuLu44VgRSwCqhKN69+z
+        QcQFJU7OfAJWIyqQLNG85RATiC0soCVx79oGZhCbWUBc4taT+UwgQ0UEVjNKvNp9lAXEYRY4
+        zijxcN4Fdoh12xklXrccAhvFJmAo0fW2C2wFJ9DqLwuuQo0yk+ja2sUIYctLbH87h3kCo9As
+        JJfMQrJxFpKWWUhaFjCyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAiMzm3Hfm7ewTjv1Ue9
+        Q4xMHIyHGCU4mJVEeF9f35okxJuSWFmVWpQfX1Sak1p8iNEUGBwTmaVEk/OB6SGvJN7QzMDU
+        0MTM0sDU0sxYSZzXs6AjUUggPbEkNTs1tSC1CKaPiYNTqoGpdtrkToXDOy4kLXPa53mxXN/t
+        dsGlgheqUzSvueevyfdLeZ3511Vmj97urAOpr+4d23zZSHNXb1+oYeqtrkLnV9en8Qfvm/5G
+        wq+zd1qf9Zooy50hU+2l56+28f/hN9dsr1TAW7sT3Y/zgq0amHg/fHh1sYllafbkV08EH7hb
+        Xi/eXpL6QDz015rivBeq6Se9HodMmmLJr5ZUoHbS5X/R1JBFCcdrQgpzV7f55W+79Ewq0654
+        0/t2/xO2yfN2371mzZPsfmVR/UaxVXcvv9g599s+SbePsxUjMsRSvfZtED2quPySQ5Hk8tkH
+        e+Xn+fAe/1Ec2fg6q9D+p7WFLdeBh7zcpqVZz3XX205+VmijxFKckWioxVxUnAgAr4dHFVcD
+        AAA=
+X-CMS-MailID: 20220627103019eucas1p231b106b2ac894ad3818dd5fdc9e611f6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d
+References: <20220624173541.GA1543581@bhelgaas>
+        <CGME20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d@eucas1p1.samsung.com>
+        <c0c802c0-82e1-e7bb-48be-974ac23b5a15@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Upon system sleep, mdio_bus_phy_suspend() stops the phy_state_machine(),
-but subsequent interrupts may retrigger it:
+Hi,
 
-They may have been left enabled to facilitate wakeup and are not
-quiesced until the ->suspend_noirq() phase.  Unwanted interrupts may
-hence occur between mdio_bus_phy_suspend() and dpm_suspend_noirq(),
-as well as between dpm_resume_noirq() and mdio_bus_phy_resume().
+On 24.06.2022 20:07, Krzysztof Kozlowski wrote:
+> On 24/06/2022 19:35, Bjorn Helgaas wrote:
+>> In exynos_pcie_host_init() [1], we call:
+>>
+>>    phy_reset(ep->phy);
+>>    phy_power_on(ep->phy);
+>>    phy_init(ep->phy);
+>>
+>> The phy_init() function comment [2] says it must be called before
+>> phy_power_on().  Is exynos doing this backwards?
+> Looks like. I don't have Exynos hardware with a PCI, so cannot
+> test/fix/verify.
+>
+> Luckily for Exynos ;-) it's not alone in this pattern:
+> drivers/net/ethernet/marvell/sky2.c
+> drivers/usb/dwc2/platform.c
 
-Retriggering the phy_state_machine() through an interrupt is not only
-undesirable for the reason given in mdio_bus_phy_suspend() (freezing it
-midway with phydev->lock held), but also because the PHY may be
-inaccessible after it's suspended:  Accesses to USB-attached PHYs are
-blocked once usb_suspend_both() clears the can_submit flag and PHYs on
-PCI network cards may become inaccessible upon suspend as well.
+I've checked that on the real hardware. Swapping the order of 
+phy_power_on and phy_init breaks driver operation.
 
-Amend phy_interrupt() to avoid triggering the state machine if the PHY
-is suspended.  Signal wakeup instead if the attached net_device or its
-parent has been configured as a wakeup source.  (Those conditions are
-identical to mdio_bus_phy_may_suspend().)  Postpone handling of the
-interrupt until the PHY has resumed.
+However pci-exynos is the only driver that uses the phy-exynos-pcie, so 
+we can simply swap the content of the init and power_on in the phy 
+driver to adjust the code to the right order. power_on/init and 
+exit/power_off are also called one after the other in pci-exynos, 
+without any activity between them, so we can also simply move all 
+operation to one pair of the callback, like power_on/off.
 
-Before stopping the phy_state_machine() in mdio_bus_phy_suspend(),
-wait for a concurrent phy_interrupt() to run to completion.  That is
-necessary because phy_interrupt() may have checked the PHY's suspend
-status before the system sleep transition commenced and it may thus
-retrigger the state machine after it was stopped.
+Krzysztof, which solution would you prefer?
 
-Likewise, after re-enabling interrupt handling in mdio_bus_phy_resume(),
-wait for a concurrent phy_interrupt() to complete to ensure that
-interrupts which it postponed are properly rerun.
-
-The issue was exposed by commit 3873b20fd278 ("usbnet: smsc95xx: Forward
-PHY interrupts to PHY driver to avoid polling"), but has existed since
-forever.  Hence the stable designation.
-
-Link: https://lore.kernel.org/netdev/a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com/
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: stable@vger.kernel.org
----
- Resending as requested by Jakub.  No code changes since v1.
- 
- Changes v1 -> v2:
- * Extend rationale in commit message.
- * Drop Fixes tag, add Tested-by tag (Marek).
- 
- Changes v2 -> v3:
- * Add stable designation.
- * Add Acked-by tag (Rafael).
- 
- Link to v1:
- https://lore.kernel.org/netdev/688f559346ea747d3b47a4d16ef8277e093f9ebe.1653556322.git.lukas@wunner.de/
- 
- Link to v2:
- https://lore.kernel.org/netdev/cover.1654680790.git.lukas@wunner.de/
- 
- drivers/net/phy/phy.c        | 23 +++++++++++++++++++++++
- drivers/net/phy/phy_device.c | 23 +++++++++++++++++++++++
- include/linux/phy.h          |  6 ++++++
- 3 files changed, 52 insertions(+)
-
-diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-index ef62f357b76d..8d3ee3a6495b 100644
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -31,6 +31,7 @@
- #include <linux/io.h>
- #include <linux/uaccess.h>
- #include <linux/atomic.h>
-+#include <linux/suspend.h>
- #include <net/netlink.h>
- #include <net/genetlink.h>
- #include <net/sock.h>
-@@ -976,6 +977,28 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
- 	struct phy_driver *drv = phydev->drv;
- 	irqreturn_t ret;
- 
-+	/* Wakeup interrupts may occur during a system sleep transition.
-+	 * Postpone handling until the PHY has resumed.
-+	 */
-+	if (IS_ENABLED(CONFIG_PM_SLEEP) && phydev->irq_suspended) {
-+		struct net_device *netdev = phydev->attached_dev;
-+
-+		if (netdev) {
-+			struct device *parent = netdev->dev.parent;
-+
-+			if (netdev->wol_enabled)
-+				pm_system_wakeup();
-+			else if (device_may_wakeup(&netdev->dev))
-+				pm_wakeup_dev_event(&netdev->dev, 0, true);
-+			else if (parent && device_may_wakeup(parent))
-+				pm_wakeup_dev_event(parent, 0, true);
-+		}
-+
-+		phydev->irq_rerun = 1;
-+		disable_irq_nosync(irq);
-+		return IRQ_HANDLED;
-+	}
-+
- 	mutex_lock(&phydev->lock);
- 	ret = drv->handle_interrupt(phydev);
- 	mutex_unlock(&phydev->lock);
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 431a8719c635..46acddd865a7 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -278,6 +278,15 @@ static __maybe_unused int mdio_bus_phy_suspend(struct device *dev)
- 	if (phydev->mac_managed_pm)
- 		return 0;
- 
-+	/* Wakeup interrupts may occur during the system sleep transition when
-+	 * the PHY is inaccessible. Set flag to postpone handling until the PHY
-+	 * has resumed. Wait for concurrent interrupt handler to complete.
-+	 */
-+	if (phy_interrupt_is_valid(phydev)) {
-+		phydev->irq_suspended = 1;
-+		synchronize_irq(phydev->irq);
-+	}
-+
- 	/* We must stop the state machine manually, otherwise it stops out of
- 	 * control, possibly with the phydev->lock held. Upon resume, netdev
- 	 * may call phy routines that try to grab the same lock, and that may
-@@ -315,6 +324,20 @@ static __maybe_unused int mdio_bus_phy_resume(struct device *dev)
- 	if (ret < 0)
- 		return ret;
- no_resume:
-+	if (phy_interrupt_is_valid(phydev)) {
-+		phydev->irq_suspended = 0;
-+		synchronize_irq(phydev->irq);
-+
-+		/* Rerun interrupts which were postponed by phy_interrupt()
-+		 * because they occurred during the system sleep transition.
-+		 */
-+		if (phydev->irq_rerun) {
-+			phydev->irq_rerun = 0;
-+			enable_irq(phydev->irq);
-+			irq_wake_thread(phydev->irq, phydev);
-+		}
-+	}
-+
- 	if (phydev->attached_dev && phydev->adjust_link)
- 		phy_start_machine(phydev);
- 
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 508f1149665b..b09f7d36cff2 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -572,6 +572,10 @@ struct macsec_ops;
-  * @mdix_ctrl: User setting of crossover
-  * @pma_extable: Cached value of PMA/PMD Extended Abilities Register
-  * @interrupts: Flag interrupts have been enabled
-+ * @irq_suspended: Flag indicating PHY is suspended and therefore interrupt
-+ *                 handling shall be postponed until PHY has resumed
-+ * @irq_rerun: Flag indicating interrupts occurred while PHY was suspended,
-+ *             requiring a rerun of the interrupt handler after resume
-  * @interface: enum phy_interface_t value
-  * @skb: Netlink message for cable diagnostics
-  * @nest: Netlink nest used for cable diagnostics
-@@ -626,6 +630,8 @@ struct phy_device {
- 
- 	/* Interrupts are enabled */
- 	unsigned interrupts:1;
-+	unsigned irq_suspended:1;
-+	unsigned irq_rerun:1;
- 
- 	enum phy_state state;
- 
+Best regards
 -- 
-2.36.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
