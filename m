@@ -2,135 +2,138 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED42FCCA482
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 11:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDEEC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 11:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238694AbiF0Lxp (ORCPT
+        id S238140AbiF0LyX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 07:53:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55994 "EHLO
+        Mon, 27 Jun 2022 07:54:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239037AbiF0LxE (ORCPT
+        with ESMTP id S238871AbiF0Lwp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 07:53:04 -0400
-Received: from smtp2.axis.com (smtp2.axis.com [195.60.68.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C653DF53;
-        Mon, 27 Jun 2022 04:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1656330456;
-  x=1687866456;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HvYHOeFy99wGwq/w2fx0FEcTo66gkhtePc7lFcpF/fs=;
-  b=YrScMb56OEuqc9o6FhUutnD/8QeywtmPSgdmJVGgOjiGve7Rk4JVR94p
-   OmgEcEZZtvVnYg8H2pm66ekaT1ksGnX3BD5bOVro6njJDTuf4P469THMN
-   nukZ0UD0zMDP+exFbknv/aXk3yp/hLUO3AwzMyfAEDqViKimHRbJFcCqj
-   vTG9e9Z4s3IVfxlIa2PH0qbwNz8C9FPt8SVzBbpx5WW+iY5uHelZJoQr1
-   D5B6lJizOvq4fYM5wA1G06UvpmU/v3/JPbH/N4iF1nZQpHIShZ2imSQwK
-   7l6oF+7nq2WGcKczL2gV8rLQzkKmvhes81lHwLspEL7qHaFMYXlnpkkLE
-   g==;
-Date:   Mon, 27 Jun 2022 13:47:33 +0200
-From:   Jesper Nilsson <Jesper.Nilsson@axis.com>
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
-CC:     Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 27 Jun 2022 07:52:45 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3382BDED1;
+        Mon, 27 Jun 2022 04:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656330370; x=1687866370;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=038ViQj4OdJMOtsCH8E05gcJKrV6mUvMiaaLGQCFo14=;
+  b=MvkWEbVLP4mP0s/WkY4CK3hUeVibF9JQOL1q//3tHt7oe0kp0XhjemPe
+   uhldW23mIg8276oH2EvSTE0xtBRz++DwKc+/dcUzjRFcecnJ9dMd625zH
+   6IgQeT62GkxAjWQst3gGQCKoZ0a3+FNTaDCt3KDGxi5VZf6bwclut4tfe
+   GIBFG+qb2ToII8wlRzONuJ3uL8fPMtLKl+/rMn4cMffJNwCvD+mgFs9kf
+   kZ8qDr38+9wvwU6ubU/uBi6VyP6t5cLVZBDHA8ArOXgpIJC88oX4SN6Og
+   F+eEUxAgr3EDoBEcL55V/fFpVf+1VMQYAfUKxXbSxgBbn+WRX/Tjz4AQU
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10390"; a="278973156"
+X-IronPort-AV: E=Sophos;i="5.92,226,1650956400"; 
+   d="scan'208";a="278973156"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2022 04:46:09 -0700
+X-IronPort-AV: E=Sophos;i="5.92,226,1650956400"; 
+   d="scan'208";a="646396113"
+Received: from gretavix-mobl3.amr.corp.intel.com ([10.249.43.78])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2022 04:46:07 -0700
+Date:   Mon, 27 Jun 2022 14:46:07 +0300 (EEST)
+From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Chanho Park <chanho61.park@samsung.com>
+cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Minghuan Lian <minghuan.Lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jesper Nilsson <Jesper.Nilsson@axis.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Rahul Tanwar <rtanwar@maxlinear.com>,
-        Srikanth Thokala <srikanth.thokala@intel.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Pratyush Anand <pratyush.anand@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Frank Li <Frank.Li@nxp.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@axis.com>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH RESEND v5 15/18] PCI: dwc: Add dw_ prefix to the
- pcie_port structure name
-Message-ID: <20220627114733.GG13332@axis.com>
-References: <20220624143428.8334-1-Sergey.Semin@baikalelectronics.ru>
- <20220624143428.8334-16-Sergey.Semin@baikalelectronics.ru>
+        Hector Martin <marcan@marcan.st>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-serial <linux-serial@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] tty: serial: samsung_tty: loopback mode support
+In-Reply-To: <20220627032353.8868-1-chanho61.park@samsung.com>
+Message-ID: <ab327a8f-f520-ad85-c0fc-1e505647164c@linux.intel.com>
+References: <CGME20220627032556epcas2p26c2cd2786888a5018607bf651bc5dec0@epcas2p2.samsung.com> <20220627032353.8868-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20220624143428.8334-16-Sergey.Semin@baikalelectronics.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 04:34:25PM +0200, Serge Semin wrote:
-> All of the DW PCIe core driver entities have names with the dw_ prefix in
-> order to easily distinguish local and common PCIe name spaces. All except
-> the pcie_port structure which contains the DW PCIe Root Port descriptor.
-> For historical reason the structure has retained the original name since
-> commit 340cba6092c2 ("pci: Add PCIe driver for Samsung Exynos") when
-> the DW PCIe IP-core support was added to the kernel. Let's finally fix
-> that by adding the dw_ prefix to the structure name and by adding the _rp
-> suffix to be similar to the EP counterpart. Thus the name will be coherent
-> with the common driver naming policy. It shall make the driver code more
-> readable eliminating visual confusion between the local and generic PCI
-> name spaces.
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On Mon, 27 Jun 2022, Chanho Park wrote:
 
-Sorry, I never replied in the thread for the last patch,
-your reasoning for not changing the parameter name made sense.
+> Internal loopback mode can be supported by setting
+> S3C2443_UCON_LOOPBACK bit. The mode & bit can be supported since
+> s3c2410 and later SoCs.
 
-For the ARTPEC-6 parts,
+In that case, why is the  LOOPBACK define named 2443 and not 2410???
 
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+The change looks fine otherwise.
 
-/^JN - Jesper Nilsson
+I note though that many of the current drivers won't return TOICM_LOOP 
+from ->get_mctrl() but I don't think it's exactly wrong to return it 
+either. Perhaps lack of returning it is due to 
+Documentation/driver-api/serial/driver.rst not including TOICM_LOOP in 
+get_mctrl's list of information but only in set_mctrl's one.
+
 -- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+ i.
+
+> We can test it by linux-serial-test program[1]
+> with -k option. It will set TIOCM_LOOP mode during test.
+> 
+> -k, --loopback     Use internal hardware loop back
+> 
+> [1]: https://github.com/cbrake/linux-serial-test
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index d5ca904def34..d7d035cd95c0 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -1002,16 +1002,22 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
+>  static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
+>  {
+>  	unsigned int umstat = rd_reg(port, S3C2410_UMSTAT);
+> +	unsigned int ucon = rd_reg(port, S3C2410_UCON);
+> +	unsigned int mctrl = TIOCM_CAR | TIOCM_DSR;
+>  
+>  	if (umstat & S3C2410_UMSTAT_CTS)
+> -		return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
+> -	else
+> -		return TIOCM_CAR | TIOCM_DSR;
+> +		mctrl |= TIOCM_CTS;
+> +
+> +	if (ucon & S3C2443_UCON_LOOPBACK)
+> +		mctrl |= TIOCM_LOOP;
+> +
+> +	return mctrl;
+>  }
+>  
+>  static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
+>  {
+>  	unsigned int umcon = rd_regl(port, S3C2410_UMCON);
+> +	unsigned int ucon = rd_reg(port, S3C2410_UCON);
+>  
+>  	if (mctrl & TIOCM_RTS)
+>  		umcon |= S3C2410_UMCOM_RTS_LOW;
+> @@ -1019,6 +1025,13 @@ static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
+>  		umcon &= ~S3C2410_UMCOM_RTS_LOW;
+>  
+>  	wr_regl(port, S3C2410_UMCON, umcon);
+> +
+> +	if (mctrl & TIOCM_LOOP)
+> +		ucon |= S3C2443_UCON_LOOPBACK;
+> +	else
+> +		ucon &= ~S3C2443_UCON_LOOPBACK;
+> +
+> +	wr_regl(port, S3C2410_UCON, ucon);
+>  }
+>  
+>  static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
+> 
+
