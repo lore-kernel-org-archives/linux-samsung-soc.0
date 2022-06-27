@@ -2,97 +2,98 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1363AC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 11:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F026AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jun 2022 11:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235615AbiF0LbI (ORCPT
+        id S235798AbiF0LeT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 07:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46500 "EHLO
+        Mon, 27 Jun 2022 07:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235515AbiF0L3x (ORCPT
+        with ESMTP id S236342AbiF0Ldj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 07:29:53 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D81B6B
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 04:28:35 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id o9so12497317edt.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 04:28:35 -0700 (PDT)
+        Mon, 27 Jun 2022 07:33:39 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DA5DEB5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 04:30:59 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id q6so18412366eji.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 04:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=/t4Xm9+FraTLR9hcokAjM0p4uyhSwWz6XTXdVOTOTeY=;
-        b=WUUYOCKjF+CjYBCEU4xB+C5tmTt+OHg4/wP/B/fZoq3zxojZDcIeuXNTvkiMQhnHKU
-         dpILD6bfuPO8nP5jHMNa85TRrbel8gvofp84ykB7HeKrfaUtxhuLO9Nx07KH0clQS7zS
-         unTdptdd9dggBYIEXkZ7h8ZLaSdUjqwJuC8RCD8v1eCPTBbHuf2VwwIQWDFHU4uYRJjd
-         IehkaWUypEkpJA83HCOBSeOQ2FtrW24DYQGEjYxT+vzby5dD1F77ebUi9TXeBhr5bbXu
-         /6HRsGtYKWf/8yMXaT+oxHj9+VvZ7JCAWg7afM3mo6Y3kd4Ubs2vhaDShZ8sFQpPdtE2
-         QyqA==
+        bh=l3ShECmhHBYGtTaNrFh8O7lxelsTpiudcEC3xdylX/o=;
+        b=WG2zDq3HZTzjze3fkNGpZfPEgvmcUtHem+gHJYjTO0HPeF4CD44nnkEuFvvCywvYqp
+         ywzkxVoh8JcH5fPkpgVweha1HGaZA0CFPnLZvf+Wrz/HWMij5gJV9OqKQ/HzcL3kXizt
+         cdem3MiT4P03vfxMWkkN8hId/4oyFwf4SkzZY57uUYj4Vnp3C9uDNNaOCVT+RXc/pC7/
+         NHm5F77NS/bNifp61dq/7p5cVlvfxhs3x0Tq4Z0AiBXgOSCk/AKcgf/60M0XL6PChFEf
+         05hG4QrYDKxZHZJNVZuu85kIyPCszfyt+eoCea0TGsBqHRage2Eab1AqaFFulCkrWeLX
+         kcug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=/t4Xm9+FraTLR9hcokAjM0p4uyhSwWz6XTXdVOTOTeY=;
-        b=uyrGAoj2ORTNN2SSeZiaE2s6z7nxxvzL5gUpdZP9IUCYwlpA+FSguvXPGbDWBJNeiq
-         tnJhNMU89CTgW1eTEHNDwsVcbLwNyT1nBZmdqu07pNRsH+HLwNEkRnCitQiDLqukNsQT
-         e//0OikGgcJki6uGGZEl7+w7AG9bBTGBfENg0GeHYG6OyJ88PGsWEVLjPFX0+cPRr7DH
-         TNtvPzldvtLgUNnzNm0Z3Lhwd9UdddztKPwDiJhyBHQDRczrGsRZ6kdqYoR4M3E/dL5S
-         D1n2T2PbwF7W0zs+Cz5p0AbljdWovB0TEUHfQNb0CUkoV0xilzTR6qL1+464lYPac5Uo
-         vVkQ==
-X-Gm-Message-State: AJIora+dJ+ABYHs9+0eNG0zxQ6C/TxxZz1EqQAg2hRfca1rIK4rjqHyr
-        hcR23czowajsX88twlIaBHpwMQ==
-X-Google-Smtp-Source: AGRyM1uv1ehNApugy+NOUezcRtQPCQpoYtTHCveVV3gt2ujW+I/EL0vOXUCpwTrCWLgqHy9wWv2AmQ==
-X-Received: by 2002:a05:6402:5c9:b0:420:aac6:257b with SMTP id n9-20020a05640205c900b00420aac6257bmr15834606edx.128.1656329313730;
-        Mon, 27 Jun 2022 04:28:33 -0700 (PDT)
+        bh=l3ShECmhHBYGtTaNrFh8O7lxelsTpiudcEC3xdylX/o=;
+        b=ku3Nmku6Jmr8/dJD243a9NuTOl1a/XiatKqZDMWRbKPC8i0PinDSJ16UbX5l842caD
+         uH+iweyOztoAW88vQ35gtuRHm17GrhW13dqVp63M4C2GzSHf8f2c35+gkOYoq3+BP4i9
+         o2lq12kaI8i0lOpv23cg9MeZyl3cdVCR/A5p+TsFn9uDupXx2xCnvZ4nhmesHL51CHkV
+         AKPnODvYx0nnKjIyormKDVEL96geGHUAY5syMl6ZFP9miGFkszkctlQsdMv3l4HqxCLy
+         2p1ZTEuMbW+8/IhgRrOiv0In6JZYmNQGctbi6ku4IFmsZwmJ0xSSeS5DZ36Feyx66oVb
+         rjBg==
+X-Gm-Message-State: AJIora9X0dCUHVLEAY9O67cAjjYjm2/Sn7t/pBSCTQ2ifaLiALKIXDl6
+        brAyc3pTPRzDNbV2pY6ZRUyGGg==
+X-Google-Smtp-Source: AGRyM1tS8F9/rptbLxOmuVEwJVg2EzfiYgzVz7ce4tu0rkW1+TrZ16suB/FnT+SU4tQ9fOBTUVGd2Q==
+X-Received: by 2002:a17:907:6294:b0:6e1:ea4:74a3 with SMTP id nd20-20020a170907629400b006e10ea474a3mr12573216ejc.168.1656329458079;
+        Mon, 27 Jun 2022 04:30:58 -0700 (PDT)
 Received: from [192.168.0.249] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id lo17-20020a170906fa1100b0072696b3a327sm2162188ejb.187.2022.06.27.04.28.32
+        by smtp.gmail.com with ESMTPSA id a27-20020a170906275b00b00722e57fa051sm4886163ejd.90.2022.06.27.04.30.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 04:28:33 -0700 (PDT)
-Message-ID: <07afc435-90fc-34f7-8357-e212c81867b0@linaro.org>
-Date:   Mon, 27 Jun 2022 13:28:32 +0200
+        Mon, 27 Jun 2022 04:30:57 -0700 (PDT)
+Message-ID: <6d7b0ea7-7918-aea4-6f2f-46d4870d92ad@linaro.org>
+Date:   Mon, 27 Jun 2022 13:30:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH] tty: serial: samsung_tty: loopback mode support
+Subject: Re: [PATCH 2/3] clk: samsung: exynosautov9: add missing gate clks for
+ peric0/c1
 Content-Language: en-US
 To:     Chanho Park <chanho61.park@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Hector Martin <marcan@marcan.st>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <CGME20220627032556epcas2p26c2cd2786888a5018607bf651bc5dec0@epcas2p2.samsung.com>
- <20220627032353.8868-1-chanho61.park@samsung.com>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220627005210.6473-1-chanho61.park@samsung.com>
+ <CGME20220627005413epcas2p37d6b3cbea055cecade47ad304b40b7e3@epcas2p3.samsung.com>
+ <20220627005210.6473-3-chanho61.park@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220627032353.8868-1-chanho61.park@samsung.com>
+In-Reply-To: <20220627005210.6473-3-chanho61.park@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 27/06/2022 05:23, Chanho Park wrote:
-> Internal loopback mode can be supported by setting
-> S3C2443_UCON_LOOPBACK bit. The mode & bit can be supported since
-> s3c2410 and later SoCs. We can test it by linux-serial-test program[1]
-> with -k option. It will set TIOCM_LOOP mode during test.
+On 27/06/2022 02:52, Chanho Park wrote:
+> "gout_peric0_pclk_1" and "gout_peric1_pclk_1" should be added to peric0
+> and peric1 respectively.
+
+Where is exactly the bug? The commit msg suggests that they were added
+to different block, but there is no code removal.
+
 > 
-> -k, --loopback     Use internal hardware loop back
-> 
-> [1]: https://github.com/cbrake/linux-serial-test
+> Fixes: f2dd366992d0 ("clk: samsung: exynosautov9: add cmu_peric0 clock support")
+> Fixes: b35f27fe73d8 ("clk: samsung: exynosautov9: add cmu_peric1 clock support")
 > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > ---
->  drivers/tty/serial/samsung_tty.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+>  drivers/clk/samsung/clk-exynosautov9.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
 Best regards,
 Krzysztof
