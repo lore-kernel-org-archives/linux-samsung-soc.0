@@ -2,176 +2,281 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CB7CCA47B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 01:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD99C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 02:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231941AbiF1Bv7 (ORCPT
+        id S237326AbiF1CDK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jun 2022 21:51:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38432 "EHLO
+        Mon, 27 Jun 2022 22:03:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243223AbiF1Bv7 (ORCPT
+        with ESMTP id S234962AbiF1CDI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jun 2022 21:51:59 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BE4263A
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 18:51:55 -0700 (PDT)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220628015153epoutp03cdfcf4a57a15d7c6fa3d484801bf8bc4~8pdjhGsj21565415654epoutp03k
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 01:51:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220628015153epoutp03cdfcf4a57a15d7c6fa3d484801bf8bc4~8pdjhGsj21565415654epoutp03k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1656381113;
-        bh=zfGvcH4lBVwI5LXKh5eqEwAFrZzlrW51lWexTf6mm8A=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=CRWHoJOvjCjyjq+sY7opNGyUV+TgY7hswphgS8wKn7j9jOYL58e7HgO74QyFKUK02
-         qtuU4on1kt65TIDRRELSZJSNKPviU8CvMN0jNIthFes6UUMAdxJ5wvamTBas07e4ZK
-         3f/JBxfNzL/S81exif3DVbNNX+3y6gOxCz0uHj10=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20220628015153epcas2p1910561790e05c686a032671895ddaabb~8pdjEHgqf2601626016epcas2p1B;
-        Tue, 28 Jun 2022 01:51:53 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.89]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4LX6yx088Gz4x9Pw; Tue, 28 Jun
-        2022 01:51:53 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        10.44.09642.8BE5AB26; Tue, 28 Jun 2022 10:51:52 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220628015152epcas2p4e5963a774006e7b26bc6fb1d1090a539~8pdiCFu_c2768427684epcas2p4Y;
-        Tue, 28 Jun 2022 01:51:52 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220628015152epsmtrp2d84aff7512dd5e32c192fa985ea166a2~8pdiAl85h1556515565epsmtrp2c;
-        Tue, 28 Jun 2022 01:51:52 +0000 (GMT)
-X-AuditID: b6c32a47-5f7ff700000025aa-ce-62ba5eb8b81f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5F.3D.08905.8BE5AB26; Tue, 28 Jun 2022 10:51:52 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220628015152epsmtip12f92b43e8580fd9ecd5dc046a727b743~8pdh0X8eb2072620726epsmtip1W;
-        Tue, 28 Jun 2022 01:51:52 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Andi Shyti'" <andi@etezian.org>,
-        "'Mark Brown'" <broonie@kernel.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
-Cc:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <3a7f2faa-0d42-02e6-fb1a-216be1120ff3@linaro.org>
-Subject: RE: [PATCH 3/5] spi: s3c64xx: support custom value of internal
- clock divider
-Date:   Tue, 28 Jun 2022 10:51:52 +0900
-Message-ID: <000201d88a91$a33d3c60$e9b7b520$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKd8jrOeLz5V8oX+q+XomvWydQZVADtCDevAliT4PYCn6r7K6uqE8tA
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmqe6OuF1JBkt2m1k8mLeNzWLxj+dM
-        FlMfPmGzmH/kHKtF34uHzBZ7X29lt9j0+BqrxYzz+5gsGj/eZLdo3XuE3YHL4/qST8wem1Z1
-        snncubaHzWPzknqPvi2rGD0+b5ILYIvKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0
-        tDBXUshLzE21VXLxCdB1y8wBukxJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2Be
-        oFecmFtcmpeul5daYmVoYGBkClSYkJ1x+d5ZloJdAhW/ntxkbGDs5+1i5OSQEDCRmLvpLTuI
-        LSSwg1HiyTJnCPsTo8TiI2pdjFxA9jdGiQW71zHDNBx+dYwdIrGXUeLL778sEM4LRom9x/ez
-        glSxCehLvOzYxgqSEBF4yyhxZvcJsB3MAjsZJRrmxYDYnAJ2Ertub2QEsYUFwiWuPJnKBmKz
-        CKhKXNp1kwnE5hWwlPj5bCULhC0ocXLmExaIOfIS29/OgTpJQeLn02Vgi0UE3CTO7fvIDFEj
-        IjG7s40Z5AgJgT0cEr09/VANLhLfnh2BsoUlXh3fwg5hS0l8freXDcIullg66xMTRHMDo8Tl
-        bb+gEsYSs561A13NAbRBU2L9Ln0QU0JAWeLILajb+CQ6Dv9lhwjzSnS0CUE0qksc2D6dBcKW
-        leie85l1AqPSLCSfzULy2SwkH8xC2LWAkWUVo1hqQXFuemqxUYExPLKT83M3MYITrZb7DsYZ
-        bz/oHWJk4mA8xCjBwawkwrvwzM4kId6UxMqq1KL8+KLSnNTiQ4ymwLCeyCwlmpwPTPV5JfGG
-        JpYGJmZmhuZGpgbmSuK8XikbEoUE0hNLUrNTUwtSi2D6mDg4pRqYRGSNBIVufeRd+uZrzp+O
-        i0c2qAWkfeL+Yrqo1i+h/MqFW/I6XSdsPiwvnt47Z4OxE5eOFOevj+2rzVdYSm1f/sfh4U2z
-        lAX/Pm/Y/GkW11qh+qfzI/MZ2dew+T30KNo03zxmV7jJv7+fDpi2tIYk7v91cW5BaejXffIP
-        Q9VUFu6qUPZO7L8kNaN78ac3//zXuh1cMeFh/tIzC5671/OJpivr3b1yPHfVR4611gI/Cjv9
-        raNZv53klf/1OX6J3GYJ3++F697rmZuvL593/rpo/eYXpsvidgX4SCu//8p4g3kmW/eb5ABx
-        cbXDvIyvRDvjaq9bLA45yf3SKTZxzQ9JzzrnlITER3vD3ylsCCp6rsRSnJFoqMVcVJwIAMw/
-        Qu49BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSnO6OuF1JBmt6uCwezNvGZrH4x3Mm
-        i6kPn7BZzD9yjtWi78VDZou9r7eyW2x6fI3VYsb5fUwWjR9vslu07j3C7sDlcX3JJ2aPTas6
-        2TzuXNvD5rF5Sb1H35ZVjB6fN8kFsEVx2aSk5mSWpRbp2yVwZVy+d5alYJdAxa8nNxkbGPt5
-        uxg5OSQETCQOvzrG3sXIxSEksJtR4uulVlaIhKzEs3c72CFsYYn7LUdYIYqeMUq0ndjIBpJg
-        E9CXeNmxDSwhIvCeUeLhgkuMIA6zwF5Gidsnb7JBtHxnlJjQcoEZpIVTwE5i1+2NjCC2sECo
-        xJKbR1lAbBYBVYlLu24ygdi8ApYSP5+tZIGwBSVOznwCZjMLaEv0PmxlhLDlJba/ncMMcZ+C
-        xM+ny8DuFhFwkzi37yMzRI2IxOzONuYJjMKzkIyahWTULCSjZiFpWcDIsopRMrWgODc9t9iw
-        wDAvtVyvODG3uDQvXS85P3cTIzj2tDR3MG5f9UHvECMTB+MhRgkOZiUR3oVndiYJ8aYkVlal
-        FuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1ILUIJsvEwSnVwGS3kbcxOvf844k51SqZ
-        4atSp07mU+c44rA1vGFH7dmb2oaaDt92OaUlaeptkOxnM396xvbv7luRu7vXvYldN9fyrErq
-        MWvtyrvTk+OmGDUke3dKJbe9WvTZ92pbiF6w5zH/jpXnd13Y62dU31HzUd7pyaFbmR6nXlkn
-        fbnUX1XFvIxvk4v2sVl8IjNTwlxU3VTy6iNLHmdsON98Ofv4XD2N5kdZV3yWfIyeNet868l3
-        xxVUk3ZkuuvvVVfRPvDdQendYR2/g539fvNWHblpMM0znuGW/fFDzLyX6ve1/xczn/ni84LL
-        zopC01dVbkvyF2v1XXZiyls1/8lHzRY8OJXhtuZDaPP8yvg9KRkXfyqxFGckGmoxFxUnAgCm
-        1kp9LAMAAA==
-X-CMS-MailID: 20220628015152epcas2p4e5963a774006e7b26bc6fb1d1090a539
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220627064931epcas2p2e1dc352f41895b294d7945c2239de362
-References: <20220627064707.138883-1-chanho61.park@samsung.com>
-        <CGME20220627064931epcas2p2e1dc352f41895b294d7945c2239de362@epcas2p2.samsung.com>
-        <20220627064707.138883-4-chanho61.park@samsung.com>
-        <3a7f2faa-0d42-02e6-fb1a-216be1120ff3@linaro.org>
+        Mon, 27 Jun 2022 22:03:08 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549E95FFB
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 19:03:05 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id l6-20020a25bf86000000b00668c915a3f2so9785258ybk.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 19:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=/OuahP8oPHDxIXADrtMOHzHvbE6HS+PoE4WDHegn+rY=;
+        b=XSa6BG9j+Us6qSO6vPHqc2TVfQxumnU0pAOfjBJHFlWcIck0At2n2mfq5tAA7z3Bx5
+         PD0vlBv1k9Q/E/30MAFFG1P5OxPr5/WK6+axB0HoavtP7KnHzjHkg1qUFmVSky1XYmCE
+         keKg7zc6YYKZDYEnwk3qbSxvFO3Xk4Y8/tdDX97msFctgpLZBdPkJDnH5LbWzXx7pTZH
+         CgzyIamG5okMqCh9aY8wAvuFixrOfwL/UhwfbnX/7paM2krnQNZDjv67WdvSzvvMWo7D
+         m5fFpT4ZoMrA6AasD66OkuDUwH3oHEeuCSo5kX9VLcSW8/gQ+X2898P5YGyQhyrYIK8G
+         Aulw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=/OuahP8oPHDxIXADrtMOHzHvbE6HS+PoE4WDHegn+rY=;
+        b=6ccLMCUKhNLAP44hfF5Ht2kcSo1eIzp20lAc6BujXjIE4ujXoqU2hXRABKveX0E6tn
+         uuEV+JBQZZDtqVEixM7IuuiD/JshPYcX/Q0iBv6X8yohQxKaUBe5jM8s87DEGImo31ma
+         KWzh9iMZaALp/UR03QyWCPoYo42UHWk0TjOrs1oguXqka2lEXaXcS7Q+31Due4M5O4jA
+         cgo4aM0qzwtySLuexzT23ksS+QKLyTuLZ2IUD4NVqVPizhagR1vvOMe6uI8OhrsqYXPu
+         pwkFilIJBQG1ocPxPJVwWYhBpnlr4waiFphZd5XDLKky5hMmTzAMCx+6kYvc0Q1fQBpW
+         L88w==
+X-Gm-Message-State: AJIora8w02BVlxA+pUe1Gsp1iRQjxO/3fRrB+CNmv10ptCZRbjItZ9px
+        9AJlWQcPfrwo/KXcJC/J5z0S+KmGRQRAQ2I=
+X-Google-Smtp-Source: AGRyM1s6TFssoICBD8dW4KaHJ9QFnbGLouWSVAgJ1icUDVgZq5pRLN92A6h2ACkaFVoX2i0qb9ktR7y39ECy36c=
+X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:1f27:a302:2101:1c82])
+ (user=saravanak job=sendgmr) by 2002:a81:9292:0:b0:317:dd64:5adc with SMTP id
+ j140-20020a819292000000b00317dd645adcmr19123629ywg.145.1656381784427; Mon, 27
+ Jun 2022 19:03:04 -0700 (PDT)
+Date:   Mon, 27 Jun 2022 19:01:01 -0700
+Message-Id: <20220628020110.1601693-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+Subject: [PATCH v1 0/2] Fix console probe delay when stdout-path isn't set
+From:   Saravana Kannan <saravanak@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Saravana Kannan <saravanak@google.com>
+Cc:     Rob Herring <robh@kernel.org>, sascha hauer <sha@pengutronix.de>,
+        peng fan <peng.fan@nxp.com>, kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> Subject: Re: [PATCH 3/5] spi: s3c64xx: support custom value of internal
-> clock divider
-> 
-> On 27/06/2022 08:47, Chanho Park wrote:
-> > Modern exynos SoCs such as Exynos Auto v9 has different internal clock
-> > divider, for example "4". To support this internal value, this adds
-> > clk_div of the s3c64xx_spi_port_config and use it if it is specified.
-> > Otherwise, use "2" which is the previous default value.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > ---
-> >  drivers/spi/spi-s3c64xx.c | 23 +++++++++++++++--------
-> >  1 file changed, 15 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> > index e17c74c0d7de..dd5fc8570bce 100644
-> > --- a/drivers/spi/spi-s3c64xx.c
-> > +++ b/drivers/spi/spi-s3c64xx.c
-> > @@ -131,6 +131,7 @@ struct s3c64xx_spi_dma_data {
-> >   * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS
-> register.
-> >   * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
-> >   * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
-> > + * @clk_div: Internal clock divider, if not specified, use 2 as the
-> default.
-> >   * @quirks: Bitmask of known quirks
-> >   * @high_speed: True, if the controller supports HIGH_SPEED_EN bit.
-> >   * @clk_from_cmu: True, if the controller does not include a clock
-> > mux and @@ -148,6 +149,7 @@ struct s3c64xx_spi_port_config {
-> >  	int	rx_lvl_offset;
-> >  	int	tx_st_done;
-> >  	int	quirks;
-> > +	int	clk_div;
-> >  	bool	high_speed;
-> >  	bool	clk_from_cmu;
-> >  	bool	clk_ioclk;
-> > @@ -620,6 +622,7 @@ static int s3c64xx_spi_config(struct
-> s3c64xx_spi_driver_data *sdd)
-> >  	void __iomem *regs = sdd->regs;
-> >  	int ret;
-> >  	u32 val;
-> > +	u32 div = sdd->port_conf->clk_div ? sdd->port_conf->clk_div : 2;
-> 
-> I would prefer to explicitly set '2' as clk_div for existing variants.
-> Such assignments in the code are usually trickier to find/read.
+Since the series that fixes console probe delay based on stdout-path[1] got
+pulled into driver-core-next, I made these patches on top of them.
 
-Make sense. It can be more clear what value is using.
-I'll apply it next patchset.
+Even if stdout-path isn't set in DT, this patch should take console
+probe times back to how they were before the deferred_probe_timeout
+clean up series[2].
 
-Best Regards,
-Chanho Park
+Fabio/Ahmad/Sascha,
+
+Can you give this a shot please?
+
+[1] - https://lore.kernel.org/lkml/20220623080344.783549-1-saravanak@google.com/
+[2] - https://lore.kernel.org/lkml/20220601070707.3946847-1-saravanak@google.com/
+
+Thanks,
+Saravana
+
+cc: Rob Herring <robh@kernel.org>
+cc: sascha hauer <sha@pengutronix.de>
+cc: peng fan <peng.fan@nxp.com>
+cc: kevin hilman <khilman@kernel.org>
+cc: ulf hansson <ulf.hansson@linaro.org>
+cc: len brown <len.brown@intel.com>
+cc: pavel machek <pavel@ucw.cz>
+cc: joerg roedel <joro@8bytes.org>
+cc: will deacon <will@kernel.org>
+cc: andrew lunn <andrew@lunn.ch>
+cc: heiner kallweit <hkallweit1@gmail.com>
+cc: russell king <linux@armlinux.org.uk>
+cc: "david s. miller" <davem@davemloft.net>
+cc: eric dumazet <edumazet@google.com>
+cc: jakub kicinski <kuba@kernel.org>
+cc: paolo abeni <pabeni@redhat.com>
+cc: linus walleij <linus.walleij@linaro.org>
+cc: hideaki yoshifuji <yoshfuji@linux-ipv6.org>
+cc: david ahern <dsahern@kernel.org>
+cc: kernel-team@android.com
+cc: linux-kernel@vger.kernel.org
+cc: linux-pm@vger.kernel.org
+cc: iommu@lists.linux-foundation.org
+cc: netdev@vger.kernel.org
+cc: linux-gpio@vger.kernel.org
+Cc: kernel@pengutronix.de
+
+Saravana Kannan (2):
+  driver core: Add probe_no_timeout flag for drivers
+  serial: Set probe_no_timeout for all DT based drivers
+
+ drivers/base/base.h                         |  1 +
+ drivers/base/core.c                         |  7 +++++++
+ drivers/base/dd.c                           |  3 +++
+ drivers/tty/ehv_bytechan.c                  |  1 +
+ drivers/tty/goldfish.c                      |  1 +
+ drivers/tty/hvc/hvc_opal.c                  |  1 +
+ drivers/tty/serial/8250/8250_acorn.c        |  1 -
+ drivers/tty/serial/8250/8250_aspeed_vuart.c |  1 +
+ drivers/tty/serial/8250/8250_bcm2835aux.c   |  1 +
+ drivers/tty/serial/8250/8250_bcm7271.c      |  1 +
+ drivers/tty/serial/8250/8250_dw.c           |  1 +
+ drivers/tty/serial/8250/8250_em.c           |  1 +
+ drivers/tty/serial/8250/8250_ingenic.c      |  1 +
+ drivers/tty/serial/8250/8250_lpc18xx.c      |  1 +
+ drivers/tty/serial/8250/8250_mtk.c          |  1 +
+ drivers/tty/serial/8250/8250_of.c           |  1 +
+ drivers/tty/serial/8250/8250_omap.c         |  1 +
+ drivers/tty/serial/8250/8250_pxa.c          |  1 +
+ drivers/tty/serial/8250/8250_tegra.c        |  1 +
+ drivers/tty/serial/8250/8250_uniphier.c     |  1 +
+ drivers/tty/serial/altera_jtaguart.c        |  1 +
+ drivers/tty/serial/altera_uart.c            |  1 +
+ drivers/tty/serial/amba-pl011.c             |  1 +
+ drivers/tty/serial/apbuart.c                |  1 +
+ drivers/tty/serial/ar933x_uart.c            |  1 +
+ drivers/tty/serial/arc_uart.c               |  1 +
+ drivers/tty/serial/atmel_serial.c           |  1 +
+ drivers/tty/serial/bcm63xx_uart.c           |  1 +
+ drivers/tty/serial/clps711x.c               |  1 +
+ drivers/tty/serial/cpm_uart/cpm_uart_core.c |  1 +
+ drivers/tty/serial/digicolor-usart.c        |  1 +
+ drivers/tty/serial/fsl_linflexuart.c        |  1 +
+ drivers/tty/serial/fsl_lpuart.c             |  1 +
+ drivers/tty/serial/imx.c                    |  1 +
+ drivers/tty/serial/lantiq.c                 |  1 +
+ drivers/tty/serial/liteuart.c               |  1 +
+ drivers/tty/serial/lpc32xx_hs.c             |  1 +
+ drivers/tty/serial/max310x.c                |  1 +
+ drivers/tty/serial/meson_uart.c             |  1 +
+ drivers/tty/serial/milbeaut_usio.c          |  1 +
+ drivers/tty/serial/mpc52xx_uart.c           |  1 +
+ drivers/tty/serial/mps2-uart.c              |  1 +
+ drivers/tty/serial/msm_serial.c             |  1 +
+ drivers/tty/serial/mvebu-uart.c             |  1 +
+ drivers/tty/serial/mxs-auart.c              |  1 +
+ drivers/tty/serial/omap-serial.c            |  1 +
+ drivers/tty/serial/owl-uart.c               |  1 +
+ drivers/tty/serial/pic32_uart.c             |  1 +
+ drivers/tty/serial/pmac_zilog.c             |  1 +
+ drivers/tty/serial/pxa.c                    |  1 +
+ drivers/tty/serial/qcom_geni_serial.c       |  1 +
+ drivers/tty/serial/rda-uart.c               |  1 +
+ drivers/tty/serial/samsung_tty.c            |  1 +
+ drivers/tty/serial/sc16is7xx.c              |  1 +
+ drivers/tty/serial/serial-tegra.c           |  1 +
+ drivers/tty/serial/sh-sci.c                 |  1 +
+ drivers/tty/serial/sifive.c                 |  1 +
+ drivers/tty/serial/sprd_serial.c            |  1 +
+ drivers/tty/serial/st-asc.c                 |  1 +
+ drivers/tty/serial/stm32-usart.c            |  1 +
+ drivers/tty/serial/sunhv.c                  |  1 +
+ drivers/tty/serial/sunplus-uart.c           |  1 +
+ drivers/tty/serial/sunsab.c                 |  1 +
+ drivers/tty/serial/sunsu.c                  |  1 +
+ drivers/tty/serial/sunzilog.c               |  1 +
+ drivers/tty/serial/tegra-tcu.c              |  1 +
+ drivers/tty/serial/uartlite.c               |  1 +
+ drivers/tty/serial/ucc_uart.c               |  1 +
+ drivers/tty/serial/vt8500_serial.c          |  1 +
+ drivers/tty/serial/xilinx_uartps.c          |  1 +
+ include/linux/device.h                      |  7 +++++++
+ include/linux/device/driver.h               | 11 +++++++++++
+ 72 files changed, 95 insertions(+), 1 deletion(-)
+
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
 
