@@ -2,102 +2,178 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F03C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 06:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94252C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 08:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245446AbiF1G6w (ORCPT
+        id S232758AbiF1IOE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 02:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37594 "EHLO
+        Tue, 28 Jun 2022 04:14:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343824AbiF1G6k (ORCPT
+        with ESMTP id S241951AbiF1INt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 02:58:40 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F802716B
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 23:58:39 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id k22so16199299wrd.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jun 2022 23:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uWCwSBsZzcDsXerOmBKtj8q7pC0dytvTE5QF/VhPSWk=;
-        b=uMaTZlsfbzqjhEiVTj0O/iYD7nAQ1DmFCBbQIqU/xo28jBNsxWPGVfaJ7JpKcO8PYx
-         4WLYUtzmU7WIE1U0Zn9KXiJjDbJuqowo2U8MZ9vzM5HTlsMO4gCwYCI3SoiXVnlwjJ7v
-         A/N7vLB8ANExEvDVKHqabUxGnYCgAnvGbXPDOZoWVY2/U3oH0futdZga/r+c1wdehzkS
-         lf0rsv9tN5K/HXXZ4XsH1d2M/g/8QfZNBYbUTmQDYU4TA/Rzf0LuQrSi1zieE5SNIWsp
-         7CJ9rkB5ecjFAnLkt1mVIB3m3xCl76+di0kDmoLgMVB/lu5/CCtqUF2BlZA9LZz7LEsZ
-         I9zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=uWCwSBsZzcDsXerOmBKtj8q7pC0dytvTE5QF/VhPSWk=;
-        b=GW91wkzym4R3xzEj4xZGCMg92svkGr9Masm+vZ9VOqETxV4j+XXfiT6g+Oq4MRkjtc
-         i8g801LIlAqv4MitPM5u562OUDlPecugtZdko0b3+RFzJzih1J51F0CsXbO/kgafFIFI
-         X6bU4JEHHcm29iObZxGCEKH27xRjZjVsZe4OOhVq2n93QQZwhvZl6SeYPg6J0qM8QScp
-         H0rBjbyP/Wiqs6wmlMKUHrujimB0hg/PRksEfgwwS9XclNv1f0ez8fltqIDLAwz7jjjV
-         hWMFObhHjNqfAn5vr0g4gcm2ZMjT/jUNVl6lct9oc7MgZlPBSGfrrmhJxJwK65SYifP4
-         lbtg==
-X-Gm-Message-State: AJIora8rKU1kKv4Shfn2biXOzIfsRtxiiPpOp7vQkygcK1Gy1nSRMKOW
-        NkBnPt1IeqXELuMNeZjkilJLqA==
-X-Google-Smtp-Source: AGRyM1s2XUn6XqdPxK0J7NgHSR6nFE03RvtcwySu69kLez+73qYwJFz8S3w5dEWFd7y0gRbfY+UlcA==
-X-Received: by 2002:a5d:4102:0:b0:21b:8a6f:ff64 with SMTP id l2-20020a5d4102000000b0021b8a6fff64mr15859102wrp.186.1656399517870;
-        Mon, 27 Jun 2022 23:58:37 -0700 (PDT)
-Received: from [192.168.0.251] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id t10-20020adfe10a000000b00210320d9fbfsm15092681wrz.18.2022.06.27.23.58.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 23:58:37 -0700 (PDT)
-Message-ID: <b0468d5e-fa2d-c874-3daa-6670509c15a0@linaro.org>
-Date:   Tue, 28 Jun 2022 08:58:35 +0200
+        Tue, 28 Jun 2022 04:13:49 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE3F2D1E5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 01:13:42 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220628081339euoutp0155bd4a453606ddab35302efdca83c660~8uq3_gmOe0417704177euoutp01x
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 08:13:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220628081339euoutp0155bd4a453606ddab35302efdca83c660~8uq3_gmOe0417704177euoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1656404019;
+        bh=PlenMJZIMvg+yssHUrSEVcbqZWVVKLRTR1oE2sU1L04=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=Py+/elLgFTA2wSamoJesR+rrkmPmTvRETEiMcvj0e3vUPESm20QsjGfTYXbKnF2Gz
+         hFoh6SMTipAjlQVjpBfWxL0Ztyw8gPkdvYrZzJyQ1OGVyX75OEMiVOL/njbXhVx77y
+         hgqT5sC4c2xXnsb9reCD3vA0vZRosmV+9yaiIiXQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220628081338eucas1p19f6fd8f2771cae90fe7aec67c6ed1c63~8uq3fsx3o2201622016eucas1p1z;
+        Tue, 28 Jun 2022 08:13:38 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id EA.C8.09664.238BAB26; Tue, 28
+        Jun 2022 09:13:38 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220628081338eucas1p1e0aab18d1d8c7aa0601399cf9a1cab34~8uq3B2KWe0414204142eucas1p1n;
+        Tue, 28 Jun 2022 08:13:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220628081338eusmtrp1ca67fa56b51049c663aedf1a86730c29~8uq3BCtqU3120431204eusmtrp1O;
+        Tue, 28 Jun 2022 08:13:38 +0000 (GMT)
+X-AuditID: cbfec7f2-d97ff700000025c0-00-62bab83200e8
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 29.99.09038.238BAB26; Tue, 28
+        Jun 2022 09:13:38 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220628081337eusmtip2613a19042f2ffebe257e68a03b14106d~8uq2f07Rm0756207562eusmtip2r;
+        Tue, 28 Jun 2022 08:13:37 +0000 (GMT)
+Message-ID: <a7d73302-ce96-4adb-1981-fcde0ff03e87@samsung.com>
+Date:   Tue, 28 Jun 2022 10:13:36 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 2/3] clk: samsung: exynosautov9: add missing gate clks for
- peric0/c1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: pci-exynos.c phy_init() usage
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-        'Tomasz Figa' <tomasz.figa@gmail.com>,
-        'Chanwoo Choi' <cw00.choi@samsung.com>,
-        'Stephen Boyd' <sboyd@kernel.org>,
-        'Michael Turquette' <mturquette@baylibre.com>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>
-Cc:     'Alim Akhtar' <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220627005210.6473-1-chanho61.park@samsung.com>
- <CGME20220627005413epcas2p37d6b3cbea055cecade47ad304b40b7e3@epcas2p3.samsung.com>
- <20220627005210.6473-3-chanho61.park@samsung.com>
- <6d7b0ea7-7918-aea4-6f2f-46d4870d92ad@linaro.org>
- <000301d88a94$37aa7320$a6ff5960$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <000301d88a94$37aa7320$a6ff5960$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>
+Cc:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <ae8cee69-2ca5-0b27-f6d5-0f9f74871fd8@linaro.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SeUxScRzfjwfvPdiwF2r+kmaJy61cmkf1tspuR9eWrta5EvENXR4EauVq
+        uWIdZOZVIh3qdMuw0qmoOLEyjXkRyzIsxQ7soFF5VjYt8Fn53+f3Ob7XfjjCK2d54rEJSZQs
+        QRQnQDnMmsc/jUuC6uqjlvYbQ8jXN2tQ0tZxFyXN42dZZOlIPkbqP2sxMi39F4usfNfNIjtv
+        GlBS9aSRsZYt1Kn7MGGl5gIq7O1uQIXWZ3kMYVXJKWFGtQYIhyu9dmD7OKuiqbjYFEoWEBrJ
+        ienK1zKkE67Hfl/8yEoDRYQSsHFIhMCskh6gBBycR5QCmPXFynAKPGIEwJKBBbQwDKBiqIf5
+        N3F5+D5CC7cA1AwppuODjkTPBHC6uEQovNQ6PoWZxEL4rXRgmp8NW/OtU5XcCTE0dj5HndiV
+        WAwt3RWIEyOEB3xpLWA4i7oRZQD2qzIx5wMhDABm6r5iThdKBEKlXTmVZju6lXfVYnR6Pqy1
+        X0foWc+w4aDJl8Yboa6wCaOxK7QZqqfxPNiek+6YCHfgRDihCqbpY7D7853pMithr3EcdVoQ
+        YhEsrw+g6XXwkT4L0EkXaLbPpgdwgdk1eQhNc+H5szza7QvVhnv/ej40PUUygUA94yjqGcur
+        Z6yi/t+3EDA1wINKlsdLKHlgAnXUXy6KlycnSPzFifGVwPGn2icNQ3Xghm3QvwkwcNAEII4I
+        3LhFHbooHjdadDyVkiUekiXHUfImwMeZAg+uOLZCxCMkoiTqMEVJKdlflYGzPdMYcQfCNv8M
+        j9JuTX3TclxVb1EEbS+ft2ksQjNYldHi3Wu/Wjy5u2CIJWL2ZYRt3P9rz5yc3g9HL65b5i7R
+        53Jvmxq9qkN1YW45rbZmNTtdG3bFAMxd8XyqzufdyUU7Z0VK0gb0ZasvWxr7V4wp+sbyz632
+        q/LT87coxZ5vvfheOaFVD8sWnNjAr89qa65N2vvGsvx9at9IxANtpP3wC47nDZX0dMoKTcSP
+        L6c+LVvlZzcoVTHIwdFrY6+OmEIGvJurpSUFPonJ46PfsW2R1Ppg6ybjpRQ23hLYEzO3X6KQ
+        RnubI7Jfmdp+7ArKvl1sFN93+Z7b0JlrnsxjFoWvaRm1eAuY8hhR4GJEJhf9AUWnsUfCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xe7pGO3YlGbzcLWrxYN42NotXZ9ay
+        Wdz41cZqseLLTHaLva+3sls09Pxmtdj0+Bqrxdl5x9ksZpzfx+TA6bFz1l12j02rOtk87lzb
+        w+bx5Mp0Jo/NS+o9+rasYvT4vEkugD1Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
+        1srIVEnfziYlNSezLLVI3y5BL+PyzK1MBX+FK/53v2BtYFwo0MXIySEhYCLR/3k/cxcjF4eQ
+        wFJGiUlrn7JAJGQkTk5rYIWwhSX+XOtigyh6zyix4O1ENpAEr4CdRO/JX4wgNouAqsSHFU8Z
+        IeKCEidnPgEbJCqQLNG85RATiC0soCVx79oGZhCbWUBc4taT+UwgQ0UEVjNKvNp9lAXEYRY4
+        zijxcN4Fdoh1C5gklm+5AzaWTcBQouttF9hqTqDV6y9vZ4cYZSbRtbWLEcKWl9j+dg7zBEah
+        WUgumYVk4ywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRGKHbjv3csoNx5auP
+        eocYmTgYDzFKcDArifAuPLMzSYg3JbGyKrUoP76oNCe1+BCjKTA4JjJLiSbnA1NEXkm8oZmB
+        qaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QDU/nmsrkeN9wuG9UJqOUseye8
+        7clGBpZdm63mfym8fGXZyfXr+pZnfj9sJrwlxHZmUkmF665Tly584pS49XHOqWe1d2bFGfFf
+        OqDJvq5sWee2aT03XH98u7CL01FxzkfF7ufTJoektiitfu/14/wZnnd6hc68Dn9azrO2bpI0
+        P2rWPSMsafuEdTxt/BO99m0OD8iTL3q/tnRu5KXG91srRWu9D35jKCuKeTdts81FltdnP1bG
+        h5ruFegRq9L983jShfXLu8/KrDjzM9lVuu5Z/hFHdSWtvAL+k7PDKuR9zz08JyPvIZ1tdV2G
+        VfflaUVrHdYI7SzbpqUZJkuO52zmeSc6xTvq3rpDnRcqlbhUdymxFGckGmoxFxUnAgBg6KeN
+        WQMAAA==
+X-CMS-MailID: 20220628081338eucas1p1e0aab18d1d8c7aa0601399cf9a1cab34
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d
+References: <20220624173541.GA1543581@bhelgaas>
+        <CGME20220624180806eucas1p16a18d9598c0a08770b428cd58916b65d@eucas1p1.samsung.com>
+        <c0c802c0-82e1-e7bb-48be-974ac23b5a15@linaro.org>
+        <591f696f-b55c-d267-7fcb-74f7fd4a6900@samsung.com>
+        <ae8cee69-2ca5-0b27-f6d5-0f9f74871fd8@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/06/2022 04:10, Chanho Park wrote:
->> Subject: Re: [PATCH 2/3] clk: samsung: exynosautov9: add missing gate clks
->> for peric0/c1
->>
->> On 27/06/2022 02:52, Chanho Park wrote:
->>> "gout_peric0_pclk_1" and "gout_peric1_pclk_1" should be added to
->>> peric0 and peric1 respectively.
->>
->> Where is exactly the bug? The commit msg suggests that they were added to
->> different block, but there is no code removal.
-> 
-> I thought they should be added from previous patch because clock IDs were existing without implementations.
-> I can drop fixes tags next patchset.
+Hi Krzysztof,
 
-The clock IDs as bindings can be added upfront - it's independent from
-implementation. Please drop the fixes.
+On 27.06.2022 12:47, Krzysztof Kozlowski wrote:
+> On 27/06/2022 12:30, Marek Szyprowski wrote:
+>> On 24.06.2022 20:07, Krzysztof Kozlowski wrote:
+>>> On 24/06/2022 19:35, Bjorn Helgaas wrote:
+>>>> In exynos_pcie_host_init() [1], we call:
+>>>>
+>>>>     phy_reset(ep->phy);
+>>>>     phy_power_on(ep->phy);
+>>>>     phy_init(ep->phy);
+>>>>
+>>>> The phy_init() function comment [2] says it must be called before
+>>>> phy_power_on().  Is exynos doing this backwards?
+>>> Looks like. I don't have Exynos hardware with a PCI, so cannot
+>>> test/fix/verify.
+>>>
+>>> Luckily for Exynos ;-) it's not alone in this pattern:
+>>> drivers/net/ethernet/marvell/sky2.c
+>>> drivers/usb/dwc2/platform.c
+>> I've checked that on the real hardware. Swapping the order of
+>> phy_power_on and phy_init breaks driver operation.
+>>
+>> However pci-exynos is the only driver that uses the phy-exynos-pcie, so
+>> we can simply swap the content of the init and power_on in the phy
+>> driver to adjust the code to the right order. power_on/init and
+>> exit/power_off are also called one after the other in pci-exynos,
+>> without any activity between them, so we can also simply move all
+>> operation to one pair of the callback, like power_on/off.
+>>
+>> Krzysztof, which solution would you prefer?
+> I think the real problem is that the Exynos PCIe phy init
+> (exynos5433_pcie_phy_init) performs parts of power on procedure, so the
+> code is mixed. Probably also the phy init could not happen earlier due
+> to gated clocks (ungated in exynos5433_pcie_phy_power_on).
+>
+> I would prefer to clean it up while ordering init+power_on, so figure
+> out more or less correct procedure.
+>
+> You can also look at Artpec-8 PHY - it seems using correct order
+> (init+reset):
+> https://lore.kernel.org/all/20220614011616epcms2p7dcaa67c53b7df5802dd7a697e2d472d7@epcms2p7/
 
-Best regards,
-Krzysztof
+I've played a bit with those register writes in exynos_pcie_phy and 
+frankly speaking the currenly used (power_on + init) is the only 
+sequence that works properly. I'm leaning to move everything to 
+phy_init/exit. I really don't see how to split it into init + power_on 
+callbacks.
+
+While touching this - I would also remove the phy_reset() call in the 
+exynos-pcie driver. It is a left over from the old, obsoleted exynos5440 
+pcie code, not implemented in the current phy driver, also only a few 
+drivers use or implement it. IMHO it doesn't make sense to keep such 
+dead code.
+
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
