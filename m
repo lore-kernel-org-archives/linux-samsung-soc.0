@@ -2,133 +2,184 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7BBC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 20:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F992C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 22:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbiF1UNG (ORCPT
+        id S229640AbiF1WEq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 16:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47532 "EHLO
+        Tue, 28 Jun 2022 18:04:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230297AbiF1ULz (ORCPT
+        with ESMTP id S229436AbiF1WEq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 16:11:55 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EB43A73F;
-        Tue, 28 Jun 2022 13:03:07 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id e63so13212339pgc.5;
-        Tue, 28 Jun 2022 13:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rEFNBAp2rK8tG0znpxJYCMRlWPc6NvbqoMLW4LzSJfk=;
-        b=MIGeY0RhS9CN40/vGDp7FQeaUW55mq9Qr4KpwEyoE3Q77hTZfXkuDJ/d6Wk0MHz8Uf
-         ivnaaF1YKNJVw5ssrdAsQAhuNpvvzA/l4t92b5OzTe2qBq+o+JyQqiAIFXPIXuOoV6pO
-         UbwVoDi6XKK7wH4GtCzsoDxqDUmbB5fFVfQs1+UzLMgf9oY7+tzMV9z8F4WV4lGoxsnt
-         fnmRaIRpgR8MLN2Q8KXFutIS0K/RI4DoFub81Hy+Ib7b3uZ+KL+I+3P5fyDFRWFk4ubc
-         GdeUPoT+S50BaRUJCUBu0MzmGZpvicdgXql0+hwY20sdsSqspWf0a8/Nm02Y1d0Gxbqk
-         LX3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=rEFNBAp2rK8tG0znpxJYCMRlWPc6NvbqoMLW4LzSJfk=;
-        b=P9mkQRIUTLCF1YvC6xf1JivbDmj1swKsUTHoYghmGdVXXThi8RzkCaANNf4iRhfoOv
-         XM0SRecP3DadqPmlmRrMqMG5NxI1mO/8h9x375F68TEY5PdeiN5NuRjEPhD1fYx23Wib
-         ck9NLmXWNM2746L1pdBt1XPyYn4py6n1W/cBlfGXIQ2HKFtOoMB3IVIoNDK0mPfYXAtn
-         zUp37iCAA+ZoW3464yvcWi+47zBWkX/39gb0kEcR+KI0vRBUcpYmY3o1s+1ma753b/rx
-         2iHCKzC12Hc8SbGUlAiiOAZQDeUaTBBGOH+SS4Dg+8ihtg5qq9rMU5gwulObfygcHfl5
-         pSjQ==
-X-Gm-Message-State: AJIora9QaxN7OcZFByy9tfNgu88gXhJLi8dmHaa4aVEPw8P3iJpUSYVt
-        suTHtceRIg35FlRmMyK535I=
-X-Google-Smtp-Source: AGRyM1ubUd6iMiZ5FInUp79X9UHmw0Zc+5SomdCP0cuuxV5u0WVcVO0qFx8FQl68HaZHGEPi7qRnUg==
-X-Received: by 2002:a63:b444:0:b0:40c:f936:a21a with SMTP id n4-20020a63b444000000b0040cf936a21amr19713224pgu.37.1656446587334;
-        Tue, 28 Jun 2022 13:03:07 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id t4-20020a17090340c400b001616723b8ddsm9651148pld.45.2022.06.28.13.03.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 13:03:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Tue, 28 Jun 2022 13:03:05 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tue, 28 Jun 2022 18:04:46 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026772F01D
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 15:04:43 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220628220438euoutp016798f75841c08df2762c3a6b69baf4bd~86AbC20kt2946029460euoutp01S
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 22:04:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220628220438euoutp016798f75841c08df2762c3a6b69baf4bd~86AbC20kt2946029460euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1656453878;
+        bh=XEuq3SoUCY32rfJJrgZxojZUmItQVq6RytvcYj0hSbs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Y+BJsk26H5ToRd6tJGulIcbbwZdtDuj6xhebV+W5pzpP/DHvBE6oyQ0RyeuN4PtyI
+         o24SWBAtVq1KfE+DolHPDpwsNWuUygLnH4huMPKxlmY66y34v+ep2scyIFdHAXY5hD
+         Wz5VVPzDRmjBM4UKGinUIgQB9LUvEVMJuR90VpsQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220628220437eucas1p1998d971649c75eed01ed6305cbd7dd8b~86AaKlB_l1022110221eucas1p13;
+        Tue, 28 Jun 2022 22:04:37 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B3.DB.10067.5FA7BB26; Tue, 28
+        Jun 2022 23:04:37 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220628220437eucas1p2c478751458323f93a71050c4a949f12e~86AZy9Opa2730027300eucas1p2A;
+        Tue, 28 Jun 2022 22:04:37 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220628220437eusmtrp1b00e467e1f8bff9ce14904891ffe86d7~86AZx69k03076730767eusmtrp1_;
+        Tue, 28 Jun 2022 22:04:37 +0000 (GMT)
+X-AuditID: cbfec7f4-dd7ff70000002753-db-62bb7af5cce6
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 71.51.09038.5FA7BB26; Tue, 28
+        Jun 2022 23:04:37 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220628220436eusmtip286b1356ea04d39555a4a5a75b064c1f1~86AZKJcH31092910929eusmtip2b;
+        Tue, 28 Jun 2022 22:04:36 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-phy@lists.infradead.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 4/8] watchdog: s3c2410_wdt: Remove #ifdef guards for PM
- related functions
-Message-ID: <20220628200305.GD3633970@roeck-us.net>
-References: <20220628193449.160585-1-paul@crapouillou.net>
- <20220628193449.160585-5-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628193449.160585-5-paul@crapouillou.net>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 1/2] phy: samsung: phy-exynos-pcie: sanitize init/power_on
+ callbacks
+Date:   Wed, 29 Jun 2022 00:04:08 +0200
+Message-Id: <20220628220409.26545-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSa1BMcRjG53/O7jmn1XLajf5EWArNlJCZY1xzGWf4QI3xoYY6OF1oK3va
+        LRkjNtJaizK23Sgq00XZbKm226hoMysSk1uNmBjTZSgJubadxbfnfZ7nN8+Xl0AlZ4UziKiY
+        eFYRw0TLMJGgsuXbA5/PSbV7/DLavame7EqMyj8eSRWOGHCq/a0Wo+r7b+FUsva7kGrLtmLU
+        ueJRAZX5sAGhUn6kCKjSO9049buuGqcsXa3oOjFtMXbj9BWzkjYXp2F0V2cdRvc+0SN0ef5R
+        WldRDGjrsyqE/mT22O4ULFq1j42OUrGKxWvCRJEDneVoXNO0xKL3ZwTJ4KJUA5wISPrDosYc
+        RANEhIQsBLDid5uQP0YArK0aBPzxCcCx0X78L3Jn+KkDKQCwsKUZ/4eUtJ0A9hZGLoGaQQ1m
+        164kA8tzNai9hJIFKMwrvSC0B1JyJ+zIbJwoCUhPaOgbmoDF5Gr4MzvfMTcbXi+7PQFDspWA
+        VTfTUD7YCGtHrYDXUthnrXAAM6EtQyvQAGJcx8Kfmct4OxF29pc40JWw68EYZq+g5CJoqlnM
+        2wHw1bGrCE9Ohs8GXew2Oi7TK/Uob4vhqZMSvu0FjdYb/zYb2zscFRoa1IF2W0Lugr3G09g5
+        4GH8P3UFgGLgxio5eQTLLY1hE3w5Rs4pYyJ898bKzWD8Z2y/rCPVoKBvyLcJIARoApBAZa7i
+        q/cteyTifcyhJFYRG6pQRrNcE3AnBDI38d6oMkZCRjDx7AGWjWMVf1OEcJqRjJw/8eRxhcst
+        2+t4n0kpN4ryJ1eH5MUe2X9wQPeyMy7B0JzrVZLUor8UINN7e69NCp4bOhUL37pDury8YV3g
+        nJsLRf3C8PSX9VlBzpzJv1SdmrKhF4Z/HPbUpgadcskp29Qb3pFD01NCBi7BrOv1gUjg7vlP
+        X0C/5VFaq/mNOjXxbrdyh236MnyO7YunXv38kXuEYb0uLEERaqIUhZXK9CGpSf7usO4yk9V1
+        wBKfm5B291prtbP/i57H97xq5N9dfT4Me8jeWA+2q6bMcttY5ZylqvP7mqw2Bl2euwKXpwfU
+        cJptphXu4iPZee8DNuvUqkyPLbJ5nxf0WOrDulWvzo7JBFwks8QbVXDMH/uuzXSiAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xe7pfq3YnGfw5wmPxYN42NoslTRkW
+        K77MZLe48LSHzWLv663sFg09v1ktzs47zmYxYdU3FosZ5/cxWbT8aWGxWHvkLrvF/z072C12
+        3jnB7MDrsXPWXXaPBZtKPTat6mTzuHNtD5vHkyvTmTw2L6n36NuyitHj+I3tTB6fN8kFcEbp
+        2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZby5tpm5
+        4JBYxcoXvSwNjNOEuxg5OSQETCSOfLrO1MXIxSEksJRR4uSVg0wQCRmJk9MaWCFsYYk/17rY
+        IIo+MUpc+7MVLMEmYCjR9RYkwckhIpAssfn8D7AiZoH1zBL7r18HmyQsECKxpKeLBcRmEVCV
+        mPnqIyOIzStgK/F33hJ2iA3yEqs3HGCewMizgJFhFaNIamlxbnpusZFecWJucWleul5yfu4m
+        RmCQbzv2c8sOxpWvPuodYmTiYDzEKMHBrCTCu/DMziQh3pTEyqrUovz4otKc1OJDjKZA+yYy
+        S4km5wPjLK8k3tDMwNTQxMzSwNTSzFhJnNezoCNRSCA9sSQ1OzW1ILUIpo+Jg1OqgSniwMNL
+        jwPWT7jOI9d3Lm2XQ4LyvjvBXR0b5D277Pn/2/ytNli4Xf73tWM6N4MW38gPXvPkc65AbZxe
+        c/hXCVelOxEW8xaV5D+pdbct3Pd8u9c0gS0dDqsPdu9klzR6XHBAPT3yQgaLwcSfMXEdnhcv
+        cC0LM668/eCWrQ7/lOmGLBNSHBiCm+cpvCnVOPpt7587XTW/uGuFD8iuSb/o0Syo6hUbYfPi
+        3MyDbi+mb5yxeep/no0PJuocKXfUNVeW9Whcdc5XZ8aJC6uS1t+deSp378x7zkZpm05w/9zr
+        v/SrQZHsL7tLfoyeqYvcwkx2dbO03EuP8AyQXnco7VBMW2Mne2Ro1fwNjtx7OBLaVimxFGck
+        GmoxFxUnAgCPG9qD+wIAAA==
+X-CMS-MailID: 20220628220437eucas1p2c478751458323f93a71050c4a949f12e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220628220437eucas1p2c478751458323f93a71050c4a949f12e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220628220437eucas1p2c478751458323f93a71050c4a949f12e
+References: <CGME20220628220437eucas1p2c478751458323f93a71050c4a949f12e@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 08:34:45PM +0100, Paul Cercueil wrote:
-> Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros to
-> handle the .suspend/.resume callbacks.
-> 
-> These macros allow the suspend and resume functions to be automatically
-> dropped by the compiler when CONFIG_SUSPEND is disabled, without having
-> to use #ifdef guards. Not using #ifdef guards means that the code is
-> always compiled independently of any Kconfig option, and thanks to that
-> bugs and regressions are easier to catch.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
+The exynos-pcie driver called phy_power_on() and then phy_init() for some
+historical reasons. However the generic PHY framework assumes that the
+proper sequence is to call phy_init() first, then phy_power_on(). The
+operations done by both functions should be considered as one action and
+as such they are called by the exynos-pcie driver (without doing anything
+between them). The initialization is just a sequence of register writes,
+which cannot be altered, without breaking the hardware operation.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+To match the generic PHY framework requirement, simply move all register
+writes to the phy_init()/phy_exit() and drop power_on()/power_off()
+callbacks. This way the driver will also work with the old (incorrect)
+PHY initialization call sequence.
 
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 6db22f2e3a4f..95919392927f 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -845,8 +845,6 @@ static void s3c2410wdt_shutdown(struct platform_device *dev)
->  	s3c2410wdt_stop(&wdt->wdt_device);
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -
->  static int s3c2410wdt_suspend(struct device *dev)
->  {
->  	int ret;
-> @@ -885,10 +883,9 @@ static int s3c2410wdt_resume(struct device *dev)
->  
->  	return 0;
->  }
-> -#endif
->  
-> -static SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops, s3c2410wdt_suspend,
-> -			s3c2410wdt_resume);
-> +static DEFINE_SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops,
-> +				s3c2410wdt_suspend, s3c2410wdt_resume);
->  
->  static struct platform_driver s3c2410wdt_driver = {
->  	.probe		= s3c2410wdt_probe,
-> @@ -897,7 +894,7 @@ static struct platform_driver s3c2410wdt_driver = {
->  	.id_table	= s3c2410_wdt_ids,
->  	.driver		= {
->  		.name	= "s3c2410-wdt",
-> -		.pm	= &s3c2410wdt_pm_ops,
-> +		.pm	= pm_sleep_ptr(&s3c2410wdt_pm_ops),
->  		.of_match_table	= of_match_ptr(s3c2410_wdt_match),
->  	},
->  };
-> -- 
-> 2.35.1
-> 
+Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/phy/samsung/phy-exynos-pcie.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
+index 578cfe07d07a..53c9230c2907 100644
+--- a/drivers/phy/samsung/phy-exynos-pcie.c
++++ b/drivers/phy/samsung/phy-exynos-pcie.c
+@@ -51,6 +51,13 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
+ {
+ 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+ 
++	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
++			   BIT(0), 1);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
++			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
++	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
++			   PCIE_REFCLK_GATING_EN, 0);
++
+ 	regmap_update_bits(ep->fsysreg,	PCIE_EXYNOS5433_PHY_COMMON_RESET,
+ 			   PCIE_PHY_RESET, 1);
+ 	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
+@@ -109,20 +116,7 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
+ 	return 0;
+ }
+ 
+-static int exynos5433_pcie_phy_power_on(struct phy *phy)
+-{
+-	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+-
+-	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
+-			   BIT(0), 1);
+-	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
+-			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
+-	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
+-			   PCIE_REFCLK_GATING_EN, 0);
+-	return 0;
+-}
+-
+-static int exynos5433_pcie_phy_power_off(struct phy *phy)
++static int exynos5433_pcie_phy_exit(struct phy *phy)
+ {
+ 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+ 
+@@ -135,8 +129,7 @@ static int exynos5433_pcie_phy_power_off(struct phy *phy)
+ 
+ static const struct phy_ops exynos5433_phy_ops = {
+ 	.init		= exynos5433_pcie_phy_init,
+-	.power_on	= exynos5433_pcie_phy_power_on,
+-	.power_off	= exynos5433_pcie_phy_power_off,
++	.exit		= exynos5433_pcie_phy_exit,
+ 	.owner		= THIS_MODULE,
+ };
+ 
+-- 
+2.17.1
+
