@@ -2,113 +2,172 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7C1C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 10:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA291C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 11:15:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345126AbiF1K7f (ORCPT
+        id S1344129AbiF1LPW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 06:59:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56986 "EHLO
+        Tue, 28 Jun 2022 07:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343573AbiF1K7e (ORCPT
+        with ESMTP id S230489AbiF1LPU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 06:59:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB6CC1F63E;
-        Tue, 28 Jun 2022 03:59:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 699EEB81DC6;
-        Tue, 28 Jun 2022 10:59:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5993C3411D;
-        Tue, 28 Jun 2022 10:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656413971;
-        bh=Wqg0ETp02r05Seu7ujmQUQ414cg/uxWo81xExN0cy1Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=nrh0nVqaQvbXB/U1O1AFBvjEHOWtM9Kmuc/cru4Q2as1yYm5yig+ESS0p35Ay3h1K
-         174YJ8Bvo966syKkPSc4BVmTpPH6hYMWyHOUE84kt29ECeKnC7GStSNUZJRg52gr7J
-         NhEWDbdOxwwnkdFdtBgNf+eygbATz2hJqKalAhUGO29zs7nyMidkFd9srg9DLaHRPM
-         78Vvmuy284U4syr9bQlcPhQe3jXNROMmFt54M8s8KRDAseaAQttKxFJ8QN6EJ+GJb4
-         DgeVmtRl7ckAuZIysrcEp4u6IBVCUpBZLRJStIUIGcrRZgds7GT2ubwVd9CJyLVQSw
-         7YonD4CETuCpw==
-Date:   Tue, 28 Jun 2022 05:59:29 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Tue, 28 Jun 2022 07:15:20 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 631AC2CE07;
+        Tue, 28 Jun 2022 04:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656414919; x=1687950919;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VAm8GqMxSVbXa5l11MJLdH5RISvLfde2v1QEXHVyiio=;
+  b=mZq8HQm1gvx+ndU7H/4UXDpllHvZVhrQ1XAiisz3B81fZx3onExWwa6O
+   HVQxDRJDl50jvnbmrxEchDmq6UY8/i+ttGS+eDncCPGtynlXDroamI9ti
+   Uq51RMcF+qY6EIE39PfvMcnXDxErEvuU2MDeFHDV+KJ2SAyoSQ3S2hSqI
+   dLdVcrslX3VZW+FTuv6drbFpkgP25VRuSTGtqxOLLsDysNrBVHYiSkTT6
+   Ea8A9VKdMgtpUdr7diMyFGcq3zGsVKsEyAHor2tTs2WoAdvklRfh8+/gy
+   205fk4PmBhGiS2cOmHsS+LF9r8uF1CXZqm9uam08rIymaHIDGHF6iO5Pp
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="281749895"
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="281749895"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:15:19 -0700
+X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
+   d="scan'208";a="693067914"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:15:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1o69BV-000wl7-8C;
+        Tue, 28 Jun 2022 14:15:09 +0300
+Date:   Tue, 28 Jun 2022 14:15:09 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Al Cooper <alcooperx@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: pci-exynos.c phy_init() usage
-Message-ID: <20220628105929.GA1819457@bhelgaas>
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Fix console probe delay when stdout-path isn't set
+Message-ID: <Yrrivbk2NSK3loBW@smile.fi.intel.com>
+References: <20220628020110.1601693-1-saravanak@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7ab52c5f-6c48-6381-e0f3-a1d9572dc2a9@linaro.org>
+In-Reply-To: <20220628020110.1601693-1-saravanak@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 10:27:31AM +0200, Krzysztof Kozlowski wrote:
-> On 28/06/2022 10:13, Marek Szyprowski wrote:
-> > On 27.06.2022 12:47, Krzysztof Kozlowski wrote:
-> >> On 27/06/2022 12:30, Marek Szyprowski wrote:
-> >>> On 24.06.2022 20:07, Krzysztof Kozlowski wrote:
-> >>>> On 24/06/2022 19:35, Bjorn Helgaas wrote:
-> >>>>> In exynos_pcie_host_init() [1], we call:
-> >>>>>
-> >>>>>     phy_reset(ep->phy);
-> >>>>>     phy_power_on(ep->phy);
-> >>>>>     phy_init(ep->phy);
-> >>>>>
-> >>>>> The phy_init() function comment [2] says it must be called before
-> >>>>> phy_power_on().  Is exynos doing this backwards?
-> >>>> Looks like. I don't have Exynos hardware with a PCI, so cannot
-> >>>> test/fix/verify.
-> >>>>
-> >>>> Luckily for Exynos ;-) it's not alone in this pattern:
-> >>>> drivers/net/ethernet/marvell/sky2.c
-> >>>> drivers/usb/dwc2/platform.c
-> >>> I've checked that on the real hardware. Swapping the order of
-> >>> phy_power_on and phy_init breaks driver operation.
-> >>>
-> >>> However pci-exynos is the only driver that uses the phy-exynos-pcie, so
-> >>> we can simply swap the content of the init and power_on in the phy
-> >>> driver to adjust the code to the right order. power_on/init and
-> >>> exit/power_off are also called one after the other in pci-exynos,
-> >>> without any activity between them, so we can also simply move all
-> >>> operation to one pair of the callback, like power_on/off.
-> >>>
-> >>> Krzysztof, which solution would you prefer?
-> >> I think the real problem is that the Exynos PCIe phy init
-> >> (exynos5433_pcie_phy_init) performs parts of power on procedure, so the
-> >> code is mixed. Probably also the phy init could not happen earlier due
-> >> to gated clocks (ungated in exynos5433_pcie_phy_power_on).
-> >>
-> >> I would prefer to clean it up while ordering init+power_on, so figure
-> >> out more or less correct procedure.
-> >>
-> >> You can also look at Artpec-8 PHY - it seems using correct order
-> >> (init+reset):
-> >> https://lore.kernel.org/all/20220614011616epcms2p7dcaa67c53b7df5802dd7a697e2d472d7@epcms2p7/
-> > 
-> > I've played a bit with those register writes in exynos_pcie_phy and 
-> > frankly speaking the currenly used (power_on + init) is the only 
-> > sequence that works properly. I'm leaning to move everything to 
-> > phy_init/exit. I really don't see how to split it into init + power_on 
-> > callbacks.
+On Mon, Jun 27, 2022 at 07:01:01PM -0700, Saravana Kannan wrote:
+> Since the series that fixes console probe delay based on stdout-path[1] got
+> pulled into driver-core-next, I made these patches on top of them.
 > 
-> I was afraid it will be like this. I imagine that certain (not
-> explicitly documented) init operations cannot even happen before power
-> on, so this would be a lot of tries.
-> 
-> I am fine with it. Thanks for doing it.
+> Even if stdout-path isn't set in DT, this patch should take console
+> probe times back to how they were before the deferred_probe_timeout
+> clean up series[2].
 
-If nothing can be improved, a comment to this effect might make it
-look less like a mistake.
+Are you sure it's only limited to the serial drivers?
+(just asking, I don't know myself the answer)
 
-Bjorn
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
