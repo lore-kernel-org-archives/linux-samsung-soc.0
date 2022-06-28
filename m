@@ -2,179 +2,103 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA396CCA479
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 16:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1CBC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 19:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237181AbiF1QZ0 (ORCPT
+        id S232145AbiF1Tnl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 12:25:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44700 "EHLO
+        Tue, 28 Jun 2022 15:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233139AbiF1QYs (ORCPT
+        with ESMTP id S229490AbiF1Tm7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 12:24:48 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E2B39143
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 09:17:01 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id p7so21632699ybm.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 09:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a+P6wSeN2x0ZvD2/JjzHKyqS9/n/5A6tY5jiA6Lhnb8=;
-        b=svPPiUXmjLu4A2+b3rJgoCqrzxWVmAH7KXTvVP4AwaLTDrIN9AN3BtNG2XiV2ycJ8x
-         6Y9oMX5BQlCl6K+KL9J1KxqNRcb1MdTb/c18nJgwvmc5rVyOe8EKUyj+KrCbNC70iJoL
-         OlJOsi9x5Scvw9W8cP8d/OYBAk6luTiA/PE8w/jzj7tOJ+ICpHFzyCnfh2xqrRn3YVLo
-         nvgpT4pJzONw4hikJOgq/y8DRHjrG2lOfrc2hEWRc02ovhuxlfgkK9/gOnTwVGME5DOU
-         4AXMX65QfUYiz76GEkrT/465op3M51kj45IkhJmeQobRe1+J32FVHZumFFaJBd9Gan88
-         /wYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a+P6wSeN2x0ZvD2/JjzHKyqS9/n/5A6tY5jiA6Lhnb8=;
-        b=gsjrqqBIA3B9AKFHglHwtmvJHopsAF9mH7senj7+Q2NEAC31e2PHS4woXSCKU/h3EX
-         zd/JlvIqzm/9IB33v4sRwkbJSz3qNWN4qmjDR263HafWC7rJHSxBIokDJQkr+dObc+KS
-         ATGJqHLnL/W5HdDaoNoLtpyUVq4X7KPM7uMEF1mRCkSME6I9mFKBBIGe4EY9EIPICBf9
-         GEXl43+fQ2EGALnxuD3pE4j+TXbSgGnQC6BqmzRKwiDb3NVb2iurlJazb0vFZ57/1puE
-         vprL4uZPvZ1Fr0aH7zfIITsqT80xsPG+b7pEONP5aMBkZ80JdrmBKNUJLRLh8m6LVNBK
-         YRLw==
-X-Gm-Message-State: AJIora/QBkF5r2zDmZyrDdDS10+KN3ShcAUL2KCBcPgEBDvvebC3s0I8
-        cVcqQ8bNV0IL5KdDpcHLnKAiYj2OD/X/2JLDlriHkw==
-X-Google-Smtp-Source: AGRyM1vHa4WRnJlk4sln0xuJGdVhcpu8QS15R2N9PrbVvkglI7Nzwr0PBFdp1lTun6HJ/nUSS1O/TmeoEjFZPidRK0U=
-X-Received: by 2002:a25:5bc3:0:b0:669:b722:beb8 with SMTP id
- p186-20020a255bc3000000b00669b722beb8mr20258885ybb.447.1656433020483; Tue, 28
- Jun 2022 09:17:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220628020110.1601693-1-saravanak@google.com>
- <20220628020110.1601693-3-saravanak@google.com> <20220628140025.qpom64ptru4ub6fu@distanz.ch>
-In-Reply-To: <20220628140025.qpom64ptru4ub6fu@distanz.ch>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 28 Jun 2022 09:16:24 -0700
-Message-ID: <CAGETcx_7jS3H2cphiXdk=NBfmuPzsusEwPBx75n3PrP6YTnjnA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] serial: Set probe_no_timeout for all DT based drivers
-To:     Tobias Klauser <tklauser@distanz.ch>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Al Cooper <alcooperx@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tue, 28 Jun 2022 15:42:59 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C9743F895;
+        Tue, 28 Jun 2022 12:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1656444901; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XGopMg7rrQDjhUvGbHD50XRWYmeZSip2Vhlfrfv9/RM=;
+        b=XeE2AuIr+XIVkVMs8Gpx0JQCB1N3qu6Wm83uBYXDAj0lChptVLvJPQ1kJWOEpuDuPigYH9
+        GFzCpmX6Sp7pREsl4WFwjmzSEOhaVIFd41/HX8cz4mci6R4m3jENeSr8sLxR4DSDXFHtLw
+        pdYKQTXEBgA1HqE1Xxc4a2WVjRU3nOM=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
         Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pali Rohar <pali@kernel.org>,
-        Andreas Farber <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh@kernel.org>,
-        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
-        kevin hilman <khilman@kernel.org>,
-        ulf hansson <ulf.hansson@linaro.org>,
-        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
-        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
-        andrew lunn <andrew@lunn.ch>,
-        heiner kallweit <hkallweit1@gmail.com>,
-        eric dumazet <edumazet@google.com>,
-        jakub kicinski <kuba@kernel.org>,
-        paolo abeni <pabeni@redhat.com>,
-        linus walleij <linus.walleij@linaro.org>,
-        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
-        david ahern <dsahern@kernel.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-actions@lists.infradead.org,
-        linux-unisoc@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        sparclinux@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 4/8] watchdog: s3c2410_wdt: Remove #ifdef guards for PM related functions
+Date:   Tue, 28 Jun 2022 20:34:45 +0100
+Message-Id: <20220628193449.160585-5-paul@crapouillou.net>
+In-Reply-To: <20220628193449.160585-1-paul@crapouillou.net>
+References: <20220628193449.160585-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 7:00 AM Tobias Klauser <tklauser@distanz.ch> wrote:
->
-> On 2022-06-28 at 04:01:03 +0200, Saravana Kannan <saravanak@google.com> wrote:
-> > diff --git a/drivers/tty/serial/8250/8250_acorn.c b/drivers/tty/serial/8250/8250_acorn.c
-> > index 758c4aa203ab..5a6f2f67de4f 100644
-> > --- a/drivers/tty/serial/8250/8250_acorn.c
-> > +++ b/drivers/tty/serial/8250/8250_acorn.c
-> > @@ -114,7 +114,6 @@ static const struct ecard_id serial_cids[] = {
-> >  static struct ecard_driver serial_card_driver = {
-> >       .probe          = serial_card_probe,
-> >       .remove         = serial_card_remove,
-> > -     .id_table       = serial_cids,
->
-> Is this change intentional? All other drivers are only changed to set
-> .probe_no_time and I don't see anything mentioned in the commit message
-> re. this driver's change.
+Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros to
+handle the .suspend/.resume callbacks.
 
-No, that's a mistake. Thanks for catching it! I'll check this patch again.
+These macros allow the suspend and resume functions to be automatically
+dropped by the compiler when CONFIG_SUSPEND is disabled, without having
+to use #ifdef guards. Not using #ifdef guards means that the code is
+always compiled independently of any Kconfig option, and thanks to that
+bugs and regressions are easier to catch.
 
--Saravana
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ drivers/watchdog/s3c2410_wdt.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 6db22f2e3a4f..95919392927f 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -845,8 +845,6 @@ static void s3c2410wdt_shutdown(struct platform_device *dev)
+ 	s3c2410wdt_stop(&wdt->wdt_device);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-
+ static int s3c2410wdt_suspend(struct device *dev)
+ {
+ 	int ret;
+@@ -885,10 +883,9 @@ static int s3c2410wdt_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+-static SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops, s3c2410wdt_suspend,
+-			s3c2410wdt_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops,
++				s3c2410wdt_suspend, s3c2410wdt_resume);
+ 
+ static struct platform_driver s3c2410wdt_driver = {
+ 	.probe		= s3c2410wdt_probe,
+@@ -897,7 +894,7 @@ static struct platform_driver s3c2410wdt_driver = {
+ 	.id_table	= s3c2410_wdt_ids,
+ 	.driver		= {
+ 		.name	= "s3c2410-wdt",
+-		.pm	= &s3c2410wdt_pm_ops,
++		.pm	= pm_sleep_ptr(&s3c2410wdt_pm_ops),
+ 		.of_match_table	= of_match_ptr(s3c2410_wdt_match),
+ 	},
+ };
+-- 
+2.35.1
+
