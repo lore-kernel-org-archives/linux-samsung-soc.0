@@ -2,142 +2,234 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAF0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 10:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CF1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 10:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344698AbiF1KCw (ORCPT
+        id S1344727AbiF1KPo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 06:02:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57778 "EHLO
+        Tue, 28 Jun 2022 06:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241640AbiF1KCa (ORCPT
+        with ESMTP id S1343964AbiF1KPh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 06:02:30 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55F602F3AF
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 03:02:12 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id i25so11375333wrc.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 03:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=3ZLTvjDl16WXAfxrYhPgAG4dx8YGkXCU/wb2ZjBGHxQ=;
-        b=msmzAW7PSUdijfx025BCp2/8s3pOGKHZjzRWntzmi6KAvV8jW6AQruHlpJe5hJBJ+T
-         EM36fcnz/XIBu2v5ab+3p5b9NWV5h9s4w+Y2RWsFE7tH3czqwpsz9Nr3RGgr7QXncXSv
-         IqLV58rvPzMwjDi88tiKUSd21vSifDdBvmsrqCLAje/NYaaR98WdoEfymvhd8dnDnIqD
-         vyxsP4pEjPBuji0NZGr+bHgoOIbvX8wbqQ4R5jSCelXDfwmjbKNLdBD3IVFK4DMOZAkr
-         ED6qGkg/LjDsKf6P3IrWkWIKh07p7qquUuFXS/yYJgTyDMy9zWksPt0WrKG+V4FZouU/
-         5n+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=3ZLTvjDl16WXAfxrYhPgAG4dx8YGkXCU/wb2ZjBGHxQ=;
-        b=Or8g64mbTAghor6NIGRRlJGRaQW485xs6FaFi/h8a+JYbTHN6lcOtnz/PiyVYe3G2i
-         VZH0bkORO5WvgaMowbG6oMiEPfJW363X2rZw64x4N1RXl1k7rfi4IbQ0VVkrC8mweGOF
-         7+bWgVlIA59MXMiPEyRAbUsV67bM/M9QiHXIy9OznKy3ZnLgBBRBT5QZItcT5Lhjw0KY
-         oFLc/4DnDAlgv4WFh+ilpnjnAGWpttSwS8ppBxTidd6CWQ4YpJLvP8mAuiEptG30UfQm
-         Qn63ljyWF9Rh8kYCiMuqJgvrx1OnU+WGDmGS+l6RhoCxlgPrXdblq6MmS+HrMvBRn/vw
-         B2Lw==
-X-Gm-Message-State: AJIora9WW0f5RElMLQNAPT2q18k+w3AMjg80VZNaa505Y/XnfW4EJ6eE
-        Ad2ZbDQDoCjqMSWXyp+lR9tT9w==
-X-Google-Smtp-Source: AGRyM1ticr0v/IxsOpoo3bMVweszhCvDeSWbd9rkPrNp8Fcov6Tmwht2shB+7n3Tz1p27DACrMqxkw==
-X-Received: by 2002:a05:6000:1d84:b0:20e:5fae:6e71 with SMTP id bk4-20020a0560001d8400b0020e5fae6e71mr16980710wrb.224.1656410530736;
-        Tue, 28 Jun 2022 03:02:10 -0700 (PDT)
-Received: from [192.168.0.252] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id c3-20020adfef43000000b0021bab0ba755sm13629129wrp.106.2022.06.28.03.02.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 03:02:09 -0700 (PDT)
-Message-ID: <354b2ae2-92b4-bb56-387a-599f0451a1c0@linaro.org>
-Date:   Tue, 28 Jun 2022 12:02:08 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov9: correct clock
- numbering of peric0/c1
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-        'Tomasz Figa' <tomasz.figa@gmail.com>,
-        'Chanwoo Choi' <cw00.choi@samsung.com>,
-        'Stephen Boyd' <sboyd@kernel.org>,
-        'Michael Turquette' <mturquette@baylibre.com>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>
-Cc:     'Alim Akhtar' <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220627005210.6473-1-chanho61.park@samsung.com>
- <CGME20220627005413epcas2p39750fb5876366881b8535ee516c1bebe@epcas2p3.samsung.com>
- <20220627005210.6473-2-chanho61.park@samsung.com>
- <0e9aab63-7ddf-dead-11b2-4ba81235dcb4@linaro.org>
- <001901d88a94$e87208d0$b9561a70$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <001901d88a94$e87208d0$b9561a70$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Tue, 28 Jun 2022 06:15:37 -0400
+Received: from mailout3.hostsharing.net (mailout3.hostsharing.net [IPv6:2a01:4f8:150:2161:1:b009:f236:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B7A011822;
+        Tue, 28 Jun 2022 03:15:35 -0700 (PDT)
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "*.hostsharing.net", Issuer "RapidSSL TLS DV RSA Mixed SHA256 2020 CA-1" (verified OK))
+        by mailout3.hostsharing.net (Postfix) with ESMTPS id D0006101E6AA3;
+        Tue, 28 Jun 2022 12:15:29 +0200 (CEST)
+Received: from localhost (unknown [89.246.108.87])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by h08.hostsharing.net (Postfix) with ESMTPSA id 99F0061DA94E;
+        Tue, 28 Jun 2022 12:15:29 +0200 (CEST)
+X-Mailbox-Line: From b7f386d04e9b5b0e2738f0125743e30676f309ef Mon Sep 17 00:00:00 2001
+Message-Id: <b7f386d04e9b5b0e2738f0125743e30676f309ef.1656410895.git.lukas@wunner.de>
+From:   Lukas Wunner <lukas@wunner.de>
+Date:   Tue, 28 Jun 2022 12:15:08 +0200
+Subject: [PATCH net v4] net: phy: Don't trigger state machine while in suspend
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     netdev@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Ferry Toth <fntoth@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/06/2022 04:15, Chanho Park wrote:
->> Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov9: correct clock
->> numbering of peric0/c1
->>
->> On 27/06/2022 02:52, Chanho Park wrote:
->>> There are duplicated definitions of peric0 and peric1 cmu blocks.
->>> Thus, they should be defined correctly as numerical order.
->>>
->>> Fixes: 680e1c8370a2 ("dt-bindings: clock: add clock binding
->>> definitions for Exynos Auto v9")
->>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->>> ---
->>>  .../dt-bindings/clock/samsung,exynosautov9.h  | 56
->>> +++++++++----------
->>>  1 file changed, 28 insertions(+), 28 deletions(-)
->>>
->>> diff --git a/include/dt-bindings/clock/samsung,exynosautov9.h
->>> b/include/dt-bindings/clock/samsung,exynosautov9.h
->>> index ea9f91b4eb1a..a7db6516593f 100644
->>> --- a/include/dt-bindings/clock/samsung,exynosautov9.h
->>> +++ b/include/dt-bindings/clock/samsung,exynosautov9.h
->>> @@ -226,21 +226,21 @@
->>>  #define CLK_GOUT_PERIC0_IPCLK_8		28
->>>  #define CLK_GOUT_PERIC0_IPCLK_9		29
->>>  #define CLK_GOUT_PERIC0_IPCLK_10	30
->>> -#define CLK_GOUT_PERIC0_IPCLK_11	30
->>> -#define CLK_GOUT_PERIC0_PCLK_0		31
->>> -#define CLK_GOUT_PERIC0_PCLK_1		32
->>> -#define CLK_GOUT_PERIC0_PCLK_2		33
->>> -#define CLK_GOUT_PERIC0_PCLK_3		34
->>> -#define CLK_GOUT_PERIC0_PCLK_4		35
->>> -#define CLK_GOUT_PERIC0_PCLK_5		36
->>> -#define CLK_GOUT_PERIC0_PCLK_6		37
->>> -#define CLK_GOUT_PERIC0_PCLK_7		38
->>> -#define CLK_GOUT_PERIC0_PCLK_8		39
->>> -#define CLK_GOUT_PERIC0_PCLK_9		40
->>> -#define CLK_GOUT_PERIC0_PCLK_10		41
->>> -#define CLK_GOUT_PERIC0_PCLK_11		42
->>> +#define CLK_GOUT_PERIC0_IPCLK_11	31
->>> +#define CLK_GOUT_PERIC0_PCLK_0		32
->>> +#define CLK_GOUT_PERIC0_PCLK_1		33
->>
->> Is this a fix for current cycle? If yes, it's ok, otherwise all other IDs
->> should not be changed, because it's part of ABI.
-> 
-> What is the current cycle? 5.19-rc or 5.20?
-> I prefer this goes on 5.19-rc but if it's not possible due to the ABI breakage, I'm okay this can be going to v5.20.
+Upon system sleep, mdio_bus_phy_suspend() stops the phy_state_machine(),
+but subsequent interrupts may retrigger it:
 
-The change was introduced indeed in v5.19-rc1, so this should go to
-current cycle as well (v5.19) and your patch is fine.
+They may have been left enabled to facilitate wakeup and are not
+quiesced until the ->suspend_noirq() phase.  Unwanted interrupts may
+hence occur between mdio_bus_phy_suspend() and dpm_suspend_noirq(),
+as well as between dpm_resume_noirq() and mdio_bus_phy_resume().
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Retriggering the phy_state_machine() through an interrupt is not only
+undesirable for the reason given in mdio_bus_phy_suspend() (freezing it
+midway with phydev->lock held), but also because the PHY may be
+inaccessible after it's suspended:  Accesses to USB-attached PHYs are
+blocked once usb_suspend_both() clears the can_submit flag and PHYs on
+PCI network cards may become inaccessible upon suspend as well.
 
-Sylwester or Stephen,
+Amend phy_interrupt() to avoid triggering the state machine if the PHY
+is suspended.  Signal wakeup instead if the attached net_device or its
+parent has been configured as a wakeup source.  (Those conditions are
+identical to mdio_bus_phy_may_suspend().)  Postpone handling of the
+interrupt until the PHY has resumed.
 
-Please kindly grab it for fixes.
+Before stopping the phy_state_machine() in mdio_bus_phy_suspend(),
+wait for a concurrent phy_interrupt() to run to completion.  That is
+necessary because phy_interrupt() may have checked the PHY's suspend
+status before the system sleep transition commenced and it may thus
+retrigger the state machine after it was stopped.
 
-Best regards,
-Krzysztof
+Likewise, after re-enabling interrupt handling in mdio_bus_phy_resume(),
+wait for a concurrent phy_interrupt() to complete to ensure that
+interrupts which it postponed are properly rerun.
+
+The issue was exposed by commit 1ce8b37241ed ("usbnet: smsc95xx: Forward
+PHY interrupts to PHY driver to avoid polling"), but has existed since
+forever.
+
+Fixes: 541cd3ee00a4 ("phylib: Fix deadlock on resume")
+Link: https://lore.kernel.org/netdev/a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com/
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: stable@vger.kernel.org # v2.6.33+
+---
+ Changes v3 -> v4:
+ * Fix sha1 in commit message
+ * Add correct Fixes tag
+ 
+ Changes v2 -> v3:
+ * Add stable designation
+ * Add Acked-by tag (Rafael)
+ 
+ Changes v1 -> v2:
+ * Extend rationale in commit message
+ * Drop incorrect Fixes tag, add Tested-by tag (Marek)
+ 
+ Link to v3:
+ https://lore.kernel.org/netdev/c5595bdb20625382538816c2e6d917d95c62e09b.1656322883.git.lukas@wunner.de/
+ 
+ drivers/net/phy/phy.c        | 23 +++++++++++++++++++++++
+ drivers/net/phy/phy_device.c | 23 +++++++++++++++++++++++
+ include/linux/phy.h          |  6 ++++++
+ 3 files changed, 52 insertions(+)
+
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index ef62f357b76d..8d3ee3a6495b 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -31,6 +31,7 @@
+ #include <linux/io.h>
+ #include <linux/uaccess.h>
+ #include <linux/atomic.h>
++#include <linux/suspend.h>
+ #include <net/netlink.h>
+ #include <net/genetlink.h>
+ #include <net/sock.h>
+@@ -976,6 +977,28 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
+ 	struct phy_driver *drv = phydev->drv;
+ 	irqreturn_t ret;
+ 
++	/* Wakeup interrupts may occur during a system sleep transition.
++	 * Postpone handling until the PHY has resumed.
++	 */
++	if (IS_ENABLED(CONFIG_PM_SLEEP) && phydev->irq_suspended) {
++		struct net_device *netdev = phydev->attached_dev;
++
++		if (netdev) {
++			struct device *parent = netdev->dev.parent;
++
++			if (netdev->wol_enabled)
++				pm_system_wakeup();
++			else if (device_may_wakeup(&netdev->dev))
++				pm_wakeup_dev_event(&netdev->dev, 0, true);
++			else if (parent && device_may_wakeup(parent))
++				pm_wakeup_dev_event(parent, 0, true);
++		}
++
++		phydev->irq_rerun = 1;
++		disable_irq_nosync(irq);
++		return IRQ_HANDLED;
++	}
++
+ 	mutex_lock(&phydev->lock);
+ 	ret = drv->handle_interrupt(phydev);
+ 	mutex_unlock(&phydev->lock);
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 431a8719c635..46acddd865a7 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -278,6 +278,15 @@ static __maybe_unused int mdio_bus_phy_suspend(struct device *dev)
+ 	if (phydev->mac_managed_pm)
+ 		return 0;
+ 
++	/* Wakeup interrupts may occur during the system sleep transition when
++	 * the PHY is inaccessible. Set flag to postpone handling until the PHY
++	 * has resumed. Wait for concurrent interrupt handler to complete.
++	 */
++	if (phy_interrupt_is_valid(phydev)) {
++		phydev->irq_suspended = 1;
++		synchronize_irq(phydev->irq);
++	}
++
+ 	/* We must stop the state machine manually, otherwise it stops out of
+ 	 * control, possibly with the phydev->lock held. Upon resume, netdev
+ 	 * may call phy routines that try to grab the same lock, and that may
+@@ -315,6 +324,20 @@ static __maybe_unused int mdio_bus_phy_resume(struct device *dev)
+ 	if (ret < 0)
+ 		return ret;
+ no_resume:
++	if (phy_interrupt_is_valid(phydev)) {
++		phydev->irq_suspended = 0;
++		synchronize_irq(phydev->irq);
++
++		/* Rerun interrupts which were postponed by phy_interrupt()
++		 * because they occurred during the system sleep transition.
++		 */
++		if (phydev->irq_rerun) {
++			phydev->irq_rerun = 0;
++			enable_irq(phydev->irq);
++			irq_wake_thread(phydev->irq, phydev);
++		}
++	}
++
+ 	if (phydev->attached_dev && phydev->adjust_link)
+ 		phy_start_machine(phydev);
+ 
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 508f1149665b..b09f7d36cff2 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -572,6 +572,10 @@ struct macsec_ops;
+  * @mdix_ctrl: User setting of crossover
+  * @pma_extable: Cached value of PMA/PMD Extended Abilities Register
+  * @interrupts: Flag interrupts have been enabled
++ * @irq_suspended: Flag indicating PHY is suspended and therefore interrupt
++ *                 handling shall be postponed until PHY has resumed
++ * @irq_rerun: Flag indicating interrupts occurred while PHY was suspended,
++ *             requiring a rerun of the interrupt handler after resume
+  * @interface: enum phy_interface_t value
+  * @skb: Netlink message for cable diagnostics
+  * @nest: Netlink nest used for cable diagnostics
+@@ -626,6 +630,8 @@ struct phy_device {
+ 
+ 	/* Interrupts are enabled */
+ 	unsigned interrupts:1;
++	unsigned irq_suspended:1;
++	unsigned irq_rerun:1;
+ 
+ 	enum phy_state state;
+ 
+-- 
+2.36.1
+
