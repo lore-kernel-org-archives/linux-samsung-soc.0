@@ -2,172 +2,152 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA291C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 11:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B143EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Jun 2022 11:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344129AbiF1LPW (ORCPT
+        id S239395AbiF1LzV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 07:15:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41814 "EHLO
+        Tue, 28 Jun 2022 07:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230489AbiF1LPU (ORCPT
+        with ESMTP id S1344829AbiF1LzT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 07:15:20 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 631AC2CE07;
-        Tue, 28 Jun 2022 04:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656414919; x=1687950919;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VAm8GqMxSVbXa5l11MJLdH5RISvLfde2v1QEXHVyiio=;
-  b=mZq8HQm1gvx+ndU7H/4UXDpllHvZVhrQ1XAiisz3B81fZx3onExWwa6O
-   HVQxDRJDl50jvnbmrxEchDmq6UY8/i+ttGS+eDncCPGtynlXDroamI9ti
-   Uq51RMcF+qY6EIE39PfvMcnXDxErEvuU2MDeFHDV+KJ2SAyoSQ3S2hSqI
-   dLdVcrslX3VZW+FTuv6drbFpkgP25VRuSTGtqxOLLsDysNrBVHYiSkTT6
-   Ea8A9VKdMgtpUdr7diMyFGcq3zGsVKsEyAHor2tTs2WoAdvklRfh8+/gy
-   205fk4PmBhGiS2cOmHsS+LF9r8uF1CXZqm9uam08rIymaHIDGHF6iO5Pp
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10391"; a="281749895"
-X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
-   d="scan'208";a="281749895"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:15:19 -0700
-X-IronPort-AV: E=Sophos;i="5.92,227,1650956400"; 
-   d="scan'208";a="693067914"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 04:15:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1o69BV-000wl7-8C;
-        Tue, 28 Jun 2022 14:15:09 +0300
-Date:   Tue, 28 Jun 2022 14:15:09 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Al Cooper <alcooperx@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tobias Klauser <tklauser@distanz.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pali Rohar <pali@kernel.org>,
-        Andreas Farber <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh@kernel.org>,
-        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
-        kevin hilman <khilman@kernel.org>,
-        ulf hansson <ulf.hansson@linaro.org>,
-        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
-        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
-        andrew lunn <andrew@lunn.ch>,
-        heiner kallweit <hkallweit1@gmail.com>,
-        eric dumazet <edumazet@google.com>,
-        jakub kicinski <kuba@kernel.org>,
-        paolo abeni <pabeni@redhat.com>,
-        linus walleij <linus.walleij@linaro.org>,
-        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
-        david ahern <dsahern@kernel.org>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-actions@lists.infradead.org,
-        linux-unisoc@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Fix console probe delay when stdout-path isn't set
-Message-ID: <Yrrivbk2NSK3loBW@smile.fi.intel.com>
-References: <20220628020110.1601693-1-saravanak@google.com>
+        Tue, 28 Jun 2022 07:55:19 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784CF31218
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 04:55:17 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220628115515epoutp022f592aa061fce0c37653b5e6b71a3eba~8xsW5TzXE1106011060epoutp02F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 11:55:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220628115515epoutp022f592aa061fce0c37653b5e6b71a3eba~8xsW5TzXE1106011060epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1656417315;
+        bh=i6YODiJmY3k0rS6SbrmdfnttwEjx62o5iv4NgsN9cXc=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=DrjO/Dfiq7HPPcN6qSKFtnsKZvmYB85HEH2+Q/wBj9QKwaAgI5ble/VKrVS28GwX0
+         e4GwJj7cYXV7Lq+Gssr0M4wZGfDVYm7rD+9GrBTo42xbiGKwHR82LsvSMR3+gLtyIC
+         CQgZaVtG4k/04F2YaL2UfIbhLYU+rBWEhs1qEDM0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20220628115514epcas2p3c6090e8b9af804b638f23440c7d14664~8xsWYj4Po3114331143epcas2p3d;
+        Tue, 28 Jun 2022 11:55:14 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4LXNM64ZDkz4x9Q2; Tue, 28 Jun
+        2022 11:55:14 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BA.E3.09650.22CEAB26; Tue, 28 Jun 2022 20:55:14 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220628115514epcas2p111c656393c313ee2245d195679486678~8xsVhoCsm2065020650epcas2p1B;
+        Tue, 28 Jun 2022 11:55:13 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220628115513epsmtrp2e2013bcb374c8db4882c27e8e817b00c~8xsVgCPFk1577615776epsmtrp2p;
+        Tue, 28 Jun 2022 11:55:13 +0000 (GMT)
+X-AuditID: b6c32a46-0a3ff700000025b2-72-62baec225712
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        71.4D.08802.12CEAB26; Tue, 28 Jun 2022 20:55:13 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220628115513epsmtip1f6e0dfd2598291da22a1130ff88b5672~8xsVRc7DA2553225532epsmtip1W;
+        Tue, 28 Jun 2022 11:55:13 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     =?ISO-8859-1?Q?'Ilpo_J=E4rvinen'?= <ilpo.jarvinen@linux.intel.com>
+Cc:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Jiri Slaby'" <jirislaby@kernel.org>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+        "'Hector Martin'" <marcan@marcan.st>,
+        "'Jaewon Kim'" <jaewon02.kim@samsung.com>,
+        "'Vincent Whitchurch'" <vincent.whitchurch@axis.com>,
+        <linux-samsung-soc@vger.kernel.org>,
+        "'linux-serial'" <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <ab327a8f-f520-ad85-c0fc-1e505647164c@linux.intel.com>
+Subject: RE: [PATCH] tty: serial: samsung_tty: loopback mode support
+Date:   Tue, 28 Jun 2022 20:55:13 +0900
+Message-ID: <018601d88ae5$ed2af930$c780eb90$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628020110.1601693-1-saravanak@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIYBiAk/1BqxfP9MIgOSKejVHmFRAK1rqSQAVoU74OsxTEdMA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmma7Sm11JBt9uKlg8mLeNzaJ58Xo2
+        i84dPSwWOxqOsFq8mytjsff1VnaLTY+vsVrMOL+PyeLM4l52i9PXFrBbnN/m78DtcX1dgMem
+        VZ1sHneu7WHzmHcy0GP/3DXsHpuX1HssXraTzaNvyypGj8+b5AI4o7JtMlITU1KLFFLzkvNT
+        MvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4AuVVIoS8wpBQoFJBYXK+nb2RTl
+        l5akKmTkF5fYKqUWpOQUmBfoFSfmFpfmpevlpZZYGRoYGJkCFSZkZ3zveMZecJq9ormvka2B
+        sYWti5GTQ0LAROLFioOMILaQwA5Gifs7ZboYuYDsT4wST6adZoRwPjNKfLp0G67j+K11TBCJ
+        XYwSjz5MZINwXjBKLO7czwpSxSagL/GyYxuYLSLgJtH+rJEdpIhZ4AqzxLcDR9hBEpwCzhLz
+        5/wHs4UFXCRmXroONJaDg0VAVWJruytImFfAUuL1i9WMELagxMmZT1hAbGYBPYkpV1sYIWx5
+        ie1v5zBDXKcg8fPpMlaQMSICThKTN8dAlIhIzO5sYwY5QULgAodE8+O57BD1LhKtO/uhPhOW
+        eHV8C1RcSuLzu71Q8WKJpbM+MUE0NzBKXN72CyphLDHrWTsjyDIJAWWJI7egbuOT6Dj8lx0i
+        zCvR0SYEUa0ucWD7dBYIW1aie85n1gmMSrOQfDYLyWezkHw2C8kLCxhZVjGKpRYU56anFhsV
+        GMFjOzk/dxMjOBVrue1gnPL2g94hRiYOxkOMEhzMSiK8C8/sTBLiTUmsrEotyo8vKs1JLT7E
+        aAoM64nMUqLJ+cBskFcSb2hiaWBiZmZobmRqYK4kzuuVsiFRSCA9sSQ1OzW1ILUIpo+Jg1Oq
+        gck+qzIqOPN5u9uShgvXZeYE80r/u2W/7Ozf1M2H7/meP5v4S+PGK/l986Y65DsLzrhXxdz7
+        b4qWiF7JVLWpYdJzRIsYE+5tENkepTwtfG+L3vG5TExmkb7Za+8GZOZncZ7j/BwtpjIz1nnv
+        UcGH+xpXL9+/ZRHnSfMir367OcedmnPS8huKFW4HpzzJuWC7/vLuBbHNAd5y1y8XnFE6HBiz
+        3eT4iShlQ9X+5EMqLYfX8vAJWT59fsM7PmB5t49Ek/Wb0J6631Nrr8qnfE9cx33u7YwT/7dv
+        Cs1dxmF0M2V6x0/V801fjFl8upVeu9hbhDfM7ReK+fm5tzgqYXL4hG89akxxf89dmn/+5wzX
+        f0osxRmJhlrMRcWJANPrMohOBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSnK7im11JBgc7zCwezNvGZtG8eD2b
+        ReeOHhaLHQ1HWC3ezZWx2Pt6K7vFpsfXWC1mnN/HZHFmcS+7xelrC9gtzm/zd+D2uL4uwGPT
+        qk42jzvX9rB5zDsZ6LF/7hp2j81L6j0WL9vJ5tG3ZRWjx+dNcgGcUVw2Kak5mWWpRfp2CVwZ
+        3zuesRecZq9o7mtka2BsYeti5OSQEDCROH5rHVMXIxeHkMAORolDx2YxQiRkJZ6928EOYQtL
+        3G85wgpR9IxRYuO8aSwgCTYBfYmXHdtYQWwRATeJ9meN7CBFzAK3mCV+3/zCDNFxjFHi8qSl
+        YPs4BZwl5s/5DzZWWMBFYual60C7OThYBFQltra7goR5BSwlXr9YzQhhC0qcnPkEbBmzgIHE
+        tlP/2CFseYntb+cwQ1ynIPHz6TJWkDEiAk4SkzfHQJSISMzubGOewCg8C8mkWUgmzUIyaRaS
+        lgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYKjUktrB+OeVR/0DjEycTAeYpTg
+        YFYS4V14ZmeSEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxS
+        DUwt54N3Rr2L3uStGOZ/KabR5utLttgHN49c4a46erDkVk72sz8Lymfkz+DJEuW5vnu/Z+PB
+        5KMbp5lr3T67LkeHrZfRpML7W0/4/gsac4wL/n2MmeB4Y90PtuOrQ/XXPGxWbUyxyXT5wu89
+        d+PPwtOTOcU0mFdG3LbecmLn5Ltz9lsz3tI4qi/PwM7ndLzow9llrz0LUxoX/9D4WLes+plG
+        ldZaq9NrvJ0ZMib5r5ga/uPD3MvnlI4sueAyb4Vnx1Yj78cP+1nUuw4VavvMijx0aa/1O7Xs
+        d+pLq1WKDn5y/7Bp4ZEjSka+iYdqXWs3mE1POjHDeWbT+mOrFJ37f9QzRSpL1U3qcZ17M1ss
+        dH+MEktxRqKhFnNRcSIAR4XWMzkDAAA=
+X-CMS-MailID: 20220628115514epcas2p111c656393c313ee2245d195679486678
+X-Msg-Generator: CA
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220627032556epcas2p26c2cd2786888a5018607bf651bc5dec0
+References: <CGME20220627032556epcas2p26c2cd2786888a5018607bf651bc5dec0@epcas2p2.samsung.com>
+        <20220627032353.8868-1-chanho61.park@samsung.com>
+        <ab327a8f-f520-ad85-c0fc-1e505647164c@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 07:01:01PM -0700, Saravana Kannan wrote:
-> Since the series that fixes console probe delay based on stdout-path[1] got
-> pulled into driver-core-next, I made these patches on top of them.
+> Subject: Re: [PATCH] tty: serial: samsung_tty: loopback mode support
 > 
-> Even if stdout-path isn't set in DT, this patch should take console
-> probe times back to how they were before the deferred_probe_timeout
-> clean up series[2].
+> On Mon, 27 Jun 2022, Chanho Park wrote:
+> 
+> > Internal loopback mode can be supported by setting
+> > S3C2443_UCON_LOOPBACK bit. The mode & bit can be supported since
+> > s3c2410 and later SoCs.
+> 
+> In that case, why is the  LOOPBACK define named 2443 and not 2410???
 
-Are you sure it's only limited to the serial drivers?
-(just asking, I don't know myself the answer)
+It might be copied from mach-s3c24xx.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> The change looks fine otherwise.
+> 
+> I note though that many of the current drivers won't return TOICM_LOOP
+> from ->get_mctrl() but I don't think it's exactly wrong to return it
+> either. Perhaps lack of returning it is due to Documentation/driver-
+> api/serial/driver.rst not including TOICM_LOOP in get_mctrl's list of
+> information but only in set_mctrl's one.
 
+According to the description, TIOCM_LOOP bit might be used only for setting.
+I'll drop the bit manipulation from get_mctrl callback.
+Thanks for the heads up.
+
+Best Regards,
+Chanho Park
 
