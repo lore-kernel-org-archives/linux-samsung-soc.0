@@ -2,93 +2,206 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65663C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F86CCA47C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 10:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233195AbiF2J7q (ORCPT
+        id S233238AbiF2KEN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 05:59:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45464 "EHLO
+        Wed, 29 Jun 2022 06:04:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233173AbiF2J7p (ORCPT
+        with ESMTP id S233102AbiF2KEM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 05:59:45 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 570EE3D1F5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 02:59:44 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id c13so21412998eds.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 02:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=wHx0xHehg63vfEGKTlzZUfteHn01fhYVqm+Y98MQ7+U=;
-        b=cq3NqapgxQIZNLj/B4EpJSN83FT6u7scmebwaohN243g5lWrwO8nYBNIAUn1qhvgUb
-         7jmmYqH4sKXTgPqROvurvn1vcXpXmylTudSKxbz3wfUavJZu/drqoz5sEa+W5iQTRblF
-         5XSJkq1wtz/vUkhZOETe59hjQCYJ80VPeHXi2+7FT76LK3iGsf9cOxGtJxUm6fVg4+tX
-         gHvUST/E4kcHFVBni8Uo5KdGCn6dbo2m2ucg+YQITuLGMf03hSWn6qRpS2d5prRfI4YM
-         nOlY0VqzuovmFZbZyEnVCPfbor3VtedyU1MSOkm8RT7eAzy78HLxQXHEw1K4eepqjNJl
-         5dZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=wHx0xHehg63vfEGKTlzZUfteHn01fhYVqm+Y98MQ7+U=;
-        b=As1BzNcNLHhaVeebvayfJJv9Er5RP7qlqymU17bpZ9Iz/w6hitTUFbYVBVxkoxYcG5
-         7yFYSdzRuTgZo3qqTu6Es61xF7pxUvrXUxjWLxpkXpsC591UFWCFB7so9KRk4IuzcyjA
-         ADowQQQPQ9Ddxnuy5pYTs8+Oas1j808e2c65ARpqeE8w6VxM5UiqX4BLwQeHjRgRRC1m
-         DjC/0CtbiGIK3kJWsp/xfbsT1ynrSzJVTjCXWY0CknbNOMpZRui8TEkwN74CJ6POCpin
-         WarZ7H8YPfzO33aZ0akt4VkkvxZ36YzPygJeB5F1D9XW3LwflPV49VirbJpFROFA84vO
-         hlxA==
-X-Gm-Message-State: AJIora/w909SE4fdHYdbdEhRakYPNs0/i/rPYCqpfOVqwD5s/mF0254u
-        dVmCkn0q5c9/2XhZUBm+P6080A==
-X-Google-Smtp-Source: AGRyM1uKH7BIvUrbVdQs4hTQzzjvedfKmrpPqHS5rBnnbwQUfXiaigl6zGQSbVqTeAGptfLzPSzvTA==
-X-Received: by 2002:a05:6402:430e:b0:435:9e41:6858 with SMTP id m14-20020a056402430e00b004359e416858mr3130822edc.69.1656496782905;
-        Wed, 29 Jun 2022 02:59:42 -0700 (PDT)
-Received: from [192.168.0.183] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id bo5-20020a170906d04500b006ff0fe78cb7sm7516695ejb.133.2022.06.29.02.59.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 02:59:42 -0700 (PDT)
-Message-ID: <db26821d-9780-5829-5078-d8f8fe6e5875@linaro.org>
-Date:   Wed, 29 Jun 2022 11:59:41 +0200
+        Wed, 29 Jun 2022 06:04:12 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E8003D4AD
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 03:04:10 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220629100408epoutp039f93ce6622b32d8d3fa7ae9ab1fa6870~9D0n-uHbI0983109831epoutp035
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 10:04:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220629100408epoutp039f93ce6622b32d8d3fa7ae9ab1fa6870~9D0n-uHbI0983109831epoutp035
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1656497048;
+        bh=mfXEZIav+lKQ3SITbiYkNMcxmeLkUSvRgV44KIZ63jk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=XPLiNjTyO4Phxi6rozCqvwgUVNjH0oDMro2OC+dy5l7iwfY0m2FU2oigIwVEvqaMS
+         hIb/B9h9008wBYllY3ruN8Dwp7/K8DQyzWhC+cqq5upK7fR4n+S3b+Q2dsvocJjAqX
+         rHgHQlXygfe+x8uFyBAT0bxSZZUE78i1jBfTkfHs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20220629100408epcas2p24a1e56738e4247bbe8576ff8a4e2a36b~9D0nniifj0830208302epcas2p2g;
+        Wed, 29 Jun 2022 10:04:08 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4LXxrR58xRz4x9Q7; Wed, 29 Jun
+        2022 10:04:07 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E4.17.09666.7932CB26; Wed, 29 Jun 2022 19:04:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220629100407epcas2p3bb2c41e89024cafceff5a3d9b646d3a0~9D0m_Vfsw1681316813epcas2p3d;
+        Wed, 29 Jun 2022 10:04:07 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220629100407epsmtrp2ba2e88fa8f9d295274010eacc1d528ac~9D0m9gowy2437224372epsmtrp2F;
+        Wed, 29 Jun 2022 10:04:07 +0000 (GMT)
+X-AuditID: b6c32a45-471ff700000025c2-f8-62bc23970e14
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        26.A5.08905.7932CB26; Wed, 29 Jun 2022 19:04:07 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220629100407epsmtip12886762af6bfe594a56d4457d31b8593~9D0mwmmJB1085110851epsmtip1F;
+        Wed, 29 Jun 2022 10:04:07 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Andi Shyti'" <andi@etezian.org>
+Cc:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Mark Brown'" <broonie@kernel.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <YrweoNCL3BjqUNWV@jack.zhora.eu>
+Subject: RE: [PATCH v2 2/4] spi: s3c64xx: support custom value of internal
+ clock divider
+Date:   Wed, 29 Jun 2022 19:04:07 +0900
+Message-ID: <026801d88b9f$91f01180$b5d03480$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 2/3] clk: samsung: exynosautov9: add missing gate clks
- for peric0/c1
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220628104138.152118-1-chanho61.park@samsung.com>
- <CGME20220628104347epcas2p4502a4524de0c98ababe8cab4b7b73c3f@epcas2p4.samsung.com>
- <20220628104138.152118-3-chanho61.park@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220628104138.152118-3-chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQHQezgfaORozkaflreY0gl9GrbVUwIO7M/nAkDRpz4Cfbaemq0/2M+g
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmue505T1JBp8a1C0ezNvGZrH4x3Mm
+        i6kPn7BZzD9yjtWi78VDZou9r7eyW2x6fI3VYsb5fUwWjR9vslu07j3C7sDlcX3JJ2aPTas6
+        2TzuXNvD5rF5Sb1H35ZVjB6fN8kFsEVl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpa
+        WpgrKeQl5qbaKrn4BOi6ZeYAXaakUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAv
+        0CtOzC0uzUvXy0stsTI0MDAyBSpMyM64/1au4KFoxbKvK5gbGK8KdjFyckgImEjs2f6XvYuR
+        i0NIYAejxOp9TWwQzidGiT1relkhnG+MEl82vWfuYuQAa5n/SwsivpdRomNfI1THC0aJZ2d3
+        soDMZRPQl3jZsY0VxBYRUJVY+ngmWBGzQCOzxJa9O5lBEpwCuhJ7Ti9mBLGFBaIkdj98zwRi
+        swA1dK5bDmbzClhKnDizgBHCFpQ4OfMJ2AJmAXmJ7W/nMEM8oSDx8+kyVoi4iMTszjZmiMVu
+        En/bnoM9JyGwlkNi0YPfbBANLhJbbn2FsoUlXh3fwg5hS0l8frcXKl4ssXTWJyaI5gZGicvb
+        fkEljCVmPWtnBIUFs4CmxPpd+pBgUZY4cgvqNj6JjsOgQAUJ80p0tAlBNKpLHNg+nQXClpXo
+        nvOZdQKj0iwkn81C8tksJN/MQti1gJFlFaNYakFxbnpqsVGBITyyk/NzNzGCE62W6w7GyW8/
+        6B1iZOJgPMQowcGsJMK78MzOJCHelMTKqtSi/Pii0pzU4kOMpsCwnsgsJZqcD0z1eSXxhiaW
+        BiZmZobmRqYG5krivF4pGxKFBNITS1KzU1MLUotg+pg4OKUamBhDmBtTfDZbRC/56Lczvfd5
+        zf/umd/u9bw/HxutsNHyzNEbk09uk/g864OpwGL9o1Y2R1rL53x70DWPsb3jaE6M+81dN5Je
+        5N4z2Gr9aLJLZEM1+8zt5yo7Sy61VX0q60lc2/zI8ouCwDM572cve8zDHnLVVS7ikfzPeLZw
+        /4/ACcqf86dZPCjKD7QVfhMXrqfn4r9XWf5t5N4t4qYSfZ/2a7b7GM7Y2/DK+WrFN12lvTs2
+        LOtc+HEtW7N71d24i+KPPFRjLqt8X6OsPPVfTe6HDxa8odNOG85kcvFhjJ6wk2kRR7Tza3M9
+        pfca83cX8Z6+/y3ZUk9a9cVimyuN/+4likvYxJw9VOE+xdnbUomlOCPRUIu5qDgRALtarTY9
+        BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSnO505T1JBhfm8Fk8mLeNzWLxj+dM
+        FlMfPmGzmH/kHKtF34uHzBZ7X29lt9j0+BqrxYzz+5gsGj/eZLdo3XuE3YHL4/qST8wem1Z1
+        snncubaHzWPzknqPvi2rGD0+b5ILYIvisklJzcksSy3St0vgyrj/Vq7goWjFsq8rmBsYrwp2
+        MXJwSAiYSMz/pdXFyMUhJLCbUWJh6zbmLkZOoLisxLN3O9ghbGGJ+y1HWCGKnjFKzH7azQaS
+        YBPQl3jZsY0VxBYRUJVY+ngmG0gRs0A7s8StS+fAEmAds1bWgticAroSe04vZgSxhQUiJCb/
+        vQdmswA1d65bzgRi8wpYSpw4s4ARwhaUODnzCQuIzSygJ7F+/RxGCFteYvvbOVCXKkj8fLqM
+        FSIuIjG7s40Z4iA3ib9tz9knMArPQjJqFpJRs5CMmoWkfQEjyypGydSC4tz03GLDAsO81HK9
+        4sTc4tK8dL3k/NxNjOCY09Lcwbh91Qe9Q4xMHIyHGCU4mJVEeBee2ZkkxJuSWFmVWpQfX1Sa
+        k1p8iFGag0VJnPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA5OLgr22IcsEMY3bB9vtcrZcVNKI
+        T1ML9Nsc+FW4iDWzQLUy/07EqoUylt+XaF8xPp94WuLTIWXfx5f+v7+dySvQ9W3KRvULW2WD
+        a3Ln91XpL7xqeoSr8yHXxDv7+b5788wMLd17IGXphSWf1f3f+T+M3/7v/6I8p+NWx9ik3Te+
+        sjzvmOzaEWLM5PxKS+zrDPubl5M2lUdvsZtcILeG069jkrHu3atRj5q/xhe+k79ZzG3bdEmh
+        0urG/gdb7vbJ21oY2Zc9VQjeJNCQO1F0Zm/xtqDboibrV2/ITci8sYlrvhjjCctLVzmyPx17
+        GLzCVs4vgLcupLJ61lHbOXFTXz9Vzq85IDZ3bWjVgkn/LZVYijMSDbWYi4oTAbr550IoAwAA
+X-CMS-MailID: 20220629100407epcas2p3bb2c41e89024cafceff5a3d9b646d3a0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220628044432epcas2p11e6f927321c30cf5557dbd41d749ef28
+References: <20220628044222.152794-1-chanho61.park@samsung.com>
+        <CGME20220628044432epcas2p11e6f927321c30cf5557dbd41d749ef28@epcas2p1.samsung.com>
+        <20220628044222.152794-3-chanho61.park@samsung.com>
+        <YrweoNCL3BjqUNWV@jack.zhora.eu>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 28/06/2022 12:41, Chanho Park wrote:
-> "gout_peric0_pclk_1" and "gout_peric1_pclk_1" should be added to peric0
-> and peric1 respectively.
+Hi Andy,
+Thanks for your reviews :)
+
+> -----Original Message-----
+> From: Andi Shyti <andi@etezian.org>
+> Sent: Wednesday, June 29, 2022 6:43 PM
+> To: Chanho Park <chanho61.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Andi Shyti
+> <andi@etezian.org>; Mark Brown <broonie@kernel.org>; Rob Herring
+> <robh+dt@kernel.org>; Krzysztof Kozlowski
+> <krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar
+<alim.akhtar@samsung.com>;
+> devicetree@vger.kernel.org; linux-spi@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH v2 2/4] spi: s3c64xx: support custom value of internal
+> clock divider
 > 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Hi Chanho,
+> 
+> On Tue, Jun 28, 2022 at 01:42:20PM +0900, Chanho Park wrote:
+> > Modern exynos SoCs such as Exynos Auto v9 has different internal clock
+> 
+> /has/have/
 
+I'll correct it.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> > divider, for example "4". To support this internal value, this adds
+> > clk_div of the s3c64xx_spi_port_config and assign "2" as the default
+> > value to existing s3c64xx_spi_port_config.
+> >
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > ---
+> >  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++++--------
+> >  1 file changed, 20 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> > index b3c50c7665fc..51a0e830441b 100644
+> > --- a/drivers/spi/spi-s3c64xx.c
+> > +++ b/drivers/spi/spi-s3c64xx.c
+> > @@ -131,6 +131,7 @@ struct s3c64xx_spi_dma_data {
+> >   * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS
+> register.
+> >   * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS
+regiter.
+> >   * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
+> > + * @clk_div: Internal clock divider, if not specified, use 2 as the
+> default.
+> 
+> is it default? Is it not specified anywhere? I think you are assigning '2'
+> to everyone. I would just leave it "Internal clock divider."
 
+It has not been removed since v1.
 
-Best regards,
-Krzysztof
+> 
+> [...]
+> 
+> > @@ -871,6 +873,7 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+> >  	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+> >  	struct s3c64xx_spi_driver_data *sdd;
+> >  	int err;
+> > +	u32 div = 2;
+> 
+> As per Krzystof review.
+> 
+> >  	sdd = spi_master_get_devdata(spi->master);
+> >  	if (spi->dev.of_node) {
+> > @@ -889,22 +892,24 @@ static int s3c64xx_spi_setup(struct spi_device
+> > *spi)
+> >
+> >  	pm_runtime_get_sync(&sdd->pdev->dev);
+> >
+> > +	div = sdd->port_conf->clk_div;
+> 
+> Can you please be consistent with the data type? div is u32, but clk_div
+> is int.
+
+It should be int to be matched with any other types of
+s3c64xx_spi_port_config.
+
+Best Regards,
+Chanho Park
+
