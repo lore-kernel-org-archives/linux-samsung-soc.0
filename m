@@ -2,197 +2,262 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC43BC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA311C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 09:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232735AbiF2J1F (ORCPT
+        id S232884AbiF2Jrf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 05:27:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39856 "EHLO
+        Wed, 29 Jun 2022 05:47:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232549AbiF2J1E (ORCPT
+        with ESMTP id S233170AbiF2JrR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 05:27:04 -0400
+        Wed, 29 Jun 2022 05:47:17 -0400
 Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02D038D88
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 02:27:00 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220629092655epoutp03de4a911532743a2b28721867de82aa3d~9DUIWM3U70800808008epoutp03N
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 09:26:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220629092655epoutp03de4a911532743a2b28721867de82aa3d~9DUIWM3U70800808008epoutp03N
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B13C3DA60
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 02:47:13 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220629094711epoutp03257077443ee51994d3f6828d6128ec66~9Dl1M-HcI2558125581epoutp03Q
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 09:47:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220629094711epoutp03257077443ee51994d3f6828d6128ec66~9Dl1M-HcI2558125581epoutp03Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1656494815;
-        bh=eFoynbtp5zQ4RqUvE/6e2kJcFhCAJ3vcUwMB/64AeFU=;
+        s=mail20170921; t=1656496031;
+        bh=iqF2apEkCvZdAPYu4EcErqLDGzRBguavBQSGJXfAqQ4=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Ap5mOIrm9Qi/aUj5F8cIDW6wKaJkw0EV4hPpmv5S3cu07xa2w8Qy458jM0HXMJ/gJ
-         RmqCzHDw1pvixPzFHmGRhhVcKOGFhowCimnFl8uySGSgRznNV7F44gBLe3ReElhmAp
-         4zoUEXnRfsnaMIW8etQCFgoVylg8ToJPUJ3FCPOQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20220629092654epcas2p1b485607b70aff328da403406da53ff8c~9DUHrY7Wi0873208732epcas2p18;
-        Wed, 29 Jun 2022 09:26:54 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.99]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4LXx1V2pD0z4x9Pq; Wed, 29 Jun
-        2022 09:26:54 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FF.38.09666.EDA1CB26; Wed, 29 Jun 2022 18:26:54 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        b=KWS9zucVoVlicr6i1IxKt2DLwn39zJr3TfCR+OFLb3XnDWI85HVm2+bm/CpyOJj+L
+         +g8sLHnZaN4V696gJ0tcKHn91WrbiMfi2P7GznYCf3sBliXVBlOSIw3F6al4RbY+Lg
+         mQYvkG25bwbZ8lIud1h7MkljGN5ppSdAcBRUBoGo=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20220629094710epcas2p2e28379ee46c79a1221395566f1f46619~9Dlz75XYc0427704277epcas2p2q;
+        Wed, 29 Jun 2022 09:47:10 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.99]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4LXxSs6PCjz4x9Q9; Wed, 29 Jun
+        2022 09:47:09 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        66.1F.09650.D9F1CB26; Wed, 29 Jun 2022 18:47:09 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220629092653epcas2p3d8090c552998591944ad9a215f0936c2~9DUGs5P-o1907319073epcas2p3o;
-        Wed, 29 Jun 2022 09:26:53 +0000 (GMT)
+        20220629094709epcas2p34992641ea8cb55a8fff679471b9869aa~9Dly10Wcf0170901709epcas2p3H;
+        Wed, 29 Jun 2022 09:47:09 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220629092653epsmtrp1a9cec49bce3ca0fb5cb4a63805dd3a37~9DUGr-zy20156801568epsmtrp1e;
-        Wed, 29 Jun 2022 09:26:53 +0000 (GMT)
-X-AuditID: b6c32a45-45bff700000025c2-f4-62bc1adeba22
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220629094709epsmtrp27277ed7790302eb6412a8caa49d00c56~9Dly0es3f1409214092epsmtrp2j;
+        Wed, 29 Jun 2022 09:47:09 +0000 (GMT)
+X-AuditID: b6c32a46-0a3ff700000025b2-d6-62bc1f9d0645
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        05.42.08905.DDA1CB26; Wed, 29 Jun 2022 18:26:53 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
+        D3.54.08905.D9F1CB26; Wed, 29 Jun 2022 18:47:09 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220629092653epsmtip16d06c48d4a473488e40e0c294ce393fb~9DUGgVcvm2512325123epsmtip1L;
-        Wed, 29 Jun 2022 09:26:53 +0000 (GMT)
+        20220629094709epsmtip28d8e3b665565c8f4573ea25f9ee99a6b~9DlynwsV02096820968epsmtip2A;
+        Wed, 29 Jun 2022 09:47:09 +0000 (GMT)
 From:   "Chanho Park" <chanho61.park@samsung.com>
 To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Andi Shyti'" <andi@etezian.org>,
-        "'Mark Brown'" <broonie@kernel.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>
 Cc:     "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
+        "'Sam Protsenko'" <semen.protsenko@linaro.org>,
+        "'Jaewon Kim'" <jaewon02.kim@samsung.com>,
+        <devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <da86b25a-097d-63fe-083a-5600b72b0bdb@linaro.org>
-Subject: RE: [PATCH v2 2/4] spi: s3c64xx: support custom value of internal
- clock divider
-Date:   Wed, 29 Jun 2022 18:26:53 +0900
-Message-ID: <025401d88b9a$5e94bca0$1bbe35e0$@samsung.com>
+In-Reply-To: <acf6fb6d-46da-48f6-f064-1a08d323b0f1@linaro.org>
+Subject: RE: [PATCH 2/3] arm64: dts: exynosautov9: add exynosautov9-usi.dtsi
+Date:   Wed, 29 Jun 2022 18:47:09 +0900
+Message-ID: <025601d88b9d$332049b0$9960dd10$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
 Content-Language: ko
-Thread-Index: AQHQezgfaORozkaflreY0gl9GrbVUwIO7M/nAkDRpz4CZcCB8a1Akd7g
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmue49qT1JBh+mCFs8mLeNzWLxj+dM
-        FlMfPmGzmH/kHKtF34uHzBZ7X29lt9j0+BqrxYzz+5gsGj/eZLdo3XuE3YHL4/qST8wem1Z1
-        snncubaHzWPzknqPvi2rGD0+b5ILYIvKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0
-        tDBXUshLzE21VXLxCdB1y8wBukxJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2Be
-        oFecmFtcmpeul5daYmVoYGBkClSYkJ3Rcfssa8EZ8YpZ/VsZGxivCXUxcnJICJhInF94m6mL
-        kYtDSGAHo8TTD9PZIJxPjBJHNrxkgXC+MUos+HSSHablwpJrUIm9jBL/XlyF6n/BKNF8ch4b
-        SBWbgL7Ey45trCAJEYG3jBJndp8Aa2cW2Mko0TAvBsTmFLCT+PD5JROILSwQJbH74Xswm0VA
-        VWLivO8sIDavgKVE+7ZlzBC2oMTJmU9YIObIS2x/O4cZ4iQFiZ9Pl7FCxEUkZne2gcVFBNwk
-        GpvPs0DU7OCQ+LDetouRA8h2kTh6zBQiLCzx6vgWqM+kJF72t0HZxRJLZ30Ce0xCoIFR4vK2
-        X2wQCWOJWc/aGUHmMAtoSqzfpQ8xUlniyC2oy/gkOg7/ZYcI80p0tEGDWl3iwPbpUMfISnTP
-        +cw6gVFpFpK/ZiH5axaSX2Yh7FrAyLKKUSy1oDg3PbXYqMAQHtnJ+bmbGMGJVst1B+Pktx/0
-        DjEycTAeYpTgYFYS4V14ZmeSEG9KYmVValF+fFFpTmrxIUZTYEhPZJYSTc4Hpvq8knhDE0sD
-        EzMzQ3MjUwNzJXFer5QNiUIC6YklqdmpqQWpRTB9TBycUg1Mcd4+6yuKr7158pxbIrGpQ9Ko
-        z8qWeZsC+779JYu3B1758ej8e2dpKx9vKVOXBpHp5QnTFdqVV57tclPjEbNm27P7A69548fO
-        D6ydkSWTMxjfeE2L61/2aJuOR8YXR3FpTp7Swy/6trf2GnayituXcdY02f6a+uR6SMlM7Vnh
-        /g9r7VmOrN31OOZr0tZNj5xXtzbv/nFQVeHzfNH/aRpn0qbIy8kpX1LzvBYRd8hwc6l7d5F1
-        x1fHv1uOblR42Nq2VMjtdP6NU9Isv61DT6xeUWdw548x+/kqba2Nbq37XK0qTx1uv3ap6qEu
-        f+adOS55bZMMuML6TFVvK/8IlLskJG2SLs7o9G1F5AvfBCWW4oxEQy3mouJEAD2tQIw9BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSnO5dqT1JBj0/lSwezNvGZrH4x3Mm
-        i6kPn7BZzD9yjtWi78VDZou9r7eyW2x6fI3VYsb5fUwWjR9vslu07j3C7sDlcX3JJ2aPTas6
-        2TzuXNvD5rF5Sb1H35ZVjB6fN8kFsEVx2aSk5mSWpRbp2yVwZXTcPstacEa8Ylb/VsYGxmtC
-        XYycHBICJhIXllxj6WLk4hAS2M0osf1iKzNEQlbi2bsd7BC2sMT9liOsEEXPGCXWr7oNlmAT
-        0Jd42bENLCEi8J5R4uGCS4wgDrPAXkaJ2ydvskG0fGeUOPliFQtIC6eAncSHzy+ZQGxhgQiJ
-        yX/vMYLYLAKqEhPnfQer4RWwlGjftowZwhaUODnzCVicWUBb4unNp1C2vMT2t3OgblWQ+Pl0
-        GStEXERidmcbWFxEwE2isfk8ywRG4VlIRs1CMmoWklGzkLQvYGRZxSiZWlCcm55bbFhgmJda
-        rlecmFtcmpeul5yfu4kRHHtamjsYt6/6oHeIkYmD8RCjBAezkgjvwjM7k4R4UxIrq1KL8uOL
-        SnNSiw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLglGpgquO4LfqE9e3ag8Vnpt6asF/g
-        9QZDza9HLBO2yM22sFNoO3tjO6/m5L8f7mz8Y2Uz+dvOhu236oxfK19Y473364Una36cvu8x
-        pbWw8ljm1XcsT9b85rO6lHTk+NTbryb2feN3bbmk+VnDs3rTosItekfUjsuwnPh7ca+i1J6a
-        04evCc/lCjY4oWMfIduqMPmgX/v3C9EnEng/uwoLXWTTa/1s+/yKcGlVq/Dy3/N35PyS+mn6
-        9bHjNCPNoph9FevVIw1LE+7dOciav0de7Dv/7flcv+/MSBfZba8f3OPcK/p+jfGabKdH+z++
-        OMf3oZl1Q/C7Tccun/AqUn+9cN18lQ8/DzxYZb3UUdhvW6/YpU5WJZbijERDLeai4kQAmFR6
-        dywDAAA=
-X-CMS-MailID: 20220629092653epcas2p3d8090c552998591944ad9a215f0936c2
+Thread-Index: AQEp4vOGDSKs9voJE7nXsru3sJlKUQHq1LSjAWulMQACV0OHza6WBHZA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmqe5c+T1JBo3njS0ezNvGZjH/yDlW
+        ix0NR1gt+l48ZLbY+3oru8Wmx9dYLWac38dk0br3CLvF8759TA6cHptWdbJ53Lm2h81j85J6
+        j74tqxg9Pm+SC2CNyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
+        8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeX
+        WmJlaGBgZApUmJCd0XBgOlvBBo2KRXtXsTQw9ip0MXJySAiYSBz4+Im5i5GLQ0hgB6PE4+Zu
+        FgjnE6NE75ODUJlvjBJLZ6xhhmlZtnc7E0RiL6NEY/caNgjnBaPExFffWUGq2AT0JV52bGMF
+        SYgILGaU6Lv8EayKWeAno8SJ1sdgszgF7CRerfjPAmILC/hILNsPEWcRUJU4130CKM7BwStg
+        KfFpgQhImFdAUOLkzCdg5cwC2hLLFr6GOklB4ufTZawQcRGJ2Z1tzCCtIgJuErcfSoKslRBY
+        yiFxbPVxRoh6F4llr96zQNjCEq+Ob2GHsKUkPr/bywZhF0ssnfWJCaK5gVHi8rZfUAljiVnP
+        2hlBFjALaEqs36UPYkoIKEscuQV1Gp9Ex+G/7BBhXomONiGIRnWJA9unQ22Vleie85l1AqPS
+        LCSPzULy2Cwkz8xC2LWAkWUVo1hqQXFuemqxUYERPLaT83M3MYLTqpbbDsYpbz/oHWJk4mA8
+        xCjBwawkwrvwzM4kId6UxMqq1KL8+KLSnNTiQ4ymwJCeyCwlmpwPTOx5JfGGJpYGJmZmhuZG
+        pgbmSuK8XikbEoUE0hNLUrNTUwtSi2D6mDg4pRqYNIrP7n6wkL3qp/2CQ8Gz2j2cd+cVHXp0
+        JohL/IzGD8ETtrvOJC8KbCmqzLnFLanyuUr8f/DOwqzLrxdUzLwkX10ZV3X4fPXE109m3jQw
+        V78Z8Wn6O8df3ZuPb+cWWzP3+LZL6RqVt34tntkgXtxv7LBd2qZ14UFxy1n792gwa6+cJGen
+        2tMXaM++dKbKGuey85cndeaGe+/4Gfn0muQ9zd9LzuipPOI/4HykIKuU2VFlm7Nv/qzUjjmH
+        y6MUbHPyY1Xcy9e+XrR0qewDli1ap/n8NzxcMy1D7P7ls1zZPFvC7hz5XHXR5CJLqWd4R8bK
+        Jr35Te+2R/ccSPKf/WKzQrvCyud/b1ZI71Or6jBUUWIpzkg01GIuKk4EAH6WRtE0BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42LZdlhJXneu/J4kg5+zuSwezNvGZjH/yDlW
+        ix0NR1gt+l48ZLbY+3oru8Wmx9dYLWac38dk0br3CLvF8759TA6cHptWdbJ53Lm2h81j85J6
+        j74tqxg9Pm+SC2CN4rJJSc3JLEst0rdL4MqYefYSe8EJ9Yq2pidMDYxz5bsYOTkkBEwklu3d
+        zgRiCwnsZpTo/xcBEZeVePZuBzuELSxxv+UIaxcjF1DNM0aJk6v+MoIk2AT0JV52bANLiAgs
+        ZpQ4uH0eE4jDLPCXUeLBnzY2iLHfGSXuLwkCsTkF7CRerfjPAmILC/hILNv/mBnEZhFQlTjX
+        fQIozsHBK2Ap8WmBCEiYV0BQ4uTMJ2DlzALaEk9vPoWzly18zQxxnYLEz6fLWCHiIhKzO9uY
+        QcaICLhJ3H4oOYFReBaSSbOQTJqFZNIsJN0LGFlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXr
+        JefnbmIEx5eW5g7G7as+6B1iZOJgPMQowcGsJMK78MzOJCHelMTKqtSi/Pii0pzU4kOM0hws
+        SuK8F7pOxgsJpCeWpGanphakFsFkmTg4pRqYpLLtWW4dWVWu9oF9VuwV+5fdFx0ZY/MkZv1d
+        dOLi3Bs3r76053hcWfCgUq3zxyZ1owkuHnvXpHy9Ks+on/VoZ0BYCecBSVk5X97n/Spc21x1
+        bZXdG1s40y+IOc/tniv8QOnKu0PqLznO2cb8rX6m5X14hdoujlnbzs9oPbtl3imDd8b7v8Qs
+        W2mV1mvm2WC9WkzTZLPZBE9Tt1qjC98+dL7YbONqvsvZ6kfHfnfts/9Sq1L0Di7+J91hZSoY
+        s3QXj/19vkme+1Z6pj83TLzOuPHiyYak/UGnHmf+U+vezCfjrn9zxhpvWabmpy6RJWlTN2/Y
+        O+2InK9mu/eaiZv9Pf+s+mwuuCc+ull5ssNvJZbijERDLeai4kQAsuEHbx4DAAA=
+X-CMS-MailID: 20220629094709epcas2p34992641ea8cb55a8fff679471b9869aa
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220628044432epcas2p11e6f927321c30cf5557dbd41d749ef28
-References: <20220628044222.152794-1-chanho61.park@samsung.com>
-        <CGME20220628044432epcas2p11e6f927321c30cf5557dbd41d749ef28@epcas2p1.samsung.com>
-        <20220628044222.152794-3-chanho61.park@samsung.com>
-        <da86b25a-097d-63fe-083a-5600b72b0bdb@linaro.org>
+X-CMS-RootMailID: 20220629015913epcas2p1dcfcc81c026aa524a1f35c8e393be4f0
+References: <20220629015650.138527-1-chanho61.park@samsung.com>
+        <CGME20220629015913epcas2p1dcfcc81c026aa524a1f35c8e393be4f0@epcas2p1.samsung.com>
+        <20220629015650.138527-3-chanho61.park@samsung.com>
+        <acf6fb6d-46da-48f6-f064-1a08d323b0f1@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> > Modern exynos SoCs such as Exynos Auto v9 has different internal clock
-> > divider, for example "4". To support this internal value, this adds
-> > clk_div of the s3c64xx_spi_port_config and assign "2" as the default
-> > value to existing s3c64xx_spi_port_config.
+> On 29/06/2022 03:56, Chanho Park wrote:
+> > Universal Serial Interface (USI) supports three types of serial
+> > interface such as Universal Asynchronous Receiver and Transmitter
+> > (UART), Serial Peripheral Interface (SPI), and Inter-Integrated Circuit
+> (I2C).
+> > Each protocols can be working independently and configured as one of
+> > those using external configuration inputs.
+> > Exynos Auto v9 SoC support 12 USIs. When a USI uses two pins such as
+> > i2c and 3 wire uarts(RX/TX only), we can use remain two pins as i2c mod=
+e.
+> > So, we can define one USI node that includes serial/spi and hsi2c.
+> > usi_i2c nodes can be used only for i2c mode.
 > >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > We can have below combinations for one USI.
+> > 1) The usi node is used either 4 pin uart or 4 pin spi  -> No usi_i2c
+> > can be used
+> > 2) The usi node is used 2 pin uart(RX/TX) and i2c(SDA/SCL)  -> usi_i2c
+> > should be enabled to use the latter i2c
+> > 3) The usi node is used i2c(SDA/SCL) and i2c(SDA/SCL)  -> usi_i2c
+> > should be enabled to use the latter i2c
+> >
+> > By default, all USIs are initially set to uart mode by below setting.
+> > samsung,mode =3D <USI_V2_UART>;
+> > You can change it either USI_V2_SPI or USI_V2_I2C.
+> >
+> > Signed-off-by: Chanho Park <chanho61.park=40samsung.com>
 > > ---
-> >  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++++--------
-> >  1 file changed, 20 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> > index b3c50c7665fc..51a0e830441b 100644
-> > --- a/drivers/spi/spi-s3c64xx.c
-> > +++ b/drivers/spi/spi-s3c64xx.c
-> > @@ -131,6 +131,7 @@ struct s3c64xx_spi_dma_data {
-> >   * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS
-> register.
-> >   * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
-> >   * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
-> > + * @clk_div: Internal clock divider, if not specified, use 2 as the
-> default.
-> >   * @quirks: Bitmask of known quirks
-> >   * @high_speed: True, if the controller supports HIGH_SPEED_EN bit.
-> >   * @clk_from_cmu: True, if the controller does not include a clock
-> > mux and @@ -148,6 +149,7 @@ struct s3c64xx_spi_port_config {
-> >  	int	rx_lvl_offset;
-> >  	int	tx_st_done;
-> >  	int	quirks;
-> > +	int	clk_div;
-> >  	bool	high_speed;
-> >  	bool	clk_from_cmu;
-> >  	bool	clk_ioclk;
-> > @@ -620,6 +622,7 @@ static int s3c64xx_spi_config(struct
-> s3c64xx_spi_driver_data *sdd)
-> >  	void __iomem *regs = sdd->regs;
-> >  	int ret;
-> >  	u32 val;
-> > +	u32 div = sdd->port_conf->clk_div;
-> >
-> >  	/* Disable Clock */
-> >  	if (!sdd->port_conf->clk_from_cmu) { @@ -668,16 +671,15 @@ static
-> > int s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
-> >  	writel(val, regs + S3C64XX_SPI_MODE_CFG);
-> >
-> >  	if (sdd->port_conf->clk_from_cmu) {
-> > -		/* The src_clk clock is divided internally by 2 */
-> > -		ret = clk_set_rate(sdd->src_clk, sdd->cur_speed * 2);
-> > +		ret = clk_set_rate(sdd->src_clk, sdd->cur_speed * div);
-> >  		if (ret)
-> >  			return ret;
-> > -		sdd->cur_speed = clk_get_rate(sdd->src_clk) / 2;
-> > +		sdd->cur_speed = clk_get_rate(sdd->src_clk) / div;
-> >  	} else {
-> >  		/* Configure Clock */
-> >  		val = readl(regs + S3C64XX_SPI_CLK_CFG);
-> >  		val &= ~S3C64XX_SPI_PSR_MASK;
-> > -		val |= ((clk_get_rate(sdd->src_clk) / sdd->cur_speed / 2 - 1)
-> > +		val |= ((clk_get_rate(sdd->src_clk) / sdd->cur_speed / div -
-> 1)
-> >  				& S3C64XX_SPI_PSR_MASK);
-> >  		writel(val, regs + S3C64XX_SPI_CLK_CFG);
-> >
-> > @@ -871,6 +873,7 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
-> >  	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
-> >  	struct s3c64xx_spi_driver_data *sdd;
-> >  	int err;
-> > +	u32 div = 2;
-> 
-> This assignment is not effective - shortly later is being overwritten.
+> >  .../boot/dts/exynos/exynosautov9-usi.dtsi     =7C 1127 +++++++++++++++=
+++
+> >  1 file changed, 1127 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+>=20
+> Put all this directly in exynosautov9.dtsi, because this is not a re-
+> usable piece among different DTSI.
 
-I forgot to remove this. I'll drop the assignment.
+Okay. I'll move them in the exynosautov9.dtsi. I thought they're too long t=
+o put in the exynosautov9.dtsi and I also found a similar case such as exyn=
+os5433-bus.dtsi and exynos5433-tmu.dtsi.
+
+>=20
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+> > b/arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+> > new file mode 100644
+> > index 000000000000..0e4c6332770b
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+> > =40=40 -0,0 +1,1127 =40=40
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Samsung's ExynosAutov9 SoC USI device tree source
+> > + *
+> > + * Copyright (c) 2022 Samsung Electronics Co., Ltd.
+> > + *
+> > + * Samsung's ExynosAutov9 SoC USI(Universal Serial Interface,
+> > +uart/spi/i2c)
+> > + * are listed as device tree nodes in this file.
+> > + */
+> > +
+> > +/* PERIC0 USIs */
+> > +&soc =7B
+> > +	syscon_peric0: syscon=4010220000 =7B
+> > +		compatible =3D =22samsung,exynosautov9-sysreg=22, =22syscon=22;
+> > +		reg =3D <0x10220000 0x2000>;
+> > +	=7D;
+> > +
+> > +	usi_0: usi=40103000c0 =7B
+> > +		compatible =3D =22samsung,exynos850-usi=22;
+>=20
+> We should start adding dedicated compatible, so:
+> =22samsung,exynosautov9-usi=22, =22samsung,exynos850-usi=22
+
+So, I need to add the compatible to the Documentation/devicetree/bindings/s=
+oc/samsung/exynos-usi.yaml, right?
+
+- samsung,exynos850-usi   =23 for USIv2 (Exynos850, ExynosAutoV9)
+
+To be>
+- samsung,exynos850-usi
+- samsung,exynosautov9-usi
+
+>=20
+> > +		reg =3D <0x103000c0 0x20>;
+> > +		samsung,sysreg =3D <&syscon_peric0 0x1000>;
+> > +		samsung,mode =3D <USI_V2_UART>;
+> > +		=23address-cells =3D <1>;
+> > +		=23size-cells =3D <1>;
+> > +		ranges;
+> > +		clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_0>,
+> > +			 <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_0>;
+> > +		clock-names =3D =22pclk=22, =22ipclk=22;
+> > +		status =3D =22disabled=22;
+> > +
+> > +		/* USI: UART */
+>=20
+> Skip the comments, they are obvious from device node name. Long time ago =
+I
+> was not advocating this, but I see it's benefits - much easier to
+> introduce changes to DTS or binding in case of some differences.
+
+I'll drop them.
+
+>=20
+> > +		serial_0: serial=4010300000 =7B
+> > +			compatible =3D =22samsung,exynos850-uart=22;
+>=20
+> Here as well.
+
+I'll add =22samsung,exynosautov9-uart=22 to the yaml file.
+
+>=20
+> > +			reg =3D <0x10300000 0xc0>;
+> > +			interrupts =3D <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
+> > +			pinctrl-names =3D =22default=22;
+> > +			pinctrl-0 =3D <&uart0_bus>;
+> > +			clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_0>,
+> > +				 <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_0>;
+> > +			clock-names =3D =22uart=22, =22clk_uart_baud0=22;
+> > +			samsung,uart-fifosize =3D <256>;
+> > +			status =3D =22disabled=22;
+> > +		=7D;
+> > +
+> > +		/* USI: SPI */
+> > +		spi_0: spi=4010300000 =7B
+> > +			compatible =3D =22samsung,exynosautov9-spi=22;
+> > +			reg =3D <0x10300000 0x30>;
+> > +			interrupts =3D <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
+> > +			pinctrl-names =3D =22default=22;
+> > +			pinctrl-0 =3D <&spi0_bus &spi0_cs_func>;
+> > +			clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_0>,
+> > +				 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>,
+> > +				 <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_0>;
+> > +			clock-names =3D =22spi=22, =22spi_busclk0=22, =22spi_ioclk=22;
+> > +			samsung,spi-src-clk =3D <0>;
+> > +			dmas =3D <&pdma0 1 &pdma0 0>;
+>=20
+> These are two separate phandles <>, not one.
+
+I'll separate it.
 
 Best Regards,
 Chanho Park
