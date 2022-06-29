@@ -2,111 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6B9C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 07:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 085A3C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 07:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbiF2HXM (ORCPT
+        id S231135AbiF2Ha2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38368 "EHLO
+        Wed, 29 Jun 2022 03:30:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230516AbiF2HXG (ORCPT
+        with ESMTP id S231217AbiF2Ha1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 03:23:06 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5C0222;
-        Wed, 29 Jun 2022 00:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=udw9lHGmzoAvFePyLCTqIKD8e/mAeVeJzVZcMu5/Lq4=; b=j+WgdvbgwVAiXYEKAtG4WPjD0X
-        46phVxCdZseTfn5Sqq8rzFUj9MHWNX27GVEfZiR0NHLIGG84wfxUcMdEybxgfTXszXBobgLYgcyNU
-        TK+U5pj9jP0tFtlxOEx/8NavELJT8zKDhgCEVxFpIERWhb+Oq7yvGRDDwejQbKGTS8Pc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1o6S23-008gOb-QH; Wed, 29 Jun 2022 09:22:39 +0200
-Date:   Wed, 29 Jun 2022 09:22:39 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Thomas Gleixner <tglx@linutronix.de>, netdev@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Ferry Toth <fntoth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH net v4] net: phy: Don't trigger state machine while in
- suspend
-Message-ID: <Yrv9v/uiZ/uMvtR3@lunn.ch>
-References: <b7f386d04e9b5b0e2738f0125743e30676f309ef.1656410895.git.lukas@wunner.de>
+        Wed, 29 Jun 2022 03:30:27 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27C71E3C0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:30:26 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id q6so30657478eji.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=8f9f/DdxcxCzzZ6MEC/yMm66gVi082k8/rCqNHVJetw=;
+        b=ZFc70PtUa5ydr2IDLP8qWrRARDxIZ0xHbWPrHDXA1A78Sv6PcZQkFq1Pl5ksYGhQpA
+         H0HS/TBnWToTgqJqBMrW3fCS3/OTkQxgjAxjYmGcwvm9GAd0ef5cYra07oBBsNi/GELG
+         FN5Kybp4/WNKH0RDImP2VFGhSGdKkysI0Jsu+w1TKjNaKZ1l/GP+KknlLiws/b8KmDfX
+         ZQ4YbUuoyLZZRgWXE+UCHPvFreFYjUJVP76+BG0XFSWunsQHbN5vWJ6+pZwRc0Dmyuz/
+         cD5BaSv1KEmrF2geHwDf7en8qHnpcrvBRwU3Lh7yVNMb5dla3vr2f/GkuLudd0TZK5F0
+         RDdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=8f9f/DdxcxCzzZ6MEC/yMm66gVi082k8/rCqNHVJetw=;
+        b=j7W9t+kojEtJQB7lN7jvV6kI2K1m/PzaQtGvYWYXuwTa+Hxcvclc9tf5Itw4aq8XR7
+         G9F82T55elZjLc2zelfqPaA2QTzCC9Kp6kBIaeGDmYtb+cXUx8wTo/51RC/u23zKev87
+         8ogPpXhMMaHIBDFIgNh1blssgiNQoHb8VAeXU+Hk6xd9A4shmq3Ybh7C+YGB+V3aVjUg
+         Ne5FDonZo9O6S3VpOkMCGQwt2NRdB4tYYxzlboisEH80OcjFSRXUC0S0o293X/iCYUWc
+         Oei0BMO+ZVfc7CfheLEUIwibAd3bs5w4SxhonLlVUsJDBbpXEPgWv9ORZ984V/G3ZdSc
+         hlqg==
+X-Gm-Message-State: AJIora/1FAClHRQ9kYx0iPSspiP5LsApYG0fnXxlxT629XlfgvVTw1VS
+        HUc1aS7uzs1n2s+VQwTIdBzE5TBqdsV05Q==
+X-Google-Smtp-Source: AGRyM1tYJfy35uELg9evZ2s21gatUi2PnZHF3AxAijFvL1oP2JbDyBofB1Va552x9uvLRUgMeJvcSQ==
+X-Received: by 2002:a17:907:3f28:b0:726:3149:8a99 with SMTP id hq40-20020a1709073f2800b0072631498a99mr1932872ejc.277.1656487825516;
+        Wed, 29 Jun 2022 00:30:25 -0700 (PDT)
+Received: from [192.168.0.182] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id p17-20020a056402501100b0043787ad7cfasm6169340eda.22.2022.06.29.00.30.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jun 2022 00:30:25 -0700 (PDT)
+Message-ID: <f8186d95-a49c-d211-d0a6-bed9975b03b0@linaro.org>
+Date:   Wed, 29 Jun 2022 09:30:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7f386d04e9b5b0e2738f0125743e30676f309ef.1656410895.git.lukas@wunner.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2] tty: serial: samsung_tty: support more than 4 uart
+ ports
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jirislaby@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Hector Martin <marcan@marcan.st>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <CGME20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17@epcas2p4.samsung.com>
+ <20220629005538.60132-1-chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220629005538.60132-1-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 12:15:08PM +0200, Lukas Wunner wrote:
-> Upon system sleep, mdio_bus_phy_suspend() stops the phy_state_machine(),
-> but subsequent interrupts may retrigger it:
+On 29/06/2022 02:55, Chanho Park wrote:
+> Regarding Exynos Auto v9 SoC, it supports uarts up to 12. However, the
+> maximum number of the ports has been derived from
+> CONFIG_SERIAL_SAMSUNG_UARTS and tightly coupled with the config for
+> previous Samsung SoCs such as s3c24xx and s3c64xx. To overcome this
+> limitation, this changes the usage of the definition to UART_NR which is
+> widely used from other serial drivers. This also defines the value to 12
+> only for ARM64 SoCs to not affect the change to previous arm32 SoCs.
 > 
-> They may have been left enabled to facilitate wakeup and are not
-> quiesced until the ->suspend_noirq() phase.  Unwanted interrupts may
-> hence occur between mdio_bus_phy_suspend() and dpm_suspend_noirq(),
-> as well as between dpm_resume_noirq() and mdio_bus_phy_resume().
+> Instead of enumerating all the ports as predefined arrays, this
+> introduces s3c24xx_serial_init_port_default that is initializing the
+> structure as the default value.
 > 
-> Retriggering the phy_state_machine() through an interrupt is not only
-> undesirable for the reason given in mdio_bus_phy_suspend() (freezing it
-> midway with phydev->lock held), but also because the PHY may be
-> inaccessible after it's suspended:  Accesses to USB-attached PHYs are
-> blocked once usb_suspend_both() clears the can_submit flag and PHYs on
-> PCI network cards may become inaccessible upon suspend as well.
-> 
-> Amend phy_interrupt() to avoid triggering the state machine if the PHY
-> is suspended.  Signal wakeup instead if the attached net_device or its
-> parent has been configured as a wakeup source.  (Those conditions are
-> identical to mdio_bus_phy_may_suspend().)  Postpone handling of the
-> interrupt until the PHY has resumed.
-> 
-> Before stopping the phy_state_machine() in mdio_bus_phy_suspend(),
-> wait for a concurrent phy_interrupt() to run to completion.  That is
-> necessary because phy_interrupt() may have checked the PHY's suspend
-> status before the system sleep transition commenced and it may thus
-> retrigger the state machine after it was stopped.
-> 
-> Likewise, after re-enabling interrupt handling in mdio_bus_phy_resume(),
-> wait for a concurrent phy_interrupt() to complete to ensure that
-> interrupts which it postponed are properly rerun.
-> 
-> The issue was exposed by commit 1ce8b37241ed ("usbnet: smsc95xx: Forward
-> PHY interrupts to PHY driver to avoid polling"), but has existed since
-> forever.
-> 
-> Fixes: 541cd3ee00a4 ("phylib: Fix deadlock on resume")
-> Link: https://lore.kernel.org/netdev/a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com/
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: stable@vger.kernel.org # v2.6.33+
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-    Andrew
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
