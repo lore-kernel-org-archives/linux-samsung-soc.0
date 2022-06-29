@@ -2,114 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163A0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 12:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B5EC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 14:44:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232925AbiF2Mft (ORCPT
+        id S233541AbiF2OoS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 08:35:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37508 "EHLO
+        Wed, 29 Jun 2022 10:44:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231713AbiF2Mfs (ORCPT
+        with ESMTP id S233552AbiF2OoP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 08:35:48 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB1828E3D
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 05:35:47 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id g26so32289330ejb.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 05:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Q8pCybxjWozGkg4XkxF8hCsdW8FgZKjWDEioFfT4qAc=;
-        b=lci++Zen0Iac6DnB8ntK2Y4eGEo+IF3ekd+ab/O8WDauLz4PrhJTqEv6Vk9qLMFruS
-         crrxNjPD8t08uTn8wxxzlgVw2wJlYtgPQBnFmdJ7LC0mC706lmEwpasVczB4BTfc71EQ
-         rYe6CoWvhSanvSRdOSNLRSqr8RcdyM+jGT1oX68C9qkezsFz80L8MQ8xK/EMtN7vmxUd
-         AOWY8Ly/n/gMxgTekdcxrErLkE/4l6mKITxr8zx45+iUA/3knVFG1xRzXKc4UA3Jj0Kq
-         fSB7/p5pcwWyfmcecNBa9Ujkf3Zr43209mEshZwTyYmHHtVMlGanVEPF7BLxd9hO7/4q
-         m7pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Q8pCybxjWozGkg4XkxF8hCsdW8FgZKjWDEioFfT4qAc=;
-        b=tGztjkdrkxjp3WwRPoaeP4APpeUgnL70OUNoHvFo5KHPyVVJ4bQsom6z+Q0noHqTX9
-         y92fpW3QXbID5U4taGsXc6kClIHPVRqC8sGLsG3eapqZ7kiNTZDZU9TFJ4zfcJvws6OH
-         ROGBivQA3J7GUFji8pODFSfV+OjGt+esVNOZhmjUKGjAl1RLSpXdJdA7U4yJykN+44z3
-         1puulLxAMlKMIcJfYHNO/eEwEt4Bn4LXhxBbi4KfzdKqTl1qvaeN7OmGnsZYofhVQqcY
-         0jRSJbPvCC0qCUXRihPX4ZR5hxTd4tnZk5n5yuJRY1X1+drrsH8ImoABvmx8BqTLamM0
-         JY4A==
-X-Gm-Message-State: AJIora/zmTICplSR4fnLyZlDPQs7pRyb553fXdgAbhSsJVChQ/ulUS6G
-        tfczye0EDysPHrdqBCPOpFfIsQ==
-X-Google-Smtp-Source: AGRyM1u943KaJE2gtYoBez8mvmZ6nHvpsrQFytNjdq485fL9iLkWdn0J4ZOz5mVQgQLA3S/z6G6xqw==
-X-Received: by 2002:a17:906:b782:b0:726:f979:7adb with SMTP id dt2-20020a170906b78200b00726f9797adbmr3014643ejb.498.1656506146499;
-        Wed, 29 Jun 2022 05:35:46 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id s2-20020a1709062ec200b006f4cb79d9a8sm7769345eji.75.2022.06.29.05.35.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jun 2022 05:35:45 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: soc: samsung: s5pv210-chipid: add S5PV210 ChipID
-Date:   Wed, 29 Jun 2022 14:35:43 +0200
-Message-Id: <20220629123543.94515-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 29 Jun 2022 10:44:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDBC624BCA;
+        Wed, 29 Jun 2022 07:44:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 65A3561F5F;
+        Wed, 29 Jun 2022 14:44:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDCBEC341C8;
+        Wed, 29 Jun 2022 14:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656513853;
+        bh=VKmQkXSSr0fp8xEEhrHuI4jJj9kI+Q29PnoOBCQnruI=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=vA081Ef0eFD0cI0hgJ6BpR90sEWAJutJfPskioZSCiyzd77Bif/1jnqHnZNZIgg9m
+         VAobGxTWWQMyurZW7mLUkZpRd5ZpE9IwDUevCR00zm4nb6uPGZoMCR3pLU+fTxtLpk
+         JgPSisiqIEqY8UfN9l8gNsSu0/uBXmuDKxN5ZV40ebwUKkPLauOuIAvwiar9/Y9WeG
+         A8or0hfYud6Y6TkS5TrM2GQwpSvX1n5SAe/vph/Q5FiETupIEDlyhSrCXQzPgLkCet
+         idpVeTgzkKWL7NNRr1i0pIO4smmMHuG8ETZVc3pG/Riyx5bo9s62nf4b2XeFA0rXO8
+         7Vj+Pe+dXD3rg==
+From:   Mark Brown <broonie@kernel.org>
+To:     krzysztof.kozlowski@linaro.org, andi@etezian.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        chanho61.park@samsung.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        alim.akhtar@samsung.com
+In-Reply-To: <20220629102304.65712-1-chanho61.park@samsung.com>
+References: <CGME20220629102527epcas2p4ab04f91877e5f744c4a4e37827d19ce8@epcas2p4.samsung.com> <20220629102304.65712-1-chanho61.park@samsung.com>
+Subject: Re: [PATCH v3 0/4] spi support for Exynos Auto v9 SoC
+Message-Id: <165651385163.1635474.11164615734135811182.b4-ty@kernel.org>
+Date:   Wed, 29 Jun 2022 15:44:11 +0100
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add bindings for the S5PV210 ChipID block.
+On Wed, 29 Jun 2022 19:23:00 +0900, Chanho Park wrote:
+> Add to support Exynos Auto v9 SoC's spi. By supporting USI(Universal
+> Serial Interface) mode, the SoC can support up to 12 spi ports. Thus, we
+> need to increase MAX_SPI_PORTS from 6 to 12. The spi of the SoC can
+> support loopback mode unlike previous exynos SoCs. To separate the
+> feature, we need to add .has_loopback to the s3c64xx_spi_port_config.
+> Furthermore, it uses 4 as the default internal clock divider. We also
+> need to clk_div field of the structure and assign "2" as the default
+> value to the existing SoC's port config.
+> Device tree definitions of exynosautov9-spi will be added in separated
+> patchset to include usi(i2c/uart/spi) nodes all together.
+> 
+> [...]
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/soc/samsung/s5pv210-chipid.yaml  | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml
+Applied to
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml b/Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml
-new file mode 100644
-index 000000000000..7c3f4ec47f7e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml
-@@ -0,0 +1,30 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/samsung/s5pv210-chipid.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S5PV210 SoC series Chipid driver
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+properties:
-+  compatible:
-+    const: samsung,s5pv210-chipid
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    chipid@e0000000 {
-+        compatible = "samsung,s5pv210-chipid";
-+        reg = <0xe0000000 0x1000>;
-+    };
--- 
-2.34.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
+
+[1/4] spi: s3c64xx: support loopback mode
+      commit: ffb7bcd3b27e86fa7bdbabf4488060064ec9d00d
+[2/4] spi: s3c64xx: support custom value of internal clock divider
+      commit: bfcd27dcb7b93bd1f3b89d03d8b90207876d635f
+[3/4] dt-bindings: samsung,spi: define exynosautov9 compatible
+      commit: 9dbeef8ad5f8e7d2cab7b888853b4abe9db87ffd
+[4/4] spi: s3c64xx: add spi port configuration for Exynos Auto v9 SoC
+      commit: 11d50d853dceb2df8d28bf772d3e928c1c5b137a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
