@@ -2,97 +2,90 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085A3C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 07:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FECEC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 07:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbiF2Ha2 (ORCPT
+        id S231735AbiF2Hg2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:30:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45360 "EHLO
+        Wed, 29 Jun 2022 03:36:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231217AbiF2Ha1 (ORCPT
+        with ESMTP id S231959AbiF2Hg1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 03:30:27 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E27C71E3C0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:30:26 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id q6so30657478eji.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:30:26 -0700 (PDT)
+        Wed, 29 Jun 2022 03:36:27 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D459E35DFA
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:36:26 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id ej4so20960219edb.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=8f9f/DdxcxCzzZ6MEC/yMm66gVi082k8/rCqNHVJetw=;
-        b=ZFc70PtUa5ydr2IDLP8qWrRARDxIZ0xHbWPrHDXA1A78Sv6PcZQkFq1Pl5ksYGhQpA
-         H0HS/TBnWToTgqJqBMrW3fCS3/OTkQxgjAxjYmGcwvm9GAd0ef5cYra07oBBsNi/GELG
-         FN5Kybp4/WNKH0RDImP2VFGhSGdKkysI0Jsu+w1TKjNaKZ1l/GP+KknlLiws/b8KmDfX
-         ZQ4YbUuoyLZZRgWXE+UCHPvFreFYjUJVP76+BG0XFSWunsQHbN5vWJ6+pZwRc0Dmyuz/
-         cD5BaSv1KEmrF2geHwDf7en8qHnpcrvBRwU3Lh7yVNMb5dla3vr2f/GkuLudd0TZK5F0
-         RDdA==
+        bh=bPXiVn6Pb7F2l4c7bgqIfqtL2gpKtRVep1Vk1dOzNLs=;
+        b=YRIAwZtnksko0gShIVaLFi1lVENHUCkhB42FPcIPtwStjQsfP6CeB+v0fWeZOUdmhc
+         teecEw6g3oHTuLKa02sAl0gVjuvFOvSxRZXqbKBdKsGRdrYXdYGODVNSLkETedcCusM3
+         OVvtcRnZ4HpLBe7v8oH7S9n/Fp5P0a9HNNTXrS2sxGQf1mqkW/2zwYeRGYi6tLi7bVer
+         sXlmD/4/XgEpa13fPTBB6Y/87lqBMg1NXLZut3TGZ97S8ALTyalurRMZl5i2y89smqdF
+         MWTXEq2U5vyJXxusOhR7p72c71jRSxee2lhI5yUxzx7RjXSpXw40DtHTS0AEclLStudZ
+         Hv3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=8f9f/DdxcxCzzZ6MEC/yMm66gVi082k8/rCqNHVJetw=;
-        b=j7W9t+kojEtJQB7lN7jvV6kI2K1m/PzaQtGvYWYXuwTa+Hxcvclc9tf5Itw4aq8XR7
-         G9F82T55elZjLc2zelfqPaA2QTzCC9Kp6kBIaeGDmYtb+cXUx8wTo/51RC/u23zKev87
-         8ogPpXhMMaHIBDFIgNh1blssgiNQoHb8VAeXU+Hk6xd9A4shmq3Ybh7C+YGB+V3aVjUg
-         Ne5FDonZo9O6S3VpOkMCGQwt2NRdB4tYYxzlboisEH80OcjFSRXUC0S0o293X/iCYUWc
-         Oei0BMO+ZVfc7CfheLEUIwibAd3bs5w4SxhonLlVUsJDBbpXEPgWv9ORZ984V/G3ZdSc
-         hlqg==
-X-Gm-Message-State: AJIora/1FAClHRQ9kYx0iPSspiP5LsApYG0fnXxlxT629XlfgvVTw1VS
-        HUc1aS7uzs1n2s+VQwTIdBzE5TBqdsV05Q==
-X-Google-Smtp-Source: AGRyM1tYJfy35uELg9evZ2s21gatUi2PnZHF3AxAijFvL1oP2JbDyBofB1Va552x9uvLRUgMeJvcSQ==
-X-Received: by 2002:a17:907:3f28:b0:726:3149:8a99 with SMTP id hq40-20020a1709073f2800b0072631498a99mr1932872ejc.277.1656487825516;
-        Wed, 29 Jun 2022 00:30:25 -0700 (PDT)
+        bh=bPXiVn6Pb7F2l4c7bgqIfqtL2gpKtRVep1Vk1dOzNLs=;
+        b=wPb/D5Ul0rJDYakAdCnCV0ooCjyjXcGgIUoO4BfgvxvO29wmKPHJtuUFJdEJ0snf63
+         HP3+PcBdXg5j2h8opcpH4uP3mIMpSDQ1tN3IbfCjEhm/FsGnEvS15cEQFst6xvBncjBe
+         sr5c9ZYSJgV/seiAzXjCY6iY4lBFD82tlnWlri0b1IRWWgE/wiY9x5y2JqO9gZGJ7H63
+         LQgBOMvYJNueO+ej28aFqGUMmdWR6thFsCdRZiXybIQl59b+OqQ+rtoOgXicMtZok+0m
+         2JTPFWp2oXKN5/YTBVYfAWCEt6fDuBEP26JN4UuK7SqUg/NnKCESg/yn5DUm2FkjOGrQ
+         Nm9g==
+X-Gm-Message-State: AJIora/Ko5+B0o1TmNBA6YsnLqotfhd9sM9WleX9KTos3TY9wCxhQ6y8
+        Bebml1dThCjBgfF0mfeJ2+rj1A==
+X-Google-Smtp-Source: AGRyM1vyeNBDBCLxl77d0cqo0XxUzuKi0mn8I9fSWYSyOYZDqlIxnY91+SWQ3NHzLnxUw1aVK0m9Dw==
+X-Received: by 2002:a05:6402:94e:b0:437:8d58:4ece with SMTP id h14-20020a056402094e00b004378d584ecemr2361899edz.396.1656488185428;
+        Wed, 29 Jun 2022 00:36:25 -0700 (PDT)
 Received: from [192.168.0.182] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id p17-20020a056402501100b0043787ad7cfasm6169340eda.22.2022.06.29.00.30.24
+        by smtp.gmail.com with ESMTPSA id n18-20020a05640204d200b00435a08a3557sm10950502edw.27.2022.06.29.00.36.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 00:30:25 -0700 (PDT)
-Message-ID: <f8186d95-a49c-d211-d0a6-bed9975b03b0@linaro.org>
-Date:   Wed, 29 Jun 2022 09:30:23 +0200
+        Wed, 29 Jun 2022 00:36:24 -0700 (PDT)
+Message-ID: <b98cd4e9-28d8-53b8-2514-d6c63bacc12c@linaro.org>
+Date:   Wed, 29 Jun 2022 09:36:23 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v2] tty: serial: samsung_tty: support more than 4 uart
- ports
+Subject: Re: [PATCH 4/8] watchdog: s3c2410_wdt: Remove #ifdef guards for PM
+ related functions
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Hector Martin <marcan@marcan.st>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <CGME20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17@epcas2p4.samsung.com>
- <20220629005538.60132-1-chanho61.park@samsung.com>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220628193449.160585-1-paul@crapouillou.net>
+ <20220628193449.160585-5-paul@crapouillou.net>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220629005538.60132-1-chanho61.park@samsung.com>
+In-Reply-To: <20220628193449.160585-5-paul@crapouillou.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/06/2022 02:55, Chanho Park wrote:
-> Regarding Exynos Auto v9 SoC, it supports uarts up to 12. However, the
-> maximum number of the ports has been derived from
-> CONFIG_SERIAL_SAMSUNG_UARTS and tightly coupled with the config for
-> previous Samsung SoCs such as s3c24xx and s3c64xx. To overcome this
-> limitation, this changes the usage of the definition to UART_NR which is
-> widely used from other serial drivers. This also defines the value to 12
-> only for ARM64 SoCs to not affect the change to previous arm32 SoCs.
+On 28/06/2022 21:34, Paul Cercueil wrote:
+> Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros to
+> handle the .suspend/.resume callbacks.
 > 
-> Instead of enumerating all the ports as predefined arrays, this
-> introduces s3c24xx_serial_init_port_default that is initializing the
-> structure as the default value.
+> These macros allow the suspend and resume functions to be automatically
+> dropped by the compiler when CONFIG_SUSPEND is disabled, without having
+> to use #ifdef guards. Not using #ifdef guards means that the code is
+> always compiled independently of any Kconfig option, and thanks to that
+> bugs and regressions are easier to catch.
 > 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
-
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
