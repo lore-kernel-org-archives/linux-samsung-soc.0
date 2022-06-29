@@ -2,98 +2,111 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6B5C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 06:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6B9C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 07:23:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231649AbiF2GFV (ORCPT
+        id S231512AbiF2HXM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 02:05:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44452 "EHLO
+        Wed, 29 Jun 2022 03:23:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231609AbiF2GFN (ORCPT
+        with ESMTP id S230516AbiF2HXG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 02:05:13 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DFDA167D5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 23:05:10 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id lw20so30413290ejb.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 23:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uGY+jOQ2fDtGwhpBG0jOGtMDvHqQPy+lwiNiTo9tAGI=;
-        b=cU3RsXB7qJInbLOuBSrC30bSU4N38bE5ivi1ybaT3QdSZsHMZLnZNKMw7An9Y7Ktp6
-         eH5OBkK9gJImXGJQnY2TyQVYghECaPvsH/5L0Dbxa4wVov00ETIjspX7mAWpHmsxjUwQ
-         n3XBJCU1ON3a15RksIfFywIpTyvbzMbhnlDEXv6CJqhjQPKM+H0NFwcQrPDLHZEuSXfK
-         A982nTDFM7gIQkwCfJP77i+Wkob9qnnRZYnAd9y+mpieiV5mOx0Z9DR9qR5x0hTkIcJT
-         Q/79G3udrYYLwtK/zFvMKjaf6MjDzNY2AwN0g4arX9HEOTK7xHfIl1SkrB0q8VkiI/vd
-         Gxag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=uGY+jOQ2fDtGwhpBG0jOGtMDvHqQPy+lwiNiTo9tAGI=;
-        b=xTG8zEYheNnUKJLwgA+ystOdekiaUdhnwey7aZVq/t3SAp/4XFww9ijKUuctkGXX0W
-         +Y2qvyXcjvJroPaKAFFQCoF9SDhi1nsdiRQMBu6eEukD00QnmeWy+VCZEDkaRzbVSKvG
-         QA7/RiMOhywtzbKznWsdNcU7wMFyXlIZXB4Vd07lz3qKh0QsoPdysIp6T9xU2RYrlaYh
-         UIV/YJjwoHrP32/cbuV5g2r9zkOMy99njYAnpsULs6+xQnMmRwVXj1HZV8d11r0Q1ex0
-         I3k0c+9gPQWsA7V/Mt0lAKvrp+4E0B6ck9C9pVUjsmLvkf764wGUUCulj27i6+xixdzt
-         4Z9Q==
-X-Gm-Message-State: AJIora/vWwZEmFXCzeu6ggTkl7Y8xY1IGlITyIncqSVPXRhitxTRI7rn
-        yK2Q3LtUumZgQGwspCLZgWF8Rw==
-X-Google-Smtp-Source: AGRyM1vGU72GMkFkoo/ffWzfMP4gjWTNAd01+PTMiL3WQsSd9gW5N5OlaaRS+NAtsf/jdGEZlA0z/w==
-X-Received: by 2002:a17:907:2814:b0:72a:3758:e948 with SMTP id eb20-20020a170907281400b0072a3758e948mr658896ejc.8.1656482708846;
-        Tue, 28 Jun 2022 23:05:08 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id i23-20020aa7c9d7000000b0042de3d661d2sm10692507edt.1.2022.06.28.23.05.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 23:05:08 -0700 (PDT)
-Message-ID: <19b5c553-466a-14c6-bf29-577323d9ec29@linaro.org>
-Date:   Wed, 29 Jun 2022 08:05:07 +0200
+        Wed, 29 Jun 2022 03:23:06 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5C0222;
+        Wed, 29 Jun 2022 00:23:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=udw9lHGmzoAvFePyLCTqIKD8e/mAeVeJzVZcMu5/Lq4=; b=j+WgdvbgwVAiXYEKAtG4WPjD0X
+        46phVxCdZseTfn5Sqq8rzFUj9MHWNX27GVEfZiR0NHLIGG84wfxUcMdEybxgfTXszXBobgLYgcyNU
+        TK+U5pj9jP0tFtlxOEx/8NavELJT8zKDhgCEVxFpIERWhb+Oq7yvGRDDwejQbKGTS8Pc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1o6S23-008gOb-QH; Wed, 29 Jun 2022 09:22:39 +0200
+Date:   Wed, 29 Jun 2022 09:22:39 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thomas Gleixner <tglx@linutronix.de>, netdev@vger.kernel.org,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
+        Andre Edich <andre.edich@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Gabriel Hojda <ghojda@yo2urs.ro>,
+        Christoph Fritz <chf.fritz@googlemail.com>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
+        Philipp Rosenberger <p.rosenberger@kunbus.com>,
+        Ferry Toth <fntoth@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH net v4] net: phy: Don't trigger state machine while in
+ suspend
+Message-ID: <Yrv9v/uiZ/uMvtR3@lunn.ch>
+References: <b7f386d04e9b5b0e2738f0125743e30676f309ef.1656410895.git.lukas@wunner.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 2/2] PCI: dwc: exynos: Correct generic PHY usage
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-phy@lists.infradead.org
-Cc:     Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-References: <20220628220409.26545-1-m.szyprowski@samsung.com>
- <CGME20220628220441eucas1p2098d46abc47ec1888781fdc5319dec67@eucas1p2.samsung.com>
- <20220628220409.26545-2-m.szyprowski@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220628220409.26545-2-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7f386d04e9b5b0e2738f0125743e30676f309ef.1656410895.git.lukas@wunner.de>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/06/2022 00:04, Marek Szyprowski wrote:
-> The proper initialization for generic PHYs is to call first phy_init(),
-> then phy_power_on().
+On Tue, Jun 28, 2022 at 12:15:08PM +0200, Lukas Wunner wrote:
+> Upon system sleep, mdio_bus_phy_suspend() stops the phy_state_machine(),
+> but subsequent interrupts may retrigger it:
 > 
-> While touching this, lets remove the phy_reset() call. It is just a
-> left-over from the obsoleted Exynos5440 support and current exynos-pcie
-> PHY driver doesn't even support this function. It is also rarely used by
-> other drivers.
+> They may have been left enabled to facilitate wakeup and are not
+> quiesced until the ->suspend_noirq() phase.  Unwanted interrupts may
+> hence occur between mdio_bus_phy_suspend() and dpm_suspend_noirq(),
+> as well as between dpm_resume_noirq() and mdio_bus_phy_resume().
 > 
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Retriggering the phy_state_machine() through an interrupt is not only
+> undesirable for the reason given in mdio_bus_phy_suspend() (freezing it
+> midway with phydev->lock held), but also because the PHY may be
+> inaccessible after it's suspended:  Accesses to USB-attached PHYs are
+> blocked once usb_suspend_both() clears the can_submit flag and PHYs on
+> PCI network cards may become inaccessible upon suspend as well.
+> 
+> Amend phy_interrupt() to avoid triggering the state machine if the PHY
+> is suspended.  Signal wakeup instead if the attached net_device or its
+> parent has been configured as a wakeup source.  (Those conditions are
+> identical to mdio_bus_phy_may_suspend().)  Postpone handling of the
+> interrupt until the PHY has resumed.
+> 
+> Before stopping the phy_state_machine() in mdio_bus_phy_suspend(),
+> wait for a concurrent phy_interrupt() to run to completion.  That is
+> necessary because phy_interrupt() may have checked the PHY's suspend
+> status before the system sleep transition commenced and it may thus
+> retrigger the state machine after it was stopped.
+> 
+> Likewise, after re-enabling interrupt handling in mdio_bus_phy_resume(),
+> wait for a concurrent phy_interrupt() to complete to ensure that
+> interrupts which it postponed are properly rerun.
+> 
+> The issue was exposed by commit 1ce8b37241ed ("usbnet: smsc95xx: Forward
+> PHY interrupts to PHY driver to avoid polling"), but has existed since
+> forever.
+> 
+> Fixes: 541cd3ee00a4 ("phylib: Fix deadlock on resume")
+> Link: https://lore.kernel.org/netdev/a5315a8a-32c2-962f-f696-de9a26d30091@samsung.com/
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: stable@vger.kernel.org # v2.6.33+
 
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+    Andrew
