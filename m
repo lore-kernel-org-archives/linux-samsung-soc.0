@@ -2,80 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B31DC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 11:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB2DC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 11:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbiF2LN5 (ORCPT
+        id S229892AbiF2LhF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 07:13:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50568 "EHLO
+        Wed, 29 Jun 2022 07:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbiF2LN4 (ORCPT
+        with ESMTP id S232638AbiF2LhD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 07:13:56 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19BA3B56D;
-        Wed, 29 Jun 2022 04:13:52 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 29 Jun 2022 07:37:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 251E4FD34;
+        Wed, 29 Jun 2022 04:37:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 53DA54246A;
-        Wed, 29 Jun 2022 11:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
-        t=1656501228; bh=fywTBmp/Rx3yTXANfmyKbEQMsXV/OITc3j37KagJD9Q=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=dS/P6hfgXAo+nwkFg4H3b84PP8vJ03G017njpi4uktB7KVxf1eaa4kZOPapdpzs1e
-         hSCPJ/DuIxlUdJ8hVWKq/2onNujAZMpimc3NoYz91T1hY/eRxEYu2lo9Fga9mm1nmu
-         Qg1O2K7IMunhjbhlJzaXvCTeYpfJpc/m5WhuFbw68kxq4RXXRWUwkV8Y3EsNfsIXmH
-         t5Q96cEJ1XhfkAe9UyMxhL7KAkNv2bF7vaRxFcFGdvP2BNPITTiQ1WMzb2vjxXLJxH
-         cmh5wgc+ayBuiCt9WPqvFWaPQfUeJLmD/Vw8ItjO15uhSQRnl8aiDd1QuhWrh+GBNK
-         7JM/7n3YDtd2w==
-Message-ID: <eff27894-1fa9-6a23-235f-70bd4b29310c@marcan.st>
-Date:   Wed, 29 Jun 2022 20:13:42 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2] tty: serial: samsung_tty: support more than 4 uart
- ports
-Content-Language: es-ES
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A76A5619AF;
+        Wed, 29 Jun 2022 11:37:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE976C34114;
+        Wed, 29 Jun 2022 11:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656502622;
+        bh=dSIdq7JC6ZEBfIR3l2QmQJOHZZDgsMua0zlvIzt80VI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IV64jujEl1lfHCsDBW591Z3BuiCMrIU1O+WBuUGXrYJCNxyJjoJttqABwpFMZ3Y81
+         hFgcFrRiBEfZ79QE0+MzKYtiLyU0qTgQq5hm8iOxqNhI0IOxEnpjZV37yn/2P0qkME
+         uwtMyolDR98EaqjZsUdOPDFMuxIgi+yYB9RCZy6SJ69jtsyHqDoLzDkmcxfqyCkMod
+         ZonjXv/6q4AiNDqGREDG36d4clUnuH1uY0tbpFNnBJrFC66UeZVdoEj/X2L3fUVQvi
+         QKQx/AyuetBLk+hSJnkXVLgBvo3+6z370tYOGoY6Mdr/h5byfIStAK6WjrqdadfPlZ
+         4pl75ifwn9iwQ==
+Date:   Wed, 29 Jun 2022 12:36:56 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Chanho Park <chanho61.park@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-References: <CGME20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17@epcas2p4.samsung.com>
- <20220629005538.60132-1-chanho61.park@samsung.com>
-From:   Hector Martin <marcan@marcan.st>
-In-Reply-To: <20220629005538.60132-1-chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 2/4] spi: s3c64xx: support custom value of internal
+ clock divider
+Message-ID: <Yrw5WKWq6sMEKBmn@sirena.org.uk>
+References: <20220629102304.65712-1-chanho61.park@samsung.com>
+ <CGME20220629102527epcas2p42e99f44d529d215623bd0e12a082d1dd@epcas2p4.samsung.com>
+ <20220629102304.65712-3-chanho61.park@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HAtCNg6OqyvUsmZi"
+Content-Disposition: inline
+In-Reply-To: <20220629102304.65712-3-chanho61.park@samsung.com>
+X-Cookie: Booths for two or more.
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29/06/2022 09.55, Chanho Park wrote:
-> Regarding Exynos Auto v9 SoC, it supports uarts up to 12. However, the
-> maximum number of the ports has been derived from
-> CONFIG_SERIAL_SAMSUNG_UARTS and tightly coupled with the config for
-> previous Samsung SoCs such as s3c24xx and s3c64xx. To overcome this
-> limitation, this changes the usage of the definition to UART_NR which is
-> widely used from other serial drivers. This also defines the value to 12
-> only for ARM64 SoCs to not affect the change to previous arm32 SoCs.
-> 
-> Instead of enumerating all the ports as predefined arrays, this
-> introduces s3c24xx_serial_init_port_default that is initializing the
-> structure as the default value.
-> 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 
-Reviewed-by: Hector Martin <marcan@marcan.st>
+--HAtCNg6OqyvUsmZi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+On Wed, Jun 29, 2022 at 07:23:02PM +0900, Chanho Park wrote:
+> Modern exynos SoCs such as Exynos Auto v9 have different internal clock
+> divider, for example "4". To support this internal value, this adds
+> clk_div of the s3c64xx_spi_port_config and assign "2" as the default
+> value to existing s3c64xx_spi_port_config.
+
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
+
+--HAtCNg6OqyvUsmZi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmK8OVcACgkQJNaLcl1U
+h9AXKQgAg14h9aGv1DqGvTWdAbzqKiPCrC+YB/liN+o0njPpCkRImRxdJePYOZMC
+rneJPQfxB4/o+cchNoMZ1c9j18GOeg2eunlGA2PZ8T8ZLq7j8b0F0b4smTquLJiY
+QmSR1kO/Ml+3dlG9Ct/iW2MMoWIEBVpl8jN/oHhr6PcHMAJ6xCTEIgap78HwV7XP
+0IL+i0NfvKI7KzB6aXgQj+06JPfdoo29e8sn+skc2M2lQGJcnCHnPSMUjZKkOkB2
+KNDO3Ur3bAh+CVdfpzgrcOaH5l7Y3tlGdfnrrlypYU5hcN4LGeich8y3m3ROYUfD
+hefzVZwI+AGqT5gaimihDj27rxsyqQ==
+=+CO7
+-----END PGP SIGNATURE-----
+
+--HAtCNg6OqyvUsmZi--
