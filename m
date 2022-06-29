@@ -2,68 +2,63 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06238C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 12:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163A0C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 12:35:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbiF2MIM (ORCPT
+        id S232925AbiF2Mft (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 08:08:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39006 "EHLO
+        Wed, 29 Jun 2022 08:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbiF2MIL (ORCPT
+        with ESMTP id S231713AbiF2Mfs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 08:08:11 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6589E0E
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 05:08:07 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id fi2so32102858ejb.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 05:08:07 -0700 (PDT)
+        Wed, 29 Jun 2022 08:35:48 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB1828E3D
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 05:35:47 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id g26so32289330ejb.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 05:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VQvrq36Ub//nJeMH+4IujCfCMUXPGt0nmKpTahRoY0Y=;
-        b=R3rXrWGRkIFrpTNQIko+IMi3mb57TfabMBpZ3vfI0KcKtdCIaAP/zkFKBJO3O4SFJ5
-         CjsFghNlc7mUxsI9Z5kmL5awoJ8aACxIVgtvQAby5YMqlFl1hOKpzaDFW1YLNsG3fqVR
-         h/PVY/yrS7/pcJbVa5nF+k7uGEAWSEwP3uV9QHUF8KaY7hLbvZIinC8xixeB6vwjJvFY
-         FISfCbbsgD0xTzAk3OIhi8VEl3PQZ05V/3e4tSWYEMrVoneC6RtctvSbKad645jUzDU8
-         SRxo0I+OREUDOEHU8iz/sStZ9tWYhC8aSQudQx6h1TtrOJuPmHrJxK+46KeMdAn2Cmgf
-         pCRA==
+        bh=Q8pCybxjWozGkg4XkxF8hCsdW8FgZKjWDEioFfT4qAc=;
+        b=lci++Zen0Iac6DnB8ntK2Y4eGEo+IF3ekd+ab/O8WDauLz4PrhJTqEv6Vk9qLMFruS
+         crrxNjPD8t08uTn8wxxzlgVw2wJlYtgPQBnFmdJ7LC0mC706lmEwpasVczB4BTfc71EQ
+         rYe6CoWvhSanvSRdOSNLRSqr8RcdyM+jGT1oX68C9qkezsFz80L8MQ8xK/EMtN7vmxUd
+         AOWY8Ly/n/gMxgTekdcxrErLkE/4l6mKITxr8zx45+iUA/3knVFG1xRzXKc4UA3Jj0Kq
+         fSB7/p5pcwWyfmcecNBa9Ujkf3Zr43209mEshZwTyYmHHtVMlGanVEPF7BLxd9hO7/4q
+         m7pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VQvrq36Ub//nJeMH+4IujCfCMUXPGt0nmKpTahRoY0Y=;
-        b=aVdlszizkHiAivIaRCsA2qxITwjLIKz5VVpnCBRrUudgDq5zEoMzlDeqEI069mcg3Z
-         o88gPk2oVMG23j78KHWkyczGkoxTyMiWldJE/JItZY61T1suraGqHQ4d9VVSRVbT8Mpd
-         xS+Vb+7CONk6TwDyLsLMDwH8sWn29Zg3HscqQ9kAIVGb+G0lH4UHXlhXLyop0l2OjgRb
-         Lvc5kbi+vAfHzFbKnKnkdHil88I4W1dw0bwzmN9rlG3nJQBydLDYbqKOvz5uEVB01rYe
-         1flPQurzIJ/adGD390mArkrJ/jkSileFgZrygBU6/SsyzO8ungOHMCm+ZOTkMgbvQGXS
-         +kXQ==
-X-Gm-Message-State: AJIora9SnZO4bT3zuioKabuWhLguUqwYI2O6GHro5LvGwI3UrE4dmvuN
-        qvhqZ1TQ2zFKaGqSuRSsUb5cdw==
-X-Google-Smtp-Source: AGRyM1u8EhSLSXoIchWFFE8Kf94rq07ZLyyCvbo6ssbRKd3BYrEFlqS2MOqasNkDpfSA2G5eHDgXAA==
-X-Received: by 2002:a17:907:1314:b0:722:fc80:3b34 with SMTP id vj20-20020a170907131400b00722fc803b34mr2949437ejb.583.1656504486124;
-        Wed, 29 Jun 2022 05:08:06 -0700 (PDT)
+        bh=Q8pCybxjWozGkg4XkxF8hCsdW8FgZKjWDEioFfT4qAc=;
+        b=tGztjkdrkxjp3WwRPoaeP4APpeUgnL70OUNoHvFo5KHPyVVJ4bQsom6z+Q0noHqTX9
+         y92fpW3QXbID5U4taGsXc6kClIHPVRqC8sGLsG3eapqZ7kiNTZDZU9TFJ4zfcJvws6OH
+         ROGBivQA3J7GUFji8pODFSfV+OjGt+esVNOZhmjUKGjAl1RLSpXdJdA7U4yJykN+44z3
+         1puulLxAMlKMIcJfYHNO/eEwEt4Bn4LXhxBbi4KfzdKqTl1qvaeN7OmGnsZYofhVQqcY
+         0jRSJbPvCC0qCUXRihPX4ZR5hxTd4tnZk5n5yuJRY1X1+drrsH8ImoABvmx8BqTLamM0
+         JY4A==
+X-Gm-Message-State: AJIora/zmTICplSR4fnLyZlDPQs7pRyb553fXdgAbhSsJVChQ/ulUS6G
+        tfczye0EDysPHrdqBCPOpFfIsQ==
+X-Google-Smtp-Source: AGRyM1u943KaJE2gtYoBez8mvmZ6nHvpsrQFytNjdq485fL9iLkWdn0J4ZOz5mVQgQLA3S/z6G6xqw==
+X-Received: by 2002:a17:906:b782:b0:726:f979:7adb with SMTP id dt2-20020a170906b78200b00726f9797adbmr3014643ejb.498.1656506146499;
+        Wed, 29 Jun 2022 05:35:46 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id b7-20020a1709064d4700b0070f6855b90bsm7692878ejv.170.2022.06.29.05.08.05
+        by smtp.gmail.com with ESMTPSA id s2-20020a1709062ec200b006f4cb79d9a8sm7769345eji.75.2022.06.29.05.35.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jun 2022 05:08:05 -0700 (PDT)
+        Wed, 29 Jun 2022 05:35:45 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: media: samsung,s5pv210-jpeg: convert to dtschema
-Date:   Wed, 29 Jun 2022 14:08:03 +0200
-Message-Id: <20220629120803.61965-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: soc: samsung: s5pv210-chipid: add S5PV210 ChipID
+Date:   Wed, 29 Jun 2022 14:35:43 +0200
+Message-Id: <20220629123543.94515-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,187 +66,50 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung SoC JPEG codec bindings to DT schema.
-
-The original bindings were quite old and incomplete, so change during
-conversion:
-1. Add typical (already used) properties like iommus and power domains.
-2. Document samsung,exynos4212-jpeg compatible (already used in DTS and
-   driver).
-3. List clocks per each variant.
+Add bindings for the S5PV210 ChipID block.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/media/exynos-jpeg-codec.txt      |  16 ---
- .../bindings/media/samsung,s5pv210-jpeg.yaml  | 123 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 3 files changed, 124 insertions(+), 16 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
- create mode 100644 Documentation/devicetree/bindings/media/samsung,s5pv210-jpeg.yaml
+ .../bindings/soc/samsung/s5pv210-chipid.yaml  | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml
 
-diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-deleted file mode 100644
-index ce9a22689e53..000000000000
---- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-+++ /dev/null
-@@ -1,16 +0,0 @@
--Samsung S5P/Exynos SoC series JPEG codec
--
--Required properties:
--
--- compatible	: should be one of:
--		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg",
--		  "samsung,exynos3250-jpeg", "samsung,exynos5420-jpeg",
--		  "samsung,exynos5433-jpeg";
--- reg		: address and length of the JPEG codec IP register set;
--- interrupts	: specifies the JPEG codec IP interrupt;
--- clock-names   : should contain:
--		   - "jpeg" for the core gate clock,
--		   - "sclk" for the special clock (optional).
--- clocks	: should contain the clock specifier and clock ID list
--		  matching entries in the clock-names property; from
--		  the common clock bindings.
-diff --git a/Documentation/devicetree/bindings/media/samsung,s5pv210-jpeg.yaml b/Documentation/devicetree/bindings/media/samsung,s5pv210-jpeg.yaml
+diff --git a/Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml b/Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml
 new file mode 100644
-index 000000000000..e28d6ec56c0b
+index 000000000000..7c3f4ec47f7e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung,s5pv210-jpeg.yaml
-@@ -0,0 +1,123 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++++ b/Documentation/devicetree/bindings/soc/samsung/s5pv210-chipid.yaml
+@@ -0,0 +1,30 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/media/samsung,s5pv210-jpeg.yaml#
++$id: http://devicetree.org/schemas/soc/samsung/s5pv210-chipid.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung S5PV210 and Exynos SoC JPEG codec
++title: Samsung S5PV210 SoC series Chipid driver
 +
 +maintainers:
-+  - Jacek Anaszewski <jacek.anaszewski@gmail.com>
 +  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-+  - Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
 +
 +properties:
 +  compatible:
-+    enum:
-+      - samsung,s5pv210-jpeg
-+      - samsung,exynos3250-jpeg
-+      - samsung,exynos4210-jpeg
-+      - samsung,exynos4212-jpeg
-+      - samsung,exynos5420-jpeg
-+      - samsung,exynos5433-jpeg
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 4
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 4
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  iommus:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
++    const: samsung,s5pv210-chipid
 +
 +  reg:
 +    maxItems: 1
 +
-+
 +required:
 +  - compatible
-+  - clocks
-+  - clock-names
-+  - interrupts
 +  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,s5pv210-jpeg
-+              - samsung,exynos4210-jpeg
-+              - samsung,exynos4212-jpeg
-+              - samsung,exynos5420-jpeg
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+        clock-names:
-+          items:
-+            - const: jpeg
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos3250-jpeg
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: jpeg
-+            - const: sclk
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos5433-jpeg
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+          maxItems: 4
-+        clock-names:
-+          items:
-+            - const: pclk
-+            - const: aclk
-+            - const: aclk_xiu
-+            - const: sclk
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/exynos5433.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    codec@15020000 {
-+        compatible = "samsung,exynos5433-jpeg";
-+        reg = <0x15020000 0x10000>;
-+        interrupts = <GIC_SPI 411 IRQ_TYPE_LEVEL_HIGH>;
-+        clock-names = "pclk", "aclk", "aclk_xiu", "sclk";
-+        clocks = <&cmu_mscl CLK_PCLK_JPEG>,
-+                 <&cmu_mscl CLK_ACLK_JPEG>,
-+                 <&cmu_mscl CLK_ACLK_XIU_MSCLX>,
-+                 <&cmu_mscl CLK_SCLK_JPEG>;
-+        iommus = <&sysmmu_jpeg>;
-+        power-domains = <&pd_mscl>;
++    chipid@e0000000 {
++        compatible = "samsung,s5pv210-chipid";
++        reg = <0xe0000000 0x1000>;
 +    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d208bf3b6f11..7669bb12deea 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2728,6 +2728,7 @@ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-media@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/media/samsung,s5pv210-jpeg.yaml
- F:	drivers/media/platform/samsung/s5p-jpeg/
- 
- ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
 -- 
 2.34.1
 
