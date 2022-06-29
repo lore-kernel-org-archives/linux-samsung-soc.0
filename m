@@ -2,268 +2,140 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AE2C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 00:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5E5C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 01:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbiF2A6A (ORCPT
+        id S229903AbiF2B7S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Jun 2022 20:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42182 "EHLO
+        Tue, 28 Jun 2022 21:59:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbiF2A55 (ORCPT
+        with ESMTP id S229511AbiF2B7S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Jun 2022 20:57:57 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF540326FC
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 17:57:54 -0700 (PDT)
+        Tue, 28 Jun 2022 21:59:18 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC74D1E3E7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jun 2022 18:59:16 -0700 (PDT)
 Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220629005753epoutp047c596015d6f1230d87b2face6d8bdcda~88Xrly-fi1495314953epoutp04k
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 00:57:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220629005753epoutp047c596015d6f1230d87b2face6d8bdcda~88Xrly-fi1495314953epoutp04k
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220629015915epoutp036d0ba2a9d86b8a249c5ad4b60a631379~89NQrcY8G0655706557epoutp032
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 01:59:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220629015915epoutp036d0ba2a9d86b8a249c5ad4b60a631379~89NQrcY8G0655706557epoutp032
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1656464273;
-        bh=eOELwGthOhj4Twna3ildIS47IEDsUa9r0d3IFwQZJ6A=;
+        s=mail20170921; t=1656467955;
+        bh=KVhbm0vttu95++MMph6Q+Udh2opKQIoPwYk/7uEz2nE=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=QqXoVnISrLLVO1yvlC8gu3tKjCBubBlfbfDCfI8FPvQMW5sqKHqlsgoBNf1JwWcCP
-         BhAIhLI0Tulqq/PMveIcr2QMJP4dTC3PwE06fr50/EJMO/7BKNGjA4fNLMsq2gWRNz
-         fOYnL6ZQrpghWCdvKGZI3zwI5asnC0StHbyPzdXI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20220629005752epcas2p37291981f31d1dfa105a63243b2b7ee25~88XqtAuf_0406604066epcas2p3R;
-        Wed, 29 Jun 2022 00:57:52 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.89]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4LXjk73b5Jz4x9QF; Wed, 29 Jun
-        2022 00:57:51 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        b=OLXsncDw6Kf6HJuzCEN/kxl7XSkCecuzMEL6gD9J1zRLNWaR4/9iTp+WxMyNAM1Iw
+         pu2U7EfHqMpzrMK6hy6MkaL3kJpQpPa9TKVhvDnmnh/2OZbGV1icDUglPrS7JT0w4N
+         xmNzRL2ue78H/E2UtH543pwwmeYa1IwdSmMcGK5Y=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20220629015914epcas2p42fb19ba3a0a2c29195e2f49690c5410f~89NP6O9cF1518115181epcas2p4k;
+        Wed, 29 Jun 2022 01:59:14 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.70]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4LXl4x47cnz4x9QJ; Wed, 29 Jun
+        2022 01:59:13 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
         epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6F.DA.09662.F83ABB26; Wed, 29 Jun 2022 09:57:51 +0900 (KST)
+        9C.35.09662.1F1BBB26; Wed, 29 Jun 2022 10:59:13 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17~88XplYyCc1396813968epcas2p42;
-        Wed, 29 Jun 2022 00:57:50 +0000 (GMT)
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220629015913epcas2p3e5cafc2ae9415ca0568afdf1b3ca842b~89NOwbzrs0748407484epcas2p3F;
+        Wed, 29 Jun 2022 01:59:13 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220629005750epsmtrp1f14bb8b05b530a4eed95963062a9530d~88XpkTe2V2342623426epsmtrp1V;
-        Wed, 29 Jun 2022 00:57:50 +0000 (GMT)
-X-AuditID: b6c32a48-9f7ff700000025be-69-62bba38fb47e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        20220629015912epsmtrp1f1a3c6c9f5fc146be2f8cf51e1df0c73~89NOvqCq72671226712epsmtrp1Z;
+        Wed, 29 Jun 2022 01:59:12 +0000 (GMT)
+X-AuditID: b6c32a48-9f7ff700000025be-87-62bbb1f1a99c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A5.F9.08802.E83ABB26; Wed, 29 Jun 2022 09:57:50 +0900 (KST)
+        46.C5.08802.0F1BBB26; Wed, 29 Jun 2022 10:59:12 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220629005750epsmtip253cacbd8a1c3fc11e613a68383f03128~88XpXTri22587325873epsmtip2w;
-        Wed, 29 Jun 2022 00:57:50 +0000 (GMT)
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220629015912epsmtip1cd68e4a11e50fafbd0d362307a7a4c0d~89NOdBSLc1231912319epsmtip1T;
+        Wed, 29 Jun 2022 01:59:12 +0000 (GMT)
 From:   Chanho Park <chanho61.park@samsung.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jirislaby@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Hector Martin <marcan@marcan.st>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v2] tty: serial: samsung_tty: support more than 4 uart ports
-Date:   Wed, 29 Jun 2022 09:55:38 +0900
-Message-Id: <20220629005538.60132-1-chanho61.park@samsung.com>
+Subject: [PATCH 0/3] support USI for Exynos Auto v9 SoC
+Date:   Wed, 29 Jun 2022 10:56:47 +0900
+Message-Id: <20220629015650.138527-1-chanho61.park@samsung.com>
 X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmuW7/4t1JBr0LpC0ezNvGZnF5v7ZF
-        8+L1bBY7Go6wWrybK2Ox9/VWdotNj6+xWsw4v4/J4sziXnaL09cWsFuc3+bvwO1xfV2Ax6ZV
-        nWwed67tYfPYP3cNu8fmJfUei5ftZPPo27KK0ePzJrkAjqhsm4zUxJTUIoXUvOT8lMy8dFsl
-        7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygI5UUyhJzSoFCAYnFxUr6djZF+aUlqQoZ
-        +cUltkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ2Rkvt3xmLehWrnj28RJrA+MsmS5G
-        Tg4JAROJn7+3MoPYQgI7GCUu3teAsD8xSuzdxNXFyAVkf2aU+PPnMlARB1jDlScyEPFdjBLv
-        Z65hhHA+MkosntkBNolNQFdiy/NXjCC2iEC2xJz2TawgRcwCD5kk7qw6CDZJWMBHYv+WXJAa
-        FgFViYmfH4HV8wrYSSzesogd4jp5iQ3ze5kh4oISJ2c+YQGxmYHizVtnM4PMlBD4yy6x/NNR
-        ZogGF4m+KyugbGGJV8e3QA2SknjZ3wZlF0ssnfWJCaK5gVHi8rZfbBAJY4lZz9oZQY5jFtCU
-        WL9LH+JjZYkjt6D28kl0HP7LDhHmlehoE4JoVJc4sH06C4QtK9E95zMrhO0h8fDiS3ZIgMZK
-        XHh2i30Co/wsJN/MQvLNLIS9CxiZVzGKpRYU56anFhsVmMCjNDk/dxMjOJVqeexgnP32g94h
-        RiYOxkOMEhzMSiK8C8/sTBLiTUmsrEotyo8vKs1JLT7EaAoM34nMUqLJ+cBknlcSb2hiaWBi
-        ZmZobmRqYK4kzuuVsiFRSCA9sSQ1OzW1ILUIpo+Jg1Oqgcnnn3K6nuHLIDPZK1HN528sX5fF
-        HFAXe1ppukcZz/OfyxSTYw93lQQEb1rxbHnqPuvFcY9eCJyp7/+7Tq/y9gwjZc3OBwc7Fs57
-        td1k35aeHxlL/KrN1B+xz8o8eUl18cEt2x8kNf4M27np9Vw7i8y92tJHWz+4vrnCI/vEIU1j
-        IUflk9VfRcu5fcqnOU6pyeBmS98cMPm9sejMpYw3K6yqxQ7VOCqIaC1elCNVMclzWu+FBvHE
-        +YxHCycrXQn0YAt9YWh0WUw0f5XltCU6d1SSz5xPWnwpKUj3bkf366CKmv59S7epzDxwdFGy
-        ScehfeZf/8yd+7P6z/p3YvmBDmUzD116LPnCffNU8y1tCj+UWIozEg21mIuKEwHdFGOKLgQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSvG7f4t1JBp8uGFs8mLeNzeLyfm2L
-        5sXr2Sx2NBxhtXg3V8Zi7+ut7BabHl9jtZhxfh+TxZnFvewWp68tYLc4v83fgdvj+roAj02r
-        Otk87lzbw+axf+4ado/NS+o9Fi/byebRt2UVo8fnTXIBHFFcNimpOZllqUX6dglcGS+3fGYt
-        6FauePbxEmsD4yyZLkYODgkBE4krT4BMLg4hgR2MEk279rN3MXICxWUlnr3bAWULS9xvOcIK
-        UfSeUeL+52PMIAk2AV2JLc9fMYLYIgLZEmu/7GUDKWIWeM4ksW/qVBaQDcICPhL7t+SC1LAI
-        qEpM/PwIrJ5XwE5i8ZZFUAvkJTbM72WGiAtKnJz5hAXEZgaKN2+dzTyBkW8WktQsJKkFjEyr
-        GCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCA1xLawfjnlUf9A4xMnEwHmKU4GBWEuFd
-        eGZnkhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNTUwtSi2CyTBycUg1MBdnT
-        NphvvxPlPyeX+at0tO6rGwERVWKGkj81g1ccOrn/7EPT6uN/VzD+kGs6GLAoqGWpQIvNPYb2
-        0+v+5L79//HOt5IZk6KZt5cG1GgUznOY+z7rxtq9KkVK8YvTFSdL6n4WnubYzT6VQzW25ZbM
-        q6kXDC61mexKna7rbNojeVbGZumti6XrHtTJbHbW/Nm65Jj2VknDqsWXRG9l7DCV4q/a+/XX
-        et6uyZoMqt1P//Q86nA9a6gs1b9x5f8dl8WeTeji6TLYmOlrM1Nie6n+nwrpUp39yzlv+0wO
-        5s0qmzw5emnJihvHMtxzlNxmHPt184H4nzdHVySE3gm2TXyjdOhvzbtt3jl3tG+qsiQpKrEU
-        ZyQaajEXFScCAKF8yKPfAgAA
-X-CMS-MailID: 20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdljTQvfjxt1JBievKVg8mLeNzeLyfm2L
+        +UfOsVrsaDjCatH34iGzxabH11gtZpzfx2TRuvcIu8Xzvn1MDpwem1Z1snncubaHzWPzknqP
+        vi2rGD0+b5ILYI3KtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLx
+        CdB1y8wBOkdJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BeoFecmFtcmpeul5da
+        YmVoYGBkClSYkJ0x/clp1oLZHBVbtk5laWB8z9bFyMkhIWAiMbfrEUsXIxeHkMAORokr298x
+        QTifGCU23ZzKBuF8ZpSY1HEbruXtxPOMEIldjBIbXt2H6v8IVLUZZBgnB5uArsSW568YQWwR
+        gXiJ5xfegxUxC0xikjjf0cwMkhAWMJf4tXspWBGLgKrE9O737CA2r4C9xPvDvxkh1slLbJjf
+        ywwRF5Q4OfMJ2AJmoHjz1tnMIEMlBG6xS9z5vBWqwUWiv2cFO4QtLPHq+BYoW0riZX8blF0s
+        sXTWJyaI5gZGicvbfkE9Zywx61k70CAOoA2aEut36YOYEgLKEkduQe3lk+g4/JcdIswr0dEm
+        BNGoLnFg+3QWCFtWonvOZ1YI20Pi37mDYLaQQKzEwafT2Ccwys9C8s0sJN/MQti7gJF5FaNY
+        akFxbnpqsVGBCTxak/NzNzGC06SWxw7G2W8/6B1iZOJgPMQowcGsJMK78MzOJCHelMTKqtSi
+        /Pii0pzU4kOMpsDwncgsJZqcD0zUeSXxhiaWBiZmZobmRqYG5krivF4pGxKFBNITS1KzU1ML
+        Uotg+pg4OKUamLLfPL4b6KCRfGB+S+n+G+pf3jFmMYu+3Vmn6x53JHLiga2a8Sl597ZoLpur
+        /n9joc60Dt8ibV1LP9P7i5/8WJS+arOI5WLRsLeadgpr5z9VaE5qETxq8mThYROevz8Zl246
+        PeHD9JgXq2T1kov3nJ5/lrn/g9eai4/XFCd1yU5t6bggp9ft833mHbOWuTbLflya/2Ry68UX
+        N5QtZKsb1yoJ3ZIQj0wJ9lb23bxJ6/2W+p7V/nEreucFspyd2bXqymuuSY/Dt5juOex1jHHb
+        XOFit7vt08/fsp3aliVjKGrZsX9Kk5vZrORLF2JqNxiIl7HkRh9cdWlCRUVUZtSN9Xx33l1M
+        WvSiubAtkpura5ISS3FGoqEWc1FxIgBHsV0sHAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBLMWRmVeSWpSXmKPExsWy7bCSnO6HjbuTDLa3GFs8mLeNzeLyfm2L
+        +UfOsVrsaDjCatH34iGzxabH11gtZpzfx2TRuvcIu8Xzvn1MDpwem1Z1snncubaHzWPzknqP
+        vi2rGD0+b5ILYI3isklJzcksSy3St0vgypj+5DRrwWyOii1bp7I0ML5n62Lk5JAQMJF4O/E8
+        YxcjF4eQwA5GideLzjFBJGQlnr3bwQ5hC0vcbznCClH0nlHi/ZJHYEVsAroSW56/YgSxRQTi
+        JTZ/WcgCUsQsMI1JouPxDLBuYQFziV+7l4IVsQioSkzvfg8W5xWwl3h/+DcjxAZ5iQ3ze5kh
+        4oISJ2c+YQGxmYHizVtnM09g5JuFJDULSWoBI9MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS9
+        5PzcTYzgwNXS2sG4Z9UHvUOMTByMhxglOJiVRHgXntmZJMSbklhZlVqUH19UmpNafIhRmoNF
+        SZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVAOTdsO6PsfEj0FHKhYvO7/apbD0UIR3gb/+H1nt
+        /xFq/bnRHIcb02tXCU2Ym+hz4fvn6945hst47d4EP3vc/s3LXl394iLp+37y/+qza7cyfMvn
+        kGHRTnreVr1GYqVCPO++86qLTimknuB/2LwtdUNo1MH4tZXty73232P+unhq4Jo/xrmpVxW4
+        qmc99zHcENnO9O7jDS4B/oTOWvkPRbVuhaeP5EyzfNt2wdmq3FiF125H3Btvyyl7Nx5UyRer
+        ehta6snwdrv/g2NxmSddW/YX5l0JDuFd4mP26t8y9fmeDlv01a6Kq1/d/db41YYvWgWnBTbW
+        bJuk7v+kJ9RcYqPS9M2X9zZ6+0S4SmhoTlJiKc5INNRiLipOBAAFKVT9ywIAAA==
+X-CMS-MailID: 20220629015913epcas2p3e5cafc2ae9415ca0568afdf1b3ca842b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17
-References: <CGME20220629005750epcas2p418cd79922d1b3f13eda761ee3fcd3e17@epcas2p4.samsung.com>
+X-CMS-RootMailID: 20220629015913epcas2p3e5cafc2ae9415ca0568afdf1b3ca842b
+References: <CGME20220629015913epcas2p3e5cafc2ae9415ca0568afdf1b3ca842b@epcas2p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Regarding Exynos Auto v9 SoC, it supports uarts up to 12. However, the
-maximum number of the ports has been derived from
-CONFIG_SERIAL_SAMSUNG_UARTS and tightly coupled with the config for
-previous Samsung SoCs such as s3c24xx and s3c64xx. To overcome this
-limitation, this changes the usage of the definition to UART_NR which is
-widely used from other serial drivers. This also defines the value to 12
-only for ARM64 SoCs to not affect the change to previous arm32 SoCs.
+Add to support USI(Universal Serial Interface) for Exynos Auto v9 SoC.
+This patchset is built on top of below patchset.
+- spi patchset:
+https://lore.kernel.org/linux-samsung-soc/20220628044222.152794-1-chanho61.park@samsung.com/
+- serial patch to expand serial devices to 12:
+https://lore.kernel.org/linux-samsung-soc/20220629005538.60132-1-chanho61.park@samsung.com/
 
-Instead of enumerating all the ports as predefined arrays, this
-introduces s3c24xx_serial_init_port_default that is initializing the
-structure as the default value.
+The SoC supports up to 12 USIs so they can be configured as below
+- 12 x UARTs(4pins)
+- 12 x SPIs(4pins)
+- 24 x I2C
+- 12 x UARTS(2pin) and 12 x I2C
 
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
-Changes from v1:
-- Remove initial value assignment of s3c24xx_serial_ports by assigning
-  them dynamically as suggested by Greg and Krzysztof.
+Chanho Park (3):
+  arm64: dts: exynosautov9: add pdma0 device tree node
+  arm64: dts: exynosautov9: add exynosautov9-usi.dtsi
+  arm64: dts: exynosautov9: include exynosautov9-usi.dtsi
 
- drivers/tty/serial/samsung_tty.c | 82 ++++++++++----------------------
- 1 file changed, 25 insertions(+), 57 deletions(-)
+ .../boot/dts/exynos/exynosautov9-sadk.dts     |    2 +
+ .../boot/dts/exynos/exynosautov9-usi.dtsi     | 1127 +++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi  |   39 +-
+ 3 files changed, 1140 insertions(+), 28 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 03ef4ff506fd..8971fbb49fa3 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -48,6 +48,12 @@
- #define S3C24XX_SERIAL_MAJOR	204
- #define S3C24XX_SERIAL_MINOR	64
- 
-+#ifdef CONFIG_ARM64
-+#define UART_NR			12
-+#else
-+#define UART_NR			CONFIG_SERIAL_SAMSUNG_UARTS
-+#endif
-+
- #define S3C24XX_TX_PIO			1
- #define S3C24XX_TX_DMA			2
- #define S3C24XX_RX_PIO			1
-@@ -87,7 +93,7 @@ struct s3c24xx_uart_info {
- struct s3c24xx_serial_drv_data {
- 	const struct s3c24xx_uart_info	info;
- 	const struct s3c2410_uartcfg	def_cfg;
--	const unsigned int		fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
-+	const unsigned int		fifosize[UART_NR];
- };
- 
- struct s3c24xx_uart_dma {
-@@ -1810,67 +1816,27 @@ static const struct uart_ops apple_s5l_serial_ops = {
- static struct uart_driver s3c24xx_uart_drv = {
- 	.owner		= THIS_MODULE,
- 	.driver_name	= "s3c2410_serial",
--	.nr		= CONFIG_SERIAL_SAMSUNG_UARTS,
-+	.nr		= UART_NR,
- 	.cons		= S3C24XX_SERIAL_CONSOLE,
- 	.dev_name	= S3C24XX_SERIAL_NAME,
- 	.major		= S3C24XX_SERIAL_MAJOR,
- 	.minor		= S3C24XX_SERIAL_MINOR,
- };
- 
--#define __PORT_LOCK_UNLOCKED(i) \
--	__SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[i].port.lock)
--static struct s3c24xx_uart_port
--s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
--	[0] = {
--		.port = {
--			.lock		= __PORT_LOCK_UNLOCKED(0),
--			.iotype		= UPIO_MEM,
--			.uartclk	= 0,
--			.fifosize	= 16,
--			.ops		= &s3c24xx_serial_ops,
--			.flags		= UPF_BOOT_AUTOCONF,
--			.line		= 0,
--		}
--	},
--	[1] = {
--		.port = {
--			.lock		= __PORT_LOCK_UNLOCKED(1),
--			.iotype		= UPIO_MEM,
--			.uartclk	= 0,
--			.fifosize	= 16,
--			.ops		= &s3c24xx_serial_ops,
--			.flags		= UPF_BOOT_AUTOCONF,
--			.line		= 1,
--		}
--	},
--#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
--	[2] = {
--		.port = {
--			.lock		= __PORT_LOCK_UNLOCKED(2),
--			.iotype		= UPIO_MEM,
--			.uartclk	= 0,
--			.fifosize	= 16,
--			.ops		= &s3c24xx_serial_ops,
--			.flags		= UPF_BOOT_AUTOCONF,
--			.line		= 2,
--		}
--	},
--#endif
--#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
--	[3] = {
--		.port = {
--			.lock		= __PORT_LOCK_UNLOCKED(3),
--			.iotype		= UPIO_MEM,
--			.uartclk	= 0,
--			.fifosize	= 16,
--			.ops		= &s3c24xx_serial_ops,
--			.flags		= UPF_BOOT_AUTOCONF,
--			.line		= 3,
--		}
--	}
--#endif
--};
--#undef __PORT_LOCK_UNLOCKED
-+static struct s3c24xx_uart_port s3c24xx_serial_ports[UART_NR];
-+
-+static void s3c24xx_serial_init_port_default(int index) {
-+	struct uart_port *port = &s3c24xx_serial_ports[index].port;
-+
-+	spin_lock_init(&port->lock);
-+
-+	port->iotype = UPIO_MEM;
-+	port->uartclk = 0;
-+	port->fifosize = 16;
-+	port->ops = &s3c24xx_serial_ops;
-+	port->flags = UPF_BOOT_AUTOCONF;
-+	port->line = index;
-+}
- 
- /* s3c24xx_serial_resetport
-  *
-@@ -2186,6 +2152,8 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 	}
- 	ourport = &s3c24xx_serial_ports[index];
- 
-+	s3c24xx_serial_init_port_default(index);
-+
- 	ourport->drv_data = s3c24xx_get_driver_data(pdev);
- 	if (!ourport->drv_data) {
- 		dev_err(&pdev->dev, "could not find driver data\n");
-@@ -2584,7 +2552,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
- 
- 	/* is this a valid port */
- 
--	if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
-+	if (co->index == -1 || co->index >= UART_NR)
- 		co->index = 0;
- 
- 	port = &s3c24xx_serial_ports[co->index].port;
 -- 
 2.36.1
 
