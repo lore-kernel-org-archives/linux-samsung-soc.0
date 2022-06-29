@@ -2,111 +2,220 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CB0C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 10:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DA4C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jun 2022 11:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232706AbiF2K60 (ORCPT
+        id S229677AbiF2LJI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 06:58:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36204 "EHLO
+        Wed, 29 Jun 2022 07:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232129AbiF2K6Y (ORCPT
+        with ESMTP id S229777AbiF2LJG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jun 2022 06:58:24 -0400
-X-Greylist: delayed 2401 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 29 Jun 2022 03:58:23 PDT
-Received: from 3.mo575.mail-out.ovh.net (3.mo575.mail-out.ovh.net [46.105.58.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1748511817
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 03:58:22 -0700 (PDT)
-Received: from player786.ha.ovh.net (unknown [10.109.146.32])
-        by mo575.mail-out.ovh.net (Postfix) with ESMTP id 3625524BC8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 09:43:09 +0000 (UTC)
-Received: from etezian.org (bbcs-175-223.cust.wingo.ch [178.238.175.223])
-        (Authenticated sender: andi@etezian.org)
-        by player786.ha.ovh.net (Postfix) with ESMTPSA id 5A7DD2C05D303;
-        Wed, 29 Jun 2022 09:42:57 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-105G006ecb3de72-25dc-4105-8c80-3e4ff39ffe64,
-                    27473AD2557E96BAE247B01472F11916F8881100) smtp.auth=andi@etezian.org
-X-OVh-ClientIp: 178.238.175.223
-Date:   Wed, 29 Jun 2022 12:42:56 +0300
-From:   Andi Shyti <andi@etezian.org>
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/4] spi: s3c64xx: support custom value of internal
- clock divider
-Message-ID: <YrweoNCL3BjqUNWV@jack.zhora.eu>
-References: <20220628044222.152794-1-chanho61.park@samsung.com>
- <CGME20220628044432epcas2p11e6f927321c30cf5557dbd41d749ef28@epcas2p1.samsung.com>
- <20220628044222.152794-3-chanho61.park@samsung.com>
+        Wed, 29 Jun 2022 07:09:06 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F15F36328
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 04:09:05 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id mf9so31949149ejb.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2022 04:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=foG60lhNannT8P9dwW6kOYADdXZ/flWXxg5inptG7Kk=;
+        b=fOqmOi1CSnXz7riHqPSZPrFn2IWlV4hfw0pYjQPy5LkPoB3mqXKSLx2Nc1qRyI+pT3
+         ijTo0bflkgH6otLqB34F1P4BviJwWuPt0NcEMGguEEwqwYvfWwl1H8VTBvl2Vyy7wNVn
+         0rX6JnCqrwZFKl9kxgOZnDETW8QeqEUCgAwkDJY3V1yQzXxf41HlH5bSPvD3ux0yFoZ5
+         ZPjiOG8erfdIwHve8fhCGBPLQ19LqDjR/8j2qCx/rK0wQYbnnlrJhmkXdjIWPftZERTZ
+         5htviNG37n6y6bhmbWk+GqOHbCKRYY54eVuiyPcQgit0vFaOgifBZY0Zzo091U5LUugs
+         hE+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=foG60lhNannT8P9dwW6kOYADdXZ/flWXxg5inptG7Kk=;
+        b=gjBnVDHLkOXIEEUw78dsUHgC31riUT8a8/tB4MWbPwH/PXxpbJE3ZDCxI5RwdIg5wl
+         K8Veh2yUwp0VzU7/XqoocO8GgqTz8bA+7amHBHf9OmVc91o9yIUOIVHf9cKPCZQbPE+R
+         2vydYymPPlhKmWQl1N3qemfiOB0PWYJuiwrpu5zjcDuGHvOcrrWTdPXB5gxxzwDxVMRt
+         b3yk4a8a74vpjGN2rBR0T8e7qGSWpSMPHSq+kZCljEiA4wV3KLx916Y06R1jm/5irkie
+         pGCFytJKYbSmmLpCUr5v2RSF0cJz/hncPK9EDD+beZPIkP5Zaiyd2lbIWs5Vw3bVRwxy
+         TfnA==
+X-Gm-Message-State: AJIora8llcumHDS/DeUwkJlCU44Jm6M9pDNo0QFHr+HjW332zBIIoMEm
+        LGKWBhZgtZfxpyV/bLJN4ClDTA==
+X-Google-Smtp-Source: AGRyM1tAc75CObf54+Dn1EXYo9rv7I8KdZ7F32RpNsq1ifASqeuEyIi397CtnC3Ibo8I2EE97xCsdw==
+X-Received: by 2002:a17:907:3dac:b0:722:e6ab:8d9 with SMTP id he44-20020a1709073dac00b00722e6ab08d9mr3076325ejc.20.1656500943955;
+        Wed, 29 Jun 2022 04:09:03 -0700 (PDT)
+Received: from [192.168.0.184] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id a23-20020aa7d757000000b00437df2444f5sm174712eds.11.2022.06.29.04.09.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jun 2022 04:09:03 -0700 (PDT)
+Message-ID: <eb7275a0-3883-176f-fab0-b5cab5bb09ee@linaro.org>
+Date:   Wed, 29 Jun 2022 13:09:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628044222.152794-3-chanho61.park@samsung.com>
-X-Ovh-Tracer-Id: 2210422993221847576
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrudegledgudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughiucfuhhihthhiuceorghnughisegvthgviihirghnrdhorhhgqeenucggtffrrghtthgvrhhnpeejgfelgeekieffjeegveeuvdehgeelveetveejudffvedvleehvdefleehudelueenucfkpheptddrtddrtddrtddpudejkedrvdefkedrudejhedrvddvfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhlrgihvghrjeekiedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpegrnhguihesvghtvgiiihgrnhdrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehjeeh
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 2/3] arm64: dts: exynosautov9: add exynosautov9-usi.dtsi
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>,
+        'Rob Herring' <robh+dt@kernel.org>
+Cc:     'Alim Akhtar' <alim.akhtar@samsung.com>,
+        'Sam Protsenko' <semen.protsenko@linaro.org>,
+        'Jaewon Kim' <jaewon02.kim@samsung.com>,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220629015650.138527-1-chanho61.park@samsung.com>
+ <CGME20220629015913epcas2p1dcfcc81c026aa524a1f35c8e393be4f0@epcas2p1.samsung.com>
+ <20220629015650.138527-3-chanho61.park@samsung.com>
+ <acf6fb6d-46da-48f6-f064-1a08d323b0f1@linaro.org>
+ <025601d88b9d$332049b0$9960dd10$@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <025601d88b9d$332049b0$9960dd10$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Chanho,
-
-On Tue, Jun 28, 2022 at 01:42:20PM +0900, Chanho Park wrote:
-> Modern exynos SoCs such as Exynos Auto v9 has different internal clock
-
-/has/have/
-
-> divider, for example "4". To support this internal value, this adds
-> clk_div of the s3c64xx_spi_port_config and assign "2" as the default
-> value to existing s3c64xx_spi_port_config.
+On 29/06/2022 11:47, Chanho Park wrote:
+>> On 29/06/2022 03:56, Chanho Park wrote:
+>>> Universal Serial Interface (USI) supports three types of serial
+>>> interface such as Universal Asynchronous Receiver and Transmitter
+>>> (UART), Serial Peripheral Interface (SPI), and Inter-Integrated Circuit
+>> (I2C).
+>>> Each protocols can be working independently and configured as one of
+>>> those using external configuration inputs.
+>>> Exynos Auto v9 SoC support 12 USIs. When a USI uses two pins such as
+>>> i2c and 3 wire uarts(RX/TX only), we can use remain two pins as i2c mode.
+>>> So, we can define one USI node that includes serial/spi and hsi2c.
+>>> usi_i2c nodes can be used only for i2c mode.
+>>>
+>>> We can have below combinations for one USI.
+>>> 1) The usi node is used either 4 pin uart or 4 pin spi  -> No usi_i2c
+>>> can be used
+>>> 2) The usi node is used 2 pin uart(RX/TX) and i2c(SDA/SCL)  -> usi_i2c
+>>> should be enabled to use the latter i2c
+>>> 3) The usi node is used i2c(SDA/SCL) and i2c(SDA/SCL)  -> usi_i2c
+>>> should be enabled to use the latter i2c
+>>>
+>>> By default, all USIs are initially set to uart mode by below setting.
+>>> samsung,mode = <USI_V2_UART>;
+>>> You can change it either USI_V2_SPI or USI_V2_I2C.
+>>>
+>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>>> ---
+>>>  .../boot/dts/exynos/exynosautov9-usi.dtsi     | 1127 +++++++++++++++++
+>>>  1 file changed, 1127 insertions(+)
+>>>  create mode 100644 arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+>>
+>> Put all this directly in exynosautov9.dtsi, because this is not a re-
+>> usable piece among different DTSI.
 > 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
+> Okay. I'll move them in the exynosautov9.dtsi. I thought they're too long to put in the exynosautov9.dtsi and I also found a similar case such as exynos5433-bus.dtsi and exynos5433-tmu.dtsi.
+
+Indeed we did like that... The tmu maybe was meant to be re-used,
+although it references specific clusters. But the split of bus I don't
+understand - it does not help.
+
+I don't think it improved readability.
+
 > 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index b3c50c7665fc..51a0e830441b 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -131,6 +131,7 @@ struct s3c64xx_spi_dma_data {
->   * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS register.
->   * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
->   * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
-> + * @clk_div: Internal clock divider, if not specified, use 2 as the default.
+>>
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+>>> b/arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+>>> new file mode 100644
+>>> index 000000000000..0e4c6332770b
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-usi.dtsi
+>>> @@ -0,0 +1,1127 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Samsung's ExynosAutov9 SoC USI device tree source
+>>> + *
+>>> + * Copyright (c) 2022 Samsung Electronics Co., Ltd.
+>>> + *
+>>> + * Samsung's ExynosAutov9 SoC USI(Universal Serial Interface,
+>>> +uart/spi/i2c)
+>>> + * are listed as device tree nodes in this file.
+>>> + */
+>>> +
+>>> +/* PERIC0 USIs */
+>>> +&soc {
+>>> +	syscon_peric0: syscon@10220000 {
+>>> +		compatible = "samsung,exynosautov9-sysreg", "syscon";
+>>> +		reg = <0x10220000 0x2000>;
+>>> +	};
+>>> +
+>>> +	usi_0: usi@103000c0 {
+>>> +		compatible = "samsung,exynos850-usi";
+>>
+>> We should start adding dedicated compatible, so:
+>> "samsung,exynosautov9-usi", "samsung,exynos850-usi"
+> 
+> So, I need to add the compatible to the Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml, right?
+> 
+> - samsung,exynos850-usi   # for USIv2 (Exynos850, ExynosAutoV9)
+> 
+> To be>
+> - samsung,exynos850-usi
+> - samsung,exynosautov9-usi
 
-is it default? Is it not specified anywhere? I think you are
-assigning '2' to everyone. I would just leave it "Internal
-clock divider."
 
-[...]
+  compatible:
 
-> @@ -871,6 +873,7 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->  	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
->  	struct s3c64xx_spi_driver_data *sdd;
->  	int err;
-> +	u32 div = 2;
+    oneOf:
+     - items:
+         - const: samsung,exynosautov9-usi
+         - const: samsung,exynos850-usi
+     - enum:
 
-As per Krzystof review.
+         - samsung,exynos850-usi   # for USIv2 (Exynos850, ExynosAutoV9)
 
->  	sdd = spi_master_get_devdata(spi->master);
->  	if (spi->dev.of_node) {
-> @@ -889,22 +892,24 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->  
->  	pm_runtime_get_sync(&sdd->pdev->dev);
->  
-> +	div = sdd->port_conf->clk_div;
+> 
+>>
+>>> +		reg = <0x103000c0 0x20>;
+>>> +		samsung,sysreg = <&syscon_peric0 0x1000>;
+>>> +		samsung,mode = <USI_V2_UART>;
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <1>;
+>>> +		ranges;
+>>> +		clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_0>,
+>>> +			 <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_0>;
+>>> +		clock-names = "pclk", "ipclk";
+>>> +		status = "disabled";
+>>> +
+>>> +		/* USI: UART */
+>>
+>> Skip the comments, they are obvious from device node name. Long time ago I
+>> was not advocating this, but I see it's benefits - much easier to
+>> introduce changes to DTS or binding in case of some differences.
 
-Can you please be consistent with the data type? div is u32, but
-clk_div is int.
+Eh, I think my reply got mixed up. The last sentence was about
+compatible, so it should be:
 
-[...]
+We should start adding dedicated compatible, so:
+"samsung,exynosautov9-usi", "samsung,exynos850-usi".
+Long time ago I was not advocating this, but I see it's benefits - much
+easier to introduce changes to DTS or binding in case of some differences.
 
-Andi
+and here only about the comment.
+
+> I'll drop them.
+
+Yes, please.
+
+> 
+>>
+>>> +		serial_0: serial@10300000 {
+>>> +			compatible = "samsung,exynos850-uart";
+>>
+>> Here as well.
+> 
+> I'll add "samsung,exynosautov9-uart" to the yaml file.
+> 
+>>
+
+Best regards,
+Krzysztof
