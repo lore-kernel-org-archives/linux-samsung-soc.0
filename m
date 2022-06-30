@@ -2,88 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4588EC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 23:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6A3C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 23:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232411AbiF3XPm (ORCPT
+        id S232585AbiF3XRM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jun 2022 19:15:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37430 "EHLO
+        Thu, 30 Jun 2022 19:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232370AbiF3XPk (ORCPT
+        with ESMTP id S232589AbiF3XRH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jun 2022 19:15:40 -0400
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F79F25F3;
-        Thu, 30 Jun 2022 16:15:38 -0700 (PDT)
-Received: by mail-il1-f170.google.com with SMTP id p13so403445ilq.0;
-        Thu, 30 Jun 2022 16:15:38 -0700 (PDT)
+        Thu, 30 Jun 2022 19:17:07 -0400
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C6401E3DC;
+        Thu, 30 Jun 2022 16:16:46 -0700 (PDT)
+Received: by mail-il1-f177.google.com with SMTP id h5so380073ili.3;
+        Thu, 30 Jun 2022 16:16:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KbKoF7QVYBmq2AlkSxV5k4lgb1s7hwhdeCtoubmk3Gs=;
-        b=jBhunu26yKkgLjouCcuSSHE6ypKqfQ6QPs78OUywdGNsC6ja+z+lLWiqHuJsiV1jqh
-         gORxuy6w3yy6FQSmaiSo1gmuTgeF6ntj0jP80xLJmCpEOf5Xc0LhRVe2vJuHgyI4FM8u
-         QzdI6A2ZYN1LXKthm0Cj1OusTNehYUDtpVMXEMR5JnbYVLaFhM0XhVMBogizc6AnMIKo
-         P4tfJsMMOsTJ0+kWJneBGHe43XoWUC9U5Rf2Fdx6NJVCTx1cFhuTxlzZZ3UhFT5cV8HD
-         yEhAq8j3kiK8ldJWDoBPh+uCd3vAm0rS8SV+E62iGM6J2b+rpGQ+px8h/b4pF02Z/7JY
-         1WAQ==
-X-Gm-Message-State: AJIora/g2ynwNgJI2DI/jg1s4+xwm+i4ezD1YLxx79pFccsKI1DACkLe
-        slitFWuavlspaTodb1UCCg==
-X-Google-Smtp-Source: AGRyM1vZy3Jmsw2q9GC4kAnlyLXpaf0K8vwy4daLOXGv4iZ6PHja3Um5ewE62KIMBmU6l+z65fCQBw==
-X-Received: by 2002:a05:6e02:19ca:b0:2da:a2d8:38c0 with SMTP id r10-20020a056e0219ca00b002daa2d838c0mr6867324ill.148.1656630937867;
-        Thu, 30 Jun 2022 16:15:37 -0700 (PDT)
+        bh=d62Av7F3BWv71Z/lOKF3fB8kkhXhdc30IXRm0NnALFM=;
+        b=rUX5+lB+JwK32edSsz3/376DwXIGjBuM89m3nI7yAtze2fDoNfp3iCEHpq7mXbOLu6
+         XCGCZFFGZ1gbeFYJ7EvdVinfxM2M+eGzO7jQ+lKNrfO+0E/aTqhwtpUjpIRQTo+iywPD
+         7cu5pTArR7igbenIGUvUB4CqsjHl406Ch27VCjTV/KXp7pRZjrOs2tfjluHx8pbIFHIS
+         F7r63bUHbdDndV0CgHzIB2LhUBWAd6kHMoXms9nWyoVdFQmOBPLHHgwe1a1Ox8wwIZft
+         apLXLaF7MeHy5hxEWwkr2fq7gn6os2zJ+gwm2UIzxIvwjRrM1OtdKHYm+8UPonDomGQV
+         3O8g==
+X-Gm-Message-State: AJIora88aGYwDPnPp95Vy1naEZEvEmnOXiDzQ7MvgDmzvvCGIC3bCaAH
+        /Up33Q2s5SFipfxIURtKJQ==
+X-Google-Smtp-Source: AGRyM1smMxjMKzfPYe8QALeF3NEaDxnRWfvDQvGqBx+28UPnBM/jcLkAOxQA0slVAHdw7MlO/XHugg==
+X-Received: by 2002:a05:6e02:10c7:b0:2d9:202e:78fe with SMTP id s7-20020a056e0210c700b002d9202e78femr6824458ilj.124.1656631005342;
+        Thu, 30 Jun 2022 16:16:45 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id e24-20020a022118000000b00331d764e5b5sm9163571jaa.97.2022.06.30.16.15.36
+        by smtp.gmail.com with ESMTPSA id p10-20020a92c10a000000b002d958b56258sm8569182ile.62.2022.06.30.16.16.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 16:15:37 -0700 (PDT)
-Received: (nullmailer pid 3512196 invoked by uid 1000);
-        Thu, 30 Jun 2022 23:15:35 -0000
-Date:   Thu, 30 Jun 2022 17:15:35 -0600
+        Thu, 30 Jun 2022 16:16:45 -0700 (PDT)
+Received: (nullmailer pid 3514016 invoked by uid 1000);
+        Thu, 30 Jun 2022 23:16:43 -0000
+Date:   Thu, 30 Jun 2022 17:16:43 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-mmc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org,
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 5/5] dt-bindings: mmc: samsung,s3c6410-sdhci: convert to
- dtschema
-Message-ID: <20220630231535.GA3512163-robh@kernel.org>
-References: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org>
- <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: media: samsung,exynos5250-gsc: convert
+ to dtschema
+Message-ID: <20220630231643.GA3513958-robh@kernel.org>
+References: <20220626163300.6271-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220626163300.6271-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 26 Jun 2022 14:03:42 +0200, Krzysztof Kozlowski wrote:
-> Convert the Samsung SoC SDHCI Controller bindings to DT schema.
+On Sun, 26 Jun 2022 18:33:00 +0200, Krzysztof Kozlowski wrote:
+> Convert the Samsung Exynos SoC G-Scaler bindings to DT schema.
 > 
-> The original bindings were quite old and incomplete, so add during
-> conversion typical (already used) properties like reg, clocks,
-> interrupts.
+> Changes done during conversion:
+> 1. A typical (already used) properties like clocks, iommus and
+>    power-domains.
+> 2. Require clocks, because they are essential for the block to operate.
+> 3. Describe the differences in clocks between the Exynos5250/5420 and
+>    the Exynos5433 G-Scalers.  This includes the fifth Exynos5433 clock
+>    "gsd" (GSCL Smart Deck) which was added to the DTS, but not to the
+>    bindings and Linux driver.  Similarly to Exynos5433 DECON change [1],
+>    the clock should be used.
 > 
-> The bindings were not precising the clocks, although the upstream DTS
-> and Linux driver were expecting bus clocks in certain patterns in any
-> order.  Document the status quo even though it is not a proper approach
-> for bindings.
-> 
+> [1] https://lore.kernel.org/all/6270db2d-667d-8d6f-9289-be92da486c25@samsung.com/
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 > ---
->  .../bindings/mmc/samsung,s3c6410-sdhci.yaml   | 81 +++++++++++++++++++
->  .../devicetree/bindings/mmc/samsung-sdhci.txt | 32 --------
->  2 files changed, 81 insertions(+), 32 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> 
+> Changes since v1:
+> 1. Remove Joonyoung Shim from maintainers (emails bounce).
+> ---
+>  .../devicetree/bindings/media/exynos5-gsc.txt |  38 ------
+>  .../media/samsung,exynos5250-gsc.yaml         | 109 ++++++++++++++++++
+>  2 files changed, 109 insertions(+), 38 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/exynos5-gsc.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
