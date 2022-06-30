@@ -2,96 +2,116 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402C3C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 07:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80B7C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 07:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232081AbiF3HQM (ORCPT
+        id S233325AbiF3H6c (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jun 2022 03:16:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44826 "EHLO
+        Thu, 30 Jun 2022 03:58:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230428AbiF3HQM (ORCPT
+        with ESMTP id S233414AbiF3H63 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jun 2022 03:16:12 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B0A19C38
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 00:16:10 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id n8so11353745eda.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 00:16:10 -0700 (PDT)
+        Thu, 30 Jun 2022 03:58:29 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C709317AAA
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 00:58:28 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id a4so18725000lfm.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 00:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Se9PAbHiO1jMTkhXH+gjlL2eCcfcxzVHjO3BT8HcTMk=;
-        b=uYDwo8yFEMZxXygiwcQLnlRPWXJzAwg5VlKHqG1W/9yzpzhTKIX/aGgDLOJyfm1uJR
-         DKafO81M6bDYbiHgKa0ciXZ974TnuZbu61JRmlOIGQqwzAaWdl/3u0euTJbb9biRjwyk
-         XXml/MQaTrtxaFgu8H+9iT5+5OoZemtcXQLpyH/kqVeRsmjuePHmGeUDYBb3uqXIp09l
-         SnMz5+EJ6TJYY5mOy2akTBZq+MgxPUv1c9LnrTrnIBVh5mnYxC5pJcb9n3Wmr87VK3tY
-         3plsKAUy0i0w1iFDPI2DLeAgBLezBCCNCi/4aDpXaJfHia7J5DjXICef/Q2/OVhj0a0I
-         cSsw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PJMxRQnUNYQvlP7uEfgVmlMLr9rQqkQej3JH4PVMmdE=;
+        b=aL1aT606iCTFZOa/2t6AEC5jU+oUtmBus4SJqq2CmfTKiyfQ/t/MuzUQoj4kPih6LN
+         z7bL8E2SkH+TygVqlIkH55VjhnzTFy+9ntS7JhexGfq6JOEmJoGAO/i0PlyAEQQRQhH1
+         D/sfrHWRL5hGqPCz7w5GBV6deH7m4tKJU6JP7RsNgf4wgx5XHJNy37DaNRHTw2x7SxHp
+         Hdl+nqel2qgIFwSch8+CJ13tF/O66m5JJ2LmB6HqYdeUvedEEUUxNQy4Q7ZGfPt6ffWk
+         LmmSvKfvlPWHNcM1TvXFzjZKiJGR0KKr99rD9Fz4Yqj/+ZUSKMhw6eBFmhslOX8PoGOG
+         nNeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Se9PAbHiO1jMTkhXH+gjlL2eCcfcxzVHjO3BT8HcTMk=;
-        b=h4uLdUnMvokQh0PHl5SUezhoWoFGHNCRrkFSyPxPd89Np5TogMa62Auas9oDY7fU3K
-         q23WjEH6bAwFXoo3oy6CFdd9zhGj0DeSP5FUJfhIvdnfG1uyBvJlnr+L/UbwREUl6AWv
-         +iRn+lqXNtrU5DIHhLAU+9VvdOLcp8z3Yq+i6Ea/ee1XiiQZonWTT6iV49dDiid8HwCy
-         8mP8CLhWIkiiofILa/hG1bV2r2YpwOiFaeQXzJorksqkGuYhxQwjdWwXCedB7xaLwqqN
-         BJWciD1QakKRFCimZKXXxjvKLz2InJh5JzdBXHFbi0cG1mWgLlXjq5fGrX8KPkk73/22
-         DUZw==
-X-Gm-Message-State: AJIora+CTqWHwQCRQJACfdPEqWFTWMAkIKieNCSeDah9T8ReOtGxZ8ZJ
-        4YwOFhJGTJBMV/UtwhdmAzkqMwS6ECzuTA==
-X-Google-Smtp-Source: AGRyM1t3vyzgUafwfHvDRxnaU/OU/7ysmU/StzH4CO/jMHjw4lxorN8MvyI7JSU/Zjg4dNsCHV3KWA==
-X-Received: by 2002:a05:6402:d05:b0:425:b7ab:776e with SMTP id eb5-20020a0564020d0500b00425b7ab776emr9740463edb.142.1656573369012;
-        Thu, 30 Jun 2022 00:16:09 -0700 (PDT)
-Received: from [192.168.0.187] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id h8-20020a170906260800b00718f4d4f073sm8687223ejc.88.2022.06.30.00.16.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jun 2022 00:16:08 -0700 (PDT)
-Message-ID: <6e27989c-ab2f-821d-d855-d8cd5c492145@linaro.org>
-Date:   Thu, 30 Jun 2022 09:16:07 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PJMxRQnUNYQvlP7uEfgVmlMLr9rQqkQej3JH4PVMmdE=;
+        b=MBBFRvLm2iycf+hYmIa20YrxBodxAXM9RMF9yDnJ9xBxZX4qbLDF4+twKeaaco/lI1
+         234+/QWLrhzYIKjiUGxVrSBdXPk9dmPnz39Xou5ccZv4lrDmKzAUEqKCh3RuW0Y/CHDN
+         GUFS3jkCzBuVVuuQgxo+HrcNBEqJAc/7ZR1Flqg+7ArJD7l8ETPLMT0zpaUWpFO83owJ
+         XF6i4syMOCrTkltogcntnhF8Xw/ejGl6yscA6Lrwzko55MpnDXPRo5TpUmWxkGtv1W/B
+         2bJm75Tx1bVlpSm8JnuiBdbqODFfV4pUboJO3CMJGug9Leab8F2RkzSbJbqf6IUBHWW1
+         US3Q==
+X-Gm-Message-State: AJIora9imXrm+AYTdZ42r91pVNPuXKV/pQ2r+Ccynf1HT0QpXKAvxUVP
+        Wuf7glCMZw/sLI0zb7usgNuYBcuNQh/flV9GbQhyig==
+X-Google-Smtp-Source: AGRyM1ukGrSjpcuXE6bxl7rgH/OwrTDEttO2nj/+IU/ofXWJ4zArZf0/xpIclGzIJCRitKTVLVeQ1Et1Raj+eI45QaY=
+X-Received: by 2002:a05:6512:2399:b0:47f:ad15:886f with SMTP id
+ c25-20020a056512239900b0047fad15886fmr4639899lfv.226.1656575907178; Thu, 30
+ Jun 2022 00:58:27 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 2/4] dt-bindings: serial: samsung: add
- exynosautov9-uart compatible
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
+References: <CGME20220630021951epcas2p26cd4a554f01f9cb6e44acd813eee15fd@epcas2p2.samsung.com>
+ <cover.1656554759.git.chanho61.park@samsung.com> <8d7029cdf7b2ce0d1c43e6f91b3b9fdadece08ee.1656554759.git.chanho61.park@samsung.com>
+ <CAPLW+4noFAHc+g7jTaaiMQH871OkqcOWjZ85-mpfPVbjiFO1iA@mail.gmail.com> <415e6440-0b46-8d3c-2e29-841bdb16e29a@linaro.org>
+In-Reply-To: <415e6440-0b46-8d3c-2e29-841bdb16e29a@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 30 Jun 2022 10:58:16 +0300
+Message-ID: <CAPLW+4kpH39O4hZNRG_JdVuV7v3PeA4biWSvdC5pZfGc-4GdXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: soc: samsung: usi: add
+ exynosautov9-usi compatible
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Chanho Park <chanho61.park@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Jaewon Kim <jaewon02.kim@samsung.com>,
         devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-References: <cover.1656554759.git.chanho61.park@samsung.com>
- <CGME20220630021951epcas2p1d35e3e0b6d4267eccbe0468b15a558f0@epcas2p1.samsung.com>
- <eb82ba7e93f6b0e5c22d1e2bbad2cc4056e5cb31.1656554759.git.chanho61.park@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <eb82ba7e93f6b0e5c22d1e2bbad2cc4056e5cb31.1656554759.git.chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 30/06/2022 04:16, Chanho Park wrote:
-> Add samsung,exynosautov9-uart dedicated compatible for representing
-> uart of Exynos Auto v9 SoC.
+On Thu, 30 Jun 2022 at 10:11, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 30/06/2022 07:59, Sam Protsenko wrote:
+> > Hi Chanho,
+> >
+> > On Thu, 30 Jun 2022 at 05:19, Chanho Park <chanho61.park@samsung.com> wrote:
+> >>
+> >> Add samsung,exynosautov9-uart dedicated compatible for representing
+> >> usi of Exynos Auto v9 SoC.
+> >>
+> >> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> >> ---
+> >>  .../devicetree/bindings/soc/samsung/exynos-usi.yaml       | 8 ++++++--
+> >>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> >> index fde886a8cf43..6e806e950a36 100644
+> >> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> >> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> >> @@ -22,8 +22,12 @@ properties:
+> >>      pattern: "^usi@[0-9a-f]+$"
+> >>
+> >>    compatible:
+> >> -    enum:
+> >> -      - samsung,exynos850-usi   # for USIv2 (Exynos850, ExynosAutoV9)
+> >> +    oneOf:
+> >> +      - items:
+> >> +          - const: samsung,exynosautov9-usi
+> >> +          - const: samsung,exynos850-usi
+> >> +      - enum:
+> >> +          - samsung,exynos850-usi   # for USIv2 (Exynos850, ExynosAutoV9)
+> >>
+> >
+> > Why "samsung,exynos850-usi" is duplicated? Maybe it would be correct
+> > to leave only "items" and remove the "enum"?
+>
+> It has to be like this. Either you use exynos850-usi directly (on
+> Exynos850) or as a fallback (on Autov9).
+>
 
-s/uart of Exynos Auto v9 SoC/UART of Exynos Auto v9 SoC/
-> 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
+Thanks for the explanation, I never thought about that case before,
+though noticed that pattern in bindings long ago.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+> Best regards,
+> Krzysztof
