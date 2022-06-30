@@ -2,57 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9330FC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 09:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33C7C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 09:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233508AbiF3JHi (ORCPT
+        id S234281AbiF3JSd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jun 2022 05:07:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35536 "EHLO
+        Thu, 30 Jun 2022 05:18:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233276AbiF3JHi (ORCPT
+        with ESMTP id S234139AbiF3JSC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jun 2022 05:07:38 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AED1CB07
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 02:07:37 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id v185so23095520ybe.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 02:07:37 -0700 (PDT)
+        Thu, 30 Jun 2022 05:18:02 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1EB03FDB8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 02:16:47 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-31bf3656517so82015527b3.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 02:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LM7syOsuEujen5dmBbJf2NA8ECKqk41TV2371TTE0Ek=;
-        b=TlEFTT+BqFbp7eqEnEAaggxbVkXRy71Zg2YuphHqLVH39D8HbYrV6YvFEfMc8Hot+2
-         08kRtTlZAtWvUHnwVyl/4zRAODaPgbpoKw1P8cWZCrnt58/uqImCJVrkST2NpLCZcwto
-         W6bj0ML9VQIeiSmriEbyERn++O5W79kZXSKmRYNeF8VWcIWcql2c4BcI1KdUtjOsci+X
-         QTBBP/Dy724Srhf6ViUXgxtuEqLWD8c8v9tDJt1boGEzWf2TTkYD5o8RxFetHT0BXe22
-         lgCu/QfYNpCqbBu1/kczyPPtJSpGtWwdA7Q/7zKFyymFEPbLHWMFwks+BzWYbOI+M61A
-         WnIw==
+        bh=y2VcWUn76owMkahIiSpe6u3dmJvIJ7O7/SunZB5ovaY=;
+        b=EIZ5mBcgizaSwAGmq8RVN4Ev0EgefBfQ1Zkam3vTcFZbuOMtG8vnYJWocqRzbgnrqp
+         Hyzh/VH2EDFZWQs5uN738AesOeGyPhc5e45LDg+anBaRy2a/EN28QLRuUcxDG6InguBL
+         pOALxDvaFC8nD2KIw6whHPam9YQAA4HbTu7zN9ag0BnhNxbWZDVQCAlBupiGGjRkroZc
+         zqCG8/QOEmVkq9Rxpb7H/Uk7/vbJqADBHWAqo0UNOxAROQET3/nNxpJmgENWPr6uP2am
+         q0DOqGm9kzthmJVC+WO1GuLwK1cWU7dKrDuHI4ShAORa95YMl1DfAI6HD9Z5WInpN8nO
+         TWgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LM7syOsuEujen5dmBbJf2NA8ECKqk41TV2371TTE0Ek=;
-        b=2COVNT1EE5ZaKY4InPoBLjjQjro8jghRSYsii0W40huHmZBQ7ntUW/SW4pXC9piRN4
-         NNVH0BwrqFzNIc867S+s5PigJNPliX4B7KXdgkCXMhzLi99Vj9pLH78/WGVBZnRbZ8fK
-         T927vuU+pk6f2kuBgXrXgyDV49sgBPhXDqfWGU+mcVgybG/TM29fua4+j8gVf15SdpHn
-         ED3X+XQme370F4eU1QF/4UmneIeHa1h747obXHivAGiNWiNqWcwJ0HLgd37Pecs7bx+R
-         OUKYxDep81+P3GRp2qq9dbSAx7N/cfL5tABK5+g6oU1br6HfZGW2YxaGbiQxCfHYxWBq
-         qGIg==
-X-Gm-Message-State: AJIora8+JUhOTUS61dMAJONB1OIo/6q25LctSVr+c8eSCt0OFG9hlaHO
-        reCQYnH8ZemB86ECVsPA7fGXcNSPXikazfpaKCxNHg==
-X-Google-Smtp-Source: AGRyM1txhj6Bt2Ppk95Xs8lzgpOlcXsxAyKn9sSO7LnkUjia6xoliisgZJZfuZHQrrccsWvvlPua0vjyAqBysuk9X1M=
-X-Received: by 2002:a25:d82:0:b0:66c:dafa:48c6 with SMTP id
- 124-20020a250d82000000b0066cdafa48c6mr8388465ybn.492.1656580056618; Thu, 30
- Jun 2022 02:07:36 -0700 (PDT)
+        bh=y2VcWUn76owMkahIiSpe6u3dmJvIJ7O7/SunZB5ovaY=;
+        b=Bgep38M93FQYHp0NdIRAl+AWGzRtccRhgpkUSd19yvW/HHR7j97RS0F1txDtbduA0V
+         CPHuehKRHkkegIVvQ6VYsaLsxvypzqvXwabrbMmJrBz3eXmTXJt7yvRXev7T1pOrTszU
+         4lVXJftRUqqdcFvC1v9aPptrfu4HczY9tlXqwmWimHbW0Kj7Xjc25yid1AAOluL47e/O
+         1b6rZlO6y/5rgxyZcH8IYWPv+RUfijZPh+v+2JLNf2XTmHYUe3Rp+g1AIcHhD3IB4hr9
+         e0/Yv89nizNJGUaNty1FcP0rPRPKaurxl6SNFo6VrxWTHUrNm4OqLkHYxQA+dKApNvH9
+         hayA==
+X-Gm-Message-State: AJIora80HtGO3NOb7lCSyTN2UXfZMVs48+CUAmTGhakrUrV8bibn3m6b
+        PJ11JV85wi+iGSgfR4wWF1dpTInnObsUBQX5hN70ejLvUblLJQ==
+X-Google-Smtp-Source: AGRyM1tjLZ153j7Np3XGNGpSK5G64rKc8JOpc+/Fc3g7HcwAIDXbcAmIMxNFbsul/0N0Bx967t8Cyw5rxHBJe9cOL4w=
+X-Received: by 2002:a81:71c6:0:b0:318:38d5:37f3 with SMTP id
+ m189-20020a8171c6000000b0031838d537f3mr9507316ywc.268.1656580607004; Thu, 30
+ Jun 2022 02:16:47 -0700 (PDT)
 MIME-Version: 1.0
 References: <CGME20220629102527epcas2p42e99f44d529d215623bd0e12a082d1dd@epcas2p4.samsung.com>
  <20220629102304.65712-1-chanho61.park@samsung.com> <20220629102304.65712-3-chanho61.park@samsung.com>
 In-Reply-To: <20220629102304.65712-3-chanho61.park@samsung.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 30 Jun 2022 11:07:25 +0200
-Message-ID: <CACRpkdadUF8iQhhpO53VgbY0NBqJsmW7sXGUayN4+LrRYouwVA@mail.gmail.com>
+Date:   Thu, 30 Jun 2022 11:16:35 +0200
+Message-ID: <CACRpkdagXnR0jjHNOVgGkh_ZntfzF0h4D_+DX85jNy7q=6DNEw@mail.gmail.com>
 Subject: Re: [PATCH v3 2/4] spi: s3c64xx: support custom value of internal
  clock divider
 To:     Chanho Park <chanho61.park@samsung.com>
@@ -78,17 +78,21 @@ On Wed, Jun 29, 2022 at 12:27 PM Chanho Park <chanho61.park@samsung.com> wrote:
 >
 > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 
-I don't really see why this divider value should be hard-coded like this.
+While this gives a way to set up the default clock divider (which is
+fair) I think
+you should probably go the extra mile and make this clock divider a proper
+clock abstraction, so the driver can respect the DT standard property
+spi-max-frequency
+from Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
 
-I guess it is some default value, that's OK I guess, then call it:
+This actually isn't very hard: look for example in the PL111 driver,
+a hardware block that contains a similar internal clock divider:
+drivers/gpu/drm/pl111/pl111_display.c
+check how we define a clock from pl111_clk_div_ops.
+in pl111_init_clock_divider().
 
-> + * @clk_div: Internal clock divider
-> +       int     clk_div;
-
-clk_div_default
-
-And the documentation should say "clock divider to be used
-by default unless a specific clock frequency is configured"
+Then the driver probe() just grabs that clock and sets the frequency.
+The algorithms should be pretty much copy/paste.
 
 Yours,
 Linus Walleij
