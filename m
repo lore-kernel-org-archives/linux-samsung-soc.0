@@ -2,97 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D33C7C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 09:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4588EC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jun 2022 23:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234281AbiF3JSd (ORCPT
+        id S232411AbiF3XPm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jun 2022 05:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
+        Thu, 30 Jun 2022 19:15:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234139AbiF3JSC (ORCPT
+        with ESMTP id S232370AbiF3XPk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jun 2022 05:18:02 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1EB03FDB8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 02:16:47 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-31bf3656517so82015527b3.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2022 02:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y2VcWUn76owMkahIiSpe6u3dmJvIJ7O7/SunZB5ovaY=;
-        b=EIZ5mBcgizaSwAGmq8RVN4Ev0EgefBfQ1Zkam3vTcFZbuOMtG8vnYJWocqRzbgnrqp
-         Hyzh/VH2EDFZWQs5uN738AesOeGyPhc5e45LDg+anBaRy2a/EN28QLRuUcxDG6InguBL
-         pOALxDvaFC8nD2KIw6whHPam9YQAA4HbTu7zN9ag0BnhNxbWZDVQCAlBupiGGjRkroZc
-         zqCG8/QOEmVkq9Rxpb7H/Uk7/vbJqADBHWAqo0UNOxAROQET3/nNxpJmgENWPr6uP2am
-         q0DOqGm9kzthmJVC+WO1GuLwK1cWU7dKrDuHI4ShAORa95YMl1DfAI6HD9Z5WInpN8nO
-         TWgQ==
+        Thu, 30 Jun 2022 19:15:40 -0400
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F79F25F3;
+        Thu, 30 Jun 2022 16:15:38 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id p13so403445ilq.0;
+        Thu, 30 Jun 2022 16:15:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y2VcWUn76owMkahIiSpe6u3dmJvIJ7O7/SunZB5ovaY=;
-        b=Bgep38M93FQYHp0NdIRAl+AWGzRtccRhgpkUSd19yvW/HHR7j97RS0F1txDtbduA0V
-         CPHuehKRHkkegIVvQ6VYsaLsxvypzqvXwabrbMmJrBz3eXmTXJt7yvRXev7T1pOrTszU
-         4lVXJftRUqqdcFvC1v9aPptrfu4HczY9tlXqwmWimHbW0Kj7Xjc25yid1AAOluL47e/O
-         1b6rZlO6y/5rgxyZcH8IYWPv+RUfijZPh+v+2JLNf2XTmHYUe3Rp+g1AIcHhD3IB4hr9
-         e0/Yv89nizNJGUaNty1FcP0rPRPKaurxl6SNFo6VrxWTHUrNm4OqLkHYxQA+dKApNvH9
-         hayA==
-X-Gm-Message-State: AJIora80HtGO3NOb7lCSyTN2UXfZMVs48+CUAmTGhakrUrV8bibn3m6b
-        PJ11JV85wi+iGSgfR4wWF1dpTInnObsUBQX5hN70ejLvUblLJQ==
-X-Google-Smtp-Source: AGRyM1tjLZ153j7Np3XGNGpSK5G64rKc8JOpc+/Fc3g7HcwAIDXbcAmIMxNFbsul/0N0Bx967t8Cyw5rxHBJe9cOL4w=
-X-Received: by 2002:a81:71c6:0:b0:318:38d5:37f3 with SMTP id
- m189-20020a8171c6000000b0031838d537f3mr9507316ywc.268.1656580607004; Thu, 30
- Jun 2022 02:16:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20220629102527epcas2p42e99f44d529d215623bd0e12a082d1dd@epcas2p4.samsung.com>
- <20220629102304.65712-1-chanho61.park@samsung.com> <20220629102304.65712-3-chanho61.park@samsung.com>
-In-Reply-To: <20220629102304.65712-3-chanho61.park@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 30 Jun 2022 11:16:35 +0200
-Message-ID: <CACRpkdagXnR0jjHNOVgGkh_ZntfzF0h4D_+DX85jNy7q=6DNEw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] spi: s3c64xx: support custom value of internal
- clock divider
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KbKoF7QVYBmq2AlkSxV5k4lgb1s7hwhdeCtoubmk3Gs=;
+        b=jBhunu26yKkgLjouCcuSSHE6ypKqfQ6QPs78OUywdGNsC6ja+z+lLWiqHuJsiV1jqh
+         gORxuy6w3yy6FQSmaiSo1gmuTgeF6ntj0jP80xLJmCpEOf5Xc0LhRVe2vJuHgyI4FM8u
+         QzdI6A2ZYN1LXKthm0Cj1OusTNehYUDtpVMXEMR5JnbYVLaFhM0XhVMBogizc6AnMIKo
+         P4tfJsMMOsTJ0+kWJneBGHe43XoWUC9U5Rf2Fdx6NJVCTx1cFhuTxlzZZ3UhFT5cV8HD
+         yEhAq8j3kiK8ldJWDoBPh+uCd3vAm0rS8SV+E62iGM6J2b+rpGQ+px8h/b4pF02Z/7JY
+         1WAQ==
+X-Gm-Message-State: AJIora/g2ynwNgJI2DI/jg1s4+xwm+i4ezD1YLxx79pFccsKI1DACkLe
+        slitFWuavlspaTodb1UCCg==
+X-Google-Smtp-Source: AGRyM1vZy3Jmsw2q9GC4kAnlyLXpaf0K8vwy4daLOXGv4iZ6PHja3Um5ewE62KIMBmU6l+z65fCQBw==
+X-Received: by 2002:a05:6e02:19ca:b0:2da:a2d8:38c0 with SMTP id r10-20020a056e0219ca00b002daa2d838c0mr6867324ill.148.1656630937867;
+        Thu, 30 Jun 2022 16:15:37 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id e24-20020a022118000000b00331d764e5b5sm9163571jaa.97.2022.06.30.16.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 16:15:37 -0700 (PDT)
+Received: (nullmailer pid 3512196 invoked by uid 1000);
+        Thu, 30 Jun 2022 23:15:35 -0000
+Date:   Thu, 30 Jun 2022 17:15:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        linux-mmc@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 5/5] dt-bindings: mmc: samsung,s3c6410-sdhci: convert to
+ dtschema
+Message-ID: <20220630231535.GA3512163-robh@kernel.org>
+References: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org>
+ <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 12:27 PM Chanho Park <chanho61.park@samsung.com> wrote:
+On Sun, 26 Jun 2022 14:03:42 +0200, Krzysztof Kozlowski wrote:
+> Convert the Samsung SoC SDHCI Controller bindings to DT schema.
+> 
+> The original bindings were quite old and incomplete, so add during
+> conversion typical (already used) properties like reg, clocks,
+> interrupts.
+> 
+> The bindings were not precising the clocks, although the upstream DTS
+> and Linux driver were expecting bus clocks in certain patterns in any
+> order.  Document the status quo even though it is not a proper approach
+> for bindings.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/mmc/samsung,s3c6410-sdhci.yaml   | 81 +++++++++++++++++++
+>  .../devicetree/bindings/mmc/samsung-sdhci.txt | 32 --------
+>  2 files changed, 81 insertions(+), 32 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> 
 
-> Modern exynos SoCs such as Exynos Auto v9 have different internal clock
-> divider, for example "4". To support this internal value, this adds
-> clk_div of the s3c64xx_spi_port_config and assign "2" as the default
-> value to existing s3c64xx_spi_port_config.
->
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-
-While this gives a way to set up the default clock divider (which is
-fair) I think
-you should probably go the extra mile and make this clock divider a proper
-clock abstraction, so the driver can respect the DT standard property
-spi-max-frequency
-from Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-
-This actually isn't very hard: look for example in the PL111 driver,
-a hardware block that contains a similar internal clock divider:
-drivers/gpu/drm/pl111/pl111_display.c
-check how we define a clock from pl111_clk_div_ops.
-in pl111_init_clock_divider().
-
-Then the driver probe() just grabs that clock and sets the frequency.
-The algorithms should be pretty much copy/paste.
-
-Yours,
-Linus Walleij
+Reviewed-by: Rob Herring <robh@kernel.org>
