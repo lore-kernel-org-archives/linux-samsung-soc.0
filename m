@@ -2,191 +2,427 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA059C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Jul 2022 10:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385B3C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 Jul 2022 11:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235916AbiGAKSQ (ORCPT
+        id S233360AbiGAL24 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 Jul 2022 06:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
+        Fri, 1 Jul 2022 07:28:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235572AbiGAKSM (ORCPT
+        with ESMTP id S231261AbiGAL2z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 Jul 2022 06:18:12 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 695E3BC92;
-        Fri,  1 Jul 2022 03:18:11 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id g4so3203786ybg.9;
-        Fri, 01 Jul 2022 03:18:11 -0700 (PDT)
+        Fri, 1 Jul 2022 07:28:55 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8FA2DD44;
+        Fri,  1 Jul 2022 04:28:54 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id e2so2580114edv.3;
+        Fri, 01 Jul 2022 04:28:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IK1q7pWvnzmd2/yzmMQOB6gFUgHkXgsyzwODpSKqHtU=;
-        b=jSDpH5b4ezTXYDkI+Kv1qjoulW4GueRKAo9MfvH6Or74WD1aO19b0yl9X6h7ikpgsb
-         Yzj9/9QR8pvv9s537mQBeUk8bodicRt2sYNtrKP02dXkQyCDQKSj99VRGbrzh5/zLrXe
-         3DbujuLPciSi5vALJ+old//V6zoLm6pd0LhvBAARG1SXsh/2UP6qVVa/FfV3DuM5if+u
-         lMLgaAYtih653stfzpF6JzV1TgtPEvIAiwFM7x+VFO7m6+ikg5S95jdc8NlSpoxf6NUC
-         chD7vf96GrCNEtWT2dpp9TfC5k1TkiGvGH1SczyJzPL6/3uFcjCYC/RxAKuWF753UD7k
-         NBBQ==
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=uOeLjcmvFhVHfwCMLmbLJAr5vR/c1sBZWyJr2fJptLg=;
+        b=ACayMuiyGwKJOwXzUgQt9dqFChkiXt700U9G6Kenwnyfskyyq2EgoIQxqQaEDMp09L
+         OUPsEI4NOrMOmMKi3PcugpJlLdEmPEzDCW8xCLgvZ8smmm/1refRgBAnDLkqDOMrZXNW
+         VHaHJxidQ0GID7Fb2nZjKyoIfKc1UPOvCU3Q+9iB8EbQeJHOW2LJwvP6egSbb8OpYGi9
+         6WKahOZJJUtyBjN/5vznjySHJVhXKmnIoBNoZ93ha2FF8c01lMFeG/NxKHKAMdS4qhyV
+         KCrsPe8hHS3nMnjewxmULjfvuPXpy2Hzwq9aUSLsgMvLz78bS5Kg3vPoKqKvTJVXPiSr
+         aKrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IK1q7pWvnzmd2/yzmMQOB6gFUgHkXgsyzwODpSKqHtU=;
-        b=15An1tGG8nHWbgQ7lfNc8QLkFangfrf5YDaVcKBSZIPQNTJpbJxa1DdQzV2vSVOcbO
-         fh8Ji5/HqmK7yMFs2MeudkwBT0eUgiprBaC/Ipzg3IKpQEC48MbD9m5GtGhAwwOR1S38
-         voachqulCt9cj6gYIc3OwlRxsv9slparbv2iXH6LnUc2rniEK+YWoy+PXqdP3WyAEj5+
-         rsQ/igFcd7l6NwGjhR1DuOEwyg6roMp4wpQsnXjvh0N3s3ON1yJTkfgv0SAFFL/ravUl
-         Z2SByPfwCJvXSEO6RW+F0dcU0r8IacIWIiQdBlThXmbvdg+DnfZF1OkBKNG6LPeik1rx
-         XpYQ==
-X-Gm-Message-State: AJIora9wJdSdxEZ+C6/PPujawAdsPLp91iPchxdMcifaiD5H32SspsC1
-        NV3zAm6bWrrd7io0QsjyNBjW5xoQDju9soyGUQI=
-X-Google-Smtp-Source: AGRyM1tvrcPaXjb6qpRZmlm3mN1+HaZ3X5zFt5Vb6BDK08mCBJ8qF4vfcIrvo5gC3LEAhM4YrPgldTFVhwpUgFcS228=
-X-Received: by 2002:a05:6902:1549:b0:66d:5f76:27ba with SMTP id
- r9-20020a056902154900b0066d5f7627bamr14092504ybu.385.1656670690515; Fri, 01
- Jul 2022 03:18:10 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=uOeLjcmvFhVHfwCMLmbLJAr5vR/c1sBZWyJr2fJptLg=;
+        b=D6+yY4AVc/H16zgT4TvE4h394XFBopltNtgqbPpZsHZuNxkCBAghyleWsT/45P+TqQ
+         OAiBAp6G/RXAi8K2gdlMp62r5/52NzeQAR78Nzx9+rpGjhxqZJoxJ+e3EWTA/tKC8OFT
+         yLzMU+qhMg6Kz0it5wRJ/iqTuZITQTBPRHporFEBQMNkGsbwW/6knnRXgSZVxvjC1xs/
+         WeBIu+04w2qmzk7BQOuK1ZoDXFNdZxxY/FIwM5mZAd1hVkRLIEpBjI/VfhTzNEJRvEnf
+         bjohM1s+1fyCxBZEK8PeiuNic1eFEioYiGB4gQKOj8T744CeLjk2bbIvLaDfFBkRLht+
+         AiIA==
+X-Gm-Message-State: AJIora97G66RXB2vdDySQtp/K80moSV1PzMAqDb7fgKmIjcN7aUluR/S
+        Sz0aamIALc48pkexN7rc27g=
+X-Google-Smtp-Source: AGRyM1sx5OzTStbFMdL7PPLALshPs5DDq6kTFyUj9tvzGeDKZ0YXRsV0UMy/ogk+GwNeFTBbE8dgkg==
+X-Received: by 2002:a05:6402:448e:b0:435:9926:1acc with SMTP id er14-20020a056402448e00b0043599261accmr18097647edb.179.1656674932640;
+        Fri, 01 Jul 2022 04:28:52 -0700 (PDT)
+Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
+        by smtp.gmail.com with ESMTPSA id i10-20020a170906698a00b0071cbc7487e0sm10417669ejr.71.2022.07.01.04.28.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 04:28:52 -0700 (PDT)
+Message-ID: <62beda74.1c69fb81.bace6.3899@mx.google.com>
+X-Google-Original-Message-ID: <Yr7acmEir5ldSWRi@Ansuel-xps.>
+Date:   Fri, 1 Jul 2022 13:28:50 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] PM / devfreq: Rework freq_table to be local to devfreq
+ struct
+References: <20220619220351.29891-1-ansuelsmth@gmail.com>
+ <CGME20220701080154eucas1p2c545476306b23c62ebddcabf2616b828@eucas1p2.samsung.com>
+ <4ea890c9-7df1-b5b2-0e13-0f23eb452d49@samsung.com>
 MIME-Version: 1.0
-References: <20220701012647.2007122-1-saravanak@google.com> <20220701012647.2007122-3-saravanak@google.com>
-In-Reply-To: <20220701012647.2007122-3-saravanak@google.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 1 Jul 2022 12:17:33 +0200
-Message-ID: <CAHp75Vdw8pZePnqR=mmJh4pv0bPMRJE=p7-cG3akskdxMHmoKw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] serial: Set probe_no_timeout for all DT based drivers
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tobias Klauser <tklauser@distanz.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Richard Genoud <richard.genoud@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Karol Gugala <kgugala@antmicro.com>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Pali Rohar <pali@kernel.org>,
-        Andreas Farber <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hammer Hsieh <hammerh0314@gmail.com>,
-        Peter Korsgaard <jacmet@sunsite.dk>,
-        Timur Tabi <timur@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Rob Herring <robh@kernel.org>,
-        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
-        kevin hilman <khilman@kernel.org>,
-        ulf hansson <ulf.hansson@linaro.org>,
-        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
-        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
-        andrew lunn <andrew@lunn.ch>,
-        heiner kallweit <hkallweit1@gmail.com>,
-        eric dumazet <edumazet@google.com>,
-        jakub kicinski <kuba@kernel.org>,
-        paolo abeni <pabeni@redhat.com>,
-        linus walleij <linus.walleij@linaro.org>,
-        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
-        david ahern <dsahern@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
-        <linuxppc-dev@lists.ozlabs.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/ASPEED MACHINE SUPPORT" 
-        <linux-aspeed@lists.ozlabs.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org,
-        linux-amlogic <linux-amlogic@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-actions@lists.infradead.org,
-        linux-unisoc@lists.infradead.org,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Sparc kernel list <sparclinux@vger.kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4ea890c9-7df1-b5b2-0e13-0f23eb452d49@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 1, 2022 at 3:28 AM Saravana Kannan <saravanak@google.com> wrote:
+On Fri, Jul 01, 2022 at 10:01:52AM +0200, Marek Szyprowski wrote:
+> Hi All,
+> 
+> On 20.06.2022 00:03, Christian Marangi wrote:
+> > On a devfreq PROBE_DEFER, the freq_table in the driver profile struct,
+> > is never reset and may be leaved in an undefined state.
+> >
+> > This comes from the fact that we store the freq_table in the driver
+> > profile struct that is commonly defined as static and not reset on
+> > PROBE_DEFER.
+> > We currently skip the reinit of the freq_table if we found
+> > it's already defined since a driver may declare his own freq_table.
+> >
+> > This logic is flawed in the case devfreq core generate a freq_table, set
+> > it in the profile struct and then PROBE_DEFER, freeing the freq_table.
+> > In this case devfreq will found a NOT NULL freq_table that has been
+> > freed, skip the freq_table generation and probe the driver based on the
+> > wrong table.
+> >
+> > To fix this and correctly handle PROBE_DEFER, use a local freq_table and
+> > max_state in the devfreq struct and never modify the freq_table present
+> > in the profile struct if it does provide it.
+> >
+> > Fixes: 0ec09ac2cebe ("PM / devfreq: Set the freq_table of devfreq device")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> 
+> This patch landed in linux next-20220630 as commit b5d281f6c16d ("PM / 
+> devfreq: Rework freq_table to be local to devfreq struct"). 
+> Unfortunately it causes the following regression on my Exynos based test 
+> systems:
+> 
+> 8<--- cut here ---
+> Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> [00000000] *pgd=00000000
+> Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+> Modules linked in:
+> CPU: 3 PID: 49 Comm: kworker/u8:3 Not tainted 5.19.0-rc4-next-20220630 #5312
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+> Workqueue: events_unbound deferred_probe_work_func
+> PC is at exynos_bus_probe+0x604/0x684
+> LR is at device_add+0x14c/0x908
+> pc : [<c090aef4>]    lr : [<c06cf77c>]    psr: 80000053
+> ...
+> Process kworker/u8:3 (pid: 49, stack limit = 0x(ptrval))
+> Stack: (0xf0a15d30 to 0xf0a16000)
+> ...
+>   exynos_bus_probe from platform_probe+0x5c/0xb8
+>   platform_probe from really_probe+0xe0/0x414
+>   really_probe from __driver_probe_device+0xa0/0x208
+>   __driver_probe_device from driver_probe_device+0x30/0xc0
+>   driver_probe_device from __device_attach_driver+0xa4/0x11c
+>   __device_attach_driver from bus_for_each_drv+0x7c/0xc0
+>   bus_for_each_drv from __device_attach+0xac/0x20c
+>   __device_attach from bus_probe_device+0x88/0x90
+>   bus_probe_device from deferred_probe_work_func+0x98/0xe0
+>   deferred_probe_work_func from process_one_work+0x288/0x774
+>   process_one_work from worker_thread+0x44/0x504
+>   worker_thread from kthread+0xf4/0x128
+>   kthread from ret_from_fork+0x14/0x2c
+> Exception stack(0xf0a15fb0 to 0xf0a15ff8)
+> ...
+> ---[ end trace 0000000000000000 ]---
+> 
+> This issue is caused by bus->devfreq->profile->freq_table being NULL here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/devfreq/exynos-bus.c?h=next-20220630#n451
+> 
 >
-> With commit 71066545b48e ("driver core: Set fw_devlink.strict=1 by
-> default") the probing of TTY consoles could get delayed if they have
-> optional suppliers that are listed in DT, but those suppliers don't
-> probe by the time kernel boot finishes. The console devices will probe
-> eventually after driver_probe_timeout expires.
->
-> However, since consoles are often used for debugging kernel issues, it
-> does not make sense to delay their probe. So, set the newly added
-> probe_no_timeout flag for all serial drivers that at DT based. This way,
-> fw_devlink will know not to delay the probing of the consoles past
-> kernel boot.
 
-Same question, do you think only serial drivers need that?
+I just checked this and the bug is caused by a simple pr_info...
+
+Can you test the following patch just to make sure?
+
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index b5615e667e31..79725bbb4bb0 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -447,9 +447,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+                }
+        }
+
+-       max_state = bus->devfreq->profile->max_state;
+-       min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+-       max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
++       max_state = bus->devfreq->max_state;
++       min_freq = (bus->devfreq->freq_table[0] / 1000);
++       max_freq = (bus->devfreq->freq_table[max_state - 1] / 1000);
+        pr_info("exynos-bus: new bus device registered: %s (%6ld KHz ~ %6ld KHz)\n",
+                        dev_name(dev), min_freq, max_freq);
+ 
+
+> >   drivers/devfreq/devfreq.c          | 71 ++++++++++++++----------------
+> >   drivers/devfreq/governor_passive.c | 14 +++---
+> >   include/linux/devfreq.h            |  5 +++
+> >   3 files changed, 46 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> > index 01474daf4548..2e2b3b414d67 100644
+> > --- a/drivers/devfreq/devfreq.c
+> > +++ b/drivers/devfreq/devfreq.c
+> > @@ -123,7 +123,7 @@ void devfreq_get_freq_range(struct devfreq *devfreq,
+> >   			    unsigned long *min_freq,
+> >   			    unsigned long *max_freq)
+> >   {
+> > -	unsigned long *freq_table = devfreq->profile->freq_table;
+> > +	unsigned long *freq_table = devfreq->freq_table;
+> >   	s32 qos_min_freq, qos_max_freq;
+> >   
+> >   	lockdep_assert_held(&devfreq->lock);
+> > @@ -133,11 +133,11 @@ void devfreq_get_freq_range(struct devfreq *devfreq,
+> >   	 * The devfreq drivers can initialize this in either ascending or
+> >   	 * descending order and devfreq core supports both.
+> >   	 */
+> > -	if (freq_table[0] < freq_table[devfreq->profile->max_state - 1]) {
+> > +	if (freq_table[0] < freq_table[devfreq->max_state - 1]) {
+> >   		*min_freq = freq_table[0];
+> > -		*max_freq = freq_table[devfreq->profile->max_state - 1];
+> > +		*max_freq = freq_table[devfreq->max_state - 1];
+> >   	} else {
+> > -		*min_freq = freq_table[devfreq->profile->max_state - 1];
+> > +		*min_freq = freq_table[devfreq->max_state - 1];
+> >   		*max_freq = freq_table[0];
+> >   	}
+> >   
+> > @@ -169,8 +169,8 @@ static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+> >   {
+> >   	int lev;
+> >   
+> > -	for (lev = 0; lev < devfreq->profile->max_state; lev++)
+> > -		if (freq == devfreq->profile->freq_table[lev])
+> > +	for (lev = 0; lev < devfreq->max_state; lev++)
+> > +		if (freq == devfreq->freq_table[lev])
+> >   			return lev;
+> >   
+> >   	return -EINVAL;
+> > @@ -178,7 +178,6 @@ static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+> >   
+> >   static int set_freq_table(struct devfreq *devfreq)
+> >   {
+> > -	struct devfreq_dev_profile *profile = devfreq->profile;
+> >   	struct dev_pm_opp *opp;
+> >   	unsigned long freq;
+> >   	int i, count;
+> > @@ -188,25 +187,22 @@ static int set_freq_table(struct devfreq *devfreq)
+> >   	if (count <= 0)
+> >   		return -EINVAL;
+> >   
+> > -	profile->max_state = count;
+> > -	profile->freq_table = devm_kcalloc(devfreq->dev.parent,
+> > -					profile->max_state,
+> > -					sizeof(*profile->freq_table),
+> > -					GFP_KERNEL);
+> > -	if (!profile->freq_table) {
+> > -		profile->max_state = 0;
+> > +	devfreq->max_state = count;
+> > +	devfreq->freq_table = devm_kcalloc(devfreq->dev.parent,
+> > +					   devfreq->max_state,
+> > +					   sizeof(*devfreq->freq_table),
+> > +					   GFP_KERNEL);
+> > +	if (!devfreq->freq_table)
+> >   		return -ENOMEM;
+> > -	}
+> >   
+> > -	for (i = 0, freq = 0; i < profile->max_state; i++, freq++) {
+> > +	for (i = 0, freq = 0; i < devfreq->max_state; i++, freq++) {
+> >   		opp = dev_pm_opp_find_freq_ceil(devfreq->dev.parent, &freq);
+> >   		if (IS_ERR(opp)) {
+> > -			devm_kfree(devfreq->dev.parent, profile->freq_table);
+> > -			profile->max_state = 0;
+> > +			devm_kfree(devfreq->dev.parent, devfreq->freq_table);
+> >   			return PTR_ERR(opp);
+> >   		}
+> >   		dev_pm_opp_put(opp);
+> > -		profile->freq_table[i] = freq;
+> > +		devfreq->freq_table[i] = freq;
+> >   	}
+> >   
+> >   	return 0;
+> > @@ -246,7 +242,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+> >   
+> >   	if (lev != prev_lev) {
+> >   		devfreq->stats.trans_table[
+> > -			(prev_lev * devfreq->profile->max_state) + lev]++;
+> > +			(prev_lev * devfreq->max_state) + lev]++;
+> >   		devfreq->stats.total_trans++;
+> >   	}
+> >   
+> > @@ -835,6 +831,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+> >   		if (err < 0)
+> >   			goto err_dev;
+> >   		mutex_lock(&devfreq->lock);
+> > +	} else {
+> > +		devfreq->freq_table = devfreq->profile->freq_table;
+> > +		devfreq->max_state = devfreq->profile->max_state;
+> >   	}
+> >   
+> >   	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
+> > @@ -870,8 +869,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
+> >   
+> >   	devfreq->stats.trans_table = devm_kzalloc(&devfreq->dev,
+> >   			array3_size(sizeof(unsigned int),
+> > -				    devfreq->profile->max_state,
+> > -				    devfreq->profile->max_state),
+> > +				    devfreq->max_state,
+> > +				    devfreq->max_state),
+> >   			GFP_KERNEL);
+> >   	if (!devfreq->stats.trans_table) {
+> >   		mutex_unlock(&devfreq->lock);
+> > @@ -880,7 +879,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+> >   	}
+> >   
+> >   	devfreq->stats.time_in_state = devm_kcalloc(&devfreq->dev,
+> > -			devfreq->profile->max_state,
+> > +			devfreq->max_state,
+> >   			sizeof(*devfreq->stats.time_in_state),
+> >   			GFP_KERNEL);
+> >   	if (!devfreq->stats.time_in_state) {
+> > @@ -1665,9 +1664,9 @@ static ssize_t available_frequencies_show(struct device *d,
+> >   
+> >   	mutex_lock(&df->lock);
+> >   
+> > -	for (i = 0; i < df->profile->max_state; i++)
+> > +	for (i = 0; i < df->max_state; i++)
+> >   		count += scnprintf(&buf[count], (PAGE_SIZE - count - 2),
+> > -				"%lu ", df->profile->freq_table[i]);
+> > +				"%lu ", df->freq_table[i]);
+> >   
+> >   	mutex_unlock(&df->lock);
+> >   	/* Truncate the trailing space */
+> > @@ -1690,7 +1689,7 @@ static ssize_t trans_stat_show(struct device *dev,
+> >   
+> >   	if (!df->profile)
+> >   		return -EINVAL;
+> > -	max_state = df->profile->max_state;
+> > +	max_state = df->max_state;
+> >   
+> >   	if (max_state == 0)
+> >   		return sprintf(buf, "Not Supported.\n");
+> > @@ -1707,19 +1706,17 @@ static ssize_t trans_stat_show(struct device *dev,
+> >   	len += sprintf(buf + len, "           :");
+> >   	for (i = 0; i < max_state; i++)
+> >   		len += sprintf(buf + len, "%10lu",
+> > -				df->profile->freq_table[i]);
+> > +				df->freq_table[i]);
+> >   
+> >   	len += sprintf(buf + len, "   time(ms)\n");
+> >   
+> >   	for (i = 0; i < max_state; i++) {
+> > -		if (df->profile->freq_table[i]
+> > -					== df->previous_freq) {
+> > +		if (df->freq_table[i] == df->previous_freq)
+> >   			len += sprintf(buf + len, "*");
+> > -		} else {
+> > +		else
+> >   			len += sprintf(buf + len, " ");
+> > -		}
+> > -		len += sprintf(buf + len, "%10lu:",
+> > -				df->profile->freq_table[i]);
+> > +
+> > +		len += sprintf(buf + len, "%10lu:", df->freq_table[i]);
+> >   		for (j = 0; j < max_state; j++)
+> >   			len += sprintf(buf + len, "%10u",
+> >   				df->stats.trans_table[(i * max_state) + j]);
+> > @@ -1743,7 +1740,7 @@ static ssize_t trans_stat_store(struct device *dev,
+> >   	if (!df->profile)
+> >   		return -EINVAL;
+> >   
+> > -	if (df->profile->max_state == 0)
+> > +	if (df->max_state == 0)
+> >   		return count;
+> >   
+> >   	err = kstrtoint(buf, 10, &value);
+> > @@ -1751,11 +1748,11 @@ static ssize_t trans_stat_store(struct device *dev,
+> >   		return -EINVAL;
+> >   
+> >   	mutex_lock(&df->lock);
+> > -	memset(df->stats.time_in_state, 0, (df->profile->max_state *
+> > +	memset(df->stats.time_in_state, 0, (df->max_state *
+> >   					sizeof(*df->stats.time_in_state)));
+> >   	memset(df->stats.trans_table, 0, array3_size(sizeof(unsigned int),
+> > -					df->profile->max_state,
+> > -					df->profile->max_state));
+> > +					df->max_state,
+> > +					df->max_state));
+> >   	df->stats.total_trans = 0;
+> >   	df->stats.last_update = get_jiffies_64();
+> >   	mutex_unlock(&df->lock);
+> > diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+> > index 72c67979ebe1..ce24a262aa16 100644
+> > --- a/drivers/devfreq/governor_passive.c
+> > +++ b/drivers/devfreq/governor_passive.c
+> > @@ -131,18 +131,18 @@ static int get_target_freq_with_devfreq(struct devfreq *devfreq,
+> >   		goto out;
+> >   
+> >   	/* Use interpolation if required opps is not available */
+> > -	for (i = 0; i < parent_devfreq->profile->max_state; i++)
+> > -		if (parent_devfreq->profile->freq_table[i] == *freq)
+> > +	for (i = 0; i < parent_devfreq->max_state; i++)
+> > +		if (parent_devfreq->freq_table[i] == *freq)
+> >   			break;
+> >   
+> > -	if (i == parent_devfreq->profile->max_state)
+> > +	if (i == parent_devfreq->max_state)
+> >   		return -EINVAL;
+> >   
+> > -	if (i < devfreq->profile->max_state) {
+> > -		child_freq = devfreq->profile->freq_table[i];
+> > +	if (i < devfreq->max_state) {
+> > +		child_freq = devfreq->freq_table[i];
+> >   	} else {
+> > -		count = devfreq->profile->max_state;
+> > -		child_freq = devfreq->profile->freq_table[count - 1];
+> > +		count = devfreq->max_state;
+> > +		child_freq = devfreq->freq_table[count - 1];
+> >   	}
+> >   
+> >   out:
+> > diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+> > index dc10bee75a72..34aab4dd336c 100644
+> > --- a/include/linux/devfreq.h
+> > +++ b/include/linux/devfreq.h
+> > @@ -148,6 +148,8 @@ struct devfreq_stats {
+> >    *		reevaluate operable frequencies. Devfreq users may use
+> >    *		devfreq.nb to the corresponding register notifier call chain.
+> >    * @work:	delayed work for load monitoring.
+> > + * @freq_table:		current frequency table used by the devfreq driver.
+> > + * @max_state:		count of entry present in the frequency table.
+> >    * @previous_freq:	previously configured frequency value.
+> >    * @last_status:	devfreq user device info, performance statistics
+> >    * @data:	Private data of the governor. The devfreq framework does not
+> > @@ -185,6 +187,9 @@ struct devfreq {
+> >   	struct notifier_block nb;
+> >   	struct delayed_work work;
+> >   
+> > +	unsigned long *freq_table;
+> > +	unsigned int max_state;
+> > +
+> >   	unsigned long previous_freq;
+> >   	struct devfreq_dev_status last_status;
+> >   
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+	Ansuel
