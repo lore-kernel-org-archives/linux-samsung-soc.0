@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDD0CCA47F
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Jul 2022 21:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378BDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 Jul 2022 21:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbiGBVha (ORCPT
+        id S230231AbiGBVhh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 2 Jul 2022 17:37:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44876 "EHLO
+        Sat, 2 Jul 2022 17:37:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229959AbiGBVha (ORCPT
+        with ESMTP id S230045AbiGBVhb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 2 Jul 2022 17:37:30 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBE6BC10
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Jul 2022 14:37:29 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id eq6so6965900edb.6
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Jul 2022 14:37:29 -0700 (PDT)
+        Sat, 2 Jul 2022 17:37:31 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447EDB855
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Jul 2022 14:37:30 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id g26so10055227ejb.5
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Jul 2022 14:37:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KxNfqvGh9Dkg/Ylz1u5K33HiEHJDlDTxa5n3A3ldybk=;
-        b=Me94KsgF2l25/VtjClrzXOurY47uvCOFfBo96GNvQ0dqyBJGRWw0HvuryG16InIHsg
-         42ueHTmWL+quG64V1G7HkyB5jmP+xIMed8FLl7P0xqZQgaOn4opESi/YnArBL8Yv3B+I
-         oO/Tf4+yWiRBPYAvjIDHFuTtSPEORWhHF67IltYBGUiqSUfXEdnUmvk22x1prSXi6pnj
-         Etc0PbRfKOZgZ9Iex/as0SOwJuP7HTIPwaYmwgHWudeNdflB8n+BMO3V+6xqHrU3gGLP
-         3UgWOFoCQ1iMyu2FWwqsYThO7W6BWAbl0FkEwOWAMqyOHVpcZi0VNPQINV7VLbc42jf9
-         Q50g==
+        bh=fjkLlnpo3rJV91gWG5Ub4TjaCmhb4e/5Gjwv7rGBuNk=;
+        b=BqX0hBiyoAeYzJvTN5zLo10CPIik6CQ1uuNpCfO3oq+RooTR3lviNeDHJH/TUUuJKS
+         wUSkXeozyQgNLTM/cvKl2jPJTrzSH0myVq5M75OZivSySF+gkQJ24NlIDVVgrMbqLVGX
+         wkH/4iI0lA4+uHrtf1nuF5wtDyjpFzVf22KES+ZXA7mX/AmqqcIl6kcFyx2NZ2gOLDlt
+         p9mSagqMQh+9sF09gikAhlQeJfk12Cqxl0F9W852boCwBSMqhYRwIUoyGMhDm7HXBKL7
+         g2SABFfGTM0PskN5Bd0582SNluuYumuv8oc6R2l95M6DBu0m7EL/q/aAicGaXR/wWln5
+         Y6Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KxNfqvGh9Dkg/Ylz1u5K33HiEHJDlDTxa5n3A3ldybk=;
-        b=wftDdXoAhVTIkxD+/2q8WB4hUqArR6+uFnCu5EkQ7Kvzk3lLR7kJPFNnPkS7D0jZs0
-         UNdW1l6aKwA3OUcIMAZk2JC/AQfzmxWviNVt7LWbIqalWLX0dGgVPofNFup1ZgGKel8a
-         AYa8vNZFPY0GitQF8y5h4PlApHLS8JNkvdil9gfBHzM3nHb6d34oOkoGGIaJiqxp27r0
-         MPK1Ia1qvQ18179v5gZOULP0lU+yN9hr4M5CChfcThlr5tIfIpEyhV2wGaxOwibXQEkN
-         uOUdhDQrjJAvFP7blDxNShUmU2zvFZbonL5ESOOsMIko9dUieBqoa+nsXuhLOV8vRNLH
-         R2gg==
-X-Gm-Message-State: AJIora8o5mc2dKko3kH+IS01fsIeQM7gXx9oGMdTnUg+M652gVFt0rCP
-        Bw7feY5fq7QwP0fe7oontwDQD1ZHahMGR+H/
-X-Google-Smtp-Source: AGRyM1tDG6oe9EA4EzWZYsEDwSxNJe8GVmy2A/vhPa0sP6AZ1JAP27WJ8w7/4ZBkoKA+0ySR6z8AtA==
-X-Received: by 2002:a05:6402:1774:b0:435:7fea:8c02 with SMTP id da20-20020a056402177400b004357fea8c02mr27855122edb.213.1656797847559;
-        Sat, 02 Jul 2022 14:37:27 -0700 (PDT)
+        bh=fjkLlnpo3rJV91gWG5Ub4TjaCmhb4e/5Gjwv7rGBuNk=;
+        b=1GgnnjGxrW2j22m13T9fU7Kszqm7riK1pweqJLKmD9QY2hUBqEAEpP8cK2cmqOEm3S
+         SRc8KIoQ6cfCgWk/UMDhs29M4J77t8k03LVtlVnaGqujuUpmBK03lBVARX8GpQyuYYON
+         StBSZzzD1+nK/jwm8OSEo4Y12mZqwddON4SbF4FxGT2y5H5DbhuQuNmov3A9VYGbVBen
+         YCegplfPGpeecTLFAAd56V+Wo1ty9g2gQizq8J/Jm8YPubO1CrNgfgPE72L71Dn/MnKo
+         XgoLFiEVTm/TAvp+PqggxMoi6355O7GmFD+u6IS+eTxHGvuXIvfK/uN4aFxrvquwvgYg
+         rb2g==
+X-Gm-Message-State: AJIora8YhuXL3en5079Nst7+5Q5hYYe4/WpMQHx0R/T3oI9XYD+c3TpN
+        8V5Sn2Rrbj70qtu7nYWkOQTCSg==
+X-Google-Smtp-Source: AGRyM1tIDyoc701JH7tqf6GG8NYNGAr1P57wdNbZb5l5imY87uRjSo8YlTS/OW6VjdvCTXTf8Tu4AA==
+X-Received: by 2002:a17:906:8a53:b0:72a:8a2d:db61 with SMTP id gx19-20020a1709068a5300b0072a8a2ddb61mr10421953ejc.674.1656797848790;
+        Sat, 02 Jul 2022 14:37:28 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id s8-20020a508dc8000000b00435c10b5daesm17297032edh.34.2022.07.02.14.37.27
+        by smtp.gmail.com with ESMTPSA id lo17-20020a170906fa1100b0072696b3a327sm9436558ejb.187.2022.07.02.14.37.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jul 2022 14:37:27 -0700 (PDT)
+        Sat, 02 Jul 2022 14:37:28 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -61,9 +61,9 @@ Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] iommu/exynos: Check if SysMMU v7 has VM registers
-Date:   Sun,  3 Jul 2022 00:37:22 +0300
-Message-Id: <20220702213724.3949-3-semen.protsenko@linaro.org>
+Subject: [PATCH 3/4] iommu/exynos: Use lookup based approach to access v7 registers
+Date:   Sun,  3 Jul 2022 00:37:23 +0300
+Message-Id: <20220702213724.3949-4-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220702213724.3949-1-semen.protsenko@linaro.org>
 References: <20220702213724.3949-1-semen.protsenko@linaro.org>
@@ -73,111 +73,94 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-SysMMU v7 can have Virtual Machine registers, which implement multiple
-translation domains. The driver should know if it's true or not, as VM
-registers shouldn't be accessed if not present. Read corresponding
-capabilities register to obtain that info, and store it in driver data.
+SysMMU v7 might have different register layouts (VM capable or non-VM
+capable). Check which layout is implemented in current SysMMU module and
+prepare the corresponding register table for futher usage. This way is
+faster and more elegant than checking corresponding condition (if it's
+VM or non-VM SysMMU) each time before accessing v7 registers. For now
+the register table contains only most basic registers needed to add the
+SysMMU v7 support.
+
+This patch is based on downstream work of next authors:
+  - Janghyuck Kim <janghyuck.kim@samsung.com>
+  - Daniel Mentz <danielmentz@google.com>
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- drivers/iommu/exynos-iommu.c | 42 ++++++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 6 deletions(-)
+ drivers/iommu/exynos-iommu.c | 46 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 28f8c8d93aa3..df6ddbebbe2b 100644
+index df6ddbebbe2b..47017e8945c5 100644
 --- a/drivers/iommu/exynos-iommu.c
 +++ b/drivers/iommu/exynos-iommu.c
-@@ -135,6 +135,9 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
- #define CFG_SYSSEL	(1 << 22) /* System MMU 3.2 only */
- #define CFG_FLPDCACHE	(1 << 20) /* System MMU 3.2+ only */
+@@ -180,6 +180,47 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
  
-+#define CAPA0_CAPA1_EXIST		BIT(11)
-+#define CAPA1_VCR_ENABLED		BIT(14)
-+
- /* common registers */
- #define REG_MMU_CTRL		0x000
- #define REG_MMU_CFG		0x004
-@@ -171,6 +174,10 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
- #define REG_V5_FAULT_AR_VA	0x070
- #define REG_V5_FAULT_AW_VA	0x080
- 
-+/* v7.x registers */
-+#define REG_V7_CAPA0		0x870
-+#define REG_V7_CAPA1		0x874
-+
  #define has_sysmmu(dev)		(dev_iommu_priv_get(dev) != NULL)
  
- static struct device *dma_dev;
-@@ -274,6 +281,9 @@ struct sysmmu_drvdata {
- 	unsigned int version;		/* our version */
- 
- 	struct iommu_device iommu;	/* IOMMU core handle */
++#define MMU_REG(data, idx)		\
++	((data)->sfrbase + (data)->regs[idx].off)
++#define MMU_VM_REG(data, idx, vmid)	\
++	(MMU_REG(data, idx) + (vmid) * (data)->regs[idx].mult)
 +
-+	/* v7 fields */
-+	bool has_vcr;			/* virtual machine control register */
++enum {
++	REG_SET_NON_VM,
++	REG_SET_VM,
++	MAX_REG_SET
++};
++
++enum {
++	IDX_CTRL_VM,
++	IDX_CFG_VM,
++	IDX_FLPT_BASE,
++	IDX_ALL_INV,
++	MAX_REG_IDX
++};
++
++struct sysmmu_vm_reg {
++	unsigned int off;	/* register offset */
++	unsigned int mult;	/* VM index offset multiplier */
++};
++
++static const struct sysmmu_vm_reg sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
++	/* Default register set (non-VM) */
++	{
++		/*
++		 * SysMMUs without VM support do not have CTRL_VM and CFG_VM
++		 * registers. Setting the offsets to 1 will trigger an unaligned
++		 * access exception.
++		 */
++		{0x1}, {0x1}, {0x000c}, {0x0010},
++	},
++	/* VM capable register set */
++	{
++		{0x8000, 0x1000}, {0x8004, 0x1000}, {0x800c, 0x1000},
++		{0x8010, 0x1000},
++	},
++};
++
+ static struct device *dma_dev;
+ static struct kmem_cache *lv2table_kmem_cache;
+ static sysmmu_pte_t *zero_lv2_table;
+@@ -284,6 +325,7 @@ struct sysmmu_drvdata {
+ 
+ 	/* v7 fields */
+ 	bool has_vcr;			/* virtual machine control register */
++	const struct sysmmu_vm_reg *regs; /* register set */
  };
  
  static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
-@@ -364,11 +374,7 @@ static void __sysmmu_disable_clocks(struct sysmmu_drvdata *data)
- 
- static void __sysmmu_get_version(struct sysmmu_drvdata *data)
- {
--	u32 ver;
--
--	__sysmmu_enable_clocks(data);
--
--	ver = readl(data->sfrbase + REG_MMU_VERSION);
-+	const u32 ver = readl(data->sfrbase + REG_MMU_VERSION);
- 
- 	/* controllers on some SoCs don't report proper version */
- 	if (ver == 0x80000001u)
-@@ -378,6 +384,29 @@ static void __sysmmu_get_version(struct sysmmu_drvdata *data)
- 
- 	dev_dbg(data->sysmmu, "hardware version: %d.%d\n",
- 		MMU_MAJ_VER(data->version), MMU_MIN_VER(data->version));
-+}
-+
-+static bool __sysmmu_has_capa1(struct sysmmu_drvdata *data)
-+{
-+	const u32 capa0 = readl(data->sfrbase + REG_V7_CAPA0);
-+
-+	return capa0 & CAPA0_CAPA1_EXIST;
-+}
-+
-+static void __sysmmu_get_vcr(struct sysmmu_drvdata *data)
-+{
-+	const u32 capa1 = readl(data->sfrbase + REG_V7_CAPA1);
-+
-+	data->has_vcr = capa1 & CAPA1_VCR_ENABLED;
-+}
-+
-+static void sysmmu_get_hw_info(struct sysmmu_drvdata *data)
-+{
-+	__sysmmu_enable_clocks(data);
-+
-+	__sysmmu_get_version(data);
-+	if (MMU_MAJ_VER(data->version) >= 7 && __sysmmu_has_capa1(data))
-+		__sysmmu_get_vcr(data);
+@@ -407,6 +449,10 @@ static void sysmmu_get_hw_info(struct sysmmu_drvdata *data)
+ 	__sysmmu_get_version(data);
+ 	if (MMU_MAJ_VER(data->version) >= 7 && __sysmmu_has_capa1(data))
+ 		__sysmmu_get_vcr(data);
++	if (data->has_vcr)
++		data->regs = sysmmu_regs[REG_SET_VM];
++	else
++		data->regs = sysmmu_regs[REG_SET_NON_VM];
  
  	__sysmmu_disable_clocks(data);
  }
-@@ -623,6 +652,8 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
- 	data->sysmmu = dev;
- 	spin_lock_init(&data->lock);
- 
-+	sysmmu_get_hw_info(data);
-+
- 	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
- 				     dev_name(data->sysmmu));
- 	if (ret)
-@@ -634,7 +665,6 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, data);
- 
--	__sysmmu_get_version(data);
- 	if (PG_ENT_SHIFT < 0) {
- 		if (MMU_MAJ_VER(data->version) < 5) {
- 			PG_ENT_SHIFT = SYSMMU_PG_ENT_SHIFT;
 -- 
 2.30.2
 
