@@ -2,149 +2,117 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625BFC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jul 2022 03:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D039C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Jul 2022 10:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232216AbiGCD7T (ORCPT
+        id S232367AbiGCKrk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 2 Jul 2022 23:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
+        Sun, 3 Jul 2022 06:47:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232243AbiGCD63 (ORCPT
+        with ESMTP id S232373AbiGCKrb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 2 Jul 2022 23:58:29 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A8A8BF41
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Jul 2022 20:57:36 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id i126so8957077oih.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Jul 2022 20:57:35 -0700 (PDT)
+        Sun, 3 Jul 2022 06:47:31 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA986431;
+        Sun,  3 Jul 2022 03:47:22 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id z41so8265369ede.1;
+        Sun, 03 Jul 2022 03:47:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=S2PQt3HxkBxUYjC+VtlXEq4NoCpstcc7waq7Ie+ZSSw=;
-        b=LcxkuQlcBom6K7cYz2cObFcKqvmFziGvIewxr5CVdQDXpiVs4Qe1p9/ma3MjpEBl0m
-         LdiaLTeEwxUPT1iylGK2uBRwa96fvGW0y6QRWq5F+NZCFL6N1e6TXJlkAQCGEx5XaKBZ
-         bMXT/f+ogoq6vs4TCzgBdramsCAz0nmWRD4br2nzTC8FHRTsVjgo15di4+fdqYbsWQIV
-         4/vga7HK3myEs7r2HcBsoYeS5QL/sXXpo879hazt2tPiyyJMP+yzm9vvBM9i2od8IqAh
-         LSpFzHsWhZD+5n1ToMnLkj0S4zSlSFpghH27+UmeVqnGiX+vxJHJBYAk1fLnQfBbxsFF
-         J2sg==
+        d=gmail.com; s=20210112;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :content-transfer-encoding:user-agent:mime-version;
+        bh=xtZe00jcrHCWayegr58xFfUp2h3js8Bof36AjGw58FU=;
+        b=LHTZ6sd9Ylw0mhtbQPt/yWf3J9vu7LgLvrQ2hPvUPpfNDO/Mv4xdqmhAlOM4oVSz9+
+         yP+pH7VDq5J0bfVfFX/4ofM9et9VoauQO6/67ZpO5wlZ7/nxqo8QY/sZW9qbGIMFESzJ
+         y2GhjpLU1+yjhJ3o7oruqb/tO9oUHnpq3BD1WJwxTuMrbGBwkysz2KQxInZkjmd2+HKo
+         9hnAbYIlJrkOlO7IkbhGKjceeqBoVi9MdS994NI3MopaLTCo2YpYK4VAArGhkCsc/AN0
+         scmcnr6I9vskBSXS5H3VqnLI42uKWD0fhbgUMkZD+dkgc7swGyy/1Rn/cwisYL3CB/z3
+         es1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S2PQt3HxkBxUYjC+VtlXEq4NoCpstcc7waq7Ie+ZSSw=;
-        b=7bggHHkyBrlyfZt7M8YZZXtM5omiaoVm/dDYA2Db2fS+sg+Whz3u3vFu/Y92g4/51U
-         QaV5pW93hpkMR26ytXKHfiipTmEEud0ZpPrwmZHB1NceKH9j2bCiM8W6DEmaIOSxT9Ii
-         xwRovPlPKVxisjPnsKetH3OXbfWM2I0jo7vmX1YKnIhtuzS1MTFzb4sAgnbULuP35b59
-         gVpGpE3u1/MgxGH1UHe5yije5UGmVmL9TWzqyxHLWie9CDU0tK2MeMXj63Ny360lD64q
-         y3VpabHF5oRYbZTI3tEluK3L8PcDu2PSsd7CcLpfAPOM58cSwFRmQkRqPGT8R4fvtKcL
-         06yQ==
-X-Gm-Message-State: AJIora/RVIFNYkbQ+mYyh1PSl5LdTAlJAI+tKg1C9oe7WuIB1XRHURUw
-        wg6+3ZZQgFe1Q6JHpdpqKIo2Pg==
-X-Google-Smtp-Source: AGRyM1vPsLVLSd2YTyZeBHDlHn82rVPH0GlTr+Bdo5oMuTiVoQgn60DY/3PL3sh3O2ct5ts3e02W/w==
-X-Received: by 2002:a05:6808:1b25:b0:32e:e59c:3901 with SMTP id bx37-20020a0568081b2500b0032ee59c3901mr13881725oib.186.1656820650648;
-        Sat, 02 Jul 2022 20:57:30 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 25-20020aca0f19000000b0032e5d0b5d5fsm12965910oip.58.2022.07.02.20.57.28
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:content-transfer-encoding:user-agent:mime-version;
+        bh=xtZe00jcrHCWayegr58xFfUp2h3js8Bof36AjGw58FU=;
+        b=uhnbO9nDdzmNSYNLVjvQZZnuj4lUUgGNwBnMG0yWpiia69iBsr3Sl9RYWh4S0L07g7
+         kHSDuCEHQcMapo026/pSsB3JaqAAhnmK/OhE4ZbzieSiRJGBjfZ36oaQhLfXNSvz7EpG
+         0+BK4nI2o32g2zYHOZc2ZakMfQNZBqvzYjWI8wq1rC9FiS1GttOnRkObVa2LxQEfc/7H
+         uo44e0LUOMsZnIp0xtHcET4X2XrYWCQ9trmRD6RFn7gcEx8xw+vTP1fZa44GkLwpoPNP
+         N5xebckXdwu1JHgwbDJNwG/ADHg28x2aGA7qwgfTtxm5wr1B31q2NCxJya4wgRV++3zc
+         9XKA==
+X-Gm-Message-State: AJIora+xFTipZ1fIVoKI5sW4CPJyhXq0jaifjL7t5YvXcVcprnQy9Sjx
+        Tf4w8p2nfSrgiwPPU5PUGuTkruDeAtQpOA==
+X-Google-Smtp-Source: AGRyM1tGVPJyIq3szdnRuDtIIMLXe+/hYDrptJIGBirIXbjThF7HJVmbD5r7tXNhzxzCPtbySChhdA==
+X-Received: by 2002:a05:6402:1e88:b0:435:bf05:f0f with SMTP id f8-20020a0564021e8800b00435bf050f0fmr31256381edf.2.1656845241327;
+        Sun, 03 Jul 2022 03:47:21 -0700 (PDT)
+Received: from ?IPv6:2a02:ab88:368f:2080:5d6e:322:57b6:5f03? ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
+        by smtp.gmail.com with ESMTPSA id kw24-20020a170907771800b0072a3216c23asm5791972ejc.154.2022.07.03.03.47.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jul 2022 20:57:29 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc:     Li Yang <leoyang.li@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Scott Branden <sbranden@broadcom.com>,
-        linux-rockchip@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-tegra@vger.kernel.org,
-        Khuong Dinh <khuong@os.amperecomputing.com>,
-        linux-gpio@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Heiko Stuebner <heiko@sntech.de>, Nishanth Menon <nm@ti.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Peter Rosin <peda@axentia.se>,
+        Sun, 03 Jul 2022 03:47:20 -0700 (PDT)
+Message-ID: <67943ec4dcfe85d6d616a5507437d99f6c5638a2.camel@gmail.com>
+Subject: Re: [PATCH 0/4] iommu/exynos: Add basic support for SysMMU v7
+From:   David Virag <virag.david003@gmail.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
         linux-arm-kernel@lists.infradead.org,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        openbmc@lists.ozlabs.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Andy Gross <agross@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
-        linux-omap@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Ray Jui <rjui@broadcom.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-input@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: Re: (subset) [PATCH v2 00/48] dt-bindings: input: gpio-keys: rework matching children
-Date:   Sat,  2 Jul 2022 22:56:25 -0500
-Message-Id: <165682055971.445910.5189932421143220440.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
-References: <20220609113721.379932-1-krzysztof.kozlowski@linaro.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sun, 03 Jul 2022 14:47:20 +0200
+In-Reply-To: <CAPLW+4kYbG7PRYo_L6N5xMa+F9DFBpyph4B+zb2R4kBbE3EKHg@mail.gmail.com>
+References: <20220702213724.3949-1-semen.protsenko@linaro.org>
+         <CAPLW+4kYbG7PRYo_L6N5xMa+F9DFBpyph4B+zb2R4kBbE3EKHg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 9 Jun 2022 13:37:21 +0200, Krzysztof Kozlowski wrote:
-> Merging
-> =======
-> 1. dt-bindings: rebased on top of Rob's:
->    https://lore.kernel.org/all/20220608211207.2058487-1-robh@kernel.org/
-> 
-> 2. DTS patches are independent. They can be picked up directly by sub-arch
->    maintainers, by Arnd or Olof, or eventually by me (if you wish).
-> 
-> [...]
+On Sun, 2022-07-03 at 00:48 +0300, Sam Protsenko wrote:
+[...]
+> Hi Marek,
+>=20
+> As I understand, you have some board with SysMMU v7, which is not VM
+> capable (judging from the patches you shared earlier). Could you
+> please somehow verify if this series works fine for you? For example,
+> this testing driver [1] can be helpful.
+>=20
+> Thanks!
+>=20
+> [1]
+> https://github.com/joe-skb7/linux/commit/bbadd46fa525fe1fef2ccbdfff81f7d2=
+9caf0506
 
-Applied, thanks!
+Hi Sam,
 
-[27/48] arm64: dts: qcom: align gpio-key node names with dtschema
-        commit: b08f5cbd69dcd25f5ab2a0798fe3836a97a9d7c6
-[28/48] arm64: dts: qcom: correct gpio-keys properties
-        commit: 5a4b0b853a2914403746b0a1decab695202ff242
-[29/48] arm64: dts: qcom: sdm630-sony-xperia-nile: drop unneeded status from gpio-keys
-        commit: 9d8840f6ee426b6dfcb65bdf39e2898652e2b1e5
-[30/48] arm64: dts: qcom: align led node names with dtschema
-        commit: 3cfe94d660a8ebc19e78ea0a4781d7e9a1054c65
+Not Marek here, but I wanted to try this on my jackpotlte (Exynos
+7885). The driver reports it's DPU sysmmu as version 7.2, and manually
+reading the capabilities registers it looks like it has the 2nd
+capability register but not the VM capability.
+
+After applying your patches, adding your test driver (with SYSMMU_BASE
+corrected to 7885 value), and adding the sysmmu to dt, I tried to cat
+the test file that it creates in debugfs and I got an SError kernel
+panic.
+
+I tried tracing where the SError happens and it looks like it's this
+line:
+	/* Preload for emulation */
+	iowrite32(rw | vpn, obj->reg_base + MMU_EMU_PRELOAD);
+
+Trying to read the EMU registers using devmem results in a "Bus error".
+
+Could these emulation registers be missing from my SysMMU? Do you have
+any info on what version should have it? Or maybe some capability bit?
+I'll try testing it with DECON/DPP later and see if it works that way.
 
 Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+David
