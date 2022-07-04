@@ -2,41 +2,59 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B334C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jul 2022 10:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB10C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jul 2022 11:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232642AbiGDKe4 (ORCPT
+        id S233824AbiGDLDR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Jul 2022 06:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60160 "EHLO
+        Mon, 4 Jul 2022 07:03:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232403AbiGDKe4 (ORCPT
+        with ESMTP id S233132AbiGDLDQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Jul 2022 06:34:56 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F83E0C2;
-        Mon,  4 Jul 2022 03:34:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id F0DC8CE1370;
-        Mon,  4 Jul 2022 10:34:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D08C3411E;
-        Mon,  4 Jul 2022 10:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656930892;
-        bh=VS/AYyc+ImwYSCRUDxdX3kVUKuEf+5x1uWoCR/Jw37I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZnJxJbKncct82q2it3jfl8yPLN5Vl5Wz/BK1fPwb/yTgt7WEZq3w0zNLM/LbWkiPH
-         n0kOiBJzrZNoOoER3EdZlwhf5cWw6vKZY/uVBlYUKc4z68mFmywcuyE1TmbqJTOuaG
-         9L8++iXvUoN/tQzBlhWLoY9vWNQ3LvKkCJrYy9QsFiJ/JN2SFKOnihlmwdeCHUKSVi
-         TpCSDoCDRZLuJSrKbBikGl/hxv2GMp1I5zX6PnDoAjTqw0TYLMbk1Js4w64s5SEXUt
-         ssQ3VTVPWk5KEQtKEKmyW5nwaMZn3q+ExP9jUT9N1QvL9cBgfopUJCk2JFIRxNfnh6
-         0/M4YezvGshAQ==
-Date:   Mon, 4 Jul 2022 11:34:46 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
+        Mon, 4 Jul 2022 07:03:16 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A04BCDD0;
+        Mon,  4 Jul 2022 04:03:15 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id g39-20020a05600c4ca700b003a03ac7d540so7735829wmp.3;
+        Mon, 04 Jul 2022 04:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=references:from:to:cc:subject:date:in-reply-to:message-id
+         :mime-version;
+        bh=tcELFetdYGA2DUMvfbpy/EbdVD0LihfAQ4JNPb6Poww=;
+        b=TTnj9RnTY/Fil7PCVEcwlz/5zbedogy6o3+qZn4x4ph014UGq1I8N/4ije3jqjdWyH
+         PqhdysPAM5VKsiRpCQoiHjgR7B0M+3JZCy7KjgpR9YYGSOm4T+wMR4nMnf3l8btVz1IT
+         8XTN+2pb/DUQEHumEXsx9fWiqiclpDvZd/EG0orzFet/0UzpkQPXpUfvK4pGVOM7QNqR
+         xQzr3ulVUJOTEvE+Vno9l5tlMeeroyyf48UQASHZgQu76/FvdncVGWNRz4tD3irTQLNm
+         ctiLIbvZQgVj5foxb7EkisN+yIDR2PrLt/v5x7qgKUtsfrQ701qOeLdJrIe7jUzWfPmQ
+         M6MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:references:from:to:cc:subject:date:in-reply-to
+         :message-id:mime-version;
+        bh=tcELFetdYGA2DUMvfbpy/EbdVD0LihfAQ4JNPb6Poww=;
+        b=qukgMBasuoBtLQUoZ0+TpYH8e3D9hAPj9tV5YAWMZEYUmO/6Mn902LO5BvFglxAHiB
+         DjmyYvqksk7Tgf7NLoWP2ZJnjk+SGFfSzGGY0eaqPEmuP/wH5TsznOFD9jj6cle6Vi6L
+         D1TLURhoMC0mUJpaurbKBLHYV3gBYA3Rc/umu/QNZN6QJ1yxxIOTY6fcbnraA3/WXhJ5
+         fwEr4ILddBsoeUnMvgoLYexShSam4hL5xXzI1V+QoSHhdeanfKEdIL8379TO7cuSP1F7
+         RR50FWP6mzbk9lCLTSjnrR3L00Y3oM7TBEjekt8E0cLISSJ7PMEdEJR4X7ykC86EMPA1
+         ujKQ==
+X-Gm-Message-State: AJIora8KTQItQtkimi3a0bMTpQ07d2YAuOuRriezcSqQVJCn4C64oEzx
+        b+fYC80wwNbn+fKoTLVw0GI=
+X-Google-Smtp-Source: AGRyM1tXgagNme9jWgH4512rljB9jn/pOVDZPYpFUxLXkdosIaPbcj3rI9+d70jI/s9usfstzfVJww==
+X-Received: by 2002:a1c:f60f:0:b0:3a0:3e0c:1de1 with SMTP id w15-20020a1cf60f000000b003a03e0c1de1mr33084700wmc.56.1656932594082;
+        Mon, 04 Jul 2022 04:03:14 -0700 (PDT)
+Received: from localhost (92.40.202.48.threembb.co.uk. [92.40.202.48])
+        by smtp.gmail.com with ESMTPSA id q5-20020adff945000000b0021b9585276dsm29358435wrr.101.2022.07.04.04.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 04:03:13 -0700 (PDT)
+References: <20220703112101.24493-1-aidanmacdonald.0x0@gmail.com>
+ <CAHp75VdjPVzOQ15S93GDnYz3cUFkHF-sF97f5GhoDEHdM+iFDQ@mail.gmail.com>
+ <YsLCRvuy8G6W6qku@sirena.org.uk>
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -45,45 +63,26 @@ Cc:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 Subject: Re: [PATCH v3 00/12] regmap-irq cleanups and refactoring
-Message-ID: <YsLCRvuy8G6W6qku@sirena.org.uk>
-References: <20220703112101.24493-1-aidanmacdonald.0x0@gmail.com>
- <CAHp75VdjPVzOQ15S93GDnYz3cUFkHF-sF97f5GhoDEHdM+iFDQ@mail.gmail.com>
+Date:   Mon, 04 Jul 2022 11:58:41 +0100
+In-reply-to: <YsLCRvuy8G6W6qku@sirena.org.uk>
+Message-ID: <LIUiHsmHaJNAcy8tSd153xDy2GYqEjG8@localhost>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="po0Y6nYHTKzOgS/W"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VdjPVzOQ15S93GDnYz3cUFkHF-sF97f5GhoDEHdM+iFDQ@mail.gmail.com>
-X-Cookie: MERYL STREEP is my obstetrician!
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---po0Y6nYHTKzOgS/W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mark Brown <broonie@kernel.org> writes:
 
-On Sun, Jul 03, 2022 at 04:27:49PM +0200, Andy Shevchenko wrote:
+> On Sun, Jul 03, 2022 at 04:27:49PM +0200, Andy Shevchenko wrote:
+>
+>> Obviously you haven't rebased it on top of
+>> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/log/?h=for-5.20
+>> so it may not be applied.
+>
+> Yes, please send incremental patches against what's already applied.
 
-> Obviously you haven't rebased it on top of
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git/log/?h=for-5.20
-> so it may not be applied.
-
-Yes, please send incremental patches against what's already applied.
-
---po0Y6nYHTKzOgS/W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmLCwkYACgkQJNaLcl1U
-h9BuNQf/cgZs3YjjaGb2PGTakFwrI3boro+UbBxrBJxcYGVqBy+ZjNzVActDW87f
-BzDksUw3D935WSmod8q8r0EuJa8RYp8z/+Gl8s/EhzBWoqBf9/I0nZPFNbX18dJW
-Hre3I4WGQBv73viStUwrzEmqJBYtLJv1VI3tnGvlDDvlp+b704HZntdT9eHvIVrm
-XrQ2KEvmr4I/YU6g1rTSIl7//Qumy9hfiPloUFLeappKroCpzNgeYp+6Ujep2Cou
-947r/bywxWfhg+GWwwYAowSqZpH5TtKOQCuzUWEXhPlT6kH9A9mhJE50qoBGbiCs
-r1FhoYneE/mFesiBzJcN8s8MFR4yAQ==
-=/On5
------END PGP SIGNATURE-----
-
---po0Y6nYHTKzOgS/W--
+Alright, I'll send a patch along shortly. I thought it was fine to drop
+patches from -next if problems show up so I had assumed it was better to
+just replace the series.
