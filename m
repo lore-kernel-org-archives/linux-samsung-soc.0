@@ -2,153 +2,142 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FCFC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Jul 2022 04:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F3CC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Jul 2022 06:25:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbiGEEeo (ORCPT
+        id S229696AbiGEGZd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 00:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        Tue, 5 Jul 2022 02:25:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiGEEen (ORCPT
+        with ESMTP id S229477AbiGEGZc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Jul 2022 00:34:43 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADD513CEE
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Jul 2022 21:34:42 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id m2so10026516plx.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Jul 2022 21:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tmakuE4H8rZY3d6iU39dHrEeioyPOU2VRNgXbaFPqgw=;
-        b=u7aod0CrQMXqVD1ebu7kjSt/WcQQQkg7j6oHslRmkt+QTw/T612mRYZc8qxkE8om3O
-         EQM+h21JvLKnCzpiIq4xgwUXzQLpQJOdCt1694l5ZM1mQPkjlLZ33DO+Dp91Uof0icTc
-         2eCH31nP6U7iVCED/tU23T/actjjYFmw5UZLP7t0DKiBKU/nAR7cp0MXJlqAa8wI742A
-         EQR0aX38sVjulvZcqY4l2O71LHN3k6M9c36toeseQylQoLjWGDZYqtxqvh3+p0Tozz/N
-         XPHPZJPQNycYMom8jxQv3xsFNeAKZLSk+yfh0F9BKr8UZwwsSvArNI8r2sZRhz3icFzn
-         3CaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tmakuE4H8rZY3d6iU39dHrEeioyPOU2VRNgXbaFPqgw=;
-        b=pHa+iIiCgxxGUP/Dz+vHJoJ0WFz6HartMeJWwWBA/SqEdBjmMFF1Gc7WVJ0O9KB4xJ
-         F4rDNFFeL/OVVQ3SjaTCVesy/gMFuJBjR1L5+vhMqNEHDOJY36xxtk8/4zhtEUUu6CJr
-         7KKwt8E9J6eV6tbiuyPdXCex7RX2Z9ULS3nqQujFs14+JOd4FZGaWvV057W85jCKloSP
-         4YbGy0+Kmu2ol9eNo9iLMmT7pTrajrvIYzUCYST+yNu3JDnWrPFgjrSj9fDJnZSnME6o
-         kjtslIlVRwIpY8t1q+gA6NPAhQrczBs9qlLngVO27x89NrTbXaAF/LY12wxPdeuKda5j
-         oVaQ==
-X-Gm-Message-State: AJIora9yKy60v9wvAt1uyY3XfJVNRYP2hM75IIA98gBIhmRI77jGeuTO
-        T0BctsLNZ7XJ2sIfAQOSZdj2pQ==
-X-Google-Smtp-Source: AGRyM1sRTY3jhmXML4zUAHI23oIyvbgNG1ONSMMqox+hipkmWXEtiTEid5mCOhRsoVVHI5UrE7Q83A==
-X-Received: by 2002:a17:90b:4a4f:b0:1ef:90fb:35a5 with SMTP id lb15-20020a17090b4a4f00b001ef90fb35a5mr5846805pjb.161.1656995682324;
-        Mon, 04 Jul 2022 21:34:42 -0700 (PDT)
-Received: from localhost ([122.171.18.80])
-        by smtp.gmail.com with ESMTPSA id p26-20020a056a0026da00b005251e2b53acsm21651540pfw.116.2022.07.04.21.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 21:34:41 -0700 (PDT)
-Date:   Tue, 5 Jul 2022 10:04:39 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Steven Price <steven.price@arm.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tue, 5 Jul 2022 02:25:32 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E0AA1AB;
+        Mon,  4 Jul 2022 23:25:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5AFF5CE1A17;
+        Tue,  5 Jul 2022 06:25:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E58FC341C7;
+        Tue,  5 Jul 2022 06:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657002327;
+        bh=gT9vnVWwfoaHB/KlAQfPukD6zbCjQfi0xC2TgLz8Ixg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QQiyORgpEmTuZ7hRd4rpivPxBCRE9sZIIC3psJ10k8AnU9FSkYEBIWeO6oHhY+2bT
+         gOWu9onqD66WfCeviF8oHCZ4jqy2FvULccPniYlVH80npXuF+UKUaum0uGZlqKjRWu
+         75jMaHvqwZFIP0EhiwBoBVV6lF+8Vs6WCE+ZVxQKZp6rHFOkbdsKvA3DQpCp9Zv9iV
+         fDEDKGK6y+u12lk2sLoWMg61Kx7XNzlNm177NRMQVvo2VoxDUoWeqEopmswjhyzomu
+         LJDeH7sOhMyyk1OreB6khpri975grUltDUHjZ3AfmQ5Zz1G3sN4uFrXHoebb9NyyBr
+         ZCFrhwe33Aslg==
+Date:   Tue, 5 Jul 2022 11:55:23 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-phy@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Qiang Yu <yuq825@gmail.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
- NULL terminated list
-Message-ID: <20220705043439.xlrxusxrhwjupiyt@vireshk-i7>
-References: <cover.1656935522.git.viresh.kumar@linaro.org>
- <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
- <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 1/2] phy: samsung: phy-exynos-pcie: sanitize
+ init/power_on callbacks
+Message-ID: <YsPZU83Jl/kcqR8h@matsya>
+References: <CGME20220628220437eucas1p2c478751458323f93a71050c4a949f12e@eucas1p2.samsung.com>
+ <20220628220409.26545-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
+In-Reply-To: <20220628220409.26545-1-m.szyprowski@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04-07-22, 15:35, Steven Price wrote:
-> I have to say the 'new improved' list ending with NULL approach doesn't
-> work out so well for Panfrost. We already have to have a separate
-> 'num_supplies' variable for devm_regulator_bulk_get() /
-> regulator_bulk_{en,dis}able(), so the keeping everything in sync
-> argument is lost here.
+On 29-06-22, 00:04, Marek Szyprowski wrote:
+> The exynos-pcie driver called phy_power_on() and then phy_init() for some
+> historical reasons. However the generic PHY framework assumes that the
+> proper sequence is to call phy_init() first, then phy_power_on(). The
+> operations done by both functions should be considered as one action and
+> as such they are called by the exynos-pcie driver (without doing anything
+> between them). The initialization is just a sequence of register writes,
+> which cannot be altered, without breaking the hardware operation.
 > 
-> I would suggest added the NULL on the end of the lists in panfrost_drv.c
-> but then it would break the use of ARRAY_SIZE() to automagically keep
-> the length correct...
+> To match the generic PHY framework requirement, simply move all register
+> writes to the phy_init()/phy_exit() and drop power_on()/power_off()
+> callbacks. This way the driver will also work with the old (incorrect)
+> PHY initialization call sequence.
 
-Actually we can still make it work.
+Is the plan to merge thru pcie tree?
 
-> For now the approach isn't too bad because Panfrost doesn't yet support
-> enabling devfreq with more than one supply. But that array isn't going
-> to work so nicely when that restriction is removed.
 > 
-> The only sane way I can see of handling this in Panfrost would be
-> replicating the loop to count the supplies in the Panfrost code which
-> would allow dropping num_supplies from struct panfrost_compatible and
-> then supply_names in the same struct could be NULL terminated ready for
-> devm_pm_opp_set_regulators().
+> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/phy/samsung/phy-exynos-pcie.c | 25 +++++++++----------------
+>  1 file changed, 9 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
+> index 578cfe07d07a..53c9230c2907 100644
+> --- a/drivers/phy/samsung/phy-exynos-pcie.c
+> +++ b/drivers/phy/samsung/phy-exynos-pcie.c
+> @@ -51,6 +51,13 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
+>  {
+>  	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+>  
+> +	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
+> +			   BIT(0), 1);
+> +	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
+> +			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
+> +	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
+> +			   PCIE_REFCLK_GATING_EN, 0);
+> +
 
-Or doing this, which will simplify both the cases.
+why not retain exynos5433_pcie_phy_power_on() and call it from here and
+drop in ops. It would be clear to reader that these are for turning on
+the phy...
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index 7fcbc2a5b6cd..b3b55565b8ef 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -625,24 +625,29 @@ static int panfrost_remove(struct platform_device *pdev)
-        return 0;
- }
- 
--static const char * const default_supplies[] = { "mali" };
-+/*
-+ * The OPP core wants the supply names to be NULL terminated, but we need the
-+ * correct num_supplies value for regulator core. Hence, we NULL terminate here
-+ * and then initialize num_supplies with ARRAY_SIZE - 1.
-+ */
-+static const char * const default_supplies[] = { "mali", NULL };
- static const struct panfrost_compatible default_data = {
--       .num_supplies = ARRAY_SIZE(default_supplies),
-+       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
-        .supply_names = default_supplies,
-        .num_pm_domains = 1, /* optional */
-        .pm_domain_names = NULL,
- };
- 
- static const struct panfrost_compatible amlogic_data = {
--       .num_supplies = ARRAY_SIZE(default_supplies),
-+       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
-        .supply_names = default_supplies,
-        .vendor_quirk = panfrost_gpu_amlogic_quirk,
- };
- 
--static const char * const mediatek_mt8183_supplies[] = { "mali", "sram" };
-+static const char * const mediatek_mt8183_supplies[] = { "mali", "sram", NULL };
- static const char * const mediatek_mt8183_pm_domains[] = { "core0", "core1", "core2" };
- static const struct panfrost_compatible mediatek_mt8183_data = {
--       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies),
-+       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies) - 1,
-        .supply_names = mediatek_mt8183_supplies,
-        .num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
-        .pm_domain_names = mediatek_mt8183_pm_domains,
+>  	regmap_update_bits(ep->fsysreg,	PCIE_EXYNOS5433_PHY_COMMON_RESET,
+>  			   PCIE_PHY_RESET, 1);
+>  	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
+> @@ -109,20 +116,7 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
+>  	return 0;
+>  }
+>  
+> -static int exynos5433_pcie_phy_power_on(struct phy *phy)
+> -{
+> -	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> -
+> -	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
+> -			   BIT(0), 1);
+> -	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
+> -			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
+> -	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
+> -			   PCIE_REFCLK_GATING_EN, 0);
+> -	return 0;
+> -}
+> -
+> -static int exynos5433_pcie_phy_power_off(struct phy *phy)
+> +static int exynos5433_pcie_phy_exit(struct phy *phy)
+>  {
+>  	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+>  
+> @@ -135,8 +129,7 @@ static int exynos5433_pcie_phy_power_off(struct phy *phy)
+>  
+>  static const struct phy_ops exynos5433_phy_ops = {
+>  	.init		= exynos5433_pcie_phy_init,
+> -	.power_on	= exynos5433_pcie_phy_power_on,
+> -	.power_off	= exynos5433_pcie_phy_power_off,
+> +	.exit		= exynos5433_pcie_phy_exit,
+>  	.owner		= THIS_MODULE,
+>  };
+>  
+> -- 
+> 2.17.1
 
 -- 
-viresh
+~Vinod
