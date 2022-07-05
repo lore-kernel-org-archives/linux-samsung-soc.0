@@ -2,36 +2,57 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF5CC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Jul 2022 14:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FCFC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Jul 2022 04:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234267AbiGDOfN (ORCPT
+        id S229521AbiGEEeo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Jul 2022 10:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35212 "EHLO
+        Tue, 5 Jul 2022 00:34:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232123AbiGDOfM (ORCPT
+        with ESMTP id S229448AbiGEEen (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Jul 2022 10:35:12 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 081F41136;
-        Mon,  4 Jul 2022 07:35:10 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBF9423A;
-        Mon,  4 Jul 2022 07:35:10 -0700 (PDT)
-Received: from [10.57.41.70] (unknown [10.57.41.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 419853F66F;
-        Mon,  4 Jul 2022 07:35:07 -0700 (PDT)
-Message-ID: <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
-Date:   Mon, 4 Jul 2022 15:35:05 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
- NULL terminated list
-Content-Language: en-GB
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Tue, 5 Jul 2022 00:34:43 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADD513CEE
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Jul 2022 21:34:42 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id m2so10026516plx.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Jul 2022 21:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=tmakuE4H8rZY3d6iU39dHrEeioyPOU2VRNgXbaFPqgw=;
+        b=u7aod0CrQMXqVD1ebu7kjSt/WcQQQkg7j6oHslRmkt+QTw/T612mRYZc8qxkE8om3O
+         EQM+h21JvLKnCzpiIq4xgwUXzQLpQJOdCt1694l5ZM1mQPkjlLZ33DO+Dp91Uof0icTc
+         2eCH31nP6U7iVCED/tU23T/actjjYFmw5UZLP7t0DKiBKU/nAR7cp0MXJlqAa8wI742A
+         EQR0aX38sVjulvZcqY4l2O71LHN3k6M9c36toeseQylQoLjWGDZYqtxqvh3+p0Tozz/N
+         XPHPZJPQNycYMom8jxQv3xsFNeAKZLSk+yfh0F9BKr8UZwwsSvArNI8r2sZRhz3icFzn
+         3CaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tmakuE4H8rZY3d6iU39dHrEeioyPOU2VRNgXbaFPqgw=;
+        b=pHa+iIiCgxxGUP/Dz+vHJoJ0WFz6HartMeJWwWBA/SqEdBjmMFF1Gc7WVJ0O9KB4xJ
+         F4rDNFFeL/OVVQ3SjaTCVesy/gMFuJBjR1L5+vhMqNEHDOJY36xxtk8/4zhtEUUu6CJr
+         7KKwt8E9J6eV6tbiuyPdXCex7RX2Z9ULS3nqQujFs14+JOd4FZGaWvV057W85jCKloSP
+         4YbGy0+Kmu2ol9eNo9iLMmT7pTrajrvIYzUCYST+yNu3JDnWrPFgjrSj9fDJnZSnME6o
+         kjtslIlVRwIpY8t1q+gA6NPAhQrczBs9qlLngVO27x89NrTbXaAF/LY12wxPdeuKda5j
+         oVaQ==
+X-Gm-Message-State: AJIora9yKy60v9wvAt1uyY3XfJVNRYP2hM75IIA98gBIhmRI77jGeuTO
+        T0BctsLNZ7XJ2sIfAQOSZdj2pQ==
+X-Google-Smtp-Source: AGRyM1sRTY3jhmXML4zUAHI23oIyvbgNG1ONSMMqox+hipkmWXEtiTEid5mCOhRsoVVHI5UrE7Q83A==
+X-Received: by 2002:a17:90b:4a4f:b0:1ef:90fb:35a5 with SMTP id lb15-20020a17090b4a4f00b001ef90fb35a5mr5846805pjb.161.1656995682324;
+        Mon, 04 Jul 2022 21:34:42 -0700 (PDT)
+Received: from localhost ([122.171.18.80])
+        by smtp.gmail.com with ESMTPSA id p26-20020a056a0026da00b005251e2b53acsm21651540pfw.116.2022.07.04.21.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 21:34:41 -0700 (PDT)
+Date:   Tue, 5 Jul 2022 10:04:39 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Steven Price <steven.price@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
@@ -42,186 +63,92 @@ To:     Viresh Kumar <viresh.kumar@linaro.org>,
         Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
         Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-pm@vger.kernel.org,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
         linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
+ NULL terminated list
+Message-ID: <20220705043439.xlrxusxrhwjupiyt@vireshk-i7>
 References: <cover.1656935522.git.viresh.kumar@linaro.org>
  <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
-From:   Steven Price <steven.price@arm.com>
-In-Reply-To: <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48d865e8-6c0d-99c0-a43b-89793d5c3f85@arm.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04/07/2022 13:07, Viresh Kumar wrote:
-> Make dev_pm_opp_set_regulators() accept a NULL terminated list of names
-> instead of making the callers keep the two parameters in sync, which
-> creates an opportunity for bugs to get in.
+On 04-07-22, 15:35, Steven Price wrote:
+> I have to say the 'new improved' list ending with NULL approach doesn't
+> work out so well for Panfrost. We already have to have a separate
+> 'num_supplies' variable for devm_regulator_bulk_get() /
+> regulator_bulk_{en,dis}able(), so the keeping everything in sync
+> argument is lost here.
 > 
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq-dt.c                |  9 ++++-----
->  drivers/cpufreq/ti-cpufreq.c                |  7 +++----
->  drivers/devfreq/exynos-bus.c                |  4 ++--
->  drivers/gpu/drm/lima/lima_devfreq.c         |  3 ++-
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c |  4 ++--
->  drivers/opp/core.c                          | 18 ++++++++++++------
->  drivers/soc/tegra/pmc.c                     |  4 ++--
->  include/linux/pm_opp.h                      |  9 ++++-----
->  8 files changed, 31 insertions(+), 27 deletions(-)
+> I would suggest added the NULL on the end of the lists in panfrost_drv.c
+> but then it would break the use of ARRAY_SIZE() to automagically keep
+> the length correct...
+
+Actually we can still make it work.
+
+> For now the approach isn't too bad because Panfrost doesn't yet support
+> enabling devfreq with more than one supply. But that array isn't going
+> to work so nicely when that restriction is removed.
 > 
-[...]
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> index 194af7f607a6..12784f349550 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
-> @@ -91,6 +91,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
->  	struct devfreq *devfreq;
->  	struct thermal_cooling_device *cooling;
->  	struct panfrost_devfreq *pfdevfreq = &pfdev->pfdevfreq;
-> +	const char *supplies[] = { pfdev->comp->supply_names[0], NULL };
->  
->  	if (pfdev->comp->num_supplies > 1) {
->  		/*
-> @@ -101,8 +102,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
->  		return 0;
->  	}
->  
-> -	ret = devm_pm_opp_set_regulators(dev, pfdev->comp->supply_names,
-> -					 pfdev->comp->num_supplies);
-> +	ret = devm_pm_opp_set_regulators(dev, supplies);
->  	if (ret) {
->  		/* Continue if the optional regulator is missing */
->  		if (ret != -ENODEV) {
+> The only sane way I can see of handling this in Panfrost would be
+> replicating the loop to count the supplies in the Panfrost code which
+> would allow dropping num_supplies from struct panfrost_compatible and
+> then supply_names in the same struct could be NULL terminated ready for
+> devm_pm_opp_set_regulators().
 
-I have to say the 'new improved' list ending with NULL approach doesn't
-work out so well for Panfrost. We already have to have a separate
-'num_supplies' variable for devm_regulator_bulk_get() /
-regulator_bulk_{en,dis}able(), so the keeping everything in sync
-argument is lost here.
+Or doing this, which will simplify both the cases.
 
-I would suggest added the NULL on the end of the lists in panfrost_drv.c
-but then it would break the use of ARRAY_SIZE() to automagically keep
-the length correct...
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 7fcbc2a5b6cd..b3b55565b8ef 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -625,24 +625,29 @@ static int panfrost_remove(struct platform_device *pdev)
+        return 0;
+ }
+ 
+-static const char * const default_supplies[] = { "mali" };
++/*
++ * The OPP core wants the supply names to be NULL terminated, but we need the
++ * correct num_supplies value for regulator core. Hence, we NULL terminate here
++ * and then initialize num_supplies with ARRAY_SIZE - 1.
++ */
++static const char * const default_supplies[] = { "mali", NULL };
+ static const struct panfrost_compatible default_data = {
+-       .num_supplies = ARRAY_SIZE(default_supplies),
++       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
+        .supply_names = default_supplies,
+        .num_pm_domains = 1, /* optional */
+        .pm_domain_names = NULL,
+ };
+ 
+ static const struct panfrost_compatible amlogic_data = {
+-       .num_supplies = ARRAY_SIZE(default_supplies),
++       .num_supplies = ARRAY_SIZE(default_supplies) - 1,
+        .supply_names = default_supplies,
+        .vendor_quirk = panfrost_gpu_amlogic_quirk,
+ };
+ 
+-static const char * const mediatek_mt8183_supplies[] = { "mali", "sram" };
++static const char * const mediatek_mt8183_supplies[] = { "mali", "sram", NULL };
+ static const char * const mediatek_mt8183_pm_domains[] = { "core0", "core1", "core2" };
+ static const struct panfrost_compatible mediatek_mt8183_data = {
+-       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies),
++       .num_supplies = ARRAY_SIZE(mediatek_mt8183_supplies) - 1,
+        .supply_names = mediatek_mt8183_supplies,
+        .num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+        .pm_domain_names = mediatek_mt8183_pm_domains,
 
-For now the approach isn't too bad because Panfrost doesn't yet support
-enabling devfreq with more than one supply. But that array isn't going
-to work so nicely when that restriction is removed.
-
-The only sane way I can see of handling this in Panfrost would be
-replicating the loop to count the supplies in the Panfrost code which
-would allow dropping num_supplies from struct panfrost_compatible and
-then supply_names in the same struct could be NULL terminated ready for
-devm_pm_opp_set_regulators().
-
-Steve
-
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index e166bfe5fc90..4e4593957ec5 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2105,13 +2105,20 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_put_prop_name);
->   * This must be called before any OPPs are initialized for the device.
->   */
->  struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
-> -					    const char * const names[],
-> -					    unsigned int count)
-> +					    const char * const names[])
->  {
->  	struct dev_pm_opp_supply *supplies;
-> +	const char * const *temp = names;
->  	struct opp_table *opp_table;
->  	struct regulator *reg;
-> -	int ret, i;
-> +	int count = 0, ret, i;
-> +
-> +	/* Count number of regulators */
-> +	while (*temp++)
-> +		count++;
-> +
-> +	if (!count)
-> +		return ERR_PTR(-EINVAL);
->  
->  	opp_table = _add_opp_table(dev, false);
->  	if (IS_ERR(opp_table))
-> @@ -2236,12 +2243,11 @@ static void devm_pm_opp_regulators_release(void *data)
->   * Return: 0 on success and errorno otherwise.
->   */
->  int devm_pm_opp_set_regulators(struct device *dev,
-> -			       const char * const names[],
-> -			       unsigned int count)
-> +			       const char * const names[])
->  {
->  	struct opp_table *opp_table;
->  
-> -	opp_table = dev_pm_opp_set_regulators(dev, names, count);
-> +	opp_table = dev_pm_opp_set_regulators(dev, names);
->  	if (IS_ERR(opp_table))
->  		return PTR_ERR(opp_table);
->  
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 5611d14d3ba2..6a4b8f7e7948 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1384,7 +1384,7 @@ tegra_pmc_core_pd_opp_to_performance_state(struct generic_pm_domain *genpd,
->  static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
->  {
->  	struct generic_pm_domain *genpd;
-> -	const char *rname = "core";
-> +	const char *rname[] = { "core", NULL};
->  	int err;
->  
->  	genpd = devm_kzalloc(pmc->dev, sizeof(*genpd), GFP_KERNEL);
-> @@ -1395,7 +1395,7 @@ static int tegra_pmc_core_pd_add(struct tegra_pmc *pmc, struct device_node *np)
->  	genpd->set_performance_state = tegra_pmc_core_pd_set_performance_state;
->  	genpd->opp_to_performance_state = tegra_pmc_core_pd_opp_to_performance_state;
->  
-> -	err = devm_pm_opp_set_regulators(pmc->dev, &rname, 1);
-> +	err = devm_pm_opp_set_regulators(pmc->dev, rname);
->  	if (err)
->  		return dev_err_probe(pmc->dev, err,
->  				     "failed to set core OPP regulator\n");
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index 6708b4ec244d..4c490865d574 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -159,9 +159,9 @@ void dev_pm_opp_put_supported_hw(struct opp_table *opp_table);
->  int devm_pm_opp_set_supported_hw(struct device *dev, const u32 *versions, unsigned int count);
->  struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name);
->  void dev_pm_opp_put_prop_name(struct opp_table *opp_table);
-> -struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
-> +struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[]);
->  void dev_pm_opp_put_regulators(struct opp_table *opp_table);
-> -int devm_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
-> +int devm_pm_opp_set_regulators(struct device *dev, const char * const names[]);
->  struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char *name);
->  void dev_pm_opp_put_clkname(struct opp_table *opp_table);
->  int devm_pm_opp_set_clkname(struct device *dev, const char *name);
-> @@ -379,7 +379,7 @@ static inline struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, con
->  
->  static inline void dev_pm_opp_put_prop_name(struct opp_table *opp_table) {}
->  
-> -static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count)
-> +static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[])
->  {
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
-> @@ -387,8 +387,7 @@ static inline struct opp_table *dev_pm_opp_set_regulators(struct device *dev, co
->  static inline void dev_pm_opp_put_regulators(struct opp_table *opp_table) {}
->  
->  static inline int devm_pm_opp_set_regulators(struct device *dev,
-> -					     const char * const names[],
-> -					     unsigned int count)
-> +					     const char * const names[])
->  {
->  	return -EOPNOTSUPP;
->  }
-
+-- 
+viresh
