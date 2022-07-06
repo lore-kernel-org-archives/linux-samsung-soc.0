@@ -2,168 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FFDC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 11:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDB4C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 13:06:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232357AbiGFLX2 (ORCPT
+        id S233185AbiGFNGy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 07:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58336 "EHLO
+        Wed, 6 Jul 2022 09:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232126AbiGFLX0 (ORCPT
+        with ESMTP id S233112AbiGFNGx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Jul 2022 07:23:26 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945C1E9E
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 04:23:24 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220706112322epoutp02bb7809cc47a0b11c7a310d5cd655a550~-Oazy7GLV1845118451epoutp02z
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 11:23:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220706112322epoutp02bb7809cc47a0b11c7a310d5cd655a550~-Oazy7GLV1845118451epoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1657106602;
-        bh=dfUBcYQXdUrModIFjRat22irHZxbZCkVZLeW9qUuQ7g=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=SygnOOAsQCz2/2WGFiTQGBZy13ixlOZHGFqS8N7PZTy67ccYccWKLKrjkgQaeU/qT
-         9ZVCX1TIjHDvQK4XEaHPVlrrSMO3oN/DHzayNqzc4968gv3euZFSHwrXEcnAMUSOm1
-         kVf9ttyaMfGtMRfJ0vt6UsatPRJhWSBvu9tl+QVc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220706112322epcas5p3ba1853edd5400e0af9d5486cd485df79~-OazKGjoB1146611466epcas5p3J;
-        Wed,  6 Jul 2022 11:23:22 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4LdHGZ5g4Cz4x9Px; Wed,  6 Jul
-        2022 11:23:18 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        73.72.09662.5A075C26; Wed,  6 Jul 2022 20:23:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220706112317epcas5p2bf746fe8180c17e7ce2d0d7b0d45b19c~-OauXyy2A3254232542epcas5p2z;
-        Wed,  6 Jul 2022 11:23:17 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220706112317epsmtrp2e9bbd88042411f6cc15de0a8bb8e6bc7~-OauXE24v0416104161epsmtrp2T;
-        Wed,  6 Jul 2022 11:23:17 +0000 (GMT)
-X-AuditID: b6c32a49-885ff700000025be-ca-62c570a5fab4
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.B6.08802.4A075C26; Wed,  6 Jul 2022 20:23:16 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220706112315epsmtip18760da57ee04c066b9fc2d5317e95e20~-OatOnst41449514495epsmtip17;
-        Wed,  6 Jul 2022 11:23:15 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc:     "'Chanho Park'" <chanho61.park@samsung.com>
-In-Reply-To: <20220706095037.78542-2-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 2/3] dt-bindings: soc: samsung: exynos-pmu: use abolute
- ref paths
-Date:   Wed, 6 Jul 2022 16:53:14 +0530
-Message-ID: <02d501d8912a$c9dbaa60$5d92ff20$@samsung.com>
+        Wed, 6 Jul 2022 09:06:53 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80CB918E29
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 06:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=D0hNbSBzGzNXDpHde8BsfsD5hfBQ
+        bb4aorNSvpTgVrU=; b=E6cdQmWOgXODAMsv1qYtftsUDkq8yB2rzDN7nbBj49dC
+        OTU5rWih/KddxbSWUIuqbYyZA1DH1debq9NIp/cByt22mxrn5n/ONLBreV56cIbi
+        Lq0NaxHrB7CM921l7oThMnvySzFR0PaRyaVsm+XjBJmkMxL8giq3frwg2nVAZ1E=
+Received: (qmail 1712726 invoked from network); 6 Jul 2022 15:06:46 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2022 15:06:46 +0200
+X-UD-Smtp-Session: l3s3148p1@ZX/5oyLjKmlZzIq1
+Date:   Wed, 6 Jul 2022 15:06:42 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Michael Walle <michael@walle.cc>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Till Harbaum <till@harbaum.org>
+Subject: Re: [PATCH v2 2/2] i2c: Introduce i2c_str_read_write() and make use
+ of it
+Message-ID: <YsWI4nzQa9gmqKdw@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Till Harbaum <till@harbaum.org>
+References: <20220703154232.55549-1-andriy.shevchenko@linux.intel.com>
+ <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGv0xjueruurOeUsHbvEnIYv28ubAHrzfVgAZn0Pf2tpoDbUA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmpu7SgqNJBhuuKVpc3q9tMf/IOVaL
-        vhcPmS32vt7KbrHp8TVWi8u75rBZzDi/j8mide8RdgcOj02rOtk87lzbw+axeUm9R9+WVYwe
-        nzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXm
-        AF2ipFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAw
-        MgUqTMjO2LlrIVPBD96Kjx+2sTUw/ufuYuTkkBAwkTg19xtLFyMXh5DAbkaJY+umMYIkhAQ+
-        MUrc7nGGSHxmlPh4ejsjTMez7QfYIIp2MUp8XWEFUfSSUeLS6w9gRWwCuhI7FrexgSREBDYx
-        SXzZv5cdJMEsoC+xsPMVWBGngIvEyutPWUFsYYFwiUkbljOB2CwCKhIfTr9hBrF5BSwldvx9
-        xgRhC0qcnPmEBWKOvMT2t3OYIS5SkPj5dBnYHBEBJ4mljUsYIWrEJV4ePcIOcoSEwFwOibbt
-        11kgGlwkdlz+yARhC0u8Or6FHcKWkvj8bi/Q1RxAtofEoj9SEOEMibfL10N9by9x4MocFpAS
-        ZgFNifW79CFW8Un0/n7CBNHJK9HRJgRRrSrR/O4q1FJpiYnd3awww+fNjZjAqDgLyV+zkPw1
-        C8n9sxB2LWBkWcUomVpQnJueWmxaYJiXWg6P7eT83E2M4FSq5bmD8e6DD3qHGJk4GA8xSnAw
-        K4nwrpp0MEmINyWxsiq1KD++qDQntfgQoykwsCcyS4km5wOTeV5JvKGJpYGJmZmZiaWxmaGS
-        OK/X1U1JQgLpiSWp2ampBalFMH1MHJxSDUx5uidnKvDoXd96JGtRcGGuz72ZmZ8X6NlbftA+
-        /qPbd0Jtso3ou+072vPld5TWh9xm3T6Nuflo8AmeQN/pPE8DfR1Fzwv3M185YMh/syl2csZ+
-        A0c/Vac1/zQvC/4wTPp/qHmR/0KuYzqcE2LX5vwOu274WVB46sIcj2t7Q3eJpFWx73kc+vVT
-        z7qb0bkbdy6/sqb4XnHVBLm6qudFodpi2a7t1758vd6uZ/9ngVzR9UTW9Zt0xD99vfBZ+dME
-        19PCy33jMkv+q/5beWP/Dc4kTY8gWa707UvTE+YuWH+yJNHgy5Z3zwvmSly1eNDtbOC8ZN/J
-        K8E/vuSsZ79wS+2X0jfNzROfa38wP5yd/Ha6EktxRqKhFnNRcSIAzDZ9NC4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJTndJwdEkg7Z3NhaX92tbzD9yjtWi
-        78VDZou9r7eyW2x6fI3V4vKuOWwWM87vY7Jo3XuE3YHDY9OqTjaPO9f2sHlsXlLv0bdlFaPH
-        501yAaxRXDYpqTmZZalF+nYJXBk7dy1kKvjBW/Hxwza2Bsb/3F2MnBwSAiYSz7YfYOti5OIQ
-        EtjBKLG+6TwLREJa4vrGCewQtrDEyn/P2SGKnjNKXJ35FKyITUBXYsfiNrBuEYFtTBKrmv+w
-        gSSYBfQlFna+YoToOMso8a1xPStIglPARWLl9adgtrBAqMTHTauYQGwWARWJD6ffMIPYvAKW
-        Ejv+PmOCsAUlTs58ArSNA2ionkTbRkaI+fIS29/OYYa4TkHi59NlYCNFBJwkljYugaoRl3h5
-        9Aj7BEbhWUgmzUKYNAvJpFlIOhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiO
-        Ki2tHYx7Vn3QO8TIxMF4iFGCg1lJhHfVpINJQrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2M
-        FxJITyxJzU5NLUgtgskycXBKNTDZrXix+d/jyEtvl/zs33RY25Tp6i/RQ3XuT/t8D3Mligu9
-        a33nWMK4snrzxI6kGFPe+Gdr6gTVj2Yfil9bp/jj2J6lhw7yuL04Zml8j/9F4I89P7Yz7rr1
-        55pxzPkJdlaPgjOUG7bNiilgUv00Y+m9JWc1eqbuU2L+zRgk6rnJ+vcTG91TNvMiJRJ/Twq6
-        aFyQ5exrZXTAwN7ilnWZzZrwsCflX9YXPN+6264n8aTNt6PMr0pPVs2qWhXf4Phyp73NhmOr
-        fdfVvCqcHq3Qe87js1/UjSmSElOPVNixLL18xFCsWjh6dW3VBX+9Z8Z/9xcF6JyRLr+28MWN
-        bBMP0413eP4qF2x6vzdXV9tcYMVGJZbijERDLeai4kQAfHX23RkDAAA=
-X-CMS-MailID: 20220706112317epcas5p2bf746fe8180c17e7ce2d0d7b0d45b19c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220706095045epcas5p27a8694a7ba3f4d9af3c1a502235fdbf6
-References: <20220706095037.78542-1-krzysztof.kozlowski@linaro.org>
-        <CGME20220706095045epcas5p27a8694a7ba3f4d9af3c1a502235fdbf6@epcas5p2.samsung.com>
-        <20220706095037.78542-2-krzysztof.kozlowski@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CdaVGdeblKJUV2jY"
+Content-Disposition: inline
+In-Reply-To: <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+--CdaVGdeblKJUV2jY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->-----Original Message-----
->From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
->Sent: Wednesday, July 6, 2022 3:21 PM
->To: Rob Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski+dt@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>;
->devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
->Cc: Chanho Park <chanho61.park@samsung.com>; Krzysztof Kozlowski
-><krzysztof.kozlowski@linaro.org>
->Subject: [PATCH 2/3] dt-bindings: soc: samsung: exynos-pmu: use abolute ref
->paths
->
->Preferred coding for referencing other schemas is to use absolute path.
->Quotes over path are also not needed.
->
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->---
+Hi Andy,
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+On Sun, Jul 03, 2022 at 06:42:32PM +0300, Andy Shevchenko wrote:
+> str_read_write() returns a string literal "read" or "write" based
+> on the value. It also allows to unify usage of a such in the kernel.
+>=20
+> For i2c case introduce a wrapper that takes struct i2c_msg as parameter.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
->b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
->index a5d489acfdca..1835ca08416d 100644
->--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
->+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
->@@ -75,13 +75,13 @@ properties:
->     const: 3
->
->   syscon-poweroff:
->-    $ref: "../../power/reset/syscon-poweroff.yaml#"
->+    $ref: /schemas/power/reset/syscon-poweroff.yaml#
->     type: object
->     description:
->       Node for power off method
->
->   syscon-reboot:
->-    $ref: "../../power/reset/syscon-reboot.yaml#"
->+    $ref: /schemas/power/reset/syscon-reboot.yaml#
->     type: object
->     description:
->       Node for reboot method
->--
->2.34.1
+To be honest, I don't think this series is very useful. Most of the
+converted strings here are debug printouts which could rather be removed
+because we have a tracepoint for i2c_transfer (which is the preferred
+unification). The warnings printed on timeouts are plain wrong, because
+timeouts can happen and need to be handled by the client driver. And the
+change in the I2C core is not worth the hazzle IMHO.
 
+Happy hacking,
 
+   Wolfram
+
+--CdaVGdeblKJUV2jY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmLFiN4ACgkQFA3kzBSg
+KbaOnRAAlv7WrOzngujipBR3pVf3yo6uKVwFX+PykjBTa0wBHwetMP0pYuObpjH9
+MPI+xi3IOPO8nnwQgPbg8ke0Yq4akFTTkLG8QOXU1ddT1UWRq1TJXNB9hME3tXGD
+WkO7L/wslhrvwy48f+0nOJotVJ3q34bifTQ78CTnFyYY6Tfg6BgF/opp70w7XNgW
+5blntGsxPCRsh1VBlDilYsgh3TXzmD934y8v1hFpM2BXFgnHKsID9FOeHVDsuB8O
+RL08dyCz/yt2r4M0f7DDOF56PS/35JsJhZ5v2F9er0fkPgEdS392WEeJrQhiQ920
+ugWPpY6MhwTuTFZQqaeiv9moB+j1BBcKoEyG3c4quq35KKIYsaaC0fj40+1u9Gel
+wlZ5qxgE29BYSWZocpQbdFF8jG/iEhnEy9pIRfGfQagUypOLsqqcsk5Qq9aavWHK
+Vu4pI5SRlsMcRWzWO4592D8KYF5Tc/0NQ+qfCj6AO+OwBIBR+S7lBsLiNpIETLil
+EMa1kLVlr/ElAFyqXIa8yX7vvK9xHDcHEPWsW3Q30g5QEGT40iXSGkM21l3KebVz
+Lw7qzoMkINICUNGP2ULiYOCgafWdlVlev4RmQCDFDljj2ZKH1ph91kJeM7YscDj5
+ZGh3HI5USzLFt/C6uFVIwSpz2aM2IMOWcasNvtXlR7RZNu/qwdI=
+=srXy
+-----END PGP SIGNATURE-----
+
+--CdaVGdeblKJUV2jY--
