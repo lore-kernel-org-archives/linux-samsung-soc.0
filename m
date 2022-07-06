@@ -2,79 +2,97 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96277C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 16:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6FBC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 16:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233264AbiGFQAu (ORCPT
+        id S232800AbiGFQDE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 12:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57854 "EHLO
+        Wed, 6 Jul 2022 12:03:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232918AbiGFQAt (ORCPT
+        with ESMTP id S232214AbiGFQDD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Jul 2022 12:00:49 -0400
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A00F22B0D;
-        Wed,  6 Jul 2022 09:00:47 -0700 (PDT)
-Received: by mail-io1-f41.google.com with SMTP id p69so14389721iod.10;
-        Wed, 06 Jul 2022 09:00:47 -0700 (PDT)
+        Wed, 6 Jul 2022 12:03:03 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5AA22B0D
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 09:03:02 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id bx13so19039071ljb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 09:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZaoaKwsL8ku1Uz6lXHCkOu4mh1FNdfVzKE+uBlMrabs=;
+        b=EQDIuAW2mPjWc3UukucAmnpe503YdQiYmVy7KYJl2PRpYcGW7hjafd3FnyGdCPQq2x
+         L9lEqV57/RrBgD0TjF9LOilwljWgA1RRIltXLGk21nilEA0gn62nImKNbHqp/rBtRZQa
+         EoFYhn8/7gUd2e5FGV1VpwMFFjtQsAalpD6E6aOwur/bOt8kSD10XwaH6CYX18CD9ZIy
+         FH56lk+Rk5BM1uF1h4wCSxpaG/R+dexGYhDg5DOlIqVL7A5pT/wy6b3fTzkskksShdTg
+         Jib7bAvsJh/KB+HsV9pBJuyy6MFRjwg4d1JB2KzUoyt5wsDbmBED/N49xM+XOG15RRHO
+         CqrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Eapa/ltQqCjpwdBfwKCsw90fAUtdsJkoZHS0nADe7Iw=;
-        b=a+fTCf2j7eV/BFWxkkEtBy+kOyVfVWJiuUZBZPxcpbPc7/qj/1Ibn79/N83Z1zi1ZI
-         1utRmUZzRPB0nZvv9VYkRArqBhUrcXHtfn+Jp1+AP/soz6y94XlLMzGm+jNMzMjzYpxT
-         uwjWB+UxWJTzLAu3SXRQnugjXDw6Mz/hUya9Fw9bBRzkJEQ0QJKowE+ilshffuHQnhSj
-         801yfyYaYaFhUHtbATaiUbTyNBy6UxSLgKrrMVweRpecDiHvj2u0q/Qtj5VThv1sAR+S
-         uXWSxRp4BPATLQx0mrUq2363UlyyYVNOiB1STBuRDFw0buenq+Kf9gkJwcPyYksRvwtF
-         vrpQ==
-X-Gm-Message-State: AJIora8Gy0JRcsrDIRHgsDDFCTcnJ3ik6+wzZHDAogJ10dfM4hJ78MhW
-        nfNOvBA8lMrSPnuyWL8wfb2t4F6Sww==
-X-Google-Smtp-Source: AGRyM1tdiGrB5Ucg2D1u/brE0h7PErQZk7g0g4hKTr463CkrTRnXebaIjgUy203Zg6eB3Em4ssvPjw==
-X-Received: by 2002:a6b:8f44:0:b0:675:1e6d:938e with SMTP id r65-20020a6b8f44000000b006751e6d938emr21749173iod.189.1657123246482;
-        Wed, 06 Jul 2022 09:00:46 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id d11-20020a056e020c0b00b002dae42fa5f2sm6366095ile.56.2022.07.06.09.00.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZaoaKwsL8ku1Uz6lXHCkOu4mh1FNdfVzKE+uBlMrabs=;
+        b=S2f8OFjz8U3rZsCB9s0wNyrig2vaIWTdRjcZ4e/vRSF4FmZEsiuIs6Sgze19ey6YC8
+         e0G5eunqO0leOZ8YWWvP97K4R/Zuoq7mC9MMOeP4EOcOGHQUpMnw6IP2mml1P4by20bV
+         X9d5mj3lSogUsn019atZuhM3meTBk+Ygml8CiMsoIRfOKrzW0uCZuxUyd/tN4YbuIPPP
+         DsSMTUAK4F0G2LTW4D091T+uwMEB8SpisT/RFkZFrrIDKXCAQJYBFH90uiNZeFiYn3wG
+         lwrJvMK8sLSX7JUsz0zZ1ZsnGScPa+jqryH5QJ1RG5EFsSuJJxAdF+1pv0kYveBfShX6
+         PQNQ==
+X-Gm-Message-State: AJIora+Htw7aH9iY1HAFOLwLHfodYt9bl4HMH+EbRtS/i5oO1XBpymAG
+        9aPgJpea92uB/iE4RFSViTcfsw==
+X-Google-Smtp-Source: AGRyM1usYe0DgQM+cWbFc0I1Rn5wU2VfkJUj/XUxR6drj0t4QMNREew/jx3fpm7jmqgvm8metzBd7g==
+X-Received: by 2002:a05:651c:4cf:b0:25a:9cbe:bf4b with SMTP id e15-20020a05651c04cf00b0025a9cbebf4bmr24713793lji.379.1657123380501;
+        Wed, 06 Jul 2022 09:03:00 -0700 (PDT)
+Received: from krzk-bin.home ([84.20.121.239])
+        by smtp.gmail.com with ESMTPSA id w10-20020a2e9bca000000b0025a65ed7aa4sm6291292ljj.51.2022.07.06.09.02.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 09:00:46 -0700 (PDT)
-Received: (nullmailer pid 122249 invoked by uid 1000);
-        Wed, 06 Jul 2022 16:00:44 -0000
-Date:   Wed, 6 Jul 2022 10:00:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 06 Jul 2022 09:02:59 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: samsung: document preferred compatible
- naming
-Message-ID: <20220706160044.GA122192-robh@kernel.org>
-References: <20220705161340.493474-1-krzysztof.kozlowski@linaro.org>
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/3] dt-bindings: soc: samsung: exynos-pmu: cleanup assigned clocks
+Date:   Wed,  6 Jul 2022 18:02:55 +0200
+Message-Id: <20220706160257.27579-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220705161340.493474-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 05 Jul 2022 18:13:40 +0200, Krzysztof Kozlowski wrote:
-> Compatibles can come in two formats.  Either "vendor,ip-soc" or
-> "vendor,soc-ip".  Add a DT schema documenting preferred policy and
-> enforcing it for all new compatibles, except few existing patterns.  The
-> schema also disallows wild-cards used in SoC compatibles.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Update comment.
-> ---
->  .../bindings/arm/samsung/samsung-soc.yaml     | 40 +++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung/samsung-soc.yaml
-> 
+"assigned-clocks" are not needed in the device schema as they come from
+core schema.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+---
+
+Changes since v1:
+1. Re-phrase commit msg.
+---
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index c30a6437030d..a5d489acfdca 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -49,9 +49,6 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  assigned-clock-parents: true
+-  assigned-clocks: true
+-
+   '#clock-cells':
+     const: 1
+ 
+-- 
+2.34.1
+
