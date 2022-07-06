@@ -2,85 +2,96 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BBCC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 09:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26CAC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 09:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbiGFJyJ (ORCPT
+        id S232532AbiGFJ4D (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:54:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33426 "EHLO
+        Wed, 6 Jul 2022 05:56:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232031AbiGFJxr (ORCPT
+        with ESMTP id S232347AbiGFJzk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Jul 2022 05:53:47 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E393C2610C
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 02:53:06 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id t25so24995337lfg.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 02:53:06 -0700 (PDT)
+        Wed, 6 Jul 2022 05:55:40 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09B425C58
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 02:55:02 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id s14so17815262ljs.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 02:55:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
-         :subject:content-transfer-encoding;
-        bh=2FVetjxzklklHxgJM/McAptL/rX/8Wu5tgIb1xFKons=;
-        b=GDZFJfKTu2z9DGUQGZOFzVVm15OzBXNo2MWdXF8GShZ931XRVEfsXqfmaDDLZpwigr
-         I9gNHfLxGTV5mZzQEREVxUz8sIYUAK3i0fCaVDYmcDTtJzx9ILfAWxUEp1cwS3MNHdQ9
-         meZZo76+OBDpCMERV1DN+TiLYEKPgcElLwlZyAgyIP/PW03uZNQuSpIXpadhlrDLusPj
-         PKk2JV3WrKTo21M3QSIGREe/MOihZ2yHjlD18wEgtXd+M4jIHDxD05H5RsLzr8znmqB0
-         rzn1l4yGjk4pg5q4qgCc0A4ENagaky4EwCAtYC8WyjUnvDnGRODvIzRiJavNWwSkmgSK
-         CSjA==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=MLKzrM+9AqNqUlJzLdYBL/Maeq7E5O1+AfToNrQTETE=;
+        b=myt12LFHr8reOh3SXvfUdIz816T2RINdKwtOgx/SI/lnIY0zsEfUmPKqDEamHYXBrf
+         Buq0ojkUkWpfHo+2CuFxK3DNnVoAA7czlTOZ7WHpDJM72Nz/fkvS9sXHqWZrIIchlIqH
+         /GPH6gAROvAlWu4GXYuzI8rBuFNmh9Uja6ttBPaDczSiKWTOEXTrRzOPhpj5JUXD+IIM
+         ugJQTAUK+ICHcx8Z1hYXNRC/30/c21K9zCF5Wb0/KUMNVWgadIvIf+AtACMWIRwODpaU
+         /wKXTTegWof/OuvFoMzjaJaw9u6dZY3GV2eDqM3OXwJZtzMlY6cf6bq5Ewev7327D1Aj
+         37lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:from:subject:content-transfer-encoding;
-        bh=2FVetjxzklklHxgJM/McAptL/rX/8Wu5tgIb1xFKons=;
-        b=Nc/VTbIDxv8mgBYFKkcXPbETkAmX4Pb6P/iN/aCegBBt1VxrBv6nsOCwVCUGE8OczJ
-         MqYnUrXfdTrEmVOzHhRnxNrg9SIRtfEO3zHYfiY4L61WWyNugd8pqAtMHNrWME9+cAMg
-         KLpN9xDHUdzGbXkLxYZnRBRCQAhqVQrkTmDBYZgKSbxNakxOQYZXs4idOJEnK6C0QjXT
-         9aqtlw8PN4HgC0M9Ypn6YlIcFbIGtlMOHwNc+iVks8N/IM5Pg5a2NOsKJYJ8Km1FxORI
-         n49es8zfKeC5oBqnsNQAKWSUJWN4e3zZymOJV58mxr76M75HnUXnFIkEsS7sR10V9OeS
-         xRCg==
-X-Gm-Message-State: AJIora+V6mMHSd1mLDm5mQ8+/aAY4C0dEfCxMlP2dXqDCDzJ2XP14P4i
-        1hkxmIxQPi3TwHVtC3ZT2PWCxTtsrPfMWg==
-X-Google-Smtp-Source: AGRyM1uOBbTMS8AMMFv2zNraedxagLfPJH6pvKGDmkFCxpDv3V7ItVXLi3LOAha/9Zuecr0/jlyJGg==
-X-Received: by 2002:a05:6512:e95:b0:47f:9d60:d90a with SMTP id bi21-20020a0565120e9500b0047f9d60d90amr27150833lfb.591.1657101184992;
-        Wed, 06 Jul 2022 02:53:04 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=MLKzrM+9AqNqUlJzLdYBL/Maeq7E5O1+AfToNrQTETE=;
+        b=bdL3fZHpL1hWxUkbezaF0zVdcRikziIo/w/FPUih0stQOt3X1VykwvgMyQZVUrhjlW
+         osUos0Aiej+wU/po7/mXv0SREeQgTWN6iGwrSSBEB5dt9FVilahTwOP7+yxf4vBwA9fg
+         K/PRSmtqu3y0ITOZXEGmZUcgM78IFhxQCPBgXmfS6NA/YqB/9dmK7urRNWgKlM/FIx96
+         rqn34e06v3vm6+9zU2j7BKseVq7elRa1s3wjv44ytrMGnypeSVlN1xu4vKkKpdiALQca
+         ZrmxtvmLttTwh5Hqu95rxf1e4q/Tk2c0Xvc/xm9PmJEvx78goFZdgikBiDBSvhu/FN3t
+         7eWQ==
+X-Gm-Message-State: AJIora8rT8jfOxyMm0tPHB+kXI1WwhEZWY+cm7RBlZlPKiabgvfPEM3d
+        UjBZl2C/4I/wt2SWYFerbNK/Zg==
+X-Google-Smtp-Source: AGRyM1ssHMMNbJwUMIIj/KkwH7iJhu5+/uN7GYosbxJwWb7UnbAiR56nimnepjqrTpPpc46ePBmhUQ==
+X-Received: by 2002:a05:651c:881:b0:25d:4865:f6b0 with SMTP id d1-20020a05651c088100b0025d4865f6b0mr588712ljq.418.1657101300832;
+        Wed, 06 Jul 2022 02:55:00 -0700 (PDT)
 Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id 1-20020ac24d41000000b004870ef4a0c7sm82400lfp.17.2022.07.06.02.53.04
+        by smtp.gmail.com with ESMTPSA id s14-20020a19770e000000b0047faab456cesm6186060lfc.237.2022.07.06.02.55.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Jul 2022 02:53:04 -0700 (PDT)
-Message-ID: <140c1c89-49a7-45bd-7f01-8a3ed1343437@linaro.org>
-Date:   Wed, 6 Jul 2022 11:53:03 +0200
+        Wed, 06 Jul 2022 02:55:00 -0700 (PDT)
+Message-ID: <f1e03b78-f844-6eec-2ace-d177af59f0c9@linaro.org>
+Date:   Wed, 6 Jul 2022 11:54:59 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
+Subject: Re: ExynosAutov9 SDAK UFS phy dtbs check error
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>
 Cc:     "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: ExynosAutov9 SDAK UFS phy dtbs check error
+References: <140c1c89-49a7-45bd-7f01-8a3ed1343437@linaro.org>
+In-Reply-To: <140c1c89-49a7-45bd-7f01-8a3ed1343437@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Chanho,
+On 06/07/2022 11:53, Krzysztof Kozlowski wrote:
+> Hi Chanho,
+> 
+> When running dtbs_check I found:
+> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: phy@17e04000: clocks:
+> [[10]] is too short
+> 
+> 	From schema: Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> 
+> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: phy@17e04000:
+> clock-names: ['ref_clk'] is too short
+> 
+> 	From schema: Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> 
+> 
+> and so on. It seems you miss there clocks.
 
-When running dtbs_check I found:
-arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: phy@17e04000: clocks:
-[[10]] is too short
++Cc Alim.
 
-	From schema: Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+Tesla FSD has the same problem:
+tesla/fsd-evb.dtb: ufs-phy@15124000: clocks: [[35, 2]] is too short
 
-arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: phy@17e04000:
-clock-names: ['ref_clk'] is too short
-
-	From schema: Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-
-
-and so on. It seems you miss there clocks.
 
 Best regards,
 Krzysztof
