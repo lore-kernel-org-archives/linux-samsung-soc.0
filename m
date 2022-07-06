@@ -2,88 +2,104 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6FCCCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 16:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 034E7C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 16:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233818AbiGFQZm (ORCPT
+        id S232295AbiGFQiB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 12:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52046 "EHLO
+        Wed, 6 Jul 2022 12:38:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229723AbiGFQZl (ORCPT
+        with ESMTP id S231916AbiGFQiA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Jul 2022 12:25:41 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10E7248C3
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 09:25:39 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id t24so26832883lfr.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 09:25:39 -0700 (PDT)
+        Wed, 6 Jul 2022 12:38:00 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D7A417067
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 09:37:59 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id bu42so7014697lfb.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 09:37:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JIashhGYeFkYbR7kffcxLHDD+hAhV8QuuTTEgk9FK6w=;
-        b=SSDkiH9n4YUDAEgzeFf1wijKsdU1ygC2Uyrcwx3gg8zkLNpuo/dxGqL9ivnDrIvWyk
-         K7yIk7BMjOc6IC/9b4aQTUqXeBnTDeHPL2xwu4cOGWLdCvJ9GySyewAp8xjALGKyBPn4
-         wrsgaRflmgDS7gopEhVKYyjKWrASbY+yuOsZRblk4Dz4T/xpYr5ti5UqzEO+kUH0j0ev
-         EsvgVCkjESXJvQtWvCzUzKH6nhBTNYjyCqwaLce8Z/sswjrLjQA/pyjdGHbUo2hfwQJp
-         WmHOcsagFJ1ypodUlhsfFtJOhHYm0I4etlRQwLGimh/qRSggOHY1Q3wVmFvSc2m+5FKR
-         8Eow==
+        bh=3JIvP1fLoUDaPL2KDH7rBxoB2fmHYy4Oyai7s7FblzM=;
+        b=z8QpHD2g9KR0gRs38I9tQHxuBxZcFspVly256PoFHFttb5ZU65VHEVxW4zL0jDIk1N
+         OHb8Ke2HlLC1wovgg8KpnrshVxdq54tWma9NzHHxB9JdIPUAXdZYZh6CmiIeW1v+rZXR
+         jeYwxXa7VTcudWJvGa/mR8mye9YsFGb6RJkF2QDk8uy+gAIMoW4HYYv4A55lkYrTtkXV
+         PmOKeRTYsepmCpXtJgZZpqF8Yk8QD3m3Q0xZURpBd6rOMfC4FVj/mtrr5FtlHA8syOvu
+         a5xEmQo+a6vRc7+gcNgXhUhZ7Y2ftV1f4OBHaorAuNOGyxHbjZ1C0J7GrWxiWojD1Wyy
+         55vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JIashhGYeFkYbR7kffcxLHDD+hAhV8QuuTTEgk9FK6w=;
-        b=MSi2mqjgqoghLqczc/LtcXiU+m2RELM7bnoNoDd361ql3iEE1KpBf0o4hIbetqz7bC
-         +kjGzJHzPngAlbFW7EQGL5ytIuB+gGudu/R0T70W2noe2CwjIpSiOpMWey9a9m/HrKe+
-         +Ra+qdc5KHDQ0Bv0BNCDXQ5of3F/hW9cFmvn/GdCYh4tmWjL81pIcJhgqGAbuET0f1FB
-         Fkewq3IktVqm9nus5aaRPtL+QJeXtRnwl/FR22XgU9r4ngLMOoB/gCK3YVtkn9Y0mLho
-         /KGr02HW5X6IriIYU+v15henxFZ98R7qbGEYel+nIlXINW9ucYKUoZ0wfMQ6Xfzo6TpA
-         i61g==
-X-Gm-Message-State: AJIora8CI2o/C19dFw8lIf3jNod9OW5+yEejwdGbekt5851hNSZ0wBz7
-        Tf303vQublTUvGD7z4+Tv5FRZQ==
-X-Google-Smtp-Source: AGRyM1v3dY3SIkHzldafEjg4djIqTpd+Td8TJMqE++IEKyQClDARm8w1I4/mKmWXRyPnpi9Alj+NTQ==
-X-Received: by 2002:a05:6512:b8d:b0:47f:74f0:729b with SMTP id b13-20020a0565120b8d00b0047f74f0729bmr25713700lfv.403.1657124738237;
-        Wed, 06 Jul 2022 09:25:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3JIvP1fLoUDaPL2KDH7rBxoB2fmHYy4Oyai7s7FblzM=;
+        b=uyyz/jIg+qNVKIkdHYxaLdqQPVmPlnuGatYIqt1l2Hw6QZDJaq3dkQD6+0Q845ugSC
+         ocr3IeHy7MfL47ZQVbu4xQznpjALqT00m8lTz0dvZI/TlnHMTbVpaLxlGTG52ZkgaCmA
+         0261qZRLa0IBguOL9Cdzoi+zD2XQKibTpBNcSzWVF6a/qZTgQwyvx+cpfM+jPM1W56mS
+         hUVqQd0h3LxUuJ0nQlJY/CLWk0arp/S/IqY6/KwBiNqdGVE1Hq5nDpwzovNenuotcXUE
+         j3cxx5Idu2b1T85SJTzz29yqxws8fUyltVNYibqanUeeUmhIeWUtbEXFtTg7BztmhvU8
+         6vDw==
+X-Gm-Message-State: AJIora8ESUivl0Hq70vWH9WNgbR3eROHGqfVcdb2mxrxCxjHPkDqudAc
+        oC3yoggYa83JfJt8XgyMuSUFag==
+X-Google-Smtp-Source: AGRyM1u0vGXTJ6VoG+UpXo1yuYiOQ2/csLw8KHFNtxpsN2sGIuYba6SJoaBHEAs8+lbsIADjsYgTBg==
+X-Received: by 2002:a05:6512:929:b0:485:5918:7a8f with SMTP id f9-20020a056512092900b0048559187a8fmr3617198lft.463.1657125478033;
+        Wed, 06 Jul 2022 09:37:58 -0700 (PDT)
 Received: from krzk-bin.home ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id 14-20020a2e154e000000b0025bf58c5338sm4025232ljv.15.2022.07.06.09.25.37
+        by smtp.gmail.com with ESMTPSA id v12-20020a056512096c00b004831cc659ffsm1168063lft.125.2022.07.06.09.37.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 09:25:37 -0700 (PDT)
+        Wed, 06 Jul 2022 09:37:57 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     krzysztof.kozlowski@linaro.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, alim.akhtar@samsung.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: soc: samsung: exynos-pmu: cleanup assigned clocks
-Date:   Wed,  6 Jul 2022 18:25:35 +0200
-Message-Id: <165712469638.30806.13604483011536770069.b4-ty@linaro.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/2] arm64: dts: cleanup for v5.20, second round
+Date:   Wed,  6 Jul 2022 18:37:53 +0200
+Message-Id: <20220706163754.33064-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220706160257.27579-1-krzysztof.kozlowski@linaro.org>
-References: <20220706160257.27579-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 6 Jul 2022 18:02:55 +0200, Krzysztof Kozlowski wrote:
-> "assigned-clocks" are not needed in the device schema as they come from
-> core schema.
-> 
-> 
+Hi,
 
-Applied with Rob's tags carried over from v1.
+This should conclude my cleanup session for ARM/ARM64.
 
-Applied, thanks!
-
-[1/3] dt-bindings: soc: samsung: exynos-pmu: cleanup assigned clocks
-      https://git.kernel.org/krzk/linux/c/38aed2e0aa406de6dda64515cc3937976a27038e
-[2/3] dt-bindings: soc: samsung: exynos-pmu: use abolute ref paths
-      https://git.kernel.org/krzk/linux/c/61bebc2902901cc2f1cac496dc81be38ca74d7d4
-[3/3] dt-bindings: soc: samsung: exynos-pmu: add reboot-mode
-      https://git.kernel.org/krzk/linux/c/3e27bf719303b1b19edd37bd04e9e586c73f6511
+On top of previous pull request.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
+
+
+The following changes since commit 87ccc38e2f8e55853ddfe633d9934bc7ca74b21c:
+
+  arm64: dts: apm: Harmonize DWC USB3 DT nodes name (2022-06-27 10:15:20 +0200)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/dt64-cleanup-5.20-2
+
+for you to fetch changes up to 2b090180dced85ccf27f276c1b6c9521d4c4120e:
+
+  arm64: dts: marvell: armada-3720: align lednode names with dtschema (2022-06-27 10:44:03 +0200)
+
+----------------------------------------------------------------
+Cleanup of ARM64 DTS for v5.20, part two
+
+Remaining cleanups for ARM64 DTS: gpio-keys and led node names on Marvel
+platforms.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      arm64: dts: marvell: align gpio-key node names with dtschema
+      arm64: dts: marvell: armada-3720: align lednode names with dtschema
+
+ arch/arm64/boot/dts/marvell/armada-3720-turris-mox.dts     | 4 ++--
+ arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
