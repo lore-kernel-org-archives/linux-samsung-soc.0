@@ -2,147 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1C2C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 15:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BC1C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 15:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232400AbiGFPDS (ORCPT
+        id S231799AbiGFPK1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 11:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
+        Wed, 6 Jul 2022 11:10:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229786AbiGFPDR (ORCPT
+        with ESMTP id S231892AbiGFPKZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Jul 2022 11:03:17 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE83D25EB8
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 08:03:15 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id s14so18844984ljs.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 08:03:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=IFs4K+vHO4shlMpyGm0KT1ygHT2JQiFDn/WkET9yuB0=;
-        b=vmA3fcKDcVjV7b2iQSvzwqDq5nlrjn+sb8pFsaTTMXgNC468AQKTAP2Ee8nYGSkaqH
-         WsA9d61yxfuOgLp+r7vPvUvtsdpDgv0zIfpbJrGyZJ6F4Fy5u+M7sQ6m7B8wfoEQfAHZ
-         Gjwj5A+VlIMUvT3OYkMPqySYtpce1KGVX2lZeyz0pQTXRngQzPfvMzhyzkVLhxvs8kGw
-         Kg7s+hDrpk6ZY9HlMDxW1MVuiVp0rsxl+6Rpp3KIrO4E24rT6xaqIljWnjJIOs4Pkjz7
-         7ZPHmYJFbLDcFubTOLgavLFNF3kZHTKlg7a6izX06/g8om7tvV7ixe9x2zYL7WdZD6Ez
-         i9bA==
+        Wed, 6 Jul 2022 11:10:25 -0400
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7666F65D7;
+        Wed,  6 Jul 2022 08:10:25 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id r133so14274237iod.3;
+        Wed, 06 Jul 2022 08:10:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=IFs4K+vHO4shlMpyGm0KT1ygHT2JQiFDn/WkET9yuB0=;
-        b=GExGIGeYGK/Fegy7CJJEPYXDqjKCVbu9zIW8IqiJKispx0FpbbAAE7KwywIVKQBSeT
-         p7gpSwPNrZ//W56ulUmYGlm2STFkazkVrnKdkhMubr8rZS8TicbvEwZF1zRgsKofd1d3
-         5CmG81GHgOKCGb1oaHpS6dzG8xIii3OvBJyzOKykUvChJc9iGa3++nekbOuYJyPo8aDX
-         cBwfYSwe5bLleAEuUxh24qGD/AaLnZgzNAKaRZRpAG9NoDlJJcGAGayi7QZ/t+vC/NX/
-         EHJ0gWTNcK0kWjAjvYCBZe2LkcmTpgU26MUnN1me9FZ2SE09/V2kJNcMo6ZHHO1i26Sb
-         mAkg==
-X-Gm-Message-State: AJIora/2XZy037skshELNMGZ3yHvAbAKF6HPTsxaQWCnaJdXDE795v1G
-        cDtVpk7g6NCKat2Bwniz8Fw/0w==
-X-Google-Smtp-Source: AGRyM1vzf+X2DEOP0TXIqFD/djZdIH/lQtaH7PMeSC8hPX5X4b/lW4XYVD3ntTQM0B5I4fKeuAsTyA==
-X-Received: by 2002:a2e:9110:0:b0:25d:46ea:3173 with SMTP id m16-20020a2e9110000000b0025d46ea3173mr2230800ljg.80.1657119792752;
-        Wed, 06 Jul 2022 08:03:12 -0700 (PDT)
-Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id z19-20020a056512371300b0047fa16f71e6sm6321366lfr.30.2022.07.06.08.03.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Jul 2022 08:03:12 -0700 (PDT)
-Message-ID: <e9b0306b-4d4b-72b2-b12d-cea4c3754a58@linaro.org>
-Date:   Wed, 6 Jul 2022 17:03:10 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ti4zmV4GUapG/KcWvw/wcUeeD0JIk7jWHgtf+D9XkUc=;
+        b=gcp5efh9IvLopr3Lpz1ts+1tQeSI9tYpaFLMloOaVkUtU3rR8YErYcqMVpeADjAQPH
+         L/tEth+C5zSU1+Ege44JpucqvWygPXcLpLVIuMLfHQGNtPEgREPmCk4qmX8a1Dbo8cEE
+         fGNSSuLI56duo+xNiJk8jM0GTqwGVh8yYM8Hqb1TUVvV1KjxEt1fEMygw+FqJpXk+Qlk
+         +zQVe0K4gineQt0IvxENZz/QYVheXgPKakrnW6e32ntME4V+8Li7Qk42HLXIsjOMPiqY
+         CCtt+p4KWGSjco4P64s6AWSqzO6aRStlCDesYV+4o3QsuNnw/nt9uk5pOHnNF9Cjeern
+         5inQ==
+X-Gm-Message-State: AJIora+xyJv8zutRzul5LWkskupPULp6RSmKYUc14lCkVFYZJnnbVR7E
+        lJd5uKF3F7TLE5YVmzfHGg==
+X-Google-Smtp-Source: AGRyM1u7Si3EOMaQg8tfbk3/6gmgmrta74QsCxtc71g6m2mKVZfQnkfBZeJHPq5m0IW/hXHFwWK01w==
+X-Received: by 2002:a05:6638:304:b0:33e:9d12:99f5 with SMTP id w4-20020a056638030400b0033e9d1299f5mr18195671jap.45.1657120224755;
+        Wed, 06 Jul 2022 08:10:24 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id cn27-20020a0566383a1b00b0033efc8857c0sm1475754jab.50.2022.07.06.08.10.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 08:10:24 -0700 (PDT)
+Received: (nullmailer pid 52757 invoked by uid 1000);
+        Wed, 06 Jul 2022 15:10:22 -0000
+Date:   Wed, 6 Jul 2022 09:10:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Tero Kristo <kristo@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwinfo: group Chip ID-like devices
+Message-ID: <20220706151022.GA52709-robh@kernel.org>
+References: <20220705154613.453096-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: ExynosAutov9 SDAK UFS phy dtbs check error
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        'Alim Akhtar' <alim.akhtar@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org
-References: <140c1c89-49a7-45bd-7f01-8a3ed1343437@linaro.org>
- <CGME20220706095505epcas2p36afb722aa84d41c6d13c825280467258@epcas2p3.samsung.com>
- <f1e03b78-f844-6eec-2ace-d177af59f0c9@linaro.org>
- <021701d89126$c6e8f410$54badc30$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <021701d89126$c6e8f410$54badc30$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220705154613.453096-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/07/2022 12:54, Chanho Park wrote:
->>> When running dtbs_check I found:
->>> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: phy@17e04000: clocks:
->>> [[10]] is too short
->>>
->>> 	From schema: Documentation/devicetree/bindings/phy/samsung,ufs-
->> phy.yaml
->>>
->>> arch/arm64/boot/dts/exynos/exynosautov9-sadk.dtb: phy@17e04000:
->>> clock-names: ['ref_clk'] is too short
->>>
->>> 	From schema: Documentation/devicetree/bindings/phy/samsung,ufs-
->> phy.yaml
->>>
->>>
->>> and so on. It seems you miss there clocks.
->>
->> +Cc Alim.
->>
->> Tesla FSD has the same problem:
->> tesla/fsd-evb.dtb: ufs-phy@15124000: clocks: [[35, 2]] is too short
->>
+On Tue, 05 Jul 2022 17:46:12 +0200, Krzysztof Kozlowski wrote:
+> Group devices like Chip ID or SoC information under "hwinfo" directory.
 > 
-> Thanks for the report.
-> Ufs-phy clock of Fsd and Exynos Auto v9 shall be 'ref' clock only unlike previous exynos7's ufs-phy.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> I'm looking into how I can fix the warning.
-> I simply made below patch but I'm not sure which is better between minItems/maxItems and oneOf selection.
+> ---
 > 
-> --- a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> @@ -28,17 +28,23 @@ properties: 
+> Changes since v2:
+> 1. Spllit renesas,prr.yaml into separate patchset.
 > 
->    clocks:
->      items:
-> -      - description: PLL reference clock
-> -      - description: symbol clock for input symbol ( rx0-ch0 symbol clock)
-> -      - description: symbol clock for input symbol ( rx1-ch1 symbol clock)
-> -      - description: symbol clock for output symbol ( tx0 symbol clock)
-> +      minItems: 1
-> +      maxItems: 4
-> +      items:
-> +        - description: PLL reference clock
-> +        - description: symbol clock for input symbol ( rx0-ch0 symbol clock)
-> +        - description: symbol clock for input symbol ( rx1-ch1 symbol clock)
-> +        - description: symbol clock for output symbol ( tx0 symbol clock) 
-> 
->    clock-names:
-> -    items:
-> -      - const: ref_clk
-> -      - const: rx1_symbol_clk
-> -      - const: rx0_symbol_clk
-> -      - const: tx0_symbol_clk
-> +    oneOf:
-> +      - items:
-> +          - const: ref_clk
-> +          - const: rx1_symbol_clk
-> +          - const: rx0_symbol_clk
-> +          - const: tx0_symbol_clk
-> +      - items:
-> +          - const: ref_clk 
+> Changes since v1:
+> 1. New patch
+> ---
+>  .../exynos-chipid.yaml => hwinfo/samsung,exynos-chipid.yaml}    | 2 +-
+>  .../{soc/ti/k3-socinfo.yaml => hwinfo/ti,k3-socinfo.yaml}       | 2 +-
+>  MAINTAINERS                                                     | 2 ++
+>  3 files changed, 4 insertions(+), 2 deletions(-)
+>  rename Documentation/devicetree/bindings/{soc/samsung/exynos-chipid.yaml => hwinfo/samsung,exynos-chipid.yaml} (92%)
+>  rename Documentation/devicetree/bindings/{soc/ti/k3-socinfo.yaml => hwinfo/ti,k3-socinfo.yaml} (92%)
 > 
 
-You need:
-1. new compatible
-2. min/maxItems in clocks/clock-names in "properties:" part.
-3. allOf:if:then: adding constraints per variant to clocks and clock-names.
-
-See:
-https://elixir.bootlin.com/linux/v5.18-rc2/source/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml#L53
-
-
-Best regards,
-Krzysztof
+Applied, thanks!
