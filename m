@@ -2,123 +2,123 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDB4C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 13:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EA6C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Jul 2022 14:24:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233185AbiGFNGy (ORCPT
+        id S232759AbiGFOY6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 09:06:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37392 "EHLO
+        Wed, 6 Jul 2022 10:24:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233112AbiGFNGx (ORCPT
+        with ESMTP id S232042AbiGFOY5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Jul 2022 09:06:53 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80CB918E29
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 06:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=D0hNbSBzGzNXDpHde8BsfsD5hfBQ
-        bb4aorNSvpTgVrU=; b=E6cdQmWOgXODAMsv1qYtftsUDkq8yB2rzDN7nbBj49dC
-        OTU5rWih/KddxbSWUIuqbYyZA1DH1debq9NIp/cByt22mxrn5n/ONLBreV56cIbi
-        Lq0NaxHrB7CM921l7oThMnvySzFR0PaRyaVsm+XjBJmkMxL8giq3frwg2nVAZ1E=
-Received: (qmail 1712726 invoked from network); 6 Jul 2022 15:06:46 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2022 15:06:46 +0200
-X-UD-Smtp-Session: l3s3148p1@ZX/5oyLjKmlZzIq1
-Date:   Wed, 6 Jul 2022 15:06:42 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Michael Walle <michael@walle.cc>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Till Harbaum <till@harbaum.org>
-Subject: Re: [PATCH v2 2/2] i2c: Introduce i2c_str_read_write() and make use
- of it
-Message-ID: <YsWI4nzQa9gmqKdw@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Walle <michael@walle.cc>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Till Harbaum <till@harbaum.org>
-References: <20220703154232.55549-1-andriy.shevchenko@linux.intel.com>
- <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
+        Wed, 6 Jul 2022 10:24:57 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB5920F75
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Jul 2022 07:24:56 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id i18so26186186lfu.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2022 07:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y0+hemKCm9KoLcdJVlDwowemoYH5rpN+Hagnel9ijRQ=;
+        b=omXZrna0gxIYOazn7dGSQ7WvQGEYaiftOCQUxfDqPa5w+1/OLqJq8uvIyGgBHkh8zG
+         9StaSLqmtiC++EBHnpfHQg4he4T37Hj1jxHflwWnMXc3gqIUe9gPq3WCAcdsp+s+2A3k
+         VrH2kCLpJsCMT7K6KTLi//AB2RG+tSx0/Kt51DWW1YXgTGeB+LdeM7Yubl1VaevlPI6W
+         wF7AKTUrmEaEU8dwOESUd3SQGKWBP/ipS3jCHfC0y8aIWEEQuBS4EgPw9kiZxRFXCwcS
+         YtyGi6h+7/VfY39HZmzZ6fMF3Mf3AV3oUgt4z9v5BCBRR3hYosw9wyz7yWCEfjyAfLEG
+         JuoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y0+hemKCm9KoLcdJVlDwowemoYH5rpN+Hagnel9ijRQ=;
+        b=c4Pmkw8B9FdDcSY/Jtzkx+6IqDqn9BhohuEQjFh75whYPmh+UM9h/0x8wSPeIeNOIL
+         SvQVI2wC5gmJ2Mm3wNgQLJ+2MMCvmGpSADsISrmfoZ5bea+J1p9etM6LaRHDQzrRI0+G
+         2dcPVagWjw4KDvzm3j4IMK6391EBbjmuQ34pLR7nmc1aWQyyTzZW9b2saj3z87Pn1x+/
+         rtBHLly/ldjBxFor0BqILmFJsvsoMhcqq0FpcbB8q1lflAi47x6f0YiJn+pOTvIOSeSg
+         yuDWAS+b1EzE4AsV48Qthn5wl3/A9HI2XP3z+j9OpwIhJZufjz27KQTKSkPsSOZ4WQ9f
+         NPYA==
+X-Gm-Message-State: AJIora8HnBVIEA2Z4jco5k646M74+G1dZFWrNhNSLWnwhfWtyS838s2q
+        ht6lYCl48wt4AITDZNRIDzzaQ8cOwC0P79DzbWZBsg==
+X-Google-Smtp-Source: AGRyM1uDeNrP78kQbE4GCyT6VGpyQpPl0h+HaGsEaZJSOZN/gnHdPOD4IO3m6JYnJJttm/k1+C81vMOjQAuEaHVjx1g=
+X-Received: by 2002:a05:6512:2205:b0:484:e296:62fa with SMTP id
+ h5-20020a056512220500b00484e29662famr4062867lfu.142.1657117494567; Wed, 06
+ Jul 2022 07:24:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CdaVGdeblKJUV2jY"
-Content-Disposition: inline
-In-Reply-To: <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
+References: <20220702213724.3949-1-semen.protsenko@linaro.org>
+ <CAPLW+4kYbG7PRYo_L6N5xMa+F9DFBpyph4B+zb2R4kBbE3EKHg@mail.gmail.com> <67943ec4dcfe85d6d616a5507437d99f6c5638a2.camel@gmail.com>
+In-Reply-To: <67943ec4dcfe85d6d616a5507437d99f6c5638a2.camel@gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 6 Jul 2022 17:24:43 +0300
+Message-ID: <CAPLW+4k9DBbX6PupEk-J_KFbLmwgbfuDrfuVgyapT=d4WMG7yQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] iommu/exynos: Add basic support for SysMMU v7
+To:     Janghyuck Kim <janghyuck.kim@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        David Virag <virag.david003@gmail.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sun, 3 Jul 2022 at 13:47, David Virag <virag.david003@gmail.com> wrote:
+>
+> On Sun, 2022-07-03 at 00:48 +0300, Sam Protsenko wrote:
+> [...]
+> > Hi Marek,
+> >
+> > As I understand, you have some board with SysMMU v7, which is not VM
+> > capable (judging from the patches you shared earlier). Could you
+> > please somehow verify if this series works fine for you? For example,
+> > this testing driver [1] can be helpful.
+> >
+> > Thanks!
+> >
+> > [1]
+> > https://github.com/joe-skb7/linux/commit/bbadd46fa525fe1fef2ccbdfff81f7d29caf0506
+>
+> Hi Sam,
+>
+> Not Marek here, but I wanted to try this on my jackpotlte (Exynos
+> 7885). The driver reports it's DPU sysmmu as version 7.2, and manually
+> reading the capabilities registers it looks like it has the 2nd
+> capability register but not the VM capability.
+>
+> After applying your patches, adding your test driver (with SYSMMU_BASE
+> corrected to 7885 value), and adding the sysmmu to dt, I tried to cat
+> the test file that it creates in debugfs and I got an SError kernel
+> panic.
+>
+> I tried tracing where the SError happens and it looks like it's this
+> line:
+>         /* Preload for emulation */
+>         iowrite32(rw | vpn, obj->reg_base + MMU_EMU_PRELOAD);
+>
+> Trying to read the EMU registers using devmem results in a "Bus error".
+>
+> Could these emulation registers be missing from my SysMMU? Do you have
+> any info on what version should have it? Or maybe some capability bit?
+> I'll try testing it with DECON/DPP later and see if it works that way.
+>
 
---CdaVGdeblKJUV2jY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Janghyuck,
 
-Hi Andy,
+Do you have by chance any info on SysMMU v7.2, which is present e.g.
+on Exynos7885? David is trying to use emulation registers there with
+no luck, so it would be nice if you can provide some details on
+questions above.
 
-On Sun, Jul 03, 2022 at 06:42:32PM +0300, Andy Shevchenko wrote:
-> str_read_write() returns a string literal "read" or "write" based
-> on the value. It also allows to unify usage of a such in the kernel.
->=20
-> For i2c case introduce a wrapper that takes struct i2c_msg as parameter.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thanks!
 
-To be honest, I don't think this series is very useful. Most of the
-converted strings here are debug printouts which could rather be removed
-because we have a tracepoint for i2c_transfer (which is the preferred
-unification). The warnings printed on timeouts are plain wrong, because
-timeouts can happen and need to be handled by the client driver. And the
-change in the I2C core is not worth the hazzle IMHO.
-
-Happy hacking,
-
-   Wolfram
-
---CdaVGdeblKJUV2jY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmLFiN4ACgkQFA3kzBSg
-KbaOnRAAlv7WrOzngujipBR3pVf3yo6uKVwFX+PykjBTa0wBHwetMP0pYuObpjH9
-MPI+xi3IOPO8nnwQgPbg8ke0Yq4akFTTkLG8QOXU1ddT1UWRq1TJXNB9hME3tXGD
-WkO7L/wslhrvwy48f+0nOJotVJ3q34bifTQ78CTnFyYY6Tfg6BgF/opp70w7XNgW
-5blntGsxPCRsh1VBlDilYsgh3TXzmD934y8v1hFpM2BXFgnHKsID9FOeHVDsuB8O
-RL08dyCz/yt2r4M0f7DDOF56PS/35JsJhZ5v2F9er0fkPgEdS392WEeJrQhiQ920
-ugWPpY6MhwTuTFZQqaeiv9moB+j1BBcKoEyG3c4quq35KKIYsaaC0fj40+1u9Gel
-wlZ5qxgE29BYSWZocpQbdFF8jG/iEhnEy9pIRfGfQagUypOLsqqcsk5Qq9aavWHK
-Vu4pI5SRlsMcRWzWO4592D8KYF5Tc/0NQ+qfCj6AO+OwBIBR+S7lBsLiNpIETLil
-EMa1kLVlr/ElAFyqXIa8yX7vvK9xHDcHEPWsW3Q30g5QEGT40iXSGkM21l3KebVz
-Lw7qzoMkINICUNGP2ULiYOCgafWdlVlev4RmQCDFDljj2ZKH1ph91kJeM7YscDj5
-ZGh3HI5USzLFt/C6uFVIwSpz2aM2IMOWcasNvtXlR7RZNu/qwdI=
-=srXy
------END PGP SIGNATURE-----
-
---CdaVGdeblKJUV2jY--
+> Best regards,
+> David
