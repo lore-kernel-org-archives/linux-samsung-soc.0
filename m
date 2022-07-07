@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA31AC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jul 2022 19:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625F9C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jul 2022 19:30:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235560AbiGGTEJ (ORCPT
+        id S235347AbiGGTaB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 15:04:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56528 "EHLO
+        Thu, 7 Jul 2022 15:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbiGGTEI (ORCPT
+        with ESMTP id S232284AbiGGTaB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Jul 2022 15:04:08 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B9D1EADB;
-        Thu,  7 Jul 2022 12:04:07 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id o12so7690979pfp.5;
-        Thu, 07 Jul 2022 12:04:07 -0700 (PDT)
+        Thu, 7 Jul 2022 15:30:01 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F7F20BFE;
+        Thu,  7 Jul 2022 12:30:00 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id x184so7999283pfx.2;
+        Thu, 07 Jul 2022 12:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=lfedw5Q6kj9MYHK76JYN4i5YQeu/OcQq9f2Hbxue1dE=;
-        b=Q92DfUFfGBSBq2rMRhTimcdKdE75oTaXk1j89PBY2orftuKs0EYufzZAPruBtKc/e1
-         cz7355enxMLNE3kMcxEudu5jCPpdMmlpEu3CQ7l+U1h50RFnZQtUhO8qdR3B7vF/+KLC
-         auGbW7DBqB0we/sImYcsljLCICyMgE1cz7HU3SNPykLHDvZLKgZqbTEHZaUrRqFRc+cY
-         DTnfDOKitxgDhMzCjiMi3d6cCOVF5ObhWNxyg8nQ0SMeGhv0ThvXEqILg61Sk609PGqU
-         /gHF30qaBJM8YRG1RlsMSgAMYmNt0l706Yl5egbme5AGzgwiRMGgWTzJltOYUIfFUPWO
-         yCEQ==
+        bh=rNjW1kwIEY/5kZagqWsC214U8GWp+x3M7qVK2GMrOLI=;
+        b=E1vFwX9SAFs6L7n5gRjxI/pxygtN8qYO0JGr7AtKRs/kCmd9Y8DoGc2ob5uARbk178
+         +N5ZitQyQV4IwDD/fU+pPDuibd7LZnfhZBFB4G4jQNg0mXh6SgluSAD0saMj3dNEVurI
+         w1I3LkMJgTd87dK2KQ/HKFZl2EM5RU1BtZSX/7jOJep4sd/23NOt95fAvRLuX4aHlXGQ
+         Li35EzLsZd1a+7Wi1V5EH8HfHVw89xT3G9DLe8L+xuLGJoMuyK7O4xlryDMgCBAlxIXG
+         /nXCvX108iKCwn+0Q465T4kbyJ2DOVtJBbd92MlpltWJazipX8ZoXhW046kralGWmQR0
+         oqFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=lfedw5Q6kj9MYHK76JYN4i5YQeu/OcQq9f2Hbxue1dE=;
-        b=Ck3SmV9D/0WYSu+mmqiH39smAtbMaeHWZ8kM+s38uH/FGi3Mh7WXN64XCwK42NkbAO
-         kzYxrkEPOUMpi6qNjnz3ZLts6vekzELv+dbxU5aS8ktZgA30zI0CdHPFtwefJZ9rQgPW
-         BBJqn+mkvhptpsLX5expFpK3Vdo/RgTb5NKBwYfhaAl/tRE9kir4jKsHVihasF7IJhK3
-         JZIaZhlEhdveXE8wyjTwOVAiljhhIvnWaUh1bgf0xN7kZznY/x31GXDDSx8e/ffZnsUm
-         ppU7HTo0t225NopGozmejS7adYdKnY2rJfYqkaJN+A+zg/1nAUL6eh1a0RqUlYgmK0CV
-         sGzA==
-X-Gm-Message-State: AJIora+Vpu+Ic8sz0G0eM+KgE8K3YZbv7dRZMFQQgXQbKOxZHlG5koJr
-        M1pNuV/1MemuNplcJY/X2ao=
-X-Google-Smtp-Source: AGRyM1vBMTVoI5fmKr4hV9WCTP7Jok/033MBAoEPhbyZTPfHRnGcZZW1OFagAJqNbMyMz7kb/cenUw==
-X-Received: by 2002:a05:6a00:14c5:b0:525:3797:fd3b with SMTP id w5-20020a056a0014c500b005253797fd3bmr52910828pfu.27.1657220646748;
-        Thu, 07 Jul 2022 12:04:06 -0700 (PDT)
+        bh=rNjW1kwIEY/5kZagqWsC214U8GWp+x3M7qVK2GMrOLI=;
+        b=rtAlblJo8CAmBbP5oNMiFae56q3EFgsAaDGRidRy8oLrGbq0DnwTjTxBSYePYA40D4
+         Q8Vc+OItMzWRGOh9DoOeHq1tgokhwfDlMK4Cbf57FsfRTL7hVeo9aP7RDhHSa33twSxX
+         dVPzUl99Wn3iaRxqxnVozdtVxccihEAjiDOXBe3PZHY3lOdwuGP6FBp+1m6ccQjB/8y/
+         nZMciZBQwy7uG/6SBsf97UrfsANv7h25PjCSdgvp2E9lz+mB0a+vHyZrEMweBLPOPYS6
+         wv1WDWoHoKF6Dl5PJIcT56H8Hs7MaEyAmiSDL+1bM4P9vm9L0yjXLLSxi8BAmZEx/51Q
+         iqyA==
+X-Gm-Message-State: AJIora+DXzuF8fLOW9YG92NhF6ASKybUr8JR+GzD5kKQVjeoIVpNTvkd
+        KilfCJcCCWjcXm1La9yYcJQ=
+X-Google-Smtp-Source: AGRyM1tnlvQyJtAHuwz1B3mqv0X0N/6H4lbbTRErdmjx2oQEL0l0hJhce9UgvBKXtrTx18hTVOlk4Q==
+X-Received: by 2002:a62:542:0:b0:525:a313:fe28 with SMTP id 63-20020a620542000000b00525a313fe28mr55479583pff.73.1657222199790;
+        Thu, 07 Jul 2022 12:29:59 -0700 (PDT)
 Received: from [172.30.1.47] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id rm12-20020a17090b3ecc00b001efc839ac97sm2073696pjb.3.2022.07.07.12.04.00
+        by smtp.gmail.com with ESMTPSA id y27-20020a634b1b000000b0040cff9def93sm25909782pga.66.2022.07.07.12.29.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Jul 2022 12:04:06 -0700 (PDT)
-Message-ID: <bc08957c-4ebc-7c17-cbf4-ad6718862127@gmail.com>
-Date:   Fri, 8 Jul 2022 04:04:02 +0900
+        Thu, 07 Jul 2022 12:29:59 -0700 (PDT)
+Message-ID: <c4f66e4d-727e-254c-2a36-6949813f8031@gmail.com>
+Date:   Fri, 8 Jul 2022 04:29:54 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH V3 02/20] OPP: Make dev_pm_opp_set_regulators() accept
- NULL terminated list
+Subject: Re: [PATCH V3 10/20] OPP: Migrate set-regulators API to use
+ set-config helpers
 Content-Language: en-US
 To:     Viresh Kumar <viresh.kumar@linaro.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -65,24 +65,15 @@ To:     Viresh Kumar <viresh.kumar@linaro.org>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Qiang Yu <yuq825@gmail.com>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org
 References: <cover.1656935522.git.viresh.kumar@linaro.org>
- <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
+ <57b3f53e71550be92e28f4e2fa619f93bb5f3d78.1656935522.git.viresh.kumar@linaro.org>
 From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <9730e011004b7526e79c6f409f5147fb235b414a.1656935522.git.viresh.kumar@linaro.org>
+In-Reply-To: <57b3f53e71550be92e28f4e2fa619f93bb5f3d78.1656935522.git.viresh.kumar@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -90,103 +81,98 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On 22. 7. 4. 21:07, Viresh Kumar wrote:
-> Make dev_pm_opp_set_regulators() accept a NULL terminated list of names
-> instead of making the callers keep the two parameters in sync, which
-> creates an opportunity for bugs to get in.
+> Now that we have a central API to handle all OPP table configurations,
+> migrate the set-regulators family of helpers to use the new
+> infrastructure.
 > 
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> The return type and parameter to the APIs change a bit due to this,
+> update the current users as well in the same commit in order to avoid
+> breaking builds.
+> 
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/cpufreq/cpufreq-dt.c                |  9 ++++-----
->  drivers/cpufreq/ti-cpufreq.c                |  7 +++----
->  drivers/devfreq/exynos-bus.c                |  4 ++--
->  drivers/gpu/drm/lima/lima_devfreq.c         |  3 ++-
->  drivers/gpu/drm/panfrost/panfrost_devfreq.c |  4 ++--
->  drivers/opp/core.c                          | 18 ++++++++++++------
->  drivers/soc/tegra/pmc.c                     |  4 ++--
->  include/linux/pm_opp.h                      |  9 ++++-----
->  8 files changed, 31 insertions(+), 27 deletions(-)
+>  drivers/cpufreq/cpufreq-dt.c | 12 ++---
+>  drivers/devfreq/exynos-bus.c | 19 +++-----
+>  drivers/opp/core.c           | 91 ++++++++----------------------------
+>  include/linux/pm_opp.h       | 44 ++++++++++-------
+>  4 files changed, 60 insertions(+), 106 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> index 8fcaba541539..be0c19b3ffa5 100644
-> --- a/drivers/cpufreq/cpufreq-dt.c
-> +++ b/drivers/cpufreq/cpufreq-dt.c
-> @@ -193,7 +193,7 @@ static int dt_cpufreq_early_init(struct device *dev, int cpu)
->  	struct private_data *priv;
->  	struct device *cpu_dev;
->  	bool fallback = false;
-> -	const char *reg_name;
-> +	const char *reg_name[] = { NULL, NULL };
->  	int ret;
->  
->  	/* Check if this CPU is already covered by some other policy */
-> @@ -218,10 +218,9 @@ static int dt_cpufreq_early_init(struct device *dev, int cpu)
->  	 * OPP layer will be taking care of regulators now, but it needs to know
->  	 * the name of the regulator first.
->  	 */
-> -	reg_name = find_supply_name(cpu_dev);
-> -	if (reg_name) {
-> -		priv->opp_table = dev_pm_opp_set_regulators(cpu_dev, &reg_name,
-> -							    1);
-> +	reg_name[0] = find_supply_name(cpu_dev);
-> +	if (reg_name[0]) {
-> +		priv->opp_table = dev_pm_opp_set_regulators(cpu_dev, reg_name);
->  		if (IS_ERR(priv->opp_table)) {
->  			ret = PTR_ERR(priv->opp_table);
->  			if (ret != -EPROBE_DEFER)
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index 8f9fdd864391..560d67a6bef1 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -173,7 +173,7 @@ static struct ti_cpufreq_soc_data omap34xx_soc_data = {
->   *    seems to always read as 0).
->   */
->  
-> -static const char * const omap3_reg_names[] = {"cpu0", "vbb"};
-> +static const char * const omap3_reg_names[] = {"cpu0", "vbb", NULL};
->  
->  static struct ti_cpufreq_soc_data omap36xx_soc_data = {
->  	.reg_names = omap3_reg_names,
-> @@ -326,7 +326,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  	const struct of_device_id *match;
->  	struct opp_table *ti_opp_table;
->  	struct ti_cpufreq_data *opp_data;
-> -	const char * const default_reg_names[] = {"vdd", "vbb"};
-> +	const char * const default_reg_names[] = {"vdd", "vbb", NULL};
->  	int ret;
->  
->  	match = dev_get_platdata(&pdev->dev);
-> @@ -387,8 +387,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  		if (opp_data->soc_data->reg_names)
->  			reg_names = opp_data->soc_data->reg_names;
->  		ti_opp_table = dev_pm_opp_set_regulators(opp_data->cpu_dev,
-> -							 reg_names,
-> -							 ARRAY_SIZE(default_reg_names));
-> +							 reg_names);
->  		if (IS_ERR(ti_opp_table)) {
->  			dev_pm_opp_put_supported_hw(opp_data->opp_table);
->  			ret =  PTR_ERR(ti_opp_table);
+
+(snip)
+
 > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index e689101abc93..541baff93ee8 100644
+> index 541baff93ee8..d1235242367f 100644
 > --- a/drivers/devfreq/exynos-bus.c
 > +++ b/drivers/devfreq/exynos-bus.c
-> @@ -180,10 +180,10 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+> @@ -33,7 +33,7 @@ struct exynos_bus {
+>  
+>  	unsigned long curr_freq;
+>  
+> -	struct opp_table *opp_table;
+> +	int opp_token;
+>  	struct clk *clk;
+>  	unsigned int ratio;
+>  };
+> @@ -161,8 +161,7 @@ static void exynos_bus_exit(struct device *dev)
+>  
+>  	dev_pm_opp_of_remove_table(dev);
+>  	clk_disable_unprepare(bus->clk);
+> -	dev_pm_opp_put_regulators(bus->opp_table);
+> -	bus->opp_table = NULL;
+> +	dev_pm_opp_put_regulators(bus->opp_token);
+>  }
+>  
+>  static void exynos_bus_passive_exit(struct device *dev)
+> @@ -179,18 +178,16 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  					struct exynos_bus *bus)
 >  {
 >  	struct device *dev = bus->dev;
->  	struct opp_table *opp_table;
-> -	const char *vdd = "vdd";
-> +	const char *supplies[] = { "vdd", NULL };
+> -	struct opp_table *opp_table;
+>  	const char *supplies[] = { "vdd", NULL };
 >  	int i, ret, count, size;
 >  
-> -	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
-> +	opp_table = dev_pm_opp_set_regulators(dev, supplies);
->  	if (IS_ERR(opp_table)) {
->  		ret = PTR_ERR(opp_table);
+> -	opp_table = dev_pm_opp_set_regulators(dev, supplies);
+> -	if (IS_ERR(opp_table)) {
+> -		ret = PTR_ERR(opp_table);
+> +	ret = dev_pm_opp_set_regulators(dev, supplies);
+> +	if (ret < 0) {
 >  		dev_err(dev, "failed to set regulators %d\n", ret);
+>  		return ret;
+>  	}
+>  
+> -	bus->opp_table = opp_table;
+> +	bus->opp_token = ret;
+>  
+>  	/*
+>  	 * Get the devfreq-event devices to get the current utilization of
+> @@ -236,8 +233,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	return 0;
+>  
+>  err_regulator:
+> -	dev_pm_opp_put_regulators(bus->opp_table);
+> -	bus->opp_table = NULL;
+> +	dev_pm_opp_put_regulators(bus->opp_token);
+>  
+>  	return ret;
+>  }
+> @@ -459,8 +455,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  	dev_pm_opp_of_remove_table(dev);
+>  	clk_disable_unprepare(bus->clk);
+>  err_reg:
+> -	dev_pm_opp_put_regulators(bus->opp_table);
+> -	bus->opp_table = NULL;
+> +	dev_pm_opp_put_regulators(bus->opp_token);
+>  
+>  	return ret;
+>  }
 
 Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
+Thanks.
+
+
 (snip)
+
 
 -- 
 Best Regards,
