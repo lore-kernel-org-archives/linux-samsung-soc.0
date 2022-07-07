@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9253EC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jul 2022 08:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF1AC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Jul 2022 08:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233783AbiGGIET (ORCPT
+        id S234773AbiGGIET (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Thu, 7 Jul 2022 04:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49432 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232120AbiGGIES (ORCPT
+        with ESMTP id S234218AbiGGIET (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 7 Jul 2022 04:04:18 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0B631352
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Jul 2022 01:04:17 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id e12so29776363lfr.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Jul 2022 01:04:17 -0700 (PDT)
+        Thu, 7 Jul 2022 04:04:19 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 457B2E00
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Jul 2022 01:04:18 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id t25so29771910lfg.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Jul 2022 01:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t9dYgQ35cdd5QcwdHZmKr6Q8Vl0RugkCrkWrdr8ld24=;
-        b=AeV56w8X6d0UUFxOQOh6iNGq9TyUYX8ofNmERk0UhTdG9g3q6Rd8ibW7E60fMU73N/
-         E/HlUkN/PpEXf1DM786OvOL7jyPe4cDT63s//co2l2T3vtIxbVNy+Jzm49G2nCMu7wxC
-         U5jOYRdmdvIy6sVDYyjEGqUb3P04X/1iK2UTTbyoBqZ+X1aJLgHCEekcW895rw0Dekhb
-         CeiFBn9raIWf/7ACKj2h/05hz/TKzzaFob3nEcs0p2c8tC+tA/lnMUKrgMm/yYTOXaOe
-         TWLrSJWQrLkFHIva/c9meAiKyZvUYQDLgiftcbMLwtiCP5vytl4iA4dg4HBhW3NrLauf
-         VFRg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Z5ssFYeQl7V2JJ54NmhIzC4kevK2DFEIrlaz+FamJ4o=;
+        b=nQyKLogTPnRG/buW57rEKh/p4nVI47DT4almuA9zdgse7ZnePqyIwZragdTmyL5Zkk
+         Yp09663+gJTNo6qUACiFo0ItN4bQo+s4TS0rCPM2pDXCJPJX25HqaZZJNmvGB/j31Aq1
+         aS3fWZ/H1HJmLrZV6uu9kUzNZlxk3eDVOBZXpwg0A10QMvW12iLmccF1dNE1rlP9sVtl
+         Vq+JSBAzqzBEd5oPAnKpx18289Y2MSIz3mUyK+RGsBHrAhfB3FRo+SQj5UXSSaTGKfPM
+         04k1TMBLdFVVsLPv9IxxFCW4Wh1/EQOusbiWmRBRv29+eVjtV9XMLbhofx+RqjB9ebGE
+         QFsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t9dYgQ35cdd5QcwdHZmKr6Q8Vl0RugkCrkWrdr8ld24=;
-        b=vsTlLWckTnbX/p/Yu8iahQ5pnNtBV3iz72EymqvzGcne2SBUZNkjWogk95kHTV+KZ+
-         86gDBwHOCWbPk+i2yb9OF0rVAcpx1upA8MydaHIgZMpylGaDj5t8yN87BXerrJx3GT+8
-         dJuWFC4Q0IM6HTdZGirK+fgmtjUl5ldOUhNI2j6Thckr0yY0tP37HCn0VAfX1Lopa6GO
-         BVWduHqZHc20ew4UKepXFzsyNl5mkuPWTj5mcCI5EX87FF7UHDetbKYqG0FavfRuZFup
-         UQ3+K5q7V34RGeEuyejIRouxre6lIr8+B18+lrf4e2m+M1kJVNWRTHEJmlW7kl9or83S
-         Nh+A==
-X-Gm-Message-State: AJIora9SUFM6jyc4xQCtl55ZzSbzlAtRcqHkS4dpAreMt0iY+nPTFxOU
-        HB3u6JJB9vHAt/ybcsfQydSZew==
-X-Google-Smtp-Source: AGRyM1sFsafUoEd5OpC5bdbiu44MmM3ARKbnb0/kpVDSpu/pZHsf52Uy0hJBrMCVvqCZac/uRBLmBg==
-X-Received: by 2002:a05:6512:3051:b0:47f:7945:83d0 with SMTP id b17-20020a056512305100b0047f794583d0mr26620431lfb.99.1657181055571;
-        Thu, 07 Jul 2022 01:04:15 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Z5ssFYeQl7V2JJ54NmhIzC4kevK2DFEIrlaz+FamJ4o=;
+        b=yd2HlTKV9SA+fJv6rlHqKdG0VACZHrfMNYrEe+v9gERmkqulLpddlq/yXeP+rUa7hF
+         eO8qbpxarda0DemQ5DqWYE2rQzQI3HW9ndKtPLDDhxzshRlW/i39WPhGZbrcI5d77sUq
+         +CoekZuDrEgajtz7Ana4YUKj0HPufREixbVsLgwRBlD19PI1UFBYYFUmUh1+6Qyy0ccE
+         jUI+fzW6M0f3d7LWkICV2LDyKnaXb9YKoSGfZBSKl4bBVK+j6sF7tpFfjzBgn/Kke5hZ
+         fswelNpL7pOWCJekfNpA2ZcHZe7rdUCSwOFNRyUTZHGntbvGoiD+23KRcRD5LVrWEKmw
+         ompQ==
+X-Gm-Message-State: AJIora8lFQT5CggAcdumeZr+bO51YUUMf0v+7JR6KYlWgxxnr4G3DoqK
+        ewn2+CoHnzbTfZ1F+bWdhqhwMg==
+X-Google-Smtp-Source: AGRyM1uBT3p2me4ed88jdqAaeNxgZQVJKSTxRZJFJljooGEjRoS8yamieK3o3TdtSIRerorKAVhrTw==
+X-Received: by 2002:a05:6512:3c96:b0:488:c36d:b336 with SMTP id h22-20020a0565123c9600b00488c36db336mr623077lfv.410.1657181056637;
+        Thu, 07 Jul 2022 01:04:16 -0700 (PDT)
 Received: from krzk-bin.home ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id u16-20020a05651220d000b00478ea0e4f66sm6702687lfr.169.2022.07.07.01.04.14
+        by smtp.gmail.com with ESMTPSA id u16-20020a05651220d000b00478ea0e4f66sm6702687lfr.169.2022.07.07.01.04.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 01:04:14 -0700 (PDT)
+        Thu, 07 Jul 2022 01:04:16 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org, soc@kernel.org
@@ -57,10 +57,12 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/2] ARM: dts: samsung: 2nd round for v5.20
-Date:   Thu,  7 Jul 2022 10:04:07 +0200
-Message-Id: <20220707080408.69251-1-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 2/2] arm64: dts: samsung: 2nd round for v5.20
+Date:   Thu,  7 Jul 2022 10:04:08 +0200
+Message-Id: <20220707080408.69251-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220707080408.69251-1-krzysztof.kozlowski@linaro.org>
+References: <20220707080408.69251-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -69,48 +71,40 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On top of previous pull request. This also includes DT bindings for
-convenience, although nothing depends on the bindings itself.
+On top of previous pull request.
 
 Best regards,
 Krzysztof
 
 
-The following changes since commit 82cd16902a51773cfc0ee05bbd1ab470db5181ab:
+The following changes since commit 1a4f20cab6411c6e73dd22d28b6595b728cc2829:
 
-  ARM: dts: exynos: add function and color to LED nodes in Odroid XU/XU3 (2022-06-22 13:58:01 +0200)
+  Merge branch 'for-v5.20/exynos7885-emmc-clk' into next/dt64 (2022-06-24 09:12:47 +0200)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.20-2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-5.20-2
 
-for you to fetch changes up to 3e27bf719303b1b19edd37bd04e9e586c73f6511:
+for you to fetch changes up to 1ba1fd7d775dbccf43951671a7331c561408e72b:
 
-  dt-bindings: soc: samsung: exynos-pmu: add reboot-mode (2022-07-06 18:24:32 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v5.20, part two
-
-1. Cleanups: align SDHCI node names.
-2. DT bindings: Document preferred compatible naming schema.
-3. DT bindings: fixes and improvements to Exynos PMU bindings.
+  arm64: dts: exynosautov9: add usi device tree nodes (2022-07-05 12:34:36 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (8):
-      ARM: dts: exynos: align SDHCI node name with dtschema
-      ARM: dts: s3c24xx: align SDHCI node name with dtschema
-      ARM: dts: s3c64xx: align SDHCI node name with dtschema
-      ARM: dts: s5pv210: align SDHCI node name with dtschema
-      dt-bindings: samsung: document preferred compatible naming
-      dt-bindings: soc: samsung: exynos-pmu: cleanup assigned clocks
-      dt-bindings: soc: samsung: exynos-pmu: use abolute ref paths
-      dt-bindings: soc: samsung: exynos-pmu: add reboot-mode
+Samsung DTS ARM64 changes for v5.20, part two
 
- .../bindings/arm/samsung/samsung-soc.yaml          | 40 ++++++++++++++++++++++
- .../bindings/soc/samsung/exynos-pmu.yaml           | 13 ++++---
- arch/arm/boot/dts/exynos4.dtsi                     |  8 ++---
- arch/arm/boot/dts/s3c2416.dtsi                     |  4 +--
- arch/arm/boot/dts/s3c64xx.dtsi                     |  6 ++--
- arch/arm/boot/dts/s5pv210.dtsi                     |  8 ++---
- 6 files changed, 61 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/samsung-soc.yaml
+1. Correct SPI11 pin names on ExynosAutov9.
+2. Add more USI (I2C/SPI/UART) devices to ExynosAutov9.
+
+----------------------------------------------------------------
+Chanho Park (5):
+      arm64: dts: exynosautov9: correct spi11 pin names
+      dt-bindings: soc: samsung: usi: add exynosautov9-usi compatible
+      arm64: dts: exynosautov9: add pdma0 device tree node
+      arm64: dts: exynosautov9: prepare usi0 changes
+      arm64: dts: exynosautov9: add usi device tree nodes
+
+ .../bindings/soc/samsung/exynos-usi.yaml           |    8 +-
+ .../boot/dts/exynos/exynosautov9-pinctrl.dtsi      |    6 +-
+ arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts   |    2 +
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi       | 1087 +++++++++++++++++++-
+ 4 files changed, 1093 insertions(+), 10 deletions(-)
