@@ -2,50 +2,33 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89964C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jul 2022 10:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A71CCA480
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jul 2022 12:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237201AbiGHKGR (ORCPT
+        id S237672AbiGHMAu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Jul 2022 06:06:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52000 "EHLO
+        Fri, 8 Jul 2022 08:00:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237242AbiGHKGR (ORCPT
+        with ESMTP id S237849AbiGHMAt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Jul 2022 06:06:17 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79E983F25;
-        Fri,  8 Jul 2022 03:06:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657274776; x=1688810776;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=lbqQjKB+wMbVvhshNl7agCaUpV1RPa7FLoLbtHU0PKQ=;
-  b=KTbvY+CqZlIxq8LWCyw9tgYlT8zYK45rEM91ppbZnZq4ADp5/Vt1HC8W
-   zVBy4LWGlJ7TDIGAJnNnn33Tzv+UD+6fXo14n/sJp/mIwo//OU8FUc4fY
-   KLf9MV+lZmikFUO0XA5w3ru92rn6lLx1KpRDWFfkKFDwhu1L2zWslRxWs
-   AvuygH/FMuo9fgAI/Wc/Ct0HmhjfiddWQq5Nmtf6BpIxWid7E0mYWdLu8
-   cZ4FZce2EAg8g9qKi7Ya6XW+kC38DbgJt3KygqV+EosrlAmkM15ereSzi
-   tJvUqFaeFuuwn008GYmZR5zaL/NGs+XQfiIs5qrdIo2eUcY30/jz0/gpy
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10401"; a="282999030"
-X-IronPort-AV: E=Sophos;i="5.92,255,1650956400"; 
-   d="scan'208";a="282999030"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 03:06:16 -0700
-X-IronPort-AV: E=Sophos;i="5.92,255,1650956400"; 
-   d="scan'208";a="683618026"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 03:06:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1o9ksD-0017y9-0P;
-        Fri, 08 Jul 2022 13:06:09 +0300
-Date:   Fri, 8 Jul 2022 13:06:08 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Michael Walle <michael@walle.cc>,
+        Fri, 8 Jul 2022 08:00:49 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254EA9B191
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Jul 2022 05:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=deq1/ZSP7j0uIXHZ3zd27VbyV1ru
+        /BltTDPcvYhni2I=; b=DUJ1cdQeQPXPlPl2xY59/CmcI9ivyTxVDKF2q1AFp2dJ
+        kgxMosYhjVnNuoQzsOhuoofWbr7FTLhAHkVWNF1f34nSOK85B+mWm8I3T/uygBFe
+        oXsrILkddhzESkJs69t0ouBnBz+LCTbTbnSWTTDRdwHYMSYmFSgivZ3AU0vEMFo=
+Received: (qmail 2505774 invoked from network); 8 Jul 2022 14:00:40 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Jul 2022 14:00:40 +0200
+X-UD-Smtp-Session: l3s3148p1@+xtC80njj2tZD+7L
+Date:   Fri, 8 Jul 2022 14:00:36 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Michael Walle <michael@walle.cc>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Sam Protsenko <semen.protsenko@linaro.org>,
         Lucas De Marchi <lucas.demarchi@intel.com>,
@@ -62,56 +45,69 @@ To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Till Harbaum <till@harbaum.org>
 Subject: Re: [PATCH v2 2/2] i2c: Introduce i2c_str_read_write() and make use
  of it
-Message-ID: <YsgBkDeq/KeQ15HU@smile.fi.intel.com>
+Message-ID: <YsgcZHzjzqyJjKqQ@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Till Harbaum <till@harbaum.org>
 References: <20220703154232.55549-1-andriy.shevchenko@linux.intel.com>
  <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
  <YsWI4nzQa9gmqKdw@shikoro>
+ <YsgBkDeq/KeQ15HU@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Sq82JupuAgPLDLmZ"
 Content-Disposition: inline
-In-Reply-To: <YsWI4nzQa9gmqKdw@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <YsgBkDeq/KeQ15HU@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 06, 2022 at 03:06:42PM +0200, Wolfram Sang wrote:
-> On Sun, Jul 03, 2022 at 06:42:32PM +0300, Andy Shevchenko wrote:
-> > str_read_write() returns a string literal "read" or "write" based
-> > on the value. It also allows to unify usage of a such in the kernel.
-> > 
-> > For i2c case introduce a wrapper that takes struct i2c_msg as parameter.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> To be honest, I don't think this series is very useful. Most of the
-> converted strings here are debug printouts which could rather be removed
-> because we have a tracepoint for i2c_transfer (which is the preferred
-> unification). 
 
-OK.
-
-> The warnings printed on timeouts are plain wrong, because
-> timeouts can happen and need to be handled by the client driver.
-
-OK
-
-> And the
-> change in the I2C core is not worth the hazzle IMHO.
-
-OK
-
-Just noticed yet another (but not in the category of the above) debug message
-[1]. Would it be acceptable to use patch 1 from this series and its use in (a
-completely new) patch 2?
-
-[1]: i2c-scmi.c:
-
-	dev_dbg(&adap->dev, "access size: %d %s\n", size,
-                (read_write) ? "READ" : "WRITE");
-
--- 
-With Best Regards,
-Andy Shevchenko
+--Sq82JupuAgPLDLmZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> Just noticed yet another (but not in the category of the above) debug message
+> [1]. Would it be acceptable to use patch 1 from this series and its use in (a
+> completely new) patch 2?
+
+Well, it falls into the first category because we also have a tracepoint
+for smbus_xfer :)
+
+
+--Sq82JupuAgPLDLmZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmLIHGAACgkQFA3kzBSg
+KbaYABAAr2nYnOk9xmIU5H+KZGkaK+s/X8AUWPUDFsl/n0MNiDdYVxAz5wvEvxKZ
+Iul3hmIswn6oontyJKdI+e/gXkQMdXnbzPSn9PxywBPmW71EopxPFX1WMcrg5RIe
+wmNMDQu7TDMUwrjMe7G+G4QqTeywXXwHV40AhnpL0VVzB4ZnPkzucmZYf3SZ9GvI
+Ggami5cnVmHl9Ouqvs7+B86/5o6mo5ZGVFOnhxu+Q8EoAS1BjXBFG0xBJ6hN/wIt
+uO4rwbDp7z6bp87qJeFEeWQzD8ld8nSfGuj8FUbVQ6LPuXtEqDDEyyMPOruJ7jYF
+Y0xa5Q+RaL7vJrxieVOTaYkqVsTZ8M7PzMnScoGBKqllzbc2iYW3udn8a2XQ3CI9
+X67c8CSjCrvBsuQkTbwn9py3R2cSk9K/AuuGWLYulSGXuUFKk94nYYPjLOsnRkQd
+ceYLYiFpjowNT2evvGSc0mF9tksYRvqDMSW9U9XAUFLKjLugCS3D70oj4Qu8xz5v
+LDUOIcy0wQ9KaoF9Q3SCenyLOg9b3mnXB3+tTVOxCCBT9dMxTNwpZ8xIBZpvP++P
+luszN3gUUk3YJoBi2QYKKD4Mf2pi4wPFQi+X3zOtru+SUHafwfcdIYTQEB5L29j5
+IyeYj9nEvWEkqtD1TsNmbff2wTbsybm2dtWVppb3dQZ6WvCoMks=
+=JOUV
+-----END PGP SIGNATURE-----
+
+--Sq82JupuAgPLDLmZ--
