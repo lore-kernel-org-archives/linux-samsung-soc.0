@@ -2,112 +2,130 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A71CCA480
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jul 2022 12:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC9AC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jul 2022 13:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237672AbiGHMAu (ORCPT
+        id S237590AbiGHNSr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Jul 2022 08:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55902 "EHLO
+        Fri, 8 Jul 2022 09:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237849AbiGHMAt (ORCPT
+        with ESMTP id S237238AbiGHNSr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Jul 2022 08:00:49 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254EA9B191
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Jul 2022 05:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=deq1/ZSP7j0uIXHZ3zd27VbyV1ru
-        /BltTDPcvYhni2I=; b=DUJ1cdQeQPXPlPl2xY59/CmcI9ivyTxVDKF2q1AFp2dJ
-        kgxMosYhjVnNuoQzsOhuoofWbr7FTLhAHkVWNF1f34nSOK85B+mWm8I3T/uygBFe
-        oXsrILkddhzESkJs69t0ouBnBz+LCTbTbnSWTTDRdwHYMSYmFSgivZ3AU0vEMFo=
-Received: (qmail 2505774 invoked from network); 8 Jul 2022 14:00:40 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Jul 2022 14:00:40 +0200
-X-UD-Smtp-Session: l3s3148p1@+xtC80njj2tZD+7L
-Date:   Fri, 8 Jul 2022 14:00:36 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Michael Walle <michael@walle.cc>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Till Harbaum <till@harbaum.org>
-Subject: Re: [PATCH v2 2/2] i2c: Introduce i2c_str_read_write() and make use
- of it
-Message-ID: <YsgcZHzjzqyJjKqQ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Walle <michael@walle.cc>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Till Harbaum <till@harbaum.org>
-References: <20220703154232.55549-1-andriy.shevchenko@linux.intel.com>
- <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
- <YsWI4nzQa9gmqKdw@shikoro>
- <YsgBkDeq/KeQ15HU@smile.fi.intel.com>
+        Fri, 8 Jul 2022 09:18:47 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2691183B8
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Jul 2022 06:18:45 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id n15so25882972ljg.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Jul 2022 06:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1Yam3y0DcCFqvtPSG9KOweCqxMOCqoZ/tVs5qs0X19I=;
+        b=kQj86bjG5zvMHEWhoxQWhFXTOUb15TA7YqDTqLA361xfX3dMGb3sA66mMwl6cGu1Cp
+         6Q867H9s0YhApBd6xEXsnrThqvBSoz4fZBP7GLTRSaQ2QnK2HHIHWLF7Bkz+/ibQrGx9
+         WmOhWen94YFgjXDgtkMpIKy7LhOV3xpqHo7pF7uXoOeJux9kYLux8b8Da6NFvugnft3J
+         7IDixkpvl3CYYIAi1v+2agBHTgmcIGWQ7LyOylWYDH605GAIKDf+ueY84GGCLvQA03zg
+         h7ZrE3ctcGYV6khkrm9AlNVaQcIRWiW0Aabx9L/vnPGrhtaV+DOamJDJZOY0RVy/mPqT
+         Q1rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1Yam3y0DcCFqvtPSG9KOweCqxMOCqoZ/tVs5qs0X19I=;
+        b=iQIhELvKFdquTQENQa6ZE+g7Gq+GGGmT+IoPLc90sTLgCPJY7DuHLt2JH5N3p/KmyK
+         9iikAhc9MsDH/QQXMXpriJR0g+Z3LQw6eOr6kIXQOhoz6uqtx/Riruf01+/GFcyqa5ih
+         LsULSdnhhHEusRBdj7Wb8iSTnZuC3gI2kH+REaQzlyGMF5qm50F0b4MYYQagjJ63sxxu
+         6aNWSJwyeZgYP2ib33ZHa/9ZjLpaFbvrkBXFG3j13cVjV9IgRPKjMU2TXY8PQ9noe9G3
+         GpA4HHv4AiG8jN0uxHLAfYbdyIQqd0sbxur2f/uaQoHoq6859OzuZgIbo5wSWg26Hhxn
+         T6GQ==
+X-Gm-Message-State: AJIora9sHB+KduubG9MYXdYtf9L8EP9u9buBwrYS4Im5LmgGCcxGiNAc
+        ZNRg8e5LSFN5oanR2qfL4pxin4wUb9I/pi3dUpBopg==
+X-Google-Smtp-Source: AGRyM1uIshwbshScAbeRQz3UVgzvkjmr6Hms69W47MrzRQoRsZF9RKD+toMCTMaHHbdrVf4EyhuKSDLC3CiVAnM6wtg=
+X-Received: by 2002:a2e:a413:0:b0:25d:4844:9d65 with SMTP id
+ p19-20020a2ea413000000b0025d48449d65mr1997343ljn.169.1657286324182; Fri, 08
+ Jul 2022 06:18:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Sq82JupuAgPLDLmZ"
-Content-Disposition: inline
-In-Reply-To: <YsgBkDeq/KeQ15HU@smile.fi.intel.com>
+References: <20220702213724.3949-1-semen.protsenko@linaro.org>
+ <20220702213724.3949-2-semen.protsenko@linaro.org> <9afb1e98-706f-ed61-892c-e3cc321364b4@linaro.org>
+In-Reply-To: <9afb1e98-706f-ed61-892c-e3cc321364b4@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 8 Jul 2022 16:18:32 +0300
+Message-ID: <CAPLW+4kfrHOb8utzynhB=2KLDQu-NC08UYpAVjpg__NQSeSQyg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] iommu/exynos: Set correct dma mask for SysMMU v5+
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sun, 3 Jul 2022 at 21:50, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 02/07/2022 23:37, Sam Protsenko wrote:
+> > SysMMU v5+ supports 36 bit physical address space. Set corresponding DMA
+> > mask to avoid falling back to SWTLBIO usage in dma_map_single() because
+> > of failed dma_capable() check.
+> >
+> > The original code for this fix was suggested by Marek.
+> >
+> > Originally-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> This is some tip specific tag, I don't think checkpatch allows it.
+> Either use suggesgted-by or co-developed-by + SoB.
+>
 
---Sq82JupuAgPLDLmZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, checkpatch is swearing at that line, though I encountered that
+tag mentioning somewhere in Documentation. Will rework it in v2.
 
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/iommu/exynos-iommu.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> > index 71f2018e23fe..28f8c8d93aa3 100644
+> > --- a/drivers/iommu/exynos-iommu.c
+> > +++ b/drivers/iommu/exynos-iommu.c
+> > @@ -647,6 +647,14 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+> >               }
+> >       }
+> >
+> > +     if (MMU_MAJ_VER(data->version) >= 5) {
+> > +             ret = dma_set_mask(dev, DMA_BIT_MASK(36));
+> > +             if (ret) {
+> > +                     dev_err(dev, "Unable to set DMA mask: %d\n", ret);
+>
+> Missing cleanup: iommu_device_unregister
+> and probably also: iommu_device_sysfs_remove
+>
 
-> Just noticed yet another (but not in the category of the above) debug message
-> [1]. Would it be acceptable to use patch 1 from this series and its use in (a
-> completely new) patch 2?
+Right. Also the correct cleanup should be added for failing
+iommu_device_register() case, above of the quoted code. Will do that
+in v2, thanks.
 
-Well, it falls into the first category because we also have a tracepoint
-for smbus_xfer :)
+Another thing is that "remove" method is missing. But guess I'll get
+to it later, when adding modularization support for this driver.
 
-
---Sq82JupuAgPLDLmZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmLIHGAACgkQFA3kzBSg
-KbaYABAAr2nYnOk9xmIU5H+KZGkaK+s/X8AUWPUDFsl/n0MNiDdYVxAz5wvEvxKZ
-Iul3hmIswn6oontyJKdI+e/gXkQMdXnbzPSn9PxywBPmW71EopxPFX1WMcrg5RIe
-wmNMDQu7TDMUwrjMe7G+G4QqTeywXXwHV40AhnpL0VVzB4ZnPkzucmZYf3SZ9GvI
-Ggami5cnVmHl9Ouqvs7+B86/5o6mo5ZGVFOnhxu+Q8EoAS1BjXBFG0xBJ6hN/wIt
-uO4rwbDp7z6bp87qJeFEeWQzD8ld8nSfGuj8FUbVQ6LPuXtEqDDEyyMPOruJ7jYF
-Y0xa5Q+RaL7vJrxieVOTaYkqVsTZ8M7PzMnScoGBKqllzbc2iYW3udn8a2XQ3CI9
-X67c8CSjCrvBsuQkTbwn9py3R2cSk9K/AuuGWLYulSGXuUFKk94nYYPjLOsnRkQd
-ceYLYiFpjowNT2evvGSc0mF9tksYRvqDMSW9U9XAUFLKjLugCS3D70oj4Qu8xz5v
-LDUOIcy0wQ9KaoF9Q3SCenyLOg9b3mnXB3+tTVOxCCBT9dMxTNwpZ8xIBZpvP++P
-luszN3gUUk3YJoBi2QYKKD4Mf2pi4wPFQi+X3zOtru+SUHafwfcdIYTQEB5L29j5
-IyeYj9nEvWEkqtD1TsNmbff2wTbsybm2dtWVppb3dQZ6WvCoMks=
-=JOUV
------END PGP SIGNATURE-----
-
---Sq82JupuAgPLDLmZ--
+> > +                     return ret;
+> > +             }
+> > +     }
+> > +
+> >       /*
+> >        * use the first registered sysmmu device for performing
+> >        * dma mapping operations on iommu page tables (cpu cache flush)
+>
+>
+> Best regards,
+> Krzysztof
