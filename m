@@ -2,76 +2,121 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1265BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jul 2022 13:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F801C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jul 2022 16:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbiGIN6x (ORCPT
+        id S229496AbiGIQG2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Jul 2022 09:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
+        Sat, 9 Jul 2022 12:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbiGIN6w (ORCPT
+        with ESMTP id S229462AbiGIQG1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Jul 2022 09:58:52 -0400
-Received: from mailrelay3-1.pub.mailoutpod1-cph3.one.com (mailrelay3-1.pub.mailoutpod1-cph3.one.com [46.30.210.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E789220D2
-        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Jul 2022 06:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=rsa1;
-        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-         message-id:subject:cc:to:from:date:from;
-        bh=DW9E7LotanhEdCfJgAU6YAugMIE+y2/N10PXcxYE6NE=;
-        b=X96BNvwEPYU/AWi0AnnSY1C6yji6n/MVkb6zkHy4NzLKPi5OFUguq2LXwPy+Azaq4S0Ktw4hezr7D
-         jMZ2lIDC7DGxIRIrM4lXOZ1FBVFZ1WlWOOUiOGhSI/Keq4db8hnydASNNX0uj3FA8AsEd6luigibBH
-         s/lazen9sCJXGBeSGN3Mn44NYg4OUM4+UlB1AcVa7KW+do4282w7bauf06/nBgkfxmNWkpaSrBwQYF
-         iEjorjffiH6jO1O4EwitLDNpr2YOLkEQtXKW4NyX4B7+eYG76fyWPwA61uFSwKTvb7YWVZefQawOFB
-         EPAufF/qBix636CHHSOOrL7J59RPD3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-        d=ravnborg.org; s=ed1;
-        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-         message-id:subject:cc:to:from:date:from;
-        bh=DW9E7LotanhEdCfJgAU6YAugMIE+y2/N10PXcxYE6NE=;
-        b=D8hno8mT5l4KSmvyvEpmfVmAuoT1KBF3FopG8zYqg/11I0aqr5Z4HhzZwyYpnZfRJCjiPp5QLWJ0n
-         7DMejwZCg==
-X-HalOne-Cookie: 384c07829e1e26af4942da55cdb9b473b8d8ec02
-X-HalOne-ID: 1c761a6e-ff8f-11ec-be7e-d0431ea8bb03
-Received: from mailproxy2.cst.dirpod4-cph3.one.com (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
-        by mailrelay3.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
-        id 1c761a6e-ff8f-11ec-be7e-d0431ea8bb03;
-        Sat, 09 Jul 2022 13:57:46 +0000 (UTC)
-Date:   Sat, 9 Jul 2022 15:57:45 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Sat, 9 Jul 2022 12:06:27 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0189613DFC
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Jul 2022 09:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=ZlPlNDk/FmGLbnfej0pJ166q9k37
+        AQWgI23YOHarBQA=; b=X5Mi2WhSYS3ssU4FsbaksAQh0rgRXfmD5uQx0ub0NDEG
+        fAjVxPN3rvuXQKUfQXG4XvEQNGhG2AZedqVZIDIKCrjJc2ERKolCnlt2VsB9lN9S
+        FRCKR2XypfJgZC6yWnT/a5hIRYXSpyyBctBBy6Gl7zdebmV7BKrmH/WUGNkVn0U=
+Received: (qmail 2909422 invoked from network); 9 Jul 2022 18:06:20 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Jul 2022 18:06:20 +0200
+X-UD-Smtp-Session: l3s3148p1@d4uyf2HjmQdZD+wL
+Date:   Sat, 9 Jul 2022 18:06:17 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/3] drm/panel: simple: add support for the Samsung
- LTL101AL01 panel
-Message-ID: <YsmJWYP2Q10zRUC/@ravnborg.org>
-References: <20220516193709.10037-1-martin.juecker@gmail.com>
- <20220516193709.10037-2-martin.juecker@gmail.com>
+        Till Harbaum <till@harbaum.org>
+Subject: Re: [PATCH v2 2/2] i2c: Introduce i2c_str_read_write() and make use
+ of it
+Message-ID: <YsmneQ1VAKXMU7eP@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Till Harbaum <till@harbaum.org>
+References: <20220703154232.55549-1-andriy.shevchenko@linux.intel.com>
+ <20220703154232.55549-2-andriy.shevchenko@linux.intel.com>
+ <YsWI4nzQa9gmqKdw@shikoro>
+ <YsgBkDeq/KeQ15HU@smile.fi.intel.com>
+ <YsgcZHzjzqyJjKqQ@shikoro>
+ <CAHp75VdJ2AT30md_nR3a_hY6L511w+4oqsAJ-CoE2gXitXCrNw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zHbyfqMzo6/Cti3A"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220516193709.10037-2-martin.juecker@gmail.com>
+In-Reply-To: <CAHp75VdJ2AT30md_nR3a_hY6L511w+4oqsAJ-CoE2gXitXCrNw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Martin, the patch looks good.
 
-On Mon, May 16, 2022 at 09:37:08PM +0200, Martin Jücker wrote:
-> Add timings and panel description for the Samsung LTL101AL01 panel.
-> 
-> Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
+--zHbyfqMzo6/Cti3A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied to drm-misc (drm-misc-next).
 
-	Sam
+> Okay, let me find another subsystem where this will be more useful. Do
+
+Yes :)
+
+> yuo have any wiki page about TODO in i2c subsys for kernel newbies (it
+> would be good task to add)?
+
+There is https://i2c.wiki.kernel.org/index.php/Main_Page but it is not
+kept up to date. Do you mean "cleaning drivers from dbg messages"?
+
+
+--zHbyfqMzo6/Cti3A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmLJp3UACgkQFA3kzBSg
+KbZbDA/9FIe+AyjmEg9ON3TYLjMcM21C05cj4cxDDSX5aoeBkpRSkfXkuhj1U/A7
+u5wRPnB6miHwtwEQXhic9osorCz4/jY7nq0klnoZQUBHVaHkWUsAq2e2qxZcgSR3
+eDtSFwThH0gHhanBXzL/gOT8I7eahqT6RwCCLK3S82nJQvw5Y9onoavSFNyd0/2g
+8FqF+lb6qnDsseaYy4PTzP443/2Dwzc9TY3Q9T/ndm3kR8L9M0pQIsr/TiwlevQl
+917dl0A7BXUqnispE/kswzyDUvneB00aWjGPd9QQ1pEpsheqKo+tgbfdzMFfeEyP
+Z4RO1eNjJHU8cqIoR3NXH32bdTSQyxSCHKQK2KE1G7ZRPbMJ68tsa52MXf1iTYGH
+U7DTmWTsOtBU0eQzcX0vSEcIpjfn7dP3IGwvlMExx40mP+9RcP6zrt+u3b74wpeK
+gCIghaZ906PH6W9OetFH6H9EXju1M37b3jCdCWednDcWEnwvNIxPdmcPGrl7D/K+
+tD+pKE1bVMZBIYnj+QG+ULSzIb2HCIseWXxiMgdklPs7q9J+AZD2ayIumKuDeQn2
+E++oGGmww0s+bjhYTG1WkVUN0Es5h9AwXFEcJfkaXBkiSi8KQixfnotFrSOpNVmm
+XsE9AdyrN3AFFQ5qWmGiAMbDhQ29gQz1+pHY6221Bqe6YMSMrYI=
+=AtXT
+-----END PGP SIGNATURE-----
+
+--zHbyfqMzo6/Cti3A--
