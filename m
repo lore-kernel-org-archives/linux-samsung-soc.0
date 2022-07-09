@@ -2,222 +2,76 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAC5C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 Jul 2022 18:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45598C433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 Jul 2022 13:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238737AbiGHSNV (ORCPT
+        id S229598AbiGIN6J (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 Jul 2022 14:13:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34402 "EHLO
+        Sat, 9 Jul 2022 09:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238232AbiGHSNU (ORCPT
+        with ESMTP id S229564AbiGIN6I (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 Jul 2022 14:13:20 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3F273580
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Jul 2022 11:13:19 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id m16so4957239ljh.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Jul 2022 11:13:19 -0700 (PDT)
+        Sat, 9 Jul 2022 09:58:08 -0400
+X-Greylist: delayed 61 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 09 Jul 2022 06:58:08 PDT
+Received: from mailrelay4-1.pub.mailoutpod1-cph3.one.com (mailrelay4-1.pub.mailoutpod1-cph3.one.com [46.30.210.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174C5491FB
+        for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Jul 2022 06:58:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xxakuRjObUCkye3AQ22V76C+V/wXWgeyU417sI5Erhk=;
-        b=PyBdwpT1kw0OeeUw6KnFZnNBkmCt38SG1b76RSoRpK1WOdDZj894b0A0jFL7O5PKx+
-         pUHfiV99aQJAcxfxTWtJLs5RXrnjz/xPTcGUsVVpqmdleDtM/GZOu0hn35XCT2PY3ipq
-         SaE+FYpbHu24g1jgO23mGYgMKYAD2EBwkoaC1zx4VlSQ2YC+fT7rEGvvkuueN10p/b4g
-         U3lPgzcYW7/HcxfRrz/6DAR1DKMU8Ki7pHUaUWqvexJ5WzcrKNGX3EcigmIZNLEDcLX/
-         1WbECeQ03q2bCSJdvufKe2C+923wmsFO+0xpjv0d49bF3ePzdeZkKoVCb8jAa+7+Sxgp
-         L7nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xxakuRjObUCkye3AQ22V76C+V/wXWgeyU417sI5Erhk=;
-        b=dqPaEvv+EqwHmrQqoPGZQU0VY4kkgzdrCYRZ2TCcw6LCw6Ju4xEc9J9A6PyzGwI4t8
-         gzbkioUcNDqSOO8aOvhac9RY5+gdG94GubG1K8gJeaTuuYuAFnOS/AZ4H3+M5EaZabK+
-         giHgt0nCVuQbJpcVcdnvHr1ygR0bhyODritP3PTNdgcRAR9UaKW3Zq4Rc01VvTabRWbH
-         GIFFk5I/gHYzm2bnwWKrcxBf95xRq2JyyzIYnG5hWt+E2FwtXSgTLZUuhHplPOSL8q3r
-         /SgyxulvSiv4NvvZUe7wQTNU7kwAF31CI65SqGi3mtR4wFE7cTe8/icp9HonOZmrM+UA
-         B8Zw==
-X-Gm-Message-State: AJIora8EYUO8MIytXjmLm8W/W+gkd8qaK6B8QMOGVRwc7Zo5fUi2WNUj
-        WXIxtGqvBant6bfJFIusv/dFNYhMxWxOPBl0v8wmNQ==
-X-Google-Smtp-Source: AGRyM1s4khtAdDPD9uAtpQbZOOwGGF2BRshqhouC45A+O1rPRIXlXk8YUZSNdivuO908GgYbfwpcIOkx4P2VtlZmLr8=
-X-Received: by 2002:a2e:bd11:0:b0:25d:4f94:ac79 with SMTP id
- n17-20020a2ebd11000000b0025d4f94ac79mr2689388ljq.4.1657303997519; Fri, 08 Jul
- 2022 11:13:17 -0700 (PDT)
+        d=ravnborg.org; s=rsa1;
+        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
+         message-id:subject:cc:to:from:date:from;
+        bh=QDvYa9cFEorN1ILaq5p0/t/GBxoIQgB2tyKasIexqXs=;
+        b=uHxHgDorQxChvH4gH2fuo2MNARVNejJimVx6FLSWFl/wA01O2eLtrgFIQbsYwJRP/im+6jA2ffGBX
+         Ic+bJZAUf3QMQugASocmdQQCjGyHUgzIP78TPUjvQZJUMAAe1ob1xDGCTDIKLGogh9sdontAFn5NDf
+         7l+K6QNVGW3WLl+jiCdyT4e6OzNo3zmnPTu9DR3zF95QERBperdvqKnQsP0/g79v3ffuLc8B/azhhi
+         sytiEsNxMM2sDaCKU9BpcSscUqS82ls8KL7++GkaE+rrbjSCsTxlnJEnfigoDyWX3j0prPhyF1HdBc
+         V2zLMM+RPs9L5/BI0R69GiCNpi+h7KQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+        d=ravnborg.org; s=ed1;
+        h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
+         message-id:subject:cc:to:from:date:from;
+        bh=QDvYa9cFEorN1ILaq5p0/t/GBxoIQgB2tyKasIexqXs=;
+        b=OJYGdGwmD39yIGuezDD0shzbCZ80kbR/J8mg/gZnpYSmcwSzAvbTO8P3kVlx4THYAdM1qwFICXjmS
+         xWE8pO6Ag==
+X-HalOne-Cookie: e9bc3fa241fdae21be51ef3314c024f593f38501
+X-HalOne-ID: 03389c65-ff8f-11ec-823c-d0431ea8bb10
+Received: from mailproxy1.cst.dirpod4-cph3.one.com (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+        by mailrelay4.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
+        id 03389c65-ff8f-11ec-823c-d0431ea8bb10;
+        Sat, 09 Jul 2022 13:57:04 +0000 (UTC)
+Date:   Sat, 9 Jul 2022 15:57:02 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Martin =?iso-8859-1?Q?J=FCcker?= <martin.juecker@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: display: simple: add support for
+ Samsung LTL101AL01
+Message-ID: <YsmJLhHBUGPHh7nL@ravnborg.org>
+References: <20220516193709.10037-1-martin.juecker@gmail.com>
 MIME-Version: 1.0
-References: <20220702213724.3949-1-semen.protsenko@linaro.org>
- <20220702213724.3949-4-semen.protsenko@linaro.org> <925751c3-83e8-02b8-6a8b-549290522a9e@linaro.org>
-In-Reply-To: <925751c3-83e8-02b8-6a8b-549290522a9e@linaro.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 8 Jul 2022 21:13:06 +0300
-Message-ID: <CAPLW+4kc86aOVspBz52vt+uhs8GXDNfekd-7jKhyNjUpi8XwLQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] iommu/exynos: Use lookup based approach to access v7 registers
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220516193709.10037-1-martin.juecker@gmail.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 3 Jul 2022 at 22:29, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 02/07/2022 23:37, Sam Protsenko wrote:
-> > SysMMU v7 might have different register layouts (VM capable or non-VM
-> > capable). Check which layout is implemented in current SysMMU module and
-> > prepare the corresponding register table for futher usage. This way is
-> > faster and more elegant than checking corresponding condition (if it's
-> > VM or non-VM SysMMU) each time before accessing v7 registers. For now
-> > the register table contains only most basic registers needed to add the
-> > SysMMU v7 support.
-> >
-> > This patch is based on downstream work of next authors:
-> >   - Janghyuck Kim <janghyuck.kim@samsung.com>
-> >   - Daniel Mentz <danielmentz@google.com>
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> >  drivers/iommu/exynos-iommu.c | 46 ++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 46 insertions(+)
-> >
-> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> > index df6ddbebbe2b..47017e8945c5 100644
-> > --- a/drivers/iommu/exynos-iommu.c
-> > +++ b/drivers/iommu/exynos-iommu.c
-> > @@ -180,6 +180,47 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
-> >
-> >  #define has_sysmmu(dev)              (dev_iommu_priv_get(dev) != NULL)
-> >
-> > +#define MMU_REG(data, idx)           \
-> > +     ((data)->sfrbase + (data)->regs[idx].off)
->
-> I would expect to see users of this - convert all existing regs.
->
+Hi Martin,
 
-I was thinking about doing that as a consequent patch (adding SysMMU
-v1/v5 register sets). But ok, will add in v2. And will probably split
-it per 2 patches:
-  1. Rework existing driver to use register sets (lookup table). To
-keep it as "no functional change" patch.
-  2. Add SysMMU v7 support.
+On Mon, May 16, 2022 at 09:37:07PM +0200, Martin Jücker wrote:
+> Add the Samsung LTL101AL01 WXGA LCD panel to the list.
+> 
+> Signed-off-by: Martin Jücker <martin.juecker@gmail.com>
 
-Also, I will probably replace MMU_REG() with more standard approach,
-i.e. will add sysmmu_read() / sysmmu_write() functions instead. It
-should make the code tidier.
+Applied to drm-misc (drm-misc-next).
 
-> > +#define MMU_VM_REG(data, idx, vmid)  \
-> > +     (MMU_REG(data, idx) + (vmid) * (data)->regs[idx].mult)
-> > +
-> > +enum {
-> > +     REG_SET_NON_VM,
-> > +     REG_SET_VM,
-> > +     MAX_REG_SET
-> > +};
-> > +
-> > +enum {
-> > +     IDX_CTRL_VM,
-> > +     IDX_CFG_VM,
-> > +     IDX_FLPT_BASE,
->
-> Isn't this called REG_MMU_FLUSH? If yes, it's a bit confusing to see
-> different name used.
->
-
-I used v7 registers naming, as I only added support for v7 register
-set in this patch series. As I said above, I'll add SysMMU v1/v5
-register sets in v2, and rename those indexes to have old register
-names. Despite the differences between register names in SysMMU v1/v5
-and v7, their purpose is the same.
-
-> > +     IDX_ALL_INV,
->
-> Isn't this called REG_MMU_FLUSH_ENTRY?
->
-> > +     MAX_REG_IDX
-> > +};
-> > +
-> > +struct sysmmu_vm_reg {
-> > +     unsigned int off;       /* register offset */
-> > +     unsigned int mult;      /* VM index offset multiplier */
-> > +};
-> > +
-> > +static const struct sysmmu_vm_reg sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
-> > +     /* Default register set (non-VM) */
-> > +     {
-> > +             /*
-> > +              * SysMMUs without VM support do not have CTRL_VM and CFG_VM
-> > +              * registers. Setting the offsets to 1 will trigger an unaligned
-> > +              * access exception.
->
-> So why are you setting offset 1? To trigger unaligned access?
->
-
-Yes, as comment suggests, 0x1 offset is set intentionally to cause the
-exception. That might be useful for debugging (if driver is trying to
-access some non-existing register on some particular SysMMU version).
-I'll improve the comment in v2.
-
-> > +              */
-> > +             {0x1}, {0x1}, {0x000c}, {0x0010},
-> > +     },
-> > +     /* VM capable register set */
-> > +     {
-> > +             {0x8000, 0x1000}, {0x8004, 0x1000}, {0x800c, 0x1000},
-> > +             {0x8010, 0x1000},
-> > +     },
-> You add here quite a bit of dead code and some hard-coded numbers.
->
-
-Ok, will remove those multiplier bits for now. It can be added later,
-when implementing domains support (to use VM registers other than n=0
-instance).
-
-> > +};
-> > +
-> >  static struct device *dma_dev;
-> >  static struct kmem_cache *lv2table_kmem_cache;
-> >  static sysmmu_pte_t *zero_lv2_table;
-> > @@ -284,6 +325,7 @@ struct sysmmu_drvdata {
-> >
-> >       /* v7 fields */
-> >       bool has_vcr;                   /* virtual machine control register */
-> > +     const struct sysmmu_vm_reg *regs; /* register set */
-> >  };
-> >
-> >  static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
-> > @@ -407,6 +449,10 @@ static void sysmmu_get_hw_info(struct sysmmu_drvdata *data)
-> >       __sysmmu_get_version(data);
-> >       if (MMU_MAJ_VER(data->version) >= 7 && __sysmmu_has_capa1(data))
-> >               __sysmmu_get_vcr(data);
-> > +     if (data->has_vcr)
-> > +             data->regs = sysmmu_regs[REG_SET_VM];
-> > +     else
-> > +             data->regs = sysmmu_regs[REG_SET_NON_VM];
->
-> This is set and not read.
->
-
-It's used in patch 4/4. But as discussed above, I will convert
-existing code (SysMMU v1/v3/v5) to benefit from register set as well.
-Will send in v2.
-
-Thanks for the review!
-
-> >
-> >       __sysmmu_disable_clocks(data);
-> >  }
->
->
-> Best regards,
-> Krzysztof
+	Sam
