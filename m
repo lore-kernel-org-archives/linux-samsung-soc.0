@@ -2,166 +2,173 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5375CCA480
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Jul 2022 23:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 849BECCA47B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 Jul 2022 11:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbiGJXGS (ORCPT
+        id S229862AbiGKLT1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 Jul 2022 19:06:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
+        Mon, 11 Jul 2022 07:19:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiGJXGQ (ORCPT
+        with ESMTP id S229456AbiGKLSn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 Jul 2022 19:06:16 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D28D21261B
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Jul 2022 16:06:14 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so4084973wme.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Jul 2022 16:06:14 -0700 (PDT)
+        Mon, 11 Jul 2022 07:18:43 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61527237EB
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jul 2022 03:42:02 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id z25so8004445lfr.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jul 2022 03:42:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KNH1geTaFS8UgrJdKxdLAWd/njt1ov+nbcgh7oJT0rY=;
-        b=T87IiTdb4pJnCgF0XeioT2CsjqmQdwyQjcZzrX/yjr+VQuaFEsbAGpDF6XUTV9rLQA
-         JcXl0fW2wMaYiqTrEkO8BxhXWlqQk8BfN10qYEXGITDn76UzveWAgPGHZIMzLLq8EfrB
-         lv4wJ/2nDndYjjktKWPcszs2Gs4Igf3kor8if/eoTbzhbV/aYuFSmXIXYTU65kSdIqSs
-         n1C4h9qT2u6O+x8F3TN7nZpFnaT10uOdJwMXlQlIPCsTLSoUqM/uRJn9WnviUMcxto+B
-         W0+F7oeKoAy1gfUjtyr8hNRIiGDnRwVfygDk5yfRo88r49NqOVOl/f4ErVy40Bb1jQWD
-         zjIQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=4QBRJvxfseZP/GEMFAKFD2cSumF9kaMS829yxVnCjIU=;
+        b=kSNvJFyvbyNW4zR+Dm4tF7QqQdfuqItCLjbNcbogU70biRPZYjGvn1OFETlLlTI/Iw
+         +uIUwmF5ICn24fOKEdQwisatQVYfwsMzj+wu61S+1olIK0sfdW528zmebCc8QF4oRyRd
+         p1uWPddboxciGyBPsT2kiv8ChM+5G0EHh6oDyuzM4NhoGqGA1Z9l9WuoSuHCzjhkENKJ
+         DBkrtWtFAFrruy6OyHFO75wDl6opWwmG0wxyOaaf2zc528DOmbSubM1yE/u56f6RwVyT
+         pZc/I9YNe2Am9RZYVSoKESIk4bKvqONwucsIuJ4RV7BTQnGLLMwqnQG+l4mVmYyuj4KJ
+         qErQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KNH1geTaFS8UgrJdKxdLAWd/njt1ov+nbcgh7oJT0rY=;
-        b=Ya1hO2veie2bwpUFLkUnFqiaE3fW7ZEnsDVcvgVkpFnGfTwXvKEu+KIOlpGdWTJXWE
-         skrGQbqGPcQxpiia08cyMRC8RAq5kNxIg9Yl55YKbKCq1Rrb0rBaWDlvsWQjta4r9Yfq
-         zcBTwLx4j4PnidI1UfSzBENn3CNUgcTgfMgigUsfTEWW4l5+MCAq7DQw41PFQmtxtZNt
-         4vf7V3QJRfUO9PiUhik+j6LX1JvYrbEs2e9CosjNEyP72CRsBZqF9bt5yMgBbu9PO+p/
-         g00eSmyXD/tdA8J4w3tvHie8KNeffQPbc7T69IxP3triN2t9M2hPiU123AVbr1yFNj1M
-         yngQ==
-X-Gm-Message-State: AJIora9klpqdT/fS354sPwpHCpGSWQ6auPV6aVpWRMAHU5co/uBWIIP3
-        q+8+81ntM5tnzWB0N6c+SRZszQ==
-X-Google-Smtp-Source: AGRyM1uRQCdLusX8/Jae+V5XrhdfTKy0U5Q5Dq20Gv5hGNi+JheNXS9bP0mjHWaY7BqUTaz/Kqw2DA==
-X-Received: by 2002:a05:600c:4e4a:b0:3a2:e29e:9a with SMTP id e10-20020a05600c4e4a00b003a2e29e009amr8825907wmq.138.1657494373220;
-        Sun, 10 Jul 2022 16:06:13 -0700 (PDT)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id m10-20020a05600c460a00b003a03185231bsm5019981wmo.31.2022.07.10.16.06.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Jul 2022 16:06:12 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] iommu/exynos: Enable default VM instance on SysMMU v7
-Date:   Mon, 11 Jul 2022 02:06:03 +0300
-Message-Id: <20220710230603.13526-8-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220710230603.13526-1-semen.protsenko@linaro.org>
-References: <20220710230603.13526-1-semen.protsenko@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=4QBRJvxfseZP/GEMFAKFD2cSumF9kaMS829yxVnCjIU=;
+        b=7ha8LKkRGCshNyZ0y0Xy0Zitkwwsh6ZKH8lHVSRtISRrAk2XomMcfBnq9SpSzdTMAn
+         Q7Eswow5fzla360H/mzjzaW7zRAD8JRqHo+8+nCefcBJTeKpb9cPJXcLNtN6l0yaFQhf
+         NxE9CmuXA398Gw76TxdDJSfL9JRCAuNS9SWEs7QIydoDRyy6ojoLNxdjHQucTxq6f0+L
+         EoZi5930HsnpnwclCEd3uZSgkXVhJ3UH9RGi0sLjoa3OqRO1pQmx6Lkq4xmORMSp8vwZ
+         C1iUfbbs3GN7HxRVYbURsUI58+/VSrNjTB16dmDOTraJrGZpZR1nt1R+PS9YyhYXjQ/d
+         UnNw==
+X-Gm-Message-State: AJIora+bBG5MlkpZa2PZIZmLCx1n1Z1h5l4Dfgz235LI2aMRAjJRdM/M
+        loK3Uuyy4qFIsSVU+Cpag8jZrA==
+X-Google-Smtp-Source: AGRyM1uCOe3mr76NIxQeaEgiqmyu9nGkImm03wxDQOMBkUBd3iUukEak4Y7cE/KQBa5f1A3NbiW5lA==
+X-Received: by 2002:a05:6512:1683:b0:47f:78ca:8ac5 with SMTP id bu3-20020a056512168300b0047f78ca8ac5mr11189229lfb.663.1657536120707;
+        Mon, 11 Jul 2022 03:42:00 -0700 (PDT)
+Received: from [10.0.0.8] (fwa5cab-55.bb.online.no. [88.92.171.55])
+        by smtp.gmail.com with ESMTPSA id s23-20020a056512203700b00489c59819ebsm1477789lfs.66.2022.07.11.03.41.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jul 2022 03:42:00 -0700 (PDT)
+Message-ID: <90c85105-b9f4-e7cb-fa93-17127b3b369d@linaro.org>
+Date:   Mon, 11 Jul 2022 12:41:57 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v1 31/33] thermal/drivers/samsung: Switch to new of
+ thermal API
+Content-Language: en-US
+To:     Daniel Lezcano <daniel.lezcano@linexp.org>,
+        daniel.lezcano@linaro.org, rafael@kernel.org
+Cc:     rui.zhang@intel.com, khilman@baylibre.com, abailon@baylibre.com,
+        amitk@kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220710212423.681301-1-daniel.lezcano@linexp.org>
+ <20220710212423.681301-32-daniel.lezcano@linexp.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220710212423.681301-32-daniel.lezcano@linexp.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In order to enable SysMMU v7 with VM register layout, at least the
-default VM instance (n=0) must be enabled, in addition to enabling the
-SysMMU itself. To do so, add corresponding write to MMU_CTRL_VM[0]
-register, before writing to MMU_CTRL register.
+On 10/07/2022 23:24, Daniel Lezcano wrote:
+> The thermal OF code has a new API allowing to migrate the OF
+> initialization to a simpler approach.
+> 
+> Use this new API.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index f4ab4c5b4b62..2bd7b3b57b28 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -650,9 +650,9 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+>  	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+>  }
+>  
+> -static int exynos_get_temp(void *p, int *temp)
+> +static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+>  {
+> -	struct exynos_tmu_data *data = p;
+> +	struct exynos_tmu_data *data = tz->devdata;
+>  	int value, ret = 0;
+>  
+>  	if (!data || !data->tmu_read)
+> @@ -728,9 +728,9 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
+>  	writel(val, data->base + emul_con);
+>  }
+>  
+> -static int exynos_tmu_set_emulation(void *drv_data, int temp)
+> +static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
+>  {
+> -	struct exynos_tmu_data *data = drv_data;
+> +	struct exynos_tmu_data *data = tz->devdata;
+>  	int ret = -EINVAL;
+>  
+>  	if (data->soc == SOC_ARCH_EXYNOS4210)
+> @@ -750,7 +750,7 @@ static int exynos_tmu_set_emulation(void *drv_data, int temp)
+>  }
+>  #else
+>  #define exynos4412_tmu_set_emulation NULL
+> -static int exynos_tmu_set_emulation(void *drv_data, int temp)
+> +static int exynos_tmu_set_emulation(struct thermal_zone *tz, int temp)
+>  	{ return -EINVAL; }
+>  #endif /* CONFIG_THERMAL_EMULATION */
+>  
+> @@ -997,7 +997,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -static const struct thermal_zone_of_device_ops exynos_sensor_ops = {
+> +static struct thermal_zone_device_ops exynos_sensor_ops = {
+>  	.get_temp = exynos_get_temp,
+>  	.set_emul_temp = exynos_tmu_set_emulation,
+>  };
+> @@ -1091,8 +1091,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  	 * data->tzd must be registered before calling exynos_tmu_initialize(),
+>  	 * requesting irq and calling exynos_tmu_control().
+>  	 */
+> -	data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+> -						    &exynos_sensor_ops);
+> +	data->tzd = devm_thermal_of_zone_register(&pdev->dev, 0, data,
+> +						  &exynos_sensor_ops);
+>  	if (IS_ERR(data->tzd)) {
+>  		ret = PTR_ERR(data->tzd);
+>  		if (ret != -EPROBE_DEFER)
+> @@ -1118,7 +1118,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err_thermal:
+> -	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+> +	thermal_of_zone_unregister(data->tzd);
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
-  - Extracted VM enabling code to the separate function
-  - Used new SysMMU read/write functions to access the registers
+You use now devm, so this should not be needed.
 
- drivers/iommu/exynos-iommu.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+>  err_sclk:
+>  	clk_disable_unprepare(data->sclk);
+>  err_clk:
+> @@ -1138,7 +1138,7 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>  	struct thermal_zone_device *tzd = data->tzd;
+>  
+> -	thermal_zone_of_sensor_unregister(&pdev->dev, tzd);
+> +	thermal_of_zone_unregister(tzd);
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 64bf3331064f..2b333e137f57 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -135,6 +135,8 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
- #define CFG_SYSSEL	(1 << 22) /* System MMU 3.2 only */
- #define CFG_FLPDCACHE	(1 << 20) /* System MMU 3.2+ only */
- 
-+#define CTRL_VM_ENABLE			BIT(0)
-+#define CTRL_VM_FAULT_MODE_STALL	BIT(3)
- #define CAPA0_CAPA1_EXIST		BIT(11)
- #define CAPA1_VCR_ENABLED		BIT(14)
- 
-@@ -183,6 +185,7 @@ enum {
- 	IDX_FLUSH_END,
- 	IDX_INT_STATUS,
- 	IDX_INT_CLEAR,
-+	IDX_CTRL_VM,
- 	MAX_REG_IDX
- };
- 
-@@ -196,22 +199,22 @@ static const unsigned int sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
- 	/* SysMMU v1..v3 */
- 	{
- 		0x00, 0x04, 0x08, 0x14, 0x0c, 0x10, 0x1, 0x1, 0x1,
--		0x18, 0x1c,
-+		0x18, 0x1c, 0x1,
- 	},
- 	/* SysMMU v5 */
- 	{
- 		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
--		0x60, 0x64,
-+		0x60, 0x64, 0x1,
- 	},
- 	/* SysMMU v7: Default register set (non-VM) */
- 	{
- 		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
--		0x60, 0x64,
-+		0x60, 0x64, 0x1,
- 	},
- 	/* SysMMU v7: VM capable register set */
- 	{
- 		0x00, 0x04, 0x08, 0x800c, 0x8010, 0x8014, 0x8018, 0x8020,
--		0x8024, 0x60, 0x64,
-+		0x8024, 0x60, 0x64, 0x8000,
- 	},
- };
- 
-@@ -567,6 +570,18 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
- 	sysmmu_write(data, IDX_CFG, cfg);
- }
- 
-+static void __sysmmu_enable_vid(struct sysmmu_drvdata *data)
-+{
-+	u32 ctrl;
-+
-+	if (MMU_MAJ_VER(data->version) < 7 || !data->has_vcr)
-+		return;
-+
-+	ctrl = sysmmu_read(data, IDX_CTRL_VM);
-+	ctrl |= CTRL_VM_ENABLE | CTRL_VM_FAULT_MODE_STALL;
-+	sysmmu_write(data, IDX_CTRL_VM, ctrl);
-+}
-+
- static void __sysmmu_enable(struct sysmmu_drvdata *data)
- {
- 	unsigned long flags;
-@@ -577,6 +592,7 @@ static void __sysmmu_enable(struct sysmmu_drvdata *data)
- 	sysmmu_write(data, IDX_CTRL, CTRL_BLOCK);
- 	__sysmmu_init_config(data);
- 	__sysmmu_set_ptbase(data, data->pgtable);
-+	__sysmmu_enable_vid(data);
- 	sysmmu_write(data, IDX_CTRL, CTRL_ENABLE);
- 	data->active = true;
- 	spin_unlock_irqrestore(&data->lock, flags);
--- 
-2.30.2
+This as well.
 
+
+
+Best regards,
+Krzysztof
