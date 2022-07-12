@@ -2,158 +2,224 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C07C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 06:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4531AC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 11:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiGLGKT (ORCPT
+        id S233007AbiGLLJ7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 02:10:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41798 "EHLO
+        Tue, 12 Jul 2022 07:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiGLGKS (ORCPT
+        with ESMTP id S229628AbiGLLJu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jul 2022 02:10:18 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D364B480
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jul 2022 23:10:16 -0700 (PDT)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220712061014epoutp046bfd1cd7580d5304800841fb01db6f96~BABG-FvZI1624516245epoutp04-
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 06:10:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220712061014epoutp046bfd1cd7580d5304800841fb01db6f96~BABG-FvZI1624516245epoutp04-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1657606214;
-        bh=N8GYedKNDSPz7Lc7caJu8nhqgbUnmR/8OXe/iACBxQk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=o5744k0uDB+DN94Y0iZk4RXPhBWUaZbWQ0tVW5N0opThg2mkxdYci9lnFs8utpSR2
-         uetMs9I2atLRTRluRzpLJ3HV9C17esZVSaM9gB3RD79PRDLD2f55+I/874LUeIfMNr
-         lIUGkrWkEzn2KCEQHT8kZnQB22OA09vvt9irpOHY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20220712061013epcas1p4595bdb33e2fbf147c3b284ad694f9676~BABGqgFD-1418514185epcas1p40;
-        Tue, 12 Jul 2022 06:10:13 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.38.236]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Lhr2X0VdVz4x9Pv; Tue, 12 Jul
-        2022 06:10:12 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        93.E9.09657.1401DC26; Tue, 12 Jul 2022 15:10:09 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220712061009epcas1p2a58002c639023a32375700be9ee9dea5~BABCXZJJd0276502765epcas1p2w;
-        Tue, 12 Jul 2022 06:10:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220712061009epsmtrp1d0fe57ad6e37c89811b93a3a6b6564d4~BABCWpwG80547905479epsmtrp1Q;
-        Tue, 12 Jul 2022 06:10:09 +0000 (GMT)
-X-AuditID: b6c32a35-733ff700000025b9-f2-62cd10414bc1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E6.6D.08905.0401DC26; Tue, 12 Jul 2022 15:10:09 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220712061008epsmtip2e4f9eac3c99db6a30f65bd82372efc82~BABCORCfj0846308463epsmtip2N;
-        Tue, 12 Jul 2022 06:10:08 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Tue, 12 Jul 2022 15:10:08 +0900
-Message-Id: <20220712061008.199961-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 12 Jul 2022 07:09:50 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D9CB0F92
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 04:09:46 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id d12so13327124lfq.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 04:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8tdpS+5ubtJGGOPxmM+nq8jqWPaOVB3css9TAtAfGOI=;
+        b=dteUqy18Cu6l5q1qpmyWbmh9SYyiDuauhyzK2n+Z2mGTQ4ORfsZunyy6Q+IBXc9Z8p
+         MuFm4eDCr83xxUP9tEjS5YIsh2UsnX3GhgEVF5lrRLpuaqFVxBnWqLfXhnCtmasg01Xi
+         JnXIgsdOWJrXt4cK2vMX7u9QjReHadYuuTBxKApN4Su2/yCB+IjKzXCN11TSQyuoxI84
+         KABZGqlheVrcJ1HJdu+y2S+3VsWwVi+VCRw1y4UtbkXJpDycJ/VO3513W8eg3zpSyFZF
+         pdQ1Ri80+whrgJ0Z1VdfRh2karl6cJzhPzUa9zMviVi0qHSyqjZXlCorlfX8ve1VT0XN
+         7MxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8tdpS+5ubtJGGOPxmM+nq8jqWPaOVB3css9TAtAfGOI=;
+        b=M9/WZi6fLp1URUDpVSHp1fSSO+0exRnKDlbepewKObIhI9c2TL+Tz1PKOQsK9uRB0+
+         dB3tyz60tBhzxSbQhs8mDGFYEA4XgVDvKzZUVxSTAztmqLyl6ES2VQjTx8eMy+KC9qi6
+         KPj3WUFYWAsu1EalD+5SXQm3fPI064vO8flLkgOIPz7TgjLuzPo5KAn/51XvuLs4zgjj
+         CD8zPP7zRxDnRbPe42SYtEzj8NC86E0xcPfuE3TlOKiOVVu/pZQn8EgBq5UjHnS/627L
+         Gz9dZMWrxbzyrXbNfoQvR3Tuyu9hfRbXLCgfPZsP1AkvXNoGO1OmCGdx3DDLDAgYbRfP
+         U59Q==
+X-Gm-Message-State: AJIora8J8MU9n/vSt9olDn1JDkIdnMtZiarDBLNGgtkiAAKqgq48epUF
+        9efWKqUn3izgqOCa6Ht7oaynjwltPsWCCJmHreu6cw==
+X-Google-Smtp-Source: AGRyM1uFxb+BdqIl3tBJoT69LzidPBHC05qJXBK5HhG4NGNDzrGe14N2yRhxnWHlCAwRx8kw9OJIiWPSW1zrRwjYsHk=
+X-Received: by 2002:a05:6512:3403:b0:481:60ae:7ebc with SMTP id
+ i3-20020a056512340300b0048160ae7ebcmr15210209lfr.358.1657624185645; Tue, 12
+ Jul 2022 04:09:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7bCmvq6jwNkkg65jYha9504yWfzfNpHZ
-        4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCUq2yYjNTEltUghNS85PyUzL91W
-        yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-        I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITuj7eR55oLZghVTJv9ibGA8z9vF
-        yMEhIWAisXKPWRcjJ4eQwA5GiZ4v6l2MXED2J0aJN7u/sEE43xglZs9oZYRp2N6nDRHfyyhx
-        pPMxK4TzhVHi07l1rCCj2ARUJSauuM8GYosA2W8nPWYGsZkF3CT+LD3LAmILCyhL7L6+D6ye
-        Bahm+sf3YAt4Bawkdm4XAAlLCMhLzLz0nR3E5hUQlDg58wkLxBh5ieats5lB9koIbGOX2LCq
-        gw2iwUXi0Pf7LBC2sMSr41vYIWwpiZf9bewQDZMZJe5cX8EC4cxglDj88zojRJWxxP6lk5lA
-        rmAW0JRYv0sfIqwosfP3XEaIzXwS7772sEJCgleio00IokRJ4tjFG1BTJCQuLJkIdY+HxK2V
-        x9kgwRsr8XTVUdYJjPKzkPwzC8k/sxAWL2BkXsUollpQnJueWmxYYAiP0+T83E2M4ESnZbqD
-        ceLbD3qHGJk4GA8xSnAwK4nw/jl7KkmINyWxsiq1KD++qDQntfgQoykwgCcyS4km5wNTbV5J
-        vKGJpYGJmZGxiYWhmaGSOO+qaacThQTSE0tSs1NTC1KLYPqYODilGpia3QKznxmxJfYKbJ08
-        JeDB1jsfnb7+5lW8NmfPoorGnv0O+t8ZJmqse+2++2dOwoQdTZaqSWGP1i0WqBVpjLLvKfj3
-        +9Dh7/c/zmZLrWM2DeSy8S6r55kXvp59x8e9cfmh1+offdidcJ9jUlJ/sLzUgVt3tPOTc/4v
-        1F25+NlXvj6GoLzfPvW6aaZyW22cheKyFVt8M7/oL0i+49aZt6Ay13V9yTyV4oVcc09c2jjN
-        6Mfsu2bPFKUnrXVj6vEV1pq5YPf3Ilfr0Hv5VoITrhld7luXfpFjcuZLZqklbpcvlOtOLjj2
-        KSG98dLtRuUL/7aH2ilWP7qncudtQ0aEd2yc7IXZO481HHhiX8ezmFmJpTgj0VCLuag4EQAP
-        Paay/QMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOLMWRmVeSWpSXmKPExsWy7bCSvK6jwNkkg58rmC16z51ksvi/bSKz
-        xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV0bbyfPM
-        BbMFK6ZM/sXYwHiet4uRg0NCwERie592FyMXh5DAbkaJg2vvsUHEJSS2bOWAMIUlDh8uhij5
-        xCjx//g/li5GTg42AVWJiSvus4HYIgLqEg8uL2QEsZkFPCTe71nNDmILCyhL7L6+jxXEZgGq
-        n/7xPSPITF4BK4md2wVAwhIC8hIzL30HK+cVEJQ4OfMJC8QYeYnmrbOZJzDyzUKSmoUktYCR
-        aRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnDYaWnuYNy+6oPeIUYmDsZDjBIczEoi
-        vH/OnkoS4k1JrKxKLcqPLyrNSS0+xCjNwaIkznuh62S8kEB6YklqdmpqQWoRTJaJg1OqgUnX
-        oyY18qHHyXk+Hm0ahyVMOLV11XhvxS54f/ymweabnIKM52bVvIpjn++g/WGH612B9yaOf723
-        h7jNm/Jax7hGSPbDx1ZbbeZnUm8MLv9M3fvrvkDB6hLOk8s4jZZ1yzzpc1JfprQm9eG/f893
-        eV9ZsFTi3izxNfO5o4/NFs5La3d/ULvrV5F9QneOy82+A/V/lz5kn/TYQOznj00vNsu+NhWu
-        mXvORup32/Yrma5/GLiUHr8oYVq53Lzk/7X9+7gfHJl9VunlVt5HZzOaL6Z0mZ99X7H7WMoW
-        7yt8J+/O987k+RpTuU3TSvDJr31r818eq23YKHBwHovY4eTIXZdtl7ScWlGu9mX9k6kdpSFW
-        SizFGYmGWsxFxYkA8dmylaoCAAA=
-X-CMS-MailID: 20220712061009epcas1p2a58002c639023a32375700be9ee9dea5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220712061009epcas1p2a58002c639023a32375700be9ee9dea5
-References: <CGME20220712061009epcas1p2a58002c639023a32375700be9ee9dea5@epcas1p2.samsung.com>
+References: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org> <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 12 Jul 2022 13:09:08 +0200
+Message-ID: <CAPDyKFqvkYEHLMV67an9=1iu0jwewZNA=Mj0Erg30oJ_CEmxMw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] dt-bindings: mmc: samsung,s3c6410-sdhci: convert to dtschema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave and Daniel,
+On Sun, 26 Jun 2022 at 14:03, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Convert the Samsung SoC SDHCI Controller bindings to DT schema.
+>
+> The original bindings were quite old and incomplete, so add during
+> conversion typical (already used) properties like reg, clocks,
+> interrupts.
+>
+> The bindings were not precising the clocks, although the upstream DTS
+> and Linux driver were expecting bus clocks in certain patterns in any
+> order.  Document the status quo even though it is not a proper approach
+> for bindings.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-   Just two cleanups which remove invalid maintainer info and one fixup
-   for releasing resouce.
+Applied for next, thanks!
 
-Please kindly let me know if there is any problem.
+Kind regards
+Uffe
 
-Thanks,
-Inki Dae
 
-The following changes since commit c6a3d73592ae20f2f6306f823aa5121c83c88223:
-
-  Merge tag 'drm-intel-gt-next-2022-06-29' of git://anongit.freedesktop.org/drm/drm-intel into drm-next (2022-07-01 14:14:52 +1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.20
-
-for you to fetch changes up to 48b927770f8ad3f8cf4a024a552abf272af9f592:
-
-  drm/exynos/exynos7_drm_decon: free resources when clk_set_parent() failed. (2022-07-12 13:56:54 +0900)
-
-----------------------------------------------------------------
-Two cleanups
-- Remove Joonyoung Shim from MAINTAINERS and relevant yaml files.
-  He left from Samsung so his email address isn't valid anymore.
-
-Fixup
-- Fix resume function issue of exynos decon driver by calling
-  clk_disable_unprepare() properly if clk_prepare_enable() failed.
-
-----------------------------------------------------------------
-Jian Zhang (1):
-      drm/exynos/exynos7_drm_decon: free resources when clk_set_parent() failed.
-
-Krzysztof Kozlowski (2):
-      drm/exynos: MAINTAINERS: move Joonyoung Shim to credits
-      dt-bindings: remove Joonyoung Shim from maintainers
-
- CREDITS                                                 |  4 ++++
- .../display/samsung/samsung,exynos-hdmi-ddc.yaml        |  1 -
- .../bindings/display/samsung/samsung,exynos-hdmi.yaml   |  1 -
- .../bindings/display/samsung/samsung,exynos-mixer.yaml  |  1 -
- .../display/samsung/samsung,exynos5433-decon.yaml       |  1 -
- .../display/samsung/samsung,exynos5433-mic.yaml         |  1 -
- .../bindings/display/samsung/samsung,exynos7-decon.yaml |  1 -
- .../bindings/display/samsung/samsung,fimd.yaml          |  1 -
- .../bindings/phy/samsung,exynos-hdmi-phy.yaml           |  1 -
- MAINTAINERS                                             |  1 -
- drivers/gpu/drm/exynos/exynos7_drm_decon.c              | 17 +++++++++++++----
- 11 files changed, 17 insertions(+), 13 deletions(-)
+> ---
+>  .../bindings/mmc/samsung,s3c6410-sdhci.yaml   | 81 +++++++++++++++++++
+>  .../devicetree/bindings/mmc/samsung-sdhci.txt | 32 --------
+>  2 files changed, 81 insertions(+), 32 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml b/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
+> new file mode 100644
+> index 000000000000..5d873a60f650
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/samsung,s3c6410-sdhci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC SDHCI Controller
+> +
+> +maintainers:
+> +  - Jaehoon Chung <jh80.chung@samsung.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,s3c6410-sdhci
+> +      - samsung,exynos4210-sdhci
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 5
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    items:
+> +      - const: hsmmc
+> +      - pattern: "^mmc_busclk.[0-3]$"
+> +      - pattern: "^mmc_busclk.[0-3]$"
+> +      - pattern: "^mmc_busclk.[0-3]$"
+> +      - pattern: "^mmc_busclk.[0-3]$"
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - $ref: mmc-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos4210-sdhci
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: hsmmc
+> +            - const: mmc_busclk.2
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/exynos4.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    mmc@12510000 {
+> +        compatible = "samsung,exynos4210-sdhci";
+> +        reg = <0x12510000 0x100>;
+> +        interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&clock CLK_SDMMC0>, <&clock CLK_SCLK_MMC0>;
+> +        clock-names = "hsmmc", "mmc_busclk.2";
+> +        bus-width = <4>;
+> +        cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
+> +        pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
+> +        pinctrl-names = "default";
+> +        vmmc-supply = <&ldo21_reg>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> deleted file mode 100644
+> index 42e0a9afa100..000000000000
+> --- a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> +++ /dev/null
+> @@ -1,32 +0,0 @@
+> -* Samsung's SDHCI Controller device tree bindings
+> -
+> -Samsung's SDHCI controller is used as a connectivity interface with external
+> -MMC, SD and eMMC storage mediums. This file documents differences between the
+> -core mmc properties described by mmc.txt and the properties used by the
+> -Samsung implementation of the SDHCI controller.
+> -
+> -Required SoC Specific Properties:
+> -- compatible: should be one of the following
+> -  - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
+> -    controller.
+> -  - "samsung,exynos4210-sdhci": For controllers compatible with Exynos4 sdhci
+> -    controller.
+> -
+> -Required Board Specific Properties:
+> -- pinctrl-0: Should specify pin control groups used for this controller.
+> -- pinctrl-names: Should contain only one value - "default".
+> -
+> -Example:
+> -       sdhci@12530000 {
+> -               compatible = "samsung,exynos4210-sdhci";
+> -               reg = <0x12530000 0x100>;
+> -               interrupts = <0 75 0>;
+> -               bus-width = <4>;
+> -               cd-gpios = <&gpk2 2 0>;
+> -               pinctrl-names = "default";
+> -               pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
+> -       };
+> -
+> -       Note: This example shows both SoC specific and board specific properties
+> -       in a single device node. The properties can be actually be separated
+> -       into SoC specific node and board specific node.
+> --
+> 2.34.1
+>
