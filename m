@@ -2,152 +2,153 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D27C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 17:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624B7C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 20:12:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233081AbiGLRAV (ORCPT
+        id S232834AbiGLUMh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 13:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47724 "EHLO
+        Tue, 12 Jul 2022 16:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231321AbiGLRAU (ORCPT
+        with ESMTP id S233435AbiGLUMf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jul 2022 13:00:20 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74A36CC00A;
-        Tue, 12 Jul 2022 10:00:19 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F53D165C;
-        Tue, 12 Jul 2022 10:00:19 -0700 (PDT)
-Received: from [10.57.85.194] (unknown [10.57.85.194])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63ED83F73D;
-        Tue, 12 Jul 2022 10:00:16 -0700 (PDT)
-Message-ID: <dcf4da29-9da0-69ea-300e-80d1f5cc10a3@arm.com>
-Date:   Tue, 12 Jul 2022 18:00:11 +0100
+        Tue, 12 Jul 2022 16:12:35 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE33C04CB;
+        Tue, 12 Jul 2022 13:12:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C4B93B81BD4;
+        Tue, 12 Jul 2022 20:12:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29987C3411C;
+        Tue, 12 Jul 2022 20:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657656749;
+        bh=C+yfvntE4lUQFnchn6+AaT3QmZucpB/IPosD50VMDg0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=HuPFA7l4CqqTjlnLnP6451u+Ip9AtKsDW2VVXOvtphrzdiv4u2YuX7RYamnT6V3FI
+         spgVZi0EgvZ7xjfGK2p6NRRTChhA/nk/M072kfd9WS9Dv0YF6zML2Wa2WnCfPUbm1F
+         j9leI7kthkeRDOEY4PHMpDbuAonTj2mc2HcUmugngqw6JYc47uhFJwtiurntX121We
+         6AgO2/QMFZycAd4WvG/98sl/AnhDrcngCHB6UFZ5CVDvoZip4H561pNeI/bvwFNdXC
+         e66CL8+r4blLp0AH81Z6pUMmqrpo/13XCXSx4aR1TjmHKPILz9dLR5Cg2SvvHVkEb9
+         PTT3XQsXxRpCA==
+Date:   Tue, 12 Jul 2022 15:12:27 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-phy@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 1/2] phy: samsung: phy-exynos-pcie: sanitize
+ init/power_on callbacks
+Message-ID: <20220712201227.GA791612@bhelgaas>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 6/7] iommu/exynos: Add SysMMU v7 register sets
-Content-Language: en-GB
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Janghyuck Kim <janghyuck.kim@samsung.com>,
-        Cho KyongHo <pullip.cho@samsung.com>,
-        Daniel Mentz <danielmentz@google.com>,
-        David Virag <virag.david003@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220710230603.13526-1-semen.protsenko@linaro.org>
- <20220710230603.13526-7-semen.protsenko@linaro.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20220710230603.13526-7-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YsPZU83Jl/kcqR8h@matsya>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2022-07-11 00:06, Sam Protsenko wrote:
-> SysMMU v7 might have different register layouts (VM capable or non-VM
-> capable). Check which layout is implemented in current SysMMU module and
-> prepare the corresponding register table for futher usage.
+On Tue, Jul 05, 2022 at 11:55:23AM +0530, Vinod Koul wrote:
+> On 29-06-22, 00:04, Marek Szyprowski wrote:
+> > The exynos-pcie driver called phy_power_on() and then phy_init() for some
+> > historical reasons. However the generic PHY framework assumes that the
+> > proper sequence is to call phy_init() first, then phy_power_on(). The
+> > operations done by both functions should be considered as one action and
+> > as such they are called by the exynos-pcie driver (without doing anything
+> > between them). The initialization is just a sequence of register writes,
+> > which cannot be altered, without breaking the hardware operation.
+> > 
+> > To match the generic PHY framework requirement, simply move all register
+> > writes to the phy_init()/phy_exit() and drop power_on()/power_off()
+> > callbacks. This way the driver will also work with the old (incorrect)
+> > PHY initialization call sequence.
 > 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> Changes in v2:
->    - (none) This patch is new and added in v2
+> Is the plan to merge thru pcie tree?
+
+I guess these patches should go together.  I don't see any major
+exynos series pending, but I do have two minor pci-exynos.c patches in
+the queue.
+
+If you ack it (after resolution of your question below) I'd be happy
+to take both if it doesn't cause trouble for you.
+
+> > Reported-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >  drivers/phy/samsung/phy-exynos-pcie.c | 25 +++++++++----------------
+> >  1 file changed, 9 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
+> > index 578cfe07d07a..53c9230c2907 100644
+> > --- a/drivers/phy/samsung/phy-exynos-pcie.c
+> > +++ b/drivers/phy/samsung/phy-exynos-pcie.c
+> > @@ -51,6 +51,13 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
+> >  {
+> >  	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> >  
+> > +	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
+> > +			   BIT(0), 1);
+> > +	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
+> > +			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
+> > +	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
+> > +			   PCIE_REFCLK_GATING_EN, 0);
+> > +
 > 
->   drivers/iommu/exynos-iommu.c | 26 ++++++++++++++++++++++----
->   1 file changed, 22 insertions(+), 4 deletions(-)
+> why not retain exynos5433_pcie_phy_power_on() and call it from here and
+> drop in ops. It would be clear to reader that these are for turning on
+> the phy...
 > 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 48681189ccf8..64bf3331064f 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -166,6 +166,8 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
->   enum {
->   	REG_SET_V1,
->   	REG_SET_V5,
-> +	REG_SET_V7_NON_VM,
-> +	REG_SET_V7_VM,
->   	MAX_REG_SET
->   };
->   
-> @@ -201,6 +203,16 @@ static const unsigned int sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
->   		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
->   		0x60, 0x64,
->   	},
-> +	/* SysMMU v7: Default register set (non-VM) */
-> +	{
-> +		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
-> +		0x60, 0x64,
-> +	},
-> +	/* SysMMU v7: VM capable register set */
-> +	{
-> +		0x00, 0x04, 0x08, 0x800c, 0x8010, 0x8014, 0x8018, 0x8020,
-> +		0x8024, 0x60, 0x64,
-
-Yuck, see, it's turning into an unreadable mess already.
-
-This is also raising the question of whether it's worth abstracting 
-accesses to the common registers if it means having an ever-increasing 
-number of copies of those same offsets. Personally I'd leave those using 
-regular readl/writel, but even if there's an argument for keeping all 
-the callsites consistent (modulo the one that already can't be), there's 
-no reason the wrappers couldn't pick up the slack, e.g.:
-
-static void sysmmu_write(struct sysmmu_drvdata *data, size_t idx, u32 val)
-{
-	unsigned int offset;
-
-	if (idx <= IDX_STATUS) {
-		offset = idx * 4;
-	} else {
-		offset = data->regs[idx - IDX_PT_BASE];
-		if (WARN_ON(!offset))
-			return;
-	}
-	writel(val, data->sfrbase + offset);
-}
-
-Indeed, not abstracting REG_MMU_CTRL via data->regs would then make it 
-trivial to be robust against unimplemented registers without even having 
-to remember to initialise their offsets to some magic value, which seems 
-rather attractive.
-
-(also, as it only strikes me now, why are we passing enum values around 
-as size_t? That's just odd)
-
-Thanks,
-Robin.
-
-> +	},
->   };
->   
->   static struct device *dma_dev;
-> @@ -440,12 +452,18 @@ static void sysmmu_get_hw_info(struct sysmmu_drvdata *data)
->   	__sysmmu_enable_clocks(data);
->   
->   	__sysmmu_get_version(data);
-> -	if (MMU_MAJ_VER(data->version) >= 7 && __sysmmu_has_capa1(data))
-> -		__sysmmu_get_vcr(data);
-> -	if (MMU_MAJ_VER(data->version) < 5)
-> +	if (MMU_MAJ_VER(data->version) < 5) {
->   		data->regs = sysmmu_regs[REG_SET_V1];
-> -	else
-> +	} else if (MMU_MAJ_VER(data->version) < 7) {
->   		data->regs = sysmmu_regs[REG_SET_V5];
-> +	} else {
-> +		if (__sysmmu_has_capa1(data))
-> +			__sysmmu_get_vcr(data);
-> +		if (data->has_vcr)
-> +			data->regs = sysmmu_regs[REG_SET_V7_VM];
-> +		else
-> +			data->regs = sysmmu_regs[REG_SET_V7_NON_VM];
-> +	}
->   
->   	__sysmmu_disable_clocks(data);
->   }
+> >  	regmap_update_bits(ep->fsysreg,	PCIE_EXYNOS5433_PHY_COMMON_RESET,
+> >  			   PCIE_PHY_RESET, 1);
+> >  	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
+> > @@ -109,20 +116,7 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
+> >  	return 0;
+> >  }
+> >  
+> > -static int exynos5433_pcie_phy_power_on(struct phy *phy)
+> > -{
+> > -	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> > -
+> > -	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
+> > -			   BIT(0), 1);
+> > -	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
+> > -			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
+> > -	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
+> > -			   PCIE_REFCLK_GATING_EN, 0);
+> > -	return 0;
+> > -}
+> > -
+> > -static int exynos5433_pcie_phy_power_off(struct phy *phy)
+> > +static int exynos5433_pcie_phy_exit(struct phy *phy)
+> >  {
+> >  	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
+> >  
+> > @@ -135,8 +129,7 @@ static int exynos5433_pcie_phy_power_off(struct phy *phy)
+> >  
+> >  static const struct phy_ops exynos5433_phy_ops = {
+> >  	.init		= exynos5433_pcie_phy_init,
+> > -	.power_on	= exynos5433_pcie_phy_power_on,
+> > -	.power_off	= exynos5433_pcie_phy_power_off,
+> > +	.exit		= exynos5433_pcie_phy_exit,
+> >  	.owner		= THIS_MODULE,
+> >  };
+> >  
+> > -- 
+> > 2.17.1
+> 
+> -- 
+> ~Vinod
+> 
+> -- 
+> linux-phy mailing list
+> linux-phy@lists.infradead.org
+> https://lists.infradead.org/mailman/listinfo/linux-phy
