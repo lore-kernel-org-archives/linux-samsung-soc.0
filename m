@@ -2,65 +2,36 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7E5C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 16:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D27C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 17:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232383AbiGLQw6 (ORCPT
+        id S233081AbiGLRAV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 12:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42234 "EHLO
+        Tue, 12 Jul 2022 13:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230015AbiGLQw6 (ORCPT
+        with ESMTP id S231321AbiGLRAU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jul 2022 12:52:58 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F421CBF552
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 09:52:56 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id z25so14969136lfr.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 09:52:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=hk91vgCrBTUvEpGSrKbGq5iow1WG9u7J+VYZ+z7HncQ=;
-        b=wWFiS3SEigESx+/qdsuHPrOMuSFVDZ8NNlNoUFV4zIU5vZIB9wmYnN2DNO8WV7IBgR
-         d2cJMJCkK3rVHRQOVUBJoZAXy1cgu+1AOJ4peL3SUSkpMXxR9QPrEjeP3tTIosq39GhB
-         mhvRjKTelDkItHYLhMtBRsIo2vSxpKtyXg5StsUt5V5huMiJuc6iRCy4WdODh7Uw1LCs
-         1+nuHx2EfaDrXl4lnsdPLUGwP1hc7SMm6P80yMDgBvpyh+o3l8fOWF7WN7nsvwCRINbe
-         uyXQCqe45bL5achZDh8VEeQD/Tz9g42IUJ7KzlYhmaW331JnyiieyLtf+Ed8b5AHX3DC
-         jn3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=hk91vgCrBTUvEpGSrKbGq5iow1WG9u7J+VYZ+z7HncQ=;
-        b=rf6fqsbLBKKsgtjk6XJ3FMdI5ye6wgUhbPfUrQ8Sh0/JooiJicskUrVfPeorkkgSta
-         O7KSMDL+mWGWkQjcansglnQT+NV8+BPxurMNe0IVYTrJnpWJmI7PHKewpMfKxqaZ1rhe
-         A+KuFnSCXPFkUotA5mXcbg9XgRvEfL2hxQZh0rw3ziWyMPlhuYIPJc01Cdr0INBpgmPB
-         i0gk7/gnb7CTfAhohMh8Du74DG9BHBq/0vBbDNnuTWXdVN73kLCA0Q06j3Jlf2bGRgRK
-         ixE4YpuqASTXpfiU3/xlf8qvGhzfWznFDfKgoUbgjpC+pwoyR+qNWPEzxd9KXQ3vmRmF
-         JmBg==
-X-Gm-Message-State: AJIora/5nfcVLMbWZN4YofX47Ei5qhU9+q8fxb2aV8hhIdCrlB4j28wT
-        aFHmsYZJSauz1kXEWLxH4BCHWw==
-X-Google-Smtp-Source: AGRyM1v/dKeiG9uF3Q11EN7iwNXDDikvgf15Kljcs4hTXl5qB2EU9cPzZbfR68r8CVYNNFKBW5+TYQ==
-X-Received: by 2002:ac2:4e03:0:b0:485:74c4:97ce with SMTP id e3-20020ac24e03000000b0048574c497cemr15368417lfr.13.1657644775361;
-        Tue, 12 Jul 2022 09:52:55 -0700 (PDT)
-Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
-        by smtp.gmail.com with ESMTPSA id b15-20020a19644f000000b00488fd910e22sm2280059lfj.140.2022.07.12.09.52.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jul 2022 09:52:54 -0700 (PDT)
-Message-ID: <4d198463-fedc-a5d9-6804-63c134da76e7@linaro.org>
-Date:   Tue, 12 Jul 2022 18:52:46 +0200
+        Tue, 12 Jul 2022 13:00:20 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74A36CC00A;
+        Tue, 12 Jul 2022 10:00:19 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F53D165C;
+        Tue, 12 Jul 2022 10:00:19 -0700 (PDT)
+Received: from [10.57.85.194] (unknown [10.57.85.194])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 63ED83F73D;
+        Tue, 12 Jul 2022 10:00:16 -0700 (PDT)
+Message-ID: <dcf4da29-9da0-69ea-300e-80d1f5cc10a3@arm.com>
+Date:   Tue, 12 Jul 2022 18:00:11 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v2 4/7] iommu/exynos: Use lookup based approach to access
- registers
-Content-Language: en-US
+Subject: Re: [PATCH v2 6/7] iommu/exynos: Add SysMMU v7 register sets
+Content-Language: en-GB
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Janghyuck Kim <janghyuck.kim@samsung.com>,
         Cho KyongHo <pullip.cho@samsung.com>,
@@ -70,153 +41,113 @@ Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20220710230603.13526-1-semen.protsenko@linaro.org>
- <20220710230603.13526-5-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220710230603.13526-5-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+ <20220710230603.13526-7-semen.protsenko@linaro.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220710230603.13526-7-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/07/2022 01:06, Sam Protsenko wrote:
-> At the moment the driver supports SysMMU v1..v5 versions. SysMMU v5 has
-> different register layout than SysMMU v1..v3. Instead of checking the
-> version each time before reading/writing the registers, let's create
-> corresponding register table for each SysMMU version and set the needed
-> table on init, checking the SysMMU version one single time. This way is
-> faster and more elegant.
-> 
-> No functional change here, just a refactoring patch.
+On 2022-07-11 00:06, Sam Protsenko wrote:
+> SysMMU v7 might have different register layouts (VM capable or non-VM
+> capable). Check which layout is implemented in current SysMMU module and
+> prepare the corresponding register table for futher usage.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
 > Changes in v2:
->   - Reworked existing code (SysMMU v1..v5) to use this approach
->   - Extracted v7 registers to the separate patches
->   - Replaced MMU_REG() with corresponding SysMMU read/write functions
->   - Improved the comment for 0x1 offsets triggering an unaligned access
->     exception
->   - Removed support for VMID number, as only VMID=0 (default) is used
->     for now
->   - Renamed register index names to reflect the old SysMMU version
->     register names
+>    - (none) This patch is new and added in v2
 > 
->  drivers/iommu/exynos-iommu.c | 141 ++++++++++++++++++++++-------------
->  1 file changed, 90 insertions(+), 51 deletions(-)
+>   drivers/iommu/exynos-iommu.c | 26 ++++++++++++++++++++++----
+>   1 file changed, 22 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 494f7d7aa9c5..0cb1ce10db51 100644
+> index 48681189ccf8..64bf3331064f 100644
 > --- a/drivers/iommu/exynos-iommu.c
 > +++ b/drivers/iommu/exynos-iommu.c
-> @@ -136,9 +136,6 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
->  #define CFG_FLPDCACHE	(1 << 20) /* System MMU 3.2+ only */
->  
->  /* common registers */
-> -#define REG_MMU_CTRL		0x000
-> -#define REG_MMU_CFG		0x004
-> -#define REG_MMU_STATUS		0x008
->  #define REG_MMU_VERSION		0x034
->  
->  #define MMU_MAJ_VER(val)	((val) >> 7)
-> @@ -148,31 +145,57 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
->  #define MAKE_MMU_VER(maj, min)	((((maj) & 0xF) << 7) | ((min) & 0x7F))
->  
->  /* v1.x - v3.x registers */
-> -#define REG_MMU_FLUSH		0x00C
-> -#define REG_MMU_FLUSH_ENTRY	0x010
-> -#define REG_PT_BASE_ADDR	0x014
-> -#define REG_INT_STATUS		0x018
-> -#define REG_INT_CLEAR		0x01C
-> -
->  #define REG_PAGE_FAULT_ADDR	0x024
->  #define REG_AW_FAULT_ADDR	0x028
->  #define REG_AR_FAULT_ADDR	0x02C
->  #define REG_DEFAULT_SLAVE_ADDR	0x030
->  
->  /* v5.x registers */
-> -#define REG_V5_PT_BASE_PFN	0x00C
-> -#define REG_V5_MMU_FLUSH_ALL	0x010
-> -#define REG_V5_MMU_FLUSH_ENTRY	0x014
-> -#define REG_V5_MMU_FLUSH_RANGE	0x018
-> -#define REG_V5_MMU_FLUSH_START	0x020
-> -#define REG_V5_MMU_FLUSH_END	0x024
-> -#define REG_V5_INT_STATUS	0x060
-> -#define REG_V5_INT_CLEAR	0x064
->  #define REG_V5_FAULT_AR_VA	0x070
->  #define REG_V5_FAULT_AW_VA	0x080
->  
->  #define has_sysmmu(dev)		(dev_iommu_priv_get(dev) != NULL)
->  
-> +enum {
-> +	REG_SET_V1,
-> +	REG_SET_V5,
-> +	MAX_REG_SET
-> +};
-> +
-> +enum {
-> +	IDX_CTRL,
-> +	IDX_CFG,
-> +	IDX_STATUS,
-> +	IDX_PT_BASE,
-> +	IDX_FLUSH_ALL,
-> +	IDX_FLUSH_ENTRY,
-> +	IDX_FLUSH_RANGE,
-> +	IDX_FLUSH_START,
-> +	IDX_FLUSH_END,
-> +	IDX_INT_STATUS,
-> +	IDX_INT_CLEAR,
-> +	MAX_REG_IDX
-> +};
-> +
-> +/*
-> + * Some SysMMU versions might not implement some registers from this set, thus
-> + * those registers shouldn't be accessed. Set the offsets for those registers to
-> + * 0x1 to trigger an unaligned access exception, which can help one to debug
-> + * related issues.
-> + */
-> +static const unsigned int sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
-> +	/* SysMMU v1..v3 */
-> +	{
-> +		0x00, 0x04, 0x08, 0x14, 0x0c, 0x10, 0x1, 0x1, 0x1,
-> +		0x18, 0x1c,
-> +	},
-> +	/* SysMMU v5 */
+> @@ -166,6 +166,8 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
+>   enum {
+>   	REG_SET_V1,
+>   	REG_SET_V5,
+> +	REG_SET_V7_NON_VM,
+> +	REG_SET_V7_VM,
+>   	MAX_REG_SET
+>   };
+>   
+> @@ -201,6 +203,16 @@ static const unsigned int sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
+>   		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
+>   		0x60, 0x64,
+>   	},
+> +	/* SysMMU v7: Default register set (non-VM) */
 > +	{
 > +		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
 > +		0x60, 0x64,
 > +	},
-> +};
-> +
->  static struct device *dma_dev;
->  static struct kmem_cache *lv2table_kmem_cache;
->  static sysmmu_pte_t *zero_lv2_table;
-> @@ -274,6 +297,7 @@ struct sysmmu_drvdata {
->  	unsigned int version;		/* our version */
->  
->  	struct iommu_device iommu;	/* IOMMU core handle */
-> +	const unsigned int *regs;	/* register set */
->  };
->  
->  static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
-> @@ -281,20 +305,30 @@ static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
->  	return container_of(dom, struct exynos_iommu_domain, domain);
->  }
->  
-> +static void sysmmu_write(struct sysmmu_drvdata *data, size_t idx, u32 val)
-> +{
-> +	writel(val, data->sfrbase + data->regs[idx]);
+> +	/* SysMMU v7: VM capable register set */
+> +	{
+> +		0x00, 0x04, 0x08, 0x800c, 0x8010, 0x8014, 0x8018, 0x8020,
+> +		0x8024, 0x60, 0x64,
 
-Beside what Robin wrote, I also don't think these wrappers actually
-help, because you reverse arguments comparing to writel.
+Yuck, see, it's turning into an unreadable mess already.
 
-How about having a per-variant structure with offsets and using it like:
+This is also raising the question of whether it's worth abstracting 
+accesses to the common registers if it means having an ever-increasing 
+number of copies of those same offsets. Personally I'd leave those using 
+regular readl/writel, but even if there's an argument for keeping all 
+the callsites consistent (modulo the one that already can't be), there's 
+no reason the wrappers couldn't pick up the slack, e.g.:
 
-#define SYSMMU_REG(data, reg) ((data)->sfrbase + (data)->variant->reg)
-writel(CTRL_ENABLE, SYSMMU_REG(data, mmu_ctrl_reg))
+static void sysmmu_write(struct sysmmu_drvdata *data, size_t idx, u32 val)
+{
+	unsigned int offset;
 
-Would that be more readable?
+	if (idx <= IDX_STATUS) {
+		offset = idx * 4;
+	} else {
+		offset = data->regs[idx - IDX_PT_BASE];
+		if (WARN_ON(!offset))
+			return;
+	}
+	writel(val, data->sfrbase + offset);
+}
 
+Indeed, not abstracting REG_MMU_CTRL via data->regs would then make it 
+trivial to be robust against unimplemented registers without even having 
+to remember to initialise their offsets to some magic value, which seems 
+rather attractive.
 
-Best regards,
-Krzysztof
+(also, as it only strikes me now, why are we passing enum values around 
+as size_t? That's just odd)
+
+Thanks,
+Robin.
+
+> +	},
+>   };
+>   
+>   static struct device *dma_dev;
+> @@ -440,12 +452,18 @@ static void sysmmu_get_hw_info(struct sysmmu_drvdata *data)
+>   	__sysmmu_enable_clocks(data);
+>   
+>   	__sysmmu_get_version(data);
+> -	if (MMU_MAJ_VER(data->version) >= 7 && __sysmmu_has_capa1(data))
+> -		__sysmmu_get_vcr(data);
+> -	if (MMU_MAJ_VER(data->version) < 5)
+> +	if (MMU_MAJ_VER(data->version) < 5) {
+>   		data->regs = sysmmu_regs[REG_SET_V1];
+> -	else
+> +	} else if (MMU_MAJ_VER(data->version) < 7) {
+>   		data->regs = sysmmu_regs[REG_SET_V5];
+> +	} else {
+> +		if (__sysmmu_has_capa1(data))
+> +			__sysmmu_get_vcr(data);
+> +		if (data->has_vcr)
+> +			data->regs = sysmmu_regs[REG_SET_V7_VM];
+> +		else
+> +			data->regs = sysmmu_regs[REG_SET_V7_NON_VM];
+> +	}
+>   
+>   	__sysmmu_disable_clocks(data);
+>   }
