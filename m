@@ -2,224 +2,151 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4531AC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 11:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42ACC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 14:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233007AbiGLLJ7 (ORCPT
+        id S229572AbiGLOAB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 07:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54824 "EHLO
+        Tue, 12 Jul 2022 10:00:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbiGLLJu (ORCPT
+        with ESMTP id S229700AbiGLN7n (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jul 2022 07:09:50 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D9CB0F92
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 04:09:46 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id d12so13327124lfq.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 04:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8tdpS+5ubtJGGOPxmM+nq8jqWPaOVB3css9TAtAfGOI=;
-        b=dteUqy18Cu6l5q1qpmyWbmh9SYyiDuauhyzK2n+Z2mGTQ4ORfsZunyy6Q+IBXc9Z8p
-         MuFm4eDCr83xxUP9tEjS5YIsh2UsnX3GhgEVF5lrRLpuaqFVxBnWqLfXhnCtmasg01Xi
-         JnXIgsdOWJrXt4cK2vMX7u9QjReHadYuuTBxKApN4Su2/yCB+IjKzXCN11TSQyuoxI84
-         KABZGqlheVrcJ1HJdu+y2S+3VsWwVi+VCRw1y4UtbkXJpDycJ/VO3513W8eg3zpSyFZF
-         pdQ1Ri80+whrgJ0Z1VdfRh2karl6cJzhPzUa9zMviVi0qHSyqjZXlCorlfX8ve1VT0XN
-         7MxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8tdpS+5ubtJGGOPxmM+nq8jqWPaOVB3css9TAtAfGOI=;
-        b=M9/WZi6fLp1URUDpVSHp1fSSO+0exRnKDlbepewKObIhI9c2TL+Tz1PKOQsK9uRB0+
-         dB3tyz60tBhzxSbQhs8mDGFYEA4XgVDvKzZUVxSTAztmqLyl6ES2VQjTx8eMy+KC9qi6
-         KPj3WUFYWAsu1EalD+5SXQm3fPI064vO8flLkgOIPz7TgjLuzPo5KAn/51XvuLs4zgjj
-         CD8zPP7zRxDnRbPe42SYtEzj8NC86E0xcPfuE3TlOKiOVVu/pZQn8EgBq5UjHnS/627L
-         Gz9dZMWrxbzyrXbNfoQvR3Tuyu9hfRbXLCgfPZsP1AkvXNoGO1OmCGdx3DDLDAgYbRfP
-         U59Q==
-X-Gm-Message-State: AJIora8J8MU9n/vSt9olDn1JDkIdnMtZiarDBLNGgtkiAAKqgq48epUF
-        9efWKqUn3izgqOCa6Ht7oaynjwltPsWCCJmHreu6cw==
-X-Google-Smtp-Source: AGRyM1uFxb+BdqIl3tBJoT69LzidPBHC05qJXBK5HhG4NGNDzrGe14N2yRhxnWHlCAwRx8kw9OJIiWPSW1zrRwjYsHk=
-X-Received: by 2002:a05:6512:3403:b0:481:60ae:7ebc with SMTP id
- i3-20020a056512340300b0048160ae7ebcmr15210209lfr.358.1657624185645; Tue, 12
- Jul 2022 04:09:45 -0700 (PDT)
+        Tue, 12 Jul 2022 09:59:43 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE52DB8E9E
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 06:59:02 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220712135901euoutp02470bbbc271cb8fa50cff44888210db1a~BGaadbii22310623106euoutp02z
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 13:59:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220712135901euoutp02470bbbc271cb8fa50cff44888210db1a~BGaadbii22310623106euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1657634341;
+        bh=UrPawTkkxco5tNzWRxD6vVP9tjBtCtweHbBECxb5T8o=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=UVL7V+VNtOvGJuZt6vcXLlVmz6T/gmDgabvME5JLAk6PloVixy0MTyg3LYeEXRd5X
+         XcmQLMHPBAoWcApYLBPghubaSpHafPmJob48VbSefucnyRmxO4FvelNOUarRflXg4h
+         VZ0GFugLdmrS90bXWI0iV51S7zeUteLaNx8Cmemc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220712135900eucas1p14a52f558e0ee24a00db457b1b938ee39~BGaaGFSV_1626016260eucas1p1Y;
+        Tue, 12 Jul 2022 13:59:00 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 25.57.09664.42E7DC26; Tue, 12
+        Jul 2022 14:59:00 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220712135900eucas1p284595bf0268f06396e7dba21fa6eb244~BGaZpwtAB0409004090eucas1p2X;
+        Tue, 12 Jul 2022 13:59:00 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220712135900eusmtrp1f49bd185141eab176bb4115d9164945a~BGaZo-mJo1223712237eusmtrp1S;
+        Tue, 12 Jul 2022 13:59:00 +0000 (GMT)
+X-AuditID: cbfec7f2-d97ff700000025c0-ad-62cd7e24525c
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EE.01.09038.42E7DC26; Tue, 12
+        Jul 2022 14:59:00 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220712135859eusmtip1e1fea7b861abd6226036e7300863b6f3~BGaYtxzAy0659806598eusmtip10;
+        Tue, 12 Jul 2022 13:58:59 +0000 (GMT)
+Message-ID: <caa266c1-aecc-31c4-75f5-b5061444b446@samsung.com>
+Date:   Tue, 12 Jul 2022 15:58:59 +0200
 MIME-Version: 1.0
-References: <20220626120342.38851-1-krzysztof.kozlowski@linaro.org> <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220626120342.38851-6-krzysztof.kozlowski@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Jul 2022 13:09:08 +0200
-Message-ID: <CAPDyKFqvkYEHLMV67an9=1iu0jwewZNA=Mj0Erg30oJ_CEmxMw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: mmc: samsung,s3c6410-sdhci: convert to dtschema
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH v3] tty: serial: samsung_tty: loopback mode support
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
+        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
+Cc:     'Jiri Slaby' <jirislaby@kernel.org>,
+        'Alim Akhtar' <alim.akhtar@samsung.com>,
+        'Hector Martin' <marcan@marcan.st>,
+        'Jaewon Kim' <jaewon02.kim@samsung.com>,
+        'Vincent Whitchurch' <vincent.whitchurch@axis.com>,
+        =?UTF-8?Q?=27Ilpo_J=c3=a4rvinen=27?= 
+        <ilpo.jarvinen@linux.intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <000001d89588$936d14c0$ba473e40$@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsWy7djPc7oqdWeTDKb9MrB4MG8bm8Xl/doW
+        zYvXs1l07uhhsdjRcITV4t1cGYu9r7eyW2x6fI3VYsb5fUwWZxb3slucvraA3eL8Nn8HHo/r
+        6wI8Nq3qZPO4c20Pm8e8k4Ee++euYffYvKTeY/GynWwefVtWMXp83iQXwBnFZZOSmpNZllqk
+        b5fAldG14gRLwUOOihOtTSwNjK/Zuhg5OSQETCTavj9m7GLk4hASWMEocXLuY3aQhJDAF0aJ
+        H4vrIezPjBIHD0XDNPxddZ0NomE5o8TOmZ0sEM5HRonFd7YAdXNw8ArYSayf7QnSwCKgKrG6
+        7yQjiM0rIChxcuYTFhBbVCBZ4tzZq2BXCAu4S3TOaGUFsZkFxCVuPZnPBDJTRGAWo8TbLdvA
+        FjALdDBLzP+2BKyKTcBQouttF1g3p4CVxNzGb4wQ3fIS29/OYQZpkBCYzSmxf/ZUJoi7XST+
+        v9vBDGELS7w6voUdwpaROD25hwXkagmBfIm/M4whwhUS116vgSq3lrhz7hcbSAmzgKbE+l36
+        EGFHiTM961ghOvkkbrwVhLiAT2LStunMEGFeiY42IYhqNYlZx9fB7Tx44RLzBEalWUihMgvJ
+        97OQ/DILYe8CRpZVjOKppcW56anFhnmp5XrFibnFpXnpesn5uZsYgcns9L/jn3Ywzn31Ue8Q
+        IxMH4yFGCQ5mJRHeP2dPJQnxpiRWVqUW5ccXleakFh9ilOZgURLnTc7ckCgkkJ5YkpqdmlqQ
+        WgSTZeLglGpgsnqzynoFS9HTTVezq6q2fXx1IOGT5jr90LwHF0TenUsuWevvmbpuVhZfXlTw
+        cb2sCrNpJXyb1xpbK/bFN5nysOaenK+oIGP6SVhEYNXMI4f9l85eXZsrZtqY5dfGYW14qor9
+        jWhg5KWjsa+mXniQsjRTQaq593N39f/ad0rCAW3pVxlv8OSe0l3x4LLJkyen735lTlFY/+Id
+        R9zT/y5zG1h2rz3T+GjZtUlaJkt59r6R09u5wPvz+T1HO5+nLFx1hjvO66CQi1Xehp/RzUvL
+        b6Soz+m3nBaUMZkrV9VIsV3r1SyB2QZRu96kLLvAo79S201lg9qFuycXCfDY/53QESMv2Hnr
+        uPrG2WmTRG3jlFiKMxINtZiLihMBTg96ptUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xu7oqdWeTDCa/F7B4MG8bm8Xl/doW
+        zYvXs1l07uhhsdjRcITV4t1cGYu9r7eyW2x6fI3VYsb5fUwWZxb3slucvraA3eL8Nn8HHo/r
+        6wI8Nq3qZPO4c20Pm8e8k4Ee++euYffYvKTeY/GynWwefVtWMXp83iQXwBmlZ1OUX1qSqpCR
+        X1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl9G14gRLwUOOihOtTSwN
+        jK/Zuhg5OSQETCT+rroOZHNxCAksZZQ4tK2HFSIhI3FyWgOULSzx51oXVNF7RokHL3axdzFy
+        cPAK2Emsn+0JUsMioCqxuu8kI4jNKyAocXLmExYQW1QgWaJ5yyEmEFtYwF2ic0Yr2ExmAXGJ
+        W0/mM4HMFBGYxShx/dNTdhCHWaCLWeLI4y5miG3fGSUmnDoKdiubgKFE19suMJtTwEpibuM3
+        RohRZhJdW7ugbHmJ7W/nME9gFJqF5JJZSDbOQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV5
+        6XrJ+bmbGIFxvO3Yzy07GFe++qh3iJGJg/EQowQHs5II75+zp5KEeFMSK6tSi/Lji0pzUosP
+        MZoCg2Mis5Rocj4wkeSVxBuaGZgamphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBK
+        NTB55L0SUb6XEuy/82Qzw/m78XlBn+qWr90U9sZx6bua9c32pkJ99SraJpqPpRQ2sE1f9upf
+        0dmTkWUZNxVFZmtGXrjqJDeloWrNfv8z6zTvPCrSmSfu93eVWd31Nx9KlyRUCZaw9HHd6Fv+
+        rTTtUelRkwzWKpdE5e2+XyonJrs90m5L7hDiYuO+9u599druR+cu7HtwIuj2R2aT04c++97U
+        unZQuMRUsch5m+yn9dGd3VarrSPLlVz3/LY9+fbyozYNw5f3tvxODjSb8namf97CK7bnuvym
+        7+7oPFyQ7sW6atGcnwGdUzaF8l8yFv4veLE1Vf/TphUt+65t33yEQf70SbbvP991z74698a2
+        OtsnSizFGYmGWsxFxYkAc9ZqpWwDAAA=
+X-CMS-MailID: 20220712135900eucas1p284595bf0268f06396e7dba21fa6eb244
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220629004356epcas2p408afcd3d19d926a86d98e887e25e93bc
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220629004356epcas2p408afcd3d19d926a86d98e887e25e93bc
+References: <CGME20220629004356epcas2p408afcd3d19d926a86d98e887e25e93bc@epcas2p4.samsung.com>
+        <20220629004141.51484-1-chanho61.park@samsung.com>
+        <4fb8c922-08aa-2ee3-8073-95b8a26bf5db@samsung.com>
+        <000001d89588$936d14c0$ba473e40$@samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 26 Jun 2022 at 14:03, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Convert the Samsung SoC SDHCI Controller bindings to DT schema.
->
-> The original bindings were quite old and incomplete, so add during
-> conversion typical (already used) properties like reg, clocks,
-> interrupts.
->
-> The bindings were not precising the clocks, although the upstream DTS
-> and Linux driver were expecting bus clocks in certain patterns in any
-> order.  Document the status quo even though it is not a proper approach
-> for bindings.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 12.07.2022 02:44, Chanho Park wrote:
+>>> +	if (mctrl & TIOCM_LOOP)
+>>> +		ucon |= S3C2410_UCON_LOOPBACK;
+>>> +	else
+>>> +		ucon &= ~S3C2410_UCON_LOOPBACK;
+>>> +
+>>> +	wr_regl(port, S3C2410_UCON, ucon);
+>> S3C2410_UCON must be modified at least under the local_irq_save() or port
+>> lock, otherwise it breaks kernel console operation on older Exynos SoCs
+>> (especially when DMA mode is used).
+>>
+>> The above read-modify-write sequence should be replaced with the following
+>> pattern:
+>>
+>>           if (mctrl & TIOCM_LOOP)
+>>                   s3c24xx_set_bit(port, S3C2410_UCON_LOOPBACK, S3C2410_UCON);
+>>           else
+>>                   s3c24xx_clear_bit(port, S3C2410_UCON_LOOPBACK, S3C2410_UCON);
+> All the set_mctrl() call can be protected by spin_[un]lock_irq[save/restore] with port->lock.
+> So, I think it is not required.
 
-Applied for next, thanks!
+Right. The problem is elsewhere. You used rd_reg(port, S3C2410_UCON) 
+instead of rd_regl(port, S3C2410_UCON) what always zeroed upper bits. I 
+will send a fix in a few minutes.
 
-Kind regards
-Uffe
 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-> ---
->  .../bindings/mmc/samsung,s3c6410-sdhci.yaml   | 81 +++++++++++++++++++
->  .../devicetree/bindings/mmc/samsung-sdhci.txt | 32 --------
->  2 files changed, 81 insertions(+), 32 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
->
-> diff --git a/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml b/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
-> new file mode 100644
-> index 000000000000..5d873a60f650
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/samsung,s3c6410-sdhci.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/samsung,s3c6410-sdhci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SoC SDHCI Controller
-> +
-> +maintainers:
-> +  - Jaehoon Chung <jh80.chung@samsung.com>
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,s3c6410-sdhci
-> +      - samsung,exynos4210-sdhci
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 5
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    items:
-> +      - const: hsmmc
-> +      - pattern: "^mmc_busclk.[0-3]$"
-> +      - pattern: "^mmc_busclk.[0-3]$"
-> +      - pattern: "^mmc_busclk.[0-3]$"
-> +      - pattern: "^mmc_busclk.[0-3]$"
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
-> +allOf:
-> +  - $ref: mmc-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos4210-sdhci
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: hsmmc
-> +            - const: mmc_busclk.2
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/exynos4.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    mmc@12510000 {
-> +        compatible = "samsung,exynos4210-sdhci";
-> +        reg = <0x12510000 0x100>;
-> +        interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clock CLK_SDMMC0>, <&clock CLK_SCLK_MMC0>;
-> +        clock-names = "hsmmc", "mmc_busclk.2";
-> +        bus-width = <4>;
-> +        cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
-> +        pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
-> +        pinctrl-names = "default";
-> +        vmmc-supply = <&ldo21_reg>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-> deleted file mode 100644
-> index 42e0a9afa100..000000000000
-> --- a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
-> +++ /dev/null
-> @@ -1,32 +0,0 @@
-> -* Samsung's SDHCI Controller device tree bindings
-> -
-> -Samsung's SDHCI controller is used as a connectivity interface with external
-> -MMC, SD and eMMC storage mediums. This file documents differences between the
-> -core mmc properties described by mmc.txt and the properties used by the
-> -Samsung implementation of the SDHCI controller.
-> -
-> -Required SoC Specific Properties:
-> -- compatible: should be one of the following
-> -  - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
-> -    controller.
-> -  - "samsung,exynos4210-sdhci": For controllers compatible with Exynos4 sdhci
-> -    controller.
-> -
-> -Required Board Specific Properties:
-> -- pinctrl-0: Should specify pin control groups used for this controller.
-> -- pinctrl-names: Should contain only one value - "default".
-> -
-> -Example:
-> -       sdhci@12530000 {
-> -               compatible = "samsung,exynos4210-sdhci";
-> -               reg = <0x12530000 0x100>;
-> -               interrupts = <0 75 0>;
-> -               bus-width = <4>;
-> -               cd-gpios = <&gpk2 2 0>;
-> -               pinctrl-names = "default";
-> -               pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4>;
-> -       };
-> -
-> -       Note: This example shows both SoC specific and board specific properties
-> -       in a single device node. The properties can be actually be separated
-> -       into SoC specific node and board specific node.
-> --
-> 2.34.1
->
