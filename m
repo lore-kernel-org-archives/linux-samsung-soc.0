@@ -2,61 +2,61 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47463C433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 15:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB80C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 15:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbiGLPjS (ORCPT
+        id S233352AbiGLPk3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 11:39:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
+        Tue, 12 Jul 2022 11:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234192AbiGLPjR (ORCPT
+        with ESMTP id S233932AbiGLPk2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jul 2022 11:39:17 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2380EB9685
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 08:39:13 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220712153907euoutp01d049e6fefc60071e5dc7d11822362921~BHx0jkcIA1921719217euoutp01Y
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 15:39:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220712153907euoutp01d049e6fefc60071e5dc7d11822362921~BHx0jkcIA1921719217euoutp01Y
+        Tue, 12 Jul 2022 11:40:28 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE12C2584
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 08:40:27 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220712154026euoutp0209dee1da28d053be7026dd19b906dc36~BHy9c5tKK0375303753euoutp02U
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 15:40:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220712154026euoutp0209dee1da28d053be7026dd19b906dc36~BHy9c5tKK0375303753euoutp02U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1657640347;
-        bh=d0eRr0tejRZv6hF5ccPDmr9RC5rKrMnTUtD6fgci4PM=;
+        s=mail20170921; t=1657640426;
+        bh=TUO+DO9jnZzlF7cFIVzUSgXYJXa5dsygivVMaxzzNJo=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=uqK4sMEcJPKvKh1EVxIiA2fUc8LnAIYfCLY5DEFWWD338nT4OJXMpLyPz6F7v8z9M
-         nR+fYSatxkuCKwZDwn573AZuZtn3kvrFlTLk+x1L9GxSp5aVwTLNLF5UO2Liyz/cse
-         ObL3tmgX4A/tStuJ+6BM/kofSbavG1nSVx5fRQ9A=
+        b=PVwrNQ78W35bb+hbLMMGs1CQcVWzBEF4ZDeIwAGiJV22P9pt6bBFfoV0Yc0fU9waG
+         GVOhRMDaFfrFQxKbQhWcT5t1nqEO6BJGMRytZnji5bytoPZZLSQqzR8xMBmLRoX9M9
+         bMl+Mxs94YSxG9Jks2Cka7QmGwLoYIZzfXPVu4YQ=
 Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220712153907eucas1p296c57de710aeacbbf5215b3629e004d7~BHx0RcGjL0332103321eucas1p2q;
-        Tue, 12 Jul 2022 15:39:07 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220712154025eucas1p1f1951ae93826a46cc9f7cad7021cc9d1~BHy88bDfo2470724707eucas1p1o;
+        Tue, 12 Jul 2022 15:40:25 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 55.4E.10067.B959DC26; Tue, 12
-        Jul 2022 16:39:07 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220712153907eucas1p286b90f05f585c68c4779756b8aaac69d~BHxz5PuQ70334303343eucas1p21;
-        Tue, 12 Jul 2022 15:39:07 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220712153907eusmtrp178f3a10f86a5f32085f0ed115339583c~BHxz4UgsJ1145811458eusmtrp1T;
-        Tue, 12 Jul 2022 15:39:07 +0000 (GMT)
-X-AuditID: cbfec7f4-dc1ff70000002753-18-62cd959b647b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id FB.0F.09095.B959DC26; Tue, 12
-        Jul 2022 16:39:07 +0100 (BST)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id C8.7E.10067.9E59DC26; Tue, 12
+        Jul 2022 16:40:25 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220712154024eucas1p10429e06f93be2e3d19ebbb64e3e10419~BHy8QzS682469724697eucas1p1c;
+        Tue, 12 Jul 2022 15:40:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220712154024eusmtrp2218a7ea2efa085911d4fac60c77913a8~BHy8PvKIb0630506305eusmtrp2I;
+        Tue, 12 Jul 2022 15:40:24 +0000 (GMT)
+X-AuditID: cbfec7f4-dc1ff70000002753-cc-62cd95e9ee98
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D2.9E.09038.8E59DC26; Tue, 12
+        Jul 2022 16:40:24 +0100 (BST)
 Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220712153906eusmtip15175d2da5d6dad91e6452c72bea42a97~BHxzJ49az2817228172eusmtip19;
-        Tue, 12 Jul 2022 15:39:06 +0000 (GMT)
-Message-ID: <f847f665-f374-9b28-124a-abc6f0372db7@samsung.com>
-Date:   Tue, 12 Jul 2022 17:39:06 +0200
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220712154024eusmtip22427e078312d378ec38714a3663aee18~BHy7iCOyx3160031600eusmtip2Q;
+        Tue, 12 Jul 2022 15:40:24 +0000 (GMT)
+Message-ID: <6ec2aa42-2470-5f16-0017-485771d80d20@samsung.com>
+Date:   Tue, 12 Jul 2022 17:40:24 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
         Gecko/20100101 Thunderbird/91.10.0
-Subject: Re: [PATCH v2 1/7] iommu/exynos: Reuse SysMMU constants for page
- size and order
+Subject: Re: [PATCH v2 2/7] iommu/exynos: Handle failed IOMMU device
+ registration properly
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -70,101 +70,94 @@ Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220710230603.13526-2-semen.protsenko@linaro.org>
+In-Reply-To: <20220710230603.13526-3-semen.protsenko@linaro.org>
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCKsWRmVeSWpSXmKPExsWy7djP87qzp55NMli1Ss5iQkcrk8WvLxYW
-        m+cUW3TO3sBusff1VnaLTY+vsVpc3jWHzWLG+X1MFv96DzJaHPzwhNXieR+Qe+ruZ3aL4+8f
-        M1q03DF14PN4cnAek8eaeWsYPXbOusvusWBTqcemVZ1sHneu7WHz2Lyk3uPF5pmMHn1bVjF6
-        fN4kF8AVxWWTkpqTWZZapG+XwJVx78cxxoId/BXNW6ewNDAe5Oli5OSQEDCR2Nj/l72LkYtD
-        SGAFo0TT+sVsEM4XRomGD29YIJzPjBIX+58xw7QsObcCKrGcUWLJ8uOsEM5HRoktUy+wgVTx
-        CthJrL/dyw5iswioShyb95oJIi4ocXLmExYQW1QgWeLc2atg9cICURJXn38Hq2EWEJe49WQ+
-        mC0ikCZx9d99sAXMAjuYJb7OuQnWzCZgKNH1tgusmVPAQWLmxQ3sEM3yEtvfzmEGaZAQWM0p
-        sbhtLhPE3S4S0y70skLYwhKvjm9hh7BlJE5P7gEaygFk50v8nWEMEa6QuPZ6DdTL1hJ3zv1i
-        AylhFtCUWL9LHyLsKPHgyA92iE4+iRtvBSEu4JOYtG06M0SYV6KjTQiiWk1i1vF1cDsPXrjE
-        PIFRaRZSoMxC8vwsJL/MQti7gJFlFaN4amlxbnpqsVFearlecWJucWleul5yfu4mRmDCO/3v
-        +JcdjMtffdQ7xMjEwXiIUYKDWUmE98/ZU0lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZMzNyQK
-        CaQnlqRmp6YWpBbBZJk4OKUamDzqPCRnNMdZHdpmIWfoYHbKeHX/0+M6bZ47Lhtkrsvymb9Z
-        +GTZ/2efH6mU/5n57Vko86PJZdVWNpzsJzPu9MrWhk/ifP1rRZL48Yv7pSOV9K1/nDu5IiWC
-        adHLKYJThaXb/Jmb1+3MyhNjej33HW/6smNTL3xf2L1tSa19m+/MC6tLoyJmepXdZTLU2uXH
-        viSI2egLP+fLRGc/hxveDxsm7m2eEXFla6zv7ccrcpdxGk7Xea35bF+o36c9rOvk98tMWba/
-        f4JMCd/3NhH9JafY0yxadpXyaU3mm2ZyJ72b4XtDsG+A96xXVjdbah4I7p/tw3ii7VJqZ6jr
-        m41STIGXnrRfqtvGmTn3mbRmhBJLcUaioRZzUXEiAPAYzdfnAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsVy+t/xu7qzp55NMpjdw2IxoaOVyeLXFwuL
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7djP87ovp55NMuj7IW0xoaOVyeLXFwuL
         zXOKLTpnb2C32Pt6K7vFpsfXWC0u75rDZjHj/D4mi3+9BxktDn54wmrxvA/IPXX3M7vF8feP
         GS1a7pg68Hk8OTiPyWPNvDWMHjtn3WX3WLCp1GPTqk42jzvX9rB5bF5S7/Fi80xGj74tqxg9
-        Pm+SC+CK0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL
-        0Mu49+MYY8EO/ormrVNYGhgP8nQxcnJICJhILDm3gqWLkYtDSGApo8Sfp+dZIBIyEienNbBC
-        2MISf651sUEUvWeUeDKngx0kwStgJ7H+di+YzSKgKnFs3msmiLigxMmZT8AGiQokSzRvOQQW
-        FxaIkpj7ZycbiM0sIC5x68l8sLiIQJrEvkmvGUEWMAvsYpboaXsFddJJRonfO9vANrAJGEp0
-        ve0C6+YUcJCYeXEDO8QkM4murV2MELa8xPa3c5gnMArNQnLILCQLZyFpmYWkZQEjyypGkdTS
-        4tz03GJDveLE3OLSvHS95PzcTYzAON927OfmHYzzXn3UO8TIxMF4iFGCg1lJhPfP2VNJQrwp
-        iZVVqUX58UWlOanFhxhNgaExkVlKNDkfmGjySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNL
-        UrNTUwtSi2D6mDg4pRqYekN06z7sZPgVePbkBKYt4ic49j4O+3n143SjtujPq3l/MVuVtjbe
-        sDoz27Se8fzNFfLLzJ3c2w4HG2QdeCi9dwoX444Nilc8b0e/Tzj10fmKTubPD3qBPKaty9fJ
-        mNnnifbc2sHwlsFx/r02rdP3WY5a9rL5Pv3Xu9XnccGcQvMww8Smddxb7WJ2hZl+XTd/z4Vj
-        D/fGHpa9vfTClzq38LLLjouO5ilHuKzNeWOppDn7ydy/27SXfNLSW8Kzo4CdJ/V2UcHvh6b1
-        EV1PPIzVOTpT/7Pz5kRwhl70mH5v+4K30Ye/uFd91QjdonBG8Crn/J6SbG5e1obUPu+nX11i
-        U/jOXl/byr791uKqxHm9SizFGYmGWsxFxYkAwQf4BXwDAAA=
-X-CMS-MailID: 20220712153907eucas1p286b90f05f585c68c4779756b8aaac69d
+        Pm+SC+CK4rJJSc3JLEst0rdL4Mr4/3cZc0E3d8Xzrd3sDYzNnF2MnBwSAiYSXyb0MXUxcnEI
+        CaxglPg/dzcrhPOFUWLHhe/MEM5nRonpf9+ydTFygLV0tgqDdAsJLGeUeL5CH6LmI6PEtq3n
+        WUESvAJ2EhsOXGcHsVkEVCWeHTgEFReUODnzCQuILSqQLHHu7FU2EFtYIEZiy7peZhCbWUBc
+        4taT+UwgtohAmsTVf/fBLmIW2MEs8XXOTbBmNgFDia63XWDNnAIOElePvIdqlpfY/nYO2NUS
+        Aus5JR7sm8cE8aiLxOUHfWwQtrDEq+Nb2CFsGYn/O0G2gXyWL/F3hjFEuELi2us1zBC2tcSd
+        c7/AnmcW0JRYv0sfotpRYkJHAITJJ3HjrSDEAXwSk7ZNZ4YI80p0tAlBzFCTmHV8HdzKgxcu
+        MU9gVJqFFCazkPw+C8krsxDWLmBkWcUonlpanJueWmyUl1quV5yYW1yal66XnJ+7iRGY6k7/
+        O/5lB+PyVx/1DjEycTAeYpTgYFYS4f1z9lSSEG9KYmVValF+fFFpTmrxIUZpDhYlcd7kzA2J
+        QgLpiSWp2ampBalFMFkmDk6pBqbI/+2pR0VWq5Z1ap1JXq3KLJoYk+dsn5Bt9Hv/rCe3Ojy+
+        i2u/8Zy2UuzOh9rpvgl88j8PXJ9ht4FzSf7tRPlV2ZOtbS4l8r54c3yGRuQZy165ig3T+Zy3
+        czD/vVd7d35ZSYsN8wbDCSz2pZu8T01nfDvx6PeAXVsPdSnH3d904ZZdZvY00UlzI/Zs8Pw+
+        qaHos2vL4Uvek9izHdTEtLSErzH8K38eGDHr9S2peTP+xTVI5D7d5lCvZT3X7J4S20Mpf6tJ
+        vPe++ohqfbkyT3LN2kDtqc4Gk/54fPs9ebXC5rzs+oOfJz8T1LHruTdd+MMlmfez1b+Xmymr
+        TxR5K3Yy/UBa4GPt3mKDz3n7rd8qsRRnJBpqMRcVJwIANzRk+OQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsVy+t/xe7ovpp5NMnh7Rd9iQkcrk8WvLxYW
+        m+cUW3TO3sBusff1VnaLTY+vsVpc3jWHzWLG+X1MFv96DzJaHPzwhNXieR+Qe+ruZ3aL4+8f
+        M1q03DF14PN4cnAek8eaeWsYPXbOusvusWBTqcemVZ1sHneu7WHz2Lyk3uPF5pmMHn1bVjF6
+        fN4kF8AVpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+X
+        oJfx/+8y5oJu7ornW7vZGxibObsYOTgkBEwkOluFuxi5OIQEljJKHG3cztbFyAkUl5E4Oa2B
+        FcIWlvhzrYsNoug9o8TWnbPBErwCdhIbDlxnB7FZBFQlnh04BBUXlDg58wkLiC0qkCzRvOUQ
+        E4gtLBAjsWVdLzOIzSwgLnHryXywuIhAmsS+Sa8ZQRYwC+xiluhpe8UCse0ko8Spz5fBNrAJ
+        GEp0ve0CO49TwEHi6pH3UJPMJLq2djFC2PIS29/OYZ7AKDQLySGzkCychaRlFpKWBYwsqxhF
+        UkuLc9Nzi430ihNzi0vz0vWS83M3MQKjfNuxn1t2MK589VHvECMTB+MhRgkOZiUR3j9nTyUJ
+        8aYkVlalFuXHF5XmpBYfYjQFhsZEZinR5HxgmskriTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJI
+        TyxJzU5NLUgtgulj4uCUamCyq721+neqtseEhzYTO59s0rf8LmTxwVL/7roCwfVs1WLmOz9L
+        tH6yZjzk96XZy+6Ab5SBhbaYp1VxcNeqvIifvY+3W3DuLHwY9dh32adS/csn1l1yXNCxxGJ+
+        ZMSE6YERjQc95rLHFLjGKE8+xs++jv9U1uk83dbkTLnyPMlfc18WC99rql41eX+ELfutkqdr
+        bn7Y1fb3aobMY94ISX+Lby8NHLb3uGQoztz40rf/y3Ym1a+79x9yXbhyScjhnotLZh7yes+1
+        Pi9IeJ4x0475F2uSI/1btmzS3BnDzlWgpHnawno7z5F5pzP4jl7l/91gp3dWNiFhe+ynO0sk
+        5lbPZLhwUaPizb2XD+uzL91SYinOSDTUYi4qTgQAJEG5KXsDAAA=
+X-CMS-MailID: 20220712154024eucas1p10429e06f93be2e3d19ebbb64e3e10419
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220710230612eucas1p1ccf9ad3301b653134479432dfb7c08fa
+X-RootMTR: 20220710230613eucas1p14dafab5ac0b7c2e8e69d7b60e98c9d14
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220710230612eucas1p1ccf9ad3301b653134479432dfb7c08fa
+X-CMS-RootMailID: 20220710230613eucas1p14dafab5ac0b7c2e8e69d7b60e98c9d14
 References: <20220710230603.13526-1-semen.protsenko@linaro.org>
-        <CGME20220710230612eucas1p1ccf9ad3301b653134479432dfb7c08fa@eucas1p1.samsung.com>
-        <20220710230603.13526-2-semen.protsenko@linaro.org>
+        <CGME20220710230613eucas1p14dafab5ac0b7c2e8e69d7b60e98c9d14@eucas1p1.samsung.com>
+        <20220710230603.13526-3-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 On 11.07.2022 01:05, Sam Protsenko wrote:
-> Using SZ_4K in context of SysMMU driver is better than using PAGE_SIZE,
-> as PAGE_SIZE might have different value on different platforms. Though
-> it would be even better to use more specific constants, already existing
-> in SysMMU driver. Make the code more strict by using SPAGE_ORDER and
-> SPAGE_SIZE constants.
->
-> It also makes sense, as __sysmmu_tlb_invalidate_entry() also uses
-> SPAGE_* constants for further calculations with num_inv param, so it's
-> logical that num_inv should be previously calculated using also SPAGE_*
-> values.
+> If iommu_device_register() fails in exynos_sysmmu_probe(), the previous
+> calls have to be cleaned up. In this case, the iommu_device_sysfs_add()
+> should be cleaned up, by calling its remove counterpart call.
 >
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-
 Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
 > ---
 > Changes in v2:
 >    - (none) This patch is new and added in v2
 >
->   drivers/iommu/exynos-iommu.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/iommu/exynos-iommu.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
 >
 > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 79729892eb48..8f80aaa35092 100644
+> index 8f80aaa35092..c85db9dab851 100644
 > --- a/drivers/iommu/exynos-iommu.c
 > +++ b/drivers/iommu/exynos-iommu.c
-> @@ -340,7 +340,7 @@ static void __sysmmu_set_ptbase(struct sysmmu_drvdata *data, phys_addr_t pgd)
->   	if (MMU_MAJ_VER(data->version) < 5)
->   		writel(pgd, data->sfrbase + REG_PT_BASE_ADDR);
->   	else
-> -		writel(pgd / SZ_4K, data->sfrbase + REG_V5_PT_BASE_PFN);
-> +		writel(pgd >> SPAGE_ORDER, data->sfrbase + REG_V5_PT_BASE_PFN);
+> @@ -629,7 +629,7 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
 >   
->   	__sysmmu_tlb_invalidate(data);
+>   	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
+>   	if (ret)
+> -		return ret;
+> +		goto err_iommu_register;
+>   
+>   	platform_set_drvdata(pdev, data);
+>   
+> @@ -656,6 +656,10 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>   	pm_runtime_enable(dev);
+>   
+>   	return 0;
+> +
+> +err_iommu_register:
+> +	iommu_device_sysfs_remove(&data->iommu);
+> +	return ret;
 >   }
-> @@ -550,7 +550,7 @@ static void sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
->   		 * 64KB page can be one of 16 consecutive sets.
->   		 */
->   		if (MMU_MAJ_VER(data->version) == 2)
-> -			num_inv = min_t(unsigned int, size / SZ_4K, 64);
-> +			num_inv = min_t(unsigned int, size / SPAGE_SIZE, 64);
 >   
->   		if (sysmmu_block(data)) {
->   			__sysmmu_tlb_invalidate_entry(data, iova, num_inv);
+>   static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
 
 Best regards
 -- 
