@@ -2,64 +2,64 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7847BC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 15:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BECF9C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 Jul 2022 16:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233645AbiGLPx7 (ORCPT
+        id S233821AbiGLQTP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 11:53:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34294 "EHLO
+        Tue, 12 Jul 2022 12:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233358AbiGLPx6 (ORCPT
+        with ESMTP id S234355AbiGLQTM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Jul 2022 11:53:58 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC16101FD
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 08:53:46 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220712155344euoutp017b9f79f9ba08baaf47b60a584c8116cf~BH_lLp71w3037030370euoutp01K
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 15:53:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220712155344euoutp017b9f79f9ba08baaf47b60a584c8116cf~BH_lLp71w3037030370euoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1657641224;
-        bh=vNovVSQmMovh5C/1R25U4TKhhBZ9NJ7y2zolR6OqBy4=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=fX2POQmdPrYdCV7ZW9J5sNkvi8u8Abn7eud8SViy5gWTxhgJXCkRo8RmirNxYaJCl
-         rA514WnCT5zVQ6FAEvbj9/DYqgsDT8Iodk4KwoDn5MpveE3ZHdKutCIZlMZYB3QinX
-         7dcUgnDsQh+ki1gdMavWDZ8auyVwvzrft0ARcf7g=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220712155343eucas1p1ef4caa69cd9915a214642348b777f74a~BH_khJPn80639006390eucas1p15;
-        Tue, 12 Jul 2022 15:53:43 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E5.B9.09664.7099DC26; Tue, 12
-        Jul 2022 16:53:43 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220712155343eucas1p291ba9a443b820543ce3c443912701b80~BH_jwVlhy2176921769eucas1p2T;
-        Tue, 12 Jul 2022 15:53:43 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220712155343eusmtrp2cc058c63b050760ff33c6e267570ec97~BH_jvh1Nr1436214362eusmtrp2t;
-        Tue, 12 Jul 2022 15:53:43 +0000 (GMT)
-X-AuditID: cbfec7f2-d97ff700000025c0-1c-62cd99079e4a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F2.CF.09038.6099DC26; Tue, 12
-        Jul 2022 16:53:43 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220712155342eusmtip151ca99c84b8d6260f7e774f3cffd2119~BH_i7B6c-1082610826eusmtip19;
-        Tue, 12 Jul 2022 15:53:42 +0000 (GMT)
-Message-ID: <a545127d-1d9d-79c9-e38a-0e9edd98df36@samsung.com>
-Date:   Tue, 12 Jul 2022 17:53:42 +0200
+        Tue, 12 Jul 2022 12:19:12 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB205BE695
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 09:19:10 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id a9so14767282lfk.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jul 2022 09:19:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=uJ9dVi90hK+YLTAhE7H/lF4J6uUbmiWH1N0eWZR3ZwA=;
+        b=TTsXZieu32r3wAaawionSAU7zpQZb8eC0dCJ0JhkT+ecFFSbVnbKVkFmXYyw1029m2
+         1GR6KJ4SPcmGBcdCugUqdzSuiNXVea9CTYsurcpyvnfKcrCP7dSeuna0fEgPg5N5WJpD
+         hoPACOrCuHbt3ZcML4hZ20i24O19ZQr24EAH14GvGBlggtLW+lL1HkwjutpMHinCzuj5
+         iN4Lls3rZp95yjTD9gF2Le10PFvVzjWghz8ngg9LNvxKb8q9hVejhorDbYGxej2kIjIs
+         fgoS9+T0y/ecsMzfml0R8/b8EhS/ku/nwBqiBlm0Q7x2mdRB8R2ZT/bhEPUavPo1s4Td
+         P02w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=uJ9dVi90hK+YLTAhE7H/lF4J6uUbmiWH1N0eWZR3ZwA=;
+        b=uuOFPrDww42dLCetQKTYebjCM8hQFbRf0cglTb7yRHr1Ck7EG1sWzmmuqkt10M8jvj
+         X2ubM6xUuvi0zZue1ozmIClmiRbnupqb3d3ydYVwLTFhBI+6pz+mTJ/tLnZYZhpNUtKs
+         cD4pjpOAMq1HXUu4oYnWkfD9NZEvS93/uHc+Ag1uOgItFuPkxjnWprbkvD3dLSaJUjFA
+         XiHdPKC/XNttsYjTBlJvKdpIaBSk9JFMnAQDC9TTN05VR38SWBQwlWNEnFbm0I9JOjLx
+         lD/aUzbOEJBMPuyk4RK0Ccd5ns5gV/qST3y9Rc40UTlz6JF9YNefQpoKwTaxETI3/HzM
+         qpGQ==
+X-Gm-Message-State: AJIora/zhXZ9tJAZgBFUpzXF3XOxypIZbSuNe/BT2fUfiI1KcGWB/Pkn
+        4LKxXGAQqse2WNNWcCpwJ77zAw==
+X-Google-Smtp-Source: AGRyM1uGiF4reCluBJM1q38YblixcNGVUMf8QXzKeopoBX/HMPUAtrhZDOIADX//FSe4WDjod3mUAw==
+X-Received: by 2002:a05:6512:682:b0:489:16b3:14e1 with SMTP id t2-20020a056512068200b0048916b314e1mr16035039lfe.132.1657642749316;
+        Tue, 12 Jul 2022 09:19:09 -0700 (PDT)
+Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
+        by smtp.gmail.com with ESMTPSA id k13-20020ac257cd000000b00489db767c89sm1552945lfo.271.2022.07.12.09.19.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Jul 2022 09:19:08 -0700 (PDT)
+Message-ID: <257c64a7-db27-301c-f724-f8c771092466@linaro.org>
+Date:   Tue, 12 Jul 2022 18:19:05 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.10.0
-Subject: Re: [PATCH v2 7/7] iommu/exynos: Enable default VM instance on
- SysMMU v7
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2 1/7] iommu/exynos: Reuse SysMMU constants for page size
+ and order
 Content-Language: en-US
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
         Janghyuck Kim <janghyuck.kim@samsung.com>,
@@ -69,150 +69,33 @@ Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220710230603.13526-8-semen.protsenko@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCKsWRmVeSWpSXmKPExsWy7djP87rsM88mGbTsMbWY0NHKZPHri4XF
-        5jnFFp2zN7Bb7H29ld1i0+NrrBaXd81hs5hxfh+Txb/eg4wWBz88YbV43gfknrr7md3i+PvH
-        jBYtd0wd+DyeHJzH5LFm3hpGj52z7rJ7LNhU6rFpVSebx51re9g8Ni+p93ixeSajR9+WVYwe
-        nzfJBXBFcdmkpOZklqUW6dslcGVse/WLreCmRMXE34cZGxiXCXcxcnJICJhIbP2wiLGLkYtD
-        SGAFo8TGpc3MEM4XRolPO19CZT4zSix6uJIJpuXanN0sEInljBKXJ62Hcj4ySqz6ATKMk4NX
-        wE7i99ebYB0sAqoSLW2fmCHighInZz5hAbFFBZIlzp29ygZiCwsES5w//wisl1lAXOLWk/lg
-        vSICaRJX/91nBVnALLCDWeLrnJtgzWwChhJdb7vAmjkFHCReHtzMBtEsL7H97RywJyQEVnNK
-        HH/dC3W3i8Tvv/1QtrDEq+Nb2CFsGYn/O0G2cQDZ+RJ/ZxhDhCskrr1ewwxhW0vcOfeLDaSE
-        WUBTYv0ufYiwo8Sj16dYIDr5JG68FYS4gE9i0rbpzBBhXomONiGIajWJWcfXwe08eOES8wRG
-        pVlIgTILyfOzkPwyC2HvAkaWVYziqaXFuempxYZ5qeV6xYm5xaV56XrJ+bmbGIEJ7/S/4592
-        MM599VHvECMTB+MhRgkOZiUR3j9nTyUJ8aYkVlalFuXHF5XmpBYfYpTmYFES503O3JAoJJCe
-        WJKanZpakFoEk2Xi4JRqYIoK+G3Yqff+v32OjYbbTQ1jhtNT9D9c/CYSkDkxa7KSIvNBhqhD
-        wWwrZM44F1nvL9FYe0Nb9M5K9WMPN2rpHyq+FczkdOx3d/Silquc5pWXjohvdZ3lMWvPj+kp
-        DtWhFpy1L45obJ3fodh6nvnmpL1TC/OkNJV310itbglaPfU+fzbTN47nsyt2VEdU+z6Z3rv8
-        WfGG0sVnlp+3UW+vXO/EHFOzg9m9fH28QfFj+Z95QvU7Tuzdqds5f7X5Mh9Njuytfjb98mu7
-        2DmDL0ieu8R0Trdj+nVLrRPFty7PYknreLjT9t2+tQ+UjvWZWs1g/fUhjr1T9au+3/WGh9qt
-        332Ugot8fsWvZpoWypH3XYmlOCPRUIu5qDgRAKtKLLLnAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsVy+t/xu7rsM88mGXyosJjQ0cpk8euLhcXm
-        OcUWnbM3sFvsfb2V3WLT42usFpd3zWGzmHF+H5PFv96DjBYHPzxhtXjeB+SeuvuZ3eL4+8eM
-        Fi13TB34PJ4cnMfksWbeGkaPnbPusnss2FTqsWlVJ5vHnWt72Dw2L6n3eLF5JqNH35ZVjB6f
-        N8kFcEXp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
-        ZWx79Yut4KZExcTfhxkbGJcJdzFyckgImEhcm7ObpYuRi0NIYCmjxN7rN9ghEjISJ6c1sELY
-        whJ/rnWxgdhCAu8ZJV5PtgaxeQXsJH5/vckEYrMIqEq0tH1ihogLSpyc+YQFxBYVSJZo3nII
-        rEZYIFhi7+1ljCA2s4C4xK0n88HiIgJpEvsmvWYEOYJZYBezRE/bK6iLTjJKtPfOButgEzCU
-        6HoLcQWngIPEy4Ob2SAmmUl0be2Cmiovsf3tHOYJjEKzkBwyC8nCWUhaZiFpWcDIsopRJLW0
-        ODc9t9hIrzgxt7g0L10vOT93EyMwxrcd+7llB+PKVx/1DjEycTAeYpTgYFYS4f1z9lSSEG9K
-        YmVValF+fFFpTmrxIUZTYGhMZJYSTc4HJpm8knhDMwNTQxMzSwNTSzNjJXFez4KORCGB9MSS
-        1OzU1ILUIpg+Jg5OqQamNZ5tdz4vNdmdV8UxZ27Kn3td6oE7Kptbgn7XbQrumLxqdt4TyTu7
-        m4U0Uz47PnxvlOW8cWnbnc1TOh78nvLwg3q0eLCzvWDAhYo1+763KUh+yD0lwheRvNZ0fpn+
-        /NPXFC6tiJGfOGNZbN290iM8zN0HvT/eNbHatiOgZ23q2liPyrf3PTp3bp9ULrNvQTfL4Yjf
-        h11satp4ovMV7ZMZGoVDnlqmL16p77BpSWTmiaCsbEf/xcueuJwRcijLdL+Z6Cyct049692e
-        aeeLt06bae0ew6zjemQnz59iwTmeOdZH7ltMnWzxo+P44uzF0X93O3o1TjcPm8abJR012VJ7
-        9ZzEkPdWm2Uy+uX7+7uUWIozEg21mIuKEwHuKA6begMAAA==
-X-CMS-MailID: 20220712155343eucas1p291ba9a443b820543ce3c443912701b80
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220710230617eucas1p135fabb24acf8b5ce64cd1298582c4f2a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220710230617eucas1p135fabb24acf8b5ce64cd1298582c4f2a
 References: <20220710230603.13526-1-semen.protsenko@linaro.org>
-        <CGME20220710230617eucas1p135fabb24acf8b5ce64cd1298582c4f2a@eucas1p1.samsung.com>
-        <20220710230603.13526-8-semen.protsenko@linaro.org>
+ <20220710230603.13526-2-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220710230603.13526-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11.07.2022 01:06, Sam Protsenko wrote:
-> In order to enable SysMMU v7 with VM register layout, at least the
-> default VM instance (n=0) must be enabled, in addition to enabling the
-> SysMMU itself. To do so, add corresponding write to MMU_CTRL_VM[0]
-> register, before writing to MMU_CTRL register.
->
+On 11/07/2022 01:05, Sam Protsenko wrote:
+> Using SZ_4K in context of SysMMU driver is better than using PAGE_SIZE,
+> as PAGE_SIZE might have different value on different platforms. Though
+> it would be even better to use more specific constants, already existing
+> in SysMMU driver. Make the code more strict by using SPAGE_ORDER and
+> SPAGE_SIZE constants.
+> 
+> It also makes sense, as __sysmmu_tlb_invalidate_entry() also uses
+> SPAGE_* constants for further calculations with num_inv param, so it's
+> logical that num_inv should be previously calculated using also SPAGE_*
+> values.
+> 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Changes in v2:
->    - Extracted VM enabling code to the separate function
->    - Used new SysMMU read/write functions to access the registers
->
->   drivers/iommu/exynos-iommu.c | 24 ++++++++++++++++++++----
->   1 file changed, 20 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 64bf3331064f..2b333e137f57 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -135,6 +135,8 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
->   #define CFG_SYSSEL	(1 << 22) /* System MMU 3.2 only */
->   #define CFG_FLPDCACHE	(1 << 20) /* System MMU 3.2+ only */
->   
-> +#define CTRL_VM_ENABLE			BIT(0)
-> +#define CTRL_VM_FAULT_MODE_STALL	BIT(3)
->   #define CAPA0_CAPA1_EXIST		BIT(11)
->   #define CAPA1_VCR_ENABLED		BIT(14)
->   
-> @@ -183,6 +185,7 @@ enum {
->   	IDX_FLUSH_END,
->   	IDX_INT_STATUS,
->   	IDX_INT_CLEAR,
-> +	IDX_CTRL_VM,
->   	MAX_REG_IDX
->   };
->   
-> @@ -196,22 +199,22 @@ static const unsigned int sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
->   	/* SysMMU v1..v3 */
->   	{
->   		0x00, 0x04, 0x08, 0x14, 0x0c, 0x10, 0x1, 0x1, 0x1,
-> -		0x18, 0x1c,
-> +		0x18, 0x1c, 0x1,
->   	},
->   	/* SysMMU v5 */
->   	{
->   		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
-> -		0x60, 0x64,
-> +		0x60, 0x64, 0x1,
->   	},
->   	/* SysMMU v7: Default register set (non-VM) */
->   	{
->   		0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x20, 0x24,
-> -		0x60, 0x64,
-> +		0x60, 0x64, 0x1,
->   	},
->   	/* SysMMU v7: VM capable register set */
->   	{
->   		0x00, 0x04, 0x08, 0x800c, 0x8010, 0x8014, 0x8018, 0x8020,
-> -		0x8024, 0x60, 0x64,
-> +		0x8024, 0x60, 0x64, 0x8000,
->   	},
->   };
->   
-> @@ -567,6 +570,18 @@ static void __sysmmu_init_config(struct sysmmu_drvdata *data)
->   	sysmmu_write(data, IDX_CFG, cfg);
->   }
->   
-> +static void __sysmmu_enable_vid(struct sysmmu_drvdata *data)
-> +{
-> +	u32 ctrl;
-> +
-> +	if (MMU_MAJ_VER(data->version) < 7 || !data->has_vcr)
-> +		return;
-> +
-> +	ctrl = sysmmu_read(data, IDX_CTRL_VM);
-> +	ctrl |= CTRL_VM_ENABLE | CTRL_VM_FAULT_MODE_STALL;
-> +	sysmmu_write(data, IDX_CTRL_VM, ctrl);
-> +}
-> +
->   static void __sysmmu_enable(struct sysmmu_drvdata *data)
->   {
->   	unsigned long flags;
-> @@ -577,6 +592,7 @@ static void __sysmmu_enable(struct sysmmu_drvdata *data)
->   	sysmmu_write(data, IDX_CTRL, CTRL_BLOCK);
->   	__sysmmu_init_config(data);
->   	__sysmmu_set_ptbase(data, data->pgtable);
-> +	__sysmmu_enable_vid(data);
->   	sysmmu_write(data, IDX_CTRL, CTRL_ENABLE);
->   	data->active = true;
->   	spin_unlock_irqrestore(&data->lock, flags);
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
