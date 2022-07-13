@@ -2,164 +2,128 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743D4C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jul 2022 09:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BF4C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jul 2022 14:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234289AbiGMJRT (ORCPT
+        id S231482AbiGMOPA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Jul 2022 05:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33304 "EHLO
+        Wed, 13 Jul 2022 10:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235255AbiGMJRS (ORCPT
+        with ESMTP id S229770AbiGMOPA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Jul 2022 05:17:18 -0400
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A50FE4F0D;
-        Wed, 13 Jul 2022 02:17:17 -0700 (PDT)
-Received: by mail-qv1-f44.google.com with SMTP id p14so4404021qvo.9;
-        Wed, 13 Jul 2022 02:17:17 -0700 (PDT)
+        Wed, 13 Jul 2022 10:15:00 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03494255B5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jul 2022 07:14:59 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id a39so13635738ljq.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jul 2022 07:14:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PGcV0udwGjSruZ22N9l9PLf+/uHhdyNzh4czvTCR/yA=;
+        b=zCTXM9N+lWM7M4yu4edy1tV1WT6siuoQVV6e1kZX7hZCPivLfKVDwNmZtMUzVTGTpk
+         Ef/AqPA3Cez2+uOeq9HV/f45tl55LY3/Lm6rh//1MmfnE/laT91v1pxoExx7UEnUDxCn
+         k+YUuX3kPsjFkja4s3YHSyZTONf48zrSpsqopdXI6QpK4QNe2dvl0s1rizEh9vWkXkxq
+         lZrrKtazdbhBNmmNGYg9KXcMYXNveeSxUh+6khWPFBJhyJjhsUPhsNKbhjX+X4GDpXmE
+         bKl01T2O+MbqurfsuoXEoHQI8RzhgK8jlETIuCE/jnpt5a0WPd/D2VtgyjbibRTLuymr
+         MrXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Zby97TNc1ghpjXRqZzrsX3Uiwj/4uwx2MsSKfbl6g7E=;
-        b=u5CPOFktHPDoBx0+1PEVf4b5eS/AEEDoa5fAZucWF8UAspytg0asKGIDYNU5xX/25A
-         ZdndZqfeFshpZCWXjZ0qoDJQ3+vRBTJBd+eacmVGYMYienQya6K84rf5uyWQlrxSyTey
-         EkeSCiyScl+bul9yy7VYg9UOpXdld+zUwUCJSqiYeW1FViEs79aLcTX2zqHF+mEod9mY
-         5vyYs27sVVavFmOesgoGeJIUeXkJ4cQA/+mu8l1KW9zInoGWsK2j7ptZp6F4o0N4kRUg
-         5NEkuUj36U3t/fiXA2e97ZcNEDtP++uTRqRtzgBnfQzNutfl2ZQSn5RfaFJ9YecYwqEm
-         PFAw==
-X-Gm-Message-State: AJIora9GF/51kq0zZfRgKcnYOU2eKa/VG+UPfWVxf4cbhqcaIf116Ya2
-        WMtXqYlv01dY/8Dsz8+mgaAykoal97ddog==
-X-Google-Smtp-Source: AGRyM1vExN4xusyHHPvUVXKPu3A04mwXo+bSfaFOyCZGSr+d6fdvfVFoTiI9EG3ZsX+tE1/XVJLjOg==
-X-Received: by 2002:a05:6214:29c4:b0:472:fb62:3a03 with SMTP id gh4-20020a05621429c400b00472fb623a03mr1846804qvb.93.1657703836439;
-        Wed, 13 Jul 2022 02:17:16 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id d9-20020ac85ac9000000b0031eb3af3ffesm1535185qtd.52.2022.07.13.02.17.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 02:17:15 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id p129so18267155yba.7;
-        Wed, 13 Jul 2022 02:17:15 -0700 (PDT)
-X-Received: by 2002:a25:bc8e:0:b0:66e:fe43:645c with SMTP id
- e14-20020a25bc8e000000b0066efe43645cmr2777562ybk.202.1657703835228; Wed, 13
- Jul 2022 02:17:15 -0700 (PDT)
+        bh=PGcV0udwGjSruZ22N9l9PLf+/uHhdyNzh4czvTCR/yA=;
+        b=b8RmvcRX7i3L5gdJM8V6Ckg82DhVvZoncvI96b18TDQctSHwqdnAaJ3691izt0j80+
+         ARMdFeqnsyix8/oMVHEjmFS3Y0m+snHI2x6m0XRAIsvJ18C+SQ4FVB326gUCN17AwqHI
+         5zL3KH2Q1bC3XXNUKroN0jhm2ClCTk1jZws+dklQ1ejz7n5HfjDRLEg+N/6oRioP3qHC
+         tSLhI3S/k7emOROjeoTXXGXfy0ztTlRZr3UJBAL7+v3ZPEG45Gug8gMLxZHNDVfyGWrP
+         kHF0qRLFCoRT5X1J4141pvwWKzczDBz1GpnaqgSUOBk/o+40uM+KiN/b6oef/0zfEo6L
+         dg0A==
+X-Gm-Message-State: AJIora/wa3XlgdYa/7ylMdmrKDmyE1KNXWTWW3zc9t311KQfhNN8LZVu
+        0ZR+xs7oBOahTU6MTxSwyat3e9rpMe0ioYUPCuNHCA==
+X-Google-Smtp-Source: AGRyM1tG9FwWpL3QNN3CU2va1RCPbzZzojzMQ4cZgpcwNihHlrvL0DxO6/vvEBv8w67LwDpTW1hzi0m3ohydLI4AQ8s=
+X-Received: by 2002:a2e:bd11:0:b0:25d:4f94:ac79 with SMTP id
+ n17-20020a2ebd11000000b0025d4f94ac79mr1943417ljq.4.1657721697308; Wed, 13 Jul
+ 2022 07:14:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220712164235.40293-1-f.fainelli@gmail.com> <CAK8P3a2QrYbWOqV+CG-W0ZkzW6ORgw8R6Dv-L3o2ZAtJs-B3Kw@mail.gmail.com>
- <0131e1d6-09c0-31a4-5b9d-0e2fc49d61ac@linaro.org>
-In-Reply-To: <0131e1d6-09c0-31a4-5b9d-0e2fc49d61ac@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Jul 2022 11:17:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWDDY_72y3WYt401hG122xg1s7_VRCG9Vyhhkzco-nBYw@mail.gmail.com>
-Message-ID: <CAMuHMdWDDY_72y3WYt401hG122xg1s7_VRCG9Vyhhkzco-nBYw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: Kconfig.platforms: Re-organized Broadcom menu
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        SoC Team <soc@kernel.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        william.zhang@broadcom.com, anand.gore@broadcom.com,
-        Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>
+References: <20220702213724.3949-1-semen.protsenko@linaro.org>
+ <CAPLW+4kYbG7PRYo_L6N5xMa+F9DFBpyph4B+zb2R4kBbE3EKHg@mail.gmail.com> <67943ec4dcfe85d6d616a5507437d99f6c5638a2.camel@gmail.com>
+In-Reply-To: <67943ec4dcfe85d6d616a5507437d99f6c5638a2.camel@gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 13 Jul 2022 17:14:46 +0300
+Message-ID: <CAPLW+4=pikbLQZLabv7aZvGhA_30xaJRYLxK+uOUUXnwu2Byow@mail.gmail.com>
+Subject: Re: [PATCH 0/4] iommu/exynos: Add basic support for SysMMU v7
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        iommu@lists.linux-foundation.org, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Wed, Jul 13, 2022 at 10:40 AM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On 13/07/2022 10:25, Arnd Bergmann wrote:
-> > On Tue, Jul 12, 2022 at 6:42 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >> There are now multiple Broadcom SoCs supported so group them under their
-> >> own menu such that the selection is visually more appealing and we can
-> >> easily add new platforms there in the future. This allows us to move
-> >> ARCH_BRCMSTB back to its siblings.
-> >>
-> >> No functional changes introduced.
-> >>
-> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> >> ---
-> >>
-> >> Note this is based on "arm64: bcmbca: add arch bcmbca machine entry"
-> >
-> > Hi Florian,
-> >
-> > So far, we have tried to keep the Kconfig.platforms file rather coarse-grained,
-> > mainly limiting it to company names and high-level families, but avoiding
-> > sub-menus or adding too many sub-families.
-> >
-> > If we add per-vendor submenus, we should probably first decide how we
-> > want to structure this across vendors. I've added maintainers and lists to
-> > Cc for a couple of the ones that are in a similar situation.
-> >
-> > I can see a couple of ways we can do this:
-> >
-> > a) keep the list of platforms as short as possible, combining related
-> >   SoC families from a single vendor wherever possible, but no sub-menus
-> >   (same as today)
-> >
-> > b) Always use sub-menus when there is more than one family, but
-> >    keep relatively coarse platform selection.
-> >
-> > c) Use sub-menus and also move to a more fine-grained SoC
-> >     selection, similar to what we have on 32-bit arm.
-> >
-> > I would not really want to go to c), but a) and b) both make sense to
-> > me as long as do it consistently across all platforms.
-> >
-> > Any other ideas or opinions?
+On Sun, 3 Jul 2022 at 13:47, David Virag <virag.david003@gmail.com> wrote:
 >
-> Whatever we decide here, the SoC can override in drivers/soc, just like
-> Renesas did. I think Renesas chose option c), but made it in
-> drivers/soc. I would vote to have consistent policy, so if arch/arm64 is
-> a) or b), sub-archs should not redefine it in drivers/soc.
-
-We did so because of the "only a single symbol in
-arch/arm64/Kconfig.platforms"-policy.
-
-> Or we could choose d)
-> d) keep arch/arm64 list of platforms as short as possible, but sub-archs
-> can do whatever they like on drivers/soc.
+> On Sun, 2022-07-03 at 00:48 +0300, Sam Protsenko wrote:
+> [...]
+> > Hi Marek,
+> >
+> > As I understand, you have some board with SysMMU v7, which is not VM
+> > capable (judging from the patches you shared earlier). Could you
+> > please somehow verify if this series works fine for you? For example,
+> > this testing driver [1] can be helpful.
+> >
+> > Thanks!
+> >
+> > [1]
+> > https://github.com/joe-skb7/linux/commit/bbadd46fa525fe1fef2ccbdfff81f7d29caf0506
 >
-> Personally, I find fine-grained SoC selection a bit ridiculous
-> optimization, like compiling kernel, Glibc and userspace with -O3,
-> -funroll-loops and many other flags. One gets smaller size but looses
-> multi-platform and ability to test one kernel on different boards.
-> Therefore I would vote for b) with disallowing drivers/soc defining more
-> ARCH_ and more SOC_.
+> Hi Sam,
+>
+> Not Marek here, but I wanted to try this on my jackpotlte (Exynos
+> 7885). The driver reports it's DPU sysmmu as version 7.2, and manually
+> reading the capabilities registers it looks like it has the 2nd
+> capability register but not the VM capability.
+>
+> After applying your patches, adding your test driver (with SYSMMU_BASE
+> corrected to 7885 value), and adding the sysmmu to dt, I tried to cat
+> the test file that it creates in debugfs and I got an SError kernel
+> panic.
+>
+> I tried tracing where the SError happens and it looks like it's this
+> line:
+>         /* Preload for emulation */
+>         iowrite32(rw | vpn, obj->reg_base + MMU_EMU_PRELOAD);
+>
+> Trying to read the EMU registers using devmem results in a "Bus error".
+>
+> Could these emulation registers be missing from my SysMMU? Do you have
+> any info on what version should have it? Or maybe some capability bit?
+> I'll try testing it with DECON/DPP later and see if it works that way.
+>
 
-No one prevents you from selecting multiple SoCs, they are not
-mutually-exclusive...
+Hey David,
 
-With arm64 (or risc-v ;-) instead of arm32 being used for all new
-SoCs,  I expect the real small ones (with a few MiB of embedded
-SRAM) to enter the arm64 realm soon.  No point in including e.g. all
-pinctrl drivers from the vendor if you have barely enough RAM to run
-Linux and your app...
+Can you please try out the [1] branch again? I've added support for
+Exynos7885 there, using the info provided by Janghyuck Kim: apparently
+Exynos7885 has EMU registers, but those have some other offsets than
+on Exynos850:
 
-Gr{oetje,eeting}s,
+    #define MMU_EMU_PRELOAD    0x8040
+    #define MMU_EMU_SHOT       0x8044
 
-                        Geert
+I wonder if my changes to [1] do the trick.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[1] https://github.com/joe-skb7/linux/tree/e850-96-mainline-iommu
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Best regards,
+> David
