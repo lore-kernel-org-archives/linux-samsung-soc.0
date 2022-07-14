@@ -2,163 +2,163 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60178C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Jul 2022 22:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2394CC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Jul 2022 13:11:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236548AbiGMWF3 (ORCPT
+        id S232050AbiGNNLX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 Jul 2022 18:05:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45718 "EHLO
+        Thu, 14 Jul 2022 09:11:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236181AbiGMWF2 (ORCPT
+        with ESMTP id S231486AbiGNNLW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 Jul 2022 18:05:28 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D37F845049;
-        Wed, 13 Jul 2022 15:05:27 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id f11so10779507pgj.7;
-        Wed, 13 Jul 2022 15:05:27 -0700 (PDT)
+        Thu, 14 Jul 2022 09:11:22 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140463D58D
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2022 06:11:21 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id y11so2722485lfs.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2022 06:11:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=uOBKq9yzkPX8ihcF5QdXtzsKbLEa/eP+OCHtDKfv5N0=;
-        b=hk176+zLssVNRft8dirHFUQSzDMI0whOu6+6yXw9L8L7d0wLw7U16maq1hJRXPZTq/
-         Gz/tk/9k5ncT0FkQbbwWFHn+Pbt8O7O5TawARP5Ey5PdgOfYEEgoTvfNvjwaKlC2Fp+u
-         /yc6TfI2wpFGrTa7ELUtOTilQC8x/WO/N5T2D8R57dpFGws1xuiH5hYBGa0wwi3eo4hN
-         f5S77L0OFyouEIHVUdo1qtgyMETHSDVdDO9i7srid340U9uCEKObdUPpsjKnJGrtF46J
-         gnb7/zaBOGh40U273oDZM0oA/ohc98tEWGZ+o/mSmHyWI2/5r6+mUVZip7FZc9yew0w6
-         weVQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i3k2QX4bguOE0L7QO8kTytO481rt2YTc1m8KARAq/JE=;
+        b=OseFNQWCpneawnk6hDRAcmEjZIvGnmdYZBZowJgnKaUcQMpIn5ZycNGgemvrKty1Ky
+         nWVLsrYroWqs1jKbXnmksiWdubrPiOfzYQ/Jadkq28J49HyA2oqZxcSrNwuHFylw1tMP
+         0D0tSl58B1KULox2v9JIjxnUoihgdl/zodAm1y54fjNq3nJTJh5aQ5fTFX3O849183pI
+         2iN0/YoWII2OUuSKWES3GXfom9+SHS6HWCnsUwx2pkn5N6WnIlLheIE2p79uajKY3WFW
+         Qaw+ojqZRkbPpspf8jjzdGecNGvsKzn8V+idkD+PIY60XuTEQOD+mtlp7TerlTUmqxkr
+         M5HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=uOBKq9yzkPX8ihcF5QdXtzsKbLEa/eP+OCHtDKfv5N0=;
-        b=lIIJth0Ot2coM+RxAyU0K5xL6fAmHxVkdgzZleB7HvdEJCV4ZV+xRf6j9lw3E37tFa
-         qlkeJNmledY5FEPCuTgBwMkx0XmWFEk0EH2OrIdzCyqUj/m6jHBlSsWWecsnVEwWFkVB
-         zIQ7FUygsq4mGLcm8j8Hnb/1Dmc8QU4IF+hOE+8QB/qLgyNXxE3DaPr9rm+FTb4gXz7a
-         UdRUADvTxLpQ07JG2+nqVJO6laZyB3CLhJPzjFGPU2hg0z2P5dzkmymGSC/O11tI+nJF
-         vhiBot9yAJSK+sB9wgHPe9LURPq4z9/f4cfeO5iks7VWyoCrg24aSZVCNrDllPqofgos
-         QxXA==
-X-Gm-Message-State: AJIora+P3UwtVRVK3V2hP2EHIEl2FEiWBHS3OKiADIba1tBZ8HTStdkE
-        0wa4m3yOsyr6uVn7wWBtjMY=
-X-Google-Smtp-Source: AGRyM1uFY5sq0uRq7vOEVCZc6Mt9dWUHaZVFaEt9VTaYlh+WdsLMFRrjoUXRSVp/xtwuLE8Bc1hpsw==
-X-Received: by 2002:a65:4501:0:b0:3fc:4895:283b with SMTP id n1-20020a654501000000b003fc4895283bmr4726104pgq.231.1657749927276;
-        Wed, 13 Jul 2022 15:05:27 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id x7-20020a634847000000b0040c97f0057dsm7946127pgk.17.2022.07.13.15.05.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 15:05:26 -0700 (PDT)
-Message-ID: <fb4f4444-20c2-0e35-bb83-79a419ec87a7@gmail.com>
-Date:   Wed, 13 Jul 2022 15:05:23 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i3k2QX4bguOE0L7QO8kTytO481rt2YTc1m8KARAq/JE=;
+        b=YvGt6xgIES9eAec/mWUXlSQXu3ibKCS3GTDDgAwYpgva81QrPJKxNY8wDLmeZpxSmJ
+         SevQvRgKbx20Ns8uOgVd2mE2vsmrR74BpQMn3Ac1Th8eijsk094iaxUREfPfKqGsoJ2C
+         4Q4WieYrnGi0ufJl9HPiVuyybZKPFs11ytPjMSpLC2OZyEaoXFX4fcWcytfmQw6S7908
+         BGtsYGgKspL2MJ9NRrHa7F9iXs0QsXvW0IRLVVgCNEa0YBTtxzCL+s7yJCAQqItLowLm
+         7xHmOzZ5cNe68780Ms2BUgGbOT3yLcnkKroy3xip4MRXrOMUAwYHRftI1ZLYihm4rQUB
+         93KQ==
+X-Gm-Message-State: AJIora9NL++sLbPZ1qH8bf5DasYrlrPkZuFmoX1WVjHTp1x6QwDjdAl5
+        5ZaYRdP60bB5rrpTZkmsvVVsE8k4lTuBA2Clz7zCgw==
+X-Google-Smtp-Source: AGRyM1uG/EcQ4xkQr2lwBmOJy5j05NRxm363QEGm3+XpW5ztY9XxmPCK2hQgTdMeJgU3mUt6QlIChrPlb/72n9Yjrg8=
+X-Received: by 2002:a05:6512:398d:b0:489:c7a2:be6f with SMTP id
+ j13-20020a056512398d00b00489c7a2be6fmr4987221lfu.11.1657804279347; Thu, 14
+ Jul 2022 06:11:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] arm64: Kconfig.platforms: Re-organized Broadcom menu
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        SoC Team <soc@kernel.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        william.zhang@broadcom.com, anand.gore@broadcom.com,
-        Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Dinh Nguyen <dinguyen@kernel.org>
-References: <20220712164235.40293-1-f.fainelli@gmail.com>
- <CAK8P3a2QrYbWOqV+CG-W0ZkzW6ORgw8R6Dv-L3o2ZAtJs-B3Kw@mail.gmail.com>
- <0131e1d6-09c0-31a4-5b9d-0e2fc49d61ac@linaro.org>
- <CAMuHMdWDDY_72y3WYt401hG122xg1s7_VRCG9Vyhhkzco-nBYw@mail.gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <CAMuHMdWDDY_72y3WYt401hG122xg1s7_VRCG9Vyhhkzco-nBYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220710230603.13526-1-semen.protsenko@linaro.org>
+ <20220710230603.13526-5-semen.protsenko@linaro.org> <9eb795cd-999b-73e5-2eeb-c123b1d05a34@arm.com>
+In-Reply-To: <9eb795cd-999b-73e5-2eeb-c123b1d05a34@arm.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 14 Jul 2022 16:11:07 +0300
+Message-ID: <CAPLW+4=QOv_gAov2KHC4zR881CV3igESMH5JU7XgLbDLS8UNAg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] iommu/exynos: Use lookup based approach to access registers
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 7/13/22 02:17, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
-> 
-> On Wed, Jul 13, 2022 at 10:40 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->> On 13/07/2022 10:25, Arnd Bergmann wrote:
->>> On Tue, Jul 12, 2022 at 6:42 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->>>> There are now multiple Broadcom SoCs supported so group them under their
->>>> own menu such that the selection is visually more appealing and we can
->>>> easily add new platforms there in the future. This allows us to move
->>>> ARCH_BRCMSTB back to its siblings.
->>>>
->>>> No functional changes introduced.
->>>>
->>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->>>> ---
->>>>
->>>> Note this is based on "arm64: bcmbca: add arch bcmbca machine entry"
->>>
->>> Hi Florian,
->>>
->>> So far, we have tried to keep the Kconfig.platforms file rather coarse-grained,
->>> mainly limiting it to company names and high-level families, but avoiding
->>> sub-menus or adding too many sub-families.
->>>
->>> If we add per-vendor submenus, we should probably first decide how we
->>> want to structure this across vendors. I've added maintainers and lists to
->>> Cc for a couple of the ones that are in a similar situation.
->>>
->>> I can see a couple of ways we can do this:
->>>
->>> a) keep the list of platforms as short as possible, combining related
->>>    SoC families from a single vendor wherever possible, but no sub-menus
->>>    (same as today)
->>>
->>> b) Always use sub-menus when there is more than one family, but
->>>     keep relatively coarse platform selection.
->>>
->>> c) Use sub-menus and also move to a more fine-grained SoC
->>>      selection, similar to what we have on 32-bit arm.
->>>
->>> I would not really want to go to c), but a) and b) both make sense to
->>> me as long as do it consistently across all platforms.
->>>
->>> Any other ideas or opinions?
->>
->> Whatever we decide here, the SoC can override in drivers/soc, just like
->> Renesas did. I think Renesas chose option c), but made it in
->> drivers/soc. I would vote to have consistent policy, so if arch/arm64 is
->> a) or b), sub-archs should not redefine it in drivers/soc.
-> 
-> We did so because of the "only a single symbol in
-> arch/arm64/Kconfig.platforms"-policy.
+On Tue, 12 Jul 2022 at 19:24, Robin Murphy <robin.murphy@arm.com> wrote:
 
-I was not aware of that rule.
+[snip]
 
-It is a bit of a mixed situation with Broadcom SoCs but in essence, each 
-Kconfig entry denotes a deeply different SoC architecture at the memory 
-subsystem, bus, security or product space that you might not want to 
-enable in your kernel. There is definitively sharing of drivers between 
-all of the platforms and a lot of cross pollination too but usually 
-these are deeply different that different kernel images do make sense.
+> > No functional change here, just a refactoring patch.
+>
+> FWIW I'd say that this absolutely *is* a functional change. Achieving
+> the same end result, but fundamentally changing the mechanism used to
+> get there, is a bit different to simply moving code around.
+>
 
-The itch that I wanted to calm was that ARCH_BRCMSTB was after the other 
-Broadcom platforms separated by ARCH_BERLIN. if you prefer a pair of 
-KConfig comments to delineate them and flatten the platform selection, 
-that works for me, too.
--- 
-Florian
+As I understand, usually the "functional change" means some change
+that can be observed from the user's point of view (i.e. user of this
+driver). But ok, I'll clarify this bit in the commit message.
+
+[snip]
+
+> > +/*
+> > + * Some SysMMU versions might not implement some registers from this set, thus
+> > + * those registers shouldn't be accessed. Set the offsets for those registers to
+> > + * 0x1 to trigger an unaligned access exception, which can help one to debug
+> > + * related issues.
+> > + */
+> > +static const unsigned int sysmmu_regs[MAX_REG_SET][MAX_REG_IDX] = {
+>
+> Do we really need MAX_REG_SET? Maybe there's a consistency argument, I
+> guess :/
+>
+
+Here and below: I reworked the register table using approach suggested
+by Krzysztof, so those enums won't be present in v2 at all.
+
+> > +     /* SysMMU v1..v3 */
+> > +     {
+> > +             0x00, 0x04, 0x08, 0x14, 0x0c, 0x10, 0x1, 0x1, 0x1,
+> > +             0x18, 0x1c,
+>
+> This looks fragile and unnecessarily difficult to follow and maintain -
+> designated initialisers would be a lot better in all respects, i.e.:
+>
+>         [REG_SET_V1] = {
+>                 ...
+>                 [IDX_PT_BASE] = REG_PT_BASE_ADDR,
+>                 ...
+>
+> etc.
+>
+
+[snip]
+
+> >   static void __sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+> > @@ -317,31 +348,33 @@ static void __sysmmu_tlb_invalidate_entry(struct sysmmu_drvdata *data,
+> >
+> >       if (MMU_MAJ_VER(data->version) < 5) {
+> >               for (i = 0; i < num_inv; i++) {
+> > -                     writel((iova & SPAGE_MASK) | 1,
+> > -                                  data->sfrbase + REG_MMU_FLUSH_ENTRY);
+> > +                     sysmmu_write(data, IDX_FLUSH_ENTRY,
+> > +                                  (iova & SPAGE_MASK) | 0x1);
+> >                       iova += SPAGE_SIZE;
+> >               }
+> >       } else {
+> >               if (num_inv == 1) {
+>
+> You could merge this condition into the one above now. That much I'd
+> call non-functional refactoring ;)
+>
+
+Done, thanks.
+
+[snip]
+
+> > +
+> > +static void sysmmu_get_hw_info(struct sysmmu_drvdata *data)
+> > +{
+>
+> Seems a bit unnecessary to split the call up like this - I'd say the
+> register set is fundamentally connected to the version, and
+> "get_hw_info" is even less meaningfully descriptive than just having
+> "get_version" take care of one more assignment, but hey ho, it's not my
+> driver.
+>
+
+Guess I was looking into downstream vendor's kernel too much :) They
+do a bit more things in this function -- like getting TLBs number and
+"no block mode" capability; that's why I renamed it. Anyway, don't
+have a strong opinion on this one, will use the old name in v2.
+
+Thanks for the review!
+
+> Thanks,
+> Robin.
