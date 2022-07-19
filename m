@@ -2,139 +2,98 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2146C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 Jul 2022 23:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E32CAC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Jul 2022 03:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232341AbiGOXVj (ORCPT
+        id S236537AbiGSDJT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 Jul 2022 19:21:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48562 "EHLO
+        Mon, 18 Jul 2022 23:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232157AbiGOXVd (ORCPT
+        with ESMTP id S236114AbiGSDJR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 Jul 2022 19:21:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4561C93C39;
-        Fri, 15 Jul 2022 16:21:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 94801B82F03;
-        Fri, 15 Jul 2022 23:21:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC8CFC34115;
-        Fri, 15 Jul 2022 23:21:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657927282;
-        bh=J5W0p4ucASc4vcM38f4aAA0aBmwfM4SM9vH8Xt0UEZ4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=MIhvZ7dyMNTqXpgIUIKXdHkUN20tBif8oS4/LgKCwjiH8brwnLVDd+vcILhnOI3vM
-         EuUnP/YFXNcXIb8iowT53tmDt5Z7brcoFxZx1I2PHndD6GVq4FRzcN6B4lSA7r1c0x
-         LRs7BiRfZhswP2QzAM7v+kcXHwG3uhGSpRpoBh7tP/lYN27XpA3Wwu2I/6VdrNh4dZ
-         c/4dgeNHnAl0kxerrkkp2/h8qJHXUBrBwce+k++MHN4yN45rRnoN1Wi3jYa+fu9gL2
-         VBMCW6QAwre/G32926VhoMuoFDygW8Ylbrb/BNvFkQflBfDAfIryBBvmSHUQ97ivxH
-         tDpERWrjFJ+zQ==
-Date:   Fri, 15 Jul 2022 18:21:20 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-phy@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        Mon, 18 Jul 2022 23:09:17 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CDE83C173;
+        Mon, 18 Jul 2022 20:09:16 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26IKihg8024556;
+        Tue, 19 Jul 2022 03:09:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2022-7-12;
+ bh=SelJW1NFk8AZ0XjTZ3yL2HdUivxxk0nyrbeU6D4RpIE=;
+ b=qRlKzhb1vRwswI5yqB9U6CQ6bsTGStNz0DZJMwobxet0Gs9R+2V/cqO8iiI3hC32cbEk
+ dx/HTJmPZH2kUBPtHohzlaJ+pv9tKzuLTjyNMqn6HIV7bPmOeX5Bf8FkC9dJVNulOna6
+ 5+y+zX2lgMIXm9sfB8OEF98+v9Xte90+QZGr2yIyI0QPaM50HPjNDvF21zeS7kAdz5cH
+ 0JDUIhkeT9yv576zUPIkmgIuV1fjtmOZlD2cCAGNNlVLOYq0Z6sQl6AM33OPX2NteKH7
+ Eu/xo4NOMRKILslhb2O2Hcgzz5sACOlz773aPlUhUuZHAMs7rA6e03GoJmiTPA1vp1vc cw== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hbm42cyma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jul 2022 03:09:02 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 26IND6rQ002047;
+        Tue, 19 Jul 2022 03:09:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3hc1k2ypt4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jul 2022 03:09:02 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26J391U1016855;
+        Tue, 19 Jul 2022 03:09:01 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3hc1k2ypt1-1;
+        Tue, 19 Jul 2022 03:09:01 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Bart Van Assche <bvanassche@acm.org>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 1/2] phy: samsung: phy-exynos-pcie: sanitize
- init/power_on callbacks
-Message-ID: <20220715232120.GA1216057@bhelgaas>
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-arm-kernel@lists.infradead.org, linux-scsi@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] change exynos ufs phy control
+Date:   Mon, 18 Jul 2022 23:08:54 -0400
+Message-Id: <165820009733.29375.13730837711131450349.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220706020255.151177-1-chanho61.park@samsung.com>
+References: <CGME20220706020540epcas2p37a8b697af2c6786db9e4ed67cf20a40f@epcas2p3.samsung.com> <20220706020255.151177-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220628220409.26545-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-18_22,2022-07-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
+ definitions=main-2207190011
+X-Proofpoint-ORIG-GUID: D1y6NFQDdt_KabmPI9U_UHxu2d-dmPWi
+X-Proofpoint-GUID: D1y6NFQDdt_KabmPI9U_UHxu2d-dmPWi
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 12:04:08AM +0200, Marek Szyprowski wrote:
-> The exynos-pcie driver called phy_power_on() and then phy_init() for some
-> historical reasons. However the generic PHY framework assumes that the
-> proper sequence is to call phy_init() first, then phy_power_on(). The
-> operations done by both functions should be considered as one action and
-> as such they are called by the exynos-pcie driver (without doing anything
-> between them). The initialization is just a sequence of register writes,
-> which cannot be altered, without breaking the hardware operation.
-> 
-> To match the generic PHY framework requirement, simply move all register
-> writes to the phy_init()/phy_exit() and drop power_on()/power_off()
-> callbacks. This way the driver will also work with the old (incorrect)
-> PHY initialization call sequence.
-> 
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Wed, 6 Jul 2022 11:02:52 +0900, Chanho Park wrote:
 
-Both applied to pci/ctrl/exynos for v5.20, thanks!
+> Since commit 1599069a62c6 ("phy: core: Warn when phy_power_on is called
+> before phy_init"), below warning has been reported.
+> 
+> phy_power_on was called before phy_init
+> 
+> To address this, we need to remove phy_power_on from
+> exynos_ufs_phy_init.
+> 
+> [...]
 
-> ---
->  drivers/phy/samsung/phy-exynos-pcie.c | 25 +++++++++----------------
->  1 file changed, 9 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
-> index 578cfe07d07a..53c9230c2907 100644
-> --- a/drivers/phy/samsung/phy-exynos-pcie.c
-> +++ b/drivers/phy/samsung/phy-exynos-pcie.c
-> @@ -51,6 +51,13 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
->  {
->  	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
->  
-> +	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
-> +			   BIT(0), 1);
-> +	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
-> +			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
-> +	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
-> +			   PCIE_REFCLK_GATING_EN, 0);
-> +
->  	regmap_update_bits(ep->fsysreg,	PCIE_EXYNOS5433_PHY_COMMON_RESET,
->  			   PCIE_PHY_RESET, 1);
->  	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
-> @@ -109,20 +116,7 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
->  	return 0;
->  }
->  
-> -static int exynos5433_pcie_phy_power_on(struct phy *phy)
-> -{
-> -	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
-> -
-> -	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
-> -			   BIT(0), 1);
-> -	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
-> -			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
-> -	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
-> -			   PCIE_REFCLK_GATING_EN, 0);
-> -	return 0;
-> -}
-> -
-> -static int exynos5433_pcie_phy_power_off(struct phy *phy)
-> +static int exynos5433_pcie_phy_exit(struct phy *phy)
->  {
->  	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
->  
-> @@ -135,8 +129,7 @@ static int exynos5433_pcie_phy_power_off(struct phy *phy)
->  
->  static const struct phy_ops exynos5433_phy_ops = {
->  	.init		= exynos5433_pcie_phy_init,
-> -	.power_on	= exynos5433_pcie_phy_power_on,
-> -	.power_off	= exynos5433_pcie_phy_power_off,
-> +	.exit		= exynos5433_pcie_phy_exit,
->  	.owner		= THIS_MODULE,
->  };
->  
-> -- 
-> 2.17.1
-> 
-> 
-> -- 
-> linux-phy mailing list
-> linux-phy@lists.infradead.org
-> https://lists.infradead.org/mailman/listinfo/linux-phy
+Applied to 5.20/scsi-queue, thanks!
+
+[3/3] ufs: ufs-exynos: change ufs phy control sequence
+      https://git.kernel.org/mkp/scsi/c/3d73b200f989
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
