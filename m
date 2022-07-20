@@ -2,50 +2,50 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B2EC43334
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Jul 2022 15:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F60C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Jul 2022 15:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbiGTPwy (ORCPT
+        id S231622AbiGTPxB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Jul 2022 11:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58968 "EHLO
+        Wed, 20 Jul 2022 11:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiGTPwx (ORCPT
+        with ESMTP id S229456AbiGTPxA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Jul 2022 11:52:53 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F474BD18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2022 08:52:52 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id c3so15928279pfb.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2022 08:52:52 -0700 (PDT)
+        Wed, 20 Jul 2022 11:53:00 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A049C4BD19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2022 08:52:59 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 72so16782894pge.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2022 08:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iLxDXrnWztCpLdw3kYeARw1Pm9i++dE2YdXdMibsoFo=;
-        b=PaszaOkYJY2VE8wDTHuC41WxzfuIzViy7vxpymrOxX5qs1oOeg2km5vr1LjAsFMZhQ
-         uUX9mz9de27WM/nmkjTVMCSKAoQtHBIplBraPHazO3+WrZYhkO7+DF4LoGqWR4XyXVnU
-         QqQBr2ocwiKcKR7L6kEptahnzJucpF6cYoHOM=
+        bh=SvFqcqX31Dpa8PvnhTvPWiOoGd8kdnJv5vFHkC7+/vs=;
+        b=QE+SPnmp4wbiuLSFkmZsG5U+MAI3e/QdhycDXv08PMkqVNGs8Fr+e+Q2V5P0lrrqLI
+         pBVw/V7B3qPgLboGzoKxKKFUp4MW+SkFY/XW6aHb5qIpbwu5DUmuDTxP9FWZr1MZt9+d
+         BqQTZTZn7wikI19yqYTZEyQFe9cU5kS/IpCxE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iLxDXrnWztCpLdw3kYeARw1Pm9i++dE2YdXdMibsoFo=;
-        b=EBxlDHA+9DalhZoGeFZMvNYq4ZBbyjy2VMvLiaiTM04Qoef00ipZGh8sjS24ZSBVcK
-         RHCXv4EvWlQUIqES5UpCAEtYkQYxhI3ot39Sjfc/2cq23lLICoiwYP5xuy4j2yF+QZM5
-         JkECOf3gnzP9yuHhqSGA7ZN1lpWJ00kbXvxMe0EHSK3peuWuhHoPNQhLTWD2enjw7iZ8
-         rg3fkWGtjRZWkvkDC6rrY8+g4L5mr5milo/rCyM0qL6LYKkGEgW6y+WjlUPoi9usDoz0
-         yFqnvv/qW4hJpzANOZFlExjw4w2SKhwO0n6o2WRxZXIgLGbe/m79rylwTUfPvCLwgwcf
-         nQ8A==
-X-Gm-Message-State: AJIora+mT0au9COdcU8ZBfopvdhwqcJ+wev0E5rGl4tY3j4mWZyZWJc2
-        6fo8XGZwsksBqIC3+i79TD5COA==
-X-Google-Smtp-Source: AGRyM1uNAIpZRc81rmpXpMq/eT86B354GywhhPmppJYXQAqiCpFr4SAfCAr2HROsR5Et4FZ52w7r5A==
-X-Received: by 2002:a63:8841:0:b0:412:b40b:cfb5 with SMTP id l62-20020a638841000000b00412b40bcfb5mr35384538pgd.197.1658332371457;
-        Wed, 20 Jul 2022 08:52:51 -0700 (PDT)
+        bh=SvFqcqX31Dpa8PvnhTvPWiOoGd8kdnJv5vFHkC7+/vs=;
+        b=oNNgfnOkwTk0kO09AGLMbGebkC9fSABA1O6WOeOSE6wsFOsbUzqSnMhZy8LcoojqzT
+         hrAWo9pXqwuPtgRKjVuDDK3hoU0rb3D1nArJSICKx22RqC33fiWW4VM7CM3cd+suR2oZ
+         vICJNXqZGyzVFvGp0nE8E0brXyl2wRU0+HJ8DfKuN5zwk3202hFVC2ZcpeOue7zBwoJD
+         tzUfkxIrvvkdu/icbhGUCqWv00cFNR5RSAy1qpoyrPjz2UTAb/0ih2MK1CXQC4yPLRPf
+         36mV6QHIPQkHYwtShBvF4n/xlD40x6Xm00rG6QDsf7fnBsxvPesTr+TLMpAGSh76VMf7
+         mpRA==
+X-Gm-Message-State: AJIora9ZTzDKsHl1l3qWoVSQoxDRB0zaHUITrIb2q0HgCJze1mhtoybQ
+        9fMdhagUyzwZ+Fxp9aeVQ9Pf4g==
+X-Google-Smtp-Source: AGRyM1vicfWCxIXbcN0f/ncIRNCwbSCZvrYENdtXR/lRQ+tls5Pg6hbXs6p36dHMLcFDobbVVNNzVA==
+X-Received: by 2002:a63:5cc:0:b0:412:b2ea:c6fe with SMTP id 195-20020a6305cc000000b00412b2eac6femr34992899pgf.596.1658332379069;
+        Wed, 20 Jul 2022 08:52:59 -0700 (PDT)
 Received: from localhost.localdomain ([2405:201:c00a:a073:d177:d5:aee:4f03])
-        by smtp.gmail.com with ESMTPSA id a8-20020a170902710800b0015e8d4eb1d7sm13919198pll.33.2022.07.20.08.52.44
+        by smtp.gmail.com with ESMTPSA id a8-20020a170902710800b0015e8d4eb1d7sm13919198pll.33.2022.07.20.08.52.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jul 2022 08:52:51 -0700 (PDT)
+        Wed, 20 Jul 2022 08:52:58 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -69,9 +69,9 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 03/13] drm: bridge: samsung-dsim: Lookup OF-graph or Child node devices
-Date:   Wed, 20 Jul 2022 21:22:00 +0530
-Message-Id: <20220720155210.365977-4-jagan@amarulasolutions.com>
+Subject: [PATCH v3 04/13] drm: bridge: samsung-dsim: Handle platform init via driver_data
+Date:   Wed, 20 Jul 2022 21:22:01 +0530
+Message-Id: <20220720155210.365977-5-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220720155210.365977-1-jagan@amarulasolutions.com>
 References: <20220720155210.365977-1-jagan@amarulasolutions.com>
@@ -81,130 +81,131 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The child devices in MIPI DSI can be binding with OF-graph
-and also via child nodes.
+In order to make a common Samsung DSIM bridge driver some platform
+specific glue code needs to maintain separately as it is hard to
+maintain platform specific glue and conventional component_ops on
+the drm bridge drivers side.
 
-The OF-graph interface represents the child devices via
-remote and associated endpoint numbers like
+This patch is trying to support that glue code initialization based
+on the DSIM_QUIRK_PLAT_DATA set from respective driver_data.
 
-dsi {
-   compatible = "fsl,imx8mm-mipi-dsim";
+So, the platforms which enable DSIM_QUIRK_PLAT_DATA flags will handle
+all platform specific initialization via samsung_dsim_plat_probe.
 
-   ports {
-	port@0 {
-	     reg = <0>;
-
-	     dsi_in_lcdif: endpoint@0 {
-		  reg = <0>;
-		  remote-endpoint = <&lcdif_out_dsi>;
-	     };
-	};
-
-	port@1 {
-	     reg = <1>;
-
-	     dsi_out_bridge: endpoint {
-		  remote-endpoint = <&bridge_in_dsi>;
-	     };
-	};
-};
-
-The child node interface represents the child devices via
-conventional child nodes on given DSI parent like
-
-dsi {
-   compatible = "samsung,exynos5433-mipi-dsi";
-
-   ports {
-        port@0 {
-             reg = <0>;
-
-             dsi_to_mic: endpoint {
-                  remote-endpoint = <&mic_to_dsi>;
-             };
-        };
-   };
-
-   panel@0 {
-        reg = <0>;
-   };
-};
-
-As Samsung DSIM bridge is common DSI IP across all Exynos DSI
-and NXP i.MX8M host controllers, this patch adds support to
-lookup the child devices whether its bindings on the associated
-host represent OF-graph or child node interfaces.
+The platform probe is responsible to
+- initialize samsung_dsim_plat_data and install hooks
+- initialize component_ops
+- preserve samsung_dsim structure pointer
 
 v3:
-* none
+* update samsung_dsim_plat_probe return value
+* add plat_data quirk to handle platform init
 
 v2:
-* new patch
+* fix samsung_dsim_plat_probe return pointer
+
+v1:
+* use platform_init instead of exynos_specific
+* handle component_ops in glue code
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 38 +++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/bridge/samsung-dsim.c | 16 ++++++++++++++--
+ include/drm/bridge/samsung-dsim.h     |  5 +++++
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 21975ed513bd..20db345abf8b 100644
+index 20db345abf8b..4d5f72de2240 100644
 --- a/drivers/gpu/drm/bridge/samsung-dsim.c
 +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1357,18 +1357,52 @@ static int samsung_dsim_host_attach(struct mipi_dsi_host *host,
- 	struct samsung_dsim *dsi = host_to_dsi(host);
- 	const struct samsung_dsim_plat_data *pdata = dsi->plat_data;
- 	struct device *dev = dsi->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *remote;
- 	struct drm_panel *panel;
- 	int ret;
+@@ -369,6 +369,7 @@ static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
+ 	.reg_values = reg_values,
++	.quirks = DSIM_QUIRK_PLAT_DATA,
+ };
  
--	panel = of_drm_find_panel(device->dev.of_node);
-+	/**
-+	 * Devices can also be child nodes when we also control that device
-+	 * through the upstream device (ie, MIPI-DCS for a MIPI-DSI device).
-+	 *
-+	 * Lookup for a child node of the given parent that isn't either port
-+	 * or ports.
-+	 */
-+	for_each_available_child_of_node(np, remote) {
-+		if (of_node_name_eq(remote, "port") ||
-+		    of_node_name_eq(remote, "ports"))
-+			continue;
-+
-+		goto of_find_panel_or_bridge;
-+	}
-+
-+	/*
-+	 * of_graph_get_remote_node() produces a noisy error message if port
-+	 * node isn't found and the absence of the port is a legit case here,
-+	 * so at first we silently check whether graph presents in the
-+	 * device-tree node.
-+	 */
-+	if (!of_graph_is_present(np))
-+		return -ENODEV;
-+
-+	remote = of_graph_get_remote_node(np, 1, 0);
-+
-+of_find_panel_or_bridge:
-+	if (!remote)
-+		return -ENODEV;
-+
-+	panel = of_drm_find_panel(remote);
- 	if (!IS_ERR(panel)) {
- 		dsi->out_bridge = devm_drm_panel_bridge_add(dev, panel);
- 	} else {
--		dsi->out_bridge = of_drm_find_bridge(device->dev.of_node);
-+		dsi->out_bridge = of_drm_find_bridge(remote);
- 		if (!dsi->out_bridge)
- 			dsi->out_bridge = ERR_PTR(-EINVAL);
- 	}
+ static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
+@@ -381,6 +382,7 @@ static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
+ 	.reg_values = reg_values,
++	.quirks = DSIM_QUIRK_PLAT_DATA,
+ };
  
-+	of_node_put(remote);
+ static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
+@@ -391,6 +393,7 @@ static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
+ 	.reg_values = reg_values,
++	.quirks = DSIM_QUIRK_PLAT_DATA,
+ };
+ 
+ static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
+@@ -402,6 +405,7 @@ static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
+ 	.wait_for_reset = 0,
+ 	.num_bits_resol = 12,
+ 	.reg_values = exynos5433_reg_values,
++	.quirks = DSIM_QUIRK_PLAT_DATA,
+ };
+ 
+ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+@@ -413,6 +417,7 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 12,
+ 	.reg_values = exynos5422_reg_values,
++	.quirks = DSIM_QUIRK_PLAT_DATA,
+ };
+ 
+ static const struct of_device_id samsung_dsim_of_match[] = {
+@@ -1609,7 +1614,11 @@ static int samsung_dsim_probe(struct platform_device *pdev)
+ 	dsi->bridge.of_node = dev->of_node;
+ 	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
+ 
+-	ret = samsung_dsim_plat_probe(dsi);
++	if (dsi->driver_data->quirks & DSIM_QUIRK_PLAT_DATA)
++		ret = samsung_dsim_plat_probe(dsi);
++	else
++		ret = mipi_dsi_host_register(&dsi->dsi_host);
 +
- 	if (IS_ERR(dsi->out_bridge)) {
- 		ret = PTR_ERR(dsi->out_bridge);
- 		DRM_DEV_ERROR(dev, "failed to find the bridge: %d\n", ret);
+ 	if (ret)
+ 		goto err_disable_runtime;
+ 
+@@ -1627,7 +1636,10 @@ static int samsung_dsim_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
+-	samsung_dsim_plat_remove(dsi);
++	if (dsi->driver_data->quirks & DSIM_QUIRK_PLAT_DATA)
++		samsung_dsim_plat_remove(dsi);
++	else
++		mipi_dsi_host_unregister(&dsi->dsi_host);
+ 
+ 	return 0;
+ }
+diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
+index 2e245bffd1b6..97fdee5ef5df 100644
+--- a/include/drm/bridge/samsung-dsim.h
++++ b/include/drm/bridge/samsung-dsim.h
+@@ -33,6 +33,10 @@ struct samsung_dsim_transfer {
+ 	u16 rx_done;
+ };
+ 
++enum samsung_dsim_quirks {
++	DSIM_QUIRK_PLAT_DATA		= BIT(0),
++};
++
+ struct samsung_dsim_driver_data {
+ 	const unsigned int *reg_ofs;
+ 	unsigned int plltmr_reg;
+@@ -43,6 +47,7 @@ struct samsung_dsim_driver_data {
+ 	unsigned int wait_for_reset;
+ 	unsigned int num_bits_resol;
+ 	const unsigned int *reg_values;
++	enum samsung_dsim_quirks quirks;
+ };
+ 
+ struct samsung_dsim_host_ops {
 -- 
 2.25.1
 
