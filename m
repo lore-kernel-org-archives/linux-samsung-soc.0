@@ -2,70 +2,49 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4394C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jul 2022 14:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE76C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jul 2022 14:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229506AbiGUORl (ORCPT
+        id S229498AbiGUOSL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 10:17:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58078 "EHLO
+        Thu, 21 Jul 2022 10:18:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbiGUORk (ORCPT
+        with ESMTP id S229482AbiGUOSL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Jul 2022 10:17:40 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 738B67FE66;
-        Thu, 21 Jul 2022 07:17:39 -0700 (PDT)
+        Thu, 21 Jul 2022 10:18:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583DB8048A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 07:18:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 26041B82472;
-        Thu, 21 Jul 2022 14:17:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43FDC3411E;
-        Thu, 21 Jul 2022 14:17:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E73DE61E41
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 14:18:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC4BC341C0;
+        Thu, 21 Jul 2022 14:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658413056;
-        bh=Eh2C4aITvaLQEiGsMNBpPw6UurolrVcixN6eqDOt2PM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Glhv+SQqG16r77ENTWknlvdgnUqsROh3K2+kcJElNGOzjsG5CpgSR8GbATdrAf+wN
-         crFyRQQD/z6p3m/dnqIELnlsoZZ3PJRfUSuDuHkOfWNH6X8BJf9B1Isn7jHXbTIp68
-         AjLll/6qf/ATI1IWmgwSwcKCZVXYFv6nYHcDVQyZYdF9eulli5++DWmmpkWScEfnZ2
-         2VSDzAVzSsyJs4wnW9g004w+rlMpGzYrCYBKplJK82MOCmxQZQLVybJQWgUNJyV6ZQ
-         Z/OSljQwvoz0GXqd7c7t8vJg9U18B/qhLHXWMQq7bxtPT5Q05Xsm2i5XUe8b9u2evY
-         d5XWobATRivFA==
+        s=k20201202; t=1658413089;
+        bh=uyREqICAA5M/4JR/uUUB2dI6MeJkWxbgGPHly85bO1g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UCIECntjrYyuvx6nutw9pJgptkLEZEBmXKZCuexwkClVQjXd9Wx2ubtQGbvCvbAZO
+         yT6t4WVwI1DuHHPRdsM0Wfo4ZZ8XBj/d1zxkt9xzB3DDw+f09dsFSp2IU/JpoiOtZk
+         VDzHZ4WdlxQUOHRa6eLOwdnWn44upmFPiWovhNEcUNEbRahWRRbaDeHuW3IWNfJsET
+         glfAXn4WQ3gnWvNJXgI3gzoffJsdP1SAJzle1NGO6eb9i2LXuSwEq5zJmiAG/27kur
+         m0khddKplHAGyUCRhFptdZUrjVaq27ImjGlGE5GUy/q61G6PYem0AECxwCzt/j8DZx
+         3AkNJ9Pl9Pstg==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Laurence de Bruxelles <lfdebrux@gmail.com>,
-        Lennert Buytenhek <buytenh@wantstofly.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Lukasz Majewski <lukma@denx.de>, Marc Zyngier <maz@kernel.org>,
-        Mauri Sandberg <maukka@ext.kapsi.fi>,
-        Nikita Shubin <nikita.shubin@maquefel.me>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>,
-        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 00/13] ARM: mark most boards as unused
-Date:   Thu, 21 Jul 2022 16:17:09 +0200
-Message-Id: <20220721141722.2414719-1-arnd@kernel.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 11/13] ARM: s3c: mark most board files as unused
+Date:   Thu, 21 Jul 2022 16:17:20 +0200
+Message-Id: <20220721141722.2414719-12-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20220721141722.2414719-1-arnd@kernel.org>
+References: <20220721141722.2414719-1-arnd@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -74,125 +53,187 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Based on the recent mailing list discussion I started [1], I have now
-turned the findings into a set of patches that marks most board files as
-'depends on UNUSED_BOARD_FILES', leaving only 38 of the 196 boards.
+The s3c24xx platform is already scheduled for removal in early 2023,
+with s3c64xx meeting the same fate a year later.
 
-Please double-check the lists for each platform to make sure I got the
-right set. The only functional change here is in the Kconfig dependencies,
-so I would still apply this as a late fix for the coming merge window,
-to give any remaining users the most time to run into this and speak up
-in case any of these boards are actually still in use.
+Most of the s3c64xx board files appear to be unused, as the better
+maintained ones already got converted to DT. The main exception is
+the Wolfson Cragganmore board, which remains in use as the reference
+design for Wolfson/Cirrus devices. As the other boards get removed,
+this one stays around along with the DT based machines.
 
-    Arnd
+The s3c6400_defconfig file now disables the unused boards, while the
+s3c24xx defconfig files all turn on CONFIG_UNUSED_BOARD_FILES to
+remain usable.
 
-[1] https://lore.kernel.org/linux-arm-kernel/CAK8P3a0Z9vGEQbVRBo84bSyPFM-LF+hs5w8ZA51g2Z+NsdtDQA@mail.gmail.com/
-
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Daniel Mack <daniel@zonque.org>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Kristoffer Ericson <kristoffer.ericson@gmail.com>
-Cc: Krzysztof Halasa <khalasa@piap.pl>
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Laurence de Bruxelles <lfdebrux@gmail.com>
-Cc: Lennert Buytenhek <buytenh@wantstofly.org>
-Cc: Linus Walleij <linusw@kernel.org>
-Cc: Lubomir Rintel <lkundrak@v3.sk>
-Cc: Lukasz Majewski <lukma@denx.de>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Mauri Sandberg <maukka@ext.kapsi.fi>
-Cc: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/configs/mini2440_defconfig   |  1 +
+ arch/arm/configs/s3c2410_defconfig    |  1 +
+ arch/arm/configs/s3c6400_defconfig    |  9 ---------
+ arch/arm/configs/tct_hammer_defconfig |  1 +
+ arch/arm/mach-s3c/Kconfig.s3c24xx     |  2 +-
+ arch/arm/mach-s3c/Kconfig.s3c64xx     | 20 ++++++++++----------
+ 6 files changed, 14 insertions(+), 20 deletions(-)
 
-Arnd Bergmann (13):
-  ARM: add ATAGS dependencies to non-DT platforms
-  ARM: add CONFIG_UNUSED_BOARD_FILES
-  ARM: pxa: add Kconfig dependencies for ATAGS based boards
-  ARM: orion: add ATAGS dependencies
-  ARM: davinci: mark all ATAGS board files as unused
-  ARM: ep93xx: mark most board files as unused
-  ARM: mmp: mark all board files for removal
-  ARM: footbridge: mark cats board for removal
-  ARM: sa1100: mark most boards as unused
-  ARM: omap1: add Kconfig dependencies for unused boards
-  ARM: s3c: mark most board files as unused
-  ARM: iop32x: mark as unused
-  ARM: cns3xxx: add CONFIG_UNUSED_BOARD_FILES dependency
-
- arch/arm/Kconfig                          | 21 ++++++-
- arch/arm/configs/badge4_defconfig         |  1 +
- arch/arm/configs/cerfcube_defconfig       |  1 +
- arch/arm/configs/cm_x300_defconfig        |  1 +
- arch/arm/configs/cns3420vb_defconfig      |  1 +
- arch/arm/configs/colibri_pxa270_defconfig |  1 +
- arch/arm/configs/colibri_pxa300_defconfig |  1 +
- arch/arm/configs/corgi_defconfig          |  1 +
- arch/arm/configs/davinci_all_defconfig    | 11 ----
- arch/arm/configs/ep93xx_defconfig         |  9 ---
- arch/arm/configs/eseries_pxa_defconfig    |  1 +
- arch/arm/configs/ezx_defconfig            |  1 +
- arch/arm/configs/footbridge_defconfig     |  1 -
- arch/arm/configs/h5000_defconfig          |  1 +
- arch/arm/configs/hackkit_defconfig        |  1 +
- arch/arm/configs/iop32x_defconfig         |  1 +
- arch/arm/configs/jornada720_defconfig     |  1 +
- arch/arm/configs/lart_defconfig           |  1 +
- arch/arm/configs/lpd270_defconfig         |  1 +
- arch/arm/configs/lubbock_defconfig        |  1 +
- arch/arm/configs/magician_defconfig       |  1 +
- arch/arm/configs/mainstone_defconfig      |  1 +
- arch/arm/configs/mini2440_defconfig       |  1 +
- arch/arm/configs/mmp2_defconfig           |  5 +-
- arch/arm/configs/multi_v5_defconfig       | 17 -----
- arch/arm/configs/mv78xx0_defconfig        |  1 +
- arch/arm/configs/mvebu_v5_defconfig       |  8 ---
- arch/arm/configs/omap1_defconfig          |  9 ---
- arch/arm/configs/orion5x_defconfig        | 13 ----
- arch/arm/configs/palmz72_defconfig        |  1 +
- arch/arm/configs/pcm027_defconfig         |  1 +
- arch/arm/configs/pleb_defconfig           |  1 +
- arch/arm/configs/pxa255-idp_defconfig     |  1 +
- arch/arm/configs/pxa3xx_defconfig         |  7 +--
- arch/arm/configs/pxa_defconfig            | 77 ++++-------------------
- arch/arm/configs/s3c2410_defconfig        |  1 +
- arch/arm/configs/s3c6400_defconfig        |  9 ---
- arch/arm/configs/shannon_defconfig        |  1 +
- arch/arm/configs/simpad_defconfig         |  1 +
- arch/arm/configs/tct_hammer_defconfig     |  1 +
- arch/arm/configs/trizeps4_defconfig       |  1 +
- arch/arm/configs/viper_defconfig          |  1 +
- arch/arm/configs/xcep_defconfig           |  1 +
- arch/arm/configs/zeus_defconfig           |  1 +
- arch/arm/mach-cns3xxx/Kconfig             |  1 +
- arch/arm/mach-davinci/Kconfig             |  8 +++
- arch/arm/mach-dove/Kconfig                |  1 +
- arch/arm/mach-ep93xx/Kconfig              | 10 +++
- arch/arm/mach-footbridge/Kconfig          |  1 +
- arch/arm/mach-iop32x/Kconfig              |  1 +
- arch/arm/mach-mmp/Kconfig                 |  9 +++
- arch/arm/mach-mv78xx0/Kconfig             |  1 +
- arch/arm/mach-omap1/Kconfig               | 11 ++++
- arch/arm/mach-orion5x/Kconfig             | 17 +++++
- arch/arm/mach-pxa/Kconfig                 | 53 ++++++++++++++++
- arch/arm/mach-s3c/Kconfig.s3c24xx         |  2 +-
- arch/arm/mach-s3c/Kconfig.s3c64xx         | 20 +++---
- arch/arm/mach-sa1100/Kconfig              | 11 ++++
- 58 files changed, 199 insertions(+), 166 deletions(-)
-
+diff --git a/arch/arm/configs/mini2440_defconfig b/arch/arm/configs/mini2440_defconfig
+index 5b4ab5bf5c5f..86e00f684e16 100644
+--- a/arch/arm/configs/mini2440_defconfig
++++ b/arch/arm/configs/mini2440_defconfig
+@@ -11,6 +11,7 @@ CONFIG_S3C_ADC=y
+ CONFIG_CPU_S3C2440=y
+ CONFIG_MACH_MINI2440=y
+ CONFIG_AEABI=y
++CONFIG_UNUSED_BOARD_FILES=y
+ CONFIG_KEXEC=y
+ CONFIG_CPU_IDLE=y
+ CONFIG_APM_EMULATION=y
+diff --git a/arch/arm/configs/s3c2410_defconfig b/arch/arm/configs/s3c2410_defconfig
+index 2789e96e4ef6..41b40863a78e 100644
+--- a/arch/arm/configs/s3c2410_defconfig
++++ b/arch/arm/configs/s3c2410_defconfig
+@@ -37,6 +37,7 @@ CONFIG_ARCH_S3C2440=y
+ CONFIG_MACH_NEO1973_GTA02=y
+ CONFIG_MACH_RX1950=y
+ CONFIG_MACH_SMDK2443=y
++CONFIG_UNUSED_BOARD_FILES=y
+ CONFIG_CMDLINE="root=/dev/hda1 ro init=/bin/bash console=ttySAC0"
+ CONFIG_FPE_NWFPE=y
+ CONFIG_FPE_NWFPE_XP=y
+diff --git a/arch/arm/configs/s3c6400_defconfig b/arch/arm/configs/s3c6400_defconfig
+index 300f5a7febf0..4f04f583c738 100644
+--- a/arch/arm/configs/s3c6400_defconfig
++++ b/arch/arm/configs/s3c6400_defconfig
+@@ -5,15 +5,6 @@ CONFIG_KALLSYMS_ALL=y
+ CONFIG_ARCH_MULTI_V6=y
+ # CONFIG_ARCH_MULTI_V7 is not set
+ CONFIG_ARCH_S3C64XX=y
+-CONFIG_MACH_SMDK6400=y
+-CONFIG_MACH_ANW6410=y
+-CONFIG_MACH_MINI6410=y
+-CONFIG_MACH_REAL6410=y
+-CONFIG_MACH_SMDK6410=y
+-CONFIG_MACH_NCP=y
+-CONFIG_MACH_HMT=y
+-CONFIG_MACH_SMARTQ5=y
+-CONFIG_MACH_SMARTQ7=y
+ CONFIG_MACH_WLF_CRAGG_6410=y
+ CONFIG_CMDLINE="console=ttySAC0,115200 root=/dev/ram init=/linuxrc initrd=0x51000000,6M ramdisk_size=6144"
+ CONFIG_VFP=y
+diff --git a/arch/arm/configs/tct_hammer_defconfig b/arch/arm/configs/tct_hammer_defconfig
+index ce95cc97dcac..3b29ae1fb750 100644
+--- a/arch/arm/configs/tct_hammer_defconfig
++++ b/arch/arm/configs/tct_hammer_defconfig
+@@ -13,6 +13,7 @@ CONFIG_ARCH_MULTI_V4T=y
+ # CONFIG_ARCH_MULTI_V7 is not set
+ CONFIG_ARCH_S3C24XX=y
+ CONFIG_MACH_TCT_HAMMER=y
++CONFIG_UNUSED_BOARD_FILES=y
+ CONFIG_CMDLINE="mem=64M root=/dev/ram0 init=/linuxrc rw"
+ CONFIG_FPE_NWFPE=y
+ CONFIG_MODULES=y
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c24xx b/arch/arm/mach-s3c/Kconfig.s3c24xx
+index 88a5a333312a..c28e75424947 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c24xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c24xx
+@@ -8,7 +8,7 @@ menuconfig ARCH_S3C24XX
+ 	bool "Samsung S3C24XX SoCs (deprecated, see help)"
+ 	depends on ARCH_MULTI_V4T || ARCH_MULTI_V5
+ 	depends on CPU_LITTLE_ENDIAN
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CLKSRC_SAMSUNG_PWM
+ 	select GPIO_SAMSUNG
+ 	select GPIOLIB
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index 2b27bff4d928..46f4fd795de5 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -114,8 +114,8 @@ config S3C64XX_SETUP_USB_PHY
+ # S36400 Macchine support
+ 
+ config MACH_SMDK6400
+-       bool "SMDK6400"
+-	depends on ATAGS
++	bool "SMDK6400"
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6400
+ 	select S3C64XX_SETUP_SDHCI
+ 	select S3C_DEV_HSMMC1
+@@ -126,7 +126,7 @@ config MACH_SMDK6400
+ 
+ config MACH_ANW6410
+ 	bool "A&W6410"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6410
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C_DEV_FB
+@@ -135,7 +135,7 @@ config MACH_ANW6410
+ 
+ config MACH_MINI6410
+ 	bool "MINI6410"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6410
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_SDHCI
+@@ -151,7 +151,7 @@ config MACH_MINI6410
+ 
+ config MACH_REAL6410
+ 	bool "REAL6410"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6410
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_SDHCI
+@@ -167,7 +167,7 @@ config MACH_REAL6410
+ 
+ config MACH_SMDK6410
+ 	bool "SMDK6410"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6410
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_I2C1
+@@ -254,7 +254,7 @@ config SMDK6410_WM1192_EV1
+ 
+ config MACH_NCP
+ 	bool "NCP"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6410
+ 	select S3C64XX_SETUP_I2C1
+ 	select S3C_DEV_HSMMC1
+@@ -264,7 +264,7 @@ config MACH_NCP
+ 
+ config MACH_HMT
+ 	bool "Airgoo HMT"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select CPU_S3C6410
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C_DEV_FB
+@@ -296,14 +296,14 @@ config MACH_SMARTQ
+ 
+ config MACH_SMARTQ5
+ 	bool "SmartQ 5"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select MACH_SMARTQ
+ 	help
+ 	    Machine support for the SmartQ 5
+ 
+ config MACH_SMARTQ7
+ 	bool "SmartQ 7"
+-	depends on ATAGS
++	depends on ATAGS && UNUSED_BOARD_FILES
+ 	select MACH_SMARTQ
+ 	help
+ 	    Machine support for the SmartQ 7
 -- 
 2.29.2
 
