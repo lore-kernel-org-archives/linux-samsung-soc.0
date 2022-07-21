@@ -2,60 +2,60 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E14CCA487
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jul 2022 15:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9411DC43334
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jul 2022 15:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230342AbiGUPmf (ORCPT
+        id S232161AbiGUPnz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 11:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36728 "EHLO
+        Thu, 21 Jul 2022 11:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232859AbiGUPmJ (ORCPT
+        with ESMTP id S232441AbiGUPnb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Jul 2022 11:42:09 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0435A7E032
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 08:38:27 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id o7so3371955lfq.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 08:38:26 -0700 (PDT)
+        Thu, 21 Jul 2022 11:43:31 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B93288F1C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 08:39:36 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id a10so2288999ljj.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 08:39:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=UqCa+wJI049j4zTLACQna4vEDfj2rqaLjlldqQdrtbc=;
-        b=Hr4EUI+tJ5IR28Fd9rlLrL2Jhdl6y04tFTZ7SiEj8y1JW0oLBxnYtIiAxp4fV/1ml3
-         XNc2IHUMggG0rlz1xVNCcB8Ij7GdlfZJng1lvQzRta+lFGgEuqvRcPk1VAyXG6/rz6L3
-         24N7v/a2z6VqnTCmtZRoxq9+R94zChXy64OuJ+ofzweytxFPcsC18NRkN0F/inqmx65G
-         8EtBrYyOKrnRMNd1zVShLukQdFrlhcWvnBxH1Skm/pMFhtK5dIa0hnnAVck4MmS80fWc
-         O4GIa+aNN+YT4KPfVRPywl0b25PpIhaAQOpzc4dspd4HUkTiGvC7Qox4l+D4eMYzliSj
-         M93g==
+        bh=oqVQwNQbcwLQWg6kfm6rj9WKvgY4OIEgQOzUXlpBlmg=;
+        b=bUbA0eHhlHZLz/7ERfxE+ujHsrXIi/1BLF0UUgCTGD2Op4a9uPqxE8PfjDUnh0vkrM
+         NoiNYlMDhoMOEIMth1a4LodxokvPtNEiBNqvhrTtMsiqk5AvOOTWVvtkX0vcdar+TZ9P
+         cuHmDRDRj/iCTgpFnlWFwejofmUcNLUdW+0FeB/h2HYA1p1jGTJseRZ/c1Dk0fKehi12
+         XzY95w37ZgrMXEVRmU96gkg5e/DspC1gFPZ/ekbdgflGdDWjEXquopvsQwGp1I4qEgn7
+         d7QKdgpNbpN8vahcEQWCFuFNkozJDOmGqU5v/udTFpQ1oOJ+f117PzP28vOHlt71WwUc
+         35AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=UqCa+wJI049j4zTLACQna4vEDfj2rqaLjlldqQdrtbc=;
-        b=PgDvCyP+aeOfX8zM+qKTe5mSawsszJopjTs/qfL4RsoHnEm0FSKrsHWua2BfzZxP3c
-         T+ck3Jpv9hdPwYYn7rpEQ9mbIgASTST0+Cxb5w/j4aRwTsC2aQeqktu4/3DOYa5mdsYh
-         sBJzhNKWFFYpT3WZAc8iUmPbaDd7TuMfBhUJ/cp2saW8S7Eg2JE3UsUMGB0KexHdSb4F
-         x0sFZHi4xafdVfqrTYQjb36KCcMC0ZMZvYj1Yo/Ol6p7jsAoVDBjm8CoL4M/kDsOreBD
-         6w2Ce2poQeuxGc7xSIOwu0HrN1h0ZIZnhoUJbeII2uFWGe/0KxlphGrjlHQ7SCJKBHtX
-         R3zw==
-X-Gm-Message-State: AJIora9YQndlkh5ptogXEMILsVdkXVDYRpsEMiVsRzaJ6A2wvauBVWyF
-        BquelpD1bnFcCc8WEmRzNKKC4Q==
-X-Google-Smtp-Source: AGRyM1u+XAg5Gfu+MlpMWaQN3hIuyfigsjR8EO3U+oTkp4M+3abIhECXSY47lzIOdxD8vuPZLJkGzA==
-X-Received: by 2002:a05:6512:108d:b0:489:e640:df8c with SMTP id j13-20020a056512108d00b00489e640df8cmr22708209lfg.332.1658417903698;
-        Thu, 21 Jul 2022 08:38:23 -0700 (PDT)
+        bh=oqVQwNQbcwLQWg6kfm6rj9WKvgY4OIEgQOzUXlpBlmg=;
+        b=eXVFrYfK2nzzhphLnLEWPNvYUUxd3kT33g/v4qDrVkgsETbYOvDFt4R4mBOpYO2D5W
+         0TmJTQclQZWr4/+fdusbrUYqHIRyHgxXb0JTS5amM9DZWgxVv6B3ViKtDWldkqptpCup
+         MH0uKzq+HYqj5xhfaPwS6xaglet/LVLqd7rLN5xdnU/3FK30hXC8H3s2tj27qV/NK4xk
+         60qQRX47o5QL9w22DzfJhkWuQsIjSvNah3s7KvIcskH/yVeLKqKX7tQ/TH83Cz9jQ+57
+         wurLtIPqYBoN7HGu1lr4IIwjitt9XNzZgZm46vqeHxkxP44axAZwJ52sTfUEVo9Z1U2q
+         tNfw==
+X-Gm-Message-State: AJIora+SWLyKABX8kD+TYMmRMAM9+0gv78ZrNDCfxN4D+u1wYJM4K1RY
+        02eGRSfOAehBWCTve1mCR3nCTQ==
+X-Google-Smtp-Source: AGRyM1u1EiuENGOYTFtFOFvt+gosoK/tppAX7Zpo5TZqB7ckZKOx3LwixuugOACtM48KFq3goni/DQ==
+X-Received: by 2002:a2e:953:0:b0:25d:5c20:2265 with SMTP id 80-20020a2e0953000000b0025d5c202265mr18734344ljj.348.1658417974213;
+        Thu, 21 Jul 2022 08:39:34 -0700 (PDT)
 Received: from [192.168.115.193] (89-162-31-138.fiber.signal.no. [89.162.31.138])
-        by smtp.gmail.com with ESMTPSA id 8-20020a05651c12c800b0025de7126bf1sm448863lje.89.2022.07.21.08.38.21
+        by smtp.gmail.com with ESMTPSA id o23-20020a05651205d700b0048a35b93b24sm504903lfo.181.2022.07.21.08.39.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Jul 2022 08:38:23 -0700 (PDT)
-Message-ID: <6468e7b1-b253-53bc-c81f-2fa6b75194ae@linaro.org>
-Date:   Thu, 21 Jul 2022 17:38:20 +0200
+        Thu, 21 Jul 2022 08:39:33 -0700 (PDT)
+Message-ID: <e3b0a57b-e987-9be0-75e5-40c0d7e41310@linaro.org>
+Date:   Thu, 21 Jul 2022 17:39:31 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH 1/6] ARM: refresh defconfig files
+Subject: Re: [PATCH 3/6] ARM: defconfig: remove stale CONFIG_ZBOOT_ROM entries
 Content-Language: en-US
 To:     Arnd Bergmann <arnd@kernel.org>,
         linux-arm-kernel@lists.infradead.org
@@ -105,9 +105,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
         linux-sh@vger.kernel.org
 References: <20220721141325.2413920-1-arnd@kernel.org>
- <20220721141325.2413920-2-arnd@kernel.org>
+ <20220721141325.2413920-4-arnd@kernel.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220721141325.2413920-2-arnd@kernel.org>
+In-Reply-To: <20220721141325.2413920-4-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -117,22 +117,15 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 On 21/07/2022 16:13, Arnd Bergmann wrote:
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> A lot of Kconfig options have changed over the years, and we tend
-> to not do a blind 'make defconfig' to refresh the files, to ensure
-> we catch options that should not have gone away.
-> 
-> I used some a bit of scripting to only rework the bits where an
-> option moved around in any of the defconfig files, without also
-> dropping any of the other lines, to make it clearer which options
-> we no longer have.
+> The default is always 0x0 after commit 39c3e304567a ("ARM: 8984/1:
+> Kconfig: set default ZBOOT_ROM_TEXT/BSS value to 0x0"), so any
+> defconfig file that has these two lines can now drop them to reduce
+> the diff against the 'make savedefconfig' version.
 > 
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Samsung bits (s3c, s5p, exynos, mini2440, tct_hammer) look good:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> # Samsung
-
-(I did not review the rest, though)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
