@@ -2,117 +2,272 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7D3C43334
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jul 2022 11:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F94CCA487
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Jul 2022 14:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232829AbiGULNA (ORCPT
+        id S229969AbiGUONq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 07:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36464 "EHLO
+        Thu, 21 Jul 2022 10:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232549AbiGULM7 (ORCPT
+        with ESMTP id S229506AbiGUONn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Jul 2022 07:12:59 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3FB82128
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 04:12:58 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id ss3so2500526ejc.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2022 04:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3bWB1n3BjW/TWB6swVQ3izNKlloaKqYiwDk5KO5rsGQ=;
-        b=prTqJ3kszRl/Y6aPlIRDyWcAdAdZZVSCgCKaZOW5wh9Qt6FYpuattroTDjlAnkG9bT
-         SEHTFuTrk7VKRDs8xBtNq8xD56FJcgcMQwIGGZuh2D3Xlz4B2JHMGGwgTzsIW3f8hzIY
-         4jQhmtwrivDGIg9yija8XOcC92kLB2Zgk3ess=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3bWB1n3BjW/TWB6swVQ3izNKlloaKqYiwDk5KO5rsGQ=;
-        b=z5v8Kgla8HH6Zw6JAgol4S+OKYHWvZLuPp+F6eqOVLEqHFWf3VNscoyYp6gXrEjHzw
-         e3vSNaKA+EPiLiY2QKGw42ygrK+qdzvLG+Y1t4Fgpt7wkpX87hZHJYr3oAml8/l61/ZE
-         RAMSA8wcTPsoz+gd+DB9qPCPSjnA8DBGAa6XTCTj9M+baCEv0JHGQTL4FiTLpPPDwsdj
-         pWTs5S0InZ2cFCLr11jZ4/YIMNCpebGIaukpkY6eqPyBocd1dyVVdVQPq1SMFGCglahr
-         DVnvqpMEyWlPWXzW49WnwDGh30JdVI1LwMQXIdJyzj6oJl0kcOToXptL0FCMTTBMVP8B
-         ddIQ==
-X-Gm-Message-State: AJIora/k/iR/zKF9IAdjD290mEb+xt8shXhQtnYzxF0TOhd0U94wKlb5
-        My5kotwkjQfWYGph3XRDSdTGyOwrQdlfDSIQVvP98A==
-X-Google-Smtp-Source: AGRyM1sF67vJVc6cIWxuhYrLplHoU7hktpFBGLNNhVWl498hs+oHq2RaVIFs7/eP0Tc1GWg9p0GxCg1EHAqrObvx1x8=
-X-Received: by 2002:a17:907:1629:b0:72b:68e9:bf2c with SMTP id
- hb41-20020a170907162900b0072b68e9bf2cmr39581240ejc.760.1658401976678; Thu, 21
- Jul 2022 04:12:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220720155210.365977-1-jagan@amarulasolutions.com>
- <CGME20220720155329eucas1p1643af66a6bc9eb3cf478fc8b064a620f@eucas1p1.samsung.com>
- <20220720155210.365977-9-jagan@amarulasolutions.com> <de9b3aa2-c1d4-6ee5-5061-27cec4bab679@samsung.com>
-In-Reply-To: <de9b3aa2-c1d4-6ee5-5061-27cec4bab679@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 21 Jul 2022 16:42:45 +0530
-Message-ID: <CAMty3ZAwJ9SSiJatk0mjLUfyRUd=H7BwWooD65CY+az4ESUvbA@mail.gmail.com>
-Subject: Re: [PATCH v3 08/13] drm: bridge: samsung-dsim: Add module init, exit
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Thu, 21 Jul 2022 10:13:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB3152893;
+        Thu, 21 Jul 2022 07:13:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 07F5861F82;
+        Thu, 21 Jul 2022 14:13:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C56C3411E;
+        Thu, 21 Jul 2022 14:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658412821;
+        bh=EPecOnRHvam2B9sAJCT0OBa+3aX5JmCDR+0inavW5vo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oRQ70x6nGh2glXxglojpBQHnTR4hurQ2zeuuLjLqKvR+Q+2JXmkt2I+S3jcBy2078
+         h0eDVZac7ctNYah6Fa3Ne06zk/tm4v+8KdKJl4NAYp19fNSGpySE/VFc1YuK61+eCe
+         RrcwtuQ10LYRWhb67YeUB/8htFx4d3ljOCC1wWjs8c4+nOfg6BkwJbW+3diPc4OUee
+         rK7mewt4yfy/EHoiO84A0upUYiYWfuFzB8dDkUfLD0FR5i/Ysfn24GI4bOfJgFPEht
+         pSDfiIXyTC6ZI4zWEmq7fGY6s9e8vzbP9g5TWaECjcTQIix1PW+z5fTe/0o7A9sXvr
+         r1IRTYd3cTVjQ==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-oxnas@groups.io, linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Subject: [PATCH 0/6] ARM: defconfig cleanups
+Date:   Thu, 21 Jul 2022 16:13:19 +0200
+Message-Id: <20220721141325.2413920-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Thu, Jul 21, 2022 at 4:39 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi Jagan,
->
-> On 20.07.2022 17:52, Jagan Teki wrote:
-> > Add module init and exit functions for the bridge to register
-> > and unregister dsi_driver.
-> >
-> > Exynos drm driver stack will register the platform_driver separately
-> > in the common of it's exynos_drm_drv.c including dsi_driver.
-> >
-> > Register again would return -EBUSY, so return 0 for such cases as
-> > dsi_driver is already registered.
->
-> I've already pointed that this is a bad style solution. It will also not
-> work in the following cases:
+In the process of deprecating board files, I had to modify some defconfig
+files and ran into the same problem as everyone else that a lot of
+them are rather outdated. With some scripting, I managed to split out
+a preparation patch that puts all lines into the expected order without
+actually changing the contents.
 
-Yes, I have seen it in v2. (sending again since its part of the series
-and resolved other issues on v2)
+This helped doing the cleanup separately per Kconfig option that needed
+to be addressed. I only did a small portion of the follow-up changes
+to get to the point of being able to rebase my board changes on top,
+but I did manage to address some bugs that have crept in.
 
->
-> 1. exynos drm and samsung-dsim compiled as modules - samsung-dsim
-> module, once loaded, will register the driver and exynos_drm won't be
-> able to register the exynos_dsi.
->
-> 2. multi-arch case - if one compiles a kernel (disto-style) with drivers
-> for both supported architectures (exynos and imx) - in such case it will
-> not work on imx, because exynos_drm driver will always register
-> exynos_dsi driver first (even if the kernel is booted on non-exynos board).
+If there are no objections, I'd apply this set to the arm/defconfig
+branch of the soc tree directly.
 
-Okay. I need to check the best way to handle this - so far this seems
-new. any suggestions, please let me know.
+      Arnd
 
-Thanks,
-Jagan.
+Arnd Bergmann (6):
+  ARM: refresh defconfig files
+  ARM: defconfig: remove irda remnants
+  ARM: defconfig: remove stale CONFIG_ZBOOT_ROM entries
+  ARM: defconfig: address renamed CONFIG_DEBUG_INFO=y
+  ARM: defconfig: remove broken CONFIG_THUMB disables
+  ARM: defconfig: kill remnants of CONFIG_LEDS
+
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Taichi Sugaya <sugaya.taichi@socionext.com>
+Cc: Takao Orito <orito.takao@socionext.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Samuel Holland <samuel@sholland.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-aspeed@lists.ozlabs.org
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-oxnas@groups.io
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-sunxi@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
+
+ arch/arm/configs/am200epdkit_defconfig    |  28 ++---
+ arch/arm/configs/aspeed_g4_defconfig      |  17 ++-
+ arch/arm/configs/aspeed_g5_defconfig      |  17 ++-
+ arch/arm/configs/assabet_defconfig        |  19 ++-
+ arch/arm/configs/at91_dt_defconfig        |  10 +-
+ arch/arm/configs/axm55xx_defconfig        |  26 ++--
+ arch/arm/configs/badge4_defconfig         |  17 +--
+ arch/arm/configs/bcm2835_defconfig        |  38 +++---
+ arch/arm/configs/cerfcube_defconfig       |  24 ++--
+ arch/arm/configs/clps711x_defconfig       |   6 +-
+ arch/arm/configs/cm_x300_defconfig        |  28 ++---
+ arch/arm/configs/cns3420vb_defconfig      |  20 ++--
+ arch/arm/configs/colibri_pxa270_defconfig |  41 +++----
+ arch/arm/configs/colibri_pxa300_defconfig |  12 +-
+ arch/arm/configs/collie_defconfig         |  22 ++--
+ arch/arm/configs/corgi_defconfig          |  51 ++++----
+ arch/arm/configs/davinci_all_defconfig    |  28 ++---
+ arch/arm/configs/dove_defconfig           |  32 +++--
+ arch/arm/configs/ep93xx_defconfig         |  18 ++-
+ arch/arm/configs/eseries_pxa_defconfig    |  36 ++----
+ arch/arm/configs/exynos_defconfig         |  24 ++--
+ arch/arm/configs/ezx_defconfig            |  74 ++++++------
+ arch/arm/configs/footbridge_defconfig     |  31 ++---
+ arch/arm/configs/h3600_defconfig          |  16 +--
+ arch/arm/configs/h5000_defconfig          |  20 ++--
+ arch/arm/configs/hackkit_defconfig        |  12 +-
+ arch/arm/configs/hisi_defconfig           |  24 ++--
+ arch/arm/configs/imx_v4_v5_defconfig      |  10 +-
+ arch/arm/configs/imx_v6_v7_defconfig      |   8 +-
+ arch/arm/configs/integrator_defconfig     |   2 +-
+ arch/arm/configs/iop32x_defconfig         |  23 ++--
+ arch/arm/configs/ixp4xx_defconfig         |   1 -
+ arch/arm/configs/jornada720_defconfig     |  16 +--
+ arch/arm/configs/keystone_defconfig       |  64 +++++-----
+ arch/arm/configs/lart_defconfig           |  21 ++--
+ arch/arm/configs/lpc18xx_defconfig        |  16 ++-
+ arch/arm/configs/lpc32xx_defconfig        |  12 +-
+ arch/arm/configs/lpd270_defconfig         |  11 +-
+ arch/arm/configs/lubbock_defconfig        |  21 ++--
+ arch/arm/configs/magician_defconfig       |  41 +++----
+ arch/arm/configs/mainstone_defconfig      |  15 ++-
+ arch/arm/configs/milbeaut_m10v_defconfig  |   6 +-
+ arch/arm/configs/mini2440_defconfig       |   8 +-
+ arch/arm/configs/mmp2_defconfig           |  32 +++--
+ arch/arm/configs/moxart_defconfig         |  20 ++--
+ arch/arm/configs/mps2_defconfig           |  18 ++-
+ arch/arm/configs/multi_v4t_defconfig      |   6 +-
+ arch/arm/configs/multi_v5_defconfig       |  14 +--
+ arch/arm/configs/multi_v7_defconfig       |  62 +++++-----
+ arch/arm/configs/mv78xx0_defconfig        |  36 +++---
+ arch/arm/configs/mvebu_v5_defconfig       |  32 +++--
+ arch/arm/configs/mvebu_v7_defconfig       |   4 +-
+ arch/arm/configs/mxs_defconfig            |   6 +-
+ arch/arm/configs/neponset_defconfig       |  30 ++---
+ arch/arm/configs/netwinder_defconfig      |  18 +--
+ arch/arm/configs/nhk8815_defconfig        |   8 +-
+ arch/arm/configs/omap1_defconfig          |  80 ++++++-------
+ arch/arm/configs/omap2plus_defconfig      |  17 ++-
+ arch/arm/configs/orion5x_defconfig        |  36 +++---
+ arch/arm/configs/oxnas_v6_defconfig       |  14 +--
+ arch/arm/configs/palmz72_defconfig        |  16 ++-
+ arch/arm/configs/pcm027_defconfig         |  24 ++--
+ arch/arm/configs/pleb_defconfig           |   8 +-
+ arch/arm/configs/pxa168_defconfig         |  22 ++--
+ arch/arm/configs/pxa255-idp_defconfig     |  21 ++--
+ arch/arm/configs/pxa3xx_defconfig         |  20 ++--
+ arch/arm/configs/pxa910_defconfig         |  26 ++--
+ arch/arm/configs/pxa_defconfig            | 140 ++++++++++------------
+ arch/arm/configs/qcom_defconfig           |  62 +++++-----
+ arch/arm/configs/realview_defconfig       |   8 +-
+ arch/arm/configs/rpc_defconfig            |  20 ++--
+ arch/arm/configs/s3c2410_defconfig        |  12 +-
+ arch/arm/configs/s3c6400_defconfig        |   4 +-
+ arch/arm/configs/s5pv210_defconfig        |   6 +-
+ arch/arm/configs/sama5_defconfig          |   8 +-
+ arch/arm/configs/sama7_defconfig          |   8 +-
+ arch/arm/configs/shannon_defconfig        |  10 +-
+ arch/arm/configs/simpad_defconfig         |  29 ++---
+ arch/arm/configs/socfpga_defconfig        |   8 +-
+ arch/arm/configs/spear13xx_defconfig      |  18 +--
+ arch/arm/configs/spear3xx_defconfig       |  12 +-
+ arch/arm/configs/spear6xx_defconfig       |  10 +-
+ arch/arm/configs/spitz_defconfig          |  51 ++++----
+ arch/arm/configs/stm32_defconfig          |  18 ++-
+ arch/arm/configs/sunxi_defconfig          |   2 +-
+ arch/arm/configs/tct_hammer_defconfig     |  14 +--
+ arch/arm/configs/tegra_defconfig          |  20 ++--
+ arch/arm/configs/trizeps4_defconfig       |  66 +++++-----
+ arch/arm/configs/u8500_defconfig          |   2 +-
+ arch/arm/configs/versatile_defconfig      |   4 +-
+ arch/arm/configs/vexpress_defconfig       |   8 +-
+ arch/arm/configs/vf610m4_defconfig        |   2 +-
+ arch/arm/configs/viper_defconfig          |  30 +++--
+ arch/arm/configs/vt8500_v6_v7_defconfig   |   2 +-
+ arch/arm/configs/xcep_defconfig           |  32 +++--
+ arch/arm/configs/zeus_defconfig           |  28 ++---
+ arch/arm64/configs/defconfig              |   2 +-
+ arch/sh/configs/ecovec24_defconfig        |   2 -
+ 100 files changed, 989 insertions(+), 1189 deletions(-)
+
+-- 
+2.29.2
+
