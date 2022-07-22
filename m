@@ -2,196 +2,223 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BCCCCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jul 2022 15:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B68C43334
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jul 2022 15:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235767AbiGVPM5 (ORCPT
+        id S229771AbiGVPfN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 Jul 2022 11:12:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59806 "EHLO
+        Fri, 22 Jul 2022 11:35:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235703AbiGVPMr (ORCPT
+        with ESMTP id S229778AbiGVPfM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 Jul 2022 11:12:47 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D60119C279;
-        Fri, 22 Jul 2022 08:12:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2B8C2B827C3;
-        Fri, 22 Jul 2022 15:12:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E56C341C6;
-        Fri, 22 Jul 2022 15:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658502762;
-        bh=QNDA1Wl/P9Tdabb9er+hcjmLg+ZWPQYKQjQn31syPZs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TOvvu0qlyhr+tmgrzFarODSHy2nmwd/vZkaOfw7UOlCrWttzwGKU19rg8AV7A8T7i
-         IfjgWg0t2g4Ij3/wDGk0CzmXgSTPXgE3n1u2iwGUjmleTogf4uINMSXjxmVGVqzSDf
-         NdnzljfzlPJdmijyVLMwEzZZ53euLLK3T+7lg1++pTTDKLDbOWkoP2Kq2RUZ3s84P6
-         FBICts7HV/wapVFQ1AVuS+EXg97CVEyaQ8kbfAxQREHvjUc07BdPWl0gXMD41NG9LD
-         308lnEB6RcxuafVaPDXSt3EJNt5k6THt96Bq2WKrP+Lj0X4kKIL9pRDDVTaN2puF9b
-         HBK7vSUuswD+Q==
-Message-ID: <8430301c-3682-fde0-4bf3-033450563be3@kernel.org>
-Date:   Fri, 22 Jul 2022 10:12:34 -0500
+        Fri, 22 Jul 2022 11:35:12 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7DAC11A37
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2022 08:35:09 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220722153503euoutp029b4922487ae6b59035acbf2547030171~EMLIFKiWI2670826708euoutp02N
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2022 15:35:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220722153503euoutp029b4922487ae6b59035acbf2547030171~EMLIFKiWI2670826708euoutp02N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1658504103;
+        bh=8iUWnppJCV9cxi73ncqkunMv5J6/UqB70bb8lGw2n3k=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=KzUpsuuehVYC5r/VzK8Dm3um+qUqCGBgAsg8ziuvehxIGgApxKDJ9tC4S3AxUa1GF
+         PNw3N4OpCf27oofg2/8nDCKqdA0GbygmsG5dEWRaN0ro6zgvU2r+Y6LYBXvEDl1qk9
+         OfepIKw1XHMes5z412CkwPJIojIqn8O+Qr7jKJ4k=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220722153503eucas1p29ef9a4a71db3286ba7fa795137935b6f~EMLHmFIgr0537105371eucas1p2q;
+        Fri, 22 Jul 2022 15:35:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5A.8C.09580.7A3CAD26; Fri, 22
+        Jul 2022 16:35:03 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220722153502eucas1p2f821f4ed624695d0880e3f663ad05184~EMLHJPJVn0836008360eucas1p2B;
+        Fri, 22 Jul 2022 15:35:02 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220722153502eusmtrp2fadd49a2a85be0ee3bc075eb306e7a33~EMLG3Vbxn3191631916eusmtrp27;
+        Fri, 22 Jul 2022 15:35:02 +0000 (GMT)
+X-AuditID: cbfec7f5-9adff7000000256c-d9-62dac3a70336
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 07.25.09095.6A3CAD26; Fri, 22
+        Jul 2022 16:35:02 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220722153501eusmtip268ac35be11a31049a22881b1d390a26d~EMLFx2cKh0570605706eusmtip2Z;
+        Fri, 22 Jul 2022 15:35:01 +0000 (GMT)
+Message-ID: <8598bc48-ab5d-92fe-076a-c1e6ca74fccd@samsung.com>
+Date:   Fri, 22 Jul 2022 17:35:01 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 1/6] ARM: refresh defconfig files
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH v3 06/13] drm: bridge: samsung-dsim: Add DSI init in
+ bridge pre_enable()
 Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+To:     Jagan Teki <jagan@amarulasolutions.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-oxnas@groups.io, linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-sh@vger.kernel.org
-References: <20220721141325.2413920-1-arnd@kernel.org>
- <20220721141325.2413920-2-arnd@kernel.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20220721141325.2413920-2-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>
+Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220720155210.365977-7-jagan@amarulasolutions.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxbVRje6f1o6Va8dB+cIMps3CKL6yDsx0k26dgQb/wjRBcUdWtXLqwK
+        FHth3yrbAhsVCasTS7ewzpaUkQEWkG2GAMOuMAkFjFYEulI+EhirCC2KkA4plyn/nvd5n+d9
+        3vfkCDCxnowQqHLyGE2OIktCCvFm+z+9uy0/Dh6LGfGJ0fBQN4bcJh+OpoeqSfTL/AyJvqxy
+        EEjnLsORv6GMRJOP+nHUc+EJHxVfMfORpayVRA1jTgJpF29hSN/bykNPis4D1D1aj6Gfzhfi
+        qKP0fTRn8Kw0v5oiUX/XHIb+XurBDmyja2fdBD0zUMinKw1dOH21y0bQjhIXSd8zuPj0tcsV
+        BG1qmeLRtl9NBD3sbCFp9xedPLrR/Dlt/eMujy5tqgG0r+HF5OfShPvTmSzVCUazJ14uPG5r
+        GiNy+7eeqnFdAwXAEqYFIQJI7YVLXiehBUKBmKoGsM7uWyv8ALZZdIArfABanBeIZ5a2wEWc
+        a1gA1AXq1iyzAD5oneMHVSIqHhrbjWQQ49QO6GkeITk+DD6sGMeDeCulhHcWL61O3Uwdgf6Z
+        kVUeo8Lh4PgNXnDoFqqegN7xq6t7YMGEkgUPFlSRVCzUerWrU0OoBHhj2k1w7ih4x3sd43b9
+        WgiL/3qFw4mwsmmC5PBm+Lizic/hSLh8L5gmWMFqGNDHcfQp6Jy+vTZmHxx2LJJBCUZFw/of
+        9nB0ArRr/STnDIUD3jBugVCoa/4G42gRvFwk5tQ7oaGz7r/M+30/Y2VAYlj3KIZ1xxvWnWL4
+        P9cI8BoQzuSz2ZkMG5fDnJSyimw2PydTqlRnN4CVz9v9tHP+Lqh+PCvtADwB6ABQgEm2iCY+
+        +e2YWJSuOH2G0aiPavKzGLYDPC/AJeEipeo7hZjKVOQxHzNMLqN51uUJQiIKePyU4qQU76tF
+        ITbRkdtzoLNng3lp4+vJm/buGvLH8z0nTTFx0j6Z8qPJJNc7yW++cO4s7FL0DTRXVRXuTn1N
+        p4oYLRy9OFkgwc0Z0vmKiaaDQ+/aTz+4Wa7rkpsWXI0bX4pPra38s9T6sJxayGi/lVVr3a63
+        DR8+IdHp03zXWTZyW5TqDbauj1TbA4+mXo4+ajXtM15Simz4WJ5nga6JSg+YbzpKvle6KgwK
+        Z9KY2Lkj7dvoyAOzmzLeloW2L/Xm7nyvUpYvsSbKPtw/Xy4XnflAtpzQok48fOXgobfMhz6T
+        y1PkgzHL98/9Lt2w3RH61FjaO5LZ2PapKV98dibWnCrB2eOK2F2YhlX8CwIqwHorBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsVy+t/xe7rLDt9KMlh+X9bizu3TzBb3F39m
+        sXh9ewWbxZWv79ksepeeY7WYdH8Ci8WXTRPYLF7cu8hicbbpDbtF58Ql7BbLJ+xjs9j0+Bqr
+        RdevlcwWM87vY7J409bIaHH60Xpmi1ONrSwWh/qiLT7NegiUnPySzeLiiU/MFt9/n2V2EPNY
+        +/E+q8f7G63sHvNmnWDxmHLiCKvHuZ67bB47Z91l95jdMZPVY/Gel0weR64uZvW4c20Pm8f9
+        7uNMHpuX1HtsfLeDyaNvyypGj8+b5AL4o/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyN
+        zWOtjEyV9O1sUlJzMstSi/TtEvQyjmx5zFpwUbRi1d3ZjA2MywW7GDk5JARMJPb/bWbpYuTi
+        EBJYyiixrO8aM0RCRuLktAZWCFtY4s+1LjaIoveMEguergNL8ArYSSw4sIANxGYRUJV4uO0B
+        G0RcUOLkzCcsILaoQLJEy/8+sLiwQJzEl/cPwOLMAuISt57MZwIZKiKwlVXi1bZ1YBuYBT4y
+        SlyavIUdYt1pRolbrVPBWtgEDCW63naBjeIUcJSY//o+K8QoM4murV2MELa8xPa3c5gnMArN
+        QnLJLCQbZyFpmYWkZQEjyypGkdTS4tz03GJDveLE3OLSvHS95PzcTYzAhLPt2M/NOxjnvfqo
+        d4iRiYPxEKMEB7OSCO/TwutJQrwpiZVVqUX58UWlOanFhxhNgcExkVlKNDkfmPLySuINzQxM
+        DU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqY3I9uEDv8sZDlRcW333bHxHfz
+        2HfPCPcIrmNm6Zsj3Psj4eee4ORT8SZZ3hfaG0yWXNjJbFgSVXCxmdlN797NytrdE05rcZ7a
+        mHnq5q6ZVYp27U+WSAnP+D+rw2FaV4v7PrnQWtYX5gbKkSmcW5oO8vTKL2bYlKfTx8g6YbfM
+        v00S17IOuyx5lZzE3HlV4/2SYxsvrznCKplkNpXRlbFFfMsX/8rV9g6GdxWmbp1UefN0Z3Ry
+        YpnpdpXNretmTTrzyfk7f+GMvqz3t/z2feaf9GFKKc/igozfPD6rFpVvCzk2weXuz+OVE/q/
+        /ri4XSRMdeXZ1Zc1Hz89e3QGT4bD1zmPjmzcay2adHSLm/nhXUosxRmJhlrMRcWJABk4Y1HB
+        AwAA
+X-CMS-MailID: 20220722153502eucas1p2f821f4ed624695d0880e3f663ad05184
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220720155316eucas1p2ab58c67670ef8f30f0827fdbe5c41ef2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220720155316eucas1p2ab58c67670ef8f30f0827fdbe5c41ef2
+References: <20220720155210.365977-1-jagan@amarulasolutions.com>
+        <CGME20220720155316eucas1p2ab58c67670ef8f30f0827fdbe5c41ef2@eucas1p2.samsung.com>
+        <20220720155210.365977-7-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On 20.07.2022 17:52, Jagan Teki wrote:
+> Host transfer() in DSI master will invoke only when the DSI commands
+> are sent from DSI devices like DSI Panel or DSI bridges and this
+> host transfer wouldn't invoke for I2C-based-DSI bridge drivers.
+>
+> Handling DSI host initialization in transfer calls misses the
+> controller setup for I2C configured DSI bridges.
+>
+> This patch adds the DSI initialization from transfer to bridge
+> pre_enable as the bridge pre_enable API is invoked by core as
+> it is common across all classes of DSI device drivers.
+
+This is still problematic in case of Exynos. Without a workaround like this
+
+https://github.com/mszyprow/linux/commit/11bbfc61272da9610dd5c574bb8ef838dc150961
+
+the display on the all real DSI panels on my Exynos based boards is broken.
 
 
-On 7/21/22 09:13, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A lot of Kconfig options have changed over the years, and we tend
-> to not do a blind 'make defconfig' to refresh the files, to ensure
-> we catch options that should not have gone away.
-> 
-> I used some a bit of scripting to only rework the bits where an
-> option moved around in any of the defconfig files, without also
-> dropping any of the other lines, to make it clearer which options
-> we no longer have.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> v3:
+> * none
+>
+> v2:
+> * check initialized state in samsung_dsim_init
+>
+> v1:
+> * keep DSI init in host transfer
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->   arch/arm/configs/am200epdkit_defconfig    |  26 ++---
->   arch/arm/configs/aspeed_g4_defconfig      |  16 +--
->   arch/arm/configs/aspeed_g5_defconfig      |  16 +--
->   arch/arm/configs/assabet_defconfig        |   8 +-
->   arch/arm/configs/at91_dt_defconfig        |  10 +-
->   arch/arm/configs/axm55xx_defconfig        |  22 ++--
->   arch/arm/configs/badge4_defconfig         |   8 +-
->   arch/arm/configs/bcm2835_defconfig        |  36 +++----
->   arch/arm/configs/cerfcube_defconfig       |  16 +--
->   arch/arm/configs/clps711x_defconfig       |   2 +-
->   arch/arm/configs/cm_x300_defconfig        |  26 ++---
->   arch/arm/configs/cns3420vb_defconfig      |  18 ++--
->   arch/arm/configs/colibri_pxa270_defconfig |  32 +++---
->   arch/arm/configs/colibri_pxa300_defconfig |  10 +-
->   arch/arm/configs/collie_defconfig         |  20 ++--
->   arch/arm/configs/corgi_defconfig          |  44 ++++----
->   arch/arm/configs/davinci_all_defconfig    |  26 ++---
->   arch/arm/configs/dove_defconfig           |  28 ++---
->   arch/arm/configs/ep93xx_defconfig         |  16 +--
->   arch/arm/configs/eseries_pxa_defconfig    |  26 ++---
->   arch/arm/configs/exynos_defconfig         |  20 ++--
->   arch/arm/configs/ezx_defconfig            |  72 ++++++-------
->   arch/arm/configs/footbridge_defconfig     |  14 +--
->   arch/arm/configs/h3600_defconfig          |  10 +-
->   arch/arm/configs/h5000_defconfig          |  18 ++--
->   arch/arm/configs/hackkit_defconfig        |   4 +-
->   arch/arm/configs/hisi_defconfig           |  24 ++---
->   arch/arm/configs/imx_v4_v5_defconfig      |   8 +-
->   arch/arm/configs/imx_v6_v7_defconfig      |   8 +-
->   arch/arm/configs/integrator_defconfig     |   2 +-
->   arch/arm/configs/iop32x_defconfig         |  20 ++--
->   arch/arm/configs/jornada720_defconfig     |  10 +-
->   arch/arm/configs/keystone_defconfig       |  62 +++++------
->   arch/arm/configs/lart_defconfig           |   6 +-
->   arch/arm/configs/lpc18xx_defconfig        |  12 +--
->   arch/arm/configs/lpc32xx_defconfig        |   8 +-
->   arch/arm/configs/lpd270_defconfig         |   6 +-
->   arch/arm/configs/lubbock_defconfig        |  10 +-
->   arch/arm/configs/magician_defconfig       |  30 +++---
->   arch/arm/configs/mainstone_defconfig      |   4 +-
->   arch/arm/configs/milbeaut_m10v_defconfig  |   6 +-
->   arch/arm/configs/mini2440_defconfig       |   6 +-
->   arch/arm/configs/mmp2_defconfig           |  28 ++---
->   arch/arm/configs/moxart_defconfig         |  18 ++--
->   arch/arm/configs/mps2_defconfig           |  14 +--
->   arch/arm/configs/multi_v4t_defconfig      |   4 +-
->   arch/arm/configs/multi_v5_defconfig       |  12 +--
->   arch/arm/configs/multi_v7_defconfig       |  62 +++++------
->   arch/arm/configs/mv78xx0_defconfig        |  32 +++---
->   arch/arm/configs/mvebu_v5_defconfig       |  28 ++---
->   arch/arm/configs/mvebu_v7_defconfig       |   2 +-
->   arch/arm/configs/mxs_defconfig            |   4 +-
->   arch/arm/configs/neponset_defconfig       |  24 ++---
->   arch/arm/configs/netwinder_defconfig      |  10 +-
->   arch/arm/configs/nhk8815_defconfig        |   6 +-
->   arch/arm/configs/omap1_defconfig          |  74 ++++++-------
->   arch/arm/configs/omap2plus_defconfig      |  16 +--
->   arch/arm/configs/orion5x_defconfig        |  32 +++---
->   arch/arm/configs/oxnas_v6_defconfig       |  14 +--
->   arch/arm/configs/palmz72_defconfig        |  14 +--
->   arch/arm/configs/pcm027_defconfig         |  22 ++--
->   arch/arm/configs/pleb_defconfig           |   6 +-
->   arch/arm/configs/pxa168_defconfig         |  18 ++--
->   arch/arm/configs/pxa255-idp_defconfig     |  10 +-
->   arch/arm/configs/pxa3xx_defconfig         |  18 ++--
->   arch/arm/configs/pxa910_defconfig         |  22 ++--
->   arch/arm/configs/pxa_defconfig            | 126 +++++++++++-----------
->   arch/arm/configs/qcom_defconfig           |  60 +++++------
->   arch/arm/configs/realview_defconfig       |   8 +-
->   arch/arm/configs/rpc_defconfig            |  18 ++--
->   arch/arm/configs/s3c2410_defconfig        |   8 +-
->   arch/arm/configs/s3c6400_defconfig        |   2 +-
->   arch/arm/configs/s5pv210_defconfig        |   4 +-
->   arch/arm/configs/sama5_defconfig          |   8 +-
->   arch/arm/configs/sama7_defconfig          |   8 +-
->   arch/arm/configs/shannon_defconfig        |   8 +-
->   arch/arm/configs/simpad_defconfig         |  18 ++--
->   arch/arm/configs/socfpga_defconfig        |   4 +-
+>   drivers/gpu/drm/bridge/samsung-dsim.c | 18 ++++++++++++------
+>   1 file changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+> index 9b74a3f98a17..b07909a52f2d 100644
+> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
+> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+> @@ -1258,6 +1258,9 @@ static int samsung_dsim_init(struct samsung_dsim *dsi)
+>   {
+>   	const struct samsung_dsim_driver_data *driver_data = dsi->driver_data;
+>   
+> +	if (dsi->state & DSIM_STATE_INITIALIZED)
+> +		return 0;
+> +
+>   	samsung_dsim_reset(dsi);
+>   	samsung_dsim_enable_irq(dsi);
+>   
+> @@ -1270,6 +1273,8 @@ static int samsung_dsim_init(struct samsung_dsim *dsi)
+>   	samsung_dsim_set_phy_ctrl(dsi);
+>   	samsung_dsim_init_link(dsi);
+>   
+> +	dsi->state |= DSIM_STATE_INITIALIZED;
+> +
+>   	return 0;
+>   }
+>   
+> @@ -1289,6 +1294,10 @@ static void samsung_dsim_atomic_pre_enable(struct drm_bridge *bridge,
+>   	}
+>   
+>   	dsi->state |= DSIM_STATE_ENABLED;
+> +
+> +	ret = samsung_dsim_init(dsi);
+> +	if (ret)
+> +		return;
+>   }
+>   
+>   static void samsung_dsim_atomic_enable(struct drm_bridge *bridge,
+> @@ -1464,12 +1473,9 @@ static ssize_t samsung_dsim_host_transfer(struct mipi_dsi_host *host,
+>   	if (!(dsi->state & DSIM_STATE_ENABLED))
+>   		return -EINVAL;
+>   
+> -	if (!(dsi->state & DSIM_STATE_INITIALIZED)) {
+> -		ret = samsung_dsim_init(dsi);
+> -		if (ret)
+> -			return ret;
+> -		dsi->state |= DSIM_STATE_INITIALIZED;
+> -	}
+> +	ret = samsung_dsim_init(dsi);
+> +	if (ret)
+> +		return ret;
+>   
+>   	ret = mipi_dsi_create_packet(&xfer.packet, msg);
+>   	if (ret < 0)
 
-for socfpga
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
