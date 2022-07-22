@@ -2,139 +2,109 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE57CCA473
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jul 2022 17:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64FDC433EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 Jul 2022 17:33:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236031AbiGVRRY (ORCPT
+        id S236013AbiGVRdB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 Jul 2022 13:17:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39510 "EHLO
+        Fri, 22 Jul 2022 13:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235870AbiGVRRW (ORCPT
+        with ESMTP id S235960AbiGVRdA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 Jul 2022 13:17:22 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6BA12251B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:17:20 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id z25so8706517lfr.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:17:20 -0700 (PDT)
+        Fri, 22 Jul 2022 13:33:00 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C139CE2D
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:32:59 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id m9so6205594ljp.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jul 2022 10:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=kKlkNDy7IkULxlqR/cm5H8XjRPA1VC1UXnLKGJxFlME=;
-        b=kBc+EnEOjMvGg2ZacnNtByBS5zqpdyDA3715FeJnzHEz8i7uQ3YazW37ESeq6Bt/Xs
-         xfZxUKs2P9eMWf6y8K6/VFe7VOybuL/G6VLN3AIKAgqfVnwnDcWIaWqMeBD90b1cHJEm
-         CrGy0+PfYoICbO7lBsY1q6kAKWV6HYUaZI6Pxj9bQK+3VRbuFAmNR6timpbiAbfNAD1h
-         RgrdIYtHkCLgg+QKCKOKx3J8mbJQ8vlMXmwgS5nuRcsGKH/WiePo8hsKWsIvPjTXvgG5
-         74rE/woUGUEcCuZI9zWfuFtnmKLvL6vpUJWmdAEsEulykLv048QBWoQr4lEKzl+ShQ0H
-         hidA==
+        bh=l48XYpfyFIQhz2kXp9OwdWKvu7j6Lw8BsI/XJ/Jv9Po=;
+        b=Yk8lVGLY7UCYYTPZkrBXuwqCPqgSGUB4wvwBVUo+bNNOQiSFpx7HDPJYr6J4QGDG6+
+         sKp0mkuIkGL45Y8mUjqaQzGVH7zR++z0HRsaE847EuN/Hy6PstJjb075COS8SmNCG9zy
+         edunZhxF2J1mZdTOXIugyaegeKHTygAX0xkd02zu+Ht6VFQve4x0kKgMdQht5KvjHkzD
+         Ol49eotMYOU/cDncMdWegvo0Y8f2ErI9Ya/sjDdnv/q4aVq87l2+/a5sTFbWv96HDy38
+         33LqDqvG9bl5RCtZCqd3ftCnFuyGA4ExsS27vDrlGYtS4IAWwzUiqPOOtvtkltH/eob1
+         skVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=kKlkNDy7IkULxlqR/cm5H8XjRPA1VC1UXnLKGJxFlME=;
-        b=jjdV0QLE0JYHOejM2Ul8NzBW9dRSxOODPlaueCFdZWODOzNMAGlpyBPTvTwVWDOtsW
-         nECANu6/I1aPHfWqJJA/LV2yI2xExmFm8xy3WIcTwEi6VdNYEh1tHIDPM2sww61B2Brs
-         ieJjhPrody3u5VwxF155kmstlSvEmasm1KFTCNs5REo+9WTe+erN3IlwHZVjQr2oFJN4
-         QrwMbVv0nzzcgjULYeRSrd98dqWPcNCPW1eZDT1opwUoNy+A3Ld5by9n7mKZU7HUyf9l
-         iDd1gTjberQK4fETCfDvn032jiSByQttXi6hjdxMm2vFqv7MnoNEe5g0+aYauMOgMeSa
-         5N2w==
-X-Gm-Message-State: AJIora+GaIAnByVa//R3DuRKdbX+1p0tPouoV0+ZILEaojsulZnERAHr
-        IpWCgK5RbNvJHsspy/bZ4Oo7ug==
-X-Google-Smtp-Source: AGRyM1tCkKIh7mn6CioEd8be2QKiJ6B5weamVHcEf6LV7UC4qd+9bgwV6JWvuVCeXL6DaArFJ0VqEA==
-X-Received: by 2002:a05:6512:b84:b0:48a:7d72:407c with SMTP id b4-20020a0565120b8400b0048a7d72407cmr183405lfv.537.1658510238975;
-        Fri, 22 Jul 2022 10:17:18 -0700 (PDT)
+        bh=l48XYpfyFIQhz2kXp9OwdWKvu7j6Lw8BsI/XJ/Jv9Po=;
+        b=Mk5Auuu8atwJu6dSyzweaErRCUR1R3Q59poF5GAdc3Q86/IhCTVZUnLMWt0+UP1III
+         n7v9PMSLgxikEKe4mLApxxdCJ6stl3aPvUCgbYh8VHXf1EAttpjNAc0Gx5BuZbfSKQvq
+         nyPFaxN7ljR4SuUC8o9fZU0CqG/rrwessm0MkUnMLjUMbgzlC550ktgCPAS7/puu6OZa
+         OJKRmh0hhNAD6nDp9g/DOdp225OSUu6hZXRcU9mhXkPACXofYSff/CVV3GrfAZMNTEDr
+         oLIfWwkPRXkFmqUaJGImt8myJPQIFyZ9HV2GB/W9W8+0ssLGjT4zXgRzxdRGDy50MVST
+         Hpxw==
+X-Gm-Message-State: AJIora+4R05ZMj8uSO1Pn5qj3w6y22Q7gKtnM3y9t+A+MvqTxoHn8Xmi
+        6kkmnKMsR05oRrfKa+VYANvrybzJl2+nXQ3I
+X-Google-Smtp-Source: AGRyM1tFjTdGZO6apyoZWyqR7lEhDKJTi9zVNsh1r+H7/YyqRX239MTwEIiGl2W+UPY+SmwYx7Oqfw==
+X-Received: by 2002:a2e:8004:0:b0:25d:80c0:1e93 with SMTP id j4-20020a2e8004000000b0025d80c01e93mr380410ljg.210.1658511177697;
+        Fri, 22 Jul 2022 10:32:57 -0700 (PDT)
 Received: from [192.168.10.173] (93.81-167-86.customer.lyse.net. [81.167.86.93])
-        by smtp.gmail.com with ESMTPSA id e6-20020a05651236c600b0048a72437127sm962811lfs.42.2022.07.22.10.17.15
+        by smtp.gmail.com with ESMTPSA id n7-20020a05651203e700b00485e55192a3sm1159175lfq.72.2022.07.22.10.32.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Jul 2022 10:17:18 -0700 (PDT)
-Message-ID: <3c3bccc2-786f-45f2-fe30-3e0c9f95da63@linaro.org>
-Date:   Fri, 22 Jul 2022 19:17:15 +0200
+        Fri, 22 Jul 2022 10:32:57 -0700 (PDT)
+Message-ID: <454232b3-2f98-c3ca-4661-5e9eb51998b6@linaro.org>
+Date:   Fri, 22 Jul 2022 19:32:54 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH 4/6] ARM: defconfig: address renamed CONFIG_DEBUG_INFO=y
+Subject: Re: [PATCH v2] dt-bindings: phy: samsung,ufs-phy: match clock items
 Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>, linux-oxnas@groups.io,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-sunxi@lists.linux.dev,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-References: <20220721141325.2413920-1-arnd@kernel.org>
- <20220721141325.2413920-5-arnd@kernel.org>
- <e83c98f9-f32a-6bfd-71b6-9aba22aa7abb@linaro.org>
- <CAK8P3a0yc_iZ1dqbReckvune6KszCPvysCX9okYoaU-by+YRhQ@mail.gmail.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>,
+        'Rob Herring' <robh+dt@kernel.org>
+Cc:     'Alim Akhtar' <alim.akhtar@samsung.com>,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <CGME20220707063058epcas2p19364a05a5b2fc8aad81fa390ac030f21@epcas2p1.samsung.com>
+ <20220707062807.135960-1-chanho61.park@samsung.com>
+ <4e8a36de-a631-f6c9-44d7-7d873f775db2@linaro.org>
+ <001b01d89d69$37d80320$a7880960$@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAK8P3a0yc_iZ1dqbReckvune6KszCPvysCX9okYoaU-by+YRhQ@mail.gmail.com>
+In-Reply-To: <001b01d89d69$37d80320$a7880960$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 21/07/2022 22:43, Arnd Bergmann wrote:
-
-> I'd rather keep them together: while removing the DEBUG_INFO is
-> now a NOP, keeping the two changes together explains much better
-> why this is done and is atomically needed based on the single patch
-> that caused the change.
+On 22/07/2022 03:20, Chanho Park wrote:
+>> Subject: Re: [PATCH v2] dt-bindings: phy: samsung,ufs-phy: match clock
+>> items
+>>
+>> On 07/07/2022 08:28, Chanho Park wrote:
+>>> Below error is detected from dtbs_check. exynos7-ufs-phy is required
+>>> symbol clocks otherwise only PLL ref clock is required.
+>>>
+>>> clock-names: ['ref_clk'] is too short
+>>>
+>>> Reported-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Suggested-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+>>
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> It's the same with the LEDS patch that replaces the CONFIG_LEDS
-> option with CONFIG_NEW_LEDS.
+> Hi Krzysztof,
+> 
+> No one takes this patch. Could you please pick this patch in your tree?
+> Thanks.
 
-OK,
+You did not send it to PHY maintainers... The bindings go via subsystem
+maintainers.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If Vinod doesn't want it, I could take it, but he never had a chance to
+say :)
 
+Please resend.
 
 Best regards,
 Krzysztof
