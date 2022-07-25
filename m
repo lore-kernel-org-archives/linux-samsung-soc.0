@@ -2,89 +2,189 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F0BC433EF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Jul 2022 07:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1BACCA48E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 Jul 2022 21:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbiGYHg6 (ORCPT
+        id S237471AbiGYVaI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Jul 2022 03:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
+        Mon, 25 Jul 2022 17:30:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbiGYHg5 (ORCPT
+        with ESMTP id S237537AbiGYV3S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Jul 2022 03:36:57 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36DA812091;
-        Mon, 25 Jul 2022 00:36:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7695CB80D81;
-        Mon, 25 Jul 2022 07:36:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283CEC341C6;
-        Mon, 25 Jul 2022 07:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658734613;
-        bh=LUiMLAhA+OjPnzur2BcOAHYRJpUgPwPJevN7YbYoXG8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UssAoRr2irhYEnKwR1jy9cAG6tz6GVQQNmEU4WpmgaCnzpRupWp213/TKp5sgXPxW
-         f4FJqxs8C0bLuuyupi2rq7qmvnsiHwzs4pMXhF2GlY1RpYxsFfy+qfyALuf0ldeLci
-         pJdoRH6sk7rRFo9c9Itb//58M3cMjOlEsWZoDe7siGpHYJNzoFjQY2j2YQBgV92qiW
-         PTRAzFYecjITUELPVxv+025MDiMDYCsRK3CqAO2potzLcpKTwlBmSqeRYm88xVC34W
-         bJiNGuqOjhC8vB9+/jf+DxjVhaxzEku51iUBR1l7u0xpmu+rv7wO1UrrJrDxqSOITI
-         N6qLrUFDEqr2w==
-Date:   Mon, 25 Jul 2022 13:06:48 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Chanho Park <chanho61.park@samsung.com>
-Cc:     'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
-        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Alim Akhtar' <alim.akhtar@samsung.com>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] dt-bindings: phy: samsung,ufs-phy: match clock items
-Message-ID: <Yt5IEHK9OsRZDGi1@matsya>
-References: <CGME20220707063058epcas2p19364a05a5b2fc8aad81fa390ac030f21@epcas2p1.samsung.com>
- <20220707062807.135960-1-chanho61.park@samsung.com>
- <4e8a36de-a631-f6c9-44d7-7d873f775db2@linaro.org>
- <001b01d89d69$37d80320$a7880960$@samsung.com>
- <454232b3-2f98-c3ca-4661-5e9eb51998b6@linaro.org>
- <000001d89fb9$4ee00520$eca00f60$@samsung.com>
+        Mon, 25 Jul 2022 17:29:18 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB34F255A7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2022 14:28:08 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id b6so7614231wmq.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2022 14:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linexp-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5ySF+b0toG9yTVS3ACVkkX+IpUHvtJQ/EOrRyNhrRXg=;
+        b=s6z7yoSV0rekPzE4RDgRa5y5JvTAMcHuEGlvc5yE01gfsHE/h+bkbXvzMdz4cv830a
+         Yfd8XaLjC5vFDocgKRQ2ft27kY3GJj0TmnODwt2nEtVTEnAvOT5B9NDyjXG+U9wBTsEQ
+         xYyNbPfWhrJlsQo2v9XeM3TZggY9EjSovtTF9kKqARweT1hvK4gU7f0Za9ZD5hFJ1qzP
+         knYiTCcn+JyO8aHU/I2WFS7vDmh3GlpIWRMrYnz8rwouDDnAdwEYTEZs+hBFTOX+jjHP
+         cn2MHZn5jEZ34FBOmrQh0LS7uARU/9FuQj0tN3Yd5TEMCIXkzZv8McogKvYj7dH/TShu
+         Dg0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5ySF+b0toG9yTVS3ACVkkX+IpUHvtJQ/EOrRyNhrRXg=;
+        b=4ldFzRuKWzogczTIBygWYXIzaxeNMQ2bGE5djjYHdeocTE8D6f6bg8aCsER5VTP5WS
+         LFTr0S3bgNA+XSDQGNdXJXIoH5RYgbXcFbRdu53xeyYuHopKwhl/XS/XfkkeRuRvOCKA
+         Sph341i8bTOI9vvYpuCDocYMxBxzkeWOTuVRwzJ3qX577lIC507rr1cjSfFP6uc9GZHX
+         LqH8e/+0DTL5cyZ1gH09c7JS086Mhqx1Fcj5M3D3GF3Dbbnu5Hg4Yma3bTb8KcxoKwae
+         +NG7KU9fLSy5xBdp0Rsiy8IUZQEQ5Fv5/O5IFW6Izec3wN/dhn/V8p+QoGct8LMxJWGe
+         9EhQ==
+X-Gm-Message-State: AJIora+50QzwAKzlEeZqXd+AwO94zjLRApV/fS49hI+wOpxQZ3pfwYCo
+        lLtLEnWLGVPTb06D56VVXgmYSw==
+X-Google-Smtp-Source: AGRyM1t7vq2vDZZFgYRcdteW9NvkgZMxCdv/oe6Ppug+VrhMCGytQcJClM5w0E1gbcjuWx6jpaQxEw==
+X-Received: by 2002:a1c:2783:0:b0:3a2:fd82:bf46 with SMTP id n125-20020a1c2783000000b003a2fd82bf46mr22261412wmn.29.1658784488465;
+        Mon, 25 Jul 2022 14:28:08 -0700 (PDT)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:1780:8e54:dd38:6668])
+        by smtp.gmail.com with ESMTPSA id r17-20020a5d52d1000000b0021d68a504cbsm12668772wrv.94.2022.07.25.14.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jul 2022 14:28:08 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linexp.org>
+To:     daniel.lezcano@linaro.org, rafael@kernel.org
+Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com,
+        abailon@baylibre.com, lukasz.luba@arm.com, broonie@kernel.org,
+        damien.lemoal@opensource.wdc.com, heiko@sntech.de,
+        hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+        talel@amazon.com, thierry.reding@gmail.com, digetx@gmail.com,
+        jonathanh@nvidia.com, anarsoul@gmail.com, tiny.windzz@gmail.com,
+        baolin.wang7@gmail.com, f.fainelli@gmail.com,
+        bjorn.andersson@linaro.org, mcoquelin.stm32@gmail.com,
+        glaroque@baylibre.com, miquel.raynal@bootlin.com,
+        shawnguo@kernel.org, niklas.soderlund@ragnatech.se,
+        matthias.bgg@gmail.com, j-keerthy@ti.com,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
+        S5P AND EXYNOS ARM ARCHITECTURES)
+Subject: [PATCH v2 30/32] thermal/drivers/samsung: Switch to new of thermal API
+Date:   Mon, 25 Jul 2022 23:26:35 +0200
+Message-Id: <20220725212637.2818207-31-daniel.lezcano@linexp.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220725212637.2818207-1-daniel.lezcano@linexp.org>
+References: <20220725212637.2818207-1-daniel.lezcano@linexp.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000001d89fb9$4ee00520$eca00f60$@samsung.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25-07-22, 08:58, Chanho Park wrote:
-> > >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > >
-> > > Hi Krzysztof,
-> > >
-> > > No one takes this patch. Could you please pick this patch in your tree?
-> > > Thanks.
-> > 
-> > You did not send it to PHY maintainers... The bindings go via subsystem
-> > maintainers.
-> > 
-> > If Vinod doesn't want it, I could take it, but he never had a chance to
-> > say :)
-> > 
-> > Please resend.
-> 
-> Oh, maybe I missed him due to not showing from get_maintainer.pl script.
+The thermal OF code has a new API allowing to migrate the OF
+initialization to a simpler approach. The ops are no longer device
+tree specific and are the generic ones provided by the core code.
 
-./scripts/get_maintainer.pl Documentation/devicetree/bindings/phy/
-Kishon Vijay Abraham I <kishon@ti.com> (supporter:GENERIC PHY FRAMEWORK)
-Vinod Koul <vkoul@kernel.org> (supporter:GENERIC PHY FRAMEWORK)
+Convert the ops to the thermal_zone_device_ops format and use the new
+API to register the thermal zone with these generic ops.
 
-:-|
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linexp.org>
+---
+ drivers/thermal/samsung/exynos_tmu.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-> I'll resend this.
-
-Pls do..
-
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index f4ab4c5b4b62..5b1a8a1e193d 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -650,9 +650,9 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+ 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
+ }
+ 
+-static int exynos_get_temp(void *p, int *temp)
++static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
+ {
+-	struct exynos_tmu_data *data = p;
++	struct exynos_tmu_data *data = tz->devdata;
+ 	int value, ret = 0;
+ 
+ 	if (!data || !data->tmu_read)
+@@ -728,9 +728,9 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
+ 	writel(val, data->base + emul_con);
+ }
+ 
+-static int exynos_tmu_set_emulation(void *drv_data, int temp)
++static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
+ {
+-	struct exynos_tmu_data *data = drv_data;
++	struct exynos_tmu_data *data = tz->devdata;
+ 	int ret = -EINVAL;
+ 
+ 	if (data->soc == SOC_ARCH_EXYNOS4210)
+@@ -750,7 +750,7 @@ static int exynos_tmu_set_emulation(void *drv_data, int temp)
+ }
+ #else
+ #define exynos4412_tmu_set_emulation NULL
+-static int exynos_tmu_set_emulation(void *drv_data, int temp)
++static int exynos_tmu_set_emulation(struct thermal_zone *tz, int temp)
+ 	{ return -EINVAL; }
+ #endif /* CONFIG_THERMAL_EMULATION */
+ 
+@@ -997,7 +997,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct thermal_zone_of_device_ops exynos_sensor_ops = {
++static const struct thermal_zone_device_ops exynos_sensor_ops = {
+ 	.get_temp = exynos_get_temp,
+ 	.set_emul_temp = exynos_tmu_set_emulation,
+ };
+@@ -1091,8 +1091,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 	 * data->tzd must be registered before calling exynos_tmu_initialize(),
+ 	 * requesting irq and calling exynos_tmu_control().
+ 	 */
+-	data->tzd = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+-						    &exynos_sensor_ops);
++	data->tzd = devm_thermal_of_zone_register(&pdev->dev, 0, data,
++						  &exynos_sensor_ops);
+ 	if (IS_ERR(data->tzd)) {
+ 		ret = PTR_ERR(data->tzd);
+ 		if (ret != -EPROBE_DEFER)
+@@ -1104,21 +1104,19 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 	ret = exynos_tmu_initialize(pdev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialize TMU\n");
+-		goto err_thermal;
++		goto err_sclk;
+ 	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
+ 		IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
+-		goto err_thermal;
++		goto err_sclk;
+ 	}
+ 
+ 	exynos_tmu_control(pdev, true);
+ 	return 0;
+ 
+-err_thermal:
+-	thermal_zone_of_sensor_unregister(&pdev->dev, data->tzd);
+ err_sclk:
+ 	clk_disable_unprepare(data->sclk);
+ err_clk:
+@@ -1136,9 +1134,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ static int exynos_tmu_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-	struct thermal_zone_device *tzd = data->tzd;
+ 
+-	thermal_zone_of_sensor_unregister(&pdev->dev, tzd);
+ 	exynos_tmu_control(pdev, false);
+ 
+ 	clk_disable_unprepare(data->sclk);
 -- 
-~Vinod
+2.25.1
+
