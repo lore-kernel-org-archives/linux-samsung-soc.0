@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D974C25B08
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Aug 2022 14:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECFCC00140
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Aug 2022 14:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241183AbiHEO66 (ORCPT
+        id S241087AbiHEO7O (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Aug 2022 10:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45316 "EHLO
+        Fri, 5 Aug 2022 10:59:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241067AbiHEO6S (ORCPT
+        with ESMTP id S241083AbiHEO6W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Aug 2022 10:58:18 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC1A6716D
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Aug 2022 07:58:08 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id q30so3503078wra.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Aug 2022 07:58:08 -0700 (PDT)
+        Fri, 5 Aug 2022 10:58:22 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A89967CAA
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Aug 2022 07:58:10 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id l22so3540338wrz.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Aug 2022 07:58:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=8+E7Vl3OuQJYkPZfeMwMw1IQSn5jvS+Nro+I/6Lgevk=;
-        b=h0ud1B5+DGsF/FRvY0TpG0en75NeBVlkgAnh89X68EZlKqBEIaK7fzBYia53lJUyE7
-         pR0yvm3U6Vs5r8TlpqN0gs02ld8+kZt3UasFfShQaQf+KCK9VQu0AZoH6wmaDO3bq0S+
-         lxHBzs667mEdOIuEi38Ofa6V0zqXLTIafvVaj7vAQOr171oN4tilK8uszjHRoJ+CkK5t
-         esOgx7ZiQsdFS4IUM85bZ95AbbEURHzxw+4bqWtt1WU4jwg5iSQ1e0qAHRj9lpjgC635
-         LN6OOT/V0ii7xYGQts3J2dkkzcDuN4BDWBy0ZzNyIvQNWLkTLSeHN4h2cg9VXK9gzk5h
-         WGpQ==
+        bh=pufgKF3VxRi8wygChmKG06xXNb5GKVSbBUzBy2xU3rk=;
+        b=rk4/mZt6JIIWJJRoHWgLE+9YmpqkQCr3//i4YTPgi7CTv2ZgDWBl1Ab55ad1K9Nfkh
+         RYB28HPaa5AJ/YK7ZnANZmDdbobBtjpLXKzRNk0ZMokTboOJ0AlMJ8C86ccUOyuS7d2n
+         AWYCCpNuYhrGsdjgZlDXJuNlfniApswMo7/XDNL7Lmu1k17iIIR1J+P2FfVsAUgfknyb
+         8BOLNgQ7A5Dng4CzwnovR2f8uuJLublHMkVcL+K7sSZUTXo7+p0I7B7QOowIqYvI6QnA
+         ZvzPgxLg/OhQkvdCu+t2HIMXkZF9xlLalftcqqUqzvFisas3t2G1ef1EwxpmNBrUhNoK
+         SAAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=8+E7Vl3OuQJYkPZfeMwMw1IQSn5jvS+Nro+I/6Lgevk=;
-        b=a/byjcmwbi+6hVqaRj6Ps6NGLI5aKvBSRmMbpQaqK0fruU2NgasXJXinw5zihHAb+L
-         XJ76/LAUU1gMdaZ+E5NDhhovCoHSWA+TeQcVTQKwcdqWyj60xzMGHI8pqvUdDJXVOsn2
-         JAh8ueuv+YAK9bJHO+FC4gV9g9cjkUjToFqV8pXUKvAiBbz0NP4qon/ZqdZh+vQwTwzp
-         myfG2OjZmaZTjtpsDqRHVQi4C6listrBfoTqXBhjNUb5x/bpDTVlvols4YgwLz9SK/JC
-         1aI3dF9GE5jCuLVqGzCbxLNpxNVgngBkTe4XiebUA3Z4YIRTV3gXPAMcyk8hNxc+bPZB
-         t5sg==
-X-Gm-Message-State: ACgBeo07LrVVCEg/QO+vfuJNjddOJM+pnbxncHREzpjv46E9OZHykrCb
-        B0Pvvv5puPOWTVhLXnwSzCDlNw==
-X-Google-Smtp-Source: AA6agR7V5JIIGK0zTvb4pObU/QSmyBBStTOpqXs5lzqmWi3NjQ2bXd3HTC/moUqy7BCra7tg4n3xug==
-X-Received: by 2002:a5d:5a8d:0:b0:21d:6d69:ca03 with SMTP id bp13-20020a5d5a8d000000b0021d6d69ca03mr4542643wrb.135.1659711486604;
-        Fri, 05 Aug 2022 07:58:06 -0700 (PDT)
+        bh=pufgKF3VxRi8wygChmKG06xXNb5GKVSbBUzBy2xU3rk=;
+        b=u7/MSnnKydybVyk81nkqhEA0K6PCWnDI173he4h2gxNl/o2ZSLsJyfbaZvyXpobUSd
+         uzisxPxNP8XVKxlJxqNEm21R03G+ZG1xzL8lylhyGusjNSQle8/RenSFNgw+SCFbRJqZ
+         G4uxNC3IPokvPNgRTkZG3h6xeE5tLspfNlBSiOC4DTiVaNGcg9G60eIoLpwv2MMJAsWx
+         tZWlno3X+NdFE0w37Nix4siPeNCOc4ycFQQ8QrxB2p3LCCHzrBq5bUQGD2vofbf9Ir0F
+         TPK3Pw5zp+HSDjj+lpfmPRT5Spd7KXi6rtK8uHE4ddv/l+iOGYy+VOHiSJruW1mHz/1y
+         yCpw==
+X-Gm-Message-State: ACgBeo0Og0AZWWo5Hx90qgmBZxvbHWe89V55HMWGR0TEUVFHS0ufOrX2
+        1mBwsB/K7WAabkU5sttwWLjgqg==
+X-Google-Smtp-Source: AA6agR5MNl3NOE3s0YlBPls/rjs3dizeJCLaAt9k4OVi2vQc/5lbF93PxwLWMqiY5girE3GjkwHnVg==
+X-Received: by 2002:a5d:6609:0:b0:21f:ff6:9090 with SMTP id n9-20020a5d6609000000b0021f0ff69090mr4877151wru.30.1659711489440;
+        Fri, 05 Aug 2022 07:58:09 -0700 (PDT)
 Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:aef0:8606:da6b:79ef])
-        by smtp.gmail.com with ESMTPSA id y1-20020adfd081000000b0022159d92004sm3102448wrh.82.2022.08.05.07.58.05
+        by smtp.gmail.com with ESMTPSA id y1-20020adfd081000000b0022159d92004sm3102448wrh.82.2022.08.05.07.58.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Aug 2022 07:58:06 -0700 (PDT)
+        Fri, 05 Aug 2022 07:58:08 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     daniel.lezcano@linaro.org, rafael@kernel.org
 Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
         S5P AND EXYNOS ARM ARCHITECTURES)
-Subject: [PATCH v1 16/26] thermal/drivers/exynos: of_thermal_get_ntrips()
-Date:   Fri,  5 Aug 2022 16:57:19 +0200
-Message-Id: <20220805145729.2491611-17-daniel.lezcano@linaro.org>
+Subject: [PATCH v1 18/26] thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by thermal_zone_get_trip()
+Date:   Fri,  5 Aug 2022 16:57:21 +0200
+Message-Id: <20220805145729.2491611-19-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220805145729.2491611-1-daniel.lezcano@linaro.org>
 References: <20220805145729.2491611-1-daniel.lezcano@linaro.org>
@@ -72,50 +72,66 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The thermal core framework allows to get the number of thermal trips,
-use it instead of visiting the thermal core structure internals.
-
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 5204e343d5b0..ac47c716c1f0 100644
+index ac47c716c1f0..9def8c76ef9a 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -260,6 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+@@ -552,13 +552,15 @@ static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
  {
  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct thermal_zone_device *tzd = data->tzd;
-+	int num_trips = thermal_zone_get_num_trips(tzd);
- 	unsigned int status;
- 	int ret = 0, temp;
+ 	struct thermal_zone_device *tz = data->tzd;
++	struct thermal_trip trip;
+ 	unsigned int con, interrupt_en = 0, i;
  
-@@ -271,12 +272,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		goto out;
- 	}
+ 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
  
--	if (of_thermal_get_ntrips(tzd) > data->ntrip) {
-+	if (num_trips > data->ntrip) {
- 		dev_info(&pdev->dev,
- 			 "More trip points than supported by this TMU.\n");
- 		dev_info(&pdev->dev,
- 			 "%d trip points should be configured in polling mode.\n",
--			 (of_thermal_get_ntrips(tzd) - data->ntrip));
-+			 num_trips - data->ntrip);
- 	}
+ 	if (on) {
+ 		for (i = 0; i < data->ntrip; i++) {
+-			if (!of_thermal_is_trip_valid(tz, i))
++
++			if (thermal_zone_get_trip(tz, i, &trip))
+ 				continue;
  
- 	mutex_lock(&data->lock);
-@@ -289,7 +290,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		ret = -EBUSY;
- 	} else {
- 		int i, ntrips =
--			min_t(int, of_thermal_get_ntrips(tzd), data->ntrip);
-+			min_t(int, num_trips, data->ntrip);
+ 			interrupt_en |=
+@@ -582,13 +584,15 @@ static void exynos5433_tmu_control(struct platform_device *pdev, bool on)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct thermal_zone_device *tz = data->tzd;
++	struct thermal_trip trip;
+ 	unsigned int con, interrupt_en = 0, pd_det_en, i;
  
- 		data->tmu_initialize(pdev);
+ 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
  
+ 	if (on) {
+ 		for (i = 0; i < data->ntrip; i++) {
+-			if (!of_thermal_is_trip_valid(tz, i))
++
++			if (thermal_zone_get_trip(tz, i, &trip))
+ 				continue;
+ 
+ 			interrupt_en |=
+@@ -613,13 +617,15 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct thermal_zone_device *tz = data->tzd;
++	struct thermal_trip trip;
+ 	unsigned int con, interrupt_en = 0, i;
+ 
+ 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+ 
+ 	if (on) {
+ 		for (i = 0; i < data->ntrip; i++) {
+-			if (!of_thermal_is_trip_valid(tz, i))
++
++			if (thermal_zone_get_trip(tz, i, &trip))
+ 				continue;
+ 
+ 			interrupt_en |=
 -- 
 2.25.1
 
