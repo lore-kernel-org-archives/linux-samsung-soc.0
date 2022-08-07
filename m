@@ -2,95 +2,48 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CA7C19F2A
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Aug 2022 14:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28165C19F2A
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Aug 2022 17:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235098AbiHGOzM (ORCPT
+        id S235511AbiHGR7I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 Aug 2022 10:55:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51710 "EHLO
+        Sun, 7 Aug 2022 13:59:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234877AbiHGOyv (ORCPT
+        with ESMTP id S235479AbiHGR7H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Aug 2022 10:54:51 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C6A4AE6F;
-        Sun,  7 Aug 2022 07:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1659883985; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KhmQUAzyoS18HNqAM0H6H0gTiYDcgAB/NWukYcltpUA=;
-        b=1tOBlgKh4w4cx6ZIBgNfPJksLmLV5DvkuOE1hCKxCnxkMQAujeBLnwvvA+n4acrS5KiUkW
-        0PeQtmaSKxTd3onupHJXmHEwcmK/gmXighvkvPBasrd4HsPCswl0zUrWE6j1khLzvcx5c/
-        3HWZpVgpZo+YOTpnj5iCIDvwSX2JJlA=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 13/28] mfd: sec: Remove #ifdef guards for PM related functions
-Date:   Sun,  7 Aug 2022 16:52:32 +0200
-Message-Id: <20220807145247.46107-14-paul@crapouillou.net>
-In-Reply-To: <20220807145247.46107-1-paul@crapouillou.net>
-References: <20220807145247.46107-1-paul@crapouillou.net>
+        Sun, 7 Aug 2022 13:59:07 -0400
+X-Greylist: delayed 516 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 07 Aug 2022 10:59:07 PDT
+Received: from sh11309.ispgateway.de (sh11309.ispgateway.de [IPv6:2001:1520:a:5e::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25F1E1009
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Aug 2022 10:59:07 -0700 (PDT)
+Received: from sh11309.ispgateway.de (php73.df_default [IPv6:fd00:dead:beef::e])
+        by sh11309.ispgateway.de (Postfix) with ESMTPS id 61BB21A9D4B
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Aug 2022 19:50:28 +0200 (CEST)
+Received: (from re832140@localhost)
+        by sh11309.ispgateway.de (8.15.2/8.15.2/Submit) id 277HoShS025632;
+        Sun, 7 Aug 2022 19:50:28 +0200
+X-Authentication-Warning: sh11309.ispgateway.de: re832140 set sender to ricardo@xn--jugend-bnde-0hb.de using -f
+To:     linux-samsung-soc@vger.kernel.org
+Subject: =?UTF-8?Q?Anfrage_an_Jugend-B=C3=BCnde:_"THE_WORLD_FINANCIAL?=  =?UTF-8?Q?_CRISIS_CAN_MAKE_YOU_A_MILLIONAIRE!"?=
+X-PHP-Originating-Script: 832140:PHPMailer.php
+Date:   Sun, 7 Aug 2022 17:50:28 +0000
+From:   =?UTF-8?Q?Jugend_B=C3=BCnde?= <wordpress@xn--jugend-bnde-0hb.de>
+Reply-To: buendywood@googlemail.com
+Message-ID: <MrBuPdWKSIXrQHoNO0iawAX9WaoWvelqL0FbKKYz0U@www.xn--jugend-bnde-0hb.de>
+X-Mailer: PHPMailer 6.5.0 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros
-to handle the .suspend/.resume callbacks.
+Vielen Dank für deine Nachricht, wir werden uns in Kürze mit Dir in Verbindung setzen.
 
-These macros allow the suspend and resume functions to be automatically
-dropped by the compiler when CONFIG_SUSPEND is disabled, without having
-to use #ifdef guards.
+Deine gesendete Nachricht:
+THE WORLD FINANCIAL CRISIS CAN MAKE YOU VERY RICH! https://telegra.ph/Cryptocurrency-makes-people-millionaires-at-15-people-per-hour---Page-409770-08-03
 
-The advantage is then that these functions are now always compiled
-independently of any Kconfig option, and thanks to that bugs and
-regressions are easier to catch.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/mfd/sec-core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 1fb29c45f5cf..a467de2b2fea 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -455,7 +455,6 @@ static void sec_pmic_shutdown(struct i2c_client *i2c)
- 	regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static int sec_pmic_suspend(struct device *dev)
- {
- 	struct i2c_client *i2c = to_i2c_client(dev);
-@@ -488,14 +487,14 @@ static int sec_pmic_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif /* CONFIG_PM_SLEEP */
- 
--static SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops, sec_pmic_suspend, sec_pmic_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops,
-+				sec_pmic_suspend, sec_pmic_resume);
- 
- static struct i2c_driver sec_pmic_driver = {
- 	.driver = {
- 		   .name = "sec_pmic",
--		   .pm = &sec_pmic_pm_ops,
-+		   .pm = pm_sleep_ptr(&sec_pmic_pm_ops),
- 		   .of_match_table = sec_dt_match,
- 	},
- 	.probe = sec_pmic_probe,
--- 
-2.35.1
+--
+Diese E-Mail wurde von einem Kontaktformular von Jugend Bünde (http://www.jugend-bünde.de) gesendet
 
