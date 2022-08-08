@@ -2,146 +2,89 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B50C19F2A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 00:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5709C3F6B0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 05:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232167AbiHHAnB (ORCPT
+        id S233845AbiHHFxe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 Aug 2022 20:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36590 "EHLO
+        Mon, 8 Aug 2022 01:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbiHHAnA (ORCPT
+        with ESMTP id S232197AbiHHFxe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Aug 2022 20:43:00 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CB86584
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Aug 2022 17:42:57 -0700 (PDT)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220808004255epoutp02b9b31f5177ac8c15224c5190c87df083~JN_CRoyrE0222802228epoutp02Q
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 00:42:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220808004255epoutp02b9b31f5177ac8c15224c5190c87df083~JN_CRoyrE0222802228epoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1659919375;
-        bh=sunQ4SmkLR5K3Io954QPWJRtsZKOFHaGeJrTKKpgmYE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=eSaBfreUkMHMqFIRYRDR1gN24QkwzIK0xABNSKqqtk7ezAUA2u6ce1mjMOiEMI8xg
-         Dv9/71P1c4ZCgeAv2kx2XIa5nY3jEWvQ3C7CJTU6sexs/z2pCfBQAZ9wBRsV/OX+QJ
-         0ejld+f5HyisoDt6UAth7ophSBWFaZfvvWT4V8HY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20220808004254epcas2p2f68217532a87c088a73a13a9a9477939~JN_BrYt9G1309813098epcas2p2N;
-        Mon,  8 Aug 2022 00:42:54 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.99]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4M1HVQ1GlXz4x9Pv; Mon,  8 Aug
-        2022 00:42:54 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6E.68.56487.E0C50F26; Mon,  8 Aug 2022 09:42:54 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220808004253epcas2p3937171a6f89a765d67d5cc7b55afb89a~JN_A0TSLj2512025120epcas2p3I;
-        Mon,  8 Aug 2022 00:42:53 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220808004253epsmtrp2ef1a624a97b854b923a18a5676fc107d~JN_Azi4vo2154421544epsmtrp2j;
-        Mon,  8 Aug 2022 00:42:53 +0000 (GMT)
-X-AuditID: b6c32a46-e43ff7000000dca7-70-62f05c0ef823
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5C.31.08905.D0C50F26; Mon,  8 Aug 2022 09:42:53 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220808004253epsmtip2ea54f85bfe16342e1ee0db0896b88975~JN_AmGE1A1435014350epsmtip2K;
-        Mon,  8 Aug 2022 00:42:53 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mon, 8 Aug 2022 01:53:34 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0821002
+        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Aug 2022 22:53:31 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id v7so8732631ljj.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Aug 2022 22:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=3vnVtVwupQ8WazaZ/AL9IwhCzJFASSPI0qjJVJcoGaM=;
+        b=yjIPdxk6jpZlmk7BoHMOCo62Yfn7cAnV3oiwVY3HUfDPv5VzvqYi8VIzM8o/nd2yTd
+         JGC4Rd9g+lOBYGQLkLwp+HPpTahAEcOI1n4S1S7/FX3n+YNGqiw5ZY63vKeDJFeQA2iw
+         0ipNhEaWG4MQYKCjoegvDEeN96f4Z9A11EFwLh1DOb7OQCxdN/7baNPv1L/jGpzyRILF
+         CgHTpW/RYHmgOo5av9P8c4m+YxAVSzWU7n8Uglf2RLPWdFTA1lOHDRSK69Xl8aCip7/h
+         u1t7RerPTHjToAaK9V2cYkzc1kRG9Br4c/u9dpjazwR5mIO/mVuIo/6XTmr++gOVp95w
+         3/Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=3vnVtVwupQ8WazaZ/AL9IwhCzJFASSPI0qjJVJcoGaM=;
+        b=Ay/HZ0vav5PTHfJup9r/IEQNqe1dlca883Rvj76mvbL6h9itAmexIwEvu1h1iQBXyv
+         OXwSgwkmJHsNrZRwncf24s1JCc/woXiYwGQRtgzyjP3kcGHOENd7x7vDZT1k7EpS+M+S
+         ABmsMwfB0LKEy/irmkaiA7LXZzWBJ2XT++t576EjUwYRqqEJ1XNRMNwnYPt7+sx6ITmk
+         RO3i7PPq8ZE1VEkaTAfkHIVMYdZscMO+Ok0p8eRTKwchcc4s1hPtbYMrO3bG3r8XH8a5
+         iUPXepxl/Zwu1e4BV4BO7Fy58/Jpn9k6zhRqR2w93jsyigEYwNz66W3veg7cBbEvAeF4
+         WNQA==
+X-Gm-Message-State: ACgBeo35hIq7xdwxBKbfPIKuNeQRM4N3SIvwPoDSGcVq+k2sVVDl9+8I
+        Ed1jvXMA4iCZMiMQqilDPcvKID1Nr9w2ikDL
+X-Google-Smtp-Source: AA6agR6Ns2dWP270jXtxfSHr7jqQAWAB2geMsLB2/0u9dfxx6EWGcJLF7DNwM6LljpdVPznto5Rl0g==
+X-Received: by 2002:a05:651c:179f:b0:25d:ba24:2e16 with SMTP id bn31-20020a05651c179f00b0025dba242e16mr5080138ljb.422.1659938009749;
+        Sun, 07 Aug 2022 22:53:29 -0700 (PDT)
+Received: from [192.168.1.39] ([83.146.140.105])
+        by smtp.gmail.com with ESMTPSA id j16-20020ac25510000000b0048af3154456sm1306679lfk.146.2022.08.07.22.53.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Aug 2022 22:53:29 -0700 (PDT)
+Message-ID: <5e61f334-4712-a41c-e270-d4cef6397112@linaro.org>
+Date:   Mon, 8 Aug 2022 08:53:26 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] spi: s3c64xx: correct dma_chan pointer initialization
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
         Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         Adithya K V <adithya.kv@samsung.com>,
         kernel test robot <lkp@intel.com>, linux-spi@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH] spi: s3c64xx: correct dma_chan pointer initialization
-Date:   Mon,  8 Aug 2022 09:48:51 +0900
-Message-Id: <20220808004851.25122-1-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.37.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmmS5fzIckg71P2CwOTHjFavFg3jY2
-        i8U/njNZTH0IFLu8X9ti7+ut7BabHl9jtbi8aw6bxYzz+5gsGj/eZLd41fyIzYHb4/qST8we
-        i/e8ZPLYtKqTzePOtT1sHpuX1Hv0bVnF6PF5k1wAe1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8
-        c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QiUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OIS
-        W6XUgpScAvMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Ix/E9uYC1ZyVrx4uZelgfEDexcjJ4eE
-        gInEtrcPWbsYuTiEBHYwSrS/fMAG4XxilPj54RwThPONUeLbhveMMC1zXh5ghEjsZZRY2rgT
-        yvnIKLF6xhIWkCo2AV2JLc9fgXWICFRJzHz+hhmkiFlgKZNEW+clNpCEsICbxK6fr5lBbBYB
-        VYmpX5eD2bwCdhJNt5ezQKyTl7h+sw0qLihxcuYTsDgzULx562ywoRICX9klmq59Z4VocJHY
-        OHkLlC0s8er4FqhXpSQ+v9vLBmEXSyyd9YkJormBUeLytl9QCWOJWc/agc7mANqgKbF+lz6I
-        KSGgLHHkFtRePomOw3/ZIcK8Eh1tQhCN6hIHtk+HOllWonvOZ6gLPCQufrgHFhcSiJX42tbO
-        OIFRfhaSb2Yh+WYWwt4FjMyrGMVSC4pz01OLjQqM4NGanJ+7iRGcTrXcdjBOeftB7xAjEwfj
-        IUYJDmYlEd4ja98nCfGmJFZWpRblxxeV5qQWH2I0BYbvRGYp0eR8YELPK4k3NLE0MDEzMzQ3
-        MjUwVxLn9UrZkCgkkJ5YkpqdmlqQWgTTx8TBKdXAxDeHU9IxW1Epa7vLvJSjrtZqTh83bP9S
-        mGI6eQrvixO/uqY3Rs16teKezvGpMTndsxh8VTTk+iRyJk29u+nQ38YLeiq+Fy4WZCrdKjl6
-        LeV3cVfnY60YN83WPLePLz9qvXRg/77P9FjTm617JBnM+4P7lctXLD1XUah04b4IS+XqJdUb
-        D61nT0usYtj+sJ8rl+G0XA5jSQOjraGl/wy3tZGcu7K6mwyFJkfemayrUm18r2Cn1Wz/7KbW
-        tLJUtQ3ihyNWKIdcLHXZmm84d/2dTR91ffcqrYj6JPNpovC1q5tmaUYJV97S/P3LmWl3/se4
-        FepBzoq3VW7a+U9dWZP7XEr6hvkqfoPXuvzazBpKLMUZiYZazEXFiQAEBAjpMAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSvC5vzIckgxvnNSwOTHjFavFg3jY2
-        i8U/njNZTH34hM3i8n5ti72vt7JbbHp8jdXi8q45bBYzzu9jsmj8eJPd4lXzIzYHbo/rSz4x
-        eyze85LJY9OqTjaPO9f2sHlsXlLv0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBn/JrYxF6zk
-        rHjxci9LA+MH9i5GTg4JAROJOS8PMHYxcnEICexmlGg7tIsJIiEr8ezdDqgiYYn7LUdYIYre
-        M0psX9bGDJJgE9CV2PL8FSOILSJQI3HmwlWwScwCq5kkLl1/wAaSEBZwk9j18zVYA4uAqsTU
-        r8vBbF4BO4mm28tZIDbIS1y/2QYVF5Q4OfMJWJwZKN68dTbzBEa+WUhSs5CkFjAyrWKUTC0o
-        zk3PLTYsMMxLLdcrTswtLs1L10vOz93ECA5wLc0djNtXfdA7xMjEwXiIUYKDWUmE98ja90lC
-        vCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnNTk0tSC2CyTJxcEo1MBnH9XikvPA9
-        3/B4S+ltmY4Sn1VcKc+vm9+ZMUer8WOqbrfIgv5PK58z/TH4XbRVcF5i2fKp68Uevzscc+Ai
-        Q+Wv+4oiNU4/nx88cbBZ/Nedq+x9j32XXDnosTsqf9fq1KRtPjFX3z5ZlWMcPP0rR5/P7txD
-        5w81uMpWf8lPT8s0VObgsjylExC78Niz/Md62j2rTY19BPRU2h4kXDWwcNNdH7PRq3fKpw5L
-        zW9uXeK1UWXXeXJFO0JzQ+rzv3U3OSWcmLPk0CzBO/e7mRyrj7Zte+Cw1sWvNHdjMmvPlyy/
-        LfPO6dr83bxu80n7b2+3ZFrddXZffHcKC6/h0ZyZ8zmmK6zyn+B8XKdJXqA0SImlOCPRUIu5
-        qDgRAOWgJsDfAgAA
-X-CMS-MailID: 20220808004253epcas2p3937171a6f89a765d67d5cc7b55afb89a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220808004253epcas2p3937171a6f89a765d67d5cc7b55afb89a
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <CGME20220808004253epcas2p3937171a6f89a765d67d5cc7b55afb89a@epcas2p3.samsung.com>
+ <20220808004851.25122-1-chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220808004851.25122-1-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use NULL for dma channel pointer initialization instead of plain integer.
+On 08/08/2022 02:48, Chanho Park wrote:
+> Use NULL for dma channel pointer initialization instead of plain integer.
+> 
+> sparse warnings: (new ones prefixed by >>)
+>>> drivers/spi/spi-s3c64xx.c:387:34: sparse: sparse: Using plain integer as NULL pointer
+>    drivers/spi/spi-s3c64xx.c:388:34: sparse: sparse: Using plain integer as NULL pointer
+> 
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/spi/spi-s3c64xx.c:387:34: sparse: sparse: Using plain integer as NULL pointer
-   drivers/spi/spi-s3c64xx.c:388:34: sparse: sparse: Using plain integer as NULL pointer
 
-Reported-by: kernel test robot <lkp@intel.com>
-Fixes: 82295bc0d192 ("spi: s3c64xx: move dma_release_channel to unprepare")
-Fixes: f52b03c70744 ("spi: s3c64xx: requests spi-dma channel only during data transfer")
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- drivers/spi/spi-s3c64xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 7f346866614a..651c35dd9124 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -389,8 +389,8 @@ static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
- 	if (sdd->rx_dma.ch && sdd->tx_dma.ch) {
- 		dma_release_channel(sdd->rx_dma.ch);
- 		dma_release_channel(sdd->tx_dma.ch);
--		sdd->rx_dma.ch = 0;
--		sdd->tx_dma.ch = 0;
-+		sdd->rx_dma.ch = NULL;
-+		sdd->tx_dma.ch = NULL;
- 	}
- 
- 	return 0;
--- 
-2.37.1
 
+Best regards,
+Krzysztof
