@@ -2,95 +2,107 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2DBC25B08
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 17:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B2DC3F6B0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 18:16:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244084AbiHHRoR (ORCPT
+        id S243354AbiHHSQB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Aug 2022 13:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
+        Mon, 8 Aug 2022 14:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244132AbiHHRns (ORCPT
+        with ESMTP id S237137AbiHHSP7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Aug 2022 13:43:48 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD385DEC5;
-        Mon,  8 Aug 2022 10:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1659980504; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p2MPm/2Uv2Duo3Mf9+3rBZbS97l/02M7wHI7G738Dso=;
-        b=Qbs2Fz06wYR4x7XYiDHc2TWJEHBaGWoUPlDPuFkZjdCO+p9oQiXpmuZmxBmU9EJY2GsrZe
-        AoxuWj3VWEyX9k/vmT2z0G4FzCppuhlRfafLBL7pQ0qr/hUXqFq43GSXfN74GTxDzexxzc
-        jWjsW1QF3aySaiWrJhZ/rN/hZTgRDOs=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 14/30] mfd: sec: Remove #ifdef guards for PM related functions
-Date:   Mon,  8 Aug 2022 19:40:51 +0200
-Message-Id: <20220808174107.38676-15-paul@crapouillou.net>
-In-Reply-To: <20220808174107.38676-1-paul@crapouillou.net>
-References: <20220808174107.38676-1-paul@crapouillou.net>
+        Mon, 8 Aug 2022 14:15:59 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C75CBC1A
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 11:15:58 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id i128-20020a1c3b86000000b003a536d58f73so2815478wma.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2022 11:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=N0YWcYm3d7mIGu9NuVyOkucoriM5WUeBmD8ZP+rQP0U=;
+        b=GNylwCkzpQPatgX5rPWJnN8jA0fAp7fl0T68smMCOTL2q71loAf7XfEteoIaBmcRv1
+         mfJBioIs443o8R2EWXBQnTd8ahubQJv4gtY5ed6Yg05di6WrDgsc82ABIibKnLrsVeDB
+         6Ph0iUVMnlkr0E8i5C9fnnNMnyZ4C8rRvbig8HeSYoO6zCbC1mav91xASl32E47l2Ift
+         APXm4hSXxH/YhmlxEZuhTMc8ikP+bNjpdVG4HsBpRYPi54ARygvBblMxZ0/vNjaFnkda
+         KJPrVNyEtvq5NaSQECMtLq+R1jNK/kcigZ6n4lWQ/XYZysUr6zFLJHHwP5sFQsnLw8V2
+         woSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=N0YWcYm3d7mIGu9NuVyOkucoriM5WUeBmD8ZP+rQP0U=;
+        b=6pdr7Zy9ty9jbY9mkx5Ce4NN8629cJQs78CwEKznNh5qk8pmxqYCCmVqaAx/SNEeeC
+         A3JRgzst3PzossEQmwH6JahvVeGV8T+B5/frmV7i1m/L1RpRQiMdV8A8K6TFN410uBpm
+         5k785+wpoiaowVeUYmMsnjp1vlRtNn8XKhdNRsTAFENgF+GB+SV4JmbTk5R6sV+Gt5v8
+         0ANuTap4ZDSP+KKHA8zfAwmyjbE2aXIRQPQ6zA6itxmanwxp/ksAu4JNzqtagljy7iNi
+         lNNXBmgN4+KKjcENN5xhyxRjFdf532jdCUiAEk9lrHNzpdxn/2B547QiRTJV4MVcbhWh
+         4bSQ==
+X-Gm-Message-State: ACgBeo1hJO3l0AAo24aDVW0Ty5GFG9q/ZYn4bd4xAN5m9OLuYSQkCBHX
+        wVtZ3+GCarWnLEGYQ4cqXKXU4g==
+X-Google-Smtp-Source: AA6agR7uIQNJY/KUYJyYbtaFZH5Jo6FalM2qfD+ZEMKEFb9WGSQbnUNbsKVFgfhra3Ne+RxO12aLHA==
+X-Received: by 2002:a05:600c:3d17:b0:3a3:2bc8:6132 with SMTP id bh23-20020a05600c3d1700b003a32bc86132mr13427684wmb.24.1659982557094;
+        Mon, 08 Aug 2022 11:15:57 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id u7-20020a05600c210700b003a3561d4f3fsm3188184wml.43.2022.08.08.11.15.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Aug 2022 11:15:55 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] clk: samsung: exynos850: Add CMUs needed for SysMMU
+Date:   Mon,  8 Aug 2022 21:15:55 +0300
+Message-Id: <20220808181555.10333-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros
-to handle the .suspend/.resume callbacks.
+This patch series implements some missing Exynos850 clock domains. Right
+now those are mainly required for SysMMU clocks, although of course
+there is a lot of other clocks generated by those CMUs.
 
-These macros allow the suspend and resume functions to be automatically
-dropped by the compiler when CONFIG_SUSPEND is disabled, without having
-to use #ifdef guards.
+Exynos850 has next SysMMU instances:
+  - SYSMMU_AUD
+  - SYSMMU_DPU
+  - SYSMMU_IS0
+  - SYSMMU_IS1
+  - SYSMMU_MFCMSCL
 
-This has the advantage of always compiling these functions in,
-independently of any Kconfig option. Thanks to that, bugs and other
-regressions are subsequently easier to catch.
+As CMU_DPU is already implemented, that leaves CMU_AUD, CMU_IS and
+CMU_MFCMSCL to be implemented, which is done in this series:
+  - CMU_AUD: audio clocks
+  - CMU_IS: camera clocks (Image Signal Processing)
+  - CMU_MFCMSCL: multi-format codec and scaler clocks
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org
+Sam Protsenko (7):
+  dt-bindings: clock: Add bindings for Exynos850 CMU_AUD
+  dt-bindings: clock: Add bindings for Exynos850 CMU_IS
+  dt-bindings: clock: Add bindings for Exynos850 CMU_MFCMSCL
+  clk: samsung: exynos850: Style fixes
+  clk: samsung: exynos850: Implement CMU_AUD domain
+  clk: samsung: exynos850: Implement CMU_IS domain
+  clk: samsung: exynos850: Implement CMU_MFCMSCL domain
 
- drivers/mfd/sec-core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ .../clock/samsung,exynos850-clock.yaml        |  69 ++
+ drivers/clk/samsung/clk-exynos850.c           | 682 +++++++++++++++++-
+ include/dt-bindings/clock/exynos850.h         | 136 +++-
+ 3 files changed, 883 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 1fb29c45f5cf..a467de2b2fea 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -455,7 +455,6 @@ static void sec_pmic_shutdown(struct i2c_client *i2c)
- 	regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static int sec_pmic_suspend(struct device *dev)
- {
- 	struct i2c_client *i2c = to_i2c_client(dev);
-@@ -488,14 +487,14 @@ static int sec_pmic_resume(struct device *dev)
- 
- 	return 0;
- }
--#endif /* CONFIG_PM_SLEEP */
- 
--static SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops, sec_pmic_suspend, sec_pmic_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops,
-+				sec_pmic_suspend, sec_pmic_resume);
- 
- static struct i2c_driver sec_pmic_driver = {
- 	.driver = {
- 		   .name = "sec_pmic",
--		   .pm = &sec_pmic_pm_ops,
-+		   .pm = pm_sleep_ptr(&sec_pmic_pm_ops),
- 		   .of_match_table = sec_dt_match,
- 	},
- 	.probe = sec_pmic_probe,
 -- 
-2.35.1
+2.30.2
 
