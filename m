@@ -2,88 +2,135 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5709C3F6B0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 05:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8A9C00140
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 09:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233845AbiHHFxe (ORCPT
+        id S236836AbiHHJLI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Aug 2022 01:53:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41788 "EHLO
+        Mon, 8 Aug 2022 05:11:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbiHHFxe (ORCPT
+        with ESMTP id S230127AbiHHJLH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Aug 2022 01:53:34 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0821002
-        for <linux-samsung-soc@vger.kernel.org>; Sun,  7 Aug 2022 22:53:31 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id v7so8732631ljj.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Aug 2022 22:53:31 -0700 (PDT)
+        Mon, 8 Aug 2022 05:11:07 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFEA1CE3C
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 02:11:05 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id o2so4421592lfb.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2022 02:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=3vnVtVwupQ8WazaZ/AL9IwhCzJFASSPI0qjJVJcoGaM=;
-        b=yjIPdxk6jpZlmk7BoHMOCo62Yfn7cAnV3oiwVY3HUfDPv5VzvqYi8VIzM8o/nd2yTd
-         JGC4Rd9g+lOBYGQLkLwp+HPpTahAEcOI1n4S1S7/FX3n+YNGqiw5ZY63vKeDJFeQA2iw
-         0ipNhEaWG4MQYKCjoegvDEeN96f4Z9A11EFwLh1DOb7OQCxdN/7baNPv1L/jGpzyRILF
-         CgHTpW/RYHmgOo5av9P8c4m+YxAVSzWU7n8Uglf2RLPWdFTA1lOHDRSK69Xl8aCip7/h
-         u1t7RerPTHjToAaK9V2cYkzc1kRG9Br4c/u9dpjazwR5mIO/mVuIo/6XTmr++gOVp95w
-         3/Mw==
+        bh=capmqUg3G2WGPZIJLVN0uL7EfqUKEp7KJ1xrI9gIScY=;
+        b=mkrFcP1IBKQ/4uTvXD8INz59IvBi/jIPA9T3Kb0PTch8u/9Hr3RKgGHHDtzGdBClqW
+         msaVM3Zg0f84JVBbl6vSlBST7PhqkSRuNuhYL6b8HVuDGCT5Rn0gn4M21+KDcmIYkabk
+         UeG2sWRVfOOgZHnIrfHG3uWb2m7T6K6Lc6KzHmiAfvSaIrwlwfqZTmpMKyEdGG6B9Vyy
+         X4PYwt00A7pjVoSJMTbEON9JYJgHOVkC+l3MkrdYgUk+LpQlg4wTi8BQmhO0/payfY94
+         HypMkBcl5QEMgkcgGywtuHThIbzc8k+bjflGldAG3nGhnGYneSCYpN58VSGWv2GI4h8Y
+         Lttw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=3vnVtVwupQ8WazaZ/AL9IwhCzJFASSPI0qjJVJcoGaM=;
-        b=Ay/HZ0vav5PTHfJup9r/IEQNqe1dlca883Rvj76mvbL6h9itAmexIwEvu1h1iQBXyv
-         OXwSgwkmJHsNrZRwncf24s1JCc/woXiYwGQRtgzyjP3kcGHOENd7x7vDZT1k7EpS+M+S
-         ABmsMwfB0LKEy/irmkaiA7LXZzWBJ2XT++t576EjUwYRqqEJ1XNRMNwnYPt7+sx6ITmk
-         RO3i7PPq8ZE1VEkaTAfkHIVMYdZscMO+Ok0p8eRTKwchcc4s1hPtbYMrO3bG3r8XH8a5
-         iUPXepxl/Zwu1e4BV4BO7Fy58/Jpn9k6zhRqR2w93jsyigEYwNz66W3veg7cBbEvAeF4
-         WNQA==
-X-Gm-Message-State: ACgBeo35hIq7xdwxBKbfPIKuNeQRM4N3SIvwPoDSGcVq+k2sVVDl9+8I
-        Ed1jvXMA4iCZMiMQqilDPcvKID1Nr9w2ikDL
-X-Google-Smtp-Source: AA6agR6Ns2dWP270jXtxfSHr7jqQAWAB2geMsLB2/0u9dfxx6EWGcJLF7DNwM6LljpdVPznto5Rl0g==
-X-Received: by 2002:a05:651c:179f:b0:25d:ba24:2e16 with SMTP id bn31-20020a05651c179f00b0025dba242e16mr5080138ljb.422.1659938009749;
-        Sun, 07 Aug 2022 22:53:29 -0700 (PDT)
+        bh=capmqUg3G2WGPZIJLVN0uL7EfqUKEp7KJ1xrI9gIScY=;
+        b=FUmd+dka8elPO9dCVIEo5PhK8An9vNHY7ZsIoEP0nTqSum0hFe+DieYyZs5C9avZ6l
+         B9vKK6OwaV39KB3/c2blOeqqEbJ4ZHdJWJ2Cxx78Q7l69HOzoHjEm9iNtP4MCZZ243Ft
+         xwgdz/evfrxP4HCjt0OKjr6IBv6weE2/8UcovdKLFDh+Kn3acvsrSPIgIgzkTAzK95of
+         h/PH9XU4AnajPUoT+AvdjPNxla5WDxTd5AD9nZgZImUwg877kvPHfTnzB4SR6ZeitUpD
+         SzKdk5+TOU6vYzq+UvqVpFmU6UZPBFD3bPkA7kPe6Tj46krJJXeAXuvjFNZdRpIHyxTi
+         qqLw==
+X-Gm-Message-State: ACgBeo2hAS8VxGIJoNGeL7c/1y5I/stOev8H0gRiefq6nsBRMZ9x42C+
+        yxB890WLrWYcyhAzzlCEu+DgsQ==
+X-Google-Smtp-Source: AA6agR5o3GE4sOi7zvF2niOzM96s9c5dBH+V9xgSaAGhu6wEDIByw9G0WGSzZNsuMtQYObK4wIc+Yg==
+X-Received: by 2002:a05:6512:12c7:b0:48b:37af:15d3 with SMTP id p7-20020a05651212c700b0048b37af15d3mr6714608lfg.290.1659949864073;
+        Mon, 08 Aug 2022 02:11:04 -0700 (PDT)
 Received: from [192.168.1.39] ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id j16-20020ac25510000000b0048af3154456sm1306679lfk.146.2022.08.07.22.53.28
+        by smtp.gmail.com with ESMTPSA id t16-20020a2e9d10000000b0025e6a598019sm1299772lji.131.2022.08.08.02.11.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 Aug 2022 22:53:29 -0700 (PDT)
-Message-ID: <5e61f334-4712-a41c-e270-d4cef6397112@linaro.org>
-Date:   Mon, 8 Aug 2022 08:53:26 +0300
+        Mon, 08 Aug 2022 02:11:03 -0700 (PDT)
+Message-ID: <a625a1b4-6ecd-79d9-3d13-f42fd5b8275c@linaro.org>
+Date:   Mon, 8 Aug 2022 12:11:02 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH] spi: s3c64xx: correct dma_chan pointer initialization
+Subject: Re: [PATCH 13/28] mfd: sec: Remove #ifdef guards for PM related
+ functions
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Adithya K V <adithya.kv@samsung.com>,
-        kernel test robot <lkp@intel.com>, linux-spi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <CGME20220808004253epcas2p3937171a6f89a765d67d5cc7b55afb89a@epcas2p3.samsung.com>
- <20220808004851.25122-1-chanho61.park@samsung.com>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+References: <20220807145247.46107-1-paul@crapouillou.net>
+ <20220807145247.46107-14-paul@crapouillou.net>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220808004851.25122-1-chanho61.park@samsung.com>
+In-Reply-To: <20220807145247.46107-14-paul@crapouillou.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 08/08/2022 02:48, Chanho Park wrote:
-> Use NULL for dma channel pointer initialization instead of plain integer.
+On 07/08/2022 17:52, Paul Cercueil wrote:
+> Use the new DEFINE_SIMPLE_DEV_PM_OPS() and pm_sleep_ptr() macros
+> to handle the .suspend/.resume callbacks.
 > 
-> sparse warnings: (new ones prefixed by >>)
->>> drivers/spi/spi-s3c64xx.c:387:34: sparse: sparse: Using plain integer as NULL pointer
->    drivers/spi/spi-s3c64xx.c:388:34: sparse: sparse: Using plain integer as NULL pointer
+> These macros allow the suspend and resume functions to be automatically
+> dropped by the compiler when CONFIG_SUSPEND is disabled, without having
+> to use #ifdef guards.
 > 
+> The advantage is then that these functions are now always compiled
+> independently of any Kconfig option, and thanks to that bugs and
+> regressions are easier to catch.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+The address does not work. Please don't add it to commit log.
+
+> Cc: linux-samsung-soc@vger.kernel.org
+
+This is also not really needed in commit log... it's just a mailing list...
+
+I actually never understood why people want to add to commit log, so to
+something which will last 10 years, Cc-ing other folks, instead of
+adding such tags after '---'. Imagine 10 years from now:
+
+1. What's the point to be cced on this patch after 10 years instead of
+using maintainers file (the one in 10 years)? Why Cc-ing me in 10 years?
+If I am a maintainer of this driver in that time, I will be C-ced based
+on maintainers file. If I am not a maintainer in 10 years, why the heck
+cc-ing me based on some 10-year old commit? Just because I was a
+maintainer once, like 10 years ago?
+
+2. Or why cc-ing such people when backporting to stable?
+
+It's quite a lot of unnecessary emails which many of us won't actually
+handle later...
+
+I sincerely admit I was once also adding such Cc-tags. But that time my
+employer was counting lines-of-patch (including commit log)... crazy, right?
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/mfd/sec-core.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index 1fb29c45f5cf..a467de2b2fea 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -455,7 +455,6 @@ static void sec_pmic_shutdown(struct i2c_client *i2c)
+>  	regmap_update_bits(sec_pmic->regmap_pmic, reg, mask, 0);
+>  }
+>  
+> -#ifdef CONFIG_PM_SLEEP
+>  static int sec_pmic_suspend(struct device *dev)
+
+Did you test W=1 with !CONFIG_PM_SLEEP? No warnings?
 
 
 Best regards,
