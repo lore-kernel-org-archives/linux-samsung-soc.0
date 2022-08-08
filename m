@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BAFC25B0F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 10:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9C5C25B0E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 10:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242359AbiHHKQZ (ORCPT
+        id S237284AbiHHKQ0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Aug 2022 06:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40786 "EHLO
+        Mon, 8 Aug 2022 06:16:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242214AbiHHKQX (ORCPT
+        with ESMTP id S242257AbiHHKQZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Aug 2022 06:16:23 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0B7101C8
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 03:16:22 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id z6so4509706lfu.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2022 03:16:22 -0700 (PDT)
+        Mon, 8 Aug 2022 06:16:25 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB280DF85
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 03:16:23 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id by6so894696ljb.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2022 03:16:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JWyHWpRZ1Kh32AMhlQIk7pyHBxJVf8IzTt5zqpwObhY=;
-        b=MrROKyLJJ83f3Rr2mGc49Yse06wHtSB+UZ/fdnVkIROrdgd6G5U0BHv6wZCH0y/ELG
-         AJ/m/Z/4Q7nc+d7bJBHuSjCXT9hyjQr6FsJpynKeTu7fw5UTIUgWnyB4ROV6D1v5kGxH
-         vKTPX90RZrqPKvjtOl/EiKG71FvteMwCGWYOobnquUOQm8jIHa9oCCfQu+PvxlH5NrCW
-         iwRFPN/ePSPg8LUGx4iyC/fG14Oske8ipp/nAcCYTlFCM7MokuuK008QWNlC2JyW29WO
-         FHjxT9M+nzbkNOPuHVaA9LMMz6lcaIpnRfAwa8DyvaqiF6QwEl9fAi1PbdzqmFR0fH97
-         EVPg==
+        bh=9X5+OY9C1JUS8+hnV0IE5pgrose61H6CK2ZponbGyzQ=;
+        b=EyfrmTnrDXlotODXx82gzFKRsGHHudSI5dBZz7dEPF+vwq5g/VpTEuVygENJLc9MYg
+         jkSzsUqmuwtDhKuwCelC1wSm+xTxwXILTvPepVU6oZGefnUrElS8baaEtmnDnDQelyth
+         kjoaoE4KmDDWxs28HadN8/MTqZUymyqjEe5+pzFlwYiog9sjBbIXIB3cKPIl+9fXoQvR
+         3oyL9iT6JED3JMHn+WN9TMBRDonmkG8Jz6/HxVrmDIpNQMZIAeHoH7AYU8UPAQE2A15b
+         0bH5uQiYftr4gt5wYQdr4Czjg73qkzDl/cmud2Ei+QHhZv5KxwRk0brHHV875fnsp3qk
+         DQmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JWyHWpRZ1Kh32AMhlQIk7pyHBxJVf8IzTt5zqpwObhY=;
-        b=XdH6KCkWeF6nCSn81T71lJGsBs2tHAk7QAzDEoqa4IN7gdjnlBqWb7K3N4Q6kucOs9
-         TaWqFKzqKhnFYr4Ua4unvCD9iQfm/7UD70BhybFK/UeMIZOeNv+HS5yVJ/AQh8rRC+/V
-         8PUQRuNgaAE6W+PRsyiSQKPdT4n7rCrxydKW9exG2RYBPlcFu9Sx+3r1ZNf/CnyOxp4H
-         hCII3wTm/0/QAJqEsewWTBxVoik1Cefo3Fhe7Ia4a5rMSLFHZ+rrg0n/8ZtP+U+vTrIQ
-         IKArEYxVmzQqw9EBHOxp4pCIpzE8gQYTYmgwI2ljd6FwERJLGMY6rI1eEH0m1cZDTuxT
-         IeHg==
-X-Gm-Message-State: ACgBeo2u1Vs5fciCYuXqGvn84/clhtZmC3ku155WNjvOuAYGFi/A1vB0
-        sOcOfV4c7ZHRDdb7EdBgmtE2ag==
-X-Google-Smtp-Source: AA6agR7cfm64Y6GBFeSO18v6MzV1E5WMXn0USHffiVixm1IpLgTYtoCxMdxCHJ8TpfOA7GHPubr/eg==
-X-Received: by 2002:a05:6512:2349:b0:48c:ee14:7fc with SMTP id p9-20020a056512234900b0048cee1407fcmr1125838lfu.71.1659953780871;
-        Mon, 08 Aug 2022 03:16:20 -0700 (PDT)
+        bh=9X5+OY9C1JUS8+hnV0IE5pgrose61H6CK2ZponbGyzQ=;
+        b=dqlZrqs0tJttGSJ2Hi/t1m5C0pwxgXHqe+xBp2TZpgtRO3t+lKkdPd5quCLdNRfKrQ
+         Lq5U9IWlc5OY5lzihGRRKdeJ8AsuRp7CCnUPwDSq19WwwXWBcutk6/Lh4me8o0cYhrQI
+         3baoqhKg4YTL1SFr2y001lEToEQYJ1PAuy578i+QK7HdL9eJ2zB1avCLm+RAaEMAbA8l
+         kMgnl6YUj9sXNeazVm8QjG0LkgWr176dEXKrcDyJxL9tBqrHVs9NyRLQYtX6it3sgHrh
+         Hu586j92Zeg2RpVjJX3GBzLcPvPiMci3Yl37JFE1Lgt7TuoxKh4zx1noBxu5dhms1gT+
+         9GcQ==
+X-Gm-Message-State: ACgBeo3qdbe3oxmpln2kSPW7zBX8DAbrpTvPWaziIlZsOR+iCC5seo6K
+        Zf2lEvspszjWooOrebj+7arvCg==
+X-Google-Smtp-Source: AA6agR4tttRe6G0iEjjBNa15w2EGKbZLas/+/O7VoRN7jyC3KSWWrfglGpmZ0iCybcN82fFC9txRag==
+X-Received: by 2002:a2e:9e17:0:b0:25d:78d8:407f with SMTP id e23-20020a2e9e17000000b0025d78d8407fmr5948114ljk.433.1659953782159;
+        Mon, 08 Aug 2022 03:16:22 -0700 (PDT)
 Received: from localhost.localdomain ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id b2-20020a056512070200b0048b193f677dsm1377489lfs.178.2022.08.08.03.16.19
+        by smtp.gmail.com with ESMTPSA id b2-20020a056512070200b0048b193f677dsm1377489lfs.178.2022.08.08.03.16.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Aug 2022 03:16:20 -0700 (PDT)
+        Mon, 08 Aug 2022 03:16:21 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Lee Jones <lee@kernel.org>, linux-samsung-soc@vger.kernel.org,
@@ -63,9 +63,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: [PATCH 2/3] MAINTAINERS: pwm-fan: Drop Bartlomiej Zolnierkiewicz
-Date:   Mon,  8 Aug 2022 13:15:25 +0300
-Message-Id: <20220808101526.46556-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 3/3] dt-bindings: display: simple-framebuffer: Drop Bartlomiej Zolnierkiewicz
+Date:   Mon,  8 Aug 2022 13:15:26 +0300
+Message-Id: <20220808101526.46556-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220808101526.46556-1-krzysztof.kozlowski@linaro.org>
 References: <20220808101526.46556-1-krzysztof.kozlowski@linaro.org>
@@ -87,28 +87,21 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 I assume that if other change was preferred, there was quite enough of
 time to send a patch for this. :)
 ---
- MAINTAINERS | 8 --------
- 1 file changed, 8 deletions(-)
+ .../devicetree/bindings/display/simple-framebuffer.yaml          | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 423c81f8ba61..4832b317fe05 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16529,14 +16529,6 @@ T:	git git://linuxtv.org/media_tree.git
- F:	drivers/media/usb/pwc/*
- F:	include/trace/events/pwc.h
+diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
+index 27ba4323d221..1f905d85dd9c 100644
+--- a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
++++ b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
+@@ -7,7 +7,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Simple Framebuffer Device Tree Bindings
  
--PWM FAN DRIVER
--M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
--L:	linux-hwmon@vger.kernel.org
--S:	Supported
--F:	Documentation/devicetree/bindings/hwmon/pwm-fan.txt
--F:	Documentation/hwmon/pwm-fan.rst
--F:	drivers/hwmon/pwm-fan.c
--
- PWM IR Transmitter
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
+ maintainers:
+-  - Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+   - Hans de Goede <hdegoede@redhat.com>
+ 
+ description: |+
 -- 
 2.34.1
 
