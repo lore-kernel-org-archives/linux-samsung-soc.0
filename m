@@ -2,139 +2,49 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22E7C00140
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Aug 2022 20:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBC6C19F2D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Aug 2022 05:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244225AbiHHURc (ORCPT
+        id S232199AbiHIFD1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Aug 2022 16:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42080 "EHLO
+        Tue, 9 Aug 2022 01:03:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244124AbiHHURb (ORCPT
+        with ESMTP id S230456AbiHIFD0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Aug 2022 16:17:31 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5931A3B4
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 13:17:30 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id l4so12052614wrm.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2022 13:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=+dc2Wr5R8DkIR7Sm+I5+T7mhvoBamdjHee3gcWWSuJo=;
-        b=uabJrolrTPyF1qLICQ8TpBepRoWYZnlEAhQgFjivjeMzBVzfD93dk6u6l8O2xkJVHQ
-         4RGVeoNcpPWfyHL+mbwcYM4R3BT+evvCv3E/f0UKOQKmzTi0bZZQ0TmodcOsKf09S3sp
-         loVX0/zXg1eJcZaO2wvA4/V/DlTtrxPP9U73KmgeOr4TElRHAuJmEdWA1Y9sSs4mOK5L
-         LD6mtxQfeHX7W7n6PDQB+c7Qx5bHiS9SIf9Ky/bIe7F5AyyR0xS94kQbPSeneY5PqxJS
-         v7BfapRw+gr31Zdw8wcbwZHbVrAQHtowq623som7SWXlSgpT9r++LAXsUeG4vULA15rt
-         +Bdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=+dc2Wr5R8DkIR7Sm+I5+T7mhvoBamdjHee3gcWWSuJo=;
-        b=6iJLAM+aPJVdrl7ITn6gvqk3Wv7vW96gxSSwRV3f2mbHXyl8gsW3b3hx+50R8ohWYZ
-         bnlz6QbxclbHRPc/bsqIvX4mUut0cW/KgdWPxzuv26Nt9KE2sIi810SmWNFDEsa2vDuz
-         RNAOE9khibOu9n4LqIzOdpVIHkYbWwn1DMi0MA7Fts5YnTM2ApHxYhrHAuoFFN20gwmQ
-         HmUMfVtkU2Pp25+tc+zLML0opUojVNVuTYEFMLgAlQH3XO4VJerg+bRDt/VRcs/gYvuZ
-         fBXi9VDfGIfjZHeBDj2EbVBrkUuyErGKui4INovQ7AHP7kYI1W/mb6Sg82uLqPcFMaUJ
-         V0jQ==
-X-Gm-Message-State: ACgBeo1tuS+iRSuWjiTuEzl2u7rLatXki7QgUI1F8pTtyWS+4JsNV3f7
-        ePfgUOAAw7XuLGf9A66zpVQpYw==
-X-Google-Smtp-Source: AA6agR4El7NQSSoWoZfNjns26MLZnLRuSF49GPdQbZYqrN61O2+SXmNc/xvHVZO+ufi4KB42EnCdJA==
-X-Received: by 2002:a5d:6d0e:0:b0:21e:fc95:3dfc with SMTP id e14-20020a5d6d0e000000b0021efc953dfcmr12458195wrq.112.1659989848614;
-        Mon, 08 Aug 2022 13:17:28 -0700 (PDT)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id j20-20020adfd214000000b0021ec32d130asm11868629wrh.74.2022.08.08.13.17.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Aug 2022 13:17:28 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: exynos: Add SysMMU nodes for Exynos850
-Date:   Mon,  8 Aug 2022 23:17:24 +0300
-Message-Id: <20220808201724.27831-3-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220808201724.27831-1-semen.protsenko@linaro.org>
-References: <20220808201724.27831-1-semen.protsenko@linaro.org>
+        Tue, 9 Aug 2022 01:03:26 -0400
+X-Greylist: delayed 332 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 08 Aug 2022 22:03:25 PDT
+Received: from plesk.creativescave.com (unknown [167.71.2.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9158C1E3DC
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Aug 2022 22:03:25 -0700 (PDT)
+Received: by plesk.creativescave.com (Postfix, from userid 10004)
+        id 177FE79E57; Tue,  9 Aug 2022 04:57:52 +0000 (UTC)
+To:     linux-samsung-soc@vger.kernel.org
+Subject: =?us-ascii?Q?AA-Loodgieters.nl_"EINE_FINANZKRISE_KANN_SIE_SE?=  =?us-ascii?Q?HR_REICH_MACHEN!"?=
+Date:   Tue, 9 Aug 2022 04:57:52 +0000
+From:   "AA-Loodgieters.nl" <info@aa-loodgieters.nl>
+Reply-To: k70v5chup9qx@n3plcpnl0074.prod.ams3.secureserver.net
+Message-ID: <J1uVLNIdGGi2Da9TrIIP6UTGNV3F6SNEpF2nlrDW78@aa-loodgieters.nl>
+X-Mailer: PHPMailer 6.5.0 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add all SysMMU nodes to Exynos850 SoC device tree.
+Beste GradyIsork,
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 45 +++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Uw bericht is ontvangen, wij zullen binnen 6 uur contact met je opnemen. Heeft het spoed ? Bel dan: +31 657 73 75 74
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 8e78b50416d8..4204a443ea4a 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -503,6 +503,51 @@ i2c_6: i2c@13890000 {
- 			status = "disabled";
- 		};
- 
-+		sysmmu_aud: sysmmu@14850000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x14850000 0x9000>;
-+			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "sysmmu";
-+			clocks = <&cmu_aud CLK_GOUT_AUD_SYSMMU_CLK>;
-+			#iommu-cells = <0>;
-+		};
-+
-+		sysmmu_dpu: sysmmu@130c0000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x130c0000 0x9000>;
-+			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "sysmmu";
-+			clocks = <&cmu_dpu CLK_GOUT_DPU_SMMU_CLK>;
-+			#iommu-cells = <0>;
-+		};
-+
-+		sysmmu_is0: sysmmu@14550000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x14550000 0x9000>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "sysmmu";
-+			clocks = <&cmu_is CLK_GOUT_IS_SYSMMU_IS0_CLK>;
-+			#iommu-cells = <0>;
-+		};
-+
-+		sysmmu_is1: sysmmu@14570000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x14570000 0x9000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "sysmmu";
-+			clocks = <&cmu_is CLK_GOUT_IS_SYSMMU_IS1_CLK>;
-+			#iommu-cells = <0>;
-+		};
-+
-+		sysmmu_mfcmscl: sysmmu@12c50000 {
-+			compatible = "samsung,exynos-sysmmu";
-+			reg = <0x12c50000 0x9000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "sysmmu";
-+			clocks = <&cmu_mfcmscl CLK_GOUT_MFCMSCL_SYSMMU_CLK>;
-+			#iommu-cells = <0>;
-+		};
-+
- 		sysreg_peri: syscon@10020000 {
- 			compatible = "samsung,exynos850-sysreg", "syscon";
- 			reg = <0x10020000 0x10000>;
--- 
-2.30.2
+
+Groet,
+
+AA-Loodgieters
+
+--------------------
+Uw bericht:
+
+DIE WELTFINANZKRISE KANN SIE REICH MACHEN! https://telegra.ph/Deutschland-hat-eine-neue-Einnahmequelle-von-10827-Euro-pro-Woche-08-07
+
+--------------------
 
