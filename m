@@ -2,120 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD85EC28B2B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Aug 2022 22:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57971C25B0C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Aug 2022 11:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230056AbiHIWFt (ORCPT
+        id S234648AbiHKLqW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 9 Aug 2022 18:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50156 "EHLO
+        Thu, 11 Aug 2022 07:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229965AbiHIWFV (ORCPT
+        with ESMTP id S234066AbiHKLqV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Aug 2022 18:05:21 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3AAF5A0
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Aug 2022 15:05:19 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id i128-20020a1c3b86000000b003a536d58f73so116732wma.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Aug 2022 15:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=Dtsn+qHePIXkfLwiYhYSs7MDeRS5UWjSoQeV0DC4IrQ=;
-        b=iwarO3CIexAFy05WuDYuhU+vOtx1AsCy/sZkh+hlYJ/QRSOXp3NLVsIWafaFT79jph
-         noaLzAWR4SH+E8koHK8Dql7gkKhgx+yDeBAzAD7uemcTUznbUlIBUyi4MHGVWLZ+N5Ge
-         CTVEyjSF8RKK2f0rqSs58y112TxHK+aaUdrRM6jV1MvF0qq3xYzHL0BTudA78O06nERZ
-         S1QfesPyK/Bf+PUwAXXzY9XU1lVmBOejuXOkQY6sNG1mwYsc7P7eO2VxzOZBCEyfl0FO
-         +pABrjMsEp3PFqzfODLa2xixNDJ+qRl0VIccPJwAAhtCEJACQAOzm9KYk7JrVvrt9urH
-         n81A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=Dtsn+qHePIXkfLwiYhYSs7MDeRS5UWjSoQeV0DC4IrQ=;
-        b=DYCokxRFmULWv1J2faDeGL9Gh5HimdGCamkhx+iVYR0uXWMYa+pTxukg234CVuQHIW
-         ELEHb2p+Rb6yRrCY4ddoZrkbHS0hllq3cecPnfCABqCuSw1u0R8efNhMm4bvxJnvV24q
-         4t+dyR2sktEsNlG87reRh86GPfl/khO6vAf6K9gpbD3SDsJZc00SQNcQ6dors2MJdE4A
-         iIbtTY9BqD4S/EjOzHCn/QUAMHGhbnwXWOuK8tZuKn92N07HL423KSkxIs8O2O5P5Udf
-         nMZ85/Mg8n3CvoJy3gOM8pRZQAPh+CC4MGgR7Z5+BjXA4jaPyNRrU5BIflT5WTwDCNMF
-         nNqg==
-X-Gm-Message-State: ACgBeo3v0bgOMdJdYoVLqp/Mygtrvr/sMpre0qv/MvmdKOnyGBoTc1kA
-        cK3aGTFhqW04ELzxE9L62hQ/2nihhF++Tg==
-X-Google-Smtp-Source: AA6agR5BLj4meEP0OErMKJ3xPVCx+0sgrKGHOpVy5tF2q9LI+yGJ3PpYE9yfYQZwow0TMV9p0T1VmA==
-X-Received: by 2002:a1c:4c0d:0:b0:3a5:98fa:3a4a with SMTP id z13-20020a1c4c0d000000b003a598fa3a4amr283578wmf.92.1660082718206;
-        Tue, 09 Aug 2022 15:05:18 -0700 (PDT)
-Received: from localhost.localdomain (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id m21-20020a05600c3b1500b003a317ee3036sm293583wms.2.2022.08.09.15.05.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 15:05:17 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     daniel.lezcano@linaro.org, rafael@kernel.org
-Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
-        S5P AND EXYNOS ARM ARCHITECTURES)
-Subject: [PATCH v2 16/26] thermal/drivers/exynos: of_thermal_get_ntrips()
-Date:   Wed, 10 Aug 2022 00:04:26 +0200
-Message-Id: <20220809220436.711020-17-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220809220436.711020-1-daniel.lezcano@linaro.org>
-References: <20220809220436.711020-1-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 11 Aug 2022 07:46:21 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D19661DB1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Aug 2022 04:46:19 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220811114617epoutp0313c7bc3519757e1b01594b626c497c83~KR9F3SVk80199401994epoutp033
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Aug 2022 11:46:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220811114617epoutp0313c7bc3519757e1b01594b626c497c83~KR9F3SVk80199401994epoutp033
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1660218377;
+        bh=rB/gvBVWvLIu7HTWugyowvJ5OV0wFMrOhW9GykTAGio=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=kFS0oCoD1ksZ0slYKJntqgqjCc0D0elmzTRCs8PEKamLaGvWm5JbJxUVrPvZz/Ul1
+         uElMII5ghgsEPwxg0H0S1a8mdwWdfFiMRlPbScjOltm71Zq28xvCM7vZtRw5vutFxJ
+         oGSMvMha37n3AWpePQ+reA/dvSGqDSOPA4vUruPI=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220811114616epcas5p20e860f87a13af8c89701ec6adc6df663~KR9FGbST72919329193epcas5p25;
+        Thu, 11 Aug 2022 11:46:16 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4M3Q4Q6zByz4x9Pq; Thu, 11 Aug
+        2022 11:46:14 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AD.E0.09494.60CE4F26; Thu, 11 Aug 2022 20:46:14 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220811114614epcas5p29046e326acc8d13824479504e80a0d49~KR9Ch5Z822876028760epcas5p27;
+        Thu, 11 Aug 2022 11:46:14 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220811114614epsmtrp21b83be63e967a1317ab7235713d4ab3b~KR9ChF2911552215522epsmtrp2a;
+        Thu, 11 Aug 2022 11:46:14 +0000 (GMT)
+X-AuditID: b6c32a4a-201ff70000012516-a8-62f4ec06ca77
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7F.EF.08905.50CE4F26; Thu, 11 Aug 2022 20:46:13 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.109.115.6]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220811114612epsmtip133ef77525e3f653d6a0b4fbbe5ff0d4b~KR9BFqO4C3069330693epsmtip1N;
+        Thu, 11 Aug 2022 11:46:12 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, avri.altman@wdc.com,
+        bvanassche@acm.org, martin.petersen@oracle.com,
+        chanho61.park@samsung.com, linux-samsung-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] scsi: ufs: host: ufs-exynos: staticize fsd_ufs_drvs
+Date:   Thu, 11 Aug 2022 17:05:50 +0530
+Message-Id: <20220811113550.31914-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDKsWRmVeSWpSXmKPExsWy7bCmhi7bmy9JBotuGlk8mLeNzeLlz6ts
+        FtM+/GS2uLxf26LvxUNmi02Pr7FaXN41h81ixvl9TBbd13ewWSw//o/Jgcvj8hVvjzvX9rB5
+        bF5S7/Hx6S0Wj74tqxg9Pm+S82g/0M0UwB6VbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZg
+        qGtoaWGupJCXmJtqq+TiE6DrlpkDdJySQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAl
+        p8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvj+7mNbAXrOSre9LSyNjB+YOti5OSQEDCReDPz
+        FVMXIxeHkMBuRokVXdcZIZxPjBKnHjyCcr4xSrz9spQFpmXN9sXsEIm9jBLXJu1mg3CamSQa
+        zlxgAqliE9CWuDt9C5gtIpAicXX/T7AlzAKXGSX2zbkOlhAWcJHYsvcA0A4ODhYBVYmWm6Ug
+        YV4BG4kH13qhtslLrN5wgBmkV0LgHLvEjyk9jBAJF4llk65C2cISr45vYYewpSQ+v9vLBjJT
+        QsBDYtEfKYhwhsTb5euhyu0lDlyZwwJSwiygKbF+lz5ImFmAT6L39xMmiE5eiY42IYhqVYnm
+        d1ehrpGWmNjdzQphe0js/QARFxKIldj5eTbLBEaZWQhDFzAyrmKUTC0ozk1PLTYtMMpLLYfH
+        TXJ+7iZGcDLT8trB+PDBB71DjEwcjIcYJTiYlUR4yxZ9ThLiTUmsrEotyo8vKs1JLT7EaAoM
+        pInMUqLJ+cB0mlcSb2hiaWBiZmZmYmlsZqgkzut1dVOSkEB6YklqdmpqQWoRTB8TB6dUA9Pa
+        kM/buzSElOVqliRuyNwVcXDLXv5Da/auf998wzHJWvYK8/7H734e+7Xrir5bxvVE9om83U9r
+        /5YKLdlzP2/OuilPD3H/2P+G5eCJc0m2V8wiGvp8JjzPrri0759eWnLC9Q4rh29mE686rmDP
+        iAqSK86UaBR+ef7ILhEWtrXpXAwJ8udeyj8wOhU6R3unXnbe31+v4u8te2+q5sG4ysvU0WHP
+        yc+WqudZmHftDVoxibfuld373c3h1oJs+Ze0pfyb7e/Z5L2oWS3W8jF78jmFYzGdPBoCMyv3
+        C/+6WH5smseTE73lLjbLflol3ZlsIT/lyKTLL82e1TM+futygu1s3J09JindjOuCb+d3Xdig
+        xFKckWioxVxUnAgAGWTPOe8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCLMWRmVeSWpSXmKPExsWy7bCSnC7rmy9JBj9XWlg8mLeNzeLlz6ts
+        FtM+/GS2uLxf26LvxUNmi02Pr7FaXN41h81ixvl9TBbd13ewWSw//o/Jgcvj8hVvjzvX9rB5
+        bF5S7/Hx6S0Wj74tqxg9Pm+S82g/0M0UwB7FZZOSmpNZllqkb5fAlfH93Ea2gvUcFW96Wlkb
+        GD+wdTFyckgImEis2b6YvYuRi0NIYDejxO6WK8wQCWmJ6xsnsEPYwhIr/z2HKmpkkli+eT0T
+        SIJNQFvi7vQtQDYHh4hAmsS3kyogNcwCtxkl1n34BLZBWMBFYsveA4wgNSwCqhItN0tBwrwC
+        NhIPrvWyQMyXl1i94QDzBEaeBYwMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxggNO
+        S3MH4/ZVH/QOMTJxMB5ilOBgVhLhLVv0OUmINyWxsiq1KD++qDQntfgQozQHi5I474Wuk/FC
+        AumJJanZqakFqUUwWSYOTqkGpiZ5g2Ut/ns2vG3K8rqmsfeooOwJRRVlsetvX6kdf3CwQ3/X
+        1QvTsy3fGCzmuOg9c5nwQwMGnwwXjz8zi+/+j7br628uZ14hvXiSkkdBo0TPYlkDYakIj+3/
+        /bgveXeefbW4mJ17lsmkvjC7G3ePbOM7nfZM3mUbn1bVtNLrhpWCJ5UuzV++p5RTiftBB+dU
+        38wF9ws/nt32c82023MVdh380HNER3ryYcapbb0dx6WeLWP1mbL7e0OLLnfEVbsGRk1LyyPH
+        3S9nOspsnm+VHlbR6WfzaVmo4fWMFa5ex434vYW4Pzs/e2NkeOrY1VnTywIZZki1PfrXeurw
+        5sx/hlM4lGvVNHef23hk3SPbY0osxRmJhlrMRcWJAFjAtuenAgAA
+X-CMS-MailID: 20220811114614epcas5p29046e326acc8d13824479504e80a0d49
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220811114614epcas5p29046e326acc8d13824479504e80a0d49
+References: <CGME20220811114614epcas5p29046e326acc8d13824479504e80a0d49@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The thermal core framework allows to get the number of thermal trips,
-use it instead of visiting the thermal core structure internals.
+struct fsd_ufs_drvs is not used outside this file, so made it static.
+This fixes sparse warning:
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+drivers/ufs/host/ufs-exynos.c:1721:28: sparse: sparse:
+symbol 'fsd_ufs_drvs' was not declared. Should it be static?
+
+Reported-by: kernel test robot <lkp@intel.com>
+Fixes: 216f74e8059a ("scsi: ufs: host: ufs-exynos: Add support for FSD UFS HCI")
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/ufs/host/ufs-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 5204e343d5b0..ac47c716c1f0 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -260,6 +260,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct thermal_zone_device *tzd = data->tzd;
-+	int num_trips = thermal_zone_get_num_trips(tzd);
- 	unsigned int status;
- 	int ret = 0, temp;
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index eced97538082..6cef19118e07 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -1711,7 +1711,7 @@ static struct exynos_ufs_uic_attr fsd_uic_attr = {
+ 	.pa_dbg_option_suite		= 0x2E820183,
+ };
  
-@@ -271,12 +272,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		goto out;
- 	}
- 
--	if (of_thermal_get_ntrips(tzd) > data->ntrip) {
-+	if (num_trips > data->ntrip) {
- 		dev_info(&pdev->dev,
- 			 "More trip points than supported by this TMU.\n");
- 		dev_info(&pdev->dev,
- 			 "%d trip points should be configured in polling mode.\n",
--			 (of_thermal_get_ntrips(tzd) - data->ntrip));
-+			 num_trips - data->ntrip);
- 	}
- 
- 	mutex_lock(&data->lock);
-@@ -289,7 +290,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		ret = -EBUSY;
- 	} else {
- 		int i, ntrips =
--			min_t(int, of_thermal_get_ntrips(tzd), data->ntrip);
-+			min_t(int, num_trips, data->ntrip);
- 
- 		data->tmu_initialize(pdev);
- 
+-struct exynos_ufs_drv_data fsd_ufs_drvs = {
++static struct exynos_ufs_drv_data fsd_ufs_drvs = {
+ 	.uic_attr               = &fsd_uic_attr,
+ 	.quirks                 = UFSHCD_QUIRK_PRDT_BYTE_GRAN |
+ 				  UFSHCI_QUIRK_BROKEN_REQ_LIST_CLR |
 -- 
-2.34.1
+2.25.1
 
