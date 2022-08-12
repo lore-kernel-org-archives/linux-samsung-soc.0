@@ -2,450 +2,448 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C52BC00140
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 10:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5353C25B08
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 12:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237746AbiHLKkE (ORCPT
+        id S238334AbiHLM0E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Aug 2022 06:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44456 "EHLO
+        Fri, 12 Aug 2022 08:26:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234110AbiHLKkD (ORCPT
+        with ESMTP id S238272AbiHLMZq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Aug 2022 06:40:03 -0400
+        Fri, 12 Aug 2022 08:25:46 -0400
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DAFA8960
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 03:40:01 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220812103957euoutp01e15639aa512bad56929aca56c2bcbf83~Kksc_lwS90982909829euoutp01V
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 10:39:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220812103957euoutp01e15639aa512bad56929aca56c2bcbf83~Kksc_lwS90982909829euoutp01V
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B8805FAD7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 05:25:43 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220812122541euoutp017563aff4f5d038f3334212590be4cdd3~KmIxYPYpO2811028110euoutp01K
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 12:25:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220812122541euoutp017563aff4f5d038f3334212590be4cdd3~KmIxYPYpO2811028110euoutp01K
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1660300797;
-        bh=v3JwjQQfQ8BFKoRh78TK+NwQSCSRw2LzPxcbsE2p/jE=;
+        s=mail20170921; t=1660307141;
+        bh=WESLTj5OX5vVlhcNzo7Y0VD2lQ0iI5c5Q/Vx9qNnQPg=;
         h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=pxSjvI2MmwQ6H/A/DzSU3mKnl2KRhL/uVywMctsV7PFNt1W6Eoaf8UFEFFYiDA+yo
-         XB5UBup33xO3bK7uGGZUAXfwzGUxpA0hjc/is2xJt8ofjfQ9yQXUU963DhIVZ+K47H
-         QHQRAECnYaDIf6+B+p5YkMGC5yYa3WNZBght/WRA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=V5mdsljhgtqOP1e8bXJI0jLTy5GMCRKx0l+mReH2XaT9SZGKtfgVmY5MN6F1VvtfM
+         Pi3KqcoPD1N9GOW8ZLlw8SllOQkNo0YVy40BJFbXaENUbNcy+Nk55iHro1BxacNwSL
+         eXuktyZFInIMsWf8l1Bsoj0DkjU0PUXiJMsqPnNk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220812103956eucas1p2a9cd51eba0b8b87657c82e0e96ce416a~KkscsPAyH0496004960eucas1p2p;
-        Fri, 12 Aug 2022 10:39:56 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id AA.BC.09580.CFD26F26; Fri, 12
-        Aug 2022 11:39:56 +0100 (BST)
+        20220812122540eucas1p2734d63c9a9a6c1c5017f89f058b44f86~KmIw9GaPA2658126581eucas1p2J;
+        Fri, 12 Aug 2022 12:25:40 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 5D.62.10067.4C646F26; Fri, 12
+        Aug 2022 13:25:40 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220812103956eucas1p1849443855b3537c3f5be2891fa50a50b~KkscR9xLl1664316643eucas1p1g;
-        Fri, 12 Aug 2022 10:39:56 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220812122540eucas1p2abdde59aaf1837c34e0aed594339bc72~KmIwdyvRZ2580425804eucas1p2O;
+        Fri, 12 Aug 2022 12:25:40 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220812103956eusmtrp2a6b70ff349e428f5b4c097139e614832~KkscROlSo0364903649eusmtrp2p;
-        Fri, 12 Aug 2022 10:39:56 +0000 (GMT)
-X-AuditID: cbfec7f5-9c3ff7000000256c-08-62f62dfc9817
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 16.9E.09038.CFD26F26; Fri, 12
-        Aug 2022 11:39:56 +0100 (BST)
+        20220812122540eusmtrp28655a74bcd1fb8d2c8de53260db57b9a~KmIwc2Ydi0040000400eusmtrp2l;
+        Fri, 12 Aug 2022 12:25:40 +0000 (GMT)
+X-AuditID: cbfec7f4-dd7ff70000002753-9d-62f646c4c986
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 87.6B.09095.4C646F26; Fri, 12
+        Aug 2022 13:25:40 +0100 (BST)
 Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220812103955eusmtip2f66e7f26443f2317effe4ca3c3fe3a66~Kksbzpha11806818068eusmtip2c;
-        Fri, 12 Aug 2022 10:39:55 +0000 (GMT)
-Message-ID: <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
-Date:   Fri, 12 Aug 2022 12:39:55 +0200
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220812122539eusmtip1a014347098a791f9f93116cdda114141~KmIvuXHOT3016730167eusmtip1I;
+        Fri, 12 Aug 2022 12:25:39 +0000 (GMT)
+Message-ID: <7e9e509a-0ef7-087d-e379-14fb58e3e14f@samsung.com>
+Date:   Fri, 12 Aug 2022 14:25:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
         Gecko/20100101 Thunderbird/91.12.0
-Subject: Re: [PATCH 5/5] thermal/core: Move the mutex inside the
- thermal_zone_device_update() function
+Subject: Re: [PATCH 1/2] iommu/exynos: Abstract getting the fault info
 Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Janghyuck Kim <janghyuck.kim@samsung.com>,
+        Cho KyongHo <pullip.cho@samsung.com>,
+        Daniel Mentz <danielmentz@google.com>,
+        David Virag <virag.david003@gmail.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>, iommu@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220805153834.2510142-5-daniel.lezcano@linaro.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djP87p/dL8lGfxfpmFxeH6FxbzPshbn
-        z29gt7i8aw6bxefeI4wWM87vY7KY+2Uqs8WTh31sDhwei/e8ZPLYtKqTzePOtT1sHp83yQWw
-        RHHZpKTmZJalFunbJXBlvJt9j7FgVnzF+2mf2BoYp/t2MXJwSAiYSCxcr9jFyMUhJLCCUWLR
-        gzb2LkZOIOcLo8Szu84Qic+MEjMXTgdLgDSsvf2bFSKxnFHi5dut7BDOR0aJ5WePgVXxCthJ
-        LJnSBWazCKhKPNm2hAUiLihxcuYTMFtUIFni2f/FYDXCAhkSz/aeYAOxmQXEJW49mc8EYosI
-        ZElc2/eNGWQBs8A6RokvW46AJdgEDCW63naBNXAKOEp8uNDJDNEsL9G8dTYzxKl3OCR+veCG
-        sF0k/u6/AfWCsMSr41ugbBmJ/ztBloHCIl/i7wxjiHCFxLXXa6DGWEvcOfeLDaSEWUBTYv0u
-        fYiwo8TWCROYITr5JG68FYQ4gE9i0rbpUGFeiY42IYhqNYlZx9fB7Tx44RLzBEalWUhhMgvJ
-        77OQvDILYe8CRpZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgYnn9L/jX3cwrnj1Ue8Q
-        IxMH4yFGCQ5mJRHeskWfk4R4UxIrq1KL8uOLSnNSiw8xSnOwKInzJmduSBQSSE8sSc1OTS1I
-        LYLJMnFwSjUwxby5cumC7P7evAuXJzg13ijs8/s6g/ObndJNw10vGw/anWrfNGfBseDZrmJ/
-        Ox5+fjr74HXD6RsY50ZHmh866FOzcOsHneVPH0rtbupf5V1ZsuOrvrjJmVxZFt7HX5Vk30Re
-        PPjWaubVVRmmHOePWX3YK6dctU0qK/T+H81H7MlrbmxPFlwwYfH7+LoLPR8iXlSVXTorWceS
-        maPKGLwizfTMzgl8K1+sK50bIbhqneCjz9seJKr+Fcz4+WK3VX3s/c+b30e8X5dw78T97TO4
-        2tY9qxS5vHazbhVT9o0r2pL1TEmNrwVOschUOn5YG15/8nWe3g7VJUFSlxf9YnnNFybw8fX8
-        Aw6rS+x/SDBGCPgosRRnJBpqMRcVJwIAtpII9KsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xe7p/dL8lGUy6wW9xeH6FxbzPshbn
-        z29gt7i8aw6bxefeI4wWM87vY7KY+2Uqs8WTh31sDhwei/e8ZPLYtKqTzePOtT1sHp83yQWw
-        ROnZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlvJt9
-        j7FgVnzF+2mf2BoYp/t2MXJySAiYSKy9/Zu1i5GLQ0hgKaPEueW9rBAJGYmT0xqgbGGJP9e6
-        2CCK3jNKHLp6lw0kwStgJ7FkShc7iM0ioCrxZNsSFoi4oMTJmU/AbFGBZIkFh5aC2cICGRLP
-        9p4A62UWEJe49WQ+UxcjB4eIQJbE69muIPOZBdYxSuzeMxesXkigXGLx13dgR7AJGEp0ve0C
-        6+UUcJT4cKGTGWKOmUTX1i5GCFteonnrbOYJjEKzkJwxC8m6WUhaZiFpWcDIsopRJLW0ODc9
-        t9hIrzgxt7g0L10vOT93EyMw4rYd+7llB+PKVx/1DjEycTAeYpTgYFYS4S1b9DlJiDclsbIq
-        tSg/vqg0J7X4EKMpMCwmMkuJJucDYz6vJN7QzMDU0MTM0sDU0sxYSZzXs6AjUUggPbEkNTs1
-        tSC1CKaPiYNTqoGJ825r18UFzywqv/3fuNwnfYfSPCmxtJspE+4Yrz/+1DCw6pGMtdFaNcuk
-        0skiuwvEm4M2fCpv7760Wn7WnFO73Rwkbvit2ZXxviLqTI5t7GJRbo/oHROX7/9WOPnk51R+
-        3zOuS2Nff1mmYXt2Z9yLQz0mQv8efLdJiLA7+CKx+e877iNGJ5ZtuJfxSjSqbFHkved2L7/M
-        vteSL8Tem8q9bvLVPQKv2ItPsrREWbDxPV1+vXj5NT59T5/msmaN9WcLZNQ1dq5Qrp/4bckn
-        1RyVkzY3yxp2fWVxVU87IPSaP60y4M6+XHWDPQ2fIoO+5bJFOTiUrNg80XPCyiRD1aczpXJ3
-        Op8QmL2hNDnEOG6vEktxRqKhFnNRcSIAPdgZDEEDAAA=
-X-CMS-MailID: 20220812103956eucas1p1849443855b3537c3f5be2891fa50a50b
+In-Reply-To: <20220726200739.30017-2-semen.protsenko@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djPc7pH3L4lGdx6pWoxoaOVyeLXFwuL
+        zXOKLTpnb2C32Pt6K7vFpsfXWC0u75rDZjHj/D4mi3+9BxktDn54wmrxvA/IPXX3M7vF8feP
+        GS1a7pg68Hk8OTiPyWPNvDWMHjtn3WX3WLCp1GPTqk42jzvX9rB5bF5S7/Fi80xGj74tqxg9
+        Pm+SC+CK4rJJSc3JLEst0rdL4Mo4POU1c8HapIqDfcuZGhgf+3YxcnJICJhI3Jr2kK2LkYtD
+        SGAFo8T5i/uZQBJCAl8YJQ4f94VIfGaU+PfnI2MXIwdYx+sfqRDx5YwSPWdWMUM4Hxklvi27
+        zwzSzStgJ7FwdhMriM0ioCpxYtc9Roi4oMTJmU9YQGxRgWSJZ/8Xs4PYwgJuEtvPTgGLMwuI
+        S9x6Mh/sChGBNImr/+6zgixgFtjBLPF1zk2wIjYBQ4mut11sIDangIPEms65TBDN8hLb384B
+        u0hCYDOnxMkf0xkhHnWRODrhHCuELSzx6vgWdghbRuL/TpBtIK/lS/ydYQwRrpC49noNM4Rt
+        LXHn3C82kBJmAU2J9bv0IcKOEt+m7WOD6OSTuPFWEOICPolJ26YzQ4R5JTrahCCq1SRmHV8H
+        t/PghUvMExiVZiEFyiwkz89C8ssshL0LGFlWMYqnlhbnpqcWG+WllusVJ+YWl+al6yXn525i
+        BCa70/+Of9nBuPzVR71DjEwcjIcYJTiYlUR4yxZ9ThLiTUmsrEotyo8vKs1JLT7EKM3BoiTO
+        m5y5IVFIID2xJDU7NbUgtQgmy8TBKdXAVHXyw9Jd0x/2GO+QtBGf7Gb16s8tfp6UfUnKYpsq
+        X7y2/zXnee25eKei3pnTptT9NrpxJ1ZO7I+4QddttfQ6tY7dKy8dvFB5O9IscOnUS3niD2ND
+        bkzi2XH0u8pOn6vBfta33nqb81UuXbnc5VzHvCghw4mJMl2ZK590Pjl/PTTdOT7I2EqlIXKl
+        VJ5Y6ZavG6Lqwm/bNN+c/29D3s/48KUpu0tYN4WwRW1Y5plzP0WgyO7Rxlvltq9V7zOteFDY
+        dPHSrV9SLFfzsmafPmexddVk2aX5NyZwGWq4c1+XWjr9isCMcy/6cmpWmtdxCt2o23HD+JTh
+        ilPbW69VX3VKldzns6zRgOl3jjlXWqa2vBJLcUaioRZzUXEiAL9o89/lAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsVy+t/xu7pH3L4lGczcwWoxoaOVyeLXFwuL
+        zXOKLTpnb2C32Pt6K7vFpsfXWC0u75rDZjHj/D4mi3+9BxktDn54wmrxvA/IPXX3M7vF8feP
+        GS1a7pg68Hk8OTiPyWPNvDWMHjtn3WX3WLCp1GPTqk42jzvX9rB5bF5S7/Fi80xGj74tqxg9
+        Pm+SC+CK0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL
+        0Ms4POU1c8HapIqDfcuZGhgf+3YxcnBICJhIvP6R2sXIxSEksJRRYvuTryxdjJxAcRmJk9Ma
+        WCFsYYk/17rYIIreM0r8njudGSTBK2AnsXB2E1gRi4CqxIld9xgh4oISJ2c+ARskKpAsseDQ
+        UjBbWMBNYvvZKWA2s4C4xK0n85lAbBGBNIl9k14zgixgFtjFLNHT9ooFYttJRondbcvYQarY
+        BAwlut6CnMHJwSngILGmcy4TxCQzia6tXYwQtrzE9rdzmCcwCs1CcsgsJAtnIWmZhaRlASPL
+        KkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMAo33bs5+YdjPNefdQ7xMjEwXiIUYKDWUmEt2zR
+        5yQh3pTEyqrUovz4otKc1OJDjKbA0JjILCWanA9MM3kl8YZmBqaGJmaWBqaWZsZK4ryeBR2J
+        QgLpiSWp2ampBalFMH1MHJxSDUxtU2oaFgl+P2POM1v7WvLJn2sl5d8sk7mQtEREKGymZswe
+        Vl7ue3uUfflZIl2vat0zcgpQ4ze9ff7nselXRaLMlUUynhd+STty6+yLJDnFu1zPX/J2XuYN
+        lvXcpaqxcpUda96ryRFTJrM/T/58M3xtG6/v07KqTR/3uPzuX3JLyo2p67bwhfD3U6df2i2e
+        +7avrzzsAve5ZY/m66mcD5d//LlueuIe97r+qvwE28JNP+fvdtcp3bqYd+69plk1gidfN7z/
+        Vv1y2/Onz6ZMypF+vKjjj+vjNSlFCt+TapYzbzyec2XWjx43sZj/+QGaYdWHVop9PdjEbdmy
+        LMLDo2hzy5f1F/o+73yr/s1i7c18JZbijERDLeai4kQAjnlrK3sDAAA=
+X-CMS-MailID: 20220812122540eucas1p2abdde59aaf1837c34e0aed594339bc72
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220812103956eucas1p1849443855b3537c3f5be2891fa50a50b
+X-RootMTR: 20220726200747eucas1p226a18ed7760741ddaed94483ba1f9228
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220812103956eucas1p1849443855b3537c3f5be2891fa50a50b
-References: <20220805153834.2510142-1-daniel.lezcano@linaro.org>
-        <20220805153834.2510142-5-daniel.lezcano@linaro.org>
-        <CGME20220812103956eucas1p1849443855b3537c3f5be2891fa50a50b@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20220726200747eucas1p226a18ed7760741ddaed94483ba1f9228
+References: <20220726200739.30017-1-semen.protsenko@linaro.org>
+        <CGME20220726200747eucas1p226a18ed7760741ddaed94483ba1f9228@eucas1p2.samsung.com>
+        <20220726200739.30017-2-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Daniel,
+Hi Sam,
 
-On 05.08.2022 17:38, Daniel Lezcano wrote:
-> All the different calls inside the thermal_zone_device_update()
-> function take the mutex.
+On 26.07.2022 22:07, Sam Protsenko wrote:
+> Fault info obtaining is implemented for SysMMU v1..v5 in a very hardware
+> specific way, as it relies on:
+>    - interrupt bits being tied to read or write access
+>    - having separate registers for the fault address w.r.t. AR/AW ops
 >
-> The previous changes move the mutex out of the different functions,
-> like the throttling ops. Now that the mutexes are all at the same
-> level in the call stack for the thermal_zone_device_update() function,
-> they can be moved inside this one.
+> Newer SysMMU versions (like SysMMU v7) have different way of providing
+> the fault info via registers:
+>    - the transaction type (read or write) should be read from the
+>      register (instead of hard-coding it w.r.t. corresponding interrupt
+>      status bit)
+>    - there is only one single register for storing the fault address
 >
-> That has the benefit of:
+> Because of that, it is not possible to add newer SysMMU support into
+> existing paradigm. Also it's not very effective performance-wise:
+>    - checking SysMMU version in ISR each time is not necessary
+>    - performing linear search to find the fault info by interrupt bit can
+>      be replaced with a single lookup operation
 >
-> 1. Simplify the code by not having a plethora of places where the lock is taken
+> Pave the way for adding support for new SysMMU versions by abstracting
+> the getting of fault info in ISR. While at it, do some related style
+> cleanups as well.
 >
-> 2. Probably closes more race windows because releasing the lock from
-> one line to another can give the opportunity to the thermal zone to change
-> its state in the meantime. For example, the thermal zone can be
-> enabled right after checking it is disabled.
+> This is mostly a refactoring patch, but there are some minor functional
+> changes:
+>    - fault message format is a bit different; now instead of AR/AW
+>      prefixes for the fault's name, the request direction is printed as
+>      [READ]/[WRITE]. It has to be done to prepare an abstraction for
+>      SysMMU v7 support
+>    - don't panic on unknown interrupts; print corresponding message and
+>      continue
+>    - if fault wasn't recovered, panic with some sane message instead of
+>      just doing BUG_ON()
 >
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> The whole fault message looks like this now:
+>
+>      [READ] PAGE FAULT occurred at 0x12341000
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-This patch landed recently in linux next-20220811 as commit ca48ad71717d 
-("thermal/core: Move the mutex inside the thermal_zone_device_update() 
-function"). Unfortunately it triggers a warning on Samsung ARM/ARM64 
-Exynos-based systems during the system suspend/resume cycle:
+I'm not very happy with converting the sysmmu_fault_info arrays into the 
+decoding functions. If I got the code right, adding v7 is still possible 
+with the current approach. The main advantage of the array-based 
+approach is readability and keeping all the information together in a 
+single place.
 
-Restarting tasks ... done.
-random: crng reseeded on system resumption
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1374 at drivers/thermal/thermal_core.c:452 
-thermal_zone_device_is_enabled+0x58/0x5c
-Modules linked in: cmac bnep hci_uart btbcm btintel bluetooth s5p_csis 
-s5p_fimc exynos4_is_common v4l2_fwnode v4l2_async ecdh_generic ecc 
-s5p_mfc brcmfmac cfg80211 s5p_jpeg videobuf2_dma_contig videobuf2_memops 
-brcmutil v4l2_mem2mem videobuf2_v4l2 videobuf2_common videodev mc
-CPU: 1 PID: 1374 Comm: rtcwake Not tainted 5.18.0-02136-gca48ad71717d #12560
-Hardware name: Samsung Exynos (Flattened Device Tree)
-  unwind_backtrace from show_stack+0x10/0x14
-  show_stack from dump_stack_lvl+0x58/0x70
-  dump_stack_lvl from __warn+0x230/0x234
-  __warn from warn_slowpath_fmt+0xac/0xb4
-  warn_slowpath_fmt from thermal_zone_device_is_enabled+0x58/0x5c
-  thermal_zone_device_is_enabled from thermal_pm_notify+0x84/0xe8
-  thermal_pm_notify from blocking_notifier_call_chain+0x6c/0x94
-  blocking_notifier_call_chain from pm_suspend+0x2e8/0x428
-  pm_suspend from state_store+0x68/0xc8
-  state_store from kernfs_fop_write_iter+0x108/0x1b0
-  kernfs_fop_write_iter from vfs_write+0x268/0x50c
-  vfs_write from ksys_write+0x54/0xc8
-  ksys_write from ret_fast_syscall+0x0/0x1c
-Exception stack(0xf0fa9fa8 to 0xf0fa9ff0)
-...
-irq event stamp: 49341
-hardirqs last  enabled at (49349): [<c019d3f0>] __up_console_sem+0x50/0x60
-hardirqs last disabled at (49358): [<c019d3dc>] __up_console_sem+0x3c/0x60
-softirqs last  enabled at (49336): [<c0101808>] __do_softirq+0x4c8/0x5e8
-softirqs last disabled at (49331): [<c01305b8>] irq_exit+0x1cc/0x200
----[ end trace 0000000000000000 ]---
-PM: suspend exit
+I agree for the items listed above as 'minor functional changes', 
+though. Those sysmmu_fault_info arrays might be a part of sysmmu hw 
+variant to avoid decoding hw version for each fault.
 
+I'm not sure that the linear scan is so problematic with regards to the 
+performance. You really don't want your drivers to trigger IOMMU fault 
+so often during normal operation. It is just a way to get some debugging 
+information or handle some exception.
 
-It looks that either the exynos_thermal driver or the framework has to 
-be somehow adjusted to avoid the above issue, but I didn't check the 
-details in the code yet.
+You mentioned that the transaction type is read from the separate 
+register in case of v7, but your code (here and in second patch) still 
+relies on the reported interrupt bits.
 
+Could you try to rework all your changes in a such way, that the 
+sysmmu_fault_info arrays are still used? V7 is really very similar to 
+the v5 already supported by the current driver.
 
 > ---
->   drivers/thermal/thermal_core.c    | 32 +++++--------
->   drivers/thermal/thermal_core.h    |  2 +
->   drivers/thermal/thermal_helpers.c | 75 ++++++++++++++++++-------------
->   drivers/thermal/thermal_sysfs.c   |  6 ++-
->   4 files changed, 62 insertions(+), 53 deletions(-)
+>   drivers/iommu/exynos-iommu.c | 162 +++++++++++++++++++++--------------
+>   1 file changed, 100 insertions(+), 62 deletions(-)
 >
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 9d554f97e081..60110ac53e23 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -297,24 +297,18 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
->   
->   static void monitor_thermal_zone(struct thermal_zone_device *tz)
->   {
-> -	mutex_lock(&tz->lock);
-> -
->   	if (tz->mode != THERMAL_DEVICE_ENABLED)
->   		thermal_zone_device_set_polling(tz, 0);
->   	else if (tz->passive)
->   		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
->   	else if (tz->polling_delay_jiffies)
->   		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
-> -
-> -	mutex_unlock(&tz->lock);
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 8e18984a0c4f..766d409e084a 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -185,38 +185,36 @@ static sysmmu_pte_t *page_entry(sysmmu_pte_t *sent, sysmmu_iova_t iova)
+>   				lv2table_base(sent)) + lv2ent_offset(iova);
 >   }
 >   
->   static void handle_non_critical_trips(struct thermal_zone_device *tz, int trip)
->   {
-> -	mutex_lock(&tz->lock);
->   	tz->governor ? tz->governor->throttle(tz, trip) :
->   		       def_governor->throttle(tz, trip);
-> -	mutex_unlock(&tz->lock);
->   }
->   
->   void thermal_zone_device_critical(struct thermal_zone_device *tz)
-> @@ -382,7 +376,7 @@ static void update_temperature(struct thermal_zone_device *tz)
->   {
->   	int temp, ret;
->   
-> -	ret = thermal_zone_get_temp(tz, &temp);
-> +	ret = __thermal_zone_get_temp(tz, &temp);
->   	if (ret) {
->   		if (ret != -EAGAIN)
->   			dev_warn(&tz->device,
-> @@ -391,10 +385,8 @@ static void update_temperature(struct thermal_zone_device *tz)
->   		return;
->   	}
->   
-> -	mutex_lock(&tz->lock);
->   	tz->last_temperature = tz->temperature;
->   	tz->temperature = temp;
-> -	mutex_unlock(&tz->lock);
->   
->   	trace_thermal_temperature(tz);
->   
-> @@ -457,15 +449,9 @@ EXPORT_SYMBOL_GPL(thermal_zone_device_disable);
->   
->   int thermal_zone_device_is_enabled(struct thermal_zone_device *tz)
->   {
-> -	enum thermal_device_mode mode;
-> -
-> -	mutex_lock(&tz->lock);
-> -
-> -	mode = tz->mode;
-> +	lockdep_assert_held(&tz->lock);
->   
-> -	mutex_unlock(&tz->lock);
-> -
-> -	return mode == THERMAL_DEVICE_ENABLED;
-> +	return tz->mode == THERMAL_DEVICE_ENABLED;
->   }
->   
->   void thermal_zone_device_update(struct thermal_zone_device *tz,
-> @@ -473,9 +459,6 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
->   {
->   	int count;
->   
-> -	if (!thermal_zone_device_is_enabled(tz))
-> -		return;
-> -
->   	if (atomic_read(&in_suspend))
->   		return;
->   
-> @@ -483,9 +466,14 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
->   		      "'get_temp' ops set\n", __func__))
->   		return;
->   
-> +	mutex_lock(&tz->lock);
-> +
-> +	if (!thermal_zone_device_is_enabled(tz))
-> +		goto out;
-> +
->   	update_temperature(tz);
->   
-> -	thermal_zone_set_trips(tz);
-> +	__thermal_zone_set_trips(tz);
->   
->   	tz->notify_event = event;
->   
-> @@ -493,6 +481,8 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
->   		handle_thermal_trip(tz, count);
->   
->   	monitor_thermal_zone(tz);
-> +out:
-> +	mutex_unlock(&tz->lock);
->   }
->   EXPORT_SYMBOL_GPL(thermal_zone_device_update);
->   
-> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-> index 2241d2dce017..1571917bd3c8 100644
-> --- a/drivers/thermal/thermal_core.h
-> +++ b/drivers/thermal/thermal_core.h
-> @@ -112,6 +112,8 @@ int thermal_build_list_of_policies(char *buf);
->   
->   /* Helpers */
->   void thermal_zone_set_trips(struct thermal_zone_device *tz);
-> +void __thermal_zone_set_trips(struct thermal_zone_device *tz);
-> +int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
->   
->   /* sysfs I/F */
->   int thermal_zone_create_device_groups(struct thermal_zone_device *, int);
-> diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
-> index 690890f054a3..702c70bdca48 100644
-> --- a/drivers/thermal/thermal_helpers.c
-> +++ b/drivers/thermal/thermal_helpers.c
-> @@ -64,27 +64,17 @@ get_thermal_instance(struct thermal_zone_device *tz,
->   }
->   EXPORT_SYMBOL(get_thermal_instance);
->   
-> -/**
-> - * thermal_zone_get_temp() - returns the temperature of a thermal zone
-> - * @tz: a valid pointer to a struct thermal_zone_device
-> - * @temp: a valid pointer to where to store the resulting temperature.
-> - *
-> - * When a valid thermal zone reference is passed, it will fetch its
-> - * temperature and fill @temp.
-> - *
-> - * Return: On success returns 0, an error code otherwise
+> -/*
+> - * IOMMU fault information register
 > - */
-> -int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
-> +int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
->   {
->   	int ret = -EINVAL;
->   	int count;
->   	int crit_temp = INT_MAX;
->   	enum thermal_trip_type type;
+> -struct sysmmu_fault_info {
+> -	unsigned int bit;	/* bit number in STATUS register */
+> -	unsigned short addr_reg; /* register to read VA fault address */
+> +struct sysmmu_fault {
+> +	sysmmu_iova_t addr;	/* IOVA address that caused fault */
+> +	const char *name;	/* human readable fault name */
+> +	unsigned int type;	/* fault type for report_iommu_fault() */
+> +};
+> +
+> +struct sysmmu_v1_fault_info {
+> +	unsigned short addr_reg; /* register to read IOVA fault address */
+>   	const char *name;	/* human readable fault name */
+>   	unsigned int type;	/* fault type for report_iommu_fault */
+>   };
 >   
-> +	lockdep_assert_held(&tz->lock);
-> +	
->   	if (!tz || IS_ERR(tz) || !tz->ops->get_temp)
-> -		goto exit;
-> -
-> -	mutex_lock(&tz->lock);
-> +		return -EINVAL;
+> -static const struct sysmmu_fault_info sysmmu_faults[] = {
+> -	{ 0, REG_PAGE_FAULT_ADDR, "PAGE", IOMMU_FAULT_READ },
+> -	{ 1, REG_AR_FAULT_ADDR, "AR MULTI-HIT", IOMMU_FAULT_READ },
+> -	{ 2, REG_AW_FAULT_ADDR, "AW MULTI-HIT", IOMMU_FAULT_WRITE },
+> -	{ 3, REG_DEFAULT_SLAVE_ADDR, "BUS ERROR", IOMMU_FAULT_READ },
+> -	{ 4, REG_AR_FAULT_ADDR, "AR SECURITY PROTECTION", IOMMU_FAULT_READ },
+> -	{ 5, REG_AR_FAULT_ADDR, "AR ACCESS PROTECTION", IOMMU_FAULT_READ },
+> -	{ 6, REG_AW_FAULT_ADDR, "AW SECURITY PROTECTION", IOMMU_FAULT_WRITE },
+> -	{ 7, REG_AW_FAULT_ADDR, "AW ACCESS PROTECTION", IOMMU_FAULT_WRITE },
+> +static const struct sysmmu_v1_fault_info sysmmu_v1_faults[] = {
+> +	{ REG_PAGE_FAULT_ADDR, "PAGE", IOMMU_FAULT_READ },
+> +	{ REG_AR_FAULT_ADDR, "MULTI-HIT", IOMMU_FAULT_READ },
+> +	{ REG_AW_FAULT_ADDR, "MULTI-HIT", IOMMU_FAULT_WRITE },
+> +	{ REG_DEFAULT_SLAVE_ADDR, "BUS ERROR", IOMMU_FAULT_READ },
+> +	{ REG_AR_FAULT_ADDR, "SECURITY PROTECTION", IOMMU_FAULT_READ },
+> +	{ REG_AR_FAULT_ADDR, "ACCESS PROTECTION", IOMMU_FAULT_READ },
+> +	{ REG_AW_FAULT_ADDR, "SECURITY PROTECTION", IOMMU_FAULT_WRITE },
+> +	{ REG_AW_FAULT_ADDR, "ACCESS PROTECTION", IOMMU_FAULT_WRITE },
+>   };
 >   
->   	ret = tz->ops->get_temp(tz, temp);
+> -static const struct sysmmu_fault_info sysmmu_v5_faults[] = {
+> -	{ 0, REG_V5_FAULT_AR_VA, "AR PTW", IOMMU_FAULT_READ },
+> -	{ 1, REG_V5_FAULT_AR_VA, "AR PAGE", IOMMU_FAULT_READ },
+> -	{ 2, REG_V5_FAULT_AR_VA, "AR MULTI-HIT", IOMMU_FAULT_READ },
+> -	{ 3, REG_V5_FAULT_AR_VA, "AR ACCESS PROTECTION", IOMMU_FAULT_READ },
+> -	{ 4, REG_V5_FAULT_AR_VA, "AR SECURITY PROTECTION", IOMMU_FAULT_READ },
+> -	{ 16, REG_V5_FAULT_AW_VA, "AW PTW", IOMMU_FAULT_WRITE },
+> -	{ 17, REG_V5_FAULT_AW_VA, "AW PAGE", IOMMU_FAULT_WRITE },
+> -	{ 18, REG_V5_FAULT_AW_VA, "AW MULTI-HIT", IOMMU_FAULT_WRITE },
+> -	{ 19, REG_V5_FAULT_AW_VA, "AW ACCESS PROTECTION", IOMMU_FAULT_WRITE },
+> -	{ 20, REG_V5_FAULT_AW_VA, "AW SECURITY PROTECTION", IOMMU_FAULT_WRITE },
+> +/* SysMMU v5 has the same faults for AR (0..4 bits) and AW (16..20 bits) */
+> +static const char * const sysmmu_v5_fault_names[] = {
+> +	"PTW",
+> +	"PAGE",
+> +	"MULTI-HIT",
+> +	"ACCESS PROTECTION",
+> +	"SECURITY PROTECTION"
+>   };
 >   
-> @@ -107,35 +97,42 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
->   			*temp = tz->emul_temperature;
->   	}
+>   /*
+> @@ -246,9 +244,12 @@ struct exynos_iommu_domain {
+>   	struct iommu_domain domain; /* generic domain data structure */
+>   };
 >   
-> -	mutex_unlock(&tz->lock);
-> -exit:
->   	return ret;
->   }
-> -EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
->   
->   /**
-> - * thermal_zone_set_trips - Computes the next trip points for the driver
-> - * @tz: a pointer to a thermal zone device structure
-> + * thermal_zone_get_temp() - returns the temperature of a thermal zone
-> + * @tz: a valid pointer to a struct thermal_zone_device
-> + * @temp: a valid pointer to where to store the resulting temperature.
->    *
-> - * The function computes the next temperature boundaries by browsing
-> - * the trip points. The result is the closer low and high trip points
-> - * to the current temperature. These values are passed to the backend
-> - * driver to let it set its own notification mechanism (usually an
-> - * interrupt).
-> + * When a valid thermal zone reference is passed, it will fetch its
-> + * temperature and fill @temp.
->    *
-> - * It does not return a value
-> + * Return: On success returns 0, an error code otherwise
+> +struct sysmmu_drvdata;
+> +
+>   /*
+>    * SysMMU version specific data. Contains offsets for the registers which can
+>    * be found in different SysMMU variants, but have different offset values.
+> + * Also contains version specific callbacks to abstract the hardware.
 >    */
-> -void thermal_zone_set_trips(struct thermal_zone_device *tz)
-> +int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
-> +{
-> +	int ret;
+>   struct sysmmu_variant {
+>   	u32 pt_base;		/* page table base address (physical) */
+> @@ -259,6 +260,9 @@ struct sysmmu_variant {
+>   	u32 flush_end;		/* end address of range invalidation */
+>   	u32 int_status;		/* interrupt status information */
+>   	u32 int_clear;		/* clear the interrupt */
 > +
-> +	mutex_lock(&tz->lock);
-> +	ret = __thermal_zone_get_temp(tz, temp);
-> +	mutex_unlock(&tz->lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
-> +
-> +void __thermal_zone_set_trips(struct thermal_zone_device *tz)
->   {
->   	int low = -INT_MAX;
->   	int high = INT_MAX;
->   	int trip_temp, hysteresis;
->   	int i, ret;
+> +	int (*get_fault_info)(struct sysmmu_drvdata *data, unsigned int itype,
+> +			      struct sysmmu_fault *fault);
+>   };
 >   
-> -	mutex_lock(&tz->lock);
+>   /*
+> @@ -293,6 +297,46 @@ struct sysmmu_drvdata {
+>   
+>   #define SYSMMU_REG(data, reg) ((data)->sfrbase + (data)->variant->reg)
+>   
+> +static int exynos_sysmmu_v1_get_fault_info(struct sysmmu_drvdata *data,
+> +					   unsigned int itype,
+> +					   struct sysmmu_fault *fault)
+> +{
+> +	const struct sysmmu_v1_fault_info *finfo;
+> +
+> +	if (itype >= ARRAY_SIZE(sysmmu_v1_faults))
+> +		return -ENXIO;
+> +
+> +	finfo = &sysmmu_v1_faults[itype];
+> +	fault->addr = readl(data->sfrbase + finfo->addr_reg);
+> +	fault->name = finfo->name;
+> +	fault->type = finfo->type;
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_sysmmu_v5_get_fault_info(struct sysmmu_drvdata *data,
+> +					   unsigned int itype,
+> +					   struct sysmmu_fault *fault)
+> +{
+> +	unsigned int addr_reg;
+> +
+> +	if (itype < ARRAY_SIZE(sysmmu_v5_fault_names)) {
+> +		fault->type = IOMMU_FAULT_READ;
+> +		addr_reg = REG_V5_FAULT_AR_VA;
+> +	} else if (itype >= 16 && itype <= 20) {
+> +		fault->type = IOMMU_FAULT_WRITE;
+> +		addr_reg = REG_V5_FAULT_AW_VA;
+> +		itype -= 16;
+> +	} else {
+> +		return -ENXIO;
+> +	}
+> +
+> +	fault->name = sysmmu_v5_fault_names[itype];
+> +	fault->addr = readl(data->sfrbase + addr_reg);
+> +
+> +	return 0;
+> +}
+> +
+>   /* SysMMU v1..v3 */
+>   static const struct sysmmu_variant sysmmu_v1_variant = {
+>   	.flush_all	= 0x0c,
+> @@ -300,6 +344,8 @@ static const struct sysmmu_variant sysmmu_v1_variant = {
+>   	.pt_base	= 0x14,
+>   	.int_status	= 0x18,
+>   	.int_clear	= 0x1c,
+> +
+> +	.get_fault_info	= exynos_sysmmu_v1_get_fault_info,
+>   };
+>   
+>   /* SysMMU v5 and v7 (non-VM capable) */
+> @@ -312,6 +358,8 @@ static const struct sysmmu_variant sysmmu_v5_variant = {
+>   	.flush_end	= 0x24,
+>   	.int_status	= 0x60,
+>   	.int_clear	= 0x64,
+> +
+> +	.get_fault_info	= exynos_sysmmu_v5_get_fault_info,
+>   };
+>   
+>   /* SysMMU v7: VM capable register set */
+> @@ -324,6 +372,8 @@ static const struct sysmmu_variant sysmmu_v7_vm_variant = {
+>   	.flush_end	= 0x8024,
+>   	.int_status	= 0x60,
+>   	.int_clear	= 0x64,
+> +
+> +	.get_fault_info	= exynos_sysmmu_v5_get_fault_info,
+>   };
+>   
+>   static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
+> @@ -453,68 +503,56 @@ static void __sysmmu_get_version(struct sysmmu_drvdata *data)
+>   }
+>   
+>   static void show_fault_information(struct sysmmu_drvdata *data,
+> -				   const struct sysmmu_fault_info *finfo,
+> -				   sysmmu_iova_t fault_addr)
+> +				   const struct sysmmu_fault *fault)
+>   {
+>   	sysmmu_pte_t *ent;
+>   
+> -	dev_err(data->sysmmu, "%s: %s FAULT occurred at %#x\n",
+> -		dev_name(data->master), finfo->name, fault_addr);
+> +	dev_err(data->sysmmu, "%s: [%s] %s FAULT occurred at %#x\n",
+> +		dev_name(data->master),
+> +		fault->type == IOMMU_FAULT_READ ? "READ" : "WRITE",
+> +		fault->name, fault->addr);
+>   	dev_dbg(data->sysmmu, "Page table base: %pa\n", &data->pgtable);
+> -	ent = section_entry(phys_to_virt(data->pgtable), fault_addr);
+> +	ent = section_entry(phys_to_virt(data->pgtable), fault->addr);
+>   	dev_dbg(data->sysmmu, "\tLv1 entry: %#x\n", *ent);
+>   	if (lv1ent_page(ent)) {
+> -		ent = page_entry(ent, fault_addr);
+> +		ent = page_entry(ent, fault->addr);
+>   		dev_dbg(data->sysmmu, "\t Lv2 entry: %#x\n", *ent);
+>   	}
+>   }
+>   
+>   static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+>   {
+> -	/* SYSMMU is in blocked state when interrupt occurred. */
+>   	struct sysmmu_drvdata *data = dev_id;
+> -	const struct sysmmu_fault_info *finfo;
+> -	unsigned int i, n, itype;
+> -	sysmmu_iova_t fault_addr;
+> +	unsigned int itype;
+> +	struct sysmmu_fault fault;
+>   	int ret = -ENOSYS;
+>   
+>   	WARN_ON(!data->active);
+>   
+> -	if (MMU_MAJ_VER(data->version) < 5) {
+> -		finfo = sysmmu_faults;
+> -		n = ARRAY_SIZE(sysmmu_faults);
+> -	} else {
+> -		finfo = sysmmu_v5_faults;
+> -		n = ARRAY_SIZE(sysmmu_v5_faults);
+> -	}
 > -
-> +	lockdep_assert_held(&tz->lock);
-> +	
->   	if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
-> -		goto exit;
-> +		return;
+>   	spin_lock(&data->lock);
+> -
+>   	clk_enable(data->clk_master);
 >   
->   	for (i = 0; i < tz->num_trips; i++) {
->   		int trip_low;
-> @@ -154,7 +151,7 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>   	itype = __ffs(readl(SYSMMU_REG(data, int_status)));
+> -	for (i = 0; i < n; i++, finfo++)
+> -		if (finfo->bit == itype)
+> -			break;
+> -	/* unknown/unsupported fault */
+> -	BUG_ON(i == n);
+> -
+> -	/* print debug message */
+> -	fault_addr = readl(data->sfrbase + finfo->addr_reg);
+> -	show_fault_information(data, finfo, fault_addr);
+> -
+> -	if (data->domain)
+> -		ret = report_iommu_fault(&data->domain->domain,
+> -					data->master, fault_addr, finfo->type);
+> -	/* fault is not recovered by fault handler */
+> -	BUG_ON(ret != 0);
+> +	ret = data->variant->get_fault_info(data, itype, &fault);
+> +	if (ret) {
+> +		dev_err(data->sysmmu, "Unhandled interrupt bit %u\n", itype);
+> +		goto out;
+> +	}
+> +	show_fault_information(data, &fault);
 >   
->   	/* No need to change trip points */
->   	if (tz->prev_low_trip == low && tz->prev_high_trip == high)
-> -		goto exit;
-> +		return;
->   
->   	tz->prev_low_trip = low;
->   	tz->prev_high_trip = high;
-> @@ -169,8 +166,24 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
->   	ret = tz->ops->set_trips(tz, low, high);
->   	if (ret)
->   		dev_err(&tz->device, "Failed to set trips: %d\n", ret);
-> +}
->   
-> -exit:
-> +/**
-> + * thermal_zone_set_trips - Computes the next trip points for the driver
-> + * @tz: a pointer to a thermal zone device structure
-> + *
-> + * The function computes the next temperature boundaries by browsing
-> + * the trip points. The result is the closer low and high trip points
-> + * to the current temperature. These values are passed to the backend
-> + * driver to let it set its own notification mechanism (usually an
-> + * interrupt).
-> + *
-> + * It does not return a value
-> + */
-> +void thermal_zone_set_trips(struct thermal_zone_device *tz)
-> +{
-> +	mutex_lock(&tz->lock);
-> +	__thermal_zone_set_trips(tz);
->   	mutex_unlock(&tz->lock);
->   }
->   
-> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-> index 3c513561d346..f094f7cbc455 100644
-> --- a/drivers/thermal/thermal_sysfs.c
-> +++ b/drivers/thermal/thermal_sysfs.c
-> @@ -49,7 +49,11 @@ static ssize_t
->   mode_show(struct device *dev, struct device_attribute *attr, char *buf)
->   {
->   	struct thermal_zone_device *tz = to_thermal_zone(dev);
-> -	int enabled = thermal_zone_device_is_enabled(tz);
-> +	int enabled;
+> +	if (data->domain) {
+> +		ret = report_iommu_fault(&data->domain->domain, data->master,
+> +					 fault.addr, fault.type);
+> +	}
+> +	if (ret)
+> +		panic("Unrecoverable System MMU Fault!");
 > +
-> +	mutex_lock(&tz->lock);
-> +	enabled = thermal_zone_device_is_enabled(tz);
-> +	mutex_unlock(&tz->lock);
+> +out:
+>   	writel(1 << itype, SYSMMU_REG(data, int_clear));
 >   
->   	return sprintf(buf, "%s\n", enabled ? "enabled" : "disabled");
->   }
+> +	/* SysMMU is in blocked state when interrupt occurred */
+>   	sysmmu_unblock(data);
+> -
+>   	clk_disable(data->clk_master);
+> -
+>   	spin_unlock(&data->lock);
+>   
+>   	return IRQ_HANDLED;
 
 Best regards
 -- 
