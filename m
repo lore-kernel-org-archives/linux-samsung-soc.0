@@ -2,97 +2,432 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EC1C00140
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 13:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E42F8C00140
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 13:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238278AbiHLNMS (ORCPT
+        id S238209AbiHLNR4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Aug 2022 09:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59896 "EHLO
+        Fri, 12 Aug 2022 09:17:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238198AbiHLNMR (ORCPT
+        with ESMTP id S235047AbiHLNRh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Aug 2022 09:12:17 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFBF74DD7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 06:12:14 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id l4so1145224wrm.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 06:12:14 -0700 (PDT)
+        Fri, 12 Aug 2022 09:17:37 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAAF582FAF
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 06:17:34 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id c187-20020a1c35c4000000b003a30d88fe8eso4332805wma.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 06:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=wVwOBZA0zq/Lz3Xu/BShwTW/TQe4u53rxqANn2qeajk=;
-        b=KJfS8mejNCIL9EiGI6BGw8hT6IFR0d6MSBhFcCA08SvJREI2xiV8j/kNonVQXNTIo8
-         LNWH5sbuWoVus02TDV4ONmn07hnkjBaeNYl3EyRqNjnIh/Rf/VBS/Z/z7NcEzP+QHn5y
-         MxXfC5Wc0THQSnbBbATRz20mmZUmcIH9O1ZoS0CoSZCb3NHZk3umNCP8stSVEjd2rzf8
-         KJ7DM5JFquhq88iiCs/05OOCzfToFehqwIKw7JVfXwmYWcSjQlxMLoMU2BngxZf+tPQN
-         uFSnaxAt64E7czU8YC1Mc6GrPCNgm0WC6uqd3kghwhuRxxVbWFD3DrtCk2DUshKnto09
-         oIzA==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=h5pNhdaJn3gZtjcw74tHikrW0IO2+nn5+5hQi02FBXI=;
+        b=j7O3KEcE2eXWYLQ6fIIogKn10XMxtto9O7JBxPmSeKbY4EN1tkOQXrBr+GGO7EscUh
+         HEM2IlPW2CQKtAeOnOXmnqiettzgnCdbQortN19uyll9CXz7S9NTTjJ2wxl8sFeM+DqB
+         h6VFq+s9K+xe4ObW4pPDEg4npsUNACq5hshdSAP3Lmtl1BdRnvVeSiyNOHY3Vo5H/Tfw
+         kdYdqu2saWJNF9pmx2fAEGl5ru1sSi7UhgwSCyj4NjyErfZSkRExF9GvxNGyNutUkcUI
+         JOV7T2zvUWrWDp7JMFfxuMcfY3Wp6uiwJgKmqfLn5k5YghRfogpDdDhZtaBhO1wt9i40
+         zaPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=wVwOBZA0zq/Lz3Xu/BShwTW/TQe4u53rxqANn2qeajk=;
-        b=vsgt0La+zy4uNaZP578ywx80cqaoqYJsOyq2xL+WTonb/Yl4LQjS1MrvmsdAPOQiLO
-         iDxOGmh4OVkyyrkTcXYx1mP/0fxHi6v9435/XsIzYOOEW3DnjIZGZHGfLfI3qkLRxLv6
-         CNcj5xxpSBl4q9yrpe2ckc3f1utrXl+6407nt496K/ktOkq5Kd9/hnQpPPHdWtwZRXDQ
-         AU/8n5Cd/Av7vK+JHMzYpA650nVlnwVW/e3YWLr4xdTYnhO9Pt/+O9j8us3qCYcVXXHy
-         MyvHGwMUNs4hQlY8LeAGvecyrj1QyzbmXmq57n/ckuDqj7w7xUDlVIg3pJOd7aAZ6vSb
-         wufQ==
-X-Gm-Message-State: ACgBeo07eUgKY5xaIC6Zj6hLZ5sRuhhiIuaA169uzYODdOHIX0nLlP6F
-        UVlXXg38JdcM4bN11C7hkh2+ZA==
-X-Google-Smtp-Source: AA6agR4LQL9fSbM39ZGrili9KfncXZK8Cn1NLAlopW7/Y1EYnyUw5yvh9QpgoX6RFiabSoPbPd+emA==
-X-Received: by 2002:a5d:47a5:0:b0:220:5985:6710 with SMTP id 5-20020a5d47a5000000b0022059856710mr2193212wrb.633.1660309932862;
-        Fri, 12 Aug 2022 06:12:12 -0700 (PDT)
-Received: from localhost.localdomain (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id o36-20020a05600c512400b003a5317f07b4sm10698952wms.37.2022.08.12.06.12.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Aug 2022 06:12:12 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     m.szyprowski@samsung.com
-Cc:     rafael@kernel.org, krzk@kernel.org, rui.zhang@intel.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amitk@kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] thermal/core: Fix lockdep_assert() warning
-Date:   Fri, 12 Aug 2022 15:12:02 +0200
-Message-Id: <20220812131202.1331238-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
-References: <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=h5pNhdaJn3gZtjcw74tHikrW0IO2+nn5+5hQi02FBXI=;
+        b=OB63Ep/tmCNS64Tdj0VJMUpqyAylSRDmuIEJiPNYnaf13Egc8f3Ob1SvPgNtDhU1Am
+         0U0GGrPQV3s7mIRemurnA9D2Z3QaFO27FkKQcAEugZkPhMBgc+KAQsyvFFcv9iugxl36
+         mWUTg6DBtzPXH7p6mgIAhidLaI01oHNYi1VauCQrvX/J5XDS/vyzJ1jLW3uCuuOmlPuD
+         ld6EEp7IO2hLnSM4P3dmmvw5Qjc5B02VNuyen8hYlNMxcuHo8bufVo2JAgfo4okW8pUq
+         VW4nZ5fBbk/sKsM+MTz749jVNhI6GCrKsqYB3M157AoRTreshsWvc1+ba/gCc40ieos2
+         sUHA==
+X-Gm-Message-State: ACgBeo27y7Fi45PY6IAVidy2NyVoye6ViL5ZxaxebSHJ3lp+TgZ4sOew
+        7vaErlOgA+zwe2u2f34M2NUb3A==
+X-Google-Smtp-Source: AA6agR5wrrn5Yf7D/SMH/cKc8qeHq4VVCaltJxZvq16i17bUkNqj1qGHIh7WzS+/+j1L6WJh7yczcQ==
+X-Received: by 2002:a05:600c:35d6:b0:3a3:1c4f:6f46 with SMTP id r22-20020a05600c35d600b003a31c4f6f46mr2680295wmq.206.1660310253288;
+        Fri, 12 Aug 2022 06:17:33 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id n12-20020adfe78c000000b0021e4bc9edbfsm1911602wrm.112.2022.08.12.06.17.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Aug 2022 06:17:32 -0700 (PDT)
+Message-ID: <cb827fce-197e-1f33-0127-ba5d49679d65@linaro.org>
+Date:   Fri, 12 Aug 2022 15:17:30 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 5/5] thermal/core: Move the mutex inside the
+ thermal_zone_device_update() function
+Content-Language: en-US
+To:     Marek Szyprowski <m.szyprowski@samsung.com>, rafael@kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+References: <20220805153834.2510142-1-daniel.lezcano@linaro.org>
+ <20220805153834.2510142-5-daniel.lezcano@linaro.org>
+ <CGME20220812103956eucas1p1849443855b3537c3f5be2891fa50a50b@eucas1p1.samsung.com>
+ <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The function thermal_zone_device_is_enabled() must be called with the
-thermal zone lock held. In the resume path, it is called without.
 
-As the thermal_zone_device_is_enabled() is also checked in
-thermal_zone_device_update(), do the check in resume() function is
-pointless, except for saving an extra initialization which does not
-hurt if it is done in all the cases.
+Hi Marek,
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/thermal_core.c | 3 ---
- 1 file changed, 3 deletions(-)
+thanks for reporting.
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 50814009339d..dc8ff6a84df1 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -1438,9 +1438,6 @@ static int thermal_pm_notify(struct notifier_block *nb,
- 	case PM_POST_SUSPEND:
- 		atomic_set(&in_suspend, 0);
- 		list_for_each_entry(tz, &thermal_tz_list, node) {
--			if (!thermal_zone_device_is_enabled(tz))
--				continue;
--
- 			thermal_zone_device_init(tz);
- 			thermal_zone_device_update(tz,
- 						   THERMAL_EVENT_UNSPECIFIED);
+Are you ok to check if the patch I've sent fixes the issue on your 
+platform ?
+
+
+On 12/08/2022 12:39, Marek Szyprowski wrote:
+> Hi Daniel,
+> 
+> On 05.08.2022 17:38, Daniel Lezcano wrote:
+>> All the different calls inside the thermal_zone_device_update()
+>> function take the mutex.
+>>
+>> The previous changes move the mutex out of the different functions,
+>> like the throttling ops. Now that the mutexes are all at the same
+>> level in the call stack for the thermal_zone_device_update() function,
+>> they can be moved inside this one.
+>>
+>> That has the benefit of:
+>>
+>> 1. Simplify the code by not having a plethora of places where the lock is taken
+>>
+>> 2. Probably closes more race windows because releasing the lock from
+>> one line to another can give the opportunity to the thermal zone to change
+>> its state in the meantime. For example, the thermal zone can be
+>> enabled right after checking it is disabled.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> This patch landed recently in linux next-20220811 as commit ca48ad71717d
+> ("thermal/core: Move the mutex inside the thermal_zone_device_update()
+> function"). Unfortunately it triggers a warning on Samsung ARM/ARM64
+> Exynos-based systems during the system suspend/resume cycle:
+> 
+> Restarting tasks ... done.
+> random: crng reseeded on system resumption
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 1374 at drivers/thermal/thermal_core.c:452
+> thermal_zone_device_is_enabled+0x58/0x5c
+> Modules linked in: cmac bnep hci_uart btbcm btintel bluetooth s5p_csis
+> s5p_fimc exynos4_is_common v4l2_fwnode v4l2_async ecdh_generic ecc
+> s5p_mfc brcmfmac cfg80211 s5p_jpeg videobuf2_dma_contig videobuf2_memops
+> brcmutil v4l2_mem2mem videobuf2_v4l2 videobuf2_common videodev mc
+> CPU: 1 PID: 1374 Comm: rtcwake Not tainted 5.18.0-02136-gca48ad71717d #12560
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+>    unwind_backtrace from show_stack+0x10/0x14
+>    show_stack from dump_stack_lvl+0x58/0x70
+>    dump_stack_lvl from __warn+0x230/0x234
+>    __warn from warn_slowpath_fmt+0xac/0xb4
+>    warn_slowpath_fmt from thermal_zone_device_is_enabled+0x58/0x5c
+>    thermal_zone_device_is_enabled from thermal_pm_notify+0x84/0xe8
+>    thermal_pm_notify from blocking_notifier_call_chain+0x6c/0x94
+>    blocking_notifier_call_chain from pm_suspend+0x2e8/0x428
+>    pm_suspend from state_store+0x68/0xc8
+>    state_store from kernfs_fop_write_iter+0x108/0x1b0
+>    kernfs_fop_write_iter from vfs_write+0x268/0x50c
+>    vfs_write from ksys_write+0x54/0xc8
+>    ksys_write from ret_fast_syscall+0x0/0x1c
+> Exception stack(0xf0fa9fa8 to 0xf0fa9ff0)
+> ...
+> irq event stamp: 49341
+> hardirqs last  enabled at (49349): [<c019d3f0>] __up_console_sem+0x50/0x60
+> hardirqs last disabled at (49358): [<c019d3dc>] __up_console_sem+0x3c/0x60
+> softirqs last  enabled at (49336): [<c0101808>] __do_softirq+0x4c8/0x5e8
+> softirqs last disabled at (49331): [<c01305b8>] irq_exit+0x1cc/0x200
+> ---[ end trace 0000000000000000 ]---
+> PM: suspend exit
+> 
+> 
+> It looks that either the exynos_thermal driver or the framework has to
+> be somehow adjusted to avoid the above issue, but I didn't check the
+> details in the code yet.
+> 
+> 
+>> ---
+>>    drivers/thermal/thermal_core.c    | 32 +++++--------
+>>    drivers/thermal/thermal_core.h    |  2 +
+>>    drivers/thermal/thermal_helpers.c | 75 ++++++++++++++++++-------------
+>>    drivers/thermal/thermal_sysfs.c   |  6 ++-
+>>    4 files changed, 62 insertions(+), 53 deletions(-)
+>>
+>> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+>> index 9d554f97e081..60110ac53e23 100644
+>> --- a/drivers/thermal/thermal_core.c
+>> +++ b/drivers/thermal/thermal_core.c
+>> @@ -297,24 +297,18 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
+>>    
+>>    static void monitor_thermal_zone(struct thermal_zone_device *tz)
+>>    {
+>> -	mutex_lock(&tz->lock);
+>> -
+>>    	if (tz->mode != THERMAL_DEVICE_ENABLED)
+>>    		thermal_zone_device_set_polling(tz, 0);
+>>    	else if (tz->passive)
+>>    		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
+>>    	else if (tz->polling_delay_jiffies)
+>>    		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
+>> -
+>> -	mutex_unlock(&tz->lock);
+>>    }
+>>    
+>>    static void handle_non_critical_trips(struct thermal_zone_device *tz, int trip)
+>>    {
+>> -	mutex_lock(&tz->lock);
+>>    	tz->governor ? tz->governor->throttle(tz, trip) :
+>>    		       def_governor->throttle(tz, trip);
+>> -	mutex_unlock(&tz->lock);
+>>    }
+>>    
+>>    void thermal_zone_device_critical(struct thermal_zone_device *tz)
+>> @@ -382,7 +376,7 @@ static void update_temperature(struct thermal_zone_device *tz)
+>>    {
+>>    	int temp, ret;
+>>    
+>> -	ret = thermal_zone_get_temp(tz, &temp);
+>> +	ret = __thermal_zone_get_temp(tz, &temp);
+>>    	if (ret) {
+>>    		if (ret != -EAGAIN)
+>>    			dev_warn(&tz->device,
+>> @@ -391,10 +385,8 @@ static void update_temperature(struct thermal_zone_device *tz)
+>>    		return;
+>>    	}
+>>    
+>> -	mutex_lock(&tz->lock);
+>>    	tz->last_temperature = tz->temperature;
+>>    	tz->temperature = temp;
+>> -	mutex_unlock(&tz->lock);
+>>    
+>>    	trace_thermal_temperature(tz);
+>>    
+>> @@ -457,15 +449,9 @@ EXPORT_SYMBOL_GPL(thermal_zone_device_disable);
+>>    
+>>    int thermal_zone_device_is_enabled(struct thermal_zone_device *tz)
+>>    {
+>> -	enum thermal_device_mode mode;
+>> -
+>> -	mutex_lock(&tz->lock);
+>> -
+>> -	mode = tz->mode;
+>> +	lockdep_assert_held(&tz->lock);
+>>    
+>> -	mutex_unlock(&tz->lock);
+>> -
+>> -	return mode == THERMAL_DEVICE_ENABLED;
+>> +	return tz->mode == THERMAL_DEVICE_ENABLED;
+>>    }
+>>    
+>>    void thermal_zone_device_update(struct thermal_zone_device *tz,
+>> @@ -473,9 +459,6 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
+>>    {
+>>    	int count;
+>>    
+>> -	if (!thermal_zone_device_is_enabled(tz))
+>> -		return;
+>> -
+>>    	if (atomic_read(&in_suspend))
+>>    		return;
+>>    
+>> @@ -483,9 +466,14 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
+>>    		      "'get_temp' ops set\n", __func__))
+>>    		return;
+>>    
+>> +	mutex_lock(&tz->lock);
+>> +
+>> +	if (!thermal_zone_device_is_enabled(tz))
+>> +		goto out;
+>> +
+>>    	update_temperature(tz);
+>>    
+>> -	thermal_zone_set_trips(tz);
+>> +	__thermal_zone_set_trips(tz);
+>>    
+>>    	tz->notify_event = event;
+>>    
+>> @@ -493,6 +481,8 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
+>>    		handle_thermal_trip(tz, count);
+>>    
+>>    	monitor_thermal_zone(tz);
+>> +out:
+>> +	mutex_unlock(&tz->lock);
+>>    }
+>>    EXPORT_SYMBOL_GPL(thermal_zone_device_update);
+>>    
+>> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+>> index 2241d2dce017..1571917bd3c8 100644
+>> --- a/drivers/thermal/thermal_core.h
+>> +++ b/drivers/thermal/thermal_core.h
+>> @@ -112,6 +112,8 @@ int thermal_build_list_of_policies(char *buf);
+>>    
+>>    /* Helpers */
+>>    void thermal_zone_set_trips(struct thermal_zone_device *tz);
+>> +void __thermal_zone_set_trips(struct thermal_zone_device *tz);
+>> +int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+>>    
+>>    /* sysfs I/F */
+>>    int thermal_zone_create_device_groups(struct thermal_zone_device *, int);
+>> diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+>> index 690890f054a3..702c70bdca48 100644
+>> --- a/drivers/thermal/thermal_helpers.c
+>> +++ b/drivers/thermal/thermal_helpers.c
+>> @@ -64,27 +64,17 @@ get_thermal_instance(struct thermal_zone_device *tz,
+>>    }
+>>    EXPORT_SYMBOL(get_thermal_instance);
+>>    
+>> -/**
+>> - * thermal_zone_get_temp() - returns the temperature of a thermal zone
+>> - * @tz: a valid pointer to a struct thermal_zone_device
+>> - * @temp: a valid pointer to where to store the resulting temperature.
+>> - *
+>> - * When a valid thermal zone reference is passed, it will fetch its
+>> - * temperature and fill @temp.
+>> - *
+>> - * Return: On success returns 0, an error code otherwise
+>> - */
+>> -int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+>> +int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+>>    {
+>>    	int ret = -EINVAL;
+>>    	int count;
+>>    	int crit_temp = INT_MAX;
+>>    	enum thermal_trip_type type;
+>>    
+>> +	lockdep_assert_held(&tz->lock);
+>> +	
+>>    	if (!tz || IS_ERR(tz) || !tz->ops->get_temp)
+>> -		goto exit;
+>> -
+>> -	mutex_lock(&tz->lock);
+>> +		return -EINVAL;
+>>    
+>>    	ret = tz->ops->get_temp(tz, temp);
+>>    
+>> @@ -107,35 +97,42 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+>>    			*temp = tz->emul_temperature;
+>>    	}
+>>    
+>> -	mutex_unlock(&tz->lock);
+>> -exit:
+>>    	return ret;
+>>    }
+>> -EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
+>>    
+>>    /**
+>> - * thermal_zone_set_trips - Computes the next trip points for the driver
+>> - * @tz: a pointer to a thermal zone device structure
+>> + * thermal_zone_get_temp() - returns the temperature of a thermal zone
+>> + * @tz: a valid pointer to a struct thermal_zone_device
+>> + * @temp: a valid pointer to where to store the resulting temperature.
+>>     *
+>> - * The function computes the next temperature boundaries by browsing
+>> - * the trip points. The result is the closer low and high trip points
+>> - * to the current temperature. These values are passed to the backend
+>> - * driver to let it set its own notification mechanism (usually an
+>> - * interrupt).
+>> + * When a valid thermal zone reference is passed, it will fetch its
+>> + * temperature and fill @temp.
+>>     *
+>> - * It does not return a value
+>> + * Return: On success returns 0, an error code otherwise
+>>     */
+>> -void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>> +int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+>> +{
+>> +	int ret;
+>> +
+>> +	mutex_lock(&tz->lock);
+>> +	ret = __thermal_zone_get_temp(tz, temp);
+>> +	mutex_unlock(&tz->lock);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
+>> +
+>> +void __thermal_zone_set_trips(struct thermal_zone_device *tz)
+>>    {
+>>    	int low = -INT_MAX;
+>>    	int high = INT_MAX;
+>>    	int trip_temp, hysteresis;
+>>    	int i, ret;
+>>    
+>> -	mutex_lock(&tz->lock);
+>> -
+>> +	lockdep_assert_held(&tz->lock);
+>> +	
+>>    	if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
+>> -		goto exit;
+>> +		return;
+>>    
+>>    	for (i = 0; i < tz->num_trips; i++) {
+>>    		int trip_low;
+>> @@ -154,7 +151,7 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>>    
+>>    	/* No need to change trip points */
+>>    	if (tz->prev_low_trip == low && tz->prev_high_trip == high)
+>> -		goto exit;
+>> +		return;
+>>    
+>>    	tz->prev_low_trip = low;
+>>    	tz->prev_high_trip = high;
+>> @@ -169,8 +166,24 @@ void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>>    	ret = tz->ops->set_trips(tz, low, high);
+>>    	if (ret)
+>>    		dev_err(&tz->device, "Failed to set trips: %d\n", ret);
+>> +}
+>>    
+>> -exit:
+>> +/**
+>> + * thermal_zone_set_trips - Computes the next trip points for the driver
+>> + * @tz: a pointer to a thermal zone device structure
+>> + *
+>> + * The function computes the next temperature boundaries by browsing
+>> + * the trip points. The result is the closer low and high trip points
+>> + * to the current temperature. These values are passed to the backend
+>> + * driver to let it set its own notification mechanism (usually an
+>> + * interrupt).
+>> + *
+>> + * It does not return a value
+>> + */
+>> +void thermal_zone_set_trips(struct thermal_zone_device *tz)
+>> +{
+>> +	mutex_lock(&tz->lock);
+>> +	__thermal_zone_set_trips(tz);
+>>    	mutex_unlock(&tz->lock);
+>>    }
+>>    
+>> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+>> index 3c513561d346..f094f7cbc455 100644
+>> --- a/drivers/thermal/thermal_sysfs.c
+>> +++ b/drivers/thermal/thermal_sysfs.c
+>> @@ -49,7 +49,11 @@ static ssize_t
+>>    mode_show(struct device *dev, struct device_attribute *attr, char *buf)
+>>    {
+>>    	struct thermal_zone_device *tz = to_thermal_zone(dev);
+>> -	int enabled = thermal_zone_device_is_enabled(tz);
+>> +	int enabled;
+>> +
+>> +	mutex_lock(&tz->lock);
+>> +	enabled = thermal_zone_device_is_enabled(tz);
+>> +	mutex_unlock(&tz->lock);
+>>    
+>>    	return sprintf(buf, "%s\n", enabled ? "enabled" : "disabled");
+>>    }
+> 
+> Best regards
+
+
 -- 
-2.34.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
