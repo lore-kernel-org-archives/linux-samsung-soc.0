@@ -2,111 +2,147 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1700BC00140
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 09:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63E5C00140
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 10:01:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237663AbiHLJz0 (ORCPT
+        id S232506AbiHLKBy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Aug 2022 05:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43552 "EHLO
+        Fri, 12 Aug 2022 06:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237635AbiHLJzY (ORCPT
+        with ESMTP id S231237AbiHLKBx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Aug 2022 05:55:24 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9180C11C1F
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 02:55:22 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id a9so630920lfm.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 02:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=T5iIzTCDVHqt30FHfCBf7QyCkBoOs7GPL9+XgJpnyHY=;
-        b=wzhT+buoDcE5KBLNi6WAqq2oLZi0r2AKjAMCS+H+73hksv87Nlik8u7vCpU7xCGkTK
-         dbcrW/+mteB6uMRvRmsI/DfdobEjH2Wnom7i3hOCWUTPkbQCBZ01C2nVnEWWndW0NNX8
-         Vy6PYOdE9cf5pXDtLm/MlNkuiIWbd0qZoFH95l7i8aeyMi+DqpKI7NWazSRwg/JaR+nT
-         We4m8IRm5bg4qOtwNGwEJFJHVoCaxIxqbxEL6jhbnsDmXV59L6FIK8eCm79/6gaSy/gl
-         +/amH1RU58cCY2dclZUCOu9cHem5YidgDAH7eR9xifYlXAWe2F1zdLwHZYXBJWMCNc4o
-         OxWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=T5iIzTCDVHqt30FHfCBf7QyCkBoOs7GPL9+XgJpnyHY=;
-        b=b07ohzwyk+KNLa/uJzWqNnHNVTqQbnUMINoFt9FdCt5Tb8sD+TrMrf98eyiIlq86sC
-         Pj5SV1fY6TN8dnE9r+xooGVRUc6eiNMWLr5V0FohByU8yjSekvYa4bhSJb0iOz8lhiU5
-         hpySyN+S3WExBjqiCUUcQLRe8cDqxjJhz0frlCgKs1PGhFn0f7pOhpDhz9pETsfll8H8
-         A/X0yttAndVq3CaEDEKpJrh6GOb1RNAxwisn0H7eO1bd7ZH8OxmdLDwv0s8pGfSqVPyg
-         6+Y1v1r/9ZJOs2ftVkWnVSDoK2mhxQH/J7tZxeJEALJVVs3Z7QAAU3KTMP7Iyc+T0c7c
-         VP7g==
-X-Gm-Message-State: ACgBeo2+MMJeTgbWP1J6/eY/g61KJjefmPJsSD7rUtDPa5XFqAl4yGXU
-        BdCBsCWpOxCBE9clNls7fAyyyA==
-X-Google-Smtp-Source: AA6agR7+AJPeAcWzIKKPAUQqUNDiGibnaRRiY1ldxGkU5iEvz7Z8KODNoh3VQbhU39rSPYcKl7QjEg==
-X-Received: by 2002:a05:6512:1585:b0:48d:158:7013 with SMTP id bp5-20020a056512158500b0048d01587013mr1116184lfb.536.1660298120968;
-        Fri, 12 Aug 2022 02:55:20 -0700 (PDT)
-Received: from [192.168.1.39] ([83.146.140.105])
-        by smtp.gmail.com with ESMTPSA id s12-20020a05651c048c00b0025e4ed638dcsm301594ljc.59.2022.08.12.02.55.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Aug 2022 02:55:20 -0700 (PDT)
-Message-ID: <af463efe-1656-5638-b41a-5daea3099812@linaro.org>
-Date:   Fri, 12 Aug 2022 12:55:15 +0300
+        Fri, 12 Aug 2022 06:01:53 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65925A5718;
+        Fri, 12 Aug 2022 03:01:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 24879B82316;
+        Fri, 12 Aug 2022 10:01:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A49C433C1;
+        Fri, 12 Aug 2022 10:01:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660298509;
+        bh=s58ue2CyPXl6/8g0VYA+ViWugJ65i3F1UtTTqhXIejM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ScAbCWrrh+KuR8k+ubctiqFW5ukzlqwwV3oCSDpEhAR9JC42ccDSBUsthjS6UN3dP
+         sIKQywHObhoJV+ecAAR8NXB8X7w9YMK8p+/uCirVLWmDhbYFazVrzNlMfVZfWAauyS
+         cnIoGp4kJcAYspIfxnV/R2NxYKa5fX4FdXcg9p+eC1jh5uxGnYghynFo0D5MHzIaSQ
+         33RqtApVF4pWR++8FeLVFA2ByywRWU6evFUsF/K+F3i6xVxpCqUhrfsMH0jughG3f9
+         wFD+TDjr+BtMGZ8+a8CMjl1+hXpJ1Hri+1BpI+CQHnmbZKsUa7zUWdAkzyrEUuE9QU
+         32fvoojgKqO2w==
+Message-ID: <63d459cc-23f0-ce8d-9fe4-b0015b4e41ab@kernel.org>
+Date:   Fri, 12 Aug 2022 13:01:35 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH v2 7/9] clk: samsung: exynos850: Implement CMU_MFCMSCL
- domain
+Subject: Re: [PATCH v2 07/26] thermal/drivers/exynos: Use generic
+ thermal_zone_get_trip() function
 Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220809113323.29965-1-semen.protsenko@linaro.org>
- <20220809113323.29965-8-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220809113323.29965-8-semen.protsenko@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
+Cc:     rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "open list:SAMSUNG THERMAL DRIVER" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220809220436.711020-1-daniel.lezcano@linaro.org>
+ <20220809220436.711020-8-daniel.lezcano@linaro.org>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220809220436.711020-8-daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 09/08/2022 14:33, Sam Protsenko wrote:
-> CMU_MFCMSCL clock domain provides clocks for MFC (Multi-Format Codec),
-> JPEG Codec and Scaler IP-cores. According to Exynos850 TRM, CMU_MFCMSCL
-> generates MFC, M2M, MCSC and JPEG clocks for BLK_MFCMSCL.
+On 10/08/2022 01:04, Daniel Lezcano wrote:
+> The thermal framework gives the possibility to register the trip
+> points with the thermal zone. When that is done, no get_trip_* ops are
+> needed and they can be removed.
 > 
-> This patch adds next clocks:
->   - bus clocks in CMU_TOP for CMU_MFCMSCL
->   - all internal CMU_MFCMSCL clocks
->   - leaf clocks for MFCMSCL, TZPC (TrustZone Protection Controller),
->     JPEG codec, M2M (Memory-to-Memory), MCSC (Multi-Channel Scaler),
->     MFC (Multi-Format Codec), PPMU (Platform Performance Monitoring
->     Unit), SysMMU and SysReg
+> Convert ops content logic into generic trip points and register them with the
+> thermal zone.
 > 
-> MFCMSCL related gate clocks in CMU_TOP were marked as CLK_IS_CRITICAL,
-> because:
->   1. All of those have to be enabled in order to read
->      /sys/kernel/debug/clk/clk_summary file
->   2. When some user driver (e.g. exynos-sysmmu) disables some derived
->      leaf clock, it can lead to CMU_TOP clocks disable, which then makes
->      the system hang. To prevent that, the CLK_IS_CRITICAL flag is used,
->      as CLK_IGNORE_UNUSED is not enough.
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 41 ++++++++++------------------
+>  1 file changed, 15 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 51874d0a284c..5204e343d5b0 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -260,16 +260,8 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  {
+>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>  	struct thermal_zone_device *tzd = data->tzd;
+> -	const struct thermal_trip * const trips =
+> -		of_thermal_get_trip_points(tzd);
+>  	unsigned int status;
+> -	int ret = 0, temp, hyst;
+> -
+> -	if (!trips) {
+> -		dev_err(&pdev->dev,
+> -			"Cannot get trip points from device tree!\n");
+> -		return -ENODEV;
+> -	}
+> +	int ret = 0, temp;
+>  
+>  	if (data->soc != SOC_ARCH_EXYNOS5433) /* FIXME */
+>  		ret = tzd->ops->get_crit_temp(tzd, &temp);
+> @@ -303,19 +295,16 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  
+>  		/* Write temperature code for rising and falling threshold */
+>  		for (i = 0; i < ntrips; i++) {
+> -			/* Write temperature code for rising threshold */
+> -			ret = tzd->ops->get_trip_temp(tzd, i, &temp);
+> -			if (ret)
+> -				goto err;
+> -			temp /= MCELSIUS;
+> -			data->tmu_set_trip_temp(data, i, temp);
+>  
+> -			/* Write temperature code for falling threshold */
+> -			ret = tzd->ops->get_trip_hyst(tzd, i, &hyst);
+> +			struct thermal_trip trip;
+> +			
+> +			ret = thermal_zone_get_trip(tzd, i, &trip);
+>  			if (ret)
+>  				goto err;
+> -			hyst /= MCELSIUS;
+> -			data->tmu_set_trip_hyst(data, i, temp, hyst);
+> +
+> +			data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
+> +			data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
+> +						trip.hysteresis / MCELSIUS);
+>  		}
+>  
+>  		data->tmu_clear_irqs(data);
+> @@ -360,21 +349,21 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+>  }
+>  
+>  static void exynos4210_tmu_set_trip_temp(struct exynos_tmu_data *data,
+> -					 int trip, u8 temp)
+> +					 int trip_id, u8 temp)
+>  {
+> -	const struct thermal_trip * const trips =
+> -		of_thermal_get_trip_points(data->tzd);
+> +	struct thermal_trip trip;
+>  	u8 ref, th_code;
+>  
+> -	ref = trips[0].temperature / MCELSIUS;
+> -
+> -	if (trip == 0) {
+> +	thermal_zone_get_trip(data->tzd, 0, &trip);
 
-No, same as with ISP these are not critical clocks.
+This can return error and trip will be uninitialized.
+
 
 Best regards,
 Krzysztof
