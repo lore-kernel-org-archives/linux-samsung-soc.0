@@ -2,102 +2,106 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087B6C25B0E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Aug 2022 13:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF53C25B0F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Aug 2022 04:08:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238360AbiHLNzA (ORCPT
+        id S229593AbiHNEIs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 12 Aug 2022 09:55:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41456 "EHLO
+        Sun, 14 Aug 2022 00:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238192AbiHLNy6 (ORCPT
+        with ESMTP id S229379AbiHNEIr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 12 Aug 2022 09:54:58 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B26A9252
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 06:54:55 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id l22so1288293wrz.7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Aug 2022 06:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=jM7EPdzO3/8UIbNc27Sgu5Ssc7D/JbAU5jUdYrnh1RQ=;
-        b=j8Sp0Ny1AUyYQrQLBjWgLArXRjmzPu1lvmcKL+902eFWGt+x+95FkQ+LUAsRGB/lG9
-         Dsd23JA6G0mporl2ukXShKbHFJXlIMyXriCwpi96pWky/eRqATdJp79iylWXQJGFpu9S
-         xi+1UOTIuWDsawV/wl8Dto08G4ACp7h0YnyyjQPSXFK+U1fOlYPha14ooMsaX20r7lCm
-         bpMNJ0Cuqi8z9Q9OwkQszpmVmR4TjAun/1/WWNu7V1kR1ByiV66W7m6jqDWkR+dh6V/z
-         K9XUY1oS+Z8W3lx4hTsBrNot3HvxxwnQizqulHzAO+bfX7BrES7mig84NrV3S9AG12v1
-         0SRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=jM7EPdzO3/8UIbNc27Sgu5Ssc7D/JbAU5jUdYrnh1RQ=;
-        b=naJ0PhEcaM/k6QFMug+BVC2Vytn5JuppJReccXVEGyizj4mJOAd/atMn36Pxwp6jwU
-         hadOzPq4ZjLk5oBOCehMOxCCvPghAc/O7ynDNBsaHHAjL9fRmC/WXx2NnYcS7Pf8CiJA
-         WrQV0RMr2PZPtd/vstfdJAcZnXGWtAd80J2RU4cqdLaIS4uc72gDa31fVkHwFXaKmpgh
-         3Wd/7Hfas/6rixKu/vCHGuAb8jTHHB12a6Z7TpKLfjpum9YfrHK8eSB1cNb3bvChYVR4
-         CwIcrDximNsu8cmqhXLoUpmtWocm9UJuZQbm708hqas03VJXARyulB2wRapX54t7+zHj
-         M1jQ==
-X-Gm-Message-State: ACgBeo335KjFq2ZLM+TFMxVlUn08oY4OqVKeV5OMLDtpKmfDHuSqWv2s
-        SA8FEQ50hCWsb3uxL1RZydOw9w==
-X-Google-Smtp-Source: AA6agR5Kf8LT3vuuSyA8RzNo0c2gUbzfKa5DRzkQ/uyCoMf8X9uhFvLsN0rMwuIy/15RvIrWqifSIQ==
-X-Received: by 2002:a05:6000:1acd:b0:220:62c2:bc29 with SMTP id i13-20020a0560001acd00b0022062c2bc29mr2199687wry.620.1660312493881;
-        Fri, 12 Aug 2022 06:54:53 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id bo22-20020a056000069600b0021d80f53324sm2164032wrb.7.2022.08.12.06.54.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Aug 2022 06:54:53 -0700 (PDT)
-Message-ID: <c0c5b306-9fd5-1048-ba08-044d292cbf7a@linaro.org>
-Date:   Fri, 12 Aug 2022 15:54:52 +0200
+        Sun, 14 Aug 2022 00:08:47 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9E61EAE6;
+        Sat, 13 Aug 2022 21:08:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1660450126; x=1691986126;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=edAB/jt4sqHxc5RzVegMVJYdHU9YswUxCooZ50KcXEA=;
+  b=NMRE2HBb+V4QGgrQzPFuHMFkEBcAjKlXiy8HmKjaz1XCDGa2ljw7feBS
+   Y9vH2e9MUC6uRuTjOWXtDxcNc9x6KPBMO6h5/UHDEKrhLw1Dhkl3XCCCF
+   10WKyvZDFwg7Cp3+aRUm2NbrdKo3bn7H1kafTVy//d6+v5Iga/sJsVoE2
+   Nlgh8JjghL9j3JShcWwXOmd+Gvi9sOuCwPKy/FA7hvZGk+oPbJVhye8c2
+   YJOGQ6ceUNxTPZwzeAmm7JOw3taxJcCX5rKRV079bBiUKMeDIsYESQkjZ
+   jnA9Uj8P2tqAdlXXkYgfekJNYGoZnXIqdk3ol5gsSnnpPp4K+CCIq5Dnb
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10437"; a="292591523"
+X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
+   d="scan'208";a="292591523"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2022 21:08:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
+   d="scan'208";a="709416302"
+Received: from lkp-server02.sh.intel.com (HELO 8745164cafc7) ([10.239.97.151])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Aug 2022 21:08:42 -0700
+Received: from kbuild by 8745164cafc7 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oN4vZ-0002Td-1F;
+        Sun, 14 Aug 2022 04:08:41 +0000
+Date:   Sun, 14 Aug 2022 12:08:03 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kbuild-all@lists.01.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: exynos: Add CMU_AUD, CMU_IS and
+ CMU_MFCMSCL for Exynos850
+Message-ID: <202208141234.dc1oJWXs-lkp@intel.com>
+References: <20220808201724.27831-2-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] thermal/core: Fix lockdep_assert() warning
-Content-Language: en-US
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     rafael@kernel.org, krzk@kernel.org, rui.zhang@intel.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        amitk@kernel.org, linux-samsung-soc@vger.kernel.org
-References: <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
- <CGME20220812131216eucas1p266cfd4e51b59fc3cf8056474a6910094@eucas1p2.samsung.com>
- <20220812131202.1331238-1-daniel.lezcano@linaro.org>
- <ab708272-efe0-343e-2dfc-299187126a2a@samsung.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <ab708272-efe0-343e-2dfc-299187126a2a@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220808201724.27831-2-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 12/08/2022 15:34, Marek Szyprowski wrote:
-> On 12.08.2022 15:12, Daniel Lezcano wrote:
->> The function thermal_zone_device_is_enabled() must be called with the
->> thermal zone lock held. In the resume path, it is called without.
->>
->> As the thermal_zone_device_is_enabled() is also checked in
->> thermal_zone_device_update(), do the check in resume() function is
->> pointless, except for saving an extra initialization which does not
->> hurt if it is done in all the cases.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-> This fixes the warning I've reported. Feel free to add:
-> 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Sam,
 
-Great, thanks for testing
+Thank you for the patch! Yet something to improve:
 
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on krzk-dt/for-next linus/master v5.19 next-20220812]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sam-Protsenko/arm64-dts-exynos850-Add-cmu-and-sysmmu-nodes/20220809-041907
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20220814/202208141234.dc1oJWXs-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/c4a995f799014f9233486fa406340888e8e9bc34
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sam-Protsenko/arm64-dts-exynos850-Add-cmu-and-sysmmu-nodes/20220809-041907
+        git checkout c4a995f799014f9233486fa406340888e8e9bc34
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> Error: arch/arm64/boot/dts/exynos/exynos850.dtsi:295.16-17 syntax error
+   FATAL ERROR: Unable to parse input tree
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+0-DAY CI Kernel Test Service
+https://01.org/lkp
