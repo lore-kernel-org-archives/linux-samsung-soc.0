@@ -2,37 +2,37 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA2DC25B06
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Aug 2022 15:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD2AC282E7
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Aug 2022 15:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241737AbiHNPmQ (ORCPT
+        id S241251AbiHNPrJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 14 Aug 2022 11:42:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
+        Sun, 14 Aug 2022 11:47:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241105AbiHNPjW (ORCPT
+        with ESMTP id S241588AbiHNPpu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 14 Aug 2022 11:39:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D594AE62;
-        Sun, 14 Aug 2022 08:32:40 -0700 (PDT)
+        Sun, 14 Aug 2022 11:45:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3467BB85B;
+        Sun, 14 Aug 2022 08:34:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0655AB80B43;
-        Sun, 14 Aug 2022 15:32:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D29BC433C1;
-        Sun, 14 Aug 2022 15:32:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CCCBE60CF7;
+        Sun, 14 Aug 2022 15:34:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB435C433C1;
+        Sun, 14 Aug 2022 15:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660491157;
+        s=k20201202; t=1660491264;
         bh=dA6ZEuwj7DPqjItnEoT4QchiUOKqV/ohRsxC0LHDOW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeRSoMzGIlF3L6l/gDD7IZz3YrqVAUiMASb27r2UB0vr7xEehOymyJoVj2DNLvjU9
-         YABNf49Chh5ZRY9mZEZPhrvhgrp6vL4iZW630Wwj9DqztSHnVNUgzI1u5G2QAohKWx
-         bQehrR6IvYiXrJsbwSvAoBiStEzO0MQxVeKSBPosSWp6LzBLfD2ocmg9lWdSa5nwkE
-         sA6zEy0QosZmCULHQ6kWLE+g4xcxST1PhkfT8UhI42vPHB9pZ2WfdrQi3RxCDmTGhw
-         78EDBNfxvRmWnQ4afuUD6SPEUAhnNOBW+Ydw64wVt7U5uWA1uI3PNpG3PqOKhEljGI
-         T6mjPwseZdLtQ==
+        b=n4Vkw7fJasY4SHvpwajwV8xT76J/s6rM47swdn38/qZ4eO5SdmvlRDwsB9rsCTbB+
+         9hK3eEPHYpgWgFMoWUxjX7dYFD1x3HIg4q0n9n8ydXSuBHnyIB2FVPLJsLu5Ypyqk0
+         bVEk1O/hkgnLr37SEW+F/UDHHJyL6YqYR1BCs0MyluQjpHh0wMbtC88LAj/pgNZ6Pn
+         sjr1B8RpBdZ9yF+//Kh41X4f48orJwsadmJB7nhVppC0Kz7x9qoBaROi9TefuMdTKp
+         Ln0jHWIBdh7uEBVZ8a3y4zEknqZjnWft9IZw10U/G2f9unTQnl/PrEm0DZaHBWakfn
+         eiFtCABozuPQg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -44,12 +44,12 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         kishon@ti.com, linux-phy@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.18 49/56] phy: samsung: phy-exynos-pcie: sanitize init/power_on callbacks
-Date:   Sun, 14 Aug 2022 11:30:19 -0400
-Message-Id: <20220814153026.2377377-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 41/46] phy: samsung: phy-exynos-pcie: sanitize init/power_on callbacks
+Date:   Sun, 14 Aug 2022 11:32:42 -0400
+Message-Id: <20220814153247.2378312-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220814153026.2377377-1-sashal@kernel.org>
-References: <20220814153026.2377377-1-sashal@kernel.org>
+In-Reply-To: <20220814153247.2378312-1-sashal@kernel.org>
+References: <20220814153247.2378312-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
