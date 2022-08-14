@@ -2,106 +2,137 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF53C25B0F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Aug 2022 04:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF978C25B06
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Aug 2022 15:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbiHNEIs (ORCPT
+        id S240555AbiHNPbk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 14 Aug 2022 00:08:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34370 "EHLO
+        Sun, 14 Aug 2022 11:31:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiHNEIr (ORCPT
+        with ESMTP id S240362AbiHNPa4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 14 Aug 2022 00:08:47 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9E61EAE6;
-        Sat, 13 Aug 2022 21:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660450126; x=1691986126;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=edAB/jt4sqHxc5RzVegMVJYdHU9YswUxCooZ50KcXEA=;
-  b=NMRE2HBb+V4QGgrQzPFuHMFkEBcAjKlXiy8HmKjaz1XCDGa2ljw7feBS
-   Y9vH2e9MUC6uRuTjOWXtDxcNc9x6KPBMO6h5/UHDEKrhLw1Dhkl3XCCCF
-   10WKyvZDFwg7Cp3+aRUm2NbrdKo3bn7H1kafTVy//d6+v5Iga/sJsVoE2
-   Nlgh8JjghL9j3JShcWwXOmd+Gvi9sOuCwPKy/FA7hvZGk+oPbJVhye8c2
-   YJOGQ6ceUNxTPZwzeAmm7JOw3taxJcCX5rKRV079bBiUKMeDIsYESQkjZ
-   jnA9Uj8P2tqAdlXXkYgfekJNYGoZnXIqdk3ol5gsSnnpPp4K+CCIq5Dnb
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10437"; a="292591523"
-X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
-   d="scan'208";a="292591523"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2022 21:08:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,236,1654585200"; 
-   d="scan'208";a="709416302"
-Received: from lkp-server02.sh.intel.com (HELO 8745164cafc7) ([10.239.97.151])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Aug 2022 21:08:42 -0700
-Received: from kbuild by 8745164cafc7 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oN4vZ-0002Td-1F;
-        Sun, 14 Aug 2022 04:08:41 +0000
-Date:   Sun, 14 Aug 2022 12:08:03 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kbuild-all@lists.01.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm64: dts: exynos: Add CMU_AUD, CMU_IS and
- CMU_MFCMSCL for Exynos850
-Message-ID: <202208141234.dc1oJWXs-lkp@intel.com>
-References: <20220808201724.27831-2-semen.protsenko@linaro.org>
+        Sun, 14 Aug 2022 11:30:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA3D1A826;
+        Sun, 14 Aug 2022 08:29:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1479460C41;
+        Sun, 14 Aug 2022 15:29:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFB2C433D6;
+        Sun, 14 Aug 2022 15:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660490971;
+        bh=qt61o7YewrXnnLL9ocm5HDs/bnCH6kg7cv3t1Ds3lw8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hNNDrRCxBQIok7pc0B2BtKN5py0ml1fNBjXHenOw1KbwjmkXG0ygxTZfC5Li6wAWj
+         GO4Gpr4SayO+Bq7eM7s/8fGxtdUQWGKZ+38+MA9Mi0lzj744IjuDaHhnHReTgY1phE
+         H01+WJac0OSGq34E8QzVhyQdVb2hIpGzbDq6qOquhx/4Sf4baaJQT9vTeF2BUY6EMJ
+         4jG6EI6P/dzNK4JbRIbkYtbMJvEDrYa3rI6AigALbR+6IgIqR4R4eTfNmMEoI31/k8
+         ayczk4roQ4ZfRDtMQvi2vAFyzRp14sJBckV41bGMGADwBzxW5ilWufRa4/ZZPfcEAU
+         eGw6fgjfgLxWg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chanho Park <chanho61.park@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, jejb@linux.ibm.com,
+        alim.akhtar@samsung.com, bvanassche@acm.org, beanhuo@micron.com,
+        peter.wang@mediatek.com, linux-scsi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.19 38/64] scsi: ufs: ufs-exynos: Change ufs phy control sequence
+Date:   Sun, 14 Aug 2022 11:24:11 -0400
+Message-Id: <20220814152437.2374207-38-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220814152437.2374207-1-sashal@kernel.org>
+References: <20220814152437.2374207-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220808201724.27831-2-semen.protsenko@linaro.org>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sam,
+From: Chanho Park <chanho61.park@samsung.com>
 
-Thank you for the patch! Yet something to improve:
+[ Upstream commit 3d73b200f9893d8f5ba5d105e8b69c8d16744fa2 ]
 
-[auto build test ERROR on krzk/for-next]
-[also build test ERROR on krzk-dt/for-next linus/master v5.19 next-20220812]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Since commit 1599069a62c6 ("phy: core: Warn when phy_power_on is called
+before phy_init"), the following warning has been reported:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sam-Protsenko/arm64-dts-exynos850-Add-cmu-and-sysmmu-nodes/20220809-041907
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20220814/202208141234.dc1oJWXs-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/c4a995f799014f9233486fa406340888e8e9bc34
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sam-Protsenko/arm64-dts-exynos850-Add-cmu-and-sysmmu-nodes/20220809-041907
-        git checkout c4a995f799014f9233486fa406340888e8e9bc34
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
+	phy_power_on was called before phy_init
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+To address this, we need to remove phy_power_on from exynos_ufs_phy_init()
+and move it after phy_init. phy_power_off and phy_exit are also necessary
+in exynos_ufs_remove().
 
-All errors (new ones prefixed by >>):
+Link: https://lore.kernel.org/r/20220706020255.151177-4-chanho61.park@samsung.com
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/ufs/host/ufs-exynos.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
->> Error: arch/arm64/boot/dts/exynos/exynos850.dtsi:295.16-17 syntax error
-   FATAL ERROR: Unable to parse input tree
-
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index a81d8cbd542f..25995667c832 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -910,9 +910,13 @@ static int exynos_ufs_phy_init(struct exynos_ufs *ufs)
+ 	if (ret) {
+ 		dev_err(hba->dev, "%s: phy init failed, ret = %d\n",
+ 			__func__, ret);
+-		goto out_exit_phy;
++		return ret;
+ 	}
+ 
++	ret = phy_power_on(generic_phy);
++	if (ret)
++		goto out_exit_phy;
++
+ 	return 0;
+ 
+ out_exit_phy:
+@@ -1174,10 +1178,6 @@ static int exynos_ufs_init(struct ufs_hba *hba)
+ 		goto out;
+ 	}
+ 
+-	ret = phy_power_on(ufs->phy);
+-	if (ret)
+-		goto phy_off;
+-
+ 	exynos_ufs_priv_init(hba, ufs);
+ 
+ 	if (ufs->drv_data->drv_init) {
+@@ -1195,8 +1195,6 @@ static int exynos_ufs_init(struct ufs_hba *hba)
+ 	exynos_ufs_config_smu(ufs);
+ 	return 0;
+ 
+-phy_off:
+-	phy_power_off(ufs->phy);
+ out:
+ 	hba->priv = NULL;
+ 	return ret;
+@@ -1514,9 +1512,14 @@ static int exynos_ufs_probe(struct platform_device *pdev)
+ static int exynos_ufs_remove(struct platform_device *pdev)
+ {
+ 	struct ufs_hba *hba =  platform_get_drvdata(pdev);
++	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+ 
+ 	pm_runtime_get_sync(&(pdev)->dev);
+ 	ufshcd_remove(hba);
++
++	phy_power_off(ufs->phy);
++	phy_exit(ufs->phy);
++
+ 	return 0;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
