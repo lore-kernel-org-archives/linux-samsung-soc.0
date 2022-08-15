@@ -2,141 +2,94 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD2AC282E7
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Aug 2022 15:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA31AC25B0E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 15 Aug 2022 15:45:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241251AbiHNPrJ (ORCPT
+        id S232913AbiHOPpH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 14 Aug 2022 11:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
+        Mon, 15 Aug 2022 11:45:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241588AbiHNPpu (ORCPT
+        with ESMTP id S232860AbiHOPpE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 14 Aug 2022 11:45:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3467BB85B;
-        Sun, 14 Aug 2022 08:34:25 -0700 (PDT)
+        Mon, 15 Aug 2022 11:45:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9245F17075;
+        Mon, 15 Aug 2022 08:45:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CCCBE60CF7;
-        Sun, 14 Aug 2022 15:34:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB435C433C1;
-        Sun, 14 Aug 2022 15:34:22 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E4F50B80F2B;
+        Mon, 15 Aug 2022 15:45:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF706C433D7;
+        Mon, 15 Aug 2022 15:44:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660491264;
-        bh=dA6ZEuwj7DPqjItnEoT4QchiUOKqV/ohRsxC0LHDOW0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n4Vkw7fJasY4SHvpwajwV8xT76J/s6rM47swdn38/qZ4eO5SdmvlRDwsB9rsCTbB+
-         9hK3eEPHYpgWgFMoWUxjX7dYFD1x3HIg4q0n9n8ydXSuBHnyIB2FVPLJsLu5Ypyqk0
-         bVEk1O/hkgnLr37SEW+F/UDHHJyL6YqYR1BCs0MyluQjpHh0wMbtC88LAj/pgNZ6Pn
-         sjr1B8RpBdZ9yF+//Kh41X4f48orJwsadmJB7nhVppC0Kz7x9qoBaROi9TefuMdTKp
-         Ln0jHWIBdh7uEBVZ8a3y4zEknqZjnWft9IZw10U/G2f9unTQnl/PrEm0DZaHBWakfn
-         eiFtCABozuPQg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        kishon@ti.com, linux-phy@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 41/46] phy: samsung: phy-exynos-pcie: sanitize init/power_on callbacks
-Date:   Sun, 14 Aug 2022 11:32:42 -0400
-Message-Id: <20220814153247.2378312-41-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220814153247.2378312-1-sashal@kernel.org>
-References: <20220814153247.2378312-1-sashal@kernel.org>
+        s=k20201202; t=1660578299;
+        bh=k0MrKa0Q1r65Wdc+CzzRsBanpCr4K/PXB+Iu80gw5uk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=DpNu4s0L/R4xpsXDP2lXtiZLEtl/wle9s9gjLreo8OR9Uaz2x+KtmwR8N6fgkixEo
+         cIaU9CkXllBFBbMO2fJKS5H3hA3c9ec02ojHg9FKNpx1xJzNlHjl3woWDWi08FphGQ
+         Lvh9NG33Qjah9Oq5wu/YaeAlAyjG63xdoxLe7Dgau0RF+tPvtRQuRj92cvXWjCnxw1
+         1soDmpUPTqOH3XOcWBeOJ9+ee0Eo0IzWzVvbO2dgJ8JK4LWzkTFEkffKE+UnKjBOK5
+         D7nFz2hLEjM+0oCezxiblgvxumbBr+Ac8M5mC11e3AKKl9GjIZkuuP8no61s1t/acG
+         pLGOUe7BieMWA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Andi Shyti <andi@etezian.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        kernel test robot <lkp@intel.com>,
+        Adithya K V <adithya.kv@samsung.com>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20220808004851.25122-1-chanho61.park@samsung.com>
+References: <CGME20220808004253epcas2p3937171a6f89a765d67d5cc7b55afb89a@epcas2p3.samsung.com>
+ <20220808004851.25122-1-chanho61.park@samsung.com>
+Subject: Re: [PATCH] spi: s3c64xx: correct dma_chan pointer initialization
+Message-Id: <166057829744.697678.17489335737107175059.b4-ty@kernel.org>
+Date:   Mon, 15 Aug 2022 16:44:57 +0100
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fe10a
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+On Mon, 8 Aug 2022 09:48:51 +0900, Chanho Park wrote:
+> Use NULL for dma channel pointer initialization instead of plain integer.
+> 
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/spi/spi-s3c64xx.c:387:34: sparse: sparse: Using plain integer as NULL pointer
+>    drivers/spi/spi-s3c64xx.c:388:34: sparse: sparse: Using plain integer as NULL pointer
+> 
+> 
+> [...]
 
-[ Upstream commit f2812227bb07e2eaee74253f11cea1576945df31 ]
+Applied to
 
-The exynos-pcie driver called phy_power_on() before phy_init() for some
-historical reasons. However the generic PHY framework assumes that the
-proper sequence is to call phy_init() first, then phy_power_on(). The
-operations done by both functions should be considered as one action and as
-such they are called by the exynos-pcie driver (without doing anything
-between them). The initialization is just a sequence of register writes,
-which cannot be altered without breaking the hardware operation.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-To match the generic PHY framework requirement, simply move all register
-writes to the phy_init()/phy_exit() and drop power_on()/power_off()
-callbacks. This way the driver will also work with the old (incorrect)
-PHY initialization call sequence.
+Thanks!
 
-Link: https://lore.kernel.org/r/20220628220409.26545-1-m.szyprowski@samsung.com
-Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Chanho Park <chanho61.park@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-By: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/phy/samsung/phy-exynos-pcie.c | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
+[1/1] spi: s3c64xx: correct dma_chan pointer initialization
+      commit: dad57a510db9423a4128ae6565854e999cebac51
 
-diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
-index 578cfe07d07a..53c9230c2907 100644
---- a/drivers/phy/samsung/phy-exynos-pcie.c
-+++ b/drivers/phy/samsung/phy-exynos-pcie.c
-@@ -51,6 +51,13 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
- {
- 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
- 
-+	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
-+			   BIT(0), 1);
-+	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
-+			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
-+	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
-+			   PCIE_REFCLK_GATING_EN, 0);
-+
- 	regmap_update_bits(ep->fsysreg,	PCIE_EXYNOS5433_PHY_COMMON_RESET,
- 			   PCIE_PHY_RESET, 1);
- 	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_MAC_RESET,
-@@ -109,20 +116,7 @@ static int exynos5433_pcie_phy_init(struct phy *phy)
- 	return 0;
- }
- 
--static int exynos5433_pcie_phy_power_on(struct phy *phy)
--{
--	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
--
--	regmap_update_bits(ep->pmureg, EXYNOS5433_PMU_PCIE_PHY_OFFSET,
--			   BIT(0), 1);
--	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_GLOBAL_RESET,
--			   PCIE_APP_REQ_EXIT_L1_MODE, 0);
--	regmap_update_bits(ep->fsysreg, PCIE_EXYNOS5433_PHY_L1SUB_CM_CON,
--			   PCIE_REFCLK_GATING_EN, 0);
--	return 0;
--}
--
--static int exynos5433_pcie_phy_power_off(struct phy *phy)
-+static int exynos5433_pcie_phy_exit(struct phy *phy)
- {
- 	struct exynos_pcie_phy *ep = phy_get_drvdata(phy);
- 
-@@ -135,8 +129,7 @@ static int exynos5433_pcie_phy_power_off(struct phy *phy)
- 
- static const struct phy_ops exynos5433_phy_ops = {
- 	.init		= exynos5433_pcie_phy_init,
--	.power_on	= exynos5433_pcie_phy_power_on,
--	.power_off	= exynos5433_pcie_phy_power_off,
-+	.exit		= exynos5433_pcie_phy_exit,
- 	.owner		= THIS_MODULE,
- };
- 
--- 
-2.35.1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
