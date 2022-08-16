@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13381C32774
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Aug 2022 13:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EF9C3F6B0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Aug 2022 13:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235760AbiHPNao (ORCPT
+        id S235772AbiHPNaq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Aug 2022 09:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45544 "EHLO
+        Tue, 16 Aug 2022 09:30:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235772AbiHPNaZ (ORCPT
+        with ESMTP id S235767AbiHPNaX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Aug 2022 09:30:25 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C798FB8A6F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 06:30:22 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id s9so10524578ljs.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 06:30:22 -0700 (PDT)
+        Tue, 16 Aug 2022 09:30:23 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32977B8F07
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 06:30:21 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id z6so14923796lfu.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 06:30:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc;
-        bh=5Maa5mHCDvID2XEbeA3TvbZciKfZbejdkqWh3jCTW2w=;
-        b=WBByk97cZs3CogZGSwc4iXNJ+Pjg63T3GFhsuU/mdkJvXfscSR4OMJdBNNP2eyRAqe
-         cPko9V6kv7gwBdG5ksCTrM+P+isaIeMzepjszn+q7YYVmBNftGz0M3F5JlKP8ubhPVJY
-         GYujjeKW/pJjNhyhd4V+ApiN0Am69HJWyJKK6+sBJr1b9HcSZjbctPsfpDog4Kc8+WiJ
-         gdYsmVgD3JqCCE1lSM8m4P277ehknAHp8beR11tD82aF3wpIEg4nn/3au0XhAda/g6HW
-         Ib4WdGdO3XqU+CITfIN3NxnvoXUUPgIevepPrCtfaQDX9D5MZY97TZigqt9VvDNT6wEL
-         IodA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc;
+        bh=HS3oZr3WBhNNsRHtdxFrbXCE2V9zgobb5QWVf0AGmdY=;
+        b=hkBUgKtApBf6JtTX0hC2k+Z0jGioeWYa6a/JVa5tXkNG5uZjlGMVy4rdTzS/lJfu1T
+         xQauPa0OuY6GxehVYSl1oNh5WJ0ng1KiGGOcziZqY+EdF3tYAdjGVLDMmefJK6oxy41j
+         Jn1C24mnEDkpVsS4W2S1MQa/nnfAvl5vqhwKUJTcrTpG1kwTAgxm3ADXa/zk56cvMupO
+         ILMAcMGCThoDTEwr/DCYvdJx6fjrEq3TKnLfooODc6hMdR4vG7l+ABZX7np5ngETKtgz
+         uOfp/vnx3cHr1H/4DFm7SlEB+1lC/rDinO26R/UwCxf8ycklEy9XQIzzUH937q6T54Uc
+         RQKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc;
-        bh=5Maa5mHCDvID2XEbeA3TvbZciKfZbejdkqWh3jCTW2w=;
-        b=0xnlh+7pX67mCMZEB8hT20fLeepM4yUpIOBwHLDxCAYAREllxUdBJLOYqV+puHYCaw
-         iz5rWw7W8Bo3xd9m1lFl72X1IzozG60U+JF2Y2BWbvcU8t2M/7CJgaehUIyJGHPYfTEn
-         TpRBT4/im9iqwx6PDzUJEqJNhxCrpwToX+Fh5DG4f7nygR4/vWmCAJ91gpZs2Eanwpqo
-         AUFFInXa7vrIIAVPR34cnl9TEJp0BtaTLoERI6vrodRabiNlatEJkHDB40yJxqstWGq4
-         p8fccllMq/KxA7y59MUMPXr7ryGf5FoLTM8ajC3fZodGzwxtJOfCkzAIPgwpoTpL7gyB
-         8CtA==
-X-Gm-Message-State: ACgBeo1DVJzqKYghDibZtgZNZO8foT9i5kUHQGCkwaLN7c+kkH4zgAym
-        4ydWosBe41WO1EYdWkh4tHchvw==
-X-Google-Smtp-Source: AA6agR5KkdbueNzav6IGro95WRos+dXgFJPzwKDgHnq+77Qu54W5MBRJc0paIAniQQ8p8D0SCY52+Q==
-X-Received: by 2002:a2e:8e71:0:b0:261:74ad:ab5f with SMTP id t17-20020a2e8e71000000b0026174adab5fmr5785039ljk.387.1660656620931;
-        Tue, 16 Aug 2022 06:30:20 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc;
+        bh=HS3oZr3WBhNNsRHtdxFrbXCE2V9zgobb5QWVf0AGmdY=;
+        b=tpQhSlqKRmjQ4zdhDGAMbekl2BZ2Y72WVhBe+neQevYUZa1FcgMddFRj7Nb5DaGA2O
+         5ZHDq6hLSo32yhpoz8DBS7O1mXrz/FRRAWFp3N5L8y9yWVIGVjSGpwbZliZsmuLfUBg0
+         LScO4CsQtyFiAFNaCM710NKhhoSLuDEJi0+ZlZ1298DoPVCPBUi2Vh9KUlc+eGGyOyRp
+         PKGztW4u2oxv+2DOakbVCYDv+kt0v1hJihGXWCbZt7VI9T2oTIoZ1Ffw2i/I52MSeTNL
+         EfgRXqa+/0FFzRHa9VBvAuvvir3Vi8rdFVeAXRm3Xmhw5JOnCBP2ER4H3WqH7KjddlH7
+         wgeA==
+X-Gm-Message-State: ACgBeo2juyjU/uR1KzmsljIiIAWqAvxF6NIS2ZvnYGu3crwCJqRexLeI
+        S8v6xR0CJcFdK2WkO4gaT3TC3A==
+X-Google-Smtp-Source: AA6agR5tpEp1fDlN49U9Zv9v0kUqYCywdThruRzO+ILElAG4Qm47gDL97wqjtoPF51H2AioBtrdEvQ==
+X-Received: by 2002:a05:6512:3f0e:b0:48a:5edd:99b2 with SMTP id y14-20020a0565123f0e00b0048a5edd99b2mr6712350lfa.124.1660656619410;
+        Tue, 16 Aug 2022 06:30:19 -0700 (PDT)
 Received: from krzk-bin.. (d15l54g8c71znbtrbzt-4.rev.dnainternet.fi. [2001:14bb:ae:539c:1782:dd68:b0c1:c1a4])
-        by smtp.gmail.com with ESMTPSA id k19-20020a2eb753000000b0025e42f8e771sm1816301ljo.34.2022.08.16.06.30.19
+        by smtp.gmail.com with ESMTPSA id k19-20020a2eb753000000b0025e42f8e771sm1816301ljo.34.2022.08.16.06.30.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 06:30:20 -0700 (PDT)
+        Tue, 16 Aug 2022 06:30:18 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Tomasz Figa <tomasz.figa@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -59,214 +59,70 @@ To:     Tomasz Figa <tomasz.figa@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/2] dt-bindings: pinctrl: samsung: stop using bindings header with constants
-Date:   Tue, 16 Aug 2022 16:30:15 +0300
-Message-Id: <20220816133016.77553-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 0/2] pinctrl/arm: dt-bindings: deprecate header with register constants
+Date:   Tue, 16 Aug 2022 16:30:14 +0300
+Message-Id: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
-References: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The bindings header with pin controller register values is being
-deprecated and DTS already switched to a DTS-local header.
+Hi,
 
-Do not reference the bindings header in schema and replace the defines
-with raw values.
+Changes since v3
+================
+1. Add patch 1 - bindings example fixes.
+2. All dependencies were merged, so this can go via Samsung pinctrl tree.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
+Changes since v2
+================
+1. Split last bindings patch per driver changes and bindings.
+2. Add tags.
+
+Changes since v1
+================
+1. Correct title (in the comment) of each header (Chanho).
+2. Patch #7: Adjust warning message.
+3. Add tags.
+
+Description
+===========
+The Samsung pin controller drivers were always expecting DTS to use raw
+register values for pin configuration (e.g. pull up/down, drive strength).  DTS
+had these values hard-coded all over, so at some point we decided for
+convenience to move them to dt-bindings header.  Less code duplication, some
+meaning added to raw number, etc.
+
+However these constants do not fit the purpose of bindings.  They do not
+provide any abstraction, any hardware and driver independent ID.  With minor
+exceptions, the Linux drivers actually do not use the bindings header at
+all.  Because of this "dt-bindings ID" approach, these constants were re-used
+between chips, e.g. Exynos ones in S5PV210.  These does not make much sense
+because the values between Exynos and S5PV210 (or S3C24xx) are not related.  If
+it was an abstraction ID, this would be fine. But it's not.
+
+Clean this up by:
+1. Moving the constants to DTS-local headers.
+2. Deprecating the bindings header.
+
+Tested by comparing DTBs (dtx_diff, fdtdump).
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (2):
+  dt-bindings: pinctrl: samsung: stop using bindings header with
+    constants
+  dt-bindings: pinctrl: samsung: deprecate header with register
+    constants
+
  .../pinctrl/samsung,pinctrl-pins-cfg.yaml     |  1 -
  .../bindings/pinctrl/samsung,pinctrl.yaml     | 63 ++++++++-----------
- 2 files changed, 27 insertions(+), 37 deletions(-)
+ include/dt-bindings/pinctrl/samsung.h         |  7 +++
+ 3 files changed, 34 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
-index 9869d4dceddb..f796f27bf0e6 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml
-@@ -20,7 +20,6 @@ description: |
-   The values used for config properties should be derived from the hardware
-   manual and these values are programmed as-is into the pin pull up/down and
-   driver strength register of the pin-controller.
--  See also include/dt-bindings/pinctrl/samsung.h with useful constants.
- 
-   See also Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml for
-   additional information and example.
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-index 3a65c66ca71d..dafa51c69c06 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-@@ -15,9 +15,6 @@ description: |
-   This is a part of device tree bindings for Samsung S3C/S5P/Exynos SoC pin
-   controller.
- 
--  Pin group settings (like drive strength, pull up/down) are available as
--  macros in include/dt-bindings/pinctrl/samsung.h.
--
-   All the pin controller nodes should be represented in the aliases node using
-   the following format 'pinctrl{n}' where n is a unique number for the alias.
- 
-@@ -138,8 +135,6 @@ additionalProperties: false
- 
- examples:
-   - |
--    #include <dt-bindings/pinctrl/samsung.h>
--
-     pinctrl@7f008000 {
-         compatible = "samsung,s3c64xx-pinctrl";
-         reg = <0x7f008000 0x1000>;
-@@ -166,8 +161,8 @@ examples:
- 
-         uart0-data-pins {
-             samsung,pins = "gpa-0", "gpa-1";
--            samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
--            samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+            samsung,pin-function = <2>;
-+            samsung,pin-pud = <0>;
-         };
- 
-         // ...
-@@ -175,7 +170,6 @@ examples:
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    #include <dt-bindings/pinctrl/samsung.h>
- 
-     pinctrl@11400000 {
-         compatible = "samsung,exynos4210-pinctrl";
-@@ -197,9 +191,9 @@ examples:
- 
-         uart0-data-pins {
-             samsung,pins = "gpa0-0", "gpa0-1";
--            samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
--            samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
--            samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+            samsung,pin-function = <2>;
-+            samsung,pin-pud = <0>;
-+            samsung,pin-drv = <0>;
-         };
- 
-         // ...
-@@ -207,14 +201,14 @@ examples:
-         sleep0: sleep-state {
-             gpa0-0-pin {
-                 samsung,pins = "gpa0-0";
--                samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
--                samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+                samsung,pin-con-pdn = <2>;
-+                samsung,pin-pud-pdn = <0>;
-             };
- 
-             gpa0-1-pin {
-                 samsung,pins = "gpa0-1";
--                samsung,pin-con-pdn = <EXYNOS_PIN_PDN_OUT0>;
--                samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+                samsung,pin-con-pdn = <0>;
-+                samsung,pin-pud-pdn = <0>;
-             };
- 
-             // ...
-@@ -223,7 +217,6 @@ examples:
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    #include <dt-bindings/pinctrl/samsung.h>
- 
-     pinctrl@11000000 {
-         compatible = "samsung,exynos4210-pinctrl";
-@@ -272,26 +265,26 @@ examples:
- 
-         sd0-clk-pins {
-             samsung,pins = "gpk0-0";
--            samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
--            samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
--            samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
-+            samsung,pin-function = <2>;
-+            samsung,pin-pud = <0>;
-+            samsung,pin-drv = <3>;
-         };
- 
-         sd4-bus-width8-pins {
-             part-1-pins {
-                 samsung,pins = "gpk0-3", "gpk0-4",
-                                "gpk0-5", "gpk0-6";
--                samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
--                samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
--                samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
-+                samsung,pin-function = <3>;
-+                samsung,pin-pud = <3>;
-+                samsung,pin-drv = <3>;
-             };
- 
-             part-2-pins {
-                 samsung,pins = "gpk1-3", "gpk1-4",
-                                "gpk1-5", "gpk1-6";
--                samsung,pin-function = <EXYNOS_PIN_FUNC_4>;
--                samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
--                samsung,pin-drv = <EXYNOS4_PIN_DRV_LV4>;
-+                samsung,pin-function = <4>;
-+                samsung,pin-pud = <3>;
-+                samsung,pin-drv = <3>;
-             };
-         };
- 
-@@ -299,16 +292,15 @@ examples:
- 
-         otg-gp-pins {
-             samsung,pins = "gpx3-3";
--            samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
--            samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
--            samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+            samsung,pin-function = <1>;
-+            samsung,pin-pud = <0>;
-+            samsung,pin-drv = <0>;
-             samsung,pin-val = <0>;
-         };
-     };
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    #include <dt-bindings/pinctrl/samsung.h>
- 
-     pinctrl@10580000 {
-         compatible = "samsung,exynos5433-pinctrl";
-@@ -352,9 +344,9 @@ examples:
-         initial_alive: initial-state {
-             gpa0-0-pin {
-                 samsung,pins = "gpa0-0";
--                samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
--                samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
--                samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+                samsung,pin-function = <0>;
-+                samsung,pin-pud = <1>;
-+                samsung,pin-drv = <0>;
-             };
- 
-             // ...
-@@ -363,7 +355,6 @@ examples:
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    #include <dt-bindings/pinctrl/samsung.h>
- 
-     pinctrl@114b0000 {
-         compatible = "samsung,exynos5433-pinctrl";
-@@ -384,9 +375,9 @@ examples:
-         i2s0-bus-pins {
-             samsung,pins = "gpz0-0", "gpz0-1", "gpz0-2", "gpz0-3",
-                            "gpz0-4", "gpz0-5", "gpz0-6";
--            samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
--            samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
--            samsung,pin-drv = <EXYNOS5433_PIN_DRV_FAST_SR1>;
-+            samsung,pin-function = <2>;
-+            samsung,pin-pud = <0>;
-+            samsung,pin-drv = <0>;
-         };
- 
-         // ...
 -- 
 2.34.1
 
