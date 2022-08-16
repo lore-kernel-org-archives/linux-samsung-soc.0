@@ -2,87 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D92C3F6B0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Aug 2022 10:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0E7C32771
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Aug 2022 10:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbiHPKKn (ORCPT
+        id S234337AbiHPKXh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Aug 2022 06:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38026 "EHLO
+        Tue, 16 Aug 2022 06:23:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234266AbiHPKKE (ORCPT
+        with ESMTP id S234374AbiHPKXT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Aug 2022 06:10:04 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A84F83F3A
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 02:24:37 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id o2so14095697lfb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 02:24:37 -0700 (PDT)
+        Tue, 16 Aug 2022 06:23:19 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFF658539
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 02:23:31 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id u3so14053551lfk.8
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 02:23:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=dA9DhESaxIAdSuqYA69VElvQhXKaLx6GMaT3o/MxfcQ=;
-        b=pAYcHJ/DCBmLR9cpFpCsw+KdXs1oauKhBl0AkYjD7c8nyjJj3+eSFlS1/VCuw6wHn9
-         G6OSm0FBh/QkaDRo1ti/hDuY4VmQvslzvGnlspUuKrS3Ky3DqzYNHDKNgYRhw1Cpkhnu
-         cQtq6kzHMGotOKUXCPwoF0INia1hvQ/0Wt/ItkiqaFpHIy9U0m0cfVYiINu5hbBYp9bK
-         72rA5DZv4lzP86L9AgRiQoJjX8/H1O7S3YDKfwWUZan2CnkXRaTyakvAAzoE+Wd/YAAd
-         Hp/L5aZT4N6+3GtRgdA6f5T5yzIrcXG+IQ1Zr2670IWXX4JWNoWAye41nXDKSW7HVCnC
-         aj+Q==
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=xqmZkTjqkBszJr4LKjJt2ehtVUvSW3sFkYgqkkGWDf4=;
+        b=yj+1nFMppjyZXIpFnjKZvFDRpcKZwm+a4RWh+1tgO9xkQqZ5ouieOYtGDdckwPCLkD
+         uFNRzJohXUEtJkdoEMQud0/N66NTYI0UV0uWL9W2sOWN2DPcWtt6PVdBw5MjNIDJIYgz
+         7z1qS3BhvROOXNwNVdMCiNBn+hCwboOkqh+EliX/jOaVubo4IIFegvDhncPRP9id2YSy
+         zJ2KMbORQuM3hcHWwWAxXLHMYeN11+ZOS0NSe132Auln0y3rEuRGL4zv++iOnJSGhjZc
+         kbibfmoOvPb7P4Gyx7pJH4QHOwiW9cdScaGQsSqohEUl4AfB3xEzQnP61EQFQQFRh6Y2
+         8OPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=dA9DhESaxIAdSuqYA69VElvQhXKaLx6GMaT3o/MxfcQ=;
-        b=A2yOEXCCEVA2PL9dq6xz5Rb3eO6eZcUG1HnKM0JO7/Rdvh1axN0H1J4QYHx2Iwn5dy
-         EsTPr1ReH+6wBIP754+wMatOKA6fF/7ORYidvmmsT389l4KAkMU3kvELszb12X+6zkYC
-         WhzuOEV3QKdbfLA7NWcB8tQyEsmX6yj9NvqH7Q3WdEW9/Gp/48kd7NNFRvA5bIktM40/
-         CmBIkObytBzZZgvN7aZ1SurVQdvGfIzWhkE4Q9OWq1hL6lWDxXLZhrXTQU1YAvvsF1X7
-         GOQnameuwn2Oy/wZT77WuGntEJBDhBJgTX9SdqiwVN/xtBX4ZRxRaEmhacRssKwzBVjI
-         mL/A==
-X-Gm-Message-State: ACgBeo3LowmVQvFj+y08G5WQL+MPKRPaBCd/xihu8Hclc46qFMNHWv7O
-        9YYc6ZXGQ7g2cRzAbB6HLGvAjQ==
-X-Google-Smtp-Source: AA6agR4SacvxqdwEQnvdddBBMXsDS1BirINw4bHykF8sOxTwdBrYtb13QtvhxD+krOjDjpFrrNwVeQ==
-X-Received: by 2002:a05:651c:154b:b0:25e:c73d:a786 with SMTP id y11-20020a05651c154b00b0025ec73da786mr6211788ljp.397.1660641875620;
-        Tue, 16 Aug 2022 02:24:35 -0700 (PDT)
-Received: from krzk-bin.. (d15l54g8c71znbtrbzt-4.rev.dnainternet.fi. [2001:14bb:ae:539c:1782:dd68:b0c1:c1a4])
-        by smtp.gmail.com with ESMTPSA id v11-20020a056512048b00b0048a8c907fe9sm1326420lfq.167.2022.08.16.02.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 02:24:35 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     tomasz.figa@gmail.com, linus.walleij@linaro.org,
-        saravanak@google.com, alim.akhtar@samsung.com,
-        s.nawrocki@samsung.com
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel-team@android.com, linux-samsung-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v1] pinctrl: samsung: Finish initializing the gpios before registering them
-Date:   Tue, 16 Aug 2022 12:24:32 +0300
-Message-Id: <166064186857.38288.3043355425920212927.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220727013349.3056826-1-saravanak@google.com>
-References: <20220727013349.3056826-1-saravanak@google.com>
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=xqmZkTjqkBszJr4LKjJt2ehtVUvSW3sFkYgqkkGWDf4=;
+        b=TPhuRbvpCXFJDSdBfdCS9V+YrXnkwVOh15pTOM6Xp62tuqiF5sZ/EXgFnkzVUKYpfw
+         8kBxE7YvwhFfXNbWWRzsrGHBL7s/lPZFA77DXMq5AWwgzmb4Jekh9PP2D8wxZdSmt/G7
+         4pGBUqHxAp5tCIls7oGuEEkSklj+XFUtOqMFJCpdT4ruJ7C7kbkPHUJ4NQsE9viWGUfG
+         LddspSF54eE606TScJuN00nNWLxI9uGvB3sQjJyV5l+pXCmUKdRISZ56uJBseb5KkEUD
+         EVhZLJCy+ICbbooSLcHNkSVm1+zm+t+9Jdax+YDkqeMvCHR4jJaxYC6O0L8xzVwpxyzF
+         Grfw==
+X-Gm-Message-State: ACgBeo1sfBUGBxLmJLo3+g6ugYGdgsAHqYW43xFmPg+sDYDUinUrl5HJ
+        5A0MYCfdEQU2XBRrDIgpyAVcwg==
+X-Google-Smtp-Source: AA6agR5+nNwI8d3IuOAHqLUOx1QI0JR8HQgP2AKO07DOADBkCQC3TdTrDgt0+LLhBk+z2F6rApxi6Q==
+X-Received: by 2002:a19:5e02:0:b0:48b:1870:dc4 with SMTP id s2-20020a195e02000000b0048b18700dc4mr7462376lfb.4.1660641809597;
+        Tue, 16 Aug 2022 02:23:29 -0700 (PDT)
+Received: from ?IPV6:2001:14bb:ae:539c:1782:dd68:b0c1:c1a4? (d15l54g8c71znbtrbzt-4.rev.dnainternet.fi. [2001:14bb:ae:539c:1782:dd68:b0c1:c1a4])
+        by smtp.gmail.com with ESMTPSA id x25-20020a056512131900b0048a0e948c34sm1325631lfu.195.2022.08.16.02.23.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Aug 2022 02:23:29 -0700 (PDT)
+Message-ID: <b6a515bf-b1a3-02e5-ecda-d11753288fe2@linaro.org>
+Date:   Tue, 16 Aug 2022 12:23:27 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v1] pinctrl: samsung: Finish initializing the gpios before
+ registering them
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Saravana Kannan <saravanak@google.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220727013349.3056826-1-saravanak@google.com>
+ <49e4f45a-51da-ec4c-9ebb-dfa022bf8a88@linaro.org>
+In-Reply-To: <49e4f45a-51da-ec4c-9ebb-dfa022bf8a88@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 26 Jul 2022 18:33:48 -0700, Saravana Kannan wrote:
-> As soon as a gpio is registered, it should be usable by a consumer. So,
-> do all the initialization before registering the gpios. Without this
-> change, a consumer can request a GPIO IRQ and have the gpio to IRQ
-> mapping fail.
+On 28/07/2022 11:32, Krzysztof Kozlowski wrote:
+> On 27/07/2022 03:33, Saravana Kannan wrote:
+>> As soon as a gpio is registered, it should be usable by a consumer. So,
+>> do all the initialization before registering the gpios. Without this
+>> change, a consumer can request a GPIO IRQ and have the gpio to IRQ
+>> mapping fail.
+>>
+>> Signed-off-by: Saravana Kannan <saravanak@google.com>
 > 
+> Looks good.
 > 
+> Linus,
+> It's too late for me to pick it up, so make you could grab it directly?
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Otherwise it will wait for merge window to finish.
 
-Applied, thanks!
-
-[1/1] pinctrl: samsung: Finish initializing the gpios before registering them
-      https://git.kernel.org/pinctrl/samsung/c/152a81a0b1204e9c7f4af0004b5ed7a8d67dd037
+Applied.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
