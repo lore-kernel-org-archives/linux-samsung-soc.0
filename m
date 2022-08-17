@@ -2,127 +2,87 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EF9C3F6B0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 16 Aug 2022 13:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0E7C3F6B0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 17 Aug 2022 07:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235772AbiHPNaq (ORCPT
+        id S229722AbiHQHbg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 16 Aug 2022 09:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45378 "EHLO
+        Wed, 17 Aug 2022 03:31:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235767AbiHPNaX (ORCPT
+        with ESMTP id S231288AbiHQHbf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 16 Aug 2022 09:30:23 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32977B8F07
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 06:30:21 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id z6so14923796lfu.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2022 06:30:21 -0700 (PDT)
+        Wed, 17 Aug 2022 03:31:35 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A4A86D549
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2022 00:31:34 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id x9so12740631ljj.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2022 00:31:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc;
-        bh=HS3oZr3WBhNNsRHtdxFrbXCE2V9zgobb5QWVf0AGmdY=;
-        b=hkBUgKtApBf6JtTX0hC2k+Z0jGioeWYa6a/JVa5tXkNG5uZjlGMVy4rdTzS/lJfu1T
-         xQauPa0OuY6GxehVYSl1oNh5WJ0ng1KiGGOcziZqY+EdF3tYAdjGVLDMmefJK6oxy41j
-         Jn1C24mnEDkpVsS4W2S1MQa/nnfAvl5vqhwKUJTcrTpG1kwTAgxm3ADXa/zk56cvMupO
-         ILMAcMGCThoDTEwr/DCYvdJx6fjrEq3TKnLfooODc6hMdR4vG7l+ABZX7np5ngETKtgz
-         uOfp/vnx3cHr1H/4DFm7SlEB+1lC/rDinO26R/UwCxf8ycklEy9XQIzzUH937q6T54Uc
-         RQKw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc;
+        bh=n866UwlVQsvEsNFKCS8hnoSDwI11hrtsqigMztK4PUg=;
+        b=P5fgpWe4cPrzCJusVO6q5+NjmimvA7suGtowiRgC7IkHvYFbrYfNOz3kmbiEgRSIqR
+         QgY/zeWNw9ClHhckGsh20186cIiVx0tu5qb1/MQKpmVn57BDLMUKxzSjurdDIOXNPfF9
+         5IO/YzPq2vbW9I7rCdS2atffVlubqHXp64UdJpyhhSFFXOATF0er+Xr7Qyu50X3yQqmG
+         yKAlqqUxb/132vkBY8sqygKsbExmhkXiFF5f3184FqLM5PUWKIXQPVQcLAROrWxq49wn
+         yJBB7rR/yDMrzxwD2y/RBRwuSHD/sLgC2DANofXZdrgQLTWA7aEVVNvKwWhspgrk7z4B
+         TCUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc;
-        bh=HS3oZr3WBhNNsRHtdxFrbXCE2V9zgobb5QWVf0AGmdY=;
-        b=tpQhSlqKRmjQ4zdhDGAMbekl2BZ2Y72WVhBe+neQevYUZa1FcgMddFRj7Nb5DaGA2O
-         5ZHDq6hLSo32yhpoz8DBS7O1mXrz/FRRAWFp3N5L8y9yWVIGVjSGpwbZliZsmuLfUBg0
-         LScO4CsQtyFiAFNaCM710NKhhoSLuDEJi0+ZlZ1298DoPVCPBUi2Vh9KUlc+eGGyOyRp
-         PKGztW4u2oxv+2DOakbVCYDv+kt0v1hJihGXWCbZt7VI9T2oTIoZ1Ffw2i/I52MSeTNL
-         EfgRXqa+/0FFzRHa9VBvAuvvir3Vi8rdFVeAXRm3Xmhw5JOnCBP2ER4H3WqH7KjddlH7
-         wgeA==
-X-Gm-Message-State: ACgBeo2juyjU/uR1KzmsljIiIAWqAvxF6NIS2ZvnYGu3crwCJqRexLeI
-        S8v6xR0CJcFdK2WkO4gaT3TC3A==
-X-Google-Smtp-Source: AA6agR5tpEp1fDlN49U9Zv9v0kUqYCywdThruRzO+ILElAG4Qm47gDL97wqjtoPF51H2AioBtrdEvQ==
-X-Received: by 2002:a05:6512:3f0e:b0:48a:5edd:99b2 with SMTP id y14-20020a0565123f0e00b0048a5edd99b2mr6712350lfa.124.1660656619410;
-        Tue, 16 Aug 2022 06:30:19 -0700 (PDT)
-Received: from krzk-bin.. (d15l54g8c71znbtrbzt-4.rev.dnainternet.fi. [2001:14bb:ae:539c:1782:dd68:b0c1:c1a4])
-        by smtp.gmail.com with ESMTPSA id k19-20020a2eb753000000b0025e42f8e771sm1816301ljo.34.2022.08.16.06.30.18
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=n866UwlVQsvEsNFKCS8hnoSDwI11hrtsqigMztK4PUg=;
+        b=Ek0oR10MhGv+CqUH3S37SvMh+2FZ5oYBiPwUtsf1okPxuTw8NYZNtu0y6HAAcNpLl2
+         0z5eVEicRi6L+HCyq1zjsWxIxX0eFj+UstY2Zt9DIdnAMjgaZ8bXEUBQ+UqLbg8k/e8c
+         XWCTz8ARUMfD9Tz5suzu/tvR6k+akL/ZolPi8ZRq+mSwIVcZMCIG5e/1jkXS6cKIOTbF
+         QM5Cqo5EJDhJNhen/GvL2OMliNsuQTJFoZ5/+P9sYSNW0MGzL+v4hh60dLiLt9Xxkdi+
+         YslTLaPAZpjNrywQ4AebufHmGfv7NdnNMhfvgH5GOv59eSHfv3mQ4ka6Xk2XbRYsGP9S
+         I69g==
+X-Gm-Message-State: ACgBeo2as8TpYCmsvfOq8APYHMUusnanpMSqJSA5WUg7tT+9mC51j3fC
+        sSrYvInSn5KGAOSqXKGdbUXk5G1nVQQc5WX2
+X-Google-Smtp-Source: AA6agR4ZRa7kPXpKMgSEeReObwfLq016wKe9tLYdc9p31rQ9SyozcH3P6Vxjtg66mc6ooTXwgNS2Ow==
+X-Received: by 2002:a2e:944a:0:b0:24f:10bd:b7e8 with SMTP id o10-20020a2e944a000000b0024f10bdb7e8mr8241865ljh.238.1660721492560;
+        Wed, 17 Aug 2022 00:31:32 -0700 (PDT)
+Received: from krzk-bin.. (d15l54h48cw7vbh-qr4-4.rev.dnainternet.fi. [2001:14bb:ae:539c:1b1c:14b7:109b:ed76])
+        by smtp.gmail.com with ESMTPSA id j24-20020ac253b8000000b0048b2f079cf7sm1591957lfh.239.2022.08.17.00.31.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 06:30:18 -0700 (PDT)
+        Wed, 17 Aug 2022 00:31:31 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/2] pinctrl/arm: dt-bindings: deprecate header with register constants
-Date:   Tue, 16 Aug 2022 16:30:14 +0300
-Message-Id: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
+To:     linux-samsung-soc@vger.kernel.org, airlied@linux.ie,
+        daniel.lezcano@linaro.org, hdegoede@redhat.com,
+        krzysztof.kozlowski+dt@linaro.org, daniel@ffwll.ch,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        lee@kernel.org, robh+dt@kernel.org, cw00.choi@samsung.com,
+        linux-fbdev@vger.kernel.org, krzysztof.kozlowski@linaro.org,
+        broonie@kernel.org, linux-kernel@vger.kernel.org
+Cc:     bzolnier@gmail.com
+Subject: Re: (subset) [PATCH 1/3] MAINTAINERS: Drop Bartlomiej Zolnierkiewicz
+Date:   Wed, 17 Aug 2022 10:31:28 +0300
+Message-Id: <166072148468.30126.5293143761869366053.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220808101526.46556-1-krzysztof.kozlowski@linaro.org>
+References: <20220808101526.46556-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Mon, 8 Aug 2022 13:15:24 +0300, Krzysztof Kozlowski wrote:
+> Bartlomiej's Samsung email address is not working since around last
+> year and there was no follow up patch take over of the drivers, so drop
+> the email from maintainers.
+> 
+> 
 
-Changes since v3
-================
-1. Add patch 1 - bindings example fixes.
-2. All dependencies were merged, so this can go via Samsung pinctrl tree.
+Applied, thanks!
 
-Changes since v2
-================
-1. Split last bindings patch per driver changes and bindings.
-2. Add tags.
-
-Changes since v1
-================
-1. Correct title (in the comment) of each header (Chanho).
-2. Patch #7: Adjust warning message.
-3. Add tags.
-
-Description
-===========
-The Samsung pin controller drivers were always expecting DTS to use raw
-register values for pin configuration (e.g. pull up/down, drive strength).  DTS
-had these values hard-coded all over, so at some point we decided for
-convenience to move them to dt-bindings header.  Less code duplication, some
-meaning added to raw number, etc.
-
-However these constants do not fit the purpose of bindings.  They do not
-provide any abstraction, any hardware and driver independent ID.  With minor
-exceptions, the Linux drivers actually do not use the bindings header at
-all.  Because of this "dt-bindings ID" approach, these constants were re-used
-between chips, e.g. Exynos ones in S5PV210.  These does not make much sense
-because the values between Exynos and S5PV210 (or S3C24xx) are not related.  If
-it was an abstraction ID, this would be fine. But it's not.
-
-Clean this up by:
-1. Moving the constants to DTS-local headers.
-2. Deprecating the bindings header.
-
-Tested by comparing DTBs (dtx_diff, fdtdump).
+[1/3] MAINTAINERS: Drop Bartlomiej Zolnierkiewicz
+      https://git.kernel.org/krzk/linux/c/20b02590a3f76ee4895a917da28897736b20eda9
 
 Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (2):
-  dt-bindings: pinctrl: samsung: stop using bindings header with
-    constants
-  dt-bindings: pinctrl: samsung: deprecate header with register
-    constants
-
- .../pinctrl/samsung,pinctrl-pins-cfg.yaml     |  1 -
- .../bindings/pinctrl/samsung,pinctrl.yaml     | 63 ++++++++-----------
- include/dt-bindings/pinctrl/samsung.h         |  7 +++
- 3 files changed, 34 insertions(+), 37 deletions(-)
-
 -- 
-2.34.1
-
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
