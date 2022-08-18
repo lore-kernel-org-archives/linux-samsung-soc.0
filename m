@@ -2,78 +2,122 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBD4C3F6B0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Aug 2022 14:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FD5C00140
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 18 Aug 2022 20:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343997AbiHRO7o (ORCPT
+        id S231771AbiHRU7n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 18 Aug 2022 10:59:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
+        Thu, 18 Aug 2022 16:59:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343959AbiHRO7M (ORCPT
+        with ESMTP id S239931AbiHRU7m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 18 Aug 2022 10:59:12 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DFEB3D5AE;
-        Thu, 18 Aug 2022 07:58:51 -0700 (PDT)
-Received: by mail-qt1-f179.google.com with SMTP id l5so1286462qtv.4;
-        Thu, 18 Aug 2022 07:58:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=fPoxGBPf5NZE66FQhKWYb3s56+gNdfQUrK1EC5WHaTg=;
-        b=vTjqruJbEUjKzzkzrmLbrucZ925+PMA7buaADNLtUmbboJBwhNuYXwehHpcGAP5DKM
-         rvWm1De3sxong74kvTjOslfHzthqIkAO4lrm74mQ6RvgF5p1kPz20qo6MnSt6q9PvKHM
-         wFp22fOvVP+ytRkTm5g5zWix33PUEtZzzhFeu7pQrcsiJJXUHHkSTNq2pQPyX3hqthC/
-         27Nd2SBTSE8MN2Pt4s35lMiFRYOGpi1Wg5H6QSMRUzVGlbZOrhMUguBseNmh/KvjhplV
-         bRYlJ79zbWruxz/BQsyxH7JhinlXg7eosZwwEpc4bdMxAYhADt1a4+kmkDylK/J36vlO
-         CAZg==
-X-Gm-Message-State: ACgBeo02g33GQUp0l0tNrBS/GtS0Gkra+maQjYxp+uN0SuqbuSX+RwQc
-        HEyfTaWb9AzuJ7HkrkPnEA==
-X-Google-Smtp-Source: AA6agR6nblJYoeb1H2gBXIhyMUJf+lUVbU/lrXRwPfE27ZZOAGg07tCHpKSQCRMpP9h7iUKbmKd9ug==
-X-Received: by 2002:a05:622a:410:b0:33b:72b2:6038 with SMTP id n16-20020a05622a041000b0033b72b26038mr3024805qtx.627.1660834730751;
-        Thu, 18 Aug 2022 07:58:50 -0700 (PDT)
-Received: from robh.at.kernel.org ([2607:fb90:c63:5705:782e:33fb:22e5:50bd])
-        by smtp.gmail.com with ESMTPSA id b22-20020a05620a119600b006b9576cd060sm1614260qkk.21.2022.08.18.07.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Aug 2022 07:58:50 -0700 (PDT)
-Received: (nullmailer pid 1859341 invoked by uid 1000);
-        Thu, 18 Aug 2022 14:58:48 -0000
-Date:   Thu, 18 Aug 2022 08:58:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thu, 18 Aug 2022 16:59:42 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34DD3B943C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Aug 2022 13:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=UY3eA8XvN3gEMdC/K51GLf88c9p
+        7hHuumqnNTIAqC7o=; b=s0VGqkas6t2+evpuCoJqLMizk2fkjpSSTRfBB1jZPi4
+        ktzxYcfXlnA7u8+6EDOsSFZaOhLRrk+nEb0m98tz89v0PQw5zGYrPpj1fYK/agOI
+        O9fr9/oNvrNeyWSyo5VSV/o0NnUSo/4pwObRTYWTnKRHxTmPPPpSB4UGMzhRqH9M
+        =
+Received: (qmail 3958905 invoked from network); 18 Aug 2022 22:59:38 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Aug 2022 22:59:38 +0200
+X-UD-Smtp-Session: l3s3148p1@TW9sQorm45cucref
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: pinctrl: samsung: stop using
- bindings header with constants
-Message-ID: <20220818145848.GG1829017-robh@kernel.org>
-References: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
- <20220816133016.77553-2-krzysztof.kozlowski@linaro.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] ARM: move from strlcpy with unused retval to strscpy
+Date:   Thu, 18 Aug 2022 22:59:37 +0200
+Message-Id: <20220818205937.6168-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220816133016.77553-2-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 04:30:15PM +0300, Krzysztof Kozlowski wrote:
-> The bindings header with pin controller register values is being
-> deprecated and DTS already switched to a DTS-local header.
-> 
-> Do not reference the bindings header in schema and replace the defines
-> with raw values.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../pinctrl/samsung,pinctrl-pins-cfg.yaml     |  1 -
->  .../bindings/pinctrl/samsung,pinctrl.yaml     | 63 ++++++++-----------
->  2 files changed, 27 insertions(+), 37 deletions(-)
+Follow the advice of the below link and prefer 'strscpy' in this
+subsystem. Conversion is 1:1 because the return value is not used.
+Generated by a coccinelle script.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm/kernel/atags_parse.c     | 4 ++--
+ arch/arm/kernel/setup.c           | 2 +-
+ arch/arm/kernel/vdso.c            | 2 +-
+ arch/arm/mach-s3c/mach-real6410.c | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+index 373b61f9a4f0..33f6eb5213a5 100644
+--- a/arch/arm/kernel/atags_parse.c
++++ b/arch/arm/kernel/atags_parse.c
+@@ -127,7 +127,7 @@ static int __init parse_tag_cmdline(const struct tag *tag)
+ #elif defined(CONFIG_CMDLINE_FORCE)
+ 	pr_warn("Ignoring tag cmdline (using the default kernel command line)\n");
+ #else
+-	strlcpy(default_command_line, tag->u.cmdline.cmdline,
++	strscpy(default_command_line, tag->u.cmdline.cmdline,
+ 		COMMAND_LINE_SIZE);
+ #endif
+ 	return 0;
+@@ -224,7 +224,7 @@ setup_machine_tags(void *atags_vaddr, unsigned int machine_nr)
+ 	}
+ 
+ 	/* parse_early_param needs a boot_command_line */
+-	strlcpy(boot_command_line, from, COMMAND_LINE_SIZE);
++	strscpy(boot_command_line, from, COMMAND_LINE_SIZE);
+ 
+ 	return mdesc;
+ }
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 1e8a50a97edf..3f8d7c1eeae4 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -1128,7 +1128,7 @@ void __init setup_arch(char **cmdline_p)
+ 	setup_initial_init_mm(_text, _etext, _edata, _end);
+ 
+ 	/* populate cmd_line too for later use, preserving boot_command_line */
+-	strlcpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
++	strscpy(cmd_line, boot_command_line, COMMAND_LINE_SIZE);
+ 	*cmdline_p = cmd_line;
+ 
+ 	early_fixmap_init();
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index 3408269d19c7..f297d66a8a76 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -135,7 +135,7 @@ static Elf32_Sym * __init find_symbol(struct elfinfo *lib, const char *symname)
+ 
+ 		if (lib->dynsym[i].st_name == 0)
+ 			continue;
+-		strlcpy(name, lib->dynstr + lib->dynsym[i].st_name,
++		strscpy(name, lib->dynstr + lib->dynsym[i].st_name,
+ 			MAX_SYMNAME);
+ 		c = strchr(name, '@');
+ 		if (c)
+diff --git a/arch/arm/mach-s3c/mach-real6410.c b/arch/arm/mach-s3c/mach-real6410.c
+index 8c10ebc38a9c..50427ac7be8e 100644
+--- a/arch/arm/mach-s3c/mach-real6410.c
++++ b/arch/arm/mach-s3c/mach-real6410.c
+@@ -232,7 +232,7 @@ static char real6410_features_str[12] __initdata = "0";
+ static int __init real6410_features_setup(char *str)
+ {
+ 	if (str)
+-		strlcpy(real6410_features_str, str,
++		strscpy(real6410_features_str, str,
+ 			sizeof(real6410_features_str));
+ 	return 1;
+ }
+-- 
+2.35.1
+
