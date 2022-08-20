@@ -2,93 +2,84 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0C3C32771
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 19 Aug 2022 13:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33876C25B08
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 20 Aug 2022 11:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349499AbiHSNzm (ORCPT
+        id S1343915AbiHTL5W (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 19 Aug 2022 09:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47382 "EHLO
+        Sat, 20 Aug 2022 07:57:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349493AbiHSNzl (ORCPT
+        with ESMTP id S230061AbiHTL5V (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 19 Aug 2022 09:55:41 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EADBACA2A
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Aug 2022 06:55:40 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id l1so5705045lfk.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Aug 2022 06:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc;
-        bh=qz+s4Lp+1rNmUcFb2WvMXoDlDkJBMF0AImdXZ84Zq2Q=;
-        b=b2qPJwI1tvDFb5SSvsztBjBlbvMLCdljfj7HbLEKPKoiMjYaHinlgcNbssiLU19TsA
-         rDANCGi0KhfynTCEopOYs7YZLZZZSZjhESlknMcCel+vwnX26JCbn01/FQzwku56QoQX
-         LBC7/fd+Oudwpc/qf5pLqSuSyvZelrH+llgZwrFqim1KQe4+KbTlpa1aKCS6XW1k6P3/
-         xy0RyLR0T8Wy1bX11SPDbWswB3IlmhSNFfCAfmRsfpaeQpr/9/4Bf1r+lyMnRQVydhiN
-         Mifei2iFuYInXiOZsfF2z75zaIeC1YfTI30ViA0Kzn7DFtAY4/5psWRaKPLAfIMgO7yC
-         ULaQ==
+        Sat, 20 Aug 2022 07:57:21 -0400
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C45248E2;
+        Sat, 20 Aug 2022 04:57:20 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-333a4a5d495so182359727b3.10;
+        Sat, 20 Aug 2022 04:57:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc;
-        bh=qz+s4Lp+1rNmUcFb2WvMXoDlDkJBMF0AImdXZ84Zq2Q=;
-        b=0CdOXoa7SpNqtilfFwZU9HXVSlx7jlhKeMmY96YyWhsfJ38W49pyMhSFi/EYa7q8ML
-         i7Shz6Ht6EhTJ6lRd+9fmy0X/7hCI7oiJh+03B5gnImCVXxHYllN+IM+lMiiAqZmuPBu
-         HvlrDuqIjcQaKbcqIuCn1A5CRlNOAYK9GpATzJSXaK8eeXyxxfsZ1F6x9gkuNJbTIrvB
-         DvUeJnS5k0rvOqoJ+8lyaAFeEHrXuBomLVItatL2LieK2zofOhzJcAZuW6QkTrc1NHYu
-         Zjslq9bQCxF5ExrZCMbEcMp+dq0TaCGJYLysqMhUie4c4mQSBBhZpsOy7/EnKky+7Cco
-         SoQA==
-X-Gm-Message-State: ACgBeo0D9muGPvPfreQgT5NUbsJzFosFjoKeK2cDeGRlv7cat4Q/TyDc
-        k4DHUGgJiDkYEuRT2ZUCzNd5uw==
-X-Google-Smtp-Source: AA6agR4hZSxYhPPfmqGv6yv5rwo91nhjhiJwwdev9U1WMc5eWfLZgok57gjZGhaFuKCx+uPr0IP3mQ==
-X-Received: by 2002:a05:6512:168d:b0:491:3206:b63 with SMTP id bu13-20020a056512168d00b0049132060b63mr2376458lfb.149.1660917338688;
-        Fri, 19 Aug 2022 06:55:38 -0700 (PDT)
-Received: from krzk-bin.. (d1xw6v77xrs23np8r6z-4.rev.dnainternet.fi. [2001:14bb:ac:e5a8:ef73:73ed:75b3:8ed5])
-        by smtp.gmail.com with ESMTPSA id z2-20020a2e8e82000000b0025dd5b3fabesm598519ljk.102.2022.08.19.06.55.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Aug 2022 06:55:38 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        krzysztof.kozlowski@linaro.org, tomasz.figa@gmail.com,
-        robh+dt@kernel.org, alim.akhtar@samsung.com,
-        linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] pinctrl/arm: dt-bindings: deprecate header with register constants
-Date:   Fri, 19 Aug 2022 16:55:35 +0300
-Message-Id: <166091732992.90087.5461624467254256635.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
-References: <20220816133016.77553-1-krzysztof.kozlowski@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=eFv+Oj3QaofeetDmZ1hWU31f01S4gXzOn+W40f2bcH8=;
+        b=Jh9VYy5RF6o3w+4t2LygfX4yCtFcAj+toPFoYCAvMWoNJCb340EE6H2jNoUVEER67j
+         Oof6U81HeY5G2lxcydW7TLSZp0DuQxsvl872ON+MxqNCD1MVfR2zqD58U7mGHJJxaRhs
+         dvLX2jNP7jWbeSgqfCwRXeoiV4ypDgLsQP+dzGmnF6zUt21JjPWT8dwKGLhyY9p6kqrm
+         qXCPEgRQJ17hi9oYKJ4jqe1g2DVaULlUy52kwKGAiBam4KFIIL5+5WAFwaikg7F41Ifq
+         JCobYAIBRVa9KCWJADGJjh7YpfvATF+irt6dGz27jdP944/yq4r39b1x1N0U5K16845Z
+         JAjw==
+X-Gm-Message-State: ACgBeo3V7U5nzltHxIOW19X4yw8aArUvdpQwyvHuc081/fxGuWgZ5GzK
+        7Ur1LUJkTQBMEkZ0jho3LPtXMbYgmUb8tj7CbHk=
+X-Google-Smtp-Source: AA6agR6zWHtnabZ6V306XrP13eJqyDVES8EsSaAH+ECiBaAuEnvGN7G48D/WRufhiU2j2MyLI1HC14c/WpW02memvng=
+X-Received: by 2002:a81:104e:0:b0:336:37f1:9686 with SMTP id
+ 75-20020a81104e000000b0033637f19686mr12206283ywq.149.1660996639914; Sat, 20
+ Aug 2022 04:57:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <f1fb1d84-85de-f3c5-0212-fcf0e9c0ccd2@samsung.com>
+ <CGME20220812131216eucas1p266cfd4e51b59fc3cf8056474a6910094@eucas1p2.samsung.com>
+ <20220812131202.1331238-1-daniel.lezcano@linaro.org> <ab708272-efe0-343e-2dfc-299187126a2a@samsung.com>
+ <c0c5b306-9fd5-1048-ba08-044d292cbf7a@linaro.org>
+In-Reply-To: <c0c5b306-9fd5-1048-ba08-044d292cbf7a@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sat, 20 Aug 2022 13:57:09 +0200
+Message-ID: <CAJZ5v0gL=k-1SxbfSSdoFYaTWk=YvY72d3r0oEyu9dZA5YJLbw@mail.gmail.com>
+Subject: Re: [PATCH] thermal/core: Fix lockdep_assert() warning
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 16 Aug 2022 16:30:14 +0300, Krzysztof Kozlowski wrote:
-> Changes since v3
-> ================
-> 1. Add patch 1 - bindings example fixes.
-> 2. All dependencies were merged, so this can go via Samsung pinctrl tree.
-> 
-> Changes since v2
-> ================
-> 1. Split last bindings patch per driver changes and bindings.
-> 2. Add tags.
-> 
-> [...]
+On Fri, Aug 12, 2022 at 3:54 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 12/08/2022 15:34, Marek Szyprowski wrote:
+> > On 12.08.2022 15:12, Daniel Lezcano wrote:
+> >> The function thermal_zone_device_is_enabled() must be called with the
+> >> thermal zone lock held. In the resume path, it is called without.
+> >>
+> >> As the thermal_zone_device_is_enabled() is also checked in
+> >> thermal_zone_device_update(), do the check in resume() function is
+> >> pointless, except for saving an extra initialization which does not
+> >> hurt if it is done in all the cases.
+> >>
+> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >
+> > This fixes the warning I've reported. Feel free to add:
+> >
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Great, thanks for testing
 
-Applied, thanks!
-
-[1/2] dt-bindings: pinctrl: samsung: stop using bindings header with constants
-      https://git.kernel.org/pinctrl/samsung/c/df805304a820ed10fc3d038dd64b85821c9ee606
-[2/2] dt-bindings: pinctrl: samsung: deprecate header with register constants
-      https://git.kernel.org/pinctrl/samsung/c/9d9292576810d0b36897718c24dfbc1a2835314b
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Do you want me to apply this for -rc3?
