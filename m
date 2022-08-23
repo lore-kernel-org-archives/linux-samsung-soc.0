@@ -2,96 +2,141 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45DAC32793
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 07:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F90DC32793
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 07:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240950AbiHWH0o (ORCPT
+        id S240980AbiHWHaP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Aug 2022 03:26:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59130 "EHLO
+        Tue, 23 Aug 2022 03:30:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240937AbiHWH0d (ORCPT
+        with ESMTP id S240747AbiHWHaO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2022 03:26:33 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889F562AAD
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 00:26:24 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id l23so1648959lji.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 00:26:24 -0700 (PDT)
+        Tue, 23 Aug 2022 03:30:14 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B018161D42
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 00:30:12 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id x25so12687634ljm.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 00:30:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=BiwaO+tJ6D9uFFRuqrFJ6Lk+1eZHbSFwYlokO8SI9kY=;
-        b=YD8vBeQEgbua10OlF5G7F7MHSy5oYfrAV/X3+6j11WcGONzNMADqmn/n2onWuanIy6
-         U02noFuouG/A0/KelIXPUOJESqawCX9/EE07hno/z3a2GELw/INFZFBRwNJS4AaOz5T9
-         1NPvqkL0PxaweziqFGP00M7xjrJITjLDpP/XaG9o0GWsQvjeXqNJqXunLAj2Wk3OzZX7
-         foFfbhSUMobOqwJ32QqawF7mSzy42KIjBP8CDdcJmzZ0y8qsJVfsBE9T945tir/LTbBT
-         gAt6F258wGRySck2Ow9oZ9ScGw/XnFDz15fRNYs9ffbvOmN+BXdRV+mOkob26biy26iD
-         QkhQ==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=31EpOHbl+nrYiysahic+51blRSoZd90XSQRkgmuZH8Q=;
+        b=L3txLJbzNASJ23txY0RNdj71aCCiDk/ZgPs0vd6IuBr9Jv6qjFsL+DguB2evwx37e7
+         qo4/+MYuYGWPNLgSL57Rm2eeWZ0HZ679AAcpgNEiFasaUq9yWOO1vzzYHiv66AA+BpOR
+         q3iJj0TRj0U6/9X3QnNeitZxTTQebAAcJncBbhkUsEraYO3eM+aSY59qlihVBwx5nzOk
+         94AX7APlauoQ9znqABTxQg9Mzq4dUkgFtJPUmGf9CWyI/yxlEgcUxsz7IB/MJMoz6HFj
+         /mKsPjjmnBKxWQr7rHvftyc/piBxizSgIumInoNChwp9dy3mD42mvjbK8o5G6lpeATl2
+         UL7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=BiwaO+tJ6D9uFFRuqrFJ6Lk+1eZHbSFwYlokO8SI9kY=;
-        b=cym+lkl2WzFNc2l1Kz7QJisPlVxL3LeWUfNliVjB61seg03d2ErGlFju5SvJ9P+2oC
-         ecngEZnzdZhRxkzxs0T0RY2bAAheDMJ5LLnhsKPbgsvnDOlpk/xsQeJ5lFp2guMjLuet
-         g2ssFYqmhW/dbx+FiunjzB2eKYFMvEF6ZmP5idiNG8hK+gmDZSTTkuBMHXhePIhaQEXl
-         y1hKFWfrXphbFMASV3pFjKZonYLWnvw1ZWMnOW0wXtz+2HX4iORiWfoszAyCoPARP0T3
-         M+c2rvaPl6HR33ReLVgIcuXPKPqotvJabTMO2eUNXRUdvme1jpK5uNIAPT/lbs83fI0E
-         5aPQ==
-X-Gm-Message-State: ACgBeo1Y5yAdmMmjkaWU18Ps0ziAIjh4d2WryP3EY+eBxn97wtIzTyRN
-        MboJ5BzMLzqkHWW2mfWbCbIQXg==
-X-Google-Smtp-Source: AA6agR54KJxfGU8ZHsWZgTp1U/cK9UNGx+bhRs55yUskY6DvKcheUuSilY9tKPgpyRuXBtqjH8IX+g==
-X-Received: by 2002:a05:651c:2227:b0:25e:cc38:a1e6 with SMTP id y39-20020a05651c222700b0025ecc38a1e6mr7088816ljq.84.1661239582903;
-        Tue, 23 Aug 2022 00:26:22 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=31EpOHbl+nrYiysahic+51blRSoZd90XSQRkgmuZH8Q=;
+        b=GKz1FiwutFKSXC1OmCedTYtWMcm/FttCW1eXflZRSjCKmw8krKg91wYUA6XC1Dc/KV
+         PEaiS8SfdSU4/HyMt9cKmsQAK5JS3ZMFRo4cRiI3UzV4GE4V2yr2McwEA1NGtfSdcLyV
+         8jP00Yy9LYuL/q3nzulPoWWe/lEex9Xsmt/nMuOEj1pId5bdJXaWFQ02RBAO5U/IT2vS
+         OtUR8xd/nPkSlzwBIWElaMW4gyvIpdSUIyJwNNGgQ+E0iQI40CHi1t9L4h2U/M9alpyw
+         O++E3t0NbPRaD1c8oxb7X0AYiaCCwei0oVkYE+x2OrvQSmuYppphciFQO9ANfYoQ4FFJ
+         97mg==
+X-Gm-Message-State: ACgBeo3nA7SssWF582kU/YnHrLyd88i+EEgQ2By7za+ownV2ClLWG5Hw
+        1LE8e2XvMil/7piem+E/wIWMfg==
+X-Google-Smtp-Source: AA6agR7UsstB+zMX2Ji4pK97oKYfHBo72sTQaY6/pQpWOeEaDcMW0YiVsuF5zXcBH40oxBMg2GQp0A==
+X-Received: by 2002:a2e:a593:0:b0:25f:e6ac:c28e with SMTP id m19-20020a2ea593000000b0025fe6acc28emr7003949ljp.485.1661239811099;
+        Tue, 23 Aug 2022 00:30:11 -0700 (PDT)
 Received: from krzk-bin.. (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
-        by smtp.gmail.com with ESMTPSA id i24-20020a196d18000000b0047f8e9826a1sm2357410lfc.31.2022.08.23.00.26.21
+        by smtp.gmail.com with ESMTPSA id u19-20020a05651220d300b0048a7ef09b22sm2361230lfr.274.2022.08.23.00.30.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Aug 2022 00:26:22 -0700 (PDT)
+        Tue, 23 Aug 2022 00:30:10 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>, chanho61.park@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RESEND PATCH v2 0/3] fixes for exynosautov9 clock
-Date:   Tue, 23 Aug 2022 10:26:15 +0300
-Message-Id: <166123956379.357728.7509148041951328796.b4-ty@linaro.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] arm64: dts: exynos: Add SysMMU nodes for Exynos850
+Date:   Tue, 23 Aug 2022 10:30:06 +0300
+Message-Id: <20220823073006.358764-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220727021357.152421-1-chanho61.park@samsung.com>
-References: <CGME20220727021823epcas2p2d924128dab9d449c2c6794d16aac617c@epcas2p2.samsung.com> <20220727021357.152421-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 27 Jul 2022 11:13:54 +0900, Chanho Park wrote:
-> There are some fixes for exynosautov9 such as clock id numbering,
-> missing clocks and register offsets.
-> 
-> RESEND PATCH v2 with:
-> - Add Krzysztof's R-B tags for #2
-> - Add Chanwoo's A-B tags for all patches
-> 
-> [...]
+From: Sam Protsenko <semen.protsenko@linaro.org>
 
-Applied, thanks!
+Add all SysMMU nodes to Exynos850 SoC device tree.
 
-[1/3] dt-bindings: clock: exynosautov9: correct clock numbering of peric0/c1
-      https://git.kernel.org/krzk/linux/c/b6740089b740b842d5e6ff55b4b2c3bf5961c69a
-[2/3] clk: samsung: exynosautov9: add missing gate clks for peric0/c1
-      https://git.kernel.org/krzk/linux/c/6ac24a3a24a9e88f5e1ee8e96fd9d39fcab28b3f
-[3/3] clk: samsung: exynosautov9: correct register offsets of peric0/c1
-      https://git.kernel.org/krzk/linux/c/67d98943408bce835185688cb75ebbb45b91e572
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20220809113323.29965-10-semen.protsenko@linaro.org
+---
+ arch/arm64/boot/dts/exynos/exynos850.dtsi | 45 +++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Best regards,
+diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+index 8e78b50416d8..c61441f3a89a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+@@ -503,6 +503,51 @@ i2c_6: i2c@13890000 {
+ 			status = "disabled";
+ 		};
+ 
++		sysmmu_mfcmscl: sysmmu@12c50000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x12c50000 0x9000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "sysmmu";
++			clocks = <&cmu_mfcmscl CLK_GOUT_MFCMSCL_SYSMMU_CLK>;
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_dpu: sysmmu@130c0000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x130c0000 0x9000>;
++			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "sysmmu";
++			clocks = <&cmu_dpu CLK_GOUT_DPU_SMMU_CLK>;
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_is0: sysmmu@14550000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x14550000 0x9000>;
++			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "sysmmu";
++			clocks = <&cmu_is CLK_GOUT_IS_SYSMMU_IS0_CLK>;
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_is1: sysmmu@14570000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x14570000 0x9000>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "sysmmu";
++			clocks = <&cmu_is CLK_GOUT_IS_SYSMMU_IS1_CLK>;
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_aud: sysmmu@14850000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x14850000 0x9000>;
++			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "sysmmu";
++			clocks = <&cmu_aud CLK_GOUT_AUD_SYSMMU_CLK>;
++			#iommu-cells = <0>;
++		};
++
+ 		sysreg_peri: syscon@10020000 {
+ 			compatible = "samsung,exynos850-sysreg", "syscon";
+ 			reg = <0x10020000 0x10000>;
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.34.1
+
