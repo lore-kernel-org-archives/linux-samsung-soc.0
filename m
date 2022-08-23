@@ -2,91 +2,69 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28704C28D13
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 22 Aug 2022 16:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13A4C3F6B0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 02:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235004AbiHVQQr (ORCPT
+        id S239260AbiHWCUr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 22 Aug 2022 12:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60820 "EHLO
+        Mon, 22 Aug 2022 22:20:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234679AbiHVQQr (ORCPT
+        with ESMTP id S239556AbiHWCUi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 22 Aug 2022 12:16:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D49932A8D
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2022 09:16:46 -0700 (PDT)
+        Mon, 22 Aug 2022 22:20:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B85E5AC7F;
+        Mon, 22 Aug 2022 19:20:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DC8C4611E1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2022 16:16:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACB0C433D6;
-        Mon, 22 Aug 2022 16:16:43 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B8A61B81A7F;
+        Tue, 23 Aug 2022 02:20:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBEFC433C1;
+        Tue, 23 Aug 2022 02:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661185005;
-        bh=u35J4IpHSFEfh+GYLrukSlUjmHxOKq2CFdVZojhZiak=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=OGr4nayobT6fT8ydoU5LaYZCf1MEoWJVF9F9YmHC7hO56OMJpwx+AyNNt4o7KVqiF
-         x57Bv/LtnMW8C7gcV3uqwyiZQweD07AZ7wmFX16zjILwaF2SxjU+JyZujFcAx18ztk
-         d+bHBKHVw7FRlxhtTPIfdOvzlMORUUa+e5UbGkFksjve2vIQZB+N3wQdRErwYaQBcd
-         EFcSDq9eB+QBQ4GxA4GTN+egSUCfTF8GlnpskD5pE3ehyWMhgsfpWFwAaE/j6o1ERd
-         GwmqQo1kWXPESQ58hduyI2bEnAWtNrR2MX7s2O7eVsUvwu0Xhwj5TikzIAA9Vfenun
-         uHln2YHXB2/Ww==
-From:   Mark Brown <broonie@kernel.org>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc:     Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220821160914.2207116-1-jic23@kernel.org>
-References: <20220821160914.2207116-1-jic23@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Use iio_get_channel_type() accessor.
-Message-Id: <166118500362.214851.13933856221972874063.b4-ty@kernel.org>
-Date:   Mon, 22 Aug 2022 17:16:43 +0100
-MIME-Version: 1.0
+        s=k20201202; t=1661221231;
+        bh=9+q9kiKL50YG4CdosiWGTc8Tk1I5wulTBdKIfEXqaIs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=LSZhy/w14YQKxIYE/XipCJZr5OZEIdF8LkW1e4U53/pp2AleUS9QtUEDg9Dko23LJ
+         wvK4wTR5ie0fEK2pb8Wr4hQaZe0uQUnoZrEVYUwGHZg7SDeRVdxtyTm9QcEdmA6WgH
+         qBTUXYBbYQvuvG4tr5Y4qcIL71DCHiYAEvycciv8C8Ht8hXUIB/jRDCtMe+1ODEXWs
+         tZGNaAmtdB38A4c0Xt1Cwa/zojqdy4VizSSNLKVWNGb+vhTtBz47zP/omyPVydlN7l
+         oZMAX0i9/uZKK9Qbku6BA+SuCVnLcj1wzVhKklPqIjAPfp+dz0TUeHdmXUb9Jj6SRY
+         UJB8NEDhxoaGw==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fe10a
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1659054220.git.chanho61.park@samsung.com>
+References: <CGME20220729003611epcas2p1fe80f3eb06160c48c41f10b35d7c03eb@epcas2p1.samsung.com> <cover.1659054220.git.chanho61.park@samsung.com>
+Subject: Re: [PATCH v2 0/6] fsys0/1 clock support for Exynos Auto v9 SoC
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chanho Park <chanho61.park@samsung.com>
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Mon, 22 Aug 2022 19:20:28 -0700
+User-Agent: alot/0.10
+Message-Id: <20220823022031.6FBEFC433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, 21 Aug 2022 17:09:14 +0100, Jonathan Cameron wrote:
-> From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> struct iio_chan_spec is meant to be opaque to IIO consumer drivers
-> which should only use the interfaces in linux/iio/consumer.h.
-> Use the provided accessor function to find get the type of the
-> channel instead of directly reading it form the structure.
-> 
-> [...]
+Quoting Chanho Park (2022-07-28 17:30:18)
+> CMU_FSYS0 block provides clocks for PCIe Gen3 1 x 4Lanes and 2 x 2
+> Lanes. Similarly, CMU_FSYS1 provides clocks for USB(2 x USB3.1 Gen-1,
+> 2 x USB 2.0) and mmc. For MMC clocks, PLL_MMC(PLL0831X type) is also
+> supported as a PLL source clock provider.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: samsung: Use iio_get_channel_type() accessor.
-      commit: 94f072748337424c9cf92cd018532a34db3a5516
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Is someone at Samsung going to pick up the Samsung clk driver patches
+and send them as a PR? I didn't see anything last cycle.
