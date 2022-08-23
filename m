@@ -2,71 +2,73 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB7FC38142
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 17:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F927C3F6B0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 17:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231783AbiHWRWY (ORCPT
+        id S231684AbiHWRWW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:22:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38528 "EHLO
+        Tue, 23 Aug 2022 13:22:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239257AbiHWRVG (ORCPT
+        with ESMTP id S241773AbiHWRVS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2022 13:21:06 -0400
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFD3CE481;
-        Tue, 23 Aug 2022 07:57:20 -0700 (PDT)
-Received: by mail-oi1-f174.google.com with SMTP id s199so16320310oie.3;
-        Tue, 23 Aug 2022 07:57:20 -0700 (PDT)
+        Tue, 23 Aug 2022 13:21:18 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F4F2F391;
+        Tue, 23 Aug 2022 07:57:33 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id a14-20020a0568300b8e00b0061c4e3eb52aso9965169otv.3;
+        Tue, 23 Aug 2022 07:57:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc;
-        bh=h0CnVKrOjJedjISgP9+nhkN7E189WcSV8KiZ+ezPrBE=;
-        b=Hj6YOfcwMIipZypYQRxbGh8/KWopFRMDiU4nOJYryQLL8PkwRSedtDDZ51lSb9tWUt
-         PkgEfsDEo4XNQHtB+Pgf0+9y0gA7qgeVF0Q0cldC7gNc/q6PyKOTZ4SGsXSgel/y0QTZ
-         LdR6iLdyJKT3hQuI4bnVjGXAxz946W1VLikufYnKzhPz55fykFYpuTOr4x8UVH81VUTQ
-         UyW9/BMwWW5euMZtBxmBhYJVtX1rA7Q/pmVsafdeprhRTGVzDLiEyvwlqgbC08pyQCSw
-         zOauHE3bKx+uPXc3gDkqPBrK07nQ0wMMjwVH9X8sA5EMF4NDE5d50TgJ1YEz1sHoBTBR
-         vwTQ==
-X-Gm-Message-State: ACgBeo3FqBygZ0OCoKY1EYFMt9raSuzW8FxdEFGgrbxd1BR6CVda64X+
-        wmBDvKpWvPN/o2zz3ri9iw==
-X-Google-Smtp-Source: AA6agR5OARvxdnc8BmaUXFTmBiSwYZaPHP9yws/NVD55WI4mBLuEUcY0qCEgGgE0JHMJhoGGEYBTzg==
-X-Received: by 2002:aca:f054:0:b0:345:7285:1147 with SMTP id o81-20020acaf054000000b0034572851147mr1505615oih.108.1661266640082;
-        Tue, 23 Aug 2022 07:57:20 -0700 (PDT)
+        bh=X3oSNHfhYN1D8nj/Tus+6OMR/7Xdc3qc/TG8fQDrSaM=;
+        b=E/zFZHZulFqGRZrTzXrS2jRjM89qK09z6oSf6JhWBLPOSVJssSBxyQ1QorEq8NcRxd
+         Q6/PHEnaFlCdB8fIGBn8/dBw2gyXk9x7RaoFIdbxwTZcHS/bdRJkDmbPbPth9kQ9ifnL
+         j/qPUgIIwKkVteJfZ8q4u3sOkNN/hIQ+6n4D4MAPV37CWxM0xY7sdYJwQNah79AquJe2
+         6wr/1kfQ40fUHBoZnEY5NlkMDEZUudr4GlvrMp6m+Rr1CkUHBktSCjMCHeRkdfzwdeid
+         u+wVfeKl89U6ALbHTGZ3Av1etGwGVMwCSz3zHWGmpKXpjPJQDWXnYJbplj5V0UG9TK7p
+         Ra3g==
+X-Gm-Message-State: ACgBeo1V1Wwtn8X3hZ9nkDYdgH0DTrZmJsq3ZrhV/rEcaqZTVzdEEa2m
+        2gtu18OA5f6XXJ6VXDM+rg==
+X-Google-Smtp-Source: AA6agR7DQBou8qC5N4MzG6OFDfSyxvUBlmCTQHSauVZ73UWGC8xCB14yWHMhag68xgrM7MZHRX63/g==
+X-Received: by 2002:a05:6830:6999:b0:61d:26f8:94c1 with SMTP id cy25-20020a056830699900b0061d26f894c1mr9511714otb.278.1661266653059;
+        Tue, 23 Aug 2022 07:57:33 -0700 (PDT)
 Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.googlemail.com with ESMTPSA id t1-20020a056870600100b0011c65559b04sm3840637oaa.34.2022.08.23.07.57.18
+        by smtp.googlemail.com with ESMTPSA id t1-20020a056870600100b0011c65559b04sm3840637oaa.34.2022.08.23.07.57.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Aug 2022 07:57:19 -0700 (PDT)
+        Tue, 23 Aug 2022 07:57:32 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
-To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+To:     "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Andy Teng <andy.teng@mediatek.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH] dt-bindings: pinctrl: Add missing (unevaluated|additional)Properties on child nodes
-Date:   Tue, 23 Aug 2022 09:56:37 -0500
-Message-Id: <20220823145649.3118479-6-robh@kernel.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: display: Add missing (unevaluated|additional)Properties on child nodes
+Date:   Tue, 23 Aug 2022 09:56:42 -0500
+Message-Id: <20220823145649.3118479-11-robh@kernel.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -80,146 +82,73 @@ must have unevaluatedProperties or additionalProperties set to false
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/pinctrl/brcm,bcm4908-pinctrl.yaml      | 1 +
- .../devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml     | 1 +
- .../devicetree/bindings/pinctrl/intel,pinctrl-thunderbay.yaml  | 1 +
- .../devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml       | 1 +
- .../devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml   | 2 ++
- .../devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml   | 1 +
- .../devicetree/bindings/pinctrl/renesas,rza1-ports.yaml        | 1 +
- Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 3 +++
- .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml          | 3 +++
- .../devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml  | 1 +
- 10 files changed, 15 insertions(+)
+ Documentation/devicetree/bindings/display/arm,komeda.yaml        | 1 +
+ Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
+ Documentation/devicetree/bindings/display/msm/gpu.yaml           | 1 +
+ .../bindings/display/samsung/samsung,exynos7-decon.yaml          | 1 +
+ .../devicetree/bindings/display/samsung/samsung,fimd.yaml        | 1 +
+ 5 files changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm4908-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,bcm4908-pinctrl.yaml
-index 175a992f15e1..8a9fb9b433ca 100644
---- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm4908-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm4908-pinctrl.yaml
-@@ -23,6 +23,7 @@ patternProperties:
-   '-pins$':
+diff --git a/Documentation/devicetree/bindings/display/arm,komeda.yaml b/Documentation/devicetree/bindings/display/arm,komeda.yaml
+index 9f4aade97f10..3ad3eef89ca8 100644
+--- a/Documentation/devicetree/bindings/display/arm,komeda.yaml
++++ b/Documentation/devicetree/bindings/display/arm,komeda.yaml
+@@ -58,6 +58,7 @@ properties:
+ patternProperties:
+   '^pipeline@[01]$':
      type: object
-     $ref: pinmux-node.yaml#
 +    additionalProperties: false
+     description:
+       clocks
  
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+index 3a8614e0f627..84aafcbf0919 100644
+--- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+@@ -51,6 +51,7 @@ properties:
      properties:
-       function:
-diff --git a/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
-index 5e99d79499b4..846651ff77c9 100644
---- a/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-keembay.yaml
-@@ -44,6 +44,7 @@ properties:
- patternProperties:
-   '^gpio@[0-9a-f]*$':
-     type: object
-+    additionalProperties: false
- 
-     description:
-       Child nodes can be specified to contain pin configuration information,
-diff --git a/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-thunderbay.yaml b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-thunderbay.yaml
-index 0ec476248f21..6f30b5337ca2 100644
---- a/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-thunderbay.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/intel,pinctrl-thunderbay.yaml
-@@ -42,6 +42,7 @@ properties:
- patternProperties:
-   '^gpio@[0-9a-f]*$':
-     type: object
-+    additionalProperties: false
- 
-     description:
-       Child nodes can be specified to contain pin configuration information,
-diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml
-index a651b2744caf..491f67e7cc4f 100644
---- a/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/marvell,ac5-pinctrl.yaml
-@@ -24,6 +24,7 @@ patternProperties:
-   '-pins$':
-     type: object
-     $ref: pinmux-node.yaml#
-+    additionalProperties: false
- 
-     properties:
-       marvell,function:
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-index e7601c0f5a69..840f649e36ce 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
-@@ -76,6 +76,8 @@ required:
- patternProperties:
-   '-[0-9]*$':
-     type: object
-+    additionalProperties: false
-+
-     patternProperties:
-       '-pins*$':
-         type: object
-diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml
-index 7a11beb8f222..7b7f840ffc4c 100644
---- a/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,wpcm450-pinctrl.yaml
-@@ -30,6 +30,7 @@ patternProperties:
- 
-   "^gpio@[0-7]$":
-     type: object
-+    additionalProperties: false
- 
-     description:
-       Eight GPIO banks (gpio@0 to gpio@7), that each contain between 14 and 18
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml
-index 8ed4b98a1628..9083040c996a 100644
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-ports.yaml
-@@ -41,6 +41,7 @@ required:
- patternProperties:
-   "^gpio-[0-9]*$":
-     type: object
-+    additionalProperties: false
- 
-     description:
-       Each port of the r7s72100 pin controller hardware is itself a GPIO
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-index 3a65c66ca71d..d006a940c7c6 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-@@ -97,6 +97,9 @@ patternProperties:
-         additionalProperties: false
- 
-   "^(initial|sleep)-state$":
-+    type: object
-+    additionalProperties: false
-+
-     patternProperties:
-       "^(pin-[a-z0-9-]+|[a-z0-9-]+-pin)$":
-         $ref: samsung,pinctrl-pins-cfg.yaml
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-index d35dcc4f0242..53c952d93ea2 100644
---- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-@@ -115,9 +115,12 @@ patternProperties:
- 
-   '-[0-9]*$':
-     type: object
-+    additionalProperties: false
-+
-     patternProperties:
-       '^pins':
-         type: object
-+        additionalProperties: false
+       port@0:
+         $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
          description: |
-           A pinctrl node should contain at least one subnode representing the
-           pinctrl group available on the machine. Each subnode will list the
-diff --git a/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-index 306524885a2b..98b4663f9766 100644
---- a/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/toshiba,visconti-pinctrl.yaml
-@@ -36,6 +36,7 @@ patternProperties:
-       pins it needs, and how they should be configured, with regard to muxer
-       configuration, pullups, drive strength.
-     $ref: "pinmux-node.yaml"
-+    additionalProperties: false
+           For LVDS encoders, port 0 is the parallel input
+           For LVDS decoders, port 0 is the LVDS input
+diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+index 3397bc31d087..0179c816fa6d 100644
+--- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+@@ -81,6 +81,7 @@ properties:
  
+   zap-shader:
+     type: object
++    additionalProperties: false
+     description: |
+       For a5xx and a6xx devices this node contains a memory-region that
+       points to reserved memory to store the zap shader that can be used to
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+index 969bd8c563a5..dec1c9058876 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+@@ -37,6 +37,7 @@ properties:
+ 
+   i80-if-timings:
+     type: object
++    additionalProperties: false
+     description: timing configuration for lcd i80 interface support
      properties:
-       function:
+       cs-setup:
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+index 5d5cc220f78a..7593938601bb 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+@@ -40,6 +40,7 @@ properties:
+ 
+   i80-if-timings:
+     type: object
++    additionalProperties: false
+     description: |
+       Timing configuration for lcd i80 interface support.
+       The parameters are defined as::
 -- 
 2.34.1
 
