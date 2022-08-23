@@ -2,128 +2,82 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84C5C32793
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 07:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CBDC32772
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 23 Aug 2022 15:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241295AbiHWHv2 (ORCPT
+        id S242254AbiHWPHQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 23 Aug 2022 03:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33296 "EHLO
+        Tue, 23 Aug 2022 11:07:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241420AbiHWHvO (ORCPT
+        with ESMTP id S242257AbiHWPHB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 23 Aug 2022 03:51:14 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE81E6566C
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 00:51:09 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220823075106euoutp01181ae3a7de80b3699f9030d0d5408844~N6fLAYr_D1038810388euoutp01i
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 07:51:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220823075106euoutp01181ae3a7de80b3699f9030d0d5408844~N6fLAYr_D1038810388euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1661241066;
-        bh=OdAUYDUE0RtxDQJxlta/lTLQKVFbvQ5IcKfejb7SxWc=;
-        h=Date:Subject:To:From:In-Reply-To:References:From;
-        b=YzmgmcreHTCQyHKzbK7wQcdrFDvjDpGnfAdLxrBybth93xVC13cEfcwL3nXZ9FbsZ
-         luZQ/FVXNGsnho4N++2uYNlnSzdyjlGF9TtsV1fmnx3v1z3ZbHzWo3/Cz6QW+LrlII
-         moB4MVkgjLPZQj4dR1wy2LEXAOSnqMBRpLoODUsw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220823075105eucas1p27cf58d12d4928050fc3bd26ebe977b56~N6fKaInLg0812408124eucas1p2R;
-        Tue, 23 Aug 2022 07:51:05 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 85.D8.07817.9E684036; Tue, 23
-        Aug 2022 08:51:05 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220823075105eucas1p24f6502d7088ffeb65180723f4c7b246c~N6fKA_8PA0769807698eucas1p2l;
-        Tue, 23 Aug 2022 07:51:05 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220823075105eusmtrp105eefa20678a3cf5dac665d1e9457bc8~N6fKAEZ9Y0366903669eusmtrp1w;
-        Tue, 23 Aug 2022 07:51:05 +0000 (GMT)
-X-AuditID: cbfec7f4-893ff70000011e89-0e-630486e9ec36
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1A.34.10862.9E684036; Tue, 23
-        Aug 2022 08:51:05 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220823075104eusmtip236de6fdbca44ee6174d98b378a9f9f27~N6fJaM3L92482924829eusmtip2A;
-        Tue, 23 Aug 2022 07:51:04 +0000 (GMT)
-Message-ID: <64f39fcd-9dfb-1c40-377c-034f5f043072@samsung.com>
-Date:   Tue, 23 Aug 2022 09:51:04 +0200
+        Tue, 23 Aug 2022 11:07:01 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AACE329919
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 05:34:54 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id u24so7789703lji.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2022 05:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=LKZ/vD9wmefmxQhO5lusEK9ST+HwNC5+PjaBESEeuys=;
+        b=PNuO0zhUMklVqPdf6qtK0nfdumM0D/Hwz68Et5tlv2nG5/gv32viakxB828FJTpumU
+         Aae/Z+CSJylb7YeQo5ZpvXQLQBvTL5ZPweD7ZtbTxAwnasS5Mjj8P1Z3SY0UI8zJkw6E
+         alks5XAmeD2iTCBoE+pPEEV74Rs4QYHRof2L+p43UKmz1BjeU4zLhfgW3mbRp3khtQhN
+         y7P1p799H1Gew4TPx3MUn/Kpx1RKjY1Nj8yfVOi35Zx7TxglHceo+qf52K6WbRm1eNuY
+         o9FQw7e/FUccFk62vxZdki1FO9wlC6zf35I9uEhvfKpCfvJWuyzrkbB3pzdBve80yQSq
+         Kbhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=LKZ/vD9wmefmxQhO5lusEK9ST+HwNC5+PjaBESEeuys=;
+        b=R15ZQJQpBVcsssOrx8gZVKZ8fm2JDH6dXkcW/9b3i+hysq10I8wLyUuDAjH+qGCBiL
+         KUn9t/qfon1qeGkpXlkX8S949KNq1D2lhfUmrl8VBRgjIuMPkvYhanmTH1D55tIB7ky4
+         I3lxO8mXDGvyueUtxr7QJiVcBlT81lnaxuhSloP1PaBivoe8xyqONCrR2x6e7tgaFwh9
+         AVvuG0U5IA+5u7EQxZ0HGF4JI15jwykAkZ/WyuIGK+0cVeUbXH2S6h6Yt3zDwQlBqzVw
+         OczMQCCfw1FteuW4rxXoW0/QoOlZy++eMldL+6OooklGrwTgsAh7QxkK7oJa2akA+aLT
+         msJg==
+X-Gm-Message-State: ACgBeo1HZgeEqbTh0kenpirlBTbGgEKVNbFP/zh1gIzYtlwysarnEzoU
+        Nu5kpjV2nimNv1JDjGvgFpRQAw==
+X-Google-Smtp-Source: AA6agR4JmXTLU+9iQlgcfuYvL+JDv7qCLq/Y3gaBjTKTmiOhXuKPPQ+hEuE+Fzp0Ch1sp1ZHonydVg==
+X-Received: by 2002:a05:651c:905:b0:25e:67a8:4dd0 with SMTP id e5-20020a05651c090500b0025e67a84dd0mr7700929ljq.232.1661258092397;
+        Tue, 23 Aug 2022 05:34:52 -0700 (PDT)
+Received: from [192.168.0.11] (89-27-92-210.bb.dnainternet.fi. [89.27.92.210])
+        by smtp.gmail.com with ESMTPSA id b10-20020a19670a000000b0048a9e899693sm2492704lfc.16.2022.08.23.05.34.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Aug 2022 05:34:49 -0700 (PDT)
+Message-ID: <577fc85b-3bdc-35a1-c54b-fbc37774b34b@linaro.org>
+Date:   Tue, 23 Aug 2022 15:34:48 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.12.0
-Subject: Re: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] drm/exynos: fix repeated words in comments
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+To:     Jilin Yuan <yuanjilin@cdjrlc.com>, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220823122117.15757-1-yuanjilin@cdjrlc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220823122117.15757-1-yuanjilin@cdjrlc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7djPc7ov21iSDZ4v0bJ4MG8bm8X1L89Z
-        Lfa+3spu8bHnHqvF5V1z2CxmnN/HZHHxlKvFv2sbWSxW7frD6MDp8f5GK7vHzll32T02repk
-        87hzbQ+bR9+WVYwenzfJBbBFcdmkpOZklqUW6dslcGW8bT7IWPCduWLe0pdMDYzTmbsYOTkk
-        BEwkHp1sZu1i5OIQEljBKPH7w34mCOcLo0T3mruMEM5nRomJC//AtXT0/GOHSCxnlFj5dT6U
-        85FRYv7xtUwgVbwCdhJ9b7+ygtgsAqoSF9d9YYSIC0qcnPmEBcQWFUiWePZ/MTuILSzgLnFr
-        QRNYPbOAuMStJ/PB7hARuMMk0fjwE1gDm4ChRO/RPrBBnAKuEq/b9rBBNMhLbH87B+q8FxwS
-        /euNIWwXiWMn7rJA2MISr45vYYewZSROT+6BitdLTJ5yhQ3C7mCU+LrXDMK2lpiw6QRQnANo
-        vqbE+l36EGFHiTML3zKBhCUE+CRuvBWEuIBPYtI2UJiChHklOtqEIKpVJH6vms4EYUtJdD/5
-        D7XUQ2LF7k9MExgVZyEFyiwkz89C8tcshBsWMLKsYhRPLS3OTU8tNspLLdcrTswtLs1L10vO
-        z93ECExPp/8d/7KDcfmrj3qHGJk4GA8xSnAwK4nwVl9kSBbiTUmsrEotyo8vKs1JLT7EKM3B
-        oiTOm5y5IVFIID2xJDU7NbUgtQgmy8TBKdXAxC2S6fW4kPdLksPq69zPVFy8Paf+CLJe4s3e
-        l60eblY+2Wd7CsM/vr3e7Z5m2/6JaRVe+mg09WbZrnLV1B3hfGJy8m92sOzZ+SZixgfXx/b3
-        WzZwlRyJkjxtPm1H2+3I1U+/Wf37WvTwquTlG+IbPWzfyV8JLt20m5NXUHPr3ScHV75/eM2s
-        RrV3e9G2GUI5De0vX1gfOx8/g+PmGyYm5eWfBEwVI7UUrLjnqN4MUZ2i/cOt65eRXf7i29t/
-        mdWbLgzUz3kn2/RKksE/N0/PPz91yoZdZ5ykVp3Yc19D3idWlHnqson9LlbzjM7/NPr6N1s9
-        UfjExMOXtLYtXqo5W+PVv0mBvrkT3jBqp8x6ocRSnJFoqMVcVJwIANv0p32+AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsVy+t/xe7ov21iSDU5f5rV4MG8bm8X1L89Z
-        Lfa+3spu8bHnHqvF5V1z2CxmnN/HZHHxlKvFv2sbWSxW7frD6MDp8f5GK7vHzll32T02repk
-        87hzbQ+bR9+WVYwenzfJBbBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp
-        29mkpOZklqUW6dsl6GW8bT7IWPCduWLe0pdMDYzTmbsYOTkkBEwkOnr+sXcxcnEICSxllHi5
-        /RqQwwGUkJKY36IEUSMs8edaFxtEzXtGidnXN7GCJHgF7CT63n4Fs1kEVCUurvvCCBEXlDg5
-        8wkLiC0qkCyx4NBSMFtYwF3i1oImsHpmAXGJW0/mM4EMFRG4xyTx9eUtJogNMxglVmxaAHYe
-        m4ChRO/RPrCpnAKuEq/b9rCBXMcsoC6xfp4QxCB5ie1v5zBPYBSchWT3LCQ7ZiF0zELSsYCR
-        ZRWjSGppcW56brGRXnFibnFpXrpecn7uJkZg3G079nPLDsaVrz7qHWJk4mA8xCjBwawkwlt9
-        kSFZiDclsbIqtSg/vqg0J7X4EKMp0P8TmaVEk/OBkZ9XEm9oZmBqaGJmaWBqaWasJM7rWdCR
-        KCSQnliSmp2aWpBaBNPHxMEp1cC0bN/ZHNPYNjO90JSnLtf5V862bnx4oU3m8II5FtxXv8bZ
-        1X89mLyguyxiueRpzqSmY8m37MREcsOjF2sFnZVm+RuzwNLx7rXQYz4rp56QF0nZH2RWrFfr
-        tnJ2p71yxtxgt7zM4q7re9Kq5U5JtL75I1ph4My1Kf/Xv9V3Vp1ruO4h8+SksO95YVetGX6c
-        M3p6t1y70d3AcF+0VGCd8OSpmcqV8b8EKtTUO+8VZdinNcY+q45V3K90zp1zjsQu0eDlu2vW
-        a++fp3TW4seKzuOTj4j+apTLPBayYvEnrsgOOfWmQxESGxM/2s72ME3uUb8hmHvwzdHE9IuN
-        OlcLHfinLj73ad/LZZUWy+XZ9iuxFGckGmoxFxUnAgAtkIR/RAMAAA==
-X-CMS-MailID: 20220823075105eucas1p24f6502d7088ffeb65180723f4c7b246c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220823073202eucas1p148f4ef93a8469ccfb5f4f2bdc7146555
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220823073202eucas1p148f4ef93a8469ccfb5f4f2bdc7146555
-References: <CGME20220823073202eucas1p148f4ef93a8469ccfb5f4f2bdc7146555@eucas1p1.samsung.com>
-        <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23.08.2022 09:31, Krzysztof Kozlowski wrote:
-> Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
-> clock maintainer to handle the patches.
+On 23/08/2022 15:21, Jilin Yuan wrote:
+>  Delete the redundant word 'next'.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Agreed with Sylwester who is recently busy. Let me handle some patches
-> as I already handle rest of Samsung SoC.
-> 
-> I plan to send pulls the same way Sylwester did - to Stephen.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Use scripts/get_maintainers.pl to CC all maintainers and relevant
+mailing lists.
 
+Best regards,
+Krzysztof
