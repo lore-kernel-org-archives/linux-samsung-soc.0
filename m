@@ -2,117 +2,83 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C178C00140
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Aug 2022 11:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7568BC00140
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 24 Aug 2022 13:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236633AbiHXLkb (ORCPT
+        id S238046AbiHXNMS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 24 Aug 2022 07:40:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60794 "EHLO
+        Wed, 24 Aug 2022 09:12:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236821AbiHXLkZ (ORCPT
+        with ESMTP id S238026AbiHXNMR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 24 Aug 2022 07:40:25 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F426610F;
-        Wed, 24 Aug 2022 04:40:22 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id ca13so21700207ejb.9;
-        Wed, 24 Aug 2022 04:40:22 -0700 (PDT)
+        Wed, 24 Aug 2022 09:12:17 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70BE7220DF
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Aug 2022 06:12:12 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id n15so2857017lfe.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Aug 2022 06:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc;
-        bh=pxKLfOME1R0KZZACiredgYsYKfw4h1/06Dg8Bmv9RjQ=;
-        b=DBL6LzztEwGp8X1U8me4Py7MxcKtdBb9YWUi/PURCPdr8iaMAQDC8JC3zxz4qqE0/m
-         bKiS9swMJ0I5nPY+WOf/aR2SgT5kiL8AiQEtdNwGVF8bxhUe+HlKjaVE6uQdl5UELpDi
-         nOqrp5TCMAWdBs5o5nfC1rfU5e2qXs5dmOvk9/Gd5R+3FZ/hFX5nFrXLNuh4R7eCVAqi
-         FCD5iN/WHnPKHbnfzWuSN5G0k1/px6vzxcTx4TMMx7qF3sPYp0G+KwZA99xomnl42Zmg
-         JZ7XnaY5aKCjIc5pKnlLhwWDnsYB0uqJ+gTcJALUtFK0Nclz4q/LUoSWJvtnF87WM0Di
-         VwFQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc;
+        bh=r+ASC3oRaNs40i1Zi0sR0tnL7ZgVnCM0wgXLHL0rIow=;
+        b=z66l8KV/M2ajnf+BKwBbC2pfnne8mNrvln8Edj/p8+WH8xvpRh83bB4lfw5csZkOGA
+         dJf5dGm0pqzUIw+WUcC3WbKw0nx4eFIKUsQ2fUSLunE1QigLbjXsnrLeVKnrWq/XHVEc
+         Zl9cJCaeyUSfJCtJfvq4Cvqv/+MBzYXhWeWsasTH0sfqBtujxI906nNgulGnD7gkg4D5
+         09N2yvcmYLdqXKqtMRoZ3IXgvEhgQSauqTTQy/pqi0tX5u8og6iACqgMlrCZru6JO1Cv
+         wn/8NL4smIoUWMBwa5ogYxm+apnxbizeyBAT/sGtXzcaPxLTIVwMDyowwH1qHxxIcn6m
+         h+cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc;
-        bh=pxKLfOME1R0KZZACiredgYsYKfw4h1/06Dg8Bmv9RjQ=;
-        b=so/pfXSmzyGfC0Wzzzrz4w3iIYD/hKhbygw5+FEU6lltqTsgkI1pDQKTtLofHWbV7v
-         /xPmttLl8Ep1BbuzsFvQkbkwwixlfCMRbxcNb+Dprx61iSMNtaot7c0jtsanK+GNvCaZ
-         72C6gFCCFPnwImbb74CKe1p/uzyXJr/78wSvhOZEAKIe5CFNyu+thiZbi181MfLcHcIc
-         UzfFEyM1g5jVug4Zsynqrwr7Xa8E96CIxrlh7wYn22AToF2a0UJGwjbEv4BhkouNxtId
-         adWvDEH/2tZPCNzC3MGAtsxKJGnUv0hYTQDf3crKDe3IHiB33g84LrjNPd38zxcg7sEo
-         HZgQ==
-X-Gm-Message-State: ACgBeo2LfRZarpA/w8+js0xt9UkjPWiwvQhB1zF2swbvqufbikGR83Xj
-        CSq6g+bvvIYTh4mSdBonRZvuHccuZsl0Six/rLfd8PmO
-X-Google-Smtp-Source: AA6agR5Ns6sE/CX5NmrAoDfd3/1lrF0pkxRUfma+oBjhnH3A3CDYJX/3W1+0CRi4pSmkQBkj4rL/neE5GM78cX+RuJ8=
-X-Received: by 2002:a17:906:e9b:b0:730:a6a1:9fc9 with SMTP id
- p27-20020a1709060e9b00b00730a6a19fc9mr2623390ejf.601.1661341220971; Wed, 24
- Aug 2022 04:40:20 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc;
+        bh=r+ASC3oRaNs40i1Zi0sR0tnL7ZgVnCM0wgXLHL0rIow=;
+        b=gPIrziED40MnW1kQs2ZF6jbnNl/4aGf2zlpeweT+ymdekCPc1KFDRqxTPb1Z7hje42
+         nYxWW7xutzlO4Y9PlzzkFCjwNQmbt3ZKk9g2WdxFKys+oTe4A1MONeXLhVgabvfHJeOO
+         WMiKO5p00GtDK8ZrxE9bkhCnXYMMyzTQamWVpd5pGyjxWRHYi1ouVvUqF7y6asoN8uXD
+         Vp4WZwUpwIFZFGj/ZMQflcvGoWHO8K7SKZjKq9+C9rUnTWKHPv8KuOQVRPenDkY4ljwE
+         GLz8VeAQMYuQ/zk2eegzJEeDl8IxJZWyNdNgmRDWw3cecZ8TIOM7o1rnwCOFG34tX8Oj
+         wt0Q==
+X-Gm-Message-State: ACgBeo2HfUzNnv+bzUD2R2fdooYml8bzuQ1X2peKQeTDPjGIXLPiK/ig
+        y9pAFhCEOUqioISY09r3xNLdLg==
+X-Google-Smtp-Source: AA6agR69XSYfJplsCoH90jpaWGzP3LcQMrKD5PQUFuRSK50NVKpyjOuIvqcqBdr6NfAuT8UOI7UMDQ==
+X-Received: by 2002:ac2:4d29:0:b0:492:e965:b6aa with SMTP id h9-20020ac24d29000000b00492e965b6aamr4111277lfk.495.1661346730825;
+        Wed, 24 Aug 2022 06:12:10 -0700 (PDT)
+Received: from krzk-bin.. ([194.204.13.210])
+        by smtp.gmail.com with ESMTPSA id w17-20020ac25991000000b00477c0365b20sm3013046lfn.188.2022.08.24.06.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Aug 2022 06:12:10 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     sboyd@kernel.org, cw00.choi@samsung.com, tomasz.figa@gmail.com,
+        krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
+        s.nawrocki@samsung.com, mturquette@baylibre.com,
+        alim.akhtar@samsung.com, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+Date:   Wed, 24 Aug 2022 16:11:26 +0300
+Message-Id: <166134667696.17579.16496249801589294435.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
+References: <20220823073154.359090-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-References: <20220823122117.15757-1-yuanjilin@cdjrlc.com> <48f4a56f-0586-9e9d-c121-6309be65b803@arm.com>
-In-Reply-To: <48f4a56f-0586-9e9d-c121-6309be65b803@arm.com>
-From:   Inki Dae <daeinki@gmail.com>
-Date:   Wed, 24 Aug 2022 20:39:44 +0900
-Message-ID: <CAAQKjZNPBDwEwjL7+rYTvfm7eQ85feXW1rr_P3VCERn3fPPfjQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: fix repeated words in comments
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Jilin Yuan <yuanjilin@cdjrlc.com>, Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        krzysztof.kozlowski@linaro.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Tue, 23 Aug 2022 10:31:54 +0300, Krzysztof Kozlowski wrote:
+> Add Krzysztof Kozlowski (already Samsung SoC maintainer) as Samsung SoC
+> clock maintainer to handle the patches.
+> 
+> 
 
-2022=EB=85=84 8=EC=9B=94 23=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 10:37, =
-Robin Murphy <robin.murphy@arm.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> On 2022-08-23 13:21, Jilin Yuan wrote:
-> >   Delete the redundant word 'next'.
->
->  From the context, I'm not sure it is redundant - as far as I can tell
-> this comment seems to be describing a sequence of 3 commands, where
-> "current" is the first, "next" is the second, and "next next" implies
-> the third. The whole comment could certainly be reworded more clearly,
-> but as it stands I suspect a replacement like s/next next/next+1/ is
-> more likely to be correct.
->
+Applied, thanks!
 
-"next next" is correct. :) As you said, "next next" could be reworded
-more clearly. As of now, the original sentence could make it
-confusing.
+[1/1] clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+      https://git.kernel.org/krzk/linux/c/ef96c458888fa2a329b14efc7991530f645fbddb
 
-Thanks,
-Inki Dae
-
-> Robin.
->
-> > Signed-off-by: Jilin Yuan <yuanjilin@cdjrlc.com>
-> > ---
-> >   drivers/gpu/drm/exynos/exynos_drm_g2d.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/=
-exynos/exynos_drm_g2d.c
-> > index 471fd6c8135f..4f9edca66632 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> > @@ -1195,7 +1195,7 @@ int exynos_g2d_set_cmdlist_ioctl(struct drm_devic=
-e *drm_dev, void *data,
-> >        * If don't clear SFR registers, the cmdlist is affected by regis=
-ter
-> >        * values of previous cmdlist. G2D hw executes SFR clear command =
-and
-> >        * a next command at the same time then the next command is ignor=
-ed and
-> > -      * is executed rightly from next next command, so needs a dummy c=
-ommand
-> > +      * is executed rightly from next command, so needs a dummy comman=
-d
-> >        * to next command of SFR clear command.
-> >        */
-> >       cmdlist->data[cmdlist->last++] =3D G2D_SOFT_RESET;
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
