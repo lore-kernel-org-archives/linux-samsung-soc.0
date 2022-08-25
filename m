@@ -2,438 +2,532 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D62FECAA2D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Aug 2022 17:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC40ECAA24
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Aug 2022 17:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235762AbiHYRJv (ORCPT
+        id S241976AbiHYRX6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Aug 2022 13:09:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60624 "EHLO
+        Thu, 25 Aug 2022 13:23:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbiHYRJt (ORCPT
+        with ESMTP id S234511AbiHYRX5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Aug 2022 13:09:49 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B9D1CE;
-        Thu, 25 Aug 2022 10:09:45 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220825170941epoutp022ef87e36375dbc9e68a6f53ea997101e~OpZdUlmoR0296902969epoutp02T;
-        Thu, 25 Aug 2022 17:09:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220825170941epoutp022ef87e36375dbc9e68a6f53ea997101e~OpZdUlmoR0296902969epoutp02T
+        Thu, 25 Aug 2022 13:23:57 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43F9BCC16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 10:23:54 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220825172352epoutp037a5e375667527f5e070a05c17be3b3c2~Opl1qPYLE2200922009epoutp03d
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 17:23:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220825172352epoutp037a5e375667527f5e070a05c17be3b3c2~Opl1qPYLE2200922009epoutp03d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1661447382;
-        bh=OacBpmGRDqsNjkrx2u5xaY8W1MLNzX6d37+yYizJPCI=;
-        h=From:To:In-Reply-To:Subject:Date:References:From;
-        b=uXqtI2W2s25AmQbJ4MeNVTwPooY2Id2ZRsVk9fFw9hvQ3EqPADorksjOxVcODcBwX
-         zVEoB4ltySlgc19FjOF+Sr8vXfQa34n1baOXYxzbxIQJ8bEP5Iw5UVMJY7mN0V0n77
-         2Jz2DmcSXORvGEhQI/PrrprxOgAbKrFVCe3zeKMg=
+        s=mail20170921; t=1661448232;
+        bh=+iq854JY5Rl+gEgILI4k8JciYQAIHHt8VT0JAgZB+rE=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=m39lTo8JGLIYNEQA9FoiS40f5uCVMcUUKwa0bN0OVAvvd3eCyWC1YQ4BqZgC3p/01
+         dEFoEYQB9NEDedlA87CC4b8Ns3VaglJIkLnMscNoZnJWzI1FY07CLQ8B0Gvc8Qel1q
+         1jrQZrVyig/j1WIbxiZTDuhxbInjDcwCxpK72+YA=
 Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
         epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20220825170941epcas5p27799c73d198bc31b76e49f8aa058262e~OpZci6KVr0999909999epcas5p23;
-        Thu, 25 Aug 2022 17:09:41 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4MD8b64t1Pz4x9Pp; Thu, 25 Aug
-        2022 17:09:38 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4C.26.59633.2DCA7036; Fri, 26 Aug 2022 02:09:38 +0900 (KST)
+        20220825172351epcas5p226cbbcf5f9d756abc6632490706d8b96~Opl0Qwzmz1687816878epcas5p2U;
+        Thu, 25 Aug 2022 17:23:51 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4MD8vT3mtJz4x9Pp; Thu, 25 Aug
+        2022 17:23:49 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5F.86.53458.520B7036; Fri, 26 Aug 2022 02:23:49 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220825170937epcas5p282c40d4031c94c7642eb3cdf65c5af81~OpZZK4XT20999909999epcas5p2x;
-        Thu, 25 Aug 2022 17:09:37 +0000 (GMT)
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220825172348epcas5p19d6b4703b2355b0db52e2bc2f0cd8e8a~Oplx_NC2q3212832128epcas5p1m;
+        Thu, 25 Aug 2022 17:23:48 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220825170937epsmtrp1897666625f3833353acce0e58953342a~OpZZEMusp1369413694epsmtrp1D;
-        Thu, 25 Aug 2022 17:09:37 +0000 (GMT)
-X-AuditID: b6c32a49-06ffe7000000e8f1-66-6307acd2c733
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        20220825172348epsmtrp1117412528eaa997878282152927931af~Oplx9Q1OK1972919729epsmtrp1V;
+        Thu, 25 Aug 2022 17:23:48 +0000 (GMT)
+X-AuditID: b6c32a4a-a5bff7000000d0d2-66-6307b0257004
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        44.85.18644.1DCA7036; Fri, 26 Aug 2022 02:09:37 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        C8.D5.18644.420B7036; Fri, 26 Aug 2022 02:23:48 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220825170930epsmtip13f4a6899927070d7a683599d4aa68709~OpZSsHOr81884918849epsmtip1e;
-        Thu, 25 Aug 2022 17:09:30 +0000 (GMT)
+        20220825172345epsmtip2c897af43570cdfe4a99e863bce82163d~OplvR98dQ1221812218epsmtip2R;
+        Thu, 25 Aug 2022 17:23:45 +0000 (GMT)
 From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>,
-        "'Kunihiko Hayashi'" <hayashi.kunihiko@socionext.com>,
-        "'Masami Hiramatsu'" <mhiramat@kernel.org>,
-        "'Damien Le Moal'" <damien.lemoal@opensource.wdc.com>,
-        "'Michael Turquette'" <mturquette@baylibre.com>,
-        "'Stephen Boyd'" <sboyd@kernel.org>,
-        "'Geert Uytterhoeven'" <geert+renesas@glider.be>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
-        "'Vladimir Zapolskiy'" <vz@mleia.com>,
-        "'Herbert Xu'" <herbert@gondor.apana.org.au>,
-        "'David S. Miller'" <davem@davemloft.net>,
-        "'Andrzej Hajda'" <andrzej.hajda@intel.com>,
-        "'Neil Armstrong'" <neil.armstrong@linaro.org>,
-        "'Robert Foss'" <robert.foss@linaro.org>,
-        "'Laurent Pinchart'" <Laurent.pinchart@ideasonboard.com>,
-        "'Jonas Karlman'" <jonas@kwiboo.se>,
-        "'Jernej Skrabec'" <jernej.skrabec@gmail.com>,
-        "'David Airlie'" <airlied@linux.ie>,
-        "'Daniel Vetter'" <daniel@ffwll.ch>,
-        "'Rob Clark'" <robdclark@gmail.com>,
-        "'Abhinav Kumar'" <quic_abhinavk@quicinc.com>,
-        "'Dmitry Baryshkov'" <dmitry.baryshkov@linaro.org>,
-        "'Sean Paul'" <sean@poorly.run>,
-        "'Inki Dae'" <inki.dae@samsung.com>,
-        "'Seung-Woo Kim'" <sw0312.kim@samsung.com>,
-        "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-        "'Thierry Reding'" <thierry.reding@gmail.com>,
-        "'Jonathan Hunter'" <jonathanh@nvidia.com>,
-        "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
-        "'Florian Fainelli'" <f.fainelli@gmail.com>,
-        "'Linus Walleij'" <linus.walleij@linaro.org>,
-        "'Andre Przywara'" <andre.przywara@arm.com>,
-        "'Kuninori Morimoto'" <kuninori.morimoto.gx@renesas.com>,
-        "'Yoshihiro Shimoda'" <yoshihiro.shimoda.uh@renesas.com>,
-        "'Marek Vasut'" <marex@denx.de>,
-        "'Krishna Manikandan'" <quic_mkrishn@quicinc.com>,
-        <devicetree@vger.kernel.org>,
+To:     "'Ard Biesheuvel'" <ardb@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     "'Alan Stern'" <stern@rowland.harvard.edu>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Nicolas Ferre'" <nicolas.ferre@microchip.com>,
+        "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>,
+        "'Claudiu Beznea'" <claudiu.beznea@microchip.com>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Avi Fishman'" <avifishman70@gmail.com>,
+        "'Tomer Maimon'" <tmaimon77@gmail.com>,
+        "'Tali Perry'" <tali.perry1@gmail.com>,
+        "'Patrick Venture'" <venture@google.com>,
+        "'Nancy Yuen'" <yuenn@google.com>,
+        "'Benjamin Fair'" <benjaminfair@google.com>,
+        "'Patrice Chotard'" <patrice.chotard@foss.st.com>,
+        "'Vladimir Zapolskiy'" <vz@mleia.com>, <linux-usb@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-ide@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        <linux-tegra@vger.kernel.org>
-In-Reply-To: <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 5/5] dt-bindings: display: drop minItems equal to
- maxItems
-Date:   Thu, 25 Aug 2022 22:39:29 +0530
-Message-ID: <065301d8b8a5$747cf310$5d76d930$@samsung.com>
+        <linux-samsung-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>
+In-Reply-To: <20220825170327.674446-1-ardb@kernel.org>
+Subject: RE: [RFC PATCH] usb: reduce kernel log spam on driver registration
+Date:   Thu, 25 Aug 2022 22:53:44 +0530
+Message-ID: <065601d8b8a7$6fee5850$4fcb08f0$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGXYWyYQPva3C8wcpr5uE47k6l8qAGFGprcAibC4Y6uJSdW0A==
+Thread-Index: AQE+q3nSdIaCERkMHuLgOUMV1aT/lQIBke/SruPps0A=
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TeVBTVxTG5773khek2Gek9UrtmKamLh2Q1EAPjmBVKM+20zJ12nEYW5qB
-        N8AISZqEikstKlLZWoILGtKggkupiiISiEIVcEEHQkHjMoUgxcZoADW4sFiaEGz973fO+c79
-        zrl3roAUHhMECJIVWk6tkKeI+ZOo6sa5cwLbj9DxwZnPRJDf2kzAYeMQAlupi4Lrg3YejLRY
-        SBir1pFgsGRSUNLUygOdZYgPVx8P8GG4v4kGg70FwS/FhQgab2xGkHtvBhTaCiiwlxxD0Oy8
-        RkGmfj8FP929TULd/VM03Gs0I2jZ7KQhW1dGw47RQwRU/mV1H/x7Cw0P87p4YOsaIuBCTQ8B
-        HWYDH045+gnYbaknIHtQzwdn1iYEpYfegT8uR8FA7S0EznMFPMgb7KHBvu8ZCY/0bq+tde7h
-        Gp0/8uAf6wkKOrc3Idi93cGHIbORgnLzKIKx4S3umbpcCB7XufgfyNgjxiOIHbixlWarfr1J
-        sEb9JYqte7KXYnUtgWytvpNmq89K2OJte3hs6RkHwVaWZ/PZSwXtBPun9QyfNT3p5rG23IsE
-        e7Lsh5jpsasXJXHyBE4t4hTxyoRkRWK4+OMVccviQkKDpYHSMHhfLFLIU7lwceQnMYEfJqe4
-        X0Ys+k6ekuZOxcg1GvH8iEVqZZqWEyUpNdpwMadKSFHJVEEaeaomTZEYpOC0C6XBwe+FuIXf
-        rE7KrrETKgOb3q3LJzNQYUQO8hFgRoadlssoB00SCJnTCBcf+I3yBo8QNjU84XkDlzvQ36Zf
-        tFgL9kwUzAhnP+wZLwgZB8JZtiUe5jOBuKY0i+8R+TNjU3BtWx7PU/BhonDWwWHSw1OZGKw/
-        Z6U8TDES3O3KG2c/Jgwfd5wgvDwFN+/pHc+TzExs6jOQ3ilEeOjOwfEz/ZmlOMN+mPZqpmHH
-        +SbaY4yZDF98se5vytsQiU3mzAmeiu9drJpYJwA7fs5ys8DNLN4/GuBNJ+G+QxXIy4vx2asG
-        yiMhmbm4wjzfazUZ54/0Et5OP7wtS+hVS/CW/msTRm9gXW4uz8ssLnmwY+KqOxA+P5yHCpBI
-        /9KW+pe21L+0jf5/572IKkfTOZUmNZHThKikCm7Nfw8er0ytROMfd97yGtTZ/SCoAREC1ICw
-        gBT7+y28QMUL/RLka9dxamWcOi2F0zSgEPfV68iA1+KV7p+v0MZJZWHBstDQUFnYglCpeJrf
-        jndRvJBJlGu51Ryn4tQv+giBT0AGITs5qaJvw6vRC8B26/MxWmXK0ba9cjwprCGoY5blvH12
-        cXuLIngg7On1dVGj9UflCv/6FdVxmy6skkztu9VV0rzYXm7b2G7slrS+2cf0+n87li+pjBLO
-        Ktsl6BCtWpkPsTb2yhc7j6YPP9/w7HRgWqd/2+trqj5ddd+3vnSmcUkGNYKHIgsjiogvN12Z
-        bdmctmX6jP7eGOOUuzmmr+eZ5tyJLto4oC576nzUJ3ne+dWlz9r8XIXKja23376+t3tXa9H6
-        lRGTfZfGng3QrAWr/K1tBt/lI47jGVRJ1Kjp8c5oU5W1tuejB7EViWdufq9PP6Bbf63EdTA8
-        uUdjPtWbMn9fZHojK6Y0SXLpPFKtkf8LSCD0skEFAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfVCTdRy/3/M8e55Bt+tx7PQnmtgO0ygQO+78FuklST3XH0rdWdE/tvAJ
-        VoBrExU7Y8mLDME2sJIHBGqksgiDeF2MBCYveoAgIKSMadocDgF5saFCwK6L/z73eft+/viK
-        SamO9hUr4w/w6nhFrJz2pqqb5esCu0uZqOBW8zOQ1dlOwPkCN4Jh4yQF16ccInjc0UXCfLWB
-        hPyuFAoKrZ0iMHS5aeidHqNh9oGVgXxHB4IzedkImgeOITgxshayh/UUOArLELS7+ihIEX6k
-        4OS9WyRY7lcxMNJsRtBxzMWAzlDMwKkn5wio+Kt/ofiPDgYmMm0iGLa5CWipvU3ANXM+DVXO
-        BwSc7mogQDcl0OBK+xqB8dwL0H05HMbq/kTgatSLIHPqNgOOH/4h4aGwcCvVsjCu2XVcBHP9
-        5RQM5VgRnM5x0uA2F1BgMj9BMD+bvLDJNolg2jJJvxHClRaUIm5sIJXhKksGCa5AaKM4y0wR
-        xRk6Ark6YYjhqi9u4PLSc0Wcsd5JcBUmHc216XsI7mZ/Pc3VzNhF3PCJVoL7rTgpYvVH3q/v
-        42OVB3n15u0fe8foah2EKp87bDdkkVqUvT0DeYkxG4L79bmiDOQtlrK1CI/Y/qY9whp8vVzP
-        eLAPLplzMB6TA+HLlivkokCzgbjWmLYUkLFGKc4pTPCYuhDWDd5bSnux4Tjt7OxSwIfdhU/a
-        ppcCFLsB2yczqUUsYV/FvzrLCQ9egdtz7yzwYjHJBuG0crRIk6wfrhnNJz2D1mP33bMiz90w
-        rHWcZzyeVdh5ycrokVRY1iT83yQsaxKWJYoQZUKreZUmLjpOs0X1Sjx/KEijiNMkxEcHRe2P
-        q0BL3xoQUIvqTeNBTYgQoyaExaRcJnmthYqSSvYpEo/w6v171QmxvKYJrRFT8lWSqxnte6Vs
-        tOIA/znPq3j1fyoh9vLVEulXBONbt0zf9Uwk+s9URQIezysZ/qW05bB5fOa+rDLMolVday1y
-        SvbMyUKLVGuz1xWv8L2g+awzWZntzv3dus1AZtY1XPgk2Px90tbQXWHJCcjvUe/uHTkXey/5
-        hX7VlnhjW5LUNWroS4GnR5tGG40TLe/3qFISLLL6GxtfrnSEWKsHlePM5q0/vcdP72x8N7It
-        uebbZ68i5e71R7+QpyeVfRo4YHtIsytf4oZGHcKZmJuS5/2d2rLjEd6K0oY3n7N/mCPq3knG
-        tfm19+2YfxyxUdlwKDL4iE9m5dty+5f+m35+yjbdGdf2aV8stq8MNz76ZlP5XfM7WYMFHxwM
-        Htpzik2VU5oYxZYAUq1R/Au2jZEwHAQAAA==
-X-CMS-MailID: 20220825170937epcas5p282c40d4031c94c7642eb3cdf65c5af81
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xbVRjd7Xu8V8iqbwXkWtThiwTBlFGk3YOMMePiXpwYIiMm6oRSni1C
+        f6SvdTBNVqy0/Iij0zpnxwyUFXTCWMsY0A1ENkEMAeZ0BoUFMqYCGzB+LBSI2vKY8t/5zj3f
+        d75zby4fEfowET9fY2D0GnkhiYWgl67GxoijL+CKhHaHiLLO1uOUb2kOUL7Pj/OoU53jCDXU
+        tY5T5rpmjOqcacUpz+2bQdQNbzVGnT5bhVKnhrp4lLO+FKHaWmoRytc/h1O2tWGM8naX4NTq
+        xWlAdXa7UeqfVTNCWVbrsX1h9JeN79N3qlpxusMxhtM1HiPtOVeO0aM3r2D0t2cacbrl7DF6
+        dMUF6L9r7Sh9emwF0IuepzK2v1GwR8XI8xh9FKNRaPPyNcpU8mBm9ovZUlmCRCxJpnaTURq5
+        mkkl97+SIX4pv9Cfk4x6T15o9FMZcpYld+3do9caDUyUSssaUklGl1eoS9LFs3I1a9Qo4zWM
+        IUWSkJAo9QtzClTXqi7wdHcNRcvrdtwE+pgKEMyHRBIsL/2dVwFC+ELiMoCDV9Y2iwUAHwy3
+        IFyxCGBT+VjQw5bzsx/h3IEXQKt9aFM1BaCtYxIJqDBCDNvrLFgAhxE09JR8hwYwQtRj0HdZ
+        HMDBhAzODNf5J/H5ocRB2PZXUYBGiWhoca5u0AIiGdoXhQFaQOyA/V9Mbk7ZCdvuVSPcPlHQ
+        d6c+iHNKgW1TgQQBTQSc+v7axp6QaAiGfXedGNewH/aO21AOh8Lpvos4h0Vwqsqy4Qv9KzvX
+        RRytgvcamgGH02D3z9VoQIIQsbDZu4uzegR+vDbJ4zoFsMwi5NTR0Dz7y6ZRJDxRWbl5g/7h
+        tVbcBp52bAnm2BLMsSWA43+zGoCeA48zOlatZFipLlHDHPnvtRVatQds/IG4l9vBxPh8fA/g
+        8UEPgHyEDBOk9KIKoSBPXnyU0Wuz9cZChu0BUv9ln0BE4Qqt/xNpDNmSpOSEJJlMlpT8vExC
+        RgjszwGFkFDKDUwBw+gY/cM+Hj9YZOJJipum46+H1ky0OqMfHXSlPBGytvDn/aLDV7efzHX5
+        zA0jmQdsI205VX9cOt51aD4ro2Vl30TtAjU/aj4wsEgWLz8oK51RN7gipz+zfmB0u7Hh3TeY
+        /prcOeWxH9O1OWnW1iX34Ftv/3a+dL+ypyFOWa4XD6Ykm9Nd9GiW9MMV6QA7kPjp6/DMs6av
+        wcDSjhfqYo7cX67IH8m8vv6OO8MUeyvC7nLLKvM12q9mYtKeDJ/YViJ5hhfeXCb6xrBoOInn
+        2g6/WkSYbqcfHdz2U+3OguIxrwHp3UtGtuTOv2t5rMNUlHULx3xv/qBq+sRT+at1otd3aCVT
+        FNKY+VqiM1zt9JIoq5JL4hA9K/8XkAKKl4wEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsWy7bCSvK7KBvZkgy8TFS3a3y1jt/j55T2j
+        xc/pfUwWM/Y+YLY4v+8Pu0Xz4vVsFntfb2W32PT4GqvF5V1z2CxmL+lnsZhxfh+TxaJlrcwW
+        2zcvZLb4efI9u8WE3xfYLHYdaGS3+LXlFaPF3gMbWSz+/2pmtmj7tYzNQcRj3ppqj6f9W9k9
+        ds66y+6xYFOpx6ZVnWwed67tYfPYP3cNu8fmJfUed34sZfT4t3AKi8fsuz8YPT5vkgvgieKy
+        SUnNySxLLdK3S+DKONK/gangTUnF1z9T2BsYj6d2MXJySAiYSKx718LexcjFISSwg1Hi6+ep
+        jBAJaYnrGyewQ9jCEiv/PYcqes4ocenMNWaQBJuArsSOxW1sILaIgJfE1+tPWECKmAU2sEls
+        edQK1dHOKHFuz3ywDk4BM4nXFxYDJTg4hAW8Jba/qAAJswioSrQt+gUW5hWwlJjyWQgkzCsg
+        KHFyJshMDqCZehJtG8FuYxaQl9j+dg4zxG0KEj+fLmOFOMFKYvvL30wQNeISL48eYZ/AKDwL
+        yaRZCJNmIZk0C0nHAkaWVYySqQXFuem5xYYFRnmp5XrFibnFpXnpesn5uZsYwclAS2sH455V
+        H/QOMTJxMB5ilOBgVhLhtTrGkizEm5JYWZValB9fVJqTWnyIUZqDRUmc90LXyXghgfTEktTs
+        1NSC1CKYLBMHp1QD08rQ5zuNBa8vt0x6klOQ9eikyHWn9EVHLbnui/ULTzDSOmMgbxjxZ0bW
+        t7eiyasqbh77d/66zeVNGXkxSdz3s/W+myTWLQwoVPSKf7I088suWYnaZ8EPXs07IxccyVMj
+        GNuXsO7I0SIFlXlvqkte8AssmbjLeX7qvYCa/D4HfdbkHUeeCFpp9ql+uCjg3C91dtvVzAdv
+        z7luyLvYP+kPw/9VDf2/P3GcixN40ad0NUjlsfTHnI/zjikHzzhyfdHPfg+/6YdZee9xr9VK
+        PnLD1clYeU/oXsY3j2MP97VcvNv0idtyftjVtpV3SnkUrtTf/hFps3PL2cumi17v7L4ictVo
+        kUSCrWdf4Hp1gXulrEosxRmJhlrMRcWJAE+4L6p1AwAA
+X-CMS-MailID: 20220825172348epcas5p19d6b4703b2355b0db52e2bc2f0cd8e8a
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220825113350epcas5p3cb0cc2cbf440c7999a160212d9e714f4
-References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
-        <CGME20220825113350epcas5p3cb0cc2cbf440c7999a160212d9e714f4@epcas5p3.samsung.com>
-        <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
+X-CMS-RootMailID: 20220825170354epcas5p28a5f1a4b13507b5c40ca235560a6ba56
+References: <CGME20220825170354epcas5p28a5f1a4b13507b5c40ca235560a6ba56@epcas5p2.samsung.com>
+        <20220825170327.674446-1-ardb@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof
-
-I got below messages when replied to all
-"
-Your mail to 'linux-arm-kernel' with the subject
-
-    RE: [PATCH 4/5] dt-bindings: crypto: drop minItems equal to
-maxItems and for [PATCH 3/5] as well
-
-Is being held until the list moderator can review it for approval.
-
-The reason it is being held:
-
-    Too many recipients to the message
-"
-
-Are these many "To" addresses are really needed?
 
 
 >-----Original Message-----
->From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@linaro.org]
->Sent: Thursday, August 25, 2022 5:04 PM
->To: Rob Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
-><krzysztof.kozlowski+dt@linaro.org>; Kunihiko Hayashi
-><hayashi.kunihiko@socionext.com>; Masami Hiramatsu
-><mhiramat@kernel.org>; Damien Le Moal
-><damien.lemoal@opensource.wdc.com>; Michael Turquette
-><mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Geert
->Uytterhoeven <geert+renesas@glider.be>; Sylwester Nawrocki
-><s.nawrocki@samsung.com>; Tomasz Figa <tomasz.figa@gmail.com>;
->Chanwoo Choi <cw00.choi@samsung.com>; Alim Akhtar
-><alim.akhtar@samsung.com>; Vladimir Zapolskiy <vz@mleia.com>; Herbert
->Xu <herbert@gondor.apana.org.au>; David S. Miller
-><davem@davemloft.net>; Andrzej Hajda <andrzej.hajda@intel.com>; Neil
->Armstrong <neil.armstrong@linaro.org>; Robert Foss
-><robert.foss@linaro.org>; Laurent Pinchart
-><Laurent.pinchart@ideasonboard.com>; Jonas Karlman <jonas@kwiboo.se>;
->Jernej Skrabec <jernej.skrabec@gmail.com>; David Airlie <airlied@linux.ie>;
->Daniel Vetter <daniel@ffwll.ch>; Rob Clark <robdclark@gmail.com>; Abhinav
->Kumar <quic_abhinavk@quicinc.com>; Dmitry Baryshkov
-><dmitry.baryshkov@linaro.org>; Sean Paul <sean@poorly.run>; Inki Dae
-><inki.dae@samsung.com>; Seung-Woo Kim <sw0312.kim@samsung.com>;
->Kyungmin Park <kyungmin.park@samsung.com>; Thierry Reding
-><thierry.reding@gmail.com>; Jonathan Hunter <jonathanh@nvidia.com>;
->Masahiro Yamada <yamada.masahiro@socionext.com>; Florian Fainelli
-><f.fainelli@gmail.com>; Linus Walleij <linus.walleij@linaro.org>; Andre
->Przywara <andre.przywara@arm.com>; Kuninori Morimoto
-><kuninori.morimoto.gx@renesas.com>; Yoshihiro Shimoda
-><yoshihiro.shimoda.uh@renesas.com>; Marek Vasut <marex@denx.de>;
->Krishna Manikandan <quic_mkrishn@quicinc.com>;
->devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->kernel@vger.kernel.org; linux-ide@vger.kernel.org; linux-
->clk@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-samsung-
->soc@vger.kernel.org; linux-crypto@vger.kernel.org; dri-
->devel@lists.freedesktop.org; linux-arm-msm@vger.kernel.org;
->freedreno@lists.freedesktop.org; linux-tegra@vger.kernel.org
+>From: Ard Biesheuvel [mailto:ardb@kernel.org]
+>Sent: Thursday, August 25, 2022 10:33 PM
+>To: linux-kernel@vger.kernel.org
+>Cc: Ard Biesheuvel <ardb@kernel.org>; Alan Stern
+><stern@rowland.harvard.edu>; Greg Kroah-Hartman
+><gregkh@linuxfoundation.org>; Nicolas Ferre
+><nicolas.ferre@microchip.com>; Alexandre Belloni
+><alexandre.belloni@bootlin.com>; Claudiu Beznea
+><claudiu.beznea@microchip.com>; Krzysztof Kozlowski
+><krzysztof.kozlowski@linaro.org>; Alim Akhtar <alim.akhtar@samsung.com>;
+>Avi Fishman <avifishman70@gmail.com>; Tomer Maimon
+><tmaimon77@gmail.com>; Tali Perry <tali.perry1@gmail.com>; Patrick
+>Venture <venture@google.com>; Nancy Yuen <yuenn@google.com>;
+>Benjamin Fair <benjaminfair@google.com>; Patrice Chotard
+><patrice.chotard@foss.st.com>; Vladimir Zapolskiy <vz@mleia.com>; linux-
+>usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
+>soc@vger.kernel.org; linux-omap@vger.kernel.org
+>Subject: [RFC PATCH] usb: reduce kernel log spam on driver registration
+>
+>Drivers are typically supposed to be quiet unless they are actually probed,
+but
+>for some reason, USB host controllers seem to be exempt from this rule, and
+>happily broadcast their existence into the kernel log at boot even if the
+>hardware in question is nowhere to be found.
+>
+>Let's fix that, and remove these pr_info() calls.
+>
+How about just change pr_info() to pr_debug() instead? 
+
+>Cc: Alan Stern <stern@rowland.harvard.edu>
+>Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+>Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
 >Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->Subject: [PATCH 5/5] dt-bindings: display: drop minItems equal to maxItems
->
->minItems, if missing, are implicitly equal to maxItems, so drop redundant
->piece to reduce size of code.
->
->Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>Cc: Alim Akhtar <alim.akhtar@samsung.com>
+>Cc: Avi Fishman <avifishman70@gmail.com>
+>Cc: Tomer Maimon <tmaimon77@gmail.com>
+>Cc: Tali Perry <tali.perry1@gmail.com>
+>Cc: Patrick Venture <venture@google.com>
+>Cc: Nancy Yuen <yuenn@google.com>
+>Cc: Benjamin Fair <benjaminfair@google.com>
+>Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+>Cc: Vladimir Zapolskiy <vz@mleia.com>
+>Cc: linux-usb@vger.kernel.org
+>Cc: linux-arm-kernel@lists.infradead.org
+>Cc: linux-kernel@vger.kernel.org
+>Cc: linux-samsung-soc@vger.kernel.org
+>Cc: linux-omap@vger.kernel.org
+>Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 >---
-
-
-Feel free to add
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-
-> Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml   | 1 -
-> .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 --
-> Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 --
-> .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 --
-> .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 1 -
-> .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 1 -
-> .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 1 -
-> .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml  | 1 -
-> .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml   | 2 --
-> 9 files changed, 13 deletions(-)
+> drivers/usb/host/ehci-atmel.c    | 1 -
+> drivers/usb/host/ehci-exynos.c   | 1 -
+> drivers/usb/host/ehci-fsl.c      | 2 --
+> drivers/usb/host/ehci-hcd.c      | 1 -
+> drivers/usb/host/ehci-npcm7xx.c  | 2 --
+> drivers/usb/host/ehci-omap.c     | 2 --
+> drivers/usb/host/ehci-orion.c    | 2 --
+> drivers/usb/host/ehci-pci.c      | 2 --
+> drivers/usb/host/ehci-platform.c | 2 --
+> drivers/usb/host/ehci-spear.c    | 2 --
+> drivers/usb/host/ehci-st.c       | 2 --
+> drivers/usb/host/fotg210-hcd.c   | 1 -
+> drivers/usb/host/ohci-at91.c     | 1 -
+> drivers/usb/host/ohci-da8xx.c    | 1 -
+> drivers/usb/host/ohci-exynos.c   | 1 -
+> drivers/usb/host/ohci-hcd.c      | 1 -
+> drivers/usb/host/ohci-nxp.c      | 2 --
+> drivers/usb/host/ohci-omap.c     | 2 --
+> drivers/usb/host/ohci-pci.c      | 2 --
+> drivers/usb/host/ohci-platform.c | 2 --
+> drivers/usb/host/ohci-pxa27x.c   | 2 --
+> drivers/usb/host/ohci-s3c2410.c  | 1 -
+> drivers/usb/host/ohci-spear.c    | 2 --
+> drivers/usb/host/ohci-st.c       | 2 --
+> 24 files changed, 39 deletions(-)
 >
->diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
->b/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
->index 2ebaa43eb62e..b19be0804abe 100644
->--- a/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
->+++ b/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
->@@ -25,7 +25,6 @@ properties:
->     const: ldb
+>diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
+>index 05d41fd65f25..0e995019c1df 100644
+>--- a/drivers/usb/host/ehci-atmel.c
+>+++ b/drivers/usb/host/ehci-atmel.c
+>@@ -239,7 +239,6 @@ static int __init ehci_atmel_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   reg:
->-    minItems: 2
->     maxItems: 2
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+> 	ehci_init_driver(&ehci_atmel_hc_driver,
+>&ehci_atmel_drv_overrides);
+> 	return platform_driver_register(&ehci_atmel_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-exynos.c
+b/drivers/usb/host/ehci-exynos.c
+>index 1a9b7572e17f..a65e365e3a04 100644
+>--- a/drivers/usb/host/ehci-exynos.c
+>+++ b/drivers/usb/host/ehci-exynos.c
+>@@ -347,7 +347,6 @@ static int __init ehci_exynos_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   reg-names:
->diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-
->main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-
->controller-main.yaml
->index 880bfe930830..3b609c19e0bc 100644
->--- a/Documentation/devicetree/bindings/display/msm/dsi-controller-
->main.yaml
->+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.
->+++ yaml
->@@ -66,13 +66,11 @@ properties:
->       2 DSI links.
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+> 	ehci_init_driver(&exynos_ehci_hc_driver, &exynos_overrides);
+> 	return platform_driver_register(&exynos_ehci_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
+index
+>896c0d107f72..9cea785934e5 100644
+>--- a/drivers/usb/host/ehci-fsl.c
+>+++ b/drivers/usb/host/ehci-fsl.c
+>@@ -722,8 +722,6 @@ static int __init ehci_fsl_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   assigned-clocks:
->-    minItems: 2
->     maxItems: 2
->     description: |
->       Parents of "byte" and "pixel" for the given platform.
+>-	pr_info(DRV_NAME ": " DRIVER_DESC "\n");
+>-
+> 	ehci_init_driver(&fsl_ehci_hc_driver, &ehci_fsl_overrides);
 >
->   assigned-clock-parents:
->-    minItems: 2
->     maxItems: 2
->     description: |
->       The Byte clock and Pixel clock PLL outputs provided by a DSI PHY
-block.
->diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-
->10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-
->10nm.yaml
->index 716f921e3532..d9ad8b659f58 100644
->--- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
->+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
->@@ -37,7 +37,6 @@ properties:
+> 	fsl_ehci_hc_driver.product_desc =
+>diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
+index
+>684164fa9716..a1930db0da1c 100644
+>--- a/drivers/usb/host/ehci-hcd.c
+>+++ b/drivers/usb/host/ehci-hcd.c
+>@@ -1351,7 +1351,6 @@ static int __init ehci_hcd_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   qcom,phy-rescode-offset-top:
->     $ref: /schemas/types.yaml#/definitions/int8-array
->-    minItems: 5
->     maxItems: 5
->     description:
->       Integer array of offset for pull-up legs rescode for all five lanes.
->@@ -49,7 +48,6 @@ properties:
+>-	printk(KERN_INFO "%s: " DRIVER_DESC "\n", hcd_name);
+> 	set_bit(USB_EHCI_LOADED, &usb_hcds_loaded);
+> 	if (test_bit(USB_UHCI_LOADED, &usb_hcds_loaded) ||
+> 			test_bit(USB_OHCI_LOADED, &usb_hcds_loaded))
+>diff --git a/drivers/usb/host/ehci-npcm7xx.c b/drivers/usb/host/ehci-
+>npcm7xx.c index 6b5a7a873e01..4321ac6b11cc 100644
+>--- a/drivers/usb/host/ehci-npcm7xx.c
+>+++ b/drivers/usb/host/ehci-npcm7xx.c
+>@@ -191,8 +191,6 @@ static int __init ehci_npcm7xx_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   qcom,phy-rescode-offset-bot:
->     $ref: /schemas/types.yaml#/definitions/int8-array
->-    minItems: 5
->     maxItems: 5
->     description:
->       Integer array of offset for pull-down legs rescode for all five
-lanes.
->diff --git
->a/Documentation/devicetree/bindings/display/samsung/samsung,exynos543
->3-decon.yaml
->b/Documentation/devicetree/bindings/display/samsung/samsung,exynos543
->3-decon.yaml
->index 921bfe925cd6..6380eeebb073 100644
->---
->a/Documentation/devicetree/bindings/display/samsung/samsung,exynos543
->3-decon.yaml
->+++
->b/Documentation/devicetree/bindings/display/samsung/samsung,exynos54
->+++ 33-decon.yaml
->@@ -24,7 +24,6 @@ properties:
->       - samsung,exynos5433-decon-tv
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_npcm7xx_hc_driver, NULL);
+> 	return platform_driver_register(&npcm7xx_ehci_hcd_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-omap.c b/drivers/usb/host/ehci-omap.c
+>index 8c45bc17a580..7dd984722a7f 100644
+>--- a/drivers/usb/host/ehci-omap.c
+>+++ b/drivers/usb/host/ehci-omap.c
+>@@ -284,8 +284,6 @@ static int __init ehci_omap_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clocks:
->-    minItems: 11
->     maxItems: 11
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_omap_hc_driver, &ehci_omap_overrides);
+> 	return platform_driver_register(&ehci_hcd_omap_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-orion.c b/drivers/usb/host/ehci-orion.c
+>index 3626758b3e2a..2c8b1e6f1fff 100644
+>--- a/drivers/usb/host/ehci-orion.c
+>+++ b/drivers/usb/host/ehci-orion.c
+>@@ -361,8 +361,6 @@ static int __init ehci_orion_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clock-names:
->@@ -59,7 +58,6 @@ properties:
->       - const: te
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_orion_hc_driver, &orion_overrides);
+> 	return platform_driver_register(&ehci_orion_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-pci.c b/drivers/usb/host/ehci-pci.c
+index
+>9937c5a7efc2..9581952d999a 100644
+>--- a/drivers/usb/host/ehci-pci.c
+>+++ b/drivers/usb/host/ehci-pci.c
+>@@ -423,8 +423,6 @@ static int __init ehci_pci_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   iommus:
->-    minItems: 2
->     maxItems: 2
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_pci_hc_driver, &pci_overrides);
 >
->   iommu-names:
->diff --git
->a/Documentation/devicetree/bindings/display/samsung/samsung,exynos543
->3-mic.yaml
->b/Documentation/devicetree/bindings/display/samsung/samsung,exynos543
->3-mic.yaml
->index 7d405f2febcd..26e5017737a3 100644
->---
->a/Documentation/devicetree/bindings/display/samsung/samsung,exynos543
->3-mic.yaml
->+++
->b/Documentation/devicetree/bindings/display/samsung/samsung,exynos54
->+++ 33-mic.yaml
->@@ -24,7 +24,6 @@ properties:
->     const: samsung,exynos5433-mic
+> 	/* Entries for the PCI suspend/resume callbacks are special */ diff
+--git
+>a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+>index 6924f0316e9a..50491eea9409 100644
+>--- a/drivers/usb/host/ehci-platform.c
+>+++ b/drivers/usb/host/ehci-platform.c
+>@@ -529,8 +529,6 @@ static int __init ehci_platform_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clocks:
->-    minItems: 2
->     maxItems: 2
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_platform_hc_driver, &platform_overrides);
+> 	return platform_driver_register(&ehci_platform_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-spear.c b/drivers/usb/host/ehci-spear.c
+>index 3694e450a11a..13369289d9cc 100644
+>--- a/drivers/usb/host/ehci-spear.c
+>+++ b/drivers/usb/host/ehci-spear.c
+>@@ -167,8 +167,6 @@ static int __init ehci_spear_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clock-names:
->diff --git
->a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-
->decon.yaml
->b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-
->decon.yaml
->index 969bd8c563a5..c06f306e8d14 100644
->---
->a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-
->decon.yaml
->+++
->b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-
->+++ decon.yaml
->@@ -22,7 +22,6 @@ properties:
->     const: samsung,exynos7-decon
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_spear_hc_driver, &spear_overrides);
+> 	return platform_driver_register(&spear_ehci_hcd_driver);
+> }
+>diff --git a/drivers/usb/host/ehci-st.c b/drivers/usb/host/ehci-st.c index
+>f74433aac948..1086078133f8 100644
+>--- a/drivers/usb/host/ehci-st.c
+>+++ b/drivers/usb/host/ehci-st.c
+>@@ -346,8 +346,6 @@ static int __init ehci_platform_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clocks:
->-    minItems: 4
->     maxItems: 4
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ehci_init_driver(&ehci_platform_hc_driver, &platform_overrides);
+> 	return platform_driver_register(&ehci_platform_driver);
+> }
+>diff --git a/drivers/usb/host/fotg210-hcd.c
+b/drivers/usb/host/fotg210-hcd.c
+>index f8c111e08a0d..3d1dbcf4c073 100644
+>--- a/drivers/usb/host/fotg210-hcd.c
+>+++ b/drivers/usb/host/fotg210-hcd.c
+>@@ -5692,7 +5692,6 @@ static int __init fotg210_hcd_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clock-names:
->diff --git
->a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
->b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
->index 5d5cc220f78a..210d856b3b57 100644
->---
->a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
->+++
->b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yam
->+++ l
->@@ -27,7 +27,6 @@ properties:
->     const: 1
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+> 	set_bit(USB_EHCI_LOADED, &usb_hcds_loaded);
+> 	if (test_bit(USB_UHCI_LOADED, &usb_hcds_loaded) ||
+> 			test_bit(USB_OHCI_LOADED, &usb_hcds_loaded))
+>diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
+index
+>98326465e2dc..adf0998f0299 100644
+>--- a/drivers/usb/host/ohci-at91.c
+>+++ b/drivers/usb/host/ohci-at91.c
+>@@ -699,7 +699,6 @@ static int __init ohci_at91_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   clocks:
->-    minItems: 2
->     maxItems: 2
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+> 	ohci_init_driver(&ohci_at91_hc_driver, &ohci_at91_drv_overrides);
 >
->   clock-names:
->diff --git
-a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-
->gr3d.yaml
->b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-
->gr3d.yaml
->index dbdf0229d9f6..4755a73473c7 100644
->--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-
->gr3d.yaml
->+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3
->+++ d.yaml
->@@ -59,7 +59,6 @@ properties:
->     maxItems: 2
+> 	/*
+>diff --git a/drivers/usb/host/ohci-da8xx.c b/drivers/usb/host/ohci-da8xx.c
+>index 1371b0c249ec..d4818e8d652b 100644
+>--- a/drivers/usb/host/ohci-da8xx.c
+>+++ b/drivers/usb/host/ohci-da8xx.c
+>@@ -551,7 +551,6 @@ static int __init ohci_da8xx_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   power-domain-names:
->-    minItems: 2
->     maxItems: 2
+>-	pr_info("%s: " DRIVER_DESC "\n", DRV_NAME);
+> 	ohci_init_driver(&ohci_da8xx_hc_driver, &da8xx_overrides);
 >
-> allOf:
->diff --git
-a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-
->mpe.yaml
->b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-
->mpe.yaml
->index 4154ae01ad13..5f4f0fb4b692 100644
->--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-
->mpe.yaml
->+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe
->+++ .yaml
->@@ -42,11 +42,9 @@ properties:
->     maxItems: 1
+> 	/*
+>diff --git a/drivers/usb/host/ohci-exynos.c
+b/drivers/usb/host/ohci-exynos.c
+>index 5f5e8a64c8e2..a060be6ae274 100644
+>--- a/drivers/usb/host/ohci-exynos.c
+>+++ b/drivers/usb/host/ohci-exynos.c
+>@@ -310,7 +310,6 @@ static int __init ohci_exynos_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   interconnects:
->-    minItems: 6
->     maxItems: 6
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+> 	ohci_init_driver(&exynos_ohci_hc_driver, &exynos_overrides);
+> 	return platform_driver_register(&exynos_ohci_driver);
+> }
+>diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+index
+>c4c821c2288c..0457dd9f6c19 100644
+>--- a/drivers/usb/host/ohci-hcd.c
+>+++ b/drivers/usb/host/ohci-hcd.c
+>@@ -1276,7 +1276,6 @@ static int __init ohci_hcd_mod_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   interconnect-names:
->-    minItems: 6
->     maxItems: 6
+>-	printk(KERN_INFO "%s: " DRIVER_DESC "\n", hcd_name);
+> 	pr_debug ("%s: block sizes: ed %zd td %zd\n", hcd_name,
+> 		sizeof (struct ed), sizeof (struct td));
+> 	set_bit(USB_OHCI_LOADED, &usb_hcds_loaded); diff --git
+>a/drivers/usb/host/ohci-nxp.c b/drivers/usb/host/ohci-nxp.c index
+>106a6bcefb08..5b32e683e367 100644
+>--- a/drivers/usb/host/ohci-nxp.c
+>+++ b/drivers/usb/host/ohci-nxp.c
+>@@ -275,8 +275,6 @@ static int __init ohci_nxp_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
 >
->   operating-points-v2:
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_nxp_hc_driver, NULL);
+> 	return platform_driver_register(&ohci_hcd_nxp_driver);
+> }
+>diff --git a/drivers/usb/host/ohci-omap.c b/drivers/usb/host/ohci-omap.c
+>index f5bc9c8bdc9a..cb29701df911 100644
+>--- a/drivers/usb/host/ohci-omap.c
+>+++ b/drivers/usb/host/ohci-omap.c
+>@@ -423,8 +423,6 @@ static int __init ohci_omap_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_omap_hc_driver, &omap_overrides);
+> 	return platform_driver_register(&ohci_hcd_omap_driver);
+> }
+>diff --git a/drivers/usb/host/ohci-pci.c b/drivers/usb/host/ohci-pci.c
+index
+>41efe927d8f3..a146b2d3ef0b 100644
+>--- a/drivers/usb/host/ohci-pci.c
+>+++ b/drivers/usb/host/ohci-pci.c
+>@@ -306,8 +306,6 @@ static int __init ohci_pci_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_pci_hc_driver, &pci_overrides);
+>
+> #ifdef	CONFIG_PM
+>diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-
+>platform.c
+>index 0adae6265127..6d56b52966c7 100644
+>--- a/drivers/usb/host/ohci-platform.c
+>+++ b/drivers/usb/host/ohci-platform.c
+>@@ -346,8 +346,6 @@ static int __init ohci_platform_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_platform_hc_driver, &platform_overrides);
+> 	return platform_driver_register(&ohci_platform_driver);
+> }
+>diff --git a/drivers/usb/host/ohci-pxa27x.c
+b/drivers/usb/host/ohci-pxa27x.c
+>index ab4f610a0140..f2504b884e92 100644
+>--- a/drivers/usb/host/ohci-pxa27x.c
+>+++ b/drivers/usb/host/ohci-pxa27x.c
+>@@ -608,8 +608,6 @@ static int __init ohci_pxa27x_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_pxa27x_hc_driver, &pxa27x_overrides);
+> 	ohci_pxa27x_hc_driver.hub_control = pxa27x_ohci_hub_control;
+>
+>diff --git a/drivers/usb/host/ohci-s3c2410.c
+b/drivers/usb/host/ohci-s3c2410.c
+>index 12264c048601..7207c7a3cf49 100644
+>--- a/drivers/usb/host/ohci-s3c2410.c
+>+++ b/drivers/usb/host/ohci-s3c2410.c
+>@@ -474,7 +474,6 @@ static int __init ohci_s3c2410_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+> 	ohci_init_driver(&ohci_s3c2410_hc_driver, NULL);
+>
+> 	/*
+>diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
+>index 9b81f420656d..71a3f18fe1be 100644
+>--- a/drivers/usb/host/ohci-spear.c
+>+++ b/drivers/usb/host/ohci-spear.c
+>@@ -179,8 +179,6 @@ static int __init ohci_spear_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_spear_hc_driver, &spear_overrides);
+> 	return platform_driver_register(&spear_ohci_hcd_driver);
+> }
+>diff --git a/drivers/usb/host/ohci-st.c b/drivers/usb/host/ohci-st.c index
+>ac796ccd93ef..2e542a344aae 100644
+>--- a/drivers/usb/host/ohci-st.c
+>+++ b/drivers/usb/host/ohci-st.c
+>@@ -324,8 +324,6 @@ static int __init ohci_platform_init(void)
+> 	if (usb_disabled())
+> 		return -ENODEV;
+>
+>-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+>-
+> 	ohci_init_driver(&ohci_platform_hc_driver, &platform_overrides);
+> 	return platform_driver_register(&ohci_platform_driver);
+> }
 >--
->2.34.1
+>2.35.1
 
 
