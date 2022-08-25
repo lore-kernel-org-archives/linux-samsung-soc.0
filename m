@@ -2,53 +2,53 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31821C48BE4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Aug 2022 11:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2F3C04AA5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Aug 2022 11:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240952AbiHYLeV (ORCPT
+        id S241713AbiHYLej (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Aug 2022 07:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49664 "EHLO
+        Thu, 25 Aug 2022 07:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241661AbiHYLdv (ORCPT
+        with ESMTP id S241718AbiHYLeP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Aug 2022 07:33:51 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A64AF4AE
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 04:33:46 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id l8so10301755lfc.12
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 04:33:45 -0700 (PDT)
+        Thu, 25 Aug 2022 07:34:15 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E548EAF48E
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 04:33:49 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id n15so6739114lfe.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 04:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc;
-        bh=uAj6PCuWD0Jdh8SbbVYKmqZvEbRpC9H1z0Nl20Cruac=;
-        b=fvXfXXHh5BGdtsz5EycnPawDsbQFYVSc5NIkbHOCBoaR5sbVKjYhKf0riJxZtsJPn0
-         yLkXyOcZ7O7JIzBtCuFXAdx1hymKNbd4gs+d7nj0e4VvWl4XrfrySGc/UWWzKKDZEhIK
-         PMz9IhmKovNl6wE5mKmlZCJbkOZLvYujeJ9+Z+PdLEovtKAiynUSGlYTdFQH+L9I1o33
-         aPzbFi0vyGjMUfUK4pO5yOoysBDhVf7GAzunWBiJtmNBaA9A23nonR7Uj/jAlkl5+u/w
-         Pqke31tLYylGnmywof9M0uE0+6i88SzV9fj6yOGafWmodh1kwDgsqFgTQIZDW9VnaqaW
-         R9Dw==
+        bh=Tq0s9B485yoq3tV5HmxMkObKnV3Mr1APkcEYUXUMsb0=;
+        b=lFelrwdgyU0S7QCGZG4WC4OD1o/tcyBXsjjSh54M9wMD+cwqfLYayIQCN/GqBHbHxZ
+         oLJ4G1d44o0bIJYbyVz5CWA/FevFy7L/b1qtl34SgeGctg7orXBdL5PKecyygfI/2xxt
+         tVAjPszcQXAkc8iaB48dn+ob+iWxr8wpQwR1eUdvngppmoBJugWt3nsMqfGJmVFm5V7d
+         1p4OuhZCQYxqHYTII8q9h+li56i6UW2cdgAPwri77xsWvxNhx7hPFyJtp0TZ/oz85ZFd
+         95+sRXVj0Rxap9qMy+GQz2N9aXsJDQTPP77tlYUWwgSJ7D8MGXKP+Nh3J01EnpYPRZUn
+         98WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=uAj6PCuWD0Jdh8SbbVYKmqZvEbRpC9H1z0Nl20Cruac=;
-        b=KUwWBCY74SE+WALdZ5f9fU94YB3fqWuigSikRIiQ00M4mIZUFpZSGdahaMuqidOReI
-         Udpv3uB0hx9HuoxNzHGysboEUrfgc9wc16DV0jb4GB/Mi6yFGqfdIPD0GTR2H3mXnHNW
-         Rl+r5yPV0K11LnMhR4qb8akI2zSWv5+X120WEgkosPwRauAeqIP7DBadViYfUf4046jS
-         l+ckTLipmsP03YkUyZUHkESkmystCm0VhsOAf7ru3ZFsHJ06jA4HEHlNjlpcqRlCP3GQ
-         E057mY1yTTopiU/Ww6s/ZtKPmqEl0J7EQO+D95seZsyK0Hfq3Rvr+TxjifHkCMgllhDh
-         gpLA==
-X-Gm-Message-State: ACgBeo0uJtvGni4IKzmS6r8S4CpmUlK3zPxCIo1wA10WCRu2n5Taz0Dg
-        dyQcGg1aw7g+9eFoJRs39NftwQ==
-X-Google-Smtp-Source: AA6agR712qcvmFpt50SIccfBNtYn9ngIdkzCeLBRl3LE4oSeWQnKcFPJ0lH5Lj37t8pI5y2uiTBTEw==
-X-Received: by 2002:a05:6512:3f06:b0:492:f6b6:ad8b with SMTP id y6-20020a0565123f0600b00492f6b6ad8bmr993416lfa.544.1661427223942;
-        Thu, 25 Aug 2022 04:33:43 -0700 (PDT)
+        bh=Tq0s9B485yoq3tV5HmxMkObKnV3Mr1APkcEYUXUMsb0=;
+        b=sX209THKckq6oSXpypH9T7GiGjnrnFkRa3pLvsZDtrt+EqZ4d5p4hGCX3k1kERYryg
+         DEcHJOWxMBynHY4YJcOa0n5uXAbg6bKDjwh3I6PGQXzfKQGlxpu+KRm7MdqjADDSHD19
+         hwCWX1LPbaSnBETbeMbNLp89hBhaeFaNbL1VmsgchDyNe1toJCd+jN0J+WEpqVR3Tfwz
+         VfwrgmYSyaASuuxmeEBDLfBquO+jyCbRfnf1QzQsjbMvyuQg5uFgRjFQPeTWnzGNNQAv
+         KU9cgybDhxIIsvASDfOM6VdWjHaxRbGqCM5S0dm7TdcRrGk/qnk7awn74OVhG0o3eJE9
+         ZHzw==
+X-Gm-Message-State: ACgBeo2gkr+H865si8AprAOLi0kD10iTjlo7brT1CG1fbwOix4Rm3YpO
+        kCLsPLF5x6JL8qSenadOTY0HRA==
+X-Google-Smtp-Source: AA6agR7uYhTEmWfh0/JQDYwVaRIxA3JmwcnbxkFxOGoCltN/foI9prmdgFxeyJpRr7c/V2eZZ6Nk6w==
+X-Received: by 2002:a05:6512:2611:b0:478:da8f:e2d8 with SMTP id bt17-20020a056512261100b00478da8fe2d8mr990459lfb.460.1661427227697;
+        Thu, 25 Aug 2022 04:33:47 -0700 (PDT)
 Received: from krzk-bin.starman.ee (82.131.98.15.cable.starman.ee. [82.131.98.15])
-        by smtp.gmail.com with ESMTPSA id e18-20020a195012000000b0048b0aa2f87csm446764lfb.181.2022.08.25.04.33.42
+        by smtp.gmail.com with ESMTPSA id e18-20020a195012000000b0048b0aa2f87csm446764lfb.181.2022.08.25.04.33.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 04:33:43 -0700 (PDT)
+        Thu, 25 Aug 2022 04:33:46 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -96,9 +96,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/5] dt-bindings: clock: drop minItems equal to maxItems
-Date:   Thu, 25 Aug 2022 14:33:32 +0300
-Message-Id: <20220825113334.196908-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 5/5] dt-bindings: display: drop minItems equal to maxItems
+Date:   Thu, 25 Aug 2022 14:33:34 +0300
+Message-Id: <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
 References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
@@ -113,55 +113,151 @@ redundant piece to reduce size of code.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml   | 1 -
- .../devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml  | 2 --
- Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml    | 1 -
- 3 files changed, 4 deletions(-)
+ Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml   | 1 -
+ .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 --
+ Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 --
+ .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 --
+ .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 1 -
+ .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 1 -
+ .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 1 -
+ .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml  | 1 -
+ .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml   | 2 --
+ 9 files changed, 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-index 0abd6ba82dfd..82836086cac1 100644
---- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-+++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-@@ -23,7 +23,6 @@ properties:
-   clocks:
+diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml b/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
+index 2ebaa43eb62e..b19be0804abe 100644
+--- a/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml
+@@ -25,7 +25,6 @@ properties:
+     const: ldb
+ 
+   reg:
+-    minItems: 2
+     maxItems: 2
+ 
+   reg-names:
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+index 880bfe930830..3b609c19e0bc 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+@@ -66,13 +66,11 @@ properties:
+       2 DSI links.
+ 
+   assigned-clocks:
+-    minItems: 2
+     maxItems: 2
+     description: |
+       Parents of "byte" and "pixel" for the given platform.
+ 
+   assigned-clock-parents:
+-    minItems: 2
+     maxItems: 2
+     description: |
+       The Byte clock and Pixel clock PLL outputs provided by a DSI PHY block.
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
+index 716f921e3532..d9ad8b659f58 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml
+@@ -37,7 +37,6 @@ properties:
+ 
+   qcom,phy-rescode-offset-top:
+     $ref: /schemas/types.yaml#/definitions/int8-array
+-    minItems: 5
+     maxItems: 5
      description:
-       Common clock binding for CLK_IN, XTI/REF_CLK
+       Integer array of offset for pull-up legs rescode for all five lanes.
+@@ -49,7 +48,6 @@ properties:
+ 
+   qcom,phy-rescode-offset-bot:
+     $ref: /schemas/types.yaml#/definitions/int8-array
+-    minItems: 5
+     maxItems: 5
+     description:
+       Integer array of offset for pull-down legs rescode for all five lanes.
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
+index 921bfe925cd6..6380eeebb073 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-decon.yaml
+@@ -24,7 +24,6 @@ properties:
+       - samsung,exynos5433-decon-tv
+ 
+   clocks:
+-    minItems: 11
+     maxItems: 11
+ 
+   clock-names:
+@@ -59,7 +58,6 @@ properties:
+       - const: te
+ 
+   iommus:
+-    minItems: 2
+     maxItems: 2
+ 
+   iommu-names:
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
+index 7d405f2febcd..26e5017737a3 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos5433-mic.yaml
+@@ -24,7 +24,6 @@ properties:
+     const: samsung,exynos5433-mic
+ 
+   clocks:
 -    minItems: 2
      maxItems: 2
  
    clock-names:
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-index 6eaabb4d82ec..81f09df7147e 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-@@ -47,7 +47,6 @@ properties:
-     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+index 969bd8c563a5..c06f306e8d14 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+@@ -22,7 +22,6 @@ properties:
+     const: samsung,exynos7-decon
  
    clocks:
 -    minItems: 4
      maxItems: 4
  
    clock-names:
-@@ -64,7 +63,6 @@ properties:
-     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+index 5d5cc220f78a..210d856b3b57 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+@@ -27,7 +27,6 @@ properties:
+     const: 1
  
-   resets:
+   clocks:
 -    minItems: 2
      maxItems: 2
  
-   reset-names:
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
-index 9248bfc16d48..d5296e6053a1 100644
---- a/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
-+++ b/Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
-@@ -34,7 +34,6 @@ properties:
-     const: 1
+   clock-names:
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
+index dbdf0229d9f6..4755a73473c7 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml
+@@ -59,7 +59,6 @@ properties:
+     maxItems: 2
  
-   clock-output-names:
--    minItems: 3
-     maxItems: 3
-     description: Names for AP, CP and BT clocks.
+   power-domain-names:
+-    minItems: 2
+     maxItems: 2
  
+ allOf:
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+index 4154ae01ad13..5f4f0fb4b692 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+@@ -42,11 +42,9 @@ properties:
+     maxItems: 1
+ 
+   interconnects:
+-    minItems: 6
+     maxItems: 6
+ 
+   interconnect-names:
+-    minItems: 6
+     maxItems: 6
+ 
+   operating-points-v2:
 -- 
 2.34.1
 
