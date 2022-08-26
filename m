@@ -2,139 +2,115 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E5ECAAD7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Aug 2022 09:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0286ECAAD6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Aug 2022 10:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344092AbiHZJrZ (ORCPT
+        id S242795AbiHZKLE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 05:47:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46746 "EHLO
+        Fri, 26 Aug 2022 06:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344070AbiHZJrT (ORCPT
+        with ESMTP id S244907AbiHZKLC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Aug 2022 05:47:19 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDCCD630C
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 02:47:17 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id u24so1099514lji.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 02:47:17 -0700 (PDT)
+        Fri, 26 Aug 2022 06:11:02 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70742ACA16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 03:10:57 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id n15so1386325lfe.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 03:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=7/zLm6wYmIJxefFBwnQ6xTIL94BoETjg8bQDFj+L0EQ=;
-        b=HIdAzMqZp+CHMUJvXZDL4kQfbbHEzP9oyvYz1ueQNzPdJuFdzN/xiOWNVvAI5PypY2
-         phc7mMSMvv0CqdAk3VeOaSOG1rVJQhyoTe39lWgf29/RQtOFhD7d+DPbjBkxwJtUIkhy
-         cta3uW2ybEZW+YD8Fw2dkJR4gv7MOtmY6qC+zYXXmj+Z4l5AhOceFVfeylnXwXhn1Qg4
-         ld1fWsPQV5Kf/3HaxA9FJzTVAxTZPdCP38pgrmH64yfQ9etak3X7fthigbG+2fPn57OV
-         wm7dDnDP5PGUOjHBGcdSnq4ZOYoc68PuhJYJy371olT9dw/BL1IEEx4esBwhZD/7bnUm
-         gpNQ==
+        bh=zBsaAPXHP/WINN92NN7t+ecJR0ITtEiUOYhWSRxDrOo=;
+        b=ZUeoL8+bFhmGyi/2xXx0UdI4XZSmxqCoQ/yHxfiLH/DU9QQGvq9wEZGUVjYwgMXwKi
+         26HcnUPfHIWYzIKhYqQoZx90f3H0nrZfVGP/eqKhMhYGWJD04pqDRjmwvRzRM6h1tcaE
+         LRVVaFFo/wx3mmsFyOheVWHkOmEb2o1C4IziuaZBI94AH62n4M11qRSK7FOIrfQIzNf5
+         vThpod+1K9nDrs5ER0gKpQtabrijnomOc8918irJfKNNhsd2DNxbrg/VkjLVjWgoWFMf
+         kj7VPv/e9UqGXTgGWpvzn4orocfJ1/AjcFV9M5WeSnycQn0CMeGRZYnXfyhfkU9f+5aT
+         EtmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=7/zLm6wYmIJxefFBwnQ6xTIL94BoETjg8bQDFj+L0EQ=;
-        b=Z/eN/DplTzKObphn0TO0f3qL0t3FohK+l0wNFP6D3OotCtjnC3lzjX2QapI7+l884V
-         l1X36F7fsQ8vHW+uNJCiF4ntgw0PaFImBB6GoDWAvGEr3+DRtcbrSSRB7rL8q0DJBEtc
-         kjT/npZ8ZPA2QG8aDIODN3d/jkrQMW6dS3zhcYwZ1sdtPGFPoj6ip0uzzKpqpGAJ1YAF
-         /uFhq9B6iixJH0EiuQeOHjbNZ/iAfDA2fjxy7en7anKim59c9yN0uhLRAirP/h3cVEf2
-         FRrIptK4tWDyrmAJAol5qMipqMVdDlbGofKxT6eTyr2PDRsEYOekIlvJxBYot0uzl5lM
-         eOmw==
-X-Gm-Message-State: ACgBeo3BUWAC7n2Fjqljl1QF/qa0Dq5VWqerOd4vWudLsQ3T4OVkEM+T
-        NPtb5Ux+tPzkpTYOQmX8KiZC7A==
-X-Google-Smtp-Source: AA6agR4NooJqTIyf/F5iZCsGcw1gdJa0BYVeuEHWvl+KrvNFJZWMb3qoex5YNXUISP81L4uvAWNr2Q==
-X-Received: by 2002:a05:651c:179c:b0:261:8fbe:b729 with SMTP id bn28-20020a05651c179c00b002618fbeb729mr2140443ljb.114.1661507235107;
-        Fri, 26 Aug 2022 02:47:15 -0700 (PDT)
+        bh=zBsaAPXHP/WINN92NN7t+ecJR0ITtEiUOYhWSRxDrOo=;
+        b=UBZNhfD2ksL/0paA+ILFRqli3mRkbo2bqlMWZ80qbVfZxbPLrKkO1FZkNqj++eglbd
+         R4R+bwrKkAXBgXbrgd0166897b61t/To0iDZLjedeVpv7Puoi+K4fP4kRKwIAi92fGHT
+         cshiaCqkSJQN/L3FjQH9AqObTx8HyutFCQ9A2o8YtnFikBXi2ibqgBJsczDhPcDGYA9u
+         mMBjVymNP0/Cp/lNCAVtJybQVTAmq6MZ0iHtrv9UxZ1WJpNJ0ekWrL6ANccNO/IuJFhG
+         TEi4rMoWKWGgpVCjM0GL2gZxdjEGY1tI1ttVFG7JAFkMQcms49nGPXItCUOIIvIySvH2
+         ntmw==
+X-Gm-Message-State: ACgBeo38IXgvFmRzfqXTYBr91w8X0y5TfzaPxq6+XVz8qUCpMmry6Kc/
+        zCX0gyVL7V6HVXiRqJEkmhLbnA==
+X-Google-Smtp-Source: AA6agR5Ibvjx4/X46gslkNdnrORZcJxR+lxt0sY3ESbw+/23dXGNcAwyX3sJKgTU+5hglvPmE7IBFg==
+X-Received: by 2002:a05:6512:2248:b0:48a:f8f9:3745 with SMTP id i8-20020a056512224800b0048af8f93745mr2137147lfu.256.1661508655644;
+        Fri, 26 Aug 2022 03:10:55 -0700 (PDT)
 Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id q22-20020a194316000000b004931817c487sm320823lfa.197.2022.08.26.02.47.14
+        by smtp.gmail.com with ESMTPSA id s15-20020a056512314f00b0047f7419de4asm330732lfi.180.2022.08.26.03.10.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Aug 2022 02:47:14 -0700 (PDT)
-Message-ID: <e4c5a39e-6a47-6814-92f7-c751bd95bdf0@linaro.org>
-Date:   Fri, 26 Aug 2022 12:47:13 +0300
+        Fri, 26 Aug 2022 03:10:55 -0700 (PDT)
+Message-ID: <47e1460f-e775-d1cb-f622-ccac3044ff86@linaro.org>
+Date:   Fri, 26 Aug 2022 13:10:54 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.1.2
-Subject: Re: [PATCH 5/5] dt-bindings: display: drop minItems equal to maxItems
+Subject: Re: [PATCH] dt-bindings: display: Add missing
+ (unevaluated|additional)Properties on child nodes
 Content-Language: en-GB
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh@kernel.org>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Robert Foss <robert.foss@linaro.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Rob Clark <robdclark@gmail.com>,
         Abhinav Kumar <quic_abhinavk@quicinc.com>,
         Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Marek Vasut <marex@denx.de>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
- <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220823145649.3118479-11-robh@kernel.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220825113334.196908-5-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220823145649.3118479-11-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 25/08/2022 14:33, Krzysztof Kozlowski wrote:
-> minItems, if missing, are implicitly equal to maxItems, so drop
-> redundant piece to reduce size of code.
+On 23/08/2022 17:56, Rob Herring wrote:
+> In order to ensure only documented properties are present, node schemas
+> must have unevaluatedProperties or additionalProperties set to false
+> (typically).
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->   Documentation/devicetree/bindings/display/bridge/fsl,ldb.yaml   | 1 -
->   .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 --
->   Documentation/devicetree/bindings/display/msm/dsi-phy-10nm.yaml | 2 --
+>   Documentation/devicetree/bindings/display/arm,komeda.yaml        | 1 +
+>   Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
+>   Documentation/devicetree/bindings/display/msm/gpu.yaml           | 1 +
 
-For msm changes:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>   .../bindings/display/samsung/samsung,exynos7-decon.yaml          | 1 +
+>   .../devicetree/bindings/display/samsung/samsung,fimd.yaml        | 1 +
+>   5 files changed, 5 insertions(+)
 
->   .../bindings/display/samsung/samsung,exynos5433-decon.yaml      | 2 --
->   .../bindings/display/samsung/samsung,exynos5433-mic.yaml        | 1 -
->   .../bindings/display/samsung/samsung,exynos7-decon.yaml         | 1 -
->   .../devicetree/bindings/display/samsung/samsung,fimd.yaml       | 1 -
->   .../devicetree/bindings/display/tegra/nvidia,tegra20-gr3d.yaml  | 1 -
->   .../devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml   | 2 --
->   9 files changed, 13 deletions(-)
-> 
 
 -- 
 With best wishes
