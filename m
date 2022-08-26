@@ -2,200 +2,189 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17CDECAAD1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 25 Aug 2022 22:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEB1ECAAA3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Aug 2022 04:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239218AbiHYWb0 (ORCPT
+        id S234047AbiHZECO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 25 Aug 2022 18:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44702 "EHLO
+        Fri, 26 Aug 2022 00:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244430AbiHYWbZ (ORCPT
+        with ESMTP id S230357AbiHZECN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 25 Aug 2022 18:31:25 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0376EB941D
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 15:31:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1661466683; x=1693002683;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=pXWRUr7yy74YSO6PolHsHDXM3uM60SKPSfU0sqhXVlw=;
-  b=NI/Z0YMMdEQituBQFDlaEelY9ZKMYzdu/zae8J+H4t2B6ST7BP7f37Qb
-   HBfPZs/9Etc5c1nBYXcRildkX0oMyEQpBv0yZwBSBXVhUh2fIjAPp/Ypz
-   L0BOsHOUfnL3Ux+v4BO4oE/rCdcv9t+K9ngVUnly+KC1HUIweBg6l18bZ
-   q/W2hC5o3K7z2F5+naNb9n1v6p4kdj2uLJLwoFGbi3s23E7/UjgBvNYtb
-   cwsD9bTd/ox/o7Yh/OO1rvAnaMT/hnD0effVmth8Fr8k5X6wNWvzD5pu8
-   iIQLkS7aAzbSiUcfD4C96oRQ5ygkXRdUseJyjx7ICES0Pi9Y7KyJqW80J
-   A==;
-X-IronPort-AV: E=Sophos;i="5.93,264,1654531200"; 
-   d="scan'208";a="208130139"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Aug 2022 06:31:23 +0800
-IronPort-SDR: 5T5guJcMx9Rfco1v6vGNbQooJCRT9blLAm9+mbWru8f7n1sZgGq+GHu0b9o9S26/Y+KHD5pk9v
- ph8EN9zKAI2C0O8Yoy/hUR/mXcddL7bfX6M6QqwpCadNZyVI0irdWPiWs5JIwGiWoqsXEZuPZu
- UkB+NLiKaWtKdTavCQxbYnYruEho+LjUXP8G3twAbqJu6nkYQjSF7/PtHhHnXua6xdo9oSTzsW
- XL6kuzGK40URwOaEcvgWMmcKQw3iHpyouw9pr2ofU03lxTu/BQNdqj3Zky9lTeC+jsQS8z0VOO
- BmonPBpPAX2017NnFxQFEgvu
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2022 14:52:00 -0700
-IronPort-SDR: 6OjIXGGiFy4i8d1xdnGTV190z+sA1jdOnQK+uEEJDLKtvykjN0VaagO2/HP1zo3ESbHUM7INrj
- InkkKjce/HerF/W/VfL+Vb4gd9NSlrRFXR3+VnVFUDeH4qUPOCgYzAvN/tm94mBE90bcPZcgbL
- H7nYjCQxswQ3TEsbEN5Fwl0rAUQsxDap0wDuiwlQ6HBrk5tW/ixuikEJRtly/L8DRf+7BNNjX8
- kxyMpmgkE4d6xPPE/5Zv60/qRToCTvWSJEaksAqBx8NznZnyPvd+Cxa8K7VpI89sDD4z+k6aOD
- uzg=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2022 15:31:23 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4MDHkM27QKz1Rwry
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 15:31:23 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1661466682; x=1664058683; bh=pXWRUr7yy74YSO6PolHsHDXM3uM60SKPSfU
-        0sqhXVlw=; b=DS5CoFc3iYU7cDPy9qH82TgEIsNMbhoT3C6WeVO1k1n8lfF5jOd
-        4QX9dz+jZ2zBT6lYcxg+KWIWNsTkP0T39GuuYt+Fb54L+Ay16HMoRx/umfqkrCTA
-        5g07OD/6ZWQNFpgrYTCY3b5VmwPIe8ZVeKZjxn3TcnZkMTLaDFOZPDoCaKqF7Yu0
-        M57XRvGIQ4ULgKrfH+zmolhYlxi9tLSaf3wHIfcYiq0AucN2J/i/m6EHR3ZASpwa
-        y4jnhHL1vOGRndZWTAVPX6+j9lVqy63Znj9K+/KI1ssi/+aLLozx85ixW9f3Xqhd
-        u67xga7LZad0mOnZ764Wv9X5dqdJcnCFLTw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qIJSmCGANulS for <linux-samsung-soc@vger.kernel.org>;
-        Thu, 25 Aug 2022 15:31:22 -0700 (PDT)
-Received: from [10.225.163.46] (unknown [10.225.163.46])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4MDHk850sGz1RtVk;
-        Thu, 25 Aug 2022 15:31:12 -0700 (PDT)
-Message-ID: <bb0728d1-20fd-8b6d-5d42-a0c76b6d3e4b@opensource.wdc.com>
-Date:   Fri, 26 Aug 2022 07:31:11 +0900
+        Fri, 26 Aug 2022 00:02:13 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88F1C1402A
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Aug 2022 21:02:10 -0700 (PDT)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220826040205epoutp03ff5ff18bd4da5125d97a1e5db648c754~OyTEe-OKB0609506095epoutp03N
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 04:02:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220826040205epoutp03ff5ff18bd4da5125d97a1e5db648c754~OyTEe-OKB0609506095epoutp03N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1661486525;
+        bh=MBD3K3P3J3skXsq862gMYBryTHZ/3pcRsvpMXjV0TvM=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=sNfIaGURZO/F9rGXradWPE3A7NOSihH5Ag1pH0qf3YlCLwzCALvwQHUSCK1OCcwzH
+         PWAd04nMMiepZ3YTx16lVnHtlw0ABvNx8uYbU6BdpYR7NoePt5vQjWM852N5/2wwMo
+         0Wz4GfUETEA6/lltop3uA4AybdBy8+WMG0Hjpu6k=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220826040204epcas5p450102b67404effa9c07bff82bc6000b9~OyTDs2_rp2832928329epcas5p4d;
+        Fri, 26 Aug 2022 04:02:04 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4MDR3t6Gy9z4x9QB; Fri, 26 Aug
+        2022 04:02:02 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        16.0A.54060.AB548036; Fri, 26 Aug 2022 13:02:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220826040201epcas5p2f94d6fb31fbe023b369e00812692cbe1~OyTBUGhII0036000360epcas5p2J;
+        Fri, 26 Aug 2022 04:02:01 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220826040201epsmtrp194b806a07005414f551503093623c67f~OyTBR4xbN1288312883epsmtrp1N;
+        Fri, 26 Aug 2022 04:02:01 +0000 (GMT)
+X-AuditID: b6c32a4b-be1ff7000000d32c-a9-630845baf4d7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        47.BC.14392.9B548036; Fri, 26 Aug 2022 13:02:01 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220826040159epsmtip169049ef95172d791436b30987e887ee9~OyS_oTxDN2569325693epsmtip1R;
+        Fri, 26 Aug 2022 04:01:58 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Russell King \(Oracle\)'" <linux@armlinux.org.uk>
+Cc:     "'Ard Biesheuvel'" <ardb@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "'Alexandre Belloni'" <alexandre.belloni@bootlin.com>,
+        <linux-samsung-soc@vger.kernel.org>,
+        "'Tomer Maimon'" <tmaimon77@gmail.com>,
+        <linux-omap@vger.kernel.org>,
+        "'Avi Fishman'" <avifishman70@gmail.com>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>,
+        "'Tali Perry'" <tali.perry1@gmail.com>,
+        "'Nancy Yuen'" <yuenn@google.com>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Alan Stern'" <stern@rowland.harvard.edu>,
+        "'Patrice Chotard'" <patrice.chotard@foss.st.com>,
+        "'Patrick Venture'" <venture@google.com>,
+        "'Vladimir Zapolskiy'" <vz@mleia.com>,
+        "'Claudiu Beznea'" <claudiu.beznea@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Benjamin Fair'" <benjaminfair@google.com>
+In-Reply-To: <Ywe6/AKzVL/77Fhi@shell.armlinux.org.uk>
+Subject: RE: [RFC PATCH] usb: reduce kernel log spam on driver registration
+Date:   Fri, 26 Aug 2022 09:31:57 +0530
+Message-ID: <07c701d8b900$987dcef0$c9796cd0$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/5] dt-bindings: ata: drop minItems equal to maxItems
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Marek Vasut <marex@denx.de>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
-References: <20220825113334.196908-1-krzysztof.kozlowski@linaro.org>
- <20220825113334.196908-2-krzysztof.kozlowski@linaro.org>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220825113334.196908-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE+q3nSdIaCERkMHuLgOUMV1aT/lQIBke/SAkR46wUCQ7PKTq6/unbg
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xTZxje6Tk9pxCrh8LGJ0TX1TC8hNKOtp6qbGRecgguYVt0EcZK055R
+        QmmbXpC5izBCpUBBpwZW2QSEyhiz3AW0yJjgCHHMqGwuwHBC5K4pC5YiYy0HN/497/s9z/e8
+        z/flZcGcFTSElaoxUnqNXM1D/ZHWn3Zsj+g4yFIIGix84tScHSMW/34CEYslRQyi1DkKEwOd
+        zzEi55IDJZzTLRjR+GiQSdztKEOJC1XFCFE60MkgKu25MNF93umV9T3BiNNLv6JER1c2Rnia
+        pyDC2dWAECueHJgwe+xoTBB5d/AOTH5b9yk5XtyCke22YYwsbzSRjbUWlBwavI6SN76pw8im
+        qpPkkLsaIv+pOIeQF4bdEDnfuDWenZC2T0XJlZSeS2kUWmWqJiWaF/e+bL9MLBEII4RSYjeP
+        q5GnU9G8A4fjIw6lqr1hedwMudrkbcXLDQZe5Jv79FqTkeKqtAZjNI/SKdU6kY5vkKcbTJoU
+        voYy7hEKBG+IvcTkNNVUtRnR9Qdkjo8sYVlQ6aZ8yI8FcBGoH3EjPszBr0HA1ROeD/l7sQsC
+        ZwrKUbpYgMDt+hnohWJpOpdBHzghYG6YR+hiEgLW37KZPhaKR4C2S2bUh4Pw3eC85SbTR4Lx
+        ayh47BqDfQd+uBgstNi8JBYrEI8DVycyfW0EDwNXpr9fvYeNS0HOlUKExgGg7+uxVQzjr4Kr
+        s2UwPREXLI7bmbTXIdA9ZlnjBIPJnpuYzxfgDj8w46hbi3AAlJ11MWkcCKZuNWM0DgGTxWbM
+        Nw/ASVD5PIRuq8DsZcea9C3Qda8M8VFgfAdwdETSVhuBdWmMQSvZIM/ModlhIGfuPkLjUO+D
+        FqyZei+vOIWdhl6zrQtmWxfMti6A7X+zcgiphTZTOkN6CmUQ66I01PH/vluhTW+EVjdhZ1wb
+        9NfoU343xGBB3RBgwbwg9p5eRMFhK+WfnKD0WpnepKYM3ZDY+9pn4JCXFVrvKmmMMqFIKhBJ
+        JBKRNEoi5AWzz+2CFBw8RW6k0ihKR+lf6Bgsv5AsRsmDz5zfeVpPMlgXk/qOSoqFv6PLX2rn
+        /7Qzj+CbXRtlD91Z7dUfYb9wfyjKrloeXhitvePqEMcGtxsLS/aWnjXMPc4/Yi374pk043P9
+        0weJqprDnbbbBfMxFtuuZXMhJ/u9FevRJIasJ4vBDP1wYALhk38gE4alR52JmdDHLeqwhoSZ
+        Y73HUwrcGb32hJGtW1wxoUXV28bZN5IKZn9kFurCEyIr3k79ea91U8C92A3stnCBdMQSVnOf
+        f2woPMq/Jb8/r8Yj2l4v8LyULNtw2X1iG/5VnTa2/5nI8XrriuLdUeCf2KxsYr2z4DQlBy4/
+        zLv1Abvplcrrua1brMrh/YEXeYhBJRfuhPUG+b9K7Fi3kgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsWy7bCSnO5OV45kg6f7jCza3y1jt/j55T2j
+        xc/pfUwWM/Y+YLY4v+8Pu0Xz4vVsFntfb2W32PT4GqvF5V1z2CxmL+lnsZhxfh+TxaJlrcwW
+        h6buBWo7+Z7dYsLvC2wWuw40slv82vKK0WLvgY0sFv9/NTNbtP1axuYg4nH52kVmj3lrqj2e
+        9m9l99g56y67x4JNpR6bVnWyedy5tofNY//cNewem5fUe9z5sZTR49/CKSwes+/+YPT4vEku
+        gDeKyyYlNSezLLVI3y6BK+PV0jaWgtOCFU/v/WZvYJzB38XIySEhYCLx+3UrUxcjF4eQwG5G
+        ib8rJjBCJKQlrm+cwA5hC0us/PecHaLoOaPEhHONLCAJNgFdiR2L29hAbBEBc4mpnUdYQYqY
+        BY6zSdz+8hSq4x6jxLe1p8DGcgqYSnzbOguog4NDWMBbYvuLCpAwi4CqxLrXq1lBbF4BS4nm
+        dT0sELagxMmZT1hAypkF9CTaNoJNYRaQl9j+dg4zxHEKEj+fLmOFuMFN4tCTThaIGnGJl0eP
+        sE9gFJ6FZNIshEmzkEyahaRjASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4MSg
+        pbmDcfuqD3qHGJk4GA8xSnAwK4nwWh1jSRbiTUmsrEotyo8vKs1JLT7EKM3BoiTOe6HrZLyQ
+        QHpiSWp2ampBahFMlomDU6qBKW26h0nai5rlrAl/82880kyZ6B3o+LkjXsLiauMd+aPvA7ZN
+        zmnO53kkM6P5JUfEzaUmTAGTTs1ekfmn49sSJc3WmbO712wJrY6S2+9yplMzpEDk0bWCWHOf
+        fR+qJt/MEiirk27p9/zf/Wr7iluvzjD4a91nDfD8mOPMez0obpsQV9vUWWbqy8+qrP5qZ+LM
+        efjKikS9wun6TQ1v+b8c3TqZZ1HhX9/u31sLco/zeczeIyaw54e+mkx6e8f8v6YXaqx86kUd
+        TvI8zzN9F6M9w+b1yy+5D+9MYJ25WP3LjB072e6IS926kfFX2zynW0ZM6cqFa7fEV61jvCj/
+        lPdFE9fjVJ+nEyZqRTvU/VR2VmIpzkg01GIuKk4EAFXyc9F7AwAA
+X-CMS-MailID: 20220826040201epcas5p2f94d6fb31fbe023b369e00812692cbe1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220825170354epcas5p28a5f1a4b13507b5c40ca235560a6ba56
+References: <CGME20220825170354epcas5p28a5f1a4b13507b5c40ca235560a6ba56@epcas5p2.samsung.com>
+        <20220825170327.674446-1-ardb@kernel.org>
+        <065601d8b8a7$6fee5850$4fcb08f0$@samsung.com>
+        <Ywe6/AKzVL/77Fhi@shell.armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 8/25/22 20:33, Krzysztof Kozlowski wrote:
-> minItems, if missing, are implicitly equal to maxItems, so drop
-> redundant piece to reduce size of code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Acked-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-
-> ---
->  Documentation/devicetree/bindings/ata/brcm,sata-brcm.yaml       | 1 -
->  .../devicetree/bindings/ata/cortina,gemini-sata-bridge.yaml     | 2 --
->  Documentation/devicetree/bindings/ata/sata_highbank.yaml        | 1 -
->  3 files changed, 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/brcm,sata-brcm.yaml b/Documentation/devicetree/bindings/ata/brcm,sata-brcm.yaml
-> index 235a93ac86b0..3766cc80cb17 100644
-> --- a/Documentation/devicetree/bindings/ata/brcm,sata-brcm.yaml
-> +++ b/Documentation/devicetree/bindings/ata/brcm,sata-brcm.yaml
-> @@ -30,7 +30,6 @@ properties:
->            - const: brcm,bcm-nsp-ahci
->  
->    reg:
-> -    minItems: 2
->      maxItems: 2
->  
->    reg-names:
-> diff --git a/Documentation/devicetree/bindings/ata/cortina,gemini-sata-bridge.yaml b/Documentation/devicetree/bindings/ata/cortina,gemini-sata-bridge.yaml
-> index 21a90975593b..529093666508 100644
-> --- a/Documentation/devicetree/bindings/ata/cortina,gemini-sata-bridge.yaml
-> +++ b/Documentation/devicetree/bindings/ata/cortina,gemini-sata-bridge.yaml
-> @@ -22,7 +22,6 @@ properties:
->      maxItems: 1
->  
->    resets:
-> -    minItems: 2
->      maxItems: 2
->      description: phandles to the reset lines for both SATA bridges
->  
-> @@ -32,7 +31,6 @@ properties:
->        - const: sata1
->  
->    clocks:
-> -    minItems: 2
->      maxItems: 2
->      description: phandles to the compulsory peripheral clocks
->  
-> diff --git a/Documentation/devicetree/bindings/ata/sata_highbank.yaml b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-> index 49679b58041c..f23f26a8f21c 100644
-> --- a/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-> +++ b/Documentation/devicetree/bindings/ata/sata_highbank.yaml
-> @@ -52,7 +52,6 @@ properties:
->      minItems: 1
->      maxItems: 8
->      items:
-> -      minItems: 2
->        maxItems: 2
->  
->    calxeda,tx-atten:
 
 
--- 
-Damien Le Moal
-Western Digital Research
+>-----Original Message-----
+>From: Russell King (Oracle) [mailto:linux@armlinux.org.uk]
+>Sent: Thursday, August 25, 2022 11:40 PM
+>To: Alim Akhtar <alim.akhtar@samsung.com>
+>Cc: 'Ard Biesheuvel' <ardb@kernel.org>; linux-kernel@vger.kernel.org;
+>'Alexandre Belloni' <alexandre.belloni@bootlin.com>; linux-samsung-
+>soc@vger.kernel.org; 'Tomer Maimon' <tmaimon77@gmail.com>; linux-
+>omap@vger.kernel.org; 'Avi Fishman' <avifishman70@gmail.com>; 'Greg
+>Kroah-Hartman' <gregkh@linuxfoundation.org>; linux-usb@vger.kernel.org;
+>'Tali Perry' <tali.perry1@gmail.com>; 'Nancy Yuen' <yuenn@google.com>;
+>'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>; 'Alan Stern'
+><stern@rowland.harvard.edu>; 'Patrice Chotard'
+><patrice.chotard@foss.st.com>; 'Patrick Venture' <venture@google.com>;
+>'Vladimir Zapolskiy' <vz@mleia.com>; 'Claudiu Beznea'
+><claudiu.beznea@microchip.com>; linux-arm-kernel@lists.infradead.org;
+>'Benjamin Fair' <benjaminfair@google.com>
+>Subject: Re: [RFC PATCH] usb: reduce kernel log spam on driver registration
+>
+>On Thu, Aug 25, 2022 at 10:53:44PM +0530, Alim Akhtar wrote:
+>> >Drivers are typically supposed to be quiet unless they are actually
+>> >probed,
+>> but
+>> >for some reason, USB host controllers seem to be exempt from this
+>> >rule, and happily broadcast their existence into the kernel log at
+>> >boot even if the hardware in question is nowhere to be found.
+>> >
+>> >Let's fix that, and remove these pr_info() calls.
+>> >
+>> How about just change pr_info() to pr_debug() instead?
+>
+>Do the messages serve a useful purpose that the initcall_debug kernel
+>parameter (that doesn't require #define DEBUG to be set while compiling and
+>thus can be used with any kernel) doesn't provide?
+>
+Ah, right,  initcall_debug will do the job.
+So removing pr_info() from init call looks good.
+Thanks.
+
+Hi Ard
+Feel free to add 
+
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+
+>--
+>RMK's Patch system: https://protect2.fireeye.com/v1/url?k=3b37dc19-
+>5abcc93c-3b365756-74fe485cbff6-6a25f0b5c8476bae&q=1&e=752dac9b-cfef-
+>4919-8665-
+>8a220aac5d96&u=https%3A%2F%2Fwww.armlinux.org.uk%2Fdeveloper%2Fp
+>atches%2F
+>FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+
