@@ -2,117 +2,97 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0286ECAAD6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Aug 2022 10:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894F0ECAAA3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Aug 2022 13:34:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242795AbiHZKLE (ORCPT
+        id S1344381AbiHZNeH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 06:11:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39704 "EHLO
+        Fri, 26 Aug 2022 09:34:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244907AbiHZKLC (ORCPT
+        with ESMTP id S1344369AbiHZNeF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Aug 2022 06:11:02 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70742ACA16
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 03:10:57 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id n15so1386325lfe.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 03:10:57 -0700 (PDT)
+        Fri, 26 Aug 2022 09:34:05 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9839DC5F5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 06:34:03 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-32a09b909f6so37092677b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 06:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=zBsaAPXHP/WINN92NN7t+ecJR0ITtEiUOYhWSRxDrOo=;
-        b=ZUeoL8+bFhmGyi/2xXx0UdI4XZSmxqCoQ/yHxfiLH/DU9QQGvq9wEZGUVjYwgMXwKi
-         26HcnUPfHIWYzIKhYqQoZx90f3H0nrZfVGP/eqKhMhYGWJD04pqDRjmwvRzRM6h1tcaE
-         LRVVaFFo/wx3mmsFyOheVWHkOmEb2o1C4IziuaZBI94AH62n4M11qRSK7FOIrfQIzNf5
-         vThpod+1K9nDrs5ER0gKpQtabrijnomOc8918irJfKNNhsd2DNxbrg/VkjLVjWgoWFMf
-         kj7VPv/e9UqGXTgGWpvzn4orocfJ1/AjcFV9M5WeSnycQn0CMeGRZYnXfyhfkU9f+5aT
-         EtmA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=qiR3kqY1FtS7aluiuV2htyDwOrHtB3ABTNirVnY7LY0=;
+        b=Badek9Z3Zw7k7MP3T3YzVdM7CAxTgNBC24Y9sxs8xUcI7ApWgF7W8s+Gcvz5ZVhKP1
+         Gv/BM4JpKuQ0UsB3GLYAcuMHJrwhuMYNb4FXaxY6qW5KzLK0QVcBuDwguYH4jNNxTedj
+         lCUZuv+5g6OWaGpzsg7CujNCCX8jo0zwxY/d62havl0hP9HtOY07Lla1ygso+jhceuRo
+         c6zerpixbQK+eKtQ2/j8/OVTJ7t+7dCHSEbF6H4JAlv0ncMGq4l8alqAwd7ZBJWq49W7
+         dduQbKTdmgNjW5trp2/imaB1kqDb2eJN79QRGfSzutp/zKzz9em/stAFPeeyWGJku245
+         agtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=zBsaAPXHP/WINN92NN7t+ecJR0ITtEiUOYhWSRxDrOo=;
-        b=UBZNhfD2ksL/0paA+ILFRqli3mRkbo2bqlMWZ80qbVfZxbPLrKkO1FZkNqj++eglbd
-         R4R+bwrKkAXBgXbrgd0166897b61t/To0iDZLjedeVpv7Puoi+K4fP4kRKwIAi92fGHT
-         cshiaCqkSJQN/L3FjQH9AqObTx8HyutFCQ9A2o8YtnFikBXi2ibqgBJsczDhPcDGYA9u
-         mMBjVymNP0/Cp/lNCAVtJybQVTAmq6MZ0iHtrv9UxZ1WJpNJ0ekWrL6ANccNO/IuJFhG
-         TEi4rMoWKWGgpVCjM0GL2gZxdjEGY1tI1ttVFG7JAFkMQcms49nGPXItCUOIIvIySvH2
-         ntmw==
-X-Gm-Message-State: ACgBeo38IXgvFmRzfqXTYBr91w8X0y5TfzaPxq6+XVz8qUCpMmry6Kc/
-        zCX0gyVL7V6HVXiRqJEkmhLbnA==
-X-Google-Smtp-Source: AA6agR5Ibvjx4/X46gslkNdnrORZcJxR+lxt0sY3ESbw+/23dXGNcAwyX3sJKgTU+5hglvPmE7IBFg==
-X-Received: by 2002:a05:6512:2248:b0:48a:f8f9:3745 with SMTP id i8-20020a056512224800b0048af8f93745mr2137147lfu.256.1661508655644;
-        Fri, 26 Aug 2022 03:10:55 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id s15-20020a056512314f00b0047f7419de4asm330732lfi.180.2022.08.26.03.10.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Aug 2022 03:10:55 -0700 (PDT)
-Message-ID: <47e1460f-e775-d1cb-f622-ccac3044ff86@linaro.org>
-Date:   Fri, 26 Aug 2022 13:10:54 +0300
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=qiR3kqY1FtS7aluiuV2htyDwOrHtB3ABTNirVnY7LY0=;
+        b=c3kUtY2PxGdjcgFGQbQkJifA561EPh1ywDZOgh/snWFizvAkM9ELlCqOVOE60p0sAE
+         HrXm8i1TIzJ1j/cS6R2l03YAkmf+Mr4kZBaGWthu5TMBOVkTWjzaXl7Bww25PorGjD8R
+         GfKPPn4kj6aQTCyJDUqE6mTyrM6PLrPIbPggW0pUH69pKd80JirILyCO94OvAEV4DTll
+         LgKdS/oIf9VUgq8gmKacmoZFG/niD7fOHASYbEng1fllHHlVpCh7nDQvfggM3mRidWtw
+         WRcdMVvFQj3nE/BhOgLrcne8wB9bBWjet0pmihEtht3RxEU6veu6iETlooah0IHIkh5V
+         bifw==
+X-Gm-Message-State: ACgBeo2aPHKcZLicg4DIc/Ifv91cPfi53D9NkAQuv6H7AIkc6D1xbUXv
+        o/EzEZ7rgfFmj3mFxY56TokRE5SVP8l7YMAo9A96mA==
+X-Google-Smtp-Source: AA6agR4cSYDUjHjKqgs9zKaZ58NNESabUJfIrLT+OTCGH4HwSfACpDx/ctbx5ozgIrEgXjQk7zDpKuMhmKfrTiLRGm0=
+X-Received: by 2002:a05:6902:124e:b0:668:222c:e8da with SMTP id
+ t14-20020a056902124e00b00668222ce8damr7302689ybu.383.1661520843052; Fri, 26
+ Aug 2022 06:34:03 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH] dt-bindings: display: Add missing
- (unevaluated|additional)Properties on child nodes
-Content-Language: en-GB
-To:     Rob Herring <robh@kernel.org>,
-        "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
+References: <20220823145649.3118479-6-robh@kernel.org>
+In-Reply-To: <20220823145649.3118479-6-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 26 Aug 2022 15:33:51 +0200
+Message-ID: <CACRpkdZ3syQzLaZJ1aksB6o7Q_xOMGSC1RfT_9iVYgpXHi_mfw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: Add missing (unevaluated|additional)Properties
+ on child nodes
+To:     Rob Herring <robh@kernel.org>
+Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220823145649.3118479-11-robh@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220823145649.3118479-11-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Sowjanya D <lakshmi.sowjanya.d@intel.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Andy Teng <andy.teng@mediatek.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 23/08/2022 17:56, Rob Herring wrote:
+On Tue, Aug 23, 2022 at 4:57 PM Rob Herring <robh@kernel.org> wrote:
+
 > In order to ensure only documented properties are present, node schemas
 > must have unevaluatedProperties or additionalProperties set to false
 > (typically).
-> 
+>
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   Documentation/devicetree/bindings/display/arm,komeda.yaml        | 1 +
->   Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
->   Documentation/devicetree/bindings/display/msm/gpu.yaml           | 1 +
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
+Patch applied to the pinctrl tree for v6.1
 
->   .../bindings/display/samsung/samsung,exynos7-decon.yaml          | 1 +
->   .../devicetree/bindings/display/samsung/samsung,fimd.yaml        | 1 +
->   5 files changed, 5 insertions(+)
-
-
--- 
-With best wishes
-Dmitry
-
+Yours,
+Linus Walleij
