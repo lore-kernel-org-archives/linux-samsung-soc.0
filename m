@@ -2,97 +2,143 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894F0ECAAA3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 26 Aug 2022 13:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E03ECAAD4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Aug 2022 08:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344381AbiHZNeH (ORCPT
+        id S229673AbiH2IxN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 09:34:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58540 "EHLO
+        Mon, 29 Aug 2022 04:53:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344369AbiHZNeF (ORCPT
+        with ESMTP id S229463AbiH2IxM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 26 Aug 2022 09:34:05 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9839DC5F5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 06:34:03 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-32a09b909f6so37092677b3.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2022 06:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=qiR3kqY1FtS7aluiuV2htyDwOrHtB3ABTNirVnY7LY0=;
-        b=Badek9Z3Zw7k7MP3T3YzVdM7CAxTgNBC24Y9sxs8xUcI7ApWgF7W8s+Gcvz5ZVhKP1
-         Gv/BM4JpKuQ0UsB3GLYAcuMHJrwhuMYNb4FXaxY6qW5KzLK0QVcBuDwguYH4jNNxTedj
-         lCUZuv+5g6OWaGpzsg7CujNCCX8jo0zwxY/d62havl0hP9HtOY07Lla1ygso+jhceuRo
-         c6zerpixbQK+eKtQ2/j8/OVTJ7t+7dCHSEbF6H4JAlv0ncMGq4l8alqAwd7ZBJWq49W7
-         dduQbKTdmgNjW5trp2/imaB1kqDb2eJN79QRGfSzutp/zKzz9em/stAFPeeyWGJku245
-         agtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=qiR3kqY1FtS7aluiuV2htyDwOrHtB3ABTNirVnY7LY0=;
-        b=c3kUtY2PxGdjcgFGQbQkJifA561EPh1ywDZOgh/snWFizvAkM9ELlCqOVOE60p0sAE
-         HrXm8i1TIzJ1j/cS6R2l03YAkmf+Mr4kZBaGWthu5TMBOVkTWjzaXl7Bww25PorGjD8R
-         GfKPPn4kj6aQTCyJDUqE6mTyrM6PLrPIbPggW0pUH69pKd80JirILyCO94OvAEV4DTll
-         LgKdS/oIf9VUgq8gmKacmoZFG/niD7fOHASYbEng1fllHHlVpCh7nDQvfggM3mRidWtw
-         WRcdMVvFQj3nE/BhOgLrcne8wB9bBWjet0pmihEtht3RxEU6veu6iETlooah0IHIkh5V
-         bifw==
-X-Gm-Message-State: ACgBeo2aPHKcZLicg4DIc/Ifv91cPfi53D9NkAQuv6H7AIkc6D1xbUXv
-        o/EzEZ7rgfFmj3mFxY56TokRE5SVP8l7YMAo9A96mA==
-X-Google-Smtp-Source: AA6agR4cSYDUjHjKqgs9zKaZ58NNESabUJfIrLT+OTCGH4HwSfACpDx/ctbx5ozgIrEgXjQk7zDpKuMhmKfrTiLRGm0=
-X-Received: by 2002:a05:6902:124e:b0:668:222c:e8da with SMTP id
- t14-20020a056902124e00b00668222ce8damr7302689ybu.383.1661520843052; Fri, 26
- Aug 2022 06:34:03 -0700 (PDT)
+        Mon, 29 Aug 2022 04:53:12 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D77C5A158;
+        Mon, 29 Aug 2022 01:53:10 -0700 (PDT)
+Received: from mail-ed1-f54.google.com ([209.85.208.54]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1M6UuX-1oV2QG0qU5-006wee; Mon, 29 Aug 2022 10:53:09 +0200
+Received: by mail-ed1-f54.google.com with SMTP id a36so5416614edf.5;
+        Mon, 29 Aug 2022 01:53:09 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2riAW7/qNEOVTnGTC4bJx4eLD7rRPQaKHwQ9R+wfTY2TVVgwC9
+        DObtGsbBLXYfNIVtoa43tqmLRSARv0mGrZIUMwM=
+X-Google-Smtp-Source: AA6agR4dO9Qog99EOhFMYD2/TUvDUFPeLAFKpCKJySAtY2CWxJsmH8fvbDozC2seipJY5siIbg1N/2rhc6q5GDAswIQ=
+X-Received: by 2002:a17:907:d0b:b0:741:7ca6:a2b with SMTP id
+ gn11-20020a1709070d0b00b007417ca60a2bmr3580848ejc.654.1661763177783; Mon, 29
+ Aug 2022 01:52:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220823145649.3118479-6-robh@kernel.org>
-In-Reply-To: <20220823145649.3118479-6-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 26 Aug 2022 15:33:51 +0200
-Message-ID: <CACRpkdZ3syQzLaZJ1aksB6o7Q_xOMGSC1RfT_9iVYgpXHi_mfw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Add missing (unevaluated|additional)Properties
- on child nodes
-To:     Rob Herring <robh@kernel.org>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+References: <20220818135522.3143514-1-arnd@kernel.org>
+In-Reply-To: <20220818135522.3143514-1-arnd@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 29 Aug 2022 10:52:41 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1tsby7+xfKTQaaBQZ4t-=uWG5Dtbcn_jPEsSMG_YVHgA@mail.gmail.com>
+Message-ID: <CAK8P3a1tsby7+xfKTQaaBQZ4t-=uWG5Dtbcn_jPEsSMG_YVHgA@mail.gmail.com>
+Subject: Re: [PATCH 00/11] ARM: defconfig cleanup
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Qin Jian <qinjian@cqplus1.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Sowjanya D <lakshmi.sowjanya.d@intel.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Andy Teng <andy.teng@mediatek.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Shannon Nelson <snelson@pensando.io>,
+        Peter Chen <peter.chen@nxp.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:/EcVK/F1GzKJg7nI3gnx3l2/fiz8nAQrDCtoD8KunxCnbGLi+7x
+ wou1KG1wFlZgmfaKCW3Y/bWTNMRPmBIhC8qgdkgfK74v6HyrxWjhFowjUEZVuhv7YUyczz/
+ W9gU4s3/TJuGjFMxEADckk9m11NT1n8B8Seif14yMZ5BZHAY2y0RlIFTzOTuqtmLt47IlSQ
+ 5FiFQ4K612imzNyrfXpTg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hyZpA9LylN8=:QfBKmGOitqo2UKo5+9ZcPQ
+ /dNHHwc6qA1RDTSwmbtZ744H4HTnJFbfDY134iuzwdf/80vl11WliIqpIWQfbOy3i9C9SCF47
+ KGxIzGjq/HAc3+QeB8rOyNjEWu6kH0CFMGw09O4Vs5O2AXFFkbex37kSJoHwagvvos77pSiY6
+ SRjqxCeP2LHkuHuUZM2vjAKqe8W88N9TvmjGJwJ9LxDVDwLanPhF/7APq+atg1KuLUpIUnW3a
+ J+WFRj/ugCVlpQo4bY4xWkwjmnBQDq3IbI+JWU9MOlixgyZ3IE6nYzkbuDDzY7oG4w2Af0gZ/
+ nuz0eMLlhFzvBRsXFrZgtDkw6R1xGEGt6+nW8/WtnNwgHBzk2Wp9c7OFmjziLAmCNw9fKLJcY
+ spO+KPsES8yAD3WTRrFPKzJO1V80GcapY7YGRnGfdlVILmL/8Ud6V/p5c7NDsxflgj1vmxExu
+ mFNOkFqd7XHbbp2UUjQJJ7Utgfvtqx9p/rzDMBRiiskgUPwkTs8El/Wswt5tWNgqtNpQFg43l
+ 0TZfScNgjdg51VaEbhFjxPjL70orSb7ll5pdwU9+QiejRCi8E8bNFKx1azdHUZrXCPPdYOW5b
+ KdFQ4N3xICd7ihSYqJGDE98V6LCBYLexLDLVe6NZ3HOhZddx66iC2nW0RV4Ens1CwkDCNwMgX
+ MNsuy4rFYYK5OtBYXG1ar+VvDX0pOihL+w0Dzh43cHd7kITxV0wxHEBoN/WJwLuqeYArZFx9j
+ 6/fZHZXyJFR/vgEKUMk56njnC+iB/GceKR0V7ef4BrLooLZjh1rFOl8FKautDgyaXcKZqLHWg
+ MUDSQR1mo94DzpsbNIJ4b39+sjUpcf246Vl1p7S0m/jNS916t1KFHnYeDWThoB/qMJwxDc9bi
+ Vt/hVEaJMQe1HlxV1nHw==
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 23, 2022 at 4:57 PM Rob Herring <robh@kernel.org> wrote:
-
-> In order to ensure only documented properties are present, node schemas
-> must have unevaluatedProperties or additionalProperties set to false
-> (typically).
+On Thu, Aug 18, 2022 at 3:55 PM Arnd Bergmann <arnd@kernel.org> wrote:
 >
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> I have continued the cleanup of the multi_*_defconfig files, and
+> reordered the other files according to the 'make savedefconfig'
+> output as before.
+>
+> I would like to queue these up for 6.1, though the last two
+> should probably be considered bugfixes and merged for 6.0.
+>
+> Since a third of the defconfig files are for machines that
+> are now marked as unused, I skipped those files. There are still
+> a few things that get removed by 'make savedefconfig' as they
+> now get selected by some driver:
+>
+> -CONFIG_SERIAL_BCM63XX=y
+> -CONFIG_SND_AUDIO_GRAPH_CARD=m
+> -CONFIG_NEW_LEDS=y
+> -CONFIG_LEDS_TRIGGERS=y
+> -CONFIG_TEGRA20_APB_DMA=y
+>
+> I think for those we should follow up with patches to remove the
+> 'select' statements.
 
-Patch applied to the pinctrl tree for v6.1
+I dropped the last patch that Greg has already picked up, and merged the
+rest into the arm/defconfig branch of the soc tree.
 
-Yours,
-Linus Walleij
+Thanks for the Acks.
+
+        Arnd
