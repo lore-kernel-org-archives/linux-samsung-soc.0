@@ -2,203 +2,100 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 107A6ECAAD4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Aug 2022 19:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740FAC0502C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 29 Aug 2022 19:55:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbiH2TmT (ORCPT
+        id S229796AbiH2Tz2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 29 Aug 2022 15:42:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
+        Mon, 29 Aug 2022 15:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiH2TmS (ORCPT
+        with ESMTP id S230006AbiH2TzS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 29 Aug 2022 15:42:18 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76FB47332E
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Aug 2022 12:42:13 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id u9so17815815ejy.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Aug 2022 12:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=6cTy6keoa6b646vo8Js7s0CIFmnj1Q2o4aqvygA4K3o=;
-        b=DFxjElR5msx7cZgIJRZPd43/YEwRZgLSkWluSuIlAaCJTw3xRblAbfxzDvQ6842Ix7
-         lJM5BC5VPvtKp9PDOjeXt1Vnmzjfx095NvtvDOLSh1q2LsieFFZt2W6oFuEFqk/MDV1P
-         9s0c1LvOjVKHDYYmeTs18q9039vwHM10Xbmk2o/kXvKcP2Y7spxlh9mSz7JgxBqRS1m/
-         mutRWNbZ7eQO6MGyGmXHBTVYPnJ9YHLX6xtlNC7geBZU8Kw2NAHci3irYScaPsiQpzjN
-         Lrh82iQHzutGhmJaFb/BuuC7s54OFTIpiFPEVac8/EJghj/RPSjxFHLjcf3KvHYLs5Yl
-         /GwQ==
+        Mon, 29 Aug 2022 15:55:18 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B07546201;
+        Mon, 29 Aug 2022 12:55:09 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-11c4d7d4683so11761346fac.8;
+        Mon, 29 Aug 2022 12:55:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=6cTy6keoa6b646vo8Js7s0CIFmnj1Q2o4aqvygA4K3o=;
-        b=aS//FGz6KSDrsbiiQQsNuiW82cKkc3XGhVJo4UqCcpEa1wvbb7xRtUM1Nlhj16Ywg+
-         wNNsJthjA++5bn/DjXzP7qzVXHpI/V5e+ehtMpcBmkYUMPgA8F4fY9bEWZ3W4dM7943d
-         zGL0ZWS/1+NIL66lY6gW6LNrhYevaTl1MPJuoRVDi2m9a3JWXfiMCIthkBKKFx19hTd4
-         ubJxOofBwc1auzQgY11phh3u+AZ+cfvaWDZ6w+gosKnp8xSyPQ2FFN0venR8H/vnL9G2
-         g7dz3XAncaJ4l+in3aOtWqIb65KVw8VAKvUAozhVVQTcRNdcv7STGMtavkg2Z0OsQke2
-         41oA==
-X-Gm-Message-State: ACgBeo1m7U5IAgbqc3NpJ5iscTyy+csEq4MxtmstbhhzkTBzht1/EgP7
-        9uzIn+GBc0ETj6we0dBH59CIpIlYzMGVcDtwLuk=
-X-Google-Smtp-Source: AA6agR7uH/lREQZQwl9H3i0GUO9N6GrUUJHUai+M6A9pycUtOdBDMUR87TRVuoIcQUVD/Y/8XtDbHmmiKYLJtrvlFIg=
-X-Received: by 2002:a17:907:87b0:b0:731:3dfd:bc8d with SMTP id
- qv48-20020a17090787b000b007313dfdbc8dmr14315550ejc.607.1661802131774; Mon, 29
- Aug 2022 12:42:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220829184031.1863663-1-jagan@amarulasolutions.com> <20220829184031.1863663-8-jagan@amarulasolutions.com>
-In-Reply-To: <20220829184031.1863663-8-jagan@amarulasolutions.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 29 Aug 2022 14:42:00 -0500
-Message-ID: <CAHCN7xKxS6oaX8kGYv_bhWfCFUEMBykN87BwXMPkcCg=OwKXrw@mail.gmail.com>
-Subject: Re: [PATCH v4 07/12] drm: bridge: samsung-dsim: Fix PLL_P (PMS_P) offset
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=1Fx0hyhLEgesMduKS6YaoV8lOy13f0toONYZ7JFMUI8=;
+        b=xWcRnmvzQOzyC2le2Z2jWPmXfRaYJZai4nf6TGGjOkJqtsXQ1d8jak2IOA/6jSeCt5
+         dhrZhv5haTDYj1jqD8lLos3SIRU8pddIz0RdpT5Y1sKNXTIu9Uvtr2pyj1Tl8/1lcq2V
+         clmRdzNj7jT5B0ZTNt3ZRG1fq9XwnNP9oFaw4+SXPMBzOkgSq+5pCzxFcrKt/AmlZShW
+         pxRQD3GKykLjS6Ld2jR6LuSTHBMuO4U+yxyEvPpc17ogUbZpYHaWQmdDfJYRb/W+HfAB
+         DUZnmRPYr4BhtngAOwWP7S3ofzPLagnqL5+Nli5QBQiuZrFgzPmiXLh4q0xxYhTFnYEL
+         BnNQ==
+X-Gm-Message-State: ACgBeo0zsPgtB4Qs4Iz5YHObywclq9KHP5yzKOFKGHZlElfbJ00JG5Nr
+        efXD7FoalgZkR1ObBh14Gw==
+X-Google-Smtp-Source: AA6agR79LCtTkBPjMXGth4L11I5KqYCZQN4ePEGJGOaoom7y5jjfLynZ1x4N82eBlETw0i+IO6OPwQ==
+X-Received: by 2002:aca:d17:0:b0:344:bea0:8c83 with SMTP id 23-20020aca0d17000000b00344bea08c83mr7497679oin.104.1661802909040;
+        Mon, 29 Aug 2022 12:55:09 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id a16-20020a0568300b9000b0063975d170a8sm5068102otv.7.2022.08.29.12.55.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Aug 2022 12:55:08 -0700 (PDT)
+Received: (nullmailer pid 2310401 invoked by uid 1000);
+        Mon, 29 Aug 2022 19:55:07 -0000
+Date:   Mon, 29 Aug 2022 14:55:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-kernel@vger.kernel.org,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        Inki Dae <inki.dae@samsung.com>,
+        Rob Clark <robdclark@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Robert Foss <robert.foss@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        dri-devel@lists.freedesktop.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH] dt-bindings: display: Add missing
+ (unevaluated|additional)Properties on child nodes
+Message-ID: <20220829195507.GA2310372-robh@kernel.org>
+References: <20220823145649.3118479-11-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220823145649.3118479-11-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 29, 2022 at 1:41 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> The i.MX 8M Mini Applications Processor Reference Manual, Rev. 3, 11/2020
-> with 13.7.10.1 Master PLL PMS Value setting Register mentioned PMS_P offset
-> range from BIT[18-13] and the upstream driver is using the same offset.
->
-> However, offset 13 is not working on i.MX8M Mini platforms but downstream
-> NXP driver is using 14 [1] and it is working with i.MX8M Mini SoC.
-
-From the line you highlighted in the link, the downstream NXP ones
-shows 13 if I'm reading it correctly.
-
-#define PLLCTRL_SET_P(x) REG_PUT(x, 18, 13)
-
-From what I can tell the PMS calculation here needs to be updated for
-the Mini because the ranges of the FCO calculator are different.  Took
-your series and tweaked it a bit [2] which changes a few settings, and
-the PMS calculator appears to more closely match the values I get from
-the NXP one.  I think it could be further tweaked because p min and
-p_max also have changed.
-
->
-> Not sure about whether it is reference manual documentation or something
-> else but this patch trusts the downstream code and fixes the PLL_P offset.
->
-> [1] https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/gpu/drm/bridge/sec-dsim.c?h=imx_5.4.47_2.2.0#n211
->
-
-[2] -https://github.com/aford173/linux/commit/a5fa184160ec9ea45a7546eaa0d8b8fc760cf3d9
-
-> v4, v3, v2:
-> * none
->
-> v1:
-> * updated commit message
-> * add downstream driver link
->
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+On Tue, 23 Aug 2022 09:56:42 -0500, Rob Herring wrote:
+> In order to ensure only documented properties are present, node schemas
+> must have unevaluatedProperties or additionalProperties set to false
+> (typically).
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/gpu/drm/bridge/samsung-dsim.c | 10 ++++++++--
->  include/drm/bridge/samsung-dsim.h     |  1 +
->  2 files changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-> index b6883a6d4681..b6d17c0c9e58 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -168,7 +168,7 @@
->  /* DSIM_PLLCTRL */
->  #define DSIM_FREQ_BAND(x)              ((x) << 24)
->  #define DSIM_PLL_EN                    (1 << 23)
-> -#define DSIM_PLL_P(x)                  ((x) << 13)
-> +#define DSIM_PLL_P(x, offset)          ((x) << (offset))
->  #define DSIM_PLL_M(x)                  ((x) << 4)
->  #define DSIM_PLL_S(x)                  ((x) << 1)
->
-> @@ -368,6 +368,7 @@ static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
->         .max_freq = 1000,
->         .wait_for_reset = 1,
->         .num_bits_resol = 11,
-> +       .pll_p_offset = 13,
->         .reg_values = reg_values,
->         .quirks = DSIM_QUIRK_PLAT_DATA,
->  };
-> @@ -381,6 +382,7 @@ static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
->         .max_freq = 1000,
->         .wait_for_reset = 1,
->         .num_bits_resol = 11,
-> +       .pll_p_offset = 13,
->         .reg_values = reg_values,
->         .quirks = DSIM_QUIRK_PLAT_DATA,
->  };
-> @@ -392,6 +394,7 @@ static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
->         .max_freq = 1000,
->         .wait_for_reset = 1,
->         .num_bits_resol = 11,
-> +       .pll_p_offset = 13,
->         .reg_values = reg_values,
->         .quirks = DSIM_QUIRK_PLAT_DATA,
->  };
-> @@ -404,6 +407,7 @@ static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
->         .max_freq = 1500,
->         .wait_for_reset = 0,
->         .num_bits_resol = 12,
-> +       .pll_p_offset = 13,
->         .reg_values = exynos5433_reg_values,
->         .quirks = DSIM_QUIRK_PLAT_DATA,
->  };
-> @@ -416,6 +420,7 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
->         .max_freq = 1500,
->         .wait_for_reset = 1,
->         .num_bits_resol = 12,
-> +       .pll_p_offset = 13,
->         .reg_values = exynos5422_reg_values,
->         .quirks = DSIM_QUIRK_PLAT_DATA,
->  };
-> @@ -563,7 +568,8 @@ static unsigned long samsung_dsim_set_pll(struct samsung_dsim *dsi,
->         writel(driver_data->reg_values[PLL_TIMER],
->                         dsi->reg_base + driver_data->plltmr_reg);
->
-> -       reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
-> +       reg = DSIM_PLL_EN | DSIM_PLL_P(p, driver_data->pll_p_offset) |
-> +             DSIM_PLL_M(m) | DSIM_PLL_S(s);
->
->         if (driver_data->has_freqband) {
->                 static const unsigned long freq_bands[] = {
-> diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
-> index e15fbfd49efe..95d3f89aec4f 100644
-> --- a/include/drm/bridge/samsung-dsim.h
-> +++ b/include/drm/bridge/samsung-dsim.h
-> @@ -47,6 +47,7 @@ struct samsung_dsim_driver_data {
->         unsigned int max_freq;
->         unsigned int wait_for_reset;
->         unsigned int num_bits_resol;
-> +       unsigned int pll_p_offset;
->         const unsigned int *reg_values;
->         enum samsung_dsim_quirks quirks;
->  };
-> --
-> 2.25.1
->
+>  Documentation/devicetree/bindings/display/arm,komeda.yaml        | 1 +
+>  Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 1 +
+>  Documentation/devicetree/bindings/display/msm/gpu.yaml           | 1 +
+>  .../bindings/display/samsung/samsung,exynos7-decon.yaml          | 1 +
+>  .../devicetree/bindings/display/samsung/samsung,fimd.yaml        | 1 +
+>  5 files changed, 5 insertions(+)
+> 
+
+Applied, thanks!
