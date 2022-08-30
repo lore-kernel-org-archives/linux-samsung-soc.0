@@ -2,56 +2,44 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3325ECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Aug 2022 18:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20F9ECAAA1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Aug 2022 22:05:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbiH3SfH (ORCPT
+        id S232086AbiH3WFF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Aug 2022 14:35:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
+        Tue, 30 Aug 2022 18:05:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231201AbiH3SfB (ORCPT
+        with ESMTP id S232095AbiH3WEq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Aug 2022 14:35:01 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB0F7659F
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Aug 2022 11:34:56 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id p5so13594126lfc.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Aug 2022 11:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=2qc4z4IniWo5S8Bjp3Lb04VkKR2XhFXi6h1hRVoeddw=;
-        b=qpMHDsaE+ARKwZPkRz6IRLDlJ7VtqId5wp+4T6HGUEbCLJsbF5YP9gHCCdt9inih7s
-         x8l6nXDAC9uWxI0rfem6ZOjMPmaIDBNy1GFefYAJz4QDhBT74NLhoZ0om1hKm08q7VHh
-         +phR+Z/nkhWVZCFxk+/utrxnT2P+5pLMmEj510hC3Pvnqn7Bv1ecUW8ccMR7wnQvVHCm
-         +9LykdEJTVS+39K0q97h0JuywbBdhsqtAgUL37dCHDHkoAnOwEFb4ZlPz5/5ZvJzXdRW
-         ZeXFcYvmCqQW0rFb+cqoxg1K3p/yDdTIL/MyYcDrekEvdSAT31IAuNgSQKHDOKJXMVlk
-         3F6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=2qc4z4IniWo5S8Bjp3Lb04VkKR2XhFXi6h1hRVoeddw=;
-        b=gs3CeuaUAHMHqiNd3o8LiFwRATYkuQwFQpsQmMsJEsKt7B8fdktnV72uIduW8UPy27
-         wWD1+TDQvsLPLVL+lII6RwHuaxdpQ91E4iU+yb4wHX16gznSwr1DGuRLfrHvbyaKs33O
-         NhDP3ijaykOiSvXP97MY9KZIMxV34Id4n0tEOapNKrWzu68xODfoCJsGFDwGbQtM34ls
-         s0azNADWWWSMhF2oX9PqMkWnXzBZmFLP7NAQ9GQnO6U6kybdzwboyRLEej7u7Qa3kP+j
-         IZQl2YKEGDDbiBaq++v2daJSJW0sOSNof9eGaOmJakPtkmw0ToOA0wPwpLk4YshqVZWD
-         vPrg==
-X-Gm-Message-State: ACgBeo1UueIFljM7uVU7j2JjnjJokA8nRCIhD6N3X/X8XvkxcL/4Ea/V
-        TbjFD89Seoc/mbDm7ofhnUrg/w==
-X-Google-Smtp-Source: AA6agR4/olU/KNlq60S9dpcH9lGfvx1IyF/SOa/kzAEpuENf6xMvHJWfCxVaAYu+ZS8TKwbsWS/wbw==
-X-Received: by 2002:a05:6512:3f14:b0:47d:e011:f19b with SMTP id y20-20020a0565123f1400b0047de011f19bmr7603468lfa.427.1661884494655;
-        Tue, 30 Aug 2022 11:34:54 -0700 (PDT)
-Received: from krzk-bin.. (balticom-73-99-134.balticom.lv. [109.73.99.134])
-        by smtp.gmail.com with ESMTPSA id 11-20020ac25f0b000000b004945f2de7ebsm1224892lfq.262.2022.08.30.11.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Aug 2022 11:34:52 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Tue, 30 Aug 2022 18:04:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECF891D3A;
+        Tue, 30 Aug 2022 15:03:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A884460B9A;
+        Tue, 30 Aug 2022 22:03:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDB6DC433D7;
+        Tue, 30 Aug 2022 22:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661897006;
+        bh=W3UvA0KjpIMtP2Uq4fpqJ+KTfnsGHwilKFhq3opz2oA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=SQ71bbuZHFJiZVNMqSJNo2l8rqvUiehe4U8WJfFvUI5ZK1FSsFoo5s0Q4d2ZLumsH
+         +d5byNIFYEW3N/2j7B84KklkwEvcWPXJgSBBgezHpEVPuB1jFFgQ9F/IyuyHK+nRzN
+         Snai71z/jkPFJJe8asCUHJBWRk037KTf2ThGPU/bhbOeR0qTEQJISOJPu+xm9/sBrn
+         mz8EvNbwC4WLyJ/GXmfRPDE/KPM4Ycf8nLMfxRXsP+KJp9lFo0qPygVPqmjmNB7Xtu
+         FnSR9La8OWSF3zpl/2N2EQHtE2U0lWl6L4j7pLF/JFl7NwnKQTFGXDyFNwYoQanWwU
+         a3XvGf0LBuYHA==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
+References: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: for v6.1
+From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -61,92 +49,44 @@ Cc:     linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: for v6.1
-Date:   Tue, 30 Aug 2022 21:34:48 +0300
-Message-Id: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 30 Aug 2022 15:03:23 -0700
+User-Agent: alot/0.10
+Message-Id: <20220830220325.EDB6DC433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Stephen,
+Quoting Krzysztof Kozlowski (2022-08-30 11:34:48)
+> Hi Stephen,
+>=20
+> Samsung clocks from a new tree. I hope we can meet on some Linux conferen=
+ce for
+> a key signing. :)
 
-Samsung clocks from a new tree. I hope we can meet on some Linux conference for
-a key signing. :)
+I'll be at LPC next month.
 
-Best regards,
-Krzysztof
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b8=
+68:
+>=20
+>   Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-6.1
+>=20
+> for you to fetch changes up to ef96c458888fa2a329b14efc7991530f645fbddb:
+>=20
+>   clk: samsung: MAINTAINERS: add Krzysztof Kozlowski (2022-08-24 16:10:22=
+ +0300)
+>=20
+> ----------------------------------------------------------------
 
-
-The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
-
-  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.1
-
-for you to fetch changes up to ef96c458888fa2a329b14efc7991530f645fbddb:
-
-  clk: samsung: MAINTAINERS: add Krzysztof Kozlowski (2022-08-24 16:10:22 +0300)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.1
-
-1. Exynos7885: add FSYS, TREX and MFC clock controllers.
-2. Exynos850: add IS and AUD (audio) clock controllers with bindings.
-3. ExynosAutov9: add FSYS clock controllers with bindings.
-4. ExynosAutov9: correct clock IDs in bindings of Peric 0 and 1 clock
-   controllers, due to duplicated entries.  This is an acceptable ABI
-   break: recently developed/added platform so without legacies, acked
-   by known users/developers.
-5. ExynosAutov9: add few missing Peric 0/1 gates.
-6. ExynosAutov9: correct register offsets of few Peric 0/1 clocks.
-7. Minor code improvements (use of_device_get_match_data() helper, code
-   style).
-8. Add Krzysztof Kozlowski as co-maintainer of Samsung SoC clocks, as he
-   already maintainers that architecture/platform.
-
-----------------------------------------------------------------
-Chanho Park (8):
-      dt-bindings: clock: exynosautov9: correct clock numbering of peric0/c1
-      dt-bindings: clock: exynosautov9: add fys0 clock definitions
-      dt-bindings: clock: exynosautov9: add fsys1 clock definitions
-      dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1
-      clk: samsung: exynosautov9: add missing gate clks for peric0/c1
-      clk: samsung: exynosautov9: correct register offsets of peric0/c1
-      clk: samsung: exynosautov9: add fsys0 clock support
-      clk: samsung: exynosautov9: add fsys1 clock support
-
-David Virag (2):
-      clk: samsung: exynos7885: Implement CMU_FSYS domain
-      clk: samsung: exynos7885: Add TREX clocks
-
-Krzysztof Kozlowski (2):
-      Merge branch 'for-v6.0/samsung-clk-dt-bindings' into next/clk
-      clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
-
-Minghao Chi (CGEL ZTE) (1):
-      clk: samsung: exynos-clkout: Use of_device_get_match_data()
-
-Sam Protsenko (7):
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_AUD
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_IS
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_MFCMSCL
-      clk: samsung: exynos850: Style fixes
-      clk: samsung: exynos850: Implement CMU_AUD domain
-      clk: samsung: exynos850: Implement CMU_IS domain
-      clk: samsung: exynos850: Implement CMU_MFCMSCL domain
-
- .../bindings/clock/samsung,exynos850-clock.yaml    |  69 +++
- .../bindings/clock/samsung,exynosautov9-clock.yaml |  44 ++
- MAINTAINERS                                        |   2 +
- drivers/clk/samsung/clk-exynos-clkout.c            |   6 +-
- drivers/clk/samsung/clk-exynos7885.c               | 207 ++++++-
- drivers/clk/samsung/clk-exynos850.c                | 682 ++++++++++++++++++++-
- drivers/clk/samsung/clk-exynosautov9.c             | 401 +++++++++++-
- include/dt-bindings/clock/exynos850.h              | 136 +++-
- include/dt-bindings/clock/samsung,exynosautov9.h   | 128 +++-
- 9 files changed, 1620 insertions(+), 55 deletions(-)
+Thanks. Pulled into clk-next
