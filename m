@@ -2,66 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F03CECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Aug 2022 18:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3325ECAAA1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Aug 2022 18:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232226AbiH3SJe (ORCPT
+        id S229979AbiH3SfH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Aug 2022 14:09:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42766 "EHLO
+        Tue, 30 Aug 2022 14:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231928AbiH3SJd (ORCPT
+        with ESMTP id S231201AbiH3SfB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Aug 2022 14:09:33 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D29E7DF54
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Aug 2022 11:09:31 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id z23so9369051ljk.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Aug 2022 11:09:31 -0700 (PDT)
+        Tue, 30 Aug 2022 14:35:01 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB0F7659F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Aug 2022 11:34:56 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id p5so13594126lfc.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Aug 2022 11:34:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc;
-        bh=7KlMwSftGItCgKJxWHQ5GZjTJzLdgW+jcQpEYqciYc4=;
-        b=pK/oDQ7CoMZf/zNFpOshGLYYgcHCTaEQa7UscX45UN78z+c23pTNRCZZ71n1XED/vE
-         wy8gTaUDTFW2C1q3V5abCXi+V8F750wmQdsxui5vVojKq1WXHUu3vvWoHyO5BMhhIzuK
-         Z78RvG/BK5Z7mNhfTNtgez7bWX4qqCwH9++U+ewSI0BIsknD3f62v/pQYP6s1EhID3M/
-         o+Be2G8YX4JdlINjN+R/duOxPVeDlZgXFxfOuxp55N2H4sBWWWRfEuGeUCVPZ4Su6Tn9
-         XPH3Ot4cWip5doW0agH7+Iq6ydq7hE8dHgarOd28H3DxjFzWShlvvnElXcrgZ5wvEstQ
-         GPJQ==
+        bh=2qc4z4IniWo5S8Bjp3Lb04VkKR2XhFXi6h1hRVoeddw=;
+        b=qpMHDsaE+ARKwZPkRz6IRLDlJ7VtqId5wp+4T6HGUEbCLJsbF5YP9gHCCdt9inih7s
+         x8l6nXDAC9uWxI0rfem6ZOjMPmaIDBNy1GFefYAJz4QDhBT74NLhoZ0om1hKm08q7VHh
+         +phR+Z/nkhWVZCFxk+/utrxnT2P+5pLMmEj510hC3Pvnqn7Bv1ecUW8ccMR7wnQvVHCm
+         +9LykdEJTVS+39K0q97h0JuywbBdhsqtAgUL37dCHDHkoAnOwEFb4ZlPz5/5ZvJzXdRW
+         ZeXFcYvmCqQW0rFb+cqoxg1K3p/yDdTIL/MyYcDrekEvdSAT31IAuNgSQKHDOKJXMVlk
+         3F6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc;
-        bh=7KlMwSftGItCgKJxWHQ5GZjTJzLdgW+jcQpEYqciYc4=;
-        b=Geb6sbEA6Jmqipe78/Z93AFR5xG0haGTLGtn+L2Kf4zWbIye6l68sxDGA12oXLd30E
-         GyVLNlTs3w8wTV51h8vL7aINwPeIEW26lmlDsrZJngvNCwAfJlSJfUbVraFzpnOXQ8fk
-         5SpuHN8DIhsqwtZ6Tm49BSXrsv4jCpExO8vXn7UklwKTnvYBGlDwMNRs45CJBqKidNTj
-         8RlpEcKqdjF/luRC1DBZF+yYrV//2SYH1+ipXKJjMTC6k6oRTJIsHRMcpJKd28LrFf52
-         bskHZTJ1JfyVgl2u1Rw6Rh8cK+u7SAKsHRM/ZfNh57ZBcvHo92LoIOoyQiDtDrfd4t0a
-         CIVA==
-X-Gm-Message-State: ACgBeo2wqDdCk6Xmfgpbt/ShVikxUcEbwEhjvC3D2BCXrrtNmFQ0kK7l
-        Wf2fNb7yrAJ54uN2HKF4SGh+G27KgPQy8dk0
-X-Google-Smtp-Source: AA6agR5VYOBi9QqZLUTVUp2RhaoIqdnw8GUDEh0Rv2km8tN8UY6OZJCfNgmVM/9CVhmi9OX73tmg3w==
-X-Received: by 2002:a2e:9956:0:b0:263:5bc8:c16a with SMTP id r22-20020a2e9956000000b002635bc8c16amr4813642ljj.436.1661882969852;
-        Tue, 30 Aug 2022 11:09:29 -0700 (PDT)
+        bh=2qc4z4IniWo5S8Bjp3Lb04VkKR2XhFXi6h1hRVoeddw=;
+        b=gs3CeuaUAHMHqiNd3o8LiFwRATYkuQwFQpsQmMsJEsKt7B8fdktnV72uIduW8UPy27
+         wWD1+TDQvsLPLVL+lII6RwHuaxdpQ91E4iU+yb4wHX16gznSwr1DGuRLfrHvbyaKs33O
+         NhDP3ijaykOiSvXP97MY9KZIMxV34Id4n0tEOapNKrWzu68xODfoCJsGFDwGbQtM34ls
+         s0azNADWWWSMhF2oX9PqMkWnXzBZmFLP7NAQ9GQnO6U6kybdzwboyRLEej7u7Qa3kP+j
+         IZQl2YKEGDDbiBaq++v2daJSJW0sOSNof9eGaOmJakPtkmw0ToOA0wPwpLk4YshqVZWD
+         vPrg==
+X-Gm-Message-State: ACgBeo1UueIFljM7uVU7j2JjnjJokA8nRCIhD6N3X/X8XvkxcL/4Ea/V
+        TbjFD89Seoc/mbDm7ofhnUrg/w==
+X-Google-Smtp-Source: AA6agR4/olU/KNlq60S9dpcH9lGfvx1IyF/SOa/kzAEpuENf6xMvHJWfCxVaAYu+ZS8TKwbsWS/wbw==
+X-Received: by 2002:a05:6512:3f14:b0:47d:e011:f19b with SMTP id y20-20020a0565123f1400b0047de011f19bmr7603468lfa.427.1661884494655;
+        Tue, 30 Aug 2022 11:34:54 -0700 (PDT)
 Received: from krzk-bin.. (balticom-73-99-134.balticom.lv. [109.73.99.134])
-        by smtp.gmail.com with ESMTPSA id b20-20020a056512061400b0049478cc4eb9sm322078lfe.230.2022.08.30.11.09.28
+        by smtp.gmail.com with ESMTPSA id 11-20020ac25f0b000000b004945f2de7ebsm1224892lfq.262.2022.08.30.11.34.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Aug 2022 11:09:29 -0700 (PDT)
+        Tue, 30 Aug 2022 11:34:52 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [RESEND PATCH dt v2] dt-bindings: media: samsung,exynos5250-gsc: convert to dtschema
-Date:   Tue, 30 Aug 2022 21:09:27 +0300
-Message-Id: <20220830180927.16686-1-krzysztof.kozlowski@linaro.org>
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: for v6.1
+Date:   Tue, 30 Aug 2022 21:34:48 +0300
+Message-Id: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,199 +71,82 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert the Samsung Exynos SoC G-Scaler bindings to DT schema.
+Hi Stephen,
 
-Changes done during conversion:
-1. A typical (already used) properties like clocks, iommus and
-   power-domains.
-2. Require clocks, because they are essential for the block to operate.
-3. Describe the differences in clocks between the Exynos5250/5420 and
-   the Exynos5433 G-Scalers.  This includes the fifth Exynos5433 clock
-   "gsd" (GSCL Smart Deck) which was added to the DTS, but not to the
-   bindings and Linux driver.  Similarly to Exynos5433 DECON change [1],
-   the clock should be used.
+Samsung clocks from a new tree. I hope we can meet on some Linux conference for
+a key signing. :)
 
-[1] https://lore.kernel.org/all/6270db2d-667d-8d6f-9289-be92da486c25@samsung.com/
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Best regards,
+Krzysztof
 
----
 
-Rob,
-You already reviewed the patch:
-https://lore.kernel.org/all/20220630231643.GA3513958-robh@kernel.org/
-however it was not picked up through media, so can you take it?
+The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
-In case media would pick it up, then:
-Reviewed-by: Rob Herring <robh@kernel.org>
+  Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
 
-Changes since v1:
-1. Remove Joonyoung Shim from maintainers (emails bounce).
----
- .../devicetree/bindings/media/exynos5-gsc.txt |  38 ------
- .../media/samsung,exynos5250-gsc.yaml         | 109 ++++++++++++++++++
- 2 files changed, 109 insertions(+), 38 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/exynos5-gsc.txt
- create mode 100644 Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
+are available in the Git repository at:
 
-diff --git a/Documentation/devicetree/bindings/media/exynos5-gsc.txt b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
-deleted file mode 100644
-index 1872688fa408..000000000000
---- a/Documentation/devicetree/bindings/media/exynos5-gsc.txt
-+++ /dev/null
-@@ -1,38 +0,0 @@
--* Samsung Exynos5 G-Scaler device
--
--G-Scaler is used for scaling and color space conversion on Exynos5 SoCs.
--
--Required properties:
--- compatible: should be one of
--	      "samsung,exynos5250-gsc"
--	      "samsung,exynos5420-gsc"
--	      "samsung,exynos5433-gsc"
--	      "samsung,exynos5-gsc" (deprecated)
--- reg: should contain G-Scaler physical address location and length.
--- interrupts: should contain G-Scaler interrupt number
--
--Optional properties:
--- samsung,sysreg: handle to syscon used to control the system registers to
--  set writeback input and destination
--
--Example:
--
--gsc_0:  gsc@13e00000 {
--	compatible = "samsung,exynos5250-gsc";
--	reg = <0x13e00000 0x1000>;
--	interrupts = <0 85 0>;
--};
--
--Aliases:
--Each G-Scaler node should have a numbered alias in the aliases node,
--in the form of gscN, N = 0...3. G-Scaler driver uses these aliases
--to retrieve the device IDs using "of_alias_get_id()" call.
--
--Example:
--
--aliases {
--	gsc0 =&gsc_0;
--	gsc1 =&gsc_1;
--	gsc2 =&gsc_2;
--	gsc3 =&gsc_3;
--};
-diff --git a/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml b/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
-new file mode 100644
-index 000000000000..878397830a4d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
-@@ -0,0 +1,109 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/samsung,exynos5250-gsc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC G-Scaler
-+
-+maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Seung-Woo Kim <sw0312.kim@samsung.com
-+
-+description:
-+  G-Scaler is used for scaling and color space conversion on Samsung Exynos
-+  SoCs.
-+
-+  Each G-Scaler node should have a numbered alias in the aliases node, in the
-+  form of gscN, N = 0...3.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - samsung,exynos5250-gsc
-+              - samsung,exynos5420-gsc
-+          - const: samsung,exynos5-gsc
-+      - enum:
-+          - samsung,exynos5433-gsc
-+      - const: samsung,exynos5-gsc
-+        deprecated: True
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 5
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 5
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  iommus:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  samsung,sysreg:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Syscon used to control the system registers to set writeback input and destination.
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos5-gsc
-+              - samsung,exynos5250-gsc
-+              - samsung,exynos5420-gsc
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+        clock-names:
-+          items:
-+            - const: gscl
-+    else:
-+      properties:
-+        clocks:
-+          minItems: 5
-+        clock-names:
-+          items:
-+            - const: pclk
-+            - const: aclk
-+            - const: aclk_xiu
-+            - const: aclk_gsclbend
-+            - const: gsd
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5250.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    video-scaler@13e00000 {
-+        compatible = "samsung,exynos5250-gsc", "samsung,exynos5-gsc";
-+        reg = <0x13e00000 0x1000>;
-+        interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+        power-domains = <&pd_gsc>;
-+        clocks = <&clock CLK_GSCL0>;
-+        clock-names = "gscl";
-+        iommus = <&sysmmu_gsc0>;
-+    };
--- 
-2.34.1
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.1
 
+for you to fetch changes up to ef96c458888fa2a329b14efc7991530f645fbddb:
+
+  clk: samsung: MAINTAINERS: add Krzysztof Kozlowski (2022-08-24 16:10:22 +0300)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for 6.1
+
+1. Exynos7885: add FSYS, TREX and MFC clock controllers.
+2. Exynos850: add IS and AUD (audio) clock controllers with bindings.
+3. ExynosAutov9: add FSYS clock controllers with bindings.
+4. ExynosAutov9: correct clock IDs in bindings of Peric 0 and 1 clock
+   controllers, due to duplicated entries.  This is an acceptable ABI
+   break: recently developed/added platform so without legacies, acked
+   by known users/developers.
+5. ExynosAutov9: add few missing Peric 0/1 gates.
+6. ExynosAutov9: correct register offsets of few Peric 0/1 clocks.
+7. Minor code improvements (use of_device_get_match_data() helper, code
+   style).
+8. Add Krzysztof Kozlowski as co-maintainer of Samsung SoC clocks, as he
+   already maintainers that architecture/platform.
+
+----------------------------------------------------------------
+Chanho Park (8):
+      dt-bindings: clock: exynosautov9: correct clock numbering of peric0/c1
+      dt-bindings: clock: exynosautov9: add fys0 clock definitions
+      dt-bindings: clock: exynosautov9: add fsys1 clock definitions
+      dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1
+      clk: samsung: exynosautov9: add missing gate clks for peric0/c1
+      clk: samsung: exynosautov9: correct register offsets of peric0/c1
+      clk: samsung: exynosautov9: add fsys0 clock support
+      clk: samsung: exynosautov9: add fsys1 clock support
+
+David Virag (2):
+      clk: samsung: exynos7885: Implement CMU_FSYS domain
+      clk: samsung: exynos7885: Add TREX clocks
+
+Krzysztof Kozlowski (2):
+      Merge branch 'for-v6.0/samsung-clk-dt-bindings' into next/clk
+      clk: samsung: MAINTAINERS: add Krzysztof Kozlowski
+
+Minghao Chi (CGEL ZTE) (1):
+      clk: samsung: exynos-clkout: Use of_device_get_match_data()
+
+Sam Protsenko (7):
+      dt-bindings: clock: exynos850: Add Exynos850 CMU_AUD
+      dt-bindings: clock: exynos850: Add Exynos850 CMU_IS
+      dt-bindings: clock: exynos850: Add Exynos850 CMU_MFCMSCL
+      clk: samsung: exynos850: Style fixes
+      clk: samsung: exynos850: Implement CMU_AUD domain
+      clk: samsung: exynos850: Implement CMU_IS domain
+      clk: samsung: exynos850: Implement CMU_MFCMSCL domain
+
+ .../bindings/clock/samsung,exynos850-clock.yaml    |  69 +++
+ .../bindings/clock/samsung,exynosautov9-clock.yaml |  44 ++
+ MAINTAINERS                                        |   2 +
+ drivers/clk/samsung/clk-exynos-clkout.c            |   6 +-
+ drivers/clk/samsung/clk-exynos7885.c               | 207 ++++++-
+ drivers/clk/samsung/clk-exynos850.c                | 682 ++++++++++++++++++++-
+ drivers/clk/samsung/clk-exynosautov9.c             | 401 +++++++++++-
+ include/dt-bindings/clock/exynos850.h              | 136 +++-
+ include/dt-bindings/clock/samsung,exynosautov9.h   | 128 +++-
+ 9 files changed, 1620 insertions(+), 55 deletions(-)
