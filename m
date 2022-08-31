@@ -2,91 +2,121 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20F9ECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 30 Aug 2022 22:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA7FECAAD1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 31 Aug 2022 07:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232086AbiH3WFF (ORCPT
+        id S229936AbiHaHar (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 30 Aug 2022 18:05:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56162 "EHLO
+        Wed, 31 Aug 2022 03:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232095AbiH3WEq (ORCPT
+        with ESMTP id S229882AbiHaHan (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 30 Aug 2022 18:04:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECF891D3A;
-        Tue, 30 Aug 2022 15:03:27 -0700 (PDT)
+        Wed, 31 Aug 2022 03:30:43 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A362865276;
+        Wed, 31 Aug 2022 00:30:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A884460B9A;
-        Tue, 30 Aug 2022 22:03:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDB6DC433D7;
-        Tue, 30 Aug 2022 22:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661897006;
-        bh=W3UvA0KjpIMtP2Uq4fpqJ+KTfnsGHwilKFhq3opz2oA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SQ71bbuZHFJiZVNMqSJNo2l8rqvUiehe4U8WJfFvUI5ZK1FSsFoo5s0Q4d2ZLumsH
-         +d5byNIFYEW3N/2j7B84KklkwEvcWPXJgSBBgezHpEVPuB1jFFgQ9F/IyuyHK+nRzN
-         Snai71z/jkPFJJe8asCUHJBWRk037KTf2ThGPU/bhbOeR0qTEQJISOJPu+xm9/sBrn
-         mz8EvNbwC4WLyJ/GXmfRPDE/KPM4Ycf8nLMfxRXsP+KJp9lFo0qPygVPqmjmNB7Xtu
-         FnSR9La8OWSF3zpl/2N2EQHtE2U0lWl6L4j7pLF/JFl7NwnKQTFGXDyFNwYoQanWwU
-         a3XvGf0LBuYHA==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
-References: <20220830183448.18997-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: for v6.1
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 60519B81F59;
+        Wed, 31 Aug 2022 07:30:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837B6C433C1;
+        Wed, 31 Aug 2022 07:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1661931038;
+        bh=O0rPw8Oihaz4yR+43b4ZmSmPtj+BredqtoyyQMI4C2Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TK8dakXDG2+vKT3sCKygQduTtkrc1DQ60DU3BQMLwG4t407IwBEynrsGRrPxIqXrn
+         f2zH67/O7+fkn4DCSNDgdRfBXiapmHK9ud2mO3s0xOdJk+LL7BsgmnCcFJE13qP0ip
+         Aw1I3ZKYypDb3S/19LxejwwcNl5Eo7OOxfcQJgjA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-usb@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel test robot <lkp@intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 30 Aug 2022 15:03:23 -0700
-User-Agent: alot/0.10
-Message-Id: <20220830220325.EDB6DC433D7@smtp.kernel.org>
+        Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: hcd: remove unused hcd_name variables
+Date:   Wed, 31 Aug 2022 09:30:32 +0200
+Message-Id: <20220831073032.1409291-1-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.37.2
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2490; i=gregkh@linuxfoundation.org; h=from:subject; bh=O0rPw8Oihaz4yR+43b4ZmSmPtj+BredqtoyyQMI4C2Y=; b=owGbwMvMwCRo6H6F97bub03G02pJDMn8fGK3/50x2i5lMetzz10Oq0kB0/IVWhxYD1ZV1TOaKT+K bu7uiGVhEGRikBVTZPmyjefo/opDil6Gtqdh5rAygQxh4OIUgIksvcQwP7N19a74T/alykKrJbmF0i b9VDOcyjDPpnmy2tsYtw9T7ZqilzEKZmsKr84BAA==
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-08-30 11:34:48)
-> Hi Stephen,
->=20
-> Samsung clocks from a new tree. I hope we can meet on some Linux conferen=
-ce for
-> a key signing. :)
+In the commit 10174220f55a ("usb: reduce kernel log spam on driver
+registration") a lot of unneeded kernel log messages were removed, but
+that caused a few build warnings to show up where the variable
+`hcd_name` was being set but never used anymore.
 
-I'll be at LPC next month.
+Resolve this by just removing these variables as they are not needed
+anymore
 
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b8=
-68:
->=20
->   Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.1
->=20
-> for you to fetch changes up to ef96c458888fa2a329b14efc7991530f645fbddb:
->=20
->   clk: samsung: MAINTAINERS: add Krzysztof Kozlowski (2022-08-24 16:10:22=
- +0300)
->=20
-> ----------------------------------------------------------------
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: linux-usb@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Fixes: 10174220f55a ("usb: reduce kernel log spam on driver registration")
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/usb/host/ehci-exynos.c   | 1 -
+ drivers/usb/host/ehci-platform.c | 2 --
+ drivers/usb/host/ohci-platform.c | 2 --
+ 3 files changed, 5 deletions(-)
 
-Thanks. Pulled into clk-next
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index a65e365e3a04..c8e152c2e0ce 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -32,7 +32,6 @@
+ 	(EHCI_INSNREG00_ENA_INCR16 | EHCI_INSNREG00_ENA_INCR8 |	\
+ 	 EHCI_INSNREG00_ENA_INCR4 | EHCI_INSNREG00_ENA_INCRX_ALIGN)
+ 
+-static const char hcd_name[] = "ehci-exynos";
+ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+ 
+ #define PHY_NUMBER 3
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+index 50491eea9409..fe497c876d76 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -53,8 +53,6 @@ struct ehci_platform_priv {
+ 	struct delayed_work poll_work;
+ };
+ 
+-static const char hcd_name[] = "ehci-platform";
+-
+ static int ehci_platform_reset(struct usb_hcd *hcd)
+ {
+ 	struct platform_device *pdev = to_platform_device(hcd->self.controller);
+diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
+index 6d56b52966c7..4e7946024ce7 100644
+--- a/drivers/usb/host/ohci-platform.c
++++ b/drivers/usb/host/ohci-platform.c
+@@ -41,8 +41,6 @@ struct ohci_platform_priv {
+ 	struct reset_control *resets;
+ };
+ 
+-static const char hcd_name[] = "ohci-platform";
+-
+ static int ohci_platform_power_on(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
+-- 
+2.37.2
+
