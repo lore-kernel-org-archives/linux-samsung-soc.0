@@ -2,228 +2,93 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4230ECAAD5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Sep 2022 11:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0E7ECAAD3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Sep 2022 12:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238215AbiIELYn (ORCPT
+        id S237142AbiIEMTk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Sep 2022 07:24:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
+        Mon, 5 Sep 2022 08:19:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238198AbiIELYl (ORCPT
+        with ESMTP id S236787AbiIEMTj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Sep 2022 07:24:41 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C983634E
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Sep 2022 04:24:34 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220905112419euoutp02a6df02e9e7cc8666ff4f71029ecb3eee~R8yCn5ych0971309713euoutp02k
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Sep 2022 11:24:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220905112419euoutp02a6df02e9e7cc8666ff4f71029ecb3eee~R8yCn5ych0971309713euoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1662377059;
-        bh=7flYTWURgvZWZJ0bllJwRUFaD/epPd9YT+NmvYtDtng=;
-        h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-        b=uonc5MUq30HqmmPAtt3iNle9c1ay73T9L9wbfdzY/zWBA1yo381E5mlSyN9kVFdYj
-         dmwmz2U8yELHGr8Px1cWLXf4ftk6DTJM7ImpCql9QgsAK4jcVBSbpfEKv0oxDsna1D
-         fDXwub89fs+rXKhBYR3NyRMP+mT8o0Nx2DxRBxxo=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220905112404eucas1p102451e5139cc449cf30959fe4fc2427c~R8x0rjDPi2163221632eucas1p1j;
-        Mon,  5 Sep 2022 11:24:04 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9D.53.29727.35CD5136; Mon,  5
-        Sep 2022 12:24:04 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220905112403eucas1p1b3154207ebea4d10684904144e17b3c0~R8x0LYf4s1126311263eucas1p1C;
-        Mon,  5 Sep 2022 11:24:03 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220905112403eusmtrp253635c8319b725b5b58e8174cae82dcb~R8x0FDCaj1852618526eusmtrp22;
-        Mon,  5 Sep 2022 11:24:03 +0000 (GMT)
-X-AuditID: cbfec7f2-21dff7000001741f-b8-6315dc535ddc
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id B9.C9.07473.35CD5136; Mon,  5
-        Sep 2022 12:24:03 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220905112402eusmtip2e5ae6c1ea62e596e302614549e3dbf29~R8xy4wfX22248922489eusmtip2Z;
-        Mon,  5 Sep 2022 11:24:02 +0000 (GMT)
-Message-ID: <d750a140-c87e-16af-7683-22d48f68305a@samsung.com>
-Date:   Mon, 5 Sep 2022 13:24:02 +0200
+        Mon, 5 Sep 2022 08:19:39 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4E1B10559
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Sep 2022 05:19:37 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id j14so12910895lfu.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Sep 2022 05:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=uLFVpwL+K/8vBnNeBIqD0bnrQNEYXNCQ5ZcTV6tt8XM=;
+        b=hK++AwSCUxbN7mrDFyZRX00NUn64ZmAiOC0t5xoHUHmoxe5RHqUkf7s1eKGVhmBiuz
+         CQcn0+IA58FhN8s2ikMh9JZn+EcGE8wpuqOd6ykCJPSqt+TNn51Jvtelknb8N1WI8N2F
+         3mWkITa908J5+inow3THMOho82pSlwVNhSrgw/CLSVbgvxQ56FiWs/261AkXCqV9cLfK
+         J966quCXJp66ooFrmn7p0qzgO7hBXWiA6RLfRSn1he/bPTQ6j3s0I3SyvS4NXyimJhsi
+         msjG9n6NjJh6pKI78hb/+LBiXCQR+cDaBYD0mtS6MaTqWm2GvbfhhSCt7f+bfQpq3r5r
+         L4hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=uLFVpwL+K/8vBnNeBIqD0bnrQNEYXNCQ5ZcTV6tt8XM=;
+        b=18MT8Icy85DynWN8w2pllKe6WMUlzp8uy727E5vIYyd5efI9qZLvHlebw74YQDBcCH
+         OKLzkhWmhaxckH3GNguj+rC/Bcu+kyxN/ixhvvA/Vm6dSIu0oPGyyH1uWZYo6nfG03u6
+         3iqkfiHFiVSVPxteUT/RKpaSPOEViZhX6VTPYgwaSM4X9AgecKjsicG7F7NyPhEnqPBM
+         /sl/+RbiceDYhfcHUVR8oNvJIWq9vnOyyI9m+jOf9Oi9zVXH8cIgsgPLld/t55+Vpc8v
+         N5pW+JfZLFcoFK+KsfcPvwdIbnwf8h7MhxCp2Re5+MW2VvFfI4L0tBKOO/NtboNzfcC4
+         1OUg==
+X-Gm-Message-State: ACgBeo3eK0+YYmmE2j6pgPOV9GIfwT5He1xXBdM/62+NELscWLX4RxsB
+        NL565NbQM6vs48jUW01F+1l4nw==
+X-Google-Smtp-Source: AA6agR4RCsw6lJqZwkMUyrOduj4LVzpdXzKpmlnuDVQpKdfbxaMEs17Ol01jmNf43r01HjyYoMjDcw==
+X-Received: by 2002:a05:6512:33c8:b0:48a:fe63:e4ea with SMTP id d8-20020a05651233c800b0048afe63e4eamr15484628lfg.415.1662380376296;
+        Mon, 05 Sep 2022 05:19:36 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id b23-20020ac25637000000b00494a27500c1sm1173634lff.163.2022.09.05.05.19.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Sep 2022 05:19:35 -0700 (PDT)
+Message-ID: <64e96f32-e3c4-5a9d-c4f0-90986eba597d@linaro.org>
+Date:   Mon, 5 Sep 2022 14:19:34 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.13.0
-Subject: Re: [PATCH v4 02/12] drm: bridge: Add Samsung DSIM bridge driver
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] USB/ARM: Switch S3C2410 UDC to GPIO descriptors
 Content-Language: en-US
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-In-Reply-To: <7511aa28-a944-d241-5bea-8404008e7dce@samsung.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf0xTVxj19r2+lpq611LhinMznXGbycqYbLs4449sc8+pYWaduPGH1vKC
-        bKWYFiaOLIKAYR3UUgk/io7GIjCQIQUMkM50TWmraAV0BCylw7FlIiAURFYyGO3Tjf/Od873
-        3XO+L5eLCcuIKG6KMp1WKWUKMcHDrzn+dr8hHVorf1Mbh4Y83RjymWZw9MhTR6B7Tx4TqOiy
-        m430Ph2OZs06Av013Iuj22fGOei74moOqtVdJ5D593420gR+xFD5nessNH42B6DuB00YupmT
-        jyObNhH5DSPL4vmHBOp1+TH0dOE2tiuCapz2sanHA/kc6geDC6dKXHY25S70ElSHwcuhKgsq
-        2JTJ8pBF2X81samhfgtB+b53sqiW6tNU82Q7i9K21gNqxvzSJy98wdueRCtSvqZV0TuO8o6b
-        GlrAiYYNmQ8G84lsoIcaEMaFZCysWrJyNIDHFZJ1ALaaJwmmmAVw2tMFmGIGwCLvIuv5SO4Z
-        O84ItQAau56wmWIawMDICBHs4pM7YH+lHQtinNwES31FOMML4I2K0RBeS8qhweEAQRxO7oXe
-        G4EQj5GR8P5oVciNIGOgZkITyiQim9hwYrQklAkLuhXOj4QcwsidsMVRQDDTL8PctkqMyarl
-        wauDAgZ/AG/N/flsh3A45mzlMPhFuNQRdOMu4zT4T/lWhs6E/Y+uPHvmPTjkDhDBFox8HTZ1
-        RjP0blg414kzk2vgwISACbAG6q+VYQzNhwVnhUz3Zmhw/vSf5y89fZgOiA0rjmJYsbxhxSqG
-        /32NAK8HkXSGOjWZVsco6ZMStSxVnaFMlsjTUs1g+e92Lzr97eDi2LTEBlhcYAOQi4lF/KR2
-        kVzIT5Kd+oZWpR1RZShotQ2s5+LiSL485apMSCbL0umvaPoErXqusrhhUdmsC/fenl/dvLQa
-        Pz2f6cx+NyvPXRCIz3Ecc1kuFW67TxSNKIl10tfKt+2UevZ33q15/9ytVVbBqv1E1ZXDX/7G
-        DtMmLKRfTJiwHwwX+r89ZKwVZm1s2hwh3RA9oZU0Kl4Zf+dAerbOO/lpmXpKlOiQ2CSd87Hu
-        4Qjj+KStePGox3PyY/1gnH/XbtGhNmzPXVOW4vP4pN639J/Zz8fPebv6tkdbZqd6zl2YGt54
-        Z8vPiQMLfxifFrurpbHUVP5lvnS92mf1WHr2NfisrR0fpdUItrblnTrwIS9cGJdbmlhHHcRU
-        UbmW+sMlS6/mzR2LvXkkobHUuq6mpKLL1TfWId07uq9ZjKuPy2K2YCq17F+ki5zvKgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsVy+t/xe7rBd0STDT5/FLS4c/s0s8X9xZ9Z
-        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
-        0fVrJbPFjPP7mCzetDUyWpx+tJ7Z4lRjK4vFob5oi0+zHgIlJ79ks7h44hOzxfffZ5kdxDzW
-        frzP6vH+Riu7x7xZJ1g8ppw4wupxrucum8fOWXfZPWZ3zGT1WLznJZPHkauLWT3uXNvD5nG/
-        +ziTx+Yl9R4b3+1g8ujbsorR4/MmuQD+KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj
-        81grI1MlfTublNSczLLUIn27BL2Mxas3Mxaslq14dLOVrYFxkkQXIyeHhICJRHPTEZYuRi4O
-        IYGljBJXlm1jhUjISJyc1gBlC0v8udbFBlH0nlFi6vkGFpAEr4CdxLXZR5hBbBYBFYlp93uh
-        4oISJ2c+AbNFBZIlljTcBxskLOApcffkL7A4s4C4xK0n85lAbDYBQ4mutxALRAS2skq82rYO
-        zGEW+MgocWnyFnaI1U1MEn+n/mQHaeEUsJfYfKyDDWKUmUTX1i5GCFteonnrbOYJjEKzkFwy
-        C8nGWUhaZiFpWcDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMw4Ww79nPzDsZ5rz7qHWJk
-        4mA8xCjBwawkwpuyQyRZiDclsbIqtSg/vqg0J7X4EKMpMDgmMkuJJucDU15eSbyhmYGpoYmZ
-        pYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAPTVI6cGXIO0auuqf6YzGZldnROluz8
-        DV5hb1ZcCWFaevyjRNCz8otOv6c8uz/VYctdacsZ9tvVHu5Pfj9T/Ni2matiJl6qWTgp5d6S
-        pebOuhdVmXyEsj8Lq39TCeKquTTz4iomLfOp0l+1Lpzf8bbsoSpT34mTP1XUsi5t28ckXxqi
-        ujiN8Yk2b9m0K2+6Jdkr53zdX/vy2qp6NonPQtw3Llb1LeY7tOul6uzn1/mXRkT953qgy3U8
-        cHluOUdks8qT9TPiHys8P/JUWjhjr35y7VupV9Hn5nast3eYbhMVuIQ//YKifl7ugzneG36/
-        F04zr7LvnvZOjfF79cY7LX3WG4/OjS4PvqCeFidoVfbXXomlOCPRUIu5qDgRAGgNCO7BAwAA
-X-CMS-MailID: 20220905112403eucas1p1b3154207ebea4d10684904144e17b3c0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220829184118eucas1p2cda47fa166cafcb904800a55a5f66180
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220829184118eucas1p2cda47fa166cafcb904800a55a5f66180
-References: <20220829184031.1863663-1-jagan@amarulasolutions.com>
-        <CGME20220829184118eucas1p2cda47fa166cafcb904800a55a5f66180@eucas1p2.samsung.com>
-        <20220829184031.1863663-3-jagan@amarulasolutions.com>
-        <7511aa28-a944-d241-5bea-8404008e7dce@samsung.com>
+        linux-samsung-soc@vger.kernel.org
+References: <20220901081649.564348-1-linus.walleij@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220901081649.564348-1-linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi All,
+On 01/09/2022 10:16, Linus Walleij wrote:
+> This converts the S3C2410 UDC USB device controller to use
+> GPIO descriptor tables and modern GPIO.
+> 
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> If the Samsung S3C maintainers can ACK this I think it's
+> best to take it into the USB tree where the bigger changes
+> are.
 
-On 02.09.2022 12:47, Marek Szyprowski wrote:
-> On 29.08.2022 20:40, Jagan Teki wrote:
->> Samsung MIPI DSIM controller is common DSI IP that can be used in 
->> various
->> SoCs like Exynos, i.MX8M Mini/Nano.
->>
->> In order to access this DSI controller between various platform SoCs,
->> the ideal way to incorporate this in the drm stack is via the drm bridge
->> driver.
->>
->> This patch is trying to differentiate platform-specific and bridge 
->> driver
->> code and keep maintaining the exynos_drm_dsi.c code as platform-specific
->> glue code and samsung-dsim.c as a common bridge driver code.
->>
->> - Exynos specific glue code is exynos specific te_irq, host_attach, and
->>    detach code along with conventional component_ops.
->>
->> - Samsung DSIM is a bridge driver which is common across all 
->> platforms and
->>    the respective platform-specific glue will initialize at the end 
->> of the
->>    probe. The platform-specific operations and other glue calls will 
->> invoke
->>    on associate code areas.
->>
->> v4:
->> * include Inki Dae in MAINTAINERS
->> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
->
-> This breaks Exynos DRM completely as the Exynos DRM driver is not able 
-> to wait until the DSI driver is probed and registered as component.
->
-> I will show how to rework this the way it is done in 
-> drivers/gpu/drm/exynos/exynos_dp.c and 
-> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c soon...
 
-I've finally had some time to implement such approach, see 
-https://github.com/mszyprow/linux/tree/v6.0-dsi-v4-reworked
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-If you want me to send the patches against your v4 patchset, let me 
-know, but imho my changes are much more readable after squashing to the 
-original patches.
 
-Now the driver is fully multi-arch safe and ready for further 
-extensions. I've removed the weak functions, reworked the way the 
-plat_data is used (dropped the patch related to it) and restored 
-exynos-dsi driver as a part of the Exynos DRM drivers/subsystem. Feel 
-free to resend the above as v5 after testing on your hardware. At least 
-it properly works now on all Exynos boards I have, both compiled into 
-the kernel or as modules.
-
->
->> v3:
->> * restore gpio related fixes
->> * restore proper bridge chain
->> * rework initialization issue
->> * fix header includes in proper way
->>
->> v2:
->> * fixed exynos dsi driver conversion (Marek Szyprowski)
->> * updated commit message
->> * updated MAINTAINERS file
->>
->> v1:
->> * don't maintain component_ops in bridge driver
->> * don't maintain platform glue code in bridge driver
->> * add platform-specific glue code and make a common bridge
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->>   MAINTAINERS                             |    9 +
->>   drivers/gpu/drm/bridge/Kconfig          |   12 +
->>   drivers/gpu/drm/bridge/Makefile         |    1 +
->>   drivers/gpu/drm/bridge/samsung-dsim.c   | 1686 ++++++++++++++++++++++
->>   drivers/gpu/drm/exynos/Kconfig          |    1 +
->>   drivers/gpu/drm/exynos/exynos_drm_drv.c |    3 -
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 -
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1715 +----------------------
->>   include/drm/bridge/samsung-dsim.h       |   99 ++
->>   9 files changed, 1868 insertions(+), 1659 deletions(-)
->>   create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
->>   create mode 100644 include/drm/bridge/samsung-dsim.h
->>
->> ...
->
-> Best regards
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best regards,
+Krzysztof
