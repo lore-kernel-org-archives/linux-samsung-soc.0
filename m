@@ -2,202 +2,587 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F587C38145
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  2 Sep 2022 10:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AFEECAAD3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Sep 2022 10:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233262AbiIBKri (ORCPT
+        id S236681AbiIEKxT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 2 Sep 2022 06:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47516 "EHLO
+        Mon, 5 Sep 2022 06:53:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232001AbiIBKrh (ORCPT
+        with ESMTP id S236215AbiIEKxS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 2 Sep 2022 06:47:37 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 708ACBD745
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Sep 2022 03:47:32 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220902104726euoutp02d7ac244635b4f5f41dd493ad412ff180~RBV_5igow1250212502euoutp02e
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Sep 2022 10:47:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220902104726euoutp02d7ac244635b4f5f41dd493ad412ff180~RBV_5igow1250212502euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1662115646;
-        bh=YagpSWf3K7UL6OhQCW+uCZNYOT6YsGMcBT9nh2OsGCA=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=q2s+CYtbcg2/ouvi/08ys0J3UFV95lIMgKooyw3P5Y+zHqqTsDVlSMTgx3Il29YWB
-         mGIy+IRZ+qtL6JBLWBRR2OAHnybDl8xgGvsMvKfm5cMWMxZTZ2yvZNc+A9HyWA2WVm
-         sDYOMaRQ4fXzF7EepGfl5sfThYhIBJChdpB96HeU=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220902104725eucas1p2d34a256cefe6d667079b594fc4499e1e~RBV_UER6C0435704357eucas1p24;
-        Fri,  2 Sep 2022 10:47:25 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id EB.98.29727.D3FD1136; Fri,  2
-        Sep 2022 11:47:25 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220902104725eucas1p1a5c89dfd00867a5e5c6d15a59b221870~RBV95Xduw3256432564eucas1p1R;
-        Fri,  2 Sep 2022 10:47:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220902104725eusmtrp12eb1b1c73430b86ff9b012512c8e6d6a~RBV94IQ9Y0645406454eusmtrp1d;
-        Fri,  2 Sep 2022 10:47:25 +0000 (GMT)
-X-AuditID: cbfec7f2-21dff7000001741f-7b-6311df3d0793
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D8.CC.10862.C3FD1136; Fri,  2
-        Sep 2022 11:47:24 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220902104723eusmtip27cf700a0ebf4b633498d5f108ca3d59b~RBV805Bqb0329203292eusmtip2M;
-        Fri,  2 Sep 2022 10:47:23 +0000 (GMT)
-Message-ID: <7511aa28-a944-d241-5bea-8404008e7dce@samsung.com>
-Date:   Fri, 2 Sep 2022 12:47:23 +0200
+        Mon, 5 Sep 2022 06:53:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AB654C9B;
+        Mon,  5 Sep 2022 03:53:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 51D0AB8102E;
+        Mon,  5 Sep 2022 10:53:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA02AC43470;
+        Mon,  5 Sep 2022 10:53:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662375194;
+        bh=laszTlloEazNn4q68j064DnBDXZiy8Xt3+xeDvwfazo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jSew0KtQ12hYgzg+XX+Gj1w/8BoXQzHoiNcpR8GO9LfCXO31t7nTD+vZm3/j6MzS2
+         aAk6Rg8fh4kh/ZHfR5f2zdqRTnG+lIk7fFyz/hQeOYeFy2h2QCiMgRGlKhLRY/1owL
+         HNxQLQfOYO7Ahfpu8BafyX1DWorNPEwze1B+NIJ8xFDDK5U8FyqsFkS7ToYdtsAgl8
+         tWnfZvUVYMam4WEA5m96jpgaGEzIyBMQLpP1X14O4ThDcl+wW24SW0foSdEfn5DJO0
+         pNaRL9nur1JVQoLMm7ccyIOl+Vc/pmJBYsasz6Mqqxjz0BWkvpYYuZJv4m0UjvFe3K
+         srus6StKXR7Uw==
+From:   Ard Biesheuvel <ardb@kernel.org>
+To:     linux-usb@vger.kernel.org
+Cc:     Ard Biesheuvel <ardb@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v2] usb: reduce kernel log spam on driver registration
+Date:   Mon,  5 Sep 2022 12:52:52 +0200
+Message-Id: <20220905105252.351795-1-ardb@kernel.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.13.0
-Subject: Re: [PATCH v4 02/12] drm: bridge: Add Samsung DSIM bridge driver
-Content-Language: en-US
-To:     Jagan Teki <jagan@amarulasolutions.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220829184031.1863663-3-jagan@amarulasolutions.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=18174; i=ardb@kernel.org; h=from:subject; bh=laszTlloEazNn4q68j064DnBDXZiy8Xt3+xeDvwfazo=; b=owEB7QES/pANAwAKAcNPIjmS2Y8kAcsmYgBjFdUD1K24m0gaam9LdgZAgk5gxc4K/K28xrBNrQmU nIl521SJAbMEAAEKAB0WIQT72WJ8QGnJQhU3VynDTyI5ktmPJAUCYxXVAwAKCRDDTyI5ktmPJGPgDA CHiTeqqMVDvqark5Mg1EI5OboSFrAuh7mRSwQCT+bLw4uYEy3YDxbYi2zQRi0PRhxskp6ZOu6iMlHq +KNcMBOKn2gIBDAUs7f8ZwtH/0uYLfJHZqXXRJA0s6xE1YQKx7yNl92nkluoqqFmoS1LsEV9d7vx3w brev5jJivS1NnOJqKc4X6c22AT5VSlCkN/QY63VTZWMfBgOcEgwL/z2HiI7WETLZ4N3B2y1LCVAEyC xaklInCRgNC+7untW5m7Jq6/cubfoxgWX9AlP7O5+CCApU5VUgnLWQIyCROaTX9zeaHFnHIAPdhlTj wmsSU0S06g03k3k2I5kirAAK57ldpOLxfEBG1h1MlBhtNp1JOxPENwMXUhuglQURGifFQl/khvt4ny +h/kmzgHXQbH02Y6Hs4k/BYqmSNZNWpJRcnZhoWBc7u1NEtmOawrfNX/P0ibcZ3f8ctnxohoGB6aQv Mn9QiE/s4Cb/Jd23es/UaUt+Pe8+Ga5Ny9t/igXnCF3aA=
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xTVxzm9D5626VwKdWegGMJMYsuE1aV7UQZ2ZwzVw0Zi3Ey1M2u3tQ6
-        KKS1jm1xikYDtTyGyKDI++WK0NGBYYyHPKRIw0OyFbBAZVQjSCGA89FNM8qdG/993/f7vvOd
-        38mhMHEOGUip1CdYjVoeF0IK8evdzwY2vev0V7zVXhiExhw2DDnLlnD00HGVRL/9OU+itIp+
-        AmU5M3H0yJJJogcTt3HUd3aWj1K/L+ejqsxWElmm7ATSe37EUO5AKw/NXkgGyPaHGUO9yedx
-        1JF+EC0aJ5eHl6ZJdLtnEUNP/urD3lvL1Cw4CWZ+5DyfKTT24Ex2TxfB9BvGSeYX4zifyU/J
-        I5iy5mke0/V7GcGM2ZtJxnnRymN+Lj/N1M018pj0ehNglizB0X6xwoijbJzqJKsJizwiPNZ3
-        dldi05qkmuzHxBmwROsBRUF6K0xLEemBkBLTVwG0N9ThHHkEoCmrjeDIEoCpQ3+Dl4nBmu84
-        vQpAw6CZx5EFAOfSM5bjAkpER8Li+9WkF+P0euhsq+Bzuj+8leda8ayhFdDY3Q28OIDeDcdv
-        eVZ0jJbCO66ilUMltJmAblc28BLM22B4Ool5XSQtg3q3fqVBQO+ApXd7+Vz6NXiuIR/zBiCd
-        J4S2mVrCO4D0Tlhedw9wOADOWOv5HF4HbZcMOLdbAnyeu4WTk6D94TWMw9vhWL+H9FoweiM0
-        N4Vx8vvQ8Ljp36QvHHH7czfwhVnXf8A4WQRTLog59+vQaK39r7N9cAjLBCHGVa9iXLW9cdUu
-        xv97iwFuAlJWp41XslqZmv0qVCuP1+rUylBFQrwFLH9d2wvrYiMomFkI7QA8CnQASGEhEtHl
-        TlohFh2Vf/0Nq0n4XKOLY7UdIIjCQ6QiheonuZhWyk+wX7JsIqt5OeVRgsAzvDdfOb5trwB8
-        mKBmlDUR0T4ZZMGhaUdsXty3PXdmOxVFFcptJnGErHMiTBC4Z5jdIz7dcOCU22THppIcxoHj
-        I1PP19p3iVv8YyYPVXmOvBATrpHSG4d9NrdFCLb6SHnho1d6c252P7umK337XGrRhuadyZG5
-        e4dRSVeU735K1V5mHXxV/mDd5hsay4bRjYUfdCqjJ+4f2PGO+WRrQIul+m7rxx/dkw2V/OoJ
-        Ct7dF/W0uSl1X8MVx7hry2HJaMxcY70oXFL+qbtyXvTk4ClJaHXuJrZytnL7xUTJF+EtaSW6
-        zwpy3JQqMb3/Zguc9IuPGv6kdn1whl9+W2yweX/MPlJaHIJrj8llb2AarfwfMEg6+ykEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsVy+t/xe7o29wWTDRY+tba4c/s0s8X9xZ9Z
-        LF7fXsFmceXrezaL3qXnWC0m3Z/AYvFl0wQ2ixf3LrJYnG16w27ROXEJu8XyCfvYLDY9vsZq
-        0fVrJbPFjPP7mCzetDUyWpx+tJ7Z4lRjK4vFob5oi0+zHgIlJ79ks7h44hOzxfffZ5kdxDzW
-        frzP6vH+Riu7x7xZJ1g8ppw4wupxrucum8fOWXfZPWZ3zGT1WLznJZPHkauLWT3uXNvD5nG/
-        +ziTx+Yl9R4b3+1g8ujbsorR4/MmuQD+KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj
-        81grI1MlfTublNSczLLUIn27BL2Ms01uBbtEK9ZO+cbawPhZoIuRg0NCwETiwtq6LkYuDiGB
-        pYwSl7cfY+ti5ASKy0icnNbACmELS/y51gUWFxJ4zyjR1G4MYvMK2EkseLYaLM4ioCJxf/9S
-        doi4oMTJmU9YQGxRgWSJJQ33weYIC3hK3D35CyzOLCAucevJfCaQxSICW1klXm1bxwbiMAt8
-        ZJS4NHkLO8RJZxkllpx8yQTSwiZgKNH1FuIMTgEniUUPTrFDjDKT6NraxQhhy0s0b53NPIFR
-        aBaSS2Yh2TgLScssJC0LGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBKaabcd+btnBuPLV
-        R71DjEwcjIcYJTiYlUR4px4WSBbiTUmsrEotyo8vKs1JLT7EaAoMjonMUqLJ+cBkl1cSb2hm
-        YGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnVwLR26eGvvRK2mjuU3xtLv3vx
-        Q4hjy36p++2iMcVsCwWSLA/WStft2rrx2szbE+QPiXX5Mq6aNflkxZX5zjyz2W8x7Tr87IkB
-        548vB3pn+Er1F1fK3kj+7ifrniK8WLX0BO++y7fW7Gz4rmWapBs+r+vBuzkHj+2x/HXwkXXY
-        39p3v3KTnm3n/S1yMqbigu7K3wHXwuWmL0qy+H7jbJi98wK1rqWbvuyaMvUMs+fkM/8bhO38
-        DA5FPz2ave7Nl7WTF0YfP/Rr6h3fX8ZrVW56cXrEaYRm8HqIWHMVpP+6PufWIVPeJG/GWTNu
-        TXSYaWu39uYnua/LEr6c+H8yVnrxKZ5P8RpdPf2tdxcViT7M1fe+rsRSnJFoqMVcVJwIAMzy
-        Wq6+AwAA
-X-CMS-MailID: 20220902104725eucas1p1a5c89dfd00867a5e5c6d15a59b221870
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220829184118eucas1p2cda47fa166cafcb904800a55a5f66180
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220829184118eucas1p2cda47fa166cafcb904800a55a5f66180
-References: <20220829184031.1863663-1-jagan@amarulasolutions.com>
-        <CGME20220829184118eucas1p2cda47fa166cafcb904800a55a5f66180@eucas1p2.samsung.com>
-        <20220829184031.1863663-3-jagan@amarulasolutions.com>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 29.08.2022 20:40, Jagan Teki wrote:
-> Samsung MIPI DSIM controller is common DSI IP that can be used in various
-> SoCs like Exynos, i.MX8M Mini/Nano.
->
-> In order to access this DSI controller between various platform SoCs,
-> the ideal way to incorporate this in the drm stack is via the drm bridge
-> driver.
->
-> This patch is trying to differentiate platform-specific and bridge driver
-> code and keep maintaining the exynos_drm_dsi.c code as platform-specific
-> glue code and samsung-dsim.c as a common bridge driver code.
->
-> - Exynos specific glue code is exynos specific te_irq, host_attach, and
->    detach code along with conventional component_ops.
->
-> - Samsung DSIM is a bridge driver which is common across all platforms and
->    the respective platform-specific glue will initialize at the end of the
->    probe. The platform-specific operations and other glue calls will invoke
->    on associate code areas.
->
-> v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+Drivers are typically supposed to be quiet unless they are actually
+probed, but for some reason, USB host controllers seem to be exempt from
+this rule, and happily broadcast their existence into the kernel log at
+boot even if the hardware in question is nowhere to be found.
 
-This breaks Exynos DRM completely as the Exynos DRM driver is not able 
-to wait until the DSI driver is probed and registered as component.
+Let's fix that, and remove these pr_info() calls.
 
-I will show how to rework this the way it is done in 
-drivers/gpu/drm/exynos/exynos_dp.c and 
-drivers/gpu/drm/bridge/analogix/analogix_dp_core.c soon...
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Avi Fishman <avifishman70@gmail.com>
+Cc: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Tali Perry <tali.perry1@gmail.com>
+Cc: Patrick Venture <venture@google.com>
+Cc: Nancy Yuen <yuenn@google.com>
+Cc: Benjamin Fair <benjaminfair@google.com>
+Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>
+Cc: linux-usb@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+v2: - drop another couple of occurrences pointed out by Robert
+    - drop hcd_name variables as well if the only reference to them is
+      being dropped
+    - pick up acks
 
-> v3:
-> * restore gpio related fixes
-> * restore proper bridge chain
-> * rework initialization issue
-> * fix header includes in proper way
->
-> v2:
-> * fixed exynos dsi driver conversion (Marek Szyprowski)
-> * updated commit message
-> * updated MAINTAINERS file
->
-> v1:
-> * don't maintain component_ops in bridge driver
-> * don't maintain platform glue code in bridge driver
-> * add platform-specific glue code and make a common bridge
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->   MAINTAINERS                             |    9 +
->   drivers/gpu/drm/bridge/Kconfig          |   12 +
->   drivers/gpu/drm/bridge/Makefile         |    1 +
->   drivers/gpu/drm/bridge/samsung-dsim.c   | 1686 ++++++++++++++++++++++
->   drivers/gpu/drm/exynos/Kconfig          |    1 +
->   drivers/gpu/drm/exynos/exynos_drm_drv.c |    3 -
->   drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 -
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1715 +----------------------
->   include/drm/bridge/samsung-dsim.h       |   99 ++
->   9 files changed, 1868 insertions(+), 1659 deletions(-)
->   create mode 100644 drivers/gpu/drm/bridge/samsung-dsim.c
->   create mode 100644 include/drm/bridge/samsung-dsim.h
->
-> ...
+ drivers/usb/host/ehci-atmel.c    | 3 ---
+ drivers/usb/host/ehci-exynos.c   | 2 --
+ drivers/usb/host/ehci-fsl.c      | 2 --
+ drivers/usb/host/ehci-hcd.c      | 1 -
+ drivers/usb/host/ehci-npcm7xx.c  | 4 ----
+ drivers/usb/host/ehci-omap.c     | 2 --
+ drivers/usb/host/ehci-orion.c    | 4 ----
+ drivers/usb/host/ehci-pci.c      | 2 --
+ drivers/usb/host/ehci-platform.c | 4 ----
+ drivers/usb/host/ehci-spear.c    | 4 ----
+ drivers/usb/host/ehci-st.c       | 4 ----
+ drivers/usb/host/fotg210-hcd.c   | 1 -
+ drivers/usb/host/ohci-at91.c     | 3 ---
+ drivers/usb/host/ohci-da8xx.c    | 1 -
+ drivers/usb/host/ohci-exynos.c   | 2 --
+ drivers/usb/host/ohci-hcd.c      | 1 -
+ drivers/usb/host/ohci-nxp.c      | 2 --
+ drivers/usb/host/ohci-omap.c     | 2 --
+ drivers/usb/host/ohci-pci.c      | 2 --
+ drivers/usb/host/ohci-platform.c | 4 ----
+ drivers/usb/host/ohci-pxa27x.c   | 4 ----
+ drivers/usb/host/ohci-s3c2410.c  | 3 ---
+ drivers/usb/host/ohci-spear.c    | 3 ---
+ drivers/usb/host/ohci-st.c       | 4 ----
+ drivers/usb/host/u132-hcd.c      | 1 -
+ drivers/usb/host/uhci-hcd.c      | 2 --
+ 26 files changed, 67 deletions(-)
 
-Best regards
+diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
+index 05d41fd65f25..8b775e7bab06 100644
+--- a/drivers/usb/host/ehci-atmel.c
++++ b/drivers/usb/host/ehci-atmel.c
+@@ -25,8 +25,6 @@
+ 
+ #define DRIVER_DESC "EHCI Atmel driver"
+ 
+-static const char hcd_name[] = "ehci-atmel";
+-
+ #define EHCI_INSNREG(index)			((index) * 4 + 0x90)
+ #define EHCI_INSNREG08_HSIC_EN			BIT(2)
+ 
+@@ -239,7 +237,6 @@ static int __init ehci_atmel_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+ 	ehci_init_driver(&ehci_atmel_hc_driver, &ehci_atmel_drv_overrides);
+ 	return platform_driver_register(&ehci_atmel_driver);
+ }
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index 1a9b7572e17f..c8e152c2e0ce 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -32,7 +32,6 @@
+ 	(EHCI_INSNREG00_ENA_INCR16 | EHCI_INSNREG00_ENA_INCR8 |	\
+ 	 EHCI_INSNREG00_ENA_INCR4 | EHCI_INSNREG00_ENA_INCRX_ALIGN)
+ 
+-static const char hcd_name[] = "ehci-exynos";
+ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+ 
+ #define PHY_NUMBER 3
+@@ -347,7 +346,6 @@ static int __init ehci_exynos_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+ 	ehci_init_driver(&exynos_ehci_hc_driver, &exynos_overrides);
+ 	return platform_driver_register(&exynos_ehci_driver);
+ }
+diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
+index 896c0d107f72..9cea785934e5 100644
+--- a/drivers/usb/host/ehci-fsl.c
++++ b/drivers/usb/host/ehci-fsl.c
+@@ -722,8 +722,6 @@ static int __init ehci_fsl_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info(DRV_NAME ": " DRIVER_DESC "\n");
+-
+ 	ehci_init_driver(&fsl_ehci_hc_driver, &ehci_fsl_overrides);
+ 
+ 	fsl_ehci_hc_driver.product_desc =
+diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
+index 684164fa9716..a1930db0da1c 100644
+--- a/drivers/usb/host/ehci-hcd.c
++++ b/drivers/usb/host/ehci-hcd.c
+@@ -1351,7 +1351,6 @@ static int __init ehci_hcd_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	printk(KERN_INFO "%s: " DRIVER_DESC "\n", hcd_name);
+ 	set_bit(USB_EHCI_LOADED, &usb_hcds_loaded);
+ 	if (test_bit(USB_UHCI_LOADED, &usb_hcds_loaded) ||
+ 			test_bit(USB_OHCI_LOADED, &usb_hcds_loaded))
+diff --git a/drivers/usb/host/ehci-npcm7xx.c b/drivers/usb/host/ehci-npcm7xx.c
+index 6b5a7a873e01..f72b28a2c02a 100644
+--- a/drivers/usb/host/ehci-npcm7xx.c
++++ b/drivers/usb/host/ehci-npcm7xx.c
+@@ -27,8 +27,6 @@
+ 
+ #define DRIVER_DESC "EHCI npcm7xx driver"
+ 
+-static const char hcd_name[] = "npcm7xx-ehci";
+-
+ #define  USB2PHYCTL_OFFSET 0x144
+ 
+ #define  IPSRST2_OFFSET 0x24
+@@ -191,8 +189,6 @@ static int __init ehci_npcm7xx_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_npcm7xx_hc_driver, NULL);
+ 	return platform_driver_register(&npcm7xx_ehci_hcd_driver);
+ }
+diff --git a/drivers/usb/host/ehci-omap.c b/drivers/usb/host/ehci-omap.c
+index 8c45bc17a580..7dd984722a7f 100644
+--- a/drivers/usb/host/ehci-omap.c
++++ b/drivers/usb/host/ehci-omap.c
+@@ -284,8 +284,6 @@ static int __init ehci_omap_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_omap_hc_driver, &ehci_omap_overrides);
+ 	return platform_driver_register(&ehci_hcd_omap_driver);
+ }
+diff --git a/drivers/usb/host/ehci-orion.c b/drivers/usb/host/ehci-orion.c
+index 3626758b3e2a..a3454a3ea4e0 100644
+--- a/drivers/usb/host/ehci-orion.c
++++ b/drivers/usb/host/ehci-orion.c
+@@ -65,8 +65,6 @@ struct orion_ehci_hcd {
+ 	struct phy *phy;
+ };
+ 
+-static const char hcd_name[] = "ehci-orion";
+-
+ static struct hc_driver __read_mostly ehci_orion_hc_driver;
+ 
+ /*
+@@ -361,8 +359,6 @@ static int __init ehci_orion_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_orion_hc_driver, &orion_overrides);
+ 	return platform_driver_register(&ehci_orion_driver);
+ }
+diff --git a/drivers/usb/host/ehci-pci.c b/drivers/usb/host/ehci-pci.c
+index 9937c5a7efc2..9581952d999a 100644
+--- a/drivers/usb/host/ehci-pci.c
++++ b/drivers/usb/host/ehci-pci.c
+@@ -423,8 +423,6 @@ static int __init ehci_pci_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_pci_hc_driver, &pci_overrides);
+ 
+ 	/* Entries for the PCI suspend/resume callbacks are special */
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+index 6924f0316e9a..fe497c876d76 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -53,8 +53,6 @@ struct ehci_platform_priv {
+ 	struct delayed_work poll_work;
+ };
+ 
+-static const char hcd_name[] = "ehci-platform";
+-
+ static int ehci_platform_reset(struct usb_hcd *hcd)
+ {
+ 	struct platform_device *pdev = to_platform_device(hcd->self.controller);
+@@ -529,8 +527,6 @@ static int __init ehci_platform_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_platform_hc_driver, &platform_overrides);
+ 	return platform_driver_register(&ehci_platform_driver);
+ }
+diff --git a/drivers/usb/host/ehci-spear.c b/drivers/usb/host/ehci-spear.c
+index 3694e450a11a..c4ddd1022f60 100644
+--- a/drivers/usb/host/ehci-spear.c
++++ b/drivers/usb/host/ehci-spear.c
+@@ -24,8 +24,6 @@
+ 
+ #define DRIVER_DESC "EHCI SPEAr driver"
+ 
+-static const char hcd_name[] = "SPEAr-ehci";
+-
+ struct spear_ehci {
+ 	struct clk *clk;
+ };
+@@ -167,8 +165,6 @@ static int __init ehci_spear_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_spear_hc_driver, &spear_overrides);
+ 	return platform_driver_register(&spear_ehci_hcd_driver);
+ }
+diff --git a/drivers/usb/host/ehci-st.c b/drivers/usb/host/ehci-st.c
+index f74433aac948..f731dc98c533 100644
+--- a/drivers/usb/host/ehci-st.c
++++ b/drivers/usb/host/ehci-st.c
+@@ -42,8 +42,6 @@ struct st_ehci_platform_priv {
+ #define hcd_to_ehci_priv(h) \
+ 	((struct st_ehci_platform_priv *)hcd_to_ehci(h)->priv)
+ 
+-static const char hcd_name[] = "ehci-st";
+-
+ #define EHCI_CAPS_SIZE 0x10
+ #define AHB2STBUS_INSREG01 (EHCI_CAPS_SIZE + 0x84)
+ 
+@@ -346,8 +344,6 @@ static int __init ehci_platform_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ehci_init_driver(&ehci_platform_hc_driver, &platform_overrides);
+ 	return platform_driver_register(&ehci_platform_driver);
+ }
+diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
+index f8c111e08a0d..3d1dbcf4c073 100644
+--- a/drivers/usb/host/fotg210-hcd.c
++++ b/drivers/usb/host/fotg210-hcd.c
+@@ -5692,7 +5692,6 @@ static int __init fotg210_hcd_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+ 	set_bit(USB_EHCI_LOADED, &usb_hcds_loaded);
+ 	if (test_bit(USB_UHCI_LOADED, &usb_hcds_loaded) ||
+ 			test_bit(USB_OHCI_LOADED, &usb_hcds_loaded))
+diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
+index 98326465e2dc..533537ef3c21 100644
+--- a/drivers/usb/host/ohci-at91.c
++++ b/drivers/usb/host/ohci-at91.c
+@@ -62,8 +62,6 @@ struct ohci_at91_priv {
+ 
+ #define DRIVER_DESC "OHCI Atmel driver"
+ 
+-static const char hcd_name[] = "ohci-atmel";
+-
+ static struct hc_driver __read_mostly ohci_at91_hc_driver;
+ 
+ static const struct ohci_driver_overrides ohci_at91_drv_overrides __initconst = {
+@@ -699,7 +697,6 @@ static int __init ohci_at91_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+ 	ohci_init_driver(&ohci_at91_hc_driver, &ohci_at91_drv_overrides);
+ 
+ 	/*
+diff --git a/drivers/usb/host/ohci-da8xx.c b/drivers/usb/host/ohci-da8xx.c
+index 1371b0c249ec..d4818e8d652b 100644
+--- a/drivers/usb/host/ohci-da8xx.c
++++ b/drivers/usb/host/ohci-da8xx.c
+@@ -551,7 +551,6 @@ static int __init ohci_da8xx_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", DRV_NAME);
+ 	ohci_init_driver(&ohci_da8xx_hc_driver, &da8xx_overrides);
+ 
+ 	/*
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 5f5e8a64c8e2..8d7977fd5d3b 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -21,7 +21,6 @@
+ 
+ #define DRIVER_DESC "OHCI Exynos driver"
+ 
+-static const char hcd_name[] = "ohci-exynos";
+ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+ 
+ #define to_exynos_ohci(hcd) (struct exynos_ohci_hcd *)(hcd_to_ohci(hcd)->priv)
+@@ -310,7 +309,6 @@ static int __init ohci_exynos_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+ 	ohci_init_driver(&exynos_ohci_hc_driver, &exynos_overrides);
+ 	return platform_driver_register(&exynos_ohci_driver);
+ }
+diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+index c4c821c2288c..0457dd9f6c19 100644
+--- a/drivers/usb/host/ohci-hcd.c
++++ b/drivers/usb/host/ohci-hcd.c
+@@ -1276,7 +1276,6 @@ static int __init ohci_hcd_mod_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	printk(KERN_INFO "%s: " DRIVER_DESC "\n", hcd_name);
+ 	pr_debug ("%s: block sizes: ed %zd td %zd\n", hcd_name,
+ 		sizeof (struct ed), sizeof (struct td));
+ 	set_bit(USB_OHCI_LOADED, &usb_hcds_loaded);
+diff --git a/drivers/usb/host/ohci-nxp.c b/drivers/usb/host/ohci-nxp.c
+index 106a6bcefb08..5b32e683e367 100644
+--- a/drivers/usb/host/ohci-nxp.c
++++ b/drivers/usb/host/ohci-nxp.c
+@@ -275,8 +275,6 @@ static int __init ohci_nxp_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_nxp_hc_driver, NULL);
+ 	return platform_driver_register(&ohci_hcd_nxp_driver);
+ }
+diff --git a/drivers/usb/host/ohci-omap.c b/drivers/usb/host/ohci-omap.c
+index f5bc9c8bdc9a..cb29701df911 100644
+--- a/drivers/usb/host/ohci-omap.c
++++ b/drivers/usb/host/ohci-omap.c
+@@ -423,8 +423,6 @@ static int __init ohci_omap_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_omap_hc_driver, &omap_overrides);
+ 	return platform_driver_register(&ohci_hcd_omap_driver);
+ }
+diff --git a/drivers/usb/host/ohci-pci.c b/drivers/usb/host/ohci-pci.c
+index 41efe927d8f3..a146b2d3ef0b 100644
+--- a/drivers/usb/host/ohci-pci.c
++++ b/drivers/usb/host/ohci-pci.c
+@@ -306,8 +306,6 @@ static int __init ohci_pci_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_pci_hc_driver, &pci_overrides);
+ 
+ #ifdef	CONFIG_PM
+diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
+index 0adae6265127..4e7946024ce7 100644
+--- a/drivers/usb/host/ohci-platform.c
++++ b/drivers/usb/host/ohci-platform.c
+@@ -41,8 +41,6 @@ struct ohci_platform_priv {
+ 	struct reset_control *resets;
+ };
+ 
+-static const char hcd_name[] = "ohci-platform";
+-
+ static int ohci_platform_power_on(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
+@@ -346,8 +344,6 @@ static int __init ohci_platform_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_platform_hc_driver, &platform_overrides);
+ 	return platform_driver_register(&ohci_platform_driver);
+ }
+diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
+index ab4f610a0140..a1dad8745622 100644
+--- a/drivers/usb/host/ohci-pxa27x.c
++++ b/drivers/usb/host/ohci-pxa27x.c
+@@ -114,8 +114,6 @@
+ 
+ #define PXA_UHC_MAX_PORTNUM    3
+ 
+-static const char hcd_name[] = "ohci-pxa27x";
+-
+ static struct hc_driver __read_mostly ohci_pxa27x_hc_driver;
+ 
+ struct pxa27x_ohci {
+@@ -608,8 +606,6 @@ static int __init ohci_pxa27x_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_pxa27x_hc_driver, &pxa27x_overrides);
+ 	ohci_pxa27x_hc_driver.hub_control = pxa27x_ohci_hub_control;
+ 
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index 12264c048601..85a0a9ae0095 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -39,8 +39,6 @@
+ 
+ #define DRIVER_DESC "OHCI S3C2410 driver"
+ 
+-static const char hcd_name[] = "ohci-s3c2410";
+-
+ static struct clk *clk;
+ static struct clk *usb_clk;
+ 
+@@ -474,7 +472,6 @@ static int __init ohci_s3c2410_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+ 	ohci_init_driver(&ohci_s3c2410_hc_driver, NULL);
+ 
+ 	/*
+diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
+index 9b81f420656d..196951a27f3f 100644
+--- a/drivers/usb/host/ohci-spear.c
++++ b/drivers/usb/host/ohci-spear.c
+@@ -23,7 +23,6 @@
+ 
+ #define DRIVER_DESC "OHCI SPEAr driver"
+ 
+-static const char hcd_name[] = "SPEAr-ohci";
+ struct spear_ohci {
+ 	struct clk *clk;
+ };
+@@ -179,8 +178,6 @@ static int __init ohci_spear_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_spear_hc_driver, &spear_overrides);
+ 	return platform_driver_register(&spear_ohci_hcd_driver);
+ }
+diff --git a/drivers/usb/host/ohci-st.c b/drivers/usb/host/ohci-st.c
+index ac796ccd93ef..82eef3c62e11 100644
+--- a/drivers/usb/host/ohci-st.c
++++ b/drivers/usb/host/ohci-st.c
+@@ -40,8 +40,6 @@ struct st_ohci_platform_priv {
+ #define hcd_to_ohci_priv(h) \
+ 	((struct st_ohci_platform_priv *)hcd_to_ohci(h)->priv)
+ 
+-static const char hcd_name[] = "ohci-st";
+-
+ static int st_ohci_platform_power_on(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
+@@ -324,8 +322,6 @@ static int __init ohci_platform_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	pr_info("%s: " DRIVER_DESC "\n", hcd_name);
+-
+ 	ohci_init_driver(&ohci_platform_hc_driver, &platform_overrides);
+ 	return platform_driver_register(&ohci_platform_driver);
+ }
+diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
+index d879d6af5710..95240c9c45bd 100644
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -3190,7 +3190,6 @@ static int __init u132_hcd_init(void)
+ 	u132_exiting = 0;
+ 	if (usb_disabled())
+ 		return -ENODEV;
+-	printk(KERN_INFO "driver %s\n", hcd_name);
+ 	workqueue = create_singlethread_workqueue("u132");
+ 	if (!workqueue)
+ 		return -ENOMEM;
+diff --git a/drivers/usb/host/uhci-hcd.c b/drivers/usb/host/uhci-hcd.c
+index d90b869f5f40..c22b51af83fc 100644
+--- a/drivers/usb/host/uhci-hcd.c
++++ b/drivers/usb/host/uhci-hcd.c
+@@ -867,8 +867,6 @@ static int __init uhci_hcd_init(void)
+ 	if (usb_disabled())
+ 		return -ENODEV;
+ 
+-	printk(KERN_INFO "uhci_hcd: " DRIVER_DESC "%s\n",
+-			ignore_oc ? ", overcurrent ignored" : "");
+ 	set_bit(USB_UHCI_LOADED, &usb_hcds_loaded);
+ 
+ #ifdef CONFIG_DYNAMIC_DEBUG
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.35.1
 
