@@ -2,37 +2,54 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDFCECAAD3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Sep 2022 11:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50943C6FA83
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  5 Sep 2022 11:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236202AbiIELHv (ORCPT
+        id S237646AbiIELSO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 5 Sep 2022 07:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35906 "EHLO
+        Mon, 5 Sep 2022 07:18:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236361AbiIELHu (ORCPT
+        with ESMTP id S235874AbiIELSM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 5 Sep 2022 07:07:50 -0400
+        Mon, 5 Sep 2022 07:18:12 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F1127B09;
-        Mon,  5 Sep 2022 04:07:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3FC5AC67;
+        Mon,  5 Sep 2022 04:18:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 80C25B810DD;
-        Mon,  5 Sep 2022 11:07:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8355C433D7;
-        Mon,  5 Sep 2022 11:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1662376067;
-        bh=NCHiJUzFQ5Oq/AO3AnwAzpKld4u1DrxzVVAgLT3exyI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hGc1Qye10ygILeTS6wCE1BPBoiVpgzRcbochFyHKjVt8G71OkJie1ba882ck2Ehww
-         dz+8qDvxh+Z7ZK1ApiKeCodqaVi+GS56hQW3JBAPeKwP7sGaWiPWaSkYzhgZ4qkDzt
-         smsGPLKrLnTDMT/8WT0Q3IoqWiHLeCODYBQcDKqo=
-Date:   Mon, 5 Sep 2022 13:07:44 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ard Biesheuvel <ardb@kernel.org>
+        by ams.source.kernel.org (Postfix) with ESMTPS id BE86BB810EE;
+        Mon,  5 Sep 2022 11:18:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84511C43147;
+        Mon,  5 Sep 2022 11:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662376688;
+        bh=VqDluIVUCa0cvkguJgqU0qU0mM2vHSOAmaSO20HhtAk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=q6BmZ1QMF63HoDD/P7moeMLa+G1n88M4wOMcVbYClfBxzKmPMQ74uqDdaHwSku00i
+         /IPgadj+DfsdTH/0T/kD8oU55dlB+s7yobE3ZWCVPguW8bL6ufitxHc/7f/OcdKlvA
+         rJEsYPOu0mhYpikubnPNVWmFkAG0ZSR6v4S/c0ldh5FxqlmRZ7iWi6WrrhnhsaNykE
+         PKuAE2qyazipp7WwSvqB4mlW4MlYsNw0F14tpXl32678ssVZo6gSMfgS6uIH3CZ14r
+         wwODrSCcZdTazHd9orXEuwKIzq3hOjUIE/kQA3woApsD/yniXCW5SpwBe4bbs4jhoi
+         asmoteEajmSMA==
+Received: by mail-lj1-f170.google.com with SMTP id k22so8908507ljg.2;
+        Mon, 05 Sep 2022 04:18:08 -0700 (PDT)
+X-Gm-Message-State: ACgBeo1322twlth2xDs7zUirfnZmdc32Mck2zjtKHz2I5anf3QO33v9/
+        4WAynM3Mx0SuXPsDJAQFCfWyYpyN7dRAImhmkds=
+X-Google-Smtp-Source: AA6agR5KS/N7PwAIE1VgLmLrimzWOIJ66TyKWYDA3eq+4LJpciY5M1NhNEKFX77c9InbsebrMfDTY91CD1+6hxCAd/U=
+X-Received: by 2002:a2e:9b0e:0:b0:268:cb68:575b with SMTP id
+ u14-20020a2e9b0e000000b00268cb68575bmr5579388lji.152.1662376686339; Mon, 05
+ Sep 2022 04:18:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220905105252.351795-1-ardb@kernel.org> <YxXYgNsug4BIWsoF@kroah.com>
+In-Reply-To: <YxXYgNsug4BIWsoF@kroah.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 5 Sep 2022 13:17:55 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFuzXPmah+bO+tORQSWnBn_YktDA716FJA=_Psez0OTmg@mail.gmail.com>
+Message-ID: <CAMj1kXFuzXPmah+bO+tORQSWnBn_YktDA716FJA=_Psez0OTmg@mail.gmail.com>
+Subject: Re: [PATCH v2] usb: reduce kernel log spam on driver registration
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -50,59 +67,55 @@ Cc:     linux-usb@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
         Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] usb: reduce kernel log spam on driver registration
-Message-ID: <YxXYgNsug4BIWsoF@kroah.com>
-References: <20220905105252.351795-1-ardb@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220905105252.351795-1-ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 05, 2022 at 12:52:52PM +0200, Ard Biesheuvel wrote:
-> Drivers are typically supposed to be quiet unless they are actually
-> probed, but for some reason, USB host controllers seem to be exempt from
-> this rule, and happily broadcast their existence into the kernel log at
-> boot even if the hardware in question is nowhere to be found.
-> 
-> Let's fix that, and remove these pr_info() calls.
-> 
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Avi Fishman <avifishman70@gmail.com>
-> Cc: Tomer Maimon <tmaimon77@gmail.com>
-> Cc: Tali Perry <tali.perry1@gmail.com>
-> Cc: Patrick Venture <venture@google.com>
-> Cc: Nancy Yuen <yuenn@google.com>
-> Cc: Benjamin Fair <benjaminfair@google.com>
-> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
-> Cc: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: linux-usb@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
-> v2: - drop another couple of occurrences pointed out by Robert
->     - drop hcd_name variables as well if the only reference to them is
->       being dropped
->     - pick up acks
+On Mon, 5 Sept 2022 at 13:07, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Sep 05, 2022 at 12:52:52PM +0200, Ard Biesheuvel wrote:
+> > Drivers are typically supposed to be quiet unless they are actually
+> > probed, but for some reason, USB host controllers seem to be exempt from
+> > this rule, and happily broadcast their existence into the kernel log at
+> > boot even if the hardware in question is nowhere to be found.
+> >
+> > Let's fix that, and remove these pr_info() calls.
+> >
+> > Cc: Alan Stern <stern@rowland.harvard.edu>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> > Cc: Avi Fishman <avifishman70@gmail.com>
+> > Cc: Tomer Maimon <tmaimon77@gmail.com>
+> > Cc: Tali Perry <tali.perry1@gmail.com>
+> > Cc: Patrick Venture <venture@google.com>
+> > Cc: Nancy Yuen <yuenn@google.com>
+> > Cc: Benjamin Fair <benjaminfair@google.com>
+> > Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+> > Cc: Vladimir Zapolskiy <vz@mleia.com>
+> > Cc: linux-usb@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-omap@vger.kernel.org
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > ---
+> > v2: - drop another couple of occurrences pointed out by Robert
+> >     - drop hcd_name variables as well if the only reference to them is
+> >       being dropped
+> >     - pick up acks
+>
+> I've already applied your first version, so can you rebase this against
+> linux-next and send just the fixups?
+>
 
-I've already applied your first version, so can you rebase this against
-linux-next and send just the fixups?
-
-thanks,
-
-greg k-h
+OK
