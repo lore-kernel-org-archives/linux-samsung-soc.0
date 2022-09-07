@@ -2,283 +2,74 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBD5C6FA86
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Sep 2022 00:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC10FECAAD3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Sep 2022 08:59:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbiIGALA (ORCPT
+        id S229566AbiIGI7R (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 6 Sep 2022 20:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60022 "EHLO
+        Wed, 7 Sep 2022 04:59:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiIGAK7 (ORCPT
+        with ESMTP id S229437AbiIGI7Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 6 Sep 2022 20:10:59 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81B2E7EFDB;
-        Tue,  6 Sep 2022 17:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662509457; x=1694045457;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5VL1HdoAlQpX/wJgCDQycSomzAIMxMiV5IkyN0016so=;
-  b=dhIPvwufq41j6iFqhlpLKFLotQUHfpKb8hKBLnUwNKJvs0o7uyZv3cN1
-   lCINu3dhmz4c6HO9DvextMOVPbhiVbAaBYEOjpv4KFF/ssVe4MpZhfpan
-   7fOQRjdkBCgVmjFssbci5eUQF8cRYRljYQp7+1Gf2S6RTucspacqx94ar
-   zXkBJGF+6/2FEa201N0DSRcH4HBJc4j9EOnnuf0czFFH0vFktq0OipcVZ
-   zf3I6W57OWCdZCyaOKhbION9tRjTNpzwMkro5PtOZUHtZNlRhexHgpRjH
-   mrMnfWipOnwcLTsSxoFEzfdPCMpW43k7IOVCgDrdy6icGpPED7eXyGE/9
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="296740853"
-X-IronPort-AV: E=Sophos;i="5.93,295,1654585200"; 
-   d="scan'208";a="296740853"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 17:10:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,295,1654585200"; 
-   d="scan'208";a="647424580"
-Received: from lkp-server02.sh.intel.com (HELO 95dfd251caa2) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 06 Sep 2022 17:10:53 -0700
-Received: from kbuild by 95dfd251caa2 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oViea-0005oX-0t;
-        Wed, 07 Sep 2022 00:10:52 +0000
-Date:   Wed, 07 Sep 2022 08:10:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     openbmc@lists.ozlabs.org, linux-usb@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, bpf@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 840126e36e8ff272cb63158646433fa1324533d9
-Message-ID: <6317e168.JCyIK4idIjFsweBL%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 7 Sep 2022 04:59:16 -0400
+Received: from smtp1.axis.com (smtp1.axis.com [195.60.68.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9064BA572A;
+        Wed,  7 Sep 2022 01:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1662541155;
+  x=1694077155;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NCvMmfchnGPeVaarb8daTn1zsbjoZBkx6giRlsMO4Fo=;
+  b=etJ4jxUEY03Tg9+tZm4yiWTGZPseq7bCGMqDUqoyRspSL8o2fSZtVCdp
+   tdO0n/Ip+V5PIYoHzyihtNvBxTTkM6iLX5yDmqd3zh4B6JBe4fRNdwjn9
+   uPpwYSbIBrabCI9omfhMgK5frr91eLMPERM6hp1HP91c9bml0bvszMXUQ
+   +74q6FvReMEvcpaP+4myUkK144SgxieuOK9XX2PpWOOHr6pHdjC9RoVwS
+   thvlCwl0aGwIbVJafaVBgKahyaqZk2eqZo3i8znLASDrESVWmMKLXIhVl
+   mOp/GmU6z2t4cB8s9yylvmpBsH+OZG59oWhsJrZE85+TMEf/+7LG21oxu
+   g==;
+Date:   Wed, 7 Sep 2022 10:59:12 +0200
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        kernel <kernel@axis.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: Re: [PATCH v4 3/4] clocksource/drivers/exynos_mct: Support
+ local-timers property
+Message-ID: <YxhdYAmSIzUGN5od@axis.com>
+References: <20220609112738.359385-1-vincent.whitchurch@axis.com>
+ <20220609112738.359385-4-vincent.whitchurch@axis.com>
+ <d0f3bab8-fadb-709c-7118-20e23fba1dc4@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d0f3bab8-fadb-709c-7118-20e23fba1dc4@linaro.org>
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 840126e36e8ff272cb63158646433fa1324533d9  Add linux-next specific files for 20220906
+On Tue, Jun 21, 2022 at 03:11:15PM +0200, Krzysztof Kozlowski wrote:
+> On 09/06/2022 13:27, Vincent Whitchurch wrote:
+> > If the device tree indicates that the hardware requires that the
+> > processor only use certain local timers, respect that.
+> > 
+> > Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Daniel,
+> All patches got my review. Do you need here anything more? It seems it's
+> only me who reviews such code, so I don't expect more Rb-tags. :)
 
-Error/Warning reports:
-
-https://lore.kernel.org/linux-mm/202209021204.DcLzOllr-lkp@intel.com
-https://lore.kernel.org/linux-mm/202209042337.FQi69rLV-lkp@intel.com
-https://lore.kernel.org/linux-mm/202209060229.dVuyxjBv-lkp@intel.com
-https://lore.kernel.org/linux-mm/202209070728.o3stvgVt-lkp@intel.com
-https://lore.kernel.org/llvm/202208312208.HjwleIeN-lkp@intel.com
-
-Error/Warning: (recently discovered and may have been fixed)
-
-ERROR: modpost: "__aeabi_ldivmod" [drivers/gpu/drm/vkms/vkms.ko] undefined!
-ERROR: modpost: "__aeabi_uldivmod" [drivers/gpu/drm/vkms/vkms.ko] undefined!
-ERROR: modpost: "__divdi3" [drivers/gpu/drm/vkms/vkms.ko] undefined!
-ERROR: modpost: "__udivdi3" [drivers/gpu/drm/vkms/vkms.ko] undefined!
-arm-linux-gnueabi-ld: vkms_formats.c:(.text+0x1e98): undefined reference to `__divdi3'
-drivers/base/regmap/regmap-mmio.c:221:17: error: implicit declaration of function 'writesb'; did you mean 'writeb'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:224:17: error: implicit declaration of function 'writesw'; did you mean 'writew'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:227:17: error: implicit declaration of function 'writesl'; did you mean 'writel'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:231:17: error: implicit declaration of function 'writesq'; did you mean 'writeq'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:231:17: error: implicit declaration of function 'writesq'; did you mean 'writesl'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:358:17: error: implicit declaration of function 'readsb'; did you mean 'readb'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:361:17: error: implicit declaration of function 'readsw'; did you mean 'readw'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:364:17: error: implicit declaration of function 'readsl'; did you mean 'readl'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:368:17: error: implicit declaration of function 'readsq'; did you mean 'readq'? [-Werror=implicit-function-declaration]
-drivers/base/regmap/regmap-mmio.c:368:17: error: implicit declaration of function 'readsq'; did you mean 'readsl'? [-Werror=implicit-function-declaration]
-drivers/gpu/drm/amd/amdgpu/imu_v11_0_3.c:139:6: warning: no previous prototype for 'imu_v11_0_3_program_rlc_ram' [-Wmissing-prototypes]
-drivers/gpu/drm/drm_atomic_helper.c:802: warning: expecting prototype for drm_atomic_helper_check_wb_connector_state(). Prototype was for drm_atomic_helper_check_wb_encoder_state() instead
-drivers/gpu/drm/vkms/vkms_formats.c:(.text+0x4b0): undefined reference to `__divdi3'
-drivers/gpu/drm/vkms/vkms_formats.c:259: undefined reference to `__divdi3'
-drivers/gpu/drm/vkms/vkms_plane.c:105 vkms_plane_atomic_update() warn: variable dereferenced before check 'fb' (see line 103)
-drivers/scsi/qla2xxx/qla_os.c:2854:23: warning: assignment to 'struct trace_array *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-drivers/usb/host/ehci-platform.c:56:19: warning: 'hcd_name' defined but not used [-Wunused-const-variable=]
-drivers/usb/host/ohci-platform.c:44:19: warning: 'hcd_name' defined but not used [-Wunused-const-variable=]
-include/linux/string.h:303:42: warning: 'strnlen' specified bound 4 exceeds source size 3 [-Wstringop-overread]
-kernel/bpf/memalloc.c:344 bpf_mem_alloc_destroy() error: potentially dereferencing uninitialized 'c'.
-kismet: WARNING: unmet direct dependencies detected for PINCTRL_IMX when selected by PINCTRL_IMX8MM
-ld: drivers/gpu/drm/vkms/vkms_formats.c:260: undefined reference to `__divdi3'
-ld: vkms_formats.c:(.text+0x47f): undefined reference to `__divdi3'
-mips-linux-ld: vkms_formats.c:(.text+0x384): undefined reference to `__divdi3'
-mips-linux-ld: vkms_formats.c:(.text.argb_u16_to_RGB565+0xd0): undefined reference to `__divdi3'
-mipsel-linux-ld: drivers/gpu/drm/vkms/vkms_formats.c:(.text+0x4d8): undefined reference to `__divdi3'
-sound/soc/codecs/tas2562.c:442:13: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-vkms_formats.c:(.text+0x455): undefined reference to `__divdi3'
-vkms_formats.c:(.text.argb_u16_to_RGB565+0xb0): undefined reference to `__divdi3'
-
-Unverified Error/Warning (likely false positive, please contact us if interested):
-
-drivers/usb/host/ehci-atmel.c:28:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-drivers/usb/host/ehci-exynos.c:35:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-drivers/usb/host/ehci-npcm7xx.c:27:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-drivers/usb/host/ehci-orion.c:68:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-drivers/usb/host/ehci-platform.c:56:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-drivers/usb/host/ehci-spear.c:27:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-drivers/usb/host/ohci-platform.c:44:19: warning: unused variable 'hcd_name' [-Wunused-const-variable]
-
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsb
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsl
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsq
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsw
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesb
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesl
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesq
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesw
-|   |-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|   `-- drivers-scsi-qla2xxx-qla_os.c:warning:assignment-to-struct-trace_array-from-int-makes-pointer-from-integer-without-a-cast
-|-- alpha-buildonly-randconfig-r001-20220906
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsb
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsl
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsq
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-readsw
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesb
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesl
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesq
-|   |-- drivers-base-regmap-regmap-mmio.c:error:implicit-declaration-of-function-writesw
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|-- arc-allyesconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|-- arm-allyesconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|-- arm-randconfig-r006-20220906
-|   |-- ERROR:__aeabi_ldivmod-drivers-gpu-drm-vkms-vkms.ko-undefined
-|   `-- ERROR:__aeabi_uldivmod-drivers-gpu-drm-vkms-vkms.ko-undefined
-|-- arm-randconfig-r013-20220905
-|   `-- arm-linux-gnueabi-ld:vkms_formats.c:(.text):undefined-reference-to-__divdi3
-|-- arm64-allyesconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|-- csky-randconfig-r006-20220906
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|-- csky-randconfig-s031-20220906
-|   |-- ERROR:__divdi3-drivers-gpu-drm-vkms-vkms.ko-undefined
-|   `-- kernel-exit.c:sparse:sparse:incorrect-type-in-initializer-(different-address-spaces)-expected-struct-sighand_struct-sighand-got-struct-sighand_struct-noderef-__rcu-sighand
-|-- i386-allyesconfig
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-imu_v11_0_3_program_rlc_ram
-|-- i386-randconfig-a001
-|   |-- drivers-usb-host-ehci-platform.c:warning:hcd_name-defined-but-not-used
-|   `-- drivers-usb-host-ohci-platform.c:warning:hcd_name-defined-but-not-used
-|-- i386-randconfig-a003
-|   |-- ERROR:__divdi3-drivers-gpu-drm-vkms-vkms.ko-undefined
-|   `-- ERROR:__udivdi3-drivers-gpu-drm-vkms-vkms.ko-undefined
-|-- i386-randconfig-a012
-|   |-- drivers-gpu-drm-vkms-vkms_formats.c:undefined-reference-to-__divdi3
-|   `-- ld:drivers-gpu-drm-vkms-vkms_formats.c:undefined-reference-to-__divdi3
-|-- i386-randconfig-a014
-|   |-- ld:vkms_formats.c:(.text):undefined-reference-to-__divdi3
-clang_recent_errors
-|-- arm64-randconfig-r005-20220906
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-function-imu_v11_0_3_program_rlc_ram
-|-- hexagon-randconfig-r001-20220906
-|   `-- drivers-extcon-extcon-usbc-tusb320.c:warning:expecting-prototype-for-drivers-extcon-extcon-tusb320c().-Prototype-was-for-TUSB320_REG8()-instead
-|-- hexagon-randconfig-r045-20220907
-|   |-- drivers-usb-host-ehci-exynos.c:warning:unused-variable-hcd_name
-|   |-- drivers-usb-host-ehci-npcm7xx.c:warning:unused-variable-hcd_name
-|   `-- drivers-usb-host-ehci-orion.c:warning:unused-variable-hcd_name
-|-- i386-randconfig-a002
-|   `-- drivers-extcon-extcon-usbc-tusb320.c:warning:expecting-prototype-for-drivers-extcon-extcon-tusb320c().-Prototype-was-for-TUSB320_REG8()-instead
-|-- i386-randconfig-a011
-|   |-- drivers-usb-host-ehci-platform.c:warning:unused-variable-hcd_name
-|   `-- drivers-usb-host-ohci-platform.c:warning:unused-variable-hcd_name
-|-- i386-randconfig-a015
-|   `-- drivers-extcon-extcon-usbc-tusb320.c:warning:expecting-prototype-for-drivers-extcon-extcon-tusb320c().-Prototype-was-for-TUSB320_REG8()-instead
-|-- riscv-randconfig-r004-20220906
-|   `-- drivers-gpu-drm-amd-amdgpu-imu_v11_0_3.c:warning:no-previous-prototype-for-function-imu_v11_0_3_program_rlc_ram
-|-- riscv-randconfig-r042-20220907
-|   |-- drivers-usb-host-ehci-atmel.c:warning:unused-variable-hcd_name
-|   `-- drivers-usb-host-ehci-spear.c:warning:unused-variable-hcd_name
-|-- s390-randconfig-r036-20220906
-|   |-- drivers-scsi-qla2xxx-qla_os.c:error:call-to-undeclared-function-trace_array_get_by_name-ISO-C99-and-later-do-not-support-implicit-function-declarations
-|   |-- drivers-scsi-qla2xxx-qla_os.c:error:call-to-undeclared-function-trace_array_put-ISO-C99-and-later-do-not-support-implicit-function-declarations
-|   `-- drivers-scsi-qla2xxx-qla_os.c:error:incompatible-integer-to-pointer-conversion-assigning-to-struct-trace_array-from-int
-|-- x86_64-randconfig-a003
-|   `-- drivers-extcon-extcon-usbc-tusb320.c:warning:expecting-prototype-for-drivers-extcon-extcon-tusb320c().-Prototype-was-for-TUSB320_REG8()-instead
-|-- x86_64-randconfig-a012
-|   `-- drivers-extcon-extcon-usbc-tusb320.c:warning:expecting-prototype-for-drivers-extcon-extcon-tusb320c().-Prototype-was-for-TUSB320_REG8()-instead
-`-- x86_64-randconfig-a016
-    `-- drivers-extcon-extcon-usbc-tusb320.c:warning:expecting-prototype-for-drivers-extcon-extcon-tusb320c().-Prototype-was-for-TUSB320_REG8()-instead
-
-elapsed time: 721m
-
-configs tested: 64
-configs skipped: 2
-
-gcc tested configs:
-arc                  randconfig-r043-20220906
-riscv                randconfig-r042-20220906
-um                           x86_64_defconfig
-s390                 randconfig-r044-20220906
-um                             i386_defconfig
-i386                          randconfig-a014
-i386                          randconfig-a001
-i386                          randconfig-a012
-i386                                defconfig
-i386                          randconfig-a016
-i386                          randconfig-a003
-m68k                             allmodconfig
-i386                          randconfig-a005
-arc                              allyesconfig
-alpha                            allyesconfig
-m68k                             allyesconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-arm                                 defconfig
-x86_64                          rhel-8.3-func
-x86_64                        randconfig-a002
-x86_64                        randconfig-a013
-x86_64                         rhel-8.3-kunit
-x86_64                        randconfig-a011
-i386                             allyesconfig
-x86_64                        randconfig-a006
-x86_64                    rhel-8.3-kselftests
-x86_64                           allyesconfig
-x86_64                           rhel-8.3-kvm
-x86_64                           rhel-8.3-syz
-x86_64                        randconfig-a015
-x86_64                        randconfig-a004
-ia64                             allmodconfig
-arm                              allyesconfig
-microblaze                      mmu_defconfig
-openrisc                         alldefconfig
-arm                          pxa3xx_defconfig
-sh                          r7785rp_defconfig
-sh                     sh7710voipgw_defconfig
-arm64                            allyesconfig
-powerpc                           allnoconfig
-powerpc                          allmodconfig
-mips                             allyesconfig
-csky                              allnoconfig
-arc                               allnoconfig
-alpha                             allnoconfig
-riscv                             allnoconfig
-i386                          randconfig-c001
-sh                               allmodconfig
-
-clang tested configs:
-hexagon              randconfig-r041-20220906
-hexagon              randconfig-r045-20220906
-i386                          randconfig-a013
-i386                          randconfig-a011
-i386                          randconfig-a002
-i386                          randconfig-a015
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a001
-x86_64                        randconfig-a016
-x86_64                        randconfig-a003
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a005
-x86_64                          rhel-8.3-rust
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+It's been a couple of months, and unless I'm missing something, it looks
+like this series did not get merged, and nor did it receive any further
+comments.  Should I resend it with Krzysztof's Reviewed-by tags?
