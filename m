@@ -2,113 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FBDC38145
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Sep 2022 11:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7011AC54EE9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Sep 2022 11:52:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbiIGLHV (ORCPT
+        id S229437AbiIGLww (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Sep 2022 07:07:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42552 "EHLO
+        Wed, 7 Sep 2022 07:52:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiIGLHU (ORCPT
+        with ESMTP id S229785AbiIGLwv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Sep 2022 07:07:20 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E40082FA3
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Sep 2022 04:07:19 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id bn9so15524304ljb.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2022 04:07:19 -0700 (PDT)
+        Wed, 7 Sep 2022 07:52:51 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EFAB6D54B
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Sep 2022 04:52:50 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id p7so22031811lfu.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2022 04:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=lvtJG6I12xIUOgfdF4widnYZYk9JagVGFuN0/DDPLdU=;
-        b=XiMUPBPxPc9IhVA1ZGgRlWRAegNFsU/EoUpWrSg+v+nbt/y4HeQi6x3+iXihRNL0le
-         f5hjw/1+TTM/t3tu0+/8hOZezVP6Lhs7dAs4s+s73Hh4bKpPxt8Rnne8DypzDTXnXwvH
-         ORkltv3XCpDUtqh9stWnUzrufQAFeNfQmnRvjP5OiYgAUKWhKZxaZQk4v9Wzk/ARalCt
-         2jKDWi8fDljjmo745pzpdZb2djh1xhuYIhOCWcvOM6J2nIHPGDXP8tWkU1BAx98Aolec
-         vvRdZui0sxbt2CvsDohKkqUTKb1a0zuTVB+ldLst4l9APdKAdaUwwNVl68txorng1xHO
-         S+9Q==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=Q9TkKT3+r01vVZzm+xYD0OiOoUb1Biq2Sme618hwY2k=;
+        b=E2WS1W4kTl+lKYjh0LzH3Iv0PROxOKPqSSBUCjc6Ru0c/oRl2CwyXEESKCujDzMVZ4
+         vofTbLuMOSJy3uTdgF2dvEfMG3R4J8paHgPsRFJC3Q/RZLqojQAFvSoQ1kFcQZZeYW33
+         CKHo+Cl2RMBm/Fr4CFOfRQVW2doulrmXVYUgBIcAheY7NGPH+Rf095FHhf2kpfkbnjUf
+         emrsva18+hWuKfGqoEbqx5H3ec599rqRpxPytLgk12j69+ayiuTv8mtICSQmLOH3/r+2
+         iUYfbydwCc/0HQk6f5/SAfFZB8u7IF6qVBy+n3AL+qqxjmvZvDJHlKjK/7NWMId5I2dx
+         fyTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=lvtJG6I12xIUOgfdF4widnYZYk9JagVGFuN0/DDPLdU=;
-        b=ehD0nrtswisU7/dL2vbaTJ/Hox0OZKSkW1IzLIGOot6Iy85TA829iW0B5lus5ctrgF
-         R+basW5MDx0JtkX0kUwF+gRD+gYCMWTZrcRX5qoThorfQXbBsOlwKlJ9wAZWYW53cupA
-         /CmrkIep6CePPnWnlX/11iUtiVJdV9KpgzeMVI30XKsMN7+mA0sCUz7KW7KDGlaIv0Ki
-         x2Sh22Juw/N9HBmZKW3bn/eI3qq5JVi9hjsMCdOHLO16r31I6S2+MqrQJdkQOfWpYpU7
-         82uOvxLEiynASPPqB2BKhXruT90WEbTxDJwby/aS4LP4QxjowCKUBLKV6W0dM57nk5pu
-         2A/A==
-X-Gm-Message-State: ACgBeo2V72Bqi2Hza+ssc3x8aaPiiPouJ1TUpbdtDmiXsP1/EM6mymRV
-        EEGQyk1VljRxzF6ZjtxlgsIkZw==
-X-Google-Smtp-Source: AA6agR4BsvretTiQT3ouMfvY5Cv6ZwiSK/2diedXXx6s6LwAJ8VnnPNgBRPXt6owZeAN/Boc80yIxg==
-X-Received: by 2002:a2e:3002:0:b0:26a:b199:46df with SMTP id w2-20020a2e3002000000b0026ab19946dfmr766144ljw.304.1662548837711;
-        Wed, 07 Sep 2022 04:07:17 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id c19-20020a056512325300b0048b18700dddsm2407812lfr.106.2022.09.07.04.07.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Sep 2022 04:07:17 -0700 (PDT)
-Message-ID: <da1178da-bb0c-fb7e-9ff9-ee4e3caaf222@linaro.org>
-Date:   Wed, 7 Sep 2022 13:07:16 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v3 10/30] thermal/drivers/exynos: Replace
- of_thermal_is_trip_valid() by thermal_zone_get_trip()
-Content-Language: en-US
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "open list:SAMSUNG THERMAL DRIVER" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220906164720.330701-1-daniel.lezcano@linaro.org>
- <20220906164720.330701-11-daniel.lezcano@linaro.org>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=Q9TkKT3+r01vVZzm+xYD0OiOoUb1Biq2Sme618hwY2k=;
+        b=mvHuVAxrCEjFYEePKyYpDI6O15QNJTwxOiZ0BNMDl+20fGpOPZRsM34qNXgbiQNMI7
+         7Q2LR7boRe3L8aDK7MXcpu6MicT7shDMLofVyiFNrvdeBSsVy2YlPzKzeq+0bHoBiQiu
+         evD4VQg/aQiFPvRx/XZek2BtQDBgjhu4c/QlTWDoYBgcu0JaNfr81cGZ2tM9s1PRaZRy
+         rKi6zGpnmM90cVvJqvjnKqkyxVUcxL8qQw7zt1kaFXz7dLoXYf5BbCIc9IQSsDpoSpnF
+         7zQ2yG1/5otDg2vXO7bI07cUDyl2SNTd5+B5x+sJao1Uo6DVucfv9+Vjs+fAQN1cziHD
+         4Ctg==
+X-Gm-Message-State: ACgBeo2sJ/vrrOIouqlCStFtmq18dVDg3bZlF1nPW+5irfkxIy/Ycwd8
+        EJ+3MeSt7UWNUO3W1KasugfUPw==
+X-Google-Smtp-Source: AA6agR7gpVa5DIQ2h+vqaTkyvVoEIuRThZItL25KMOVg6jlA6fNSzQ7YUJDL6/meWk9lWYJT9jLdhA==
+X-Received: by 2002:a19:5602:0:b0:496:443d:f044 with SMTP id k2-20020a195602000000b00496443df044mr1069081lfb.313.1662551568497;
+        Wed, 07 Sep 2022 04:52:48 -0700 (PDT)
+Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id g1-20020a0565123b8100b004947a12232bsm2383321lfv.275.2022.09.07.04.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 04:52:46 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220906164720.330701-11-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     broonie@kernel.org, krzysztof.kozlowski@linaro.org,
+        robh+dt@kernel.org, daniel@ffwll.ch, linux-kernel@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, airlied@linux.ie,
+        linux-samsung-soc@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, hdegoede@redhat.com,
+        daniel.lezcano@linaro.org, lee@kernel.org, cw00.choi@samsung.com
+Cc:     bzolnier@gmail.com
+Subject: Re: (subset) [PATCH 2/3] MAINTAINERS: pwm-fan: Drop Bartlomiej Zolnierkiewicz
+Date:   Wed,  7 Sep 2022 13:52:41 +0200
+Message-Id: <166255155747.50111.5480583055849352151.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220808101526.46556-2-krzysztof.kozlowski@linaro.org>
+References: <20220808101526.46556-1-krzysztof.kozlowski@linaro.org> <20220808101526.46556-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06/09/2022 18:47, Daniel Lezcano wrote:
-> The thermal_zone_get_trip() does the same check as
-> of_thermal_is_trip_valid(). Replace the call to
-> of_thermal_is_trip_valid() by thermal_zone_get_trip().
+On Mon, 8 Aug 2022 13:15:25 +0300, Krzysztof Kozlowski wrote:
+> Bartlomiej's Samsung email address is not working since around last
+> year and there was no follow up patch take over of the drivers, so drop
+> the email from maintainers.
 > 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 91e6860b5ec4..5e6bb74c67f0 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -554,13 +554,15 @@ static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
->  {
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->  	struct thermal_zone_device *tz = data->tzd;
-> +	struct thermal_trip trip;
->  	unsigned int con, interrupt_en = 0, i;
->  
->  	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
->  
->  	if (on) {
->  		for (i = 0; i < data->ntrip; i++) {
-> -			if (!of_thermal_is_trip_valid(tz, i))
-> +
-> +			if (thermal_zone_get_trip(tz, i, &trip))
 
-No need for empty line before. Ditto in other places.
+Applied, thanks!
+
+[2/3] MAINTAINERS: pwm-fan: Drop Bartlomiej Zolnierkiewicz
+      https://git.kernel.org/krzk/linux/c/1f88d1e5f9e5d965c2208edc2c757eaff8960bca
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
