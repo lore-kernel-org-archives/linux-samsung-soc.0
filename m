@@ -2,69 +2,67 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7011AC54EE9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Sep 2022 11:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B942CC54EE9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  7 Sep 2022 11:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbiIGLww (ORCPT
+        id S230049AbiIGLw4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 7 Sep 2022 07:52:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43270 "EHLO
+        Wed, 7 Sep 2022 07:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbiIGLwv (ORCPT
+        with ESMTP id S229701AbiIGLwy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 7 Sep 2022 07:52:51 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EFAB6D54B
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Sep 2022 04:52:50 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id p7so22031811lfu.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2022 04:52:50 -0700 (PDT)
+        Wed, 7 Sep 2022 07:52:54 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA0986D54B
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Sep 2022 04:52:52 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id i26so6287405lfp.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2022 04:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=Q9TkKT3+r01vVZzm+xYD0OiOoUb1Biq2Sme618hwY2k=;
-        b=E2WS1W4kTl+lKYjh0LzH3Iv0PROxOKPqSSBUCjc6Ru0c/oRl2CwyXEESKCujDzMVZ4
-         vofTbLuMOSJy3uTdgF2dvEfMG3R4J8paHgPsRFJC3Q/RZLqojQAFvSoQ1kFcQZZeYW33
-         CKHo+Cl2RMBm/Fr4CFOfRQVW2doulrmXVYUgBIcAheY7NGPH+Rf095FHhf2kpfkbnjUf
-         emrsva18+hWuKfGqoEbqx5H3ec599rqRpxPytLgk12j69+ayiuTv8mtICSQmLOH3/r+2
-         iUYfbydwCc/0HQk6f5/SAfFZB8u7IF6qVBy+n3AL+qqxjmvZvDJHlKjK/7NWMId5I2dx
-         fyTA==
+        bh=cdVqHqPCKx36tLKOaUP1rRot7WAowoU5bcxA52fdRL8=;
+        b=FQjJxM11DO5lE8Hh/L7toy34lHsPwqSnGDxUK6itZXBy1miZ6JVV5oANyYfK5icS49
+         WYFepCZozX/1VLGNgbiTpqOh0nK8sDxCI1+dD+t+07HK5n+HkmyaBtdR0yI8DgKFATPR
+         rz9Xos18Zb70XBjfXCdLsGf/Y9trnlyvPulbbsAZQqxu4AMMvApddBCTwnsqcpQNjcMH
+         3Tjj2KZvoqhc8M7avrNu6uMAIDel2gOScH71YAmmx8pEZbbQlg9jLdJmFUrERB4RfAL+
+         2IBvWQcNc2Mmp4md5+vhdU5jIByHMmWfAiqR13TxFSLzY3Q2pnsQjwl8zPMHE5Dchvaq
+         7h7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=Q9TkKT3+r01vVZzm+xYD0OiOoUb1Biq2Sme618hwY2k=;
-        b=mvHuVAxrCEjFYEePKyYpDI6O15QNJTwxOiZ0BNMDl+20fGpOPZRsM34qNXgbiQNMI7
-         7Q2LR7boRe3L8aDK7MXcpu6MicT7shDMLofVyiFNrvdeBSsVy2YlPzKzeq+0bHoBiQiu
-         evD4VQg/aQiFPvRx/XZek2BtQDBgjhu4c/QlTWDoYBgcu0JaNfr81cGZ2tM9s1PRaZRy
-         rKi6zGpnmM90cVvJqvjnKqkyxVUcxL8qQw7zt1kaFXz7dLoXYf5BbCIc9IQSsDpoSpnF
-         7zQ2yG1/5otDg2vXO7bI07cUDyl2SNTd5+B5x+sJao1Uo6DVucfv9+Vjs+fAQN1cziHD
-         4Ctg==
-X-Gm-Message-State: ACgBeo2sJ/vrrOIouqlCStFtmq18dVDg3bZlF1nPW+5irfkxIy/Ycwd8
-        EJ+3MeSt7UWNUO3W1KasugfUPw==
-X-Google-Smtp-Source: AA6agR7gpVa5DIQ2h+vqaTkyvVoEIuRThZItL25KMOVg6jlA6fNSzQ7YUJDL6/meWk9lWYJT9jLdhA==
-X-Received: by 2002:a19:5602:0:b0:496:443d:f044 with SMTP id k2-20020a195602000000b00496443df044mr1069081lfb.313.1662551568497;
-        Wed, 07 Sep 2022 04:52:48 -0700 (PDT)
+        bh=cdVqHqPCKx36tLKOaUP1rRot7WAowoU5bcxA52fdRL8=;
+        b=lKBluCw+QH+IxJWcsIfAYCzt9iRlHYNC9hubicgiO6RQNclh1tJIuJ+EMmQ0VisBuW
+         K7ZETLGK9KQd4cbWRylv6khkPNqbm4wT2XoMCx3o/dOMfUxP7Nuk0rs5ZBOa0WO5stz/
+         7SwBSojVfMr3yJymVd+qkeTu9FoLGDzmdxmNkfYxpCb7kZOOV37bUJ3CQZzIdYv4DCBE
+         Pv3SKCUUyu1E8HPug7/WLFyPxSYRM552bGBPZ+NvgWtZByrzuiikrnh5Wq9lqWKFLOOt
+         R5wf1rPAkhg/a+C5PGPJaXv3BSiC+hZwEs19hTJHBLJOl7ZpGY93y+yEAFzzTaob8PBU
+         S7xA==
+X-Gm-Message-State: ACgBeo2VpcFWddEdbdS0igkL/ZmyikZx02Xeg9+js3atoLLmAX3VU4Gr
+        G+uS2fd4+xrSgyn+AOel7Hiftw==
+X-Google-Smtp-Source: AA6agR5yuHKYZVas1pQBmyY2r8bGC0yIVaTwFxz+W5feeOYS2XO8hONK2cT5Joj8q2U8PP1XAbib/Q==
+X-Received: by 2002:a05:6512:169c:b0:492:ca5c:eb23 with SMTP id bu28-20020a056512169c00b00492ca5ceb23mr1052420lfb.646.1662551571123;
+        Wed, 07 Sep 2022 04:52:51 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id g1-20020a0565123b8100b004947a12232bsm2383321lfv.275.2022.09.07.04.52.44
+        by smtp.gmail.com with ESMTPSA id g1-20020a0565123b8100b004947a12232bsm2383321lfv.275.2022.09.07.04.52.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 04:52:46 -0700 (PDT)
+        Wed, 07 Sep 2022 04:52:49 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     broonie@kernel.org, krzysztof.kozlowski@linaro.org,
-        robh+dt@kernel.org, daniel@ffwll.ch, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, airlied@linux.ie,
-        linux-samsung-soc@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, hdegoede@redhat.com,
-        daniel.lezcano@linaro.org, lee@kernel.org, cw00.choi@samsung.com
-Cc:     bzolnier@gmail.com
-Subject: Re: (subset) [PATCH 2/3] MAINTAINERS: pwm-fan: Drop Bartlomiej Zolnierkiewicz
-Date:   Wed,  7 Sep 2022 13:52:41 +0200
-Message-Id: <166255155747.50111.5480583055849352151.b4-ty@linaro.org>
+To:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        sw0312.kim@samsung.com, alim.akhtar@samsung.com
+Cc:     robh@kernel.org
+Subject: Re: [RESEND PATCH dt v2] dt-bindings: media: samsung,exynos5250-gsc: convert to dtschema
+Date:   Wed,  7 Sep 2022 13:52:42 +0200
+Message-Id: <166255155746.50111.6462325647652564835.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220808101526.46556-2-krzysztof.kozlowski@linaro.org>
-References: <20220808101526.46556-1-krzysztof.kozlowski@linaro.org> <20220808101526.46556-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220830180927.16686-1-krzysztof.kozlowski@linaro.org>
+References: <20220830180927.16686-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -72,17 +70,25 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 8 Aug 2022 13:15:25 +0300, Krzysztof Kozlowski wrote:
-> Bartlomiej's Samsung email address is not working since around last
-> year and there was no follow up patch take over of the drivers, so drop
-> the email from maintainers.
+On Tue, 30 Aug 2022 21:09:27 +0300, Krzysztof Kozlowski wrote:
+> Convert the Samsung Exynos SoC G-Scaler bindings to DT schema.
 > 
+> Changes done during conversion:
+> 1. A typical (already used) properties like clocks, iommus and
+>    power-domains.
+> 2. Require clocks, because they are essential for the block to operate.
+> 3. Describe the differences in clocks between the Exynos5250/5420 and
+>    the Exynos5433 G-Scalers.  This includes the fifth Exynos5433 clock
+>    "gsd" (GSCL Smart Deck) which was added to the DTS, but not to the
+>    bindings and Linux driver.  Similarly to Exynos5433 DECON change [1],
+>    the clock should be used.
 > 
+> [...]
 
 Applied, thanks!
 
-[2/3] MAINTAINERS: pwm-fan: Drop Bartlomiej Zolnierkiewicz
-      https://git.kernel.org/krzk/linux/c/1f88d1e5f9e5d965c2208edc2c757eaff8960bca
+[1/1] dt-bindings: media: samsung,exynos5250-gsc: convert to dtschema
+      https://git.kernel.org/krzk/linux/c/1d27e716805c6d8784122ab3d4ea4fc591c340e4
 
 Best regards,
 -- 
