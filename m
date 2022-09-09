@@ -2,82 +2,71 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B80EC6FA86
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Sep 2022 15:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618C9ECAAD3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  9 Sep 2022 15:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231462AbiIIPI7 (ORCPT
+        id S229892AbiIIPQS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 11:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42622 "EHLO
+        Fri, 9 Sep 2022 11:16:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231327AbiIIPI6 (ORCPT
+        with ESMTP id S229480AbiIIPQR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 9 Sep 2022 11:08:58 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4CC013CB38
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Sep 2022 08:08:57 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id s10so1561313ljp.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Sep 2022 08:08:57 -0700 (PDT)
+        Fri, 9 Sep 2022 11:16:17 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C5D144970
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Sep 2022 08:16:11 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id f14so2266762lfg.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Sep 2022 08:16:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=yG6n1mI/niFEcjcQjVJpd13snjc11+9Ua1ZcNArK/PA=;
-        b=oEfXggTUejCD3bsEk5Eo+2JMTPU7wYewMF59Trg8eC3tcKDXXy9WPcQ/CmG4RUaDFB
-         v0BbuQMpgpflqYAmI6w+ZDVN5FoE35/jmCH/VwnBtWCpZzbAELh1uQy3A95xe7uAci5y
-         OrOwtu2CS7oHyXL4es6VMZhIHNyPJtLtxL8PuUd7qy/Cw2TVW70mKTKVtw95DqWc73SA
-         ZaagKx6++krFfGPGbooUVF5xZihXWtqKe6v2QMCTcy7CQF8RegFYUt2P6IBtpLg3lmvU
-         qPnJ09Io0tVuDU+XOSCas5VUCXCv64AADXRNempF/rlMHimS+KgZRV/GqWQJrmym6IDa
-         tnOA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=NUa3V8LEZ2/vDPoZ3wTXU0JCjw5IK+/h0qXIj+ixXts=;
+        b=a7qBUwihziETQrL53Oy5msDh5lUbMPy/QjR7otB9c8m6nhptuhNxdYBJOxQlaP2eCg
+         6zBOOtrFsr6VmX2fBJOatYS6fR+zDD+7wkfMagpqCBYXY/LKrazuI0O5Nl+D5HSaYFOg
+         xJjaynjUCssmoMMUsJfIQu412Cp2EsUeJJFCiF9LhjyeXApL9yD1HP8TTHNzkQhX3Gw1
+         t9IHi3+ZC5rfByIedRqouGbcKO3T2GJxL7ky9tth7zd6dwWDAiPBoEdQihPbpH/L8jA2
+         H6Bh7iXAXzMegQzstgeVbAVextLad3hgUF7D5mpDROJZni7gXUwhm1C+dgaFVsaAuwbJ
+         DXyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=yG6n1mI/niFEcjcQjVJpd13snjc11+9Ua1ZcNArK/PA=;
-        b=lnXmkDU0bTJPiGaEZW4KoQ9pYCSDH/szDIPSS4MlTd2JZE1zjr5+4AAYhQB7Nt+l0E
-         Q+hhju2dDVAwMoWLMf/wixcqRN4Cn8uZbONRMkBL5pTqQmHTMCSPyDxL6OlnJHfIv7le
-         +gKYXWYZGOJQ9h8NQg9UnrxKMpB9m0Jbi3FMLrriWZkSvg0RlN1+9MYLtz1qq055Fgz2
-         8VN3ZcdoGsysjs9QiyUInlAEmNknEaJx+4zShNV54frvbFjX3MPTxlOjyAltb+CCKFxD
-         uQQKIlmFHeU9Lry0/fgT5dj5czzVya0M6EbqyLyBSvNX0HJs6tHH6Oy6R9LbkHsRacuL
-         rnAQ==
-X-Gm-Message-State: ACgBeo0ja94T9DeEu0V6kh22MHFJURjO/v+RkRN/zyfQ2JyQn0H4w8gG
-        x6r5ktKBjltrBn2F/G2OPaqm2Q==
-X-Google-Smtp-Source: AA6agR7iqqrJBwh91qdHkanhjVdu547jO82W1aU6cr1V6QbocxJYKksLDOPQALu7g/UDT1is1JsJDA==
-X-Received: by 2002:a2e:b712:0:b0:26a:d1d9:f8d1 with SMTP id j18-20020a2eb712000000b0026ad1d9f8d1mr3644878ljo.271.1662736136106;
-        Fri, 09 Sep 2022 08:08:56 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=NUa3V8LEZ2/vDPoZ3wTXU0JCjw5IK+/h0qXIj+ixXts=;
+        b=0cGmzm6k25XQUNj7XPwHnQ7cWdEkBnAui0unaFqz1D15Thhvu/BEro/SVjfxEudmXJ
+         jVF4V/cr4GJGlCPzOBryUOHiXRe9uV4V11g4899O0vSKkPA3DOCjE+WwkzRxUM5/qz2b
+         qH+rP7pX2rwXOW9WBGyALqf5PeouVXvSj1rHyu0Jyp0KzkKX3ltXHIAC3NIiD0cQjezW
+         rBUZGDWP59rHXHdTGdOXltRd4tQUWfnV1LLUis7KeZlBt74uYnTrNx9XdayrlB/KaQPB
+         W63zskyxTKIfHVA9YiOBBxlM+gsr75QcST9cifg4oqGn7FOYr+eAHInn/+MDHK5feRj8
+         4Ung==
+X-Gm-Message-State: ACgBeo2PzVl9YWPNUlPLYIsrcnGsoDyolo80oeUaOQYGxGF0NlDomdS6
+        2AAD6T/qBd9BHsS8FusTrDcLmw==
+X-Google-Smtp-Source: AA6agR7v3BDcGAoPMFNRMOvrkFPYNQRBRmlEmUWVN3rQwS8Eb81UspLe2vlpgEFNc23LuS2zvoQQMg==
+X-Received: by 2002:a05:6512:681:b0:489:d509:e076 with SMTP id t1-20020a056512068100b00489d509e076mr5084997lfe.618.1662736569815;
+        Fri, 09 Sep 2022 08:16:09 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id d26-20020a2e361a000000b0026ab83298d6sm110605lja.77.2022.09.09.08.08.54
+        by smtp.gmail.com with ESMTPSA id i17-20020a2ea371000000b0025d5eb5dde7sm107674ljn.104.2022.09.09.08.16.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Sep 2022 08:08:55 -0700 (PDT)
+        Fri, 09 Sep 2022 08:16:09 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/2] arm64: dts: samsung: for v6.1
-Date:   Fri,  9 Sep 2022 17:08:49 +0200
-Message-Id: <20220909150849.820523-2-krzysztof.kozlowski@linaro.org>
+        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: for v6.1
+Date:   Fri,  9 Sep 2022 17:16:05 +0200
+Message-Id: <20220909151605.821685-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220909150849.820523-1-krzysztof.kozlowski@linaro.org>
-References: <20220909150849.820523-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-
-Hi,
-
-The clock binding headers are also shared with clk tree (via earlier pull
-request).
-
-Best regards,
-Krzysztof
-
 
 The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
@@ -85,41 +74,32 @@ The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.1
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-6.1
 
-for you to fetch changes up to dfce69c8520592f1a20619050e6ded6275e9f25f:
+for you to fetch changes up to 9d9292576810d0b36897718c24dfbc1a2835314b:
 
-  dt-bindings: serial: samsung: add exynosautov9-uart compatible (2022-08-25 09:47:56 +0300)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.0
-
-1. Add binding headers for several Exynos850 and ExynosAutov9 clocks.
-2. ExynosAutov9: Add FSYS clock controller nodes.
-3. ExynosAutov9: Document serial compatible (used in DTS).
-4. Exynos850: Add Audio, IS, MFC clock controllers. Add IOMMU nodes.
+  dt-bindings: pinctrl: samsung: deprecate header with register constants (2022-08-19 16:54:10 +0300)
 
 ----------------------------------------------------------------
-Chanho Park (6):
-      dt-bindings: clock: exynosautov9: correct clock numbering of peric0/c1
-      dt-bindings: clock: exynosautov9: add fys0 clock definitions
-      dt-bindings: clock: exynosautov9: add fsys1 clock definitions
-      dt-bindings: clock: exynosautov9: add schema for cmu_fsys0/1
-      arm64: dts: exynosautov9: add fsys0/1 clock DT nodes
-      dt-bindings: serial: samsung: add exynosautov9-uart compatible
+Samsung pinctrl drivers changes for v6.1
 
-Sam Protsenko (5):
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_AUD
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_IS
-      dt-bindings: clock: exynos850: Add Exynos850 CMU_MFCMSCL
-      arm64: dts: exynos: Add CMU_AUD, CMU_IS and CMU_MFCMSCL for Exynos850
-      arm64: dts: exynos: Add SysMMU nodes for Exynos850
+1. Minor fix in order of initializing pinctrl driver - GPIOs should be
+   configured before registering gpiolib.
+2. Final steps to deprecated bindings headers with register constants.
+   The constants were moved to include files in DTS directories, because
+   these are not suitable for bindings.  Remove final references and
+   mark binding header as deprecated to warn any users.
 
- .../bindings/clock/samsung,exynos850-clock.yaml    |  69 +++++++++++
- .../bindings/clock/samsung,exynosautov9-clock.yaml |  44 +++++++
- .../devicetree/bindings/serial/samsung_uart.yaml   |   5 +-
- arch/arm64/boot/dts/exynos/exynos850.dtsi          |  83 +++++++++++++
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  28 +++++
- include/dt-bindings/clock/exynos850.h              | 136 ++++++++++++++++++++-
- include/dt-bindings/clock/samsung,exynosautov9.h   | 128 ++++++++++++++-----
- 7 files changed, 461 insertions(+), 32 deletions(-)
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      dt-bindings: pinctrl: samsung: stop using bindings header with constants
+      dt-bindings: pinctrl: samsung: deprecate header with register constants
+
+Saravana Kannan (1):
+      pinctrl: samsung: Finish initializing the gpios before registering them
+
+ .../bindings/pinctrl/samsung,pinctrl-pins-cfg.yaml |  1 -
+ .../bindings/pinctrl/samsung,pinctrl.yaml          | 63 ++++++++++------------
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |  8 +--
+ include/dt-bindings/pinctrl/samsung.h              |  7 +++
+ 4 files changed, 38 insertions(+), 41 deletions(-)
