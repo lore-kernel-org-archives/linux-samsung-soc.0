@@ -2,120 +2,70 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4ABECAAD8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 13 Sep 2022 23:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E66ECAAD8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 14 Sep 2022 03:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229557AbiIMXS7 (ORCPT
+        id S229723AbiINDqW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 13 Sep 2022 19:18:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
+        Tue, 13 Sep 2022 23:46:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiIMXS6 (ORCPT
+        with ESMTP id S229611AbiINDqU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 13 Sep 2022 19:18:58 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A829266110;
-        Tue, 13 Sep 2022 16:18:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id BDFB9CE1347;
-        Tue, 13 Sep 2022 23:18:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4BDC433C1;
-        Tue, 13 Sep 2022 23:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663111133;
-        bh=/LcuPi8V7Ej7uvoNaew7dsD1eUxauxC0rf5elEG4pcY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=isGmkR8X+bqZCIZQIZToszbRwjKwXAksaJyyViRDQ/ma3/H6VFLPPnBz4H+I+C6Z1
-         6k969mCZrmzJ/PvuMY9bfIh5gMSpa4U5DU+e9lUOE5415GUoFjRUDZLy9B6o1Sfnhm
-         3EtgPvgMiLXEI9iAzPZ6EBkKHoMNjadHoRDyPZOk3tWbqMPuFIqDyGl9hIa45hm89L
-         F/BlojPf6ZnPMR+WiolQWurOnGA0nbqbWlbZrE0JZ1mokMU4oSYFD6+IMLVQOPtkRJ
-         CxhG7NRoOAS+mXX9yUN/d+qGKH5PXJyjUYxkpe2rJdJWPuBGrPaadHsfomM2bY93nQ
-         TCPHDb5axgLdA==
-Date:   Tue, 13 Sep 2022 16:18:51 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Nathan Huckleberry <nhuck@google.com>
-Cc:     Dan Carpenter <error27@gmail.com>, llvm@lists.linux.dev,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/exynos: Fix return type for mixer_mode_valid and
- hdmi_mode_valid
-Message-ID: <YyEP28J5O2Wlh4lS@dev-arch.thelio-3990X>
-References: <20220913205449.154966-1-nhuck@google.com>
+        Tue, 13 Sep 2022 23:46:20 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD5736AA27;
+        Tue, 13 Sep 2022 20:46:18 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MS5lq1LVFznV0W;
+        Wed, 14 Sep 2022 11:43:35 +0800 (CST)
+Received: from cgs.huawei.com (10.244.148.83) by
+ kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Wed, 14 Sep 2022 11:46:15 +0800
+From:   Gaosheng Cui <cuigaosheng1@huawei.com>
+To:     <rostedt@goodmis.org>, <mingo@redhat.com>, <linux@armlinux.org.uk>,
+        <tony@atomide.com>, <bcousson@baylibre.com>, <paul@pwsan.com>,
+        <krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+        <stefan@agner.ch>, <rmk+kernel@armlinux.org.uk>,
+        <linus.walleij@linaro.org>, <broonie@kernel.org>,
+        <sebastian.reichel@collabora.co.uk>, <cuigaosheng1@huawei.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH 0/3] Remove unused declarations for arm
+Date:   Wed, 14 Sep 2022 11:46:12 +0800
+Message-ID: <20220914034615.1240860-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220913205449.154966-1-nhuck@google.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.244.148.83]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 13, 2022 at 01:54:49PM -0700, Nathan Huckleberry wrote:
-> The field mode_valid in exynos_drm_crtc_ops is expected to be of type
-> enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
->                                    const struct drm_display_mode *mode);
-> 
-> Likewise for mode_valid in drm_connector_helper_funcs.
-> 
-> The mismatched return type breaks forward edge kCFI since the underlying
-> function definition does not match the function hook definition.
-> 
-> The return type of mixer_mode_valid and hdmi_mode_valid should be
-> changed from int to enum drm_mode_status.
-> 
-> Reported-by: Dan Carpenter <error27@gmail.com>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1703
-> Cc: llvm@lists.linux.dev
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+This series contains a few cleanup patches, to remove unused
+declarations which have been removed. Thanks!
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Gaosheng Cui (3):
+  ARM: OMAP2+: remove orphan declarations from omap2
+  ARM: s3c: remove orphan declarations from arch/arm/mach-s3c/devs.h
+  ARM: ftrace: remove unused ftrace_graph_caller_old() declaration
 
-> ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c  | 4 ++--
->  drivers/gpu/drm/exynos/exynos_mixer.c | 5 +++--
->  2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 10b0036f8a2e..8453359c92e8 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -922,8 +922,8 @@ static int hdmi_find_phy_conf(struct hdmi_context *hdata, u32 pixel_clock)
->  	return -EINVAL;
->  }
->  
-> -static int hdmi_mode_valid(struct drm_connector *connector,
-> -			struct drm_display_mode *mode)
-> +static enum drm_mode_status hdmi_mode_valid(struct drm_connector *connector,
-> +					    struct drm_display_mode *mode)
->  {
->  	struct hdmi_context *hdata = connector_to_hdmi(connector);
->  	int ret;
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 65260a658684..82f676e6d21b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -1045,8 +1045,9 @@ static void mixer_atomic_disable(struct exynos_drm_crtc *crtc)
->  	clear_bit(MXR_BIT_POWERED, &ctx->flags);
->  }
->  
-> -static int mixer_mode_valid(struct exynos_drm_crtc *crtc,
-> -		const struct drm_display_mode *mode)
-> +static enum drm_mode_status
-> +mixer_mode_valid(struct exynos_drm_crtc *crtc,
-> +		 const struct drm_display_mode *mode)
->  {
->  	struct mixer_context *ctx = crtc->ctx;
->  	u32 w = mode->hdisplay, h = mode->vdisplay;
-> -- 
-> 2.37.2.789.g6183377224-goog
-> 
+ arch/arm/kernel/ftrace.c                     | 1 -
+ arch/arm/mach-omap2/common.h                 | 3 ---
+ arch/arm/mach-omap2/omap_hwmod.h             | 3 ---
+ arch/arm/mach-omap2/omap_hwmod_common_data.h | 1 -
+ arch/arm/mach-omap2/omap_opp_data.h          | 5 -----
+ arch/arm/mach-omap2/serial.h                 | 3 ---
+ arch/arm/mach-omap2/usb.h                    | 1 -
+ arch/arm/mach-s3c/devs.h                     | 2 --
+ 8 files changed, 19 deletions(-)
+
+-- 
+2.25.1
+
