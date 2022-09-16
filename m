@@ -2,51 +2,51 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD707ECAAA1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Sep 2022 18:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2734ECAAD8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 16 Sep 2022 18:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbiIPSTH (ORCPT
+        id S229803AbiIPSTN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 16 Sep 2022 14:19:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57950 "EHLO
+        Fri, 16 Sep 2022 14:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiIPSTH (ORCPT
+        with ESMTP id S229515AbiIPSTM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 16 Sep 2022 14:19:07 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236AFB6D68
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Sep 2022 11:19:05 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id fv3so21871878pjb.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Sep 2022 11:19:05 -0700 (PDT)
+        Fri, 16 Sep 2022 14:19:12 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151EDB6D49
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Sep 2022 11:19:12 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id d64-20020a17090a6f4600b00202ce056566so476124pjk.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Sep 2022 11:19:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=btq8+UvEuEu4v/DMPqax3KQNrb7VRjirbnKm5H1X5d4=;
-        b=YdBKDmr3sXtbPM/f1RFYSy36rI90QAemtIF0NfqOj6gxl5hT6RhWPNx1kF5u3SWRsg
-         qdA+vypt8+c3kx6qYGL8uZuKBuA7ptHoH6aAyi81pAAYWEvVhA5Cr5YOQS1+MGcP3Ycs
-         2VuGfz7uRc0+OYDaycHuTAT3H/RsKalTt3Q6c=
+        bh=/hU4HRiScUW44wbIelmvAkcYgyCjCELEthv9SlsOnOg=;
+        b=UQg0TSNCEznQTsptxEyRT4tlYmSkY3s8B44ecHlGjoJQ2Cl5dYIdtu+bUPFHjMSbKk
+         CdM5Gyudok2hVIG5B0r3CK8xjCZhw7e0HKexe9C6BiO8uzRIUaYWCk57N2TZCRiv9vbH
+         PoqaEey2Apl29NimPjodBI3POB2/cLC8lfc9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=btq8+UvEuEu4v/DMPqax3KQNrb7VRjirbnKm5H1X5d4=;
-        b=TPQ94yLk0EkewYoPOPcL6SLJg8e6hOkQBviGAo/qm5BE/+d3XqlynS+VhQpAow0fi+
-         xCmZyKAaWtlf0KtcBOKbYgQjtZFcLq4yIh0BKeeOJNBAXhFaKNBml87hMbDGHnIvo3b0
-         0CIcps6UeqYvC+eM0sZ5u+LccJrpl7cztXFCfWtlyCrEbAl0yFbaQrbthYtv4M7KR/NI
-         EwbHhmXObULnyolvs73unQzFL5gW+5LpNUdXL9obM8CBGjqC2z03ILDZTXKk15vtBOeC
-         WJFhM34A5JOfPIf4MeqbR8gLN+IgbM9j5f1qhOIFc/gxSWYUNDi/1Hbqr6xJcrp/hL2g
-         pzCw==
-X-Gm-Message-State: ACrzQf1jHkBA8VbfU9A4LGAL0w5mEGcLQw2r7VDfsz9tio4wWV/jKJCl
-        PHcmrnrtjnNjUfBWzOCXJdi0ew==
-X-Google-Smtp-Source: AMsMyM5Yo3Kl8awJvYOisIZ3GPjLjoGmJhsTyQWPKvT3XeYfdgGBcIDp/PLG1WiEruiDzYuF96ooHw==
-X-Received: by 2002:a17:90a:9295:b0:202:582b:1765 with SMTP id n21-20020a17090a929500b00202582b1765mr6666216pjo.99.1663352344609;
-        Fri, 16 Sep 2022 11:19:04 -0700 (PDT)
+        bh=/hU4HRiScUW44wbIelmvAkcYgyCjCELEthv9SlsOnOg=;
+        b=4PEczBZ7UwiLLwSf53/l4YliIw+kl34S3jHrqMf59H4bzbI/cq0ILrE9eXvQwwASvJ
+         EVsLtCy0U3EwgFjWwwM8SsLF0y3tLtxp1vMTfuGEIwgsz+6iwt8zp7kd4hYaEEIAcC6t
+         GEBPJWS4bD74YStU0ulgWrdPV+ChAlOC8vQfUx9xzNnIxHBzh0Ds9zXPi2qhDAeCxWMK
+         Pfkb2ANB71A0JimYnAyHr/aw13/ESTOoatMDy1cVdg0MtYhGSky90PUlUjd/BqR1sbyg
+         0QupFDOUGh6s87BZR0FgITFiKfwlqNJFBGdcfDuitsetTQA20sZN4BnNsbTHRbVzg9f1
+         4BHA==
+X-Gm-Message-State: ACrzQf2SUMyNsmEQj10o1mkR1fYb5ZgGO24q5CT6mcTaD6aDczfuIR9C
+        MYoIWvzPe2NTImoWnnghWYC1gg==
+X-Google-Smtp-Source: AMsMyM6NLTi/+OFyQcowtoFQV8Auo4ugFnbL3vRCHKKwmo6aBGW2DgOZFDW3oFDiIXt7m8fFu/fb3g==
+X-Received: by 2002:a17:902:d512:b0:178:2898:8099 with SMTP id b18-20020a170902d51200b0017828988099mr1037241plg.131.1663352351541;
+        Fri, 16 Sep 2022 11:19:11 -0700 (PDT)
 Received: from localhost.localdomain ([2405:201:c00a:a073:ae5d:6ee4:5c2f:6733])
-        by smtp.gmail.com with ESMTPSA id d14-20020a17090a6a4e00b002007b60e288sm1770000pjm.23.2022.09.16.11.18.57
+        by smtp.gmail.com with ESMTPSA id d14-20020a17090a6a4e00b002007b60e288sm1770000pjm.23.2022.09.16.11.19.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Sep 2022 11:19:03 -0700 (PDT)
+        Fri, 16 Sep 2022 11:19:11 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <andrzej.hajda@intel.com>,
         Inki Dae <inki.dae@samsung.com>,
@@ -70,9 +70,9 @@ Cc:     Matteo Lisi <matteo.lisi@engicam.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-amarula <linux-amarula@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 06/11] drm: bridge: samsung-dsim: Add atomic_check
-Date:   Fri, 16 Sep 2022 23:47:26 +0530
-Message-Id: <20220916181731.89764-7-jagan@amarulasolutions.com>
+Subject: [PATCH v5 07/11] drm: bridge: samsung-dsim: Add platform PLL_P (PMS_P) offset
+Date:   Fri, 16 Sep 2022 23:47:27 +0530
+Message-Id: <20220916181731.89764-8-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220916181731.89764-1-jagan@amarulasolutions.com>
 References: <20220916181731.89764-1-jagan@amarulasolutions.com>
@@ -82,99 +82,119 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Look like an explicit fixing up of mode_flags is required for DSIM IP
-present in i.MX8M Mini/Nano SoCs.
+Look like PLL PMS_P offset value varies between platforms that have
+Samsung DSIM IP.
 
-At least the LCDIF + DSIM needs active low sync polarities in order
-to correlate the correct sync flags of the surrounding components in
-the chain to make sure the whole pipeline can work properly.
+However, there is no clear evidence for it as both Exynos and i.MX
+8M Mini Application Processor Reference Manual is still referring
+the PMS_P offset as 13.
 
-On the other hand the i.MX 8M Mini Applications Processor Reference Manual,
-Rev. 3, 11/2020 says.
-"13.6.3.5.2 RGB interface
- Vsync, Hsync, and VDEN are active high signals."
+The offset 13 is not working for i.MX8M Mini SoCs but the downstream
+NXP sec-dsim.c driver is using offset 14 for i.MX8M Mini SoC platforms
+[1] [2].
 
-No clear evidence about whether it can be documentation issues or
-something, so added a comment FIXME for this and updated the active low
-sync polarities using SAMSUNG_DSIM_TYPE_IMX8MM hw_type.
+PMS_P value set in sec_mipi_dsim_check_pll_out using PLLCTRL_SET_P()
+with offset 13 and then an additional offset of one bit added in
+sec_mipi_dsim_config_pll via PLLCTRL_SET_PMS().
+
+Not sure whether it is reference manual documentation or something else
+but this patch trusts the downstream code and handle PLL_P offset via
+platform driver data so-that imx8mm driver data shall use pll_p_offset
+to 14.
+
+[1] https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/gpu/drm/bridge/sec-dsim.c?h=imx_5.4.47_2.2.0#n210
+[2] https://source.codeaurora.org/external/imx/linux-imx/tree/drivers/gpu/drm/bridge/sec-dsim.c?h=imx_5.4.47_2.2.0#n211
 
 v5:
-* rebase based new bridge changes [mszyprow]
-* remove DSIM_QUIRK_FIXUP_SYNC_POL
-* add hw_type check for sync polarities change.
+* updated clear commit message
 
-v4:
-* none
-
-v3:
-* add DSIM_QUIRK_FIXUP_SYNC_POL to handle mode_flasg fixup
-
-v2:
+v4, v3, v2:
 * none
 
 v1:
-* fix mode flags in atomic_check instead of mode_fixup
+* updated commit message
+* add downstream driver link
 
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 26 ++++++++++++++++++++++++++
+ drivers/gpu/drm/bridge/samsung-dsim.c | 10 ++++++++--
  include/drm/bridge/samsung-dsim.h     |  1 +
- 2 files changed, 27 insertions(+)
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 6d524338d4ff..8abf89326424 100644
+index 8abf89326424..60f22c506c0f 100644
 --- a/drivers/gpu/drm/bridge/samsung-dsim.c
 +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1315,6 +1315,31 @@ static void samsung_dsim_atomic_post_disable(struct drm_bridge *bridge,
- 	pm_runtime_put_sync(dsi->dev);
- }
+@@ -168,7 +168,7 @@
+ /* DSIM_PLLCTRL */
+ #define DSIM_FREQ_BAND(x)		((x) << 24)
+ #define DSIM_PLL_EN			(1 << 23)
+-#define DSIM_PLL_P(x)			((x) << 13)
++#define DSIM_PLL_P(x, offset)		((x) << (offset))
+ #define DSIM_PLL_M(x)			((x) << 4)
+ #define DSIM_PLL_S(x)			((x) << 1)
  
-+static int samsung_dsim_atomic_check(struct drm_bridge *bridge,
-+				     struct drm_bridge_state *bridge_state,
-+				     struct drm_crtc_state *crtc_state,
-+				     struct drm_connector_state *conn_state)
-+{
-+	struct samsung_dsim *dsi = bridge_to_dsi(bridge);
-+	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
-+
-+	if (dsi->plat_data->hw_type & SAMSUNG_DSIM_TYPE_IMX8MM) {
-+		/**
-+		 * FIXME:
-+		 * At least LCDIF + DSIM needs active low sync,
-+		 * but i.MX 8M Mini Applications Processor Reference Manual,
-+		 * Rev. 3, 11/2020 says
-+		 *
-+		 * 13.6.3.5.2 RGB interface
-+		 * Vsync, Hsync, and VDEN are active high signals.
-+		 */
-+		adjusted_mode->flags |= (DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC);
-+		adjusted_mode->flags &= ~(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC);
-+	}
-+
-+	return 0;
-+}
-+
- static void samsung_dsim_mode_set(struct drm_bridge *bridge,
- 				  const struct drm_display_mode *mode,
- 				  const struct drm_display_mode *adjusted_mode)
-@@ -1337,6 +1362,7 @@ static const struct drm_bridge_funcs samsung_dsim_bridge_funcs = {
- 	.atomic_duplicate_state		= drm_atomic_helper_bridge_duplicate_state,
- 	.atomic_destroy_state		= drm_atomic_helper_bridge_destroy_state,
- 	.atomic_reset			= drm_atomic_helper_bridge_reset,
-+	.atomic_check			= samsung_dsim_atomic_check,
- 	.atomic_pre_enable		= samsung_dsim_atomic_pre_enable,
- 	.atomic_enable			= samsung_dsim_atomic_enable,
- 	.atomic_disable			= samsung_dsim_atomic_disable,
+@@ -368,6 +368,7 @@ static const struct samsung_dsim_driver_data exynos3_dsi_driver_data = {
+ 	.max_freq = 1000,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
++	.pll_p_offset = 13,
+ 	.reg_values = reg_values,
+ };
+ 
+@@ -380,6 +381,7 @@ static const struct samsung_dsim_driver_data exynos4_dsi_driver_data = {
+ 	.max_freq = 1000,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
++	.pll_p_offset = 13,
+ 	.reg_values = reg_values,
+ };
+ 
+@@ -390,6 +392,7 @@ static const struct samsung_dsim_driver_data exynos5_dsi_driver_data = {
+ 	.max_freq = 1000,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 11,
++	.pll_p_offset = 13,
+ 	.reg_values = reg_values,
+ };
+ 
+@@ -401,6 +404,7 @@ static const struct samsung_dsim_driver_data exynos5433_dsi_driver_data = {
+ 	.max_freq = 1500,
+ 	.wait_for_reset = 0,
+ 	.num_bits_resol = 12,
++	.pll_p_offset = 13,
+ 	.reg_values = exynos5433_reg_values,
+ };
+ 
+@@ -412,6 +416,7 @@ static const struct samsung_dsim_driver_data exynos5422_dsi_driver_data = {
+ 	.max_freq = 1500,
+ 	.wait_for_reset = 1,
+ 	.num_bits_resol = 12,
++	.pll_p_offset = 13,
+ 	.reg_values = exynos5422_reg_values,
+ };
+ 
+@@ -543,7 +548,8 @@ static unsigned long samsung_dsim_set_pll(struct samsung_dsim *dsi,
+ 	writel(driver_data->reg_values[PLL_TIMER],
+ 			dsi->reg_base + driver_data->plltmr_reg);
+ 
+-	reg = DSIM_PLL_EN | DSIM_PLL_P(p) | DSIM_PLL_M(m) | DSIM_PLL_S(s);
++	reg = DSIM_PLL_EN | DSIM_PLL_P(p, driver_data->pll_p_offset) |
++	      DSIM_PLL_M(m) | DSIM_PLL_S(s);
+ 
+ 	if (driver_data->has_freqband) {
+ 		static const unsigned long freq_bands[] = {
 diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
-index 57b27d75369e..0c5a905f3de7 100644
+index 0c5a905f3de7..df3d030daec6 100644
 --- a/include/drm/bridge/samsung-dsim.h
 +++ b/include/drm/bridge/samsung-dsim.h
-@@ -27,6 +27,7 @@ enum samsung_dsim_type {
- 	SAMSUNG_DSIM_TYPE_EXYNOS5410,
- 	SAMSUNG_DSIM_TYPE_EXYNOS5422,
- 	SAMSUNG_DSIM_TYPE_EXYNOS5433,
-+	SAMSUNG_DSIM_TYPE_IMX8MM,
- 	SAMSUNG_DSIM_TYPE_COUNT,
+@@ -53,6 +53,7 @@ struct samsung_dsim_driver_data {
+ 	unsigned int max_freq;
+ 	unsigned int wait_for_reset;
+ 	unsigned int num_bits_resol;
++	unsigned int pll_p_offset;
+ 	const unsigned int *reg_values;
  };
  
 -- 
