@@ -2,98 +2,88 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DACECAAD3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 09:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D1AECAAD3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 10:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbiISJnV (ORCPT
+        id S230086AbiISK01 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 05:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35880 "EHLO
+        Mon, 19 Sep 2022 06:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbiISJnU (ORCPT
+        with ESMTP id S231948AbiISKYY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2022 05:43:20 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE7D21277
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 02:43:18 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id x29so934590ljq.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 02:43:18 -0700 (PDT)
+        Mon, 19 Sep 2022 06:24:24 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A059C27FFF
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 03:19:17 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id s6so34925592lfo.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 03:19:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=PcJLJgBrnPMXsGzjXkPY7Pb1M0P65ee6QbjyYcCY3xQ=;
-        b=atIaslZfr7a2dG6dY4McyfmKlTdPK8wfvhBhS5rWv/98HRPJw/1AwMp+fkCG/PjSLc
-         RXcNQZBO/gZE2dT3wsIRIgZOQliqzguckcp1vAng7kUVGfQoGmn6/sh3vU38gDdvXt4J
-         9VaKr7oTuPW3tawyEmRanRpqSvuEq6fCU5s1pYKgmjTQ4Fa7Xxx8Uv1e5Gn8O4UXalR9
-         rqDgnqHfmGDz17merzTzYJ6s1Bb1i7bRJOK60QkuZPWF5A3bElzmcXSrdyvzYT4lmOzV
-         +HRVVjLLkIS83wjwpm8L8LRjMqNs7WFzAGqaOREh4Vtv8eKvcsHgdTMzY2Ec1qBZ2bGz
-         Xtag==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=I3nq9SH0Z4BapU3+D3M4JLuO2Hr9R3TgojeyAFc62IA=;
+        b=Zw/AFzXZHwhQz6Um1qmS6KWUUbRquXfeB2T3RZwuGZNOOwVigUCyHfyVrhE4cC88Gx
+         19Flmp1b9gMuSkITrvY21DDqScm66vAAgv9OJTbM+iPvSJVSIRYVAX/hm7rFt8vbCigw
+         ZdyhsxRHoKfG46krJWCJ+TKKOWPp6rZAsHkfRIEgj4Xyja3BL0vw/t4yR92j/EJzJaoG
+         bA9hPQGGbgGUqfVE0axDeufip+yKQCRuVZVqrpNZ3EVtLF3Tz2aUrrhFYAJFWDNb/QvJ
+         PHbAFy/4XWn65ZKIpnAbJkVeXCcmWReEnCU7HHA0+kblIr7jtIZhiRZgeCgryBveeDxC
+         BYhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=PcJLJgBrnPMXsGzjXkPY7Pb1M0P65ee6QbjyYcCY3xQ=;
-        b=MAueGvt+9Eg3PxVLoT8WSnCK/SAKMjApES0rZPCKYyw6Rrp1tTVseSJGIRk7JcCyDl
-         KfpJ5X8TLmU+PqOK4V3jqdgLIDOEl2HCyNeC1Qb+LbOsyHZdmyLhjpmNejjx9VQllAEu
-         9FlzhhNEF9PM079YrkY3mig5JVmtkGLyO8s+e2HeO6ZqZxNM/4Pb4KYVYMMXBlQztCEo
-         NThKzkRINVuVX9Sw5XZcYiHJmrQivR5HCiAo/0GySdSVxbjRGBTZksHu2bo7oocPXQ6X
-         o1i04Pd6UE79zfERNQ6j0SWXBsjJimxIPbZAX54GIRmKu/3smS++9reXc4qcyKwJUNxq
-         q5LA==
-X-Gm-Message-State: ACrzQf0KH0O4SywMi4CPBnTVbymUPJSxWih1Ay536npxpdkFNrSobojG
-        w1FgnOiV0+0jtb2UbKdxdO1dKw==
-X-Google-Smtp-Source: AMsMyM5+Rdc98PpTnnewnK3sHZtYQPHsqQbH/8xSabXXuoP63eF5UntgK3joCznaglllNZ7LiWVEWw==
-X-Received: by 2002:a2e:988a:0:b0:26c:171f:1ecb with SMTP id b10-20020a2e988a000000b0026c171f1ecbmr4632926ljj.105.1663580597222;
-        Mon, 19 Sep 2022 02:43:17 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id g5-20020a19ee05000000b004886508ca5csm5117935lfb.68.2022.09.19.02.43.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Sep 2022 02:43:16 -0700 (PDT)
-Message-ID: <2ace1136-25e0-ef6b-8960-29fbc7050e22@linaro.org>
-Date:   Mon, 19 Sep 2022 11:43:16 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH 4/4] spi: s3c64xx: Fix large transfers with DMA
-Content-Language: en-US
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        broonie@kernel.org, andi@etezian.org
-Cc:     kernel@axis.com, alim.akhtar@samsung.com,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220916113951.228398-1-vincent.whitchurch@axis.com>
- <20220916113951.228398-5-vincent.whitchurch@axis.com>
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=I3nq9SH0Z4BapU3+D3M4JLuO2Hr9R3TgojeyAFc62IA=;
+        b=TIeGqht6v217k2ezzkCHZKWaR8Id+xBcIP3ofNTw4/CfrLGbEZcYpk+ohMka4yvdbK
+         KfQEMVJQeE96NKQPmtb94BWF6Fb1RDStO14b2xtlnRj09u3aRuYvTM9e7moKdW2VKX6U
+         MIdQ8BpekjXUoTIQQmfwFyaKrDGhjLDrxuisH35uBwZNkNFDIbsz2wCYcYCB6SFrM2kp
+         yDOnpJK7K+zWxut6IbTH7WvdrRow7dMGwD5i4V7G8MohlGhwtv90n6jeTBPCeH+6+Ym9
+         +m0MsYRvzKNAAFLVYgijg6sxr4b2HKQP4YMG9xAsFbz+dOTAam53bR6nMtsiUxklLVqi
+         rW/Q==
+X-Gm-Message-State: ACrzQf0jrBn2MFUQ4GiQy+S8RtE/VI29QRM3G/hcMOiQ/tzripelVMpG
+        1yNf5l6Eeog8kZ/Wdbq9Ex4YSw==
+X-Google-Smtp-Source: AMsMyM6S98Z9ei/Hod1Vl3jXv9h8+wy5sGwfGmnMpWB3RM4n34+G0Wf8fQtLVeFSt54ZzyBus6Q7Nw==
+X-Received: by 2002:a05:6512:3f8b:b0:492:d1ed:5587 with SMTP id x11-20020a0565123f8b00b00492d1ed5587mr6409490lfa.355.1663582755278;
+        Mon, 19 Sep 2022 03:19:15 -0700 (PDT)
+Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id u13-20020a05651220cd00b0048b365176d9sm5115936lfr.286.2022.09.19.03.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Sep 2022 03:19:14 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220916113951.228398-5-vincent.whitchurch@axis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     linus.walleij@linaro.org, cuigaosheng1@huawei.com,
+        rostedt@goodmis.org, paul@pwsan.com, stefan@agner.ch,
+        alim.akhtar@samsung.com, tony@atomide.com, mingo@redhat.com,
+        Sebastian Reichel <sre@kernel.org>, rmk+kernel@armlinux.org.uk,
+        linux@armlinux.org.uk, broonie@kernel.org, bcousson@baylibre.com
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: (subset) [PATCH 2/3] ARM: s3c: remove orphan declarations from arch/arm/mach-s3c/devs.h
+Date:   Mon, 19 Sep 2022 12:19:12 +0200
+Message-Id: <166358274950.27930.12152110869781483914.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220914034615.1240860-3-cuigaosheng1@huawei.com>
+References: <20220914034615.1240860-1-cuigaosheng1@huawei.com> <20220914034615.1240860-3-cuigaosheng1@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 16/09/2022 13:39, Vincent Whitchurch wrote:
-> The COUNT_VALUE in the PACKET_CNT register is 16-bit so the maximum
-> value is 65535.  Asking the driver to transfer a larger size currently
-> leads to the DMA transfer timing out.  Fix this by splitting the
-> transfer as needed.
+On Wed, 14 Sep 2022 11:46:14 +0800, Gaosheng Cui wrote:
+> s3c64xx_device_spi1 and s3c64xx_device_spi2 were removed by
+> commit f1ba938e4f98 ("spi: s3c64xx: Delete unused boardfile
+> helpers"), so remove the declaration, too.
 > 
-> With this, the len>64 KiB tests in spi-loopback-test pass.
 > 
-> (Note that len==64 KiB tests work even without this patch for some reason.
->  The driver programs 0 to the COUNT_VALUE field in that case, but it's
->  unclear if it's by design, since the hardware documentation doesn't say
->  anything about the behaviour when COUNT_VALUE == 0, so play it safe and
->  split at 65535.)
-> 
-> Fixes: 230d42d422e7b69 ("spi: Add s3c64xx SPI Controller driver")
-> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
+Applied, thanks!
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+[2/3] ARM: s3c: remove orphan declarations from arch/arm/mach-s3c/devs.h
+      https://git.kernel.org/krzk/linux/c/45c2bd1f61875fcda24937da9b0ff0d0ff8139ff
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
