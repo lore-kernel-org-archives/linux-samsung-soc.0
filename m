@@ -2,91 +2,148 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF8AECAAD3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 16:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663ACECAAD3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 21:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbiISQve (ORCPT
+        id S229731AbiISVn6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 12:51:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56366 "EHLO
+        Mon, 19 Sep 2022 17:43:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbiISQuv (ORCPT
+        with ESMTP id S229605AbiISVne (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2022 12:50:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7FA3DF1B;
-        Mon, 19 Sep 2022 09:50:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A3D5561E69;
-        Mon, 19 Sep 2022 16:50:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA3FC433D7;
-        Mon, 19 Sep 2022 16:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663606210;
-        bh=llaez4drV8Sk9BIkIlYW0smhbZDI+kICBKljdOWOs6U=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=d6CoHsHmU2diIk6I0+T1LVFoz7ywOBFA4k4oI3UmL7dyl+xniKEf6ocCVyQ0P3PkG
-         2l1MVXtrQDa1gxHYXB4lMn9K5w8ePPkZmXt/Cuar+rHfRcv5IJ0IeEhVE31cEyInjj
-         ev0JTN944Ln/m8jEKNcwSmngQujAvTSTuu67Dq/o6p3aYqQ+f9S7zwtGcI13fKtRVF
-         GodOYlQAj3BGa6ImjBbuhfsYLFHKbUJ03EOpDpJ1xtj1TbIg93EGcD4GYZEAXYA4qS
-         g6ntto/VGX0q2QnPhLn2ZDhvqXxz6+uUGWvtojM4iFP0s4+G8ymWj9EonartoIZcIt
-         56TMeeD2DZ7Og==
-From:   Mark Brown <broonie@kernel.org>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>, andi@etezian.org,
-        krzysztof.kozlowski@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@axis.com,
-        alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20220916113951.228398-1-vincent.whitchurch@axis.com>
-References: <20220916113951.228398-1-vincent.whitchurch@axis.com>
-Subject: Re: (subset) [PATCH 0/4] spi: Fix DMA bugs in (not only) spi-s3c64xx
-Message-Id: <166360620609.3110754.1774249252415131243.b4-ty@kernel.org>
-Date:   Mon, 19 Sep 2022 17:50:06 +0100
+        Mon, 19 Sep 2022 17:43:34 -0400
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30D447B94
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 14:43:33 -0700 (PDT)
+Received: by mail-ot1-x32c.google.com with SMTP id h9-20020a9d5549000000b0063727299bb4so466323oti.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 14:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks-com.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=sKtyENe86Q/OqlXN1O0gbexI0XpfGGGtAepGMCor+34=;
+        b=IkGsimzJxr4hqy+Vfmjx30QA9nvDXkOEA8YDczvvQiAdYxDKkqy76p3hG+o+5R12tM
+         IAlcyop9rO+MCRGVV4pgZNTqIu8EnCGdpHFW9aUHUYnSgIHdPmK2SXJL9WKgoS4mop7a
+         PfCQ8xTqOviFdZz/LMEgdPN+H5SoaRFljnxPXv1eKl3S9cLdBlOqxZ5WX6gIVLtUETHi
+         vC6y6UfRF/wycH6zu9n1hQEpm/J4qzRCg7afWGrzkMeOYXlqGg349LyHPu60rPnW2kP6
+         kn4OnlidGxK+YdbMXs1H+/mAaCPpt9QzyXBObqrEka/JBGU2zM9Nm08dnPWA0YB2eP5L
+         8mCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=sKtyENe86Q/OqlXN1O0gbexI0XpfGGGtAepGMCor+34=;
+        b=ESNSEN96GfL8AkA7ZtgJGIaho6BOEYnGeijQ4T0ic89b6LhFT8b0AOMd+KNrTlrEzz
+         TYVUorzIEt6/XfknXBRUrw/xSP72YhVQE91kLqTkJpg19PHUPfZ5ypzYHebMGL3lezf1
+         nw38hZo26HyMRv9cNrwUVQucQ/yNXfmJnxOaq+o1sfeIO6EzbVhQfVlCHqxPH9lgnLge
+         EvBZ/V42slICL3psQAk58065BCvgIG0T8+RTQE+UympMg5Q1cpWQaeO75ITbff/nO0G6
+         wWfF7RM/4KGffDhu9mS02/578ceFhLJVFCMVIncaqPxFhD9AJD6CjOTnSXhtbBsFD8Uq
+         OQGg==
+X-Gm-Message-State: ACrzQf26plVoTUOb4dfmzo2tJWGtECHAdVd+PbB/KMGPu0nl8diTC9jz
+        2T6aSfP058AgkhKz95HC1IPqj4mMPWhWqXyI/wARAQ==
+X-Google-Smtp-Source: AMsMyM43Dxu8MAFsKgpb6em8MHC2r9PEgty88ZEsoPBRfo9rrredHoNCUpBQ6LZibyYt9OJAAPG2bCDGDPDg8xqgDOQ=
+X-Received: by 2002:a9d:684e:0:b0:659:6461:a8d9 with SMTP id
+ c14-20020a9d684e000000b006596461a8d9mr8971091oto.42.1663623813024; Mon, 19
+ Sep 2022 14:43:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.11.0-dev-8af31
+References: <20220916181731.89764-1-jagan@amarulasolutions.com>
+In-Reply-To: <20220916181731.89764-1-jagan@amarulasolutions.com>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Mon, 19 Sep 2022 14:43:21 -0700
+Message-ID: <CAJ+vNU2gLKm_Si7xUsRJuzbJyEFHpC_TqsiorBAT5ADTZjsPZg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] drm: bridge: Add Samsung MIPI DSIM bridge
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Fancy Fang <chen.fang@nxp.com>,
+        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+        Adam Ford <aford173@gmail.com>,
+        Neil Armstrong <narmstrong@linaro.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>,
+        Matteo Lisi <matteo.lisi@engicam.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 16 Sep 2022 13:39:47 +0200, Vincent Whitchurch wrote:
-> This series fixes some bugs I found while running spi-loopback-test with
-> spi-s3c64xx.  The first problem (which I actually noticed while trying to fix
-> the second problem with transfers >64KiB) seems to be a generic issue which
-> affects several drivers so I fixed it in the core.
-> 
-> The series has been tested on ARTPEC-8, which has a version of the IP similar
-> to Exynos 7 and with 64 byte FIFOs (compatible with "tesla,fsd-spi").
-> 
-> [...]
+On Fri, Sep 16, 2022 at 11:18 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> This series supports common bridge support for Samsung MIPI DSIM
+> which is used in Exynos and i.MX8MM SoC's.
+>
+> Previous v4 can be available here [1], repo on linux-next [2] and
+> Engicam i.Core MX8M Mini SoM boot log [3].
+>
+> The final bridge supports both the Exynos and i.MX8MM DSI devices.
+>
+> Changes for v3:
+> * bridge changes to support multi-arch
+> * updated and clear commit messages
+> * add hw_type via plat data
+> * removed unneeded quirk
+> * rebased on linux-next
+>
+> Changes for v4:
+> * include Inki Dae in MAINTAINERS
+> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
+> * update init handling to ensure host init done on first cmd transfer
+>
+> Changes for v3:
+> * fix the mult-arch build
+> * fix dsi host init
+> * updated commit messages
+>
+> Changes for v2:
+> * fix bridge handling
+> * fix dsi host init
+> * correct the commit messages
+>
+> Patch 0001:     Restore proper bridge chain in exynos_dsi
+>
+> Patch 0002:     Samsung DSIM bridge
+>
+> Patch 0003:     PHY optional
+>
+> Patch 0004:     OF-graph or Child node lookup
+>
+> Patch 0005:     DSI host initialization
+>
+> Patch 0006:     atomic check
+>
+> Patch 0007:     PMS_P offset via plat data
+>
+> Patch 0008:     atomic_get_input_bus_fmts
+>
+> Patch 0009:     input_bus_flags
+>
+> Patch 0010:     document fsl,imx8mm-mipi-dsim
+>
+> Patch 0011:     add i.MX8MM DSIM support
+>
+> [3] https://gist.github.com/openedev/22b2d63b30ade0ba55ab414a2f47aaf0
+> [2] https://github.com/openedev/kernel/tree/imx8mm-dsi-v5
 
-Applied to
+Jagan,
 
-   broonie/spi.git for-next
+I would like to try out this latest series a board I have here. It
+looks like perhaps you did not push this imx8mm-dsi-v5 branch?
 
-Thanks!
+Best Regards,
 
-[1/4] spi: spi-loopback-test: Add test to trigger DMA/PIO mixing
-      commit: b85ad8a54e0a446b3daa7f526e4996ddb6d4373f
+Tim
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> [1] https://patchwork.kernel.org/project/dri-devel/cover/20220829184031.1863663-1-jagan@amarulasolutions.com/
+>
