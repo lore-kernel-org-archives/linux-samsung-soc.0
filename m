@@ -2,148 +2,230 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663ACECAAD3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 21:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B67C6FA94
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 22:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbiISVn6 (ORCPT
+        id S230006AbiISW4a (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 17:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
+        Mon, 19 Sep 2022 18:56:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiISVne (ORCPT
+        with ESMTP id S229983AbiISW42 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 19 Sep 2022 17:43:34 -0400
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30D447B94
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 14:43:33 -0700 (PDT)
-Received: by mail-ot1-x32c.google.com with SMTP id h9-20020a9d5549000000b0063727299bb4so466323oti.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 14:43:33 -0700 (PDT)
+        Mon, 19 Sep 2022 18:56:28 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646AC402D9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 15:56:23 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id sb3so2051734ejb.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2022 15:56:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20210112.gappssmtp.com; s=20210112;
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=sKtyENe86Q/OqlXN1O0gbexI0XpfGGGtAepGMCor+34=;
-        b=IkGsimzJxr4hqy+Vfmjx30QA9nvDXkOEA8YDczvvQiAdYxDKkqy76p3hG+o+5R12tM
-         IAlcyop9rO+MCRGVV4pgZNTqIu8EnCGdpHFW9aUHUYnSgIHdPmK2SXJL9WKgoS4mop7a
-         PfCQ8xTqOviFdZz/LMEgdPN+H5SoaRFljnxPXv1eKl3S9cLdBlOqxZ5WX6gIVLtUETHi
-         vC6y6UfRF/wycH6zu9n1hQEpm/J4qzRCg7afWGrzkMeOYXlqGg349LyHPu60rPnW2kP6
-         kn4OnlidGxK+YdbMXs1H+/mAaCPpt9QzyXBObqrEka/JBGU2zM9Nm08dnPWA0YB2eP5L
-         8mCw==
+        bh=5S9VBftUHA8Ab+AfT1DhnDF/jWnQCvfphMhw9w+YVhc=;
+        b=pT3AVw/XaQKfMJa28M67X6CWfwalI0Uvo6unsRjOTD2Z+d/hMLJagRy91+fB9mWt/H
+         RvjlLsn+3FsNx74QkbruJHKtTQ+30w35PYmoN36zBZvRhmzaaut2t/ejO0VHEYQ77EDj
+         OXDYFEqkBBbGSPaGws21i+7eNFUtsVpC10Ocfp53V0C+AqpxtnC2gWLf09NvoZb8DNZe
+         nefkWz5Q2xpTnqPE/9sJZpmszdShkKibcjHKjjaL4N2+oQKOJucjE0sZV5m8l2gxJQLL
+         eUTG5Bs9Z5UoBJW4L2zlLkhjGsOc0HVn5guvp/vsJvOqjFnEQJHDOGaHy7aMupntX7WF
+         7vTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=sKtyENe86Q/OqlXN1O0gbexI0XpfGGGtAepGMCor+34=;
-        b=ESNSEN96GfL8AkA7ZtgJGIaho6BOEYnGeijQ4T0ic89b6LhFT8b0AOMd+KNrTlrEzz
-         TYVUorzIEt6/XfknXBRUrw/xSP72YhVQE91kLqTkJpg19PHUPfZ5ypzYHebMGL3lezf1
-         nw38hZo26HyMRv9cNrwUVQucQ/yNXfmJnxOaq+o1sfeIO6EzbVhQfVlCHqxPH9lgnLge
-         EvBZ/V42slICL3psQAk58065BCvgIG0T8+RTQE+UympMg5Q1cpWQaeO75ITbff/nO0G6
-         wWfF7RM/4KGffDhu9mS02/578ceFhLJVFCMVIncaqPxFhD9AJD6CjOTnSXhtbBsFD8Uq
-         OQGg==
-X-Gm-Message-State: ACrzQf26plVoTUOb4dfmzo2tJWGtECHAdVd+PbB/KMGPu0nl8diTC9jz
-        2T6aSfP058AgkhKz95HC1IPqj4mMPWhWqXyI/wARAQ==
-X-Google-Smtp-Source: AMsMyM43Dxu8MAFsKgpb6em8MHC2r9PEgty88ZEsoPBRfo9rrredHoNCUpBQ6LZibyYt9OJAAPG2bCDGDPDg8xqgDOQ=
-X-Received: by 2002:a9d:684e:0:b0:659:6461:a8d9 with SMTP id
- c14-20020a9d684e000000b006596461a8d9mr8971091oto.42.1663623813024; Mon, 19
- Sep 2022 14:43:33 -0700 (PDT)
+        bh=5S9VBftUHA8Ab+AfT1DhnDF/jWnQCvfphMhw9w+YVhc=;
+        b=rKnovejNM1ujUbez9R7mWaC2bonb6HAQVPLvbYP4aT1W9hcBj3w1qboZIWR6ae3jTA
+         9dsuNBWklWg8sWJcDIA+FLrjxgoerzu9YHHxpiY/pX5ysyUkdrxisFxoqMtCvPo5w5XA
+         SGdeVAQ/YFq0JXu5Ljyca8bE1uY7PuNXynMdobs5X0EzWZ3H81GwOAdYQrAjY4K5/Ysn
+         l7KPAibA6H08DibC9Wyk3RsSaIWIVHYt5aQ5Av8iYmxF4H6JCo2cX/jAYxSlYSbvIUU/
+         8+NCGDbKKUon9we9Pb7e9VQgilxtfwNJc0YdM/Dske+WwZ/JrZUflEVjaa0TjJyn8U9C
+         NrLQ==
+X-Gm-Message-State: ACrzQf08CxYzSqP7LGXOTAK7ylQSOMzUKqzMWvTqYW8Lg+dCETG+zB5a
+        CJG4S4W1gSCPcuY6/Sy5TONuV4QvUCHjb6T0xs1iGg==
+X-Google-Smtp-Source: AMsMyM5kdxcAfNB78ChbidtnpNAMschNYMIGpvHRr7zgKTZ4CCEGx6bhJgHHTNr9SAgKH+LAmfDCBtvH2R9hQBackB8=
+X-Received: by 2002:a17:906:ef8c:b0:77c:8f77:330 with SMTP id
+ ze12-20020a170906ef8c00b0077c8f770330mr14503775ejb.604.1663628181793; Mon, 19
+ Sep 2022 15:56:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220916181731.89764-1-jagan@amarulasolutions.com>
-In-Reply-To: <20220916181731.89764-1-jagan@amarulasolutions.com>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Mon, 19 Sep 2022 14:43:21 -0700
-Message-ID: <CAJ+vNU2gLKm_Si7xUsRJuzbJyEFHpC_TqsiorBAT5ADTZjsPZg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/11] drm: bridge: Add Samsung MIPI DSIM bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Fancy Fang <chen.fang@nxp.com>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Adam Ford <aford173@gmail.com>,
-        Neil Armstrong <narmstrong@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tommaso Merciai <tommaso.merciai@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>,
-        Matteo Lisi <matteo.lisi@engicam.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+References: <20220701012647.2007122-1-saravanak@google.com>
+ <YwS5J3effuHQJRZ5@kroah.com> <CAOesGMivJ5Q-jdeGKw32yhjmNiYctHjpEAnoMMRghYqWD2m2tw@mail.gmail.com>
+ <YygsEtxKz8dsEstc@kroah.com>
+In-Reply-To: <YygsEtxKz8dsEstc@kroah.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 19 Sep 2022 15:56:09 -0700
+Message-ID: <CAOesGMh5GHCONTQ9M1Ro7zW-hkL_1F7Xt=xRV0vYSfPY=7LYkQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 11:18 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On Mon, Sep 19, 2022 at 1:44 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> This series supports common bridge support for Samsung MIPI DSIM
-> which is used in Exynos and i.MX8MM SoC's.
+> On Sun, Sep 18, 2022 at 08:44:27PM -0700, Olof Johansson wrote:
+> > On Tue, Aug 23, 2022 at 8:37 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
+> > > > These patches are on top of driver-core-next.
+> > > >
+> > > > Even if stdout-path isn't set in DT, this patch should take console
+> > > > probe times back to how they were before the deferred_probe_timeout
+> > > > clean up series[1].
+> > >
+> > > Now dropped from my queue due to lack of a response to other reviewer's
+> > > questions.
+> >
+> > What happened to this patch? I have a 10 second timeout on console
+> > probe on my SiFive Unmatched, and I don't see this flag being set for
+> > the serial driver. In fact, I don't see it anywhere in-tree. I can't
+> > seem to locate another patchset from Saravana around this though, so
+> > I'm not sure where to look for a missing piece for the sifive serial
+> > driver.
+> >
+> > This is the second boot time regression (this one not fatal, unlike
+> > the Layerscape PCIe one) from the fw_devlink patchset.
+> >
+> > Greg, can you revert the whole set for 6.0, please? It's obviously
+> > nowhere near tested enough to go in and I expect we'll see a bunch of
+> > -stable fixups due to this if we let it remain in.
 >
-> Previous v4 can be available here [1], repo on linux-next [2] and
-> Engicam i.Core MX8M Mini SoM boot log [3].
->
-> The final bridge supports both the Exynos and i.MX8MM DSI devices.
->
-> Changes for v3:
-> * bridge changes to support multi-arch
-> * updated and clear commit messages
-> * add hw_type via plat data
-> * removed unneeded quirk
-> * rebased on linux-next
->
-> Changes for v4:
-> * include Inki Dae in MAINTAINERS
-> * remove dsi_driver probe in exynos_drm_drv to support multi-arch build
-> * update init handling to ensure host init done on first cmd transfer
->
-> Changes for v3:
-> * fix the mult-arch build
-> * fix dsi host init
-> * updated commit messages
->
-> Changes for v2:
-> * fix bridge handling
-> * fix dsi host init
-> * correct the commit messages
->
-> Patch 0001:     Restore proper bridge chain in exynos_dsi
->
-> Patch 0002:     Samsung DSIM bridge
->
-> Patch 0003:     PHY optional
->
-> Patch 0004:     OF-graph or Child node lookup
->
-> Patch 0005:     DSI host initialization
->
-> Patch 0006:     atomic check
->
-> Patch 0007:     PMS_P offset via plat data
->
-> Patch 0008:     atomic_get_input_bus_fmts
->
-> Patch 0009:     input_bus_flags
->
-> Patch 0010:     document fsl,imx8mm-mipi-dsim
->
-> Patch 0011:     add i.MX8MM DSIM support
->
-> [3] https://gist.github.com/openedev/22b2d63b30ade0ba55ab414a2f47aaf0
-> [2] https://github.com/openedev/kernel/tree/imx8mm-dsi-v5
+> What exactly is "the whole set"?  I have the default option fix queued
+> up and will send that to Linus later this week (am traveling back from
+> Plumbers still), but have not heard any problems about any other issues
+> at all other than your report.
 
-Jagan,
+I stand corrected in this case, the issue on the Hifive Unmatched was
+a regression due to a PWM clock change -- I just sent a patch for that
+(serial driver fix).
 
-I would like to try out this latest series a board I have here. It
-looks like perhaps you did not push this imx8mm-dsi-v5 branch?
+So it seems like as long as the fw_devlink.strict=1 patch is reverted,
+things are back to a working state here.
 
-Best Regards,
+I still struggle with how the fw_devlink patchset is expected to work
+though, since DT is expected to describe the hardware configuration,
+and it has no knowledge of whether there are drivers that will be
+bound to any referenced supplier devnodes. It's not going to work well
+to assume that they will always be bound, and to add 10 second
+timeouts for those cases isn't a good solution. Seems like the number
+of special cases will keep adding up.
 
-Tim
+The whole design feels like it's falling short, and it's been patched
+here and there to deal with the shortcomings, instead of revisiting
+the full solution. (The patches are the console one, and another to
+deal with nfsroot boots).
 
-> [1] https://patchwork.kernel.org/project/dri-devel/cover/20220829184031.1863663-1-jagan@amarulasolutions.com/
->
+As long as it doesn't keep regressing others, I suppose the work to
+redesign it can happen in-tree, but it's not usually how we try to do
+it for new functionality. Especially since it's still being iterated
+on (with active patch sets posted around -rc1 for improvements).
+
+Oh, and one more thing for the future -- the main patch that changes
+behavior due to dependency tracking is 2f8c3ae8288e, named "driver
+core: Add wait_for_init_devices_probe helper function". It's easy to
+overlook this when looking at a list of patches since it's said to
+just introduce a helper.
+
+
+-Olof
