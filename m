@@ -2,164 +2,191 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295DBECAAD8
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 18 Sep 2022 22:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6085C6FA91
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 19 Sep 2022 03:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbiIRWLy (ORCPT
+        id S229731AbiISDoq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 18 Sep 2022 18:11:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36760 "EHLO
+        Sun, 18 Sep 2022 23:44:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbiIRWLx (ORCPT
+        with ESMTP id S229679AbiISDoo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 18 Sep 2022 18:11:53 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39FF17593;
-        Sun, 18 Sep 2022 15:11:50 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id i15-20020a17090a4b8f00b0020073b4ac27so4410234pjh.3;
-        Sun, 18 Sep 2022 15:11:50 -0700 (PDT)
+        Sun, 18 Sep 2022 23:44:44 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DB09FF7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Sep 2022 20:44:41 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id b35so39494097edf.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Sep 2022 20:44:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=Sy4r0WjfjVrjcfEvaSP88S+n0l6KDV7pVO2qpx67ucY=;
-        b=dXnxJZlR1kRI0Y2QLs09BU+ofbs3tKjLtLatklxr5ZER1DQy4WK5hRSI+jUKH2YJB+
-         1daeCwnkGBtn4gH8l5R9ckUiuVPhO7SHlQF+cFB8bfJVFP97By+kvbH3iWqp2wbn1ju4
-         apWtUWZxZKKHqKfdIHJ6wjVlmLoL2hGfRoFIVLEsvzR7dXcJJMDaxvQbkIdIqQNEQQXn
-         ih/NkWAcZ+rKSDNVOw/kQ8yWzaZHvZPeuaEXistzQGCWgW+mN+nmM6sUsnHs3+KUg2Vx
-         9FUwx7Md6g9DynMqJfQeFxqZyBWNeatdrdHkke8ijKBWDYIAIu5QzmYv375FhOyOB/Ra
-         k2+Q==
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=8wzd/IsQMAz4yliZb1FsJ3OfMRVNZc5tTLnz3lR7QHQ=;
+        b=EuFCJAkszMPKPtxQSyMQ0NoboaeVB7t96eFw9rPXwH9oSHUro5o77bxEeYAtANDzyR
+         I9BMOm4HMiosCb0pcsiSHEAZo2qSCtvZawUq0/zPNIdwAvDvQAPS+8+0uFrWbUJgoTtd
+         ExLo8MeQP7GyQ+rW2rlFvIPPT75kqxCAKPhOGjeDjYZZFhuAOfywggSn5a+jZu6mJGBr
+         cWVHHoToy9UWA6nPxBqZcAZLzmJoxjkbRc1yLhwZYNZgNQEBRnr86m6GI/e/+J8MoRAT
+         suDLw8ILYZpcoPAOh+pvz4Lu/zfiYh6RXQKy+jZAxuRvjXsVxLmt63JqorCueNp9TEEJ
+         9kQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=Sy4r0WjfjVrjcfEvaSP88S+n0l6KDV7pVO2qpx67ucY=;
-        b=7LaRl9G3xqyW44jqBM1TRdWH+luBQiedEcNh0cGlPwGZOKjY3GQUZvJIIMNkqjTsYY
-         MIjV+EsF0berdZ0H9pdFxqhCqu8b7wP93swJQ46xHI+xTQzngUD+y6otZ1+gZ2Wulxc9
-         pbMkh1vPtMQerfC/lcXU8rL7H8Q9hyzwX9ZwuAHWcAfYBVD3KlRodFeKZ4YU6NmDHMLE
-         2g8n8pcJEs6H5m7xn39TA0oSJpm6ysLBI7ZHyBc3rJ0OV1NxVo3esqr/28yw7+aVT+2J
-         6vw3szpxuAe2o6PqfbGVKzQA9x8kDzmJ95ZGq9pLQ1pzfSv/qV4SJR6KUhEOiXdaClEM
-         9P0w==
-X-Gm-Message-State: ACrzQf0LOOCpn8CvChgPiqyWSUksP84OglI5olhkD2MSneuN/npE8nvE
-        PaZlCYjke/9C760BgzQAShg=
-X-Google-Smtp-Source: AMsMyM79LEEV4jWCLdWZcyBi6StD5RQCoRM+1+cKc7E0nfnidwFL7hIDXBpgAEk9XfovAHzGbA8N9A==
-X-Received: by 2002:a17:902:8c81:b0:178:a33f:8b8f with SMTP id t1-20020a1709028c8100b00178a33f8b8fmr1017858plo.50.1663539110235;
-        Sun, 18 Sep 2022 15:11:50 -0700 (PDT)
-Received: from ?IPV6:2600:8802:b00:4a48:4c3d:6f64:77e4:9b52? ([2600:8802:b00:4a48:4c3d:6f64:77e4:9b52])
-        by smtp.gmail.com with ESMTPSA id q7-20020a170902a3c700b0016f1319d2a7sm18750283plb.297.2022.09.18.15.11.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Sep 2022 15:11:49 -0700 (PDT)
-Message-ID: <adb2de4e-0ad0-a94a-93e6-572f58a2141b@gmail.com>
-Date:   Sun, 18 Sep 2022 15:11:47 -0700
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=8wzd/IsQMAz4yliZb1FsJ3OfMRVNZc5tTLnz3lR7QHQ=;
+        b=Q5u7xTNEyVrDYteLyXqagicASQjK4ohg2kFFuwIPNpwh12GM1NWGsERm0bBFqdnzaY
+         EAY4v494O3OUXDwUAz022I9JmoWF7m9XJgY2EtCYQSuI8hbhUwcGlYxd6H1NPj44mSBS
+         zPQjOitwZDFlDmcnrbndjfpSv/7/sVkmDP8CirBtYrgUUS0cYOmIUtEdZclkrFv+ui3K
+         9wmid3i7hTX4dzQuYRx0BQI4M5gTYbF8w6bon8DaOV7vJycHRaVF/GHNoFAoxo2QBJpn
+         UgaTfYcMaUDO5d4tLVE5r6B3IL24dJzprizw8xfTHT5oWtKVwOZQwA26fDwvwuU7pMec
+         BLQQ==
+X-Gm-Message-State: ACrzQf1obZr10BFNbKxewNahl2hQTWlP/I+sg/q+YF5jooXPEovyQ5MP
+        f4ZkcU6MB7r/KeIj5CJUtOwGA5NqdAG2+cQPrJYbDg==
+X-Google-Smtp-Source: AMsMyM67X4fHgNHGRzRNZ0AalOVh8oZlYNRkDoycvf7zBAcHx4qOwSpxEraLAwYUCmYCoDnGs0xLR1B5pb/N312tK3I=
+X-Received: by 2002:aa7:cc8a:0:b0:446:7668:2969 with SMTP id
+ p10-20020aa7cc8a000000b0044676682969mr13821510edt.206.1663559079248; Sun, 18
+ Sep 2022 20:44:39 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH net-next v3 5/7] usbnet: smsc95xx: Forward PHY interrupts
- to PHY driver to avoid polling
-Content-Language: en-US
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Steve Glendinning <steve.glendinning@shawell.net>,
-        UNGLinuxDriver@microchip.com, Oliver Neukum <oneukum@suse.com>,
-        Andre Edich <andre.edich@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Gabriel Hojda <ghojda@yo2urs.ro>,
-        Christoph Fritz <chf.fritz@googlemail.com>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Philipp Rosenberger <p.rosenberger@kunbus.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+References: <20220701012647.2007122-1-saravanak@google.com> <YwS5J3effuHQJRZ5@kroah.com>
+In-Reply-To: <YwS5J3effuHQJRZ5@kroah.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sun, 18 Sep 2022 20:44:27 -0700
+Message-ID: <CAOesGMivJ5Q-jdeGKw32yhjmNiYctHjpEAnoMMRghYqWD2m2tw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Fix console probe delay when stdout-path isn't set
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Saravana Kannan <saravanak@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tobias Klauser <tklauser@distanz.ch>,
         Russell King <linux@armlinux.org.uk>,
-        Ferry Toth <fntoth@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-References: <20220519190841.GA30869@wunner.de>
- <31baa38c-b2c7-10cd-e9cd-eee140f01788@samsung.com>
- <e598a232-6c78-782a-316f-77902644ad6c@samsung.com>
- <20220826071924.GA21264@wunner.de>
- <2b1a1588-505e-dff3-301d-bfc1fb14d685@samsung.com>
- <20220826075331.GA32117@wunner.de>
- <093730dd-2f2c-bd0b-bd13-b97f8a2898bd@samsung.com>
- <81c0f21f-f8f1-f7b3-c52f-c6a564c6a445@samsung.com>
- <20220918191333.GA2107@wunner.de>
- <d963b1a3-e18d-25d5-f07c-42d17d382174@gmail.com>
- <20220918205516.GA13914@wunner.de>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220918205516.GA13914@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Vineet Gupta <vgupta@kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Karol Gugala <kgugala@antmicro.com>,
+        Mateusz Holenko <mholenko@antmicro.com>,
+        Gabriel Somlo <gsomlo@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pali Rohar <pali@kernel.org>,
+        Andreas Farber <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hammer Hsieh <hammerh0314@gmail.com>,
+        Peter Korsgaard <jacmet@sunsite.dk>,
+        Timur Tabi <timur@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>,
+        sascha hauer <sha@pengutronix.de>, peng fan <peng.fan@nxp.com>,
+        kevin hilman <khilman@kernel.org>,
+        ulf hansson <ulf.hansson@linaro.org>,
+        len brown <len.brown@intel.com>, pavel machek <pavel@ucw.cz>,
+        joerg roedel <joro@8bytes.org>, will deacon <will@kernel.org>,
+        andrew lunn <andrew@lunn.ch>,
+        heiner kallweit <hkallweit1@gmail.com>,
+        eric dumazet <edumazet@google.com>,
+        jakub kicinski <kuba@kernel.org>,
+        paolo abeni <pabeni@redhat.com>,
+        linus walleij <linus.walleij@linaro.org>,
+        hideaki yoshifuji <yoshfuji@linux-ipv6.org>,
+        david ahern <dsahern@kernel.org>, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        iommu@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org,
+        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-unisoc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, Aug 23, 2022 at 8:37 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jun 30, 2022 at 06:26:38PM -0700, Saravana Kannan wrote:
+> > These patches are on top of driver-core-next.
+> >
+> > Even if stdout-path isn't set in DT, this patch should take console
+> > probe times back to how they were before the deferred_probe_timeout
+> > clean up series[1].
+>
+> Now dropped from my queue due to lack of a response to other reviewer's
+> questions.
+
+What happened to this patch? I have a 10 second timeout on console
+probe on my SiFive Unmatched, and I don't see this flag being set for
+the serial driver. In fact, I don't see it anywhere in-tree. I can't
+seem to locate another patchset from Saravana around this though, so
+I'm not sure where to look for a missing piece for the sifive serial
+driver.
+
+This is the second boot time regression (this one not fatal, unlike
+the Layerscape PCIe one) from the fw_devlink patchset.
+
+Greg, can you revert the whole set for 6.0, please? It's obviously
+nowhere near tested enough to go in and I expect we'll see a bunch of
+-stable fixups due to this if we let it remain in.
+
+This seems to be one of the worst releases I've encountered in recent
+years on my hardware here due to this patchset. :-(
 
 
-On 9/18/2022 1:55 PM, Lukas Wunner wrote:
-> On Sun, Sep 18, 2022 at 01:41:13PM -0700, Florian Fainelli wrote:
->> On 9/18/2022 12:13 PM, Lukas Wunner wrote:
->>> On Mon, Aug 29, 2022 at 01:40:05PM +0200, Marek Szyprowski wrote:
->>>> I've finally traced what has happened. I've double checked and indeed
->>>> the 1758bde2e4aa commit fixed the issue on next-20220516 kernel and as
->>>> such it has been merged to linus tree. Then the commit 744d23c71af3
->>>> ("net: phy: Warn about incorrect mdio_bus_phy_resume() state") has been
->>>> merged to linus tree, which triggers a new warning during the
->>>> suspend/resume cycle with smsc95xx driver. Please note, that the
->>>> smsc95xx still works fine regardless that warning. However it look that
->>>> the commit 1758bde2e4aa only hide a real problem, which the commit
->>>> 744d23c71af3 warns about.
->>>>
->>>> Probably a proper fix for smsc95xx driver is to call phy_stop/start
->>>> during suspend/resume cycle, like in similar patches for other drivers:
->>>>
->>>> https://lore.kernel.org/all/20220825023951.3220-1-f.fainelli@gmail.com/
->>>
->>> No, smsc95xx.c relies on mdio_bus_phy_{suspend,resume}() and there's
->>> no need to call phy_{stop,start}() >
->>> 744d23c71af3 was flawed and 6dbe852c379f has already fixed a portion
->>> of the fallout.
->>>
->>> However the WARN() condition still seems too broad and causes false
->>> positives such as in your case.  In particular, mdio_bus_phy_suspend()
->>> may leave the device in PHY_UP state, so that's a legal state that
->>> needs to be exempted from the WARN().
->>
->> How is that a legal state when the PHY should be suspended? Even if we are
->> interrupt driven, the state machine should be stopped, does not mean that
->> Wake-on-LAN or other activity interrupts should be disabled.
-> 
-> mdio_bus_phy_suspend()
->    phy_stop_machine()
->      phydev->state = PHY_UP  #  if (phydev->state >= PHY_UP)
-> 
-> So apparently PHY_UP is a legal state for a suspended PHY.
-
-It is not clear to me why, however. Sure it does ensure that when we 
-resume we set needs_aneg = true but this feels like a hack in the sense 
-that we are setting the PHY in a provisional state in anticipation for 
-what might come next.
-
-> 
-> 
->>> Does the issue still appear even after 6dbe852c379f?
->>>
->>> If it does, could you test whether exempting PHY_UP silences the
->>> gratuitous WARN splat?  I.e.:
->>
->> If you allow PHY_UP, then the warning becomes effectively useless, so I
->> don't believe this is quite what you want to do here.
-> 
-> Hm, maybe the WARN() should be dropped altogether?
-
-And then be left with debugging similar problems that prompted me to 
-submit the patch in the first place, no thank you. I guess I would 
-rather accept that PHY_UP needs to be special cased then.
--- 
-Florian
+-Olof
