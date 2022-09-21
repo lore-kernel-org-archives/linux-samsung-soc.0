@@ -2,68 +2,68 @@ Return-Path: <linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085ADECAAD8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Sep 2022 09:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A801C32771
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 21 Sep 2022 09:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231684AbiIUJny (ORCPT
+        id S231700AbiIUJnz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 05:43:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44412 "EHLO
+        Wed, 21 Sep 2022 05:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231760AbiIUJnn (ORCPT
+        with ESMTP id S231773AbiIUJno (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 21 Sep 2022 05:43:43 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E492F93203
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2022 02:43:32 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id o20-20020a05600c4fd400b003b4a516c479so3418448wmq.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2022 02:43:32 -0700 (PDT)
+        Wed, 21 Sep 2022 05:43:44 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C5F923EA
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2022 02:43:36 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id d12-20020a05600c3acc00b003b4c12e47f3so3396087wms.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2022 02:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=aNmMz3cRMj5kxPfKCvTpL8Ywx++ZqyPMyM5lgZsCem0=;
-        b=opBVigkRy1OeHJrzgVEv50Om8MwOvmKtdXtGwDmTqDiVeKIVBTX9lyRdNNyru+jQpf
-         pvHxkjNQDbdCSku4L0BzhyYs8MC3x533ztjIKkKKHK9xqBnfIAroNYuUGZHcPR4SKq7B
-         FLgZnDwCHlwDxSirS6wY+jzARCYEFuYEnEUOcO1Qw1mr6riViPYm6NRi2t+rqGo3RZhg
-         LxF87n6cjFqA4Q7MJdW8b+Boouz8tDTWD6P1Eg+IRMHihWo6wX2Dd+Re1QwFQZ/KDEXU
-         +6GCsa7FaQ3YqbYcke8pcLCZ7Pz9y2kwrLYW62BRHvz5VG6q1gZO8ovwfSzTWKvxTQOs
-         kKvw==
+        bh=7e6ctEATW9s/XP6ppX0yJV3WjnU6tGYDDticrBE+dlY=;
+        b=STS/hkaX5fTFQngJMGA3ECsx0YNz/DGYRFInjs+Pvwg4Ke/RBoKCJf2tDQlQj66ZPt
+         LtFaOLblPP5sDEAwlxxwRcjgYSotQwt6s1+hIFkB9F3CymD0S9DPgqt9DMSgAAIYIUIc
+         /ihaJ90YfFmBZLy1nvUECuoY+VfNvQXGC/MpcGMPiXMkzg/K5vg1uRgWeq2E4LtEUEKL
+         R9xWj7G+0RpgE1NvR4OHOriTA3Mu7dkZQeJDvfeelamAkf/VCVjgoiIqCokMdwRFCv3w
+         qEN37vFopu5zsv+OKKa1nNuZryLAqkyI32+rHwU6nyO7r3i9/g8LD7ssEfqaetxvi7Se
+         KkDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date;
-        bh=aNmMz3cRMj5kxPfKCvTpL8Ywx++ZqyPMyM5lgZsCem0=;
-        b=28H5VBHHg67LJKqcGvdbbodvjdcjFBGiOC78Ys1OLhKUhkP1i1AUzxdFKeZqfaZ+tm
-         k01Fb/kFdy2CqL0jKutPjGGqJ/OQ9DyVGpWfaYh5+gxlC5BoBtNc6fftTPNACfl5xmzX
-         jgN3qK5tmwIb1NK6ctugyYwQC5CbP6qWYdqUdEwyLRnE485B1gezSnaAgOm+tFlzdM01
-         Pa6ihAuKaXbFfUyhohkkXoNrvfjHfbg43CSBPaoZot5vBg2jcKJCfCiF+3ISz6h2YdCR
-         9bEAst0Xib7lubz1EWzrJ0c3vuZreLccBwLI/UaVBtCWDQzICi4Gd3C3DVyYKyurmGft
-         aVgg==
-X-Gm-Message-State: ACrzQf1memSx1GsZD8DXqHr9k28ar5KU9koMuFerRi/hR7FRalfDbgkr
-        A8IICp3vA2IBxhyOh5pBMfejnQ==
-X-Google-Smtp-Source: AMsMyM591OTlLMxQsmmUWR66w2WKMc3P6675xLoxproqZsL80SdIV9dgnd2ab52ATVMOcbZgomjCmA==
-X-Received: by 2002:a05:600c:4c22:b0:3b4:766a:4f76 with SMTP id d34-20020a05600c4c2200b003b4766a4f76mr4978885wmp.101.1663753411232;
-        Wed, 21 Sep 2022 02:43:31 -0700 (PDT)
+        bh=7e6ctEATW9s/XP6ppX0yJV3WjnU6tGYDDticrBE+dlY=;
+        b=T9WYebBZq49irS9BKxdOC3bhjbtFtM68AeOhMi7tajvOMq3J6E3K6UFrVpVfXqcII0
+         +uJtysCaFKK8Af6znyqcZCsi+eMS95sFHvXCr0sgLCU/PVuph44nfkRG+h8koMg0Ynif
+         pEDRUir3r9SP0Jqx2qQ6N7KzhwnpjH7r2zlI0RM2A8azHYOHzugLL0B5+rh6nNA0RCva
+         FZlWMt7peCIE/VtIGSDPMnceeNoxbzrYnDN1ywXHB/O65UvB0Z7uK8zzsHLyoXQnw58D
+         HOZf9Zx9FnEj248ykHa7Gt0tD8sStOSP5G72YFFZYu/yoWhDwF5jJ/r7BVg5T+bomoT+
+         8EpQ==
+X-Gm-Message-State: ACrzQf0tl+M5jurlnjC3PwnQp2fVVu17KFq5IoSurD21TXeqDdVYUir2
+        wZdr7u/L45kgZcp8iVqMUwRELzdjeYRWGw==
+X-Google-Smtp-Source: AMsMyM4/4rjQZEXF1J3b3NG9zZlSdlTtoeb2ny8YHaNelDL6+kKKZEIcL1QAm6vOKKrxdRDfZPVqyw==
+X-Received: by 2002:a05:600c:2050:b0:3b4:a51a:a1f5 with SMTP id p16-20020a05600c205000b003b4a51aa1f5mr5044066wmg.177.1663753414618;
+        Wed, 21 Sep 2022 02:43:34 -0700 (PDT)
 Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id r123-20020a1c2b81000000b003a62052053csm2763917wmr.18.2022.09.21.02.43.29
+        by smtp.gmail.com with ESMTPSA id r123-20020a1c2b81000000b003a62052053csm2763917wmr.18.2022.09.21.02.43.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 02:43:30 -0700 (PDT)
+        Wed, 21 Sep 2022 02:43:34 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     daniel.lezcano@linaro.org, rafael@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         rui.zhang@intel.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Amit Kucheria <amitk@kernel.org>,
         Alim Akhtar <alim.akhtar@samsung.com>,
         linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C,
         S5P AND EXYNOS ARM ARCHITECTURES)
-Subject: [PATCH v4 08/30] thermal/drivers/exynos: Use generic thermal_zone_get_trip() function
-Date:   Wed, 21 Sep 2022 11:42:21 +0200
-Message-Id: <20220921094244.606948-9-daniel.lezcano@linaro.org>
+Subject: [PATCH v4 10/30] thermal/drivers/exynos: Replace of_thermal_is_trip_valid() by thermal_zone_get_trip()
+Date:   Wed, 21 Sep 2022 11:42:23 +0200
+Message-Id: <20220921094244.606948-11-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220921094244.606948-1-daniel.lezcano@linaro.org>
 References: <20220921094244.606948-1-daniel.lezcano@linaro.org>
@@ -73,98 +73,67 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The thermal framework gives the possibility to register the trip
-points with the thermal zone. When that is done, no get_trip_* ops are
-needed and they can be removed.
-
-Convert ops content logic into generic trip points and register them with the
-thermal zone.
+The thermal_zone_get_trip() does the same check as
+of_thermal_is_trip_valid(). Replace the call to
+of_thermal_is_trip_valid() by thermal_zone_get_trip().
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 41 +++++++++++-----------------
- 1 file changed, 16 insertions(+), 25 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 51874d0a284c..0e33d32a9d2e 100644
+index 91e6860b5ec4..34b460092308 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -260,16 +260,8 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+@@ -554,13 +554,14 @@ static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
  {
  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct thermal_zone_device *tzd = data->tzd;
--	const struct thermal_trip * const trips =
--		of_thermal_get_trip_points(tzd);
- 	unsigned int status;
--	int ret = 0, temp, hyst;
--
--	if (!trips) {
--		dev_err(&pdev->dev,
--			"Cannot get trip points from device tree!\n");
--		return -ENODEV;
--	}
-+	int ret = 0, temp;
- 
- 	if (data->soc != SOC_ARCH_EXYNOS5433) /* FIXME */
- 		ret = tzd->ops->get_crit_temp(tzd, &temp);
-@@ -303,19 +295,16 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 
- 		/* Write temperature code for rising and falling threshold */
- 		for (i = 0; i < ntrips; i++) {
--			/* Write temperature code for rising threshold */
--			ret = tzd->ops->get_trip_temp(tzd, i, &temp);
--			if (ret)
--				goto err;
--			temp /= MCELSIUS;
--			data->tmu_set_trip_temp(data, i, temp);
- 
--			/* Write temperature code for falling threshold */
--			ret = tzd->ops->get_trip_hyst(tzd, i, &hyst);
-+			struct thermal_trip trip;
-+			
-+			ret = thermal_zone_get_trip(tzd, i, &trip);
- 			if (ret)
- 				goto err;
--			hyst /= MCELSIUS;
--			data->tmu_set_trip_hyst(data, i, temp, hyst);
-+
-+			data->tmu_set_trip_temp(data, i, trip.temperature / MCELSIUS);
-+			data->tmu_set_trip_hyst(data, i, trip.temperature / MCELSIUS,
-+						trip.hysteresis / MCELSIUS);
- 		}
- 
- 		data->tmu_clear_irqs(data);
-@@ -360,21 +349,23 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- }
- 
- static void exynos4210_tmu_set_trip_temp(struct exynos_tmu_data *data,
--					 int trip, u8 temp)
-+					 int trip_id, u8 temp)
- {
--	const struct thermal_trip * const trips =
--		of_thermal_get_trip_points(data->tzd);
+ 	struct thermal_zone_device *tz = data->tzd;
 +	struct thermal_trip trip;
- 	u8 ref, th_code;
+ 	unsigned int con, interrupt_en = 0, i;
  
--	ref = trips[0].temperature / MCELSIUS;
-+	if (thermal_zone_get_trip(data->tzd, 0, &trip))
-+		return;
+ 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
  
--	if (trip == 0) {
-+	ref = trip.temperature / MCELSIUS;
-+	
-+	if (trip_id == 0) {
- 		th_code = temp_to_code(data, ref);
- 		writeb(th_code, data->base + EXYNOS4210_TMU_REG_THRESHOLD_TEMP);
- 	}
+ 	if (on) {
+ 		for (i = 0; i < data->ntrip; i++) {
+-			if (!of_thermal_is_trip_valid(tz, i))
++			if (thermal_zone_get_trip(tz, i, &trip))
+ 				continue;
  
- 	temp -= ref;
--	writeb(temp, data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + trip * 4);
-+	writeb(temp, data->base + EXYNOS4210_TMU_REG_TRIG_LEVEL0 + trip_id * 4);
- }
+ 			interrupt_en |=
+@@ -584,13 +585,14 @@ static void exynos5433_tmu_control(struct platform_device *pdev, bool on)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct thermal_zone_device *tz = data->tzd;
++	struct thermal_trip trip;
+ 	unsigned int con, interrupt_en = 0, pd_det_en, i;
  
- /* failing thresholds are not supported on Exynos4210 */
+ 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+ 
+ 	if (on) {
+ 		for (i = 0; i < data->ntrip; i++) {
+-			if (!of_thermal_is_trip_valid(tz, i))
++			if (thermal_zone_get_trip(tz, i, &trip))
+ 				continue;
+ 
+ 			interrupt_en |=
+@@ -615,13 +617,14 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct thermal_zone_device *tz = data->tzd;
++	struct thermal_trip trip;
+ 	unsigned int con, interrupt_en = 0, i;
+ 
+ 	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+ 
+ 	if (on) {
+ 		for (i = 0; i < data->ntrip; i++) {
+-			if (!of_thermal_is_trip_valid(tz, i))
++			if (thermal_zone_get_trip(tz, i, &trip))
+ 				continue;
+ 
+ 			interrupt_en |=
 -- 
 2.34.1
 
